@@ -40,7 +40,7 @@ class PodsField_Link extends PodsField_Website {
 	public function options() {
 
 		$options = array(
-			self::$type . '_format'            => array(
+			static::$type . '_format'            => array(
 				'label'   => __( 'Format', 'pods' ),
 				'default' => 'normal',
 				'type'    => 'pick',
@@ -54,28 +54,28 @@ class PodsField_Link extends PodsField_Website {
 					'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' ),
 				),
 			),
-			self::$type . '_select_existing'   => array(
+			static::$type . '_select_existing'   => array(
 				'label'      => __( 'Enable Selecting from Existing Links?', 'pods' ),
 				'default'    => 1,
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
-			self::$type . '_new_window'        => array(
+			static::$type . '_new_window'        => array(
 				'label'      => __( 'Open link in new window by default?', 'pods' ),
-				'default'    => apply_filters( 'pods_form_ui_field_link_new_window', 0, self::$type ),
+				'default'    => apply_filters( 'pods_form_ui_field_link_new_window', 0, static::$type ),
 				'type'       => 'boolean',
 				'dependency' => false,
 			),
 			'output_options'                   => array(
 				'label' => __( 'Link Text Output Options', 'pods' ),
 				'group' => array(
-					self::$type . '_allow_shortcode' => array(
+					static::$type . '_allow_shortcode' => array(
 						'label'      => __( 'Allow Shortcodes?', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
 					),
-					self::$type . '_allow_html'      => array(
+					static::$type . '_allow_html'      => array(
 						'label'      => __( 'Allow HTML?', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
@@ -83,15 +83,15 @@ class PodsField_Link extends PodsField_Website {
 					),
 				),
 			),
-			self::$type . '_allowed_html_tags' => array(
+			static::$type . '_allowed_html_tags' => array(
 				'label'      => __( 'Allowed HTML Tags', 'pods' ),
-				'depends-on' => array( self::$type . '_allow_html' => true ),
+				'depends-on' => array( static::$type . '_allow_html' => true ),
 				'default'    => 'strong em a ul ol li b i',
 				'type'       => 'text',
 			),
-			self::$type . '_html5'             => array(
+			static::$type . '_html5'             => array(
 				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
-				'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
+				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),
 		);
@@ -153,13 +153,13 @@ class PodsField_Link extends PodsField_Website {
 
 			$atts = '';
 
-			if ( ! empty( $value['target'] ) || ( ! isset( $value['target'] ) && 1 === (int) pods_v( self::$type . '_new_window', $options ) ) ) {
+			if ( ! empty( $value['target'] ) || ( ! isset( $value['target'] ) && 1 === (int) pods_v( static::$type . '_new_window', $options ) ) ) {
 				// Possible support for other targets in future
 				$atts .= ' target="' . esc_attr( $value['target'] ) . '"';
 			}
 
 			// Do shortcodes if this is enabled
-			if ( 1 === (int) pods_v( self::$type . '_allow_shortcode', $options ) ) {
+			if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options ) ) {
 				$text = do_shortcode( $text );
 			}
 
@@ -277,7 +277,7 @@ class PodsField_Link extends PodsField_Website {
 		// Start Target format
 		if ( ! empty( $value['target'] ) ) {
 			$value['target'] = $this->validate_target( $value['target'] );
-		} elseif ( ! isset( $value['target'] ) && 1 === (int) pods_v( self::$type . '_new_window', $options, 0 ) ) {
+		} elseif ( ! isset( $value['target'] ) && 1 === (int) pods_v( static::$type . '_new_window', $options, 0 ) ) {
 			$value['target'] = '_blank';
 		}
 

@@ -39,7 +39,7 @@ class PodsField_Phone extends PodsField {
 	public function options() {
 
 		$options = array(
-			self::$type . '_repeatable'  => array(
+			static::$type . '_repeatable'  => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
 				'default'           => 0,
 				'type'              => 'boolean',
@@ -48,7 +48,7 @@ class PodsField_Phone extends PodsField {
 				'dependency'        => true,
 				'developer_mode'    => true,
 			),
-			self::$type . '_format'      => array(
+			static::$type . '_format'      => array(
 				'label'   => __( 'Format', 'pods' ),
 				'default' => '999-999-9999 x999',
 				'type'    => 'pick',
@@ -63,28 +63,28 @@ class PodsField_Phone extends PodsField {
 					),
 				),
 			),
-			self::$type . '_options'     => array(
+			static::$type . '_options'     => array(
 				'label' => __( 'Phone Options', 'pods' ),
 				'group' => array(
-					self::$type . '_enable_phone_extension' => array(
+					static::$type . '_enable_phone_extension' => array(
 						'label'   => __( 'Enable Phone Extension?', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 					),
 				),
 			),
-			self::$type . '_max_length'  => array(
+			static::$type . '_max_length'  => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 25,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
-			self::$type . '_html5'       => array(
+			static::$type . '_html5'       => array(
 				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
-				'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
+				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),
-			self::$type . '_placeholder' => array(
+			static::$type . '_placeholder' => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
@@ -103,7 +103,7 @@ class PodsField_Phone extends PodsField {
 	 */
 	public function schema( $options = null ) {
 
-		$length = (int) pods_v( self::$type . '_max_length', $options, 25, true );
+		$length = (int) pods_v( static::$type . '_max_length', $options, 25, true );
 
 		$schema = 'VARCHAR(' . $length . ')';
 
@@ -128,7 +128,7 @@ class PodsField_Phone extends PodsField {
 
 		$field_type = 'phone';
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 
@@ -182,7 +182,7 @@ class PodsField_Phone extends PodsField {
 
 		$options = (array) $options;
 
-		if ( 'international' === pods_v( self::$type . '_format', $options ) ) {
+		if ( 'international' === pods_v( static::$type . '_format', $options ) ) {
 			// no validation/changes
 		} else {
 			// Clean input
@@ -221,25 +221,25 @@ class PodsField_Phone extends PodsField {
 			}
 
 			// Format number
-			if ( '(999) 999-9999 x999' === pods_v( self::$type . '_format', $options ) ) {
+			if ( '(999) 999-9999 x999' === pods_v( static::$type . '_format', $options ) ) {
 				if ( 2 === count( $numbers ) ) {
 					$value = implode( '-', $numbers );
 				} else {
 					$value = '(' . $numbers[0] . ') ' . $numbers[1] . '-' . $numbers[2];
 				}
-			} elseif ( '999.999.9999 x999' === pods_v( self::$type . '_format', $options ) ) {
+			} elseif ( '999.999.9999 x999' === pods_v( static::$type . '_format', $options ) ) {
 				$value = implode( '.', $numbers );
 			} else {
 				$value = implode( '-', $numbers );
 			}
 
 			// Add extension
-			if ( 1 === (int) pods_v( self::$type . '_enable_phone_extension', $options ) && 0 < strlen( $extension ) ) {
+			if ( 1 === (int) pods_v( static::$type . '_enable_phone_extension', $options ) && 0 < strlen( $extension ) ) {
 				$value .= ' x' . $extension;
 			}
 		}//end if
 
-		$length = (int) pods_v( self::$type . '_max_length', $options, 25 );
+		$length = (int) pods_v( static::$type . '_max_length', $options, 25 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );

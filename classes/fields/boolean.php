@@ -36,7 +36,7 @@ class PodsField_Boolean extends PodsField {
 	public function options() {
 
 		$options = array(
-			self::$type . '_format_type' => array(
+			static::$type . '_format_type' => array(
 				'label'      => __( 'Input Type', 'pods' ),
 				'default'    => 'checkbox',
 				'type'       => 'pick',
@@ -47,12 +47,12 @@ class PodsField_Boolean extends PodsField {
 				),
 				'dependency' => true,
 			),
-			self::$type . '_yes_label'   => array(
+			static::$type . '_yes_label'   => array(
 				'label'   => __( 'Yes Label', 'pods' ),
 				'default' => __( 'Yes', 'pods' ),
 				'type'    => 'text',
 			),
-			self::$type . '_no_label'    => array(
+			static::$type . '_no_label'    => array(
 				'label'   => __( 'No Label', 'pods' ),
 				'default' => __( 'No', 'pods' ),
 				'type'    => 'text',
@@ -95,8 +95,8 @@ class PodsField_Boolean extends PodsField {
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
 		$yesno = array(
-			1 => pods_v( self::$type . '_yes_label', $options ),
-			0 => pods_v( self::$type . '_no_label', $options ),
+			1 => pods_v( static::$type . '_yes_label', $options ),
+			0 => pods_v( static::$type . '_no_label', $options ),
 		);
 
 		// Deprecated handling for 1.x
@@ -121,13 +121,13 @@ class PodsField_Boolean extends PodsField {
 
 		$field_type = 'checkbox';
 
-		if ( 'radio' === pods_v( self::$type . '_format_type', $options ) ) {
+		if ( 'radio' === pods_v( static::$type . '_format_type', $options ) ) {
 			$field_type = 'radio';
-		} elseif ( 'dropdown' === pods_v( self::$type . '_format_type', $options ) ) {
+		} elseif ( 'dropdown' === pods_v( static::$type . '_format_type', $options ) ) {
 			$field_type = 'select';
 		}
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 			} else {
@@ -151,14 +151,14 @@ class PodsField_Boolean extends PodsField {
 	 */
 	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
 
-		if ( 'checkbox' !== pods_v( self::$type . '_format_type', $options ) ) {
+		if ( 'checkbox' !== pods_v( static::$type . '_format_type', $options ) ) {
 			$data = array(
-				1 => pods_v( self::$type . '_yes_label', $options ),
-				0 => pods_v( self::$type . '_no_label', $options ),
+				1 => pods_v( static::$type . '_yes_label', $options ),
+				0 => pods_v( static::$type . '_no_label', $options ),
 			);
 		} else {
 			$data = array(
-				1 => pods_v( self::$type . '_yes_label', $options ),
+				1 => pods_v( static::$type . '_yes_label', $options ),
 			);
 		}
 
@@ -186,8 +186,8 @@ class PodsField_Boolean extends PodsField {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		$yes = strtolower( pods_v( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ) );
-		$no  = strtolower( pods_v( self::$type . '_no_label', $options, __( 'No', 'pods' ), true ) );
+		$yes = strtolower( pods_v( static::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ) );
+		$no  = strtolower( pods_v( static::$type . '_no_label', $options, __( 'No', 'pods' ), true ) );
 
 		// Only allow 0 / 1
 		if ( 'yes' === strtolower( $value ) || '1' === (string) $value ) {
@@ -211,8 +211,8 @@ class PodsField_Boolean extends PodsField {
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 
 		$yesno = array(
-			1 => pods_v( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ),
-			0 => pods_v( self::$type . '_no_label', $options, __( 'No', 'pods' ), true ),
+			1 => pods_v( static::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ),
+			0 => pods_v( static::$type . '_no_label', $options, __( 'No', 'pods' ), true ),
 		);
 
 		if ( isset( $yesno[ (int) $value ] ) ) {

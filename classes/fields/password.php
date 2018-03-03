@@ -39,13 +39,13 @@ class PodsField_Password extends PodsField {
 	public function options() {
 
 		$options = array(
-			self::$type . '_max_length'  => array(
+			static::$type . '_max_length'  => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 255,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
-			self::$type . '_placeholder' => array(
+			static::$type . '_placeholder' => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
@@ -64,7 +64,7 @@ class PodsField_Password extends PodsField {
 	 */
 	public function schema( $options = null ) {
 
-		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
+		$length = (int) pods_v( static::$type . '_max_length', $options, 255 );
 
 		$schema = 'VARCHAR(' . $length . ')';
 
@@ -87,7 +87,7 @@ class PodsField_Password extends PodsField {
 			$value = implode( ' ', $value );
 		}
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 			} else {
@@ -131,7 +131,7 @@ class PodsField_Password extends PodsField {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
+		$length = (int) pods_v( static::$type . '_max_length', $options, 255 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );

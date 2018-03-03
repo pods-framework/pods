@@ -42,13 +42,13 @@ class PodsField_HTML extends PodsField {
 			'output_options' => array(
 				'label' => __( 'Output Options', 'pods' ),
 				'group' => array(
-					self::$type . '_allow_html'      => array(
+					static::$type . '_allow_html'      => array(
 						'label'      => __( 'Allow HTML?', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
 					),
-					self::$type . '_oembed'          => array(
+					static::$type . '_oembed'          => array(
 						'label'   => __( 'Enable oEmbed?', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
@@ -57,7 +57,7 @@ class PodsField_HTML extends PodsField {
 							'http://codex.wordpress.org/Embeds',
 						),
 					),
-					self::$type . '_wptexturize'     => array(
+					static::$type . '_wptexturize'     => array(
 						'label'   => __( 'Enable wptexturize?', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -66,7 +66,7 @@ class PodsField_HTML extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/wptexturize',
 						),
 					),
-					self::$type . '_convert_chars'   => array(
+					static::$type . '_convert_chars'   => array(
 						'label'   => __( 'Enable convert_chars?', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -75,7 +75,7 @@ class PodsField_HTML extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/convert_chars',
 						),
 					),
-					self::$type . '_wpautop'         => array(
+					static::$type . '_wpautop'         => array(
 						'label'   => __( 'Enable wpautop?', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -84,7 +84,7 @@ class PodsField_HTML extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/wpautop',
 						),
 					),
-					self::$type . '_allow_shortcode' => array(
+					static::$type . '_allow_shortcode' => array(
 						'label'      => __( 'Allow Shortcodes?', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
@@ -116,26 +116,26 @@ class PodsField_HTML extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		if ( 1 === (int) pods_v( self::$type . '_oembed', $options, 0 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_oembed', $options, 0 ) ) {
 			$embed = $GLOBALS['wp_embed'];
 			$value = $embed->run_shortcode( $value );
 			$value = $embed->autoembed( $value );
 		}
 
-		if ( 1 === (int) pods_v( self::$type . '_wptexturize', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_wptexturize', $options, 1 ) ) {
 			$value = wptexturize( $value );
 		}
 
-		if ( 1 === (int) pods_v( self::$type . '_convert_chars', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_convert_chars', $options, 1 ) ) {
 			$value = convert_chars( $value );
 		}
 
-		if ( 1 === (int) pods_v( self::$type . '_wpautop', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
 			$value = wpautop( $value );
 		}
 
-		if ( 1 === (int) pods_v( self::$type . '_allow_shortcode', $options, 0 ) ) {
-			if ( 1 === (int) pods_v( self::$type . '_wpautop', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
+			if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
 				$value = shortcode_unautop( $value );
 			}
 
@@ -189,7 +189,7 @@ class PodsField_HTML extends PodsField {
 
 		$options = (array) $options;
 
-		if ( 1 !== (int) pods_v( self::$type . '_allow_html', $options ) ) {
+		if ( 1 !== (int) pods_v( static::$type . '_allow_html', $options ) ) {
 			$value = strip_tags( $value );
 		}
 

@@ -53,7 +53,7 @@ class PodsField_Avatar extends PodsField_File {
 
 		$options = parent::options();
 
-		unset( $options[ self::$type . '_type' ], $options[ self::$type . '_allowed_extensions' ], $options[ self::$type . '_field_template' ], $options[ self::$type . '_wp_gallery_output' ], $options[ self::$type . '_wp_gallery_link' ], $options[ self::$type . '_wp_gallery_columns' ], $options[ self::$type . '_wp_gallery_random_sort' ], $options[ self::$type . '_wp_gallery_size' ] );
+		unset( $options[ static::$type . '_type' ], $options[ static::$type . '_allowed_extensions' ], $options[ static::$type . '_field_template' ], $options[ static::$type . '_wp_gallery_output' ], $options[ static::$type . '_wp_gallery_link' ], $options[ static::$type . '_wp_gallery_columns' ], $options[ static::$type . '_wp_gallery_random_sort' ], $options[ static::$type . '_wp_gallery_size' ] );
 
 		return $options;
 
@@ -66,9 +66,9 @@ class PodsField_Avatar extends PodsField_File {
 
 		$options = (array) $options;
 
-		$options[ self::$type . '_type' ]              = 'images';
-		$options[ self::$type . '_field_template' ]    = 'rows';
-		$options[ self::$type . '_wp_gallery_output' ] = 0;
+		$options[ static::$type . '_type' ]              = 'images';
+		$options[ static::$type . '_field_template' ]    = 'rows';
+		$options[ static::$type . '_wp_gallery_output' ] = 0;
 
 		parent::input( $name, $value, $options, $pod, $id );
 

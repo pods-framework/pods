@@ -39,7 +39,7 @@ class PodsField_WYSIWYG extends PodsField {
 	public function options() {
 
 		$options = array(
-			self::$type . '_repeatable'        => array(
+			static::$type . '_repeatable'        => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
 				'default'           => 0,
 				'type'              => 'boolean',
@@ -48,7 +48,7 @@ class PodsField_WYSIWYG extends PodsField {
 				'dependency'        => true,
 				'developer_mode'    => true,
 			),
-			self::$type . '_editor'            => array(
+			static::$type . '_editor'            => array(
 				'label'      => __( 'Editor', 'pods' ),
 				'default'    => 'tinymce',
 				'type'       => 'pick',
@@ -62,9 +62,9 @@ class PodsField_WYSIWYG extends PodsField {
 			),
 			'editor_options'                   => array(
 				'label'      => __( 'Editor Options', 'pods' ),
-				'depends-on' => array( self::$type . '_editor' => 'tinymce' ),
+				'depends-on' => array( static::$type . '_editor' => 'tinymce' ),
 				'group'      => array(
-					self::$type . '_media_buttons' => array(
+					static::$type . '_media_buttons' => array(
 						'label'   => __( 'Enable Media Buttons?', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -74,7 +74,7 @@ class PodsField_WYSIWYG extends PodsField {
 			'output_options'                   => array(
 				'label' => __( 'Output Options', 'pods' ),
 				'group' => array(
-					self::$type . '_oembed'          => array(
+					static::$type . '_oembed'          => array(
 						'label'   => __( 'Enable oEmbed?', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
@@ -83,7 +83,7 @@ class PodsField_WYSIWYG extends PodsField {
 							'http://codex.wordpress.org/Embeds',
 						),
 					),
-					self::$type . '_wptexturize'     => array(
+					static::$type . '_wptexturize'     => array(
 						'label'   => __( 'Enable wptexturize?', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -92,7 +92,7 @@ class PodsField_WYSIWYG extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/wptexturize',
 						),
 					),
-					self::$type . '_convert_chars'   => array(
+					static::$type . '_convert_chars'   => array(
 						'label'   => __( 'Enable convert_chars?', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -101,7 +101,7 @@ class PodsField_WYSIWYG extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/convert_chars',
 						),
 					),
-					self::$type . '_wpautop'         => array(
+					static::$type . '_wpautop'         => array(
 						'label'   => __( 'Enable wpautop?', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -110,7 +110,7 @@ class PodsField_WYSIWYG extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/wpautop',
 						),
 					),
-					self::$type . '_allow_shortcode' => array(
+					static::$type . '_allow_shortcode' => array(
 						'label'      => __( 'Allow Shortcodes?', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
@@ -122,7 +122,7 @@ class PodsField_WYSIWYG extends PodsField {
 					),
 				),
 			),
-			self::$type . '_allowed_html_tags' => array(
+			static::$type . '_allowed_html_tags' => array(
 				'label'   => __( 'Allowed HTML Tags', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
@@ -131,7 +131,7 @@ class PodsField_WYSIWYG extends PodsField {
 		);
 
 		if ( function_exists( 'Markdown' ) ) {
-			$options['output_options']['group'][ self::$type . '_allow_markdown' ] = array(
+			$options['output_options']['group'][ static::$type . '_allow_markdown' ] = array(
 				'label'   => __( 'Allow Markdown Syntax?', 'pods' ),
 				'default' => 0,
 				'type'    => 'boolean',
@@ -158,7 +158,7 @@ class PodsField_WYSIWYG extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		if ( 1 === (int) pods_v( self::$type . '_oembed', $options, 0 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_oembed', $options, 0 ) ) {
 			$post_temp = false;
 
 			// Workaround for WP_Embed since it needs a $post to work from
@@ -181,27 +181,27 @@ class PodsField_WYSIWYG extends PodsField {
 			}
 		}//end if
 
-		if ( 1 === (int) pods_v( self::$type . '_wptexturize', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_wptexturize', $options, 1 ) ) {
 			$value = wptexturize( $value );
 		}
 
-		if ( 1 === (int) pods_v( self::$type . '_convert_chars', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_convert_chars', $options, 1 ) ) {
 			$value = convert_chars( $value );
 		}
 
-		if ( 1 === (int) pods_v( self::$type . '_wpautop', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
 			$value = wpautop( $value );
 		}
 
-		if ( 1 === (int) pods_v( self::$type . '_allow_shortcode', $options, 0 ) ) {
-			if ( 1 === (int) pods_v( self::$type . '_wpautop', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
+			if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
 				$value = shortcode_unautop( $value );
 			}
 
 			$value = do_shortcode( $value );
 		}
 
-		if ( function_exists( 'Markdown' ) && 1 === (int) pods_v( self::$type . '_allow_markdown', $options ) ) {
+		if ( function_exists( 'Markdown' ) && 1 === (int) pods_v( static::$type . '_allow_markdown', $options ) ) {
 			$value = Markdown( $value );
 		}
 
@@ -220,7 +220,7 @@ class PodsField_WYSIWYG extends PodsField {
 			$value = implode( "\n", $value );
 		}
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 
@@ -232,14 +232,14 @@ class PodsField_WYSIWYG extends PodsField {
 			$options['readonly'] = true;
 
 			$field_type = 'textarea';
-		} elseif ( 'tinymce' === pods_v( self::$type . '_editor', $options ) ) {
+		} elseif ( 'tinymce' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'tinymce';
-		} elseif ( 'cleditor' === pods_v( self::$type . '_editor', $options ) ) {
+		} elseif ( 'cleditor' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'cleditor';
 		} else {
 			// Support custom WYSIWYG integration
-			do_action( 'pods_form_ui_field_wysiwyg_' . pods_v( self::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
-			do_action( 'pods_form_ui_field_wysiwyg', pods_v( self::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
+			do_action( 'pods_form_ui_field_wysiwyg_' . pods_v( static::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
+			do_action( 'pods_form_ui_field_wysiwyg', pods_v( static::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
 
 			return;
 		}//end if
@@ -254,7 +254,7 @@ class PodsField_WYSIWYG extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		$length = (int) pods_v( self::$type . '_max_length', $options, 0 );
+		$length = (int) pods_v( static::$type . '_max_length', $options, 0 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );
@@ -299,8 +299,8 @@ class PodsField_WYSIWYG extends PodsField {
 
 		$allowed_html_tags = '';
 
-		if ( 0 < strlen( pods_v( self::$type . '_allowed_html_tags', $options ) ) ) {
-			$allowed_tags = pods_v( self::$type . '_allowed_html_tags', $options );
+		if ( 0 < strlen( pods_v( static::$type . '_allowed_html_tags', $options ) ) ) {
+			$allowed_tags = pods_v( static::$type . '_allowed_html_tags', $options );
 			$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
 			$allowed_tags = explode( ' ', $allowed_tags );
 			$allowed_tags = array_unique( array_filter( $allowed_tags ) );

@@ -39,7 +39,7 @@ class PodsField_Email extends PodsField {
 	public function options() {
 
 		$options = array(
-			self::$type . '_repeatable'  => array(
+			static::$type . '_repeatable'  => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
 				'default'           => 0,
 				'type'              => 'boolean',
@@ -48,18 +48,18 @@ class PodsField_Email extends PodsField {
 				'dependency'        => true,
 				'developer_mode'    => true,
 			),
-			self::$type . '_max_length'  => array(
+			static::$type . '_max_length'  => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 255,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
-			self::$type . '_html5'       => array(
+			static::$type . '_html5'       => array(
 				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
-				'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
+				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),
-			self::$type . '_placeholder' => array(
+			static::$type . '_placeholder' => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
@@ -78,7 +78,7 @@ class PodsField_Email extends PodsField {
 	 */
 	public function schema( $options = null ) {
 
-		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
+		$length = (int) pods_v( static::$type . '_max_length', $options, 255 );
 
 		$schema = 'VARCHAR(' . $length . ')';
 
@@ -103,7 +103,7 @@ class PodsField_Email extends PodsField {
 
 		$field_type = 'email';
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 
@@ -169,7 +169,7 @@ class PodsField_Email extends PodsField {
 			$value = '';
 		}
 
-		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
+		$length = (int) pods_v( static::$type . '_max_length', $options, 255 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );

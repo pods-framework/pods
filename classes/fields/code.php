@@ -58,7 +58,7 @@ class PodsField_Code extends PodsField {
 	public function options() {
 
 		$options = array(
-			self::$type . '_repeatable' => array(
+			static::$type . '_repeatable' => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
 				'default'           => 0,
 				'type'              => 'boolean',
@@ -70,7 +70,7 @@ class PodsField_Code extends PodsField {
 			'output_options'            => array(
 				'label' => __( 'Output Options', 'pods' ),
 				'group' => array(
-					self::$type . '_allow_shortcode' => array(
+					static::$type . '_allow_shortcode' => array(
 						'label'      => __( 'Allow Shortcodes?', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
@@ -78,14 +78,14 @@ class PodsField_Code extends PodsField {
 					),
 				),
 			),
-			self::$type . '_max_length' => array(
+			static::$type . '_max_length' => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 0,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			), /*
 		,
-            self::$type . '_size' => array(
+            static::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -110,7 +110,7 @@ class PodsField_Code extends PodsField {
 	 */
 	public function schema( $options = null ) {
 
-		$length = (int) pods_v( self::$type . '_max_length', $options, 0 );
+		$length = (int) pods_v( static::$type . '_max_length', $options, 0 );
 
 		$schema = 'LONGTEXT';
 
@@ -136,7 +136,7 @@ class PodsField_Code extends PodsField {
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
-		if ( 1 === (int) pods_v( self::$type . '_allow_shortcode', $options, 0 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
 			$value = do_shortcode( $value );
 		}
 
@@ -187,7 +187,7 @@ class PodsField_Code extends PodsField {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		$length = (int) pods_v( self::$type . '_max_length', $options, 0 );
+		$length = (int) pods_v( static::$type . '_max_length', $options, 0 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );

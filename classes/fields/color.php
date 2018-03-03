@@ -34,7 +34,7 @@ class PodsField_Color extends PodsField {
 	public function options() {
 
 		$options = array(
-			self::$type . '_repeatable' => array(
+			static::$type . '_repeatable' => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
 				'default'           => 0,
 				'type'              => 'boolean',
@@ -81,7 +81,7 @@ class PodsField_Color extends PodsField {
 		// WP Color Picker for 3.5+
 		$field_type = 'color';
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 

@@ -53,7 +53,7 @@ class PodsField_Slug extends PodsField {
 	public function options() {
 
 		$options = array(
-			self::$type . '_placeholder' => array(
+			static::$type . '_placeholder' => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
@@ -122,7 +122,7 @@ class PodsField_Slug extends PodsField {
 
 		$field_type = 'slug';
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 

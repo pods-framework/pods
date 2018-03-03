@@ -43,7 +43,7 @@ class PodsField_Paragraph extends PodsField {
 	public function options() {
 
 		$options = array(
-			self::$type . '_repeatable'        => array(
+			static::$type . '_repeatable'        => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
 				'default'           => 0,
 				'type'              => 'boolean',
@@ -55,13 +55,13 @@ class PodsField_Paragraph extends PodsField {
 			'output_options'                   => array(
 				'label' => __( 'Output Options', 'pods' ),
 				'group' => array(
-					self::$type . '_allow_html'      => array(
+					static::$type . '_allow_html'      => array(
 						'label'      => __( 'Allow HTML?', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
 					),
-					self::$type . '_oembed'          => array(
+					static::$type . '_oembed'          => array(
 						'label'   => __( 'Enable oEmbed?', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
@@ -70,7 +70,7 @@ class PodsField_Paragraph extends PodsField {
 							'http://codex.wordpress.org/Embeds',
 						),
 					),
-					self::$type . '_wptexturize'     => array(
+					static::$type . '_wptexturize'     => array(
 						'label'   => __( 'Enable wptexturize?', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -79,7 +79,7 @@ class PodsField_Paragraph extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/wptexturize',
 						),
 					),
-					self::$type . '_convert_chars'   => array(
+					static::$type . '_convert_chars'   => array(
 						'label'   => __( 'Enable convert_chars?', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -88,7 +88,7 @@ class PodsField_Paragraph extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/convert_chars',
 						),
 					),
-					self::$type . '_wpautop'         => array(
+					static::$type . '_wpautop'         => array(
 						'label'   => __( 'Enable wpautop?', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
@@ -97,7 +97,7 @@ class PodsField_Paragraph extends PodsField {
 							'http://codex.wordpress.org/Function_Reference/wpautop',
 						),
 					),
-					self::$type . '_allow_shortcode' => array(
+					static::$type . '_allow_shortcode' => array(
 						'label'      => __( 'Allow Shortcodes?', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
@@ -109,20 +109,20 @@ class PodsField_Paragraph extends PodsField {
 					),
 				),
 			),
-			self::$type . '_allowed_html_tags' => array(
+			static::$type . '_allowed_html_tags' => array(
 				'label'      => __( 'Allowed HTML Tags', 'pods' ),
-				'depends-on' => array( self::$type . '_allow_html' => true ),
+				'depends-on' => array( static::$type . '_allow_html' => true ),
 				'default'    => 'strong em a ul ol li b i',
 				'type'       => 'text',
 				'help'       => __( 'Format: strong em a ul ol li b i', 'pods' ),
 			),
-			self::$type . '_max_length'        => array(
+			static::$type . '_max_length'        => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 0,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
-			self::$type . '_placeholder'       => array(
+			static::$type . '_placeholder'       => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
@@ -130,22 +130,11 @@ class PodsField_Paragraph extends PodsField {
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
 				),
-			), /*
-		,
-            self::$type . '_size' => array(
-                'label' => __( 'Field Size', 'pods' ),
-                'default' => 'medium',
-                'type' => 'pick',
-                'data' => array(
-                    'small' => __( 'Small', 'pods' ),
-                    'medium' => __( 'Medium', 'pods' ),
-                    'large' => __( 'Large', 'pods' )
-                )
-            )*/
+			),
 		);
 
 		if ( function_exists( 'Markdown' ) ) {
-			$options['output_options']['group'][ self::$type . '_allow_markdown' ] = array(
+			$options['output_options']['group'][ static::$type . '_allow_markdown' ] = array(
 				'label'   => __( 'Allow Markdown Syntax?', 'pods' ),
 				'default' => 0,
 				'type'    => 'boolean',
@@ -160,7 +149,7 @@ class PodsField_Paragraph extends PodsField {
 	 */
 	public function schema( $options = null ) {
 
-		$length = (int) pods_v( self::$type . '_max_length', $options, 0 );
+		$length = (int) pods_v( static::$type . '_max_length', $options, 0 );
 
 		$schema = 'LONGTEXT';
 
@@ -178,33 +167,33 @@ class PodsField_Paragraph extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		if ( 1 === (int) pods_v( self::$type . '_oembed', $options, 0 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_oembed', $options, 0 ) ) {
 			$embed = $GLOBALS['wp_embed'];
 			$value = $embed->run_shortcode( $value );
 			$value = $embed->autoembed( $value );
 		}
 
-		if ( 1 === (int) pods_v( self::$type . '_wptexturize', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_wptexturize', $options, 1 ) ) {
 			$value = wptexturize( $value );
 		}
 
-		if ( 1 === (int) pods_v( self::$type . '_convert_chars', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_convert_chars', $options, 1 ) ) {
 			$value = convert_chars( $value );
 		}
 
-		if ( 1 === (int) pods_v( self::$type . '_wpautop', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
 			$value = wpautop( $value );
 		}
 
-		if ( 1 === (int) pods_v( self::$type . '_allow_shortcode', $options, 0 ) ) {
-			if ( 1 === (int) pods_v( self::$type . '_wpautop', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
+			if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
 				$value = shortcode_unautop( $value );
 			}
 
 			$value = do_shortcode( $value );
 		}
 
-		if ( function_exists( 'Markdown' ) && 1 === (int) pods_v( self::$type . '_allow_markdown', $options ) ) {
+		if ( function_exists( 'Markdown' ) && 1 === (int) pods_v( static::$type . '_allow_markdown', $options ) ) {
 			$value = Markdown( $value );
 		}
 
@@ -223,7 +212,7 @@ class PodsField_Paragraph extends PodsField {
 			$value = implode( "\n", $value );
 		}
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 			} else {
@@ -243,7 +232,7 @@ class PodsField_Paragraph extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		$length = (int) pods_v( self::$type . '_max_length', $options, 0 );
+		$length = (int) pods_v( static::$type . '_max_length', $options, 0 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );
@@ -281,11 +270,11 @@ class PodsField_Paragraph extends PodsField {
 
 		$options = (array) $options;
 
-		if ( 1 === (int) pods_v( self::$type . '_allow_html', $options ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_allow_html', $options ) ) {
 			$allowed_html_tags = '';
 
-			if ( 0 < strlen( pods_v( self::$type . '_allowed_html_tags', $options ) ) ) {
-				$allowed_tags = pods_v( self::$type . '_allowed_html_tags', $options );
+			if ( 0 < strlen( pods_v( static::$type . '_allowed_html_tags', $options ) ) ) {
+				$allowed_tags = pods_v( static::$type . '_allowed_html_tags', $options );
 				$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
 				$allowed_tags = explode( ' ', $allowed_tags );
 				$allowed_tags = array_unique( array_filter( $allowed_tags ) );

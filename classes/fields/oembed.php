@@ -72,7 +72,7 @@ class PodsField_OEmbed extends PodsField {
 	public function options() {
 
 		$options = array(
-			self::$type . '_repeatable'   => array(
+			static::$type . '_repeatable'   => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
 				'default'           => 0,
 				'type'              => 'boolean',
@@ -81,19 +81,19 @@ class PodsField_OEmbed extends PodsField {
 				'dependency'        => true,
 				'developer_mode'    => true,
 			),
-			self::$type . '_width'        => array(
+			static::$type . '_width'        => array(
 				'label'   => __( 'Embed Width', 'pods' ),
 				'default' => 0,
 				'type'    => 'number',
 				'help'    => __( 'Optional width to use for this oEmbed. Leave as 0 (zero) to default to none.', 'pods' ),
 			),
-			self::$type . '_height'       => array(
+			static::$type . '_height'       => array(
 				'label'   => __( 'Embed Height', 'pods' ),
 				'default' => 0,
 				'type'    => 'number',
 				'help'    => __( 'Optional height to use for this oEmbed. Leave as 0 (zero) to default to none.', 'pods' ),
 			),
-			self::$type . '_show_preview' => array(
+			static::$type . '_show_preview' => array(
 				'label'   => __( 'Show preview', 'pods' ),
 				'default' => 0,
 				'type'    => 'boolean',
@@ -111,21 +111,21 @@ class PodsField_OEmbed extends PodsField {
 
 		// Only add the options if we have data
 		if ( ! empty( $unique_providers ) ) {
-			$options[ self::$type . '_restrict_providers' ] = array(
+			$options[ static::$type . '_restrict_providers' ] = array(
 				'label'      => __( 'Restrict to providers', 'pods' ),
 				'help'       => __( 'Restrict input to specific WordPress oEmbed compatible providers.', 'pods' ),
 				'type'       => 'boolean',
 				'default'    => 0,
 				'dependency' => true,
 			);
-			$options[ self::$type . '_enable_providers' ]   = array(
+			$options[ static::$type . '_enable_providers' ]   = array(
 				'label'      => __( 'Select enabled providers', 'pods' ),
-				'depends-on' => array( self::$type . '_restrict_providers' => true ),
+				'depends-on' => array( static::$type . '_restrict_providers' => true ),
 				'group'      => array(),
 			);
 			// Add all the oEmbed providers
 			foreach ( $unique_providers as $provider ) {
-				$options[ self::$type . '_enable_providers' ]['group'][ self::$type . '_enabled_providers_' . tag_escape( $provider ) ] = array(
+				$options[ static::$type . '_enable_providers' ]['group'][ static::$type . '_enabled_providers_' . tag_escape( $provider ) ] = array(
 					'label'   => $provider,
 					'type'    => 'boolean',
 					'default' => 0,
@@ -153,8 +153,8 @@ class PodsField_OEmbed extends PodsField {
 
 		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
-		$width  = (int) pods_v( self::$type . '_width', $options );
-		$height = (int) pods_v( self::$type . '_height', $options );
+		$width  = (int) pods_v( static::$type . '_width', $options );
+		$height = (int) pods_v( static::$type . '_height', $options );
 		$args   = array();
 		if ( $width > 0 ) {
 			$args['width'] = $width;
@@ -200,7 +200,7 @@ class PodsField_OEmbed extends PodsField {
 			$value = implode( ' ', $value );
 		}
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 			} else {
@@ -455,7 +455,7 @@ class PodsField_OEmbed extends PodsField {
 	public function validate_provider( $value, $options ) {
 
 		// Do we even need to validate?
-		if ( 0 === (int) pods_v( self::$type . '_restrict_providers', $options ) ) {
+		if ( 0 === (int) pods_v( static::$type . '_restrict_providers', $options ) ) {
 			return true;
 		}
 
@@ -463,13 +463,13 @@ class PodsField_OEmbed extends PodsField {
 
 		// Filter existing providers
 		foreach ( $providers as $key => $provider ) {
-			$fieldname = self::$type . '_enabled_providers_' . tag_escape( $provider['host'] );
+			$fieldname = static::$type . '_enabled_providers_' . tag_escape( $provider['host'] );
 
 			/**
 			 * @todo Future compat to enable serialised strings as field options
 			 */
 			/*
-			if ( empty( $options[ self::$type . '_enabled_providers_' ][ $provider['host'] ] ) ) {
+			if ( empty( $options[ static::$type . '_enabled_providers_' ][ $provider['host'] ] ) ) {
 				unset( $providers[ $key ] );
 			} else*/
 

@@ -430,6 +430,8 @@ class Test_Pods extends Pods_UnitTestCase {
 		$deprecated->foo        = 'bar';
 		$this->pods->deprecated = $deprecated;
 
+		$this->markTestIncomplete( 'not yet implemented' );
+
 		// @todo needs fixing
 		// $this->setExpectedException( 'PHPUnit_Framework_Error_Notice' );
 		// $test = $this->pods->foo;
@@ -470,6 +472,8 @@ class Test_Pods extends Pods_UnitTestCase {
 
 		$deprecated             = Mockery::mock( 'Pods_Deprecated' );
 		$this->pods->deprecated = $deprecated;
+
+		$this->markTestIncomplete( 'not yet implemented' );
 
 		// $this->setExpectedException( 'PHPUnit_Framework_Error_Notice' );
 		// $test = $this->pods->__call( 'foo', array() );

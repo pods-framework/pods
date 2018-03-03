@@ -166,22 +166,9 @@ class Test_Pods extends Pods_UnitTestCase {
 	 */
 	public function test_method_rewind() {
 
-		$this->setReflectionPropertyValue( $this->pods, 'iterator', true );
+		$this->setReflectionPropertyValue( $this->pods, 'iterator', false );
 		$this->assertNull( $this->pods->rewind(), 'Pods::rewind did not return null' );
 		$this->assertEquals( 0, $this->getReflectionPropertyValue( $this->pods, 'row_number' ) );
-	}
-
-	/**
-	 * Test rewind when iterator is false
-	 *
-	 * @covers  Pods::rewind
-	 * @depends test_method_rewind_exists
-	 * @since   3.0
-	 */
-	public function test_method_rewind_iterator_false() {
-
-		$this->setReflectionPropertyValue( $this->pods, 'iterator', false );
-		$this->assertFalse( $this->pods->rewind() );
 	}
 
 	/**
@@ -238,7 +225,8 @@ class Test_Pods extends Pods_UnitTestCase {
 	public function test_method_key_iterator_false() {
 
 		$this->setReflectionPropertyValue( $this->pods, 'iterator', false );
-		$this->assertFalse( $this->pods->key() );
+		$this->setReflectionPropertyValue( $this->pods, 'row_number', 22 );
+		$this->assertEquals( 22, $this->pods->key() );
 	}
 
 	/**
@@ -274,7 +262,9 @@ class Test_Pods extends Pods_UnitTestCase {
 	public function test_method_next_iterator_false() {
 
 		$this->setReflectionPropertyValue( $this->pods, 'iterator', false );
-		$this->assertFalse( $this->pods->next() );
+		$this->setReflectionPropertyValue( $this->pods, 'row_number', 19 );
+		$this->assertNull( $this->pods->next() );
+		$this->assertEquals( 20, $this->getReflectionPropertyValue( $this->pods, 'row_number' ), 'The row number was not incremented correctly' );
 	}
 
 	/**

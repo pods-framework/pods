@@ -326,7 +326,7 @@ class Pods implements Iterator {
 			$this->page = pods_v( $this->page_var, 'get', 1, true );
 
 			if ( ! empty( $this->page ) ) {
-				$this->page = max( pods_absint( $this->page, 1 ) );
+				$this->page = max( 1, pods_absint( $this->page ) );
 			}
 		}
 

@@ -8,7 +8,7 @@ class PodsWidgetView extends WP_Widget {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct( $id_base, $name, $widget_options = array(), $control_options = array() ) {
+	public function __construct( $id_base = '', $name = '', $widget_options = array(), $control_options = array() ) {
 
 		parent::__construct( 'pods_widget_view', __( 'Pods - View', 'pods' ), array(
 			'classname'   => 'pods_widget_view',

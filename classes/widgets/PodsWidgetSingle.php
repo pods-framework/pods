@@ -8,7 +8,7 @@ class PodsWidgetSingle extends WP_Widget {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct( $id_base, $name, $widget_options = array(), $control_options = array() ) {
+	public function __construct( $id_base = '', $name = '', $widget_options = array(), $control_options = array() ) {
 
 		parent::__construct( 'pods_widget_single', __( 'Pods - Single Item', 'pods' ), array(
 			'classname'   => 'pods_widget_single',

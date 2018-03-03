@@ -486,7 +486,6 @@ class PodsInit {
 					continue;
 				} elseif ( ! empty( $post_type['object'] ) && isset( $existing_post_types[ $post_type['object'] ] ) ) {
 					// Post type exists already
-
 					continue;
 				} elseif ( ! $force && isset( $existing_post_types[ $post_type['name'] ] ) ) {
 					// Post type was setup and exists already, but we aren't forcing it to be setup again
@@ -719,7 +718,6 @@ class PodsInit {
 					continue;
 				} elseif ( ! empty( $taxonomy['object'] ) && isset( $existing_taxonomies[ $taxonomy['object'] ] ) ) {
 					// Taxonomy exists already
-
 					continue;
 				} elseif ( ! $force && isset( $existing_taxonomies[ $taxonomy['name'] ] ) ) {
 					// Taxonomy was setup and exists already, but we aren't forcing it to be setup again
@@ -1023,7 +1021,7 @@ class PodsInit {
 		global $wp_post_types, $wp_taxonomies;
 
 		$post_type_names = wp_list_pluck( $post_types, 'name', 'id' );
-		$taxonomy_names = wp_list_pluck( $taxonomies, 'name', 'id' );
+		$taxonomy_names  = wp_list_pluck( $taxonomies, 'name', 'id' );
 
 		foreach ( $existing_post_types as $post_type_name => $post_type_name_again ) {
 			if ( isset( self::$content_types_registered['post_types'] ) && in_array( $post_type_name, self::$content_types_registered['post_types'] ) ) {

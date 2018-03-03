@@ -619,8 +619,8 @@ class PodsInit {
 
 				$show_in_menu = (boolean) pods_v( 'show_in_menu', $post_type, true );
 
-				if ( $show_in_menu && 0 < strlen( pods_v_raw( 'menu_location_custom', $post_type ) ) ) {
-					$show_in_menu = pods_v_raw( 'menu_location_custom', $post_type );
+				if ( $show_in_menu && 0 < strlen( pods_v( 'menu_location_custom', $post_type ) ) ) {
+					$show_in_menu = pods_v( 'menu_location_custom', $post_type );
 				}
 
 				$menu_icon = pods_v( 'menu_icon', $post_type );

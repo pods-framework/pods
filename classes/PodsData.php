@@ -926,10 +926,12 @@ class PodsData {
 			$params->pod_table_prefix = 't';
 		}
 
-		if ( ! empty( $pod ) && ! in_array( $pod['type'], array(
-			'pod',
-			'table',
-		), true ) && 'table' === $pod['storage'] ) {
+		if ( ! empty( $pod ) && ! in_array(
+			$pod['type'], array(
+				'pod',
+				'table',
+			), true
+		) && 'table' === $pod['storage'] ) {
 			$params->pod_table_prefix = 'd';
 		}
 
@@ -1297,10 +1299,12 @@ class PodsData {
 							}
 						}//end if
 					}//end foreach
-				} elseif ( in_array( $attributes['type'], array(
-					'date',
-					'datetime',
-				), true ) ) {
+				} elseif ( in_array(
+					$attributes['type'], array(
+						'date',
+						'datetime',
+					), true
+				) ) {
 					$start_value = pods_v( 'filter_' . $field . '_start', 'get', false );
 					$end_value   = pods_v( 'filter_' . $field . '_end', 'get', false );
 
@@ -1940,10 +1944,12 @@ class PodsData {
 
 				$current_row_id = false;
 
-				if ( in_array( $this->pod_data['type'], array(
-					'post_type',
-					'media',
-				), true ) ) {
+				if ( in_array(
+					$this->pod_data['type'], array(
+						'post_type',
+						'media',
+					), true
+				) ) {
 					$current_row_id = pods_v( 'ID', $this->row );
 				} elseif ( 'taxonomy' === $this->pod_data['type'] ) {
 					$current_row_id = pods_v( 'term_id', $this->row );
@@ -1990,10 +1996,12 @@ class PodsData {
 
 			if ( false !== $row && is_array( $row ) ) {
 				$this->row = $row;
-			} elseif ( in_array( $this->pod_data['type'], array(
-				'post_type',
-				'media',
-			), true ) ) {
+			} elseif ( in_array(
+				$this->pod_data['type'], array(
+					'post_type',
+					'media',
+				), true
+			) ) {
 				if ( 'post_type' === $this->pod_data['type'] ) {
 					if ( empty( $this->pod_data['object'] ) ) {
 						$post_type = $this->pod_data['name'];
@@ -2689,10 +2697,12 @@ class PodsData {
 					}
 
 					if ( empty( $field_cast ) ) {
-						if ( ! in_array( $pod['type'], array(
-							'pod',
-							'table',
-						), true ) ) {
+						if ( ! in_array(
+							$pod['type'], array(
+								'pod',
+								'table',
+							), true
+						) ) {
 							if ( isset( $pod['object_fields'][ $field_name ] ) ) {
 								$field_cast = "`t`.`{$field_name}`";
 							} elseif ( isset( $pod['fields'][ $field_name ] ) ) {
@@ -2786,10 +2796,12 @@ class PodsData {
 				'NOT BETWEEN',
 			), true
 		) ) {
-			if ( in_array( $field_compare, array(
-				'!=',
-				'NOT LIKE',
-			), true ) ) {
+			if ( in_array(
+				$field_compare, array(
+					'!=',
+					'NOT LIKE',
+				), true
+			) ) {
 				$field_compare = 'NOT IN';
 			} else {
 				$field_compare = 'IN';
@@ -2807,10 +2819,12 @@ class PodsData {
 
 			if ( 1 < count( $check_value ) ) {
 				$field_value = $check_value;
-			} elseif ( in_array( $field_compare, array(
-				'NOT IN',
-				'NOT BETWEEN',
-			), true ) ) {
+			} elseif ( in_array(
+				$field_compare, array(
+					'NOT IN',
+					'NOT BETWEEN',
+				), true
+			) ) {
 				$field_compare = '!=';
 			} else {
 				$field_compare = '=';
@@ -2818,10 +2832,12 @@ class PodsData {
 		}//end if
 
 		// Restrict to two values, force = and != if only one value provided.
-		if ( in_array( $field_compare, array(
-			'BETWEEN',
-			'NOT BETWEEN',
-		), true ) ) {
+		if ( in_array(
+			$field_compare, array(
+				'BETWEEN',
+				'NOT BETWEEN',
+			), true
+		) ) {
 			$field_value = array_values( array_slice( $field_value, 0, 2 ) );
 
 			if ( 1 === count( $field_value ) ) {
@@ -2859,36 +2875,42 @@ class PodsData {
 		);
 
 		// Make the query.
-		if ( in_array( $field_compare, array(
-			'=',
-			'!=',
-			'>',
-			'>=',
-			'<',
-			'<=',
-			'REGEXP',
-			'NOT REGEXP',
-			'RLIKE',
-		), true ) ) {
+		if ( in_array(
+			$field_compare, array(
+				'=',
+				'!=',
+				'>',
+				'>=',
+				'<',
+				'<=',
+				'REGEXP',
+				'NOT REGEXP',
+				'RLIKE',
+			), true
+		) ) {
 			if ( $field_sanitize ) {
 				$field_query = $wpdb->prepare( $field_cast . ' ' . $field_compare . ' ' . $field_sanitize_format, $field_value );
 			} else {
 				$field_query = $field_cast . ' ' . $field_compare . ' "' . $field_value . '"';
 			}
-		} elseif ( in_array( $field_compare, array(
-			'LIKE',
-			'NOT LIKE',
-		), true ) ) {
+		} elseif ( in_array(
+			$field_compare, array(
+				'LIKE',
+				'NOT LIKE',
+			), true
+		) ) {
 			if ( $field_sanitize ) {
 				$field_query = $field_cast . ' ' . $field_compare . ' "%' . pods_sanitize_like( $field_value ) . '%"';
 			} else {
 				$field_query = $field_cast . ' ' . $field_compare . ' "' . $field_value . '"';
 			}
-		} elseif ( in_array( $field_compare, array(
-			'IN',
-			'NOT IN',
-			'ALL',
-		), true ) ) {
+		} elseif ( in_array(
+			$field_compare, array(
+				'IN',
+				'NOT IN',
+				'ALL',
+			), true
+		) ) {
 			if ( 'ALL' === $field_compare ) {
 				$field_compare = 'IN';
 
@@ -2906,10 +2928,12 @@ class PodsData {
 			} else {
 				$field_query = $field_cast . ' ' . $field_compare . ' ( "' . implode( '", "', $field_value ) . '" )';
 			}
-		} elseif ( in_array( $field_compare, array(
-			'BETWEEN',
-			'NOT BETWEEN',
-		), true ) ) {
+		} elseif ( in_array(
+			$field_compare, array(
+				'BETWEEN',
+				'NOT BETWEEN',
+			), true
+		) ) {
 			if ( $field_sanitize ) {
 				$field_query = $wpdb->prepare( $field_cast . ' ' . $field_compare . ' ' . $field_sanitize_format . ' AND ' . $field_sanitize_format, $field_value );
 			} else {
@@ -3010,10 +3034,12 @@ class PodsData {
 
 				$pod_data = array();
 
-				if ( in_array( $traverse_recurse['pod'], array(
-					'user',
-					'comment',
-				), true ) ) {
+				if ( in_array(
+					$traverse_recurse['pod'], array(
+						'user',
+						'comment',
+					), true
+				) ) {
 					$pod = $this->api->load_pod(
 						array(
 							'name'       => $traverse_recurse['pod'],

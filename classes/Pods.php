@@ -1205,7 +1205,11 @@ class Pods implements Iterator {
 				}
 
 				$is_field_set       = isset( $this->fields[ $params->name ] );
-				$is_tableless_field = in_array( $this->fields[ $params->name ]['type'], $tableless_field_types, true );
+				$is_tableless_field = false;
+
+				if ( $is_field_set ) {
+					$is_tableless_field = in_array( $this->fields[ $params->name ]['type'], $tableless_field_types, true );
+				}
 
 				if ( $simple || ! $is_field_set || ! $is_tableless_field ) {
 					if ( null === $params->single ) {

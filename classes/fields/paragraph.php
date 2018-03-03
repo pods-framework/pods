@@ -178,33 +178,33 @@ class PodsField_Paragraph extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		if ( 1 == pods_var( self::$type . '_oembed', $options, 0 ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_oembed', $options, 0 ) ) {
 			$embed = $GLOBALS['wp_embed'];
 			$value = $embed->run_shortcode( $value );
 			$value = $embed->autoembed( $value );
 		}
 
-		if ( 1 == pods_var( self::$type . '_wptexturize', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_wptexturize', $options, 1 ) ) {
 			$value = wptexturize( $value );
 		}
 
-		if ( 1 == pods_var( self::$type . '_convert_chars', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_convert_chars', $options, 1 ) ) {
 			$value = convert_chars( $value );
 		}
 
-		if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_wpautop', $options, 1 ) ) {
 			$value = wpautop( $value );
 		}
 
-		if ( 1 == pods_var( self::$type . '_allow_shortcode', $options, 0 ) ) {
-			if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_allow_shortcode', $options, 0 ) ) {
+			if ( 1 === (int) pods_v( self::$type . '_wpautop', $options, 1 ) ) {
 				$value = shortcode_unautop( $value );
 			}
 
 			$value = do_shortcode( $value );
 		}
 
-		if ( function_exists( 'Markdown' ) && 1 == pods_v( self::$type . '_allow_markdown', $options ) ) {
+		if ( function_exists( 'Markdown' ) && 1 === (int) pods_v( self::$type . '_allow_markdown', $options ) ) {
 			$value = Markdown( $value );
 		}
 
@@ -224,12 +224,12 @@ class PodsField_Paragraph extends PodsField {
 		}
 
 		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
-			if ( pods_var( 'read_only', $options, false ) ) {
+			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
 			$options['readonly'] = true;
 		}
 
@@ -243,7 +243,7 @@ class PodsField_Paragraph extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		$length = (int) pods_var( self::$type . '_max_length', $options, 0 );
+		$length = (int) pods_v( self::$type . '_max_length', $options, 0 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );
@@ -281,11 +281,11 @@ class PodsField_Paragraph extends PodsField {
 
 		$options = (array) $options;
 
-		if ( 1 == pods_var( self::$type . '_allow_html', $options ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_allow_html', $options ) ) {
 			$allowed_html_tags = '';
 
-			if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
-				$allowed_tags = pods_var( self::$type . '_allowed_html_tags', $options );
+			if ( 0 < strlen( pods_v( self::$type . '_allowed_html_tags', $options ) ) ) {
+				$allowed_tags = pods_v( self::$type . '_allowed_html_tags', $options );
 				$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
 				$allowed_tags = explode( ' ', $allowed_tags );
 				$allowed_tags = array_unique( array_filter( $allowed_tags ) );

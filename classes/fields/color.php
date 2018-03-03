@@ -113,13 +113,13 @@ class PodsField_Color extends PodsField {
 			$color = str_replace( '#', '', $check );
 
 			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-				if ( 1 == pods_v( 'required', $options ) ) {
+				if ( 1 === (int) pods_v( 'required', $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				} else {
 					// @todo Ask for a specific format in error message
 					$errors[] = __( 'Invalid value provided for this field.', 'pods' );
 				}
-			} elseif ( 3 != strlen( $color ) && 6 != strlen( $color ) && 1 != empty( $color ) ) {
+			} elseif ( ! in_array( strlen( $color ), array( 3, 6 ), true ) ) {
 				$errors[] = __( 'Invalid Hex Color value provided for this field.', 'pods' );
 			}
 		}

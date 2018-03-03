@@ -103,7 +103,7 @@ class PodsField_OEmbed extends PodsField {
 		// Get all unique provider host names
 		$unique_providers = array();
 		foreach ( $this->get_providers() as $provider ) {
-			if ( ! in_array( $provider['host'], $unique_providers ) ) {
+			if ( ! in_array( $provider['host'], $unique_providers, true ) ) {
 				$unique_providers[] = $provider['host'];
 			}
 		}
@@ -201,12 +201,12 @@ class PodsField_OEmbed extends PodsField {
 		}
 
 		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
-			if ( pods_var( 'read_only', $options, false ) ) {
+			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
 			$options['readonly'] = true;
 		}
 
@@ -226,7 +226,7 @@ class PodsField_OEmbed extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-				if ( 1 == (bool) pods_v( 'required', $options ) ) {
+				if ( 1 === (int) pods_v( 'required', $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}
 			}
@@ -376,12 +376,12 @@ class PodsField_OEmbed extends PodsField {
 				$url  = parse_url( $provider[0] );
 				$host = $url['host'];
 				$tmp  = explode( '.', $host );
-				if ( count( $tmp ) == 3 ) {
+				if ( count( $tmp ) === 3 ) {
 					// Take domain names like .co.uk in consideration
-					if ( ! in_array( 'co', $tmp ) ) {
+					if ( ! in_array( 'co', $tmp, true ) ) {
 						unset( $tmp[0] );
 					}
-				} elseif ( count( $tmp ) == 4 ) {
+				} elseif ( count( $tmp ) === 4 ) {
 					// Take domain names like .co.uk in consideration
 					unset( $tmp[0] );
 				}
@@ -455,7 +455,7 @@ class PodsField_OEmbed extends PodsField {
 	public function validate_provider( $value, $options ) {
 
 		// Do we even need to validate?
-		if ( false == (int) pods_v( self::$type . '_restrict_providers', $options ) ) {
+		if ( 0 === (int) pods_v( self::$type . '_restrict_providers', $options ) ) {
 			return true;
 		}
 
@@ -484,7 +484,7 @@ class PodsField_OEmbed extends PodsField {
 		// Value validation
 		$provider_match = $this->get_provider( $value );
 		foreach ( $providers as $match => $provider ) {
-			if ( $provider_match == $match ) {
+			if ( $provider_match === $match ) {
 				return true;
 			}
 		}

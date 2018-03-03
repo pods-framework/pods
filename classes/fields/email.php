@@ -78,7 +78,7 @@ class PodsField_Email extends PodsField {
 	 */
 	public function schema( $options = null ) {
 
-		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
 		$schema = 'VARCHAR(' . $length . ')';
 
@@ -104,14 +104,14 @@ class PodsField_Email extends PodsField {
 		$field_type = 'email';
 
 		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
-			if ( pods_var( 'read_only', $options, false ) ) {
+			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 
 				$field_type = 'text';
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
 			$options['readonly'] = true;
 
 			$field_type = 'text';
@@ -141,9 +141,9 @@ class PodsField_Email extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-				$label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
+				$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
-				if ( 1 == pods_var( 'required', $options ) ) {
+				if ( 1 === (int) pods_v( 'required', $options ) ) {
 					$errors[] = sprintf( __( '%s is required', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid e-mail provided for %s', 'pods' ), $label );
@@ -169,7 +169,7 @@ class PodsField_Email extends PodsField {
 			$value = '';
 		}
 
-		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );

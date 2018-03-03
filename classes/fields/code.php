@@ -136,7 +136,7 @@ class PodsField_Code extends PodsField {
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
-		if ( 1 == pods_v( self::$type . '_allow_shortcode', $options, 0 ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_allow_shortcode', $options, 0 ) ) {
 			$value = do_shortcode( $value );
 		}
 
@@ -187,7 +187,7 @@ class PodsField_Code extends PodsField {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		$length = (int) pods_var( self::$type . '_max_length', $options, 0 );
+		$length = (int) pods_v( self::$type . '_max_length', $options, 0 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );

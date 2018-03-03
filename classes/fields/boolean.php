@@ -95,8 +95,8 @@ class PodsField_Boolean extends PodsField {
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
 		$yesno = array(
-			1 => pods_var_raw( self::$type . '_yes_label', $options ),
-			0 => pods_var_raw( self::$type . '_no_label', $options ),
+			1 => pods_v( self::$type . '_yes_label', $options ),
+			0 => pods_v( self::$type . '_no_label', $options ),
 		);
 
 		// Deprecated handling for 1.x
@@ -121,9 +121,9 @@ class PodsField_Boolean extends PodsField {
 
 		$field_type = 'checkbox';
 
-		if ( 'radio' == pods_v( self::$type . '_format_type', $options ) ) {
+		if ( 'radio' === pods_v( self::$type . '_format_type', $options ) ) {
 			$field_type = 'radio';
-		} elseif ( 'dropdown' == pods_v( self::$type . '_format_type', $options ) ) {
+		} elseif ( 'dropdown' === pods_v( self::$type . '_format_type', $options ) ) {
 			$field_type = 'select';
 		}
 
@@ -151,14 +151,14 @@ class PodsField_Boolean extends PodsField {
 	 */
 	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
 
-		if ( 'checkbox' != pods_v( self::$type . '_format_type', $options ) ) {
+		if ( 'checkbox' !== pods_v( self::$type . '_format_type', $options ) ) {
 			$data = array(
-				1 => pods_var_raw( self::$type . '_yes_label', $options ),
-				0 => pods_var_raw( self::$type . '_no_label', $options ),
+				1 => pods_v( self::$type . '_yes_label', $options ),
+				0 => pods_v( self::$type . '_no_label', $options ),
 			);
 		} else {
 			$data = array(
-				1 => pods_var_raw( self::$type . '_yes_label', $options ),
+				1 => pods_v( self::$type . '_yes_label', $options ),
 			);
 		}
 
@@ -186,14 +186,17 @@ class PodsField_Boolean extends PodsField {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
+		$yes = strtolower( pods_v( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ) );
+		$no  = strtolower( pods_v( self::$type . '_no_label', $options, __( 'No', 'pods' ), true ) );
+
 		// Only allow 0 / 1
 		if ( 'yes' === strtolower( $value ) || '1' === (string) $value ) {
 			$value = 1;
 		} elseif ( 'no' === strtolower( $value ) || '0' === (string) $value ) {
 			$value = 0;
-		} elseif ( strtolower( pods_var_raw( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), null, true ) ) === strtolower( $value ) ) {
+		} elseif ( $yes === strtolower( $value ) ) {
 			$value = 1;
-		} elseif ( strtolower( pods_var_raw( self::$type . '_no_label', $options, __( 'No', 'pods' ), null, true ) ) === strtolower( $value ) ) {
+		} elseif ( $no === strtolower( $value ) ) {
 			$value = 0;
 		} else {
 			$value = ( 0 === (int) $value ? 0 : 1 );
@@ -208,8 +211,8 @@ class PodsField_Boolean extends PodsField {
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 
 		$yesno = array(
-			1 => pods_var_raw( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), null, true ),
-			0 => pods_var_raw( self::$type . '_no_label', $options, __( 'No', 'pods' ), null, true ),
+			1 => pods_v( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ),
+			0 => pods_v( self::$type . '_no_label', $options, __( 'No', 'pods' ), true ),
 		);
 
 		if ( isset( $yesno[ (int) $value ] ) ) {

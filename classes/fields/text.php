@@ -96,7 +96,7 @@ class PodsField_Text extends PodsField {
 	 */
 	public function schema( $options = null ) {
 
-		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
 		$schema = 'VARCHAR(' . $length . ')';
 
@@ -114,7 +114,7 @@ class PodsField_Text extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		if ( 1 == pods_var( self::$type . '_allow_shortcode', $options ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_allow_shortcode', $options ) ) {
 			$value = do_shortcode( $value );
 		}
 
@@ -134,12 +134,12 @@ class PodsField_Text extends PodsField {
 		}
 
 		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
-			if ( pods_var( 'read_only', $options, false ) ) {
+			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
 			$options['readonly'] = true;
 		}
 
@@ -159,7 +159,7 @@ class PodsField_Text extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-				if ( 1 == pods_var( 'required', $options ) ) {
+				if ( 1 === (int) pods_v( 'required', $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}
 			}
@@ -179,7 +179,7 @@ class PodsField_Text extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );
@@ -195,7 +195,7 @@ class PodsField_Text extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		if ( 0 == pods_var( self::$type . '_allow_html', $options, 0, null, true ) ) {
+		if ( 0 === (int) pods_v( self::$type . '_allow_html', $options, 0, true ) ) {
 			$value = wp_trim_words( $value );
 		}
 
@@ -224,11 +224,11 @@ class PodsField_Text extends PodsField {
 
 		$options = (array) $options;
 
-		if ( 1 == pods_var( self::$type . '_allow_html', $options, 0, null, true ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_allow_html', $options, 0, true ) ) {
 			$allowed_html_tags = '';
 
-			if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
-				$allowed_html_tags = explode( ' ', trim( pods_var( self::$type . '_allowed_html_tags', $options ) ) );
+			if ( 0 < strlen( pods_v( self::$type . '_allowed_html_tags', $options ) ) ) {
+				$allowed_html_tags = explode( ' ', trim( pods_v( self::$type . '_allowed_html_tags', $options ) ) );
 				$allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
 			}
 

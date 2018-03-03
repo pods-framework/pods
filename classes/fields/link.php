@@ -153,13 +153,13 @@ class PodsField_Link extends PodsField_Website {
 
 			$atts = '';
 
-			if ( ! empty( $value['target'] ) || ( ! isset( $value['target'] ) && 1 == pods_var( self::$type . '_new_window', $options ) ) ) {
+			if ( ! empty( $value['target'] ) || ( ! isset( $value['target'] ) && 1 === (int) pods_v( self::$type . '_new_window', $options ) ) ) {
 				// Possible support for other targets in future
 				$atts .= ' target="' . esc_attr( $value['target'] ) . '"';
 			}
 
 			// Do shortcodes if this is enabled
-			if ( 1 == pods_var( self::$type . '_allow_shortcode', $options ) ) {
+			if ( 1 === (int) pods_v( self::$type . '_allow_shortcode', $options ) ) {
 				$text = do_shortcode( $text );
 			}
 
@@ -218,7 +218,7 @@ class PodsField_Link extends PodsField_Website {
 
 		$errors = array();
 
-		$label = strip_tags( pods_var_raw( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
+		$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
@@ -228,7 +228,7 @@ class PodsField_Link extends PodsField_Website {
 			$errors = $check;
 		} else {
 			if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && strlen( $check ) < 1 ) {
-				if ( 1 == pods_var( 'required', $options ) ) {
+				if ( 1 === (int) pods_v( 'required', $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid link provided for the field %s.', 'pods' ), $label );
@@ -277,7 +277,7 @@ class PodsField_Link extends PodsField_Website {
 		// Start Target format
 		if ( ! empty( $value['target'] ) ) {
 			$value['target'] = $this->validate_target( $value['target'] );
-		} elseif ( ! isset( $value['target'] ) && 1 == pods_v( self::$type . '_new_window', $options, 0 ) ) {
+		} elseif ( ! isset( $value['target'] ) && 1 === (int) pods_v( self::$type . '_new_window', $options, 0 ) ) {
 			$value['target'] = '_blank';
 		}
 

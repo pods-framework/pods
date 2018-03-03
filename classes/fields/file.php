@@ -339,7 +339,7 @@ class PodsField_File extends PodsField {
 				'attachment',
 				'plupload',
 				'media',
-			)
+			), true
 		) ) {
 			// Support custom File Uploader integration
 			do_action( 'pods_form_ui_field_' . static::$type . '_uploader_' . pods_v( static::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
@@ -852,8 +852,6 @@ class PodsField_File extends PodsField {
 
 		if ( empty( $icon ) ) {
 			$icon = '{{icon}}';
-		} else {
-			$icon = esc_url( $icon );
 		}
 
 		if ( empty( $name ) ) {
@@ -871,12 +869,12 @@ class PodsField_File extends PodsField {
 			<?php echo PodsForm::field( $attributes['name'] . '[' . $id . '][id]', $id, 'hidden' ); ?>
 
 			<ul class="pods-file-meta media-item">
-				<?php if ( 1 != $limit ) { ?>
+				<?php if ( 1 !== (int) $limit ) { ?>
 					<li class="pods-file-col pods-file-handle">Handle</li>
 				<?php } ?>
 
 				<li class="pods-file-col pods-file-icon">
-					<img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" />
+					<img class="pinkynail" src="<?php echo esc_url( $icon ); ?>" alt="Icon" />
 				</li>
 
 				<li class="pods-file-col pods-file-name">
@@ -884,7 +882,7 @@ class PodsField_File extends PodsField {
 					if ( $editable ) {
 						echo PodsForm::field( $attributes['name'] . '[' . $id . '][title]', $name, 'text' );
 					} else {
-						echo( empty( $name ) ? '{{name}}' : $name );
+						echo esc_html( $name );
 					}
 					?>
 				</li>
@@ -1005,7 +1003,7 @@ class PodsField_File extends PodsField {
 			$pod   = self::$api->load_pod( array( 'id' => (int) $params->pod ) );
 			$field = self::$api->load_field( array( 'id' => (int) $params->field ) );
 
-			if ( empty( $pod ) || empty( $field ) || $pod['id'] != $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
+			if ( empty( $pod ) || empty( $field ) || (int) $pod['id'] !== (int) $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
 				pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
 			}
 

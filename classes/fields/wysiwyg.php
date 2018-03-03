@@ -158,11 +158,11 @@ class PodsField_WYSIWYG extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		if ( 1 == pods_var( self::$type . '_oembed', $options, 0 ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_oembed', $options, 0 ) ) {
 			$post_temp = false;
 
 			// Workaround for WP_Embed since it needs a $post to work from
-			if ( 'post_type' == pods_var( 'type', $pod ) && 0 < $id && ( ! isset( $GLOBALS['post'] ) || empty( $GLOBALS['post'] ) ) ) {
+			if ( 'post_type' === pods_v( 'type', $pod ) && 0 < $id && ( ! isset( $GLOBALS['post'] ) || empty( $GLOBALS['post'] ) ) ) {
 				$post_temp = true;
 
 				$GLOBALS['post'] = get_post( $id );
@@ -181,27 +181,27 @@ class PodsField_WYSIWYG extends PodsField {
 			}
 		}//end if
 
-		if ( 1 == pods_var( self::$type . '_wptexturize', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_wptexturize', $options, 1 ) ) {
 			$value = wptexturize( $value );
 		}
 
-		if ( 1 == pods_var( self::$type . '_convert_chars', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_convert_chars', $options, 1 ) ) {
 			$value = convert_chars( $value );
 		}
 
-		if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_wpautop', $options, 1 ) ) {
 			$value = wpautop( $value );
 		}
 
-		if ( 1 == pods_var( self::$type . '_allow_shortcode', $options, 0 ) ) {
-			if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) ) {
+		if ( 1 === (int) pods_v( self::$type . '_allow_shortcode', $options, 0 ) ) {
+			if ( 1 === (int) pods_v( self::$type . '_wpautop', $options, 1 ) ) {
 				$value = shortcode_unautop( $value );
 			}
 
 			$value = do_shortcode( $value );
 		}
 
-		if ( function_exists( 'Markdown' ) && 1 == pods_v( self::$type . '_allow_markdown', $options ) ) {
+		if ( function_exists( 'Markdown' ) && 1 === (int) pods_v( self::$type . '_allow_markdown', $options ) ) {
 			$value = Markdown( $value );
 		}
 
@@ -221,25 +221,25 @@ class PodsField_WYSIWYG extends PodsField {
 		}
 
 		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
-			if ( pods_var( 'read_only', $options, false ) ) {
+			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 
 				$field_type = 'textarea';
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
 			$options['readonly'] = true;
 
 			$field_type = 'textarea';
-		} elseif ( 'tinymce' == pods_var( self::$type . '_editor', $options ) ) {
+		} elseif ( 'tinymce' === pods_v( self::$type . '_editor', $options ) ) {
 			$field_type = 'tinymce';
-		} elseif ( 'cleditor' == pods_var( self::$type . '_editor', $options ) ) {
+		} elseif ( 'cleditor' === pods_v( self::$type . '_editor', $options ) ) {
 			$field_type = 'cleditor';
 		} else {
 			// Support custom WYSIWYG integration
-			do_action( 'pods_form_ui_field_wysiwyg_' . pods_var( self::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
-			do_action( 'pods_form_ui_field_wysiwyg', pods_var( self::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
+			do_action( 'pods_form_ui_field_wysiwyg_' . pods_v( self::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
+			do_action( 'pods_form_ui_field_wysiwyg', pods_v( self::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
 
 			return;
 		}//end if
@@ -254,7 +254,7 @@ class PodsField_WYSIWYG extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		$length = (int) pods_var( self::$type . '_max_length', $options, 0 );
+		$length = (int) pods_v( self::$type . '_max_length', $options, 0 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );
@@ -299,8 +299,8 @@ class PodsField_WYSIWYG extends PodsField {
 
 		$allowed_html_tags = '';
 
-		if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
-			$allowed_tags = pods_var( self::$type . '_allowed_html_tags', $options );
+		if ( 0 < strlen( pods_v( self::$type . '_allowed_html_tags', $options ) ) ) {
+			$allowed_tags = pods_v( self::$type . '_allowed_html_tags', $options );
 			$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
 			$allowed_tags = explode( ' ', $allowed_tags );
 			$allowed_tags = array_unique( array_filter( $allowed_tags ) );

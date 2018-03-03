@@ -226,7 +226,7 @@ class PodsField_DateTime extends PodsField {
 
 		$value = trim( $value );
 
-		if ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+		if ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
 			$is_empty = true;
 		}
 
@@ -283,12 +283,12 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
-		if ( ! empty( $value ) && ( 0 == pods_v( static::$type . '_allow_empty', $options, 1 ) || ! in_array(
+		if ( ! empty( $value ) && ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) || ! in_array(
 			$value, array(
 				'0000-00-00',
 				'0000-00-00 00:00:00',
 				'00:00:00',
-			)
+			), true
 		) ) ) {
 			$js = true;
 
@@ -305,7 +305,7 @@ class PodsField_DateTime extends PodsField {
 			$check = $this->convert_date( $value, static::$storage_format, $format, true );
 
 			if ( false === $check ) {
-				$label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
+				$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
 				return sprintf( esc_html__( '%1$s was not provided in a recognizable format: "%2$s"', 'pods' ), $label, $value );
 			}
@@ -329,15 +329,15 @@ class PodsField_DateTime extends PodsField {
 			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
 		}
 
-		if ( ! empty( $value ) && ( 0 == pods_v( static::$type . '_allow_empty', $options, 1 ) || ! in_array(
+		if ( ! empty( $value ) && ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) || ! in_array(
 			$value, array(
 				'0000-00-00',
 				'0000-00-00 00:00:00',
 				'00:00:00',
-			)
+			), true
 		) ) ) {
 			$value = $this->convert_date( $value, static::$storage_format, $format );
-		} elseif ( 1 == pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
+		} elseif ( 1 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
 			$value = static::$empty_value;
 		} else {
 			$value = date_i18n( static::$storage_format );
@@ -353,12 +353,12 @@ class PodsField_DateTime extends PodsField {
 
 		$value = $this->display( $value, $name, $options, $pod, $id );
 
-		if ( 1 == pods_v( static::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array(
+		if ( 1 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array(
 			$value, array(
 				'0000-00-00',
 				'0000-00-00 00:00:00',
 				'00:00:00',
-			)
+			), true
 		) ) ) {
 			$value = false;
 		}
@@ -386,7 +386,7 @@ class PodsField_DateTime extends PodsField {
 			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
 		}
 
-		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
 			// Try default storage format.
 			$date = $this->createFromFormat( static::$storage_format, (string) $value );
 			// Try field format.
@@ -399,7 +399,7 @@ class PodsField_DateTime extends PodsField {
 			} else {
 				$value = date_i18n( $format, strtotime( (string) $value ) );
 			}
-		} elseif ( 0 == pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
+		} elseif ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
 			$value = date_i18n( $format );
 		} else {
 			$value = '';
@@ -670,7 +670,7 @@ class PodsField_DateTime extends PodsField {
 
 		$date = '';
 
-		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
 			$date = $this->createFromFormat( $original_format, (string) $value, $return_timestamp );
 
 			if ( $date instanceof DateTime ) {

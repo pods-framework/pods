@@ -69,7 +69,7 @@ class PodsField_Currency extends PodsField_Number {
 		$currency_options = array();
 		foreach ( static::$currencies as $key => $value ) {
 			$currency = $value['label'];
-			if ( $value['label'] != $value['name'] ) {
+			if ( $value['label'] !== $value['name'] ) {
 				$currency .= ': ' . $value['name'];
 			}
 			$currency                .= ' (' . $value['sign'] . ')';
@@ -405,7 +405,7 @@ class PodsField_Currency extends PodsField_Number {
 		$dot         = $format_args['dot'];
 		$decimals    = $format_args['decimals'];
 
-		if ( 'i18n' == pods_v( static::$type . '_format', $options ) ) {
+		if ( 'i18n' === pods_v( static::$type . '_format', $options ) ) {
 			$value = number_format_i18n( (float) $value, $decimals );
 		} else {
 			$value = number_format( (float) $value, $decimals, $dot, $thousands );

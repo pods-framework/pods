@@ -103,7 +103,7 @@ class PodsField_Phone extends PodsField {
 	 */
 	public function schema( $options = null ) {
 
-		$length = (int) pods_var( self::$type . '_max_length', $options, 25, null, true );
+		$length = (int) pods_v( self::$type . '_max_length', $options, 25, true );
 
 		$schema = 'VARCHAR(' . $length . ')';
 
@@ -136,7 +136,7 @@ class PodsField_Phone extends PodsField {
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
 			$options['readonly'] = true;
 
 			$field_type = 'text';
@@ -152,7 +152,7 @@ class PodsField_Phone extends PodsField {
 
 		$errors = array();
 
-		$label = strip_tags( pods_var_raw( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
+		$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
@@ -222,7 +222,7 @@ class PodsField_Phone extends PodsField {
 
 			// Format number
 			if ( '(999) 999-9999 x999' === pods_v( self::$type . '_format', $options ) ) {
-				if ( 2 == count( $numbers ) ) {
+				if ( 2 === count( $numbers ) ) {
 					$value = implode( '-', $numbers );
 				} else {
 					$value = '(' . $numbers[0] . ') ' . $numbers[1] . '-' . $numbers[2];
@@ -239,7 +239,7 @@ class PodsField_Phone extends PodsField {
 			}
 		}//end if
 
-		$length = (int) pods_var( self::$type . '_max_length', $options, 25 );
+		$length = (int) pods_v( self::$type . '_max_length', $options, 25 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
 			$value = pods_mb_substr( $value, 0, $length );

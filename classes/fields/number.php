@@ -197,7 +197,7 @@ class PodsField_Number extends PodsField {
 			$value = implode( '', $value );
 		}
 
-		if ( 'slider' == pods_v( static::$type . '_format_type', $options, 'number' ) ) {
+		if ( 'slider' === pods_v( static::$type . '_format_type', $options, 'number' ) ) {
 			$field_type = 'slider';
 		} else {
 			$field_type = static::$type;
@@ -309,7 +309,7 @@ class PodsField_Number extends PodsField {
 		$dot         = $format_args['dot'];
 		$decimals    = $format_args['decimals'];
 
-		if ( 'i18n' == pods_v( static::$type . '_format', $options ) ) {
+		if ( 'i18n' === pods_v( static::$type . '_format', $options ) ) {
 			$value = number_format_i18n( (float) $value, $decimals );
 		} else {
 			$value = number_format( (float) $value, $decimals, $dot, $thousands );
@@ -345,22 +345,22 @@ class PodsField_Number extends PodsField {
 
 		global $wp_locale;
 
-		if ( '9.999,99' == pods_v( static::$type . '_format', $options ) ) {
+		if ( '9.999,99' === pods_v( static::$type . '_format', $options ) ) {
 			$thousands = '.';
 			$dot       = ',';
-		} elseif ( '9,999.99' == pods_v( static::$type . '_format', $options ) ) {
+		} elseif ( '9,999.99' === pods_v( static::$type . '_format', $options ) ) {
 			$thousands = ',';
 			$dot       = '.';
-		} elseif ( '9\'999.99' == pods_v( static::$type . '_format', $options ) ) {
+		} elseif ( '9\'999.99' === pods_v( static::$type . '_format', $options ) ) {
 			$thousands = '\'';
 			$dot       = '.';
-		} elseif ( '9 999,99' == pods_v( static::$type . '_format', $options ) ) {
+		} elseif ( '9 999,99' === pods_v( static::$type . '_format', $options ) ) {
 			$thousands = ' ';
 			$dot       = ',';
-		} elseif ( '9999.99' == pods_v( static::$type . '_format', $options ) ) {
+		} elseif ( '9999.99' === pods_v( static::$type . '_format', $options ) ) {
 			$thousands = '';
 			$dot       = '.';
-		} elseif ( '9999,99' == pods_v( static::$type . '_format', $options ) ) {
+		} elseif ( '9999,99' === pods_v( static::$type . '_format', $options ) ) {
 			$thousands = '';
 			$dot       = ',';
 		} else {

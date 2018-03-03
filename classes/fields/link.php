@@ -7,41 +7,27 @@ require_once PODS_DIR . 'classes/fields/website.php';
 class PodsField_Link extends PodsField_Website {
 
 	/**
-	 * Field Type Group
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $group = 'Text';
 
 	/**
-	 * Field Type Identifier
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $type = 'link';
 
 	/**
-	 * Field Type Label
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $label = 'Link';
 
 	/**
-	 * Field Type Preparation
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $prepare = '%s';
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
@@ -49,12 +35,7 @@ class PodsField_Link extends PodsField_Website {
 	}
 
 	/**
-	 * Add options and set defaults to
-	 *
-	 * @return array
-	 * @internal param array $options
-	 *
-	 * @since    2.0
+	 * {@inheritdoc}
 	 */
 	public function options() {
 
@@ -108,29 +89,11 @@ class PodsField_Link extends PodsField_Website {
 				'default'    => 'strong em a ul ol li b i',
 				'type'       => 'text',
 			),
-			/*
-			self::$type . '_max_length' => array(
-				'label' => __( 'Maximum Length', 'pods' ),
-				'default' => 255,
-				'type' => 'number',
-				'help' => __( 'Set to -1 for no limit', 'pods' )
-			),*/
 			self::$type . '_html5'             => array(
 				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
 				'type'    => 'boolean',
-			), /*
-		,
-			self::$type . '_size' => array(
-				'label' => __( 'Field Size', 'pods' ),
-				'default' => 'medium',
-				'type' => 'pick',
-				'data' => array(
-					'small' => __( 'Small', 'pods' ),
-					'medium' => __( 'Medium', 'pods' ),
-					'large' => __( 'Large', 'pods' )
-				)
-			)*/
+			),
 		);
 
 		return $options;
@@ -138,12 +101,7 @@ class PodsField_Link extends PodsField_Website {
 	}
 
 	/**
-	 * Define the current field's schema for DB table storage
-	 *
-	 * @param array $options
-	 *
-	 * @return string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
 
@@ -154,16 +112,7 @@ class PodsField_Link extends PodsField_Website {
 	}
 
 	/**
-	 * Change the value of the field
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @return mixed|null|string
-	 * @since 2.3
+	 * {@inheritdoc}
 	 */
 	public function value( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -172,16 +121,7 @@ class PodsField_Link extends PodsField_Website {
 	}
 
 	/**
-	 * Change the way the value of the field is displayed with Pods::get
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @return mixed|null|string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -256,15 +196,7 @@ class PodsField_Link extends PodsField_Website {
 	}
 
 	/**
-	 * Customize output of the form field
-	 *
-	 * @param string $name
-	 * @param mixed  $value
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -280,19 +212,7 @@ class PodsField_Link extends PodsField_Website {
 	}
 
 	/**
-	 * Validate a value before it's saved
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $fields
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @param null   $params
-	 *
-	 * @return array|bool
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
@@ -325,19 +245,7 @@ class PodsField_Link extends PodsField_Website {
 	}
 
 	/**
-	 * Change the value or perform actions after validation but before saving to the DB
-	 *
-	 * @param mixed  $value
-	 * @param int    $id
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $fields
-	 * @param array  $pod
-	 * @param object $params
-	 *
-	 * @return array
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 

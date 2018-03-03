@@ -6,26 +6,17 @@
 class PodsField_File extends PodsField {
 
 	/**
-	 * Field Type Group
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $group = 'Relationships / Media';
 
 	/**
-	 * Field Type Identifier
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $type = 'file';
 
 	/**
-	 * Field Type Label
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $label = 'File / Image / Video';
 
@@ -47,9 +38,7 @@ class PodsField_File extends PodsField {
 	}
 
 	/**
-	 * Add admin_init actions.
-	 *
-	 * @since 2.3
+	 * {@inheritdoc}
 	 */
 	public function admin_init() {
 

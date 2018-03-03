@@ -5,41 +5,27 @@
 class PodsField_Website extends PodsField {
 
 	/**
-	 * Field Type Group
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $group = 'Text';
 
 	/**
-	 * Field Type Identifier
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $type = 'website';
 
 	/**
-	 * Field Type Label
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $label = 'Website';
 
 	/**
-	 * Field Type Preparation
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $prepare = '%s';
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
@@ -48,11 +34,7 @@ class PodsField_Website extends PodsField {
 	}
 
 	/**
-	 * Add options and set defaults to
-	 *
-	 * @param array $options
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function options() {
 		$options = array(
@@ -118,29 +100,13 @@ class PodsField_Website extends PodsField {
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
 				),
-			), /*
-		,
-			self::$type . '_size' => array(
-				'label' => __( 'Field Size', 'pods' ),
-				'default' => 'medium',
-				'type' => 'pick',
-				'data' => array(
-					'small' => __( 'Small', 'pods' ),
-					'medium' => __( 'Medium', 'pods' ),
-					'large' => __( 'Large', 'pods' )
-				)
-			)*/
+			),
 		);
 		return $options;
 	}
 
 	/**
-	 * Define the current field's schema for DB table storage
-	 *
-	 * @param array $options
-	 *
-	 * @return array
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
 		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
@@ -155,16 +121,7 @@ class PodsField_Website extends PodsField {
 	}
 
 	/**
-	 * Change the way the value of the field is displayed with Pods::get
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @return mixed|null
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 		// Ensure proper format
@@ -186,15 +143,7 @@ class PodsField_Website extends PodsField {
 	}
 
 	/**
-	 * Customize output of the form field
-	 *
-	 * @param string $name
-	 * @param mixed  $value
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 		$options         = (array) $options;
@@ -223,18 +172,7 @@ class PodsField_Website extends PodsField {
 	}
 
 	/**
-	 * Validate a value before it's saved
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $fields
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @return bool|array
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 		$errors = array();
@@ -263,19 +201,7 @@ class PodsField_Website extends PodsField {
 	}
 
 	/**
-	 * Change the value or perform actions after validation but before saving to the DB
-	 *
-	 * @param mixed  $value
-	 * @param int    $id
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $fields
-	 * @param array  $pod
-	 * @param object $params
-	 *
-	 * @return string
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 		$options = (array) $options;
@@ -301,18 +227,7 @@ class PodsField_Website extends PodsField {
 	}
 
 	/**
-	 * Customize the Pods UI manage table column output
-	 *
-	 * @param int    $id
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $fields
-	 * @param array  $pod
-	 *
-	 * @return string
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 		$value = $this->display( $value, $name, $options, $pod, $id );

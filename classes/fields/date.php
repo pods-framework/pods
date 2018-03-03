@@ -7,57 +7,37 @@ require_once PODS_DIR . 'classes/fields/datetime.php';
 class PodsField_Date extends PodsField_DateTime {
 
 	/**
-	 * Field Type Group
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $group = 'Date / Time';
 
 	/**
-	 * Field Type Identifier
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $type = 'date';
 
 	/**
-	 * Field Type Label
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $label = 'Date';
 
 	/**
-	 * Field Type Preparation
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $prepare = '%s';
 
 	/**
-	 * Storage format.
-	 *
-	 * @var string
-	 * @since 2.7
+	 * {@inheritdoc}
 	 */
 	public static $storage_format = 'Y-m-d';
 
 	/**
-	 * The default empty value (database)
-	 *
-	 * @var string
-	 * @since 2.7
+	 * {@inheritdoc}
 	 */
 	public static $empty_value = '0000-00-00';
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
@@ -65,11 +45,7 @@ class PodsField_Date extends PodsField_DateTime {
 	}
 
 	/**
-	 * Add options and set defaults to
-	 *
-	 * @return array
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function options() {
 
@@ -160,12 +136,7 @@ class PodsField_Date extends PodsField_DateTime {
 	}
 
 	/**
-	 * Define the current field's schema for DB table storage
-	 *
-	 * @param array $options
-	 *
-	 * @return string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
 
@@ -175,13 +146,7 @@ class PodsField_Date extends PodsField_DateTime {
 	}
 
 	/**
-	 * Build date/time format string based on options
-	 *
-	 * @param array $options
-	 * @param bool  $js Return format for jQuery UI?
-	 *
-	 * @return string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function format( $options, $js = false ) {
 

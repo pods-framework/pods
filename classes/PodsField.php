@@ -66,6 +66,16 @@ class PodsField {
 	}
 
 	/**
+	 * Add admin_init actions.
+	 *
+	 * @since 2.3
+	 */
+	public function admin_init() {
+
+		// Add admin actions here.
+	}
+
+	/**
 	 * Add options and set defaults for field type, shows in admin area
 	 *
 	 * @return array $options
@@ -224,6 +234,24 @@ class PodsField {
 	 * @since 2.0
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
+		return $value;
+
+	}
+
+	/**
+	 * Reformat a number to the way the value of the field is displayed.
+	 *
+	 * @param mixed  $value
+	 * @param string $name
+	 * @param array  $options
+	 * @param array  $pod
+	 * @param int    $id
+	 *
+	 * @return string|null
+	 * @since 2.0
+	 */
+	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
 		return $value;
 

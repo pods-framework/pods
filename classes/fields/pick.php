@@ -93,9 +93,7 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Add admin_init actions.
-	 *
-	 * @since 2.3
+	 * {@inheritdoc}
 	 */
 	public function admin_init() {
 
@@ -274,17 +272,6 @@ class PodsField_Pick extends PodsField {
 				'pick_object'      => 'role',
 				'pick_format_type' => 'multi',
 			),
-			/*
-            self::$type . '_user_site' => array(
-                'label' => __( 'Limit list to Site(s)', 'pods' ),
-                'help' => __( 'help', 'pods' ),
-                'depends-on' => array( self::$type . '_object' => 'user' ),
-                'default' => '',
-                'type' => 'pick',
-                'pick_object' => 'site',
-                'pick_format_type' => 'multi',
-            ),
-			*/
 			self::$type . '_where'          => array(
 				'label'       => __( 'Customized <em>WHERE</em>', 'pods' ),
 				'help'        => __( 'help', 'pods' ),
@@ -312,18 +299,6 @@ class PodsField_Pick extends PodsField {
 				'default'     => '',
 				'type'        => 'text',
 			),
-			/*
-			self::$type . '_size' => array(
-				'label' => __( 'Field Size', 'pods' ),
-				'default' => 'medium',
-				'type' => 'pick',
-				'data' => array(
-					'small' => __( 'Small', 'pods' ),
-					'medium' => __( 'Medium', 'pods' ),
-					'large' => __( 'Large', 'pods' )
-				)
-			),
-			*/
 		);
 
 		$post_type_pick_objects = array();
@@ -344,12 +319,6 @@ class PodsField_Pick extends PodsField {
 				self::$type . '_object' => $post_type_pick_objects,
 			),
 		);
-
-		/*
-		if ( ! is_multisite() ) {
-			unset( $options[ self::$type . '_user_site' ] );
-		}
-		*/
 
 		return $options;
 

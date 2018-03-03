@@ -504,7 +504,7 @@ class PodsInit {
 
 				// Labels
 				$cpt_label    = esc_html( pods_v( 'label', $post_type, ucwords( str_replace( '_', ' ', pods_v( 'name', $post_type ) ) ), true ) );
-				$cpt_singular = esc_html( pods_v( 'label_singular', $post_type, ucwords( str_replace( '_', ' ', pods_v( 'label', $post_type, $post_type_name, null, true ) ) ), true ) );
+				$cpt_singular = esc_html( pods_v( 'label_singular', $post_type, ucwords( str_replace( '_', ' ', pods_v( 'label', $post_type, $post_type_name, true ) ) ), true ) );
 
 				$cpt_labels                          = array();
 				$cpt_labels['name']                  = $cpt_label;
@@ -623,7 +623,7 @@ class PodsInit {
 					$show_in_menu = pods_v_raw( 'menu_location_custom', $post_type );
 				}
 
-				$menu_icon = pods_v( 'menu_icon', $post_type, null, true );
+				$menu_icon = pods_v( 'menu_icon', $post_type );
 
 				if ( ! empty( $menu_icon ) ) {
 					$menu_icon = pods_evaluate_tags( $menu_icon );
@@ -736,7 +736,7 @@ class PodsInit {
 
 				// Labels
 				$ct_label    = esc_html( pods_v( 'label', $taxonomy, ucwords( str_replace( '_', ' ', pods_v( 'name', $taxonomy ) ) ), true ) );
-				$ct_singular = esc_html( pods_v( 'label_singular', $taxonomy, ucwords( str_replace( '_', ' ', pods_v( 'label', $taxonomy, pods_v( 'name', $taxonomy ), null, true ) ) ), true ) );
+				$ct_singular = esc_html( pods_v( 'label_singular', $taxonomy, ucwords( str_replace( '_', ' ', pods_v( 'label', $taxonomy, pods_v( 'name', $taxonomy ), true ) ) ), true ) );
 
 				$ct_labels                               = array();
 				$ct_labels['name']                       = $ct_label;

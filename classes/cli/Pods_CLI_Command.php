@@ -96,7 +96,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 		}
 
 		if ( null !== $item && $pod->exists() ) {
-			WP_CLI::error( sprintf( __( 'Pod "%s" item "%s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
+			WP_CLI::error( sprintf( __( 'Pod "%1$s" item "%2$s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
 		}
 
 		if ( ! empty( $assoc_args ) ) {
@@ -147,7 +147,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 		}
 
 		if ( $pod->exists() ) {
-			WP_CLI::error( sprintf( __( 'Pod "%s" item "%s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
+			WP_CLI::error( sprintf( __( 'Pod "%1$s" item "%2$s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
 		}
 
 		$id = 0;
@@ -194,7 +194,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 		}
 
 		if ( $pod->exists() ) {
-			WP_CLI::error( sprintf( __( 'Pod "%s" item "%s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
+			WP_CLI::error( sprintf( __( 'Pod "%1$s" item "%2$s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
 		}
 
 		$deleted = false;
@@ -260,7 +260,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 		}
 
 		if ( null !== $item && $pod->exists() ) {
-			WP_CLI::error( sprintf( __( 'Pod "%s" item "%s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
+			WP_CLI::error( sprintf( __( 'Pod "%1$s" item "%2$s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
 		}
 
 		$params = array(

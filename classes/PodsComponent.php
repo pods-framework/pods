@@ -10,8 +10,6 @@ class PodsComponent {
 	/**
 	 * Do things like register/enqueue scripts and stylesheets
 	 *
-	 * @return \PodsComponent
-	 *
 	 * @since 2.0
 	 */
 	public function __construct() {
@@ -70,7 +68,7 @@ class PodsComponent {
 	/**
 	 * Handler to run code based on $options
 	 *
-	 * @param $options
+	 * @param array $options Component options.
 	 *
 	 * @since 2.0
 	 */
@@ -81,7 +79,7 @@ class PodsComponent {
 	/**
 	 * Build admin area
 	 *
-	 * @param $options
+	 * @param array $options Component options.
 	 *
 	 * @since 2.0
 	 * public function admin ( $options ) {

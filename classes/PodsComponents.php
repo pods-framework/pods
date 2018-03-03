@@ -59,8 +59,6 @@ class PodsComponents {
 	/**
 	 * Setup actions and get options
 	 *
-	 * @return \PodsComponents
-	 *
 	 * @since 2.0
 	 */
 	public function __construct() {
@@ -113,7 +111,7 @@ class PodsComponents {
 		foreach ( $this->components as $component => $component_data ) {
 			$component_data['MustUse'] = apply_filters( 'pods_component_require_' . $component_data['ID'], $component_data['MustUse'], $component_data );
 
-			if ( empty( $component_data['MustUse'] ) && ( ! isset( $this->settings['components'][ $component ] ) || 0 == $this->settings['components'][ $component ] ) ) {
+			if ( empty( $component_data['MustUse'] ) && ( ! isset( $this->settings['components'][ $component ] ) || 0 === $this->settings['components'][ $component ] ) ) {
 				continue;
 			}
 
@@ -218,7 +216,7 @@ class PodsComponents {
 			foreach ( $custom_component_menus as $menu_page => $component_data ) {
 				if ( isset( $submenu[ $parent ] ) ) {
 					foreach ( $submenu[ $parent ] as $sub => &$menu ) {
-						if ( $menu[2] == $menu_page ) {
+						if ( $menu[2] === $menu_page ) {
 							$menu_page = $component_data['MenuPage'];
 
 							/*
@@ -260,7 +258,7 @@ class PodsComponents {
 		foreach ( (array) $this->components as $component => $component_data ) {
 			$component_data['MustUse'] = apply_filters( 'pods_component_require_' . $component_data['ID'], $component_data['MustUse'], $component_data );
 
-			if ( false === $component_data['MustUse'] && ( ! isset( $this->settings['components'][ $component ] ) || 0 == $this->settings['components'][ $component ] ) ) {
+			if ( false === $component_data['MustUse'] && ( ! isset( $this->settings['components'][ $component ] ) || 0 === $this->settings['components'][ $component ] ) ) {
 				continue;
 			}
 
@@ -275,7 +273,9 @@ class PodsComponents {
 			if ( ! empty( $component_data['ThemeDependency'] ) ) {
 				$dependency = explode( '|', $component_data['ThemeDependency'] );
 
-				if ( strtolower( $dependency[1] ) != strtolower( get_template() ) && strtolower( $dependency[1] ) != strtolower( get_stylesheet() ) ) {
+				$check = strtolower( $dependency[1] );
+
+				if ( strtolower( get_template() ) !== $check && strtolower( get_stylesheet() ) !== $check ) {
 					continue;
 				}
 			}
@@ -333,11 +333,11 @@ class PodsComponents {
 
 		$components = pods_transient_get( 'pods_components' );
 
-		if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+		if ( 1 === (int) pods_v( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 			$components = array();
 		}
 
-		if ( PodsInit::$version != PODS_VERSION || ! is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET['page'] ) && 'pods-components' === $_GET['page'] && 1 !== pods_transient_get( 'pods_components_refresh' ) ) ) {
+		if ( PodsInit::$version !== PODS_VERSION || ! is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET['page'] ) && 'pods-components' === $_GET['page'] && 1 !== pods_transient_get( 'pods_components_refresh' ) ) ) {
 			do_action( 'pods_components_get' );
 
 			$component_dir   = @opendir( untrailingslashit( $this->components_dir ) );
@@ -345,23 +345,23 @@ class PodsComponents {
 
 			if ( false !== $component_dir ) {
 				while ( false !== ( $file = readdir( $component_dir ) ) ) {
-					if ( '.' == substr( $file, 0, 1 ) ) {
+					if ( '.' === substr( $file, 0, 1 ) ) {
 						continue;
 					} elseif ( is_dir( $this->components_dir . $file ) ) {
 						$component_subdir = @opendir( $this->components_dir . $file );
 
 						if ( $component_subdir ) {
 							while ( false !== ( $subfile = readdir( $component_subdir ) ) ) {
-								if ( '.' == substr( $subfile, 0, 1 ) ) {
+								if ( '.' === substr( $subfile, 0, 1 ) ) {
 									continue;
-								} elseif ( '.php' == substr( $subfile, - 4 ) ) {
+								} elseif ( '.php' === substr( $subfile, - 4 ) ) {
 									$component_files[] = str_replace( '\\', '/', $file . '/' . $subfile );
 								}
 							}
 
 							closedir( $component_subdir );
 						}
-					} elseif ( '.php' == substr( $file, - 4 ) ) {
+					} elseif ( '.php' === substr( $file, - 4 ) ) {
 						$component_files[] = $file;
 					}
 				}//end while
@@ -450,13 +450,13 @@ class PodsComponents {
 
 				$component_data['ID'] = sanitize_title( $component_data['ID'] );
 
-				if ( 'on' == strtolower( $component_data['DeveloperMode'] ) || 1 == $component_data['DeveloperMode'] ) {
+				if ( 'on' === strtolower( $component_data['DeveloperMode'] ) || 1 === $component_data['DeveloperMode'] ) {
 					$component_data['DeveloperMode'] = true;
 				} else {
 					$component_data['DeveloperMode'] = false;
 				}
 
-				if ( 'on' == strtolower( $component_data['TablelessMode'] ) || 1 == $component_data['TablelessMode'] ) {
+				if ( 'on' === strtolower( $component_data['TablelessMode'] ) || 1 === $component_data['TablelessMode'] ) {
 					$component_data['TablelessMode'] = true;
 				} else {
 					$component_data['TablelessMode'] = false;
@@ -464,9 +464,9 @@ class PodsComponents {
 
 				$component_data['External'] = (boolean) $external;
 
-				if ( 'on' == strtolower( $component_data['MustUse'] ) || '1' === $component_data['MustUse'] ) {
+				if ( 'on' === strtolower( $component_data['MustUse'] ) || '1' === $component_data['MustUse'] ) {
 					$component_data['MustUse'] = true;
-				} elseif ( 'off' == strtolower( $component_data['MustUse'] ) || '0' === $component_data['MustUse'] ) {
+				} elseif ( 'off' === strtolower( $component_data['MustUse'] ) || '0' === $component_data['MustUse'] ) {
 					$component_data['MustUse'] = false;
 				} else {
 					$component_data['MustUse'] = $component_data['External'];
@@ -484,7 +484,7 @@ class PodsComponents {
 			pods_transient_set( 'pods_components', $components );
 		}//end if
 
-		if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+		if ( 1 === (int) pods_v( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 			pods_debug( $components );
 		}
 
@@ -496,8 +496,8 @@ class PodsComponents {
 	/**
 	 * Set component options
 	 *
-	 * @param $component
-	 * @param $options
+	 * @param string $component Component name.
+	 * @param array  $options   Component options.
 	 *
 	 * @since 2.0
 	 */
@@ -540,9 +540,11 @@ class PodsComponents {
 	}
 
 	/**
-	 * @param $options
-	 * @param $settings
-	 * @param $component
+	 * Render components admin.
+	 *
+	 * @param array  $options   Component options.
+	 * @param array  $settings  Component setting values.
+	 * @param string $component Component name.
 	 */
 	public function admin( $options, $settings, $component ) {
 
@@ -558,7 +560,7 @@ class PodsComponents {
 	/**
 	 * Check if a component is active or not
 	 *
-	 * @param string $component The component name to check if active
+	 * @param string $component The component name to check if active.
 	 *
 	 * @return bool
 	 *
@@ -579,7 +581,7 @@ class PodsComponents {
 	/**
 	 * Activate a component
 	 *
-	 * @param string $component The component name to activate
+	 * @param string $component The component name to activate.
 	 *
 	 * @return boolean Whether the component was activated.
 	 *
@@ -598,7 +600,11 @@ class PodsComponents {
 			if ( isset( $this->components[ $component ] ) ) {
 				$this->settings['components'][ $component ] = array();
 
-				$settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+				if ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ) {
+					$settings = wp_json_encode( $this->settings, JSON_UNESCAPED_UNICODE );
+				} else {
+					$settings = wp_json_encode( $this->settings );
+				}
 
 				update_option( 'pods_component_settings', $settings );
 
@@ -606,7 +612,7 @@ class PodsComponents {
 			}
 		} else {
 			$activated = true;
-		}
+		}//end if
 
 		return $activated;
 
@@ -615,7 +621,7 @@ class PodsComponents {
 	/**
 	 * Deactivate a component
 	 *
-	 * @param string $component The component name to deactivate
+	 * @param string $component The component name to deactivate.
 	 *
 	 * @since 2.7
 	 */
@@ -636,7 +642,7 @@ class PodsComponents {
 	/**
 	 * Toggle a component on or off
 	 *
-	 * @param string $component The component name to toggle
+	 * @param string $component The component name to toggle.
 	 *
 	 * @return bool
 	 *
@@ -648,7 +654,7 @@ class PodsComponents {
 
 		$toggle_mode = (int) pods_v( 'toggle', 'get' );
 
-		if ( 1 == $toggle_mode ) {
+		if ( 1 === $toggle_mode ) {
 			$this->activate_component( $component );
 			$toggle = true;
 		} else {
@@ -663,7 +669,7 @@ class PodsComponents {
 	/**
 	 * Add pods specific capabilities.
 	 *
-	 * @param $capabilities List of extra capabilities to add
+	 * @param array $capabilities List of extra capabilities to add.
 	 *
 	 * @return array
 	 */
@@ -674,12 +680,14 @@ class PodsComponents {
 				continue;
 			}
 
-			if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && ! pods_developer() ) {
-				continue;
-			}
+			if ( ! pods_developer() ) {
+				if ( true === (boolean) pods_v( 'DeveloperMode', $component_data, false ) ) {
+					continue;
+				}
 
-			if ( true === (boolean) pods_var( 'TablelessMode', $component_data, false ) && ! pods_developer() ) {
-				continue;
+				if ( true === (boolean) pods_v( 'TablelessMode', $component_data, false ) ) {
+					continue;
+				}
 			}
 
 			if ( empty( $component_data['MenuPage'] ) && ( ! isset( $component_data['object'] ) || ! method_exists( $component_data['object'], 'admin' ) ) ) {
@@ -692,7 +700,7 @@ class PodsComponents {
 				$capability = $component_data['Capability'];
 			}
 
-			if ( ! in_array( $capability, $capabilities ) ) {
+			if ( ! in_array( $capability, $capabilities, true ) ) {
 				$capabilities[] = $capability;
 			}
 		}//end foreach
@@ -771,8 +779,10 @@ class PodsComponents {
 	}
 
 	/**
-	 * @param $component
-	 * @param $params
+	 * Handle admin AJAX settings saving.
+	 *
+	 * @param string $component Component name.
+	 * @param array  $params    AJAX parameters.
 	 *
 	 * @return string
 	 */
@@ -794,19 +804,23 @@ class PodsComponents {
 			$field_option = PodsForm::field_setup( $field_option, null, $field_option['type'] );
 
 			if ( ! is_array( $field_option['group'] ) ) {
-				$field_value = pods_var_raw( 'pods_setting_' . $field_name, $params );
+				$field_value = pods_v( 'pods_setting_' . $field_name, $params );
 
 				$this->settings['components'][ $component ][ $field_name ] = $field_value;
 			} else {
 				foreach ( $field_option['group'] as $field_group_name => $field_group_option ) {
-					$field_value = pods_var_raw( 'pods_setting_' . $field_group_name, $params );
+					$field_value = pods_v( 'pods_setting_' . $field_group_name, $params );
 
 					$this->settings['components'][ $component ][ $field_group_name ] = $field_value;
 				}
 			}
 		}
 
-		$settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+		if ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ) {
+			$settings = wp_json_encode( $this->settings, JSON_UNESCAPED_UNICODE );
+		} else {
+			$settings = wp_json_encode( $this->settings );
+		}
 
 		update_option( 'pods_component_settings', $settings );
 

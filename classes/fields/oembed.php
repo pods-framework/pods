@@ -486,9 +486,18 @@ class PodsField_OEmbed extends PodsField {
 		$params = pods_unslash( (array) $_POST );
 
 		if ( ! empty( $params['_nonce_pods_oembed'] ) && ! empty( $params['pods_field_oembed_value'] ) && wp_verify_nonce( $params['_nonce_pods_oembed'], 'pods_field_oembed_preview' ) ) {
-			$value   = $this->strip_html( $params['pods_field_oembed_value'] );
-			$name    = ( ! empty( $params['pods_field_oembed_name'] ) ) ? $this->strip_html( $params['pods_field_oembed_name'] ) : '';
-			$options = ( ! empty( $params['pods_field_oembed_options'] ) ) ? $params['pods_field_oembed_options'] : array();
+			$value = $this->strip_html( $params['pods_field_oembed_value'] );
+
+			$name    = '';
+			$options = array();
+
+			if ( ! empty( $params['pods_field_oembed_name'] ) ) {
+				$name = $this->strip_html( $params['pods_field_oembed_name'] );
+			}
+
+			if ( ! empty( $params['pods_field_oembed_options'] ) ) {
+				$options = $params['pods_field_oembed_options'];
+			}
 
 			// Load the field to get it's options.
 			$options = pods_api()->load_field( (object) $options );

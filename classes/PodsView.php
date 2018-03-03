@@ -46,9 +46,9 @@ class PodsView {
 		 * @since 2.4.1
 		 */
 		$filter_check = apply_filters( 'pods_view_alt_view', null, $view, $data, $expires, $cache_mode );
-		if ( ! is_null( $filter_check ) ) {
-			return $filter_check;
 
+		if ( null !== $filter_check ) {
+			return $filter_check;
 		}
 
 		// Advanced $expires handling

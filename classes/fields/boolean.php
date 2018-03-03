@@ -116,7 +116,11 @@ class PodsField_Boolean extends PodsField {
 		$form_field_type = PodsForm::$field_type;
 
 		if ( is_array( $value ) ) {
-			$value = ! empty( $value );
+			if ( ! empty( $value ) ) {
+				$value = true;
+			} else {
+				$value = false;
+			}
 		}
 
 		$field_type = 'checkbox';
@@ -198,8 +202,10 @@ class PodsField_Boolean extends PodsField {
 			$value = 1;
 		} elseif ( strtolower( $value ) === $no ) {
 			$value = 0;
+		} elseif ( 0 !== (int) $value ) {
+			$value = 1;
 		} else {
-			$value = ( 0 === (int) $value ? 0 : 1 );
+			$value = 0;
 		}
 
 		return $value;

@@ -83,7 +83,7 @@ class PodsField_Avatar extends PodsField_File {
 		if ( is_admin() ) {
 			$current_screen = get_current_screen();
 
-			if ( ! is_null( $current_screen ) && 'options-discussion' === $current_screen->id && 32 === $size ) {
+			if ( null !== $current_screen && 'options-discussion' === $current_screen->id && 32 === $size ) {
 				return $avatar;
 			}
 		}

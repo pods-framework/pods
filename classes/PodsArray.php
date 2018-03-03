@@ -14,7 +14,7 @@ class PodsArray implements ArrayAccess {
 	 * Alternative to get_object_vars to access an object as an array with simple functionality and accepts arrays to
 	 * add additional functionality. Additional functionality includes validation and setting default data.
 	 *
-	 * @param mixed $container Object (or existing Array)
+	 * @param mixed $container Object (or existing Array).
 	 *
 	 * @return \PodsArray
 	 *
@@ -31,10 +31,10 @@ class PodsArray implements ArrayAccess {
 	/**
 	 * Set value from array usage $object['offset'] = 'value';
 	 *
-	 * @param mixed $offset Used to set index of Array or Variable name on Object
-	 * @param mixed $value  Value to be set
+	 * @param mixed $offset Used to set index of Array or Variable name on Object.
+	 * @param mixed $value  Value to be set.
 	 *
-	 * @return mixed|void
+	 * @return mixed
 	 * @since 2.0
 	 */
 	public function offsetSet( $offset, $value ) {
@@ -42,7 +42,7 @@ class PodsArray implements ArrayAccess {
 		if ( is_array( $this->__container ) ) {
 			$this->__container[ $offset ] = $value;
 		} else {
-			$this->__container->$offset = $value;
+			$this->__container->{$offset} = $value;
 		}
 
 		return $value;
@@ -51,7 +51,7 @@ class PodsArray implements ArrayAccess {
 	/**
 	 * Get value from array usage $object['offset'];
 	 *
-	 * @param mixed $offset Used to get value of Array or Variable on Object
+	 * @param mixed $offset Used to get value of Array or Variable on Object.
 	 *
 	 * @return mixed|null
 	 * @since 2.0
@@ -62,10 +62,7 @@ class PodsArray implements ArrayAccess {
 			if ( isset( $this->__container[ $offset ] ) ) {
 				return $this->__container[ $offset ];
 			}
-
-			return null;
-		}
-		if ( isset( $this->__container->$offset ) ) {
+		} elseif ( isset( $this->__container->$offset ) ) {
 			return $this->__container->$offset;
 		}
 
@@ -75,7 +72,7 @@ class PodsArray implements ArrayAccess {
 	/**
 	 * Get value from array usage $object['offset'];
 	 *
-	 * @param mixed $offset Used to get value of Array or Variable on Object
+	 * @param mixed $offset Used to get value of Array or Variable on Object.
 	 *
 	 * @return bool
 	 * @since 2.0
@@ -92,7 +89,7 @@ class PodsArray implements ArrayAccess {
 	/**
 	 * Get value from array usage $object['offset'];
 	 *
-	 * @param mixed $offset Used to unset index of Array or Variable on Object
+	 * @param mixed $offset Used to unset index of Array or Variable on Object.
 	 *
 	 * @since 2.0
 	 */
@@ -108,11 +105,11 @@ class PodsArray implements ArrayAccess {
 	/**
 	 * Validate value on a specific type and set default (if empty)
 	 *
-	 * @param mixed  $offset  Used to get value of Array or Variable on Object
-	 * @param mixed  $default Used to set default value if it doesn't exist
-	 * @param string $type    Used to force a specific type of variable (allowed: array, object, integer, absint,
-	 *                        boolean)
-	 * @param mixed  $extra   Used in advanced types of variables
+	 * @param mixed       $offset  Used to get value of Array or Variable on Object.
+	 * @param mixed|null  $default Used to set default value if it doesn't exist.
+	 * @param string|null $type    Used to force a specific type of variable (allowed: array, object, integer, absint,
+	 *                             boolean).
+	 * @param mixed|null  $extra   Used in advanced types of variables.
 	 *
 	 * @return array|bool|int|mixed|null|number|object
 	 * @since 2.0
@@ -128,6 +125,7 @@ class PodsArray implements ArrayAccess {
 		if ( empty( $value ) && null !== $default && false !== $value ) {
 			$value = $default;
 		}
+
 		if ( 'array' === $type || 'array_merge' === $type ) {
 			if ( ! is_array( $value ) ) {
 				$value = explode( ',', $value );
@@ -162,11 +160,11 @@ class PodsArray implements ArrayAccess {
 		} elseif ( 'in_array' === $type && is_array( $default ) ) {
 			if ( is_array( $value ) ) {
 				foreach ( $value as $k => $v ) {
-					if ( ! in_array( $v, $extra ) ) {
+					if ( ! in_array( $v, $extra, true ) ) {
 						unset( $value[ $k ] );
 					}
 				}
-			} elseif ( ! in_array( $value, $extra ) ) {
+			} elseif ( ! in_array( $value, $extra, true ) ) {
 				$value = $default;
 			}
 		} elseif ( 'isset' === $type && is_array( $default ) ) {
@@ -205,12 +203,11 @@ class PodsArray implements ArrayAccess {
 	/**
 	 * Mapping >> offsetSet
 	 *
+	 * @param mixed $offset Property name.
+	 * @param mixed $value  Property value.
+	 *
+	 * @return mixed
 	 * @since 2.0
-	 *
-	 * @param $offset
-	 * @param $value
-	 *
-	 * @return mixed|void
 	 */
 	public function __set( $offset, $value ) {
 
@@ -220,11 +217,10 @@ class PodsArray implements ArrayAccess {
 	/**
 	 * Mapping >> offsetGet
 	 *
-	 * @since 2.0
-	 *
-	 * @param $offset
+	 * @param mixed $offset Property name.
 	 *
 	 * @return mixed|null
+	 * @since 2.0
 	 */
 	public function __get( $offset ) {
 
@@ -234,11 +230,10 @@ class PodsArray implements ArrayAccess {
 	/**
 	 * Mapping >> offsetExists
 	 *
-	 * @since 2.0
-	 *
-	 * @param $offset
+	 * @param mixed $offset Property name.
 	 *
 	 * @return bool
+	 * @since 2.0
 	 */
 	public function __isset( $offset ) {
 
@@ -248,9 +243,9 @@ class PodsArray implements ArrayAccess {
 	/**
 	 * Mapping >> offsetUnset
 	 *
-	 * @since 2.0
+	 * @param mixed $offset Property name.
 	 *
-	 * @param $offset
+	 * @since 2.0
 	 */
 	public function __unset( $offset ) {
 

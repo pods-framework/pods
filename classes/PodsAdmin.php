@@ -660,7 +660,7 @@ class PodsAdmin {
 	/**
 	 * Set the correct parent_file to highlight the correct top level menu
 	 *
-	 * @param string $parent_file The parent file
+	 * @param string $parent_file The parent file.
 	 *
 	 * @return mixed|string
 	 *
@@ -701,7 +701,9 @@ class PodsAdmin {
 
 		if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) && is_object( PodsInit::$components ) ) {
 			global $submenu_file;
+
 			$components = PodsInit::$components->components;
+
 			foreach ( $components as $component => $component_data ) {
 				if ( ! empty( $component_data['MenuPage'] ) && $parent_file === $component_data['MenuPage'] ) {
 					$parent_file = 'pods';
@@ -2449,46 +2451,48 @@ class PodsAdmin {
 						'restrict_capability' => true,
 					),
 				),
-				/*
-				,
-                        'search' => array(
-                            'label' => __( 'Include in searches', 'pods' ),
-                            'help' => __( 'help', 'pods' ),
-                            'default' => 1,
-                            'type' => 'boolean',
-                        )*/
 			),
-			/*
-			,
-                __( 'Validation', 'pods' ) => array(
-                    'regex_validation' => array(
-                        'label' => __( 'RegEx Validation', 'pods' ),
-                        'help' => __( 'help', 'pods' ),
-                        'type' => 'text',
-                        'default' => ''
-                    ),
-                    'message_regex' => array(
-                        'label' => __( 'Message if field does not pass RegEx', 'pods' ),
-                        'help' => __( 'help', 'pods' ),
-                        'type' => 'text',
-                        'default' => ''
-                    ),
-                    'message_required' => array(
-                        'label' => __( 'Message if field is blank', 'pods' ),
-                        'help' => __( 'help', 'pods' ),
-                        'type' => 'text',
-                        'default' => '',
-                        'depends-on' => array( 'required' => true )
-                    ),
-                    'message_unique' => array(
-                        'label' => __( 'Message if field is not unique', 'pods' ),
-                        'help' => __( 'help', 'pods' ),
-                        'type' => 'text',
-                        'default' => '',
-                        'depends-on' => array( 'unique' => true )
-                    )
-                )*/
 		);
+
+		/*
+		$options['advanced'][ __( 'Visibility', 'pods' ) ]['search'] = array(
+			'label'   => __( 'Include in searches', 'pods' ),
+			'help'    => __( 'help', 'pods' ),
+			'default' => 1,
+			'type'    => 'boolean',
+		);
+		*/
+
+		/*
+		$options['advanced'][ __( 'Validation', 'pods' ) ] = array(
+			'regex_validation' => array(
+				'label'   => __( 'RegEx Validation', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			),
+			'message_regex'    => array(
+				'label'   => __( 'Message if field does not pass RegEx', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			),
+			'message_required' => array(
+				'label'      => __( 'Message if field is blank', 'pods' ),
+				'help'       => __( 'help', 'pods' ),
+				'type'       => 'text',
+				'default'    => '',
+				'depends-on' => array( 'required' => true ),
+			),
+			'message_unique'   => array(
+				'label'      => __( 'Message if field is not unique', 'pods' ),
+				'help'       => __( 'help', 'pods' ),
+				'type'       => 'text',
+				'default'    => '',
+				'depends-on' => array( 'unique' => true ),
+			),
+		);
+		*/
 
 		if ( ! class_exists( 'Pods_Helpers' ) ) {
 			unset( $options['advanced']['input_helper'] );
@@ -2731,7 +2735,13 @@ class PodsAdmin {
 			$component_data['Description'] = wpautop( trim( make_clickable( strip_tags( $component_data['Description'], 'em,strong' ) ) ) );
 
 			if ( ! empty( $meta ) ) {
-				$component_data['Description'] .= '<div class="pods-component-meta" ' . ( ! empty( $component_data['Description'] ) ? ' style="padding:8px 0 4px;"' : '' ) . '>' . implode( '&nbsp;&nbsp;|&nbsp;&nbsp;', $meta ) . '</div>';
+				$description_style = '';
+
+				if ( ! empty( $component_data['Description'] ) ) {
+					$description_style = ' style="padding:8px 0 4px;"';
+				}
+
+				$component_data['Description'] .= '<div class="pods-component-meta" ' . $description_style . '>' . implode( '&nbsp;&nbsp;|&nbsp;&nbsp;', $meta ) . '</div>';
 			}
 
 			$component_data = array(
@@ -2836,7 +2846,7 @@ class PodsAdmin {
 	/**
 	 * Toggle a component on or off
 	 *
-	 * @param PodsUI $ui PodsUI object
+	 * @param PodsUI $ui PodsUI object.
 	 *
 	 * @return bool
 	 */
@@ -3278,7 +3288,7 @@ class PodsAdmin {
 
 		$api = pods_api();
 
-		if ( is_null( $pod ) ) {
+		if ( null === $pod ) {
 			$the_pods = $api->load_pods();
 		} elseif ( is_array( $pod ) ) {
 			foreach ( $pod as $p ) {

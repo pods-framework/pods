@@ -2222,14 +2222,20 @@ class PodsField_Pick extends PodsField {
 								continue;
 							}
 
-							$where[] = $wpdb->base_prefix . ( ( is_multisite() && ! is_main_site() ) ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
+							$prefix = $wpdb->base_prefix;
+
+							if ( is_multisite() && ! is_main_site() ) {
+								$prefix .= get_current_blog_id() . '_';
+							}
+
+							$where[] = $prefix . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
 						}
 
 						if ( ! empty( $where ) ) {
 							$params['where'][] = implode( ' OR ', $where );
 						}
-					}
-				}
+					}//end if
+				}//end if
 
 				$results = $search_data->select( $params );
 

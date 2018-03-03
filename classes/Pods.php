@@ -323,8 +323,11 @@ class Pods implements Iterator {
 			$this->search     = false;
 		} else {
 			// Get the page variable.
-			$this->page = pods_v( $this->page_var, 'get' );
-			$this->page = ( empty( $this->page ) ? 1 : max( pods_absint( $this->page ), 1 ) );
+			$this->page = pods_v( $this->page_var, 'get', 1, true );
+
+			if ( ! empty( $this->page ) ) {
+				$this->page = max( pods_absint( $this->page, 1 ) );
+			}
 		}
 
 		// Set default pagination handling to on/off.

@@ -792,31 +792,27 @@ class Pods implements Iterator {
 			'args'        => array(),
 		);
 
-		$is_name_object   = is_object( $name );
-		$is_single_object = is_object( $single );
-		$is_raw_object    = is_object( $raw );
+		if ( is_object( $name ) ) {
+			$name = get_object_vars( $name );
+		}
 
-		if ( is_array( $name ) || $is_name_object ) {
-			if ( $is_name_object ) {
-				$name = get_object_vars( $name );
-			}
+		if ( is_object( $single ) ) {
+			$single = get_object_vars( $single );
+		}
 
+		if ( is_object( $raw ) ) {
+			$raw = get_object_vars( $raw );
+		}
+
+		if ( is_array( $name ) ) {
 			$defaults['name'] = null;
 
 			$params = (object) array_merge( $defaults, (array) $name );
-		} elseif ( is_array( $single ) || $is_single_object ) {
-			if ( $is_single_object ) {
-				$single = get_object_vars( $single );
-			}
-
+		} elseif ( is_array( $single ) ) {
 			$defaults['single'] = null;
 
 			$params = (object) array_merge( $defaults, (array) $single );
-		} elseif ( is_array( $raw ) || $is_raw_object ) {
-			if ( $is_raw_object ) {
-				$raw = get_object_vars( $raw );
-			}
-
+		} elseif ( is_array( $raw ) ) {
 			$defaults['raw'] = false;
 
 			$params = (object) array_merge( $defaults, (array) $raw );
@@ -1213,7 +1209,7 @@ class Pods implements Iterator {
 
 				if ( $simple || ! $is_field_set || ! $is_tableless_field ) {
 					if ( null === $params->single ) {
-						if ( $is_field_set && $is_tableless_field ) {
+						if ( $is_field_set && ! $is_tableless_field ) {
 							$params->single = true;
 						} else {
 							$params->single = false;
@@ -1256,7 +1252,7 @@ class Pods implements Iterator {
 
 						$single_multi = 'single';
 
-						if ( isset( $this->fields[ $params->name ] ) ) {
+						if ( $is_field_set ) {
 							$single_multi = pods_v( $this->fields[ $params->name ]['type'] . '_format_type', $this->fields[ $params->name ]['options'], $single_multi );
 						}
 

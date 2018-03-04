@@ -44,12 +44,15 @@
     "php": ">=5.2.4"
   },
   "require-dev": {
+    "wp-cli/wp-cli": "1.*",
     "phpunit/phpunit": "6.*",
     "mockery/mockery": "1.*",
     "wp-coding-standards/wpcs": "0.14.*",
-    "wp-cli/wp-cli": "1.*",
     "squizlabs/php_codesniffer": "3.*",
     "wimg/php-compatibility": "8.*"
+  },
+  "suggest": {
+    "wp-cli/wp-cli": "Enables access to Pods CLI commands."
   },
   "extra": {
     "installer-name": "pods"

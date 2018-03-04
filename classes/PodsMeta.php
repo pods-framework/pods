@@ -348,7 +348,7 @@ class PodsMeta {
 	}
 
 	/**
-	 * @param $type
+	 * @param string $type
 	 * @param $pod
 	 *
 	 * @return array|bool|int
@@ -837,7 +837,7 @@ class PodsMeta {
 	 * @param $type
 	 * @param $name
 	 *
-	 * @return array|bool|mixed|void
+	 * @return string
 	 */
 	public function object_get( $type, $name ) {
 
@@ -893,7 +893,7 @@ class PodsMeta {
 	}
 
 	/**
-	 * @param $type
+	 * @param string $type
 	 * @param $name
 	 * @param $default_fields
 	 *
@@ -3154,7 +3154,7 @@ class PodsMeta {
 	 * @param string $meta_value
 	 * @param bool   $unique
 	 *
-	 * @return bool|int|null
+	 * @return null|integer
 	 */
 	public function add_meta( $object_type, $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $unique = false ) {
 
@@ -3202,7 +3202,7 @@ class PodsMeta {
 	 * @param string $meta_value
 	 * @param string $prev_value
 	 *
-	 * @return bool|int|null
+	 * @return null|integer
 	 */
 	public function update_meta( $object_type, $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $prev_value = '' ) {
 
@@ -3386,7 +3386,7 @@ class PodsMeta {
 	}
 
 	/**
-	 * @param      $type
+	 * @param      string $type
 	 * @param      $id
 	 * @param null $name
 	 *

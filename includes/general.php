@@ -371,7 +371,6 @@ function pods_strict( $include_debug = true ) {
 /**
  * Determine if Deprecated Mode is enabled
  *
- * @param bool $include_debug Whether to include strict mode
  *
  * @return bool Whether Deprecated Mode is enabled
  *
@@ -497,6 +496,7 @@ function pods_help ( $text, $url = null ) {
  * @param string $minimum_version Minimum version
  * @param string $comparison Comparison operator
  * @param string $maximum_version Maximum version
+ * @param string $what
  *
  * @return bool
  */
@@ -974,7 +974,7 @@ function pods_shortcode_form ( $tags, $content = null ) {
  * @uses get_shortcode_regex() Gets the search pattern for searching shortcodes.
  *
  * @param string $content Content to search for shortcodes
- * @param array $shortcodes Array of shortcodes to run
+ * @param string[] $shortcodes Array of shortcodes to run
  * @return string Content with shortcodes filtered out.
  */
 function pods_do_shortcode( $content, $shortcodes ) {
@@ -1523,7 +1523,7 @@ function pods_cache_get ( $key, $group = '', $callback = null ) {
  * @param string|bool $key Key for the cache
  * @param string $group (optional) Key for the group
  *
- * @return bool|mixed|null|void
+ * @return boolean
  *
  * @since 2.0
  */
@@ -1731,7 +1731,6 @@ function pods_register_type ( $type, $name, $object = null ) {
  *
  * @param string|array $pod The pod name or array of pod names
  * @param string $name The name of the Pod
- * @param array $object (optional) Pod array, including any 'fields' arrays
  *
  * @return array|boolean Field data or false if unsuccessful
  * @since 2.1

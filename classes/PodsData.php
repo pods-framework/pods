@@ -2246,8 +2246,8 @@ class PodsData {
 	 *
 	 * @param string|array $sql              The SQL to execute.
 	 * @param string       $error            Error to throw on problems.
-	 * @param null         $results_error    (optional).
-	 * @param null         $no_results_error (optional).
+	 * @param string|null         $results_error    (optional).
+	 * @param string|null         $no_results_error (optional).
 	 *
 	 * @return array|bool|mixed|null|void Result of the query
 	 *
@@ -2594,7 +2594,7 @@ class PodsData {
 	/**
 	 * Get the string to use in a query for matching, uses WP_Query meta_query arguments
 	 *
-	 * @param string|int   $field  Field name or array index.
+	 * @param string   $field  Field name or array index.
 	 * @param array|string $q      Query array (meta_query) or string for matching.
 	 * @param array        $pod    Related Pod.
 	 * @param object       $params Parameters passed from select().

@@ -1573,7 +1573,7 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      * @param bool $sanitized (optional) Decides whether the params have been sanitized before being passed, will sanitize them if false.
-     * @param bool|int $db (optional) Whether to save into the DB or just return Pod array.
+     * @param boolean $db (optional) Whether to save into the DB or just return Pod array.
      *
      * @return int Pod ID
      * @since 1.7.9
@@ -4023,7 +4023,7 @@ class PodsAPI {
      * Save relationships
      *
      * @param int $id ID of item
-     * @param int|array $related_id ID or IDs to save
+     * @param int|array $related_ids ID or IDs to save
      * @param array $pod Pod data
      * @param array $field Field data
      */
@@ -5257,7 +5257,6 @@ class PodsAPI {
      * Delete an object from tableless fields
      *
      * @param int $id
-     * @param string $type
      * @param string $name
      *
      * @return bool
@@ -5480,6 +5479,7 @@ class PodsAPI {
      * $params['name'] string Pod name
      *
      * @param array $params An associative array of parameters
+     * @param string $type
      *
      * @return bool True if exists
      *
@@ -7052,7 +7052,7 @@ class PodsAPI {
      * @param string $type Field type to look for
      * @param array $options (optional) Options of the field to pass to the schema function.
      *
-     * @return array|bool|mixed|null
+     * @return string
      *
      * @since 2.0
      */
@@ -7497,7 +7497,7 @@ class PodsAPI {
 	 *
 	 * Load the information about an objects MySQL table
 	 *
-	 * @param $object_type
+	 * @param string $object_type
 	 * @param string $object The object to look for
 	 * @param null $name (optional) Name of the pod to load
 	 * @param array $pod (optional) Array with pod information

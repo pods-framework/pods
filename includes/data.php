@@ -855,7 +855,7 @@ function pods_v_sanitized( $var = null, $type = 'get', $default = null, $strict 
  *
  * @param mixed               $value The value to be set
  * @param mixed               $var   The variable name, or URI segment position / query var name (if $type is 'url')
- * @param string|array|object $type  (optional) Super globals, url/url-relative, constants, globals, user data, Pod
+ * @param string $type  (optional) Super globals, url/url-relative, constants, globals, user data, Pod
  *                                   field values
  *
  * @return mixed Updated URL (if $type is 'url'), $value (if $type is 'constant'), Item ID (if $type is 'pods'), $type,
@@ -1206,7 +1206,7 @@ function pods_cast( $value, $cast_from = null ) {
 /**
  * Create a slug from an input string
  *
- * @param      $orig
+ * @param      string $orig
  *
  * @param bool $strict
  *

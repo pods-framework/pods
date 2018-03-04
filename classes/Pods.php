@@ -583,7 +583,7 @@ class Pods implements Iterator {
 	 * Return field array from a Pod, a field's data, or a field option
 	 *
 	 * @param null $field  Field name.
-	 * @param null $option Option name.
+	 * @param string $option Option name.
 	 *
 	 * @return bool|mixed
 	 *
@@ -666,7 +666,7 @@ class Pods implements Iterator {
 	 * list of text such as "Rick, John, and Gary"
 	 *
 	 * @param string|array|object  $name   The field name, or an associative array of parameters.
-	 * @param boolean|array|object $single (optional) For tableless fields, to return an array or the first.
+	 * @param boolean $single (optional) For tableless fields, to return an array or the first.
 	 *
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
@@ -726,7 +726,7 @@ class Pods implements Iterator {
 	 * list of text such as "Rick, John, and Gary"
 	 *
 	 * @param string|array|object  $name   The field name, or an associative array of parameters.
-	 * @param boolean|array|object $single (optional) For tableless fields, to return an array or the first.
+	 * @param boolean $single (optional) For tableless fields, to return an array or the first.
 	 *
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
@@ -2806,7 +2806,7 @@ class Pods implements Iterator {
 	 * @param null|int $offset Offset of rows.
 	 * @param null|int $total  Total rows.
 	 *
-	 * @return int Number of pages
+	 * @return double Number of pages
 	 * @since 2.3.10
 	 */
 	public function total_pages( $limit = null, $offset = null, $total = null ) {
@@ -2920,7 +2920,7 @@ class Pods implements Iterator {
 	 * @see   PodsAPI::save_pod_item
 	 *
 	 * @param string $field Field name.
-	 * @param mixed  $value IDs to add, int|float to add to number field, string for dates (+1 day), or string for text.
+	 * @param string  $value IDs to add, int|float to add to number field, string for dates (+1 day), or string for text.
 	 * @param int    $id    (optional) ID of the pod item to update.
 	 *
 	 * @return int The item ID
@@ -3036,7 +3036,7 @@ class Pods implements Iterator {
 	 * @see   PodsAPI::save_pod_item
 	 *
 	 * @param string $field Field name.
-	 * @param mixed  $value IDs to add, int|float to add to number field, string for dates (-1 day), or string for text.
+	 * @param string  $value IDs to add, int|float to add to number field, string for dates (-1 day), or string for text.
 	 * @param int    $id    (optional) ID of the pod item to update.
 	 *
 	 * @return int The item ID

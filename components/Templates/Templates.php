@@ -125,7 +125,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * @param $caps
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function get_capabilities( $caps ) {
 
@@ -148,7 +148,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * @param $post_types
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function disable_builder_layout( $post_types ) {
 

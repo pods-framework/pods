@@ -18,7 +18,7 @@ add_shortcode( "pod_if_field", "frontier_if_block" );
 /**
  * Return array of valid frontier type shortcode tags
  *
- * @return array
+ * @return string[]
  */
 function frontier_get_shortcodes() {
 	$shortcodes = array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' );
@@ -247,7 +247,7 @@ function frontier_template_once_blocks( $atts, $code ) {
  * @param array attributes from template
  * @param string template to be processed
  *
- * @return null
+ * @return string
  * @since 2.4
  */
 function frontier_do_subtemplate( $atts, $content ) {

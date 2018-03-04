@@ -1342,7 +1342,7 @@ class PodsForm {
 	 * @param bool  $noarray
 	 * @param bool  $db_field
 	 *
-	 * @return mixed|string
+	 * @return string
 	 */
 	public static function clean( $input, $noarray = false, $db_field = false ) {
 

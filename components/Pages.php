@@ -129,7 +129,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * @param $caps
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function get_capabilities( $caps ) {
 
@@ -178,7 +178,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @param array $post_types
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function disable_builder_layout( $post_types ) {
 
@@ -717,7 +717,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @param string $uri The Pod Page URI to check if exists
 	 *
-	 * @return array|bool
+	 * @return boolean
 	 */
 	public static function exists( $uri = null ) {
 

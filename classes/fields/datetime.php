@@ -626,7 +626,7 @@ class PodsField_DateTime extends PodsField {
 	 * @param string  $date             Defaults to time() if empty.
 	 * @param boolean $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
 	 *
-	 * @return DateTime|null|int|false
+	 * @return string
 	 */
 	public function createFromFormat( $format, $date, $return_timestamp = false ) {
 

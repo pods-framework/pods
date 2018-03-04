@@ -1012,28 +1012,18 @@ class PodsForm {
 			}
 		}
 
-		if ( method_exists( self::$loaded[ $type ], 'value' ) ) {
-			if ( is_array( $value ) && in_array( $type, self::tableless_field_types() ) ) {
-				foreach ( $value as &$display_value ) {
-					$display_value = call_user_func_array(
-						array(
-							self::$loaded[ $type ],
-							'value',
-						), array( $display_value, $name, $options, $pod, $id, $traverse )
-					);
-				}
-			} else {
-				$value = call_user_func_array(
-					array( self::$loaded[ $type ], 'value' ), array(
-						$value,
-						$name,
-						$options,
-						$pod,
-						$id,
-						$traverse,
-					)
-				);
-			}//end if
+		if ( is_array( $value ) && in_array( $type, self::tableless_field_types(), true ) ) {
+			foreach ( $value as &$display_value ) {
+				$display_value = call_user_func( array(
+					self::$loaded[ $type ],
+					'value',
+				), $display_value, $name, $options, $pod, $id, $traverse );
+			}
+		} else {
+			$value = call_user_func( array(
+				self::$loaded[ $type ],
+				'value',
+			), $value, $name, $options, $pod, $id, $traverse );
 		}//end if
 
 		return $value;

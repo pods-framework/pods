@@ -227,7 +227,7 @@ class PodsField {
 
 		$is_empty = false;
 
-		if ( is_array( $values ) ) {
+		if ( is_array( $values ) && isset( $values[0] ) ) {
 			if ( $strict ) {
 				foreach ( $values as $value ) {
 					$is_empty = true;

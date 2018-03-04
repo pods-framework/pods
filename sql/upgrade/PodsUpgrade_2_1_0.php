@@ -52,7 +52,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 			$pod = $this->api->load_pod( array( 'pod' => $field['pod'] ) );
 
 			// Only target pods that are meta-enabled
-			if ( ! in_array( $pod['type'], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
+			if ( ! in_array( $pod['type'], array( 'post_type', 'media', 'user', 'comment' ), true ) ) {
 				continue;
 			}
 
@@ -115,7 +115,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 
 		delete_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ) );
 
-		if ( in_array( $this->version, $upgraded ) ) {
+		if ( in_array( $this->version, $upgraded, true ) ) {
 			unset( $upgraded[ array_search( $this->version, $upgraded ) ] );
 		}
 

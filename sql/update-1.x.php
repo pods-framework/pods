@@ -250,7 +250,7 @@ if ( version_compare( $old_version, '1.7.5', '<' ) ) {
 
 	if ( is_array( $pods_roles ) ) {
 		foreach ( $pods_roles as $role => $privs ) {
-			if ( in_array( 'manage_podpages', $privs ) ) {
+			if ( in_array( 'manage_podpages', $privs, true ) ) {
 				$pods_roles[ $role ][] = 'manage_pod_pages';
 
 				unset( $pods_roles[ $role ]['manage_podpages'] );

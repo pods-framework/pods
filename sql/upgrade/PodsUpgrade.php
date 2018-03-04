@@ -223,7 +223,7 @@ class PodsUpgrade {
 
 		delete_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ) );
 
-		if ( ! in_array( $this->version, $upgraded ) ) {
+		if ( ! in_array( $this->version, $upgraded, true ) ) {
 			$upgraded[] = $this->version;
 		}
 

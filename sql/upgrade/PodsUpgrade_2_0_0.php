@@ -20,7 +20,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 		 */
 		global $wpdb;
 
-		if ( ! in_array( "{$wpdb->prefix}pod_types", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pod_types", $this->tables, true ) ) {
 			return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
 		}
 
@@ -45,7 +45,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 		 */
 		global $wpdb;
 
-		if ( ! in_array( "{$wpdb->prefix}pod_fields", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pod_fields", $this->tables, true ) ) {
 			return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
 		}
 
@@ -70,7 +70,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 		 */
 		global $wpdb;
 
-		if ( ! in_array( "{$wpdb->prefix}pod_rel", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pod_rel", $this->tables, true ) ) {
 			return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
 		}
 
@@ -95,7 +95,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 		 */
 		global $wpdb;
 
-		if ( ! in_array( "{$wpdb->prefix}pod", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pod", $this->tables, true ) ) {
 			return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
 		}
 
@@ -120,7 +120,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 		 */
 		global $wpdb;
 
-		if ( ! in_array( "{$wpdb->prefix}pod_templates", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pod_templates", $this->tables, true ) ) {
 			return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
 		}
 
@@ -145,7 +145,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 		 */
 		global $wpdb;
 
-		if ( ! in_array( "{$wpdb->prefix}pod_pages", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pod_pages", $this->tables, true ) ) {
 			return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
 		}
 
@@ -170,7 +170,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 		 */
 		global $wpdb;
 
-		if ( ! in_array( "{$wpdb->prefix}pod_helpers", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pod_helpers", $this->tables, true ) ) {
 			return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
 		}
 
@@ -203,7 +203,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 		$pod = pods_sanitize( pods_clean_name( $params->pod ) );
 
-		if ( ! in_array( "{$wpdb->prefix}pod_tbl_{$pod}", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pod_tbl_{$pod}", $this->tables, true ) ) {
 			return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
 		}
 
@@ -229,7 +229,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 		if ( ! empty( $field_rows ) ) {
 			foreach ( $field_rows as $field ) {
-				if ( ! in_array( $field->coltype, array( 'pick', 'file' ) ) ) {
+				if ( ! in_array( $field->coltype, array( 'pick', 'file' ), true ) ) {
 					$fields[] = $field->name;
 				}
 			}
@@ -240,7 +240,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 		$errors = array();
 
 		foreach ( $columns as $column => $info ) {
-			if ( ! in_array( $column, $fields ) ) {
+			if ( ! in_array( $column, $fields, true ) ) {
 				$errors[] = "<strong>{$column}</strong> " . __( 'is a field in the table, but was not found in this pod - the field data will not be migrated.', 'pods' );
 			}
 		}
@@ -377,7 +377,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 					$row->name = pods_clean_name( $row->name );
 
-					if ( in_array( $row->name, array( 'created', 'modified', 'author' ) ) ) {
+					if ( in_array( $row->name, array( 'created', 'modified', 'author' ), true ) ) {
 						$row->name .= '2';
 					}
 
@@ -412,7 +412,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 						),
 					);
 
-					if ( in_array( $field_params['name'], $found_fields ) ) {
+					if ( in_array( $field_params['name'], $found_fields, true ) ) {
 						continue;
 					}
 
@@ -604,7 +604,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 				foreach ( $pod_fields as $field ) {
 					// Handle name changes
-					if ( in_array( $field->name, array( 'created', 'modified', 'author' ) ) ) {
+					if ( in_array( $field->name, array( 'created', 'modified', 'author' ), true ) ) {
 						$field->name .= '2';
 					}
 
@@ -625,7 +625,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 				$field = $types[ $r->datatype ]['fields'][ $types[ $r->datatype ]['old_fields'][ $r->field_id ] ];
 
-				if ( ! in_array( $field['type'], array( 'pick', 'file' ) ) ) {
+				if ( ! in_array( $field['type'], array( 'pick', 'file' ), true ) ) {
 					continue;
 				}
 
@@ -777,7 +777,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 				foreach ( $data as $cap ) {
 					if ( 0 === strpos( 'manage_', $cap ) ) {
-						if ( in_array( $cap, array( 'manage_roles' ) ) ) {
+						if ( 'manage_roles' === $cap ) {
 							continue;
 						}
 
@@ -913,19 +913,19 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 		$pod = pods_sanitize( pods_clean_name( $params->pod ) );
 
-		if ( ! in_array( "{$wpdb->prefix}pod_tbl_{$pod}", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pod_tbl_{$pod}", $this->tables, true ) ) {
 			return pods_error( __( 'Table not found, items cannot be migrated', 'pods' ) );
 		}
 
-		if ( ! in_array( "{$wpdb->prefix}pods_{$pod}", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pods_{$pod}", $this->tables, true ) ) {
 			return pods_error( __( 'New table not found, items cannot be migrated', 'pods' ) );
 		}
 
-		if ( ! in_array( "{$wpdb->prefix}pod_types", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pod_types", $this->tables, true ) ) {
 			return pods_error( __( 'Pod Types table not found, items cannot be migrated', 'pods' ) );
 		}
 
-		if ( ! in_array( "{$wpdb->prefix}pod", $this->tables ) ) {
+		if ( ! in_array( "{$wpdb->prefix}pod", $this->tables, true ) ) {
 			return pods_error( __( 'Pod table not found, items cannot be migrated', 'pods' ) );
 		}
 
@@ -948,8 +948,8 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 					'created',
 					'modified',
 					'author',
-				)
-			) && ! in_array( $field['type'], array( 'file', 'pick' ) ) ) {
+				), true
+			) && ! in_array( $field['type'], array( 'file', 'pick' ), true ) ) {
 				$columns[]     = pods_sanitize( $field['name'] );
 				$old_columns[] = pods_var( '_pods_1x_field_name', $field['options'], $field['name'], null, false );
 			}

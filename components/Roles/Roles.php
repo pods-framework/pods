@@ -460,7 +460,7 @@ class Pods_Roles extends PodsComponent {
 	}
 
 	/**
-	 * @return array
+	 * @return string[]
 	 */
 	public function get_wp_capabilities() {
 

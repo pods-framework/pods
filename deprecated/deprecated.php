@@ -442,7 +442,7 @@ function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form
  * @param string $message
  * @param bool   $error Whether or not it is an error message
  *
- * @return bool
+ * @return boolean|null
  *
  * @since     1.12
  * @deprcated 2.3
@@ -459,7 +459,7 @@ function pods_ui_message( $message, $error = false ) {
  *
  * @param string $message
  *
- * @return bool
+ * @return boolean|null
  *
  * @since     1.12
  * @deprcated 2.3
@@ -516,7 +516,7 @@ function pods_point_to_version( $point ) {
  *
  * @param $version
  *
- * @return array|string
+ * @return string
  */
 function pods_version_to_point( $version ) {
 

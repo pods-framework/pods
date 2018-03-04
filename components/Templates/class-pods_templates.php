@@ -298,8 +298,8 @@ class Pods_Templates_Frontier {
 	/**
 	 * create and register an instance ID
 	 *
-	 * @param $id
-	 * @param $process
+	 * @param string $id
+	 * @param string $process
 	 *
 	 * @return string
 	 */
@@ -491,8 +491,8 @@ class Pods_Templates_Frontier {
 	 *
 	 * Get the current URL
 	 *
-	 * @param null $src
-	 * @param null $path
+	 * @param string $src
+	 * @param string $path
 	 *
 	 * @return string
 	 */
@@ -509,7 +509,7 @@ class Pods_Templates_Frontier {
 	 *
 	 * Get the current URL
 	 *
-	 * @param null $src
+	 * @param string $src
 	 *
 	 * @return string
 	 */

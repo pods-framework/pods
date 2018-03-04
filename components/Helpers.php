@@ -359,7 +359,7 @@ class Pods_Helpers extends PodsComponent {
      * $params['name'] string Field name
      *
      * @param array $params An associative array of parameters
-     * @param null $obj
+     * @param Pods $obj
      *
      * @return mixed Anything returned by the helper
      * @since 2.0

@@ -439,7 +439,7 @@ class PodsUI {
 	 * @param mixed $options    Object, Array, or String containing Pod or Options to be used
 	 * @param bool  $deprecated Set to true to support old options array from Pods UI plugin
 	 *
-	 * @return \PodsUI
+	 * @return false|null
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 * @since   2.0
@@ -1481,7 +1481,7 @@ class PodsUI {
 	}
 
 	/**
-	 * @return mixed
+	 * @return null|boolean
 	 */
 	public function go() {
 
@@ -1594,7 +1594,7 @@ class PodsUI {
 	}
 
 	/**
-	 * @return mixed
+	 * @return null|boolean
 	 */
 	public function add() {
 
@@ -1641,7 +1641,7 @@ class PodsUI {
 	/**
 	 * @param bool $duplicate
 	 *
-	 * @return mixed
+	 * @return null|boolean
 	 */
 	public function edit( $duplicate = false ) {
 
@@ -1716,7 +1716,7 @@ class PodsUI {
 	 * @param bool $create
 	 * @param bool $duplicate
 	 *
-	 * @return bool|mixed
+	 * @return null|boolean
 	 */
 	public function form( $create = false, $duplicate = false ) {
 
@@ -1877,7 +1877,7 @@ class PodsUI {
 	}
 
 	/**
-	 * @return bool|mixed
+	 * @return null|boolean
 	 * @since 2.3.10
 	 */
 	public function view() {
@@ -2158,9 +2158,9 @@ class PodsUI {
 	}
 
 	/**
-	 * @param null $id
+	 * @param integer $id
 	 *
-	 * @return bool|mixed
+	 * @return null|boolean
 	 */
 	public function delete( $id = null ) {
 
@@ -2718,7 +2718,7 @@ class PodsUI {
 
 	/**
 	 * @param int  $counter
-	 * @param null $method
+	 * @param string $method
 	 *
 	 * @return array
 	 */
@@ -3688,7 +3688,7 @@ class PodsUI {
 	/**
 	 * @param bool $reorder
 	 *
-	 * @return bool|mixed
+	 * @return null|boolean
 	 */
 	public function table( $reorder = false ) {
 
@@ -4775,7 +4775,7 @@ class PodsUI {
 	}
 
 	/**
-	 * @param bool|array $exclude
+	 * @param string[] $exclude
 	 * @param bool|array $array
 	 */
 	public function hidden_vars( $exclude = false, $array = false ) {

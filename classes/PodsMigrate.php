@@ -545,7 +545,7 @@ class PodsMigrate {
 	 * @param array  $data      Array of data
 	 * @param string $delimiter Delimiter for export type 'sv'
 	 *
-	 * @return bool
+	 * @return false|string
 	 */
 	public function build_sv( $data = null, $delimiter = null ) {
 
@@ -624,7 +624,7 @@ class PodsMigrate {
 	/**
 	 * @param array $data Array of data
 	 *
-	 * @return bool
+	 * @return false|string
 	 */
 	public function build_xml( $data = null ) {
 
@@ -1238,7 +1238,7 @@ class PodsMigrate {
 	 * @param array  $data   Data to export.
 	 * @param bool   $single Whether this is a single item export.
 	 *
-	 * @return mixed
+	 * @return string
 	 */
 	public static function export_data_to_file( $file, $data, $single = false ) {
 

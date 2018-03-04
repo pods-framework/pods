@@ -105,7 +105,7 @@ class PodsArray implements ArrayAccess {
 	/**
 	 * Validate value on a specific type and set default (if empty)
 	 *
-	 * @param mixed       $offset  Used to get value of Array or Variable on Object.
+	 * @param string       $offset  Used to get value of Array or Variable on Object.
 	 * @param mixed|null  $default Used to set default value if it doesn't exist.
 	 * @param string|null $type    Used to force a specific type of variable (allowed: array, object, integer, absint,
 	 *                             boolean).

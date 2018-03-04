@@ -17,7 +17,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 	}
 
 	/**
-	 * @return array|bool|int|mixed|null|void
+	 * @return integer
 	 */
 	public function prepare_relationships() {
 

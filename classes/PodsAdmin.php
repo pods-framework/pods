@@ -2568,7 +2568,7 @@ class PodsAdmin {
 	 * @param PodsUI     $obj PodsUI object.
 	 * @param int|string $id  Item ID.
 	 *
-	 * @return mixed
+	 * @return boolean|null
 	 */
 	public function admin_setup_reset( $obj, $id ) {
 
@@ -2617,7 +2617,7 @@ class PodsAdmin {
 	 * @param int|string $id  Item ID.
 	 * @param PodsUI     $obj PodsUI object.
 	 *
-	 * @return mixed
+	 * @return boolean|null
 	 */
 	public function admin_setup_delete( $id, $obj ) {
 
@@ -2848,7 +2848,7 @@ class PodsAdmin {
 	 *
 	 * @param PodsUI $ui PodsUI object.
 	 *
-	 * @return bool
+	 * @return boolean|null
 	 */
 	public function admin_components_toggle( $ui ) {
 
@@ -2992,7 +2992,7 @@ class PodsAdmin {
 	 *
 	 * @param array $capabilities List of extra capabilities to add.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function admin_capabilities( $capabilities ) {
 

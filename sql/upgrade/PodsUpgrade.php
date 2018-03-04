@@ -164,7 +164,7 @@ class PodsUpgrade {
 	}
 
 	/**
-	 * @param      $method
+	 * @param      string $method
 	 * @param      $v
 	 * @param null   $x
 	 */
@@ -186,7 +186,7 @@ class PodsUpgrade {
 	}
 
 	/**
-	 * @param      $method
+	 * @param      string $method
 	 * @param null   $x
 	 *
 	 * @return bool

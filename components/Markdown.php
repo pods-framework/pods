@@ -1243,8 +1243,8 @@ if ( ! function_exists( 'Markdown' ) ) :
 		public $list_level = 0;
 
 		/**
-		 * @param $list_str
-		 * @param $marker_any_re
+		 * @param string $list_str
+		 * @param string $marker_any_re
 		 *
 		 * @return mixed
 		 */
@@ -1371,7 +1371,7 @@ if ( ! function_exists( 'Markdown' ) ) :
 		}
 
 		/**
-		 * @param $code
+		 * @param string $code
 		 *
 		 * @return string
 		 */
@@ -1978,7 +1978,7 @@ if ( ! function_exists( 'Markdown' ) ) :
 		public $utf8_strlen = 'mb_strlen';
 
 		/**
-		 * @param $text
+		 * @param string $text
 		 *
 		 * @return mixed
 		 */

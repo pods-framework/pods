@@ -254,7 +254,7 @@ class Pods_Templates_Auto_Template_Settings {
 	 *
 	 * @param bool $load_in_admin Optional. Whether to load in admin. Default is false.
 	 *
-	 * @return Pods_PFAT_Frontend
+	 * @return Pods_Templates_Auto_Template_Front_End|null
 	 *
 	 * @since 2.5.5
 	 */

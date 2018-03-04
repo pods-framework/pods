@@ -47,8 +47,9 @@
     "wp-cli/wp-cli": "1.*",
     "phpunit/phpunit": "4.*",
     "mockery/mockery": "0.9.*",
-    "wp-coding-standards/wpcs": "0.14.*",
     "squizlabs/php_codesniffer": "3.*",
+    "DealerDirect/phpcodesniffer-composer-installer":"0.4.*",
+    "wp-coding-standards/wpcs": "0.14.*",
     "wimg/php-compatibility": "8.*"
   },
   "suggest": {

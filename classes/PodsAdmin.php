@@ -87,7 +87,7 @@ class PodsAdmin {
 			 */
 			$pods_admin_ajax_actions = apply_filters( 'pods_admin_ajax_actions', $pods_admin_ajax_actions );
 
-			if ( in_array( pods_v( 'action', 'get' ), $pods_admin_ajax_actions, true ) || in_array( pods_v( 'action', 'post' ), $pods_admin_ajax_actions, true ) ) {
+			if ( in_array( pods_v( 'action' ), $pods_admin_ajax_actions, true ) || in_array( pods_v( 'action', 'post' ), $pods_admin_ajax_actions, true ) ) {
 				// @codingStandardsIgnoreLine
 				foreach ( $_POST as $key => $value ) {
 					if ( 'action' === $key || 0 === strpos( $key, '_podsfix_' ) ) {
@@ -276,7 +276,7 @@ class PodsAdmin {
 								$all_title = $plural_label;
 								$all_label = pods_v( 'label_all_items', $pod['options'], __( 'All', 'pods' ) . ' ' . $plural_label );
 
-								if ( pods_v( 'page', 'get' ) === $page ) {
+								if ( pods_v( 'page' ) === $page ) {
 									if ( 'edit' === pods_v( 'action', 'get', 'manage' ) ) {
 										$all_title = pods_v( 'label_edit_item', $pod['options'], __( 'Edit', 'pods' ) . ' ' . $singular_label );
 									} elseif ( 'add' === pods_v( 'action', 'get', 'manage' ) ) {
@@ -350,7 +350,7 @@ class PodsAdmin {
 							$all_title = $plural_label;
 							$all_label = __( 'Manage', 'pods' ) . ' ' . $plural_label;
 
-							if ( pods_v( 'page', 'get' ) === $page ) {
+							if ( pods_v( 'page' ) === $page ) {
 								if ( 'edit' === pods_v( 'action', 'get', 'manage' ) ) {
 									$all_title = __( 'Edit', 'pods' ) . ' ' . $singular_label;
 								} elseif ( 'add' === pods_v( 'action', 'get', 'manage' ) ) {
@@ -852,7 +852,7 @@ class PodsAdmin {
 	 */
 	public function register_media_assets() {
 
-		if ( 'pods_media_attachment' === pods_v( 'inlineId', 'get' ) ) {
+		if ( 'pods_media_attachment' === pods_v( 'inlineId' ) ) {
 			wp_enqueue_style( 'pods-styles' );
 		}
 	}
@@ -2911,7 +2911,7 @@ class PodsAdmin {
 			return;
 		}
 
-		if ( '1' === pods_v( 'toggled' ) ) {
+		if ( 1 === (int) pods_v( 'toggled' ) ) {
 			$toggle = PodsInit::$components->toggle( $component );
 
 			if ( true === $toggle ) {

@@ -638,7 +638,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 				$related_item_id  = $r->tbl_row_id;
 
 				if ( 'pick' === $field['type'] ) {
-					$old_sister_id = (int) pods_var( '_pods_1x_sister_id', $field['options'], 0 );
+					$old_sister_id = (int) pods_v( '_pods_1x_sister_id', $field['options'], 0 );
 
 					if ( 0 < $old_sister_id ) {
 						$sql = '
@@ -951,7 +951,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 				), true
 			) && ! in_array( $field['type'], array( 'file', 'pick' ), true ) ) {
 				$columns[]     = pods_sanitize( $field['name'] );
-				$old_columns[] = pods_var( '_pods_1x_field_name', $field['options'], $field['name'], null, false );
+				$old_columns[] = pods_v( '_pods_1x_field_name', $field['options'], $field['name'], false );
 			}
 		}
 
@@ -1007,15 +1007,9 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 		update_option( 'pods_framework_upgraded_1_x', 1 );
 
-		$oldget = $_GET;
-
-		$_GET['toggle'] = 1;
-
-		PodsInit::$components->toggle( 'templates' );
-		PodsInit::$components->toggle( 'pages' );
-		PodsInit::$components->toggle( 'helpers' );
-
-		$_GET = $oldget;
+		PodsInit::$components->activate_component( 'templates' );
+		PodsInit::$components->activate_component( 'pages' );
+		PodsInit::$components->activate_component( 'helpers' );
 
 		$this->api->cache_flush_pods();
 

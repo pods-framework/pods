@@ -930,7 +930,7 @@ class PodsUI {
 		$options->validate( 'view', pods_var( 'view' . $options->num, 'get', $this->view, null, true ), 'isset', $this->views );
 
 		$options->validate( 'searchable', $this->searchable, 'boolean' );
-		$options->validate( 'search', pods_var( 'search' . $options->num, 'get' ) );
+		$options->validate( 'search', pods_var( 'search' . $options->num ) );
 		$options->validate( 'search_across', $this->search_across, 'boolean' );
 		$options->validate( 'search_across_picks', $this->search_across_picks, 'boolean' );
 		$options->validate( 'filters', $this->filters, 'array' );
@@ -1172,7 +1172,7 @@ class PodsUI {
 			}
 		}
 
-		$unique_identifier = pods_var( 'page', 'get' );
+		$unique_identifier = pods_var( 'page' );
 		// wp-admin page
 		if ( is_object( $this->pod ) && isset( $this->pod->pod ) ) {
 			$unique_identifier = '_' . $this->pod->pod;
@@ -2958,7 +2958,7 @@ class PodsUI {
 					<?php
 							echo PodsForm::field( 'filter_' . $filter . '_end', $end, $filter_field['type'], $filter_field );
 											} elseif ( 'pick' === $filter_field['type'] ) {
-												$value = pods_var_raw( 'filter_' . $filter, 'get' );
+												$value = pods_var_raw( 'filter_' . $filter );
 
 												if ( strlen( $value ) < 1 ) {
 													$value = pods_var_raw( 'filter_default', $filter_field );}
@@ -3008,7 +3008,7 @@ class PodsUI {
 					<?php
 							echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options );
 											} else {
-												$value = pods_var_raw( 'filter_' . $filter, 'get' );
+												$value = pods_var_raw( 'filter_' . $filter );
 
 												if ( strlen( $value ) < 1 ) {
 													$value = pods_var_raw( 'filter_default', $filter_field );}
@@ -3331,7 +3331,7 @@ class PodsUI {
 						}
 
 						foreach ( $filters as $filter ) {
-							$value = pods_var_raw( 'filter_' . $filter, 'get' );
+							$value = pods_var_raw( 'filter_' . $filter );
 
 							if ( isset( $this->pod->fields[ $filter ] ) ) {
 								$filter_field = $this->pod->fields[ $filter ];
@@ -3601,7 +3601,7 @@ class PodsUI {
 							</span>
 								<?php
 							} else {
-								$value = pods_var_raw( 'filter_' . $filter, 'get' );
+								$value = pods_var_raw( 'filter_' . $filter );
 
 								if ( strlen( $value ) < 1 ) {
 									$value = pods_var_raw( 'filter_default', $filter_field );
@@ -3636,7 +3636,7 @@ class PodsUI {
 
 					<p class="pods-ui-posts-filter-toggled pods-ui-posts-filter-search<?php echo esc_attr( $zebra ? ' clear' : '' ); ?>">
 						<label for="pods-form-ui-search<?php echo esc_attr( $this->num ); ?>"><?php _e( 'Search Text', 'pods' ); ?></label>
-						<?php echo PodsForm::field( 'search' . $this->num, pods_var_raw( 'search' . $this->num, 'get' ), 'text' ); ?>
+						<?php echo PodsForm::field( 'search' . $this->num, pods_var_raw( 'search' . $this->num ), 'text' ); ?>
 					</p>
 
 					<?php $zebra = empty( $zebra ); ?>

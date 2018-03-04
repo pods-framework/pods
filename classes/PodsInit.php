@@ -1313,7 +1313,7 @@ class PodsInit {
 
 		global $wpdb;
 
-		if ( is_multisite() && 1 === (int) pods_v( 'networkwide', 'get' ) ) {
+		if ( is_multisite() && 1 === (int) pods_v( 'networkwide' ) ) {
 			$_blog_ids = $wpdb->get_col( "SELECT `blog_id` FROM `{$wpdb->blogs}`" );
 
 			foreach ( $_blog_ids as $_blog_id ) {

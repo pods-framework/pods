@@ -37,7 +37,7 @@ class PodsUpgrade {
 	}
 
 	/**
-	 * @param null $_blog_id
+	 * @param null $_blog_id Blog ID to install.
 	 */
 	public function install( $_blog_id = null ) {
 
@@ -57,7 +57,7 @@ class PodsUpgrade {
 
 		do_action( 'pods_install', PODS_VERSION, $pods_version, $_blog_id );
 
-		if ( ( ! pods_tableless() ) && false !== apply_filters( 'pods_install_run', null, PODS_VERSION, $pods_version, $_blog_id ) && ! isset( $_GET['pods_bypass_install'] ) ) {
+		if ( ( ! pods_tableless() ) && false !== apply_filters( 'pods_install_run', null, PODS_VERSION, $pods_version, $_blog_id ) && 0 === (int) pods_v( 'pods_bypass_install' ) ) {
 			$sql = file_get_contents( PODS_DIR . 'sql/dump.sql' );
 			$sql = apply_filters( 'pods_install_sql', $sql, PODS_VERSION, $pods_version, $_blog_id );
 
@@ -88,13 +88,13 @@ class PodsUpgrade {
 			}
 
 			// Auto activate component.
-			if ( empty( PodsInit::$components ) ) {
+			if ( ! PodsInit::$components ) {
 				if ( ! defined( 'PODS_LIGHT' ) || ! PODS_LIGHT ) {
 					PodsInit::$components = pods_components();
 				}
 			}
 
-			if ( ! empty( PodsInit::$components ) ) {
+			if ( PodsInit::$components ) {
 				PodsInit::$components->activate_component( 'templates' );
 			}
 		}//end if

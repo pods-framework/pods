@@ -4290,7 +4290,7 @@ class Pods implements Iterator {
 					if ( ! current_user_can( 'pods_add_' . $this->pod ) ) {
 						$actions_disabled['add'] = 'add';
 
-						if ( 'add' === pods_v( 'action' . $num, 'get' ) ) {
+						if ( 'add' === pods_v( 'action' . $num ) ) {
 							$_GET[ 'action' . $num ] = 'manage';
 						}
 					}

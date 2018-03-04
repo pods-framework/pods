@@ -1266,7 +1266,7 @@ class PodsData {
 				}
 
 				if ( 'pick' === $attributes['type'] ) {
-					$filter_value = pods_v( 'filter_' . $field, 'get' );
+					$filter_value = pods_v( 'filter_' . $field );
 
 					if ( ! is_array( $filter_value ) ) {
 						$filter_value = (array) $filter_value;
@@ -3244,13 +3244,13 @@ class PodsData {
 		$rel_alias = 'rel_' . $field_joined;
 
 		if ( pods_v( 'search', $traverse_recurse['params'], false ) && empty( $traverse_recurse['params']->filters ) ) {
-			if ( 0 < strlen( pods_v( 'filter_' . $field_joined, 'get' ) ) ) {
-				$val = absint( pods_v( 'filter_' . $field_joined, 'get' ) );
+			if ( 0 < strlen( pods_v( 'filter_' . $field_joined ) ) ) {
+				$val = absint( pods_v( 'filter_' . $field_joined ) );
 
 				$search = "`{$field_joined}`.`{$table_info[ 'field_id' ]}` = {$val}";
 
 				if ( 'text' === $this->search_mode ) {
-					$val = pods_v_sanitized( 'filter_' . $field_joined, 'get' );
+					$val = pods_v_sanitized( 'filter_' . $field_joined );
 
 					$search = "`{$field_joined}`.`{$traverse[ 'name' ]}` = '{$val}'";
 				} elseif ( 'text_like' === $this->search_mode ) {

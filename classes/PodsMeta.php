@@ -1276,12 +1276,12 @@ class PodsMeta {
 		}
 
 		// Block Quick Edits / Bulk Edits
-		if ( 'edit.php' === pods_v( 'pagenow', 'global' ) && ( 'inline-save' === pods_v( 'action', 'post' ) || null !== pods_v( 'bulk_edit', 'get' ) || is_array( pods_v( 'post', 'get' ) ) ) ) {
+		if ( 'edit.php' === pods_v( 'pagenow', 'global' ) && ( 'inline-save' === pods_v( 'action', 'post' ) || null !== pods_v( 'bulk_edit' ) || is_array( pods_v( 'post' ) ) ) ) {
 			return;
 		}
 
 		// Block Trash
-		if ( in_array( pods_v( 'action', 'get' ), array( 'untrash', 'trash' ), true ) ) {
+		if ( in_array( pods_v( 'action' ), array( 'untrash', 'trash' ), true ) ) {
 			return;
 		}
 

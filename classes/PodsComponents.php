@@ -335,7 +335,7 @@ class PodsComponents {
 			$components = array();
 		}
 
-		if ( PODS_VERSION !== PodsInit::$version || ! is_array( $components ) || empty( $components ) || ( is_admin() && 'pods-components' === pods_v( 'page', 'get' ) && 1 !== (int) pods_transient_get( 'pods_components_refresh' ) ) ) {
+		if ( PODS_VERSION !== PodsInit::$version || ! is_array( $components ) || empty( $components ) || ( is_admin() && 'pods-components' === pods_v( 'page' ) && 1 !== (int) pods_transient_get( 'pods_components_refresh' ) ) ) {
 			do_action( 'pods_components_get' );
 
 			// @codingStandardsIgnoreLine
@@ -538,7 +538,7 @@ class PodsComponents {
 	 */
 	public function admin_handler() {
 
-		$component = str_replace( 'pods-component-', '', pods_v_sanitized( 'page', 'get' ) );
+		$component = str_replace( 'pods-component-', '', pods_v_sanitized( 'page' ) );
 
 		if ( isset( $this->components[ $component ] ) && isset( $this->components[ $component ]['object'] ) && is_object( $this->components[ $component ]['object'] ) ) {
 			// Component init
@@ -651,27 +651,28 @@ class PodsComponents {
 	/**
 	 * Toggle a component on or off
 	 *
-	 * @param string $component The component name to toggle.
+	 * @param string  $component   The component name to toggle.
+	 * @param boolean $toggle_mode Force toggle on or off.
 	 *
 	 * @return bool
 	 *
 	 * @since 2.0
 	 */
-	public function toggle( $component ) {
+	public function toggle( $component, $toggle_mode = false ) {
 
-		$toggle = null;
+		$toggled = null;
 
-		$toggle_mode = (int) pods_v( 'toggle', 'get' );
+		$toggle_mode = (boolean) pods_v( 'toggle', 'get', $toggle_mode );
 
-		if ( 1 === $toggle_mode ) {
-			$this->activate_component( $component );
-			$toggle = true;
+		if ( $toggle_mode ) {
+			$toggled = $this->activate_component( $component );
 		} else {
 			$this->deactivate_component( $component );
-			$toggle = false;
+
+			$toggled = false;
 		}
 
-		return $toggle;
+		return $toggled;
 
 	}
 

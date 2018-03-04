@@ -47,7 +47,7 @@ class PodsUpgrade {
 		global $wpdb;
 
 		// Switch DB table prefixes
-		if ( null !== $_blog_id && $_blog_id != $wpdb->blogid ) {
+		if ( null !== $_blog_id && $_blog_id !== $wpdb->blogid ) {
 			switch_to_blog( pods_absint( $_blog_id ) );
 		} else {
 			$_blog_id = null;
@@ -241,7 +241,7 @@ class PodsUpgrade {
 		global $wpdb;
 
 		foreach ( $this->tables as $table ) {
-			if ( false !== strpos( $table, "{$wpdb->prefix}pod_" ) || "{$wpdb->prefix}pod" == $table ) {
+			if ( false !== strpos( $table, "{$wpdb->prefix}pod_" ) || "{$wpdb->prefix}pod" === $table ) {
 				pods_query( "DROP TABLE `{$table}`", false );
 			}
 		}

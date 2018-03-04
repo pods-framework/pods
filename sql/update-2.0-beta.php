@@ -103,17 +103,17 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 			$table     = $table[0];
 			$new_table = $table;
 
-			if ( "{$wpdb->prefix}pods_rel" == $table ) {
+			if ( "{$wpdb->prefix}pods_rel" === $table ) {
 				$new_table = "{$wpdb->prefix}podsrel";
 
 				$podsrel_found = true;
-			} elseif ( "{$wpdb->prefix}podsrel" == $table ) {
+			} elseif ( "{$wpdb->prefix}podsrel" === $table ) {
 				$podsrel_found = true;
 			} else {
 				$new_table = str_replace( 'pods_tbl_', 'pods_', $table );
 			}
 
-			if ( $table != $new_table ) {
+			if ( $table !== $new_table ) {
 				$wpdb->query( "ALTER TABLE `{$table}` RENAME `{$new_table}`" );
 			}
 		}
@@ -409,7 +409,7 @@ function pods_2_alpha_migrate_pods() {
 
 		$renamed = false;
 
-		if ( $pod->storage == 'table' ) {
+		if ( 'table' === $pod->storage ) {
 			try {
 				pods_query( "RENAME TABLE `@wp_pods_tbl_{$pod->name}` TO `@wp_pods_tb_{$pod->name}`" );
 				$renamed = true;
@@ -420,7 +420,7 @@ function pods_2_alpha_migrate_pods() {
 
 		$pod_id = $api->save_pod( $pod_params );
 
-		if ( $pod->storage == 'table' && $renamed ) {
+		if ( 'table' === $pod->storage && $renamed ) {
 			pods_query( "DROP TABLE `@wp_pods_tbl_{$pod->name}`", false );
 			pods_query( "RENAME TABLE `@wp_pods_tb_{$pod->name}` TO `@wp_pods_tbl_{$pod->name}`" );
 		}

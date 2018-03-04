@@ -442,7 +442,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 						$field_params['options']['pick_display'] = '';
 						$field_params['options']['pick_size']    = 'medium';
 
-						if ( 1 == $row->multiple ) {
+						if ( 1 === (int) $row->multiple ) {
 							$field_params['options']['pick_format_type']  = 'multi';
 							$field_params['options']['pick_format_multi'] = 'checkbox';
 							$field_params['options']['pick_limit']        = 0;
@@ -505,7 +505,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 		$this->update_progress( __FUNCTION__, $last_id );
 
-		if ( $migration_limit == count( $pod_types ) ) {
+		if ( count( $pod_types ) === $migration_limit ) {
 			return '-2';
 		} else {
 			return '1';
@@ -722,7 +722,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 		$this->update_progress( __FUNCTION__, $last_id );
 
-		if ( $migration_limit == count( $rel ) ) {
+		if ( count( $rel ) === $migration_limit ) {
 			return '-2';
 		} else {
 			return '1';
@@ -765,7 +765,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 		if ( ! empty( $old_roles ) ) {
 			foreach ( $old_roles as $role => $data ) {
-				if ( $role == '_wpnonce' ) {
+				if ( '_wpnonce' === $role ) {
 					continue;
 				}
 
@@ -1054,7 +1054,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 		global $wpdb;
 
 		foreach ( $this->tables as $table ) {
-			if ( false !== strpos( $table, "{$wpdb->prefix}pod_" ) || "{$wpdb->prefix}pod" == $table ) {
+			if ( false !== strpos( $table, "{$wpdb->prefix}pod_" ) || "{$wpdb->prefix}pod" === $table ) {
 				pods_query( "DROP TABLE `{$table}`", false );
 			}
 		}

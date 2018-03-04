@@ -83,7 +83,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 
 		$this->update_progress( __FUNCTION__, $last_id );
 
-		if ( $migration_limit == count( $rel ) ) {
+		if ( count( $rel ) === $migration_limit ) {
 			return '-2';
 		} else {
 			return '1';
@@ -116,6 +116,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 		delete_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ) );
 
 		if ( in_array( $this->version, $upgraded, true ) ) {
+	        // @codingStandardsIgnoreLine
 			unset( $upgraded[ array_search( $this->version, $upgraded ) ] );
 		}
 

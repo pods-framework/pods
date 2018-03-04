@@ -5403,6 +5403,8 @@ class PodsAPI {
 		    // Delete relationship from cache
 		    unset( self::$related_item_cache[ $related_pod[ 'id' ] ][ $related_field[ 'id' ] ] );
 	    }
+
+	    // @codingStandardsIgnoreLine
         unset( $related_ids[ array_search( $id, $related_ids ) ] );
 
         $no_conflict = pods_no_conflict_check( $related_pod[ 'type' ] );

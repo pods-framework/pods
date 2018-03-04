@@ -25,7 +25,7 @@ function pods_sanitize( $input, $params = array() ) {
 	$defaults = array(
 		'nested' => false,
 		'type'   => null,
-	// %s %d %f etc
+		// %s %d %f etc
 	);
 
 	if ( ! is_array( $params ) ) {
@@ -136,7 +136,7 @@ function pods_slash( $input, $params = array() ) {
 
 	$defaults = array(
 		'type' => null,
-	// %s %d %f etc
+		// %s %d %f etc
 	);
 
 	if ( ! is_array( $params ) ) {
@@ -951,12 +951,10 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 				$user->set_role( $value );
 			} elseif ( isset( $user_data[ $var ] ) ) {
 				// Core field
-				wp_update_user(
-					array(
+				wp_update_user( array(
 						'ID' => $user->ID,
 						$var => $value,
-					)
-				);
+					) );
 			} else {
 				// Meta field
 				update_user_meta( $user->ID, $var, $value );
@@ -1002,19 +1000,15 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false, $context = 'display' ) {
 
 	if ( 'raw' === $context ) {
-		$output = pods_v(
-			$var, $type, $default, $strict, array(
+		$output = pods_v( $var, $type, $default, $strict, array(
 				'allowed' => $allowed,
 				'casting' => $casting,
-			)
-		);
+			) );
 	} else {
-		$output = pods_v_sanitized(
-			$var, $type, $default, $strict, array(
+		$output = pods_v_sanitized( $var, $type, $default, $strict, array(
 				'allowed' => $allowed,
 				'casting' => $casting,
-			)
-		);
+			) );
 	}
 
 	return $output;
@@ -1040,12 +1034,10 @@ function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = nul
  */
 function pods_var_raw( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false ) {
 
-	return pods_v(
-		$var, $type, $default, $strict, array(
+	return pods_v( $var, $type, $default, $strict, array(
 			'allowed' => $allowed,
 			'casting' => $casting,
-		)
-	);
+		) );
 
 }
 
@@ -1262,12 +1254,10 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
 	$id     = absint( $id );
 
 	if ( empty( $pod_data ) ) {
-		$pod_data = pods_api()->load_pod(
-			array(
-				'id'   => $pod_id,
-				'name' => $pod,
-			), false
-		);
+		$pod_data = pods_api()->load_pod( array(
+			'id'   => $pod_id,
+			'name' => $pod,
+		), false );
 	}
 
 	if ( empty( $pod_data ) || empty( $pod_id ) || empty( $pod ) ) {

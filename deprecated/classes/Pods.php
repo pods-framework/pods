@@ -391,13 +391,11 @@ class Pods_Deprecated {
 					$name = $field['name'];
 				}
 
-				if ( in_array(
-					$name, array(
-						'created',
-						'modified',
-						'author',
-					)
-				) && isset( $this->obj->fields[ $name . '2' ] ) ) {
+				if ( in_array( $name, array(
+							'created',
+							'modified',
+							'author',
+						) ) && isset( $this->obj->fields[ $name . '2' ] ) ) {
 					$name .= '2';
 				}
 
@@ -415,7 +413,7 @@ class Pods_Deprecated {
 	 *
 	 * @deprecated deprecated since 2.0
 	 *
-	 * @param $field
+	 * @param array $field Field data.
 	 */
 	public function build_field_html( $field ) {
 
@@ -457,13 +455,11 @@ class Pods_Deprecated {
 			pods_deprecated( 'Pods::get_field', '2.0', 'Pods::field' );
 		}
 
-		$value = $this->obj->field(
-			array(
+		$value = $this->obj->field( array(
 				'name'       => $name,
 				'orderby'    => $orderby,
 				'deprecated' => true,
-			)
-		);
+			) );
 
 		if ( is_array( $value ) && ! empty( $value ) ) {
 			if ( false === strpos( $name, '.' ) && ! isset( $value[0] ) ) {
@@ -589,7 +585,7 @@ class Pods_Deprecated {
 	 * @since      1.x
 	 * @deprecated deprecated since version 2.0
 	 *
-	 * @param $id
+	 * @param int $id Item ID.
 	 *
 	 * @return
 	 */
@@ -647,12 +643,10 @@ class Pods_Deprecated {
 			pods_deprecated( 'Pods::getPagination', '2.0', 'Pods::pagination' );
 		}
 
-		echo $this->obj->pagination(
-			array(
+		echo $this->obj->pagination( array(
 				'type'  => 'advanced',
 				'label' => $label,
-			)
-		);
+			) );
 	}
 
 	/**
@@ -686,9 +680,9 @@ class Pods_Deprecated {
 	/**
 	 * Run a helper within a Pod Page or WP Template
 	 *
-	 * @param      $helper_name
-	 * @param null $value
-	 * @param null $name
+	 * @param string            $helper_name Helper name.
+	 * @param null|string|array $value       Field value.
+	 * @param null|string       $name        Field name.
 	 *
 	 * @return mixed Anything returned by the helper
 	 * @internal   param string $helper The helper name
@@ -717,8 +711,8 @@ class Pods_Deprecated {
 	 *
 	 * @deprecated deprecated since version 2.0
 	 *
-	 * @param      $template_name
-	 * @param null $code
+	 * @param string      $template_name Template name.
+	 * @param null|string $code          Template code override.
 	 *
 	 * @return
 	 */

@@ -12,7 +12,7 @@ if ( ! function_exists( 'json_encode' ) ) {
 	require_once ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php';
 
 	/**
-	 * @param $str
+	 * @param mixed $str Data to encode.
 	 *
 	 * @return mixed
 	 */
@@ -24,7 +24,7 @@ if ( ! function_exists( 'json_encode' ) ) {
 	}
 
 	/**
-	 * @param $str
+	 * @param string $str JSON string.
 	 *
 	 * @return mixed
 	 */
@@ -34,12 +34,12 @@ if ( ! function_exists( 'json_encode' ) ) {
 
 		return $json->decode( $str );
 	}
-}
+}//end if
 
 // WP 3.4.x support
 if ( ! function_exists( 'wp_send_json' ) ) {
 	/**
-	 * @param $response
+	 * @param array $response Response data.
 	 */
 	function wp_send_json( $response ) {
 
@@ -79,10 +79,10 @@ if ( ! function_exists( 'get_current_url' ) ) {
  * @since      1.x
  * @deprecated deprecated since version 2.0
  *
- * @param        $sql
- * @param string $error
- * @param null   $results_error
- * @param null   $no_results_error
+ * @param string      $sql              SQL query.
+ * @param string      $error            Error message on failure.
+ * @param null|string $results_error    Error message if results returned.
+ * @param null|string $no_results_error Error message if no results returned.
  *
  * @return array|bool|mixed|null|void Result of the query
  */
@@ -153,7 +153,7 @@ class Pod {
 	 *
 	 * @since 2.0
 	 *
-	 * @param $name
+	 * @param string $name Property name.
 	 *
 	 * @return array|bool|int|mixed|PodsData
 	 */
@@ -199,8 +199,8 @@ class Pod {
 	 *
 	 * @since 2.0
 	 *
-	 * @param $name
-	 * @param $value
+	 * @param string $name  Property name.
+	 * @param mixed  $value Property value to set.
 	 *
 	 * @return mixed
 	 */
@@ -218,8 +218,8 @@ class Pod {
 	 *
 	 * @since 2.0
 	 *
-	 * @param $name
-	 * @param $args
+	 * @param string $name Call name.
+	 * @param array  $args Call arguments.
 	 *
 	 * @return mixed
 	 */
@@ -235,7 +235,7 @@ class Pod {
 	 *
 	 * @since 2.0
 	 *
-	 * @param $name
+	 * @param string $name Property name.
 	 *
 	 * @return bool
 	 */
@@ -286,9 +286,9 @@ class PodAPI {
 	 *
 	 * @since 2.0
 	 *
-	 * @param $name
+	 * @param string $name Property name.
 	 *
-	 * @return null
+	 * @return null|mixed
 	 */
 	public function __get( $name ) {
 
@@ -304,8 +304,8 @@ class PodAPI {
 	 *
 	 * @since 2.0
 	 *
-	 * @param $name
-	 * @param $args
+	 * @param string $name Call name.
+	 * @param array  $args Call arguments.
 	 *
 	 * @return mixed
 	 */
@@ -323,7 +323,7 @@ class PodAPI {
  * @since      2.0
  * @deprecated deprecated since version 2.0
  *
- * @param $obj
+ * @param Pods $obj Pods object.
  *
  * @return PodsUI
  */
@@ -340,9 +340,9 @@ function pods_ui_manage( $obj ) {
  * @since      1.x
  * @deprecated deprecated since version 2.0
  *
- * @param $object
- * @param $access
- * @param $what
+ * @param Pods   $object Pods object.
+ * @param array  $access Access array.
+ * @param string $what   Action name.
  *
  * @return bool
  */
@@ -393,10 +393,10 @@ function pods_url_variable( $key = 'last', $type = 'url' ) {
  * @since      1.2.0
  * @deprecated deprecated since version 2.0
  *
- * @param     $datatype
- * @param     $uri_hash
- * @param     $columns
- * @param int $form_count
+ * @param string $datatype   Pod name.
+ * @param string $uri_hash   URI hash for session.
+ * @param array  $columns    List of columns.
+ * @param int    $form_count Form counter.
  *
  * @return mixed|string|void
  */
@@ -415,11 +415,11 @@ function pods_generate_key( $datatype, $uri_hash, $columns, $form_count = 1 ) {
  * @since      1.2.0
  * @deprecated deprecated since version 2.0
  *
- * @param      $token
- * @param      $datatype
- * @param      $uri_hash
- * @param null $columns
- * @param int  $form_count
+ * @param string     $token      Nonce token.
+ * @param string     $datatype   Pod name.
+ * @param string     $uri_hash   URI hash for session.
+ * @param null|array $columns    List of columns.
+ * @param int        $form_count Form counter.
  *
  * @return mixed|void
  */
@@ -477,7 +477,7 @@ function pods_ui_error( $message ) {
  * @since     1.10.1
  * @deprcated 2.3
  *
- * @param $point
+ * @param string $point Version number with points.
  *
  * @return int|string
  */
@@ -514,7 +514,7 @@ function pods_point_to_version( $point ) {
  * @since     1.10
  * @deprcated 2.3
  *
- * @param $version
+ * @param string $version Version number string.
  *
  * @return array|string
  */

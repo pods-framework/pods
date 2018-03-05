@@ -5,12 +5,10 @@
 			$filters = explode( ',', $filters );
 		}
 		foreach ( $filters as $field_name ) {
-			$field = $this->api->load_column(
-				array(
+			$field = $this->api->load_column( array(
 					'name' => $field_name,
 					'pod'  => $this->pod,
-				)
-			);
+				) );
 			if ( empty( $field ) ) {
 				continue;
 			}

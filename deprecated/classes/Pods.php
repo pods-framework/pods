@@ -391,11 +391,13 @@ class Pods_Deprecated {
 					$name = $field['name'];
 				}
 
-				if ( in_array( $name, array(
-							'created',
-							'modified',
-							'author',
-						) ) && isset( $this->obj->fields[ $name . '2' ] ) ) {
+				if ( in_array(
+					$name, array(
+						'created',
+						'modified',
+						'author',
+					)
+				) && isset( $this->obj->fields[ $name . '2' ] ) ) {
 					$name .= '2';
 				}
 
@@ -455,11 +457,13 @@ class Pods_Deprecated {
 			pods_deprecated( 'Pods::get_field', '2.0', 'Pods::field' );
 		}
 
-		$value = $this->obj->field( array(
+		$value = $this->obj->field(
+			array(
 				'name'       => $name,
 				'orderby'    => $orderby,
 				'deprecated' => true,
-			) );
+			)
+		);
 
 		if ( is_array( $value ) && ! empty( $value ) ) {
 			if ( false === strpos( $name, '.' ) && ! isset( $value[0] ) ) {
@@ -643,10 +647,12 @@ class Pods_Deprecated {
 			pods_deprecated( 'Pods::getPagination', '2.0', 'Pods::pagination' );
 		}
 
-		echo $this->obj->pagination( array(
+		echo $this->obj->pagination(
+			array(
 				'type'  => 'advanced',
 				'label' => $label,
-			) );
+			)
+		);
 	}
 
 	/**

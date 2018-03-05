@@ -48,10 +48,12 @@
 								<div class="pods-field-option">
 									<?php
 									echo PodsForm::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
-									echo PodsForm::field( 'role_name', pods_var_raw( 'role_name', 'post' ), 'db', array(
+									echo PodsForm::field(
+										'role_name', pods_var_raw( 'role_name', 'post' ), 'db', array(
 											'attributes' => array( 'data-sluggable' => 'role_label' ),
 											'class'      => 'pods-validate pods-validate-required pods-slugged-lower',
-										) );
+										)
+									);
 									?>
 								</div>
 							</div>

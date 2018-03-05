@@ -58,10 +58,12 @@ class Pods_Roles extends PodsComponent {
 		global $wp_roles;
 
 		// Hook into Gravity Forms roles (since it only adds filter if Members plugin itself is activated
-		if ( class_exists( 'RGForms' ) && ! has_filter( 'members_get_capabilities', array(
-					'RGForms',
-					'members_get_capabilities',
-				) ) ) {
+		if ( class_exists( 'RGForms' ) && ! has_filter(
+			'members_get_capabilities', array(
+				'RGForms',
+				'members_get_capabilities',
+			)
+		) ) {
 			add_filter( 'members_get_capabilities', array( 'RGForms', 'members_get_capabilities' ) );
 		}
 

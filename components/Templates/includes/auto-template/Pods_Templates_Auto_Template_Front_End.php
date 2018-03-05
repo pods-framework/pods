@@ -88,13 +88,15 @@ class Pods_Templates_Auto_Template_Front_End {
 		// check if we already have the results cached & use it if we can.
 		if ( false === $the_pods ) {
 			// get all post type pods
-			$the_pods = pods_api()->load_pods( array(
+			$the_pods = pods_api()->load_pods(
+				array(
 					'type'  => array(
 						'taxonomy',
 						'post_type',
 					),
 					'names' => true,
-				) );
+				)
+			);
 
 			// cache the results
 			pods_transient_set( $key, $the_pods );

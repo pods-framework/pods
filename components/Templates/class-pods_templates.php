@@ -203,20 +203,24 @@ class Pods_Templates_Frontier {
 		wp_enqueue_style( $this->plugin_slug . '-pod_reference-styles', $this->get_url( 'assets/css/styles-pod_reference.css', __FILE__ ), array(), self::VERSION );
 
 		// add metabox
-		add_meta_box( 'view_template', __( 'Template', 'pods' ), array(
-			$this,
-			'render_metaboxes_custom',
-		), '_pods_template', 'normal', 'high', array(
+		add_meta_box(
+			'view_template', __( 'Template', 'pods' ), array(
+				$this,
+				'render_metaboxes_custom',
+			), '_pods_template', 'normal', 'high', array(
 				'slug'   => 'view_template',
 				'groups' => array(),
-			) );
-		add_meta_box( 'pod_reference', __( 'Pod Reference', 'pods' ), array(
-			$this,
-			'render_metaboxes_custom',
-		), '_pods_template', 'side', 'default', array(
+			)
+		);
+		add_meta_box(
+			'pod_reference', __( 'Pod Reference', 'pods' ), array(
+				$this,
+				'render_metaboxes_custom',
+			), '_pods_template', 'side', 'default', array(
 				'slug'   => 'pod_reference',
 				'groups' => array(),
-			) );
+			)
+		);
 
 	}
 
@@ -316,7 +320,7 @@ class Pods_Templates_Frontier {
 	 * @param      $atts
 	 * @param      $content
 	 * @param      $slug
-	 * @param bool $head
+	 * @param bool    $head
 	 *
 	 * @return string|void
 	 */
@@ -420,7 +424,8 @@ class Pods_Templates_Frontier {
 			}
 			// get clean do shortcode for header checking
 			ob_start();
-			pods_do_shortcode( $out, array(
+			pods_do_shortcode(
+				$out, array(
 					'each',
 					'pod_sub_template',
 					'once',
@@ -431,13 +436,15 @@ class Pods_Templates_Frontier {
 					'pod_after_template',
 					'if',
 					'pod_if_field',
-				) );
+				)
+			);
 			ob_get_clean();
 
 			return;
 		}//end if
 
-		return pods_do_shortcode( $out, array(
+		return pods_do_shortcode(
+			$out, array(
 				'each',
 				'pod_sub_template',
 				'once',
@@ -448,7 +455,8 @@ class Pods_Templates_Frontier {
 				'pod_after_template',
 				'if',
 				'pod_if_field',
-			) );
+			)
+		);
 	}
 
 	/**

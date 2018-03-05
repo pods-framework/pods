@@ -324,11 +324,13 @@ class Pods_Templates_Auto_Template_Settings {
 			$auto_pods = $front->auto_pods();
 
 			foreach ( $auto_pods as $name => $pod ) {
-				if ( ! $pod['has_archive'] && $pod['archive'] && $pod['type'] !== 'taxonomy' && ! in_array( $name, array(
-							'post',
-							'page',
-							'attachment',
-						) ) ) {
+				if ( ! $pod['has_archive'] && $pod['archive'] && $pod['type'] !== 'taxonomy' && ! in_array(
+					$name, array(
+						'post',
+						'page',
+						'attachment',
+					)
+				) ) {
 					$archive_test[ $pod['label'] ] = 'fail';
 				}
 			}

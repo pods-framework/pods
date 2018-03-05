@@ -13,10 +13,10 @@ if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
 	 */
 	class PodsBuilderModuleForm extends LayoutModule {
 
-		public $_name = '';
-		public $_var = 'pods-builder-form';
-		public $_description = '';
-		public $_editor_width = 500;
+		public $_name                = '';
+		public $_var                 = 'pods-builder-form';
+		public $_description         = '';
+		public $_editor_width        = 500;
 		public $_can_remove_wrappers = true;
 
 		/**

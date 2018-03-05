@@ -27,16 +27,16 @@ if ( class_exists( 'Pods_Component_I18n' ) ) {
  */
 class Pods_Component_I18n extends PodsComponent {
 
-	public $settings = array();
-	public $locale = null;
-	public $languages = array();
-	public $languages_available = array();
+	public $settings             = array();
+	public $locale               = null;
+	public $languages            = array();
+	public $languages_available  = array();
 	public $languages_translated = array();
-	public $cur_pod = null;
-	public $option_key = 'pods_component_i18n_settings';
-	public $admin_page = 'pods-component-translate-pods-admin';
-	public $capability = 'pods_i18n_activate_lanuages';
-	public $nonce = 'pods_i18n_activate_lanuages';
+	public $cur_pod              = null;
+	public $option_key           = 'pods_component_i18n_settings';
+	public $admin_page           = 'pods-component-translate-pods-admin';
+	public $capability           = 'pods_i18n_activate_lanuages';
+	public $nonce                = 'pods_i18n_activate_lanuages';
 
 	public $translatable_fields = array(
 		'label',
@@ -104,10 +104,12 @@ class Pods_Component_I18n extends PodsComponent {
 			add_filter( 'pods_register_taxonomy', array( $this, 'pods_register_wp_object_i18n' ), 10, 2 );
 
 			// ACT's
-			add_filter( 'pods_advanced_content_type_pod_data', array(
-				$this,
-				'pods_filter_object_strings_i18n',
-			), 10, 2 );
+			add_filter(
+				'pods_advanced_content_type_pod_data', array(
+					$this,
+					'pods_filter_object_strings_i18n',
+				), 10, 2
+			);
 
 			// Setting pages
 			add_filter( 'pods_admin_menu_page_title', array( $this, 'admin_menu_page_title_i18n' ), 10, 2 );
@@ -118,10 +120,12 @@ class Pods_Component_I18n extends PodsComponent {
 			add_filter( 'pods_form_ui_comment_text', array( $this, 'fields_ui_comment_text_i18n' ), 10, 3 );
 
 			foreach ( pods_form()->field_types() as $type => $data ) {
-				add_filter( 'pods_form_ui_field_' . $type . '_options', array(
-					$this,
-					'form_ui_field_options_i18n',
-				), 10, 5 );
+				add_filter(
+					'pods_form_ui_field_' . $type . '_options', array(
+						$this,
+						'form_ui_field_options_i18n',
+					), 10, 5
+				);
 			}
 
 			// Field specific
@@ -161,10 +165,12 @@ class Pods_Component_I18n extends PodsComponent {
 	 */
 	public function admin_assets() {
 
-		wp_enqueue_script( 'pods-admin-i18n', PODS_URL . 'components/I18n/pods-admin-i18n.js', array(
-			'jquery',
-			'pods-i18n',
-		), '1.0', true );
+		wp_enqueue_script(
+			'pods-admin-i18n', PODS_URL . 'components/I18n/pods-admin-i18n.js', array(
+				'jquery',
+				'pods-i18n',
+			), '1.0', true
+		);
 		$localize_script = array();
 		if ( ! empty( $this->languages ) ) {
 			foreach ( $this->languages as $lang => $lang_data ) {
@@ -748,12 +754,19 @@ class Pods_Component_I18n extends PodsComponent {
 	 */
 	public function admin_meta_box() {
 
-		add_meta_box( 'pods_i18n', // ID
-			__( 'Translation options', 'pods' ), // Label
-			array( $this, 'meta_box' ), // Callback
-			'_pods_pod', // Screen
-			'side', // Context (side)
-			'default' // Priority
+		add_meta_box(
+			'pods_i18n',
+			// ID
+			__( 'Translation options', 'pods' ),
+			// Label
+			array( $this, 'meta_box' ),
+			// Callback
+			'_pods_pod',
+			// Screen
+			'side',
+			// Context (side)
+			'default'
+			// Priority
 		);
 	}
 
@@ -785,10 +798,12 @@ class Pods_Component_I18n extends PodsComponent {
 					?>
 					<div class="pods-field-option pods-enable-disable-language" data-locale="<?php echo esc_attr( $locale ); ?>">
 						<?php
-						echo PodsForm::field( 'enable_i18n[' . $locale . ']', $pod['options']['enable_i18n'][ $locale ], 'boolean', array(
+						echo PodsForm::field(
+							'enable_i18n[' . $locale . ']', $pod['options']['enable_i18n'][ $locale ], 'boolean', array(
 								'boolean_yes_label' => '<code>' . $locale . '</code> ' . $this->create_lang_label( $lang_data ),
 								'boolean_no_label'  => '',
-							) );
+							)
+						);
 						?>
 					</div>
 					<?php
@@ -860,7 +875,7 @@ class Pods_Component_I18n extends PodsComponent {
 					$style = ' style="display: none;"';
 				}
 
-				$field_name = rtrim( $name, ']' );
+				$field_name  = rtrim( $name, ']' );
 				$field_name .= '_' . $locale . ']';
 			} else {
 				$field_name = $name . '_' . $locale;

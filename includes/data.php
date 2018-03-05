@@ -1206,9 +1206,8 @@ function pods_cast( $value, $cast_from = null ) {
 /**
  * Create a slug from an input string
  *
- * @param      $orig
- *
- * @param bool $strict
+ * @param string $orig   Original string.
+ * @param bool   $strict Whether to only support 0-9, a-z, A-Z, and dash characters.
  *
  * @return string Sanitized slug
  *
@@ -1976,9 +1975,9 @@ function pods_hierarchical_select( $list, $args = array() ) {
 /**
  * Recurse list of hierarchical data
  *
- * @param       $items
- * @param array $args Array of children and prefix keys to use
- * @param int   $depth
+ * @param array $items Items to recurse.
+ * @param array $args  Array of children and prefix keys to use.
+ * @param int   $depth Current depth of recursion.
  *
  * @return array
  * @internal param array|object $list List of items

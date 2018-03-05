@@ -55,11 +55,9 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 	private $taxonomies = array();
 
 	/**
-	 * Do things like register scripts and stylesheets
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function init() {
 
 		$this->post_option_name = $this->get_option_name( $this->post_option_name_list );
 		if ( ! is_null( $this->post_option_name ) ) {

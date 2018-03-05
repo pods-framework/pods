@@ -26,11 +26,9 @@ if ( class_exists( 'Pods_Advanced_Content_Types' ) ) {
 class Pods_Advanced_Content_Types extends PodsComponent {
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.3
+	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function init() {
 
 		if ( ! pods_tableless() ) {
 			add_filter( 'pods_admin_setup_add_create_pod_type', array( $this, 'add_pod_type' ) );

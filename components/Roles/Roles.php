@@ -27,11 +27,9 @@ if ( class_exists( 'Pods_Roles' ) ) {
 class Pods_Roles extends PodsComponent {
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function init() {
 
 		add_filter( 'pods_roles_get_capabilities', array( $this, 'remove_deprecated_capabilities' ) );
 	}

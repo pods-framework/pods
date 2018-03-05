@@ -70,11 +70,9 @@ class Pods_Templates extends PodsComponent {
 	private $capability_type = 'pods_template';
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function init() {
 
 		$args = array(
 			'label'        => 'Pod Templates',

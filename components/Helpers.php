@@ -40,12 +40,11 @@ class Pods_Helpers extends PodsComponent {
      */
     private $object_type = '_pods_helper';
 
-    /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.0
-     */
-    public function __construct () {
+	/**
+	 * {@inheritdoc}
+	 */
+	public function init() {
+
         $args = array(
             'label' => 'Pod Helpers',
             'labels' => array( 'singular_name' => 'Pod Helper' ),
@@ -85,6 +84,7 @@ class Pods_Helpers extends PodsComponent {
 
             add_filter( 'builder_layout_filter_non_layout_post_types', array( $this, 'disable_builder_layout' ) );
         }
+
     }
 
     public function disable_builder_layout ( $post_types ) {

@@ -51,19 +51,7 @@ class Pods_Component_I18n extends PodsComponent {
 	);
 
 	/**
-	 * Get mandatory data and add actions
-	 *
-	 * @since 0.1
-	 */
-	public function __construct() {
-
-		$this->init();
-	}
-
-	/**
-	 * Init function to register data, hooks and resources
-	 *
-	 * @since 0.1
+	 * {@inheritdoc}
 	 */
 	public function init() {
 
@@ -88,6 +76,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 		$is_component_page = false;
 		$is_pods_edit_page = false;
+
 		if ( is_admin() && isset( $_GET['page'] ) ) {
 
 			// Is the current page the admin page of this component or a Pods edit page?

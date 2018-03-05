@@ -25,11 +25,9 @@ if ( class_exists( 'Pods_Table_Storage' ) ) {
 class Pods_Table_Storage extends PodsComponent {
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.3
+	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function init() {
 
 		if ( ! pods_tableless() ) {
 			add_filter( 'pods_admin_setup_add_create_storage', '__return_true' );

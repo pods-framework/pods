@@ -70,11 +70,9 @@ class Pods_Pages extends PodsComponent {
 	private $capability_type = 'pods_page';
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function init() {
 
 		add_shortcode( 'pods-content', array( $this, 'shortcode' ) );
 

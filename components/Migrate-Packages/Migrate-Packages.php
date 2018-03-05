@@ -27,15 +27,6 @@ if ( class_exists( 'Pods_Migrate_Packages' ) ) {
 class Pods_Migrate_Packages extends PodsComponent {
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.0
-	 */
-	public function __construct() {
-
-	}
-
-	/**
 	 * Enqueue styles
 	 *
 	 * @since 2.0
@@ -48,9 +39,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 	/**
 	 * Build admin area
 	 *
-	 * @param $options
-	 *
-	 * @param $component
+	 * @param array  $options Component options.
+	 * @param string $component Component name.
 	 *
 	 * @since 2.0
 	 */

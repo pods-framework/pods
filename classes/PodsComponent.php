@@ -8,11 +8,23 @@
 class PodsComponent {
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
+	 * Setup initial component class.
 	 *
 	 * @since 2.0
 	 */
 	public function __construct() {
+
+		$this->init();
+
+	}
+
+	/**
+	 * Do things like register/enqueue scripts and stylesheets.
+	 *
+	 * @since 2.7.2
+	 */
+	public function init() {
+
 
 	}
 

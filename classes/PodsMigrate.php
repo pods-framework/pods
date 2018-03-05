@@ -7,17 +7,17 @@ class PodsMigrate {
     /**
      * @var null|string
      */
-    var $type = 'php';
+    public $type = 'php';
 
     /**
      * @var array
      */
-    var $types = array( 'php', 'json', 'sv', 'xml' );
+    public $types = array( 'php', 'json', 'sv', 'xml' );
 
     /**
      * @var array
      */
-    var $mimes = array(
+    public $mimes = array(
         'json' => 'application/json',
         'csv' => 'text/csv',
         'tsv' => 'text/tsv',
@@ -27,31 +27,32 @@ class PodsMigrate {
     /**
      * @var null|string
      */
-    var $delimiter = ',';
+    public $delimiter = ',';
 
     /**
      * @var null
      */
-    var $data = array(
-        'items' => array(),
+    public $data = array(
+        'items'   => array(),
         'columns' => array(),
-        'fields' => array()
+        'fields'  => array(),
+        'single'  => false,
     );
 
     /**
      * @var null
      */
-    var $input;
+    public $input;
 
     /**
      * @var
      */
-    var $parsed;
+    public $parsed;
 
     /**
      * @var
      */
-    var $built;
+    public $built;
 
     /**
      * Migrate Data to and from Pods
@@ -66,10 +67,28 @@ class PodsMigrate {
      * @since 2.0
      */
     function __construct ( $type = null, $delimiter = null, $data = null ) {
-        if ( !empty( $type ) && in_array( $type, $this->types ) )
-            $this->type = $type;
 
-        if ( !empty( $delimiter ) )
+	    if ( ! empty( $type ) ) {
+		    if ( 'csv' === $type ) {
+			    $type = 'sv';
+
+			    if ( null === $delimiter ) {
+				    $delimiter = ',';
+			    }
+		    } elseif ( 'tsv' === $type ) {
+			    $type = 'sv';
+
+			    if ( null === $delimiter ) {
+			        $delimiter = "\t";
+			    }
+		    }
+
+		    if ( in_array( $type, $this->types, true ) ) {
+			    $this->type = $type;
+		    }
+	    }
+
+        if ( ! empty( $delimiter ) )
             $this->delimiter = $delimiter;
 
         if ( !empty( $data ) )
@@ -94,17 +113,7 @@ class PodsMigrate {
      * @param string $delimiter Delimiter for export type 'sv'
      */
     function import ( $data = null, $type = null, $delimiter = null ) {
-        if ( !empty( $data ) )
-            $this->input = $data;
-
-        if ( !empty( $type ) && in_array( $type, $this->types ) )
-            $this->type = $type;
-
-        if ( !empty( $delimiter ) )
-            $this->delimiter = $delimiter;
-
-        if ( method_exists( $this, "parse_{$this->type}" ) )
-            call_user_func( array( $this, 'parse_' . $this->type ) );
+        $this->parse( $data, $type, $delimiter );
 
         return $this->import_pod_items();
     }
@@ -125,16 +134,20 @@ class PodsMigrate {
 
     /**
      * @param array $data Array of data
-     * @param string $type Export Type (php, json, sv, xml)
+     * @param string $type Parse Type (php, json, sv, xml)
+     * @param string $delimiter Delimiter for export type 'sv'
      *
      * @return null
      */
-    public function parse ( $data = null, $type = null ) {
+    public function parse ( $data = null, $type = null, $delimiter = null ) {
         if ( !empty( $data ) )
             $this->input = $data;
 
         if ( !empty( $type ) && in_array( $type, $this->types ) )
             $this->type = $type;
+
+        if ( !empty( $delimiter ) )
+            $this->delimiter = $delimiter;
 
         if ( method_exists( $this, "parse_{$this->type}" ) )
             return call_user_func( array( $this, 'parse_' . $this->type ) );
@@ -156,22 +169,29 @@ class PodsMigrate {
         if ( !is_array( $items ) )
             return false;
 
-        $data = array(
-            'columns' => array(),
-            'items' => array(),
-            'fields' => array()
-        );
+        // Only export to a basic object if building for a single item.
+        if ( ! empty( $this->data['single'] ) ) {
+        	$data = $items;
+        } else {
+	        $data = array(
+		        'columns' => array(),
+		        'items'   => array(),
+		        'fields'  => array()
+	        );
 
-        foreach ( $items as $key => $item ) {
-            if ( !is_array( $item ) )
-                continue;
+	        foreach ( $items as $key => $item ) {
+		        if ( ! is_array( $item ) ) {
+			        continue;
+		        }
 
-            foreach ( $item as $column => $value ) {
-                if ( !in_array( $column, $data[ 'columns' ] ) )
-                    $data[ 'columns' ][] = $column;
-            }
+		        foreach ( $item as $column => $value ) {
+			        if ( ! in_array( $column, $data['columns'] ) ) {
+				        $data['columns'][] = $column;
+			        }
+		        }
 
-            $data[ 'items' ][ $key ] = $item;
+		        $data['items'][ $key ] = $item;
+	        }
         }
 
         $this->parsed = $data;
@@ -357,6 +377,8 @@ class PodsMigrate {
      * @param array $data Array of data
      * @param string $type Export Type (php, json, sv, xml)
      * @param string $delimiter Delimiter for export type 'sv'
+     *
+     * @return mixed
      */
     public function export ( $data = null, $type = null, $delimiter = null ) {
         if ( !empty( $data ) )
@@ -413,39 +435,46 @@ class PodsMigrate {
         if ( empty( $this->data ) || !is_array( $this->data ) )
             return false;
 
-        $data = array(
-            'items' => array(
-                'count' => count( $this->data[ 'items' ] ),
-                'item' => array()
-            )
-        );
+        // Only export to a basic object if building for a single item.
+        if ( ! empty( $this->data['single'] ) ) {
+        	$data = $this->data['items'];
+        } else {
+	        $data = array(
+		        'items' => array(
+			        'count' => count( $this->data['items'] ),
+			        'item'  => array()
+		        )
+	        );
 
-        foreach ( $this->data[ 'items' ] as $item ) {
-            $row = array();
+	        foreach ( $this->data['items'] as $item ) {
+		        $row = array();
 
-            foreach ( $this->data[ 'columns' ] as $column => $label ) {
-                if ( is_numeric( $column ) && ( ( is_object( $item ) && !isset( $item->$column ) ) || ( is_array( $item ) && !isset( $item[ $column ] ) ) ) )
-                    $column = $label;
+		        foreach ( $this->data['columns'] as $column => $label ) {
+			        if ( is_numeric( $column ) && ( ( is_object( $item ) && ! isset( $item->$column ) ) || ( is_array( $item ) && ! isset( $item[ $column ] ) ) ) ) {
+				        $column = $label;
+			        }
 
-                $value = '';
+			        $value = '';
 
-                if ( is_object( $item ) ) {
-                    if ( !isset( $item->$column ) )
-                        $item->$column = '';
+			        if ( is_object( $item ) ) {
+				        if ( ! isset( $item->$column ) ) {
+					        $item->$column = '';
+				        }
 
-                    $value = $item->$column;
-                }
-                elseif ( is_array( $item ) ) {
-                    if ( !isset( $item[ $column ] ) )
-                        $item[ $column ] = '';
+				        $value = $item->$column;
+			        } elseif ( is_array( $item ) ) {
+				        if ( ! isset( $item[ $column ] ) ) {
+					        $item[ $column ] = '';
+				        }
 
-                    $value = $item[ $column ];
-                }
+				        $value = $item[ $column ];
+			        }
 
-                $row[ $column ] = $value;
-            }
+			        $row[ $column ] = $value;
+		        }
 
-            $data[ 'items' ][ 'item' ][] = $row;
+		        $data['items']['item'][] = $row;
+	        }
         }
 
         $this->built = @json_encode( $data );
@@ -619,60 +648,113 @@ class PodsMigrate {
         return $this->built;
     }
 
-    /**
-     * Save export to a file
-     */
-    public function save() {
-        $extension = 'txt';
+	/**
+	 * Save export to a file.
+	 *
+	 * @param array $params Additional options for saving.
+	 *
+	 * @return string The URL of the saved file, a path if not attached.
+	 */
+	public function save( $params = array() ) {
 
-        if ( 'sv' == $this->type ) {
-            if ( ',' == $this->delimiter )
-                $extension = 'csv';
-            elseif ( "\t" == $this->delimiter )
-                $extension = 'tsv';
-        }
-        else
-            $extension = $this->type;
+	    $defaults = array(
+		    'file'   => null,
+		    'path'   => null,
+		    'attach' => false,
+	    );
 
-        $export_file = 'pods_export_' . wp_create_nonce( date_i18n( 'm-d-Y_h-i-sa' ) ) . '.' . $extension;
+	    $params = array_merge( $defaults, $params );
 
-        if ( !( ( $uploads = wp_upload_dir( current_time( 'mysql' ) ) ) && false === $uploads[ 'error' ] ) )
-            return pods_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
+	    $extension = 'txt';
 
-        // Generate unique file name
-        $filename = wp_unique_filename( $uploads[ 'path' ], $export_file );
+	    if ( ! empty( $params['file'] ) ) {
+	    	$export_file = $params['file'];
 
-        // move the file to the uploads dir
-        $new_file = $uploads[ 'path' ] . '/' . $filename;
+	    	if ( false !== strpos( $export_file, '.' ) ) {
+			    $extension = explode( '.', $export_file );
+			    $extension = end( $extension );
+		    }
+	    } else {
+		    if ( 'sv' === $this->type ) {
+			    if ( ',' === $this->delimiter ) {
+				    $extension = 'csv';
+			    } elseif ( "\t" === $this->delimiter ) {
+				    $extension = 'tsv';
+			    }
+		    } else {
+			    $extension = $this->type;
+		    }
 
-        file_put_contents( $new_file, $this->built );
+		    $export_file = sprintf(
+		    	'pods_export_%s.%s',
+			    wp_create_nonce( date_i18n( 'm-d-Y_h-i-sa' ) ),
+			    $extension
+		    );
+	    }
 
-        // Set correct file permissions
-        $stat = stat( dirname( $new_file ) );
-        $perms = $stat[ 'mode' ] & 0000666;
-        @chmod( $new_file, $perms );
+	    if ( ! empty( $params['path'] ) ) {
+	    	$new_file = sprintf(
+	    		'%s/%s',
+			    untrailingslashit( $params['path'] ),
+			    $export_file
+		    );
 
-        // Get the file type
-        $wp_filetype = wp_check_filetype( $filename, $this->mimes );
+	    	$filename = $export_file;
+	    } else {
+	    	$uploads = wp_upload_dir( current_time( 'mysql' ) );
 
-        // construct the attachment array
-        $attachment = array(
-            'post_mime_type' => ( !$wp_filetype[ 'type' ] ? 'text/' . $extension : $wp_filetype[ 'type' ] ),
-            'guid' => $uploads[ 'url' ] . '/' . $filename,
-            'post_parent' => null,
-            'post_title' => 'Pods Export (' . $export_file . ')',
-            'post_content' => '',
-            'post_status' => 'private'
-        );
+	    	if ( ! $uploads || false === $uploads['error'] ) {
+		        return pods_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
+		    }
 
-        // insert attachment
-        $attachment_id = wp_insert_attachment( $attachment, $new_file );
+		    // Generate unique file name
+		    $filename = wp_unique_filename( $uploads['path'], $export_file );
 
-        // error!
-        if ( is_wp_error( $attachment_id ) )
-            return pods_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
+		    // move the file to the uploads dir
+		    $new_file = $uploads['path'] . '/' . $filename;
+	    }
 
-        return $attachment[ 'guid' ];
+	    file_put_contents( $new_file, $this->built );
+
+	    // Set correct file permissions
+	    $stat  = stat( dirname( $new_file ) );
+	    $perms = $stat['mode'] & 0000666;
+	    @chmod( $new_file, $perms );
+
+	    // Only attach if we want to and don't have a custom path.
+	    if ( $params['attach'] && empty( $params['path'] ) ) {
+		    // Get the file type
+		    $wp_filetype = wp_check_filetype( $filename, $this->mimes );
+
+		    // construct the attachment array
+		    $attachment = array(
+			    'post_mime_type' => 'text/' . $extension,
+			    'guid'           => $uploads['url'] . '/' . $filename,
+			    'post_parent'    => null,
+			    'post_title'     => 'Pods Export (' . $export_file . ')',
+			    'post_content'   => '',
+			    'post_status'    => 'private'
+		    );
+
+		    if ( $wp_filetype['type'] ) {
+		    	$attachment['post_mime_type'] = $wp_filetype['type'];
+		    }
+
+		    // insert attachment
+		    $attachment_id = wp_insert_attachment( $attachment, $new_file );
+
+		    // error!
+		    if ( is_wp_error( $attachment_id ) ) {
+			    return pods_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
+		    }
+
+		    $url = $attachment['guid'];
+	    } else {
+		    $url = $new_file;
+	    }
+
+        return $url;
+
     }
 
     /*
@@ -1018,4 +1100,93 @@ class PodsMigrate {
             echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <strong style='color:green;'>Import Complete</strong>\n";
         }
     }
+
+	/**
+	 * Export data to a file.
+	 *
+	 * @param string $file   File to export to.
+	 * @param array  $data   Data to export.
+	 * @param bool   $single Whether this is a single item export.
+	 *
+	 * @return mixed
+	 */
+	public static function export_data_to_file( $file, $data, $single = false ) {
+
+		$path = ABSPATH;
+
+		// Detect path if it is set in the file param.
+		if ( false !== strpos( $file, '/' ) ) {
+			$path = dirname( $file );
+			$file = basename( $file );
+		}
+
+		$format = 'json';
+
+		// Detect the export format.
+		if ( false !== strpos( $file, '.' ) ) {
+			$format = explode( '.', $file );
+			$format = end( $format );
+		}
+
+		$migrate_data = array(
+			'items'  => array( $data ),
+			'single' => $single,
+		);
+
+		$migrate = new self( $format, null, $migrate_data );
+
+		// Handle processing the data into the format needed.
+		$migrate->export();
+
+		$save_params = array(
+			'path'   => $path,
+			'file'   => $file,
+			'attach' => true,
+		);
+
+		return $migrate->save( $save_params );
+
+	}
+
+	/**
+	 * Get data from a file.
+	 *
+	 * @param string $file   File to get data from.
+	 * @param bool   $single Whether this is a single item.
+	 *
+	 * @return mixed
+	 */
+	public static function get_data_from_file( $file, $single = false ) {
+
+		$path = ABSPATH;
+
+		// Detect path if it is set in the file param.
+		if ( false !== strpos( $file, '/' ) ) {
+			$path = dirname( $file );
+			$file = basename( $file );
+		}
+
+		$format = 'json';
+
+		// Detect the export format.
+		if ( false !== strpos( $file, '.' ) ) {
+			$format = explode( '.', $file );
+			$format = end( $format );
+		}
+
+		$migrate_data = array(
+			'single' => $single,
+		);
+
+		$migrate = new self( $format, null, $migrate_data );
+
+		$raw_data = file_get_contents( $file );
+
+		// Handle processing the raw data from the format needed.
+		$data = $migrate->parse( $raw_data );
+
+		return $data;
+
+	}
+
 }

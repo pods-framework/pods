@@ -192,6 +192,7 @@ select.pods-pick-multi {
 .pods-pick-values ul {
     overflow: auto;
     margin: 0;
+    padding: 0;
 }
 
 .pods-pick-values li {
@@ -204,6 +205,10 @@ select.pods-pick-multi {
 
 .pods-pick-values li:nth-child(even) {
     background: #fcfcfc;
+}
+
+.pods-pick-values .pods-dfv-list-item li {
+    line-height: 0;
 }
 
 /* Remove backgrounds from inner child lists */

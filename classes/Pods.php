@@ -3033,6 +3033,7 @@ class Pods implements Iterator {
 	 *
 	 * @param array $fields (optional) Fields to export
 	 * @param int $id (optional) ID of the pod item to export
+	 * @param null|string $format (optional) The format of the export (php | json)
 	 *
 	 * @return array|bool Data array of the exported pod item
 	 *
@@ -3040,13 +3041,15 @@ class Pods implements Iterator {
 	 * @link https://pods.io/docs/export/
 	 */
 	public function export ( $fields = null, $id = null, $format = null ) {
+
 		$params = array(
-			'pod' => $this->pod,
-			'id' => $id,
-			'fields' => null,
-			'depth' => 2,
+			'pod'     => $this->pod,
+			'id'      => $id,
+			'fields'  => null,
+			'depth'   => 2,
 			'flatten' => false,
 			'context' => null,
+			'format'  => $format,
 		);
 
 		if ( is_array( $fields ) && ( isset( $fields[ 'fields' ] ) || isset( $fields[ 'depth' ] ) ) )
@@ -3067,10 +3070,8 @@ class Pods implements Iterator {
 
 		$data = $this->api->export_pod_item( $params );
 
-		if ( !empty( $format ) ) {
-			if ( 'json' == $format )
-				$data = json_encode( (array) $data );
-			// @todo more formats
+		if ( ! empty( $params['format'] ) && 'json' === $params['format'] ) {
+			$data = json_encode( (array) $data );
 		}
 
 		return $data;

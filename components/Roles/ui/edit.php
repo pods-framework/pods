@@ -182,7 +182,7 @@
 
 			$( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', toggle_all );
 
-			toggle_all = ( !toggle_all );
+			toggle_all = (!toggle_all);
 		} );
 
 		$( '#add-capability' ).on( 'click', function ( e ) {

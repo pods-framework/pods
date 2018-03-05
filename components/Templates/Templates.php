@@ -127,8 +127,7 @@ class Pods_Templates extends PodsComponent {
 	 */
 	public function get_capabilities( $caps ) {
 
-		$caps = array_merge(
-			$caps, array(
+		$caps = array_merge( $caps, array(
 				'edit_' . $this->capability_type,
 				'read_' . $this->capability_type,
 				'delete_' . $this->capability_type,
@@ -137,8 +136,7 @@ class Pods_Templates extends PodsComponent {
 				'publish_' . $this->capability_type . 's',
 				'read_private_' . $this->capability_type . 's',
 				'edit_' . $this->capability_type . 's',
-			)
-		);
+			) );
 
 		return $caps;
 	}
@@ -181,23 +179,17 @@ class Pods_Templates extends PodsComponent {
 			6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
 			8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
-			9  => sprintf(
-				__( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ), $labels->singular_name,
-				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name
-			),
+			9  => sprintf( __( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ), $labels->singular_name, // translators: Publish box date format, see http://php.net/date
+				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name ),
 			10 => sprintf( __( '%1$s draft updated. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 		);
 
 		if ( false === (boolean) $post_type->public ) {
-			$messages[ $post_type->name ][1] = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][6] = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][8] = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][9] = sprintf(
-				__( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels->singular_name,
-				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
-			);
+			$messages[ $post_type->name ][1]  = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][6]  = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][8]  = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][9]  = sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels->singular_name, // translators: Publish box date format, see http://php.net/date
+				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) );
 			$messages[ $post_type->name ][10] = sprintf( __( '%s draft updated.', 'pods' ), $labels->singular_name );
 		}
 

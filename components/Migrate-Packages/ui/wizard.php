@@ -351,9 +351,9 @@
 				toggle_all[$( this ).data( 'toggle' )] = true;
 			}
 
-			$( this ).closest( '.pods-field-option-group' ).find( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', ( !toggle_all[$( this ).data( 'toggle' )] ) );
+			$( this ).closest( '.pods-field-option-group' ).find( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', (!toggle_all[$( this ).data( 'toggle' )]) );
 
-			toggle_all[$( this ).data( 'toggle' )] = ( !toggle_all[$( this ).data( 'toggle' )] );
+			toggle_all[$( this ).data( 'toggle' )] = (!toggle_all[$( this ).data( 'toggle' )]);
 		} );
 	} );
 </script>

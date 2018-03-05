@@ -5,7 +5,7 @@
 ?><textarea id="content" name="content">
 <?php
 if ( isset( $content ) ) {
-		echo esc_textarea( $content );
+	echo esc_textarea( $content );
 }
-	?>
+?>
 	</textarea>

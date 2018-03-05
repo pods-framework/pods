@@ -13,10 +13,10 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 	 */
 	class PodsBuilderModuleList extends LayoutModule {
 
-		public $_name                = '';
-		public $_var                 = 'pods-builder-list';
-		public $_description         = '';
-		public $_editor_width        = 500;
+		public $_name = '';
+		public $_var = 'pods-builder-list';
+		public $_description = '';
+		public $_editor_width = 500;
 		public $_can_remove_wrappers = true;
 
 		/**
@@ -147,12 +147,10 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 				</td>
 				<td>
 					<?php
-					$form->add_text_area(
-						'template_custom', array(
+					$form->add_text_area( 'template_custom', array(
 							'style' => 'width:90%; max-width:100%; min-height:100px;',
 							'rows'  => '8',
-						)
-					);
+						) );
 					?>
 				</td>
 			</tr>

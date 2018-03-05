@@ -5,7 +5,7 @@
  */
 class Pods_I18n_Polylang {
 
-	public $languages  = array();
+	public $languages = array();
 	public $textdomain = 'polylang';
 
 	/**
@@ -17,12 +17,10 @@ class Pods_I18n_Polylang {
 			$this->languages = pll_languages_list( array( 'fields' => 'locale' ) );
 
 			add_filter( 'pods_component_i18n_admin_data', array( $this, 'pods_component_i18n_admin_data' ) );
-			add_filter(
-				'pods_component_i18n_admin_ui_fields', array(
-					$this,
-					'pods_component_i18n_admin_ui_fields',
-				), 10, 2
-			);
+			add_filter( 'pods_component_i18n_admin_ui_fields', array(
+				$this,
+				'pods_component_i18n_admin_ui_fields',
+			), 10, 2 );
 		}
 
 	}

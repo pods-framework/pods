@@ -34,8 +34,8 @@ function pq_loadpod( $podname = false ) {
 
 /**
  * @param        $pod_name
- * @param string   $prefix
- * @param array    $pods_visited
+ * @param string $prefix
+ * @param array  $pods_visited
  *
  * @return array
  */

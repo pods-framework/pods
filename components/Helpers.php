@@ -2,7 +2,8 @@
 /**
  * Name: Helpers
  *
- * Description: A holdover from Pods 1.x for backwards compatibility purposes, you most likely don't need these and we recommend you use our WP filters and actions instead.
+ * Description: A holdover from Pods 1.x for backwards compatibility purposes, you most likely don't need these and we
+ * recommend you use our WP filters and actions instead.
  *
  * Version: 2.3
  *
@@ -13,7 +14,7 @@
  *
  * External: pods-helpers/pods-helpers.php
  *
- * @package Pods\Components
+ * @package    Pods\Components
  * @subpackage Helpers
  */
 
@@ -90,6 +91,7 @@ class Pods_Helpers extends PodsComponent {
 	}
 
 	public function disable_builder_layout( $post_types ) {
+
 		$post_types[] = $this->object_type;
 
 		return $post_types;
@@ -104,6 +106,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @since 2.0.2
 	 */
 	public function setup_updated_messages( $messages ) {
+
 		global $post, $post_ID;
 
 		$post_type = get_post_type_object( $this->object_type );
@@ -119,33 +122,18 @@ class Pods_Helpers extends PodsComponent {
 			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
-			8  => sprintf(
-				__( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ),
-				$labels->singular_name,
-				esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ),
-				$labels->singular_name
-			),
-			9  => sprintf(
-				__( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ),
-				$labels->singular_name,
-				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ),
-				esc_url( get_permalink( $post_ID ) ),
-				$labels->singular_name
-			),
+			8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
+			9  => sprintf( __( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ), $labels->singular_name, // translators: Publish box date format, see http://php.net/date
+				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name ),
 			10 => sprintf( __( '%1$s draft updated. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 		);
 
 		if ( false === (boolean) $post_type->public ) {
-			$messages[ $post_type->name ][1] = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][6] = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][8] = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][9] = sprintf(
-				__( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ),
-				$labels->singular_name,
-				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
-			);
+			$messages[ $post_type->name ][1]  = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][6]  = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][8]  = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][9]  = sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels->singular_name, // translators: Publish box date format, see http://php.net/date
+				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) );
 			$messages[ $post_type->name ][10] = sprintf( __( '%s draft updated.', 'pods' ), $labels->singular_name );
 		}
 
@@ -158,6 +146,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @since 2.0
 	 */
 	public function admin_assets() {
+
 		wp_enqueue_style( 'pods-styles' );
 	}
 
@@ -167,6 +156,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @since 2.0.1
 	 */
 	public function fix_filters( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+
 		remove_filter( 'content_save_pre', 'balanceTags', 50 );
 	}
 
@@ -176,6 +166,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @since 2.0.5
 	 */
 	function remove_row_actions( $actions, $post ) {
+
 		global $current_screen;
 
 		if ( ! is_object( $current_screen ) || $this->object_type != $current_screen->post_type ) {
@@ -204,6 +195,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @since 2.0.5
 	 */
 	public function remove_bulk_actions( $actions ) {
+
 		if ( isset( $actions['edit'] ) ) {
 			unset( $actions['edit'] );
 		}
@@ -217,6 +209,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @since 2.0
 	 */
 	public function clear_cache( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+
 		$old_post = $id;
 
 		if ( ! is_object( $id ) ) {
@@ -243,6 +236,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @since 2.0
 	 */
 	public function set_title_text( $text, $post ) {
+
 		return __( 'Enter helper name here', 'pods' );
 	}
 
@@ -252,6 +246,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @since 2.0
 	 */
 	public function edit_page_form() {
+
 		global $post_type;
 
 		if ( $this->object_type != $post_type ) {
@@ -267,6 +262,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @since 2.0
 	 */
 	public function add_meta_boxes() {
+
 		$pod = array(
 			'name' => $this->object_type,
 			'type' => 'post_type',
@@ -312,6 +308,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @return array|bool|int|mixed|null|string|void
 	 */
 	public function get_meta( $_null, $post_ID = null, $meta_key = null, $single = false ) {
+
 		if ( 'code' == $meta_key ) {
 			$post = get_post( $post_ID );
 
@@ -326,7 +323,7 @@ class Pods_Helpers extends PodsComponent {
 	/**
 	 * Save the fields
 	 *
-	 * @param $_null
+	 * @param        $_null
 	 * @param int    $post_ID
 	 * @param string $meta_key
 	 * @param string $meta_value
@@ -334,6 +331,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @return bool|int|null
 	 */
 	public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
+
 		if ( 'code' == $meta_key ) {
 			$post = get_post( $post_ID );
 
@@ -382,6 +380,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @since 2.0
 	 */
 	public static function helper( $params, $obj = null ) {
+
 		/**
 		 * @var $obj Pods
 		 */

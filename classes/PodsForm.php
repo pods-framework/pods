@@ -1419,6 +1419,7 @@ class PodsForm {
             'pick',
             'boolean',
             'color',
+            'icon',
             'slug',
         );
 

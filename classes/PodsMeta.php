@@ -106,7 +106,7 @@ class PodsMeta {
 	 *
 	 * @since 2.0
 	 */
-	function __construct() {
+	public function __construct() {
 
 	}
 

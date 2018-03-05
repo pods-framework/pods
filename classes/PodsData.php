@@ -2968,7 +2968,7 @@ class PodsData {
 	 *
 	 * @since 2.0
 	 */
-	function traverse_build( $fields = null, $params = null ) {
+	public function traverse_build( $fields = null, $params = null ) {
 
 		if ( null === $fields ) {
 			$fields = $this->fields;
@@ -3004,7 +3004,7 @@ class PodsData {
 	 *
 	 * @since 2.0
 	 */
-	function traverse_recurse( $traverse_recurse ) {
+	public function traverse_recurse( $traverse_recurse ) {
 
 		global $wpdb;
 
@@ -3437,7 +3437,7 @@ class PodsData {
 	 *
 	 * @return array Array of joins
 	 */
-	function traverse( $fields = null, $all_fields = null, $params = null ) {
+	public function traverse( $fields = null, $all_fields = null, $params = null ) {
 
 		$joins = array();
 

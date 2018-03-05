@@ -171,7 +171,7 @@ class Pods_Helpers extends PodsComponent {
 	 *
 	 * @since 2.0.5
 	 */
-	function remove_row_actions( $actions, $post ) {
+	public function remove_row_actions( $actions, $post ) {
 
 		global $current_screen;
 

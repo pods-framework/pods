@@ -1,5 +1,8 @@
 <?php
 
+$wp_icon_picker = Icon_Picker::instance();
+$wp_icon_picker->load();
+
 wp_enqueue_style( 'icon-picker' );
 wp_enqueue_script( 'icon-picker' );
 

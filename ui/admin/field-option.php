@@ -42,7 +42,7 @@ foreach ( $field_options as $field_name => $field_option ) {
 			$value = pods_v( $field_name, $field, $value );
 		}
 
-		if ( in_array( $field_option['type'], PodsForm::file_field_types() ) ) {
+		if ( in_array( $field_option['type'], PodsForm::file_field_types(), true ) ) {
 			if ( is_array( $value ) && ! isset( $value['id'] ) ) {
 				foreach ( $value as $k => $v ) {
 					if ( isset( $v['id'] ) ) {

@@ -106,7 +106,7 @@ class Pods_Deprecated {
 		do_action( 'pods_showform_pre', $pod_id, $public_fields, $label, $this );
 
 		foreach ( $fields as $key => $field ) {
-			if ( ! is_array( $field ) || in_array( $key, array( 'created', 'modified' ) ) ) {
+			if ( ! is_array( $field ) || in_array( $key, array( 'created', 'modified' ), true ) ) {
 				continue;
 			}
 
@@ -396,7 +396,7 @@ class Pods_Deprecated {
 						'created',
 						'modified',
 						'author',
-					)
+					), true
 				) && isset( $this->obj->fields[ $name . '2' ] ) ) {
 					$name .= '2';
 				}

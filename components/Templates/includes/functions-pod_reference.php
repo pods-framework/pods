@@ -82,7 +82,7 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 			}
 		} elseif ( ! empty( $field['table_info'] ) && ! empty( $field['table_info']['pod'] ) ) {
 			$linked_pod = $field['table_info']['pod']['name'];
-			if ( ! isset( $pods_visited[ $linked_pod ] ) || ! in_array( $name, $pods_visited[ $linked_pod ] ) ) {
+			if ( ! isset( $pods_visited[ $linked_pod ] ) || ! in_array( $name, $pods_visited[ $linked_pod ], true ) ) {
 				$pods_visited[ $linked_pod ][] = $name;
 				$recurse_queue[ $linked_pod ]  = "{$prefix}{$name}.";
 			}

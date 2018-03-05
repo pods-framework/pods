@@ -329,7 +329,7 @@ class Pods_Templates_Auto_Template_Settings {
 						'post',
 						'page',
 						'attachment',
-					)
+					), true
 				) ) {
 					$archive_test[ $pod['label'] ] = 'fail';
 				}

@@ -75,7 +75,7 @@ wp_enqueue_style( 'pods-form' );
 										'pods',
 										'pods_delete_' . $pod->pod,
 									)
-								) && ! in_array( 'delete', $obj->actions_disabled ) && ! in_array( 'delete', $obj->actions_hidden ) ) {
+								) && ! in_array( 'delete', $obj->actions_disabled, true ) && ! in_array( 'delete', $obj->actions_hidden, true ) ) {
 									?>
 									<div id="delete-action">
 										<a class="submitdelete deletion" href="<?php echo esc_url( pods_query_arg( array( 'action' => 'delete' ) ) ); ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
@@ -93,7 +93,7 @@ wp_enqueue_style( 'pods-form' );
 				</div>
 				<!-- /#submitdiv --><!-- END PUBLISH DIV --><!-- TODO: minor column fields -->
 				<?php
-				if ( ! in_array( 'navigate', $obj->actions_disabled ) && ! in_array( 'navigate', $obj->actions_hidden ) ) {
+				if ( ! in_array( 'navigate', $obj->actions_disabled, true ) && ! in_array( 'navigate', $obj->actions_hidden, true ) ) {
 					if ( ! isset( $singular_label ) ) {
 						$singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data['name'] ) );
 					}

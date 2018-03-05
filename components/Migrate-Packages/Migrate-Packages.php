@@ -251,7 +251,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 								),
 							);
 
-							if ( in_array( $new_field['name'], $found_fields ) ) {
+							if ( in_array( $new_field['name'], $found_fields, true ) ) {
 								unset( $pod_data['fields'][ $k ] );
 
 								continue;
@@ -651,7 +651,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 				}
 
 				foreach ( $pod as $option => $option_value ) {
-					if ( in_array( $option, $options_ignore ) || null === $option_value ) {
+					if ( in_array( $option, $options_ignore, true ) || null === $option_value ) {
 						unset( $pod[ $option ] );
 					}
 				}
@@ -665,7 +665,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 						}
 
 						foreach ( $field as $option => $option_value ) {
-							if ( in_array( $option, $options_ignore ) || null === $option_value ) {
+							if ( in_array( $option, $options_ignore, true ) || null === $option_value ) {
 								unset( $field[ $option ] );
 							}
 						}

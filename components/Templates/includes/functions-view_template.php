@@ -243,7 +243,7 @@ function frontier_template_once_blocks( $atts, $code ) {
 	}
 
 	$blockhash = md5( $code . $atts['id'] );
-	if ( in_array( $blockhash, $frontier_once_hashes ) ) {
+	if ( in_array( $blockhash, $frontier_once_hashes, true ) ) {
 		return '';
 	}
 	$frontier_once_hashes[] = $blockhash;
@@ -285,7 +285,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 		 * the $pod->fields array and is something to not expect to be there in
 		 * 3.0 as this was unintentional.
 		 */
-		if ( in_array( $field['pick_object'], $object_types ) || 'taxonomy' == $field['type'] ) {
+		if ( in_array( $field['pick_object'], $object_types, true ) || 'taxonomy' == $field['type'] ) {
 			// Match any Pod object or taxonomy
 			foreach ( $entries as $key => $entry ) {
 				$subpod = pods( $field['pick_val'] );

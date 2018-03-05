@@ -21,7 +21,7 @@ if ( 'pod' == pods_v_sanitized( 'pick_object', $field ) ) {
 
 $ignored_pick_objects = apply_filters( '', array( 'table' ) );
 
-if ( ! in_array( pods_v_sanitized( 'pick_object', $field ), $ignored_pick_objects ) ) {
+if ( ! in_array( pods_v_sanitized( 'pick_object', $field ), $ignored_pick_objects, true ) ) {
 	// Set pick object
 	$field['pick_object'] = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sanitized( 'pick_val', $field ), '-' );
 }

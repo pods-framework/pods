@@ -243,9 +243,9 @@ class Pod {
 
 		$name = (string) $name;
 
-		if ( in_array( $name, array( '_data', 'data', 'total', 'total_rows', 'zebra' ) ) ) {
+		if ( in_array( $name, array( '_data', 'data', 'total', 'total_rows', 'zebra' ), true ) ) {
 			return true;
-		} elseif ( in_array( $name, array( 'meta', 'meta_properties', 'meta_extra' ) ) ) {
+		} elseif ( in_array( $name, array( 'meta', 'meta_properties', 'meta_extra' ), true ) ) {
 			return true;
 		} else {
 			return isset( $this->new->{$name} );

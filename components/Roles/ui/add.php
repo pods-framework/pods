@@ -82,7 +82,7 @@
 											foreach ( $capabilities as $capability ) {
 												$checked = false;
 
-												if ( in_array( $capability, $defaults ) ) {
+												if ( in_array( $capability, $defaults, true ) ) {
 													$checked = true;
 												}
 

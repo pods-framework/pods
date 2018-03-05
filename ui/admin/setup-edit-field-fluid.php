@@ -37,7 +37,7 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 									'basic',
 									'additional-field',
 									'advanced',
-								)
+								), true
 							) && ( ! isset( $field_tab_options[ $tab ] ) || empty( $field_tab_options[ $tab ] ) ) ) {
 								continue;
 							}

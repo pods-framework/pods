@@ -41,7 +41,7 @@ class Pods_I18n_WPML {
 	public function pods_component_i18n_admin_data( $data ) {
 
 		foreach ( $data as $lang => $field_data ) {
-			if ( in_array( $lang, $this->languages ) ) {
+			if ( in_array( $lang, $this->languages, true ) ) {
 				$data[ $lang ]['wpml'] = true;
 			} else {
 				$data[ $lang ]['wpml'] = false;

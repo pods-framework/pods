@@ -141,11 +141,11 @@ class Pods_Advanced_Relationships extends PodsComponent {
 
 		$page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
 
-		if ( ! in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) ) {
+		if ( ! in_array( 'page.php', $page_templates, true ) && locate_template( array( 'page.php', false ) ) ) {
 			$page_templates['Page (WP Default)'] = 'page.php';
 		}
 
-		if ( ! in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) ) {
+		if ( ! in_array( 'index.php', $page_templates, true ) && locate_template( array( 'index.php', false ) ) ) {
 			$page_templates['Index (WP Fallback)'] = 'index.php';
 		}
 
@@ -210,7 +210,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 		$ignore = array( 'revision', 'nav_menu_item' );
 
 		foreach ( $post_types as $post_type ) {
-			if ( in_array( $post_type->name, $ignore ) || 0 === strpos( $post_type->name, '_pods_' ) ) {
+			if ( in_array( $post_type->name, $ignore, true ) || 0 === strpos( $post_type->name, '_pods_' ) ) {
 				continue;
 			}
 
@@ -242,7 +242,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 		$ignore = array( 'nav_menu', 'post_format' );
 
 		foreach ( $taxonomies as $taxonomy ) {
-			if ( in_array( $taxonomy->name, $ignore ) ) {
+			if ( in_array( $taxonomy->name, $ignore, true ) ) {
 				continue;
 			}
 

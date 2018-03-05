@@ -126,7 +126,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 		}
 
 		foreach ( $post_types as $k => $post_type ) {
-			if ( ! in_array( pods_var( 'name', $post_type ), $migrate_post_types ) ) {
+			if ( ! in_array( pods_var( 'name', $post_type ), $migrate_post_types, true ) ) {
 				continue;
 			}
 
@@ -138,7 +138,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 		}
 
 		foreach ( $taxonomies as $k => $taxonomy ) {
-			if ( ! in_array( pods_var( 'name', $taxonomy ), $migrate_taxonomies ) ) {
+			if ( ! in_array( pods_var( 'name', $taxonomy ), $migrate_taxonomies, true ) ) {
 				continue;
 			}
 
@@ -206,16 +206,16 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 			'menu_string'              => pods_var_raw( 'show_in_menu_string', $post_type ),
 
 			// 'supports' argument to register_post_type()
-			'supports_title'           => ( is_array( $post_type[0] ) && in_array( 'title', $post_type[0] ) ),
-			'supports_editor'          => ( is_array( $post_type[0] ) && in_array( 'editor', $post_type[0] ) ),
-			'supports_excerpt'         => ( is_array( $post_type[0] ) && in_array( 'excerpt', $post_type[0] ) ),
-			'supports_trackbacks'      => ( is_array( $post_type[0] ) && in_array( 'trackbacks', $post_type[0] ) ),
-			'supports_custom_fields'   => ( is_array( $post_type[0] ) && in_array( 'custom-fields', $post_type[0] ) ),
-			'supports_comments'        => ( is_array( $post_type[0] ) && in_array( 'comments', $post_type[0] ) ),
-			'supports_revisions'       => ( is_array( $post_type[0] ) && in_array( 'revisions', $post_type[0] ) ),
-			'supports_thumbnail'       => ( is_array( $post_type[0] ) && in_array( 'thumbnail', $post_type[0] ) ),
-			'supports_author'          => ( is_array( $post_type[0] ) && in_array( 'author', $post_type[0] ) ),
-			'supports_page_attributes' => ( is_array( $post_type[0] ) && in_array( 'page-attributes', $post_type[0] ) ),
+			'supports_title'           => ( is_array( $post_type[0] ) && in_array( 'title', $post_type[0], true ) ),
+			'supports_editor'          => ( is_array( $post_type[0] ) && in_array( 'editor', $post_type[0], true ) ),
+			'supports_excerpt'         => ( is_array( $post_type[0] ) && in_array( 'excerpt', $post_type[0], true ) ),
+			'supports_trackbacks'      => ( is_array( $post_type[0] ) && in_array( 'trackbacks', $post_type[0], true ) ),
+			'supports_custom_fields'   => ( is_array( $post_type[0] ) && in_array( 'custom-fields', $post_type[0], true ) ),
+			'supports_comments'        => ( is_array( $post_type[0] ) && in_array( 'comments', $post_type[0], true ) ),
+			'supports_revisions'       => ( is_array( $post_type[0] ) && in_array( 'revisions', $post_type[0], true ) ),
+			'supports_thumbnail'       => ( is_array( $post_type[0] ) && in_array( 'thumbnail', $post_type[0], true ) ),
+			'supports_author'          => ( is_array( $post_type[0] ) && in_array( 'author', $post_type[0], true ) ),
+			'supports_page_attributes' => ( is_array( $post_type[0] ) && in_array( 'page-attributes', $post_type[0], true ) ),
 
 			// 'labels' argument to register_post_type()
 			'menu_name'                => pods_var_raw( 'menu_name', $post_type[2] ),

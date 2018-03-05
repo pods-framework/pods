@@ -368,7 +368,7 @@ class Pods_Roles extends PodsComponent {
 				continue;
 			}
 
-			if ( in_array( $capability, $new_capabilities ) ) {
+			if ( in_array( $capability, $new_capabilities, true ) ) {
 				continue;
 			}
 
@@ -380,7 +380,7 @@ class Pods_Roles extends PodsComponent {
 		}
 
 		foreach ( $role_capabilities as $capability => $x ) {
-			if ( ! in_array( $capability, $new_capabilities ) && false === strpos( $capability, 'level_' ) ) {
+			if ( ! in_array( $capability, $new_capabilities, true ) && false === strpos( $capability, 'level_' ) ) {
 				$role->remove_cap( $capability );
 			}
 		}

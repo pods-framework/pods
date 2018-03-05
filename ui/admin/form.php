@@ -24,7 +24,7 @@ $submittable_fields = array();
 foreach ( $groups as $g => $group ) {
 	// unset fields
 	foreach ( $group['fields'] as $k => $field ) {
-		if ( in_array( $field['name'], array( 'created', 'modified' ) ) ) {
+		if ( in_array( $field['name'], array( 'created', 'modified' ), true ) ) {
 			unset( $group['fields'][ $k ] );
 
 			continue;
@@ -274,7 +274,7 @@ if ( 0 < $pod->id() ) {
 											'pods',
 											'pods_delete_' . $pod->pod,
 										)
-									) && null !== $pod->id() && ! $duplicate && ! in_array( 'delete', (array) $obj->actions_disabled ) && ! in_array( 'delete', (array) $obj->actions_hidden ) ) {
+									) && null !== $pod->id() && ! $duplicate && ! in_array( 'delete', (array) $obj->actions_disabled, true ) && ! in_array( 'delete', (array) $obj->actions_hidden, true ) ) {
 										$link = pods_query_arg(
 											array(
 												'action'   => 'delete',
@@ -331,7 +331,7 @@ if ( 0 < $pod->id() ) {
 					</div>
 					<!-- /#submitdiv --><!-- END PUBLISH DIV --><!-- TODO: minor column fields -->
 					<?php
-					if ( pods_v( 'action' ) == 'edit' && ! $duplicate && ! in_array( 'navigate', (array) $obj->actions_disabled ) && ! in_array( 'navigate', (array) $obj->actions_hidden ) ) {
+					if ( pods_v( 'action' ) == 'edit' && ! $duplicate && ! in_array( 'navigate', (array) $obj->actions_disabled, true ) && ! in_array( 'navigate', (array) $obj->actions_hidden, true ) ) {
 						if ( ! isset( $singular_label ) ) {
 							$singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data['name'] ) );
 						}

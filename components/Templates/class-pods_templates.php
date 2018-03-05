@@ -99,7 +99,7 @@ class Pods_Templates_Frontier {
 			return;
 		}
 
-		if ( in_array( $screen->id, $this->plugin_screen_hook_suffix ) ) {
+		if ( in_array( $screen->id, $this->plugin_screen_hook_suffix, true ) ) {
 			$slug = array_search( $screen->id, $this->plugin_screen_hook_suffix );
 			// $configfiles = glob( $this->get_path( __FILE__ ) .'configs/'.$slug.'-*.php' );
 			if ( file_exists( $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php' ) ) {
@@ -180,12 +180,12 @@ class Pods_Templates_Frontier {
 	public function add_metaboxes( $slug, $post = false ) {
 
 		if ( ! empty( $post ) ) {
-			if ( ! in_array( $post->post_type, array( '_pods_template' ) ) ) {
+			if ( ! in_array( $post->post_type, array( '_pods_template' ), true ) ) {
 				return;
 			}
 		} else {
 			$screen = get_current_screen();
-			if ( ! in_array( $screen->base, array( '_pods_template' ) ) ) {
+			if ( ! in_array( $screen->base, array( '_pods_template' ), true ) ) {
 				return;
 			}
 		}

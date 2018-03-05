@@ -35,7 +35,7 @@ class Pods_I18n_Polylang {
 	public function pods_component_i18n_admin_data( $data ) {
 
 		foreach ( $data as $lang => $field_data ) {
-			if ( in_array( $lang, $this->languages ) ) {
+			if ( in_array( $lang, $this->languages, true ) ) {
 				$data[ $lang ]['polylang'] = true;
 			} else {
 				$data[ $lang ]['polylang'] = false;

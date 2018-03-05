@@ -812,7 +812,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 	if ( null !== $params->allowed ) {
 		if ( is_array( $params->allowed ) ) {
 			// Not in array and is not the same array
-			if ( ! in_array( $output, $params->allowed ) && ( ! is_array( $output ) || $output !== $params->allowed ) ) {
+			if ( ! in_array( $output, $params->allowed, true ) && ( ! is_array( $output ) || $output !== $params->allowed ) ) {
 				$output = $default;
 			}
 		} elseif ( $output !== $params->allowed ) {
@@ -922,7 +922,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 			$_SERVER[ $var ] = $value;
 
 			$ret = $_SERVER;
-		} elseif ( in_array( $type, array( 'global', 'globals' ) ) ) {
+		} elseif ( in_array( $type, array( 'global', 'globals' ), true ) ) {
 			$GLOBALS[ $var ] = $value;
 
 			$ret = $GLOBALS;
@@ -1118,7 +1118,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 
 	if ( ! empty( $excluded ) ) {
 		foreach ( $excluded as $exclusion ) {
-			if ( isset( $query_args[ $exclusion ] ) && ! in_array( $exclusion, $allowed ) ) {
+			if ( isset( $query_args[ $exclusion ] ) && ! in_array( $exclusion, $allowed, true ) ) {
 				$query_args[ $exclusion ] = false;
 			}
 		}
@@ -1273,7 +1273,7 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
 		return $slug;
 	}
 
-	if ( 'table' !== $pod_data['storage'] || ! in_array( $pod_data['type'], array( 'pod', 'table' ) ) ) {
+	if ( 'table' !== $pod_data['storage'] || ! in_array( $pod_data['type'], array( 'pod', 'table' ), true ) ) {
 		return $slug;
 	}
 
@@ -1579,7 +1579,7 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 		'prefix',
 	);
 
-	if ( in_array( $tag[0], $single_supported ) ) {
+	if ( in_array( $tag[0], $single_supported, true ) ) {
 		$value = pods_v( '', $tag[0], '', true );
 	} elseif ( 1 == count( $tag ) ) {
 		$value = pods_v( $tag[0], 'get', '', true );
@@ -1650,12 +1650,12 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 
-		if ( ! empty( $params->field ) && is_array( $params->field ) && in_array( $params->field['type'], PodsForm::tableless_field_types() ) ) {
-			if ( in_array( $params->field['type'], PodsForm::file_field_types() ) ) {
+		if ( ! empty( $params->field ) && is_array( $params->field ) && in_array( $params->field['type'], PodsForm::tableless_field_types(), true ) ) {
+			if ( in_array( $params->field['type'], PodsForm::file_field_types(), true ) ) {
 				if ( null === $params->field_index ) {
 					$params->field_index = 'guid';
 				}
-			} elseif ( in_array( $params->field['pick_object'], $simple_tableless_objects ) ) {
+			} elseif ( in_array( $params->field['pick_object'], $simple_tableless_objects, true ) ) {
 				$simple = true;
 			} else {
 				$table = pods_api()->get_table_info( $params->field['pick_object'], $params->field['pick_val'], null, null, $params->field );

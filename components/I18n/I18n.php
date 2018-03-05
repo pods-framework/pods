@@ -225,7 +225,7 @@ class Pods_Component_I18n extends PodsComponent {
 			return true;
 		}
 		// All translatable fields
-		if ( in_array( $name, $translatable_fields ) ) {
+		if ( in_array( $name, $translatable_fields, true ) ) {
 			return true;
 		}
 		// Custom fields data, the name must begin with field_data[
@@ -235,7 +235,7 @@ class Pods_Component_I18n extends PodsComponent {
 			$name = explode( '][', $name );
 			$name = end( $name );
 			// All translatable fields from field_data[ (int) ][ $name ]
-			if ( in_array( $name, $translatable_fields ) ) {
+			if ( in_array( $name, $translatable_fields, true ) ) {
 				return true;
 			}
 		}
@@ -534,7 +534,7 @@ class Pods_Component_I18n extends PodsComponent {
 			foreach ( $_POST['pods_i18n_enabled_languages'] as $locale ) {
 				$locale = sanitize_text_field( $locale );
 
-				if ( in_array( $locale, $this->languages_available ) ) {
+				if ( in_array( $locale, $this->languages_available, true ) ) {
 					$new_languages[ $locale ] = array();
 
 					if ( isset( $this->languages_translated[ $locale ]['language'] ) ) {

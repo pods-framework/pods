@@ -433,15 +433,15 @@ class Pods_Pages extends PodsComponent {
 
 		$page_templates[ __( 'Custom (uses only Pod Page content)', 'pods' ) ] = '_custom';
 
-		if ( ! in_array( 'pods.php', $page_templates ) && locate_template( array( 'pods.php', false ) ) ) {
+		if ( ! in_array( 'pods.php', $page_templates, true ) && locate_template( array( 'pods.php', false ) ) ) {
 			$page_templates[ __( 'Pods (Pods Default)', 'pods' ) ] = 'pods.php';
 		}
 
-		if ( ! in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) ) {
+		if ( ! in_array( 'page.php', $page_templates, true ) && locate_template( array( 'page.php', false ) ) ) {
 			$page_templates[ __( 'Page (WP Default)', 'pods' ) ] = 'page.php';
 		}
 
-		if ( ! in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) ) {
+		if ( ! in_array( 'index.php', $page_templates, true ) && locate_template( array( 'index.php', false ) ) ) {
 			$page_templates[ __( 'Index (WP Fallback)', 'pods' ) ] = 'index.php';
 		}
 

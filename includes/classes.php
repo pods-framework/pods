@@ -17,7 +17,7 @@
  */
 function pods( $type = null, $id = null, $strict = null ) {
 
-	require_once( PODS_DIR . 'classes/Pods.php' );
+	require_once PODS_DIR . 'classes/Pods.php';
 
 	$pod = new Pods( $type, $id );
 
@@ -48,7 +48,7 @@ function pods( $type = null, $id = null, $strict = null ) {
  */
 function pods_ui( $obj, $deprecated = false ) {
 
-	require_once( PODS_DIR . 'classes/PodsUI.php' );
+	require_once PODS_DIR . 'classes/PodsUI.php';
 
 	return new PodsUI( $obj, $deprecated );
 }
@@ -68,7 +68,7 @@ function pods_ui( $obj, $deprecated = false ) {
  */
 function pods_api( $pod = null, $format = null ) {
 
-	require_once( PODS_DIR . 'classes/PodsAPI.php' );
+	require_once PODS_DIR . 'classes/PodsAPI.php';
 
 	return PodsAPI::init( $pod, $format );
 }
@@ -89,7 +89,7 @@ function pods_api( $pod = null, $format = null ) {
  */
 function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
 
-	require_once( PODS_DIR . 'classes/PodsData.php' );
+	require_once PODS_DIR . 'classes/PodsData.php';
 
 	if ( $unique && false !== $pod ) {
 		return new PodsData( $pod, $id, $strict );
@@ -109,7 +109,7 @@ function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
  */
 function pods_form() {
 
-	require_once( PODS_DIR . 'classes/PodsForm.php' );
+	require_once PODS_DIR . 'classes/PodsForm.php';
 
 	return PodsForm::init();
 }
@@ -125,7 +125,7 @@ function pods_form() {
  */
 function pods_init() {
 
-	require_once( PODS_DIR . 'classes/PodsInit.php' );
+	require_once PODS_DIR . 'classes/PodsInit.php';
 
 	return PodsInit::init();
 }
@@ -141,8 +141,8 @@ function pods_init() {
  */
 function pods_components() {
 
-	require_once( PODS_DIR . 'classes/PodsComponents.php' );
-	require_once( PODS_DIR . 'classes/PodsComponent.php' );
+	require_once PODS_DIR . 'classes/PodsComponents.php';
+	require_once PODS_DIR . 'classes/PodsComponent.php';
 
 	return PodsComponents::init();
 }
@@ -158,7 +158,7 @@ function pods_components() {
  */
 function pods_admin() {
 
-	require_once( PODS_DIR . 'classes/PodsAdmin.php' );
+	require_once PODS_DIR . 'classes/PodsAdmin.php';
 
 	return PodsAdmin::init();
 }
@@ -174,7 +174,7 @@ function pods_admin() {
  */
 function pods_meta() {
 
-	require_once( PODS_DIR . 'classes/PodsMeta.php' );
+	require_once PODS_DIR . 'classes/PodsMeta.php';
 
 	return PodsMeta::init();
 }
@@ -192,7 +192,7 @@ function pods_meta() {
  */
 function pods_array( $container ) {
 
-	require_once( PODS_DIR . 'classes/PodsArray.php' );
+	require_once PODS_DIR . 'classes/PodsArray.php';
 
 	return new PodsArray( $container );
 }
@@ -202,7 +202,7 @@ function pods_array( $container ) {
  */
 function pods_i18n() {
 
-	require_once( PODS_DIR . 'classes/PodsI18n.php' );
+	require_once PODS_DIR . 'classes/PodsI18n.php';
 
 	return PodsI18n::get_instance();
 }
@@ -226,7 +226,7 @@ function pods_i18n() {
  */
 function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
 
-	require_once( PODS_DIR . 'classes/PodsView.php' );
+	require_once PODS_DIR . 'classes/PodsView.php';
 
 	$view = PodsView::view( $view, $data, $expires, $cache_mode );
 
@@ -252,7 +252,7 @@ function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache'
  */
 function pods_migrate( $type = null, $delimiter = null, $data = null ) {
 
-	require_once( PODS_DIR . 'classes/PodsMigrate.php' );
+	require_once PODS_DIR . 'classes/PodsMigrate.php';
 
 	return new PodsMigrate( $type, $delimiter, $data );
 }

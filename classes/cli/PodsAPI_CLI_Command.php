@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Implements PodsAPI command for WP-CLI
  */
@@ -23,6 +24,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * wp pods-api add-pod --name=genre --type=taxonomy --label=Genres --singular_label=Genre
 	 *
 	 * @subcommand add-pod
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function add_pod( $args, $assoc_args ) {
 
@@ -68,6 +72,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * wp pods-api save-pod --name=genre --type=taxonomy --label=Genres --singular_label=Genre
 	 *
 	 * @subcommand save-pod
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function save_pod( $args, $assoc_args ) {
 
@@ -122,6 +129,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * wp pods-api duplicate-pod --name=book --new_name=book2 --label="Books Two" --singular_label="Book Two"
 	 *
 	 * @subcommand duplicate-pod
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function duplicate_pod( $args, $assoc_args ) {
 
@@ -168,6 +178,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * wp pods-api reset-pod --name=book
 	 *
 	 * @subcommand reset-pod
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function reset_pod( $args, $assoc_args ) {
 
@@ -212,6 +225,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * wp pods-api delete-pod --name=book --delete_all
 	 *
 	 * @subcommand delete-pod
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function delete_pod( $args, $assoc_args ) {
 
@@ -259,6 +275,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * wp pods-api activate-component --component=templates
 	 *
 	 * @subcommand activate-component
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function activate_component( $args, $assoc_args ) {
 
@@ -295,6 +314,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * wp pods-api deactivate-component --component=templates
 	 *
 	 * @subcommand deactivate-component
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function deactivate_component( $args, $assoc_args ) {
 
@@ -436,7 +458,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand import-pod
 	 */
-	function import_pod( $args, $assoc_args ) {
+	public function import_pod( $args, $assoc_args ) {
 
 		if ( ! PodsInit::$components->is_component_active( 'migrate-packages' ) ) {
 			WP_CLI::error( sprintf( __( 'Migrate Package is not activated. Try activating it: %s', 'pods' ), 'wp pods-api activate-component --component=migrate-packages' ) );

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class PodsRESTFields
  *
@@ -12,7 +13,7 @@ class PodsRESTFields {
 	/**
 	 * Pods object
 	 *
-	 * @since 2.5.6
+	 * @since  2.5.6
 	 *
 	 * @access protected
 	 *
@@ -72,7 +73,7 @@ class PodsRESTFields {
 			} else {
 				$this->pod = false;
 			}
-		}
+		}//end if
 
 	}
 
@@ -183,8 +184,8 @@ class PodsRESTFields {
 						$allowed = true;
 					}
 				}
-			}
-		}
+			}//end if
+		}//end if
 
 		return $allowed;
 

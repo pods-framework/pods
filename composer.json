@@ -64,7 +64,7 @@
     "wp-cli/wp-cli": "Enables access to Pods CLI commands."
   },
   "extra": {
-    "installer-name": "pods"
+    "installer-name": "pods",
     "installer-paths": {
       "vendor/{$vendor}/{$name}/": ["type:wordpress-plugin"]
     }

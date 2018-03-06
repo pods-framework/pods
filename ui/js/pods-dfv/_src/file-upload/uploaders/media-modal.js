@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
 import { PodsFileUploader } from 'pods-dfv/_src/file-upload/uploaders/pods-file-uploader';
 
@@ -9,7 +10,10 @@ export const MediaModal = PodsFileUploader.extend( {
 	invoke: function () {
 
 		if ( wp.Uploader.defaults.filters.mime_types === undefined ) {
-			wp.Uploader.defaults.filters.mime_types = [ { title: PodsI18n.__( 'Allowed Files' ), extensions: '*' } ];
+			wp.Uploader.defaults.filters.mime_types = [ {
+				title: PodsI18n.__( 'Allowed Files' ),
+				extensions: '*'
+			} ];
 		}
 
 		let defaultExt = wp.Uploader.defaults.filters.mime_types[ 0 ].extensions;
@@ -17,14 +21,15 @@ export const MediaModal = PodsFileUploader.extend( {
 		wp.Uploader.defaults.filters.mime_types[ 0 ].extensions = this.fieldConfig[ 'limit_extensions' ];
 
 		// set our settings
+		// noinspection EqualityComparisonWithCoercionJS ("1" is every bit as valid to us as 1)
 		this.mediaObject = wp.media( {
-			title   : this.fieldConfig[ 'file_modal_title' ],
+			title: this.fieldConfig[ 'file_modal_title' ],
 			multiple: ( 1 != this.fieldConfig[ 'file_limit' ] ),
-			library : {
+			library: {
 				type: this.fieldConfig[ 'limit_types' ]
 			},
 			// Customize the submit button.
-			button  : {
+			button: {
 				// Set the text of the button.
 				text: this.fieldConfig[ 'file_modal_add_button' ]
 			}
@@ -62,19 +67,19 @@ export const MediaModal = PodsFileUploader.extend( {
 				// Get thumbnail if it exists
 				if ( sizes.thumbnail !== undefined && sizes.thumbnail.url !== undefined ) {
 					attachmentThumbnail = sizes.thumbnail.url;
-				}// If thumbnail doesn't exist, get full because this is a small image
-				else if ( sizes.full !== undefined && sizes.full.url !== undefined ) {
+				} else if ( sizes.full !== undefined && sizes.full.url !== undefined ) {
+					// If thumbnail doesn't exist, get full because this is a small image
 					attachmentThumbnail = sizes.full.url;
 				}
 			}
 
 			newFiles.push( {
-				id       : attachment.attributes.id,
-				icon     : attachmentThumbnail,
-				name     : attachment.attributes.title,
+				id: attachment.attributes.id,
+				icon: attachmentThumbnail,
+				name: attachment.attributes.title,
 				edit_link: attachment.attributes.editLink,
-				link     : attachment.attributes.link,
-				download : attachment.attributes.url
+				link: attachment.attributes.link,
+				download: attachment.attributes.url
 			} );
 		} );
 

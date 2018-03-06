@@ -286,7 +286,7 @@
                                             $post_types = get_post_types();
 
                                             foreach ( $post_types as $post_type => $label ) {
-                                                if ( in_array( $post_type, $ignore ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
+                                                if ( in_array( $post_type, $ignore, true ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
                                                 	// Post type is ignored
                                                     unset( $post_types[ $post_type ] );
 
@@ -310,7 +310,7 @@
                                             $taxonomies = get_taxonomies();
 
                                             foreach ( $taxonomies as $taxonomy => $label ) {
-                                                if ( in_array( $taxonomy, $ignore ) ) {
+                                                if ( in_array( $taxonomy, $ignore, true ) ) {
                                                 	// Taxonomy is ignored
                                                     unset( $taxonomies[ $taxonomy ] );
 

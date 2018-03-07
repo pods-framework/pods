@@ -180,6 +180,10 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.2 - TBD =
+
+* Added WP-CLI commands for Pods, more details at [https://docs.pods.io/advanced-topics/pods-wp-cli/](https://docs.pods.io/advanced-topics/pods-wp-cli/) #@sc0ttkclark
+
 = 2.7.1 - December 8th 2017 =
 
 * Fix table join logic for taxonomies when renaming meta fields #4613 @sc0ttkclark

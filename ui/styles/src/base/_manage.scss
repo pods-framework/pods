@@ -154,7 +154,7 @@ form.pods-manage ul.pods-dfv-list li span.pods-file-remove img {
 .plupload-progress .progress-bar {
     position: absolute;
     height: 14px;
-    width: 0%;
+    width: 0;
     background: #4d4d4d;
     margin-left: 10px;
 }
@@ -290,7 +290,7 @@ table.plupload-queue td.progress {
 }
 
 table.plupload-queue td.progress .progress-bar {
-    width: 0%;
+    width: 0;
     height: 14px;
     background: black;
 }

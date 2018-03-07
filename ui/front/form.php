@@ -15,7 +15,7 @@ foreach ( $fields as $k => $field ) {
 	) );
 	$fields[ $k ] = $field;
 
-	if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) ) {
+	if ( in_array( $field[ 'name' ], array( 'created', 'modified' ), true ) ) {
 		unset( $fields[ $k ] );
 	}
 	elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {

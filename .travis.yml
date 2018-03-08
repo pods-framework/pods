@@ -3,7 +3,7 @@ language: php
 sudo: false
 
 php:
-    - 7.1
+    #- 7.1
 
 env:
     #- WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable

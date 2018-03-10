@@ -316,15 +316,6 @@ class PodsInit {
 
 		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
 
-		if ( is_admin() ) {
-			$screen = get_current_screen();
-
-			// Deregister the outdated Pods handlebars script on TEC event screen
-			if ( $screen && 'tribe_events' === $screen->post_type ) {
-				$register_handlebars = false;
-			}
-		}
-
 		if ( $register_handlebars ) {
 			wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
 		}
@@ -362,6 +353,18 @@ class PodsInit {
 		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', array(), PODS_VERSION );
 		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', array(), PODS_VERSION );
 
+		// Deal with specifics on admin pages
+		if ( is_admin() ) {
+			$screen = get_current_screen();
+
+			// Deregister the outdated Pods handlebars script on TEC event screen
+			if ( $screen && 'tribe_events' === $screen->post_type ) {
+				$register_handlebars = false;
+			// Media items in grid mode need DFV
+			} else if ( $screen->base && 'upload' === $screen->base ) {
+				wp_enqueue_script( 'pods-dfv' );
+			}
+		}
 	}
 
 	/**

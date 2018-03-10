@@ -12,7 +12,7 @@ env:
 
 matrix:
     allow_failures:
-    - env: WP_VERSION=nightly WP_MULTISITE=0
+    - env: WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable
 
     include:
     - php: 7.2

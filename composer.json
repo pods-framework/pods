@@ -41,7 +41,7 @@
   },
   "require": {
     "composer/installers": "1.5.*",
-    "php": ">=5.2.4"
+    "php": ">=5.3"
   },
   "require-dev": {
     "wp-cli/wp-cli": "1.*",

@@ -1462,10 +1462,11 @@ class PodsUI {
 	public function message( $msg, $error = false ) {
 
 		$msg = $this->do_hook( ( $error ) ? 'error' : 'message', $msg );
-		?>
+		if($msg !== null) {
+		?> 
 		<div id="message" class="<?php echo esc_attr( ( $error ) ? 'error' : 'updated' ); ?> fade">
 			<p><?php echo $msg; ?></p></div>
-		<?php
+		<?php }
 	}
 
 	/**

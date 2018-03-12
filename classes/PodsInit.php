@@ -342,7 +342,6 @@ class PodsInit {
 			add_filter( 'admin_body_class', array( $this, 'add_classes_to_body_class' ) );
 		}
 
-
 		// Deal with specifics on admin pages
 		if ( is_admin() ) {
 			$screen = get_current_screen();

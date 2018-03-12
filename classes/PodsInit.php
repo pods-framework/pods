@@ -314,12 +314,6 @@ class PodsInit {
 		);
 		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.css", array(), '1.0.1' );
 
-		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
-
-		if ( $register_handlebars ) {
-			wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
-		}
-
 		// Marionette dependencies for MV fields
 		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.js', array( 'backbone' ), '2.0.0', true );
 		wp_register_script(
@@ -348,22 +342,44 @@ class PodsInit {
 			add_filter( 'admin_body_class', array( $this, 'add_classes_to_body_class' ) );
 		}
 
+
+		// Deal with specifics on admin pages
+		if ( is_admin() ) {
+			$screen = get_current_screen();
+
+			if ( $screen->base && 'upload' === $screen->base ) {
+				wp_enqueue_script( 'pods-dfv' );
+			}
+		}
+
+		$this->maybe_register_handlebars();
+
 		// As of 2.7 we combine styles to just three .css files
 		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', array(), PODS_VERSION );
 		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', array(), PODS_VERSION );
 		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', array(), PODS_VERSION );
+	}
 
-		// Deal with specifics on admin pages
+	/**
+	 * Register handlebars where needed
+	 *
+	 * @since 2.7.2
+	 */
+	private function maybe_register_handlebars() {
+
+		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
+
 		if ( is_admin() ) {
 			$screen = get_current_screen();
 
 			// Deregister the outdated Pods handlebars script on TEC event screen
 			if ( $screen && 'tribe_events' === $screen->post_type ) {
 				$register_handlebars = false;
-			// Media items in grid mode need DFV
-			} else if ( $screen->base && 'upload' === $screen->base ) {
-				wp_enqueue_script( 'pods-dfv' );
 			}
+		}
+
+		if ( $register_handlebars ) {
+			wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
 		}
 	}
 

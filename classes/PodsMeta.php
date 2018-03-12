@@ -1463,7 +1463,8 @@ class PodsMeta {
 					pods_no_conflict_off( 'post' );
 				}
 
-				// Manually force DFV initialization.  This is needed for attachments in "grid mode" in the media library
+				// Manually force DFV initialization.  This is needed for attachments in "grid mode" in the
+				// media library.  Note that this should only occur for attachment_fields_to_edit (see #4785)
 				$dfv_init_script = "<script>jQuery( '.pods-form-ui-field' ).PodsDFVInit( PodsDFV.fieldInstances );</script>";
 
 				$form_fields[ 'pods_meta_' . $field['name'] ] = array(

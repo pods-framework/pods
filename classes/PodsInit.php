@@ -346,6 +346,7 @@ class PodsInit {
 		if ( is_admin() ) {
 			$screen = get_current_screen();
 
+			// DFV must be enqueued on the media library page for items in grid mode (see #4785)
 			if ( $screen->base && 'upload' === $screen->base ) {
 				wp_enqueue_script( 'pods-dfv' );
 			}

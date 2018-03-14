@@ -3625,7 +3625,8 @@ class PodsAPI {
 			$options = pods_var( 'options', $field_data, array() );
 
 			// WPML AJAX compatibility
-			if ( is_admin() && isset( $_GET['page'] ) && false !== strpos( $_GET['page'], '/menu/languages.php' ) && isset( $_POST['icl_ajx_action'] ) && isset( $_POST['_icl_nonce'] ) && wp_verify_nonce( $_POST['_icl_nonce'], $_POST['icl_ajx_action'] . '_nonce' ) ) {
+			if ( ( is_admin() && isset( $_POST['action'] ) && 'wpml_save_job_ajax' === $_POST['action'] ) ||
+				 ( is_admin() && isset( $_GET['page'] ) && false !== strpos( $_GET['page'], '/menu/languages.php' ) && isset( $_POST['icl_ajx_action'] ) && isset( $_POST['_icl_nonce'] ) && wp_verify_nonce( $_POST['_icl_nonce'], $_POST['icl_ajx_action'] . '_nonce' ) ) ) {
 				$options['unique'] = $fields[ $field ]['options']['unique'] = $options['required'] = $fields[ $field ]['options']['required'] = 0;
 			} else {
 				// Validate value

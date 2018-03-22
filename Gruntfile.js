@@ -1,9 +1,12 @@
+/*jshint node: true */
 module.exports = function ( grunt ) {
+	'use strict';
 
 	//setup file list for copying/ not copying for SVN
-	files_list = [
+	var files_list = [
 		'**',
 		'!.git/**',
+		'!.idea/**',
 		'!.sass-cache/**',
 		'!bin/**',
 		'!node_modules/**',
@@ -11,25 +14,35 @@ module.exports = function ( grunt ) {
 		'!sources/**',
 		'!tests/**',
 		'!vendor/**',
+		'!.babelrc',
 		'!.gitattributes',
 		'!.gitignore',
 		'!.gitmodules',
+		'!.jshintrc',
+		'!.scrutinizer.yml',
 		'!.travis.yml',
+		'!audit.sh',
 		'!CODEOWNERS',
 		'!composer.json',
 		'!composer.lock',
 		'!CONTRIBUTING.md',
-		'!Gruntfile.js',
 		'!git-workflow.md',
 		'!grunt-workflow.md',
+		'!Gruntfile.js',
 		'!package.json',
+		'!package-lock.json',
 		'!phpcs.ruleset.xml',
 		'!phpunit.xml.dist',
-		'!README.md'
+		'!README.md',
+		'!report-full.txt',
+		'!report-source.txt',
+		'!rollup.config.js'
 	];
 
 	// load all grunt tasks in package.json matching the `grunt-*` pattern
 	require( 'load-grunt-tasks' )( grunt );
+
+	grunt.loadNpmTasks( 'grunt-exec' );
 
 	// Project configuration.
 	grunt.initConfig( {
@@ -43,19 +56,19 @@ module.exports = function ( grunt ) {
 
 		copy: {
 			svn_trunk: {
-				expand: true,
+				expand : true,
 				options: {
-					mode:true
+					mode: true
 				},
-				src:  files_list,
-				dest: 'build/<%= pkg.name %>/trunk/'
+				src    : files_list,
+				dest   : 'build/<%= pkg.name %>/trunk/'
 			}
 		},
 
 		gittag: {
 			addtag: {
 				options: {
-					tag: '2.x/<%= pkg.version %>',
+					tag    : '2.x/<%= pkg.version %>',
 					message: 'Pods <%= pkg.version %>'
 				}
 			}
@@ -64,12 +77,12 @@ module.exports = function ( grunt ) {
 		gitcommit: {
 			commit: {
 				options: {
-					message: 'Pods <%= pkg.version %>',
-					noVerify: true,
-					noStatus: false,
+					message   : 'Pods <%= pkg.version %>',
+					noVerify  : true,
+					noStatus  : false,
 					allowEmpty: true
 				},
-				files: {
+				files  : {
 					src: [
 						'readme.txt',
 						'init.php',
@@ -84,7 +97,7 @@ module.exports = function ( grunt ) {
 		gitpush: {
 			push: {
 				options: {
-					tags: true,
+					tags  : true,
 					remote: 'origin',
 					branch: 'master'
 				}
@@ -92,94 +105,94 @@ module.exports = function ( grunt ) {
 		},
 
 		replace: {
-			version_readme_txt: {
-				src: [ 'readme.txt' ],
-				overwrite: true,
-				replacements: [{
+			version_readme_txt          : {
+				src         : [ 'readme.txt' ],
+				overwrite   : true,
+				replacements: [ {
 					from: /Stable tag: (.*)/,
-					to: "Stable tag: <%= pkg.version %>"
-				}]
+					to  : "Stable tag: <%= pkg.version %>"
+				} ]
 
 			},
-			version_init_php: {
-				src: [ 'init.php' ],
-				overwrite: true,
-				replacements: [{
+			version_init_php            : {
+				src         : [ 'init.php' ],
+				overwrite   : true,
+				replacements: [ {
 					from: /Version: (.*)/,
-					to: "Version: <%= pkg.version %>"
+					to  : "Version: <%= pkg.version %>"
 				}, {
 					from: /define\( 'PODS_VERSION', '([\.\d\w\-]*)' \);/,
-					to: "define( 'PODS_VERSION', '<%= pkg.version %>' );"
-				}]
+					to  : "define( 'PODS_VERSION', '<%= pkg.version %>' );"
+				} ]
 			},
-			branchfix_master_readme_md: {
-				src: [ 'README.md' ],
-				overwrite: true,
-				replacements: [{
+			branchfix_master_readme_md  : {
+				src         : [ 'README.md' ],
+				overwrite   : true,
+				replacements: [ {
 					from: /\?branch=(release\/|)([\.\d\w\-]*)/g,
-					to: "?branch=master"
+					to  : "?branch=master"
 				}, {
 					from: /\?b=(release\/|)([\.\d\w\-]*)/g,
-					to: "?b=master"
+					to  : "?b=master"
 				}, {
 					from: /\/blob\/(release\/|)([\.\d\w\-]*)\//g,
-					to: "/blob/master/"
-				}]
+					to  : "/blob/master/"
+				} ]
 
 			},
-			branchfix_master_init_php: {
-				src: [ 'init.php' ],
-				overwrite: true,
-				replacements: [{
-					from: /GitHub Branch: (release\/|)([\.\d\w\-\/]*)/,
-					to: "GitHub Branch: master"
-				}]
+			branchfix_master_init_php   : {
+				src         : [ 'init.php' ],
+				overwrite   : true,
+				replacements: [ {
+					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
+					to  : "GitHub Branch: master"
+				} ]
 			},
-			branchfix_2x_readme_md: {
-				src: [ 'README.md' ],
-				overwrite: true,
-				replacements: [{
+			branchfix_2x_readme_md      : {
+				src         : [ 'README.md' ],
+				overwrite   : true,
+				replacements: [ {
 					from: /\?branch=(release\/|)([\.\d\w\-]*)/g,
-					to: "?branch=2.x"
+					to  : "?branch=2.x"
 				}, {
 					from: /\?b=(release\/|)([\.\d\w\-]*)/g,
-					to: "?b=2.x"
+					to  : "?b=2.x"
 				}, {
 					from: /\/blob\/(release\/|)([\.\d\w\-]*)\//g,
-					to: "/blob/2.x/"
-				}]
+					to  : "/blob/2.x/"
+				} ]
 
 			},
-			branchfix_2x_init_php: {
-				src: [ 'init.php' ],
-				overwrite: true,
-				replacements: [{
-					from: /GitHub Branch: (release\/|)([\.\d\w\-\/]*)/,
-					to: "GitHub Branch: 2.x"
-				}]
+			branchfix_2x_init_php       : {
+				src         : [ 'init.php' ],
+				overwrite   : true,
+				replacements: [ {
+					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
+					to  : "GitHub Branch: 2.x"
+				} ]
 			},
-			branchfix_release_readme_md: {
-				src: [ 'README.md' ],
-				overwrite: true,
-				replacements: [{
+			branchfix_release_readme_md : {
+				src         : [ 'README.md' ],
+				overwrite   : true,
+				replacements: [ {
 					from: /\?branch=(release\/|)([\.\d\w\-]*)/g,
-					to: "?branch=release/3.0"
+					to  : "?branch=release/2.7"
 				}, {
 					from: /\?b=(release\/|)([\.\d\w\-]*)/g,
-					to: "?b=release/3.0"
+					to  : "?b=release/2.7"
 				}, {
 					from: /\/blob\/(release\/|)([\.\d\w\-]*)\//g,
-					to: "/blob/release/3.0/"
-				}]
+					to  : "/blob/release/2.7/"
+				} ]
 
 			},
-			branchfix_release_init_php: {
-				src: [ 'init.php' ],
-				overwrite: true,
-				replacements: [{
-					from: /GitHub Branch: (release\/|)([\.\d\w\-\/]*)/,
-					to: "GitHub Branch: release/3.0"
-				}]
+			branchfix_release_init_php  : {
+				src         : [ 'init.php' ],
+				overwrite   : true,
+				replacements: [ {
+					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
+					to  : "GitHub Branch: release/2.7"
+				} ]
 			}
 		},
 
@@ -198,27 +211,27 @@ module.exports = function ( grunt ) {
 			options: {
 				remove: true
 			},
-			main: {
-				src: 'build/<%= pkg.name %>/trunk',
+			main   : {
+				src : 'build/<%= pkg.name %>/trunk',
 				dest: 'http://plugins.svn.wordpress.org/<%= pkg.name %>/trunk',
-				tmp: 'build/push_svn/trunk'
+				tmp : 'build/push_svn/trunk'
 			}
 		},
 
 		svn_copy: {
 			options: {},
-			files: {
+			files  : {
 				// This is switched, dest = source and src = target, svn_copy code is wrong
 				// See: https://github.com/ColmMcBarron/grunt-svn-copy/issues/1
 				dest: 'http://plugins.svn.wordpress.org/<%= pkg.name %>/trunk',
-				src: 'http://plugins.svn.wordpress.org/<%= pkg.name %>/tags/<%= pkg.version %> -m "<%= pkg.name %>/<%= pkg.version %>"'
+				src : 'http://plugins.svn.wordpress.org/<%= pkg.name %>/tags/<%= pkg.version %> -m "<%= pkg.name %>/<%= pkg.version %>"'
 			}
 		},
 
 		mkdir: {
 			build: {
 				options: {
-					mode: 0755,
+					mode  : parseInt( '0755', 8 ),
 					create: [ 'build' ]
 				}
 			}
@@ -237,5 +250,4 @@ module.exports = function ( grunt ) {
 	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'push_svn', 'svn_copy' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
 	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );
-
 };

@@ -5,11 +5,11 @@
 
     <h3><?php _e( 'Pods Support' , 'pods'); ?></h3>
 
-    <p><?php _e( 'There are many resources available to help you learn to use Pods on our site, <a href="http://pods.io/" target="_blank">Pods.io</a>:', 'pods'); ?></p>
+    <p><?php _e( 'There are many resources available to help you learn to use Pods on our site, <a href="https://pods.io/" target="_blank">Pods.io</a>:', 'pods'); ?></p>
     <ul class="ul-disc">
-        <li><?php _e('To learn more about using Pods, see the <a href="http://pods.io/docs/" target="_blank">documentation</a>, or our <a href="http://pods.io/tutorials/" target="_blank">tutorials section</a>', 'pods'); ?>.
+        <li><?php _e('To learn more about using Pods, see the <a href="https://pods.io/docs/" target="_blank">documentation</a>, or our <a href="https://pods.io/tutorials/" target="_blank">tutorials section</a>', 'pods'); ?>.
 
-        <li><?php _e( 'To get help with a specific issue, you can ask in our <a href="http://pods.io/forums/" target="_blank">support forums</a>, or in <a href="http://pods.io/forums/chat/" target="_blank">our chat</a>', 'pods'); ?>.
+        <li><?php _e( 'To get help with a specific issue, you can ask in our <a href="https://pods.io/forums/" target="_blank">support forums</a>, or in <a href="https://pods.io/forums/chat/" target="_blank">our chat</a>', 'pods'); ?>.
 
         <li><?php _e('To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank">GitHub</a>.', 'pods' ); ?></li>
 
@@ -21,7 +21,7 @@
     <?php
         include_once( ABSPATH . WPINC . '/feed.php' );
 
-        $feed = fetch_feed( 'http://pods.io/forums/forum/pods-2-x/feed/' );
+        $feed = fetch_feed( 'https://pods.io/forums/forum/pods-2-x/feed/' );
 
         if ( !is_wp_error( $feed ) ) {
             $max_items = $feed->get_item_quantity( 10 );
@@ -29,7 +29,7 @@
 
             if ( 0 < $max_items ) {
     ?>
-        <h3><?php _e( 'Latest Forum Posts at <a href="http://pods.io/forums/forum/general-discussion/pods-2-x/" target="_blank">pods.io</a>', 'pods'); ?></h3>
+        <h3><?php _e( 'Latest Forum Posts at <a href="https://pods.io/forums/forum/general-discussion/pods-2-x/" target="_blank">pods.io</a>', 'pods'); ?></h3>
 
         <ul class="ul-disc">
             <?php

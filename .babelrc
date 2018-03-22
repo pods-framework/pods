@@ -1,0 +1,9 @@
+{
+    "presets": [ "es2015" ],
+    "plugins": [
+        [ "module-resolver", {
+            "alias": { "pods-dfv": "./ui/js/pods-dfv" }
+        } ],
+        "transform-html-import-to-string"
+    ]
+}

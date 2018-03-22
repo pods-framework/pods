@@ -1,0 +1,584 @@
+.pods-hidden {
+    display: none;
+}
+
+.pods-admin .pods-leaf-watermark-right {
+    position: fixed;
+    width: 236px;
+    height: 178px;
+    bottom: 50px;
+    right: 16px;
+    z-index: -1;
+}
+
+.pods-admin .pods_floatmenu {
+    width: 200px;
+}
+
+.pods-admin .pods-icon {
+    display: inline-block;
+    padding: 1px 0 0 5px;
+    vertical-align: top;
+}
+
+.icon32#icon-pods {
+    background: url(#{$ImagesPath}/icon32.png) no-repeat;
+}
+
+.pods-admin .waiting {
+    display: none;
+    vertical-align: middle;
+}
+
+.pods-admin button,
+.pods-admin a.button,
+.pods-admin a.button-secondary,
+.pods-admin a.button-primary {
+    vertical-align: middle;
+}
+
+/*
+ * Pods Validate
+ */
+.pods-admin .pods-validate.pods-validate-error {
+    border-color: #C89797;
+    color: #790000;
+    background-color: #FFDFDF;
+}
+
+.pods-admin .pods-validate-error-message {
+    color: #790000;
+    font-weight: bold;
+    padding: 5px 10px 4px;
+    display: inline-block;
+}
+
+/*
+ * Pods Advanced
+ */
+.pods-admin .pods-advanced-toggle {
+    font-size: 12px;
+    text-decoration: underline;
+}
+
+.pods-admin .pods-advanced {
+    display: none;
+    width: 100%;
+}
+
+/*
+ * Pods Wizard
+ */
+.pods-wizard p {
+    font-size: 14px;
+}
+
+.pods-wizard #poststuff h1,
+.pods-wizard h2,
+.pods-wizard h3 {
+    margin-bottom: 0 !important;
+}
+
+.pods-admin #poststuff h3 {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/*
+ * Pods Tabbed
+ */
+.pods-tabbed ul.pods-tabs:before {
+    content: "";
+    display: table;
+}
+
+.pods-tabbed ul.pods-tabs:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.pods-tabbed ul.pods-tabs {
+    zoom: 1;
+    margin-bottom: 0;
+}
+
+.pods-tabbed ul.pods-tabs li.pods-tab {
+    float: left;
+    margin: 0;
+}
+
+.pods-tabbed ul.pods-tabs li.pods-tab a {
+    -moz-border-radius-bottomleft: 0;
+    -moz-border-radius-bottomright: 0;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    -webkit-border-radius: 5px 5px 0 0;
+    background: #e9e9e9;
+    border: 1px solid #dfdfdf;
+    border-radius: 5px 5px 0 0;
+    display: block;
+    float: left;
+    font-size: 14px;
+    margin-right: 5px;
+    padding: 5px 10px;
+    text-decoration: none;
+}
+
+.pods-tabbed ul.pods-tabs li.pods-tab a.selected {
+    background: #FFF;
+    border-bottom: 1px solid #FFF;
+}
+
+.pods-tabbed .pods-tab-group h4 {
+    margin: 5px 10px;
+}
+
+.pods-tabbed .pods-tab-group .pods-tab {
+    display: none;
+    margin-bottom: 15px;
+    margin-top: -1px;
+    width: 99%;
+    border: 1px solid #dfdfdf;
+    border-bottom: 0;
+}
+
+.pods-nav-tabbed .pods-nav-tab-group .pods-nav-tab {
+    display: none;
+}
+
+/*
+ * Pods Collapsible
+ */
+tbody.pods-manage-list div {
+    overflow: hidden;
+    zoom: 1;
+}
+
+tbody.pods-manage-list div.pods-manage-row-wrapper {
+    max-width: 500px;
+    display: none;
+    width: 100%;
+}
+
+tbody.pods-manage-list tr.pods-manage-row-expanded {
+    background: #f1f1f1;
+}
+
+tbody.pods-manage-list tr.pods-manage-row-expanded td.pods-manage-row-name,
+tbody.pods-manage-list tr.pods-manage-row-expanded td.pods-manage-row-type,
+tbody.pods-manage-list tr.pods-manage-row-expanded td.pods-manage-row-comment,
+tbody.pods-manage-list tr.pods-manage-row-expanded span.pods-manage-row-id,
+tbody.pods-manage-list tr.pods-manage-row-expanded div.row-actions,
+tbody.pods-manage-list tr.pods-manage-row-expanded th.pods-manage-sort img {
+    display: none;
+}
+
+tbody.pods-manage-list tr.pods-manage-row th.pods-manage-sort {
+    cursor: move;
+}
+
+tbody.pods-manage-list tr.pods-manage-row th.pods-manage-sort img {
+    vertical-align: top;
+    margin-top: 7px;
+    margin-left: -5px;
+}
+
+tbody.pods-manage-list tr.pods-manage-row td > span.pods-manage-row-more {
+    display: none;
+    margin-left: 5px;
+    color: #999;
+}
+
+tbody.pods-manage-list tr.pods-manage-row td:hover > span.pods-manage-row-more {
+    display: inline;
+}
+
+tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-actions {
+    margin-bottom: 4px;
+    overflow: visible;
+}
+
+tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-delete {
+    float: left;
+    text-align: left;
+    width: 40%;
+}
+
+tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
+    float: right;
+    text-align: right;
+}
+
+tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-delete a.submitdelete,
+tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save a.pods-button-add,
+tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-save a.pods-button-update {
+    display: none;
+}
+
+tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-save a.pods-button-add {
+    display: inline-block;
+}
+
+/*
+ * Pods Field statuses
+ */
+tbody.pods-manage-list .pods-manage-row th.check-field {
+    border: 5px solid transparent; /* separates items from each other */
+    border-right: 0;
+    padding: 3px 5px;
+    transition: border-color 300ms ease; /* ooh, fancy! */
+}
+/* Any changed or new field */
+tbody.pods-manage-list .pods-field-updated th.check-field {
+    border-left-color: #95BF3B;
+}
+/* Applies to a new field just added or existing field being modified. */
+tbody.pods-manage-list .pods-manage-row-expanded th.check-field,
+tbody.pods-manage-list .pods-field-new th.check-field {
+    border-left-color: #E35036;
+}
+
+/*
+ * Pods Toggled
+ */
+.pods-toggled {
+    clear: both;
+    margin-top: 30px;
+}
+
+.pods-toggled.pods-toggled-only {
+    margin-top: 0;
+}
+
+.pods-toggled h3 {
+    cursor: pointer;
+}
+
+.pods-no-toggle h3 {
+    cursor: default;
+}
+
+tr.pods-toggled-on {
+    background-color: #FFF;
+}
+
+tr.pods-toggled-off {
+    background-color: #F4F4F4;
+}
+
+/*
+ * Pods Dependency
+ */
+.pods-depends-on,
+.pods-excludes-on,
+.pods-wildcard-on {
+    display: none;
+}
+
+/*
+ * Pods Field Tabs
+ */
+.pods-tabbed div {
+    overflow: hidden;
+    zoom: 1;
+}
+
+.pods-tab.pods-basic-options {
+    display: block;
+}
+
+.pods-tab#pods-advanced-labels,
+.pods-tab#pods-advanced-settings-labels {
+    display: block;
+}
+
+/*
+ * Pods Fields
+ */
+div.pods-manage-field div {
+    overflow: hidden;
+    zoom: 1;
+}
+
+div.pods-manage-field .description {
+    clear: both;
+}
+
+div.pods-manage-field .pods-field-option,
+div.pods-manage-field .pods-field-option-group {
+    background: #fcfcfc;
+    border-bottom: 1px solid #dfdfdf;
+    padding: 10px;
+}
+
+div.pods-manage-field .pods-pick-values li,
+div.pods-manage-field .pods-field {
+    position: relative;
+}
+
+div.pods-manage-field .pods-pick-values li {
+    margin: 0;
+}
+
+div.pods-manage-field .pods-field-option:nth-child(odd),
+div.pods-manage-field .pods-field-option-group:nth-child(odd) {
+    background: #fff;
+}
+
+div.pods-manage-field .pods-field-option label,
+div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
+    padding-top: 4px;
+    float: left;
+    width: 30%;
+    max-width: 150px;
+    margin-right: 2%;
+}
+
+.pods-manage-field .pods-field.pods-boolean label,
+.pods-manage-field .pods-field-option .pods-pick-values label {
+    float: none;
+    width: auto;
+    max-width: 100%;
+    display: block;
+    margin-left: 22px;
+    padding: 5px 0;
+    line-height: 14px;
+    margin-right: 0;
+}
+
+.pods-manage-field .pods-field-option .pods-pick-values .pods-field.pods-boolean {
+    float: none;
+    margin-left: 0;
+    width: auto;
+    max-width: 100%;
+}
+
+.pods-manage-field .pods-field-option input[type="text"],
+.pods-manage-field .pods-field-option select,
+.pods-manage-field .pods-field-option textarea,
+.pods-manage-field .pods-field-option .pods-field.pods-boolean,
+.pods-manage-field .pods-pick-values,
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-file,
+.pods-manage-field .pods-slider-field {
+    display: block;
+    float: left;
+    width: 65%;
+    max-width: 25em;
+}
+
+.pods-manage-field label + div .pods-pick-values {
+    /* Match width to input fields */
+    width: 96%;
+}
+
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-wysiwyg textarea {
+    max-width: 100%;
+}
+
+.pods-manage-field .pods-field-option div select {
+    float: none;
+    width: 100%;
+    margin: 0;
+    max-width: 100%;
+}
+
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-file {
+    padding-bottom: 8px;
+}
+
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-file table.form-table tr.form-field td {
+    padding: 0;
+    border-bottom: none;
+}
+
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-file table.form-table,
+.pods-manage-field .pods-field-option-group p.pods-field-option-group-label {
+    margin-top: 0;
+}
+
+.pods-manage-field .pods-field.pods-boolean {
+    margin: 5px 0;
+}
+
+.pods-manage-field input[type="checkbox"],
+.pods-manage-field input[type="radio"] {
+	display: inline-block;
+    margin: 4px 2px 4px 0;
+    float: left;
+    vertical-align: middle;
+}
+
+.pods-manage-field .pods-pick-values ul {
+    overflow: auto;
+    margin: 5px 0;
+}
+
+.pods-manage-field .pods-pick-values ul .pods-field.pods-boolean {
+    margin: 0;
+}
+
+.pods-manage-field .pods-pick-values.pods-zebra {
+    width: 100%;
+    max-width: 100%;
+}
+.pods-manage-field .pods-pick-values.pods-zebra li {
+    margin-bottom: 4px;
+}
+
+.pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean input {
+    margin: 4px;
+}
+.pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean label {
+    margin-left: 26px;
+}
+
+.pods-manage-field .pods-pick-values li.pods-zebra-odd {
+    display: block;
+    width: 50%;
+    float: left;
+    clear: both;
+}
+
+.pods-manage-field .pods-pick-values li.pods-zebra-even {
+    display: block;
+    width: 50%;
+    float: left;
+    clear: none;
+}
+
+.pods-manage-field .pods-pick-values .regular-text {
+    max-width: 95%;
+}
+
+.pods-manage-field li > .pods-field.pods-boolean:hover {
+    background: #f5f5f5;
+}
+
+.pods-manage-field input.pods-form-ui-no-label {
+    position: relative;
+}
+
+/*
+ * Pods Sluggable
+ */
+.pods-sluggable .pods-slug em {
+    cursor: pointer;
+}
+
+.pods-sluggable a.cancel {
+    font-size: 12px;
+}
+
+.pods-sluggable .pods-slug-edit {
+    display: none;
+}
+
+/**
+ * Pods DFV
+ */
+.pods-manage-field .pods-dfv-field .pods-ui-file-list.pods-field-template-rows,
+.pods-manage-field .pods-dfv-field .pods-ui-list-autocomplete {
+    width: 65%;
+    max-width: 25em;
+}
+
+/*
+ * Pods Flexible
+ */
+tbody.pods-manage-list tr.flexible-row {
+    display: none;
+}
+
+.pods-admin .pods-float-right {
+    float: right;
+}
+
+.pods-admin p.pods-manage-row-add {
+    text-align: right;
+}
+
+/*
+ * Pods UI
+ */
+div.row-actions.row-actions-toggle {
+    display: block;
+    visibility: visible;
+}
+
+/*
+ * REST API Tab
+ */
+#pods-rest-api label[for="pods-form-ui-no-dependencies"] {
+    width: 100%;
+    max-width: initial;
+}
+
+@media only screen and (max-width: 850px) {
+    .pods-admin .pods_floatmenu {
+        position: static !important;
+        float: none;
+        display: block;
+        width: 100%;
+    }
+    .pods-admin .pods_floatmenu .inner-sidebar {
+        float: none;
+        width: auto;
+    }
+}
+
+@media screen and (max-width: 782px) {
+    /*
+     * Pods wp-list-table
+     */
+    .wp-list-table td.column-secondary {
+        display: block !important;
+        margin-top: -10px;
+        margin-bottom: 5px;
+    }
+    .wp-list-table .is-expanded td.column-secondary {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    div.pods-manage-field .pods-field-option label,
+    div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
+        float: none;
+        display: block;
+        width: 100%;
+        max-width: none;
+        padding-bottom: 4px;
+        margin-bottom: 0;
+        line-height: 22px;
+    }
+
+    .pods-manage-field .pods-field-option input[type="text"],
+    .pods-manage-field .pods-field-option select,
+    .pods-manage-field .pods-field-option textarea,
+    .pods-manage-field .pods-field-option .pods-field.pods-boolean,
+    .pods-manage-field .pods-pick-values,
+    .pods-manage-field .pods-field-option .pods-form-ui-field-type-file,
+    .pods-manage-field .pods-slider-field {
+        display: block;
+        margin: 0;
+        width: 100%;
+        max-width: none;
+    }
+
+    .pods-manage-field .pods-field.pods-boolean label,
+    .pods-manage-field .pods-field-option .pods-pick-values label {
+        line-height: 22px;
+        font-size: 14px;
+        margin-left: 34px;
+    }
+
+    .pods-manage-field .pods-pick-values li.pods-zebra-odd,
+    .pods-manage-field .pods-pick-values li.pods-zebra-even {
+        display: block;
+        width: 100%;
+        float: none;
+        clear: both;
+    }
+}

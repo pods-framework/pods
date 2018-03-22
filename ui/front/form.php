@@ -1,13 +1,21 @@
 <?php
-wp_enqueue_style( 'pods-form', false, array(), false, true );
-
-if ( wp_script_is( 'pods', 'registered' ) && !wp_script_is( 'pods', 'done' ) ) {
-    wp_print_scripts( 'pods' );
-}
+wp_enqueue_style( 'pods-form' );
+wp_enqueue_script( 'pods' );
 
 // unset fields
 foreach ( $fields as $k => $field ) {
-	if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) ) {
+
+	// Make sure all required array keys exist.
+	$field = wp_parse_args( $field, array(
+		'name' => '',
+		'type' => '',
+		'label' => '',
+		'help' => '',
+		'options' => array(),
+	) );
+	$fields[ $k ] = $field;
+
+	if ( in_array( $field[ 'name' ], array( 'created', 'modified' ), true ) ) {
 		unset( $fields[ $k ] );
 	}
 	elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
@@ -170,18 +178,21 @@ if ( !$fields_only ) {
 </form>
 
 <script type="text/javascript">
-    if ( 'undefined' == typeof pods_form_init && 'undefined' != typeof jQuery( document ).Pods ) {
-        var pods_form_init = true;
+	if ( 'undefined' === typeof pods_form_init ) {
+		var pods_form_init = true;
 
-        if ( 'undefined' == typeof ajaxurl ) {
-            var ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
-        }
+		jQuery(document).ready( function( $ ) {
+			if ( 'undefined' !== typeof jQuery( document ).Pods ) {
 
-        jQuery( function ( $ ) {
-            $( document ).Pods( 'validate' );
-            $( document ).Pods( 'submit' );
-        } );
-    }
+				if ( 'undefined' === typeof ajaxurl ) {
+					window.ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
+				}
+
+				$( document ).Pods( 'validate' );
+				$( document ).Pods( 'submit' );
+			}
+		} );
+	}
 </script>
 <?php
 }

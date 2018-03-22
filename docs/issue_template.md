@@ -21,6 +21,16 @@
 3.
 4.
 
+## Pods Package Export (helpful!)
+<!-- Not obligatory, but providing an export of your Podds, etc. would help us troubleshoot -->
+<!-- Under Pods Admin, Components, select Migrate: Packages and Enable. -->
+<!-- Then select Pods Admin, Migrate Packages, Export, and Copy and Paste the contents -->
+<!-- of that JSON Export into the Section provided below -->
+<details>
+```
+Copy and Paste the JSON Export from **Pods Admin, Migrate: Packages, Export** in WordPress admin here
+```
+</details>
 ## Related Issues and/or PRs
 <!-- List related issues or PRs against other branches:  -->
 

@@ -48,7 +48,7 @@
   ],
   "require": {
     "composer/installers": "1.4.*",
-    "php": ">=5.2.4"
+    "php": ">=5.2.4",
     "kucrut/icon-picker": "^0.5.0"
   },
   "require-dev": {

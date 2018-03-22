@@ -3186,6 +3186,7 @@ class PodsUI {
 		include_once ABSPATH . 'wp-admin/includes/template.php';
 
 		wp_enqueue_script( 'thickbox' );
+		wp_enqueue_style( 'thickbox' );
 		wp_enqueue_style( 'pods-styles' );
 
 		$filters = $this->filters;

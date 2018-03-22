@@ -39,9 +39,17 @@
     "source": "https://github.com/pods-framework/pods",
     "docs": "https://pods.io/docs/"
   },
+  "repositories": [
+    {
+      "url": "https://github.com/ineagu/wp-icon-picker.git",
+      "type": "git",
+      "name": "kucrut/icon-picker"
+    }
+  ],
   "require": {
     "composer/installers": "1.4.*",
     "php": ">=5.2.4"
+    "kucrut/icon-picker": "^0.5.0"
   },
   "require-dev": {
     "wp-cli/wp-cli": "1.*",
@@ -56,6 +64,9 @@
     "wp-cli/wp-cli": "Enables access to Pods CLI commands."
   },
   "extra": {
-    "installer-name": "pods"
+    "installer-name": "pods",
+    "installer-paths": {
+      "vendor/{$vendor}/{$name}/": ["type:wordpress-plugin"]
+    }
   }
 }

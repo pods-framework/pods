@@ -22,15 +22,14 @@
 4.
 
 ## Pods Package Export (helpful!)
-<!-- Not obligatory, but providing an export of your Podds, etc. would help us troubleshoot -->
-<!-- Under Pods Admin, Components, select Migrate: Packages and Enable. -->
-<!-- Then select Pods Admin, Migrate Packages, Export, and Copy and Paste the contents -->
-<!-- of that JSON Export into the Section provided below -->
-<details>
+<!-- Please include the Pods Package Export as it will be helpful in reproducing your issues. -->
+<!-- To access: Pods Admin, Components, Migrate: Packages, Enable. -->
+<!-- Then Pods Admin, Migrate: Packages, Export and Copy and Paste the JSON here OR -->
+<!-- Save to a text file and upload to this bug report -->
 ```
 Copy and Paste the JSON Export from **Pods Admin, Migrate: Packages, Export** in WordPress admin here
 ```
-</details>
+
 ## Related Issues and/or PRs
 <!-- List related issues or PRs against other branches:  -->
 

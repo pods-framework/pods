@@ -13,6 +13,8 @@ env:
 matrix:
     allow_failures:
     - env: WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable
+    - php: 7.3
+      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
 
     include:
     - php: 7.2

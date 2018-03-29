@@ -701,7 +701,23 @@ class PodsAPI {
 
 			unset( $term_data['name'] );
 
-			$term_data['term_id'] = wp_insert_term( $term_name, $taxonomy, $term_data );
+			// Check to be certain the 'new' term doesn't exist.
+			if ( is_int( $term_name ) ) {
+				$term = get_term_by( 'term_id', $term_name, $taxonomy );
+			} else {
+				$term = get_term_by( 'name', $term_name, $taxonomy );
+
+				if ( ! $term ) {
+					$term = get_term_by( 'slug', $term_name, $taxonomy );
+				}
+			}
+
+			if ( $term ) {
+				// Term already exists, no need to insert it.
+				$term_data['term_id'] = $term->term_id;
+			} else {
+				$term_data['term_id'] = wp_insert_term( $term_name, $taxonomy, $term_data );
+			}
 		} elseif ( 1 < count( $term_data ) ) {
 			$term_data['term_id'] = wp_update_term( $term_data['term_id'], $taxonomy, $term_data );
 		}

@@ -183,6 +183,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 = 2.7.2 - TBD =
 
 * Added WP-CLI commands for Pods, more details at [https://docs.pods.io/advanced-topics/pods-wp-cli/](https://docs.pods.io/advanced-topics/pods-wp-cli/) #@sc0ttkclark
+* Added: Filter HTML class for li.pods-field form element to allow for more styling options. #4813
 
 = 2.7.1 - December 8th 2017 =
 

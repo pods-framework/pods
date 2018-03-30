@@ -117,7 +117,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						 */
 						do_action( 'pods_form_pre_field', $field, $fields, $pod, $params );
 				?>
-					<li class="pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>">
+					<li class="pods-field <?php echo apply_filters( 'pods-field-html-class', $field ); ?> <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>">
 						<div class="pods-field-label">
 							<?php echo PodsForm::label( $field_prefix . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
 						</div>

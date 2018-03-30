@@ -23,8 +23,9 @@ wp_enqueue_style( 'pods-form' );
 			} else {
 				$value = $pod->display( $field['name'] );
 			}
+			exit;
 			?>
-			<li class="pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
+			<li class="pods-field <?php echo apply_filters( 'pods-field-html-class', $field ); ?> <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
 				<div class="pods-field-label">
 					<strong><?php echo $field['label']; ?></strong>
 				</div>

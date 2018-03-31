@@ -17,6 +17,18 @@
 	<config name="testVersion" value="5.3-"/>
 	<rule ref="PHPCompatibility"/>
 
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array" value="pods"/>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array" value="pods"/>
+		</properties>
+	</rule>
+
 	<rule ref="Squiz.Commenting">
 		<!-- Excluding the need for a full stop at the end of a comment (common, harmless error) -->
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>

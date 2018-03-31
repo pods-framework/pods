@@ -9,17 +9,13 @@
 	<exclude-pattern>vendor/*</exclude-pattern>
 	<exclude-pattern>components/Markdown.php</exclude-pattern>
 
+	<config name="minimum_supported_wp_version" value="4.5"/>
 	<rule ref="WordPress-Core"/>
 	<rule ref="WordPress-Docs"/>
 	<rule ref="WordPress-Extra"/>
-	<rule ref="PHPCompatibility"/>
 
-	<rule ref="WordPress.PHP.DiscouragedPHPFunctions">
-		<!-- From "Extra": The create_function group is excluded as WP core still supports PHP 5.2 and 5.2 does not support anonymous functions. -->
-		<properties>
-			<property name="exclude" value="create_function"/>
-		</properties>
-	</rule>
+	<config name="testVersion" value="5.3-"/>
+	<rule ref="PHPCompatibility"/>
 
 	<rule ref="Squiz.Commenting">
 		<!-- Excluding the need for a full stop at the end of a comment (common, harmless error) -->

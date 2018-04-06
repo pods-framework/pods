@@ -1815,7 +1815,7 @@
 
                         $new_row = $tbody.find( 'tr#row-' + row_counter );
 
-						// Duct tape to handle fields added dynamically
+                        // Duct tape to handle fields added dynamically
                         PodsDFV.init();
 
                         $new_row.data( 'row', row_counter );
@@ -1873,7 +1873,7 @@
                         $new_row_label = $new_row.find( 'td.pods-manage-row-label' );
                         $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
 
-						// Duct tape to handle fields added dynamically
+                        // Duct tape to handle fields added dynamically
                         PodsDFV.init();
 
                         field_data[ 'name' ] += '_copy';

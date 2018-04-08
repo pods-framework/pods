@@ -150,7 +150,10 @@ class PodsField_Number extends PodsField {
 
 		$decimals = $this->get_max_decimals( $options );
 
-		if ( 0 < $decimals ) {
+		if( 6 < $decimals ) {
+			// %F only allows 6 decimals by default
+			$format = '%.' . $decimals . 'F';
+		} else if ( 0 < $decimals ) {
 			$format = '%F';
 		}
 

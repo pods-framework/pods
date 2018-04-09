@@ -70,17 +70,17 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	} else {
 		global $pods, $pods_init, $pods_form;
 
-		require_once( PODS_DIR . 'includes/classes.php' );
-		require_once( PODS_DIR . 'includes/data.php' );
-		require_once( PODS_DIR . 'includes/general.php' );
+		require_once PODS_DIR . 'includes/classes.php';
+		require_once PODS_DIR . 'includes/data.php';
+		require_once PODS_DIR . 'includes/general.php';
 
 		if ( ! defined( 'PODS_MEDIA' ) || PODS_MEDIA ) {
-			require_once( PODS_DIR . 'includes/media.php' );
+			require_once PODS_DIR . 'includes/media.php';
 		}
 
 		if ( ! defined( 'SHORTINIT' ) || ! SHORTINIT ) {
 			if ( pods_allow_deprecated() ) {
-				require_once( PODS_DIR . 'deprecated/deprecated.php' );
+				require_once PODS_DIR . 'deprecated/deprecated.php';
 			}
 
 			if ( false !== pods_compatibility_check() ) {

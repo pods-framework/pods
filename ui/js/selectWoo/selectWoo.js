@@ -778,7 +778,7 @@ S2.define('select2/utils',[
       Utils._isTouchscreenCache = 'ontouchstart' in document.documentElement;
     }
     return Utils._isTouchscreenCache;
-  }
+  };
 
   return Utils;
 });

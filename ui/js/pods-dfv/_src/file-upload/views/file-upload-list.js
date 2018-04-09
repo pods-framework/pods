@@ -1,7 +1,7 @@
 /*global jQuery, _, Backbone, Marionette, wp */
 import template from 'pods-dfv/_src/file-upload/views/file-upload-item.html';
 
-import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
+import { PodsFieldListView, PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
 
 /**
  * Individual list items, representing a single file
@@ -16,12 +16,12 @@ export const FileUploadItem = PodsFieldView.extend( {
 	className: 'pods-dfv-list-item',
 
 	ui: {
-		dragHandle  : '.pods-dfv-list-handle',
-		editLink    : '.pods-dfv-list-edit-link',
-		viewLink    : '.pods-dfv-list-link',
+		dragHandle: '.pods-dfv-list-handle',
+		editLink: '.pods-dfv-list-edit-link',
+		viewLink: '.pods-dfv-list-link',
 		downloadLink: '.pods-dfv-list-download',
 		removeButton: '.pods-dfv-list-remove',
-		itemName    : '.pods-dfv-list-name'
+		itemName: '.pods-dfv-list-name'
 	},
 
 	triggers: {
@@ -60,11 +60,11 @@ export const FileUploadList = PodsFieldListView.extend( {
 
 			// init sortable
 			this.$el.sortable( {
-				containment      : 'parent',
-				axis             : sort_axis,
+				containment: 'parent',
+				axis: sort_axis,
 				scrollSensitivity: 40,
-				tolerance        : 'pointer',
-				opacity          : 0.6
+				tolerance: 'pointer',
+				opacity: 0.6
 			} );
 		}
 	}

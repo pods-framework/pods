@@ -508,6 +508,11 @@ div.row-actions.row-actions-toggle {
     visibility: visible;
 }
 
+table.pods-admin { 
+    table-layout: fixed; 
+}
+
+
 /*
  * REST API Tab
  */

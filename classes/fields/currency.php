@@ -335,13 +335,16 @@ class PodsField_Currency extends PodsField_Number {
 		$decimal_handling = pods_v( static::$type . '_decimal_handling', $options, 'none' );
 		if ( 'none' !== $decimal_handling ) {
 			$value_parts = explode( $dot, $value );
-			if ( 'remove' === $decimal_handling ) {
-				array_pop( $value_parts );
-			} elseif ( 'dash' === $decimal_handling ) {
-				array_pop( $value_parts );
-				$value_parts[] = '-';
+			// Make sure decimals are empty.
+			if ( isset( $value_parts[1] ) && ! (int) $value_parts[1] ) {
+				if ( 'remove' === $decimal_handling ) {
+					array_pop( $value_parts );
+				} elseif ( 'dash' === $decimal_handling ) {
+					array_pop( $value_parts );
+					$value_parts[] = '-';
+				}
+				$value = implode( $dot, $value_parts );
 			}
-			$value = implode( $dot, $value_parts );
 		}
 
 		return $value;

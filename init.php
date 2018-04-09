@@ -3,7 +3,7 @@
 Plugin Name: Pods - Custom Content Types and Fields
 Plugin URI: https://pods.io/
 Description: Pods is a framework for creating, managing, and deploying customized content types and fields
-Version: 2.7.1-a-1
+Version: 2.7.2-a-1
 Author: Pods Framework Team
 Author URI: https://pods.io/about/
 Text Domain: pods
@@ -36,7 +36,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	add_action( 'init', 'pods_deactivate_pods_ui' );
 } else {
 	// Current version
-	define( 'PODS_VERSION', '2.7.1-a-1' );
+	define( 'PODS_VERSION', '2.7.2-a-1' );
 
 	// Version tracking between DB updates themselves
 	define( 'PODS_DB_VERSION', '2.3.5' );
@@ -55,8 +55,9 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 
 	// This should match minimum WP requirements or usage (90%+)
 	// Found at: https://wordpress.org/about/stats/
+	// Using 5.1 for now, many RedHat servers aren't EOL yet and they backport security releases
 	if ( ! defined( 'PODS_MYSQL_VERSION_MINIMUM' ) ) {
-		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.5' );
+		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.1' );
 	}
 
 	define( 'PODS_SLUG', plugin_basename( __FILE__ ) );
@@ -69,17 +70,17 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	} else {
 		global $pods, $pods_init, $pods_form;
 
-		require_once( PODS_DIR . 'includes/classes.php' );
-		require_once( PODS_DIR . 'includes/data.php' );
-		require_once( PODS_DIR . 'includes/general.php' );
+		require_once PODS_DIR . 'includes/classes.php';
+		require_once PODS_DIR . 'includes/data.php';
+		require_once PODS_DIR . 'includes/general.php';
 
 		if ( ! defined( 'PODS_MEDIA' ) || PODS_MEDIA ) {
-			require_once( PODS_DIR . 'includes/media.php' );
+			require_once PODS_DIR . 'includes/media.php';
 		}
 
 		if ( ! defined( 'SHORTINIT' ) || ! SHORTINIT ) {
 			if ( pods_allow_deprecated() ) {
-				require_once( PODS_DIR . 'deprecated/deprecated.php' );
+				require_once PODS_DIR . 'deprecated/deprecated.php';
 			}
 
 			if ( false !== pods_compatibility_check() ) {

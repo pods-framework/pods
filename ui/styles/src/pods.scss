@@ -5,8 +5,11 @@
 @import "helpers/typography";
 @import "helpers/dashicons";
 
-form.pods-form, form.pods-admin, .pods-qtip-container {
+form.pods-form, form.pods-admin {
     @import "libs/jquery-ui-custom";
+}
+
+.pods-qtip-container {
     @import "libs/jquery-qtip";
 }
 

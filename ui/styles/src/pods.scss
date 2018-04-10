@@ -7,6 +7,9 @@
 
 form.pods-form, form.pods-admin {
     @import "libs/jquery-ui-custom";
+}
+
+.pods-qtip-container {
     @import "libs/jquery-qtip";
 }
 
@@ -24,3 +27,5 @@ div.pods-form-ui-field {
     @import "overrides/jquery-ui-timepicker";
     @import "overrides/select-woo";
 }
+
+@import "overrides/jquery-qtip";

@@ -1988,6 +1988,7 @@
                         delay : 300
                     },
                     position : {
+                        container: $( '.pods-qtip-container' ),
                         my : 'bottom left',
                         adjust : {
                             y : -14

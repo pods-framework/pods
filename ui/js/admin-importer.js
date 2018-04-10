@@ -41,7 +41,7 @@ jQuery(document).ready(function () {
     jQuery.fn.animateHighlight = function(highlightColor, duration) {
         var highlightBg = highlightColor || "#FFFF9C";
         var animateMs = duration || 1500;
-        if ( window.console ) console.log(this)
+        if ( window.console ) console.log(this);
         var originalBg = '#F5F5F5';
 
         this.stop().css("background-color", highlightBg).css("padding", "4px").css("border-radius", "6px").animate({backgroundColor: originalBg}, animateMs);

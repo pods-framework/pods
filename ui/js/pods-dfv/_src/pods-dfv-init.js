@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Marionette */
-import {PodsDFVFieldModel} from 'pods-dfv/_src/core/pods-field-model';
+import { PodsDFVFieldModel } from 'pods-dfv/_src/core/pods-field-model';
 
 import * as fields from 'pods-dfv/_src/field-manifest';
 
@@ -42,13 +42,13 @@ export const PodsDFVInit = function ( fields ) {
 			if ( FieldClass !== undefined ) {
 				// Assemble the model
 				fieldModel = new PodsDFVFieldModel( {
-					htmlAttr   : data.htmlAttr,
+					htmlAttr: data.htmlAttr,
 					fieldConfig: data.fieldConfig
 				} );
 
 				newField = new FieldClass( {
-					el           : this,
-					model        : fieldModel,
+					el: this,
+					model: fieldModel,
 					fieldItemData: data.fieldItemData
 				} );
 

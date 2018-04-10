@@ -1,6 +1,7 @@
+/* eslint-disable camelcase */
 /*global jQuery, _, Backbone, Marionette, wp, plupload, PodsI18n */
-import {PodsFileUploader} from 'pods-dfv/_src/file-upload/uploaders/pods-file-uploader';
-import {FileUploadQueueModel, FileUploadQueue} from 'pods-dfv/_src/file-upload/views/file-upload-queue';
+import { PodsFileUploader } from 'pods-dfv/_src/file-upload/uploaders/pods-file-uploader';
+import { FileUploadQueueModel, FileUploadQueue } from 'pods-dfv/_src/file-upload/views/file-upload-queue';
 
 export const Plupload = PodsFileUploader.extend( {
 	plupload: {},
@@ -35,7 +36,7 @@ export const Plupload = PodsFileUploader.extend( {
 		collection = new Backbone.Collection();
 		jQuery.each( files, function ( index, file ) {
 			model = new FileUploadQueueModel( {
-				id      : file.id,
+				id: file.id,
 				filename: file.name
 			} );
 
@@ -81,7 +82,7 @@ export const Plupload = PodsFileUploader.extend( {
 		let json;
 
 		// Error condition 1
-		if ( "Error: " == resp.response.substr( 0, 7 ) ) {
+		if ( 'Error: ' === resp.response.substr( 0, 7 ) ) {
 			response = response.substr( 7 );
 			if ( window.console ) {
 				console.log( response );
@@ -91,9 +92,9 @@ export const Plupload = PodsFileUploader.extend( {
 				progress: 0,
 				errorMsg: response
 			} );
-		}
-		// Error condition 2
-		else if ( "<e>" == resp.response.substr( 0, 3 ) ) {
+
+			// Error condition 2
+		} else if ( '<e>' === resp.response.substr( 0, 3 ) ) {
 			response = jQuery( response ).text(); // Strip tags, text only
 			if ( window.console ) {
 				console.log( response );
@@ -103,18 +104,16 @@ export const Plupload = PodsFileUploader.extend( {
 				progress: 0,
 				errorMsg: response
 			} );
-		}
-		else {
+		} else {
 			json = response.match( /{.*}$/ );
 
 			if ( null !== json && 0 < json.length ) {
 				json = jQuery.parseJSON( json[ 0 ] );
-			}
-			else {
+			} else {
 				json = {};
 			}
 
-			if ( 'object' != typeof json || jQuery.isEmptyObject( json ) ) {
+			if ( 'object' !== typeof json || jQuery.isEmptyObject( json ) ) {
 				if ( window.console ) {
 					console.log( response );
 				}
@@ -130,12 +129,12 @@ export const Plupload = PodsFileUploader.extend( {
 			}
 
 			newFile = {
-				id       : json.ID,
-				icon     : json.thumbnail,
-				name     : json.post_title,
+				id: json.ID,
+				icon: json.thumbnail,
+				name: json.post_title,
 				edit_link: json.edit_link,
-				link     : json.link,
-				download : json.download
+				link: json.link,
+				download: json.download
 			};
 
 			// Remove the file from the upload queue model and trigger an event for the hosting container

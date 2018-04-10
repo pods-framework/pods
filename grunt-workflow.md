@@ -4,7 +4,7 @@
 * Install grunt-init globally if not already installed.
     * `npm install -g grunt-init`
 * Install composer to usr/local/bin/composer if not already installed
-* Switch to this git repositor directory 
+* Switch to this git repository directory 
 * Install node modules
     * `npm install`
     * BTW On OSX you generally need `sudo` to make this work.
@@ -30,8 +30,9 @@
     * Copies WP SVN `trunk` into tag `tags/{version}`
     * Commits branch and version number changes in files to GitHub with commit message as version number `Pods {version}`
     * Tags `master` as version number `2.x/{version}`
-    * Pushes `master` and new tag
+    * Pushes `master` and new tag (**NOTE** This is not currently happening right now, you need to manually push the master branch and the new tag)
     * Removes temporary files (WP SVN)
+    
     
 ## What It Does
 * Changes version number in all the places that is needed.

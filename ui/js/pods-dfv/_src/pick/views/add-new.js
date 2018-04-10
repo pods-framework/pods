@@ -1,7 +1,7 @@
 /*global jQuery, _, Backbone, Marionette, wp */
 import template from 'pods-dfv/_src/pick/views/add-new.html';
 
-import {PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
+import { PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
 
 const DISABLED_CLASS = 'button-disabled';
 
@@ -45,7 +45,7 @@ export const AddNew = PodsFieldView.extend( {
 		const addButton = this.getUI( 'addButton' );
 
 		// Only pass the event up the view chain if we're enabled
-		if ( ! addButton.hasClass( DISABLED_CLASS ) ) {
+		if ( !addButton.hasClass( DISABLED_CLASS ) ) {
 			this.trigger( 'childview:add:new', this );
 		}
 	}

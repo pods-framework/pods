@@ -510,8 +510,8 @@ function pods_help( $text, $url = null ) {
 	}
 
 	echo '<div class="pods-qtip-container">';
-    echo '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
-    echo '</div>';
+	echo '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
+	echo '</div>';
 }
 
 /**

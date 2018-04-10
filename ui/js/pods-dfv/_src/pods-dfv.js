@@ -1,12 +1,12 @@
 /*global jQuery, _, Backbone, Marionette */
-import {PodsDFVInit} from 'pods-dfv/_src/pods-dfv-init'; // jQuery plugin
+import { PodsDFVInit } from 'pods-dfv/_src/pods-dfv-init'; // jQuery plugin
 
 import * as fields from 'pods-dfv/_src/field-manifest';
 import * as models from 'pods-dfv/_src/model-manifest';
 
 const PodsDFV = {
-	fields        : fields,
-	models        : models,
+	fields: fields,
+	models: models,
 	fieldInstances: {}
 };
 export default PodsDFV;

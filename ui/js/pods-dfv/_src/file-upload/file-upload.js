@@ -27,14 +27,14 @@ export const FileUpload = PodsDFVFieldLayout.extend( {
 	template: _.template( template ),
 
 	regions: {
-		list    : '.pods-ui-file-list',
+		list: '.pods-ui-file-list',
 		uiRegion: '.pods-ui-region', // "Utility" container for uploaders to use
-		form    : '.pods-ui-form'
+		form: '.pods-ui-form'
 	},
 
 	childViewEvents: {
 		'childview:remove:file:click': 'onChildviewRemoveFileClick',
-		'childview:add:file:click'   : 'onChildviewAddFileClick'
+		'childview:add:file:click': 'onChildviewAddFileClick'
 	},
 
 	uploader: {},
@@ -91,7 +91,7 @@ export const FileUpload = PodsDFVFieldLayout.extend( {
 	 */
 	onAddedFiles: function ( data ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
-		const fileLimit   = +fieldConfig[ 'file_limit' ]; // Unary plus to force to number
+		const fileLimit = +fieldConfig[ 'file_limit' ]; // Unary plus to force to number
 		let newCollection, filteredModels;
 
 		// Get a copy of the existing collection with the new files added
@@ -101,8 +101,7 @@ export const FileUpload = PodsDFVFieldLayout.extend( {
 		// Enforce the file limit option if one is set
 		if ( UNLIMITED_FILES === fileLimit ) {
 			filteredModels = newCollection.models;
-		}
-		else {
+		} else {
 			// Number of uploads is limited: keep the last N models, FIFO/queue style
 			filteredModels = newCollection.filter( function ( model ) {
 				return ( newCollection.indexOf( model ) >= newCollection.length - fileLimit );
@@ -113,7 +112,7 @@ export const FileUpload = PodsDFVFieldLayout.extend( {
 	},
 
 	createUploader: function () {
-		const fieldConfig    = this.model.get( 'fieldConfig' );
+		const fieldConfig = this.model.get( 'fieldConfig' );
 		const targetUploader = fieldConfig[ 'file_uploader' ];
 		let Uploader;
 
@@ -128,14 +127,13 @@ export const FileUpload = PodsDFVFieldLayout.extend( {
 			this.uploader = new Uploader( {
 				// We provide regular DOM element for the button
 				browseButton: this.getRegion( 'form' ).getEl( '.pods-dfv-list-add' ).get(),
-				uiRegion    : this.getRegion( 'uiRegion' ),
-				fieldConfig : fieldConfig
+				uiRegion: this.getRegion( 'uiRegion' ),
+				fieldConfig: fieldConfig
 			} );
 			return this.uploader;
-		}
-		else {
+		} else {
 			// @todo sprintf type with PodsI18n.__()
-			throw "Could not locate file uploader '" + targetUploader + "'";
+			throw `Could not locate file uploader '${targetUploader}'`;
 		}
 	}
 } );

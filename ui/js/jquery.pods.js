@@ -43,7 +43,7 @@
                         }
 
                     }
-                    else if ( '' == $el.val() )
+                    else if ( '' === $el.val() )
                         valid_field = false;
 
                     if ( !valid_field ) {
@@ -108,7 +108,7 @@
                             else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
                                 return true; // This input is not checked, continue the loop
 
-                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' == $el.val() ) ) {
+                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' === $el.val() ) ) {
                                 $el.trigger( 'change' );
 
                                 if ( false !== valid_form )
@@ -195,7 +195,7 @@
                             else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
                                 return true; // This input is not checked, continue the loop
 
-                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' == $el.val() ) ) {
+                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' === $el.val() ) ) {
                                 $el.trigger( 'change' );
 
                                 if ( false !== valid_form )
@@ -522,13 +522,13 @@
 
                             // update fields
                             $( 'input.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' ).each( function () {
-                                if ( '' == $( this ).val() ) {
+                                if ( '' === $( this ).val() ) {
                                     $( this ).val( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) );
                                     $( this ).trigger( 'change' );
                                 }
                             } );
                             $( 'input.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' ).each( function () {
-                                if ( '' == $( this ).val() ) {
+                                if ( '' === $( this ).val() ) {
                                     $( this ).val( slug.toLowerCase() );
                                     $( this ).trigger( 'change' );
                                 }
@@ -868,7 +868,7 @@
 
                         window.location.hash = '';
                     }
-                }
+                };
 
                 // Next button event binding
                 $( '#pods-wizard-next' ).on( 'click', function ( e ) {
@@ -1495,7 +1495,7 @@
 
                             $row.fadeOut( 'slow', function () {
                                 $( this ).remove();
-                                if ( 0 == $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
+                                if ( 0 === $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
                                     $tbody.find( 'tr.no-items' ).show();
                             } );
 
@@ -1616,7 +1616,7 @@
                     var row_id = $row.data( 'row' );
                     var field_data = {};
 
-                    if ( 'undefined' != typeof $row_value && null != $row_value && '' != $row_value ) {
+                    if ( 'undefined' != typeof $row_value && null != $row_value && '' !== $row_value ) {
                         field_data = jQuery.parseJSON( $row_value );
                     }
 
@@ -1625,7 +1625,7 @@
                     $field_wrapper.find( 'input, select, textarea' ).each( function () {
                         var $el = $( this );
 
-                        if ( '' != $el.prop( 'name' ) ) {
+                        if ( '' !== $el.prop( 'name' ) ) {
                             // TinyMCE support
                             if ( 'object' == typeof( tinyMCE ) && -1 < $el.prop( 'class' ).indexOf( 'pods-ui-field-tinymce' ) ) {
                                 var ed = tinyMCE.get( $el.prop( 'id' ) );
@@ -1670,7 +1670,7 @@
                             else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
                                 val = '';
 
-                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && '' == $el.val() ) {
+                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && '' === $el.val() ) {
                                 $el.trigger( 'change' );
 
                                 if ( false !== valid_form )
@@ -1930,7 +1930,7 @@
 
                         $row.fadeOut( 'slow', function () {
                             $( this ).remove();
-                            if ( 0 == $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
+                            if ( 0 === $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
                                 $tbody.find( 'tr.no-items' ).show();
                         } );
 
@@ -1988,6 +1988,7 @@
                         delay : 300
                     },
                     position : {
+                        container: $( '.pods-qtip-container' ),
                         my : 'bottom left',
                         adjust : {
                             y : -14

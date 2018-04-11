@@ -1,47 +1,39 @@
 <?php
-require_once( PODS_DIR . 'classes/fields/file.php' );
+require_once PODS_DIR . 'classes/fields/file.php';
 
 /**
+ * PodsField_Avatar class.
+ *
  * @package Pods\Fields
  */
 class PodsField_Avatar extends PodsField_File {
 
 	/**
-	 * Field Type Group
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $group = 'Relationships / Media';
 
 	/**
-	 * Field Type Identifier
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $type = 'avatar';
 
 	/**
-	 * Field Type Label
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $label = 'Avatar';
 
 	/**
-	 * Pod Types supported on (true for all, false for none, or give array of specific types supported)
-	 *
-	 * @var array|bool
-	 * @since 2.1
+	 * {@inheritdoc}
 	 */
-	public static $pod_types = array( 'user' );
+	public static $pod_types = array(
+		'user',
+	);
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'Avatar', 'pods' );
 	}
@@ -53,14 +45,7 @@ class PodsField_Avatar extends PodsField_File {
 
 		$options = parent::options();
 
-		unset( $options[ self::$type . '_type' ] );
-		unset( $options[ self::$type . '_allowed_extensions' ] );
-		unset( $options[ self::$type . '_field_template' ] );
-		unset( $options[ self::$type . '_wp_gallery_output' ] );
-		unset( $options[ self::$type . '_wp_gallery_link' ] );
-		unset( $options[ self::$type . '_wp_gallery_columns' ] );
-		unset( $options[ self::$type . '_wp_gallery_random_sort' ] );
-		unset( $options[ self::$type . '_wp_gallery_size' ] );
+		unset( $options[ static::$type . '_type' ], $options[ static::$type . '_allowed_extensions' ], $options[ static::$type . '_field_template' ], $options[ static::$type . '_wp_gallery_output' ], $options[ static::$type . '_wp_gallery_link' ], $options[ static::$type . '_wp_gallery_columns' ], $options[ static::$type . '_wp_gallery_random_sort' ], $options[ static::$type . '_wp_gallery_size' ] );
 
 		return $options;
 
@@ -73,9 +58,9 @@ class PodsField_Avatar extends PodsField_File {
 
 		$options = (array) $options;
 
-		$options[ self::$type . '_type' ]              = 'images';
-		$options[ self::$type . '_field_template' ]    = 'rows';
-		$options[ self::$type . '_wp_gallery_output' ] = 0;
+		$options[ static::$type . '_type' ]              = 'images';
+		$options[ static::$type . '_field_template' ]    = 'rows';
+		$options[ static::$type . '_wp_gallery_output' ] = 0;
 
 		parent::input( $name, $value, $options, $pod, $id );
 
@@ -98,7 +83,7 @@ class PodsField_Avatar extends PodsField_File {
 		if ( is_admin() ) {
 			$current_screen = get_current_screen();
 
-			if ( ! is_null( $current_screen ) && 'options-discussion' === $current_screen->id && 32 === $size ) {
+			if ( null !== $current_screen && 'options-discussion' === $current_screen->id && 32 === $size ) {
 				return $avatar;
 			}
 		}
@@ -167,9 +152,9 @@ class PodsField_Avatar extends PodsField_File {
 							pods_cache_set( $user_id . '-' . $size, $avatar, 'pods_avatars' );
 						}
 					}
-				}
-			}
-		}
+				}//end if
+			}//end if
+		}//end if
 
 		return $avatar;
 

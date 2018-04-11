@@ -21,15 +21,15 @@ class Pods_Term_Splitting {
 	private $previous_progress = array();
 
 	/**
-	 * @param int $term_id ID of the formerly shared term.
-	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
-	 * @param string $taxonomy Taxonomy for the split term.
+	 * @param int    $term_id     ID of the formerly shared term.
+	 * @param int    $new_term_id ID of the new term created for the $term_taxonomy_id.
+	 * @param string $taxonomy    Taxonomy for the split term.
 	 */
 	public function __construct( $term_id, $new_term_id, $taxonomy ) {
 
-		$this->term_id = $term_id;
+		$this->term_id     = $term_id;
 		$this->new_term_id = $new_term_id;
-		$this->taxonomy = $taxonomy;
+		$this->taxonomy    = $taxonomy;
 
 		$this->progress_option_name = "_pods_term_split_{$term_id}_{$taxonomy}";
 
@@ -52,11 +52,11 @@ class Pods_Term_Splitting {
 
 		// Is the taxonomy a Pod?
 		if ( is_array( $taxonomy_pod ) ) {
-			$this->update_podsrel_taxonomy( $taxonomy_pod[ 'id' ] );
+			$this->update_podsrel_taxonomy( $taxonomy_pod['id'] );
 
 			// Update the Pods table if the taxonomy is a table based Pod
-			if ( 'table' == $taxonomy_pod[ 'storage' ] ) {
-				$this->update_pod_table( $taxonomy_pod[ 'pod_table' ] );
+			if ( 'table' === $taxonomy_pod['storage'] ) {
+				$this->update_pod_table( $taxonomy_pod['pod_table'] );
 			}
 		}
 
@@ -80,9 +80,9 @@ class Pods_Term_Splitting {
 		if ( pods_api()->pod_exists( $this->taxonomy ) ) {
 
 			// Load the taxonomy Pod
-			$params = array(
+			$params   = array(
 				'name'       => $this->taxonomy,
-				'table_info' => true
+				'table_info' => true,
 			);
 			$pod_info = pods_api()->load_pod( $params, false );
 		}
@@ -103,13 +103,13 @@ class Pods_Term_Splitting {
 		if ( ! $this->have_done( $task ) ) {
 
 			// UPDATE {$wpdb->prefix}podsrel SET item_id = {$new_term_id} WHERE pod_id = {$pod_id} AND item_id = {$term_id}
-			$table = "{$wpdb->prefix}podsrel";
-			$data = array( 'item_id' => $this->new_term_id );
-			$where = array(
+			$table        = "{$wpdb->prefix}podsrel";
+			$data         = array( 'item_id' => $this->new_term_id );
+			$where        = array(
 				'pod_id'  => $pod_id,
-				'item_id' => $this->term_id
+				'item_id' => $this->term_id,
 			);
-			$format = '%d';
+			$format       = '%d';
 			$where_format = '%d';
 
 			$wpdb->update( $table, $data, $where, $format, $where_format );
@@ -131,9 +131,9 @@ class Pods_Term_Splitting {
 		if ( ! $this->have_done( $task ) ) {
 
 			// Prime the values and update
-			$data = array( 'id' => $this->new_term_id );
-			$where = array( 'id' => $this->term_id );
-			$format = '%d';
+			$data         = array( 'id' => $this->new_term_id );
+			$where        = array( 'id' => $this->term_id );
+			$format       = '%d';
 			$where_format = '%d';
 			$wpdb->update( $pod_table, $data, $where, $format, $where_format );
 
@@ -157,21 +157,21 @@ class Pods_Term_Splitting {
 		foreach ( $all_pods as $this_pod_id => $this_pod ) {
 
 			// Loop through all fields in this Pod
-			foreach ( $this_pod[ 'fields' ] as $this_field_name => $this_field ) {
+			foreach ( $this_pod['fields'] as $this_field_name => $this_field ) {
 
 				// Ignore everything except relationship fields to this taxonomy
-				if ( 'pick' != $this_field[ 'type' ] || 'taxonomy' != $this_field[ 'pick_object' ] || $this->taxonomy != $this_field[ 'pick_val' ] ) {
+				if ( 'pick' !== $this_field['type'] || 'taxonomy' !== $this_field['pick_object'] || $this->taxonomy != $this_field['pick_val'] ) {
 					continue;
 				}
 
 				// Update the term ID in podsrel everywhere it is the value for this field
-				$this->update_podsrel_related_term( $this_field[ 'id' ] );
+				$this->update_podsrel_related_term( $this_field['id'] );
 
 				// Fix-up any special-case relationships that store term IDs in their own meta table and/or serialized
-				switch ( $this_pod[ 'type' ] ) {
+				switch ( $this_pod['type'] ) {
 
 					case 'post_type':
-						$this->update_postmeta( $this_pod[ 'name' ], $this_field_name );
+						$this->update_postmeta( $this_pod['name'], $this_field_name );
 						break;
 
 					case 'comment':
@@ -183,11 +183,11 @@ class Pods_Term_Splitting {
 						break;
 
 					case 'settings':
-						$this->update_setting_meta( $this_pod[ 'name' ], $this_field_name );
+						$this->update_setting_meta( $this_pod['name'], $this_field_name );
 						break;
 				}
-			}
-		}
+			}//end foreach
+		}//end foreach
 
 	}
 
@@ -203,15 +203,15 @@ class Pods_Term_Splitting {
 		if ( ! $this->have_done( $task ) ) {
 
 			// UPDATE {$wpdb->prefix}podsrel SET related_item_id = {$new_term_id} WHERE field_id = {$field_id} AND related_item_id = {$term_id}
-			$table = "{$wpdb->prefix}podsrel";
-			$data = array(
-				'related_item_id' => $this->new_term_id
+			$table        = "{$wpdb->prefix}podsrel";
+			$data         = array(
+				'related_item_id' => $this->new_term_id,
 			);
-			$where = array(
+			$where        = array(
 				'field_id'        => $field_id,
-				'related_item_id' => $this->term_id
+				'related_item_id' => $this->term_id,
 			);
-			$format = '%d';
+			$format       = '%d';
 			$where_format = '%d';
 			$wpdb->update( $table, $data, $where, $format, $where_format );
 
@@ -235,8 +235,9 @@ class Pods_Term_Splitting {
 		$task = "update_postmeta_{$pod_name}_{$field_name}_unserialized";
 		if ( ! $this->have_done( $task ) ) {
 
-			$wpdb->query( $wpdb->prepare(
-				"
+			$wpdb->query(
+				$wpdb->prepare(
+					"
 				UPDATE
 					{$wpdb->postmeta} AS meta
 					LEFT JOIN {$wpdb->posts} AS t
@@ -247,26 +248,24 @@ class Pods_Term_Splitting {
 					meta_key = %s
 					AND meta_value = %s
 					AND t.post_type = %s
-				",
-				$this->new_term_id,
-				$field_name,
-				$this->term_id,
-				$pod_name
-			) );
+				", $this->new_term_id, $field_name, $this->term_id, $pod_name
+				)
+			);
 
 			$this->append_progress( $task );
-		}
+		}//end if
 
 		// Fix up the serialized data
 		$task = "update_postmeta_{$pod_name}_{$field_name}_serialized";
 		if ( ! $this->have_done( $task ) ) {
 
-			$meta_key = sprintf( '_pods_%s', $field_name );
-			$target_serialized = sprintf( ';i:%s;', $this->term_id );
+			$meta_key           = sprintf( '_pods_%s', $field_name );
+			$target_serialized  = sprintf( ';i:%s;', $this->term_id );
 			$replace_serialized = sprintf( ';i:%s;', $this->new_term_id );
 
-			$wpdb->query( $wpdb->prepare(
-				"
+			$wpdb->query(
+				$wpdb->prepare(
+					"
 				UPDATE
 				    {$wpdb->postmeta} AS meta
 			    LEFT JOIN {$wpdb->posts} AS t
@@ -277,16 +276,12 @@ class Pods_Term_Splitting {
 				    meta.meta_key = %s
 					AND t.post_type = %s
 					AND meta_value LIKE '%%%s%%'
-				",
-				$target_serialized,
-				$replace_serialized,
-				$meta_key,
-				$pod_name,
-				pods_sanitize_like( $target_serialized )
-			) );
+				", $target_serialized, $replace_serialized, $meta_key, $pod_name, pods_sanitize_like( $target_serialized )
+				)
+			);
 
 			$this->append_progress( $task );
-		}
+		}//end if
 
 	}
 
@@ -304,13 +299,13 @@ class Pods_Term_Splitting {
 		$task = "update_commentmeta_{$field_name}_unserialized";
 		if ( ! $this->have_done( $task ) ) {
 
-			$table = $wpdb->commentmeta;
-			$data = array( 'meta_value' => $this->new_term_id );
-			$where = array(
+			$table        = $wpdb->commentmeta;
+			$data         = array( 'meta_value' => $this->new_term_id );
+			$where        = array(
 				'meta_key'   => $field_name,
-				'meta_value' => $this->term_id
+				'meta_value' => $this->term_id,
 			);
-			$format = '%s';
+			$format       = '%s';
 			$where_format = array( '%s', '%s' );
 			$wpdb->update( $table, $data, $where, $format, $where_format );
 
@@ -321,12 +316,13 @@ class Pods_Term_Splitting {
 		$task = "update_commentmeta_{$field_name}_serialized";
 		if ( ! $this->have_done( $task ) ) {
 
-			$meta_key = sprintf( '_pods_%s', $field_name );
-			$target_serialized = sprintf( ';i:%s;', $this->term_id );
+			$meta_key           = sprintf( '_pods_%s', $field_name );
+			$target_serialized  = sprintf( ';i:%s;', $this->term_id );
 			$replace_serialized = sprintf( ';i:%s;', $this->new_term_id );
 
-			$wpdb->query( $wpdb->prepare(
-				"
+			$wpdb->query(
+				$wpdb->prepare(
+					"
 				UPDATE
 				    {$wpdb->commentmeta}
 				SET
@@ -334,15 +330,12 @@ class Pods_Term_Splitting {
 				WHERE
 				    meta_key = %s
 					AND meta_value LIKE '%%%s%%'
-				",
-				$target_serialized,
-				$replace_serialized,
-				$meta_key,
-				pods_sanitize_like( $target_serialized )
-			) );
+				", $target_serialized, $replace_serialized, $meta_key, pods_sanitize_like( $target_serialized )
+				)
+			);
 
 			$this->append_progress( $task );
-		}
+		}//end if
 
 	}
 
@@ -360,13 +353,13 @@ class Pods_Term_Splitting {
 		$task = "update_usermeta_{$field_name}_unserialized";
 		if ( ! $this->have_done( $task ) ) {
 
-			$table = $wpdb->usermeta;
-			$data = array( 'meta_value' => $this->new_term_id );
-			$where = array(
+			$table        = $wpdb->usermeta;
+			$data         = array( 'meta_value' => $this->new_term_id );
+			$where        = array(
 				'meta_key'   => $field_name,
-				'meta_value' => $this->term_id
+				'meta_value' => $this->term_id,
 			);
-			$format = '%s';
+			$format       = '%s';
 			$where_format = array( '%s', '%s' );
 			$wpdb->update( $table, $data, $where, $format, $where_format );
 
@@ -377,12 +370,13 @@ class Pods_Term_Splitting {
 		$task = "update_usermeta_{$field_name}_serialized";
 		if ( ! $this->have_done( $task ) ) {
 
-			$meta_key = sprintf( '_pods_%s', $field_name );
-			$target_serialized = sprintf( ';i:%s;', $this->term_id );
+			$meta_key           = sprintf( '_pods_%s', $field_name );
+			$target_serialized  = sprintf( ';i:%s;', $this->term_id );
 			$replace_serialized = sprintf( ';i:%s;', $this->new_term_id );
 
-			$wpdb->query( $wpdb->prepare(
-				"
+			$wpdb->query(
+				$wpdb->prepare(
+					"
 				UPDATE
 				    {$wpdb->usermeta}
 				SET
@@ -390,15 +384,12 @@ class Pods_Term_Splitting {
 				WHERE
 				    meta_key = %s
 					AND meta_value LIKE '%%%s%%'
-				",
-				$target_serialized,
-				$replace_serialized,
-				$meta_key,
-				pods_sanitize_like( $target_serialized )
-			) );
+				", $target_serialized, $replace_serialized, $meta_key, pods_sanitize_like( $target_serialized )
+				)
+			);
 
 			$this->append_progress( $task );
-		}
+		}//end if
 
 	}
 
@@ -420,13 +411,13 @@ class Pods_Term_Splitting {
 		if ( ! $this->have_done( $task ) ) {
 
 			// UPDATE {$wpdb->options} SET option_value = '{$new_term_id}' WHERE option_name = '{$pod_name}_{$field_name}' AND option_value = '{$term_id}'
-			$table = $wpdb->options;
-			$data = array( 'option_value' => $this->new_term_id );
-			$where = array(
+			$table        = $wpdb->options;
+			$data         = array( 'option_value' => $this->new_term_id );
+			$where        = array(
 				'option_name'  => $option_name,
-				'option_value' => $this->term_id
+				'option_value' => $this->term_id,
 			);
-			$format = '%s';
+			$format       = '%s';
 			$where_format = array( '%s', '%s' );
 			$wpdb->update( $table, $data, $where, $format, $where_format );
 
@@ -437,11 +428,12 @@ class Pods_Term_Splitting {
 		$task = "update_setting_meta_{$pod_name}_{$field_name}_serialized";
 		if ( ! $this->have_done( $task ) ) {
 
-			$target_serialized = sprintf( ';i:%s;', $this->term_id );
+			$target_serialized  = sprintf( ';i:%s;', $this->term_id );
 			$replace_serialized = sprintf( ';i:%s;', $this->new_term_id );
 
-			$wpdb->query( $wpdb->prepare(
-				"
+			$wpdb->query(
+				$wpdb->prepare(
+					"
 				UPDATE
 					{$wpdb->options}
 				SET
@@ -449,15 +441,12 @@ class Pods_Term_Splitting {
 				WHERE
 					option_name = %s
 					AND option_value LIKE '%%%s%%'
-				",
-				$target_serialized,
-				$replace_serialized,
-				$option_name,
-				pods_sanitize_like( $target_serialized )
-			) );
+				", $target_serialized, $replace_serialized, $option_name, pods_sanitize_like( $target_serialized )
+				)
+			);
 
 			$this->append_progress( $task );
-		}
+		}//end if
 
 	}
 

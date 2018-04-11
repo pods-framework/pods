@@ -1,5 +1,7 @@
 <?php
+
 namespace Pods_Unit_Tests;
+
 use Mockery;
 
 /**
@@ -10,6 +12,11 @@ if ( ! class_exists( 'Pods' ) ) {
 	require_once PODS_TEST_PLUGIN_DIR . '/classes/Pods.php';
 }
 
+/**
+ * Class Test_Pods
+ *
+ * @package Pods_Unit_Tests
+ */
 class Test_Pods extends Pods_UnitTestCase {
 
 	/**
@@ -21,10 +28,12 @@ class Test_Pods extends Pods_UnitTestCase {
 	private $pods;
 
 	public function setUp() {
+
 		$this->pods = pods();
 	}
 
 	public function tearDown() {
+
 		unset( $this->pods );
 	}
 
@@ -35,6 +44,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_add_empty() {
+
 		$this->assertTrue( method_exists( $this->pods, 'add' ), 'Method add does not exist' );
 
 		$return = $this->pods->add( null, null );
@@ -48,6 +58,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_exists_exists() {
+
 		$this->assertTrue( method_exists( $this->pods, 'exists' ), 'Method exists does not exist' );
 	}
 
@@ -58,6 +69,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_exists_false() {
+
 		$this->assertFalse( $this->pods->exists() );
 	}
 
@@ -66,6 +78,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_exists() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'row', 'foo' );
 		$this->assertTrue( $this->pods->exists() );
 	}
@@ -75,6 +88,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_exists_valid() {
+
 		$this->assertTrue( method_exists( $this->pods, 'valid' ), 'Method valid does not exist' );
 	}
 
@@ -86,26 +100,29 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_valid_invalid() {
+
 		$this->assertFalse( $this->pods->valid() );
 	}
 
 	/**
-	 * @covers Pods::valid
+	 * @covers  Pods::valid
 	 * @depends test_method_exists_valid
-	 * @since  3.0
+	 * @since   3.0
 	 */
 	public function test_method_valid_iterator() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'pod_id', 1 );
 		$this->setReflectionPropertyValue( $this->pods, 'iterator', true );
 		$this->assertFalse( $this->pods->valid() );
 	}
 
 	/**
-	 * @covers Pods::valid
+	 * @covers  Pods::valid
 	 * @depends test_method_exists_valid
-	 * @since  3.0
+	 * @since   3.0
 	 */
 	public function test_method_valid() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'pod_id', 1 );
 		$this->assertTrue( $this->pods->valid() );
 	}
@@ -115,6 +132,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_is_iterator() {
+
 		$this->assertTrue( method_exists( $this->pods, 'is_iterator' ), 'Method is_iterator does not exist' );
 		$this->setReflectionPropertyValue( $this->pods, 'iterator', true );
 		$this->assertTrue( $this->pods->is_iterator() );
@@ -125,6 +143,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_stop_iterator() {
+
 		$this->assertTrue( method_exists( $this->pods, 'stop_iterator' ), 'Method stop_iterator does not exist' );
 		$this->setReflectionPropertyValue( $this->pods, 'iterator', true );
 		$this->pods->stop_iterator();
@@ -136,6 +155,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_rewind_exists() {
+
 		$this->assertTrue( method_exists( $this->pods, 'rewind' ), 'Method rewind does not exist' );
 	}
 
@@ -145,21 +165,10 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_rewind() {
-		$this->setReflectionPropertyValue( $this->pods, 'iterator', true );
+
+		$this->setReflectionPropertyValue( $this->pods, 'iterator', false );
 		$this->assertNull( $this->pods->rewind(), 'Pods::rewind did not return null' );
 		$this->assertEquals( 0, $this->getReflectionPropertyValue( $this->pods, 'row_number' ) );
-	}
-
-	/**
-	 * Test rewind when iterator is false
-	 *
-	 * @covers  Pods::rewind
-	 * @depends test_method_rewind_exists
-	 * @since   3.0
-	 */
-	public function test_method_rewind_iterator_false() {
-		$this->setReflectionPropertyValue( $this->pods, 'iterator', false );
-		$this->assertFalse( $this->pods->rewind() );
 	}
 
 	/**
@@ -167,6 +176,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_current_exists() {
+
 		$this->assertTrue( method_exists( $this->pods, 'current' ), 'Method current does not exist' );
 	}
 
@@ -178,6 +188,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_current_iterator_false() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'iterator', false );
 		$this->assertFalse( $this->pods->current() );
 	}
@@ -190,6 +201,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_current_iterator_true() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'iterator', true );
 		$this->assertFalse( $this->pods->current() );
 	}
@@ -199,6 +211,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_key_exists() {
+
 		$this->assertTrue( method_exists( $this->pods, 'key' ) );
 	}
 
@@ -210,8 +223,10 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_key_iterator_false() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'iterator', false );
-		$this->assertFalse( $this->pods->key() );
+		$this->setReflectionPropertyValue( $this->pods, 'row_number', 22 );
+		$this->assertEquals( 22, $this->pods->key() );
 	}
 
 	/**
@@ -222,6 +237,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_key() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'iterator', true );
 		$this->setReflectionPropertyValue( $this->pods, 'row_number', 22 );
 		$this->assertEquals( 22, $this->pods->key() );
@@ -232,6 +248,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_next_exists() {
+
 		$this->assertTrue( method_exists( $this->pods, 'next' ) );
 	}
 
@@ -243,8 +260,11 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_next_iterator_false() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'iterator', false );
-		$this->assertFalse( $this->pods->next() );
+		$this->setReflectionPropertyValue( $this->pods, 'row_number', 19 );
+		$this->assertNull( $this->pods->next() );
+		$this->assertEquals( 20, $this->getReflectionPropertyValue( $this->pods, 'row_number' ), 'The row number was not incremented correctly' );
 	}
 
 	/**
@@ -255,6 +275,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_next() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'iterator', true );
 		$this->setReflectionPropertyValue( $this->pods, 'row_number', 19 );
 		$this->assertNull( $this->pods->next() );
@@ -266,7 +287,8 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_exists_input() {
-		$this->assertTrue( method_exists( $this->pods, 'input'), 'Method input does not exist' );
+
+		$this->assertTrue( method_exists( $this->pods, 'input' ), 'Method input does not exist' );
 	}
 
 	/**
@@ -277,6 +299,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_input_field_string_missing_field() {
+
 		$this->expectOutputString( '' );
 		$this->pods->input( 'foo' );
 	}
@@ -289,15 +312,17 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_input_field_empty_array() {
+
 		$this->expectOutputString( '' );
 		$this->pods->input( array() );
 	}
 
 	/**
 	 * @covers Pods::row
-	 * @since 3.0
+	 * @since  3.0
 	 */
 	public function test_method_exists_row() {
+
 		$this->assertTrue( method_exists( $this->pods, 'row' ), 'Method row does not exist' );
 	}
 
@@ -307,6 +332,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_row_false() {
+
 		$this->assertFalse( $this->pods->row() );
 	}
 
@@ -316,6 +342,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_row() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'row', array() );
 		$this->assertInternalType( 'array', $this->pods->row() );
 	}
@@ -325,6 +352,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_exists_data() {
+
 		$this->assertTrue( method_exists( $this->pods, 'data' ), 'Method data does not exist' );
 	}
 
@@ -334,6 +362,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_data_empty_rows() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'rows', array() );
 		$this->assertFalse( $this->pods->data() );
 	}
@@ -344,6 +373,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_data() {
+
 		$this->setReflectionPropertyValue( $this->pods, 'rows', array( 'foo' => 'bar' ) );
 		$this->assertEquals( array( 'foo' => 'bar' ), $this->pods->data() );
 	}
@@ -353,6 +383,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_exists_get() {
+
 		$this->assertTrue( method_exists( $this->pods, '__get' ), 'Method __get does not exist' );
 	}
 
@@ -364,7 +395,8 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_get() {
-		$this->pods->data->field_foo  = 'bar';
+
+		$this->pods->data->field_foo = 'bar';
 
 		$this->assertEquals( 'bar', $this->pods->field_foo );
 	}
@@ -377,6 +409,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_get_deprecated_property() {
+
 		$deprecated             = Mockery::mock( 'Pods_Deprecated' );
 		$deprecated->foo        = 'bar';
 		$this->pods->deprecated = $deprecated;
@@ -392,13 +425,16 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_get_deprecated_property_error() {
+
 		$deprecated             = Mockery::mock( 'Pods_Deprecated' );
 		$deprecated->foo        = 'bar';
 		$this->pods->deprecated = $deprecated;
 
+		$this->markTestIncomplete( 'not yet implemented' );
+
 		// @todo needs fixing
-		//$this->setExpectedException( 'PHPUnit_Framework_Error_Notice' );
-		//$test = $this->pods->foo;
+		// $this->setExpectedException( 'PHPUnit_Framework_Error_Notice' );
+		// $test = $this->pods->foo;
 	}
 
 	/**
@@ -418,7 +454,8 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_call_method_does_not_exist() {
-		$deprecated = Mockery::mock( 'Pods_Deprecated' );
+
+		$deprecated             = Mockery::mock( 'Pods_Deprecated' );
 		$this->pods->deprecated = $deprecated;
 
 		$this->assertNull( @$this->pods->__call( 'foo', array() ) );
@@ -432,11 +469,14 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since   3.0
 	 */
 	public function test_method_call_deprecated_method_error() {
-		$deprecated = Mockery::mock( 'Pods_Deprecated' );
+
+		$deprecated             = Mockery::mock( 'Pods_Deprecated' );
 		$this->pods->deprecated = $deprecated;
 
-		//$this->setExpectedException( 'PHPUnit_Framework_Error_Notice' );
-		//$test = $this->pods->__call( 'foo', array() );
+		$this->markTestIncomplete( 'not yet implemented' );
+
+		// $this->setExpectedException( 'PHPUnit_Framework_Error_Notice' );
+		// $test = $this->pods->__call( 'foo', array() );
 	}
 
 	/**
@@ -447,7 +487,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 		$this->assertTrue( method_exists( $this->pods, 'id' ), 'Method id does not exist' );
 
-		$data = new \stdClass();
+		$data           = new \stdClass();
 		$data->field_id = 1;
 		$this->setReflectionPropertyValue( $this->pods, 'data', $data );
 

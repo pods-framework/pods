@@ -89,10 +89,13 @@ class PodsField_Currency extends PodsField_Number {
 				'default' => apply_filters( 'pods_form_ui_field_number_currency_placement_default', 'before' ),
 				'type'    => 'pick',
 				'data'    => array(
-					'before'          => __( 'Before (ex. $100)', 'pods' ),
-					'after'           => __( 'After (ex. 100$)', 'pods' ),
-					'none'            => __( 'None (ex. 100)', 'pods' ),
-					'beforeaftercode' => __( 'Before with Currency Code after (ex. $100 USD)', 'pods' ),
+					'before'                => __( 'Before (ex. $100)', 'pods' ),
+					'after'                 => __( 'After (ex. 100$)', 'pods' ),
+					'before_space'          => __( 'Before with space (ex. $ 100)', 'pods' ),
+					'after_space'           => __( 'After with space (ex. 100 $)', 'pods' ),
+					'none'                  => __( 'None (ex. 100)', 'pods' ),
+					'beforeaftercode'       => __( 'Before with Currency Code after (ex. $100 USD)', 'pods' ),
+					'beforeaftercode_space' => __( 'Before width space and with Currency Code after (ex. $ 100 USD)', 'pods' ),
 				),
 			),
 			static::$type . '_format'           => array(
@@ -188,14 +191,23 @@ class PodsField_Currency extends PodsField_Number {
 
 		if ( mb_strlen( $currency_sign ) > 1 && false === strpos( $currency_sign, '&' ) ) {
 			$currency_gap = ' ';
+		} elseif ( in_array( $placement, array( 'before_space', 'after_space', 'beforeaftercode_space' ), true ) ) {
+			$currency_gap = ' ';
 		}
 
-		if ( 'before' === $placement ) {
-			$value = $currency_sign . $currency_gap . $value;
-		} elseif ( 'after' === $placement ) {
-			$value .= $currency_gap . $currency_sign;
-		} elseif ( 'beforeaftercode' === $placement ) {
-			$value = $currency_sign . $currency_gap . $value . ' ' . $currency_label;
+		switch ( $placement ) {
+			case 'before':
+			case 'before_space':
+				$value = $currency_sign . $currency_gap . $value;
+				break;
+			case 'after':
+			case 'after_space':
+				$value .= $currency_gap . $currency_sign;
+				break;
+			case 'beforeaftercode':
+			case 'beforeaftercode_space':
+				$value = $currency_sign . $currency_gap . $value . ' ' . $currency_label;
+				break;
 		}
 
 		return $value;

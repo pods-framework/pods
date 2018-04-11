@@ -168,4 +168,31 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		);
 	}
 
+	/**
+	 * @dataProvider displayDefaultsFormatAfterSpaceProvider
+	 */
+	public function test_display_defaults_format_after_space( $value, $expected ) {
+		$options = $this->defaultOptions;
+		$options[ 'currency_format_placement' ] = 'after_space';
+
+		$this->assertEquals( $expected, $this->field->display( $value, null, $options ) );
+	}
+
+	public function displayDefaultsFormatAfterSpaceProvider() {
+
+		return array(
+			array( "-1", "-1.00 $" ),
+			array( "0", "0.00 $" ),
+			array( "1", "1.00 $" ),
+			array( "1.", "1.00 $" ),
+			array( "1.5", "1.50 $" ),
+			array( "10", "10.00 $" ),
+			array( "10.01", "10.01 $" ),
+			array( "100", "100.00 $" ),
+			array( "1000", "1,000.00 $" ),
+			array( "10000", "10,000.00 $" ),
+			array( "1000000", "1,000,000.00 $" ),
+		);
+	}
+
 }

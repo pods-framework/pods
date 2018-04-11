@@ -37,26 +37,26 @@ echo '<code class="currency-sign">' . $currency_sign . '</code>';
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
 <script>
-    jQuery( function ( $ ) {
-    	var input = $( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ),
-    		currency_sign = input.siblings( 'code.currency-sign' );
+	jQuery( function ( $ ) {
+		var input = $( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ),
+			currency_sign = input.siblings( 'code.currency-sign' );
 
-        input.on( 'blur', function () {
-            if ( !/^[0-9\<?php
-            echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
-            ?>]$/.test( $( this ).val() ) ) {
-                var newval = $( this )
-                    .val()
-                    .replace( /[^0-9-\\<?php echo esc_js( $currency_sign ); ?>\<?php
-                              echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
-                              ?>]/g, '' );
-                $( this ).val( newval );
-            }
-        } );
+		input.on( 'blur', function () {
+			if ( !/^[0-9\<?php
+			echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
+			?>]$/.test( $( this ).val() ) ) {
+				var newval = $( this )
+					.val()
+					.replace( /[^0-9-\\<?php echo esc_js( $currency_sign ); ?>\<?php
+						echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
+						?>]/g, '' );
+				$( this ).val( newval );
+			}
+		} );
 
-        if ( currency_sign.length ) {
-	        input.css( 'padding-left', parseInt( input.css( 'padding-left' ), 10 ) + currency_sign.width() + 12 );
-	        currency_sign.show();
-        }
-    } );
+		if ( currency_sign.length ) {
+			input.css( 'padding-left', parseInt( input.css( 'padding-left' ), 10 ) + currency_sign.width() + 12 );
+			currency_sign.show();
+		}
+	} );
 </script>

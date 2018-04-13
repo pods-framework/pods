@@ -62,16 +62,16 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @dataProvider formatDefaultsDecimalCommaProvider
+	 * @dataProvider formatDecimalCommaProvider
 	 */
-	public function test_format_defaults_decimal_comma( $value, $expected ) {
+	public function test_format_decimal_comma( $value, $expected ) {
 		$options = $this->defaultOptions;
 		$options[ 'currency_format' ] = '9.999,99';
 
 		$this->assertEquals( $expected, $this->field->format( $value, null, $options ) );
 	}
 
-	public function formatDefaultsDecimalCommaProvider() {
+	public function formatDecimalCommaProvider() {
 
 		return array(
 			array( "-1", "-1,00" ),
@@ -142,16 +142,16 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @dataProvider displayDefaultsFormatAfterProvider
+	 * @dataProvider displayFormatAfterProvider
 	 */
-	public function test_display_defaults_format_after( $value, $expected ) {
+	public function test_display_format_after( $value, $expected ) {
 		$options = $this->defaultOptions;
 		$options[ 'currency_format_placement' ] = 'after';
 
 		$this->assertEquals( $expected, $this->field->display( $value, null, $options ) );
 	}
 
-	public function displayDefaultsFormatAfterProvider() {
+	public function displayFormatAfterProvider() {
 
 		return array(
 			array( "-1", "-1.00$" ),
@@ -169,16 +169,16 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @dataProvider displayDefaultsFormatAfterSpaceProvider
+	 * @dataProvider displayFormatAfterSpaceProvider
 	 */
-	public function test_display_defaults_format_after_space( $value, $expected ) {
+	public function test_display_format_after_space( $value, $expected ) {
 		$options = $this->defaultOptions;
 		$options[ 'currency_format_placement' ] = 'after_space';
 
 		$this->assertEquals( $expected, $this->field->display( $value, null, $options ) );
 	}
 
-	public function displayDefaultsFormatAfterSpaceProvider() {
+	public function displayFormatAfterSpaceProvider() {
 
 		return array(
 			array( "-1", "-1.00 $" ),

@@ -55,7 +55,12 @@ echo '<code class="currency-sign">' . $currency_sign . '</code>';
 		} );
 
 		if ( currency_sign.length ) {
-			input.css( 'padding-left', parseInt( input.css( 'padding-left' ), 10 ) + currency_sign.width() + 12 );
+			function resize_currency_sign() {
+				input.css( 'padding-left', parseInt( input.css( 'padding-left' ), 10 ) + currency_sign.width() + 12 );
+				currency_sign.css( 'line-height', parseInt( input.innerHeight() ) + 'px' );
+			}
+			$(window).resize( resize_currency_sign );
+			resize_currency_sign();
 			currency_sign.show();
 		}
 	} );

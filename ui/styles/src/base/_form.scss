@@ -118,13 +118,17 @@ input.pods-form-ui-field-type-color {
 
 /* Currency */
 .pods-form-ui-row-type-currency code {
-    line-height: 20px;
-    float: left;
-    margin: 2px;
-    position: absolute;
-    min-width: 10px;
-    text-align: center;
-    display: none; /* Shown with JS */
+	line-height: 25px; /* Modified with JS */
+	float: left;
+	margin: 2px;
+	position: absolute;
+	min-width: 10px;
+	text-align: center;
+	display: none; /* Shown with JS */
+}
+/* Fix for meta box. */
+.pods-form-ui-row-type-currency .pods-submittable-fields code {
+	margin: 1px 2px;
 }
 
 /**

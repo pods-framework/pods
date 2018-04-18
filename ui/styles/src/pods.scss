@@ -22,10 +22,13 @@ form.pods-form, form.pods-admin {
 @import "base/ui-list-table";
 
 div.pods-form-ui-field {
-	@import "overrides/codemirror";
 	@import "overrides/jquery-cleditor";
 	@import "overrides/jquery-ui-timepicker";
 	@import "overrides/select-woo";
+}
+
+div.pods-form-ui-field, .pods-form {
+	@import "overrides/codemirror";
 }
 
 @import "overrides/jquery-qtip";

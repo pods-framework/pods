@@ -1970,33 +1970,35 @@
                     pods_changed = false;
                 } );
             },
-            qtip: function( element ) {
-                $( element ).find( '.pods-qtip' ).qtip( {
-                    content : {
-                        attr : 'alt'
-                    },
-                    style : {
-                        classes : 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
-                    },
-                    show : {
-                        effect : function ( offset ) {
-                            $( this ).fadeIn( 'fast' );
+            qtip: function ( element ) {
+                $( element ).find( '.pods-qtip' ).each( function ( index, element ) {
+                    $( element ).qtip( {
+                        content: {
+                            attr: 'alt'
+                        },
+                        style: {
+                            classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+                        },
+                        show: {
+                            effect: function ( offset ) {
+                                $( this ).fadeIn( 'fast' );
+                            }
+                        },
+                        hide: {
+                            fixed: true,
+                            delay: 300
+                        },
+                        position: {
+                            container: $( element ).closest( '.pods-submittable' ),
+                            my: 'bottom left',
+                            adjust: {
+                                y: -14
+                            }
                         }
-                    },
-                    hide : {
-                        fixed : true,
-                        delay : 300
-                    },
-                    position : {
-                        container: $( '.pods-qtip-container' ),
-                        my : 'bottom left',
-                        adjust : {
-                            y : -14
-                        }
-                    }
+                    } );
                 } );
             },
-            scroll : function ( selector, callback ) {
+            scroll: function ( selector, callback ) {
                 var offset = 10;
 
                 if ( $( '#wpadminbar' )[ 0 ] )

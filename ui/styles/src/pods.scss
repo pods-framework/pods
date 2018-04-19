@@ -9,10 +9,6 @@ form.pods-form, form.pods-admin {
 	@import "libs/jquery-ui-custom";
 }
 
-.pods-qtip-container {
-	@import "libs/jquery-qtip";
-}
-
 @import "base/admin";
 @import "base/advanced";
 @import "base/dfv-list";
@@ -21,7 +17,9 @@ form.pods-form, form.pods-admin {
 @import "base/modal-relationships";
 @import "base/ui-list-table";
 
-div.pods-form-ui-field {
+.pods-submittable {
+	@import "libs/jquery-qtip";
+	@import "overrides/codemirror";
 	@import "overrides/codemirror";
 	@import "overrides/jquery-cleditor";
 	@import "overrides/jquery-ui-timepicker";

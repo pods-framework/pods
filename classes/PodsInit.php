@@ -158,6 +158,14 @@ class PodsInit {
 	 */
 	public function after_setup_theme() {
 
+		if ( ! defined( 'PODS_COMPATIBILITY' ) ) {
+			define( 'PODS_COMPATIBILITY', true );
+		}
+
+		if ( ! PODS_COMPATIBILITY ) {
+			return;
+		}
+
 		require_once PODS_DIR . 'includes/compatibility/acf.php';
 
 	}

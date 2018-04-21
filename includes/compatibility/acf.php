@@ -3,12 +3,6 @@
  * Compatibility functions for integration with other plugins.
  */
 
-if ( ! defined( 'PODS_COMPATIBILITY' ) ) {
-	define( 'PODS_COMPATIBILITY', true );
-}
-
-$acf_backwards_compatibility = PODS_COMPATIBILITY;
-
 /**
  * Enable backwards compatibility with ACF functions.
  *
@@ -16,7 +10,7 @@ $acf_backwards_compatibility = PODS_COMPATIBILITY;
  *
  * @since 2.7.2
  */
-$acf_backwards_compatibility = apply_filters( 'pods_acf_backwards_compatibility', $acf_backwards_compatibility );
+$acf_backwards_compatibility = apply_filters( 'pods_acf_backwards_compatibility', true );
 
 if ( $acf_backwards_compatibility ) {
 	if ( ! function_exists( 'the_field' ) ) {

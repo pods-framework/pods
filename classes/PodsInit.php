@@ -128,6 +128,7 @@ class PodsInit {
 
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 		add_action( 'plugins_loaded', array( $this, 'activate_install' ), 9 );
+		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
 
 		add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
 
@@ -149,6 +150,15 @@ class PodsInit {
 		}
 
 		load_plugin_textdomain( 'pods' );
+
+	}
+
+	/**
+	 * Add compatibility for other plugins.
+	 */
+	public function after_setup_theme() {
+
+		require_once PODS_DIR . 'includes/compatibility/acf.php';
 
 	}
 

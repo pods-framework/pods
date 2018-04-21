@@ -4293,10 +4293,14 @@ class PodsAPI {
 
 		$related_ids = array_unique( array_filter( $related_ids ) );
 
+		$is_single = false;
+
 		$related_limit = (int) pods_var_raw( $field['type'] . '_limit', $field['options'], 0 );
 
-		if ( 'single' === pods_var_raw( $field['type'] . '_format_type', $field['options'] ) ) {
+		if ( 'single' === pods_v( $field['type'] . '_format_type', $field['options'] ) ) {
 			$related_limit = 1;
+
+			$is_single = true;
 		}
 
 		// Limit values
@@ -4317,7 +4321,11 @@ class PodsAPI {
 			$new_ids = array_diff( $related_ids, $current_ids );
 
 			if ( ! empty( $related_ids ) ) {
-				update_metadata( $object_type, $id, '_pods_' . $field['name'], $related_ids );
+				if ( $is_single ) {
+					update_metadata( $object_type, $id, '_pods_' . $field['name'], $related_ids );
+				} else {
+					delete_metadata( $object_type, $id, '_pods_' . $field['name'] );
+				}
 
 				foreach ( $new_ids as $related_id ) {
 					add_metadata( $object_type, $id, $field['name'], $related_id );
@@ -4343,53 +4351,58 @@ class PodsAPI {
 
 		// Relationships table
 		if ( ! pods_tableless() ) {
-
-
-			foreach ( $new_ids as $related_id ) {
-
+			if ( ! empty( $new_ids ) ) {
+				foreach ( $new_ids as $related_id ) {
 					pods_query( '
-                        INSERT INTO `@wp_podsrel`
-                            (
-                                `pod_id`,
-                                `field_id`,
-                                `item_id`,
-                                `related_pod_id`,
-                                `related_field_id`,
-                                `related_item_id`,
-                                `weight`
-                            )
-                        VALUES ( %d, %d, %d, %d, %d, %d, %d )
-                    ', array(
-						$pod['id'],
-						$field['id'],
-						$id,
-						$related_pod_id,
-						$related_field_id,
-						$related_id,
-						0
-					) );
+							INSERT INTO `@wp_podsrel`
+							(
+								`pod_id`,
+								`field_id`,
+								`item_id`,
+								`related_pod_id`,
+								`related_field_id`,
+								`related_item_id`,
+								`weight`
+							)
+							VALUES ( %d, %d, %d, %d, %d, %d, 0 )
+						', array(
+							$pod['id'],
+							$field['id'],
+							$id,
+							$related_pod_id,
+							$related_field_id,
+							$related_id,
+						)
+					);
 				}
 
-			$related_ids_sql = '(' . implode( ', ', array_map( 'intval', $related_ids ) ) . ')';
+				$related_ids_sql = implode( ', ', array_fill( 0, count( $related_ids ), '%d' ) );
 
-			pods_query( 'SET @weight = 0' );
-			pods_query( "
-                        UPDATE `@wp_podsrel`
-                        SET
-                            `weight` = @weight:=@weight+1
-                        WHERE
-                            `pod_id` = %d
-                            AND `field_id` = %d
-                            AND `related_pod_id` = %d
-                            AND `related_field_id` = %d
-                            AND `related_item_id` IN {$related_ids_sql}
-                    ", array(
-				$pod['id'],
-				$field['id'],
-				$related_pod_id,
-				$related_field_id,
-				'(' . implode( ', ', array_map( 'intval', $related_ids ) ) . ')'
-			) );
+				$prepare = array(
+					$pod['id'],
+					$field['id'],
+					$related_pod_id,
+					$related_field_id,
+				);
+
+				$prepare = array_merge( $prepare, $related_ids );
+
+				// Reset weights for related items.
+				pods_query( 'SET @weight = 0' );
+				pods_query( "
+						UPDATE `@wp_podsrel`
+						SET
+							`weight` = @weight:=@weight+1
+						WHERE
+							`pod_id` = %d
+							AND `field_id` = %d
+							AND `related_pod_id` = %d
+							AND `related_field_id` = %d
+							AND `related_item_id` IN ( {$related_ids_sql} )
+					",
+					$prepare
+				);
+			}
 		}
 	}
 

@@ -41,7 +41,8 @@
   },
   "require": {
     "composer/installers": "1.5.*",
-    "php": ">=5.3"
+    "php": ">=5.3",
+    "mustangostang/spyc": "^0.6.2"
   },
   "require-dev": {
     "wp-cli/wp-cli": "1.*",

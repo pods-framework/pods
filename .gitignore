@@ -36,7 +36,8 @@ tests/clover.xml
 # NPM / Composer
 composer.lock
 /node_modules/
-/vendor/
+/vendor/*
+!/vendor/mustangostang
 npm-debug.log
 
 # PHPunit config

@@ -489,6 +489,7 @@ function pods_help( $text, $url = null ) {
 				'jquery-qtip2',
 			), PODS_VERSION
 		);
+		wp_enqueue_script( 'pods-qtip-init' );
 	} elseif ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
 		wp_enqueue_script( 'pods-qtip-init' );
 	}

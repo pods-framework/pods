@@ -1,6 +1,8 @@
 <?php
 /**
  * Compatibility functions for integration with other plugins.
+ *
+ * @package Pods
  */
 
 /**
@@ -23,6 +25,7 @@ if ( $acf_backwards_compatibility ) {
 		 * @since 2.7.2
 		 */
 		function the_field( $field, $id = false ) {
+			// @codingStandardsIgnoreLine
 			echo pods_field_display( null, $id, $field, true );
 		}
 	}
@@ -104,7 +107,7 @@ if ( $acf_backwards_compatibility ) {
 		}
 
 		add_shortcode( 'acf', 'pods_acf_shortcode' );
-	}
+	}//end if
 
 	/**
 	 * These functions below will do nothing for now. We might add some sort of further compatibility later.
@@ -408,4 +411,4 @@ if ( $acf_backwards_compatibility ) {
 			return null;
 		}
 	}
-}
+}//end if

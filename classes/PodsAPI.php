@@ -4284,7 +4284,7 @@ class PodsAPI {
 		}
 
 		if ( ! is_array( $related_ids ) ) {
-			$related_ids = implode( ',', $related_ids );
+			$related_ids = explode( ',', $related_ids );
 		}
 
 		foreach ( $related_ids as $k => $related_id ) {

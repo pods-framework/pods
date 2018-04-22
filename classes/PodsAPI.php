@@ -4295,7 +4295,7 @@ class PodsAPI {
 
 		$is_single = false;
 
-		$related_limit = (int) pods_var_raw( $field['type'] . '_limit', $field['options'], 0 );
+		$related_limit = (int) pods_v( $field['type'] . '_limit', $field['options'], 0 );
 
 		if ( 'single' === pods_v( $field['type'] . '_format_type', $field['options'] ) ) {
 			$related_limit = 1;

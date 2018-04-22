@@ -1517,10 +1517,14 @@ class PodsField_Pick extends PodsField {
 					continue;
 				}
 
-				self::$api->save_relationships( $related_id, $bidirectional_ids, $related_pod, $related_field );
-
+				// Delete relationships
 				if ( ! empty( $remove_ids ) ) {
 					self::$api->delete_relationships( $remove_ids, $related_id, $pod, $options );
+				}
+
+				// Save relationships
+				if ( ! empty( $bidirectional_ids ) ) {
+					self::$api->save_relationships( $related_id, $bidirectional_ids, $related_pod, $related_field );
 				}
 			}//end foreach
 

@@ -19,6 +19,7 @@ class PodsConfig {
 	 */
 	protected $registered_config_item_types = array(
 		'pods'      => 'pods',
+		'fields'    => 'fields',
 		'templates' => 'templates',
 		'pages'     => 'pages',
 		'helpers'   => 'helpers',
@@ -88,7 +89,7 @@ class PodsConfig {
 	 *
 	 * @param string $config_type Config type.
 	 */
-	public function register_config_type( string $config_type ) {
+	public function register_config_type( $config_type ) {
 
 		$config_type = sanitize_title( $config_type );
 		$config_type = str_replace( array( '/', DIRECTORY_SEPARATOR ), '-', $config_type );
@@ -102,7 +103,7 @@ class PodsConfig {
 	 *
 	 * @param string $config_type Config type.
 	 */
-	public function unregister_config_type( string $config_type ) {
+	public function unregister_config_type( $config_type ) {
 
 		$config_type = sanitize_title( $config_type );
 		$config_type = str_replace( array( '/', DIRECTORY_SEPARATOR ), '-', $config_type );
@@ -118,7 +119,7 @@ class PodsConfig {
 	 *
 	 * @param string $item_type Config item type.
 	 */
-	public function register_config_item_type( string $item_type ) {
+	public function register_config_item_type( $item_type ) {
 
 		$item_type = sanitize_title( $item_type );
 		$item_type = str_replace( array( '/', DIRECTORY_SEPARATOR ), '-', $item_type );
@@ -132,7 +133,7 @@ class PodsConfig {
 	 *
 	 * @param string $item_type Config item type.
 	 */
-	public function unregister_config_item_type( string $item_type ) {
+	public function unregister_config_item_type( $item_type ) {
 
 		$item_type = sanitize_title( $item_type );
 		$item_type = str_replace( array( '/', DIRECTORY_SEPARATOR ), '-', $item_type );
@@ -146,9 +147,9 @@ class PodsConfig {
 	/**
 	 * Register a config file path.
 	 *
-	 * @param string $path File path.
+	 * @param string $path Config file path.
 	 */
-	public function register_path( string $path ) {
+	public function register_path( $path ) {
 
 		$path = trailingslashit( $path );
 
@@ -163,9 +164,9 @@ class PodsConfig {
 	/**
 	 * Unregister a config file path.
 	 *
-	 * @param string $path File path.
+	 * @param string $path Config file path.
 	 */
-	public function unregister_path( string $path ) {
+	public function unregister_path( $path ) {
 
 		$path = trailingslashit( $path );
 
@@ -184,33 +185,37 @@ class PodsConfig {
 	 *
 	 * @return array File configs.
 	 */
-	public function get_file_configs() {
+	protected function get_file_configs() {
 
 		$file_configs = array();
 
 		// Flesh out the config types.
 		foreach ( $this->registered_config_types as $config_type ) {
-			$path = sprintf(
-				'pods.%s',
-				$config_type
-			);
+			foreach ( $this->registered_config_item_types as $config_item_type ) {
+				$theme_support = false;
 
-			$file_configs[] = array(
-				'type' => $config_type,
-				'file' => $path,
-			);
+				// Themes get pods.json / pods.yml support at root.
+				if ( 'pods' === $config_item_type ) {
+					$theme_support = true;
+				}
 
-			foreach ( $this->registered_config_item_types as $config_item_types ) {
-				$path = sprintf(
-					'pods%s%s.%s',
-					DIRECTORY_SEPARATOR,
-					$config_item_types,
-					$config_type
-				);
+				$path = sprintf( '%s.%s', $config_item_type, $config_type );
 
 				$file_configs[] = array(
-					'type' => $config_type,
-					'file' => $path,
+					'type'          => $config_type,
+					'file'          => $path,
+					'item_type'     => $config_item_type,
+					'theme_support' => $theme_support,
+				);
+
+				// Prepend pods/ to path for theme paths.
+				$path = sprintf( 'pods%s%s', DIRECTORY_SEPARATOR, $path );
+
+				$file_configs[] = array(
+					'type'          => $config_type,
+					'file'          => $path,
+					'item_type'     => $config_item_type,
+					'theme_support' => true,
 				);
 			}//end foreach
 		}//end foreach
@@ -222,7 +227,7 @@ class PodsConfig {
 	/**
 	 * Load configs from registered file paths.
 	 */
-	public function load_configs() {
+	protected function load_configs() {
 
 		/**
 		 * @var $wp_filesystem WP_Filesystem_Base
@@ -240,8 +245,17 @@ class PodsConfig {
 
 		$file_configs = $this->get_file_configs();
 
+		$theme_dirs = array(
+			trailingslashit( get_template_directory() ),
+			trailingslashit( get_stylesheet_directory() ),
+		);
+
 		foreach ( $this->registered_paths as $config_path ) {
 			foreach ( $file_configs as $file_config ) {
+				if ( empty( $file_config['theme_support'] ) && in_array( $config_path, $theme_dirs, true ) ) {
+					continue;
+				}
+
 				$file_path = $config_path . $file_config['file'];
 
 				if ( ! $wp_filesystem->exists( $file_path ) || ! $wp_filesystem->is_readable( $file_path ) ) {
@@ -254,7 +268,7 @@ class PodsConfig {
 					continue;
 				}
 
-				$this->load_config( $file_config['type'], $raw_config, $file_path );
+				$this->load_config( $file_config['type'], $raw_config, $file_path, $file_config );
 			}//end foreach
 		}//end foreach
 
@@ -265,9 +279,10 @@ class PodsConfig {
 	 *
 	 * @param string $config_type Config type.
 	 * @param string $raw_config  Raw config content.
-	 * @param string $file_path   File path.
+	 * @param string $file_path   Config file path.
+	 * @param array  $file_config File config.
 	 */
-	public function load_config( string $config_type, string $raw_config, string $file_path ) {
+	protected function load_config( $config_type, $raw_config, $file_path, array $file_config ) {
 
 		$config = null;
 
@@ -282,16 +297,16 @@ class PodsConfig {
 			 * Parse Pods config from a custom config type.
 			 *
 			 * @param array  $config      Config data.
-			 * @param string $raw_config  Raw config content.
 			 * @param string $config_type Config type.
+			 * @param string $raw_config  Raw config content.
 			 *
 			 * @since 2.7.2
 			 */
-			$config = apply_filters( 'pods_config_parse', [], $raw_config, $config_type );
+			$config = apply_filters( 'pods_config_parse', array(), $config_type, $raw_config );
 		}
 
 		if ( $config && is_array( $config ) ) {
-			$this->register_config( $config, $file_path );
+			$this->register_config( $config, $file_path, $file_config );
 		}
 
 	}
@@ -299,10 +314,11 @@ class PodsConfig {
 	/**
 	 * Register config for different item types.
 	 *
-	 * @param array  $config    Config data.
-	 * @param string $file_path Config file path.
+	 * @param array  $config      Config data.
+	 * @param string $file_path   Config file path.
+	 * @param array  $file_config File config.
 	 */
-	public function register_config( array $config, string $file_path = '' ) {
+	protected function register_config( array $config, $file_path, array $file_config = array() ) {
 
 		if ( ! isset( $this->file_path_configs[ $file_path ] ) ) {
 			$this->file_path_configs[ $file_path ] = array();
@@ -313,12 +329,25 @@ class PodsConfig {
 				continue;
 			}
 
+			$supported_item_types = array(
+				$item_type,
+				// We support all item types for pods configs.
+				'pods',
+ 			);
+
+			// Skip if the item type is not supported for this config file.
+			if ( ! empty( $file_config['item_type'] ) && ! in_array( $file_config['item_type'], $supported_item_types, true ) ) {
+				continue;
+			}
+
 			if ( ! isset( $this->file_path_configs[ $file_path ][ $item_type ] ) ) {
 				$this->file_path_configs[ $file_path ][ $item_type ] = array();
 			}
 
 			if ( 'pods' === $item_type ) {
 				$this->register_config_pods( $items, $file_path );
+			} elseif ( 'fields' === $item_type ) {
+				$this->register_config_fields( $items, $file_path );
 			} elseif ( 'templates' === $item_type ) {
 				$this->register_config_templates( $items, $file_path );
 			} elseif ( 'pages' === $item_type ) {
@@ -338,7 +367,7 @@ class PodsConfig {
 	 * @param array  $items     Config items.
 	 * @param string $file_path Config file path.
 	 */
-	public function register_config_pods( array $items, string $file_path = '' ) {
+	protected function register_config_pods( array $items, $file_path = '' ) {
 
 		foreach ( $items as $item ) {
 			// Check if the item type and name exists.
@@ -354,9 +383,56 @@ class PodsConfig {
 				unset( $item['id'] );
 			}
 
+			if ( empty( $item['fields'] ) ) {
+				$item['fields'] = array();
+			}
+
 			$this->pods[ $item['type'] ][ $item['name'] ] = $item;
 
 			$this->file_path_configs[ $file_path ]['pods'] = $item['type'] . ':' . $item['name'];
+		}//end foreach
+
+	}
+
+	/**
+	 * Register pod field configs.
+	 *
+	 * @param array  $items     Config items.
+	 * @param string $file_path Config file path.
+	 */
+	protected function register_config_fields( array $items, $file_path = '' ) {
+
+		foreach ( $items as $item ) {
+			// Check if the pod name, pod type, item type, and item name exists.
+			if ( empty( $item['type'] ) || empty( $item['name'] ) || empty( $item['pod']['name'] ) || empty( $item['pod']['type'] ) ) {
+				continue;
+			}
+
+			if ( ! isset( $this->pods[ $item['pod']['type'] ] ) ) {
+				$this->pods[ $item['pod']['type'] ] = array();
+			}
+
+			if ( isset( $item['pod']['id'] ) ) {
+				unset( $item['pod']['id'] );
+			}
+
+			// Check if pod has been registered yet.
+			if ( ! isset( $this->pods[ $item['pod']['type'][ $item['pod']['name'] ] ] ) ) {
+				$this->pods[ $item['pod']['type'] ][ $item['pod']['name'] ] = $item['pod'];
+			}
+
+			// Check if pod has fields that have been registered yet.
+			if ( ! isset( $this->pods[ $item['pod']['type'][ $item['pod']['name'] ] ]['fields'] ) ) {
+				$this->pods[ $item['pod']['type'] ][ $item['pod']['name'] ]['fields'] = array();
+			}
+
+			if ( isset( $item['id'] ) ) {
+				unset( $item['id'] );
+			}
+
+			$this->pods[ $item['pod']['type'] ][ $item['pod']['name'] ]['fields'][ $item['name'] ] = $item;
+
+			$this->file_path_configs[ $file_path ]['pods'] = $item['pod']['type'] . ':' . $item['pod']['name'] . ':' . $item['name'];
 		}//end foreach
 
 	}
@@ -367,7 +443,7 @@ class PodsConfig {
 	 * @param array  $items     Config items.
 	 * @param string $file_path Config file path.
 	 */
-	public function register_config_templates( array $items, string $file_path = '' ) {
+	protected function register_config_templates( array $items, $file_path = '' ) {
 
 		foreach ( $items as $item ) {
 			// Check if the item name exists.
@@ -392,7 +468,7 @@ class PodsConfig {
 	 * @param array  $items     Config items.
 	 * @param string $file_path Config file path.
 	 */
-	public function register_config_pages( array $items, string $file_path = '' ) {
+	protected function register_config_pages( array $items, $file_path = '' ) {
 
 		foreach ( $items as $item ) {
 			// Check if the item name exists.
@@ -417,7 +493,7 @@ class PodsConfig {
 	 * @param array  $items     Config items.
 	 * @param string $file_path Config file path.
 	 */
-	public function register_config_helpers( array $items, string $file_path = '' ) {
+	protected function register_config_helpers( array $items, $file_path = '' ) {
 
 		foreach ( $items as $item ) {
 			// Check if the item name exists.
@@ -443,7 +519,7 @@ class PodsConfig {
 	 * @param array  $items     Config items.
 	 * @param string $file_path Config file path.
 	 */
-	public function register_config_custom_item_type( string $item_type, array $items, string $file_path = '' ) {
+	protected function register_config_custom_item_type( $item_type, array $items, $file_path = '' ) {
 
 		if ( ! isset( $this->custom_configs[ $item_type ] ) ) {
 			$this->custom_configs[ $item_type ] = array();
@@ -455,7 +531,7 @@ class PodsConfig {
 			 *
 			 * @param array  $item      Item to pre-process.
 			 * @param string $item_type Item type.
-			 * @param string $file_path File path of config.
+			 * @param string $file_path Config file path.
 			 *
 			 * @since 2.7.2
 			 */

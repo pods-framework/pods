@@ -1691,6 +1691,9 @@ class Pods implements Iterator {
 											} else {
 												$value[] = $item->{$field};
 											}
+										} elseif ( ! empty( $related_obj ) && 0 === strpos( $full_field, 'post_thumbnail' ) ) {
+											// We want to catch post_thumbnail and post_thumbnail_url here
+											$value[] = $related_obj->field( $full_field );
 										} elseif ( ( ( false !== strpos( $full_field, '_src' ) || 'guid' === $field ) && ( in_array( $table['type'], array(
 											'attachment',
 											'media',

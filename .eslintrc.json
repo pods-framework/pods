@@ -1,0 +1,29 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2016,
+    "sourceType": "module"
+  },
+
+  "extends": ["wordpress"],
+
+  "rules": {
+    "object-curly-spacing": ["error", "always"],
+
+    "space-in-parens": ["error", "always"],
+
+    "space-before-function-paren": ["error", {
+      "anonymous": "always",
+      "named": "always",
+      "asyncArrow": "always"
+    }],
+
+    "lines-around-comment": [ "error", {
+      "beforeLineComment": false,
+      "beforeBlockComment": false
+    }],
+
+    "space-unary-ops": [ "error", {
+      "nonwords": false
+    }]
+  }
+}

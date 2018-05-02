@@ -1,6 +1,6 @@
 /*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
 
-import {PodsDFVModal} from 'pods-dfv/_src/core/dfv-modal';
+import { PodsDFVModal } from 'pods-dfv/_src/core/dfv-modal';
 
 /**
  * A frame for displaying a modal popup with iframe content
@@ -39,9 +39,9 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 
 		this.states.add( [
 			new wp.media.controller.State( {
-				id   : 'default',
+				id: 'default',
 				title: title,
-				src  : src
+				src: src
 			} )
 		] );
 
@@ -81,7 +81,7 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 	createTitle: function ( title ) {
 		title.view = new wp.media.View( {
 			controller: this,
-			tagName   : 'h1'
+			tagName: 'h1'
 		} );
 	}
 } );

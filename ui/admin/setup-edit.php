@@ -7,7 +7,7 @@ $pod = $api->load_pod( array( 'id' => $obj->id ) );
 
 $pod_type = pods_v( 'type', $pod );
 
-if ( 'taxonomy' == $pod[ 'type' ] && 'none' == $pod[ 'storage' ] && 1 == pods_v( 'enable_extra_fields', 'get' ) ) {
+if ( 'taxonomy' == $pod[ 'type' ] && 'none' == $pod[ 'storage' ] && 1 == pods_v( 'enable_extra_fields' ) ) {
     $api->save_pod( array( 'id' => $obj->id, 'storage' => 'table' ) );
 
     $pod = $api->load_pod( array( 'id' => $obj->id ) );
@@ -36,7 +36,7 @@ foreach ( $field_types as $type => $field_type_data ) {
     if ( true !== $field_type_vars[ 'pod_types' ] ) {
         if ( empty( $field_type_vars[ 'pod_types' ] ) )
             continue;
-        elseif ( is_array( $field_type_vars[ 'pod_types' ] ) && !in_array( $pod_type, $field_type_vars[ 'pod_types' ] ) )
+        elseif ( is_array( $field_type_vars[ 'pod_types' ] ) && !in_array( $pod_type, $field_type_vars[ 'pod_types' ], true ) )
             continue;
         elseif ( !is_array( $field_type_vars[ 'pod_types' ] ) && $pod_type != $field_type_vars[ 'pod_types' ] )
             continue;
@@ -166,7 +166,7 @@ do_action( 'add_meta_boxes', $pod_post->post_type, $pod_post );
     <h2>
         <?php esc_html_e( 'Edit Pod', 'pods' ); ?>:
         <?php
-            if ( ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && !empty( $pod[ 'object' ] ) ) || in_array( $pod[ 'type' ], array( 'media', 'user', 'comment' ) ) ) {
+            if ( ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ), true ) && !empty( $pod[ 'object' ] ) ) || in_array( $pod[ 'type' ], array( 'media', 'user', 'comment' ), true ) ) {
         ?>
             <em><?php echo esc_html( $pod[ 'name' ] ); ?></em>
         <?php
@@ -209,7 +209,7 @@ do_action( 'add_meta_boxes', $pod_post->post_type, $pod_post );
                 }
 
                 foreach ( $tabs as $tab => $label ) {
-                    if ( !in_array( $tab, array( 'manage-fields', 'labels', 'extra-fields' ) ) && ( !isset( $tab_options[ $tab ] ) || empty( $tab_options[ $tab ] ) ) )
+                    if ( !in_array( $tab, array( 'manage-fields', 'labels', 'extra-fields' ), true ) && ( !isset( $tab_options[ $tab ] ) || empty( $tab_options[ $tab ] ) ) )
                         continue;
 
                     $class = '';
@@ -547,7 +547,7 @@ elseif ( 'pod' == $pod_type ) {
         $index_fields = array( 'id' => 'ID' );
 
         foreach ( $pod[ 'fields' ] as $field ) {
-            if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
+            if ( !in_array( $field[ 'type' ], $tableless_field_types, true ) )
                 $index_fields[ $field[ 'name' ] ] = $field[ 'label' ];
         }
     ?>
@@ -650,7 +650,7 @@ elseif ( 'pod' == $pod_type ) {
 foreach ( $tabs as $tab => $tab_label ) {
     $tab = sanitize_title( $tab );
 
-    if ( in_array( $tab, array( 'manage-fields', 'labels', 'advanced', 'extra-fields' ) ) || !isset( $tab_options[ $tab ] ) || empty( $tab_options[ $tab ] ) )
+    if ( in_array( $tab, array( 'manage-fields', 'labels', 'advanced', 'extra-fields' ), true ) || !isset( $tab_options[ $tab ] ) || empty( $tab_options[ $tab ] ) )
         continue;
 ?>
     <div id="pods-<?php echo esc_attr( $tab ); ?>" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">

@@ -23,14 +23,14 @@ if ( 1 == pods_var( $form_field_type . '_html5', $options ) ) {
 $attributes['type']     = $type;
 $attributes['tabindex'] = 2;
 
-$format = PodsForm::field_method( 'time', 'format', $options );
+$format = PodsForm::field_method( 'time', 'format_datetime', $options );
 
 $method = 'timepicker';
 
 $args = array(
 	'ampm'       => false,
 	// Get selected JS time format.
-	'timeFormat' => PodsForm::field_method( 'time', 'format', $options, true ),
+	'timeFormat' => PodsForm::field_method( 'time', 'format_datetime', $options, true ),
 );
 
 if ( false !== stripos( $args['timeFormat'], 'tt' ) ) {

@@ -21,13 +21,13 @@ if ( 1 == pods_var( $form_field_type . '_html5', $options ) ) {
 $attributes['type']     = $type;
 $attributes['tabindex'] = 2;
 
-$format = PodsForm::field_method( 'date', 'format', $options );
+$format = PodsForm::field_method( 'date', 'format_datetime', $options );
 
 $method = 'datepicker';
 
 $args = array(
 	// Get selected JS date format.
-	'dateFormat'  => PodsForm::field_method( 'date', 'format', $options, true ),
+	'dateFormat'  => PodsForm::field_method( 'date', 'format_datetime', $options, true ),
 	'changeMonth' => true,
 	'changeYear'  => true,
 	'firstDay'    => (int) get_option( 'start_of_week', 0 ),

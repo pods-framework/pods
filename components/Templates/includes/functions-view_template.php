@@ -330,6 +330,21 @@ function frontier_do_subtemplate( $atts, $content ) {
 
 				$out .= pods_do_shortcode( $pod->do_magic_tags( $content ), frontier_get_shortcodes() );
 			}
+		} elseif ( isset( $field['table_info'], $field['table_info']['pod'] ) ) {
+			// Relationship to something that is extended by Pods
+			$entries = $pod->field( array( 'name' => $field_name, 'output' => 'pod' ) );
+			foreach ( $entries as $key => $entry ) {
+				$subatts = array(
+					'id' => $entry->id,
+					'pod' => $entry->pod,
+				);
+
+				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
+				$template = str_replace( '{_index}', $key, $template );
+				$template = str_replace( '{@' . $field_name . '.', '{@', $template );
+
+				$out .= pods_do_shortcode( $entry->do_magic_tags( $template ), frontier_get_shortcodes() );
+			}
 		} else {
 			// Relationship to something other than a Pod (ie: user)
 			foreach ( $entries as $key => $entry ) {

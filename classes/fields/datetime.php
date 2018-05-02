@@ -378,19 +378,6 @@ class PodsField_DateTime extends PodsField {
 	}
 
 	/**
-	 * {@inheritdoc}
-	 */
-	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		if ( method_exists( $this, 'format_' . static::$type ) ) {
-			$value = call_user_func( array( $this, 'format_' . static::$type ), $options );
-		}
-
-		return $value;
-
-	}
-
-	/**
 	 * Convert value to the correct format for display.
 	 *
 	 * @param string $value   Field value.

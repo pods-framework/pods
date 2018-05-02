@@ -210,7 +210,8 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: Corrects most relationship fields on media items when editing in grid mode. Select2 based fields still need a workaround (Autocomplete, List View). (#4795) (@pglewis)
 * Fixed: Avoid printing null message in PodsUI #4796 (@davidatwhiletrue)
 * Fixed: Single-select Post Thumbnail does not display in Pods Template traversal. Allow traversing into post_thumbnail. (#4719) (@jamesgol)
-* Fixed: Disable the "Add New" button for relationships when we're inside a media modal window (#4864). This is just a workaround until we can iron out the CSS and display for a modal from a modal. (@pglewis )
+* Fixed: Disable the "Add New" button for relationships when we're inside a media modal window (#4864). This is just a workaround until we can iron out the CSS and display for a modal from a modal. (@pglewis)
+* Fixed: Autotemplate hook validation to verify filter before applying Auto Templates (#4695) (@JoryHogeveen)
 
 ## Fixes for Unit Testing and Workflow
 

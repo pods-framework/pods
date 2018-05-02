@@ -4,7 +4,7 @@ Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.5
 Requires PHP: 5.3
-Tested up to: 4.9
+Tested up to: 4.9.5
 Stable tag: 2.7.2-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -180,10 +180,44 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
-= 2.7.2 - TBD =
+= 2.7.2 - May 2nd 2018 =
 
-* Added WP-CLI commands for Pods, more details at [https://docs.pods.io/advanced-topics/pods-wp-cli/](https://docs.pods.io/advanced-topics/pods-wp-cli/) #@sc0ttkclark
-* Added: Filter HTML class for li.pods-field form element to allow for more styling options. #4813
+## New Features Added
+
+* Added WP-CLI commands for Pods, more details at [https://docs.pods.io/advanced-topics/pods-wp-cli/](https://docs.pods.io/advanced-topics/pods-wp-cli/) (@sc0ttkclark)
+* Added: Filter HTML class for li.pods-field form element to allow for more styling options. #4813 (@paddelboot)
+* Added: Currency field enhancement: Add a currency sign before the field input. #4714 (@JoryHogeveen)
+* Added: Currency formats with spacing between currency sign and value #4838 (@JoryHogeveen)
+
+## Bug Fixes & Corrections
+
+* Fixed: Missing thickbox styles for `PodsUI::filters()` #4797 Fixes #4693 which was preventing Advanced Content Type Filters Popup from Loading (@pglewis)
+* Fixed: Text field readonly no longer defaults to `true` #4794 Fixes #4791 (@pglewis)
+* Fixed: Simplify how we inject the PHP string into the JS #4787 Fixes #4786 which was creating syntax error in JS for number fields (@pglewis)
+* Fixed: Tooltips were not working in the Pods Templates or Roles and Capabilities components #4851 (Fixes #4850) (@pglewis)
+* Fixed: Isolates qtip styles and functionality to pods only which should hopefully resolve any issues with conflicting with other plugins/themes that may use the tooltip functionality [#4834] Fixes #4832 where tooltips were not displaying (@nicdford)
+* Fixed: Tooltip corrections: Update Pods Add New screen for extended taxonomies as Table Storage is not required since Term Meta was added by WordPress. #4609 (@pglewis)
+* Fixed: Issue where fields with particularly long post titles would extend past the width of the container #4831( Fixes #4700) (@nicdford)
+* Added: appropriate CSS namespace prefixes to avoid style conflicts #4632 (#4612) (@nicdford)
+* Fixed: Prefix all form styles with `form.pods-manage`. Namespace prefix all pods-manage styles to avoid CSS conflicts with Gravity forms (#4615,#4612) (@JoryHogeveen)
+* Fixed: Pods DFV fields no longer depend upon the specific instance of jQuery shipped with WordPress (#4680). (@pglewis)
+* Fixed: Update all storage type tooltips. Many were still referencing old Custom Taxonomy Table Storage requirements that were no longer required after Term Meta support. Fixes #4835 (@pglewis)
+* Fixed: Bug with decimal handler when converting to dash (-) #4829 (@JoryHogeveen)
+* Fixed: Checkbox misalignment on custom settings pages (#4711) (@JoryHogeveen)
+* Fixed: Quality of life visual updates and optimizations for the CLEditor (#4633) (@nicdford)
+* Fixed: `%F` with PHP's `sprintf` function defaults to a precision of 6 decimal places, we now include the precision specifier whenever more than 6 decimal places of precision is needed. (#4741) (@0xLBF)
+* Fixed: Extend the condition for WPML validation exception to cover the Translation Editor so required fields don't break the Translation Editor in WPML. (#4802) (@dgwatkins)
+* Fixed: Corrects most relationship fields on media items when editing in grid mode. Select2 based fields still need a workaround (Autocomplete, List View). (#4795) (@pglewis)
+* Fixed: Avoid printing null message in PodsUI #4796 (@davidatwhiletrue)
+* Fixed: Single-select Post Thumbnail does not display in Pods Template traversal. Allow traversing into post_thumbnail. (#4719) (@jamesgol)
+* Fixed: Disable the "Add New" button for relationships when we're inside a media modal window (#4864). This is just a workaround until we can iron out the CSS and display for a modal from a modal. (@pglewis )
+
+## Fixes for Unit Testing and Workflow
+
+* Fixed: Skip npm install and js tests on the PHP 5.3/Precise box to fix #4788 (#4789) (@pglewis) 
+* Fixed: mockery 1.0 requires php >=5.6.0; downgrade to 0.9 for now #4818 @pglewis 
+* Fixed: PHP Codesniffer Fixes #4569 (@sc0ttkclark)
+* Fixed: eslint rules and formatting for Javascript (DFV only) #4590 (@sc0ttkclark)
 
 = 2.7.1 - December 8th 2017 =
 

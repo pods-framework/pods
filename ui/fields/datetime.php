@@ -23,7 +23,7 @@ if ( 1 == pods_var( $form_field_type . '_html5', $options ) ) {
 $attributes['type']     = $type;
 $attributes['tabindex'] = 2;
 
-$format = PodsForm::field_method( 'datetime', 'format', $options );
+$format = PodsForm::field_method( 'datetime', 'format_datetime', $options );
 
 $method = 'datetimepicker';
 

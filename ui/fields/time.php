@@ -30,7 +30,7 @@ $method = 'timepicker';
 $args = array(
 	'ampm'       => false,
 	// Get selected JS time format.
-	'timeFormat' => PodsForm::field_method( 'time', 'format', $options, true ),
+	'timeFormat' => PodsForm::field_method( 'time', 'format_time', $options, true ),
 );
 
 if ( false !== stripos( $args['timeFormat'], 'tt' ) ) {

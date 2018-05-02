@@ -27,7 +27,7 @@ $method = 'datepicker';
 
 $args = array(
 	// Get selected JS date format.
-	'dateFormat'  => PodsForm::field_method( 'date', 'format', $options, true ),
+	'dateFormat'  => PodsForm::field_method( 'date', 'format_date', $options, true ),
 	'changeMonth' => true,
 	'changeYear'  => true,
 	'firstDay'    => (int) get_option( 'start_of_week', 0 ),

@@ -12,7 +12,7 @@ env:
 
 matrix:
     allow_failures:
-     - env: WP_VERSION=nightly WP_MULTISITE=0
+    - env: WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable
 
     include:
     - php: 7.2
@@ -34,9 +34,12 @@ cache:
         - $HOME/.composer/cache
 
 before_install:
-    - . $HOME/.nvm/nvm.sh
-    - nvm install ${NODE_RELEASE}
-    - npm install
+    - | # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
+      if [ $NODE_RELEASE == "stable" ]; then
+          . $HOME/.nvm/nvm.sh;
+          nvm install ${NODE_RELEASE};
+          npm install;
+      fi
 
 before_script:
     - bash bin/init.sh
@@ -45,4 +48,7 @@ before_script:
 
 script:
     - vendor/bin/phpunit
-    - npm run test-dfv
+    - | # Only run js tests if we're running the latest stable node (Pipe preserves subsequent whitespace)
+      if [ $NODE_RELEASE == "stable" ]; then
+          npm run test-dfv;
+      fi

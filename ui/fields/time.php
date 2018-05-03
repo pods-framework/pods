@@ -78,12 +78,13 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 
 <script>
 	jQuery( function () {
-		var setContainer = {
+		var $container = jQuery( '<div>' ).appendTo( 'body' ).addClass( 'pods-compat-container' );
+		var beforeShow = {
 			'beforeShow': function( textbox, instance) {
-				jQuery('.pods-submittable').append( jQuery( '#ui-datepicker-div' ) );
+				jQuery( '#ui-datepicker-div' ).appendTo( $container );
 			}
 		};
-		var <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args = jQuery.extend( <?php echo json_encode( $args ); ?>, setContainer );
+		var <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args = jQuery.extend( <?php echo json_encode( $args ); ?>, beforeShow );
 
 		<?php
 		if ( 'text' !== $type ) {

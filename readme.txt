@@ -182,6 +182,10 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 = 2.7.2.1 - {date}
 
+**Developer and deployment enhancements**
+
+* Add .editorconfig file [http://editorconfig.org/](http://editorconfig.org/) #4571 (@JoryHogeveen)
+
 **Bug Fixes**
 
 *...

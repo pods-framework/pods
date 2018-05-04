@@ -180,6 +180,12 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.2.1 - {date}
+
+**Bug Fixes**
+
+*...
+
 = 2.7.2 - May 3rd 2018 =
 
 **New Features Added**
@@ -217,8 +223,8 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Fixes for Unit Testing and Workflow**
 
-* Fixed: Skip npm install and js tests on the PHP 5.3/Precise box to fix #4788 (#4789) (@pglewis) 
-* Fixed: mockery 1.0 requires php >=5.6.0; downgrade to 0.9 for now #4818 @pglewis 
+* Fixed: Skip npm install and js tests on the PHP 5.3/Precise box to fix #4788 (#4789) (@pglewis)
+* Fixed: mockery 1.0 requires php >=5.6.0; downgrade to 0.9 for now #4818 @pglewis
 * Fixed: PHP Codesniffer Fixes #4569 (@sc0ttkclark)
 * Fixed: eslint rules and formatting for Javascript (DFV only) #4590 (@sc0ttkclark)
 

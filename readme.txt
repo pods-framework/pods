@@ -188,7 +188,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
-*...
+* Fix Pods Widget output #4891 (@pglewis)
 
 = 2.7.2 - May 3rd 2018 =
 

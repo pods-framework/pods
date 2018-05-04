@@ -8,6 +8,7 @@
 /ui/js/pods-dfv/pods-dfv.min.js.map export-ignore
 /ui/styles/src export-ignore
 .travis.yml export-ignore
+.editorconfig export-ignore
 composer.json export-ignore
 rollup.config.js export-ignore
 CONTRIBUTING.md export-ignore

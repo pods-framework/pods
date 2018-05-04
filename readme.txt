@@ -184,11 +184,12 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Developer and deployment enhancements**
 
-* Add .editorconfig file [http://editorconfig.org/](http://editorconfig.org/) #4571 (@JoryHogeveen)
+* Added: .editorconfig file [http://editorconfig.org/](http://editorconfig.org/) #4571 (@JoryHogeveen)
 
 **Bug Fixes**
 
-* Fix Pods Widget output #4891 (@pglewis)
+* Fixed: Pods Widget output #4891 (@pglewis)
+* Fixed: Slider controls not showing #4895 (@pglewis)
 
 = 2.7.2 - May 3rd 2018 =
 

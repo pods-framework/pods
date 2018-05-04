@@ -1539,6 +1539,13 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 		$tag = $tag[2];
 	}
 
+	$callable = explode( ',', $tag );
+	if ( 1 < count( $callable ) ) {
+		$tag = array_shift( $callable );
+	} else {
+		$callable = false;
+	}
+
 	$tag = trim( $tag, ' {@}' );
 	$tag = explode( '.', $tag );
 
@@ -1599,6 +1606,12 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 
 	if ( $sanitize ) {
 		$value = pods_sanitize( $value );
+	}
+
+	if ( $callable ) {
+		foreach ( $callable as $callback ) {
+			$value = call_user_func( $callback, $value );
+		}
 	}
 
 	return $value;

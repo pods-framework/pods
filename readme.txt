@@ -192,6 +192,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: Pods Widget output #4891 (@pglewis)
 * Fixed: Slider controls not showing #4895 (@pglewis)
 * Fixed: Fatal exception attempting to parse Persian DateTime strings #4896 (@sc0ttkclark)
+* Fixed: Array to string conversion notice in Pods form #4886 (@sc0ttkclark)
 
 = 2.7.2 - May 3rd 2018 =
 

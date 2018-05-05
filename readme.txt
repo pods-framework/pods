@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Requires PHP: 5.3
 Tested up to: 4.9.5
-Stable tag: 2.7.2
+Stable tag: 2.7.3-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -180,16 +180,30 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.2.1 - May 5th 2018 =
+
+**Developer and deployment enhancements**
+
+* Added: .editorconfig file [http://editorconfig.org/](http://editorconfig.org/) #4571 (@JoryHogeveen)
+* Updated: export-ignore list #4898 (@pglewis)
+
+**Bug Fixes**
+
+* Fixed: Pods Widget output #4891 (@pglewis)
+* Fixed: Slider controls not showing #4895 (@pglewis)
+* Fixed: Fatal exception attempting to parse Persian DateTime strings #4896 (@sc0ttkclark)
+* Fixed: Array to string conversion notice in Pods form #4886 (@sc0ttkclark)
+
 = 2.7.2 - May 3rd 2018 =
 
-## New Features Added
+**New Features Added**
 
 * Added WP-CLI commands for Pods, more details at [https://docs.pods.io/advanced-topics/pods-wp-cli/](https://docs.pods.io/advanced-topics/pods-wp-cli/) (@sc0ttkclark)
 * Added: Filter HTML class for li.pods-field form element to allow for more styling options. #4813 (@paddelboot)
 * Added: Currency field enhancement: Add a currency sign before the field input. #4714 (@JoryHogeveen)
 * Added: Currency formats with spacing between currency sign and value #4838 (@JoryHogeveen)
 
-## Bug Fixes & Corrections
+**Bug Fixes & Corrections**
 
 * Fixed: Missing thickbox styles for `PodsUI::filters()` #4797 Fixes #4693 which was preventing Advanced Content Type Filters Popup from Loading (@pglewis)
 * Fixed: Text field readonly no longer defaults to `true` #4794 Fixes #4791 (@pglewis)
@@ -215,10 +229,10 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: Allow user-meta (and other extended Pods) to work in templates (#4847) (@jamesgol)
 * Fixed: Corrected conflicts with container CSS/JS around Date/Time Fields (#4878) (@pglewis,@nicdford)
 
-## Fixes for Unit Testing and Workflow
+**Fixes for Unit Testing and Workflow**
 
-* Fixed: Skip npm install and js tests on the PHP 5.3/Precise box to fix #4788 (#4789) (@pglewis) 
-* Fixed: mockery 1.0 requires php >=5.6.0; downgrade to 0.9 for now #4818 @pglewis 
+* Fixed: Skip npm install and js tests on the PHP 5.3/Precise box to fix #4788 (#4789) (@pglewis)
+* Fixed: mockery 1.0 requires php >=5.6.0; downgrade to 0.9 for now #4818 @pglewis
 * Fixed: PHP Codesniffer Fixes #4569 (@sc0ttkclark)
 * Fixed: eslint rules and formatting for Javascript (DFV only) #4590 (@sc0ttkclark)
 

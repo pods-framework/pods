@@ -185,6 +185,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 **Developer and deployment enhancements**
 
 * Added: .editorconfig file [http://editorconfig.org/](http://editorconfig.org/) #4571 (@JoryHogeveen)
+* Updated: export-ignore list #4898 (@pglewis)
 
 **Bug Fixes**
 

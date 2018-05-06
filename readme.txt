@@ -180,6 +180,10 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.3 - {date} =
+
+**Bug Fixes**
+
 = 2.7.2.1 - May 5th 2018 =
 
 **Developer and deployment enhancements**

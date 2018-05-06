@@ -28,8 +28,8 @@ class PodsWidgetView extends WP_Widget {
 		$before_title   = pods_v( 'before_title', $args );
 		$title          = apply_filters( 'widget_title', pods_v( 'title', $instance ) );
 		$after_title    = pods_v( 'after_title', $args );
-		$before_content = pods_v( 'before_content', $args );
-		$after_content  = pods_v( 'after_content', $args );
+		$before_content = pods_v( 'before_content', $instance );
+		$after_content  = pods_v( 'after_content', $instance );
 
 		$args = array(
 			'view'       => trim( pods_v( 'view', $instance, '' ) ),

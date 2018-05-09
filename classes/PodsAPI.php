@@ -1478,20 +1478,25 @@ class PodsAPI {
 			'create_label_singular'   => '',
 			'create_label_plural'     => '',
 			'create_storage'          => 'meta',
-			'create_storage_taxonomy' => ( function_exists( 'get_term_meta' ) ? 'meta' : 'none' ),
+			'create_storage_taxonomy' => '',
 
 			'create_setting_name'  => '',
 			'create_label_title'   => '',
 			'create_label_menu'    => '',
 			'create_menu_location' => 'settings',
 
-			'extend_pod_type'         => 'post_type',
-			'extend_post_type'        => 'post',
-			'extend_taxonomy'         => 'category',
-			'extend_table'            => '',
-			'extend_storage'          => 'meta',
-			'extend_storage_taxonomy' => ( function_exists( 'get_term_meta' ) ? 'meta' : 'table' ),
+			'extend_pod_type' => 'post_type',
+			'extend_post_type' => 'post',
+			'extend_taxonomy' => 'category',
+			'extend_table' => '',
+			'extend_storage' => 'meta',
+			'extend_storage_taxonomy' => '',
 		);
+
+		if( !function_exists( 'get_term_meta' ) ) {
+			$defaults['create_storage_taxonomy'] = 'none';
+			$defaults['extend_storage_taxonomy' ] = 'table' ;
+		}
 
 		$params = (object) array_merge( $defaults, (array) $params );
 
@@ -1544,7 +1549,11 @@ class PodsAPI {
 					return pods_error( 'Please enter a Name for this Pod', $this );
 				}
 
-				$pod_params['storage'] = $params->create_storage_taxonomy;
+				$pod_params['storage'] = $params->create_storage;
+
+				if ( ! function_exists( 'get_term_meta' ) || ! empty( $params->create_storage_taxonomy ) ) {
+					$pod_params['storage'] = $params->create_storage_taxonomy;
+				}
 
 				if ( pods_tableless() ) {
 					$pod_params['storage'] = ( function_exists( 'get_term_meta' ) ? 'meta' : 'none' );
@@ -1590,7 +1599,11 @@ class PodsAPI {
 
 				$pod_params['name'] = $params->extend_post_type;
 			} elseif ( 'taxonomy' === $pod_params['type'] ) {
-				$pod_params['storage'] = $params->extend_storage_taxonomy;
+				$pod_params['storage'] = $params->extend_storage;
+
+				if ( ! function_exists( 'get_term_meta' ) || ! empty( $params->extend_storage_taxonomy ) ) {
+					$pod_params['storage'] = $params->extend_storage_taxonomy;
+				}
 
 				if ( pods_tableless() ) {
 					$pod_params['storage'] = ( function_exists( 'get_term_meta' ) ? 'meta' : 'none' );
@@ -2090,20 +2103,20 @@ class PodsAPI {
 
 			// Sync any related fields if the name has changed
 			$fields = pods_query( "
-                SELECT `p`.`ID`
-                FROM `{$wpdb->posts}` AS `p`
-                LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
-                LEFT JOIN `{$wpdb->postmeta}` AS `pm2` ON `pm2`.`post_id` = `p`.`ID`
-                WHERE
-                    `p`.`post_type` = '_pods_field'
-                    AND `pm`.`meta_key` = 'pick_object'
-                    AND (
-                    	`pm`.`meta_value` = 'pod'
-                    	OR `pm`.`meta_value` = '" . $pod['type'] . "'
+				SELECT `p`.`ID`
+				FROM `{$wpdb->posts}` AS `p`
+				LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
+				LEFT JOIN `{$wpdb->postmeta}` AS `pm2` ON `pm2`.`post_id` = `p`.`ID`
+				WHERE
+					`p`.`post_type` = '_pods_field'
+					AND `pm`.`meta_key` = 'pick_object'
+					AND (
+						`pm`.`meta_value` = 'pod'
+						OR `pm`.`meta_value` = '" . $pod['type'] . "'
 					)
-                    AND `pm2`.`meta_key` = 'pick_val'
-                    AND `pm2`.`meta_value` = '{$old_name}'
-            " );
+					AND `pm2`.`meta_key` = 'pick_val'
+					AND `pm2`.`meta_value` = '{$old_name}'
+			" );
 
 			if ( ! empty( $fields ) ) {
 				foreach ( $fields as $field ) {
@@ -2113,17 +2126,17 @@ class PodsAPI {
 			}
 
 			$fields = pods_query( "
-                SELECT `p`.`ID`
-                FROM `{$wpdb->posts}` AS `p`
-                LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
-                WHERE
-                    `p`.`post_type` = '_pods_field'
-                    AND `pm`.`meta_key` = 'pick_object'
-                    AND (
-                    	`pm`.`meta_value` = 'pod-{$old_name}'
-                    	OR `pm`.`meta_value` = '" . $pod['type'] . "-{$old_name}'
+				SELECT `p`.`ID`
+				FROM `{$wpdb->posts}` AS `p`
+				LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
+				WHERE
+					`p`.`post_type` = '_pods_field'
+					AND `pm`.`meta_key` = 'pick_object'
+					AND (
+						`pm`.`meta_value` = 'pod-{$old_name}'
+						OR `pm`.`meta_value` = '" . $pod['type'] . "-{$old_name}'
 					)
-            " );
+			" );
 
 			if ( ! empty( $fields ) ) {
 				foreach ( $fields as $field ) {
@@ -2183,12 +2196,12 @@ class PodsAPI {
 					}
 
 					$query = "SELECT p.ID FROM {$wpdb->posts} AS p
-                                LEFT JOIN {$wpdb->postmeta} AS pm ON pm.post_id = p.ID AND pm.meta_key = '{$lookup_option}'
-                                LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm2.post_id = p.ID AND pm2.meta_key = 'type' AND pm2.meta_value = '{$lookup_built_in}'
-                                LEFT JOIN {$wpdb->postmeta} AS pm3 ON pm3.post_id = p.ID AND pm3.meta_key = 'object' AND pm3.meta_value = ''
-                                WHERE p.post_type = '_pods_pod' AND p.post_name = '{$built_in_object}'
-                                    AND pm2.meta_id IS NOT NULL
-                                    AND ( pm.meta_id IS NULL OR pm.meta_value = {$search_val} )";
+								LEFT JOIN {$wpdb->postmeta} AS pm ON pm.post_id = p.ID AND pm.meta_key = '{$lookup_option}'
+								LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm2.post_id = p.ID AND pm2.meta_key = 'type' AND pm2.meta_value = '{$lookup_built_in}'
+								LEFT JOIN {$wpdb->postmeta} AS pm3 ON pm3.post_id = p.ID AND pm3.meta_key = 'object' AND pm3.meta_value = ''
+								WHERE p.post_type = '_pods_pod' AND p.post_name = '{$built_in_object}'
+									AND pm2.meta_id IS NOT NULL
+									AND ( pm.meta_id IS NULL OR pm.meta_value = {$search_val} )";
 
 					$results = pods_query( $query );
 
@@ -2863,14 +2876,14 @@ class PodsAPI {
 			}
 
 			pods_query( "
-                UPDATE `{$pod[ 'meta_table' ]}` AS `m`
-                LEFT JOIN `{$join_table}` AS `t`
-                    ON `t`.`{$pod[ 'field_id' ]}` = `m`.`{$pod[ 'meta_field_id' ]}`
-                SET
-                    `m`.`{$pod[ 'meta_field_index' ]}` = %s
-                WHERE
-                    `m`.`{$pod[ 'meta_field_index' ]}` = %s
-            " . ( ! empty( $pod['field_type'] ) ? " AND `t`.`{$pod[ 'field_type' ]}` = %s" : "" ), $prepare );
+				UPDATE `{$pod[ 'meta_table' ]}` AS `m`
+				LEFT JOIN `{$join_table}` AS `t`
+					ON `t`.`{$pod[ 'field_id' ]}` = `m`.`{$pod[ 'meta_field_id' ]}`
+				SET
+					`m`.`{$pod[ 'meta_field_index' ]}` = %s
+				WHERE
+					`m`.`{$pod[ 'meta_field_index' ]}` = %s
+			" . ( ! empty( $pod['field_type'] ) ? " AND `t`.`{$pod[ 'field_type' ]}` = %s" : "" ), $prepare );
 		}
 
 		if ( $field['type'] !== $old_type && in_array( $old_type, $tableless_field_types ) ) {
@@ -2878,16 +2891,16 @@ class PodsAPI {
 
 			if ( true === $db ) {
 				pods_query( "
-                        DELETE pm
-                        FROM {$wpdb->postmeta} AS pm
-                        LEFT JOIN {$wpdb->posts} AS p
-                            ON p.post_type = '_pods_field'
-                            AND p.ID = pm.post_id
-                        WHERE
-                            p.ID IS NOT NULL
-                            AND pm.meta_key = 'sister_id'
-                            AND pm.meta_value = %d
-                    ", array(
+						DELETE pm
+						FROM {$wpdb->postmeta} AS pm
+						LEFT JOIN {$wpdb->posts} AS p
+							ON p.post_type = '_pods_field'
+							AND p.ID = pm.post_id
+						WHERE
+							p.ID IS NOT NULL
+							AND pm.meta_key = 'sister_id'
+							AND pm.meta_value = %d
+					", array(
 						$params->id
 					) );
 
@@ -2895,10 +2908,10 @@ class PodsAPI {
 					pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}", false );
 
 					pods_query( "
-                            UPDATE `@wp_podsrel`
-                            SET `related_field_id` = 0
-                            WHERE `field_id` = %d
-                        ", array(
+							UPDATE `@wp_podsrel`
+							SET `related_field_id` = 0
+							WHERE `field_id` = %d
+						", array(
 							$old_sister_id
 						) );
 				}
@@ -2908,10 +2921,10 @@ class PodsAPI {
 
 			if ( true === $db && ( ! pods_tableless() ) ) {
 				pods_query( "
-                        UPDATE `@wp_podsrel`
-                        SET `related_field_id` = %d
-                        WHERE `field_id` = %d
-                    ", array(
+						UPDATE `@wp_podsrel`
+						SET `related_field_id` = %d
+						WHERE `field_id` = %d
+					", array(
 						$params->id,
 						$sister_id
 					) );
@@ -2921,10 +2934,10 @@ class PodsAPI {
 
 			if ( true === $db && ( ! pods_tableless() ) ) {
 				pods_query( "
-                        UPDATE `@wp_podsrel`
-                        SET `related_field_id` = 0
-                        WHERE `field_id` = %d
-                    ", array(
+						UPDATE `@wp_podsrel`
+						SET `related_field_id` = 0
+						WHERE `field_id` = %d
+					", array(
 						$old_sister_id
 					) );
 			}
@@ -2932,13 +2945,13 @@ class PodsAPI {
 
 		if ( ! empty( $old_id ) && $old_name !== $field['name'] && true === $db ) {
 			pods_query( "
-                    UPDATE `@wp_postmeta`
-                    SET `meta_value` = %s
-                    WHERE
-                        `post_id` = %d
-                        AND `meta_key` = 'pod_index'
-                        AND `meta_value` = %s
-                ", array(
+					UPDATE `@wp_postmeta`
+					SET `meta_value` = %s
+					WHERE
+						`post_id` = %d
+						AND `meta_key` = 'pod_index'
+						AND `meta_value` = %s
+				", array(
 					$field['name'],
 					$pod['id'],
 					$old_name
@@ -3625,7 +3638,12 @@ class PodsAPI {
 			$options = pods_var( 'options', $field_data, array() );
 
 			// WPML AJAX compatibility
-			if ( is_admin() && isset( $_GET['page'] ) && false !== strpos( $_GET['page'], '/menu/languages.php' ) && isset( $_POST['icl_ajx_action'] ) && isset( $_POST['_icl_nonce'] ) && wp_verify_nonce( $_POST['_icl_nonce'], $_POST['icl_ajx_action'] . '_nonce' ) ) {
+			if ( is_admin() &&
+				( isset( $_POST['action'] ) && 'wpml_save_job_ajax' === $_POST['action'] ) ||
+				( isset( $_GET['page'] ) && false !== strpos( $_GET['page'], '/menu/languages.php' )
+				 && isset( $_POST['icl_ajx_action'] ) && isset( $_POST['_icl_nonce'] )
+				 && wp_verify_nonce( $_POST['_icl_nonce'], $_POST['icl_ajx_action'] . '_nonce' ) )
+			) {
 				$options['unique'] = $fields[ $field ]['options']['unique'] = $options['required'] = $fields[ $field ]['options']['required'] = 0;
 			} else {
 				// Validate value
@@ -4335,21 +4353,21 @@ class PodsAPI {
 			foreach ( $related_ids as $related_id ) {
 				if ( in_array( $related_id, $current_ids ) ) {
 					pods_query( "
-                        UPDATE `@wp_podsrel`
-                        SET
-                            `pod_id` = %d,
-                            `field_id` = %d,
-                            `item_id` = %d,
-                            `related_pod_id` = %d,
-                            `related_field_id` = %d,
-                            `related_item_id` = %d,
-                            `weight` = %d
-                        WHERE
-                            `pod_id` = %d
-                            AND `field_id` = %d
-                            AND `item_id` = %d
-                            AND `related_item_id` = %d
-                    ", array(
+						UPDATE `@wp_podsrel`
+						SET
+							`pod_id` = %d,
+							`field_id` = %d,
+							`item_id` = %d,
+							`related_pod_id` = %d,
+							`related_field_id` = %d,
+							`related_item_id` = %d,
+							`weight` = %d
+						WHERE
+							`pod_id` = %d
+							AND `field_id` = %d
+							AND `item_id` = %d
+							AND `related_item_id` = %d
+					", array(
 						$pod['id'],
 						$field['id'],
 						$id,
@@ -4365,18 +4383,18 @@ class PodsAPI {
 					) );
 				} else {
 					pods_query( "
-                        INSERT INTO `@wp_podsrel`
-                            (
-                                `pod_id`,
-                                `field_id`,
-                                `item_id`,
-                                `related_pod_id`,
-                                `related_field_id`,
-                                `related_item_id`,
-                                `weight`
-                            )
-                        VALUES ( %d, %d, %d, %d, %d, %d, %d )
-                    ", array(
+						INSERT INTO `@wp_podsrel`
+							(
+								`pod_id`,
+								`field_id`,
+								`item_id`,
+								`related_pod_id`,
+								`related_field_id`,
+								`related_item_id`,
+								`weight`
+							)
+						VALUES ( %d, %d, %d, %d, %d, %d, %d )
+					", array(
 						$pod['id'],
 						$field['id'],
 						$id,
@@ -5008,48 +5026,48 @@ class PodsAPI {
 			$type = pods_var( 'object', $pod, $pod['name'], null, true );
 
 			$sql = "
-                DELETE `t`, `r`, `m`
-                FROM `{$pod['table']}` AS `t`
-                LEFT JOIN `{$pod['meta_table']}` AS `m`
-                    ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
-                LEFT JOIN `{$pod['table']}` AS `r`
-                    ON `r`.`post_parent` = `t`.`{$pod['field_id']}` AND `r`.`post_status` = 'inherit'
-                WHERE `t`.`{$pod['field_type']}` = '{$type}'
-            ";
+				DELETE `t`, `r`, `m`
+				FROM `{$pod['table']}` AS `t`
+				LEFT JOIN `{$pod['meta_table']}` AS `m`
+					ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
+				LEFT JOIN `{$pod['table']}` AS `r`
+					ON `r`.`post_parent` = `t`.`{$pod['field_id']}` AND `r`.`post_status` = 'inherit'
+				WHERE `t`.`{$pod['field_type']}` = '{$type}'
+			";
 
 			pods_query( $sql, false );
 		} elseif ( 'taxonomy' === $pod['type'] ) {
 			// Delete all terms from this taxonomy
 			if ( function_exists( 'get_term_meta' ) ) {
 				$sql = "
-                    DELETE `t`, `m`, `tt`, `tr`
-                    FROM `{$pod['table']}` AS `t`
-                    LEFT JOIN `{$pod['meta_table']}` AS `m`
-                        ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
-                    " . $pod['join']['tt'] . "
-                    " . $pod['join']['tr'] . "
-                    WHERE " . implode( ' AND ', $pod['where'] ) . "
-                ";
+					DELETE `t`, `m`, `tt`, `tr`
+					FROM `{$pod['table']}` AS `t`
+					LEFT JOIN `{$pod['meta_table']}` AS `m`
+						ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
+					" . $pod['join']['tt'] . "
+					" . $pod['join']['tr'] . "
+					WHERE " . implode( ' AND ', $pod['where'] ) . "
+				";
 			} else {
 				$sql = "
-                    DELETE `t`, `tt`, `tr`
-                    FROM `{$pod['table']}` AS `t`
-                    " . $pod['join']['tt'] . "
-                    " . $pod['join']['tr'] . "
-                    WHERE " . implode( ' AND ', $pod['where'] ) . "
-                ";
+					DELETE `t`, `tt`, `tr`
+					FROM `{$pod['table']}` AS `t`
+					" . $pod['join']['tt'] . "
+					" . $pod['join']['tr'] . "
+					WHERE " . implode( ' AND ', $pod['where'] ) . "
+				";
 			}
 
 			pods_query( $sql, false );
 		} elseif ( 'user' === $pod['type'] ) {
 			// Delete all users except the current one
 			$sql = "
-                DELETE `t`, `m`
-                FROM `{$pod['table']}` AS `t`
-                LEFT JOIN `{$pod['meta_table']}` AS `m`
-                    ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
-                WHERE `t`.`{$pod['field_id']}` != " . (int) get_current_user_id() . "
-            ";
+				DELETE `t`, `m`
+				FROM `{$pod['table']}` AS `t`
+				LEFT JOIN `{$pod['meta_table']}` AS `m`
+					ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
+				WHERE `t`.`{$pod['field_id']}` != " . (int) get_current_user_id() . "
+			";
 
 			pods_query( $sql, false );
 		} elseif ( 'comment' === $pod['type'] ) {
@@ -5057,12 +5075,12 @@ class PodsAPI {
 			$type = pods_var( 'object', $pod, $pod['name'], null, true );
 
 			$sql = "
-                DELETE `t`, `m`
-                FROM `{$pod['table']}` AS `t`
-                LEFT JOIN `{$pod['meta_table']}` AS `m`
-                    ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
-                WHERE `t`.`{$pod['field_type']}` = '{$type}'
-            ";
+				DELETE `t`, `m`
+				FROM `{$pod['table']}` AS `t`
+				LEFT JOIN `{$pod['meta_table']}` AS `m`
+					ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
+				WHERE `t`.`{$pod['field_type']}` = '{$type}'
+			";
 
 			pods_query( $sql, false );
 		}
@@ -5164,21 +5182,21 @@ class PodsAPI {
 
 		// Delete any relationship references
 		$sql = "
-            DELETE `pm`
-            FROM `{$wpdb->postmeta}` AS `pm`
-            LEFT JOIN `{$wpdb->posts}` AS `p`
-                ON `p`.`post_type` = '_pods_field'
-                    AND `p`.`ID` = `pm`.`post_id`
-            LEFT JOIN `{$wpdb->postmeta}` AS `pm2`
-                ON `pm2`.`meta_key` = 'pick_object'
-                    AND `pm2`.`meta_value` = 'pod'
-                    AND `pm2`.`post_id` = `pm`.`post_id`
-            WHERE
-                `p`.`ID` IS NOT NULL
-                AND `pm2`.`meta_id` IS NOT NULL
-                AND `pm`.`meta_key` = 'pick_val'
-                AND `pm`.`meta_value` = '{$params->name}'
-        ";
+			DELETE `pm`
+			FROM `{$wpdb->postmeta}` AS `pm`
+			LEFT JOIN `{$wpdb->posts}` AS `p`
+				ON `p`.`post_type` = '_pods_field'
+					AND `p`.`ID` = `pm`.`post_id`
+			LEFT JOIN `{$wpdb->postmeta}` AS `pm2`
+				ON `pm2`.`meta_key` = 'pick_object'
+					AND `pm2`.`meta_value` = 'pod'
+					AND `pm2`.`post_id` = `pm`.`post_id`
+			WHERE
+				`p`.`ID` IS NOT NULL
+				AND `pm2`.`meta_id` IS NOT NULL
+				AND `pm`.`meta_key` = 'pick_val'
+				AND `pm`.`meta_value` = '{$params->name}'
+		";
 
 		pods_query( $sql );
 
@@ -5278,9 +5296,9 @@ class PodsAPI {
 		}
 
 		$wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
-            LEFT JOIN {$wpdb->posts} AS p
-                ON p.post_type = '_pods_field' AND p.ID = pm.post_id
-            WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
+			LEFT JOIN {$wpdb->posts} AS p
+				ON p.post_type = '_pods_field' AND p.ID = pm.post_id
+			WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
 		if ( ( ! pods_tableless() ) && $table_operation ) {
 			pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})", false );
@@ -5640,17 +5658,17 @@ class PodsAPI {
 
 		if ( ! empty( $pod ) && ! pods_tableless() ) {
 			pods_query( "
-                DELETE FROM `@wp_podsrel`
-                WHERE
-                (
-                    `pod_id` = %d
-                    AND `item_id` = %d
-                )
-                OR (
-                    `related_pod_id` = %d
-                    AND `related_item_id` = %d
-                )
-            ", array(
+				DELETE FROM `@wp_podsrel`
+				WHERE
+				(
+					`pod_id` = %d
+					AND `item_id` = %d
+				)
+				OR (
+					`related_pod_id` = %d
+					AND `related_item_id` = %d
+				)
+			", array(
 				$pod['id'],
 				$id,
 
@@ -5753,21 +5771,21 @@ class PodsAPI {
 		// Relationships table
 		if ( ! pods_tableless() ) {
 			pods_query( "
-                DELETE FROM `@wp_podsrel`
-                WHERE
-                (
-                    `pod_id` = %d
-                    AND `field_id` = %d
-                    AND `item_id` = %d
-                    AND `related_item_id` = %d
-                )
-                OR (
-                    `related_pod_id` = %d
-                    AND `related_field_id` = %d
-                    AND `related_item_id` = %d
-                    AND `item_id` = %d
-                )
-            ", array(
+				DELETE FROM `@wp_podsrel`
+				WHERE
+				(
+					`pod_id` = %d
+					AND `field_id` = %d
+					AND `item_id` = %d
+					AND `related_item_id` = %d
+				)
+				OR (
+					`related_pod_id` = %d
+					AND `related_field_id` = %d
+					AND `related_item_id` = %d
+					AND `item_id` = %d
+				)
+			", array(
 				$related_pod['id'],
 				$related_field['id'],
 				$related_id,
@@ -7702,17 +7720,17 @@ class PodsAPI {
 			$sister_id = (int) pods_var_raw( 'sister_id', $field, 0 );
 
 			$related_where = "
-                `field_id` = {$field_id}
-                AND `item_id` IN ( {$ids} )
-            ";
+				`field_id` = {$field_id}
+				AND `item_id` IN ( {$ids} )
+			";
 
 			$sql = "
-                SELECT item_id, related_item_id, related_field_id
-                FROM `@wp_podsrel`
-                WHERE
-                    {$related_where}
-                ORDER BY `weight`
-            ";
+				SELECT item_id, related_item_id, related_field_id
+				FROM `@wp_podsrel`
+				WHERE
+					{$related_where}
+				ORDER BY `weight`
+			";
 
 			$relationships = pods_query( $sql );
 
@@ -7869,17 +7887,17 @@ class PodsAPI {
 			$sister_id = (int) pods_var_raw( 'sister_id', $field, 0 );
 
 			$related_where = "
-                `field_id` = {$field_id}
-                AND `related_item_id` = {$id}
-            ";
+				`field_id` = {$field_id}
+				AND `related_item_id` = {$id}
+			";
 
 			$sql = "
-                SELECT *
-                FROM `@wp_podsrel`
-                WHERE
-                    {$related_where}
-                ORDER BY `weight`
-            ";
+				SELECT *
+				FROM `@wp_podsrel`
+				WHERE
+					{$related_where}
+				ORDER BY `weight`
+			";
 
 			$relationships = pods_query( $sql );
 
@@ -8134,8 +8152,8 @@ class PodsAPI {
 		 * @var $polylang                     object
 		 */
 		/*
-	     * @todo wpml-comp Remove global object usage
-	     */
+		 * @todo wpml-comp Remove global object usage
+		 */
 		global $wpdb, $sitepress, $polylang;
 
 		// @todo Handle $object arrays for Post Types, Taxonomies, Comments (table pulled from first object in array)
@@ -8346,30 +8364,30 @@ class PodsAPI {
 			$info['orderby'] = '`t`.`menu_order`, `t`.`' . $info['field_index'] . '`, `t`.`post_date`';
 
 			/*
-             * @todo wpml-comp Check if WPML filters can be applied afterwards
-             */
+			 * @todo wpml-comp Check if WPML filters can be applied afterwards
+			 */
 			// WPML support
 			if ( did_action( 'wpml_loaded' ) && ! empty( $current_language ) && apply_filters( 'wpml_is_translated_post_type', false, $post_type ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
 				$info['join']['wpml_translations'] = "
-                        LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
-                            ON `wpml_translations`.`element_id` = `t`.`ID`
-                                AND `wpml_translations`.`element_type` = 'post_{$post_type}'
-                                AND `wpml_translations`.`language_code` = '{$current_language}'
-                    ";
+						LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
+							ON `wpml_translations`.`element_id` = `t`.`ID`
+								AND `wpml_translations`.`element_type` = 'post_{$post_type}'
+								AND `wpml_translations`.`language_code` = '{$current_language}'
+					";
 
 				$info['join']['wpml_languages'] = "
-                        LEFT JOIN `{$wpdb->prefix}icl_languages` AS `wpml_languages`
-                            ON `wpml_languages`.`code` = `wpml_translations`.`language_code` AND `wpml_languages`.`active` = 1
-                    ";
+						LEFT JOIN `{$wpdb->prefix}icl_languages` AS `wpml_languages`
+							ON `wpml_languages`.`code` = `wpml_translations`.`language_code` AND `wpml_languages`.`active` = 1
+					";
 
 				$info['where']['wpml_languages'] = "`wpml_languages`.`code` IS NOT NULL";
 			} elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && ! empty( $current_language ) && function_exists( 'pll_is_translated_post_type' ) && pll_is_translated_post_type( $post_type ) ) {
 				// Polylang support
 				$info['join']['polylang_languages'] = "
-                        LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
-                            ON `polylang_languages`.`object_id` = `t`.`ID`
-                                AND `polylang_languages`.`term_taxonomy_id` = {$current_language_tt_id}
-                    ";
+						LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
+							ON `polylang_languages`.`object_id` = `t`.`ID`
+								AND `polylang_languages`.`term_taxonomy_id` = {$current_language_tt_id}
+					";
 
 				$info['where']['polylang_languages'] = "`polylang_languages`.`object_id` IS NOT NULL";
 			}
@@ -8432,22 +8450,22 @@ class PodsAPI {
 			);
 
 			/*
-             * @todo wpml-comp WPML API call for is_translated_taxononomy
-             * @todo wpml-comp Check if WPML filters can be applied afterwards
-             */
+			 * @todo wpml-comp WPML API call for is_translated_taxononomy
+			 * @todo wpml-comp Check if WPML filters can be applied afterwards
+			 */
 			// WPML Support
 			if ( is_object( $sitepress ) && ! empty( $current_language ) && $sitepress->is_translated_taxonomy( $taxonomy ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
 				$info['join']['wpml_translations'] = "
-                        LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
-                            ON `wpml_translations`.`element_id` = `tt`.`term_taxonomy_id`
-                                AND `wpml_translations`.`element_type` = 'tax_{$taxonomy}'
-                                AND `wpml_translations`.`language_code` = '{$current_language}'
-                    ";
+						LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
+							ON `wpml_translations`.`element_id` = `tt`.`term_taxonomy_id`
+								AND `wpml_translations`.`element_type` = 'tax_{$taxonomy}'
+								AND `wpml_translations`.`language_code` = '{$current_language}'
+					";
 
 				$info['join']['wpml_languages'] = "
-                        LEFT JOIN `{$wpdb->prefix}icl_languages` AS `wpml_languages`
-                            ON `wpml_languages`.`code` = `wpml_translations`.`language_code` AND `wpml_languages`.`active` = 1
-                    ";
+						LEFT JOIN `{$wpdb->prefix}icl_languages` AS `wpml_languages`
+							ON `wpml_languages`.`code` = `wpml_translations`.`language_code` AND `wpml_languages`.`active` = 1
+					";
 
 				$info['where']['wpml_languages'] = "`wpml_languages`.`code` IS NOT NULL";
 			} elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && ! empty( $current_language ) && ! empty( $current_language_tl_tt_id ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {

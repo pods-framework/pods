@@ -33,42 +33,51 @@ class Pods_Templates_Auto_Template_Front_End {
 	}
 
 	/**
+	 * Get the filter used for a Pod.
+	 * @since  1.7.2
+	 * @param  string  $current_post_type
+	 * @param  array   $possible_pods
+	 * @return string
+	 */
+	public function get_pod_filter( $current_post_type = '', $possible_pods = array() ) {
+		$filter = 'the_content';
+
+		if ( ! $current_post_type ) {
+			// get the current post type
+			$current_post_type = $this->current_post_type();
+		}
+
+		if ( ! $possible_pods ) {
+			//now use other methods in class to build array to search in/ use
+			$possible_pods = $this->auto_pods();
+		}
+
+		//check if $current_post_type is the key of the array of possible pods
+		if ( isset( $possible_pods[ $current_post_type ] ) ) {
+			$this_pod = $possible_pods[ $current_post_type ];
+
+      if ( is_singular( $current_post_type ) ) {
+				$filter = pods_v( 'single_filter', $this_pod, $filter, true );
+			} elseif ( is_post_type_archive( $current_post_type ) ) {
+				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+			} elseif ( is_home() && $current_post_type === 'post'  ) {
+				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+			} elseif ( is_tax( $current_post_type )  ) {
+				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+			}
+		}
+
+		return $filter;
+	}
+
+	/**
 	 * Add hooks for output
 	 *
 	 * @since 2.6.6
 	 */
-	public function hook_content() {
+	public function hook_content(){
+		$filter = $this->get_pod_filter();
 
-		$this->remove_hooks();
-		$this->filtered_content = array();
-
-		// get the current post type
-		$current_post_type = $this->current_post_type();
-
-		if ( ! $current_post_type || is_array( $current_post_type ) ) {
-			// If we're outside the loop, provide a chance to recompute
-			// the current_post_type when we are in the loop
-			if ( ! in_the_loop() ) {
-				add_action( 'the_post', array( $this, 'hook_content' ) );
-			}
-		}
-
-		// now use other methods in class to build array to search in/ use
-		$possible_pods = $this->auto_pods();
-
-		// check if $current_post_type is the key of the array of possible pods
-		if ( isset( $possible_pods[ $current_post_type ] ) ) {
-
-			$this_pod = $possible_pods[ $current_post_type ];
-
-			if ( ! empty( $this_pod['single'] ) && ! empty( $this_pod['single_filter'] ) ) {
-				$this->filtered_content[ $this_pod ['single_filter'] ] = 10.5;
-			}
-
-			if ( ! empty( $this_pod['archive'] ) && ! empty( $this_pod['archive_filter'] ) ) {
-				$this->filtered_content[ $this_pod ['archive_filter'] ] = 10.5;
-			}
-		}
 		/**
 		 * Allows plugin to append/replace the_excerpt
 		 *
@@ -312,6 +321,12 @@ class Pods_Templates_Auto_Template_Front_End {
 		if ( isset( $possible_pods[ $current_post_type ] ) ) {
 			// get array for the current post type
 			$this_pod = $possible_pods[ $current_post_type ];
+
+			$filter = $this->get_pod_filter( $current_post_type, $possible_pods );
+
+			if ( current_filter() !== $filter ) {
+				return $content;
+			}
 
 			if ( ! in_the_loop() && ! pods_v( 'run_outside_loop', $this_pod, false ) ) {
 				// If outside of the loop, exit quickly

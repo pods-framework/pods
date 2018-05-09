@@ -400,6 +400,7 @@ class PodsField_DateTime extends PodsField {
 		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
 			// Try default storage format.
 			$date = $this->createFromFormat( static::$storage_format, (string) $value );
+
 			// Try field format.
 			$date_local = $this->createFromFormat( $format, (string) $value );
 
@@ -496,28 +497,36 @@ class PodsField_DateTime extends PodsField {
 		switch ( (string) pods_v( static::$type . '_time_type', $options, '12', true ) ) {
 			case '12':
 				$time_format = $this->get_time_formats( $js );
-				$format      = $time_format[ pods_v( static::$type . '_time_format', $options, 'hh_mm', true ) ];
+
+				$format = $time_format[ pods_v( static::$type . '_time_format', $options, 'hh_mm', true ) ];
+
 				break;
 			case '24':
 				$time_format_24 = $this->get_time_formats_24( $js );
-				$format         = $time_format_24[ pods_v( static::$type . '_time_format_24', $options, 'hh_mm', true ) ];
+
+				$format = $time_format_24[ pods_v( static::$type . '_time_format_24', $options, 'hh_mm', true ) ];
+
 				break;
 			case 'custom':
 				if ( ! $js ) {
 					$format = pods_v( static::$type . '_time_format_custom', $options, '' );
 				} else {
 					$format = pods_v( static::$type . '_time_format_custom_js', $options, '' );
+
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_time_format_custom', $options, '' );
 						$format = $this->convert_format( $format, array( 'source' => 'php' ) );
 					}
 				}
+
 				break;
 			default:
 				$format = get_option( 'time_format' );
+
 				if ( $js ) {
 					$format = $this->convert_format( $format, array( 'source' => 'php' ) );
 				}
+
 				break;
 		}//end switch
 
@@ -551,11 +560,14 @@ class PodsField_DateTime extends PodsField {
 			'fjsy'      => 'F jS, Y',
 			'y'         => 'Y',
 		);
-		$filter      = 'pods_form_ui_field_date_formats';
+
+		$filter = 'pods_form_ui_field_date_formats';
+
 		if ( $js ) {
 			// @todo Method parameters? (Not supported by array_map)
 			$date_format = array_map( array( $this, 'convert_format' ), $date_format );
-			$filter      = 'pods_form_ui_field_date_js_formats';
+
+			$filter = 'pods_form_ui_field_date_js_formats';
 		}
 
 		return apply_filters( $filter, $date_format );
@@ -584,11 +596,14 @@ class PodsField_DateTime extends PodsField {
 			'hh_mm'      => 'h:i',
 			'hh_mm_ss'   => 'h:i:s',
 		);
-		$filter      = 'pods_form_ui_field_time_formats';
+
+		$filter = 'pods_form_ui_field_time_formats';
+
 		if ( $js ) {
 			// @todo Method parameters? (Not supported by array_map)
 			$time_format = array_map( array( $this, 'convert_format' ), $time_format );
-			$filter      = 'pods_form_ui_field_time_js_formats';
+
+			$filter = 'pods_form_ui_field_time_js_formats';
 		}
 
 		return apply_filters( $filter, $time_format );
@@ -609,10 +624,13 @@ class PodsField_DateTime extends PodsField {
 			'hh_mm'    => 'H:i',
 			'hh_mm_ss' => 'H:i:s',
 		);
-		$filter         = 'pods_form_ui_field_time_formats_24';
+
+		$filter = 'pods_form_ui_field_time_formats_24';
+
 		if ( $js ) {
 			// @todo Method parameters? (Not supported by array_map)
 			$time_format_24 = array_map( array( $this, 'convert_format' ), $time_format_24 );
+
 			$filter         = 'pods_form_ui_field_time_js_formats_24';
 		}
 
@@ -632,41 +650,46 @@ class PodsField_DateTime extends PodsField {
 
 		$datetime = null;
 
-		if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
-			$timezone = get_option( 'timezone_string' );
+		try {
+			if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
+				$timezone = get_option( 'timezone_string' );
 
-			if ( empty( $timezone ) ) {
-				$timezone = timezone_name_from_abbr( '', get_option( 'gmt_offset' ) * HOUR_IN_SECONDS, 0 );
-			}
-
-			if ( ! empty( $timezone ) ) {
-				$datetimezone = new DateTimeZone( $timezone );
-
-				$datetime = DateTime::createFromFormat( $format, (string) $date, $datetimezone );
-
-				if ( false === $datetime ) {
-					$datetime = DateTime::createFromFormat( static::$storage_format, (string) $date, $datetimezone );
+				if ( empty( $timezone ) ) {
+					$timezone = timezone_name_from_abbr( '', get_option( 'gmt_offset' ) * HOUR_IN_SECONDS, 0 );
 				}
 
-				if ( false !== $datetime && $return_timestamp ) {
-					return $datetime;
+				if ( ! empty( $timezone ) ) {
+					$datetimezone = new DateTimeZone( $timezone );
+
+					$datetime = DateTime::createFromFormat( $format, (string) $date, $datetimezone );
+
+					if ( false === $datetime ) {
+						$datetime = DateTime::createFromFormat( static::$storage_format, (string) $date, $datetimezone );
+					}
+
+					if ( false !== $datetime && $return_timestamp ) {
+						return $datetime;
+					}
+				}
+			}//end if
+
+			if ( in_array( $datetime, array( null, false ), true ) ) {
+				if ( empty( $date ) ) {
+					$timestamp = time();
+				} else {
+					$timestamp = strtotime( (string) $date );
+
+					if ( $return_timestamp ) {
+						return $timestamp;
+					}
+				}
+
+				if ( $timestamp ) {
+					$datetime = new DateTime( date_i18n( static::$storage_format, $timestamp ) );
 				}
 			}
-		}//end if
-
-		if ( in_array( $datetime, array( null, false ), true ) ) {
-			if ( empty( $date ) ) {
-				$timestamp = time();
-			} else {
-				$timestamp = strtotime( (string) $date );
-
-				if ( $return_timestamp ) {
-					return $timestamp;
-				}
-			}
-			if ( $timestamp ) {
-				$datetime = new DateTime( date_i18n( static::$storage_format, $timestamp ) );
-			}
+		} catch ( Exception $e ) {
+			// There is no saving this time value, it's an exception to the rule.
 		}
 
 		return apply_filters( 'pods_form_ui_field_datetime_formatter', $datetime, $format, $date );

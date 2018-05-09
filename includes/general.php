@@ -489,6 +489,7 @@ function pods_help( $text, $url = null ) {
 				'jquery-qtip2',
 			), PODS_VERSION
 		);
+		wp_enqueue_script( 'pods-qtip-init' );
 	} elseif ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
 		wp_enqueue_script( 'pods-qtip-init' );
 	}
@@ -748,7 +749,7 @@ function pods_shortcode( $tags, $content = null ) {
 	$tags = apply_filters( 'pods_shortcode', $tags );
 
 	$tags['pagination']  = filter_var( $tags['pagination'], FILTER_VALIDATE_BOOLEAN );
-	$tags['search']      = filter_var( $tags['pagination'], FILTER_VALIDATE_BOOLEAN );
+	$tags['search']      = filter_var( $tags['search'], FILTER_VALIDATE_BOOLEAN );
 	$tags['use_current'] = filter_var( $tags['use_current'], FILTER_VALIDATE_BOOLEAN );
 
 	if ( empty( $content ) ) {

@@ -133,7 +133,7 @@ class PodsField_Text extends PodsField {
 			$value = implode( ' ', $value );
 		}
 
-		$is_read_only = (boolean) pods_v( 'read_only', $options, true );
+		$is_read_only = (boolean) pods_v( 'read_only', $options, false );
 
 		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( $is_read_only ) {

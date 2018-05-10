@@ -184,6 +184,8 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
+* Fixed: Non-required color-picker field did not allow saving empty value #4919 (@JoryHogeveen)
+
 = 2.7.3 - May 6th 2018  =
 
 **Bug Fixes**

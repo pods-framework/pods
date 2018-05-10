@@ -111,7 +111,7 @@ class PodsField_Color extends PodsField {
 					// @todo Ask for a specific format in error message
 					$errors[] = __( 'Invalid value provided for this field.', 'pods' );
 				}
-			} elseif ( ! in_array( strlen( $color ), array( 3, 6 ), true ) ) {
+			} elseif ( ! empty( $color ) && ! in_array( strlen( $color ), array( 3, 6 ), true ) ) {
 				$errors[] = __( 'Invalid Hex Color value provided for this field.', 'pods' );
 			}
 		}

@@ -14,13 +14,13 @@
 @import "base/ui-list-table";
 
 .pods-compat-container {
+	@import "overrides/codemirror";
 	@import "overrides/jquery-ui-timepicker";
 	@import "libs/jquery-ui-custom";
 }
 
 .pods-submittable {
 	@import "libs/jquery-qtip";
-	@import "overrides/codemirror";
 	@import "overrides/jquery-cleditor";
 	@import "overrides/select-woo";
 }

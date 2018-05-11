@@ -1299,7 +1299,7 @@ class PodsField_Pick extends PodsField {
 		$selected = false;
 
 		if ( is_array( $args->value ) ) {
-			// Note: don't do strict check, we may get strings or ints
+			// Note: don't do strict check, we may get mixed string and int
 			if ( in_array( $item_id, $args->value ) ) {
 				$selected = true;
 			}

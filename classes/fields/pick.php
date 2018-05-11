@@ -1299,8 +1299,10 @@ class PodsField_Pick extends PodsField {
 		$selected = false;
 
 		if ( is_array( $args->value ) ) {
-			// Note: don't do strict check, we may get mixed string and int
-			if ( in_array( $item_id, $args->value ) ) {
+			// Cast values in array as string.
+			$args->value = array_map( 'strval', $args->value );
+
+			if ( in_array( $item_id, $args->value, true ) ) {
 				$selected = true;
 			}
 		} elseif ( (string) $item_id === (string) $args->value ) {

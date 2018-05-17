@@ -184,6 +184,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
+* Fixed: Pick fields with predefined/custom lists using numeric keys not loading values #4892, #4753 (@pglewis)
 * Fixed: Non-required color-picker field did not allow saving empty value #4919 (@JoryHogeveen)
 * Fixed: CodeMirror fields in Taxonomy and User edit forms #4913 (@pglewis)
 

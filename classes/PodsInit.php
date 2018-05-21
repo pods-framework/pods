@@ -343,7 +343,7 @@ class PodsInit {
 		}
 
 		// Deal with specifics on admin pages
-		if ( is_admin() && function_exists('get_current_screen') ) {
+		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 
 			// DFV must be enqueued on the media library page for items in grid mode (see #4785)
@@ -369,7 +369,7 @@ class PodsInit {
 
 		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
 
-		if ( is_admin() && function_exists('get_current_screen') ) {
+		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 
 			// Deregister the outdated Pods handlebars script on TEC event screen

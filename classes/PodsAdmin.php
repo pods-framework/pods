@@ -1890,7 +1890,7 @@ class PodsAdmin {
 				),
 				'hierarchical'            => array(
 					'label'             => __( 'Hierarchical', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
+					'help'              => __( 'Hierarchical taxonomies will have a list with checkboxes to select an existing category in the taxonomy admin box on the post edit page (like default post categories). Non-hierarchical taxonomies will just have an empty text field to type-in taxonomy terms to associate with the post (like default post tags).', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'dependency'        => true,

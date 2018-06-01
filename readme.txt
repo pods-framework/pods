@@ -180,6 +180,12 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.4 - TBD =
+
+**Bug Fixes**
+
+* Fixed: Resolve file uploads directory check logic for file exports #4970 (@sc0ttkclark)
+
 = 2.7.3 - May 6th 2018  =
 
 **Bug Fixes**

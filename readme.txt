@@ -184,7 +184,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
-* 
+* Fixed: Media modal issues in post edits, #4945, #4967 (@pglewis)
 * Fixed: Fatal error if not logged in and accessing wp-admin, #4828 (@therealgilles)
 * Fixed: Pick fields with predefined/custom lists using numeric keys not loading values #4892, #4753 (@pglewis)
 * Fixed: Non-required color-picker field did not allow saving empty value #4919 (@JoryHogeveen)

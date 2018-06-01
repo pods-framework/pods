@@ -182,9 +182,11 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 = 2.7.4 - {Date}  =
 
+**Features/Enhancements**
+* Added: Tooltip for the Hierarchical option for taxonomies, #4949 (@pglewis)
+
 **Bug Fixes**
 
-* Added: Tooltip for the Hierarchical option for taxonomies, #4949 (@pglewis)
 * Fixed: Media modal issues in post edits, #4945, #4967 (@pglewis)
 * Fixed: Fatal error if not logged in and accessing wp-admin, #4828 (@therealgilles)
 * Fixed: Pick fields with predefined/custom lists using numeric keys not loading values #4892, #4753 (@pglewis)

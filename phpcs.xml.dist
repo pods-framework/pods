@@ -9,6 +9,8 @@
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/components/Markdown.php</exclude-pattern>
 
+	<arg name="extensions" value="php"/>
+
 	<config name="minimum_supported_wp_version" value="4.5"/>
 	<rule ref="WordPress-Core"/>
 	<rule ref="WordPress-Docs"/>

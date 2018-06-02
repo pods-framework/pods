@@ -24,5 +24,5 @@ echo Running PHPCS reports
 for type in ${types[@]}
 do
   echo Running PHPCS report: ${type}
-  ./vendor/bin/phpcs -v --report="${type}" --report-file="report-${type}${file_affix}.txt" ${file_path}
+  ./vendor/bin/phpcs -v --report="${type}" --report-file="phpcs-report-${type}${file_affix}.txt" ${file_path}
 done;

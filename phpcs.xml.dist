@@ -2,6 +2,7 @@
 <ruleset name="Pods">
 	<description>Pods-customized WordPress Coding Standards</description>
 
+	<file>.</file>
 	<exclude-pattern>*/.idea/*</exclude-pattern>
 	<exclude-pattern>*/.sass-cache/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>

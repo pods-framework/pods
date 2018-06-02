@@ -10,7 +10,8 @@
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/components/Markdown.php</exclude-pattern>
 
-	<arg value="s"/> <!-- Show sniff -->
+	<arg value="s"/> <!-- Show sniff codes in all reports -->
+	<arg value="p"/> <!-- Show progress of the run -->
 	<arg name="extensions" value="php"/><!-- Only check .php files -->
 
 	<ini name="memory_limit" value="256M"/>

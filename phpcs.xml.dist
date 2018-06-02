@@ -2,12 +2,18 @@
 <ruleset name="Pods">
 	<description>Pods-customized WordPress Coding Standards</description>
 
+	<file>.</file>
 	<exclude-pattern>*/.idea/*</exclude-pattern>
 	<exclude-pattern>*/.sass-cache/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/tests/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/components/Markdown.php</exclude-pattern>
+
+	<arg value="s"/> <!-- Show sniff -->
+	<arg name="extensions" value="php"/><!-- Only check .php files -->
+
+	<ini name="memory_limit" value="256M"/>
 
 	<config name="minimum_supported_wp_version" value="4.5"/>
 	<rule ref="WordPress-Core"/>

@@ -188,6 +188,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
+* Fixed: Pods breaks Theme Editor for PHP files, hangs loopback test #4595, #4931 (@jamesgol, @pglewis)
 * Fixed: Time field cannot save midnight #3488, #4937 (@pglewis)
 * Fixed: Resolve file uploads directory check logic for file exports #4970 (@elia-senatore-cippest, @sc0ttkclark)
 * Fixed: Media modal issues in post edits, #4945, #4967 (@pglewis)

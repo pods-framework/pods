@@ -2266,6 +2266,9 @@ function pods_session_start() {
 	if ( false !== headers_sent() ) {
 		// Check if headers were sent.
 		return false;
+	} elseif ( false !== is_user_logged_in() ) {
+		// We do not need a session ID if there is a valid user logged in
+		return false;
 	} elseif ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
 		// Allow for bypassing Pods session autostarting.
 		return false;

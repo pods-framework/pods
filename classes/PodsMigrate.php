@@ -795,7 +795,7 @@ class PodsMigrate {
 		} else {
 			$uploads = wp_upload_dir( current_time( 'mysql' ) );
 
-			if ( ! $uploads || false === $uploads['error'] ) {
+			if ( ! $uploads || false !== $uploads['error'] ) {
 				return pods_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
 			}
 

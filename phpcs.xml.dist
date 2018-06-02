@@ -12,6 +12,8 @@
 	<arg value="s"/> <!-- Show sniff -->
 	<arg name="extensions" value="php"/><!-- Only check .php files -->
 
+	<ini name="memory_limit" value="256M"/>
+
 	<config name="minimum_supported_wp_version" value="4.5"/>
 	<rule ref="WordPress-Core"/>
 	<rule ref="WordPress-Docs"/>

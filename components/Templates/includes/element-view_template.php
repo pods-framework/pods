@@ -12,7 +12,8 @@
 		if ( isset( $content ) ) {
 			// WordPress will already call esc_textarea() if richedit is off, don't escape twice (see #3462)
 			if ( ! user_can_richedit() ) {
-				echo $content; // phpcs:ignore
+				// phpcs:ignore
+				echo $content;
 			} else {
 				echo esc_textarea( $content );
 			}

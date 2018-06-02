@@ -188,6 +188,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
+* Fixed: Time field cannot save midnight #3488, #4937 (@pglewis)
 * Fixed: Resolve file uploads directory check logic for file exports #4970 (@elia-senatore-cippest, @sc0ttkclark)
 * Fixed: Media modal issues in post edits, #4945, #4967 (@pglewis)
 * Fixed: Fatal error if not logged in and accessing wp-admin, #4828 (@therealgilles)

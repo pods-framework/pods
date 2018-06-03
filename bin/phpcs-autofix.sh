@@ -12,4 +12,4 @@ default_path="."
 file_path=${1:-$default_path}
 
 echo Running PHPCS autofix
-./vendor/bin/phpcbf -v ${file_path}
+./vendor/bin/phpcbf ${file_path}

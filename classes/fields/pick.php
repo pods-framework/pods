@@ -780,12 +780,12 @@ class PodsField_Pick extends PodsField {
 
 		$ajax = false;
 
-		if ( ( 'custom-simple' !== pods_v( $args->type . '_object', $options ) || empty( $custom ) ) && '' !== pods_v( $args->type . '_object', $options, '', true ) ) {
+		if ( $this->can_ajax( $options ) ) {
 			$ajax = true;
-		}
 
-		if ( ! empty( self::$field_data ) && self::$field_data['id'] === $options['id'] ) {
-			$ajax = (boolean) self::$field_data['autocomplete'];
+			if ( ! empty( self::$field_data ) && self::$field_data['id'] === $options['id'] ) {
+				$ajax = (boolean) self::$field_data['autocomplete'];
+			}
 		}
 
 		$ajax = apply_filters( 'pods_form_ui_field_pick_ajax', $ajax, $args->name, $args->value, $options, $args->pod, $args->id );
@@ -2371,6 +2371,8 @@ class PodsField_Pick extends PodsField {
 	 * @param array $options Field options.
 	 *
 	 * @return bool
+	 *
+	 * @since 2.7
 	 */
 	public function is_autocomplete( $options ) {
 
@@ -2387,6 +2389,27 @@ class PodsField_Pick extends PodsField {
 		}
 
 		return $autocomplete;
+	}
+
+	/**
+	 * Check if a field supports AJAX mode
+	 *
+	 * @param array $options Field options.
+	 *
+	 * @return bool
+	 *
+	 * @since 2.7.4
+	 */
+	public function can_ajax( $options ) {
+
+		$is_simple_tableless = in_array( $options['pick_object'], PodsForm::simple_tableless_objects(), true );
+
+		$value = false;
+		if ( $this->is_autocomplete( $options ) && ! $is_simple_tableless ) {
+			$value = true;
+		}
+
+		return $value;
 	}
 
 	/**

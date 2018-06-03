@@ -2402,7 +2402,8 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function can_ajax( $options ) {
 
-		$is_simple_tableless = in_array( $options['pick_object'], PodsForm::simple_tableless_objects(), true );
+		$field_object = pods_v( $options['type'] . '_object', $options );
+		$is_simple_tableless = in_array( $field_object, PodsForm::simple_tableless_objects(), true );
 
 		$value = false;
 		if ( $this->is_autocomplete( $options ) && ! $is_simple_tableless ) {

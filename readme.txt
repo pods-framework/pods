@@ -188,6 +188,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
+* Fixed: HTML entities in a field's description are converted when the Pod is loaded again, #4495 (@pglewis)
 * Fixed: Relationship fields related to the _pods_pod or _pods_field post type would not return the correct value, #4979 (@scottkclark)
 * Fixed: Code Editor for Pods Template double-escapes HTML when Visual Editor is OFF in WordPress, #3462 (@pglewis)
 * Fixed: Pods breaks Theme Editor for PHP files, hangs loopback test #4595, #4931 (@jamesgol, @pglewis)

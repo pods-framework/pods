@@ -11,7 +11,5 @@
 default_path="."
 file_path=${1:-$default_path}
 
-ignore="\.idea,\.saas-cache,node_modules,vendor,bin,tests"
-
 echo Running PHPCS autofix
-./vendor/bin/phpcbf -v -d memory_limit="256M" --extensions="php" --ignore="${ignore}" ${file_path}
+./vendor/bin/phpcbf ${file_path}

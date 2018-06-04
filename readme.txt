@@ -184,6 +184,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Features/Enhancements**
 
+* Improvement: Address some i18n code standard violations, #4982 (@GaryJones)
 * Added: Tooltip for the Hierarchical option for taxonomies, #4949 (@pglewis)
 
 **Bug Fixes**

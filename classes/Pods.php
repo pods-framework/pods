@@ -1518,7 +1518,7 @@ class Pods implements Iterator {
 
 								$item_data = array();
 
-								if ( ! $related_obj ) {
+								if ( ! $related_obj || ! $related_obj->valid() ) {
 									if ( ! is_object( $this->alt_data ) ) {
 										$this->alt_data = pods_data( null, 0, true, true );
 									}

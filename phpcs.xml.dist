@@ -12,6 +12,8 @@
 	<arg value="s"/> <!-- Show sniff codes in all reports -->
 	<arg value="p"/> <!-- Show progress of the run -->
 	<arg name="extensions" value="php"/><!-- Only check .php files -->
+	<arg name="basepath" value="."/><!-- Strip the file paths down to the relevant bit -->
+	<arg name="colors"/><!-- Show colors in output -->
 
 	<ini name="memory_limit" value="256M"/>
 

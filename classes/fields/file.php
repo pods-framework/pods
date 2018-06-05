@@ -791,7 +791,7 @@ class PodsField_File extends PodsField {
 	 * @return string
 	 * @since 2.0.0
 	 *
-	 * @deprecated 2.7
+	 * @deprecated 2.7.0
 	 */
 	public function markup( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null, $linked = false, $link = null ) {
 

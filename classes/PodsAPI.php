@@ -42,7 +42,7 @@ class PodsAPI {
 
 	/**
 	 * @var
-	 * @deprecated 2.0
+	 * @deprecated 2.0.0
 	 */
 	public $format = null;
 
@@ -3240,7 +3240,7 @@ class PodsAPI {
 			$error_mode = $params->error_mode;
 		}
 
-		// @deprecated 2.0
+		// @deprecated 2.0.0
 		if ( isset( $params->datatype ) ) {
 			pods_deprecated( '$params->pod instead of $params->datatype', '2.0' );
 
@@ -3267,7 +3267,7 @@ class PodsAPI {
 			}
 		}
 
-		// @deprecated 2.0
+		// @deprecated 2.0.0
 		if ( isset( $params->tbl_row_id ) ) {
 			pods_deprecated( '$params->id instead of $params->tbl_row_id', '2.0' );
 
@@ -3276,7 +3276,7 @@ class PodsAPI {
 			unset( $params->tbl_row_id );
 		}
 
-		// @deprecated 2.0
+		// @deprecated 2.0.0
 		if ( isset( $params->columns ) ) {
 			pods_deprecated( '$params->data instead of $params->columns', '2.0' );
 
@@ -3513,9 +3513,9 @@ class PodsAPI {
 			}
 		}
 
-		$columns            =& $fields; // @deprecated 2.0
-		$active_columns     =& $fields_active; // @deprecated 2.0
-		$params->tbl_row_id =& $params->id; // @deprecated 2.0
+		$columns            =& $fields; // @deprecated 2.0.0
+		$active_columns     =& $fields_active; // @deprecated 2.0.0
+		$params->tbl_row_id =& $params->id; // @deprecated 2.0.0
 
 		$pre_save_helpers = $post_save_helpers = array();
 
@@ -4177,7 +4177,9 @@ class PodsAPI {
 	}
 
 	/**
-	 *Handle tracking changed fields or get them
+	 * Handle tracking changed fields or get them.
+	 *
+	 * @since 2.7.0
 	 *
 	 * @param string $pod
 	 * @param int    $id
@@ -4258,7 +4260,7 @@ class PodsAPI {
 	 *
 	 * @return array Array of fields and values that have changed
 	 *
-	 * @deprecated Use PodsAPI::handle_changed_fields
+	 * @deprecated 2.7.0 Use PodsAPI::handle_changed_fields
 	 */
 	public function get_changed_fields( $pieces ) {
 
@@ -4923,7 +4925,7 @@ class PodsAPI {
 
 		$params = (object) pods_sanitize( $params );
 
-		// @deprecated 2.0
+		// @deprecated 2.0.0
 		if ( isset( $params->datatype ) ) {
 			pods_deprecated( __( '$params->pod instead of $params->datatype', 'pods' ), '2.0' );
 
@@ -5435,7 +5437,7 @@ class PodsAPI {
 
 		$params = (object) pods_sanitize( $params );
 
-		// @deprecated 2.0
+		// @deprecated 2.0.0
 		if ( isset( $params->datatype_id ) || isset( $params->datatype ) || isset( $params->tbl_row_id ) ) {
 			if ( isset( $params->tbl_row_id ) ) {
 				pods_deprecated( __( '$params->id instead of $params->tbl_row_id', 'pods' ), '2.0' );
@@ -7510,7 +7512,7 @@ class PodsAPI {
 	 * @uses  PodsForm::field_loader
 	 *
 	 * @since 2.0.0
-	 * @deprecated
+	 * @deprecated 2.3.0
 	 */
 	public function get_field_types() {
 
@@ -8655,7 +8657,7 @@ class PodsAPI {
 	 * @return array|bool
 	 *
 	 * @since      1.9.0
-	 * @deprecated 2.0
+	 * @deprecated 2.0.0
 	 */
 	public function export_package( $params ) {
 
@@ -8674,7 +8676,7 @@ class PodsAPI {
 	 * @return bool
 	 *
 	 * @since      1.9.8
-	 * @deprecated 2.0
+	 * @deprecated 2.0.0
 	 */
 	public function replace_package( $data = false ) {
 
@@ -8690,7 +8692,7 @@ class PodsAPI {
 	 * @return bool
 	 *
 	 * @since      1.9.0
-	 * @deprecated 2.0
+	 * @deprecated 2.0.0
 	 */
 	public function import_package( $data = false, $replace = false ) {
 
@@ -8710,7 +8712,7 @@ class PodsAPI {
 	 * @return array|bool
 	 *
 	 * @since      1.9.0
-	 * @deprecated 2.0
+	 * @deprecated 2.0.0
 	 */
 	public function validate_package( $data = false, $output = false ) {
 

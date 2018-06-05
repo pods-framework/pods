@@ -257,7 +257,7 @@ class Pods implements Iterator {
 	 *
 	 * @var string
 	 *
-	 * @deprecated 2.0
+	 * @deprecated 2.0.0
 	 */
 	public $datatype;
 
@@ -266,7 +266,7 @@ class Pods implements Iterator {
 	 *
 	 * @var int
 	 *
-	 * @deprecated 2.0
+	 * @deprecated 2.0.0
 	 */
 	public $datatype_id;
 

@@ -228,7 +228,7 @@ class PodsForm {
 		 *
 		 * They will be entirely removed in Pods 3.0.
 		 *
-		 * @deprecated 2.7
+		 * @deprecated 2.7.0
 		 */
 		if ( 0 < strlen( pods_v( 'input_helper', $options ) ) ) {
 			$helper = pods_api()->load_helper( array( 'name' => $options['input_helper'] ) );
@@ -244,7 +244,7 @@ class PodsForm {
 		 *
 		 * It will be replaced in Pods 3.0 with better documentation.
 		 *
-		 * @deprecated 2.7
+		 * @deprecated 2.7.0
 		 */
 		if ( true === apply_filters( 'pods_form_ui_field_' . $type . '_override', false, $name, $value, $options, $pod, $id ) ) {
 			/**
@@ -252,7 +252,7 @@ class PodsForm {
 			 *
 			 * It will be replaced in Pods 3.0 with better documentation.
 			 *
-			 * @deprecated 2.7
+			 * @deprecated 2.7.0
 			 */
 			do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
 		} elseif ( ! empty( $helper ) && 0 < strlen( pods_v( 'code', $helper ) ) && false === strpos( $helper['code'], '$this->' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
@@ -261,7 +261,7 @@ class PodsForm {
 			 *
 			 * They will be entirely removed in Pods 3.0.
 			 *
-			 * @deprecated 2.7
+			 * @deprecated 2.7.0
 			 */
 			eval( '?>' . $helper['code'] );
 		} elseif ( method_exists( get_class(), 'field_' . $type ) ) {
@@ -275,7 +275,7 @@ class PodsForm {
 			 *
 			 * It will be replaced in Pods 3.0 with better documentation.
 			 *
-			 * @deprecated 2.7
+			 * @deprecated 2.7.0
 			 */
 			do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
 		}//end if

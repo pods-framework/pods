@@ -780,7 +780,7 @@ class PodsField_Pick extends PodsField {
 
 		$ajax = false;
 
-		if ( $this->can_ajax( $options ) ) {
+		if ( $this->can_ajax( $args->type, $options ) ) {
 			$ajax = true;
 
 			if ( ! empty( self::$field_data ) && self::$field_data['id'] === $options['id'] ) {
@@ -2394,15 +2394,15 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Check if a field supports AJAX mode
 	 *
-	 * @param array $options Field options.
+	 * @param string $type
+	 * @param array  $options Field options.
 	 *
 	 * @return bool
-	 *
 	 * @since 2.7.4
 	 */
-	public function can_ajax( $options ) {
+	public function can_ajax( $type, $options ) {
 
-		$field_object = pods_v( $options['type'] . '_object', $options );
+		$field_object = pods_v( $type . '_object', $options );
 		$is_simple_tableless = in_array( $field_object, PodsForm::simple_tableless_objects(), true );
 
 		$value = false;

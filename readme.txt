@@ -189,6 +189,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
+* Fixed: Check for localized 'help' before adding tooltip #4614 (@davidatwhieltrue, @GaryJones)
 * Fixed: Autocomplete/List View broken with "Other WP Objects", #4504 (@pglewis, @sc0ttkclark)
 * Fixed: HTML entities in a field's description are converted when the Pod is loaded again, #4495 (@pglewis)
 * Fixed: Relationship fields related to the _pods_pod or _pods_field post type would not return the correct value, #4979 (@sc0ttkclark)

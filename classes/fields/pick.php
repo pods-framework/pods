@@ -2374,7 +2374,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @since 2.7
 	 */
-	public function is_autocomplete( $options ) {
+	private function is_autocomplete( $options ) {
 
 		$autocomplete = false;
 
@@ -2400,7 +2400,7 @@ class PodsField_Pick extends PodsField {
 	 * @param array  $options Field options.
 	 * @return bool True if the field type is a tableless text field type, false otherwise.
 	 */
-	public function is_simple_tableless( $type, array $options ) {
+	private function is_simple_tableless( $type, array $options ) {
 		$field_object = pods_v( $type . '_object', $options );
 
 		return in_array( $field_object, PodsForm::simple_tableless_objects(), true );
@@ -2415,7 +2415,7 @@ class PodsField_Pick extends PodsField {
 	 * @return bool
 	 * @since 2.7.4
 	 */
-	public function can_ajax( $type, $options ) {
+	private function can_ajax( $type, $options ) {
 		return $this->is_autocomplete( $options ) && ! $this->is_simple_tableless( $type, $options );
 	}
 

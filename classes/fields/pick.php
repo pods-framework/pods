@@ -2409,7 +2409,7 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Check if a field supports AJAX mode
 	 *
-	 * @param string $type
+	 * @param string $type    Field type.
 	 * @param array  $options Field options.
 	 *
 	 * @return bool

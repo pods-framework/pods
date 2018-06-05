@@ -189,6 +189,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
+* Fixed: CLI: Fix missing negation on valid & exists checks #4989 (@GaryJones)
 * Fixed: Check for localized 'help' before adding tooltip #4614 (@davidatwhieltrue, @GaryJones)
 * Fixed: Autocomplete/List View broken with "Other WP Objects", #4504 (@pglewis, @sc0ttkclark)
 * Fixed: HTML entities in a field's description are converted when the Pod is loaded again, #4495 (@pglewis)

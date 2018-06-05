@@ -32,7 +32,7 @@ class PodsAdmin {
 	 * @return \PodsAdmin
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since   2.0
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -64,7 +64,7 @@ class PodsAdmin {
 	/**
 	 * Init the admin area
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_init() {
 
@@ -107,7 +107,7 @@ class PodsAdmin {
 	/**
 	 * Attach requirements to admin header
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_head() {
 
@@ -181,7 +181,7 @@ class PodsAdmin {
 	/**
 	 * Build the admin menus
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_menu() {
 
@@ -2308,7 +2308,7 @@ class PodsAdmin {
 			/**
 			 * Modify Additional Field Options tab
 			 *
-			 * @since 2.7
+			 * @since 2.7.0
 			 *
 			 * @param array       $options Additional field type options,
 			 * @param string      $type    Field type,
@@ -3282,7 +3282,7 @@ class PodsAdmin {
 	 *
 	 * @return array
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function configuration( $pod = null, $full_field_info = false ) {
 

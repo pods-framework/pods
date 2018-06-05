@@ -104,7 +104,7 @@ class PodsMeta {
 	/**
 	 * @return \PodsMeta
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -662,7 +662,7 @@ class PodsMeta {
 	 * @param string       $priority (optional) The priority within the context where the boxes should show ('high',
 	 *                               'core', 'default' or 'low').
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @return mixed|void
 	 */

@@ -1033,7 +1033,7 @@ function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = nul
  * @param bool   $casting (optional) Whether to cast the value returned like provided in $default
  *
  * @return mixed The variable (if exists), or default value
- * @since      2.0
+ * @since 2.0.0
  *
  * @deprecated 2.4 Use pods_v() instead.
  * @see        pods_v
@@ -1166,7 +1166,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
  *
  * @return mixed
  *
- * @since      2.0
+ * @since 2.0.0
  *
  * @deprecated 2.4 Use pods_query_arg() instead.
  * @see        pods_query_arg
@@ -1185,7 +1185,7 @@ function pods_var_update( $array = null, $allowed = null, $excluded = null, $url
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_cast( $value, $cast_from = null ) {
 
@@ -1361,7 +1361,7 @@ function pods_js_name( $orig, $lower = true ) {
  * @param bool   $allow_negative (optional)
  *
  * @return integer
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_absint( $maybeint, $strict = true, $allow_negative = false ) {
 
@@ -1616,7 +1616,7 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
  *
  * @return string
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_serial_comma( $value, $field = null, $fields = null, $and = null, $field_index = null ) {
 
@@ -1804,7 +1804,7 @@ function pods_var_user( $anon = false, $user = true, $capability = null ) {
  * @param array        $args Array of parent, children, and id keys to use
  *
  * @return array|object
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_hierarchical_list( $list, $args = array() ) {
 
@@ -1837,7 +1837,7 @@ function pods_hierarchical_list( $list, $args = array() ) {
  * @param array        $args   Array of parent, children, and id keys to use
  *
  * @return array|object
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_hierarchical_list_recurse( $parent, $list, &$args ) {
 
@@ -1942,7 +1942,7 @@ function pods_hierarchical_list_recurse( $parent, $list, &$args ) {
  * @return array|object
  * @internal param string $children_key Key to recurse children into
  *
- * @since    2.3
+ * @since 2.3.0
  */
 function pods_hierarchical_select( $list, $args = array() ) {
 
@@ -1984,7 +1984,7 @@ function pods_hierarchical_select( $list, $args = array() ) {
  * @internal param string $children_key Key to recurse children into
  *
  * @see      pods_hierarchical_select
- * @since    2.3
+ * @since 2.3.0
  */
 function pods_hierarchical_select_recurse( $items, $args, $depth = 0 ) {
 
@@ -2041,7 +2041,7 @@ function pods_hierarchical_select_recurse( $items, $args, $depth = 0 ) {
  *
  * @see   wp_list_filter
  * @return array
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_list_filter( $list, $args = array(), $operator = 'AND' ) {
 

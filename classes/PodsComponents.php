@@ -18,7 +18,7 @@ class PodsComponents {
 	 * @var string
 	 *
 	 * @private
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	private $components_dir = null;
 
@@ -27,7 +27,7 @@ class PodsComponents {
 	 *
 	 * @var array
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public $components = array();
 
@@ -36,7 +36,7 @@ class PodsComponents {
 	 *
 	 * @var array
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public $settings = array();
 
@@ -59,7 +59,7 @@ class PodsComponents {
 	/**
 	 * Setup actions and get options
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -96,7 +96,7 @@ class PodsComponents {
 	 *
 	 * @param string $parent The parent slug.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @uses  add_submenu_page
 	 */
@@ -245,7 +245,7 @@ class PodsComponents {
 	/**
 	 * Load activated components and init component
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function load() {
 
@@ -325,7 +325,7 @@ class PodsComponents {
 	/**
 	 * Get list of components available
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function get_components() {
 
@@ -516,7 +516,7 @@ class PodsComponents {
 	 * @param string $component Component name.
 	 * @param array  $options   Component options.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function options( $component, $options ) {
 
@@ -534,7 +534,7 @@ class PodsComponents {
 	/**
 	 * Call component specific admin functions
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_handler() {
 
@@ -581,7 +581,7 @@ class PodsComponents {
 	 *
 	 * @return bool
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function is_component_active( $component ) {
 
@@ -602,7 +602,7 @@ class PodsComponents {
 	 *
 	 * @return boolean Whether the component was activated.
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function activate_component( $component ) {
 
@@ -634,7 +634,7 @@ class PodsComponents {
 	 *
 	 * @param string $component The component name to deactivate.
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function deactivate_component( $component ) {
 
@@ -656,7 +656,7 @@ class PodsComponents {
 	 *
 	 * @return bool
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function toggle( $component, $toggle_mode = false ) {
 
@@ -721,7 +721,7 @@ class PodsComponents {
 	/**
 	 * Handle admin ajax
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_ajax() {
 

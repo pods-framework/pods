@@ -22,7 +22,7 @@ class Pods_Deprecated {
 	 * @param object $obj The Pods object
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since   2.0
+	 * @since 2.0.0
 	 */
 	public function __construct( $obj ) {
 
@@ -500,7 +500,7 @@ class Pods_Deprecated {
 	/**
 	 * Search and filter records
 	 *
-	 * @since      1.x
+	 * @since 1.x.x
 	 * @deprecated deprecated since version 2.0
 	 *
 	 * @param null $orderby
@@ -586,7 +586,7 @@ class Pods_Deprecated {
 	/**
 	 * Return a single record
 	 *
-	 * @since      1.x
+	 * @since 1.x.x
 	 * @deprecated deprecated since version 2.0
 	 *
 	 * @param int $id Item ID.

@@ -37,7 +37,7 @@ class Pods_Roles extends PodsComponent {
 	/**
 	 * Enqueue styles
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_assets() {
 
@@ -51,7 +51,7 @@ class Pods_Roles extends PodsComponent {
 	 * @param $component
 	 *
 	 * @return void
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin( $options, $component ) {
 

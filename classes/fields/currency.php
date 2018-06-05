@@ -30,7 +30,7 @@ class PodsField_Currency extends PodsField_Number {
 	 * Currency Formats
 	 *
 	 * @var array
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static $currencies = array();
 
@@ -621,7 +621,7 @@ class PodsField_Currency extends PodsField_Number {
 	 * Get the max allowed decimals.
 	 * Overwrites the default value of Number field. 2 decimals instead of 0.
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 *
 	 * @param array $options Field options.
 	 *

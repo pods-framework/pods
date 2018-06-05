@@ -29,7 +29,7 @@ class PodsField_OEmbed extends PodsField {
 	 * Available oEmbed providers
 	 *
 	 * @var array
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private $providers = array();
 
@@ -37,7 +37,7 @@ class PodsField_OEmbed extends PodsField {
 	 * Current embed width
 	 *
 	 * @var int
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private $width = 0;
 
@@ -45,7 +45,7 @@ class PodsField_OEmbed extends PodsField {
 	 * Current embed height
 	 *
 	 * @var int
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private $height = 0;
 
@@ -287,7 +287,7 @@ class PodsField_OEmbed extends PodsField {
 	 *
 	 * @return string Potentially modified $content.
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function autoembed( $content ) {
 
@@ -314,7 +314,7 @@ class PodsField_OEmbed extends PodsField {
 	 *
 	 * @return string The embed shortcode
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function autoembed_callback( $match ) {
 
@@ -336,7 +336,7 @@ class PodsField_OEmbed extends PodsField {
 	 * @type string Hostname for this provider
 	 * }
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function get_providers() {
 
@@ -388,7 +388,7 @@ class PodsField_OEmbed extends PodsField {
 	 * This function is ripped from WP since Pods has support from 3.8 and in the WP core this function is 4.0+
 	 * We've stripped the autodiscover part from this function to keep it basic
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 * @access public
 	 *
 	 * @see    WP_oEmbed::get_provider()
@@ -430,7 +430,7 @@ class PodsField_OEmbed extends PodsField {
 	/**
 	 * Validate a value with the enabled oEmbed providers (if required).
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 *
 	 * @param string $value   Field value.
 	 * @param array  $options Field options.
@@ -477,7 +477,7 @@ class PodsField_OEmbed extends PodsField {
 	/**
 	 * Handle update preview AJAX.
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function admin_ajax_oembed_update_preview() {
 

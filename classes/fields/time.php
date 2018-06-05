@@ -30,7 +30,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 * Storage format.
 	 *
 	 * @var string
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public static $storage_format = 'H:i:s';
 
@@ -38,7 +38,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 * The default empty value (database)
 	 *
 	 * @var string
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public static $empty_value = '';
 
@@ -168,7 +168,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 * @param bool   $js      Return formatted from jQuery UI format? (only for custom formats).
 	 *
 	 * @return string
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function format_value_display( $value, $options, $js = false ) {
 
@@ -219,7 +219,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 * @param bool  $js      Return formatted from jQuery UI format? (only for custom formats).
 	 *
 	 * @return string
-	 * @since  2.7
+	 * @since 2.7.0
 	 */
 	public function format_time( $options, $js = false ) {
 

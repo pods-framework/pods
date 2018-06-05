@@ -174,7 +174,7 @@ if ( 0 < $pod->id() ) {
 		 * @param Pods   $pod Current Pods object.
 		 * @param PodsUI $obj Current PodsUI object.
 		 *
-		 * @since 2.5
+		 * @since 2.5.0
 		 */
 		do_action( 'pods_meta_box_pre', $pod, $obj );
 		?>
@@ -253,7 +253,7 @@ if ( 0 < $pod->id() ) {
 												 * @param Pods   $pod Current Pods object.
 												 * @param PodsUI $obj Current PodsUI object.
 												 *
-												 * @since 2.5
+												 * @since 2.5.0
 												 */
 												do_action( 'pods_ui_form_misc_pub_actions', $pod, $obj );
 												?>
@@ -300,7 +300,7 @@ if ( 0 < $pod->id() ) {
 										 * @param Pods   $pod Current Pods object.
 										 * @param PodsUI $obj Current PodsUI object.
 										 *
-										 * @since 2.5
+										 * @since 2.5.0
 										 */
 										do_action( 'pods_ui_form_submit_area', $pod, $obj );
 										?>
@@ -319,7 +319,7 @@ if ( 0 < $pod->id() ) {
 								 * @param Pods   $pod Current Pods object.
 								 * @param PodsUI $obj Current PodsUI object.
 								 *
-								 * @since 2.5
+								 * @since 2.5.0
 								 */
 								do_action( 'pods_ui_form_publish_area', $pod, $obj );
 								?>
@@ -463,7 +463,7 @@ if ( 0 < $pod->id() ) {
 							 * @param Pods   $pod Current Pods object.
 							 * @param PodsUI $obj Current PodsUI object.
 							 *
-							 * @since 2.5
+							 * @since 2.5.0
 							 */
 							if ( pods_v( 'readonly', $field['options'], pods_v( 'readonly', $field, false ) ) || apply_filters( 'pods_ui_form_title_readonly', false, $pod, $obj ) ) {
 								?>

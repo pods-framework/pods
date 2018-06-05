@@ -76,7 +76,7 @@ if ( ! function_exists( 'get_current_url' ) ) {
 /**
  * Mapping function to new function name (following normalization of function names from pod_ to pods_)
  *
- * @since      1.x
+ * @since 1.x.x
  * @deprecated deprecated since version 2.0
  *
  * @param string      $sql              SQL query.
@@ -111,7 +111,7 @@ function pod_query( $sql, $error = 'SQL failed', $results_error = null, $no_resu
 /**
  * Include and Init the Pods class
  *
- * @since      1.x
+ * @since 1.x.x
  * @deprecated deprecated since version 2.0
  * @package    Pods\Deprecated
  */
@@ -151,7 +151,7 @@ class Pod {
 	/**
 	 * Handle variables that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name Property name.
 	 *
@@ -197,7 +197,7 @@ class Pod {
 	/**
 	 * Handle variables that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name  Property name.
 	 * @param mixed  $value Property value to set.
@@ -216,7 +216,7 @@ class Pod {
 	/**
 	 * Handle methods that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name Call name.
 	 * @param array  $args Call arguments.
@@ -233,7 +233,7 @@ class Pod {
 	/**
 	 * Handle variables that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name Property name.
 	 *
@@ -256,7 +256,7 @@ class Pod {
 /**
  * Include and Init the PodsAPI class
  *
- * @since      1.x
+ * @since 1.x.x
  * @deprecated deprecated since version 2.0
  * @package    Pods\Deprecated
  */
@@ -284,7 +284,7 @@ class PodAPI {
 	/**
 	 * Handle variables that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name Property name.
 	 *
@@ -302,7 +302,7 @@ class PodAPI {
 	/**
 	 * Handle methods that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name Call name.
 	 * @param array  $args Call arguments.
@@ -320,7 +320,7 @@ class PodAPI {
 /**
  * Include and Init the PodsUI class
  *
- * @since      2.0
+ * @since 2.0.0
  * @deprecated deprecated since version 2.0
  *
  * @param Pods $obj Pods object.
@@ -337,7 +337,7 @@ function pods_ui_manage( $obj ) {
 /**
  * Limit Access based on Field Value
  *
- * @since      1.x
+ * @since 1.x.x
  * @deprecated deprecated since version 2.0
  *
  * @param Pods   $object Pods object.

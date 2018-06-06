@@ -4,7 +4,7 @@ Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.5
 Requires PHP: 5.3
-Tested up to: 4.9.5
+Tested up to: 4.9.6
 Stable tag: 2.7.4-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -179,6 +179,32 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.4 - June 6th 2018  =
+
+**Features/Enhancements**
+
+* Code Quality: Address some i18n code standard violations, #4982 (@GaryJones)
+* Code Quality: All @since and @deprecated tags updated to use three digits everywhere, #4995 (@GaryJones)
+* Added: Tooltip for the Hierarchical option for taxonomies, #4949 (@pglewis)
+
+**Bug Fixes**
+
+* Fixed: jQuery.fn.size() is deprecated #3898 (@GaryJones)
+* Fixed: CLI: Fix missing negation on valid & exists checks #4989 (@GaryJones)
+* Fixed: Check for localized 'help' before adding tooltip #4614 (@davidatwhieltrue, @GaryJones)
+* Fixed: Autocomplete/List View broken with "Other WP Objects", #4504 (@pglewis, @sc0ttkclark)
+* Fixed: HTML entities in a field's description are converted when the Pod is loaded again, #4495 (@pglewis)
+* Fixed: Relationship fields related to the _pods_pod or _pods_field post type would not return the correct value, #4979 (@sc0ttkclark)
+* Fixed: Code Editor for Pods Template double-escapes HTML when Visual Editor is OFF in WordPress, #3462 (@pglewis)
+* Fixed: Pods breaks Theme Editor for PHP files, hangs loopback test #4595, #4931 (@jamesgol, @pglewis)
+* Fixed: Time field cannot save midnight #3488, #4937 (@pglewis)
+* Fixed: Resolve file uploads directory check logic for file exports #4970 (@elia-senatore-cippest, @sc0ttkclark)
+* Fixed: Media modal issues in post edits, #4945, #4967 (@pglewis)
+* Fixed: Fatal error if not logged in and accessing wp-admin, #4828 (@therealgilles)
+* Fixed: Pick fields with predefined/custom lists using numeric keys not loading values #4892, #4753 (@pglewis)
+* Fixed: Non-required color-picker field did not allow saving empty value #4919 (@JoryHogeveen)
+* Fixed: CodeMirror fields in Taxonomy and User edit forms #4913 (@pglewis)
 
 = 2.7.3 - May 6th 2018  =
 

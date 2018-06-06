@@ -29,7 +29,7 @@ class PodsField_DateTime extends PodsField {
 	 * Storage format.
 	 *
 	 * @var string
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public static $storage_format = 'Y-m-d H:i:s';
 
@@ -37,7 +37,7 @@ class PodsField_DateTime extends PodsField {
 	 * The default empty value (database)
 	 *
 	 * @var string
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public static $empty_value = '0000-00-00 00:00:00';
 
@@ -385,7 +385,7 @@ class PodsField_DateTime extends PodsField {
 	 * @param bool   $js      Return formatted from jQuery UI format? (only for custom formats).
 	 *
 	 * @return string
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function format_value_display( $value, $options, $js = false ) {
 
@@ -423,7 +423,7 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Build date and/or time format string based on options
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 *
 	 * @param  array $options Field options.
 	 * @param  bool  $js      Whether to return format for jQuery UI.
@@ -446,7 +446,7 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Build date format string based on options
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 *
 	 * @param  array $options Field options.
 	 * @param  bool  $js      Whether to return format for jQuery UI.
@@ -485,7 +485,7 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Build time format string based on options
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 *
 	 * @param  array $options Field options.
 	 * @param  bool  $js      Whether to return format for jQuery UI.
@@ -536,7 +536,7 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Get the date formats.
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 *
 	 * @param  bool $js Whether to return format for jQuery UI.
 	 *
@@ -576,7 +576,7 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Get the time formats.
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 *
 	 * @param  bool $js Whether to return format for jQuery UI.
 	 *
@@ -612,7 +612,7 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Get the time formats.
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 *
 	 * @param  bool $js Whether to return format for jQuery UI.
 	 *
@@ -742,7 +742,7 @@ class PodsField_DateTime extends PodsField {
 	 * @link   https://api.jqueryui.com/datepicker/
 	 * @link   http://trentrichardson.com/examples/timepicker/
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 *
 	 * @param  string $source_format Source format string.
 	 * @param  array  $args          Format arguments.
@@ -863,7 +863,7 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Enqueue the i18n files for jquery date/timepicker
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 */
 	public function enqueue_jquery_ui_i18n() {
 

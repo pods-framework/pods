@@ -39,7 +39,7 @@ class Pods_Templates extends PodsComponent {
 	 *
 	 * @var object
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static $obj = null;
 
@@ -48,7 +48,7 @@ class Pods_Templates extends PodsComponent {
 	 *
 	 * @var bool
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static $deprecated = false;
 
@@ -57,7 +57,7 @@ class Pods_Templates extends PodsComponent {
 	 *
 	 * @var string
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	private $object_type = '_pods_template';
 
@@ -207,7 +207,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Enqueue styles
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_assets() {
 
@@ -285,7 +285,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Clear cache on save
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param      $data
 	 * @param null $pod
@@ -318,7 +318,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Change post title placeholder text
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param $text
 	 * @param $post
@@ -333,7 +333,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Edit page form
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function edit_page_form() {
 
@@ -349,7 +349,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Add meta boxes to the page
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function add_meta_boxes() {
 
@@ -475,7 +475,7 @@ class Pods_Templates extends PodsComponent {
 	 * @param bool   $deprecated    Whether to use deprecated functionality based on old function usage
 	 *
 	 * @return mixed|string|void
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function template( $template_name, $code = null, $obj = null, $deprecated = false ) {
 

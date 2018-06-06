@@ -142,7 +142,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
  *
  * Currently only context 'side' is available
  *
- * @since 2.7
+ * @since 2.7.0
  * @see https://codex.wordpress.org/Plugin_API/Action_Reference/add_meta_boxes
  * @param array $pod The Pod object as an array
  */

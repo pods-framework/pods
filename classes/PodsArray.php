@@ -19,7 +19,7 @@ class PodsArray implements ArrayAccess {
 	 * @return \PodsArray
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since   2.0
+	 * @since 2.0.0
 	 */
 	public function __construct( $container ) {
 
@@ -35,7 +35,7 @@ class PodsArray implements ArrayAccess {
 	 * @param mixed $value  Value to be set.
 	 *
 	 * @return mixed
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function offsetSet( $offset, $value ) {
 
@@ -54,7 +54,7 @@ class PodsArray implements ArrayAccess {
 	 * @param mixed $offset Used to get value of Array or Variable on Object.
 	 *
 	 * @return mixed|null
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function offsetGet( $offset ) {
 
@@ -75,7 +75,7 @@ class PodsArray implements ArrayAccess {
 	 * @param mixed $offset Used to get value of Array or Variable on Object.
 	 *
 	 * @return bool
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function offsetExists( $offset ) {
 
@@ -91,7 +91,7 @@ class PodsArray implements ArrayAccess {
 	 *
 	 * @param mixed $offset Used to unset index of Array or Variable on Object.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function offsetUnset( $offset ) {
 
@@ -112,7 +112,7 @@ class PodsArray implements ArrayAccess {
 	 * @param mixed|null  $extra   Used in advanced types of variables.
 	 *
 	 * @return array|bool|int|mixed|null|number|object
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function validate( $offset, $default = null, $type = null, $extra = null ) {
 
@@ -189,7 +189,7 @@ class PodsArray implements ArrayAccess {
 	 *
 	 * @return array Array version of the object
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function dump() {
 
@@ -207,7 +207,7 @@ class PodsArray implements ArrayAccess {
 	 * @param mixed $value  Property value.
 	 *
 	 * @return mixed
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __set( $offset, $value ) {
 
@@ -220,7 +220,7 @@ class PodsArray implements ArrayAccess {
 	 * @param mixed $offset Property name.
 	 *
 	 * @return mixed|null
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __get( $offset ) {
 
@@ -233,7 +233,7 @@ class PodsArray implements ArrayAccess {
 	 * @param mixed $offset Property name.
 	 *
 	 * @return bool
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __isset( $offset ) {
 
@@ -245,7 +245,7 @@ class PodsArray implements ArrayAccess {
 	 *
 	 * @param mixed $offset Property name.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __unset( $offset ) {
 

@@ -28,7 +28,7 @@ class PodsView {
 	 *
 	 * @return bool|mixed|null|string|void
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function view( $view, $data = null, $expires = false, $cache_mode = 'cache' ) {
 
@@ -160,7 +160,7 @@ class PodsView {
 	 *
 	 * @return bool|mixed|null|void
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function get( $key, $cache_mode = 'cache', $group = '', $callback = null ) {
 
@@ -296,7 +296,7 @@ class PodsView {
 	 *
 	 * @return bool|mixed|null|string|void
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function set( $key, $value, $expires = 0, $cache_mode = null, $group = '' ) {
 
@@ -384,7 +384,7 @@ class PodsView {
 	 *
 	 * @return bool
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function clear( $key = true, $cache_mode = null, $group = '' ) {
 
@@ -606,7 +606,7 @@ class PodsView {
 	 *
 	 * @return bool|int
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 * @static
 	 */
 	public static function expires( $expires, $cache_mode = 'cache' ) {

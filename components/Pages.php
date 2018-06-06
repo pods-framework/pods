@@ -30,7 +30,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @var array
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static $exists = null;
 
@@ -39,7 +39,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @var string
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	private $object_type = '_pods_page';
 
@@ -48,7 +48,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @var bool
 	 *
-	 * @since 2.1
+	 * @since 2.1.0
 	 */
 	public static $checked = false;
 
@@ -57,7 +57,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @var bool
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public static $content_called = false;
 
@@ -237,7 +237,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Enqueue styles
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_assets() {
 
@@ -315,7 +315,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Clear cache on save
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param      $data
 	 * @param null $pod
@@ -356,7 +356,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Change post title placeholder text
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param $text
 	 * @param $post
@@ -371,7 +371,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Edit page form
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function edit_page_form() {
 
@@ -410,7 +410,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Add meta boxes to the page
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function add_meta_boxes() {
 

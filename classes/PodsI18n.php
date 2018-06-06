@@ -2,7 +2,7 @@
 
 /**
  * @package Pods
- * @since   2.7
+ * @since 2.7.0
  */
 final class PodsI18n {
 
@@ -29,7 +29,7 @@ final class PodsI18n {
 	/**
 	 * Singleton handling for a basic pods_i18n() request
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private function __construct() {
 
@@ -49,7 +49,7 @@ final class PodsI18n {
 	 *
 	 * @return \PodsI18n
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public static function get_instance() {
 
@@ -62,7 +62,7 @@ final class PodsI18n {
 	}
 
 	/**
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function enqueue_scripts() {
 
@@ -78,7 +78,7 @@ final class PodsI18n {
 	 *     * Build localizations strings from the defaults and those provided via filter
 	 *     * Provide a global JavaScript object with the assembled localization strings via `wp_localize_script`
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private static function localize_assets() {
 
@@ -87,7 +87,7 @@ final class PodsI18n {
 		 * Setting the key of your string to the original (non translated) value is mandatory
 		 * Note: Existing keys in this class will overwrite the ones of this filter!
 		 *
-		 * @since 2.7
+		 * @since 2.7.0
 		 * @see   default_strings()
 		 *
 		 * @param array
@@ -116,7 +116,7 @@ final class PodsI18n {
 	 * @param string $string_key
 	 * @param string $translation
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private static function register( $string_key, $translation ) {
 
@@ -140,7 +140,7 @@ final class PodsI18n {
 	 *
 	 * @return array Key/value pairs with label/translation
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private static function default_strings() {
 
@@ -205,7 +205,7 @@ final class PodsI18n {
 	/**
 	 * Get current locale information from Multilingual plugins
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 *
 	 * @param array $args    (optional) {
 	 *
@@ -455,7 +455,7 @@ final class PodsI18n {
 	/**
 	 * Add Pods templates to possible i18n enabled post-types (polylang settings).
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 *
 	 * @param  array $post_types
 	 * @param  bool  $is_settings

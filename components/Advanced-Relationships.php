@@ -35,7 +35,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	/**
 	 * Add Advanced Related Objects
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function add_related_objects() {
 
@@ -103,7 +103,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_themes( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -129,7 +129,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_page_templates( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -171,7 +171,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_sidebars( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -199,7 +199,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_post_types( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -231,7 +231,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_taxonomies( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 

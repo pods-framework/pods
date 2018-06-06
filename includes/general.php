@@ -13,7 +13,7 @@
  * @param string $no_results_error (optional) Throw an error if no records are found
  *
  * @return array|bool|mixed|null|void
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_query( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
 
@@ -56,7 +56,7 @@ function pods_query( $sql, $error = 'Database Error', $results_error = null, $no
  * @param object $obj   (optional) Object to reference for filter / action
  *
  * @return mixed
- * @since 2.0
+ * @since 2.0.0
  * @todo  Need to figure out how to handle $scope = 'pods' for the Pods class
  */
 function pods_do_hook( $scope, $name, $args = null, $obj = null ) {
@@ -111,7 +111,7 @@ $GLOBALS['pods_errors'] = array();
  *
  * @return mixed
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_error( $error, $obj = null ) {
 
@@ -247,7 +247,7 @@ $pods_debug = 0;
  *
  * @return void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 
@@ -334,7 +334,7 @@ function pods_is_admin( $cap = null ) {
  *
  * @return bool Whether Developer Mode is enabled
  *
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_developer() {
 
@@ -350,7 +350,7 @@ function pods_developer() {
  *
  * @return bool Whether Tableless Mode is enabled
  *
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_tableless() {
 
@@ -442,7 +442,7 @@ function pods_api_cache() {
  * @param string $version     The version of WordPress that deprecated the function
  * @param string $replacement Optional. The function that should have been called
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_deprecated( $function, $version, $replacement = null ) {
 
@@ -472,7 +472,7 @@ function pods_deprecated( $function, $version, $replacement = null ) {
  *
  * @return void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_help( $text, $url = null ) {
 
@@ -564,7 +564,7 @@ function pods_helper( $helper_name, $value = null, $name = null ) {
  * Get the full URL of the current page
  *
  * @return string Full URL of the current page
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_current_url() {
 
@@ -585,7 +585,7 @@ function pods_current_url() {
  * @param object $object The Pod Object currently checking (optional)
  *
  * @return bool
- * @since 2.0
+ * @since 2.0.0
  */
 function is_pod( $object = null ) {
 
@@ -1009,7 +1009,7 @@ function pods_shortcode( $tags, $content = null ) {
  * @param string $content Not currently used
  *
  * @return string
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_shortcode_form( $tags, $content = null ) {
 
@@ -1245,7 +1245,7 @@ function pods_function_or_file( $function_or_file, $function_name = null, $file_
  *
  * @return void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_redirect( $location, $status = 302, $die = true ) {
 
@@ -1430,7 +1430,7 @@ function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null
  *
  * @return mixed Field value
  *
- * @since 2.1
+ * @since 2.1.0
  */
 function pods_field( $pod, $id = false, $name = null, $single = false ) {
 
@@ -1463,7 +1463,7 @@ function pods_field( $pod, $id = false, $name = null, $single = false ) {
  *
  * @return mixed Field value
  *
- * @since 2.1
+ * @since 2.1.0
  */
 function pods_field_display( $pod, $id = false, $name = null, $single = false ) {
 
@@ -1496,7 +1496,7 @@ function pods_field_display( $pod, $id = false, $name = null, $single = false ) 
  *
  * @return mixed Field value
  *
- * @since 2.1
+ * @since 2.1.0
  */
 function pods_field_raw( $pod, $id = false, $name = null, $single = false ) {
 
@@ -1526,7 +1526,7 @@ function pods_field_raw( $pod, $id = false, $name = null, $single = false ) {
  *
  * @return bool|mixed|null|string|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_view_set( $key, $value, $expires = 0, $cache_mode = 'cache', $group = '' ) {
 
@@ -1547,7 +1547,7 @@ function pods_view_set( $key, $value, $expires = 0, $cache_mode = 'cache', $grou
  *
  * @return bool|mixed|null|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_view_get( $key, $cache_mode = 'cache', $group = '', $callback = null ) {
 
@@ -1567,7 +1567,7 @@ function pods_view_get( $key, $cache_mode = 'cache', $group = '', $callback = nu
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_view_clear( $key = true, $cache_mode = 'cache', $group = '' ) {
 
@@ -1588,7 +1588,7 @@ function pods_view_clear( $key = true, $cache_mode = 'cache', $group = '' ) {
  *
  * @return bool|mixed|null|string|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_cache_set( $key, $value, $group = '', $expires = 0 ) {
 
@@ -1606,7 +1606,7 @@ function pods_cache_set( $key, $value, $group = '', $expires = 0 ) {
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_cache_get( $key, $group = '', $callback = null ) {
 
@@ -1623,7 +1623,7 @@ function pods_cache_get( $key, $group = '', $callback = null ) {
  *
  * @return bool|mixed|null|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_cache_clear( $key = true, $group = '' ) {
 
@@ -1641,7 +1641,7 @@ function pods_cache_clear( $key = true, $group = '' ) {
  *
  * @return bool|mixed|null|string|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_transient_set( $key, $value, $expires = 0 ) {
 
@@ -1658,7 +1658,7 @@ function pods_transient_set( $key, $value, $expires = 0 ) {
  *
  * @return bool|mixed|null|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_transient_get( $key, $callback = null ) {
 
@@ -1674,7 +1674,7 @@ function pods_transient_get( $key, $callback = null ) {
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_transient_clear( $key = true ) {
 
@@ -1822,7 +1822,7 @@ function pods_template_part( $template, $data = null, $return = false ) {
  * @param array  $object (optional) Pod array, including any 'fields' arrays
  *
  * @return array|boolean Pod data or false if unsuccessful
- * @since 2.1
+ * @since 2.1.0
  */
 function pods_register_type( $type, $name, $object = null ) {
 
@@ -1847,7 +1847,7 @@ function pods_register_type( $type, $name, $object = null ) {
  * @param array        $object (optional) Pod array, including any 'fields' arrays
  *
  * @return array|boolean Field data or false if unsuccessful
- * @since 2.1
+ * @since 2.1.0
  */
 function pods_register_field( $pod, $name, $field = null ) {
 
@@ -1871,7 +1871,7 @@ function pods_register_field( $pod, $name, $field = null ) {
  * @param string $file The new field type class file location
  *
  * @return array Field type array
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_register_field_type( $type, $file = null ) {
 
@@ -1886,7 +1886,7 @@ function pods_register_field_type( $type, $file = null ) {
  * @param array  $options Object options
  *
  * @return array|boolean Object array or false if unsuccessful
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_register_related_object( $name, $label, $options = null ) {
 
@@ -1900,7 +1900,7 @@ function pods_register_related_object( $name, $label, $options = null ) {
  *
  * @return void
  *
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_require_component( $component ) {
 
@@ -1924,7 +1924,7 @@ function pods_require_component( $component ) {
  *
  * @return void
  *
- * @since 2.0
+ * @since 2.0.0
  * @link  https://pods.io/docs/pods-group-add/
  */
 function pods_group_add( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
@@ -1946,7 +1946,7 @@ function pods_group_add( $pod, $label, $fields, $context = 'normal', $priority =
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_is_plugin_active( $plugin ) {
 
@@ -1982,7 +1982,7 @@ function pods_is_plugin_active( $plugin ) {
  *
  * @return bool
  *
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_no_conflict_check( $object_type = 'post' ) {
 
@@ -2011,7 +2011,7 @@ function pods_no_conflict_check( $object_type = 'post' ) {
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 
@@ -2208,7 +2208,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_no_conflict_off( $object_type = 'post' ) {
 
@@ -2266,6 +2266,9 @@ function pods_session_start() {
 	if ( false !== headers_sent() ) {
 		// Check if headers were sent.
 		return false;
+	} elseif ( false !== is_user_logged_in() ) {
+		// We do not need a session ID if there is a valid user logged in
+		return false;
 	} elseif ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
 		// Allow for bypassing Pods session autostarting.
 		return false;
@@ -2292,7 +2295,7 @@ function pods_session_start() {
  *
  * @return bool
  *
- * @since 2.7
+ * @since 2.7.0
  */
 function pods_is_modal_window() {
 
@@ -2312,7 +2315,7 @@ function pods_is_modal_window() {
  *
  * @return bool Whether the pod object is valid and exists
  *
- * @since 2.7
+ * @since 2.7.0
  */
 function pod_is_valid( $pod ) {
 
@@ -2332,7 +2335,7 @@ function pod_is_valid( $pod ) {
  *
  * @return bool Whether the pod object has items
  *
- * @since 2.7
+ * @since 2.7.0
  */
 function pod_has_items( $pod ) {
 

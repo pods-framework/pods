@@ -442,7 +442,7 @@ class PodsUI {
 	 * @return \PodsUI
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since   2.0
+	 * @since 2.0.0
 	 */
 	public function __construct( $options, $deprecated = false ) {
 
@@ -1463,18 +1463,18 @@ class PodsUI {
 
 		$class = 'updated';
 		$hook  = 'message';
-		
+
 		if ( $error ) {
 			$class = 'error';
 			$hook  = 'error';
 		}
-		
+
 		$msg = $this->do_hook( $hook, $msg );
-		
+
 		if ( empty( $msg ) ) {
 			return;
 		}
-		?> 
+		?>
 		<div id="message" class="<?php echo esc_attr( $class ); ?> fade">
 			<p><?php echo $msg; ?></p>
 		</div>

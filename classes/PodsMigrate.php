@@ -65,7 +65,7 @@ class PodsMigrate {
 	 * @return \PodsMigrate
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since   2.0
+	 * @since 2.0.0
 	 */
 	public function __construct( $type = null, $delimiter = null, $data = null ) {
 
@@ -795,7 +795,7 @@ class PodsMigrate {
 		} else {
 			$uploads = wp_upload_dir( current_time( 'mysql' ) );
 
-			if ( ! $uploads || false === $uploads['error'] ) {
+			if ( ! $uploads || false !== $uploads['error'] ) {
 				return pods_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
 			}
 

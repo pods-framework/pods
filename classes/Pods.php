@@ -257,7 +257,7 @@ class Pods implements Iterator {
 	 *
 	 * @var string
 	 *
-	 * @deprecated 2.0
+	 * @deprecated 2.0.0
 	 */
 	public $datatype;
 
@@ -266,7 +266,7 @@ class Pods implements Iterator {
 	 *
 	 * @var int
 	 *
-	 * @deprecated 2.0
+	 * @deprecated 2.0.0
 	 */
 	public $datatype_id;
 
@@ -391,7 +391,7 @@ class Pods implements Iterator {
 	 *
 	 * @return bool
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function valid() {
 
@@ -502,7 +502,7 @@ class Pods implements Iterator {
 	 *
 	 * @return bool
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function exists() {
 
@@ -521,7 +521,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array|bool An array of all rows returned from a find() call, or false if no items returned
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/data/
 	 */
 	public function data() {
@@ -587,7 +587,7 @@ class Pods implements Iterator {
 	 *
 	 * @return bool|mixed
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function fields( $field = null, $option = null ) {
 
@@ -647,7 +647,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array|false
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function row() {
 
@@ -670,7 +670,7 @@ class Pods implements Iterator {
 	 *
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/display/
 	 */
 	public function display( $name, $single = null ) {
@@ -730,7 +730,7 @@ class Pods implements Iterator {
 	 *
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/display/
 	 */
 	public function raw( $name, $single = null ) {
@@ -771,7 +771,7 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed|null Value returned depends on the field type, null if the field doesn't exist, false if no value
 	 *                    returned for tableless fields.
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/field/
 	 */
 	public function field( $name, $single = null, $raw = false ) {
@@ -1518,7 +1518,7 @@ class Pods implements Iterator {
 
 								$item_data = array();
 
-								if ( ! $related_obj ) {
+								if ( ! $related_obj || ! $related_obj->valid() ) {
 									if ( ! is_object( $this->alt_data ) ) {
 										$this->alt_data = pods_data( null, 0, true, true );
 									}
@@ -2145,7 +2145,7 @@ class Pods implements Iterator {
 	 * Return the item ID
 	 *
 	 * @return int
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function id() {
 
@@ -2164,7 +2164,7 @@ class Pods implements Iterator {
 	 * @param array|object|null $params_override Override the find() parameters.
 	 *
 	 * @return int
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function prev_id( $id = null, $params_override = null ) {
 
@@ -2253,7 +2253,7 @@ class Pods implements Iterator {
 	 * @param array|object|null $params_override Override the find() parameters.
 	 *
 	 * @return int
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function next_id( $id = null, $params_override = null ) {
 
@@ -2321,7 +2321,7 @@ class Pods implements Iterator {
 	 * @param array|object|null $params_override Override the find() parameters.
 	 *
 	 * @return int
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function first_id( $params_override = null ) {
 
@@ -2366,7 +2366,7 @@ class Pods implements Iterator {
 	 * @param array|object|null $params_override Override the find() parameters.
 	 *
 	 * @return int
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function last_id( $params_override = null ) {
 
@@ -2436,7 +2436,7 @@ class Pods implements Iterator {
 	 * Return the item name
 	 *
 	 * @return string
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function index() {
 
@@ -2452,7 +2452,7 @@ class Pods implements Iterator {
 	 * @param string       $sql    (deprecated) For advanced use, a custom SQL query to run.
 	 *
 	 * @return \Pods The pod object
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/find/
 	 */
 	public function find( $params = null, $limit = 15, $where = null, $sql = null ) {
@@ -2698,7 +2698,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array An array of fields from the row
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/fetch/
 	 */
 	public function fetch( $id = null, $explicit_set = true ) {
@@ -2731,7 +2731,7 @@ class Pods implements Iterator {
 	 *
 	 * @return \Pods The pod object
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/reset/
 	 */
 	public function reset( $row = null ) {
@@ -2759,7 +2759,7 @@ class Pods implements Iterator {
 	 * @see   PodsData::total
 	 *
 	 * @return int Number of rows returned by find(), based on the 'limit' parameter set
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/total/
 	 */
 	public function total() {
@@ -2781,7 +2781,7 @@ class Pods implements Iterator {
 	 * @see   PodsData::total_found
 	 *
 	 * @return int Number of rows returned by find(), regardless of the 'limit' parameter
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/total-found/
 	 */
 	public function total_found() {
@@ -2855,7 +2855,7 @@ class Pods implements Iterator {
 	 * @param int|string $nth The $nth to match on the PodsData::row_number.
 	 *
 	 * @return bool Whether $nth matches
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function nth( $nth = null ) {
 
@@ -2870,7 +2870,7 @@ class Pods implements Iterator {
 	 * @see   PodsData::position
 	 *
 	 * @return int Current row number (+1)
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function position() {
 
@@ -2892,7 +2892,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int The item ID
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/add/
 	 */
 	public function add( $data = null, $value = null ) {
@@ -2928,7 +2928,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int The item ID
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function add_to( $field, $value, $id = null ) {
 
@@ -3185,7 +3185,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int The item ID
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/save/
 	 */
 	public function save( $data = null, $value = null, $id = null, $params = null ) {
@@ -3262,7 +3262,7 @@ class Pods implements Iterator {
 	 *
 	 * @return bool Whether the item was successfully deleted
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/delete/
 	 */
 	public function delete( $id = null ) {
@@ -3317,7 +3317,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int|bool ID of the new pod item
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/duplicate/
 	 */
 	public function duplicate( $id = null ) {
@@ -3351,7 +3351,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array IDs of imported items
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function import( $import_data, $numeric_mode = false, $format = null ) {
 
@@ -3369,7 +3369,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array|bool Data array of the exported pod item
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/export/
 	 */
 	public function export( $fields = null, $id = null, $format = null ) {
@@ -3422,7 +3422,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array Data arrays of all exported pod items
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function export_data( $params = null ) {
 
@@ -3449,7 +3449,7 @@ class Pods implements Iterator {
 	 * @param array|object $params Associative array of parameters.
 	 *
 	 * @return string Pagination HTML
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/pagination/
 	 */
 	public function pagination( $params = null ) {
@@ -3528,7 +3528,7 @@ class Pods implements Iterator {
 	 *
 	 * @return string Filters HTML
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/filters/
 	 */
 	public function filters( $params = null ) {
@@ -3654,7 +3654,7 @@ class Pods implements Iterator {
 	 * @param string       $name   Field name.
 	 *
 	 * @return mixed Anything returned by the helper
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function helper( $helper, $value = null, $name = null ) {
 
@@ -3697,7 +3697,7 @@ class Pods implements Iterator {
 			 * @param array $disallowed List of callbacks not allowed.
 			 * @param array $params     Parameters used by Pods::helper() method.
 			 *
-			 * @since 2.7
+			 * @since 2.7.0
 			 */
 			$disallowed = apply_filters( 'pods_helper_disallowed_callbacks', $disallowed, $params );
 
@@ -3707,7 +3707,7 @@ class Pods implements Iterator {
 			 * @param array $allowed List of callbacks explicitly allowed.
 			 * @param array $params  Parameters used by Pods::helper() method.
 			 *
-			 * @since 2.7
+			 * @since 2.7.0
 			 */
 			$allowed = apply_filters( 'pods_helper_allowed_callbacks', $allowed, $params );
 
@@ -3747,7 +3747,7 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed Template output
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/template/
 	 */
 	public function template( $template_name, $code = null, $deprecated = false ) {
@@ -3877,7 +3877,7 @@ class Pods implements Iterator {
 	 * @param string $thank_you (optional) Thank you URL to send to upon success.
 	 *
 	 * @return bool|mixed
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/form/
 	 */
 	public function form( $params = null, $label = null, $thank_you = null ) {
@@ -4003,7 +4003,7 @@ class Pods implements Iterator {
 				 *
 				 * @param string $message Success message.
 				 *
-				 * @since 2.7
+				 * @since 2.7.0
 				 */
 				$message = apply_filters( 'pods_pod_form_success_message', $message );
 
@@ -4106,7 +4106,7 @@ class Pods implements Iterator {
 	 *
 	 * @return string Code with Magic Tags evaluated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function do_magic_tags( $code ) {
 
@@ -4118,7 +4118,7 @@ class Pods implements Iterator {
 		 * @param string $code The content to evaluate.
 		 * @param Pods   $pods The Pods Object.
 		 *
-		 * @since 2.7
+		 * @since 2.7.0
 		 */
 		$pre = apply_filters( 'pods_pre_do_magic_tags', null, $code, $this );
 		if ( null !== $pre ) {
@@ -4470,7 +4470,7 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed Value filtered
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	private function do_hook( $name ) {
 
@@ -4493,7 +4493,7 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __get( $name ) {
 
@@ -4535,7 +4535,7 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed|null
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __call( $name, $args ) {
 

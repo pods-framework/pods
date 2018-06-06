@@ -142,7 +142,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
  *
  * Currently only context 'side' is available
  *
- * @since 2.7
+ * @since 2.7.0
  * @see https://codex.wordpress.org/Plugin_API/Action_Reference/add_meta_boxes
  * @param array $pod The Pod object as an array
  */
@@ -242,7 +242,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
     elseif ( 'duplicate' ==$do )
         $action = __( 'duplicated', 'pods' );
 
-    $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+    $message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
     echo $obj->message( $message );
 }

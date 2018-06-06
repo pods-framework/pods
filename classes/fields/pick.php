@@ -29,7 +29,7 @@ class PodsField_Pick extends PodsField {
 	 * Available Related Objects.
 	 *
 	 * @var array
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public static $related_objects = array();
 
@@ -37,7 +37,7 @@ class PodsField_Pick extends PodsField {
 	 * Custom Related Objects
 	 *
 	 * @var array
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public static $custom_related_objects = array();
 
@@ -45,7 +45,7 @@ class PodsField_Pick extends PodsField {
 	 * Data used during validate / save to avoid extra queries.
 	 *
 	 * @var array
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public static $related_data = array();
 
@@ -53,7 +53,7 @@ class PodsField_Pick extends PodsField {
 	 * Data used during input method (mainly for autocomplete).
 	 *
 	 * @var array
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public static $field_data = array();
 
@@ -61,7 +61,7 @@ class PodsField_Pick extends PodsField {
 	 * Saved array of simple relationship names.
 	 *
 	 * @var array
-	 * @since 2.5
+	 * @since 2.5.0
 	 */
 	private static $names_simple = null;
 
@@ -69,7 +69,7 @@ class PodsField_Pick extends PodsField {
 	 * Saved array of relationship names
 	 *
 	 * @var array
-	 * @since 2.5
+	 * @since 2.5.0
 	 */
 	private static $names_related = null;
 
@@ -77,7 +77,7 @@ class PodsField_Pick extends PodsField {
 	 * Saved array of bidirectional relationship names
 	 *
 	 * @var array
-	 * @since 2.5
+	 * @since 2.5.0
 	 */
 	private static $names_bidirectional = null;
 
@@ -329,7 +329,7 @@ class PodsField_Pick extends PodsField {
 	 * @param array  $options Object options.
 	 *
 	 * @return array|boolean Object array or false if unsuccessful
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function register_related_object( $name, $label, $options = null ) {
 
@@ -360,7 +360,7 @@ class PodsField_Pick extends PodsField {
 	 * @param boolean $force Whether to force refresh of related objects.
 	 *
 	 * @return bool True when data has been loaded
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function setup_related_objects( $force = false ) {
 
@@ -604,7 +604,7 @@ class PodsField_Pick extends PodsField {
 	 * @param boolean $force Whether to force refresh of related objects.
 	 *
 	 * @return array Field selection array
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function related_objects( $force = false ) {
 
@@ -630,7 +630,7 @@ class PodsField_Pick extends PodsField {
 	 * Return available simple object names
 	 *
 	 * @return array Simple object names
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function simple_objects() {
 
@@ -780,12 +780,12 @@ class PodsField_Pick extends PodsField {
 
 		$ajax = false;
 
-		if ( ( 'custom-simple' !== pods_v( $args->type . '_object', $options ) || empty( $custom ) ) && '' !== pods_v( $args->type . '_object', $options, '', true ) ) {
+		if ( $this->can_ajax( $args->type, $options ) ) {
 			$ajax = true;
-		}
 
-		if ( ! empty( self::$field_data ) && self::$field_data['id'] === $options['id'] ) {
-			$ajax = (boolean) self::$field_data['autocomplete'];
+			if ( ! empty( self::$field_data ) && self::$field_data['id'] === $options['id'] ) {
+				$ajax = (boolean) self::$field_data['autocomplete'];
+			}
 		}
 
 		$ajax = apply_filters( 'pods_form_ui_field_pick_ajax', $ajax, $args->name, $args->value, $options, $args->pod, $args->id );
@@ -851,7 +851,7 @@ class PodsField_Pick extends PodsField {
 		 *
 		 * @param array|null $select2_overrides Override options for Select2/SelectWoo.
 		 *
-		 * @since 2.7
+		 * @since 2.7.0
 		 */
 		$options['select2_overrides'] = apply_filters( 'pods_pick_select2_overrides', null );
 
@@ -931,7 +931,7 @@ class PodsField_Pick extends PodsField {
 		 * @param array $config
 		 * @param array $args
 		 *
-		 * @since 2.7
+		 * @since 2.7.0
 		 */
 		$show_on_front = apply_filters( 'pods_ui_dfv_pick_modals_show_on_front', false, $config, $args );
 
@@ -942,7 +942,7 @@ class PodsField_Pick extends PodsField {
 		 * @param array $config
 		 * @param array $args
 		 *
-		 * @since 2.7
+		 * @since 2.7.0
 		 */
 		$allow_nested_modals = apply_filters( 'pods_ui_dfv_pick_modals_allow_nested', false, $config, $args );
 
@@ -1032,7 +1032,7 @@ class PodsField_Pick extends PodsField {
 		 * @param array $config
 		 * @param array $args
 		 *
-		 * @since 2.7
+		 * @since 2.7.0
 		 */
 		$iframe = apply_filters( 'pods_ui_dfv_pick_modals_iframe', $iframe, $config, $args );
 
@@ -1299,9 +1299,10 @@ class PodsField_Pick extends PodsField {
 		$selected = false;
 
 		if ( is_array( $args->value ) ) {
-			if ( isset( $args->value[ $item_id ] ) ) {
-				$selected = true;
-			} elseif ( in_array( $item_id, $args->value, true ) ) {
+			// Cast values in array as string.
+			$args->value = array_map( 'strval', $args->value );
+
+			if ( in_array( (string) $item_id, $args->value, true ) ) {
 				$selected = true;
 			}
 		} elseif ( (string) $item_id === (string) $args->value ) {
@@ -1539,7 +1540,7 @@ class PodsField_Pick extends PodsField {
 	 * @param array|null  $options Field options.
 	 * @param array|null  $pod     Pod options.
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function delete( $id = null, $name = null, $options = null, $pod = null ) {
 
@@ -1767,7 +1768,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return string
 	 *
-	 * @since 2.2
+	 * @since 2.2.0
 	 */
 	public function value_to_label( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -2370,8 +2371,10 @@ class PodsField_Pick extends PodsField {
 	 * @param array $options Field options.
 	 *
 	 * @return bool
+	 *
+	 * @since 2.7.0
 	 */
-	public function is_autocomplete( $options ) {
+	private function is_autocomplete( $options ) {
 
 		$autocomplete = false;
 
@@ -2389,9 +2392,38 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
+	 * Check if a field type is a tableless text field type.
+	 *
+	 * @since 2.7.4
+	 *
+	 * @param string $type    Field type.
+	 * @param array  $options Field options.
+	 * @return bool True if the field type is a tableless text field type, false otherwise.
+	 */
+	private function is_simple_tableless( $type, array $options ) {
+		$field_object = pods_v( $type . '_object', $options );
+
+		return in_array( $field_object, PodsForm::simple_tableless_objects(), true );
+	}
+
+	/**
+	 * Check if a field supports AJAX mode
+	 *
+	 * @param string $type    Field type.
+	 * @param array  $options Field options.
+	 *
+	 * @return bool
+	 * @since 2.7.4
+	 */
+	private function can_ajax( $type, $options ) {
+		return $this->is_autocomplete( $options ) && ! $this->is_simple_tableless( $type, $options );
+	}
+
+
+	/**
 	 * Handle autocomplete AJAX.
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function admin_ajax_relationship() {
 
@@ -2525,7 +2557,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_post_stati( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -2552,7 +2584,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_roles( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -2579,7 +2611,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_capabilities( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -2683,7 +2715,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_image_sizes( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -2710,7 +2742,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_countries( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -2996,7 +3028,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_us_states( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -3069,7 +3101,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_ca_provinces( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -3104,7 +3136,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_days_of_week( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -3128,7 +3160,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_months_of_year( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 

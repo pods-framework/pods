@@ -32,7 +32,7 @@ class PodsAdmin {
 	 * @return \PodsAdmin
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since   2.0
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -64,7 +64,7 @@ class PodsAdmin {
 	/**
 	 * Init the admin area
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_init() {
 
@@ -107,7 +107,7 @@ class PodsAdmin {
 	/**
 	 * Attach requirements to admin header
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_head() {
 
@@ -181,7 +181,7 @@ class PodsAdmin {
 	/**
 	 * Build the admin menus
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_menu() {
 
@@ -1890,7 +1890,7 @@ class PodsAdmin {
 				),
 				'hierarchical'            => array(
 					'label'             => __( 'Hierarchical', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
+					'help'              => __( 'Hierarchical taxonomies will have a list with checkboxes to select an existing category in the taxonomy admin box on the post edit page (like default post categories). Non-hierarchical taxonomies will just have an empty text field to type-in taxonomy terms to associate with the post (like default post tags).', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'dependency'        => true,
@@ -2308,7 +2308,7 @@ class PodsAdmin {
 			/**
 			 * Modify Additional Field Options tab
 			 *
-			 * @since 2.7
+			 * @since 2.7.0
 			 *
 			 * @param array       $options Additional field type options,
 			 * @param string      $type    Field type,
@@ -3282,7 +3282,7 @@ class PodsAdmin {
 	 *
 	 * @return array
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function configuration( $pod = null, $full_field_info = false ) {
 
@@ -3426,8 +3426,8 @@ class PodsAdmin {
 		if ( ! function_exists( 'register_rest_field' ) ) {
 			$options['rest-api'] = array(
 				'no_dependencies' => array(
-					'label' => __( sprintf( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta9</a>' ), 'pods' ),
-					'help'  => __( sprintf( 'See %s for more information.', '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/</a>' ), 'pods' ),
+					'label' => sprintf( __( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', 'pods' ), '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta9</a>' ),
+					'help'  => sprintf( __( 'See %s for more information.', 'pods' ), '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/</a>' ),
 					'type'  => 'html',
 				),
 			);
@@ -3469,7 +3469,7 @@ class PodsAdmin {
 			$options['rest-api'] = array(
 				'not_restable' => array(
 					'label' => __( 'Pods REST API support covers post type, taxonomy and user Pods.', 'pods' ),
-					'help'  => __( sprintf( 'See %s for more information.', '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/"</a>' ), 'pods' ),
+					'help'  => sprintf( __( 'See %s for more information.', 'pods' ), '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/"</a>' ),
 					'type'  => 'html',
 				),
 			);

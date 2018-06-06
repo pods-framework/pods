@@ -267,7 +267,7 @@ class PodsData {
 	 * @return \PodsData
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since   2.0
+	 * @since 2.0.0
 	 */
 	public function __construct( $pod = null, $id = 0, $strict = true ) {
 
@@ -447,7 +447,7 @@ class PodsData {
 	 *
 	 * @uses  wpdb::insert
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function insert( $table, $data, $format = null ) {
 
@@ -503,7 +503,7 @@ class PodsData {
 	 *
 	 * @uses  wpdb::prepare
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function insert_on_duplicate( $table, $data, $formats = array() ) {
 
@@ -547,7 +547,7 @@ class PodsData {
 	 * @param array  $where_format (optional) An array of formats to be mapped to each of the values in $where.
 	 *
 	 * @return bool
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function update( $table, $data, $where, $format = null, $where_format = null ) {
 
@@ -624,7 +624,7 @@ class PodsData {
 	 * @uses  PodsData::query
 	 * @uses  PodsData::prepare
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function delete( $table, $where, $where_format = null ) {
 
@@ -672,7 +672,7 @@ class PodsData {
 	 * @param array $params
 	 *
 	 * @return array|bool|mixed
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function select( $params ) {
 
@@ -809,7 +809,7 @@ class PodsData {
 	 * @param array $params
 	 *
 	 * @return bool|mixed|string
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function build( $params ) {
 
@@ -1661,7 +1661,7 @@ class PodsData {
 	 * Fetch the total row count returned
 	 *
 	 * @return int Number of rows returned by select()
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function total() {
 
@@ -1672,7 +1672,7 @@ class PodsData {
 	 * Fetch the total row count total
 	 *
 	 * @return int Number of rows found by select()
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function total_found() {
 
@@ -1702,7 +1702,7 @@ class PodsData {
 	 * @param int|string $nth The $nth to match on the PodsData::row_number.
 	 *
 	 * @return bool Whether $nth matches
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function nth( $nth ) {
 
@@ -1750,7 +1750,7 @@ class PodsData {
 	 * Fetch the current position in the loop (starting at 1)
 	 *
 	 * @return int Current row number (+1)
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function position() {
 
@@ -1768,7 +1768,7 @@ class PodsData {
 	 *
 	 * @uses  PodsData::query
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function table_create( $table, $fields, $if_not_exists = false ) {
 
@@ -1806,7 +1806,7 @@ class PodsData {
 	 *
 	 * @uses  PodsData::query
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function table_alter( $table, $changes ) {
 
@@ -1829,7 +1829,7 @@ class PodsData {
 	 *
 	 * @uses  PodsData::query
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function table_truncate( $table ) {
 
@@ -1854,7 +1854,7 @@ class PodsData {
 	 *
 	 * @uses  PodsData::query
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function table_drop( $table ) {
 
@@ -1880,7 +1880,7 @@ class PodsData {
 	 *
 	 * @uses  PodsData::update
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function reorder( $table, $weight_field, $id_field, $ids ) {
 
@@ -1919,7 +1919,7 @@ class PodsData {
 	 *
 	 * @return mixed
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function fetch( $row = null, $explicit_set = true ) {
 
@@ -2218,7 +2218,7 @@ class PodsData {
 	 *
 	 * @return mixed
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function reset( $row = null ) {
 
@@ -2251,7 +2251,7 @@ class PodsData {
 	 *
 	 * @return array|bool|mixed|null|void Result of the query
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function query( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
 
@@ -2355,7 +2355,7 @@ class PodsData {
 	 *
 	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function get_tables( $wp_core = true, $pods_tables = true ) {
 
@@ -2400,7 +2400,7 @@ class PodsData {
 	 *
 	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function get_table_columns( $table ) {
 
@@ -2434,7 +2434,7 @@ class PodsData {
 	 *
 	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function get_column_data( $column_name, $table ) {
 
@@ -2459,7 +2459,7 @@ class PodsData {
 	 *
 	 * @return bool|null|string
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function prepare( $sql, $data ) {
 
@@ -2482,7 +2482,7 @@ class PodsData {
 	 * @return string|null Query string for WHERE/HAVING
 	 *
 	 * @static
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public static function query_fields( $fields, $pod = null, &$params = null ) {
 
@@ -2603,7 +2603,7 @@ class PodsData {
 	 *
 	 * @see   PodsData::query_fields
 	 * @static
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public static function query_field( $field, $q, $pod = null, &$params = null ) {
 
@@ -2966,7 +2966,7 @@ class PodsData {
 	 *
 	 * @param object $params (optional) Parameters from build().
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function traverse_build( $fields = null, $params = null ) {
 
@@ -3002,7 +3002,7 @@ class PodsData {
 	 *
 	 * @return array Array of table joins
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function traverse_recurse( $traverse_recurse ) {
 
@@ -3475,7 +3475,7 @@ class PodsData {
 	/**
 	 * Handle filters / actions for the class
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	private static function do_hook() {
 
@@ -3509,7 +3509,7 @@ class PodsData {
 		 * @param string   $sql       SQL Query string.
 		 * @param PodsData $pods_data PodsData object.
 		 *
-		 * @since 2.7
+		 * @since 2.7.0
 		 */
 		$sql = apply_filters( 'pods_data_get_sql', $sql, $this );
 

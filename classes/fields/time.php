@@ -30,7 +30,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 * Storage format.
 	 *
 	 * @var string
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public static $storage_format = 'H:i:s';
 
@@ -38,9 +38,9 @@ class PodsField_Time extends PodsField_DateTime {
 	 * The default empty value (database)
 	 *
 	 * @var string
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
-	public static $empty_value = '00:00:00';
+	public static $empty_value = '';
 
 	/**
 	 * {@inheritdoc}
@@ -161,6 +161,50 @@ class PodsField_Time extends PodsField_DateTime {
 	}
 
 	/**
+	 * Convert value to the correct format for display.
+	 *
+	 * @param string $value   Field value.
+	 * @param array  $options Field options.
+	 * @param bool   $js      Return formatted from jQuery UI format? (only for custom formats).
+	 *
+	 * @return string
+	 * @since 2.7.0
+	 */
+	public function format_value_display( $value, $options, $js = false ) {
+
+		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
+			$js = false;
+		}
+		$format = $this->format_datetime( $options, $js );
+		if ( $js ) {
+			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
+		}
+
+		if ( ! empty( $value ) ) {
+			// Try default storage format.
+			$date = $this->createFromFormat( static::$storage_format, (string) $value );
+
+			// Try field format.
+			$date_local = $this->createFromFormat( $format, (string) $value );
+
+			if ( $date instanceof DateTime ) {
+				$value = $date->format( $format );
+			} elseif ( $date_local instanceof DateTime ) {
+				$value = $date_local->format( $format );
+			} else {
+				$value = date_i18n( $format, strtotime( (string) $value ) );
+			}
+		} elseif ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
+			$value = date_i18n( $format );
+		} else {
+			$value = '';
+		}
+
+		return $value;
+	}
+
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function format_datetime( $options, $js = false ) {
@@ -175,7 +219,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 * @param bool  $js      Return formatted from jQuery UI format? (only for custom formats).
 	 *
 	 * @return string
-	 * @since  2.7
+	 * @since 2.7.0
 	 */
 	public function format_time( $options, $js = false ) {
 

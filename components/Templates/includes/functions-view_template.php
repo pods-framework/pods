@@ -60,7 +60,7 @@ function frontier_do_shortcode( $content ) {
  * @param array attributed provided from parent
  *
  * @return string
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_decode_template( $code, $atts ) {
 
@@ -87,7 +87,7 @@ function frontier_decode_template( $code, $atts ) {
  * @param string $code encoded template to be decoded
  *
  * @return string
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_if_block( $atts, $code ) {
 
@@ -191,7 +191,7 @@ function frontier_if_block( $atts, $code ) {
  * @param string shortcode slug used to process
  *
  * @return null
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_template_blocks( $atts, $code, $slug ) {
 
@@ -232,7 +232,7 @@ function frontier_template_blocks( $atts, $code, $slug ) {
  * @param string encoded template to be decoded
  *
  * @return string template code
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_template_once_blocks( $atts, $code ) {
 
@@ -258,7 +258,7 @@ function frontier_template_once_blocks( $atts, $code ) {
  * @param string template to be processed
  *
  * @return null
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_do_subtemplate( $atts, $content ) {
 
@@ -374,7 +374,7 @@ function frontier_do_subtemplate( $atts, $content ) {
  * @param boolean $skip_unknown If true then values not in $data will not be touched
  *
  * @return string
- * @since 2.7
+ * @since 2.7.0
  */
 function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknown = false ) {
 
@@ -457,7 +457,7 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
  * @param string template to be processed
  *
  * @return null
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_prefilter_template( $code, $template, $pod ) {
 

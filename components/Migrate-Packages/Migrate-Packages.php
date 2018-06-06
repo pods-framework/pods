@@ -29,7 +29,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	/**
 	 * Enqueue styles
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_assets() {
 
@@ -42,7 +42,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	 * @param array  $options   Component options.
 	 * @param string $component Component name.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin( $options, $component ) {
 

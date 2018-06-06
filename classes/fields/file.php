@@ -669,7 +669,7 @@ class PodsField_File extends PodsField {
 	 * @param string $image_size Image size.
 	 *
 	 * @return string
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function images( $id, $value, $name = null, $options = null, $pod = null, $image_size = null ) {
 
@@ -698,7 +698,7 @@ class PodsField_File extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_image_sizes( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -717,7 +717,7 @@ class PodsField_File extends PodsField {
 	/**
 	 * Create a WP Gallery from the passed values (need to be attachments)
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 *
 	 * @param  string|array $value   The value(s).
 	 * @param  array        $options The field options.
@@ -789,9 +789,9 @@ class PodsField_File extends PodsField {
 	 * @param null|string     $link       Link URL.
 	 *
 	 * @return string
-	 * @since      2.0
+	 * @since 2.0.0
 	 *
-	 * @deprecated 2.7
+	 * @deprecated 2.7.0
 	 */
 	public function markup( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null, $linked = false, $link = null ) {
 
@@ -872,7 +872,7 @@ class PodsField_File extends PodsField {
 	/**
 	 * Handle AJAX plupload calls.
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function admin_ajax_upload() {
 

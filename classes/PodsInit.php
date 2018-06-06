@@ -343,11 +343,12 @@ class PodsInit {
 		}
 
 		// Deal with specifics on admin pages
-		if ( is_admin() ) {
+		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 
-			// DFV must be enqueued on the media library page for items in grid mode (see #4785)
-			if ( $screen->base && 'upload' === $screen->base ) {
+			// DFV must be enqueued on the media library page for items in grid mode (#4785)
+			// and for posts due to the possibility that post-thumbnails are enabled (#4945)
+			if ( $screen->base && in_array( $screen->base, array( 'upload', 'post' ), true ) ) {
 				wp_enqueue_script( 'pods-dfv' );
 			}
 		}
@@ -369,7 +370,7 @@ class PodsInit {
 
 		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
 
-		if ( is_admin() ) {
+		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 
 			// Deregister the outdated Pods handlebars script on TEC event screen
@@ -947,11 +948,6 @@ class PodsInit {
 			// Max length for taxonomies are 32 characters
 			$taxonomy = substr( $taxonomy, 0, 32 );
 
-			// i18n compatibility for plugins that override it
-			if ( is_array( $options['rewrite'] ) && isset( $options['rewrite']['slug'] ) && ! empty( $options['rewrite']['slug'] ) ) {
-				$options['rewrite']['slug'] = _x( $options['rewrite']['slug'], 'URL taxonomy slug', 'pods' );
-			}
-
 			/**
 			 * Allow filtering of taxonomy options per taxonomy.
 			 *
@@ -996,11 +992,6 @@ class PodsInit {
 
 			// Max length for post types are 20 characters
 			$post_type = substr( $post_type, 0, 20 );
-
-			// i18n compatibility for plugins that override it
-			if ( is_array( $options['rewrite'] ) && isset( $options['rewrite']['slug'] ) && ! empty( $options['rewrite']['slug'] ) ) {
-				$options['rewrite']['slug'] = _x( $options['rewrite']['slug'], 'URL slug', 'pods' );
-			}
 
 			/**
 			 * Allow filtering of post type options per post type.
@@ -1212,7 +1203,7 @@ class PodsInit {
 				$messages[ $post_type['name'] ][6] = sprintf( __( '%s published.', 'pods' ), $labels['singular_name'] );
 				$messages[ $post_type['name'] ][8] = sprintf( __( '%s submitted.', 'pods' ), $labels['singular_name'] );
 				$messages[ $post_type['name'] ][9] = sprintf(
-					__( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels['singular_name'],
+					__( '%1$s scheduled for: <strong>%2$s</strong>.', 'pods' ), $labels['singular_name'],
 					// translators: Publish box date format, see http://php.net/date
 					date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
 				);

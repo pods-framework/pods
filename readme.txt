@@ -189,6 +189,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
+* Fixed: jQuery.fn.size() is deprecated #3898 (@GaryJones)
 * Fixed: CLI: Fix missing negation on valid & exists checks #4989 (@GaryJones)
 * Fixed: Check for localized 'help' before adding tooltip #4614 (@davidatwhieltrue, @GaryJones)
 * Fixed: Autocomplete/List View broken with "Other WP Objects", #4504 (@pglewis, @sc0ttkclark)

@@ -1127,6 +1127,11 @@ class PodsInit {
 	 */
 	public function flush_rewrite_rules() {
 
+		// Only run $wp_rewrite->flush_rules() in an admin context.
+		if ( ! is_admin() ) {
+			return;
+		}
+
 		$flush = (int) pods_transient_get( 'pods_flush_rewrites' );
 
 		if ( 1 === $flush ) {

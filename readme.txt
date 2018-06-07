@@ -184,6 +184,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
+* Fixed: Only flush rewrite rules in an admin context, #5006 (@sc0ttkclark)
 * Fixed: SelectWoo fields would sometimes call `focus()` inappropriately #4725 (@GaryJones)
 
 = 2.7.4 - June 6th 2018  =

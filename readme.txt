@@ -182,6 +182,10 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 = 2.7.5 - {Date}  =
 
+**Bug Fixes**
+
+* Fixed: SelectWoo fields would sometimes call `focus()` inappropriately #4725 (@GaryJones)
+
 = 2.7.4 - June 6th 2018  =
 
 **Features/Enhancements**

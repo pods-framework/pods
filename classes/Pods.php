@@ -4458,8 +4458,9 @@ class Pods implements Iterator {
 			return pods_ui( $this );
 		}//end if
 
+		$pod_name = $this->pod;
 		do_action( 'pods_admin_ui_custom', $this );
-		do_action( 'pods_admin_ui_custom_' . $this->pod, $this );
+		do_action( "pods_admin_ui_custom_{$pod_name}", $this );
 
 		return null;
 	}

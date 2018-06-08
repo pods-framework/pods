@@ -254,7 +254,7 @@ class PodsForm {
 			 *
 			 * @deprecated 2.7.0
 			 */
-			do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
+			do_action( "pods_form_ui_field_{$type}", $name, $value, $options, $pod, $id );
 		} elseif ( ! empty( $helper ) && 0 < strlen( pods_v( 'code', $helper ) ) && false === strpos( $helper['code'], '$this->' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
 			/**
 			 * Input helpers are deprecated and not guaranteed to work properly.
@@ -277,7 +277,7 @@ class PodsForm {
 			 *
 			 * @deprecated 2.7.0
 			 */
-			do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
+			do_action( "pods_form_ui_field_{$type}", $name, $value, $options, $pod, $id );
 		}//end if
 
 		$output = ob_get_clean();

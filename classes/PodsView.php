@@ -363,12 +363,12 @@ class PodsView {
 			}//end if
 
 			if ( $result ) {
-				do_action( 'set_transient_' . $key );
+				do_action( "set_transient_{$key}" );
 				do_action( 'setted_transient', $key );
 			}
 		}//end if
 
-		do_action( 'pods_view_set_' . $cache_mode, $original_key, $value, $expires, $group );
+		do_action( "pods_view_set_{$cache_mode}", $original_key, $value, $expires, $group );
 
 		return $value;
 	}
@@ -450,7 +450,7 @@ class PodsView {
 		} elseif ( 'option-cache' === $cache_mode ) {
 			global $_wp_using_ext_object_cache;
 
-			do_action( 'delete_transient_' . $key, $key );
+			do_action( "delete_transient_{$key}", $key );
 
 			if ( $_wp_using_ext_object_cache ) {
 				$result = wp_cache_delete( $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
@@ -472,7 +472,7 @@ class PodsView {
 			}
 		}//end if
 
-		do_action( 'pods_view_clear_' . $cache_mode, $original_key, $group );
+		do_action( "pods_view_clear_{$cache_mode}", $original_key, $group );
 
 		return true;
 	}

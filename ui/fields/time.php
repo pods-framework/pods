@@ -52,7 +52,8 @@ if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array
 		'00:00:00',
 	), true
 ) ) {
-	$formatted_date = $value = '';
+	$formatted_date = '';
+	$value          = '';
 } elseif ( 'text' !== $type ) {
 	$formatted_date = $value;
 

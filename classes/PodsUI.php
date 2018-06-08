@@ -1692,7 +1692,7 @@ class PodsUI {
 						array(
 							'action' . $this->num => 'add',
 							'id' . $this->num     => '',
-							'do' . $this->num = '',
+							'do' . $this->num     => '',
 						), self::$allowed, $this->exclusion()
 					);
 
@@ -2006,7 +2006,7 @@ class PodsUI {
 						array(
 							'action' . $this->num => 'add',
 							'id' . $this->num     => '',
-							'do' . $this->num = '',
+							'do' . $this->num     => '',
 						), self::$allowed, $this->exclusion()
 					);
 
@@ -2234,7 +2234,8 @@ class PodsUI {
 						continue;
 					}
 
-					if ( $callback = $this->callback( 'delete', $id ) ) {
+					$callback = $this->callback( 'delete', $id );
+					if ( $callback ) {
 						$check = $callback;
 					} elseif ( is_object( $this->pod ) ) {
 						$check = $this->pod->delete( $id );
@@ -2450,7 +2451,8 @@ class PodsUI {
 		$value = null;
 
 		// use PodsData to get field
-		if ( $callback = $this->callback( 'get_field', $field ) ) {
+		$callback = $this->callback( 'get_field', $field );
+		if ( $callback ) {
 			return $callback;
 		}
 
@@ -3357,7 +3359,9 @@ class PodsUI {
 
 							$data_filter = 'filter_' . $filter;
 
-							$start = $end = $value_label = '';
+							$start       = '';
+							$end         = '';
+							$value_label = '';
 
 							if ( in_array( $filter_field['type'], array( 'date', 'datetime', 'time' ) ) ) {
 								$start = pods_var_raw( 'filter_' . $filter . '_start', 'get', '', null, true );
@@ -4441,8 +4445,10 @@ class PodsUI {
 	 */
 	public function screen_meta() {
 
-		$screen_html = $help_html = '';
-		$screen_link = $help_link = '';
+		$screen_html = '';
+		$help_html   = '';
+		$screen_link = '';
+		$help_link   = '';
 		if ( ! empty( $this->screen_options ) && ! empty( $this->help ) ) {
 			foreach ( $this->ui_page as $page ) {
 				if ( isset( $this->screen_options[ $page ] ) ) {
@@ -4771,7 +4777,8 @@ class PodsUI {
 			$value = call_user_func_array( $tag[1], array( $value, $field_name, $this->row, &$this ) );
 		}
 
-		$before = $after = '';
+		$before = '';
+		$after  = '';
 
 		if ( isset( $tag[2] ) && ! empty( $tag[2] ) ) {
 			$before = $tag[2];

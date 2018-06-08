@@ -236,7 +236,8 @@ class PodsForm {
 
 		// @todo Move into DFV field method or PodsObject later
 		if ( ( ! isset( $options['data'] ) || empty( $options['data'] ) ) && is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'data' ) ) {
-			$data = $options['data'] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id, true );
+			$options['data'] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id, true );
+			$data            = $options['data'];
 		}
 
 		/**
@@ -914,9 +915,12 @@ class PodsForm {
 	 */
 	public static function dependencies( $options, $prefix = '' ) {
 
-		$options    = (array) $options;
-		$classes    = $data = array();
-		$depends_on = $excludes_on = $wildcard_on = array();
+		$options     = (array) $options;
+		$classes     = array();
+		$data        = array();
+		$depends_on  = array();
+		$excludes_on = array();
+		$wildcard_on = array();
 
 		if ( isset( $options['depends-on'] ) ) {
 			$depends_on = (array) $options['depends-on'];

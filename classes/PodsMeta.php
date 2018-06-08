@@ -329,7 +329,7 @@ class PodsMeta {
 				pods_transient_set( 'pods_pod_' . $pod_name, $pod );
 			}
 
-			self::$$type = array_merge( self::$$type, $objects );
+			self::${$type} = array_merge( self::${$type}, $objects );
 		}
 	}
 
@@ -491,13 +491,17 @@ class PodsMeta {
 		}
 
 		if ( in_array( $type, array( 'wp-links', 'link' ), true ) ) {
-			$object_type = $object = 'link';
+			$object_type = 'link';
+			$object      = 'link';
 		} elseif ( in_array( $type, array( 'wp-media', 'media' ), true ) ) {
-			$object_type = $object = 'media';
+			$object_type = 'media';
+			$object      = 'media';
 		} elseif ( in_array( $type, array( 'wp-users', 'user' ), true ) ) {
-			$object_type = $object = 'user';
+			$object_type = 'user';
+			$object      = 'user';
 		} elseif ( in_array( $type, array( 'wp-comments', 'comment' ), true ) ) {
-			$object_type = $object = 'comment';
+			$object_type = 'comment';
+			$object      = 'comment';
 		} elseif ( 'taxonomy' === $type ) {
 			$object_type = 'taxonomy';
 			if ( ! $obj ) {
@@ -586,13 +590,17 @@ class PodsMeta {
 		}
 
 		if ( in_array( $type, array( 'wp-links', 'link' ), true ) ) {
-			$object_type = $object = 'link';
+			$object_type = 'link';
+			$object      = 'link';
 		} elseif ( in_array( $type, array( 'wp-media', 'media' ), true ) ) {
-			$object_type = $object = 'media';
+			$object_type = 'media';
+			$object      = 'media';
 		} elseif ( in_array( $type, array( 'wp-users', 'user' ), true ) ) {
-			$object_type = $object = 'user';
+			$object_type = 'user';
+			$object      = 'user';
 		} elseif ( in_array( $type, array( 'wp-comments', 'comment' ), true ) ) {
-			$object_type = $object = 'comment';
+			$object_type = 'comment';
+			$object      = 'comment';
 		} elseif ( 'taxonomy' === $type ) {
 			$object_type = 'taxonomy';
 			if ( ! method_exists( $obj, 'get_taxonomy' ) ) {

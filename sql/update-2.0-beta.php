@@ -140,7 +140,8 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 
 		$sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
 
-		for ( $i = 0, $z = count( $sql ); $i < $z; $i ++ ) {
+		$z = count( $sql );
+		for ( $i = 0; $i < $z; $i ++ ) {
 			$query = trim( $sql[ $i ] );
 
 			if ( empty( $query ) ) {

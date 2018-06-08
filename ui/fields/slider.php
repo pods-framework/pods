@@ -20,7 +20,8 @@ $values[0] = max( $values[0], pods_var( $form_field_type . '_min', $options, 0 )
 $values[1] = min( $values[1], pods_var( $form_field_type . '_min', $options, 100 ) );
 
 if ( 0 == pods_var( $form_field_type . '_range', $options, 0 ) ) {
-	$output_value = $value = $values[0];
+	$value        = $values[0];
+	$output_value = $value;
 } else {
 	$value        = implode( ',', $values );
 	$output_value = implode( ' - ', $values );

@@ -1306,7 +1306,7 @@ class PodsField_Pick extends PodsField {
 			$values = (array) $args->value;
 		}
 
-		// If the value array has keys as IDs, let's get the keys from the values instead.
+		// If the value array has keys as IDs, let's check for matches from the keys first.
 		if ( ! isset( $values[0] ) ) {
 			// Get values from keys.
 			$key_values = array_keys( $values );

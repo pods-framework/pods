@@ -1298,25 +1298,37 @@ class PodsField_Pick extends PodsField {
 		// Determine if this is a selected item
 		$selected = false;
 
-		if ( is_array( $args->value ) ) {
-			if ( ! isset( $args->value[0] ) ) {
-				$keys = array_map( 'strval', array_keys( $args->value ) );
+		$values = array();
 
-				if ( in_array( (string) $item_id, $keys, true ) ) {
-					$selected = true;
-				}
+		// If we have values, let's cast them.
+		if ( ! empty( $args->value ) ) {
+			// The value may be a single non-array value.
+			$values = (array) $args->value;
+		}
+
+		// If the value array has keys as IDs, let's get the keys from the values instead.
+		if ( ! isset( $values[0] ) ) {
+			// Get values from keys.
+			$key_values = array_keys( $values );
+
+			// Cast key values in array as string.
+			$key_values = array_map( 'strval', $key_values );
+		
+			// Let's check to see if the current $item_id matches any key values.
+			if ( in_array( (string) $item_id, $key_values, true ) ) {
+				$selected = true;
 			}
+		}
 
-			if ( ! $selected ) {
-				// Cast values in array as string.
-				$args->value = array_map( 'strval', $args->value );
+		// If we do not have a key match, the normal values may still match.
+		if ( ! $selected ) {
+			// Cast values in array as string.
+			$values = array_map( 'strval', $values );
 
-				if ( in_array( (string) $item_id, $args->value, true ) ) {
-					$selected = true;
-				}
+			// Let's check to see if the current $item_id matches any values.
+			if ( in_array( (string) $item_id, $values, true ) ) {
+				$selected = true;
 			}
-		} elseif ( (string) $item_id === (string) $args->value ) {
-			$selected = true;
 		}
 
 		$item = array(

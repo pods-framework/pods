@@ -182,6 +182,8 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 = 2.7.6 - June 8th 2018  =
 
+* Fixed: Records added modally via DFV's 'Add New' are not selected and don't refresh list view in 2.7.5, #5014 (@sc0ttkclark, @pglewis)
+
 = 2.7.5 - June 7th 2018  =
 
 **Bug Fixes**

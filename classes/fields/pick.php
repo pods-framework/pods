@@ -2569,7 +2569,7 @@ class PodsField_Pick extends PodsField {
 			$data[ $post_status->name ] = $post_status->label;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_post_stati', $data, $name, $value, $options, $pod, $id );
 
 	}
 
@@ -2596,7 +2596,7 @@ class PodsField_Pick extends PodsField {
 			$data[ $key ] = $wp_roles->role_names[ $key ];
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_roles', $data, $name, $value, $options, $pod, $id );
 
 	}
 
@@ -2700,7 +2700,7 @@ class PodsField_Pick extends PodsField {
 			$data[ $capability ] = $capability;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_capabilities', $data, $name, $value, $options, $pod, $id );
 
 	}
 
@@ -2727,7 +2727,7 @@ class PodsField_Pick extends PodsField {
 			$data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_image_sizes', $data, $name, $value, $options, $pod, $id );
 
 	}
 
@@ -3013,7 +3013,7 @@ class PodsField_Pick extends PodsField {
 			'AX' => __( 'Åland Islands' ),
 		);
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_countries', $data, $name, $value, $options, $pod, $id );
 
 	}
 
@@ -3086,7 +3086,7 @@ class PodsField_Pick extends PodsField {
 			'WY' => __( 'Wyoming' ),
 		);
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_us_states', $data, $name, $value, $options, $pod, $id );
 
 	}
 
@@ -3121,7 +3121,7 @@ class PodsField_Pick extends PodsField {
 			'YT' => __( 'Yukon' ),
 		);
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_ca_provinces', $data, $name, $value, $options, $pod, $id );
 
 	}
 

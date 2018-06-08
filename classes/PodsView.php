@@ -120,7 +120,7 @@ class PodsView {
 			self::set( 'pods-view-' . $cache_key . $view_id, $output, $expires, $cache_mode, 'pods_view' );
 		}
 
-		$output = apply_filters( 'pods_view_output_' . $cache_key, $output, $view, $data, $expires, $cache_mode );
+		$output = apply_filters( "pods_view_output_{$cache_key}", $output, $view, $data, $expires, $cache_mode );
 		$output = apply_filters( 'pods_view_output', $output, $view, $data, $expires, $cache_mode );
 
 		return $output;
@@ -211,7 +211,7 @@ class PodsView {
 		} elseif ( 'option-cache' === $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
 			global $_wp_using_ext_object_cache;
 
-			$pre = apply_filters( 'pre_transient_' . $key, false );
+			$pre = apply_filters( "pre_transient_{$key}", false );
 
 			if ( false !== $pre ) {
 				$value = $pre;
@@ -263,7 +263,7 @@ class PodsView {
 			}//end if
 
 			if ( false !== $value ) {
-				$value = apply_filters( 'transient_' . $key, $value );
+				$value = apply_filters( "transient_{$key}", $value );
 			}
 		} else {
 			$value = false;
@@ -278,7 +278,7 @@ class PodsView {
 			}
 		}
 
-		$value = apply_filters( 'pods_view_get_' . $cache_mode, $value, $original_key, $group );
+		$value = apply_filters( "pods_view_get_{$cache_mode}", $value, $original_key, $group );
 
 		return $value;
 	}
@@ -335,7 +335,7 @@ class PodsView {
 		} elseif ( 'option-cache' === $cache_mode ) {
 			global $_wp_using_ext_object_cache;
 
-			$value = apply_filters( 'pre_set_transient_' . $key, $value );
+			$value = apply_filters( "pre_set_transient_{$key}", $value );
 
 			if ( $_wp_using_ext_object_cache ) {
 				$result = wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_option_cache' : $group ) );

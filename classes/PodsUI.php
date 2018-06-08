@@ -525,7 +525,8 @@ class PodsUI {
 		// @todo This is also done in setup(), maybe a better / more central way?
 		if ( is_object( $this->pod ) && ! empty( $this->pod->pod_data['options'] ) ) {
 			$pod_options = $this->pod->pod_data['options'];
-			$pod_options = apply_filters( 'pods_advanced_content_type_pod_data_' . $this->pod->pod_data['name'], $pod_options, $this->pod->pod_data['name'] );
+			$pod_name    = $this->pod->pod_data['name'];
+			$pod_options = apply_filters( "pods_advanced_content_type_pod_data_{$pod_name}", $pod_options, $this->pod->pod_data['name'] );
 			$pod_options = apply_filters( 'pods_advanced_content_type_pod_data', $pod_options, $this->pod->pod_data['name'] );
 
 			$this->label = array_merge( $this->label, $pod_options );
@@ -1025,7 +1026,8 @@ class PodsUI {
 
 		if ( is_object( $this->pod ) ) {
 			$pod_data = $this->pod->pod_data;
-			$pod_data = apply_filters( 'pods_advanced_content_type_pod_data_' . $this->pod->pod_data['name'], $pod_data, $this->pod->pod_data['name'] );
+			$pod_name = $this->pod->pod_data['name'];
+			$pod_data = apply_filters( "pods_advanced_content_type_pod_data_{$pod_name}", $pod_data, $this->pod->pod_data['name'] );
 			$pod_data = apply_filters( 'pods_advanced_content_type_pod_data', $pod_data, $this->pod->pod_data['name'] );
 
 			$this->label = array_merge( $this->label, $pod_data['options'] );

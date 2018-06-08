@@ -955,7 +955,7 @@ class PodsInit {
 			 * @param string $taxonomy      Taxonomy name
 			 * @param array  $ct_post_types Associated Post Types
 			 */
-			$options = apply_filters( 'pods_register_taxonomy_' . $taxonomy, $options, $taxonomy, $ct_post_types );
+			$options = apply_filters( "pods_register_taxonomy_{$taxonomy}", $options, $taxonomy, $ct_post_types );
 
 			/**
 			 * Allow filtering of taxonomy options.
@@ -999,7 +999,7 @@ class PodsInit {
 			 * @param array  $options   Post type options
 			 * @param string $post_type Post type name
 			 */
-			$options = apply_filters( 'pods_register_post_type_' . $post_type, $options, $post_type );
+			$options = apply_filters( "pods_register_post_type_{$post_type}", $options, $post_type );
 
 			/**
 			 * Allow filtering of post type options.

@@ -780,9 +780,11 @@ class PodsMeta {
 			'priority' => $priority
 		);
 
+		$pod_type = $pod['type'];
+
 		// Filter group data, pass vars separately for reference down the line (in case array changed by other filter)
-		$group = apply_filters( 'pods_meta_group_add_' . $pod['type'] . '_' . $object_name, $group, $pod, $label, $fields );
-		$group = apply_filters( 'pods_meta_group_add_' . $pod['type'], $group, $pod, $label, $fields );
+		$group = apply_filters( "pods_meta_group_add_{$pod_type}_{$object_name}", $group, $pod, $label, $fields );
+		$group = apply_filters( "pods_meta_group_add_{$pod_type}", $group, $pod, $label, $fields );
 		$group = apply_filters( 'pods_meta_group_add', $group, $pod, $label, $fields );
 
 		self::$groups[ $pod['type'] ][ $object_name ][] = $group;
@@ -1476,7 +1478,7 @@ class PodsMeta {
 			}
 		}
 
-		$form_fields = apply_filters( 'pods_meta_' . __FUNCTION__, $form_fields );
+		$form_fields = apply_filters( 'pods_meta_meta_media', $form_fields );
 
 		return $form_fields;
 	}
@@ -2212,7 +2214,7 @@ class PodsMeta {
 			}
 		}
 
-		$form_fields = apply_filters( 'pods_meta_' . __FUNCTION__, $form_fields );
+		$form_fields = apply_filters( 'pods_meta_meta_comment_new', $form_fields );
 
 		return $form_fields;
 	}

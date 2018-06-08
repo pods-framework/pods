@@ -111,7 +111,7 @@ class PodsComponents {
 		foreach ( $this->components as $component => $component_data ) {
 			$component_id = $component_data['ID'];
 
-			$component_data['MustUse'] = apply_filters( 'pods_component_require_' . $component_id, $component_data['MustUse'], $component_data );
+			$component_data['MustUse'] = apply_filters( "pods_component_require_{$component_id}", $component_data['MustUse'], $component_data );
 
 			if ( empty( $component_data['MustUse'] ) && ( ! isset( $this->settings['components'][ $component ] ) || 0 === $this->settings['components'][ $component ] ) ) {
 				continue;
@@ -254,7 +254,7 @@ class PodsComponents {
 		foreach ( (array) $this->components as $component => $component_data ) {
 			$component_id = $component_data['ID'];
 
-			$component_data['MustUse'] = apply_filters( 'pods_component_require_' . $component_id, $component_data['MustUse'], $component_data );
+			$component_data['MustUse'] = apply_filters( "pods_component_require_{$component_id}", $component_data['MustUse'], $component_data );
 
 			if ( false === $component_data['MustUse'] && ( ! isset( $this->settings['components'][ $component ] ) || 0 === $this->settings['components'][ $component ] ) ) {
 				continue;
@@ -760,7 +760,7 @@ class PodsComponents {
 		// Cleaning up $params
 		unset( $params->action, $params->component, $params->method, $params->_wpnonce );
 
-		$params = (object) apply_filters( 'pods_component_ajax_' . $component . '_' . $method, $params, $component, $method );
+		$params = (object) apply_filters( "pods_component_ajax_{$component}_{$method}", $params, $component, $method );
 
 		$output = false;
 

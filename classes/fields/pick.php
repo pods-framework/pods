@@ -1299,11 +1299,21 @@ class PodsField_Pick extends PodsField {
 		$selected = false;
 
 		if ( is_array( $args->value ) ) {
-			// Cast values in array as string.
-			$args->value = array_map( 'strval', $args->value );
+			if ( ! isset( $args->value[0] ) ) {
+				$keys = array_map( 'strval', array_keys( $args->value ) );
 
-			if ( in_array( (string) $item_id, $args->value, true ) ) {
-				$selected = true;
+				if ( in_array( (string) $item_id, $keys, true ) ) {
+					$selected = true;
+				}
+			}
+
+			if ( ! $selected ) {
+				// Cast values in array as string.
+				$args->value = array_map( 'strval', $args->value );
+
+				if ( in_array( (string) $item_id, $args->value, true ) ) {
+					$selected = true;
+				}
 			}
 		} elseif ( (string) $item_id === (string) $args->value ) {
 			$selected = true;

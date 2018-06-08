@@ -312,7 +312,7 @@ class PodsInit {
 				'pods-i18n',
 			), '1.0.1'
 		);
-		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.css", array(), '1.0.1' );
+		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.css", array(), '1.0.2' );
 
 		// Marionette dependencies for MV fields
 		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.js', array( 'backbone' ), '2.0.0', true );
@@ -1126,6 +1126,11 @@ class PodsInit {
 	 * This gets run during 'init' action late in the game to give other plugins time to register their rewrite rules
 	 */
 	public function flush_rewrite_rules() {
+
+		// Only run $wp_rewrite->flush_rules() in an admin context.
+		if ( ! is_admin() ) {
+			return;
+		}
 
 		$flush = (int) pods_transient_get( 'pods_flush_rewrites' );
 

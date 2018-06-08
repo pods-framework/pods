@@ -802,7 +802,7 @@ class PodsAdmin {
 		} else {
 			$pod_pod_name = $pod->pod;
 			do_action( 'pods_admin_ui_custom', $pod );
-			do_action( "pods_admin_ui_custom_{$pod_pod_name}, $pod );
+			do_action( "pods_admin_ui_custom_{$pod_pod_name}", $pod );
 		}//end if
 	}
 

@@ -180,7 +180,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
-= 2.7.6 - {DATE}  =
+= 2.7.6 - June 8th 2018  =
 
 = 2.7.5 - June 7th 2018  =
 

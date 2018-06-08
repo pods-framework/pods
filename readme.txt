@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Requires PHP: 5.3
 Tested up to: 4.9.6
-Stable tag: 2.7.5
+Stable tag: 2.7.6-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -179,6 +179,10 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.6 - June 8th 2018  =
+
+* Fixed: Records added modally via DFV's 'Add New' are not selected and don't refresh list view in 2.7.5, #5014 (@sc0ttkclark, @pglewis)
 
 = 2.7.5 - June 7th 2018  =
 

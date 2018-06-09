@@ -1295,7 +1295,8 @@ class PodsField_Pick extends PodsField {
 			$edit_link = add_query_arg( array( 'pods_modal' => '1' ), $edit_link );
 		}
 
-		// Determine if this is a selected item
+		// Determine if this is a selected item.
+		//  Issue history for setting selected: #4753, #4892, #5014
 		$selected = false;
 
 		$values = array();
@@ -1313,7 +1314,7 @@ class PodsField_Pick extends PodsField {
 
 			// Cast key values in array as string.
 			$key_values = array_map( 'strval', $key_values );
-		
+
 			// Let's check to see if the current $item_id matches any key values.
 			if ( in_array( (string) $item_id, $key_values, true ) ) {
 				$selected = true;

@@ -633,9 +633,8 @@ if ( 0 < $pod->id() ) {
 					}//end if
 					?>
 
-					<!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">
-					</div>
-					 /#advanced-sortables -->
+					<!-- <div id="advanced-sortables" class="meta-box-sortables ui-sortable"></div> -->
+					<!-- /#advanced-sortables -->
 
 				</div>
 				<!-- /#post-body-content -->

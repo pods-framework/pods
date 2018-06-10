@@ -488,7 +488,8 @@ class PodsView {
 	public static function get_template_part( $_view, $_data = null ) {
 
 		/*
-		 to be reviewed later, should have more checks and restrictions like a whitelist etc
+		To be reviewed later, should have more checks and restrictions like a whitelist etc.
+
 		if ( 0 === strpos( $_view, 'http://' ) || 0 === strpos( $_view, 'https://' ) ) {
 			$_view = apply_filters( 'pods_view_url_include', $_view );
 

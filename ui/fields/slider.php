@@ -51,23 +51,23 @@ $attributes          = PodsForm::merge_attributes( $attributes, $name, $form_fie
 			<?php
 			if ( 1 == pods_var( $form_field_type . '_range', $options, 0 ) ) {
 				?>
-			   range  : true,
-			   values : [
+				range  : true,
+				values : [
 				<?php echo esc_js( $values[0] ); ?>,
 				<?php echo esc_js( $values[1] ); ?>
 			],
 			slide  : function ( event, ui ) {
-			 $( "#<?php echo esc_js( $attributes['id'] ); ?>" ).val( ui.values[0] + ',' + ui.values[1] );
-			 $( "#<?php echo esc_js( $attributes['id'] ); ?>-amount-display" ).html( ui.values[0] + ' - ' + ui.values[1] );
+				$( "#<?php echo esc_js( $attributes['id'] ); ?>" ).val( ui.values[0] + ',' + ui.values[1] );
+				$( "#<?php echo esc_js( $attributes['id'] ); ?>-amount-display" ).html( ui.values[0] + ' - ' + ui.values[1] );
 			}
 			<?php
 			} else {
 				?>
-			   range  : false,
-			   value  : <?php echo esc_js( $value ); ?>,
+				range  : false,
+				value  : <?php echo esc_js( $value ); ?>,
 			slide  : function ( event, ui ) {
-			 $( "#<?php echo esc_js( $attributes['id'] ); ?>" ).val( ui.value );
-			 $( "#<?php echo esc_js( $attributes['id'] ); ?>-amount-display" ).html( ui.value );
+				$( "#<?php echo esc_js( $attributes['id'] ); ?>" ).val( ui.value );
+				$( "#<?php echo esc_js( $attributes['id'] ); ?>-amount-display" ).html( ui.value );
 			}
 			<?php
 			}//end if

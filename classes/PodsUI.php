@@ -3134,20 +3134,17 @@ class PodsUI {
 					</form>
 				<?php
 					} elseif ( ! in_array( 'export', $this->actions_disabled ) && ! in_array( 'export', $this->actions_hidden ) ) {
+						$export_document_location = pods_slash(
+							pods_query_arg(
+								array(
+									'action_bulk' . $this->num => 'export',
+									'_wpnonce' => wp_create_nonce( 'pods-ui-action-bulk' ),
+								), self::$allowed, $this->exclusion()
+							)
+						);
 						?>
 						<div class="alignleft actions">
-							<input type="button" value="<?php echo esc_attr( sprintf( __( 'Export all %s', 'pods' ), $this->items ) ); ?>" class="button" onclick="document.location=';
-																	<?php
-																	echo pods_slash(
-																		pods_query_arg(
-																			array(
-																				'action_bulk' . $this->num => 'export',
-																				'_wpnonce' => wp_create_nonce( 'pods-ui-action-bulk' ),
-																			), self::$allowed, $this->exclusion()
-																		)
-																	);
-							?>
-							';" />
+							<input type="button" value="<?php echo esc_attr( sprintf( __( 'Export all %s', 'pods' ), $this->items ) ); ?>" class="button" onclick="document.location='<?php echo $export_document_location; ?>';" />
 						</div>
 						<?php
 					}//end if

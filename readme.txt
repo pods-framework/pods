@@ -182,8 +182,9 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 = 2.7.7 - {DATE}  =
 
-* Fixed: Midnight (00:00) results as 'empty' in an [if][/if] Template Tag #4999 (@pglewis)
-* Fixed: Non-internationalized string "Add Another Custom Capability" #5028 (@GaryJones, @pglewis)
+* Fixed: Pods Template Editor is adding two 'tabs' to the front of the template during Save. #5022 (@pglewis)
+* Fixed: Midnight (00:00) results as 'empty' in an [if][/if] Template Tag. #4999 (@pglewis)
+* Fixed: Non-internationalized string "Add Another Custom Capability". #5028 (@GaryJones, @pglewis)
 
 = 2.7.6 - June 8th 2018  =
 

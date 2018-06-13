@@ -161,6 +161,14 @@ class PodsField_Time extends PodsField_DateTime {
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function is_empty( $value = null ) {
+
+		return empty( trim ( $value ) );
+	}
+
+	/**
 	 * Convert value to the correct format for display.
 	 *
 	 * @param string $value   Field value.
@@ -180,7 +188,7 @@ class PodsField_Time extends PodsField_DateTime {
 			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
 		}
 
-		if ( ! empty( $value ) ) {
+		if ( ! $this->is_empty( $value ) ) {
 			// Try default storage format.
 			$date = $this->createFromFormat( static::$storage_format, (string) $value );
 

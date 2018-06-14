@@ -327,12 +327,12 @@ if ( version_compare( $pods_version, '2.0.0-b-15', '<' ) ) {
 }
 
 /*
- ===================================
- *
- * Old upgrade code from Alpha to Beta
- *
- * ===================================
- */
+===================================
+
+Old upgrade code from Alpha to Beta
+
+===================================
+*/
 /**
  * @param $id
  * @param $options

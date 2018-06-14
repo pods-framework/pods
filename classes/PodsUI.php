@@ -1618,14 +1618,16 @@ class PodsUI {
 		if ( $this->restricted( $this->action ) ) {
 			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 		}
+
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"
-			<?php
-			if ( false !== $this->icon ) {
-?>
- style="background-position:0 0;background-size:100%;background-image:url(<?php echo esc_url( $this->icon ); ?>);"<?php } ?>>
-				<br /></div>
+			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+				<br />
+			</div>
 			<h2>
 				<?php
 				echo wp_kses_post( $this->header['add'] );
@@ -1675,14 +1677,16 @@ class PodsUI {
 		if ( $this->restricted( $this->action ) ) {
 			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 		}
+
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"
-			<?php
-			if ( false !== $this->icon ) {
-?>
- style="background-position:0 0;background-size:100%;background-image:url(<?php echo esc_url( $this->icon ); ?>);"<?php } ?>>
-				<br /></div>
+			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+				<br />
+			</div>
 			<h2>
 				<?php
 				echo wp_kses_post( $this->do_template( $duplicate ? $this->header['duplicate'] : $this->header['edit'] ) );
@@ -1989,14 +1993,16 @@ class PodsUI {
 
 		unset( $view_fields );
 		// Cleanup
+
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"
-			<?php
-			if ( false !== $this->icon ) {
-?>
- style="background-position:0 0;background-size:100%;background-image:url(<?php echo esc_url( $this->icon ); ?>);"<?php } ?>>
-				<br /></div>
+			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+				<br />
+			</div>
 			<h2>
 				<?php
 				echo wp_kses_post( $this->do_template( $this->header['view'] ) );
@@ -2805,14 +2811,19 @@ class PodsUI {
 		$this->screen_meta();
 
 		if ( true === $reorder ) {
-			wp_enqueue_script( 'jquery-ui-sortable' );}
+			wp_enqueue_script( 'jquery-ui-sortable' );
+		}
+
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
+
 		?>
 	<div class="wrap pods-admin pods-ui">
-		<div id="icon-edit-pages" class="icon32"
-		<?php
-		if ( false !== $this->icon ) {
-?>
- style="background-position:0 0;background-size:100%;background-image:url(<?php echo esc_url( $this->icon ); ?>);"<?php } ?>><br /></div>
+		<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+			<br />
+		</div>
 		<h2>
 			<?php
 			if ( true === $reorder ) {
@@ -4930,15 +4941,16 @@ class PodsUI {
 				}
 			}//end if
 			/*
-			 @todo determine proper logic for non-pods capabilities
-			 * else {
-			 * $restricted = true;
-			 *
-			 * if ( pods_is_admin( array( 'pods', 'pods_content' ) ) )
-			 * $restricted = false;
-			 * elseif ( current_user_can( 'pods_' . $action . '_others_' . $_tbd ) )
-			 * $restricted = false;
-			 * }*/
+			@todo determine proper logic for non-pods capabilities
+			else {
+			$restricted = true;
+
+			if ( pods_is_admin( array( 'pods', 'pods_content' ) ) )
+			$restricted = false;
+			elseif ( current_user_can( 'pods_' . $action . '_others_' . $_tbd ) )
+			$restricted = false;
+			}
+			*/
 		}//end if
 
 		if ( $restricted && ! empty( $restrict ) ) {
@@ -5087,9 +5099,10 @@ class PodsUI {
 					$okay = false;
 				}
 				/*
-				 @todo determine proper logic for non-pods capabilities
-				 * elseif ( !current_user_can( 'pods_' . $action . '_' . $_tbd ) )
-				 * $okay = false;*/
+				@todo determine proper logic for non-pods capabilities
+				elseif ( !current_user_can( 'pods_' . $action . '_' . $_tbd ) )
+				$okay = false;
+				*/
 
 				if ( ! $okay && ! empty( $row ) ) {
 					foreach ( $this->restrict['author_restrict'] as $key => $val ) {

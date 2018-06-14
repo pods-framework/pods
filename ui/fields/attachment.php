@@ -131,12 +131,12 @@ PodsForm::attributes(
 		// init sortable
 		$( '#<?php echo esc_js( $css_id ); ?> ul.pods-files' )
 			.sortable( {
-						   containment       : 'parent',
-						   axis              : 'y',
-						   scrollSensitivity : 40,
-						   tolerance         : 'pointer',
-						   opacity           : 0.6
-					   } );
+				containment       : 'parent',
+				axis              : 'y',
+				scrollSensitivity : 40,
+				tolerance         : 'pointer',
+				opacity           : 0.6
+			} );
 
 		// hook delete links
 		$( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'li.pods-file-delete a', function ( e ) {

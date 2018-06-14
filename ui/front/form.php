@@ -116,7 +116,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						 * @since 2.3.19
 						 */
 						do_action( 'pods_form_pre_field', $field, $fields, $pod, $params );
-						
+
 						$default_class = ' pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ] );
 
 						/**
@@ -163,7 +163,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 					}
 
 					echo PodsForm::field( $field_prefix . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
-			   }
+				}
 
 				/**
 				 * Runs after all fields are outputted.

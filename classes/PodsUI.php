@@ -1619,10 +1619,13 @@ class PodsUI {
 			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 		}
 
-		$icon_style = false !== $this->icon ? ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"' : '';
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; ?>>
+			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
 				<br />
 			</div>
 			<h2>
@@ -1675,10 +1678,13 @@ class PodsUI {
 			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 		}
 
-		$icon_style = false !== $this->icon ? ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"' : '';
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; ?>>
+			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
 				<br />
 			</div>
 			<h2>
@@ -1988,10 +1994,13 @@ class PodsUI {
 		unset( $view_fields );
 		// Cleanup
 
-		$icon_style = false !== $this->icon ? ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"' : '';
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; ?>>
+			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
 				<br />
 			</div>
 			<h2>
@@ -2803,10 +2812,14 @@ class PodsUI {
 			wp_enqueue_script( 'jquery-ui-sortable' );
 		}
 
-		$icon_style = false !== $this->icon ? ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"' : '';
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
+
 		?>
 	<div class="wrap pods-admin pods-ui">
-		<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; ?>>
+		<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
 			<br />
 		</div>
 		<h2>

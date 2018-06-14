@@ -777,7 +777,8 @@ function pods_shortcode( $tags, $content = null ) {
 
 			if ( ! empty( $pod ) ) {
 				$tags['name'] = get_post_type();
-				$id           = $tags['id'] = get_the_ID();
+				$id           = get_the_ID();
+				$tags['id']   = get_the_ID();
 			}
 		}
 

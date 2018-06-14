@@ -638,11 +638,13 @@ class PodsData {
 		}
 
 		$wheres        = array();
-		$where_formats = $where_format = (array) $where_format;
+		$where_format  = (array) $where_format;
+		$where_formats = $where_format;
 
 		foreach ( (array) array_keys( $where ) as $field ) {
 			if ( ! empty( $where_format ) ) {
-				$form = ( $form = array_shift( $where_formats ) ) ? $form : $where_format[0];
+				$form = array_shift( $where_formats );
+				$form = $form ? $form : $where_format[0];
 			} elseif ( isset( self::$field_types[ $field ] ) ) {
 				$form = self::$field_types[ $field ];
 			} elseif ( isset( $wpdb->field_types[ $field ] ) ) {
@@ -678,7 +680,8 @@ class PodsData {
 
 		global $wpdb;
 
-		$cache_key = $results = false;
+		$cache_key = false;
+		$results   = false;
 
 		/**
 		 * Filter select parameters before the query
@@ -1103,7 +1106,8 @@ class PodsData {
 		// Search.
 		if ( ! empty( $params->search ) && ! empty( $params->fields ) ) {
 			if ( false !== $params->search_query && 0 < strlen( $params->search_query ) ) {
-				$where = $having = array();
+				$where  = array();
+				$having = array();
 
 				if ( false !== $params->search_across ) {
 					foreach ( $params->fields as $key => $field ) {
@@ -1222,7 +1226,8 @@ class PodsData {
 
 			// Filter.
 			foreach ( $params->filters as $filter ) {
-				$where = $having = array();
+				$where  = array();
+				$having = array();
 
 				if ( ! isset( $params->fields[ $filter ] ) ) {
 					continue;
@@ -1376,13 +1381,17 @@ class PodsData {
 
 			preg_match_all( '/`?[\w\-]+`?(?:\\.`?[\w\-]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
 
-			$found = (array) @current( $found );
-			$find  = $replace = $traverse = array();
+			$found    = (array) @current( $found );
+			$find     = array();
+			$replace  = array();
+			$traverse = array();
 
 			foreach ( $found as $key => $value ) {
 				$value = str_replace( '`', '', $value );
 				$value = explode( '.', $value );
-				$dot   = $last_value = array_pop( $value );
+
+				$last_value = array_pop( $value );
+				$dot        = $last_value;
 
 				if ( 't' === $value[0] ) {
 					continue;
@@ -2058,7 +2067,9 @@ class PodsData {
 					$filter = 'raw';
 					$term   = $id;
 
-					if ( 'id' !== $mode || ! $_term = wp_cache_get( $term, $taxonomy ) ) {
+					$_term = wp_cache_get( $term, $taxonomy );
+
+					if ( 'id' !== $mode || ! $_term ) {
 						$_term = $wpdb->get_row( $wpdb->prepare( "SELECT t.*, tt.* FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id WHERE tt.taxonomy = %s AND {$term_where} LIMIT 1", $taxonomy, $term ) );
 
 						if ( $_term ) {

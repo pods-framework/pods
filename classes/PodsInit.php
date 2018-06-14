@@ -499,8 +499,10 @@ class PodsInit {
 				'taxonomies' => array(),
 			);
 
-			$pods_post_types      = $pods_taxonomies = array();
-			$supported_post_types = $supported_taxonomies = array();
+			$pods_post_types      = array();
+			$pods_taxonomies      = array();
+			$supported_post_types = array();
+			$supported_taxonomies = array();
 
 			$post_format_post_types = array();
 

@@ -396,9 +396,12 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	 */
 	public function go_to( $url ) {
 
-		$GLOBALS['_SERVER']['REQUEST_URI'] = $url = str_replace( network_home_url(), '', $url );
+		$url = str_replace( network_home_url(), '', $url );
 
-		$_GET = $_POST = array();
+		$GLOBALS['_SERVER']['REQUEST_URI'] = $url;
+
+		$_GET  = array();
+		$_POST = array();
 
 		foreach (
 			array(

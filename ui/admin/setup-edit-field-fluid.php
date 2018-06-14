@@ -42,7 +42,8 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 								continue;
 							}
 
-							$class = $extra_classes = '';
+							$class         = '';
+							$extra_classes = '';
 
 							$tab = sanitize_title( $tab );
 

@@ -406,7 +406,8 @@ class PodsView {
 			$group_key = $group . '_';
 		}
 
-		$full_key = $original_key = $key;
+		$full_key     = $key;
+		$original_key = $key;
 
 		if ( true !== $key ) {
 			// Get proper cache key

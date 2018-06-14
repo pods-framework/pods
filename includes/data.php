@@ -403,7 +403,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = get_stylesheet_directory_uri();
 				break;
 			case 'site-url':
-				$blog_id = $scheme = null;
+				$blog_id = null;
+				$scheme  = null;
 				$path    = '';
 
 				if ( is_array( $var ) ) {
@@ -421,7 +422,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = get_site_url( $blog_id, $path, $scheme );
 				break;
 			case 'home-url':
-				$blog_id = $scheme = null;
+				$blog_id = null;
+				$scheme  = null;
 				$path    = '';
 
 				if ( is_array( $var ) ) {
@@ -439,7 +441,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = get_home_url( $blog_id, $path, $scheme );
 				break;
 			case 'admin-url':
-				$blog_id = $scheme = null;
+				$blog_id = null;
+				$scheme  = null;
 				$path    = '';
 
 				if ( is_array( $var ) ) {
@@ -463,7 +466,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = content_url( $var );
 				break;
 			case 'plugins-url':
-				$path = $plugin = '';
+				$path   = '';
+				$plugin = '';
 
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {

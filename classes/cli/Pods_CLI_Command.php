@@ -330,7 +330,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		unset( $assoc_args['pod'] );
 
-		$pod = pods( $pod_name, null, false );
+		$pod = pods( $pod_name, array( 'limit' => -1 ), false );
 
 		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );

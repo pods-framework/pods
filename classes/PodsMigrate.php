@@ -111,6 +111,17 @@ class PodsMigrate {
 
 		$this->data = array_merge( $defaults, (array) $data );
 	}
+	
+	/**
+	 * @return array	Array of data items
+	 */
+	private function get_items ( ) {
+		
+		return empty( $this->data['single'] ) ? 
+			$this->data['items'] : 
+			array( $this->data['items'] );
+
+	}
 
 	/**
 	 * Importing / Parsing / Validating Code
@@ -570,12 +581,7 @@ class PodsMigrate {
 
 		$head = substr( $head, 0, - 1 );
 
-		$items = $this->data['items'];
-		if ( ! empty( $this->data['single'] ) ) {
-			$items = array( $this->data['items'] );
-		}
-
-		foreach ( $items as $item ) {
+		foreach ( $this->get_items() as $item ) {
 			$line = '';
 
 			foreach ( $this->data['columns'] as $column => $label ) {
@@ -641,10 +647,7 @@ class PodsMigrate {
 			return false;
 		}
 
-		$items = $this->data['items'];
-		if ( ! empty( $this->data['single'] ) ) {
-			$items = array( $this->data['items'] );
-		}
+		$items = $this->get_items();
 
 		$head  = '<' . '?' . 'xml version="1.0" encoding="utf-8" ' . '?' . '>' . "\r\n<items count=\"" . count( $items ) . "\">\r\n";
 		$lines = '';
@@ -1276,7 +1279,7 @@ class PodsMigrate {
 		$first_item = null;
 		if ( $single ) {
 			$first_item = $data;
-		} else if ( is_array( $data ) ) {
+		} elseif ( is_array( $data ) ) {
 			$first_item = reset( $data );
 		}
 		if ( is_array( $first_item ) ) {

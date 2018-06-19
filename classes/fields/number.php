@@ -326,7 +326,7 @@ class PodsField_Number extends PodsField {
 	/**
 	 * Get the formatting arguments for numbers.
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 *
 	 * @param array $options Field options.
 	 *
@@ -375,7 +375,7 @@ class PodsField_Number extends PodsField {
 	/**
 	 * Get the max allowed decimals.
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 *
 	 * @param array $options Field options.
 	 *

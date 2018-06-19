@@ -5,10 +5,6 @@
 @import "helpers/typography";
 @import "helpers/dashicons";
 
-form.pods-form, form.pods-admin {
-	@import "libs/jquery-ui-custom";
-}
-
 @import "base/admin";
 @import "base/advanced";
 @import "base/dfv-list";
@@ -17,11 +13,15 @@ form.pods-form, form.pods-admin {
 @import "base/modal-relationships";
 @import "base/ui-list-table";
 
+.pods-compat-container {
+	@import "overrides/codemirror";
+	@import "overrides/jquery-ui-timepicker";
+	@import "libs/jquery-ui-custom";
+}
+
 .pods-submittable {
 	@import "libs/jquery-qtip";
-	@import "overrides/codemirror";
 	@import "overrides/jquery-cleditor";
-	@import "overrides/jquery-ui-timepicker";
 	@import "overrides/select-woo";
 }
 

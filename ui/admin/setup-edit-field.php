@@ -71,7 +71,14 @@ $data = array(
 					</span>
 		</div>
 		<div class="pods-manage-row-wrapper" id="pods-manage-field-<?php echo esc_attr( $pods_i ); ?>">
-			<input type="hidden" name="field_data_json[<?php echo esc_attr( $pods_i ); ?>]" value="<?php echo esc_attr( ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $field, JSON_UNESCAPED_UNICODE ) : json_encode( $field ) ) ); ?>" class="field_data" />
+			<?php
+				$hidden_field_name = "field_data_json[" . $pods_i . "]";
+
+				// Convert '&' to an entity prior to calling esc_attr() to preserve pre-existing entities (see: #4495)
+				$hidden_field_value = ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $field, JSON_UNESCAPED_UNICODE ) : json_encode( $field ) );
+				$hidden_field_value = str_replace( '&', '&amp;', $hidden_field_value );
+			?>
+			<input type="hidden" name="<?php echo esc_attr( $hidden_field_name ); ?>" value="<?php echo esc_attr( $hidden_field_value ); ?>" class="field_data" />
 
 			<div class="pods-manage-field pods-dependency">
 				<input type="hidden" name="field_data[<?php echo esc_attr( $pods_i ); ?>][id]" value="<?php echo esc_attr( pods_v( 'id', $field ) ); ?>" />

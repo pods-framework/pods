@@ -28,7 +28,7 @@ class PodsView {
 	 *
 	 * @return bool|mixed|null|string|void
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function view( $view, $data = null, $expires = false, $cache_mode = 'cache' ) {
 
@@ -160,7 +160,7 @@ class PodsView {
 	 *
 	 * @return bool|mixed|null|void
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function get( $key, $cache_mode = 'cache', $group = '', $callback = null ) {
 
@@ -296,7 +296,7 @@ class PodsView {
 	 *
 	 * @return bool|mixed|null|string|void
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function set( $key, $value, $expires = 0, $cache_mode = null, $group = '' ) {
 
@@ -384,7 +384,7 @@ class PodsView {
 	 *
 	 * @return bool
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function clear( $key = true, $cache_mode = null, $group = '' ) {
 
@@ -406,7 +406,8 @@ class PodsView {
 			$group_key = $group . '_';
 		}
 
-		$full_key = $original_key = $key;
+		$full_key     = $key;
+		$original_key = $key;
 
 		if ( true !== $key ) {
 			// Get proper cache key
@@ -488,7 +489,8 @@ class PodsView {
 	public static function get_template_part( $_view, $_data = null ) {
 
 		/*
-		 to be reviewed later, should have more checks and restrictions like a whitelist etc
+		To be reviewed later, should have more checks and restrictions like a whitelist etc.
+
 		if ( 0 === strpos( $_view, 'http://' ) || 0 === strpos( $_view, 'https://' ) ) {
 			$_view = apply_filters( 'pods_view_url_include', $_view );
 
@@ -606,7 +608,7 @@ class PodsView {
 	 *
 	 * @return bool|int
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 * @static
 	 */
 	public static function expires( $expires, $cache_mode = 'cache' ) {

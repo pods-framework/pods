@@ -442,7 +442,7 @@ class PodsUI {
 	 * @return \PodsUI
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since   2.0
+	 * @since 2.0.0
 	 */
 	public function __construct( $options, $deprecated = false ) {
 
@@ -1461,10 +1461,23 @@ class PodsUI {
 	 */
 	public function message( $msg, $error = false ) {
 
-		$msg = $this->do_hook( ( $error ) ? 'error' : 'message', $msg );
+		$class = 'updated';
+		$hook  = 'message';
+
+		if ( $error ) {
+			$class = 'error';
+			$hook  = 'error';
+		}
+
+		$msg = $this->do_hook( $hook, $msg );
+
+		if ( empty( $msg ) ) {
+			return;
+		}
 		?>
-		<div id="message" class="<?php echo esc_attr( ( $error ) ? 'error' : 'updated' ); ?> fade">
-			<p><?php echo $msg; ?></p></div>
+		<div id="message" class="<?php echo esc_attr( $class ); ?> fade">
+			<p><?php echo $msg; ?></p>
+		</div>
 		<?php
 	}
 
@@ -1605,14 +1618,16 @@ class PodsUI {
 		if ( $this->restricted( $this->action ) ) {
 			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 		}
+
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"
-			<?php
-			if ( false !== $this->icon ) {
-?>
- style="background-position:0 0;background-size:100%;background-image:url(<?php echo esc_url( $this->icon ); ?>);"<?php } ?>>
-				<br /></div>
+			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+				<br />
+			</div>
 			<h2>
 				<?php
 				echo wp_kses_post( $this->header['add'] );
@@ -1662,14 +1677,16 @@ class PodsUI {
 		if ( $this->restricted( $this->action ) ) {
 			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 		}
+
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"
-			<?php
-			if ( false !== $this->icon ) {
-?>
- style="background-position:0 0;background-size:100%;background-image:url(<?php echo esc_url( $this->icon ); ?>);"<?php } ?>>
-				<br /></div>
+			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+				<br />
+			</div>
 			<h2>
 				<?php
 				echo wp_kses_post( $this->do_template( $duplicate ? $this->header['duplicate'] : $this->header['edit'] ) );
@@ -1679,7 +1696,7 @@ class PodsUI {
 						array(
 							'action' . $this->num => 'add',
 							'id' . $this->num     => '',
-							'do' . $this->num = '',
+							'do' . $this->num     => '',
 						), self::$allowed, $this->exclusion()
 					);
 
@@ -1976,14 +1993,16 @@ class PodsUI {
 
 		unset( $view_fields );
 		// Cleanup
+
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
 		?>
 		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"
-			<?php
-			if ( false !== $this->icon ) {
-?>
- style="background-position:0 0;background-size:100%;background-image:url(<?php echo esc_url( $this->icon ); ?>);"<?php } ?>>
-				<br /></div>
+			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+				<br />
+			</div>
 			<h2>
 				<?php
 				echo wp_kses_post( $this->do_template( $this->header['view'] ) );
@@ -1993,7 +2012,7 @@ class PodsUI {
 						array(
 							'action' . $this->num => 'add',
 							'id' . $this->num     => '',
-							'do' . $this->num = '',
+							'do' . $this->num     => '',
 						), self::$allowed, $this->exclusion()
 					);
 
@@ -2221,7 +2240,8 @@ class PodsUI {
 						continue;
 					}
 
-					if ( $callback = $this->callback( 'delete', $id ) ) {
+					$callback = $this->callback( 'delete', $id );
+					if ( $callback ) {
 						$check = $callback;
 					} elseif ( is_object( $this->pod ) ) {
 						$check = $this->pod->delete( $id );
@@ -2437,7 +2457,8 @@ class PodsUI {
 		$value = null;
 
 		// use PodsData to get field
-		if ( $callback = $this->callback( 'get_field', $field ) ) {
+		$callback = $this->callback( 'get_field', $field );
+		if ( $callback ) {
 			return $callback;
 		}
 
@@ -2790,14 +2811,19 @@ class PodsUI {
 		$this->screen_meta();
 
 		if ( true === $reorder ) {
-			wp_enqueue_script( 'jquery-ui-sortable' );}
+			wp_enqueue_script( 'jquery-ui-sortable' );
+		}
+
+		$icon_style = '';
+		if ( false !== $this->icon ) {
+			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
+		}
+
 		?>
 	<div class="wrap pods-admin pods-ui">
-		<div id="icon-edit-pages" class="icon32"
-		<?php
-		if ( false !== $this->icon ) {
-?>
- style="background-position:0 0;background-size:100%;background-image:url(<?php echo esc_url( $this->icon ); ?>);"<?php } ?>><br /></div>
+		<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
+			<br />
+		</div>
 		<h2>
 			<?php
 			if ( true === $reorder ) {
@@ -3344,7 +3370,9 @@ class PodsUI {
 
 							$data_filter = 'filter_' . $filter;
 
-							$start = $end = $value_label = '';
+							$start       = '';
+							$end         = '';
+							$value_label = '';
 
 							if ( in_array( $filter_field['type'], array( 'date', 'datetime', 'time' ) ) ) {
 								$start = pods_var_raw( 'filter_' . $filter . '_start', 'get', '', null, true );
@@ -4428,8 +4456,10 @@ class PodsUI {
 	 */
 	public function screen_meta() {
 
-		$screen_html = $help_html = '';
-		$screen_link = $help_link = '';
+		$screen_html = '';
+		$help_html   = '';
+		$screen_link = '';
+		$help_link   = '';
 		if ( ! empty( $this->screen_options ) && ! empty( $this->help ) ) {
 			foreach ( $this->ui_page as $page ) {
 				if ( isset( $this->screen_options[ $page ] ) ) {
@@ -4758,7 +4788,8 @@ class PodsUI {
 			$value = call_user_func_array( $tag[1], array( $value, $field_name, $this->row, &$this ) );
 		}
 
-		$before = $after = '';
+		$before = '';
+		$after  = '';
 
 		if ( isset( $tag[2] ) && ! empty( $tag[2] ) ) {
 			$before = $tag[2];
@@ -4910,15 +4941,16 @@ class PodsUI {
 				}
 			}//end if
 			/*
-			 @todo determine proper logic for non-pods capabilities
-			 * else {
-			 * $restricted = true;
-			 *
-			 * if ( pods_is_admin( array( 'pods', 'pods_content' ) ) )
-			 * $restricted = false;
-			 * elseif ( current_user_can( 'pods_' . $action . '_others_' . $_tbd ) )
-			 * $restricted = false;
-			 * }*/
+			@todo determine proper logic for non-pods capabilities
+			else {
+			$restricted = true;
+
+			if ( pods_is_admin( array( 'pods', 'pods_content' ) ) )
+			$restricted = false;
+			elseif ( current_user_can( 'pods_' . $action . '_others_' . $_tbd ) )
+			$restricted = false;
+			}
+			*/
 		}//end if
 
 		if ( $restricted && ! empty( $restrict ) ) {
@@ -5067,9 +5099,10 @@ class PodsUI {
 					$okay = false;
 				}
 				/*
-				 @todo determine proper logic for non-pods capabilities
-				 * elseif ( !current_user_can( 'pods_' . $action . '_' . $_tbd ) )
-				 * $okay = false;*/
+				@todo determine proper logic for non-pods capabilities
+				elseif ( !current_user_can( 'pods_' . $action . '_' . $_tbd ) )
+				$okay = false;
+				*/
 
 				if ( ! $okay && ! empty( $row ) ) {
 					foreach ( $this->restrict['author_restrict'] as $key => $val ) {

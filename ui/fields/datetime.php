@@ -23,7 +23,7 @@ if ( 1 == pods_var( $form_field_type . '_html5', $options ) ) {
 $attributes['type']     = $type;
 $attributes['tabindex'] = 2;
 
-$format = PodsForm::field_method( 'datetime', 'format', $options );
+$format = PodsForm::field_method( 'datetime', 'format_datetime', $options );
 
 $method = 'datetimepicker';
 
@@ -72,7 +72,8 @@ if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array
 		'00:00:00',
 	), true
 ) ) {
-	$formatted_date = $value = '';
+	$formatted_date = '';
+	$value          = '';
 } elseif ( 'text' !== $type ) {
 	$formatted_date = $value;
 
@@ -97,7 +98,14 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 
 <script>
 	jQuery( function () {
-		var <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args = <?php echo json_encode( $args ); ?>;
+		var $container = jQuery( '<div>' ).appendTo( 'body' ).addClass( 'pods-compat-container' );
+		var beforeShow = {
+			'beforeShow': function( textbox, instance) {
+				jQuery( '#ui-datepicker-div' ).appendTo( $container );
+			}
+		};
+
+		var <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args = jQuery.extend( <?php echo json_encode( $args ); ?>, beforeShow );
 
 		<?php
 		if ( 'text' !== $type ) {

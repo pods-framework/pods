@@ -45,7 +45,7 @@ class Test_Shortcodes extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @since 3.0
+	 * @since 3.0.0
 	 */
 	public function test_shortcode_pods() {
 
@@ -113,7 +113,7 @@ class Test_Shortcodes extends Pods_UnitTestCase {
 	 * PR 2339
 	 *
 	 * @link  https://github.com/pods-framework/pods/pull/2339
-	 * @since 3.0
+	 * @since 3.0.0
 	 */
 	public function test_shortcode_pods_field_in_shortcode() {
 

@@ -161,7 +161,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Load assets for this component
 	 *
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public function admin_assets() {
 
@@ -210,7 +210,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Check is a field name is set for translation
 	 *
-	 * @since 0.1
+	 * @since 0.1.0
 	 *
 	 * @param string $name
 	 *
@@ -246,7 +246,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Get a translated option for a field key (if available)
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  string $current Current value
 	 * @param  string $key     The key / opion name to search for
@@ -275,7 +275,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Page title for setting pages
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsAdmin.php >> admin_menu()
 	 * @see    PodsAdmin.php >> admin_content_settings()
 	 *
@@ -292,7 +292,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Menu title for setting pages
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsAdmin.php >> admin_menu()
 	 *
 	 * @param  string $menu_label Current menu label
@@ -308,7 +308,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Returns the translated label if available
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_label_text' (filter)
 	 *
 	 * @param  string $label   The default label
@@ -326,7 +326,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Returns the translated description if available
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_comment_text' (filter)
 	 *
 	 * @param  string $message The default description
@@ -343,7 +343,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Replaces the default selected text with a translation if available
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    pick.php >> 'pods_field_pick_data' (filter)
 	 *
 	 * @param  array  $data    The default data of the field
@@ -370,7 +370,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Replaces the default values with a translation if available
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_field_' . $type . '_options' (filter)
 	 *
 	 * @param  array  $options The field options
@@ -396,7 +396,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Filter hook function to overwrite the labels and description with translations (if available)
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsInit.php >> setup_content_types()
 	 *
 	 * @param  array  $options The array of object options
@@ -479,7 +479,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Filter hook function to overwrite the labels and description with translations (if available)
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsInit.php >> admin_menu()
 	 *
 	 * @param  array  $options The array of object options
@@ -516,7 +516,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Save component settings
 	 *
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public function admin_save() {
 
@@ -562,7 +562,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Build admin area
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  $options
 	 * @param  $component
@@ -650,7 +650,7 @@ class Pods_Component_I18n extends PodsComponent {
 		/**
 		 * Filter the language data
 		 *
-		 * @since 0.1
+		 * @since 0.1.0
 		 *
 		 * @param array
 		 */
@@ -659,7 +659,7 @@ class Pods_Component_I18n extends PodsComponent {
 		/**
 		 * Filter the UI fields
 		 *
-		 * @since 0.1
+		 * @since 0.1.0
 		 *
 		 * @param array
 		 */
@@ -696,7 +696,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 *
 	 * @todo   Remove if not used in final version
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  array $tabs
 	 * @param  array $pod
@@ -716,7 +716,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 *
 	 * @todo   Remove if not used in final version
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  array $options
 	 * @param  array $pod
@@ -750,7 +750,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Add the i18n metabox.
 	 *
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public function admin_meta_box() {
 
@@ -775,7 +775,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 *
 	 * @todo   Store enabled languages serialized instead of separate inputs
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 */
 	public function meta_box() {
 
@@ -821,7 +821,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Adds translation inputs to fields
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_field_' . $type (filter)
 	 *
 	 * @param  string $output  The default output of the field
@@ -895,7 +895,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Check if a language is get to enabled for an object
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  string $locale The locale to validate
 	 * @param  array  $data   Object data
@@ -921,7 +921,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Create a label with the english and native name combined
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  array $lang_data
 	 *

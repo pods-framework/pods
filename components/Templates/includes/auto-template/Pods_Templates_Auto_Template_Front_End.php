@@ -24,37 +24,51 @@ class Pods_Templates_Auto_Template_Front_End {
 	}
 
 	/**
+	 * Get the filter used for a Pod.
+	 * @since  1.7.2
+	 * @param  string  $current_post_type
+	 * @param  array   $possible_pods
+	 * @return string
+	 */
+	public function get_pod_filter( $current_post_type = '', $possible_pods = array() ) {
+		$filter = 'the_content';
+
+		if ( ! $current_post_type ) {
+			// get the current post type
+			$current_post_type = $this->current_post_type();
+		}
+
+		if ( ! $possible_pods ) {
+			//now use other methods in class to build array to search in/ use
+			$possible_pods = $this->auto_pods();
+		}
+
+		//check if $current_post_type is the key of the array of possible pods
+		if ( isset( $possible_pods[ $current_post_type ] ) ) {
+			$this_pod = $possible_pods[ $current_post_type ];
+
+			if ( is_singular( $current_post_type ) ) {
+				$filter = pods_v( 'single_filter', $this_pod, $filter, true );
+			} elseif ( is_post_type_archive( $current_post_type ) ) {
+				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+			} elseif ( is_home() && $current_post_type === 'post'  ) {
+				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+			} elseif ( is_tax( $current_post_type )  ) {
+				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+			}
+		}
+
+		return $filter;
+	}
+
+	/**
 	 * Add hooks for output
 	 *
 	 * @since 2.6.6
 	 */
-	public function hook_content() {
+	public function hook_content(){
+		$filter = $this->get_pod_filter();
 
-		$filter = 'the_content';
-
-		// get the current post type
-		$current_post_type = $this->current_post_type();
-
-		// now use other methods in class to build array to search in/ use
-		$possible_pods = $this->auto_pods();
-
-		// check if $current_post_type is the key of the array of possible pods
-		if ( isset( $possible_pods[ $current_post_type ] ) ) {
-
-			$this_pod = $possible_pods[ $current_post_type ];
-
-			if ( is_singular( $current_post_type ) ) {
-				$filter = $this_pod['single_filter'];
-			} elseif ( is_post_type_archive( $current_post_type ) ) {
-				$filter = $this_pod['archive_filter'];
-
-			} elseif ( is_home() && $current_post_type === 'post' ) {
-				$filter = $this_pod['archive_filter'];
-			} elseif ( is_tax( $current_post_type ) ) {
-				$filter = $this_pod['archive_filter'];
-
-			}
-		}
 		/**
 		 * Allows plugin to append/replace the_excerpt
 		 *
@@ -269,6 +283,12 @@ class Pods_Templates_Auto_Template_Front_End {
 		if ( isset( $possible_pods[ $current_post_type ] ) ) {
 			// get array for the current post type
 			$this_pod = $possible_pods[ $current_post_type ];
+
+			$filter = $this->get_pod_filter( $current_post_type, $possible_pods );
+
+			if ( current_filter() !== $filter ) {
+				return $content;
+			}
 
 			if ( ! in_the_loop() && ! pods_v( 'run_outside_loop', $this_pod, false ) ) {
 				// If outside of the loop, exit quickly

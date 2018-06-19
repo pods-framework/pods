@@ -22,7 +22,7 @@ class Pods_Deprecated {
 	 * @param object $obj The Pods object
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since   2.0
+	 * @since 2.0.0
 	 */
 	public function __construct( $obj ) {
 
@@ -60,7 +60,7 @@ class Pods_Deprecated {
 	/**
 	 * Display HTML for all datatype fields
 	 *
-	 * @deprecated deprecated since 2.0
+	 * @deprecated 2.0.0
 	 *
 	 * @param null   $id
 	 * @param null   $public_fields
@@ -147,7 +147,9 @@ class Pods_Deprecated {
 					$pick_val    = $pick_pod['name'];
 				}
 
-				$pick_table = $pick_join = $pick_where = '';
+				$pick_table = '';
+				$pick_join  = '';
+				$pick_where = '';
 
 				$pick_field_id   = 'id';
 				$pick_field_name = 'name';
@@ -367,7 +369,7 @@ class Pods_Deprecated {
 	/**
 	 * Build public input form
 	 *
-	 * @deprecated deprecated since 2.0
+	 * @deprecated 2.0.0
 	 *
 	 * @param null   $fields
 	 * @param string $label
@@ -413,7 +415,7 @@ class Pods_Deprecated {
 	/**
 	 * Build HTML for a single field
 	 *
-	 * @deprecated deprecated since 2.0
+	 * @deprecated 2.0.0
 	 *
 	 * @param array $field Field data.
 	 */
@@ -430,7 +432,7 @@ class Pods_Deprecated {
 	 * Fetch a row of results from the DB
 	 *
 	 * @since      1.2.0
-	 * @deprecated deprecated since 2.0
+	 * @deprecated 2.0.0
 	 */
 	public function fetchRecord() {
 
@@ -448,7 +450,7 @@ class Pods_Deprecated {
 	 * @param string $orderby (optional) The orderby string, for PICK fields
 	 *
 	 * @since      1.2.0
-	 * @deprecated deprecated since version 2.0
+	 * @deprecated 2.0.0
 	 * @return array|mixed
 	 */
 	public function get_field( $name, $orderby = null ) {
@@ -482,7 +484,7 @@ class Pods_Deprecated {
 	 *
 	 * @return int The ID from the wp_pod table
 	 * @since      1.2.0
-	 * @deprecated deprecated since version 2.0
+	 * @deprecated 2.0.0
 	 */
 	public function get_pod_id() {
 
@@ -500,8 +502,8 @@ class Pods_Deprecated {
 	/**
 	 * Search and filter records
 	 *
-	 * @since      1.x
-	 * @deprecated deprecated since version 2.0
+	 * @since 1.x.x
+	 * @deprecated 2.0.0
 	 *
 	 * @param null $orderby
 	 * @param int  $rows_per_page
@@ -586,8 +588,8 @@ class Pods_Deprecated {
 	/**
 	 * Return a single record
 	 *
-	 * @since      1.x
-	 * @deprecated deprecated since version 2.0
+	 * @since 1.x.x
+	 * @deprecated 2.0.0
 	 *
 	 * @param int $id Item ID.
 	 *
@@ -605,7 +607,7 @@ class Pods_Deprecated {
 	/**
 	 * Fetch the total row count
 	 *
-	 * @deprecated deprecated since version 2.0
+	 * @deprecated 2.0.0
 	 */
 	public function getTotalRows() {
 
@@ -619,7 +621,7 @@ class Pods_Deprecated {
 	/**
 	 * (Re)set the MySQL result pointer
 	 *
-	 * @deprecated deprecated since version 2.0
+	 * @deprecated 2.0.0
 	 *
 	 * @param int $row_number
 	 *
@@ -637,7 +639,7 @@ class Pods_Deprecated {
 	/**
 	 * Display the pagination controls
 	 *
-	 * @deprecated deprecated since 2.0
+	 * @deprecated 2.0.0
 	 *
 	 * @param string $label
 	 */
@@ -658,7 +660,7 @@ class Pods_Deprecated {
 	/**
 	 * Display the list filters
 	 *
-	 * @deprecated deprecated since 2.0
+	 * @deprecated 2.0.0
 	 *
 	 * @param null   $filters
 	 * @param string $label
@@ -694,7 +696,7 @@ class Pods_Deprecated {
 	 * @internal   param string $helper The helper name
 	 *
 	 * @since      1.2.0
-	 * @deprecated deprecated since version 2.0
+	 * @deprecated 2.0.0
 	 */
 	public function pod_helper( $helper_name, $value = null, $name = null ) {
 
@@ -715,7 +717,7 @@ class Pods_Deprecated {
 	/**
 	 * Display the page template
 	 *
-	 * @deprecated deprecated since version 2.0
+	 * @deprecated 2.0.0
 	 *
 	 * @param string      $template_name Template name.
 	 * @param null|string $code          Template code override.

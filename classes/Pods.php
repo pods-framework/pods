@@ -1014,7 +1014,7 @@ class Pods implements Iterator {
 			}
 
 			$value = $this->row[ $params->name ];
-		} elseif ( empty( $value ) ) {
+		} elseif ( null !== $value ) {
 			$object_field_found = false;
 
 			if ( 'object_field' === $field_type ) {

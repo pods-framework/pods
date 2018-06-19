@@ -668,6 +668,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 		$this->assertEquals( (string) $data['id'], (string) $p->id(), sprintf( 'Item ID not as expected (%s) [%s]', $data['field_id'], $variant_id ) );
 
+		$this->assertEquals( 1, (int) $p->field( '_total' ), sprintf( 'Total value not as expected (%s) [%s]', $p->total(), $variant_id ) );
+		$this->assertEquals( '', $p->field( '_total_s' ), sprintf( 'Total "s" value not as expected (%s) [%s]', $p->total(), $variant_id ) );
+		$this->assertEquals( 1, (int) $p->field( '_total_found' ), sprintf( 'Total found value not as expected (%s) [%s]', $p->total_found(), $variant_id ) );
+		$this->assertEquals( '', $p->field( '_total_found_s' ), sprintf( 'Total found "s" value not as expected (%s) [%s]', $p->total_found(), $variant_id ) );
+
 	}
 
 	/**
@@ -1022,6 +1027,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 		$this->assertNotEmpty( $p->fetch(), sprintf( 'Item not fetched [%s]', $variant_id ) );
 
 		$this->assertEquals( (string) $data['id'], (string) $p->id(), sprintf( 'Item ID not as expected (%s) [%s]', $data['field_id'], $variant_id ) );
+
+		$this->assertEquals( 1, (int) $p->field( '_total' ), sprintf( 'Total value not as expected (%s) [%s]', $p->total(), $variant_id ) );
+		$this->assertEquals( '', $p->field( '_total_s' ), sprintf( 'Total "s" value not as expected (%s) [%s]', $p->total(), $variant_id ) );
+		$this->assertEquals( 1, (int) $p->field( '_total_found' ), sprintf( 'Total found value not as expected (%s) [%s]', $p->total_found(), $variant_id ) );
+		$this->assertEquals( '', $p->field( '_total_found_s' ), sprintf( 'Total found "s" value not as expected (%s) [%s]', $p->total_found(), $variant_id ) );
 
 	}
 

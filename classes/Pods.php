@@ -902,6 +902,7 @@ class Pods implements Iterator {
 			'user',
 			'comment',
 		), true ) ) ) {
+			// Handle detail page links.
 			if ( 0 < strlen( $this->detail_page ) ) {
 				$value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
 			} elseif ( in_array( $this->pod_data['type'], array( 'post_type', 'media' ), true ) ) {
@@ -912,6 +913,30 @@ class Pods implements Iterator {
 				$value = get_author_posts_url( $this->id() );
 			} elseif ( 'comment' === $this->pod_data['type'] ) {
 				$value = get_comment_link( $this->id() );
+			}
+		} elseif ( in_array( $params->name, array(
+			'_total',
+			'_total_found',
+			'_total_s',
+			'_total_found_s',
+		), true ) ) {
+			// Handle total values.
+			if ( '_total' === $params->name ) {
+				$value = $this->total();
+			} elseif ( '_total_found' === $params->name ) {
+				$value = $this->total_found();
+			} elseif ( '_total_s' === $params->name ) {
+				$value = '';
+
+				if ( 1 !== $this->total() ) {
+					$value = 's';
+				}
+			} elseif ( '_total_found_s' === $params->name ) {
+				$value = '';
+
+				if ( 1 !== $this->total_found() ) {
+					$value = 's';
+				}
 			}
 		}
 

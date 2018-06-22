@@ -964,7 +964,7 @@ class Pods implements Iterator {
 			$params->output = 'arrays';
 		}
 
-		if ( empty( $value ) && in_array( $field_data['type'], $tableless_field_types, true ) ) {
+		if ( null === $value && in_array( $field_data['type'], $tableless_field_types, true ) ) {
 			$params->raw = true;
 
 			$value = false;
@@ -982,7 +982,7 @@ class Pods implements Iterator {
 			}
 		}
 
-		if ( empty( $value ) && isset( $this->row[ $params->name ] ) && ( ! in_array( $field_data['type'], $tableless_field_types, true ) || 'arrays' === $params->output ) ) {
+		if ( in_array( $value, array( false, null ), true ) && isset( $this->row[ $params->name ] ) && ( ! in_array( $field_data['type'], $tableless_field_types, true ) || 'arrays' === $params->output ) ) {
 			if ( empty( $field_data ) || in_array( $field_data['type'], array(
 				'boolean',
 				'number',
@@ -1000,7 +1000,7 @@ class Pods implements Iterator {
 			}
 
 			$value = $this->row[ $params->name ];
-		} elseif ( null !== $value ) {
+		} elseif ( in_array( $value, array( false, null ), true ) ) {
 			$object_field_found = false;
 
 			if ( 'object_field' === $field_type ) {

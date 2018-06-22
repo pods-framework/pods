@@ -129,7 +129,7 @@ class PodsForm {
 
 		$output = ob_get_clean();
 
-		return apply_filters( 'pods_form_ui_' . $type, $output, $name, $label, $help, $attributes, $options );
+		return apply_filters( "pods_form_ui_{$type}", $output, $name, $label, $help, $attributes, $options );
 	}
 
 	/**
@@ -168,7 +168,7 @@ class PodsForm {
 
 		$output = ob_get_clean();
 
-		return apply_filters( 'pods_form_ui_' . $type, $output, $name, $message, $attributes, $options );
+		return apply_filters( "pods_form_ui_{$type}", $output, $name, $message, $attributes, $options );
 	}
 
 	/**
@@ -201,7 +201,7 @@ class PodsForm {
 		}
 
 		$options = self::options( $type, $options );
-		$options = apply_filters( 'pods_form_ui_field_' . $type . '_options', $options, $value, $name, $pod, $id );
+		$options = apply_filters( "pods_form_ui_field_{$type}_options", $options, $value, $name, $pod, $id );
 
 		if ( null === $value || ( '' === $value && 'boolean' === $type ) || ( ! empty( $pod ) && empty( $id ) ) ) {
 			$value = self::default_value( $value, $type, $name, $options, $pod, $id );
@@ -216,7 +216,7 @@ class PodsForm {
 			return false;
 		}
 
-		$value           = apply_filters( 'pods_form_ui_field_' . $type . '_value', $value, $name, $options, $pod, $id );
+		$value           = apply_filters( "pods_form_ui_field_{$type}_value", $value, $name, $options, $pod, $id );
 		$form_field_type = self::$field_type;
 
 		ob_start();
@@ -247,7 +247,7 @@ class PodsForm {
 		 *
 		 * @deprecated 2.7.0
 		 */
-		if ( true === apply_filters( 'pods_form_ui_field_' . $type . '_override', false, $name, $value, $options, $pod, $id ) ) {
+		if ( true === apply_filters( "pods_form_ui_field_{$type}_override", false, $name, $value, $options, $pod, $id ) ) {
 			/**
 			 * pods_form_ui_field_{$type} action leaves too much to be done by developer.
 			 *
@@ -255,7 +255,7 @@ class PodsForm {
 			 *
 			 * @deprecated 2.7.0
 			 */
-			do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
+			do_action( "pods_form_ui_field_{$type}", $name, $value, $options, $pod, $id );
 		} elseif ( ! empty( $helper ) && 0 < strlen( pods_v( 'code', $helper ) ) && false === strpos( $helper['code'], '$this->' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
 			/**
 			 * Input helpers are deprecated and not guaranteed to work properly.
@@ -278,7 +278,7 @@ class PodsForm {
 			 *
 			 * @deprecated 2.7.0
 			 */
-			do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
+			do_action( "pods_form_ui_field_{$type}", $name, $value, $options, $pod, $id );
 		}//end if
 
 		$output = ob_get_clean();
@@ -288,7 +288,7 @@ class PodsForm {
 		 *
 		 * It is not intended for replacing but augmenting input markup.
 		 */
-		return apply_filters( 'pods_form_ui_field_' . $type, $output, $name, $value, $options, $pod, $id );
+		return apply_filters( "pods_form_ui_field_{$type}", $output, $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -469,7 +469,7 @@ class PodsForm {
 	 */
 	public static function attributes( $attributes, $name = null, $type = null, $options = null ) {
 
-		$attributes = (array) apply_filters( 'pods_form_ui_field_' . $type . '_attributes', $attributes, $name, $options );
+		$attributes = (array) apply_filters( "pods_form_ui_field_{$type}_attributes", $attributes, $name, $options );
 
 		foreach ( $attributes as $attribute => $value ) {
 			if ( null === $value ) {
@@ -492,7 +492,7 @@ class PodsForm {
 	 */
 	public static function data( $data, $name = null, $type = null, $options = null ) {
 
-		$data = (array) apply_filters( 'pods_form_ui_field_' . $type . '_data', $data, $name, $options );
+		$data = (array) apply_filters( "pods_form_ui_field_{$type}_data", $data, $name, $options );
 
 		foreach ( $data as $key => $value ) {
 			if ( null === $value ) {
@@ -592,7 +592,7 @@ class PodsForm {
 			$attributes['maxlength'] = $max_length;
 		}
 
-		$attributes = (array) apply_filters( 'pods_form_ui_field_' . $type . '_merge_attributes', $attributes, $name, $options );
+		$attributes = (array) apply_filters( "pods_form_ui_field_{$type}_merge_attributes", $attributes, $name, $options );
 
 		return $attributes;
 	}
@@ -704,7 +704,7 @@ class PodsForm {
 			self::field_loader( $type );
 		}
 
-		$options = apply_filters( 'pods_field_' . $type . '_options', (array) self::$loaded[ $type ]->options(), $type );
+		$options = apply_filters( "pods_field_{$type}_options", (array) self::$loaded[ $type ]->options(), $type );
 
 		$first_field = current( $options );
 
@@ -757,7 +757,7 @@ class PodsForm {
 
 		self::field_loader( $type );
 
-		$options = apply_filters( 'pods_field_' . $type . '_ui_options', (array) self::$loaded[ $type ]->ui_options(), $type );
+		$options = apply_filters( "pods_field_{$type}_ui_options", (array) self::$loaded[ $type ]->ui_options(), $type );
 
 		$first_field = current( $options );
 
@@ -867,7 +867,7 @@ class PodsForm {
 				self::field_loader( $type );
 
 				if ( method_exists( self::$loaded[ $type ], 'options' ) ) {
-					$options = apply_filters( 'pods_field_' . $type . '_options', (array) self::$loaded[ $type ]->options(), $type );
+					$options = apply_filters( "pods_field_{$type}_options", (array) self::$loaded[ $type ]->options(), $type );
 				}
 			}
 		}//end if
@@ -1093,7 +1093,7 @@ class PodsForm {
 			}//end if
 		}//end if
 
-		$value = apply_filters( 'pods_form_display_' . $type, $value, $name, $options, $pod, $id, $traverse );
+		$value = apply_filters( "pods_form_display_{$type}", $value, $name, $options, $pod, $id, $traverse );
 
 		return $value;
 	}
@@ -1119,7 +1119,7 @@ class PodsForm {
 			$regex = self::$loaded[ $type ]->regex( $options );
 		}
 
-		$regex = apply_filters( 'pods_field_' . $type . '_regex', $regex, $options, $type );
+		$regex = apply_filters( "pods_field_{$type}_regex", $regex, $options, $type );
 
 		return $regex;
 	}
@@ -1145,7 +1145,7 @@ class PodsForm {
 			$prepare = self::$loaded[ $type ]->prepare( $options );
 		}
 
-		$prepare = apply_filters( 'pods_field_' . $type . '_prepare', $prepare, $options, $type );
+		$prepare = apply_filters( "pods_field_{$type}_prepare", $prepare, $options, $type );
 
 		return $prepare;
 	}
@@ -1177,7 +1177,7 @@ class PodsForm {
 			$validate = self::$loaded[ $type ]->validate( $value, $name, $options, $fields, $pod, $id, $params );
 		}
 
-		$validate = apply_filters( 'pods_field_' . $type . '_validate', $validate, $value, $name, $options, $fields, $pod, $id, $type, $params );
+		$validate = apply_filters( "pods_field_{$type}_validate", $validate, $value, $name, $options, $fields, $pod, $id, $type, $params );
 
 		return $validate;
 	}

@@ -214,7 +214,9 @@ class PodsAdmin {
 						continue;
 					}
 
-					$pod = apply_filters( 'pods_advanced_content_type_pod_data_' . $pod['name'], $pod, $pod['name'] );
+					$pod_name = $pod['name'];
+
+					$pod = apply_filters( "pods_advanced_content_type_pod_data_{$pod_name}", $pod, $pod['name'] );
 					$pod = apply_filters( 'pods_advanced_content_type_pod_data', $pod, $pod['name'] );
 
 					if ( 1 === (int) pods_v( 'show_in_menu', $pod['options'], 0 ) ) {
@@ -789,15 +791,18 @@ class PodsAdmin {
 				'actions_disabled' => $actions_disabled,
 			);
 
-			$ui = apply_filters( 'pods_admin_ui_' . $pod->pod, apply_filters( 'pods_admin_ui', $ui, $pod->pod, $pod ), $pod->pod, $pod );
+			$pod_pod_name = $pod->pod;
+
+			$ui = apply_filters( "pods_admin_ui_{$pod_pod_name}", apply_filters( 'pods_admin_ui', $ui, $pod->pod, $pod ), $pod->pod, $pod );
 
 			// Force disabled actions, do not pass go, do not collect $two_hundred
 			$ui['actions_disabled'] = $actions_disabled;
 
 			pods_ui( $ui );
 		} else {
+			$pod_pod_name = $pod->pod;
 			do_action( 'pods_admin_ui_custom', $pod );
-			do_action( 'pods_admin_ui_custom_' . $pod->pod, $pod );
+			do_action( "pods_admin_ui_custom_{$pod_pod_name}", $pod );
 		}//end if
 	}
 
@@ -1146,6 +1151,9 @@ class PodsAdmin {
 
 		$addtl_args = compact( array( 'fields', 'labels', 'admin_ui', 'advanced' ) );
 
+		$pod_type = $pod['type'];
+		$pod_name = $pod['name'];
+
 		/**
 		 * Add or modify tabs in Pods editor for a specific Pod
 		 *
@@ -1155,12 +1163,12 @@ class PodsAdmin {
 		 *
 		 * @since  unknown
 		 */
-		$tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod['type'] . '_' . $pod['name'], $tabs, $pod, $addtl_args );
+		$tabs = apply_filters( "pods_admin_setup_edit_tabs_{$pod_type}_{$pod_name}", $tabs, $pod, $addtl_args );
 
 		/**
 		 * Add or modify tabs for any Pod in Pods editor of a specific post type.
 		 */
-		$tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod['type'], $tabs, $pod, $addtl_args );
+		$tabs = apply_filters( "pods_admin_setup_edit_tabs_{$pod_type}", $tabs, $pod, $addtl_args );
 
 		/**
 		 * Add or modify tabs in Pods editor for all pods.
@@ -1611,6 +1619,8 @@ class PodsAdmin {
 				),
 			);
 
+			$post_type_name = pods_v( 'name', $pod, 'post_type', true );
+
 			$options['advanced'] = array(
 				'public'                  => array(
 					'label'             => __( 'Public', 'pods' ),
@@ -1754,7 +1764,7 @@ class PodsAdmin {
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'pick',
 					'pick_object' => 'post-status',
-					'default'     => apply_filters( 'pods_api_default_status_' . pods_v( 'name', $pod, 'post_type', true ), 'draft', $pod ),
+					'default'     => apply_filters( "pods_api_default_status_{$post_type_name}", 'draft', $pod ),
 				),
 			);
 		} elseif ( 'taxonomy' === $pod['type'] ) {
@@ -2202,6 +2212,9 @@ class PodsAdmin {
 			);
 		}//end if
 
+		$pod_type = $pod['type'];
+		$pod_name = $pod['name'];
+
 		/**
 		 * Add admin fields to the Pods editor for a specific Pod
 		 *
@@ -2210,7 +2223,7 @@ class PodsAdmin {
 		 *
 		 * @since  unkown
 		 */
-		$options = apply_filters( 'pods_admin_setup_edit_options_' . $pod['type'] . '_' . $pod['name'], $options, $pod );
+		$options = apply_filters( "pods_admin_setup_edit_options_{$pod_type}_{$pod_name}", $options, $pod );
 
 		/**
 		 * Add admin fields to the Pods editor for any Pod of a specific content type.
@@ -2218,7 +2231,7 @@ class PodsAdmin {
 		 * @param array  $options The Options fields.
 		 * @param object $pod     Current Pods object.
 		 */
-		$options = apply_filters( 'pods_admin_setup_edit_options_' . $pod['type'], $options, $pod );
+		$options = apply_filters( "pods_admin_setup_edit_options_{$pod_type}", $options, $pod );
 
 		/**
 		 * Add admin fields to the Pods editor for all Pods
@@ -2315,7 +2328,7 @@ class PodsAdmin {
 			 * @param array       $options Tabs, indexed by label,
 			 * @param object|Pods $pod     Pods object for the Pod this UI is for.
 			 */
-			$options['additional-field'][ $type ] = apply_filters( 'pods_admin_setup_edit_' . $type . '_additional_field_options', $options['additional-field'][ $type ], $type, $options, $pod );
+			$options['additional-field'][ $type ] = apply_filters( "pods_admin_setup_edit_{$type}_additional_field_options", $options['additional-field'][ $type ], $type, $options, $pod );
 			$options['additional-field'][ $type ] = apply_filters( 'pods_admin_setup_edit_additional_field_options', $options['additional-field'][ $type ], $type, $options, $pod );
 		}//end foreach
 
@@ -3209,7 +3222,9 @@ class PodsAdmin {
 
 		$params->method = $method->name;
 
-		$params = apply_filters( 'pods_api_' . $method->name, $params, $method );
+		$method_name = $method->name;
+
+		$params = apply_filters( "pods_api_{$method_name}", $params, $method );
 
 		$api = pods_api();
 

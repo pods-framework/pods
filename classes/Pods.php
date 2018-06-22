@@ -1158,10 +1158,11 @@ class Pods implements Iterator {
 				}
 
 				if ( isset( $this->fields[ $params->name ], $this->fields[ $params->name ]['type'] ) ) {
+					$field_type = $this->fields[ $params->name ]['type'];
 					/**
 					 * Modify value returned by field() after its retrieved, but before its validated or formatted
 					 *
-					 * Filter name is set dynamically with name of field: "pods_pods_field_{field_name}"
+					 * Filter name is set dynamically with name of field: "pods_pods_field_{field_type}"
 					 *
 					 * @since unknown
 					 *
@@ -1170,7 +1171,7 @@ class Pods implements Iterator {
 					 * @param array             $params Params array passed to field().
 					 * @param object|Pods       $this   Current Pods object.
 					 */
-					$v = apply_filters( 'pods_pods_field_' . $this->fields[ $params->name ]['type'], null, $this->fields[ $params->name ], $this->row, $params, $this );
+					$v = apply_filters( "pods_pods_field_{$field_type}", null, $this->fields[ $params->name ], $this->row, $params, $this );
 
 					if ( null !== $v ) {
 						return $v;
@@ -4361,7 +4362,8 @@ class Pods implements Iterator {
 				}
 			}//end if
 
-			$manage = apply_filters( 'pods_admin_ui_fields_' . $this->pod, apply_filters( 'pods_admin_ui_fields', $manage, $this->pod, $this ), $this->pod, $this );
+			$pod_name = $this->pod;
+			$manage   = apply_filters( "pods_admin_ui_fields_{$pod_name}", apply_filters( 'pods_admin_ui_fields', $manage, $this->pod, $this ), $this->pod, $this );
 
 			$icon = pods_v( 'ui_icon', $this->pod_data['options'] );
 
@@ -4443,7 +4445,8 @@ class Pods implements Iterator {
 			}
 
 			// @todo Customize the Add New / Manage links to point to their correct menu items.
-			$ui = apply_filters( 'pods_admin_ui_' . $this->pod, apply_filters( 'pods_admin_ui', $ui, $this->pod, $this ), $this->pod, $this );
+			$pod_name = $this->pod;
+			$ui       = apply_filters( "pods_admin_ui_{$pod_name}", apply_filters( 'pods_admin_ui', $ui, $this->pod, $this ), $this->pod, $this );
 
 			// Override UI options.
 			foreach ( $options as $option => $value ) {
@@ -4455,8 +4458,9 @@ class Pods implements Iterator {
 			return pods_ui( $this );
 		}//end if
 
+		$pod_name = $this->pod;
 		do_action( 'pods_admin_ui_custom', $this );
-		do_action( 'pods_admin_ui_custom_' . $this->pod, $this );
+		do_action( "pods_admin_ui_custom_{$pod_name}", $this );
 
 		return null;
 	}

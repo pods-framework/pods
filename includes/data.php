@@ -789,7 +789,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = apply_filters( 'pods_var_post_id', $post_id, $default, $var, $strict, $params );
 				break;
 			default:
-				$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );
+				$output = apply_filters( "pods_var_{$type}", $default, $var, $strict, $params );
 		}//end switch
 	}//end if
 
@@ -977,7 +977,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 				$ret = $pods->save( $var, $value );
 			}
 		} else {
-			$ret = apply_filters( 'pods_var_set_' . $type, $value, $var );
+			$ret = apply_filters( "pods_var_set_{$type}", $value, $var );
 		}//end if
 	}//end if
 

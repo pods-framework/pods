@@ -3323,6 +3323,7 @@ class PodsAPI {
 			$params->track_changed_fields = false;
 		}
 
+		$pod_name = $params->pod;
 		/**
 		 * Override $params['track_changed_fields']
 		 *
@@ -3332,7 +3333,7 @@ class PodsAPI {
 		 *
 		 * @since 2.3.19
 		 */
-		$track_changed_fields = apply_filters( 'pods_api_save_pod_item_track_changed_fields_' . $params->pod, (boolean) $params->track_changed_fields, $params );
+		$track_changed_fields = apply_filters( "pods_api_save_pod_item_track_changed_fields_{$pod_name}", (boolean) $params->track_changed_fields, $params );
 
 		$changed_fields = array();
 

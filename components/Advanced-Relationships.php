@@ -115,7 +115,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			$data[ $theme->Template ] = $theme->Name;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_themes', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -157,7 +157,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			$data[ $page_template_file ] = $page_template;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_page_templates', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -185,7 +185,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			}
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_sidebars', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -217,7 +217,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			$data[ $post_type->name ] = $post_type->label;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_post_types', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -249,7 +249,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			$data[ $taxonomy->name ] = $taxonomy->label;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_taxonomies', $data, $name, $value, $options, $pod, $id );
 	}
 
 }

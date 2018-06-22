@@ -518,8 +518,10 @@ class Pods_Templates extends PodsComponent {
 			}
 		}
 
+		$slug = $template['slug'];
+
 		$code = apply_filters( 'pods_templates_pre_template', $code, $template, $obj );
-		$code = apply_filters( 'pods_templates_pre_template_' . $template['slug'], $code, $template, $obj );
+		$code = apply_filters( "pods_templates_pre_template_{$slug}", $code, $template, $obj );
 
 		ob_start();
 
@@ -553,7 +555,7 @@ class Pods_Templates extends PodsComponent {
 		$out = ob_get_clean();
 
 		$out = apply_filters( 'pods_templates_post_template', $out, $code, $template, $obj );
-		$out = apply_filters( 'pods_templates_post_template_' . $template['slug'], $out, $code, $template, $obj );
+		$out = apply_filters( "pods_templates_post_template_{$slug}", $out, $code, $template, $obj );
 
 		return $out;
 	}

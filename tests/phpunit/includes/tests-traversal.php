@@ -668,8 +668,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 		$this->assertEquals( (string) $data['id'], (string) $p->id(), sprintf( 'Item ID not as expected (%s) [%s]', $data['field_id'], $variant_id ) );
 
-		$this->assertEquals( 1, (int) $p->field( '_total' ), sprintf( 'Total value not as expected (%s) %s [%s]', $p->total(), var_export( $p->field( '_total' ), true ), $variant_id ) );
-		$this->assertEquals( 1, (int) $p->field( '_total_found' ), sprintf( 'Total found value not as expected (%s) %s [%s]', $p->total_found(), var_export( $p->field( '_total_found' ), true ), $variant_id ) );
+		$this->assertEquals( 1, (int) $p->field( '_total' ), sprintf( 'Total value not as expected (%1$s) %2$s [%3$s]', $p->total(), var_export( $p->field( '_total' ), true ), $variant_id ) );
+		$this->assertEquals( 1, (int) $p->field( '_total_found' ), sprintf( 'Total found value not as expected (%1$s) %2$s [%3$s]', $p->total_found(), var_export( $p->field( '_total_found' ), true ), $variant_id ) );
 
 	}
 
@@ -1026,8 +1026,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 		$this->assertEquals( (string) $data['id'], (string) $p->id(), sprintf( 'Item ID not as expected (%s) [%s]', $data['field_id'], $variant_id ) );
 
-		$this->assertEquals( 1, (int) $p->field( '_total' ), sprintf( 'Total value not as expected (%s) [%s]', $p->total(), $variant_id ) );
-		$this->assertEquals( 1, (int) $p->field( '_total_found' ), sprintf( 'Total found value not as expected (%s) [%s]', $p->total_found(), $variant_id ) );
+		$this->assertEquals( 1, (int) $p->field( '_total' ), sprintf( 'Total value not as expected (%1$s) %2$s [%3$s]', $p->total(), var_export( $p->field( '_total' ), true ), $variant_id ) );
+		$this->assertEquals( 1, (int) $p->field( '_total_found' ), sprintf( 'Total found value not as expected (%1$s) %2$s [%3$s]', $p->total_found(), var_export( $p->field( '_total_found' ), true ), $variant_id ) );
 
 	}
 

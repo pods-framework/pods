@@ -185,6 +185,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 **Features/Enhancements/Improvements**
 * Code Quality: Disallow multiple assignments and assignment inside conditions, #5021 (@GaryJones)
 * Code Quality: WordPress.WhiteSpace.PrecisionAlignment compliance, #5026 (@GaryJones)
+* Code Quality: Use interpolation to construct all dynamic hook names, #4992 (@GaryJones)
 
 **Bug Fixes**
 

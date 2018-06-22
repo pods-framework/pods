@@ -917,26 +917,12 @@ class Pods implements Iterator {
 		} elseif ( in_array( $params->name, array(
 			'_total',
 			'_total_found',
-			'_total_s',
-			'_total_found_s',
 		), true ) ) {
 			// Handle total values.
 			if ( '_total' === $params->name ) {
 				$value = $this->total();
 			} elseif ( '_total_found' === $params->name ) {
 				$value = $this->total_found();
-			} elseif ( '_total_s' === $params->name ) {
-				$value = '';
-
-				if ( 1 !== $this->total() ) {
-					$value = 's';
-				}
-			} elseif ( '_total_found_s' === $params->name ) {
-				$value = '';
-
-				if ( 1 !== $this->total_found() ) {
-					$value = 's';
-				}
 			}
 		}
 

@@ -50,6 +50,11 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		'childview:add:new': 'onChildviewAddNew'
 	},
 
+	setCollection: function ( data ) {
+		this.collection = new RelationshipCollection( data );
+		this.render();
+	},
+
 	/**
 	 *
 	 */

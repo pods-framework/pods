@@ -51,6 +51,16 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	},
 
 	/**
+	 * Replace the existing collection and re-render the field.
+	 *
+	 * @param data {Object[]} data An array of objects to be used as the new collection
+	 */
+	setCollectionData: function ( data ) {
+		this.collection = new RelationshipCollection( data );
+		this.render();
+	},
+
+	/**
 	 *
 	 */
 	onBeforeRender: function () {

@@ -83,7 +83,7 @@ class Test_Before extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$this->assertEquals( 'Start 123. 321.', $shortcode_output );
 	}
 
-	public function test_after_magic_tags() {
+	public function test_before_magic_tags() {
 
 		$pod_name = self::$pod_name;
 

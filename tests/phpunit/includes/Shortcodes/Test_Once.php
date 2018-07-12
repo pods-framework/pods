@@ -18,13 +18,6 @@ class Test_Once extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	public static function wpSetUpBeforeClass() {
 
-		add_shortcode(
-			'test_once_recurse', function ( $args, $content ) {
-
-				return do_shortcode( $content );
-			}
-		);
-
 		self::$pod_id = pods_api()->save_pod(
 			array(
 				'storage' => 'meta',
@@ -51,138 +44,73 @@ class Test_Once extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		pods_api()->save_field( $params );
 
-		$params = array(
-			'pod'              => self::$pod_name,
-			'pod_id'           => self::$pod_id,
-			'name'             => 'related_field',
-			'type'             => 'pick',
-			'pick_object'      => 'post_type',
-			'pick_val'         => self::$pod_name,
-			'pick_format_type' => 'multi',
-		);
-
-		pods_api()->save_field( $params );
-
 	}
 
 	public static function wpTearDownAfterClass() {
 
-		if ( shortcode_exists( 'test_once_recurse' ) ) {
-			remove_shortcode( 'test_once_recurse' );
-		}
 		pods_api()->delete_pod( array( 'id' => self::$pod_id ) );
 
-	}
-
-	public function test_psuedo_shortcodes() {
-
-		// Make sure our pseudo shortcodes are working properly
-		$this->assertEquals( 'abc123', do_shortcode( '[test_once_recurse]abc123[/test_once_recurse]' ) );
 	}
 
 	public function test_once_simple() {
 
 		$pod_name = self::$pod_name;
-		$sub_ids  = array();
-		$pod      = pods( $pod_name );
-		for ( $x = 1; $x <= 5; $x ++ ) {
-			$sub_ids[] = $pod->add(
-				array(
-					'post_status' => 'publish',
-					'name'        => $x,
-					'number1'     => $x,
-					'number2'     => $x * $x,
-				)
-			);
-		}
-		$main_id = $pod->add(
+
+		$pod = pods( $pod_name );
+
+		$pod->add(
 			array(
 				'post_status'   => 'publish',
 				'name'          => 'main post',
 				'number1'       => 123,
 				'number2'       => 456,
-				'related_field' => $sub_ids,
 			)
 		);
-		$content = base64_encode( '{@number1}_{@number2}' );
-		$this->assertEquals( '1_12_43_94_165_25', do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_sub_template]" ) );
+
+		$pod->add(
+			array(
+				'post_status'   => 'publish',
+				'name'          => 'secondary post',
+				'number1'       => 321,
+				'number2'       => 654,
+			)
+		);
+
+		$content = '{@number1}.[once]HI![/once]';
+
+		$shortcode_output = do_shortcode( "[pods pod='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
+
+		$this->assertEquals( '123.HI!321.', $shortcode_output );
 	}
 
-	public function test_once_with_nested_if() {
+	public function test_once_magic_tags() {
 
 		$pod_name = self::$pod_name;
-		$sub_ids  = array();
-		$pod      = pods( $pod_name );
-		for ( $x = 1; $x <= 5; $x ++ ) {
-			$sub_ids[] = $pod->add(
-				array(
-					'post_status' => 'publish',
-					'name'        => $x,
-					'number1'     => $x,
-					'number2'     => $x * $x,
-				)
-			);
-		}
-		$main_id = $pod->add(
+
+		$pod = pods( $pod_name );
+
+		$pod->add(
 			array(
 				'post_status'   => 'publish',
 				'name'          => 'main post',
 				'number1'       => 123,
 				'number2'       => 456,
-				'related_field' => $sub_ids,
 			)
 		);
-		$content = base64_encode( '[if number1]{@number1}_{@number2}[/if]' );
-		$this->assertEquals( '1_12_43_94_165_25', do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_sub_template]" ) );
-		// Testing [once] inside [if]
-		$inner_content = base64_encode( '[if number1]{@number1}_{@number2}[/if]' );
-		$content       = base64_encode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$inner_content}[/pod_sub_template]" );
-		$this->assertEquals( '1_12_43_94_165_25', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_if_field]" ) );
 
-		// Testing [once] inside [if] with [else]
-		$inner_content = base64_encode( '[if number1]{@number1}_{@number2}[/if]' );
-		$content       = base64_encode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$inner_content}[/pod_sub_template][else]No related field" );
-		$this->assertEquals( '1_12_43_94_165_25', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_if_field]" ) );
-
-		// Testing [once] inside [if] with [else] and no relationships
-		$main_id       = $pod->add(
-			array(
-				'post_status' => 'publish',
-				'name'        => 'post with no related fields',
-				'number1'     => 123,
-				'number2'     => 456,
-			)
-		);
-		$inner_content = base64_encode( '[if number1]{@number1}_{@number2}[/if]' );
-		$content       = base64_encode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$inner_content}[/pod_sub_template][else]No related field" );
-		$this->assertEquals( 'No related field', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_if_field]" ) );
-	}
-
-	public function test_once_nested_in_external() {
-
-		$pod_name = self::$pod_name;
-		$sub_ids  = array();
-		$pod      = pods( $pod_name );
-		for ( $x = 1; $x <= 5; $x ++ ) {
-			$sub_ids[] = $pod->add(
-				array(
-					'post_status' => 'publish',
-					'name'        => $x,
-					'number1'     => $x,
-					'number2'     => $x * $x,
-				)
-			);
-		}
-		$main_id = $pod->add(
+		$pod->add(
 			array(
 				'post_status'   => 'publish',
-				'name'          => 'main post',
-				'number1'       => 123,
-				'number2'       => 456,
-				'related_field' => $sub_ids,
+				'name'          => 'secondary post',
+				'number1'       => 321,
+				'number2'       => 654,
 			)
 		);
-		$content = base64_encode( '{@number1}_{@number2}' );
-		$this->assertEquals( '1_12_43_94_165_25', do_shortcode( "[test_once_recurse][pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_sub_template][/test_once_recurse]" ) );
+
+		$content = '{@number1}.[once]{@number2}.[/once]';
+
+		$shortcode_output = do_shortcode( "[pods pod='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
+
+		$this->assertEquals( '123.456.321.', $shortcode_output );
 	}
 }

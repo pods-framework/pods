@@ -327,11 +327,14 @@ final class PodsI18n {
 						$current_language = '';
 					}
 
+					/**
+					 * Polylang support.
+					 * In polylang the preferred language could be anything.
+					 */
 					if ( 'PLL' === $translator && pll_is_translated_post_type( $current_post_type ) ) {
 
 						/**
-						 * Polylang support (1.5.4+).
-						 * In polylang the preferred language could be anything.
+						 * Polylang (1.5.4+).
 						 * We only want the related objects if they are not translatable OR the same language as the current object.
 						 */
 						if ( function_exists( 'pll_get_post_language' ) ) {
@@ -340,8 +343,7 @@ final class PodsI18n {
 						}
 
 						/**
-						 * Polylang support (1.0.1+).
-						 * In polylang the preferred language could be anything.
+						 * Polylang (1.0.1+).
 						 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language.
 						 */
 						if ( ! empty( $_GET['new_lang'] ) ) {
@@ -378,11 +380,14 @@ final class PodsI18n {
 						$current_language = '';
 					}
 
+					/**
+					 * Polylang support.
+					 * In polylang the preferred language could be anything.
+					 */
 					if ( 'PLL' === $translator && pll_is_translated_taxonomy( $current_taxonomy ) ) {
 
 						/**
-						 * Polylang support (1.5.4+).
-						 * In polylang the preferred language could be anything.
+						 * Polylang (1.5.4+).
 						 * We only want the related objects if they are not translatable OR the same language as the current object.
 						 */
 						if ( $current_tag_id && function_exists( 'pll_get_term_language' ) ) {
@@ -391,8 +396,7 @@ final class PodsI18n {
 						}
 
 						/**
-						 * Polylang support (1.0.1+).
-						 * In polylang the preferred language could be anything.
+						 * Polylang (1.0.1+).
 						 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language.
 						 */
 						if ( ! empty( $_GET['new_lang'] ) ) {

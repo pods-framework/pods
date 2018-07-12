@@ -58,7 +58,7 @@ class Test_Once extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$pod = pods( $pod_name );
 
-		$pod->add(
+		$main_id = $pod->add(
 			array(
 				'post_status'   => 'publish',
 				'name'          => 'main post',
@@ -78,7 +78,9 @@ class Test_Once extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$content = '{@number1}.[once]HI![/once]';
 
-		$shortcode_output = do_shortcode( "[pods name='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
+		$shortcode = "[pods name='{$pod_name}' orderby='t.ID']{$content}[/pods]";
+
+		$shortcode_output = apply_filters( 'the_content', $shortcode, $main_id );
 
 		$this->assertEquals( '123.HI!321.', $shortcode_output );
 	}
@@ -89,7 +91,7 @@ class Test_Once extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$pod = pods( $pod_name );
 
-		$pod->add(
+		$main_id = $pod->add(
 			array(
 				'post_status'   => 'publish',
 				'name'          => 'main post',
@@ -109,7 +111,9 @@ class Test_Once extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$content = '{@number1}.[once]{@number2}.[/once]';
 
-		$shortcode_output = do_shortcode( "[pods name='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
+		$shortcode = "[pods name='{$pod_name}' orderby='t.ID']{$content}[/pods]";
+
+		$shortcode_output = apply_filters( 'the_content', $shortcode, $main_id );
 
 		$this->assertEquals( '123.456.321.', $shortcode_output );
 	}

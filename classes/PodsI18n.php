@@ -257,8 +257,8 @@ final class PodsI18n {
 		}
 
 		/**
-		 * @var $sitepress SitePress object
-		 * @var $polylang  Polylang object
+		 * @var \SitePress $sitepress object
+		 * @var \Polylang $polylang  object
 		 */
 		/*
 		 * @todo wpml-comp Remove global object usage
@@ -269,36 +269,36 @@ final class PodsI18n {
 		$translator       = false;
 		$current_language = false;
 
-		// Multilingual support
+		// Multilingual support.
 		if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
-			// WPML support
+			// WPML support.
 			$translator = 'WPML';
 
-			// Get the global current language (if set)
+			// Get the global current language (if set).
 			$wpml_language    = apply_filters( 'wpml_current_language', null );
-			$current_language = ( $wpml_language != 'all' ) ? $wpml_language : '';
+			$current_language = ( 'all' !== $wpml_language ) ? $wpml_language : '';
 
 		} elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && function_exists( 'pll_current_language' ) ) {
-			// Polylang support
+			// Polylang support.
 			$translator = 'PLL';
 
-			// Get the global current language (if set)
+			// Get the global current language (if set).
 			$current_language = pll_current_language( 'slug' );
 		}
 
 		/**
-		 * Admin functions that overwrite the current language
+		 * Admin functions that overwrite the current language.
 		 *
 		 * @since 2.6.6
 		 */
 		if ( is_admin() && ! empty( $translator ) ) {
-			if ( $translator == 'PLL' ) {
+			if ( 'PLL' === $translator ) {
 				/**
-				 * Polylang support
+				 * Polylang support.
 				 * Get the current user's preferred language.
-				 * This is a user meta setting that will overwrite the language returned from pll_current_language()
+				 * This is a user meta setting that will overwrite the language returned from pll_current_language().
 				 *
-				 * @see polylang/admin/admin-base.php -> init_user()
+				 * @see \PLL_Admin_Base::init_user() (polylang/admin/admin-base.php)
 				 */
 				$current_language = get_user_meta( get_current_user_id(), 'pll_filter_content', true );
 			}
@@ -416,21 +416,21 @@ final class PodsI18n {
 			);
 
 			/**
-			 * Polylang support
-			 * Get the language taxonomy object for the current language
+			 * Polylang support.
+			 * Get the language taxonomy object for the current language.
 			 */
-			if ( $translator == 'PLL' ) {
+			if ( 'PLL' === $translator ) {
 				$current_language_t = false;
 
-				// Get the language term object
+				// Get the language term object.
 				if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'get_language' ) ) {
-					// Polylang 1.8 and newer
+					// Polylang 1.8 and newer.
 					$current_language_t = PLL()->model->get_language( $current_language );
 				} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_language' ) ) {
 					// Polylang 1.2 - 1.7.x
 					$current_language_t = $polylang->model->get_language( $current_language );
 				} elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_language' ) ) {
-					// Polylang 1.1.x and older
+					// Polylang 1.1.x and older.
 					$current_language_t = $polylang->get_language( $current_language );
 				}
 
@@ -450,16 +450,15 @@ final class PodsI18n {
 		 *
 		 * @since 2.6.6
 		 *
-		 * @param array|false    $lang_data  {
-		 *                                   Language data
-		 *
-		 * @type string          $language   Language slug
-		 * @type int             $t_id       Language term_id
-		 * @type int             $tt_id      Language term_taxonomy_id
-		 * @type WP_Term         $term       Language term object
+		 * @param array|false $lang_data  {
+		 *     Language data
+		 *     @type string   $language  Language slug
+		 *     @type int      $t_id      Language term_id
+		 *     @type int      $tt_id     Language term_taxonomy_id
+		 *     @type WP_Term  $term      Language term object
 		 * }
 		 *
-		 * @param string|boolean $translator Language plugin used
+		 * @param string|boolean $translator Language plugin used.
 		 */
 		$lang_data = apply_filters( 'pods_get_current_language', $lang_data, $translator );
 

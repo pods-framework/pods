@@ -78,7 +78,7 @@ class Test_Once extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$content = '{@number1}.[once]HI![/once]';
 
-		$shortcode_output = do_shortcode( "[pods pod='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
+		$shortcode_output = do_shortcode( "[pods name='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
 
 		$this->assertEquals( '123.HI!321.', $shortcode_output );
 	}
@@ -109,7 +109,7 @@ class Test_Once extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$content = '{@number1}.[once]{@number2}.[/once]';
 
-		$shortcode_output = do_shortcode( "[pods pod='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
+		$shortcode_output = do_shortcode( "[pods name='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
 
 		$this->assertEquals( '123.456.321.', $shortcode_output );
 	}

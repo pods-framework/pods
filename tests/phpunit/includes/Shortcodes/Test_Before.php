@@ -78,7 +78,7 @@ class Test_Before extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$content = '[before]Start[/before] {@number1}.';
 
-		$shortcode_output = do_shortcode( "[pods pod='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
+		$shortcode_output = do_shortcode( "[pods name='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
 
 		$this->assertEquals( 'Start 123. 321.', $shortcode_output );
 	}
@@ -109,7 +109,7 @@ class Test_Before extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$content = '[before]Total records: {@_total}[/before] {@number1}.';
 
-		$shortcode_output = do_shortcode( "[pods pod='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
+		$shortcode_output = do_shortcode( "[pods name='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
 
 		$this->assertEquals( 'Total Records: 2 123. 321.', $shortcode_output );
 	}

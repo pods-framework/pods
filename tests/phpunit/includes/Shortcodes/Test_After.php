@@ -78,7 +78,7 @@ class Test_After extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$content = '{@number1}. [after]Done[/after]';
 
-		$shortcode_output = do_shortcode( "[pods pod='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
+		$shortcode_output = do_shortcode( "[pods name='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
 
 		$this->assertEquals( '123. 321. Done', $shortcode_output );
 	}
@@ -109,7 +109,7 @@ class Test_After extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$content = '{@number1}. [after]Total records: {@_total}[/after]';
 
-		$shortcode_output = do_shortcode( "[pods pod='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
+		$shortcode_output = do_shortcode( "[pods name='{$pod_name}' orderby='t.ID']{$content}[/pods]" );
 
 		$this->assertEquals( '123. 321. Total Records: 2', $shortcode_output );
 	}

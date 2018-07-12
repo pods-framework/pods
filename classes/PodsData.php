@@ -1985,8 +1985,12 @@ class PodsData {
 			$id   = pods_absint( $row );
 
 			if ( ! is_numeric( $row ) || 0 === strpos( $row, '0' ) || $row != preg_replace( '/[^0-9]/', '', $row ) ) {
-				$mode = 'slug';
-				$id   = $row;
+				if ( ! is_numeric( $this->id ) ) {
+					$mode = 'slug';
+					$id   = $row;
+				} else {
+					$id = $this->id;
+				}
 			}
 
 			$row = false;

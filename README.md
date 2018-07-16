@@ -10,6 +10,8 @@
 
 [![Project Stats](https://www.openhub.net/p/pods-framework/widgets/project_thin_badge.gif)](https://www.openhub.net/p/pods-framework)
 [![Bountysource Bounties](https://api.bountysource.com/badge/tracker?tracker_id=247358)](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358)
+[![Backers on Open Collective](https://opencollective.com/podsframework/backers/badge.svg)](#backers)
+[![Sponsors on Open Collective](https://opencollective.com/podsframework/sponsors/badge.svg)](#sponsors) 
 
 **Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.**
 
@@ -46,6 +48,28 @@ There are various ways you can contribute:
 ## Donations
 
 We're able to focus more on Pods when we have some cash to help keep the lights on, want to help? [Become a Friend of Pods!](https://pods.io/friends-of-pods/)
+
+## Credits
+
+### Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+
+<a href="graphs/contributors"><img src="https://opencollective.com/podsframework/contributors.svg?width=890&button=false" /></a>
+
+### Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/podsframework#backer)]
+
+<a href="https://opencollective.com/podsframework#backers" target="_blank"><img src="https://opencollective.com/podsframework/backers.svg?width=890”></a>
+
+### Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/podsframework#sponsor)]
+
+<a href="https://opencollective.com/podsframework/sponsor/0/website" target="_blank"><img src="https://opencollective.com/podsframework/sponsor/0/avatar.svg"></a>
+
+
 
 ## Developer Notes
 

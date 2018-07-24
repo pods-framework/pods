@@ -915,11 +915,14 @@ class Pods implements Iterator {
 				$value = get_comment_link( $this->id() );
 			}
 		} elseif ( in_array( $params->name, array(
+			'_position',
 			'_total',
 			'_total_found',
 		), true ) ) {
-			// Handle total values.
-			if ( '_total' === $params->name ) {
+			// Handle special values.
+			if ( '_position' === $params->name ) {
+				$value = $this->position();
+			} elseif ( '_total' === $params->name ) {
 				$value = $this->total();
 			} elseif ( '_total_found' === $params->name ) {
 				$value = $this->total_found();

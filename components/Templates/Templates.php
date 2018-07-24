@@ -581,6 +581,8 @@ class Pods_Templates extends PodsComponent {
 
 		$code = trim( $code );
 
+		$code = apply_filters( 'pods_templates_pre_do_template', $code, $obj );
+
 		if ( false !== strpos( $code, '<?' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
 			pods_deprecated( 'Pod Template PHP code has been deprecated, please use WP Templates instead of embedding PHP.', '2.3' );
 

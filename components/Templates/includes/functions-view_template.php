@@ -1,13 +1,13 @@
 <?php
 /**
- * Utility function for processesing fromtier based templates
+ * Utility function for processing frontier based templates
  *
  * @package Pods_Frontier_Template_Editor\view_template
  */
 
 // add filters
 add_filter( 'pods_templates_post_template', 'frontier_end_template', 25, 4 );
-add_filter( 'pods_templates_do_template', 'frontier_do_shortcode', 25, 1 );
+add_filter( 'pods_templates_do_template', 'frontier_do_shortcode', 25, 3 );
 
 // template shortcode handlers
 add_shortcode( 'pod_sub_template', 'frontier_do_subtemplate' );
@@ -40,12 +40,14 @@ function frontier_get_shortcodes() {
 }
 
 /**
- * @param $content
+ * @param string $content Content.
+ * @param string $code    Template code.
+ * @param Pods   $pod     Pods object.
  *
  * @return string
  * @since 2.4.3
  */
-function frontier_do_shortcode( $content ) {
+function frontier_do_shortcode( $content, $code, $pod ) {
 
 	$content = pods_do_shortcode( $content, frontier_get_shortcodes() );
 
@@ -268,8 +270,17 @@ function frontier_template_once_blocks( $atts, $code ) {
  */
 function frontier_do_subtemplate( $atts, $content ) {
 
-	$out        = null;
-	$pod        = pods( $atts['pod'], $atts['id'] );
+	if ( empty( $atts['pod'] ) || empty( $atts['id'] ) ) {
+		return '';
+	}
+
+	$out = null;
+	$pod = pods( $atts['pod'], $atts['id'] );
+
+	if ( ! $pod || ! $pod->valid() || ! $pod->exists() || empty( $atts['field'] ) ) {
+		return '';
+	}
+
 	$field_name = $atts['field'];
 
 	$entries = $pod->field( $field_name );
@@ -461,10 +472,12 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 /**
  * processes template code within an each command from the base template
  *
- * @param array attributes from template
- * @param string template to be processed
+ * @param string $code     Template code to be processed.
+ * @param array  $template Attributes from template.
+ * @param Pods   $pod      Pod object.
  *
- * @return null
+ * @return string
+ *
  * @since 2.4.0
  */
 function frontier_prefilter_template( $code, $template, $pod ) {

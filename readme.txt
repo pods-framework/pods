@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Requires PHP: 5.3
 Tested up to: 4.9.6
-Stable tag: 2.7.6
+Stable tag: 2.7.7-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -179,6 +179,22 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.7 - July 26th 2018  =
+
+**Features/Enhancements/Improvements**
+
+* Code Quality: Disallow multiple assignments and assignment inside conditions, #5021 (@GaryJones)
+* Code Quality: WordPress.WhiteSpace.PrecisionAlignment compliance, #5026 (@GaryJones)
+* Code Quality: Use interpolation to construct all dynamic hook names, #4992 (@GaryJones)
+
+**Bug Fixes**
+
+* Fixed: 'others' capability checks for current_user_can pods_{$action}{$pod} vs pods{$action}others{$pod} capabilities, #5043 (@Ulminia, @sc0ttkclark)
+* Fixed: "Export all" button for ACTs does not work, #5005 (@pglewis)
+* Fixed: Pods Template Editor is adding two 'tabs' to the front of the template during Save. #5022 (@pglewis)
+* Fixed: Midnight (00:00) results as 'empty' in an [if][/if] Template Tag. #4999 (@pglewis)
+* Fixed: Non-internationalized string "Add Another Custom Capability". #5028 (@GaryJones, @pglewis)
 
 = 2.7.6 - June 8th 2018  =
 

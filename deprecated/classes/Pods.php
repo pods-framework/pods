@@ -147,7 +147,9 @@ class Pods_Deprecated {
 					$pick_val    = $pick_pod['name'];
 				}
 
-				$pick_table = $pick_join = $pick_where = '';
+				$pick_table = '';
+				$pick_join  = '';
+				$pick_where = '';
 
 				$pick_field_id   = 'id';
 				$pick_field_name = 'name';

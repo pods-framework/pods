@@ -58,6 +58,8 @@ class PodsField_File extends PodsField {
 			$image_sizes[ $size ] = ucwords( str_replace( '-', ' ', $size ) );
 		}
 
+		$type = static::$type;
+
 		$options = array(
 			static::$type . '_format_type'            => array(
 				'label'      => __( 'Upload Limit', 'pods' ),
@@ -74,7 +76,8 @@ class PodsField_File extends PodsField {
 				'default'    => 'attachment',
 				'type'       => 'pick',
 				'data'       => apply_filters(
-					'pods_form_ui_field_' . static::$type . '_uploader_options', array(
+					"pods_form_ui_field_{$type}_uploader_options",
+					array(
 						'attachment' => __( 'Upload and/or Select (Media Library)', 'pods' ),
 						'plupload'   => __( 'Upload only (Plupload)', 'pods' ),
 					)
@@ -122,10 +125,11 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_type'                   => array(
 				'label'      => __( 'Restrict File Types', 'pods' ),
-				'default'    => apply_filters( 'pods_form_ui_field_' . static::$type . '_type_default', 'images' ),
+				'default'    => apply_filters( "pods_form_ui_field_{$type}_type_default", 'images' ),
 				'type'       => 'pick',
 				'data'       => apply_filters(
-					'pods_form_ui_field_' . static::$type . '_type_options', array(
+					"pods_form_ui_field_{$type}_type_options",
+					array(
 						'images' => __( 'Images (jpg, jpeg, png, gif)', 'pods' ),
 						'video'  => __( 'Video (mpg, mov, flv, mp4, etc..)', 'pods' ),
 						'audio'  => __( 'Audio (mp3, m4a, wav, wma, etc..)', 'pods' ),
@@ -140,17 +144,18 @@ class PodsField_File extends PodsField {
 				'label'       => __( 'Allowed File Extensions', 'pods' ),
 				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
 				'depends-on'  => array( static::$type . '_type' => 'other' ),
-				'default'     => apply_filters( 'pods_form_ui_field_' . static::$type . '_extensions_default', '' ),
+				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
 				'type'        => 'text',
 			),
 			static::$type . '_field_template'         => array(
 				'label'      => __( 'List Style', 'pods' ),
 				'help'       => __( 'You can choose which style you would like the files to appear within the form.', 'pods' ),
 				'depends-on' => array( static::$type . '_type' => 'images' ),
-				'default'    => apply_filters( 'pods_form_ui_field_' . static::$type . '_template_default', 'rows' ),
+				'default'    => apply_filters( "pods_form_ui_field_{$type}_template_default", 'rows' ),
 				'type'       => 'pick',
 				'data'       => apply_filters(
-					'pods_form_ui_field_' . static::$type . '_type_templates', array(
+					"pods_form_ui_field_{$type}_type_templates",
+					array(
 						'rows'  => __( 'Rows', 'pods' ),
 						'tiles' => __( 'Tiles', 'pods' ),
 					)
@@ -652,7 +657,8 @@ class PodsField_File extends PodsField {
 			$value = array( $value );
 		}
 
-		$image_size = apply_filters( 'pods_form_ui_field_' . static::$type . '_ui_image_size', 'thumbnail', $id, $value, $name, $options, $pod );
+		$type       = static::$type;
+		$image_size = apply_filters( "pods_form_ui_field_{$type}_ui_image_size", 'thumbnail', $id, $value, $name, $options, $pod );
 
 		return $this->images( $id, $value, $name, $options, $pod, $image_size );
 
@@ -710,7 +716,7 @@ class PodsField_File extends PodsField {
 			$data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_image_sizes', $data, $name, $value, $options, $pod, $id );
 
 	}
 

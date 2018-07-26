@@ -850,10 +850,9 @@ class PodsMigrate {
 	}
 
 	/*
-	* The real enchilada!
-	*/
-	/*
-	 EXAMPLES
+	The real enchilada!
+
+	EXAMPLES
 	//// minimal import (if your fields match on both your pods and tables)
 	$import = array('my_pod' => array('table' => 'my_table')); // if your table name doesn't match the pod name
 	$import = array('my_pod'); // if your table name matches your pod name

@@ -20,6 +20,9 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
+## Pods Version
+Please provide the version of Pods you are running: 
+
 ## WordPress Environment
 <!-- This is REQUIRED for Bug Reports, so we can check for conflicts, version issues, etc. -->
 <details>
@@ -42,3 +45,4 @@ Add any other context about the problem here.
 
 **Possible Workaround**
 If you have discovered a workaround, please include it below.
+

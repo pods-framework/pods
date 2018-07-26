@@ -165,7 +165,8 @@ class PodsField_Time extends PodsField_DateTime {
 	 */
 	public function is_empty( $value = null ) {
 
-		return empty( trim ( $value ) );
+		$value = trim ( $value );
+		return empty( $value );
 	}
 
 	/**

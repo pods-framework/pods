@@ -180,6 +180,8 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.9 - {Date}  =
+
 = 2.7.8 - July 26th 2018  =
 
 * Hotfix: Time field generates a fatal error on PHP prior to 5.5, #5079 (@davegaeddert)

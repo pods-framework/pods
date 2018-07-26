@@ -180,6 +180,22 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.7 - July 26th 2018  =
+
+**Features/Enhancements/Improvements**
+
+* Code Quality: Disallow multiple assignments and assignment inside conditions, #5021 (@GaryJones)
+* Code Quality: WordPress.WhiteSpace.PrecisionAlignment compliance, #5026 (@GaryJones)
+* Code Quality: Use interpolation to construct all dynamic hook names, #4992 (@GaryJones)
+
+**Bug Fixes**
+
+* Fixed: 'others' capability checks for current_user_can pods_{$action}{$pod} vs pods{$action}others{$pod} capabilities, #5043 (@Ulminia, @sc0ttkclark)
+* Fixed: "Export all" button for ACTs does not work, #5005 (@pglewis)
+* Fixed: Pods Template Editor is adding two 'tabs' to the front of the template during Save. #5022 (@pglewis)
+* Fixed: Midnight (00:00) results as 'empty' in an [if][/if] Template Tag. #4999 (@pglewis)
+* Fixed: Non-internationalized string "Add Another Custom Capability". #5028 (@GaryJones, @pglewis)
+
 = 2.7.6 - June 8th 2018  =
 
 * Fixed: Records added modally via DFV's 'Add New' are not selected and don't refresh list view in 2.7.5, #5014 (@sc0ttkclark, @pglewis)

@@ -49,6 +49,9 @@ function frontier_get_shortcodes() {
  */
 function frontier_do_shortcode( $content, $code, $pod ) {
 
+	// Save root pod for reuse.
+	frontier_get_pod_from_level( 'root', $pod );
+
 	$content = pods_do_shortcode( $content, frontier_get_shortcodes() );
 
 	return $content;
@@ -64,10 +67,9 @@ function frontier_do_shortcode( $content, $code, $pod ) {
  * @return string
  * @since 2.4.0
  */
-function frontier_decode_template( $code, $atts ) {
+function frontier_decode_template( $code, $atts, $do_magic_tags = false ) {
 
 	$code = base64_decode( $code );
-	$pod  = pods( $atts['pod'] );
 
 	if ( isset( $atts['pod'] ) ) {
 		$code = str_replace( '@pod', $atts['pod'], $code );
@@ -77,6 +79,24 @@ function frontier_decode_template( $code, $atts ) {
 	}
 	if ( isset( $atts['index'] ) ) {
 		$code = str_replace( '{_index}', $atts['index'], $code );
+	}
+
+	if ( $do_magic_tags && ! empty( $atts['pod'] ) ) {
+		var_dump( $atts );
+		if ( ! empty( $atts['level'] ) ) {
+			// Get root pod for use.
+			$pod = frontier_get_pod_from_level( $atts['level'] );
+		} elseif ( ! empty( $atts['id'] ) ) {
+			// Setup pod for use.
+			$pod = pods( $atts['pod'], $atts['id'] );
+		} else {
+			// Setup pod for use.
+			$pod = pods( $atts['pod'] );
+		}
+
+		if ( $pod && $pod->valid() ) {
+			$code = $pod->do_magic_tags( $code );
+		}
 	}
 
 	return $code;
@@ -238,25 +258,23 @@ function frontier_template_blocks( $atts, $code, $slug ) {
  */
 function frontier_template_once_blocks( $atts, $code ) {
 
-	global $frontier_once_hashes;
-
-	if ( ! isset( $frontier_once_hashes ) ) {
-		$frontier_once_hashes = array();
-	}
+	static $hashes = array();
 
 	$id = '';
 
-	if ( ! empty( $atts['id'] ) ) {
-		$id = $atts['id'];
+	if ( empty( $atts['index'] ) && ! empty( $atts['pod'] ) && ! empty( $atts['id'] ) ) {
+		$id = '|' . $atts['pod'] . '|' . $atts['id'];
 	}
 
-	$blockhash = md5( trim( $code . $id ) );
-	if ( in_array( $blockhash, $frontier_once_hashes, true ) ) {
+	$blockhash = md5( trim( $code ) . $id );
+
+	if ( in_array( $blockhash, $hashes, true ) ) {
 		return '';
 	}
-	$frontier_once_hashes[] = $blockhash;
 
-	return pods_do_shortcode( frontier_decode_template( $code, $atts ), frontier_get_shortcodes() );
+	$hashes[] = $blockhash;
+
+	return pods_do_shortcode( frontier_decode_template( $code, $atts, true ), frontier_get_shortcodes() );
 }
 
 /**
@@ -284,98 +302,101 @@ function frontier_do_subtemplate( $atts, $content ) {
 	$field_name = $atts['field'];
 
 	$entries = $pod->field( $field_name );
-	if ( ! empty( $entries ) ) {
-		$entries = (array) $entries;
 
-		$field = $pod->fields[ $field_name ];
-		// Object types that could be Pods
-		$object_types = array( 'post_type', 'pod' );
+	if ( empty( $entries ) ) {
+		return '';
+	}
 
-		/**
-		 * Note on the change below for issue #3018:
-		 * ... || 'taxonomy' == $pod->fields[ $atts[ 'field' ] ][ 'type' ]
-		 *
-		 * calling field() above for a taxonomy object field will populate
-		 * $pod->fields[ $field_name ] for the object field's data, in this
-		 * case a taxonomy object field. Without calling
-		 * $pod->field( $field_name ), it would not normally be available in
-		 * the $pod->fields array and is something to not expect to be there in
-		 * 3.0 as this was unintentional.
-		 */
-		if ( in_array( $field['pick_object'], $object_types, true ) || 'taxonomy' == $field['type'] ) {
-			// Match any Pod object or taxonomy
-			foreach ( $entries as $key => $entry ) {
-				$subpod = pods( $field['pick_val'] );
+	$entries = (array) $entries;
 
-				$subatts = array(
-					'id'  => $entry[ $subpod->api->pod_data['field_id'] ],
-					'pod' => $field['pick_val'],
-				);
+	$field = $pod->fields[ $field_name ];
+	// Object types that could be Pods
+	$object_types = array( 'post_type', 'pod' );
 
-				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
-				$template = str_replace( '{_index}', $key, $template );
-				$template = str_replace( '{@' . $field_name . '.', '{@', $template );
+	/**
+	 * Note on the change below for issue #3018:
+	 * ... || 'taxonomy' == $pod->fields[ $atts[ 'field' ] ][ 'type' ]
+	 *
+	 * calling field() above for a taxonomy object field will populate
+	 * $pod->fields[ $field_name ] for the object field's data, in this
+	 * case a taxonomy object field. Without calling
+	 * $pod->field( $field_name ), it would not normally be available in
+	 * the $pod->fields array and is something to not expect to be there in
+	 * 3.0 as this was unintentional.
+	 */
+	if ( in_array( $field['pick_object'], $object_types, true ) || 'taxonomy' == $field['type'] ) {
+		// Match any Pod object or taxonomy
+		foreach ( $entries as $key => $entry ) {
+			$subpod = pods( $field['pick_val'] );
 
-				// Kludge to work with taxonomies, pending a better solution: see issue #3018
-				$target_id = null;
-				if ( isset( $entry['ID'] ) ) {
-					$target_id = $entry['ID'];
-				} elseif ( isset( $entry['id'] ) ) {
-					// Advanced Content Types have lowercase 'id'
-					$target_id = $entry['id'];
-				} elseif ( isset( $entry['term_id'] ) ) {
-					$target_id = $entry['term_id'];
-				}
+			$subatts = array(
+				'id'  => $entry[ $subpod->api->pod_data['field_id'] ],
+				'pod' => $field['pick_val'],
+			);
 
-				$out .= pods_shortcode(
-					array(
-						'name'  => $field['pick_val'],
-						'slug'  => $target_id,
-						'index' => $key,
-					), $template
-				);
+			$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
+			$template = str_replace( '{_index}', $key, $template );
+			$template = str_replace( '{@' . $field_name . '.', '{@', $template );
 
-			}//end foreach
-		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] && 'multi' == $field['options']['file_format_type'] ) {
+			// Kludge to work with taxonomies, pending a better solution: see issue #3018
+			$target_id = null;
+			if ( isset( $entry['ID'] ) ) {
+				$target_id = $entry['ID'];
+			} elseif ( isset( $entry['id'] ) ) {
+				// Advanced Content Types have lowercase 'id'
+				$target_id = $entry['id'];
+			} elseif ( isset( $entry['term_id'] ) ) {
+				$target_id = $entry['term_id'];
+			}
+
+			$out .= pods_shortcode(
+				array(
+					'name'  => $field['pick_val'],
+					'slug'  => $target_id,
+					'index' => $key,
+				), $template
+			);
+
+		}//end foreach
+	} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] && 'multi' == $field['options']['file_format_type'] ) {
+		$template = frontier_decode_template( $content, $atts );
+		foreach ( $entries as $key => $entry ) {
+			$content = str_replace( '{_index}', $key, $template );
+			$content = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $content );
+			$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $content );
+			$content = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $content );
+			$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
+
+			$out .= pods_do_shortcode( $pod->do_magic_tags( $content ), frontier_get_shortcodes() );
+		}
+	} elseif ( isset( $field['table_info'], $field['table_info']['pod'] ) ) {
+		// Relationship to something that is extended by Pods
+		$entries = $pod->field( array( 'name' => $field_name, 'output' => 'pod' ) );
+		foreach ( $entries as $key => $entry ) {
+			$subatts = array(
+				'id' => $entry->id,
+				'pod' => $entry->pod,
+			);
+
+			$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
+			$template = str_replace( '{_index}', $key, $template );
+			$template = str_replace( '{@' . $field_name . '.', '{@', $template );
+
+			$out .= pods_do_shortcode( $entry->do_magic_tags( $template ), frontier_get_shortcodes() );
+		}
+	} else {
+		// Relationship to something other than a Pod (ie: user)
+		foreach ( $entries as $key => $entry ) {
 			$template = frontier_decode_template( $content, $atts );
-			foreach ( $entries as $key => $entry ) {
-				$content = str_replace( '{_index}', $key, $template );
-				$content = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $content );
-				$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $content );
-				$content = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $content );
-				$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
-
-				$out .= pods_do_shortcode( $pod->do_magic_tags( $content ), frontier_get_shortcodes() );
-			}
-		} elseif ( isset( $field['table_info'], $field['table_info']['pod'] ) ) {
-			// Relationship to something that is extended by Pods
-			$entries = $pod->field( array( 'name' => $field_name, 'output' => 'pod' ) );
-			foreach ( $entries as $key => $entry ) {
-				$subatts = array(
-					'id' => $entry->id,
-					'pod' => $entry->pod,
+			$template = str_replace( '{_index}', $key, $template );
+			if ( ! is_array( $entry ) ) {
+				$entry = array(
+					'_key'   => $key,
+					'_value' => $entry,
 				);
-
-				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
-				$template = str_replace( '{_index}', $key, $template );
-				$template = str_replace( '{@' . $field_name . '.', '{@', $template );
-
-				$out .= pods_do_shortcode( $entry->do_magic_tags( $template ), frontier_get_shortcodes() );
 			}
-		} else {
-			// Relationship to something other than a Pod (ie: user)
-			foreach ( $entries as $key => $entry ) {
-				$template = frontier_decode_template( $content, $atts );
-				$template = str_replace( '{_index}', $key, $template );
-				if ( ! is_array( $entry ) ) {
-					$entry = array(
-						'_key'   => $key,
-						'_value' => $entry,
-					);
-				}
-				$out .= pods_do_shortcode( frontier_pseudo_magic_tags( $template, $entry, $pod ), frontier_get_shortcodes() );
-			}
-		}//end if
+			$out .= pods_do_shortcode( frontier_pseudo_magic_tags( $template, $entry, $pod ), frontier_get_shortcodes() );
+		}
 	}//end if
 
 	return pods_do_shortcode( $out, frontier_get_shortcodes() );
@@ -455,7 +476,7 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 				$value = pods_serial_comma(
 					$value, array(
 						'field'  => $field_name,
-						'fields' => $this->fields,
+						'fields' => $pod->fields,
 					)
 				);
 			}
@@ -467,6 +488,32 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 			return '';
 		}, $template
 	);
+}
+
+/**
+ * Get pod from level.
+ *
+ * @param string $level Level of pod to get.
+ * @param null   $pod   Pod to use to set the level.
+ *
+ * @return Pods|null The pod object or null if pod level not found.
+ *
+ * @since TBD
+ */
+function frontier_get_pod_from_level( $level, $pod = null ) {
+
+	static $pods = array();
+
+	if ( $pod ) {
+		$pods[ $level ] = $pod;
+	}
+
+	if ( ! empty( $pods[ $level ] ) ) {
+		return $pods[ $level ];
+	}
+
+	return null;
+
 }
 
 /**
@@ -506,6 +553,9 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 	 * @since 1.0.0
 	 */
 	$commands = apply_filters( 'pods_frontier_template_commands', $commands );
+
+	// Save root pod for reuse.
+	frontier_get_pod_from_level( 'root', $pod );
 
 	$aliases = array();
 	foreach ( $commands as $command => $shortcode ) {
@@ -547,7 +597,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 					$newtag              = $shortcode . '__' . $key;
 					$tags[ $indexCount ] = $newtag;
 					$aliases[]           = $newtag;
-					$code                = preg_replace( '/(' . preg_quote( $tag ) . ')/m', '[' . $newtag . $atts . ' index="{_index}"]', $code, 1 );
+					$code                = preg_replace( '/(' . preg_quote( $tag ) . ')/m', '[' . $newtag . $atts . ' index="{@_position}" level="root"]', $code, 1 );
 					$indexCount ++;
 				} else {
 					// close tag

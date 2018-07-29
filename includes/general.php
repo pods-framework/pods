@@ -1007,8 +1007,9 @@ function pods_shortcode( $tags, $content = null ) {
 	 *
 	 * @param string $return Shortcode output to return.
 	 * @param array  $tags   Shortcode attributes.
+	 * @param Pods   $pod    Pods object.
 	 */
-	$return = apply_filters( 'pods_shortcode_output', $return, $tags );
+	$return = apply_filters( 'pods_shortcode_output', $return, $tags, $pod );
 
 	return $return;
 }

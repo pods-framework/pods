@@ -788,6 +788,7 @@ class Pods implements Iterator {
 			'get_meta'    => false,
 			'output'      => null,
 			'deprecated'  => false,
+			'keyed'       => false,
 			// extra data to send to field handlers.
 			'args'        => array(),
 		);
@@ -1830,7 +1831,7 @@ class Pods implements Iterator {
 									}
 
 									$value = PodsForm::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[ $pod ], 0, true );
-								} elseif ( false === $params->in_form && ! empty( $value ) && is_array( $value ) ) {
+								} elseif ( false === $params->in_form && ! empty( $value ) && is_array( $value ) && false === $params->keyed ) {
 									$value = array_values( $value );
 								}
 

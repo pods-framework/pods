@@ -182,6 +182,8 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 = 2.7.9 - {Date}  =
 
+Added: Support for Pods::fields() argument keyed which when set to true will return the array for relationship fields with the IDs used as keys, #5092 (@sc0ttkclark)
+
 = 2.7.8 - July 26th 2018  =
 
 * Hotfix: Time field generates a fatal error on PHP prior to 5.5, #5079 (@davegaeddert)

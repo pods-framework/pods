@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Requires PHP: 5.3
 Tested up to: 4.9.6
-Stable tag: 2.7.8
+Stable tag: 2.7.9-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -179,6 +179,17 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.9 - August 9th 2018  =
+
+**Features/Enhancements**
+
+* Added: Support for Pods::fields() argument keyed which when set to true will return the array for relationship fields with the IDs used as keys, #5092 (@sc0ttkclark)
+* Added: pods_shortcode_output filter to allow customization of shortcode output based on shortcode attributes, #5083 (@sc0ttkclark)
+
+** Bug Fixes**
+
+* Fixed: Fix compatibility issue with Polylang & WPML when getting the current language from the edit post and edit tax pages. #5060 (JoryHogeveen)
 
 = 2.7.8 - July 26th 2018  =
 

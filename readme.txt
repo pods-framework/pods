@@ -183,6 +183,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 = 2.7.9 - {Date}  =
 
 Added: Support for Pods::fields() argument keyed which when set to true will return the array for relationship fields with the IDs used as keys, #5092 (@sc0ttkclark)
+Added: pods_shortcode_output filter to allow customization of shortcode output based on shortcode attributes, #5083 (@sc0ttkclark)
 
 = 2.7.8 - July 26th 2018  =
 

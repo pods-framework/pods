@@ -911,6 +911,12 @@ class PodsMeta {
 	 */
 	public function groups_get( $type, $name, $default_fields = null ) {
 
+		static $groups_cache = array();
+
+		if ( isset( $groups_cache[ $type . '/' . $name ] ) ) {
+			return $groups_cache[ $type . '/' . $name ];
+		}
+
 		if ( 'post_type' == $type && 'attachment' == $name ) {
 			$type = 'media';
 			$name = 'media';
@@ -970,7 +976,9 @@ class PodsMeta {
 		}
 
 		if ( $pod['type'] != $type ) {
-			return array();
+			$groups_cache[ $type . '/' . $name ] = array();
+
+			return $groups_cache[ $type . '/' . $name ];
 		}
 
 		$groups = array(
@@ -1009,7 +1017,11 @@ class PodsMeta {
 		 *
 		 * @since 2.6.6
 		 */
-		return apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
+		$groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
+
+		$groups_cache[ $type . '/' . $name ] = $groups;
+
+		return $groups_cache[ $type . '/' . $name ];
 	}
 
 	/**

@@ -4,7 +4,7 @@
     "sourceType": "module"
   },
 
-  "extends": ["wordpress"],
+  "extends": ["wordpress", "plugin:react/recommended"],
 
   "rules": {
     "object-curly-spacing": ["error", "always"],

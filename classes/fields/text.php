@@ -145,7 +145,18 @@ class PodsField_Text extends PodsField {
 			$options['readonly'] = true;
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
+		//--DFV test
+
+		$options = (array) $options;
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+		wp_enqueue_script( 'pods-dfv' );
+		$this->render_input_script( $args );
+
+		//pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
 	/**

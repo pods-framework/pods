@@ -323,6 +323,11 @@ class PodsInit {
 			), '3.1.0', true
 		);
 
+		wp_register_script('react', 'https://unpkg.com/react@16/umd/react.development.js', array(), '', true);
+		wp_script_add_data( 'react', 'crossorigin' , 'anonymous' );
+		wp_register_script('react-dom', 'https://unpkg.com/react-dom@16/umd/react-dom.development.js', array(), '', true);
+		wp_script_add_data( 'react-dom', 'crossorigin' , 'anonymous' );
+
 		// MV stuff
 		wp_register_script(
 			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js', array(
@@ -330,6 +335,8 @@ class PodsInit {
 				'jquery-ui-core',
 				'jquery-ui-sortable',
 				'pods-i18n',
+				'react',
+				'react-dom',
 				'marionette',
 				'media-views',
 				'media-models',

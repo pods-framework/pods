@@ -23,9 +23,7 @@ export default {
 			'jquery': 'jQuery',
 			'_': '_',
 			'backbone': 'Backbone',
-			'backbone.marionette': 'Marionette',
-			'react': 'React',
-			'react-dom': 'ReactDOM'
+			'backbone.marionette': 'Marionette'
 		},
 		sourcemap: true
 	},

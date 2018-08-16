@@ -525,7 +525,8 @@ class PodsUI {
 		// @todo This is also done in setup(), maybe a better / more central way?
 		if ( is_object( $this->pod ) && ! empty( $this->pod->pod_data['options'] ) ) {
 			$pod_options = $this->pod->pod_data['options'];
-			$pod_options = apply_filters( 'pods_advanced_content_type_pod_data_' . $this->pod->pod_data['name'], $pod_options, $this->pod->pod_data['name'] );
+			$pod_name    = $this->pod->pod_data['name'];
+			$pod_options = apply_filters( "pods_advanced_content_type_pod_data_{$pod_name}", $pod_options, $this->pod->pod_data['name'] );
 			$pod_options = apply_filters( 'pods_advanced_content_type_pod_data', $pod_options, $this->pod->pod_data['name'] );
 
 			$this->label = array_merge( $this->label, $pod_options );
@@ -1025,7 +1026,8 @@ class PodsUI {
 
 		if ( is_object( $this->pod ) ) {
 			$pod_data = $this->pod->pod_data;
-			$pod_data = apply_filters( 'pods_advanced_content_type_pod_data_' . $this->pod->pod_data['name'], $pod_data, $this->pod->pod_data['name'] );
+			$pod_name = $this->pod->pod_data['name'];
+			$pod_data = apply_filters( "pods_advanced_content_type_pod_data_{$pod_name}", $pod_data, $this->pod->pod_data['name'] );
 			$pod_data = apply_filters( 'pods_advanced_content_type_pod_data', $pod_data, $this->pod->pod_data['name'] );
 
 			$this->label = array_merge( $this->label, $pod_data['options'] );
@@ -3147,20 +3149,17 @@ class PodsUI {
 					</form>
 				<?php
 					} elseif ( ! in_array( 'export', $this->actions_disabled ) && ! in_array( 'export', $this->actions_hidden ) ) {
+						$export_document_location = pods_slash(
+							pods_query_arg(
+								array(
+									'action_bulk' . $this->num => 'export',
+									'_wpnonce' => wp_create_nonce( 'pods-ui-action-bulk' ),
+								), self::$allowed, $this->exclusion()
+							)
+						);
 						?>
 						<div class="alignleft actions">
-							<input type="button" value="<?php echo esc_attr( sprintf( __( 'Export all %s', 'pods' ), $this->items ) ); ?>" class="button" onclick="document.location=';
-																	<?php
-																	echo pods_slash(
-																		pods_query_arg(
-																			array(
-																				'action_bulk' . $this->num => 'export',
-																				'_wpnonce' => wp_create_nonce( 'pods-ui-action-bulk' ),
-																			), self::$allowed, $this->exclusion()
-																		)
-																	);
-							?>
-							';" />
+							<input type="button" value="<?php echo esc_attr( sprintf( __( 'Export all %s', 'pods' ), $this->items ) ); ?>" class="button" onclick="document.location='<?php echo $export_document_location; ?>';" />
 						</div>
 						<?php
 					}//end if
@@ -4929,14 +4928,14 @@ class PodsUI {
 				if ( pods_is_admin( array( 'pods', 'pods_content' ) ) ) {
 					$restricted = false;
 				} elseif ( 'manage' === $action ) {
-					if ( ! in_array( 'edit', $this->actions_disabled ) && current_user_can( 'pods_edit_' . $this->pod->pod ) && current_user_can( 'pods_edit_others_' . $this->pod->pod ) ) {
+					if ( ! in_array( 'edit', $this->actions_disabled ) && ( current_user_can( 'pods_edit_' . $this->pod->pod ) || current_user_can( 'pods_edit_others_' . $this->pod->pod ) ) ) {
 						$restricted = false;
-					} elseif ( ! in_array( 'delete', $this->actions_disabled ) && current_user_can( 'pods_delete_' . $this->pod->pod ) && current_user_can( 'pods_delete_others_' . $this->pod->pod ) ) {
+					} elseif ( ! in_array( 'delete', $this->actions_disabled ) && ( current_user_can( 'pods_delete_' . $this->pod->pod ) || current_user_can( 'pods_delete_others_' . $this->pod->pod ) ) ) {
 						$restricted = false;
-					} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) && current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
+					} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) || current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
 						$restricted = false;
 					}
-				} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) && current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
+				} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) || current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
 					$restricted = false;
 				}
 			}//end if

@@ -32,10 +32,18 @@ module.exports = function ( grunt ) {
 		'!package.json',
 		'!package-lock.json',
 		'!phpcs.ruleset.xml',
+		'!phpcs.xml',
+		'!phpcs.xml.dist',
 		'!phpunit.xml.dist',
 		'!README.md',
+		'!phpcs-report-full.txt',
 		'!report-full.txt',
+		'!report-full-2.7.txt',
+		'!report-full-after.txt',
+		'!phpcs-report-source.txt',
 		'!report-source.txt',
+		'!report-source-2.7.txt',
+		'!report-source-after.txt',
 		'!rollup.config.js'
 	];
 

@@ -182,7 +182,7 @@ class PodsAdmin {
 		 *
 		 * @since 2.7.10
 		 */
-		if ( apply_filters( 'pods_default_enqueue_dfv', is_admin() ) ) {
+		if ( apply_filters( 'pods_default_enqueue_dfv', true ) ) {
 			wp_enqueue_script( 'pods-dfv' );
 		}
 

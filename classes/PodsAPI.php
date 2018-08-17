@@ -156,6 +156,8 @@ class PodsAPI {
 		}
 
 		if ( $sanitized ) {
+//--!! Hardcoded here just for proof of concept, proper fix TBD
+			$meta = pods_sanitize( $meta );
 			$data = pods_unsanitize( $data );
 			$meta = pods_unsanitize( $meta );
 		}
@@ -340,7 +342,8 @@ class PodsAPI {
 						add_post_meta( $id, $meta_key, $value );
 					}
 				} else {
-					update_post_meta( $id, $meta_key, $meta_value );
+//--!! Hardcoded here just for proof of concept, proper fix TBD
+					update_post_meta( $id, $meta_key, wp_slash( $meta_value ) );
 				}
 			}
 		}

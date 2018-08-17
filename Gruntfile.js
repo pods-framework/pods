@@ -148,14 +148,6 @@ module.exports = function ( grunt ) {
 				} ]
 
 			},
-			branchfix_master_init_php   : {
-				src         : [ 'init.php' ],
-				overwrite   : true,
-				replacements: [ {
-					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
-					to  : "GitHub Branch: master"
-				} ]
-			},
 			branchfix_2x_readme_md      : {
 				src         : [ 'README.md' ],
 				overwrite   : true,
@@ -171,36 +163,20 @@ module.exports = function ( grunt ) {
 				} ]
 
 			},
-			branchfix_2x_init_php       : {
-				src         : [ 'init.php' ],
-				overwrite   : true,
-				replacements: [ {
-					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
-					to  : "GitHub Branch: 2.x"
-				} ]
-			},
 			branchfix_release_readme_md : {
 				src         : [ 'README.md' ],
 				overwrite   : true,
 				replacements: [ {
 					from: /\?branch=(release\/|)([\.\d\w\-]*)/g,
-					to  : "?branch=release/2.7"
+					to  : "?branch=release/2.8"
 				}, {
 					from: /\?b=(release\/|)([\.\d\w\-]*)/g,
-					to  : "?b=release/2.7"
+					to  : "?b=release/2.8"
 				}, {
 					from: /\/blob\/(release\/|)([\.\d\w\-]*)\//g,
-					to  : "/blob/release/2.7/"
+					to  : "/blob/release/2.8/"
 				} ]
 
-			},
-			branchfix_release_init_php  : {
-				src         : [ 'init.php' ],
-				overwrite   : true,
-				replacements: [ {
-					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
-					to  : "GitHub Branch: release/2.7"
-				} ]
 			}
 		},
 
@@ -248,9 +224,9 @@ module.exports = function ( grunt ) {
 	} );
 
 	// branch related tasks
-	grunt.registerTask( 'branch_name_master', [ 'replace:branchfix_master_readme_md', 'replace:branchfix_master_init_php' ] );
-	grunt.registerTask( 'branch_name_2x', [ 'replace:branchfix_2x_readme_md', 'replace:branchfix_2x_init_php' ] );
-	grunt.registerTask( 'branch_name_release', [ 'replace:branchfix_release_readme_md', 'replace:branchfix_release_init_php' ] );
+	grunt.registerTask( 'branch_name_master', [ 'replace:branchfix_master_readme_md' ] );
+	grunt.registerTask( 'branch_name_2x', [ 'replace:branchfix_2x_readme_md' ] );
+	grunt.registerTask( 'branch_name_release', [ 'replace:branchfix_release_readme_md' ] );
 
 	// release tasks
 	grunt.registerTask( 'version_number', [ 'replace:version_readme_txt', 'replace:version_init_php' ] );

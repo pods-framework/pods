@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Requires PHP: 5.3
 Tested up to: 4.9.6
-Stable tag: 2.7.10-a-1
+Stable tag: 2.8.0-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -179,6 +179,10 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.10 - {DATE} =
+
+
 
 = 2.7.9 - August 9th 2018  =
 

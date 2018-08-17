@@ -51,7 +51,10 @@ export default {
 				[ 'env', { modules: false } ],
 				[ 'react' ]
 			],
-			plugins: [ 'external-helpers' ]
+			plugins: [
+				'transform-object-rest-spread',
+				'external-helpers'
+			]
 		} ),
 		uglify()
 	]

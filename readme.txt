@@ -187,7 +187,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 ** Bug Fixes**
 
 * Fixed: Use minified versions of Backbone.Marionette and Backbone.Radio, #5115
-
+* Fixed: Always enqueue the DFV script by default if in the admin, #5111 (@pglewis, @sc0ttkclark)
 
 = 2.7.9 - August 9th 2018  =
 

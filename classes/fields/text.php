@@ -146,10 +146,14 @@ class PodsField_Text extends PodsField {
 		}
 
 		wp_enqueue_script( 'pods-dfv' );
+
 		$type = pods_v( 'type', $options, static::$type );
+		
 		$args = compact( array_keys( get_defined_vars() ) );
 		$args = (object) $args;
+
 		$this->render_input_script( $args );
+
 	}
 
 	/**

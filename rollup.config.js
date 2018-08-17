@@ -31,9 +31,7 @@ export default {
 		'jquery',
 		'_',
 		'backbone',
-		'backbone.marionette',
-		'react',
-		'react-dom'
+		'backbone.marionette'
 	],
 	plugins: [
 		includePaths( includePathOptions ),

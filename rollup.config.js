@@ -21,7 +21,7 @@ export default {
 		name: 'PodsDFV', // One single object added to the global namespace
 		globals: {
 			'jquery': 'jQuery',
-			'_': '_',
+			'underscore': '_',
 			'backbone': 'Backbone',
 			'backbone.marionette': 'Marionette'
 		},
@@ -29,7 +29,7 @@ export default {
 	},
 	external: [
 		'jquery',
-		'_',
+		'underscore',
 		'backbone',
 		'backbone.marionette'
 	],

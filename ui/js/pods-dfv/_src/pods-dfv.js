@@ -1,8 +1,10 @@
 import jQuery from 'jquery';
 import { mnRenderer } from 'pods-dfv/_src/core/renderers/mn-renderer';
+import { reactRenderer } from 'pods-dfv/_src/core/renderers/react-renderer';
 
 import * as fields from 'pods-dfv/_src/field-manifest';
 import * as models from 'pods-dfv/_src/model-manifest';
+
 
 const INIT_TARGETS = '.pods-form-ui-field';           // Where to look for scripts
 const SCRIPT_TARGET = 'script.pods-dfv-field-data';   // What scripts to look for
@@ -19,6 +21,10 @@ const fieldClasses =  {
 	'pick': {
 		FieldClass: fields.Pick,
 		renderer: mnRenderer
+	},
+	'text': {
+		FieldClass: fields.PodsDFVText,
+		renderer: reactRenderer
 	}
 };
 

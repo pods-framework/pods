@@ -21,7 +21,7 @@ export default {
 		name: 'PodsDFV', // One single object added to the global namespace
 		globals: {
 			'jquery': 'jQuery',
-			'_': '_',
+			'underscore': '_',
 			'backbone': 'Backbone',
 			'backbone.marionette': 'Marionette'
 		},
@@ -29,11 +29,9 @@ export default {
 	},
 	external: [
 		'jquery',
-		'_',
+		'underscore',
 		'backbone',
-		'backbone.marionette',
-		'react',
-		'react-dom'
+		'backbone.marionette'
 	],
 	plugins: [
 		includePaths( includePathOptions ),
@@ -53,7 +51,10 @@ export default {
 				[ 'env', { modules: false } ],
 				[ 'react' ]
 			],
-			plugins: [ 'external-helpers' ]
+			plugins: [
+				'transform-object-rest-spread',
+				'external-helpers'
+			]
 		} ),
 		uglify()
 	]

@@ -174,6 +174,18 @@ class PodsAdmin {
 			}//end if
 		}//end if
 
+		/**
+		 * Filter to disable default loading of the DFV script. By default, Pods
+		 * will always enqueue the DFV script if is_admin()
+		 *
+		 * @param bool Whether or not to enqueue by default
+		 *
+		 * @since 2.7.10
+		 */
+		if ( apply_filters( 'pods_default_enqueue_dfv', true ) ) {
+			wp_enqueue_script( 'pods-dfv' );
+		}
+
 		// New Styles Enqueue
 		wp_enqueue_style( 'pods-styles' );
 	}

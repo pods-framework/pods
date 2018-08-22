@@ -72,6 +72,7 @@ export const CheckboxView = PodsFieldListView.extend( {
 	onChildviewToggleSelected: function ( childView ) {
 
 		childView.model.toggleSelected();
+		childView.getUI( 'checkbox' ).trigger( 'change' );
 
 		// Dynamically enforce selection limit
 		if ( this.validateSelectionLimit() ) {

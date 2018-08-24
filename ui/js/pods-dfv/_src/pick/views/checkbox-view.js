@@ -54,6 +54,8 @@ export const CheckboxView = PodsFieldListView.extend( {
 		'toggle:selected': 'onChildviewToggleSelected'
 	},
 
+	debounceTimeout: null,
+
 	/**
 	 *
 	 */
@@ -72,7 +74,9 @@ export const CheckboxView = PodsFieldListView.extend( {
 	onChildviewToggleSelected: function ( childView ) {
 
 		childView.model.toggleSelected();
-		childView.getUI( 'checkbox' ).trigger( 'change' );
+
+		// Media items edited in grid mode need a change event triggered for saves
+		this.triggerChangeDebounced( childView );
 
 		// Dynamically enforce selection limit
 		if ( this.validateSelectionLimit() ) {
@@ -80,6 +84,20 @@ export const CheckboxView = PodsFieldListView.extend( {
 		} else {
 			this.selectionLimitOver();
 		}
+	},
+
+	/**
+	 * Fire change events for media items edited in grid mode, debounced to
+	 * cut back on ajax requests when there are rapid changes
+	 *
+	 * @param childView
+	 */
+	triggerChangeDebounced: function( childView ) {
+
+		clearTimeout( this.debounceTimeout );
+		this.debounceTimeout = setTimeout( () => {
+			childView.getUI( 'checkbox' ).trigger( 'change' );
+		}, 750 );
 	},
 
 	/**

@@ -124,6 +124,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						if ( ! empty( $dependencies['classes'] ) ) {
 							$default_class .= ' ' . $dependencies['classes'];
 						}
+						$dep_data = $dependencies['data'];
 
 						/**
 						 * Filter the html class used on form field list item element.
@@ -135,7 +136,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						 */
 						$html_class = apply_filters( 'pods_form_html_class', 'pods-field-html-class', $field ) . $default_class;
 				?>
-					<li class="pods-field <?php echo esc_attr( $html_class, true ); ?>">
+					<li class="pods-field <?php echo esc_attr( $html_class, true ); ?>" <?php PodsForm::data( $dep_data ); ?>>
 						<div class="pods-field-label">
 							<?php echo PodsForm::label( $field_prefix . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
 						</div>

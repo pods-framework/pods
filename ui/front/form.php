@@ -120,7 +120,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						$default_class = ' pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ] );
 
 						// Setup field conditionals.
-						$dependencies = PodsForm::dependencies( $field, '' );
+						$dependencies = PodsForm::dependencies( $field, 'pods-field-' );
 						if ( ! empty( $dependencies['classes'] ) ) {
 							$default_class .= ' ' . $dependencies['classes'];
 						}

@@ -98,7 +98,7 @@ if ( !$fields_only ) {
 do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 ?>
 
-			<ul class="pods-form-fields">
+			<ul class="pods-form-fields pods-dependency">
 				<?php
 					foreach ( $fields as $field ) {
 						if ( 'hidden' == $field[ 'type' ] ) {

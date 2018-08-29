@@ -184,12 +184,13 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Features/Enhancements/Improvements**
 
-Enhancement: Add pods conditional logic handling on frontend forms, #5136 (@JoryHogeveen) 
+Enhancement: Add pods conditional logic handling on frontend forms, #5136 (@JoryHogeveen)
 
 **Bug Fixes**
 
 * Fixed: Use minified versions of Backbone.Marionette and Backbone.Radio, #5115
 * Fixed: Always enqueue the DFV script by default if in the admin, #5111 (@pglewis, @sc0ttkclark)
+* Fixed: Add static groups cache for PodsMeta::groups_get() to improve memory usage on bulk wp_insert_post and other similar calls, #5088 (@sc0ttkclark)
 
 = 2.7.9 - August 9th 2018  =
 

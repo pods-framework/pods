@@ -1,4 +1,9 @@
-<input name="<%- htmlAttr.name %>[<%= ordinal %>]"
+<input
+		<% if ( 'single' === fieldConfig.pick_format_type ) { %>
+			name="<%- htmlAttr.name %>"
+		<% } else { %>
+			name="<%- htmlAttr.name %>[<%= ordinal %>]"
+		<% } %>
 		data-name-clean="<%- htmlAttr.name_clean %>"
 		id="<%- htmlAttr.id %><%= ordinal %>"
 		type="hidden"

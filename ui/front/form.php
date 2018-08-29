@@ -98,7 +98,7 @@ if ( !$fields_only ) {
 do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 ?>
 
-			<ul class="pods-form-fields">
+			<ul class="pods-form-fields pods-dependency">
 				<?php
 					foreach ( $fields as $field ) {
 						if ( 'hidden' == $field[ 'type' ] ) {
@@ -119,6 +119,13 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 
 						$default_class = ' pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ] );
 
+						// Setup field conditionals.
+						$dependencies = PodsForm::dependencies( $field, 'pods-field-' );
+						if ( ! empty( $dependencies['classes'] ) ) {
+							$default_class .= ' ' . $dependencies['classes'];
+						}
+						$dep_data = $dependencies['data'];
+
 						/**
 						 * Filter the html class used on form field list item element.
 						 *
@@ -129,7 +136,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						 */
 						$html_class = apply_filters( 'pods_form_html_class', 'pods-field-html-class', $field ) . $default_class;
 				?>
-					<li class="pods-field <?php echo esc_attr( $html_class, true ); ?>">
+					<li class="pods-field <?php echo esc_attr( $html_class, true ); ?>" <?php PodsForm::data( $dep_data ); ?>>
 						<div class="pods-field-label">
 							<?php echo PodsForm::label( $field_prefix . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
 						</div>
@@ -202,6 +209,7 @@ if ( !$fields_only ) {
 
 				$( document ).Pods( 'validate' );
 				$( document ).Pods( 'submit' );
+				$( document ).Pods( 'dependency' );
 			}
 		} );
 	}

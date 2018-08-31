@@ -1781,6 +1781,12 @@ class PodsAdmin {
 			);
 		} elseif ( 'taxonomy' === $pod['type'] ) {
 			$options['admin-ui'] = array(
+				'description'           => array(
+					'label'   => __( 'Taxonomy Description', 'pods' ),
+					'help'    => __( 'A short descriptive summary of what the taxonomy is.', 'pods' ),
+					'type'    => 'text',
+					'default' => '',
+				),
 				'show_ui'               => array(
 					'label'             => __( 'Show Admin UI', 'pods' ),
 					'help'              => __( 'Whether to generate a default UI for managing this taxonomy.', 'pods' ),

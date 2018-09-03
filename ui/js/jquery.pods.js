@@ -1279,8 +1279,10 @@
                 } );
 
                 if ( 'undefined' != typeof init && init ) {
-                    $( '.pods-dependency' ).find( '.pods-dependent-toggle' ).each( function () {
-                        $( this ).trigger( 'change' );
+                    $( '.pods-dependency' ).find( '.pods-dependent-toggle' ).trigger( 'change' );
+                    // DFV fields load later.
+                    $( window ).on( 'load', function() {
+	                    $( '.pods-dependency' ).find( '.pods-dependent-toggle' ).trigger( 'change' );
                     } );
                 }
             },

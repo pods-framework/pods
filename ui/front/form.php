@@ -209,7 +209,7 @@ if ( !$fields_only ) {
 
 				$( document ).Pods( 'validate' );
 				$( document ).Pods( 'submit' );
-				$( document ).Pods( 'dependency' );
+				$( document ).Pods( 'dependency', true ); // Pass `true` to trigger init.
 			}
 		} );
 	}

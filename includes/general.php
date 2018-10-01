@@ -774,10 +774,12 @@ function pods_shortcode( $tags, $content = null ) {
 
 	$blog_is_switched = false;
 
-	if ( ! empty( $tags['blog_id'] ) && is_numeric( $tags['blog_id'] ) && (int) get_current_blog_id() !== (int) $tags['blog_id'] ) {
-		switch_to_blog( (int) $tags['blog_id'] );
-		
-		$blog_is_switched = true;
+	if ( defined( 'PODS_SHORTCODE_ALLOW_BLOG_SWITCHING' ) && PODS_SHORTCODE_ALLOW_BLOG_SWITCHING ) {
+		if ( ! empty( $tags['blog_id'] ) && is_numeric( $tags['blog_id'] ) && (int) get_current_blog_id() !== (int) $tags['blog_id'] ) {
+			switch_to_blog( (int) $tags['blog_id'] );
+
+			$blog_is_switched = true;
+		}
 	}
 	
 	if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {

@@ -507,7 +507,7 @@ function pods_help( $text, $url = null ) {
 	}
 
 	if ( 0 < strlen( $url ) ) {
-		$text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+		$text .= '<br /><br /><a href="' . $url . '" target="_blank">' . esc_html__( 'Find out more', 'pods' ) . ' &raquo;</a>';
 	}
 
 	echo '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
@@ -859,7 +859,7 @@ function pods_shortcode( $tags, $content = null ) {
 			restore_current_blog();
 		}
 
-		return '<p>' . __( 'Pods shortcode error: Pod not found.', 'pods' ) . '</p>';
+		return '<p>' . esc_html__( 'Pods shortcode error: Pod not found.', 'pods' ) . '</p>';
 	}
 
 	$found = 0;
@@ -990,7 +990,7 @@ function pods_shortcode( $tags, $content = null ) {
 				restore_current_blog();
 			}
 
-			return '<p>' . __( 'Pods shortcode error: Pods Page not found.', 'pods' ) . '</p>';
+			return '<p>' . esc_html__( 'Pods shortcode error: Pods Page not found.', 'pods' ) . '</p>';
 		}
 
 		$return = Pods_Pages::content( true, $pods_page );

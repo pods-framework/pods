@@ -6,6 +6,7 @@ module.exports = function ( grunt ) {
 	var files_list = [
 		'**',
 		'!.git/**',
+		'!.idea/**',
 		'!.sass-cache/**',
 		'!bin/**',
 		'!node_modules/**',
@@ -13,20 +14,37 @@ module.exports = function ( grunt ) {
 		'!sources/**',
 		'!tests/**',
 		'!vendor/**',
+		'!.babelrc',
 		'!.gitattributes',
 		'!.gitignore',
 		'!.gitmodules',
+		'!.jshintrc',
+		'!.scrutinizer.yml',
 		'!.travis.yml',
+		'!audit.sh',
+		'!CODEOWNERS',
 		'!composer.json',
 		'!composer.lock',
 		'!CONTRIBUTING.md',
-		'!Gruntfile.js',
 		'!git-workflow.md',
 		'!grunt-workflow.md',
+		'!Gruntfile.js',
 		'!package.json',
+		'!package-lock.json',
 		'!phpcs.ruleset.xml',
+		'!phpcs.xml',
+		'!phpcs.xml.dist',
 		'!phpunit.xml.dist',
-		'!README.md'
+		'!README.md',
+		'!phpcs-report-full.txt',
+		'!report-full.txt',
+		'!report-full-2.7.txt',
+		'!report-full-after.txt',
+		'!phpcs-report-source.txt',
+		'!report-source.txt',
+		'!report-source-2.7.txt',
+		'!report-source-after.txt',
+		'!rollup.config.js'
 	];
 
 	// load all grunt tasks in package.json matching the `grunt-*` pattern
@@ -37,12 +55,6 @@ module.exports = function ( grunt ) {
 	// Project configuration.
 	grunt.initConfig( {
 		pkg: grunt.file.readJSON( 'package.json' ),
-
-		exec: {
-			dfv_rollup_dev : 'node node_modules/rollup/bin/rollup -c ui/js/pods-dfv/_src/rollup.config.dev.js',
-			dfv_rollup_prod: 'node node_modules/rollup/bin/rollup -c ui/js/pods-dfv/_src/rollup.config.prod.js',
-			dfv_test       : 'node node_modules/mocha/bin/mocha --compilers js:babel-core/register --reporter dot --recursive tests/js'
-		},
 
 		clean: {
 			post_build: [
@@ -79,7 +91,13 @@ module.exports = function ( grunt ) {
 					allowEmpty: true
 				},
 				files  : {
-					src: [ 'readme.txt', 'init.php', 'package.json', 'Gruntfile.js' ]
+					src: [
+						'readme.txt',
+						'init.php',
+						'package.json',
+						'Gruntfile.js',
+						'README.md'
+					]
 				}
 			}
 		},
@@ -130,14 +148,6 @@ module.exports = function ( grunt ) {
 				} ]
 
 			},
-			branchfix_master_init_php   : {
-				src         : [ 'init.php' ],
-				overwrite   : true,
-				replacements: [ {
-					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
-					to  : "GitHub Branch: master"
-				} ]
-			},
 			branchfix_2x_readme_md      : {
 				src         : [ 'README.md' ],
 				overwrite   : true,
@@ -153,36 +163,20 @@ module.exports = function ( grunt ) {
 				} ]
 
 			},
-			branchfix_2x_init_php       : {
-				src         : [ 'init.php' ],
-				overwrite   : true,
-				replacements: [ {
-					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
-					to  : "GitHub Branch: 2.x"
-				} ]
-			},
 			branchfix_release_readme_md : {
 				src         : [ 'README.md' ],
 				overwrite   : true,
 				replacements: [ {
 					from: /\?branch=(release\/|)([\.\d\w\-]*)/g,
-					to  : "?branch=release/3.0"
+					to  : "?branch=release/2.8"
 				}, {
 					from: /\?b=(release\/|)([\.\d\w\-]*)/g,
-					to  : "?b=release/3.0"
+					to  : "?b=release/2.8"
 				}, {
 					from: /\/blob\/(release\/|)([\.\d\w\-]*)\//g,
-					to  : "/blob/release/3.0/"
+					to  : "/blob/release/2.8/"
 				} ]
 
-			},
-			branchfix_release_init_php  : {
-				src         : [ 'init.php' ],
-				overwrite   : true,
-				replacements: [ {
-					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
-					to  : "GitHub Branch: release/3.0"
-				} ]
 			}
 		},
 
@@ -230,9 +224,9 @@ module.exports = function ( grunt ) {
 	} );
 
 	// branch related tasks
-	grunt.registerTask( 'branch_name_master', [ 'replace:branchfix_master_readme_md', 'replace:branchfix_master_init_php' ] );
-	grunt.registerTask( 'branch_name_2x', [ 'replace:branchfix_2x_readme_md', 'replace:branchfix_2x_init_php' ] );
-	grunt.registerTask( 'branch_name_release', [ 'replace:branchfix_release_readme_md', 'replace:branchfix_release_init_php' ] );
+	grunt.registerTask( 'branch_name_master', [ 'replace:branchfix_master_readme_md' ] );
+	grunt.registerTask( 'branch_name_2x', [ 'replace:branchfix_2x_readme_md' ] );
+	grunt.registerTask( 'branch_name_release', [ 'replace:branchfix_release_readme_md' ] );
 
 	// release tasks
 	grunt.registerTask( 'version_number', [ 'replace:version_readme_txt', 'replace:version_init_php' ] );
@@ -240,10 +234,4 @@ module.exports = function ( grunt ) {
 	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'push_svn', 'svn_copy' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
 	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );
-
-	// build tasks
-	grunt.registerTask( 'exec_dfv_rollup_dev', [ 'exec:dfv_rollup_dev' ] );
-	grunt.registerTask( 'exec_dfv_rollup_prod', [ 'exec:dfv_rollup_prod' ] );
-	grunt.registerTask( 'exec_dfv_test', [ 'exec:dfv_test' ] );
-
 };

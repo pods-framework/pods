@@ -1,12 +1,14 @@
 /*global jQuery, _, Backbone, Marionette, wp */
-import template from '~/ui/js/pods-dfv/_src/pick/views/radio-item.html';
+import template from 'pods-dfv/_src/pick/views/radio-item.html';
 
-import {PodsFieldListView, PodsFieldView} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
+import { PodsFieldListView, PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
 
 /**
  *
  */
 export const RadioItem = PodsFieldView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'li',
 
 	template: _.template( template ),
@@ -27,6 +29,8 @@ export const RadioItem = PodsFieldView.extend( {
  *
  */
 export const RadioView = PodsFieldListView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'ul',
 
 	className: 'pods-radio',

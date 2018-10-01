@@ -43,7 +43,7 @@
                         }
 
                     }
-                    else if ( '' == $el.val() )
+                    else if ( '' === $el.val() )
                         valid_field = false;
 
                     if ( !valid_field ) {
@@ -108,7 +108,7 @@
                             else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
                                 return true; // This input is not checked, continue the loop
 
-                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' == $el.val() ) ) {
+                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' === $el.val() ) ) {
                                 $el.trigger( 'change' );
 
                                 if ( false !== valid_form )
@@ -148,7 +148,7 @@
                 } );
             },
             submit : function () {
-                var $submitbutton;
+                var $submitbutton, id, data;
 
                 // Handle submit of form and translate to AJAX
                 $( 'form.pods-submittable' ).on( 'submit', function ( e ) {
@@ -195,7 +195,7 @@
                             else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
                                 return true; // This input is not checked, continue the loop
 
-                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' == $el.val() ) ) {
+                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' === $el.val() ) ) {
                                 $el.trigger( 'change' );
 
                                 if ( false !== valid_form )
@@ -209,6 +209,16 @@
                             }
                         }
                     } );
+
+                    // Check for unsaved open fields. (separate if's to prevent possible unneeded jQuery selector)
+                    if ( 'undefined' !== typeof postdata.method ) {
+	                    if ( 'save_pod' === postdata.method ) {
+	                        if ( $( 'tbody.pods-manage-list tr.pods-manage-row-expanded', $submittable ).length ) {
+		                        alert( PodsI18n.__( 'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.' ) );
+		                        valid_form = false;
+	                        }
+	                    }
+                    }
 
                     if ( 'undefined' != typeof pods_admin_submit_validation )
                         valid_form = pods_admin_submit_validation( valid_form, $submittable );
@@ -243,32 +253,57 @@
                         cache : false,
                         data : postdata,
                         success : function ( d ) {
-                            if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf( '</e>' ) && -1 != d ) {
-                                var id = d.match( /\d*$/, '' );
 
-                                if ( 0 < id.length ) {
-                                    id = parseInt( id[ 0 ] );
-
-                                    if ( isNaN( id ) )
-                                        id = 0;
-                                }
-                                else
-                                    id = 0;
-
-                                if ( 'undefined' != typeof pods_admin_submit_callback )
-                                    pods_admin_submit_callback( d, $submittable, id );
-                                else if ( 'undefined' != typeof $submittable.data( 'location' ) )
-                                    document.location.href = $submittable.data( 'location' ).replace( 'X_ID_X', id );
-                                else
-                                    document.location.reload( true );
+                            // Attempt to parse what was returned as data
+                            try {
+                                data = $.parseJSON( d );
                             }
-                            else if ( 'undefined' != typeof $submittable.data( 'error-location' ) )
+                            catch ( e ) {
+                                data = undefined;
+                            }
+
+                            if ( -1 === d.indexOf( '<e>' ) && -1 === d.indexOf( '</e>' ) && -1 !== d ) {
+
+                                // Added for modal add/edit support.  If we get a valid JSON object, we assume we're modal
+                                if ( 'object' === typeof data && null !== data ) {
+
+                                    // Phone home with the data
+                                    window.parent.jQuery( window.parent ).trigger('dfv:modal:update', data );
+                                }
+                                else {
+                                    id = d.match( /\d*$/, '' );
+
+                                    if ( 0 < id.length ) {
+                                        id = parseInt( id[ 0 ] );
+
+                                        if ( isNaN( id ) ) {
+                                            id = 0;
+                                        }
+                                    }
+                                    else {
+                                        id = 0;
+                                    }
+
+                                    if ( 'undefined' != typeof pods_admin_submit_callback ) {
+                                        pods_admin_submit_callback( d, $submittable, id );
+                                    }
+                                    else if ( 'undefined' != typeof $submittable.data( 'location' ) ) {
+                                        document.location.href = $submittable.data( 'location' ).replace( 'X_ID_X', id );
+                                    }
+                                    else {
+                                        document.location.reload( true );
+                                    }
+                                }
+                            }
+                            else if ( 'undefined' != typeof $submittable.data( 'error-location' ) ) {
                                 document.location.href = $submittable.data( 'error-location' );
+                            }
                             else {
                                 var err_msg = d.replace( '<e>', '' ).replace( '</e>', '' );
 
-                                if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                                if ( 'undefined' != typeof pods_admin_submit_error_callback ) {
                                     pods_admin_submit_error_callback( err_msg, $submittable );
+                                }
                                 else {
                                     alert( 'Error: ' + err_msg );
                                     if ( window.console ) console.log( err_msg );
@@ -288,8 +323,9 @@
                         error : function () {
                             var err_msg = 'Unable to process request, please try again.';
 
-                            if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                            if ( 'undefined' != typeof pods_admin_submit_error_callback ) {
                                 pods_admin_submit_error_callback( err_msg, $submittable );
+                            }
                             else {
                                 alert( 'Error: ' + err_msg );
                                 if ( window.console ) console.log( err_msg );
@@ -486,13 +522,13 @@
 
                             // update fields
                             $( 'input.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' ).each( function () {
-                                if ( '' == $( this ).val() ) {
+                                if ( '' === $( this ).val() ) {
                                     $( this ).val( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) );
                                     $( this ).trigger( 'change' );
                                 }
                             } );
                             $( 'input.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' ).each( function () {
-                                if ( '' == $( this ).val() ) {
+                                if ( '' === $( this ).val() ) {
                                     $( this ).val( slug.toLowerCase() );
                                     $( this ).trigger( 'change' );
                                 }
@@ -561,7 +597,42 @@
                             var $current_tab = $tabbed.find( '.pods-tab-group .pods-tab' + tab_hash );
 
                             $( '.pods-dependent-toggle', $current_tab ).each( function () {
-                                methods[ 'setup_dependencies' ]( $( this ) );
+                                var elementId = $( this ).attr( 'id' );
+                                var runDependencies = true;
+                                var selectionTypes = [
+                                    {
+                                        name           : 'single',
+                                        pickFormatRegex: /pick-format-single$/g
+                                    },
+                                    {
+                                        name           : 'multi',
+                                        pickFormatRegex: /pick-format-multi$/g
+                                    }
+                                ];
+
+                                // Pick multi/single select: Bypass dependency checks on the format of selection types
+                                // that aren't currently chosen. We shouldn't check dependencies against format_single
+                                // if multi is selected and vice versa.
+                                selectionTypes.forEach( function( thisSelectionType ) {
+                                    var pickSelectionTypeId = null;
+
+                                    // Is this the format list for one of the selection types?
+                                    if ( thisSelectionType.pickFormatRegex.test( elementId ) ) {
+
+                                        // Get the HTML ID of the "selection type" select box so we can check its value
+                                        pickSelectionTypeId = elementId.replace( thisSelectionType.pickFormatRegex, 'pick-format-type' );
+
+                                        // Bypass dependency checks if this format value is for a selection type
+                                        // that isn't currently selected
+                                        if ( $( '#' + pickSelectionTypeId ).val() !== thisSelectionType.name ) {
+                                            runDependencies = false;
+                                        }
+                                    }
+                                } );
+
+                                if ( runDependencies ) {
+                                    methods[ 'setup_dependencies' ]( $( this ) );
+                                }
                             } );
 
                             $current_tab.slideDown();
@@ -797,7 +868,7 @@
 
                         window.location.hash = '';
                     }
-                }
+                };
 
                 // Next button event binding
                 $( '#pods-wizard-next' ).on( 'click', function ( e ) {
@@ -1191,7 +1262,20 @@
 
                 // Handle dependent toggle
                 $( '.pods-admin' ).on( 'change', '.pods-dependent-toggle[data-name-clean]', function ( e ) {
+                    var selectionTypeRegex = /pick-format-type$/g;
+                    var elementId = $( this ).attr( 'id' );
+                    var selectionType, selectionFormatId;
+
+                    // Setup dependencies for the field that changed
                     methods[ 'setup_dependencies' ]( $( this ) );
+
+                    // Also force a dependency update for the appropriate format when "selection type" changes
+                    if ( selectionTypeRegex.test( elementId ) ) {
+                        selectionType = $( this ).val();
+                        selectionFormatId = elementId.replace( selectionTypeRegex, 'pick-format-' + selectionType );
+                        methods[ 'setup_dependencies' ]( $( '#' + selectionFormatId ) );
+                    }
+
                 } );
 
                 if ( 'undefined' != typeof init && init ) {
@@ -1411,7 +1495,7 @@
 
                             $row.fadeOut( 'slow', function () {
                                 $( this ).remove();
-                                if ( 0 == $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
+                                if ( 0 === $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
                                     $tbody.find( 'tr.no-items' ).show();
                             } );
 
@@ -1432,8 +1516,8 @@
                             } else {
                                 $field_wrapper.append( edit_row );
 
-                                // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
-                                $row_content.find( '.pods-form-ui-field' ).PodsDFVInit( PodsDFV.fieldInstances );
+                                // Duct tape to handle fields added dynamically
+                                PodsDFV.init();
                             }
 
                             $field_wrapper.find( '.pods-depends-on' ).hide();
@@ -1532,7 +1616,7 @@
                     var row_id = $row.data( 'row' );
                     var field_data = {};
 
-                    if ( 'undefined' != typeof $row_value && null != $row_value && '' != $row_value ) {
+                    if ( 'undefined' != typeof $row_value && null != $row_value && '' !== $row_value ) {
                         field_data = jQuery.parseJSON( $row_value );
                     }
 
@@ -1541,7 +1625,7 @@
                     $field_wrapper.find( 'input, select, textarea' ).each( function () {
                         var $el = $( this );
 
-                        if ( '' != $el.prop( 'name' ) ) {
+                        if ( '' !== $el.prop( 'name' ) ) {
                             // TinyMCE support
                             if ( 'object' == typeof( tinyMCE ) && -1 < $el.prop( 'class' ).indexOf( 'pods-ui-field-tinymce' ) ) {
                                 var ed = tinyMCE.get( $el.prop( 'id' ) );
@@ -1586,7 +1670,7 @@
                             else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
                                 val = '';
 
-                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && '' == $el.val() ) {
+                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && '' === $el.val() ) {
                                 $el.trigger( 'change' );
 
                                 if ( false !== valid_form )
@@ -1673,9 +1757,10 @@
                         }
 
                         $row_content.slideUp( 'slow', function () {
-                            $row.toggleClass( 'pods-manage-row-expanded' );
-                            $row_label.prop( 'colspan', '1' );
-                            $row.removeClass( 'pods-field-new' );
+	                        $row_label.prop( 'colspan', '1' );
+	                        $row.removeClass( 'pods-manage-row-expanded' );
+	                        $row.removeClass( 'pods-field-new' );
+	                        $row.addClass( 'pods-field-updated' );
                         } );
                     }
 
@@ -1730,8 +1815,8 @@
 
                         $new_row = $tbody.find( 'tr#row-' + row_counter );
 
-                        // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
-                        $new_row.find( '.pods-form-ui-field' ).PodsDFVInit( PodsDFV.fieldInstances );
+                        // Duct tape to handle fields added dynamically
+                        PodsDFV.init();
 
                         $new_row.data( 'row', row_counter );
                         $new_row.find( '.pods-dependency .pods-depends-on' ).hide();
@@ -1788,8 +1873,8 @@
                         $new_row_label = $new_row.find( 'td.pods-manage-row-label' );
                         $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
 
-                        // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
-                        $new_row.find( '.pods-form-ui-field' ).PodsDFVInit( PodsDFV.fieldInstances );
+                        // Duct tape to handle fields added dynamically
+                        PodsDFV.init();
 
                         field_data[ 'name' ] += '_copy';
                         field_data[ 'label' ] += ' (' + PodsI18n.__( 'Copy' ) + ')';
@@ -1845,7 +1930,7 @@
 
                         $row.fadeOut( 'slow', function () {
                             $( this ).remove();
-                            if ( 0 == $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
+                            if ( 0 === $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
                                 $tbody.find( 'tr.no-items' ).show();
                         } );
 
@@ -1885,32 +1970,35 @@
                     pods_changed = false;
                 } );
             },
-            qtip: function( element ) {
-                $( element ).find( '.pods-qtip' ).qtip( {
-                    content : {
-                        attr : 'alt'
-                    },
-                    style : {
-                        classes : 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
-                    },
-                    show : {
-                        effect : function ( offset ) {
-                            $( this ).fadeIn( 'fast' );
+            qtip: function ( element ) {
+                $( element ).find( '.pods-qtip' ).each( function ( index, element ) {
+                    $( element ).qtip( {
+                        content: {
+                            attr: 'alt'
+                        },
+                        style: {
+                            classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+                        },
+                        show: {
+                            effect: function ( offset ) {
+                                $( this ).fadeIn( 'fast' );
+                            }
+                        },
+                        hide: {
+                            fixed: true,
+                            delay: 300
+                        },
+                        position: {
+                            container: $( element ).closest( '.pods-submittable' ),
+                            my: 'bottom left',
+                            adjust: {
+                                y: -14
+                            }
                         }
-                    },
-                    hide : {
-                        fixed : true,
-                        delay : 300
-                    },
-                    position : {
-                        my : 'bottom left',
-                        adjust : {
-                            y : -14
-                        }
-                    }
+                    } );
                 } );
             },
-            scroll : function ( selector, callback ) {
+            scroll: function ( selector, callback ) {
                 var offset = 10;
 
                 if ( $( '#wpadminbar' )[ 0 ] )

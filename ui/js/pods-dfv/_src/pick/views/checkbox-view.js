@@ -1,12 +1,14 @@
 /*global jQuery, _, Backbone, Marionette, wp */
-import template from '~/ui/js/pods-dfv/_src/pick/views/checkbox-item.html';
+import template from 'pods-dfv/_src/pick/views/checkbox-item.html';
 
-import {PodsFieldListView, PodsFieldView} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
+import { PodsFieldListView, PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
 
 /**
  *
  */
 export const CheckboxItem = PodsFieldView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'li',
 
 	template: _.template( template ),
@@ -33,10 +35,6 @@ export const CheckboxItem = PodsFieldView.extend( {
 
 	modelChanged: function () {
 		this.render();
-	},
-
-	onToggleSelected: function () {
-		this.model.toggleSelected();
 	}
 } );
 
@@ -44,9 +42,72 @@ export const CheckboxItem = PodsFieldView.extend( {
  *
  */
 export const CheckboxView = PodsFieldListView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'ul',
 
 	className: 'pods-checkbox-view',
 
-	childView: CheckboxItem
+	childView: CheckboxItem,
+
+	childViewEvents: {
+		'toggle:selected': 'onChildviewToggleSelected'
+	},
+
+	/**
+	 *
+	 */
+	onAttach: function () {
+
+		// Check initial selection limit status and enforce it if needed
+		if ( !this.validateSelectionLimit() ) {
+			this.selectionLimitOver();
+		}
+	},
+
+	/**
+	 *
+	 * @param childView
+	 */
+	onChildviewToggleSelected: function ( childView ) {
+
+		childView.model.toggleSelected();
+
+		// Dynamically enforce selection limit
+		if ( this.validateSelectionLimit() ) {
+			this.selectionLimitUnder();
+		} else {
+			this.selectionLimitOver();
+		}
+	},
+
+	/**
+	 * @returns {boolean} true if unlimited selections are allowed or we're below the selection limit
+	 */
+	validateSelectionLimit: function () {
+		const fieldConfig = this.fieldModel.get( 'fieldConfig' );
+		let limit, numSelected;
+
+		limit = +fieldConfig.pick_limit;  // Unary plus will implicitly cast to number
+		numSelected = this.collection.filterBySelected().length;
+
+		return 0 === limit || numSelected < limit;
+	},
+
+	/**
+	 *
+	 */
+	selectionLimitOver: function () {
+		this.$el.find( 'input:checkbox:not(:checked)' ).prop( 'disabled', true );
+		this.trigger( 'selection:limit:over', this );
+	},
+
+	/**
+	 *
+	 */
+	selectionLimitUnder: function () {
+		this.$el.find( 'input:checkbox' ).prop( 'disabled', false );
+		this.trigger( 'selection:limit:under', this );
+	}
+
 } );

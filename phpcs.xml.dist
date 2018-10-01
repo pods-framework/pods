@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<ruleset name="Pods">
+	<description>Pods-customized WordPress Coding Standards</description>
+
+	<file>.</file>
+	<exclude-pattern>*/.idea/*</exclude-pattern>
+	<exclude-pattern>*/.sass-cache/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/components/Markdown.php</exclude-pattern>
+
+	<arg value="s"/> <!-- Show sniff codes in all reports -->
+	<arg value="p"/> <!-- Show progress of the run -->
+	<arg name="extensions" value="php"/><!-- Only check .php files -->
+	<arg name="basepath" value="."/><!-- Strip the file paths down to the relevant bit -->
+	<arg name="colors"/><!-- Show colors in output -->
+
+	<ini name="memory_limit" value="256M"/>
+
+	<config name="minimum_supported_wp_version" value="4.5"/>
+	<rule ref="WordPress-Core"/>
+	<rule ref="WordPress-Docs"/>
+	<rule ref="WordPress-Extra"/>
+
+	<config name="testVersion" value="5.3-"/>
+	<rule ref="PHPCompatibility"/>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array" value="pods"/>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array" value="pods"/>
+		</properties>
+	</rule>
+
+	<rule ref="Squiz.Commenting">
+		<!-- Excluding the need for a full stop at the end of a comment (common, harmless error) -->
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
+		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop"/>
+		<exclude name="Squiz.Commenting.FileComment.Missing"/>
+	</rule>
+
+	<rule ref="WordPress.Files">
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+	</rule>
+
+	<rule ref="Generic.Commenting">
+		<exclude name="Generic.Commenting.DocComment.MissingShort"/>
+	</rule>
+
+	<rule ref="Squiz.PHP">
+		<exclude name="Squiz.PHP.CommentedOutCode.Found"/>
+		<exclude name="Squiz.PHP.GlobalKeyword.NotAllowed"/>
+	</rule>
+</ruleset>

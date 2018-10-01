@@ -5,12 +5,13 @@
  */
 export const RelationshipModel = Backbone.Model.extend( {
 	defaults: {
-		'id'       : 0,
-		'name'     : '',
-		'icon'     : '',
-		'link'     : '',
+		'id': 0,
+		'name': '',
+		'icon': '',
+		'use_dashicon': false,
+		'link': '',
 		'edit_link': '',
-		'selected' : false
+		'selected': false
 	},
 
 	toggleSelected: function () {
@@ -40,7 +41,7 @@ export const RelationshipCollection = Backbone.Collection.extend( {
 	 *
 	 * @returns {*}
 	 */
-	filterSelected: function () {
+	filterBySelected: function () {
 
 		// Get an array with only the selected items
 		const filtered = this.filter( function ( itemModel ) {
@@ -49,6 +50,23 @@ export const RelationshipCollection = Backbone.Collection.extend( {
 
 		// this.filter is going to return an array, so create a collection out of it
 		return new RelationshipCollection( filtered );
+	},
+
+	/**
+	 * Return a new collection containing just the unselected items in this one
+	 *
+	 * @returns {*}
+	 */
+	filterByUnselected: function () {
+
+		// Get an array with only the unselected items
+		const filtered = this.filter( function ( itemModel ) {
+			return !( itemModel.get( 'selected' ) );
+		} );
+
+		// this.filter is going to return an array, so create a collection out of it
+		return new RelationshipCollection( filtered );
 	}
+
 } );
 

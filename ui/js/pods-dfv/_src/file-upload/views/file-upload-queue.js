@@ -1,11 +1,11 @@
 /*global jQuery, _, Backbone, Marionette, wp */
-import template from '~/ui/js/pods-dfv/_src/file-upload/views/file-upload-queue.html';
+import template from 'pods-dfv/_src/file-upload/views/file-upload-queue.html';
 
 export const FileUploadQueueModel = Backbone.Model.extend( {
 	defaults: {
-		id       : 0,
-		filename : '',
-		progress : 0,
+		id: 0,
+		filename: '',
+		progress: 0,
 		errorMsg: ''
 	}
 } );
@@ -23,7 +23,7 @@ export const FileUploadQueueItem = Marionette.View.extend( {
 	attributes: function () {
 		return {
 			class: 'pods-dfv-list-item',
-			id   : this.model.get( 'id' )
+			id: this.model.get( 'id' )
 		};
 	},
 

@@ -1,10 +1,11 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, pglewis, jimtrue, Shelob9, jamesgol, clubduece, dan.stefan, Desertsnowman, curtismchale, logikal16, mikedamage, jchristopher, keraweb, ramoonus, pcfreak30
-Donate link: http://podsfoundation.org/donate/
-Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields, relationships
-Requires at least: 3.8
-Tested up to: 4.7.1
-Stable tag: 2.7.0-a-2
+Contributors: sc0ttkclark, pglewis, jimtrue, jamesgol, keraweb, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
+Donate link: https://pods.io/friends-of-pods/
+Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
+Requires at least: 4.5
+Requires PHP: 5.3
+Tested up to: 4.9.6
+Stable tag: 2.8.0-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +18,7 @@ Manage all your custom content needs in ONE location with the Pods Framework. Yo
 * Easily display your custom content, whether you want to use shortcodes, widgets, the code-free Pods Template approach, or use standard PHP in WordPress Theme templates and functions.
 * Create connections between any of your content to help organize it in logical and useful ways with relationship fields.
 
-Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out [pods.io](http://pods.io/) for our User Guide, Support Forum, and other resources to help you develop with Pods.
+Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out [pods.io](https://pods.io/) for our User Guide, [Support Forum](https://pods.io/forums/), and our [Slack Chat](https://pods.io/chat/) to help you develop with Pods.
 
 = Introduction =
 [youtube http://www.youtube.com/watch?v=bYEE2i3nPOM]
@@ -120,9 +121,9 @@ We also do our best to integrate and play nicely with other projects:
  * [WPML](http://wpml.org/)
  * [Conductor](https://conductorplugin.com/)
  * [Timber](http://upstatement.com/timber/)
- * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://github.com/pods-framework/pods-gravity-forms)
+ * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
  * [Caldera Forms](http://calderaforms.com) Using the [Pods Caldera Forms Add-on](https://github.com/pods-framework/pods-caldera-forms)
- * [WordPress JSON REST API (WP-API)](http://wp-api.org) Using the [Pods JSON API](https://github.com/pods-framework/pods-json-api)
+ * [Beaver Builder](https://www.wpbeaverbuilder.com/) and [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) Using the [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/)
 * Themes we've integrated with
  * [Builder](http://www.ithemes.com/) (iThemes)
  * [Genesis](http://www.studiopress.com/) (StudioPress)
@@ -140,7 +141,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 = Where do we go for Support on your plugin? =
 
-Our primary Support is handled through our Support Forums at [http://pods.io/forums/](http://pods.io/forums/). For the fastest support, you can contact us on our Slack Chat at [http://pods.io/chat/](http://pods.io/chat/) in the #support channel. We do not staff our Slack channel 24 hours, but we do check any questions that come through daily and reply to any unanswered questions.
+Our primary Support is handled through our Support Forums at [https://pods.io/forums/](https://pods.io/forums/). For the fastest support, you can contact us on our Slack Chat at [https://pods.io/chat/](https://pods.io/chat/) in the #support channel. We do not staff our Slack channel 24 hours, but we do check any questions that come through daily and reply to any unanswered questions.
 
 We do have a community of Pods users and developers that hang out on Slack so you're sure to get an answer quickly. We answer our Forum questions once a week with follow-up during the week as we're prioritizing resources towards restructuring and improving our documentation.
 
@@ -173,9 +174,226 @@ Pods really wouldn't be where it is without all of the contributions both financ
 
 Many thanks go out to the fine folks who have helped us translate Pods into other languages other than English!
 
-Join us in further translating the Pods interface at: [wp-translate.org/projects/pods](http://wp-translate.org/projects/pods)
+Join us in further translating the Pods interface at: [https://translate.wordpress.org/projects/wp-plugins/pods](https://translate.wordpress.org/projects/wp-plugins/pods)
+
+We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.9 - August 9th 2018  =
+
+**Features/Enhancements**
+
+* Added: Support for Pods::fields() argument keyed which when set to true will return the array for relationship fields with the IDs used as keys, #5092 (@sc0ttkclark)
+* Added: pods_shortcode_output filter to allow customization of shortcode output based on shortcode attributes, #5083 (@sc0ttkclark)
+
+** Bug Fixes**
+
+* Fixed: Fix compatibility issue with Polylang & WPML when getting the current language from the edit post and edit tax pages. #5060 (JoryHogeveen)
+
+= 2.7.8 - July 26th 2018  =
+
+* Hotfix: Time field generates a fatal error on PHP prior to 5.5, #5079 (@davegaeddert)
+
+= 2.7.7 - July 26th 2018  =
+
+**Features/Enhancements/Improvements**
+
+* Code Quality: Disallow multiple assignments and assignment inside conditions, #5021 (@GaryJones)
+* Code Quality: WordPress.WhiteSpace.PrecisionAlignment compliance, #5026 (@GaryJones)
+* Code Quality: Use interpolation to construct all dynamic hook names, #4992 (@GaryJones)
+
+**Bug Fixes**
+
+* Fixed: 'others' capability checks for current_user_can pods_{$action}{$pod} vs pods{$action}others{$pod} capabilities, #5043 (@Ulminia, @sc0ttkclark)
+* Fixed: "Export all" button for ACTs does not work, #5005 (@pglewis)
+* Fixed: Pods Template Editor is adding two 'tabs' to the front of the template during Save. #5022 (@pglewis)
+* Fixed: Midnight (00:00) results as 'empty' in an [if][/if] Template Tag. #4999 (@pglewis)
+* Fixed: Non-internationalized string "Add Another Custom Capability". #5028 (@GaryJones, @pglewis)
+
+= 2.7.6 - June 8th 2018  =
+
+* Fixed: Records added modally via DFV's 'Add New' are not selected and don't refresh list view in 2.7.5, #5014 (@sc0ttkclark, @pglewis)
+
+= 2.7.5 - June 7th 2018  =
+
+**Bug Fixes**
+
+* Fixed: Only flush rewrite rules in an admin context, #5006 (@sc0ttkclark)
+* Fixed: SelectWoo fields would sometimes call `focus()` inappropriately #4725 (@GaryJones)
+
+= 2.7.4 - June 6th 2018  =
+
+**Features/Enhancements**
+
+* Code Quality: Address some i18n code standard violations, #4982 (@GaryJones)
+* Code Quality: All @since and @deprecated tags updated to use three digits everywhere, #4995 (@GaryJones)
+* Added: Tooltip for the Hierarchical option for taxonomies, #4949 (@pglewis)
+
+**Bug Fixes**
+
+* Fixed: jQuery.fn.size() is deprecated #3898 (@GaryJones)
+* Fixed: CLI: Fix missing negation on valid & exists checks #4989 (@GaryJones)
+* Fixed: Check for localized 'help' before adding tooltip #4614 (@davidatwhieltrue, @GaryJones)
+* Fixed: Autocomplete/List View broken with "Other WP Objects", #4504 (@pglewis, @sc0ttkclark)
+* Fixed: HTML entities in a field's description are converted when the Pod is loaded again, #4495 (@pglewis)
+* Fixed: Relationship fields related to the _pods_pod or _pods_field post type would not return the correct value, #4979 (@sc0ttkclark)
+* Fixed: Code Editor for Pods Template double-escapes HTML when Visual Editor is OFF in WordPress, #3462 (@pglewis)
+* Fixed: Pods breaks Theme Editor for PHP files, hangs loopback test #4595, #4931 (@jamesgol, @pglewis)
+* Fixed: Time field cannot save midnight #3488, #4937 (@pglewis)
+* Fixed: Resolve file uploads directory check logic for file exports #4970 (@elia-senatore-cippest, @sc0ttkclark)
+* Fixed: Media modal issues in post edits, #4945, #4967 (@pglewis)
+* Fixed: Fatal error if not logged in and accessing wp-admin, #4828 (@therealgilles)
+* Fixed: Pick fields with predefined/custom lists using numeric keys not loading values #4892, #4753 (@pglewis)
+* Fixed: Non-required color-picker field did not allow saving empty value #4919 (@JoryHogeveen)
+* Fixed: CodeMirror fields in Taxonomy and User edit forms #4913 (@pglewis)
+
+= 2.7.3 - May 6th 2018  =
+
+**Bug Fixes**
+
+* Fixed: 'search' param for Pods shortcodes #4909 (@pglewis)
+* Fixed: 'before_content' and 'after_content' were ignored in widgets #4891 (@pglewis)
+
+= 2.7.2.1 - May 5th 2018 =
+
+**Developer and deployment enhancements**
+
+* Added: .editorconfig file [http://editorconfig.org/](http://editorconfig.org/) #4571 (@JoryHogeveen)
+* Updated: export-ignore list #4898 (@pglewis)
+
+**Bug Fixes**
+
+* Fixed: Pods Widget output #4891 (@pglewis)
+* Fixed: Slider controls not showing #4895 (@pglewis)
+* Fixed: Fatal exception attempting to parse Persian DateTime strings #4896 (@sc0ttkclark)
+* Fixed: Array to string conversion notice in Pods form #4886 (@sc0ttkclark)
+
+= 2.7.2 - May 3rd 2018 =
+
+**New Features Added**
+
+* Added WP-CLI commands for Pods, more details at [https://docs.pods.io/advanced-topics/pods-wp-cli/](https://docs.pods.io/advanced-topics/pods-wp-cli/) (@sc0ttkclark)
+* Added: Filter HTML class for li.pods-field form element to allow for more styling options. #4813 (@paddelboot)
+* Added: Currency field enhancement: Add a currency sign before the field input. #4714 (@JoryHogeveen)
+* Added: Currency formats with spacing between currency sign and value #4838 (@JoryHogeveen)
+
+**Bug Fixes & Corrections**
+
+* Fixed: Missing thickbox styles for `PodsUI::filters()` #4797 Fixes #4693 which was preventing Advanced Content Type Filters Popup from Loading (@pglewis)
+* Fixed: Text field readonly no longer defaults to `true` #4794 Fixes #4791 (@pglewis)
+* Fixed: Simplify how we inject the PHP string into the JS #4787 Fixes #4786 which was creating syntax error in JS for number fields (@pglewis)
+* Fixed: Tooltips were not working in the Pods Templates or Roles and Capabilities components #4851 (Fixes #4850) (@pglewis)
+* Fixed: Isolates qtip styles and functionality to pods only which should hopefully resolve any issues with conflicting with other plugins/themes that may use the tooltip functionality [#4834] Fixes #4832 where tooltips were not displaying (@nicdford)
+* Fixed: Tooltip corrections: Update Pods Add New screen for extended taxonomies as Table Storage is not required since Term Meta was added by WordPress. #4609 (@pglewis)
+* Fixed: Issue where fields with particularly long post titles would extend past the width of the container #4831( Fixes #4700) (@nicdford)
+* Added: appropriate CSS namespace prefixes to avoid style conflicts #4632 (#4612) (@nicdford)
+* Fixed: Prefix all form styles with `form.pods-manage`. Namespace prefix all pods-manage styles to avoid CSS conflicts with Gravity forms (#4615,#4612) (@JoryHogeveen)
+* Fixed: Pods DFV fields no longer depend upon the specific instance of jQuery shipped with WordPress (#4680). (@pglewis)
+* Fixed: Update all storage type tooltips. Many were still referencing old Custom Taxonomy Table Storage requirements that were no longer required after Term Meta support. Fixes #4835 (@pglewis)
+* Fixed: Bug with decimal handler when converting to dash (-) #4829 (@JoryHogeveen)
+* Fixed: Checkbox misalignment on custom settings pages (#4711) (@JoryHogeveen)
+* Fixed: Quality of life visual updates and optimizations for the CLEditor (#4633) (@nicdford)
+* Fixed: `%F` with PHP's `sprintf` function defaults to a precision of 6 decimal places, we now include the precision specifier whenever more than 6 decimal places of precision is needed. (#4741) (@0xLBF)
+* Fixed: Extend the condition for WPML validation exception to cover the Translation Editor so required fields don't break the Translation Editor in WPML. (#4802) (@dgwatkins)
+* Fixed: Corrects most relationship fields on media items when editing in grid mode. Select2 based fields still need a workaround (Autocomplete, List View). (#4795) (@pglewis)
+* Fixed: Avoid printing null message in PodsUI #4796 (@davidatwhiletrue)
+* Fixed: Single-select Post Thumbnail does not display in Pods Template traversal. Allow traversing into post_thumbnail. (#4719) (@jamesgol)
+* Fixed: Disable the "Add New" button for relationships when we're inside a media modal window (#4864). This is just a workaround until we can iron out the CSS and display for a modal from a modal. (@pglewis)
+* Fixed: Autotemplate hook validation to verify filter before applying Auto Templates (#4695) (@JoryHogeveen)
+* Fixed: Allow user-meta (and other extended Pods) to work in templates (#4847) (@jamesgol)
+* Fixed: Corrected conflicts with container CSS/JS around Date/Time Fields (#4878) (@pglewis,@nicdford)
+
+**Fixes for Unit Testing and Workflow**
+
+* Fixed: Skip npm install and js tests on the PHP 5.3/Precise box to fix #4788 (#4789) (@pglewis)
+* Fixed: mockery 1.0 requires php >=5.6.0; downgrade to 0.9 for now #4818 @pglewis
+* Fixed: PHP Codesniffer Fixes #4569 (@sc0ttkclark)
+* Fixed: eslint rules and formatting for Javascript (DFV only) #4590 (@sc0ttkclark)
+
+= 2.7.1 - December 8th 2017 =
+
+* Fix table join logic for taxonomies when renaming meta fields #4613 @sc0ttkclark
+* Fix Pods Form submit errors and 404s #4618 @pglewis
+* Fix dashicons style conflicts with Pods Form #4626 @nicdford
+* Roll-back minimum version requirement for MySQL from 5.5 to 5.1 #4634 @sc0ttkclark
+
+= 2.7 - December 4th 2017 =
+
+**New PHP & WP Minimum Version Requirements:**
+
+* PHP Version Change Requirement 5.3+
+* WP Version Change Required 4.5+
+
+**Major Changes in 2.7 Release: Flexible Relationships:**
+
+* New Relationship Field Format "List View": The power of the new flexible relationships is our new modal window that opens within the existing record for relationship fields. This is modeled after the Media Modal from WordPress and provides full functionality to Add New related records or edit existing records all from within the parent record of the relationship. This is provided through our new List View field format for relationship fields. To see a demo of this field in action [head on over to our YouTube](https://youtu.be/V8c067GAEcA)
+* Add New with Flexible Relationships: The new flexible relationships will automatically enable Add New on all your existing relationships, but you can disable this from the Additional Options tab for each relationship field. You can switch field formats to the new List View from additional options tab as well.
+* Dynamic Field Views: The relationship fields and file upload fields have been rewritten to take advantage of "Dynamic Field Views", driven by JavaScript. More technical details about the directions we went towards these field changes can be read about in our ["Pods 2.7: What We Did and Why We Did It"](https://pods.io/2017/12/05/pods-2-7-developer-notes/)
+
+**Significant Improvements and Fixes:**
+
+* Enhancements for Date, Time & Date/Time Fields to improve class inheritance, use WP Defaults and allow for custom options for saving and display @JoryHOgeveen
+* Gallery & Tile View for Upload/Media Fields #3589 @JoryHogeveen
+* IsEmpty for all Date/Time Fields, Number, Currency, etc. improvements for `[if field][/if]` for Templates @JoryHogeveen
+* Major fixes for Pods Templates: Proper handling of shortcodes within Pods Templates and in if/each blocks. Proper handling of all image tags and user traversal @jamesgol
+* Comment Traversal #4118 @sc0ttkclark
+* Update Compatibility with Admin Columns 3.0+ #4570 @JoryHogeveen
+* Filter Added for Select2 Overrides #4571 @sc0ttkclark
+* Fix for Advanced Content Types and Relationships in `[each][/each]` tags correcting for lowercase id. #4585 @0xLBF
+
+**Behind the Scenes Fixes and Improvements:**
+
+* js unit tests #3640, #4049 @pglewis
+* pods_ui_get_params hook #3785 @telwing
+* table storage list fields #4420 @jamesgol
+* Refactor CSS @nicdford
+* Built with Node @pglewis
+* Pods Templates added for Polylang Translation Compatibility @JoryHogeveen
+* SelectWoo migration from Select2 to address version incompatibilities #4546 @pglewis
+
+**Known Issues with this Release:**
+
+* Relationships to Taxonomy have Flexible Relationships disabled as the input screen for Taxonomy was not able to be accessed in an iFrame. We’re working on this for a future release.
+
+= 2.6.11 - September 20th 2017 =
+* Fixed: WordPress 4.8.2 introduced a breaking change that no longer correctly prepared number/currency queries. It did not introduce a vulnerability but only produced Database errors.
+* Stay tuned for Pods 2.7 which will be out soon -- [Download Pods 2.7 RC1](https://github.com/pods-framework/pods/archive/release/2.7.zip) and join our [Pods Slack channel #pods-beta](https://pods.io/chat/) to help us finish the final testing
+
+= 2.6.10 - July 14th 2017 =
+* Fixed: Pods Templates were creating erroneous output with nested `[if _fieldname_][else][/if]` and `[each _fieldname_][/each]` template tags inside HTML entities after 2.6.9 upgrade. This fix bypasses `do_shortcode` and also bypasses `do_shortcodes_in_html_tags` which was the problem with this particular fix. Fixes (#4324,#4307,#4307). (#4335). [@pglewis]
+* Fixed: Multi-file fields save was causing array to string conversion warning. New function & helper added called `array_filter_walker` for backwards compatibility. Also fixes the 'editable' titles in Multiple File Upload. Fixes (#4112,#4313). (#4314). [@mgratch,@JoryHogeveen,@sc0ttkclark]
+* Added: Pods Templates & Page Capabilities have been added to the Members Cap Filter and Pods Role Manager from Components, Roles & Capabilities. This corrects an issue where Pods Templates and Pods Pages were not available to Admins, only Network Admins. Admins will still need to have the pods_templates_ and pods_pages_ capabilities added to their role, but now they'll be able to do this without additional code. Fixes (#4311). (#4342). [@JoryHogeveen]
+* Fixed: Corrected 2.x branch for GitHub Feed. Fixes (#4305). (#4306). [@sc0ttkclark]
+* Fixed: Minor Spelling fixes related to i18n. (#4276) [@garrett-eclipse]
+* Updated: Removed CodeClimate Integration (#4275) and updated glob 7.1 (#4242). [@Ramoonus]
+
+= 2.6.9 - May 30th 2017 =
+* Added: Pods Template Component is now automatically active on initial installation or reinstallation of Pods. Fixes (#3446). (#4060,#4180). [@pglewis,@sc0ttkclark]
+* Added: Auto Template Fix: Add configurations setting to override and allow Auto Templates to run against the_content outside of the WordPress_Loop. By default now, it will only run inside the WP Loop. (#4088). [@jamesgol]
+* Added: Allow raw value in PodsUI rows. New type "raw" that can output HTML form elements; used in i18n component. Fixes (#3959). (#3960). [@JoryHogeveen]
+* Fixed: Template Reference in Template Editor now properly displays without running out of memory. Fixes (#3370,#3992). (#4088,#4000). [@jamesgol]
+* Fixed: post_author querying now works through traversal of related post type. Fixes (#3931). (#3953,#4065). [@sc0ttkclark,@pglewis]
+* Fixed: Search the proper SQL column with "search" and meta based CPT. Fixes (#3858). (#4007). [@jamesgol]
+* Fixed: Ensure call to pods_view returns shortcode generated content, instead of echo'ing. Fixes (#3433). (#4010) [@dom111]
+* Fixed: Additional CSS Classes were not saved (#4003) so new Duplicating Pod now gives preference to existing field options values on duplication (#4028). [@pglewis]
+* Fixed: duplicate_pod_item now works for WP objects. Fixes (#3238,#4025). (#4070). [@pglewis]
+* Fixed: Hidden field did not save Default Values on fields with both Visibility hidden and a Default Value set. Fixes (#3996). (#4061). [@pglewis]
+* Fixed: Use register_taxonomy_for_object_type for post types that support post formats. Was not originally being registered for Pods CPT. Fixes (#2165). (#4076,#4084). [@sc0ttkclark]
+* Fixed: Help Text for HTML fields wpautop reference. Fixes (#4090,#4091). (#4089). [@JoryHogeveen]
+* Fixed: Corrected Pods overriding preview link for post updated messages. Fixes (#4092). (#4093). [@tuanmh]
+* Fixed: When using shortcodes/magic tags with PDF attachments, ._src returns an image since WP 4.7. This will now output the URL of the file. You can still get PDF generated images using ._src.image_size or ._img. Fixes (#4040). (#4111). [@JoryHogeveen]
+* Fixed: Audio attachments will now work properly with pods_attachment_import. (#4155) [@sc0ttkclark]
+* Fixed: Handling of Single & Double Quotes in post_thumbnail interpolation. Fixes (#4166). (#4167). [@quasel]
+* Fixed: Adding back_link to wp_die() usage which allows Modal Add/Edit to give you a way to go back in the edit screen. Fixes (#4168). (#4169). [@sc0ttkclark]
+* Fixed: Conflict with The Event Calendar issue with Handlebars (as we're using an older implementation). Temporary hack until 2.7 with the correct fix. (#4173). [@sc0ttkclark]
+* Fixed: Missing images in unit test (#4177). [@sc0ttkclark]
+* Fixed: Invalid AJAX error with frontend forms and Settings Pods; $id will always return for AJAX requests. Fixes (#4181). (#4184). [@JoryHogeveen]
+* Fixed: Allow float values for menu positions and the option to remove trailing decimals from number field. Fixes issue where Pods Converted menu positions with decimals to INT on save. Fixes (#2839). (#4192). [@JoryHogeveen]
+* Fixed: Composer: composer installers v1.2 to v1.3. (#4239) [@Ramoonus]
+* Fixed: Editable Titles in Multiple File Upload fields are 'editable' again (broke in 2.6.8) without breaking bidirectional relationship saving. Fixes (#4112) and resolves (#3477,#3720). (#4264). [@sc0ttkclark]
+* Fixed: Spelling error in UI. Fixes (#4266). (#4267). [@danmaby]
+* Updated: Brand assets for Pods (icons and banners) for WordPress Plugin Directory. Fixes (#3948). (#4268) [@jimtrue]
 
 = 2.6.8 - January 17th 2017 =
 * Added: WP Gallery display options for image fields. Fixes (#3905). (#3910). [@JoryHogeveen]
@@ -479,7 +697,7 @@ Join us in further translating the Pods interface at: [wp-translate.org/projects
 * Fixed issue where user_url was created as a required field when extending users.
 * Add ability to use pods_group_add() in the ACT editor.
 * Security Update Reminder: As of Pods 2.4.2, we recommend all Pods 2.x installations be updated to the latest version, or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
-* If you need assistance in upgrading your Pods 2.x site to the latest version of Pods, please don't hesitate to contact us at http://pods.io/help/
+* If you need assistance in upgrading your Pods 2.x site to the latest version of Pods, please don't hesitate to contact us at https://pods.io/help/
 
 = 2.4.3 - June 23rd, 2014 =
 * Fixed: Pods Templates component now has better handling of the new shortcodes
@@ -568,3 +786,9 @@ Join us in further translating the Pods interface at: [wp-translate.org/projects
 Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
+
+
+== Upgrade Notice ==
+
+= 2.7 =
+This upgrade requires a minimum PHP version of 5.3+ and WordPress 4.5+.

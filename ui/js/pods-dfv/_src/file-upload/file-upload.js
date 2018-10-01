@@ -1,15 +1,15 @@
 /*global jQuery, _, Backbone, Marionette */
-import template from '~/ui/js/pods-dfv/_src/file-upload/file-upload-layout.html';
+import template from 'pods-dfv/_src/file-upload/file-upload-layout.html';
 
-import {PodsDFVFieldLayout} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
+import { PodsDFVFieldLayout } from 'pods-dfv/_src/core/pods-field-views';
 
-import {FileUploadCollection, FileUploadModel} from '~/ui/js/pods-dfv/_src/file-upload/file-upload-model';
+import { FileUploadCollection } from 'pods-dfv/_src/file-upload/file-upload-model';
 
-import {FileUploadList} from '~/ui/js/pods-dfv/_src/file-upload/views/file-upload-list';
-import {FileUploadForm} from '~/ui/js/pods-dfv/_src/file-upload/views/file-upload-form';
+import { FileUploadList } from 'pods-dfv/_src/file-upload/views/file-upload-list';
+import { FileUploadForm } from 'pods-dfv/_src/file-upload/views/file-upload-form';
 
-import {Plupload} from '~/ui/js/pods-dfv/_src/file-upload/uploaders/plupload';
-import {MediaModal} from '~/ui/js/pods-dfv/_src/file-upload/uploaders/media-modal';
+import { Plupload } from 'pods-dfv/_src/file-upload/uploaders/plupload';
+import { MediaModal } from 'pods-dfv/_src/file-upload/uploaders/media-modal';
 
 const Uploaders = [
 	Plupload,
@@ -22,12 +22,19 @@ const UNLIMITED_FILES = 0;
  * @extends Backbone.View
  */
 export const FileUpload = PodsDFVFieldLayout.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	template: _.template( template ),
 
 	regions: {
-		list    : '.pods-ui-file-list',
+		list: '.pods-ui-file-list',
 		uiRegion: '.pods-ui-region', // "Utility" container for uploaders to use
-		form    : '.pods-ui-form'
+		form: '.pods-ui-form'
+	},
+
+	childViewEvents: {
+		'childview:remove:file:click': 'onChildviewRemoveFileClick',
+		'childview:add:file:click': 'onChildviewAddFileClick'
 	},
 
 	uploader: {},
@@ -65,12 +72,16 @@ export const FileUpload = PodsDFVFieldLayout.extend( {
 	/**
 	 * Fired by a add:file:click trigger in any child view
 	 *
-	 * plupload fields should never generate this event as it places a shim over our button and handles the event
-	 * internally
+	 * plupload fields should never generate this event, it places a shim over our button and handles the
+	 * event internally.  But this event does still come through with plupload fields in some browser
+	 * environments for reasons we've been unable to determine.
 	 */
 	onChildviewAddFileClick: function () {
+
 		// Invoke the uploader
-		this.uploader.invoke();
+		if ( 'function' === typeof this.uploader.invoke ) {
+			this.uploader.invoke();
+		}
 	},
 
 	/**
@@ -90,8 +101,7 @@ export const FileUpload = PodsDFVFieldLayout.extend( {
 		// Enforce the file limit option if one is set
 		if ( UNLIMITED_FILES === fileLimit ) {
 			filteredModels = newCollection.models;
-		}
-		else {
+		} else {
 			// Number of uploads is limited: keep the last N models, FIFO/queue style
 			filteredModels = newCollection.filter( function ( model ) {
 				return ( newCollection.indexOf( model ) >= newCollection.length - fileLimit );
@@ -117,14 +127,13 @@ export const FileUpload = PodsDFVFieldLayout.extend( {
 			this.uploader = new Uploader( {
 				// We provide regular DOM element for the button
 				browseButton: this.getRegion( 'form' ).getEl( '.pods-dfv-list-add' ).get(),
-				uiRegion    : this.getRegion( 'uiRegion' ),
-				fieldConfig : fieldConfig
+				uiRegion: this.getRegion( 'uiRegion' ),
+				fieldConfig: fieldConfig
 			} );
 			return this.uploader;
-		}
-		else {
+		} else {
 			// @todo sprintf type with PodsI18n.__()
-			throw "Could not locate file uploader '" + targetUploader + "'";
+			throw `Could not locate file uploader '${targetUploader}'`;
 		}
 	}
 } );

@@ -69,7 +69,9 @@
         $feed = fetch_feed( 'https://github.com/pods-framework/pods/commits/2.x.atom' );
 
         if ( !is_wp_error( $feed ) ) {
-            $max_items = $feed->get_item_quantity( 10 );
+	        // Silence warnings due to a bug in SimplePie's date parser with PHP 7.1+
+	        // See: https://github.com/pods-framework/pods/issues/4363
+            $max_items = @$feed->get_item_quantity( 10 );
             $rss_items = $feed->get_items( 0, $max_items );
 
             if ( 0 < $max_items ) {

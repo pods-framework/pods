@@ -451,8 +451,8 @@ class PodsMeta {
 	 */
 	public function integrations() {
 
-		// `ac_is_version_gte` is since AC 3.0+
-		if ( ! function_exists( 'ac_is_version_gte' ) ) {
+		// `AC()` is AC 3.0+, && `AC_FILE` is AC 3.2+
+		if ( ! function_exists( 'AC' ) && ! defined( 'AC_FILE' ) ) {
 			// Codepress Admin Columns < 2.x
 			add_filter( 'cac/storage_model/meta_keys', array( $this, 'cpac_meta_keys' ), 10, 2 );
 			add_filter( 'cac/post_types', array( $this, 'cpac_post_types' ), 10, 1 );

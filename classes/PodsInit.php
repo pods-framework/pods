@@ -824,6 +824,7 @@ class PodsInit {
 				$pods_taxonomies[ $taxonomy_name ] = array(
 					'label'                 => $ct_label,
 					'labels'                => $ct_labels,
+					'description'           => esc_html( pods_v( 'description', $taxonomy ) ),
 					'public'                => (boolean) pods_v( 'public', $taxonomy, true ),
 					'show_ui'               => (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_in_menu'          => (boolean) pods_v( 'show_in_menu', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),

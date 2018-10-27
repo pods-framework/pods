@@ -186,6 +186,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 Enhancement: Add pods conditional logic handling on frontend forms, #5136 (@JoryHogeveen)
 Enhancement: Add current memory usage to stats, #5178 (@sc0ttkclark)
+Enhancement: Add support for Taxonomy descriptions, #4766
 
 **Bug Fixes**
 

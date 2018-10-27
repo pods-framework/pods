@@ -188,6 +188,7 @@ Enhancement: Add pods conditional logic handling on frontend forms, #5136 (@Jory
 
 **Bug Fixes**
 
+* Fixed: Comma character breaks custom post type dropdown, #2042 (@sc0ttkclark)
 * Fixed: Compatibility with Admin Columns 3.2+, #5129 (@JoryHogeveen, @DGStefan)
 * Fixed: Missing Styles of DFV form field using $pods->form, #5056 (@pglewis)
 * Fixed: "Single Select" Relationship Return differently depending on Format, #5138 (@pglewis)

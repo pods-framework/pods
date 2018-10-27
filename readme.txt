@@ -188,6 +188,7 @@ Enhancement: Add pods conditional logic handling on frontend forms, #5136 (@Jory
 
 **Bug Fixes**
 
+* Fixed: Missing Styles of DFV form field using $pods->form, #5056 (@pglewis)
 * Fixed: "Single Select" Relationship Return differently depending on Format, #5138 (@pglewis)
 * Fixed: Media modal doesn't work on frontend using pods form, #4715 (@pglewis)
 * Fixed: Use minified versions of Backbone.Marionette and Backbone.Radio, #5115

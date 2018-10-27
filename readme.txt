@@ -190,6 +190,7 @@ Enhancement: Add support for Taxonomy descriptions, #4766
 
 **Bug Fixes**
 
+* Fixed: pods->save() does not clear fields with shorthand syntax, #5166 (@mastef)
 * Fixed: Comma character breaks custom post type dropdown, #2042 (@sc0ttkclark)
 * Fixed: Compatibility with Admin Columns 3.2+, #5129 (@JoryHogeveen, @DGStefan)
 * Fixed: Missing Styles of DFV form field using $pods->form, #5056 (@pglewis)

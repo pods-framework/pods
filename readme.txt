@@ -188,6 +188,7 @@ Enhancement: Add pods conditional logic handling on frontend forms, #5136 (@Jory
 
 **Bug Fixes**
 
+* Fixed: Media modal doesn't work on frontend using pods form, #4715 (@pglewis)
 * Fixed: Use minified versions of Backbone.Marionette and Backbone.Radio, #5115
 * Fixed: Always enqueue the DFV script by default if in the admin, #5111 (@pglewis, @sc0ttkclark)
 * Fixed: Add static groups cache for PodsMeta::groups_get() to improve memory usage on bulk wp_insert_post and other similar calls, #5088 (@sc0ttkclark)

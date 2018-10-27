@@ -452,11 +452,6 @@ class PodsField_File extends PodsField {
 
 		$is_user_logged_in = is_user_logged_in();
 
-		// @todo test frontend media modal
-		if ( empty( $options[ static::$type . '_uploader' ] ) || ! is_admin() || ! $is_user_logged_in || ( ! current_user_can( 'upload_files' ) && ! current_user_can( 'edit_files' ) ) ) {
-			$options[ static::$type . '_uploader' ] = 'plupload';
-		}
-
 		// @todo: plupload specific options need accommodation
 		if ( 'plupload' === $options[ static::$type . '_uploader' ] ) {
 			wp_enqueue_script( 'plupload-all' );

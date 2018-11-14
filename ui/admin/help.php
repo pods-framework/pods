@@ -7,9 +7,9 @@
 
     <p><?php _e( 'There are many resources available to help you learn to use Pods on our site, <a href="https://pods.io/" target="_blank">Pods.io</a>:', 'pods'); ?></p>
     <ul class="ul-disc">
-        <li><?php _e('To learn more about using Pods, see the <a href="https://pods.io/docs/" target="_blank">documentation</a>, or our <a href="https://pods.io/tutorials/" target="_blank">tutorials section</a>', 'pods'); ?>.
+        <li><?php _e('To learn more about using Pods, see our <a href="https://pods.io/docs/" target="_blank">documentation</a> and subscribe to our <a href="https://www.youtube.com/user/podsframework/" target="_blank">YouTube Channel</a>', 'pods'); ?>.
 
-        <li><?php _e( 'To get help with a specific issue, you can ask in our <a href="https://wordpress.org/support/plugin/pods" target="_blank">support forums</a>, or in <a href="https://pods.io/forums/chat/" target="_blank">our chat</a>', 'pods'); ?>.
+        <li><?php _e( 'To get help with a specific issue, you can ask in our <a href="https://wordpress.org/support/plugin/pods" target="_blank">support forums</a>, or you can join <a href="https://pods.io/chat/" target="_blank">our Slack chat</a>', 'pods'); ?>.
 
         <li><?php _e('To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank">GitHub</a>.', 'pods' ); ?></li>
 

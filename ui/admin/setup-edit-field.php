@@ -96,7 +96,12 @@ $data = array(
 			$type = $field_types[ pods_v_sanitized( 'type', $field ) ]['label'];
 		}
 
-		echo esc_html( $type ) . ' <span class="pods-manage-row-more">[type: ' . pods_v_sanitized( 'type', $field ) . ']</span>';
+		$type = esc_html( $type );
+		if ( 'pick' == pods_v_sanitized( 'type', $field ) && '' != pods_v_sanitized( 'sister_id', $field, '' ) ) {
+			$type .= ' <small>(' . esc_html__( 'Bi-directional Field', 'pods' ) . ')</small>';
+		}
+
+		echo $type . ' <span class="pods-manage-row-more">[type: ' . pods_v_sanitized( 'type', $field ) . ']</span>';
 
 		$pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sanitized( 'pick_val', $field ), '-' );
 

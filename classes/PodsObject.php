@@ -293,6 +293,8 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	 * @return null|mixed Argument value, or null if not set.
 	 */
 	public function get_arg( $arg ) {
+		$arg = (string) $arg;
+
 		if ( ! isset( $this->_args[ $arg ] ) ) {
 			return null;
 		}
@@ -307,6 +309,8 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	 * @param mixed  $value Argument value.
 	 */
 	public function set_arg( $arg, $value ) {
+		$arg = (string) $arg;
+
 		$reserved = array(
 			'fields',
 			'options',
@@ -314,6 +318,8 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 			'id',
 			'parent',
 			'group',
+			'label',
+			'description',
 		);
 
 		if ( in_array( $arg, $reserved, true ) ) {

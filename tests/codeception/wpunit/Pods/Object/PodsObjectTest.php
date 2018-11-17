@@ -38,7 +38,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	 * @covers PodsObject::__sleep
 	 */
 	public function test_serialization() {
-		$this->assertTrue( method_exists( $this->pods_object, '__sleep' ), 'Method from_serialized does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object, '__sleep' ), 'Method __sleep does not exist' );
 
 		$serialized = serialize( $this->pods_object );
 
@@ -66,6 +66,36 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers PodsObject::jsonSerialize
+	 */
+	public function test_json() {
+		$this->assertTrue( method_exists( $this->pods_object, 'jsonSerialize' ), 'Method jsonSerialize does not exist' );
+
+		$json = json_encode( $this->pods_object );
+
+		$to = json_decode( $json, true );
+
+		$this->assertInternalType( 'array', $to );
+		$this->assertEquals( $this->pods_object->get_args(), $to );
+		$this->assertEquals( $this->pods_object->get_id(), $to['id'] );
+		$this->assertEquals( $this->pods_object->get_name(), $to['name'] );
+		$this->assertEquals( $this->pods_object->get_parent(), $to['parent'] );
+		$this->assertEquals( $this->pods_object->get_group(), $to['group'] );
+	}
+
+	/**
+	 * @covers PodsObject::__toString
+	 */
+	public function test_string() {
+		$this->assertTrue( method_exists( $this->pods_object, '__toString' ), 'Method __toString does not exist' );
+
+		$to = (string) $this->pods_object;
+
+		$this->assertInternalType( 'string', $to );
+		$this->assertEquals( $this->pods_object->get_identifier(), $to );
+	}
+
+	/**
 	 * @covers PodsObject::from_serialized
 	 */
 	public function test_from_serialized() {
@@ -76,7 +106,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 		$to = $this->pods_object->from_serialized( $serialized );
 
 		$this->assertInstanceOf( PodsObject::class, $to );
-		$this->assertEquals( $this->pods_object->get_type(), $to->get_type() );
+		$this->assertEquals( $this->pods_object->get_object_type(), $to->get_object_type() );
 		$this->assertEquals( $this->pods_object->get_id(), $to->get_id() );
 		$this->assertEquals( $this->pods_object->get_name(), $to->get_name() );
 		$this->assertEquals( $this->pods_object->get_parent(), $to->get_parent() );
@@ -105,14 +135,14 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	 * @covers PodsObject::from_json
 	 */
 	public function test_from_json() {
-		$this->assertTrue( method_exists( $this->pods_object, 'from_json' ), 'Method from_serialized does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object, 'from_json' ), 'Method from_json does not exist' );
 
 		$json = json_encode( $this->pods_object );
 
 		$to = $this->pods_object->from_json( $json );
 
 		$this->assertInstanceOf( PodsObject::class, $to );
-		$this->assertEquals( $this->pods_object->get_type(), $to->get_type() );
+		$this->assertEquals( $this->pods_object->get_object_type(), $to->get_object_type() );
 		$this->assertEquals( $this->pods_object->get_id(), $to->get_id() );
 		$this->assertEquals( $this->pods_object->get_name(), $to->get_name() );
 		$this->assertEquals( $this->pods_object->get_parent(), $to->get_parent() );
@@ -123,7 +153,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	 * @covers PodsObject::from_json
 	 */
 	public function test_from_json_args() {
-		$this->assertTrue( method_exists( $this->pods_object, 'from_json' ), 'Method from_serialized does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object, 'from_json' ), 'Method from_json does not exist' );
 
 		$json = json_encode( $this->pods_object );
 
@@ -141,7 +171,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	 * @covers PodsObject::from_wp_post
 	 */
 	public function test_from_wp_post() {
-		$this->assertTrue( method_exists( $this->pods_object, 'from_wp_post' ), 'Method from_serialized does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object, 'from_wp_post' ), 'Method from_wp_post does not exist' );
 
 		$args = array(
 			'post_title'   => $this->pods_object->get_arg( 'label' ),
@@ -161,7 +191,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 		$to = $this->pods_object->from_wp_post( $post );
 
 		$this->assertInstanceOf( PodsObject::class, $to );
-		$this->assertEquals( $this->pods_object->get_type(), $to->get_type() );
+		$this->assertEquals( $this->pods_object->get_object_type(), $to->get_object_type() );
 		$this->assertEquals( $this->pods_object->get_id(), $to->get_id() );
 		$this->assertEquals( $this->pods_object->get_name(), $to->get_name() );
 		$this->assertEquals( $this->pods_object->get_parent(), $to->get_parent() );
@@ -172,7 +202,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	 * @covers PodsObject::from_wp_post
 	 */
 	public function test_from_wp_post_args() {
-		$this->assertTrue( method_exists( $this->pods_object, 'from_wp_post' ), 'Method from_serialized does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object, 'from_wp_post' ), 'Method from_wp_post does not exist' );
 
 		$args = array(
 			'post_title'   => $this->pods_object->get_arg( 'label' ),
@@ -195,5 +225,49 @@ class PodsObjectTest extends Pods_UnitTestCase {
 		$this->assertEquals( $this->pods_object->get_name(), $to['name'] );
 		$this->assertEquals( $this->pods_object->get_parent(), $to['parent'] );
 		$this->assertEquals( $this->pods_object->get_group(), $to['group'] );
+	}
+
+	/**
+	 * @covers PodsObject::offsetExists
+	 * @covers PodsObject::offsetGet
+	 * @covers PodsObject::offsetSet
+	 * @covers PodsObject::offsetUnset
+	 * @covers PodsObject::get_arg
+	 * @covers PodsObject::set_arg
+	 */
+	public function test_array_access() {
+		// Confirm methods exist.
+		$this->assertTrue( method_exists( $this->pods_object, 'offsetExists' ), 'Method offsetExists does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object, 'offsetGet' ), 'Method offsetGet does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object, 'offsetSet' ), 'Method offsetSet does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object, 'offsetUnset' ), 'Method offsetUnset does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object, 'get_arg' ), 'Method get_arg does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object, 'set_arg' ), 'Method set_arg does not exist' );
+
+		// Confirm argument get matches ArrayAccess.
+		$this->assertEquals( $this->pods_object->get_id(), $this->pods_object['id'] );
+		$this->assertEquals( $this->pods_object->get_name(), $this->pods_object['name'] );
+		$this->assertEquals( $this->pods_object->get_parent(), $this->pods_object['parent'] );
+		$this->assertEquals( $this->pods_object->get_group(), $this->pods_object['group'] );
+
+		// Test non-existent arguments and handling for ArrayAccess.
+		$this->assertNull( $this->pods_object->get_arg( '404' ) );
+		$this->assertEquals( $this->pods_object->get_arg( '404' ), $this->pods_object['404'] );
+		$this->assertFalse( isset( $this->pods_object['404'] ) );
+
+		// Test isset for ArrayAccess.
+		$this->assertTrue( isset( $this->pods_object['id'] ) );
+		$this->assertTrue( isset( $this->pods_object['name'] ) );
+		$this->assertTrue( isset( $this->pods_object['parent'] ) );
+		$this->assertTrue( isset( $this->pods_object['group'] ) );
+
+		// Test unset handling for ArrayAccess for reserved arguments.
+		unset( $this->pods_object['id'], $this->pods_object['name'], $this->pods_object['parent'], $this->pods_object['group'] );
+
+		// Confirm ArrayAccess arguments are now empty strings for reserved arguments.
+		$this->assertEquals( $this->pods_object['id'], '' );
+		$this->assertEquals( $this->pods_object['name'], '' );
+		$this->assertEquals( $this->pods_object['parent'], '' );
+		$this->assertEquals( $this->pods_object['group'], '' );
 	}
 }

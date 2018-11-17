@@ -79,6 +79,9 @@ install:
   - composer update --prefer-dist
 
 before_script:
+  # set up folder
+  - mkdir -p $WP_ROOT_FOLDER
+
   # access vendor/bin commands
   - export PATH=$PATH:$TRAVIS_BUILD_DIR/vendor/bin
 

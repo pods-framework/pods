@@ -1,0 +1,296 @@
+.pods-ui-filter-bar {
+	margin: 10px 0 20px;
+}
+
+.pods-ui-filter-bar-primary {
+	padding: 8px 15px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	background-color: #F9F9F9;
+	border: 1px solid #DFDFDF;
+	position: relative;
+	height: auto;
+	line-height: 35px;
+	text-shadow: 0 1px 0 white;
+	overflow: hidden;
+	word-wrap: break-word;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub {
+	margin: 0 0 0 4px;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li {
+	margin-right: 5px;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li.pods-ui-filter-view-label {
+	margin-right: 8px;
+	color: #222;
+	font-size: 14px;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a {
+	text-decoration: none;
+	font-size: 12px;
+	line-height: 13px;
+	padding: 3px 10px;
+	cursor: pointer;
+	border-radius: 3px;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	box-sizing: content-box;
+	border: 1px solid #BBB;
+	color: #464646;
+	background: #F2F2F2;
+	text-shadow: rgba(255, 255, 255, 1) 0 1px 0;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a:hover {
+	color: #000;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a:active {
+	background: #EEE;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a.current {
+	border: none;
+	font-weight: bold;
+	color: white;
+	background: #21759B;
+	text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a.current:hover {
+	border-color: #13455B;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a.current:active {
+	background: #21759B repeat-x scroll left top;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a.current:hover,
+.pods-ui-filter-bar-primary ul.subsubsub li a.current:active {
+	color: #EAF2FA;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a span {
+	font-size: 11px;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a.current span {
+	color: #F7F7F7;
+}
+
+.pods-ui-filter-bar-primary p.search-box {
+	margin: 0;
+}
+
+.pods-ui-filter-bar-primary p.search-box a.pods-ui-filter-reset {
+	margin-right: 6px;
+	font-size: 11px;
+}
+
+body.branch-3-5 .pods-ui-filter-bar-primary p.search-box input[name="s"] {
+	float: none;
+	line-height: 24px;
+}
+
+body.branch-3-5 .pods-ui-filter-bar-primary p.search-box input.button {
+	float: none;
+	line-height: 23px;
+}
+
+.pods-ui-filter-bar-secondary {
+	margin: 0 auto;
+	width: 97%;
+	background: #e1ecf2;
+	border: 1px solid #c0d4e0;
+	padding: 6px 8px;
+	text-align: right;
+
+	-webkit-border-bottom-right-radius: 8px;
+	-webkit-border-bottom-left-radius: 8px;
+	-moz-border-radius-bottomright: 8px;
+	-moz-border-radius-bottomleft: 8px;
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub {
+	margin: 0;
+	float: none;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-add-filter {
+	margin-right: 8px;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-add-filter a {
+	font-size: 13px;
+	font-weight: normal;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter {
+	text-decoration: none;
+	font-size: 12px;
+	line-height: 13px;
+	margin-left: 8px;
+	padding: 4px 12px;
+	cursor: pointer;
+	-webkit-border-radius: 11px;
+	border-radius: 11px;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	box-sizing: content-box;
+
+	border: none;
+	background: #21759B;
+	text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter a {
+	color: white;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:hover {
+	border-color: #13455B;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:active {
+	background: #21759B;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:hover a:hover,
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:active a {
+	color: #EAF2FA;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter a.remove-filter {
+	padding-left: 7px;
+	margin-left: 3px;
+	border-left: 1px solid #888;
+	text-transform: uppercase;
+	font-size: 11px;
+	color: #CCC;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:hover a.remove-filter {
+	color: #CCC;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:hover a.remove-filter:hover {
+	color: #CCC;
+}
+
+.pods-ui-posts-filter-popup .pods-ui-posts-filters,
+.pods-ui-posts-filter-popup .pods-ui-posts-filters p.clear {
+	clear: both;
+}
+
+.pods-ui-posts-filter-popup label {
+	display: block;
+	margin-bottom: 9px;
+	font-weight: bold;
+	font-size: 15px;
+	color: #282828;
+	cursor: pointer;
+}
+
+.pods-ui-posts-filter-popup .pods-ui-posts-filter label {
+	margin: 4px 0;
+	font-size: 13px;
+}
+
+.pods-ui-posts-filter-popup .pods-ui-posts-filter-toggle {
+	color: #2175A4;
+	font-size: 10px;
+	line-height: 15px;
+	text-transform: uppercase;
+	margin-left: 9px;
+	vertical-align: 1px;
+	float: right;
+	cursor: pointer;
+}
+
+.pods-ui-posts-filter-popup .pods-ui-posts-filter {
+	clear: both;
+	display: block;
+	margin-bottom: 4px;
+}
+
+.pods-ui-posts-filter-popup .pods-ui-posts-filter.pods-hidden {
+	display: none;
+}
+
+.pods-ui-posts-filter-popup .pods-ui-posts-filter-toggle.toggle-on {
+	font-size: 14px;
+}
+
+.pods-ui-posts-filter-popup .pods-ui-posts-filter-toggle:active,
+.pods-ui-posts-filter-popup .pods-ui-posts-filter-toggle:hover {
+	color: #D54E21;
+}
+
+.pods-ui-posts-filter-popup p {
+	display: block;
+	float: left;
+	width: 47%;
+	margin: 7px 0 20px 5%;
+	border-bottom: 1px solid #BABABA;
+}
+
+.pods-ui-posts-filter-popup p.clear {
+	margin-left: 0;
+}
+
+.pods-ui-posts-filter-popup p input,
+.pods-ui-posts-filter-popup p select,
+.pods-ui-posts-filter-popup p textarea {
+	max-width: 100%;
+}
+
+.pods-ui-posts-filter-popup p input[type="text"],
+.pods-ui-posts-filter-popup p textarea {
+	width: 100%;
+}
+
+.pods-ui-posts-filter-popup p.pods-ui-posts-filter-search {
+	padding-bottom: 0;
+	border-bottom: none;
+}
+
+.pods-ui-posts-filter-popup p.submit {
+	margin-top: 30px;
+	padding: 0 !important;
+	border-bottom: none;
+}
+
+body.branch-3-5 .pods-ui-posts-filter-popup p.submit {
+	margin-top: 36px;
+}
+
+.pods-ui-posts-filter-popup p.submit.clear {
+	clear: none;
+	float: right;
+	text-align: right;
+}
+
+body.branch-3-4 .pods-ui-posts-filter-popup p.submit input.button {
+	font-size: 13px !important;
+	padding: 5px 32px;
+}
+
+body.branch-3-5 .pods-ui-posts-filter-popup p.submit input.button {
+	padding: 0 32px;
+}
+
+.pods-ui-posts-filter-popup p:after,
+.pods-ui-posts-filter-popup .pods-ui-posts-filters:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}

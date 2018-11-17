@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * Class Pods_I18n_Polylang
+ */
+class Pods_I18n_Polylang {
+
+	public $languages = array();
+
+	/**
+	 * Pods_I18n_Polylang constructor.
+	 */
+	public function __construct() {
+
+		if ( function_exists( 'pll_languages_list' ) ) {
+			$this->languages = pll_languages_list( array( 'fields' => 'locale' ) );
+
+			add_filter( 'pods_component_i18n_admin_data', array( $this, 'pods_component_i18n_admin_data' ) );
+			add_filter(
+				'pods_component_i18n_admin_ui_fields', array(
+					$this,
+					'pods_component_i18n_admin_ui_fields',
+				), 10, 2
+			);
+		}
+
+	}
+
+	/**
+	 * @param $data
+	 *
+	 * @return mixed
+	 */
+	public function pods_component_i18n_admin_data( $data ) {
+
+		foreach ( $data as $lang => $field_data ) {
+			if ( in_array( $lang, $this->languages, true ) ) {
+				$data[ $lang ]['polylang'] = true;
+			} else {
+				$data[ $lang ]['polylang'] = false;
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @param $fields
+	 * @param $data
+	 *
+	 * @return mixed
+	 */
+	public function pods_component_i18n_admin_ui_fields( $fields, $data ) {
+
+		$fields['manage']['polylang'] = array(
+			'label' => __( 'Polylang', 'pods' ),
+			'type'  => 'boolean',
+			/*
+			'options' => array(
+				'text_allow_html' => 1,
+				'text_allowed_html_tags' => 'br a',
+			)*/
+		);
+
+		return $fields;
+	}
+
+}
+
+new Pods_I18n_Polylang();

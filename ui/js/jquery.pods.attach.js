@@ -1,3 +1,4 @@
+/*@global PodsI18n */
 var pods_file_context = false; // tracks whether or not we've got a thickbox displayed in our context
 var pods_file_thickbox_modder; // stores our interval for making necessary changes to thickbox content
 
@@ -14,7 +15,7 @@ function pods_attachments ( src, file_limit ) {
 
         if ( wp_media_show.data( 'pods-injected-quick-add') !== true ) {
             // Create 'Add' link
-            var pods_file_quick_add = jQuery( '<a href="#">Add</a>' ).addClass( 'pods-quick-add' );
+            var pods_file_quick_add = jQuery( '<a href="#">' + PodsI18n.__( 'Add' ) + '</a>' ).addClass( 'pods-quick-add' );
 
             pods_file_quick_add.bind( 'click', function( e ) {
                 var item = jQuery( this );
@@ -23,7 +24,7 @@ function pods_attachments ( src, file_limit ) {
                 item.fadeOut( 'fast', function() {
 
                     // Not sure if the close link should be there for each link?
-                    item.before( '<span class="pods-attached pods-quick-add">Added!</span>' );
+                    item.before( '<span class="pods-attached pods-quick-add">' + PodsI18n.__( 'Added!' ) + '</span>' );
                     //item.before( '<span class="pods-attached pods-quick-add">Added! <a href="#">close this box</a>.</span>' );
 
                     item.remove(); }
@@ -81,7 +82,7 @@ function pods_attachments ( src, file_limit ) {
         pods_file_context.find( 'li#pods-file-' + wp_media_id ).slideDown( 'fast' );
 
         var items = pods_file_context.find( 'li.pods-file' ),
-            itemCount = items.size();
+            itemCount = items.length;
 
         if ( 0 < file_limit && itemCount > file_limit ) {
             items.each( function ( idx, elem ) {
@@ -92,7 +93,7 @@ function pods_attachments ( src, file_limit ) {
         }
 
         if ( 1 < file_limit || file_limit == 0 ) {
-            jQuery( this ).after( ' <span class="pods-attached">Added! Choose another or <a href="#">close this box</a>.</span>' );
+            jQuery( this ).after( ' <span class="pods-attached">' + PodsI18n.__( 'Added! Choose another or <a href="#">close this box</a>' ) + '</span>' );
             jQuery( this ).parent().find( 'span.pods-attached a' ).on( 'click', function ( e ) {
                 parent.eval( 'tb_remove()' );
 

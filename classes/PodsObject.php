@@ -3,6 +3,13 @@
 /**
  * PodsObject abstract class.
  *
+ * @method string|null get_parent_type()
+ * @method string|null get_parent_id()
+ * @method string|null get_parent_name()
+ * @method string|null get_group_type()
+ * @method string|null get_group_id()
+ * @method string|null get_group_name()
+ *
  * @since 2.8
  */
 abstract class PodsObject implements ArrayAccess {
@@ -405,60 +412,6 @@ abstract class PodsObject implements ArrayAccess {
 	}
 
 	/**
-	 * Get object parent type.
-	 *
-	 * @return null|string Object parent type, or null if not set.
-	 */
-	public function get_parent_type() {
-
-		$parent = $this->get_parent_object();
-
-		if ( $parent ) {
-			/** @var PodsObject $group */
-			return $parent->get_type();
-		}
-
-		return null;
-
-	}
-
-	/**
-	 * Get object parent ID.
-	 *
-	 * @return null|string Object parent ID, or null if not set.
-	 */
-	public function get_parent_id() {
-
-		$parent = $this->get_parent_object();
-
-		if ( $parent ) {
-			/** @var PodsObject $group */
-			return $parent->get_id();
-		}
-
-		return null;
-
-	}
-
-	/**
-	 * Get object parent name.
-	 *
-	 * @return null|string Object parent name, or null if not set.
-	 */
-	public function get_parent_name() {
-
-		$parent = $this->get_parent_object();
-
-		if ( $parent ) {
-			/** @var PodsObject $group */
-			return $parent->get_name();
-		}
-
-		return null;
-
-	}
-
-	/**
 	 * Get object group ID or name.
 	 *
 	 * @return null|string Object group ID, group name, or null if not set.
@@ -492,53 +445,36 @@ abstract class PodsObject implements ArrayAccess {
 	}
 
 	/**
-	 * Get object group type.
+	 * Call magic methods.
 	 *
-	 * @return null|string Object group type, or null if not set.
+	 * @param string $name      Method name.
+	 * @param array  $arguments Method arguments.
+	 *
+	 * @return mixed|null
 	 */
-	public function get_group_type() {
+	public function __call( $name, $arguments ) {
 
-		$group = $this->get_group_object();
+		$object = null;
+		$method = null;
 
-		if ( $group ) {
-			/** @var PodsObject $group */
-			return $group->get_type();
+		// Handle parent method calls.
+		if ( 0 === strpos( $name, 'get_parent_' ) ) {
+			$object = $this->get_parent_object();
+
+			$method = explode( 'get_parent_', $name );
+			$method = 'get_' . $method[1];
 		}
 
-		return null;
+		// Handle group method calls.
+		if ( 0 === strpos( $name, 'get_group_' ) ) {
+			$object = $this->get_group_object();
 
-	}
-
-	/**
-	 * Get object group ID.
-	 *
-	 * @return null|string Object group ID, or null if not set.
-	 */
-	public function get_group_id() {
-
-		$group = $this->get_group_object();
-
-		if ( $group ) {
-			/** @var PodsObject $group */
-			return $group->get_id();
+			$method = explode( 'get_group_', $name );
+			$method = 'get_' . $method[1];
 		}
 
-		return null;
-
-	}
-
-	/**
-	 * Get object group name.
-	 *
-	 * @return null|string Object group name, or null if not set.
-	 */
-	public function get_group_name() {
-
-		$group = $this->get_group_object();
-
-		if ( $group ) {
-			/** @var PodsObject $group */
-			return $group->get_name();
+		if ( $object && $method && method_exists( $object, $method ) ) {
+			return call_user_func_array( array( $object, $method ), $arguments );
 		}
 
 		return null;

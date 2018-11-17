@@ -36,6 +36,11 @@ cache:
     - node_modules
     - $HOME/.composer/cache
 
+env:
+  global:
+    - WP_VERSION="latest"
+    - NODE_RELEASE="stable"
+
 matrix:
   allow_failures:
     - env: WP_VERSION="nightly"
@@ -48,6 +53,11 @@ matrix:
       dist: precise
 
 before_install:
+  # load in .env variables
+  - set -a
+  - . .env
+  - set +a
+
   # create the databases needed for the tests
   - mysql -e "create database IF NOT EXISTS $DB_NAME;" -uroot
   - mysql -e "create database IF NOT EXISTS $TEST_DB_NAME;" -uroot

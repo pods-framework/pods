@@ -79,17 +79,14 @@ install:
   - composer update --prefer-dist
 
 before_script:
-  # set up folders
-  - mkdir -p /tmp/tools $WP_ROOT_FOLDER
-
   # access vendor/bin commands
-  - export PATH=$PATH:vendor/bin
+  - export PATH=$PATH:$TRAVIS_BUILD_DIR/vendor/bin
 
   # install WordPress in the `wordpress` folder
   - cd $WP_ROOT_FOLDER
   - wp core download --version=$WP_VERSION
   - wp config create --dbname="$DB_NAME" --dbuser="root" --dbpass="" --dbhost="127.0.0.1" --dbprefix="$WP_TABLE_PREFIX"
-  - wp core install --url="$WP_URL" --title="TEC Tests" --admin_user="$WP_ADMIN_USERNAME" --admin_password="$WP_ADMIN_PASSWORD" --admin_email="admin@$WP_DOMAIN" --skip-email
+  - wp core install --url="$WP_URL" --title="Pods Tests" --admin_user="$WP_ADMIN_USERNAME" --admin_password="$WP_ADMIN_PASSWORD" --admin_email="admin@$WP_DOMAIN" --skip-email
 
   # get back to the build folder
   - cd $TRAVIS_BUILD_DIR

@@ -7,12 +7,12 @@
 /**
  * Class PodsObject_Pod
  *
- * @property PodsObject_Field[] $object_fields Object Fields
- * @property PodsObject_Field[] $fields        Fields
- * @property PodsObject_Group[] $groups        Object Groups
+ * @property PodsObjectOLD_Field[] $object_fields Object Fields
+ * @property PodsObjectOLD_Field[] $fields        Fields
+ * @property PodsObjectOLD_Group[] $groups        Object Groups
  * @property array              $table_info    Table information for Object
  */
-class PodsObject_Pod extends PodsObject {
+class PodsObjectOLD_Pod extends PodsObjectOLD {
 
 	/**
 	 * Post type / meta key prefix for internal values

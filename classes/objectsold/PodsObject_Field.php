@@ -8,10 +8,10 @@
  * Class PodsObject_Field
  *
  * @property int|string         $sister_id  Sister ID
- * @property PodsObject_Field[] $fields     Fields
+ * @property PodsObjectOLD_Field[] $fields     Fields
  * @property array              $table_info Table information for Object
  */
-class PodsObject_Field extends PodsObject {
+class PodsObjectOLD_Field extends PodsObjectOLD {
 
 	/**
 	 * Post type / meta key prefix for internal values

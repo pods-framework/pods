@@ -7,9 +7,9 @@
 /**
  * Class PodsObject_Group
  *
- * @property PodsObject_Field[] $fields Fields
+ * @property PodsObjectOLD_Field[] $fields Fields
  */
-class PodsObject_Group extends PodsObject {
+class PodsObjectOLD_Group extends PodsObjectOLD {
 
 	/**
 	 * Post type / meta key prefix for internal values

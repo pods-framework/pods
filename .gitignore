@@ -49,3 +49,12 @@ ui/js/pods-ui-ready.min.js.map
 
 # PHPCS reports
 phpcs-report-*.txt
+
+
+# Tests - local config files
+codeception.yml
+tests/codeception/*.suite.yml
+.env.local
+
+# Tests - local output files
+tests/codeception/_output

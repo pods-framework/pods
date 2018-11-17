@@ -1,0 +1,13 @@
+actor: Tester
+paths:
+    tests: tests/codeception
+    log: tests/codeception/_output
+    data: tests/codeception/_data
+    helpers: tests/codeception/_support
+settings:
+    bootstrap: _bootstrap.php
+    colors: true
+    memory_limit: 1024M
+params:
+  # read dynamic configuration parameters from the .env file
+  - .env

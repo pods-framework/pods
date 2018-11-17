@@ -1,54 +1,145 @@
+sudo: required
+
 language: php
 
-sudo: false
+notifications:
+  email: false
 
 php:
-    - 7.1
+  - 7.2
 
-env:
-    - WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable
-    - WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
-    - WP_VERSION=latest WP_MULTISITE=1 NODE_RELEASE=stable
+services:
+  - mysql
 
-matrix:
-    allow_failures:
-    - env: WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable
+addons:
+  apt:
+    packages:
+      # needed for Nginx
+      - libjpeg-dev
+      - libpng12-dev
+      - php5-fpm
+      - php5-mysql
+      - nginx
+  hosts:
+    # resolve the following domains to localhost
+    - pods.localhost
 
-    include:
-    - php: 7.2
-      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
-    - php: 7.0
-      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
-    - php: 5.6
-      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
-    - php: 5.3
-      env: WP_VERSION=4.5 WP_MULTISITE=0 NODE_RELEASE=7
-      dist: precise
+# disable the default submodule logic
+git:
+  submodules: false
 
 ## Cache composer and node bits
 cache:
-    apt: true
-    directories:
-        - vendor
-        - node_modules
-        - $HOME/.composer/cache
+  apt: true
+  directories:
+    - vendor
+    - node_modules
+    - $HOME/.composer/cache
+
+env:
+  global:
+    - WP_VERSION="latest"
+    - WP_ROOT_FOLDER="/tmp/wordpress"
+    - WP_URL="http://pods.localhost"
+    - WP_DOMAIN="pods.localhost"
+    - WP_TABLE_PREFIX="wp_"
+    - DB_NAME="wp"
+    - TEST_DB_NAME="test"
+    - WP_ADMIN_USERNAME="admin"
+    - WP_ADMIN_PASSWORD="password"
+    - NODE_RELEASE="stable"
+
+matrix:
+  allow_failures:
+    - env: WP_VERSION="nightly"
+
+  include:
+    - env: WP_VERSION="nightly" WP_MULTISITE=1
+    - php: 7.0
+    - php: 5.6
+    - php: 5.4
+      env: WP_VERSION="4.5" NODE_RELEASE=7
+      dist: precise
 
 before_install:
-    - | # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
-      if [ $NODE_RELEASE == "stable" ]; then
-          . $HOME/.nvm/nvm.sh;
-          nvm install ${NODE_RELEASE};
-          npm install;
-      fi
+  # create the databases needed for the tests
+  - mysql -e "create database IF NOT EXISTS $DB_NAME;" -uroot
+  - mysql -e "create database IF NOT EXISTS $TEST_DB_NAME;" -uroot
+
+  # tweak git to correctly work with submodules
+  - sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
+  - git submodule update --init --recursive
+
+  # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
+  - |
+    if [ $NODE_RELEASE == "stable" ]; then
+        . $HOME/.nvm/nvm.sh;
+        nvm install ${NODE_RELEASE};
+        npm install;
+    fi
+install:
+  # disable XDebug to speed up the tests
+  - phpenv config-rm xdebug.ini
+
+  - composer update --prefer-dist
 
 before_script:
-    - bash bin/init.sh
-    - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
-    - ln -s . /tmp/wordpress/wp-content/plugins/pods
+  # set up folders
+  - mkdir -p /tmp/tools $WP_ROOT_FOLDER
+
+  # install wp-cli
+  - wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -P /tmp/tools/
+  - chmod +x /tmp/tools/wp-cli.phar && mv /tmp/tools/wp-cli.phar /tmp/tools/wp
+  - export PATH=$PATH:/tmp/tools:vendor/bin
+
+  # install WordPress in the `wordpress` folder
+  - cd $WP_ROOT_FOLDER
+  - wp core download --version=$WP_VERSION
+  - wp config create --dbname="$DB_NAME" --dbuser="root" --dbpass="" --dbhost="127.0.0.1" --dbprefix="$WP_TABLE_PREFIX"
+  - wp core install --url="$WP_URL" --title="TEC Tests" --admin_user="$WP_ADMIN_USERNAME" --admin_password="$WP_ADMIN_PASSWORD" --admin_email="admin@$WP_DOMAIN" --skip-email
+
+  # get back to the build folder
+  - cd $TRAVIS_BUILD_DIR
+
+  # copy the Nginx configuration file to the available sites
+  - sudo cp tests/_support/travis/nginx.conf /etc/nginx/sites-available/$WP_DOMAIN
+  - sudo sed -e "s?%WP_ROOT_FOLDER%?$WP_ROOT_FOLDER?g" --in-place /etc/nginx/sites-available/$WP_DOMAIN
+  - sudo sed -e "s?%WP_DOMAIN%?$WP_DOMAIN?g" --in-place /etc/nginx/sites-available/$WP_DOMAIN
+
+  # enable the site
+  - sudo ln -s /etc/nginx/sites-available/$WP_DOMAIN /etc/nginx/sites-enabled/
+
+  # move the plugin into WordPress folder
+  - mv $TRAVIS_BUILD_DIR $WP_ROOT_FOLDER/wp-content/plugins/the-events-calendar
+  - export PLUGIN_DIR="$WP_ROOT_FOLDER/wp-content/plugins/the-events-calendar"
+
+  # activate the plugin in WordPress
+  - cd $WP_ROOT_FOLDER
+  - wp plugin activate the-events-calendar
+
+  # skip any welcome screen
+  - wp option set tribe_skip_welcome 1
+
+  # flush rewrite rules
+  - wp rewrite structure '/%postname%/' --hard
+
+  # export a dump of the just installed database to the _data folder
+  - wp db export $PLUGIN_DIR/tests/_data/dump.sql
+  # do the same for the starting database fixture for the `aggregatorv1` suite
+  - wp db export $PLUGIN_DIR/tests/_data/aggregator-dump.sql
+
+  # get back to the plugin dir
+  - cd $PLUGIN_DIR
+
+  # restart Nnginx and PHP-FPM services
+  - sudo service php5-fpm restart
+  - sudo service nginx restart
 
 script:
-    - vendor/bin/phpunit
-    - | # Only run js tests if we're running the latest stable node (Pipe preserves subsequent whitespace)
-      if [ $NODE_RELEASE == "stable" ]; then
-          npm run test-dfv;
-      fi
+  - codecept run integration
+  - codecept run wpunit
+  # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
+  - |
+    if [ $NODE_RELEASE == "stable" ]; then
+        npm run test-dfv;
+    fi

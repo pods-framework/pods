@@ -67,8 +67,8 @@ before_install:
   - mysql -e "create database IF NOT EXISTS $TEST_DB_NAME;" -uroot
 
   # tweak git to correctly work with submodules
-  - sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
-  - git submodule update --init --recursive
+  #- sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
+  #- git submodule update --init --recursive
 
   # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
   - |

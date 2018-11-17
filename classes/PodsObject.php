@@ -3,88 +3,73 @@
 /**
  * PodsObject abstract class.
  *
+ * @method string|null get_parent_identifier()
  * @method string|null get_parent_type()
- * @method string|null get_parent_id()
  * @method string|null get_parent_name()
+ * @method string|null get_parent_id()
+ * @method string|null get_group_identifier()
  * @method string|null get_group_type()
- * @method string|null get_group_id()
  * @method string|null get_group_name()
+ * @method string|null get_group_id()
  *
  * @since 2.8
  */
-abstract class PodsObject implements ArrayAccess {
+abstract class PodsObject implements ArrayAccess, JsonSerializable {
 
 	/**
 	 * @var array
 	 */
-	private $_args = array(
-		'name'   => '',
-		'id'     => '',
-		'parent' => '',
-		'group'  => '',
+	protected $_args = array(
+		'name'        => '',
+		'id'          => '',
+		'parent'      => '',
+		'group'       => '',
+		'label'       => '',
+		'description' => '',
 	);
 
 	/**
 	 * @var string
 	 */
-	private $_type = 'object';
-
-	/**
-	 * @var string
-	 */
-	private $_name = '';
-
-	/**
-	 * @var string
-	 */
-	private $_id = '';
-
-	/**
-	 * @var string
-	 */
-	private $_parent = '';
-
-	/**
-	 * @var string
-	 */
-	private $_group = '';
+	protected $_type = 'object';
 
 	/**
 	 * PodsObject constructor.
 	 *
 	 * @todo Define storage per PodsObject.
 	 *
-	 * @param array $args {
-	 *      Object arguments.
+	 * @param array     $args        {
+	 *                               Object arguments.
 	 *
-	 *      @type string     $name        Object name.
-	 *      @type string|int $id          Object ID.
-	 *      @type string     $label       Object label.
-	 *      @type string     $description Object description.
-	 *      @type string|int $parent      Object parent name or ID.
-	 *      @type string|int $group       Object group name or ID.
+	 * @type string     $name        Object name.
+	 * @type string|int $id          Object ID.
+	 * @type string     $label       Object label.
+	 * @type string     $description Object description.
+	 * @type string|int $parent      Object parent name or ID.
+	 * @type string|int $group       Object group name or ID.
 	 * }
 	 */
 	public function __construct( array $args = array() ) {
-
 		// Setup the object.
 		$this->setup( $args );
-
 	}
 
 	/**
 	 * Setup object from a serialized string.
 	 *
 	 * @param string  $serialized Serialized representation of the object.
-	 * @param boolean $to_args    Return as arguments array if serialized string is an array.
+	 * @param boolean $to_args    Return as arguments array.
 	 *
 	 * @return PodsObject|array|null
 	 */
 	public static function from_serialized( $serialized, $to_args = false ) {
-
 		$object = maybe_unserialize( $serialized );
 
 		if ( $object instanceof self ) {
+			if ( $to_args ) {
+				return $object->get_args();
+			}
+
 			return $object;
 		}
 
@@ -99,7 +84,6 @@ abstract class PodsObject implements ArrayAccess {
 		}
 
 		return null;
-
 	}
 
 	/**
@@ -111,7 +95,6 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return PodsObject|array|null
 	 */
 	public static function from_json( $json, $to_args = false ) {
-
 		$args = @json_decode( $json, true );
 
 		if ( is_array( $args ) ) {
@@ -125,7 +108,6 @@ abstract class PodsObject implements ArrayAccess {
 		}
 
 		return null;
-
 	}
 
 	/**
@@ -137,9 +119,6 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return PodsObject|array|null
 	 */
 	public static function from_wp_post( $post, $to_args = false ) {
-
-		$called_class = get_called_class();
-
 		if ( ! $post instanceof WP_Post ) {
 			$post = get_post( $post );
 		}
@@ -153,6 +132,8 @@ abstract class PodsObject implements ArrayAccess {
 			'id'          => $post->ID,
 			'label'       => $post->post_title,
 			'description' => $post->post_content,
+			'parent'      => '',
+			'group'       => '',
 		);
 
 		if ( 0 < $post->post_parent ) {
@@ -169,8 +150,9 @@ abstract class PodsObject implements ArrayAccess {
 			return $args;
 		}
 
-		return new $called_class( $args );
+		$called_class = get_called_class();
 
+		return new $called_class( $args );
 	}
 
 	/**
@@ -179,7 +161,6 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return array List of properties to serialize.
 	 */
 	public function __sleep() {
-
 		// @todo If DB based config, return only name, id, parent, group
 		/*$this->_args = array(
 			'name'   => $this->_args['name'],
@@ -191,17 +172,23 @@ abstract class PodsObject implements ArrayAccess {
 		return array(
 			'_args',
 		);
-
 	}
 
 	/**
 	 * On unserialization of this object, setup the object.
 	 */
 	public function __wakeup() {
-
 		// Setup the object.
 		$this->setup();
+	}
 
+	/**
+	 * Handle JSON encoding for object.
+	 *
+	 * @return array Object arguments.
+	 */
+	public function jsonSerialize() {
+		return $this->_args;
 	}
 
 	/**
@@ -210,9 +197,7 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return string Object identifier.
 	 */
 	public function __toString() {
-
 		return $this->get_identifier();
-
 	}
 
 	/**
@@ -223,10 +208,8 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return bool Whether the offset exists.
 	 */
 	public function offsetExists( $offset ) {
-
 		// @todo Handle offsetExists.
 		return false;
-
 	}
 
 	/**
@@ -237,10 +220,8 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return mixed|null Offset value, or null if not set.
 	 */
 	public function offsetGet( $offset ) {
-
 		// @todo Handle offsetGet.
 		return null;
-
 	}
 
 	/**
@@ -250,7 +231,6 @@ abstract class PodsObject implements ArrayAccess {
 	 * @param mixed $value  Offset value.
 	 */
 	public function offsetSet( $offset, $value ) {
-
 		// @todo Handle offsetSet.
 
 	}
@@ -261,7 +241,6 @@ abstract class PodsObject implements ArrayAccess {
 	 * @param mixed $offset Offset name.
 	 */
 	public function offsetUnset( $offset ) {
-
 		// @todo Handle offsetUnset.
 
 	}
@@ -269,34 +248,58 @@ abstract class PodsObject implements ArrayAccess {
 	/**
 	 * Setup object.
 	 *
-	 * @param array $args {
-	 *      Object arguments.
+	 * @param array     $args        {
+	 *                               Object arguments.
 	 *
-	 *      @type string     $name        Object name.
-	 *      @type string|int $id          Object ID.
-	 *      @type string     $label       Object label.
-	 *      @type string     $description Object description.
-	 *      @type string|int $parent      Object parent name or ID.
-	 *      @type string|int $group       Object group name or ID.
+	 * @type string     $name        Object name.
+	 * @type string|int $id          Object ID.
+	 * @type string     $label       Object label.
+	 * @type string     $description Object description.
+	 * @type string|int $parent      Object parent name or ID.
+	 * @type string|int $group       Object group name or ID.
 	 * }
 	 */
 	public function setup( array $args = array() ) {
-
 		if ( ! empty( $args ) ) {
 			$this->_args = $args;
 		}
 
 		$defaults = array(
-			'name'   => '',
-			'id'     => '',
-			'parent' => '',
-			'group'  => '',
+			'name'        => '',
+			'id'          => '',
+			'parent'      => '',
+			'group'       => '',
+			'label'       => '',
+			'description' => '',
 		);
 
 		$this->_args = array_merge( $defaults, $this->_args );
-
 		// @todo Handle setup.
+	}
 
+	/**
+	 * Get object argument value.
+	 *
+	 * @param string $arg Argument name.
+	 *
+	 * @return null|mixed Argument value, or null if not set.
+	 */
+	public function get_arg( $arg ) {
+		if ( ! isset( $this->_args[ $arg ] ) ) {
+			return null;
+		}
+
+		return $this->_args[ $arg ];
+	}
+
+	/**
+	 * Set object argument.
+	 *
+	 * @param string $arg   Argument name.
+	 * @param mixed  $value Argument value.
+	 */
+	public function set_arg( $arg, $value ) {
+		$this->_args[ $arg ] = $value;
 	}
 
 	/**
@@ -305,13 +308,11 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return bool Whether the object is valid.
 	 */
 	public function is_valid() {
-
 		if ( $this->get_name() ) {
 			return true;
 		}
 
 		return false;
-
 	}
 
 	/**
@@ -320,7 +321,6 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return string Object identifier.
 	 */
 	public function get_identifier() {
-
 		$parts = array(
 			$this->_type,
 		);
@@ -334,7 +334,6 @@ abstract class PodsObject implements ArrayAccess {
 		}
 
 		return implode( '/', $parts );
-
 	}
 
 	/**
@@ -343,24 +342,16 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return string Object type.
 	 */
 	public function get_type() {
-
 		return $this->_type;
-
 	}
 
 	/**
-	 * Get object ID.
+	 * Get object arguments.
 	 *
-	 * @return null|string Object ID or null if not set.
+	 * @return array Object arguments.
 	 */
-	public function get_id() {
-
-		if ( $this->_id ) {
-			return $this->_id;
-		}
-
-		return null;
-
+	public function get_args() {
+		return $this->_args;
 	}
 
 	/**
@@ -369,28 +360,37 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return null|string Object name or null if not set.
 	 */
 	public function get_name() {
-
-		if ( 0 < strlen( $this->_name ) ) {
-			return $this->_name;
+		if ( ! empty( $this->_args['name'] ) ) {
+			return $this->_args['name'];
 		}
 
 		return null;
+	}
 
+	/**
+	 * Get object ID.
+	 *
+	 * @return null|string Object ID or null if not set.
+	 */
+	public function get_id() {
+		if ( ! empty( $this->_args['id'] ) ) {
+			return $this->_args['id'];
+		}
+
+		return null;
 	}
 
 	/**
 	 * Get object parent ID or name.
 	 *
-	 * @return null|string Object parent ID, parent name, or null if not set.
+	 * @return null|string|int Object parent ID, parent name, or null if not set.
 	 */
 	public function get_parent() {
-
-		if ( 0 < strlen( $this->_parent ) ) {
-			return $this->_parent;
+		if ( ! empty( $this->_args['parent'] ) ) {
+			return $this->_args['parent'];
 		}
 
 		return null;
-
 	}
 
 	/**
@@ -399,7 +399,6 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return PodsObject|null Object parent, or null if not set.
 	 */
 	public function get_parent_object() {
-
 		$parent = PodsObject_Collection::get_object( $this->_parent );
 
 		if ( $parent ) {
@@ -408,22 +407,19 @@ abstract class PodsObject implements ArrayAccess {
 		}
 
 		return $parent;
-
 	}
 
 	/**
 	 * Get object group ID or name.
 	 *
-	 * @return null|string Object group ID, group name, or null if not set.
+	 * @return null|string|int Object group ID, group name, or null if not set.
 	 */
 	public function get_group() {
-
-		if ( 0 < strlen( $this->_group ) ) {
-			return $this->_group;
+		if ( ! empty( $this->_args['group'] ) ) {
+			return $this->_args['group'];
 		}
 
 		return null;
-
 	}
 
 	/**
@@ -432,7 +428,6 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return PodsObject|null Object group, or null if not set.
 	 */
 	public function get_group_object() {
-
 		$group = PodsObject_Collection::get_object( $this->_group );
 
 		if ( $group ) {
@@ -441,7 +436,6 @@ abstract class PodsObject implements ArrayAccess {
 		}
 
 		return $group;
-
 	}
 
 	/**
@@ -453,7 +447,6 @@ abstract class PodsObject implements ArrayAccess {
 	 * @return mixed|null
 	 */
 	public function __call( $name, $arguments ) {
-
 		$object = null;
 		$method = null;
 
@@ -478,7 +471,6 @@ abstract class PodsObject implements ArrayAccess {
 		}
 
 		return null;
-
 	}
 
 }

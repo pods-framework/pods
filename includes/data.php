@@ -275,7 +275,7 @@ function pods_unslash( $input ) {
  * @return array|object|string
  * @since 1.2.0
  */
-function pods_trim( $input, $charlist = null, $lr = null ) {
+function pods_trim( $input, $charlist = " \t\n\r\0\x0B", $lr = null ) {
 
 	$output = array();
 

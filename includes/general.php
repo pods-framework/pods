@@ -460,7 +460,7 @@ function pods_deprecated( $function, $version, $replacement = null ) {
 			$error = __( '%1$s has been <strong>deprecated</strong> since Pods version %2$s with no alternative available.', 'pods' );
 		}
 
-		trigger_error( sprintf( $error, $function, $version, $replacement ) );
+		trigger_error( sprintf( $error, $function, $version, $replacement ), E_USER_DEPRECATED );
 	}
 }
 

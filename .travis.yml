@@ -36,19 +36,6 @@ cache:
     - node_modules
     - $HOME/.composer/cache
 
-env:
-  global:
-    - WP_VERSION="latest"
-    - WP_ROOT_FOLDER="/tmp/wordpress"
-    - WP_URL="http://pods.localhost"
-    - WP_DOMAIN="pods.localhost"
-    - WP_TABLE_PREFIX="wp_"
-    - DB_NAME="wp"
-    - TEST_DB_NAME="test"
-    - WP_ADMIN_USERNAME="admin"
-    - WP_ADMIN_PASSWORD="password"
-    - NODE_RELEASE="stable"
-
 matrix:
   allow_failures:
     - env: WP_VERSION="nightly"

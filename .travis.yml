@@ -57,7 +57,6 @@ matrix:
     - env: WP_VERSION="nightly" WP_MULTISITE=1
     - php: 7.0
     - php: 5.6
-    - php: 5.4
       env: WP_VERSION="4.5" NODE_RELEASE=7
       dist: precise
 
@@ -80,7 +79,6 @@ before_install:
 install:
   # disable XDebug to speed up the tests
   - phpenv config-rm xdebug.ini
-
   - composer update --prefer-dist
 
 before_script:
@@ -102,7 +100,7 @@ before_script:
   - cd $TRAVIS_BUILD_DIR
 
   # copy the Nginx configuration file to the available sites
-  - sudo cp tests/_support/travis/nginx.conf /etc/nginx/sites-available/$WP_DOMAIN
+  - sudo cp tests/codeception/_support/travis/nginx.conf /etc/nginx/sites-available/$WP_DOMAIN
   - sudo sed -e "s?%WP_ROOT_FOLDER%?$WP_ROOT_FOLDER?g" --in-place /etc/nginx/sites-available/$WP_DOMAIN
   - sudo sed -e "s?%WP_DOMAIN%?$WP_DOMAIN?g" --in-place /etc/nginx/sites-available/$WP_DOMAIN
 
@@ -124,9 +122,9 @@ before_script:
   - wp rewrite structure '/%postname%/' --hard
 
   # export a dump of the just installed database to the _data folder
-  - wp db export $PLUGIN_DIR/tests/_data/dump.sql
+  - wp db export $PLUGIN_DIR/tests/codeception/_data/dump.sql
   # do the same for the starting database fixture for the `aggregatorv1` suite
-  - wp db export $PLUGIN_DIR/tests/_data/aggregator-dump.sql
+  - wp db export $PLUGIN_DIR/tests/codeception/_data/aggregator-dump.sql
 
   # get back to the plugin dir
   - cd $PLUGIN_DIR

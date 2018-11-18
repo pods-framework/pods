@@ -1,8 +1,14 @@
 <?php
 
 /**
- * PodsObject abstract class.
+ * Pods_Object abstract class.
  *
+ * @method string|null get_name()
+ * @method string|null get_id()
+ * @method string|null get_parent()
+ * @method string|null get_group()
+ * @method string|null get_label()
+ * @method string|null get_description()
  * @method string|null get_parent_identifier()
  * @method string|null get_parent_object_type()
  * @method string|null get_parent_name()
@@ -14,12 +20,12 @@
  *
  * @since 2.8
  */
-abstract class PodsObject implements ArrayAccess, JsonSerializable {
+abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 
 	/**
 	 * @var array
 	 */
-	protected $_args = array(
+	protected $args = array(
 		'name'        => '',
 		'id'          => '',
 		'parent'      => '',
@@ -31,12 +37,12 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	/**
 	 * @var string
 	 */
-	protected $_type = 'object';
+	protected $type = 'object';
 
 	/**
-	 * PodsObject constructor.
+	 * Pods_Object constructor.
 	 *
-	 * @todo Define storage per PodsObject.
+	 * @todo Define storage per Pods_Object.
 	 *
 	 * @param array     $args        {
 	 *                               Object arguments.
@@ -60,7 +66,7 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	 * @param string  $serialized Serialized representation of the object.
 	 * @param boolean $to_args    Return as arguments array.
 	 *
-	 * @return PodsObject|array|null
+	 * @return Pods_Object|array|null
 	 */
 	public static function from_serialized( $serialized, $to_args = false ) {
 		$object = maybe_unserialize( $serialized );
@@ -74,13 +80,16 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 		}
 
 		if ( is_array( $object ) ) {
-			if ( $to_args ) {
-				return $object;
-			}
-
 			$called_class = get_called_class();
 
-			return new $called_class( $object );
+			/** @var Pods_Object $object */
+			$object = new $called_class( $object );
+
+			if ( $to_args ) {
+				return $object->get_args();
+			}
+
+			return $object;
 		}
 
 		return null;
@@ -92,22 +101,72 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	 * @param string  $json    JSON representation of the object.
 	 * @param boolean $to_args Return as arguments array.
 	 *
-	 * @return PodsObject|array|null
+	 * @return Pods_Object|array|null
 	 */
 	public static function from_json( $json, $to_args = false ) {
 		$args = @json_decode( $json, true );
 
 		if ( is_array( $args ) ) {
-			if ( $to_args ) {
-				return $args;
+			if ( ! empty( $args['id'] ) ) {
+				// Check if we already have an object registered and available.
+				$object = Pods_Object_Collection::get_instance()->get_object( $args['id'] );
+
+				if ( $object ) {
+					if ( $to_args ) {
+						return $object->get_args();
+					}
+
+					return $object;
+				}
 			}
 
 			$called_class = get_called_class();
 
-			return new $called_class( $args );
+			/** @var Pods_Object $object */
+			$object = new $called_class( $args );
+
+			if ( $to_args ) {
+				return $object->get_args();
+			}
+
+			return $object;
 		}
 
 		return null;
+	}
+
+	/**
+	 * Setup object from an array configuration.
+	 *
+	 * @param array   $array   Array configuration.
+	 * @param boolean $to_args Return as arguments array.
+	 *
+	 * @return Pods_Object|array|null
+	 */
+	public static function from_array( array $array, $to_args = false ) {
+		if ( ! empty( $array['id'] ) ) {
+			// Check if we already have an object registered and available.
+			$object = Pods_Object_Collection::get_instance()->get_object( $array['id'] );
+
+			if ( $object ) {
+				if ( $to_args ) {
+					return $object->get_args();
+				}
+
+				return $object;
+			}
+		}
+
+		$called_class = get_called_class();
+
+		/** @var Pods_Object $object */
+		$object = new $called_class( $array );
+
+		if ( $to_args ) {
+			return $object->get_args();
+		}
+
+		return $object;
 	}
 
 	/**
@@ -116,7 +175,7 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	 * @param WP_Post|int $post    Post object or ID of the object.
 	 * @param boolean     $to_args Return as arguments array.
 	 *
-	 * @return PodsObject|array|null
+	 * @return Pods_Object|array|null
 	 */
 	public static function from_wp_post( $post, $to_args = false ) {
 		if ( ! $post instanceof WP_Post ) {
@@ -125,6 +184,17 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 
 		if ( empty( $post ) ) {
 			return null;
+		}
+
+		// Check if we already have an object registered and available.
+		$object = Pods_Object_Collection::get_instance()->get_object( $post->ID );
+
+		if ( $object ) {
+			if ( $to_args ) {
+				return $object->get_args();
+			}
+
+			return $object;
 		}
 
 		$args = array(
@@ -162,15 +232,15 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	 */
 	public function __sleep() {
 		// @todo If DB based config, return only name, id, parent, group
-		/*$this->_args = array(
-			'name'   => $this->_args['name'],
-			'id'     => $this->_args['id'],
-			'parent' => $this->_args['parent'],
-			'group'  => $this->_args['group'],
+		/*$this->args = array(
+			'name'   => $this->args['name'],
+			'id'     => $this->args['id'],
+			'parent' => $this->args['parent'],
+			'group'  => $this->args['group'],
 		);*/
 
 		return array(
-			'_args',
+			'args',
 		);
 	}
 
@@ -188,7 +258,7 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	 * @return array Object arguments.
 	 */
 	public function jsonSerialize() {
-		return $this->_args;
+		return $this->args;
 	}
 
 	/**
@@ -210,7 +280,7 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	public function offsetExists( $offset ) {
 		// @todo Handle offsetExists for fields and other options.
 
-		if ( isset( $this->_args[ $offset ] ) ) {
+		if ( isset( $this->args[ $offset ] ) ) {
 			return true;
 		}
 
@@ -269,7 +339,7 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	 */
 	public function setup( array $args = array() ) {
 		if ( ! empty( $args ) ) {
-			$this->_args = $args;
+			$this->args = $args;
 		}
 
 		$defaults = array(
@@ -281,7 +351,7 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 			'description' => '',
 		);
 
-		$this->_args = array_merge( $defaults, $this->_args );
+		$this->args = array_merge( $defaults, $this->args );
 		// @todo Handle setup.
 	}
 
@@ -295,11 +365,11 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	public function get_arg( $arg ) {
 		$arg = (string) $arg;
 
-		if ( ! isset( $this->_args[ $arg ] ) ) {
+		if ( ! isset( $this->args[ $arg ] ) ) {
 			return null;
 		}
 
-		return $this->_args[ $arg ];
+		return $this->args[ $arg ];
 	}
 
 	/**
@@ -332,7 +402,7 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 			}
 		}
 
-		$this->_args[ $arg ] = $value;
+		$this->args[ $arg ] = $value;
 	}
 
 	/**
@@ -355,7 +425,7 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	 */
 	public function get_identifier() {
 		$parts = array(
-			$this->_type,
+			$this->type,
 		);
 
 		$parent = $this->get_parent();
@@ -378,7 +448,7 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	 * @return string Object type.
 	 */
 	public function get_object_type() {
-		return $this->_type;
+		return $this->type;
 	}
 
 	/**
@@ -387,88 +457,38 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 	 * @return array Object arguments.
 	 */
 	public function get_args() {
-		return $this->_args;
-	}
-
-	/**
-	 * Get object name.
-	 *
-	 * @return null|string Object name or null if not set.
-	 */
-	public function get_name() {
-		if ( ! empty( $this->_args['name'] ) ) {
-			return $this->_args['name'];
-		}
-
-		return null;
-	}
-
-	/**
-	 * Get object ID.
-	 *
-	 * @return null|string Object ID or null if not set.
-	 */
-	public function get_id() {
-		if ( ! empty( $this->_args['id'] ) ) {
-			return $this->_args['id'];
-		}
-
-		return null;
-	}
-
-	/**
-	 * Get object parent ID or name.
-	 *
-	 * @return null|string|int Object parent ID, parent name, or null if not set.
-	 */
-	public function get_parent() {
-		if ( ! empty( $this->_args['parent'] ) ) {
-			return $this->_args['parent'];
-		}
-
-		return null;
+		return $this->args;
 	}
 
 	/**
 	 * Get object parent.
 	 *
-	 * @return PodsObject|null Object parent, or null if not set.
+	 * @return Pods_Object|null Object parent, or null if not set.
 	 */
 	public function get_parent_object() {
-		$parent = PodsObject_Collection::get_object( $this->_parent );
+		$parent = $this->get_parent();
 
 		if ( $parent ) {
-			/** @var PodsObject $parent */
-			$this->_parent = $parent->get_name();
+			$parent = Pods_Object_Collection::get_instance()->get_object( $parent );
 		}
 
 		return $parent;
 	}
 
 	/**
-	 * Get object group ID or name.
-	 *
-	 * @return null|string|int Object group ID, group name, or null if not set.
-	 */
-	public function get_group() {
-		if ( ! empty( $this->_args['group'] ) ) {
-			return $this->_args['group'];
-		}
-
-		return null;
-	}
-
-	/**
 	 * Get object group.
 	 *
-	 * @return PodsObject|null Object group, or null if not set.
+	 * @return Pods_Object|null Object group, or null if not set.
 	 */
 	public function get_group_object() {
-		$group = PodsObject_Collection::get_object( $this->_group );
+		$group = $this->get_group();
 
 		if ( $group ) {
-			/** @var PodsObject $group */
-			$this->_group = $group->get_name();
+			$group = Pods_Object_Collection::get_instance()->get_object( $group );
+
+			if ( $group ) {
+				$this->args['group'] = $group->get_identifier();
+			}
 		}
 
 		return $group;
@@ -502,8 +522,29 @@ abstract class PodsObject implements ArrayAccess, JsonSerializable {
 			$method = 'get_' . $method[1];
 		}
 
-		if ( $object && $method && method_exists( $object, $method ) ) {
+		if ( $object && $method ) {
 			return call_user_func_array( array( $object, $method ), $arguments );
+		}
+
+		// Handle arg method calls.
+		if ( 0 === strpos( $name, 'get_' ) ) {
+			$arg = explode( 'get_', $name );
+			$arg = $arg[1];
+
+			$supported_args = array(
+				'name',
+				'id',
+				'parent',
+				'group',
+				'label',
+				'description',
+			);
+
+			if ( ! empty( $this->args[ $arg ] ) && in_array( $arg, $supported_args, true ) ) {
+				return $this->args[ $arg ];
+			}
+
+			return null;
 		}
 
 		return null;

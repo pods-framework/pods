@@ -8,7 +8,7 @@ use PodsMeta;
  * @group  pods-meta
  * @covers PodsMeta
  */
-class PodsMetaTest extends Pods_UnitTestCase {
+class MetaTest extends Pods_UnitTestCase {
 
 	/**
 	 * @var PodsMeta

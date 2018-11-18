@@ -8,7 +8,7 @@ use PodsAPI;
  * @group  pods
  * @covers PodsAPI
  */
-class PodsAPITest extends Pods_UnitTestCase {
+class APITest extends Pods_UnitTestCase {
 
 	/**
 	 * @var PodsAPI

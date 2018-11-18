@@ -1,15 +1,26 @@
 <?php
 
-namespace Pods_Unit_Tests;
+namespace Pods_Unit_Tests\Object;
 
-use Mockery;
-use PodsObject;
+use Pods_Unit_Tests\Pods_UnitTestCase;
+use Pods_Object_Collection;
+use Pods_Object;
 
 /**
  * @group  pods_object
- * @covers PodsObject
+ * @covers Pods_Object
  */
-class PodsObjectTest extends Pods_UnitTestCase {
+class ObjectTest extends Pods_UnitTestCase {
+
+	/**
+	 * @var array
+	 */
+	private $parent_args;
+
+	/**
+	 * @var array
+	 */
+	private $group_args;
 
 	/**
 	 * @var array
@@ -17,30 +28,125 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	private $args;
 
 	/**
-	 * @var PodsObject
+	 * @var Pods_Object
+	 */
+	private $pods_object_parent;
+
+	/**
+	 * @var Pods_Object
+	 */
+	private $pods_object_group;
+
+	/**
+	 * @var Pods_Object
 	 */
 	private $pods_object;
 
 	public function setUp() {
-		$this->args = array(
+		// Setup parent.
+		$parent_args = array(
+			'id'          => 121,
+			'name'        => 'test-parent',
+			'label'       => 'Test parent',
+			'description' => 'Testing parent',
+		);
+
+		$this->pods_object_parent = $this->setup_pods_object( $parent_args, 'parent' );
+
+		// Setup group.
+		$group_args = array(
+			'id'          => 122,
+			'name'        => 'test-group',
+			'label'       => 'Test group',
+			'description' => 'Testing group',
+		);
+
+		$this->pods_object_group = $this->setup_pods_object( $group_args, 'group' );
+
+		// Setup object.
+		$args = array(
 			'id'          => 123,
 			'name'        => 'test',
 			'label'       => 'Test',
 			'description' => 'Testing',
+			'parent'      => $this->pods_object_parent->get_id(),
+			'group'       => $this->pods_object_group->get_identifier(),
+		);
+
+		$this->pods_object = $this->setup_pods_object( $args );
+	}
+
+	public function tearDown() {
+		unset( $this->pods_object_parent );
+		unset( $this->pods_object_group );
+		unset( $this->pods_object );
+
+		$this->parent_args = array();
+		$this->group_args  = array();
+		$this->args        = array();
+
+		Pods_Object_Collection::get_instance()->flush_objects();
+	}
+
+	/**
+	 * Setup and return a Pods_Object.
+	 *
+	 * @param array  $args Object arguments.
+	 * @param string $type Object type.
+	 *
+	 * @return Pods_Object
+	 */
+	public function setup_pods_object( array $args = array(), $type = 'object' ) {
+		$defaults = array(
+			'id'          => '',
+			'name'        => '',
+			'label'       => '',
+			'description' => '',
 			'parent'      => '',
 			'group'       => '',
 		);
 
-		$this->pods_object = $this->getMockBuilder( PodsObject::class )->getMockForAbstractClass();
-		$this->pods_object->setup( $this->args );
-	}
+		$args = array_merge( $defaults, $args );
 
-	public function tearDown() {
-		unset( $this->pods_object );
+		if ( 'parent' === $type ) {
+			$this->parent_args = $args;
+		} elseif ( 'group' === $type ) {
+			$this->group_args = $args;
+		} else {
+			$this->args = $args;
+		}
+
+		/** @var Pods_Object $object */
+		$object = $this->getMockBuilder( Pods_Object::class )->getMockForAbstractClass();
+		$object->setup( $args );
+
+		$object_collection = Pods_Object_Collection::get_instance();
+		$object_collection->register_object( $object );
+
+		return $object;
 	}
 
 	/**
-	 * @covers PodsObject::__sleep
+	 * Setup WP Post from Pods_Object.
+	 *
+	 * @param Pods_Object $object
+	 *
+	 * @return int|\WP_Error
+	 */
+	public function setup_wp_post( Pods_Object $object ) {
+		$args = array(
+			'post_title'   => $object->get_arg( 'label' ),
+			'post_name'    => $object->get_name(),
+			'post_content' => $object->get_arg( 'description' ),
+			'post_parent'  => $object->get_arg( 'parent' ),
+			'post_type'    => 'doesntmatter',
+		);
+
+		return wp_insert_post( $args );
+	}
+
+	/**
+	 * @covers Pods_Object::__sleep
 	 */
 	public function test_serialization() {
 		$this->assertTrue( method_exists( $this->pods_object, '__sleep' ), 'Method __sleep does not exist' );
@@ -53,15 +159,15 @@ class PodsObjectTest extends Pods_UnitTestCase {
 		$serialized_pattern = sprintf( 'O:%d:"%s":', strlen( $class_name ), $class_name );
 
 		$serialized = str_replace( $serialized_pattern, 'a:', $serialized );
-		$serialized = str_replace( "s:8:\"\0*\0_args\"", 's:5:"_args"', $serialized );
+		$serialized = str_replace( "s:7:\"\0*\0args\"", 's:4:"args"', $serialized );
 
 		$to = unserialize( $serialized );
 
 		$this->assertInternalType( 'array', $to );
-		$this->assertArrayHasKey( '_args', $to );
-		$this->assertInternalType( 'array', $to['_args'] );
+		$this->assertArrayHasKey( 'args', $to );
+		$this->assertInternalType( 'array', $to['args'] );
 
-		$to = $to['_args'];
+		$to = $to['args'];
 
 		$this->assertEquals( $this->pods_object->get_args(), $to );
 		$this->assertEquals( $this->pods_object->get_id(), $to['id'] );
@@ -71,7 +177,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::jsonSerialize
+	 * @covers Pods_Object::jsonSerialize
 	 */
 	public function test_json() {
 		$this->assertTrue( method_exists( $this->pods_object, 'jsonSerialize' ), 'Method jsonSerialize does not exist' );
@@ -89,7 +195,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::__toString
+	 * @covers Pods_Object::__toString
 	 */
 	public function test_string() {
 		$this->assertTrue( method_exists( $this->pods_object, '__toString' ), 'Method __toString does not exist' );
@@ -101,7 +207,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::from_serialized
+	 * @covers Pods_Object::from_serialized
 	 */
 	public function test_from_serialized() {
 		$this->assertTrue( method_exists( $this->pods_object, 'from_serialized' ), 'Method from_serialized does not exist' );
@@ -110,7 +216,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 
 		$to = $this->pods_object->from_serialized( $serialized );
 
-		$this->assertInstanceOf( PodsObject::class, $to );
+		$this->assertInstanceOf( Pods_Object::class, $to );
 		$this->assertEquals( $this->pods_object->get_object_type(), $to->get_object_type() );
 		$this->assertEquals( $this->pods_object->get_id(), $to->get_id() );
 		$this->assertEquals( $this->pods_object->get_name(), $to->get_name() );
@@ -119,7 +225,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::from_serialized
+	 * @covers Pods_Object::from_serialized
 	 */
 	public function test_from_serialized_args() {
 		$this->assertTrue( method_exists( $this->pods_object, 'from_serialized' ), 'Method from_serialized does not exist' );
@@ -137,7 +243,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::from_json
+	 * @covers Pods_Object::from_json
 	 */
 	public function test_from_json() {
 		$this->assertTrue( method_exists( $this->pods_object, 'from_json' ), 'Method from_json does not exist' );
@@ -146,7 +252,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 
 		$to = $this->pods_object->from_json( $json );
 
-		$this->assertInstanceOf( PodsObject::class, $to );
+		$this->assertInstanceOf( Pods_Object::class, $to );
 		$this->assertEquals( $this->pods_object->get_object_type(), $to->get_object_type() );
 		$this->assertEquals( $this->pods_object->get_id(), $to->get_id() );
 		$this->assertEquals( $this->pods_object->get_name(), $to->get_name() );
@@ -155,7 +261,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::from_json
+	 * @covers Pods_Object::from_json
 	 */
 	public function test_from_json_args() {
 		$this->assertTrue( method_exists( $this->pods_object, 'from_json' ), 'Method from_json does not exist' );
@@ -173,29 +279,29 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::from_wp_post
+	 * @covers Pods_Object::from_wp_post
 	 */
 	public function test_from_wp_post() {
 		$this->assertTrue( method_exists( $this->pods_object, 'from_wp_post' ), 'Method from_wp_post does not exist' );
 
-		$args = array(
-			'post_title'   => $this->pods_object->get_arg( 'label' ),
-			'post_name'    => $this->pods_object->get_name(),
-			'post_content' => $this->pods_object->get_arg( 'description' ),
-			'post_parent'  => $this->pods_object->get_arg( 'parent' ),
-			'post_type'    => 'doesntmatter',
-		);
-
-		$post_id = wp_insert_post( $args );
+		$parent_post_id = $this->setup_wp_post( $this->pods_object_parent );
+		$group_post_id  = $this->setup_wp_post( $this->pods_object_group );
 
 		// Update object ID to match.
+		$this->pods_object->set_arg( 'parent', $parent_post_id );
+
+		$post_id = $this->setup_wp_post( $this->pods_object );
+
+		// Update object ID and group to match.
 		$this->pods_object->set_arg( 'id', $post_id );
+
+		update_post_meta( $post_id, 'group', $this->pods_object_group->get_identifier() );
 
 		$post = get_post( $post_id );
 
 		$to = $this->pods_object->from_wp_post( $post );
 
-		$this->assertInstanceOf( PodsObject::class, $to );
+		$this->assertInstanceOf( Pods_Object::class, $to );
 		$this->assertEquals( $this->pods_object->get_object_type(), $to->get_object_type() );
 		$this->assertEquals( $this->pods_object->get_id(), $to->get_id() );
 		$this->assertEquals( $this->pods_object->get_name(), $to->get_name() );
@@ -204,23 +310,23 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::from_wp_post
+	 * @covers Pods_Object::from_wp_post
 	 */
 	public function test_from_wp_post_args() {
 		$this->assertTrue( method_exists( $this->pods_object, 'from_wp_post' ), 'Method from_wp_post does not exist' );
 
-		$args = array(
-			'post_title'   => $this->pods_object->get_arg( 'label' ),
-			'post_name'    => $this->pods_object->get_name(),
-			'post_content' => $this->pods_object->get_arg( 'description' ),
-			'post_parent'  => $this->pods_object->get_arg( 'parent' ),
-			'post_type'    => 'doesntmatter',
-		);
-
-		$post_id = wp_insert_post( $args );
+		$parent_post_id = $this->setup_wp_post( $this->pods_object_parent );
+		$group_post_id  = $this->setup_wp_post( $this->pods_object_group );
 
 		// Update object ID to match.
+		$this->pods_object->set_arg( 'parent', $parent_post_id );
+
+		$post_id = $this->setup_wp_post( $this->pods_object );
+
+		// Update object ID and group to match.
 		$this->pods_object->set_arg( 'id', $post_id );
+
+		update_post_meta( $post_id, 'group', $this->pods_object_group->get_identifier() );
 
 		$to = $this->pods_object->from_wp_post( $post_id, true );
 
@@ -233,12 +339,12 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::offsetExists
-	 * @covers PodsObject::offsetGet
-	 * @covers PodsObject::offsetSet
-	 * @covers PodsObject::offsetUnset
-	 * @covers PodsObject::get_arg
-	 * @covers PodsObject::set_arg
+	 * @covers Pods_Object::offsetExists
+	 * @covers Pods_Object::offsetGet
+	 * @covers Pods_Object::offsetSet
+	 * @covers Pods_Object::offsetUnset
+	 * @covers Pods_Object::get_arg
+	 * @covers Pods_Object::set_arg
 	 */
 	public function test_array_access() {
 		// Confirm methods exist.
@@ -275,10 +381,10 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::setup
-	 * @covers PodsObject::get_args
-	 * @covers PodsObject::get_arg
-	 * @covers PodsObject::get_group
+	 * @covers Pods_Object::setup
+	 * @covers Pods_Object::get_args
+	 * @covers Pods_Object::get_arg
+	 * @covers Pods_Object::get_group
 	 */
 	public function test_setup() {
 		$this->assertTrue( method_exists( $this->pods_object, 'setup' ), 'Method setup does not exist' );
@@ -313,8 +419,8 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::get_arg
-	 * @covers PodsObject::set_arg
+	 * @covers Pods_Object::get_arg
+	 * @covers Pods_Object::set_arg
 	 */
 	public function test_get_set_arg() {
 		// Confirm methods exist.
@@ -352,7 +458,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::is_valid
+	 * @covers Pods_Object::is_valid
 	 */
 	public function test_is_valid() {
 		$this->assertTrue( method_exists( $this->pods_object, 'is_valid' ), 'Method is_valid does not exist' );
@@ -372,25 +478,25 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::get_identifier
+	 * @covers Pods_Object::get_identifier
 	 */
 	public function test_get_identifier() {
 		$this->assertTrue( method_exists( $this->pods_object, 'get_identifier' ), 'Method get_identifier does not exist' );
 
-		$identifier = sprintf( '%s/%s', $this->pods_object->get_object_type(), $this->pods_object->get_name() );
+		$identifier = sprintf( '%s/%s/%s', $this->pods_object->get_object_type(), $this->pods_object->get_parent(), $this->pods_object->get_name() );
 
 		$this->assertEquals( $identifier, $this->pods_object->get_identifier() );
 
-		// Set parent.
-		$this->pods_object->set_arg( 'parent', 555 );
+		// Unset parent.
+		$this->pods_object->set_arg( 'parent', null );
 
-		$identifier = sprintf( '%s/%s/%s', $this->pods_object->get_object_type(), $this->pods_object->get_parent(), $this->pods_object->get_name() );
+		$identifier = sprintf( '%s/%s', $this->pods_object->get_object_type(), $this->pods_object->get_name() );
 
 		$this->assertEquals( $identifier, $this->pods_object->get_identifier() );
 	}
 
 	/**
-	 * @covers PodsObject::get_object_type
+	 * @covers Pods_Object::get_object_type
 	 */
 	public function test_get_object_type() {
 		$this->assertTrue( method_exists( $this->pods_object, 'get_object_type' ), 'Method get_object_type does not exist' );
@@ -399,7 +505,7 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::get_args
+	 * @covers Pods_Object::get_args
 	 */
 	public function test_get_args() {
 		$this->assertTrue( method_exists( $this->pods_object, 'get_args' ), 'Method get_args does not exist' );
@@ -408,38 +514,95 @@ class PodsObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers PodsObject::get_name
+	 * Provide get_* methods to be tested.
+	 *
+	 * @return array
 	 */
-	public function test_get_name() {
-		$this->assertTrue( method_exists( $this->pods_object, 'get_name' ), 'Method get_name does not exist' );
-
-		$this->assertEquals( $this->args['name'], $this->pods_object->get_name() );
+	public function provider_methods() {
+		return array(
+			array( 'name' ),
+			array( 'id' ),
+			array( 'parent' ),
+			array( 'group' ),
+		);
 	}
 
 	/**
-	 * @covers PodsObject::get_id
+	 * @covers       Pods_Object::get_name
+	 * @covers       Pods_Object::get_id
+	 * @covers       Pods_Object::get_parent
+	 * @covers       Pods_Object::get_group
+	 *
+	 * @dataProvider provider_methods
+	 *
+	 * @param string $property Property to test.
 	 */
-	public function test_get_id() {
-		$this->assertTrue( method_exists( $this->pods_object, 'get_id' ), 'Method get_id does not exist' );
+	public function test_get( $property ) {
+		$method = 'get_' . $property;
 
-		$this->assertEquals( $this->args['id'], $this->pods_object->get_id() );
+		codecept_debug( 'Method: ' . $method );
+
+		$this->assertEquals( $this->args[ $property ], call_user_func( array( $this->pods_object, $method ) ) );
 	}
 
 	/**
-	 * @covers PodsObject::get_parent
+	 * Provide parent get_* methods to be tested.
+	 *
+	 * @return array
 	 */
-	public function test_get_parent() {
-		$this->assertTrue( method_exists( $this->pods_object, 'get_parent' ), 'Method get_parent does not exist' );
-
-		$this->assertEquals( $this->args['parent'], $this->pods_object->get_parent() );
+	public function provider_parent_methods() {
+		return array(
+			array( 'name' ),
+			array( 'id' ),
+			array( 'parent' ),
+			array( 'group' ),
+		);
 	}
 
 	/**
-	 * @covers PodsObject::get_group
+	 * @covers       Pods_Object::get_parent_name
+	 * @covers       Pods_Object::get_parent_id
+	 *
+	 * @dataProvider provider_parent_methods
+	 *
+	 * @param string $property Property to test.
 	 */
-	public function test_get_group() {
-		$this->assertTrue( method_exists( $this->pods_object, 'get_group' ), 'Method get_group does not exist' );
+	public function test_get_parent( $property ) {
+		$method = 'get_parent_' . $property;
 
-		$this->assertEquals( $this->args['group'], $this->pods_object->get_group() );
+		codecept_debug( 'Method: ' . $method );
+
+		$this->assertEquals( $this->parent_args[ $property ], call_user_func( array( $this->pods_object, $method ) ) );
 	}
+
+	/**
+	 * Provide group get_* methods to be tested.
+	 *
+	 * @return array
+	 */
+	public function provider_group_methods() {
+		return array(
+			array( 'name' ),
+			array( 'id' ),
+			array( 'parent' ),
+			array( 'group' ),
+		);
+	}
+
+	/**
+	 * @covers       Pods_Object::get_group_name
+	 * @covers       Pods_Object::get_group_id
+	 *
+	 * @dataProvider provider_group_methods
+	 *
+	 * @param string $property Property to test.
+	 */
+	public function test_get_group( $property ) {
+		$method = 'get_group_' . $property;
+
+		codecept_debug( 'Method: ' . $method );
+
+		$this->assertEquals( $this->group_args[ $property ], call_user_func( array( $this->pods_object, $method ) ) );
+	}
+
 }

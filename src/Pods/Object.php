@@ -3,6 +3,7 @@
 /**
  * Pods_Object abstract class.
  *
+ * @method string      get_object_type()
  * @method string|null get_name()
  * @method string|null get_id()
  * @method string|null get_parent()
@@ -26,6 +27,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	 * @var array
 	 */
 	protected $args = array(
+		'object_type' => 'object',
 		'name'        => '',
 		'id'          => '',
 		'parent'      => '',
@@ -33,11 +35,6 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 		'label'       => '',
 		'description' => '',
 	);
-
-	/**
-	 * @var string
-	 */
-	protected $type = 'object';
 
 	/**
 	 * Pods_Object constructor.
@@ -216,13 +213,16 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 			$args['group'] = $group;
 		}
 
-		if ( $to_args ) {
-			return $args;
-		}
-
 		$called_class = get_called_class();
 
-		return new $called_class( $args );
+		/** @var Pods_Object $object */
+		$object = new $called_class( $args );
+
+		if ( $to_args ) {
+			return $object->get_args();
+		}
+
+		return $object;
 	}
 
 	/**
@@ -233,10 +233,11 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	public function __sleep() {
 		// @todo If DB based config, return only name, id, parent, group
 		/*$this->args = array(
-			'name'   => $this->args['name'],
-			'id'     => $this->args['id'],
-			'parent' => $this->args['parent'],
-			'group'  => $this->args['group'],
+			'object_type' => $this->args['object_type'],
+			'name'        => $this->args['name'],
+			'id'          => $this->args['id'],
+			'parent'      => $this->args['parent'],
+			'group'       => $this->args['group'],
 		);*/
 
 		return array(
@@ -258,7 +259,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	 * @return array Object arguments.
 	 */
 	public function jsonSerialize() {
-		return $this->args;
+		return $this->get_args();
 	}
 
 	/**
@@ -338,11 +339,12 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	 * }
 	 */
 	public function setup( array $args = array() ) {
-		if ( ! empty( $args ) ) {
-			$this->args = $args;
+		if ( empty( $args ) ) {
+			$args = $this->get_args();
 		}
 
 		$defaults = array(
+			'object_type' => $this->get_arg( 'object_type' ),
 			'name'        => '',
 			'id'          => '',
 			'parent'      => '',
@@ -351,7 +353,15 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 			'description' => '',
 		);
 
-		$this->args = array_merge( $defaults, $this->args );
+		$args = array_merge( $defaults, $args );
+
+		// Reset arguments.
+		$this->args = $defaults;
+
+		foreach ( $args as $arg => $value ) {
+			$this->set_arg( $arg, $value );
+		}
+
 		// @todo Handle setup.
 	}
 
@@ -382,6 +392,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 		$arg = (string) $arg;
 
 		$reserved = array(
+			'object_type',
 			'fields',
 			'options',
 			'name',
@@ -392,12 +403,28 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 			'description',
 		);
 
+		$read_only = array(
+			'object_type',
+			'fields',
+			'options',
+		);
+
 		if ( in_array( $arg, $reserved, true ) ) {
-			if ( 'fields' === $arg || 'options' === $arg ) {
+			if ( in_array( $arg, $read_only, true ) ) {
 				return;
 			}
 
-			if ( null === $value ) {
+			if ( is_string( $value ) ) {
+				$value = trim( $value );
+			}
+
+			$empty_values = array(
+				null,
+				0,
+				'0',
+			);
+
+			if ( in_array( $value, $empty_values, true ) ) {
 				$value = '';
 			}
 		}
@@ -419,36 +446,39 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	}
 
 	/**
-	 * Get object identifier.
+	 * Get object identifier from arguments.
 	 *
-	 * @return string Object identifier.
+	 * @param array $args Object arguments.
+	 *
+	 * @return string|null Object identifier or if invalid object.
 	 */
-	public function get_identifier() {
-		$parts = array(
-			$this->type,
-		);
-
-		$parent = $this->get_parent();
-		$name   = $this->get_name();
-
-		if ( 0 < strlen( $parent ) ) {
-			$parts[] = $parent;
+	public static function get_identifier_from_args( array $args ) {
+		if ( empty( $args['object_type'] ) ) {
+			return null;
 		}
 
-		if ( 0 < strlen( $name ) ) {
-			$parts[] = $name;
+		$parts = array(
+			$args['object_type'],
+		);
+
+		if ( isset( $args['parent'] ) && 0 < strlen( $args['parent'] ) ) {
+			$parts[] = $args['parent'];
+		}
+
+		if ( isset( $args['name'] ) && 0 < strlen( $args['name'] ) ) {
+			$parts[] = $args['name'];
 		}
 
 		return implode( '/', $parts );
 	}
 
 	/**
-	 * Get object type.
+	 * Get object identifier.
 	 *
-	 * @return string Object type.
+	 * @return string Object identifier.
 	 */
-	public function get_object_type() {
-		return $this->type;
+	public function get_identifier() {
+		return self::get_identifier_from_args( $this->get_args() );
 	}
 
 	/**
@@ -487,7 +517,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 			$group = Pods_Object_Collection::get_instance()->get_object( $group );
 
 			if ( $group ) {
-				$this->args['group'] = $group->get_identifier();
+				$this->set_arg( 'group', $group->get_identifier() );
 			}
 		}
 
@@ -532,6 +562,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 			$arg = $arg[1];
 
 			$supported_args = array(
+				'object_type',
 				'name',
 				'id',
 				'parent',
@@ -540,8 +571,10 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 				'description',
 			);
 
-			if ( ! empty( $this->args[ $arg ] ) && in_array( $arg, $supported_args, true ) ) {
-				return $this->args[ $arg ];
+			$value = $this->get_arg( $arg );
+
+			if ( ! empty( $value ) && in_array( $arg, $supported_args, true ) ) {
+				return $value;
 			}
 
 			return null;

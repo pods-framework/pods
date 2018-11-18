@@ -98,6 +98,7 @@ class ObjectTest extends Pods_UnitTestCase {
 	 */
 	public function setup_pods_object( array $args = array(), $type = 'object' ) {
 		$defaults = array(
+			'object_type' => 'object', // For test reference.
 			'id'          => '',
 			'name'        => '',
 			'label'       => '',
@@ -370,7 +371,7 @@ class ObjectTest extends Pods_UnitTestCase {
 		$this->assertTrue( isset( $this->pods_object['parent'] ) );
 		$this->assertTrue( isset( $this->pods_object['group'] ) );
 
-		// Test unset handling for ArrayAccess for reserved arguments.
+		// Test unset handling for ArrayAccess served arguments.
 		unset( $this->pods_object['id'], $this->pods_object['name'], $this->pods_object['parent'], $this->pods_object['group'] );
 
 		// Confirm ArrayAccess arguments are now empty strings for reserved arguments.
@@ -478,6 +479,26 @@ class ObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers Pods_Object::get_identifier_from_args
+	 */
+	public function test_get_identifier_from_args() {
+		$this->assertTrue( method_exists( $this->pods_object, 'get_identifier_from_args' ), 'Method get_identifier_from_args does not exist' );
+
+		$this->assertEquals( $this->pods_object->get_identifier(), Pods_Object::get_identifier_from_args( $this->args ) );
+
+		$identifier = sprintf( '%s/%s/%s', $this->pods_object->get_object_type(), $this->pods_object->get_parent(), $this->pods_object->get_name() );
+
+		$this->assertEquals( $identifier, Pods_Object::get_identifier_from_args( $this->pods_object->get_args() ) );
+
+		// Unset parent.
+		$this->pods_object->set_arg( 'parent', null );
+
+		$identifier = sprintf( '%s/%s', $this->pods_object->get_object_type(), $this->pods_object->get_name() );
+
+		$this->assertEquals( $identifier, Pods_Object::get_identifier_from_args( $this->pods_object->get_args() ) );
+	}
+
+	/**
 	 * @covers Pods_Object::get_identifier
 	 */
 	public function test_get_identifier() {
@@ -496,15 +517,6 @@ class ObjectTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_object_type
-	 */
-	public function test_get_object_type() {
-		$this->assertTrue( method_exists( $this->pods_object, 'get_object_type' ), 'Method get_object_type does not exist' );
-
-		$this->assertEquals( 'object', $this->pods_object->get_object_type() );
-	}
-
-	/**
 	 * @covers Pods_Object::get_args
 	 */
 	public function test_get_args() {
@@ -520,6 +532,7 @@ class ObjectTest extends Pods_UnitTestCase {
 	 */
 	public function provider_methods() {
 		return array(
+			array( 'object_type' ),
 			array( 'name' ),
 			array( 'id' ),
 			array( 'parent' ),
@@ -552,6 +565,7 @@ class ObjectTest extends Pods_UnitTestCase {
 	 */
 	public function provider_parent_methods() {
 		return array(
+			array( 'object_type' ),
 			array( 'name' ),
 			array( 'id' ),
 			array( 'parent' ),
@@ -582,6 +596,7 @@ class ObjectTest extends Pods_UnitTestCase {
 	 */
 	public function provider_group_methods() {
 		return array(
+			array( 'object_type' ),
 			array( 'name' ),
 			array( 'id' ),
 			array( 'parent' ),

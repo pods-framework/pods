@@ -20,9 +20,18 @@ abstract class Pods_Object_Storage {
 	}
 
 	/**
+	 * Get storage type.
+	 *
+	 * @return string
+	 */
+	public function get_storage_type() {
+		return $this->type;
+	}
+
+	/**
 	 * Get object from storage.
 	 *
-	 * @return null
+	 * @return Pods_Object|null
 	 */
 	public function get() {
 		// @todo Get how?
@@ -34,7 +43,7 @@ abstract class Pods_Object_Storage {
 	 *
 	 * @param array $args Arguments to use.
 	 *
-	 * @return array
+	 * @return Pods_Object[]
 	 */
 	public function find( array $args = array() ) {
 		// @todo Find how?
@@ -44,45 +53,66 @@ abstract class Pods_Object_Storage {
 	/**
 	 * Add an object.
 	 *
-	 * @return bool
+	 * @param Pods_Object $object Object to add.
+	 *
+	 * @return string|int|false Object name, object ID, or false if not added.
 	 */
-	public function add() {
+	public function add( Pods_Object $object ) {
 		return false;
 	}
 
 	/**
 	 * Save an object.
 	 *
+	 * @param Pods_Object $object Object to save.
+	 *
+	 * @return string|int|false Object name, object ID, or false if not saved.
+	 */
+	public function save( Pods_Object $object ) {
+		return false;
+	}
+
+	/**
+	 * Save object argument data.
+	 *
+	 * @param Pods_Object $object Object with arguments to save.
+	 *
 	 * @return bool
 	 */
-	public function save() {
+	public function save_args( Pods_Object $object ) {
 		return false;
 	}
 
 	/**
 	 * Duplicate an object.
 	 *
-	 * @return bool
+	 * @param Pods_Object $object Object to duplicate.
+	 *
+	 * @return string|int|false Duplicated object name, duplicated object ID, or false if not duplicated.
 	 */
-	public function duplicate() {
+	public function duplicate( Pods_Object $object ) {
 		return false;
 	}
 
 	/**
 	 * Delete an object.
 	 *
+	 * @param Pods_Object $object Object to delete.
+	 *
 	 * @return bool
 	 */
-	public function delete() {
+	public function delete( Pods_Object $object ) {
 		return false;
 	}
 
 	/**
 	 * Reset an object's item data.
 	 *
+	 * @param Pods_Object $object Object of items to reset.
+	 *
 	 * @return bool
 	 */
-	public function reset() {
+	public function reset( Pods_Object $object ) {
 		return false;
 	}
 

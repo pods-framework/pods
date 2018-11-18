@@ -26,6 +26,41 @@ class StorageTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * Setup and return a Pods_Object.
+	 *
+	 * @param array $args Object arguments.
+	 *
+	 * @return Pods_Object
+	 */
+	public function setup_pods_object( array $args = array() ) {
+		$defaults = array(
+			'id'          => 123,
+			'name'        => 'test',
+			'label'       => 'Test',
+			'description' => 'Testing',
+			'parent'      => '',
+			'group'       => '',
+		);
+
+		$this->args = array_merge( $defaults, $args );
+
+		/** @var Pods_Object $object */
+		$object = $this->getMockBuilder( Pods_Object::class )->getMockForAbstractClass();
+		$object->setup( $this->args );
+
+		return $object;
+	}
+
+	/**
+	 * @covers Pods_Object_Storage::get_storage_type
+	 */
+	public function test_get_storage_type() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'get_storage_type' ), 'Method get_storage_type does not exist' );
+
+		$this->assertEquals( '', $this->pods_object_storage->get_storage_type() );
+	}
+
+	/**
 	 * @covers Pods_Object_Storage::get
 	 */
 	public function test_get() {
@@ -49,7 +84,9 @@ class StorageTest extends Pods_UnitTestCase {
 	public function test_add() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'add' ), 'Method add does not exist' );
 
-		$this->assertFalse( $this->pods_object_storage->add() );
+		$object = $this->setup_pods_object();
+
+		$this->assertFalse( $this->pods_object_storage->add( $object ) );
 	}
 
 	/**
@@ -58,7 +95,20 @@ class StorageTest extends Pods_UnitTestCase {
 	public function test_save() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'save' ), 'Method save does not exist' );
 
-		$this->assertFalse( $this->pods_object_storage->save() );
+		$object = $this->setup_pods_object();
+
+		$this->assertFalse( $this->pods_object_storage->save( $object ) );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage::save_args
+	 */
+	public function test_save_args() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'save_args' ), 'Method save_args does not exist' );
+
+		$object = $this->setup_pods_object();
+
+		$this->assertFalse( $this->pods_object_storage->save_args( $object ) );
 	}
 
 	/**
@@ -67,7 +117,9 @@ class StorageTest extends Pods_UnitTestCase {
 	public function test_duplicate() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'duplicate' ), 'Method duplicate does not exist' );
 
-		$this->assertFalse( $this->pods_object_storage->duplicate() );
+		$object = $this->setup_pods_object();
+
+		$this->assertFalse( $this->pods_object_storage->duplicate( $object ) );
 	}
 
 	/**
@@ -76,7 +128,9 @@ class StorageTest extends Pods_UnitTestCase {
 	public function test_delete() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'delete' ), 'Method delete does not exist' );
 
-		$this->assertFalse( $this->pods_object_storage->delete() );
+		$object = $this->setup_pods_object();
+
+		$this->assertFalse( $this->pods_object_storage->delete( $object ) );
 	}
 
 	/**
@@ -85,7 +139,9 @@ class StorageTest extends Pods_UnitTestCase {
 	public function test_reset() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'reset' ), 'Method reset does not exist' );
 
-		$this->assertFalse( $this->pods_object_storage->reset() );
+		$object = $this->setup_pods_object();
+
+		$this->assertFalse( $this->pods_object_storage->reset( $object ) );
 	}
 
 }

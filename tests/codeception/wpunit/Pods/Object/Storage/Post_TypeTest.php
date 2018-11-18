@@ -5,6 +5,7 @@ namespace Pods_Unit_Tests\Object;
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use Pods_Object_Storage_Post_Type;
 use Pods_Object;
+use WP_Post;
 
 /**
  * @group  pods_object
@@ -88,7 +89,10 @@ class Post_TypeTest extends Pods_UnitTestCase {
 
 		$object->set_arg( 'id', null );
 
-		$this->assertInternalType( 'integer', $this->pods_object_storage_post_type->add( $object ) );
+		$id = $this->pods_object_storage_post_type->add( $object );
+
+		$this->assertInternalType( 'integer', $id );
+		$this->assertInstanceOf( WP_Post::class, get_post( $id ) );
 	}
 
 	/**
@@ -104,7 +108,10 @@ class Post_TypeTest extends Pods_UnitTestCase {
 		$object->set_arg( 'id', $new_id );
 		$object->set_arg( 'label', 'New label' );
 
-		$this->assertInternalType( 'integer', $this->pods_object_storage_post_type->save( $object ) );
+		$id = $this->pods_object_storage_post_type->save( $object );
+
+		$this->assertInternalType( 'integer', $id );
+		$this->assertInstanceOf( WP_Post::class, get_post( $id ) );
 	}
 
 	/**
@@ -134,7 +141,10 @@ class Post_TypeTest extends Pods_UnitTestCase {
 
 		$object->set_arg( 'id', $new_id );
 
-		$this->assertInternalType( 'integer', $this->pods_object_storage_post_type->duplicate( $object ) );
+		$id = $this->pods_object_storage_post_type->duplicate( $object );
+
+		$this->assertInternalType( 'integer', $id );
+		$this->assertInstanceOf( WP_Post::class, get_post( $id ) );
 	}
 
 	/**

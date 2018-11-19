@@ -53,6 +53,19 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	 * {@inheritdoc}
 	 */
 	public function find( array $args = array() ) {
+		/**
+		 * Filter the maximum number of posts to get for post type storage.
+		 *
+		 * @param int $limit
+		 */
+		$limit = apply_filters( 'pods_object_post_type_find_limit', 300 );
+
+		$post_args = array(
+			'order'          => 'ASC',
+			'orderby'        => 'menu_order title',
+			'posts_per_page' => $limit,
+		);
+
 		// @todo Find how?
 		return array();
 	}

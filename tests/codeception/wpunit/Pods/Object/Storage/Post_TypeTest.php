@@ -41,6 +41,7 @@ class Post_TypeTest extends Pods_UnitTestCase {
 			'description' => 'Testing',
 			'parent'      => '',
 			'group'       => '',
+			'custom1'     => 'value1',
 		);
 
 		$this->args = array_merge( $defaults, $args );
@@ -127,6 +128,8 @@ class Post_TypeTest extends Pods_UnitTestCase {
 		$object->set_arg( 'id', $new_id );
 
 		$this->assertTrue( $this->pods_object_storage_post_type->save_args( $object ) );
+		$this->assertEquals( $object->get_arg( 'group' ), get_post_meta( $new_id, 'group', true ) );
+		$this->assertEquals( $object->get_arg( 'custom1' ), get_post_meta( $new_id, 'custom1', true ) );
 	}
 
 	/**

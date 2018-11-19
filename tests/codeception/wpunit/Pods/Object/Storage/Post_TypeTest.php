@@ -8,7 +8,8 @@ use Pods_Object;
 use WP_Post;
 
 /**
- * @group  pods_object
+ * @group  pods-object
+ * @group  pods-object-storage
  * @covers Pods_Object_Storage_Post_Type
  */
 class Post_TypeTest extends Pods_UnitTestCase {

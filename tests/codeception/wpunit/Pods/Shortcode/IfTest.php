@@ -1,16 +1,14 @@
 <?php
 
-namespace Pods_Unit_Tests\Shortcodes;
+namespace Pods_Unit_Tests\Shortcode;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 
 /**
  * Class Test_If
  *
- * @package Pods_Unit_Tests
- * @group   pods_acceptance_tests
- * @group   pods-shortcodes
- * @group   pods-shortcodes-if
+ * @group pods-shortcode
+ * @group pods-shortcode-pods-if
  */
 class Pods_IfTest extends Pods_UnitTestCase {
 

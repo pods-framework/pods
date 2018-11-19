@@ -7,7 +7,7 @@ use Pods_Object_Collection;
 use Pods_Object;
 
 /**
- * @group  pods_object
+ * @group  pods-object
  * @covers Pods_Object
  */
 class ObjectTest extends Pods_UnitTestCase {

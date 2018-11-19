@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests\Fields;
+namespace Pods_Unit_Tests\Field;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use PodsField_Boolean;

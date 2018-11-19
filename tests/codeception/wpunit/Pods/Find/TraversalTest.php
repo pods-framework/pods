@@ -8,6 +8,9 @@ use Pods_Unit_Tests\Pods_UnitTestCase;
  * Class Test_Traversal
  *
  * @package Pods_Unit_Tests
+ *
+ * @group traversal
+ * @group pods-find
  */
 class TraversalTest extends Pods_UnitTestCase {
 

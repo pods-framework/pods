@@ -7,7 +7,8 @@ use Pods_Object_Storage;
 use Pods_Object;
 
 /**
- * @group  pods_object
+ * @group  pods-object
+ * @group  pods-object-storage
  * @covers Pods_Object_Storage
  */
 class StorageTest extends Pods_UnitTestCase {

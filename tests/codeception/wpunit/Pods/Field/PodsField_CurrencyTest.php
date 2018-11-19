@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests\Fields;
+namespace Pods_Unit_Tests\Field;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use PodsField_Currency;
@@ -8,7 +8,6 @@ use PodsField_Currency;
 require_once PODS_DIR . '/classes/fields/currency.php';
 
 /**
- * @package            Pods_Unit_Tests
  * @group              pods-field
  * @coversDefaultClass PodsField_Currency
  */

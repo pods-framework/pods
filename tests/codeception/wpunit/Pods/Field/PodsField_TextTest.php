@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests\Fields;
+namespace Pods_Unit_Tests\Field;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use PodsField_Text;
@@ -8,7 +8,7 @@ use PodsField_Text;
 require_once PODS_DIR . '/classes/fields/text.php';
 
 /**
- * @group pods_field
+ * @group              pods-field
  * @coversDefaultClass PodsField_Text
  */
 class PodsField_TextTest extends Pods_UnitTestCase {

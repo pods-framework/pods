@@ -1,11 +1,14 @@
 <?php
 
-namespace Pods_Unit_Tests\Shortcodes;
+namespace Pods_Unit_Tests\Shortcode;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 
 /**
- * @group pods_acceptance_tests
+ * Class PodsTest
+ *
+ * @group pods-shortcode
+ * @group pods-shortcode-pods
  */
 class PodsTest extends Pods_UnitTestCase {
 

@@ -40,8 +40,64 @@ class Pods_Object_Collection {
 	/**
 	 * Pods_Object_Collection constructor.
 	 */
-	private function __construct() {
-		// Nothing here.
+	protected function __construct() {
+		$this->object_types  = $this->get_default_object_types();
+		$this->storage_types = $this->get_default_storage_types();
+		$this->objects       = $this->get_default_objects();
+	}
+
+	/**
+	 * Get list of default object type classes.
+	 *
+	 * @return array List of object type classes.
+	 */
+	public function get_default_object_types() {
+		return array(
+			'pod'   => 'Pods_Object_Pod',
+			'field' => 'Pods_Object_Field',
+			'group' => 'Pods_Object_Group',
+		);
+	}
+
+	/**
+	 * Get list of default storage type classes.
+	 *
+	 * @return array List of storage type classes.
+	 */
+	public function get_default_storage_types() {
+		return array(
+			'post_type' => 'Pods_Object_Storage_Post_Type',
+		);
+	}
+	/**
+	 * Get list of default objects.
+	 *
+	 * @return array List of objects.
+	 */
+	public function get_default_objects() {
+		return array(
+			'pod/_pods_pod' => array(
+				'internal'    => true,
+				'object_type' => 'pod',
+				'name'        => '_pods_pod',
+				'label'       => __( 'Pod', 'pods' ),
+				'description' => __( 'Pod configuration', 'pods' ),
+			),
+			'pod/_pods_field' => array(
+				'internal'    => true,
+				'object_type' => 'pod',
+				'name'        => '_pods_field',
+				'label'       => __( 'Pod Field', 'pods' ),
+				'description' => __( 'Pod Field configuration', 'pods' ),
+			),
+			'pod/_pods_group' => array(
+				'internal'    => true,
+				'object_type' => 'pod',
+				'name'        => '_pods_group',
+				'label'       => __( 'Pod Group', 'pods' ),
+				'description' => __( 'Pod Group configuration', 'pods' ),
+			),
+		);
 	}
 
 	/**
@@ -82,6 +138,12 @@ class Pods_Object_Collection {
 	 * @return boolean Whether the object type was successfully unregistered.
 	 */
 	public function unregister_object_type( $object_type ) {
+		$defaults = $this->get_default_object_types();
+
+		if ( isset( $defaults[ $object_type ] ) ) {
+			return false;
+		}
+
 		if ( isset( $this->object_types[ $object_type ] ) ) {
 			unset( $this->object_types[ $object_type ] );
 
@@ -95,7 +157,7 @@ class Pods_Object_Collection {
 	 * Remove all object types from collection.
 	 */
 	public function flush_object_types() {
-		$this->object_types = array();
+		$this->object_types = $this->get_default_object_types();
 	}
 
 	/**
@@ -146,6 +208,12 @@ class Pods_Object_Collection {
 	 * @return boolean Whether the object storage type was successfully unregistered.
 	 */
 	public function unregister_storage_type( $storage_type ) {
+		$defaults = $this->get_default_storage_types();
+
+		if ( isset( $defaults[ $storage_type ] ) ) {
+			return false;
+		}
+
 		if ( isset( $this->storage_types[ $storage_type ] ) ) {
 			unset( $this->storage_types[ $storage_type ] );
 
@@ -163,8 +231,16 @@ class Pods_Object_Collection {
 	 * Remove all object storage types from collection.
 	 */
 	public function flush_storage_types() {
-		$this->storage_types  = array();
-		$this->storage_engine = array();
+		$this->storage_types = $this->get_default_storage_types();
+
+		// Remove all storage engines that have been flushed exist.
+		foreach ( $this->storage_engine as $storage_type => $engine ) {
+			if ( isset( $this->storage_types[ $storage_type ] ) ) {
+				continue;
+			}
+
+			unset( $this->storage_engine[ $storage_type ] );
+		}
 	}
 
 	/**
@@ -259,6 +335,8 @@ class Pods_Object_Collection {
 	 * @return boolean Whether the object was successfully unregistered.
 	 */
 	public function unregister_object( $identifier ) {
+		$defaults = $this->get_default_objects();
+
 		if ( $identifier instanceof Pods_Object ) {
 			$id         = $identifier->get_id();
 			$identifier = $identifier->get_identifier();
@@ -277,6 +355,10 @@ class Pods_Object_Collection {
 		}
 
 		if ( isset( $this->objects[ $identifier ] ) ) {
+			if ( isset( $defaults[ $identifier ] ) ) {
+				return false;
+			}
+
 			// Ensure reference gets killed.
 			$this->objects[ $identifier ] = null;
 
@@ -292,11 +374,22 @@ class Pods_Object_Collection {
 	 * Remove all objects from collection.
 	 */
 	public function flush_objects() {
-		// Ensure references get killed.
-		$this->objects = array_map( '__return_null', $this->objects );
+		$default_objects = $this->get_default_objects();
+
+		foreach ( $this->objects as $identifier => $object ) {
+			if ( isset( $default_objects[ $identifier ] ) ) {
+				continue;
+			}
+
+			// Ensure references get killed.
+			$object = null;
+
+			$this->objects[ $identifier ] = null;
+
+			unset( $this->objects[ $identifier ] );
+		}
 
 		$this->object_ids = array();
-		$this->objects    = array();
 	}
 
 	/**

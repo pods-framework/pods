@@ -140,7 +140,7 @@ class ObjectTest extends Pods_UnitTestCase {
 			'post_name'    => $object->get_name(),
 			'post_content' => $object->get_arg( 'description' ),
 			'post_parent'  => $object->get_arg( 'parent' ),
-			'post_type'    => 'doesntmatter',
+			'post_type'    => '_pods_pod',
 		);
 
 		return wp_insert_post( $args );
@@ -270,66 +270,6 @@ class ObjectTest extends Pods_UnitTestCase {
 		$json = json_encode( $this->pods_object );
 
 		$to = $this->pods_object->from_json( $json, true );
-
-		$this->assertInternalType( 'array', $to );
-		$this->assertEquals( $this->pods_object->get_args(), $to );
-		$this->assertEquals( $this->pods_object->get_id(), $to['id'] );
-		$this->assertEquals( $this->pods_object->get_name(), $to['name'] );
-		$this->assertEquals( $this->pods_object->get_parent(), $to['parent'] );
-		$this->assertEquals( $this->pods_object->get_group(), $to['group'] );
-	}
-
-	/**
-	 * @covers Pods_Object::from_wp_post
-	 */
-	public function test_from_wp_post() {
-		$this->assertTrue( method_exists( $this->pods_object, 'from_wp_post' ), 'Method from_wp_post does not exist' );
-
-		$parent_post_id = $this->setup_wp_post( $this->pods_object_parent );
-		$group_post_id  = $this->setup_wp_post( $this->pods_object_group );
-
-		// Update object ID to match.
-		$this->pods_object->set_arg( 'parent', $parent_post_id );
-
-		$post_id = $this->setup_wp_post( $this->pods_object );
-
-		// Update object ID and group to match.
-		$this->pods_object->set_arg( 'id', $post_id );
-
-		update_post_meta( $post_id, 'group', $this->pods_object_group->get_identifier() );
-
-		$post = get_post( $post_id );
-
-		$to = $this->pods_object->from_wp_post( $post );
-
-		$this->assertInstanceOf( Pods_Object::class, $to );
-		$this->assertEquals( $this->pods_object->get_object_type(), $to->get_object_type() );
-		$this->assertEquals( $this->pods_object->get_id(), $to->get_id() );
-		$this->assertEquals( $this->pods_object->get_name(), $to->get_name() );
-		$this->assertEquals( $this->pods_object->get_parent(), $to->get_parent() );
-		$this->assertEquals( $this->pods_object->get_group(), $to->get_group() );
-	}
-
-	/**
-	 * @covers Pods_Object::from_wp_post
-	 */
-	public function test_from_wp_post_args() {
-		$this->assertTrue( method_exists( $this->pods_object, 'from_wp_post' ), 'Method from_wp_post does not exist' );
-
-		$parent_post_id = $this->setup_wp_post( $this->pods_object_parent );
-		$group_post_id  = $this->setup_wp_post( $this->pods_object_group );
-
-		// Update object ID to match.
-		$this->pods_object->set_arg( 'parent', $parent_post_id );
-
-		$post_id = $this->setup_wp_post( $this->pods_object );
-
-		// Update object ID and group to match.
-		$this->pods_object->set_arg( 'id', $post_id );
-
-		update_post_meta( $post_id, 'group', $this->pods_object_group->get_identifier() );
-
-		$to = $this->pods_object->from_wp_post( $post_id, true );
 
 		$this->assertInternalType( 'array', $to );
 		$this->assertEquals( $this->pods_object->get_args(), $to );

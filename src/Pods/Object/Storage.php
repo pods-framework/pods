@@ -10,7 +10,17 @@ abstract class Pods_Object_Storage {
 	/**
 	 * @var string
 	 */
-	protected $type = '';
+	protected static $type = '';
+
+	/**
+	 * @var array
+	 */
+	protected $primary_args = array();
+
+	/**
+	 * @var array
+	 */
+	protected $secondary_args = array();
 
 	/**
 	 * Pods_Object_Storage constructor.
@@ -25,7 +35,7 @@ abstract class Pods_Object_Storage {
 	 * @return string
 	 */
 	public function get_storage_type() {
-		return $this->type;
+		return static::$type;
 	}
 
 	/**

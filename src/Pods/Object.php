@@ -24,10 +24,15 @@
 abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 
 	/**
+	 * @var string
+	 */
+	protected static $type = 'object';
+
+	/**
 	 * @var array
 	 */
 	protected $args = array(
-		'object_type' => 'object',
+		'object_type' => '',
 		'name'        => '',
 		'id'          => '',
 		'parent'      => '',
@@ -53,6 +58,8 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	 * }
 	 */
 	public function __construct( array $args = array() ) {
+		$this->args['object_type'] = static::$type;
+
 		// Setup the object.
 		$this->setup( $args );
 	}
@@ -158,65 +165,6 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 
 		/** @var Pods_Object $object */
 		$object = new $called_class( $array );
-
-		if ( $to_args ) {
-			return $object->get_args();
-		}
-
-		return $object;
-	}
-
-	/**
-	 * Setup object from a Post ID or Post object.
-	 *
-	 * @param WP_Post|int $post    Post object or ID of the object.
-	 * @param boolean     $to_args Return as arguments array.
-	 *
-	 * @return Pods_Object|array|null
-	 */
-	public static function from_wp_post( $post, $to_args = false ) {
-		if ( ! $post instanceof WP_Post ) {
-			$post = get_post( $post );
-		}
-
-		if ( empty( $post ) ) {
-			return null;
-		}
-
-		// Check if we already have an object registered and available.
-		$object = Pods_Object_Collection::get_instance()->get_object( $post->ID );
-
-		if ( $object ) {
-			if ( $to_args ) {
-				return $object->get_args();
-			}
-
-			return $object;
-		}
-
-		$args = array(
-			'name'        => $post->post_name,
-			'id'          => $post->ID,
-			'label'       => $post->post_title,
-			'description' => $post->post_content,
-			'parent'      => '',
-			'group'       => '',
-		);
-
-		if ( 0 < $post->post_parent ) {
-			$args['parent'] = $post->post_parent;
-		}
-
-		$group = get_post_meta( $post->ID, 'group', true );
-
-		if ( 0 < strlen( $group ) ) {
-			$args['group'] = $group;
-		}
-
-		$called_class = get_called_class();
-
-		/** @var Pods_Object $object */
-		$object = new $called_class( $args );
 
 		if ( $to_args ) {
 			return $object->get_args();

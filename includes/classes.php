@@ -4,10 +4,13 @@
  * @category Utilities
  */
 
+require_once PODS_DIR . 'src/Pods/Object.php';
+require_once PODS_DIR . 'src/Pods/Object/Pod.php';
+require_once PODS_DIR . 'src/Pods/Object/Field.php';
+require_once PODS_DIR . 'src/Pods/Object/Group.php';
 require_once PODS_DIR . 'src/Pods/Object/Collection.php';
 require_once PODS_DIR . 'src/Pods/Object/Storage.php';
 require_once PODS_DIR . 'src/Pods/Object/Storage/Post_Type.php';
-require_once PODS_DIR . 'src/Pods/Object.php';
 
 /**
  * Include and Init the Pods class

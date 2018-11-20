@@ -25,11 +25,11 @@ class CollectionTest extends Pods_UnitTestCase {
 
 	public function setUp() {
 		if ( ! class_exists( 'Pods_Object_Custom' ) ) {
-			eval( 'class Pods_Object_Custom extends Pods_Object { public $type = "custom"; }' );
+			eval( 'class Pods_Object_Custom extends Pods_Object { protected static $type = "custom"; }' );
 		}
 
 		if ( ! class_exists( 'Pods_Object_Storage_Custom' ) ) {
-			eval( 'class Pods_Object_Storage_Custom extends Pods_Object_Storage { public $type = "custom"; }' );
+			eval( 'class Pods_Object_Storage_Custom extends Pods_Object_Storage { protected static $type = "custom"; }' );
 		}
 
 		$this->pods_object_collection = Pods_Object_Collection::get_instance();
@@ -83,19 +83,22 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object_type( 'custom', 'Pods_Object_Custom' );
 		$this->pods_object_collection->register_storage_type( 'custom', 'Pods_Object_Storage_Custom' );
-		$this->pods_object_collection->register_object( $this->setup_pods_object() );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_object_types() );
-		$this->assertCount( 1, $this->pods_object_collection->get_storage_types() );
-		$this->assertCount( 1, $this->pods_object_collection->get_objects() );
+		$object = $this->setup_pods_object( array( 'object_type' => 'custom' ) );
+
+		$this->pods_object_collection->register_object( $object );
+
+		$this->assertCount( 4, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 2, $this->pods_object_collection->get_storage_types() );
+		$this->assertCount( 4, $this->pods_object_collection->get_objects() );
 
 		Pods_Object_Collection::destroy();
 
 		$this->pods_object_collection = Pods_Object_Collection::get_instance();
 
-		$this->assertCount( 0, $this->pods_object_collection->get_object_types() );
-		$this->assertCount( 0, $this->pods_object_collection->get_storage_types() );
-		$this->assertCount( 0, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 3, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 1, $this->pods_object_collection->get_storage_types() );
+		$this->assertCount( 3, $this->pods_object_collection->get_objects() );
 	}
 
 	/**
@@ -107,7 +110,7 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object_type( 'custom', 'Pods_Object_Custom' );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 4, $this->pods_object_collection->get_object_types() );
 	}
 
 	/**
@@ -120,11 +123,11 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object_type( 'custom', 'Pods_Object_Custom' );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 4, $this->pods_object_collection->get_object_types() );
 
 		$this->assertTrue( $this->pods_object_collection->unregister_object_type( 'custom' ) );
 
-		$this->assertCount( 0, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 3, $this->pods_object_collection->get_object_types() );
 
 		$this->assertFalse( $this->pods_object_collection->unregister_object_type( 'nope' ) );
 	}
@@ -139,11 +142,11 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object_type( 'custom', 'Pods_Object_Custom' );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 4, $this->pods_object_collection->get_object_types() );
 
 		$this->pods_object_collection->flush_object_types();
 
-		$this->assertCount( 0, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 3, $this->pods_object_collection->get_object_types() );
 	}
 
 	/**
@@ -155,7 +158,7 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object_type( 'custom', 'Pods_Object_Custom' );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 4, $this->pods_object_collection->get_object_types() );
 	}
 
 	/**
@@ -179,7 +182,7 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_storage_type( 'custom', 'Pods_Object_Storage_Custom' );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_storage_types() );
+		$this->assertCount( 2, $this->pods_object_collection->get_storage_types() );
 	}
 
 	/**
@@ -192,11 +195,11 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_storage_type( 'custom', 'Pods_Object_Storage_Custom' );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_storage_types() );
+		$this->assertCount( 2, $this->pods_object_collection->get_storage_types() );
 
 		$this->assertTrue( $this->pods_object_collection->unregister_storage_type( 'custom' ) );
 
-		$this->assertCount( 0, $this->pods_object_collection->get_storage_types() );
+		$this->assertCount( 1, $this->pods_object_collection->get_storage_types() );
 
 		$this->assertFalse( $this->pods_object_collection->unregister_storage_type( 'nope' ) );
 	}
@@ -211,11 +214,11 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_storage_type( 'custom', 'Pods_Object_Storage_Custom' );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_storage_types() );
+		$this->assertCount( 2, $this->pods_object_collection->get_storage_types() );
 
 		$this->pods_object_collection->flush_storage_types();
 
-		$this->assertCount( 0, $this->pods_object_collection->get_storage_types() );
+		$this->assertCount( 1, $this->pods_object_collection->get_storage_types() );
 	}
 
 	/**
@@ -227,7 +230,7 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_storage_type( 'custom', 'Pods_Object_Storage_Custom' );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_storage_types() );
+		$this->assertCount( 2, $this->pods_object_collection->get_storage_types() );
 	}
 
 	/**
@@ -265,7 +268,7 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object( $object );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 4, $this->pods_object_collection->get_objects() );
 	}
 
 	/**
@@ -280,11 +283,13 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object( $object );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 4, $this->pods_object_collection->get_objects() );
 
 		$this->assertTrue( $this->pods_object_collection->unregister_object( $object ) );
 
-		$this->assertCount( 0, $this->pods_object_collection->get_objects() );
+		$objects = $this->pods_object_collection->get_objects();
+
+		$this->assertCount( 3, $objects );
 
 		// Setup another object that is not registered.
 		$args = array(
@@ -322,11 +327,11 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object( $object2 );
 
-		$this->assertCount( 2, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 5, $this->pods_object_collection->get_objects() );
 
 		$this->pods_object_collection->flush_objects();
 
-		$this->assertCount( 0, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 3, $this->pods_object_collection->get_objects() );
 	}
 
 	/**
@@ -353,7 +358,7 @@ class CollectionTest extends Pods_UnitTestCase {
 
 		$objects = $this->pods_object_collection->get_objects();
 
-		$this->assertCount( 2, $objects );
+		$this->assertCount( 5, $objects );
 
 		$this->assertEquals( $object, $objects[ $object->get_identifier() ] );
 		$this->assertEquals( $object2, $objects[ $object2->get_identifier() ] );
@@ -408,7 +413,7 @@ class CollectionTest extends Pods_UnitTestCase {
 		$this->pods_object_collection->register_object_type( 'custom', 'Pods_Object_Custom' );
 		$this->pods_object_collection->register_object( $args );
 
-		$this->assertCount( 1, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 4, $this->pods_object_collection->get_objects() );
 
 		$identifier = Pods_Object::get_identifier_from_args( $args );
 

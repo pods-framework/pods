@@ -10,7 +10,27 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	protected $type = 'post_type';
+	protected static $type = 'post_type';
+
+	/**
+	 * @var array
+	 */
+	protected $primary_args = array(
+		'ID'           => 'id',
+		'post_name'    => 'name',
+		'post_title'   => 'label',
+		'post_content' => 'description',
+		'post_parent'  => 'parent',
+	);
+
+	/**
+	 * @var array
+	 */
+	protected $secondary_args = array(
+		'type',
+		'object',
+		'group',
+	);
 
 	/**
 	 * {@inheritdoc}
@@ -19,44 +39,24 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 		// @todo Get by ID? Get by identifier? Get by name?
 		$id = 0;
 
-		$post = get_post( $id );
-
-		if ( ! $post || is_wp_error( $post ) ) {
-			return null;
-		}
-
-		$args = array(
-			'name'        => $post->post_name,
-			'id'          => $post->ID,
-			'label'       => $post->post_title,
-			'description' => $post->post_content,
-			'parent'      => '',
-			'group'       => '',
-		);
-
-		if ( 0 < $post->post_parent ) {
-			$args['parent'] = $post->post_parent;
-		}
-
-		$group = get_post_meta( $post->ID, 'group', true );
-
-		if ( 0 < strlen( $group ) ) {
-			$args['group'] = $group;
-		}
-
-		$object_class = 'Pods_Object';
-
-		return new $object_class( $args );
+		return $this->to_object( $id );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function find( array $args = array() ) {
+		// Object type is required.
+		if ( empty( $args['object_type'] ) ) {
+			return array();
+		}
+
 		/**
 		 * Filter the maximum number of posts to get for post type storage.
 		 *
 		 * @param int $limit
+		 *
+		 * @since 2.8
 		 */
 		$limit = apply_filters( 'pods_object_post_type_find_limit', 300 );
 
@@ -64,10 +64,85 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 			'order'          => 'ASC',
 			'orderby'        => 'menu_order title',
 			'posts_per_page' => $limit,
+			'meta_query'     => array(),
+			'post_type'      => $args['object_type'],
 		);
 
-		// @todo Find how?
-		return array();
+		if ( ! empty( $args['type'] ) ) {
+			$args['type'] = (array) $args['type'];
+			$args['type'] = array_map( 'trim', $args['type'] );
+			$args['type'] = array_unique( $args['type'] );
+			$args['type'] = array_filter( $args['type'] );
+
+			if ( $args['type'] ) {
+				sort( $args['type'] );
+
+				$post_args['meta_query'][] = array(
+					'key'     => 'type',
+					'value'   => $args['type'],
+					'compare' => 'IN',
+				);
+			}
+		}
+
+		if ( ! empty( $args['object'] ) ) {
+			$args['object'] = (array) $args['object'];
+			$args['object'] = array_map( 'trim', $args['object'] );
+			$args['object'] = array_unique( $args['object'] );
+			$args['object'] = array_filter( $args['object'] );
+
+			if ( $args['object'] ) {
+				sort( $args['object'] );
+
+				$post_args['meta_query'][] = array(
+					'key'     => 'object',
+					'value'   => $args['object'],
+					'compare' => 'IN',
+				);
+			}
+		}
+
+		if ( ! empty( $args['ids'] ) ) {
+			$args['ids'] = (array) $args['ids'];
+			$args['ids'] = array_map( 'absint', $args['ids'] );
+			$args['ids'] = array_unique( $args['ids'] );
+			$args['ids'] = array_filter( $args['ids'] );
+
+			if ( $args['ids'] ) {
+				sort( $args['ids'] );
+
+				$post_args['post__in'] = $args['ids'];
+			}
+		}
+
+		/**
+		 * Filter the get_posts() arguments used for finding the objects for post type storage.
+		 *
+		 * @param array $post_args Post arguments to use in get_posts() call.
+		 * @param array $args      Arguments to use.
+		 *
+		 * @since 2.8
+		 */
+		$post_args = apply_filters( 'pods_object_post_type_find_args', $post_args, $args );
+
+		$post_args['fields'] = 'ids';
+
+		sort( $post_args );
+
+		$cache_key = 'pods_object_post_type_find_' . json_encode( $post_args );
+
+		$cached = pods_transient_get( $cache_key );
+
+		if ( ! is_array( $cached ) ) {
+			$posts = get_posts( $post_args );
+
+			pods_transient_set( $cache_key, $posts );
+		}
+
+		$posts = array_map( array( $this, 'to_object' ), $posts );
+		$posts = array_filter( $posts );
+
+		return $posts;
 	}
 
 	/**
@@ -190,6 +265,61 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	 */
 	public function reset( Pods_Object $object ) {
 		return false;
+	}
+
+	/**
+	 * Setup object from a Post ID or Post object.
+	 *
+	 * @param WP_Post|array|int $post Post object or ID of the object.
+	 *
+	 * @return Pods_Object|null
+	 */
+	public function to_object( $post ) {
+		if ( null !== $post && ! $post instanceof WP_Post ) {
+			$post = get_post( $post );
+		}
+
+		if ( empty( $post ) ) {
+			return null;
+		}
+
+		if ( ! $post || is_wp_error( $post ) ) {
+			return null;
+		}
+
+		$pods_object_collection = Pods_Object_Collection::get_instance();
+
+		// Check if we already have an object registered and available.
+		$object = $pods_object_collection->get_object( $post->ID );
+
+		if ( $object ) {
+			return $object;
+		}
+
+		foreach ( $this->primary_args as $object_arg => $arg ) {
+			$args[ $arg ] = '';
+
+			if ( isset( $post->{$object_arg} ) ) {
+				$args[ $arg ] = $post->{$object_arg};
+			}
+		}
+
+		foreach ( $this->secondary_args as $arg ) {
+			$args[ $arg ] = get_post_meta( $post->ID, $arg, true );
+		}
+
+		$object_type = substr( $post->post_type, strlen( '_pods_' ) );
+
+		$class_name = $pods_object_collection->get_object_type( $object_type );
+
+		if ( ! $class_name || ! class_exists( $class_name ) ) {
+			return null;
+		}
+
+		/** @var Pods_Object $object */
+		$object = new $class_name( $args );
+
+		return $object;
 	}
 
 }

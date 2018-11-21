@@ -671,6 +671,8 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 
 	/**
 	 * Add items to the pods
+	 *
+	 * @throws \Exception
 	 */
 	public static function _initialize_data() {
 		// Insert test data for Non-Pod Taxonomy
@@ -709,13 +711,16 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 			if ( ! empty( $item_data['is_build'] ) || 'test_non_pod_ct' === $item ) {
 				continue;
 			} elseif ( '%s' !== $item ) {
+				$md5 = md5( json_encode( $item_data['data'] ) );
+
 				foreach ( $item_data['data'] as $k => $v ) {
 					if ( is_array( $v ) ) {
 						foreach ( $v as $kv => $vv ) {
-							$v[ $kv ] = sprintf( $vv, wp_generate_password( 4, false ) );
+							$v[ $kv ] = sprintf( $vv, $md5 );
 						}
 					} else {
-						$v = sprintf( $v, wp_generate_password( 4, false ) );
+						$v = sprintf( $v, $md5 );
+
 						if ( 'permalink' === $k ) {
 							$v = strtolower( $v );
 						}
@@ -807,13 +812,16 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 								}
 							}
 
+							$md5 = md5( json_encode( $pod_item_data['data'] ) );
+
 							foreach ( $pod_item_data['data'] as $k => $v ) {
 								if ( is_array( $v ) ) {
 									foreach ( $v as $kv => $vv ) {
-										$v[ $kv ] = sprintf( $vv, wp_generate_password( 4, false ) );
+										$v[ $kv ] = sprintf( $vv, $md5 );
 									}
 								} else {
-									$v = sprintf( $v, wp_generate_password( 4, false ) );
+									$v = sprintf( $v, $md5 );
+
 									if ( 'permalink' === $k ) {
 										$v = strtolower( $v );
 									}
@@ -920,14 +928,14 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 		// Setup copies
 		self::$related_items['author'] = self::$related_items['test_rel_user'];
 	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public static function tearDownAfterClass() {
-		// Force WP_UnitTestCase to not delete all data
-	}
 }
 
-Pods_UnitTestCase::_initialize_config();
-Pods_UnitTestCase::_initialize_data();
+$rebuild_data = filter_var( getenv( 'PODS_REBUILD_DATA' ), FILTER_VALIDATE_BOOLEAN );
+
+if ( $rebuild_data ) {
+	Pods_UnitTestCase::_initialize_config();
+	Pods_UnitTestCase::_initialize_data();
+
+	echo "\nData rebuilt, you can now export the updated SQL to tests/codeception_data/dump-pods-testcase.sql\n";
+	die();
+}

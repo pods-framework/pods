@@ -35,19 +35,43 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get() {
-		// @todo Get by ID? Get by identifier? Get by name?
-		$id = 0;
+	public function get( array $args = array() ) {
+		// Object type is required.
+		if ( empty( $args['object_type'] ) ) {
+			return null;
+		}
 
-		return $this->to_object( $id );
+		if ( ! empty( $args['id'] ) ) {
+			return $this->to_object( $args['id'] );
+		}
+
+		if ( ! empty( $args['post'] ) ) {
+			return $this->to_object( $args['post'] );
+		}
+
+		if ( ! empty( $args['name'] ) ) {
+			$find_args = array(
+				'object_type' => $args['object_type'],
+				'name'        => $args['name'],
+				'limit'       => 1,
+			);
+
+			$objects = $this->find( $find_args );
+
+			if ( $objects ) {
+				return reset( $objects );
+			}
+		}
+
+		return null;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function find( array $args = array() ) {
-		// Object type is required.
-		if ( empty( $args['object_type'] ) ) {
+		// Object type OR parent is required.
+		if ( empty( $args['object_type'] ) && empty( $args['parent'] ) ) {
 			return array();
 		}
 
@@ -62,57 +86,133 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 
 		$post_args = array(
 			'order'          => 'ASC',
-			'orderby'        => 'menu_order title',
+			'orderby'        => 'title',
 			'posts_per_page' => $limit,
 			'meta_query'     => array(),
-			'post_type'      => $args['object_type'],
+			'post_type'      => 'any',
+			'post_status'    => array(
+				'publish',
+				'draft',
+			),
 		);
 
-		if ( ! empty( $args['type'] ) ) {
-			$args['type'] = (array) $args['type'];
-			$args['type'] = array_map( 'trim', $args['type'] );
-			$args['type'] = array_unique( $args['type'] );
-			$args['type'] = array_filter( $args['type'] );
+		if ( ! empty( $args['object_type'] ) ) {
+			$post_args['post_type'] = array();
 
-			if ( $args['type'] ) {
-				sort( $args['type'] );
+			$object_types = (array) $args['object_type'];
+
+			foreach ( $object_types as $object_type ) {
+				$post_args['post_type'][] = '_pods_' . $object_type;
+			}
+		}
+
+		if ( ! isset( $args['args'] ) ) {
+			$args['args'] = array();
+		}
+
+		$args['args'] = (array) $args['args'];
+
+		foreach ( $this->secondary_args as $arg ) {
+			if ( ! isset( $args[ $arg ] ) ) {
+				continue;
+			}
+
+			$args['args'][ $arg ] = $args[ $arg ];
+		}
+
+		foreach ( $args['args'] as $arg => $value ) {
+			if ( null === $value ) {
+				$post_args['meta_query'][] = array(
+					'key'     => $arg,
+					'compare' => 'NOT EXISTS',
+				);
+
+				continue;
+			}
+
+			if ( ! is_array( $value ) ) {
+				$value = trim( $value );
 
 				$post_args['meta_query'][] = array(
-					'key'     => 'type',
-					'value'   => $args['type'],
+					'key'   => $arg,
+					'value' => $value,
+				);
+
+				continue;
+			}
+
+			$value = (array) $value;
+			$value = array_map( 'trim', $value );
+			$value = array_unique( $value );
+			$value = array_filter( $value );
+
+			if ( $value ) {
+				sort( $value );
+
+				$post_args['meta_query'][] = array(
+					'key'     => $arg,
+					'value'   => $value,
 					'compare' => 'IN',
 				);
 			}
 		}
 
-		if ( ! empty( $args['object'] ) ) {
-			$args['object'] = (array) $args['object'];
-			$args['object'] = array_map( 'trim', $args['object'] );
-			$args['object'] = array_unique( $args['object'] );
-			$args['object'] = array_filter( $args['object'] );
+		if ( ! empty( $args['id'] ) ) {
+			$args['id'] = (array) $args['id'];
+			$args['id'] = array_map( 'absint', $args['id'] );
+			$args['id'] = array_unique( $args['id'] );
+			$args['id'] = array_filter( $args['id'] );
 
-			if ( $args['object'] ) {
-				sort( $args['object'] );
-
-				$post_args['meta_query'][] = array(
-					'key'     => 'object',
-					'value'   => $args['object'],
-					'compare' => 'IN',
-				);
+			if ( $args['id'] ) {
+				$post_args['post__in'] = $args['id'];
 			}
 		}
 
-		if ( ! empty( $args['ids'] ) ) {
-			$args['ids'] = (array) $args['ids'];
-			$args['ids'] = array_map( 'absint', $args['ids'] );
-			$args['ids'] = array_unique( $args['ids'] );
-			$args['ids'] = array_filter( $args['ids'] );
+		if ( ! empty( $args['name'] ) ) {
+			$args['name'] = (array) $args['name'];
+			$args['name'] = array_map( 'trim', $args['name'] );
+			$args['name'] = array_unique( $args['name'] );
+			$args['name'] = array_filter( $args['name'] );
 
-			if ( $args['ids'] ) {
-				sort( $args['ids'] );
-
-				$post_args['post__in'] = $args['ids'];
+			if ( $args['name'] ) {
+				$post_args['post_name__in'] = $args['name'];
 			}
+		}
+
+		if ( ! empty( $args['parent'] ) ) {
+			$args['parent'] = (array) $args['parent'];
+			$args['parent'] = array_map( 'absint', $args['parent'] );
+			$args['parent'] = array_unique( $args['parent'] );
+			$args['parent'] = array_filter( $args['parent'] );
+
+			if ( $args['parent'] ) {
+				$post_args['post_parent__in'] = $args['parent'];
+			}
+		}
+
+		if ( ! empty( $args['status'] ) ) {
+			$args['status'] = (array) $args['status'];
+			$args['status'] = array_map( 'trim', $args['status'] );
+			$args['status'] = array_unique( $args['status'] );
+			$args['status'] = array_filter( $args['status'] );
+
+			if ( $args['status'] ) {
+				sort( $args['status'] );
+
+				$post_args['post_status'] = $args['status'];
+			}
+		}
+
+		if ( ! empty( $args['order'] ) ) {
+			$post_args['order'] = $args['order'];
+		}
+
+		if ( ! empty( $args['orderby'] ) ) {
+			$post_args['orderby'] = $args['orderby'];
+		}
+
+		if ( ! empty( $args['limit'] ) ) {
+			$post_args['posts_per_page'] = (int) $args['limit'];
 		}
 
 		/**
@@ -127,13 +227,40 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 
 		$post_args['fields'] = 'ids';
 
-		sort( $post_args );
+		if ( empty( $post_args['meta_query'] ) ) {
+			unset( $post_args['meta_query'] );
+		}
 
-		$cache_key = 'pods_object_post_type_find_' . json_encode( $post_args );
+		asort( $post_args );
 
-		$cached = pods_transient_get( $cache_key );
+		$current_language = false;
 
-		if ( ! is_array( $cached ) ) {
+		// Get current language data
+		$lang_data = PodsInit::$i18n->get_current_language_data();
+
+		if ( $lang_data ) {
+			if ( ! empty( $lang_data['language'] ) ) {
+				$current_language = $lang_data['language'];
+			}
+		}
+
+		$cache_key_parts = array(
+			'pods_object_post_type_find',
+			$current_language,
+			json_encode( $post_args )
+		);
+
+		$cache_key_parts = array_filter( $cache_key_parts );
+
+		$cache_key = implode( '_', $cache_key_parts );
+
+		$posts = false;
+
+		if ( empty( $args['refresh'] ) ) {
+			$posts = pods_transient_get( $cache_key );
+		}
+
+		if ( ! is_array( $posts ) ) {
 			$posts = get_posts( $post_args );
 
 			pods_transient_set( $cache_key, $posts );
@@ -141,6 +268,10 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 
 		$posts = array_map( array( $this, 'to_object' ), $posts );
 		$posts = array_filter( $posts );
+
+		$names = wp_list_pluck( $posts, 'name' );
+
+		$posts = array_combine( $names, $posts );
 
 		return $posts;
 	}
@@ -154,19 +285,30 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 			'post_name'    => $object->get_name(),
 			'post_content' => $object->get_description(),
 			'post_parent'  => $object->get_parent_id(),
-			// @todo Abstract post type
-			'post_type'    => '_pods_object',
+			'post_type'    => '_pods_' . $object->get_object_type(),
 			'post_status'  => 'publish',
 		);
+
+		if ( '' === $post_data['post_title'] ) {
+			$post_data['post_title'] = $post_data['post_name'];
+		}
 
 		$added = wp_insert_post( $post_data );
 
 		if ( is_int( $added ) && 0 < $added ) {
-			// @todo Update Pods_Object_Collection id/identifier.
+			$object_collection = Pods_Object_Collection::get_instance();
+
+			// Remove any other references.
+			$object_collection->unregister_object( $object );
 
 			$object->set_arg( 'id', $added );
 
 			$this->save_args( $object );
+
+			// Register now that it has an ID.
+			$object_collection->register_object( $object );
+
+			pods_api()->cache_flush_pods( $object );
 
 			return $added;
 		}
@@ -184,8 +326,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 			'post_name'    => $object->get_name(),
 			'post_content' => $object->get_description(),
 			'post_parent'  => $object->get_parent_id(),
-			// @todo Abstract post type
-			'post_type'    => '_pods_object',
+			'post_type'    => '_pods_' . $object->get_object_type(),
 			'post_status'  => 'publish',
 		);
 
@@ -198,6 +339,8 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 
 			$this->save_args( $object );
 
+			pods_api()->cache_flush_pods( $object );
+
 			return $saved;
 		}
 
@@ -207,16 +350,41 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function get_args( Pods_Object $object ) {
+		$meta = get_post_meta( $object->get_id() );
+
+		$args = array();
+
+		foreach ( $meta as $meta_key => $meta_value ) {
+			if ( 1 === count( $meta_value ) ) {
+				$meta_value = reset( $meta_value );
+			}
+
+			// Skip empties.
+			if ( in_array( $meta_value, array( '', array() ), true ) ) {
+				continue;
+			}
+
+			$args[ $meta_key ] = $meta_value;
+
+			$object->set_arg( $meta_key, $meta_value );
+		}
+
+		return $args;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function save_args( Pods_Object $object ) {
 		$args = $object->get_args();
 
 		$excluded = array(
-			'name',
-			'id',
-			'parent',
-			'label',
-			'description',
+			'object_type',
+			'storage_type',
 		);
+
+		$excluded = array_merge( $excluded, array_values( $this->primary_args ) );
 
 		foreach ( $excluded as $exclude ) {
 			if ( isset( $args[ $exclude ] ) ) {
@@ -254,6 +422,23 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 		$deleted = wp_delete_post( $object->get_id(), true );
 
 		if ( false !== $deleted && ! is_wp_error( $deleted ) ) {
+			// If this object has fields or groups, delete them.
+			$args = array(
+				'parent' => $object->get_id(),
+			);
+
+			$objects = $this->find( $args );
+
+			// Delete objects.
+			array_map( array( $this, 'delete' ), $objects );
+
+			pods_api()->cache_flush_pods( $object );
+
+			$object_collection = Pods_Object_Collection::get_instance();
+			$object_collection->unregister_object( $object );
+
+			$object->set_arg( 'id', null );
+
 			return true;
 		}
 
@@ -287,10 +472,10 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 			return null;
 		}
 
-		$pods_object_collection = Pods_Object_Collection::get_instance();
+		$object_collection = Pods_Object_Collection::get_instance();
 
 		// Check if we already have an object registered and available.
-		$object = $pods_object_collection->get_object( $post->ID );
+		$object = $object_collection->get_object( $post->ID );
 
 		if ( $object ) {
 			return $object;
@@ -310,7 +495,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 
 		$object_type = substr( $post->post_type, strlen( '_pods_' ) );
 
-		$class_name = $pods_object_collection->get_object_type( $object_type );
+		$class_name = $object_collection->get_object_type( $object_type );
 
 		if ( ! $class_name || ! class_exists( $class_name ) ) {
 			return null;
@@ -318,6 +503,12 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 
 		/** @var Pods_Object $object */
 		$object = new $class_name( $args );
+
+		$object->set_arg( 'storage_type', $this->get_storage_type() );
+
+		if ( $object->is_valid() ) {
+			$object_collection->register_object( $object );
+		}
 
 		return $object;
 	}

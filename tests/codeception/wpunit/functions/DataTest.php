@@ -118,51 +118,51 @@ class DataTest extends Pods_UnitTestCase {
 	}
 
 	public function test_pods_v() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_v_sanitized() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_v_set() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_var() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_var_raw() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_var_set() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_query_arg() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_var_update() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_cast() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_create_slug() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_unique_slug() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_clean_name() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	/**
@@ -194,7 +194,7 @@ class DataTest extends Pods_UnitTestCase {
 	}
 
 	public function test_pods_str_replace() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	/**
@@ -212,43 +212,43 @@ class DataTest extends Pods_UnitTestCase {
 	}
 
 	public function test_pods_evaluate_tags() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_evaluate_tag_sanitized() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_evaluate_tag() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_serial_comma() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_var_user() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_hierarchical_list() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_hierarchical_list_recurse() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_hierarchical_select() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_hierarchical_select_recurse() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	public function test_pods_list_filter() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 }

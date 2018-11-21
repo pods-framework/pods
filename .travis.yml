@@ -121,8 +121,12 @@ before_script:
   - sudo service nginx restart
 
 script:
-  - codecept run integration
-  - codecept run wpunit
+  - export SQL_DUMP_FILE='dump.sql'
+  - codecept run wpunit --skip-group='pods-traversal'
+
+  - export SQL_DUMP_FILE='dump-pods-testcase.sql'
+  - codecept run wpunit --skip-group='pods-object'
+
   # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
   - |
     if [ $NODE_RELEASE == "stable" ]; then

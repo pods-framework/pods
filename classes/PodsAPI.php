@@ -8,12 +8,12 @@ class PodsAPI {
 	/**
 	 * @var PodsAPI
 	 */
-	static $instance = null;
+	public static $instance = null;
 
 	/**
 	 * @var array PodsAPI
 	 */
-	static $instances = array();
+	public static $instances = array();
 
 	/**
 	 * @var bool
@@ -4215,6 +4215,14 @@ class PodsAPI {
 		static $old_fields_cache = array();
 		static $changed_fields_cache = array();
 
+		if ( 'ok' !== pods_cache_get( __FUNCTION__, 'pods-static-cache' ) ) {
+			pods_cache_set( __FUNCTION__, 'ok', 'pods-static-cache' );
+
+			$changed_pods_cache = array();
+			$old_fields_cache = array();
+			$changed_fields_cache = array();
+		}
+
 		$cache_key = $pod . '|' . $id;
 
 		$export_params = array(
@@ -4305,6 +4313,12 @@ class PodsAPI {
 			$current_ids = PodsField_Pick::$related_data[ $field['id'] ]['current_ids'];
 		} else {
 			$current_ids = $this->lookup_related_items( $field['id'], $pod['id'], $id, $field, $pod );
+		}
+
+		if ( 'ok' !== pods_cache_get( 'related_item_cache', 'pods-static-cache' ) ) {
+			pods_cache_set( 'related_item_cache', 'ok', 'pods-static-cache' );
+
+			self::$related_item_cache = array();
 		}
 
 		if ( isset( self::$related_item_cache[ $pod['id'] ][ $field['id'] ] ) ) {
@@ -5750,6 +5764,12 @@ class PodsAPI {
 			return;
 		}
 
+		if ( 'ok' !== pods_cache_get( 'related_item_cache', 'pods-static-cache' ) ) {
+			pods_cache_set( 'related_item_cache', 'ok', 'pods-static-cache' );
+
+			self::$related_item_cache = array();
+		}
+
 		if ( isset( self::$related_item_cache[ $related_pod['id'] ][ $related_field['id'] ] ) ) {
 			// Delete relationship from cache
 			unset( self::$related_item_cache[ $related_pod['id'] ][ $related_field['id'] ] );
@@ -6855,9 +6875,15 @@ class PodsAPI {
 	 * @since 1.7.9
 	 */
 	public function load_fields( $params, $strict = false ) {
+		if ( 'ok' !== pods_cache_get( __FUNCTION__, 'pods-static-cache' ) ) {
+			pods_cache_set( __FUNCTION__, 'ok', 'pods-static-cache' );
+
+			$this->fields_cache = array();
+		}
 
 		// @todo Get away from using md5/serialize, I'm sure we can cache specific parts
 		$cache_key = md5( serialize( $params ) );
+
 		if ( isset( $this->fields_cache[ $cache_key ] ) ) {
 			return $this->fields_cache[ $cache_key ];
 		}
@@ -7694,6 +7720,12 @@ class PodsAPI {
 
 		$idstring = implode( ',', $ids );
 
+		if ( 'ok' !== pods_cache_get( 'related_item_cache', 'pods-static-cache' ) ) {
+			pods_cache_set( 'related_item_cache', 'ok', 'pods-static-cache' );
+
+			self::$related_item_cache = array();
+		}
+
 		if ( 0 != $pod_id && 0 != $field_id && isset( self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] ) ) {
 			// Check cache first, no point in running the same query multiple times
 			return self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ];
@@ -8289,6 +8321,12 @@ class PodsAPI {
 		}
 
 		$_info = false;
+
+		if ( 'ok' !== pods_cache_get( 'table_info_cache', 'pods-static-cache' ) ) {
+			pods_cache_set( 'table_info_cache', 'ok', 'pods-static-cache' );
+
+			self::$table_info_cache = array();
+		}
 
 		if ( isset( self::$table_info_cache[ $transient ] ) ) {
 			// Prefer info from the object internal cache

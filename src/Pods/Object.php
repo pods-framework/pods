@@ -4,6 +4,7 @@
  * Pods_Object abstract class.
  *
  * @method string      get_object_type()
+ * @method string|null get_storage_type()
  * @method string|null get_name()
  * @method string|null get_id()
  * @method string|null get_parent()
@@ -12,12 +13,18 @@
  * @method string|null get_description()
  * @method string|null get_parent_identifier()
  * @method string|null get_parent_object_type()
+ * @method string|null get_parent_storage_type()
  * @method string|null get_parent_name()
  * @method string|null get_parent_id()
+ * @method string|null get_parent_label()
+ * @method string|null get_parent_description()
  * @method string|null get_group_identifier()
  * @method string|null get_group_object_type()
+ * @method string|null get_group_storage_type()
  * @method string|null get_group_name()
  * @method string|null get_group_id()
+ * @method string|null get_group_label()
+ * @method string|null get_group_description()
  *
  * @since 2.8
  */
@@ -32,14 +39,25 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	 * @var array
 	 */
 	protected $args = array(
-		'object_type' => '',
-		'name'        => '',
-		'id'          => '',
-		'parent'      => '',
-		'group'       => '',
-		'label'       => '',
-		'description' => '',
+		'object_type'  => '',
+		'storage_type' => '',
+		'name'         => '',
+		'id'           => '',
+		'parent'       => '',
+		'group'        => '',
+		'label'        => '',
+		'description'  => '',
 	);
+
+	/**
+	 * @var array|null
+	 */
+	protected $fields;
+
+	/**
+	 * @var string
+	 */
+	protected $storage_type = '';
 
 	/**
 	 * Pods_Object constructor.
@@ -227,6 +245,47 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	 * @return bool Whether the offset exists.
 	 */
 	public function offsetExists( $offset ) {
+		return $this->__isset( $offset );
+	}
+
+	/**
+	 * Get offset value.
+	 *
+	 * @param mixed $offset Offset name.
+	 *
+	 * @return mixed|null Offset value, or null if not set.
+	 */
+	public function offsetGet( $offset ) {
+		return $this->__get( $offset );
+	}
+
+	/**
+	 * Set offset value.
+	 *
+	 * @param mixed $offset Offset name.
+	 * @param mixed $value  Offset value.
+	 */
+	public function offsetSet( $offset, $value ) {
+		$this->__set( $offset, $value );
+	}
+
+	/**
+	 * Unset offset value.
+	 *
+	 * @param mixed $offset Offset name.
+	 */
+	public function offsetUnset( $offset ) {
+		$this->__unset( $offset );
+	}
+
+	/**
+	 * Check if offset exists.
+	 *
+	 * @param mixed $offset Offset name.
+	 *
+	 * @return bool Whether the offset exists.
+	 */
+	public function __isset( $offset ) {
 		// @todo Handle offsetExists for fields and other options.
 
 		if ( isset( $this->args[ $offset ] ) ) {
@@ -243,7 +302,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	 *
 	 * @return mixed|null Offset value, or null if not set.
 	 */
-	public function offsetGet( $offset ) {
+	public function __get( $offset ) {
 		// @todo Handle offsetGet for fields and other options.
 
 		return $this->get_arg( $offset );
@@ -255,7 +314,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	 * @param mixed $offset Offset name.
 	 * @param mixed $value  Offset value.
 	 */
-	public function offsetSet( $offset, $value ) {
+	public function __set( $offset, $value ) {
 		// @todo Handle offsetGet for fields and other options.
 
 		$this->set_arg( $offset, $value );
@@ -266,7 +325,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	 *
 	 * @param mixed $offset Offset name.
 	 */
-	public function offsetUnset( $offset ) {
+	public function __unset( $offset ) {
 		// @todo Handle offsetUnset for fields and other options.
 
 		$this->set_arg( $offset, null );
@@ -292,13 +351,14 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 		}
 
 		$defaults = array(
-			'object_type' => $this->get_arg( 'object_type' ),
-			'name'        => '',
-			'id'          => '',
-			'parent'      => '',
-			'group'       => '',
-			'label'       => '',
-			'description' => '',
+			'object_type'  => $this->get_arg( 'object_type' ),
+			'storage_type' => $this->get_arg( 'storage_type' ),
+			'name'         => '',
+			'id'           => '',
+			'parent'       => '',
+			'group'        => '',
+			'label'        => '',
+			'description'  => '',
 		);
 
 		$args = array_merge( $defaults, $args );
@@ -309,8 +369,6 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 		foreach ( $args as $arg => $value ) {
 			$this->set_arg( $arg, $value );
 		}
-
-		// @todo Handle setup.
 	}
 
 	/**
@@ -322,6 +380,10 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	 */
 	public function get_arg( $arg ) {
 		$arg = (string) $arg;
+
+		if ( 'fields' === $arg ) {
+			return $this->get_fields();
+		}
 
 		if ( ! isset( $this->args[ $arg ] ) ) {
 			return null;
@@ -341,6 +403,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 
 		$reserved = array(
 			'object_type',
+			'storage_type',
 			'fields',
 			'options',
 			'name',
@@ -473,6 +536,49 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	}
 
 	/**
+	 * Get fields for object.
+	 *
+	 * @return Pods_Object[] List of fields objects.
+	 */
+	public function get_fields() {
+		if ( array() === $this->fields ) {
+			return array();
+		}
+
+		$object_collection = Pods_Object_Collection::get_instance();
+
+		$storage_object = $object_collection->get_storage_object( $this->get_arg( 'storage_type' ) );
+
+		if ( ! $storage_object ) {
+			return array();
+		}
+
+		if ( null === $this->fields ) {
+			$args = array(
+				'object_type'       => 'field',
+				'parent'            => $this->get_id(),
+				'parent_name'       => $this->get_name(),
+				'parent_identifier' => $this->get_identifier(),
+			);
+
+			$fields = $storage_object->find( $args );
+
+			$this->fields = wp_list_pluck( $fields, 'id' );
+
+			return $fields;
+		}
+
+		$fields = array_map( array( $object_collection, 'get_object' ), $this->fields );
+		$fields = array_filter( $fields );
+
+		$names = wp_list_pluck( $fields, 'name' );
+
+		$fields = array_combine( $names, $fields );
+
+		return $fields;
+	}
+
+	/**
 	 * Call magic methods.
 	 *
 	 * @param string $name      Method name.
@@ -511,6 +617,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 
 			$supported_args = array(
 				'object_type',
+				'storage_type',
 				'name',
 				'id',
 				'parent',

@@ -6,6 +6,7 @@ use PodsMeta;
 
 /**
  * @group  pods-meta
+ * @group  pods-config-required
  * @covers PodsMeta
  */
 class MetaTest extends Pods_UnitTestCase {

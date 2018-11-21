@@ -69,6 +69,7 @@ class Pods_Object_Collection {
 			'post_type' => 'Pods_Object_Storage_Post_Type',
 		);
 	}
+
 	/**
 	 * Get list of default objects.
 	 *
@@ -76,7 +77,7 @@ class Pods_Object_Collection {
 	 */
 	public function get_default_objects() {
 		return array(
-			'pod/_pods_pod' => array(
+			'pod/_pods_pod'   => array(
 				'internal'    => true,
 				'object_type' => 'pod',
 				'name'        => '_pods_pod',

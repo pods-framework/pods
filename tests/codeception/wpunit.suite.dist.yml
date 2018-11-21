@@ -4,8 +4,21 @@
 # Emulate web requests and make application process them.
 class_name: WpunitTester
 modules:
-    enabled: [WPLoader, \Helper\Wpunit]
+    enabled:
+        - \Helper\Wpunit
+        - WPDb
+        - WPLoader
     config:
+        WPDb:
+            dsn: 'mysql:host=%DB_HOST%;dbname=%DB_NAME%'
+            user: %DB_USER%
+            password: %DB_PASSWORD%
+            dump: 'tests/codeception/_data/%SQL_DUMP_FILE%'
+            populate: true
+            cleanup: false
+            url: '%WP_URL%'
+            tablePrefix: wp_
+            waitlock: 0
         WPLoader:
             wpRootFolder: %WP_ROOT_FOLDER%
             dbName: %TEST_DB_NAME%

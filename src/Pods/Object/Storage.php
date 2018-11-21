@@ -83,6 +83,17 @@ abstract class Pods_Object_Storage {
 	}
 
 	/**
+	 * Get object argument data.
+	 *
+	 * @param Pods_Object $object Object with arguments to save.
+	 *
+	 * @return array
+	 */
+	public function get_args( Pods_Object $object ) {
+		return array();
+	}
+
+	/**
 	 * Save object argument data.
 	 *
 	 * @param Pods_Object $object Object with arguments to save.

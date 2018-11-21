@@ -153,10 +153,10 @@ class PodsField_BooleanTest extends Pods_UnitTestCase {
 			1 => 'bar',
 			0 => 'baz',
 		), $this->field->data( 'foo', null, array(
-				'boolean_format_type' => 'radio',
-				'boolean_yes_label'   => 'bar',
-				'boolean_no_label'    => 'baz',
-			) ) );
+			'boolean_format_type' => 'radio',
+			'boolean_yes_label'   => 'bar',
+			'boolean_no_label'    => 'baz',
+		) ) );
 	}
 
 	/**
@@ -166,9 +166,9 @@ class PodsField_BooleanTest extends Pods_UnitTestCase {
 	 */
 	public function test_method_data_format_type_checkbox() {
 		$this->assertEquals( array( 1 => 'bar' ), $this->field->data( 'foo', null, array(
-				'boolean_format_type' => 'checkbox',
-				'boolean_yes_label'   => 'bar',
-			) ) );
+			'boolean_format_type' => 'checkbox',
+			'boolean_yes_label'   => 'bar',
+		) ) );
 	}
 
 	/**

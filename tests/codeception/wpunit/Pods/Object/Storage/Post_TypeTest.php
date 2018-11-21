@@ -2,9 +2,8 @@
 
 namespace Pods_Unit_Tests\Object;
 
-use Pods_Unit_Tests\Pods_UnitTestCase;
+use Pods_Unit_Tests\Pods_ObjectTestCase;
 use Pods_Object_Storage_Post_Type;
-use Pods_Object_Collection;
 use Pods_Object;
 use WP_Post;
 
@@ -13,313 +12,593 @@ use WP_Post;
  * @group  pods-object-storage
  * @covers Pods_Object_Storage_Post_Type
  */
-class Post_TypeTest extends Pods_UnitTestCase {
-
-	/**
-	 * @var Pods_Object_Storage_Post_Type
-	 */
-	private $pods_object_storage_post_type;
-
-	/**
-	 * @var array
-	 */
-	private $parent_args;
-
-	/**
-	 * @var array
-	 */
-	private $group_args;
-
-	/**
-	 * @var array
-	 */
-	private $args;
-
-	/**
-	 * @var Pods_Object
-	 */
-	private $pods_object_parent;
-
-	/**
-	 * @var Pods_Object
-	 */
-	private $pods_object_group;
-
-	/**
-	 * @var Pods_Object
-	 */
-	private $pods_object;
-
-	public function setUp() {
-		$this->pods_object_storage_post_type = new Pods_Object_Storage_Post_Type();
-
-		// Setup parent.
-		$parent_args = array(
-			'object_type' => 'pod',
-			'id'          => 121,
-			'name'        => 'test-parent',
-			'label'       => 'Test parent',
-			'description' => 'Testing parent',
-		);
-
-		$this->pods_object_parent = $this->setup_pods_object( $parent_args, 'parent' );
-
-		// Setup group.
-		$group_args = array(
-			'object_type' => 'group',
-			'id'          => 122,
-			'name'        => 'test-group',
-			'label'       => 'Test group',
-			'description' => 'Testing group',
-		);
-
-		$this->pods_object_group = $this->setup_pods_object( $group_args, 'group' );
-
-		// Setup object.
-		$args = array(
-			'object_type' => 'field',
-			'id'          => 123,
-			'name'        => 'test',
-			'label'       => 'Test',
-			'description' => 'Testing',
-			'parent'      => $this->pods_object_parent->get_id(),
-			'group'       => $this->pods_object_group->get_identifier(),
-		);
-
-		$this->pods_object = $this->setup_pods_object( $args );
-	}
-
-	public function tearDown() {
-		unset( $this->pods_object_parent );
-		unset( $this->pods_object_group );
-		unset( $this->pods_object );
-
-		$this->parent_args = array();
-		$this->group_args  = array();
-		$this->args        = array();
-
-		Pods_Object_Collection::get_instance()->flush_objects();
-
-		unset( $this->pods_object_storage_post_type );
-
-		pods_api()->cache_flush_pods();
-	}
-
-	/**
-	 * Setup and return a Pods_Object.
-	 *
-	 * @param array  $args Object arguments.
-	 * @param string $type Object type.
-	 *
-	 * @return Pods_Object
-	 */
-	public function setup_pods_object( array $args = array(), $type = 'object' ) {
-		$defaults = array(
-			'object_type' => 'pod',
-			'id'          => '',
-			'name'        => '',
-			'label'       => '',
-			'description' => '',
-			'parent'      => '',
-			'group'       => '',
-		);
-
-		$args = array_merge( $defaults, $args );
-
-		if ( 'parent' === $type ) {
-			$this->parent_args = $args;
-		} elseif ( 'group' === $type ) {
-			$this->group_args = $args;
-		} else {
-			$this->args = $args;
-		}
-
-		$object_collection = Pods_Object_Collection::get_instance();
-
-		$class_name = $object_collection->get_object_type( $args['object_type'] );
-
-		/** @var Pods_Object $object */
-		$object = new $class_name;
-		$object->setup( $args );
-
-		$object_collection->register_object( $object );
-
-		return $object;
-	}
-
-	/**
-	 * Setup WP Post from Pods_Object.
-	 *
-	 * @param Pods_Object $object
-	 *
-	 * @return int|\WP_Error
-	 */
-	public function setup_wp_post( Pods_Object $object ) {
-		$args = array(
-			'post_title'   => $object->get_arg( 'label' ),
-			'post_name'    => $object->get_name(),
-			'post_content' => $object->get_arg( 'description' ),
-			'post_parent'  => $object->get_arg( 'parent' ),
-			'post_type'    => '_pods_' . $object->get_object_type(),
-		);
-
-		$post_id = wp_insert_post( $args );
-
-		$object->set_arg( 'id', $post_id );
-
-		return $post_id;
-	}
+class Post_TypeTest extends Pods_ObjectTestCase {
 
 	/**
 	 * @covers Pods_Object_Storage_Post_Type::get_storage_type
 	 */
 	public function test_get_storage_type() {
-		$this->assertTrue( method_exists( $this->pods_object_storage_post_type, 'get_storage_type' ), 'Method get_storage_type does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'get_storage_type' ), 'Method get_storage_type does not exist' );
 
-		$this->assertEquals( 'post_type', $this->pods_object_storage_post_type->get_storage_type() );
+		$this->assertEquals( 'post_type', $this->pods_object_storage->get_storage_type() );
 	}
 
 	/**
 	 * @covers Pods_Object_Storage_Post_Type::get
 	 */
 	public function test_get() {
-		$this->assertTrue( method_exists( $this->pods_object_storage_post_type, 'get' ), 'Method get does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'get' ), 'Method get does not exist' );
 
-		$this->assertNull( $this->pods_object_storage_post_type->get() );
+		$this->assertNull( $this->pods_object_storage->get() );
 	}
 
 	/**
 	 * @covers Pods_Object_Storage_Post_Type::find
 	 */
 	public function test_find() {
-		$this->assertTrue( method_exists( $this->pods_object_storage_post_type, 'find' ), 'Method find does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
 
-		$this->assertEquals( array(), $this->pods_object_storage_post_type->find() );
+		$this->assertCount( 0, $this->pods_object_storage->find() );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage_Post_Type::find
+	 */
+	public function test_find_object_type() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
+
+		$args = array(
+			'object_type' => 'pod',
+			'refresh'     => true,
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+
+		$this->setup_pods_object();
+
+		$this->assertCount( 2, $this->pods_object_storage->find( $args ) );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage_Post_Type::find
+	 */
+	public function test_find_secondary() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
+
+		$args = array(
+			'object_type' => $this->pods_object_field->get_object_type(),
+			'parent'      => $this->pods_object_field->get_parent(),
+			'type'        => $this->pods_object_field->get_arg( 'type' ),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => $this->pods_object_pod->get_object_type(),
+			'object'      => $this->pods_object_pod->get_arg( 'object' ),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => $this->pods_object_field->get_object_type(),
+			'parent'      => $this->pods_object_field->get_parent(),
+			'group'       => $this->pods_object_field->get_arg( 'group' ),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage_Post_Type::find
+	 */
+	public function test_find_args() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
+
+		$args = array(
+			'object_type' => $this->pods_object_field->get_object_type(),
+			'parent'      => $this->pods_object_field->get_parent(),
+			'args'        => array(
+				'custom1' => $this->pods_object_field->get_arg( 'custom1' ),
+			),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => $this->pods_object_field->get_object_type(),
+			'parent'      => $this->pods_object_field->get_parent(),
+			'args'        => array(
+				'custom1' => 'something-else',
+			),
+		);
+
+		$this->assertCount( 0, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => $this->pods_object_field->get_object_type(),
+			'parent'      => $this->pods_object_field->get_parent(),
+			'args'        => array(
+				'custom1' => '',
+			),
+		);
+
+		$this->assertCount( 0, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => $this->pods_object_field->get_object_type(),
+			'parent'      => $this->pods_object_field->get_parent(),
+			'args'        => array(
+				'custom2' => null,
+			),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage_Post_Type::find
+	 */
+	public function test_find_id() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
+
+		$args = array(
+			'object_type' => $this->pods_object_field->get_object_type(),
+			'id'          => $this->pods_object_field->get_id(),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => $this->pods_object_group->get_object_type(),
+			'id'          => $this->pods_object_group->get_id(),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => $this->pods_object_pod->get_object_type(),
+			'id'          => $this->pods_object_pod->get_id(),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage_Post_Type::find
+	 */
+	public function test_find_name() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
+
+		$args = array(
+			'object_type' => $this->pods_object_field->get_object_type(),
+			'name'        => $this->pods_object_field->get_name(),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => $this->pods_object_group->get_object_type(),
+			'name'        => $this->pods_object_group->get_name(),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => $this->pods_object_pod->get_object_type(),
+			'name'        => $this->pods_object_pod->get_name(),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage_Post_Type::find
+	 */
+	public function test_find_parent() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
+
+		$args = array(
+			'object_type' => $this->pods_object_field->get_object_type(),
+			'parent'      => $this->pods_object_pod->get_id(),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => $this->pods_object_group->get_object_type(),
+			'parent'      => $this->pods_object_pod->get_id(),
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => $this->pods_object_pod->get_object_type(),
+			'parent'      => 0,
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage_Post_Type::find
+	 */
+	public function test_find_status() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
+
+		$args = array(
+			'object_type' => 'pod',
+			'status'      => 'draft',
+		);
+
+		$this->assertCount( 0, $this->pods_object_storage->find( $args ) );
+
+		$args = array(
+			'object_type' => 'pod',
+			'status'      => 'publish',
+		);
+
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage_Post_Type::find
+	 */
+	public function test_find_order() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
+
+		// Add test pods.
+		$args = array(
+			'object_type' => 'pod',
+			'name'        => 'fiver',
+			'label'       => 'Fiver',
+			'type'        => 'custom',
+			'fourohfour'  => 405,
+		);
+
+		$this->setup_pods_object( $args );
+
+		$args2 = array(
+			'object_type' => 'pod',
+			'name'        => 'sixer',
+			'label'       => 'Sixer',
+			'type'        => 'custom',
+			'fourohfour'  => 405,
+		);
+
+		$this->setup_pods_object( $args2 );
+
+		// Do find.
+		$find_args = array(
+			'object_type' => 'pod',
+			'type'        => 'custom',
+			'order'       => 'ASC',
+		);
+
+		$objects = $this->pods_object_storage->find( $find_args );
+
+		$this->assertCount( 2, $objects );
+		$this->assertEquals( array( 'fiver' => 'fiver', 'sixer' => 'sixer' ), wp_list_pluck( $objects, 'name' ) );
+
+		// Do find.
+		$find_args = array(
+			'object_type' => 'pod',
+			'type'        => 'custom',
+			'order'       => 'DESC',
+		);
+
+		$objects = $this->pods_object_storage->find( $find_args );
+
+		$this->assertCount( 2, $objects );
+		$this->assertEquals( array( 'sixer' => 'sixer', 'fiver' => 'fiver' ), wp_list_pluck( $objects, 'name' ) );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage_Post_Type::find
+	 */
+	public function test_find_orderby() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
+
+		// Add test pods.
+		$args = array(
+			'object_type' => 'pod',
+			'name'        => 'fiver',
+			'label'       => 'Fiver',
+			'type'        => 'custom',
+			'fourohfour'  => 405,
+		);
+
+		$object = $this->setup_pods_object( $args );
+
+		$args2 = array(
+			'object_type' => 'pod',
+			'name'        => 'sixer',
+			'label'       => 'Sixer',
+			'type'        => 'custom',
+			'fourohfour'  => 405,
+		);
+
+		$object2 = $this->setup_pods_object( $args2 );
+
+		// Do find.
+		$find_args = array(
+			'object_type' => 'pod',
+			'type'        => 'custom',
+			'orderby'     => 'post__in',
+			'id'          => array(
+				$object2->get_id(),
+				$object->get_id(),
+			),
+		);
+
+		$objects = $this->pods_object_storage->find( $find_args );
+
+		$this->assertCount( 2, $objects );
+		$this->assertEquals( array( 'sixer' => 'sixer', 'fiver' => 'fiver' ), wp_list_pluck( $objects, 'name' ) );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage_Post_Type::find
+	 */
+	public function test_find_limit() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
+
+		// Add test pods.
+		$args = array(
+			'object_type' => 'pod',
+			'name'        => 'fiver',
+			'label'       => 'Fiver',
+			'type'        => 'custom',
+			'fourohfour'  => 405,
+		);
+
+		$this->setup_pods_object( $args );
+
+		$args2 = array(
+			'object_type' => 'pod',
+			'name'        => 'sixer',
+			'label'       => 'Sixer',
+			'type'        => 'custom',
+			'fourohfour'  => 405,
+		);
+
+		$this->setup_pods_object( $args2 );
+
+		$args = array(
+			'object_type' => 'pod',
+			'limit'       => 2,
+		);
+
+		$this->assertCount( 2, $this->pods_object_storage->find( $args ) );
 	}
 
 	/**
 	 * @covers Pods_Object_Storage_Post_Type::add
 	 */
 	public function test_add() {
-		$this->assertTrue( method_exists( $this->pods_object_storage_post_type, 'add' ), 'Method add does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'add' ), 'Method add does not exist' );
 
-		$object = $this->setup_pods_object();
+		$args = array(
+			'object_type' => 'field',
+			'name'        => 'fiver',
+			'parent'      => $this->pods_object_pod->get_id(),
+			'group'       => $this->pods_object_group->get_id(),
+			'fourohfour'  => 405,
+		);
 
-		$object->set_arg( 'id', null );
+		$object = $this->setup_pods_object( $args );
 
-		$id = $this->pods_object_storage_post_type->add( $object );
+		$id = $object->get_id();
+
+		$post = get_post( $id );
 
 		$this->assertInternalType( 'integer', $id );
-		$this->assertInstanceOf( WP_Post::class, get_post( $id ) );
+		$this->assertInstanceOf( WP_Post::class, $post );
+		$this->assertEquals( $id, $object->get_id() );
+		$this->assertEquals( $object->get_label(), $post->post_title );
+		$this->assertEquals( $object->get_name(), $post->post_name );
+		$this->assertEquals( $object->get_parent(), $post->post_parent );
+		$this->assertEquals( $object->get_parent_id(), $post->post_parent );
+		$this->assertEquals( '_pods_field', $post->post_type );
+		$this->assertEquals( 'post_type', $object->get_storage_type() );
+		$this->assertEquals( $object->get_arg( 'group' ), get_post_meta( $id, 'group', true ) );
+		$this->assertEquals( $object->get_arg( 'fourohfour' ), get_post_meta( $id, 'fourohfour', true ) );
+		$this->assertEquals( $object->get_arg( 'custom1' ), get_post_meta( $id, 'custom1', true ) );
 	}
 
 	/**
 	 * @covers Pods_Object_Storage_Post_Type::save
 	 */
 	public function test_save() {
-		$this->assertTrue( method_exists( $this->pods_object_storage_post_type, 'save' ), 'Method save does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'save' ), 'Method save does not exist' );
 
-		$object = $this->setup_pods_object();
+		$args = array(
+			'object_type' => 'field',
+			'name'        => 'fiver',
+			'parent'      => $this->pods_object_pod->get_id(),
+			'group'       => $this->pods_object_group->get_id(),
+			'fourohfour'  => 405,
+		);
 
-		$new_id = $this->pods_object_storage_post_type->add( $object );
+		$object = $this->setup_pods_object( $args );
 
-		$object->set_arg( 'id', $new_id );
 		$object->set_arg( 'label', 'New label' );
 
-		$id = $this->pods_object_storage_post_type->save( $object );
+		$id = $this->pods_object_storage->save( $object );
+
+		$post = get_post( $id );
 
 		$this->assertInternalType( 'integer', $id );
-		$this->assertInstanceOf( WP_Post::class, get_post( $id ) );
+		$this->assertInstanceOf( WP_Post::class, $post );
+		$this->assertEquals( $id, $object->get_id() );
+		$this->assertEquals( $object->get_label(), $post->post_title );
+		$this->assertEquals( $object->get_name(), $post->post_name );
+		$this->assertEquals( $object->get_parent(), $post->post_parent );
+		$this->assertEquals( $object->get_parent_id(), $post->post_parent );
+		$this->assertEquals( '_pods_' . $object->get_object_type(), $post->post_type );
+		$this->assertEquals( 'post_type', $object->get_storage_type() );
+		$this->assertEquals( $object->get_arg( 'group' ), get_post_meta( $id, 'group', true ) );
+		$this->assertEquals( $object->get_arg( 'fourohfour' ), get_post_meta( $id, 'fourohfour', true ) );
+		$this->assertEquals( $object->get_arg( 'custom1' ), get_post_meta( $id, 'custom1', true ) );
+	}
+
+	/**
+	 * @covers Pods_Object_Storage::get_args
+	 */
+	public function test_get_args() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'get_args' ), 'Method get_args does not exist' );
+
+		$args = array(
+			'object_type' => 'field',
+			'name'        => 'fiver',
+			'parent'      => $this->pods_object_pod->get_id(),
+			'group'       => $this->pods_object_group->get_id(),
+			'fourohfour'  => 405,
+			'custom2'     => 'value2',
+		);
+
+		$object = $this->setup_pods_object( $args );
+
+		$id = $object->get_id();
+
+		// Set an empty field.
+		update_post_meta( $id, 'custom3', '' );
+
+		// Set a multiple value field.
+		add_post_meta( $id, 'custom4', 'value1' );
+		add_post_meta( $id, 'custom4', 'value2' );
+		add_post_meta( $id, 'custom4', 'value3' );
+		add_post_meta( $id, 'custom4', 'value4' );
+
+		$args = $this->pods_object_storage->get_args( $object );
+
+		$this->assertEquals( $object->get_arg( 'group' ), $args['group'] );
+		$this->assertEquals( $object->get_arg( 'fourohfour' ), $args['fourohfour'] );
+		$this->assertEquals( $object->get_arg( 'custom1' ), $args['custom1'] );
+		$this->assertEquals( $object->get_arg( 'custom2' ), $args['custom2'] );
+		$this->assertArrayNotHasKey( 'custom3', $args );
+		$this->assertCount( 4, $args['custom4'] );
 	}
 
 	/**
 	 * @covers Pods_Object_Storage::save_args
 	 */
 	public function test_save_args() {
-		$this->assertTrue( method_exists( $this->pods_object_storage_post_type, 'save_args' ), 'Method save_args does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'save_args' ), 'Method save_args does not exist' );
 
-		$object = $this->setup_pods_object();
+		$args = array(
+			'object_type' => 'field',
+			'name'        => 'fiver',
+			'parent'      => $this->pods_object_pod->get_id(),
+			'group'       => $this->pods_object_group->get_id(),
+			'fourohfour'  => 405,
+			'custom2'     => 'value2',
+		);
 
-		$new_id = $this->pods_object_storage_post_type->add( $object );
+		$object = $this->setup_pods_object( $args );
 
-		$object->set_arg( 'id', $new_id );
+		$id = $object->get_id();
 
-		$this->assertTrue( $this->pods_object_storage_post_type->save_args( $object ) );
-		$this->assertEquals( $object->get_arg( 'group' ), get_post_meta( $new_id, 'group', true ) );
-		$this->assertEquals( $object->get_arg( 'custom1' ), get_post_meta( $new_id, 'custom1', true ) );
+		$this->assertTrue( $this->pods_object_storage->save_args( $object ) );
+		$this->assertEquals( $object->get_arg( 'group' ), get_post_meta( $id, 'group', true ) );
+		$this->assertEquals( $object->get_arg( 'fourohfour' ), get_post_meta( $id, 'fourohfour', true ) );
+		$this->assertEquals( $object->get_arg( 'custom1' ), get_post_meta( $id, 'custom1', true ) );
 	}
 
 	/**
 	 * @covers Pods_Object_Storage_Post_Type::duplicate
 	 */
 	public function test_duplicate() {
-		$this->assertTrue( method_exists( $this->pods_object_storage_post_type, 'duplicate' ), 'Method duplicate does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'duplicate' ), 'Method duplicate does not exist' );
 
-		$object = $this->setup_pods_object();
+		$args = array(
+			'object_type' => 'field',
+			'name'        => 'fiver',
+			'parent'      => $this->pods_object_pod->get_id(),
+			'group'       => $this->pods_object_group->get_id(),
+			'fourohfour'  => 405,
+		);
 
-		$new_id = $this->pods_object_storage_post_type->add( $object );
+		$object = $this->setup_pods_object( $args );
 
-		$object->set_arg( 'id', $new_id );
+		$id = $this->pods_object_storage->duplicate( $object );
 
-		$id = $this->pods_object_storage_post_type->duplicate( $object );
+		$post = get_post( $id );
+
+		$duplicated_object = $this->pods_object_storage->to_object( $post );
 
 		$this->assertInternalType( 'integer', $id );
-		$this->assertInstanceOf( WP_Post::class, get_post( $id ) );
+		$this->assertInstanceOf( WP_Post::class, $post );
+		$this->assertEquals( $id, $duplicated_object->get_id() );
+		$this->assertEquals( $duplicated_object->get_label(), $post->post_title );
+		$this->assertEquals( $duplicated_object->get_name(), $post->post_name );
+		$this->assertEquals( $duplicated_object->get_parent(), $post->post_parent );
+		$this->assertEquals( $duplicated_object->get_parent_id(), $post->post_parent );
+		$this->assertEquals( '_pods_field', $post->post_type );
+		$this->assertEquals( 'post_type', $duplicated_object->get_storage_type() );
+		$this->assertEquals( $duplicated_object->get_arg( 'group' ), get_post_meta( $id, 'group', true ) );
+		$this->assertEquals( $duplicated_object->get_arg( 'fourohfour' ), get_post_meta( $id, 'fourohfour', true ) );
+		$this->assertEquals( $duplicated_object->get_arg( 'custom1' ), get_post_meta( $id, 'custom1', true ) );
 	}
 
 	/**
 	 * @covers Pods_Object_Storage_Post_Type::delete
 	 */
 	public function test_delete() {
-		$this->assertTrue( method_exists( $this->pods_object_storage_post_type, 'delete' ), 'Method delete does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'delete' ), 'Method delete does not exist' );
 
-		$object = $this->setup_pods_object();
+		$args = array(
+			'object_type' => 'field',
+			'name'        => 'fiver',
+			'parent'      => $this->pods_object_pod->get_id(),
+			'group'       => $this->pods_object_group->get_id(),
+			'fourohfour'  => 405,
+		);
 
-		$new_id = $this->pods_object_storage_post_type->add( $object );
+		$object = $this->setup_pods_object( $args );
 
-		$object->set_arg( 'id', $new_id );
+		$id = $object->get_id();
 
-		$this->assertTrue( $this->pods_object_storage_post_type->delete( $object ) );
+		$this->assertEquals( $id, $object->get_id() );
+		$this->assertTrue( $this->pods_object_storage->delete( $object ) );
+		$this->assertNull( $object->get_id() );
 	}
 
 	/**
 	 * @covers Pods_Object_Storage_Post_Type::reset
 	 */
 	public function test_reset() {
-		$this->assertTrue( method_exists( $this->pods_object_storage_post_type, 'reset' ), 'Method reset does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'reset' ), 'Method reset does not exist' );
 
-		$object = $this->setup_pods_object();
+		$args = array(
+			'object_type' => 'field',
+			'name'        => 'fiver',
+			'parent'      => $this->pods_object_pod->get_id(),
+			'group'       => $this->pods_object_group->get_id(),
+			'fourohfour'  => 405,
+		);
 
-		$this->assertFalse( $this->pods_object_storage_post_type->reset( $object ) );
+		$object = $this->setup_pods_object( $args );
+
+		$this->assertFalse( $this->pods_object_storage->reset( $object ) );
 	}
 
 	/**
 	 * @covers Pods_Object_Storage_Post_Type::to_object
 	 */
 	public function test_to_object() {
-		$this->assertTrue( method_exists( $this->pods_object_storage_post_type, 'to_object' ), 'Method to_object does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'to_object' ), 'Method to_object does not exist' );
 
-		$parent_post_id = $this->setup_wp_post( $this->pods_object_parent );
+		$post = get_post( $this->pods_object_field->get_id() );
 
-		$this->setup_wp_post( $this->pods_object_group );
-
-		// Update object ID to match.
-		$this->pods_object->set_arg( 'parent', $parent_post_id );
-
-		$post_id = $this->setup_wp_post( $this->pods_object );
-
-		update_post_meta( $post_id, 'group', $this->pods_object_group->get_identifier() );
-
-		$post = get_post( $post_id );
-
-		$to = $this->pods_object_storage_post_type->to_object( $post );
+		$to = $this->pods_object_storage->to_object( $post );
 
 		$this->assertInstanceOf( Pods_Object::class, $to );
-		$this->assertEquals( $this->pods_object->get_object_type(), $to->get_object_type() );
-		$this->assertEquals( $this->pods_object->get_id(), $to->get_id() );
-		$this->assertEquals( $this->pods_object->get_name(), $to->get_name() );
-		$this->assertEquals( $this->pods_object->get_parent(), $to->get_parent() );
-		$this->assertEquals( $this->pods_object->get_group(), $to->get_group() );
+		$this->assertEquals( $this->pods_object_field->get_object_type(), $to->get_object_type() );
+		$this->assertEquals( $this->pods_object_field->get_id(), $to->get_id() );
+		$this->assertEquals( $this->pods_object_field->get_name(), $to->get_name() );
+		$this->assertEquals( $this->pods_object_field->get_parent(), $to->get_parent() );
+		$this->assertEquals( $this->pods_object_field->get_group(), $to->get_group() );
 	}
 
 }

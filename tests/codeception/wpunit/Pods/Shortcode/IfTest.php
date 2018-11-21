@@ -3,6 +3,7 @@
 namespace Pods_Unit_Tests\Shortcode;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
+use Pods;
 
 /**
  * Class Test_If
@@ -12,11 +13,27 @@ use Pods_Unit_Tests\Pods_UnitTestCase;
  */
 class Pods_IfTest extends Pods_UnitTestCase {
 
+	/**
+	 * @var string
+	 */
 	protected static $pod_name = 'test_if';
 
-	protected static $pod_id;
+	/**
+	 * @var Pods
+	 */
+	protected static $pod;
 
-	public static function wpSetUpBeforeClass() {
+	/**
+	 * @var int
+	 */
+	protected static $pod_id = 0;
+
+	/**
+	 *
+	 */
+	public function setUp() {
+		parent::setUp();
+
 		add_shortcode( 'test_if_text', function ( $args, $content ) {
 			return 'abc123';
 		} );
@@ -54,27 +71,41 @@ class Pods_IfTest extends Pods_UnitTestCase {
 			'pick_format_type' => 'single',
 		);
 		pods_api()->save_field( $params );
+
+		self::$pod = pods( self::$pod_name );
 	}
 
-	public static function wpTearDownAfterClass() {
+	/**
+	 *
+	 */
+	public function tearDown() {
 		if ( shortcode_exists( 'test_if_text' ) ) {
 			remove_shortcode( 'test_if_text' );
 		}
 		if ( shortcode_exists( 'test_if_recurse' ) ) {
 			remove_shortcode( 'test_if_recurse' );
 		}
+
 		pods_api()->delete_pod( array( 'id' => self::$pod_id ) );
+
+		parent::tearDown();
 	}
 
+	/**
+	 *
+	 */
 	public function test_psuedo_shortcodes() {
 		// Make sure our pseudo shortcodes are working properly
 		$this->assertEquals( 'abc123', do_shortcode( '[test_if_text]' ) );
 		$this->assertEquals( 'abc123', do_shortcode( '[test_if_recurse][test_if_text][/test_if_recurse]' ) );
 	}
 
+	/**
+	 *
+	 */
 	public function test_if_simple() {
 		$pod_name = self::$pod_name;
-		$id       = pods( $pod_name )->add( array(
+		$id       = self::$pod->add( array(
 			'name'    => __FUNCTION__ . '1',
 			'number1' => 123,
 			'number2' => 456,
@@ -85,7 +116,7 @@ class Pods_IfTest extends Pods_UnitTestCase {
 		$this->assertEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
 		$this->assertNotEquals( 'DEF', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
 
-		$id      = pods( $pod_name )->add( array(
+		$id      = self::$pod->add( array(
 			'name'    => __FUNCTION__ . '2',
 			'number1' => 456,
 			'number2' => 0,
@@ -99,10 +130,13 @@ class Pods_IfTest extends Pods_UnitTestCase {
 		$this->assertNotEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$content}[/pod_if_field]" ) );
 	}
 
+	/**
+	 *
+	 */
 	public function test_if_nested() {
 		$pod_name = self::$pod_name;
 
-		$id = pods( $pod_name )->add( array(
+		$id = self::$pod->add( array(
 			'name'    => __FUNCTION__ . '1',
 			'number1' => 123,
 			'number2' => 456,
@@ -118,7 +152,7 @@ class Pods_IfTest extends Pods_UnitTestCase {
 
 		$this->assertEquals( 'XYZ', do_shortcode( "[test_if_recurse][pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field][/test_if_recurse]" ) );
 
-		$this->markTestIncomplete( 'Nested shortcodes currently broken, test disabled until issue resolved' );
+		$this->markTestSkipped( 'Nested shortcodes currently broken, test disabled until issue resolved' );
 
 		$inner_content = base64_encode( '[test_if_recurse]XYZ[/test_if_recurse]' );
 		$content       = base64_encode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$inner_content}[/pod_if_field]" );
@@ -126,12 +160,15 @@ class Pods_IfTest extends Pods_UnitTestCase {
 		$this->assertEquals( 'XYZ', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
 	}
 
+	/**
+	 *
+	 */
 	public function test_if_nested_external_shortcodes() {
-		$this->markTestIncomplete( 'Nested shortcodes currently broken, test disabled until issue resolved' );
+		$this->markTestSkipped( 'Nested shortcodes currently broken, test disabled until issue resolved' );
 
 		$pod_name = self::$pod_name;
 
-		$id = pods( $pod_name )->add( array(
+		$id = self::$pod->add( array(
 			'name'    => __FUNCTION__ . '1',
 			'number1' => 123,
 			'number2' => 456,
@@ -142,10 +179,13 @@ class Pods_IfTest extends Pods_UnitTestCase {
 		$this->assertEquals( 'abc123', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
 	}
 
+	/**
+	 *
+	 */
 	public function test_if_with_magic_tags() {
 		$pod_name = self::$pod_name;
 
-		$id = pods( $pod_name )->add( array(
+		$id = self::$pod->add( array(
 			'name'    => 'my post title',
 			'number1' => 123,
 			'number2' => 456,
@@ -157,7 +197,7 @@ class Pods_IfTest extends Pods_UnitTestCase {
 		$content = base64_encode( '{@number1}' );
 		$this->assertEquals( '123', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
 
-		$id = pods( $pod_name )->add( array(
+		$id = self::$pod->add( array(
 			'name'    => 'my post title',
 			'number1' => 456,
 			'number2' => 0,
@@ -167,10 +207,13 @@ class Pods_IfTest extends Pods_UnitTestCase {
 		$this->assertEquals( '456', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$content}[/pod_if_field]" ) );
 	}
 
+	/**
+	 *
+	 */
 	public function test_if_in_html() {
 		$pod_name = self::$pod_name;
 
-		$id      = pods( $pod_name )->add( array(
+		$id      = self::$pod->add( array(
 			'name'    => 'my post title',
 			'number1' => 123,
 			'number2' => 456,
@@ -186,13 +229,15 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	public function test_if_related_field() {
 		$pod_name = self::$pod_name;
 
-		$id1 = pods( $pod_name )->add( array(
+		$pod = self::$pod;
+
+		$id1 = self::$pod->add( array(
 			'post_status' => 'publish',
 			'name'        => 'first post title',
 			'number1'     => 123,
 			'number2'     => 456,
 		) );
-		$id2 = pods( $pod_name )->add( array(
+		$id2 = self::$pod->add( array(
 			'post_status'   => 'publish',
 			'name'          => 'second post title',
 			'number1'       => 987,
@@ -210,7 +255,7 @@ class Pods_IfTest extends Pods_UnitTestCase {
 
 		$site_url = site_url();
 
-		$this->assertEquals( '<a href="' . $site_url . '/?test_if=first-post-title">first post title</a>', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id2}' field='related_field']{$content}[/pod_if_field]" ) );
+		$this->assertEquals( '<a href="' . $site_url . '/?p=' . $id1 . '">first post title</a>', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id2}' field='related_field']{$content}[/pod_if_field]" ) );
 
 		$this->assertEquals( 'first post title', do_shortcode( "[pods name='{$pod_name}' id='{$id2}'][if related_field]{@related_field.post_title}[/if][/pods]" ) );
 	}

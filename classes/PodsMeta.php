@@ -1304,7 +1304,7 @@ class PodsMeta {
 
 		$blacklisted_status = apply_filters( 'pods_meta_save_post_blacklist_status', $blacklisted_status, $post_id, $post );
 
-		if ( in_array( $post->post_status, $blacklisted_status ) ) {
+		if ( in_array( $post->post_status, $blacklisted_status, true ) ) {
 			return;
 		}
 
@@ -1368,7 +1368,10 @@ class PodsMeta {
 				// Fix for Pods doing it's own sanitizing
 				$data = pods_unslash( (array) $data );
 
-				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
+				$pod->save( $data, null, null, array(
+					'is_new_item' => $is_new_item,
+					'podsmeta'    => true
+				) );
 			} elseif ( ! empty( $id ) ) {
 				foreach ( $data as $field => $value ) {
 					update_post_meta( $id, $field, $value );

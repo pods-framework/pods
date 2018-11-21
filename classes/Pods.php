@@ -364,6 +364,7 @@ class Pods implements Iterator {
 		$this->data->search_mode =& $this->search_mode;
 
 		// Sync Pod Data.
+		// @todo Blow this up, use __get() to map, stop using pod data in pods_data() and pods_api()
 		$this->api->pod_data =& $this->data->pod_data;
 		$this->pod_data      =& $this->api->pod_data;
 		$this->api->pod_id   =& $this->data->pod_id;

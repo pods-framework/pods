@@ -1815,8 +1815,12 @@ class PodsField_Pick extends PodsField {
 
 		$check_value = $value;
 
-		foreach ( $check_value as $check_k => $check_v ) {
-			$check_value[ $check_k ] = (string) $check_v;
+		if( is_array( $check_value ) ) {
+
+			foreach ( $check_value as $check_k => $check_v ) {
+				$check_value[ $check_k ] = (string) $check_v;
+			}
+			
 		}
 
 		foreach ( $data as $v => $l ) {

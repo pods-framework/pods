@@ -2,17 +2,22 @@
 
 namespace Pods_Unit_Tests;
 
-// Components
-require_once PODS_DIR . '/components/Migrate-Packages/Migrate-Packages.php';
-require_once PODS_DIR . '/components/Advanced-Content-Types.php';
-require_once PODS_DIR . '/components/Table-Storage.php';
-
-require_once PODS_DIR . '/classes/fields/pick.php';
+use Pods;
 
 /**
  * Class Pods_UnitTestCase
  */
 class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
+
+	/**
+	 * @var array
+	 */
+	public static $pods = array();
+
+	/**
+	 * @var bool
+	 */
+	public static $db_reset_teardown = true;
 
 	/**
 	 * Demo image used for attachments.
@@ -368,20 +373,46 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 		 */
 	);
 
+	/**
+	 *
+	 */
 	public function setUp() {
-		parent::setUp();
-		$this->factory = new Pods_UnitTest_Factory();
+		static $counter = 0;
 
-		pods_require_component( 'table-storage' );
-		pods_require_component( 'advanced-relationships' );
-		pods_require_component( 'migrate-packages' );
-		pods_require_component( 'advanced-content-types' );
+		parent::setUp();
+
+		$load_config = filter_var( getenv( 'PODS_LOAD_DATA' ), FILTER_VALIDATE_BOOLEAN );
+
+		if ( $load_config ) {
+			$counter ++;
+
+			if ( 100 <= $counter ) {
+				$counter = 0;
+
+				usleep( 500000 );
+			}
+		}
 	}
 
+	/**
+	 *
+	 */
+	public function tearDown() {
+		if ( static::$db_reset_teardown ) {
+			parent::tearDown();
+		}
+	}
+
+	/**
+	 *
+	 */
 	public function clean_up_global_scope() {
 		parent::clean_up_global_scope();
 	}
 
+	/**
+	 *
+	 */
 	public function assertPreConditions() {
 		parent::assertPreConditions();
 	}
@@ -524,7 +555,16 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 	/**
 	 * Create a full working set of pods
 	 */
-	public static function _initialize_config() {
+	public static function _initialize_config_from_db() {
+		self::_initialize_config( true );
+	}
+
+	/**
+	 * Create a full working set of pods
+	 *
+	 * @param boolean $use_db Whether to use the DB to load instead of saving.
+	 */
+	public static function _initialize_config( $use_db = false ) {
 		// Setup non-Pod taxonomy
 		$args = array(
 			'hierarchical' => true,
@@ -637,15 +677,23 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 						self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ] = $field;
 					}
 
-					$id = $api->save_pod( $pod );
+					if ( ! $use_db ) {
+						$id = $api->save_pod( $pod );
+					}
 
-					$load_pod = $api->load_pod( array( 'id' => $id ) );
+					$load_pod = $api->load_pod( array( 'name' => $pod['name'], 'bypass_cache' => true ), false );
 
-					if ( ! empty( $load_pod ) ) {
-						foreach ( $load_pod['fields'] as $field ) {
-							if ( isset( self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ] ) ) {
-								self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ]['id'] = $field['id'];
-							}
+					if ( empty( $load_pod ) ) {
+						codecept_debug( $pod['name'] . ' not found' );
+
+						continue;
+					}
+
+					codecept_debug( $pod['name'] . ' found' );
+
+					foreach ( $load_pod['fields'] as $field ) {
+						if ( isset( self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ] ) ) {
+							self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ]['id'] = $field['id'];
 						}
 					}
 
@@ -928,14 +976,238 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 		// Setup copies
 		self::$related_items['author'] = self::$related_items['test_rel_user'];
 	}
-}
 
-$rebuild_data = filter_var( getenv( 'PODS_REBUILD_DATA' ), FILTER_VALIDATE_BOOLEAN );
+	/**
+	 * Data provider for all data to pass into Traversal test methods
+	 * for all variations and combinations to be covered.
+	 */
+	public function data_provider_base() {
+		$data_base = array();
 
-if ( $rebuild_data ) {
-	Pods_UnitTestCase::_initialize_config();
-	Pods_UnitTestCase::_initialize_data();
+		foreach ( self::$builds as $pod_type => $objects ) {
+			foreach ( $objects as $object => $storage_types ) {
+				foreach ( $storage_types as $storage_type => $pod ) {
+					$pod_name = $pod['name'];
 
-	echo "\nData rebuilt, you can now export the updated SQL to tests/codeception_data/dump-pods-testcase.sql\n";
-	die();
+					$data_base[] = array(
+						build_query( compact( array( 'pod_type', 'storage_type', 'pod_name' ) ) ),
+						array(
+							'pod_type'     => $pod_type,
+							'storage_type' => $storage_type,
+							'pod'          => $pod,
+						),
+					);
+				}
+			}
+		}
+
+		return $data_base;
+	}
+
+	/**
+	 * Data provider for all data to pass into Traversal test methods
+	 * for all variations and combinations to be covered.
+	 */
+	public function data_provider() {
+		$data = array();
+
+		$api = pods_api();
+
+		foreach ( self::$builds as $pod_type => $objects ) {
+			foreach ( $objects as $object => $storage_types ) {
+				foreach ( $storage_types as $storage_type => $pod ) {
+					$pod['object_fields'] = $api->get_wp_object_fields( $pod_type, $pod );
+
+					foreach ( $pod['fields'] as $field_name => $field ) {
+						if ( in_array( $field['type'], array(
+								'pick',
+								'taxonomy',
+								'avatar',
+								'author',
+							) ) && empty( $field['pick_val'] ) ) {
+							if ( empty( $field['pick_object'] ) ) {
+								continue;
+							}
+
+							$field['pick_val'] = $field['pick_object'];
+						}
+
+						$pod_name   = $pod['name'];
+						$field_name = $field['name'];
+
+						$data[] = array(
+							build_query( compact( array( 'pod_type', 'storage_type', 'pod_name', 'field_name' ) ) ),
+							array(
+								'pod_type'     => $pod_type,
+								'storage_type' => $storage_type,
+								'pod'          => $pod,
+								'field'        => $field,
+							),
+						);
+					}//end foreach
+
+					// Non-Pod Taxonomy field
+					if ( 'post_type' === $pod_type && isset( $pod['object_fields']['test_non_pod_ct'] ) ) {
+						$field = $pod['object_fields']['test_non_pod_ct'];
+
+						$pod_name   = $pod['name'];
+						$field_name = $field['name'];
+
+						$data[] = array(
+							build_query( compact( array( 'pod_type', 'storage_type', 'pod_name', 'field_name' ) ) ),
+							array(
+								'pod_type'     => $pod_type,
+								'storage_type' => $storage_type,
+								'pod'          => $pod,
+								'field'        => $field,
+							),
+						);
+					}
+				}//end foreach
+			}//end foreach
+		}//end foreach
+
+		return $data;
+	}
+
+	/**
+	 * Data provider for all data to pass into Traversal test methods
+	 * for all variations and combinations to be covered.
+	 */
+	public function data_provider_deep() {
+		$data_deep = array();
+
+		foreach ( self::$builds as $pod_type => $objects ) {
+			foreach ( $objects as $object => $storage_types ) {
+				foreach ( $storage_types as $storage_type => $pod ) {
+					foreach ( $pod['fields'] as $field_name => $field ) {
+						if ( ! in_array( $field['type'], array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
+							continue;
+						}
+
+						if ( empty( $field['pick_val'] ) ) {
+							if ( empty( $field['pick_object'] ) ) {
+								continue;
+							}
+
+							$field['pick_val'] = $field['pick_object'];
+						}
+
+						// Related pod traversal
+						if ( isset( self::$builds[ $field['pick_object'] ] ) && isset( self::$builds[ $field['pick_object'] ][ $field['pick_val'] ] ) && isset( self::$related_items[ $field['pick_val'] ] ) ) {
+							$related_pod = current( self::$builds[ $field['pick_object'] ][ $field['pick_val'] ] );
+
+							foreach ( $related_pod['fields'] as $related_pod_field ) {
+								if ( empty( $related_pod_field['pick_val'] ) && ! empty( $related_pod_field['pick_object'] ) ) {
+									$related_pod_field['pick_val'] = $related_pod_field['pick_object'];
+								}
+
+								$pod_name               = $pod['name'];
+								$field_name             = $field['name'];
+								$related_pod_name       = $related_pod['name'];
+								$related_pod_field_name = $related_pod_field['name'];
+
+								$data_deep[] = array(
+									build_query( compact( array(
+										'pod_type',
+										'storage_type',
+										'pod_name',
+										'field_name',
+										'related_pod_name',
+										'related_pod_field_name',
+									) ) ),
+									array(
+										'pod_type'          => $pod_type,
+										'storage_type'      => $storage_type,
+										'pod'               => $pod,
+										'field'             => $field,
+										'related_pod'       => $related_pod,
+										'related_pod_field' => $related_pod_field,
+									),
+								);
+
+								continue;
+								// To be continued..
+								// @todo Handle one more level deeper
+								if ( ! in_array( $related_pod_field['type'], array(
+									'pick',
+									'taxonomy',
+									'avatar',
+									'author',
+								) ) ) {
+									continue;
+								}
+
+								if ( empty( $related_pod_field['pick_val'] ) ) {
+									if ( empty( $related_pod_field['pick_object'] ) ) {
+										continue;
+									}
+
+									$related_pod_field['pick_val'] = $related_pod_field['pick_object'];
+								}
+
+								// Related pod traversal
+								if ( isset( self::$builds[ $related_pod_field['pick_object'] ] ) && isset( self::$builds[ $related_pod_field['pick_object'] ][ $related_pod_field['pick_val'] ] ) && isset( self::$related_items[ $related_pod_field['pick_val'] ] ) ) {
+									$sub_related_pod = current( self::$builds[ $related_pod_field['pick_object'] ][ $related_pod_field['pick_val'] ] );
+
+									foreach ( $sub_related_pod['fields'] as $sub_related_pod_field ) {
+										if ( empty( $sub_related_pod_field['pick_val'] ) ) {
+											if ( empty( $sub_related_pod_field['pick_object'] ) ) {
+												continue;
+											}
+
+											$sub_related_pod_field['pick_val'] = $sub_related_pod_field['pick_object'];
+										}
+
+										$sub_related_pod_name       = $sub_related_pod['name'];
+										$sub_related_pod_field_name = $sub_related_pod_field['name'];
+
+										$data_deep[] = array(
+											build_query( compact( array(
+												'pod_type',
+												'storage_type',
+												'pod_name',
+												'field_name',
+												'related_pod_name',
+												'related_pod_field_name',
+												'sub_related_pod_name',
+												'sub_related_pod_field_name',
+											) ) ),
+											array(
+												'pod_type'              => $pod_type,
+												'storage_type'          => $storage_type,
+												'pod'                   => $pod,
+												'field'                 => $field,
+												'related_pod'           => $related_pod,
+												'related_pod_field'     => $related_pod_field,
+												'sub_related_pod'       => $sub_related_pod,
+												'sub_related_pod_field' => $sub_related_pod_field,
+											),
+										);
+									}//end foreach
+								}//end if
+							}//end foreach
+						}//end if
+					}//end foreach
+				}//end foreach
+			}//end foreach
+		}//end foreach
+
+		return $data_deep;
+	}
+
+	/**
+	 * Get/create pod from store.
+	 *
+	 * @param string $pod
+	 *
+	 * @return Pods
+	 */
+	public function get_pod( $pod ) {
+		if ( ! isset( self::$pods[ $pod ] ) ) {
+			self::$pods[ $pod ] = pods( $pod );
+		}
+
+		return self::$pods[ $pod ];
+	}
 }

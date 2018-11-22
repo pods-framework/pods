@@ -49,7 +49,7 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 	/**
 	 * @var array
 	 */
-	protected $pods = array();
+	protected $setup_objects = array();
 
 	/**
 	 * @var string
@@ -100,11 +100,11 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 	}
 
 	public function tearDown() {
-		array_map( array( $this->pods_object_storage, 'delete' ), $this->pods );
+		array_map( array( $this->pods_object_storage, 'delete' ), $this->setup_objects );
 
 		unset( $this->pods_object_pod, $this->pods_object_group, $this->pods_object_field );
 
-		$this->pods = array();
+		$this->setup_objects = array();
 
 		$this->pod_args   = array();
 		$this->group_args = array();
@@ -163,7 +163,7 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 			$this->field_args = $args;
 		}
 
-		$this->pods[] =& $object;
+		$this->setup_objects[] =& $object;
 
 		return $object;
 	}

@@ -17,7 +17,7 @@ modules:
             populate: true
             cleanup: false
             url: '%WP_URL%'
-            tablePrefix: wp_
+            tablePrefix: test_
             waitlock: 0
         WPLoader:
             wpRootFolder: %WP_ROOT_FOLDER%

@@ -121,11 +121,19 @@ before_script:
   - sudo service nginx restart
 
 script:
+  # Don't load Pod traversal test data
+  - export PODS_LOAD_DATA='0'
+  # Use a barebones SQL init
   - export SQL_DUMP_FILE='dump.sql'
-  - codecept run wpunit --skip-group='pods-traversal'
+  # Only run tests that don't need the Pod traversal test data
+  - codecept run wpunit --skip-group='pods-config-required'
 
+  # Load Pod traversal test data
+  - export PODS_LOAD_DATA='1'
+  # Use a Pod traversal test data SQL init
   - export SQL_DUMP_FILE='dump-pods-testcase.sql'
-  - codecept run wpunit --skip-group='pods-object'
+  # Only run tests that need the Pod traversal test data
+  - codecept run wpunit --group='pods-config-required'
 
   # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
   - |

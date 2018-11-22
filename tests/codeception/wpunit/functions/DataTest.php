@@ -117,51 +117,51 @@ class DataTest extends Pods_UnitTestCase {
 		$this->assertEquals( array( 'test' ), pods_trim( $original2 ) );
 	}
 
-	public function test_pods_v() {
+	public function _test_pods_v() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_v_sanitized() {
+	public function _test_pods_v_sanitized() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_v_set() {
+	public function _test_pods_v_set() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_var() {
+	public function _test_pods_var() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_var_raw() {
+	public function _test_pods_var_raw() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_var_set() {
+	public function _test_pods_var_set() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_query_arg() {
+	public function _test_pods_query_arg() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_var_update() {
+	public function _test_pods_var_update() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_cast() {
+	public function _test_pods_cast() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_create_slug() {
+	public function _test_pods_create_slug() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_unique_slug() {
+	public function _test_pods_unique_slug() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_clean_name() {
+	public function _test_pods_clean_name() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
@@ -193,7 +193,7 @@ class DataTest extends Pods_UnitTestCase {
 		$this->assertEquals( 0, pods_absint( 'asdf' ) );
 	}
 
-	public function test_pods_str_replace() {
+	public function _test_pods_str_replace() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
@@ -211,43 +211,43 @@ class DataTest extends Pods_UnitTestCase {
 		$this->assertEquals( 'sd', pods_mb_substr( 'asdf', 1, 2 ) );
 	}
 
-	public function test_pods_evaluate_tags() {
+	public function _test_pods_evaluate_tags() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_evaluate_tag_sanitized() {
+	public function _test_pods_evaluate_tag_sanitized() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_evaluate_tag() {
+	public function _test_pods_evaluate_tag() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_serial_comma() {
+	public function _test_pods_serial_comma() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_var_user() {
+	public function _test_pods_var_user() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_hierarchical_list() {
+	public function _test_pods_hierarchical_list() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_hierarchical_list_recurse() {
+	public function _test_pods_hierarchical_list_recurse() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_hierarchical_select() {
+	public function _test_pods_hierarchical_select() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_hierarchical_select_recurse() {
+	public function _test_pods_hierarchical_select_recurse() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 
-	public function test_pods_list_filter() {
+	public function _test_pods_list_filter() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
 

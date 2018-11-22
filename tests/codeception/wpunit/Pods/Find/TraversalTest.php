@@ -208,13 +208,29 @@ class TraversalTest extends Pods_UnitTestCase {
 		$storage_type = $options['storage_type'];
 		$pod          = $options['pod'];
 
+		$debug = array(
+			'pod'          => $pod['name'],
+			'pod_type'     => $pod_type,
+			'storage_type' => $storage_type,
+			'field_name'   => $options['field']['name'],
+			'field_type'   => $options['field']['type'],
+			'deep'         => (int) $deep,
+			'query_fields' => (int) $query_fields,
+		);
+
 		// Do setup for Pod (tearDown / setUp) per storage type
 		if ( in_array( $pod_type, array( 'user', 'media', 'comment' ) ) && 'meta' !== $storage_type ) {
+			$debug['skipped'] = 1;
+
+			codecept_debug( $debug );
+
 			return;
 
 			// @todo do magic
 			$this->assertTrue( false, sprintf( 'Pod / Storage type requires new setUp() not yet built to continue [%s]', $variant_id ) );
 		}
+
+		codecept_debug( $debug );
 
 		// Base find() $params
 		$params = array(
@@ -304,18 +320,40 @@ class TraversalTest extends Pods_UnitTestCase {
 			$storage_type = 'meta';
 		}
 
+		$debug = array(
+			'pod'          => $pod['name'],
+			'pod_type'     => $pod_type,
+			'storage_type' => $storage_type,
+			'field_name'   => $field['name'],
+			'field_type'   => $field_type,
+			'deep'         => (int) $deep,
+			'query_fields' => (int) $query_fields,
+		);
+
 		if ( $deep ) {
 			$related_pod       = $options['related_pod'];
 			$related_pod_field = $options['related_pod_field'];
+
+			$debug['related_pod']              = $related_pod['name'];
+			$debug['related_pod_type']         = $related_pod['type'];
+			$debug['related_pod_storage_type'] = $related_pod['storage'];
+			$debug['related_pod_field_name']   = $related_pod_field['name'];
+			$debug['related_pod_field_type']   = $related_pod_field['type'];
 		}
 
 		// Do setup for Pod (tearDown / setUp) per storage type
 		if ( in_array( $pod_type, array( 'user', 'media', 'comment' ) ) && 'meta' !== $storage_type ) {
+			$debug['skipped'] = 1;
+
+			codecept_debug( $debug );
+
 			return;
 
 			// @todo do magic
 			$this->assertTrue( false, sprintf( 'Pod / Storage type requires new setUp() not yet built to continue [%s]', $variant_id ) );
 		}
+
+		codecept_debug( $debug );
 
 		// Base find() $params
 		$params = array(

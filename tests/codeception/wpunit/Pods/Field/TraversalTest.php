@@ -135,6 +135,8 @@ class TraversalTest extends Pods_UnitTestCase {
 		// Suppress MySQL errors
 		add_filter( 'pods_error_die', '__return_false' );
 
+		codecept_debug( $options );
+
 		// global $wpdb;
 		// $wpdb->suppress_errors( true );
 		// $wpdb->hide_errors();
@@ -143,13 +145,27 @@ class TraversalTest extends Pods_UnitTestCase {
 		$storage_type = $options['storage_type'];
 		$pod          = $options['pod'];
 
+		$debug = array(
+			'pod'          => $pod['name'],
+			'pod_type'     => $pod_type,
+			'storage_type' => $storage_type,
+			'field_name'   => $options['field']['name'],
+			'field_type'   => $options['field']['type'],
+		);
+
 		// Do setup for Pod (tearDown / setUp) per storage type
 		if ( in_array( $pod_type, array( 'user', 'media', 'comment' ) ) && 'meta' !== $storage_type ) {
+			$debug['skipped'] = 1;
+
+			codecept_debug( $debug );
+
 			return;
 
 			// @todo do magic
 			$this->assertTrue( false, sprintf( 'Pod / Storage type requires new setUp() not yet built to continue [%s]', $variant_id ) );
 		}
+
+		codecept_debug( $debug );
 
 		$data = self::$related_items[ $pod['name'] ];
 
@@ -207,6 +223,16 @@ class TraversalTest extends Pods_UnitTestCase {
 		$field      = $options['field'];
 		$field_type = $field['type'];
 
+		$debug = array(
+			'pod'          => $pod['name'],
+			'pod_type'     => $pod_type,
+			'storage_type' => $storage_type,
+			'field_name'   => $field['name'],
+			'field_type'   => $field_type,
+			'method'       => $method,
+			'deep'         => (int) $deep,
+		);
+
 		$related_pod       = array();
 		$related_pod_field = array();
 
@@ -219,15 +245,27 @@ class TraversalTest extends Pods_UnitTestCase {
 			if ( 'taxonomy' === $related_pod_type && 'none' === $related_pod_storage_type && function_exists( 'get_term_meta' ) ) {
 				$related_pod_storage_type = 'meta';
 			}
+
+			$debug['related_pod']              = $related_pod['name'];
+			$debug['related_pod_type']         = $related_pod_type;
+			$debug['related_pod_storage_type'] = $related_pod_storage_type;
+			$debug['related_pod_field_name']   = $related_pod_field['name'];
+			$debug['related_pod_field_type']   = $related_pod_field['type'];
 		}
 
 		// Do setup for Pod (tearDown / setUp) per storage type
 		if ( in_array( $pod_type, array( 'user', 'media', 'comment' ) ) && 'meta' !== $storage_type ) {
+			$debug['skipped'] = 1;
+
+			codecept_debug( $debug );
+
 			return;
 
 			// @todo do magic
 			$this->assertTrue( false, sprintf( 'Pod / Storage type requires new setUp() not yet built to continue [%s]', $variant_id ) );
 		}
+
+		codecept_debug( $debug );
 
 		$data = self::$related_items[ $pod['name'] ];
 

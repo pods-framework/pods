@@ -121,6 +121,12 @@ before_script:
   - sudo service nginx restart
 
 script:
+  # Only run npm tests if needed (Pipe preserves subsequent whitespace)
+  - |
+    if [ $NODE_RELEASE == "stable" ]; then
+        npm run test-dfv;
+    fi
+
   # Don't load Pod traversal test data
   - export PODS_LOAD_DATA='0'
   # Use a barebones SQL init
@@ -134,9 +140,3 @@ script:
   - export SQL_DUMP_FILE='dump-pods-testcase.sql'
   # Only run tests that need the Pod traversal test data
   - codecept run wpunit --group='pods-config-required'
-
-  # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
-  - |
-    if [ $NODE_RELEASE == "stable" ]; then
-        npm run test-dfv;
-    fi

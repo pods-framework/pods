@@ -212,9 +212,6 @@ class TraversalTest extends Pods_UnitTestCase {
 			'pod'          => $pod['name'],
 			'pod_type'     => $pod_type,
 			'storage_type' => $storage_type,
-			'field_name'   => $options['field']['name'],
-			'field_type'   => $options['field']['type'],
-			'deep'         => (int) $deep,
 			'query_fields' => (int) $query_fields,
 		);
 

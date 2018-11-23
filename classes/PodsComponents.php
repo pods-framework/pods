@@ -473,7 +473,7 @@ class PodsComponents {
 					$component_data['DeveloperMode'] = false;
 				}
 
-				if ( 'on' === strtolower( $component_data['TablelessMode'] ) || 1 === $component_data['TablelessMode'] ) {
+				if ( 'no' !== strtolower( $component_data['TablelessMode'] ) ) {
 					$component_data['TablelessMode'] = true;
 				} else {
 					$component_data['TablelessMode'] = false;

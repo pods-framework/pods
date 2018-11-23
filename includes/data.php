@@ -1662,7 +1662,13 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			} elseif ( in_array( $params->field['pick_object'], $simple_tableless_objects, true ) ) {
 				$simple = true;
 			} else {
-				$table = pods_api()->get_table_info( $params->field['pick_object'], $params->field['pick_val'], null, null, $params->field );
+				$table = pods_api()->get_table_info(
+					pods_v( 'pick_object', $params->field ), 
+					pods_v( 'pick_val', $params->field ),
+					null,
+					null,
+					$params->field
+				);
 
 				if ( ! empty( $table ) ) {
 					if ( null === $params->field_index ) {

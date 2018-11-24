@@ -136,15 +136,18 @@ script:
   # Only run tests that don't need the Pod traversal test data
   - codecept run wpunit --skip-group='pods-config-required'
 
-  # Only run traversal tests if needed
+  # Load Pod traversal test data
+  export PODS_LOAD_DATA='1'
+
+  # Use a Pod traversal test data SQL init
+  SQL_DUMP_FILE='dump-pods-testcase.sql'
+
+  # Only run tests that need the Pod traversal test data
+  codecept run wpunit --group='pods-config-required' --skip-group='pods-traversal-deep'
+
+  # Only run deep traversal tests if needed
   - |
     if [ $TRAVIS_PHP_VERSION != "5.6" ]; then
-        # Load Pod traversal test data
-        export PODS_LOAD_DATA='1';
-
-        # Use a Pod traversal test data SQL init
-        SQL_DUMP_FILE='dump-pods-testcase.sql';
-
         # Only run tests that need the Pod traversal test data
-        codecept run wpunit --group='pods-config-required';
+        codecept run wpunit --group='pods-traversal-deep';
     fi

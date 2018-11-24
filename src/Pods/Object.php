@@ -11,6 +11,7 @@
  * @method string|null get_group()
  * @method string|null get_label()
  * @method string|null get_description()
+ * @method string|null get_type()
  * @method string|null get_parent_identifier()
  * @method string|null get_parent_object_type()
  * @method string|null get_parent_storage_type()
@@ -18,6 +19,7 @@
  * @method string|null get_parent_id()
  * @method string|null get_parent_label()
  * @method string|null get_parent_description()
+ * @method string|null get_parent_type()
  * @method string|null get_group_identifier()
  * @method string|null get_group_object_type()
  * @method string|null get_group_storage_type()
@@ -25,6 +27,7 @@
  * @method string|null get_group_id()
  * @method string|null get_group_label()
  * @method string|null get_group_description()
+ * @method string|null get_group_type()
  *
  * @since 2.8
  */
@@ -52,7 +55,17 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	/**
 	 * @var array|null
 	 */
-	protected $fields;
+	protected $_fields;
+
+	/**
+	 * @var array|null
+	 */
+	protected $_object_fields;
+
+	/**
+	 * @var array|null
+	 */
+	protected $_table_info;
 
 	/**
 	 * @var string
@@ -381,8 +394,14 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	public function get_arg( $arg ) {
 		$arg = (string) $arg;
 
-		if ( 'fields' === $arg ) {
-			return $this->get_fields();
+		$special_args = array(
+			'fields'        => 'get_fields',
+			'object_fields' => 'get_object_fields',
+			'table_info'    => 'get_table_info',
+		);
+
+		if ( isset( $special_args[ $arg ] ) ) {
+			return call_user_func( array( $this, $special_args[ $arg ] ) );
 		}
 
 		if ( ! isset( $this->args[ $arg ] ) ) {
@@ -538,10 +557,10 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	/**
 	 * Get fields for object.
 	 *
-	 * @return Pods_Object[] List of fields objects.
+	 * @return Pods_Object[] List of field objects.
 	 */
 	public function get_fields() {
-		if ( array() === $this->fields ) {
+		if ( array() === $this->_fields ) {
 			return array();
 		}
 
@@ -553,22 +572,23 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 			return array();
 		}
 
-		if ( null === $this->fields ) {
+		if ( null === $this->_fields ) {
 			$args = array(
 				'object_type'       => 'field',
 				'parent'            => $this->get_id(),
+				'parent_id'         => $this->get_id(),
 				'parent_name'       => $this->get_name(),
 				'parent_identifier' => $this->get_identifier(),
 			);
 
 			$fields = $storage_object->find( $args );
 
-			$this->fields = wp_list_pluck( $fields, 'id' );
+			$this->_fields = wp_list_pluck( $fields, 'id' );
 
 			return $fields;
 		}
 
-		$fields = array_map( array( $object_collection, 'get_object' ), $this->fields );
+		$fields = array_map( array( $object_collection, 'get_object' ), $this->_fields );
 		$fields = array_filter( $fields );
 
 		$names = wp_list_pluck( $fields, 'name' );
@@ -576,6 +596,24 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 		$fields = array_combine( $names, $fields );
 
 		return $fields;
+	}
+
+	/**
+	 * Get object fields for object.
+	 *
+	 * @return Pods_Object[] List of object field objects.
+	 */
+	public function get_object_fields() {
+		return array();
+	}
+
+	/**
+	 * Get table information for object.
+	 *
+	 * @return array Table information for object.
+	 */
+	public function get_table_info() {
+		return array();
 	}
 
 	/**
@@ -624,6 +662,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 				'group',
 				'label',
 				'description',
+				'type',
 			);
 
 			$value = $this->get_arg( $arg );

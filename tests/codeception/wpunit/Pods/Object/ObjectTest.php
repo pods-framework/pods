@@ -152,7 +152,131 @@ class ObjectTest extends Pods_ObjectTestCase {
 	 * @covers Pods_Object::get_arg
 	 * @covers Pods_Object::set_arg
 	 */
-	public function test_array_access() {
+	public function test_array_access_pod() {
+		// Confirm methods exist.
+		$this->assertTrue( method_exists( $this->pods_object_pod, 'offsetExists' ), 'Method offsetExists does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_pod, 'offsetGet' ), 'Method offsetGet does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_pod, 'offsetSet' ), 'Method offsetSet does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_pod, 'offsetUnset' ), 'Method offsetUnset does not exist' );
+
+		// Confirm argument get matches ArrayAccess.
+		$this->assertEquals( $this->pods_object_pod->get_id(), $this->pods_object_pod['id'] );
+		$this->assertEquals( $this->pods_object_pod->get_name(), $this->pods_object_pod['name'] );
+		$this->assertEquals( $this->pods_object_pod->get_parent(), $this->pods_object_pod['parent'] );
+		$this->assertEquals( $this->pods_object_pod->get_group(), $this->pods_object_pod['group'] );
+		$this->assertEquals( $this->pods_object_pod->get_fields(), $this->pods_object_pod['fields'] );
+		$this->assertEquals( $this->pods_object_pod->get_object_fields(), $this->pods_object_pod['object_fields'] );
+		$this->assertEquals( $this->pods_object_pod->get_table_info(), $this->pods_object_pod['table_info'] );
+
+		// Confirm argument get matches Object __get.
+		$this->assertEquals( $this->pods_object_pod->get_id(), $this->pods_object_pod->id );
+		$this->assertEquals( $this->pods_object_pod->get_name(), $this->pods_object_pod->name );
+		$this->assertEquals( $this->pods_object_pod->get_parent(), $this->pods_object_pod->parent );
+		$this->assertEquals( $this->pods_object_pod->get_group(), $this->pods_object_pod->group );
+		$this->assertEquals( $this->pods_object_pod->get_fields(), $this->pods_object_pod->fields );
+		$this->assertEquals( $this->pods_object_pod->get_object_fields(), $this->pods_object_pod->object_fields );
+		$this->assertEquals( $this->pods_object_pod->get_table_info(), $this->pods_object_pod->table_info );
+
+		$list = array( $this->pods_object_pod );
+
+		$this->assertEquals( array( $this->pods_object_pod->get_id() ), wp_list_pluck( $list, 'id' ) );
+		$this->assertEquals( array( $this->pods_object_pod->get_name() ), wp_list_pluck( $list, 'name' ) );
+		$this->assertEquals( array( $this->pods_object_pod->get_parent() ), wp_list_pluck( $list, 'parent' ) );
+		$this->assertEquals( array( $this->pods_object_pod->get_group() ), wp_list_pluck( $list, 'group' ) );
+		$this->assertEquals( array( $this->pods_object_pod->get_arg( 'custom1' ) ), wp_list_pluck( $list, 'custom1' ) );
+
+		// Test non-existent arguments and handling for ArrayAccess.
+		$this->assertNull( $this->pods_object_pod->get_arg( 'fourohfour' ) );
+		$this->assertEquals( $this->pods_object_pod->get_arg( 'fourohfour' ), $this->pods_object_pod['fourohfour'] );
+		$this->assertFalse( isset( $this->pods_object_pod['fourohfour'] ) );
+
+		// Test isset for ArrayAccess.
+		$this->assertTrue( isset( $this->pods_object_pod['id'] ) );
+		$this->assertTrue( isset( $this->pods_object_pod['name'] ) );
+		$this->assertTrue( isset( $this->pods_object_pod['parent'] ) );
+		$this->assertTrue( isset( $this->pods_object_pod['group'] ) );
+
+		// Test unset handling for ArrayAccess served arguments.
+		unset( $this->pods_object_pod['id'], $this->pods_object_pod['name'], $this->pods_object_pod['parent'], $this->pods_object_pod['group'] );
+
+		// Confirm ArrayAccess arguments are now empty strings for reserved arguments.
+		$this->assertEquals( $this->pods_object_pod['id'], '' );
+		$this->assertEquals( $this->pods_object_pod['name'], '' );
+		$this->assertEquals( $this->pods_object_pod['parent'], '' );
+		$this->assertEquals( $this->pods_object_pod['group'], '' );
+	}
+
+	/**
+	 * @covers Pods_Object::offsetExists
+	 * @covers Pods_Object::offsetGet
+	 * @covers Pods_Object::offsetSet
+	 * @covers Pods_Object::offsetUnset
+	 * @covers Pods_Object::get_arg
+	 * @covers Pods_Object::set_arg
+	 */
+	public function test_array_access_group() {
+		// Confirm methods exist.
+		$this->assertTrue( method_exists( $this->pods_object_group, 'offsetExists' ), 'Method offsetExists does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_group, 'offsetGet' ), 'Method offsetGet does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_group, 'offsetSet' ), 'Method offsetSet does not exist' );
+		$this->assertTrue( method_exists( $this->pods_object_group, 'offsetUnset' ), 'Method offsetUnset does not exist' );
+
+		// Confirm argument get matches ArrayAccess.
+		$this->assertEquals( $this->pods_object_group->get_id(), $this->pods_object_group['id'] );
+		$this->assertEquals( $this->pods_object_group->get_name(), $this->pods_object_group['name'] );
+		$this->assertEquals( $this->pods_object_group->get_parent(), $this->pods_object_group['parent'] );
+		$this->assertEquals( $this->pods_object_group->get_group(), $this->pods_object_group['group'] );
+		$this->assertEquals( $this->pods_object_group->get_fields(), $this->pods_object_group['fields'] );
+		$this->assertEquals( $this->pods_object_group->get_object_fields(), $this->pods_object_group['object_fields'] );
+		$this->assertEquals( $this->pods_object_group->get_table_info(), $this->pods_object_group['table_info'] );
+
+		// Confirm argument get matches Object __get.
+		$this->assertEquals( $this->pods_object_group->get_id(), $this->pods_object_group->id );
+		$this->assertEquals( $this->pods_object_group->get_name(), $this->pods_object_group->name );
+		$this->assertEquals( $this->pods_object_group->get_parent(), $this->pods_object_group->parent );
+		$this->assertEquals( $this->pods_object_group->get_group(), $this->pods_object_group->group );
+		$this->assertEquals( $this->pods_object_group->get_fields(), $this->pods_object_group->fields );
+		$this->assertEquals( $this->pods_object_group->get_object_fields(), $this->pods_object_group->object_fields );
+		$this->assertEquals( $this->pods_object_group->get_table_info(), $this->pods_object_group->table_info );
+
+		$list = array( $this->pods_object_group );
+
+		$this->assertEquals( array( $this->pods_object_group->get_id() ), wp_list_pluck( $list, 'id' ) );
+		$this->assertEquals( array( $this->pods_object_group->get_name() ), wp_list_pluck( $list, 'name' ) );
+		$this->assertEquals( array( $this->pods_object_group->get_parent() ), wp_list_pluck( $list, 'parent' ) );
+		$this->assertEquals( array( $this->pods_object_group->get_group() ), wp_list_pluck( $list, 'group' ) );
+		$this->assertEquals( array( $this->pods_object_group->get_arg( 'custom1' ) ), wp_list_pluck( $list, 'custom1' ) );
+
+		// Test non-existent arguments and handling for ArrayAccess.
+		$this->assertNull( $this->pods_object_group->get_arg( 'fourohfour' ) );
+		$this->assertEquals( $this->pods_object_group->get_arg( 'fourohfour' ), $this->pods_object_group['fourohfour'] );
+		$this->assertFalse( isset( $this->pods_object_group['fourohfour'] ) );
+
+		// Test isset for ArrayAccess.
+		$this->assertTrue( isset( $this->pods_object_group['id'] ) );
+		$this->assertTrue( isset( $this->pods_object_group['name'] ) );
+		$this->assertTrue( isset( $this->pods_object_group['parent'] ) );
+		$this->assertTrue( isset( $this->pods_object_group['group'] ) );
+
+		// Test unset handling for ArrayAccess served arguments.
+		unset( $this->pods_object_group['id'], $this->pods_object_group['name'], $this->pods_object_group['parent'], $this->pods_object_group['group'] );
+
+		// Confirm ArrayAccess arguments are now empty strings for reserved arguments.
+		$this->assertEquals( $this->pods_object_group['id'], '' );
+		$this->assertEquals( $this->pods_object_group['name'], '' );
+		$this->assertEquals( $this->pods_object_group['parent'], '' );
+		$this->assertEquals( $this->pods_object_group['group'], '' );
+	}
+
+	/**
+	 * @covers Pods_Object::offsetExists
+	 * @covers Pods_Object::offsetGet
+	 * @covers Pods_Object::offsetSet
+	 * @covers Pods_Object::offsetUnset
+	 * @covers Pods_Object::get_arg
+	 * @covers Pods_Object::set_arg
+	 */
+	public function test_array_access_field() {
 		// Confirm methods exist.
 		$this->assertTrue( method_exists( $this->pods_object_field, 'offsetExists' ), 'Method offsetExists does not exist' );
 		$this->assertTrue( method_exists( $this->pods_object_field, 'offsetGet' ), 'Method offsetGet does not exist' );
@@ -164,6 +288,18 @@ class ObjectTest extends Pods_ObjectTestCase {
 		$this->assertEquals( $this->pods_object_field->get_name(), $this->pods_object_field['name'] );
 		$this->assertEquals( $this->pods_object_field->get_parent(), $this->pods_object_field['parent'] );
 		$this->assertEquals( $this->pods_object_field->get_group(), $this->pods_object_field['group'] );
+		$this->assertEquals( $this->pods_object_field->get_fields(), $this->pods_object_field['fields'] );
+		$this->assertEquals( $this->pods_object_field->get_object_fields(), $this->pods_object_field['object_fields'] );
+		$this->assertEquals( $this->pods_object_field->get_table_info(), $this->pods_object_field['table_info'] );
+
+		// Confirm argument get matches Object __get.
+		$this->assertEquals( $this->pods_object_field->get_id(), $this->pods_object_field->id );
+		$this->assertEquals( $this->pods_object_field->get_name(), $this->pods_object_field->name );
+		$this->assertEquals( $this->pods_object_field->get_parent(), $this->pods_object_field->parent );
+		$this->assertEquals( $this->pods_object_field->get_group(), $this->pods_object_field->group );
+		$this->assertEquals( $this->pods_object_field->get_fields(), $this->pods_object_field->fields );
+		$this->assertEquals( $this->pods_object_field->get_object_fields(), $this->pods_object_field->object_fields );
+		$this->assertEquals( $this->pods_object_field->get_table_info(), $this->pods_object_field->table_info );
 
 		$list = array( $this->pods_object_field );
 
@@ -353,6 +489,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 			array( 'group' ),
 			array( 'label' ),
 			array( 'description' ),
+			array( 'type' ),
 		);
 	}
 
@@ -394,6 +531,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 			array( 'id' ),
 			array( 'label' ),
 			array( 'description' ),
+			array( 'type' ),
 		);
 	}
 
@@ -433,6 +571,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 			array( 'id' ),
 			array( 'label' ),
 			array( 'description' ),
+			array( 'type' ),
 		);
 	}
 
@@ -462,13 +601,104 @@ class ObjectTest extends Pods_ObjectTestCase {
 	/**
 	 * @covers Pods_Object::get_fields
 	 */
-	public function test_get_fields() {
+	public function test_get_fields_pod() {
 		$this->assertTrue( method_exists( $this->pods_object_pod, 'get_fields' ), 'Method get_fields does not exist' );
 
 		$fields = $this->pods_object_pod->get_fields();
 
 		$this->assertCount( 1, $fields );
 		$this->assertInstanceOf( Pods_Object::class, reset( $fields ) );
+	}
+
+	/**
+	 * @covers Pods_Object::get_fields
+	 */
+	public function test_get_fields_group() {
+		$this->assertTrue( method_exists( $this->pods_object_group, 'get_fields' ), 'Method get_fields does not exist' );
+
+		$fields = $this->pods_object_group->get_fields();
+
+		$this->assertCount( 1, $fields );
+		$this->assertInstanceOf( Pods_Object::class, reset( $fields ) );
+	}
+
+	/**
+	 * @covers Pods_Object::get_fields
+	 */
+	public function test_get_fields_field() {
+		$this->assertTrue( method_exists( $this->pods_object_field, 'get_fields' ), 'Method get_fields does not exist' );
+
+		$fields = $this->pods_object_field->get_fields();
+
+		$this->assertCount( 0, $fields );
+	}
+
+	/**
+	 * @covers Pods_Object::get_object_fields
+	 */
+	public function test_get_object_fields_pod() {
+		$this->assertTrue( method_exists( $this->pods_object_pod, 'get_object_fields' ), 'Method get_object_fields does not exist' );
+
+		$fields = $this->pods_object_pod->get_object_fields();
+
+		// Post types have 24 object fields.
+		$this->assertCount( 24, $fields );
+		$this->assertInstanceOf( Pods_Object::class, reset( $fields ) );
+	}
+
+	/**
+	 * @covers Pods_Object::get_object_fields
+	 */
+	public function test_get_object_fields_group() {
+		$this->assertTrue( method_exists( $this->pods_object_group, 'get_object_fields' ), 'Method get_object_fields does not exist' );
+
+		$fields = $this->pods_object_group->get_object_fields();
+
+		$this->assertCount( 0, $fields );
+	}
+
+	/**
+	 * @covers Pods_Object::get_object_fields
+	 */
+	public function test_get_object_fields_field() {
+		$this->assertTrue( method_exists( $this->pods_object_field, 'get_object_fields' ), 'Method get_object_fields does not exist' );
+
+		$fields = $this->pods_object_field->get_object_fields();
+
+		$this->assertCount( 0, $fields );
+	}
+
+	/**
+	 * @covers Pods_Object::get_table_info
+	 */
+	public function test_get_table_info_pod() {
+		$this->assertTrue( method_exists( $this->pods_object_pod, 'get_table_info' ), 'Method get_table_info does not exist' );
+
+		$table_info = $this->pods_object_pod->get_table_info();
+
+		$this->assertCount( 27, $table_info );
+	}
+
+	/**
+	 * @covers Pods_Object::get_table_info
+	 */
+	public function test_get_table_info_group() {
+		$this->assertTrue( method_exists( $this->pods_object_group, 'get_table_info' ), 'Method get_table_info does not exist' );
+
+		$table_info = $this->pods_object_group->get_table_info();
+
+		$this->assertCount( 0, $table_info );
+	}
+
+	/**
+	 * @covers Pods_Object::get_table_info
+	 */
+	public function test_get_table_info_field() {
+		$this->assertTrue( method_exists( $this->pods_object_field, 'get_table_info' ), 'Method get_table_info does not exist' );
+
+		$table_info = $this->pods_object_field->get_table_info();
+
+		$this->assertCount( 0, $table_info );
 	}
 
 }

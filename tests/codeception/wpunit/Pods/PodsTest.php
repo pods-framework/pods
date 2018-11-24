@@ -318,8 +318,8 @@ class PodsTest extends Pods_UnitTestCase {
 	 * @depends test_method_exists_get
 	 */
 	public function test_method_get_deprecated_property() {
-		$deprecated             = Mockery::mock( 'Pods_Deprecated' );
-		$deprecated->foo        = 'bar';
+		$deprecated            = Mockery::mock( 'Pods_Deprecated' );
+		$deprecated->foo       = 'bar';
 		$this->pod->deprecated = $deprecated;
 
 		$this->assertEquals( 'bar', $this->pod->foo );
@@ -340,7 +340,7 @@ class PodsTest extends Pods_UnitTestCase {
 	 * @depends test_method_exists_call
 	 */
 	public function test_method_call_method_does_not_exist() {
-		$deprecated             = Mockery::mock( 'Pods_Deprecated' );
+		$deprecated            = Mockery::mock( 'Pods_Deprecated' );
 		$this->pod->deprecated = $deprecated;
 
 		$this->assertNull( $this->pod->__call( 'foo', array() ) );

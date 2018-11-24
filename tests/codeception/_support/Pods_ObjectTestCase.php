@@ -81,6 +81,7 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 			'label'       => 'Test group',
 			'description' => 'Testing group',
 			'parent'      => $this->pods_object_pod->get_id(),
+			'type'        => 'metabox',
 		);
 
 		$this->pods_object_group = $this->setup_pods_object( $group_args, 'group' );

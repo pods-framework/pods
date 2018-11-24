@@ -268,8 +268,11 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	 *
 	 * @return mixed|null Offset value, or null if not set.
 	 */
-	public function offsetGet( $offset ) {
-		return $this->__get( $offset );
+	public function &offsetGet( $offset ) {
+		// We fake the pass by reference to avoid PHP errors for backcompat.
+		$value = $this->__get( $offset );
+
+		return $value;
 	}
 
 	/**
@@ -398,6 +401,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 			'fields'        => 'get_fields',
 			'object_fields' => 'get_object_fields',
 			'table_info'    => 'get_table_info',
+			'options'       => 'get_args',
 		);
 
 		if ( isset( $special_args[ $arg ] ) ) {
@@ -424,7 +428,6 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 			'object_type',
 			'storage_type',
 			'fields',
-			'options',
 			'name',
 			'id',
 			'parent',
@@ -436,8 +439,18 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 		$read_only = array(
 			'object_type',
 			'fields',
-			'options',
+			'table_info',
 		);
+
+		if ( 'options' === $arg ) {
+			$value = array();
+
+			foreach ( $value as $real_arg => $real_value ) {
+				$this->set_arg( $real_arg, $real_value );
+			}
+
+			return;
+		}
 
 		if ( in_array( $arg, $reserved, true ) ) {
 			if ( in_array( $arg, $read_only, true ) ) {

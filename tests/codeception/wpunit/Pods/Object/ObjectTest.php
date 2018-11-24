@@ -167,6 +167,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 		$this->assertEquals( $this->pods_object_pod->get_fields(), $this->pods_object_pod['fields'] );
 		$this->assertEquals( $this->pods_object_pod->get_object_fields(), $this->pods_object_pod['object_fields'] );
 		$this->assertEquals( $this->pods_object_pod->get_table_info(), $this->pods_object_pod['table_info'] );
+		$this->assertEquals( $this->pods_object_pod->get_args(), $this->pods_object_pod['options'] );
 
 		// Confirm argument get matches Object __get.
 		$this->assertEquals( $this->pods_object_pod->get_id(), $this->pods_object_pod->id );
@@ -176,6 +177,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 		$this->assertEquals( $this->pods_object_pod->get_fields(), $this->pods_object_pod->fields );
 		$this->assertEquals( $this->pods_object_pod->get_object_fields(), $this->pods_object_pod->object_fields );
 		$this->assertEquals( $this->pods_object_pod->get_table_info(), $this->pods_object_pod->table_info );
+		$this->assertEquals( $this->pods_object_pod->get_args(), $this->pods_object_pod->options );
 
 		$list = array( $this->pods_object_pod );
 
@@ -229,6 +231,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 		$this->assertEquals( $this->pods_object_group->get_fields(), $this->pods_object_group['fields'] );
 		$this->assertEquals( $this->pods_object_group->get_object_fields(), $this->pods_object_group['object_fields'] );
 		$this->assertEquals( $this->pods_object_group->get_table_info(), $this->pods_object_group['table_info'] );
+		$this->assertEquals( $this->pods_object_group->get_args(), $this->pods_object_group['options'] );
 
 		// Confirm argument get matches Object __get.
 		$this->assertEquals( $this->pods_object_group->get_id(), $this->pods_object_group->id );
@@ -238,6 +241,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 		$this->assertEquals( $this->pods_object_group->get_fields(), $this->pods_object_group->fields );
 		$this->assertEquals( $this->pods_object_group->get_object_fields(), $this->pods_object_group->object_fields );
 		$this->assertEquals( $this->pods_object_group->get_table_info(), $this->pods_object_group->table_info );
+		$this->assertEquals( $this->pods_object_group->get_args(), $this->pods_object_group->options );
 
 		$list = array( $this->pods_object_group );
 
@@ -291,6 +295,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 		$this->assertEquals( $this->pods_object_field->get_fields(), $this->pods_object_field['fields'] );
 		$this->assertEquals( $this->pods_object_field->get_object_fields(), $this->pods_object_field['object_fields'] );
 		$this->assertEquals( $this->pods_object_field->get_table_info(), $this->pods_object_field['table_info'] );
+		$this->assertEquals( $this->pods_object_field->get_args(), $this->pods_object_field['options'] );
 
 		// Confirm argument get matches Object __get.
 		$this->assertEquals( $this->pods_object_field->get_id(), $this->pods_object_field->id );
@@ -300,6 +305,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 		$this->assertEquals( $this->pods_object_field->get_fields(), $this->pods_object_field->fields );
 		$this->assertEquals( $this->pods_object_field->get_object_fields(), $this->pods_object_field->object_fields );
 		$this->assertEquals( $this->pods_object_field->get_table_info(), $this->pods_object_field->table_info );
+		$this->assertEquals( $this->pods_object_field->get_args(), $this->pods_object_field->options );
 
 		$list = array( $this->pods_object_field );
 
@@ -699,6 +705,28 @@ class ObjectTest extends Pods_ObjectTestCase {
 		$table_info = $this->pods_object_field->get_table_info();
 
 		$this->assertCount( 0, $table_info );
+	}
+
+	/**
+	 * @covers Pods_Object::get_fields
+	 * @covers Pods_Object::get_object_fields
+	 * @covers Pods_Object::get_table_info
+	 * @covers Pods_Object::get_args
+	 */
+	public function test_backcompat_pod() {
+		$this->assertCount( 1, $this->pods_object_pod['fields'] );
+		$this->assertCount( 24, $this->pods_object_pod['object_fields'] );
+		$this->assertCount( 27, $this->pods_object_pod['table_info'] );
+
+		$this->assertEquals( 'Test field', $this->pods_object_pod['fields']['test-field']['label'] );
+		$this->assertEquals( 'Test field', $this->pods_object_pod['fields']['test-field']['options']['label'] );
+
+		$this->pods_object_pod['fields']['test-field']['options']['label'] = 'Something else';
+
+		// Backcompat does not throw PHP errors but does not save the variables.
+		// This is acceptable because the PHP errors cause more breakage.
+		$this->assertNotEquals( 'Something else', $this->pods_object_pod['fields']['test-field']['label'] );
+		$this->assertNotEquals( 'Something else', $this->pods_object_pod['fields']['test-field']['options']['label'] );
 	}
 
 }

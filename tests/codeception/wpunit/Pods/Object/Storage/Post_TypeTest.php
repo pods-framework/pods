@@ -404,6 +404,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 		$this->assertEquals( $object->get_arg( 'group' ), get_post_meta( $id, 'group', true ) );
 		$this->assertEquals( $object->get_arg( 'fourohfour' ), get_post_meta( $id, 'fourohfour', true ) );
 		$this->assertEquals( $object->get_arg( 'custom1' ), get_post_meta( $id, 'custom1', true ) );
+		$this->assertCount( 3, get_post_meta( $id ) );
 	}
 
 	/**
@@ -440,6 +441,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 		$this->assertEquals( $object->get_arg( 'group' ), get_post_meta( $id, 'group', true ) );
 		$this->assertEquals( $object->get_arg( 'fourohfour' ), get_post_meta( $id, 'fourohfour', true ) );
 		$this->assertEquals( $object->get_arg( 'custom1' ), get_post_meta( $id, 'custom1', true ) );
+		$this->assertCount( 3, get_post_meta( $id ) );
 	}
 
 	/**
@@ -503,6 +505,8 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 		$this->assertEquals( $object->get_arg( 'group' ), get_post_meta( $id, 'group', true ) );
 		$this->assertEquals( $object->get_arg( 'fourohfour' ), get_post_meta( $id, 'fourohfour', true ) );
 		$this->assertEquals( $object->get_arg( 'custom1' ), get_post_meta( $id, 'custom1', true ) );
+		$this->assertEquals( $object->get_arg( 'custom2' ), get_post_meta( $id, 'custom2', true ) );
+		$this->assertCount( 4, get_post_meta( $id ) );
 	}
 
 	/**

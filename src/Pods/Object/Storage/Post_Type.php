@@ -382,6 +382,11 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 		$excluded = array(
 			'object_type',
 			'storage_type',
+			'id',
+			'name',
+			'label',
+			'description',
+			'parent',
 		);
 
 		$excluded = array_merge( $excluded, array_values( $this->primary_args ) );

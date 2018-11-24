@@ -137,13 +137,13 @@ script:
   - codecept run wpunit --skip-group='pods-config-required'
 
   # Load Pod traversal test data
-  export PODS_LOAD_DATA='1'
+  - export PODS_LOAD_DATA='1'
 
   # Use a Pod traversal test data SQL init
-  SQL_DUMP_FILE='dump-pods-testcase.sql'
+  - SQL_DUMP_FILE='dump-pods-testcase.sql'
 
   # Only run tests that need the Pod traversal test data
-  codecept run wpunit --group='pods-config-required' --skip-group='pods-traversal-deep'
+  - codecept run wpunit --group='pods-config-required' --skip-group='pods-traversal-deep'
 
   # Only run tests that need the Pod traversal test data
   - |

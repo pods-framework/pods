@@ -145,9 +145,8 @@ script:
   # Only run tests that need the Pod traversal test data
   codecept run wpunit --group='pods-config-required' --skip-group='pods-traversal-deep'
 
-  # Only run deep traversal tests if needed
+  # Only run tests that need the Pod traversal test data
   - |
     if [ $TRAVIS_PHP_VERSION != "5.6" ]; then
-        # Only run tests that need the Pod traversal test data
         codecept run wpunit --group='pods-traversal-deep';
     fi

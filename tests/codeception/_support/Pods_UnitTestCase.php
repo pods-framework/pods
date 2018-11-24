@@ -982,6 +982,13 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 	 * for all variations and combinations to be covered.
 	 */
 	public function data_provider_base() {
+		$load_config = filter_var( getenv( 'PODS_LOAD_DATA' ), FILTER_VALIDATE_BOOLEAN );
+
+		// Bail but don't throw skip notices.
+		if ( ! $load_config ) {
+			return array( array( 1, 2, 3 ) );
+		}
+
 		$data_base = array();
 
 		foreach ( self::$builds as $pod_type => $objects ) {
@@ -1009,6 +1016,13 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 	 * for all variations and combinations to be covered.
 	 */
 	public function data_provider() {
+		$load_config = filter_var( getenv( 'PODS_LOAD_DATA' ), FILTER_VALIDATE_BOOLEAN );
+
+		// Bail but don't throw skip notices.
+		if ( ! $load_config ) {
+			return array( array( 1, 2, 3, 4 ) );
+		}
+
 		$data = array();
 
 		$api = pods_api();
@@ -1075,6 +1089,13 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 	 * for all variations and combinations to be covered.
 	 */
 	public function data_provider_deep() {
+		$load_config = filter_var( getenv( 'PODS_LOAD_DATA' ), FILTER_VALIDATE_BOOLEAN );
+
+		// Bail but don't throw skip notices.
+		if ( ! $load_config ) {
+			return array( array( 1, 2, 3, 5, 6 ) );
+		}
+
 		$data_deep = array();
 
 		foreach ( self::$builds as $pod_type => $objects ) {

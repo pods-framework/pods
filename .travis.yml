@@ -121,7 +121,7 @@ before_script:
   - sudo service nginx restart
 
 script:
-  # Only run npm tests if needed (Pipe preserves subsequent whitespace)
+  # Only run npm tests if needed
   - |
     if [ $NODE_RELEASE == "stable" ]; then
         npm run test-dfv;
@@ -129,14 +129,22 @@ script:
 
   # Don't load Pod traversal test data
   - export PODS_LOAD_DATA='0'
+
   # Use a barebones SQL init
   - export SQL_DUMP_FILE='dump.sql'
+
   # Only run tests that don't need the Pod traversal test data
   - codecept run wpunit --skip-group='pods-config-required'
 
-  # Load Pod traversal test data
-  - if [ $(phpenv version-name) != "5.6" ]]; then export PODS_LOAD_DATA='1'; fi
-  # Use a Pod traversal test data SQL init
-  - if [ $(phpenv version-name) != "5.6" ]]; then export SQL_DUMP_FILE='dump-pods-testcase.sql'; fi
-  # Only run tests that need the Pod traversal test data
-  - if [ $(phpenv version-name) != "5.6" ]]; then codecept run wpunit --group='pods-config-required'; fi
+  # Only run traversal tests if needed
+  - |
+    if [ $TRAVIS_PHP_VERSION != "5.6" ]; then
+        # Load Pod traversal test data
+        export PODS_LOAD_DATA='1';
+
+        # Use a Pod traversal test data SQL init
+        SQL_DUMP_FILE='dump-pods-testcase.sql';
+
+        # Only run tests that need the Pod traversal test data
+        codecept run wpunit --group='pods-config-required';
+    fi

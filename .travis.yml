@@ -135,8 +135,8 @@ script:
   - codecept run wpunit --skip-group='pods-config-required'
 
   # Load Pod traversal test data
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} != "5.6" ]]; then export PODS_LOAD_DATA='1'
+  - if [ $(phpenv version-name) != "5.6" ]]; then export PODS_LOAD_DATA='1'; fi
   # Use a Pod traversal test data SQL init
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} != "5.6" ]]; then export SQL_DUMP_FILE='dump-pods-testcase.sql'
+  - if [ $(phpenv version-name) != "5.6" ]]; then export SQL_DUMP_FILE='dump-pods-testcase.sql'; fi
   # Only run tests that need the Pod traversal test data
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} != "5.6" ]]; then codecept run wpunit --group='pods-config-required'
+  - if [ $(phpenv version-name) != "5.6" ]]; then codecept run wpunit --group='pods-config-required'; fi

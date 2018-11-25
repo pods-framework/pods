@@ -472,6 +472,31 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
+	 * @covers Pods_Object::set_arg
+	 * @covers Pods_Object::get_arg
+	 */
+	public function test_set_arg() {
+		$this->assertTrue( method_exists( $this->pods_object_field, 'set_arg' ), 'Method set_arg does not exist' );
+
+		$this->pods_object_field->set_arg( 'custom5', 'Test5' );
+
+		$this->assertEquals( 'Test5', $this->pods_object_field->get_arg( 'custom5', 'Nope' ) );
+	}
+
+	/**
+	 * @covers Pods_Object::get_arg
+	 */
+	public function test_get_arg() {
+		$this->assertTrue( method_exists( $this->pods_object_field, 'get_arg' ), 'Method get_arg does not exist' );
+
+		$this->assertEquals( 'value1-test-field', $this->pods_object_field->get_arg( 'custom1' ) );
+
+		// Test default arg handling.
+		$this->assertNull( $this->pods_object_field->get_arg( 'custom6' ) );
+		$this->assertEquals( 'Nope', $this->pods_object_field->get_arg( 'custom6', 'Nope' ) );
+	}
+
+	/**
 	 * @covers Pods_Object::get_args
 	 */
 	public function test_get_args() {

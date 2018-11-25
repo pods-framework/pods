@@ -390,11 +390,12 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 	/**
 	 * Get object argument value.
 	 *
-	 * @param string $arg Argument name.
+	 * @param string     $arg     Argument name.
+	 * @param mixed|null $default Default to use if not set.
 	 *
 	 * @return null|mixed Argument value, or null if not set.
 	 */
-	public function get_arg( $arg ) {
+	public function get_arg( $arg, $default = null ) {
 		$arg = (string) $arg;
 
 		$special_args = array(
@@ -409,7 +410,7 @@ abstract class Pods_Object implements ArrayAccess, JsonSerializable {
 		}
 
 		if ( ! isset( $this->args[ $arg ] ) ) {
-			return null;
+			return $default;
 		}
 
 		return $this->args[ $arg ];

@@ -244,26 +244,42 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 			}
 		}
 
-		$cache_key_parts = array(
-			'pods_object_post_type_find',
-			$current_language,
-			json_encode( $post_args )
-		);
+		$cache_key = null;
+		$posts     = false;
 
-		$cache_key_parts = array_filter( $cache_key_parts );
+		if ( empty( $args['bypass_cache'] ) ) {
+			$cache_key_parts = array(
+				'pods_object_post_type_find',
+				$current_language,
+				json_encode( $post_args )
+			);
 
-		$cache_key = implode( '_', $cache_key_parts );
+			/**
+			 * Filter cache key parts used for generating the cache key.
+			 *
+			 * @param array $cache_key_parts Cache key parts used to build cache key.
+			 * @param array $post_args       Post arguments to use in get_posts() call.
+			 * @param array $args            Arguments to use.
+			 *
+			 * @since 2.8
+			 */
+			$cache_key_parts = apply_filters( 'pods_object_storage_post_type_cache_key_parts', $cache_key_parts, $post_args, $args );
 
-		$posts = false;
+			$cache_key_parts = array_filter( $cache_key_parts );
 
-		if ( empty( $args['refresh'] ) ) {
-			$posts = pods_transient_get( $cache_key );
+			$cache_key = implode( '_', $cache_key_parts );
+
+			if ( empty( $args['refresh'] ) ) {
+				$posts = pods_transient_get( $cache_key );
+			}
 		}
 
 		if ( ! is_array( $posts ) ) {
 			$posts = get_posts( $post_args );
 
-			pods_transient_set( $cache_key, $posts );
+			if ( empty( $args['bypass_cache'] ) ) {
+				pods_transient_set( $cache_key, $posts );
+			}
 		}
 
 		$posts = array_map( array( $this, 'to_object' ), $posts );

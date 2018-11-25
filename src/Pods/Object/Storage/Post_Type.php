@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Pods_Object_Storage_Post_Type class.
+ * Pods__Object__Storage__Post_Type class.
  *
  * @since 2.8
  */
-class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
+class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 
 	/**
 	 * {@inheritdoc}
@@ -295,7 +295,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function add( Pods_Object $object ) {
+	public function add( Pods__Object $object ) {
 		$post_data = array(
 			'post_title'   => $object->get_label(),
 			'post_name'    => $object->get_name(),
@@ -312,7 +312,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 		$added = wp_insert_post( $post_data );
 
 		if ( is_int( $added ) && 0 < $added ) {
-			$object_collection = Pods_Object_Collection::get_instance();
+			$object_collection = Pods__Object__Collection::get_instance();
 
 			// Remove any other references.
 			$object_collection->unregister_object( $object );
@@ -335,7 +335,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function save( Pods_Object $object ) {
+	public function save( Pods__Object $object ) {
 		$post_data = array(
 			'ID'           => $object->get_id(),
 			'post_title'   => $object->get_label(),
@@ -349,7 +349,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 		$saved = wp_update_post( $post_data );
 
 		if ( is_int( $saved ) && 0 < $saved ) {
-			// @todo Update Pods_Object_Collection id/identifier.
+			// @todo Update Pods__Object__Collection id/identifier.
 
 			$object->set_arg( 'id', $saved );
 
@@ -366,7 +366,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_args( Pods_Object $object ) {
+	public function get_args( Pods__Object $object ) {
 		$meta = get_post_meta( $object->get_id() );
 
 		$args = array();
@@ -392,7 +392,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function save_args( Pods_Object $object ) {
+	public function save_args( Pods__Object $object ) {
 		$args = $object->get_args();
 
 		$excluded = array(
@@ -427,7 +427,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function duplicate( Pods_Object $object ) {
+	public function duplicate( Pods__Object $object ) {
 		$duplicated_object = clone $object;
 
 		$duplicated_object->set_arg( 'id', null );
@@ -439,7 +439,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function delete( Pods_Object $object ) {
+	public function delete( Pods__Object $object ) {
 		$deleted = wp_delete_post( $object->get_id(), true );
 
 		if ( false !== $deleted && ! is_wp_error( $deleted ) ) {
@@ -455,7 +455,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 
 			pods_api()->cache_flush_pods( $object );
 
-			$object_collection = Pods_Object_Collection::get_instance();
+			$object_collection = Pods__Object__Collection::get_instance();
 			$object_collection->unregister_object( $object );
 
 			$object->set_arg( 'id', null );
@@ -469,7 +469,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function reset( Pods_Object $object ) {
+	public function reset( Pods__Object $object ) {
 		return false;
 	}
 
@@ -478,7 +478,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 	 *
 	 * @param WP_Post|array|int $post Post object or ID of the object.
 	 *
-	 * @return Pods_Object|null
+	 * @return Pods__Object|null
 	 */
 	public function to_object( $post ) {
 		if ( null !== $post && ! $post instanceof WP_Post ) {
@@ -493,7 +493,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 			return null;
 		}
 
-		$object_collection = Pods_Object_Collection::get_instance();
+		$object_collection = Pods__Object__Collection::get_instance();
 
 		// Check if we already have an object registered and available.
 		$object = $object_collection->get_object( $post->ID );
@@ -522,7 +522,7 @@ class Pods_Object_Storage_Post_Type extends Pods_Object_Storage {
 			return null;
 		}
 
-		/** @var Pods_Object $object */
+		/** @var Pods__Object $object */
 		$object = new $class_name( $args );
 
 		$object->set_arg( 'storage_type', $this->get_storage_type() );

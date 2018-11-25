@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Pods_Object_Collection class.
+ * Pods__Object__Collection class.
  *
  * @since 2.8
  */
-class Pods_Object_Collection {
+class Pods__Object__Collection {
 
 	/**
-	 * @var Pods_Object_Collection
+	 * @var Pods__Object__Collection
 	 */
 	protected static $instance;
 
@@ -23,7 +23,7 @@ class Pods_Object_Collection {
 	protected $storage_types = array();
 
 	/**
-	 * @var Pods_Object_Storage[]
+	 * @var Pods__Object__Storage[]
 	 */
 	protected $storage_engine = array();
 
@@ -38,7 +38,7 @@ class Pods_Object_Collection {
 	protected $object_ids = array();
 
 	/**
-	 * Pods_Object_Collection constructor.
+	 * Pods__Object__Collection constructor.
 	 */
 	protected function __construct() {
 		$this->object_types  = $this->get_default_object_types();
@@ -53,9 +53,9 @@ class Pods_Object_Collection {
 	 */
 	public function get_default_object_types() {
 		return array(
-			'pod'   => 'Pods_Object_Pod',
-			'field' => 'Pods_Object_Field',
-			'group' => 'Pods_Object_Group',
+			'pod'   => 'Pods__Object__Pod',
+			'field' => 'Pods__Object__Field',
+			'group' => 'Pods__Object__Group',
 		);
 	}
 
@@ -66,7 +66,7 @@ class Pods_Object_Collection {
 	 */
 	public function get_default_storage_types() {
 		return array(
-			'post_type' => 'Pods_Object_Storage_Post_Type',
+			'post_type' => 'Pods__Object__Storage__Post_Type',
 		);
 	}
 
@@ -104,7 +104,7 @@ class Pods_Object_Collection {
 	/**
 	 * Get instance of object.
 	 *
-	 * @return Pods_Object_Collection
+	 * @return Pods__Object__Collection
 	 */
 	public static function get_instance() {
 		if ( ! self::$instance ) {
@@ -188,11 +188,11 @@ class Pods_Object_Collection {
 	/**
 	 * Register an object storage type to collection.
 	 *
-	 * @param string                     $storage_type Pods object storage type.
-	 * @param string|Pods_Object_Storage $class_name   Object storage class name or object.
+	 * @param string                       $storage_type Pods object storage type.
+	 * @param string|Pods__Object__Storage $class_name   Object storage class name or object.
 	 */
 	public function register_storage_type( $storage_type, $class_name ) {
-		if ( $class_name instanceof Pods_Object_Storage ) {
+		if ( $class_name instanceof Pods__Object__Storage ) {
 			$this->storage_engine[ $storage_type ] = clone $class_name;
 
 			$class_name = get_class( $class_name );
@@ -273,7 +273,7 @@ class Pods_Object_Collection {
 	 *
 	 * @param string $storage_type Object storage type.
 	 *
-	 * @return Pods_Object_Storage Storage type object.
+	 * @return Pods__Object__Storage Storage type object.
 	 */
 	public function get_storage_object( $storage_type ) {
 		if ( isset( $this->storage_engine[ $storage_type ] ) ) {
@@ -296,13 +296,13 @@ class Pods_Object_Collection {
 	/**
 	 * Register an object to collection.
 	 *
-	 * @param Pods_Object|array $object Pods object.
+	 * @param Pods__Object|array $object Pods object.
 	 */
 	public function register_object( $object ) {
 		$id         = null;
 		$identifier = null;
 
-		if ( $object instanceof Pods_Object ) {
+		if ( $object instanceof Pods__Object ) {
 			$id         = $object->get_id();
 			$identifier = $object->get_identifier();
 		} elseif ( is_array( $object ) ) {
@@ -310,7 +310,7 @@ class Pods_Object_Collection {
 				$id = $object['id'];
 			}
 
-			$identifier = Pods_Object::get_identifier_from_args( $object );
+			$identifier = Pods__Object::get_identifier_from_args( $object );
 		} else {
 			// Don't register this object.
 			return;
@@ -321,7 +321,7 @@ class Pods_Object_Collection {
 			$this->object_ids[ $id ] = $identifier;
 		}
 
-		if ( $object instanceof Pods_Object ) {
+		if ( $object instanceof Pods__Object ) {
 			$object = clone $object;
 		}
 
@@ -331,14 +331,14 @@ class Pods_Object_Collection {
 	/**
 	 * Unregister an object to collection.
 	 *
-	 * @param string|Pods_Object|array $identifier Object identifier, ID, or Pods object instance.
+	 * @param string|Pods__Object|array $identifier Object identifier, ID, or Pods object instance.
 	 *
 	 * @return boolean Whether the object was successfully unregistered.
 	 */
 	public function unregister_object( $identifier ) {
 		$defaults = $this->get_default_objects();
 
-		if ( $identifier instanceof Pods_Object ) {
+		if ( $identifier instanceof Pods__Object ) {
 			$id         = $identifier->get_id();
 			$identifier = $identifier->get_identifier();
 		} else {
@@ -396,7 +396,7 @@ class Pods_Object_Collection {
 	/**
 	 * Get objects from collection.
 	 *
-	 * @return Pods_Object[] List of objects.
+	 * @return Pods__Object[] List of objects.
 	 */
 	public function get_objects() {
 		$objects = array_map( array( $this, 'get_object' ), $this->objects );
@@ -408,13 +408,13 @@ class Pods_Object_Collection {
 	/**
 	 * Get object from collection.
 	 *
-	 * @param string|null|Pods_Object|array $identifier Object identifier, ID, or the object/array itself.
+	 * @param string|null|Pods__Object|array $identifier Object identifier, ID, or the object/array itself.
 	 *
-	 * @return Pods_Object|null Object or null if not found.
+	 * @return Pods__Object|null Object or null if not found.
 	 */
 	public function get_object( $identifier ) {
 		// Is this already an object?
-		if ( $identifier instanceof Pods_Object ) {
+		if ( $identifier instanceof Pods__Object ) {
 			return $this->setup_object( $identifier );
 		}
 
@@ -442,12 +442,12 @@ class Pods_Object_Collection {
 	/**
 	 * Setup object if it needs to be.
 	 *
-	 * @param Pods_Object|array $object Pods object or array.
+	 * @param Pods__Object|array $object Pods object or array.
 	 *
-	 * @return Pods_Object|null Pods object or null if not able to setup.
+	 * @return Pods__Object|null Pods object or null if not able to setup.
 	 */
 	public function setup_object( $object ) {
-		if ( $object instanceof Pods_Object ) {
+		if ( $object instanceof Pods__Object ) {
 			return $object;
 		}
 
@@ -467,7 +467,7 @@ class Pods_Object_Collection {
 			return null;
 		}
 
-		/** @var Pods_Object $object */
+		/** @var Pods__Object $object */
 		$object = new $class_name;
 		$object->setup( $args );
 

@@ -1289,9 +1289,8 @@ class Pods implements Iterator {
 					// Get fields matching traversal names.
 					if ( ! empty( $lookup ) ) {
 						$fields = $this->api->load_fields( array(
-							'name'          => $lookup,
-							'type'          => $tableless_field_types,
-							'object_fields' => true,
+							'name' => $lookup,
+							'type' => $tableless_field_types,
 							// @todo support object fields too.
 						) );
 
@@ -4511,7 +4510,6 @@ class Pods implements Iterator {
 		}
 
 		if ( ! $this->deprecated ) {
-			require_once PODS_DIR . 'deprecated/classes/Pods.php';
 
 			$this->deprecated = new Pods_Deprecated( $this );
 		}
@@ -4553,7 +4551,6 @@ class Pods implements Iterator {
 		}
 
 		if ( ! $this->deprecated ) {
-			require_once PODS_DIR . 'deprecated/classes/Pods.php';
 
 			$this->deprecated = new Pods_Deprecated( $this );
 		}

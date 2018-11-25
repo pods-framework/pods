@@ -12,7 +12,6 @@
  * @since 2.0.5
  */
 function pods_image_id_from_field( $image ) {
-
 	$id = 0;
 
 	if ( ! empty( $image ) ) {
@@ -68,7 +67,6 @@ function pods_image_id_from_field( $image ) {
  * @since 2.0.5
  */
 function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = '', $force = false ) {
-
 	$html = '';
 
 	$id = pods_image_id_from_field( $image );
@@ -130,7 +128,6 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
  * @since 2.0.5
  */
 function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = false ) {
-
 	$url = '';
 
 	$id      = pods_image_id_from_field( $image );
@@ -199,7 +196,6 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
  * @since 2.3.0
  */
 function pods_attachment_import( $url, $post_parent = null, $featured = false ) {
-
 	$filename = explode( '?', $url );
 	$filename = $filename[0];
 
@@ -274,7 +270,6 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
  * @since 2.3.0
  */
 function pods_image_resize( $attachment_id, $size ) {
-
 	$size_data = array();
 
 	if ( ! is_array( $size ) ) {
@@ -352,7 +347,6 @@ function pods_image_resize( $attachment_id, $size ) {
  * @return string
  */
 function pods_audio( $url, $args = false ) {
-
 	if ( is_array( $url ) ) {
 		if ( ! is_null( pods_v( 'ID', $url ) ) ) {
 			$id  = pods_v( 'ID', $url );
@@ -369,7 +363,6 @@ function pods_audio( $url, $args = false ) {
 	}
 
 	return wp_audio_shortcode( $audio_args );
-
 }
 
 /**
@@ -385,7 +378,6 @@ function pods_audio( $url, $args = false ) {
  * @return string
  */
 function pods_video( $url, $args = false ) {
-
 	if ( is_array( $url ) ) {
 		if ( ! is_null( pods_v( 'ID', $url ) ) ) {
 			$id  = pods_v( 'ID', $url );
@@ -402,5 +394,4 @@ function pods_video( $url, $args = false ) {
 	}
 
 	return wp_video_shortcode( $video_args );
-
 }

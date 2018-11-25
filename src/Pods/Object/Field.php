@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Pods_Object_Field class.
+ * Pods__Object__Field class.
  *
  * @since 2.8
  */
-class Pods_Object_Field extends Pods_Object {
+class Pods__Object__Field extends Pods__Object {
 
 	/**
 	 * {@inheritdoc}

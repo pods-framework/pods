@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Pods_Object_Storage class.
+ * Pods__Object__Storage class.
  *
  * @since 2.8
  */
-abstract class Pods_Object_Storage {
+abstract class Pods__Object__Storage {
 
 	/**
 	 * @var string
@@ -23,7 +23,7 @@ abstract class Pods_Object_Storage {
 	protected $secondary_args = array();
 
 	/**
-	 * Pods_Object_Storage constructor.
+	 * Pods__Object__Storage constructor.
 	 */
 	public function __construct() {
 		// @todo Bueller?
@@ -41,7 +41,7 @@ abstract class Pods_Object_Storage {
 	/**
 	 * Get object from storage.
 	 *
-	 * @return Pods_Object|null
+	 * @return Pods__Object|null
 	 */
 	public function get() {
 		// @todo Get how?
@@ -53,7 +53,7 @@ abstract class Pods_Object_Storage {
 	 *
 	 * @param array $args Arguments to use.
 	 *
-	 * @return Pods_Object[]
+	 * @return Pods__Object[]
 	 */
 	public function find( array $args = array() ) {
 		// @todo Find how?
@@ -63,77 +63,77 @@ abstract class Pods_Object_Storage {
 	/**
 	 * Add an object.
 	 *
-	 * @param Pods_Object $object Object to add.
+	 * @param Pods__Object $object Object to add.
 	 *
 	 * @return string|int|false Object name, object ID, or false if not added.
 	 */
-	public function add( Pods_Object $object ) {
+	public function add( Pods__Object $object ) {
 		return false;
 	}
 
 	/**
 	 * Save an object.
 	 *
-	 * @param Pods_Object $object Object to save.
+	 * @param Pods__Object $object Object to save.
 	 *
 	 * @return string|int|false Object name, object ID, or false if not saved.
 	 */
-	public function save( Pods_Object $object ) {
+	public function save( Pods__Object $object ) {
 		return false;
 	}
 
 	/**
 	 * Get object argument data.
 	 *
-	 * @param Pods_Object $object Object with arguments to save.
+	 * @param Pods__Object $object Object with arguments to save.
 	 *
 	 * @return array
 	 */
-	public function get_args( Pods_Object $object ) {
+	public function get_args( Pods__Object $object ) {
 		return array();
 	}
 
 	/**
 	 * Save object argument data.
 	 *
-	 * @param Pods_Object $object Object with arguments to save.
+	 * @param Pods__Object $object Object with arguments to save.
 	 *
 	 * @return bool
 	 */
-	public function save_args( Pods_Object $object ) {
+	public function save_args( Pods__Object $object ) {
 		return false;
 	}
 
 	/**
 	 * Duplicate an object.
 	 *
-	 * @param Pods_Object $object Object to duplicate.
+	 * @param Pods__Object $object Object to duplicate.
 	 *
 	 * @return string|int|false Duplicated object name, duplicated object ID, or false if not duplicated.
 	 */
-	public function duplicate( Pods_Object $object ) {
+	public function duplicate( Pods__Object $object ) {
 		return false;
 	}
 
 	/**
 	 * Delete an object.
 	 *
-	 * @param Pods_Object $object Object to delete.
+	 * @param Pods__Object $object Object to delete.
 	 *
 	 * @return bool
 	 */
-	public function delete( Pods_Object $object ) {
+	public function delete( Pods__Object $object ) {
 		return false;
 	}
 
 	/**
 	 * Reset an object's item data.
 	 *
-	 * @param Pods_Object $object Object of items to reset.
+	 * @param Pods__Object $object Object of items to reset.
 	 *
 	 * @return bool
 	 */
-	public function reset( Pods_Object $object ) {
+	public function reset( Pods__Object $object ) {
 		return false;
 	}
 

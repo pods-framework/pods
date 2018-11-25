@@ -5,8 +5,6 @@ namespace Pods_Unit_Tests\Field;
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use PodsField_Text;
 
-require_once PODS_DIR . '/classes/fields/text.php';
-
 /**
  * @group              pods-field
  * @coversDefaultClass PodsField_Text

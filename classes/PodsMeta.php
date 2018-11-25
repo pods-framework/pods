@@ -3366,7 +3366,6 @@ class PodsMeta {
 	 */
 	public static function split_shared_term( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
 
-		require_once( PODS_DIR . 'classes/PodsTermSplitting.php' );
 
 		$term_splitting = new Pods_Term_Splitting( $term_id, $new_term_id, $taxonomy );
 		$term_splitting->split_shared_term();

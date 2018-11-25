@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Pods_Object_Group class.
+ * Pods__Object__Group class.
  *
  * @since 2.8
  */
-class Pods_Object_Group extends Pods_Object {
+class Pods__Object__Group extends Pods__Object {
 
 	/**
 	 * {@inheritdoc}
@@ -20,7 +20,7 @@ class Pods_Object_Group extends Pods_Object {
 			return array();
 		}
 
-		$object_collection = Pods_Object_Collection::get_instance();
+		$object_collection = Pods__Object__Collection::get_instance();
 
 		$storage_object = $object_collection->get_storage_object( $this->get_arg( 'storage_type' ) );
 

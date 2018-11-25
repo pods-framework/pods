@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Pods_Object_Pod class.
+ * Pods__Object__Pod class.
  *
  * @since 2.8
  */
-class Pods_Object_Pod extends Pods_Object {
+class Pods__Object__Pod extends Pods__Object {
 
 	/**
 	 * {@inheritdoc}
@@ -24,7 +24,7 @@ class Pods_Object_Pod extends Pods_Object {
 
 		$object_fields = $api->get_wp_object_fields( $this->get_type(), $this );
 
-		$object_collection = Pods_Object_Collection::get_instance();
+		$object_collection = Pods__Object__Collection::get_instance();
 
 		$fields = array();
 

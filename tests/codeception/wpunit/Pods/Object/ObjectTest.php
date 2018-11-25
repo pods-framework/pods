@@ -3,16 +3,16 @@
 namespace Pods_Unit_Tests\Object;
 
 use Pods_Unit_Tests\Pods_ObjectTestCase;
-use Pods_Object;
+use Pods__Object;
 
 /**
  * @group  pods-object
- * @covers Pods_Object
+ * @covers Pods__Object
  */
 class ObjectTest extends Pods_ObjectTestCase {
 
 	/**
-	 * @covers Pods_Object::__sleep
+	 * @covers Pods__Object::__sleep
 	 */
 	public function test_serialization() {
 		$this->assertTrue( method_exists( $this->pods_object_field, '__sleep' ), 'Method __sleep does not exist' );
@@ -43,7 +43,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::jsonSerialize
+	 * @covers Pods__Object::jsonSerialize
 	 */
 	public function test_json() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'jsonSerialize' ), 'Method jsonSerialize does not exist' );
@@ -61,7 +61,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::__toString
+	 * @covers Pods__Object::__toString
 	 */
 	public function test_string() {
 		$this->assertTrue( method_exists( $this->pods_object_field, '__toString' ), 'Method __toString does not exist' );
@@ -73,7 +73,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::from_serialized
+	 * @covers Pods__Object::from_serialized
 	 */
 	public function test_from_serialized() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'from_serialized' ), 'Method from_serialized does not exist' );
@@ -82,7 +82,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 
 		$to = $this->pods_object_field->from_serialized( $serialized );
 
-		$this->assertInstanceOf( Pods_Object::class, $to );
+		$this->assertInstanceOf( Pods__Object::class, $to );
 		$this->assertEquals( $this->pods_object_field->get_object_type(), $to->get_object_type() );
 		$this->assertEquals( $this->pods_object_field->get_id(), $to->get_id() );
 		$this->assertEquals( $this->pods_object_field->get_name(), $to->get_name() );
@@ -91,7 +91,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::from_serialized
+	 * @covers Pods__Object::from_serialized
 	 */
 	public function test_from_serialized_args() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'from_serialized' ), 'Method from_serialized does not exist' );
@@ -109,7 +109,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::from_json
+	 * @covers Pods__Object::from_json
 	 */
 	public function test_from_json() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'from_json' ), 'Method from_json does not exist' );
@@ -118,7 +118,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 
 		$to = $this->pods_object_field->from_json( $json );
 
-		$this->assertInstanceOf( Pods_Object::class, $to );
+		$this->assertInstanceOf( Pods__Object::class, $to );
 		$this->assertEquals( $this->pods_object_field->get_object_type(), $to->get_object_type() );
 		$this->assertEquals( $this->pods_object_field->get_id(), $to->get_id() );
 		$this->assertEquals( $this->pods_object_field->get_name(), $to->get_name() );
@@ -127,7 +127,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::from_json
+	 * @covers Pods__Object::from_json
 	 */
 	public function test_from_json_args() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'from_json' ), 'Method from_json does not exist' );
@@ -145,12 +145,12 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::offsetExists
-	 * @covers Pods_Object::offsetGet
-	 * @covers Pods_Object::offsetSet
-	 * @covers Pods_Object::offsetUnset
-	 * @covers Pods_Object::get_arg
-	 * @covers Pods_Object::set_arg
+	 * @covers Pods__Object::offsetExists
+	 * @covers Pods__Object::offsetGet
+	 * @covers Pods__Object::offsetSet
+	 * @covers Pods__Object::offsetUnset
+	 * @covers Pods__Object::get_arg
+	 * @covers Pods__Object::set_arg
 	 */
 	public function test_array_access_pod() {
 		// Confirm methods exist.
@@ -209,12 +209,12 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::offsetExists
-	 * @covers Pods_Object::offsetGet
-	 * @covers Pods_Object::offsetSet
-	 * @covers Pods_Object::offsetUnset
-	 * @covers Pods_Object::get_arg
-	 * @covers Pods_Object::set_arg
+	 * @covers Pods__Object::offsetExists
+	 * @covers Pods__Object::offsetGet
+	 * @covers Pods__Object::offsetSet
+	 * @covers Pods__Object::offsetUnset
+	 * @covers Pods__Object::get_arg
+	 * @covers Pods__Object::set_arg
 	 */
 	public function test_array_access_group() {
 		// Confirm methods exist.
@@ -273,12 +273,12 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::offsetExists
-	 * @covers Pods_Object::offsetGet
-	 * @covers Pods_Object::offsetSet
-	 * @covers Pods_Object::offsetUnset
-	 * @covers Pods_Object::get_arg
-	 * @covers Pods_Object::set_arg
+	 * @covers Pods__Object::offsetExists
+	 * @covers Pods__Object::offsetGet
+	 * @covers Pods__Object::offsetSet
+	 * @covers Pods__Object::offsetUnset
+	 * @covers Pods__Object::get_arg
+	 * @covers Pods__Object::set_arg
 	 */
 	public function test_array_access_field() {
 		// Confirm methods exist.
@@ -337,10 +337,10 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::setup
-	 * @covers Pods_Object::get_args
-	 * @covers Pods_Object::get_arg
-	 * @covers Pods_Object::get_group
+	 * @covers Pods__Object::setup
+	 * @covers Pods__Object::get_args
+	 * @covers Pods__Object::get_arg
+	 * @covers Pods__Object::get_group
 	 */
 	public function test_setup() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'setup' ), 'Method setup does not exist' );
@@ -375,8 +375,8 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_arg
-	 * @covers Pods_Object::set_arg
+	 * @covers Pods__Object::get_arg
+	 * @covers Pods__Object::set_arg
 	 */
 	public function test_get_set_arg() {
 		// Confirm methods exist.
@@ -414,7 +414,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::is_valid
+	 * @covers Pods__Object::is_valid
 	 */
 	public function test_is_valid() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'is_valid' ), 'Method is_valid does not exist' );
@@ -434,27 +434,27 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_identifier_from_args
+	 * @covers Pods__Object::get_identifier_from_args
 	 */
 	public function test_get_identifier_from_args() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'get_identifier_from_args' ), 'Method get_identifier_from_args does not exist' );
 
-		$this->assertEquals( $this->pods_object_field->get_identifier(), Pods_Object::get_identifier_from_args( $this->field_args ) );
+		$this->assertEquals( $this->pods_object_field->get_identifier(), Pods__Object::get_identifier_from_args( $this->field_args ) );
 
 		$identifier = sprintf( '%s/%s/%s', $this->pods_object_field->get_object_type(), $this->pods_object_field->get_parent(), $this->pods_object_field->get_name() );
 
-		$this->assertEquals( $identifier, Pods_Object::get_identifier_from_args( $this->pods_object_field->get_args() ) );
+		$this->assertEquals( $identifier, Pods__Object::get_identifier_from_args( $this->pods_object_field->get_args() ) );
 
 		// Unset parent.
 		$this->pods_object_field->set_arg( 'parent', null );
 
 		$identifier = sprintf( '%s/%s', $this->pods_object_field->get_object_type(), $this->pods_object_field->get_name() );
 
-		$this->assertEquals( $identifier, Pods_Object::get_identifier_from_args( $this->pods_object_field->get_args() ) );
+		$this->assertEquals( $identifier, Pods__Object::get_identifier_from_args( $this->pods_object_field->get_args() ) );
 	}
 
 	/**
-	 * @covers Pods_Object::get_identifier
+	 * @covers Pods__Object::get_identifier
 	 */
 	public function test_get_identifier() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'get_identifier' ), 'Method get_identifier does not exist' );
@@ -472,8 +472,8 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::set_arg
-	 * @covers Pods_Object::get_arg
+	 * @covers Pods__Object::set_arg
+	 * @covers Pods__Object::get_arg
 	 */
 	public function test_set_arg() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'set_arg' ), 'Method set_arg does not exist' );
@@ -484,7 +484,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_arg
+	 * @covers Pods__Object::get_arg
 	 */
 	public function test_get_arg() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'get_arg' ), 'Method get_arg does not exist' );
@@ -497,7 +497,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_args
+	 * @covers Pods__Object::get_args
 	 */
 	public function test_get_args() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'get_args' ), 'Method get_args does not exist' );
@@ -525,14 +525,14 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers       Pods_Object::get_object_type
-	 * @covers       Pods_Object::get_storage_type
-	 * @covers       Pods_Object::get_name
-	 * @covers       Pods_Object::get_id
-	 * @covers       Pods_Object::get_parent
-	 * @covers       Pods_Object::get_group
-	 * @covers       Pods_Object::get_label
-	 * @covers       Pods_Object::get_description
+	 * @covers       Pods__Object::get_object_type
+	 * @covers       Pods__Object::get_storage_type
+	 * @covers       Pods__Object::get_name
+	 * @covers       Pods__Object::get_id
+	 * @covers       Pods__Object::get_parent
+	 * @covers       Pods__Object::get_group
+	 * @covers       Pods__Object::get_label
+	 * @covers       Pods__Object::get_description
 	 *
 	 * @dataProvider provider_methods
 	 *
@@ -567,12 +567,12 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers       Pods_Object::get_parent_object_type
-	 * @covers       Pods_Object::get_parent_storage_type
-	 * @covers       Pods_Object::get_parent_name
-	 * @covers       Pods_Object::get_parent_id
-	 * @covers       Pods_Object::get_parent_label
-	 * @covers       Pods_Object::get_parent_description
+	 * @covers       Pods__Object::get_parent_object_type
+	 * @covers       Pods__Object::get_parent_storage_type
+	 * @covers       Pods__Object::get_parent_name
+	 * @covers       Pods__Object::get_parent_id
+	 * @covers       Pods__Object::get_parent_label
+	 * @covers       Pods__Object::get_parent_description
 	 *
 	 * @dataProvider provider_parent_methods
 	 *
@@ -607,12 +607,12 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers       Pods_Object::get_group_object_type
-	 * @covers       Pods_Object::get_group_storage_type
-	 * @covers       Pods_Object::get_group_name
-	 * @covers       Pods_Object::get_group_id
-	 * @covers       Pods_Object::get_group_label
-	 * @covers       Pods_Object::get_group_description
+	 * @covers       Pods__Object::get_group_object_type
+	 * @covers       Pods__Object::get_group_storage_type
+	 * @covers       Pods__Object::get_group_name
+	 * @covers       Pods__Object::get_group_id
+	 * @covers       Pods__Object::get_group_label
+	 * @covers       Pods__Object::get_group_description
 	 *
 	 * @dataProvider provider_group_methods
 	 *
@@ -630,7 +630,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_fields
+	 * @covers Pods__Object::get_fields
 	 */
 	public function test_get_fields_pod() {
 		$this->assertTrue( method_exists( $this->pods_object_pod, 'get_fields' ), 'Method get_fields does not exist' );
@@ -638,11 +638,11 @@ class ObjectTest extends Pods_ObjectTestCase {
 		$fields = $this->pods_object_pod->get_fields();
 
 		$this->assertCount( 1, $fields );
-		$this->assertInstanceOf( Pods_Object::class, reset( $fields ) );
+		$this->assertInstanceOf( Pods__Object::class, reset( $fields ) );
 	}
 
 	/**
-	 * @covers Pods_Object::get_fields
+	 * @covers Pods__Object::get_fields
 	 */
 	public function test_get_fields_group() {
 		$this->assertTrue( method_exists( $this->pods_object_group, 'get_fields' ), 'Method get_fields does not exist' );
@@ -650,11 +650,11 @@ class ObjectTest extends Pods_ObjectTestCase {
 		$fields = $this->pods_object_group->get_fields();
 
 		$this->assertCount( 1, $fields );
-		$this->assertInstanceOf( Pods_Object::class, reset( $fields ) );
+		$this->assertInstanceOf( Pods__Object::class, reset( $fields ) );
 	}
 
 	/**
-	 * @covers Pods_Object::get_fields
+	 * @covers Pods__Object::get_fields
 	 */
 	public function test_get_fields_field() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'get_fields' ), 'Method get_fields does not exist' );
@@ -665,7 +665,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_object_fields
+	 * @covers Pods__Object::get_object_fields
 	 */
 	public function test_get_object_fields_pod() {
 		$this->assertTrue( method_exists( $this->pods_object_pod, 'get_object_fields' ), 'Method get_object_fields does not exist' );
@@ -674,11 +674,11 @@ class ObjectTest extends Pods_ObjectTestCase {
 
 		// Post types have 24 object fields.
 		$this->assertCount( 24, $fields );
-		$this->assertInstanceOf( Pods_Object::class, reset( $fields ) );
+		$this->assertInstanceOf( Pods__Object::class, reset( $fields ) );
 	}
 
 	/**
-	 * @covers Pods_Object::get_object_fields
+	 * @covers Pods__Object::get_object_fields
 	 */
 	public function test_get_object_fields_group() {
 		$this->assertTrue( method_exists( $this->pods_object_group, 'get_object_fields' ), 'Method get_object_fields does not exist' );
@@ -689,7 +689,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_object_fields
+	 * @covers Pods__Object::get_object_fields
 	 */
 	public function test_get_object_fields_field() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'get_object_fields' ), 'Method get_object_fields does not exist' );
@@ -700,7 +700,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_table_info
+	 * @covers Pods__Object::get_table_info
 	 */
 	public function test_get_table_info_pod() {
 		$this->assertTrue( method_exists( $this->pods_object_pod, 'get_table_info' ), 'Method get_table_info does not exist' );
@@ -711,7 +711,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_table_info
+	 * @covers Pods__Object::get_table_info
 	 */
 	public function test_get_table_info_group() {
 		$this->assertTrue( method_exists( $this->pods_object_group, 'get_table_info' ), 'Method get_table_info does not exist' );
@@ -722,7 +722,7 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_table_info
+	 * @covers Pods__Object::get_table_info
 	 */
 	public function test_get_table_info_field() {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'get_table_info' ), 'Method get_table_info does not exist' );
@@ -733,10 +733,10 @@ class ObjectTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods_Object::get_fields
-	 * @covers Pods_Object::get_object_fields
-	 * @covers Pods_Object::get_table_info
-	 * @covers Pods_Object::get_args
+	 * @covers Pods__Object::get_fields
+	 * @covers Pods__Object::get_object_fields
+	 * @covers Pods__Object::get_table_info
+	 * @covers Pods__Object::get_args
 	 */
 	public function test_backcompat_pod() {
 		$this->assertCount( 1, $this->pods_object_pod['fields'] );

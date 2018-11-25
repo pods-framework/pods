@@ -3023,23 +3023,20 @@ class PodsAdmin {
 
 		$pods = pods_api()->load_pods(
 			array(
-				'type'       => array(
+				'type' => array(
 					'settings',
 					'post_type',
 					'taxonomy',
 				),
-				'fields'     => false,
-				'table_info' => false,
 			)
 		);
 
 		$other_pods = pods_api()->load_pods(
 			array(
-				'type'       => array(
+				'type' => array(
 					'pod',
 					'table',
 				),
-				'table_info' => false,
 			)
 		);
 

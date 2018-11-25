@@ -2,9 +2,9 @@
 
 namespace Pods_Unit_Tests;
 
-use Pods_Object_Collection;
+use Pods__Object__Collection;
 use pods_object_storage;
-use Pods_Object;
+use Pods__Object;
 
 /**
  * Class Pods_ObjectTestCase
@@ -32,17 +32,17 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 	protected $field_args;
 
 	/**
-	 * @var Pods_Object
+	 * @var Pods__Object
 	 */
 	protected $pods_object_pod;
 
 	/**
-	 * @var Pods_Object
+	 * @var Pods__Object
 	 */
 	protected $pods_object_group;
 
 	/**
-	 * @var Pods_Object
+	 * @var Pods__Object
 	 */
 	protected $pods_object_field;
 
@@ -57,7 +57,7 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 	protected $storage_type = 'post_type';
 
 	public function setUp() {
-		$object_collection = Pods_Object_Collection::get_instance();
+		$object_collection = Pods__Object__Collection::get_instance();
 
 		$this->pods_object_storage = $object_collection->get_storage_object( $this->storage_type );
 
@@ -111,7 +111,7 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 		$this->group_args = array();
 		$this->field_args = array();
 
-		$object_collection = Pods_Object_Collection::get_instance();
+		$object_collection = Pods__Object__Collection::get_instance();
 		$object_collection->flush_objects();
 
 		unset( $this->pods_object_storage );
@@ -120,12 +120,12 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * Setup and return a Pods_Object.
+	 * Setup and return a Pods__Object.
 	 *
 	 * @param array  $args Object arguments.
 	 * @param string $type Object type.
 	 *
-	 * @return Pods_Object
+	 * @return Pods__Object
 	 */
 	public function setup_pods_object( array $args = array(), $type = '' ) {
 		$defaults = array(
@@ -144,11 +144,11 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 
 		$args['custom1'] = $args['custom1'] . '-' . $args['name'];
 
-		$object_collection = Pods_Object_Collection::get_instance();
+		$object_collection = Pods__Object__Collection::get_instance();
 
 		$class_name = $object_collection->get_object_type( $args['object_type'] );
 
-		/** @var Pods_Object $object */
+		/** @var Pods__Object $object */
 		$object = new $class_name;
 		$object->setup( $args );
 

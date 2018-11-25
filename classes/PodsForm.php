@@ -234,7 +234,7 @@ class PodsForm {
 			$helper = pods_api()->load_helper( array( 'name' => $options['input_helper'] ) );
 		}
 
-		// @todo Move into DFV field method or Pods_Object later
+		// @todo Move into DFV field method or Pods__Object later
 		if ( ( ! isset( $options['data'] ) || empty( $options['data'] ) ) && is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'data' ) ) {
 			$options['data'] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id, true );
 			$data            = $options['data'];
@@ -1434,8 +1434,6 @@ class PodsForm {
 			}
 		}
 
-		include_once PODS_DIR . 'classes/PodsField.php';
-
 		$field_type = self::clean( $field_type, true, true );
 
 		$class_name = ucfirst( $field_type );
@@ -1455,11 +1453,14 @@ class PodsForm {
 			if ( ! empty( $file ) && 0 === strpos( $file, $abspath_dir ) && file_exists( $file ) ) {
 				include_once $file;
 			} else {
-				$file = str_replace( '../', '', apply_filters( 'pods_form_field_include', PODS_DIR . 'classes/fields/' . basename( $field_type ) . '.php', $field_type ) );
-				$file = realpath( $file );
+				$file = str_replace( '../', '', apply_filters( 'pods_form_field_include', '', $field_type ) );
 
-				if ( file_exists( $file ) && ( 0 === strpos( $file, $pods_dir ) || 0 === strpos( $file, $content_dir ) || 0 === strpos( $file, $plugins_dir ) || 0 === strpos( $file, $muplugins_dir ) || 0 === strpos( $file, $abspath_dir ) ) ) {
-					include_once $file;
+				if ( ! empty( $file ) ) {
+					$file = realpath( $file );
+
+					if ( file_exists( $file ) && ( 0 === strpos( $file, $pods_dir ) || 0 === strpos( $file, $content_dir ) || 0 === strpos( $file, $plugins_dir ) || 0 === strpos( $file, $muplugins_dir ) || 0 === strpos( $file, $abspath_dir ) ) ) {
+						include_once $file;
+					}
 				}
 			}
 		}
@@ -1472,6 +1473,7 @@ class PodsForm {
 		}
 
 		$class_vars = get_class_vars( $class_name );
+
 		// PHP 5.2.x workaround
 		self::$field_group = ( isset( $class_vars['group'] ) ? $class_vars['group'] : '' );
 		self::$field_type  = $class_vars['type'];

@@ -20,7 +20,6 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 	 * @return array|bool|int|mixed|null|void
 	 */
 	public function prepare_relationships() {
-
 		$relationship_fields = $this->api->load_fields( array( 'type' => 'pick' ) );
 
 		$count = 0;
@@ -36,7 +35,6 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 	 * @return string
 	 */
 	public function migrate_relationships() {
-
 		if ( true === $this->check_progress( __FUNCTION__ ) ) {
 			return '1';
 		}
@@ -73,7 +71,6 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 			$sql = '
 
             ';
-
 			// if serialized (or array), save as individual meta items and save new order meta key
 		}//end foreach
 
@@ -94,7 +91,6 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 	 * @return string
 	 */
 	public function migrate_cleanup() {
-
 		$this->upgraded();
 
 		$this->api->cache_flush_pods();
@@ -106,7 +102,6 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 	 *
 	 */
 	public function restart() {
-
 		$upgraded = get_option( 'pods_framework_upgraded' );
 
 		if ( empty( $upgraded ) || ! is_array( $upgraded ) ) {
@@ -116,7 +111,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 		delete_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ) );
 
 		if ( in_array( $this->version, $upgraded, true ) ) {
-	        // @codingStandardsIgnoreLine
+			// @codingStandardsIgnoreLine
 			unset( $upgraded[ array_search( $this->version, $upgraded ) ] );
 		}
 
@@ -127,7 +122,6 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 	 *
 	 */
 	public function cleanup() {
-
 		$this->restart();
 	}
 }

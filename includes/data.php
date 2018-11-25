@@ -15,7 +15,6 @@
  * @see   wp_slash
  */
 function pods_sanitize( $input, $params = array() ) {
-
 	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
 		return $input;
 	}
@@ -69,7 +68,6 @@ function pods_sanitize( $input, $params = array() ) {
 	}//end if
 
 	return $output;
-
 }
 
 /**
@@ -84,7 +82,6 @@ function pods_sanitize( $input, $params = array() ) {
  * @see   like_escape
  */
 function pods_sanitize_like( $input ) {
-
 	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
 		return $input;
 	}
@@ -111,7 +108,6 @@ function pods_sanitize_like( $input ) {
 	}
 
 	return $output;
-
 }
 
 /**
@@ -127,7 +123,6 @@ function pods_sanitize_like( $input ) {
  * @see   wp_slash
  */
 function pods_slash( $input, $params = array() ) {
-
 	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
 		return $input;
 	}
@@ -175,7 +170,6 @@ function pods_slash( $input, $params = array() ) {
 	}//end if
 
 	return $output;
-
 }
 
 /**
@@ -189,7 +183,6 @@ function pods_slash( $input, $params = array() ) {
  * @since 1.2.0
  */
 function pods_unsanitize( $input, $params = array() ) {
-
 	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
 		return $input;
 	}
@@ -221,7 +214,6 @@ function pods_unsanitize( $input, $params = array() ) {
 	}//end if
 
 	return $output;
-
 }
 
 /**
@@ -236,7 +228,6 @@ function pods_unsanitize( $input, $params = array() ) {
  * @see   wp_unslash
  */
 function pods_unslash( $input ) {
-
 	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
 		return $input;
 	}
@@ -262,7 +253,6 @@ function pods_unslash( $input ) {
 	}
 
 	return $output;
-
 }
 
 /**
@@ -276,7 +266,6 @@ function pods_unslash( $input ) {
  * @since 1.2.0
  */
 function pods_trim( $input, $charlist = " \t\n\r\0\x0B", $lr = null ) {
-
 	$output = array();
 
 	if ( is_object( $input ) ) {
@@ -302,7 +291,6 @@ function pods_trim( $input, $charlist = " \t\n\r\0\x0B", $lr = null ) {
 	}//end if
 
 	return $output;
-
 }
 
 /**
@@ -320,7 +308,6 @@ function pods_trim( $input, $charlist = " \t\n\r\0\x0B", $lr = null ) {
  * @since 2.3.10
  */
 function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $params = array() ) {
-
 	$defaults = array(
 		'casting' => false,
 		'allowed' => null,
@@ -845,13 +832,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
  * @see   pods_v
  */
 function pods_v_sanitized( $var = null, $type = 'get', $default = null, $strict = false, $params = array() ) {
-
 	$output = pods_v( $var, $type, $default, $strict, $params );
 
 	$output = pods_sanitize( $output, $params );
 
 	return $output;
-
 }
 
 /**
@@ -867,7 +852,6 @@ function pods_v_sanitized( $var = null, $type = 'get', $default = null, $strict 
  * @since 2.3.10
  */
 function pods_v_set( $value, $var, $type = 'get' ) {
-
 	$ret = false;
 
 	if ( null === $var || '' === $var ) {
@@ -955,12 +939,10 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 				$user->set_role( $value );
 			} elseif ( isset( $user_data[ $var ] ) ) {
 				// Core field
-				wp_update_user(
-					array(
+				wp_update_user( array(
 						'ID' => $user->ID,
 						$var => $value,
-					)
-				);
+					) );
 			} else {
 				// Meta field
 				update_user_meta( $user->ID, $var, $value );
@@ -982,7 +964,6 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 	}//end if
 
 	return $ret;
-
 }
 
 /**
@@ -1004,25 +985,19 @@ function pods_v_set( $value, $var, $type = 'get' ) {
  * @see        pods_v_sanitized
  */
 function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false, $context = 'display' ) {
-
 	if ( 'raw' === $context ) {
-		$output = pods_v(
-			$var, $type, $default, $strict, array(
+		$output = pods_v( $var, $type, $default, $strict, array(
 				'allowed' => $allowed,
 				'casting' => $casting,
-			)
-		);
+			) );
 	} else {
-		$output = pods_v_sanitized(
-			$var, $type, $default, $strict, array(
+		$output = pods_v_sanitized( $var, $type, $default, $strict, array(
 				'allowed' => $allowed,
 				'casting' => $casting,
-			)
-		);
+			) );
 	}
 
 	return $output;
-
 }
 
 /**
@@ -1037,20 +1012,16 @@ function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = nul
  * @param bool   $casting (optional) Whether to cast the value returned like provided in $default
  *
  * @return mixed The variable (if exists), or default value
- * @since 2.0.0
+ * @since      2.0.0
  *
  * @deprecated 2.4.0 Use pods_v() instead.
  * @see        pods_v
  */
 function pods_var_raw( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false ) {
-
-	return pods_v(
-		$var, $type, $default, $strict, array(
+	return pods_v( $var, $type, $default, $strict, array(
 			'allowed' => $allowed,
 			'casting' => $casting,
-		)
-	);
-
+		) );
 }
 
 /**
@@ -1067,9 +1038,7 @@ function pods_var_raw( $var = 'last', $type = 'get', $default = null, $allowed =
  * @see        pods_v_set
  */
 function pods_var_set( $value, $var = 'last', $type = 'url' ) {
-
 	return pods_v_set( $value, $var, $type );
-
 }
 
 /**
@@ -1087,7 +1056,6 @@ function pods_var_set( $value, $var = 'last', $type = 'url' ) {
  * @see   add_query_arg
  */
 function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url = null ) {
-
 	$array    = (array) $array;
 	$allowed  = (array) $allowed;
 	$excluded = (array) $excluded;
@@ -1157,7 +1125,6 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 	}
 
 	return $url;
-
 }
 
 /**
@@ -1170,15 +1137,13 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
  *
  * @return mixed
  *
- * @since 2.0.0
+ * @since      2.0.0
  *
  * @deprecated 2.4.0 Use pods_query_arg() instead.
  * @see        pods_query_arg
  */
 function pods_var_update( $array = null, $allowed = null, $excluded = null, $url = null ) {
-
 	return pods_query_arg( $array, $allowed, $excluded, $url );
-
 }
 
 /**
@@ -1192,7 +1157,6 @@ function pods_var_update( $array = null, $allowed = null, $excluded = null, $url
  * @since 2.0.0
  */
 function pods_cast( $value, $cast_from = null ) {
-
 	if ( null !== $cast_from ) {
 		if ( is_object( $value ) && is_array( $cast_from ) ) {
 			$value = get_object_vars( $value );
@@ -1204,7 +1168,6 @@ function pods_cast( $value, $cast_from = null ) {
 	}
 
 	return $value;
-
 }
 
 /**
@@ -1218,7 +1181,6 @@ function pods_cast( $value, $cast_from = null ) {
  * @since 1.8.9
  */
 function pods_create_slug( $orig, $strict = true ) {
-
 	$str = preg_replace( '/([_ \\/])/', '-', trim( $orig ) );
 
 	if ( $strict ) {
@@ -1250,7 +1212,6 @@ function pods_create_slug( $orig, $strict = true ) {
  * @since 1.7.2
  */
 function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj = null, $strict = true ) {
-
 	$slug = pods_create_slug( $slug, $strict );
 
 	$pod_data = array();
@@ -1265,12 +1226,10 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
 	$id     = absint( $id );
 
 	if ( empty( $pod_data ) ) {
-		$pod_data = pods_api()->load_pod(
-			array(
-				'id'   => $pod_id,
-				'name' => $pod,
-			), false
-		);
+		$pod_data = pods_api()->load_pod( array(
+			'id'   => $pod_id,
+			'name' => $pod,
+		), false );
 	}
 
 	if ( empty( $pod_data ) || empty( $pod_id ) || empty( $pod ) ) {
@@ -1321,7 +1280,6 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
  * @since 1.2.0
  */
 function pods_clean_name( $orig, $lower = true, $trim_underscores = false ) {
-
 	$str = trim( $orig );
 	$str = preg_replace( '/(\s)/', '_', $str );
 	$str = preg_replace( '/([^0-9a-zA-Z\-_])/', '', $str );
@@ -1350,7 +1308,6 @@ function pods_clean_name( $orig, $lower = true, $trim_underscores = false ) {
  * @since 2.5.3
  */
 function pods_js_name( $orig, $lower = true ) {
-
 	$str = pods_clean_name( $orig, $lower );
 	$str = str_replace( '-', '_', $str );
 
@@ -1368,7 +1325,6 @@ function pods_js_name( $orig, $lower = true ) {
  * @since 2.0.0
  */
 function pods_absint( $maybeint, $strict = true, $allow_negative = false ) {
-
 	if ( true === $strict && ! is_numeric( trim( $maybeint ) ) ) {
 		return 0;
 	}
@@ -1392,7 +1348,6 @@ function pods_absint( $maybeint, $strict = true, $allow_negative = false ) {
  * @version 2.0
  */
 function pods_str_replace( $find, $replace, $string, $occurrences = - 1 ) {
-
 	if ( is_array( $string ) ) {
 		foreach ( $string as $k => $v ) {
 			$string[ $k ] = pods_str_replace( $find, $replace, $v, $occurrences );
@@ -1428,13 +1383,11 @@ function pods_str_replace( $find, $replace, $string, $occurrences = - 1 ) {
  * @return int
  */
 function pods_mb_strlen( $string ) {
-
 	if ( function_exists( 'mb_strlen' ) ) {
 		return mb_strlen( $string );
 	}
 
 	return strlen( $string );
-
 }
 
 /**
@@ -1448,7 +1401,6 @@ function pods_mb_strlen( $string ) {
  * @return string
  */
 function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
-
 	if ( function_exists( 'mb_substr' ) ) {
 		if ( null === $encoding ) {
 			$encoding = mb_internal_encoding();
@@ -1458,7 +1410,6 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
 	}
 
 	return substr( $string, $start, $length );
-
 }
 
 /**
@@ -1474,7 +1425,6 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
  * @see     pods_evaluate_tag
  */
 function pods_evaluate_tags( $tags, $sanitize = false ) {
-
 	if ( is_array( $tags ) ) {
 		foreach ( $tags as $k => $tag ) {
 			$tags[ $k ] = pods_evaluate_tags( $tag, $sanitize );
@@ -1500,7 +1450,6 @@ function pods_evaluate_tags( $tags, $sanitize = false ) {
 	}
 
 	return preg_replace_callback( '/({@(.*?)})/m', $callback, (string) $tags );
-
 }
 
 /**
@@ -1515,9 +1464,7 @@ function pods_evaluate_tags( $tags, $sanitize = false ) {
  * @see     pods_evaluate_tag
  */
 function pods_evaluate_tag_sanitized( $tag ) {
-
 	return pods_evaluate_tag( $tag, true );
-
 }
 
 /**
@@ -1531,7 +1478,6 @@ function pods_evaluate_tag_sanitized( $tag ) {
  * @version 2.1
  */
 function pods_evaluate_tag( $tag, $sanitize = false ) {
-
 	global $wpdb;
 
 	// Handle pods_evaluate_tags
@@ -1606,7 +1552,6 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 	}
 
 	return $value;
-
 }
 
 /**
@@ -1623,7 +1568,6 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
  * @since 2.0.0
  */
 function pods_serial_comma( $value, $field = null, $fields = null, $and = null, $field_index = null ) {
-
 	if ( is_object( $value ) ) {
 		$value = get_object_vars( $value );
 	}
@@ -1779,7 +1723,6 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
  * @since 2.0.5
  */
 function pods_var_user( $anon = false, $user = true, $capability = null ) {
-
 	$value = $anon;
 
 	if ( is_user_logged_in() ) {
@@ -1811,7 +1754,6 @@ function pods_var_user( $anon = false, $user = true, $capability = null ) {
  * @since 2.3.0
  */
 function pods_hierarchical_list( $list, $args = array() ) {
-
 	if ( empty( $args ) || ( ! is_object( $list ) && ! is_array( $list ) ) ) {
 		return $list;
 	}
@@ -1844,7 +1786,6 @@ function pods_hierarchical_list( $list, $args = array() ) {
  * @since 2.3.0
  */
 function pods_hierarchical_list_recurse( $parent, $list, &$args ) {
-
 	$new = array();
 
 	$object = false;
@@ -1946,10 +1887,9 @@ function pods_hierarchical_list_recurse( $parent, $list, &$args ) {
  * @return array|object
  * @internal param string $children_key Key to recurse children into
  *
- * @since 2.3.0
+ * @since    2.3.0
  */
 function pods_hierarchical_select( $list, $args = array() ) {
-
 	$object = false;
 
 	if ( is_object( $list ) ) {
@@ -1988,10 +1928,9 @@ function pods_hierarchical_select( $list, $args = array() ) {
  * @internal param string $children_key Key to recurse children into
  *
  * @see      pods_hierarchical_select
- * @since 2.3.0
+ * @since    2.3.0
  */
 function pods_hierarchical_select_recurse( $items, $args, $depth = 0 ) {
-
 	$data = array();
 
 	foreach ( $items as $k => $v ) {
@@ -2048,7 +1987,6 @@ function pods_hierarchical_select_recurse( $items, $args, $depth = 0 ) {
  * @since 2.3.0
  */
 function pods_list_filter( $list, $args = array(), $operator = 'AND' ) {
-
 	if ( empty( $args ) ) {
 		return $list;
 	}

@@ -467,13 +467,13 @@ class PodsComponents {
 
 				$component_data['ID'] = sanitize_title( $component_data['ID'] );
 
-				if ( 'on' === strtolower( $component_data['DeveloperMode'] ) || 1 === $component_data['DeveloperMode'] ) {
+				if ( 'off' !== strtolower( $component_data['DeveloperMode'] ) && '0' !== $component_data['DeveloperMode'] ) {
 					$component_data['DeveloperMode'] = true;
 				} else {
 					$component_data['DeveloperMode'] = false;
 				}
 
-				if ( 'no' !== strtolower( $component_data['TablelessMode'] ) ) {
+				if ( 'off' !== strtolower( $component_data['TablelessMode'] ) && '0' !== $component_data['TablelessMode'] ) {
 					$component_data['TablelessMode'] = true;
 				} else {
 					$component_data['TablelessMode'] = false;

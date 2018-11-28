@@ -1,6 +1,6 @@
 /*global jQuery, _, Backbone, Marionette */
 import { PodsDFVFieldModel } from 'pods-dfv/_src/core/pods-field-model';
-import { PodsGbListener } from 'pods-dfv/_src/core/gb-listener';
+import { PodsGbModalListener } from 'pods-dfv/_src/core/gb-modal-listener';
 import * as fields from 'pods-dfv/_src/field-manifest';
 import * as models from 'pods-dfv/_src/model-manifest';
 
@@ -89,8 +89,8 @@ export default PodsDFV;
 document.addEventListener( 'DOMContentLoaded', () => {
 	PodsDFV.init();
 
-	// Listen Gutenberg publish/save if we're inside a Pods modal with Gutenberg active
+	// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
 	if ( PodsDFV.isModalWindow() && PodsDFV.isGutenbergEditorLoaded()) {
-		PodsGbListener.init();
+		PodsGbModalListener.init();
 	}
 } );

@@ -1,12 +1,16 @@
+/**
+ * Note: No checking is done here to make sure Gutenberg is actually loaded.
+ * Consuming code must make sure our implicit Gutenberg dependencies exist
+ * before calling through to init().
+ */
 let unSubscribe;
 const editorData = wp.data && wp.data.select( 'core/editor' );
 
 /**
  *
  */
-export const PodsGbListener = {
+export const PodsGbModalListener = {
 	init: function () {
-
 		if ( editorData.isCurrentPostPublished() ) {
 			// Post is published, this is an edit
 			unSubscribe = wp.data.subscribe( saveListener );
@@ -21,7 +25,6 @@ export const PodsGbListener = {
  * Handles "add new" modals
  */
 function publishListener () {
-
 	if ( editorData.isCurrentPostPublished() ) {
 		unSubscribe();
 		triggerUpdateEvent();

@@ -1305,10 +1305,10 @@ class PodsField_Pick extends PodsField {
 		if ( ! empty( $args->value ) ) {
 			// The value may be a single non-array value.
 			$values = (array) $args->value;
-
-			// Cast values in array as string.
-			$values = array_map( 'strval', $values );
 		}
+
+		// Cast values in array as string.
+		$values = array_map( 'strval', $values );
 
 		// If the value array has keys as IDs, let's check for matches from the keys first.
 		if ( ! isset( $values[0] ) ) {

@@ -190,6 +190,7 @@ Enhancement: Add support for Taxonomy descriptions, #4766 (@sc0ttkclark)
 Enhancement: Component Pages does not allow adding page templates in plugins, #4734 (@creabrain)
 Enhancement: Add Pods functions to Query Monitor conditional, #5208 (@JoryHogeveen)
 Enhancement: Add bi-directional status label to relationship fields, #5200 (@JoryHogeveen)
+Enhancement: Removed old forum feed, inserted the wordpress.org feed, and squelched warnings from SimplePie/PHP 7+, #5172, #4363 (@pglewis)
 
 **Bug Fixes**
 
@@ -202,7 +203,7 @@ Enhancement: Add bi-directional status label to relationship fields, #5200 (@Jor
 * Fixed: Use minified versions of Backbone.Marionette and Backbone.Radio, #5115
 * Fixed: Always enqueue the DFV script by default if in the admin, #5111 (@pglewis, @sc0ttkclark)
 * Fixed: Add static groups cache for PodsMeta::groups_get() to improve memory usage on bulk wp_insert_post and other similar calls, #5088 (@sc0ttkclark)
-* Fixed: Only disable components when using PODS_TABLELESS if the component is relying on custom tables, #5206 (@JoryHogeveen) 
+* Fixed: Only disable components when using PODS_TABLELESS if the component is relying on custom tables, #5206 (@JoryHogeveen)
 
 = 2.7.9 - August 9th 2018  =
 

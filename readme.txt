@@ -189,6 +189,7 @@ Enhancement: Add current memory usage to stats, #5178 (@sc0ttkclark)
 Enhancement: Add support for Taxonomy descriptions, #4766 (@sc0ttkclark)
 Enhancement: Component Pages does not allow adding page templates in plugins, #4734 (@creabrain)
 Enhancement: Add Pods functions to Query Monitor conditional, #5208 (@JoryHogeveen)
+Enhancement: Add bi-directional status label to relationship fields, #5200 (@JoryHogeveen)
 
 **Bug Fixes**
 

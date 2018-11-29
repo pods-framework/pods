@@ -202,6 +202,7 @@ Enhancement: Add bi-directional status label to relationship fields, #5200 (@Jor
 * Fixed: Use minified versions of Backbone.Marionette and Backbone.Radio, #5115
 * Fixed: Always enqueue the DFV script by default if in the admin, #5111 (@pglewis, @sc0ttkclark)
 * Fixed: Add static groups cache for PodsMeta::groups_get() to improve memory usage on bulk wp_insert_post and other similar calls, #5088 (@sc0ttkclark)
+* Fixed: Only disable components when using PODS_TABLELESS if the component is relying on custom tables, #5206 (@JoryHogeveen) 
 
 = 2.7.9 - August 9th 2018  =
 

@@ -188,6 +188,7 @@ Enhancement: Add pods conditional logic handling on frontend forms, #5136 (@Jory
 Enhancement: Add current memory usage to stats, #5178 (@sc0ttkclark)
 Enhancement: Add support for Taxonomy descriptions, #4766 (@sc0ttkclark)
 Enhancement: Component Pages does not allow adding page templates in plugins, #4734 (@creabrain)
+Enhancement: Add Pods functions to Query Monitor conditional, #5208 (@JoryHogeveen)
 
 **Bug Fixes**
 

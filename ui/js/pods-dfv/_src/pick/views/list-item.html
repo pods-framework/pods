@@ -1,6 +1,12 @@
-<input name="<%- htmlAttr.name %>[<%= ordinal %>]"
+<input
+		<% if ( 'single' === fieldConfig.pick_format_type ) { %>
+			name="<%- htmlAttr.name %>"
+			id="<%- htmlAttr.id %>"
+		<% } else { %>
+			name="<%- htmlAttr.name %>[<%= ordinal %>]"
+			id="<%- htmlAttr.id %><%= ordinal %>"
+		<% } %>
 		data-name-clean="<%- htmlAttr.name_clean %>"
-		id="<%- htmlAttr.id %><%= ordinal %>"
 		type="hidden"
 		value="<%- id %>">
 <ul class="pods-dfv-list-meta relationship-item">

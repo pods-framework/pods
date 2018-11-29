@@ -1747,6 +1747,11 @@
                             $.each( pods_field_types, function ( i, n ) {
                                 if ( field_type == i ) {
                                     field_type = n;
+                                    if ( 'pick' == i ) {
+                                        if ( $row_content.find( 'select#pods-form-ui-field-data-' + row_id + '-sister-id' ).val() ) {
+                                            field_type += ' <small>(' + $row_content.find( 'label[for="pods-form-ui-field-data-' + row_id + '-sister-id"]' ).text().trim() + ')</small>'
+                                        }
+                                    }
                                     return false;
                                 }
                             } );

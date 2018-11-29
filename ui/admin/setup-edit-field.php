@@ -2,7 +2,7 @@
 $field = array_merge( $field_settings['field_defaults'], $field );
 
 // Migrate pick object when saving
-if ( 'pod' == pods_v_sanitized( 'pick_object', $field ) ) {
+if ( 'pod' == pods_v( 'pick_object', $field ) ) {
 	if ( isset( PodsMeta::$post_types[ $field['pick_val'] ] ) ) {
 		$field['pick_object'] = 'post_type';
 	} elseif ( isset( PodsMeta::$taxonomies[ $field['pick_val'] ] ) ) {
@@ -21,9 +21,9 @@ if ( 'pod' == pods_v_sanitized( 'pick_object', $field ) ) {
 
 $ignored_pick_objects = apply_filters( '', array( 'table' ) );
 
-if ( ! in_array( pods_v_sanitized( 'pick_object', $field ), $ignored_pick_objects, true ) ) {
+if ( ! in_array( pods_v( 'pick_object', $field ), $ignored_pick_objects, true ) ) {
 	// Set pick object
-	$field['pick_object'] = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sanitized( 'pick_val', $field ), '-' );
+	$field['pick_object'] = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val', $field ), '-' );
 }
 
 // Unset pick_val for the field to be used above
@@ -39,7 +39,7 @@ $data = array(
 	'row' => $pods_i,
 );
 ?>
-<tr id="row-<?php echo esc_attr( $pods_i ); ?>" class="pods-manage-row pods-field-init pods-field-<?php echo esc_attr( pods_v_sanitized( 'name', $field ) ) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top"<?php PodsForm::data( $data ); ?>>
+<tr id="row-<?php echo esc_attr( $pods_i ); ?>" class="pods-manage-row pods-field-init pods-field-<?php echo esc_attr( pods_v( 'name', $field ) ) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top"<?php PodsForm::data( $data ); ?>>
 	<th scope="row" class="check-field pods-manage-sort">
 		<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/handle.gif" alt="<?php esc_attr_e( 'Move', 'pods' ); ?>" />
 	</th>
@@ -52,10 +52,10 @@ $data = array(
 		</strong>
 
 		<?php
-		if ( '__1' != pods_v_sanitized( 'id', $field ) ) {
+		if ( '__1' != pods_v( 'id', $field ) ) {
 			?>
 			<span class="pods-manage-row-more">
-						[id: <?php echo esc_html( pods_v_sanitized( 'id', $field ) ); ?>]
+						[id: <?php echo esc_html( pods_v( 'id', $field ) ); ?>]
 					</span>
 			<?php
 		}
@@ -90,17 +90,24 @@ $data = array(
 	</td>
 	<td class="pods-manage-row-type">
 		<?php
-		$type = 'Unknown';
+		$type       = 'Unknown';
+		$field_type = pods_v( 'type', $field );
 
-		if ( isset( $field_types[ pods_v_sanitized( 'type', $field ) ] ) ) {
-			$type = $field_types[ pods_v_sanitized( 'type', $field ) ]['label'];
+		if ( $field_type && isset( $field_types[ $field_type ] ) ) {
+			$type = $field_types[ $field_type ]['label'];
 		}
 
-		echo esc_html( $type ) . ' <span class="pods-manage-row-more">[type: ' . pods_v_sanitized( 'type', $field ) . ']</span>';
+		$type = esc_html( $type );
+		
+		if ( 'pick' === $field_type && '' !== pods_v( 'sister_id', $field, '' ) ) {
+			$type .= ' <small>(' . esc_html__( 'Bi-directional Field', 'pods' ) . ')</small>';
+		}
 
-		$pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sanitized( 'pick_val', $field ), '-' );
+		echo $type . ' <span class="pods-manage-row-more">[type: ' . esc_html( $field_type ) . ']</span>';
 
-		if ( 'pick' == pods_v_sanitized( 'type', $field ) && '' != pods_v_sanitized( 'pick_object', $field, '' ) ) {
+		$pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val', $field ), '-' );
+
+		if ( 'pick' === pods_v( 'type', $field ) && '' !== pods_v( 'pick_object', $field, '' ) ) {
 			$pick_object_name = null;
 
 			foreach ( $field_settings['pick_object'] as $object => $object_label ) {
@@ -128,7 +135,7 @@ $data = array(
 							break;
 						}
 					}
-				} elseif ( pods_v_sanitized( 'pick_object', $field ) === $object ) {
+				} elseif ( pods_v( 'pick_object', $field ) === $object ) {
 					$pick_object_name = $object_label;
 
 					break;
@@ -143,7 +150,7 @@ $data = array(
 				}
 			}
 			?>
-			<br /><span class="pods-manage-field-type-desc">&rsaquo; <?php echo $pick_object_name; ?></span>
+			<br /><span class="pods-manage-field-type-desc">&rsaquo; <?php echo esc_html( $pick_object_name ); ?></span>
 			<?php
 		}//end if
 		?>

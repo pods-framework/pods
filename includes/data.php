@@ -1666,9 +1666,9 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 				$pick_val    = pods_v( 'pick_val', $params->field );
 				$table       = null;
 
-				if ( ! empty( $pick_object ) && ! empty( $pick_val ) )
+				if ( ! empty( $pick_object ) && ! empty( $pick_val ) ) {
 					$table = pods_api()->get_table_info(
-						$pick_object, 
+						$pick_object,
 						$pick_val,
 						null,
 						null,

@@ -33,7 +33,7 @@ If you find an issue that you believe to be a *bug*, [let us know](https://githu
 
 ## Contributions Welcome
 
-Anyone is welcome to contribute to Pods Framework. Please read the [guidelines for contributing](https://github.com/pods-framework/pods/blob/2.x/CONTRIBUTING.md) to this repository.
+Anyone is welcome to contribute to Pods Framework. Please read the [guidelines for contributing](CONTRIBUTING.md) to this repository.
 
 There are various ways you can contribute:
 

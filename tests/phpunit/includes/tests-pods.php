@@ -23,7 +23,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * The pods system under test
 	 *
 	 * @var   \Pods
-	 * @since 3.0
+	 * @since 3.0.0
 	 */
 	private $pods;
 
@@ -41,7 +41,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * Test the add method when passing empty parameters
 	 *
 	 * @covers Pods::add
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_add_empty() {
 
@@ -55,7 +55,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::exists
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_exists_exists() {
 
@@ -66,7 +66,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * Test pod does not exist
 	 *
 	 * @covers Pods::exists
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_exists_false() {
 
@@ -75,7 +75,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::exists
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_exists() {
 
@@ -85,7 +85,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::valid
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_exists_valid() {
 
@@ -97,7 +97,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::valid
 	 * @depends test_method_exists_valid
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_valid_invalid() {
 
@@ -107,7 +107,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	/**
 	 * @covers  Pods::valid
 	 * @depends test_method_exists_valid
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_valid_iterator() {
 
@@ -119,7 +119,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	/**
 	 * @covers  Pods::valid
 	 * @depends test_method_exists_valid
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_valid() {
 
@@ -129,7 +129,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::is_iterator
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_is_iterator() {
 
@@ -140,7 +140,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::stop_iterator
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_stop_iterator() {
 
@@ -152,7 +152,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::rewind
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_rewind_exists() {
 
@@ -162,7 +162,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	/**
 	 * @covers  Pods::rewind
 	 * @depends test_method_rewind_exists
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_rewind() {
 
@@ -173,7 +173,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::current
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_current_exists() {
 
@@ -185,7 +185,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::current
 	 * @depends test_method_current_exists
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_current_iterator_false() {
 
@@ -198,7 +198,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::current
 	 * @depends test_method_current_exists
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_current_iterator_true() {
 
@@ -208,7 +208,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::key
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_key_exists() {
 
@@ -220,7 +220,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::key
 	 * @depends test_method_key_exists
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_key_iterator_false() {
 
@@ -234,7 +234,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::key
 	 * @depends test_method_key_exists
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_key() {
 
@@ -245,7 +245,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::next
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_next_exists() {
 
@@ -257,7 +257,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::next
 	 * @depends test_method_next_exists
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_next_iterator_false() {
 
@@ -272,7 +272,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::next
 	 * @depends test_method_next_exists
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_next() {
 
@@ -284,7 +284,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::input
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_exists_input() {
 
@@ -296,7 +296,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::input
 	 * @depends test_method_exists_input
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_input_field_string_missing_field() {
 
@@ -309,7 +309,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::input
 	 * @depends test_method_exists_input
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_input_field_empty_array() {
 
@@ -319,7 +319,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::row
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_exists_row() {
 
@@ -329,7 +329,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	/**
 	 * @covers  Pods::row
 	 * @depends test_method_exists_row
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_row_false() {
 
@@ -339,7 +339,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	/**
 	 * @covers  Pods::row
 	 * @depends test_method_exists_row
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_row() {
 
@@ -349,7 +349,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::data
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_exists_data() {
 
@@ -359,7 +359,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	/**
 	 * @covers  Pods::data
 	 * @depends test_method_exists_data
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_data_empty_rows() {
 
@@ -370,7 +370,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	/**
 	 * @covers  Pods::data
 	 * @depends test_method_exists_data
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_data() {
 
@@ -380,7 +380,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::__get
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_exists_get() {
 
@@ -392,7 +392,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::__get
 	 * @depends test_method_exists_get
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_get() {
 
@@ -406,7 +406,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::__get
 	 * @depends test_method_exists_get
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_get_deprecated_property() {
 
@@ -422,7 +422,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::__get
 	 * @depends test_method_exists_get
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_get_deprecated_property_error() {
 
@@ -439,7 +439,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::__call
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_exists_call() {
 
@@ -451,7 +451,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::__call
 	 * @depends test_method_exists_call
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_call_method_does_not_exist() {
 
@@ -466,7 +466,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 *
 	 * @covers  Pods::__call
 	 * @depends test_method_exists_call
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_call_deprecated_method_error() {
 
@@ -481,7 +481,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::id
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_id_field_does_not_exist() {
 

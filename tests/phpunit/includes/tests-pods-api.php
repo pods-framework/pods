@@ -14,7 +14,7 @@ class Test_Pods_Api extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::init
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_exists_init() {
 
@@ -26,7 +26,7 @@ class Test_Pods_Api extends Pods_UnitTestCase {
 	 *
 	 * @covers  PodsAPI::init
 	 * @depends test_method_exists_init
-	 * @since   3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_init_no_pod() {
 
@@ -35,7 +35,7 @@ class Test_Pods_Api extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::__construct
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_construct_no_pod() {
 

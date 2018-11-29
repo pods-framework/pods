@@ -37,7 +37,7 @@ class Pods_Roles extends PodsComponent {
 	/**
 	 * Enqueue styles
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_assets() {
 
@@ -51,7 +51,7 @@ class Pods_Roles extends PodsComponent {
 	 * @param $component
 	 *
 	 * @return void
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin( $options, $component ) {
 
@@ -176,7 +176,9 @@ class Pods_Roles extends PodsComponent {
 
 		$capabilities = $this->get_capabilities();
 
-		$role_name = $role_label = $role_capabilities = null;
+		$role_name         = null;
+		$role_label        = null;
+		$role_capabilities = null;
 
 		foreach ( $wp_roles->role_objects as $key => $role ) {
 			if ( $key != $id ) {

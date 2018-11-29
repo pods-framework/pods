@@ -39,7 +39,7 @@ class Pods_Templates extends PodsComponent {
 	 *
 	 * @var object
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static $obj = null;
 
@@ -48,7 +48,7 @@ class Pods_Templates extends PodsComponent {
 	 *
 	 * @var bool
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static $deprecated = false;
 
@@ -57,7 +57,7 @@ class Pods_Templates extends PodsComponent {
 	 *
 	 * @var string
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	private $object_type = '_pods_template';
 
@@ -182,7 +182,7 @@ class Pods_Templates extends PodsComponent {
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
 			8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 			9  => sprintf(
-				__( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ), $labels->singular_name,
+				__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %4$s</a>', 'pods' ), $labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
 				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name
 			),
@@ -194,7 +194,7 @@ class Pods_Templates extends PodsComponent {
 			$messages[ $post_type->name ][6] = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
 			$messages[ $post_type->name ][8] = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
 			$messages[ $post_type->name ][9] = sprintf(
-				__( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels->singular_name,
+				__( '%1$s scheduled for: <strong>%2$s</strong>.', 'pods' ), $labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
 				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
 			);
@@ -207,7 +207,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Enqueue styles
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_assets() {
 
@@ -285,7 +285,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Clear cache on save
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param      $data
 	 * @param null $pod
@@ -318,7 +318,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Change post title placeholder text
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param $text
 	 * @param $post
@@ -333,7 +333,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Edit page form
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function edit_page_form() {
 
@@ -349,7 +349,7 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Add meta boxes to the page
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function add_meta_boxes() {
 
@@ -475,7 +475,7 @@ class Pods_Templates extends PodsComponent {
 	 * @param bool   $deprecated    Whether to use deprecated functionality based on old function usage
 	 *
 	 * @return mixed|string|void
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function template( $template_name, $code = null, $obj = null, $deprecated = false ) {
 
@@ -518,8 +518,10 @@ class Pods_Templates extends PodsComponent {
 			}
 		}
 
+		$slug = $template['slug'];
+
 		$code = apply_filters( 'pods_templates_pre_template', $code, $template, $obj );
-		$code = apply_filters( 'pods_templates_pre_template_' . $template['slug'], $code, $template, $obj );
+		$code = apply_filters( "pods_templates_pre_template_{$slug}", $code, $template, $obj );
 
 		ob_start();
 
@@ -553,7 +555,7 @@ class Pods_Templates extends PodsComponent {
 		$out = ob_get_clean();
 
 		$out = apply_filters( 'pods_templates_post_template', $out, $code, $template, $obj );
-		$out = apply_filters( 'pods_templates_post_template_' . $template['slug'], $out, $code, $template, $obj );
+		$out = apply_filters( "pods_templates_post_template_{$slug}", $out, $code, $template, $obj );
 
 		return $out;
 	}

@@ -312,15 +312,15 @@ class PodsInit {
 				'pods-i18n',
 			), '1.0.1'
 		);
-		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.css", array(), '1.0.1' );
+		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.css", array(), '1.0.2' );
 
 		// Marionette dependencies for MV fields
-		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.js', array( 'backbone' ), '2.0.0', true );
+		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '2.0.0', true );
 		wp_register_script(
-			'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array(
+			'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.min.js', array(
 				'backbone',
 				'backbone.radio',
-			), '3.1.0', true
+			), '3.3.1', true
 		);
 
 		// MV stuff
@@ -343,11 +343,12 @@ class PodsInit {
 		}
 
 		// Deal with specifics on admin pages
-		if ( is_admin() ) {
+		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 
-			// DFV must be enqueued on the media library page for items in grid mode (see #4785)
-			if ( $screen->base && 'upload' === $screen->base ) {
+			// DFV must be enqueued on the media library page for items in grid mode (#4785)
+			// and for posts due to the possibility that post-thumbnails are enabled (#4945)
+			if ( $screen->base && in_array( $screen->base, array( 'upload', 'post' ), true ) ) {
 				wp_enqueue_script( 'pods-dfv' );
 			}
 		}
@@ -369,7 +370,7 @@ class PodsInit {
 
 		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
 
-		if ( is_admin() ) {
+		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 
 			// Deregister the outdated Pods handlebars script on TEC event screen
@@ -498,8 +499,10 @@ class PodsInit {
 				'taxonomies' => array(),
 			);
 
-			$pods_post_types      = $pods_taxonomies = array();
-			$supported_post_types = $supported_taxonomies = array();
+			$pods_post_types      = array();
+			$pods_taxonomies      = array();
+			$supported_post_types = array();
+			$supported_taxonomies = array();
 
 			$post_format_post_types = array();
 
@@ -821,6 +824,7 @@ class PodsInit {
 				$pods_taxonomies[ $taxonomy_name ] = array(
 					'label'                 => $ct_label,
 					'labels'                => $ct_labels,
+					'description'           => esc_html( pods_v( 'description', $taxonomy ) ),
 					'public'                => (boolean) pods_v( 'public', $taxonomy, true ),
 					'show_ui'               => (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_in_menu'          => (boolean) pods_v( 'show_in_menu', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
@@ -947,11 +951,6 @@ class PodsInit {
 			// Max length for taxonomies are 32 characters
 			$taxonomy = substr( $taxonomy, 0, 32 );
 
-			// i18n compatibility for plugins that override it
-			if ( is_array( $options['rewrite'] ) && isset( $options['rewrite']['slug'] ) && ! empty( $options['rewrite']['slug'] ) ) {
-				$options['rewrite']['slug'] = _x( $options['rewrite']['slug'], 'URL taxonomy slug', 'pods' );
-			}
-
 			/**
 			 * Allow filtering of taxonomy options per taxonomy.
 			 *
@@ -959,7 +958,7 @@ class PodsInit {
 			 * @param string $taxonomy      Taxonomy name
 			 * @param array  $ct_post_types Associated Post Types
 			 */
-			$options = apply_filters( 'pods_register_taxonomy_' . $taxonomy, $options, $taxonomy, $ct_post_types );
+			$options = apply_filters( "pods_register_taxonomy_{$taxonomy}", $options, $taxonomy, $ct_post_types );
 
 			/**
 			 * Allow filtering of taxonomy options.
@@ -997,18 +996,13 @@ class PodsInit {
 			// Max length for post types are 20 characters
 			$post_type = substr( $post_type, 0, 20 );
 
-			// i18n compatibility for plugins that override it
-			if ( is_array( $options['rewrite'] ) && isset( $options['rewrite']['slug'] ) && ! empty( $options['rewrite']['slug'] ) ) {
-				$options['rewrite']['slug'] = _x( $options['rewrite']['slug'], 'URL slug', 'pods' );
-			}
-
 			/**
 			 * Allow filtering of post type options per post type.
 			 *
 			 * @param array  $options   Post type options
 			 * @param string $post_type Post type name
 			 */
-			$options = apply_filters( 'pods_register_post_type_' . $post_type, $options, $post_type );
+			$options = apply_filters( "pods_register_post_type_{$post_type}", $options, $post_type );
 
 			/**
 			 * Allow filtering of post type options.
@@ -1136,6 +1130,11 @@ class PodsInit {
 	 */
 	public function flush_rewrite_rules() {
 
+		// Only run $wp_rewrite->flush_rules() in an admin context.
+		if ( ! is_admin() ) {
+			return;
+		}
+
 		$flush = (int) pods_transient_get( 'pods_flush_rewrites' );
 
 		if ( 1 === $flush ) {
@@ -1212,7 +1211,7 @@ class PodsInit {
 				$messages[ $post_type['name'] ][6] = sprintf( __( '%s published.', 'pods' ), $labels['singular_name'] );
 				$messages[ $post_type['name'] ][8] = sprintf( __( '%s submitted.', 'pods' ), $labels['singular_name'] );
 				$messages[ $post_type['name'] ][9] = sprintf(
-					__( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels['singular_name'],
+					__( '%1$s scheduled for: <strong>%2$s</strong>.', 'pods' ), $labels['singular_name'],
 					// translators: Publish box date format, see http://php.net/date
 					date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
 				);
@@ -1624,6 +1623,9 @@ class PodsInit {
 		// Show admin bar links
 		add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
 
+		// Compatibility for Query Monitor conditionals
+		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
+
 		// Add WP-CLI commands
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
@@ -1817,5 +1819,20 @@ class PodsInit {
 			}
 		}
 
+	}
+
+	/**
+	 * Add Pods conditional functions to Query Monitor.
+	 *
+	 * @param  array $conditionals
+	 * @return array
+	 */
+	public function filter_query_monitor_conditionals( $conditionals ) {
+		$conditionals[] = 'pods_developer';
+		$conditionals[] = 'pods_tableless';
+		$conditionals[] = 'pods_strict';
+		$conditionals[] = 'pods_allow_deprecated';
+		$conditionals[] = 'pods_api_cache';
+		return $conditionals;
 	}
 }

@@ -234,7 +234,7 @@ class PodsField_Website extends PodsField {
 	 *
 	 * @return string
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function validate_url( $value, $options = null ) {
 		if ( empty( $value ) ) {
@@ -329,7 +329,7 @@ class PodsField_Website extends PodsField {
 	 *
 	 * @return string
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function validate_target( $value ) {
 		if ( ! empty( $value ) && '_blank' === $value ) {

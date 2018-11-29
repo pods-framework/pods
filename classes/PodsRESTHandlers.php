@@ -113,7 +113,7 @@ class PodsRESTHandlers {
 				/**
 				 * What output type to use for a related field REST response.
 				 *
-				 * @since 2.7
+				 * @since 2.7.0
 				 *
 				 * @param string                 $output_type The pick response output type.
 				 * @param string                 $field_name  The name of the field

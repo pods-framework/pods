@@ -32,7 +32,7 @@ class PodsAdmin {
 	 * @return \PodsAdmin
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since   2.0
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -64,7 +64,7 @@ class PodsAdmin {
 	/**
 	 * Init the admin area
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_init() {
 
@@ -107,7 +107,7 @@ class PodsAdmin {
 	/**
 	 * Attach requirements to admin header
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_head() {
 
@@ -174,6 +174,18 @@ class PodsAdmin {
 			}//end if
 		}//end if
 
+		/**
+		 * Filter to disable default loading of the DFV script. By default, Pods
+		 * will always enqueue the DFV script if is_admin()
+		 *
+		 * @param bool Whether or not to enqueue by default
+		 *
+		 * @since 2.7.10
+		 */
+		if ( apply_filters( 'pods_default_enqueue_dfv', true ) ) {
+			wp_enqueue_script( 'pods-dfv' );
+		}
+
 		// New Styles Enqueue
 		wp_enqueue_style( 'pods-styles' );
 	}
@@ -181,7 +193,7 @@ class PodsAdmin {
 	/**
 	 * Build the admin menus
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_menu() {
 
@@ -214,7 +226,9 @@ class PodsAdmin {
 						continue;
 					}
 
-					$pod = apply_filters( 'pods_advanced_content_type_pod_data_' . $pod['name'], $pod, $pod['name'] );
+					$pod_name = $pod['name'];
+
+					$pod = apply_filters( "pods_advanced_content_type_pod_data_{$pod_name}", $pod, $pod['name'] );
 					$pod = apply_filters( 'pods_advanced_content_type_pod_data', $pod, $pod['name'] );
 
 					if ( 1 === (int) pods_v( 'show_in_menu', $pod['options'], 0 ) ) {
@@ -789,15 +803,18 @@ class PodsAdmin {
 				'actions_disabled' => $actions_disabled,
 			);
 
-			$ui = apply_filters( 'pods_admin_ui_' . $pod->pod, apply_filters( 'pods_admin_ui', $ui, $pod->pod, $pod ), $pod->pod, $pod );
+			$pod_pod_name = $pod->pod;
+
+			$ui = apply_filters( "pods_admin_ui_{$pod_pod_name}", apply_filters( 'pods_admin_ui', $ui, $pod->pod, $pod ), $pod->pod, $pod );
 
 			// Force disabled actions, do not pass go, do not collect $two_hundred
 			$ui['actions_disabled'] = $actions_disabled;
 
 			pods_ui( $ui );
 		} else {
+			$pod_pod_name = $pod->pod;
 			do_action( 'pods_admin_ui_custom', $pod );
-			do_action( 'pods_admin_ui_custom_' . $pod->pod, $pod );
+			do_action( "pods_admin_ui_custom_{$pod_pod_name}", $pod );
 		}//end if
 	}
 
@@ -1146,6 +1163,9 @@ class PodsAdmin {
 
 		$addtl_args = compact( array( 'fields', 'labels', 'admin_ui', 'advanced' ) );
 
+		$pod_type = $pod['type'];
+		$pod_name = $pod['name'];
+
 		/**
 		 * Add or modify tabs in Pods editor for a specific Pod
 		 *
@@ -1155,12 +1175,12 @@ class PodsAdmin {
 		 *
 		 * @since  unknown
 		 */
-		$tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod['type'] . '_' . $pod['name'], $tabs, $pod, $addtl_args );
+		$tabs = apply_filters( "pods_admin_setup_edit_tabs_{$pod_type}_{$pod_name}", $tabs, $pod, $addtl_args );
 
 		/**
 		 * Add or modify tabs for any Pod in Pods editor of a specific post type.
 		 */
-		$tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod['type'], $tabs, $pod, $addtl_args );
+		$tabs = apply_filters( "pods_admin_setup_edit_tabs_{$pod_type}", $tabs, $pod, $addtl_args );
 
 		/**
 		 * Add or modify tabs in Pods editor for all pods.
@@ -1611,6 +1631,8 @@ class PodsAdmin {
 				),
 			);
 
+			$post_type_name = pods_v( 'name', $pod, 'post_type', true );
+
 			$options['advanced'] = array(
 				'public'                  => array(
 					'label'             => __( 'Public', 'pods' ),
@@ -1754,11 +1776,17 @@ class PodsAdmin {
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'pick',
 					'pick_object' => 'post-status',
-					'default'     => apply_filters( 'pods_api_default_status_' . pods_v( 'name', $pod, 'post_type', true ), 'draft', $pod ),
+					'default'     => apply_filters( "pods_api_default_status_{$post_type_name}", 'draft', $pod ),
 				),
 			);
 		} elseif ( 'taxonomy' === $pod['type'] ) {
 			$options['admin-ui'] = array(
+				'description'           => array(
+					'label'   => __( 'Taxonomy Description', 'pods' ),
+					'help'    => __( 'A short descriptive summary of what the taxonomy is.', 'pods' ),
+					'type'    => 'text',
+					'default' => '',
+				),
 				'show_ui'               => array(
 					'label'             => __( 'Show Admin UI', 'pods' ),
 					'help'              => __( 'Whether to generate a default UI for managing this taxonomy.', 'pods' ),
@@ -1890,7 +1918,7 @@ class PodsAdmin {
 				),
 				'hierarchical'            => array(
 					'label'             => __( 'Hierarchical', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
+					'help'              => __( 'Hierarchical taxonomies will have a list with checkboxes to select an existing category in the taxonomy admin box on the post edit page (like default post categories). Non-hierarchical taxonomies will just have an empty text field to type-in taxonomy terms to associate with the post (like default post tags).', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'dependency'        => true,
@@ -2202,6 +2230,9 @@ class PodsAdmin {
 			);
 		}//end if
 
+		$pod_type = $pod['type'];
+		$pod_name = $pod['name'];
+
 		/**
 		 * Add admin fields to the Pods editor for a specific Pod
 		 *
@@ -2210,7 +2241,7 @@ class PodsAdmin {
 		 *
 		 * @since  unkown
 		 */
-		$options = apply_filters( 'pods_admin_setup_edit_options_' . $pod['type'] . '_' . $pod['name'], $options, $pod );
+		$options = apply_filters( "pods_admin_setup_edit_options_{$pod_type}_{$pod_name}", $options, $pod );
 
 		/**
 		 * Add admin fields to the Pods editor for any Pod of a specific content type.
@@ -2218,7 +2249,7 @@ class PodsAdmin {
 		 * @param array  $options The Options fields.
 		 * @param object $pod     Current Pods object.
 		 */
-		$options = apply_filters( 'pods_admin_setup_edit_options_' . $pod['type'], $options, $pod );
+		$options = apply_filters( "pods_admin_setup_edit_options_{$pod_type}", $options, $pod );
 
 		/**
 		 * Add admin fields to the Pods editor for all Pods
@@ -2308,14 +2339,14 @@ class PodsAdmin {
 			/**
 			 * Modify Additional Field Options tab
 			 *
-			 * @since 2.7
+			 * @since 2.7.0
 			 *
 			 * @param array       $options Additional field type options,
 			 * @param string      $type    Field type,
 			 * @param array       $options Tabs, indexed by label,
 			 * @param object|Pods $pod     Pods object for the Pod this UI is for.
 			 */
-			$options['additional-field'][ $type ] = apply_filters( 'pods_admin_setup_edit_' . $type . '_additional_field_options', $options['additional-field'][ $type ], $type, $options, $pod );
+			$options['additional-field'][ $type ] = apply_filters( "pods_admin_setup_edit_{$type}_additional_field_options", $options['additional-field'][ $type ], $type, $options, $pod );
 			$options['additional-field'][ $type ] = apply_filters( 'pods_admin_setup_edit_additional_field_options', $options['additional-field'][ $type ], $type, $options, $pod );
 		}//end foreach
 
@@ -3209,7 +3240,9 @@ class PodsAdmin {
 
 		$params->method = $method->name;
 
-		$params = apply_filters( 'pods_api_' . $method->name, $params, $method );
+		$method_name = $method->name;
+
+		$params = apply_filters( "pods_api_{$method_name}", $params, $method );
 
 		$api = pods_api();
 
@@ -3282,7 +3315,7 @@ class PodsAdmin {
 	 *
 	 * @return array
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function configuration( $pod = null, $full_field_info = false ) {
 
@@ -3426,8 +3459,8 @@ class PodsAdmin {
 		if ( ! function_exists( 'register_rest_field' ) ) {
 			$options['rest-api'] = array(
 				'no_dependencies' => array(
-					'label' => __( sprintf( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta9</a>' ), 'pods' ),
-					'help'  => __( sprintf( 'See %s for more information.', '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/</a>' ), 'pods' ),
+					'label' => sprintf( __( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', 'pods' ), '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta9</a>' ),
+					'help'  => sprintf( __( 'See %s for more information.', 'pods' ), '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/</a>' ),
 					'type'  => 'html',
 				),
 			);
@@ -3469,7 +3502,7 @@ class PodsAdmin {
 			$options['rest-api'] = array(
 				'not_restable' => array(
 					'label' => __( 'Pods REST API support covers post type, taxonomy and user Pods.', 'pods' ),
-					'help'  => __( sprintf( 'See %s for more information.', '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/"</a>' ), 'pods' ),
+					'help'  => sprintf( __( 'See %s for more information.', 'pods' ), '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/"</a>' ),
 					'type'  => 'html',
 				),
 			);

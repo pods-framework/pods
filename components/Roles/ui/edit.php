@@ -128,7 +128,7 @@
 												</ul>
 
 												<p>
-													<a href="#add-capability" id="add-capability" class="button">Add Another Custom Capability</a>
+													<a href="#add-capability" id="add-capability" class="button"><?php _e( 'Add Another Custom Capability', 'pods' ); ?></a>
 												</p>
 											</div>
 										</div>
@@ -139,9 +139,8 @@
 							</div>
 							<!-- /#normal-sortables -->
 
-							<!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">
-						  </div>
-						   /#advanced-sortables -->
+							<!-- <div id="advanced-sortables" class="meta-box-sortables ui-sortable"></div> -->
+							<!-- /#advanced-sortables -->
 
 						</div>
 						<!-- /#post-body-content -->

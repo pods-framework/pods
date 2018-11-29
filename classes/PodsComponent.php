@@ -10,7 +10,7 @@ class PodsComponent {
 	/**
 	 * Setup initial component class.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -33,7 +33,7 @@ class PodsComponent {
 	 *
 	 * @return array $options
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * public function options () {
 	 * $options = array(
 	 * 'option_name' => array(
@@ -82,7 +82,7 @@ class PodsComponent {
 	 *
 	 * @param array $options Component options.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function handler( $options ) {
 		// run code based on $options set
@@ -93,7 +93,7 @@ class PodsComponent {
 	 *
 	 * @param array $options Component options.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * public function admin ( $options ) {
 	 * // run code based on $options set
 	 * }

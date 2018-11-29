@@ -204,6 +204,7 @@ Enhancement: Removed old forum feed, inserted the wordpress.org feed, and squelc
 * Fixed: Always enqueue the DFV script by default if in the admin, #5111 (@pglewis, @sc0ttkclark)
 * Fixed: Add static groups cache for PodsMeta::groups_get() to improve memory usage on bulk wp_insert_post and other similar calls, #5088 (@sc0ttkclark)
 * Fixed: Only disable components when using PODS_TABLELESS if the component is relying on custom tables, #5206 (@JoryHogeveen)
+* Fixed: PHP Warning for array key pods_rel not found, #5210 (@JoryHogeveen)
 
 = 2.7.9 - August 9th 2018  =
 

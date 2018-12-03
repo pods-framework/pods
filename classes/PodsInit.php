@@ -164,7 +164,7 @@ class PodsInit {
 		$loaders = array(
 			array(
 				'prefix'    => 'Pods',
-				'separator' => '__',
+				'separator' => '\\', // Namespace
 				'path'      => PODS_DIR . 'src',
 			),
 			array(

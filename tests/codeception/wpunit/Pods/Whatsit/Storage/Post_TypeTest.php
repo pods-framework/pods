@@ -1,21 +1,21 @@
 <?php
 
-namespace Pods_Unit_Tests\Object;
+namespace Pods_Unit_Tests\Whatsit;
 
-use Pods_Unit_Tests\Pods_ObjectTestCase;
-use Pods__Object__Storage__Post_Type;
-use Pods__Object;
+use Pods_Unit_Tests\Pods_WhatsitTestCase;
+use Pods\Whatsit\Storage\Post_Type;
+use Pods\Whatsit;
 use WP_Post;
 
 /**
- * @group  pods-object
- * @group  pods-object-storage
- * @covers Pods__Object__Storage__Post_Type
+ * @group  pods-whatsit
+ * @group  pods-whatsit-storage
+ * @covers Post_Type
  */
-class Post_TypeTest extends Pods_ObjectTestCase {
+class Post_TypeTest extends Pods_WhatsitTestCase {
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::get_storage_type
+	 * @covers Post_Type::get_storage_type
 	 */
 	public function test_get_storage_type() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'get_storage_type' ), 'Method get_storage_type does not exist' );
@@ -24,7 +24,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::get
+	 * @covers Post_Type::get
 	 */
 	public function test_get() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'get' ), 'Method get does not exist' );
@@ -33,7 +33,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::find
+	 * @covers Post_Type::find
 	 */
 	public function test_find() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
@@ -42,7 +42,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::find
+	 * @covers Post_Type::find
 	 */
 	public function test_find_object_type() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
@@ -60,7 +60,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::find
+	 * @covers Post_Type::find
 	 */
 	public function test_find_secondary() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
@@ -90,7 +90,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::find
+	 * @covers Post_Type::find
 	 */
 	public function test_find_args() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
@@ -137,7 +137,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::find
+	 * @covers Post_Type::find
 	 */
 	public function test_find_id() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
@@ -165,7 +165,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::find
+	 * @covers Post_Type::find
 	 */
 	public function test_find_name() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
@@ -193,7 +193,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::find
+	 * @covers Post_Type::find
 	 */
 	public function test_find_parent() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
@@ -221,7 +221,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::find
+	 * @covers Post_Type::find
 	 */
 	public function test_find_status() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
@@ -242,7 +242,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::find
+	 * @covers Post_Type::find
 	 */
 	public function test_find_order() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
@@ -294,7 +294,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::find
+	 * @covers Post_Type::find
 	 */
 	public function test_find_orderby() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
@@ -338,7 +338,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::find
+	 * @covers Post_Type::find
 	 */
 	public function test_find_limit() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'find' ), 'Method find does not exist' );
@@ -373,7 +373,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::add
+	 * @covers Post_Type::add
 	 */
 	public function test_add() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'add' ), 'Method add does not exist' );
@@ -408,7 +408,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::save
+	 * @covers Post_Type::save
 	 */
 	public function test_save() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'save' ), 'Method save does not exist' );
@@ -445,7 +445,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage::get_args
+	 * @covers Storage::get_args
 	 */
 	public function test_get_args() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'get_args' ), 'Method get_args does not exist' );
@@ -483,7 +483,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage::save_args
+	 * @covers Storage::save_args
 	 */
 	public function test_save_args() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'save_args' ), 'Method save_args does not exist' );
@@ -510,7 +510,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::duplicate
+	 * @covers Post_Type::duplicate
 	 */
 	public function test_duplicate() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'duplicate' ), 'Method duplicate does not exist' );
@@ -546,7 +546,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::delete
+	 * @covers Post_Type::delete
 	 */
 	public function test_delete() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'delete' ), 'Method delete does not exist' );
@@ -569,7 +569,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::reset
+	 * @covers Post_Type::reset
 	 */
 	public function test_reset() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'reset' ), 'Method reset does not exist' );
@@ -588,7 +588,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 	}
 
 	/**
-	 * @covers Pods__Object__Storage__Post_Type::to_object
+	 * @covers Post_Type::to_object
 	 */
 	public function test_to_object() {
 		$this->assertTrue( method_exists( $this->pods_object_storage, 'to_object' ), 'Method to_object does not exist' );
@@ -597,7 +597,7 @@ class Post_TypeTest extends Pods_ObjectTestCase {
 
 		$to = $this->pods_object_storage->to_object( $post );
 
-		$this->assertInstanceOf( Pods__Object::class, $to );
+		$this->assertInstanceOf( Whatsit::class, $to );
 		$this->assertEquals( $this->pods_object_field->get_object_type(), $to->get_object_type() );
 		$this->assertEquals( $this->pods_object_field->get_id(), $to->get_id() );
 		$this->assertEquals( $this->pods_object_field->get_name(), $to->get_name() );

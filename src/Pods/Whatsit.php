@@ -1,7 +1,11 @@
 <?php
 
+namespace Pods;
+
+use Pods\Whatsit\Collection;
+
 /**
- * Pods__Object abstract class.
+ * Whatsit abstract class.
  *
  * @method string      get_object_type()
  * @method string|null get_storage_type()
@@ -31,7 +35,7 @@
  *
  * @since 2.8
  */
-abstract class Pods__Object implements ArrayAccess, JsonSerializable {
+abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 
 	/**
 	 * @var string
@@ -40,6 +44,7 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 
 	/**
 	 * @var array
+	 * @noinspection PropertyCanBeStaticInspection
 	 */
 	protected $args = array(
 		'object_type'  => '',
@@ -73,9 +78,9 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 	protected $storage_type = '';
 
 	/**
-	 * Pods__Object constructor.
+	 * Whatsit constructor.
 	 *
-	 * @todo Define storage per Pods__Object.
+	 * @todo Define storage per Whatsit.
 	 *
 	 * @param array     $args        {
 	 *                               Object arguments.
@@ -101,7 +106,7 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 	 * @param string  $serialized Serialized representation of the object.
 	 * @param boolean $to_args    Return as arguments array.
 	 *
-	 * @return Pods__Object|array|null
+	 * @return Whatsit|array|null
 	 */
 	public static function from_serialized( $serialized, $to_args = false ) {
 		$object = maybe_unserialize( $serialized );
@@ -117,7 +122,7 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 		if ( is_array( $object ) ) {
 			$called_class = get_called_class();
 
-			/** @var Pods__Object $object */
+			/** @var Whatsit $object */
 			$object = new $called_class( $object );
 
 			if ( $to_args ) {
@@ -136,15 +141,16 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 	 * @param string  $json    JSON representation of the object.
 	 * @param boolean $to_args Return as arguments array.
 	 *
-	 * @return Pods__Object|array|null
+	 * @return Whatsit|array|null
 	 */
 	public static function from_json( $json, $to_args = false ) {
+		/** @noinspection PhpUsageOfSilenceOperatorInspection */
 		$args = @json_decode( $json, true );
 
 		if ( is_array( $args ) ) {
 			if ( ! empty( $args['id'] ) ) {
 				// Check if we already have an object registered and available.
-				$object = Pods__Object__Collection::get_instance()->get_object( $args['id'] );
+				$object = Collection::get_instance()->get_object( $args['id'] );
 
 				if ( $object ) {
 					if ( $to_args ) {
@@ -157,7 +163,7 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 
 			$called_class = get_called_class();
 
-			/** @var Pods__Object $object */
+			/** @var Whatsit $object */
 			$object = new $called_class( $args );
 
 			if ( $to_args ) {
@@ -165,7 +171,7 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 			}
 
 			return $object;
-		}
+		}//end if
 
 		return null;
 	}
@@ -176,12 +182,12 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 	 * @param array   $array   Array configuration.
 	 * @param boolean $to_args Return as arguments array.
 	 *
-	 * @return Pods__Object|array|null
+	 * @return Whatsit|array|null
 	 */
 	public static function from_array( array $array, $to_args = false ) {
 		if ( ! empty( $array['id'] ) ) {
 			// Check if we already have an object registered and available.
-			$object = Pods__Object__Collection::get_instance()->get_object( $array['id'] );
+			$object = Collection::get_instance()->get_object( $array['id'] );
 
 			if ( $object ) {
 				if ( $to_args ) {
@@ -194,7 +200,7 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 
 		$called_class = get_called_class();
 
-		/** @var Pods__Object $object */
+		/** @var Whatsit $object */
 		$object = new $called_class( $array );
 
 		if ( $to_args ) {
@@ -406,7 +412,7 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 		);
 
 		if ( isset( $special_args[ $arg ] ) ) {
-			return call_user_func( array( $this, $special_args[ $arg ] ) );
+			return $this->{$special_args[ $arg ]}();
 		}
 
 		if ( ! isset( $this->args[ $arg ] ) ) {
@@ -537,13 +543,13 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 	/**
 	 * Get object parent.
 	 *
-	 * @return Pods__Object|null Object parent, or null if not set.
+	 * @return Whatsit|null Object parent, or null if not set.
 	 */
 	public function get_parent_object() {
 		$parent = $this->get_parent();
 
 		if ( $parent ) {
-			$parent = Pods__Object__Collection::get_instance()->get_object( $parent );
+			$parent = Collection::get_instance()->get_object( $parent );
 		}
 
 		return $parent;
@@ -552,13 +558,13 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 	/**
 	 * Get object group.
 	 *
-	 * @return Pods__Object|null Object group, or null if not set.
+	 * @return Whatsit|null Object group, or null if not set.
 	 */
 	public function get_group_object() {
 		$group = $this->get_group();
 
 		if ( $group ) {
-			$group = Pods__Object__Collection::get_instance()->get_object( $group );
+			$group = Collection::get_instance()->get_object( $group );
 
 			if ( $group ) {
 				$this->set_arg( 'group', $group->get_identifier() );
@@ -571,14 +577,14 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 	/**
 	 * Get fields for object.
 	 *
-	 * @return Pods__Object[] List of field objects.
+	 * @return Whatsit[] List of field objects.
 	 */
 	public function get_fields() {
 		if ( array() === $this->_fields ) {
 			return array();
 		}
 
-		$object_collection = Pods__Object__Collection::get_instance();
+		$object_collection = Collection::get_instance();
 
 		$storage_object = $object_collection->get_storage_object( $this->get_arg( 'storage_type' ) );
 
@@ -615,7 +621,7 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 	/**
 	 * Get object fields for object.
 	 *
-	 * @return Pods__Object[] List of object field objects.
+	 * @return Whatsit[] List of object field objects.
 	 */
 	public function get_object_fields() {
 		return array();
@@ -686,7 +692,7 @@ abstract class Pods__Object implements ArrayAccess, JsonSerializable {
 			}
 
 			return null;
-		}
+		}//end if
 
 		return null;
 	}

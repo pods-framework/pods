@@ -1,11 +1,17 @@
 <?php
 
+namespace Pods\Whatsit\Storage;
+
+use Pods\Whatsit;
+use Pods\Whatsit\Collection;
+use Pods\Whatsit\Storage;
+
 /**
- * Pods__Object__Storage__Post_Type class.
+ * Post_Type class.
  *
  * @since 2.8
  */
-class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
+class Post_Type extends Storage {
 
 	/**
 	 * {@inheritdoc}
@@ -155,7 +161,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 					'compare' => 'IN',
 				);
 			}
-		}
+		}//end foreach
 
 		if ( ! empty( $args['id'] ) ) {
 			$args['id'] = (array) $args['id'];
@@ -236,12 +242,10 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 		$current_language = false;
 
 		// Get current language data
-		$lang_data = PodsInit::$i18n->get_current_language_data();
+		$lang_data = \PodsInit::$i18n->get_current_language_data();
 
-		if ( $lang_data ) {
-			if ( ! empty( $lang_data['language'] ) ) {
-				$current_language = $lang_data['language'];
-			}
+		if ( $lang_data && ! empty( $lang_data['language'] ) ) {
+			$current_language = $lang_data['language'];
 		}
 
 		$cache_key = null;
@@ -251,7 +255,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 			$cache_key_parts = array(
 				'pods_object_post_type_find',
 				$current_language,
-				json_encode( $post_args )
+				wp_json_encode( $post_args ),
 			);
 
 			/**
@@ -272,7 +276,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 			if ( empty( $args['refresh'] ) ) {
 				$posts = pods_transient_get( $cache_key );
 			}
-		}
+		}//end if
 
 		if ( ! is_array( $posts ) ) {
 			$posts = get_posts( $post_args );
@@ -295,7 +299,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function add( Pods__Object $object ) {
+	public function add( Whatsit $object ) {
 		$post_data = array(
 			'post_title'   => $object->get_label(),
 			'post_name'    => $object->get_name(),
@@ -312,7 +316,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 		$added = wp_insert_post( $post_data );
 
 		if ( is_int( $added ) && 0 < $added ) {
-			$object_collection = Pods__Object__Collection::get_instance();
+			$object_collection = Collection::get_instance();
 
 			// Remove any other references.
 			$object_collection->unregister_object( $object );
@@ -335,7 +339,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function save( Pods__Object $object ) {
+	public function save( Whatsit $object ) {
 		$post_data = array(
 			'ID'           => $object->get_id(),
 			'post_title'   => $object->get_label(),
@@ -349,7 +353,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 		$saved = wp_update_post( $post_data );
 
 		if ( is_int( $saved ) && 0 < $saved ) {
-			// @todo Update Pods__Object__Collection id/identifier.
+			// @todo Update Collection id/identifier.
 
 			$object->set_arg( 'id', $saved );
 
@@ -366,7 +370,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_args( Pods__Object $object ) {
+	public function get_args( Whatsit $object ) {
 		$meta = get_post_meta( $object->get_id() );
 
 		$args = array();
@@ -392,7 +396,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function save_args( Pods__Object $object ) {
+	public function save_args( Whatsit $object ) {
 		$args = $object->get_args();
 
 		$excluded = array(
@@ -427,7 +431,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function duplicate( Pods__Object $object ) {
+	public function duplicate( Whatsit $object ) {
 		$duplicated_object = clone $object;
 
 		$duplicated_object->set_arg( 'id', null );
@@ -439,7 +443,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function delete( Pods__Object $object ) {
+	public function delete( Whatsit $object ) {
 		$deleted = wp_delete_post( $object->get_id(), true );
 
 		if ( false !== $deleted && ! is_wp_error( $deleted ) ) {
@@ -455,7 +459,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 
 			pods_api()->cache_flush_pods( $object );
 
-			$object_collection = Pods__Object__Collection::get_instance();
+			$object_collection = Collection::get_instance();
 			$object_collection->unregister_object( $object );
 
 			$object->set_arg( 'id', null );
@@ -469,19 +473,20 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function reset( Pods__Object $object ) {
+	public function reset( Whatsit $object ) {
+		// @todo Fill this in.
 		return false;
 	}
 
 	/**
 	 * Setup object from a Post ID or Post object.
 	 *
-	 * @param WP_Post|array|int $post Post object or ID of the object.
+	 * @param \WP_Post|array|int $post Post object or ID of the object.
 	 *
-	 * @return Pods__Object|null
+	 * @return Whatsit|null
 	 */
 	public function to_object( $post ) {
-		if ( null !== $post && ! $post instanceof WP_Post ) {
+		if ( null !== $post && ! $post instanceof \WP_Post ) {
 			$post = get_post( $post );
 		}
 
@@ -493,7 +498,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 			return null;
 		}
 
-		$object_collection = Pods__Object__Collection::get_instance();
+		$object_collection = Collection::get_instance();
 
 		// Check if we already have an object registered and available.
 		$object = $object_collection->get_object( $post->ID );
@@ -501,6 +506,8 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 		if ( $object ) {
 			return $object;
 		}
+
+		$args = array();
 
 		foreach ( $this->primary_args as $object_arg => $arg ) {
 			$args[ $arg ] = '';
@@ -522,7 +529,7 @@ class Pods__Object__Storage__Post_Type extends Pods__Object__Storage {
 			return null;
 		}
 
-		/** @var Pods__Object $object */
+		/** @var Whatsit $object */
 		$object = new $class_name( $args );
 
 		$object->set_arg( 'storage_type', $this->get_storage_type() );

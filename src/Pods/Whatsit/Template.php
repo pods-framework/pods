@@ -1,16 +1,20 @@
 <?php
 
+namespace Pods\Whatsit;
+
+use Pods\Whatsit;
+
 /**
- * Pods__Object__Page class.
+ * Template class.
  *
  * @since 2.8
  */
-class Pods__Object__Page extends Pods__Object {
+class Template extends Whatsit {
 
 	/**
 	 * {@inheritdoc}
 	 */
-	protected static $type = 'page';
+	protected static $type = 'template';
 
 	/**
 	 * {@inheritdoc}

@@ -1,14 +1,23 @@
 <?php
 
+namespace Pods\Whatsit;
+
+use Pods\Whatsit;
+use Pods\Whatsit\Pod;
+use Pods\Whatsit\Field;
+use Pods\Whatsit\Group;
+use Pods\Whatsit\Storage;
+use Pods\Whatsit\Storage\Post_Type;
+
 /**
- * Pods__Object__Collection class.
+ * Collection class.
  *
  * @since 2.8
  */
-class Pods__Object__Collection {
+class Collection {
 
 	/**
-	 * @var Pods__Object__Collection
+	 * @var Collection
 	 */
 	protected static $instance;
 
@@ -23,7 +32,7 @@ class Pods__Object__Collection {
 	protected $storage_types = array();
 
 	/**
-	 * @var Pods__Object__Storage[]
+	 * @var Storage[]
 	 */
 	protected $storage_engine = array();
 
@@ -38,7 +47,7 @@ class Pods__Object__Collection {
 	protected $object_ids = array();
 
 	/**
-	 * Pods__Object__Collection constructor.
+	 * Collection constructor.
 	 */
 	protected function __construct() {
 		$this->object_types  = $this->get_default_object_types();
@@ -53,9 +62,9 @@ class Pods__Object__Collection {
 	 */
 	public function get_default_object_types() {
 		return array(
-			'pod'   => 'Pods__Object__Pod',
-			'field' => 'Pods__Object__Field',
-			'group' => 'Pods__Object__Group',
+			'pod'   => __NAMESPACE__ . '\Pod',
+			'field' => __NAMESPACE__ . '\Field',
+			'group' => __NAMESPACE__ . '\Group',
 		);
 	}
 
@@ -66,7 +75,7 @@ class Pods__Object__Collection {
 	 */
 	public function get_default_storage_types() {
 		return array(
-			'post_type' => 'Pods__Object__Storage__Post_Type',
+			'post_type' => __NAMESPACE__ . '\Storage\Post_Type',
 		);
 	}
 
@@ -104,11 +113,11 @@ class Pods__Object__Collection {
 	/**
 	 * Get instance of object.
 	 *
-	 * @return Pods__Object__Collection
+	 * @return Collection
 	 */
 	public static function get_instance() {
 		if ( ! self::$instance ) {
-			self::$instance = new self;
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -188,11 +197,11 @@ class Pods__Object__Collection {
 	/**
 	 * Register an object storage type to collection.
 	 *
-	 * @param string                       $storage_type Pods object storage type.
-	 * @param string|Pods__Object__Storage $class_name   Object storage class name or object.
+	 * @param string         $storage_type Pods object storage type.
+	 * @param string|Storage $class_name   Object storage class name or object.
 	 */
 	public function register_storage_type( $storage_type, $class_name ) {
-		if ( $class_name instanceof Pods__Object__Storage ) {
+		if ( $class_name instanceof Storage ) {
 			$this->storage_engine[ $storage_type ] = clone $class_name;
 
 			$class_name = get_class( $class_name );
@@ -273,7 +282,7 @@ class Pods__Object__Collection {
 	 *
 	 * @param string $storage_type Object storage type.
 	 *
-	 * @return Pods__Object__Storage Storage type object.
+	 * @return Storage Storage type object.
 	 */
 	public function get_storage_object( $storage_type ) {
 		if ( isset( $this->storage_engine[ $storage_type ] ) ) {
@@ -286,7 +295,7 @@ class Pods__Object__Collection {
 			return null;
 		}
 
-		$storage_object = new $class_name;
+		$storage_object = new $class_name();
 
 		$this->storage_engine[ $storage_type ] = $storage_object;
 
@@ -296,13 +305,13 @@ class Pods__Object__Collection {
 	/**
 	 * Register an object to collection.
 	 *
-	 * @param Pods__Object|array $object Pods object.
+	 * @param Whatsit|array $object Pods object.
 	 */
 	public function register_object( $object ) {
 		$id         = null;
 		$identifier = null;
 
-		if ( $object instanceof Pods__Object ) {
+		if ( $object instanceof Whatsit ) {
 			$id         = $object->get_id();
 			$identifier = $object->get_identifier();
 		} elseif ( is_array( $object ) ) {
@@ -310,7 +319,7 @@ class Pods__Object__Collection {
 				$id = $object['id'];
 			}
 
-			$identifier = Pods__Object::get_identifier_from_args( $object );
+			$identifier = Whatsit::get_identifier_from_args( $object );
 		} else {
 			// Don't register this object.
 			return;
@@ -321,7 +330,7 @@ class Pods__Object__Collection {
 			$this->object_ids[ $id ] = $identifier;
 		}
 
-		if ( $object instanceof Pods__Object ) {
+		if ( $object instanceof Whatsit ) {
 			$object = clone $object;
 		}
 
@@ -331,14 +340,14 @@ class Pods__Object__Collection {
 	/**
 	 * Unregister an object to collection.
 	 *
-	 * @param string|Pods__Object|array $identifier Object identifier, ID, or Pods object instance.
+	 * @param string|Whatsit|array $identifier Object identifier, ID, or Pods object instance.
 	 *
 	 * @return boolean Whether the object was successfully unregistered.
 	 */
 	public function unregister_object( $identifier ) {
 		$defaults = $this->get_default_objects();
 
-		if ( $identifier instanceof Pods__Object ) {
+		if ( $identifier instanceof Whatsit ) {
 			$id         = $identifier->get_id();
 			$identifier = $identifier->get_identifier();
 		} else {
@@ -396,7 +405,7 @@ class Pods__Object__Collection {
 	/**
 	 * Get objects from collection.
 	 *
-	 * @return Pods__Object[] List of objects.
+	 * @return Whatsit[] List of objects.
 	 */
 	public function get_objects() {
 		$objects = array_map( array( $this, 'get_object' ), $this->objects );
@@ -408,13 +417,13 @@ class Pods__Object__Collection {
 	/**
 	 * Get object from collection.
 	 *
-	 * @param string|null|Pods__Object|array $identifier Object identifier, ID, or the object/array itself.
+	 * @param string|null|Whatsit|array $identifier Object identifier, ID, or the object/array itself.
 	 *
-	 * @return Pods__Object|null Object or null if not found.
+	 * @return Whatsit|null Object or null if not found.
 	 */
 	public function get_object( $identifier ) {
 		// Is this already an object?
-		if ( $identifier instanceof Pods__Object ) {
+		if ( $identifier instanceof Whatsit ) {
 			return $this->setup_object( $identifier );
 		}
 
@@ -442,12 +451,12 @@ class Pods__Object__Collection {
 	/**
 	 * Setup object if it needs to be.
 	 *
-	 * @param Pods__Object|array $object Pods object or array.
+	 * @param Whatsit|array $object Pods object or array.
 	 *
-	 * @return Pods__Object|null Pods object or null if not able to setup.
+	 * @return Whatsit|null Pods object or null if not able to setup.
 	 */
 	public function setup_object( $object ) {
-		if ( $object instanceof Pods__Object ) {
+		if ( $object instanceof Whatsit ) {
 			return $object;
 		}
 
@@ -467,8 +476,8 @@ class Pods__Object__Collection {
 			return null;
 		}
 
-		/** @var Pods__Object $object */
-		$object = new $class_name;
+		/** @var Whatsit $object */
+		$object = new $class_name();
 		$object->setup( $args );
 
 		$this->objects[ $object->get_identifier() ] = $object;

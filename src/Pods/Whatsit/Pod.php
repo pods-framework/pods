@@ -1,11 +1,15 @@
 <?php
 
+namespace Pods\Whatsit;
+
+use Pods\Whatsit;
+
 /**
- * Pods__Object__Pod class.
+ * Pod class.
  *
  * @since 2.8
  */
-class Pods__Object__Pod extends Pods__Object {
+class Pod extends Whatsit {
 
 	/**
 	 * {@inheritdoc}
@@ -24,7 +28,7 @@ class Pods__Object__Pod extends Pods__Object {
 
 		$object_fields = $api->get_wp_object_fields( $this->get_type(), $this );
 
-		$object_collection = Pods__Object__Collection::get_instance();
+		$object_collection = Collection::get_instance();
 
 		$fields = array();
 

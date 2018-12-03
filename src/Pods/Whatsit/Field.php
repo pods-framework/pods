@@ -1,11 +1,15 @@
 <?php
 
+namespace Pods\Whatsit;
+
+use Pods\Whatsit;
+
 /**
- * Pods__Object__Field class.
+ * Field class.
  *
  * @since 2.8
  */
-class Pods__Object__Field extends Pods__Object {
+class Field extends Whatsit {
 
 	/**
 	 * {@inheritdoc}
@@ -22,7 +26,7 @@ class Pods__Object__Field extends Pods__Object {
 
 		$type = $this->get_type();
 
-		$simple_tableless_objects = PodsForm::simple_tableless_objects();
+		$simple_tableless_objects = \PodsForm::simple_tableless_objects();
 
 		$related_type = $this->get_arg( $type . '_object' );
 

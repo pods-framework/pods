@@ -2,14 +2,14 @@
 
 namespace Pods_Unit_Tests;
 
-use Pods__Object__Collection;
-use pods_object_storage;
-use Pods__Object;
+use Pods\Whatsit\Collection;
+use Pods\Whatsit\Storage;
+use Pods\Whatsit;
 
 /**
  * Class Pods_ObjectTestCase
  */
-class Pods_ObjectTestCase extends Pods_UnitTestCase {
+class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 
 	/**
 	 * @var pods_object_storage
@@ -32,17 +32,17 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 	protected $field_args;
 
 	/**
-	 * @var Pods__Object
+	 * @var Whatsit
 	 */
 	protected $pods_object_pod;
 
 	/**
-	 * @var Pods__Object
+	 * @var Whatsit
 	 */
 	protected $pods_object_group;
 
 	/**
-	 * @var Pods__Object
+	 * @var Whatsit
 	 */
 	protected $pods_object_field;
 
@@ -57,7 +57,7 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 	protected $storage_type = 'post_type';
 
 	public function setUp() {
-		$object_collection = Pods__Object__Collection::get_instance();
+		$object_collection = Collection::get_instance();
 
 		$this->pods_object_storage = $object_collection->get_storage_object( $this->storage_type );
 
@@ -111,7 +111,7 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 		$this->group_args = array();
 		$this->field_args = array();
 
-		$object_collection = Pods__Object__Collection::get_instance();
+		$object_collection = Collection::get_instance();
 		$object_collection->flush_objects();
 
 		unset( $this->pods_object_storage );
@@ -120,12 +120,12 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * Setup and return a Pods__Object.
+	 * Setup and return a Whatsit.
 	 *
 	 * @param array  $args Object arguments.
 	 * @param string $type Object type.
 	 *
-	 * @return Pods__Object
+	 * @return Whatsit
 	 */
 	public function setup_pods_object( array $args = array(), $type = '' ) {
 		$defaults = array(
@@ -144,11 +144,11 @@ class Pods_ObjectTestCase extends Pods_UnitTestCase {
 
 		$args['custom1'] = $args['custom1'] . '-' . $args['name'];
 
-		$object_collection = Pods__Object__Collection::get_instance();
+		$object_collection = Collection::get_instance();
 
 		$class_name = $object_collection->get_object_type( $args['object_type'] );
 
-		/** @var Pods__Object $object */
+		/** @var Whatsit $object */
 		$object = new $class_name;
 		$object->setup( $args );
 

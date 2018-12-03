@@ -1121,9 +1121,9 @@ class PodsInit {
 				continue;
 			}
 
-			$pod_id = array_search( $post_type_name, $post_type_names, true );
+			$pod_id = array_search( $post_type_name, $post_type_names, false );
 
-			if ( ! $pod_id ) {
+			if ( ! $pod_id || ! isset( $post_types[ $pod_id ] ) ) {
 				// Post type not a pod
 				continue;
 			}
@@ -1152,9 +1152,9 @@ class PodsInit {
 				continue;
 			}
 
-			$pod_id = array_search( $taxonomy_name, $taxonomy_names, true );
+			$pod_id = array_search( $taxonomy_name, $taxonomy_names, false );
 
-			if ( ! $pod_id ) {
+			if ( ! $pod_id || ! isset( $taxonomies[ $pod_id ] ) ) {
 				// Taxonomy not a pod
 				continue;
 			}

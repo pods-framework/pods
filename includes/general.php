@@ -218,7 +218,6 @@ function pods_error( $error, $obj = null ) {
 			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
 				wp_die( $error, '', array( 'back_link' => true ) );
 			} else {
-				trigger_error( $error . ': ' . __METHOD__ );
 				die( sprintf( '<e>%s</e>', $error ) );
 			}
 		} elseif ( 'wp_error' === $error_mode ) {

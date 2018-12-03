@@ -211,28 +211,6 @@ abstract class Storage {
 	}
 
 	/**
-	 * Get object argument data.
-	 *
-	 * @param Whatsit $object Object with arguments to save.
-	 *
-	 * @return array
-	 */
-	public function get_args( Whatsit $object ) {
-		return $object->get_args();
-	}
-
-	/**
-	 * Save object argument data.
-	 *
-	 * @param Whatsit $object Object with arguments to save.
-	 *
-	 * @return bool
-	 */
-	public function save_args( Whatsit $object ) {
-		return true;
-	}
-
-	/**
 	 * Duplicate an object.
 	 *
 	 * @param Whatsit $object Object to duplicate.
@@ -346,6 +324,28 @@ abstract class Storage {
 	 * @return bool
 	 */
 	public function reset( Whatsit $object ) {
+		return false;
+	}
+
+	/**
+	 * Get object argument data.
+	 *
+	 * @param Whatsit $object Object with arguments to save.
+	 *
+	 * @return array
+	 */
+	public function get_args( Whatsit $object ) {
+		return $object->get_args();
+	}
+
+	/**
+	 * Save object argument data.
+	 *
+	 * @param Whatsit $object Object with arguments to save.
+	 *
+	 * @return bool
+	 */
+	public function save_args( Whatsit $object ) {
 		return false;
 	}
 

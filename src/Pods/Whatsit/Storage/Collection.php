@@ -278,4 +278,11 @@ class Collection extends Storage {
 		return true;
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function save_args( Whatsit $object ) {
+		return true;
+	}
+
 }

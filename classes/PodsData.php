@@ -289,8 +289,6 @@ class PodsData {
 
 		$this->pod_data = $this->api->load_pod( array( 'name' => $pod ), false );
 
-		codecept_debug( $pod );
-
 		if ( empty( $this->pod_data ) ) {
 			return;
 		}

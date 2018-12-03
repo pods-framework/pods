@@ -137,18 +137,19 @@ class Pods implements Iterator {
 			}//end if
 		}//end if
 
-		if ( ! $pod ) {
-			return;
-		}
-
 		$maybe_id = 0;
 
 		if ( ! is_array( $id ) && ! is_object( $id ) ) {
 			$maybe_id = $id;
 		}
 
-		$this->data               = pods_data( $pod, $maybe_id, false );
+		$this->data = pods_data( $pod, $maybe_id, false );
+
 		PodsData::$display_errors =& $this->display_errors;
+
+		if ( ! $pod ) {
+			return;
+		}
 
 		$this->pod_data =& $this->data->pod_data;
 
@@ -171,7 +172,7 @@ class Pods implements Iterator {
 		}
 
 		if ( $this->iterator ) {
-			return isset( $this->rows[ $this->row_number ] );
+			return isset( $this->data->rows[ $this->data->row_number ] );
 		}
 
 		return true;
@@ -218,7 +219,7 @@ class Pods implements Iterator {
 		if ( ! $this->iterator ) {
 			$this->iterator = true;
 
-			$this->row_number = 0;
+			$this->data->row_number = 0;
 		}
 	}
 
@@ -251,7 +252,7 @@ class Pods implements Iterator {
 	 */
 	public function key() {
 
-		return $this->row_number;
+		return $this->data->row_number;
 	}
 
 	/**
@@ -265,7 +266,7 @@ class Pods implements Iterator {
 	 */
 	public function next() {
 
-		$this->row_number ++;
+		$this->data->row_number ++;
 	}
 
 	/**
@@ -277,7 +278,7 @@ class Pods implements Iterator {
 	 */
 	public function exists() {
 
-		if ( empty( $this->row ) ) {
+		if ( empty( $this->data->row ) ) {
 			return false;
 		}
 
@@ -299,11 +300,11 @@ class Pods implements Iterator {
 
 		do_action( 'pods_pods_data', $this );
 
-		if ( empty( $this->rows ) ) {
+		if ( empty( $this->data->rows ) ) {
 			return false;
 		}
 
-		return (array) $this->rows;
+		return (array) $this->data->rows;
 	}
 
 	/**
@@ -424,11 +425,11 @@ class Pods implements Iterator {
 
 		do_action( 'pods_pods_row', $this );
 
-		if ( ! is_array( $this->row ) ) {
+		if ( ! is_array( $this->data->row ) ) {
 			return false;
 		}
 
-		return (array) $this->row;
+		return (array) $this->data->row;
 	}
 
 	/**
@@ -603,7 +604,7 @@ class Pods implements Iterator {
 			 * @param array        $params Params array passed to field().
 			 * @param Pods         $this   Current Pods object.
 			 */
-			$params->output = apply_filters( 'pods_pods_field_related_output_type', 'arrays', $this->row, $params, $this );
+			$params->output = apply_filters( 'pods_pods_field_related_output_type', 'arrays', $this->data->row, $params, $this );
 		}
 
 		if ( in_array( $params->output, array( 'id', 'name', 'object', 'array', 'pod' ), true ) ) {
@@ -646,8 +647,8 @@ class Pods implements Iterator {
 		}
 
 		if ( $this->data->field_id === $params->name ) {
-			if ( isset( $this->row[ $params->name ] ) ) {
-				return $this->row[ $params->name ];
+			if ( isset( $this->data->row[ $params->name ] ) ) {
+				return $this->data->row[ $params->name ];
 				// @codingStandardsIgnoreLine.
 			} elseif ( null !== $value ) {
 				return $value;
@@ -732,10 +733,10 @@ class Pods implements Iterator {
 
 			$row_key = sprintf( '_%s_%s', $params->output, $params->name );
 
-			if ( 'arrays' !== $params->output && isset( $this->row[ $row_key ] ) ) {
-				$value = $this->row[ '_' . $params->output . '_' . $params->name ];
-			} elseif ( 'arrays' === $params->output && isset( $this->row[ $params->name ] ) ) {
-				$value = $this->row[ $params->name ];
+			if ( 'arrays' !== $params->output && isset( $this->data->row[ $row_key ] ) ) {
+				$value = $this->data->row[ '_' . $params->output . '_' . $params->name ];
+			} elseif ( 'arrays' === $params->output && isset( $this->data->row[ $params->name ] ) ) {
+				$value = $this->data->row[ $params->name ];
 			}
 
 			if ( false !== $value && ! is_array( $value ) && 'pick' === $field_data['type'] && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
@@ -743,7 +744,7 @@ class Pods implements Iterator {
 			}
 		}
 
-		if ( empty( $value ) && isset( $this->row[ $params->name ] ) && ( ! in_array( $field_data['type'], $tableless_field_types, true ) || 'arrays' === $params->output ) ) {
+		if ( empty( $value ) && isset( $this->data->row[ $params->name ] ) && ( ! in_array( $field_data['type'], $tableless_field_types, true ) || 'arrays' === $params->output ) ) {
 			if ( empty( $field_data ) || in_array( $field_data['type'], array(
 				'boolean',
 				'number',
@@ -760,15 +761,15 @@ class Pods implements Iterator {
 				}
 			}
 
-			$value = $this->row[ $params->name ];
+			$value = $this->data->row[ $params->name ];
 		} elseif ( empty( $value ) ) {
 			$object_field_found = false;
 
 			if ( 'object_field' === $field_type ) {
 				$object_field_found = true;
 
-				if ( isset( $this->row[ $first_field ] ) ) {
-					$value = $this->row[ $first_field ];
+				if ( isset( $this->data->row[ $first_field ] ) ) {
+					$value = $this->data->row[ $first_field ];
 				} elseif ( in_array( $field_data['type'], $tableless_field_types, true ) ) {
 					$this->fields[ $first_field ] = $field_data;
 
@@ -943,7 +944,7 @@ class Pods implements Iterator {
 					 * @param array             $params Params array passed to field().
 					 * @param object|Pods       $this   Current Pods object.
 					 */
-					$v = apply_filters( "pods_pods_field_{$field_type}", null, $this->fields[ $params->name ], $this->row, $params, $this );
+					$v = apply_filters( "pods_pods_field_{$field_type}", null, $this->fields[ $params->name ], $this->row(), $params, $this );
 
 					if ( null !== $v ) {
 						return $v;
@@ -1625,11 +1626,11 @@ class Pods implements Iterator {
 		if ( ! empty( $params->traverse ) && 1 < count( $params->traverse ) ) {
 			$field_names = implode( '.', $params->traverse );
 
-			$this->row[ $field_names ] = $value;
+			$this->data->row[ $field_names ] = $value;
 		} elseif ( 'arrays' !== $params->output && in_array( $field_data['type'], $tableless_field_types, true ) ) {
-			$this->row[ '_' . $params->output . '_' . $params->full_name ] = $value;
+			$this->data->row[ '_' . $params->output . '_' . $params->full_name ] = $value;
 		} elseif ( 'arrays' === $params->output || ! in_array( $field_data['type'], $tableless_field_types, true ) ) {
-			$this->row[ $params->full_name ] = $value;
+			$this->data->row[ $params->full_name ] = $value;
 		}
 
 		if ( true === $params->single && is_array( $value ) && 1 === count( $value ) ) {
@@ -1705,7 +1706,7 @@ class Pods implements Iterator {
 		 * @param array             $params Params array passed to field().
 		 * @param object|Pods       $this   Current Pods object.
 		 */
-		$value = apply_filters( 'pods_pods_field', $value, $this->row, $params, $this );
+		$value = apply_filters( 'pods_pods_field', $value, $this->row(), $params, $this );
 
 		return $value;
 	}
@@ -1921,7 +1922,7 @@ class Pods implements Iterator {
 	 */
 	public function id() {
 
-		if ( isset( $this->data->row, $this->data->row['id'] ) ) {
+		if ( isset( $this->data->row['id'] ) ) {
 			// If we already have data loaded return that ID.
 			return $this->data->row['id'];
 		}
@@ -1973,8 +1974,8 @@ class Pods implements Iterator {
 				}
 			} elseif ( isset( $params['offset'] ) && 0 < $params['offset'] ) {
 				$params['offset'] --;
-			} elseif ( 0 < $this->row_number && ! isset( $params['offset'] ) && ! empty( $this->params ) ) {
-				$params['offset'] = $this->row_number - 1;
+			} elseif ( 0 < $this->data->row_number && ! isset( $params['offset'] ) && ! empty( $this->params ) ) {
+				$params['offset'] = $this->data->row_number - 1;
 			} else {
 				return 0;
 			}
@@ -2061,8 +2062,8 @@ class Pods implements Iterator {
 					$params['where'] = "{$id} < `t`.`{$this->data->field_id}`";
 				}
 			} elseif ( ! isset( $params['offset'] ) ) {
-				if ( ! empty( $this->params ) && - 1 < $this->row_number ) {
-					$params['offset'] = $this->row_number + 1;
+				if ( ! empty( $this->params ) && - 1 < $this->data->row_number ) {
+					$params['offset'] = $this->data->row_number + 1;
 				} else {
 					$params['offset'] = 1;
 				}
@@ -2491,7 +2492,7 @@ class Pods implements Iterator {
 
 		$this->data->fetch( $id, $explicit_set );
 
-		return $this->row;
+		return $this->row();
 	}
 
 	/**
@@ -2969,7 +2970,7 @@ class Pods implements Iterator {
 		$fetch = false;
 
 		// @codingStandardsIgnoreLine
-		if ( null === $id || ( $this->row && $id == $this->id() ) ) {
+		if ( null === $id || ( $this->row() && $id == $this->id() ) ) {
 			$fetch = true;
 
 			if ( null === $id ) {
@@ -3733,7 +3734,7 @@ class Pods implements Iterator {
 			if ( empty( $this->id ) && null !== $default_value ) {
 				$this->row_override[ $field['name'] ] = $default_value;
 			} elseif ( ! empty( $this->id ) && null !== $value ) {
-				$this->row[ $field['name'] ] = $value;
+				$this->data->row[ $field['name'] ] = $value;
 			}
 		}//end foreach
 
@@ -4304,7 +4305,8 @@ class Pods implements Iterator {
 			'pod'         => 'name',
 			'pod_id'      => 'id',
 			'fields'      => 'fields',
-			'detail_page' => 'detail_page',
+			'detail_page' => 'detail_url',
+			'detail_url'  => 'detail_url',
 		);
 
 		if ( isset( $supported_pods_object[ $name ] ) ) {
@@ -4331,7 +4333,7 @@ class Pods implements Iterator {
 		);
 
 		if ( isset( $mapped[ $name ] ) ) {
-			pods_deprecated( "Pods->{$mapped[$name]}", '2.0' );
+			pods_deprecated( "Pods->{$name}", '2.0', "Pods->{$mapped[$name]}" );
 
 			return $this->data->{$mapped[$name]};
 		}

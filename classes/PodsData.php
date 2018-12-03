@@ -113,7 +113,7 @@ class PodsData {
 	/**
 	 * @var
 	 */
-	public $data;
+	public $rows;
 
 	/**
 	 * @var
@@ -156,6 +156,11 @@ class PodsData {
 	public $limit = 15;
 
 	/**
+	 * @var int
+	 */
+	public $offset = 0;
+
+	/**
 	 * @var bool
 	 */
 	public $pagination = true;
@@ -196,6 +201,11 @@ class PodsData {
 	 * @var array
 	 */
 	public $filters = array();
+
+	/**
+	 * @var array
+	 */
+	public $params = array();
 
 	/**
 	 * Holds Traversal information about Pods
@@ -788,15 +798,15 @@ class PodsData {
 		 */
 		$results = apply_filters( 'pods_data_select', $results, $params, $this );
 
-		$this->data = $results;
+		$this->rows = $results;
 
 		$this->row_number = - 1;
 		$this->row        = null;
 
 		// Fill in empty field data (if none provided).
-		if ( ( ! isset( $this->fields ) || empty( $this->fields ) ) && ! empty( $this->data ) ) {
+		if ( ( ! isset( $this->fields ) || empty( $this->fields ) ) && ! empty( $this->rows ) ) {
 			$this->fields = array();
-			$data         = (array) @current( $this->data );
+			$data         = (array) @current( $this->rows );
 
 			foreach ( $data as $data_key => $data_value ) {
 				$this->fields[ $data_key ] = array( 'label' => ucwords( str_replace( '-', ' ', str_replace( '_', ' ', $data_key ) ) ) );
@@ -812,11 +822,11 @@ class PodsData {
 
 		$this->total = 0;
 
-		if ( ! empty( $this->data ) ) {
-			$this->total = count( (array) $this->data );
+		if ( ! empty( $this->rows ) ) {
+			$this->total = count( (array) $this->rows );
 		}
 
-		return $this->data;
+		return $this->rows;
 	}
 
 	/**
@@ -1987,8 +1997,8 @@ class PodsData {
 
 			$this->row = false;
 
-			if ( isset( $this->data[ $this->row_number ] ) ) {
-				$this->row = get_object_vars( $this->data[ $this->row_number ] );
+			if ( isset( $this->rows[ $this->row_number ] ) ) {
+				$this->row = get_object_vars( $this->rows[ $this->row_number ] );
 
 				$current_row_id = false;
 
@@ -2276,8 +2286,8 @@ class PodsData {
 
 		$this->row = false;
 
-		if ( isset( $this->data[ $row ] ) ) {
-			$this->row = get_object_vars( $this->data[ $row ] );
+		if ( isset( $this->rows[ $row ] ) ) {
+			$this->row = get_object_vars( $this->rows[ $row ] );
 		}
 
 		if ( empty( $row ) ) {
@@ -3567,5 +3577,110 @@ class PodsData {
 		$sql = str_replace( '{/prefix/}', '{prefix}', $sql );
 
 		return $sql;
+	}
+
+	/**
+	 * Handle variables that have been deprecated.
+	 *
+	 * @param string $name Property name.
+	 *
+	 * @return mixed
+	 *
+	 * @since 2.8
+	 */
+	public function __get( $name ) {
+		$name = (string) $name;
+
+		// Map deprecated properties.
+		$mapped = array(
+			'data' => 'rows',
+		);
+
+		if ( isset( $mapped[ $name ] ) ) {
+			pods_deprecated( "PodsData->{$name}", '2.8', "PodsData->{$mapped[$name]}" );
+
+			return $this->{$mapped[$name]};
+		}
+
+		// Handle alias Pods\Whatsit\Pod properties.
+		$supported_pods_object = array(
+			'pod'           => 'name',
+			'pod_id'        => 'id',
+			'fields'        => 'fields',
+			'detail_page'   => 'detail_url',
+			'detail_url'    => 'detail_url',
+			'select'        => 'select',
+			'table'         => 'table',
+			'field_id'      => 'field_id',
+			'field_index'   => 'field_index',
+			'field_slug'    => 'field_slug',
+			'join'          => 'join',
+			'where'         => 'where',
+			'where_default' => 'where_default',
+			'orderby'       => 'orderby',
+		);
+
+		if ( isset( $supported_pods_object[ $name ] ) ) {
+			if ( ! is_object( $this->pods_data ) ) {
+				return null;
+			}
+
+			return $this->pods_data->get_arg( $supported_pods_object[ $name ] );
+		}
+
+		// Map deprecated properties to Pods\Whatsit\Pod properties.
+		$mapped = array(
+			'datatype' => 'pod',
+			'datatype_id' => 'pod_id',
+		);
+
+		if ( isset( $mapped[ $name ] ) ) {
+			pods_deprecated( "Pods->{$name}", '2.0', "Pods->{$mapped[$name]}" );
+
+			return $this->data->{$mapped[$name]};
+		}
+
+		pods_deprecated( "Pods->{$name}", '2.0' );
+
+		return null;
+	}
+
+	/**
+	 * Handle variables that have been deprecated.
+	 *
+	 * @param string $name  Property name.
+	 * @param mixed  $value Property value.
+	 *
+	 * @since 2.8
+	 */
+	public function __set( $name, $value ) {
+		// Don't do anything.
+		return;
+	}
+
+	/**
+	 * Handle variables that have been deprecated.
+	 *
+	 * @param string $name Property name.
+	 *
+	 * @return bool Whether the variable is set or not.
+	 *
+	 * @since 2.8
+	 */
+	public function __isset( $name ) {
+		// Don't do anything.
+		return false;
+	}
+
+	/**
+	 * Handle variables that have been deprecated.
+	 *
+	 * @param string $name Property name.
+	 *
+	 * @since 2.8
+	 */
+	public function __unset( $name ) {
+		// Don't do anything.
+		return;
 	}
 }

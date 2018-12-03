@@ -809,6 +809,10 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$this->assertEquals( 'Test group', $this->pods_object_pod['groups']['test-group']['label'] );
 		$this->assertEquals( 'Test group', $this->pods_object_pod['groups']['test-group']['options']['label'] );
 
+		if ( ! pods_version_check( 'php', '7.0' ) ) {
+			return;
+		}
+
 		$this->pods_object_pod['fields']['test-field']['options']['label'] = 'Something else';
 
 		// Backcompat does not throw PHP errors but does not save the variables.

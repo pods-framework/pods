@@ -218,6 +218,7 @@ function pods_error( $error, $obj = null ) {
 			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
 				wp_die( $error, '', array( 'back_link' => true ) );
 			} else {
+				trigger_error( $error . ': ' . __METHOD__ );
 				die( sprintf( '<e>%s</e>', $error ) );
 			}
 		} elseif ( 'wp_error' === $error_mode ) {
@@ -1864,7 +1865,7 @@ function pods_require_component( $component ) {
  * @link  https://pods.io/docs/pods-group-add/
  */
 function pods_group_add( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
-	if ( ! is_array( $pod ) && null !== $type ) {
+	if ( ! is_array( $pod ) && ! $pod instanceof Pods\Whatsit && null !== $type ) {
 		$pod = array(
 			'name' => $pod,
 			'type' => $type,

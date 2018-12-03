@@ -104,27 +104,38 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_if_simple() {
+		$this->assertNotFalse( self::$pod );
+
 		$pod_name = self::$pod_name;
-		$id       = self::$pod->add( array(
+
+		$id = self::$pod->add( array(
 			'name'    => __FUNCTION__ . '1',
 			'number1' => 123,
 			'number2' => 456,
 		) );
-		$content  = base64_encode( 'ABC' );
+
+		$content = base64_encode( 'ABC' );
+
 		$this->assertEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
+
 		$content = base64_encode( 'ABC[else]DEF' );
+
 		$this->assertEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
 		$this->assertNotEquals( 'DEF', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
 
-		$id      = self::$pod->add( array(
+		$id = self::$pod->add( array(
 			'name'    => __FUNCTION__ . '2',
 			'number1' => 456,
 			'number2' => 0,
 		) );
+
 		$content = base64_encode( 'ABC' );
+
 		$this->assertNotEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$content}[/pod_if_field]" ) );
 		$this->assertNotEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='invalidfield']{$content}[/pod_if_field]" ) );
+
 		$content = base64_encode( 'ABC[else]DEF' );
+
 		$this->assertEquals( 'DEF', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$content}[/pod_if_field]" ) );
 		$this->assertEquals( 'DEF', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='invalidfield']{$content}[/pod_if_field]" ) );
 		$this->assertNotEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$content}[/pod_if_field]" ) );
@@ -134,6 +145,8 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_if_nested() {
+		$this->assertNotFalse( self::$pod );
+
 		$pod_name = self::$pod_name;
 
 		$id = self::$pod->add( array(
@@ -166,6 +179,8 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function _test_if_nested_external_shortcodes() {
+		$this->assertNotFalse( self::$pod );
+
 		$this->markTestSkipped( 'Nested shortcodes currently broken, test disabled until issue resolved' );
 
 		$pod_name = self::$pod_name;
@@ -185,6 +200,8 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_if_with_magic_tags() {
+		$this->assertNotFalse( self::$pod );
+
 		$pod_name = self::$pod_name;
 
 		$id = self::$pod->add( array(
@@ -213,6 +230,8 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_if_in_html() {
+		$this->assertNotFalse( self::$pod );
+
 		$pod_name = self::$pod_name;
 
 		$id      = self::$pod->add( array(
@@ -229,9 +248,9 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 * @group bug-4403
 	 */
 	public function test_if_related_field() {
-		$pod_name = self::$pod_name;
+		$this->assertNotFalse( self::$pod );
 
-		$pod = self::$pod;
+		$pod_name = self::$pod_name;
 
 		$id1 = self::$pod->add( array(
 			'post_status' => 'publish',

@@ -24,7 +24,7 @@ class Group extends Whatsit {
 			return array();
 		}
 
-		$object_collection = Collection::get_instance();
+		$object_collection = Store::get_instance();
 
 		$storage_object = $object_collection->get_storage_object( $this->get_arg( 'storage_type' ) );
 
@@ -35,6 +35,8 @@ class Group extends Whatsit {
 		if ( null === $this->_fields ) {
 			$args = array(
 				'object_type'      => 'field',
+				'orderby'          => 'menu_order title',
+				'order'            => 'ASC',
 				'group'            => $this->get_identifier(),
 				'group_id'         => $this->get_id(),
 				'group_name'       => $this->get_name(),
@@ -56,6 +58,13 @@ class Group extends Whatsit {
 		$fields = array_combine( $names, $fields );
 
 		return $fields;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_groups() {
+		return array();
 	}
 
 }

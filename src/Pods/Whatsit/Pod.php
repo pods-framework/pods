@@ -28,24 +28,69 @@ class Pod extends Whatsit {
 
 		$object_fields = $api->get_wp_object_fields( $this->get_type(), $this );
 
-		$object_collection = Collection::get_instance();
+		$object_collection = Store::get_instance();
 
-		$fields = array();
+		$objects = array();
 
 		foreach ( $object_fields as $object_field ) {
-			$object_field['object_type'] = 'field';
-			$object_field['parent']      = $this->get_id();
+			$object_field['object_type']  = 'object-field';
+			$object_field['storage_type'] = 'collection';
+			$object_field['parent']       = $this->get_id();
 
-			$field = $object_collection->get_object( $object_field );
+			$object = $object_collection->get_object( $object_field );
 
-			if ( $field ) {
-				$fields[ $field->get_name() ] = $field;
+			if ( $object ) {
+				$objects[ $object->get_name() ] = $object;
 			}
 		}
 
-		$this->_object_fields = $fields;
+		$this->_object_fields = $objects;
 
-		return $fields;
+		return $objects;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_groups() {
+		if ( array() === $this->_groups ) {
+			return array();
+		}
+
+		$object_collection = Store::get_instance();
+		$storage_object    = $object_collection->get_storage_object( $this->get_storage_type() );
+
+		if ( ! $storage_object ) {
+			return array();
+		}
+
+		if ( null === $this->_groups ) {
+			$args = array(
+				'object_type'       => 'group',
+				'orderby'           => 'menu_order title',
+				'order'             => 'ASC',
+				'parent'            => $this->get_id(),
+				'parent_id'         => $this->get_id(),
+				'parent_name'       => $this->get_name(),
+				'parent_identifier' => $this->get_identifier(),
+			);
+
+			/** @var Group[] $objects */
+			$objects = $storage_object->find( $args );
+
+			$this->_groups = wp_list_pluck( $objects, 'id' );
+
+			return $objects;
+		}
+
+		$objects = array_map( array( $object_collection, 'get_object' ), $this->_groups );
+		$objects = array_filter( $objects );
+
+		$names = wp_list_pluck( $objects, 'name' );
+
+		$objects = array_combine( $names, $objects );
+
+		return $objects;
 	}
 
 	/**

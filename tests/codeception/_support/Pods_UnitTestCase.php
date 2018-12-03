@@ -2,6 +2,8 @@
 
 namespace Pods_Unit_Tests;
 
+use Pods\Whatsit\Store;
+use Pods\Whatsit\Storage;
 use Pods;
 
 /**
@@ -400,6 +402,11 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 	public function tearDown() {
 		if ( static::$db_reset_teardown ) {
 			parent::tearDown();
+
+			$object_collection = Store::get_instance();
+			$object_collection->delete_objects();
+
+			pods_api()->cache_flush_pods();
 		}
 	}
 
@@ -684,12 +691,8 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 					$load_pod = $api->load_pod( array( 'name' => $pod['name'], 'bypass_cache' => true ), false );
 
 					if ( empty( $load_pod ) ) {
-						codecept_debug( $pod['name'] . ' not found' );
-
 						continue;
 					}
-
-					codecept_debug( $pod['name'] . ' found' );
 
 					foreach ( $load_pod['fields'] as $field ) {
 						if ( isset( self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ] ) ) {

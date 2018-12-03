@@ -10,14 +10,14 @@ use Pods\Whatsit\Storage;
 use Pods\Whatsit\Storage\Post_Type;
 
 /**
- * Collection class.
+ * Store class.
  *
  * @since 2.8
  */
-class Collection {
+class Store {
 
 	/**
-	 * @var Collection
+	 * @var Store
 	 */
 	protected static $instance;
 
@@ -37,17 +37,22 @@ class Collection {
 	protected $storage_engine = array();
 
 	/**
-	 * @var array
+	 * @var Whatsit[]
 	 */
 	protected $objects = array();
 
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	protected $object_ids = array();
 
 	/**
-	 * Collection constructor.
+	 * @var array[]
+	 */
+	protected $objects_in_storage = array();
+
+	/**
+	 * Store constructor.
 	 */
 	protected function __construct() {
 		$this->object_types  = $this->get_default_object_types();
@@ -58,24 +63,28 @@ class Collection {
 	/**
 	 * Get list of default object type classes.
 	 *
-	 * @return array List of object type classes.
+	 * @return string[] List of object type classes.
 	 */
 	public function get_default_object_types() {
 		return array(
-			'pod'   => __NAMESPACE__ . '\Pod',
-			'field' => __NAMESPACE__ . '\Field',
-			'group' => __NAMESPACE__ . '\Group',
+			'pod'          => __NAMESPACE__ . '\Pod',
+			'field'        => __NAMESPACE__ . '\Field',
+			'object-field' => __NAMESPACE__ . '\Object_Field',
+			'group'        => __NAMESPACE__ . '\Group',
+			'template'     => __NAMESPACE__ . '\Template',
+			'page'         => __NAMESPACE__ . '\Page',
 		);
 	}
 
 	/**
 	 * Get list of default storage type classes.
 	 *
-	 * @return array List of storage type classes.
+	 * @return string[] List of storage type classes.
 	 */
 	public function get_default_storage_types() {
 		return array(
-			'post_type' => __NAMESPACE__ . '\Storage\Post_Type',
+			'collection' => __NAMESPACE__ . '\Storage\Collection',
+			'post_type'  => __NAMESPACE__ . '\Storage\Post_Type',
 		);
 	}
 
@@ -87,25 +96,28 @@ class Collection {
 	public function get_default_objects() {
 		return array(
 			'pod/_pods_pod'   => array(
-				'internal'    => true,
-				'object_type' => 'pod',
-				'name'        => '_pods_pod',
-				'label'       => __( 'Pod', 'pods' ),
-				'description' => __( 'Pod configuration', 'pods' ),
+				'internal'     => true,
+				'object_type'  => 'pod',
+				'storage_type' => 'collection',
+				'name'         => '_pods_pod',
+				'label'        => __( 'Pod', 'pods' ),
+				'description'  => __( 'Pod configuration', 'pods' ),
 			),
 			'pod/_pods_field' => array(
-				'internal'    => true,
-				'object_type' => 'pod',
-				'name'        => '_pods_field',
-				'label'       => __( 'Pod Field', 'pods' ),
-				'description' => __( 'Pod Field configuration', 'pods' ),
+				'internal'     => true,
+				'object_type'  => 'pod',
+				'storage_type' => 'collection',
+				'name'         => '_pods_field',
+				'label'        => __( 'Pod Field', 'pods' ),
+				'description'  => __( 'Pod Field configuration', 'pods' ),
 			),
 			'pod/_pods_group' => array(
-				'internal'    => true,
-				'object_type' => 'pod',
-				'name'        => '_pods_group',
-				'label'       => __( 'Pod Group', 'pods' ),
-				'description' => __( 'Pod Group configuration', 'pods' ),
+				'internal'     => true,
+				'object_type'  => 'pod',
+				'storage_type' => 'collection',
+				'name'         => '_pods_group',
+				'label'        => __( 'Pod Group', 'pods' ),
+				'description'  => __( 'Pod Group configuration', 'pods' ),
 			),
 		);
 	}
@@ -113,7 +125,7 @@ class Collection {
 	/**
 	 * Get instance of object.
 	 *
-	 * @return Collection
+	 * @return Store
 	 */
 	public static function get_instance() {
 		if ( ! self::$instance ) {
@@ -308,15 +320,21 @@ class Collection {
 	 * @param Whatsit|array $object Pods object.
 	 */
 	public function register_object( $object ) {
-		$id         = null;
-		$identifier = null;
+		$id           = null;
+		$identifier   = null;
+		$storage_type = 'collection';
 
 		if ( $object instanceof Whatsit ) {
-			$id         = $object->get_id();
-			$identifier = $object->get_identifier();
+			$id           = $object->get_id();
+			$identifier   = $object->get_identifier();
+			$storage_type = $object->get_storage_type();
 		} elseif ( is_array( $object ) ) {
 			if ( ! empty( $object['id'] ) ) {
 				$id = $object['id'];
+			}
+
+			if ( ! empty( $object['storage_type'] ) ) {
+				$storage_type = $object['storage_type'];
 			}
 
 			$identifier = Whatsit::get_identifier_from_args( $object );
@@ -328,6 +346,12 @@ class Collection {
 		// Store ids for reference.
 		if ( '' !== $id && null !== $id ) {
 			$this->object_ids[ $id ] = $identifier;
+
+			if ( ! isset( $this->objects_in_storage[ $storage_type ] ) ) {
+				$this->objects_in_storage[ $storage_type ] = array();
+			}
+
+			$this->objects_in_storage[ $storage_type ][] = $identifier;
 		}
 
 		if ( $object instanceof Whatsit ) {
@@ -369,13 +393,36 @@ class Collection {
 				return false;
 			}
 
+			$object = $this->objects[ $identifier ];
+
+			$storage_type = 'collection';
+
+			if ( is_array( $object ) ) {
+				if ( ! empty( $object['storage_type'] ) ) {
+					$storage_type = $object['storage_type'];
+				}
+			} elseif ( $object instanceof Whatsit ) {
+				$storage_type = $object->get_storage_type();
+			} else {
+				return false;
+			}
+
 			// Ensure reference gets killed.
+			$object                       = null;
 			$this->objects[ $identifier ] = null;
 
 			unset( $this->objects[ $identifier ] );
 
+			if ( ! empty( $this->objects_in_storage[ $storage_type ] ) ) {
+				$key = array_search( $identifier, $this->objects_in_storage[ $storage_type ], true );
+
+				if ( false !== $key ) {
+					unset( $this->objects_in_storage[ $storage_type ][ $key ] );
+				}
+			}
+
 			return true;
-		}
+		}//end if
 
 		return false;
 	}
@@ -391,15 +438,36 @@ class Collection {
 				continue;
 			}
 
-			// Ensure references get killed.
-			$object = null;
-
-			$this->objects[ $identifier ] = null;
-
-			unset( $this->objects[ $identifier ] );
+			$this->unregister_object( $object );
 		}
+	}
 
-		$this->object_ids = array();
+	/**
+	 * Delete all objects and then flush them from collection.
+	 */
+	public function delete_objects() {
+		$default_objects = $this->get_default_objects();
+
+		foreach ( $this->objects as $identifier => $object ) {
+			if ( isset( $default_objects[ $identifier ] ) ) {
+				continue;
+			}
+
+			// Delete from storage.
+			$storage_type = $object->get_storage_type();
+
+			if ( empty( $storage_type ) ) {
+				$storage_type = 'collection';
+			}
+
+			$storage_object = $this->get_storage_object( $storage_type );
+
+			if ( $storage_object ) {
+				$storage_object->delete( $object );
+			}
+
+			$this->unregister_object( $object );
+		}
 	}
 
 	/**

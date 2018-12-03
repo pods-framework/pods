@@ -289,6 +289,8 @@ class PodsData {
 
 		$this->pod_data = $this->api->load_pod( array( 'name' => $pod ), false );
 
+		codecept_debug( $pod );
+
 		if ( empty( $this->pod_data ) ) {
 			return;
 		}
@@ -297,9 +299,9 @@ class PodsData {
 		$this->pod    = $this->pod_data['name'];
 		$this->fields = $this->pod_data['fields'];
 
-		if ( isset( $this->pod_data['options']['detail_url'] ) ) {
-			$this->detail_page = $this->pod_data['options']['detail_url'];
-		}
+			if ( isset( $this->pod_data['detail_url'] ) ) {
+				$this->detail_page = $this->pod_data['detail_url'];
+			}
 
 		if ( isset( $this->pod_data['select'] ) ) {
 			$this->select = $this->pod_data['select'];
@@ -1150,7 +1152,7 @@ class PodsData {
 
 				if ( false !== $params->search_across ) {
 					foreach ( $params->fields as $key => $field ) {
-						if ( is_array( $field ) ) {
+						if ( is_array( $field ) || $field instanceof Pods\Whatsit\Field ) {
 							$attributes = $field;
 							$field      = pods_v( 'name', $field, $key, true );
 						} else {
@@ -3099,8 +3101,7 @@ class PodsData {
 				) ) {
 					$pod = $this->api->load_pod(
 						array(
-							'name'       => $traverse_recurse['pod'],
-							'table_info' => true,
+							'name' => $traverse_recurse['pod'],
 						)
 					);
 
@@ -3137,8 +3138,7 @@ class PodsData {
 		} else {
 			$pod_data = $this->api->load_pod(
 				array(
-					'name'       => $traverse_recurse['pod'],
-					'table_info' => true,
+					'name' => $traverse_recurse['pod'],
 				), false
 			);
 

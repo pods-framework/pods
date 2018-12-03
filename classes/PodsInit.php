@@ -600,9 +600,6 @@ class PodsInit {
 					continue;
 				}
 
-				$post_type['options']['name'] = $post_type['name'];
-				$post_type                    = array_merge( $post_type, (array) $post_type['options'] );
-
 				$post_type_name = pods_v_sanitized( 'name', $post_type );
 
 				// Labels
@@ -831,9 +828,6 @@ class PodsInit {
 					// Taxonomy was setup and exists already, but we aren't forcing it to be setup again
 					continue;
 				}
-
-				$taxonomy['options']['name'] = $taxonomy['name'];
-				$taxonomy                    = array_merge( $taxonomy, (array) $taxonomy['options'] );
 
 				$taxonomy_name = pods_v( 'name', $taxonomy );
 

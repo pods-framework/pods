@@ -109,7 +109,6 @@ class Pods implements Iterator {
 	 * @link    https://pods.io/docs/pods/
 	 */
 	public function __construct( $pod = null, $id = null ) {
-
 		if ( null === $pod ) {
 			$queried_object = get_queried_object();
 
@@ -386,9 +385,9 @@ class Pods implements Iterator {
 
 			// Merge options.
 			if ( isset( $this->fields[ $field ] ) ) {
-				$options = array_merge( $this->fields[ $field ], $this->fields[ $field ]['options'] );
+				$options = $this->fields[ $field ];
 			} elseif ( isset( $this->pod_data['object_fields'] ) ) {
-				$options = array_merge( $this->pod_data['object_fields'][ $field ], $this->pod_data['object_fields'][ $field ]['options'] );
+				$options = $this->pod_data['object_fields'][ $field ];
 			}
 
 			if ( 'data' === $option && in_array( pods_v( 'type', $options ), PodsForm::tableless_field_types(), true ) ) {
@@ -1680,7 +1679,7 @@ class Pods implements Iterator {
 
 					$value = call_user_func_array( 'apply_filters', $args );
 				} elseif ( 1 === (int) pods_v( 'display_process', $field_data['options'], 1 ) ) {
-					$value = PodsForm::display( $field_data['type'], $value, $params->name, array_merge( $field_data, $field_data['options'] ), $this->pod_data, $this->id() );
+					$value = PodsForm::display( $field_data['type'], $value, $params->name, $field_data, $this->pod_data, $this->id() );
 				}
 
 				if ( $post_temp ) {
@@ -1690,7 +1689,7 @@ class Pods implements Iterator {
 					$post_ID = $old_post_id;
 				}
 			} else {
-				$value = PodsForm::value( $field_data['type'], $value, $params->name, array_merge( $field_data, $field_data['options'] ), $this->pod_data, $this->id() );
+				$value = PodsForm::value( $field_data['type'], $value, $params->name, $field_data, $this->pod_data, $this->id() );
 			}//end if
 		}//end if
 

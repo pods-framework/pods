@@ -135,8 +135,6 @@ class TraversalTest extends Pods_UnitTestCase {
 		// Suppress MySQL errors
 		add_filter( 'pods_error_die', '__return_false' );
 
-		codecept_debug( $options );
-
 		// global $wpdb;
 		// $wpdb->suppress_errors( true );
 		// $wpdb->hide_errors();
@@ -325,7 +323,7 @@ class TraversalTest extends Pods_UnitTestCase {
 			}
 
 			if ( ! is_object( $field_data ) && ! empty( $field_data['options'] ) ) {
-				$field_data = array_merge( $field_data['options'], $field_data );
+				$field_data = $field_data;
 			}
 
 			if ( ! empty( $field_data[ $field_type . '_format_type' ] ) && 'multi' === $field_data[ $field_type . '_format_type' ] ) {

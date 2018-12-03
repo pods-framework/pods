@@ -51,7 +51,7 @@ class Pods_Term_Splitting {
 		$taxonomy_pod = $this->get_pod_info();
 
 		// Is the taxonomy a Pod?
-		if ( is_array( $taxonomy_pod ) ) {
+		if ( is_array( $taxonomy_pod ) || $taxonomy_pod instanceof Pods\Whatsit ) {
 			$this->update_podsrel_taxonomy( $taxonomy_pod['id'] );
 
 			// Update the Pods table if the taxonomy is a table based Pod
@@ -81,8 +81,7 @@ class Pods_Term_Splitting {
 
 			// Load the taxonomy Pod
 			$params   = array(
-				'name'       => $this->taxonomy,
-				'table_info' => true,
+				'name' => $this->taxonomy,
 			);
 			$pod_info = pods_api()->load_pod( $params, false );
 		}

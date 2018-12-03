@@ -88,6 +88,9 @@ class Pods_EachTest extends Pods_UnitTestCase {
 		$api->delete_pod( array( 'id' => $this->pod_id ) );
 		$api->cache_flush_pods();
 
+		$this->pod_id = null;
+		$this->pod    = null;
+
 		parent::tearDown();
 	}
 
@@ -103,8 +106,12 @@ class Pods_EachTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_each_simple() {
+		$this->assertNotFalse( $this->pod );
+
 		$pod_name = $this->pod_name;
-		$sub_ids  = array();
+
+		$sub_ids = array();
+
 		for ( $x = 1; $x <= 5; $x ++ ) {
 			$sub_ids[] = $this->pod->add( array(
 				'post_status' => 'publish',
@@ -113,6 +120,7 @@ class Pods_EachTest extends Pods_UnitTestCase {
 				'number2'     => $x * $x,
 			) );
 		}
+
 		$main_id = $this->pod->add( array(
 			'post_status'   => 'publish',
 			'name'          => 'main post',
@@ -120,7 +128,9 @@ class Pods_EachTest extends Pods_UnitTestCase {
 			'number2'       => 456,
 			'related_field' => $sub_ids,
 		) );
+
 		$content = base64_encode( '/{@number1}_{@number2}/' );
+
 		$this->assertEquals( '/1_1//2_4//3_9//4_16//5_25/', do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_sub_template]" ) );
 	}
 
@@ -128,8 +138,12 @@ class Pods_EachTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_each_with_nested_if() {
+		$this->assertNotFalse( $this->pod );
+
 		$pod_name = $this->pod_name;
-		$sub_ids  = array();
+
+		$sub_ids = array();
+
 		for ( $x = 1; $x <= 5; $x ++ ) {
 			$sub_ids[] = $this->pod->add( array(
 				'post_status' => 'publish',
@@ -138,6 +152,7 @@ class Pods_EachTest extends Pods_UnitTestCase {
 				'number2'     => $x * $x,
 			) );
 		}
+
 		$main_id = $this->pod->add( array(
 			'post_status'   => 'publish',
 			'name'          => 'main post',
@@ -147,27 +162,32 @@ class Pods_EachTest extends Pods_UnitTestCase {
 		) );
 
 		$content = base64_encode( '[if number1]/{@number1}_{@number2}/[/if]' );
+
 		$this->assertEquals( '/1_1//2_4//3_9//4_16//5_25/', do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_sub_template]" ) );
 
 		// Testing [each] inside [if]
 		$inner_content = base64_encode( '[if number1]/{@number1}_{@number2}/[/if]' );
 		$content       = base64_encode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$inner_content}[/pod_sub_template]" );
+
 		$this->assertEquals( '/1_1//2_4//3_9//4_16//5_25/', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_if_field]" ) );
 
 		// Testing [each] inside [if] with [else]
 		$inner_content = base64_encode( '[if number1]/{@number1}_{@number2}/[/if]' );
 		$content       = base64_encode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$inner_content}[/pod_sub_template][else]No related field" );
+
 		$this->assertEquals( '/1_1//2_4//3_9//4_16//5_25/', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_if_field]" ) );
 
 		// Testing [each] inside [if] with [else] and no relationships
-		$main_id       = $this->pod->add( array(
+		$main_id = $this->pod->add( array(
 			'post_status' => 'publish',
 			'name'        => 'post with no related fields',
 			'number1'     => 123,
 			'number2'     => 456,
 		) );
+
 		$inner_content = base64_encode( '[if number1]/{@number1}_{@number2}/[/if]' );
 		$content       = base64_encode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$inner_content}[/pod_sub_template][else]No related field" );
+
 		$this->assertEquals( 'No related field', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_if_field]" ) );
 	}
 
@@ -175,8 +195,12 @@ class Pods_EachTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_each_nested_in_external() {
+		$this->assertNotFalse( $this->pod );
+
 		$pod_name = $this->pod_name;
-		$sub_ids  = array();
+
+		$sub_ids = array();
+
 		for ( $x = 1; $x <= 5; $x ++ ) {
 			$sub_ids[] = $this->pod->add( array(
 				'post_status' => 'publish',
@@ -185,6 +209,7 @@ class Pods_EachTest extends Pods_UnitTestCase {
 				'number2'     => $x * $x,
 			) );
 		}
+
 		$main_id = $this->pod->add( array(
 			'post_status'   => 'publish',
 			'name'          => 'main post',
@@ -194,6 +219,7 @@ class Pods_EachTest extends Pods_UnitTestCase {
 		) );
 
 		$content = base64_encode( '/{@number1}_{@number2}/' );
+
 		$this->assertEquals( '/1_1//2_4//3_9//4_16//5_25/', do_shortcode( "[test_each_recurse][pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_sub_template][/test_each_recurse]" ) );
 	}
 }

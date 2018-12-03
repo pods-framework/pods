@@ -613,24 +613,6 @@ class PodsForm {
 
 		$options = (array) $options;
 
-		if ( ! is_object( $options ) && isset( $options['options'] ) ) {
-			$options_temp = $options['options'];
-
-			unset( $options['options'] );
-
-			$options = array_merge( $options_temp, $options );
-
-			$override = array(
-				'class',
-			);
-
-			foreach ( $override as $check ) {
-				if ( isset( $options_temp[ $check ] ) ) {
-					$options[ $check ] = $options_temp[ $check ];
-				}
-			}
-		}
-
 		$defaults = self::options_setup( $type, $options );
 
 		$core_defaults = array(

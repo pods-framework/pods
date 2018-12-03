@@ -108,7 +108,7 @@ class Pods_Deprecated {
 			}
 
 			// Pass options so they can be manipulated via form
-			$field = array_merge( $field['options'], $field );
+			$field = $field;
 
 			// Replace field attributes with public form attributes
 			if ( ! empty( $attributes ) && is_array( $attributes[ $key ] ) ) {

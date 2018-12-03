@@ -2,17 +2,17 @@
 
 namespace Pods_Unit_Tests;
 
-use Pods\Whatsit\Collection;
+use Pods\Whatsit\Store;
 use Pods\Whatsit\Storage;
 use Pods\Whatsit;
 
 /**
- * Class Pods_ObjectTestCase
+ * Class Pods_WhatsitTestCase
  */
 class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 
 	/**
-	 * @var pods_object_storage
+	 * @var Storage
 	 */
 	protected $pods_object_storage;
 
@@ -57,7 +57,9 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 	protected $storage_type = 'post_type';
 
 	public function setUp() {
-		$object_collection = Collection::get_instance();
+		parent::setUp();
+
+		$object_collection = Store::get_instance();
 
 		$this->pods_object_storage = $object_collection->get_storage_object( $this->storage_type );
 
@@ -101,8 +103,6 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 	}
 
 	public function tearDown() {
-		array_map( array( $this->pods_object_storage, 'delete' ), $this->setup_objects );
-
 		unset( $this->pods_object_pod, $this->pods_object_group, $this->pods_object_field );
 
 		$this->setup_objects = array();
@@ -111,12 +111,9 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 		$this->group_args = array();
 		$this->field_args = array();
 
-		$object_collection = Collection::get_instance();
-		$object_collection->flush_objects();
-
 		unset( $this->pods_object_storage );
 
-		pods_api()->cache_flush_pods();
+		parent::tearDown();
 	}
 
 	/**
@@ -144,7 +141,7 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 
 		$args['custom1'] = $args['custom1'] . '-' . $args['name'];
 
-		$object_collection = Collection::get_instance();
+		$object_collection = Store::get_instance();
 
 		$class_name = $object_collection->get_object_type( $args['object_type'] );
 

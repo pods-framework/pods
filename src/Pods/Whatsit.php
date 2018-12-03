@@ -2,7 +2,10 @@
 
 namespace Pods;
 
-use Pods\Whatsit\Collection;
+use Pods\Whatsit\Store;
+use Pods\Whatsit\Field;
+use Pods\Whatsit\Group;
+use Pods\Whatsit\Object_Field;
 
 /**
  * Whatsit abstract class.
@@ -35,7 +38,12 @@ use Pods\Whatsit\Collection;
  *
  * @since 2.8
  */
-abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
+abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
+
+	/**
+	 * @var int
+	 */
+	private $position = 0;
 
 	/**
 	 * @var string
@@ -48,7 +56,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 	 */
 	protected $args = array(
 		'object_type'  => '',
-		'storage_type' => '',
+		'storage_type' => 'collection',
 		'name'         => '',
 		'id'           => '',
 		'parent'       => '',
@@ -58,12 +66,17 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 	);
 
 	/**
-	 * @var array|null
+	 * @var Field[]|null
 	 */
 	protected $_fields;
 
 	/**
-	 * @var array|null
+	 * @var Group[]|null
+	 */
+	protected $_groups;
+
+	/**
+	 * @var Object_Field[]|null
 	 */
 	protected $_object_fields;
 
@@ -71,11 +84,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 	 * @var array|null
 	 */
 	protected $_table_info;
-
-	/**
-	 * @var string
-	 */
-	protected $storage_type = '';
 
 	/**
 	 * Whatsit constructor.
@@ -150,7 +158,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 		if ( is_array( $args ) ) {
 			if ( ! empty( $args['id'] ) ) {
 				// Check if we already have an object registered and available.
-				$object = Collection::get_instance()->get_object( $args['id'] );
+				$object = Store::get_instance()->get_object( $args['id'] );
 
 				if ( $object ) {
 					if ( $to_args ) {
@@ -187,7 +195,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 	public static function from_array( array $array, $to_args = false ) {
 		if ( ! empty( $array['id'] ) ) {
 			// Check if we already have an object registered and available.
-			$object = Collection::get_instance()->get_object( $array['id'] );
+			$object = Store::get_instance()->get_object( $array['id'] );
 
 			if ( $object ) {
 				if ( $to_args ) {
@@ -217,14 +225,16 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 	 */
 	public function __sleep() {
 		// @todo If DB based config, return only name, id, parent, group
-		/*$this->args = array(
+		// @todo Maybe set up a variable with the custom array and implement Serializable::serialize/unserialize
+		/*
+		$this->args = array(
 			'object_type' => $this->args['object_type'],
 			'name'        => $this->args['name'],
 			'id'          => $this->args['id'],
 			'parent'      => $this->args['parent'],
 			'group'       => $this->args['group'],
-		);*/
-
+		);
+		*/
 		return array(
 			'args',
 		);
@@ -245,6 +255,52 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 	 */
 	public function jsonSerialize() {
 		return $this->get_args();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getArrayCopy() {
+		return array_values( $this->args );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function rewind() {
+		$this->position = 0;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function current() {
+		$args = $this->getArrayCopy();
+
+		return $args[ $this->position ];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function key() {
+		return $this->position;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function next() {
+		$this->position ++;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function valid() {
+		$args = $this->getArrayCopy();
+
+		return isset( $args[ $this->position ] );
 	}
 
 	/**
@@ -288,6 +344,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 	 * @param mixed $value  Offset value.
 	 */
 	public function offsetSet( $offset, $value ) {
+		if ( null === $offset ) {
+			// Do not allow $object[] additions.
+			return;
+		}
+
 		$this->__set( $offset, $value );
 	}
 
@@ -308,13 +369,27 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 	 * @return bool Whether the offset exists.
 	 */
 	public function __isset( $offset ) {
-		// @todo Handle offsetExists for fields and other options.
+		if ( is_int( $offset ) ) {
+			$args = $this->getArrayCopy();
 
-		if ( isset( $this->args[ $offset ] ) ) {
+			return isset( $args[ $offset ] );
+		}
+
+		$special_args = array(
+			'fields'        => 'get_fields',
+			'object_fields' => 'get_object_fields',
+			'groups'        => 'get_groups',
+			'table_info'    => 'get_table_info',
+			'options'       => 'get_args',
+		);
+
+		if ( isset( $special_args[ $offset ] ) ) {
 			return true;
 		}
 
-		return false;
+		$value = $this->get_arg( $offset, null );
+
+		return ( null !== $value );
 	}
 
 	/**
@@ -325,7 +400,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 	 * @return mixed|null Offset value, or null if not set.
 	 */
 	public function __get( $offset ) {
-		// @todo Handle offsetGet for fields and other options.
+		if ( is_int( $offset ) ) {
+			$args = $this->getArrayCopy();
+
+			return isset( $args[ $offset ] );
+		}
 
 		return $this->get_arg( $offset );
 	}
@@ -337,8 +416,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 	 * @param mixed $value  Offset value.
 	 */
 	public function __set( $offset, $value ) {
-		// @todo Handle offsetGet for fields and other options.
-
 		$this->set_arg( $offset, $value );
 	}
 
@@ -348,8 +425,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 	 * @param mixed $offset Offset name.
 	 */
 	public function __unset( $offset ) {
-		// @todo Handle offsetUnset for fields and other options.
-
 		$this->set_arg( $offset, null );
 	}
 
@@ -374,7 +449,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 
 		$defaults = array(
 			'object_type'  => $this->get_arg( 'object_type' ),
-			'storage_type' => $this->get_arg( 'storage_type' ),
+			'storage_type' => $this->get_arg( 'storage_type', 'collection' ),
 			'name'         => '',
 			'id'           => '',
 			'parent'       => '',
@@ -407,6 +482,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 		$special_args = array(
 			'fields'        => 'get_fields',
 			'object_fields' => 'get_object_fields',
+			'groups'        => 'get_groups',
 			'table_info'    => 'get_table_info',
 			'options'       => 'get_args',
 		);
@@ -416,8 +492,42 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 		}
 
 		if ( ! isset( $this->args[ $arg ] ) ) {
+			$table_info_fields = array(
+				'object_name',
+				'object_hierarchical',
+				'table',
+				'meta_table',
+				'pod_table',
+				'field_id',
+				'field_index',
+				'field_slug',
+				'field_type',
+				'field_parent',
+				'field_parent_select',
+				'meta_field_id',
+				'meta_field_index',
+				'meta_field_value',
+				'pod_field_id',
+				'pod_field_index',
+				'pod_field_slug',
+				'pod_field_parent',
+				'join',
+				'where',
+				'where_default',
+				'orderby',
+				'recurse',
+			);
+
+			if ( in_array( $arg, $table_info_fields, true ) ) {
+				$table_info = $this->get_table_info();
+
+				if ( isset( $table_info[ $arg ] ) ) {
+					return $table_info[ $arg ];
+				}
+			}
+
 			return $default;
-		}
+		}//end if
 
 		return $this->args[ $arg ];
 	}
@@ -435,6 +545,9 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 			'object_type',
 			'storage_type',
 			'fields',
+			'object_fields',
+			'groups',
+			'table_info',
 			'name',
 			'id',
 			'parent',
@@ -446,6 +559,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 		$read_only = array(
 			'object_type',
 			'fields',
+			'object_fields',
+			'groups',
 			'table_info',
 		);
 
@@ -549,7 +664,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 		$parent = $this->get_parent();
 
 		if ( $parent ) {
-			$parent = Collection::get_instance()->get_object( $parent );
+			$parent = Store::get_instance()->get_object( $parent );
 		}
 
 		return $parent;
@@ -564,7 +679,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 		$group = $this->get_group();
 
 		if ( $group ) {
-			$group = Collection::get_instance()->get_object( $group );
+			$group = Store::get_instance()->get_object( $group );
 
 			if ( $group ) {
 				$this->set_arg( 'group', $group->get_identifier() );
@@ -584,9 +699,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 			return array();
 		}
 
-		$object_collection = Collection::get_instance();
-
-		$storage_object = $object_collection->get_storage_object( $this->get_arg( 'storage_type' ) );
+		$object_collection = Store::get_instance();
+		$storage_object    = $object_collection->get_storage_object( $this->get_arg( 'storage_type' ) );
 
 		if ( ! $storage_object ) {
 			return array();
@@ -595,36 +709,85 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable {
 		if ( null === $this->_fields ) {
 			$args = array(
 				'object_type'       => 'field',
+				'orderby'           => 'menu_order title',
+				'order'             => 'ASC',
 				'parent'            => $this->get_id(),
 				'parent_id'         => $this->get_id(),
 				'parent_name'       => $this->get_name(),
 				'parent_identifier' => $this->get_identifier(),
 			);
 
-			$fields = $storage_object->find( $args );
+			/** @var Field[] $objects */
+			$objects = $storage_object->find( $args );
 
-			$this->_fields = wp_list_pluck( $fields, 'id' );
+			$this->_fields = wp_list_pluck( $objects, 'id' );
 
-			return $fields;
+			return $objects;
 		}
 
-		$fields = array_map( array( $object_collection, 'get_object' ), $this->_fields );
-		$fields = array_filter( $fields );
+		$objects = array_map( array( $object_collection, 'get_object' ), $this->_fields );
+		$objects = array_filter( $objects );
 
-		$names = wp_list_pluck( $fields, 'name' );
+		$names = wp_list_pluck( $objects, 'name' );
 
-		$fields = array_combine( $names, $fields );
+		$objects = array_combine( $names, $objects );
 
-		return $fields;
+		return $objects;
 	}
 
 	/**
 	 * Get object fields for object.
 	 *
-	 * @return Whatsit[] List of object field objects.
+	 * @return Object_Field[] List of object field objects.
 	 */
 	public function get_object_fields() {
 		return array();
+	}
+
+	/**
+	 * Get groups for object.
+	 *
+	 * @return Group[] List of group objects.
+	 */
+	public function get_groups() {
+		if ( array() === $this->_groups ) {
+			return array();
+		}
+
+		$object_collection = Store::get_instance();
+		$storage_object    = $object_collection->get_storage_object( $this->get_arg( 'storage_type' ) );
+
+		if ( ! $storage_object ) {
+			return array();
+		}
+
+		if ( null === $this->_groups ) {
+			$args = array(
+				'object_type'       => 'group',
+				'orderby'           => 'menu_order title',
+				'order'             => 'ASC',
+				'parent'            => $this->get_id(),
+				'parent_id'         => $this->get_id(),
+				'parent_name'       => $this->get_name(),
+				'parent_identifier' => $this->get_identifier(),
+			);
+
+			/** @var Group[] $objects */
+			$objects = $storage_object->find( $args );
+
+			$this->_groups = wp_list_pluck( $objects, 'id' );
+
+			return $objects;
+		}
+
+		$objects = array_map( array( $object_collection, 'get_object' ), $this->_groups );
+		$objects = array_filter( $objects );
+
+		$names = wp_list_pluck( $objects, 'name' );
+
+		$objects = array_combine( $names, $objects );
+
+		return $objects;
 	}
 
 	/**

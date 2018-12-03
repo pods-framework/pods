@@ -1216,7 +1216,7 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
 
 	$pod_data = array();
 
-	if ( is_array( $pod ) ) {
+	if ( is_array( $pod ) || $pod instanceof Pods\Whatsit ) {
 		$pod_data = $pod;
 		$pod_id   = pods_v_sanitized( 'id', $pod_data, 0 );
 		$pod      = pods_v_sanitized( 'name', $pod_data );
@@ -1598,7 +1598,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 
-		if ( ! empty( $params->field ) && is_array( $params->field ) && in_array( $params->field['type'], PodsForm::tableless_field_types(), true ) ) {
+		if ( ! empty( $params->field ) && ! is_string( $params->field ) && in_array( $params->field['type'], PodsForm::tableless_field_types(), true ) ) {
 			if ( in_array( $params->field['type'], PodsForm::file_field_types(), true ) ) {
 				if ( null === $params->field_index ) {
 					$params->field_index = 'guid';
@@ -1619,7 +1619,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		$params->field = null;
 	}//end if
 
-	if ( $simple && is_array( $params->field ) && ! is_array( $value ) && '' !== $value && null !== $value ) {
+	if ( $simple && ! is_array( $value ) && '' !== $value && null !== $value ) {
 		$value = PodsForm::field_method( 'pick', 'simple_value', $params->field['name'], $value, $params->field );
 	}
 
@@ -1639,7 +1639,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		$last = array_pop( $value );
 	}
 
-	if ( $simple && is_array( $params->field ) && ! is_array( $last ) && '' !== $last && null !== $last ) {
+	if ( $simple && ! is_array( $last ) && '' !== $last && null !== $last ) {
 		$last = PodsForm::field_method( 'pick', 'simple_value', $params->field['name'], $last, $params->field );
 	}
 
@@ -1665,7 +1665,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		}
 
 		foreach ( $value as $k => $v ) {
-			if ( $simple && is_array( $params->field ) && ! is_array( $v ) && '' !== $v && null !== $v ) {
+			if ( $simple && ! is_array( $v ) && '' !== $v && null !== $v ) {
 				$v = PodsForm::field_method( 'pick', 'simple_value', $params->field['name'], $v, $params->field );
 			}
 

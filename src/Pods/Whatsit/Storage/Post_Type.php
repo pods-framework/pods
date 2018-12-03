@@ -3,15 +3,16 @@
 namespace Pods\Whatsit\Storage;
 
 use Pods\Whatsit;
-use Pods\Whatsit\Collection;
+use Pods\Whatsit\Store;
 use Pods\Whatsit\Storage;
+use Pods\Whatsit\Storage\Collection;
 
 /**
  * Post_Type class.
  *
  * @since 2.8
  */
-class Post_Type extends Storage {
+class Post_Type extends Collection {
 
 	/**
 	 * {@inheritdoc}
@@ -27,6 +28,7 @@ class Post_Type extends Storage {
 		'post_title'   => 'label',
 		'post_content' => 'description',
 		'post_parent'  => 'parent',
+		'menu_order'   => 'weight',
 	);
 
 	/**
@@ -88,7 +90,7 @@ class Post_Type extends Storage {
 		 *
 		 * @since 2.8
 		 */
-		$limit = apply_filters( 'pods_object_post_type_find_limit', 300 );
+		$limit = apply_filters( 'pods_whatsit_storage_post_type_find_limit', 300 );
 
 		$post_args = array(
 			'order'          => 'ASC',
@@ -229,7 +231,7 @@ class Post_Type extends Storage {
 		 *
 		 * @since 2.8
 		 */
-		$post_args = apply_filters( 'pods_object_post_type_find_args', $post_args, $args );
+		$post_args = apply_filters( 'pods_whatsit_storage_post_type_find_args', $post_args, $args );
 
 		$post_args['fields'] = 'ids';
 
@@ -253,7 +255,7 @@ class Post_Type extends Storage {
 
 		if ( empty( $args['bypass_cache'] ) ) {
 			$cache_key_parts = array(
-				'pods_object_post_type_find',
+				'pods_whatsit_storage_post_type_find',
 				$current_language,
 				wp_json_encode( $post_args ),
 			);
@@ -267,7 +269,7 @@ class Post_Type extends Storage {
 			 *
 			 * @since 2.8
 			 */
-			$cache_key_parts = apply_filters( 'pods_object_storage_post_type_cache_key_parts', $cache_key_parts, $post_args, $args );
+			$cache_key_parts = apply_filters( 'pods_whatsit_storage_post_type_cache_key_parts', $cache_key_parts, $post_args, $args );
 
 			$cache_key_parts = array_filter( $cache_key_parts );
 
@@ -293,13 +295,21 @@ class Post_Type extends Storage {
 
 		$posts = array_combine( $names, $posts );
 
+		if ( empty( $args['status'] ) || in_array( 'publish', $args['status'], true ) ) {
+			$posts = array_merge( $posts, parent::find( $args ) );
+		}
+
+		if ( ! empty( $args['limit'] ) ) {
+			$posts = array_slice( $posts, 0, $args['limit'], true );
+		}
+
 		return $posts;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function add( Whatsit $object ) {
+	public function add_object( Whatsit $object ) {
 		$post_data = array(
 			'post_title'   => $object->get_label(),
 			'post_name'    => $object->get_name(),
@@ -316,21 +326,15 @@ class Post_Type extends Storage {
 		$added = wp_insert_post( $post_data );
 
 		if ( is_int( $added ) && 0 < $added ) {
-			$object_collection = Collection::get_instance();
-
 			// Remove any other references.
+			$object_collection = Store::get_instance();
 			$object_collection->unregister_object( $object );
 
 			$object->set_arg( 'id', $added );
 
 			$this->save_args( $object );
 
-			// Register now that it has an ID.
-			$object_collection->register_object( $object );
-
-			pods_api()->cache_flush_pods( $object );
-
-			return $added;
+			return parent::add_object( $object );
 		}
 
 		return false;
@@ -339,9 +343,15 @@ class Post_Type extends Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function save( Whatsit $object ) {
+	public function save_object( Whatsit $object ) {
+		$id = $object->get_id();
+
+		if ( empty( $id ) ) {
+			return parent::save_object( $object );
+		}
+
 		$post_data = array(
-			'ID'           => $object->get_id(),
+			'ID'           => $id,
 			'post_title'   => $object->get_label(),
 			'post_name'    => $object->get_name(),
 			'post_content' => $object->get_description(),
@@ -353,15 +363,15 @@ class Post_Type extends Storage {
 		$saved = wp_update_post( $post_data );
 
 		if ( is_int( $saved ) && 0 < $saved ) {
-			// @todo Update Collection id/identifier.
+			// Remove any other references.
+			$object_collection = Store::get_instance();
+			$object_collection->unregister_object( $object );
 
 			$object->set_arg( 'id', $saved );
 
 			$this->save_args( $object );
 
-			pods_api()->cache_flush_pods( $object );
-
-			return $saved;
+			return parent::save_object( $object );
 		}
 
 		return false;
@@ -371,7 +381,13 @@ class Post_Type extends Storage {
 	 * {@inheritdoc}
 	 */
 	public function get_args( Whatsit $object ) {
-		$meta = get_post_meta( $object->get_id() );
+		$id = $object->get_id();
+
+		if ( empty( $id ) ) {
+			return parent::get_args( $object );
+		}
+
+		$meta = get_post_meta( $id );
 
 		$args = array();
 
@@ -397,6 +413,12 @@ class Post_Type extends Storage {
 	 * {@inheritdoc}
 	 */
 	public function save_args( Whatsit $object ) {
+		$id = $object->get_id();
+
+		if ( empty( $id ) ) {
+			return parent::save_args( $object );
+		}
+
 		$args = $object->get_args();
 
 		$excluded = array(
@@ -422,7 +444,7 @@ class Post_Type extends Storage {
 		}
 
 		foreach ( $args as $arg => $value ) {
-			update_post_meta( $object->get_id(), $arg, $value );
+			update_post_meta( $id, $arg, $value );
 		}
 
 		return true;
@@ -431,50 +453,19 @@ class Post_Type extends Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function duplicate( Whatsit $object ) {
-		$duplicated_object = clone $object;
+	protected function delete_object( Whatsit $object ) {
+		$id = $object->get_id();
 
-		$duplicated_object->set_arg( 'id', null );
-		$duplicated_object->set_arg( 'name', $duplicated_object->get_name() . '_copy' );
-
-		return $this->add( $duplicated_object );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function delete( Whatsit $object ) {
-		$deleted = wp_delete_post( $object->get_id(), true );
-
-		if ( false !== $deleted && ! is_wp_error( $deleted ) ) {
-			// If this object has fields or groups, delete them.
-			$args = array(
-				'parent' => $object->get_id(),
-			);
-
-			$objects = $this->find( $args );
-
-			// Delete objects.
-			array_map( array( $this, 'delete' ), $objects );
-
-			pods_api()->cache_flush_pods( $object );
-
-			$object_collection = Collection::get_instance();
-			$object_collection->unregister_object( $object );
-
-			$object->set_arg( 'id', null );
-
-			return true;
+		if ( empty( $id ) ) {
+			return parent::delete_object( $object );
 		}
 
-		return false;
-	}
+		$deleted = wp_delete_post( $id, true );
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function reset( Whatsit $object ) {
-		// @todo Fill this in.
+		if ( false !== $deleted && ! is_wp_error( $deleted ) ) {
+			return parent::delete_object( $object );
+		}
+
 		return false;
 	}
 
@@ -498,7 +489,7 @@ class Post_Type extends Storage {
 			return null;
 		}
 
-		$object_collection = Collection::get_instance();
+		$object_collection = Store::get_instance();
 
 		// Check if we already have an object registered and available.
 		$object = $object_collection->get_object( $post->ID );
@@ -517,8 +508,22 @@ class Post_Type extends Storage {
 			}
 		}
 
-		foreach ( $this->secondary_args as $arg ) {
-			$args[ $arg ] = get_post_meta( $post->ID, $arg, true );
+		$meta = get_post_meta( $post->ID );
+
+		foreach ( $meta as $arg => $value ) {
+			if ( isset( $args[ $arg ] ) ) {
+				continue;
+			}
+
+			if ( empty( $value ) ) {
+				continue;
+			}
+
+			if ( 1 === count( $value ) ) {
+				$value = reset( $value );
+			}
+
+			$args[ $arg ] = $value;
 		}
 
 		$object_type = substr( $post->post_type, strlen( '_pods_' ) );

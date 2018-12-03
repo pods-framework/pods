@@ -652,7 +652,7 @@ class PodsMeta {
 				$meta = $podterms->field( $field );
 			}
 
-			$meta = PodsForm::field_method( $pod['fields'][ $field ]['type'], 'ui', $id, $meta, $field, array_merge( $pod['fields'][ $field ], $pod['fields'][ $field ]['options'] ), $pod['fields'], $pod );
+			$meta = PodsForm::field_method( $pod['fields'][ $field ]['type'], 'ui', $id, $meta, $field, $pod['fields'][ $field ] );
 		}
 
 		return $meta;
@@ -867,7 +867,7 @@ class PodsMeta {
 			$object = self::$comment;
 		}
 
-		if ( 'pod' != $type && ! empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) ) {
+		if ( 'pod' !== $type && ! empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) ) {
 			$pod = $object[ $name ];
 		} else {
 			if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] != $name ) {
@@ -937,6 +937,8 @@ class PodsMeta {
 			$object = self::$advanced_content_types;
 		}
 
+		// @todo Convert to Group
+
 		if ( ! empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) ) {
 			$fields = $object[ $name ]['fields'];
 		} else {
@@ -947,7 +949,7 @@ class PodsMeta {
 			$pod = self::$current_pod_data;
 
 			if ( ! empty( $pod ) ) {
-				$fields = $pod['fields'];
+				$fields = array();//$pod['fields'];
 			}
 		}
 
@@ -3421,7 +3423,8 @@ class PodsMeta {
 			$params = array(
 				'pod'    => pods_var( 'name', $object ),
 				'pod_id' => pods_var( 'id', $object ),
-				'id'     => $id
+				'id'     => $id,
+				'strict' => false,
 			);
 
 			return pods_api()->delete_pod_item( $params, false );

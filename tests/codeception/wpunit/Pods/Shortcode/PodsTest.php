@@ -21,11 +21,11 @@ class PodsTest extends Pods_UnitTestCase {
 	public function setUp() {
 		// Create a pod
 		$this->pod_id = pods_api()->save_pod( array(
-			'storage' => 'table',
-			'type'    => 'pod',
-			'name'    => 'planet',
+			'storage'   => 'table',
+			'type'      => 'pod',
+			'name'      => 'planet',
+			'overwrite' => true,
 		) );
-		$this->pod    = pods( 'planet' );
 
 		// register the fields
 		$params = array(
@@ -35,6 +35,8 @@ class PodsTest extends Pods_UnitTestCase {
 			'type'   => 'number',
 		);
 		pods_api()->save_field( $params );
+
+		$this->pod = pods( 'planet' );
 	}
 
 	public function tearDown() {
@@ -45,6 +47,8 @@ class PodsTest extends Pods_UnitTestCase {
 	 * @since 3.0.0
 	 */
 	public function test_shortcode_pods() {
+		$this->assertNotFalse( $this->pod );
+
 		// add an item
 		$this->pod->add( array(
 			'name'            => 'Tatooine',
@@ -105,11 +109,25 @@ class PodsTest extends Pods_UnitTestCase {
 	 * @since 3.0.0
 	 */
 	public function test_shortcode_pods_field_in_shortcode() {
+		$this->assertNotFalse( $this->pod );
+
 		// add an item
-		$this->pod->add( array(
+		$id = $this->pod->add( array(
 			'name'            => 'Dagobah',
 			'number_of_moons' => 5,
 		) );
+
+		codecept_debug( $id );
+
+		/** @var $wpdb \wpdb */
+		global $wpdb;
+
+		codecept_debug( $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}pods_planet" ) );
+
+		$this->pod->find( array( 'where' => 't.number_of_moons=5' ) );
+
+		codecept_debug( $this->pod->sql );
+		codecept_debug( $this->pod->total() );
 
 		// test shortcode
 		$this->assertEquals( '5', do_shortcode( '[pods name="planet" where="t.number_of_moons=5" field="number_of_moons"]' ) );

@@ -951,8 +951,8 @@ class PodsAPI {
 					'type'    => 'number',
 					'alias'   => array( 'id' ),
 					'options' => array(
-						'number_format' => '9999.99'
-					)
+						'number_format' => '9999.99',
+					),
 				),
 				'post_title'            => array(
 					'name'    => 'post_title',
@@ -961,8 +961,8 @@ class PodsAPI {
 					'alias'   => array( 'title', 'name' ),
 					'options' => array(
 						'display_filter'      => 'the_title',
-						'display_filter_args' => array( 'post_ID' )
-					)
+						'display_filter_args' => array( 'post_ID' ),
+					),
 				),
 				'post_content'          => array(
 					'name'    => 'post_content',
@@ -972,8 +972,8 @@ class PodsAPI {
 					'options' => array(
 						'wysiwyg_allowed_html_tags' => '',
 						'display_filter'            => 'the_content',
-						'pre_save'                  => 0
-					)
+						'pre_save'                  => 0,
+					),
 				),
 				'post_excerpt'          => array(
 					'name'    => 'post_excerpt',
@@ -984,8 +984,8 @@ class PodsAPI {
 						'paragraph_allow_html'        => 1,
 						'paragraph_allowed_html_tags' => '',
 						'display_filter'              => 'the_excerpt',
-						'pre_save'                    => 0
-					)
+						'pre_save'                    => 0,
+					),
 				),
 				'post_author'           => array(
 					'name'        => 'post_author',
@@ -996,21 +996,21 @@ class PodsAPI {
 					'options'     => array(
 						'pick_format_type'   => 'single',
 						'pick_format_single' => 'autocomplete',
-						'default_value'      => '{@user.ID}'
-					)
+						'default_value'      => '{@user.ID}',
+					),
 				),
 				'post_date'             => array(
 					'name'  => 'post_date',
 					'label' => 'Publish Date',
 					'type'  => 'datetime',
-					'alias' => array( 'created', 'date' )
+					'alias' => array( 'created', 'date' ),
 				),
 				'post_date_gmt'         => array(
 					'name'   => 'post_date_gmt',
 					'label'  => 'Publish Date (GMT)',
 					'type'   => 'datetime',
 					'alias'  => array(),
-					'hidden' => true
+					'hidden' => true,
 				),
 				'post_status'           => array(
 					'name'        => 'post_status',
@@ -1018,7 +1018,7 @@ class PodsAPI {
 					'type'        => 'pick',
 					'pick_object' => 'post-status',
 					'default'     => $this->do_hook( 'default_status_' . $pod_name, pods_var( 'default_status', pods_var_raw( 'options', $pod ), 'draft', null, true ), $pod ),
-					'alias'       => array( 'status' )
+					'alias'       => array( 'status' ),
 				),
 				'comment_status'        => array(
 					'name'    => 'comment_status',
@@ -1028,8 +1028,8 @@ class PodsAPI {
 					'alias'   => array(),
 					'data'    => array(
 						'open'   => __( 'Open', 'pods' ),
-						'closed' => __( 'Closed', 'pods' )
-					)
+						'closed' => __( 'Closed', 'pods' ),
+					),
 				),
 				'ping_status'           => array(
 					'name'    => 'ping_status',
@@ -1039,48 +1039,48 @@ class PodsAPI {
 					'alias'   => array(),
 					'data'    => array(
 						'open'   => __( 'Open', 'pods' ),
-						'closed' => __( 'Closed', 'pods' )
-					)
+						'closed' => __( 'Closed', 'pods' ),
+					),
 				),
 				'post_password'         => array(
 					'name'  => 'post_password',
 					'label' => 'Password',
 					'type'  => 'text',
-					'alias' => array()
+					'alias' => array(),
 				),
 				'post_name'             => array(
 					'name'  => 'post_name',
 					'label' => 'Permalink',
 					'type'  => 'slug',
-					'alias' => array( 'slug', 'permalink' )
+					'alias' => array( 'slug', 'permalink' ),
 				),
 				'to_ping'               => array(
 					'name'   => 'to_ping',
 					'label'  => 'To Ping',
 					'type'   => 'text',
 					'alias'  => array(),
-					'hidden' => true
+					'hidden' => true,
 				),
 				'pinged'                => array(
 					'name'   => 'pinged',
 					'label'  => 'Pinged',
 					'type'   => 'text',
 					'alias'  => array(),
-					'hidden' => true
+					'hidden' => true,
 				),
 				'post_modified'         => array(
 					'name'   => 'post_modified',
 					'label'  => 'Last Modified Date',
 					'type'   => 'datetime',
 					'alias'  => array( 'modified' ),
-					'hidden' => true
+					'hidden' => true,
 				),
 				'post_modified_gmt'     => array(
 					'name'   => 'post_modified_gmt',
 					'label'  => 'Last Modified Date (GMT)',
 					'type'   => 'datetime',
 					'alias'  => array(),
-					'hidden' => true
+					'hidden' => true,
 				),
 				'post_content_filtered' => array(
 					'name'    => 'post_content_filtered',
@@ -1095,8 +1095,8 @@ class PodsAPI {
 						'paragraph_convert_chars'     => 1,
 						'paragraph_wpautop'           => 1,
 						'paragraph_allow_shortcode'   => 1,
-						'paragraph_allowed_html_tags' => ''
-					)
+						'paragraph_allowed_html_tags' => '',
+					),
 				),
 				'post_parent'           => array(
 					'name'        => 'post_parent',
@@ -1106,14 +1106,14 @@ class PodsAPI {
 					'pick_val'    => '__current__',
 					'alias'       => array( 'parent' ),
 					'data'        => array(),
-					'hidden'      => true
+					'hidden'      => true,
 				),
 				'guid'                  => array(
 					'name'   => 'guid',
 					'label'  => 'GUID',
 					'type'   => 'text',
 					'alias'  => array(),
-					'hidden' => true
+					'hidden' => true,
 				),
 				'menu_order'            => array(
 					'name'    => 'menu_order',
@@ -1121,29 +1121,29 @@ class PodsAPI {
 					'type'    => 'number',
 					'alias'   => array(),
 					'options' => array(
-						'number_format' => '9999.99'
-					)
+						'number_format' => '9999.99',
+					),
 				),
 				'post_type'             => array(
 					'name'   => 'post_type',
 					'label'  => 'Type',
 					'type'   => 'text',
 					'alias'  => array( 'type' ),
-					'hidden' => true
+					'hidden' => true,
 				),
 				'post_mime_type'        => array(
 					'name'   => 'post_mime_type',
 					'label'  => 'Mime Type',
 					'type'   => 'text',
 					'alias'  => array(),
-					'hidden' => true
+					'hidden' => true,
 				),
 				'comment_count'         => array(
 					'name'   => 'comment_count',
 					'label'  => 'Comment Count',
 					'type'   => 'number',
 					'alias'  => array(),
-					'hidden' => true
+					'hidden' => true,
 				),
 				'comments'              => array(
 					'name'        => 'comments',
@@ -1154,8 +1154,8 @@ class PodsAPI {
 					'alias'       => array(),
 					'hidden'      => true,
 					'options'     => array(
-						'comment_format_type' => 'multi'
-					)
+						'comment_format_type' => 'multi',
+					),
 				)
 			);
 
@@ -1172,8 +1172,8 @@ class PodsAPI {
 						'alias'       => array(),
 						'hidden'      => true,
 						'options'     => array(
-							'taxonomy_format_type' => 'multi'
-						)
+							'taxonomy_format_type' => 'multi',
+						),
 					);
 				}
 			}
@@ -1185,8 +1185,8 @@ class PodsAPI {
 					'type'    => 'number',
 					'alias'   => array( 'id' ),
 					'options' => array(
-						'number_format' => '9999.99'
-					)
+						'number_format' => '9999.99',
+					),
 				),
 				'user_login'      => array(
 					'name'    => 'user_login',
@@ -1194,20 +1194,20 @@ class PodsAPI {
 					'type'    => 'text',
 					'alias'   => array( 'login' ),
 					'options' => array(
-						'required' => 1
-					)
+						'required' => 1,
+					),
 				),
 				'user_nicename'   => array(
 					'name'  => 'user_nicename',
 					'label' => 'Permalink',
 					'type'  => 'slug',
-					'alias' => array( 'nicename', 'slug', 'permalink' )
+					'alias' => array( 'nicename', 'slug', 'permalink' ),
 				),
 				'display_name'    => array(
 					'name'  => 'display_name',
 					'label' => 'Display Name',
 					'type'  => 'text',
-					'alias' => array( 'title', 'name' )
+					'alias' => array( 'title', 'name' ),
 				),
 				'user_pass'       => array(
 					'name'    => 'user_pass',
@@ -1216,8 +1216,8 @@ class PodsAPI {
 					'alias'   => array( 'password', 'pass' ),
 					'options' => array(
 						'required'         => 1,
-						'text_format_type' => 'password'
-					)
+						'text_format_type' => 'password',
+					),
 				),
 				'user_email'      => array(
 					'name'    => 'user_email',
@@ -1226,8 +1226,8 @@ class PodsAPI {
 					'alias'   => array( 'email' ),
 					'options' => array(
 						'required'         => 1,
-						'text_format_type' => 'email'
-					)
+						'text_format_type' => 'email',
+					),
 				),
 				'user_url'        => array(
 					'name'    => 'user_url',
@@ -1237,8 +1237,8 @@ class PodsAPI {
 					'options' => array(
 						'required'            => 0,
 						'text_format_type'    => 'website',
-						'text_format_website' => 'normal'
-					)
+						'text_format_website' => 'normal',
+					),
 				),
 				'user_registered' => array(
 					'name'    => 'user_registered',
@@ -1246,8 +1246,8 @@ class PodsAPI {
 					'type'    => 'date',
 					'alias'   => array( 'created', 'date', 'registered' ),
 					'options' => array(
-						'date_format_type' => 'datetime'
-					)
+						'date_format_type' => 'datetime',
+					),
 				)
 			);
 		} elseif ( 'comment' === $object ) {
@@ -1258,14 +1258,14 @@ class PodsAPI {
 					'type'    => 'number',
 					'alias'   => array( 'id', 'ID', 'comment_id' ),
 					'options' => array(
-						'number_format' => '9999.99'
-					)
+						'number_format' => '9999.99',
+					),
 				),
 				'comment_content'      => array(
 					'name'  => 'comment_content',
 					'label' => 'Content',
 					'type'  => 'wysiwyg',
-					'alias' => array( 'content' )
+					'alias' => array( 'content' ),
 				),
 				'comment_approved'     => array(
 					'name'    => 'comment_approved',
@@ -1273,15 +1273,15 @@ class PodsAPI {
 					'type'    => 'number',
 					'alias'   => array( 'approved' ),
 					'options' => array(
-						'number_format' => '9999.99'
-					)
+						'number_format' => '9999.99',
+					),
 				),
 				'comment_post_ID'      => array(
 					'name'  => 'comment_post_ID',
 					'label' => 'Post',
 					'type'  => 'pick',
 					'alias' => array( 'post', 'post_id' ),
-					'data'  => array()
+					'data'  => array(),
 				),
 				'user_id'              => array(
 					'name'        => 'user_id',
@@ -1289,7 +1289,7 @@ class PodsAPI {
 					'type'        => 'pick',
 					'alias'       => array( 'author' ),
 					'pick_object' => 'user',
-					'data'        => array()
+					'data'        => array(),
 				),
 				'comment_date'         => array(
 					'name'    => 'comment_date',
@@ -1297,39 +1297,39 @@ class PodsAPI {
 					'type'    => 'date',
 					'alias'   => array( 'created', 'date' ),
 					'options' => array(
-						'date_format_type' => 'datetime'
-					)
+						'date_format_type' => 'datetime',
+					),
 				),
 				'comment_author'       => array(
 					'name'  => 'comment_author',
 					'label' => 'Author',
 					'type'  => 'text',
-					'alias' => array( 'author' )
+					'alias' => array( 'author' ),
 				),
 				'comment_author_email' => array(
 					'name'  => 'comment_author_email',
 					'label' => 'Author E-mail',
 					'type'  => 'email',
-					'alias' => array( 'author_email' )
+					'alias' => array( 'author_email' ),
 				),
 				'comment_author_url'   => array(
 					'name'  => 'comment_author_url',
 					'label' => 'Author URL',
 					'type'  => 'text',
-					'alias' => array( 'author_url' )
+					'alias' => array( 'author_url' ),
 				),
 				'comment_author_IP'    => array(
 					'name'  => 'comment_author_IP',
 					'label' => 'Author IP',
 					'type'  => 'text',
-					'alias' => array( 'author_IP' )
+					'alias' => array( 'author_IP' ),
 				),
 				'comment_type'         => array(
 					'name'   => 'comment_type',
 					'label'  => 'Type',
 					'type'   => 'text',
 					'alias'  => array( 'type' ),
-					'hidden' => true
+					'hidden' => true,
 				),
 				'comment_parent'       => array(
 					'name'        => 'comment_parent',
@@ -1339,8 +1339,8 @@ class PodsAPI {
 					'pick_val'    => '__current__',
 					'alias'       => array( 'parent' ),
 					'data'        => array(),
-					'hidden'      => true
-				)
+					'hidden'      => true,
+				),
 			);
 		} elseif ( 'taxonomy' === $object ) {
 			$fields = array(
@@ -1350,32 +1350,32 @@ class PodsAPI {
 					'type'    => 'number',
 					'alias'   => array( 'id', 'ID' ),
 					'options' => array(
-						'number_format' => '9999.99'
-					)
+						'number_format' => '9999.99',
+					),
 				),
 				'name'             => array(
 					'name'  => 'name',
 					'label' => 'Title',
 					'type'  => 'text',
-					'alias' => array( 'title' )
+					'alias' => array( 'title' ),
 				),
 				'slug'             => array(
 					'name'  => 'slug',
 					'label' => 'Permalink',
 					'type'  => 'slug',
-					'alias' => array( 'permalink' )
+					'alias' => array( 'permalink' ),
 				),
 				'description'      => array(
 					'name'  => 'description',
 					'label' => 'Description',
 					'type'  => 'wysiwyg',
-					'alias' => array( 'content' )
+					'alias' => array( 'content' ),
 				),
 				'taxonomy'         => array(
 					'name'  => 'taxonomy',
 					'label' => 'Taxonomy',
 					'type'  => 'text',
-					'alias' => array()
+					'alias' => array(),
 				),
 				'parent'           => array(
 					'name'        => 'parent',
@@ -1385,7 +1385,7 @@ class PodsAPI {
 					'pick_val'    => '__current__',
 					'alias'       => array( 'parent' ),
 					'data'        => array(),
-					'hidden'      => true
+					'hidden'      => true,
 				),
 				'term_taxonomy_id' => array(
 					'name'    => 'term_taxonomy_id',
@@ -1394,8 +1394,8 @@ class PodsAPI {
 					'alias'   => array(),
 					'hidden'  => true,
 					'options' => array(
-						'number_format' => '9999.99'
-					)
+						'number_format' => '9999.99',
+					),
 				),
 				'term_group'       => array(
 					'name'    => 'term_group',
@@ -1404,8 +1404,8 @@ class PodsAPI {
 					'alias'   => array( 'group' ),
 					'hidden'  => true,
 					'options' => array(
-						'number_format' => '9999.99'
-					)
+						'number_format' => '9999.99',
+					),
 				),
 				'count'            => array(
 					'name'    => 'count',
@@ -1414,9 +1414,21 @@ class PodsAPI {
 					'alias'   => array(),
 					'hidden'  => true,
 					'options' => array(
-						'number_format' => '9999.99'
-					)
-				)
+						'number_format' => '9999.99',
+					),
+				),
+			);
+		} elseif ( 'pod' === $object ) {
+			$fields = array(
+				'id' => array(
+					'name'    => 'id',
+					'label'   => 'ID',
+					'type'    => 'number',
+					'alias'   => array( 'ID' ),
+					'options' => array(
+						'number_format' => '9999.99',
+					),
+				),
 			);
 		}
 
@@ -7858,6 +7870,8 @@ class PodsAPI {
 			);
 
 			$info['orderby'] = '`t`.`' . $info['field_index'] . '` DESC, `t`.`' . $info['field_id'] . '`';
+
+			$info['object_fields'] = $this->get_wp_object_fields( $object_type, $info['pod'] );
 		} elseif ( in_array( $object_type, array(
 				'option',
 				'settings'

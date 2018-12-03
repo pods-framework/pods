@@ -166,7 +166,6 @@ class Pods implements Iterator {
 	 * @since 2.0.0
 	 */
 	public function valid() {
-
 		if ( empty( $this->pod_id ) ) {
 			return false;
 		}
@@ -188,7 +187,6 @@ class Pods implements Iterator {
 	 * @link  http://www.php.net/manual/en/class.iterator.php
 	 */
 	public function is_iterator() {
-
 		return $this->iterator;
 	}
 
@@ -2237,20 +2235,26 @@ class Pods implements Iterator {
 
 		$select = '`t`.*';
 
-		if ( 'table' === $this->pod_data['storage'] && ! in_array( $this->pod_data['type'], array(
+		if ( ! $this->pod_data instanceof Pods\Whatsit\Pod ) {
+			return $this;
+		}
+
+		if ( 'table' === $this->pod_data->get_arg( 'storage' ) && ! in_array( $this->pod_data->get_arg( 'type' ), array(
 			'pod',
 			'table',
 		), true ) ) {
 			$select .= ', `d`.*';
 		}
 
-		if ( empty( $this->data->table ) ) {
+		$table = $this->pod_data->get_arg( 'table' );
+
+		if ( empty( $table ) ) {
 			return $this;
 		}
 
 		$defaults = array(
 			// Optimization parameters.
-			'table'               => $this->data->table,
+			'table'               => $table,
 			'select'              => $select,
 			'join'                => null,
 			// Main query parameters.
@@ -2541,9 +2545,7 @@ class Pods implements Iterator {
 
 		$this->data->total();
 
-		$this->total =& $this->data->total;
-
-		return $this->total;
+		return $this->data->total;
 	}
 
 	/**
@@ -2570,9 +2572,7 @@ class Pods implements Iterator {
 
 		$this->data->total_found();
 
-		$this->total_found =& $this->data->total_found;
-
-		return $this->total_found;
+		return $this->data->total_found;
 	}
 
 	/**
@@ -4310,20 +4310,20 @@ class Pods implements Iterator {
 		);
 
 		if ( isset( $supported_pods_object[ $name ] ) ) {
-			if ( ! is_object( $this->pods_data ) ) {
+			if ( ! is_object( $this->pod_data ) ) {
 				return null;
 			}
 
-			return $this->pods_data->get_arg( $supported_pods_object[ $name ] );
+			return $this->pod_data->get_arg( $supported_pods_object[ $name ] );
 		}
 
 		// Handle sending previously mapped PodsData properties directly to their correct place.
 		if ( 0 === strpos( $name, 'field_' ) ) {
-			if ( ! is_object( $this->pods_data ) ) {
+			if ( ! is_object( $this->pod_data ) ) {
 				return null;
 			}
 
-			return $this->pods_data->get_arg( $name );
+			return $this->pod_data->get_arg( $name );
 		}
 
 		// Map deprecated properties to Pods\Whatsit\Pod properties.
@@ -4383,7 +4383,7 @@ class Pods implements Iterator {
 	public function __isset( $name ) {
 		$value = $this->__get( $name );
 
-		return ( null === $value );
+		return ( null !== $value );
 	}
 
 	/**

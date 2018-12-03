@@ -31,21 +31,6 @@ class PodsData {
 	public $api = null;
 
 	/**
-	 * @var null
-	 */
-	public $select = null;
-
-	/**
-	 * @var null
-	 */
-	public $table = null;
-
-	/**
-	 * @var null
-	 */
-	public $pod = null;
-
-	/**
 	 * @var array|bool|mixed|null|void
 	 */
 	public $pod_data = null;
@@ -56,54 +41,9 @@ class PodsData {
 	public $id = 0;
 
 	/**
-	 * @var string
-	 */
-	public $field_id = 'id';
-
-	/**
-	 * @var string
-	 */
-	public $field_index = 'name';
-
-	/**
-	 * @var string
-	 */
-	public $field_slug = '';
-
-	/**
-	 * @var string
-	 */
-	public $join = '';
-
-	/**
-	 * @var array
-	 */
-	public $where = array();
-
-	/**
-	 * @var array
-	 */
-	public $where_default = array();
-
-	/**
-	 * @var string
-	 */
-	public $orderby = '';
-
-	/**
-	 * @var array
-	 */
-	public $fields = array();
-
-	/**
 	 * @var array
 	 */
 	public $aliases = array();
-
-	/**
-	 * @var
-	 */
-	public $detail_page;
 
 	/**
 	 * @var int
@@ -303,50 +243,6 @@ class PodsData {
 			return;
 		}
 
-		$this->pod_id = $this->pod_data['id'];
-		$this->pod    = $this->pod_data['name'];
-		$this->fields = $this->pod_data['fields'];
-
-			if ( isset( $this->pod_data['detail_url'] ) ) {
-				$this->detail_page = $this->pod_data['detail_url'];
-			}
-
-		if ( isset( $this->pod_data['select'] ) ) {
-			$this->select = $this->pod_data['select'];
-		}
-
-		if ( isset( $this->pod_data['table'] ) ) {
-			$this->table = $this->pod_data['table'];
-		}
-
-		if ( isset( $this->pod_data['join'] ) ) {
-			$this->join = $this->pod_data['join'];
-		}
-
-		if ( isset( $this->pod_data['field_id'] ) ) {
-			$this->field_id = $this->pod_data['field_id'];
-		}
-
-		if ( isset( $this->pod_data['field_index'] ) ) {
-			$this->field_index = $this->pod_data['field_index'];
-		}
-
-		if ( isset( $this->pod_data['field_slug'] ) ) {
-			$this->field_slug = $this->pod_data['field_slug'];
-		}
-
-		if ( isset( $this->pod_data['where'] ) ) {
-			$this->where = $this->pod_data['where'];
-		}
-
-		if ( isset( $this->pod_data['where_default'] ) ) {
-			$this->where_default = $this->pod_data['where_default'];
-		}
-
-		if ( isset( $this->pod_data['orderby'] ) ) {
-			$this->orderby = $this->pod_data['orderby'];
-		}
-
 		// Set up page variable.
 		if ( pods_strict( false ) ) {
 			$this->page       = 1;
@@ -426,61 +322,27 @@ class PodsData {
 			$table = $this->api->get_table_info( $object_type, $object );
 		}
 
+		// @todo Revisit this mess, $this->pod_data can't be an array anymore.
 		if ( ! empty( $table ) && is_array( $table ) ) {
-			$table['id']   = pods_v( 'id', $table['pod'], 0, true );
-			$table['name'] = pods_v( 'name', $table['pod'], $table['object_type'], true );
-			$table['type'] = pods_v( 'type', $table['pod'], $table['object_type'], true );
+			if ( ! empty( $table['pod'] ) && $table['pod'] instanceof Pods\Whatsit\Pod ) {
+				$table = $table['pod'];
+			} else {
+				$table['id']   = pods_v( 'id', $table['pod'], 0, true );
+				$table['name'] = pods_v( 'name', $table['pod'], $table['object_type'], true );
+				$table['type'] = pods_v( 'type', $table['pod'], $table['object_type'], true );
 
-			$default_storage = 'meta';
+				$default_storage = 'meta';
 
-			if ( 'taxonomy' === $table['type'] && ! function_exists( 'get_term_meta' ) ) {
-				$default_storage = 'none';
+				if ( ! function_exists( 'get_term_meta' ) && 'taxonomy' === $table['type'] ) {
+					$default_storage = 'none';
+				}
+
+				$table['storage']       = pods_v( 'storage', $table['pod'], $default_storage, true );
+				$table['fields']        = pods_v( 'fields', $table['pod'], array() );
+				$table['object_fields'] = pods_v( 'object_fields', $table['pod'], $this->api->get_wp_object_fields( $table['object_type'] ), true );
 			}
-
-			$table['storage']       = pods_v( 'storage', $table['pod'], $default_storage, true );
-			$table['fields']        = pods_v( 'fields', $table['pod'], array() );
-			$table['object_fields'] = pods_v( 'object_fields', $table['pod'], $this->api->get_wp_object_fields( $table['object_type'] ), true );
 
 			$this->pod_data = $table;
-			$this->pod_id   = $this->pod_data['id'];
-			$this->pod      = $this->pod_data['name'];
-			$this->fields   = $this->pod_data['fields'];
-
-			if ( isset( $this->pod_data['select'] ) ) {
-				$this->select = $this->pod_data['select'];
-			}
-
-			if ( isset( $this->pod_data['table'] ) ) {
-				$this->table = $this->pod_data['table'];
-			}
-
-			if ( isset( $this->pod_data['join'] ) ) {
-				$this->join = $this->pod_data['join'];
-			}
-
-			if ( isset( $this->pod_data['field_id'] ) ) {
-				$this->field_id = $this->pod_data['field_id'];
-			}
-
-			if ( isset( $this->pod_data['field_index'] ) ) {
-				$this->field_index = $this->pod_data['field_index'];
-			}
-
-			if ( isset( $this->pod_data['field_slug'] ) ) {
-				$this->field_slug = $this->pod_data['field_slug'];
-			}
-
-			if ( isset( $this->pod_data['where'] ) ) {
-				$this->where = $this->pod_data['where'];
-			}
-
-			if ( isset( $this->pod_data['where_default'] ) ) {
-				$this->where_default = $this->pod_data['where_default'];
-			}
-
-			if ( isset( $this->pod_data['orderby'] ) ) {
-				$this->orderby = $this->pod_data['orderby'];
-			}
 		}//end if
 	}
 
@@ -805,17 +667,19 @@ class PodsData {
 
 		// Fill in empty field data (if none provided).
 		if ( ( ! isset( $this->fields ) || empty( $this->fields ) ) && ! empty( $this->rows ) ) {
-			$this->fields = array();
+			//$this->fields = array();
 			$data         = (array) @current( $this->rows );
 
+			// @todo Don't do this anymore, need to add them to the pod via collection storage instead.
 			foreach ( $data as $data_key => $data_value ) {
-				$this->fields[ $data_key ] = array( 'label' => ucwords( str_replace( '-', ' ', str_replace( '_', ' ', $data_key ) ) ) );
+				//$this->fields[ $data_key ] = array( 'label' => ucwords( str_replace( '-', ' ', str_replace( '_', ' ', $data_key ) ) ) );
+
 				if ( isset( $this->pod_data['object_fields'][ $data_key ] ) ) {
-					$this->fields[ $data_key ] = $this->pod_data['object_fields'][ $data_key ];
+					//$this->fields[ $data_key ] = $this->pod_data['object_fields'][ $data_key ];
 				}
 			}
 
-			$this->fields = PodsForm::fields_setup( $this->fields );
+			//$this->fields = PodsForm::fields_setup( $this->fields );
 		}
 
 		$this->total_found_calculated = false;
@@ -914,7 +778,7 @@ class PodsData {
 
 		$pod = false;
 
-		if ( is_array( $this->pod_data ) ) {
+		if ( $this->pod_data instanceof Pods\Whatsit\Pod ) {
 			$pod = $this->pod_data;
 		}
 
@@ -948,12 +812,12 @@ class PodsData {
 			$params->offset = 0;
 		}
 
-		if ( ( empty( $params->fields ) || ! is_array( $params->fields ) ) && ! empty( $pod ) && isset( $this->fields ) && ! empty( $this->fields ) ) {
-			$params->fields = $this->fields;
+		if ( ( empty( $params->fields ) || ! is_array( $params->fields ) ) && $pod ) {
+			$params->fields = $pod->get_fields();
 		}
 
-		if ( ( empty( $params->object_fields ) || ! is_array( $params->object_fields ) ) && ! empty( $pod ) && isset( $pod['object_fields'] ) && ! empty( $pod['object_fields'] ) ) {
-			$params->object_fields = $pod['object_fields'];
+		if ( ( empty( $params->object_fields ) || ! is_array( $params->object_fields ) ) && $pod ) {
+			$params->object_fields = $pod->get_object_fields();
 		}
 
 		if ( empty( $params->filters ) && $params->search ) {
@@ -970,7 +834,7 @@ class PodsData {
 			$params->id = $this->field_id;
 		}
 
-		if ( empty( $params->table ) && ! empty( $pod ) && isset( $this->table ) && ! empty( $this->table ) ) {
+		if ( empty( $params->table ) && $pod && isset( $this->table ) && ! empty( $this->table ) ) {
 			$params->table = $this->table;
 		}
 
@@ -978,18 +842,18 @@ class PodsData {
 			$params->pod_table_prefix = 't';
 		}
 
-		if ( ! empty( $pod ) && ! in_array(
-			$pod['type'], array(
+		if ( $pod && ! in_array(
+			$pod->get_arg( 'type' ), array(
 				'pod',
 				'table',
 			), true
-		) && 'table' === $pod['storage'] ) {
+		) && 'table' === $pod->get_arg( 'storage' ) ) {
 			$params->pod_table_prefix = 'd';
 		}
 
 		$params->meta_fields = false;
 
-		if ( ! empty( $pod ) && ! in_array(
+		if ( $pod && ! in_array(
 			$pod['type'], array(
 				'pod',
 				'table',
@@ -2535,9 +2399,9 @@ class PodsData {
 	/**
 	 * Get the string to use in a query for WHERE/HAVING, uses WP_Query meta_query arguments
 	 *
-	 * @param array  $fields Array of field matches for querying.
-	 * @param array  $pod    Related Pod.
-	 * @param object $params Parameters passed from select().
+	 * @param array                  $fields Array of field matches for querying.
+	 * @param array|Pods\Whatsit\Pod $pod    Related Pod.
+	 * @param object                 $params Parameters passed from select().
 	 *
 	 * @return string|null Query string for WHERE/HAVING
 	 *
@@ -2602,7 +2466,7 @@ class PodsData {
 
 		if ( ! empty( $query_fields ) ) {
 			// If post_status not sent, detect it.
-			if ( ! empty( $pod ) && 'post_type' === $pod['type'] && 1 === $current_level && ! $params->where_defaulted && ! empty( $params->where_default ) ) {
+			if ( $pod && 'post_type' === $pod['type'] && 1 === $current_level && ! $params->where_defaulted && ! empty( $params->where_default ) ) {
 				$post_status_found = false;
 
 				if ( ! $params->query_field_syntax ) {
@@ -2654,10 +2518,10 @@ class PodsData {
 	/**
 	 * Get the string to use in a query for matching, uses WP_Query meta_query arguments
 	 *
-	 * @param string|int   $field  Field name or array index.
-	 * @param array|string $q      Query array (meta_query) or string for matching.
-	 * @param array        $pod    Related Pod.
-	 * @param object       $params Parameters passed from select().
+	 * @param string|int             $field  Field name or array index.
+	 * @param array|string           $q      Query array (meta_query) or string for matching.
+	 * @param array|Pods\Whatsit\Pod $pod    Related Pod.
+	 * @param object                 $params Parameters passed from select().
 	 *
 	 * @return string|null Query field string
 	 *
@@ -2742,7 +2606,7 @@ class PodsData {
 			// Setup field casting from field name.
 			if ( false === strpos( $field_name, '`' ) && false === strpos( $field_name, '(' ) && false === strpos( $field_name, ' ' ) ) {
 				// Handle field naming if Pod-based.
-				if ( ! empty( $pod ) && false === strpos( $field_name, '.' ) ) {
+				if ( $pod && false === strpos( $field_name, '.' ) ) {
 					$field_cast = '';
 
 					$tableless_field_types = PodsForm::tableless_field_types();
@@ -2981,7 +2845,7 @@ class PodsData {
 			if ( 'ALL' === $field_compare ) {
 				$field_compare = 'IN';
 
-				if ( ! empty( $pod ) ) {
+				if ( $pod ) {
 					$params->having[] = 'COUNT( DISTINCT ' . $field_cast . ' ) = ' . count( $field_value );
 
 					if ( empty( $params->groupby ) || ( ! in_array( '`t`.`' . $pod['field_id'] . '`', $params->groupby, true ) && ! in_array( 't.' . $pod['field_id'] . '', $params->groupby, true ) ) ) {
@@ -3107,14 +2971,14 @@ class PodsData {
 						'comment',
 					), true
 				) ) {
-					$pod = $this->api->load_pod(
+					$new_pod = $this->api->load_pod(
 						array(
 							'name' => $traverse_recurse['pod'],
 						)
 					);
 
-					if ( ! empty( $pod ) && $pod['type'] === $pod ) {
-						$pod_data = $pod;
+					if ( $new_pod && $new_pod['type'] === $traverse_recurse['pod'] ) {
+						$pod_data = $new_pod;
 					}
 				}
 
@@ -3621,11 +3485,11 @@ class PodsData {
 		);
 
 		if ( isset( $supported_pods_object[ $name ] ) ) {
-			if ( ! is_object( $this->pods_data ) ) {
+			if ( ! is_object( $this->pod_data ) ) {
 				return null;
 			}
 
-			return $this->pods_data->get_arg( $supported_pods_object[ $name ] );
+			return $this->pod_data->get_arg( $supported_pods_object[ $name ] );
 		}
 
 		// Map deprecated properties to Pods\Whatsit\Pod properties.

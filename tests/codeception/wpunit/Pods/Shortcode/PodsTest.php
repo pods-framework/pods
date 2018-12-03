@@ -112,22 +112,12 @@ class PodsTest extends Pods_UnitTestCase {
 		$this->assertNotFalse( $this->pod );
 
 		// add an item
-		$id = $this->pod->add( array(
+		$this->pod->add( array(
 			'name'            => 'Dagobah',
 			'number_of_moons' => 5,
 		) );
 
-		codecept_debug( $id );
-
-		/** @var $wpdb \wpdb */
-		global $wpdb;
-
-		codecept_debug( $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}pods_planet" ) );
-
 		$this->pod->find( array( 'where' => 't.number_of_moons=5' ) );
-
-		codecept_debug( $this->pod->sql );
-		codecept_debug( $this->pod->total() );
 
 		// test shortcode
 		$this->assertEquals( '5', do_shortcode( '[pods name="planet" where="t.number_of_moons=5" field="number_of_moons"]' ) );

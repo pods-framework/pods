@@ -15,13 +15,6 @@ class Pods implements Iterator {
 	private $iterator = false;
 
 	/**
-	 * PodsAPI object.
-	 *
-	 * @var PodsAPI
-	 */
-	public $api;
-
-	/**
 	 * PodsData object.
 	 *
 	 * @var PodsData
@@ -34,27 +27,6 @@ class Pods implements Iterator {
 	 * @var PodsData
 	 */
 	public $alt_data;
-
-	/**
-	 * Array of pod item arrays.
-	 *
-	 * @var array
-	 */
-	public $rows;
-
-	/**
-	 * Current pod item array.
-	 *
-	 * @var array
-	 */
-	public $row;
-
-	/**
-	 * Row number.
-	 *
-	 * @var int
-	 */
-	private $row_number;
 
 	/**
 	 * Override pod item array.
@@ -76,125 +48,6 @@ class Pods implements Iterator {
 	 * @var array|bool|mixed|null|void
 	 */
 	public $pod_data;
-
-	/**
-	 * Last used Pods::find() parameters.
-	 *
-	 * @var array
-	 */
-	public $params = array();
-
-	/**
-	 * Current Pod name.
-	 *
-	 * @var string
-	 */
-	public $pod;
-
-	/**
-	 * Current Pod ID.
-	 *
-	 * @var int
-	 */
-	public $pod_id;
-
-	/**
-	 * Pod fields information.
-	 *
-	 * @var array
-	 */
-	public $fields;
-
-	/**
-	 * Last used filters() parameters.
-	 *
-	 * @var array
-	 */
-	public $filters = array();
-
-	/**
-	 * Detail page URL used for Advanced Content Types.
-	 *
-	 * @var string
-	 */
-	public $detail_page;
-
-	/**
-	 * Current Item ID.
-	 *
-	 * @var int
-	 */
-	public $id;
-
-	/**
-	 * Last used limit from find() lookup.
-	 *
-	 * @var int
-	 */
-	public $limit = 15;
-
-	/**
-	 * Last used offset from find() lookup.
-	 *
-	 * @var int
-	 */
-	public $offset = 0;
-
-	/**
-	 * Query variable used for pagination number.
-	 *
-	 * @var string
-	 */
-	public $page_var = 'pg';
-
-	/**
-	 * Last used page from find() lookup.
-	 *
-	 * @var int|mixed
-	 */
-	public $page = 1;
-
-	/**
-	 * Last used state of whether pagination was enabled from find() lookup.
-	 *
-	 * @var bool
-	 */
-	public $pagination = true;
-
-	/**
-	 * Last used state of whether search was enabled from find() lookup.
-	 *
-	 * @var bool
-	 */
-	public $search = true;
-
-	/**
-	 * Query variable used for search string.
-	 *
-	 * @var string
-	 */
-	public $search_var = 'search';
-
-	/**
-	 * Search mode (int | text | text_like).
-	 *
-	 * @var string
-	 */
-	public $search_mode = 'int';
-
-	/**
-	 * Total number of records returned from find() lookup.
-	 *
-	 * @var int
-	 */
-	public $total = 0;
-
-	/**
-	 * Total number of records found from find() lookup.
-	 *
-	 * @var int
-	 */
-	public $total_found = 0;
 
 	/**
 	 * Last used ui options for ui() call.
@@ -239,36 +92,11 @@ class Pods implements Iterator {
 	public $meta_extra = '';
 
 	/**
-	 * Last SQL query used by a find() lookup.
-	 *
-	 * @var string
-	 */
-	public $sql;
-
-	/**
 	 * Pods_Deprecated object.
 	 *
 	 * @var Pods_Deprecated
 	 */
 	public $deprecated;
-
-	/**
-	 * Old Pod name variable.
-	 *
-	 * @var string
-	 *
-	 * @deprecated 2.0.0
-	 */
-	public $datatype;
-
-	/**
-	 * Old Pod ID variable.
-	 *
-	 * @var int
-	 *
-	 * @deprecated 2.0.0
-	 */
-	public $datatype_id;
 
 	/**
 	 * Constructor - Pods Framework core.
@@ -310,77 +138,20 @@ class Pods implements Iterator {
 			}//end if
 		}//end if
 
-		$this->api                 = pods_api( $pod );
-		$this->api->display_errors =& $this->display_errors;
+		if ( ! $pod ) {
+			return;
+		}
 
-		$this->data               = pods_data( $this->api, $id, false );
+		$maybe_id = 0;
+
+		if ( ! is_array( $id ) && ! is_object( $id ) ) {
+			$maybe_id = $id;
+		}
+
+		$this->data               = pods_data( $pod, $maybe_id, false );
 		PodsData::$display_errors =& $this->display_errors;
 
-		// Set up page variable.
-		if ( pods_strict( false ) ) {
-			$this->page       = 1;
-			$this->pagination = false;
-			$this->search     = false;
-		} else {
-			// Get the page variable.
-			$this->page = pods_v( $this->page_var, 'get', 1, true );
-
-			if ( ! empty( $this->page ) ) {
-				$this->page = max( 1, pods_absint( $this->page ) );
-			}
-		}
-
-		// Set default pagination handling to on/off.
-		if ( defined( 'PODS_GLOBAL_POD_PAGINATION' ) ) {
-			if ( ! PODS_GLOBAL_POD_PAGINATION ) {
-				$this->page       = 1;
-				$this->pagination = false;
-			} else {
-				$this->pagination = true;
-			}
-		}
-
-		// Set default search to on/off.
-		if ( defined( 'PODS_GLOBAL_POD_SEARCH' ) ) {
-			if ( PODS_GLOBAL_POD_SEARCH ) {
-				$this->search = true;
-			} else {
-				$this->search = false;
-			}
-		}
-
-		// Set default search mode.
-		$allowed_search_modes = array( 'int', 'text', 'text_like' );
-
-		if ( defined( 'PODS_GLOBAL_POD_SEARCH_MODE' ) && in_array( PODS_GLOBAL_POD_SEARCH_MODE, $allowed_search_modes, true ) ) {
-			$this->search_mode = PODS_GLOBAL_POD_SEARCH_MODE;
-		}
-
-		// Sync Settings.
-		$this->data->page        =& $this->page;
-		$this->data->limit       =& $this->limit;
-		$this->data->pagination  =& $this->pagination;
-		$this->data->search      =& $this->search;
-		$this->data->search_mode =& $this->search_mode;
-
-		// Sync Pod Data.
-		// @todo Blow this up, use __get() to map, stop using pod data in pods_data() and pods_api()
-		$this->api->pod_data =& $this->data->pod_data;
-		$this->pod_data      =& $this->api->pod_data;
-		$this->api->pod_id   =& $this->data->pod_id;
-		$this->pod_id        =& $this->api->pod_id;
-		$this->datatype_id   =& $this->pod_id;
-		$this->api->pod      =& $this->data->pod;
-		$this->pod           =& $this->api->pod;
-		$this->datatype      =& $this->pod;
-		$this->api->fields   =& $this->data->fields;
-		$this->fields        =& $this->api->fields;
-		$this->detail_page   =& $this->data->detail_page;
-		$this->id            =& $this->data->id;
-		$this->row           =& $this->data->row;
-		$this->rows          =& $this->data->data;
-		$this->row_number    =& $this->data->row_number;
-		$this->sql           =& $this->data->sql;
+		$this->pod_data =& $this->data->pod_data;
 
 		if ( is_array( $id ) || is_object( $id ) ) {
 			$this->find( $id );
@@ -4501,34 +4272,120 @@ class Pods implements Iterator {
 	 * @since 2.0.0
 	 */
 	public function __get( $name ) {
-
 		$name = (string) $name;
 
-		// PodsData vars.
-		if ( isset( $this->data->{$name} ) && 0 === strpos( $name, 'field_' ) ) {
+		// Handle PodsData properties.
+		$supported_pods_data = array(
+			'rows',
+			'row',
+			'pagination',
+			'page',
+			'page_var',
+			'search',
+			'search_var',
+			'search_mode',
+			'api',
+			'row_number',
+			'params',
+			'filters',
+			'id',
+			'limit',
+			'offset',
+			'total',
+			'total_found',
+			'sql',
+		);
+
+		if ( in_array( $name, $supported_pods_data, true ) ) {
 			return $this->data->{$name};
 		}
 
-		if ( ! $this->deprecated ) {
+		// Handle alias Pods\Whatsit\Pod properties.
+		$supported_pods_object = array(
+			'pod'         => 'name',
+			'pod_id'      => 'id',
+			'fields'      => 'fields',
+			'detail_page' => 'detail_page',
+		);
 
-			$this->deprecated = new Pods_Deprecated( $this );
+		if ( isset( $supported_pods_object[ $name ] ) ) {
+			return $this->pods_data->get_arg( $supported_pods_object[ $name ] );
 		}
 
-		$var = null;
-
-		$pod_class_exists = class_exists( 'Pod' );
-
-		if ( isset( $this->deprecated->{$name} ) ) {
-			if ( ! $pod_class_exists || Pod::$deprecated_notice ) {
-				pods_deprecated( "Pods->{$name}", '2.0' );
-			}
-
-			$var = $this->deprecated->{$name};
-		} elseif ( ! $pod_class_exists || Pod::$deprecated_notice ) {
-			pods_deprecated( "Pods->{$name}", '2.0' );
+		// Handle sending previously mapped PodsData properties directly to their correct place.
+		if ( 0 === strpos( $name, 'field_' ) ) {
+			return $this->pods_data->get_arg( $name );
 		}
 
-		return $var;
+		// Map deprecated properties to Pods\Whatsit\Pod properties.
+		$mapped = array(
+			'datatype' => 'pod',
+			'datatype_id' => 'pod_id',
+		);
+
+		if ( isset( $mapped[ $name ] ) ) {
+			pods_deprecated( "Pods->{$mapped[$name]}", '2.0' );
+
+			return $this->data->{$mapped[$name]};
+		}
+
+		return null;
+	}
+
+	/**
+	 * Handle variables that have been deprecated and PodsData vars
+	 *
+	 * @param string $name  Property name.
+	 * @param mixed  $value Property value.
+	 *
+	 * @since 2.8
+	 */
+	public function __set( $name, $value ) {
+		$name = (string) $name;
+
+		$supported_pods_data = array(
+			'rows'        => 'array',
+			'row'         => 'array',
+			'pagination'  => 'boolean',
+			'page'        => 'int',
+			'page_var'    => 'string',
+			'search'      => 'boolean',
+			'search_var'  => 'string',
+			'search_mode' => 'string',
+		);
+
+		if ( isset( $supported_pods_data[ $name ] ) ) {
+			// Cast the value.
+			settype( $value, $supported_pods_data[ $name ] );
+
+			$this->data->{$name} = $value;
+		}
+	}
+
+	/**
+	 * Handle variables that have been deprecated and PodsData vars
+	 *
+	 * @param string $name Property name.
+	 *
+	 * @return bool Whether the variable is set or not.
+	 *
+	 * @since 2.8
+	 */
+	public function __isset( $name ) {
+		$value = $this->__get( $name );
+
+		return ( null === $value );
+	}
+
+	/**
+	 * Handle variables that have been deprecated and PodsData vars
+	 *
+	 * @param string $name Property name.
+	 *
+	 * @since 2.8
+	 */
+	public function __unset( $name ) {
+		$this->__set( $name, null );
 	}
 
 	/**

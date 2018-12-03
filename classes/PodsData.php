@@ -228,19 +228,29 @@ class PodsData {
 	/**
 	 * Singleton handling for a basic pods_data() request
 	 *
-	 * @param string  $pod    Pod name.
-	 * @param integer $id     Pod Item ID.
-	 * @param bool    $strict If true throws an error if a pod is not found.
+	 * @param string|null $pod    Pod name.
+	 * @param int|string  $id     Pod Item ID.
+	 * @param bool        $strict If true throws an error if a pod is not found.
 	 *
-	 * @return \PodsData
+	 * @return \PodsData|false
+	 *
+	 * @throws \Exception
 	 *
 	 * @since 2.3.5
 	 */
 	public static function init( $pod = null, $id = 0, $strict = true ) {
 
 		if ( ( true !== $pod && null !== $pod ) || 0 != $id ) {
-			return new PodsData( $pod, $id, $strict );
-		} elseif ( ! is_object( self::$instance ) ) {
+			$object = new PodsData( $pod, $id );
+
+			if ( empty( $object->pod_data ) && true === $strict ) {
+				return pods_error( 'Pod not found', $object );
+			}
+
+			return $object;
+		}
+
+		if ( ! is_object( self::$instance ) ) {
 			self::$instance = new PodsData();
 		} else {
 			$vars = get_class_vars( __CLASS__ );
@@ -260,93 +270,122 @@ class PodsData {
 	/**
 	 * Data Abstraction Class for Pods
 	 *
-	 * @param string  $pod    Pod name.
-	 * @param integer $id     Pod Item ID.
-	 * @param bool    $strict If true throws an error if a pod is not found.
-	 *
-	 * @return \PodsData
+	 * @param string|null $pod Pod name.
+	 * @param int|string  $id  Pod Item ID.
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 * @since 2.0.0
 	 */
-	public function __construct( $pod = null, $id = 0, $strict = true ) {
+	public function __construct( $pod = null, $id = 0 ) {
 
 		global $wpdb;
 
-		if ( is_object( $pod ) && 'PodsAPI' === get_class( $pod ) ) {
-			$this->api = $pod;
-			$pod       = $this->api->pod;
-		} else {
-			$this->api = pods_api( $pod );
-		}
-
+		$this->api = pods_api();
 		$this->api->display_errors =& self::$display_errors;
 
-		if ( ! empty( $pod ) ) {
-			$this->pod_data =& $this->api->pod_data;
+		if ( empty( $pod ) ) {
+			return;
+		}
 
-			if ( false === $this->pod_data ) {
-				if ( true === $strict ) {
-					return pods_error( 'Pod not found', $this );
-				} else {
-					return $this;
-				}
+		$this->pod_data = $this->api->load_pod( array( 'name' => $pod ), false );
+
+		if ( empty( $this->pod_data ) ) {
+			return;
+		}
+
+		$this->pod_id = $this->pod_data['id'];
+		$this->pod    = $this->pod_data['name'];
+		$this->fields = $this->pod_data['fields'];
+
+		if ( isset( $this->pod_data['options']['detail_url'] ) ) {
+			$this->detail_page = $this->pod_data['options']['detail_url'];
+		}
+
+		if ( isset( $this->pod_data['select'] ) ) {
+			$this->select = $this->pod_data['select'];
+		}
+
+		if ( isset( $this->pod_data['table'] ) ) {
+			$this->table = $this->pod_data['table'];
+		}
+
+		if ( isset( $this->pod_data['join'] ) ) {
+			$this->join = $this->pod_data['join'];
+		}
+
+		if ( isset( $this->pod_data['field_id'] ) ) {
+			$this->field_id = $this->pod_data['field_id'];
+		}
+
+		if ( isset( $this->pod_data['field_index'] ) ) {
+			$this->field_index = $this->pod_data['field_index'];
+		}
+
+		if ( isset( $this->pod_data['field_slug'] ) ) {
+			$this->field_slug = $this->pod_data['field_slug'];
+		}
+
+		if ( isset( $this->pod_data['where'] ) ) {
+			$this->where = $this->pod_data['where'];
+		}
+
+		if ( isset( $this->pod_data['where_default'] ) ) {
+			$this->where_default = $this->pod_data['where_default'];
+		}
+
+		if ( isset( $this->pod_data['orderby'] ) ) {
+			$this->orderby = $this->pod_data['orderby'];
+		}
+
+		// Set up page variable.
+		if ( pods_strict( false ) ) {
+			$this->page       = 1;
+			$this->pagination = false;
+			$this->search     = false;
+		} else {
+			// Get the page variable.
+			$this->page = pods_v( $this->page_var, 'get', 1, true );
+
+			if ( ! empty( $this->page ) ) {
+				$this->page = max( 1, pods_absint( $this->page ) );
 			}
+		}
 
-			$this->pod_id = $this->pod_data['id'];
-			$this->pod    = $this->pod_data['name'];
-			$this->fields = $this->pod_data['fields'];
-
-			if ( isset( $this->pod_data['options']['detail_url'] ) ) {
-				$this->detail_page = $this->pod_data['options']['detail_url'];
+		// Set default pagination handling to on/off.
+		if ( defined( 'PODS_GLOBAL_POD_PAGINATION' ) ) {
+			if ( ! PODS_GLOBAL_POD_PAGINATION ) {
+				$this->page       = 1;
+				$this->pagination = false;
+			} else {
+				$this->pagination = true;
 			}
+		}
 
-			if ( isset( $this->pod_data['select'] ) ) {
-				$this->select = $this->pod_data['select'];
+		// Set default search to on/off.
+		if ( defined( 'PODS_GLOBAL_POD_SEARCH' ) ) {
+			if ( PODS_GLOBAL_POD_SEARCH ) {
+				$this->search = true;
+			} else {
+				$this->search = false;
 			}
+		}
 
-			if ( isset( $this->pod_data['table'] ) ) {
-				$this->table = $this->pod_data['table'];
-			}
+		// Set default search mode.
+		$allowed_search_modes = array( 'int', 'text', 'text_like' );
 
-			if ( isset( $this->pod_data['join'] ) ) {
-				$this->join = $this->pod_data['join'];
-			}
+		if ( defined( 'PODS_GLOBAL_POD_SEARCH_MODE' ) && in_array( PODS_GLOBAL_POD_SEARCH_MODE, $allowed_search_modes, true ) ) {
+			$this->search_mode = PODS_GLOBAL_POD_SEARCH_MODE;
+		}
 
-			if ( isset( $this->pod_data['field_id'] ) ) {
-				$this->field_id = $this->pod_data['field_id'];
-			}
+		if ( 'settings' === $this->pod_data['type'] ) {
+			$this->id = $this->pod_data['id'];
 
-			if ( isset( $this->pod_data['field_index'] ) ) {
-				$this->field_index = $this->pod_data['field_index'];
-			}
+			$this->fetch( $this->id );
+		} elseif ( null !== $id && ! is_array( $id ) && ! is_object( $id ) ) {
+			$this->id = $id;
 
-			if ( isset( $this->pod_data['field_slug'] ) ) {
-				$this->field_slug = $this->pod_data['field_slug'];
-			}
-
-			if ( isset( $this->pod_data['where'] ) ) {
-				$this->where = $this->pod_data['where'];
-			}
-
-			if ( isset( $this->pod_data['where_default'] ) ) {
-				$this->where_default = $this->pod_data['where_default'];
-			}
-
-			if ( isset( $this->pod_data['orderby'] ) ) {
-				$this->orderby = $this->pod_data['orderby'];
-			}
-
-			if ( 'settings' === $this->pod_data['type'] ) {
-				$this->id = $this->pod_data['id'];
-
-				$this->fetch( $this->id );
-			} elseif ( null !== $id && ! is_array( $id ) && ! is_object( $id ) ) {
-				$this->id = $id;
-
-				$this->fetch( $this->id );
-			}
-		}//end if
+			$this->fetch( $this->id );
+		}
 	}
 
 	/**

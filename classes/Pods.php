@@ -4308,11 +4308,19 @@ class Pods implements Iterator {
 		);
 
 		if ( isset( $supported_pods_object[ $name ] ) ) {
+			if ( ! is_object( $this->pods_data ) ) {
+				return null;
+			}
+
 			return $this->pods_data->get_arg( $supported_pods_object[ $name ] );
 		}
 
 		// Handle sending previously mapped PodsData properties directly to their correct place.
 		if ( 0 === strpos( $name, 'field_' ) ) {
+			if ( ! is_object( $this->pods_data ) ) {
+				return null;
+			}
+
 			return $this->pods_data->get_arg( $name );
 		}
 

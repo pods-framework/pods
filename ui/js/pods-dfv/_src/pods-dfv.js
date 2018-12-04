@@ -70,13 +70,45 @@ const PodsDFV = {
 				}
 			}
 		} );
+	},
+
+	/**
+	 * This is temporary duct tape for WordPress 5.0 only to work around a
+	 * Gutenberg compatibility bug
+	 *
+	 * See:
+	 *   https://github.com/pods-framework/pods/issues/5197
+	 *   https://github.com/WordPress/gutenberg/issues/7176
+ 	 */
+	isGutenbergWithTinyMCE: function() {
+		return ( wp.data && window.tinymce );
+	},
+
+	isModalWindow: function () {
+		return ( -1 !== location.search.indexOf( 'pods_modal=' ) );
+	},
+
+	isGutenbergEditorLoaded: function () {
+		return ( wp.data !== undefined && wp.data.subscribe !== undefined );
 	}
 };
 export default PodsDFV;
 
 /**
- * Kick everything off on document ready
+ * Kick everything off on DOMContentLoaded
  */
-jQuery( function () {
+document.addEventListener( 'DOMContentLoaded', () => {
 	PodsDFV.init();
+
+	/**
+	 * This is temporary duct tape for WordPress 5.0 only to work around a
+	 * Gutenberg compatibility bug
+	 *
+	 * See:
+	 *   https://github.com/pods-framework/pods/issues/5197
+	 *   https://github.com/WordPress/gutenberg/issues/7176
+	 */
+	if ( PodsDFV.isGutenbergWithTinyMCE() ) {
+		wp.data.subscribe( tinyMCE.triggerSave );
+	}
 } );

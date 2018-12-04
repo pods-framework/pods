@@ -392,6 +392,10 @@ class Post_Type extends Collection {
 		$args = array();
 
 		foreach ( $meta as $meta_key => $meta_value ) {
+			if ( in_array( $meta_key, $this->primary_args, true ) ) {
+				continue;
+			}
+
 			if ( 1 === count( $meta_value ) ) {
 				$meta_value = reset( $meta_value );
 			}
@@ -453,7 +457,7 @@ class Post_Type extends Collection {
 	/**
 	 * {@inheritdoc}
 	 */
-	protected function delete_object( Whatsit $object ) {
+	public function delete_object( Whatsit $object ) {
 		$id = $object->get_id();
 
 		if ( empty( $id ) ) {
@@ -508,24 +512,6 @@ class Post_Type extends Collection {
 			}
 		}
 
-		$meta = get_post_meta( $post->ID );
-
-		foreach ( $meta as $arg => $value ) {
-			if ( isset( $args[ $arg ] ) ) {
-				continue;
-			}
-
-			if ( empty( $value ) ) {
-				continue;
-			}
-
-			if ( 1 === count( $value ) ) {
-				$value = reset( $value );
-			}
-
-			$args[ $arg ] = $value;
-		}
-
 		$object_type = substr( $post->post_type, strlen( '_pods_' ) );
 
 		$class_name = $object_collection->get_object_type( $object_type );
@@ -536,6 +522,8 @@ class Post_Type extends Collection {
 
 		/** @var Whatsit $object */
 		$object = new $class_name( $args );
+
+		$this->get_args( $object );
 
 		$object->set_arg( 'storage_type', $this->get_storage_type() );
 

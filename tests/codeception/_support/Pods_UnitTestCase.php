@@ -126,14 +126,14 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 			),
 		),
 		'pod'       => array(
-			'object'  => array(
+			'object'    => array(
 				'%d',
 				'test_act',
 			),
-			'storage' => array(
+			'storage'   => array(
 				'table',
 			),
-			'fields'  => array(
+			'fields'    => array(
 				array(
 					'name' => 'name',
 					'type' => 'text',
@@ -154,7 +154,7 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 					'pick_format_type' => 'single',
 				),
 			),
-			'data'    => array(
+			'data'      => array(
 				'permalink' => 'test-slug-%s',
 			),
 		),
@@ -342,11 +342,11 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 		'%s'               => array(
 			'pod'          => '%s',
 			'id'           => 0,
-			'field_index'  => '',
-			'field_id'     => '',
+			'field_index'  => 'name',
+			'field_id'     => 'id',
 			'field_author' => false,
 			'data'         => array(
-				'index'           => 'Testing %s',
+				'index'           => 'Testing index %s',
 				'test_text_field' => 'Testing %s',
 			),
 		),
@@ -617,9 +617,8 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 			foreach ( $objects as $object ) {
 				$object_pod = $main_pod;
 
-				// @todo Fix for 3.x to be merge instead
 				if ( ! empty( $options['options'] ) ) {
-					$object_pod['options'] = $options['options'];
+					$object_pod = array_merge( $object_pod, $options['options'] );
 				}
 
 				$pod_object = $object;
@@ -656,13 +655,12 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 									unset( $field['id'] );
 								}
 
-								// Hack for 2.x
-								// @todo Remove for 3.x
-								$field['options'] = $field;
-
 								$pod['fields'][] = $field;
 							}
 						}
+
+						// Overwrite the fields when saving.
+						$pod['overwrite'] = true;
 					}
 
 					if ( ! isset( self::$builds[ $pod_type ] ) ) {

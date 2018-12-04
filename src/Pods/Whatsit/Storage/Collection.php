@@ -243,7 +243,7 @@ class Collection extends Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	protected function save_object( Whatsit $object ) {
+	public function save_object( Whatsit $object ) {
 		$storage_type = $object->get_storage_type();
 
 		if ( empty( $storage_type ) ) {
@@ -261,7 +261,7 @@ class Collection extends Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	protected function delete_object( Whatsit $object ) {
+	public function delete_object( Whatsit $object ) {
 		// If this object has fields or groups, delete them.
 		$objects = array_merge( $object->get_fields(), $object->get_groups() );
 

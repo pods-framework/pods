@@ -69,7 +69,7 @@ abstract class Storage {
 	 *
 	 * @return string|int|false Object name, object ID, or false if not added.
 	 */
-	protected function add_object( Whatsit $object ) {
+	public function add_object( Whatsit $object ) {
 		return $this->save_object( $object );
 	}
 
@@ -143,7 +143,7 @@ abstract class Storage {
 	 *
 	 * @return string|int|false Object name, object ID, or false if not saved.
 	 */
-	protected function save_object( Whatsit $object ) {
+	public function save_object( Whatsit $object ) {
 		return false;
 	}
 
@@ -257,7 +257,7 @@ abstract class Storage {
 	 *
 	 * @return bool
 	 */
-	protected function delete_object( Whatsit $object ) {
+	public function delete_object( Whatsit $object ) {
 		return false;
 	}
 

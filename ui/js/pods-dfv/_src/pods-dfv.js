@@ -109,6 +109,13 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	 *   https://github.com/WordPress/gutenberg/issues/7176
 	 */
 	if ( PodsDFV.isGutenbergWithTinyMCE() ) {
-		wp.data.subscribe( tinyMCE.triggerSave );
+		wp.data.subscribe( function() {
+			if ( wp.data.select( 'core/editor' ).isSavingPost() && window.tinymce.editors) {
+				for ( let i = 0; i < tinymce.editors.length; i++ ) {
+					tinymce.editors[ i ].save();
+				}
+			}
+
+		} );
 	}
 } );

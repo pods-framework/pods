@@ -4,11 +4,13 @@
  * Gutenberg dependencies exist (primarily wp.data) before calling through
  * to init().
  */
-let unSubscribe;
+
+// The guard in front is to ensure wp.data exists before accessing select
 const editorData = wp.data && wp.data.select( 'core/editor' );
+let unSubscribe;
 
 /**
- *
+ * init() is the only exposed interface
  */
 export const PodsGbModalListener = {
 	init: function () {
@@ -22,20 +24,22 @@ export const PodsGbModalListener = {
 	}
 };
 
+//-------------------------------------------
+// Helper functions, not externally exposed
+//-------------------------------------------
+
 /**
  * Handles "add new" modals
  */
 function publishListener () {
 
 	if ( editorData.isCurrentPostPublished() ) {
-		const postData = {
-			'id': editorData.getCurrentPostId(),
-			'name': editorData.getCurrentPostAttribute( 'title' ),
-			'selected': true // Automatically select add new records
-		};
-
 		unSubscribe();
-		triggerUpdateEvent( postData );
+		triggerUpdateEvent( {
+			'link': editorData.getPermalink(),
+			'edit_link': `post.php?post=${editorData.getCurrentPostId()}&action=edit`,
+			'selected': true // Automatically select add new records
+		} );
 	}
 }
 
@@ -55,13 +59,8 @@ function saveListener () {
 			saveListener.wasSaving = false;
 
 			if ( editorData.didPostSaveRequestSucceed() ) {
-				const postData = {
-					'id': editorData.getCurrentPostId(),
-					'name': editorData.getCurrentPostAttribute( 'title' ),
-				};
-
 				unSubscribe();
-				triggerUpdateEvent( postData );
+				triggerUpdateEvent();
 			}
 		}
 	} else {
@@ -81,6 +80,12 @@ function isUserSaving () {
 /**
  * The event listener in the parent window will take care of closing the modal
  */
-function triggerUpdateEvent ( postData ) {
+function triggerUpdateEvent ( optionalData ) {
+	const defaultData = {
+		'id': editorData.getCurrentPostId(),
+		'name': editorData.getCurrentPostAttribute( 'title' )
+	};
+	const postData = Object.assign( defaultData, optionalData );
+
 	window.parent.jQuery( window.parent ).trigger( 'dfv:modal:update', postData );
 }

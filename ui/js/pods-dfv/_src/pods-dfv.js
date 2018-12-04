@@ -72,18 +72,6 @@ const PodsDFV = {
 		} );
 	},
 
-	/**
-	 * This is temporary duct tape for WordPress 5.0 only to work around a
-	 * Gutenberg compatibility bug
-	 *
-	 * See:
-	 *   https://github.com/pods-framework/pods/issues/5197
-	 *   https://github.com/WordPress/gutenberg/issues/7176
- 	 */
-	isGutenbergWithTinyMCE: function() {
-		return ( wp.data && window.tinymce );
-	},
-
 	isModalWindow: function () {
 		return ( -1 !== location.search.indexOf( 'pods_modal=' ) );
 	},
@@ -108,7 +96,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	 *   https://github.com/pods-framework/pods/issues/5197
 	 *   https://github.com/WordPress/gutenberg/issues/7176
 	 */
-	if ( PodsDFV.isGutenbergWithTinyMCE() ) {
+	if ( wp.data && window.tinymce ) {
 		wp.data.subscribe( function() {
 			if ( wp.data.select( 'core/editor' ).isSavingPost() && window.tinymce.editors) {
 				for ( let i = 0; i < tinymce.editors.length; i++ ) {

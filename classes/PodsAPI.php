@@ -2073,13 +2073,13 @@ class PodsAPI {
 			$defined_fields = array();
 
 			foreach ( $pod['fields'] as $field ) {
-				if ( ! ( is_array( $field ) || $field instanceof Pods\Whatsit ) || ! isset( $field['name'] ) || in_array( $field['name'], $defined_fields ) ) {
+				if ( ! ( is_array( $field ) || $field instanceof Pods\Whatsit ) || ! isset( $field['name'] ) || in_array( $field['name'], $defined_fields, true ) ) {
 					continue;
 				}
 
 				$defined_fields[] = $field['name'];
 
-				if ( ! in_array( $field['type'], $tableless_field_types ) || ( 'pick' === $field['type'] && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) ) {
+				if ( ! in_array( $field['type'], $tableless_field_types ) || ( 'pick' === $field['type'] && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects, true ) ) ) {
 					$definition = $this->get_field_definition( $field['type'], $field );
 
 					if ( 0 < strlen( $definition ) ) {

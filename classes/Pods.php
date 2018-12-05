@@ -769,6 +769,7 @@ class Pods implements Iterator {
 				if ( isset( $this->data->row[ $first_field ] ) ) {
 					$value = $this->data->row[ $first_field ];
 				} elseif ( in_array( $field_data['type'], $tableless_field_types, true ) ) {
+					// @todo Refactor how this logic works.
 					$this->fields[ $first_field ] = $field_data;
 
 					$object_field_found = false;

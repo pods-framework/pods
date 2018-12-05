@@ -96,6 +96,8 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	 * See:
 	 *   https://github.com/pods-framework/pods/issues/5197
 	 *   https://github.com/WordPress/gutenberg/issues/7176
+	 *
+	 * @todo Delete this when WP 5.0.1 comes out
 	 */
 	if ( wp.data && window.tinymce ) {
 		wp.data.subscribe( function() {

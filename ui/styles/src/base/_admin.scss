@@ -479,6 +479,18 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 	display: none;
 }
 
+/*
+ * Pods Help page
+ */
+.pods-admin ul.ul-disc span.resolved:before {
+	content: "Resolved: ";
+	background: green;
+	color: white;
+	padding: 2px;
+	border-radius: 5px;
+	margin-right: 5px;
+}
+
 /**
  * Pods DFV
  */

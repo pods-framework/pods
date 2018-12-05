@@ -200,18 +200,18 @@ if ( !$fields_only ) {
 	if ( 'undefined' === typeof pods_form_init ) {
 		var pods_form_init = true;
 
-		jQuery(document).ready( function( $ ) {
+		document.addEventListener( "DOMContentLoaded", function() {
 			if ( 'undefined' !== typeof jQuery( document ).Pods ) {
 
 				if ( 'undefined' === typeof ajaxurl ) {
 					window.ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
 				}
 
-				$( document ).Pods( 'validate' );
-				$( document ).Pods( 'submit' );
-				$( document ).Pods( 'dependency' );
+				jQuery( document ).Pods( 'validate' );
+				jQuery( document ).Pods( 'submit' );
+				jQuery( document ).Pods( 'dependency', true ); // Pass `true` to trigger init.
 			}
-		} );
+		}, false );
 	}
 </script>
 <?php

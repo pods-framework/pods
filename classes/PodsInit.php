@@ -1274,6 +1274,11 @@ class PodsInit {
 			$labels['filter_items_list']     = pods_v( 'filter_items_list', $labels, sprintf( __( 'Filter %s lists', 'pods' ), $label ), true );
 			$labels['items_list_navigation'] = pods_v( 'items_list_navigation', $labels, sprintf( __( '%s navigation', 'pods' ), $label ), true );
 			$labels['items_list']            = pods_v( 'items_list', $labels, sprintf( __( '%s list', 'pods' ), $label ), true );
+			$labels['item_published']	 = pods_v( 'item_published', $labels, sprintf( __( '%s published', 'pods' ), $label ), true );
+			$labels['item_published_privately'] = pods_v( 'item_published_privately', $labels, sprintf( __( '%s published privately', 'pods' ), $label ), true );
+			$labels['item_reverted_to_draft'] = pods_v( 'item_reverted_to_draft', $labels, sprintf( __( '%s revertred to draft', 'pods'), $label ), true );
+			$labels['item_scheduled']	 = pods_v( 'item_scheduled', $labels, sprintf( __( '%s scheduled', 'pods' ), $label ), true );
+			$labels['item_updated']		 = pods_v( 'item_updated', $labels, sprintf( __( '%s updated', 'pods' ), $label ), true );
 		} elseif ( 'taxonomy' === $type ) {
 			$labels['menu_name']                  = pods_v( 'menu_name', $labels, $label, true );
 			$labels['search_items']               = pods_v( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ), $label ), true );

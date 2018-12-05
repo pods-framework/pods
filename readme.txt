@@ -3,8 +3,8 @@ Contributors: sc0ttkclark, pglewis, jimtrue, quasel, keraweb, jamesgol, ramoonus
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.5
+Tested up to: 5.0
 Requires PHP: 5.3
-Tested up to: 4.9.6
 Stable tag: 2.7.10-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -122,7 +122,6 @@ We also do our best to integrate and play nicely with other projects:
  * [Conductor](https://conductorplugin.com/)
  * [Timber](http://upstatement.com/timber/)
  * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
- * [Caldera Forms](http://calderaforms.com) Using the [Pods Caldera Forms Add-on](https://github.com/pods-framework/pods-caldera-forms)
  * [Beaver Builder](https://www.wpbeaverbuilder.com/) and [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) Using the [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/)
 * Themes we've integrated with
  * [Builder](http://www.ithemes.com/) (iThemes)
@@ -179,6 +178,42 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.10 - December 5th 2018 =
+
+**Gutenberg / WordPress 5.0 Compatibility**
+
+* Enhancement: Added support for new  WP 5.0 custom post type labels used by Gutenberg, #5223 (@wpstudio, @sc0ttkclark)
+* Fixed: TinyMCE Compability Bug for Gutenberg, #5217 (@pglewis)
+* Fixed: Read-only Checkboxes now properly save values as 0 or 1, #4961 (@atanas-angelov-dev)
+* Fixed: Scrollbar Compatibility bug for List View in Gutenberg Editor, #5220 (@pglewis)
+* Fixed: Modal Support for Gutenberg, Add/edit Modal now triggers save and close to the modal, #5191 (@pglewis)
+* Fixed: Component header parsing for developer/tableless mode, #5222 (@sc0ttkclark)
+* Fixed: Currency symbol no longer overlays input field in WP 5.0, #5219 (@pglewis, @sc0ttkclark)
+
+**Enhancements**
+
+* Enhancement: Add pods conditional logic handling on frontend forms, #5136 (@JoryHogeveen)
+* Enhancement: Add current memory usage to stats, #5178 (@sc0ttkclark)
+* Enhancement: Add support for Taxonomy descriptions, #4766 (@sc0ttkclark)
+* Enhancement: Component Pages does not allow adding page templates in plugins, #4734 (@creabrain)
+* Enhancement: Add Pods functions to Query Monitor conditional, #5208 (@JoryHogeveen)
+* Enhancement: Add bi-directional status label to relationship fields, #5200 (@JoryHogeveen)
+* Enhancement: Removed old forum feed, inserted the wordpress.org feed, and squelched warnings from SimplePie/PHP 7+, #5172, #4363 (@pglewis)
+
+**Bug Fixes**
+
+* Fixed: pods->save() does not clear fields with shorthand syntax, #5166 (@mastef)
+* Fixed: Comma character breaks custom post type dropdown, #2042 (@sc0ttkclark)
+* Fixed: Compatibility with Admin Columns 3.2+, #5129 (@JoryHogeveen, @DGStefan)
+* Fixed: Missing Styles of DFV form field using $pods->form, #5056 (@pglewis)
+* Fixed: "Single Select" Relationship Return differently depending on Format, #5138 (@pglewis)
+* Fixed: Media modal doesn't work on frontend using pods form, #4715 (@pglewis)
+* Fixed: Use minified versions of Backbone.Marionette and Backbone.Radio, #5115
+* Fixed: Always enqueue the DFV script by default if in the admin, #5111 (@pglewis, @sc0ttkclark)
+* Fixed: Add static groups cache for PodsMeta::groups_get() to improve memory usage on bulk wp_insert_post and other similar calls, #5088 (@sc0ttkclark)
+* Fixed: Only disable components when using PODS_TABLELESS if the component is relying on custom tables, #5206 (@JoryHogeveen)
+* Fixed: PHP Warning for array key pods_rel not found, #5210 (@JoryHogeveen)
 
 = 2.7.9 - August 9th 2018  =
 

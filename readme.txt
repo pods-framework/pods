@@ -4,7 +4,7 @@ Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.5
 Requires PHP: 5.3
-Tested up to: 4.9.6
+Tested up to: 5.0
 Stable tag: 2.7.10-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -122,7 +122,6 @@ We also do our best to integrate and play nicely with other projects:
  * [Conductor](https://conductorplugin.com/)
  * [Timber](http://upstatement.com/timber/)
  * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
- * [Caldera Forms](http://calderaforms.com) Using the [Pods Caldera Forms Add-on](https://github.com/pods-framework/pods-caldera-forms)
  * [Beaver Builder](https://www.wpbeaverbuilder.com/) and [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) Using the [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/)
 * Themes we've integrated with
  * [Builder](http://www.ithemes.com/) (iThemes)
@@ -205,6 +204,12 @@ Enhancement: Removed old forum feed, inserted the wordpress.org feed, and squelc
 * Fixed: Add static groups cache for PodsMeta::groups_get() to improve memory usage on bulk wp_insert_post and other similar calls, #5088 (@sc0ttkclark)
 * Fixed: Only disable components when using PODS_TABLELESS if the component is relying on custom tables, #5206 (@JoryHogeveen)
 * Fixed: PHP Warning for array key pods_rel not found, #5210 (@JoryHogeveen)
+* Fixed: TinyMCE Compability Bug for Gutenberg, #5217 (@pglewis)
+* Fixed: Read-only Checkboxes now properly save values as 0 or 1, #4961 (@atanas-angelov-dev)
+* Fixed: Scrollbar Compatibility bug for List View in Gutenberg Editor, #5220 (@sc0ttkclark)
+* Fixed: Modal Support for Gutenberg, Add/edit Modal now triggers save and close to the modal, #5191 (@pglewis)
+* Fixed: Component header parsing for developer/tableless mode, #5222 (@sc0ttkclark)
+
 
 = 2.7.9 - August 9th 2018  =
 

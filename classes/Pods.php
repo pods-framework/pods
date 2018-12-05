@@ -3192,7 +3192,7 @@ class Pods implements Iterator {
 	 */
 	public function save( $data = null, $value = null, $id = null, $params = null ) {
 
-		if ( null !== $value ) {
+		if ( null !== $data && ! is_array( $data ) ) {
 			$data = array( $data => $value );
 		}
 

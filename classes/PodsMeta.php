@@ -451,8 +451,8 @@ class PodsMeta {
 	 */
 	public function integrations() {
 
-		// `ac_is_version_gte` is since AC 3.0+
-		if ( ! function_exists( 'ac_is_version_gte' ) ) {
+		// `AC()` is AC 3.0+, && `AC_FILE` is AC 3.2+
+		if ( ! function_exists( 'AC' ) && ! defined( 'AC_FILE' ) ) {
 			// Codepress Admin Columns < 2.x
 			add_filter( 'cac/storage_model/meta_keys', array( $this, 'cpac_meta_keys' ), 10, 2 );
 			add_filter( 'cac/post_types', array( $this, 'cpac_post_types' ), 10, 1 );
@@ -911,6 +911,12 @@ class PodsMeta {
 	 */
 	public function groups_get( $type, $name, $default_fields = null ) {
 
+		static $groups_cache = array();
+
+		if ( isset( $groups_cache[ $type . '/' . $name ] ) ) {
+			return $groups_cache[ $type . '/' . $name ];
+		}
+
 		if ( 'post_type' == $type && 'attachment' == $name ) {
 			$type = 'media';
 			$name = 'media';
@@ -970,7 +976,9 @@ class PodsMeta {
 		}
 
 		if ( $pod['type'] != $type ) {
-			return array();
+			$groups_cache[ $type . '/' . $name ] = array();
+
+			return $groups_cache[ $type . '/' . $name ];
 		}
 
 		$groups = array(
@@ -1009,7 +1017,11 @@ class PodsMeta {
 		 *
 		 * @since 2.6.6
 		 */
-		return apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
+		$groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
+
+		$groups_cache[ $type . '/' . $name ] = $groups;
+
+		return $groups_cache[ $type . '/' . $name ];
 	}
 
 	/**

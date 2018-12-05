@@ -56,8 +56,8 @@ echo '<code class="currency-sign">' . $currency_sign . '</code>';
 
 		if ( currency_sign.length ) {
 			function resize_currency_sign() {
-				input.css( 'padding-left', parseInt( input.css( 'padding-left' ), 10 ) + currency_sign.width() + 12 );
-				currency_sign.css( 'line-height', parseInt( input.innerHeight() ) + 'px' );
+				input.css( 'padding-left', currency_sign.width() + 12 );
+				currency_sign.css( 'line-height', parseInt( input.innerHeight(), 10 ) + 'px' );
 			}
 			$(window).resize( resize_currency_sign );
 			resize_currency_sign();

@@ -183,12 +183,13 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Gutenberg / WordPress 5.0 Compatibility**
 
+* Enhancement: Added support for new  WP 5.0 custom post type labels used by Gutenberg, #5223 (@wpstudio, @sc0ttkclark)
 * Fixed: TinyMCE Compability Bug for Gutenberg, #5217 (@pglewis)
 * Fixed: Read-only Checkboxes now properly save values as 0 or 1, #4961 (@atanas-angelov-dev)
-* Fixed: Scrollbar Compatibility bug for List View in Gutenberg Editor, #5220 (@sc0ttkclark)
+* Fixed: Scrollbar Compatibility bug for List View in Gutenberg Editor, #5220 (@pglewis)
 * Fixed: Modal Support for Gutenberg, Add/edit Modal now triggers save and close to the modal, #5191 (@pglewis)
 * Fixed: Component header parsing for developer/tableless mode, #5222 (@sc0ttkclark)
-* Fixed: Currency symbol no longer overlays input field in WP5.0, #5219 (@pglewis, @sc0ttkclark)
+* Fixed: Currency symbol no longer overlays input field in WP 5.0, #5219 (@pglewis, @sc0ttkclark)
 
 **Enhancements**
 

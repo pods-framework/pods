@@ -209,6 +209,7 @@ Enhancement: Removed old forum feed, inserted the wordpress.org feed, and squelc
 * Fixed: Scrollbar Compatibility bug for List View in Gutenberg Editor, #5220 (@sc0ttkclark)
 * Fixed: Modal Support for Gutenberg, Add/edit Modal now triggers save and close to the modal, #5191 (@pglewis)
 * Fixed: Component header parsing for developer/tableless mode, #5222 (@sc0ttkclark)
+* Fixed: Currency symbol no longer overlays input field in WP5.0, #5219 (@pglewis, @sc0ttkclark)
 
 
 = 2.7.9 - August 9th 2018  =

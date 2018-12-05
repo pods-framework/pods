@@ -115,11 +115,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		// Provide a custom list filter for the autocomplete portion's AJAX data lists
 		view.filterAjaxList = this.filterAjaxList.bind( this );
 
-		// Destroy any existing view and rebuild from scratch
-		if ( this.getChildView( 'autocomplete' ) ) {
-			this.getChildView( 'autocomplete' ).destroy();
-		}
-
+		// Rebuild from scratch
 		this.showChildView( 'autocomplete', view );
 	},
 
@@ -250,7 +246,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 
 		// Refresh the autocomplete and List View lists on autocomplete selection
 		if ( childView.fieldConfig.selectFromExisting ) {
-			this.buildAutocomplete();
+			_.defer( this.buildAutocomplete.bind( this ) );
 			this.getChildView( 'list' ).render();
 		}
 	},

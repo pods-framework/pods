@@ -3,8 +3,8 @@ Contributors: sc0ttkclark, pglewis, jimtrue, jamesgol, keraweb, ramoonus, nicdfo
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.5
-Requires PHP: 5.3
 Tested up to: 5.0
+Requires PHP: 5.3
 Stable tag: 2.7.10-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -179,17 +179,26 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
-= 2.7.10 - {DATE} =
+= 2.7.10 - December 5th 2018 =
 
-**Features/Enhancements/Improvements**
+**Gutenberg / WordPress 5.0 Compatibility**
 
-Enhancement: Add pods conditional logic handling on frontend forms, #5136 (@JoryHogeveen)
-Enhancement: Add current memory usage to stats, #5178 (@sc0ttkclark)
-Enhancement: Add support for Taxonomy descriptions, #4766 (@sc0ttkclark)
-Enhancement: Component Pages does not allow adding page templates in plugins, #4734 (@creabrain)
-Enhancement: Add Pods functions to Query Monitor conditional, #5208 (@JoryHogeveen)
-Enhancement: Add bi-directional status label to relationship fields, #5200 (@JoryHogeveen)
-Enhancement: Removed old forum feed, inserted the wordpress.org feed, and squelched warnings from SimplePie/PHP 7+, #5172, #4363 (@pglewis)
+* Fixed: TinyMCE Compability Bug for Gutenberg, #5217 (@pglewis)
+* Fixed: Read-only Checkboxes now properly save values as 0 or 1, #4961 (@atanas-angelov-dev)
+* Fixed: Scrollbar Compatibility bug for List View in Gutenberg Editor, #5220 (@sc0ttkclark)
+* Fixed: Modal Support for Gutenberg, Add/edit Modal now triggers save and close to the modal, #5191 (@pglewis)
+* Fixed: Component header parsing for developer/tableless mode, #5222 (@sc0ttkclark)
+* Fixed: Currency symbol no longer overlays input field in WP5.0, #5219 (@pglewis, @sc0ttkclark)
+
+**Enhancements**
+
+* Enhancement: Add pods conditional logic handling on frontend forms, #5136 (@JoryHogeveen)
+* Enhancement: Add current memory usage to stats, #5178 (@sc0ttkclark)
+* Enhancement: Add support for Taxonomy descriptions, #4766 (@sc0ttkclark)
+* Enhancement: Component Pages does not allow adding page templates in plugins, #4734 (@creabrain)
+* Enhancement: Add Pods functions to Query Monitor conditional, #5208 (@JoryHogeveen)
+* Enhancement: Add bi-directional status label to relationship fields, #5200 (@JoryHogeveen)
+* Enhancement: Removed old forum feed, inserted the wordpress.org feed, and squelched warnings from SimplePie/PHP 7+, #5172, #4363 (@pglewis)
 
 **Bug Fixes**
 
@@ -204,13 +213,6 @@ Enhancement: Removed old forum feed, inserted the wordpress.org feed, and squelc
 * Fixed: Add static groups cache for PodsMeta::groups_get() to improve memory usage on bulk wp_insert_post and other similar calls, #5088 (@sc0ttkclark)
 * Fixed: Only disable components when using PODS_TABLELESS if the component is relying on custom tables, #5206 (@JoryHogeveen)
 * Fixed: PHP Warning for array key pods_rel not found, #5210 (@JoryHogeveen)
-* Fixed: TinyMCE Compability Bug for Gutenberg, #5217 (@pglewis)
-* Fixed: Read-only Checkboxes now properly save values as 0 or 1, #4961 (@atanas-angelov-dev)
-* Fixed: Scrollbar Compatibility bug for List View in Gutenberg Editor, #5220 (@sc0ttkclark)
-* Fixed: Modal Support for Gutenberg, Add/edit Modal now triggers save and close to the modal, #5191 (@pglewis)
-* Fixed: Component header parsing for developer/tableless mode, #5222 (@sc0ttkclark)
-* Fixed: Currency symbol no longer overlays input field in WP5.0, #5219 (@pglewis, @sc0ttkclark)
-
 
 = 2.7.9 - August 9th 2018  =
 

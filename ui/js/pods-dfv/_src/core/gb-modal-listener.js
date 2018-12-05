@@ -37,12 +37,11 @@ function getFeaturedImageURL () {
 	let url = '';
 
 	// Early exit if nothing was set
-	if ( 0 === featuredImageId ) {
+	if ( !featuredImageId ) {
 		return url;
 	}
 
-	const { getMedia } = wp.data.select( 'core' );
-	const media = getMedia( featuredImageId );
+	const media = wp.data.select( 'core' ).getMedia( featuredImageId );
 
 	if ( media ) {
 		const mediaSize = wp.hooks.applyFilters( 'editor.PostFeaturedImage.imageSize', 'post-thumbnail', '' );
@@ -67,7 +66,7 @@ function publishListener () {
 		triggerUpdateEvent( {
 			'icon': getFeaturedImageURL(),
 			'link': editorData.getPermalink(),
-			'edit_link': `post.php?post=${editorData.getCurrentPostId()}&action=edit`,
+			'edit_link': `post.php?post=${editorData.getCurrentPostId()}&action=edit&pods_modal=1`,
 			'selected': true // Automatically select add new records
 		} );
 	}
@@ -90,7 +89,9 @@ function saveListener () {
 
 			if ( editorData.didPostSaveRequestSucceed() ) {
 				unSubscribe();
-				triggerUpdateEvent();
+				triggerUpdateEvent( {
+					'icon': getFeaturedImageURL()
+				} );
 			}
 		}
 	} else {

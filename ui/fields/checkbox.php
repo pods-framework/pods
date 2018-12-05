@@ -62,6 +62,7 @@ if ( 0 < $data_count ) {
 
 		if ( pods_var( 'readonly', $options, false ) ) {
 			$attributes['readonly'] = 'READONLY';
+			$attributes['disabled'] = 'DISABLED';
 
 			$attributes['class'] .= ' pods-form-ui-read-only';
 		}
@@ -79,6 +80,12 @@ if ( 0 < $data_count ) {
 		<div class="pods-field pods-boolean"<?php echo $indent; ?>>
 			<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 			<?php
+			if ( isset( $attributes['readonly'] ) && isset( $attributes['checked'] ) && 'CHECKED' === $attributes['checked'] ) {
+				?>
+				<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $attributes['value'] ); ?>" />
+				<?php
+			}
+
 			if ( 0 < strlen( $label ) ) {
 				$help = pods_var_raw( 'help', $options );
 

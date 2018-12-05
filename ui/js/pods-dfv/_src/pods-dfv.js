@@ -1,5 +1,6 @@
 /*global jQuery, _, Backbone, Marionette */
 import { PodsDFVFieldModel } from 'pods-dfv/_src/core/pods-field-model';
+import { PodsGbModalListener } from 'pods-dfv/_src/core/gb-modal-listener';
 import * as fields from 'pods-dfv/_src/field-manifest';
 import * as models from 'pods-dfv/_src/model-manifest';
 
@@ -70,13 +71,47 @@ const PodsDFV = {
 				}
 			}
 		} );
+	},
+
+	isModalWindow: function () {
+		return ( -1 !== location.search.indexOf( 'pods_modal=' ) );
+	},
+
+	isGutenbergEditorLoaded: function () {
+		return ( wp.data !== undefined && wp.data.subscribe !== undefined );
 	}
 };
 export default PodsDFV;
 
 /**
- * Kick everything off on document ready
+ * Kick everything off on DOMContentLoaded
  */
-jQuery( function () {
+document.addEventListener( 'DOMContentLoaded', () => {
 	PodsDFV.init();
+
+	/**
+	 * This is temporary duct tape for WordPress 5.0 only to work around a
+	 * Gutenberg compatibility bug
+	 *
+	 * See:
+	 *   https://github.com/pods-framework/pods/issues/5197
+	 *   https://github.com/WordPress/gutenberg/issues/7176
+	 *
+	 * @todo Delete this when WP 5.0.1 comes out
+	 */
+	if ( wp.data && window.tinymce ) {
+		wp.data.subscribe( function() {
+			if ( wp.data.select( 'core/editor' ).isSavingPost() && window.tinymce.editors) {
+				for ( let i = 0; i < tinymce.editors.length; i++ ) {
+					tinymce.editors[ i ].save();
+				}
+			}
+
+		} );
+	}
+
+	// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
+	if ( PodsDFV.isModalWindow() && PodsDFV.isGutenbergEditorLoaded()) {
+		PodsGbModalListener.init();
+	}
 } );

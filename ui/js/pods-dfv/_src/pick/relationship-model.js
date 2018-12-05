@@ -8,7 +8,6 @@ export const RelationshipModel = Backbone.Model.extend( {
 		'id': 0,
 		'name': '',
 		'icon': '',
-		'use_dashicon': false,
 		'link': '',
 		'edit_link': '',
 		'selected': false

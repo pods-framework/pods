@@ -29,13 +29,43 @@ export const PodsGbModalListener = {
 //-------------------------------------------
 
 /**
+ *
+ * @return string
+ */
+function getFeaturedImageURL () {
+	const featuredImageId = editorData.getCurrentPostAttribute( 'featured_media' );
+	let url = '';
+
+	// Early exit if nothing was set
+	if ( 0 === featuredImageId ) {
+		return url;
+	}
+
+	const { getMedia } = wp.data.select( 'core' );
+	const media = getMedia( featuredImageId );
+
+	if ( media ) {
+		const mediaSize = wp.hooks.applyFilters( 'editor.PostFeaturedImage.imageSize', 'post-thumbnail', '' );
+		if ( media.media_details && media.media_details.sizes && media.media_details.sizes[ mediaSize ] ) {
+			url = media.media_details.sizes[ mediaSize ].source_url;
+		} else {
+			url = media.source_url;
+		}
+	}
+
+	return url;
+}
+
+/**
  * Handles "add new" modals
  */
 function publishListener () {
 
 	if ( editorData.isCurrentPostPublished() ) {
 		unSubscribe();
+
 		triggerUpdateEvent( {
+			'icon': getFeaturedImageURL(),
 			'link': editorData.getPermalink(),
 			'edit_link': `post.php?post=${editorData.getCurrentPostId()}&action=edit`,
 			'selected': true // Automatically select add new records

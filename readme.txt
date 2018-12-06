@@ -181,6 +181,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 = 2.7.11 - {DATE} =
 
+* Fixed: Javascript errors on pages without the Gutenberg editor active under certain circumstances, #5225, (@pglewis)
 
 = 2.7.10 - December 5th 2018 =
 

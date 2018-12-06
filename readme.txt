@@ -179,6 +179,9 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.11 - {DATE} =
+
+
 = 2.7.10 - December 5th 2018 =
 
 **Gutenberg / WordPress 5.0 Compatibility**

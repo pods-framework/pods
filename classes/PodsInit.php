@@ -315,12 +315,12 @@ class PodsInit {
 		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.css", array(), '1.0.2' );
 
 		// Marionette dependencies for MV fields
-		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.js', array( 'backbone' ), '2.0.0', true );
+		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '2.0.0', true );
 		wp_register_script(
-			'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array(
+			'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.min.js', array(
 				'backbone',
 				'backbone.radio',
-			), '3.1.0', true
+			), '3.3.1', true
 		);
 
 		// MV stuff
@@ -527,36 +527,41 @@ class PodsInit {
 				$cpt_label    = esc_html( pods_v( 'label', $post_type, ucwords( str_replace( '_', ' ', pods_v( 'name', $post_type ) ) ), true ) );
 				$cpt_singular = esc_html( pods_v( 'label_singular', $post_type, ucwords( str_replace( '_', ' ', pods_v( 'label', $post_type, $post_type_name, true ) ) ), true ) );
 
-				$cpt_labels                          = array();
-				$cpt_labels['name']                  = $cpt_label;
-				$cpt_labels['singular_name']         = $cpt_singular;
-				$cpt_labels['menu_name']             = pods_v( 'menu_name', $post_type, '', true );
-				$cpt_labels['name_admin_bar']        = pods_v( 'name_admin_bar', $post_type, '', true );
-				$cpt_labels['add_new']               = pods_v( 'label_add_new', $post_type, '', true );
-				$cpt_labels['add_new_item']          = pods_v( 'label_add_new_item', $post_type, '', true );
-				$cpt_labels['new_item']              = pods_v( 'label_new_item', $post_type, '', true );
-				$cpt_labels['edit']                  = pods_v( 'label_edit', $post_type, '', true );
-				$cpt_labels['edit_item']             = pods_v( 'label_edit_item', $post_type, '', true );
-				$cpt_labels['view']                  = pods_v( 'label_view', $post_type, '', true );
-				$cpt_labels['view_item']             = pods_v( 'label_view_item', $post_type, '', true );
-				$cpt_labels['view_items']            = pods_v( 'label_view_items', $post_type, '', true );
-				$cpt_labels['all_items']             = pods_v( 'label_all_items', $post_type, '', true );
-				$cpt_labels['search_items']          = pods_v( 'label_search_items', $post_type, '', true );
-				$cpt_labels['not_found']             = pods_v( 'label_not_found', $post_type, '', true );
-				$cpt_labels['not_found_in_trash']    = pods_v( 'label_not_found_in_trash', $post_type, '', true );
-				$cpt_labels['parent']                = pods_v( 'label_parent', $post_type, '', true );
-				$cpt_labels['parent_item_colon']     = pods_v( 'label_parent_item_colon', $post_type, '', true );
-				$cpt_labels['archives']              = pods_v( 'label_archives', $post_type, '', true );
-				$cpt_labels['attributes']            = pods_v( 'label_attributes', $post_type, '', true );
-				$cpt_labels['insert_into_item']      = pods_v( 'label_insert_into_item', $post_type, '', true );
-				$cpt_labels['uploaded_to_this_item'] = pods_v( 'label_uploaded_to_this_item', $post_type, '', true );
-				$cpt_labels['featured_image']        = pods_v( 'label_featured_image', $post_type, '', true );
-				$cpt_labels['set_featured_image']    = pods_v( 'label_set_featured_image', $post_type, '', true );
-				$cpt_labels['remove_featured_image'] = pods_v( 'label_remove_featured_image', $post_type, '', true );
-				$cpt_labels['use_featured_image']    = pods_v( 'label_use_featured_image', $post_type, '', true );
-				$cpt_labels['filter_items_list']     = pods_v( 'label_filter_items_list', $post_type, '', true );
-				$cpt_labels['items_list_navigation'] = pods_v( 'label_items_list_navigation', $post_type, '', true );
-				$cpt_labels['items_list']            = pods_v( 'label_items_list', $post_type, '', true );
+				$cpt_labels                             = array();
+				$cpt_labels['name']                     = $cpt_label;
+				$cpt_labels['singular_name']            = $cpt_singular;
+				$cpt_labels['menu_name']                = pods_v( 'menu_name', $post_type, '', true );
+				$cpt_labels['name_admin_bar']           = pods_v( 'name_admin_bar', $post_type, '', true );
+				$cpt_labels['add_new']                  = pods_v( 'label_add_new', $post_type, '', true );
+				$cpt_labels['add_new_item']             = pods_v( 'label_add_new_item', $post_type, '', true );
+				$cpt_labels['new_item']                 = pods_v( 'label_new_item', $post_type, '', true );
+				$cpt_labels['edit']                     = pods_v( 'label_edit', $post_type, '', true );
+				$cpt_labels['edit_item']                = pods_v( 'label_edit_item', $post_type, '', true );
+				$cpt_labels['view']                     = pods_v( 'label_view', $post_type, '', true );
+				$cpt_labels['view_item']                = pods_v( 'label_view_item', $post_type, '', true );
+				$cpt_labels['view_items']               = pods_v( 'label_view_items', $post_type, '', true );
+				$cpt_labels['all_items']                = pods_v( 'label_all_items', $post_type, '', true );
+				$cpt_labels['search_items']             = pods_v( 'label_search_items', $post_type, '', true );
+				$cpt_labels['not_found']                = pods_v( 'label_not_found', $post_type, '', true );
+				$cpt_labels['not_found_in_trash']       = pods_v( 'label_not_found_in_trash', $post_type, '', true );
+				$cpt_labels['parent']                   = pods_v( 'label_parent', $post_type, '', true );
+				$cpt_labels['parent_item_colon']        = pods_v( 'label_parent_item_colon', $post_type, '', true );
+				$cpt_labels['archives']                 = pods_v( 'label_archives', $post_type, '', true );
+				$cpt_labels['attributes']               = pods_v( 'label_attributes', $post_type, '', true );
+				$cpt_labels['insert_into_item']         = pods_v( 'label_insert_into_item', $post_type, '', true );
+				$cpt_labels['uploaded_to_this_item']    = pods_v( 'label_uploaded_to_this_item', $post_type, '', true );
+				$cpt_labels['featured_image']           = pods_v( 'label_featured_image', $post_type, '', true );
+				$cpt_labels['set_featured_image']       = pods_v( 'label_set_featured_image', $post_type, '', true );
+				$cpt_labels['remove_featured_image']    = pods_v( 'label_remove_featured_image', $post_type, '', true );
+				$cpt_labels['use_featured_image']       = pods_v( 'label_use_featured_image', $post_type, '', true );
+				$cpt_labels['filter_items_list']        = pods_v( 'label_filter_items_list', $post_type, '', true );
+				$cpt_labels['items_list_navigation']    = pods_v( 'label_items_list_navigation', $post_type, '', true );
+				$cpt_labels['items_list']               = pods_v( 'label_items_list', $post_type, '', true );
+				$cpt_labels['item_published']           = pods_v( 'label_item_published', $post_type, '', true );
+				$cpt_labels['item_published_privately'] = pods_v( 'label_item_published_privately', $post_type, '', true );
+				$cpt_labels['item_reverted_to_draft']   = pods_v( 'label_item_reverted_to_draft', $post_type, '', true );
+				$cpt_labels['item_scheduled']           = pods_v( 'label_item_scheduled', $post_type, '', true );
+				$cpt_labels['item_updated']             = pods_v( 'label_item_updated', $post_type, '', true );
 
 				// Supported
 				$cpt_supported = array(
@@ -824,6 +829,7 @@ class PodsInit {
 				$pods_taxonomies[ $taxonomy_name ] = array(
 					'label'                 => $ct_label,
 					'labels'                => $ct_labels,
+					'description'           => esc_html( pods_v( 'description', $taxonomy ) ),
 					'public'                => (boolean) pods_v( 'public', $taxonomy, true ),
 					'show_ui'               => (boolean) pods_v( 'show_ui', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
 					'show_in_menu'          => (boolean) pods_v( 'show_in_menu', $taxonomy, (boolean) pods_v( 'public', $taxonomy, true ) ),
@@ -1246,33 +1252,38 @@ class PodsInit {
 		$labels['singular_name'] = $singular_label;
 
 		if ( 'post_type' === $type ) {
-			$labels['menu_name']             = pods_v( 'menu_name', $labels, $label, true );
-			$labels['name_admin_bar']        = pods_v( 'name_admin_bar', $labels, $singular_label, true );
-			$labels['add_new']               = pods_v( 'add_new', $labels, __( 'Add New', 'pods' ), true );
-			$labels['add_new_item']          = pods_v( 'add_new_item', $labels, sprintf( __( 'Add New %s', 'pods' ), $singular_label ), true );
-			$labels['new_item']              = pods_v( 'new_item', $labels, sprintf( __( 'New %s', 'pods' ), $singular_label ), true );
-			$labels['edit']                  = pods_v( 'edit', $labels, __( 'Edit', 'pods' ), true );
-			$labels['edit_item']             = pods_v( 'edit_item', $labels, sprintf( __( 'Edit %s', 'pods' ), $singular_label ), true );
-			$labels['view']                  = pods_v( 'view', $labels, sprintf( __( 'View %s', 'pods' ), $singular_label ), true );
-			$labels['view_item']             = pods_v( 'view_item', $labels, sprintf( __( 'View %s', 'pods' ), $singular_label ), true );
-			$labels['view_items']            = pods_v( 'view_items', $labels, sprintf( __( 'View %s', 'pods' ), $label ), true );
-			$labels['all_items']             = pods_v( 'all_items', $labels, sprintf( __( 'All %s', 'pods' ), $label ), true );
-			$labels['search_items']          = pods_v( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ), $label ), true );
-			$labels['not_found']             = pods_v( 'not_found', $labels, sprintf( __( 'No %s Found', 'pods' ), $label ), true );
-			$labels['not_found_in_trash']    = pods_v( 'not_found_in_trash', $labels, sprintf( __( 'No %s Found in Trash', 'pods' ), $label ), true );
-			$labels['parent']                = pods_v( 'parent', $labels, sprintf( __( 'Parent %s', 'pods' ), $singular_label ), true );
-			$labels['parent_item_colon']     = pods_v( 'parent_item_colon', $labels, sprintf( __( 'Parent %s:', 'pods' ), $singular_label ), true );
-			$labels['featured_image']        = pods_v( 'featured_image', $labels, __( 'Featured Image', 'pods' ), true );
-			$labels['set_featured_image']    = pods_v( 'set_featured_image', $labels, __( 'Set featured image', 'pods' ), true );
-			$labels['remove_featured_image'] = pods_v( 'remove_featured_image', $labels, __( 'Remove featured image', 'pods' ), true );
-			$labels['use_featured_image']    = pods_v( 'use_featured_image', $labels, __( 'Use as featured image', 'pods' ), true );
-			$labels['archives']              = pods_v( 'archives', $labels, sprintf( __( '%s Archives', 'pods' ), $singular_label ), true );
-			$labels['attributes']            = pods_v( 'attributes', $labels, sprintf( __( '%s Attributes', 'pods' ), $singular_label ), true );
-			$labels['insert_into_item']      = pods_v( 'insert_into_item', $labels, sprintf( __( 'Insert into %s', 'pods' ), $singular_label ), true );
-			$labels['uploaded_to_this_item'] = pods_v( 'uploaded_to_this_item', $labels, sprintf( __( 'Uploaded to this %s', 'pods' ), $singular_label ), true );
-			$labels['filter_items_list']     = pods_v( 'filter_items_list', $labels, sprintf( __( 'Filter %s lists', 'pods' ), $label ), true );
-			$labels['items_list_navigation'] = pods_v( 'items_list_navigation', $labels, sprintf( __( '%s navigation', 'pods' ), $label ), true );
-			$labels['items_list']            = pods_v( 'items_list', $labels, sprintf( __( '%s list', 'pods' ), $label ), true );
+			$labels['menu_name']                = pods_v( 'menu_name', $labels, $label, true );
+			$labels['name_admin_bar']           = pods_v( 'name_admin_bar', $labels, $singular_label, true );
+			$labels['add_new']                  = pods_v( 'add_new', $labels, __( 'Add New', 'pods' ), true );
+			$labels['add_new_item']             = pods_v( 'add_new_item', $labels, sprintf( __( 'Add New %s', 'pods' ), $singular_label ), true );
+			$labels['new_item']                 = pods_v( 'new_item', $labels, sprintf( __( 'New %s', 'pods' ), $singular_label ), true );
+			$labels['edit']                     = pods_v( 'edit', $labels, __( 'Edit', 'pods' ), true );
+			$labels['edit_item']                = pods_v( 'edit_item', $labels, sprintf( __( 'Edit %s', 'pods' ), $singular_label ), true );
+			$labels['view']                     = pods_v( 'view', $labels, sprintf( __( 'View %s', 'pods' ), $singular_label ), true );
+			$labels['view_item']                = pods_v( 'view_item', $labels, sprintf( __( 'View %s', 'pods' ), $singular_label ), true );
+			$labels['view_items']               = pods_v( 'view_items', $labels, sprintf( __( 'View %s', 'pods' ), $label ), true );
+			$labels['all_items']                = pods_v( 'all_items', $labels, sprintf( __( 'All %s', 'pods' ), $label ), true );
+			$labels['search_items']             = pods_v( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ), $label ), true );
+			$labels['not_found']                = pods_v( 'not_found', $labels, sprintf( __( 'No %s Found', 'pods' ), $label ), true );
+			$labels['not_found_in_trash']       = pods_v( 'not_found_in_trash', $labels, sprintf( __( 'No %s Found in Trash', 'pods' ), $label ), true );
+			$labels['parent']                   = pods_v( 'parent', $labels, sprintf( __( 'Parent %s', 'pods' ), $singular_label ), true );
+			$labels['parent_item_colon']        = pods_v( 'parent_item_colon', $labels, sprintf( __( 'Parent %s:', 'pods' ), $singular_label ), true );
+			$labels['featured_image']           = pods_v( 'featured_image', $labels, __( 'Featured Image', 'pods' ), true );
+			$labels['set_featured_image']       = pods_v( 'set_featured_image', $labels, __( 'Set featured image', 'pods' ), true );
+			$labels['remove_featured_image']    = pods_v( 'remove_featured_image', $labels, __( 'Remove featured image', 'pods' ), true );
+			$labels['use_featured_image']       = pods_v( 'use_featured_image', $labels, __( 'Use as featured image', 'pods' ), true );
+			$labels['archives']                 = pods_v( 'archives', $labels, sprintf( __( '%s Archives', 'pods' ), $singular_label ), true );
+			$labels['attributes']               = pods_v( 'attributes', $labels, sprintf( __( '%s Attributes', 'pods' ), $singular_label ), true );
+			$labels['insert_into_item']         = pods_v( 'insert_into_item', $labels, sprintf( __( 'Insert into %s', 'pods' ), $singular_label ), true );
+			$labels['uploaded_to_this_item']    = pods_v( 'uploaded_to_this_item', $labels, sprintf( __( 'Uploaded to this %s', 'pods' ), $singular_label ), true );
+			$labels['filter_items_list']        = pods_v( 'filter_items_list', $labels, sprintf( __( 'Filter %s lists', 'pods' ), $label ), true );
+			$labels['items_list_navigation']    = pods_v( 'items_list_navigation', $labels, sprintf( __( '%s navigation', 'pods' ), $label ), true );
+			$labels['items_list']               = pods_v( 'items_list', $labels, sprintf( __( '%s list', 'pods' ), $label ), true );
+			$labels['item_published']           = pods_v( 'item_published', $labels, sprintf( __( '%s published', 'pods' ), $singular_label ), true );
+			$labels['item_published_privately'] = pods_v( 'item_published_privately', $labels, sprintf( __( '%s published privately', 'pods' ), $singular_label ), true );
+			$labels['item_reverted_to_draft']   = pods_v( 'item_reverted_to_draft', $labels, sprintf( __( '%s reverted to draft', 'pods'), $singular_label ), true );
+			$labels['item_scheduled']           = pods_v( 'item_scheduled', $labels, sprintf( __( '%s scheduled', 'pods' ), $singular_label ), true );
+			$labels['item_updated']             = pods_v( 'item_updated', $labels, sprintf( __( '%s updatedrrrr', 'pods' ), $singular_label ), true );
 		} elseif ( 'taxonomy' === $type ) {
 			$labels['menu_name']                  = pods_v( 'menu_name', $labels, $label, true );
 			$labels['search_items']               = pods_v( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ), $label ), true );
@@ -1622,6 +1633,9 @@ class PodsInit {
 		// Show admin bar links
 		add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
 
+		// Compatibility for Query Monitor conditionals
+		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
+
 		// Add WP-CLI commands
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
@@ -1815,5 +1829,20 @@ class PodsInit {
 			}
 		}
 
+	}
+
+	/**
+	 * Add Pods conditional functions to Query Monitor.
+	 *
+	 * @param  array $conditionals
+	 * @return array
+	 */
+	public function filter_query_monitor_conditionals( $conditionals ) {
+		$conditionals[] = 'pods_developer';
+		$conditionals[] = 'pods_tableless';
+		$conditionals[] = 'pods_strict';
+		$conditionals[] = 'pods_allow_deprecated';
+		$conditionals[] = 'pods_api_cache';
+		return $conditionals;
 	}
 }

@@ -3700,9 +3700,13 @@ class PodsAPI {
 				// Handle Simple Relationships
 				if ( $simple ) {
 					if ( ! is_array( $value ) ) {
-						$value = explode( ',', $value );
+						if ( 0 < strlen( $value ) ) {
+							$value = array( $value );
+						} else {
+							$value = array();
+						}
 					}
-
+					
 					$pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
 
 					if ( 'single' === pods_var_raw( 'pick_format_type', $options ) ) {

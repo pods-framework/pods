@@ -225,6 +225,10 @@ export const SelectView = Marionette.CollectionView.extend( {
 		this.trigger( 'childview:change:selected', this );
 	},
 
+	onBeforeDetach: function() {
+		this.$el.selectWoo( 'destroy' );
+	},
+
 	/**
 	 * @var {RelationshipCollection} this.collection
 	 *

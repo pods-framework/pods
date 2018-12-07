@@ -78,7 +78,7 @@ const PodsDFV = {
 	},
 
 	isGutenbergEditorLoaded: function () {
-		return ( wp.data !== undefined && wp.data.subscribe !== undefined );
+		return ( wp.data !== undefined && wp.data.select( 'core/editor' ) !== undefined );
 	}
 };
 export default PodsDFV;
@@ -99,7 +99,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	 *
 	 * @todo Delete this when WP 5.0.1 comes out
 	 */
-	if ( wp.data && window.tinymce ) {
+	if ( PodsDFV.isGutenbergEditorLoaded() && window.tinymce ) {
 		wp.data.subscribe( function() {
 			if ( wp.data.select( 'core/editor' ).isSavingPost() && window.tinymce.editors) {
 				for ( let i = 0; i < tinymce.editors.length; i++ ) {

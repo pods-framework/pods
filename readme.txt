@@ -179,7 +179,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
-= 2.7.11 - {DATE} =
+= 2.7.11 - December 7th 2018 =
 
 * Fixed: Javascript errors on pages without the Gutenberg editor active under certain circumstances, #5225 (@pglewis)
 * Fixed: Avoid extra user queries when not necessary, #5230 (@sc0ttkclark)

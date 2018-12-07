@@ -776,7 +776,7 @@ class PodsData {
 		if ( ! empty( $this->data ) ) {
 			$this->total = count( (array) $this->data );
 		}
-		
+
 		/**
 		 * Filters whether the total_found should be calculated right away or not.
 		 *

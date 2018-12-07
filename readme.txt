@@ -179,12 +179,22 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.11 - December 7th 2018 =
+
+**Bug Fixes**
+
+* Fixed: Javascript errors on pages without the Gutenberg editor active under certain circumstances, #5225 (@pglewis)
+* Fixed: Avoid extra user queries when not necessary, #5230 (@sc0ttkclark)
+
+**Enhancements**
+
+* Enhancement: Added: New pods_data_auto_calculate_total_found filter can be set to true to auto-calculate total_found() number right away after a Pods::find() query runs, defaults to false, #5232, (@sc0ttkclark)
+
 = 2.7.10 - December 5th 2018 =
 
 **Gutenberg / WordPress 5.0 Compatibility**
 
-* Enhancement: Added support for new  WP 5.0 custom post type labels used by Gutenberg, #5223 (@wpstudio, @sc0ttkclark)
-* Fixed: TinyMCE Compability Bug for Gutenberg, #5217 (@pglewis)
+* Fixed: TinyMCE Compatibility Bug for Gutenberg, #5217 (@pglewis)
 * Fixed: Read-only Checkboxes now properly save values as 0 or 1, #4961 (@atanas-angelov-dev)
 * Fixed: Scrollbar Compatibility bug for List View in Gutenberg Editor, #5220 (@pglewis)
 * Fixed: Modal Support for Gutenberg, Add/edit Modal now triggers save and close to the modal, #5191 (@pglewis)
@@ -193,6 +203,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Enhancements**
 
+* Enhancement: Added support for new  WP 5.0 custom post type labels used by Gutenberg, #5223 (@wpstudio, @sc0ttkclark)
 * Enhancement: Add pods conditional logic handling on frontend forms, #5136 (@JoryHogeveen)
 * Enhancement: Add current memory usage to stats, #5178 (@sc0ttkclark)
 * Enhancement: Add support for Taxonomy descriptions, #4766 (@sc0ttkclark)

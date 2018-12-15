@@ -50,6 +50,7 @@ phpcs-report-*.txt
 # Tests - local config files
 codeception.yml
 tests/codeception/*.suite.yml
+tests/codeception/_support/_generated
 .env.local
 
 # Tests - local output files

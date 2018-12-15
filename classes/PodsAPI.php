@@ -27,21 +27,6 @@ class PodsAPI {
 
 	/**
 	 * @var
-	 */
-	public $pod;
-
-	/**
-	 * @var
-	 */
-	public $pod_id;
-
-	/**
-	 * @var
-	 */
-	public $fields;
-
-	/**
-	 * @var
 	 * @deprecated 2.0.0
 	 */
 	public $format = null;
@@ -123,9 +108,6 @@ class PodsAPI {
 
 			if ( ! empty( $pod ) ) {
 				$this->pod_data = $pod;
-				$this->pod      = $pod['name'];
-				$this->pod_id   = $pod['id'];
-				$this->fields   = $pod['fields'];
 			}
 		}
 	}
@@ -3790,7 +3772,7 @@ class PodsAPI {
 							$value = array();
 						}
 					}
-					
+
 					$pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
 
 					if ( 'single' === pods_var_raw( 'pick_format_type', $options ) ) {
@@ -8529,13 +8511,32 @@ class PodsAPI {
 	}
 
 	/**
-	 * Handle variables that have been deprecated
+	 * Handle variables that have been deprecated and PodsData vars
+	 *
+	 * @param string $name Property name.
+	 *
+	 * @return mixed
 	 *
 	 * @since 2.0.0
 	 */
 	public function __get( $name ) {
 
 		$name = (string) $name;
+
+		// Handle alias Pods\Whatsit\Pod properties.
+		$supported_pods_object = array(
+			'pod'         => 'name',
+			'pod_id'      => 'id',
+			'fields'      => 'fields',
+		);
+
+		if ( isset( $supported_pods_object[ $name ] ) ) {
+			if ( ! is_object( $this->pod_data ) ) {
+				return null;
+			}
+
+			return $this->pod_data->get_arg( $supported_pods_object[ $name ] );
+		}
 
 		if ( ! isset( $this->deprecated ) ) {
 						$this->deprecated = new PodsAPI_Deprecated( $this );

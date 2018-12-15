@@ -3458,7 +3458,7 @@ class PodsData {
 	}
 
 	/**
-	 * Handle variables that have been deprecated.
+	 * Handle variables that have been deprecated and PodsData vars
 	 *
 	 * @param string $name Property name.
 	 *

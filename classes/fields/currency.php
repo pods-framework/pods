@@ -565,7 +565,7 @@ class PodsField_Currency extends PodsField_Number {
 			),
 			'usdcent' => array(
 				'label'  => 'USDCENT',
-				'name'   => __( 'US Cent', 'pods' ),
+				'name'   => __( 'US Dollar Cent', 'pods' ),
 				'sign'   => '¢',
 				'entity' => '&cent;',
 			),

@@ -1516,6 +1516,41 @@ class PodsAdmin {
 					'default'     => '',
 					'object_type' => array( 'taxonomy' ),
 				),
+				'label_item_published'             => array(
+					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> Published.', 'pods' ),
+					'help'        => __( 'help', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'object_type' => array( 'post_type' ),
+				),
+				'label_item_published_privately'   => array(
+					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> published privately.', 'pods' ),
+					'help'        => __( 'help', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'object_type' => array( 'post_type' ),
+				),
+				'label_item_reverted_to_draft'     => array(
+					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> reverted to draft.', 'pods' ),
+					'help'        => __( 'help', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'object_type' => array( 'post_type' ),
+				),
+				'label_item_scheduled'             => array(
+					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> scheduled.', 'pods' ),
+					'help'        => __( 'help', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'object_type' => array( 'post_type' ),
+				),
+				'label_item_updated'               => array(
+					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> updated.', 'pods' ),
+					'help'        => __( 'help', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'object_type' => array( 'post_type' ),
+				),
 			);
 
 			$options['labels'] = array();
@@ -1781,6 +1816,12 @@ class PodsAdmin {
 			);
 		} elseif ( 'taxonomy' === $pod['type'] ) {
 			$options['admin-ui'] = array(
+				'description'           => array(
+					'label'   => __( 'Taxonomy Description', 'pods' ),
+					'help'    => __( 'A short descriptive summary of what the taxonomy is.', 'pods' ),
+					'type'    => 'text',
+					'default' => '',
+				),
 				'show_ui'               => array(
 					'label'             => __( 'Show Admin UI', 'pods' ),
 					'help'              => __( 'Whether to generate a default UI for managing this taxonomy.', 'pods' ),

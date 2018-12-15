@@ -972,6 +972,29 @@ class PodsField_Pick extends PodsField {
 					}
 				}
 
+				// Determine the default icon to use for this post type,
+				// default to the dashicon for posts
+				$config[ 'default_icon' ] = 'dashicons-admin-post';
+
+				// Any custom specified menu icon gets priority
+				$post_type = get_post_type_object( $args->options[ 'pick_val' ] );
+				if ( ! empty( $post_type->menu_icon ) ) {
+					$config[ 'default_icon' ] = $post_type->menu_icon;
+
+				// Page and attachment have their own dashicons
+				} elseif ( isset( $post_type->name ) ) {
+					switch ( $post_type->name ) {
+						case 'page':
+							// Default for pages.
+							$config[ 'default_icon' ] = 'dashicons-admin-page';
+							break;
+						case 'attachment':
+							// Default for attachments.
+							$config[ 'default_icon' ] = 'dashicons-admin-media';
+							break;
+					}
+				}
+
 				break;
 
 			case 'taxonomy':
@@ -1134,7 +1157,6 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function build_dfv_field_item_data_recurse_item( $item_id, $item_title, $args ) {
 
-		$use_dashicon = false;
 		$icon         = '';
 		$img_icon     = '';
 		$edit_link    = '';
@@ -1280,13 +1302,10 @@ class PodsField_Pick extends PodsField {
 		// Parse icon type
 		if ( 'none' === $icon || 'div' === $icon ) {
 			$icon         = '';
-			$use_dashicon = true;
 		} elseif ( 0 === strpos( $icon, 'data:image/svg+xml;base64,' ) ) {
 			$icon         = esc_attr( $icon );
-			$use_dashicon = false;
 		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
 			$icon         = sanitize_html_class( $icon );
-			$use_dashicon = true;
 		}
 
 		// Support modal editing
@@ -1321,7 +1340,6 @@ class PodsField_Pick extends PodsField {
 
 		$item = array(
 			'id'           => $item_id,
-			'use_dashicon' => $use_dashicon,
 			'icon'         => $icon,
 			'name'         => $item_title,
 			'edit_link'    => $edit_link,

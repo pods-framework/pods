@@ -53,4 +53,15 @@ class Field extends Whatsit {
 		return $table_info;
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_arg( $arg, $default = null ) {
+		if ( 'pod' === $arg ) {
+			return $this->get_parent_name();
+		}
+
+		return parent::get_arg( $arg, $default );
+	}
+
 }

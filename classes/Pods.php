@@ -931,6 +931,7 @@ class Pods implements Iterator {
 
 				if ( isset( $this->fields[ $params->name ], $this->fields[ $params->name ]['type'] ) ) {
 					$field_type = $this->fields[ $params->name ]['type'];
+
 					/**
 					 * Modify value returned by field() after its retrieved, but before its validated or formatted
 					 *
@@ -1058,11 +1059,17 @@ class Pods implements Iterator {
 
 					// Get fields matching traversal names.
 					if ( ! empty( $lookup ) ) {
-						$fields = $this->api->load_fields( array(
-							'name' => $lookup,
-							'type' => $tableless_field_types,
-							// @todo support object fields too.
-						) );
+						if ( count( $params->traverse ) && $params->name === $params->traverse[0] && $field_data && $field_data['name'] === $params->traverse[0] ) {
+							$fields = array(
+								$field_data,
+							);
+						} else {
+							$fields = $this->api->load_fields( array(
+								'name' => $lookup,
+								'type' => $tableless_field_types,
+								// @todo support object fields too.
+							) );
+						}
 
 						if ( ! empty( $fields ) ) {
 							foreach ( $fields as $field ) {

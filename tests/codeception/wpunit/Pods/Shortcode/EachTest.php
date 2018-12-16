@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests\Shortcode;
+namespace Pods_Unit_Tests\Pods\Shortcode;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use Pods;
@@ -115,7 +115,7 @@ class Pods_EachTest extends Pods_UnitTestCase {
 		for ( $x = 1; $x <= 5; $x ++ ) {
 			$sub_ids[] = $this->pod->add( array(
 				'post_status' => 'publish',
-				'name'        => $x,
+				'post_title'  => __FUNCTION__ . ': sub post ' . $x,
 				'number1'     => $x,
 				'number2'     => $x * $x,
 			) );
@@ -123,7 +123,7 @@ class Pods_EachTest extends Pods_UnitTestCase {
 
 		$main_id = $this->pod->add( array(
 			'post_status'   => 'publish',
-			'name'          => 'main post',
+			'post_title'   => __FUNCTION__ . ': main post',
 			'number1'       => 123,
 			'number2'       => 456,
 			'related_field' => $sub_ids,

@@ -30,6 +30,10 @@ class Field extends Whatsit {
 
 		$related_type = $this->get_arg( $type . '_object' );
 
+		if ( '__current__' === $related_type ) {
+			$related_type = $this->get_object_type();
+		}
+
 		if ( empty( $related_type ) || in_array( $related_type, $simple_tableless_objects, true ) ) {
 			return array();
 		}

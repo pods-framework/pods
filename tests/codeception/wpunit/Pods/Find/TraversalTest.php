@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests\Find;
+namespace Pods_Unit_Tests\Pods\Find;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 

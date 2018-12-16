@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests\Whatsit;
+namespace Pods_Unit_Tests\Pods\Whatsit;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use Pods\Whatsit\Store;

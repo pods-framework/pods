@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests\Field;
+namespace Pods_Unit_Tests\Pods\Field;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 

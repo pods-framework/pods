@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests;
+namespace Pods_Unit_Tests\Pods;
 
 use Pods_Unit_Tests\Pods_WhatsitTestCase;
 use Pods\Whatsit;

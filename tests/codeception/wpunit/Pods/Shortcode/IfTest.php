@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests\Shortcode;
+namespace Pods_Unit_Tests\Pods\Shortcode;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use Pods;

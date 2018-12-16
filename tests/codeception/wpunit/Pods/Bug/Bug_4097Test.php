@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests\Bug;
+namespace Pods_Unit_Tests\Pods\Bug;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 

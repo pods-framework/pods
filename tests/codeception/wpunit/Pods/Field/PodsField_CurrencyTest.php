@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests\Field;
+namespace Pods_Unit_Tests\Pods\Field;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use PodsField_Currency;
@@ -27,10 +27,14 @@ class PodsField_CurrencyTest extends Pods_UnitTestCase {
 
 	public function setUp() {
 		$this->field = new PodsField_Currency();
+
+		parent::setUp();
 	}
 
 	public function tearDown() {
 		unset( $this->field );
+
+		parent::tearDown();
 	}
 
 	/**

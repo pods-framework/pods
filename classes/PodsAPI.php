@@ -3460,9 +3460,12 @@ class PodsAPI {
 			$params->id = $pod['id'];
 		}
 
-		$fields = $pod['fields'];
+		$fields        = $pod->get_fields();
+		$object_fields = $pod->get_object_fields();
 
-		$object_fields = (array) pods_var_raw( 'object_fields', $pod, array(), null, true );
+		// Map the fields to Value_Field to store values.
+		$fields        = array_map( '\Pods\API\Whatsit\Value_Field::init', $fields );
+		$object_fields = array_map( '\Pods\API\Whatsit\Value_Field::init', $object_fields );
 
 		$fields_active = array();
 		$custom_data   = array();
@@ -3474,14 +3477,17 @@ class PodsAPI {
 			foreach ( $params->data as $field => $value ) {
 				if ( isset( $object_fields[ $field ] ) ) {
 					$object_fields[ $field ]['value'] = $value;
-					$fields_active[]                  = $field;
+
+					$fields_active[] = $field;
 				} elseif ( isset( $fields[ $field ] ) ) {
 					if ( 'save' === $params->from || true === PodsForm::permission( $fields[ $field ]['type'], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
 						$fields[ $field ]['value'] = $value;
-						$fields_active[]           = $field;
+
+						$fields_active[] = $field;
 					} elseif ( ! pods_has_permissions( $fields[ $field ] ) && pods_var( 'hidden', $fields[ $field ], false ) ) {
 						$fields[ $field ]['value'] = $value;
-						$fields_active[]           = $field;
+
+						$fields_active[] = $field;
 					}
 				} else {
 					$found = false;
@@ -3489,7 +3495,8 @@ class PodsAPI {
 					foreach ( $object_fields as $object_field => $object_field_opt ) {
 						if ( in_array( $field, $object_field_opt['alias'] ) ) {
 							$object_fields[ $object_field ]['value'] = $value;
-							$fields_active[]                         = $object_field;
+
+							$fields_active[] = $object_field;
 
 							$found = true;
 
@@ -3512,28 +3519,31 @@ class PodsAPI {
 			unset( $params->data );
 		}
 
-		if ( empty( $params->id ) && ! in_array( 'created', $fields_active ) && isset( $fields['created'] ) && in_array( $fields['created']['type'], array(
+		if ( empty( $params->id ) && isset( $fields['created'] ) && ! in_array( 'created', $fields_active, true ) && in_array( $fields['created']['type'], array(
 				'date',
 				'datetime'
-			) ) ) {
+			), true ) ) {
 			$fields['created']['value'] = current_time( 'mysql' );
-			$fields_active[]            = 'created';
+
+			$fields_active[] = 'created';
 		}
 
-		if ( ! in_array( 'modified', $fields_active ) && isset( $fields['modified'] ) && in_array( $fields['modified']['type'], array(
+		if ( isset( $fields['modified'] ) && ! in_array( 'modified', $fields_active, true ) && in_array( $fields['modified']['type'], array(
 				'date',
 				'datetime'
-			) ) ) {
+			), true ) ) {
 			$fields['modified']['value'] = current_time( 'mysql' );
-			$fields_active[]             = 'modified';
+
+			$fields_active[] = 'modified';
 		}
 
-		if ( in_array( $pod['type'], array(
+		if ( empty( $params->id ) && ! empty( $pod['pod_field_index'] ) && isset( $fields[ $pod['pod_field_slug'] ] ) && in_array( $pod['type'], array(
 				'pod',
 				'table'
-			) ) && empty( $params->id ) && ! empty( $pod['pod_field_index'] ) && in_array( $pod['pod_field_index'], $fields_active ) && ! in_array( $pod['pod_field_slug'], $fields_active ) && isset( $fields[ $pod['pod_field_slug'] ] ) ) {
+			), true ) && in_array( $pod['pod_field_index'], $fields_active, true ) && ! in_array( $pod['pod_field_slug'], $fields_active, true ) ) {
 			$fields[ $pod['pod_field_slug'] ]['value'] = ''; // this will get picked up by slug pre_save method
-			$fields_active[]                           = $pod['pod_field_slug'];
+
+			$fields_active[] = $pod['pod_field_slug'];
 		}
 
 		// Handle hidden fields
@@ -3546,12 +3556,13 @@ class PodsAPI {
 				if ( in_array( $params->from, array(
 						'save',
 						'process_form'
-					) ) || true === PodsForm::permission( $fields[ $field ]['type'], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
+					), true ) || true === PodsForm::permission( $fields[ $field ]['type'], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
 					$value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data['type'], $field, pods_var_raw( 'options', $field_data, $field_data, null, true ), $pod, $params->id );
 
 					if ( null !== $value && '' !== $value && false !== $value ) {
 						$fields[ $field ]['value'] = $value;
-						$fields_active[]           = $field;
+
+						$fields_active[] = $field;
 					}
 				}
 			}
@@ -3561,7 +3572,9 @@ class PodsAPI {
 				foreach ( $object_fields as $field => $field_data ) {
 					if ( in_array( $field, $fields_active, true ) ) {
 						continue;
-					} elseif ( ! isset( $field_data['default'] ) || strlen( $field_data['default'] ) < 1 ) {
+					}
+
+					if ( ! isset( $field_data['default'] ) || '' === $field_data['default'] ) {
 						continue;
 					}
 
@@ -3569,7 +3582,8 @@ class PodsAPI {
 
 					if ( null !== $value && '' !== $value && false !== $value ) {
 						$object_fields[ $field ]['value'] = $value;
-						$fields_active[]                  = $field;
+
+						$fields_active[] = $field;
 					}
 				}
 			}
@@ -3578,7 +3592,9 @@ class PodsAPI {
 			foreach ( $fields as $field => $field_data ) {
 				if ( in_array( $field, $fields_active, true ) ) {
 					continue;
-				} elseif ( ! isset( $field_data['default'] ) || strlen( $field_data['default'] ) < 1 ) {
+				}
+
+				if ( ! isset( $field_data['default'] ) || '' === $field_data['default'] ) {
 					continue;
 				}
 
@@ -3586,7 +3602,8 @@ class PodsAPI {
 
 				if ( null !== $value && '' !== $value && false !== $value ) {
 					$fields[ $field ]['value'] = $value;
-					$fields_active[]           = $field;
+
+					$fields_active[] = $field;
 				}
 			}
 		}

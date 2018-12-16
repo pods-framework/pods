@@ -219,6 +219,32 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
+	 * Override var_dump data that is used for debugging with.
+	 *
+	 * @return array Data for debugging with.
+	 */
+	public function __debugInfo() {
+		return array(
+			'args' => $this->args,
+		);
+	}
+
+	/**
+	 * Override __set_state handling to limit it to passing in only $args.
+	 *
+	 * @return self Object with state set.
+	 */
+	public static function __set_state( $data ) {
+		$args = array();
+
+		if ( ! empty( $data['args'] ) ) {
+			$args = $data['args'];
+		}
+
+		return new static( $args );
+	}
+
+	/**
 	 * On serialization of this object, only include _args.
 	 *
 	 * @return array List of properties to serialize.

@@ -362,16 +362,25 @@ function pods_tableless() {
  * @since 2.3.5
  */
 function pods_strict( $include_debug = true ) {
+	$strict = false;
+
 	if ( defined( 'PODS_STRICT' ) && PODS_STRICT ) {
 		// Deprecated PODS_STRICT_MODE since 2.3.5
-		return true;
+		$strict = true;
 	} elseif ( defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE && pods_allow_deprecated( false ) ) {
-		return true;
+		$strict = true;
 	} elseif ( $include_debug && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-		return true;
+		$strict = true;
 	}
 
-	return false;
+	/**
+	 * Allow filtering of whether strict mode is enabled.
+	 *
+	 * @param boolean $strict Whether strict mode is enabled.
+	 *
+	 * @since 2.8
+	 */
+	return apply_filters( 'pods_strict_mode', $strict );
 }
 
 /**

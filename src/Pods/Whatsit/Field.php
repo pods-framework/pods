@@ -3,6 +3,7 @@
 namespace Pods\Whatsit;
 
 use Pods\Whatsit;
+use PodsForm;
 
 /**
  * Field class.
@@ -24,24 +25,11 @@ class Field extends Whatsit {
 			return array();
 		}
 
-		$type = $this->get_type();
+		$related_type = $this->get_related_object_type();
+		$related_name = $this->get_related_object_name();
 
-		$simple_tableless_objects = \PodsForm::simple_tableless_objects();
-
-		$related_type = $this->get_arg( $type . '_object' );
-
-		if ( '__current__' === $related_type ) {
-			$related_type = $this->get_object_type();
-		}
-
-		if ( empty( $related_type ) || in_array( $related_type, $simple_tableless_objects, true ) ) {
+		if ( null === $related_type || null === $related_name ) {
 			return array();
-		}
-
-		$related_name = $this->get_arg( $type . '_val' );
-
-		if ( '__current__' === $related_name ) {
-			$related_name = $this->get_name();
 		}
 
 		$api = pods_api();
@@ -66,6 +54,56 @@ class Field extends Whatsit {
 		}
 
 		return parent::get_arg( $arg, $default );
+	}
+
+	/**
+	 * Get related object type from field.
+	 *
+	 * @return string|null The related object type, or null if not found.
+	 */
+	public function get_related_object_type() {
+		$type = $this->get_type();
+
+		$simple_tableless_objects = \PodsForm::simple_tableless_objects();
+
+		$related_type = $this->get_arg( $type . '_object' );
+
+		if ( '__current__' === $related_type ) {
+			$related_type = $this->get_object_type();
+		}
+
+		if ( empty( $related_type ) || \in_array( $related_type, $simple_tableless_objects, true ) ) {
+			return null;
+		}
+
+		return $related_type;
+	}
+
+	/**
+	 * Get related object name from field.
+	 *
+	 * @return string|null The related object name, or null if not found.
+	 */
+	public function get_related_object_name() {
+		$type = $this->get_type();
+
+		$related_type = $this->get_related_object_type();
+
+		if ( null === $related_type ) {
+			return null;
+		}
+
+		$related_name = $this->get_arg( $type . '_val' );
+
+		if ( '__current__' === $related_name ) {
+			$related_name = $this->get_name();
+		}
+
+		if ( 'table' === $related_type ) {
+			$related_name = $this->get_arg( 'related_table', $related_name );
+		}
+
+		return $related_name;
 	}
 
 }

@@ -724,18 +724,21 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 	 * @throws \Exception
 	 */
 	public static function _initialize_data() {
+
 		// Insert test data for Non-Pod Taxonomy
 		$term = wp_insert_term( 'Non-Pod Term', 'test_non_pod_ct' );
 
-		self::$related_items['test_non_pod_ct'] = array(
-			'pod'         => 'test_non_pod_ct',
-			'id'          => (int) $term['term_id'],
-			'field_index' => 'name',
-			'field_id'    => 'term_id',
-			'data'        => array(
-				'name' => 'Non-Pod Term',
-			),
-		);
+		if ( ! is_wp_error( $term ) ) {
+			self::$related_items['test_non_pod_ct'] = array(
+				'pod'         => 'test_non_pod_ct',
+				'id'          => (int) $term['term_id'],
+				'field_index' => 'name',
+				'field_id'    => 'term_id',
+				'data'        => array(
+					'name' => 'Non-Pod Term',
+				),
+			);
+		}
 
 		// @todo In 3.x, we should be able to use pods() on any taxonomy outside of Pods
 		$related_author = 0;
@@ -784,19 +787,24 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 				$item_data['field_index'] = $p->pod_data['field_index'];
 
 				// Add term id for the Non-Pod Taxonomy field
-				if ( 'post_type' === $p->pod_data['type'] ) {
+				if ( 'post_type' === $p->pod_data['type'] && isset( self::$related_items['test_non_pod_ct'] ) ) {
 					$item_data['data']['test_non_pod_ct'] = (int) self::$related_items['test_non_pod_ct']['id'];
 				} elseif ( 'pod' === $p->pod_data['type'] ) {
 					$item_data['data']['author'] = $related_author;
 				}
 
-				if ( 'media' === $item_data['pod'] ) {
-					// Create new attachment from sample image
-					$id = pods_attachment_import( $sample_image );
+				try {
+					if ( 'media' === $item_data['pod'] ) {
+						// Create new attachment from sample image
+						$id = pods_attachment_import( $sample_image );
 
-					$p->save( $item_data['data'], null, $id );
-				} else {
-					$id = $p->add( $item_data['data'] );
+						$p->save( $item_data['data'], null, $id );
+					} else {
+						$id = $p->add( $item_data['data'] );
+					}
+				} catch ( \Exception $exception ) {
+					// Item not saved.
+					continue;
 				}
 
 				if ( ! empty( $item_data['limit'] ) ) {
@@ -810,15 +818,20 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 						$sub_item_data                              = $item_data['data'];
 						$sub_item_data[ $item_data['field_index'] ] .= ' (' . $x . ')';
 
-						if ( 'media' === $item_data['pod'] ) {
-							// Create new attachment from sample image
-							$id = pods_attachment_import( $sample_image );
+						try {
+							if ( 'media' === $item_data['pod'] ) {
+								// Create new attachment from sample image
+								$id = pods_attachment_import( $sample_image );
 
-							$p->save( $sub_item_data, null, $id );
-						} else {
-							$id = $p->add( $sub_item_data );
+								$p->save( $sub_item_data, null, $id );
+							} else {
+								$id = $p->add( $sub_item_data );
 
-							$item_data['sub_data'][ $id ] = $sub_item_data;
+								$item_data['sub_data'][ $id ] = $sub_item_data;
+							}
+						} catch ( \Exception $exception ) {
+							// Item not saved.
+							continue;
 						}
 
 						$ids[] = $id;
@@ -911,11 +924,16 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 							}
 
 							// Add term id for the Non-Pod Taxonomy field
-							if ( 'post_type' === $pod_type ) {
+							if ( 'post_type' === $pod_type && isset( self::$related_items['test_non_pod_ct'] ) ) {
 								$pod_item_data['data']['test_non_pod_ct'] = (int) self::$related_items['test_non_pod_ct']['id'];
 							}
 
-							$id = $p->add( $pod_item_data['data'] );
+							try {
+								$id = $p->add( $pod_item_data['data'] );
+							} catch ( \Exception $exception ) {
+								// Item not saved.
+								continue;
+							}
 
 							if ( 'post_type' === $pod_type ) {
 								set_post_thumbnail( $id, $related_media );
@@ -953,7 +971,7 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 					$save_data = $r_item_data['data'];
 				}
 
-				if ( 'post_type' === $p->pod_data['type'] ) {
+				if ( 'post_type' === $p->pod_data['type'] && isset( self::$related_items['test_non_pod_ct'] ) ) {
 					// Add term id for the Non-Pod Taxonomy field
 					// @todo This should be working on it's own
 					$save_data['test_non_pod_ct'] = (int) self::$related_items['test_non_pod_ct']['id'];
@@ -966,7 +984,12 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 					self::$related_items[ $r_item ]['data'] = array_merge( self::$related_items[ $r_item ]['data'], $save_data );
 				}
 
-				$p->save( $save_data, null, $item_id );
+				try {
+					$p->save( $save_data, null, $item_id );
+				} catch ( \Exception $exception ) {
+					// Item not saved.
+					continue;
+				}
 			}//end foreach
 		}//end foreach
 

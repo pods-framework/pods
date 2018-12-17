@@ -150,7 +150,7 @@ class TraversalTest extends Pods_UnitTestCase {
 		);
 
 		// Do setup for Pod (tearDown / setUp) per storage type
-		if ( in_array( $pod_type, array( 'user', 'media', 'comment' ) ) && 'meta' !== $storage_type ) {
+		if ( 'meta' !== $storage_type && in_array( $pod_type, array( 'user', 'media', 'comment' ) ) ) {
 			$debug['skipped'] = 1;
 
 			codecept_debug( $debug );
@@ -162,6 +162,8 @@ class TraversalTest extends Pods_UnitTestCase {
 		}
 
 		codecept_debug( $debug );
+
+		$this->assertArrayHasKey( $pod['name'], self::$related_items );
 
 		$data = self::$related_items[ $pod['name'] ];
 
@@ -262,6 +264,8 @@ class TraversalTest extends Pods_UnitTestCase {
 		}
 
 		codecept_debug( $debug );
+
+		$this->assertArrayHasKey( $pod['name'], self::$related_items );
 
 		$data = self::$related_items[ $pod['name'] ];
 

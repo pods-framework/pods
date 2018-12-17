@@ -242,6 +242,8 @@ class TraversalTest extends Pods_UnitTestCase {
 
 		$where = array();
 
+		$this->assertArrayHasKey( $pod['name'], self::$related_items );
+
 		$data                = self::$related_items[ $pod['name'] ];
 		$data['field_id']    = $p->pod_data['field_id'];
 		$data['field_index'] = $p->pod_data['field_index'];
@@ -364,6 +366,8 @@ class TraversalTest extends Pods_UnitTestCase {
 		$this->assertInstanceOf( 'Pods', $p, sprintf( 'Pod object not a Pod [%s]', $variant_id ) );
 
 		$where = array();
+
+		$this->assertArrayHasKey( $pod['name'], self::$related_items );
 
 		$data                = self::$related_items[ $pod['name'] ];
 		$data['field_id']    = $p->pod_data['field_id'];

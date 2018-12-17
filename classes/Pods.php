@@ -1059,15 +1059,15 @@ class Pods implements Iterator {
 
 					// Get fields matching traversal names.
 					if ( ! empty( $lookup ) ) {
-						if ( count( $params->traverse ) && $params->name === $params->traverse[0] && $field_data && $field_data['name'] === $params->traverse[0] ) {
+						if ( 1 === count( $params->traverse ) && $params->name === $params->traverse[0] && $field_data && $field_data['name'] === $params->traverse[0] ) {
 							$fields = array(
 								$field_data,
 							);
 						} else {
-							$fields = $this->api->load_fields( array(
-								'name' => $lookup,
+							$fields = $this->api->traverse_fields( array(
+								'pod'    => $pod,
+								'expand' => $lookup,
 								'type' => $tableless_field_types,
-								// @todo support object fields too.
 							) );
 						}
 
@@ -1079,16 +1079,6 @@ class Pods implements Iterator {
 									}
 
 									$all_fields[ $field['pod'] ][ $field['name'] ] = $field;
-								}
-							}
-						}
-
-						if ( ! empty( $this->pod_data['object_fields'] ) ) {
-							$object_fields = (array) $this->pod_data['object_fields'];
-
-							foreach ( $object_fields as $object_field => $object_field_opt ) {
-								if ( in_array( $object_field_opt['type'], $tableless_field_types, true ) ) {
-									$all_fields[ $this->pod ][ $object_field ] = $object_field_opt;
 								}
 							}
 						}

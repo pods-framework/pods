@@ -6328,6 +6328,82 @@ class PodsAPI {
 	}
 
 	/**
+	 * Traverse fields and load their information.
+	 *
+	 * @param array       $params       {
+	 *                                  An associative array of parameters.
+	 *
+	 * @type string  $pod               The Pod name.
+	 * @type array   $expand            The field name(s) to expand.
+	 * @type array   $types             The field type(s).
+	 * @type boolean $bypass_cache      Bypass the cache when getting data.
+	 * }
+	 *
+	 * @return Pods\Whatsit\Field[] List of field objects.
+	 *
+	 * @throws Exception
+	 *
+	 * @since 2.8
+	 */
+	public function traverse_fields( array $params ) {
+		// pod and expand are required parameters.
+		if ( empty( $params['pod'] ) || empty( $params['expand'] ) ) {
+			return array();
+		}
+
+		// Check if we need to bypass cache automatically.
+		if ( empty( $params['bypass_cache'] ) ) {
+			$api_cache = pods_api_cache();
+
+			if ( ! $api_cache ) {
+				$params['bypass_cache'] = true;
+			}
+		}
+
+		$pod    = $params['pod'];
+		$expand = $params['expand'];
+		$types  = ! empty( $params['types'] ) ? (array) $params['types'] : PodsForm::tableless_field_types();
+
+		$fields = array();
+
+		// For each in expand, load field, fall back to load pod if an object field.
+		foreach ( $expand as $field_name ) {
+			$args = array(
+				'pod'  => $pod,
+				'name' => $field_name,
+				'type' => $types,
+			);
+
+			$field = $this->load_field( $args );
+
+			if ( ! $field instanceof \Pods\Whatsit\Field ) {
+				// Check if this is an object field.
+				$pod_data = $this->load_pod( $pod );
+
+				if ( ! $pod_data instanceof \Pods\Whatsit\Pod ) {
+					break;
+				}
+
+				$field = $pod_data->get_field( $field_name );
+
+				if ( ! $field instanceof \Pods\Whatsit\Field || ! \in_array( $field['type'], $types, true ) ) {
+					break;
+				}
+			}
+
+			$fields[] = $field;
+
+			$pod = $field->get_related_object_name();
+
+			if ( null === $pod ) {
+				break;
+			}
+		}
+
+		return $fields;
+	}
+
+	/**
 	 * Load fields by Pod, ID, Name, and/or Type.
 	 *
 	 * @param array       $params       {

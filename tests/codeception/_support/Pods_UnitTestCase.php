@@ -381,17 +381,19 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 	public function setUp() {
 		static $counter = 0;
 
-		parent::setUp();
+		if ( static::$db_reset_teardown ) {
+			parent::setUp();
 
-		$load_config = filter_var( getenv( 'PODS_LOAD_DATA' ), FILTER_VALIDATE_BOOLEAN );
+			$load_config = filter_var( getenv( 'PODS_LOAD_DATA' ), FILTER_VALIDATE_BOOLEAN );
 
-		if ( $load_config ) {
-			$counter ++;
+			if ( $load_config ) {
+				$counter ++;
 
-			if ( 100 <= $counter ) {
-				$counter = 0;
+				if ( 100 <= $counter ) {
+					$counter = 0;
 
-				usleep( 500000 );
+					usleep( 500000 );
+				}
 			}
 		}
 	}
@@ -407,6 +409,8 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 			$object_collection->delete_objects();
 
 			pods_api()->cache_flush_pods();
+
+			self::$pods = array();
 		}
 	}
 
@@ -1250,7 +1254,7 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 	 */
 	public function get_pod( $pod ) {
 		if ( ! isset( self::$pods[ $pod ] ) ) {
-			self::$pods[ $pod ] = pods( $pod );
+			self::$pods[ $pod ] = pods( $pod, null, false );
 		}
 
 		return self::$pods[ $pod ];

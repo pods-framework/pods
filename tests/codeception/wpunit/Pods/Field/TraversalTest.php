@@ -3,6 +3,7 @@
 namespace Pods_Unit_Tests\Pods\Field;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
+use Pods;
 
 /**
  * Class Test_Traversal
@@ -171,6 +172,8 @@ class TraversalTest extends Pods_UnitTestCase {
 
 		$p = $this->get_pod( $pod['name'] );
 
+		$this->assertInstanceOf( Pods::class, $p, sprintf( 'Pod not object of Pod [%s]', $variant_id ) );
+
 		if ( (int) $p->id() !== $data['id'] ) {
 			$p->fetch( $data['id'] );
 		}
@@ -178,9 +181,7 @@ class TraversalTest extends Pods_UnitTestCase {
 		$data['field_id']    = $p->pod_data['field_id'];
 		$data['field_index'] = $p->pod_data['field_index'];
 
-		$this->assertTrue( is_object( $p ), sprintf( 'Pod not object [%s]', $variant_id ) );
 		$this->assertTrue( $p->valid(), sprintf( 'Pod object not valid [%s]', $variant_id ) );
-		$this->assertInstanceOf( 'Pods', $p, sprintf( 'Pod object not a Pod [%s]', $variant_id ) );
 
 		$this->assertTrue( $p->exists(), sprintf( 'Pod item not found [%s]', $variant_id ) );
 
@@ -273,6 +274,8 @@ class TraversalTest extends Pods_UnitTestCase {
 
 		$p = $this->get_pod( $pod['name'] );
 
+		$this->assertInstanceOf( Pods::class, $p, sprintf( 'Pod not object of Pod [%s]', $variant_id ) );
+
 		if ( (int) $p->id() !== $data['id'] ) {
 			$p->fetch( $data['id'] );
 		}
@@ -280,7 +283,6 @@ class TraversalTest extends Pods_UnitTestCase {
 		$data['field_id']    = $p->pod_data['field_id'];
 		$data['field_index'] = $p->pod_data['field_index'];
 
-		$this->assertTrue( is_object( $p ), sprintf( 'Pod not object [%s]', $variant_id ) );
 		$this->assertTrue( $p->valid(), sprintf( 'Pod object not valid [%s]', $variant_id ) );
 		$this->assertInstanceOf( 'Pods', $p, sprintf( 'Pod object not a Pod [%s]', $variant_id ) );
 

@@ -3,6 +3,7 @@
 namespace Pods_Unit_Tests\Pods\Find;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
+use Pods;
 
 /**
  * Class Test_Traversal
@@ -236,9 +237,8 @@ class TraversalTest extends Pods_UnitTestCase {
 
 		$p = $this->get_pod( $pod['name'] );
 
-		$this->assertTrue( is_object( $p ), sprintf( 'Pod not object [%s]', $variant_id ) );
+		$this->assertInstanceOf( Pods::class, $p, sprintf( 'Pod not object of Pod [%s]', $variant_id ) );
 		$this->assertTrue( $p->valid(), sprintf( 'Pod object not valid [%s]', $variant_id ) );
-		$this->assertInstanceOf( 'Pods', $p, sprintf( 'Pod object not a Pod [%s]', $variant_id ) );
 
 		$where = array();
 
@@ -361,9 +361,8 @@ class TraversalTest extends Pods_UnitTestCase {
 
 		$p = $this->get_pod( $pod['name'] );
 
-		$this->assertTrue( is_object( $p ), sprintf( 'Pod not object [%s]', $variant_id ) );
+		$this->assertInstanceOf( Pods::class, $p, sprintf( 'Pod not object of Pod [%s]', $variant_id ) );
 		$this->assertTrue( $p->valid(), sprintf( 'Pod object not valid [%s]', $variant_id ) );
-		$this->assertInstanceOf( 'Pods', $p, sprintf( 'Pod object not a Pod [%s]', $variant_id ) );
 
 		$where = array();
 

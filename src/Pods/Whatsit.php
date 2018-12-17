@@ -716,9 +716,43 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
+	 * Get field from object.
+	 *
+	 * @param string      $field_name Field name.
+	 * @param null|string $arg        Argument name.
+	 *
+	 * @return Field|mixed|null Field object, argument value, or null if object not found.
+	 */
+	public function get_field( $field_name, $arg = null ) {
+		$fields = $this->get_fields();
+
+		$field = null;
+
+		if ( isset( $fields[ $field_name ] ) ) {
+			$field = $fields[ $field_name ];
+		} else {
+			$object_fields = $this->get_object_fields();
+
+			if ( isset( $object_fields[ $field_name ] ) ) {
+				$field = $object_fields[ $field_name ];
+			}
+		}
+
+		if ( ! $field instanceof Field ) {
+			return null;
+		}
+
+		if ( null !== $arg ) {
+			return $field->get_arg( $arg );
+		}
+
+		return $field;
+	}
+
+	/**
 	 * Get fields for object.
 	 *
-	 * @return Whatsit[] List of field objects.
+	 * @return Field[] List of field objects.
 	 */
 	public function get_fields() {
 		if ( array() === $this->_fields ) {

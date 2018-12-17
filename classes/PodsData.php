@@ -1920,6 +1920,7 @@ class PodsData {
 
 			if ( ! empty( $this->pod ) ) {
 				$row = pods_cache_get( $id, 'pods_items_' . $this->pod );
+
 				if ( false !== $row ) {
 					$already_cached = true;
 				}
@@ -1951,7 +1952,7 @@ class PodsData {
 				if ( 'id' === $mode ) {
 					$this->row = get_post( $id, ARRAY_A );
 
-					if ( is_array( $this->row ) && $this->row['post_type'] != $post_type ) {
+					if ( is_array( $this->row ) && $this->row['post_type'] !== $post_type ) {
 						$this->row = false;
 					}
 				} else {
@@ -1968,7 +1969,7 @@ class PodsData {
 					}
 				}
 
-				if ( is_wp_error( $this->row ) || empty( $this->row ) ) {
+				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
 					$current_row_id = $this->row['ID'];
@@ -2108,7 +2109,7 @@ class PodsData {
 				$this->row = array_merge( $old_row, $this->row );
 			}
 
-			if ( 'table' === $this->pod_data['storage'] && false !== $get_table_data && is_numeric( $current_row_id ) ) {
+			if ( false !== $get_table_data && is_numeric( $current_row_id ) && 'table' === $this->pod_data['storage'] ) {
 				$params = array(
 					'table'   => $wpdb->prefix . 'pods_',
 					'where'   => "`t`.`id` = {$current_row_id}",

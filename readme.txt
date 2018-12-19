@@ -179,6 +179,13 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.12 {DATE} =
+
+**Enhancements**
+
+* Enhancement: Sort currency list alphabetically by name, add Indonesian Rupiah (Rp) and US Cent currency support, 5247 (@sc0ttkclark)
+
+
 = 2.7.11 - December 7th 2018 =
 
 **Bug Fixes**

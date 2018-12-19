@@ -3706,7 +3706,7 @@ class PodsAPI {
 							$value = array();
 						}
 					}
-					
+
 					$pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
 
 					if ( 'single' === pods_var_raw( 'pick_format_type', $options ) ) {
@@ -8239,7 +8239,7 @@ class PodsAPI {
 		if ( empty( $object_type ) ) {
 			$object_type = 'post_type';
 			$object      = 'post';
-		} elseif ( empty( $object ) && in_array( $object_type, array( 'user', 'media', 'comment' ) ) ) {
+		} elseif ( empty( $object ) && in_array( $object_type, array( 'user', 'media', 'comment' ), true ) ) {
 			$object = $object_type;
 		}
 

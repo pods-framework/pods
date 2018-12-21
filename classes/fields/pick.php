@@ -1168,8 +1168,6 @@ class PodsField_Pick extends PodsField {
 
 		switch ( $args->options['pick_object'] ) {
 			case 'post_type':
-				$item_id = (int) $item_id;
-
 				if ( null === $args->options['supports_thumbnails'] && ! empty( $args->options['pick_val'] ) ) {
 					$args->options['supports_thumbnails'] = post_type_supports( $args->options['pick_val'], 'thumbnail' );
 				}
@@ -1218,8 +1216,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'taxonomy':
-				$item_id = (int) $item_id;
-
 				if ( ! empty( $args->options['pick_val'] ) ) {
 
 					// Default icon for taxonomy.
@@ -1242,8 +1238,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'user':
-				$item_id = (int) $item_id;
-
 				$args->options['supports_thumbnails'] = true;
 
 				$icon     = 'dashicons-admin-users';
@@ -1256,8 +1250,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'comment':
-				$item_id = (int) $item_id;
-
 				$args->options['supports_thumbnails'] = true;
 
 				$icon     = 'dashicons-admin-comments';
@@ -1270,8 +1262,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'pod':
-				$item_id = (int) $item_id;
-
 				if ( ! empty( $args->options['pick_val'] ) ) {
 
 					$icon = 'dashicons-pods';

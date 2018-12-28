@@ -414,7 +414,14 @@ function pods_api_cache() {
 		return false;
 	}
 
-	return true;
+	/**
+	 * Filter whether or not to use the Pods API cache.
+	 *
+	 * @param boolean $use_cache Whether or not to use the Pods API cache.
+	 *
+	 * @since 2.8
+	 */
+	return apply_filters( 'pods_api_cache', true );
 }
 
 /**

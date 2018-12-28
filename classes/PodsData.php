@@ -3110,33 +3110,33 @@ class PodsData {
 
 		$traverse = $the_field;
 
+		$table_info = array();
+
 		if ( $the_field instanceof \Pods\Whatsit\Field && $the_field->get_table_info() ) {
-			$traverse['table_info'] = $the_field->get_table_info();
+			$table_info = $the_field->get_table_info();
 		} elseif ( in_array( $traverse['type'], $file_field_types, true ) ) {
-			$traverse['table_info'] = $this->api->get_table_info( 'post_type', 'attachment' );
+			$table_info = $this->api->get_table_info( 'post_type', 'attachment' );
 		} elseif ( ! in_array( $traverse['type'], $tableless_field_types, true ) ) {
 			if ( $pod_data instanceof \Pods\Whatsit\Pod ) {
-				$traverse['table_info'] = $pod_data->get_table_info();
+				$table_info = $pod_data->get_table_info();
 			} else {
-				$traverse['table_info'] = $this->api->get_table_info( $pod_data['type'], $pod_data['name'], $pod_data['name'], $pod_data );
+				$table_info = $this->api->get_table_info( $pod_data['type'], $pod_data['name'], $pod_data['name'], $pod_data );
 			}
-		} elseif ( empty( $traverse['table_info'] ) || ( in_array( $traverse['pick_object'], $simple_tableless_objects, true ) && ! empty( $traverse_recurse['last_table_info'] ) ) ) {
+		} elseif ( in_array( $traverse['pick_object'], $simple_tableless_objects, true ) && ! empty( $traverse_recurse['last_table_info'] ) ) {
 			$has_last_table_info = ! empty( $traverse_recurse['last_table_info'] );
 
-			if ( in_array( $traverse['pick_object'], $simple_tableless_objects, true ) && $has_last_table_info ) {
-				$traverse['table_info'] = $traverse_recurse['last_table_info'];
+			if ( $has_last_table_info ) {
+				$table_info = $traverse_recurse['last_table_info'];
 
-				if ( ! empty( $traverse['table_info']['meta_table'] ) ) {
+				if ( ! empty( $table_info['meta_table'] ) ) {
 					$meta_data_table = true;
 				}
-			} elseif ( ! in_array( $traverse['type'], $tableless_field_types, true ) && $has_last_table_info && 0 === $traverse_recurse['depth'] ) {
-				$traverse['table_info'] = $traverse_recurse['last_table_info'];
 			} else {
 				if ( ! isset( $traverse['pod'] ) ) {
 					$traverse['pod'] = null;
 				}
 
-				$traverse['table_info'] = $this->api->get_table_info( $traverse['pick_object'], $traverse['pick_val'], null, $traverse['pod'], $traverse );
+				$table_info = $this->api->get_table_info( $traverse['pick_object'], $traverse['pick_val'], null, $traverse['pod'], $traverse );
 			}
 		}//end if
 
@@ -3144,9 +3144,9 @@ class PodsData {
 			$traverse = $this->traversal[ $traverse_recurse['pod'] ][ $traverse['name'] ];
 		}
 
-		$traverse = apply_filters( 'pods_data_traverse', $traverse, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params' ), $this );
+		$traverse = apply_filters( 'pods_data_traverse', $traverse, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params', 'table_info' ), $this );
 
-		if ( empty( $traverse ) || empty( $traverse['table_info'] ) ) {
+		if ( empty( $traverse ) || empty( $table_info ) ) {
 			return $joins;
 		}
 
@@ -3155,8 +3155,6 @@ class PodsData {
 		if ( empty( $traverse['id'] ) ) {
 			$traverse['id'] = $field;
 		}
-
-		$table_info = $traverse['table_info'];
 
 		$this->traversal[ $traverse_recurse['pod'] ][ $field ] = $traverse;
 

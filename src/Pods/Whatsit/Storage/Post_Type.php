@@ -506,7 +506,7 @@ class Post_Type extends Collection {
 		// Check if we already have an object registered and available.
 		$object = $object_collection->get_object( $post->ID );
 
-		if ( $object ) {
+		if ( $object instanceof Whatsit && $post->post_type === '_pods_' . $object->get_object_type() ) {
 			return $object;
 		}
 

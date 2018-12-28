@@ -736,6 +736,24 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 			if ( isset( $object_fields[ $field_name ] ) ) {
 				$field = $object_fields[ $field_name ];
+			} else {
+				foreach ( $fields as $the_field ) {
+					if ( ! empty( $the_field['alias'] ) && in_array( $field_name, $the_field['alias'], true ) ) {
+						$field = $the_field;
+
+						break;
+					}
+				}
+
+				if ( ! $field && isset( $object_fields ) ) {
+					foreach ( $object_fields as $the_field ) {
+						if ( ! empty( $the_field['alias'] ) && in_array( $field_name, $the_field['alias'], true ) ) {
+							$field = $the_field;
+
+							break;
+						}
+					}
+				}
 			}
 		}
 

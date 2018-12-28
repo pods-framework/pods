@@ -508,6 +508,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$special_args = array(
 			'fields'        => 'get_fields',
 			'object_fields' => 'get_object_fields',
+			'all_fields'    => 'get_all_fields',
 			'groups'        => 'get_groups',
 			'table_info'    => 'get_table_info',
 			'options'       => 'get_args',
@@ -802,6 +803,15 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 */
 	public function get_object_fields() {
 		return array();
+	}
+
+	/**
+	 * Get all fields for object.
+	 *
+	 * @return Field[] List of field objects.
+	 */
+	public function get_all_fields() {
+		return array_merge( $this->get_fields(), $this->get_object_fields() );
 	}
 
 	/**

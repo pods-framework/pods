@@ -66,7 +66,7 @@ class Field extends Whatsit {
 
 		$simple_tableless_objects = \PodsForm::simple_tableless_objects();
 
-		$related_type = $this->get_arg( $type . '_object' );
+		$related_type = $this->get_arg( $type . '_object', $this->get_arg( 'pick_object' ) );
 
 		if ( '__current__' === $related_type ) {
 			$related_type = $this->get_object_type();
@@ -93,7 +93,7 @@ class Field extends Whatsit {
 			return null;
 		}
 
-		$related_name = $this->get_arg( $type . '_val' );
+		$related_name = $this->get_arg( $type . '_val', $this->get_arg( 'pick_val', $related_type ) );
 
 		if ( '__current__' === $related_name ) {
 			$related_name = $this->get_name();

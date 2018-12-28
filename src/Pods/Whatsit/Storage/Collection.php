@@ -263,7 +263,7 @@ class Collection extends Storage {
 	 */
 	public function delete_object( Whatsit $object ) {
 		// If this object has fields or groups, delete them.
-		$objects = array_merge( $object->get_fields(), $object->get_groups() );
+		$objects = array_merge( $object->get_all_fields(), $object->get_groups() );
 
 		// Delete child objects.
 		array_map( array( $this, 'delete' ), $objects );

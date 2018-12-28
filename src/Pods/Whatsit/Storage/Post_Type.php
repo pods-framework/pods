@@ -83,6 +83,14 @@ class Post_Type extends Collection {
 			return array();
 		}
 
+		if ( ! isset( $args['bypass_cache'] ) ) {
+			$api_cache = pods_api_cache();
+
+			if ( ! $api_cache ) {
+				$args['bypass_cache'] = true;
+			}
+		}
+
 		/**
 		 * Filter the maximum number of posts to get for post type storage.
 		 *

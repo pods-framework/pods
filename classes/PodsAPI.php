@@ -5228,9 +5228,9 @@ class PodsAPI {
 	 * $params['id'] int The Pod ID
 	 * $params['name'] string The Pod name
 	 *
-	 * @param array $params     An associative array of parameters
-	 * @param bool  $strict     (optional) Makes sure a pod exists, if it doesn't throws an error
-	 * @param bool  $delete_all (optional) Whether to delete all content from a WP object
+	 * @param array|string|int $params     An associative array of parameters, the pod name, or pod ID.
+	 * @param bool             $strict     (optional) Makes sure a pod exists, if it doesn't throws an error
+	 * @param bool             $delete_all (optional) Whether to delete all content from a WP object
 	 *
 	 * @uses  PodsAPI::load_pod
 	 * @uses  wp_delete_post
@@ -6078,9 +6078,7 @@ class PodsAPI {
 
 		$posts = get_posts( $args );
 
-		$total = count( $posts );
-
-		return $total;
+		return count( $posts );
 
 	}
 
@@ -6341,63 +6339,65 @@ class PodsAPI {
 	 *
 	 * @return Pods\Whatsit\Field[] List of field objects.
 	 *
-	 * @throws Exception
-	 *
 	 * @since 2.8
 	 */
 	public function traverse_fields( array $params ) {
-		// pod and expand are required parameters.
-		if ( empty( $params['pod'] ) || empty( $params['expand'] ) ) {
-			return array();
-		}
-
-		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
-			$api_cache = pods_api_cache();
-
-			if ( ! $api_cache ) {
-				$params['bypass_cache'] = true;
-			}
-		}
-
-		$pod    = $params['pod'];
-		$expand = $params['expand'];
-		$types  = ! empty( $params['types'] ) ? (array) $params['types'] : PodsForm::tableless_field_types();
-
 		$fields = array();
 
-		// For each in expand, load field, fall back to load pod if an object field.
-		foreach ( $expand as $field_name ) {
-			$args = array(
-				'pod'  => $pod,
-				'name' => $field_name,
-				'type' => $types,
-			);
+		try {
+			// pod and expand are required parameters.
+			if ( empty( $params['pod'] ) || empty( $params['expand'] ) ) {
+				return array();
+			}
 
-			$field = $this->load_field( $args );
+			// Check if we need to bypass cache automatically.
+			if ( empty( $params['bypass_cache'] ) ) {
+				$api_cache = pods_api_cache();
 
-			if ( ! $field instanceof \Pods\Whatsit\Field ) {
-				// Check if this is an object field.
-				$pod_data = $this->load_pod( $pod );
-
-				if ( ! $pod_data instanceof \Pods\Whatsit\Pod ) {
-					break;
-				}
-
-				$field = $pod_data->get_field( $field_name );
-
-				if ( ! $field instanceof \Pods\Whatsit\Field || ! \in_array( $field['type'], $types, true ) ) {
-					break;
+				if ( ! $api_cache ) {
+					$params['bypass_cache'] = true;
 				}
 			}
 
-			$fields[] = $field;
+			$pod    = $params['pod'];
+			$expand = $params['expand'];
+			$types  = ! empty( $params['types'] ) ? (array) $params['types'] : PodsForm::tableless_field_types();
 
-			$pod = $field->get_related_object_name();
+			// For each in expand, load field, fall back to load pod if an object field.
+			foreach ( $expand as $field_name ) {
+				$args = array(
+					'pod'  => $pod,
+					'name' => $field_name,
+					'type' => $types,
+				);
 
-			if ( null === $pod ) {
-				break;
+				$field = $this->load_field( $args );
+
+				if ( ! $field instanceof \Pods\Whatsit\Field ) {
+					// Check if this is an object field.
+					$pod_data = $this->load_pod( $pod );
+
+					if ( ! $pod_data instanceof \Pods\Whatsit\Pod ) {
+						break;
+					}
+
+					$field = $pod_data->get_field( $field_name );
+
+					if ( ! $field instanceof \Pods\Whatsit\Object_Field || ! in_array( $field['type'], $types, true ) ) {
+						break;
+					}
+				}
+
+				$fields[] = $field;
+
+				$pod = $field->get_related_object_name();
+
+				if ( null === $pod ) {
+					break;
+				}
 			}
+		} catch ( \Exception $e ) {
+			// Do nothing.
 		}
 
 		return $fields;
@@ -7144,11 +7144,9 @@ class PodsAPI {
 		}
 
 		if ( ! empty( $field ) ) {
-			$options = (array) pods_var_raw( 'options', $field, $field, null, true );
+			$related_pick_limit = (int) pods_v( $field_type . '_limit', $field, 0 );
 
-			$related_pick_limit = (int) pods_v( $field_type . '_limit', $options, 0 );
-
-			if ( 'single' === pods_var_raw( $field_type . '_format_type', $options ) ) {
+			if ( 'single' === pods_var_raw( $field_type . '_format_type', $field ) ) {
 				$related_pick_limit = 1;
 			}
 
@@ -7333,11 +7331,9 @@ class PodsAPI {
 		$related_pick_limit = 0;
 
 		if ( ! empty( $field ) ) {
-			$options = (array) pods_var_raw( 'options', $field, $field, null, true );
+			$related_pick_limit = (int) pods_v( $field['type'] . '_limit', $field, 0 );
 
-			$related_pick_limit = (int) pods_v( 'pick_limit', $options, 0 );
-
-			if ( 'single' === pods_var_raw( 'pick_format_type', $options ) ) {
+			if ( 'single' === pods_var_raw( $field['type'] . '_format_type', $field ) ) {
 				$related_pick_limit = 1;
 			}
 		}
@@ -9048,6 +9044,7 @@ class PodsAPI {
 			return array();
 		}
 
+		// @todo SKC remove when done testing.
 		if ( 'field' === $params['object_type'] && isset( $params['id'] ) && empty( $params['id'] ) ) {
 			trigger_error( 'test: ' . var_export( $params, true ) );
 		}

@@ -850,12 +850,14 @@ class PodsData {
 
 		$params->meta_fields = false;
 
+		$is_pod_meta_storage = 'meta' === $pod['storage'];
+
 		if ( $pod && ! in_array(
 			$pod['type'], array(
 				'pod',
 				'table',
 			), true
-		) && ( 'meta' === $pod['storage'] || ( 'none' === $pod['storage'] && function_exists( 'get_term_meta' ) ) ) ) {
+		) && ( $is_pod_meta_storage || ( 'none' === $pod['storage'] && function_exists( 'get_term_meta' ) ) ) ) {
 			$params->meta_fields = true;
 		}
 
@@ -919,7 +921,7 @@ class PodsData {
 		}
 
 		if ( ! empty( $params->orderby ) ) {
-			if ( 'post_type' === $pod['type'] && 'meta' === $pod['storage'] && is_array( $params->orderby ) ) {
+			if ( 'post_type' === $pod['type'] && $is_pod_meta_storage && is_array( $params->orderby ) ) {
 
 				foreach ( $params->orderby as $i => $orderby ) {
 					if ( strpos( $orderby, '.meta_value_num' ) ) {
@@ -1073,13 +1075,13 @@ class PodsData {
 							} else {
 								$fieldfield = $fieldfield . '.`post_title`';
 							}
-						} elseif ( isset( $params->fields[ $field ] ) ) {
+						} elseif ( isset( $params->fields[ $field ] ) && ! $params->fields[ $field ] instanceof \Pods\Whatsit\Object_Field ) {
 							if ( $params->meta_fields ) {
 								$fieldfield = $fieldfield . '.`meta_value`';
 							} else {
 								$fieldfield = '`' . $params->pod_table_prefix . '`.' . $fieldfield;
 							}
-						} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[ $field ] ) && 'meta' === $pod['storage'] ) {
+						} elseif ( ! isset( $params->fields[ $field ] ) && $is_pod_meta_storage ) {
 							$fieldfield = $fieldfield . '.`meta_value`';
 						} else {
 							$fieldfield = '`t`.' . $fieldfield;
@@ -1104,13 +1106,13 @@ class PodsData {
 
 					$fieldfield = '`t`.`' . $params->index . '`';
 
-					if ( isset( $params->fields[ $params->index ] ) ) {
+					if ( isset( $params->fields[ $params->index ] ) && ! $params->fields[ $params->index ] instanceof \Pods\Whatsit\Object_Field ) {
 						if ( $params->meta_fields ) {
 							$fieldfield = '`' . $params->index . '`.`' . $params->pod_table_prefix . '`';
 						} else {
 							$fieldfield = '`' . $params->pod_table_prefix . '`.`' . $params->index . '`';
 						}
-					} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[ $params->index ] ) && 'meta' === $pod['storage'] ) {
+					} elseif ( ! isset( $params->fields[ $params->index ] ) && $is_pod_meta_storage ) {
 						$fieldfield = '`' . $params->index . '`.`meta_value`';
 					}
 
@@ -1160,13 +1162,13 @@ class PodsData {
 					$filterfield = $filterfield . '.`' . $attributes['table_info']['field_index'] . '`';
 				} elseif ( in_array( $attributes['type'], $file_field_types, true ) ) {
 					$filterfield = $filterfield . '.`post_title`';
-				} elseif ( isset( $params->fields[ $field ] ) ) {
-					if ( $params->meta_fields && 'meta' === $pod['storage'] ) {
+				} elseif ( isset( $params->fields[ $field ] ) && $params->fields[ $field ] instanceof \Pods\Whatsit\Object_Field ) {
+					if ( $params->meta_fields && $is_pod_meta_storage ) {
 						$filterfield = $filterfield . '.`meta_value`';
 					} else {
 						$filterfield = '`' . $params->pod_table_prefix . '`.' . $filterfield;
 					}
-				} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[ $field ] ) && 'meta' === $pod['storage'] ) {
+				} elseif ( ! isset( $params->fields[ $field ] ) && $is_pod_meta_storage ) {
 					$filterfield = $filterfield . '.`meta_value`';
 				} else {
 					$filterfield = '`t`.' . $filterfield;
@@ -2599,6 +2601,8 @@ class PodsData {
 			$field_type = 'CHAR';
 		}
 
+		$is_pod_meta_storage = 'meta' === $pod['storage'];
+
 		// Alias / Casting.
 		if ( empty( $field_cast ) ) {
 			// Setup field casting from field name.
@@ -2607,17 +2611,21 @@ class PodsData {
 				if ( $pod && false === strpos( $field_name, '.' ) ) {
 					$field_cast = '';
 
+					$the_field = $pod->get_field( $field_name );
+
 					$tableless_field_types = PodsForm::tableless_field_types();
 
-					if ( isset( $pod['fields'][ $field_name ] ) && in_array( $pod['fields'][ $field_name ]['type'], $tableless_field_types, true ) ) {
-						if ( in_array( $pod['fields'][ $field_name ]['pick_object'], $simple_tableless_objects, true ) ) {
-							if ( 'meta' === $pod['storage'] ) {
+					if ( $the_field && in_array( $the_field['type'], $tableless_field_types, true ) ) {
+						$related_object_type = $the_field->get_related_object_type();
+
+						if ( in_array( $related_object_type, $simple_tableless_objects, true ) ) {
+							if ( $is_pod_meta_storage ) {
 								$field_cast = "`{$field_name}`.`meta_value`";
 							} else {
 								$field_cast = "`t`.`{$field_name}`";
 							}
 						} else {
-							$table = pods_api()->get_table_info( $pod['fields'][ $field_name ]['pick_object'], $pod['fields'][ $field_name ]['pick_val'] );
+							$table = $the_field->get_table_info();
 
 							if ( ! empty( $table ) ) {
 								$field_cast = "`{$field_name}`.`" . $table['field_index'] . '`';
@@ -2626,39 +2634,29 @@ class PodsData {
 					}
 
 					if ( empty( $field_cast ) ) {
-						if ( ! in_array(
-							$pod['type'], array(
-								'pod',
-								'table',
-							), true
-						) ) {
-							if ( isset( $pod['object_fields'][ $field_name ] ) ) {
-								$field_cast = "`t`.`{$field_name}`";
-							} elseif ( isset( $pod['fields'][ $field_name ] ) ) {
-								if ( 'meta' === $pod['storage'] ) {
+						if ( $the_field ) {
+							if ( ! in_array(
+								$pod['type'], array(
+									'pod',
+									'table',
+								), true
+							) ) {
+								if ( $the_field instanceof \Pods\Whatsit\Object_Field ) {
+									$field_cast = "`t`.`{$field_name}`";
+								} elseif ( $is_pod_meta_storage ) {
 									$field_cast = "`{$field_name}`.`meta_value`";
 								} else {
 									$field_cast = "`d`.`{$field_name}`";
 								}
-							} else {
-								foreach ( $pod['object_fields'] as $object_field => $object_field_opt ) {
-									if ( $object_field === $field_name || in_array( $field_name, $object_field_opt['alias'], true ) ) {
-										$field_cast = "`t`.`{$object_field}`";
-
-										break;
-									}
-								}
-							}
-						} elseif ( isset( $pod['fields'][ $field_name ] ) ) {
-							if ( 'meta' === $pod['storage'] ) {
+							} elseif ( $is_pod_meta_storage ) {
 								$field_cast = "`{$field_name}`.`meta_value`";
 							} else {
 								$field_cast = "`t`.`{$field_name}`";
-							}
+							}//end if
 						}//end if
 
 						if ( empty( $field_cast ) ) {
-							if ( 'meta' === $pod['storage'] ) {
+							if ( $is_pod_meta_storage ) {
 								$field_cast = "`{$field_name}`.`meta_value`";
 							} else {
 								$field_cast = "`t`.`{$field_name}`";
@@ -2981,6 +2979,7 @@ class PodsData {
 				}
 
 				if ( empty( $pod_data ) ) {
+					// @todo This logic is problematic with the new object based Pod configs.
 					$default_storage = 'meta';
 
 					if ( 'taxonomy' === $traverse_recurse['pod'] && ! function_exists( 'get_term_meta' ) ) {
@@ -2992,9 +2991,11 @@ class PodsData {
 						'name'          => '_table_' . $traverse_recurse['pod'],
 						'type'          => $traverse_recurse['pod'],
 						'storage'       => $default_storage,
-						'fields'        => array(),
-						'object_fields' => $this->api->get_wp_object_fields( $traverse_recurse['pod'] ),
+						'fields'        => $this->api->get_wp_object_fields( $traverse_recurse['pod'] ),
+						'object_fields' => array(),
 					);
+
+					$pod_data['object_fields'] = $pod_data['fields'];
 
 					$pod_data = array_merge( $this->api->get_table_info( $traverse_recurse['pod'], '' ), $pod_data );
 				} elseif ( 'taxonomy' === $pod_data['type'] && 'none' === $pod_data['storage'] && function_exists( 'get_term_meta' ) ) {
@@ -3016,10 +3017,6 @@ class PodsData {
 				return $joins;
 			}
 		}//end if
-
-		if ( isset( $pod_data['object_fields'] ) ) {
-			$pod_data['fields'] = array_merge( $pod_data['fields'], $pod_data['object_fields'] );
-		}
 
 		$tableless_field_types    = PodsForm::tableless_field_types();
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();

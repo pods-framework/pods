@@ -363,39 +363,25 @@ class Pods implements Iterator {
 
 		$field_data = null;
 
-		if ( empty( $this->fields ) ) {
-			// No fields found.
-			$field_data = array();
-		} elseif ( empty( $field ) ) {
+		if ( empty( $this->pod_data ) || ! $this->pod_data instanceof \Pods\Whatsit\Pod ) {
+			return $field_data;
+		}
+
+		if ( empty( $field ) ) {
 			// Return all fields.
-			$field_data = (array) $this->fields;
-		} elseif ( ! isset( $this->fields[ $field ] ) && ! isset( $this->pod_data['object_fields'][ $field ] ) ) {
-			// Field not found.
-			$field_data = array();
-		} elseif ( empty( $option ) ) {
-			// Return all field data.
-			if ( isset( $this->fields[ $field ] ) ) {
-				$field_data = $this->fields[ $field ];
-			} elseif ( isset( $this->pod_data['object_fields'] ) ) {
-				$field_data = $this->pod_data['object_fields'][ $field ];
-			}
+			$field_data = (array) $this->pod_data->get_all_fields();
 		} else {
-			$options = array();
+			$field = $this->pod_data->get_field( $field );
 
-			// Merge options.
-			if ( isset( $this->fields[ $field ] ) ) {
-				$options = $this->fields[ $field ];
-			} elseif ( isset( $this->pod_data['object_fields'] ) ) {
-				$options = $this->pod_data['object_fields'][ $field ];
-			}
-
-			if ( 'data' === $option && in_array( pods_v( 'type', $options ), PodsForm::tableless_field_types(), true ) ) {
+			if ( empty( $option ) ) {
+				$field_data = $field;
+			} elseif ( 'data' === $option && in_array( $field_data['type'], PodsForm::tableless_field_types(), true ) ) {
 				// Get a list of available items from a relationship field.
-				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $options );
-			} elseif ( isset( $options[ $option ] ) ) {
+				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $field_data );
+			} elseif ( isset( $field_data[ $option ] ) ) {
 				// Return option.
-				$field_data = $options[ $option ];
-			}
+				$field_data = $field_data[ $option ];
+			}//end if
 		}//end if
 
 		/**

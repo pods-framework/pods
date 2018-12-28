@@ -217,7 +217,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 		);
 
 		// Do setup for Pod (tearDown / setUp) per storage type
-		if ( in_array( $pod_type, array( 'user', 'media', 'comment' ) ) && 'meta' !== $storage_type ) {
+		if ( 'meta' !== $storage_type && in_array( $pod_type, array( 'user', 'media', 'comment' ) ) ) {
 			$debug['skipped'] = 1;
 
 			codecept_debug( $debug );
@@ -245,6 +245,14 @@ class TraversalTest extends Pods_TraversalTestCase {
 		$this->assertArrayHasKey( $pod['name'], self::$data );
 
 		$data = self::$data[ $pod['name'] ];
+
+		codecept_debug( 'Data: ' . var_export( $data, true ) );
+
+		$this->assertArrayHasKey( 'id', $data, sprintf( 'Data has no ID [%s]', $variant_id ) );
+
+		$data['id'] = (int) $data['id'];
+
+		$this->assertInstanceOf( Pods::class, $p, sprintf( 'Pod not object of Pod [%s]', $variant_id ) );
 
 		$prefix = '`t`.';
 
@@ -328,12 +336,18 @@ class TraversalTest extends Pods_TraversalTestCase {
 		);
 
 		if ( $deep ) {
-			$related_pod       = $options['related_pod'];
-			$related_pod_field = $options['related_pod_field'];
+			$related_pod              = $options['related_pod'];
+			$related_pod_type         = $related_pod['type'];
+			$related_pod_storage_type = $related_pod['storage'];
+			$related_pod_field        = $options['related_pod_field'];
+
+			if ( 'taxonomy' === $related_pod_type && 'none' === $related_pod_storage_type && function_exists( 'get_term_meta' ) ) {
+				$related_pod_storage_type = 'meta';
+			}
 
 			$debug['related_pod']              = $related_pod['name'];
-			$debug['related_pod_type']         = $related_pod['type'];
-			$debug['related_pod_storage_type'] = $related_pod['storage'];
+			$debug['related_pod_type']         = $related_pod_type;
+			$debug['related_pod_storage_type'] = $related_pod_storage_type;
 			$debug['related_pod_field_name']   = $related_pod_field['name'];
 			$debug['related_pod_field_type']   = $related_pod_field['type'];
 		}
@@ -359,14 +373,21 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 		$p = self::get_pod( $pod['name'] );
 
-		$this->assertInstanceOf( Pods::class, $p, sprintf( 'Pod not object of Pod [%s]', $variant_id ) );
-		$this->assertTrue( $p->valid(), sprintf( 'Pod object not valid [%s]', $variant_id ) );
-
-		$where = array();
-
 		$this->assertArrayHasKey( $pod['name'], self::$data );
 
 		$data = self::$data[ $pod['name'] ];
+
+		codecept_debug( 'Data: ' . var_export( $data, true ) );
+
+		$this->assertArrayHasKey( 'id', $data, sprintf( 'Data has no ID [%s]', $variant_id ) );
+
+		$data['id'] = (int) $data['id'];
+
+		$this->assertInstanceOf( Pods::class, $p, sprintf( 'Pod not object of Pod [%s]', $variant_id ) );
+
+		$this->assertTrue( $p->valid(), sprintf( 'Pod object not valid [%s]', $variant_id ) );
+
+		$where = array();
 
 		$podsrel_pod_id   = $pod['id'];
 		$podsrel_field_id = $field['id'];
@@ -397,9 +418,9 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 				if ( ! empty( $field[ $field_type . '_format_type' ] ) && 'multi' === $field[ $field_type . '_format_type' ] ) {
 					// Only go and get it if you need it
-					if ( $query_fields ) {
-						$check_multi_value = (array) array_keys( $related_data['sub_data'] );
-						$check_multi_index = (array) wp_list_pluck( $related_data['sub_data'], $related_data['_field_index'] );
+					if ( $query_fields && isset( self::$related_data[ $field['name'] ] ) ) {
+						$check_multi_value = (array) self::$related_data[ $field['name'] ]['id'];
+						$check_multi_index = (array) self::$related_data[ $field['name'] ]['_index'];
 					}
 
 					$check_value = current( $check_multi_value );
@@ -475,7 +496,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 				$related_where = array();
 
 				if ( in_array( $related_pod_field['type'], array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
-					if ( $field_name == $related_pod_field['name'] && ! isset( $related_data[ $related_pod_field['name'] ] ) ) {
+					if ( $field_name === $related_pod_field['name'] && ! isset( $related_data[ $related_pod_field['name'] ] ) ) {
 						$this->assertTrue( false, sprintf( 'No deep related item found [%s] | %s', $variant_id, print_r( $related_data, true ) ) );
 
 						return;

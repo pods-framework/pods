@@ -164,6 +164,8 @@ class TraversalTest extends Pods_TraversalTestCase {
 			$this->assertTrue( false, sprintf( 'Pod / Storage type requires new setUp() not yet built to continue [%s]', $variant_id ) );
 		}
 
+		$p = self::get_pod( $pod['name'] );
+
 		codecept_debug( $debug );
 
 		$this->assertArrayHasKey( $pod['name'], self::$data );
@@ -176,15 +178,11 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 		$data['id'] = (int) $data['id'];
 
-		$p = self::get_pod( $pod['name'] );
-
 		$this->assertInstanceOf( Pods::class, $p, sprintf( 'Pod not object of Pod [%s]', $variant_id ) );
 
 		if ( (int) $p->id() !== $data['id'] ) {
 			$p->fetch( $data['id'] );
 		}
-
-		codecept_debug( 'Data: ' . var_export( $data, true ) );
 
 		$this->assertTrue( $p->valid(), sprintf( 'Pod object not valid [%s]', $variant_id ) );
 
@@ -216,16 +214,18 @@ class TraversalTest extends Pods_TraversalTestCase {
 		// $wpdb->suppress_errors( true );
 		// $wpdb->hide_errors();
 		// Options
-		$pod_type     = $options['pod_type'];
-		$storage_type = $options['storage_type'];
-		$pod          = $options['pod'];
+		$pod_type          = $options['pod_type'];
+		$storage_type      = $options['storage_type'];
+		$pod               = $options['pod'];
+		$field             = $options['field'];
+		$field_name        = $field['name'];
+		$field_type        = $field['type'];
+		$related_pod       = array();
+		$related_pod_field = array();
 
 		if ( 'taxonomy' === $pod_type && 'none' === $storage_type && function_exists( 'get_term_meta' ) ) {
 			$storage_type = 'meta';
 		}
-
-		$field      = $options['field'];
-		$field_type = $field['type'];
 
 		$debug = array(
 			'pod'          => $pod['name'],
@@ -236,9 +236,6 @@ class TraversalTest extends Pods_TraversalTestCase {
 			'method'       => $method,
 			'deep'         => (int) $deep,
 		);
-
-		$related_pod       = array();
-		$related_pod_field = array();
 
 		if ( $deep ) {
 			$related_pod              = $options['related_pod'];
@@ -271,6 +268,8 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 		codecept_debug( $debug );
 
+		$p = self::get_pod( $pod['name'] );
+
 		$this->assertArrayHasKey( $pod['name'], self::$data );
 
 		$data = self::$data[ $pod['name'] ];
@@ -281,8 +280,6 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 		$data['id'] = (int) $data['id'];
 
-		$p = self::get_pod( $pod['name'] );
-
 		$this->assertInstanceOf( Pods::class, $p, sprintf( 'Pod not object of Pod [%s]', $variant_id ) );
 
 		if ( (int) $p->id() !== $data['id'] ) {
@@ -290,7 +287,6 @@ class TraversalTest extends Pods_TraversalTestCase {
 		}
 
 		$this->assertTrue( $p->valid(), sprintf( 'Pod object not valid [%s]', $variant_id ) );
-		$this->assertInstanceOf( 'Pods', $p, sprintf( 'Pod object not a Pod [%s]', $variant_id ) );
 
 		$this->assertTrue( $p->exists(), sprintf( 'Pod item not found [%s]', $variant_id ) );
 

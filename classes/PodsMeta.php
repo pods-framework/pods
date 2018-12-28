@@ -1296,7 +1296,7 @@ class PodsMeta {
 		// @todo Figure out how to hook into autosave for saving meta
 
 		// Block Autosave and Revisions
-		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) ) {
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types, true ) ) {
 			return;
 		}
 
@@ -1983,7 +1983,7 @@ class PodsMeta {
 
 		$is_new_item = false;
 
-		if ( 'user_register' == current_filter() ) {
+		if ( 'user_register' === current_filter() ) {
 			$is_new_item = true;
 		}
 

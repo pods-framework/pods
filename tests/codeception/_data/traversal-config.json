@@ -1,6 +1,6 @@
 [
   {
-    "name": "test_post_met_1",
+    "name": "test_post_meta",
     "type": "post_type",
     "storage": "meta",
     "fields": [
@@ -64,7 +64,7 @@
     "overwrite": true
   },
   {
-    "name": "test_post_tab_2",
+    "name": "test_post_table",
     "type": "post_type",
     "storage": "table",
     "fields": [
@@ -323,7 +323,7 @@
     "overwrite": true
   },
   {
-    "name": "test_taxo_tab_6",
+    "name": "test_tax_table",
     "type": "taxonomy",
     "storage": "table",
     "fields": [
@@ -386,7 +386,7 @@
     "overwrite": true
   },
   {
-    "name": "test_taxo_non_7",
+    "name": "test_tax_meta",
     "type": "taxonomy",
     "storage": "meta",
     "fields": [
@@ -825,86 +825,6 @@
     ],
     "options": [],
     "object": "comment",
-    "overwrite": true
-  },
-  {
-    "name": "test_pod_tab_14",
-    "type": "pod",
-    "storage": "table",
-    "fields": [
-      {
-        "name": "test_rel_user",
-        "type": "pick",
-        "pick_object": "user",
-        "pick_val": "user",
-        "pick_format_type": "single"
-      },
-      {
-        "name": "test_rel_post",
-        "type": "pick",
-        "pick_object": "post_type",
-        "pick_val": "post",
-        "pick_format_type": "single"
-      },
-      {
-        "name": "test_rel_pages",
-        "type": "pick",
-        "pick_object": "post_type",
-        "pick_val": "page",
-        "pick_format_type": "multi"
-      },
-      {
-        "name": "test_rel_tag",
-        "type": "pick",
-        "pick_object": "taxonomy",
-        "pick_val": "post_tag",
-        "pick_format_type": "single"
-      },
-      {
-        "name": "test_rel_media",
-        "type": "pick",
-        "pick_object": "media",
-        "pick_format_type": "single"
-      },
-      {
-        "name": "test_rel_comment",
-        "type": "pick",
-        "pick_object": "comment",
-        "pick_format_type": "single"
-      },
-      {
-        "name": "test_rel_act",
-        "type": "pick",
-        "pick_object": "pod",
-        "pick_val": "test_act",
-        "pick_format_type": "single"
-      },
-      {
-        "name": "test_text_field",
-        "type": "text"
-      },
-      {
-        "name": "name",
-        "type": "text"
-      },
-      {
-        "name": "permalink",
-        "type": "slug"
-      },
-      {
-        "name": "test_text_field",
-        "type": "test"
-      },
-      {
-        "name": "author",
-        "type": "pick",
-        "pick_object": "user",
-        "pick_format_type": "single"
-      }
-    ],
-    "options": {
-      "pod_index": "name"
-    },
     "overwrite": true
   },
   {

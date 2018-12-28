@@ -1,5 +1,5 @@
 {
-  "test_post_met_1": {
+  "test_post_meta": {
     "post_status": "publish",
     "post_title": "Testing index a66d982c8099d014bc1fa2937e55c912",
     "post_author": 0,
@@ -14,7 +14,7 @@
     "avatar": 0,
     "test_non_pod_ct": 0
   },
-  "test_post_tab_2": {
+  "test_post_table": {
     "post_status": "publish",
     "post_title": "Testing index fd1100433cbdb1a88065aa30720e3b40",
     "post_author": 0,
@@ -74,7 +74,7 @@
     "avatar": 0,
     "test_non_pod_ct": 0
   },
-  "test_taxo_tab_6": {
+  "test_tax_table": {
     "name": "Testing index dd10ac7ca2da6c9ab585c0e2d22cb11b",
     "test_text_field": "Testing dd10ac7ca2da6c9ab585c0e2d22cb11b",
     "test_rel_user": 0,
@@ -86,7 +86,7 @@
     "test_rel_act": 0,
     "avatar": 0
   },
-  "test_taxo_non_7": {
+  "test_tax_meta": {
     "name": "Testing index 61f604e848ee443d6747bb464a883a1e",
     "test_text_field": "Testing 61f604e848ee443d6747bb464a883a1e",
     "test_rel_user": 0,
@@ -175,20 +175,6 @@
     "comment_date": "2014-11-11",
     "user_id": 0,
     "test_text_field": "Testing 84492f44425413f9ec236fcb3ca7ff61",
-    "test_rel_user": 0,
-    "test_rel_post": 0,
-    "test_rel_pages": [],
-    "test_rel_tag": 0,
-    "test_rel_media": 0,
-    "test_rel_comment": 0,
-    "test_rel_act": 0,
-    "avatar": 0
-  },
-  "test_pod_tab_14": {
-    "permalink": "test-slug-f93c5b5355073d36e11e70f9968cc0ce",
-    "name": "Testing index f93c5b5355073d36e11e70f9968cc0ce",
-    "author": 0,
-    "test_text_field": "Testing f93c5b5355073d36e11e70f9968cc0ce",
     "test_rel_user": 0,
     "test_rel_post": 0,
     "test_rel_pages": [],

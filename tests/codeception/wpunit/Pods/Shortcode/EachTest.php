@@ -6,12 +6,12 @@ use Pods_Unit_Tests\Pods_UnitTestCase;
 use Pods;
 
 /**
- * Class Test_Each
+ * Class EachTest
  *
  * @group pods-shortcode
  * @group pods-shortcode-pods-each
  */
-class Pods_EachTest extends Pods_UnitTestCase {
+class EachTest extends Pods_UnitTestCase {
 
 	/**
 	 * @var string
@@ -41,9 +41,8 @@ class Pods_EachTest extends Pods_UnitTestCase {
 		$api = pods_api();
 
 		$this->pod_id = $api->save_pod( array(
-			'storage' => 'meta',
-			'type'    => 'post_type',
-			'name'    => $this->pod_name,
+			'type' => 'post_type',
+			'name' => $this->pod_name,
 		) );
 
 		$params = array(
@@ -84,10 +83,6 @@ class Pods_EachTest extends Pods_UnitTestCase {
 			remove_shortcode( 'test_each_recurse' );
 		}
 
-		$api = pods_api();
-		$api->delete_pod( array( 'id' => $this->pod_id ) );
-		$api->cache_flush_pods();
-
 		$this->pod_id = null;
 		$this->pod    = null;
 
@@ -123,7 +118,7 @@ class Pods_EachTest extends Pods_UnitTestCase {
 
 		$main_id = $this->pod->add( array(
 			'post_status'   => 'publish',
-			'post_title'   => __FUNCTION__ . ': main post',
+			'post_title'    => __FUNCTION__ . ': main post',
 			'number1'       => 123,
 			'number2'       => 456,
 			'related_field' => $sub_ids,

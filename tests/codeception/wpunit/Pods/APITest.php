@@ -98,10 +98,6 @@ class APITest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function tearDown() {
-		$this->api->delete_pod( array( 'id' => $this->pod_id ) );
-		$this->api->delete_pod( array( 'id' => $this->pod_id2 ) );
-		$this->api->cache_flush_pods();
-
 		$this->pod_id  = null;
 		$this->pod_id2 = null;
 		$this->api     = null;

@@ -168,6 +168,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$this->assertEquals( $this->pods_object_pod->get_group(), $this->pods_object_pod['group'] );
 		$this->assertEquals( $this->pods_object_pod->get_fields(), $this->pods_object_pod['fields'] );
 		$this->assertEquals( $this->pods_object_pod->get_object_fields(), $this->pods_object_pod['object_fields'] );
+		$this->assertEquals( $this->pods_object_pod->get_all_fields(), $this->pods_object_pod['all_fields'] );
 		$this->assertEquals( $this->pods_object_pod->get_groups(), $this->pods_object_pod['groups'] );
 		$this->assertEquals( $this->pods_object_pod->get_table_info(), $this->pods_object_pod['table_info'] );
 		$this->assertEquals( $this->pods_object_pod->get_args(), $this->pods_object_pod['options'] );
@@ -179,6 +180,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$this->assertEquals( $this->pods_object_pod->get_group(), $this->pods_object_pod->group );
 		$this->assertEquals( $this->pods_object_pod->get_fields(), $this->pods_object_pod->fields );
 		$this->assertEquals( $this->pods_object_pod->get_object_fields(), $this->pods_object_pod->object_fields );
+		$this->assertEquals( $this->pods_object_pod->get_all_fields(), $this->pods_object_pod->all_fields );
 		$this->assertEquals( $this->pods_object_pod->get_groups(), $this->pods_object_pod->groups );
 		$this->assertEquals( $this->pods_object_pod->get_table_info(), $this->pods_object_pod->table_info );
 		$this->assertEquals( $this->pods_object_pod->get_args(), $this->pods_object_pod->options );
@@ -234,6 +236,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$this->assertEquals( $this->pods_object_group->get_group(), $this->pods_object_group['group'] );
 		$this->assertEquals( $this->pods_object_group->get_fields(), $this->pods_object_group['fields'] );
 		$this->assertEquals( $this->pods_object_group->get_object_fields(), $this->pods_object_group['object_fields'] );
+		$this->assertEquals( $this->pods_object_group->get_all_fields(), $this->pods_object_group['all_fields'] );
 		$this->assertEquals( $this->pods_object_group->get_groups(), $this->pods_object_group['groups'] );
 		$this->assertEquals( $this->pods_object_group->get_table_info(), $this->pods_object_group['table_info'] );
 		$this->assertEquals( $this->pods_object_group->get_args(), $this->pods_object_group['options'] );
@@ -245,6 +248,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$this->assertEquals( $this->pods_object_group->get_group(), $this->pods_object_group->group );
 		$this->assertEquals( $this->pods_object_group->get_fields(), $this->pods_object_group->fields );
 		$this->assertEquals( $this->pods_object_group->get_object_fields(), $this->pods_object_group->object_fields );
+		$this->assertEquals( $this->pods_object_group->get_all_fields(), $this->pods_object_group->all_fields );
 		$this->assertEquals( $this->pods_object_group->get_groups(), $this->pods_object_group->groups );
 		$this->assertEquals( $this->pods_object_group->get_table_info(), $this->pods_object_group->table_info );
 		$this->assertEquals( $this->pods_object_group->get_args(), $this->pods_object_group->options );
@@ -300,6 +304,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$this->assertEquals( $this->pods_object_field->get_group(), $this->pods_object_field['group'] );
 		$this->assertEquals( $this->pods_object_field->get_fields(), $this->pods_object_field['fields'] );
 		$this->assertEquals( $this->pods_object_field->get_object_fields(), $this->pods_object_field['object_fields'] );
+		$this->assertEquals( $this->pods_object_field->get_all_fields(), $this->pods_object_field['all_fields'] );
 		$this->assertEquals( $this->pods_object_field->get_groups(), $this->pods_object_field['groups'] );
 		$this->assertEquals( $this->pods_object_field->get_table_info(), $this->pods_object_field['table_info'] );
 		$this->assertEquals( $this->pods_object_field->get_args(), $this->pods_object_field['options'] );
@@ -311,6 +316,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$this->assertEquals( $this->pods_object_field->get_group(), $this->pods_object_field->group );
 		$this->assertEquals( $this->pods_object_field->get_fields(), $this->pods_object_field->fields );
 		$this->assertEquals( $this->pods_object_field->get_object_fields(), $this->pods_object_field->object_fields );
+		$this->assertEquals( $this->pods_object_field->get_all_fields(), $this->pods_object_field->all_fields );
 		$this->assertEquals( $this->pods_object_field->get_groups(), $this->pods_object_field->groups );
 		$this->assertEquals( $this->pods_object_field->get_table_info(), $this->pods_object_field->table_info );
 		$this->assertEquals( $this->pods_object_field->get_args(), $this->pods_object_field->options );
@@ -720,6 +726,59 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$this->assertTrue( method_exists( $this->pods_object_field, 'get_object_fields' ), 'Method get_object_fields does not exist' );
 
 		$fields = $this->pods_object_field->get_object_fields();
+
+		$this->assertCount( 0, $fields );
+	}
+
+	/**
+	 * @covers Whatsit::get_all_fields
+	 */
+	public function test_get_all_fields_pod() {
+		$this->assertTrue( method_exists( $this->pods_object_pod, 'get_all_fields' ), 'Method get_all_fields does not exist' );
+
+		$fields = $this->pods_object_pod->get_all_fields();
+
+		// Post types have 24 object fields.
+		$this->assertCount( 25, $fields );
+		$this->assertInstanceOf( Field::class, reset( $fields ) );
+
+		// Confirm internal cache still works.
+		$fields = $this->pods_object_pod->get_all_fields();
+
+		$this->assertCount( 25, $fields );
+		$this->assertInstanceOf( Field::class, reset( $fields ) );
+	}
+
+	/**
+	 * @covers Whatsit::get_all_fields
+	 */
+	public function test_get_all_fields_group() {
+		$this->assertTrue( method_exists( $this->pods_object_group, 'get_all_fields' ), 'Method get_all_fields does not exist' );
+
+		$fields = $this->pods_object_group->get_all_fields();
+
+		$this->assertCount( 1, $fields );
+		$this->assertInstanceOf( Field::class, reset( $fields ) );
+
+		// Confirm internal cache still works.
+		$fields = $this->pods_object_group->get_all_fields();
+
+		$this->assertCount( 1, $fields );
+		$this->assertInstanceOf( Field::class, reset( $fields ) );
+	}
+
+	/**
+	 * @covers Whatsit::get_all_fields
+	 */
+	public function test_get_all_fields_field() {
+		$this->assertTrue( method_exists( $this->pods_object_field, 'get_all_fields' ), 'Method get_all_fields does not exist' );
+
+		$fields = $this->pods_object_field->get_all_fields();
+
+		$this->assertCount( 0, $fields );
+
+		// Confirm internal cache still works.
+		$fields = $this->pods_object_field->get_all_fields();
 
 		$this->assertCount( 0, $fields );
 	}

@@ -49,10 +49,6 @@ class Bug_4097Test extends Pods_UnitTestCase {
 	}
 
 	public function tearDown() {
-		$api = pods_api();
-		$api->delete_pod( array( 'id' => $this->pod_id ) );
-		$api->cache_flush_pods();
-
 		$this->pod_id = null;
 	}
 

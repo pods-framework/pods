@@ -15,36 +15,18 @@ Copy the `codeception.example.yml` file to `codeception.yml`, and you're all set
 
 ## Running Tests
 
-Running tests requires setting a couple of environmental variables in the command line. This ensures the right SQL file gets used and helps distinguish these tests from traversal tests (as described below).
-
-It's better to set them on each run than to run into issues as you switch between the normal tests and the Traversal tests.
+Running tests is pretty simple, you just run the codeception command `codecept` and which suite to run:
 
 ```
-export PODS_LOAD_DATA='0'
-export SQL_DUMP_FILE='dump.sql'
-vendor/bin/codecept run wpunit --skip-group='pods-config-required' -vvv
-```
-
-You can string these commands together for an easy re-run:
-
-```
-export PODS_LOAD_DATA='0'; export SQL_DUMP_FILE='dump.sql'; vendor/bin/codecept run wpunit --skip-group='pods-config-required' -vvv
+vendor/bin/codecept run wpunit -vvv
 ```
 
 ## Testing Traversal (find/field/display)
 
-Running traversal tests requires use of a special SQL dump file that pollutes other tests. These tests have to be run on their own separately in order to ensure they run their fastest (which can still take a while).  
+Running traversal tests requires use a different codeception test suite `wpunit-traversal` which makes use of special configuration files (see tests/codeception/_data/traversal-*.json). These tests have to be run apart from the other tests to prevent pollution of their configurations or data in the much more cleaner `wpunit` tests:  
 
 ```
-export PODS_LOAD_DATA='1'
-export SQL_DUMP_FILE='dump-pods-testcase.sql'
-vendor/bin/codecept run wpunit --group='pods-config-required' -vvv
-```
-
-You can string these commands together for an easy re-run:
-
-```
-export PODS_LOAD_DATA='1'; export SQL_DUMP_FILE='dump-pods-testcase.sql'; vendor/bin/codecept run wpunit --group='pods-config-required' -vvv
+vendor/bin/codecept run wpunit-traversal -vvv
 ```
 
 ## Testing NPM

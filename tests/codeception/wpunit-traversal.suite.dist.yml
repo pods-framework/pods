@@ -6,19 +6,8 @@ class_name: WpunitTester
 modules:
     enabled:
         - \Helper\Wpunit
-        - WPDb
         - WPLoader
     config:
-        WPDb:
-            dsn: 'mysql:host=%DB_HOST%;dbname=%DB_NAME%'
-            user: %DB_USER%
-            password: %DB_PASSWORD%
-            dump: 'tests/codeception/_data/dump.sql'
-            populate: true
-            cleanup: false
-            url: '%WP_URL%'
-            tablePrefix: test_
-            waitlock: 0
         WPLoader:
             wpRootFolder: %WP_ROOT_FOLDER%
             dbName: %TEST_DB_NAME%

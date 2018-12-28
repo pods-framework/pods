@@ -6,27 +6,27 @@ use Pods_Unit_Tests\Pods_UnitTestCase;
 use Pods;
 
 /**
- * Class Test_If
+ * Class IfTest
  *
  * @group pods-shortcode
  * @group pods-shortcode-pods-if
  */
-class Pods_IfTest extends Pods_UnitTestCase {
+class IfTest extends Pods_UnitTestCase {
 
 	/**
 	 * @var string
 	 */
-	protected static $pod_name = 'test_if';
-
-	/**
-	 * @var Pods
-	 */
-	protected static $pod;
+	protected $pod_name = 'test_if';
 
 	/**
 	 * @var int
 	 */
-	protected static $pod_id = 0;
+	protected $pod_id = 0;
+
+	/**
+	 * @var Pods
+	 */
+	protected $pod;
 
 	/**
 	 *
@@ -41,38 +41,41 @@ class Pods_IfTest extends Pods_UnitTestCase {
 			return do_shortcode( $content );
 		} );
 
-		self::$pod_id = pods_api()->save_pod( array(
-			'storage' => 'meta',
-			'type'    => 'post_type',
-			'name'    => self::$pod_name,
+		$api = pods_api();
+
+		$this->pod_id = $api->save_pod( array(
+			'type' => 'post_type',
+			'name' => $this->pod_name,
 		) );
 
 		$params = array(
-			'pod'    => self::$pod_name,
-			'pod_id' => self::$pod_id,
+			'pod_id' => $this->pod_id,
 			'name'   => 'number1',
 			'type'   => 'number',
 		);
-		pods_api()->save_field( $params );
+
+		$api->save_field( $params );
+
 		$params = array(
-			'pod'    => self::$pod_name,
-			'pod_id' => self::$pod_id,
+			'pod_id' => $this->pod_id,
 			'name'   => 'number2',
 			'type'   => 'number',
 		);
-		pods_api()->save_field( $params );
+
+		$api->save_field( $params );
+
 		$params = array(
-			'pod'              => self::$pod_name,
-			'pod_id'           => self::$pod_id,
+			'pod_id'           => $this->pod_id,
 			'name'             => 'related_field',
 			'type'             => 'pick',
 			'pick_object'      => 'post_type',
-			'pick_val'         => self::$pod_name,
+			'pick_val'         => $this->pod_name,
 			'pick_format_type' => 'single',
 		);
-		pods_api()->save_field( $params );
 
-		self::$pod = pods( self::$pod_name );
+		$api->save_field( $params );
+
+		$this->pod = pods( $this->pod_name );
 	}
 
 	/**
@@ -86,7 +89,8 @@ class Pods_IfTest extends Pods_UnitTestCase {
 			remove_shortcode( 'test_if_recurse' );
 		}
 
-		pods_api()->delete_pod( array( 'id' => self::$pod_id ) );
+		$this->pod_id = null;
+		$this->pod    = null;
 
 		parent::tearDown();
 	}
@@ -104,11 +108,11 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_if_simple() {
-		$this->assertNotFalse( self::$pod );
+		$this->assertNotFalse( $this->pod );
 
-		$pod_name = self::$pod_name;
+		$pod_name = $this->pod_name;
 
-		$id = self::$pod->add( array(
+		$id = $this->pod->add( array(
 			'name'    => __FUNCTION__ . '1',
 			'number1' => 123,
 			'number2' => 456,
@@ -123,7 +127,7 @@ class Pods_IfTest extends Pods_UnitTestCase {
 		$this->assertEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
 		$this->assertNotEquals( 'DEF', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
 
-		$id = self::$pod->add( array(
+		$id = $this->pod->add( array(
 			'name'    => __FUNCTION__ . '2',
 			'number1' => 456,
 			'number2' => 0,
@@ -145,11 +149,11 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_if_nested() {
-		$this->assertNotFalse( self::$pod );
+		$this->assertNotFalse( $this->pod );
 
-		$pod_name = self::$pod_name;
+		$pod_name = $this->pod_name;
 
-		$id = self::$pod->add( array(
+		$id = $this->pod->add( array(
 			'name'    => __FUNCTION__ . '1',
 			'number1' => 123,
 			'number2' => 456,
@@ -179,13 +183,13 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function _test_if_nested_external_shortcodes() {
-		$this->assertNotFalse( self::$pod );
+		$this->assertNotFalse( $this->pod );
 
 		$this->markTestSkipped( 'Nested shortcodes currently broken, test disabled until issue resolved' );
 
-		$pod_name = self::$pod_name;
+		$pod_name = $this->pod_name;
 
-		$id = self::$pod->add( array(
+		$id = $this->pod->add( array(
 			'name'    => __FUNCTION__ . '1',
 			'number1' => 123,
 			'number2' => 456,
@@ -200,11 +204,11 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_if_with_magic_tags() {
-		$this->assertNotFalse( self::$pod );
+		$this->assertNotFalse( $this->pod );
 
-		$pod_name = self::$pod_name;
+		$pod_name = $this->pod_name;
 
-		$id = self::$pod->add( array(
+		$id = $this->pod->add( array(
 			'name'    => 'my post title',
 			'number1' => 123,
 			'number2' => 456,
@@ -216,7 +220,7 @@ class Pods_IfTest extends Pods_UnitTestCase {
 		$content = base64_encode( '{@number1}' );
 		$this->assertEquals( '123', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
 
-		$id = self::$pod->add( array(
+		$id = $this->pod->add( array(
 			'name'    => 'my post title',
 			'number1' => 456,
 			'number2' => 0,
@@ -230,11 +234,11 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 *
 	 */
 	public function test_if_in_html() {
-		$this->assertNotFalse( self::$pod );
+		$this->assertNotFalse( $this->pod );
 
-		$pod_name = self::$pod_name;
+		$pod_name = $this->pod_name;
 
-		$id      = self::$pod->add( array(
+		$id      = $this->pod->add( array(
 			'name'    => 'my post title',
 			'number1' => 123,
 			'number2' => 456,
@@ -248,17 +252,17 @@ class Pods_IfTest extends Pods_UnitTestCase {
 	 * @group bug-4403
 	 */
 	public function test_if_related_field() {
-		$this->assertNotFalse( self::$pod );
+		$this->assertNotFalse( $this->pod );
 
-		$pod_name = self::$pod_name;
+		$pod_name = $this->pod_name;
 
-		$id1 = self::$pod->add( array(
+		$id1 = $this->pod->add( array(
 			'post_status' => 'publish',
 			'name'        => 'first post title',
 			'number1'     => 123,
 			'number2'     => 456,
 		) );
-		$id2 = self::$pod->add( array(
+		$id2 = $this->pod->add( array(
 			'post_status'   => 'publish',
 			'name'          => 'second post title',
 			'number1'       => 987,

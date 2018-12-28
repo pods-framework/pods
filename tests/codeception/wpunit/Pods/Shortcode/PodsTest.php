@@ -3,6 +3,7 @@
 namespace Pods_Unit_Tests\Pods\Shortcode;
 
 use Pods_Unit_Tests\Pods_UnitTestCase;
+use Pods;
 
 /**
  * Class PodsTest
@@ -12,94 +13,114 @@ use Pods_Unit_Tests\Pods_UnitTestCase;
  */
 class PodsTest extends Pods_UnitTestCase {
 
-	/** @var int|null */
-	private $pod_id = null;
+	/**
+	 * @var string
+	 */
+	protected $pod_name = 'test_pods';
 
-	/** @var \Pods|false|null */
-	private $pod = null;
+	/**
+	 * @var int
+	 */
+	protected $pod_id = 0;
 
+	/**
+	 * @var Pods
+	 */
+	protected $pod;
+
+	/**
+	 *
+	 */
 	public function setUp() {
-		// Create a pod
-		$this->pod_id = pods_api()->save_pod( array(
-			'storage'   => 'table',
-			'type'      => 'pod',
-			'name'      => 'planet',
-			'overwrite' => true,
+		parent::setUp();
+
+		$api = pods_api();
+
+		$this->pod_id = $api->save_pod( array(
+			'type' => 'pod',
+			'name' => $this->pod_name,
 		) );
 
-		// register the fields
 		$params = array(
-			'pod'    => 'planet',
 			'pod_id' => $this->pod_id,
-			'name'   => 'number_of_moons',
+			'name'   => 'number1',
 			'type'   => 'number',
 		);
-		pods_api()->save_field( $params );
 
-		$this->pod = pods( 'planet' );
-	}
+		$api->save_field( $params );
 
-	public function tearDown() {
-		pods_api()->delete_pod( array( 'id' => $this->pod_id ) );
+		$this->pod = pods( $this->pod_name );
 	}
 
 	/**
-	 * @since 2.8
+	 *
+	 */
+	public function tearDown() {
+		$this->pod_id = null;
+		$this->pod    = null;
+
+		parent::tearDown();
+	}
+
+	/**
+	 *
 	 */
 	public function test_shortcode_pods() {
 		$this->assertNotFalse( $this->pod );
 
+		$pod_name = $this->pod_name;
+
 		// add an item
 		$this->pod->add( array(
-			'name'            => 'Tatooine',
-			'number_of_moons' => 5,
+			'name'    => 'Tatooine',
+			'number1' => 5,
 		) );
 
 		// test shortcode
-		$this->assertEquals( '5', do_shortcode( '[pods name="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
+		$this->assertEquals( '5', do_shortcode( '[pods name=' . $pod_name . ' where="t.number1=5"]{@number1}[/pods]' ) );
 
 		// add another item
 		$this->pod->add( array(
-			'name'            => 'Alderaan',
-			'number_of_moons' => 7,
+			'name'    => 'Alderaan',
+			'number1' => 7,
 		) );
 
 		// test shortcode
-		$this->assertEquals( '5', do_shortcode( '[pods name="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
+		$this->assertEquals( '5', do_shortcode( '[pods name=' . $pod_name . ' where="t.number1=5"]{@number1}[/pods]' ) );
 
 		// add third item
 		$this->pod->add( array(
-			'name'            => 'Hoth',
-			'number_of_moons' => 5,
+			'name'    => 'Hoth',
+			'number1' => 5,
 		) );
 
 		// test shortcode
-		$this->assertEquals( '55', do_shortcode( '[pods name="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
+		$this->assertEquals( '55', do_shortcode( '[pods name=' . $pod_name . ' where="t.number1=5"]{@number1}[/pods]' ) );
 
 		// Test the pagination parameter
 		/** @see http://php.net/manual/en/filter.filters.validate.php FILTER_VALIDATE_BOOLEAN */
-		$this->assertContains( '<a', do_shortcode( '[pods name="planet" pagination="1" limit="2"]~[/pods]' ) );
-		$this->assertContains( '<a', do_shortcode( '[pods name="planet" pagination="true" limit="2"]~[/pods]' ) );
-		$this->assertContains( '<a', do_shortcode( '[pods name="planet" pagination="on" limit="2"]~[/pods]' ) );
-		$this->assertContains( '<a', do_shortcode( '[pods name="planet" pagination="yes" limit="2"]~[/pods]' ) );
-		$this->assertContains( '<a', do_shortcode( '[pods name="planet" pagination=1 limit="2"]~[/pods]' ) );
-		$this->assertContains( '<a', do_shortcode( '[pods name="planet" pagination=true limit="2"]~[/pods]' ) );
+		$this->assertContains( '<a', do_shortcode( '[pods name=' . $pod_name . ' pagination="1" limit="2"]~[/pods]' ) );
+		$this->assertContains( '<a', do_shortcode( '[pods name=' . $pod_name . ' pagination="true" limit="2"]~[/pods]' ) );
+		$this->assertContains( '<a', do_shortcode( '[pods name=' . $pod_name . ' pagination="on" limit="2"]~[/pods]' ) );
+		$this->assertContains( '<a', do_shortcode( '[pods name=' . $pod_name . ' pagination="yes" limit="2"]~[/pods]' ) );
+		$this->assertContains( '<a', do_shortcode( '[pods name=' . $pod_name . ' pagination=1 limit="2"]~[/pods]' ) );
+		$this->assertContains( '<a', do_shortcode( '[pods name=' . $pod_name . ' pagination=true limit="2"]~[/pods]' ) );
 
-		$this->assertEquals( '~~', do_shortcode( '[pods name="planet" pagination="0" limit="2"]~[/pods]' ) );
-		$this->assertEquals( '~~', do_shortcode( '[pods name="planet" pagination="false" limit="2"]~[/pods]' ) );
-		$this->assertEquals( '~~', do_shortcode( '[pods name="planet" pagination="off" limit="2"]~[/pods]' ) );
-		$this->assertEquals( '~~', do_shortcode( '[pods name="planet" pagination="no" limit="2"]~[/pods]' ) );
-		$this->assertEquals( '~~', do_shortcode( '[pods name="planet" pagination=0 limit="2"]~[/pods]' ) );
-		$this->assertEquals( '~~', do_shortcode( '[pods name="planet" pagination=false limit="2"]~[/pods]' ) );
-		$this->assertEquals( '~~', do_shortcode( '[pods name="planet" pagination=-1 limit="2"]~[/pods]' ) );
-		$this->assertEquals( '~~', do_shortcode( '[pods name="planet" pagination=xyzzy limit="2"]~[/pods]' ) );
+		$this->assertEquals( '~~', do_shortcode( '[pods name=' . $pod_name . ' pagination="0" limit="2"]~[/pods]' ) );
+		$this->assertEquals( '~~', do_shortcode( '[pods name=' . $pod_name . ' pagination="false" limit="2"]~[/pods]' ) );
+		$this->assertEquals( '~~', do_shortcode( '[pods name=' . $pod_name . ' pagination="off" limit="2"]~[/pods]' ) );
+		$this->assertEquals( '~~', do_shortcode( '[pods name=' . $pod_name . ' pagination="no" limit="2"]~[/pods]' ) );
+		$this->assertEquals( '~~', do_shortcode( '[pods name=' . $pod_name . ' pagination=0 limit="2"]~[/pods]' ) );
+		$this->assertEquals( '~~', do_shortcode( '[pods name=' . $pod_name . ' pagination=false limit="2"]~[/pods]' ) );
+		$this->assertEquals( '~~', do_shortcode( '[pods name=' . $pod_name . ' pagination=-1 limit="2"]~[/pods]' ) );
+		$this->assertEquals( '~~', do_shortcode( '[pods name=' . $pod_name . ' pagination=xyzzy limit="2"]~[/pods]' ) );
 
 		// Not enough records to trigger pagination even if on
-		$this->assertNotContains( '<a', do_shortcode( '[pods name="planet" pagination="1" limit="100"]~[/pods]' ) );
+		$this->assertNotContains( '<a', do_shortcode( '[pods name=' . $pod_name . ' pagination="1" limit="100"]~[/pods]' ) );
 
 		/** @link https://github.com/pods-framework/pods/pull/2807 */
-		$this->assertEquals( '57', do_shortcode( '[pods name="planet" page="1" limit="2"]{@number_of_moons}[/pods]' ) );
-		$this->assertEquals( '5', do_shortcode( '[pods name="planet" page="2" limit="2"]{@number_of_moons}[/pods]' ) );
+		$this->assertEquals( '57', do_shortcode( '[pods name=' . $pod_name . ' page="1" limit="2"]{@number1}[/pods]' ) );
+		$this->assertEquals( '5', do_shortcode( '[pods name=' . $pod_name . ' page="2" limit="2"]{@number1}[/pods]' ) );
 	}
 
 	/**
@@ -111,16 +132,18 @@ class PodsTest extends Pods_UnitTestCase {
 	public function test_shortcode_pods_field_in_shortcode() {
 		$this->assertNotFalse( $this->pod );
 
+		$pod_name = $this->pod_name;
+
 		// add an item
 		$this->pod->add( array(
-			'name'            => 'Dagobah',
-			'number_of_moons' => 5,
+			'name'    => 'Dagobah',
+			'number1' => 5,
 		) );
 
-		$this->pod->find( array( 'where' => 't.number_of_moons=5' ) );
+		$this->pod->find( array( 'where' => 't.number1=5' ) );
 
 		// test shortcode
-		$this->assertEquals( '5', do_shortcode( '[pods name="planet" where="t.number_of_moons=5" field="number_of_moons"]' ) );
+		$this->assertEquals( '5', do_shortcode( '[pods name=' . $pod_name . ' where="t.number1=5" field="number1"]' ) );
 	}
 
 }

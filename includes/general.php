@@ -1987,7 +1987,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 
 	// Filters = Usually get/update/delete meta functions
 	// Actions = Usually insert/update/save/delete object functions
-	if ( 'post' === $object_type ) {
+	if ( 'post' === $object_type || 'all' === $object_type ) {
 		if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
 			// Handle *_post_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
@@ -2010,7 +2010,9 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 			array( 'save_post', array( PodsInit::$meta, 'save_post' ), 10, 2 ),
 			array( 'wp_insert_post_data', array( PodsInit::$meta, 'save_post_track_changed_fields' ), 10, 2 ),
 		);
-	} elseif ( 'taxonomy' === $object_type ) {
+	}
+
+	if ( 'taxonomy' === $object_type || 'all' === $object_type ) {
 		if ( apply_filters( 'pods_meta_handler', true, 'term' ) ) {
 			// Handle *_term_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'term' ) ) {
@@ -2033,7 +2035,9 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 				array( 'edit_terms', array( PodsInit::$meta, 'save_taxonomy_track_changed_fields' ), 10, 2 ),
 			);
 		}//end if
-	} elseif ( 'media' === $object_type ) {
+	}
+
+	if ( 'media' === $object_type || 'all' === $object_type ) {
 		$no_conflict['filter'] = array(
 			array( 'attachment_fields_to_save', array( PodsInit::$meta, 'save_media' ), 10, 2 ),
 			array( 'wp_update_attachment_metadata', array( PodsInit::$meta, 'save_media' ), 10, 2 ),
@@ -2058,7 +2062,9 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 
 			$no_conflict['action'] = array();
 		}//end if
-	} elseif ( 'user' === $object_type ) {
+	}
+
+	if ( 'user' === $object_type || 'all' === $object_type ) {
 		if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
 			// Handle *_term_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'user' ) ) {
@@ -2081,7 +2087,9 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 			array( 'profile_update', array( PodsInit::$meta, 'save_user' ), 10, 2 ),
 			array( 'pre_user_login', array( PodsInit::$meta, 'save_user_track_changed_fields' ) ),
 		);
-	} elseif ( 'comment' === $object_type ) {
+	}
+
+	if ( 'comment' === $object_type || 'all' === $object_type ) {
 		if ( apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
 			// Handle *_term_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'comment' ) ) {
@@ -2105,7 +2113,9 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 			array( 'edit_comment', array( PodsInit::$meta, 'save_comment' ) ),
 			array( 'wp_update_comment_data', array( PodsInit::$meta, 'save_comment_track_changed_fields' ), 10, 3 ),
 		);
-	} elseif ( 'settings' === $object_type ) {
+	}
+
+	if ( 'settings' === $object_type || 'all' === $object_type ) {
 		$no_conflict['filter'] = array();
 		// @todo Better handle settings conflicts apart from each other
 	}//end if
@@ -2173,6 +2183,10 @@ function pods_no_conflict_off( $object_type = 'post' ) {
 				$conflicted = true;
 			}
 		}
+	}
+
+	if ( isset( PodsInit::$no_conflict['all'] ) ) {
+		unset( PodsInit::$no_conflict['all'] );
 	}
 
 	if ( $conflicted ) {

@@ -97,15 +97,15 @@ class Pod extends Whatsit {
 	 * {@inheritdoc}
 	 */
 	public function get_table_info() {
-		if ( array() === $this->_table_info ) {
-			return array();
+		if ( null !== $this->_table_info ) {
+			return $this->_table_info;
 		}
 
 		$api = pods_api();
 
-		$table_info = $api->get_table_info( $this->get_type(), $this->get_name() );
+		$table_info = $api->get_table_info( $this->get_type(), $this->get_name(), null, $this );
 
-		if ( ! $table_info ) {
+		if ( empty( $table_info ) ) {
 			$table_info = array();
 		}
 

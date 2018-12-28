@@ -21,8 +21,8 @@ class Field extends Whatsit {
 	 * {@inheritdoc}
 	 */
 	public function get_table_info() {
-		if ( array() === $this->_table_info ) {
-			return array();
+		if ( null !== $this->_table_info ) {
+			return $this->_table_info;
 		}
 
 		$related_type = $this->get_related_object_type();

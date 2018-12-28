@@ -71,14 +71,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	protected $_fields;
 
 	/**
-	 * @var Group[]|null
-	 */
-	protected $_groups;
-
-	/**
 	 * @var Object_Field[]|null
 	 */
 	protected $_object_fields;
+
+	/**
+	 * @var Group[]|null
+	 */
+	protected $_groups;
 
 	/**
 	 * @var array|null
@@ -472,6 +472,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		if ( empty( $args ) ) {
 			$args = $this->get_args();
 		}
+
+		$this->_fields        = null;
+		$this->_object_fields = null;
+		$this->_groups        = null;
+		$this->_table_info    = null;
 
 		$defaults = array(
 			'object_type'  => $this->get_arg( 'object_type' ),

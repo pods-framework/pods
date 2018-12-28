@@ -8473,6 +8473,10 @@ class PodsAPI {
 			pods_transient_clear( 'pods_wp_cpt_ct' );
 		}
 
+		$this->fields_cache       = array();
+		self::$table_info_cache   = array();
+		self::$related_item_cache = array();
+
 		// Delete transients in the database
 		$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );
 		$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );

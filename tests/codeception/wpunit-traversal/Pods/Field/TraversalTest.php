@@ -164,9 +164,11 @@ class TraversalTest extends Pods_TraversalTestCase {
 			$this->assertTrue( false, sprintf( 'Pod / Storage type requires new setUp() not yet built to continue [%s]', $variant_id ) );
 		}
 
-		$p = self::get_pod( $pod['name'] );
-
 		codecept_debug( $debug );
+
+		$this->assertInstanceOf( Pods\Whatsit\Pod::class, $pod );
+
+		$p = self::get_pod( $pod['name'] );
 
 		$this->assertArrayHasKey( $pod['name'], self::$data );
 
@@ -267,6 +269,8 @@ class TraversalTest extends Pods_TraversalTestCase {
 		}
 
 		codecept_debug( $debug );
+
+		$this->assertInstanceOf( Pods\Whatsit\Pod::class, $pod );
 
 		$p = self::get_pod( $pod['name'] );
 

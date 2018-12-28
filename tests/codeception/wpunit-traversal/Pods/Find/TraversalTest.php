@@ -230,6 +230,8 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 		codecept_debug( $debug );
 
+		$this->assertInstanceOf( Pods\Whatsit\Pod::class, $pod );
+
 		// Base find() $params
 		$params = array(
 			'limit' => 1,
@@ -365,6 +367,8 @@ class TraversalTest extends Pods_TraversalTestCase {
 		}
 
 		codecept_debug( $debug );
+
+		$this->assertInstanceOf( Pods\Whatsit\Pod::class, $pod );
 
 		// Base find() $params
 		$params = array(

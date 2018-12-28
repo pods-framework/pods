@@ -127,26 +127,14 @@ script:
         npm run test-dfv;
     fi
 
-  # Don't load Pod traversal test data
-  - export PODS_LOAD_DATA='0'
+  # Only run non-traversal tests
+  - codecept run wpunit
 
-  # Use a barebones SQL init
-  - export SQL_DUMP_FILE='dump.sql'
+  # Only run traversal tests
+  - codecept run wpunit-traversal --skip-group='pods-traversal-deep'
 
-  # Only run tests that don't need the Pod traversal test data
-  - codecept run wpunit --skip-group='pods-config-required'
-
-  # Load Pod traversal test data
-  - export PODS_LOAD_DATA='1'
-
-  # Use a Pod traversal test data SQL init
-  - SQL_DUMP_FILE='dump-pods-testcase.sql'
-
-  # Only run tests that need the Pod traversal test data
-  - codecept run wpunit --group='pods-config-required' --skip-group='pods-traversal-deep'
-
-  # Only run tests that need the Pod traversal test data
+  # Only run deep traversal tests if needed
   - |
     if [ $TRAVIS_PHP_VERSION != "5.6" ]; then
-        codecept run wpunit --group='pods-traversal-deep';
+        codecept run wpunit-traversal --group='pods-traversal-deep';
     fi

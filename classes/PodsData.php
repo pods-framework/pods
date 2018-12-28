@@ -665,23 +665,6 @@ class PodsData {
 		$this->row_number = - 1;
 		$this->row        = null;
 
-		// Fill in empty field data (if none provided).
-		if ( ( ! isset( $this->fields ) || empty( $this->fields ) ) && ! empty( $this->rows ) ) {
-			//$this->fields = array();
-			$data         = (array) @current( $this->rows );
-
-			// @todo Don't do this anymore, need to add them to the pod via collection storage instead.
-			foreach ( $data as $data_key => $data_value ) {
-				//$this->fields[ $data_key ] = array( 'label' => ucwords( str_replace( '-', ' ', str_replace( '_', ' ', $data_key ) ) ) );
-
-				if ( isset( $this->pod_data['object_fields'][ $data_key ] ) ) {
-					//$this->fields[ $data_key ] = $this->pod_data['object_fields'][ $data_key ];
-				}
-			}
-
-			//$this->fields = PodsForm::fields_setup( $this->fields );
-		}
-
 		$this->total_found_calculated = false;
 
 		$this->total = 0;

@@ -1618,6 +1618,7 @@ class PodsForm {
 				'avatar',
 				'taxonomy',
 				'comment',
+				'author',
 			);
 
 			$field_types = apply_filters( 'pods_tableless_field_types', $field_types );

@@ -70,8 +70,13 @@ class Pods_Component_I18n extends PodsComponent {
 		// Are there active languages?
 		if ( ! empty( $this->settings['enabled_languages'] ) ) {
 			$this->languages = $this->settings['enabled_languages'];
-			$this->locale    = get_locale();
-			$active          = true;
+			if ( function_exists( 'get_user_locale' ) ) {
+				// WP 4.7+
+				$this->locale = get_user_locale();
+			} else {
+				$this->locale = get_locale();
+			}
+			$active = true;
 		}
 
 		$is_component_page = false;

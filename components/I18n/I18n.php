@@ -6,7 +6,7 @@
  *
  * Description: Allow UI of Pods and fields to be translated
  *
- * Version: 0.1
+ * Version: 0.2
  *
  * Category: I18n
  *
@@ -452,6 +452,12 @@ class Pods_Component_I18n extends PodsComponent {
 		$locale_labels['remove_featured_image'] = pods_v( 'label_remove_featured_image_' . $locale, $pod, '', true );
 		$locale_labels['use_featured_image']    = pods_v( 'label_use_featured_image_' . $locale, $pod, '', true );
 		$locale_labels['filter_items_list']     = pods_v( 'label_filter_items_list_' . $locale, $pod, '', true );
+		// Block Editor (WP 5.0+)
+		$locale_labels['item_published']           = pods_v( 'label_item_published_' . $locale, $pod, '', true );
+		$locale_labels['item_published_privately'] = pods_v( 'label_item_published_privately_' . $locale, $pod, '', true );
+		$locale_labels['item_reverted_to_draft']   = pods_v( 'label_item_reverted_to_draft_' . $locale, $pod, '', true );
+		$locale_labels['item_scheduled']           = pods_v( 'label_item_scheduled_' . $locale, $pod, '', true );
+		$locale_labels['item_updated']             = pods_v( 'label_item_updated_' . $locale, $pod, '', true );
 
 		// Taxonomies
 		$locale_labels['update_item']                = pods_v( 'label_update_item_' . $locale, $pod, '', true );

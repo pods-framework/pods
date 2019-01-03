@@ -419,63 +419,72 @@ class Pods_Component_I18n extends PodsComponent {
 			$pod[ $_option ] = $_value;
 		}
 
-		// Default
-		$locale_labels                          = array();
-		$locale_labels['name']                  = esc_html( pods_v( 'label_' . $locale, $pod, '', true ) );
-		$locale_labels['singular_name']         = esc_html( pods_v( 'label_singular_' . $locale, $pod, '', true ) );
-		$locale_labels['menu_name']             = pods_v( 'menu_name_' . $locale, $pod, '', true );
-		$locale_labels['add_new_item']          = pods_v( 'label_add_new_item_' . $locale, $pod, '', true );
-		$locale_labels['edit_item']             = pods_v( 'label_edit_item_' . $locale, $pod, '', true );
-		$locale_labels['view_item']             = pods_v( 'label_view_item_' . $locale, $pod, '', true );
-		$locale_labels['all_items']             = pods_v( 'label_all_items_' . $locale, $pod, '', true );
-		$locale_labels['search_items']          = pods_v( 'label_search_items_' . $locale, $pod, '', true );
-		$locale_labels['parent_item_colon']     = pods_v( 'label_parent_item_colon_' . $locale, $pod, '', true );
-		$locale_labels['not_found']             = pods_v( 'label_not_found_' . $locale, $pod, '', true );
-		$locale_labels['items_list_navigation'] = pods_v( 'label_items_list_navigation_' . $locale, $pod, '', true );
-		$locale_labels['items_list']            = pods_v( 'label_items_list_' . $locale, $pod, '', true );
+		$labels = array(
+			// Default
+			'name'                       => 'label', // Different.
+			'singular_name'              => 'label_singular', // Different.
+			'menu_name'                  => 'menu_name',
+			'add_new_item'               => 'label_add_new_item',
+			'edit_item'                  => 'label_edit_item',
+			'view_item'                  => 'label_view_item',
+			'all_items'                  => 'label_all_items',
+			'search_items'               => 'label_search_items',
+			'parent_item_colon'          => 'label_parent_item_colon',
+			'not_found'                  => 'label_not_found',
+			'items_list_navigation'      => 'label_items_list_navigation',
+			'items_list'                 => 'label_items_list',
 
-		// Post Types
-		$locale_labels['name_admin_bar']        = pods_v( 'name_admin_bar_' . $locale, $pod, '', true );
-		$locale_labels['add_new']               = pods_v( 'label_add_new_' . $locale, $pod, '', true );
-		$locale_labels['new_item']              = pods_v( 'label_new_item_' . $locale, $pod, '', true );
-		$locale_labels['edit']                  = pods_v( 'label_edit_' . $locale, $pod, '', true );
-		$locale_labels['view']                  = pods_v( 'label_view_' . $locale, $pod, '', true );
-		$locale_labels['view_items']            = pods_v( 'label_view_items_' . $locale, $pod, '', true );
-		$locale_labels['parent']                = pods_v( 'label_parent_' . $locale, $pod, '', true );
-		$locale_labels['not_found_in_trash']    = pods_v( 'label_not_found_in_trash_' . $locale, $pod, '', true );
-		$locale_labels['archives']              = pods_v( 'label_archives_' . $locale, $pod, '', true );
-		$locale_labels['attributes']            = pods_v( 'label_attributes_' . $locale, $pod, '', true );
-		$locale_labels['insert_into_item']      = pods_v( 'label_insert_into_item_' . $locale, $pod, '', true );
-		$locale_labels['uploaded_to_this_item'] = pods_v( 'label_uploaded_to_this_item_' . $locale, $pod, '', true );
-		$locale_labels['featured_image']        = pods_v( 'label_featured_image_' . $locale, $pod, '', true );
-		$locale_labels['set_featured_image']    = pods_v( 'label_set_featured_image_' . $locale, $pod, '', true );
-		$locale_labels['remove_featured_image'] = pods_v( 'label_remove_featured_image_' . $locale, $pod, '', true );
-		$locale_labels['use_featured_image']    = pods_v( 'label_use_featured_image_' . $locale, $pod, '', true );
-		$locale_labels['filter_items_list']     = pods_v( 'label_filter_items_list_' . $locale, $pod, '', true );
-		// Block Editor (WP 5.0+)
-		$locale_labels['item_published']           = pods_v( 'label_item_published_' . $locale, $pod, '', true );
-		$locale_labels['item_published_privately'] = pods_v( 'label_item_published_privately_' . $locale, $pod, '', true );
-		$locale_labels['item_reverted_to_draft']   = pods_v( 'label_item_reverted_to_draft_' . $locale, $pod, '', true );
-		$locale_labels['item_scheduled']           = pods_v( 'label_item_scheduled_' . $locale, $pod, '', true );
-		$locale_labels['item_updated']             = pods_v( 'label_item_updated_' . $locale, $pod, '', true );
+			// Post Types
+			'name_admin_bar'             => 'name_admin_bar',
+			'add_new'                    => 'label_add_new',
+			'new_item'                   => 'label_new_item',
+			'edit'                       => 'label_edit',
+			'view'                       => 'label_view',
+			'view_items'                 => 'label_view_items',
+			'parent'                     => 'label_parent',
+			'not_found_in_trash'         => 'label_not_found_in_trash',
+			'archives'                   => 'label_archives',
+			'attributes'                 => 'label_attributes',
+			'insert_into_item'           => 'label_insert_into_item',
+			'uploaded_to_this_item'      => 'label_uploaded_to_this_item',
+			'featured_image'             => 'label_featured_image',
+			'set_featured_image'         => 'label_set_featured_image',
+			'remove_featured_image'      => 'label_remove_featured_image',
+			'use_featured_image'         => 'label_use_featured_image',
+			'filter_items_list'          => 'label_filter_items_list',
+			// Block Editor (WP 5.0+)
+			'item_published'             => 'label_item_published',
+			'item_published_privately'   => 'label_item_published_privately',
+			'item_reverted_to_draft'     => 'label_item_reverted_to_draft',
+			'item_scheduled'             => 'label_item_scheduled',
+			'item_updated'               => 'label_item_updated',
 
-		// Taxonomies
-		$locale_labels['update_item']                = pods_v( 'label_update_item_' . $locale, $pod, '', true );
-		$locale_labels['popular_items']              = pods_v( 'label_popular_items_' . $locale, $pod, '', true );
-		$locale_labels['parent_item']                = pods_v( 'label_parent_item_' . $locale, $pod, '', true );
-		$locale_labels['new_item_name']              = pods_v( 'label_new_item_name_' . $locale, $pod, '', true );
-		$locale_labels['separate_items_with_commas'] = pods_v( 'label_separate_items_with_commas_' . $locale, $pod, '', true );
-		$locale_labels['add_or_remove_items']        = pods_v( 'label_add_or_remove_items_' . $locale, $pod, '', true );
-		$locale_labels['choose_from_most_used']      = pods_v( 'label_choose_from_the_most_used_' . $locale, $pod, '', true );
-		$locale_labels['no_terms']                   = pods_v( 'label_no_terms_' . $locale, $pod, '', true );
+			// Taxonomies
+			'update_item'                => 'label_update_item',
+			'popular_items'              => 'label_popular_items',
+			'parent_item'                => 'label_parent_item',
+			'new_item_name'              => 'label_new_item_name',
+			'separate_items_with_commas' => 'label_separate_items_with_commas',
+			'add_or_remove_items'        => 'label_add_or_remove_items',
+			'choose_from_most_used'      => 'label_choose_from_the_most_used', // Different.
+			'no_terms'                   => 'label_no_terms',
+		);
 
-		// Assign to label array
-		if ( isset( $options['labels'] ) && is_array( $options['labels'] ) ) {
-			foreach ( $options['labels'] as $key => $value ) {
-				// @todo Currently I only overwrite, maybe also append even if the default locale isn't set?
-				if ( isset( $locale_labels[ $key ] ) && ! empty( $locale_labels[ $key ] ) ) {
-					$options['labels'][ $key ] = $locale_labels[ $key ];
+		if ( ! isset( $options['labels'] ) || ! is_array( $options['labels'] ) ) {
+			$options['labels'] = array();
+		} else {
+			// Try to find new labels.
+			foreach ( $options['labels'] as $key => $val ) {
+				if ( ! isset( $labels[ $key ] ) ) {
+					$labels[ $key ] = 'label_' . $key;
 				}
+			}
+		}
+
+		foreach ( $labels as $key => $pods_key ) {
+			$label = pods_v( $pods_key . '_' . $locale, $pod, '', true );
+			if ( $label ) {
+				$options['labels'][ $key ] = $label;
 			}
 		}
 

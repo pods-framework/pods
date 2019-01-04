@@ -62,7 +62,7 @@ class Pods_Component_I18n extends PodsComponent {
 			include_once plugin_dir_path( __FILE__ ) . 'I18n-polylang.php';
 		}
 		// WPML
-		if ( did_action( 'wpml_loaded' ) && file_exists( plugin_dir_path( __FILE__ ) . 'I18n-wpml.php' ) ) {
+		elseif ( did_action( 'wpml_loaded' ) && file_exists( plugin_dir_path( __FILE__ ) . 'I18n-wpml.php' ) ) {
 			include_once plugin_dir_path( __FILE__ ) . 'I18n-wpml.php';
 		}
 
@@ -70,12 +70,14 @@ class Pods_Component_I18n extends PodsComponent {
 		// Are there active languages?
 		if ( ! empty( $this->settings['enabled_languages'] ) ) {
 			$this->languages = $this->settings['enabled_languages'];
+
 			if ( function_exists( 'get_user_locale' ) ) {
 				// WP 4.7+
 				$this->locale = get_user_locale();
 			} else {
 				$this->locale = get_locale();
 			}
+
 			$active = true;
 		}
 
@@ -84,10 +86,12 @@ class Pods_Component_I18n extends PodsComponent {
 
 		if ( is_admin() && isset( $_GET['page'] ) ) {
 
+			$page = $_GET['page'];
+
 			// Is the current page the admin page of this component or a Pods edit page?
-			if ( $_GET['page'] === $this->admin_page ) {
+			if ( $this->admin_page === $page ) {
 				$is_component_page = true;
-			} elseif ( $_GET['page'] === 'pods' ) {
+			} elseif ( 'pods' === $page ) {
 				$is_pods_edit_page = true;
 			}
 
@@ -110,10 +114,10 @@ class Pods_Component_I18n extends PodsComponent {
 
 			// ACT's
 			add_filter(
-				'pods_advanced_content_type_pod_data', array(
-					$this,
-					'pods_filter_object_strings_i18n',
-				), 10, 2
+				'pods_advanced_content_type_pod_data',
+				array( $this, 'pods_filter_object_strings_i18n' ),
+				10,
+				2
 			);
 
 			// Setting pages
@@ -126,10 +130,10 @@ class Pods_Component_I18n extends PodsComponent {
 
 			foreach ( pods_form()->field_types() as $type => $data ) {
 				add_filter(
-					'pods_form_ui_field_' . $type . '_options', array(
-						$this,
-						'form_ui_field_options_i18n',
-					), 10, 5
+					'pods_form_ui_field_' . $type . '_options',
+					array( $this, 'form_ui_field_options_i18n' ),
+					10,
+					5
 				);
 			}
 
@@ -171,10 +175,14 @@ class Pods_Component_I18n extends PodsComponent {
 	public function admin_assets() {
 
 		wp_enqueue_script(
-			'pods-admin-i18n', PODS_URL . 'components/I18n/pods-admin-i18n.js', array(
+			'pods-admin-i18n',
+			PODS_URL . 'components/I18n/pods-admin-i18n.js',
+			array(
 				'jquery',
 				'pods-i18n',
-			), '1.0', true
+			),
+			'1.0',
+			true
 		);
 		$localize_script = array();
 		if ( ! empty( $this->languages ) ) {
@@ -803,9 +811,9 @@ class Pods_Component_I18n extends PodsComponent {
 
 		if ( ! empty( $this->languages ) ) {
 			?>
-			<p><?php _e( 'Enable/Disable languages for this Pod', 'pods' ); ?></p>
+			<p><?php esc_html_e( 'Enable/Disable languages for this Pod', 'pods' ); ?></p>
 			<p>
-				<small class="description"><?php _e( 'This overwrites the defaults set in the component admin.', 'pods' ); ?></small>
+				<small class="description"><?php esc_html_e( 'This overwrites the defaults set in the component admin.', 'pods' ); ?></small>
 			</p>
 			<div class="pods-field-enable-disable-language">
 				<?php
@@ -819,7 +827,10 @@ class Pods_Component_I18n extends PodsComponent {
 					<div class="pods-field-option pods-enable-disable-language" data-locale="<?php echo esc_attr( $locale ); ?>">
 						<?php
 						echo PodsForm::field(
-							'enable_i18n[' . $locale . ']', $pod['options']['enable_i18n'][ $locale ], 'boolean', array(
+							'enable_i18n[' . $locale . ']',
+							$pod['options']['enable_i18n'][ $locale ],
+							'boolean',
+							array(
 								'boolean_yes_label' => '<code>' . $locale . '</code> ' . $this->create_lang_label( $lang_data ),
 								'boolean_no_label'  => '',
 							)
@@ -832,7 +843,7 @@ class Pods_Component_I18n extends PodsComponent {
 			</div>
 			<hr>
 			<p>
-				<button id="toggle_i18n" class="button-secondary"><?php _e( 'Toggle translation visibility', 'pods' ); ?></button>
+				<button id="toggle_i18n" class="button-secondary"><?php esc_html_e( 'Toggle translation visibility', 'pods' ); ?></button>
 			</p>
 			<?php
 		}//end if
@@ -978,7 +989,7 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
-	 * @return mixed|void
+	 * @return array
 	 */
 	public function get_translatable_fields() {
 

@@ -181,6 +181,9 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 = 2.7.13 {DATE} =
 
+**Bug Fixes**
+
+Fixed: Cursor is jumping to the start of the block when Gutenberg autosaves, #5274 (@pglewis)
 
 
 = 2.7.12 December 20th 2018 =

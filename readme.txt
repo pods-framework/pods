@@ -185,6 +185,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 Fixed: Cursor is jumping to the start of the block when Gutenberg autosaves, #5274 (@pglewis)
 Fixed: Select drop-downs set to required, #5031 (@pglewis)
+Fixed: HTML escaping issue in the Manage Fields list, #5246 (@pglewis)
 
 = 2.7.12 December 20th 2018 =
 

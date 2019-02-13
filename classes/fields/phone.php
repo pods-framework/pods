@@ -220,7 +220,10 @@ class PodsField_Phone extends PodsField {
 
 			// Format number
 			if ( '(999) 999-9999 x999' === pods_v( static::$type . '_format', $options ) ) {
-				if ( 2 === count( $numbers ) ) {
+				if ( 1 === count( $numbers ) ) {
+					$value = '';
+				}
+				elseif ( 2 === count( $numbers ) ) {
 					$value = implode( '-', $numbers );
 				} else {
 					$value = '(' . $numbers[0] . ') ' . $numbers[1] . '-' . $numbers[2];

@@ -190,6 +190,7 @@ Fixed: Translate Pods stuck with Portuguese translation in the Admin menus, #525
 Fixed: option cache handling when using external object cache, #5294 (@sc0ttkclark)
 Fixed: Fix force WWW option on website/URL fields, #4881 (@pglewis)
 Fixed: Phone field should not put anything in the field input on 'blank' values, #4881 (@pglewis)
+Fixed: Versioned tag names are not compatible with Composer, #5278 (@pglewis)
 
 = 2.7.12 December 20th 2018 =
 

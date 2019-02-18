@@ -136,7 +136,7 @@ $data = array(
 						}
 					}
 				} elseif ( pods_v( 'pick_object', $field ) === $object ) {
-					$pick_object_name = $object_label;
+					$pick_object_name = esc_html( $object_label );
 
 					break;
 				}//end if
@@ -148,9 +148,11 @@ $data = array(
 				if ( 0 < strlen( pods_v( 'pick_val', $field ) ) ) {
 					$pick_object_name = pods_v( 'pick_val', $field ) . ' (' . $pick_object_name . ')';
 				}
+
+				$pick_object_name = esc_html( $pick_object_name );
 			}
 			?>
-			<br /><span class="pods-manage-field-type-desc">&rsaquo; <?php echo esc_html( $pick_object_name ); ?></span>
+			<br /><span class="pods-manage-field-type-desc">&rsaquo; <?php echo $pick_object_name; ?></span>
 			<?php
 		}//end if
 		?>

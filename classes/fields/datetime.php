@@ -404,13 +404,16 @@ class PodsField_DateTime extends PodsField {
 			// Try field format.
 			$date_local = $this->createFromFormat( $format, (string) $value );
 
+			// Convert to timestamp.
 			if ( $date instanceof DateTime ) {
-				$value = $date->format( $format );
+				$timestamp = $date->getTimestamp();
 			} elseif ( $date_local instanceof DateTime ) {
-				$value = $date_local->format( $format );
+				$timestamp = $date_local->getTimestamp();
 			} else {
-				$value = date_i18n( $format, strtotime( (string) $value ) );
+				$timestamp = strtotime( (string) $value );
 			}
+
+			$value = date_i18n( $format, $timestamp );
 		} elseif ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
 			$value = date_i18n( $format );
 		} else {

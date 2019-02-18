@@ -8293,6 +8293,7 @@ class PodsAPI {
 		}
 
 		$_info = false;
+		$transient_cached = false;
 
 		if ( isset( self::$table_info_cache[ $transient ] ) ) {
 			// Prefer info from the object internal cache
@@ -8302,6 +8303,7 @@ class PodsAPI {
 			if ( false === $_info && ! did_action( 'init' ) ) {
 				$_info = pods_transient_get( $transient . '_pre_init' );
 			}
+			$transient_cached = true;
 		}
 
 		if ( false !== $_info && is_array( $_info ) ) {
@@ -8682,7 +8684,7 @@ class PodsAPI {
 				$transient .= '_pre_init';
 			}
 
-			if ( false === $_info || !is_array( $_info ) ) {
+			if ( $transient_cached ) {
 				pods_transient_set( $transient, $info );
 			}
 		}

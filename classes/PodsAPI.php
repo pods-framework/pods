@@ -8681,7 +8681,10 @@ class PodsAPI {
 			if ( ! did_action( 'init' ) ) {
 				$transient .= '_pre_init';
 			}
-			pods_transient_set( $transient, $info );
+
+			if ( false !== $_info && is_array( $_info ) ) {
+				pods_transient_set( $transient, $info );
+			}
 		}
 
 		self::$table_info_cache[ $transient ] = apply_filters( 'pods_api_get_table_info', $info, $object_type, $object, $name, $pod, $field, $this );

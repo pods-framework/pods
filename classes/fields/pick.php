@@ -2093,10 +2093,10 @@ class PodsField_Pick extends PodsField {
 							$search_data->field_index = $display;
 
 							$params['select'] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
-						} elseif ( isset( $options['table_info']['pod']['fields'][ $display ] ) ) {
-							$search_data->field_index = $display;
+						} else {
+							$search_data->field_index = sanitize_key( $display );
 
-							if ( 'table' === $options['table_info']['pod']['storage'] && ! in_array(
+							if ( isset( $options['table_info']['pod']['fields'][ $display ] ) && 'table' === $options['table_info']['pod']['storage'] && ! in_array(
 								$options['table_info']['pod']['type'], array(
 									'pod',
 									'table',

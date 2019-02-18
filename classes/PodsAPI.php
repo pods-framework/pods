@@ -8682,7 +8682,7 @@ class PodsAPI {
 				$transient .= '_pre_init';
 			}
 
-			if ( false !== $_info && is_array( $_info ) ) {
+			if ( false === $_info || !is_array( $_info ) ) {
 				pods_transient_set( $transient, $info );
 			}
 		}

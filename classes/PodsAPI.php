@@ -8684,7 +8684,7 @@ class PodsAPI {
 				$transient .= '_pre_init';
 			}
 
-			if ( $transient_cached ) {
+			if ( !$transient_cached ) {
 				pods_transient_set( $transient, $info );
 			}
 		}

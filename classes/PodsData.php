@@ -3240,7 +3240,7 @@ class PodsData {
 			$traverse = array_merge( $traverse, (array) $this->traversal[ $traverse_recurse['pod'] ][ $traverse['name'] ] );
 		}
 
-		$traverse = apply_filters( 'pods_data_traverse', $traverse, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params' ), $this );
+		$traverse = apply_filters( 'pods_data_traverse', $traverse, $traverse_recurse, $this );
 
 		if ( empty( $traverse ) ) {
 			return $joins;

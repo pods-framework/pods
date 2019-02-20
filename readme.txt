@@ -194,6 +194,10 @@ Fixed: Versioned tag names are not compatible with Composer, #5278 (@pglewis)
 Fixed: `get_post_meta()` always retriggers `pods_transient_set()`, #4690 (@pglewis)
 Fixed: Date output in magic tags for date fields uses DateTime class by default instead of date_il8n, #5296 (@JoryHogeveen)
 
+**Enhancements**
+
+* Enhancement: Support meta fields as display field for relationships, #5299 (@sc0ttkclark)
+
 = 2.7.12 December 20th 2018 =
 
 **Bug Fixes**

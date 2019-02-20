@@ -389,13 +389,7 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function format_value_display( $value, $options, $js = false ) {
 
-		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
-			$js = false;
-		}
-		$format = $this->format_datetime( $options, $js );
-		if ( $js ) {
-			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
-		}
+		$format = $this->format_display( $options, $js );
 
 		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
 			// Try default storage format.
@@ -424,6 +418,29 @@ class PodsField_DateTime extends PodsField {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Build date and/or time display format string based on options
+	 *
+	 * @since 2.7.13
+	 *
+	 * @param  array $options Field options.
+	 * @param  bool  $js      Whether to return format for jQuery UI.
+	 *
+	 * @return string
+	 */
+	public function format_display( $options, $js = false ) {
+
+		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
+			$js = false;
+		}
+		$format = $this->format_datetime( $options, $js );
+		if ( $js ) {
+			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
+		}
+
+		return $format;
 	}
 
 	/**

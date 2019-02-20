@@ -400,17 +400,20 @@ class PodsField_DateTime extends PodsField {
 		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
 			// Try default storage format.
 			$date = $this->createFromFormat( static::$storage_format, (string) $value );
-
-			// Try field format.
-			$date_local = $this->createFromFormat( $format, (string) $value );
-
+			
 			// Convert to timestamp.
 			if ( $date instanceof DateTime ) {
 				$timestamp = $date->getTimestamp();
-			} elseif ( $date_local instanceof DateTime ) {
-				$timestamp = $date_local->getTimestamp();
 			} else {
-				$timestamp = strtotime( (string) $value );
+				// Try field format.
+				$date_local = $this->createFromFormat( $format, (string) $value );
+				
+				if ( $date_local instanceof DateTime ) {
+					$timestamp = $date_local->getTimestamp();
+				} else {
+					// Fallback.
+					$timestamp = strtotime( (string) $value );
+				}
 			}
 
 			$value = date_i18n( $format, $timestamp );

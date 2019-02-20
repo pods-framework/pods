@@ -191,28 +191,36 @@ class PodsField_Time extends PodsField_DateTime {
 		switch ( (string) pods_v( static::$type . '_type', $options, '12', true ) ) {
 			case '12':
 				$time_format = $this->get_time_formats( $js );
-				$format      = $time_format[ pods_v( static::$type . '_format', $options, 'hh_mm', true ) ];
+
+				$format = $time_format[ pods_v( static::$type . '_format', $options, 'hh_mm', true ) ];
+
 				break;
 			case '24':
 				$time_format_24 = $this->get_time_formats_24( $js );
-				$format         = $time_format_24[ pods_v( static::$type . '_format_24', $options, 'hh_mm', true ) ];
+
+				$format = $time_format_24[ pods_v( static::$type . '_format_24', $options, 'hh_mm', true ) ];
+
 				break;
 			case 'custom':
 				if ( ! $js ) {
 					$format = pods_v( static::$type . '_format_custom', $options, '' );
 				} else {
 					$format = pods_v( static::$type . '_format_custom_js', $options, '' );
+
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_format_custom', $options, '' );
 						$format = $this->convert_format( $format, array( 'source' => 'php' ) );
 					}
 				}
+
 				break;
 			default:
 				$format = get_option( 'time_format' );
+
 				if ( $js ) {
 					$format = $this->convert_format( $format, array( 'source' => 'php' ) );
 				}
+
 				break;
 		}//end switch
 

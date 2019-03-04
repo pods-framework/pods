@@ -811,7 +811,7 @@ function pods_shortcode( $tags, $content = null ) {
 			$id = $tags['slug'];
 
 			if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-				$id = pods_evaluate_tags( $id );
+				$id = pods_evaluate_tags( $id, true );
 			}
 		}
 
@@ -819,7 +819,7 @@ function pods_shortcode( $tags, $content = null ) {
 			$id = $tags['id'];
 
 			if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-				$id = pods_evaluate_tags( $id );
+				$id = pods_evaluate_tags( $id, true );
 			}
 
 			if ( is_numeric( $id ) ) {
@@ -857,7 +857,7 @@ function pods_shortcode( $tags, $content = null ) {
 				$params['where'] = $tags['where'];
 
 				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-					$params['where'] = pods_evaluate_tags( html_entity_decode( $params['where'] ) );
+					$params['where'] = pods_evaluate_tags( html_entity_decode( $params['where'] ), true, '""' );
 				}
 			}
 
@@ -865,7 +865,7 @@ function pods_shortcode( $tags, $content = null ) {
 				$params['having'] = $tags['having'];
 
 				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-					$params['having'] = pods_evaluate_tags( html_entity_decode( $params['having'] ) );
+					$params['having'] = pods_evaluate_tags( html_entity_decode( $params['having'] ), true, '""' );
 				}
 			}
 

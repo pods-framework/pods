@@ -359,6 +359,19 @@ class PodsInit {
 		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', array(), PODS_VERSION );
 		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', array(), PODS_VERSION );
 		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', array(), PODS_VERSION );
+
+		/**
+		 * Filter to enabled loading of the DFV script on frontend.
+		 * By default, Pods does not load DFV on frontend.
+		 *
+		 * @param bool Whether or not to enqueue by default
+		 *
+		 * @since 2.7.13
+		 */
+		if ( apply_filters( 'pods_enqueue_dfv_on_front', false ) ) {
+			wp_enqueue_script( 'pods-dfv' );
+			wp_enqueue_style( 'pods-form' );
+		}
 	}
 
 	/**

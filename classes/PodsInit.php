@@ -364,6 +364,8 @@ class PodsInit {
 		 * Filter to enabled loading of the DFV script on frontend.
 		 * By default, Pods does not load DFV on frontend.
 		 *
+		 * Example: add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
+		 *
 		 * @param bool Whether or not to enqueue by default
 		 *
 		 * @since 2.7.13

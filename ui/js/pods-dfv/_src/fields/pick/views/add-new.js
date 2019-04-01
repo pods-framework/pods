@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Marionette, wp */
-import template from 'pods-dfv/_src/pick/views/add-new.html';
+import template from 'pods-dfv/_src/fields/pick/views/add-new.html';
 
 import { PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
 

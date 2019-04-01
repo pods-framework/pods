@@ -40,7 +40,9 @@ export default {
 			// Needed for React, see https://github.com/rollup/rollup/issues/487#issuecomment-177596512
 			'process.env.NODE_ENV': JSON.stringify( 'production' )
 		} ),
-		nodeResolve(),
+		nodeResolve( {
+			browser: true
+		} ),
 		commonjs( {
 			include: 'node_modules/**'
 		} ),

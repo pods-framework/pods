@@ -2,7 +2,7 @@
 
 // Note: this is a template-less view
 import { PodsFieldListView, PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
-import { RelationshipCollection } from 'pods-dfv/_src/pick/relationship-model';
+import { RelationshipCollection } from 'pods-dfv/_src/fields/pick/relationship-model';
 
 const SELECT2_UL_TARGET = 'ul.select2-selection__rendered';
 const SELECT2_SELECTED_TARGET = '.select2-selection__choice';

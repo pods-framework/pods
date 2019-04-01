@@ -1,21 +1,21 @@
 /* eslint-disable camelcase */
 /*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
 
-import template from 'pods-dfv/_src/pick/pick-layout.html';
+import template from 'pods-dfv/_src/fields/pick/pick-layout.html';
 
 import { PodsDFVFieldModel } from 'pods-dfv/_src/core/pods-field-model';
 import { PodsDFVFieldLayout } from 'pods-dfv/_src/core/pods-field-views';
 
 import { IframeFrame } from 'pods-dfv/_src/core/iframe-frame';
 
-import { RelationshipCollection } from 'pods-dfv/_src/pick/relationship-model';
-import { PickFieldModel } from 'pods-dfv/_src/pick/pick-field-model';
+import { RelationshipCollection } from 'pods-dfv/_src/fields/pick/relationship-model';
+import { PickFieldModel } from 'pods-dfv/_src/fields/pick/pick-field-model';
 
-import { RadioView } from 'pods-dfv/_src/pick/views/radio-view';
-import { CheckboxView } from 'pods-dfv/_src/pick/views/checkbox-view';
-import { SelectView } from 'pods-dfv/_src/pick/views/select-view';
-import { ListView } from 'pods-dfv/_src/pick/views/list-view';
-import { AddNew } from 'pods-dfv/_src/pick/views/add-new';
+import { RadioView } from 'pods-dfv/_src/fields/pick/views/radio-view';
+import { CheckboxView } from 'pods-dfv/_src/fields/pick/views/checkbox-view';
+import { SelectView } from 'pods-dfv/_src/fields/pick/views/select-view';
+import { ListView } from 'pods-dfv/_src/fields/pick/views/list-view';
+import { AddNew } from 'pods-dfv/_src/fields/pick/views/add-new';
 
 const views = {
 	'checkbox': CheckboxView,

@@ -14,7 +14,7 @@ const includePathOptions = {
 };
 
 export default {
-	input: 'ui/js/pods-dfv/_src/pods-dfv.js',
+	input: 'ui/js/pods-dfv/src/pods-dfv.js',
 	output: {
 		file: 'ui/js/pods-dfv/pods-dfv.min.js',
 		format: 'iife',

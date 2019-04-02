@@ -4,7 +4,7 @@ const useState = React.useState;
 
 export const PodsDFVFieldContainer = ( props ) => {
 	const Field = props.fieldComponent;
-	const [ value, setValue ] = useState( props.fieldItemData[ 0 ] );
+	const [ value, setValue ] = useState( props.fieldItemData[ 0 ] || '' );
 	const [ validationMessages, setValidationMessages ] = useState( [] );
 
 	return (

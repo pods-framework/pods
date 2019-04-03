@@ -1,30 +1,21 @@
 import React from 'react';
 import Engine from 'json-rules-engine-simplified';
-const useEffect = React.useEffect;
-
-const requiredRule = {
-	conditions: { value: { equal: '' } },
-	event: {
-		message: 'This field is required.'
-	}
-};
 
 /**
- * Effect to initialize all validation rules at render
+ * Initialize validation rules
  *
  * The returned function will run the validation rules and return an array of
  * messages or an empty array if there were no validation issues.
  *
- * @param {boolean} required
+ * @param {object[]} conditionalRules
  * @return {function({string} value): Promise<array>}
- *
  */
-export const useValidation = ( required ) => {
+export const setValidationRules = ( conditionalRules ) => {
 	const rules = [];
 
-	useEffect( () => {
-		if ( required ) {
-			rules.push( requiredRule);
+	conditionalRules.forEach( conditionalRule => {
+		if ( conditionalRule.condition ) {
+			rules.push( conditionalRule.rule );
 		}
 	} );
 
@@ -47,4 +38,3 @@ export const useValidation = ( required ) => {
 		} );
 	};
 };
-

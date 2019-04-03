@@ -1220,7 +1220,6 @@ class PodsMeta {
 
 		<script type="text/javascript">
 			jQuery( function ( $ ) {
-				$( document ).Pods( 'validate' );
 				$( document ).Pods( 'submit_meta' );
 				$( document ).Pods( 'dependency', true );
 			} );

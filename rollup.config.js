@@ -5,6 +5,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import html from 'rollup-plugin-html';
 import babel from 'rollup-plugin-babel';
 import { uglify } from 'rollup-plugin-uglify';
+import { minify } from 'uglify-es';
 
 const includePathOptions = {
 	include: {},
@@ -58,6 +59,6 @@ export default {
 				'external-helpers'
 			]
 		} ),
-		uglify()
+		uglify( {}, minify )
 	]
 };

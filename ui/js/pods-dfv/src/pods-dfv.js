@@ -29,6 +29,10 @@ const fieldClasses =  {
 		FieldClass: fields.PodsDFVPassword,
 		renderer: reactRenderer
 	},
+	'number': {
+		FieldClass: fields.PodsDFVNumber,
+		renderer: reactRenderer
+	},
 };
 
 const PodsDFV = {

@@ -10,43 +10,41 @@ const requiredRule = {
 };
 
 /**
- * One-shot effect to initialize the rules engine and rules at render
+ * Effect to initialize all validation rules at render
+ *
+ * The returned function will run the validation rules and return an array of
+ * messages or an empty array if there were no validation issues.
  *
  * @param {boolean} required
+ * @return {function({string} value): Promise<array>}
+ *
  */
 export const useValidation = ( required ) => {
-	const rulesEngine = new Engine();
+	const rules = [];
 
 	useEffect( () => {
 		if ( required ) {
-			rulesEngine.addRule( requiredRule);
+			rules.push( requiredRule);
 		}
-	});
-
-	return rulesEngine;
-};
-
-/**
- * Run the validation rules and return an array of messages or an empty
- * array if there were no validation issues.
- *
- * @param {string} value
- * @return {Promise<array>}
- */
-export const getValidationMessages = ( rulesEngine, value ) => {
-	const messages = [];
-
-	return new Promise( (resolve, reject) => {
-		rulesEngine.run( { value } )
-		.then(
-			events => {
-				events.forEach( event => {
-					messages.push( event.message );
-				} );
-			}
-		)
-		.finally( () => {
-			resolve( messages );
-		} );
 	} );
+
+	return (value) => {
+		const rulesEngine = new Engine( rules );
+		const messages = [];
+
+		return new Promise( (resolve, reject) => {
+			rulesEngine.run( { value } )
+			.then(
+				events => {
+					events.forEach( event => {
+						messages.push( event.message );
+					} );
+				}
+			)
+			.finally( () => {
+				resolve( messages );
+			} );
+		} );
+	};
 };
+

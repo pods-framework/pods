@@ -20,6 +20,8 @@ export const PodsDFVBaseInput = ( props ) => {
 			readOnly={ !!props.fieldConfig.readonly }
 			onChange={ props.onChange || handleChange }
 			onBlur={ props.onBlur }
+			min={ props.min }
+			max={ props.max }
 		/>
 	);
 };

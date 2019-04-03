@@ -336,7 +336,7 @@ class PodsInit {
 			), PODS_VERSION, true
 		);
 
-		wp_set_script_translations( 'pods-dfv', 'pods', plugin_dir_path( __FILE__ ) . 'languages' );
+		wp_set_script_translations( 'pods-dfv', 'pods' );
 
 		// Check if Pod is a Modal Window
 		if ( pods_is_modal_window() ) {

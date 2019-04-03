@@ -329,12 +329,14 @@ class PodsInit {
 				'jquery',
 				'jquery-ui-core',
 				'jquery-ui-sortable',
-				'pods-i18n',
+				'wp-i18n',
 				'marionette',
 				'media-views',
 				'media-models',
 			), PODS_VERSION, true
 		);
+
+		wp_set_script_translations( 'pods-dfv', 'pods', plugin_dir_path( __FILE__ ) . 'languages' );
 
 		// Check if Pod is a Modal Window
 		if ( pods_is_modal_window() ) {

@@ -1,17 +1,21 @@
 import React from 'react';
+import classNames from 'classnames';
 import { PodsDFVValidationMessages } from 'pods-dfv/src/components/validation-messages';
-import { useValidation, getValidationMessages } from 'pods-dfv/src/effects/use-validation';
-
+import { useValidation } from 'pods-dfv/src/effects/use-validation';
 const useState = React.useState;
 
 export const PodsDFVFieldContainer = ( props ) => {
 	const Field = props.fieldComponent;
 	const [ value, setValue ] = useState( props.fieldItemData[ 0 ] || '' );
 	const [ validationMessages, setValidationMessages ] = useState( [] );
-	const rulesEngine = useValidation( props.fieldConfig.required === '1' );
+	const fieldClasses = classNames(
+		props.htmlAttr.class,
+		{ 'pods-validate-error': validationMessages.length }
+	);
+	const getMessages = useValidation( props.fieldConfig.required === '1' );
 
 	function handleFieldBlur () {
-		getValidationMessages( rulesEngine, value )
+		getMessages( value )
 		.then( messages => setValidationMessages( messages ) );
 	}
 
@@ -22,9 +26,7 @@ export const PodsDFVFieldContainer = ( props ) => {
 				setValue={setValue}
 				setValidationMessages={setValidationMessages}
 				onBlur={handleFieldBlur}
-				className={
-					props.htmlAttr.class + ( validationMessages.length ? ' pods-validate pods-validate-error ' : '' )
-				}
+				className={fieldClasses}
 				{...props}
 			/>
 			<PodsDFVValidationMessages messages={validationMessages} />

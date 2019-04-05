@@ -1,40 +1,41 @@
 import React from 'react';
 import Engine from 'json-rules-engine-simplified';
 
-/**
- * Initialize validation rules
- *
- * The returned function will run the validation rules and return an array of
- * messages or an empty array if there were no validation issues.
- *
- * @param {object[]} conditionalRules
- * @return {function({string} value): Promise<array>}
- */
-export const setValidationRules = ( conditionalRules ) => {
+export const podsValidation = () => {
 	const rules = [];
+	let params = {};
 
-	conditionalRules.forEach( conditionalRule => {
-		if ( conditionalRule.condition ) {
-			rules.push( conditionalRule.rule );
-		}
-	} );
+	return {
+		addRules: ( conditionalRules ) => {
 
-	return (value) => {
-		const rulesEngine = new Engine( rules );
-		const messages = [];
+			conditionalRules.forEach( conditionalRule => {
+				if ( conditionalRule.condition ) {
 
-		return new Promise( (resolve, reject) => {
-			rulesEngine.run( { value } )
-			.then(
-				events => {
-					events.forEach( event => {
-						messages.push( event.message );
-					} );
+					rules.push( conditionalRule.rule );
+					if ( conditionalRule.rule.params ) {
+						params = Object.assign( params, conditionalRule.rule.params )
+					}
 				}
-			)
-			.finally( () => {
-				resolve( messages );
 			} );
-		} );
+		},
+
+		check: () => {
+			const rulesEngine = new Engine( rules );
+			const messages = [];
+
+			return new Promise( ( resolve, reject ) => {
+				rulesEngine.run( params )
+				.then(
+					events => {
+						events.forEach( event => {
+							messages.push( event.message );
+						} );
+					}
+				)
+				.finally( () => {
+					resolve( messages );
+				} );
+			} );
+		}
 	};
 };

@@ -1,7 +1,7 @@
 const { __, sprintf } = wp.i18n;
 
 export const validationRules = {
-	'required': ( value, fieldLabel ) => {
+	required: ( value, fieldLabel ) => {
 		return {
 			params: { value: value },
 			conditions: { value: { equal: '' } },
@@ -11,7 +11,7 @@ export const validationRules = {
 		};
 	},
 
-	'max': ( value, max ) => {
+	max: ( value, max ) => {
 		return {
 			params: { numericValue: value * 1, max: max * 1 },
 			conditions: { numericValue: { greater: '$max' } },
@@ -22,7 +22,7 @@ export const validationRules = {
 		};
 	},
 
-	'min': ( value, min ) => {
+	min: ( value, min ) => {
 		return {
 			params: { numericValue: value * 1, min: min * 1 },
 			conditions: { numericValue: { less: '$min' } },
@@ -30,6 +30,25 @@ export const validationRules = {
 				message: sprintf( __( 'Below the minimum value of %s', 'pods' ), min )
 			}
 
+		};
+	},
+
+	emailFormat: ( value ) => {
+		const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+		return {
+			params: { value: value, emailRegex: emailRegex },
+			conditions: {
+				not: {
+					or: [
+						{ value: { equal: '' } },
+						{ emailRegex: { matches: value } }
+					]
+				}
+			},
+			event: {
+				message: __( 'Invalid email address format' )
+			}
 		};
 	}
 };

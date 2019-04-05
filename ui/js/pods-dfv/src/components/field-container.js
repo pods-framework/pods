@@ -5,6 +5,7 @@ import { validationRules } from 'pods-dfv/src/validation/validation-rules';
 import { podsValidation } from 'pods-dfv/src/validation/validation';
 
 const useState = React.useState;
+const useEffect = React.useEffect;
 
 export const PodsDFVFieldContainer = ( props ) => {
 	const Field = props.fieldComponent;
@@ -23,10 +24,10 @@ export const PodsDFVFieldContainer = ( props ) => {
 		}
 	] );
 
-	function handleFieldBlur () {
+	useEffect( () => {
 		validation.check()
 		.then( messages => setValidationMessages( messages ) );
-	}
+	}, [ value ] );
 
 	return (
 		<div className="pods-dfv-container">
@@ -34,7 +35,6 @@ export const PodsDFVFieldContainer = ( props ) => {
 				value={value}
 				setValue={setValue}
 				validation={validation}
-				onBlur={handleFieldBlur}
 				className={fieldClasses}
 				{...props}
 			/> <PodsDFVValidationMessages messages={validationMessages} />

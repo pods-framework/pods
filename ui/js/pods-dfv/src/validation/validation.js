@@ -1,4 +1,3 @@
-import React from 'react';
 import Engine from 'json-rules-engine-simplified';
 
 export const podsValidation = () => {

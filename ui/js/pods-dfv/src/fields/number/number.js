@@ -16,7 +16,7 @@ export const PodsDFVNumber = ( props ) => {
 
 	return (
 		<PodsDFVBaseInput
-			type="number"
+			type={props.fieldConfig.number_html5 === '1' ? 'number' : 'text'}
 			min={props.fieldConfig.number_min}
 			max={props.fieldConfig.number_max}
 			{...props}

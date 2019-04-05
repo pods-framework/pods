@@ -33,6 +33,10 @@ const fieldClasses =  {
 		FieldClass: fields.PodsDFVNumber,
 		renderer: reactRenderer
 	},
+	'paragraph': {
+		FieldClass: fields.PodsDFVTextArea,
+		renderer: reactRenderer
+	},
 };
 
 const PodsDFV = {

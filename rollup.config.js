@@ -4,8 +4,7 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import html from 'rollup-plugin-html';
 import babel from 'rollup-plugin-babel';
-import { uglify } from 'rollup-plugin-uglify';
-import { minify } from 'uglify-es';
+import { terser } from 'rollup-plugin-terser';
 
 const includePathOptions = {
 	include: {},
@@ -44,21 +43,21 @@ export default {
 		nodeResolve( {
 			browser: true
 		} ),
-		commonjs( {
-			include: 'node_modules/**'
-		} ),
 		babel( {
 			babelrc: false, // Ignore the .babelrc file which is there for mocha tests
 			ignore: [ 'node_modules/**' ],
 			presets: [
-				[ 'env', { modules: false } ],
-				[ 'react' ]
+				[ '@babel/preset-env', { modules: false } ],
+				[ '@babel/preset-react' ]
 			],
 			plugins: [
-				'transform-object-rest-spread',
-				'external-helpers'
+				'@babel/plugin-transform-react-jsx',
+				'@babel/plugin-proposal-object-rest-spread'
 			]
 		} ),
-		uglify( {}, minify )
+		commonjs( {
+			include: 'node_modules/**'
+		} ),
+		terser()
 	]
 };

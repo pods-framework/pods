@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import classNames from 'classnames';
 import { PodsDFVValidationMessages } from 'pods-dfv/src/components/validation-messages';
@@ -20,7 +21,7 @@ export const PodsDFVFieldContainer = ( props ) => {
 	validation.addRules( [
 		{
 			rule: validationRules.required( value, props.fieldConfig.label ),
-			condition: props.fieldConfig.required === '1',
+			condition: '1' === props.fieldConfig.required,
 		}
 	] );
 

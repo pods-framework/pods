@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { PodsDFVBaseInput } from 'pods-dfv/src/components/base-input';
 import { validationRules } from 'pods-dfv/src/validation/validation-rules';
@@ -10,9 +11,10 @@ export const PodsDFVEmail = ( props ) => {
 		},
 	] );
 
+	// noinspection JSUnresolvedVariable
 	return (
 		<PodsDFVBaseInput
-			type={props.fieldConfig.email_html5 === '1' ? 'email' : 'text'}
+			type={'1' === props.fieldConfig.email_html5 ? 'email' : 'text'}
 			{...props}
 		/>
 	);

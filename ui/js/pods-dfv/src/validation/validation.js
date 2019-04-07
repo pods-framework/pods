@@ -12,7 +12,7 @@ export const podsValidation = () => {
 
 					rules.push( conditionalRule.rule );
 					if ( conditionalRule.rule.params ) {
-						params = Object.assign( params, conditionalRule.rule.params )
+						params = Object.assign( params, conditionalRule.rule.params );
 					}
 				}
 			} );
@@ -22,7 +22,8 @@ export const podsValidation = () => {
 			const rulesEngine = new Engine( rules );
 			const messages = [];
 
-			return new Promise( ( resolve, reject ) => {
+			return new Promise( ( resolve ) => {
+				// noinspection JSUnresolvedFunction
 				rulesEngine.run( params )
 				.then(
 					events => {

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 
 export const PodsDFVBaseInput = ( props ) => {
@@ -7,6 +8,7 @@ export const PodsDFVBaseInput = ( props ) => {
 		props.setValue( event.target.value );
 	}
 
+	// noinspection JSUnresolvedVariable
 	return (
 		<input
 			type={ props.type }

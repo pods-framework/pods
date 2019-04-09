@@ -7,15 +7,14 @@ import Engine from 'json-rules-engine-simplified';
  *
  * @return
  * {
- * 	{useValidation: useValidation,
- * 	addRules: addRules,
- * 	check: (function(): Promise<any>)}
+ *     {function} addRules
+ *     {function} useValidation,
  * 	}
  */
 export const podsValidation = () => {
 	const [ validationMessages, setValidationMessages ] = useState( [] );
 	const rules = [];
-	let params = {};
+	let facts = {};
 
 	/**
 	 *
@@ -25,8 +24,8 @@ export const podsValidation = () => {
 		conditionalRules.forEach( conditionalRule => {
 			if ( conditionalRule.condition ) {
 				rules.push( conditionalRule.rule );
-				if ( conditionalRule.rule.params ) {
-					params = Object.assign( params, conditionalRule.rule.params );
+				if ( conditionalRule.rule.facts ) {
+					facts = Object.assign( facts, conditionalRule.rule.facts );
 				}
 			}
 		} );
@@ -36,13 +35,13 @@ export const podsValidation = () => {
 	 *
 	 * @return {Promise<any>}
 	 */
-	const check = () => {
+	const checkValidation = () => {
 		const rulesEngine = new Engine( rules );
 		const messages = [];
 
 		return new Promise( ( resolve ) => {
 			// noinspection JSUnresolvedFunction
-			rulesEngine.run( params )
+			rulesEngine.run( facts )
 			.then(
 				events => {
 					events.forEach( event => {
@@ -58,11 +57,13 @@ export const podsValidation = () => {
 
 	/**
 	 *
-	 * @param value
+	 * @param {string} value The field's value
+	 *
+	 * @return {string} Array of messages for all validation failures
 	 */
 	const useValidation = ( value ) => {
 		useEffect( () => {
-			check()
+			checkValidation()
 			.then( messages => setValidationMessages( messages ) );
 		}, [ value ] );
 

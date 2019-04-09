@@ -32,7 +32,8 @@ export const PodsDFVFieldContainer = ( props ) => {
 				validation={validation}
 				className={fieldClasses}
 				{...props}
-			/> <PodsDFVValidationMessages messages={validationMessages} />
+			/>
+			<PodsDFVValidationMessages messages={validationMessages} />
 		</div>
 	);
 };

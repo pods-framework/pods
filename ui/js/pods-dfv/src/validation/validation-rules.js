@@ -3,7 +3,7 @@ const { __, sprintf } = wp.i18n;
 export const validationRules = {
 	required: ( value, fieldLabel ) => {
 		return {
-			params: { value: value },
+			facts: { value: value },
 			conditions: { value: { equal: '' } },
 			event: {
 				message: sprintf( __( '%s is required.', 'pods' ), fieldLabel )
@@ -13,7 +13,7 @@ export const validationRules = {
 
 	max: ( value, max ) => {
 		return {
-			params: { numericValue: value * 1, max: max * 1 },
+			facts: { numericValue: value * 1, max: max * 1 },
 			conditions: { numericValue: { greater: '$max' } },
 			event: {
 				message: sprintf( __( 'Exceeds the maximum value of %s', 'pods' ), max )
@@ -24,7 +24,7 @@ export const validationRules = {
 
 	min: ( value, min ) => {
 		return {
-			params: { numericValue: value * 1, min: min * 1 },
+			facts: { numericValue: value * 1, min: min * 1 },
 			conditions: { numericValue: { less: '$min' } },
 			event: {
 				message: sprintf( __( 'Below the minimum value of %s', 'pods' ), min )
@@ -37,7 +37,7 @@ export const validationRules = {
 		const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 		return {
-			params: { value: value, emailRegex: emailRegex },
+			facts: { value: value, emailRegex: emailRegex },
 			conditions: {
 				not: {
 					or: [

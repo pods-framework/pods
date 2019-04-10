@@ -1537,11 +1537,7 @@ class PodsUI {
 			}
 			$this->edit( ( 'duplicate' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) ? true : false );
 		} elseif ( 'edit_proto' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) {
-			$this->ui_page[] = 'form';
-			if ( 'save' === $this->do && $this->save && ! empty( $_POST ) ) {
-				$this->save();
-			}
-			$this->edit( ( 'duplicate' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) ? true : false );
+			$this->edit( false );
 		} elseif ( 'delete' === $this->action && ! in_array( $this->action, $this->actions_disabled ) && false !== wp_verify_nonce( $this->_nonce, 'pods-ui-action-delete' ) ) {
 			$this->delete( $this->id );
 			$this->manage();
@@ -1679,7 +1675,7 @@ class PodsUI {
 
 		if ( $duplicate && false !== $this->callback_action( 'duplicate' ) ) {
 			return null;
-		} elseif ( false !== $this->callback_action( 'edit', $duplicate ) ) {
+		} elseif ( false !== $this->callback_action( $this->action, $duplicate ) ) {
 			return null;
 		}
 

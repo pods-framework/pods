@@ -375,6 +375,7 @@ class PodsUI {
 		'manage'    => null,
 		'add'       => null,
 		'edit'      => null,
+		'edit_proto'=> null,
 		'duplicate' => null,
 		'view'      => null,
 		'delete'    => null,
@@ -1530,6 +1531,12 @@ class PodsUI {
 				$this->add();
 			}
 		} elseif ( ( 'edit' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) || ( 'duplicate' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) ) {
+			$this->ui_page[] = 'form';
+			if ( 'save' === $this->do && $this->save && ! empty( $_POST ) ) {
+				$this->save();
+			}
+			$this->edit( ( 'duplicate' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) ? true : false );
+		} elseif ( 'edit_proto' === $this->action && ! in_array( $this->action, $this->actions_disabled ) ) {
 			$this->ui_page[] = 'form';
 			if ( 'save' === $this->do && $this->save && ! empty( $_POST ) ) {
 				$this->save();
@@ -4347,6 +4354,21 @@ class PodsUI {
 			}
 
 			$actions['edit'] = '<span class="edit"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Edit this item', 'pods' ) . '">' . __( 'Edit', 'pods' ) . '</a></span>';
+		}
+
+		if ( ! in_array( 'edit_proto', $this->actions_disabled ) && ! in_array( 'edit_proto', $this->actions_hidden ) && ! $this->restricted( 'edit_proto', $row ) ) {
+			$link = pods_query_arg(
+				array(
+					'action' . $this->num => 'edit_proto',
+					'id' . $this->num     => $row[ $this->sql['field_id'] ],
+				), self::$allowed, $this->exclusion()
+			);
+
+			if ( ! empty( $this->action_links['edit_proto'] ) ) {
+				$link = $this->do_template( $this->action_links['edit_proto'], $row );
+			}
+
+			$actions['edit_proto'] = '<span class="edit"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Edit (prototype)', 'pods' ) . '">' . __( 'Edit (prototype)', 'pods' ) . '</a></span>';
 		}
 
 		if ( ! in_array( 'duplicate', $this->actions_disabled ) && ! in_array( 'duplicate', $this->actions_hidden ) && ! $this->restricted( 'edit', $row ) ) {

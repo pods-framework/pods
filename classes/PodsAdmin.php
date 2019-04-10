@@ -1037,6 +1037,7 @@ class PodsAdmin {
 			'actions_custom'   => array(
 				'add'       => array( $this, 'admin_setup_add' ),
 				'edit'      => array( $this, 'admin_setup_edit' ),
+				'edit_proto'=> array( $this, 'admin_setup_edit' ),
 				'duplicate' => array(
 					'callback'          => array( $this, 'admin_setup_duplicate' ),
 					'restrict_callback' => array( $this, 'admin_setup_duplicate_restrict' ),

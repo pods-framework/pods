@@ -1,11 +1,13 @@
 <?php
+wp_enqueue_style( 'wp-edit-post' );
 $api = pods_api();
 $pod = $api->load_pod( array( 'id' => $obj->id ) );
 
 $pod_fields = array();
 foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
-	$pod_fields[ $field_name ] = $field_data[ 'options' ];
-	$pod_fields[ $field_name ][ 'name' ] = $field_name;
+	$field_options = array_merge( $field_data[ 'options' ], $field_data);
+	unset( $field_options[ 'options' ] );
+	array_push( $pod_fields,  $field_options );
 }
 
 $data = array(

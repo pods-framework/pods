@@ -330,6 +330,8 @@ class PodsInit {
 				'jquery-ui-core',
 				'jquery-ui-sortable',
 				'wp-i18n',
+				'wp-components',
+				'wp-compose',
 				'marionette',
 				'media-views',
 				'media-models',

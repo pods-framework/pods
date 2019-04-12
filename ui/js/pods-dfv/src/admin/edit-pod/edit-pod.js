@@ -6,7 +6,7 @@ import { PodsDFVSluggable } from 'pods-dfv/src/admin/edit-pod/sluggable';
 import { PodsDFVEditPodTabs } from 'pods-dfv/src/admin/edit-pod/edit-pod-tabs';
 import { PodsDFVManageFields } from 'pods-dfv/src/admin/edit-pod/manage-fields/manage-fields';
 import { PodsDFVPostboxContainer } from 'pods-dfv/src/admin/edit-pod/postbox-container';
-import { PodsDFVFieldBasicOptions } from 'pods-dfv/src/admin/edit-pod/manage-fields/basic-options';
+import { PodsDFVEditFieldBasicOptions } from 'pods-dfv/src/admin/edit-pod/manage-fields/basic-options';
 
 const { __ } = wp.i18n;
 const { Modal } = wp.components;
@@ -65,7 +65,7 @@ export const PodsDFVEditPod = ( props ) => {
 					title='Modal Field Edit Proto'
 					onRequestClose={() => setShowModal( false )}>
 
-					<PodsDFVFieldBasicOptions />
+					<PodsDFVEditFieldBasicOptions />
 				</Modal>
 			) }
 

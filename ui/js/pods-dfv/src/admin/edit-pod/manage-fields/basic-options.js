@@ -2,7 +2,9 @@
 import React from 'react';
 const { __ } = wp.i18n;
 
-export const PodsDFVFieldBasicOptions = ( props ) => {
+export const PodsDFVEditFieldBasicOptions = ( props ) => {
+
+	// Todo: this is all just copy/paste hardcoded as placeholders, not wired up, would be dynamically assembled
 	return (
 		<div className='pods-manage-field'>
 			<div className='pods-tab-group'>

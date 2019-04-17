@@ -1,24 +1,31 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
+import { STORE_KEY } from 'pods-dfv/src/admin/edit-pod/store/constants';
+
+// noinspection JSUnresolvedVariable
 const { __ } = wp.i18n;
+const { withSelect } = wp.data;
 
-export const PodsDFVManageFields = ( props ) => {
+export const TabManageFields = withSelect( ( select ) => {
+	return {
+		fields: select( STORE_KEY ).getFields()
+	};
+} )
+( ( props ) => {
 	return (
-		<div id='pods-manage-fields' className='-pods-nav-tab'>
+		<div id='pods-manage-fields'>
 			<p className='pods-manage-row-add pods-float-right'>
-				<a href='#add-field' className='button-primary'>{__( 'Add Field', 'pods' )}</a>
+				<a href='#add-field' className='button-primary'>
+					{__( 'Add Field', 'pods' )}
+				</a>
 			</p>
-
-			<PodsTableFieldList
-				fields={props.fields}
-				onFieldEditClick={props.onFieldEditClick}
-			/>
+			<h2>{__( 'Manage Fields', 'pods' )}</h2>
+			<PodsTableFieldList fields={props.fields} />
 		</div>
 	);
-};
+} );
 
-export const PodsTableFieldList = ( props ) => {
-
+const PodsTableFieldList = ( props ) => {
 	return (
 		<table className='widefat fixed pages'>
 			<thead>
@@ -42,7 +49,6 @@ export const PodsTableFieldList = ( props ) => {
 					<PodsTableFieldItem
 						key={thisField.id}
 						id={thisField.id}
-						onFieldEditClick={props.onFieldEditClick}
 						fieldLabel={thisField.label}
 						fieldName={thisField.name}
 						required={thisField.required}
@@ -70,17 +76,19 @@ export const PodsTableFieldList = ( props ) => {
 	);
 };
 
-export const PodsTableFieldItem = ( props ) => {
+const PodsTableFieldItem = ( props ) => {
 	return (
 		<tr className='pods-manage-row pods-field-init'>
 			<th scope='row' className='check-field pods-manage-sort'>
-				<img src={`${PODS_URL}/ui/images/handle.gif`} alt={__( 'Move', 'pods' )} />
+				<img
+					src={`${PODS_URL}/ui/images/handle.gif`}
+					alt={__( 'Move', 'pods' )}
+				/>
 			</th>
 			<td className='pods-manage-row-label'>
 				<strong>
 					<a
 						title={__( 'Edit this field', 'pods' )}
-						onClick={( e ) => props.onFieldEditClick( e, props.id )}
 						className='pods-manage-row-edit row-label'
 						href='#edit-field'>
 						{ props.fieldLabel }
@@ -93,15 +101,11 @@ export const PodsTableFieldItem = ( props ) => {
 					</abbr>
 				</strong>
 				<span className='pods-manage-row-more'>{ `[id: ${props.id}]` }</span>
-				<RowActions
-					onFieldEditClick={props.onFieldEditClick}
-					id={props.id}
-				/>
+				<RowActions />
 			</td>
 			<td className='pods-manage-row-name'>
 				<a
 					title={__( 'Edit this field', 'pods' )}
-					onClick={( e ) => props.onFieldEditClick( e, props.id )}
 					className='pods-manage-row-edit row-name'
 					href='#edit-field'>
 					{props.fieldName}
@@ -114,13 +118,12 @@ export const PodsTableFieldItem = ( props ) => {
 	);
 };
 
-export const RowActions = ( props ) => {
+const RowActions = () => {
 	return (
 		<div className='row-actions'>
 			<span className='edit'>
 				<a
 					title={__( 'Edit this field', 'pods' )}
-					onClick={( e ) => props.onFieldEditClick( e, props.id )}
 					className='pods-manage-row-edit'
 					href='#edit-field'>
 					{__( 'Edit', 'pods' )}

@@ -1,38 +1,49 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-const useState = React.useState;
-import { PodsDFVEditPodStatusMessage } from 'pods-dfv/src/admin/edit-pod/manage-fields/status-message';
-import { PodsDFVSluggable } from 'pods-dfv/src/admin/edit-pod/sluggable';
-import { PodsDFVEditPodTabs } from 'pods-dfv/src/admin/edit-pod/edit-pod-tabs';
-import { PodsDFVManageFields } from 'pods-dfv/src/admin/edit-pod/manage-fields/manage-fields';
-import { PodsDFVPostboxContainer } from 'pods-dfv/src/admin/edit-pod/postbox-container';
-import { PodsDFVEditFieldBasicOptions } from 'pods-dfv/src/admin/edit-pod/manage-fields/basic-options';
 
+/* WordPress dependencies */
+// noinspection JSUnresolvedVariable
 const { __ } = wp.i18n;
-const { Modal } = wp.components;
+//const { Modal } = wp.components;
+const { withSelect, withDispatch } = wp.data;
+const { compose } = wp.compose;
 
-const ACTION = 'pods_admin_proto';
+import { SaveStatusMessage } from 'pods-dfv/src/admin/edit-pod/save-status-message';
+import { PodsDFVSluggable } from 'pods-dfv/src/admin/edit-pod/sluggable';
+import { MainTabs } from 'pods-dfv/src/admin/edit-pod/main-tabs/main-tabs';
+import { ActiveTabContent } from 'pods-dfv/src/admin/edit-pod/main-tabs/active-tab-content';
+import { Postbox } from 'pods-dfv/src/admin/edit-pod/postbox';
+import { STORE_KEY } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
-export const PodsDFVEditPod = ( props ) => {
-	const oldName = props.podInfo.name;
-	const [ podName, setPodName ] = useState( props.podInfo.name );
-	const [ isSaving, setIsSaving ] = useState( false );
-	const [ saved, setSaved ] = useState( false );
-	const [ showModal, setShowModal ] = useState( false );
+const AJAX_ACTION = 'pods_admin_proto';
 
-	const handleSubmit = ( e ) => {
-		const requestData = {
-			'id': props.podInfo.id,
-			'name': podName,
-			'old_name': oldName,
-			'_wpnonce': props.fieldConfig.nonce,
-			'fields': props.podInfo.fields
+export const PodsDFVEditPod = compose ( [
+	withSelect( ( select ) => {
+		return {
+			state: select( STORE_KEY ).getState()
 		};
+	} ),
+	withDispatch( ( dispatch ) => {
+		return {
+			setSaveStatus: dispatch( STORE_KEY ).setSaveStatus
+		};
+	} )
+] )
+( ( props ) => {
+	const handleSubmit = ( e ) => {
 		e.preventDefault();
 
-		setSaved( false );
-		setIsSaving( true );
-		fetch( `${ajaxurl}?pods_ajax=1&action=${ACTION}`, {
+		const requestData = {
+			'id': props.podInfo.id,
+			'name': props.podInfo.name,
+			'old_name': props.podInfo.name,
+			'_wpnonce': props.fieldConfig.nonce,
+			'fields': props.fields
+		};
+
+		/*
+		props.setSaveStatus( saveStatuses.SAVING );
+		fetch( `${ajaxurl}?pods_ajax=1&action=${AJAX_ACTION}`, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
@@ -43,57 +54,35 @@ export const PodsDFVEditPod = ( props ) => {
 		.then(
 			( result ) => {
 				console.log( result );
-				setSaved( true );
+				props.setSaveStatus( saveStatuses.SAVE_SUCCESS );
 			},
 			( error ) => {
 				console.log( error );
+				props.setSaveStatus( saveStatuses.SAVE_ERROR );
 			}
-		).finally( () => {
-			setIsSaving( false );
-		} );
-	};
-
-	const onFieldEditClick = ( e, id ) => {
-		e.preventDefault();
-		setShowModal( true );
+		);
+		 */
 	};
 
 	return (
 		<form className='pods-submittable pods-nav-tabbed' onSubmit={handleSubmit}>
-			{ showModal && (
-				<Modal
-					title='Modal Field Edit Proto'
-					onRequestClose={() => setShowModal( false )}>
-
-					<PodsDFVEditFieldBasicOptions />
-				</Modal>
-			) }
-
 			<div className='pods-submittable-fields'>
 				<h2>
-					{'Edit Pod: '}
+					{__( 'Edit Pod: ', 'pods' )}
 					<PodsDFVSluggable
-						value={podName}
+						value={props.podInfo.name}
 						onChange={ ( e ) => setPodName( e.target.value ) }
 					/>
 				</h2>
-				<PodsDFVEditPodStatusMessage
-					isSaving={isSaving}
-					saved={saved}
-				/>
-				<PodsDFVEditPodTabs />
+				<SaveStatusMessage />
+				<MainTabs />
 			</div>
 			<div id='poststuff'>
 				<div id='post-body' className='meta-box-holder columns-2'>
-					<div id='post-body-content' className='pods-nav-tab-group'>
-						<PodsDFVManageFields
-							fields={props.podInfo.fields}
-							onFieldEditClick={onFieldEditClick}
-						/>
-					</div>
-					<PodsDFVPostboxContainer isSaving={isSaving} />
+					<ActiveTabContent />
+					<Postbox />
 				</div>
 			</div>
 		</form>
 	);
-};
+} );

@@ -1,10 +1,10 @@
+import { uiConstants } from '../constants';
 import {
 	fields,
 	labels,
 	ui,
 	initialUIState
 } from '../reducer';
-import { uiConstants } from '../constants';
 
 describe( 'reducer', () => {
 

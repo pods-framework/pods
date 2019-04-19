@@ -1,4 +1,4 @@
-import { saveStatuses } from './constants';
+import { uiConstants } from './constants';
 
 // Everything
 export const getState = state => state;
@@ -6,7 +6,7 @@ export const getState = state => state;
 // UI
 export const getActiveTab = state => state.ui.activeTab;
 export const getSaveStatus = state => state.ui.saveStatus;
-export const isSaving = state => ( state.ui.saveStatus === saveStatuses.SAVING );
+export const isSaving = state => ( state.ui.saveStatus === uiConstants.saveStatuses.SAVING );
 
 // Fields
 export const getFields = state => state.fields;

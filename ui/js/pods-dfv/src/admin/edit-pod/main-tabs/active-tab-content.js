@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { STORE_KEY_EDIT_POD, tabNames } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import { STORE_KEY_EDIT_POD, uiConstants } from 'pods-dfv/src/admin/edit-pod/store/constants';
 import { TabManageFields } from './tab-manage-fields';
 import { TabLabels } from './tab-labels';
 import { TabAdminUI } from './tab-admin-ui';
@@ -18,22 +18,22 @@ export const ActiveTabContent = withSelect( ( select ) => {
 ( ( props ) => {
 	const getActiveTabComponent = () => {
 		switch ( props.activeTab ) {
-			case tabNames.LABELS:
+			case uiConstants.tabNames.LABELS:
 				return ( <TabLabels /> );
 
-			case tabNames.ADMIN_UI:
+			case uiConstants.tabNames.ADMIN_UI:
 				return ( <TabAdminUI /> );
 
-			case tabNames.ADVANCED_OPTIONS:
+			case uiConstants.tabNames.ADVANCED_OPTIONS:
 				return ( <TabAdvancedOptions /> );
 
-			case tabNames.AUTO_TEMPLATE_OPTIONS:
+			case uiConstants.tabNames.AUTO_TEMPLATE_OPTIONS:
 				return ( <TabAutoTemplateOptions /> );
 
-			case tabNames.REST_API:
+			case uiConstants.tabNames.REST_API:
 				return ( <TabRestAPI /> );
 
-			case tabNames.MANAGE_FIELDS:
+			case uiConstants.tabNames.MANAGE_FIELDS:
 			default:
 				return ( <TabManageFields /> );
 		}

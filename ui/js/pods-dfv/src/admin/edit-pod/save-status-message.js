@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { STORE_KEY_EDIT_POD, saveStatuses } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import { STORE_KEY_EDIT_POD, uiConstants } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
 /* WordPress dependencies */
 // noinspection JSUnresolvedVariable
@@ -14,14 +14,14 @@ export const SaveStatusMessage = withSelect( ( select ) => {
 } )
 ( ( props ) => {
 	switch ( props.saveStatus ) {
-		case saveStatuses.SAVING:
+		case uiConstants.saveStatuses.SAVING:
 			return (
 				<div id="message" className="notice notice-warning">
 					<p><b>{__( 'Saving Pod...', 'pods' )}</b></p>
 				</div>
 			);
 
-		case saveStatuses.SAVE_SUCCESS:
+		case uiConstants.saveStatuses.SAVE_SUCCESS:
 			return (
 				<div id="message" className="updated fade">
 					<p>
@@ -32,7 +32,7 @@ export const SaveStatusMessage = withSelect( ( select ) => {
 				</div>
 			);
 
-		case saveStatuses.SAVE_ERROR:
+		case uiConstants.saveStatuses.SAVE_ERROR:
 			return (
 				<div id="message" className="notice error">
 					<p><b>{__( 'Save Error', 'pods' )}</b></p>

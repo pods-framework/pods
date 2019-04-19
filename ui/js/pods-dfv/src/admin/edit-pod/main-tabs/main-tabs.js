@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import classNames from 'classnames';
-import { STORE_KEY_EDIT_POD, tabNames } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import { STORE_KEY_EDIT_POD, uiConstants } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
 // noinspection JSUnresolvedVariable
 const { __ } = wp.i18n;
@@ -50,32 +50,32 @@ export const MainTabs = compose( [
 
 const tabs = [
 	{
-		tabName: tabNames.MANAGE_FIELDS,
+		tabName: uiConstants.tabNames.MANAGE_FIELDS,
 		content: __( 'Manage Fields', 'pods' ),
 		href: '#pods-manage-fields',
 	},
 	{
-		tabName: tabNames.LABELS,
+		tabName: uiConstants.tabNames.LABELS,
 		content: __( 'Labels', 'pods' ),
 		href: '#pods-labels',
 	},
 	{
-		tabName: tabNames.ADMIN_UI,
+		tabName: uiConstants.tabNames.ADMIN_UI,
 		content: __( 'Admin UI', 'pods' ),
 		href: '#pods-admin-ui',
 	},
 	{
-		tabName: tabNames.ADVANCED_OPTIONS,
+		tabName: uiConstants.tabNames.ADVANCED_OPTIONS,
 		content: __( 'Advanced Options', 'pods' ),
 		href: '#pods-advanced'
 	},
 	{
-		tabName: tabNames.AUTO_TEMPLATE_OPTIONS,
+		tabName: uiConstants.tabNames.AUTO_TEMPLATE_OPTIONS,
 		content: __( 'Auto Template Options', 'pods' ),
 		href: '#pods-pods-pfat'
 	},
 	{
-		tabName: tabNames.REST_API,
+		tabName: uiConstants.tabNames.REST_API,
 		content: __( 'REST API', 'pods' ),
 		href: '#pods-rest-api'
 	},

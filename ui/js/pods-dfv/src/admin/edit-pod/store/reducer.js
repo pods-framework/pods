@@ -1,22 +1,21 @@
-import { uiActions, labelActions, tabNames, saveStatuses } from './constants';
-
+import { uiConstants, labelConstants } from './constants';
 const { combineReducers } = wp.data;
 
-const initialUIState = {
-	activeTab: tabNames.MANAGE_FIELDS,
-	saveStatus: saveStatuses.NONE,
+export const initialUIState = {
+	activeTab: uiConstants.tabNames.MANAGE_FIELDS,
+	saveStatus: uiConstants.saveStatuses.NONE,
 };
 
 // Fields
-export const fields = ( state = [], action ) => {
+export const fields = ( state = [], action = {} ) => {
 	return state;
 };
 
 // Labels
-export const labels = ( state = [], action ) => {
+export const labels = ( state = [], action = {} ) => {
 	switch ( action.type ) {
-		case labelActions.SET_LABEL_VALUE:
-			return state.map( ( thisLabel, index ) => {
+		case labelConstants.actions.SET_LABEL_VALUE:
+			return state.map( ( thisLabel ) => {
 				if ( thisLabel.name !== action.labelName ) {
 					return thisLabel; // Not the target, return it as-is
 				} else {
@@ -33,11 +32,11 @@ export const labels = ( state = [], action ) => {
 };
 
 // UI
-export const ui = ( state = initialUIState, action ) => {
+export const ui = ( state = initialUIState, action = {} ) => {
 	switch ( action.type ) {
-		case uiActions.SET_ACTIVE_TAB:
+		case uiConstants.actions.SET_ACTIVE_TAB:
 			let newTab = action.activeTab;
-			if ( !Object.values( tabNames ).includes( newTab ) ) {
+			if ( !Object.values( uiConstants.tabNames ).includes( newTab ) ) {
 				newTab = initialUIState.activeTab;
 			}
 			return {
@@ -45,9 +44,9 @@ export const ui = ( state = initialUIState, action ) => {
 				activeTab: newTab
 			};
 
-		case uiActions.SET_SAVE_STATUS:
+		case uiConstants.actions.SET_SAVE_STATUS:
 			let newStatus = action.saveStatus;
-			if ( !Object.values( saveStatuses ).includes( newStatus ) ) {
+			if ( !Object.values( uiConstants.saveStatuses ).includes( newStatus ) ) {
 				newStatus = initialUIState.saveStatus;
 			}
 			return {

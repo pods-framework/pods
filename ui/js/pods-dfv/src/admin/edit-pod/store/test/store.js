@@ -21,8 +21,7 @@ describe( 'store', () => {
 			labels: [ 'label 1', 'label 2', 'label 3' ],
 		};
 		const initializedWithInitialState = {
-			fields: [ 'field 1', 'field 2', 'field 3' ],
-			labels: [ 'label 1', 'label 2', 'label 3' ],
+			...initialState,
 			ui: initialUIState
 		};
 		const store = initStore( initialState );

@@ -10,7 +10,6 @@ import {
 describe( 'selectors', () => {
 
 	describe( 'ui', () => {
-
 		describe( 'getActiveTab', () => {
 			const { tabNames } = uiConstants;
 
@@ -74,7 +73,6 @@ describe( 'selectors', () => {
 				state.labels.forEach( ( thisLabel ) => {
 					expect( getLabelValue( state, thisLabel.name ) ).toBe( thisLabel.value );
 				} );
-
 			} );
 		} );
 	} );

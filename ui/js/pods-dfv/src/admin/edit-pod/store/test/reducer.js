@@ -4,7 +4,7 @@ import {
 	ui,
 	initialUIState
 } from '../reducer';
-import { uiConstants } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import { uiConstants } from '../constants';
 
 describe( 'reducer', () => {
 
@@ -21,7 +21,7 @@ describe( 'reducer', () => {
 
 
 	describe ( 'ui', () => {
-		const { actions, saveStatuses, tabNames } = uiConstants;
+		const { actions } = uiConstants;
 		let state;
 
 		it( 'Should have proper defaults', () => {
@@ -30,13 +30,14 @@ describe( 'reducer', () => {
 		} );
 
 		describe ( 'tabs', () => {
+			const { tabNames } = uiConstants;
+
 			it( 'Should properly change the active tab', () => {
 				const action = {
 					type: actions.SET_ACTIVE_TAB,
 					activeTab: tabNames.LABELS
 				};
 				state = ui( state, action );
-
 				expect( state.activeTab ).toEqual( action.activeTab );
 			} );
 
@@ -46,12 +47,13 @@ describe( 'reducer', () => {
 					activeTab: 'xyzzy'
 				};
 				state = ui( state, action );
-
 				expect( state.activeTab ).toEqual( initialUIState.activeTab );
 			} );
 		} );
 
 		describe ( 'save status', () => {
+			const { saveStatuses } = uiConstants;
+
 			it( 'Should properly change the save status', () => {
 				const action = {
 					type: actions.SET_SAVE_STATUS,

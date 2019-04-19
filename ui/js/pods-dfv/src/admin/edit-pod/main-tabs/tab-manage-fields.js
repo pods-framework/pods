@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { STORE_KEY } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
 // noinspection JSUnresolvedVariable
 const { __ } = wp.i18n;
@@ -8,7 +8,7 @@ const { withSelect } = wp.data;
 
 export const TabManageFields = withSelect( ( select ) => {
 	return {
-		fields: select( STORE_KEY ).getFields()
+		fields: select( STORE_KEY_EDIT_POD ).getFields()
 	};
 } )
 ( ( props ) => {

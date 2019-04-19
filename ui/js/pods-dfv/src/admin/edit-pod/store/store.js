@@ -1,4 +1,4 @@
-import { STORE_KEY } from './constants';
+import { STORE_KEY_EDIT_POD } from './constants';
 import reducer from './reducer';
 import * as selectors from './selectors';
 import * as actions from './actions';
@@ -10,7 +10,7 @@ export const initStore = ( props ) => {
 		labels: props.labels,
 	};
 
-	registerStore( STORE_KEY, {
+	return registerStore( STORE_KEY_EDIT_POD, {
 		reducer: reducer,
 		selectors: selectors,
 		actions: actions,

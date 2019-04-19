@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import classNames from 'classnames';
-import { STORE_KEY, tabNames } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import { STORE_KEY_EDIT_POD, tabNames } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
 // noinspection JSUnresolvedVariable
 const { __ } = wp.i18n;
@@ -11,12 +11,12 @@ const { withSelect, withDispatch } = wp.data;
 export const MainTabs = compose( [
 	withSelect( ( select ) => {
 		return {
-			activeTab: select( STORE_KEY ).getActiveTab()
+			activeTab: select( STORE_KEY_EDIT_POD ).getActiveTab()
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
 		return {
-			setActiveTab: dispatch( STORE_KEY ).setActiveTab
+			setActiveTab: dispatch( STORE_KEY_EDIT_POD ).setActiveTab
 		};
 	} )
 ] )

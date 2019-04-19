@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { STORE_KEY, tabNames } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import { STORE_KEY_EDIT_POD, tabNames } from 'pods-dfv/src/admin/edit-pod/store/constants';
 import { TabManageFields } from './tab-manage-fields';
 import { TabLabels } from './tab-labels';
 import { TabAdminUI } from './tab-admin-ui';
@@ -12,7 +12,7 @@ const { withSelect } = wp.data;
 
 export const ActiveTabContent = withSelect( ( select ) => {
 	return {
-		activeTab: select( STORE_KEY ).getActiveTab()
+		activeTab: select( STORE_KEY_EDIT_POD ).getActiveTab()
 	};
 } )
 ( ( props ) => {

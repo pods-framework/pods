@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { STORE_KEY } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
 const { withSelect, withDispatch } = wp.data;
 const { compose } = wp.compose;
@@ -8,7 +8,7 @@ const { sprintf } = wp.i18n;
 
 export const TabLabels = compose( [
 	withSelect( ( select ) => {
-		const storeSelect = select( STORE_KEY );
+		const storeSelect = select( STORE_KEY_EDIT_POD );
 		return {
 			labels: storeSelect.getLabels(),
 			getLabelValue: storeSelect.getLabelValue
@@ -16,7 +16,7 @@ export const TabLabels = compose( [
 	} ),
 	withDispatch( ( dispatch ) => {
 		return {
-			setLabelValue: dispatch( STORE_KEY ).setLabelValue
+			setLabelValue: dispatch( STORE_KEY_EDIT_POD ).setLabelValue
 		};
 	} )
 ] )

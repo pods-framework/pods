@@ -1,13 +1,13 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { STORE_KEY } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
 const { __ } = wp.i18n;
 const { withSelect } = wp.data;
 
 export const Postbox = withSelect( ( select ) => {
 	return {
-		isSaving: select( STORE_KEY ).isSaving()
+		isSaving: select( STORE_KEY_EDIT_POD ).isSaving()
 	};
 } )
 ( ( props ) => {

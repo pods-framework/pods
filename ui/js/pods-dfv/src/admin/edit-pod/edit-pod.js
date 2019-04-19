@@ -13,19 +13,19 @@ import { PodsDFVSluggable } from 'pods-dfv/src/admin/edit-pod/sluggable';
 import { MainTabs } from 'pods-dfv/src/admin/edit-pod/main-tabs/main-tabs';
 import { ActiveTabContent } from 'pods-dfv/src/admin/edit-pod/main-tabs/active-tab-content';
 import { Postbox } from 'pods-dfv/src/admin/edit-pod/postbox';
-import { STORE_KEY } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
 const AJAX_ACTION = 'pods_admin_proto';
 
 export const PodsDFVEditPod = compose ( [
 	withSelect( ( select ) => {
 		return {
-			state: select( STORE_KEY ).getState()
+			state: select( STORE_KEY_EDIT_POD ).getState()
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
 		return {
-			setSaveStatus: dispatch( STORE_KEY ).setSaveStatus
+			setSaveStatus: dispatch( STORE_KEY_EDIT_POD ).setSaveStatus
 		};
 	} )
 ] )

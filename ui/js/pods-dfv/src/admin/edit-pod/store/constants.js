@@ -1,4 +1,4 @@
-export const STORE_KEY = 'pods/edit-pod';
+export const STORE_KEY_EDIT_POD = 'pods/edit-pod';
 
 export const labelActions = {
 	SET_LABEL_VALUE: 'SET_LABEL_VALUE',

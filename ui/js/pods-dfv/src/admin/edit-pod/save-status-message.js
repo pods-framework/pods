@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { STORE_KEY, saveStatuses } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import { STORE_KEY_EDIT_POD, saveStatuses } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
 /* WordPress dependencies */
 // noinspection JSUnresolvedVariable
@@ -9,7 +9,7 @@ const { withSelect } = wp.data;
 
 export const SaveStatusMessage = withSelect( ( select ) => {
 	return {
-		saveStatus: select( STORE_KEY ).getSaveStatus()
+		saveStatus: select( STORE_KEY_EDIT_POD ).getSaveStatus()
 	};
 } )
 ( ( props ) => {

@@ -1240,7 +1240,7 @@ class PodsAdmin {
 				'label_add_new_item'               => array(
 					'label'         => __( 'Add new %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods'),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1248,7 +1248,7 @@ class PodsAdmin {
 				'label_new_item'                   => array(
 					'label'         => __( 'New %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods'),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1257,7 +1257,7 @@ class PodsAdmin {
 				'label_new_item_name'              => array(
 					'label'         => __( 'New %s Name', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods'),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1273,7 +1273,7 @@ class PodsAdmin {
 				'label_edit_item'                  => array(
 					'label'         => __( 'Edit %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods'),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1281,7 +1281,7 @@ class PodsAdmin {
 				'label_update_item'                => array(
 					'label'         => __( 'Update %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1297,7 +1297,7 @@ class PodsAdmin {
 				'label_duplicate_item'             => array(
 					'label'         => __( 'Duplicate %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1306,7 +1306,7 @@ class PodsAdmin {
 				'label_delete_item'                => array(
 					'label'         => __( 'Delete %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1322,7 +1322,7 @@ class PodsAdmin {
 				'label_view_item'                  => array(
 					'label'         => __( 'View %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1330,7 +1330,7 @@ class PodsAdmin {
 				'label_view_items'                 => array(
 					'label'         => __( 'View %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'Items',
+					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1353,7 +1353,7 @@ class PodsAdmin {
 				'label_manage_items'               => array(
 					'label'         => __( 'Manage %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'Items',
+					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1369,7 +1369,7 @@ class PodsAdmin {
 				'label_reorder_items'              => array(
 					'label'         => __( 'Reorder %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'Items',
+					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1378,7 +1378,7 @@ class PodsAdmin {
 				'label_all_items'                  => array(
 					'label'         => __( 'All %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'Items',
+					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1393,7 +1393,7 @@ class PodsAdmin {
 				'label_search_items'               => array(
 					'label'         => __( 'Search %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'items',
+					'param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1401,7 +1401,7 @@ class PodsAdmin {
 				'label_popular_items'              => array(
 					'label'         => __( 'Popular %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'Items',
+					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1411,7 +1411,7 @@ class PodsAdmin {
 				'label_parent'                     => array(
 					'label'         => __( 'Parent %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1420,7 +1420,7 @@ class PodsAdmin {
 				'label_parent_item'                => array(
 					'label'         => __( 'Parent %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1429,7 +1429,7 @@ class PodsAdmin {
 				'label_parent_item_colon'          => array(
 					'label'         => __( 'Parent %s:', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1443,7 +1443,7 @@ class PodsAdmin {
 				'label_no_items_found'             => array(
 					'label'         => __( 'No %s Found', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1459,7 +1459,7 @@ class PodsAdmin {
 				'label_archives'                   => array(
 					'label'         => __( '%s Archives', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1468,7 +1468,7 @@ class PodsAdmin {
 				'label_attributes'                 => array(
 					'label'         => __( '%s Attributes', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1477,7 +1477,7 @@ class PodsAdmin {
 				'label_insert_into_item'           => array(
 					'label'         => __( 'Insert into %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1486,7 +1486,7 @@ class PodsAdmin {
 				'label_uploaded_to_this_item'      => array(
 					'label'         => __( 'Uploaded to this %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1527,7 +1527,7 @@ class PodsAdmin {
 				'label_filter_items_list'          => array(
 					'label'         => __( 'Filter %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'Items',
+					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1536,7 +1536,7 @@ class PodsAdmin {
 				'label_items_list_navigation'      => array(
 					'label'         => __( '%s list navigation', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'Items',
+					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1545,7 +1545,7 @@ class PodsAdmin {
 				'label_items_list'                 => array(
 					'label'         => __( '%s list', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'Items',
+					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1554,7 +1554,7 @@ class PodsAdmin {
 				'label_separate_items_with_commas' => array(
 					'label'         => __( 'Separate %s with commas', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'items',
+					'param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1563,7 +1563,7 @@ class PodsAdmin {
 				'label_add_or_remove_items'        => array(
 					'label'         => __( 'Add or remove %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'items',
+					'param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1572,7 +1572,7 @@ class PodsAdmin {
 				'label_choose_from_the_most_used'  => array(
 					'label'         => __( 'Choose from the most used %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'items',
+					'param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1581,7 +1581,7 @@ class PodsAdmin {
 				'label_no_terms'                   => array(
 					'label'         => __( 'No %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => 'items',
+					'param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1590,7 +1590,7 @@ class PodsAdmin {
 				'label_item_published'             => array(
 					'label'         => __( '%s Published.', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1599,7 +1599,7 @@ class PodsAdmin {
 				'label_item_published_privately'   => array(
 					'label'         => __( '%s published privately.', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1608,7 +1608,7 @@ class PodsAdmin {
 				'label_item_reverted_to_draft'     => array(
 					'label'         => __( '%s reverted to draft.', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1617,7 +1617,7 @@ class PodsAdmin {
 				'label_item_scheduled'             => array(
 					'label'         => __( '%s scheduled.', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -1626,7 +1626,7 @@ class PodsAdmin {
 				'label_item_updated'               => array(
 					'label'         => __( '%s updated.', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => 'Item',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',

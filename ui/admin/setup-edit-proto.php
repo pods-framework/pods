@@ -5,8 +5,7 @@ $api = pods_api();
 /** @noinspection PhpUndefinedVariableInspection */
 $pod = $api->load_pod( array( 'id' => $obj->id ) );
 
-$tab_options = PodsInit::$admin->admin_setup_edit_options( $pod );
-
+// Fields
 $pod_fields = array();
 foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
 	$field_options = array_merge( $field_data[ 'options' ], $field_data );
@@ -14,6 +13,8 @@ foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
 	array_push( $pod_fields, $field_options );
 }
 
+// Labels
+$tab_options = PodsInit::$admin->admin_setup_edit_options( $pod );
 $labels = array();
 foreach ( $tab_options[ 'labels' ] as $field_name => $option ) {
 	$option['name'] = $field_name;
@@ -22,14 +23,18 @@ foreach ( $tab_options[ 'labels' ] as $field_name => $option ) {
 	if ( isset( $option[ 'value' ] ) && 0 < strlen( $option[ 'value' ] ) ) {
 		$value = $option[ 'value' ];
 	} else {
+		//--!! 'label' is on the Pod itself but the rest are under 'options'?
 		$value = pods_v( $field_name, $pod, $value );
+		$value = pods_v( $field_name, $pod[ 'options' ], $value );
 	}
 	$option[ 'value' ] = $value;
 
 	array_push( $labels, $option );
 }
 
+// Formatted data
 $data = array(
+	'debug' => $pod,
 	'fieldType'   => 'edit-pod',
 	'podInfo'     => array(
 		'name' => $pod[ 'name' ],

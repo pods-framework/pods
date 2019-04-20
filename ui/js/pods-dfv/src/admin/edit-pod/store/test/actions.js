@@ -1,14 +1,14 @@
 import {
 	uiConstants,
 	podMetaConstants,
-	labelConstants
+	labelConstants,
 } from '../constants';
 
 import {
 	setLabelValue,
 	setPodName,
 	setSaveStatus,
-	setActiveTab
+	setActiveTab,
 } from '../actions.js';
 
 describe( 'actions', () => {
@@ -23,12 +23,14 @@ describe( 'actions', () => {
 			it( 'Should define the SET_ACTIVE_TAB action', () => {
 				expect( actions.SET_ACTIVE_TAB ).not.toBeUndefined();
 			} );
+
 			it( `Should return ${action} action`, () => {
 				const activeTab = uiConstants.tabNames.LABELS;
 				const expected = {
 					type: action,
-					activeTab: activeTab
+					activeTab: activeTab,
 				};
+
 				expect( setActiveTab( activeTab ) ).toEqual( expected );
 			} );
 		} );
@@ -39,12 +41,14 @@ describe( 'actions', () => {
 			it( 'Should define the SET_SAVE_STATUS action', () => {
 				expect( actions.SET_SAVE_STATUS ).not.toBeUndefined();
 			} );
-			it ( `Should return ${action} action`, () => {
+
+			it( `Should return ${action} action`, () => {
 				const saveStatus = uiConstants.saveStatuses.SAVE_SUCCESS;
 				const expected = {
 					type: action,
-					saveStatus: saveStatus
+					saveStatus: saveStatus,
 				};
+
 				expect( setSaveStatus( saveStatus ) ).toEqual( expected );
 			} );
 		} );
@@ -65,8 +69,9 @@ describe( 'actions', () => {
 				const podName = 'xyzzyy';
 				const expected = {
 					type: action,
-					podName: podName
+					podName: podName,
 				};
+
 				expect( setPodName( podName ) ).toEqual( expected );
 			} );
 		} );
@@ -76,7 +81,7 @@ describe( 'actions', () => {
 	describe( 'label actions', () => {
 		const { actions } = labelConstants;
 
-		describe( 'setLavelValue', () => {
+		describe( 'setLabelValue', () => {
 			const action = actions.SET_LABEL_VALUE;
 
 			it( 'Should define the SET_LABEL_VALUE action', () => {
@@ -89,9 +94,11 @@ describe( 'actions', () => {
 				const expected = {
 					type: action,
 					labelName: labelName,
-					newValue: newValue
+					newValue: newValue,
 				};
-				expect( setLabelValue( labelName, newValue ) ).toEqual( expected );
+				const result = setLabelValue( labelName, newValue );
+
+				expect( result ).toEqual( expected );
 			} );
 		} );
 	} );

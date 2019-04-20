@@ -5,7 +5,7 @@ import {
 	getLabels,
 	getLabelValue,
 	isSaving,
-	getPodName
+	getPodName,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -16,7 +16,7 @@ describe( 'selectors', () => {
 
 			it( 'Should return the active tab', () => {
 				const state = {
-					ui: { activeTab: tabNames.LABELS }
+					ui: { activeTab: tabNames.LABELS },
 				};
 				const result = getActiveTab( state );
 				const expected = state.ui.activeTab;
@@ -31,7 +31,7 @@ describe( 'selectors', () => {
 
 			it( 'Should return the save status', () => {
 				const state = {
-					ui: { saveStatus: saveStatuses.SAVE_SUCCESS }
+					ui: { saveStatus: saveStatuses.SAVE_SUCCESS },
 				};
 				const result = getSaveStatus( state );
 				const expected = state.ui.saveStatus;
@@ -46,14 +46,14 @@ describe( 'selectors', () => {
 
 			it( 'Should return true when saving', () => {
 				const state = {
-					ui: { saveStatus: saveStatuses.SAVING }
+					ui: { saveStatus: saveStatuses.SAVING },
 				};
 				expect( isSaving( state ) ).toBe( true );
 			} );
 
 			it( 'Should return false when not saving', () => {
 				const state = {
-					ui: { saveStatus: saveStatuses.SAVE_SUCCESS }
+					ui: { saveStatus: saveStatuses.SAVE_SUCCESS },
 				};
 				expect( isSaving( state ) ).toBe( false );
 			} );
@@ -64,7 +64,7 @@ describe( 'selectors', () => {
 		describe( 'getPodName', () => {
 			it( 'Should return the Pod name', () => {
 				const state = {
-					podMeta: { podName: 'plugh' }
+					podMeta: { podName: 'plugh' },
 				};
 				const result = getPodName( state );
 				const expected = state.podMeta.podName;
@@ -83,9 +83,10 @@ describe( 'selectors', () => {
 			labels: [
 				{ name: 'name1', value: 'value1' },
 				{ name: 'name2', value: 'value2' },
-				{ name: 'name3', value: 'value3' }
-			]
+				{ name: 'name3', value: 'value3' },
+			],
 		};
+
 		describe( 'getLabels', () => {
 			it( 'Should return the labels array', () => {
 				const result = getLabels( state );

@@ -3,31 +3,42 @@ import { initialUIState } from '../reducer';
 
 describe( 'store', () => {
 	describe( 'initStore() empty', () => {
-		const initializedWithEmptyState = {
+		const expected = {
+			ui: initialUIState,
+			podMeta: {},
 			fields: [],
 			labels: [],
-			ui: initialUIState
 		};
 		const store = initStore( {} );
 
 		it( 'Initializes properly', () => {
-			expect( store.getState() ).toEqual( initializedWithEmptyState );
+			expect( store.getState() ).toEqual( expected );
 		} );
 	} );
 
 	describe( 'initStore() with initialState', () => {
+		const fields = [ 'field 1', 'field 2', 'field 3'];
+		const labels = [ 'label 1', 'label 2', 'label 3' ];
+		const podName = 'xyzzy';
 		const initialState = {
-			fields: [ 'field 1', 'field 2', 'field 3' ],
-			labels: [ 'label 1', 'label 2', 'label 3' ],
+			fields: fields,
+			labels: labels,
+			podInfo: {
+				name: podName
+			}
 		};
-		const initializedWithInitialState = {
-			...initialState,
-			ui: initialUIState
+		const expected = {
+			ui: initialUIState,
+			fields: fields,
+			labels: labels,
+			podMeta: {
+				podName: podName
+			},
 		};
 		const store = initStore( initialState );
 
 		it( 'Initializes properly', () => {
-			expect( store.getState() ).toEqual( initializedWithInitialState );
+			expect( store.getState() ).toEqual( expected );
 		} );
 	} );
 } );

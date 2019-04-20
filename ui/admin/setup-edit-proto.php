@@ -34,7 +34,6 @@ foreach ( $tab_options[ 'labels' ] as $field_name => $option ) {
 
 // Formatted data
 $data = array(
-	'debug' => $pod,
 	'fieldType'   => 'edit-pod',
 	'podInfo'     => array(
 		'name' => $pod[ 'name' ],

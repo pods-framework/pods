@@ -9,7 +9,7 @@ const { withSelect, withDispatch } = wp.data;
 const { compose } = wp.compose;
 
 import { SaveStatusMessage } from 'pods-dfv/src/admin/edit-pod/save-status-message';
-import { PodsDFVSluggable } from 'pods-dfv/src/admin/edit-pod/sluggable';
+import { EditPodName } from 'pods-dfv/src/admin/edit-pod/edit-pod-name';
 import { MainTabs } from 'pods-dfv/src/admin/edit-pod/main-tabs/main-tabs';
 import { ActiveTabContent } from 'pods-dfv/src/admin/edit-pod/main-tabs/active-tab-content';
 import { Postbox } from 'pods-dfv/src/admin/edit-pod/postbox';
@@ -67,13 +67,7 @@ export const PodsDFVEditPod = compose ( [
 	return (
 		<form className='pods-submittable pods-nav-tabbed' onSubmit={handleSubmit}>
 			<div className='pods-submittable-fields'>
-				<h2>
-					{__( 'Edit Pod: ', 'pods' )}
-					<PodsDFVSluggable
-						value={props.podInfo.name}
-						onChange={ ( e ) => setPodName( e.target.value ) }
-					/>
-				</h2>
+				<EditPodName />
 				<SaveStatusMessage />
 				<MainTabs />
 			</div>

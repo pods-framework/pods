@@ -12,14 +12,20 @@ export const uiConstants = {
 		ADMIN_UI: 'ADMIN_UI',
 		ADVANCED_OPTIONS: 'ADVANCED_OPTIONS',
 		AUTO_TEMPLATE_OPTIONS: 'AUTO_TEMPLATE_OPTIONS',
-		REST_API: 'REST_API'
+		REST_API: 'REST_API',
 	},
 
 	saveStatuses: {
 		NONE: '',
 		SAVING: 'SAVING',
 		SAVE_SUCCESS: 'SAVE_SUCCESS',
-		SAVE_ERROR: 'SAVE_ERROR'
+		SAVE_ERROR: 'SAVE_ERROR',
+	},
+};
+
+export const podMetaConstants = {
+	actions: {
+		SET_POD_NAME: 'SET_POD_NAME',
 	},
 };
 

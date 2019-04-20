@@ -5,6 +5,7 @@ import {
 	getLabels,
 	getLabelValue,
 	isSaving,
+	getPodName
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -47,6 +48,17 @@ describe( 'selectors', () => {
 					ui: { saveStatus: saveStatuses.SAVE_SUCCESS }
 				};
 				expect( isSaving( state ) ).toBe( false );
+			} );
+		} );
+	} );
+
+	describe( 'podMeta', () => {
+		describe( 'getPodName', () => {
+			it( 'Should return the Pod name', () => {
+				const state = {
+					podMeta: { podName: 'plugh' }
+				};
+				expect( getPodName( state ) ).toEqual( state.podMeta.podName );
 			} );
 		} );
 	} );

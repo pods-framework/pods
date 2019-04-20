@@ -1,5 +1,6 @@
-import { uiConstants } from '../constants';
+import { podMetaConstants, uiConstants } from '../constants';
 import {
+	podMeta,
 	fields,
 	labels,
 	ui,
@@ -7,6 +8,23 @@ import {
 } from '../reducer';
 
 describe( 'reducer', () => {
+
+	describe( 'podMeta', () => {
+		const { actions } = podMetaConstants;
+
+		it( 'Should return an empty object by default', () => {
+			expect( podMeta( undefined, undefined ) ).toEqual( {} );
+		} );
+
+		it( 'Should update the pod name', () => {
+			const action = {
+				type: actions.SET_POD_NAME,
+				podName: 'plugh'
+			};
+			const state = podMeta( undefined, action );
+			expect ( state.podName ).toEqual( action.podName );
+		} );
+	} );
 
 	describe ( 'fields', () => {
 		it( 'Should return an empty array by default', () => {

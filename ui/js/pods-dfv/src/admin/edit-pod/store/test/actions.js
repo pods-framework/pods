@@ -1,6 +1,12 @@
-import { uiConstants, labelConstants } from '../constants';
+import {
+	uiConstants,
+	podMetaConstants,
+	labelConstants
+} from '../constants';
+
 import {
 	setLabelValue,
+	setPodName,
 	setSaveStatus,
 	setActiveTab
 } from '../actions.js';
@@ -34,6 +40,24 @@ describe( 'actions', () => {
 					saveStatus: saveStatus
 				};
 				expect( setSaveStatus( saveStatus ) ).toEqual( expected );
+			} );
+		} );
+	} );
+
+	// Pod meta
+	describe( 'pod meta actions', () => {
+		const { actions } = podMetaConstants;
+
+		describe( 'setPodName', () => {
+			const action = actions.SET_POD_NAME;
+
+			it( `Should return ${action} action`, () => {
+				const podName = 'xyzzyy';
+				const expected = {
+					type: action,
+					podName: podName
+				};
+				expect( setPodName( podName ) ).toEqual( expected );
 			} );
 		} );
 	} );

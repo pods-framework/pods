@@ -1,4 +1,8 @@
-import { uiConstants, labelConstants } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import {
+	uiConstants,
+	podMetaConstants,
+	labelConstants
+} from 'pods-dfv/src/admin/edit-pod/store/constants';
 
 export const setLabelValue = ( labelName, newValue ) => {
 	return {
@@ -21,3 +25,12 @@ export const setSaveStatus = ( saveStatus ) => {
 		saveStatus: saveStatus
 	};
 };
+
+export const setPodName = ( podName ) => {
+	return {
+		type: podMetaConstants.actions.SET_POD_NAME,
+		podName: podName
+	};
+};
+
+//export const setPodName

@@ -52,7 +52,11 @@ export const PodsDFVSluggable = ( props ) => {
 const NotEditing = ( props ) => {
 	return (
 		<span>
-			<em>{props.value}</em>
+			<em
+				onClick={props.handleEditClick}
+				style={{ cursor: 'pointer' }}>
+				{props.value}
+			</em>
 			{'\u00A0' /* &nbsp; */}
 			<input
 				type='button'

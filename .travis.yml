@@ -51,4 +51,5 @@ script:
     - | # Only run js tests if we're running the latest stable node (Pipe preserves subsequent whitespace)
       if [ $NODE_RELEASE == "stable" ]; then
           npm run test-dfv;
+          npm run jest-tests;
       fi

@@ -20,6 +20,9 @@ describe( 'actions', () => {
 		describe( 'setActiveTab', () => {
 			const action = actions.SET_ACTIVE_TAB;
 
+			it( 'Should define the SET_ACTIVE_TAB action', () => {
+				expect( actions.SET_ACTIVE_TAB ).not.toBeUndefined();
+			} );
 			it( `Should return ${action} action`, () => {
 				const activeTab = uiConstants.tabNames.LABELS;
 				const expected = {
@@ -33,6 +36,9 @@ describe( 'actions', () => {
 		describe( 'setSaveStatus', () => {
 			const action = actions.SET_SAVE_STATUS;
 
+			it( 'Should define the SET_SAVE_STATUS action', () => {
+				expect( actions.SET_SAVE_STATUS ).not.toBeUndefined();
+			} );
 			it ( `Should return ${action} action`, () => {
 				const saveStatus = uiConstants.saveStatuses.SAVE_SUCCESS;
 				const expected = {
@@ -51,6 +57,10 @@ describe( 'actions', () => {
 		describe( 'setPodName', () => {
 			const action = actions.SET_POD_NAME;
 
+			it( 'Should define the SET_POD_NAME action', () => {
+				expect( actions.SET_POD_NAME ).not.toBeUndefined();
+			} );
+
 			it( `Should return ${action} action`, () => {
 				const podName = 'xyzzyy';
 				const expected = {
@@ -68,6 +78,10 @@ describe( 'actions', () => {
 
 		describe( 'setLavelValue', () => {
 			const action = actions.SET_LABEL_VALUE;
+
+			it( 'Should define the SET_LABEL_VALUE action', () => {
+				expect( actions.SET_LABEL_VALUE ).not.toBeUndefined();
+			} );
 
 			it( `Should return ${action} action`, () => {
 				const labelName = 'xxx';

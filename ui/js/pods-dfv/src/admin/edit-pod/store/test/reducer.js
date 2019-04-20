@@ -1,4 +1,4 @@
-import { podMetaConstants, uiConstants } from '../constants';
+import { labelConstants, podMetaConstants, uiConstants } from '../constants';
 import {
 	podMeta,
 	fields,
@@ -9,11 +9,16 @@ import {
 
 describe( 'reducer', () => {
 
+	// Pod Meta
 	describe( 'podMeta', () => {
 		const { actions } = podMetaConstants;
 
 		it( 'Should return an empty object by default', () => {
 			expect( podMeta( undefined, undefined ) ).toEqual( {} );
+		} );
+
+		it( 'Should define the SET_POD_NAME action', () => {
+			expect( actions.SET_POD_NAME ).not.toBeUndefined();
 		} );
 
 		it( 'Should update the pod name', () => {
@@ -26,18 +31,35 @@ describe( 'reducer', () => {
 		} );
 	} );
 
+	// Fields
 	describe ( 'fields', () => {
 		it( 'Should return an empty array by default', () => {
 			expect( fields( undefined, undefined ) ).toEqual( [] );
 		} );
 	} );
 
-
+	// Labels
 	describe ( 'labels', () => {
+		const { actions } = labelConstants;
+		let state;
 
+		it( 'Should return an empty array by default', () => {
+			state = labels( undefined, undefined );
+			expect( state ).toEqual( [] );
+		} );
+
+		it( 'Should define the SET_LABEL_VALUE action', () => {
+			expect( actions.SET_LABEL_VALUE ).not.toBeUndefined();
+		} );
+
+		it( 'Should update label values', () => {
+			const action = {
+				type: actions.SET_LABEL_VALUE
+			}
+		} );
 	} );
 
-
+	// UI
 	describe ( 'ui', () => {
 		const { actions } = uiConstants;
 		let state;
@@ -49,6 +71,10 @@ describe( 'reducer', () => {
 
 		describe ( 'tabs', () => {
 			const { tabNames } = uiConstants;
+
+			it( 'Should define the SET_ACTIVE_TAB action', () => {
+				expect( actions.SET_ACTIVE_TAB ).not.toBeUndefined();
+			} );
 
 			it( 'Should properly change the active tab', () => {
 				const action = {
@@ -71,6 +97,10 @@ describe( 'reducer', () => {
 
 		describe ( 'save status', () => {
 			const { saveStatuses } = uiConstants;
+
+			it( 'Should define the SET_SAVE_STATUS action', () => {
+				expect( actions.SET_SAVE_STATUS ).not.toBeUndefined();
+			} );
 
 			it( 'Should properly change the save status', () => {
 				const action = {

@@ -18,7 +18,11 @@ describe( 'selectors', () => {
 				const state = {
 					ui: { activeTab: tabNames.LABELS }
 				};
-				expect( getActiveTab( state ) ).toEqual( state.ui.activeTab );
+				const result = getActiveTab( state );
+				const expected = state.ui.activeTab;
+
+				expect( result ).not.toBeUndefined();
+				expect( result ).toEqual( expected );
 			} );
 		} );
 
@@ -29,21 +33,25 @@ describe( 'selectors', () => {
 				const state = {
 					ui: { saveStatus: saveStatuses.SAVE_SUCCESS }
 				};
-				expect( getSaveStatus( state ) ).toEqual( state.ui.saveStatus );
+				const result = getSaveStatus( state );
+				const expected = state.ui.saveStatus;
+
+				expect( result ).not.toBeUndefined();
+				expect( result ).toEqual( expected );
 			} );
 		} );
 
 		describe( 'isSaving', () => {
 			const { saveStatuses } = uiConstants;
 
-			it ( 'Should return true when saving', () => {
+			it( 'Should return true when saving', () => {
 				const state = {
 					ui: { saveStatus: saveStatuses.SAVING }
 				};
 				expect( isSaving( state ) ).toBe( true );
 			} );
 
-			it ( 'Should return false when not saving', () => {
+			it( 'Should return false when not saving', () => {
 				const state = {
 					ui: { saveStatus: saveStatuses.SAVE_SUCCESS }
 				};
@@ -58,7 +66,11 @@ describe( 'selectors', () => {
 				const state = {
 					podMeta: { podName: 'plugh' }
 				};
-				expect( getPodName( state ) ).toEqual( state.podMeta.podName );
+				const result = getPodName( state );
+				const expected = state.podMeta.podName;
+
+				expect( result ).not.toBeUndefined();
+				expect( result ).toEqual( expected );
 			} );
 		} );
 	} );
@@ -71,19 +83,27 @@ describe( 'selectors', () => {
 			labels: [
 				{ name: 'name1', value: 'value1' },
 				{ name: 'name2', value: 'value2' },
-				{ name: 'name3', value: 'value3' },
+				{ name: 'name3', value: 'value3' }
 			]
 		};
 		describe( 'getLabels', () => {
-			it ( 'Should return the labels', () => {
-				expect( getLabels( state ) ).toEqual( state.labels );
+			it( 'Should return the labels array', () => {
+				const result = getLabels( state );
+				const expected = state.labels;
+
+				expect( result ).not.toBeUndefined();
+				expect( result ).toEqual( expected );
 			} );
 		} );
 
 		describe( 'getLabelValue', () => {
-			it ( 'Should get the label value', () => {
+			it( 'Should return label values', () => {
 				state.labels.forEach( ( thisLabel ) => {
-					expect( getLabelValue( state, thisLabel.name ) ).toBe( thisLabel.value );
+					const result = getLabelValue( state, thisLabel.name );
+					const expected = thisLabel.value;
+
+					expect( result ).not.toBeUndefined();
+					expect( result ).toBe( expected );
 				} );
 			} );
 		} );

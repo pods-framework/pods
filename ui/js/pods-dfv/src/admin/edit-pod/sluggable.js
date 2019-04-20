@@ -65,16 +65,19 @@ const NotEditing = ( props ) => {
 };
 
 const Editing = ( props ) => {
+	const handleFocus = ( e ) => e.target.select();
+
 	return (
 		<span>
 			<input
-				name='name'
-				data-name-clean='name'
-				id='pods-form-ui-name'
-				className='pods-form-ui-field pods-form-ui-field-type-text pods-form-ui-field-name-name'
 				type='text'
+				autoFocus
+				id='pods-form-ui-name'
+				name='name'
+				className='pods-form-ui-field pods-form-ui-field-type-text pods-form-ui-field-name-name'
 				value={props.value}
 				onChange={( e ) => props.handleValueChange( e.target.value )}
+				onFocus={handleFocus}
 				maxLength='46'
 				size='25'
 			/>

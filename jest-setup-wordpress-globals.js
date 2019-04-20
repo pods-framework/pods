@@ -1,15 +1,19 @@
 import {
 	combineReducers,
 	registerStore,
+	select,
+	dispatch,
 	withSelect,
 	withDispatch,
 } from '@wordpress/data';
 
 global.wp = {
 	data: {
-		combineReducers: combineReducers,
 		registerStore: registerStore,
-		withDispatch: withDispatch,
+		combineReducers: combineReducers,
+		select: select,
+		dispatch: dispatch,
 		withSelect: withSelect,
+		withDispatch: withDispatch,
 	}
 };

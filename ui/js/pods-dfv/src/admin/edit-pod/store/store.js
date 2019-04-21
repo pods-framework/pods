@@ -11,9 +11,7 @@ export const initStore = ( props ) => {
 		ui: props.ui,
 		fields: props.fields,
 		labels: props.labels,
-		podMeta: {
-			name: props.podMeta.name
-		}
+		podMeta: props.podMeta
 	};
 
 	return registerStore( STORE_KEY_EDIT_POD, {

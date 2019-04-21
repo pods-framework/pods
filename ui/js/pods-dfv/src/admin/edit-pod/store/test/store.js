@@ -73,7 +73,7 @@ describe( 'store', () => {
 			describe( 'Active tab', () => {
 				const { select, dispatch } = _initStore( {} );
 
-				it( 'getActiveTab() should return the default on empty init', () => {
+				test( 'getActiveTab() should return the default on empty init', () => {
 					const expected = initialUIState.activeTab;
 					const result = select.getActiveTab();
 
@@ -81,7 +81,7 @@ describe( 'store', () => {
 					expect( result ).toEqual( expected );
 				} );
 
-				it( 'setActiveTab() should change the active tab', () => {
+				test( 'setActiveTab() should change the active tab', () => {
 					const newTab = uiConstants.tabNames.LABELS;
 					dispatch.setActiveTab( newTab );
 					const result = select.getActiveTab();
@@ -94,7 +94,7 @@ describe( 'store', () => {
 			describe( 'Save status', () => {
 				const { select, dispatch } = _initStore( {} );
 
-				it( 'getSaveStatus() should return the default on empty init', () => {
+				test( 'getSaveStatus() should return the default on empty init', () => {
 					const expected = initialUIState.saveStatus;
 					const result = select.getSaveStatus();
 
@@ -102,14 +102,14 @@ describe( 'store', () => {
 					expect( result ).toEqual( expected );
 				} );
 
-				it( 'isSaving() should not initialize to a saving state', () => {
+				test( 'isSaving() should not initialize to a saving state', () => {
 					const expected = false;
 					const result = select.isSaving();
 
 					expect( result ).toEqual( expected );
 				} );
 
-				it( 'setSaveStatus() should change the status', () => {
+				test( 'setSaveStatus() should change the status', () => {
 					const expected = uiConstants.saveStatuses.SAVE_SUCCESS;
 					dispatch.setSaveStatus( expected );
 					const result = select.getSaveStatus();
@@ -117,7 +117,7 @@ describe( 'store', () => {
 					expect( result ).toEqual( expected );
 				} );
 
-				it( 'isSaving() should be true when saving', () => {
+				test( 'isSaving() should be true when saving', () => {
 					const saving = uiConstants.saveStatuses.SAVING;
 					dispatch.setSaveStatus( saving );
 					const result = select.getSaveStatus();
@@ -125,7 +125,7 @@ describe( 'store', () => {
 					expect( select.isSaving() ).toBe( true );
 				} );
 
-				it( 'isSaving() should be false when not saving', () => {
+				test( 'isSaving() should be false when not saving', () => {
 					const notSaving = uiConstants.saveStatuses.NONE;
 					dispatch.setSaveStatus( notSaving );
 					const result = select.getSaveStatus();
@@ -136,25 +136,49 @@ describe( 'store', () => {
 		} );
 
 		describe( 'podMeta', () => {
-			const initialName = 'plugh';
-			const rename = 'xyzzy';
-			const initialStoreState = { podMeta: { name: initialName } };
-			const { select, dispatch } = _initStore( initialStoreState );
+			describe( 'Pod name', () => {
+				const initialName = 'plugh';
+				const rename = 'xyzzy';
+				const initialState = { podMeta: { name: initialName } };
+				const { select, dispatch } = _initStore( initialState );
 
-			it( 'getPodName() should retrieve the pod name', () => {
-				const expected = initialName;
-				const result = select.getPodName();
+				it( 'getPodName() should retrieve the pod name', () => {
+					const expected = initialName;
+					const result = select.getPodName();
 
-				expect( result ).not.toBeUndefined();
-				expect( result ).toEqual( expected );
+					expect( result ).not.toBeUndefined();
+					expect( result ).toEqual( expected );
+				} );
+
+				it( 'setPodName() should update the pod name', () => {
+					const expected = rename;
+					dispatch.setPodName( expected );
+					const result = select.getPodName();
+
+					expect( result ).toEqual( expected );
+				} );
 			} );
 
-			it( 'setPodName() should update the pod name', () => {
-				const expected = rename;
-				dispatch.setPodName( expected );
-				const result = select.getPodName();
+			describe( 'General meta', () => {
+				const { select, dispatch } = _initStore( {} );
 
-				expect( result ).toEqual( expected );
+				test( 'setPodMetaValue() should create a new meta value', () => {
+					const key = 'foo';
+					const value = 'bar';
+					dispatch.setPodMetaValue( key, value );
+					const result = select.getPodMetaValue( key );
+
+					expect( result ).toEqual( value );
+				} );
+
+				test( 'setPodMetaValue() should update an existing meta value', () => {
+					const key = 'foo';
+					const value = 'baz';
+					dispatch.setPodMetaValue( key, value );
+					const result = select.getPodMetaValue( key );
+
+					expect( result ).toEqual( value );
+				} );
 			} );
 		} );
 

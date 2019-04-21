@@ -26,6 +26,7 @@ export const setSaveStatus = ( saveStatus ) => {
 	};
 };
 
+// Pod meta
 export const setPodName = ( name ) => {
 	return {
 		type: podMetaConstants.actions.SET_POD_NAME,
@@ -33,4 +34,10 @@ export const setPodName = ( name ) => {
 	};
 };
 
-//export const setPodName
+export const setPodMetaValue = ( key, value ) => {
+	return {
+		type: podMetaConstants.actions.SET_POD_META_VALUE,
+		key: key,
+		value: value
+	};
+};

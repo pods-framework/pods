@@ -33,6 +33,19 @@ describe( 'reducer', () => {
 			expect( result ).not.toBeUndefined();
 			expect( result ).toEqual( expected );
 		} );
+
+		it( 'Should update pod meta values', () => {
+			const action = {
+				type: actions.SET_POD_META_VALUE,
+				key: 'foo',
+				value: 'bar',
+			};
+			const expected = { [ action.key ]: action.value };
+			const result = podMeta( undefined, action );
+
+			expect( result ).not.toBeUndefined();
+			expect( result ).toEqual( expected );
+		} );
 	} );
 
 	// Fields

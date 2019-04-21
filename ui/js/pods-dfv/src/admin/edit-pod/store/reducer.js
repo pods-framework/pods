@@ -52,6 +52,12 @@ export const podMeta = ( state = {}, action = {} ) => {
 				name: action.name
 			};
 
+		case actions.SET_POD_META_VALUE:
+			return {
+				...state,
+				[ action.key ]: action.value
+			};
+
 		default:
 			return state;
 	}

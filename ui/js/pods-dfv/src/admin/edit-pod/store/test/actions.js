@@ -7,6 +7,7 @@ import {
 import {
 	setLabelValue,
 	setPodName,
+	setPodMetaValue,
 	setSaveStatus,
 	setActiveTab,
 } from '../actions.js';
@@ -17,7 +18,7 @@ describe( 'actions', () => {
 	describe( 'ui actions', () => {
 		const { actions } = uiConstants;
 
-		describe( 'setActiveTab', () => {
+		describe( 'setActiveTab()', () => {
 			const action = actions.SET_ACTIVE_TAB;
 
 			it( 'Should define the SET_ACTIVE_TAB action', () => {
@@ -35,7 +36,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		describe( 'setSaveStatus', () => {
+		describe( 'setSaveStatus()', () => {
 			const action = actions.SET_SAVE_STATUS;
 
 			it( 'Should define the SET_SAVE_STATUS action', () => {
@@ -58,7 +59,7 @@ describe( 'actions', () => {
 	describe( 'pod meta actions', () => {
 		const { actions } = podMetaConstants;
 
-		describe( 'setPodName', () => {
+		describe( 'setPodName()', () => {
 			const action = actions.SET_POD_NAME;
 
 			it( 'Should define the SET_POD_NAME action', () => {
@@ -75,13 +76,34 @@ describe( 'actions', () => {
 				expect( setPodName( name ) ).toEqual( expected );
 			} );
 		} );
+
+		describe( 'setPodMetaValue()', () => {
+			const action = actions.SET_POD_META_VALUE;
+
+			it( 'Should define the SET_POD_META_VALUE action', () => {
+				expect( actions.SET_POD_META_VALUE ).not.toBeUndefined();
+			} );
+
+			it( `Should return ${action} action`, () => {
+				const key = 'foo';
+				const value = 'bar';
+				const expected = {
+					type: action,
+					key: key,
+					value: value,
+				};
+				const result = setPodMetaValue( key, value );
+
+				expect( result ).toEqual( expected );
+			} );
+		} );
 	} );
 
 	// Labels
 	describe( 'label actions', () => {
 		const { actions } = labelConstants;
 
-		describe( 'setLabelValue', () => {
+		describe( 'setLabelValue()', () => {
 			const action = actions.SET_LABEL_VALUE;
 
 			it( 'Should define the SET_LABEL_VALUE action', () => {

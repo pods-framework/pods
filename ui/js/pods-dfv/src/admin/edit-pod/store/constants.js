@@ -26,6 +26,7 @@ export const uiConstants = {
 export const podMetaConstants = {
 	actions: {
 		SET_POD_NAME: 'SET_POD_NAME',
+		SET_POD_META_VALUE: 'SET_POD_META_VALUE',
 	},
 };
 

@@ -6,12 +6,13 @@ import {
 	getLabelValue,
 	isSaving,
 	getPodName,
+	getPodMetaValue,
 } from '../selectors';
 
 describe( 'selectors', () => {
 
 	describe( 'ui', () => {
-		describe( 'getActiveTab', () => {
+		describe( 'getActiveTab()', () => {
 			const { tabNames } = uiConstants;
 
 			it( 'Should return the active tab', () => {
@@ -26,7 +27,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		describe( 'getSaveStatus', () => {
+		describe( 'getSaveStatus()', () => {
 			const { saveStatuses } = uiConstants;
 
 			it( 'Should return the save status', () => {
@@ -41,7 +42,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		describe( 'isSaving', () => {
+		describe( 'isSaving()', () => {
 			const { saveStatuses } = uiConstants;
 
 			it( 'Should return true when saving', () => {
@@ -61,13 +62,25 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'podMeta', () => {
-		describe( 'getPodName', () => {
+		describe( 'getPodName()', () => {
 			it( 'Should return the Pod name', () => {
 				const state = {
 					podMeta: { name: 'plugh' },
 				};
 				const result = getPodName( state );
 				const expected = state.podMeta.name;
+
+				expect( result ).not.toBeUndefined();
+				expect( result ).toEqual( expected );
+			} );
+		} );
+
+		describe( 'getPodMetaValue()', () => {
+			it( 'Should return the meta value', () => {
+				const key = 'foo';
+				const expected = 'bar';
+				const state = { podMeta: { [ key ]: expected } };
+				const result = getPodMetaValue( state, key );
 
 				expect( result ).not.toBeUndefined();
 				expect( result ).toEqual( expected );
@@ -87,7 +100,7 @@ describe( 'selectors', () => {
 			],
 		};
 
-		describe( 'getLabels', () => {
+		describe( 'getLabels()', () => {
 			it( 'Should return the labels array', () => {
 				const result = getLabels( state );
 				const expected = state.labels;
@@ -97,7 +110,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		describe( 'getLabelValue', () => {
+		describe( 'getLabelValue()', () => {
 			it( 'Should return label values', () => {
 				state.labels.forEach( ( thisLabel ) => {
 					const result = getLabelValue( state, thisLabel.name );

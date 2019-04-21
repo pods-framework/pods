@@ -22,6 +22,9 @@ export const getPodName = state => {
 	state.podMeta = state.podMeta || {};
 	return state.podMeta.name;
 };
+export const getPodMetaValue = ( state, key ) => {
+	return state.podMeta[ key ];
+};
 
 // Fields
 export const getFields = state => state.fields;

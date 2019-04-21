@@ -1,6 +1,9 @@
 import { initStore } from '../store';
 import { initialUIState } from '../reducer';
-import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import {
+	STORE_KEY_EDIT_POD,
+	uiConstants,
+} from '../constants';
 
 describe( 'store', () => {
 
@@ -65,10 +68,22 @@ describe( 'store', () => {
 	} );
 
 	describe( 'selectors', () => {
+
+		// Selector default values
 		describe( 'selector UI defaults', () => {
 			const [ select ] = _initStore( {} );
 
-			describe( 'getSaveStatus', () => {
+			describe( 'getActiveTab()', () => {
+				const expected = initialUIState.activeTab;
+				const result = select.getActiveTab();
+
+				it( 'Should return the default on empty init', () => {
+					expect( result ).not.toBeUndefined();
+					expect( result ).toEqual( expected );
+				} );
+			} );
+
+			describe( 'getSaveStatus()', () => {
 				it( 'Should return the default on empty init', () => {
 					const expected = initialUIState.saveStatus;
 					const result = select.getSaveStatus();
@@ -78,7 +93,7 @@ describe( 'store', () => {
 				} );
 			} );
 
-			describe( 'isSaving', () => {
+			describe( 'isSaving()', () => {
 				it( 'Should not initialize to a saving state', () => {
 					const expected = false;
 					const result = select.isSaving();
@@ -88,7 +103,56 @@ describe( 'store', () => {
 			} );
 		} );
 
-		describe( 'getPodName', () => {
+		// Selectors
+		describe( 'getActiveTab()', () => {
+			const tabName = uiConstants.tabNames.LABELS;
+			const initialStoreState = { ui: { activeTab: tabName } };
+			const [ select ] = _initStore( initialStoreState );
+
+			it( 'Should return the active tab', () => {
+				const expected = tabName;
+				const result = select.getActiveTab();
+
+				expect( result ).not.toBeUndefined();
+				expect( result ).toEqual( expected );
+			} );
+		} );
+
+		describe( 'getSaveStatus()', () => {
+			const status = uiConstants.saveStatuses.SAVE_SUCCESS;
+			const initialStoreState = { ui: { saveStatus: status } };
+			const [ select ] = _initStore( initialStoreState );
+
+			it( 'Should return the save status', () => {
+				const expected = status;
+				const result = select.getSaveStatus();
+
+				expect( result ).not.toBeUndefined();
+				expect( result ).toEqual( expected );
+			} );
+		} );
+
+		describe( 'isSaving()', () => {
+			it( 'Should return true when saving', () => {
+				const status = uiConstants.saveStatuses.SAVING;
+				const initialStoreState = { ui: { saveStatus: status } };
+				const [ select ] = _initStore( initialStoreState );
+				const result = select.isSaving();
+
+				expect( result ).toEqual( true );
+			} );
+
+			it( 'Should return false when not saving', () => {
+				const status = uiConstants.saveStatuses.NONE;
+				const initialStoreState = { ui: { saveStatus: status } };
+				const [ select ] = _initStore( initialStoreState );
+				const result = select.isSaving();
+
+				expect( result ).toEqual( false );
+			} );
+		} );
+
+		describe( 'getPodName()', () => {
 			const initialStoreState = { podMeta: { name: 'plugh' } };
 			const [ select ] = _initStore( initialStoreState );
 
@@ -101,5 +165,63 @@ describe( 'store', () => {
 			} );
 		} );
 
+		describe( 'getFields()', () => {
+			const initialStoreState = {
+				fields: [
+					{ name: 'xyzzy', label: 'label1' },
+					{ name: 'plugh', label: 'label2' },
+					{ name: 'abracadabra', label: 'label3' },
+				],
+			};
+			const [ select ] = _initStore( initialStoreState );
+
+			it( 'Should return the fields array', () => {
+				const expected = initialStoreState.fields;
+				const result = select.getFields();
+
+				expect( result ).not.toBeUndefined();
+				expect( result ).toEqual( expected );
+			} );
+		} );
+
+		describe( 'getLabels()', () => {
+			const initialStoreState = {
+				labels: [
+					{ name: 'xyzzy', value: 'label1' },
+					{ name: 'plugh', value: 'label2' },
+					{ name: 'abracadabra', value: 'label3' },
+				],
+			};
+			const [ select ] = _initStore( initialStoreState );
+
+			it( 'Should return the labels array', () => {
+				const expected = initialStoreState.labels;
+				const result = select.getLabels();
+
+				expect( result ).not.toBeUndefined();
+				expect( result ).toEqual( expected );
+			} );
+		} );
+
+		describe( 'getLabelValue', () => {
+			const initialStoreState = {
+				labels: [
+					{ name: 'xyzzy', value: 'label1' },
+					{ name: 'plugh', value: 'label2' },
+					{ name: 'abracadabra', value: 'label3' },
+				],
+			};
+			const [ select ] = _initStore( initialStoreState );
+
+			it( 'Should return label values', () => {
+				initialStoreState.labels.forEach( ( thisLabel ) => {
+					const expected = thisLabel.value;
+					const result = select.getLabelValue( thisLabel.name );
+
+					expect( result ).not.toBeUndefined();
+					expect( result ).toBe( expected );
+				} );
+			} );
+		} );
 	} );
 } );

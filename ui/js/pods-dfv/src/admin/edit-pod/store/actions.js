@@ -26,10 +26,10 @@ export const setSaveStatus = ( saveStatus ) => {
 	};
 };
 
-export const setPodName = ( podName ) => {
+export const setPodName = ( name ) => {
 	return {
 		type: podMetaConstants.actions.SET_POD_NAME,
-		podName: podName
+		name: name
 	};
 };
 

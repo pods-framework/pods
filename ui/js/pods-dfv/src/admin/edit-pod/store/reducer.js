@@ -49,7 +49,7 @@ export const podMeta = ( state = {}, action = {} ) => {
 		case actions.SET_POD_NAME:
 			return {
 				...state,
-				podName: action.podName
+				name: action.name
 			};
 
 		default:

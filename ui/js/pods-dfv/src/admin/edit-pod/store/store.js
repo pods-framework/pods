@@ -12,7 +12,7 @@ export const initStore = ( props ) => {
 		fields: props.fields,
 		labels: props.labels,
 		podMeta: {
-			podName: props.podMeta.name
+			name: props.podMeta.name
 		}
 	};
 

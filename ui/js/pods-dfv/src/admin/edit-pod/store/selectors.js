@@ -20,7 +20,7 @@ export const isSaving = state => {
 // Pod meta
 export const getPodName = state => {
 	state.podMeta = state.podMeta || {};
-	return state.podMeta.podName;
+	return state.podMeta.name;
 };
 
 // Fields

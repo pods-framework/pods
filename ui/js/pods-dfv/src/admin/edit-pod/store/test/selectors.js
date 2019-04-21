@@ -64,10 +64,10 @@ describe( 'selectors', () => {
 		describe( 'getPodName', () => {
 			it( 'Should return the Pod name', () => {
 				const state = {
-					podMeta: { podName: 'plugh' },
+					podMeta: { name: 'plugh' },
 				};
 				const result = getPodName( state );
-				const expected = state.podMeta.podName;
+				const expected = state.podMeta.name;
 
 				expect( result ).not.toBeUndefined();
 				expect( result ).toEqual( expected );

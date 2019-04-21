@@ -39,7 +39,7 @@ describe( 'store', () => {
 			fields: fields,
 			labels: labels,
 			podMeta: {
-				podName: name,
+				name: name,
 			},
 		};
 

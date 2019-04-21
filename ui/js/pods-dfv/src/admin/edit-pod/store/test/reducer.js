@@ -24,11 +24,11 @@ describe( 'reducer', () => {
 		it( 'Should update the pod name', () => {
 			const action = {
 				type: actions.SET_POD_NAME,
-				podName: 'plugh',
+				name: 'plugh',
 			};
 			const state = podMeta( undefined, action );
-			const expected = action.podName;
-			const result = state.podName;
+			const expected = action.name;
+			const result = state.name;
 
 			expect( result ).not.toBeUndefined();
 			expect( result ).toEqual( expected );

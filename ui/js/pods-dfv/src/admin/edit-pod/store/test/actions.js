@@ -66,13 +66,13 @@ describe( 'actions', () => {
 			} );
 
 			it( `Should return ${action} action`, () => {
-				const podName = 'xyzzyy';
+				const name = 'xyzzyy';
 				const expected = {
 					type: action,
-					podName: podName,
+					name: name,
 				};
 
-				expect( setPodName( podName ) ).toEqual( expected );
+				expect( setPodName( name ) ).toEqual( expected );
 			} );
 		} );
 	} );

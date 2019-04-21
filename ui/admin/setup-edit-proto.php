@@ -16,20 +16,22 @@ foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
 // Labels
 $tab_options = PodsInit::$admin->admin_setup_edit_options( $pod );
 $labels      = array();
-foreach ( $tab_options[ 'labels' ] as $field_name => $option ) {
-	$option[ 'name' ] = $field_name;
+if ( isset( $tab_options[ 'labels' ] ) ) {
+	foreach ( $tab_options[ 'labels' ] as $field_name => $option ) {
+		$option[ 'name' ] = $field_name;
 
-	$value = $option[ 'default' ];
-	if ( isset( $option[ 'value' ] ) && 0 < strlen( $option[ 'value' ] ) ) {
-		$value = $option[ 'value' ];
-	} else {
-		//--!! 'label' is on the Pod itself but the rest are under 'options'?
-		$value = pods_v( $field_name, $pod, $value );
-		$value = pods_v( $field_name, $pod[ 'options' ], $value );
+		$value = $option[ 'default' ];
+		if ( isset( $option[ 'value' ] ) && 0 < strlen( $option[ 'value' ] ) ) {
+			$value = $option[ 'value' ];
+		} else {
+			//--!! 'label' is on the Pod itself but the rest are under 'options'?
+			$value = pods_v( $field_name, $pod, $value );
+			$value = pods_v( $field_name, $pod[ 'options' ], $value );
+		}
+		$option[ 'value' ] = $value;
+
+		array_push( $labels, $option );
 	}
-	$option[ 'value' ] = $value;
-
-	array_push( $labels, $option );
 }
 
 // Formatted data

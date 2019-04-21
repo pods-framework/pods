@@ -8,6 +8,7 @@ export const initStore = ( props ) => {
 	props.podMeta = props.podMeta || {};
 
 	const initialState = {
+		ui: props.ui,
 		fields: props.fields,
 		labels: props.labels,
 		podMeta: {

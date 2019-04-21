@@ -15,9 +15,9 @@ foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
 
 // Labels
 $tab_options = PodsInit::$admin->admin_setup_edit_options( $pod );
-$labels = array();
+$labels      = array();
 foreach ( $tab_options[ 'labels' ] as $field_name => $option ) {
-	$option['name'] = $field_name;
+	$option[ 'name' ] = $field_name;
 
 	$value = $option[ 'default' ];
 	if ( isset( $option[ 'value' ] ) && 0 < strlen( $option[ 'value' ] ) ) {
@@ -34,18 +34,16 @@ foreach ( $tab_options[ 'labels' ] as $field_name => $option ) {
 
 // Formatted data
 $data = array(
-	'fieldType'   => 'edit-pod',
-	'podInfo'     => array(
+	'fieldType'  => 'edit-pod',
+	'podType'    => $pod[ 'type' ],
+	'tabOptions' => $tab_options,
+	'nonce'      => wp_create_nonce( 'pods-save_pod' ),
+	'podMeta'    => array(
 		'name' => $pod[ 'name' ],
-		'id'   => $pod[ 'id' ],
-		'type' => $pod[ 'type' ],
+		'id'   => $pod[ 'id' ]
 	),
-	'fields'      => $pod_fields,
-	'tabOptions'  => $tab_options,
-	'labels'      => $labels,
-	'fieldConfig' => array(
-		'nonce' => wp_create_nonce( 'pods-save_pod' )
-	)
+	'fields'     => $pod_fields,
+	'labels'     => $labels,
 );
 $data = wp_json_encode( $data, JSON_HEX_TAG );
 ?>

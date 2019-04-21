@@ -27,9 +27,11 @@ describe( 'reducer', () => {
 				podName: 'plugh',
 			};
 			const state = podMeta( undefined, action );
+			const expected = action.podName;
+			const result = state.podName;
 
-			expect( state.podName ).not.toBeUndefined();
-			expect( state.podName ).toEqual( action.podName );
+			expect( result ).not.toBeUndefined();
+			expect( result ).toEqual( expected );
 		} );
 	} );
 

@@ -2,9 +2,6 @@
 import React from 'react';
 
 /* WordPress dependencies */
-// noinspection JSUnresolvedVariable
-const { __ } = wp.i18n;
-//const { Modal } = wp.components;
 const { withSelect, withDispatch } = wp.data;
 const { compose } = wp.compose;
 
@@ -34,10 +31,10 @@ export const PodsDFVEditPod = compose ( [
 		e.preventDefault();
 
 		const requestData = {
-			'id': props.podInfo.id,
-			'name': props.podInfo.name,
-			'old_name': props.podInfo.name,
-			'_wpnonce': props.fieldConfig.nonce,
+			'id': props.podMeta.id,
+			'name': props.podMeta.name,
+			'old_name': props.podMeta.name,
+			'_wpnonce': props.nonce,
 			'fields': props.fields
 		};
 

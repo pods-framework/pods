@@ -5,13 +5,13 @@ import * as actions from './actions';
 const { registerStore } = wp.data;
 
 export const initStore = ( props ) => {
-	props.podInfo = props.podInfo || {};
+	props.podMeta = props.podMeta || {};
 
 	const initialState = {
 		fields: props.fields,
 		labels: props.labels,
 		podMeta: {
-			podName: props.podInfo.name
+			podName: props.podMeta.name
 		}
 	};
 

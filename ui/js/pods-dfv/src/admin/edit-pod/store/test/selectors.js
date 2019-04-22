@@ -1,8 +1,10 @@
 import { uiConstants } from '../constants';
 import {
+	getState,
 	getActiveTab,
 	getSaveStatus,
 	getLabels,
+	getFields,
 	getLabelValue,
 	isSaving,
 	getPodName,
@@ -10,6 +12,24 @@ import {
 } from '../selectors';
 
 describe( 'selectors', () => {
+
+	describe( 'getState()', () => {
+		it( 'Should return the full state', () => {
+			const state = {
+				foo: {
+					'xyzzy': 42,
+					'plugh': false
+				},
+				bar: {
+					name: 'bob',
+					relationship: 'your uncle'
+				},
+				baz: [ 0, 1, 2 ]
+			};
+			const result = getState( state );
+			expect( result ).toEqual( state );
+		} );
+	} );
 
 	describe( 'ui', () => {
 		describe( 'getActiveTab()', () => {
@@ -89,6 +109,22 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'fields', () => {
+		const state = {
+			fields: [
+				{ name: 'field1', label: 'label1' },
+				{ name: 'field2', label: 'label2' },
+				{ name: 'field3', label: 'label3' },
+			]
+		};
+		describe( 'getFields()', () => {
+			it( 'Should return the fields array', () => {
+				const result = getFields( state );
+				const expected = state.fields;
+
+				expect( result ).toBeDefined();
+				expect( result ).toEqual( expected );
+			} );
+		} );
 	} );
 
 	describe( 'labels', () => {
@@ -111,7 +147,7 @@ describe( 'selectors', () => {
 		} );
 
 		describe( 'getLabelValue()', () => {
-			it( 'Should return label values', () => {
+			it( 'Should return existing label values', () => {
 				state.labels.forEach( ( thisLabel ) => {
 					const result = getLabelValue( state, thisLabel.name );
 					const expected = thisLabel.value;
@@ -119,6 +155,14 @@ describe( 'selectors', () => {
 					expect( result ).not.toBeUndefined();
 					expect( result ).toBe( expected );
 				} );
+			} );
+
+			it( 'Should return null for a non-existent label', () => {
+				const result = getLabelValue( state, 'xyzzy' );
+				const expected = null;
+
+				expect( result ).toBeDefined();
+				expect( result ).toBe( expected );
 			} );
 		} );
 	} );

@@ -1,4 +1,7 @@
-import { STORE_KEY_EDIT_POD } from './constants';
+import {
+	STORE_KEY_EDIT_POD,
+	initialUIState
+} from './constants';
 import reducer from './reducer';
 import * as selectors from './selectors';
 import * as actions from './actions';
@@ -7,7 +10,7 @@ const { registerStore } = wp.data;
 
 export const initStore = ( props ) => {
 	const initialState = {
-		ui: props.ui,
+		ui: { ...initialUIState, ...props.ui },
 		fields: props.fields,
 		labels: props.labels,
 		podMeta: props.podMeta,

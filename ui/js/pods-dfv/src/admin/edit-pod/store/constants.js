@@ -7,12 +7,12 @@ export const uiConstants = {
 	},
 
 	tabNames: {
-		MANAGE_FIELDS: 'MANAGE_FIELDS',
-		LABELS: 'LABELS',
-		ADMIN_UI: 'ADMIN_UI',
-		ADVANCED_OPTIONS: 'ADVANCED_OPTIONS',
-		AUTO_TEMPLATE_OPTIONS: 'AUTO_TEMPLATE_OPTIONS',
-		REST_API: 'REST_API',
+		MANAGE_FIELDS: 'manage-fields',
+		LABELS: 'labels',
+		ADMIN_UI: 'admin-ui',
+		ADVANCED_OPTIONS: 'advanced',
+		AUTO_TEMPLATE_OPTIONS: 'pods-pfat',
+		REST_API: 'rest-api',
 	},
 
 	saveStatuses: {
@@ -34,4 +34,10 @@ export const labelConstants = {
 	actions: {
 		SET_LABEL_VALUE: 'SET_LABEL_VALUE',
 	},
+};
+
+export const initialUIState = {
+	activeTab: uiConstants.tabNames.MANAGE_FIELDS,
+	saveStatus: uiConstants.saveStatuses.NONE,
+	tabs: {},
 };

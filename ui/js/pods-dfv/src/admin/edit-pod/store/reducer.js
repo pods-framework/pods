@@ -1,15 +1,11 @@
 import {
 	uiConstants,
+	initialUIState,
 	labelConstants,
 	podMetaConstants
 } from './constants';
 
 const { combineReducers } = wp.data;
-
-export const initialUIState = {
-	activeTab: uiConstants.tabNames.MANAGE_FIELDS,
-	saveStatus: uiConstants.saveStatuses.NONE,
-};
 
 // UI
 export const ui = ( state = initialUIState, action = {} ) => {
@@ -18,7 +14,7 @@ export const ui = ( state = initialUIState, action = {} ) => {
 	switch ( action.type ) {
 		case actions.SET_ACTIVE_TAB:
 			let newTab = action.activeTab;
-			if ( !Object.values( tabNames ).includes( newTab ) ) {
+			if ( !state.tabs.hasOwnProperty( newTab ) ) {
 				newTab = initialUIState.activeTab;
 			}
 			return {

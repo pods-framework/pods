@@ -1,28 +1,19 @@
 import { initStore } from '../store';
-import { initialUIState } from '../reducer';
 import {
 	STORE_KEY_EDIT_POD,
 	uiConstants,
+	initialUIState,
 } from '../constants';
 
+const initTestStore = ( initialState ) => {
+	initStore( initialState );
+	select = wp.data.select( STORE_KEY_EDIT_POD );
+	dispatch = wp.data.dispatch( STORE_KEY_EDIT_POD );
+};
+
+let select, dispatch;
+
 describe( 'store', () => {
-
-	/**
-	 * The select and dispatch objects must be retrieved every time the store
-	 * is initialized, so wrap that whole procedure up
-	 *
-	 * @param initialState
-	 * @return {{select, dispatch}}
-	 * @private
-	 */
-	const _initStore = ( initialState ) => {
-		initStore( initialState );
-		const select = wp.data.select( STORE_KEY_EDIT_POD );
-		const dispatch = wp.data.dispatch( STORE_KEY_EDIT_POD );
-
-		return { select, dispatch };
-	};
-
 	describe( 'initStore() with initialState', () => {
 		const fields = [ 'field 1', 'field 2', 'field 3' ];
 		const labels = [ 'label 1', 'label 2', 'label 3' ];
@@ -44,7 +35,7 @@ describe( 'store', () => {
 		};
 
 		it( 'Initializes properly', () => {
-			const { select } = _initStore( initialState );
+			initTestStore( initialState );
 			const result = select.getState();
 
 			expect( result ).toEqual( expected );
@@ -60,7 +51,7 @@ describe( 'store', () => {
 		};
 
 		it( 'Initializes properly', () => {
-			const { select } = _initStore( {} );
+			initTestStore( {} );
 			const result = select.getState();
 
 			expect( result ).toEqual( expected );
@@ -68,10 +59,22 @@ describe( 'store', () => {
 	} );
 
 	describe( 'store integration', () => {
-
 		describe( 'ui', () => {
 			describe( 'Active tab', () => {
-				const { select, dispatch } = _initStore( {} );
+				const { tabNames } = uiConstants;
+
+				test ( 'initialized properly', () => {
+					const allTabs = {
+						[ tabNames.MANAGE_FIELDS ]: {},
+						[ tabNames.LABELS ]: {},
+						[ tabNames.ADMIN_UI ]: {},
+						[ tabNames.ADVANCED_OPTIONS ]: {},
+						[ tabNames.AUTO_TEMPLATE_OPTIONS ]: {},
+						[ tabNames.REST_API ]: {}
+					};
+					const initialState = { ui: { tabs: allTabs } };
+					initTestStore( initialState );
+				} );
 
 				test( 'getActiveTab() should return the default on empty init', () => {
 					const expected = initialUIState.activeTab;
@@ -82,7 +85,7 @@ describe( 'store', () => {
 				} );
 
 				test( 'setActiveTab() should change the active tab', () => {
-					const newTab = uiConstants.tabNames.LABELS;
+					const newTab = tabNames.LABELS;
 					dispatch.setActiveTab( newTab );
 					const result = select.getActiveTab();
 
@@ -92,7 +95,8 @@ describe( 'store', () => {
 			} );
 
 			describe( 'Save status', () => {
-				const { select, dispatch } = _initStore( {} );
+				const { saveStatuses } = uiConstants;
+				initTestStore( {} );
 
 				test( 'getSaveStatus() should return the default on empty init', () => {
 					const expected = initialUIState.saveStatus;
@@ -110,7 +114,7 @@ describe( 'store', () => {
 				} );
 
 				test( 'setSaveStatus() should change the status', () => {
-					const expected = uiConstants.saveStatuses.SAVE_SUCCESS;
+					const expected = saveStatuses.SAVE_SUCCESS;
 					dispatch.setSaveStatus( expected );
 					const result = select.getSaveStatus();
 
@@ -118,17 +122,15 @@ describe( 'store', () => {
 				} );
 
 				test( 'isSaving() should be true when saving', () => {
-					const saving = uiConstants.saveStatuses.SAVING;
+					const saving = saveStatuses.SAVING;
 					dispatch.setSaveStatus( saving );
-					const result = select.getSaveStatus();
 
 					expect( select.isSaving() ).toBe( true );
 				} );
 
 				test( 'isSaving() should be false when not saving', () => {
-					const notSaving = uiConstants.saveStatuses.NONE;
+					const notSaving = saveStatuses.NONE;
 					dispatch.setSaveStatus( notSaving );
-					const result = select.getSaveStatus();
 
 					expect( select.isSaving() ).toBe( false );
 				} );
@@ -139,8 +141,11 @@ describe( 'store', () => {
 			describe( 'Pod name', () => {
 				const initialName = 'plugh';
 				const rename = 'xyzzy';
-				const initialState = { podMeta: { name: initialName } };
-				const { select, dispatch } = _initStore( initialState );
+
+				it( 'initializes', () => {
+					const initialState = { podMeta: { name: initialName } };
+					initTestStore( initialState );
+				} );
 
 				it( 'getPodName() should retrieve the pod name', () => {
 					const expected = initialName;
@@ -160,7 +165,7 @@ describe( 'store', () => {
 			} );
 
 			describe( 'General meta', () => {
-				const { select, dispatch } = _initStore( {} );
+				initTestStore( {} );
 
 				test( 'setPodMetaValue() should create a new meta value', () => {
 					const key = 'foo';
@@ -190,7 +195,10 @@ describe( 'store', () => {
 					{ name: 'abracadabra', value: 'label3' },
 				],
 			};
-			const { select, dispatch } = _initStore( initialStoreState );
+
+			it( 'initializes', () => {
+				initTestStore( initialStoreState );
+			} );
 
 			it( 'getLabels() should return the labels array', () => {
 				const expected = initialStoreState.labels;
@@ -229,7 +237,10 @@ describe( 'store', () => {
 					{ name: 'abracadabra', label: 'label3' },
 				],
 			};
-			const { select } = _initStore( initialStoreState );
+
+			it( 'initializes', () => {
+				initTestStore( initialStoreState );
+			} );
 
 			it( 'getFields() should return the fields array', () => {
 				const expected = initialStoreState.fields;

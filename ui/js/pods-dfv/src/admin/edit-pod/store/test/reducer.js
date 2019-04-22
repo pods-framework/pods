@@ -1,10 +1,14 @@
-import { labelConstants, podMetaConstants, uiConstants } from '../constants';
+import {
+	labelConstants,
+	podMetaConstants,
+	uiConstants,
+	initialUIState,
+} from '../constants';
 import {
 	podMeta,
 	fields,
 	labels,
-	ui,
-	initialUIState,
+	ui
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -111,17 +115,27 @@ describe( 'reducer', () => {
 
 		describe( 'tabs', () => {
 			const { tabNames } = uiConstants;
+			const allTabs = {
+				[ tabNames.MANAGE_FIELDS ]: {},
+				[ tabNames.LABELS ]: {},
+				[ tabNames.ADMIN_UI ]: {},
+				[ tabNames.ADVANCED_OPTIONS ]: {},
+				[ tabNames.AUTO_TEMPLATE_OPTIONS ]: {},
+				[ tabNames.REST_API ]: {}
+			};
 
 			it( 'Should define the SET_ACTIVE_TAB action', () => {
 				expect( actions.SET_ACTIVE_TAB ).not.toBeUndefined();
 			} );
 
 			it( 'Should properly change the active tab', () => {
+				state = ui( { tabs: allTabs } );
 				const action = {
 					type: actions.SET_ACTIVE_TAB,
 					activeTab: tabNames.LABELS,
 				};
 				state = ui( state, action );
+
 				expect( state.activeTab ).toEqual( action.activeTab );
 			} );
 

@@ -13,11 +13,12 @@ foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
 	array_push( $pod_fields, $field_options );
 }
 
+$tabs = PodsInit::$admin->admin_setup_edit_options( $pod );
+
 // Labels
-$tab_options = PodsInit::$admin->admin_setup_edit_options( $pod );
-$labels      = array();
-if ( isset( $tab_options[ 'labels' ] ) ) {
-	foreach ( $tab_options[ 'labels' ] as $field_name => $option ) {
+$labels = array();
+if ( isset( $tabs[ 'labels' ] ) ) {
+	foreach ( $tabs[ 'labels' ] as $field_name => $option ) {
 		$option[ 'name' ] = $field_name;
 
 		$value = $option[ 'default' ];
@@ -36,16 +37,18 @@ if ( isset( $tab_options[ 'labels' ] ) ) {
 
 // Formatted data
 $data = array(
-	'fieldType'  => 'edit-pod',
-	'podType'    => $pod[ 'type' ],
-	'tabOptions' => $tab_options,
-	'nonce'      => wp_create_nonce( 'pods-save_pod' ),
-	'podMeta'    => array(
+	'fieldType' => 'edit-pod',
+	'podType'   => $pod[ 'type' ],
+	'nonce'     => wp_create_nonce( 'pods-save_pod' ),
+	'podMeta'   => array(
 		'name' => $pod[ 'name' ],
 		'id'   => $pod[ 'id' ]
 	),
-	'fields'     => $pod_fields,
-	'labels'     => $labels,
+	'ui'        => array(
+		'tabs' => $tabs,
+	),
+	'fields'    => $pod_fields,
+	'labels'    => $labels,
 );
 $data = wp_json_encode( $data, JSON_HEX_TAG );
 ?>

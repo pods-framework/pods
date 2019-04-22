@@ -49,3 +49,4 @@ ui/js/pods-ui-ready.min.js.map
 
 # PHPCS reports
 phpcs-report-*.txt
+/coverage/

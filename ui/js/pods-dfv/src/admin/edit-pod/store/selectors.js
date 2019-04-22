@@ -4,6 +4,9 @@ import { uiConstants } from './constants';
 export const getState = state => state;
 
 // UI
+export const getTabs = state => {
+	return state.ui.tabs;
+};
 export const getActiveTab = state => {
 	return state.ui.activeTab;
 };

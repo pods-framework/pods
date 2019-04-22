@@ -1,6 +1,7 @@
 import { uiConstants } from '../constants';
 import {
 	getState,
+	getTabs,
 	getActiveTab,
 	getSaveStatus,
 	getLabels,
@@ -32,6 +33,24 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'ui', () => {
+		describe( 'getTabs', () => {
+			it( 'Should return all tabs', () => {
+				const state = {
+					ui: {
+						tabs: {
+							foo: {},
+							bar: {},
+							baz: {}
+						}
+					}
+				};
+				const result = getTabs( state );
+				const expected = state.ui.tabs;
+
+				expect( result ).toEqual( expected );
+			} );
+		} );
+
 		describe( 'getActiveTab()', () => {
 			const { tabNames } = uiConstants;
 

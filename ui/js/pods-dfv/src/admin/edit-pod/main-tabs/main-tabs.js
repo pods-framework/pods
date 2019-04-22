@@ -1,7 +1,10 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import classNames from 'classnames';
-import { STORE_KEY_EDIT_POD, uiConstants } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import {
+	STORE_KEY_EDIT_POD,
+	uiConstants
+} from 'pods-dfv/src/admin/edit-pod/store/constants';
 
 // noinspection JSUnresolvedVariable
 const { __ } = wp.i18n;

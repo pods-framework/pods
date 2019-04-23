@@ -4,7 +4,6 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import html from 'rollup-plugin-html';
 import babel from 'rollup-plugin-babel';
-import { terser } from 'rollup-plugin-terser';
 
 const includePathOptions = {
 	include: {},
@@ -38,7 +37,7 @@ export default {
 		html(),
 		replace( {
 			// Needed for React, see https://github.com/rollup/rollup/issues/487#issuecomment-177596512
-			'process.env.NODE_ENV': JSON.stringify( 'production' )
+			'process.env.NODE_ENV': JSON.stringify( 'dev' )
 		} ),
 		nodeResolve( {
 			browser: true
@@ -57,7 +56,6 @@ export default {
 		} ),
 		commonjs( {
 			include: 'node_modules/**'
-		} ),
-		terser()
+		} )
 	]
 };

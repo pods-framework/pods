@@ -13,12 +13,29 @@ foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
 	array_push( $pod_fields, $field_options );
 }
 
-$tabs = PodsInit::$admin->admin_setup_edit_options( $pod );
+$tab_content = PodsInit::$admin->admin_setup_edit_options( $pod );
+echo
+	"<script>content = "
+     . wp_json_encode( $tab_content )
+     . "</script>"
+;
+
+
+$tab_data = PodsInit::$admin->admin_setup_edit_tabs( $pod );
+$tabs = array();
+foreach ( $tab_data as $name => $title_text ) {
+	$content = isset( $tab_content[ $name ] ) ? $tab_content[ $name ] : array();
+	array_push( $tabs, array(
+		'name' => $name,
+		'titleText' => $title_text,
+		'content' => $content
+	) );
+}
 
 // Labels
 $labels = array();
-if ( isset( $tabs[ 'labels' ] ) ) {
-	foreach ( $tabs[ 'labels' ] as $field_name => $option ) {
+if ( isset( $tab_content[ 'labels' ] ) ) {
+	foreach ( $tab_content[ 'labels' ] as $field_name => $option ) {
 		$option[ 'name' ] = $field_name;
 
 		$value = $option[ 'default' ];

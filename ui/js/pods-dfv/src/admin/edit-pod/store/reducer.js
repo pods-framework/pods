@@ -7,16 +7,40 @@ import {
 
 const { combineReducers } = wp.data;
 
+/**
+ *
+ * @param {Object[]} tabs
+ * @param {string}   tabs[].name
+ * @param {string}   tabName
+ *
+ * @returns {(number|null)} The index of the targeted tab, or null if not found
+ */
+const getTabIndexFromName = ( tabs, tabName ) => {
+	let returnIndex = null;
+
+	tabs.forEach( ( thisTab, index ) => {
+		if ( thisTab.name === tabName ) {
+			returnIndex = index;
+		}
+	} );
+
+	return returnIndex;
+};
+
 // UI
 export const ui = ( state = initialUIState, action = {} ) => {
-	const { actions, saveStatuses, tabNames } = uiConstants;
+	const { actions, saveStatuses } = uiConstants;
 
 	switch ( action.type ) {
 		case actions.SET_ACTIVE_TAB:
-			let newTab = action.activeTab;
-			if ( !state.tabs.hasOwnProperty( newTab ) ) {
-				newTab = initialUIState.activeTab;
+			// Use the default if the tab name doesn't exist
+			let newTab = initialUIState.activeTab;
+			const tabIndex = getTabIndexFromName( state.tabs, action.activeTab );
+
+			if ( null !== tabIndex ) {
+				newTab = state.tabs[ tabIndex ].name;
 			}
+
 			return {
 				...state,
 				activeTab: newTab

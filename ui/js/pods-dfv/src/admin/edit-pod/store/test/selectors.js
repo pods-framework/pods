@@ -37,11 +37,11 @@ describe( 'selectors', () => {
 			it( 'Should return all tabs', () => {
 				const state = {
 					ui: {
-						tabs: {
-							foo: {},
-							bar: {},
-							baz: {}
-						}
+						tabs: [
+							{ foo: {} },
+							{ bar: {} },
+							{ baz: {} }
+						]
 					}
 				};
 				const result = getTabs( state );

@@ -115,14 +115,14 @@ describe( 'reducer', () => {
 
 		describe( 'tabs', () => {
 			const { tabNames } = uiConstants;
-			const allTabs = {
-				[ tabNames.MANAGE_FIELDS ]: {},
-				[ tabNames.LABELS ]: {},
-				[ tabNames.ADMIN_UI ]: {},
-				[ tabNames.ADVANCED_OPTIONS ]: {},
-				[ tabNames.AUTO_TEMPLATE_OPTIONS ]: {},
-				[ tabNames.REST_API ]: {}
-			};
+			const allTabs = [
+				{ name: tabNames.MANAGE_FIELDS },
+				{ name: tabNames.LABELS },
+				{ name: tabNames.ADMIN_UI  },
+				{ name: tabNames.ADVANCED_OPTIONS },
+				{ name: tabNames.AUTO_TEMPLATE_OPTIONS },
+				{ name: tabNames.REST_API }
+			];
 
 			it( 'Should define the SET_ACTIVE_TAB action', () => {
 				expect( actions.SET_ACTIVE_TAB ).not.toBeUndefined();

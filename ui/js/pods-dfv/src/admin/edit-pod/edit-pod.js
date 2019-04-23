@@ -5,23 +5,29 @@ import React from 'react';
 const { withSelect, withDispatch } = wp.data;
 const { compose } = wp.compose;
 
+import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
 import { handleSubmit } from 'pods-dfv/src/admin/edit-pod/handle-submit';
 import { SaveStatusMessage } from 'pods-dfv/src/admin/edit-pod/save-status-message';
 import { EditPodName } from 'pods-dfv/src/admin/edit-pod/edit-pod-name';
-import { MainTabs } from 'pods-dfv/src/admin/edit-pod/main-tabs/main-tabs';
+import { PodsNavTab } from 'pods-dfv/src/components/tabs/pods-nav-tab';
 import { ActiveTabContent } from 'pods-dfv/src/admin/edit-pod/main-tabs/active-tab-content';
 import { Postbox } from 'pods-dfv/src/admin/edit-pod/postbox';
-import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
-export const PodsDFVEditPod = compose ( [
+
+export const PodsDFVEditPod = compose( [
 	withSelect( ( select ) => {
+		const storeSelect = select( STORE_KEY_EDIT_POD );
 		return {
-			state: select( STORE_KEY_EDIT_POD ).getState()
+			state: storeSelect.getState(),
+			tabs: storeSelect.getTabs(),
+			activeTab: storeSelect.getActiveTab()
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
+		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
 		return {
-			setSaveStatus: dispatch( STORE_KEY_EDIT_POD ).setSaveStatus
+			setSaveStatus: storeDispatch.setSaveStatus,
+			setActiveTab: storeDispatch.setActiveTab,
 		};
 	} )
 ] )
@@ -33,12 +39,15 @@ export const PodsDFVEditPod = compose ( [
 			<div className='pods-submittable-fields'>
 				<EditPodName />
 				<SaveStatusMessage />
-				<MainTabs />
+				<PodsNavTab
+					tabs={props.tabs}
+					activeTab={props.activeTab}
+					setActiveTab={props.setActiveTab}
+				/>
 			</div>
 			<div id='poststuff'>
 				<div id='post-body' className='meta-box-holder columns-2'>
-					<ActiveTabContent />
-					<Postbox />
+					<ActiveTabContent /> <Postbox />
 				</div>
 			</div>
 		</form>

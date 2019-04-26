@@ -1,16 +1,7 @@
 import {
 	uiConstants,
 	podMetaConstants,
-	labelConstants
 } from 'pods-dfv/src/admin/edit-pod/store/constants';
-
-export const setLabelValue = ( labelName, newValue ) => {
-	return {
-		type: labelConstants.actions.SET_LABEL_VALUE,
-		labelName: labelName,
-		newValue: newValue
-	};
-};
 
 export const setActiveTab = ( activeTab ) => {
 	return {

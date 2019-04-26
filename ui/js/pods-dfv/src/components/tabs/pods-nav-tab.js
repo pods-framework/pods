@@ -34,7 +34,7 @@ PodsNavTab.propTypes = {
 	tabs: PropTypes.arrayOf( PropTypes.shape( {
 		name: PropTypes.string,
 		titleText: PropTypes.string,
-	} ) ),
-	activeTab: PropTypes.string,
-	setActiveTab: PropTypes.func,
+	} ) ).isRequired,
+	activeTab: PropTypes.string.isRequired,
+	setActiveTab: PropTypes.func.isRequired
 };

@@ -1,5 +1,4 @@
 import {
-	labelConstants,
 	podMetaConstants,
 	uiConstants,
 	initialUIState,
@@ -7,7 +6,6 @@ import {
 import {
 	podMeta,
 	fields,
-	labels,
 	ui
 } from '../reducer';
 
@@ -59,50 +57,6 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	// Labels
-	describe( 'labels', () => {
-		const { actions } = labelConstants;
-
-		it( 'Should return an empty array by default', () => {
-			const state = labels( undefined, undefined );
-			expect( state ).toEqual( [] );
-		} );
-
-		it( 'Should define the SET_LABEL_VALUE action', () => {
-			expect( actions.SET_LABEL_VALUE ).not.toBeUndefined();
-		} );
-
-		it( 'Should update label values', () => {
-			const initialValues = [
-				{ name: 'name1', value: 'value1' },
-				{ name: 'name2', value: 'value2' },
-			];
-			const testValues = [
-				{ name: 'name1', value: 'newvalue1' },
-				{ name: 'name2', value: 'newvalue2' },
-			];
-			const expectedValues = [ [
-				{ name: 'name1', value: 'newvalue1' },
-				{ name: 'name2', value: 'value2' },
-			], [
-				{ name: 'name1', value: 'value1' },
-				{ name: 'name2', value: 'newvalue2' },
-			] ];
-
-			testValues.forEach( ( thisTestValue, index ) => {
-				const action = {
-					type: actions.SET_LABEL_VALUE,
-					labelName: thisTestValue.name,
-					newValue: thisTestValue.value,
-				};
-				const expected = expectedValues[ index ];
-				const state = labels( initialValues, action );
-
-				expect( state ).toEqual( expected );
-			} );
-		} );
-	} );
-
 	// UI
 	describe( 'ui', () => {
 		const { actions } = uiConstants;
@@ -115,13 +69,13 @@ describe( 'reducer', () => {
 
 		describe( 'tabs', () => {
 			const { tabNames } = uiConstants;
-			const allTabs = [
-				{ name: tabNames.MANAGE_FIELDS },
-				{ name: tabNames.LABELS },
-				{ name: tabNames.ADMIN_UI  },
-				{ name: tabNames.ADVANCED_OPTIONS },
-				{ name: tabNames.AUTO_TEMPLATE_OPTIONS },
-				{ name: tabNames.REST_API }
+			const orderedList = [
+				tabNames.MANAGE_FIELDS,
+				tabNames.LABELS,
+				tabNames.ADMIN_UI,
+				tabNames.ADVANCED_OPTIONS,
+				tabNames.AUTO_TEMPLATE_OPTIONS,
+				tabNames.REST_API
 			];
 
 			it( 'Should define the SET_ACTIVE_TAB action', () => {
@@ -129,7 +83,7 @@ describe( 'reducer', () => {
 			} );
 
 			it( 'Should properly change the active tab', () => {
-				state = ui( { tabs: allTabs } );
+				state = ui( { tabs: { orderedList: orderedList } } );
 				const action = {
 					type: actions.SET_ACTIVE_TAB,
 					activeTab: tabNames.LABELS,

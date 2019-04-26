@@ -1,22 +1,24 @@
+import deepFreeze from 'deep-freeze';
 import { uiConstants } from '../constants';
 import {
 	getState,
-	getTabs,
 	getActiveTab,
+	getOrderedTabList,
+	getTabs,
+	getTab,
+	getOrderedTabs,
 	getSaveStatus,
-	getLabels,
-	getFields,
-	getLabelValue,
 	isSaving,
 	getPodName,
 	getPodMetaValue,
+	getFields,
 } from '../selectors';
 
 describe( 'selectors', () => {
 
 	describe( 'getState()', () => {
 		it( 'Should return the full state', () => {
-			const state = {
+			const state = deepFreeze( {
 				foo: {
 					'xyzzy': 42,
 					'plugh': false
@@ -26,42 +28,105 @@ describe( 'selectors', () => {
 					relationship: 'your uncle'
 				},
 				baz: [ 0, 1, 2 ]
-			};
+			} );
 			const result = getState( state );
+
+			expect( result ).toBeDefined();
 			expect( result ).toEqual( state );
 		} );
 	} );
 
 	describe( 'ui', () => {
-		describe( 'getTabs', () => {
-			it( 'Should return all tabs', () => {
-				const state = {
-					ui: {
-						tabs: [
-							{ foo: {} },
-							{ bar: {} },
-							{ baz: {} }
-						]
-					}
-				};
-				const result = getTabs( state );
-				const expected = state.ui.tabs;
+		describe( 'tabs', () => {
+			describe( 'getActiveTab()', () => {
+				const { tabNames } = uiConstants;
 
-				expect( result ).toEqual( expected );
+				it( 'Should return the active tab', () => {
+					const state = deepFreeze( {
+						ui: { activeTab: tabNames.LABELS },
+					} );
+					const result = getActiveTab( state );
+					const expected = state.ui.activeTab;
+
+					expect( result ).toBeDefined();
+					expect( result ).toEqual( expected );
+				} );
 			} );
-		} );
 
-		describe( 'getActiveTab()', () => {
-			const { tabNames } = uiConstants;
+			describe( 'getTabList()', () => {
+				it( 'Should return the ordered tab list', () => {
+					const orderedList = [ 'foo', 'bar', 'baz' ];
+					const state = deepFreeze( {
+						ui: {
+							tabs: { orderedList: orderedList }
+						}
+					} );
+					const result = getOrderedTabList( state );
 
-			it( 'Should return the active tab', () => {
-				const state = {
-					ui: { activeTab: tabNames.LABELS },
-				};
-				const result = getActiveTab( state );
-				const expected = state.ui.activeTab;
+					expect( result ).toBeDefined();
+					expect( result ).toEqual( orderedList );
+				} );
+			} );
 
-				expect( result ).not.toBeUndefined();
+			const testTabs = {
+				foo: {
+					name: 'foo',
+					titleText: 'Foo',
+					options: []
+				},
+				bar: {
+					name: 'bar',
+					titleText: 'Bar',
+					options: []
+				}
+			} ;
+
+
+			describe( 'getTabs()', () => {
+				it( 'Should return all tab entities', () => {
+					const state = deepFreeze( {
+						ui: { tabs: { byName: testTabs } }
+					} );
+					const result = getTabs( state );
+					const expected = testTabs;
+
+					expect( result ).toBeDefined();
+					expect( result ).toEqual( expected );
+				} );
+			} );
+
+			describe( 'getTab()', () => {
+				const state = deepFreeze( {
+					ui: { tabs: { byName: testTabs } }
+				} );
+
+				it( 'Should return the specified tab', () => {
+					const result = getTab( state, 'bar' );
+					const expected = testTabs.bar;
+
+					expect( result ).toBeDefined();
+					expect( result ).toEqual( expected );
+				} );
+
+				it( 'Should return undefined for a non-existent tab name', () => {
+					const result = getTab( state, 'not a tab' );
+					expect( result ).toBeUndefined();
+				} );
+			} );
+
+			describe( 'getOrderedTabs()', () => {
+				const state = deepFreeze( {
+					ui: {
+						tabs: {
+							byName: testTabs,
+							orderedList: [ 'bar', 'foo' ]
+						}
+					}
+				} );
+				const result = getOrderedTabs( state );
+				const expected = [ testTabs.bar, testTabs.foo ];
+
+				expect( result ).toBeDefined();
 				expect( result ).toEqual( expected );
 			} );
 		} );
@@ -70,14 +135,14 @@ describe( 'selectors', () => {
 			const { saveStatuses } = uiConstants;
 
 			it( 'Should return the save status', () => {
-				const state = {
-					ui: { saveStatus: saveStatuses.SAVE_SUCCESS },
-				};
+				const saveStatus = saveStatuses.SAVE_SUCCESS;
+				const state = deepFreeze( {
+					ui: { saveStatus: saveStatus },
+				} );
 				const result = getSaveStatus( state );
-				const expected = state.ui.saveStatus;
 
-				expect( result ).not.toBeUndefined();
-				expect( result ).toEqual( expected );
+				expect( result ).toBeDefined();
+				expect( result ).toEqual( saveStatus );
 			} );
 		} );
 
@@ -85,16 +150,16 @@ describe( 'selectors', () => {
 			const { saveStatuses } = uiConstants;
 
 			it( 'Should return true when saving', () => {
-				const state = {
+				const state = deepFreeze( {
 					ui: { saveStatus: saveStatuses.SAVING },
-				};
+				} );
 				expect( isSaving( state ) ).toBe( true );
 			} );
 
 			it( 'Should return false when not saving', () => {
-				const state = {
+				const state = deepFreeze( {
 					ui: { saveStatus: saveStatuses.SAVE_SUCCESS },
-				};
+				} );
 				expect( isSaving( state ) ).toBe( false );
 			} );
 		} );
@@ -103,13 +168,13 @@ describe( 'selectors', () => {
 	describe( 'podMeta', () => {
 		describe( 'getPodName()', () => {
 			it( 'Should return the Pod name', () => {
-				const state = {
+				const state = deepFreeze( {
 					podMeta: { name: 'plugh' },
-				};
+				} );
 				const result = getPodName( state );
 				const expected = state.podMeta.name;
 
-				expect( result ).not.toBeUndefined();
+				expect( result ).toBeDefined();
 				expect( result ).toEqual( expected );
 			} );
 		} );
@@ -118,23 +183,23 @@ describe( 'selectors', () => {
 			it( 'Should return the meta value', () => {
 				const key = 'foo';
 				const expected = 'bar';
-				const state = { podMeta: { [ key ]: expected } };
+				const state = deepFreeze( { podMeta: { [ key ]: expected } } );
 				const result = getPodMetaValue( state, key );
 
-				expect( result ).not.toBeUndefined();
+				expect( result ).toBeDefined();
 				expect( result ).toEqual( expected );
 			} );
 		} );
 	} );
 
 	describe( 'fields', () => {
-		const state = {
+		const state = deepFreeze( {
 			fields: [
 				{ name: 'field1', label: 'label1' },
 				{ name: 'field2', label: 'label2' },
 				{ name: 'field3', label: 'label3' },
 			]
-		};
+		} );
 		describe( 'getFields()', () => {
 			it( 'Should return the fields array', () => {
 				const result = getFields( state );
@@ -142,46 +207,6 @@ describe( 'selectors', () => {
 
 				expect( result ).toBeDefined();
 				expect( result ).toEqual( expected );
-			} );
-		} );
-	} );
-
-	describe( 'labels', () => {
-		const state = {
-			labels: [
-				{ name: 'name1', value: 'value1' },
-				{ name: 'name2', value: 'value2' },
-				{ name: 'name3', value: 'value3' },
-			],
-		};
-
-		describe( 'getLabels()', () => {
-			it( 'Should return the labels array', () => {
-				const result = getLabels( state );
-				const expected = state.labels;
-
-				expect( result ).not.toBeUndefined();
-				expect( result ).toEqual( expected );
-			} );
-		} );
-
-		describe( 'getLabelValue()', () => {
-			it( 'Should return existing label values', () => {
-				state.labels.forEach( ( thisLabel ) => {
-					const result = getLabelValue( state, thisLabel.name );
-					const expected = thisLabel.value;
-
-					expect( result ).not.toBeUndefined();
-					expect( result ).toBe( expected );
-				} );
-			} );
-
-			it( 'Should return null for a non-existent label', () => {
-				const result = getLabelValue( state, 'xyzzy' );
-				const expected = null;
-
-				expect( result ).toBeDefined();
-				expect( result ).toBe( expected );
 			} );
 		} );
 	} );

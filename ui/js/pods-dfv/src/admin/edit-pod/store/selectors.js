@@ -4,18 +4,17 @@ import { uiConstants } from './constants';
 export const getState = state => state;
 
 // UI
-export const getTabs = state => {
-	return state.ui.tabs;
-};
-export const getActiveTab = state => {
-	return state.ui.activeTab;
-};
-export const getSaveStatus = state => {
-	return state.ui.saveStatus;
-};
-export const isSaving = state => {
-	return ( state.ui.saveStatus === uiConstants.saveStatuses.SAVING );
-};
+//-- Tabs
+export const getActiveTab = state => state.ui.activeTab;
+//--Todo: Check for any usages of this outside of tests after the API fills out some, I doubt it's going to be needed
+export const getTabs = state => state.ui.tabs.byName;
+export const getTab = ( state, tabName ) => state.ui.tabs.byName[ tabName ];
+export const getOrderedTabList = state => state.ui.tabs.orderedList;
+export const getOrderedTabs = state => getOrderedTabList( state ).map( tabName => getTab( state, tabName ) );
+
+//-- Save status
+export const getSaveStatus = state => state.ui.saveStatus;
+export const isSaving = state => state.ui.saveStatus === uiConstants.saveStatuses.SAVING;
 
 // Pod meta
 export const getPodName = state => {
@@ -27,15 +26,3 @@ export const getPodMetaValue = ( state, key ) => {
 
 // Fields
 export const getFields = state => state.fields;
-
-// Labels
-export const getLabels = state => state.labels;
-
-export const getLabelValue = ( state, labelName ) => {
-	for ( let i = 0; i < state.labels.length; i++ ) {
-		if ( state.labels[ i ].name === labelName ) {
-			return state.labels[ i ].value;
-		}
-	}
-	return null;
-};

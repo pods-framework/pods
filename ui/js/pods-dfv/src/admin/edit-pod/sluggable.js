@@ -1,6 +1,5 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
-
+import PropTypes from 'prop-types';
 const { useState } = React;
 
 /* WordPress dependencies */
@@ -49,6 +48,11 @@ export const PodsDFVSluggable = ( props ) => {
 	}
 };
 
+PodsDFVSluggable.propTypes = {
+	value: PropTypes.string.isRequired,
+	updateValue: PropTypes.func.isRequired
+};
+
 const NotEditing = ( props ) => {
 	return (
 		<span>
@@ -66,6 +70,11 @@ const NotEditing = ( props ) => {
 			/>
 		</span>
 	);
+};
+
+NotEditing.propTypes = {
+	value: PropTypes.string.isRequired,
+	handleEditClick: PropTypes.func.isRequired
 };
 
 const Editing = ( props ) => {
@@ -95,10 +104,16 @@ const Editing = ( props ) => {
 			{'\u00A0' /* &nbsp; */}
 			<a
 				className='cancel'
-				href='#cancel-edit'
 				onClick={props.handleCancelClick}>
 				{__( 'Cancel', 'pods' )}
 			</a>
 		</span>
 	);
+};
+
+Editing.propTypes = {
+	value: PropTypes.string.isRequired,
+	handleValueChange: PropTypes.func.isRequired,
+	handleOkClick: PropTypes.func.isRequired,
+	handleCancelClick: PropTypes.func.isRequired
 };

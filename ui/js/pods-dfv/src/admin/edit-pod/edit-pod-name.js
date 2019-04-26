@@ -1,11 +1,11 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 
-// Pod dependencies
+// Pods dependencies
 import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
 import { PodsDFVSluggable } from 'pods-dfv/src/admin/edit-pod/sluggable';
 
 // WordPress dependencies
+// noinspection JSUnresolvedVariable
 const { __ } = wp.i18n;
 const { withSelect, withDispatch } = wp.data;
 const { compose } = wp.compose;

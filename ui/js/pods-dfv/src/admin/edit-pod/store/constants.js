@@ -30,12 +30,6 @@ export const podMetaConstants = {
 	},
 };
 
-export const labelConstants = {
-	actions: {
-		SET_LABEL_VALUE: 'SET_LABEL_VALUE',
-	},
-};
-
 export const initialUIState = {
 	activeTab: uiConstants.tabNames.MANAGE_FIELDS,
 	saveStatus: uiConstants.saveStatuses.NONE,

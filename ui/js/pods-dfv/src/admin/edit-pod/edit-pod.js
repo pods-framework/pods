@@ -1,10 +1,10 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 
-/* WordPress dependencies */
+// WordPress dependencies
 const { withSelect, withDispatch } = wp.data;
 const { compose } = wp.compose;
 
+// Pods dependencies
 import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
 import { handleSubmit } from 'pods-dfv/src/admin/edit-pod/handle-submit';
 import { SaveStatusMessage } from 'pods-dfv/src/admin/edit-pod/save-status-message';
@@ -13,13 +13,12 @@ import { PodsNavTab } from 'pods-dfv/src/components/tabs/pods-nav-tab';
 import { ActiveTabContent } from 'pods-dfv/src/admin/edit-pod/main-tabs/active-tab-content';
 import { Postbox } from 'pods-dfv/src/admin/edit-pod/postbox';
 
-
 export const PodsDFVEditPod = compose( [
 	withSelect( ( select ) => {
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 		return {
 			state: storeSelect.getState(),
-			tabs: storeSelect.getTabs(),
+			tabs: storeSelect.getOrderedTabs(),
 			activeTab: storeSelect.getActiveTab()
 		};
 	} ),
@@ -32,11 +31,14 @@ export const PodsDFVEditPod = compose( [
 	} )
 ] )
 ( ( props ) => {
+	//--! Todo: debugging only
+	window.select = wp.data.select( 'pods/edit-pod' );
+	window.dispatch = wp.data.dispatch( 'pods/edit-pod' );
+
 	return (
 		<form
-			className='pods-submittable pods-nav-tabbed'
 			onSubmit={( e ) => handleSubmit( e, props )}>
-			<div className='pods-submittable-fields'>
+			<div>
 				<EditPodName />
 				<SaveStatusMessage />
 				<PodsNavTab
@@ -46,8 +48,9 @@ export const PodsDFVEditPod = compose( [
 				/>
 			</div>
 			<div id='poststuff'>
-				<div id='post-body' className='meta-box-holder columns-2'>
-					<ActiveTabContent /> <Postbox />
+				<div id='post-body' className='columns-2'>
+					<ActiveTabContent />
+					<Postbox />
 				</div>
 			</div>
 		</form>

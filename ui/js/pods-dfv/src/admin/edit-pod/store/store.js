@@ -12,7 +12,6 @@ export const initStore = ( props ) => {
 	const initialState = {
 		ui: { ...initialUIState, ...props.ui },
 		fields: props.fields,
-		labels: props.labels,
 		podMeta: props.podMeta,
 	};
 

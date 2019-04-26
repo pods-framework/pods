@@ -13,43 +13,41 @@ foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
 	array_push( $pod_fields, $field_options );
 }
 
-$tab_content = PodsInit::$admin->admin_setup_edit_options( $pod );
-echo
-	"<script>content = "
-     . wp_json_encode( $tab_content )
-     . "</script>"
-;
+$setup_edit_options = PodsInit::$admin->admin_setup_edit_options( $pod );
+$setup_edit_tabs    = PodsInit::$admin->admin_setup_edit_tabs( $pod );
 
+$tab_list = array();
+$tabs     = array();
+$options  = array();
+foreach ( $setup_edit_tabs as $tab_name => $tab_title_text ) {
+	$tab_options = array();
+	array_push( $tab_list, $tab_name );
 
-$tab_data = PodsInit::$admin->admin_setup_edit_tabs( $pod );
-$tabs = array();
-foreach ( $tab_data as $name => $title_text ) {
-	$content = isset( $tab_content[ $name ] ) ? $tab_content[ $name ] : array();
-	array_push( $tabs, array(
-		'name' => $name,
-		'titleText' => $title_text,
-		'content' => $content
-	) );
-}
+	if ( isset( $setup_edit_options[ $tab_name ] ) ) {
+		foreach ( $setup_edit_options[ $tab_name ] as $option_name => $this_option ) {
 
-// Labels
-$labels = array();
-if ( isset( $tab_content[ 'labels' ] ) ) {
-	foreach ( $tab_content[ 'labels' ] as $field_name => $option ) {
-		$option[ 'name' ] = $field_name;
+			$value = isset( $this_option[ 'default' ] ) ? $this_option[ 'default' ] : "";
+			if ( isset( $this_option[ 'value' ] ) && 0 < strlen( $this_option[ 'value' ] ) ) {
+				$value = $this_option[ 'value' ];
+			} else {
+				//--!! 'label' is on the Pod itself but the rest are under 'options'?
+				$value = pods_v( $option_name, $pod, $value );
+				$value = pods_v( $option_name, $pod[ 'options' ], $value );
+			}
+			$this_option[ 'value' ] = $value;
+			$this_option[ 'name' ]  = $option_name;
 
-		$value = $option[ 'default' ];
-		if ( isset( $option[ 'value' ] ) && 0 < strlen( $option[ 'value' ] ) ) {
-			$value = $option[ 'value' ];
-		} else {
-			//--!! 'label' is on the Pod itself but the rest are under 'options'?
-			$value = pods_v( $field_name, $pod, $value );
-			$value = pods_v( $field_name, $pod[ 'options' ], $value );
+			$options[ $option_name ] = $this_option;
+
+			array_push( $tab_options, $option_name );
 		}
-		$option[ 'value' ] = $value;
-
-		array_push( $labels, $option );
 	}
+
+	$tabs[ $tab_name ] = array(
+		'name'      => $tab_name,
+		'titleText' => $tab_title_text,
+		'options'   => $tab_options
+	);
 }
 
 // Formatted data
@@ -62,10 +60,13 @@ $data = array(
 		'id'   => $pod[ 'id' ]
 	),
 	'ui'        => array(
-		'tabs' => $tabs,
+		'tabs'    => array(
+			'byName'  => $tabs,
+			'orderedList' => $tab_list,
+		),
+		'options' => $options,
 	),
 	'fields'    => $pod_fields,
-	'labels'    => $labels,
 );
 $data = wp_json_encode( $data, JSON_HEX_TAG );
 ?>

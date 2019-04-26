@@ -8,19 +8,13 @@ const { sprintf } = wp.i18n;
 
 export const TabLabels = compose( [
 	withSelect( ( select ) => {
-		const storeSelect = select( STORE_KEY_EDIT_POD );
-		return {
-			labels: storeSelect.getLabels(),
-			getLabelValue: storeSelect.getLabelValue
-		};
 	} ),
 	withDispatch( ( dispatch ) => {
-		return {
-			setLabelValue: dispatch( STORE_KEY_EDIT_POD ).setLabelValue
-		};
 	} )
 ] )
 ( ( props ) => {
+	return ( '[Labels]' );
+	/*
 	return (
 		<div id='pods-labels' className='pods-manage-field'>
 			{props.labels.map( thisLabel => (
@@ -47,4 +41,5 @@ export const TabLabels = compose( [
 			) )}
 		</div>
 	);
+	 */
 } );

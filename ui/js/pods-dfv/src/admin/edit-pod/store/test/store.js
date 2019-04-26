@@ -8,6 +8,7 @@ import {
 const testStore = {
 	select: null,
 	dispatch: null,
+
 	initStore: ( initialState ) => {
 		initStore( initialState );
 		testStore.select = wp.data.select( STORE_KEY_EDIT_POD );
@@ -22,7 +23,6 @@ describe( 'store', () => {
 		const name = 'xyzzy';
 		const initialState = {
 			fields: fields,
-			labels: labels,
 			podMeta: {
 				name: name,
 			},
@@ -30,7 +30,6 @@ describe( 'store', () => {
 		const expected = {
 			ui: initialUIState,
 			fields: fields,
-			labels: labels,
 			podMeta: {
 				name: name,
 			},
@@ -48,8 +47,7 @@ describe( 'store', () => {
 		const expected = {
 			ui: initialUIState,
 			podMeta: {},
-			fields: [],
-			labels: [],
+			fields: []
 		};
 
 		it( 'Initializes properly', () => {
@@ -64,30 +62,28 @@ describe( 'store', () => {
 		describe( 'ui', () => {
 			describe( 'Active tab', () => {
 				const { tabNames } = uiConstants;
-				const allTabs = {
-					tabs: [
-						{ name: tabNames.MANAGE_FIELDS },
-						{ name: tabNames.LABELS },
-						{ name: tabNames.ADMIN_UI },
-						{ name: tabNames.ADVANCED_OPTIONS },
-						{ name: tabNames.AUTO_TEMPLATE_OPTIONS },
-						{ name: tabNames.REST_API }
-					]
-				};
-				const initialState = { ui: allTabs };
+				const orderedList = [
+					tabNames.MANAGE_FIELDS,
+					tabNames.LABELS,
+					tabNames.ADMIN_UI,
+					tabNames.ADVANCED_OPTIONS,
+					tabNames.AUTO_TEMPLATE_OPTIONS,
+					tabNames.REST_API
+				];
+				const initialState = { ui: { tabs: { orderedList: orderedList } } };
 
-				test( 'ui tabs are initialized properly when provided', () => {
+				test( 'orderedList is initialized properly', () => {
 					testStore.initStore( initialState );
 					const fullState = testStore.select.getState();
 
-					expect( fullState.ui ).toEqual( expect.objectContaining( allTabs ) );
+					expect( fullState.ui.tabs.orderedList ).toEqual( orderedList );
 				} );
 
 				test( 'getActiveTab() should return the default on empty init', () => {
 					const expected = initialUIState.activeTab;
 					const result = testStore.select.getActiveTab();
 
-					expect( result ).not.toBeUndefined();
+					expect( result ).toBeDefined();
 					expect( result ).toEqual( expected );
 				} );
 
@@ -96,7 +92,7 @@ describe( 'store', () => {
 					testStore.dispatch.setActiveTab( newTab );
 					const result = testStore.select.getActiveTab();
 
-					expect( result ).not.toBeUndefined();
+					expect( result ).toBeDefined();
 					expect( result ).toEqual( newTab );
 				} );
 			} );
@@ -108,6 +104,7 @@ describe( 'store', () => {
 					testStore.initStore( {} );
 					const fullState = testStore.select.getState();
 
+					expect( fullState.ui ).toBeDefined();
 					expect( fullState.ui ).toEqual( expect.objectContaining( initialUIState ) );
 				} );
 
@@ -115,7 +112,7 @@ describe( 'store', () => {
 					const expected = initialUIState.saveStatus;
 					const result = testStore.select.getSaveStatus();
 
-					expect( result ).not.toBeUndefined();
+					expect( result ).toBeDefined();
 					expect( result ).toEqual( expected );
 				} );
 
@@ -144,8 +141,9 @@ describe( 'store', () => {
 				test( 'isSaving() should be false when not saving', () => {
 					const notSaving = saveStatuses.NONE;
 					testStore.dispatch.setSaveStatus( notSaving );
+					const result = testStore.select.isSaving();
 
-					expect( testStore.select.isSaving() ).toBe( false );
+					expect( result ).toBe( false );
 				} );
 			} );
 		} );
@@ -167,7 +165,7 @@ describe( 'store', () => {
 					const expected = initialName;
 					const result = testStore.select.getPodName();
 
-					expect( result ).not.toBeUndefined();
+					expect( result ).toBeDefined();
 					expect( result ).toEqual( expected );
 				} );
 
@@ -209,51 +207,6 @@ describe( 'store', () => {
 			} );
 		} );
 
-		describe( 'labels', () => {
-			const initialState = {
-				labels: [
-					{ name: 'xyzzy', value: 'label1' },
-					{ name: 'plugh', value: 'label2' },
-					{ name: 'abracadabra', value: 'label3' },
-				],
-			};
-
-			it( 'initializes labels when when provided', () => {
-				testStore.initStore( initialState );
-				const fullState = testStore.select.getState();
-
-				expect( fullState ).toEqual( expect.objectContaining( initialState ) );
-			} );
-
-			test( 'getLabels() should return the labels array', () => {
-				const expected = initialState.labels;
-				const result = testStore.select.getLabels();
-
-				expect( result ).not.toBeUndefined();
-				expect( result ).toEqual( expected );
-			} );
-
-			test( 'getLabelValue() should return a label value', () => {
-				initialState.labels.forEach( ( thisLabel ) => {
-					const expected = thisLabel.value;
-					const result = testStore.select.getLabelValue( thisLabel.name );
-
-					expect( result ).not.toBeUndefined();
-					expect( result ).toBe( expected );
-				} );
-			} );
-
-			test( 'setLabelValue() should update a label value', () => {
-				const targetLabelName = 'xyzzy';
-				const expected = 'label 1 edited';
-				testStore.dispatch.setLabelValue( targetLabelName, expected );
-				const result = testStore.select.getLabelValue( targetLabelName );
-
-				expect( result ).not.toBeUndefined();
-				expect( result ).toEqual( expected );
-			} );
-		} );
-
 		describe( 'fields', () => {
 			const initialState = {
 				fields: [
@@ -274,7 +227,7 @@ describe( 'store', () => {
 				const expected = initialState.fields;
 				const result = testStore.select.getFields();
 
-				expect( result ).not.toBeUndefined();
+				expect( result ).toBeDefined();
 				expect( result ).toEqual( expected );
 			} );
 		} );

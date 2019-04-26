@@ -7,22 +7,20 @@ export const getState = state => state;
  * UI
  */
 
-//-- Tabs
+//-- Tabs and options
+export const getOption = ( state, optionName ) => state.ui.options[ optionName ];
 export const getActiveTab = state => state.ui.activeTab;
-//--Todo: Check for any usages of this outside of tests after the API fills out some, I doubt it's going to be needed
-export const getTabs = state => state.ui.tabs.byName;
 export const getTab = ( state, tabName ) => state.ui.tabs.byName[ tabName ];
 export const getOrderedTabList = state => state.ui.tabs.orderedList;
-export const getOrderedTabs = state => getOrderedTabList( state ).map( tabName => getTab( state, tabName ) );
-export const getOrderedTabOptions = ( state, tabName ) => {
-	const tab = getTab( state, tabName );
 
-	if ( !tab ) {
-		return undefined;
-	} else {
-		return tab.options;
-	}
-};
+export const getTabs = state =>
+	getOrderedTabList( state ).map( tabName => getTab( state, tabName ) );
+
+export const getOrderedTabOptionList = ( state, tabName ) =>
+	getTab( state, tabName ).optionList;
+
+export const getTabOptions = ( state, tabName ) =>
+	getOrderedTabOptionList( state, tabName ).map( optionName => getOption( state, optionName ) );
 
 //-- Save status
 export const getSaveStatus = state => state.ui.saveStatus;

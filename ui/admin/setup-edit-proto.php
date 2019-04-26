@@ -16,37 +16,40 @@ foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
 $setup_edit_options = PodsInit::$admin->admin_setup_edit_options( $pod );
 $setup_edit_tabs    = PodsInit::$admin->admin_setup_edit_tabs( $pod );
 
-$tab_list = array();
-$tabs     = array();
-$options  = array();
+// Iterate through the defined tabs
+$ordered_tab_list = array();
+$tabs_by_name     = array();
+$options          = array();
 foreach ( $setup_edit_tabs as $tab_name => $tab_title_text ) {
-	$tab_options = array();
-	array_push( $tab_list, $tab_name );
+	$tab_option_list = array();
+	array_push( $ordered_tab_list, $tab_name ); // Ordered array of names only
 
+	// Loop through the options for this tab
 	if ( isset( $setup_edit_options[ $tab_name ] ) ) {
-		foreach ( $setup_edit_options[ $tab_name ] as $option_name => $this_option ) {
+		foreach ( $setup_edit_options[ $tab_name ] as $tab_option_name => $tab_option_values ) {
+			$tab_option_values = (array) $tab_option_values;
+			array_push( $tab_option_list, $tab_option_name ); // Ordered array of names only
 
-			$value = isset( $this_option[ 'default' ] ) ? $this_option[ 'default' ] : "";
-			if ( isset( $this_option[ 'value' ] ) && 0 < strlen( $this_option[ 'value' ] ) ) {
-				$value = $this_option[ 'value' ];
+			$value = isset( $tab_option_values[ 'default' ] ) ? $tab_option_values[ 'default' ] : "";
+			if ( isset( $tab_option_values[ 'value' ] ) && 0 < strlen( $tab_option_values[ 'value' ] ) ) {
+				$value = $tab_option_values[ 'value' ];
 			} else {
 				//--!! 'label' is on the Pod itself but the rest are under 'options'?
-				$value = pods_v( $option_name, $pod, $value );
-				$value = pods_v( $option_name, $pod[ 'options' ], $value );
+				$value = pods_v( $tab_option_name, $pod, $value );
+				$value = pods_v( $tab_option_name, $pod[ 'options' ], $value );
 			}
-			$this_option[ 'value' ] = $value;
-			$this_option[ 'name' ]  = $option_name;
 
-			$options[ $option_name ] = $this_option;
+			$tab_option_values[ 'value' ] = $value;
+			$tab_option_values[ 'name' ]  = $tab_option_name;
 
-			array_push( $tab_options, $option_name );
+			$options[ $tab_option_name ] = $tab_option_values;
 		}
 	}
 
-	$tabs[ $tab_name ] = array(
+	$tabs_by_name[ $tab_name ] = array(
 		'name'      => $tab_name,
 		'titleText' => $tab_title_text,
-		'options'   => $tab_options
+		'optionList'   => $tab_option_list
 	);
 }
 
@@ -61,8 +64,8 @@ $data = array(
 	),
 	'ui'        => array(
 		'tabs'    => array(
-			'byName'  => $tabs,
-			'orderedList' => $tab_list,
+			'byName'  => $tabs_by_name,
+			'orderedList' => $ordered_tab_list,
 		),
 		'options' => $options,
 	),

@@ -2,11 +2,12 @@ import deepFreeze from 'deep-freeze';
 import { uiConstants } from '../constants';
 import {
 	getState,
+	getOption,
 	getActiveTab,
 	getOrderedTabList,
-	getTabs,
 	getTab,
-	getOrderedTabs,
+	getTabs,
+	getTabOptions,
 	getSaveStatus,
 	isSaving,
 	getPodName,
@@ -37,7 +38,26 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'ui', () => {
-		describe( 'tabs', () => {
+		describe( 'tabs/options', () => {
+			describe( 'getOption()', () => {
+				const options = {
+					option1: { name: 'option1', value: 'option1 value' },
+					option2: { name: 'option2', value: 'option2 value' },
+					option3: { name: 'option3', value: 'option3 value' },
+				};
+
+				it( 'Should return the specified option', () => {
+					const state = deepFreeze( {
+						ui: { options: options }
+					} );
+					const result = getOption( state, 'option2' );
+					const expected = options.option2;
+
+					expect( result ).toBeDefined();
+					expect( result ).toEqual( expected );
+				} );
+			} );
+
 			describe( 'getActiveTab()', () => {
 				const { tabNames } = uiConstants;
 
@@ -72,28 +92,14 @@ describe( 'selectors', () => {
 				foo: {
 					name: 'foo',
 					titleText: 'Foo',
-					options: []
+					options: [ 'foo-option1', 'foo-option1' ]
 				},
 				bar: {
 					name: 'bar',
 					titleText: 'Bar',
-					options: []
+					options: [ 'bar-option1', 'bar-option2' ]
 				}
 			} ;
-
-
-			describe( 'getTabs()', () => {
-				it( 'Should return all tab entities', () => {
-					const state = deepFreeze( {
-						ui: { tabs: { byName: testTabs } }
-					} );
-					const result = getTabs( state );
-					const expected = testTabs;
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( expected );
-				} );
-			} );
 
 			describe( 'getTab()', () => {
 				const state = deepFreeze( {
@@ -114,20 +120,61 @@ describe( 'selectors', () => {
 				} );
 			} );
 
-			describe( 'getOrderedTabs()', () => {
-				const state = deepFreeze( {
-					ui: {
-						tabs: {
-							byName: testTabs,
-							orderedList: [ 'bar', 'foo' ]
+			describe( 'getTabs()', () => {
+				it( 'Should return the ordered tabs', () => {
+					const state = deepFreeze( {
+						ui: {
+							tabs: {
+								byName: testTabs,
+								orderedList: [ 'bar', 'foo' ]
+							}
 						}
-					}
-				} );
-				const result = getOrderedTabs( state );
-				const expected = [ testTabs.bar, testTabs.foo ];
+					} );
+					const result = getTabs( state );
+					const expected = [ testTabs.bar, testTabs.foo ];
 
-				expect( result ).toBeDefined();
-				expect( result ).toEqual( expected );
+					expect( result ).toBeDefined();
+					expect( result ).toEqual( expected );
+				} );
+			} );
+
+			describe( 'getTabOptions()', () => {
+				it( 'Should get the ordered options for the specified tab', () => {
+					const testTabs = {
+						foo: {
+							name: 'foo',
+							titleText: 'Foo',
+							optionList: [ 'foo-option2', 'foo-option1' ]
+						},
+						bar: {
+							name: 'bar',
+							titleText: 'Bar',
+							optionList: [ 'bar-option2', 'bar-option1' ]
+						}
+					} ;
+					const options = {
+						'foo-option1': { name: 'foo-option1', value: 'foo1 value' },
+						'foo-option2': { name: 'foo-option2', value: 'foo2 value' },
+						'bar-option1': { name: 'bar-option1', value: 'bar1 value' },
+						'bar-option2': { name: 'bar-option2', value: 'bar2 value' },
+					};
+					const state = deepFreeze( {
+						ui: {
+							tabs: {
+								byName: testTabs
+							},
+							options: options
+						}
+					} );
+					const result = getTabOptions( state, 'bar' );
+					const expected = [
+						{ name: 'bar-option2', value: 'bar2 value' },
+						{ name: 'bar-option1', value: 'bar1 value' },
+					];
+
+					expect( result ).toBeDefined();
+					expect( result ).toEqual( expected );
+				} );
 			} );
 		} );
 

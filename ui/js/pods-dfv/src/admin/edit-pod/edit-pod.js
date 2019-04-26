@@ -18,7 +18,7 @@ export const PodsDFVEditPod = compose( [
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 		return {
 			state: storeSelect.getState(),
-			tabs: storeSelect.getOrderedTabs(),
+			tabs: storeSelect.getTabs(),
 			activeTab: storeSelect.getActiveTab()
 		};
 	} ),

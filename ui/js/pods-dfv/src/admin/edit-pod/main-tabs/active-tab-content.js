@@ -14,7 +14,7 @@ export const ActiveTabContent = compose( [
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 		return {
 			activeTab: storeSelect.getActiveTab(),
-			getOrderedTabOptions: storeSelect.getOrderedTabOptions
+			tabOptions: storeSelect.getTabOptions
 		};
 	} ),
 ] )
@@ -24,8 +24,8 @@ export const ActiveTabContent = compose( [
 			return ( <TabManageFields /> );
 		} else {
 			return (
-				props.getOrderedTabOptions( props.activeTab ).map( option =>
-					( <div key={option}>{`${option}`}</div> )
+				props.tabOptions( props.activeTab ).map( option =>
+					( <div key={option}>{`${option.label}`}</div> )
 				)
 			);
 		}

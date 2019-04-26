@@ -1,41 +1,33 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { STORE_KEY_EDIT_POD, uiConstants } from 'pods-dfv/src/admin/edit-pod/store/constants';
+
+// WordPress dependencies
+const { compose } = wp.compose;
+const { withSelect, withDispatch } = wp.data;
+
+// Pods dependencies
+import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
 import { TabManageFields } from './tab-manage-fields';
-import { TabLabels } from './tab-labels';
-import { TabAdminUI } from './tab-admin-ui';
-import { TabAdvancedOptions } from './tab-advanced-options';
-import { TabAutoTemplateOptions } from './tab-auto-template-options';
-import { TabRestAPI } from './tab-rest-api';
 
-const { withSelect } = wp.data;
-
-export const ActiveTabContent = withSelect( ( select ) => {
-	return {
-		activeTab: select( STORE_KEY_EDIT_POD ).getActiveTab()
-	};
-} )
+export const ActiveTabContent = compose( [
+	withSelect( ( select ) => {
+		const storeSelect = select( STORE_KEY_EDIT_POD );
+		return {
+			activeTab: storeSelect.getActiveTab(),
+			getOrderedTabOptions: storeSelect.getOrderedTabOptions
+		};
+	} ),
+] )
 ( ( props ) => {
 	const getActiveTabComponent = () => {
-		switch ( props.activeTab ) {
-			case uiConstants.tabNames.LABELS:
-				return ( <TabLabels /> );
-
-			case uiConstants.tabNames.ADMIN_UI:
-				return ( <TabAdminUI /> );
-
-			case uiConstants.tabNames.ADVANCED_OPTIONS:
-				return ( <TabAdvancedOptions /> );
-
-			case uiConstants.tabNames.AUTO_TEMPLATE_OPTIONS:
-				return ( <TabAutoTemplateOptions /> );
-
-			case uiConstants.tabNames.REST_API:
-				return ( <TabRestAPI /> );
-
-			case uiConstants.tabNames.MANAGE_FIELDS:
-			default:
-				return ( <TabManageFields /> );
+		if ( 'manage-fields' === props.activeTab ) {
+			return ( <TabManageFields /> );
+		} else {
+			return (
+				props.getOrderedTabOptions( props.activeTab ).map( option =>
+					( <div key={option}>{`${option}`}</div> )
+				)
+			);
 		}
 	};
 

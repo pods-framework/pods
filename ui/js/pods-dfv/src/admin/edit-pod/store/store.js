@@ -10,7 +10,7 @@ const { registerStore } = wp.data;
 
 export const initStore = ( props ) => {
 	const initialState = merge(
-		paths.createObjectIn( paths.UI, initialUIState ),
+		paths.UI.createTree( initialUIState ),
 		props
 	);
 

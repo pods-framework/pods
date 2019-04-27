@@ -51,7 +51,7 @@ describe( 'selectors', () => {
 
 				it( 'Should return the specified option', () => {
 					const state = deepFreeze(
-						paths.createObjectIn( paths.OPTIONS, options )
+						paths.OPTIONS.createTree( options )
 					);
 					const result = getOption( state, 'option2' );
 					const expected = options.option2;
@@ -66,10 +66,10 @@ describe( 'selectors', () => {
 
 				it( 'Should return the active tab', () => {
 					const state = deepFreeze(
-						paths.createObjectIn( paths.ACTIVE_TAB, tabNames.LABELS )
+						paths.ACTIVE_TAB.createTree( tabNames.LABELS )
 					);
 					const result = getActiveTab( state );
-					const expected = paths.get( state, paths.UI ).activeTab;
+					const expected = paths.UI.getFrom( state ).activeTab;
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( expected );
@@ -80,7 +80,7 @@ describe( 'selectors', () => {
 				it( 'Should return the ordered tab list', () => {
 					const orderedList = [ 'foo', 'bar', 'baz' ];
 					const state = deepFreeze(
-						paths.createObjectIn( paths.ORDERED_TAB_LIST, orderedList )
+						paths.TABS_LIST.createTree( orderedList )
 					);
 					const result = getOrderedTabList( state );
 
@@ -91,13 +91,18 @@ describe( 'selectors', () => {
 
 			// These are being reused below
 			const testTabs = {
-				foo: { name: 'foo', optionList: [ 'foo-option2', 'foo-option1' ] },
-				bar: { name: 'bar', optionList: [ 'bar-option2', 'bar-option1' ] }
-			} ;
-
+				foo: {
+					name: 'foo',
+					[paths.TAB_OPTIONS_LIST]: [ 'foo-option2', 'foo-option1' ]
+				},
+				bar: {
+					name: 'bar',
+					[paths.TAB_OPTIONS_LIST]: [ 'bar-option2', 'bar-option1' ]
+				}
+			};
 			describe( 'getTab()', () => {
 				const state = deepFreeze(
-					paths.createObjectIn( paths.TAB_BY_NAME, testTabs )
+					paths.TABS_BY_NAME.createTree( testTabs )
 				);
 
 				it( 'Should return the specified tab', () => {
@@ -117,8 +122,8 @@ describe( 'selectors', () => {
 			describe( 'getTabs()', () => {
 				it( 'Should return the ordered tabs', () => {
 					const state = deepFreeze( merge(
-						paths.createObjectIn( paths.TAB_BY_NAME, testTabs ),
-						paths.createObjectIn( paths.ORDERED_TAB_LIST, [ 'bar', 'foo' ] )
+						paths.TABS_BY_NAME.createTree( testTabs ),
+						paths.TABS_LIST.createTree( [ 'bar', 'foo' ] )
 					) );
 					const result = getTabs( state );
 					const expected = [ testTabs.bar, testTabs.foo ];
@@ -137,8 +142,8 @@ describe( 'selectors', () => {
 						'bar-option2': { name: 'bar-option2', value: 'bar2 value' },
 					};
 					const state = deepFreeze( merge(
-						paths.createObjectIn( paths.TAB_BY_NAME, testTabs ),
-						paths.createObjectIn( paths.OPTIONS, options )
+						paths.TABS_BY_NAME.createTree( testTabs ),
+						paths.OPTIONS.createTree( options )
 					) );
 
 					const result = getTabOptions( state, 'bar' );
@@ -159,7 +164,7 @@ describe( 'selectors', () => {
 			it( 'Should return the save status', () => {
 				const saveStatus = saveStatuses.SAVE_SUCCESS;
 				const state = deepFreeze(
-					paths.createObjectIn( paths.SAVE_STATUS, saveStatus )
+					paths.SAVE_STATUS.createTree( saveStatus )
 				);
 				const result = getSaveStatus( state );
 
@@ -173,14 +178,14 @@ describe( 'selectors', () => {
 
 			it( 'Should return true when saving', () => {
 				const state = deepFreeze(
-					paths.createObjectIn( paths.SAVE_STATUS, saveStatuses.SAVING )
+					paths.SAVE_STATUS.createTree( saveStatuses.SAVING )
 				);
 				expect( isSaving( state ) ).toBe( true );
 			} );
 
 			it( 'Should return false when not saving', () => {
 				const state = deepFreeze(
-					paths.createObjectIn( paths.SAVE_STATUS, saveStatuses.SAVE_SUCCESS )
+					paths.SAVE_STATUS.createTree( saveStatuses.SAVE_SUCCESS )
 				);
 				expect( isSaving( state ) ).toBe( false );
 			} );
@@ -191,10 +196,10 @@ describe( 'selectors', () => {
 		describe( 'getPodName()', () => {
 			it( 'Should return the Pod name', () => {
 				const state = deepFreeze(
-					paths.createObjectIn( paths.POD_META, { name: 'plugh' } )
+					paths.POD_META.createTree( { name: 'plugh' } )
 				);
 				const result = getPodName( state );
-				const expected = paths.get( state, paths.POD_META ).name;
+				const expected = paths.POD_NAME.getFrom( state );
 
 				expect( result ).toBeDefined();
 				expect( result ).toEqual( expected );
@@ -206,7 +211,7 @@ describe( 'selectors', () => {
 				const key = 'foo';
 				const expected = 'bar';
 				const state = deepFreeze(
-					paths.createObjectIn( paths.POD_META, { [ key ]: expected } )
+					paths.POD_META.createTree( { [ key ]: expected } )
 				);
 				const result = getPodMetaValue( state, key );
 
@@ -225,10 +230,10 @@ describe( 'selectors', () => {
 					{ name: 'field3', label: 'label3' },
 				];
 				const state = deepFreeze(
-					paths.createObjectIn( paths.FIELDS, fields )
+					paths.FIELDS.createTree( fields )
 				);
 				const result = getFields( state );
-				const expected = paths.get( state, paths.FIELDS );
+				const expected = paths.FIELDS.getFrom( state );
 
 				expect( result ).toBeDefined();
 				expect( result ).toEqual( expected );

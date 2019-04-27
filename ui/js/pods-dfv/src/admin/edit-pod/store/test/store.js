@@ -20,7 +20,6 @@ const testStore = {
 describe( 'store', () => {
 	describe( 'initStore() with initialState', () => {
 		const fields = [ 'field 1', 'field 2', 'field 3' ];
-		const labels = [ 'label 1', 'label 2', 'label 3' ];
 		const name = 'xyzzy';
 		const initialState = {
 			fields: fields,
@@ -71,12 +70,12 @@ describe( 'store', () => {
 					tabNames.AUTO_TEMPLATE_OPTIONS,
 					tabNames.REST_API
 				];
-				const initialState = paths.createObjectIn( paths.ORDERED_TAB_LIST, orderedList );
+				const initialState = paths.TABS_LIST.createTree( orderedList );
 
 				test( 'orderedList is initialized properly', () => {
 					testStore.initStore( initialState );
 					const state = testStore.select.getState();
-					const result = paths.get( state, paths.ORDERED_TAB_LIST );
+					const result = paths.TABS_LIST.getFrom( state );
 
 					expect( result ).toEqual( orderedList );
 				} );
@@ -105,7 +104,7 @@ describe( 'store', () => {
 				test( 'Initializes with ui defaults', () => {
 					testStore.initStore( {} );
 					const state = testStore.select.getState();
-					const result = paths.get( state, paths.UI );
+					const result = paths.UI.getFrom( state );
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( expect.objectContaining( initialUIState ) );
@@ -157,7 +156,7 @@ describe( 'store', () => {
 				const rename = 'xyzzy';
 
 				test( 'The Pod name is initialized when provided', () => {
-					const initialState = paths.createObjectIn( paths.POD_META, { name: initialName } );
+					const initialState = paths.POD_META.createTree( { name: initialName } );
 					testStore.initStore( initialState );
 					const state = testStore.select.getState();
 
@@ -186,7 +185,7 @@ describe( 'store', () => {
 				test( 'initializes with an empty object for podMeta', () => {
 					testStore.initStore( {} );
 					const state = testStore.select.getState();
-					const result = paths.get( state, paths.POD_META );
+					const result = paths.POD_META.getFrom( state );
 
 					expect( result ).toEqual( {} );
 				} );

@@ -24,8 +24,8 @@ export const ActiveTabContent = compose( [
 			return ( <TabManageFields /> );
 		} else {
 			return (
-				props.tabOptions( props.activeTab ).map( option =>
-					( <div key={option}>{`${option.label}`}</div> )
+				props.tabOptions( props.activeTab ).map( ( option, index ) =>
+					( <div key={`${option}-${index}`}>{`${option.label}`}</div> )
 				)
 			);
 		}

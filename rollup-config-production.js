@@ -26,7 +26,7 @@ export default {
 			'backbone.marionette': 'Marionette',
 			'react': 'React',
 			'react-dom': 'ReactDOM',
-			'lodash': 'Lodash',
+			'lodash': 'lodash',
 		},
 		sourcemap: true
 	},

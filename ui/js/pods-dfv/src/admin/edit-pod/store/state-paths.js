@@ -1,5 +1,3 @@
-import { last } from 'lodash';
-
 export const createStatePath = path => {
 	return {
 		path: path,

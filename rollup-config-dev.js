@@ -25,7 +25,7 @@ export default {
 			'backbone.marionette': 'Marionette',
 			'react': 'React',
 			'react-dom': 'ReactDOM',
-			'lodash': 'Lodash',
+			'lodash': 'lodash',
 		},
 		sourcemap: true
 	},
@@ -36,7 +36,7 @@ export default {
 		'backbone.marionette',
 		'react',
 		'react-dom',
-		'lodash'
+		'lodash',
 	],
 	plugins: [
 		includePaths( includePathOptions ),

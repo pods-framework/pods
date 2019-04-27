@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { merge } from 'lodash';
 
 import * as paths from '../state-paths';
 import { uiConstants } from '../constants';
@@ -156,14 +157,11 @@ describe( 'selectors', () => {
 						'bar-option1': { name: 'bar-option1', value: 'bar1 value' },
 						'bar-option2': { name: 'bar-option2', value: 'bar2 value' },
 					};
-					const state = deepFreeze(
-						paths.createObjectIn( paths.UI, {
-							tabs: {
-								byName: testTabs
-							},
-							options: options
-						} )
-					);
+					const state = deepFreeze( merge(
+						paths.createObjectIn( paths.TAB_BY_NAME, testTabs ),
+						paths.createObjectIn( paths.OPTIONS, options )
+					) );
+
 					const result = getTabOptions( state, 'bar' );
 					const expected = [
 						{ name: 'bar-option2', value: 'bar2 value' },

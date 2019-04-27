@@ -89,17 +89,10 @@ describe( 'selectors', () => {
 				} );
 			} );
 
+			// These are being reused below
 			const testTabs = {
-				foo: {
-					name: 'foo',
-					titleText: 'Foo',
-					options: [ 'foo-option1', 'foo-option1' ]
-				},
-				bar: {
-					name: 'bar',
-					titleText: 'Bar',
-					options: [ 'bar-option1', 'bar-option2' ]
-				}
+				foo: { name: 'foo', optionList: [ 'foo-option2', 'foo-option1' ] },
+				bar: { name: 'bar', optionList: [ 'bar-option2', 'bar-option1' ] }
 			} ;
 
 			describe( 'getTab()', () => {
@@ -123,12 +116,10 @@ describe( 'selectors', () => {
 
 			describe( 'getTabs()', () => {
 				it( 'Should return the ordered tabs', () => {
-					const state = deepFreeze(
-						paths.createObjectIn( paths.TABS, {
-							byName: testTabs,
-							orderedList: [ 'bar', 'foo' ]
-						} )
-					);
+					const state = deepFreeze( merge(
+						paths.createObjectIn( paths.TAB_BY_NAME, testTabs ),
+						paths.createObjectIn( paths.ORDERED_TAB_LIST, [ 'bar', 'foo' ] )
+					) );
 					const result = getTabs( state );
 					const expected = [ testTabs.bar, testTabs.foo ];
 
@@ -139,18 +130,6 @@ describe( 'selectors', () => {
 
 			describe( 'getTabOptions()', () => {
 				it( 'Should get the ordered options for the specified tab', () => {
-					const testTabs = {
-						foo: {
-							name: 'foo',
-							titleText: 'Foo',
-							optionList: [ 'foo-option2', 'foo-option1' ]
-						},
-						bar: {
-							name: 'bar',
-							titleText: 'Bar',
-							optionList: [ 'bar-option2', 'bar-option1' ]
-						}
-					} ;
 					const options = {
 						'foo-option1': { name: 'foo-option1', value: 'foo1 value' },
 						'foo-option2': { name: 'foo-option2', value: 'foo2 value' },

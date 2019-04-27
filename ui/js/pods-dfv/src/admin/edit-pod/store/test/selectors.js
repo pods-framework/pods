@@ -49,9 +49,9 @@ describe( 'selectors', () => {
 				};
 
 				it( 'Should return the specified option', () => {
-					const state = deepFreeze( {
-						ui: { options: options }
-					} );
+					const state = deepFreeze(
+						paths.createObjectIn( paths.OPTIONS, options )
+					);
 					const result = getOption( state, 'option2' );
 					const expected = options.option2;
 
@@ -64,9 +64,9 @@ describe( 'selectors', () => {
 				const { tabNames } = uiConstants;
 
 				it( 'Should return the active tab', () => {
-					const state = deepFreeze( {
-						ui: { activeTab: tabNames.LABELS },
-					} );
+					const state = deepFreeze(
+						paths.createObjectIn( paths.ACTIVE_TAB, tabNames.LABELS )
+					);
 					const result = getActiveTab( state );
 					const expected = paths.get( state, paths.UI ).activeTab;
 
@@ -78,11 +78,9 @@ describe( 'selectors', () => {
 			describe( 'getTabList()', () => {
 				it( 'Should return the ordered tab list', () => {
 					const orderedList = [ 'foo', 'bar', 'baz' ];
-					const state = deepFreeze( {
-						ui: {
-							tabs: { orderedList: orderedList }
-						}
-					} );
+					const state = deepFreeze(
+						paths.createObjectIn( paths.ORDERED_TAB_LIST, orderedList )
+					);
 					const result = getOrderedTabList( state );
 
 					expect( result ).toBeDefined();
@@ -104,9 +102,9 @@ describe( 'selectors', () => {
 			} ;
 
 			describe( 'getTab()', () => {
-				const state = deepFreeze( {
-					ui: { tabs: { byName: testTabs } }
-				} );
+				const state = deepFreeze(
+					paths.createObjectIn( paths.TAB_BY_NAME, testTabs )
+				);
 
 				it( 'Should return the specified tab', () => {
 					const result = getTab( state, 'bar' );
@@ -124,14 +122,12 @@ describe( 'selectors', () => {
 
 			describe( 'getTabs()', () => {
 				it( 'Should return the ordered tabs', () => {
-					const state = deepFreeze( {
-						ui: {
-							tabs: {
-								byName: testTabs,
-								orderedList: [ 'bar', 'foo' ]
-							}
-						}
-					} );
+					const state = deepFreeze(
+						paths.createObjectIn( paths.TABS, {
+							byName: testTabs,
+							orderedList: [ 'bar', 'foo' ]
+						} )
+					);
 					const result = getTabs( state );
 					const expected = [ testTabs.bar, testTabs.foo ];
 
@@ -160,14 +156,14 @@ describe( 'selectors', () => {
 						'bar-option1': { name: 'bar-option1', value: 'bar1 value' },
 						'bar-option2': { name: 'bar-option2', value: 'bar2 value' },
 					};
-					const state = deepFreeze( {
-						ui: {
+					const state = deepFreeze(
+						paths.createObjectIn( paths.UI, {
 							tabs: {
 								byName: testTabs
 							},
 							options: options
-						}
-					} );
+						} )
+					);
 					const result = getTabOptions( state, 'bar' );
 					const expected = [
 						{ name: 'bar-option2', value: 'bar2 value' },
@@ -185,9 +181,9 @@ describe( 'selectors', () => {
 
 			it( 'Should return the save status', () => {
 				const saveStatus = saveStatuses.SAVE_SUCCESS;
-				const state = deepFreeze( {
-					ui: { saveStatus: saveStatus },
-				} );
+				const state = deepFreeze(
+					paths.createObjectIn( paths.SAVE_STATUS, saveStatus )
+				);
 				const result = getSaveStatus( state );
 
 				expect( result ).toBeDefined();
@@ -199,16 +195,16 @@ describe( 'selectors', () => {
 			const { saveStatuses } = uiConstants;
 
 			it( 'Should return true when saving', () => {
-				const state = deepFreeze( {
-					ui: { saveStatus: saveStatuses.SAVING },
-				} );
+				const state = deepFreeze(
+					paths.createObjectIn( paths.SAVE_STATUS, saveStatuses.SAVING )
+				);
 				expect( isSaving( state ) ).toBe( true );
 			} );
 
 			it( 'Should return false when not saving', () => {
-				const state = deepFreeze( {
-					ui: { saveStatus: saveStatuses.SAVE_SUCCESS },
-				} );
+				const state = deepFreeze(
+					paths.createObjectIn( paths.SAVE_STATUS, saveStatuses.SAVE_SUCCESS )
+				);
 				expect( isSaving( state ) ).toBe( false );
 			} );
 		} );
@@ -217,9 +213,9 @@ describe( 'selectors', () => {
 	describe( 'podMeta', () => {
 		describe( 'getPodName()', () => {
 			it( 'Should return the Pod name', () => {
-				const state = deepFreeze( {
-					podMeta: { name: 'plugh' },
-				} );
+				const state = deepFreeze(
+					paths.createObjectIn( paths.POD_META, { name: 'plugh' } )
+				);
 				const result = getPodName( state );
 				const expected = paths.get( state, paths.POD_META ).name;
 
@@ -232,7 +228,9 @@ describe( 'selectors', () => {
 			it( 'Should return the meta value', () => {
 				const key = 'foo';
 				const expected = 'bar';
-				const state = deepFreeze( { podMeta: { [ key ]: expected } } );
+				const state = deepFreeze(
+					paths.createObjectIn( paths.POD_META, { [ key ]: expected } )
+				);
 				const result = getPodMetaValue( state, key );
 
 				expect( result ).toBeDefined();
@@ -242,15 +240,16 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'fields', () => {
-		const state = deepFreeze( {
-			fields: [
-				{ name: 'field1', label: 'label1' },
-				{ name: 'field2', label: 'label2' },
-				{ name: 'field3', label: 'label3' },
-			]
-		} );
 		describe( 'getFields()', () => {
 			it( 'Should return the fields array', () => {
+				const fields = [
+					{ name: 'field1', label: 'label1' },
+					{ name: 'field2', label: 'label2' },
+					{ name: 'field3', label: 'label3' },
+				];
+				const state = deepFreeze(
+					paths.createObjectIn( paths.FIELDS, fields )
+				);
 				const result = getFields( state );
 				const expected = paths.get( state, paths.FIELDS );
 

@@ -12,6 +12,12 @@ export const getState = state => state;
 export const getOption = ( state, optionName ) =>
 	paths.OPTIONS.getFrom( state )[ optionName ];
 
+export const getOptionItemValue = ( state, optionName, itemName ) =>
+	paths.OPTIONS.getFrom( state )[ optionName ][ itemName ];
+
+export const getOptionValue = ( state, optionName ) =>
+	paths.OPTIONS.getFrom( state )[ optionName ].value;
+
 export const getActiveTab = state => paths.ACTIVE_TAB.getFrom( state );
 
 export const getTab = ( state, tabName ) =>

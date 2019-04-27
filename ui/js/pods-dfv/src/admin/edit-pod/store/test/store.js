@@ -71,12 +71,12 @@ describe( 'store', () => {
 					tabNames.AUTO_TEMPLATE_OPTIONS,
 					tabNames.REST_API
 				];
-				const initialState = { ui: { tabs: { orderedList: orderedList } } };
+				const initialState = paths.createObjectIn( paths.ORDERED_TAB_LIST, orderedList );
 
 				test( 'orderedList is initialized properly', () => {
 					testStore.initStore( initialState );
 					const state = testStore.select.getState();
-					const result = paths.get( state, paths.TABS ).orderedList;
+					const result = paths.get( state, paths.ORDERED_TAB_LIST );
 
 					expect( result ).toEqual( orderedList );
 				} );
@@ -157,11 +157,11 @@ describe( 'store', () => {
 				const rename = 'xyzzy';
 
 				test( 'The Pod name is initialized when provided', () => {
-					const initialState = { podMeta: { name: initialName } };
+					const initialState = paths.createObjectIn( paths.POD_META, { name: initialName } );
 					testStore.initStore( initialState );
-					const fullState = testStore.select.getState();
+					const state = testStore.select.getState();
 
-					expect( fullState ).toEqual( expect.objectContaining( initialState ) );
+					expect( state ).toEqual( expect.objectContaining( initialState ) );
 				} );
 
 				test( 'getPodName() should retrieve the pod name', () => {
@@ -222,9 +222,9 @@ describe( 'store', () => {
 
 			it( 'initializes with fields when provided', () => {
 				testStore.initStore( initialState );
-				const fullState = testStore.select.getState();
+				const state = testStore.select.getState();
 
-				expect( fullState ).toEqual( expect.objectContaining( initialState ) );
+				expect( state ).toEqual( expect.objectContaining( initialState ) );
 			} );
 
 			test( 'getFields() should return the fields array', () => {

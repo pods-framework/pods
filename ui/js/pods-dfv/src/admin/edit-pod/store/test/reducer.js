@@ -3,6 +3,7 @@ import {
 	uiConstants,
 	initialUIState,
 } from '../constants';
+
 import {
 	podMeta,
 	fields,
@@ -20,7 +21,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'Should define the SET_POD_NAME action', () => {
-			expect( actions.SET_POD_NAME ).not.toBeUndefined();
+			expect( actions.SET_POD_NAME ).toBeDefined();
 		} );
 
 		it( 'Should update the pod name', () => {
@@ -32,7 +33,7 @@ describe( 'reducer', () => {
 			const expected = action.name;
 			const result = state.name;
 
-			expect( result ).not.toBeUndefined();
+			expect( result ).toBeDefined();
 			expect( result ).toEqual( expected );
 		} );
 
@@ -45,7 +46,7 @@ describe( 'reducer', () => {
 			const expected = { [ action.key ]: action.value };
 			const result = podMeta( undefined, action );
 
-			expect( result ).not.toBeUndefined();
+			expect( result ).toBeDefined();
 			expect( result ).toEqual( expected );
 		} );
 	} );
@@ -79,7 +80,7 @@ describe( 'reducer', () => {
 			];
 
 			it( 'Should define the SET_ACTIVE_TAB action', () => {
-				expect( actions.SET_ACTIVE_TAB ).not.toBeUndefined();
+				expect( actions.SET_ACTIVE_TAB ).toBeDefined();
 			} );
 
 			it( 'Should properly change the active tab', () => {
@@ -107,7 +108,7 @@ describe( 'reducer', () => {
 			const { saveStatuses } = uiConstants;
 
 			it( 'Should define the SET_SAVE_STATUS action', () => {
-				expect( actions.SET_SAVE_STATUS ).not.toBeUndefined();
+				expect( actions.SET_SAVE_STATUS ).toBeDefined();
 			} );
 
 			it( 'Should properly change the save status', () => {

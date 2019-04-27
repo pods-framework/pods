@@ -1,5 +1,5 @@
 import deepFreeze from 'deep-freeze';
-import { merge } from 'lodash';
+const { merge } = lodash;
 
 import * as paths from '../state-paths';
 import { uiConstants } from '../constants';

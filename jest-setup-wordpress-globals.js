@@ -1,3 +1,5 @@
+import lodash from 'lodash';
+
 import {
 	combineReducers,
 	registerStore,
@@ -6,6 +8,9 @@ import {
 	withSelect,
 	withDispatch,
 } from '@wordpress/data';
+
+
+global.lodash = lodash;
 
 global.wp = {
 	data: {

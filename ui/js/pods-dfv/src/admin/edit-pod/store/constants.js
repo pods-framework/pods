@@ -33,6 +33,4 @@ export const podMetaConstants = {
 export const initialUIState = {
 	activeTab: uiConstants.tabNames.MANAGE_FIELDS,
 	saveStatus: uiConstants.saveStatuses.NONE,
-	tabs: {},
-	options: {},
 };

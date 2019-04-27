@@ -1,7 +1,4 @@
-import {
-	uiConstants,
-	podMetaConstants,
-} from '../constants';
+import { uiConstants, podMetaConstants } from '../constants';
 
 import {
 	setPodName,
@@ -20,7 +17,7 @@ describe( 'actions', () => {
 			const action = actions.SET_ACTIVE_TAB;
 
 			it( 'Should define the SET_ACTIVE_TAB action', () => {
-				expect( actions.SET_ACTIVE_TAB ).not.toBeUndefined();
+				expect( actions.SET_ACTIVE_TAB ).toBeDefined();
 			} );
 
 			it( `Should return ${action} action`, () => {
@@ -38,7 +35,7 @@ describe( 'actions', () => {
 			const action = actions.SET_SAVE_STATUS;
 
 			it( 'Should define the SET_SAVE_STATUS action', () => {
-				expect( actions.SET_SAVE_STATUS ).not.toBeUndefined();
+				expect( actions.SET_SAVE_STATUS ).toBeDefined();
 			} );
 
 			it( `Should return ${action} action`, () => {
@@ -61,7 +58,7 @@ describe( 'actions', () => {
 			const action = actions.SET_POD_NAME;
 
 			it( 'Should define the SET_POD_NAME action', () => {
-				expect( actions.SET_POD_NAME ).not.toBeUndefined();
+				expect( actions.SET_POD_NAME ).toBeDefined();
 			} );
 
 			it( `Should return ${action} action`, () => {
@@ -79,7 +76,7 @@ describe( 'actions', () => {
 			const action = actions.SET_POD_META_VALUE;
 
 			it( 'Should define the SET_POD_META_VALUE action', () => {
-				expect( actions.SET_POD_META_VALUE ).not.toBeUndefined();
+				expect( actions.SET_POD_META_VALUE ).toBeDefined();
 			} );
 
 			it( `Should return ${action} action`, () => {

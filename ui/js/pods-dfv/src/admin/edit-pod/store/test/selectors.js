@@ -1,4 +1,6 @@
 import deepFreeze from 'deep-freeze';
+
+import * as paths from '../state-paths';
 import { uiConstants } from '../constants';
 import {
 	getState,
@@ -66,7 +68,7 @@ describe( 'selectors', () => {
 						ui: { activeTab: tabNames.LABELS },
 					} );
 					const result = getActiveTab( state );
-					const expected = state.ui.activeTab;
+					const expected = paths.get( state, paths.UI ).activeTab;
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( expected );
@@ -219,7 +221,7 @@ describe( 'selectors', () => {
 					podMeta: { name: 'plugh' },
 				} );
 				const result = getPodName( state );
-				const expected = state.podMeta.name;
+				const expected = paths.get( state, paths.POD_META ).name;
 
 				expect( result ).toBeDefined();
 				expect( result ).toEqual( expected );
@@ -250,7 +252,7 @@ describe( 'selectors', () => {
 		describe( 'getFields()', () => {
 			it( 'Should return the fields array', () => {
 				const result = getFields( state );
-				const expected = state.fields;
+				const expected = paths.get( state, paths.FIELDS );
 
 				expect( result ).toBeDefined();
 				expect( result ).toEqual( expected );

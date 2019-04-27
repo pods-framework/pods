@@ -1,3 +1,4 @@
+import * as paths from './state-paths';
 import { uiConstants } from './constants';
 
 // Everything
@@ -8,10 +9,10 @@ export const getState = state => state;
  */
 
 //-- Tabs and options
-export const getOption = ( state, optionName ) => state.ui.options[ optionName ];
-export const getActiveTab = state => state.ui.activeTab;
-export const getTab = ( state, tabName ) => state.ui.tabs.byName[ tabName ];
-export const getOrderedTabList = state => state.ui.tabs.orderedList;
+export const getOption = ( state, optionName ) => paths.get( state, paths.OPTIONS )[ optionName ];
+export const getActiveTab = state => paths.get( state, paths.UI ).activeTab;
+export const getTab = ( state, tabName ) => paths.get( state, paths.TAB_BY_NAME )[ tabName ];
+export const getOrderedTabList = state => paths.get( state, paths.TABS ).orderedList;
 
 export const getTabs = state =>
 	getOrderedTabList( state ).map( tabName => getTab( state, tabName ) );
@@ -23,20 +24,20 @@ export const getTabOptions = ( state, tabName ) =>
 	getOrderedTabOptionList( state, tabName ).map( optionName => getOption( state, optionName ) );
 
 //-- Save status
-export const getSaveStatus = state => state.ui.saveStatus;
-export const isSaving = state => state.ui.saveStatus === uiConstants.saveStatuses.SAVING;
+export const getSaveStatus = state => paths.get( state, paths.UI ).saveStatus;
+export const isSaving = state => paths.get( state, paths.UI ).saveStatus === uiConstants.saveStatuses.SAVING;
 
 /**
  * Pod meta
  */
 export const getPodName = state => {
-	return state.podMeta.name;
+	return paths.get( state, paths.POD_META ).name;
 };
 export const getPodMetaValue = ( state, key ) => {
-	return state.podMeta[ key ];
+	return paths.get( state, paths.POD_META )[ key ];
 };
 
 /**
  * Fields
  */
-export const getFields = state => state.fields;
+export const getFields = state => paths.get( state, paths.FIELDS );

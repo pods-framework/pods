@@ -1,4 +1,5 @@
 import { initStore } from '../store';
+import * as paths from '../state-paths';
 import {
 	STORE_KEY_EDIT_POD,
 	uiConstants,
@@ -74,9 +75,10 @@ describe( 'store', () => {
 
 				test( 'orderedList is initialized properly', () => {
 					testStore.initStore( initialState );
-					const fullState = testStore.select.getState();
+					const state = testStore.select.getState();
+					const result = paths.get( state, paths.TABS ).orderedList;
 
-					expect( fullState.ui.tabs.orderedList ).toEqual( orderedList );
+					expect( result ).toEqual( orderedList );
 				} );
 
 				test( 'getActiveTab() should return the default on empty init', () => {
@@ -102,10 +104,11 @@ describe( 'store', () => {
 
 				test( 'Initializes with ui defaults', () => {
 					testStore.initStore( {} );
-					const fullState = testStore.select.getState();
+					const state = testStore.select.getState();
+					const result = paths.get( state, paths.UI );
 
-					expect( fullState.ui ).toBeDefined();
-					expect( fullState.ui ).toEqual( expect.objectContaining( initialUIState ) );
+					expect( result ).toBeDefined();
+					expect( result ).toEqual( expect.objectContaining( initialUIState ) );
 				} );
 
 				test( 'getSaveStatus() should return the default on empty init', () => {
@@ -182,9 +185,10 @@ describe( 'store', () => {
 
 				test( 'initializes with an empty object for podMeta', () => {
 					testStore.initStore( {} );
-					const fullState = testStore.select.getState();
+					const state = testStore.select.getState();
+					const result = paths.get( state, paths.POD_META );
 
-					expect( fullState.podMeta ).toEqual( {} );
+					expect( result ).toEqual( {} );
 				} );
 
 				test( 'setPodMetaValue() should create a new meta value', () => {

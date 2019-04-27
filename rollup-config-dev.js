@@ -22,7 +22,10 @@ export default {
 			'jquery': 'jQuery',
 			'underscore': '_',
 			'backbone': 'Backbone',
-			'backbone.marionette': 'Marionette'
+			'backbone.marionette': 'Marionette',
+			'react': 'React',
+			'react-dom': 'ReactDOM',
+			'lodash': 'Lodash',
 		},
 		sourcemap: true
 	},
@@ -30,7 +33,10 @@ export default {
 		'jquery',
 		'underscore',
 		'backbone',
-		'backbone.marionette'
+		'backbone.marionette',
+		'react',
+		'react-dom',
+		'lodash'
 	],
 	plugins: [
 		includePaths( includePathOptions ),

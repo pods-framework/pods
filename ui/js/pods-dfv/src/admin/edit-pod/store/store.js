@@ -1,4 +1,4 @@
-const { merge } = lodash;
+import { merge } from 'lodash';
 
 import * as paths from './state-paths';
 import { STORE_KEY_EDIT_POD, initialUIState } from './constants';

@@ -21,7 +21,7 @@ const MISSING = __( '[MISSING DEFAULT]', 'pods' );
  *         label: 'XXX %s',
  *         label_param: 'optionName',
  *         param_default: 'Item',
- *         type: 'text, checkbox, pick'
+ *         type: 'text, boolean, number, pick, file'
  *         value: ''
  *     }
  * }
@@ -39,18 +39,19 @@ export const DynamicTabContent = ( props ) => {
 		}
 
 		const param = getOptionValue( paramOption ) || paramDefault || MISSING;
-
 		return sprintf( labelFormat, param );
 	};
 
 	return tabOptions.map( thisOption => (
 		<DependentFieldOption
 			key={thisOption.name}
+			fieldType={thisOption.type}
 			name={thisOption.name}
 			label={getLabelValue( thisOption.label, thisOption.label_param, thisOption.param_default )}
 			value={thisOption.value}
 			default={thisOption.default}
 			dependents={thisOption[ 'depends-on' ]}
+			helpText={thisOption.help}
 			getOptionValue={getOptionValue}
 			setOptionValue={setOptionValue}
 		/>
@@ -68,8 +69,15 @@ DynamicTabContent.propTypes = {
  * Conditionally display a FieldOption (depends-on support)
  */
 const DependentFieldOption = ( props ) => {
-	const { name, label, value, dependents } = props;
+	const { fieldType, name, label, value, dependents } = props;
 	const { getOptionValue, setOptionValue } = props;
+
+	const handleInputChange = ( e ) => {
+		const target = e.target;
+		const value = 'checkbox' === target.type ? target.checked : target.value;
+
+		setOptionValue( name, value );
+	};
 
 	if ( !meetsDependencies( dependents, getOptionValue ) ) {
 		return null;
@@ -77,20 +85,24 @@ const DependentFieldOption = ( props ) => {
 
 	return (
 		<PodsFieldOption
+			fieldType={fieldType}
 			name={name}
 			value={value}
 			label={label}
 			default={props.default} // default is a keyword and can't be a const name
-			onChange={( e ) => setOptionValue( name, e.target.value ) }
+			onChange={handleInputChange}
+			helpText={props.helpText}
 		/>
 	);
 };
 DependentFieldOption.propTypes = {
+	fieldType: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	value: PropTypes.any.isRequired,
 	label: PropTypes.string.isRequired,
 	default: PropTypes.any,
 	dependents: PropTypes.object,
+	helpText: PropTypes.any,
 	getOptionValue: PropTypes.func.isRequired,
 	setOptionValue: PropTypes.func.isRequired,
 };

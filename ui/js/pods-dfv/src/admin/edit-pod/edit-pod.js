@@ -13,7 +13,7 @@ import { PodsNavTab } from 'pods-dfv/src/components/tabs/pods-nav-tab';
 import { ActiveTabContent } from './main-tabs/active-tab-content';
 import { Postbox } from './postbox';
 
-export const PodsDFVEditPod = compose( [
+const StoreSubscribe = compose( [
 	withSelect( ( select ) => {
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 		return {
@@ -31,8 +31,10 @@ export const PodsDFVEditPod = compose( [
 			setOptionValue: storeDispatch.setOptionValue,
 		};
 	} )
-] )
-( ( props ) => {
+] );
+
+
+export const PodsDFVEditPod = StoreSubscribe( ( props ) => {
 	const { activeTab, tabs, setActiveTab, tabOptions } = props;
 	const { getOptionValue, setOptionValue } = props;
 

@@ -12,7 +12,7 @@ import { DynamicTabContent } from './dynamic-tab-content';
  */
 export const ActiveTabContent = ( props ) => {
 	return (
-		<div id='post-body-content' className='pods-nav-tab-group'>
+		<div id='post-body-content' className='pods-nav-tab-group pods-manage-field'>
 			{'manage-fields' === props.activeTab ?
 				( <ManageFieldsTab /> ) :
 				( <DynamicTabContent

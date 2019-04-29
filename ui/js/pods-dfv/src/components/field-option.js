@@ -8,9 +8,9 @@ export const PodsFieldOption = ( props ) => {
 		<div className='pods-field-option'>
 			<label
 				className={`pods-form-ui-label pods-form-ui-label-${name}`}
-				htmlFor={name}
-			/>
-			{label}
+				htmlFor={name}>
+				{label}
+			</label>
 			{ /* Todo: dynamic field type handling */ }
 			<input
 				type='text'

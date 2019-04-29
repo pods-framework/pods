@@ -102,7 +102,7 @@ DependentFieldOption.propTypes = {
 /**
  *
  * @param {object}   dependencies   dictionary in the form optionName: requiredVal
- * @param {function} getOptionValue selector to lookup option values
+ * @param {function} getOptionValue selector to lookup option values by name
  *
  * @return {boolean} Whether or not the specified dependencies are met
  */

@@ -16,7 +16,7 @@ export const ui = ( state = initialUIState, action = {} ) => {
 			let newTab = initialUIState.activeTab;
 			let tabIndex = state.tabs.orderedList.indexOf( action.activeTab );
 
-			if ( -1 !==  tabIndex ) {
+			if ( -1 !== tabIndex ) {
 				newTab = action.activeTab;
 			}
 
@@ -35,9 +35,38 @@ export const ui = ( state = initialUIState, action = {} ) => {
 				saveStatus: newStatus
 			};
 
+		case actions.SET_OPTION_ITEM_VALUE:
+			return {
+				...state,
+				options: options( state.options, action )
+			};
+
 		default:
 			return state;
 	}
+};
+
+export const options = ( state = {}, action = {} ) => {
+	const { actions } = uiConstants;
+
+	switch ( action.type ) {
+		case actions.SET_OPTION_ITEM_VALUE:
+			return {
+				...state,
+				[ action.optionName ]: setObjectValue( state[ action.optionName ], action.itemName, action.itemValue )
+			};
+
+
+		default:
+			return state;
+	}
+};
+
+export const setObjectValue = ( object, key, value ) => {
+	return {
+		...object,
+		[ key ]: value
+	};
 };
 
 // Pod meta

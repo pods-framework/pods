@@ -6,7 +6,7 @@ import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants'
 const { __ } = wp.i18n;
 const { withSelect } = wp.data;
 
-export const TabManageFields = withSelect( ( select ) => {
+export const ManageFieldsTab = withSelect( ( select ) => {
 	return {
 		fields: select( STORE_KEY_EDIT_POD ).getFields()
 	};

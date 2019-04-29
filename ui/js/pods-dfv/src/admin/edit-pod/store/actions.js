@@ -17,6 +17,27 @@ export const setSaveStatus = ( saveStatus ) => {
 	};
 };
 
+// Options
+export const setOptionValue = ( name, value ) => {
+	return {
+		// Just an alias for setOptionItemValue( name, 'value', value )
+		type: uiConstants.actions.SET_OPTION_ITEM_VALUE,
+		optionName: name,
+		itemName: 'value',
+		itemValue: value
+	};
+};
+
+export const setOptionItemValue = ( optionName, itemName, itemValue ) => {
+	return {
+		type: uiConstants.actions.SET_OPTION_ITEM_VALUE,
+		optionName: optionName,
+		itemName: itemName,
+		itemValue: itemValue
+	};
+};
+
+
 // Pod meta
 export const setPodName = ( name ) => {
 	return {

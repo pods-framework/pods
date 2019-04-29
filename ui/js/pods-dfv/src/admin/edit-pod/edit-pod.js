@@ -33,7 +33,6 @@ const StoreSubscribe = compose( [
 	} )
 ] );
 
-
 export const PodsDFVEditPod = StoreSubscribe( ( props ) => {
 	const { activeTab, tabs, setActiveTab, tabOptions } = props;
 	const { getOptionValue, setOptionValue } = props;

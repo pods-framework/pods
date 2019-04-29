@@ -19,7 +19,7 @@ const MISSING = __( '[MISSING DEFAULT]', 'pods' );
  *         depends-on: { optionName: dependentValue },
  *         help: 'help',
  *         label: 'XXX %s',
- *         label_param: 'OptionName',
+ *         label_param: 'optionName',
  *         param_default: 'Item',
  *         type: 'text, checkbox, pick'
  *         value: ''
@@ -71,10 +71,6 @@ const DependentFieldOption = ( props ) => {
 	const { name, label, value, dependents } = props;
 	const { getOptionValue, setOptionValue } = props;
 
-	const onChange = ( e ) => {
-		setOptionValue( name, e.target.value );
-	};
-
 	if ( !meetsDependencies( dependents, getOptionValue ) ) {
 		return null;
 	}
@@ -85,7 +81,7 @@ const DependentFieldOption = ( props ) => {
 			value={value}
 			label={label}
 			default={props.default} // default is a keyword and can't be a const name
-			onChange={onChange}
+			onChange={( e ) => setOptionValue( name, e.target.value ) }
 		/>
 	);
 };

@@ -45,9 +45,10 @@ export const options = ( state = {}, action = {} ) => {
 
 	switch ( action.type ) {
 		case actions.SET_OPTION_ITEM_VALUE:
+			const { optionName, itemName, itemValue } = action;
 			return {
 				...state,
-				[ action.optionName ]: setObjectValue( state[ action.optionName ], action.itemName, action.itemValue )
+				[ optionName ]: setObjectValue( optionName, itemName, itemValue )
 			};
 
 

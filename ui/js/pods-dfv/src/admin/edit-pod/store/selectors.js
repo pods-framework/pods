@@ -9,8 +9,6 @@ export const getState = state => state;
  */
 
 //-- Tabs and options
-export const getOptions = ( state ) => paths.OPTIONS.getFrom( state );
-
 export const getOption = ( state, optionName ) =>
 	paths.OPTIONS.getFrom( state )[ optionName ];
 

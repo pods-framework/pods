@@ -19,7 +19,6 @@ export const setSaveStatus = ( saveStatus ) => {
 
 // Options
 export const setOptionValue = ( name, value ) => setOptionItemValue( name, 'value', value );
-
 export const setOptionItemValue = ( optionName, itemName, itemValue ) => {
 	return {
 		type: uiConstants.actions.SET_OPTION_ITEM_VALUE,

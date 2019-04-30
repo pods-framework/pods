@@ -5,6 +5,8 @@ import {
 	setPodMetaValue,
 	setSaveStatus,
 	setActiveTab,
+	setOptionValue,
+	setOptionItemValue,
 } from '../actions.js';
 
 describe( 'actions', () => {
@@ -46,6 +48,42 @@ describe( 'actions', () => {
 				};
 
 				expect( setSaveStatus( saveStatus ) ).toEqual( expected );
+			} );
+		} );
+
+		describe( 'setOptionValue()/setOptionItemValue()', () => {
+			const action = actions.SET_OPTION_ITEM_VALUE;
+
+			it( 'Should define the SET_OPTION_ITEM_VALUE action', () => {
+				expect( actions.SET_OPTION_ITEM_VALUE ).toBeDefined();
+			} );
+
+			test( `setOptionItemValue() should return ${action} action`, () => {
+				const optionName = 'foo';
+				const itemName = 'bar';
+				const itemValue = 'baz';
+				const expected = {
+					type: action,
+					optionName: optionName,
+					itemName: itemName,
+					itemValue: itemValue
+				};
+				const result = setOptionItemValue( optionName, itemName, itemValue);
+
+				expect( result ).toEqual( expected );
+			} );
+
+			test( `setOptionValue() should return ${action} action`, () => {
+				const name = 'foo';
+				const value = 'bar';
+				const expected = {
+					type: action,
+					optionName: name,
+					itemName: 'value',
+					itemValue: value
+				};
+
+				expect( setOptionValue( name, value ) ).toEqual( expected );
 			} );
 		} );
 	} );

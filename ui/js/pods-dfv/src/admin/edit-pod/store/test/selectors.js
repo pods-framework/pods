@@ -43,7 +43,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'ui', () => {
-		describe( 'tabs/options', () => {
+		describe( 'tabs', () => {
 			describe( 'getActiveTab()', () => {
 				const { tabNames } = uiConstants;
 
@@ -139,95 +139,99 @@ describe( 'selectors', () => {
 					expect( result ).toEqual( expected );
 				} );
 			} );
+		} );
 
-			describe( 'getOption()', () => {
-				const options = {
-					opt1: { name: 'opt1', label: 'Option 1', value: 'val1' },
-					opt2: { name: 'opt2', label: 'Option 2', value: 'val2' },
-					opt3: { name: 'opt3', label: 'Option 3', value: 'val3' },
-				};
+		describe( 'save status', () => {
+			describe( 'getSaveStatus()', () => {
+				const { saveStatuses } = uiConstants;
 
-				it( 'Should return the specified option', () => {
+				it( 'Should return the save status', () => {
+					const saveStatus = saveStatuses.SAVE_SUCCESS;
 					const state = deepFreeze(
-						paths.OPTIONS.createTree( options )
+						paths.SAVE_STATUS.createTree( saveStatus )
 					);
-					const result = getOption( state, 'opt2' );
-					const expected = options.opt2;
+					const result = getSaveStatus( state );
 
 					expect( result ).toBeDefined();
-					expect( result ).toEqual( expected );
+					expect( result ).toEqual( saveStatus );
 				} );
 			} );
 
-			describe( 'getOptionItemValue()', () => {
-				const options = {
-					opt1: { name: 'opt1', label: 'Option 1', value: 'val1' },
-					opt2: { name: 'opt2', label: 'Option 2', value: 'val2' },
-					opt3: { name: 'opt3', label: 'Option 3', value: 'val3' },
-				};
+			describe( 'isSaving()', () => {
+				const { saveStatuses } = uiConstants;
 
-				it( 'Should return the specified option item value', () => {
+				it( 'Should return true when saving', () => {
 					const state = deepFreeze(
-						paths.OPTIONS.createTree( options )
+						paths.SAVE_STATUS.createTree( saveStatuses.SAVING )
 					);
-					const result = getOptionItemValue( state, 'opt2', 'label' );
-					const expected = options.opt2.label;
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( expected );
+					expect( isSaving( state ) ).toBe( true );
 				} );
-			} );
 
-			describe( 'getOptionValue()', () => {
-				const options = {
-					opt1: { name: 'opt1', label: 'Option 1', value: 'val1' },
-					opt2: { name: 'opt2', label: 'Option 2', value: 'val2' },
-					opt3: { name: 'opt3', label: 'Option 3', value: 'val3' },
-				};
-
-				it( 'Should return the specified option value', () => {
+				it( 'Should return false when not saving', () => {
 					const state = deepFreeze(
-						paths.OPTIONS.createTree( options )
+						paths.SAVE_STATUS.createTree( saveStatuses.SAVE_SUCCESS )
 					);
-					const result = getOptionValue( state, 'opt2' );
-					const expected = options.opt2.value;
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( expected );
+					expect( isSaving( state ) ).toBe( false );
 				} );
 			} );
 		} );
+	} );
 
-		describe( 'getSaveStatus()', () => {
-			const { saveStatuses } = uiConstants;
+	describe( 'options', () => {
+		describe( 'getOption()', () => {
+			const options = {
+				opt1: { name: 'opt1', label: 'Option 1', value: 'val1' },
+				opt2: { name: 'opt2', label: 'Option 2', value: 'val2' },
+				opt3: { name: 'opt3', label: 'Option 3', value: 'val3' },
+			};
 
-			it( 'Should return the save status', () => {
-				const saveStatus = saveStatuses.SAVE_SUCCESS;
+			it( 'Should return the specified option', () => {
 				const state = deepFreeze(
-					paths.SAVE_STATUS.createTree( saveStatus )
+					paths.OPTIONS.createTree( options )
 				);
-				const result = getSaveStatus( state );
+				const result = getOption( state, 'opt2' );
+				const expected = options.opt2;
 
 				expect( result ).toBeDefined();
-				expect( result ).toEqual( saveStatus );
+				expect( result ).toEqual( expected );
 			} );
 		} );
 
-		describe( 'isSaving()', () => {
-			const { saveStatuses } = uiConstants;
+		describe( 'getOptionItemValue()', () => {
+			const options = {
+				opt1: { name: 'opt1', label: 'Option 1', value: 'val1' },
+				opt2: { name: 'opt2', label: 'Option 2', value: 'val2' },
+				opt3: { name: 'opt3', label: 'Option 3', value: 'val3' },
+			};
 
-			it( 'Should return true when saving', () => {
+			it( 'Should return the specified option item value', () => {
 				const state = deepFreeze(
-					paths.SAVE_STATUS.createTree( saveStatuses.SAVING )
+					paths.OPTIONS.createTree( options )
 				);
-				expect( isSaving( state ) ).toBe( true );
+				const result = getOptionItemValue( state, 'opt2', 'label' );
+				const expected = options.opt2.label;
+
+				expect( result ).toBeDefined();
+				expect( result ).toEqual( expected );
 			} );
+		} );
 
-			it( 'Should return false when not saving', () => {
+		describe( 'getOptionValue()', () => {
+			const options = {
+				opt1: { name: 'opt1', label: 'Option 1', value: 'val1' },
+				opt2: { name: 'opt2', label: 'Option 2', value: 'val2' },
+				opt3: { name: 'opt3', label: 'Option 3', value: 'val3' },
+			};
+
+			it( 'Should return the specified option value', () => {
 				const state = deepFreeze(
-					paths.SAVE_STATUS.createTree( saveStatuses.SAVE_SUCCESS )
+					paths.OPTIONS.createTree( options )
 				);
-				expect( isSaving( state ) ).toBe( false );
+				const result = getOptionValue( state, 'opt2' );
+				const expected = options.opt2.value;
+
+				expect( result ).toBeDefined();
+				expect( result ).toEqual( expected );
 			} );
 		} );
 	} );

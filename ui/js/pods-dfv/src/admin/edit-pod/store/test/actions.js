@@ -1,4 +1,4 @@
-import { uiConstants, podMetaConstants } from '../constants';
+import { uiConstants, podMetaConstants, optionConstants } from '../constants';
 
 import {
 	setPodName,
@@ -50,9 +50,14 @@ describe( 'actions', () => {
 				expect( setSaveStatus( saveStatus ) ).toEqual( expected );
 			} );
 		} );
+	} );
+
+	// Options
+	describe( 'option actions', () => {
+		const { actions } = optionConstants;
 
 		describe( 'setOptionValue()/setOptionItemValue()', () => {
-			const action = actions.SET_OPTION_ITEM_VALUE;
+			const { action } = actions.SET_OPTION_ITEM_VALUE;
 
 			it( 'Should define the SET_OPTION_ITEM_VALUE action', () => {
 				expect( actions.SET_OPTION_ITEM_VALUE ).toBeDefined();

@@ -1,10 +1,19 @@
 import {
+	optionConstants,
+	podMetaConstants,
 	uiConstants,
 	initialUIState,
-	podMetaConstants
 } from './constants';
 
 const { combineReducers } = wp.data;
+
+// Helper function
+export const setObjectValue = ( object, key, value ) => {
+	return {
+		...object,
+		[ key ]: value
+	};
+};
 
 // UI
 export const ui = ( state = initialUIState, action = {} ) => {
@@ -41,7 +50,7 @@ export const ui = ( state = initialUIState, action = {} ) => {
 };
 
 export const options = ( state = {}, action = {} ) => {
-	const { actions } = uiConstants;
+	const { actions } = optionConstants;
 
 	switch ( action.type ) {
 		case actions.SET_OPTION_ITEM_VALUE:
@@ -55,13 +64,6 @@ export const options = ( state = {}, action = {} ) => {
 		default:
 			return state;
 	}
-};
-
-export const setObjectValue = ( object, key, value ) => {
-	return {
-		...object,
-		[ key ]: value
-	};
 };
 
 // Pod meta

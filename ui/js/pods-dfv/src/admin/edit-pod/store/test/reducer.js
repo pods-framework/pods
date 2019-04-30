@@ -1,13 +1,15 @@
 import {
 	podMetaConstants,
+	optionConstants,
 	uiConstants,
 	initialUIState,
 } from '../constants';
 
 import {
 	podMeta,
+	options,
 	fields,
-	ui
+	ui,
 } from '../reducer';
 
 describe( 'reducer', () => {

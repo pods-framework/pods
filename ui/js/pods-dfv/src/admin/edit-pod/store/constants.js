@@ -4,7 +4,6 @@ export const uiConstants = {
 	actions: {
 		SET_ACTIVE_TAB: 'SET_ACTIVE_TAB',
 		SET_SAVE_STATUS: 'SET_SAVE_STATUS',
-		SET_OPTION_ITEM_VALUE: 'SET_OPTION_ITEM_VALUE',
 	},
 
 	tabNames: {
@@ -21,6 +20,12 @@ export const uiConstants = {
 		SAVING: 'SAVING',
 		SAVE_SUCCESS: 'SAVE_SUCCESS',
 		SAVE_ERROR: 'SAVE_ERROR',
+	},
+};
+
+export const optionConstants = {
+	actions: {
+		SET_OPTION_ITEM_VALUE: 'SET_OPTION_ITEM_VALUE',
 	},
 };
 

@@ -17,7 +17,6 @@ const StoreSubscribe = compose( [
 	withSelect( ( select ) => {
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 		return {
-			state: storeSelect.getState(),
 			tabs: storeSelect.getTabs(),
 			activeTab: storeSelect.getActiveTab(),
 			tabOptions: storeSelect.getTabOptions( storeSelect.getActiveTab() ),

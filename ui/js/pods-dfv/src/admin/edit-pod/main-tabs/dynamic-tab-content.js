@@ -15,6 +15,8 @@ const MISSING = __( '[MISSING DEFAULT]', 'pods' );
  * option data format
  * {
  *     optionName: {
+ *         // default may get removed... merge it into value on the server side,
+ *         // it's a one-time thing
  *         default: '',
  *         depends-on: { optionName: dependentValue },
  *         help: 'help',
@@ -42,16 +44,15 @@ export const DynamicTabContent = ( props ) => {
 		return sprintf( labelFormat, param );
 	};
 
-	return tabOptions.map( thisOption => (
+	return tabOptions.map( option => (
 		<DependentFieldOption
-			key={thisOption.name}
-			fieldType={thisOption.type}
-			name={thisOption.name}
-			label={getLabelValue( thisOption.label, thisOption.label_param, thisOption.param_default )}
-			value={thisOption.value}
-			default={thisOption.default}
-			dependents={thisOption[ 'depends-on' ]}
-			helpText={thisOption.help}
+			key={option.name}
+			fieldType={option.type}
+			name={option.name}
+			label={getLabelValue( option.label, option.label_param, option.param_default )}
+			value={option.value || ''}
+			dependents={option[ 'depends-on' ]}
+			helpText={option.help}
 			getOptionValue={getOptionValue}
 			setOptionValue={setOptionValue}
 		/>
@@ -89,7 +90,6 @@ const DependentFieldOption = ( props ) => {
 			name={name}
 			value={value}
 			label={label}
-			default={props.default} // default is a keyword and can't be a const name
 			onChange={handleInputChange}
 			helpText={props.helpText}
 		/>
@@ -100,7 +100,6 @@ DependentFieldOption.propTypes = {
 	name: PropTypes.string.isRequired,
 	value: PropTypes.any.isRequired,
 	label: PropTypes.string.isRequired,
-	default: PropTypes.any,
 	dependents: PropTypes.object,
 	helpText: PropTypes.any,
 	getOptionValue: PropTypes.func.isRequired,
@@ -109,8 +108,8 @@ DependentFieldOption.propTypes = {
 
 /**
  *
- * @param {object}   dependencies   dictionary in the form optionName: requiredVal
- * @param {function} getOptionValue selector to lookup option values by name
+ * @param {object|object[]} dependencies Dictionary in the form optionName: requiredVal
+ * @param {function} getOptionValue Selector to lookup option values by name
  *
  * @return {boolean} Whether or not the specified dependencies are met
  */

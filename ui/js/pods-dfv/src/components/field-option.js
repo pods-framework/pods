@@ -46,7 +46,5 @@ PodsFieldOption.propTypes = {
 	value: PropTypes.any.isRequired,
 	label: PropTypes.string.isRequired,
 	onChange: PropTypes.func.isRequired,
-	// Todo: implement default with controlled inputs, can't just use defaultValue
-	default: PropTypes.any,
 	helpText: PropTypes.any,
 };

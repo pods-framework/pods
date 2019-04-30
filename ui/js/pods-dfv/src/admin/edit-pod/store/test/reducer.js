@@ -1,3 +1,5 @@
+import deepFreeze from 'deep-freeze';
+
 import {
 	podMetaConstants,
 	optionConstants,
@@ -47,6 +49,61 @@ describe( 'reducer', () => {
 			};
 			const expected = { [ action.key ]: action.value };
 			const result = podMeta( undefined, action );
+
+			expect( result ).toBeDefined();
+			expect( result ).toEqual( expected );
+		} );
+	} );
+
+	// Options
+	describe( 'options', () => {
+		const { actions } = optionConstants;
+
+		it( 'Should return an empty object by default', () => {
+			expect( options( undefined, undefined ) ).toEqual( {} );
+		} );
+
+		it( 'Should define the SET_OPTION_ITEM_VALUE action', () => {
+			expect( actions.SET_OPTION_ITEM_VALUE ).toBeDefined();
+		} );
+
+		test( 'Should create a new option object if it doesn\'t exist', () => {
+			const optionName = 'foo';
+			const itemName = 'bar';
+			const itemValue = 'baz';
+			const action = {
+				type: actions.SET_OPTION_ITEM_VALUE,
+				optionName: optionName,
+				itemName: itemName,
+				itemValue: itemValue
+			};
+
+			const expected = { [ optionName ]: { [ itemName ]: itemValue } };
+			const result = options( undefined, action );
+
+			expect( result ).toBeDefined();
+			expect( result ).toEqual( expected );
+		} );
+
+		test( 'Should update an existing option item\'s value', () => {
+			const optionName = 'foo';
+			const itemName = 'bar';
+			const itemValue = 'baz';
+			const initialState = deepFreeze( {
+				[ optionName ]: { name: optionName, [ itemName ]: 'old value' }
+			} );
+			const action = {
+				type: actions.SET_OPTION_ITEM_VALUE,
+				optionName: optionName,
+				itemName: itemName,
+				itemValue: itemValue
+			};
+
+			const expected = { [ optionName ]: {
+				name: optionName,
+				[ itemName ]: itemValue }
+			};
+			const result = options( initialState, action );
 
 			expect( result ).toBeDefined();
 			expect( result ).toEqual( expected );

@@ -73,7 +73,7 @@ describe( 'actions', () => {
 					itemName: itemName,
 					itemValue: itemValue
 				};
-				const result = setOptionItemValue( optionName, itemName, itemValue);
+				const result = setOptionItemValue( optionName, itemName, itemValue );
 
 				expect( result ).toEqual( expected );
 			} );

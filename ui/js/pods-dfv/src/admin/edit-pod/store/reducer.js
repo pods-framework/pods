@@ -57,7 +57,7 @@ export const options = ( state = {}, action = {} ) => {
 			const { optionName, itemName, itemValue } = action;
 			return {
 				...state,
-				[ optionName ]: setObjectValue( optionName, itemName, itemValue )
+				[ optionName ]: setObjectValue( state[ optionName ], itemName, itemValue )
 			};
 
 

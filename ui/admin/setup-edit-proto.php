@@ -47,9 +47,9 @@ foreach ( $setup_edit_tabs as $tab_name => $tab_title_text ) {
 	}
 
 	$tabs_by_name[ $tab_name ] = array(
-		'name'      => $tab_name,
-		'titleText' => $tab_title_text,
-		'optionList'   => $tab_option_list
+		'name'       => $tab_name,
+		'titleText'  => $tab_title_text,
+		'optionList' => $tab_option_list
 	);
 }
 
@@ -63,12 +63,12 @@ $data = array(
 		'id'   => $pod[ 'id' ]
 	),
 	'ui'        => array(
-		'tabs'    => array(
-			'byName'  => $tabs_by_name,
+		'tabs' => array(
+			'byName'      => $tabs_by_name,
 			'orderedList' => $ordered_tab_list,
 		),
-		'options' => $options,
 	),
+	'options'   => $options,
 	'fields'    => $pod_fields,
 );
 $data = wp_json_encode( $data, JSON_HEX_TAG );

@@ -35,12 +35,6 @@ export const ui = ( state = initialUIState, action = {} ) => {
 				saveStatus: newStatus
 			};
 
-		case actions.SET_OPTION_ITEM_VALUE:
-			return {
-				...state,
-				options: options( state.options, action )
-			};
-
 		default:
 			return state;
 	}
@@ -99,5 +93,6 @@ export const fields = ( state = [], action = {} ) => {
 export default ( combineReducers( {
 	ui,
 	podMeta,
+	options,
 	fields,
 } ) );

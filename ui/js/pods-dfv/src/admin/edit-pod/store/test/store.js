@@ -20,19 +20,26 @@ const testStore = {
 describe( 'store', () => {
 	describe( 'initStore() with initialState', () => {
 		const fields = [ 'field 1', 'field 2', 'field 3' ];
+		const options = {
+			xyzzy: { name: 'xyzzy', value: 'Value 1' },
+			plugh: { name: 'plugh', value: 'Value 2' },
+		};
 		const name = 'xyzzy';
+
 		const initialState = {
-			fields: fields,
 			podMeta: {
 				name: name,
 			},
+			options: options,
+			fields: fields,
 		};
 		const expected = {
 			ui: initialUIState,
-			fields: fields,
 			podMeta: {
 				name: name,
 			},
+			options: options,
+			fields: fields,
 		};
 
 		it( 'Initializes properly', () => {
@@ -47,7 +54,8 @@ describe( 'store', () => {
 		const expected = {
 			ui: initialUIState,
 			podMeta: {},
-			fields: []
+			options: {},
+			fields: [],
 		};
 
 		it( 'Initializes properly', () => {

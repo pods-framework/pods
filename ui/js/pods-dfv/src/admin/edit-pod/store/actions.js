@@ -1,5 +1,6 @@
 import {
 	uiConstants,
+	optionConstants,
 	podMetaConstants,
 } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
@@ -21,7 +22,7 @@ export const setSaveStatus = ( saveStatus ) => {
 export const setOptionValue = ( name, value ) => setOptionItemValue( name, 'value', value );
 export const setOptionItemValue = ( optionName, itemName, itemValue ) => {
 	return {
-		type: uiConstants.actions.SET_OPTION_ITEM_VALUE,
+		type: optionConstants.actions.SET_OPTION_ITEM_VALUE,
 		optionName: optionName,
 		itemName: itemName,
 		itemValue: itemValue

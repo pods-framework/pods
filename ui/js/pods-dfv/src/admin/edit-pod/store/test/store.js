@@ -1,3 +1,5 @@
+import deepFreeze from 'deep-freeze';
+
 import { initStore } from '../store';
 import * as paths from '../state-paths';
 import {
@@ -26,13 +28,13 @@ describe( 'store', () => {
 		};
 		const name = 'xyzzy';
 
-		const initialState = {
+		const initialState = deepFreeze( {
 			podMeta: {
 				name: name,
 			},
 			options: options,
 			fields: fields,
-		};
+		} );
 		const expected = {
 			ui: initialUIState,
 			podMeta: {
@@ -78,7 +80,7 @@ describe( 'store', () => {
 					tabNames.AUTO_TEMPLATE_OPTIONS,
 					tabNames.REST_API
 				];
-				const initialState = paths.TABS_LIST.createTree( orderedList );
+				const initialState = deepFreeze( paths.TABS_LIST.createTree( orderedList ) );
 
 				test( 'orderedList is initialized properly', () => {
 					testStore.initStore( initialState );
@@ -164,7 +166,7 @@ describe( 'store', () => {
 				const rename = 'xyzzy';
 
 				test( 'The Pod name is initialized when provided', () => {
-					const initialState = paths.POD_META.createTree( { name: initialName } );
+					const initialState = deepFreeze( paths.POD_META.createTree( { name: initialName } ) );
 					testStore.initStore( initialState );
 					const state = testStore.select.getState();
 
@@ -219,13 +221,13 @@ describe( 'store', () => {
 		} );
 
 		describe( 'fields', () => {
-			const initialState = {
+			const initialState = deepFreeze( {
 				fields: [
 					{ name: 'xyzzy', label: 'label1' },
 					{ name: 'plugh', label: 'label2' },
 					{ name: 'abracadabra', label: 'label3' },
 				],
-			};
+			} );
 
 			it( 'initializes with fields when provided', () => {
 				testStore.initStore( initialState );

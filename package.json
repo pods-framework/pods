@@ -61,6 +61,8 @@
     "npm": "^6.9.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
+    "react-dnd": "^7.4.5",
+    "react-dnd-html5-backend": "^7.4.4",
     "react-dom": "^16.8.6",
     "rememo": "^3.0.0",
     "rollup": "^1.10.0",

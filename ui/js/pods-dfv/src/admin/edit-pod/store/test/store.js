@@ -28,13 +28,13 @@ describe( 'store', () => {
 		};
 		const name = 'xyzzy';
 
-		const initialState = deepFreeze( {
+		const initialState = {
 			podMeta: {
 				name: name,
 			},
 			options: options,
 			fields: fields,
-		} );
+		};
 		const expected = {
 			ui: initialUIState,
 			podMeta: {
@@ -45,7 +45,7 @@ describe( 'store', () => {
 		};
 
 		it( 'Initializes properly', () => {
-			testStore.initStore( initialState );
+			testStore.initStore( deepFreeze( initialState ) );
 			const result = testStore.select.getState();
 
 			expect( result ).toEqual( expected );
@@ -61,7 +61,7 @@ describe( 'store', () => {
 		};
 
 		it( 'Initializes properly', () => {
-			testStore.initStore( {} );
+			testStore.initStore( deepFreeze( {} ) );
 			const result = testStore.select.getState();
 
 			expect( result ).toEqual( expected );
@@ -80,10 +80,10 @@ describe( 'store', () => {
 					tabNames.AUTO_TEMPLATE_OPTIONS,
 					tabNames.REST_API
 				];
-				const initialState = deepFreeze( paths.TABS_LIST.createTree( orderedList ) );
+				const initialState = paths.TABS_LIST.createTree( orderedList );
 
 				test( 'orderedList is initialized properly', () => {
-					testStore.initStore( initialState );
+					testStore.initStore( deepFreeze( initialState ) );
 					const state = testStore.select.getState();
 					const result = paths.TABS_LIST.getFrom( state );
 
@@ -112,7 +112,7 @@ describe( 'store', () => {
 				const { saveStatuses } = uiConstants;
 
 				test( 'Initializes with ui defaults', () => {
-					testStore.initStore( {} );
+					testStore.initStore( deepFreeze( {} ) );
 					const state = testStore.select.getState();
 					const result = paths.UI.getFrom( state );
 
@@ -166,8 +166,8 @@ describe( 'store', () => {
 				const rename = 'xyzzy';
 
 				test( 'The Pod name is initialized when provided', () => {
-					const initialState = deepFreeze( paths.POD_META.createTree( { name: initialName } ) );
-					testStore.initStore( initialState );
+					const initialState = paths.POD_META.createTree( { name: initialName } );
+					testStore.initStore( deepFreeze( initialState ) );
 					const state = testStore.select.getState();
 
 					expect( state ).toEqual( expect.objectContaining( initialState ) );
@@ -193,7 +193,7 @@ describe( 'store', () => {
 			describe( 'General meta', () => {
 
 				test( 'initializes with an empty object for podMeta', () => {
-					testStore.initStore( {} );
+					testStore.initStore( deepFreeze( {} ) );
 					const state = testStore.select.getState();
 					const result = paths.POD_META.getFrom( state );
 
@@ -221,16 +221,16 @@ describe( 'store', () => {
 		} );
 
 		describe( 'fields', () => {
-			const initialState = deepFreeze( {
+			const initialState = {
 				fields: [
 					{ name: 'xyzzy', label: 'label1' },
 					{ name: 'plugh', label: 'label2' },
 					{ name: 'abracadabra', label: 'label3' },
 				],
-			} );
+			};
 
 			it( 'initializes with fields when provided', () => {
-				testStore.initStore( initialState );
+				testStore.initStore( deepFreeze( initialState ) );
 				const state = testStore.select.getState();
 
 				expect( state ).toEqual( expect.objectContaining( initialState ) );

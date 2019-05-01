@@ -21,6 +21,7 @@ const StoreSubscribe = compose( [
 			activeTab: storeSelect.getActiveTab(),
 			tabOptions: storeSelect.getTabOptions( storeSelect.getActiveTab() ),
 			getOptionValue: storeSelect.getOptionValue,
+			fields: storeSelect.getFields(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
@@ -33,8 +34,6 @@ const StoreSubscribe = compose( [
 ] );
 
 export const PodsDFVEditPod = StoreSubscribe( ( props ) => {
-	const { activeTab, tabs, setActiveTab, tabOptions } = props;
-	const { getOptionValue, setOptionValue } = props;
 
 //--! Todo: debugging only
 	window.select = wp.data.select( 'pods/edit-pod' );
@@ -47,15 +46,20 @@ export const PodsDFVEditPod = StoreSubscribe( ( props ) => {
 			<div>
 				<EditPodName />
 				<SaveStatusMessage />
-				<PodsNavTab tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+				<PodsNavTab
+					tabs={props.tabs}
+					activeTab={props.activeTab}
+					setActiveTab={props.setActiveTab}
+				/>
 			</div>
 			<div id='poststuff'>
 				<div id='post-body' className='columns-2'>
 					<ActiveTabContent
-						activeTab={activeTab}
-						tabOptions={tabOptions}
-						getOptionValue={getOptionValue}
-						setOptionValue={setOptionValue}
+						fields={props.fields}
+						activeTab={props.activeTab}
+						tabOptions={props.tabOptions}
+						getOptionValue={props.getOptionValue}
+						setOptionValue={props.setOptionValue}
 					/>
 					<Postbox />
 				</div>

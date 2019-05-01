@@ -1,17 +1,10 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
-import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import PropTypes from 'prop-types';
 
 // noinspection JSUnresolvedVariable
 const { __ } = wp.i18n;
-const { withSelect } = wp.data;
 
-export const ManageFieldsTab = withSelect( ( select ) => {
-	return {
-		fields: select( STORE_KEY_EDIT_POD ).getFields()
-	};
-} )
-( ( props ) => {
+export const ManageFieldsTab = ( props ) => {
 	return (
 		<div id='pods-manage-fields'>
 			<p className='pods-manage-row-add pods-float-right'>
@@ -23,8 +16,14 @@ export const ManageFieldsTab = withSelect( ( select ) => {
 			<PodsTableFieldList fields={props.fields} />
 		</div>
 	);
-} );
+};
+ManageFieldsTab.propTypes = {
+	fields: PropTypes.array,
+};
 
+/**
+ * PodsTableFieldList
+ */
 const PodsTableFieldList = ( props ) => {
 	return (
 		<table className='widefat fixed pages'>
@@ -76,6 +75,9 @@ const PodsTableFieldList = ( props ) => {
 	);
 };
 
+/**
+ * PodsTableFieldItem
+ */
 const PodsTableFieldItem = ( props ) => {
 	return (
 		<tr className='pods-manage-row pods-field-init'>
@@ -118,6 +120,9 @@ const PodsTableFieldItem = ( props ) => {
 	);
 };
 
+/**
+ * RowActions
+ */
 const RowActions = () => {
 	return (
 		<div className='row-actions'>

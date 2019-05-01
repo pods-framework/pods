@@ -17,6 +17,7 @@ export const ManageFieldsTab = ( props ) => {
 		</div>
 	);
 };
+
 ManageFieldsTab.propTypes = {
 	fields: PropTypes.array,
 };
@@ -75,6 +76,10 @@ const PodsTableFieldList = ( props ) => {
 	);
 };
 
+PodsTableFieldList.propTypes = {
+	fields: PropTypes.array.isRequired,
+};
+
 /**
  * PodsTableFieldItem
  */
@@ -118,6 +123,14 @@ const PodsTableFieldItem = ( props ) => {
 			</td>
 		</tr>
 	);
+};
+
+PodsTableFieldItem.propTypes = {
+	id: PropTypes.number.isRequired,
+	fieldName: PropTypes.string.isRequired,
+	fieldLabel: PropTypes.string.isRequired,
+	required: PropTypes.string.isRequired,
+	type: PropTypes.string.isRequired,
 };
 
 /**

@@ -13,15 +13,19 @@ describe( 'actions', () => {
 
 	// UI
 	describe( 'ui actions', () => {
+		const { actions, tabNames, saveStatuses } = uiConstants;
+
 		describe( 'setActiveTab()', () => {
-			test( 'The SET_ACTIVE_TAB action should be defined', () => {
-				expect( uiConstants.actions.SET_ACTIVE_TAB ).toBeDefined();
+			const action = actions.SET_ACTIVE_TAB;
+
+			it( 'Should define the action constant', () => {
+				expect( action ).toBeDefined();
 			} );
 
-			it( 'Should return the SET_ACTIVE_TAB action', () => {
-				const activeTab = uiConstants.tabNames.LABELS;
+			it( 'Should return the correct action', () => {
+				const activeTab = tabNames.LABELS;
 				const expected = {
-					type: uiConstants.actions.SET_ACTIVE_TAB,
+					type: action,
 					activeTab: activeTab,
 				};
 
@@ -30,14 +34,16 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'setSaveStatus()', () => {
-			test( 'The SET_SAVE_STATUS action is defined', () => {
-				expect( uiConstants.actions.SET_SAVE_STATUS ).toBeDefined();
+			const action = actions.SET_SAVE_STATUS;
+
+			it( 'Should define the action constant', () => {
+				expect( action ).toBeDefined();
 			} );
 
-			it( 'Should return the SET_SAVE_STATUS action', () => {
-				const saveStatus = uiConstants.saveStatuses.SAVE_SUCCESS;
+			it( 'Should return the correct action', () => {
+				const saveStatus = saveStatuses.SAVE_SUCCESS;
 				const expected = {
-					type: uiConstants.actions.SET_SAVE_STATUS,
+					type: action,
 					saveStatus: saveStatus,
 				};
 
@@ -48,18 +54,21 @@ describe( 'actions', () => {
 
 	// Options
 	describe( 'option actions', () => {
-		describe( 'setOptionValue()/setOptionItemValue()', () => {
+		const { actions } = optionConstants;
 
-			it( 'Should define the SET_OPTION_ITEM_VALUE action', () => {
-				expect( optionConstants.actions.SET_OPTION_ITEM_VALUE ).toBeDefined();
+		describe( 'setOptionValue()/setOptionItemValue()', () => {
+			const action = actions.SET_OPTION_ITEM_VALUE;
+
+			it( 'Should define the action constant', () => {
+				expect( action ).toBeDefined();
 			} );
 
-			test( 'setOptionItemValue() should return the SET_OPTION_ITEM_VALUE action', () => {
+			test( 'setOptionItemValue() should return the correct action', () => {
 				const optionName = 'foo';
 				const itemName = 'bar';
 				const itemValue = 'baz';
 				const expected = {
-					type: optionConstants.actions.SET_OPTION_ITEM_VALUE,
+					type: action,
 					optionName: optionName,
 					itemName: itemName,
 					itemValue: itemValue
@@ -69,11 +78,11 @@ describe( 'actions', () => {
 				expect( result ).toEqual( expected );
 			} );
 
-			test( 'setOptionValue() should return the SET_OPTION_ITEM_VALUE action', () => {
+			test( 'setOptionValue() should return the correct action', () => {
 				const name = 'foo';
 				const value = 'bar';
 				const expected = {
-					type: optionConstants.actions.SET_OPTION_ITEM_VALUE,
+					type: action,
 					optionName: name,
 					itemName: 'value',
 					itemValue: value
@@ -86,15 +95,19 @@ describe( 'actions', () => {
 
 	// Pod meta
 	describe( 'pod meta actions', () => {
+		const { actions } = podMetaConstants;
+
 		describe( 'setPodName()', () => {
-			test( 'The SET_POD_NAME action is defined', () => {
-				expect( podMetaConstants.actions.SET_POD_NAME ).toBeDefined();
+			const action = actions.SET_POD_NAME;
+
+			it( 'Should define the action constant', () => {
+				expect( action ).toBeDefined();
 			} );
 
-			it( 'Should return SET_POD_NAME action', () => {
+			it( 'Should return the correct action', () => {
 				const name = 'xyzzyy';
 				const expected = {
-					type: podMetaConstants.actions.SET_POD_NAME,
+					type: action,
 					name: name,
 				};
 
@@ -103,15 +116,17 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'setPodMetaValue()', () => {
-			test( 'The SET_POD_META_VALUE action should be defined', () => {
-				expect( podMetaConstants.actions.SET_POD_META_VALUE ).toBeDefined();
+			const action = actions.SET_POD_META_VALUE;
+
+			it( 'Should define the action constant', () => {
+				expect( action ).toBeDefined();
 			} );
 
-			it( 'Should return SET_POD_META_VALUE action', () => {
+			it( 'Should return the correct action', () => {
 				const key = 'foo';
 				const value = 'bar';
 				const expected = {
-					type: podMetaConstants.actions.SET_POD_META_VALUE,
+					type: action,
 					key: key,
 					value: value,
 				};

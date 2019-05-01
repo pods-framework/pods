@@ -105,8 +105,7 @@ describe( 'store', () => {
 				test( 'Initializes state with the proper default value', () => {
 					testStore.initStore( deepFreeze( {} ) );
 					const expected = initialUIState.saveStatus;
-					const state = testStore.select.getState();
-					const result = paths.SAVE_STATUS.getFrom( state );
+					const result = paths.SAVE_STATUS.getFrom( testStore.select.getState() );
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( expected );
@@ -141,6 +140,58 @@ describe( 'store', () => {
 					testStore.dispatch.setSaveStatus( uiConstants.saveStatuses.NONE );
 					expect( testStore.select.isSaving() ).toBe( false );
 				} );
+			} );
+		} );
+
+		describe( 'options', () => {
+			test( 'Initializes with an empty object', () => {
+				testStore.initStore( deepFreeze( {} ) );
+				const result = paths.OPTIONS.getFrom( testStore.select.getState() );
+
+				expect( result ).toBeDefined();
+				expect( result ).toEqual( {} );
+			} );
+
+			test( 'setOptionValue() should create a new option value', () => {
+				const name = 'foo1';
+				const value = 'Foo1 Value';
+				testStore.dispatch.setOptionValue( name, value );
+				const result = testStore.select.getOptionValue( name );
+
+				expect( result ).toBeDefined();
+				expect( result ).toEqual( value );
+			} );
+
+			test( 'setOptionValue() should update an existing option value', () => {
+				const name = 'foo1';
+				const value = 'Foo1 New Value';
+				testStore.dispatch.setOptionValue( name, value );
+				const result = testStore.select.getOptionValue( name );
+
+				expect( result ).toBeDefined();
+				expect( result ).toEqual( value );
+			} );
+
+			test( 'setOptionItemValue() should create a new option item/value pair', () => {
+				const optName = 'theOption';
+				const optItemName = 'optionItem';
+				const optItemValue = 'Initial Value';
+				testStore.dispatch.setOptionItemValue( optName, optItemName, optItemValue);
+				const result = testStore.select.getOptionItemValue( optName, optItemName );
+
+				expect( result ).toBeDefined();
+				expect( result ).toEqual( optItemValue );
+			} );
+
+			test( 'setOptionItemValue() should update an existing option item value', () => {
+				const optName = 'theOption';
+				const optItemName = 'optionItem';
+				const optItemValue = 'New Value';
+				testStore.dispatch.setOptionItemValue( optName, optItemName, optItemValue);
+				const result = testStore.select.getOptionItemValue( optName, optItemName );
+
+				expect( result ).toBeDefined();
+				expect( result ).toEqual( optItemValue );
 			} );
 		} );
 
@@ -186,10 +237,9 @@ describe( 'store', () => {
 			} );
 
 			describe( 'General meta', () => {
-				test( 'initializes with an empty object for podMeta', () => {
+				test( 'Initializes with an empty object', () => {
 					testStore.initStore( deepFreeze( {} ) );
-					const state = testStore.select.getState();
-					const result = paths.POD_META.getFrom( state );
+					const result = paths.POD_META.getFrom( testStore.select.getState() );
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( {} );
@@ -218,7 +268,7 @@ describe( 'store', () => {
 		} );
 
 		describe( 'fields', () => {
-			const fieldArray = 				[
+			const fieldArray = [
 				{ name: 'foo', label: 'label1' },
 				{ name: 'bar', label: 'label2' },
 				{ name: 'baz', label: 'label3' },

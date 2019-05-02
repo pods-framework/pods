@@ -1,0 +1,109 @@
+body {
+	background-color: #f1f1f1;
+	color: #555;
+}
+
+.pods-manage-fields {
+	max-width: 763px;
+	margin: 0 auto;
+}
+
+.pods-field--wrapper {
+	display: flex;
+	width: 100%;
+	background-color: #fff;
+	align-items: center;
+	transition: 200ms ease background-color;
+	border-bottom: 1px solid whitesmoke;
+
+
+	&:hover {
+		background-color: #f7f7f7;
+	}
+}
+
+.pods-field {
+	width: 25%;
+	padding: 10px 20px;
+}
+
+.pods-field--handle {
+	width: auto;
+	opacity: .2;
+}
+
+.pods-field--required {
+	color: red;
+}
+
+.pods-field--actions {
+	display: flex;
+	width: auto;
+}
+
+.pods-field--actions .dashicon {
+	padding: 10px;
+	color: #0073aa;
+
+	&:hover {
+		cursor: pointer;
+		color: #00a0d2;
+	}
+}
+
+.pods-field--label {
+	padding-left: 0;
+}
+
+.pods-field--label,
+.pods-field--type {
+
+	&:hover {
+		.pods-field--id {
+			opacity: 1;
+		}
+	}
+}
+
+.pods-field--id {
+	font-size: 13px;
+	color: #999;
+	display: inline;
+	opacity: 0;
+	transition: 200ms ease opacity;
+}
+
+.pods-field--label,
+.pods-field--name {
+	color: #0073aa;
+
+	&:hover {
+		cursor: pointer;
+		color: #00a0d2;
+	}
+}
+
+.pods-field--label {
+	flex: 1;
+}
+.pods-field--name {
+	flex: 1;
+}
+
+
+.pods-field--wrapper-labels {
+	display: flex;
+	width: 100%;
+	background-color: #fff;
+	border-bottom: 2px solid whitesmoke;
+}
+
+.pods-field--wrapper-label-items {
+	width: 172px;
+	padding: 20px 20px 17px;
+	justify-content: flex-start;
+
+	&:first-child {
+		margin-left: 36px;
+	}
+}

@@ -4,6 +4,7 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import html from 'rollup-plugin-html';
 import babel from 'rollup-plugin-babel';
+import collectSass from 'rollup-plugin-collect-sass';
 
 const includePathOptions = {
 	include: {},
@@ -40,6 +41,7 @@ export default {
 	],
 	plugins: [
 		includePaths( includePathOptions ),
+		collectSass(),
 		html(),
 		replace( {
 			// Needed for React, see https://github.com/rollup/rollup/issues/487#issuecomment-177596512

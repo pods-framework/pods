@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Pods dependencies
-import { ManageFieldsTab } from './manage-fields-tab';
+import { ManageFields } from './manage-fields';
 import { DynamicTabContent } from './dynamic-tab-content';
 
 /**
@@ -14,7 +14,8 @@ export const ActiveTabContent = ( props ) => {
 	let Component;
 
 	if ( 'manage-fields' === props.activeTab ) {
-		Component = ( <ManageFieldsTab fields={props.fields} /> );
+		//Component = ( <ManageFieldsTab fields={props.fields} /> );
+		Component = ( <ManageFields fields={props.fields} /> );
 	} else {
 		Component = (
 			<DynamicTabContent

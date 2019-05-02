@@ -17,10 +17,9 @@ export const FieldGroups = ( props ) => {
 				<FieldGroup
 					key={thisGroup.name}
 					groupName={thisGroup.name}
-					fields={props.fields}
+					getGroupFields={props.getGroupFields}
 				/>
 			) ) }
-
 			<div className="pods-button-group--container">
 				<a href="#">Add Group</a> <a href="#">Add Field</a>
 			</div>
@@ -30,13 +29,14 @@ export const FieldGroups = ( props ) => {
 
 FieldGroups.propTypes = {
 	groups: PropTypes.array.isRequired,
-	fields: PropTypes.array.isRequired,
+	getGroupFields: PropTypes.func.isRequired,
 };
 
 /**
  *
  */
 const FieldGroup = ( props ) => {
+	const { groupName, getGroupFields } = props;
 	const [ expanded, setExpanded ] = useState( false );
 
 	const toggleExpanded = () => {
@@ -49,7 +49,7 @@ const FieldGroup = ( props ) => {
 				<div className="pods-field-group--handle">
 					<Dashicon icon='menu' />
 				</div>
-				<div className="pods-field-group--name">{props.groupName}</div>
+				<div className="pods-field-group--name">{groupName}</div>
 				<div className="pods-field-group--manage">
 					{ expanded ?
 						( <Dashicon icon='arrow-up' onClick={toggleExpanded} /> ) :
@@ -57,13 +57,13 @@ const FieldGroup = ( props ) => {
 					}
 				</div>
 			</div>
-			{ expanded && <ManageFields fields={props.fields} /> }
+			{ expanded && <ManageFields fields={getGroupFields( groupName )} /> }
 		</div>
 	);
 };
 
 FieldGroup.propTypes = {
 	groupName: PropTypes.string.isRequired,
-	fields: PropTypes.array.isRequired,
+	getGroupFields: PropTypes.func.isRequired,
 };
 

@@ -14,7 +14,7 @@ foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
 	array_push( $all_field_names, $field_name );
 	$field_options = array_merge( $field_data[ 'options' ], $field_data );
 	unset( $field_options[ 'options' ] );
-	array_push( $pod_fields, $field_options );
+	$pod_fields[ $field_name ] = $field_options;
 }
 
 $setup_edit_options = PodsInit::$admin->admin_setup_edit_options( $pod );

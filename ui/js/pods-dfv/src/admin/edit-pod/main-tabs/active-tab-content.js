@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Pods dependencies
-import { ManageFields } from './manage-fields';
 import { DynamicTabContent } from './dynamic-tab-content';
 import { FieldGroups } from 'pods-dfv/src/admin/edit-pod/main-tabs/field-groups';
 
@@ -18,7 +17,7 @@ export const ActiveTabContent = ( props ) => {
 		Component = (
 			<FieldGroups
 				groups={props.groups}
-				fields={props.fields}
+				getGroupFields={props.getGroupFields}
 			/>
 		);
 	} else {
@@ -40,7 +39,7 @@ export const ActiveTabContent = ( props ) => {
 
 ActiveTabContent.propTypes = {
 	groups: PropTypes.array.isRequired,
-	fields: PropTypes.array.isRequired,
+	getGroupFields: PropTypes.func.isRequired,
 	activeTab: PropTypes.string.isRequired,
 	tabOptions: PropTypes.array.isRequired,
 	getOptionValue: PropTypes.func.isRequired,

@@ -20,9 +20,9 @@ const StoreSubscribe = compose( [
 			tabs: storeSelect.getTabs(),
 			activeTab: storeSelect.getActiveTab(),
 			tabOptions: storeSelect.getTabOptions( storeSelect.getActiveTab() ),
-			getOptionValue: storeSelect.getOptionValue,
 			groups: storeSelect.getGroups(),
-			fields: storeSelect.getFields(),
+			getOptionValue: storeSelect.getOptionValue,
+			getGroupFields: storeSelect.getGroupFields,
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
@@ -57,7 +57,7 @@ export const PodsDFVEditPod = StoreSubscribe( ( props ) => {
 				<div id='post-body' className='columns-2'>
 					<ActiveTabContent
 						groups={props.groups}
-						fields={props.fields}
+						getGroupFields={props.getGroupFields}
 						activeTab={props.activeTab}
 						tabOptions={props.tabOptions}
 						getOptionValue={props.getOptionValue}

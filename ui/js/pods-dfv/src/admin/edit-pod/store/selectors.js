@@ -51,14 +51,21 @@ export const getOptionValue = ( state, optionName ) =>
 	paths.OPTIONS.getFrom( state )[ optionName ].value;
 
 //-- Groups
-export const getGroup = ( state, groupName ) =>
-	paths.GROUPS_BY_NAME.getFrom( state )[ groupName ];
-
 export const getGroupList = state =>
 	paths.GROUP_LIST.getFrom( state );
+
+export const getGroup = ( state, groupName ) =>
+	paths.GROUPS_BY_NAME.getFrom( state )[ groupName ];
 
 export const getGroups = state =>
 	getGroupList( state ).map( groupName => getGroup( state, groupName ) );
 
+export const getFieldList = ( state, groupName ) =>
+	paths.GROUP_FIELD_LIST.getFrom( state )[ groupName ];
+
+export const getGroupFields = ( state, groupName ) =>
+	getFieldList( state, groupName ).map( fieldName => getField( state, fieldName ) );
+
 //-- Fields
 export const getFields = state => paths.FIELDS.getFrom( state );
+export const getField = ( state, fieldName ) => getFields( state )[ fieldName ];

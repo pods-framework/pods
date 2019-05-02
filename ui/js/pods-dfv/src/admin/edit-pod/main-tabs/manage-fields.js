@@ -6,11 +6,9 @@ const { Dashicon } = wp.components;
 import './manage-fields.scss';
 
 export const ManageFields = ( props ) => {
-
 	return (
 		<div className='pods-manage-fields'>
 			<FieldHeader />
-
 			{props.fields.map( thisField => (
 				<FieldRow
 					key={thisField.id}

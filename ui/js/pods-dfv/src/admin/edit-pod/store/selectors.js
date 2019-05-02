@@ -26,7 +26,7 @@ export const getTabs = state =>
 	getTabList( state ).map( tabName => getTab( state, tabName ) );
 
 export const getTabOptionList = ( state, tabName ) =>
-	getTab( state, tabName )[ paths.TAB_OPTIONS_LIST ];
+	getTab( state, tabName )[ paths.TAB_OPTION_LIST ];
 
 export const getTabOptions = ( state, tabName ) => {
 	return getTabOptionList( state, tabName ).map(

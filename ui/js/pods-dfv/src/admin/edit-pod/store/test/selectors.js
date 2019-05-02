@@ -9,7 +9,7 @@ import {
 	getOptionItemValue,
 	getOptionValue,
 	getActiveTab,
-	getOrderedTabList,
+	getTabList,
 	getTab,
 	getTabs,
 	getTabOptions,
@@ -65,7 +65,7 @@ describe( 'selectors', () => {
 					const state = deepFreeze(
 						paths.TAB_LIST.createTree( orderedList )
 					);
-					const result = getOrderedTabList( state );
+					const result = getTabList( state );
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( orderedList );
@@ -76,11 +76,11 @@ describe( 'selectors', () => {
 			const testTabs = {
 				foo: {
 					name: 'foo',
-					[paths.TAB_OPTIONS_LIST]: [ 'foo-option2', 'foo-option1' ]
+					[paths.TAB_OPTION_LIST]: [ 'foo-option2', 'foo-option1' ]
 				},
 				bar: {
 					name: 'bar',
-					[paths.TAB_OPTIONS_LIST]: [ 'bar-option2', 'bar-option1' ]
+					[paths.TAB_OPTION_LIST]: [ 'bar-option2', 'bar-option1' ]
 				}
 			};
 			describe( 'getTab()', () => {

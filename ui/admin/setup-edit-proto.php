@@ -53,6 +53,16 @@ foreach ( $setup_edit_tabs as $tab_name => $tab_title_text ) {
 	);
 }
 
+$dummy_group_list = array( 'Group 1', 'Group 2' );
+$dummy_groups     = array(
+	'Group 1' => array(
+		'name' => 'Group 1'
+	),
+	'Group 2' => array(
+		'name' => 'Group 2'
+	),
+);
+
 // Formatted data
 $data = array(
 	'fieldType' => 'edit-pod',
@@ -70,6 +80,10 @@ $data = array(
 	),
 	'options'   => $options,
 	'fields'    => $pod_fields,
+	'groups'    => array(
+		'byName'    => $dummy_groups,
+		'groupList' => $dummy_group_list,
+	),
 );
 $data = wp_json_encode( $data, JSON_HEX_TAG );
 ?>

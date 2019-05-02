@@ -52,7 +52,7 @@ export const getOptionValue = ( state, optionName ) =>
 
 //-- Groups
 export const getGroup = ( state, groupName ) =>
-	paths.GROUPS.getFrom( state )[ groupName ];
+	paths.GROUPS_BY_NAME.getFrom( state )[ groupName ];
 
 export const getGroupList = state =>
 	paths.GROUP_LIST.getFrom( state );

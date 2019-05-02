@@ -46,6 +46,7 @@ export const POD_ID = createStatePath( `${POD_META.path}.id` );
 export const FIELDS = createStatePath( 'fields' );
 
 export const GROUPS = createStatePath( 'groups' );
+export const GROUPS_BY_NAME = createStatePath( `${GROUPS.path}.byName` );
 export const GROUP_LIST = createStatePath( `${GROUPS.path}.groupList` );
 
 export const UI = createStatePath( 'ui' );

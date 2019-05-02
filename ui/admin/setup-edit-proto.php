@@ -6,12 +6,12 @@ $api = pods_api();
 $pod = $api->load_pod( array( 'id' => $obj->id ) );
 
 //--! Todo: prototyping only
-$dummy_group_field_list = array();
+$all_field_names = array();
 
 // Fields
 $pod_fields = array();
 foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
-	array_push( $dummy_group_field_list, $field_name );
+	array_push( $all_field_names, $field_name );
 	$field_options = array_merge( $field_data[ 'options' ], $field_data );
 	unset( $field_options[ 'options' ] );
 	array_push( $pod_fields, $field_options );
@@ -57,19 +57,25 @@ foreach ( $setup_edit_tabs as $tab_name => $tab_title_text ) {
 	);
 }
 
-$dummy_group_list = array( 'Test Group 1', 'Test Group 2', 'Test Group 3' );
-$dummy_groups     = array(
+$dummy_group_list = array(
+	'Test Group 1',
+	'Test Group 2',
+	'Test Group 3'
+);
+$dummy_group_field_list = array(
+	'Test Group 1' => $all_field_names,
+	'Test Group 2' => array(),
+	'Test Group 3' => array(),
+);
+$dummy_groups = array(
 	'Test Group 1' => array(
-		'name'      => 'Test Group 1',
-		'fieldList' => $dummy_group_field_list,
+		'name' => 'Test Group 1',
 	),
 	'Test Group 2' => array(
-		'name'      => 'Test Group 2',
-		'fieldList' => array(),
+		'name' => 'Test Group 2',
 	),
 	'Test Group 3' => array(
-		'name'      => 'Test Group 3',
-		'fieldList' => array(),
+		'name' => 'Test Group 3',
 	),
 );
 
@@ -91,8 +97,9 @@ $data = array(
 	'options'   => $options,
 	'fields'    => $pod_fields,
 	'groups'    => array(
-		'byName'    => $dummy_groups,
-		'groupList' => $dummy_group_list,
+		'byName'         => $dummy_groups,
+		'groupList'      => $dummy_group_list,
+		'groupFieldList' => $dummy_group_field_list,
 	),
 );
 $data = wp_json_encode( $data, JSON_HEX_TAG );

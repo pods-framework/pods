@@ -5,9 +5,13 @@ $api = pods_api();
 /** @noinspection PhpUndefinedVariableInspection */
 $pod = $api->load_pod( array( 'id' => $obj->id ) );
 
+//--! Todo: prototyping only
+$dummy_group_field_list = array();
+
 // Fields
 $pod_fields = array();
 foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
+	array_push( $dummy_group_field_list, $field_name );
 	$field_options = array_merge( $field_data[ 'options' ], $field_data );
 	unset( $field_options[ 'options' ] );
 	array_push( $pod_fields, $field_options );
@@ -53,13 +57,19 @@ foreach ( $setup_edit_tabs as $tab_name => $tab_title_text ) {
 	);
 }
 
-$dummy_group_list = array( 'Group 1', 'Group 2' );
+$dummy_group_list = array( 'Test Group 1', 'Test Group 2', 'Test Group 3' );
 $dummy_groups     = array(
-	'Group 1' => array(
-		'name' => 'Group 1'
+	'Test Group 1' => array(
+		'name'      => 'Test Group 1',
+		'fieldList' => $dummy_group_field_list,
 	),
-	'Group 2' => array(
-		'name' => 'Group 2'
+	'Test Group 2' => array(
+		'name'      => 'Test Group 2',
+		'fieldList' => array(),
+	),
+	'Test Group 3' => array(
+		'name'      => 'Test Group 3',
+		'fieldList' => array(),
 	),
 );
 

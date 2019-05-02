@@ -19,17 +19,17 @@ export const getActiveTab = state => paths.ACTIVE_TAB.getFrom( state );
 export const getTab = ( state, tabName ) =>
 	paths.TABS_BY_NAME.getFrom( state )[ tabName ];
 
-export const getOrderedTabList = state =>
+export const getTabList = state =>
 	paths.TAB_LIST.getFrom( state );
 
 export const getTabs = state =>
-	getOrderedTabList( state ).map( tabName => getTab( state, tabName ) );
+	getTabList( state ).map( tabName => getTab( state, tabName ) );
 
-export const getOrderedTabOptionList = ( state, tabName ) =>
+export const getTabOptionList = ( state, tabName ) =>
 	getTab( state, tabName )[ paths.TAB_OPTIONS_LIST ];
 
 export const getTabOptions = ( state, tabName ) => {
-	return getOrderedTabOptionList( state, tabName ).map(
+	return getTabOptionList( state, tabName ).map(
 		optionName => getOption( state, optionName )
 	);
 };

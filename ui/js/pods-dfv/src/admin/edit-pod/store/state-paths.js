@@ -67,6 +67,6 @@ export const OPTIONS = createStatePath( 'options' );
 // Ordered list of option names for this tab as an array:
 // [ 'option1name', 'options2name', ...]
 // Stored in the tab objects in TABS_BY_NAME
-export const TAB_OPTIONS_LIST = 'optionList';
+export const TAB_OPTION_LIST = 'optionList';
 
 

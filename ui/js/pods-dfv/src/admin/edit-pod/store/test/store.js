@@ -58,7 +58,7 @@ describe( 'store', () => {
 				paths.POD_META.createTree( {} ),
 				paths.OPTIONS.createTree( {} ),
 				paths.GROUPS.createTree( {} ),
-				paths.FIELDS.createTree( [] ),
+				paths.FIELDS.createTree( {} ),
 			);
 
 			expect( result ).toBeDefined();

@@ -92,7 +92,7 @@ export const podMeta = ( state = {}, action = {} ) => {
 };
 
 // Fields
-export const fields = ( state = [], action = {} ) => {
+export const fields = ( state = {}, action = {} ) => {
 	return state;
 };
 

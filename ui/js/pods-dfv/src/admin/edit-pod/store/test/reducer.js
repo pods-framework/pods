@@ -114,8 +114,8 @@ describe( 'reducer', () => {
 
 	// Fields
 	describe( 'fields', () => {
-		it( 'Should return an empty array by default', () => {
-			expect( fields( undefined, undefined ) ).toEqual( [] );
+		it( 'Should return an empty object by default', () => {
+			expect( fields( undefined, undefined ) ).toEqual( {} );
 		} );
 	} );
 

@@ -20,6 +20,8 @@ export const POD_ID = createStatePath( `${POD_META.path}.id` );
 
 export const FIELDS = createStatePath( 'fields' );
 
+export const GROUPS = createStatePath( 'groups' );
+
 export const UI = createStatePath( 'ui' );
 export const ACTIVE_TAB = createStatePath( `${UI.path}.activeTab` );
 export const SAVE_STATUS = createStatePath( `${UI.path}.saveStatus` );

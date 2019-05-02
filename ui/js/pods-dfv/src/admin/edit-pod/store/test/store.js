@@ -29,7 +29,11 @@ describe( 'store', () => {
 				xyzzy: { name: 'xyzzy', value: 'Value 1' },
 				plugh: { name: 'plugh', value: 'Value 2' },
 			} ),
-			paths.FIELDS.createTree( [ 'field 1', 'field 2', 'field 3' ] )
+			paths.FIELDS.createTree( [ 'field 1', 'field 2', 'field 3' ] ),
+			paths.GROUPS.createTree( {
+				'Group 1': { name: 'Group 1' },
+				'Group 2': { name: 'Group 2' }
+			} ),
 		);
 
 		it( 'Initializes properly', () => {
@@ -53,6 +57,7 @@ describe( 'store', () => {
 				paths.UI.createTree( initialUIState ),
 				paths.POD_META.createTree( {} ),
 				paths.OPTIONS.createTree( {} ),
+				paths.GROUPS.createTree( {} ),
 				paths.FIELDS.createTree( [] ),
 			);
 

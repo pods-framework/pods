@@ -49,20 +49,21 @@ export const ui = ( state = initialUIState, action = {} ) => {
 	}
 };
 
+export const groups = ( state = {}, action = {} ) => {
+	return state;
+};
+
 export const options = ( state = {}, action = {} ) => {
 	const { actions } = optionConstants;
 
-	switch ( action.type ) {
-		case actions.SET_OPTION_ITEM_VALUE:
-			const { optionName, itemName, itemValue } = action;
-			return {
-				...state,
-				[ optionName ]: setObjectValue( state[ optionName ], itemName, itemValue )
-			};
-
-
-		default:
-			return state;
+	if ( actions.SET_OPTION_ITEM_VALUE === action.type ) {
+		const { optionName, itemName, itemValue } = action;
+		return {
+			...state,
+			[ optionName ]: setObjectValue( state[ optionName ], itemName, itemValue )
+		};
+	} else {
+		return state;
 	}
 };
 
@@ -97,5 +98,6 @@ export default ( combineReducers( {
 	ui,
 	podMeta,
 	options,
+	groups,
 	fields,
 } ) );

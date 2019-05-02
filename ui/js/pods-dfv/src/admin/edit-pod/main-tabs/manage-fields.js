@@ -1,11 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// WordPress dependencies
+// noinspection JSUnresolvedVariable
+const { __ } = wp.i18n;
 const { Dashicon } = wp.components;
 
 import './manage-fields.scss';
 
 export const ManageFields = ( props ) => {
+
+	if ( 0 === props.fields.length ) {
+		return (
+			<div className='pods-manage-fields no-fields'>
+				{__( 'There are no fields in this group', 'pods' )}
+			</div>
+		);
+	}
+
 	return (
 		<div className='pods-manage-fields'>
 			<FieldHeader />

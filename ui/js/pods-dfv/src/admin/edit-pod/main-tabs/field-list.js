@@ -8,7 +8,7 @@ const { Dashicon } = wp.components;
 
 import './manage-fields.scss';
 
-export const ManageFields = ( props ) => {
+export const FieldList = ( props ) => {
 
 	if ( 0 === props.fields.length ) {
 		return (
@@ -22,7 +22,7 @@ export const ManageFields = ( props ) => {
 		<div className='pods-manage-fields'>
 			<FieldHeader />
 			{props.fields.map( thisField => (
-				<FieldRow
+				<FieldListItem
 					key={thisField.id}
 					id={thisField.id}
 					fieldLabel={thisField.label}
@@ -35,27 +35,14 @@ export const ManageFields = ( props ) => {
 		</div>
 	);
 };
-ManageFields.propTypes = {
+FieldList.propTypes = {
 	fields: PropTypes.array.isRequired,
 };
 
 /**
  *
  */
-export const FieldHeader = () => {
-	return (
-		<div className="pods-field--wrapper-labels">
-			<div className="pods-field--wrapper-label-items">Label</div>
-			<div className="pods-field--wrapper-label-items">Name</div>
-			<div className="pods-field--wrapper-label-items">Field Type</div>
-		</div>
-	);
-};
-
-/**
- *
- */
-export const FieldRow = ( props ) => {
+export const FieldListItem = ( props ) => {
 	const { id, fieldName, fieldLabel, required, type } = props;
 
 	return (
@@ -83,10 +70,23 @@ export const FieldRow = ( props ) => {
 	);
 };
 
-FieldRow.propTypes = {
+FieldListItem.propTypes = {
 	id: PropTypes.number.isRequired,
 	fieldName: PropTypes.string.isRequired,
 	fieldLabel: PropTypes.string.isRequired,
 	required: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
+};
+
+/**
+ *
+ */
+export const FieldHeader = () => {
+	return (
+		<div className="pods-field--wrapper-labels">
+			<div className="pods-field--wrapper-label-items">Label</div>
+			<div className="pods-field--wrapper-label-items">Name</div>
+			<div className="pods-field--wrapper-label-items">Field Type</div>
+		</div>
+	);
 };

@@ -4,7 +4,7 @@ const { useState } = React;
 
 const { Dashicon } = wp.components;
 
-import { ManageFields } from 'pods-dfv/src/admin/edit-pod/main-tabs/manage-fields';
+import { FieldList } from 'pods-dfv/src/admin/edit-pod/main-tabs/field-list';
 import './field-groups.scss';
 
 /**
@@ -57,7 +57,7 @@ const FieldGroup = ( props ) => {
 					}
 				</div>
 			</div>
-			{ expanded && <ManageFields fields={getGroupFields( groupName )} /> }
+			{ expanded && <FieldList fields={getGroupFields( groupName )} /> }
 		</div>
 	);
 };

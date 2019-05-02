@@ -63,7 +63,7 @@ describe( 'selectors', () => {
 				it( 'Should return the ordered tab list', () => {
 					const orderedList = [ 'foo', 'bar', 'baz' ];
 					const state = deepFreeze(
-						paths.TABS_LIST.createTree( orderedList )
+						paths.TAB_LIST.createTree( orderedList )
 					);
 					const result = getOrderedTabList( state );
 
@@ -106,7 +106,7 @@ describe( 'selectors', () => {
 				it( 'Should return the ordered tabs', () => {
 					const state = deepFreeze( merge(
 						paths.TABS_BY_NAME.createTree( testTabs ),
-						paths.TABS_LIST.createTree( [ 'bar', 'foo' ] )
+						paths.TAB_LIST.createTree( [ 'bar', 'foo' ] )
 					) );
 					const result = getTabs( state );
 					const expected = [ testTabs.bar, testTabs.foo ];

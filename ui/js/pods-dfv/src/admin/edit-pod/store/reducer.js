@@ -1,3 +1,5 @@
+import * as paths from './state-paths';
+
 import {
 	optionConstants,
 	podMetaConstants,
@@ -23,7 +25,7 @@ export const ui = ( state = initialUIState, action = {} ) => {
 		case actions.SET_ACTIVE_TAB:
 			// Use the default if the tab name doesn't exist
 			let newTab = initialUIState.activeTab;
-			let tabIndex = state.tabs.orderedList.indexOf( action.activeTab );
+			let tabIndex = paths.TAB_LIST.tailGetFrom( state ).indexOf( action.activeTab );
 
 			if ( -1 !== tabIndex ) {
 				newTab = action.activeTab;

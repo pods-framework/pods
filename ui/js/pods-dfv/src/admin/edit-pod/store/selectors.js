@@ -20,7 +20,7 @@ export const getTab = ( state, tabName ) =>
 	paths.TABS_BY_NAME.getFrom( state )[ tabName ];
 
 export const getOrderedTabList = state =>
-	paths.TABS.getFrom( state ).orderedList;
+	paths.TAB_LIST.getFrom( state );
 
 export const getTabs = state =>
 	getOrderedTabList( state ).map( tabName => getTab( state, tabName ) );

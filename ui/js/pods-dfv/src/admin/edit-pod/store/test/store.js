@@ -78,11 +78,11 @@ describe( 'store', () => {
 						uiConstants.tabNames.AUTO_TEMPLATE_OPTIONS,
 						uiConstants.tabNames.REST_API
 					];
-					const initialState = paths.TABS_LIST.createTree( orderedList );
+					const initialState = paths.TAB_LIST.createTree( orderedList );
 
 					testStore.initStore( deepFreeze( initialState ) );
 					const state = testStore.select.getState();
-					const result = paths.TABS_LIST.getFrom( state );
+					const result = paths.TAB_LIST.getFrom( state );
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( orderedList );
@@ -181,7 +181,7 @@ describe( 'store', () => {
 				const optName = 'theOption';
 				const optItemName = 'optionItem';
 				const optItemValue = 'Initial Value';
-				testStore.dispatch.setOptionItemValue( optName, optItemName, optItemValue);
+				testStore.dispatch.setOptionItemValue( optName, optItemName, optItemValue );
 				const result = testStore.select.getOptionItemValue( optName, optItemName );
 
 				expect( result ).toBeDefined();
@@ -192,7 +192,7 @@ describe( 'store', () => {
 				const optName = 'theOption';
 				const optItemName = 'optionItem';
 				const optItemValue = 'New Value';
-				testStore.dispatch.setOptionItemValue( optName, optItemName, optItemValue);
+				testStore.dispatch.setOptionItemValue( optName, optItemName, optItemValue );
 				const result = testStore.select.getOptionItemValue( optName, optItemName );
 
 				expect( result ).toBeDefined();

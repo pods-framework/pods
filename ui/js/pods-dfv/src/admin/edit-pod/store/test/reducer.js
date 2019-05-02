@@ -1,5 +1,7 @@
 import deepFreeze from 'deep-freeze';
 
+import * as paths from '../state-paths';
+
 import {
 	podMetaConstants,
 	optionConstants,
@@ -138,12 +140,12 @@ describe( 'reducer', () => {
 				tabNames.REST_API
 			];
 
-			it( 'Should define the SET_ACTIVE_TAB action', () => {
+			it( 'Should define the proper action', () => {
 				expect( actions.SET_ACTIVE_TAB ).toBeDefined();
 			} );
 
 			it( 'Should properly change the active tab', () => {
-				state = ui( { tabs: { orderedList: orderedList } } );
+				state = paths.TAB_LIST.tailCreateTree( orderedList );
 				const action = {
 					type: actions.SET_ACTIVE_TAB,
 					activeTab: tabNames.LABELS,

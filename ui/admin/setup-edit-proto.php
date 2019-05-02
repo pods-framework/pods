@@ -64,8 +64,8 @@ $data = array(
 	),
 	'ui'        => array(
 		'tabs' => array(
-			'byName'      => $tabs_by_name,
-			'orderedList' => $ordered_tab_list,
+			'byName'  => $tabs_by_name,
+			'tabList' => $ordered_tab_list,
 		),
 	),
 	'options'   => $options,

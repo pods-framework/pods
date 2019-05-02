@@ -1,16 +1,41 @@
+import { tail } from 'lodash';
+
+const tailPath = ( dotPath ) => tail( dotPath.split( '.' ) ).join( '.' );
+
+const createTree = ( value, dotPath ) => {
+	return dotPath.split( '.' ).reduceRight(
+		( acc, currentValue ) => {
+			return { [ currentValue ]: acc };
+		},
+		value
+	);
+};
+
+const getFrom = ( state, dotPath ) => {
+	return dotPath.split( '.' ).reduce( ( value, el ) => value[ el ], state );
+};
+
 export const createStatePath = path => {
 	return {
+		// path 'ui.tabs.tabList', tailPath: 'tabs.tabList'
 		path: path,
+		tailPath: tailPath( path ),
 
-		getFrom: state => {
-			return path.split( '.' ).reduce( ( value, el ) => value[ el ], state );
+		getFrom: ( state, dotPath = path ) => {
+			return getFrom( state, dotPath );
 		},
 
-		createTree: value => {
-			return path.split( '.' ).reduceRight( ( acc, currentValue ) => {
-				return { [ currentValue ]: acc };
-			}, value );
-		}
+		tailGetFrom: state => {
+			return getFrom( state, tailPath( path ) );
+		},
+
+		createTree: ( value, dotPath = path ) => {
+			return createTree( value, dotPath );
+		},
+
+		tailCreateTree: value => {
+			return createTree( value, tailPath( path ) );
+		},
 	};
 };
 
@@ -28,7 +53,7 @@ export const SAVE_STATUS = createStatePath( `${UI.path}.saveStatus` );
 export const TABS = createStatePath( `${UI.path}.tabs` );
 
 // Ordered list of tab names as an array: [ 'tab1name', 'tab2name', ... ]
-export const TABS_LIST = createStatePath( `${TABS.path}.orderedList` );
+export const TAB_LIST = createStatePath( `${TABS.path}.tabList` );
 
 // Tab objects keyed by tab name:
 // { tab1name: {tab object}, tab2name: {tab object}, ...}

@@ -54,5 +54,11 @@ export const getOptionValue = ( state, optionName ) =>
 export const getGroup = ( state, groupName ) =>
 	paths.GROUPS.getFrom( state )[ groupName ];
 
+export const getGroupList = state =>
+	paths.GROUP_LIST.getFrom( state );
+
+export const getGroups = state =>
+	getGroupList( state ).map( groupName => getGroup( state, groupName ) );
+
 //-- Fields
 export const getFields = state => paths.FIELDS.getFrom( state );

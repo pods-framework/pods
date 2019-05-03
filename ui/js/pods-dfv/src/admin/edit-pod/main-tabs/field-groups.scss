@@ -22,6 +22,7 @@
 	opacity: .2;
 	padding-left: 13px;
 	padding-right: 13px;
+	cursor: move;
 }
 
 .pods-field--required {
@@ -133,6 +134,7 @@
 
 .pods-field-group--handle {
 	padding-right: 13px;
+	cursor: move;
 }
 
 .pods-field-group--manage {
@@ -144,6 +146,10 @@
 	width: 100%;
 	justify-content: flex-end;
 	margin-top: 10px;
+}
+
+.pods-field-group--toggle {
+	cursor: pointer;
 }
 
 .pods-button-group--item {

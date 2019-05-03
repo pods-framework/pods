@@ -52,7 +52,7 @@ describe( 'selectors', () => {
 						paths.ACTIVE_TAB.createTree( tabNames.LABELS )
 					);
 					const result = getActiveTab( state );
-					const expected = paths.UI.getFrom( state ).activeTab;
+					const expected = paths.ACTIVE_TAB.getFrom( state );
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( expected );

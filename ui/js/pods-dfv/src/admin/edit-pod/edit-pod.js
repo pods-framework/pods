@@ -30,6 +30,7 @@ const StoreSubscribe = compose( [
 		return {
 			setActiveTab: storeDispatch.setActiveTab,
 			setOptionValue: storeDispatch.setOptionValue,
+			reorderGroupItem: storeDispatch.reorderGroupItem,
 		};
 	} )
 ] );
@@ -58,6 +59,7 @@ export const PodsDFVEditPod = StoreSubscribe( ( props ) => {
 					<ActiveTabContent
 						groups={props.groups}
 						getGroupFields={props.getGroupFields}
+						reorderGroupItem={props.reorderGroupItem}
 						activeTab={props.activeTab}
 						tabOptions={props.tabOptions}
 						getOptionValue={props.getOptionValue}

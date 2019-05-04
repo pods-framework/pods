@@ -1,3 +1,10 @@
+.opacity-ghost {
+	transition: all .8s ease;
+	opacity: 0.4;
+	box-shadow: 3px 3px 10px 3px rgba(0,0,0,0.3);
+	cursor: ns-resize;
+}
+
 .pods-field--wrapper {
 	display: flex;
 	width: 100%;

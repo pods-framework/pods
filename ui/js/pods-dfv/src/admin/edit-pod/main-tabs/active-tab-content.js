@@ -18,6 +18,7 @@ export const ActiveTabContent = ( props ) => {
 			<FieldGroups
 				groups={props.groups}
 				getGroupFields={props.getGroupFields}
+				reorderGroupItem={props.reorderGroupItem}
 			/>
 		);
 	} else {
@@ -40,6 +41,7 @@ export const ActiveTabContent = ( props ) => {
 ActiveTabContent.propTypes = {
 	groups: PropTypes.array.isRequired,
 	getGroupFields: PropTypes.func.isRequired,
+	reorderGroupItem: PropTypes.func.isRequired,
 	activeTab: PropTypes.string.isRequired,
 	tabOptions: PropTypes.array.isRequired,
 	getOptionValue: PropTypes.func.isRequired,

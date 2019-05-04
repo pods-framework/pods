@@ -60,12 +60,22 @@ foreach ( $setup_edit_tabs as $tab_name => $tab_title_text ) {
 $dummy_group_list = array(
 	'Test Group 1',
 	'Test Group 2',
-	'Test Group 3'
+	'Test Group 3',
+	'Test Group 4',
+	'Test Group 5',
+	'Test Group 6',
+	'Test Group 7',
+	'Test Group 8',
 );
 $dummy_group_field_list = array(
 	'Test Group 1' => $all_field_names,
 	'Test Group 2' => array(),
 	'Test Group 3' => array(),
+	'Test Group 4' => array(),
+	'Test Group 5' => array(),
+	'Test Group 6' => array(),
+	'Test Group 7' => array(),
+	'Test Group 8' => array(),
 );
 $dummy_groups = array(
 	'Test Group 1' => array(
@@ -76,6 +86,21 @@ $dummy_groups = array(
 	),
 	'Test Group 3' => array(
 		'name' => 'Test Group 3',
+	),
+	'Test Group 4' => array(
+		'name' => 'Test Group 4',
+	),
+	'Test Group 5' => array(
+		'name' => 'Test Group 5',
+	),
+	'Test Group 6' => array(
+		'name' => 'Test Group 6',
+	),
+	'Test Group 7' => array(
+		'name' => 'Test Group 7',
+	),
+	'Test Group 8' => array(
+		'name' => 'Test Group 8',
 	),
 );
 

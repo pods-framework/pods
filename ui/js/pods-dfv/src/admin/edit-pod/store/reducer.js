@@ -1,9 +1,10 @@
 import * as paths from './state-paths';
 
 import {
+	uiConstants,
+	groupConstants,
 	optionConstants,
 	podMetaConstants,
-	uiConstants,
 	initialUIState,
 } from './constants';
 
@@ -52,6 +53,23 @@ export const ui = ( state = initialUIState, action = {} ) => {
 };
 
 export const groups = ( state = {}, action = {} ) => {
+	const { actions } = groupConstants;
+
+	if ( actions.REORDER_GROUP_ITEM === action.type ) {
+		const { oldIndex, newIndex } = action;
+
+		if ( null === oldIndex || null === newIndex || oldIndex === newIndex ) {
+			return state;
+		}
+
+		const newGroupList = [ ...paths.GROUP_LIST.tailGetFrom( state ) ];
+		newGroupList.splice( newIndex, 0, newGroupList.splice( oldIndex, 1 )[ 0 ] );
+		return {
+			...state,
+			[ paths.GROUP_LIST.tailPath ]: newGroupList
+		};
+	}
+
 	return state;
 };
 

@@ -29,6 +29,12 @@ export const optionConstants = {
 	},
 };
 
+export const groupConstants = {
+	actions: {
+		REORDER_GROUP_ITEM: 'REORDER_GROUP_ITEM',
+	},
+};
+
 export const podMetaConstants = {
 	actions: {
 		SET_POD_NAME: 'SET_POD_NAME',

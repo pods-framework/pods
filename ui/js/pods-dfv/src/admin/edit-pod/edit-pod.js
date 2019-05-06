@@ -20,18 +20,12 @@ const StoreSubscribe = compose( [
 		return {
 			tabs: storeSelect.getTabs(),
 			activeTab: storeSelect.getActiveTab(),
-			tabOptions: storeSelect.getTabOptions( storeSelect.getActiveTab() ),
-			groups: storeSelect.getGroups(),
-			getOptionValue: storeSelect.getOptionValue,
-			getGroupFields: storeSelect.getGroupFields,
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
 		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
 		return {
 			setActiveTab: storeDispatch.setActiveTab,
-			setOptionValue: storeDispatch.setOptionValue,
-			reorderGroupItem: storeDispatch.reorderGroupItem,
 		};
 	} )
 ] );
@@ -57,15 +51,7 @@ const EditPod = StoreSubscribe( ( props ) => {
 			</div>
 			<div id='poststuff'>
 				<div id='post-body' className='columns-2'>
-					<ActiveTabContent
-						groups={props.groups}
-						getGroupFields={props.getGroupFields}
-						reorderGroupItem={props.reorderGroupItem}
-						activeTab={props.activeTab}
-						tabOptions={props.tabOptions}
-						getOptionValue={props.getOptionValue}
-						setOptionValue={props.setOptionValue}
-					/>
+					<ActiveTabContent />
 					<Postbox />
 				</div>
 			</div>

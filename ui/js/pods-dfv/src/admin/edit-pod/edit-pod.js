@@ -1,10 +1,7 @@
 import React from 'react';
 
-// WordPress dependencies
-const { withSelect, withDispatch } = wp.data;
-const { compose } = wp.compose;
-
 // Pods dependencies
+import withDragDropContext from './with-drag-drop-context';
 import { STORE_KEY_EDIT_POD } from './store/constants';
 import { handleSubmit } from './handle-submit';
 import { SaveStatusMessage } from './save-status-message';
@@ -12,6 +9,10 @@ import { EditPodName } from './edit-pod-name';
 import { PodsNavTab } from 'pods-dfv/src/components/tabs/pods-nav-tab';
 import { ActiveTabContent } from './main-tabs/active-tab-content';
 import { Postbox } from './postbox';
+
+// WordPress dependencies
+const { withSelect, withDispatch } = wp.data;
+const { compose } = wp.compose;
 
 const StoreSubscribe = compose( [
 	withSelect( ( select ) => {
@@ -35,7 +36,7 @@ const StoreSubscribe = compose( [
 	} )
 ] );
 
-export const PodsDFVEditPod = StoreSubscribe( ( props ) => {
+const EditPod = StoreSubscribe( ( props ) => {
 
 //--! Todo: debugging only
 	window.select = wp.data.select( 'pods/edit-pod' );
@@ -71,3 +72,5 @@ export const PodsDFVEditPod = StoreSubscribe( ( props ) => {
 		</form>
 	);
 } );
+
+export const PodsDFVEditPod = withDragDropContext( EditPod );

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 // Pods dependencies
 import { DynamicTabContent } from './dynamic-tab-content';
-import { FieldGroups } from 'pods-dfv/src/admin/edit-pod/main-tabs/field-groups';
+import { FieldGroups } from './field-groups';
 
 /**
  * ActiveTabContent
@@ -32,7 +32,10 @@ export const ActiveTabContent = ( props ) => {
 	}
 
 	return (
-		<div id='post-body-content' className='pods-nav-tab-group pods-manage-field'>
+		<div
+			id='post-body-content'
+			className='pods-nav-tab-group pods-manage-field'
+		>
 			{Component}
 		</div>
 	);

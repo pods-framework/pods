@@ -21,6 +21,11 @@ export const uiConstants = {
 		SAVE_SUCCESS: 'SAVE_SUCCESS',
 		SAVE_ERROR: 'SAVE_ERROR',
 	},
+
+	dragItemTypes: {
+		GROUP: 'GROUP',
+		FIELD: 'FIELD',
+	},
 };
 
 export const optionConstants = {

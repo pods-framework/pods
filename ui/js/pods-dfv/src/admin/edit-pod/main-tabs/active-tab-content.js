@@ -18,14 +18,15 @@ const StoreSubscribe = compose( [
 			groups: storeSelect.getGroups(),
 			getOptionValue: storeSelect.getOptionValue,
 			getGroupFields: storeSelect.getGroupFields,
-			getGroupList: storeSelect.getGroupList,
+			groupList: storeSelect.getGroupList(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
 		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
 		return {
 			setOptionValue: storeDispatch.setOptionValue,
-			reorderGroupItem: storeDispatch.reorderGroupItem,
+			setGroupList: storeDispatch.setGroupList,
+			moveGroup: storeDispatch.moveGroup,
 		};
 	} )
 ] );
@@ -43,7 +44,9 @@ export const ActiveTabContent = StoreSubscribe ( ( props ) => {
 			<FieldGroups
 				groups={props.groups}
 				getGroupFields={props.getGroupFields}
-				reorderGroupItem={props.reorderGroupItem}
+				groupList={props.groupList}
+				setGroupList={props.setGroupList}
+				moveGroup={props.moveGroup}
 			/>
 		);
 	} else {

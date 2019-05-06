@@ -36,7 +36,8 @@ export const optionConstants = {
 
 export const groupConstants = {
 	actions: {
-		REORDER_GROUP_ITEM: 'REORDER_GROUP_ITEM',
+		SET_GROUP_LIST: 'SET_GROUP_LIST',
+		MOVE_GROUP: 'MOVE_GROUP',
 	},
 };
 

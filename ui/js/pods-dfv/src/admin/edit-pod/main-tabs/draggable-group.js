@@ -28,11 +28,18 @@ const DraggableGroup = forwardRef( ( props, ref ) => {
 DraggableGroup.propTypes = {
 	index: PropTypes.number.isRequired,
 	moveGroup: PropTypes.func.isRequired,
+	handleBeginDrag: PropTypes.func.isRequired,
+	handleEndDrag: PropTypes.func.isRequired,
+	handleEndDragCancel: PropTypes.func.isRequired,
+	dragInProgress: PropTypes.bool.isRequired,
+
+	// This comes from the drop target
+	connectDropTarget: PropTypes.func.isRequired,
+
+	// These come from the drag source
 	connectDragSource: PropTypes.func.isRequired,
 	connectDragPreview: PropTypes.func.isRequired,
-	connectDropTarget: PropTypes.func.isRequired,
 	isDragging: PropTypes.bool.isRequired,
-	setDragInProgress: PropTypes.func.isRequired,
 };
 
 export default flow( dropTarget, dragSource )( DraggableGroup );

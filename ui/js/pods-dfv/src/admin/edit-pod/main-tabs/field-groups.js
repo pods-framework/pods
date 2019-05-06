@@ -7,11 +7,23 @@ import './field-groups.scss';
 /**
  *
  */
-export const FieldGroups = ( { groups, getGroupFields, reorderGroupItem } ) => {
+export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, moveGroup } ) => {
 	const [ dragInProgress, setDragInProgress ] = useState( false );
+	const [ originalList, setOriginalList ] = useState( groupList );
 
-	const moveGroup = ( oldIndex, newIndex ) => {
-		reorderGroupItem( oldIndex, newIndex );
+	const handleBeginDrag = () => {
+		// Take a snapshot of the list state when dragging begins
+		setOriginalList( groupList );
+		setDragInProgress( true );
+	};
+
+	const handleEndDragCancel = () => {
+		// Items are re-ordered on the fly, be sure to reset on cancel
+		setGroupList( originalList );
+		setDragInProgress( false );
+	};
+	const handleEndDrag = () => {
+		setDragInProgress( false );
 	};
 
 	return (
@@ -23,8 +35,10 @@ export const FieldGroups = ( { groups, getGroupFields, reorderGroupItem } ) => {
 					index={index}
 					getGroupFields={getGroupFields}
 					moveGroup={moveGroup}
+					handleBeginDrag={handleBeginDrag}
+					handleEndDrag={handleEndDrag}
+					handleEndDragCancel={handleEndDragCancel}
 					dragInProgress={dragInProgress}
-					setDragInProgress={setDragInProgress}
 				/>
 			) )}
 			<div className="pods-button-group--container">
@@ -37,5 +51,7 @@ export const FieldGroups = ( { groups, getGroupFields, reorderGroupItem } ) => {
 FieldGroups.propTypes = {
 	groups: PropTypes.array.isRequired,
 	getGroupFields: PropTypes.func.isRequired,
-	reorderGroupItem: PropTypes.func.isRequired,
+	moveGroup: PropTypes.func.isRequired,
+	groupList: PropTypes.array.isRequired,
+	setGroupList: PropTypes.func.isRequired,
 };

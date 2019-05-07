@@ -23,7 +23,7 @@ export const ui = ( state = initialUIState, action = {} ) => {
 	const { actions, saveStatuses } = uiConstants;
 
 	switch ( action.type ) {
-		case actions.SET_ACTIVE_TAB:
+		case actions.SET_ACTIVE_TAB: {
 			// Use the default if the tab name doesn't exist
 			let newTab = initialUIState.activeTab;
 			let tabIndex = paths.TAB_LIST.tailGetFrom( state ).indexOf( action.activeTab );
@@ -36,9 +36,10 @@ export const ui = ( state = initialUIState, action = {} ) => {
 				...state,
 				activeTab: newTab
 			};
-
-		case actions.SET_SAVE_STATUS:
+		}
+		case actions.SET_SAVE_STATUS: {
 			let newStatus = action.saveStatus;
+
 			if ( !Object.values( saveStatuses ).includes( newStatus ) ) {
 				newStatus = initialUIState.saveStatus;
 			}
@@ -46,6 +47,7 @@ export const ui = ( state = initialUIState, action = {} ) => {
 				...state,
 				saveStatus: newStatus
 			};
+		}
 
 		default:
 			return state;

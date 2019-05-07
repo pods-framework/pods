@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, useRef, forwardRef } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import * as PropTypes from 'prop-types';
 import { flow } from 'lodash';
 
@@ -12,26 +12,33 @@ const { Dashicon } = wp.components;
 // eslint-disable-next-line react/display-name
 const FieldGroup = forwardRef( ( props, ref ) => {
 	const { connectDragSource, connectDropTarget, connectDragPreview, isDragging } = props;
-	const { groupName, getGroupFields, dragInProgress } = props;
+	const { groupName, getGroupFields } = props;
 	const [ expanded, setExpanded ] = useState( false );
-	const sourceRef = useRef( ref );
-	const targetRef = useRef( ref );
-
-	connectDragSource( sourceRef );
-	connectDropTarget( targetRef );
+	const wrapperRef = useRef( ref );
+	const groupTitleRef = useRef( ref );
+	const dragHandleRef = useRef( ref );
+	connectDropTarget( wrapperRef );
+	connectDragPreview( groupTitleRef );
+	connectDragSource( dragHandleRef );
 
 	useImperativeHandle( ref, () => ( {
-		getNode: () => sourceRef.current,
+		getNode: () => wrapperRef.current,
 	} ) );
 
-	return connectDragPreview(
-		<div className="pods-field-group-wrapper" ref={targetRef} style={{ opacity: isDragging ? 0 : 1 }}>
-			<div className="pods-field-group--title" onClick={() => setExpanded( !expanded )}>
-				{connectDragSource(
-					<div ref={sourceRef} className="pods-field-group--handle">
-						<Dashicon icon='menu' />
-					</div>
-				)}
+	return (
+		<div
+			className="pods-field-group-wrapper"
+			ref={wrapperRef}
+			style={{ opacity: isDragging ? 0 : 1 }}>
+
+			<div
+				className="pods-field-group--title"
+				ref={groupTitleRef}
+				onClick={() => setExpanded( !expanded )}>
+
+				<div ref={dragHandleRef} className="pods-field-group--handle">
+					<Dashicon icon='menu' />
+				</div>
 				<div className="pods-field-group--name">{groupName}</div>
 				<div className="pods-field-group--manage">
 					<div className="pods-field-group--toggle">
@@ -40,7 +47,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 				</div>
 			</div>
 
-			{expanded && !dragInProgress &&
+			{expanded && !isDragging &&
 			<FieldList fields={getGroupFields( groupName )} />}
 		</div>
 	);
@@ -50,10 +57,8 @@ FieldGroup.propTypes = {
 	groupName: PropTypes.string.isRequired,
 	index: PropTypes.number.isRequired,
 	getGroupFields: PropTypes.func.isRequired,
-	dragInProgress: PropTypes.bool.isRequired,
 	handleBeginDrag: PropTypes.func.isRequired,
-	handleEndDrag: PropTypes.func.isRequired,
-	handleEndDragCancel: PropTypes.func.isRequired,
+	handleDragCancel: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 
 	// This comes from the drop target

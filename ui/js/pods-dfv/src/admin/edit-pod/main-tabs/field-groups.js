@@ -1,26 +1,20 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 
 import FieldGroup from './field-group';
 import './field-groups.scss';
 
 export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, moveGroup } ) => {
-	const [ dragInProgress, setDragInProgress ] = useState( false );
 	const [ originalList, setOriginalList ] = useState( groupList );
 
 	const handleBeginDrag = () => {
 		// Take a snapshot of the list state when dragging begins
 		setOriginalList( groupList );
-		setDragInProgress( true );
 	};
 
-	const handleEndDragCancel = () => {
+	const handleDragCancel = () => {
 		// Items are re-ordered on the fly, be sure to reset on cancel
 		setGroupList( originalList );
-		setDragInProgress( false );
-	};
-	const handleEndDrag = () => {
-		setDragInProgress( false );
 	};
 
 	return (
@@ -33,9 +27,7 @@ export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, 
 					getGroupFields={getGroupFields}
 					moveGroup={moveGroup}
 					handleBeginDrag={handleBeginDrag}
-					handleEndDrag={handleEndDrag}
-					handleEndDragCancel={handleEndDragCancel}
-					dragInProgress={dragInProgress}
+					handleDragCancel={handleDragCancel}
 				/>
 			) )}
 			<div className="pods-button-group--container">

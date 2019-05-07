@@ -19,7 +19,7 @@ export default DragSource(
 			} else {
 				props.handleEndDragCancel();
 			}
-		}
+		},
 	},
 	( connect, monitor ) => ( {
 		connectDragSource: connect.dragSource(),

@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import DraggableGroup from './draggable-group';
+import FieldGroup from './field-group';
 import './field-groups.scss';
 
-/**
- *
- */
 export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, moveGroup } ) => {
 	const [ dragInProgress, setDragInProgress ] = useState( false );
 	const [ originalList, setOriginalList ] = useState( groupList );
@@ -29,7 +26,7 @@ export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, 
 	return (
 		<div className="field-groups">
 			{groups.map( ( group, index ) => (
-				<DraggableGroup
+				<FieldGroup
 					key={group.name}
 					groupName={group.name}
 					index={index}

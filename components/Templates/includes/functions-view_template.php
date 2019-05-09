@@ -266,11 +266,17 @@ function frontier_do_subtemplate( $atts, $content ) {
 	$pod        = pods( $atts['pod'], $atts['id'] );
 	$field_name = $atts['field'];
 
-	$entries = $pod->field( $field_name, false );
+	$entries = $pod->field( $field_name );
+
 	if ( ! empty( $entries ) ) {
 		$entries = (array) $entries;
 
 		$field = $pod->fields[ $field_name ];
+
+		if ( 'single' === pods_v( $field['type'] . '_format_type', $field['options'], 'single' ) && ! isset( $entries[0] ) ) {
+			$entries = array( $entries );
+		}
+
 		// Object types that could be Pods
 		$object_types = array( 'post_type', 'pod' );
 

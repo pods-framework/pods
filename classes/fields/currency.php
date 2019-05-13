@@ -485,6 +485,12 @@ class PodsField_Currency extends PodsField_Number {
 				'sign'   => '$',
 				'entity' => '&#36;',
 			),
+			'ngn'     => array(
+				'label'  => 'NGN',
+				'name'   => __( 'Nigerian Naira', 'pods' ),
+				'sign'   => '₦',
+				'entity' => '&#8358;',
+			),
 			'nzd'     => array(
 				'label'  => 'NZD',
 				'name'   => __( 'New Zealand Dollar', 'pods' ),

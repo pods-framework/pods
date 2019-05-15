@@ -32,10 +32,18 @@ module.exports = function ( grunt ) {
 		'!package.json',
 		'!package-lock.json',
 		'!phpcs.ruleset.xml',
+		'!phpcs.xml',
+		'!phpcs.xml.dist',
 		'!phpunit.xml.dist',
 		'!README.md',
+		'!phpcs-report-full.txt',
 		'!report-full.txt',
+		'!report-full-2.7.txt',
+		'!report-full-after.txt',
+		'!phpcs-report-source.txt',
 		'!report-source.txt',
+		'!report-source-2.7.txt',
+		'!report-source-after.txt',
 		'!rollup.config.js'
 	];
 
@@ -68,7 +76,7 @@ module.exports = function ( grunt ) {
 		gittag: {
 			addtag: {
 				options: {
-					tag    : '2.x/<%= pkg.version %>',
+					tag    : '<%= pkg.version %>',
 					message: 'Pods <%= pkg.version %>'
 				}
 			}
@@ -247,7 +255,7 @@ module.exports = function ( grunt ) {
 	// release tasks
 	grunt.registerTask( 'version_number', [ 'replace:version_readme_txt', 'replace:version_init_php' ] );
 	grunt.registerTask( 'pre_vcs', [ 'branch_name_master', 'version_number', 'clean:post_build', 'mkdir:build' ] );
-	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'push_svn', 'svn_copy' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
-	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );
+	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'push_svn', 'svn_copy' ] );
+	grunt.registerTask( 'release', [ 'pre_vcs', 'do_git', 'do_svn', 'clean:post_build' ] );
 };

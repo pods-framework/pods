@@ -27,19 +27,22 @@ if ( '9999.99' == pods_var( 'currency_format', $options ) ) {
 
 $currency = 'usd';
 
-if ( isset( PodsField_Currency::$currencies[ pods_var( 'currency_format_sign', $options, - 1 ) ] ) ) {
-	$currency = pods_var( 'currency_format_sign', $options );
+$currency_format_sign = pods_v( 'currency_format_sign', $options, $currency );
+
+if ( isset( PodsField_Currency::$currencies[ $currency_format_sign ] ) ) {
+	$currency = $currency_format_sign;
 }
 
 $currency_sign = PodsField_Currency::$currencies[ $currency ]['sign'];
-
-echo '<code class="currency-sign">' . $currency_sign . '</code>';
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
+<div class="pods-currency-container">
+	<code class="pods-currency-sign pods-hidden"><?php echo $currency_sign; ?></code>
+	<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
+</div>
 <script>
 	jQuery( function ( $ ) {
 		var input = $( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ),
-			currency_sign = input.siblings( 'code.currency-sign' );
+			currency_sign = input.siblings( 'code.pods-currency-sign' );
 
 		input.on( 'blur', function () {
 			if ( !/^[0-9\<?php
@@ -47,7 +50,7 @@ echo '<code class="currency-sign">' . $currency_sign . '</code>';
 			?>]$/.test( $( this ).val() ) ) {
 				var newval = $( this )
 					.val()
-					.replace( /[^0-9-\\<?php echo esc_js( $currency_sign ); ?>\<?php
+					.replace( /[^0-9-\<?php
 						echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
 						?>]/g, '' );
 				$( this ).val( newval );
@@ -55,13 +58,22 @@ echo '<code class="currency-sign">' . $currency_sign . '</code>';
 		} );
 
 		if ( currency_sign.length ) {
+			currency_sign.removeClass( 'pods-hidden' );
+
 			function resize_currency_sign() {
-				input.css( 'padding-left', parseInt( input.css( 'padding-left' ), 10 ) + currency_sign.width() + 12 );
-				currency_sign.css( 'line-height', parseInt( input.innerHeight() ) + 'px' );
+				if ( currency_sign.width() < 1 ) {
+					return;
+				}
+
+				input.css( 'padding-left', currency_sign.width() + 12 );
+				currency_sign.css( 'line-height', parseInt( input.innerHeight(), 10 ) + 'px' );
 			}
-			$(window).resize( resize_currency_sign );
-			resize_currency_sign();
-			currency_sign.show();
+
+			// Cover most events we need.
+			$(window).on( 'resize load visibilitychange postbox-toggled postbox-columnchange postboxes-columnchange', resize_currency_sign );
+
+			// Gutenberg show/hide panels do not trigger any known events, this is one final hackaround for that.
+			input.on( 'hover focus', resize_currency_sign );
 		}
 	} );
 </script>

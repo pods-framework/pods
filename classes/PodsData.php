@@ -777,6 +777,20 @@ class PodsData {
 			$this->total = count( (array) $this->data );
 		}
 
+		/**
+		 * Filters whether the total_found should be calculated right away or not.
+		 *
+		 * @param boolean  $auto_calculate_total_found Whether to auto calculate total_found.
+		 * @param array    $params                     Select parameters.
+		 * @param PodsData $this                       The current PodsData instance.
+		 *
+		 * @since 2.7.11
+		 */
+		if ( apply_filters( 'pods_data_auto_calculate_total_found', false, $params, $this ) ) {
+			// Run the calculation logic.
+			$this->calculate_totals();
+		}
+
 		return $this->data;
 	}
 
@@ -3230,7 +3244,7 @@ class PodsData {
 			$traverse = array_merge( $traverse, (array) $this->traversal[ $traverse_recurse['pod'] ][ $traverse['name'] ] );
 		}
 
-		$traverse = apply_filters( 'pods_data_traverse', $traverse, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params' ), $this );
+		$traverse = apply_filters( 'pods_data_traverse', $traverse, $traverse_recurse, $this );
 
 		if ( empty( $traverse ) ) {
 			return $joins;

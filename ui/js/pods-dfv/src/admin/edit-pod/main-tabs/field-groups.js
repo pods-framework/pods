@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
 
+import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 import './field-groups.scss';
 
@@ -30,6 +31,7 @@ export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, 
 					handleDragCancel={handleDragCancel}
 				/>
 			) )}
+			<GroupDragLayer />
 			<div className="pods-button-group--container">
 				<a href="#">Add Group</a> <a href="#">Add Field</a>
 			</div>

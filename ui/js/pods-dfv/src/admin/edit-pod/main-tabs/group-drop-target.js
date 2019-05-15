@@ -9,7 +9,7 @@ const dropSpec = {
 			return null;
 		}
 		// node = HTML Div element from imperative API
-		const node = component.getNode();
+		const node = component.getWrapperNode();
 		if ( !node ) {
 			return null;
 		}

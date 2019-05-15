@@ -1,6 +1,7 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import * as PropTypes from 'prop-types';
 import { flow } from 'lodash';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 
 import dragSource from './group-drag-source';
 import dropTarget from './group-drop-target';
@@ -15,14 +16,26 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 	const { groupName, getGroupFields } = props;
 	const [ expanded, setExpanded ] = useState( false );
 	const wrapperRef = useRef( ref );
-	const groupTitleRef = useRef( ref );
 	const dragHandleRef = useRef( ref );
+
+	useEffect( () => {
+		if ( connectDragPreview ) {
+			// Use empty image as a drag preview so browsers don't draw it,
+			// we use our custom drag layer instead.
+			connectDragPreview( getEmptyImage(), {
+				// IE fallback: specify that we'd rather screenshot the node
+				// when it already knows it's being dragged so we can hide it with CSS.
+				captureDraggingState: true
+			} );
+		}
+	} );
+
 	connectDropTarget( wrapperRef );
-	connectDragPreview( groupTitleRef );
 	connectDragSource( dragHandleRef );
 
 	useImperativeHandle( ref, () => ( {
-		getNode: () => wrapperRef.current,
+		getWrapperNode: () => wrapperRef.current,
+		getHandleNode: () => dragHandleRef.current,
 	} ) );
 
 	return (
@@ -31,12 +44,10 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			ref={wrapperRef}
 			style={{ opacity: isDragging ? 0 : 1 }}>
 
-			<div
-				className="pods-field-group--title"
-				ref={groupTitleRef}
+			<div className="pods-field-group--title"
 				onClick={() => setExpanded( !expanded )}>
 
-				<div ref={dragHandleRef} className="pods-field-group--handle">
+				<div ref={dragHandleRef} className="pods-field-group--handle" style={{ cursor: isDragging ? 'ns-resize' : null }}>
 					<Dashicon icon='menu' />
 				</div>
 				<div className="pods-field-group--name">{groupName}</div>

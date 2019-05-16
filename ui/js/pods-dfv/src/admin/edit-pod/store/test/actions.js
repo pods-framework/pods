@@ -1,4 +1,4 @@
-import { uiConstants, podMetaConstants, optionConstants } from '../constants';
+import { uiConstants, podMetaConstants, optionConstants, groupConstants } from '../constants';
 
 import {
 	setPodName,
@@ -7,6 +7,8 @@ import {
 	setActiveTab,
 	setOptionValue,
 	setOptionItemValue,
+	setGroupList,
+	moveGroup,
 } from '../actions.js';
 
 describe( 'actions', () => {
@@ -89,6 +91,51 @@ describe( 'actions', () => {
 				};
 
 				expect( setOptionValue( name, value ) ).toEqual( expected );
+			} );
+		} );
+	} );
+
+	// Gropus
+	describe( 'group actions', () => {
+		const { actions } = groupConstants;
+
+		describe( 'setGroupList()', () => {
+			const action = actions.SET_GROUP_LIST;
+
+			test( 'The action constant is defined', () => {
+				expect( action ).toBeDefined();
+			} );
+
+			test( 'setGroupList() should return the correct action', () => {
+				const groupList = [ 'foo', 'bar', 'baz' ];
+				const expected = {
+					type: action,
+					groupList: groupList
+				};
+
+				const result = setGroupList( groupList );
+				expect( result ).toEqual( expected );
+			} );
+		} );
+
+		describe( 'moveGroup()', () => {
+			const action = actions.MOVE_GROUP;
+
+			test( 'The action constant is defined', () => {
+				expect( action ).toBeDefined();
+			} );
+
+			test( 'moveGroup() should return the correct action', () => {
+				const oldIndex = 3;
+				const newIndex = 1;
+				const expected = {
+					type: action,
+					oldIndex,
+					newIndex
+				};
+
+				const result = moveGroup( oldIndex, newIndex );
+				expect( result ).toEqual( expected );
 			} );
 		} );
 	} );

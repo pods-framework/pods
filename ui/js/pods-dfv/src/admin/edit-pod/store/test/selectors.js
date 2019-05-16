@@ -121,20 +121,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'groups', () => {
-		describe( 'getGroupList()', () => {
-
-		} );
-
-		describe( 'getGroups()', () => {
-
-		} );
-
-		describe( 'getGroup()', () => {
-
-		} );
-	} );
-
 	describe( 'fields', () => {
 		describe( 'getFields()', () => {
 			it( 'Should return the fields array', () => {

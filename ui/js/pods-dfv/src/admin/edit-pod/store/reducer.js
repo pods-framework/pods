@@ -59,12 +59,20 @@ export const groups = ( state = {}, action = {} ) => {
 
 	if ( actions.MOVE_GROUP === action.type ) {
 		const { oldIndex, newIndex } = action;
+		const groupList = paths.GROUP_LIST.tailGetFrom( state );
 
+		// Index bounds checking
 		if ( null === oldIndex || null === newIndex || oldIndex === newIndex ) {
 			return state;
 		}
+		if ( oldIndex >= groupList.length || 0 > oldIndex ) {
+			return state;
+		}
+		if ( newIndex >= groupList.length || 0 > newIndex ) {
+			return state;
+		}
 
-		const newGroupList = [ ...paths.GROUP_LIST.tailGetFrom( state ) ];
+		const newGroupList = [ ...groupList ];
 		newGroupList.splice( newIndex, 0, newGroupList.splice( oldIndex, 1 )[ 0 ] );
 		return {
 			...state,

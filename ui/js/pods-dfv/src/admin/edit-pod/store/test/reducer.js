@@ -5,6 +5,7 @@ import * as paths from '../state-paths';
 import {
 	podMetaConstants,
 	optionConstants,
+	groupConstants,
 	uiConstants,
 	initialUIState,
 } from '../constants';
@@ -12,6 +13,7 @@ import {
 import {
 	podMeta,
 	options,
+	groups,
 	fields,
 	ui,
 } from '../reducer';
@@ -69,7 +71,7 @@ describe( 'reducer', () => {
 			expect( actions.SET_OPTION_ITEM_VALUE ).toBeDefined();
 		} );
 
-		test( 'Should create a new option object if it doesn\'t exist', () => {
+		test( 'Should create a new options object if it doesn\'t exist', () => {
 			const optionName = 'foo';
 			const itemName = 'bar';
 			const itemValue = 'baz';
@@ -101,14 +103,82 @@ describe( 'reducer', () => {
 				itemValue: itemValue
 			};
 
-			const expected = { [ optionName ]: {
-				name: optionName,
-				[ itemName ]: itemValue }
+			const expected = {
+				[ optionName ]: {
+					name: optionName,
+					[ itemName ]: itemValue
+				}
 			};
 			const result = options( initialState, action );
 
 			expect( result ).toBeDefined();
 			expect( result ).toEqual( expected );
+		} );
+	} );
+
+	// Groups
+	describe( 'groups', () => {
+		const { actions } = groupConstants;
+		const { GROUP_LIST } = paths;
+		const initialGroupList = [ 'zero', 'one', 'two', 'three' ];
+
+		it( 'Should return an empty object by default', () => {
+			expect( groups( undefined, undefined ) ).toEqual( {} );
+		} );
+
+		describe( 'set group list', () => {
+			const actionType = actions.SET_GROUP_LIST;
+
+			test( 'The action constant should be defined', () => {
+				expect( actionType ).toBeDefined();
+			} );
+
+			it( 'Should create a new group list if it doesn\'t exist', () => {
+				const action = {
+					type: actionType,
+					groupList: initialGroupList
+				};
+				const expected = GROUP_LIST.tailCreateTree( initialGroupList );
+				const result = groups( undefined, action );
+
+				expect( result ).toBeDefined();
+				expect( result ).toEqual( expected );
+			} );
+		} );
+
+		describe( 'move group', () => {
+			const actionType = actions.MOVE_GROUP;
+			const cases = [
+				[ 0, 0, initialGroupList ], // Nothing changes
+				[ -1, 0, initialGroupList ], // oldIndex out of bounds low
+				[ 42, 2, initialGroupList ], // oldIndex out of bounds high
+				[ 3, -1, initialGroupList ], // newIndex out of bounds low
+				[ 1, 42, initialGroupList ], // newIndex out of bounds, high
+				[ 0, 1, [ 'one', 'zero', 'two', 'three' ] ],
+				[ 0, 2, [ 'one', 'two', 'zero', 'three' ] ],
+				[ 0, 3, [ 'one', 'two', 'three', 'zero' ] ],
+				[ 3, 2, [ 'zero', 'one', 'three', 'two' ] ],
+				[ 3, 1, [ 'zero', 'three', 'one', 'two' ] ],
+				[ 3, 0, [ 'three', 'zero', 'one', 'two' ] ],
+				[ 1, 2, [ 'zero', 'two', 'one', 'three' ] ],
+				[ 2, 1, [ 'zero', 'two', 'one', 'three' ] ],
+			];
+
+			test( 'The action constant should be defined', () => {
+				expect( actionType ).toBeDefined();
+			} );
+
+			test.each( cases )( 'Attempt to move %i to %i', ( oldIndex, newIndex, expected ) => {
+				const initialState = GROUP_LIST.tailCreateTree( initialGroupList, actionType );
+				const action = {
+					type: actionType,
+					oldIndex,
+					newIndex
+				};
+				const result = groups( initialState, action );
+
+				expect( result ).toEqual( GROUP_LIST.tailCreateTree( expected ) );
+			} );
 		} );
 	} );
 

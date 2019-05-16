@@ -200,6 +200,34 @@ describe( 'store', () => {
 			} );
 		} );
 
+		describe( 'groups', () => {
+			test( 'Initializes with an empty object', () => {
+				testStore.initStore( deepFreeze( {} ) );
+				const result = paths.GROUPS.getFrom( testStore.select.getState() );
+				const expected = {};
+
+				expect( result ).toEqual( expected );
+			} );
+
+			test( 'setGroupList() should set the group list', () => {
+				const groupList = [ 'group0', 'group1', 'group2', 'group3' ];
+				testStore.dispatch.setGroupList( groupList );
+
+				const result = testStore.select.getGroupList();
+
+				expect( result ).toEqual( groupList );
+			} );
+
+			test( 'moveGroup() should reorder the group list', () => {
+				const expected = [ 'group3', 'group0', 'group1', 'group2' ];
+				testStore.dispatch.moveGroup( 3, 0 );
+
+				const result = testStore.select.getGroupList();
+
+				expect( result ).toEqual( expected );
+			} );
+		} );
+
 		describe( 'podMeta', () => {
 			describe( 'Pod name/id', () => {
 				const testID = 42;

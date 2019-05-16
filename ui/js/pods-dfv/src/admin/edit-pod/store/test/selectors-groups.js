@@ -80,7 +80,7 @@ describe( 'group selectors', () => {
 	} );
 
 	describe( 'getGroupFields()', () => {
-		it( 'should', () => {
+		it( 'Should return the ordered field list for the given group name', () => {
 			const groupName = 'group1';
 			const expected = [
 				{ name: 'foo3', label: 'foo label3' },

@@ -1,10 +1,7 @@
 import React from 'react';
 
-// WordPress dependencies
-const { withSelect, withDispatch } = wp.data;
-const { compose } = wp.compose;
-
 // Pods dependencies
+import withDragDropContext from './with-drag-drop-context';
 import { STORE_KEY_EDIT_POD } from './store/constants';
 import { handleSubmit } from './handle-submit';
 import { SaveStatusMessage } from './save-status-message';
@@ -13,29 +10,27 @@ import { PodsNavTab } from 'pods-dfv/src/components/tabs/pods-nav-tab';
 import { ActiveTabContent } from './main-tabs/active-tab-content';
 import { Postbox } from './postbox';
 
+// WordPress dependencies
+const { withSelect, withDispatch } = wp.data;
+const { compose } = wp.compose;
+
 const StoreSubscribe = compose( [
 	withSelect( ( select ) => {
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 		return {
 			tabs: storeSelect.getTabs(),
 			activeTab: storeSelect.getActiveTab(),
-			tabOptions: storeSelect.getTabOptions( storeSelect.getActiveTab() ),
-			groups: storeSelect.getGroups(),
-			getOptionValue: storeSelect.getOptionValue,
-			getGroupFields: storeSelect.getGroupFields,
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
 		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
 		return {
 			setActiveTab: storeDispatch.setActiveTab,
-			setOptionValue: storeDispatch.setOptionValue,
-			reorderGroupItem: storeDispatch.reorderGroupItem,
 		};
 	} )
 ] );
 
-export const PodsDFVEditPod = StoreSubscribe( ( props ) => {
+const EditPod = StoreSubscribe( ( props ) => {
 
 //--! Todo: debugging only
 	window.select = wp.data.select( 'pods/edit-pod' );
@@ -56,18 +51,12 @@ export const PodsDFVEditPod = StoreSubscribe( ( props ) => {
 			</div>
 			<div id='poststuff'>
 				<div id='post-body' className='columns-2'>
-					<ActiveTabContent
-						groups={props.groups}
-						getGroupFields={props.getGroupFields}
-						reorderGroupItem={props.reorderGroupItem}
-						activeTab={props.activeTab}
-						tabOptions={props.tabOptions}
-						getOptionValue={props.getOptionValue}
-						setOptionValue={props.setOptionValue}
-					/>
+					<ActiveTabContent />
 					<Postbox />
 				</div>
 			</div>
 		</form>
 	);
 } );
+
+export const PodsDFVEditPod = withDragDropContext( EditPod );

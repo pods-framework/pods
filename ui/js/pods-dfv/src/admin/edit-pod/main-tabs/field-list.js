@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container, Draggable } from 'react-smooth-dnd';
 
 import './manage-fields.scss';
 
@@ -10,45 +9,28 @@ const { __ } = wp.i18n;
 const { Dashicon } = wp.components;
 
 export const FieldList = ( props ) => {
-	const containerProps = {
-		groupName: 'fields',
-		lockAxis: 'y',
-		dragHandleSelector: '.pods-field--handle',
-	};
-
-	const handleFieldDrop = ( e ) => {
-		console.log( e );
-	};
 
 	if ( 0 === props.fields.length ) {
 		return (
-			<Container {...containerProps} onDrop={handleFieldDrop}>
-				<Draggable>
-					<div className='pods-manage-fields no-fields'>
-						{__( 'There are no fields in this group', 'pods' )}
-					</div>
-				</Draggable>
-			</Container>
+			<div className='pods-manage-fields no-fields'>
+				{__( 'There are no fields in this group', 'pods' )}
+			</div>
 		);
 	}
 
-	// noinspection RequiredAttributes
 	return (
 		<div className='pods-manage-fields'>
 			<FieldHeader />
-			<Container {...containerProps} onDrop={handleFieldDrop}>
-				{props.fields.map( thisField => (
-					<Draggable key={thisField.id}>
-						<FieldListItem
-							id={thisField.id}
-							fieldLabel={thisField.label}
-							fieldName={thisField.name}
-							required={thisField.required}
-							type={thisField.type}
-						/>
-					</Draggable>
-				) )}
-			</Container>
+			{props.fields.map( field => (
+				<FieldListItem
+					key={field.id}
+					id={field.id}
+					fieldLabel={field.label}
+					fieldName={field.name}
+					required={field.required}
+					type={field.type}
+				/>
+			) )}
 			<FieldHeader />
 		</div>
 	);

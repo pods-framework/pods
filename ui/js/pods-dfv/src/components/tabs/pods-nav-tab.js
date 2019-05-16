@@ -2,27 +2,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-export const PodsNavTab = ( props ) => {
+export const PodsNavTab = ( { tabs, activeTab, setActiveTab } ) => {
 	const getClassName = ( tabName ) => {
 		return classNames(
 			'nav-tab pods-nav-tab-link',
-			{ 'nav-tab-active': ( tabName === props.activeTab ) }
+			{ 'nav-tab-active': ( tabName === activeTab ) },
 		);
 	};
 
 	const handleClick = ( e, tabName ) => {
 		e.preventDefault();
-		props.setActiveTab( tabName );
+		setActiveTab( tabName );
 	};
 
 	return (
 		<h2 className='nav-tab-wrapper pods-nav-tabs'>
-			{props.tabs.map( thisTab => (
+			{tabs.map( thisTab => (
 				<a
 					key={thisTab.name}
 					href={`#pods-${thisTab.name}`}
 					className={getClassName( thisTab.name )}
-					onClick={( e ) => handleClick( e, thisTab.name )}>
+					onClick={( e ) => handleClick( e, thisTab.name )}
+				>
 					{thisTab.titleText}
 				</a>
 			) )}
@@ -36,5 +37,5 @@ PodsNavTab.propTypes = {
 		titleText: PropTypes.string,
 	} ) ).isRequired,
 	activeTab: PropTypes.string.isRequired,
-	setActiveTab: PropTypes.func.isRequired
+	setActiveTab: PropTypes.func.isRequired,
 };

@@ -23,7 +23,7 @@ export const ui = ( state = initialUIState, action = {} ) => {
 	const { actions, saveStatuses } = uiConstants;
 
 	switch ( action.type ) {
-		case actions.SET_ACTIVE_TAB:
+		case actions.SET_ACTIVE_TAB: {
 			// Use the default if the tab name doesn't exist
 			let newTab = initialUIState.activeTab;
 			let tabIndex = paths.TAB_LIST.tailGetFrom( state ).indexOf( action.activeTab );
@@ -36,9 +36,10 @@ export const ui = ( state = initialUIState, action = {} ) => {
 				...state,
 				activeTab: newTab
 			};
-
-		case actions.SET_SAVE_STATUS:
+		}
+		case actions.SET_SAVE_STATUS: {
 			let newStatus = action.saveStatus;
+
 			if ( !Object.values( saveStatuses ).includes( newStatus ) ) {
 				newStatus = initialUIState.saveStatus;
 			}
@@ -46,6 +47,7 @@ export const ui = ( state = initialUIState, action = {} ) => {
 				...state,
 				saveStatus: newStatus
 			};
+		}
 
 		default:
 			return state;
@@ -55,7 +57,7 @@ export const ui = ( state = initialUIState, action = {} ) => {
 export const groups = ( state = {}, action = {} ) => {
 	const { actions } = groupConstants;
 
-	if ( actions.REORDER_GROUP_ITEM === action.type ) {
+	if ( actions.MOVE_GROUP === action.type ) {
 		const { oldIndex, newIndex } = action;
 
 		if ( null === oldIndex || null === newIndex || oldIndex === newIndex ) {
@@ -68,9 +70,16 @@ export const groups = ( state = {}, action = {} ) => {
 			...state,
 			[ paths.GROUP_LIST.tailPath ]: newGroupList
 		};
-	}
 
-	return state;
+	} else if ( actions.SET_GROUP_LIST === action.type ) {
+		return {
+			...state,
+			[ paths.GROUP_LIST.tailPath ]: action.groupList
+		};
+	} else {
+
+		return state;
+	}
 };
 
 export const options = ( state = {}, action = {} ) => {

@@ -58,6 +58,7 @@ export const GROUP_FIELD_LIST = createStatePath( `${GROUPS.path}.groupFieldList`
 export const UI = createStatePath( 'ui' );
 export const ACTIVE_TAB = createStatePath( `${UI.path}.activeTab` );
 export const SAVE_STATUS = createStatePath( `${UI.path}.saveStatus` );
+
 export const TABS = createStatePath( `${UI.path}.tabs` );
 
 // Ordered list of tab names as an array: [ 'tab1', 'tab2', ... ]
@@ -67,13 +68,11 @@ export const TAB_LIST = createStatePath( `${TABS.path}.tabList` );
 // { tab1: {tab object}, tab2: {tab object}, ...}
 export const TABS_BY_NAME = createStatePath( `${TABS.path}.byName` );
 
+// One to many relationship tab => options:
+// { 'tab1': [ 'option1', 'option2', ...], 'tab2': [...] }
+export const TAB_OPTIONS_LIST = createStatePath( `${TABS.path}.tabOptionsList` );
+
 // Pod option list keyed by option name:
 // { can_export: {object}, show_ui: {object}, etc }
 export const OPTIONS = createStatePath( 'options' );
-
-// Ordered list of option names for this tab as an array:
-// [ 'option1', 'option2', ...]
-// Stored in the tab objects in TABS_BY_NAME
-export const TAB_OPTION_LIST = 'optionList';
-
 

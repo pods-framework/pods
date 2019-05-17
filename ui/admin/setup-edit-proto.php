@@ -23,6 +23,7 @@ $setup_edit_tabs    = PodsInit::$admin->admin_setup_edit_tabs( $pod );
 // Iterate through the defined tabs
 $ordered_tab_list = array();
 $tabs_by_name     = array();
+$tab_options_list = array();
 $options          = array();
 foreach ( $setup_edit_tabs as $tab_name => $tab_title_text ) {
 	$tab_option_list = array();
@@ -53,8 +54,8 @@ foreach ( $setup_edit_tabs as $tab_name => $tab_title_text ) {
 	$tabs_by_name[ $tab_name ] = array(
 		'name'       => $tab_name,
 		'titleText'  => $tab_title_text,
-		'optionList' => $tab_option_list
 	);
+	$tab_options_list[ $tab_name ] = $tab_option_list;
 }
 
 $dummy_group_list = array(
@@ -117,6 +118,7 @@ $data = array(
 		'tabs' => array(
 			'byName'  => $tabs_by_name,
 			'tabList' => $ordered_tab_list,
+			'tabOptionsList' => $tab_options_list,
 		),
 	),
 	'options'   => $options,

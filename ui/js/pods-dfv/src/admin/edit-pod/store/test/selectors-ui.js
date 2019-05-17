@@ -46,15 +46,20 @@ describe( 'ui selectors', () => {
 
 		// These are being reused below
 		const testTabs = {
-			foo: {
-				name: 'foo',
-				[ paths.TAB_OPTION_LIST ]: [ 'foo-option2', 'foo-option1' ]
-			},
-			bar: {
-				name: 'bar',
-				[ paths.TAB_OPTION_LIST ]: [ 'bar-option2', 'bar-option1' ]
-			}
+			foo: { name: 'foo', titleText: 'Foo' },
+			bar: { name: 'bar', titleText: 'Bar' },
 		};
+		const options = {
+			'foo-option1': { name: 'foo-option1', value: 'foo1 value' },
+			'foo-option2': { name: 'foo-option2', value: 'foo2 value' },
+			'bar-option1': { name: 'bar-option1', value: 'bar1 value' },
+			'bar-option2': { name: 'bar-option2', value: 'bar2 value' },
+		};
+		const tabOptionsList = {
+			foo: [ 'foo-option2', 'foo-option1' ],
+			bar: [ 'bar-option2', 'bar-option1' ],
+		};
+
 		describe( 'getTab()', () => {
 			const state = deepFreeze(
 				paths.TABS_BY_NAME.createTree( testTabs )
@@ -90,15 +95,10 @@ describe( 'ui selectors', () => {
 
 		describe( 'getTabOptions()', () => {
 			it( 'Should get the ordered options for the specified tab', () => {
-				const options = {
-					'foo-option1': { name: 'foo-option1', value: 'foo1 value' },
-					'foo-option2': { name: 'foo-option2', value: 'foo2 value' },
-					'bar-option1': { name: 'bar-option1', value: 'bar1 value' },
-					'bar-option2': { name: 'bar-option2', value: 'bar2 value' },
-				};
 				const state = deepFreeze( merge(
 					paths.TABS_BY_NAME.createTree( testTabs ),
-					paths.OPTIONS.createTree( options )
+					paths.OPTIONS.createTree( options ),
+					paths.TAB_OPTIONS_LIST.createTree( tabOptionsList ),
 				) );
 
 				const result = getTabOptions( state, 'bar' );

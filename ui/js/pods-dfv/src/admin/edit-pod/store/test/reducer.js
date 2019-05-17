@@ -169,7 +169,7 @@ describe( 'reducer', () => {
 			} );
 
 			test.each( cases )( 'Attempt to move %i to %i', ( oldIndex, newIndex, expected ) => {
-				const initialState = GROUP_LIST.tailCreateTree( initialGroupList, actionType );
+				const initialState = GROUP_LIST.tailCreateTree( initialGroupList );
 				const action = {
 					type: actionType,
 					oldIndex,

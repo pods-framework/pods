@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 export const PodsNavTab = ( { tabs, activeTab, setActiveTab } ) => {

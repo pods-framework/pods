@@ -95,7 +95,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	// Gropus
+	// Groups
 	describe( 'group actions', () => {
 		const { actions } = groupConstants;
 

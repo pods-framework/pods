@@ -4927,13 +4927,16 @@ class PodsUI {
 
 				if ( pods_is_admin( array( 'pods', 'pods_content' ) ) ) {
 					$restricted = false;
-				} elseif ( 'manage' === $action ) {
-					if ( ! in_array( 'edit', $this->actions_disabled ) && ( current_user_can( 'pods_edit_' . $this->pod->pod ) || current_user_can( 'pods_edit_others_' . $this->pod->pod ) ) ) {
-						$restricted = false;
-					} elseif ( ! in_array( 'delete', $this->actions_disabled ) && ( current_user_can( 'pods_delete_' . $this->pod->pod ) || current_user_can( 'pods_delete_others_' . $this->pod->pod ) ) ) {
-						$restricted = false;
+				} elseif ( 'manage' === $action || 'reorder' === $action ) {
+					// if ( ! in_array( 'edit', $this->actions_disabled ) && ( current_user_can( 'pods_edit_' . $this->pod->pod ) || current_user_can( 'pods_edit_others_' . $this->pod->pod ) ) ) {
+		      if ( ! in_array( 'edit', $this->actions_disabled ) && current_user_can( 'pods_edit_others_' . $this->pod->pod ) ) {
+		        $restricted = false;
+		      // } elseif ( ! in_array( 'delete', $this->actions_disabled ) && ( current_user_can( 'pods_delete_' . $this->pod->pod ) || current_user_can( 'pods_delete_others_' . $this->pod->pod ) ) ) {
+		      } elseif ( ! in_array( 'delete', $this->actions_disabled ) && current_user_can( 'pods_delete_others_' . $this->pod->pod ) ) {
+		        $restricted = false;
 					} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) || current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
-						$restricted = false;
+						// $restricted = false;
+						$restricted = !empty($_GET['action']) && $_GET['action'] === 'reorder' ? true : false;
 					}
 				} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) || current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
 					$restricted = false;

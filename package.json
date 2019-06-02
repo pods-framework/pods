@@ -79,6 +79,7 @@
   "scripts": {
     "webpack-production": "webpack -p --config webpack.prod.js --progress",
     "webpack-dev": "webpack --config webpack.dev.js --progress",
+    "webpack-dev:watch": "webpack --config webpack.dev.js --progress -w",
     "test-dfv": "node node_modules/mocha/bin/mocha --require @babel/register --reporter dot --recursive tests/js",
     "jest-tests": "jest --config jest.config.json",
     "scss": "node-sass --output-style compressed ui/styles/src -o ui/styles/dist --source-map ui/styles/src/sourcemaps",

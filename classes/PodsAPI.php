@@ -2078,10 +2078,12 @@ class PodsAPI {
 			 * @see PodsUpgrade::install() L64-L76
 			 */
 			$charset_collate = 'DEFAULT CHARSET utf8';
+
 			global $wpdb;
 			if ( ! empty( $wpdb->charset ) ) {
 				$charset_collate = "DEFAULT CHARSET {$wpdb->charset}";
 			}
+
 			if ( ! empty( $wpdb->collate ) ) {
 				$charset_collate .= " COLLATE {$wpdb->collate}";
 			}

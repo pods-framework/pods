@@ -1878,6 +1878,7 @@ class Pods implements Iterator {
 				$post_temp   = false;
 				$old_post    = null;
 				$old_post_id = null;
+				$post_ID     = null;
 
 				if ( empty( $GLOBALS['post'] ) && 'post_type' === pods_v( 'type', $this->pod_data ) && 0 < $this->id() ) {
 					global $post_ID, $post;
@@ -3192,7 +3193,7 @@ class Pods implements Iterator {
 	 */
 	public function save( $data = null, $value = null, $id = null, $params = null ) {
 
-		if ( null !== $value ) {
+		if ( null !== $data && ! is_array( $data ) ) {
 			$data = array( $data => $value );
 		}
 

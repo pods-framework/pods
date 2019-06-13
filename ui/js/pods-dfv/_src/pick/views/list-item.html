@@ -1,18 +1,32 @@
-<input name="<%- htmlAttr.name %>[<%= ordinal %>]"
+<input
+		<% if ( 'single' === fieldConfig.pick_format_type ) { %>
+			name="<%- htmlAttr.name %>"
+			id="<%- htmlAttr.id %>"
+		<% } else { %>
+			name="<%- htmlAttr.name %>[<%= ordinal %>]"
+			id="<%- htmlAttr.id %><%= ordinal %>"
+		<% } %>
 		data-name-clean="<%- htmlAttr.name_clean %>"
-		id="<%- htmlAttr.id %><%= ordinal %>"
 		type="hidden"
 		value="<%- id %>">
 <ul class="pods-dfv-list-meta relationship-item">
 	<% if ( 1 != fieldConfig.pick_limit ) { %>
 		<li class="pods-dfv-list-col pods-dfv-list-handle"><span><%- PodsI18n.__( 'Reorder' ) %></span></li>
 	<% } %>
-	<% if ( 1 == fieldConfig.pick_show_icon && '' != icon ) { %>
+	<% if ( 1 == fieldConfig.pick_show_icon ) { %>
 		<li class="pods-dfv-list-col pods-dfv-list-icon">
-			<% if ( use_dashicon ) { %>
-			<span class="pinkynail dashicons <%- icon %>"></span>
+			<% if ( '' == icon ) { %>
+				<% if ( /^dashicons/.test( fieldConfig.default_icon ) ) { %>
+					<span class="pinkynail dashicons <%- fieldConfig.default_icon %>"></span>
+				<% } else { %>
+					<img class="pinkynail" src="<%- fieldConfig.default_icon %>" alt="Icon">
+				<% } %>
 			<% } else { %>
-			<img class="pinkynail" src="<%- icon %>" alt="Icon">
+				<% if ( /^dashicons/.test( icon ) ) { %>
+					<span class="pinkynail dashicons <%- icon %>"></span>
+				<% } else { %>
+					<img class="pinkynail" src="<%- icon %>" alt="Icon">
+				<% } %>
 			<% } %>
 		</li>
 	<% } %>

@@ -4934,7 +4934,8 @@ class PodsUI {
 					} elseif ( ! in_array( 'delete', $this->actions_disabled ) && current_user_can( 'pods_delete_others_' . $this->pod->pod ) ) {
 						$restricted = false;
 					} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) || current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
-						$restricted = false;
+						// $restricted = false;
+						$restricted = !empty($_GET['action']) && $_GET['action'] === 'reorder' ? true : false;
 					}
 				} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) || current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
 					$restricted = false;

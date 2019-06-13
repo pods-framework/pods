@@ -1813,16 +1813,6 @@ class PodsField_Pick extends PodsField {
 
 		$labels = array();
 
-		$check_value = $value;
-
-		if( is_array( $check_value ) ) {
-
-			foreach ( $check_value as $check_k => $check_v ) {
-				$check_value[ $check_k ] = (string) $check_v;
-			}
-			
-		}
-
 		foreach ( $data as $v => $l ) {
 			if ( ! in_array( (string) $l, $labels, true ) && ( (string) $value === (string) $v || ( is_array( $value ) && in_array( (string) $v, $value, true ) ) ) ) {
 				$labels[] = (string) $l;

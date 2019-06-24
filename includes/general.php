@@ -2290,8 +2290,11 @@ function pods_session_start() {
 	} elseif ( empty( $save_path ) || ! @file_exists( $save_path ) || ! is_writable( $save_path ) ) {
 		// Check if session path exists and can be written to, avoiding PHP fatal errors.
 		return false;
-	} elseif ( '' !== session_id() ) {
+	}
+
+	if ( '' !== session_id() ) {
 		// Check if session ID is already set.
+		// In separate if clause, to also check for non-file based sessions.
 		return false;
 	}
 

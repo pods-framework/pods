@@ -2362,14 +2362,20 @@ class PodsAPI {
 			PodsMeta::$comment[ $pod['id'] ] = $pod;
 		}
 
-		// Register Post Types / Taxonomies post-registration from PodsInit
-		if ( ! empty( PodsInit::$content_types_registered ) && in_array( $pod['type'], array(
-				'post_type',
-				'taxonomy'
-			) ) && empty( $pod['object'] ) ) {
-			global $pods_init;
+		if ( ! class_exists( 'PodsInit' ) ) {
+			pods_init();
+		}
 
-			$pods_init->setup_content_types( true );
+		// Register Post Types / Taxonomies post-registration from PodsInit
+		if (
+			! empty( PodsInit::$content_types_registered )
+			&& in_array( $pod['type'], array(
+		     	'post_type',
+				'taxonomy'
+			) )
+			&& empty( $pod['object'] )
+		) {
+			pods_init()->setup_content_types( true );
 		}
 
 		if ( true === $db ) {
@@ -5617,6 +5623,7 @@ class PodsAPI {
 
 		/**
 		 * @var $pods_init \PodsInit
+		 * @todo Use pods_init() function?
 		 */
 		global $pods_init;
 

@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette */
+/*global jQuery, _, Backbone, PodsMn */
 import { PodsDFVFieldModel } from 'pods-dfv/_src/core/pods-field-model';
 import { PodsGbModalListener } from 'pods-dfv/_src/core/gb-modal-listener';
 import * as fields from 'pods-dfv/_src/field-manifest';

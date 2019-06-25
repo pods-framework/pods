@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-/*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
+/*global jQuery, _, Backbone, PodsMn, wp, PodsI18n */
 
 import template from 'pods-dfv/_src/pick/pick-layout.html';
 

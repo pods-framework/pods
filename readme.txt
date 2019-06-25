@@ -195,6 +195,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: Date output in magic tags for date fields uses DateTime class by default instead of date_il8n, #5296 (@JoryHogeveen)
 * Fixed: PHP 7.3 `compact()` notices due to undefined var names, #5266 (@sc0ttkclark)
 * Fixed: Use `Marionette.noConflict()` to keep a private copy of Marionette, #5237 & #5354 (@pglewis)
+* Fixed: Remove floats from fields within pods manage fields (UI), #5362 (@nicdford)
 
 **Enhancements**
 

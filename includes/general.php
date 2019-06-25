@@ -675,13 +675,15 @@ function pods_access( $privs, $method = 'OR' ) {
 }
 
 /**
- * Shortcode support for use anywhere that support WP Shortcodes
+ * Shortcode support for use anywhere that support WP Shortcodes.
+ * Will return error message on failure.
  *
- * @param array  $tags    An associative array of shortcode properties
- * @param string $content A string that represents a template override
+ * @param array  $tags    An associative array of shortcode properties.
+ * @param string $content A string that represents a template override.
  *
  * @return string
  * @since 1.6.7
+ * @since 2.7.13 Try/Catch.
  */
 function pods_shortcode( $tags, $content = null ) {
 	try {
@@ -692,10 +694,10 @@ function pods_shortcode( $tags, $content = null ) {
 }
 
 /**
- * Shortcode support for use anywhere that support WP Shortcodes
+ * Shortcode support for use anywhere that support WP Shortcodes.
  *
- * @param array  $tags    An associative array of shortcode properties
- * @param string $content A string that represents a template override
+ * @param array  $tags    An associative array of shortcode properties.
+ * @param string $content A string that represents a template override.
  *
  * @return string
  * @since 2.7.13
@@ -1032,13 +1034,15 @@ function pods_shortcode_run( $tags, $content = null ) {
 }
 
 /**
- * Form Shortcode support for use anywhere that support WP Shortcodes
+ * Form Shortcode support for use anywhere that support WP Shortcodes.
+ * Will return error message on failure.
  *
- * @param array  $tags    An associative array of shortcode properties
- * @param string $content Not currently used
+ * @param array  $tags    An associative array of shortcode properties.
+ * @param string $content Not currently used.
  *
  * @return string
  * @since 2.3.0
+ * @since 2.7.13 Try/Catch.
  */
 function pods_shortcode_form( $tags, $content = null ) {
 	try {
@@ -1049,10 +1053,10 @@ function pods_shortcode_form( $tags, $content = null ) {
 }
 
 /**
- * Form Shortcode support for use anywhere that support WP Shortcodes
+ * Form Shortcode support for use anywhere that support WP Shortcodes.
  *
- * @param array  $tags    An associative array of shortcode properties
- * @param string $content Not currently used
+ * @param array  $tags    An associative array of shortcode properties.
+ * @param string $content Not currently used.
  *
  * @return string
  * @since 2.7.13

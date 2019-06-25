@@ -196,6 +196,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: PHP 7.3 `compact()` notices due to undefined var names, #5266 (@sc0ttkclark)
 * Fixed: Use `Marionette.noConflict()` to keep a private copy of Marionette, #5237 & #5354 (@pglewis)
 * Fixed: Remove floats from fields within pods manage fields (UI), #5362 (@nicdford)
+* Fixed: Set table charset for Pods Advanced Content Types to WP default charset, #5276 (@JoryHogeveen)
 
 **Enhancements**
 

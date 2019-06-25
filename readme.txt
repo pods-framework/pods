@@ -206,6 +206,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Enhancement: Support meta fields as display field for relationships, #5299 (@sc0ttkclark)
 * Enhancement: DateTime/Time field code and performance #5302 (@JoryHogeveen)
 * Enhancement: Added Nigerian Naira currency, #5377 (@webcreativeng)
+* Enhancement: Added filter `pods_enqueue_dfv_on_front` for enqueueing DFV scripts on frontend, #5313 & #5303 (@nicdford)
 
 = 2.7.12 December 20th 2018 =
 

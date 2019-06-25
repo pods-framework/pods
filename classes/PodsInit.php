@@ -317,10 +317,16 @@ class PodsInit {
 		// Marionette dependencies for MV fields
 		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '2.0.0', true );
 		wp_register_script(
-			'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.min.js', array(
+			'marionette',
+			PODS_URL . 'ui/js/marionette/backbone.marionette.min.js',
+			array(
 				'backbone',
 				'backbone.radio',
 			), '3.3.1', true
+		);
+		wp_add_inline_script(
+			'marionette',
+			'PodsMn = Backbone.Marionette.noConflict();'
 		);
 
 		// MV stuff

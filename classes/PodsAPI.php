@@ -2073,7 +2073,22 @@ class PodsAPI {
 
 			pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`" );
 
-			$result = pods_query( "CREATE TABLE `@wp_pods_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
+			/**
+			 * @todo Central function to fetch charset.
+			 * @see PodsUpgrade::install() L64-L76
+			 */
+			$charset_collate = 'DEFAULT CHARSET utf8';
+
+			global $wpdb;
+			if ( ! empty( $wpdb->charset ) ) {
+				$charset_collate = "DEFAULT CHARSET {$wpdb->charset}";
+			}
+
+			if ( ! empty( $wpdb->collate ) ) {
+				$charset_collate .= " COLLATE {$wpdb->collate}";
+			}
+
+			$result = pods_query( "CREATE TABLE `@wp_pods_{$params->name}` (" . implode( ', ', $definitions ) . ") {$charset_collate}", $this );
 
 			if ( empty( $result ) ) {
 				return pods_error( __( 'Cannot add Database Table for Pod', 'pods' ), $this );

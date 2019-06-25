@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, select2, sprintf, wp, ajaxurl, PodsI18n */
+/*global jQuery, _, Backbone, PodsMn, select2, sprintf, wp, ajaxurl, PodsI18n */
 
 // Note: this is a template-less view
 import { PodsFieldListView, PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
@@ -54,7 +54,7 @@ export const Optgroup = PodsFieldListView.extend( {
  *
  * @extends Backbone.View
  */
-export const SelectView = Marionette.CollectionView.extend( {
+export const SelectView = PodsMn.CollectionView.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
 
 	tagName: 'select',

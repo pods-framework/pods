@@ -3,9 +3,9 @@ Contributors: sc0ttkclark, pglewis, jimtrue, quasel, keraweb, jamesgol, ramoonus
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.5
-Tested up to: 5.0
+Tested up to: 5.2
 Requires PHP: 5.3
-Stable tag: 2.7.13-a-1
+Stable tag: 2.7.13-b-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

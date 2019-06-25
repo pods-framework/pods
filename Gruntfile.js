@@ -76,7 +76,7 @@ module.exports = function ( grunt ) {
 		gittag: {
 			addtag: {
 				options: {
-					tag    : '2.x/<%= pkg.version %>',
+					tag    : '<%= pkg.version %>',
 					message: 'Pods <%= pkg.version %>'
 				}
 			}

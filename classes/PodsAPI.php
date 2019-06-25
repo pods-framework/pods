@@ -2073,7 +2073,22 @@ class PodsAPI {
 
 			pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`" );
 
-			$result = pods_query( "CREATE TABLE `@wp_pods_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
+			/**
+			 * @todo Central function to fetch charset.
+			 * @see PodsUpgrade::install() L64-L76
+			 */
+			$charset_collate = 'DEFAULT CHARSET utf8';
+
+			global $wpdb;
+			if ( ! empty( $wpdb->charset ) ) {
+				$charset_collate = "DEFAULT CHARSET {$wpdb->charset}";
+			}
+
+			if ( ! empty( $wpdb->collate ) ) {
+				$charset_collate .= " COLLATE {$wpdb->collate}";
+			}
+
+			$result = pods_query( "CREATE TABLE `@wp_pods_{$params->name}` (" . implode( ', ', $definitions ) . ") {$charset_collate}", $this );
 
 			if ( empty( $result ) ) {
 				return pods_error( __( 'Cannot add Database Table for Pod', 'pods' ), $this );
@@ -8293,6 +8308,7 @@ class PodsAPI {
 		}
 
 		$_info = false;
+		$transient_cached = false;
 
 		if ( isset( self::$table_info_cache[ $transient ] ) ) {
 			// Prefer info from the object internal cache
@@ -8302,6 +8318,7 @@ class PodsAPI {
 			if ( false === $_info && ! did_action( 'init' ) ) {
 				$_info = pods_transient_get( $transient . '_pre_init' );
 			}
+			$transient_cached = true;
 		}
 
 		if ( false !== $_info && is_array( $_info ) ) {
@@ -8681,7 +8698,10 @@ class PodsAPI {
 			if ( ! did_action( 'init' ) ) {
 				$transient .= '_pre_init';
 			}
-			pods_transient_set( $transient, $info );
+
+			if ( !$transient_cached ) {
+				pods_transient_set( $transient, $info );
+			}
 		}
 
 		self::$table_info_cache[ $transient ] = apply_filters( 'pods_api_get_table_info', $info, $object_type, $object, $name, $pod, $field, $this );

@@ -194,11 +194,12 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: `get_post_meta()` always retriggers `pods_transient_set()`, #4690 (@pglewis)
 * Fixed: Date output in magic tags for date fields uses DateTime class by default instead of date_il8n, #5296 (@JoryHogeveen)
 * Fixed: PHP 7.3 `compact()` notices due to undefined var names, #5266 (@sc0ttkclark)
-* Fixed: Use `Marionette.noConflict()` to keep a private copy of Marionette #5237 & #5354 (@pglewis)
+* Fixed: Use `Marionette.noConflict()` to keep a private copy of Marionette, #5237 & #5354 (@pglewis)
 
 **Enhancements**
 
 * Enhancement: Support meta fields as display field for relationships, #5299 (@sc0ttkclark)
+* Enhancement: DateTime/Time field code and performance #5302 (@JoryHogeveen)
 
 = 2.7.12 December 20th 2018 =
 

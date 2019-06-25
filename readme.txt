@@ -200,6 +200,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 * Enhancement: Support meta fields as display field for relationships, #5299 (@sc0ttkclark)
 * Enhancement: DateTime/Time field code and performance #5302 (@JoryHogeveen)
+* Enhancement: Added Nigerian Naira currency, #5377 (@webcreativeng)
 
 = 2.7.12 December 20th 2018 =
 

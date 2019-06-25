@@ -183,17 +183,18 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 **Bug Fixes**
 
-Fixed: Cursor is jumping to the start of the block when Gutenberg autosaves, #5274 (@pglewis)
-Fixed: Select drop-downs set to required, #5031 (@pglewis)
-Fixed: HTML escaping issue in the Manage Fields list, #5246 (@pglewis)
-Fixed: Translate Pods stuck with Portuguese translation in the Admin menus, #5259 (@JoryHogeveen)
-Fixed: option cache handling when using external object cache, #5294 (@sc0ttkclark)
-Fixed: Fix force WWW option on website/URL fields, #4881 (@pglewis)
-Fixed: Phone field should not put anything in the field input on 'blank' values, #4881 (@pglewis)
-Fixed: Versioned tag names are not compatible with Composer, #5278 (@pglewis)
-Fixed: `get_post_meta()` always retriggers `pods_transient_set()`, #4690 (@pglewis)
-Fixed: Date output in magic tags for date fields uses DateTime class by default instead of date_il8n, #5296 (@JoryHogeveen)
-Fixed: PHP 7.3 `compact()` notices due to undefined var names, #5266 (@sc0ttkclark)
+* Fixed: Cursor is jumping to the start of the block when Gutenberg autosaves, #5274 (@pglewis)
+* Fixed: Select drop-downs set to required, #5031 (@pglewis)
+* Fixed: HTML escaping issue in the Manage Fields list, #5246 (@pglewis)
+* Fixed: Translate Pods stuck with Portuguese translation in the Admin menus, #5259 (@JoryHogeveen)
+* Fixed: option cache handling when using external object cache, #5294 (@sc0ttkclark)
+* Fixed: Fix force WWW option on website/URL fields, #4881 (@pglewis)
+* Fixed: Phone field should not put anything in the field input on 'blank' values, #4881 (@pglewis)
+* Fixed: Versioned tag names are not compatible with Composer, #5278 (@pglewis)
+* Fixed: `get_post_meta()` always retriggers `pods_transient_set()`, #4690 (@pglewis)
+* Fixed: Date output in magic tags for date fields uses DateTime class by default instead of date_il8n, #5296 (@JoryHogeveen)
+* Fixed: PHP 7.3 `compact()` notices due to undefined var names, #5266 (@sc0ttkclark)
+* Fixed: Use `Marionette.noConflict()` to keep a private copy of Marionette #5237 & #5354 (@pglewis)
 
 **Enhancements**
 

@@ -684,6 +684,23 @@ function pods_access( $privs, $method = 'OR' ) {
  * @since 1.6.7
  */
 function pods_shortcode( $tags, $content = null ) {
+	try {
+		return pods_shortcode_run( $tags, $content );
+	} catch ( Exception $exception ) {
+		return $exception->getMessage();
+	}
+}
+
+/**
+ * Shortcode support for use anywhere that support WP Shortcodes
+ *
+ * @param array  $tags    An associative array of shortcode properties
+ * @param string $content A string that represents a template override
+ *
+ * @return string
+ * @since 2.7.13
+ */
+function pods_shortcode_run( $tags, $content = null ) {
 
 	if ( defined( 'PODS_DISABLE_SHORTCODE' ) && PODS_DISABLE_SHORTCODE ) {
 		return '';
@@ -1024,6 +1041,23 @@ function pods_shortcode( $tags, $content = null ) {
  * @since 2.3.0
  */
 function pods_shortcode_form( $tags, $content = null ) {
+	try {
+		return pods_shortcode_form_run( $tags, $content );
+	} catch ( Exception $exception ) {
+		return $exception->getMessage();
+	}
+}
+
+/**
+ * Form Shortcode support for use anywhere that support WP Shortcodes
+ *
+ * @param array  $tags    An associative array of shortcode properties
+ * @param string $content Not currently used
+ *
+ * @return string
+ * @since 2.7.13
+ */
+function pods_shortcode_form_run( $tags, $content = null ) {
 
 	$tags['form'] = 1;
 

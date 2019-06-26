@@ -152,6 +152,13 @@ function pods_error( $error, $obj = null ) {
 	}
 
 	/**
+	 * When running a Pods shortcode, never exit and only return exception when debug is enabled.
+	 */
+	if ( pods_doing_shortcode() ) {
+		$error_mode = 'exception';
+	}
+
+	/**
 	 * Filter the error mode used by pods_error.
 	 *
 	 * @param string                     $error_mode Error mode
@@ -692,6 +699,23 @@ function pods_access( $privs, $method = 'OR' ) {
 }
 
 /**
+ * Check whether a Pods shortcode is currently being parsed.
+ * If a boolean is passed it overwrites the status.
+ *
+ * @param bool $bool
+ *
+ * @return bool
+ * @since  2.7.13
+ */
+function pods_doing_shortcode( $bool = null ) {
+	static $check = false;
+	if ( null !== $bool ) {
+		$check = (bool) $bool;
+	}
+	return $check;
+}
+
+/**
  * Shortcode support for use anywhere that support WP Shortcodes.
  * Will return error message on failure.
  *
@@ -703,11 +727,14 @@ function pods_access( $privs, $method = 'OR' ) {
  * @since 2.7.13 Try/Catch.
  */
 function pods_shortcode( $tags, $content = null ) {
+	pods_doing_shortcode( true );
 	try {
-		return pods_shortcode_run( $tags, $content );
+		$return = pods_shortcode_run( $tags, $content );
 	} catch ( Exception $exception ) {
-		return $exception->getMessage();
+		$return = $exception->getMessage();
 	}
+	pods_doing_shortcode( false );
+	return $return;
 }
 
 /**

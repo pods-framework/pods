@@ -266,6 +266,9 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	$pods_debug ++;
 
 	if ( ! pods_is_debug_display() ) {
+		// Log errors if we do not display them.
+		error_log( 'Pods error: ' . $error );
+
 		return;
 	}
 

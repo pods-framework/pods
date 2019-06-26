@@ -57,6 +57,9 @@ class PodsAdmin {
 
 		add_action( 'admin_head-media-upload-popup', array( $this, 'register_media_assets' ) );
 
+		// Add our debug to Site Info.
+		add_filter( 'debug_information', array( $this, 'add_debug_information' );
+
 		$this->rest_admin();
 
 	}
@@ -3622,6 +3625,110 @@ class PodsAdmin {
 		$tabs['rest'] = __( 'REST API', 'pods' );
 
 		return $tabs;
+	}
+
+	/**
+	 * Add Pods-specific debug info to Site Info debug area.
+	 *
+	 * @since 2.7.13
+	 *
+	 * @param array $info Debug info.
+	 *
+	 * @return array Debug info with Pods-specific debug info added.
+	 */
+	public function add_debug_information( $info ) {
+		$info['pods'] = array(
+			'label'       => 'Pods',
+			'description' => __( 'Debug information for Pods installations.', 'pods' ),
+			'fields'      => array(
+				'pods-server-software'            => array(
+					'label' => __( 'Server Software', 'pods' ),
+					'value' => ! empty( $_SERVER['SERVER_SOFTWARE'] ) ? $_SERVER['SERVER_SOFTWARE'] : 'N/A',
+				),
+				'pods-user-agent'                 => array(
+					'label' => __( 'Your User Agent', 'pods' ),
+					'value' => ! empty( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : 'N/A',
+				),
+				'pods-session-save-path'          => array(
+					'label' => __( 'Session Save Path', 'pods' ),
+					'value' => session_save_path(),
+				),
+				'pods-session-save-path-exists'   => array(
+					'label' => __( 'Session Save Path Exists', 'pods' ),
+					'value' => file_exists( session_save_path() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-session-save-path-writable' => array(
+					'label' => __( 'Session Save Path Writeable', 'pods' ),
+					'value' => is_writable( session_save_path() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-session-max-lifetime'       => array(
+					'label' => __( 'Session Max Lifetime', 'pods' ),
+					'value' => ini_get( 'session.gc_maxlifetime' ),
+				),
+				'pods-opcode-cache-apc'           => array(
+					'label' => __( 'Opcode Cache: Apc', 'pods' ),
+					'value' => function_exists( 'apc_cache_info' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-opcode-cache-memcached'     => array(
+					'label' => __( 'Opcode Cache: Memcached', 'pods' ),
+					'value' => class_exists( 'eaccelerator_put' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-opcode-cache-opcache'       => array(
+					'label' => __( 'Opcode Cache: OPcache', 'pods' ),
+					'value' => function_exists( 'opcache_get_status' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-opcode-cache-redis'         => array(
+					'label' => __( 'Opcode Cache: Redis', 'pods' ),
+					'value' => class_exists( 'xcache_set' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-object-cache-apc'           => array(
+					'label' => __( 'Object Cache: APC', 'pods' ),
+					'value' => function_exists( 'apc_cache_info' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-object-cache-apcu'          => array(
+					'label' => __( 'Object Cache: APCu', 'pods' ),
+					'value' => function_exists( 'apcu_cache_info' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-object-cache-memcache'      => array(
+					'label' => __( 'Object Cache: Memcache', 'pods' ),
+					'value' => class_exists( 'Memcache' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-object-cache-memcached'     => array(
+					'label' => __( 'Object Cache: Memcached', 'pods' ),
+					'value' => class_exists( 'Memcached' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-object-cache-redis'         => array(
+					'label' => __( 'Object Cache: Redis', 'pods' ),
+					'value' => class_exists( 'Redis' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-memory-current-usage'       => array(
+					'label' => __( 'Current Memory Usage', 'pods' ),
+					'value' => number_format_i18n( memory_get_usage() / 1024 / 1024, 3 ) . 'M',
+				),
+				'pods-memory-current-usage-real'  => array(
+					'label' => __( 'Current Memory Usage (real)', 'pods' ),
+					'value' => number_format_i18n( memory_get_usage( true ) / 1024 / 1024, 3 ) . 'M',
+				),
+				'pods-network-wide'               => array(
+					'label' => __( 'Pods Network-Wide Activated', 'pods' ),
+					'value' => is_plugin_active_for_network( basename( PODS_DIR ) . '/init.php' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-install-location'           => array(
+					'label' => __( 'Pods Install Location', 'pods' ),
+					'value' => PODS_DIR,
+				),
+				'pods-tableless-mode'             => array(
+					'label' => __( 'Pods Tableless Mode Activated', 'pods' ),
+					'value' => ( pods_tableless() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-light-mode'                 => array(
+					'label' => __( 'Pods Light Mode Activated', 'pods' ),
+					'value' => ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+			),
+		);
+
+		return $info;
 	}
 
 }

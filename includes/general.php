@@ -114,6 +114,9 @@ $GLOBALS['pods_errors'] = array();
  * @since 2.0.0
  */
 function pods_error( $error, $obj = null ) {
+	if ( ! pods_is_debug_display() ) {
+		return false;
+	}
 
 	global $pods_errors;
 
@@ -255,6 +258,10 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 
 	$pods_debug ++;
 
+	if ( ! pods_is_debug_display() ) {
+		return;
+	}
+
 	ob_start();
 
 	if ( '_null' !== $prefix ) {
@@ -286,6 +293,16 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	}
 
 	echo $debug;
+}
+
+/**
+ * Check if debug is enabled and should be displayed.
+ *
+ * @return bool
+ * @since  2.7.13
+ */
+function pods_is_debug_display() {
+	return ( WP_DEBUG && WP_DEBUG_DISPLAY );
 }
 
 /**

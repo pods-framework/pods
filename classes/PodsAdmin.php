@@ -58,7 +58,7 @@ class PodsAdmin {
 		add_action( 'admin_head-media-upload-popup', array( $this, 'register_media_assets' ) );
 
 		// Add our debug to Site Info.
-		add_filter( 'debug_information', array( $this, 'add_debug_information' );
+		add_filter( 'debug_information', array( $this, 'add_debug_information' ) );
 
 		$this->rest_admin();
 

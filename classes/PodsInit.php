@@ -1868,6 +1868,7 @@ class PodsInit {
 	public function filter_query_monitor_conditionals( $conditionals ) {
 		$conditionals[] = 'pods_developer';
 		$conditionals[] = 'pods_tableless';
+		$conditionals[] = 'pods_light';
 		$conditionals[] = 'pods_strict';
 		$conditionals[] = 'pods_allow_deprecated';
 		$conditionals[] = 'pods_api_cache';

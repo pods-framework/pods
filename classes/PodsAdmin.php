@@ -3717,6 +3717,10 @@ class PodsAdmin {
 					'label' => __( 'Pods Install Location', 'pods' ),
 					'value' => PODS_DIR,
 				),
+				'pods-developer'                  => array(
+					'label' => __( 'Pods Developer Activated' ),
+					'value' => ( pods_developer() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
 				'pods-tableless-mode'             => array(
 					'label' => __( 'Pods Tableless Mode Activated', 'pods' ),
 					'value' => ( pods_tableless() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
@@ -3724,6 +3728,18 @@ class PodsAdmin {
 				'pods-light-mode'                 => array(
 					'label' => __( 'Pods Light Mode Activated', 'pods' ),
 					'value' => ( pods_light() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-strict'                     => array(
+					'label' => __( 'Pods Strict Activated' ),
+					'value' => ( pods_strict() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-allow-deprecated'           => array(
+					'label' => __( 'Pods Allow Deprecated' ),
+					'value' => ( pods_allow_deprecated() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-api-cache'                  => array(
+					'label' => __( 'Pods API Cache Activated' ),
+					'value' => ( pods_api_cache() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
 			),
 		);

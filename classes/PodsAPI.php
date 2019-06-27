@@ -2377,14 +2377,20 @@ class PodsAPI {
 			PodsMeta::$comment[ $pod['id'] ] = $pod;
 		}
 
-		// Register Post Types / Taxonomies post-registration from PodsInit
-		if ( ! empty( PodsInit::$content_types_registered ) && in_array( $pod['type'], array(
-				'post_type',
-				'taxonomy'
-			) ) && empty( $pod['object'] ) ) {
-			global $pods_init;
+		if ( ! class_exists( 'PodsInit' ) ) {
+			pods_init();
+		}
 
-			$pods_init->setup_content_types( true );
+		// Register Post Types / Taxonomies post-registration from PodsInit
+		if (
+			! empty( PodsInit::$content_types_registered )
+			&& in_array( $pod['type'], array(
+		     	'post_type',
+				'taxonomy'
+			) )
+			&& empty( $pod['object'] )
+		) {
+			pods_init()->setup_content_types( true );
 		}
 
 		if ( true === $db ) {
@@ -5632,6 +5638,7 @@ class PodsAPI {
 
 		/**
 		 * @var $pods_init \PodsInit
+		 * @todo Use pods_init() function?
 		 */
 		global $pods_init;
 
@@ -5951,7 +5958,7 @@ class PodsAPI {
 		$bypass_cache     = false;
 
 		// Get current language data
-		$lang_data = PodsInit::$i18n->get_current_language_data();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 		if ( $lang_data ) {
 			if ( ! empty( $lang_data['language'] ) ) {
@@ -6274,7 +6281,7 @@ class PodsAPI {
 		$current_language = false;
 
 		// Get current language data
-		$lang_data = PodsInit::$i18n->get_current_language_data();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 		if ( $lang_data ) {
 			if ( ! empty( $lang_data['language'] ) ) {
@@ -8279,7 +8286,7 @@ class PodsAPI {
 		$current_language_tt_id = 0;
 
 		// Get current language data
-		$lang_data = PodsInit::$i18n->get_current_language_data();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 		if ( $lang_data ) {
 			if ( ! empty( $lang_data['language'] ) ) {

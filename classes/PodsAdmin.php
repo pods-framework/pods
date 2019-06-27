@@ -636,7 +636,7 @@ class PodsAdmin {
 		$parent = false;
 
 		// PODS_LIGHT disables all Pods components so remove the components menu
-		if ( defined( 'PODS_LIGHT' ) && true === PODS_LIGHT ) {
+		if ( pods_light() ) {
 			unset( $admin_menus['pods-components'] );
 		}
 
@@ -3723,7 +3723,7 @@ class PodsAdmin {
 				),
 				'pods-light-mode'                 => array(
 					'label' => __( 'Pods Light Mode Activated', 'pods' ),
-					'value' => ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+					'value' => ( pods_light() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
 			),
 		);

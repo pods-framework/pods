@@ -389,6 +389,22 @@ function pods_tableless() {
 }
 
 /**
+ * Determine if Light Mode is enabled
+ *
+ * @return bool Whether Light Mode is enabled
+ *
+ * @since 2.7.13
+ */
+function pods_light() {
+
+	if ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Determine if Strict Mode is enabled
  *
  * @param bool $include_debug Whether to include WP_DEBUG in strictness level

@@ -161,7 +161,7 @@ class PodsInit {
 			return;
 		}
 
-		if ( ! defined( 'PODS_LIGHT' ) || ! PODS_LIGHT ) {
+		if ( ! pods_light() ) {
 			self::$components = pods_components();
 		}
 

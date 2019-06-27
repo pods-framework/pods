@@ -201,6 +201,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: Fix PodsData fetch for when using object cache and settings pages, #4960 (@pcfreak30, @sc0ttclark, @JoryHogeveen)
 * Fixed: Moved session_id() check outside the big conditional so it's always executed, #5182 (@mastef)
 * Fixed: Change deprecated (since WP 5.1) hook `wpmu_new_blog` to `wp_insert_site` with backwards compatibility, #5369 (@JoryHogeveen)
+* Fixed: Error when PodsInit isn't available on network pages, #3353 (@JoryHogeveen)
 
 **Enhancements**
 

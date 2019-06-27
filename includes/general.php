@@ -396,7 +396,6 @@ function pods_tableless() {
  * @since 2.7.13
  */
 function pods_light() {
-
 	if ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) {
 		return true;
 	}

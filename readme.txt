@@ -181,6 +181,14 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 = 2.7.13 {DATE} =
 
+**Enhancements**
+
+* Enhancement: Support meta fields as display field for relationships, #5299 (@sc0ttkclark)
+* Enhancement: DateTime/Time field code and performance #5302 (@JoryHogeveen)
+* Enhancement: Added Nigerian Naira currency, #5377 (@webcreativeng)
+* Enhancement: Added filter `pods_enqueue_dfv_on_front` for enqueueing DFV scripts on frontend, #5313 & #5303 (@nicdford)
+* Added: Add debug information for Pods to Site Health Info area, #5399 (@sc0ttclark, @JoryHogeveen)
+
 **Bug Fixes**
 
 * Fixed: Cursor is jumping to the start of the block when Gutenberg autosaves, #5274 (@pglewis)
@@ -204,33 +212,26 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: Error when PodsInit isn't available on network pages, #3353 (@JoryHogeveen)
 * Fixed: Shortcodes no longer stop the page from loading when they encounter SQL errors, #5279 (@sc0ttclark, @JoryHogeveen)
 
-**Enhancements**
-
-* Enhancement: Support meta fields as display field for relationships, #5299 (@sc0ttkclark)
-* Enhancement: DateTime/Time field code and performance #5302 (@JoryHogeveen)
-* Enhancement: Added Nigerian Naira currency, #5377 (@webcreativeng)
-* Enhancement: Added filter `pods_enqueue_dfv_on_front` for enqueueing DFV scripts on frontend, #5313 & #5303 (@nicdford)
-
 = 2.7.12 December 20th 2018 =
-
-**Bug Fixes**
-
-Fixed: Serial comma display works again for Users, Comments, and Media relationships when used in Pods::display() and magic tag templating without specifying the object field you want to display, #5251 (@sc0ttkclark)
 
 **Enhancements**
 
 * Enhancement: Sort currency list alphabetically by name, add Indonesian Rupiah (Rp) and US Cent currency support, #5247 (@sc0ttkclark)
 
+**Bug Fixes**
+
+Fixed: Serial comma display works again for Users, Comments, and Media relationships when used in Pods::display() and magic tag templating without specifying the object field you want to display, #5251 (@sc0ttkclark)
+
 = 2.7.11 - December 7th 2018 =
+
+**Enhancements**
+
+* Enhancement: Added: New pods_data_auto_calculate_total_found filter can be set to true to auto-calculate total_found() number right away after a Pods::find() query runs, defaults to false, #5232, (@sc0ttkclark)
 
 **Bug Fixes**
 
 * Fixed: Javascript errors on pages without the Gutenberg editor active under certain circumstances, #5225 (@pglewis)
 * Fixed: Avoid extra user queries when not necessary, #5230 (@sc0ttkclark)
-
-**Enhancements**
-
-* Enhancement: Added: New pods_data_auto_calculate_total_found filter can be set to true to auto-calculate total_found() number right away after a Pods::find() query runs, defaults to false, #5232, (@sc0ttkclark)
 
 = 2.7.10 - December 5th 2018 =
 

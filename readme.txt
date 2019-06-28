@@ -179,7 +179,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
-= 2.7.13 {DATE} =
+= 2.7.13 - June 28th 2019 =
 
 **Enhancements**
 
@@ -212,7 +212,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: Error when PodsInit isn't available on network pages, #3353 (@JoryHogeveen)
 * Fixed: Shortcodes no longer stop the page from loading when they encounter SQL errors, #5279 (@sc0ttclark, @JoryHogeveen)
 
-= 2.7.12 December 20th 2018 =
+= 2.7.12 - December 20th 2018 =
 
 **Enhancements**
 

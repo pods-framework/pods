@@ -108,7 +108,8 @@ module.exports = function ( grunt ) {
 				options: {
 					tags  : true,
 					remote: 'origin',
-					branch: 'master'
+					branch: 'master',
+					force  : true
 				}
 			}
 		},

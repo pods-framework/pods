@@ -29,7 +29,7 @@
     * Commits to WP SVN `trunk` with message `Pods {version}`
     * Copies WP SVN `trunk` into tag `tags/{version}`
     * Commits branch and version number changes in files to GitHub with commit message as version number `Pods {version}`
-    * Tags `master` as version number `2.x/{version}`
+    * Tags `master` as version number `{version}`
     * Pushes `master` and new tag (**NOTE** This is not currently happening right now, you need to manually push the master branch and the new tag)
     * Removes temporary files (WP SVN)
     
@@ -39,7 +39,7 @@
 * Makes branch name changes in various places.
 * Commits to WordPress.org SVN `trunk` and `tags/{version}`
 * Commits, pushes to GitHub `master`
-* Tags `master` to `2.x/{version}`
+* Tags `master` to `{version}`
 
 ## Preparing Next Release
 * Checkout `2.x` and ensure you've pulled the latest changes. From Terminal, `git checkout 2.x`.

@@ -2,7 +2,7 @@
 * Install Node, NPM, and grunt-cli globally if not already installed.
     * https://github.com/joyent/node/wiki/installing-node.js-via-package-manager
 * Install grunt-init globally if not already installed.
-    * `npm install -g grunt-init`
+    * `npm install -g grunt-init grunt-cli`
 * Install composer to usr/local/bin/composer if not already installed
 * Switch to this git repository directory 
 * Install node modules

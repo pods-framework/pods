@@ -77,7 +77,8 @@ module.exports = function ( grunt ) {
 			addtag: {
 				options: {
 					tag    : '<%= pkg.version %>',
-					message: 'Pods <%= pkg.version %>'
+					message: 'Pods <%= pkg.version %>',
+					force  : true
 				}
 			}
 		},

@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette */
+/*global jQuery, _, Backbone, PodsMn */
 import { PodsDFVFieldModel } from 'pods-dfv/_src/core/pods-field-model';
 import { PodsGbModalListener } from 'pods-dfv/_src/core/gb-modal-listener';
 import * as fields from 'pods-dfv/_src/field-manifest';
@@ -88,27 +88,6 @@ export default PodsDFV;
  */
 document.addEventListener( 'DOMContentLoaded', () => {
 	PodsDFV.init();
-
-	/**
-	 * This is temporary duct tape for WordPress 5.0 only to work around a
-	 * Gutenberg compatibility bug
-	 *
-	 * See:
-	 *   https://github.com/pods-framework/pods/issues/5197
-	 *   https://github.com/WordPress/gutenberg/issues/7176
-	 *
-	 * @todo Delete this when WP 5.0.1 comes out
-	 */
-	if ( PodsDFV.isGutenbergEditorLoaded() && window.tinymce ) {
-		wp.data.subscribe( function() {
-			if ( wp.data.select( 'core/editor' ).isSavingPost() && window.tinymce.editors) {
-				for ( let i = 0; i < tinymce.editors.length; i++ ) {
-					tinymce.editors[ i ].save();
-				}
-			}
-
-		} );
-	}
 
 	// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
 	if ( PodsDFV.isModalWindow() && PodsDFV.isGutenbergEditorLoaded()) {

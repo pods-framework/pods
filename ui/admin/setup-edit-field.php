@@ -98,7 +98,7 @@ $data = array(
 		}
 
 		$type = esc_html( $type );
-		
+
 		if ( 'pick' === $field_type && '' !== pods_v( 'sister_id', $field, '' ) ) {
 			$type .= ' <small>(' . esc_html__( 'Bi-directional Field', 'pods' ) . ')</small>';
 		}
@@ -136,21 +136,22 @@ $data = array(
 						}
 					}
 				} elseif ( pods_v( 'pick_object', $field ) === $object ) {
-					$pick_object_name = $object_label;
+					$pick_object_name = esc_html( $object_label );
 
 					break;
 				}//end if
 			}//end foreach
 
 			if ( null === $pick_object_name ) {
-				$pick_object_name = ucwords( str_replace( array( '-', '_' ), ' ', pods_v( 'pick_object', $field ) ) );
+				$pick_object_name = esc_html( ucwords( str_replace( array( '-', '_' ), ' ', pods_v( 'pick_object', $field ) ) ) );
 
 				if ( 0 < strlen( pods_v( 'pick_val', $field ) ) ) {
-					$pick_object_name = pods_v( 'pick_val', $field ) . ' (' . $pick_object_name . ')';
+					$pick_object_name = esc_html( pods_v( 'pick_val', $field ) . ' (' . $pick_object_name . ')' );
 				}
 			}
 			?>
-			<br /><span class="pods-manage-field-type-desc">&rsaquo; <?php echo esc_html( $pick_object_name ); ?></span>
+			<?php // $pick_object_name should be pre-sanitized and not escaped here because it may contain literal HTML (#5246) ?>
+			<br /><span class="pods-manage-field-type-desc">&rsaquo; <?php echo $pick_object_name; ?></span>
 			<?php
 		}//end if
 		?>

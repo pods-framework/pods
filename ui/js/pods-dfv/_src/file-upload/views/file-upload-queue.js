@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, wp */
+/*global jQuery, _, Backbone, PodsMn, wp */
 import template from 'pods-dfv/_src/file-upload/views/file-upload-queue.html';
 
 export const FileUploadQueueModel = Backbone.Model.extend( {
@@ -13,7 +13,7 @@ export const FileUploadQueueModel = Backbone.Model.extend( {
 /**
  *
  */
-export const FileUploadQueueItem = Marionette.View.extend( {
+export const FileUploadQueueItem = PodsMn.View.extend( {
 	model: FileUploadQueueModel,
 
 	tagName: 'li',
@@ -40,7 +40,7 @@ export const FileUploadQueueItem = Marionette.View.extend( {
 /**
  *
  */
-export const FileUploadQueue = Marionette.CollectionView.extend( {
+export const FileUploadQueue = PodsMn.CollectionView.extend( {
 	tagName: 'ul',
 
 	className: 'pods-dfv-list pods-dfv-list-queue',

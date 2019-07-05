@@ -43,14 +43,16 @@ env:
 
 matrix:
   allow_failures:
-    - env: WP_VERSION="nightly"
+    - env: NODE_RELEASE="skip"
+      php: 7.3
+    - env: WP_VERSION="nightly" NODE_RELEASE="skip"
+    - env: WP_VERSION="nightly" WP_MULTISITE=1 NODE_RELEASE="skip"
 
   include:
-    - env: WP_VERSION="nightly" WP_MULTISITE=1
-    - php: 7.0
-      env: NODE_RELEASE="skip"
-    - php: 5.6
-      env: WP_VERSION="4.5" NODE_RELEASE="skip"
+    - env: NODE_RELEASE="skip"
+      php: 7.0
+    - env: WP_VERSION="4.5" NODE_RELEASE="skip"
+      php: 5.6
       dist: precise
 
 before_install:

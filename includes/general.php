@@ -111,6 +111,13 @@ $GLOBALS['pods_errors'] = array();
  * @since 2.0.0
  */
 function pods_error( $error, $obj = null ) {
+	if ( ! pods_is_debug_display() ) {
+		// Log errors if we do not display them.
+		error_log( 'Pods error: ' . $error );
+
+		return;
+	}
+
 	global $pods_errors;
 
 	$error_mode = 'exception';
@@ -141,6 +148,13 @@ function pods_error( $error, $obj = null ) {
 	 * @var string $error_mode Throw an exception, exit with the message, return false, or return WP_Error
 	 */
 	if ( ! in_array( $error_mode, array( 'exception', 'exit', 'false', 'wp_error' ), true ) ) {
+		$error_mode = 'exception';
+	}
+
+	/**
+	 * When running a Pods shortcode, never exit and only return exception when debug is enabled.
+	 */
+	if ( pods_doing_shortcode() ) {
 		$error_mode = 'exception';
 	}
 
@@ -249,6 +263,12 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 
 	$pods_debug ++;
 
+	if ( function_exists( 'codecept_debug' ) ) {
+		codecept_debug( 'Pods Debug: ' . var_export( $debug, true ) );
+
+		return;
+	}
+
 	ob_start();
 
 	if ( '_null' !== $prefix ) {
@@ -280,6 +300,16 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	}
 
 	echo $debug;
+}
+
+/**
+ * Check if debug is enabled and should be displayed.
+ *
+ * @return bool
+ * @since  2.7.13
+ */
+function pods_is_debug_display() {
+	return ( WP_DEBUG && WP_DEBUG_DISPLAY );
 }
 
 /**
@@ -346,6 +376,21 @@ function pods_developer() {
  */
 function pods_tableless() {
 	if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Determine if Light Mode is enabled
+ *
+ * @return bool Whether Light Mode is enabled
+ *
+ * @since 2.7.13
+ */
+function pods_light() {
+	if ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) {
 		return true;
 	}
 
@@ -668,15 +713,56 @@ function pods_access( $privs, $method = 'OR' ) {
 }
 
 /**
- * Shortcode support for use anywhere that support WP Shortcodes
+ * Check whether a Pods shortcode is currently being parsed.
+ * If a boolean is passed it overwrites the status.
  *
- * @param array  $tags    An associative array of shortcode properties
- * @param string $content A string that represents a template override
+ * @param bool $bool
+ *
+ * @return bool
+ * @since  2.7.13
+ */
+function pods_doing_shortcode( $bool = null ) {
+	static $check = false;
+	if ( null !== $bool ) {
+		$check = (bool) $bool;
+	}
+	return $check;
+}
+
+/**
+ * Shortcode support for use anywhere that support WP Shortcodes.
+ * Will return error message on failure.
+ *
+ * @since 1.6.7
+ * @since 2.7.13 Try/Catch.
+ *
+ * @param array  $tags    An associative array of shortcode properties.
+ * @param string $content A string that represents a template override.
  *
  * @return string
- * @since 1.6.7
  */
 function pods_shortcode( $tags, $content = null ) {
+	pods_doing_shortcode( true );
+	try {
+		$return = pods_shortcode_run( $tags, $content );
+	} catch ( Exception $exception ) {
+		$return = $exception->getMessage();
+	}
+	pods_doing_shortcode( false );
+	return $return;
+}
+
+/**
+ * Shortcode support for use anywhere that support WP Shortcodes.
+ *
+ * @since 2.7.13
+ *
+ * @param array  $tags    An associative array of shortcode properties.
+ * @param string $content A string that represents a template override.
+ *
+ * @return string
+ */
+function pods_shortcode_run( $tags, $content = null ) {
 	if ( defined( 'PODS_DISABLE_SHORTCODE' ) && PODS_DISABLE_SHORTCODE ) {
 		return '';
 	}
@@ -1003,10 +1089,10 @@ function pods_shortcode( $tags, $content = null ) {
 }
 
 /**
- * Form Shortcode support for use anywhere that support WP Shortcodes
+ * Form Shortcode support for use anywhere that support WP Shortcodes.
  *
- * @param array  $tags    An associative array of shortcode properties
- * @param string $content Not currently used
+ * @param array  $tags    An associative array of shortcode properties.
+ * @param string $content Not currently used.
  *
  * @return string
  * @since 2.3.0
@@ -1014,7 +1100,7 @@ function pods_shortcode( $tags, $content = null ) {
 function pods_shortcode_form( $tags, $content = null ) {
 	$tags['form'] = 1;
 
-	return pods_shortcode( $tags );
+	return pods_shortcode( $tags, $content );
 }
 
 /**
@@ -2222,8 +2308,11 @@ function pods_session_start() {
 	} elseif ( empty( $save_path ) || ! @file_exists( $save_path ) || ! is_writable( $save_path ) ) {
 		// Check if session path exists and can be written to, avoiding PHP fatal errors.
 		return false;
-	} elseif ( '' !== session_id() ) {
+	}
+
+	if ( '' !== session_id() ) {
 		// Check if session ID is already set.
+		// In separate if clause, to also check for non-file based sessions.
 		return false;
 	}
 

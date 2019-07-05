@@ -1666,7 +1666,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 				$pick_val    = pods_v( 'pick_val', $params->field );
 				$table       = null;
 
-				if ( ! empty( $pick_object ) && ! empty( $pick_val ) ) {
+				if ( ! empty( $pick_object ) && ( ! empty( $pick_val ) || in_array( $pick_object, array( 'user', 'media', 'comment' ), true ) ) ) {
 					$table = pods_api()->get_table_info(
 						$pick_object,
 						$pick_val,
@@ -1700,6 +1700,16 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	}
 
 	$last = '';
+
+	// If something happens with table info, and this is a single select relationship, avoid letting user pass through.
+	if ( isset( $value['user_pass'] ) ) {
+		unset( $value['user_pass'] );
+
+		// Since we know this is a single select, just pass display name through as the fallback.
+		if ( isset( $value['display_name'] ) ) {
+			$value = array( $value['display_name'] );
+		}
+	}
 
 	$original_value = $value;
 

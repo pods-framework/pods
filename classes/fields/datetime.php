@@ -389,6 +389,49 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function format_value_display( $value, $options, $js = false ) {
 
+		$format = $this->format_display( $options, $js );
+
+		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
+			// Try default storage format.
+			$date = $this->createFromFormat( static::$storage_format, (string) $value );
+			
+			// Convert to timestamp.
+			if ( $date instanceof DateTime ) {
+				$timestamp = $date->getTimestamp();
+			} else {
+				// Try field format.
+				$date_local = $this->createFromFormat( $format, (string) $value );
+				
+				if ( $date_local instanceof DateTime ) {
+					$timestamp = $date_local->getTimestamp();
+				} else {
+					// Fallback.
+					$timestamp = strtotime( (string) $value );
+				}
+			}
+
+			$value = date_i18n( $format, $timestamp );
+		} elseif ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
+			$value = date_i18n( $format );
+		} else {
+			$value = '';
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Build date and/or time display format string based on options
+	 *
+	 * @since 2.7.13
+	 *
+	 * @param  array $options Field options.
+	 * @param  bool  $js      Whether to return format for jQuery UI.
+	 *
+	 * @return string
+	 */
+	public function format_display( $options, $js = false ) {
+
 		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
 			$js = false;
 		}
@@ -397,27 +440,7 @@ class PodsField_DateTime extends PodsField {
 			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
 		}
 
-		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
-			// Try default storage format.
-			$date = $this->createFromFormat( static::$storage_format, (string) $value );
-
-			// Try field format.
-			$date_local = $this->createFromFormat( $format, (string) $value );
-
-			if ( $date instanceof DateTime ) {
-				$value = $date->format( $format );
-			} elseif ( $date_local instanceof DateTime ) {
-				$value = $date_local->format( $format );
-			} else {
-				$value = date_i18n( $format, strtotime( (string) $value ) );
-			}
-		} elseif ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
-			$value = date_i18n( $format );
-		} else {
-			$value = '';
-		}
-
-		return $value;
+		return $format;
 	}
 
 	/**

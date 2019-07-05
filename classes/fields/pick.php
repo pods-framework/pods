@@ -1168,8 +1168,6 @@ class PodsField_Pick extends PodsField {
 
 		switch ( $args->options['pick_object'] ) {
 			case 'post_type':
-				$item_id = (int) $item_id;
-
 				if ( null === $args->options['supports_thumbnails'] && ! empty( $args->options['pick_val'] ) ) {
 					$args->options['supports_thumbnails'] = post_type_supports( $args->options['pick_val'], 'thumbnail' );
 				}
@@ -1218,8 +1216,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'taxonomy':
-				$item_id = (int) $item_id;
-
 				if ( ! empty( $args->options['pick_val'] ) ) {
 
 					// Default icon for taxonomy.
@@ -1242,8 +1238,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'user':
-				$item_id = (int) $item_id;
-
 				$args->options['supports_thumbnails'] = true;
 
 				$icon     = 'dashicons-admin-users';
@@ -1256,8 +1250,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'comment':
-				$item_id = (int) $item_id;
-
 				$args->options['supports_thumbnails'] = true;
 
 				$icon     = 'dashicons-admin-comments';
@@ -1270,8 +1262,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'pod':
-				$item_id = (int) $item_id;
-
 				if ( ! empty( $args->options['pick_val'] ) ) {
 
 					$icon = 'dashicons-pods';
@@ -1831,12 +1821,6 @@ class PodsField_Pick extends PodsField {
 
 		$labels = array();
 
-		$check_value = $value;
-
-		foreach ( $check_value as $check_k => $check_v ) {
-			$check_value[ $check_k ] = (string) $check_v;
-		}
-
 		foreach ( $data as $v => $l ) {
 			if ( ! in_array( (string) $l, $labels, true ) && ( (string) $value === (string) $v || ( is_array( $value ) && in_array( (string) $v, $value, true ) ) ) ) {
 				$labels[] = (string) $l;
@@ -2103,10 +2087,10 @@ class PodsField_Pick extends PodsField {
 							$search_data->field_index = $display;
 
 							$params['select'] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
-						} elseif ( isset( $options['table_info']['pod']['fields'][ $display ] ) ) {
-							$search_data->field_index = $display;
+						} else {
+							$search_data->field_index = sanitize_key( $display );
 
-							if ( 'table' === $options['table_info']['pod']['storage'] && ! in_array(
+							if ( isset( $options['table_info']['pod']['fields'][ $display ] ) && 'table' === $options['table_info']['pod']['storage'] && ! in_array(
 								$options['table_info']['pod']['type'], array(
 									'pod',
 									'table',

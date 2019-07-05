@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette */
+/*global jQuery, _, Backbone, PodsMn */
 import template from 'pods-dfv/src/fields/file-upload/file-upload-layout.html';
 
 import { PodsDFVFieldLayout } from 'pods-dfv/src/core/pods-field-views';

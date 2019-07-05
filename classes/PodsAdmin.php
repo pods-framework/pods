@@ -46,6 +46,7 @@ class PodsAdmin {
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 99 );
 
 		// AJAX for Admin
+		add_action( 'wp_ajax_pods_admin_proto', array( $this, 'admin_ajax_proto' ) );
 		add_action( 'wp_ajax_pods_admin', array( $this, 'admin_ajax' ) );
 		add_action( 'wp_ajax_nopriv_pods_admin', array( $this, 'admin_ajax' ) );
 
@@ -1037,6 +1038,7 @@ class PodsAdmin {
 			'actions_custom'   => array(
 				'add'       => array( $this, 'admin_setup_add' ),
 				'edit'      => array( $this, 'admin_setup_edit' ),
+				'edit_proto'=> array( $this, 'admin_setup_edit_proto' ),
 				'duplicate' => array(
 					'callback'          => array( $this, 'admin_setup_duplicate' ),
 					'restrict_callback' => array( $this, 'admin_setup_duplicate_restrict' ),
@@ -1102,6 +1104,17 @@ class PodsAdmin {
 	public function admin_setup_edit( $duplicate, $obj ) {
 
 		pods_view( PODS_DIR . 'ui/admin/setup-edit.php', compact( array_keys( get_defined_vars() ) ) );
+	}
+
+	/**
+	 * Prototype for testing
+	 *
+	 * @param $duplicate
+	 * @param $obj
+	 */
+	public function admin_setup_edit_proto( $duplicate, $obj ) {
+
+		pods_view( PODS_DIR . 'ui/admin/setup-edit-proto.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
 	/**
@@ -1225,24 +1238,30 @@ class PodsAdmin {
 					'object_type' => array( 'post_type', 'pod' ),
 				),
 				'label_add_new_item'               => array(
-					'label'   => __( 'Add new <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'    => __( 'help', 'pods' ),
-					'type'    => 'text',
-					'default' => '',
+					'label'         => __( 'Add new %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods'),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
 				),
 				'label_new_item'                   => array(
-					'label'       => __( 'New <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type', 'pod' ),
+					'label'         => __( 'New %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods'),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type', 'pod' ),
 				),
 				'label_new_item_name'              => array(
-					'label'       => __( 'New <span class="pods-slugged" data-sluggable="label_singular">Item</span> Name', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'taxonomy' ),
+					'label'         => __( 'New %s Name', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods'),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'taxonomy' ),
 				),
 				'label_edit'                       => array(
 					'label'       => __( 'Edit', 'pods' ),
@@ -1252,17 +1271,21 @@ class PodsAdmin {
 					'object_type' => array( 'pod' ),
 				),
 				'label_edit_item'                  => array(
-					'label'   => __( 'Edit <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'    => __( 'help', 'pods' ),
-					'type'    => 'text',
-					'default' => '',
+					'label'         => __( 'Edit %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods'),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
 				),
 				'label_update_item'                => array(
-					'label'       => __( 'Update <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'taxonomy', 'pod' ),
+					'label'         => __( 'Update %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'taxonomy', 'pod' ),
 				),
 				'label_duplicate'                  => array(
 					'label'       => __( 'Duplicate', 'pods' ),
@@ -1272,18 +1295,22 @@ class PodsAdmin {
 					'object_type' => array( 'pod' ),
 				),
 				'label_duplicate_item'             => array(
-					'label'       => __( 'Duplicate <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'pod' ),
+					'label'         => __( 'Duplicate %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'pod' ),
 				),
 				'label_delete_item'                => array(
-					'label'       => __( 'Delete <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'pod' ),
+					'label'         => __( 'Delete %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'pod' ),
 				),
 				'label_view'                       => array(
 					'label'       => __( 'View', 'pods' ),
@@ -1293,17 +1320,21 @@ class PodsAdmin {
 					'object_type' => array( 'pod' ),
 				),
 				'label_view_item'                  => array(
-					'label'   => __( 'View <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'    => __( 'help', 'pods' ),
-					'type'    => 'text',
-					'default' => '',
+					'label'         => __( 'View %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
 				),
 				'label_view_items'                 => array(
-					'label'       => __( 'View <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type' ),
+					'label'         => __( 'View %s', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'Items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type' ),
 				),
 				'label_back_to_manage'             => array(
 					'label'       => __( 'Back to Manage', 'pods' ),
@@ -1320,11 +1351,13 @@ class PodsAdmin {
 					'object_type' => array( 'pod' ),
 				),
 				'label_manage_items'               => array(
-					'label'       => __( 'Manage <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'pod' ),
+					'label'         => __( 'Manage %s', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'Items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'pod' ),
 				),
 				'label_reorder'                    => array(
 					'label'       => __( 'Reorder', 'pods' ),
@@ -1334,17 +1367,21 @@ class PodsAdmin {
 					'object_type' => array( 'pod' ),
 				),
 				'label_reorder_items'              => array(
-					'label'       => __( 'Reorder <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'pod' ),
+					'label'         => __( 'Reorder %s', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'Items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'pod' ),
 				),
 				'label_all_items'                  => array(
-					'label'   => __( 'All <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'    => __( 'help', 'pods' ),
-					'type'    => 'text',
-					'default' => '',
+					'label'         => __( 'All %s', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'Items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
 				),
 				'label_search'                     => array(
 					'label'       => __( 'Search', 'pods' ),
@@ -1354,38 +1391,48 @@ class PodsAdmin {
 					'object_type' => array( 'pod' ),
 				),
 				'label_search_items'               => array(
-					'label'   => __( 'Search <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'    => __( 'help', 'pods' ),
-					'type'    => 'text',
-					'default' => '',
+					'label'         => __( 'Search %s', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
 				),
 				'label_popular_items'              => array(
-					'label'       => __( 'Popular <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'taxonomy' ),
+					'label'         => __( 'Popular %s', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'Items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'taxonomy' ),
 				),
 				// @todo Why was label_parent added previously? Can't find it in WP
 				'label_parent'                     => array(
-					'label'       => __( 'Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type', 'pod' ),
+					'label'         => __( 'Parent %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type', 'pod' ),
 				),
 				'label_parent_item'                => array(
-					'label'       => __( 'Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'taxonomy' ),
+					'label'         => __( 'Parent %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'taxonomy' ),
 				),
 				'label_parent_item_colon'          => array(
-					'label'   => __( 'Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>:', 'pods' ),
-					'help'    => __( 'help', 'pods' ),
-					'type'    => 'text',
-					'default' => '',
+					'label'         => __( 'Parent %s:', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
 				),
 				'label_not_found'                  => array(
 					'label'   => __( 'Not Found', 'pods' ),
@@ -1394,11 +1441,13 @@ class PodsAdmin {
 					'default' => '',
 				),
 				'label_no_items_found'             => array(
-					'label'       => __( 'No <span class="pods-slugged" data-sluggable="label_singular">Item</span> Found', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'pod' ),
+					'label'         => __( 'No %s Found', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'pod' ),
 				),
 				'label_not_found_in_trash'         => array(
 					'label'       => __( 'Not Found in Trash', 'pods' ),
@@ -1408,32 +1457,40 @@ class PodsAdmin {
 					'object_type' => array( 'post_type', 'pod' ),
 				),
 				'label_archives'                   => array(
-					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> Archives', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type' ),
+					'label'         => __( '%s Archives', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type' ),
 				),
 				'label_attributes'                 => array(
-					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> Attributes', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type' ),
+					'label'         => __( '%s Attributes', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type' ),
 				),
 				'label_insert_into_item'           => array(
-					'label'       => __( 'Insert into <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type' ),
+					'label'         => __( 'Insert into %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type' ),
 				),
 				'label_uploaded_to_this_item'      => array(
-					'label'       => __( 'Uploaded to this <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type' ),
+					'label'         => __( 'Uploaded to this %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type' ),
 				),
 				'label_featured_image'             => array(
 					'label'       => __( 'Featured Image', 'pods' ),
@@ -1468,88 +1525,112 @@ class PodsAdmin {
 					'object_type' => array( 'post_type' ),
 				),
 				'label_filter_items_list'          => array(
-					'label'       => __( 'Filter <span class="pods-slugged" data-sluggable="label">Items</span> lists', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type' ),
+					'label'         => __( 'Filter %s', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'Items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type' ),
 				),
 				'label_items_list_navigation'      => array(
-					'label'       => __( '<span class="pods-slugged" data-sluggable="label">Items</span> list navigation', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type', 'taxonomy' ),
+					'label'         => __( '%s list navigation', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'Items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type', 'taxonomy' ),
 				),
 				'label_items_list'                 => array(
-					'label'       => __( '<span class="pods-slugged" data-sluggable="label">Items</span> list', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type', 'taxonomy' ),
+					'label'         => __( '%s list', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'Items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type', 'taxonomy' ),
 				),
 				'label_separate_items_with_commas' => array(
-					'label'       => __( 'Separate <span class="pods-slugged-lower" data-sluggable="label">items</span> with commas', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'taxonomy' ),
+					'label'         => __( 'Separate %s with commas', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'taxonomy' ),
 				),
 				'label_add_or_remove_items'        => array(
-					'label'       => __( 'Add or remove <span class="pods-slugged-lower" data-sluggable="label">items</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'taxonomy' ),
+					'label'         => __( 'Add or remove %s', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'taxonomy' ),
 				),
 				'label_choose_from_the_most_used'  => array(
-					'label'       => __( 'Choose from the most used <span class="pods-slugged-lower" data-sluggable="label">items</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'taxonomy' ),
+					'label'         => __( 'Choose from the most used %s', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'taxonomy' ),
 				),
 				'label_no_terms'                   => array(
-					'label'       => __( 'No <span class="pods-slugged-lower" data-sluggable="label">items</span>', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'taxonomy' ),
+					'label'         => __( 'No %s', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'items', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'taxonomy' ),
 				),
 				'label_item_published'             => array(
-					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> Published.', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type' ),
+					'label'         => __( '%s Published.', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type' ),
 				),
 				'label_item_published_privately'   => array(
-					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> published privately.', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type' ),
+					'label'         => __( '%s published privately.', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type' ),
 				),
 				'label_item_reverted_to_draft'     => array(
-					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> reverted to draft.', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type' ),
+					'label'         => __( '%s reverted to draft.', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type' ),
 				),
 				'label_item_scheduled'             => array(
-					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> scheduled.', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type' ),
+					'label'         => __( '%s scheduled.', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type' ),
 				),
 				'label_item_updated'               => array(
-					'label'       => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> updated.', 'pods' ),
-					'help'        => __( 'help', 'pods' ),
-					'type'        => 'text',
-					'default'     => '',
-					'object_type' => array( 'post_type' ),
+					'label'         => __( '%s updated.', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'text',
+					'default'       => '',
+					'object_type'   => array( 'post_type' ),
 				),
 			);
 
@@ -1740,14 +1821,16 @@ class PodsAdmin {
 					'boolean_yes_label' => '',
 				),
 				'label_parent_item_colon' => array(
-					'label'      => __( '<strong>Label: </strong> Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+					'label'      => __( 'Label: Parent %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => array( 'hierarchical' => true ),
 				),
 				'label_parent'            => array(
-					'label'      => __( '<strong>Label: </strong> Parent', 'pods' ),
+					'label'      => __( 'Label: Parent', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
@@ -1960,21 +2043,25 @@ class PodsAdmin {
 					'boolean_yes_label' => '',
 				),
 				'label_parent_item_colon' => array(
-					'label'      => __( '<strong>Label: </strong> Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+					'label'      => __( 'Label: Parent %s', 'pods' ),
+					'label_param'   => 'label_singular',
+					'param_default' => __( 'Item', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => array( 'hierarchical' => true ),
 				),
 				'label_parent'            => array(
-					'label'      => __( '<strong>Label: </strong> Parent', 'pods' ),
+					'label'      => __( 'Label: Parent', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => array( 'hierarchical' => true ),
 				),
 				'label_no_terms'          => array(
-					'label'      => __( '<strong>Label: </strong> No <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
+					'label'      => __( 'Label: No %s', 'pods' ),
+					'label_param'   => 'label',
+					'param_default' => __( 'Items', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
@@ -3334,6 +3421,35 @@ class PodsAdmin {
 
 		die();
 		// KBAI!
+	}
+
+	public function admin_ajax_proto() {
+		$METHOD = 'save_pod';
+
+		// Request header should be Content-Type: application/json
+		$http_method = filter_input( INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING );
+		$data = json_decode( file_get_contents('php://input'), true );
+
+		if ( false === headers_sent() ) {
+			pods_session_start();
+			header( 'Content-Type: application/json; charset=' . get_bloginfo( 'charset' ) );
+		}
+
+		if ( false === wp_verify_nonce( $data[ '_wpnonce' ], 'pods-' . $METHOD ) ) {
+			pods_error( __( 'Unauthorized request', 'pods' ), $this );
+		}
+
+		// Check permissions
+		if ( !pods_is_admin( array( 'pods' ) ) && !pods_is_admin( $METHOD ) ) {
+			pods_error( __( 'Access denied', 'pods' ), $this );
+		}
+
+		// Dynamically call the API method
+		$api = pods_api();
+		$api->display_errors = false;
+		$output = $api->save_pod( $data );
+
+		die();
 	}
 
 	/**

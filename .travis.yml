@@ -121,11 +121,6 @@ before_script:
   - sudo service nginx restart
 
 script:
-  # Only run npm tests if needed
-  - |
-    if [ $NODE_RELEASE == "stable" ]; then
-        npm run test-dfv;
-    fi
 
   # Only run non-traversal tests
   - codecept run wpunit
@@ -133,8 +128,9 @@ script:
   # Only run traversal tests
   - codecept run wpunit-traversal --skip-group='pods-traversal-deep'
 
-  # Only run deep traversal tests if needed
+  # Only run js tests if we're running the latest stable node (Pipe preserves subsequent whitespace)
   - |
-    if [ $TRAVIS_PHP_VERSION != "5.6" ]; then
-        codecept run wpunit-traversal --group='pods-traversal-deep';
+    if [ $NODE_RELEASE == "stable" ]; then
+        npm run test-dfv;
+        npm run jest-tests;
     fi

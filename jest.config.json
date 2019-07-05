@@ -1,0 +1,9 @@
+{
+  "roots": [ "<rootDir>/ui/js/pods-dfv/src/" ],
+  "setupFiles": [
+    "<rootDir>/jest-setup-wordpress-globals.js"
+  ],
+  "testMatch": [
+    "**/test/*.js"
+  ]
+}

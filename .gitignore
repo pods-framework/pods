@@ -55,3 +55,4 @@ tests/codeception/_support/_generated
 
 # Tests - local output files
 tests/codeception/_output
+/coverage/

@@ -1,11 +1,24 @@
 {
-    "presets": [
-			[ "@babel/preset-env" ]
+	"presets": [
+		[ "@babel/preset-env" ],
+		[ "@babel/preset-react" ]
+	],
+	"plugins": [
+		[
+			"babel-plugin-module-resolver",
+			{
+				"alias": {
+					"pods-dfv": "./ui/js/pods-dfv"
+				}
+			}
 		],
-    "plugins": [
-        [ "babel-plugin-module-resolver", {
-            "alias": { "pods-dfv": "./ui/js/pods-dfv" }
-        } ],
-        "babel-plugin-transform-html-import-to-string"
-    ]
+		"babel-plugin-transform-html-import-to-string"
+	],
+	"env": {
+		"production": {
+			"plugins": [
+				"transform-react-remove-prop-types"
+			]
+		}
+	}
 }

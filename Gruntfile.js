@@ -3,48 +3,16 @@ module.exports = function ( grunt ) {
 	'use strict';
 
 	//setup file list for copying/ not copying for SVN
-	var files_list = [
-		'**',
-		'!.git/**',
-		'!.idea/**',
-		'!.sass-cache/**',
-		'!bin/**',
-		'!node_modules/**',
-		'!build/**',
-		'!sources/**',
-		'!tests/**',
-		'!vendor/**',
-		'!.babelrc',
-		'!.gitattributes',
-		'!.gitignore',
-		'!.gitmodules',
-		'!.jshintrc',
-		'!.scrutinizer.yml',
-		'!.travis.yml',
-		'!audit.sh',
-		'!CODEOWNERS',
-		'!composer.json',
-		'!composer.lock',
-		'!CONTRIBUTING.md',
-		'!git-workflow.md',
-		'!grunt-workflow.md',
-		'!Gruntfile.js',
-		'!package.json',
-		'!package-lock.json',
-		'!phpcs.ruleset.xml',
-		'!phpcs.xml',
-		'!phpcs.xml.dist',
-		'!phpunit.xml.dist',
-		'!README.md',
-		'!phpcs-report-full.txt',
-		'!report-full.txt',
-		'!report-full-2.7.txt',
-		'!report-full-after.txt',
-		'!phpcs-report-source.txt',
-		'!report-source.txt',
-		'!report-source-2.7.txt',
-		'!report-source-after.txt',
-		'!rollup.config.js'
+	const files_list = [
+		'classes/**',
+		'components/**',
+		'deprecated/**',
+		'includes/**',
+		'sql/**',
+		'ui/**',
+		'init.php',
+		'license.txt',
+		'readme.txt'
 	];
 
 	// load all grunt tasks in package.json matching the `grunt-*` pattern
@@ -77,7 +45,8 @@ module.exports = function ( grunt ) {
 			addtag: {
 				options: {
 					tag    : '<%= pkg.version %>',
-					message: 'Pods <%= pkg.version %>'
+					message: 'Pods <%= pkg.version %>',
+					force  : true
 				}
 			}
 		},
@@ -107,7 +76,8 @@ module.exports = function ( grunt ) {
 				options: {
 					tags  : true,
 					remote: 'origin',
-					branch: 'master'
+					branch: 'master',
+					force  : true
 				}
 			}
 		},

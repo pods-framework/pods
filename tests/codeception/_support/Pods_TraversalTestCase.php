@@ -324,6 +324,8 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 				// Get the second item in the array.
 				if ( is_array( $id ) && $is_multi < count( $id ) ) {
 					$id = current( array_slice( $id, $is_multi, 1 ) );
+
+					$item['id'] = $id;
 				}
 
 				$pod->save( $item, null, $id );

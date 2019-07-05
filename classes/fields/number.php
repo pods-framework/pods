@@ -262,6 +262,7 @@ class PodsField_Number extends PodsField {
 				'',
 			), $value
 		);
+
 		$check = trim( $check );
 
 		$check = preg_replace( '/[0-9\.\-\s]/', '', $check );

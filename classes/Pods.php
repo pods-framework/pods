@@ -1878,6 +1878,7 @@ class Pods implements Iterator {
 				$post_temp   = false;
 				$old_post    = null;
 				$old_post_id = null;
+				$post_ID     = null;
 
 				if ( empty( $GLOBALS['post'] ) && 'post_type' === pods_v( 'type', $this->pod_data ) && 0 < $this->id() ) {
 					global $post_ID, $post;

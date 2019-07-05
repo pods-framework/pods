@@ -2073,7 +2073,22 @@ class PodsAPI {
 
 			pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`" );
 
-			$result = pods_query( "CREATE TABLE `@wp_pods_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
+			/**
+			 * @todo Central function to fetch charset.
+			 * @see PodsUpgrade::install() L64-L76
+			 */
+			$charset_collate = 'DEFAULT CHARSET utf8';
+
+			global $wpdb;
+			if ( ! empty( $wpdb->charset ) ) {
+				$charset_collate = "DEFAULT CHARSET {$wpdb->charset}";
+			}
+
+			if ( ! empty( $wpdb->collate ) ) {
+				$charset_collate .= " COLLATE {$wpdb->collate}";
+			}
+
+			$result = pods_query( "CREATE TABLE `@wp_pods_{$params->name}` (" . implode( ', ', $definitions ) . ") {$charset_collate}", $this );
 
 			if ( empty( $result ) ) {
 				return pods_error( __( 'Cannot add Database Table for Pod', 'pods' ), $this );
@@ -2362,14 +2377,20 @@ class PodsAPI {
 			PodsMeta::$comment[ $pod['id'] ] = $pod;
 		}
 
-		// Register Post Types / Taxonomies post-registration from PodsInit
-		if ( ! empty( PodsInit::$content_types_registered ) && in_array( $pod['type'], array(
-				'post_type',
-				'taxonomy'
-			) ) && empty( $pod['object'] ) ) {
-			global $pods_init;
+		if ( ! class_exists( 'PodsInit' ) ) {
+			pods_init();
+		}
 
-			$pods_init->setup_content_types( true );
+		// Register Post Types / Taxonomies post-registration from PodsInit
+		if (
+			! empty( PodsInit::$content_types_registered )
+			&& in_array( $pod['type'], array(
+		     	'post_type',
+				'taxonomy'
+			) )
+			&& empty( $pod['object'] )
+		) {
+			pods_init()->setup_content_types( true );
 		}
 
 		if ( true === $db ) {
@@ -3706,7 +3727,7 @@ class PodsAPI {
 							$value = array();
 						}
 					}
-					
+
 					$pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
 
 					if ( 'single' === pods_var_raw( 'pick_format_type', $options ) ) {
@@ -5617,6 +5638,7 @@ class PodsAPI {
 
 		/**
 		 * @var $pods_init \PodsInit
+		 * @todo Use pods_init() function?
 		 */
 		global $pods_init;
 
@@ -5936,7 +5958,7 @@ class PodsAPI {
 		$bypass_cache     = false;
 
 		// Get current language data
-		$lang_data = PodsInit::$i18n->get_current_language_data();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 		if ( $lang_data ) {
 			if ( ! empty( $lang_data['language'] ) ) {
@@ -6259,7 +6281,7 @@ class PodsAPI {
 		$current_language = false;
 
 		// Get current language data
-		$lang_data = PodsInit::$i18n->get_current_language_data();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 		if ( $lang_data ) {
 			if ( ! empty( $lang_data['language'] ) ) {
@@ -8239,7 +8261,7 @@ class PodsAPI {
 		if ( empty( $object_type ) ) {
 			$object_type = 'post_type';
 			$object      = 'post';
-		} elseif ( empty( $object ) && in_array( $object_type, array( 'user', 'media', 'comment' ) ) ) {
+		} elseif ( empty( $object ) && in_array( $object_type, array( 'user', 'media', 'comment' ), true ) ) {
 			$object = $object_type;
 		}
 
@@ -8264,7 +8286,7 @@ class PodsAPI {
 		$current_language_tt_id = 0;
 
 		// Get current language data
-		$lang_data = PodsInit::$i18n->get_current_language_data();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 		if ( $lang_data ) {
 			if ( ! empty( $lang_data['language'] ) ) {
@@ -8293,6 +8315,7 @@ class PodsAPI {
 		}
 
 		$_info = false;
+		$transient_cached = false;
 
 		if ( isset( self::$table_info_cache[ $transient ] ) ) {
 			// Prefer info from the object internal cache
@@ -8302,6 +8325,7 @@ class PodsAPI {
 			if ( false === $_info && ! did_action( 'init' ) ) {
 				$_info = pods_transient_get( $transient . '_pre_init' );
 			}
+			$transient_cached = true;
 		}
 
 		if ( false !== $_info && is_array( $_info ) ) {
@@ -8681,7 +8705,10 @@ class PodsAPI {
 			if ( ! did_action( 'init' ) ) {
 				$transient .= '_pre_init';
 			}
-			pods_transient_set( $transient, $info );
+
+			if ( !$transient_cached ) {
+				pods_transient_set( $transient, $info );
+			}
 		}
 
 		self::$table_info_cache[ $transient ] = apply_filters( 'pods_api_get_table_info', $info, $object_type, $object, $name, $pod, $field, $this );

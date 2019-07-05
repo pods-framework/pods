@@ -264,7 +264,11 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	$pods_debug ++;
 
 	if ( function_exists( 'codecept_debug' ) ) {
-		codecept_debug( 'Pods Debug: ' . var_export( $debug, true ) );
+		if ( ! is_string( $debug ) ) {
+			$debug = var_export( $debug, true );
+		}
+
+		codecept_debug( 'Pods Debug: ' . $debug );
 
 		return;
 	}

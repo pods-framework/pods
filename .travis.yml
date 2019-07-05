@@ -125,6 +125,7 @@ before_script:
 script:
 
   # Only run non-traversal tests
+  - codecept run integration
   - codecept run wpunit
 
   # Only run traversal tests

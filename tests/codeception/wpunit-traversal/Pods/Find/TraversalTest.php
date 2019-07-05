@@ -216,20 +216,6 @@ class TraversalTest extends Pods_TraversalTestCase {
 			'query_fields' => (int) $query_fields,
 		);
 
-		// Do setup for Pod (tearDown / setUp) per storage type
-		if ( 'meta' !== $storage_type && in_array( $pod_type, array( 'user', 'media', 'comment' ) ) ) {
-			$debug['skipped'] = 1;
-
-			codecept_debug( $debug );
-
-			return;
-
-			// @todo do magic
-			$this->assertTrue( false, sprintf( 'Pod / Storage type requires new setUp() not yet built to continue [%s]', $variant_id ) );
-		}
-
-		codecept_debug( $debug );
-
 		$this->assertInstanceOf( Pods\Whatsit\Pod::class, $pod );
 
 		// Base find() $params
@@ -247,8 +233,6 @@ class TraversalTest extends Pods_TraversalTestCase {
 		$this->assertArrayHasKey( $pod['name'], self::$data );
 
 		$data = self::$data[ $pod['name'] ];
-
-		codecept_debug( 'Data: ' . var_export( $data, true ) );
 
 		$this->assertArrayHasKey( 'id', $data, sprintf( 'Data has no ID [%s]', $variant_id ) );
 
@@ -354,20 +338,6 @@ class TraversalTest extends Pods_TraversalTestCase {
 			$debug['related_pod_field_type']   = $related_pod_field['type'];
 		}
 
-		// Do setup for Pod (tearDown / setUp) per storage type
-		if ( in_array( $pod_type, array( 'user', 'media', 'comment' ) ) && 'meta' !== $storage_type ) {
-			$debug['skipped'] = 1;
-
-			codecept_debug( $debug );
-
-			return;
-
-			// @todo do magic
-			$this->assertTrue( false, sprintf( 'Pod / Storage type requires new setUp() not yet built to continue [%s]', $variant_id ) );
-		}
-
-		codecept_debug( $debug );
-
 		$this->assertInstanceOf( Pods\Whatsit\Pod::class, $pod );
 
 		// Base find() $params
@@ -380,8 +350,6 @@ class TraversalTest extends Pods_TraversalTestCase {
 		$this->assertArrayHasKey( $pod['name'], self::$data );
 
 		$data = self::$data[ $pod['name'] ];
-
-		codecept_debug( 'Data: ' . var_export( $data, true ) );
 
 		$this->assertArrayHasKey( 'id', $data, sprintf( 'Data has no ID [%s]', $variant_id ) );
 
@@ -422,7 +390,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 				if ( ! empty( $field[ $field_type . '_format_type' ] ) && 'multi' === $field[ $field_type . '_format_type' ] ) {
 					// Only go and get it if you need it
-					if ( $query_fields && isset( self::$related_data[ $field['name'] ] ) ) {
+					if ( isset( self::$related_data[ $field['name'] ] ) ) {
 						$check_multi_value = (array) self::$related_data[ $field['name'] ]['id'];
 						$check_multi_index = (array) self::$related_data[ $field['name'] ]['_index'];
 					}
@@ -484,7 +452,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 				}//end if
 
 				$where[] = $related_where;
-				// var_dump( array( 1, $related_where, $check_value, $check_index ) );
+				// pods_debug( array( 1, $related_where, $check_value, $check_index ) );
 			} else {
 				// Related pod traversal
 				$related_pod_type         = $related_pod['type'];
@@ -519,7 +487,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 					} elseif ( isset( self::$related_data[ $related_object ] ) ) {
 						$related_pod_data = self::$related_data[ $related_object ];
 					} else {
-						// var_dump( array( 2, '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
+						// pods_debug( array( 2, '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
 						$this->assertTrue( false, sprintf( 'Invalid deep related item [%s]', $variant_id ) );
 
 						return;
@@ -537,9 +505,18 @@ class TraversalTest extends Pods_TraversalTestCase {
 						$check_index = $related_pod_data[ $related_pod_data['_field_index'] ];
 					}
 
+					$check_multi_value = (array) $check_value;
+					$check_multi_index = (array) $check_index;
+
 					if ( ! empty( $related_pod_field[ $related_pod_field['type'] . '_format_type' ] ) && 'multi' === $related_pod_field[ $related_pod_field['type'] . '_format_type' ] ) {
-						$check_value = (array) $check_value;
-						$check_value = current( $check_value );
+						// Only go and get it if you need it
+						if ( isset( self::$related_data[ $related_pod_field['name'] ] ) ) {
+							$check_multi_value = (array) self::$related_data[ $related_pod_field['name'] ]['id'];
+							$check_multi_index = (array) self::$related_data[ $related_pod_field['name'] ]['_index'];
+						}
+
+						$check_value = current( $check_multi_value );
+						$check_index = current( $check_multi_index );
 					}
 
 					// Temporarily check against null too, recursive data not saved fully yet
@@ -552,7 +529,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 						} else {
 							$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data['_field_id'] . '` IS NULL';
 						}
-						// var_dump( array( 3, $related_where, 'empty $check_value' ) );
+						// pods_debug( array( 3, $related_where, 'empty $check_value' ) );
 					}
 
 					if ( $query_fields ) {
@@ -574,7 +551,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 						$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 					}
-					// var_dump( array( 4, $related_where, $check_value, $check_index ) );
+					// pods_debug( array( 4, $related_where, $check_value, $check_index ) );
 				} elseif ( 'none' !== $related_pod_storage_type ) {
 					if ( 'pod' === $related_pod_type ) {
 						// $related_prefix = '`t`.';
@@ -614,15 +591,15 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 						$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 					}
-					// var_dump( array( 5, $related_where, $related_suffix, $check_related_value, self::$related_data[ $field_name ] ) );
+					// pods_debug( array( 5, $related_where, $related_suffix, $check_related_value, self::$related_data[ $field_name ] ) );
 				}//end if
 
 				if ( ! empty( $related_where ) ) {
 					$where[] = $related_where;
 				}
-				// var_dump( array( 6, $where ) );
+				// pods_debug( array( 6, $where ) );
 			}//end if
-		} elseif ( 'none' !== $storage_type && $field_name != $data['_field_index'] ) {
+		} elseif ( 'none' !== $storage_type && $field_name !== $data['_field_index'] ) {
 			if ( 'pod' === $pod_type ) {
 				$prefix = '`t`.';
 			} elseif ( 'table' === $storage_type ) {

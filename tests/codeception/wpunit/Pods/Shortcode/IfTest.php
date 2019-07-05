@@ -280,7 +280,12 @@ class IfTest extends Pods_UnitTestCase {
 
 		$site_url = site_url();
 
-		$this->assertEquals( '<a href="' . $site_url . '/?p=' . $id1 . '">first post title</a>', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id2}' field='related_field']{$content}[/pod_if_field]" ) );
+		$valid = array(
+			'<a href="' . $site_url . '/?test_if=first-post-title">first post title</a>',
+			'<a href="' . $site_url . '/?p=' . $id1. '">first post title</a>',
+		);
+
+		$this->assertContains( do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id2}' field='related_field']{$content}[/pod_if_field]" ), $valid );
 
 		$this->assertEquals( 'first post title', do_shortcode( "[pods name='{$pod_name}' id='{$id2}'][if related_field]{@related_field.post_title}[/if][/pods]" ) );
 	}

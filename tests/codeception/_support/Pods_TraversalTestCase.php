@@ -2,8 +2,6 @@
 
 namespace Pods_Unit_Tests;
 
-use Pods\Whatsit\Store;
-use Pods\Whatsit\Storage;
 use Pods;
 
 /**
@@ -242,9 +240,9 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 				$save_data[ $field_name ] = $item;
 
 				// Save related field info for later.
-				self::$related_fields[ $field_name ]['id']       = $term['term_id'];
-				self::$related_fields[ $field_name ]['_index']   = $item['name'];
-				self::$related_fields[ $field_name ]['_items'][] = $item;
+				self::$related_fields[ $field_name ]['id']                         = $term['term_id'];
+				self::$related_fields[ $field_name ]['_index']                     = $item['name'];
+				self::$related_fields[ $field_name ]['_items'][ $term['term_id'] ] = $item;
 
 				continue;
 			}
@@ -296,49 +294,94 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 			if ( 0 === $depth ) {
 				if ( 0 < $is_multi ) {
-					self::$related_fields[ $field_name ]['_index'] = (array) self::$related_fields[ $field_name ]['_index'];
-					self::$related_fields[ $field_name ]['_index'][] = $item[ $pod->pod_data['field_index'] ];
+					$id = $pod->add( $item );
 
-					self::$related_fields[ $field_name ]['id']   = (array) self::$related_fields[ $field_name ]['id'];
-					self::$related_fields[ $field_name ]['id'][] = $pod->add( $item );
+					self::$related_fields[ $field_name ]['id']     = self::$related_fields[ $field_name ]['id'];
+					self::$related_fields[ $field_name ]['_index'] = self::$related_fields[ $field_name ]['_index'];
 
-					self::$related_fields[ $field_name ]['_items'][] = $item;
-				} else {
-					self::$related_fields[ $field_name ]['_index'] = $item[ $pod->pod_data['field_index'] ];
+					if ( ! is_array( self::$related_fields[ $field_name ]['id'] ) ) {
+						if ( ! is_array( self::$related_fields[ $field_name ]['_index'] ) ) {
+							self::$related_fields[ $field_name ]['_index'] = array(
+								self::$related_fields[ $field_name ]['id'] => self::$related_fields[ $field_name ]['_index'],
+							);
+						}
 
-					if ( ! empty( self::$related_fields[ $field_name ]['id'] ) ) {
-						self::$related_fields[ $field_name ]['id'] = $pod->save( $item, null, self::$related_fields[ $field_name ]['id'] );
-					} else {
-						self::$related_fields[ $field_name ]['id'] = $pod->add( $item );
+						self::$related_fields[ $field_name ]['id'] = array(
+							self::$related_fields[ $field_name ]['id'] => self::$related_fields[ $field_name ]['id'],
+						);
 					}
 
-					self::$related_fields[ $field_name ]['_items'][] = $item;
+					self::$related_fields[ $field_name ]['id'][ $id ]     = $id;
+					self::$related_fields[ $field_name ]['_index'][ $id ] = $item[ $pod->pod_data['field_index'] ];
+
+					self::$related_fields[ $field_name ]['_items'][ $id ] = $item;
+				} else {
+					if ( ! empty( self::$related_fields[ $field_name ]['id'] ) ) {
+						$id = $pod->save( $item, null, self::$related_fields[ $field_name ]['id'] );
+					} else {
+						$id = $pod->add( $item );
+					}
+
+					self::$related_fields[ $field_name ]['id'] = $id;
+
+					self::$related_fields[ $field_name ]['_index'] = $item[ $pod->pod_data['field_index'] ];
+
+					self::$related_fields[ $field_name ]['_items'][ $id ] = $item;
 				}
 
 				$item['id']     = self::$related_fields[ $field_name ]['id'];
 				$item['_index'] = self::$related_fields[ $field_name ]['_index'];
+
 				$item['_items'] = self::$related_fields[ $field_name ]['_items'];
 			} else {
-				$id = self::$related_fields[ $field_name ]['id'];
+				$id    = self::$related_fields[ $field_name ]['id'];
+				$index = self::$related_fields[ $field_name ]['_index'];
 
-				// Get the second item in the array.
-				if ( is_array( $id ) && $is_multi < count( $id ) ) {
-					$id = current( array_slice( $id, $is_multi, 1 ) );
+				// Get the last item in the array.
+				if ( is_array( $id ) ) {
+					// Handle ID.
+					$id = array_pop( $id );
 
 					$item['id'] = $id;
+
+					// Handle index.
+					$index = array_pop( $index );
+
+					$item[ $pod->pod_data['field_index'] ] = $index;
 				}
 
 				$pod->save( $item, null, $id );
 
-				$item['id']     = self::$related_fields[ $field_name ]['id'];
-				$item['_index'] = self::$related_fields[ $field_name ]['_index'];
+				if ( $is_multi ) {
+					$item['id']     = self::$related_fields[ $field_name ]['id'];
+					$item['_index'] = self::$related_fields[ $field_name ]['_index'];
+
+					if ( ! is_array( $item['id'] ) ) {
+						if ( ! is_array( $item['_index'] ) ) {
+							$item['_index'] = array(
+								$item['id'] => $item['_index'],
+							);
+						}
+
+						$item['id'] = array(
+							$item['id'] => $item['id'],
+						);
+					}
+
+					$item['id'][ $id ]     = $id;
+					$item['_index'][ $id ] = $index;
+				} else {
+					$item['id']     = self::$related_fields[ $field_name ]['id'];
+					$item['_index'] = self::$related_fields[ $field_name ]['_index'];
+				}
+
 				$item['_items'] = self::$related_fields[ $field_name ]['_items'];
 
-				$item[ $pod->pod_data['field_id'] ] = $item['id'];
-
-				$item['_field_id']    = $pod->pod_data['field_id'];
-				$item['_field_index'] = $pod->pod_data['field_index'];
+				$item[ $pod->pod_data['field_id'] ] = $id;
 			}
+
+			$item['_field_id']    = $pod->pod_data['field_id'];
+			$item['_field_index'] = $pod->pod_data['field_index'];
 
 			$save_data[ $field_name ] = $item;
 		}
@@ -487,18 +530,12 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 			foreach ( $objects as $object => $storage_types ) {
 				foreach ( $storage_types as $storage_type => $pod ) {
 					foreach ( $pod['fields'] as $field_name => $field ) {
-						if (
-							(
-								empty( $field['pick_val'] )
-								&& empty( $field['pick_object'] )
-							)
-							|| ! in_array( $field['type'], array(
+						if ( ( empty( $field['pick_val'] ) && empty( $field['pick_object'] ) ) || ! in_array( $field['type'], array(
 								'pick',
 								'taxonomy',
 								'avatar',
 								'author',
-							), true )
-						) {
+							), true ) ) {
 							continue;
 						}
 
@@ -555,18 +592,12 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 			foreach ( $objects as $object => $storage_types ) {
 				foreach ( $storage_types as $storage_type => $pod ) {
 					foreach ( $pod['fields'] as $field_name => $field ) {
-						if (
-							(
-								empty( $field['pick_val'] )
-								&& empty( $field['pick_object'] )
-							)
-							|| ! in_array( $field['type'], array(
+						if ( ( empty( $field['pick_val'] ) && empty( $field['pick_object'] ) ) || ! in_array( $field['type'], array(
 								'pick',
 								'taxonomy',
 								'avatar',
 								'author',
-							), true )
-						) {
+							), true ) ) {
 							continue;
 						}
 

@@ -825,7 +825,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
             name: <?php echo json_encode( __( 'Loading available fields..', 'pods' ) ); ?>
         } );
 
-        selectField = new PodsDFV.fields.Pick( {
+        selectField = new PodsDFV.fields.pick.FieldClass( {
             el        : $container,
             model     : fieldModel,
             collection: collection

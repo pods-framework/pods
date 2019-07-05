@@ -1,6 +1,6 @@
 /*global assert */
-import {PodsDFVFieldModel} from 'pods-dfv/_src/core/pods-field-model';
-import {Pick} from 'pods-dfv/_src/pick/pick';
+import {PodsDFVFieldModel} from 'pods-dfv/src/core/pods-field-model';
+import {Pick} from 'pods-dfv/src/fields/pick/pick';
 
 /**
  * Pick field tests

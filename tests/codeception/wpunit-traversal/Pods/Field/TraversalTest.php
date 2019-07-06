@@ -2,8 +2,8 @@
 
 namespace Pods_Unit_Tests\Pods\Field;
 
-use Pods_Unit_Tests\Pods_TraversalTestCase;
 use Pods;
+use Pods_Unit_Tests\Pods_TraversalTestCase;
 
 /**
  * Class Test_Traversal
@@ -160,7 +160,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 		$data = self::$data[ $pod['name'] ];
 
-		pods_debug( 'Data: ' . var_export( $data, true ) );
+		// pods_debug( 'Data: ' . var_export( $data, true ) );
 
 		$this->assertArrayHasKey( 'id', $data, sprintf( 'Data has no ID [%s]', $variant_id ) );
 
@@ -195,6 +195,8 @@ class TraversalTest extends Pods_TraversalTestCase {
 	 * @param boolean $deep       Whether to test deep traversal
 	 */
 	private function _test_field_traversal( $variant_id, $options, $method, $deep ) {
+		pods_debug( $variant_id );
+
 		// Suppress MySQL errors
 		add_filter( 'pods_error_die', '__return_false' );
 
@@ -242,7 +244,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 			$debug['related_pod_field_type']   = $related_pod_field['type'];
 		}
 
-		pods_debug( $debug );
+		// pods_debug( $debug );
 
 		$this->assertInstanceOf( Pods\Whatsit\Pod::class, $pod );
 
@@ -252,7 +254,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 		$data = self::$data[ $pod['name'] ];
 
-		pods_debug( 'Data: ' . var_export( $data, true ) );
+		// pods_debug( 'Data: ' . var_export( $data, true ) );
 
 		$this->assertArrayHasKey( 'id', $data, sprintf( 'Data has no ID [%s]', $variant_id ) );
 
@@ -288,7 +290,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 			$related_data = self::$related_data[ $field['name'] ];
 
-			pods_debug( 'Related data for ' . $field['name'] . ': ' . var_export( $related_data, true ) );
+			// pods_debug( 'Related data for ' . $field['name'] . ': ' . var_export( $related_data, true ) );
 
 			$check_value = $related_data['id'];
 			$check_index = $related_data['_index'];
@@ -382,7 +384,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 				}//end if
 			} else {
 				// Related pod traversal
-				if ( in_array( $related_pod_field['type'], array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
+				if ( in_array( $related_pod_field['type'], array( 'pick', 'taxonomy', 'avatar', 'author' ), true ) ) {
 					if ( $field['name'] === $related_pod_field['name'] && ! isset( $related_data[ $related_pod_field['name'] ] ) ) {
 						$this->assertTrue( false, sprintf( 'No deep related item found [%s] | %s', $variant_id, print_r( $related_data, true ) ) );
 
@@ -437,11 +439,13 @@ class TraversalTest extends Pods_TraversalTestCase {
 						$this->assertEquals( $check_value, $p->field( $related_traverse_id, ! is_array( $check_value ) ), sprintf( 'Deep Related Item field value not as expected (%s) [%s] | %s', $related_traverse_id, $variant_id, var_export( array(
 							'$check_value'                            => $check_value,
 							'$check_index'                            => $check_index,
+							'$related_traverse_id'                    => $related_traverse_id,
 							'$p->field( $related_traverse_id, true )' => $p->field( $related_traverse_id, ! is_array( $check_value ) ),
 						), true ) ) );
 						$this->assertEquals( $check_index, $p->field( $related_traverse_index, ! is_array( $check_index ) ), sprintf( 'Deep Related Item index field value not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export( array(
 							'$check_value'                               => $check_value,
 							'$check_index'                               => $check_index,
+							'$related_traverse_index'                    => $related_traverse_index,
 							'$p->field( $related_traverse_index, true )' => $p->field( $related_traverse_index, ! is_array( $check_value ) ),
 						), true ) ) );
 

@@ -72,6 +72,10 @@ class Field extends Whatsit {
 			$related_type = $this->get_object_type();
 		}
 
+		if ( empty( $related_type ) && 'avatar' === $type ) {
+			$related_type = 'media';
+		}
+
 		if ( empty( $related_type ) || \in_array( $related_type, $simple_tableless_objects, true ) ) {
 			return null;
 		}

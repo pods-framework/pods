@@ -2,8 +2,8 @@
 
 namespace Pods_Unit_Tests\Pods\Find;
 
-use Pods_Unit_Tests\Pods_TraversalTestCase;
 use Pods;
+use Pods_Unit_Tests\Pods_TraversalTestCase;
 
 /**
  * Class Test_Traversal
@@ -198,6 +198,8 @@ class TraversalTest extends Pods_TraversalTestCase {
 	 * @param boolean $query_fields Whether to test query_fields WHERE syntax
 	 */
 	private function _test_find_base( $variant_id, $options, $query_fields = false ) {
+		pods_debug( $variant_id );
+
 		// Suppress MySQL errors
 		add_filter( 'pods_error_die', '__return_false' );
 
@@ -268,11 +270,11 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 		$this->assertEquals( 1, $p->total(), sprintf( 'Total not correct [%s] | %s | %s', $variant_id, $p->sql, print_r( array(
 			'where'  => $where,
-			'params' => $p->params
+			'params' => $p->params,
 		), true ) ) );
 		$this->assertEquals( 1, $p->total_found(), sprintf( 'Total found not correct [%s] | %s | %s', $variant_id, $p->sql, print_r( array(
 			'where'  => $where,
-			'params' => $p->params
+			'params' => $p->params,
 		), true ) ) );
 
 		$this->assertNotEmpty( $p->fetch(), sprintf( 'Item not fetched [%s]', $variant_id ) );
@@ -291,6 +293,8 @@ class TraversalTest extends Pods_TraversalTestCase {
 	 * @param boolean $query_fields Whether to test query_fields WHERE syntax
 	 */
 	private function _test_find_traversal( $variant_id, $options, $deep = false, $query_fields = false ) {
+		pods_debug( $variant_id );
+
 		// Suppress MySQL errors
 		add_filter( 'pods_error_die', '__return_false' );
 
@@ -368,7 +372,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 		$prefix = '';
 		$suffix = '';
 
-		if ( in_array( $field_type, array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
+		if ( in_array( $field_type, array( 'pick', 'taxonomy', 'avatar', 'author' ), true ) ) {
 			if ( ! isset( self::$related_data[ $field_name ] ) ) {
 				$this->assertTrue( false, sprintf( 'No related item found [%s]', $variant_id ) );
 
@@ -467,7 +471,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 				$related_where = array();
 
-				if ( in_array( $related_pod_field['type'], array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
+				if ( in_array( $related_pod_field['type'], array( 'pick', 'taxonomy', 'avatar', 'author' ), true ) ) {
 					if ( $field_name === $related_pod_field['name'] && ! isset( $related_data[ $related_pod_field['name'] ] ) ) {
 						$this->assertTrue( false, sprintf( 'No deep related item found [%s] | %s', $variant_id, print_r( $related_data, true ) ) );
 
@@ -651,7 +655,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 		$debug = sprintf( '%s | %s | %s', $p->sql, print_r( array(
 			'where'  => $where,
-			'params' => $p->params
+			'params' => $p->params,
 		), true ), $debug_related );
 
 		$this->assertEquals( 1, $p->total(), sprintf( 'Total not correct [%s] | %s', $variant_id, $debug ) );

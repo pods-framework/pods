@@ -1125,12 +1125,12 @@ class Pods implements Iterator {
 
 							// No items found.
 							if ( empty( $ids ) ) {
-								//codecept_debug( 'No related IDs found! ' . var_export( array( 'id' => $current_field['id'], 'pod_id' => $current_field->get_parent_id(), 'ids' => $ids, 'current_field' => empty( $current_field['id'] ) ? $current_field : 'has field id tho' ), true ) );
+								// pods_debug( 'No related IDs found! ' . var_export( array( 'id' => $current_field['id'], 'pod_id' => $current_field->get_parent_id(), 'ids' => $ids, 'current_field' => empty( $current_field['id'] ) ? $current_field : 'has field id tho' ), true ) );
 
 								return false;
 							}
 
-							//codecept_debug( 'Related IDs found! ' . var_export( array( 'id' => $current_field['id'], 'pod_id' => $current_field->get_parent_id(), 'ids' => $ids ), true ) );
+							// pods_debug( 'Related IDs found! ' . var_export( array( 'id' => $current_field['id'], 'pod_id' => $current_field->get_parent_id(), 'ids' => $ids ), true ) );
 
 							if ( 0 < $last_limit ) {
 								// @todo This should return array() if not $params->single.
@@ -1186,7 +1186,7 @@ class Pods implements Iterator {
 								$join = (array) $table['join'];
 							}
 
-							//codecept_debug( 'IDs found: ' . var_export( $ids, true ) );
+							// pods_debug( 'IDs found: ' . var_export( $ids, true ) );
 
 							if ( $table && ( ! empty( $ids ) || ! empty( $table['where'] ) ) ) {
 								foreach ( $ids as $id ) {
@@ -1583,8 +1583,8 @@ class Pods implements Iterator {
 								}
 							}//end if
 
-							//codecept_debug( 'value' );
-							//codecept_debug( compact( 'value', 'data' ) );
+							// pods_debug( 'value' );
+							// pods_debug( compact( 'value', 'data' ) );
 
 							if ( $last_options ) {
 								$last_field_data = $last_options;

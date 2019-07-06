@@ -950,6 +950,7 @@ class PodsUI {
 				'field_index' => $this->pods_data->field_index,
 			);
 		}
+
 		$options->validate( 'sql', $this->sql, 'array_merge' );
 
 		$options->validate(

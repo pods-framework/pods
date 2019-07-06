@@ -67,21 +67,23 @@ function pods_api( $pod = null, $format = null ) {
 }
 
 /**
- * Include and Init the PodsData class
+ * Include and Init the PodsData class.
  *
  * @see   PodsData
  *
- * @param string|\Pod $pod    The pod object to load
- * @param int         $id     (optional) Id of the pod to fetch
- * @param bool        $strict (optional) If true throw an error if the pod does not exist
- * @param bool        $unique (optional) If true always return a unique class
+ * @param string|Pod      $pod    The pod object to load.
+ * @param null|null|string $id     (optional) Id of the pod to fetch.
+ * @param bool             $strict (optional) If true throw an error if the pod does not exist.
+ * @param bool             $unique (optional) If true always return a unique class.
  *
  * @return PodsData
  *
  * @since 2.0.0
+ *
+ * @throws Exception
  */
 function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
-	if ( $unique && false !== $pod ) {
+	if ( $unique && ! in_array( $pod, array( null, false ), true ) ) {
 		return new PodsData( $pod, $id, $strict );
 	}
 

@@ -182,15 +182,15 @@ class PodsData {
 	 * @param int|string  $id     Pod Item ID.
 	 * @param bool        $strict If true throws an error if a pod is not found.
 	 *
-	 * @return \PodsData|false
+	 * @return PodsData|false
 	 *
-	 * @throws \Exception
+	 * @throws Exception
 	 *
 	 * @since 2.3.5
 	 */
-	public static function init( $pod = null, $id = 0, $strict = true ) {
+	public static function init( $pod = null, $id = null, $strict = true ) {
 
-		if ( ( true !== $pod && null !== $pod ) || 0 != $id ) {
+		if ( ! in_array( $pod, array( null, false ), true ) || ! in_array( $id, array( null, 0 ), true ) ) {
 			$object = new PodsData( $pod, $id );
 
 			if ( empty( $object->pod_data ) && true === $strict ) {

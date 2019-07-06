@@ -3088,7 +3088,7 @@ class PodsAPI {
 	 */
 	public function save_slug_fix( $slug, $post_ID, $post_status, $post_type, $post_parent = 0, $original_slug = null ) {
 
-		if ( in_array( $post_type, array( '_pods_field', '_pods_pod' ), true ) && false !== strpos( $slug, '-' ) ) {
+		if ( in_array( $post_type, array( '_pods_pod', '_pods_field', '_pods_group' ), true ) && false !== strpos( $slug, '-' ) ) {
 			$slug = $original_slug;
 		}
 

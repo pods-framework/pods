@@ -137,7 +137,7 @@ class Pods implements Iterator {
 			}//end if
 		}//end if
 
-		$maybe_id = 0;
+		$maybe_id = null;
 
 		if ( ! is_array( $id ) && ! is_object( $id ) ) {
 			$maybe_id = $id;
@@ -1264,7 +1264,7 @@ class Pods implements Iterator {
 
 								if ( ! $related_obj || ! $related_obj->valid() ) {
 									if ( ! is_object( $this->alt_data ) ) {
-										$this->alt_data = pods_data( null, 0, true, true );
+										$this->alt_data = pods_data( null, null, true, true );
 									}
 
 									$item_data = $this->alt_data->select( $sql );

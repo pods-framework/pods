@@ -1287,7 +1287,8 @@ class PodsMeta {
 		$blacklisted_types = array(
 			'revision',
 			'_pods_pod',
-			'_pods_field'
+			'_pods_field',
+			'_pods_group',
 		);
 
 		$blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist_types', $blacklisted_types, $post_id, $post );

@@ -12,7 +12,7 @@ $all_field_names = array();
 $pod_fields = array();
 foreach ( $pod[ 'fields' ] as $field_name => $field_data ) {
 	array_push( $all_field_names, $field_name );
-	$field_options = array_merge( $field_data[ 'options' ], $field_data );
+	$field_options = array_merge( $field_data[ 'options' ], $field_data->get_args() );
 	unset( $field_options[ 'options' ] );
 	$pod_fields[ $field_name ] = $field_options;
 }

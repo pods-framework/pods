@@ -394,14 +394,14 @@ class PodsField_DateTime extends PodsField {
 		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
 			// Try default storage format.
 			$date = $this->createFromFormat( static::$storage_format, (string) $value );
-			
+
 			// Convert to timestamp.
 			if ( $date instanceof DateTime ) {
 				$timestamp = $date->getTimestamp();
 			} else {
 				// Try field format.
 				$date_local = $this->createFromFormat( $format, (string) $value );
-				
+
 				if ( $date_local instanceof DateTime ) {
 					$timestamp = $date_local->getTimestamp();
 				} else {
@@ -675,25 +675,19 @@ class PodsField_DateTime extends PodsField {
 
 		try {
 			if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
-				$timezone = get_option( 'timezone_string' );
 
-				if ( empty( $timezone ) ) {
-					$timezone = timezone_name_from_abbr( '', get_option( 'gmt_offset' ) * HOUR_IN_SECONDS, 0 );
+				$datetimezone = new DateTimeZone( 'UTC' );
+
+				$datetime = DateTime::createFromFormat( $format, (string) $date, $datetimezone );
+
+				if ( false === $datetime ) {
+					$datetime = DateTime::createFromFormat( static::$storage_format, (string) $date, $datetimezone );
 				}
 
-				if ( ! empty( $timezone ) ) {
-					$datetimezone = new DateTimeZone( $timezone );
-
-					$datetime = DateTime::createFromFormat( $format, (string) $date, $datetimezone );
-
-					if ( false === $datetime ) {
-						$datetime = DateTime::createFromFormat( static::$storage_format, (string) $date, $datetimezone );
-					}
-
-					if ( false !== $datetime && $return_timestamp ) {
-						return $datetime;
-					}
+				if ( false !== $datetime && $return_timestamp ) {
+					return $datetime;
 				}
+
 			}//end if
 
 			if ( in_array( $datetime, array( null, false ), true ) ) {

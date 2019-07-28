@@ -53,14 +53,14 @@ export const FieldListItem = ( props ) => {
 			</div>
 			<div className="pods-field pods-field--label">
 				{fieldLabel}<span className={required && 'pods-field--required'}>*</span>
-				<div className="pods-field--id">[id = {id}]</div>
+				<div className="pods-field--id"> [id = {id}]</div>
 			</div>
 			<div className="pods-field pods-field--name">
 				{fieldName}
 			</div>
 			<div className="pods-field pods-field--type">
 				{type}
-				<div className="pods-field--id">[type = [STILL NEED THIS]]</div>
+				<div className="pods-field--id"> [type = [STILL NEED THIS]]</div>
 			</div>
 			<div className="pods-field pods-field--actions">
 				<Dashicon icon='edit' /> <Dashicon icon='admin-page' />

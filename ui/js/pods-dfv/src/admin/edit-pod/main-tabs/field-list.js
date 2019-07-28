@@ -47,22 +47,22 @@ export const FieldListItem = ( props ) => {
 	const { id, fieldName, fieldLabel, required, type } = props;
 
 	return (
-		<div className="pods-field--wrapper">
-			<div className="pods-field pods-field--handle">
+		<div className="pods-field_wrapper">
+			<div className="pods-field pods-field_handle">
 				<Dashicon icon='menu' />
 			</div>
-			<div className="pods-field pods-field--label">
-				{fieldLabel}<span className={required && 'pods-field--required'}>*</span>
-				<div className="pods-field--id"> [id = {id}]</div>
+			<div className="pods-field pods-field_label">
+				{fieldLabel}<span className={required && 'pods-field_required'}>*</span>
+				<div className="pods-field_id"> [id = {id}]</div>
 			</div>
-			<div className="pods-field pods-field--name">
+			<div className="pods-field pods-field_name">
 				{fieldName}
 			</div>
-			<div className="pods-field pods-field--type">
+			<div className="pods-field pods-field_type">
 				{type}
-				<div className="pods-field--id"> [type = [STILL NEED THIS]]</div>
+				<div className="pods-field_id"> [type = [STILL NEED THIS]]</div>
 			</div>
-			<div className="pods-field pods-field--actions">
+			<div className="pods-field pods-field_actions">
 				<Dashicon icon='edit' /> <Dashicon icon='admin-page' />
 				<Dashicon icon='trash' />
 			</div>
@@ -83,10 +83,10 @@ FieldListItem.propTypes = {
  */
 export const FieldHeader = () => {
 	return (
-		<div className="pods-field--wrapper-labels">
-			<div className="pods-field--wrapper-label-items">Label</div>
-			<div className="pods-field--wrapper-label-items">Name</div>
-			<div className="pods-field--wrapper-label-items">Field Type</div>
+		<div className="pods-field_wrapper-labels">
+			<div className="pods-field_wrapper-label-items">Label</div>
+			<div className="pods-field_wrapper-label-items">Name</div>
+			<div className="pods-field_wrapper-label-items">Field Type</div>
 		</div>
 	);
 };

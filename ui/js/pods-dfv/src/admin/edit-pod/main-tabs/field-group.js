@@ -44,22 +44,22 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			ref={wrapperRef}
 			style={{ opacity: isDragging ? 0 : 1 }}>
 
-			<div className="pods-field-group--title"
+			<div className="pods-field-group_title"
 				onClick={() => setExpanded( !expanded )}>
 
-				<div ref={dragHandleRef} className="pods-field-group--handle" style={{ cursor: isDragging ? 'ns-resize' : null }}>
+				<div ref={dragHandleRef} className="pods-field-group_handle" style={{ cursor: isDragging ? 'ns-resize' : null }}>
 					<Dashicon icon='menu' />
 				</div>
-				<div className="pods-field-group--name">{groupName}</div>
-				<div className="pods-field-group--manage">
-					<div className="pods-field-group--toggle">
+				<div className="pods-field-group_name">{groupName}</div>
+				<div className="pods-field-group_manage">
+					<div className="pods-field-group_toggle">
 						<Dashicon icon={expanded ? 'arrow-up' : 'arrow-down'} />
 					</div>
 				</div>
 			</div>
 
 			{expanded && !isDragging &&
-			<FieldList fields={getGroupFields( groupName )} />}
+				<FieldList fields={getGroupFields( groupName )} />}
 		</div>
 	);
 } );

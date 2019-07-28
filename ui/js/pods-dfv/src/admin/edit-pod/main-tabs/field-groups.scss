@@ -5,7 +5,7 @@
 	cursor: ns-resize;
 }
 
-.pods-field--wrapper {
+.pods-field_wrapper {
 	display: flex;
 	width: 100%;
 	background-color: #fff;
@@ -24,7 +24,7 @@
 	padding: 5px 20px;
 }
 
-.pods-field--handle {
+.pods-field_handle {
 	width: 20px;
 	opacity: .2;
 	padding-left: 13px;
@@ -32,15 +32,15 @@
 	cursor: move;
 }
 
-.pods-field--required {
+.pods-field_required {
 	color: red;
 }
 
-.pods-field--actions {
+.pods-field_actions {
 	display: flex;
 }
 
-.pods-field--actions i {
+.pods-field_actions i {
 	padding: 10px;
 	color: #0073aa;
 
@@ -50,21 +50,21 @@
 	}
 }
 
-.pods-field--label {
+.pods-field_label {
 	padding-left: 0;
 }
 
-.pods-field--label,
-.pods-field--type {
+.pods-field_label,
+.pods-field_type {
 
 	&:hover {
-		.pods-field--id {
+		.pods-field_id {
 			opacity: 1;
 		}
 	}
 }
 
-.pods-field--id {
+.pods-field_id {
 	font-size: 13px;
 	color: #999;
 	display: inline;
@@ -72,8 +72,8 @@
 	transition: 200ms ease opacity;
 }
 
-.pods-field--label,
-.pods-field--name {
+.pods-field_label,
+.pods-field_name {
 	color: #0073aa;
 
 	&:hover {
@@ -82,18 +82,18 @@
 	}
 }
 
-.pods-field--label,
-.pods-field--type {
+.pods-field_label,
+.pods-field_type {
 	// flex-grow: 2;
 	width: 30%;
 }
 
-.pods-field--name {
+.pods-field_name {
 	// flex-shrink: 0;
 }
 
 
-.pods-field--wrapper-labels {
+.pods-field_wrapper-labels {
 	display: flex;
 	width: 100%;
 	background-color: #f5f5f5;
@@ -112,11 +112,11 @@
 	}
 }
 
-.pods-field--wrapper-labels .pods-field--handle {
+.pods-field_wrapper-labels .pods-field_handle {
 	cursor: inherit;
 }
 
-.pods-field--wrapper-label-items {
+.pods-field_wrapper-label-items {
 	width: 172px;
 	padding: 20px 20px 17px;
 	justify-content: flex-start;
@@ -130,7 +130,7 @@
 	background-color: #fff;
 	margin-bottom: 10px;
 
-	&>.pods-field--wrapper {
+	&>.pods-field_wrapper {
 		background-color: whitesmoke;
 
 		&:hover {
@@ -143,7 +143,7 @@
 	}
 }
 
-.pods-field-group--title {
+.pods-field-group_title {
 	padding: 10px;
 	display: flex;
 	color: #333;
@@ -153,28 +153,28 @@
 
 }
 
-.pods-field-group--handle {
+.pods-field-group_handle {
 	padding-right: 13px;
 	display: flex;
 	cursor: move;
 }
 
-.pods-field-group--manage {
+.pods-field-group_manage {
 	margin-left: auto;
 }
 
-.pods-button-group--container {
+.pods-button-group_container {
 	display: flex;
 	width: 100%;
 	justify-content: flex-end;
 	margin-top: 10px;
 }
 
-.pods-field-group--toggle {
+.pods-field-group_toggle {
 	cursor: pointer;
 }
 
-.pods-button-group--item {
+.pods-button-group_item {
 	padding: 10px 20px;
 	color: #333;
 	text-decoration: none;

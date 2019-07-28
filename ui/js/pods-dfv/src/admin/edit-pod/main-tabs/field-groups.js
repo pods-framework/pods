@@ -32,7 +32,7 @@ export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, 
 				/>
 			) )}
 			<GroupDragLayer />
-			<div className="pods-button-group--container">
+			<div className="pods-button-group_container">
 				<a href="#">Add Group</a> <a href="#">Add Field</a>
 			</div>
 		</div>

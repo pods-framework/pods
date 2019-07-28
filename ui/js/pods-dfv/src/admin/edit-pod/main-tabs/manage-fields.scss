@@ -1,4 +1,4 @@
-.pods-field--wrapper {
+.pods-field_wrapper {
 	display: flex;
 	width: 100%;
 	background-color: #fff;
@@ -26,21 +26,21 @@ div.pods-manage-f .pods-field {
 	padding: 10px 20px;
 }
 
-.pods-field--handle {
+.pods-field_handle {
 	width: auto;
 	opacity: .2;
 }
 
-.pods-field--required {
+.pods-field_required {
 	color: red;
 }
 
-.pods-field--actions {
+.pods-field_actions {
 	display: flex;
 	width: auto;
 }
 
-.pods-field--actions .dashicon {
+.pods-field_actions .dashicon {
 	padding: 10px;
 	color: #0073aa;
 
@@ -50,21 +50,21 @@ div.pods-manage-f .pods-field {
 	}
 }
 
-.pods-field--label {
+.pods-field_label {
 	padding-left: 0;
 }
 
-.pods-field--label,
-.pods-field--type {
+.pods-field_label,
+.pods-field_type {
 
 	&:hover {
-		.pods-field--id {
+		.pods-field_id {
 			opacity: 1;
 		}
 	}
 }
 
-.pods-field--id {
+.pods-field_id {
 	font-size: 13px;
 	color: #999;
 	display: inline;
@@ -72,8 +72,8 @@ div.pods-manage-f .pods-field {
 	transition: 200ms ease opacity;
 }
 
-.pods-field--label,
-.pods-field--name {
+.pods-field_label,
+.pods-field_name {
 	color: #0073aa;
 
 	&:hover {
@@ -82,23 +82,23 @@ div.pods-manage-f .pods-field {
 	}
 }
 
-.pods-field--label {
+.pods-field_label {
 	flex: 1;
 }
 
-.pods-field--name {
+.pods-field_name {
 	flex: 1;
 }
 
 
-.pods-field--wrapper-labels {
+.pods-field_wrapper-labels {
 	display: flex;
 	width: 100%;
 	background-color: #fff;
 	border-bottom: 2px solid whitesmoke;
 }
 
-.pods-field--wrapper-label-items {
+.pods-field_wrapper-label-items {
 	width: 172px;
 	padding: 20px 20px 17px;
 	justify-content: flex-start;

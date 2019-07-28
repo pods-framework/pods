@@ -51,6 +51,9 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 					<Dashicon icon='menu' />
 				</div>
 				<div className="pods-field-group_name">{groupName}</div>
+				<div className="pods-field-group_edit" onClick={() => jQuery( '.pods-field-group_settings' ).toggleClass( 'pods-field-group_settings--visible' )}>
+					Edit Group
+				</div>
 				<div className="pods-field-group_manage">
 					<div className="pods-field-group_toggle">
 						<Dashicon icon={expanded ? 'arrow-up' : 'arrow-down'} />

@@ -46,13 +46,13 @@ const CustomDragLayer = props => {
 		<div style={getLayerStyles( props )}>
 			<div style={getItemStyles( props )}>
 				<div className="pods-field-group-wrapper" style={{ cursor: 'ns-resize' }}>
-					<div className="pods-field-group--title">
-						<div className="pods-field-group--handle">
+					<div className="pods-field-group_title">
+						<div className="pods-field-group_handle">
 							<Dashicon icon='menu' />
 						</div>
-						<div className="pods-field-group--name">{item.groupName}</div>
-						<div className="pods-field-group--manage">
-							<div className="pods-field-group--toggle">
+						<div className="pods-field-group_name">{item.groupName}</div>
+						<div className="pods-field-group_manage">
+							<div className="pods-field-group_toggle">
 								<Dashicon icon={'arrow-down'} />
 							</div>
 						</div>

@@ -1,14 +1,15 @@
-.pods-field_wrapper {
-	display: flex;
-	width: 100%;
-	background-color: #fff;
-	align-items: center;
-	transition: 200ms ease background-color;
+// .pods-field_wrapper {
+// 	display: flex;
+// 	width: 100%;
+// 	background-color: #fff;
+// 	align-items: center;
+// 	transition: 200ms ease background-color;
+// 	padding-right: 10px;
 
-	&:hover {
-		background-color: #fbfbfb;
-	}
-}
+// 	&:hover {
+// 		background-color: #fbfbfb;
+// 	}
+// }
 
 .pods-manage-fields {
 	// border-left: 5px solid #94bf3a;
@@ -19,11 +20,6 @@
 .pods-manage-fields.no-fields {
 	font-weight: bold;
 	padding: 1em;
-}
-
-div.pods-manage-f .pods-field {
-	width: 25%;
-	padding: 10px 20px;
 }
 
 .pods-field_handle {
@@ -41,7 +37,7 @@ div.pods-manage-f .pods-field {
 }
 
 .pods-field_actions .dashicon {
-	padding: 10px;
+	padding: 12px 10px;
 	color: #0073aa;
 
 	&:hover {

@@ -11,11 +11,11 @@
 	background-color: #fff;
 	align-items: center;
 	transition: 200ms ease background-color;
-	// border-bottom: 1px solid whitesmoke;
+	// border-bottom: 1px solid #f3f3f3;
 
 
 	&:hover {
-		background-color: whitesmoke;
+		background-color: #f3f3f3;
 	}
 }
 
@@ -136,7 +136,7 @@
 	margin-bottom: 10px;
 
 	&>.pods-field_wrapper {
-		background-color: whitesmoke;
+		background-color: #f3f3f3;
 
 		&:hover {
 			background-color: #e4e4e4;
@@ -164,8 +164,15 @@
 	cursor: move;
 }
 
-.pods-field-group_manage {
+.pods-field-group_edit {
 	margin-left: auto;
+	color: #0073aa;
+    transition-property: border,background,color;
+    transition-duration: .05s;
+	transition-timing-function: ease-in-out;
+	text-decoration: underline;
+	margin-right: 10px;
+	cursor: pointer;
 }
 
 .pods-button-group_container {
@@ -201,7 +208,73 @@
 	}
 }
 
+//
+// Group Settings Modal
+//
+.pods-field-group_settings {
+	display: none;
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 100%;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0.2);
+	z-index: 999999;
 
+	&--visible {
+		display: block;
+	}
+}
+
+.pods-field-group_settings-container {
+	max-width: 800px;
+	width: 100%;
+	margin: 0 auto;
+	background-color: white;
+	transform: translate(-50%, -50%);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+}
+
+.pods-field-group_settings-options {
+	display: flex;
+}
+
+.pods-field-group_heading {
+	border-bottom: 1px solid #e5e5e5;
+	padding: 10px;
+	font-weight: bolder;
+	font-size: 16px;
+}
+
+.pods-field-group_settings-sidebar {
+	width: 30%;
+	background-color: #f3f3f3;
+	box-shadow: inset 0 4px 4px -4px rgba(0,0,0,.1);
+
+
+	&-item {
+		padding: 10px;
+		border-bottom: 1px solid #e5e5e5;
+		cursor: pointer;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		&--active {
+			background-color: #eee;
+		}
+	}
+}
+
+.pods-field-group_settings-main {
+	width: 70%;
+	background-color: #fff;
+	padding: 0 20px;
+	box-shadow: inset 0 4px 4px -4px rgba(0, 0, 0, 0.1), 2px 0px 4px 2px rgba(0, 0, 0, 0.1);
+}
 
 
 /* Media Queries */

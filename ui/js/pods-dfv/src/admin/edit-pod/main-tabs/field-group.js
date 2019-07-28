@@ -59,6 +59,28 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 						<Dashicon icon={expanded ? 'arrow-up' : 'arrow-down'} />
 					</div>
 				</div>
+				<div className="pods-field-group_settings">
+					<div className="pods-field-group_settings-container">
+						<div className="pods-field-group_heading">{groupName} Settings</div>
+						<div className="pods-field-group_settings-options">
+							<div className="pods-field-group_settings-sidebar">
+								<div className="pods-field-group_settings-sidebar-item pods-field-group_settings-sidebar-item--active">General</div>
+								<div className="pods-field-group_settings-sidebar-item">Advanced</div>
+								<div className="pods-field-group_settings-sidebar-item">Other Group Settings Tab</div>
+							</div>
+							<div className="pods-field-group_settings-main">
+
+								<p>$id</p>
+								<p>$title</p>
+								<p>$callback</p>
+								<p>$screen</p>
+								<p>$context</p>
+								<p>$priority</p>
+								<p>$callback_args</p>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			{expanded && !isDragging &&

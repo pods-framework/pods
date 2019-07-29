@@ -27,7 +27,7 @@ Please provide the version of Pods you are running:
 <!-- This is REQUIRED for Bug Reports, so we can check for conflicts, version issues, etc. -->
 <details>
 
-Copy and paste your System Details Tools, Site Health, Info. Use the 'Copy Site Info to Clipboard' and paste the results over this line.
+Copy and paste your Tools > Site Health > Info. Use the 'Copy Site Info to Clipboard' and paste the results over this line.
 
 </details>
 

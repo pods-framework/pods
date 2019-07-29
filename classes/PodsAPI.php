@@ -3421,11 +3421,10 @@ class PodsAPI {
 
 		$fields_active = array();
 		$custom_data   = array();
+		$custom_fields = array();
 
 		// Find the active fields (loop through $params->data to retain order)
 		if ( ! empty( $params->data ) && is_array( $params->data ) ) {
-			$custom_fields = array();
-
 			foreach ( $params->data as $field => $value ) {
 				if ( isset( $object_fields[ $field ] ) ) {
 					$object_fields[ $field ]['value'] = $value;

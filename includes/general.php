@@ -2441,8 +2441,13 @@ function pods_reserved_keywords() {
 		'year',
 	);
 
-	// @todo: Pods reserved keywords.
-
+	/**
+	 * Filter the WordPress and Pods reserved keywords.
+	 *
+	 * @since 2.7.15
+	 *
+	 * @param array $keywords List of WordPress and Pods reserved keywords.
+	 */
 	return apply_filters( 'pods_reserved_keywords', $keywords );
 }
 

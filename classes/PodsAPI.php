@@ -1720,27 +1720,30 @@ class PodsAPI {
 			$old_fields  = $pod['fields'];
 			$old_options = $pod['options'];
 
-			if ( ! isset( $params->name ) && empty( $params->name ) ) {
+			if ( empty( $params->name ) ) {
 				$params->name = $pod['name'];
 			}
 
-			if ( $old_name !== $params->name && false !== $this->pod_exists( array( 'name' => $params->name ) ) ) {
-				return pods_error( sprintf( __( 'Pod %1$s already exists, you cannot rename %2$s to that', 'pods' ), $params->name, $old_name ), $this );
-			}
+			if ( $old_name !== $params->name ) {
 
-			if ( $old_name !== $params->name && in_array( $pod['type'], array(
-					'user',
-					'comment',
-					'media'
-				) ) && in_array( $pod['object'], array( 'user', 'comment', 'media' ) ) ) {
-				return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
-			}
+				if ( false !== $this->pod_exists( array( 'name' => $params->name ) ) ) {
+					return pods_error( sprintf( __( 'Pod %1$s already exists, you cannot rename %2$s to that', 'pods' ), $params->name, $old_name ), $this );
+				}
 
-			if ( $old_name !== $params->name && in_array( $pod['type'], array(
-					'post_type',
-					'taxonomy'
-				) ) && ! empty( $pod['object'] ) && $pod['object'] == $old_name ) {
-				return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
+				if (
+					in_array( $pod['type'], array( 'user', 'comment', 'media' ) )
+					&& in_array( $pod['object'], array( 'user', 'comment', 'media' ) )
+				) {
+					return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
+				}
+
+				if (
+					in_array( $pod['type'], array( 'post_type', 'taxonomy' ) )
+					&& ! empty( $pod['object'] )
+					&& $pod['object'] == $old_name
+				) {
+					return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
+				}
 			}
 
 			if ( $old_id != $params->id ) {
@@ -1766,7 +1769,7 @@ class PodsAPI {
 				'object'      => '',
 				'alias'       => '',
 				'options'     => array(),
-				'fields'      => array()
+				'fields'      => array(),
 			);
 		}
 

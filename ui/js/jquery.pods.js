@@ -721,9 +721,10 @@
                         $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next ' ) );
                     },
                     stepBackward : function () {
-                        $( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
-                        $( '#pods-wizard-next' ).prop( 'disabled', false );
-                        $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next' ) );
+                        $( '#pods-wizard-next' )
+                            .css( 'cursor', 'pointer' )
+                            .prop( 'disabled', false )
+                            .text( $( '#pods-wizard-next' ).data( 'next' ) );
 
                         // Step toolbar menu state forwards
                         $( 'li.pods-wizard-menu-current' )
@@ -799,9 +800,10 @@
                             window.location.hash = '';
                         }
                         else if ( $( '#pods-wizard-box' ).closest( 'form' )[ 0 ] ) {
-                            $( '#pods-wizard-next' ).css( 'cursor', 'default' );
-                            $( '#pods-wizard-next' ).prop( 'disabled', true );
-                            $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'processing' ) );
+                            $( '#pods-wizard-next' )
+                                .css( 'cursor', 'default' )
+                                .prop( 'disabled', true )
+                                .text( $( '#pods-wizard-next' ).data( 'processing' ) );
 
                             // Allow for override
                             if ( 'undefined' != typeof pods_admin_wizard_callback )
@@ -813,9 +815,10 @@
                             $( '#pods-wizard-box' ).closest( 'form' ).submit();
 
                             if ( $( '#pods-wizard-box' ).closest( 'form' ).hasClass( 'invalid-form' ) ) {
-                                $( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
-                                $( '#pods-wizard-next' ).prop( 'disabled', false );
-                                $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next' ) );
+                                $( '#pods-wizard-next' )
+                                    .css( 'cursor', 'pointer' )
+                                    .prop( 'disabled', false )
+                                    .text( $( '#pods-wizard-next' ).data( 'next' ) );
 
                                 // Step toolbar menu state forwards
                                 $( 'li.pods-wizard-menu-complete:last' )

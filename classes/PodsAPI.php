@@ -1731,14 +1731,14 @@ class PodsAPI {
 				}
 
 				if (
-					in_array( $pod['type'], array( 'user', 'comment', 'media' ) )
-					&& in_array( $pod['object'], array( 'user', 'comment', 'media' ) )
+					in_array( $pod['type'], array( 'user', 'comment', 'media' ), true )
+					&& in_array( $pod['object'], array( 'user', 'comment', 'media' ), true )
 				) {
 					return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
 				}
 
 				if (
-					in_array( $pod['type'], array( 'post_type', 'taxonomy' ) )
+					in_array( $pod['type'], array( 'post_type', 'taxonomy' ), true )
 					&& ! empty( $pod['object'] )
 					&& $pod['object'] == $old_name
 				) {
@@ -1754,7 +1754,7 @@ class PodsAPI {
 				}
 			}
 		} elseif (
-			in_array( $params->name, pods_reserved_keywords() )
+			in_array( $params->name, pods_reserved_keywords(), true )
 			&& 'post_type' === pods_v( 'type', $params )
 		) {
 			return pods_error( sprintf( 'There are certain names that a Custom Post Types cannot be named and unfortunately, %s is one of them.', $params->name ), $this );

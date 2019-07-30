@@ -1750,11 +1750,10 @@ class PodsAPI {
 					return pods_error( sprintf( __( 'Pod %s already exists', 'pods' ), $params->name ), $this );
 				}
 			}
-		} elseif ( in_array( $params->name, array(
-				'order',
-				'orderby',
-				'post_type'
-			) ) && 'post_type' === pods_var( 'type', $params ) ) {
+		} elseif (
+			in_array( $params->name, pods_reserved_keywords() )
+			&& 'post_type' === pods_v( 'type', $params )
+		) {
 			return pods_error( sprintf( 'There are certain names that a Custom Post Types cannot be named and unfortunately, %s is one of them.', $params->name ), $this );
 		} else {
 			$pod = array(

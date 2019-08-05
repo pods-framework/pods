@@ -67,9 +67,9 @@ CustomDragLayer.propTypes = {
 	item: PropTypes.shape( {
 		groupName: PropTypes.string.isRequired,
 		index: PropTypes.number.isRequired
-	} ).isRequired,
+	} ),
 
-	itemType: PropTypes.string.isRequired,
+	itemType: PropTypes.string,
 
 	isDragging: PropTypes.bool.isRequired,
 

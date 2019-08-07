@@ -1757,7 +1757,7 @@ class PodsAPI {
 			in_array( $params->name, pods_reserved_keywords(), true )
 			&& in_array( pods_v( 'type', $params ), array( 'post_type', 'taxonomy' ), true )
 		) {
-			return pods_error( sprintf( 'There are certain names that a Custom Post Types cannot be named and unfortunately, %s is one of them.', $params->name ), $this );
+			return pods_error( sprintf( 'There are certain names that a Pod cannot be named and unfortunately, %s is one of them.', $params->name ), $this );
 		} else {
 			$pod = array(
 				'id'          => 0,

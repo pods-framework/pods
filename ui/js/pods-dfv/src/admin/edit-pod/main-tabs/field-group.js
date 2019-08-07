@@ -5,6 +5,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 
 import dragSource from './group-drag-source';
 import dropTarget from './group-drop-target';
+import { FieldGroupSettings } from './field-group-settings';
 import { FieldList } from 'pods-dfv/src/admin/edit-pod/main-tabs/field-list';
 
 const { useState } = React;
@@ -15,6 +16,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 	const { connectDragSource, connectDropTarget, connectDragPreview, isDragging } = props;
 	const { groupName, getGroupFields } = props;
 	const [ expanded, setExpanded ] = useState( false );
+	const [ showSettings, setShowSettings ] = useState( false );
 	const wrapperRef = useRef( ref );
 	const dragHandleRef = useRef( ref );
 
@@ -38,6 +40,11 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		getHandleNode: () => dragHandleRef.current,
 	} ) );
 
+	const onEditGroupClick = ( e ) => {
+		e.stopPropagation();
+		setShowSettings( true );
+	};
+
 	return (
 		<div
 			className="pods-field-group-wrapper"
@@ -51,7 +58,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 					<Dashicon icon='menu' />
 				</div>
 				<div className="pods-field-group_name">{groupName}</div>
-				<div className="pods-field-group_edit" onClick={() => jQuery( '.pods-field-group_settings' ).toggleClass( 'pods-field-group_settings--visible' )}>
+				<div className="pods-field-group_edit" onClick={( e ) => onEditGroupClick( e )}>
 					Edit Group
 				</div>
 				<div className="pods-field-group_manage">
@@ -59,32 +66,11 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 						<Dashicon icon={expanded ? 'arrow-up' : 'arrow-down'} />
 					</div>
 				</div>
-				<div className="pods-field-group_settings">
-					<div className="pods-field-group_settings-container">
-						<div className="pods-field-group_heading">{groupName} Settings</div>
-						<div className="pods-field-group_settings-options">
-							<div className="pods-field-group_settings-sidebar">
-								<div className="pods-field-group_settings-sidebar-item pods-field-group_settings-sidebar-item--active">General</div>
-								<div className="pods-field-group_settings-sidebar-item">Advanced</div>
-								<div className="pods-field-group_settings-sidebar-item">Other Group Settings Tab</div>
-							</div>
-							<div className="pods-field-group_settings-main">
-
-								<p>$id</p>
-								<p>$title</p>
-								<p>$callback</p>
-								<p>$screen</p>
-								<p>$context</p>
-								<p>$priority</p>
-								<p>$callback_args</p>
-							</div>
-						</div>
-					</div>
-				</div>
+				{showSettings && <FieldGroupSettings groupName={groupName} show={setShowSettings} /> }
 			</div>
 
 			{expanded && !isDragging &&
-				<FieldList fields={getGroupFields( groupName )} />}
+			<FieldList fields={getGroupFields( groupName )} />}
 		</div>
 	);
 } );

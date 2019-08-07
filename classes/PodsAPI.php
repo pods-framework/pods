@@ -1755,7 +1755,7 @@ class PodsAPI {
 			}
 		} elseif (
 			in_array( $params->name, pods_reserved_keywords(), true )
-			&& 'post_type' === pods_v( 'type', $params )
+			&& in_array( pods_v( 'type', $params ), array( 'post_type', 'taxonomy' ), true )
 		) {
 			return pods_error( sprintf( 'There are certain names that a Custom Post Types cannot be named and unfortunately, %s is one of them.', $params->name ), $this );
 		} else {

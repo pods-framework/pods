@@ -1720,7 +1720,8 @@ class PodsAPI {
 			$old_fields  = $pod['fields'];
 			$old_options = $pod['options'];
 
-			if ( empty( $params->name ) ) {
+			// Check if name is intentionally not set, set it as current name.
+			if ( ! isset( $params->name ) ) {
 				$params->name = $pod['name'];
 			}
 

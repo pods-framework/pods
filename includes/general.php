@@ -2357,6 +2357,7 @@ function pods_no_conflict_off( $object_type = 'post' ) {
 function pods_reserved_keywords() {
 
 	$keywords = array(
+		// WordPress.
 		'attachment',
 		'attachment_id',
 		'author',
@@ -2439,6 +2440,9 @@ function pods_reserved_keywords() {
 		'withcomments',
 		'withoutcomments',
 		'year',
+		// Pods
+		'id',
+		'ID',
 	);
 
 	/**

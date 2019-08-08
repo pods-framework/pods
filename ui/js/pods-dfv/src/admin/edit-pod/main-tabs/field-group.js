@@ -10,6 +10,7 @@ import { FieldList } from 'pods-dfv/src/admin/edit-pod/main-tabs/field-list';
 
 const { useState } = React;
 const { Dashicon } = wp.components;
+const { __ } = wp.i18n;
 
 // eslint-disable-next-line react/display-name
 const FieldGroup = forwardRef( ( props, ref ) => {
@@ -59,7 +60,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 				</div>
 				<div className="pods-field-group_name">{groupName}</div>
 				<div className="pods-field-group_edit" onClick={( e ) => onEditGroupClick( e )}>
-					Edit Group
+					{__( 'Edit Group', 'pods')}
 				</div>
 				<div className="pods-field-group_manage">
 					<div className="pods-field-group_toggle">

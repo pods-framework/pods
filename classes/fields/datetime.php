@@ -676,12 +676,10 @@ class PodsField_DateTime extends PodsField {
 		try {
 			if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
 
-				$datetimezone = new DateTimeZone( 'UTC' );
-
-				$datetime = DateTime::createFromFormat( $format, (string) $date, $datetimezone );
+				$datetime = DateTime::createFromFormat( $format, (string) $date );
 
 				if ( false === $datetime ) {
-					$datetime = DateTime::createFromFormat( static::$storage_format, (string) $date, $datetimezone );
+					$datetime = DateTime::createFromFormat( static::$storage_format, (string) $date );
 				}
 
 				if ( false !== $datetime && $return_timestamp ) {

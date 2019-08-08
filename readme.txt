@@ -181,9 +181,12 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 = 2.7.15 - August 9th 2019 =
 
-**Bug Fixes**
-
 **Enhancements**
+* Enhancement: Allow all callables to be passed in magic tags, #5436 (@JoryHogeveen)
+
+**Bug Fixes**
+* Fixed: Always convert database value for date/time fields without timezone to maintain the actual value, #5423 & #5424 (@JoryHogeveen)
+* Fixed: Import from file with absolute path, #5430 (@mistraloz)
 
 = 2.7.14 - July 9th 2019 =
 

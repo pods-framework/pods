@@ -2524,8 +2524,15 @@ class PodsAPI {
 				$field['name'] = $params->name;
 			}
 
-			if ( $old_name !== $field['name'] && false !== $this->field_exists( $params ) ) {
-				return pods_error( sprintf( __( 'Field %1$s already exists, you cannot rename %2$s to that', 'pods' ), $field['name'], $old_name ), $this );
+			if ( $old_name !== $field['name'] ) {
+
+				if ( in_array( $field['name'], pods_reserved_keywords(), true ) ) {
+					return pods_error( sprintf( 'There are certain names that a Pod Field cannot be named and unfortunately, %s is one of them.', $field['name'] ), $this );
+				}
+
+				if ( false !== $this->field_exists( $params ) ) {
+					return pods_error( sprintf( __( 'Field %1$s already exists, you cannot rename %2$s to that', 'pods' ), $field['name'], $old_name ), $this );
+				}
 			}
 
 			if ( ( $id_required || ! empty( $params->id ) ) && ( empty( $old_id ) || $old_id != $params->id ) ) {

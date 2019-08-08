@@ -179,6 +179,12 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.15 - August 9th 2019 =
+
+**Bug Fixes**
+
+**Enhancements**
+
 = 2.7.14 - July 9th 2019 =
 
 **Bug Fixes**

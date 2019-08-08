@@ -1757,7 +1757,7 @@ class PodsAPI {
 			in_array( $params->name, pods_reserved_keywords(), true )
 			&& in_array( pods_v( 'type', $params ), array( 'post_type', 'taxonomy' ), true )
 		) {
-			return pods_error( sprintf( 'There are certain names that a Pod cannot be named and unfortunately, %s is one of them.', $params->name ), $this );
+			return pods_error( sprintf( '%s is reserved for internal WordPress or Pods usage, please try a different name', $params->name ), $this );
 		} else {
 			$pod = array(
 				'id'          => 0,
@@ -2529,7 +2529,7 @@ class PodsAPI {
 			if ( $old_name !== $field['name'] ) {
 
 				if ( in_array( $field['name'], $reserved_keywords, true ) ) {
-					return pods_error( sprintf( '%s is reserved for internal Pods usage, please try a different name', $field['name'] ), $this );
+					return pods_error( sprintf( '%s is reserved for internal WordPress or Pods usage, please try a different name', $field['name'] ), $this );
 				}
 
 				if ( false !== $this->field_exists( $params ) ) {
@@ -2697,7 +2697,7 @@ class PodsAPI {
 			}
 
 			if ( in_array( $field['name'], $reserved_keywords, true ) ) {
-				return pods_error( sprintf( '%s is reserved for internal Pods usage, please try a different name', $field['name'] ), $this );
+				return pods_error( sprintf( '%s is reserved for internal WordPress or Pods usage, please try a different name', $field['name'] ), $this );
 			}
 
 			foreach ( $object_fields as $object_field => $object_field_opt ) {

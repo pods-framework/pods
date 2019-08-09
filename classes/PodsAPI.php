@@ -2511,7 +2511,8 @@ class PodsAPI {
 		$old_options    = null;
 		$old_sister_id  = null;
 
-		$reserved_keywords = pods_reserved_keywords();
+		// @todo pods_reserved_keywords();
+		$reserved_keywords = array( 'id', 'ID' );
 
 		if ( ! empty( $field ) ) {
 			$old_id        = pods_var( 'id', $field );

@@ -2529,7 +2529,6 @@ class PodsAPI {
 			}
 
 			if ( $old_name !== $field['name'] ) {
-
 				if ( in_array( $field['name'], $reserved_keywords, true ) ) {
 					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name' ), $field['name'] ), $this );
 				}

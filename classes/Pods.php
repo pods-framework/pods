@@ -3678,7 +3678,7 @@ class Pods implements Iterator {
 
 		if ( class_exists( 'Pods_Helpers' ) ) {
 			$value = Pods_Helpers::helper( $params, $this );
-		} elseif ( function_exists( $params['helper'] ) ) {
+		} elseif ( is_callable( $params['helper'] ) ) {
 			$disallowed = array(
 				'system',
 				'exec',

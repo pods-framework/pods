@@ -423,6 +423,22 @@ function pods_api_cache() {
 }
 
 /**
+ * Determine if Pods shortcodes can evaluate magic tags.
+ *
+ * @return bool
+ *
+ * @since 2.7.15
+ */
+function pods_shortcode_allow_evaluate_tags() {
+
+	if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Marks a function as deprecated and informs when it has been used.
  *
  * There is a hook deprecated_function_run that will be called that can be used
@@ -810,7 +826,7 @@ function pods_shortcode( $tags, $content = null ) {
 		if ( ! empty( $tags['slug'] ) ) {
 			$id = $tags['slug'];
 
-			if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+			if ( pods_shortcode_allow_evaluate_tags() ) {
 				$id = pods_evaluate_tags( $id, true );
 			}
 		}
@@ -818,7 +834,7 @@ function pods_shortcode( $tags, $content = null ) {
 		if ( ! empty( $tags['id'] ) ) {
 			$id = $tags['id'];
 
-			if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+			if ( pods_shortcode_allow_evaluate_tags() ) {
 				$id = pods_evaluate_tags( $id, true );
 			}
 
@@ -856,7 +872,7 @@ function pods_shortcode( $tags, $content = null ) {
 			if ( 0 < strlen( $tags['where'] ) ) {
 				$params['where'] = $tags['where'];
 
-				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+				if ( pods_shortcode_allow_evaluate_tags() ) {
 					$params['where'] = pods_evaluate_tags( html_entity_decode( $params['where'] ), true, '""' );
 				}
 			}
@@ -864,7 +880,7 @@ function pods_shortcode( $tags, $content = null ) {
 			if ( 0 < strlen( $tags['having'] ) ) {
 				$params['having'] = $tags['having'];
 
-				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+				if ( pods_shortcode_allow_evaluate_tags() ) {
 					$params['having'] = pods_evaluate_tags( html_entity_decode( $params['having'] ), true, '""' );
 				}
 			}

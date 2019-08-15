@@ -3741,6 +3741,10 @@ class PodsAdmin {
 					'label' => __( 'Pods API Cache Activated' ),
 					'value' => ( pods_api_cache() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
+				'pods-shortcode-allow-evaluate-tags'                  => array(
+					'label' => __( 'Pods Shortcode Allow Evaluate Tags' ),
+					'value' => ( pods_shortcode_allow_evaluate_tags() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
 			),
 		);
 

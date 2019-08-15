@@ -389,28 +389,25 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function format_value_display( $value, $options, $js = false ) {
 
-		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
-			$js = false;
-		}
-		$format = $this->format_datetime( $options, $js );
-		if ( $js ) {
-			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
-		}
+		$format = $this->format_display( $options, $js );
 
 		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
 			// Try default storage format.
 			$date = $this->createFromFormat( static::$storage_format, (string) $value );
 
-			// Try field format.
-			$date_local = $this->createFromFormat( $format, (string) $value );
-
 			// Convert to timestamp.
 			if ( $date instanceof DateTime ) {
 				$timestamp = $date->getTimestamp();
-			} elseif ( $date_local instanceof DateTime ) {
-				$timestamp = $date_local->getTimestamp();
 			} else {
-				$timestamp = strtotime( (string) $value );
+				// Try field format.
+				$date_local = $this->createFromFormat( $format, (string) $value );
+
+				if ( $date_local instanceof DateTime ) {
+					$timestamp = $date_local->getTimestamp();
+				} else {
+					// Fallback.
+					$timestamp = strtotime( (string) $value );
+				}
 			}
 
 			$value = date_i18n( $format, $timestamp );
@@ -421,6 +418,29 @@ class PodsField_DateTime extends PodsField {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Build date and/or time display format string based on options
+	 *
+	 * @since 2.7.13
+	 *
+	 * @param  array $options Field options.
+	 * @param  bool  $js      Whether to return format for jQuery UI.
+	 *
+	 * @return string
+	 */
+	public function format_display( $options, $js = false ) {
+
+		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
+			$js = false;
+		}
+		$format = $this->format_datetime( $options, $js );
+		if ( $js ) {
+			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
+		}
+
+		return $format;
 	}
 
 	/**
@@ -655,25 +675,17 @@ class PodsField_DateTime extends PodsField {
 
 		try {
 			if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
-				$timezone = get_option( 'timezone_string' );
 
-				if ( empty( $timezone ) ) {
-					$timezone = timezone_name_from_abbr( '', get_option( 'gmt_offset' ) * HOUR_IN_SECONDS, 0 );
+				$datetime = DateTime::createFromFormat( $format, (string) $date );
+
+				if ( false === $datetime ) {
+					$datetime = DateTime::createFromFormat( static::$storage_format, (string) $date );
 				}
 
-				if ( ! empty( $timezone ) ) {
-					$datetimezone = new DateTimeZone( $timezone );
-
-					$datetime = DateTime::createFromFormat( $format, (string) $date, $datetimezone );
-
-					if ( false === $datetime ) {
-						$datetime = DateTime::createFromFormat( static::$storage_format, (string) $date, $datetimezone );
-					}
-
-					if ( false !== $datetime && $return_timestamp ) {
-						return $datetime;
-					}
+				if ( false !== $datetime && $return_timestamp ) {
+					return $datetime;
 				}
+
 			}//end if
 
 			if ( in_array( $datetime, array( null, false ), true ) ) {

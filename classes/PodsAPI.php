@@ -1720,27 +1720,30 @@ class PodsAPI {
 			$old_fields  = $pod['fields'];
 			$old_options = $pod['options'];
 
-			if ( ! isset( $params->name ) && empty( $params->name ) ) {
+			// Check if name is intentionally not set, set it as current name.
+			if ( ! isset( $params->name ) ) {
 				$params->name = $pod['name'];
 			}
 
-			if ( $old_name !== $params->name && false !== $this->pod_exists( array( 'name' => $params->name ) ) ) {
-				return pods_error( sprintf( __( 'Pod %1$s already exists, you cannot rename %2$s to that', 'pods' ), $params->name, $old_name ), $this );
-			}
+			if ( $old_name !== $params->name ) {
+				if ( false !== $this->pod_exists( array( 'name' => $params->name ) ) ) {
+					return pods_error( sprintf( __( 'Pod %1$s already exists, you cannot rename %2$s to that', 'pods' ), $params->name, $old_name ), $this );
+				}
 
-			if ( $old_name !== $params->name && in_array( $pod['type'], array(
-					'user',
-					'comment',
-					'media'
-				) ) && in_array( $pod['object'], array( 'user', 'comment', 'media' ) ) ) {
-				return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
-			}
+				if (
+					in_array( $pod['type'], array( 'user', 'comment', 'media' ), true )
+					&& in_array( $pod['object'], array( 'user', 'comment', 'media' ), true )
+				) {
+					return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
+				}
 
-			if ( $old_name !== $params->name && in_array( $pod['type'], array(
-					'post_type',
-					'taxonomy'
-				) ) && ! empty( $pod['object'] ) && $pod['object'] == $old_name ) {
-				return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
+				if (
+					in_array( $pod['type'], array( 'post_type', 'taxonomy' ), true )
+					&& ! empty( $pod['object'] )
+					&& $pod['object'] == $old_name
+				) {
+					return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
+				}
 			}
 
 			if ( $old_id != $params->id ) {
@@ -1750,12 +1753,11 @@ class PodsAPI {
 					return pods_error( sprintf( __( 'Pod %s already exists', 'pods' ), $params->name ), $this );
 				}
 			}
-		} elseif ( in_array( $params->name, array(
-				'order',
-				'orderby',
-				'post_type'
-			) ) && 'post_type' === pods_var( 'type', $params ) ) {
-			return pods_error( sprintf( 'There are certain names that a Custom Post Types cannot be named and unfortunately, %s is one of them.', $params->name ), $this );
+		} elseif (
+			in_array( $params->name, pods_reserved_keywords(), true )
+			&& in_array( pods_v( 'type', $params ), array( 'post_type', 'taxonomy' ), true )
+		) {
+			return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
 		} else {
 			$pod = array(
 				'id'          => 0,
@@ -1767,7 +1769,7 @@ class PodsAPI {
 				'object'      => '',
 				'alias'       => '',
 				'options'     => array(),
-				'fields'      => array()
+				'fields'      => array(),
 			);
 		}
 
@@ -2073,7 +2075,22 @@ class PodsAPI {
 
 			pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`" );
 
-			$result = pods_query( "CREATE TABLE `@wp_pods_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
+			/**
+			 * @todo Central function to fetch charset.
+			 * @see PodsUpgrade::install() L64-L76
+			 */
+			$charset_collate = 'DEFAULT CHARSET utf8';
+
+			global $wpdb;
+			if ( ! empty( $wpdb->charset ) ) {
+				$charset_collate = "DEFAULT CHARSET {$wpdb->charset}";
+			}
+
+			if ( ! empty( $wpdb->collate ) ) {
+				$charset_collate .= " COLLATE {$wpdb->collate}";
+			}
+
+			$result = pods_query( "CREATE TABLE `@wp_pods_{$params->name}` (" . implode( ', ', $definitions ) . ") {$charset_collate}", $this );
 
 			if ( empty( $result ) ) {
 				return pods_error( __( 'Cannot add Database Table for Pod', 'pods' ), $this );
@@ -2362,14 +2379,20 @@ class PodsAPI {
 			PodsMeta::$comment[ $pod['id'] ] = $pod;
 		}
 
-		// Register Post Types / Taxonomies post-registration from PodsInit
-		if ( ! empty( PodsInit::$content_types_registered ) && in_array( $pod['type'], array(
-				'post_type',
-				'taxonomy'
-			) ) && empty( $pod['object'] ) ) {
-			global $pods_init;
+		if ( ! class_exists( 'PodsInit' ) ) {
+			pods_init();
+		}
 
-			$pods_init->setup_content_types( true );
+		// Register Post Types / Taxonomies post-registration from PodsInit
+		if (
+			! empty( PodsInit::$content_types_registered )
+			&& in_array( $pod['type'], array(
+		     	'post_type',
+				'taxonomy'
+			) )
+			&& empty( $pod['object'] )
+		) {
+			pods_init()->setup_content_types( true );
 		}
 
 		if ( true === $db ) {
@@ -2488,6 +2511,9 @@ class PodsAPI {
 		$old_options    = null;
 		$old_sister_id  = null;
 
+		// @todo pods_reserved_keywords();
+		$reserved_keywords = array( 'id', 'ID' );
+
 		if ( ! empty( $field ) ) {
 			$old_id        = pods_var( 'id', $field );
 			$old_name      = pods_clean_name( $field['name'], true, ( 'meta' === $pod['storage'] ? false : true ) );
@@ -2501,8 +2527,14 @@ class PodsAPI {
 				$field['name'] = $params->name;
 			}
 
-			if ( $old_name !== $field['name'] && false !== $this->field_exists( $params ) ) {
-				return pods_error( sprintf( __( 'Field %1$s already exists, you cannot rename %2$s to that', 'pods' ), $field['name'], $old_name ), $this );
+			if ( $old_name !== $field['name'] ) {
+				if ( in_array( $field['name'], $reserved_keywords, true ) ) {
+					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
+				}
+
+				if ( false !== $this->field_exists( $params ) ) {
+					return pods_error( sprintf( __( 'Field %1$s already exists, you cannot rename %2$s to that', 'pods' ), $field['name'], $old_name ), $this );
+				}
 			}
 
 			if ( ( $id_required || ! empty( $params->id ) ) && ( empty( $old_id ) || $old_id != $params->id ) ) {
@@ -2664,8 +2696,8 @@ class PodsAPI {
 				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 			}
 
-			if ( in_array( $field['name'], array( 'id', 'ID' ) ) ) {
-				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
+			if ( in_array( $field['name'], $reserved_keywords, true ) ) {
+				return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 			}
 
 			foreach ( $object_fields as $object_field => $object_field_opt ) {
@@ -3400,11 +3432,10 @@ class PodsAPI {
 
 		$fields_active = array();
 		$custom_data   = array();
+		$custom_fields = array();
 
 		// Find the active fields (loop through $params->data to retain order)
 		if ( ! empty( $params->data ) && is_array( $params->data ) ) {
-			$custom_fields = array();
-
 			foreach ( $params->data as $field => $value ) {
 				if ( isset( $object_fields[ $field ] ) ) {
 					$object_fields[ $field ]['value'] = $value;
@@ -5617,6 +5648,7 @@ class PodsAPI {
 
 		/**
 		 * @var $pods_init \PodsInit
+		 * @todo Use pods_init() function?
 		 */
 		global $pods_init;
 
@@ -5936,7 +5968,7 @@ class PodsAPI {
 		$bypass_cache     = false;
 
 		// Get current language data
-		$lang_data = PodsInit::$i18n->get_current_language_data();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 		if ( $lang_data ) {
 			if ( ! empty( $lang_data['language'] ) ) {
@@ -6259,7 +6291,7 @@ class PodsAPI {
 		$current_language = false;
 
 		// Get current language data
-		$lang_data = PodsInit::$i18n->get_current_language_data();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 		if ( $lang_data ) {
 			if ( ! empty( $lang_data['language'] ) ) {
@@ -8264,7 +8296,7 @@ class PodsAPI {
 		$current_language_tt_id = 0;
 
 		// Get current language data
-		$lang_data = PodsInit::$i18n->get_current_language_data();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 		if ( $lang_data ) {
 			if ( ! empty( $lang_data['language'] ) ) {

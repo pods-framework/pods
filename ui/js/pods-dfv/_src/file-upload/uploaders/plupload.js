@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-/*global jQuery, _, Backbone, Marionette, wp, plupload, PodsI18n */
+/*global jQuery, _, Backbone, PodsMn, wp, plupload, PodsI18n */
 import { PodsFileUploader } from 'pods-dfv/_src/file-upload/uploaders/pods-file-uploader';
 import { FileUploadQueueModel, FileUploadQueue } from 'pods-dfv/_src/file-upload/views/file-upload-queue';
 

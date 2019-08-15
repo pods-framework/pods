@@ -1843,6 +1843,7 @@ class PodsInit {
 		$conditionals[] = 'pods_strict';
 		$conditionals[] = 'pods_allow_deprecated';
 		$conditionals[] = 'pods_api_cache';
+		$conditionals[] = 'pods_shortcode_allow_evaluate_tags';
 		return $conditionals;
 	}
 }

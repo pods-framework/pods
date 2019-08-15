@@ -312,17 +312,31 @@ class PodsField_Number extends PodsField {
 
 		// Optionally remove trailing decimal zero's.
 		if ( pods_v( static::$type . '_format_soft', $options, false ) ) {
-			$parts = explode( $dot, $value );
-			if ( isset( $parts[1] ) ) {
-				$parts[1] = rtrim( $parts[1], '0' );
-				if ( empty( $parts[1] ) ) {
-					unset( $parts[1] );
-				}
-			}
-			$value = implode( $dot, $parts );
+			$value = $this->trim_decimals( $value, $dot );
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Trim trailing 0 decimals from numbers.
+	 *
+	 * @since 2.7.15
+	 *
+	 * @param string $value
+	 * @param string $dot
+	 *
+	 * @return string
+	 */
+	public function trim_decimals( $value, $dot ) {
+		$parts = explode( $dot, $value );
+		if ( isset( $parts[1] ) ) {
+			$parts[1] = rtrim( $parts[1], '0' );
+			if ( empty( $parts[1] ) ) {
+				unset( $parts[1] );
+			}
+		}
+		return implode( $dot, $parts );
 	}
 
 	/**

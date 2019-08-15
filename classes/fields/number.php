@@ -311,11 +311,13 @@ class PodsField_Number extends PodsField {
 		}
 
 		// Optionally remove trailing decimal zero's.
-		if ( pods_v( static::$type . '_format_soft', $options, 0 ) ) {
+		if ( pods_v( static::$type . '_format_soft', $options, false ) ) {
 			$parts = explode( $dot, $value );
 			if ( isset( $parts[1] ) ) {
 				$parts[1] = rtrim( $parts[1], '0' );
-				$parts    = array_filter( $parts );
+				if ( empty( $parts[1] ) ) {
+					unset( $parts[1] );
+				}
 			}
 			$value = implode( $dot, $parts );
 		}

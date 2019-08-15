@@ -279,12 +279,20 @@ class PodsField_Number extends PodsField {
 		$dot         = $format_args['dot'];
 		$decimals    = $format_args['decimals'];
 
-		$value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+		if ( 'slider' !== pods_v( static::$type . '_format_type', $options ) ) {
+			// Slider only supports `1234.00` format so no need for replacing characters.
+			$value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+		}
 		$value = trim( $value );
 
 		$value = preg_replace( '/[^0-9\.\-]/', '', $value );
 
 		$value = number_format( (float) $value, $decimals, '.', '' );
+
+		// Optionally remove trailing decimal zero's.
+		if ( pods_v( static::$type . '_format_soft', $options, false ) ) {
+			$value = $this->trim_decimals( $value, '.' );
+		}
 
 		return $value;
 	}

@@ -1664,7 +1664,7 @@ class PodsAPI {
 	 * $params['object'] string The object being extended (if any)
 	 * $params['storage'] string The Pod storage
 	 * $params['options'] array Options
-	 * $params['extend'] bool Extending an existing content type?
+	 * $params['create_extend'] string Create or Extend a Content Type
 	 *
 	 * @param array    $params    An associative array of parameters
 	 * @param bool     $sanitized (optional) Decides whether the params have been sanitized before being passed, will

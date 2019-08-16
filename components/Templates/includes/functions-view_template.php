@@ -273,6 +273,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 
 		$field = $pod->fields[ $field_name ];
 
+		// Force array even for single items since the logic below is using loops.
 		if ( 'single' === pods_v( $field['type'] . '_format_type', $field['options'], 'single' ) && ! isset( $entries[0] ) ) {
 			$entries = array( $entries );
 		}

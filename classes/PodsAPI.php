@@ -1679,7 +1679,7 @@ class PodsAPI {
 		$tableless_field_types    = PodsForm::tableless_field_types();
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 
-		$extend = ( is_array( $params ) && ! empty( $params['create_extend'] ) && 'extend' === $params['create_extend']  );
+		$extend = ( is_array( $params ) && ! empty( $params['create_extend'] ) && 'extend' === $params['create_extend'] );
 		unset( $params['create_extend'] );
 
 		$load_params = (object) $params;
@@ -1767,7 +1767,8 @@ class PodsAPI {
 				in_array( $params->name, pods_reserved_keywords(), true )
 				&& in_array( pods_v( 'type', $params ), array( 'post_type', 'taxonomy' ), true )
 			) {
-			       $valid_name = false;
+				$valid_name = false;
+
 				if ( $extend ) {
 					if ( 'post_type' === pods_v( 'type', $params ) ) {
 						$valid_name = in_array( $params->name, get_post_types(), true );
@@ -1775,6 +1776,7 @@ class PodsAPI {
 						$valid_name = in_array( $params->name, get_taxonomies(), true );
 					}
 				}
+
 				if ( ! $valid_name ) {
 					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
 				}

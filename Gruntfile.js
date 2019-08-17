@@ -3,40 +3,16 @@ module.exports = function ( grunt ) {
 	'use strict';
 
 	//setup file list for copying/ not copying for SVN
-	var files_list = [
-		'**',
-		'!.git/**',
-		'!.idea/**',
-		'!.sass-cache/**',
-		'!bin/**',
-		'!node_modules/**',
-		'!build/**',
-		'!sources/**',
-		'!tests/**',
-		'!vendor/**',
-		'!.babelrc',
-		'!.gitattributes',
-		'!.gitignore',
-		'!.gitmodules',
-		'!.jshintrc',
-		'!.scrutinizer.yml',
-		'!.travis.yml',
-		'!audit.sh',
-		'!CODEOWNERS',
-		'!composer.json',
-		'!composer.lock',
-		'!CONTRIBUTING.md',
-		'!git-workflow.md',
-		'!grunt-workflow.md',
-		'!Gruntfile.js',
-		'!package.json',
-		'!package-lock.json',
-		'!phpcs.ruleset.xml',
-		'!phpunit.xml.dist',
-		'!README.md',
-		'!report-full.txt',
-		'!report-source.txt',
-		'!rollup.config.js'
+	const files_list = [
+		'classes/**',
+		'components/**',
+		'deprecated/**',
+		'includes/**',
+		'sql/**',
+		'ui/**',
+		'init.php',
+		'license.txt',
+		'readme.txt'
 	];
 
 	// load all grunt tasks in package.json matching the `grunt-*` pattern
@@ -68,8 +44,9 @@ module.exports = function ( grunt ) {
 		gittag: {
 			addtag: {
 				options: {
-					tag    : '2.x/<%= pkg.version %>',
-					message: 'Pods <%= pkg.version %>'
+					tag    : '<%= pkg.version %>',
+					message: 'Pods <%= pkg.version %>',
+					force  : true
 				}
 			}
 		},
@@ -99,7 +76,8 @@ module.exports = function ( grunt ) {
 				options: {
 					tags  : true,
 					remote: 'origin',
-					branch: 'master'
+					branch: 'master',
+					force  : true
 				}
 			}
 		},
@@ -247,7 +225,7 @@ module.exports = function ( grunt ) {
 	// release tasks
 	grunt.registerTask( 'version_number', [ 'replace:version_readme_txt', 'replace:version_init_php' ] );
 	grunt.registerTask( 'pre_vcs', [ 'branch_name_master', 'version_number', 'clean:post_build', 'mkdir:build' ] );
-	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'push_svn', 'svn_copy' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
-	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );
+	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'push_svn', 'svn_copy' ] );
+	grunt.registerTask( 'release', [ 'pre_vcs', 'do_git', 'do_svn', 'clean:post_build' ] );
 };

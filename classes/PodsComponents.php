@@ -111,7 +111,7 @@ class PodsComponents {
 		foreach ( $this->components as $component => $component_data ) {
 			$component_id = $component_data['ID'];
 
-			$component_data['MustUse'] = apply_filters( 'pods_component_require_' . $component_id, $component_data['MustUse'], $component_data );
+			$component_data['MustUse'] = apply_filters( "pods_component_require_{$component_id}", $component_data['MustUse'], $component_data );
 
 			if ( empty( $component_data['MustUse'] ) && ( ! isset( $this->settings['components'][ $component ] ) || 0 === $this->settings['components'][ $component ] ) ) {
 				continue;
@@ -254,7 +254,7 @@ class PodsComponents {
 		foreach ( (array) $this->components as $component => $component_data ) {
 			$component_id = $component_data['ID'];
 
-			$component_data['MustUse'] = apply_filters( 'pods_component_require_' . $component_id, $component_data['MustUse'], $component_data );
+			$component_data['MustUse'] = apply_filters( "pods_component_require_{$component_id}", $component_data['MustUse'], $component_data );
 
 			if ( false === $component_data['MustUse'] && ( ! isset( $this->settings['components'][ $component ] ) || 0 === $this->settings['components'][ $component ] ) ) {
 				continue;
@@ -467,19 +467,19 @@ class PodsComponents {
 
 				$component_data['ID'] = sanitize_title( $component_data['ID'] );
 
-				if ( 'on' === strtolower( $component_data['DeveloperMode'] ) || 1 === $component_data['DeveloperMode'] ) {
+				if ( 'on' === strtolower( $component_data['DeveloperMode'] ) && '1' === $component_data['DeveloperMode'] ) {
 					$component_data['DeveloperMode'] = true;
 				} else {
 					$component_data['DeveloperMode'] = false;
 				}
 
-				if ( 'on' === strtolower( $component_data['TablelessMode'] ) || 1 === $component_data['TablelessMode'] ) {
+				if ( 'on' === strtolower( $component_data['TablelessMode'] ) && '1' === $component_data['TablelessMode'] ) {
 					$component_data['TablelessMode'] = true;
 				} else {
 					$component_data['TablelessMode'] = false;
 				}
 
-				$component_data['External'] = (boolean) $external;
+				$component_data['External'] = $external;
 
 				if ( 'on' === strtolower( $component_data['MustUse'] ) || '1' === $component_data['MustUse'] ) {
 					$component_data['MustUse'] = true;
@@ -760,7 +760,7 @@ class PodsComponents {
 		// Cleaning up $params
 		unset( $params->action, $params->component, $params->method, $params->_wpnonce );
 
-		$params = (object) apply_filters( 'pods_component_ajax_' . $component . '_' . $method, $params, $component, $method );
+		$params = (object) apply_filters( "pods_component_ajax_{$component}_{$method}", $params, $component, $method );
 
 		$output = false;
 

@@ -789,7 +789,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = apply_filters( 'pods_var_post_id', $post_id, $default, $var, $strict, $params );
 				break;
 			default:
-				$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );
+				$output = apply_filters( "pods_var_{$type}", $default, $var, $strict, $params );
 		}//end switch
 	}//end if
 
@@ -977,7 +977,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 				$ret = $pods->save( $var, $value );
 			}
 		} else {
-			$ret = apply_filters( 'pods_var_set_' . $type, $value, $var );
+			$ret = apply_filters( "pods_var_set_{$type}", $value, $var );
 		}//end if
 	}//end if
 
@@ -1662,7 +1662,19 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			} elseif ( in_array( $params->field['pick_object'], $simple_tableless_objects, true ) ) {
 				$simple = true;
 			} else {
-				$table = pods_api()->get_table_info( $params->field['pick_object'], $params->field['pick_val'], null, null, $params->field );
+				$pick_object = pods_v( 'pick_object', $params->field );
+				$pick_val    = pods_v( 'pick_val', $params->field );
+				$table       = null;
+
+				if ( ! empty( $pick_object ) && ( ! empty( $pick_val ) || in_array( $pick_object, array( 'user', 'media', 'comment' ), true ) ) ) {
+					$table = pods_api()->get_table_info(
+						$pick_object,
+						$pick_val,
+						null,
+						null,
+						$params->field
+					);
+				}
 
 				if ( ! empty( $table ) ) {
 					if ( null === $params->field_index ) {
@@ -1688,6 +1700,16 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	}
 
 	$last = '';
+
+	// If something happens with table info, and this is a single select relationship, avoid letting user pass through.
+	if ( isset( $value['user_pass'] ) ) {
+		unset( $value['user_pass'] );
+
+		// Since we know this is a single select, just pass display name through as the fallback.
+		if ( isset( $value['display_name'] ) ) {
+			$value = array( $value['display_name'] );
+		}
+	}
 
 	$original_value = $value;
 

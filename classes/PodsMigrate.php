@@ -1315,7 +1315,7 @@ class PodsMigrate {
 		$path = ABSPATH;
 
 		// Detect path if it is set in the file param.
-		if ( false !== strpos( $file, '/' ) ) {
+		if ( false !== strpos( $file, DIRECTORY_SEPARATOR ) ) {
 			$path = dirname( $file );
 			$file = basename( $file );
 		}
@@ -1334,7 +1334,7 @@ class PodsMigrate {
 
 		$migrate = new self( $format, null, $migrate_data );
 
-		$raw_data = file_get_contents( $file );
+		$raw_data = file_get_contents( $path . DIRECTORY_SEPARATOR . $file );
 
 		// Handle processing the raw data from the format needed.
 		$data = $migrate->parse( $raw_data );

@@ -85,7 +85,9 @@ foreach ( $pod[ 'fields' ] as $_field => $_data ) {
     }
 }
 
-$field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );
+$pod_name = $pod[ 'name' ];
+
+$field_defaults = apply_filters( 'pods_field_defaults', apply_filters( "pods_field_defaults_{$pod_name}", $field_defaults, $pod ) );
 
 $pick_table = pods_transient_get( 'pods_tables' );
 
@@ -115,9 +117,9 @@ $field_settings = array(
     'sister_id' => array( '' => __( 'No Related Fields Found', 'pods' ) )
 );
 
-$field_settings = apply_filters( 'pods_field_settings', apply_filters( 'pods_field_settings_' . $pod[ 'name' ], $field_settings, $pod ) );
+$field_settings = apply_filters( 'pods_field_settings', apply_filters( "pods_field_settings_{$pod_name}", $field_settings, $pod ) );
 
-$pod[ 'fields' ] = apply_filters( 'pods_fields_edit', apply_filters( 'pods_fields_edit_' . $pod[ 'name' ], $pod[ 'fields' ], $pod ) );
+$pod[ 'fields' ] = apply_filters( 'pods_fields_edit', apply_filters( "pods_fields_edit_{$pod_name}", $pod[ 'fields' ], $pod ) );
 
 global $wpdb;
 $max_length_name = 64;

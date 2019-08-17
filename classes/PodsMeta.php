@@ -451,8 +451,8 @@ class PodsMeta {
 	 */
 	public function integrations() {
 
-		// `ac_is_version_gte` is since AC 3.0+
-		if ( ! function_exists( 'ac_is_version_gte' ) ) {
+		// `AC()` is AC 3.0+, && `AC_FILE` is AC 3.2+
+		if ( ! function_exists( 'AC' ) && ! defined( 'AC_FILE' ) ) {
 			// Codepress Admin Columns < 2.x
 			add_filter( 'cac/storage_model/meta_keys', array( $this, 'cpac_meta_keys' ), 10, 2 );
 			add_filter( 'cac/post_types', array( $this, 'cpac_post_types' ), 10, 1 );
@@ -788,9 +788,11 @@ class PodsMeta {
 			'priority' => $priority
 		);
 
+		$pod_type = $pod['type'];
+
 		// Filter group data, pass vars separately for reference down the line (in case array changed by other filter)
-		$group = apply_filters( 'pods_meta_group_add_' . $pod['type'] . '_' . $object_name, $group, $pod, $label, $fields );
-		$group = apply_filters( 'pods_meta_group_add_' . $pod['type'], $group, $pod, $label, $fields );
+		$group = apply_filters( "pods_meta_group_add_{$pod_type}_{$object_name}", $group, $pod, $label, $fields );
+		$group = apply_filters( "pods_meta_group_add_{$pod_type}", $group, $pod, $label, $fields );
 		$group = apply_filters( 'pods_meta_group_add', $group, $pod, $label, $fields );
 
 		self::$groups[ $pod['type'] ][ $object_name ][] = $group;
@@ -909,6 +911,12 @@ class PodsMeta {
 	 */
 	public function groups_get( $type, $name, $default_fields = null ) {
 
+		static $groups_cache = array();
+
+		if ( isset( $groups_cache[ $type . '/' . $name ] ) ) {
+			return $groups_cache[ $type . '/' . $name ];
+		}
+
 		if ( 'post_type' == $type && 'attachment' == $name ) {
 			$type = 'media';
 			$name = 'media';
@@ -968,7 +976,9 @@ class PodsMeta {
 		}
 
 		if ( $pod['type'] != $type ) {
-			return array();
+			$groups_cache[ $type . '/' . $name ] = array();
+
+			return $groups_cache[ $type . '/' . $name ];
 		}
 
 		$groups = array(
@@ -1007,7 +1017,11 @@ class PodsMeta {
 		 *
 		 * @since 2.6.6
 		 */
-		return apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
+		$groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
+
+		$groups_cache[ $type . '/' . $name ] = $groups;
+
+		return $groups_cache[ $type . '/' . $name ];
 	}
 
 	/**
@@ -1093,7 +1107,7 @@ class PodsMeta {
 			$pod_type = 'media';
 		}
 
-		do_action( 'pods_meta_' . __FUNCTION__, $post );
+		do_action( 'pods_meta_meta_post', $post );
 
 		$hidden_fields = array();
 
@@ -1169,7 +1183,8 @@ class PodsMeta {
 					$dep_classes = $dep_options['classes'];
 					$dep_data    = $dep_options['data'];
 
-					do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field['name'], $post, $field, $pod );
+					$field_name = $field['name'];
+					do_action( "pods_meta_meta_post_{$field_name}", $post, $field, $pod );
 					?>
 					<tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?> <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>">
 					<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
@@ -1187,14 +1202,14 @@ class PodsMeta {
 					</td>
 					</tr>
 					<?php
-					do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field['name'] . '_post', $post, $field, $pod );
+					do_action( "pods_meta_meta_post_{$field_name}_post", $post, $field, $pod );
 				}
 			}
 			?>
 		</table>
 
 		<?php
-		do_action( 'pods_meta_' . __FUNCTION__ . '_post', $post );
+		do_action( 'pods_meta_meta_post_post', $post );
 
 		foreach ( $hidden_fields as $hidden_field ) {
 			$field_data = $hidden_field['field'];
@@ -1484,7 +1499,7 @@ class PodsMeta {
 			}
 		}
 
-		$form_fields = apply_filters( 'pods_meta_' . __FUNCTION__, $form_fields );
+		$form_fields = apply_filters( 'pods_meta_meta_media', $form_fields );
 
 		return $form_fields;
 	}
@@ -1635,7 +1650,7 @@ class PodsMeta {
 		wp_enqueue_style( 'pods-form' );
 		wp_enqueue_script( 'pods' );
 
-		do_action( 'pods_meta_' . __FUNCTION__, $tag, $taxonomy );
+		do_action( 'pods_meta_meta_taxonomy', $tag, $taxonomy );
 
 		$taxonomy_name = $taxonomy;
 
@@ -1713,7 +1728,7 @@ class PodsMeta {
 			}
 		}
 
-		do_action( 'pods_meta_' . __FUNCTION__ . '_post', $tag, $taxonomy );
+		do_action( 'pods_meta_meta_taxonomy_post', $tag, $taxonomy );
 	}
 
 	/**
@@ -1861,7 +1876,7 @@ class PodsMeta {
 		wp_enqueue_style( 'pods-form' );
 		wp_enqueue_script( 'pods' );
 
-		do_action( 'pods_meta_' . __FUNCTION__, $user_id );
+		do_action( 'pods_meta_meta_user', $user_id );
 
 		$groups = $this->groups_get( 'user', 'user' );
 
@@ -1948,7 +1963,7 @@ class PodsMeta {
 			}
 		}
 
-		do_action( 'pods_meta_' . __FUNCTION__ . '_post', $user_id );
+		do_action( 'pods_meta_meta_user_post', $user_id );
 	}
 
 	/**
@@ -2089,7 +2104,7 @@ class PodsMeta {
 		wp_enqueue_style( 'pods-form' );
 		wp_enqueue_script( 'pods' );
 
-		do_action( 'pods_meta_' . __FUNCTION__, $commenter, $user_identity );
+		do_action( 'pods_meta_meta_comment_new_logged_in', $commenter, $user_identity );
 
 		$groups = $this->groups_get( 'comment', 'comment' );
 
@@ -2147,7 +2162,7 @@ class PodsMeta {
 			}
 		}
 
-		do_action( 'pods_meta_' . __FUNCTION__ . '_post', $commenter, $user_identity );
+		do_action( 'pods_meta_meta_comment_new_logged_in_post', $commenter, $user_identity );
 	}
 
 	/**
@@ -2220,7 +2235,7 @@ class PodsMeta {
 			}
 		}
 
-		$form_fields = apply_filters( 'pods_meta_' . __FUNCTION__, $form_fields );
+		$form_fields = apply_filters( 'pods_meta_meta_comment_new', $form_fields );
 
 		return $form_fields;
 	}
@@ -2287,7 +2302,7 @@ class PodsMeta {
 		wp_enqueue_style( 'pods-form' );
 		wp_enqueue_script( 'pods' );
 
-		do_action( 'pods_meta_' . __FUNCTION__, $comment, $metabox );
+		do_action( 'pods_meta_meta_comment', $comment, $metabox );
 
 		$hidden_fields = array();
 
@@ -2352,7 +2367,7 @@ class PodsMeta {
 			echo PodsForm::field( 'pods_meta_' . $field_data['name'], $hidden_field['value'], 'hidden', $field_data );
 		}
 
-		do_action( 'pods_meta_' . __FUNCTION__ . '_post', $comment, $metabox );
+		do_action( 'pods_meta_meta_comment_post', $comment, $metabox );
 	}
 
 	/**

@@ -90,7 +90,7 @@ class PodsUpgrade {
 
 			// Auto activate component.
 			if ( ! PodsInit::$components ) {
-				if ( ! defined( 'PODS_LIGHT' ) || ! PODS_LIGHT ) {
+				if ( ! pods_light() ) {
 					PodsInit::$components = pods_components();
 				}
 			}

@@ -161,7 +161,7 @@ class PodsInit {
 			return;
 		}
 
-		if ( ! defined( 'PODS_LIGHT' ) || ! PODS_LIGHT ) {
+		if ( ! pods_light() ) {
 			self::$components = pods_components();
 		}
 
@@ -317,10 +317,16 @@ class PodsInit {
 		// Marionette dependencies for MV fields
 		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '2.0.0', true );
 		wp_register_script(
-			'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.min.js', array(
+			'marionette',
+			PODS_URL . 'ui/js/marionette/backbone.marionette.min.js',
+			array(
 				'backbone',
 				'backbone.radio',
 			), '3.3.1', true
+		);
+		wp_add_inline_script(
+			'marionette',
+			'PodsMn = Backbone.Marionette.noConflict();'
 		);
 
 		// MV stuff
@@ -1333,7 +1339,10 @@ class PodsInit {
 		register_activation_hook( PODS_DIR . 'init.php', array( $this, 'activate' ) );
 		register_deactivation_hook( PODS_DIR . 'init.php', array( $this, 'deactivate' ) );
 
-		add_action( 'wpmu_new_blog', array( $this, 'new_blog' ), 10, 6 );
+		// WP 5.1+.
+		add_action( 'wp_insert_site', array( $this, 'new_blog' ) );
+		// WP < 5.1. (Gets automaticaly removed if `wp_insert_site` is called.
+		add_action( 'wpmu_new_blog', array( $this, 'new_blog' ) );
 
 		if ( empty( self::$version ) || version_compare( self::$version, PODS_VERSION, '<' ) || version_compare( self::$version, PODS_DB_VERSION, '<=' ) || self::$upgrade_needed ) {
 			$this->setup();
@@ -1411,14 +1420,18 @@ class PodsInit {
 	}
 
 	/**
-	 * @param $_blog_id
-	 * @param $user_id
-	 * @param $domain
-	 * @param $path
-	 * @param $site_id
-	 * @param $meta
+	 * @todo  Remove `wpmu_new_blog` once support for WP < 5.1 gets dropped.
+	 * @param WP_Site|int $_blog_id
 	 */
-	public function new_blog( $_blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+	public function new_blog( $_blog_id ) {
+		// WP 5.1+.
+		if ( doing_action( 'wp_insert_site' ) ) {
+			remove_action( 'wpmu_new_blog', array( $this, 'new_blog' ) );
+		}
+
+		if ( class_exists( 'WP_Site' ) && $_blog_id instanceof WP_Site ) {
+			$_blog_id = $_blog_id->id;
+		}
 
 		if ( is_multisite() && is_plugin_active_for_network( basename( PODS_DIR ) . '/init.php' ) ) {
 			$this->setup( $_blog_id );
@@ -1855,6 +1868,7 @@ class PodsInit {
 	public function filter_query_monitor_conditionals( $conditionals ) {
 		$conditionals[] = 'pods_developer';
 		$conditionals[] = 'pods_tableless';
+		$conditionals[] = 'pods_light';
 		$conditionals[] = 'pods_strict';
 		$conditionals[] = 'pods_allow_deprecated';
 		$conditionals[] = 'pods_api_cache';

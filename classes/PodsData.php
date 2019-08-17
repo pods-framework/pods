@@ -1999,8 +1999,12 @@ class PodsData {
 			$id   = pods_absint( $row );
 
 			if ( ! is_numeric( $row ) || 0 === strpos( $row, '0' ) || $row != preg_replace( '/[^0-9]/', '', $row ) ) {
-				$mode = 'slug';
-				$id   = $row;
+				if ( $this->id && is_numeric( $this->id ) ) {
+					$id = $this->id;
+				} else {
+					$mode = 'slug';
+					$id   = $row;
+				}
 			}
 
 			$row = false;
@@ -2285,8 +2289,8 @@ class PodsData {
 		 */
 		global $wpdb;
 
-		if ( $wpdb->show_errors ) {
-			self::$display_errors = true;
+		if ( isset( $wpdb->show_errors ) ) {
+			self::$display_errors = (bool) $wpdb->show_errors;
 		}
 
 		$display_errors = self::$display_errors;

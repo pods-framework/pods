@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, select2, sprintf, wp, ajaxurl, PodsI18n */
+/*global jQuery, _, Backbone, PodsMn, select2, sprintf, wp, ajaxurl, PodsI18n */
 
 // Note: this is a template-less view
 import { PodsFieldListView, PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
@@ -54,7 +54,7 @@ export const Optgroup = PodsFieldListView.extend( {
  *
  * @extends Backbone.View
  */
-export const SelectView = Marionette.CollectionView.extend( {
+export const SelectView = PodsMn.CollectionView.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
 
 	tagName: 'select',
@@ -230,12 +230,18 @@ export const SelectView = Marionette.CollectionView.extend( {
 	},
 
 	/**
-	 * @var {RelationshipCollection} this.collection
 	 *
 	 * @returns {boolean} true if unlimited selections are allowed or we're below the selection limit
 	 */
 	validateSelectionLimit: function () {
 		let limit, numSelected;
+		const format_type = this.fieldConfig.pick_format_type;
+		const format_single = this.fieldConfig.pick_format_single;
+
+		// Selection limit should be clear if the placeholder is selected in a single-select dropdown
+		if ( "" === this.$el.val() && "single" === format_type && "dropdown" === format_single ) {
+			return true;
+		}
 
 		limit = +this.fieldConfig.pick_limit;  // Unary plus will implicitly cast to number
 		numSelected = this.collection.filterBySelected().length;

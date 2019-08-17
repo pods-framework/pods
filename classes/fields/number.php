@@ -283,6 +283,7 @@ class PodsField_Number extends PodsField {
 			// Slider only supports `1234.00` format so no need for replacing characters.
 			$value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
 		}
+
 		$value = trim( $value );
 
 		$value = preg_replace( '/[^0-9\.\-]/', '', $value );
@@ -338,12 +339,15 @@ class PodsField_Number extends PodsField {
 	 */
 	public function trim_decimals( $value, $dot ) {
 		$parts = explode( $dot, $value );
+
 		if ( isset( $parts[1] ) ) {
 			$parts[1] = rtrim( $parts[1], '0' );
+
 			if ( empty( $parts[1] ) ) {
 				unset( $parts[1] );
 			}
 		}
+
 		return implode( $dot, $parts );
 	}
 

@@ -181,6 +181,15 @@ class PodsField_DateTime extends PodsField {
 					'hh_mm_ss' => date_i18n( 'H:i:s' ),
 				),
 			),
+			static::$type . '_year_range'      => array(
+				'label'   => __( 'Year range', 'pods' ),
+				'default' => '',
+				'type'    => 'text',
+				'help'    => sprintf(
+					'<a href="https://api.jqueryui.com/datepicker/#option-yearRange" target="_blank">%1$s</a>',
+					esc_html__( 'jQuery UI datepicker documentation', 'pods' )
+				),
+			),
 			static::$type . '_allow_empty'           => array(
 				'label'   => __( 'Allow empty value?', 'pods' ),
 				'default' => 1,

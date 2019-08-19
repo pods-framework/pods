@@ -1769,6 +1769,8 @@ class PodsAPI {
 			) {
 				$valid_name = false;
 
+				// Only if it's extending an existing content type then these
+				// names are still allowed, even if they are reserved.
 				if ( $extend ) {
 					if ( 'post_type' === pods_v( 'type', $params ) ) {
 						$valid_name = in_array( $params->name, get_post_types(), true );

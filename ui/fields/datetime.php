@@ -33,6 +33,9 @@ $args = array(
 	'timeFormat'  => PodsForm::field_method( 'datetime', 'format_time', $options, true ),
 	'dateFormat'  => PodsForm::field_method( 'datetime', 'format_date', $options, true ),
 	'ampm'        => false,
+	// Force AM/PM names to prevent issues with PHP date().
+	'amNames'     => array( 'AM' ),
+	'pmNames'     => array( 'PM' ),
 	'changeMonth' => true,
 	'changeYear'  => true,
 	'firstDay'    => (int) get_option( 'start_of_week', 0 ),

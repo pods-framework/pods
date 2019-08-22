@@ -345,7 +345,7 @@ class PodsField_OEmbed extends PodsField {
 			return $this->providers;
 		}
 
-		if ( file_exists( ABSPATH . WPINC . '/class-oembed.php' ) ) {
+		if ( ! class_exists( 'WP_oEmbed' ) && file_exists( ABSPATH . WPINC . '/class-oembed.php' ) ) {
 			require_once ABSPATH . WPINC . '/class-oembed.php';
 		}
 

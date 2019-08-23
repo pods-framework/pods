@@ -5,12 +5,17 @@
  * @var        $value
  */
 
-wp_enqueue_script( 'jquery-ui-datepicker' );
-wp_enqueue_script( 'jquery-ui-timepicker' );
-wp_enqueue_style( 'pods-styles' );
-wp_enqueue_style( 'jquery-ui-timepicker' );
+$use_time = false;
 
-PodsForm::field_method( 'datetime', 'enqueue_jquery_ui_i18n' );
+wp_enqueue_script( 'jquery-ui-datepicker' );
+wp_enqueue_style( 'pods-styles' );
+if ( 'time' === $form_field_type || 'datetime' === $form_field_type ) {
+	$use_time = true;
+	wp_enqueue_script( 'jquery-ui-timepicker' );
+	wp_enqueue_style( 'jquery-ui-timepicker' );
+}
+
+PodsForm::field_method( $form_field_type, 'enqueue_jquery_ui_i18n' );
 
 $attributes = array();
 
@@ -23,21 +28,18 @@ if ( 1 == pods_var( $form_field_type . '_html5', $options ) ) {
 $attributes['type']     = $type;
 $attributes['tabindex'] = 2;
 
-$format = PodsForm::field_method( 'datetime', 'format_datetime', $options );
+$format = PodsForm::field_method( $form_field_type, 'format_' . $form_field_type, $options );
 
-$method = 'datetimepicker';
-
-$format_value = pods_v( $form_field_type . '_format', $options, 'mdy', true );
+$method = $form_field_type . 'picker';
 
 $mysql_date_format = 'Y-m-d';
 $mysql_time_format = 'H:i:s';
-$mysql_format = $mysql_date_format . ' ' . $mysql_time_format;
 
 $args = array(
-	'dateFormat'       => PodsForm::field_method( 'datetime', 'format_date', $options, true ),
-	'timeFormat'       => PodsForm::field_method( 'datetime', 'format_time', $options, true ),
-	'altFormat'        => PodsForm::field_method( 'datetime', 'convert_format', $mysql_date_format ),
-	'altTimeFormat'    => PodsForm::field_method( 'datetime', 'convert_format', $mysql_time_format ),
+	'dateFormat'       => PodsForm::field_method( $form_field_type, 'format_date', $options, true ),
+	'timeFormat'       => PodsForm::field_method( $form_field_type, 'format_time', $options, true ),
+	'altFormat'        => PodsForm::field_method( $form_field_type, 'convert_format', $mysql_date_format ),
+	'altTimeFormat'    => PodsForm::field_method( $form_field_type, 'convert_format', $mysql_time_format ),
 	'altField'         => '', // Done with JS.
 	'altFieldTimeOnly' => false,
 	'ampm'             => false,
@@ -46,27 +48,47 @@ $args = array(
 	'firstDay'         => (int) get_option( 'start_of_week', 0 ),
 );
 
-if ( false !== stripos( $args['timeFormat'], 'tt' ) ) {
-	$args['ampm'] = true;
+if ( $use_time ) {
+	$args['ampm'] = ( false !== stripos( $args['timeFormat'], 'tt' ) );
 }
 
-if ( 'format' === pods_v( $form_field_type . '_type', $options, 'format', true ) && 'c' === $format_value ) {
-	$args['ampm']       = false;
-	$args['separator']  = 'T';
-	$args['timeFormat'] = 'HH:mm:ssz';
-	// $args[ 'showTimezone' ] = true;
-	$timezone  = (int) get_option( 'gmt_offset' );
-	$timezone *= 60;
+$mysql_format = '';
 
-	if ( 0 <= $timezone ) {
-		$timezone = '+' . (string) $timezone;
-	}
+switch ( $form_field_type ) {
+	case 'datetime':
+		$mysql_format = $mysql_date_format . ' ' . $mysql_time_format;
 
-	$args['timezone'] = (string) $timezone;
+		$format_value = pods_v( $form_field_type . '_format', $options, 'mdy', true );
+
+		if ( 'format' === pods_v( $form_field_type . '_type', $options, 'format', true ) && 'c' === $format_value ) {
+			$args['ampm']       = false;
+			$args['separator']  = 'T';
+			$args['timeFormat'] = 'HH:mm:ssz';
+			// $args[ 'showTimezone' ] = true;
+			$timezone  = (int) get_option( 'gmt_offset' );
+			$timezone *= 60;
+
+			if ( 0 <= $timezone ) {
+				$timezone = '+' . (string) $timezone;
+			}
+
+			$args['timezone'] = (string) $timezone;
+		}
+
+		break;
+	case 'date':
+		$mysql_format = $mysql_date_format;
+		break;
+	case 'time':
+		$mysql_format = $mysql_time_format;
+		//$args['altFieldTimeOnly'] = true;
+		unset( $args['dateFormat'] );
+		unset( $args['altFormat'] );
+		break;
 }
 
-$date         = PodsForm::field_method( 'datetime', 'createFromFormat', $format, (string) $value );
-$date_default = PodsForm::field_method( 'datetime', 'createFromFormat', 'Y-m-d H:i:s', (string) $value );
+$date         = PodsForm::field_method( $form_field_type, 'createFromFormat', $format, (string) $value );
+$date_default = PodsForm::field_method( $form_field_type, 'createFromFormat', $mysql_format, (string) $value );
 
 $formatted_value = $value;
 $mysql_value     = $value;
@@ -99,7 +121,7 @@ if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array
 	}
 }
 
-$args = apply_filters( 'pods_form_ui_field_datetime_args', $args, $type, $options, $attributes, $name, $form_field_type );
+$args = apply_filters( 'pods_form_ui_field_' . $form_field_type . '_args', $args, $type, $options, $attributes, $name, $form_field_type );
 
 $attributes['value'] = $value;
 

@@ -5,12 +5,12 @@
  * @var        $value
  */
 
-$use_time = false;
+$use_time = ( 'time' === $form_field_type || 'datetime' === $form_field_type );
+$use_date = ( 'date' === $form_field_type || 'datetime' === $form_field_type );
 
 wp_enqueue_script( 'jquery-ui-datepicker' );
 wp_enqueue_style( 'pods-styles' );
-if ( 'time' === $form_field_type || 'datetime' === $form_field_type ) {
-	$use_time = true;
+if ( $use_time ) {
 	wp_enqueue_script( 'jquery-ui-timepicker' );
 	wp_enqueue_style( 'jquery-ui-timepicker' );
 }
@@ -38,20 +38,21 @@ $mysql_date_format = 'Y-m-d';
 $mysql_time_format = 'H:i:s';
 
 $args = array(
-	'dateFormat'       => PodsForm::field_method( $form_field_type, 'format_date', $options, true ),
-	'timeFormat'       => PodsForm::field_method( $form_field_type, 'format_time', $options, true ),
-	'altFormat'        => PodsForm::field_method( $form_field_type, 'convert_format', $mysql_date_format ),
-	'altTimeFormat'    => PodsForm::field_method( $form_field_type, 'convert_format', $mysql_time_format ),
 	'altField'         => '', // Done with JS.
 	'altFieldTimeOnly' => false,
-	'ampm'             => false,
-	'changeMonth'      => true,
-	'changeYear'       => true,
-	'firstDay'         => (int) get_option( 'start_of_week', 0 ),
 );
 
+if ( $use_date ) {
+	$args['dateFormat']  = PodsForm::field_method( $form_field_type, 'format_date', $options, true );
+	$args['altFormat']   = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_date_format );
+	$args['changeMonth'] = true;
+	$args['changeYear']  = true;
+	$args['firstDay']    = (int) get_option( 'start_of_week', 0 );
+}
 if ( $use_time ) {
-	$args['ampm'] = ( false !== stripos( $args['timeFormat'], 'tt' ) );
+	$args['timeFormat']    = PodsForm::field_method( $form_field_type, 'format_time', $options, true );
+	$args['altTimeFormat'] = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_time_format );
+	$args['ampm']          = ( false !== stripos( $args['timeFormat'], 'tt' ) );
 }
 
 $mysql_format = '';
@@ -66,6 +67,7 @@ switch ( $form_field_type ) {
 			$args['ampm']       = false;
 			$args['separator']  = 'T';
 			$args['timeFormat'] = 'HH:mm:ssz';
+
 			// $args[ 'showTimezone' ] = true;
 			$timezone  = (int) get_option( 'gmt_offset' );
 			$timezone *= 60;
@@ -83,9 +85,6 @@ switch ( $form_field_type ) {
 		break;
 	case 'time':
 		$mysql_format = $mysql_time_format;
-		//$args['altFieldTimeOnly'] = true;
-		unset( $args['dateFormat'] );
-		unset( $args['altFormat'] );
 		break;
 }
 

@@ -126,6 +126,10 @@ if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array
 $args = apply_filters( 'pods_form_ui_field_' . $form_field_type . '_args', $args, $type, $options, $attributes, $name, $form_field_type );
 
 $attributes['value'] = $value;
+if ( $html5 && 'datetime' === $form_field_type ) {
+	// Fix deprecated `datetime` type but keep $type var the same!
+	$attributes['type'] = 'datetime-local';
+}
 
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 ?>

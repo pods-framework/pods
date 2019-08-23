@@ -25,20 +25,23 @@ $format = PodsForm::field_method( 'date', 'format_date', $options );
 
 $method = 'datepicker';
 
+$mysql_format = 'Y-m-d';
+
 $args = array(
 	// Get selected JS date format.
 	'dateFormat'  => PodsForm::field_method( 'date', 'format_date', $options, true ),
+	'altFormat'   => PodsForm::field_method( 'date', 'convert_format', $mysql_format ),
+	'altField'    => '', // Done after merging attributes.
 	'changeMonth' => true,
 	'changeYear'  => true,
 	'firstDay'    => (int) get_option( 'start_of_week', 0 ),
 );
 
-$html5_format = 'Y-m-d';
-
 $date         = PodsForm::field_method( 'date', 'createFromFormat', $format, (string) $value );
 $date_default = PodsForm::field_method( 'date', 'createFromFormat', 'Y-m-d', (string) $value );
 
-$formatted_date = $value;
+$formatted_value = $value;
+$mysql_value     = $value;
 
 if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array(
 	$value, array(
@@ -50,31 +53,46 @@ if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array
 ) ) {
 	$formatted_date = '';
 	$value          = '';
-} elseif ( 'text' !== $type ) {
-	$formatted_date = $value;
+} else {
 
 	if ( false !== $date ) {
-		$value = $date->format( $html5_format );
+		$mysql_value = $date->format( $mysql_format );
 	} elseif ( false !== $date_default ) {
-		$value = $date_default->format( $html5_format );
+		$mysql_value = $date_default->format( $mysql_format );
 	} elseif ( ! empty( $value ) ) {
-		$value = date_i18n( $html5_format, strtotime( (string) $value ) );
+		$mysql_value = date_i18n( $mysql_format, strtotime( (string) $value ) );
 	} else {
-		$value = date_i18n( $html5_format );
+		$mysql_value = date_i18n( $mysql_format );
+	}
+
+	if ( 'text' !== $type ) {
+		// HTML5 uses mysql date format.
+		$value = $mysql_value;
 	}
 }
 
 $args = apply_filters( 'pods_form_ui_field_date_args', $args, $type, $options, $attributes, $name, $form_field_type );
 
-$attributes['value'] = $value;
+$attributes['value'] = $mysql_value;
 
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+
+$ui_attributes = $attributes;
+$ui_attributes['value'] = $value;
+$ui_attributes['name']  = $name . '__ui';
+$ui_attributes['id']   .= '__ui';
+
+$attributes['type']  = 'hidden';
+
+$args['altField'] = 'input#' . esc_js( $attributes['id'] );
 ?>
+<input<?php PodsForm::attributes( $ui_attributes, $name . '__ui', $form_field_type, $options ); ?> />
 <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 
 <script>
 	jQuery( function () {
 		var $container = jQuery( '<div>' ).appendTo( 'body' ).addClass( 'pods-compat-container' );
+		var $element   = jQuery( 'input#<?php echo esc_js( $attributes['id'] ); ?>__ui' );
 		var beforeShow = {
 			'beforeShow': function( textbox, instance) {
 				jQuery( '#ui-datepicker-div' ).appendTo( $container );
@@ -109,13 +127,13 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 		}
 
 		if ( !pods_test_date_field_<?php echo esc_js( $type ); ?>() ) {
-			jQuery( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).val( '<?php echo esc_js( $formatted_date ); ?>' );
-			jQuery( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args );
+			$element.val( '<?php echo esc_js( $formatted_date ); ?>' );
+			$element.<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args );
 		}
 		<?php
 		} else {
 		?>
-		jQuery( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args );
+		$element.<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args );
 		<?php
 		}//end if
 		?>

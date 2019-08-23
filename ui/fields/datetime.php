@@ -19,10 +19,12 @@ PodsForm::field_method( $form_field_type, 'enqueue_jquery_ui_i18n' );
 
 $attributes = array();
 
+$html5 = false;
 $type = 'text';
 
 if ( 1 == pods_var( $form_field_type . '_html5', $options ) ) {
-	$type = $form_field_type;
+	$html5 = true;
+	$type  = $form_field_type;
 }
 
 $attributes['type']     = $type;
@@ -115,7 +117,7 @@ if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array
 		$mysql_value = date_i18n( $mysql_format );
 	}
 
-	if ( 'text' !== $type ) {
+	if ( $html5 ) {
 		// HTML5 uses mysql date format.
 		$value = $mysql_value;
 	}

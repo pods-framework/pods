@@ -150,29 +150,18 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 		<?php
 		if ( 'text' !== $type ) {
 		?>
-		if ( 'undefined' == typeof pods_test_date_field_<?php echo esc_js( $type ); ?> ) {
-			// Test whether or not the browser supports date inputs
-			function pods_test_date_field_<?php echo esc_js( $type ); ?> () {
-				var input = jQuery( '<input/>', {
-					'type' : '<?php echo esc_js( $type ); ?>', css : {
-						position : 'absolute', display : 'none'
-					}
-				} );
+		// Test whether or not the browser supports date inputs
+		function podsCheckHtml5 () {
+			var input = document.createElement('input');
+			input.setAttribute( 'type', '<?php echo $type; ?>' );
 
-				jQuery( 'body' ).append( input );
+			var notADateValue = 'not-a-date';
+			input.setAttribute('value', notADateValue);
 
-				var bool = input.prop( 'type' ) !== 'text';
-
-				if ( bool ) {
-					var smile = ":)";
-					input.val( smile );
-
-					return (input.val() != smile);
-				}
-			}
+			return (input.value !== notADateValue);
 		}
 
-		if ( ! pods_test_date_field_<?php echo esc_js( $type ); ?>() ) {
+		if ( ! podsCheckHtml5() ) {
 			args = altField( args, $element );
 			$element.val( '<?php echo esc_js( $formatted_value ); ?>' );
 			$element.<?php echo esc_js( $method ); ?>( args );

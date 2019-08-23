@@ -22,7 +22,7 @@ $attributes = array();
 $html5 = false;
 $type  = 'text';
 
-if ( 1 == pods_var( $form_field_type . '_html5', $options ) ) {
+if ( pods_v( $form_field_type . '_html5', $options, false ) ) {
 	$html5 = true;
 	$type  = $form_field_type;
 }
@@ -94,14 +94,17 @@ $date_default = PodsForm::field_method( $form_field_type, 'createFromFormat', $m
 $formatted_value = $value;
 $mysql_value     = $value;
 
-if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array(
-	$value, array(
-		'',
-		'0000-00-00',
-		'0000-00-00 00:00:00',
-		'00:00:00',
-	), true
-) ) {
+$empty_values = array(
+	'',
+	'0000-00-00',
+	'0000-00-00 00:00:00',
+	'00:00:00',
+);
+
+if (
+	pods_v( $form_field_type . '_allow_empty', $options, true )
+	&& in_array( $value, $empty_values, true )
+) {
 	$formatted_value = '';
 	$value           = '';
 } else {

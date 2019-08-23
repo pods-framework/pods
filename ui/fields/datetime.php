@@ -20,7 +20,7 @@ PodsForm::field_method( $form_field_type, 'enqueue_jquery_ui_i18n' );
 $attributes = array();
 
 $html5 = false;
-$type = 'text';
+$type  = 'text';
 
 if ( 1 == pods_var( $form_field_type . '_html5', $options ) ) {
 	$html5 = true;
@@ -103,7 +103,7 @@ if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array
 	), true
 ) ) {
 	$formatted_value = '';
-	$value          = '';
+	$value           = '';
 } else {
 
 	if ( false !== $date ) {
@@ -125,6 +125,7 @@ if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array
 $args = apply_filters( 'pods_form_ui_field_' . $form_field_type . '_args', $args, $type, $options, $attributes, $name, $form_field_type );
 
 $attributes['value'] = $value;
+
 if ( $html5 && 'datetime' === $type ) {
 	// Fix deprecated `datetime` input type.
 	$type               = 'datetime-local';

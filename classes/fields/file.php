@@ -899,11 +899,11 @@ class PodsField_File extends PodsField {
 		);
 
 		if ( ! isset( $params->method ) || ! in_array( $params->method, $methods, true ) || ! isset( $params->pod ) || ! isset( $params->field ) || ! isset( $params->uri ) || empty( $params->uri ) ) {
-			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
+			pods_display_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		} elseif ( ! empty( $params->pod ) && empty( $params->field ) ) {
-			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
+			pods_display_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		} elseif ( empty( $params->pod ) && ! current_user_can( 'upload_files' ) ) {
-			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
+			pods_display_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		}
 
 		// Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
@@ -951,7 +951,7 @@ class PodsField_File extends PodsField {
 		$nonce_check = 'pods_upload_' . (int) $params->pod . '_' . $uid . '_' . $params->uri . '_' . (int) $params->field;
 
 		if ( true === $upload_disabled || ! isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) ) {
-			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+			pods_display_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
 		}
 
 		$pod   = array();
@@ -971,11 +971,11 @@ class PodsField_File extends PodsField {
 			$field = self::$api->load_field( array( 'id' => (int) $params->field ) );
 
 			if ( empty( $pod ) || empty( $field ) || (int) $pod['id'] !== (int) $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
-				pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
+				pods_display_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
 			}
 
 			if ( ! in_array( $field['type'], PodsForm::file_field_types(), true ) ) {
-				pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+				pods_display_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
 			}
 		}
 

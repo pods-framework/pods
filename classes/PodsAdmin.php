@@ -3250,7 +3250,7 @@ class PodsAdmin {
 		$methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
 
 		if ( ! isset( $params->method ) || ! isset( $methods[ $params->method ] ) ) {
-			pods_error( __( 'Invalid AJAX request', 'pods' ), $this );
+			pods_display_error( __( 'Invalid AJAX request', 'pods' ), $this );
 		}
 
 		$defaults = array(
@@ -3262,7 +3262,7 @@ class PodsAdmin {
 		$method = (object) array_merge( $defaults, (array) $methods[ $params->method ] );
 
 		if ( true !== $method->custom_nonce && ( ! isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method ) ) ) {
-			pods_error( __( 'Unauthorized request', 'pods' ), $this );
+			pods_display_error( __( 'Unauthorized request', 'pods' ), $this );
 		}
 
 		// Cleaning up $params
@@ -3275,7 +3275,7 @@ class PodsAdmin {
 
 		// Check permissions (convert to array to support multiple)
 		if ( ! empty( $method->priv ) && ! pods_is_admin( array( 'pods' ) ) && true !== $method->priv && ! pods_is_admin( $method->priv ) ) {
-			pods_error( __( 'Access denied', 'pods' ), $this );
+			pods_display_error( __( 'Access denied', 'pods' ), $this );
 		}
 
 		$params->method = $method->name;
@@ -3294,7 +3294,7 @@ class PodsAdmin {
 			$output = (string) apply_filters( 'pods_api_migrate_run', $params );
 		} else {
 			if ( ! method_exists( $api, $method->name ) ) {
-				pods_error( __( 'API method does not exist', 'pods' ), $this );
+				pods_display_error( __( 'API method does not exist', 'pods' ), $this );
 			} elseif ( 'save_pod' === $method->name ) {
 				if ( isset( $params->field_data_json ) && is_array( $params->field_data_json ) ) {
 					$params->fields = $params->field_data_json;
@@ -3337,7 +3337,7 @@ class PodsAdmin {
 				echo $output;
 			}
 		} else {
-			pods_error( __( 'There was a problem with your request.', 'pods' ) );
+			pods_display_error( __( 'There was a problem with your request.', 'pods' ) );
 		}//end if
 
 		die();

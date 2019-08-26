@@ -150,15 +150,15 @@ class PodsUpgrade {
 	public function ajax( $params ) {
 
 		if ( ! isset( $params->step ) ) {
-			return pods_error( __( 'Invalid upgrade process.', 'pods' ) );
+			return pods_display_error( __( 'Invalid upgrade process.', 'pods' ) );
 		}
 
 		if ( ! isset( $params->type ) ) {
-			return pods_error( __( 'Invalid upgrade method.', 'pods' ) );
+			return pods_display_error( __( 'Invalid upgrade method.', 'pods' ) );
 		}
 
 		if ( ! method_exists( $this, $params->step . '_' . $params->type ) ) {
-			return pods_error( __( 'Upgrade method not found.', 'pods' ) );
+			return pods_display_error( __( 'Upgrade method not found.', 'pods' ) );
 		}
 
 		return call_user_func( array( $this, $params->step . '_' . $params->type ), $params );

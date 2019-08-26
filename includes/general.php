@@ -106,6 +106,7 @@ $GLOBALS['pods_errors'] = array();
  * @param string|array        $error The error message(s) to be thrown / displayed.
  * @param object|boolean|null $obj   If $obj->display_errors is set and is set to true it will display errors, if
  *                                   boolean and is set to true it will display errors.
+ * @param bool $check_debug Validate WP_DEBUG and WP_DEBUG_DISPLAY before continue.
  *
  * @throws Exception Throws exception for developer-oriented error handling.
  *
@@ -113,8 +114,8 @@ $GLOBALS['pods_errors'] = array();
  *
  * @since 2.0.0
  */
-function pods_error( $error, $obj = null ) {
-	if ( ! pods_is_debug_display() ) {
+function pods_error( $error, $obj = null, $check_debug = true ) {
+	if ( $check_debug && ! pods_is_debug_display() ) {
 		return false;
 	}
 

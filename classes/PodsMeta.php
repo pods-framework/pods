@@ -725,7 +725,7 @@ class PodsMeta {
 		}
 
 		if ( empty( $pod['object'] ) ) {
-			return pods_display_error( __( 'Object required to add a Pods meta group', 'pods' ) );
+			return pods_error( __( 'Object required to add a Pods meta group', 'pods' ) );
 		}
 
 		$object_name = $pod['object'];
@@ -2423,7 +2423,7 @@ class PodsMeta {
 				}
 
 				if ( ! is_bool( $validate ) && ! empty( $validate ) ) {
-					return pods_display_error( $validate, $this );
+					return pods_error( $validate, $this );
 				}
 			}
 		}

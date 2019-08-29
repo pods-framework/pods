@@ -796,7 +796,7 @@ class PodsMigrate {
 			$uploads = wp_upload_dir( current_time( 'mysql' ) );
 
 			if ( ! $uploads || false !== $uploads['error'] ) {
-				return pods_display_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
+				return pods_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
 			}
 
 			// Generate unique file name
@@ -837,7 +837,7 @@ class PodsMigrate {
 
 			// error!
 			if ( is_wp_error( $attachment_id ) ) {
-				return pods_display_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
+				return pods_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
 			}
 
 			$url = $attachment['guid'];

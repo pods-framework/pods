@@ -416,7 +416,7 @@ class Pods_Helpers extends PodsComponent {
 		$params = (object) $params;
 
 		if ( empty( $params->helper ) ) {
-			return pods_display_error( __( 'Helper name required', 'pods' ), $obj );
+			return pods_error( __( 'Helper name required', 'pods' ), $obj );
 		} elseif ( ! is_array( $params->helper ) ) {
 			$params->helper = trim( $params->helper );
 		}

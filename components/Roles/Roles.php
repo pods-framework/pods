@@ -309,11 +309,11 @@ class Pods_Roles extends PodsComponent {
 		}
 
 		if ( empty( $role_name ) ) {
-			return pods_display_error( __( 'Role name is required', 'pods' ) );
+			return pods_error( __( 'Role name is required', 'pods' ) );
 		}
 
 		if ( empty( $role_label ) ) {
-			return pods_display_error( __( 'Role label is required', 'pods' ) );
+			return pods_error( __( 'Role label is required', 'pods' ) );
 		}
 
 		return add_role( $role_name, $role_label, $capabilities );
@@ -340,7 +340,7 @@ class Pods_Roles extends PodsComponent {
 		$params->custom_capabilities = array_filter( array_unique( $params->custom_capabilities ) );
 
 		if ( ! isset( $params->id ) || empty( $params->id ) || ! isset( $wp_roles->role_objects[ $params->id ] ) ) {
-			return pods_display_error( __( 'Role not found, cannot edit it.', 'pods' ) );
+			return pods_error( __( 'Role not found, cannot edit it.', 'pods' ) );
 		}
 
 		/**

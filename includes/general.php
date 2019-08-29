@@ -109,6 +109,8 @@ $GLOBALS['pods_errors'] = array();
  *
  * @return mixed
  *
+ * @throws Exception Throws exception for developer-oriented error handling.
+ *
  * @since 2.0.0
  */
 function pods_error( $error, $obj = null ) {
@@ -131,6 +133,7 @@ function pods_error( $error, $obj = null ) {
 	}
 
 	if ( is_object( $error ) && 'Exception' === get_class( $error ) ) {
+		/** @var Exception $error */
 		$error = $error->getMessage();
 
 		$error_mode = 'exception';
@@ -144,7 +147,7 @@ function pods_error( $error, $obj = null ) {
 	}
 
 	/**
-	 * When running a Pods shortcode, never exit and only return exception when debug is enabled.
+	 * When running a Pods shortcode, never exit and only return exception.
 	 */
 	if ( pods_doing_shortcode() ) {
 		$error_mode = 'exception';
@@ -278,7 +281,7 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 
 	if ( ! pods_is_debug_display() ) {
 		// Log errors if we do not display them.
-		error_log( 'Pods error: ' . $error );
+		error_log( 'Pods error: ' . (string) $debug );
 
 		return;
 	}

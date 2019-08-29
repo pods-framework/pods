@@ -239,25 +239,6 @@ function pods_error( $error, $obj = null ) {
 }
 
 /**
- * Error Handling which throws / displays errors.
- * This is for UI purposes. Does not check for debug.
- *
- * @param string|array        $error The error message(s) to be thrown / displayed.
- * @param object|boolean|null $obj   If $obj->display_errors is set and is set to true it will display errors, if
- *                                   boolean and is set to true it will display errors.
- *
- * @throws Exception Throws exception for developer-oriented error handling.
- * @see pods_error()
- *
- * @return mixed
- *
- * @since 2.7.15
- */
-function pods_display_error( $error, $obj = null ) {
-	return pods_error( $error, $obj, false );
-}
-
-/**
  * Debug variable used in pods_debug to count the instances debug is used
  */
 global $pods_debug;

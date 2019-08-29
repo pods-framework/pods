@@ -761,6 +761,11 @@ function pods_shortcode( $tags, $content = null ) {
 		$return = pods_shortcode_run( $tags, $content );
 	} catch ( Exception $exception ) {
 		$return = $exception->getMessage();
+		if ( ! pods_is_debug_display() ) {
+			// Logs message.
+			pods_debug( $return );
+			$return = '';
+		}
 	}
 	pods_doing_shortcode( false );
 	return $return;

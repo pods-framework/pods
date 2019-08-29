@@ -115,22 +115,19 @@ function pods_error( $error, $obj = null ) {
 
 	global $pods_errors;
 
+	$display_errors = $obj;
+	if ( is_object( $obj ) && isset( $obj->display_errors ) ) {
+		$display_errors = $obj->display_errors;
+	}
+
 	$error_mode = 'exception';
 
-	if ( is_object( $obj ) && isset( $obj->display_errors ) ) {
-		if ( true === $obj->display_errors ) {
-			$error_mode = 'exit';
-		} elseif ( false === $obj->display_errors ) {
-			$error_mode = 'exception';
-		} else {
-			$error_mode = $obj->display_errors;
-		}
-	} elseif ( true === $obj ) {
+	if ( true === $display_errors ) {
 		$error_mode = 'exit';
-	} elseif ( false === $obj ) {
+	} elseif ( false === $display_errors ) {
 		$error_mode = 'exception';
-	} elseif ( is_string( $obj ) ) {
-		$error_mode = $obj;
+	} elseif ( is_string( $display_errors ) ) {
+		$error_mode = $display_errors;
 	}
 
 	if ( is_object( $error ) && 'Exception' === get_class( $error ) ) {

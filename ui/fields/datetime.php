@@ -38,7 +38,7 @@ $args = array(
 	'firstDay'    => (int) get_option( 'start_of_week', 0 ),
 );
 
-$year_range = pods_v( $form_field_type . '_year_range', $options, "" );
+$year_range = pods_v( $form_field_type . '_year_range', $options, '' );
 if ( $year_range ) {
 	$args['yearRange'] = $year_range;
 }

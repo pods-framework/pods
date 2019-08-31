@@ -3250,7 +3250,7 @@ class PodsAdmin {
 		$methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
 
 		if ( ! isset( $params->method ) || ! isset( $methods[ $params->method ] ) ) {
-			pods_error( 'Invalid AJAX request', $this );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), $this );
 		}
 
 		$defaults = array(
@@ -3294,7 +3294,7 @@ class PodsAdmin {
 			$output = (string) apply_filters( 'pods_api_migrate_run', $params );
 		} else {
 			if ( ! method_exists( $api, $method->name ) ) {
-				pods_error( 'API method does not exist', $this );
+				pods_error( __( 'API method does not exist', 'pods' ), $this );
 			} elseif ( 'save_pod' === $method->name ) {
 				if ( isset( $params->field_data_json ) && is_array( $params->field_data_json ) ) {
 					$params->fields = $params->field_data_json;
@@ -3337,7 +3337,7 @@ class PodsAdmin {
 				echo $output;
 			}
 		} else {
-			pods_error( 'There was a problem with your request.' );
+			pods_error( __( 'There was a problem with your request.', 'pods' ) );
 		}//end if
 
 		die();

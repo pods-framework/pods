@@ -65,17 +65,17 @@ class PodsField_DateTime extends PodsField {
 				'developer_mode'    => true,
 			),
 			static::$type . '_type'                  => array(
-				'label'                        => __( 'Date Format Type', 'pods' ),
-				'default'                      => 'format',
+				'label'      => __( 'Date Format Type', 'pods' ),
+				'default'    => 'format',
 				// Backwards compatibility
-										'type' => 'pick',
-				'help'                         => __( 'WordPress Default is the format used in Settings, General under "Date Format".', 'pods' ) . '<br>' . __( 'Predefined Format will allow you to select from a list of commonly used date formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
-				'data'                         => array(
+				'type'       => 'pick',
+				'help'       => __( 'WordPress Default is the format used in Settings, General under "Date Format".', 'pods' ) . '<br>' . __( 'Predefined Format will allow you to select from a list of commonly used date formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
+				'data'       => array(
 					'wp'     => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'date_format' ) ),
 					'format' => __( 'Predefined format', 'pods' ),
 					'custom' => __( 'Custom format', 'pods' ),
 				),
-				'dependency'                   => true,
+				'dependency' => true,
 			),
 			static::$type . '_format_custom'         => array(
 				'label'      => __( 'Date format for display', 'pods' ),
@@ -117,19 +117,19 @@ class PodsField_DateTime extends PodsField {
 				'dependency' => true,
 			),
 			static::$type . '_time_type'             => array(
-				'label'                        => __( 'Time Format Type', 'pods' ),
-				'excludes-on'                  => array( static::$type . '_format' => 'c' ),
-				'default'                      => '12',
+				'label'       => __( 'Time Format Type', 'pods' ),
+				'excludes-on' => array( static::$type . '_format' => 'c' ),
+				'default'     => '12',
 				// Backwards compatibility
-										'type' => 'pick',
-				'help'                         => __( 'WordPress Default is the format used in Settings, General under "Time Format".', 'pods' ) . '<br>' . __( '12/24 hour will allow you to select from a list of commonly used time formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
-				'data'                         => array(
+				'type'        => 'pick',
+				'help'        => __( 'WordPress Default is the format used in Settings, General under "Time Format".', 'pods' ) . '<br>' . __( '12/24 hour will allow you to select from a list of commonly used time formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
+				'data'        => array(
 					'wp'     => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'time_format' ) ),
 					'12'     => __( '12 hour', 'pods' ),
 					'24'     => __( '24 hour', 'pods' ),
 					'custom' => __( 'Custom', 'pods' ),
 				),
-				'dependency'                   => true,
+				'dependency'  => true,
 			),
 			static::$type . '_time_format_custom'    => array(
 				'label'       => __( 'Time format', 'pods' ),

@@ -33,6 +33,11 @@ $args = array(
 	'firstDay'    => (int) get_option( 'start_of_week', 0 ),
 );
 
+$year_range = pods_v( $form_field_type . '_year_range_custom', $options, '' );
+if ( $year_range ) {
+	$args['yearRange'] = $year_range;
+}
+
 $html5_format = 'Y-m-d';
 
 $date         = PodsForm::field_method( 'date', 'createFromFormat', $format, (string) $value );

@@ -1537,7 +1537,7 @@ class PodsAPI {
 
 			if ( 'post_type' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 
 				$pod_params['storage'] = $params->create_storage;
@@ -1547,7 +1547,7 @@ class PodsAPI {
 				}
 			} elseif ( 'taxonomy' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 
 				$pod_params['storage'] = $params->create_storage;
@@ -1563,7 +1563,7 @@ class PodsAPI {
 				$pod_params['options']['hierarchical'] = 1;
 			} elseif ( 'pod' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pod' ), $this );
 				}
 
 				if ( pods_tableless() ) {
@@ -1585,7 +1585,7 @@ class PodsAPI {
 				}
 
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 			}
 		} elseif ( 'extend' === $params->create_extend ) {
@@ -2521,7 +2521,7 @@ class PodsAPI {
 		}
 
 		if ( empty( $params->name ) ) {
-			return pods_error( 'Pod field name is required', $this );
+			return pods_error( __( 'Pod field name is required', 'pods' ), $this );
 		}
 
 		$field = $this->load_field( $params );
@@ -6066,7 +6066,7 @@ class PodsAPI {
 
 			if ( ( ! isset( $params->id ) || empty( $params->id ) ) && ( ! isset( $params->name ) || empty( $params->name ) ) ) {
 				if ( $strict ) {
-					return pods_error( 'Either Pod ID or Name are required', $this );
+					return pods_error( __( 'Either Pod ID or Name are required', 'pods' ), $this );
 				}
 
 				return false;

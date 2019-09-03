@@ -1505,12 +1505,13 @@ class PodsAPI {
 		}
 
 		$pod_params = array(
-			'name'    => '',
-			'label'   => '',
-			'type'    => '',
-			'storage' => 'table',
-			'object'  => '',
-			'options' => array()
+			'name'          => '',
+			'label'         => '',
+			'type'          => '',
+			'storage'       => 'table',
+			'object'        => '',
+			'options'       => array(),
+			'create_extend' => $params->create_extend,
 		);
 
 		if ( 'create' === $params->create_extend ) {
@@ -1536,7 +1537,7 @@ class PodsAPI {
 
 			if ( 'post_type' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 
 				$pod_params['storage'] = $params->create_storage;
@@ -1546,7 +1547,7 @@ class PodsAPI {
 				}
 			} elseif ( 'taxonomy' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 
 				$pod_params['storage'] = $params->create_storage;
@@ -1562,7 +1563,7 @@ class PodsAPI {
 				$pod_params['options']['hierarchical'] = 1;
 			} elseif ( 'pod' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pod' ), $this );
 				}
 
 				if ( pods_tableless() ) {
@@ -1584,7 +1585,7 @@ class PodsAPI {
 				}
 
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 			}
 		} elseif ( 'extend' === $params->create_extend ) {
@@ -1663,6 +1664,7 @@ class PodsAPI {
 	 * $params['object'] string The object being extended (if any)
 	 * $params['storage'] string The Pod storage
 	 * $params['options'] array Options
+	 * $params['create_extend'] string Create or Extend a Content Type
 	 *
 	 * @param array    $params    An associative array of parameters
 	 * @param bool     $sanitized (optional) Decides whether the params have been sanitized before being passed, will
@@ -1676,6 +1678,9 @@ class PodsAPI {
 
 		$tableless_field_types    = PodsForm::tableless_field_types();
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
+
+		$extend = ( is_array( $params ) && ! empty( $params['create_extend'] ) && 'extend' === $params['create_extend'] );
+		unset( $params['create_extend'] );
 
 		$load_params = (object) $params;
 
@@ -1709,6 +1714,8 @@ class PodsAPI {
 		}
 
 		if ( ! empty( $pod ) ) {
+			// Existing pod (update).
+
 			if ( isset( $params->id ) && 0 < $params->id ) {
 				$old_id = $params->id;
 			}
@@ -1753,12 +1760,30 @@ class PodsAPI {
 					return pods_error( sprintf( __( 'Pod %s already exists', 'pods' ), $params->name ), $this );
 				}
 			}
-		} elseif (
-			in_array( $params->name, pods_reserved_keywords(), true )
-			&& in_array( pods_v( 'type', $params ), array( 'post_type', 'taxonomy' ), true )
-		) {
-			return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
 		} else {
+			// New pod (create).
+
+			if (
+				in_array( $params->name, pods_reserved_keywords(), true )
+				&& in_array( pods_v( 'type', $params ), array( 'post_type', 'taxonomy' ), true )
+			) {
+				$valid_name = false;
+
+				// Only if it's extending an existing content type then these
+				// names are still allowed, even if they are reserved.
+				if ( $extend ) {
+					if ( 'post_type' === pods_v( 'type', $params ) ) {
+						$valid_name = in_array( $params->name, get_post_types(), true );
+					} elseif ( 'taxonomy' === pods_v( 'type', $params ) ) {
+						$valid_name = in_array( $params->name, get_taxonomies(), true );
+					}
+				}
+
+				if ( ! $valid_name ) {
+					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
+				}
+			}
+
 			$pod = array(
 				'id'          => 0,
 				'name'        => $params->name,
@@ -2496,7 +2521,7 @@ class PodsAPI {
 		}
 
 		if ( empty( $params->name ) ) {
-			return pods_error( 'Pod field name is required', $this );
+			return pods_error( __( 'Pod field name is required', 'pods' ), $this );
 		}
 
 		$field = $this->load_field( $params );
@@ -6041,7 +6066,7 @@ class PodsAPI {
 
 			if ( ( ! isset( $params->id ) || empty( $params->id ) ) && ( ! isset( $params->name ) || empty( $params->name ) ) ) {
 				if ( $strict ) {
-					return pods_error( 'Either Pod ID or Name are required', $this );
+					return pods_error( __( 'Either Pod ID or Name are required', 'pods' ), $this );
 				}
 
 				return false;

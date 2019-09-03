@@ -186,7 +186,12 @@ class PodsField_DateTime extends PodsField {
 				'default' => '',
 				'type'    => 'text',
 				'help'    => sprintf(
-					'<a href="https://api.jqueryui.com/datepicker/#option-yearRange" target="_blank">%1$s</a>',
+					'%1$s<br /><a href="https://api.jqueryui.com/datepicker/#option-yearRange" target="_blank">%2$s</a>',
+					sprintf(
+						esc_html__( 'Example: %1$s for specifying a hard coded year range or %2$s for the last and next 10 years.', 'pods' ),
+						'<code>2010:2030</code>',
+						'<code>-10:+10</code>'
+					),
 					esc_html__( 'jQuery UI datepicker documentation', 'pods' )
 				),
 			),

@@ -181,7 +181,7 @@ class PodsField_DateTime extends PodsField {
 					'hh_mm_ss' => date_i18n( 'H:i:s' ),
 				),
 			),
-			static::$type . '_year_range'      => array(
+			static::$type . '_year_range_custom' => array(
 				'label'   => __( 'Year range', 'pods' ),
 				'default' => '',
 				'type'    => 'text',

@@ -111,7 +111,7 @@ class PodsField_Date extends PodsField_DateTime {
 				),
 				'dependency' => true,
 			),
-			static::$type . '_year_range'      => array(
+			static::$type . '_year_range_custom' => array(
 				'label'   => __( 'Year range', 'pods' ),
 				'default' => '',
 				'type'    => 'text',

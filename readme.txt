@@ -193,6 +193,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: Import from file with absolute path. #5430 (@mistraloz)
 * Fixed: Fix numeric soft format issue removing decimals & numeric slider input formatting. #5281 & #5215 (@JoryHogeveen)
 * Fixed: Fix & improve error handling & debug logs. #5452, #5450, #5440, #5419, #5435 & #5453 (@JoryHogeveen)
+* Fixed: Corrected Malaysian Ringgit currency sign. #5446 (@JoryHogeveen)
 
 = 2.7.14 - July 9th 2019 =
 

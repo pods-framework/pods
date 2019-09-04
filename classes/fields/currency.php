@@ -476,8 +476,8 @@ class PodsField_Currency extends PodsField_Number {
 			'myr'     => array(
 				'label'  => 'MYR',
 				'name'   => __( 'Malaysian Ringgit', 'pods' ),
-				'sign'   => 'MR',
-				'entity' => 'MR',
+				'sign'   => 'RM',
+				'entity' => 'RM',
 			),
 			'mxn'     => array(
 				'label'  => 'MXN',

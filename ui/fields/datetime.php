@@ -49,6 +49,11 @@ if ( $use_date ) {
 	$args['changeMonth'] = true;
 	$args['changeYear']  = true;
 	$args['firstDay']    = (int) get_option( 'start_of_week', 0 );
+
+	$year_range = pods_v( $form_field_type . '_year_range_custom', $options, '' );
+	if ( $year_range ) {
+		$args['yearRange'] = $year_range;
+	}
 }
 if ( $use_time ) {
 	$args['timeFormat']    = PodsForm::field_method( $form_field_type, 'format_time', $options, true );

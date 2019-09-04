@@ -179,9 +179,10 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
-= 2.7.15 - August # 2019 =
+= 2.7.15 - September # 2019 =
 
 **Enhancements**
+* Enhancement: Add year range option to date & datetime fields, #5442 (@JoryHogeveen)
 * Enhancement: Support single select relationships in templates when using `[each]`, #4507 (@sc0ttkclark, @JoryHogeveen)
 * Enhancement: Prevent creation of Pods using reserved keywords from WordPress Codex and Pods, #5428 (@JoryHogeveen)
 * Enhancement: Allow all callables to be passed in magic tags, #5436 (@JoryHogeveen)
@@ -190,6 +191,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: Always convert database value for date/time fields without timezone to maintain the actual value, #5423 & #5424 (@JoryHogeveen)
 * Fixed: Import from file with absolute path, #5430 (@mistraloz)
 * Fixed: Fix numeric soft format issue removing decimals & numeric slider input formatting, #5281 & #5215 (@JoryHogeveen)
+* Fixed: Fix & improve error handling & debug logs, #5452, #5450, #5440, #5419, #5435 (@JoryHogeveen)
 
 = 2.7.14 - July 9th 2019 =
 

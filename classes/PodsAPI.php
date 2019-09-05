@@ -2380,11 +2380,11 @@ class PodsAPI {
 			}
 		}
 
+		$this->cache_flush_pods( $pod );
+
 		if ( ! empty( $errors ) ) {
 			return pods_error( $errors, $this );
 		}
-
-		$this->cache_flush_pods( $pod );
 
 		$refresh_pod = $this->load_pod( array( 'name' => $pod['name'] ), false );
 

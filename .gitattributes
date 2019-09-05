@@ -2,6 +2,9 @@
 * text=auto
 
 # Ignore
+
+# Directories
+/.wordpress-org export-ignore
 /.github export-ignore
 /bin export-ignore
 /docs export-ignore
@@ -9,6 +12,10 @@
 /ui/js/pods-dfv/src export-ignore
 /ui/js/pods-dfv/pods-dfv.min.js.map export-ignore
 /ui/styles/src export-ignore
+
+# Files
+.gitattributes export-ignore
+.gitignore export-ignore
 
 .babelrc export-ignore
 .editorconfig export-ignore

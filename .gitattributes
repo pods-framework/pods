@@ -2,9 +2,11 @@
 * text=auto
 
 # Ignore
-/sources export-ignore
+/.github export-ignore
+/bin export-ignore
+/docs export-ignore
 /tests export-ignore
-/ui/js/pods-dfv/_src export-ignore
+/ui/js/pods-dfv/src export-ignore
 /ui/js/pods-dfv/pods-dfv.min.js.map export-ignore
 /ui/styles/src export-ignore
 

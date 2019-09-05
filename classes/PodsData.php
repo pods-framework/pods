@@ -287,7 +287,7 @@ class PodsData {
 
 			if ( false === $this->pod_data ) {
 				if ( true === $strict ) {
-					return pods_error( 'Pod not found', $this );
+					return pods_error( __( 'Pod not found', 'pods' ), $this );
 				} else {
 					return $this;
 				}

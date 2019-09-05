@@ -267,10 +267,17 @@ function frontier_do_subtemplate( $atts, $content ) {
 	$field_name = $atts['field'];
 
 	$entries = $pod->field( $field_name );
+
 	if ( ! empty( $entries ) ) {
 		$entries = (array) $entries;
 
 		$field = $pod->fields[ $field_name ];
+
+		// Force array even for single items since the logic below is using loops.
+		if ( 'single' === pods_v( $field['type'] . '_format_type', $field['options'], 'single' ) && ! isset( $entries[0] ) ) {
+			$entries = array( $entries );
+		}
+
 		// Object types that could be Pods
 		$object_types = array( 'post_type', 'pod' );
 
@@ -319,7 +326,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 			}//end foreach
-		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] && 'multi' == $field['options']['file_format_type'] ) {
+		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] ) {
 			$template = frontier_decode_template( $content, $atts );
 			foreach ( $entries as $key => $entry ) {
 				$content = str_replace( '{_index}', $key, $template );

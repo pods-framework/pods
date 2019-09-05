@@ -104,41 +104,36 @@ $GLOBALS['pods_errors'] = array();
  * Error Handling which throws / displays errors
  *
  * @param string|array        $error The error message(s) to be thrown / displayed.
- * @param object|boolean|null $obj   If $obj->display_errors is set and is set to true it will display errors, if
- *                                   boolean and is set to true it will display errors.
- *
- * @throws Exception Throws exception for developer-oriented error handling.
+ * @param object|boolean|null $obj   If $obj->display_errors is set and is set to true it will display errors,
+ *                                   if boolean and is set to true it will display errors.
  *
  * @return mixed
+ *
+ * @throws Exception Throws exception for developer-oriented error handling.
  *
  * @since 2.0.0
  */
 function pods_error( $error, $obj = null ) {
-	if ( ! pods_is_debug_display() ) {
-		return false;
-	}
 
 	global $pods_errors;
 
+	$display_errors = $obj;
+	if ( is_object( $obj ) && isset( $obj->display_errors ) ) {
+		$display_errors = $obj->display_errors;
+	}
+
 	$error_mode = 'exception';
 
-	if ( is_object( $obj ) && isset( $obj->display_errors ) ) {
-		if ( true === $obj->display_errors ) {
-			$error_mode = 'exit';
-		} elseif ( false === $obj->display_errors ) {
-			$error_mode = 'exception';
-		} else {
-			$error_mode = $obj->display_errors;
-		}
-	} elseif ( true === $obj ) {
+	if ( true === $display_errors ) {
 		$error_mode = 'exit';
-	} elseif ( false === $obj ) {
+	} elseif ( false === $display_errors ) {
 		$error_mode = 'exception';
-	} elseif ( is_string( $obj ) ) {
-		$error_mode = $obj;
+	} elseif ( is_string( $display_errors ) ) {
+		$error_mode = $display_errors;
 	}
 
 	if ( is_object( $error ) && 'Exception' === get_class( $error ) ) {
+		/** @var Exception $error */
 		$error = $error->getMessage();
 
 		$error_mode = 'exception';
@@ -152,7 +147,7 @@ function pods_error( $error, $obj = null ) {
 	}
 
 	/**
-	 * When running a Pods shortcode, never exit and only return exception when debug is enabled.
+	 * When running a Pods shortcode, never exit and only return exception.
 	 */
 	if ( pods_doing_shortcode() ) {
 		$error_mode = 'exception';
@@ -267,7 +262,7 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 
 	if ( ! pods_is_debug_display() ) {
 		// Log errors if we do not display them.
-		error_log( 'Pods error: ' . $error );
+		error_log( 'Pods error: ' . (string) $debug );
 
 		return;
 	}
@@ -750,6 +745,11 @@ function pods_shortcode( $tags, $content = null ) {
 		$return = pods_shortcode_run( $tags, $content );
 	} catch ( Exception $exception ) {
 		$return = $exception->getMessage();
+		if ( ! pods_is_debug_display() ) {
+			// Logs message.
+			pods_debug( $return );
+			$return = '';
+		}
 	}
 	pods_doing_shortcode( false );
 	return $return;
@@ -2344,6 +2344,115 @@ function pods_no_conflict_off( $object_type = 'post' ) {
 	}
 
 	return false;
+}
+
+/**
+ * Returns a list of all WordPress and Pods reserved keywords.
+ *
+ * @link https://codex.wordpress.org/Reserved_Terms
+ *
+ * @since 2.7.15
+ * @return array
+ */
+function pods_reserved_keywords() {
+
+	$keywords = array(
+		// WordPress.
+		'attachment',
+		'attachment_id',
+		'author',
+		'author_name',
+		'calendar',
+		'cat',
+		'category',
+		'category__and',
+		'category__in',
+		'category__not_in',
+		'category_name',
+		'comments_per_page',
+		'comments_popup',
+		'custom',
+		'customize_messenger_channel',
+		'customized',
+		'cpage',
+		'day',
+		'debug',
+		'embed',
+		'error',
+		'exact',
+		'feed',
+		'hour',
+		'link_category',
+		'm',
+		'minute',
+		'monthnum',
+		'more',
+		'name',
+		'nav_menu',
+		'nonce',
+		'nopaging',
+		'offset',
+		'order',
+		'orderby',
+		'p',
+		'page',
+		'page_id',
+		'paged',
+		'pagename',
+		'pb',
+		'perm',
+		'post',
+		'post__in',
+		'post__not_in',
+		'post_format',
+		'post_mime_type',
+		'post_status',
+		'post_tag',
+		'post_type',
+		'posts',
+		'posts_per_archive_page',
+		'posts_per_page',
+		'preview',
+		'robots',
+		's',
+		'search',
+		'second',
+		'sentence',
+		'showposts',
+		'static',
+		'subpost',
+		'subpost_id',
+		'tag',
+		'tag__and',
+		'tag__in',
+		'tag__not_in',
+		'tag_id',
+		'tag_slug__and',
+		'tag_slug__in',
+		'taxonomy',
+		'tb',
+		'term',
+		'terms',
+		'theme',
+		'title',
+		'type',
+		'w',
+		'withcomments',
+		'withoutcomments',
+		'year',
+		// Pods
+		'id',
+		'ID',
+	);
+
+	/**
+	 * Filter the WordPress and Pods reserved keywords.
+	 *
+	 * @since 2.7.15
+	 *
+	 * @param array $keywords List of WordPress and Pods reserved keywords.
+	 */
+	return apply_filters( 'pods_reserved_keywords', $keywords );
 }
 
 /**

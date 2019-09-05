@@ -179,7 +179,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
-= 2.7.15 - September # 2019 =
+= 2.7.15 - September 5th 2019 =
 
 **Enhancements**
 * Enhancement: Add year range option to date & datetime fields. #5442 (@JoryHogeveen)

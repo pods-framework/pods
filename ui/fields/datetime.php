@@ -168,9 +168,9 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 			input.setAttribute( 'type', '<?php echo $type; ?>' );
 
 			var notADateValue = 'not-a-date';
-			input.setAttribute('value', notADateValue);
+			input.setAttribute( 'value', notADateValue );
 
-			return (input.value !== notADateValue);
+			return ( input.value !== notADateValue );
 		}
 
 		if ( ! podsCheckHtml5() ) {
@@ -184,7 +184,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 		args = altField( args, $element );
 		$element.<?php echo esc_js( $method ); ?>( args );
 		<?php
-		}//end if
+		} //end if
 		?>
 		function altField( args, el ) {
 			var $el  = $( el ),

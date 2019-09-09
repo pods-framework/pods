@@ -126,8 +126,11 @@ if (
 	}
 
 	if ( $html5 ) {
-		// HTML5 uses mysql date format.
-		$value = $mysql_value;
+		/**
+		 * HTML5 uses mysql date format separated with a T.
+		 * @link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
+		 */
+		$value = str_replace( ' ', 'T', $mysql_value );
 	}
 }
 

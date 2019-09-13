@@ -45,7 +45,7 @@ $args = array(
 
 if ( $use_date ) {
 	$args['dateFormat']  = PodsForm::field_method( $form_field_type, 'format_date', $options, true );
-	$args['altFormat']   = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_date_format );
+	$args['altFormat']   = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_date_format, array( 'type' => 'date' ) );
 	$args['changeMonth'] = true;
 	$args['changeYear']  = true;
 	$args['firstDay']    = (int) get_option( 'start_of_week', 0 );
@@ -57,7 +57,7 @@ if ( $use_date ) {
 }
 if ( $use_time ) {
 	$args['timeFormat']    = PodsForm::field_method( $form_field_type, 'format_time', $options, true );
-	$args['altTimeFormat'] = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_time_format );
+	$args['altTimeFormat'] = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_time_format, array( 'type' => 'time' ) );
 	$args['ampm']          = ( false !== stripos( $args['timeFormat'], 'tt' ) );
 }
 

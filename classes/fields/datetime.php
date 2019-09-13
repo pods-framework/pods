@@ -394,7 +394,6 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function format_value_display( $value, $options, $js = false ) {
 
-		// @todo Remove JS here???
 		$format = $this->format_display( $options, $js );
 
 		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
@@ -438,10 +437,26 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function format_display( $options, $js = false ) {
 
-		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
+		if ( 'custom' === pods_v( static::$type . '_type', $options, 'format' ) ) {
+			if ( $js ) {
+
+				// Gets format strings in jQuery UI format.
+				$date = $this->format_date( $options, $js );
+				$time = $this->format_time( $options, $js );
+
+				// Convert them to PHP date format.
+				$date = $this->convert_format( $date, array( 'source' => 'jquery_ui', 'type' => 'date' ) );
+				$time = $this->convert_format( $time, array( 'source' => 'jquery_ui', 'type' => 'time' ) );
+
+				return $date . ' ' . $time;
+
+			} else {
+				$format = $this->format_datetime( $options, $js );
+			}
+		} else {
 			$js = false;
+			$format = $this->format_datetime( $options, $js );
 		}
-		$format = $this->format_datetime( $options, $js );
 
 		return $format;
 	}

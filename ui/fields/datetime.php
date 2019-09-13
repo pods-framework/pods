@@ -97,7 +97,7 @@ switch ( $form_field_type ) {
 $date         = PodsForm::field_method( $form_field_type, 'createFromFormat', $format, (string) $value );
 $date_default = PodsForm::field_method( $form_field_type, 'createFromFormat', $mysql_format, (string) $value );
 
-$formatted_value = $value;
+$formatted_value = PodsForm::field_method( $form_field_type, 'format_value_display', $value, $options, true );
 $mysql_value     = $value;
 
 $empty_values = array(
@@ -128,6 +128,8 @@ if (
 	if ( $html5 ) {
 		// HTML5 uses mysql date format.
 		$value = $mysql_value;
+	} else {
+		$value = $formatted_value;
 	}
 }
 

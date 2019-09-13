@@ -281,8 +281,8 @@ class PodsField_DateTime extends PodsField {
 			$value = implode( ' ', $value );
 		}
 
-		// Format Value
-		$value = $this->format_value_display( $value, $options, true );
+		// @todo Remove? Format Value (done in field template).
+		//$value = $this->format_value_display( $value, $options, true );
 
 		$field_type = static::$type;
 

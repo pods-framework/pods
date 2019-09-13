@@ -565,6 +565,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				// Hack for 2.x
 				// @todo Remove for 3.x
 				'options' => array(),
+				'create_extend' => 'extend',
 			);
 
 			if ( 'pod' === $pod_type ) {

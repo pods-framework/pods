@@ -601,8 +601,9 @@ class PodsField_DateTime extends PodsField {
 		$filter = 'pods_form_ui_field_date_formats';
 
 		if ( $js ) {
-			// @todo Method parameters? (Not supported by array_map)
-			$date_format = array_map( array( $this, 'convert_format' ), $date_format );
+			foreach ( $date_format as $key => $value ) {
+				$date_format[ $key ] = $this->convert_format( $value, array( 'type' => 'date' ) );
+			}
 
 			$filter = 'pods_form_ui_field_date_js_formats';
 		}
@@ -637,8 +638,9 @@ class PodsField_DateTime extends PodsField {
 		$filter = 'pods_form_ui_field_time_formats';
 
 		if ( $js ) {
-			// @todo Method parameters? (Not supported by array_map)
-			$time_format = array_map( array( $this, 'convert_format' ), $time_format );
+			foreach ( $time_format as $key => $value ) {
+				$time_format[ $key ] = $this->convert_format( $value, array( 'type' => 'time' ) );
+			}
 
 			$filter = 'pods_form_ui_field_time_js_formats';
 		}
@@ -665,8 +667,9 @@ class PodsField_DateTime extends PodsField {
 		$filter = 'pods_form_ui_field_time_formats_24';
 
 		if ( $js ) {
-			// @todo Method parameters? (Not supported by array_map)
-			$time_format_24 = array_map( array( $this, 'convert_format' ), $time_format_24 );
+			foreach ( $time_format_24 as $key => $value ) {
+				$time_format_24[ $key ] = $this->convert_format( $value, array( 'type' => 'time' ) );
+			}
 
 			$filter         = 'pods_form_ui_field_time_js_formats_24';
 		}
@@ -784,55 +787,64 @@ class PodsField_DateTime extends PodsField {
 		$args = array_merge(
 			array(
 				'source' => 'php',
+				'type'   => 'date',
 			// 'jquery_ui' for reverse.
 			), $args
 		);
 
 		// Keep keys and values sorted by string length.
-		$symbols = array(
-			// Day
-			'd' => 'dd',
-			'l' => 'DD',
-			'D' => 'D',
-			'j' => 'd',
-			'N' => '',
-			'S' => '',
-			'w' => '',
-			'z' => 'o',
-			// Week
-			'W' => '',
-			// Month
-			'F' => 'MM',
-			'm' => 'mm',
-			'M' => 'M',
-			'n' => 'm',
-			't' => '',
-			// Year
-			'L' => '',
-			'o' => '',
-			'Y' => 'yy',
-			'y' => 'y',
-			// AM/PM
-			'a' => 'tt',
-			'A' => 'TT',
-			// Swatch internet time (not supported)
-			'B' => '',
-			// Hour
-			'h' => 'hh',
-			'H' => 'HH',
-			'g' => 'h',
-			'G' => 'H',
-			// Minute
-			'i' => 'mm',
-			// Second
-			's' => 'ss',
-			// Microsecond
-			'u' => 'c',
-		);
+		if ( 'time' === $args['type'] || 'time' === static::$type ) {
 
-		if ( version_compare( PHP_VERSION, '7.0.0' ) >= 0 ) {
-			// Millisecond
-			$symbols['v'] = 'l';
+			$symbols = array(
+				// AM/PM
+				'a' => 'tt',
+				'A' => 'TT',
+				// Swatch internet time (not supported)
+				'B' => '',
+				// Hour
+				'h' => 'hh',
+				'H' => 'HH',
+				'g' => 'h',
+				'G' => 'H',
+				// Minute
+				'i' => 'mm',
+				// Second
+				's' => 'ss',
+				// Microsecond
+				'u' => 'c',
+			);
+
+			if ( version_compare( PHP_VERSION, '7.0.0' ) >= 0 ) {
+				// Millisecond
+				$symbols['v'] = 'l';
+			}
+
+		} else {
+
+			$symbols = array(
+				// Day
+				'd' => 'dd',
+				'l' => 'DD',
+				'D' => 'D',
+				'j' => 'd',
+				'N' => '',
+				'S' => '',
+				'w' => '',
+				'z' => 'o',
+				// Week
+				'W' => '',
+				// Month
+				'F' => 'MM',
+				'm' => 'mm',
+				'M' => 'M',
+				'n' => 'm',
+				't' => '',
+				// Year
+				'L' => '',
+				'o' => '',
+				'Y' => 'yy',
+				'y' => 'y',
+			);
 		}
 
 		if ( 'jquery_ui' === $args['source'] ) {

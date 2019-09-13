@@ -209,7 +209,10 @@ class PodsField_Time extends PodsField_DateTime {
 
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_format_custom', $options, '' );
-						$format = $this->convert_format( $format, array( 'source' => 'php' ) );
+
+						if ( $js ) {
+							$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'time' ) );
+						}
 					}
 				}
 
@@ -218,7 +221,7 @@ class PodsField_Time extends PodsField_DateTime {
 				$format = get_option( 'time_format' );
 
 				if ( $js ) {
-					$format = $this->convert_format( $format, array( 'source' => 'php' ) );
+					$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'time' ) );
 				}
 
 				break;

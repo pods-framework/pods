@@ -495,12 +495,13 @@ class PodsField_DateTime extends PodsField {
 					$format = pods_v( static::$type . '_format_custom', $options, '' );
 				} else {
 					$format = pods_v( static::$type . '_format_custom_js', $options, '' );
-					// Already in JS format.
-					$js = false;
 
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_format_custom', $options, '' );
-						$js = true;
+
+						if ( $js ) {
+							$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'date' ) );
+						}
 					}
 				}
 
@@ -512,10 +513,6 @@ class PodsField_DateTime extends PodsField {
 
 				break;
 		}//end switch
-
-		if ( $js ) {
-			$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'date' ) );
-		}
 
 		return $format;
 	}
@@ -565,10 +562,6 @@ class PodsField_DateTime extends PodsField {
 
 				break;
 		}//end switch
-
-		if ( $js ) {
-			$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'time' ) );
-		}
 
 		return $format;
 	}

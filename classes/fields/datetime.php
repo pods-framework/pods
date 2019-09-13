@@ -321,11 +321,8 @@ class PodsField_DateTime extends PodsField {
 				$js = false;
 			}
 
-			$format = $this->format_datetime( $options, $js );
-
-			if ( $js ) {
-				$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
-			}
+			// Value should always be passed as storage format since 2.7.15.
+			$format = static::$storage_format;
 
 			$check = $this->convert_date( $value, static::$storage_format, $format, true );
 
@@ -345,14 +342,8 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		$js = true;
-		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
-			$js = false;
-		}
-		$format = $this->format_datetime( $options, $js );
-		if ( $js ) {
-			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
-		}
+		// Value should always be passed as storage format since 2.7.15.
+		$format = static::$storage_format;
 
 		if ( ! empty( $value ) && ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) || ! in_array(
 			$value, array(
@@ -403,6 +394,7 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function format_value_display( $value, $options, $js = false ) {
 
+		// @todo Remove JS here???
 		$format = $this->format_display( $options, $js );
 
 		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
@@ -450,9 +442,6 @@ class PodsField_DateTime extends PodsField {
 			$js = false;
 		}
 		$format = $this->format_datetime( $options, $js );
-		if ( $js ) {
-			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
-		}
 
 		return $format;
 	}
@@ -495,26 +484,38 @@ class PodsField_DateTime extends PodsField {
 		switch ( (string) pods_v( static::$type . '_type', $options, 'format', true ) ) {
 			case 'wp':
 				$format = get_option( 'date_format' );
+
 				if ( $js ) {
-					$format = $this->convert_format( $format, array( 'source' => 'php' ) );
+					$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'date' ) );
 				}
+
 				break;
 			case 'custom':
 				if ( ! $js ) {
 					$format = pods_v( static::$type . '_format_custom', $options, '' );
 				} else {
 					$format = pods_v( static::$type . '_format_custom_js', $options, '' );
+					// Already in JS format.
+					$js = false;
+
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_format_custom', $options, '' );
-						$format = $this->convert_format( $format, array( 'source' => 'php' ) );
+						$js = true;
 					}
 				}
+
 				break;
 			default:
 				$date_format = $this->get_date_formats( $js );
+
 				$format      = $date_format[ pods_v( static::$type . '_format', $options, 'ymd_dash', true ) ];
+
 				break;
 		}//end switch
+
+		if ( $js ) {
+			$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'date' ) );
+		}
 
 		return $format;
 	}
@@ -549,10 +550,12 @@ class PodsField_DateTime extends PodsField {
 					$format = pods_v( static::$type . '_time_format_custom', $options, '' );
 				} else {
 					$format = pods_v( static::$type . '_time_format_custom_js', $options, '' );
+					// Already in JS format.
+					$js = false;
 
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_time_format_custom', $options, '' );
-						$format = $this->convert_format( $format, array( 'source' => 'php' ) );
+						$js = true;
 					}
 				}
 
@@ -560,12 +563,12 @@ class PodsField_DateTime extends PodsField {
 			default:
 				$format = get_option( 'time_format' );
 
-				if ( $js ) {
-					$format = $this->convert_format( $format, array( 'source' => 'php' ) );
-				}
-
 				break;
 		}//end switch
+
+		if ( $js ) {
+			$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'time' ) );
+		}
 
 		return $format;
 	}

@@ -133,7 +133,7 @@ function frontier_if_block( $atts, $code ) {
 
 		foreach ( $fields as $field_name ) {
 			$field = $field_name;
-			if ( ++$counter !== $total ) {
+			if ( ++$counter < $total ) {
 
 				if ( 'pick' !== $field_pod->fields( $field, 'type' ) ) {
 					// Relationship type required.
@@ -153,10 +153,14 @@ function frontier_if_block( $atts, $code ) {
 					$entry_id = $entries['ID'];
 				} elseif ( isset( $entries['term_id'] ) ) {
 					$entry_id = $entries['term_id'];
-				} elseif ( isset( $entries[0]['ID'] ) ) {
-					$entry_id = $entries[0]['term_id'];
-				} elseif ( isset( $entries[0]['term_id'] ) ) {
-					$entry_id = $entries[0]['term_id'];
+				} else {
+					// Multiple relationships.
+					$entries = reset( $entries );
+					if ( isset( $entries['ID'] ) ) {
+						$entry_id = $entries['ID'];
+					} elseif ( isset( $entries['term_id'] ) ) {
+						$entry_id = $entries['term_id'];
+					}
 				}
 
 				$new_pod = pods( $rel_pod, $entry_id );

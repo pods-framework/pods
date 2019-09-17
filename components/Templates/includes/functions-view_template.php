@@ -122,9 +122,53 @@ function frontier_if_block( $atts, $code ) {
 				break;
 		}
 	} else {
-		$field_data = $pod->field( $atts['field'] );
 
-		$field_type = $pod->fields( $atts['field'], 'type' );
+		/**
+		 * @since 2.7.16 Iterate recursively over magic tag fields (relationships).
+		 */
+		$fields    = explode( '.', $atts['field'] );
+		$field_pod = $pod;
+		$total     = count( $fields );
+		$counter   = 0;
+
+		foreach ( $fields as $field_name ) {
+			$field = $field_name;
+			if ( ++$counter !== $total ) {
+
+				if ( 'pick' !== $field_pod->fields( $field, 'type' ) ) {
+					// Relationship type required.
+					break;
+				}
+
+				$entries    = $field_pod->field( $field );
+				$rel_pod    = $field_pod->fields( $field, 'pick_val' );
+
+				if ( ! $entries || ! $rel_pod ) {
+					// No relationships or pod name found.
+					break;
+				}
+
+				$entry_id = null;
+				if ( isset( $entries['ID'] ) ) {
+					$entry_id = $entries['ID'];
+				} elseif ( isset( $entries['term_id'] ) ) {
+					$entry_id = $entries['term_id'];
+				} elseif ( isset( $entries[0]['ID'] ) ) {
+					$entry_id = $entries[0]['term_id'];
+				} elseif ( isset( $entries[0]['term_id'] ) ) {
+					$entry_id = $entries[0]['term_id'];
+				}
+
+				$new_pod = pods( $rel_pod, $entry_id );
+				if ( $new_pod && $new_pod->valid() && $new_pod->exists() ) {
+					$field_pod = $new_pod;
+				}
+
+			} else {
+				$field_data = $field_pod->field( $field );
+				$field_type = $field_pod->fields( $field, 'type' );
+			}
+		}
 	}
 
 	$is_empty = true;

@@ -146,7 +146,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 
 <script>
-	jQuery( function () {
+	jQuery( function ( $ ) {
 		var $container = jQuery( '<div>' ).appendTo( 'body' ).addClass( 'pods-compat-container' ),
 			$element   = jQuery( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ),
 			beforeShow = {

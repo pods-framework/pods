@@ -91,6 +91,12 @@ function frontier_decode_template( $code, $atts ) {
  */
 function frontier_if_block( $atts, $code ) {
 
+	$atts = wp_parse_args( $atts, array(
+		'pod'   => null,
+		'id'    => null,
+		'field' => null,
+	) );
+
 	$pod = pods( $atts['pod'], $atts['id'] );
 
 	if ( ! $pod || ! $pod->valid() || ! $pod->exists() ) {

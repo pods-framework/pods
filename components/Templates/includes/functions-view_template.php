@@ -528,9 +528,13 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 							$field = trim( $matches[2][ $key ] );
 						}
 						if ( false !== strpos( $field, '.' ) ) {
-							$path  = explode( '.', $field );
-							$field = array_pop( $path );
-							$ID    = '{@' . implode( '.', $path ) . '.' . $pod->api->pod_data['field_id'] . '}';
+							if ( 'if' === $command ) {
+								$ID = '{@' . $pod->api->pod_data['field_id'] . '}';
+							} else {
+								$path  = explode( '.', $field );
+								$field = array_pop( $path );
+								$ID    = '{@' . implode( '.', $path ) . '.' . $pod->api->pod_data['field_id'] . '}';
+							}
 						}
 						$atts = ' id="' . $ID . '" pod="@pod" field="' . $field . '"';
 						if ( ! empty( $value ) ) {

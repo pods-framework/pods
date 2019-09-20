@@ -500,7 +500,7 @@ class PodsField_OEmbed extends PodsField {
 			}
 
 			// Load the field to get it's options.
-			$options = pods_api()->load_field( (object) $options );
+			$options = pods_api()->load_field( $options );
 
 			// Field options are stored here, if not, just stay with the full options array.
 			if ( ! empty( $options['options'] ) ) {

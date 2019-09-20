@@ -1,5 +1,4 @@
 <?php
-require_once PODS_DIR . 'classes/fields/number.php';
 
 /**
  * @package Pods\Fields

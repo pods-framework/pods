@@ -136,6 +136,90 @@ class PodsInit {
 	}
 
 	/**
+	 * Autoloader for Pods classes.
+	 *
+	 * @param string $class Class name.
+	 *
+	 * @since 2.8
+	 */
+	public static function autoload_class( $class ) {
+		// Bypass anything that doesn't start with Pods
+		if ( 0 !== strpos( $class, 'Pods' ) ) {
+			return;
+		}
+
+		$custom = array(
+			'Pods_CLI_Command'    => PODS_DIR . 'classes/cli/Pods_CLI_Command.php',
+			'PodsAPI_CLI_Command' => PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php',
+		);
+
+		if ( isset( $custom[ $class ] ) ) {
+			$path = $custom[ $class ];
+
+			require_once $path;
+
+			return;
+		}
+
+		$loaders = array(
+			array(
+				'prefix'    => 'Pods',
+				'separator' => '\\', // Namespace
+				'path'      => PODS_DIR . 'src',
+			),
+			array(
+				'prefix'         => 'PodsField_',
+				'filter'         => 'strtolower',
+				'exclude_prefix' => true,
+				'path'           => PODS_DIR . 'classes/fields',
+			),
+			array(
+				'prefix' => 'PodsWidget',
+				'path'   => PODS_DIR . 'classes/widgets',
+			),
+			array(
+				'prefix' => 'Pods',
+				'path'   => PODS_DIR . 'classes',
+			),
+		);
+
+		foreach ( $loaders as $loader ) {
+			if ( 0 !== strpos( $class, $loader['prefix'] ) ) {
+				continue;
+			}
+
+			$path = array(
+				$loader['path'],
+			);
+
+			if ( ! empty( $loader['exclude_prefix'] ) ) {
+				$class = substr( $class, strlen( $loader['prefix'] ) );
+			}
+
+			if ( ! empty( $loader['filter'] ) ) {
+				$class = call_user_func( $loader['filter'], $class );
+			}
+
+			if ( ! isset( $loader['separator'] ) ) {
+				$path[] = $class;
+			} else {
+				$separated_path = explode( $loader['separator'], $class );
+
+				/** @noinspection SlowArrayOperationsInLoopInspection */
+				$path = array_merge( $path, $separated_path );
+			}
+
+			$path = implode( DIRECTORY_SEPARATOR, $path ) . '.php';
+
+			if ( file_exists( $path ) ) {
+				require_once $path;
+
+				break;
+			}
+		}
+	}
+
+	/**
 	 * Load the plugin textdomain and set default constants
 	 */
 	public function plugins_loaded() {
@@ -425,7 +509,6 @@ class PodsInit {
 	 * Register internal Post Types
 	 */
 	public function register_pods() {
-
 		$args = array(
 			'label'           => 'Pods',
 			'labels'          => array( 'singular_name' => 'Pod' ),
@@ -461,6 +544,24 @@ class PodsInit {
 		$args = self::object_label_fix( $args, 'post_type' );
 
 		register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
+
+		$args = array(
+			'label'           => 'Pod Groups',
+			'labels'          => array( 'singular_name' => 'Pod Group' ),
+			'public'          => false,
+			'can_export'      => false,
+			'query_var'       => false,
+			'rewrite'         => false,
+			'capability_type' => 'pods_pod',
+			'has_archive'     => false,
+			'hierarchical'    => true,
+			'supports'        => array( 'title', 'editor', 'author' ),
+			'menu_icon'       => 'dashicons-pods',
+		);
+
+		$args = self::object_label_fix( $args, 'post_type' );
+
+		register_post_type( '_pods_group', apply_filters( 'pods_internal_register_post_type_group', $args ) );
 	}
 
 	/**
@@ -482,8 +583,6 @@ class PodsInit {
 			return;
 		}
 
-		require_once PODS_DIR . 'classes/PodsRESTHandlers.php';
-		require_once PODS_DIR . 'classes/PodsRESTFields.php';
 
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
@@ -542,9 +641,6 @@ class PodsInit {
 					// Post type was setup and exists already, but we aren't forcing it to be setup again
 					continue;
 				}
-
-				$post_type['options']['name'] = $post_type['name'];
-				$post_type                    = array_merge( $post_type, (array) $post_type['options'] );
 
 				$post_type_name = pods_v_sanitized( 'name', $post_type );
 
@@ -779,9 +875,6 @@ class PodsInit {
 					// Taxonomy was setup and exists already, but we aren't forcing it to be setup again
 					continue;
 				}
-
-				$taxonomy['options']['name'] = $taxonomy['name'];
-				$taxonomy                    = array_merge( $taxonomy, (array) $taxonomy['options'] );
 
 				$taxonomy_name = pods_v( 'name', $taxonomy );
 
@@ -1076,9 +1169,9 @@ class PodsInit {
 				continue;
 			}
 
-			$pod_id = array_search( $post_type_name, $post_type_names, true );
+			$pod_id = array_search( $post_type_name, $post_type_names, false );
 
-			if ( ! $pod_id ) {
+			if ( ! $pod_id || ! isset( $post_types[ $pod_id ] ) ) {
 				// Post type not a pod
 				continue;
 			}
@@ -1107,9 +1200,9 @@ class PodsInit {
 				continue;
 			}
 
-			$pod_id = array_search( $taxonomy_name, $taxonomy_names, true );
+			$pod_id = array_search( $taxonomy_name, $taxonomy_names, false );
 
-			if ( ! $pod_id ) {
+			if ( ! $pod_id || ! isset( $taxonomies[ $pod_id ] ) ) {
 				// Taxonomy not a pod
 				continue;
 			}
@@ -1537,12 +1630,7 @@ class PodsInit {
 
 		$api = pods_api();
 
-		$pods = $api->load_pods(
-			array(
-				'names_ids'  => true,
-				'table_info' => false,
-			)
-		);
+		$pods = $api->load_pods( array( 'names_ids' => true ) );
 
 		foreach ( $pods as $pod_id => $pod_label ) {
 			$api->delete_pod( array( 'id' => $pod_id ) );
@@ -1670,9 +1758,7 @@ class PodsInit {
 
 		// Add WP-CLI commands
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
-			require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
-		}
+								}
 
 	}
 
@@ -1797,7 +1883,6 @@ class PodsInit {
 				continue;
 			}
 
-			require_once PODS_DIR . 'classes/widgets/' . $widget . '.php';
 
 			register_widget( $widget );
 		}
@@ -1814,13 +1899,7 @@ class PodsInit {
 			return;
 		}
 
-		$all_pods = pods_api()->load_pods(
-			array(
-				'type'       => 'pod',
-				'fields'     => false,
-				'table_info' => false,
-			)
-		);
+		$all_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
 
 		// Add New item links for all pods
 		foreach ( $all_pods as $pod ) {

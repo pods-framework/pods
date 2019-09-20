@@ -291,7 +291,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 				$subpod = pods( $field['pick_val'] );
 
 				$subatts = array(
-					'id'  => $entry[ $subpod->api->pod_data['field_id'] ],
+					'id'  => $entry[ $subpod->pod_data['field_id'] ],
 					'pod' => $field['pick_val'],
 				);
 
@@ -517,7 +517,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 						if ( false !== strpos( $field, '.' ) ) {
 							$path  = explode( '.', $field );
 							$field = array_pop( $path );
-							$ID    = '{@' . implode( '.', $path ) . '.' . $pod->api->pod_data['field_id'] . '}';
+							$ID    = '{@' . implode( '.', $path ) . '.' . $pod->pod_data['field_id'] . '}';
 						}
 						$atts = ' id="' . $ID . '" pod="@pod" field="' . $field . '"';
 						if ( ! empty( $value ) ) {
@@ -548,7 +548,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 		$code = frontier_backtrack_template( $code, $aliases );
 	}
 	$code = str_replace( '@pod', $pod->pod, $code );
-	$code = str_replace( '@EntryID', '@' . $pod->api->pod_data['field_id'], $code );
+	$code = str_replace( '@EntryID', '@' . $pod->pod_data['field_id'], $code );
 
 	return $code;
 }

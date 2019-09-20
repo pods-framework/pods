@@ -524,13 +524,13 @@ class PodsUI {
 
 		// Assign pod labels
 		// @todo This is also done in setup(), maybe a better / more central way?
-		if ( is_object( $this->pod ) && ! empty( $this->pod->pod_data['options'] ) ) {
-			$pod_options = $this->pod->pod_data['options'];
-			$pod_name    = $this->pod->pod_data['name'];
-			$pod_options = apply_filters( "pods_advanced_content_type_pod_data_{$pod_name}", $pod_options, $this->pod->pod_data['name'] );
-			$pod_options = apply_filters( 'pods_advanced_content_type_pod_data', $pod_options, $this->pod->pod_data['name'] );
+		if ( is_object( $this->pod ) && ! empty( $this->pod->pod_data ) ) {
+			$pod_data = $this->pod->pod_data;
+			$pod_name = $this->pod->pod_data['name'];
+			$pod_data = apply_filters( "pods_advanced_content_type_pod_data_{$pod_name}", $pod_data, $this->pod->pod_data['name'] );
+			$pod_data = apply_filters( 'pods_advanced_content_type_pod_data', $pod_data, $this->pod->pod_data['name'] );
 
-			$this->label = array_merge( $this->label, $pod_options );
+			$this->label = array_merge( $this->label, $pod_data['options'] );
 		}
 
 		$this->go();
@@ -950,6 +950,7 @@ class PodsUI {
 				'field_index' => $this->pods_data->field_index,
 			);
 		}
+
 		$options->validate( 'sql', $this->sql, 'array_merge' );
 
 		$options->validate(
@@ -1033,7 +1034,7 @@ class PodsUI {
 
 			$this->label = array_merge( $this->label, $pod_data['options'] );
 
-			$item  = pods_v( 'label_singular', $pod_data['options'], pods_v( 'label', $pod_data, $item, true ), true );
+			$item  = pods_v( 'label_singular', $pod_data, pods_v( 'label', $pod_data, $item, true ), true );
 			$items = pods_v( 'label', $pod_data, $items, true );
 		}
 
@@ -3003,7 +3004,7 @@ class PodsUI {
 												$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields['search'], array(), null, true ), array(), null, true ), '', null, true );
 												$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', $filter_field['options'], $filter_field['options']['input_helper'], null, true );
 
-												$options = array_merge( $filter_field, $filter_field['options'] );
+												$options = $filter_field;
 										?>
 											<label for="pods-form-ui-filter-<?php echo esc_attr( $filter ); ?>">
 							<?php echo esc_html( $filter_field['label'] ); ?>
@@ -3031,7 +3032,7 @@ class PodsUI {
 												$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields['search'], array(), null, true ), array(), null, true ), '', null, true );
 												$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', $filter_field['options'], $filter_field['options']['input_helper'], null, true );
 
-												$options = array_merge( $filter_field, $filter_field['options'] );
+												$options = $filter_field;
 										?>
 											<label for="pods-form-ui-filter-<?php echo esc_attr( $filter ); ?>">
 							<?php echo esc_html( $filter_field['label'] ); ?>
@@ -3583,7 +3584,7 @@ class PodsUI {
 								$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields['search'], array(), null, true ), array(), null, true ), '', null, true );
 								$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', $filter_field['options'], $filter_field['options']['input_helper'], null, true );
 
-								$options = array_merge( $filter_field, $filter_field['options'] );
+								$options = $filter_field;
 								?>
 								<span class="pods-ui-posts-filter-toggle toggle-on<?php echo esc_attr( empty( $value ) ? '' : ' pods-hidden' ); ?>">+</span>
 								<span class="pods-ui-posts-filter-toggle toggle-off<?php echo esc_attr( empty( $value ) ? ' pods-hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
@@ -3618,7 +3619,7 @@ class PodsUI {
 								$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields['search'], array(), null, true ), array(), null, true ), '', null, true );
 								$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', $filter_field['options'], $filter_field['options']['input_helper'], null, true );
 
-								$options = array_merge( $filter_field, $filter_field['options'] );
+								$options = $filter_field;
 								?>
 								<span class="pods-ui-posts-filter-toggle toggle-on<?php echo esc_attr( empty( $value ) ? '' : ' pods-hidden' ); ?>">+</span>
 								<span class="pods-ui-posts-filter-toggle toggle-off<?php echo esc_attr( empty( $value ) ? ' pods-hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
@@ -4000,7 +4001,7 @@ class PodsUI {
 								} else {
 									ob_start();
 
-									$field_value = PodsForm::field_method( $attributes['type'], 'ui', $this->id, $row_value, $field, array_merge( $attributes, pods_var_raw( 'options', $attributes, array(), null, true ) ), $fields, $this->pod );
+									$field_value = PodsForm::field_method( $attributes['type'], 'ui', $this->id, $row_value, $field, $attributes, $fields, $this->pod );
 
 									$field_output = trim( (string) ob_get_clean() );
 

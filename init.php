@@ -70,6 +70,10 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	} else {
 		global $pods, $pods_init, $pods_form;
 
+		// Init custom autoloader.
+		require_once PODS_DIR . 'classes/PodsInit.php';
+		spl_autoload_register( array( 'PodsInit', 'autoload_class' ) );
+
 		require_once PODS_DIR . 'includes/classes.php';
 		require_once PODS_DIR . 'includes/data.php';
 		require_once PODS_DIR . 'includes/general.php';

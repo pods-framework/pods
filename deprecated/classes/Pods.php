@@ -22,10 +22,9 @@ class Pods_Deprecated {
 	 * @param object $obj The Pods object
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since 2.0.0
+	 * @since   2.0.0
 	 */
 	public function __construct( $obj ) {
-
 		// backwards-compatibility with references to $this->var_name
 		$vars = get_object_vars( $obj );
 
@@ -47,7 +46,6 @@ class Pods_Deprecated {
 	 * @since 1.2.0
 	 */
 	public function set_field( $name, $data = null ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::set_field', '2.0' );
 		}
@@ -67,7 +65,6 @@ class Pods_Deprecated {
 	 * @param string $label
 	 */
 	public function showform( $id = null, $public_fields = null, $label = 'Save changes' ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::showform', '2.0' );
 		}
@@ -111,7 +108,7 @@ class Pods_Deprecated {
 			}
 
 			// Pass options so they can be manipulated via form
-			$field = array_merge( $field['options'], $field );
+			$field = $field;
 
 			// Replace field attributes with public form attributes
 			if ( ! empty( $attributes ) && is_array( $attributes[ $key ] ) ) {
@@ -234,7 +231,6 @@ class Pods_Deprecated {
 					$result = pods_query( $sql, $this );
 
 					if ( ! empty( $result ) ) {
-
 						$exclude = array();
 
 						foreach ( $result as $row ) {
@@ -314,7 +310,6 @@ class Pods_Deprecated {
 	 * @return array
 	 */
 	public function get_dropdown_values( $params ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::get_dropdown_values', '2.0' );
 		}
@@ -376,7 +371,6 @@ class Pods_Deprecated {
 	 * @param null   $thankyou_url
 	 */
 	public function publicForm( $fields = null, $label = 'Save Changes', $thankyou_url = null ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::publicForm', '2.0', 'Pods::form' );
 		}
@@ -393,13 +387,11 @@ class Pods_Deprecated {
 					$name = $field['name'];
 				}
 
-				if ( in_array(
-					$name, array(
+				if ( in_array( $name, array(
 						'created',
 						'modified',
 						'author',
-					), true
-				) && isset( $this->obj->fields[ $name . '2' ] ) ) {
+					), true ) && isset( $this->obj->fields[ $name . '2' ] ) ) {
 					$name .= '2';
 				}
 
@@ -420,7 +412,6 @@ class Pods_Deprecated {
 	 * @param array $field Field data.
 	 */
 	public function build_field_html( $field ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::build_field_html', '2.0' );
 		}
@@ -435,7 +426,6 @@ class Pods_Deprecated {
 	 * @deprecated 2.0.0
 	 */
 	public function fetchRecord() {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::fetchRecord', '2.0', 'Pods::fetch' );
 		}
@@ -454,18 +444,15 @@ class Pods_Deprecated {
 	 * @return array|mixed
 	 */
 	public function get_field( $name, $orderby = null ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::get_field', '2.0', 'Pods::field' );
 		}
 
-		$value = $this->obj->field(
-			array(
+		$value = $this->obj->field( array(
 				'name'       => $name,
 				'orderby'    => $orderby,
 				'deprecated' => true,
-			)
-		);
+			) );
 
 		if ( is_array( $value ) && ! empty( $value ) ) {
 			if ( false === strpos( $name, '.' ) && ! isset( $value[0] ) ) {
@@ -487,7 +474,6 @@ class Pods_Deprecated {
 	 * @deprecated 2.0.0
 	 */
 	public function get_pod_id() {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::get_pod_id', '2.0' );
 		}
@@ -502,7 +488,7 @@ class Pods_Deprecated {
 	/**
 	 * Search and filter records
 	 *
-	 * @since 1.x.x
+	 * @since      1.x.x
 	 * @deprecated 2.0.0
 	 *
 	 * @param null $orderby
@@ -513,7 +499,6 @@ class Pods_Deprecated {
 	 * @return
 	 */
 	public function findRecords( $orderby = null, $rows_per_page = 15, $where = null, $sql = null ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::findRecords', '2.0', 'Pods::find' );
 		}
@@ -588,7 +573,7 @@ class Pods_Deprecated {
 	/**
 	 * Return a single record
 	 *
-	 * @since 1.x.x
+	 * @since      1.x.x
 	 * @deprecated 2.0.0
 	 *
 	 * @param int $id Item ID.
@@ -596,7 +581,6 @@ class Pods_Deprecated {
 	 * @return
 	 */
 	public function getRecordById( $id ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::getRecordById', '2.0', 'Pods::fetch_item' );
 		}
@@ -610,7 +594,6 @@ class Pods_Deprecated {
 	 * @deprecated 2.0.0
 	 */
 	public function getTotalRows() {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::getTotalRows', '2.0', 'Pods::total_found' );
 		}
@@ -628,7 +611,6 @@ class Pods_Deprecated {
 	 * @return
 	 */
 	public function resetPointer( $row_number = 0 ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::resetPointer', '2.0', 'Pods::reset' );
 		}
@@ -644,17 +626,14 @@ class Pods_Deprecated {
 	 * @param string $label
 	 */
 	public function getPagination( $label = 'Go to page:' ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::getPagination', '2.0', 'Pods::pagination' );
 		}
 
-		echo $this->obj->pagination(
-			array(
+		echo $this->obj->pagination( array(
 				'type'  => 'advanced',
 				'label' => $label,
-			)
-		);
+			) );
 	}
 
 	/**
@@ -667,7 +646,6 @@ class Pods_Deprecated {
 	 * @param string $action
 	 */
 	public function getFilters( $filters = null, $label = 'Filter', $action = '' ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::getFilters', '2.0', 'Pods::filters' );
 		}
@@ -699,7 +677,6 @@ class Pods_Deprecated {
 	 * @deprecated 2.0.0
 	 */
 	public function pod_helper( $helper_name, $value = null, $name = null ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::pod_helper', '2.0', 'Pods::helper' );
 		}
@@ -725,7 +702,6 @@ class Pods_Deprecated {
 	 * @return
 	 */
 	public function showTemplate( $template_name, $code = null ) {
-
 		if ( Pod::$deprecated_notice ) {
 			pods_deprecated( 'Pods::showTemplate', '2.0', 'Pods::template' );
 		}

@@ -942,6 +942,7 @@ class PodsAdmin {
 			'comment'   => __( 'Comments (extended)', 'pods' ),
 			'pod'       => __( 'Advanced Content Type', 'pods' ),
 			'settings'  => __( 'Custom Settings Page', 'pods' ),
+			'internal'  => __( 'Pods Internal', 'pods' ),
 		);
 
 		$row = false;
@@ -964,45 +965,69 @@ class PodsAdmin {
 
 		$total_fields = 0;
 
+		/**
+		 * Filters whether to extend internal Pods.
+		 *
+		 * @since TBD
+		 *
+		 * @param bool $extend_internal Whether to extend internal Pods.
+		 */
+		$extend_internal = apply_filters( 'pods_admin_setup_extend_pods_internal', false );
+
+		$pod_list = array();
+
 		foreach ( $pods as $k => $pod ) {
-			if ( isset( $types[ $pod['type'] ] ) ) {
-				if ( in_array(
-					$pod['type'], array(
-						'post_type',
-						'taxonomy',
-					), true
-				) ) {
-					if ( empty( $pod['object'] ) ) {
-						if ( 'post_type' === $pod['type'] ) {
-							$pod['type'] = 'cpt';
-						} else {
-							$pod['type'] = 'ct';
-						}
-					}
-				}
+			$pod_type       = $pod['type'];
+			$pod_type_label = null;
+			$pod_storage    = $pod['storage'];
 
-				if ( ! isset( $pod_types_found[ $pod['type'] ] ) ) {
-					$pod_types_found[ $pod['type'] ] = 1;
-				} else {
-					$pod_types_found[ $pod['type'] ] ++;
-				}
-
-				if ( 'all' !== $view && $view !== $pod['type'] ) {
-					unset( $pods[ $k ] );
-
+			if ( ! empty( $pod['internal'] ) ) {
+				// Don't show internal if we aren't extending them.
+				if ( ! $extend_internal ) {
 					continue;
 				}
 
-				$pod['real_type'] = $pod['type'];
-				$pod['type']      = $types[ $pod['type'] ];
+				$pod_type    = 'internal';
+				$pod_storage = 'meta';
+			}
+
+			if ( isset( $types[ $pod_type ] ) ) {
+				$pod_type_label = $types[ $pod_type ];
+			}
+
+			$pod_real_type = $pod_type;
+			$pod_storage   = ucwords( $pod_storage );
+
+			if ( null !== $pod_type_label ) {
+				if ( empty( $pod['object'] ) && in_array( $pod_type, array(
+						'post_type',
+						'taxonomy',
+					), true ) ) {
+					if ( 'post_type' === $pod_type ) {
+						$pod_type = 'cpt';
+					} else {
+						$pod_type = 'ct';
+					}
+				}
+
+				if ( ! isset( $pod_types_found[ $pod_type ] ) ) {
+					$pod_types_found[ $pod_type ] = 1;
+				} else {
+					$pod_types_found[ $pod_type ] ++;
+				}
+
+				if ( 'all' !== $view && $view !== $pod_type ) {
+					continue;
+				}
+
+				$pod_real_type = $pod_type;
+				$pod_type      = $pod_type_label;
 			} elseif ( 'all' !== $view ) {
 				continue;
 			}//end if
 
-			$pod['storage'] = ucwords( $pod['storage'] );
-
 			// @codingStandardsIgnoreLine
-			if ( $pod['id'] == pods_v( 'id' ) && 'delete' !== pods_v( 'action' ) ) {
+			if ( 'delete' !== pods_v( 'action' ) && $pod['id'] == pods_v( 'id' ) ) {
 				$row = $pod;
 			}
 
@@ -1011,15 +1036,15 @@ class PodsAdmin {
 				'label'       => pods_v( 'label', $pod ),
 				'name'        => pods_v( 'name', $pod ),
 				'object'      => pods_v( 'object', $pod ),
-				'type'        => pods_v( 'type', $pod ),
-				'real_type'   => pods_v( 'real_type', $pod ),
-				'storage'     => pods_v( 'storage', $pod ),
+				'type'        => $pod_type,
+				'real_type'   => $pod_real_type,
+				'storage'     => $pod_storage,
 				'field_count' => count( $pod['fields'] ),
 			);
 
 			$total_fields += $pod['field_count'];
 
-			$pods[ $k ] = $pod;
+			$pod_list[] = $pod;
 		}//end foreach
 
 		if ( false === $row && 0 < pods_v( 'id' ) && 'delete' !== pods_v( 'action' ) ) {
@@ -1030,42 +1055,44 @@ class PodsAdmin {
 		}
 
 		$ui = array(
-			'data'             => $pods,
+			'data'             => $pod_list,
 			'row'              => $row,
-			'total'            => count( $pods ),
-			'total_found'      => count( $pods ),
+			'total'            => count( $pod_list ),
+			'total_found'      => count( $pod_list ),
 			'items'            => 'Pods',
 			'item'             => 'Pod',
 			'fields'           => array(
 				'manage' => $fields,
 			),
+			'sql'              => array(
+				'field_id'    => 'id',
+				'field_index' => 'label',
+			),
 			'actions_disabled' => array( 'view', 'export' ),
 			'actions_custom'   => array(
-				'add'       => array( $this, 'admin_setup_add' ),
-				'edit'      => array( $this, 'admin_setup_edit' ),
-				'edit_proto'=> array( $this, 'admin_setup_edit_proto' ),
-				'duplicate' => array(
+				'add'        => array( $this, 'admin_setup_add' ),
+				'edit'       => array( $this, 'admin_setup_edit' ),
+				'edit_proto' => array( $this, 'admin_setup_edit_proto' ),
+				'duplicate'  => array(
 					'callback'          => array( $this, 'admin_setup_duplicate' ),
 					'restrict_callback' => array( $this, 'admin_setup_duplicate_restrict' ),
 				),
-				'reset'     => array(
+				'reset'      => array(
 					'label'             => __( 'Delete All Items', 'pods' ),
 					'confirm'           => __( 'Are you sure you want to delete all items from this Pod? If this is an extended Pod, it will remove the original items extended too.', 'pods' ),
 					'callback'          => array( $this, 'admin_setup_reset' ),
 					'restrict_callback' => array( $this, 'admin_setup_reset_restrict' ),
 					'nonce'             => true,
 				),
-				'delete'    => array( $this, 'admin_setup_delete' ),
+				'delete'     => array( $this, 'admin_setup_delete' ),
 			),
 			'action_links'     => array(
-				'add' => pods_query_arg(
-					array(
+				'add' => pods_query_arg( array(
 						'page'   => 'pods-add-new',
 						'action' => '',
 						'id'     => '',
 						'do'     => '',
-					)
-				),
+					) ),
 			),
 			'search'           => false,
 			'searchable'       => false,
@@ -3156,23 +3183,20 @@ class PodsAdmin {
 
 		$pods = pods_api()->load_pods(
 			array(
-				'type'       => array(
+				'type' => array(
 					'settings',
 					'post_type',
 					'taxonomy',
 				),
-				'fields'     => false,
-				'table_info' => false,
 			)
 		);
 
 		$other_pods = pods_api()->load_pods(
 			array(
-				'type'       => array(
+				'type' => array(
 					'pod',
 					'table',
 				),
-				'table_info' => false,
 			)
 		);
 

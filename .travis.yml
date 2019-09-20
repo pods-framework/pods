@@ -1,54 +1,139 @@
+sudo: required
+
 language: php
 
-sudo: false
+notifications:
+  email: false
 
 php:
-    - 7.1
+  - 7.2
 
-env:
-    - WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable
-    - WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
-    - WP_VERSION=latest WP_MULTISITE=1 NODE_RELEASE=stable
+services:
+  - mysql
 
-matrix:
-    allow_failures:
-    - env: WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable
-    - php: 7.3
-      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
+addons:
+  apt:
+    packages:
+      # needed for Nginx
+      - libjpeg-dev
+      - libpng12-dev
+      - php5-fpm
+      - php5-mysql
+      - nginx
+  hosts:
+    # resolve the following domains to localhost
+    - pods.localhost
 
-    include:
-    - php: 7.2
-      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
-    - php: 7.0
-      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
-    - php: 5.6
-      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
+# disable the default submodule logic
+git:
+  submodules: false
 
 ## Cache composer and node bits
 cache:
-    apt: true
-    directories:
-        - vendor
-        - node_modules
-        - $HOME/.composer/cache
+  apt: true
+  directories:
+    - vendor
+    - node_modules
+    - $HOME/.composer/cache
+
+env:
+  global:
+    - WP_VERSION="latest"
+    - NODE_RELEASE="stable"
+
+matrix:
+  allow_failures:
+    - env: NODE_RELEASE="skip"
+      php: 7.3
+    - env: WP_VERSION="nightly" NODE_RELEASE="skip"
+    - env: WP_VERSION="nightly" WP_MULTISITE=1 NODE_RELEASE="skip"
+
+  include:
+    - env: NODE_RELEASE="skip"
+      php: 7.0
+    - env: WP_VERSION="4.5" NODE_RELEASE="skip"
+      php: 5.6
+      dist: precise
 
 before_install:
-    - | # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
-      if [ $NODE_RELEASE == "stable" ]; then
-          . $HOME/.nvm/nvm.sh;
-          nvm install ${NODE_RELEASE};
-          npm install;
-      fi
+  # load in .env variables
+  - set -a
+  - . .env
+  - set +a
+
+  # create the databases needed for the tests
+  - mysql -e "create database IF NOT EXISTS $DB_NAME;" -uroot
+  - mysql -e "create database IF NOT EXISTS $TEST_DB_NAME;" -uroot
+
+  # tweak git to correctly work with submodules
+  #- sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
+  #- git submodule update --init --recursive
+
+  # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
+  - |
+    if [ $NODE_RELEASE == "stable" ]; then
+        . $HOME/.nvm/nvm.sh;
+        nvm install ${NODE_RELEASE};
+        npm install;
+    fi
+install:
+  # disable XDebug to speed up the tests
+  - phpenv config-rm xdebug.ini
+  - composer update --prefer-dist
 
 before_script:
-    - bash bin/init.sh
-    - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
-    - ln -s . /tmp/wordpress/wp-content/plugins/pods
+  # set up folder
+  - mkdir -p $WP_ROOT_FOLDER
+
+  # install WordPress in the `wordpress` folder
+  - vendor/bin/wp core download --version=$WP_VERSION --path=$WP_ROOT_FOLDER
+  - vendor/bin/wp config create --dbname="$DB_NAME" --dbuser="root" --dbpass="" --dbhost="127.0.0.1" --dbprefix="$WP_TABLE_PREFIX" --path=$WP_ROOT_FOLDER
+  - vendor/bin/wp core install --url="$WP_URL" --title="Pods Tests" --admin_user="$WP_ADMIN_USERNAME" --admin_password="$WP_ADMIN_PASSWORD" --admin_email="admin@$WP_DOMAIN" --skip-email --path=$WP_ROOT_FOLDER
+
+  # copy the Nginx configuration file to the available sites
+  - sudo cp tests/codeception/_support/travis/nginx.conf /etc/nginx/sites-available/$WP_DOMAIN
+  - sudo sed -e "s?%WP_ROOT_FOLDER%?$WP_ROOT_FOLDER?g" --in-place /etc/nginx/sites-available/$WP_DOMAIN
+  - sudo sed -e "s?%WP_DOMAIN%?$WP_DOMAIN?g" --in-place /etc/nginx/sites-available/$WP_DOMAIN
+
+  # enable the site
+  - sudo ln -s /etc/nginx/sites-available/$WP_DOMAIN /etc/nginx/sites-enabled/
+
+  # move the plugin into WordPress folder
+  - mv $TRAVIS_BUILD_DIR $WP_ROOT_FOLDER/wp-content/plugins/pods
+  - export PLUGIN_DIR="$WP_ROOT_FOLDER/wp-content/plugins/pods"
+
+  # access vendor/bin commands
+  - export PATH=$PATH:$PLUGIN_DIR/vendor/bin
+
+  # activate the plugin in WordPress
+  - cd $WP_ROOT_FOLDER
+  - wp plugin activate pods
+
+  # flush rewrite rules
+  - wp rewrite structure '/%postname%/' --hard
+
+  # export a dump of the just installed database to the _data folder
+  - wp db export $PLUGIN_DIR/tests/codeception/_data/dump.sql
+
+  # get back to the plugin dir
+  - cd $PLUGIN_DIR
+
+  # restart Nnginx and PHP-FPM services
+  - sudo service php5-fpm restart
+  - sudo service nginx restart
 
 script:
-    - vendor/bin/phpunit
-    - | # Only run js tests if we're running the latest stable node (Pipe preserves subsequent whitespace)
-      if [ $NODE_RELEASE == "stable" ]; then
-          npm run test-dfv;
-          npm run jest-tests;
-      fi
+
+  # Only run non-traversal tests
+  - codecept run integration
+  - codecept run wpunit
+
+  # Only run traversal tests
+  - codecept run wpunit-traversal --skip-group='pods-traversal-deep'
+
+  # Only run js tests if we're running the latest stable node (Pipe preserves subsequent whitespace)
+  - |
+    if [ $NODE_RELEASE == "stable" ]; then
+        npm run test-dfv;
+        npm run jest-tests;
+    fi

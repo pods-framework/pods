@@ -143,6 +143,11 @@ function PodsBadFunction_Name ($var1,$var2)
 	$array = array('test','test2');
 	
 	$array[$var] = "test";
+	
+	if(1==0)
+	{
+		$array['another' ] = 'test';
+	}
 	?>
 <a href="<?php echo $var; ?>">
 	<?php echo $var; ?>

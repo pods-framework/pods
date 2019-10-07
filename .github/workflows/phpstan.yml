@@ -9,4 +9,4 @@ jobs:
     - name: PHPStan
       uses: docker://oskarstark/phpstan-ga
       with:
-        args: analyse src/
+        args: analyse classes components includes

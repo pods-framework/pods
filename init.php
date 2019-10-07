@@ -133,3 +133,19 @@ function pods_deactivate_pods_ui() {
 	}
 
 }
+
+function PodsBadFunction_Name ($var1,$var2)
+{
+	$var = $_GET[ 'test'];
+	
+        echo $var;
+	
+	$array = array('test','test2');
+	
+	$array[$var] = "test";
+	?>
+<a href="<?php echo $var; ?>">
+	<?php echo $var; ?>
+</a>
+<?php
+}

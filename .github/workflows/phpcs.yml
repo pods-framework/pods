@@ -9,7 +9,7 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - uses: rtCamp/action-phpcs-code-review@master
+    - uses: rtCamp/action-phpcs-code-review@develop
       env:
         GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
       with:

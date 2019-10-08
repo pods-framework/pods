@@ -1,0 +1,17 @@
+name: MT Code Review
+on:
+  pull_request:
+    paths-ignore:
+      - 'lang/**'
+      - '**.txt'
+      - '**.md'
+      - '.editorconfig'
+      - 'CODEOWNERS'
+jobs:
+  phpcs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: moderntribe/action-tribe-phpcs@master
+        with:
+          github-bot-token: ${{ secrets.GH_BOT_TOKEN }}

@@ -134,7 +134,7 @@ function pods_deactivate_pods_ui() {
 
 }
 
-function PodsBadFunction_Name2 ($var1,$var2)
+function PodsBadFunction_Name3 ($var1,$var2)
 {
 	$var = $_GET[ 'test'];
 	
@@ -155,7 +155,7 @@ function PodsBadFunction_Name2 ($var1,$var2)
 <?php
 }
 
-function PodsBadFunction_Name3 ($var1,$var2)
+function PodsBadFunction_Name4 ($var1,$var2)
 {
 	$var = $_GET[ 'test'];
 	

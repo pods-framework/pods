@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="Pods">
+<ruleset name="Pods Coding Standards">
 	<description>Pods-customized WordPress Coding Standards</description>
 
 	<file>.</file>
@@ -18,9 +18,15 @@
 	<ini name="memory_limit" value="256M"/>
 
 	<config name="minimum_supported_wp_version" value="4.5"/>
-	<rule ref="WordPress-Core"/>
-	<rule ref="WordPress-Docs"/>
-	<rule ref="WordPress-Extra"/>
+	
+	<rule ref="TribalScents"></rule>
+	<rule ref="WordPress-VIP-Go"></rule>
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName"/>
+	</rule>
+	<rule ref="WordPress-Extra"></rule>
+	<rule ref="WordPress-Docs"></rule>
+	<rule ref="WordPress-Core"></rule>
 
 	<config name="testVersion" value="5.3-"/>
 	<rule ref="PHPCompatibility"/>
@@ -42,11 +48,6 @@
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
 		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop"/>
 		<exclude name="Squiz.Commenting.FileComment.Missing"/>
-	</rule>
-
-	<rule ref="WordPress.Files">
-		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
-		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
 	</rule>
 
 	<rule ref="Generic.Commenting">

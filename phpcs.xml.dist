@@ -1,9 +1,5 @@
 <?xml version="1.0"?>
 <ruleset name="Pods Coding Standards">
-	<ini name="memory_limit" value="256M"/>
-
-	<config name="minimum_supported_wp_version" value="4.5"/>
-	
 	<rule ref="TribalScents"></rule>
 	<rule ref="WordPress-VIP-Go"></rule>
 	<rule ref="WordPress">
@@ -12,19 +8,4 @@
 	<rule ref="WordPress-Extra"></rule>
 	<rule ref="WordPress-Docs"></rule>
 	<rule ref="WordPress-Core"></rule>
-
-<!--	<config name="testVersion" value="5.3-"/>-->
-<!--	<rule ref="PHPCompatibility"/>-->
-
-	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
-		<properties>
-			<property name="prefixes" type="array" value="pods"/>
-		</properties>
-	</rule>
-
-	<rule ref="WordPress.WP.I18n">
-		<properties>
-			<property name="text_domain" type="array" value="pods"/>
-		</properties>
-	</rule>
 </ruleset>

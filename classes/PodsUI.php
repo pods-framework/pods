@@ -4927,16 +4927,43 @@ class PodsUI {
 
 				if ( pods_is_admin( array( 'pods', 'pods_content' ) ) ) {
 					$restricted = false;
-				} elseif ( 'manage' === $action ) {
-					if ( ! in_array( 'edit', $this->actions_disabled ) && ( current_user_can( 'pods_edit_' . $this->pod->pod ) || current_user_can( 'pods_edit_others_' . $this->pod->pod ) ) ) {
-						$restricted = false;
-					} elseif ( ! in_array( 'delete', $this->actions_disabled ) && ( current_user_can( 'pods_delete_' . $this->pod->pod ) || current_user_can( 'pods_delete_others_' . $this->pod->pod ) ) ) {
-						$restricted = false;
-					} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) || current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
-						$restricted = false;
+				} else {
+
+					// Check if the current user is the author of this item.
+					$author = pods( $this->pod->pod, $row )->field( 'author', true );
+					$is_author = false;
+					if ( $author ) {
+						$is_author = (int) $author->ID === (int) wp_get_current_user()->ID;
 					}
-				} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) || current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
-					$restricted = false;
+
+					$cap_actions = array( $action );
+					if ( 'manage' === $action || 'reorder' === $action ) {
+						if ( ! in_array( 'edit', $this->actions_disabled ) ) {
+							$cap_actions[] = 'edit';
+						}
+						if ( ! in_array( 'delete', $this->actions_disabled ) ) {
+							$cap_actions[] = 'delete';
+						}
+					}
+
+					foreach ( $cap_actions as $cap ) {
+						if ( $is_author ) {
+							// Only need regular capability.
+							if ( current_user_can( 'pods_' . $cap . '_' . $this->pod->pod ) ) {
+								$restricted = false;
+								break;
+							}
+						} else {
+							// This item is created by another user so the "others" capability is required as well.
+							if (
+								current_user_can( 'pods_' . $cap . '_' . $this->pod->pod ) &&
+								current_user_can( 'pods_' . $cap . '_others_' . $this->pod->pod )
+							) {
+								$restricted = false;
+								break;
+							}
+						}
+					}
 				}
 			}//end if
 			/*

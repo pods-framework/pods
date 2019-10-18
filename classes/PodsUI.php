@@ -4930,18 +4930,18 @@ class PodsUI {
 				} else {
 
 					// Check if the current user is the author of this item.
-					$author = pods( $this->pod->pod, $row )->field( 'author', true );
+					$author    = pods( $this->pod->pod, $row )->field( 'author', true );
 					$is_author = false;
-					if ( $author ) {
-						$is_author = (int) $author->ID === (int) wp_get_current_user()->ID;
+					if ( $author && (int) wp_get_current_user()->ID === (int) $author->ID ) {
+						$is_author = true;
 					}
 
 					$cap_actions = array( $action );
 					if ( 'manage' === $action || 'reorder' === $action ) {
-						if ( ! in_array( 'edit', $this->actions_disabled ) ) {
+						if ( ! in_array( 'edit', $this->actions_disabled, true ) ) {
 							$cap_actions[] = 'edit';
 						}
-						if ( ! in_array( 'delete', $this->actions_disabled ) ) {
+						if ( ! in_array( 'delete', $this->actions_disabled, true ) ) {
 							$cap_actions[] = 'delete';
 						}
 					}

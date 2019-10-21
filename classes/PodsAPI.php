@@ -4897,7 +4897,7 @@ class PodsAPI {
 							$field['table_info'] = $this->get_table_info( pods_var_raw( 'pick_object', $field ), pods_var_raw( 'pick_val', $field ), null, null, $field );
 						}
 
-						if ( ! empty( $field['table_info'] ) ) {
+						if ( ! empty( $field['table_info'] ) && 'table' !== $field['table_info']['object_type'] ) {
 							$field['lookup_name'] .= '.' . $field['table_info']['field_id'];
 						}
 					} elseif ( in_array( $field['type'], PodsForm::file_field_types() ) ) {

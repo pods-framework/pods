@@ -2890,7 +2890,7 @@ class PodsAPI {
 				if ( ( $field['type'] !== $old_type || $old_simple != $simple ) && empty( $definition ) ) {
 					pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
 				} elseif ( 0 < strlen( $definition ) ) {
-					if ( $old_name !== $field['name'] || $old_simple != $simple ) {
+					if ( $old_name !== $field['name'] || $old_simple != $simple || $old_definition != $definition ) {
 						$test = false;
 
 						if ( 0 < strlen( $old_definition ) ) {

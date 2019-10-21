@@ -4891,10 +4891,10 @@ class PodsAPI {
 				$field                = $pod->fields[ $field['name'] ];
 				$field['lookup_name'] = $field['name'];
 
-				if ( in_array( $field['type'], $tableless_field_types ) && ! in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) {
+				if ( in_array( $field['type'], $tableless_field_types ) && ! in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects ) ) {
 					if ( 'pick' === $field['type'] ) {
 						if ( empty( $field['table_info'] ) ) {
-							$field['table_info'] = $this->get_table_info( pods_var_raw( 'pick_object', $field ), pods_var_raw( 'pick_val', $field ), null, null, $field );
+							$field['table_info'] = $this->get_table_info( pods_v( 'pick_object', $field ), pods_v( 'pick_val', $field ), null, null, $field );
 						}
 
 						if ( ! empty( $field['table_info'] ) && 'table' !== $field['table_info']['object_type'] ) {

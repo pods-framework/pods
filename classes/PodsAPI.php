@@ -8696,12 +8696,23 @@ class PodsAPI {
 			$info['table']     = ( empty( $object ) ? $name : $object );
 			$info['pod_table'] = $wpdb->prefix . 'pods_' . $info['table'];
 
-			if ( ! empty( $field ) && is_array( $field ) ) {
-				$info['table']       = pods_var_raw( 'pick_table', pods_var_raw( 'options', $field, $field ) );
-				$info['field_id']    = pods_var_raw( 'pick_table_id', pods_var_raw( 'options', $field, $field ) );
-				$info['meta_field_value'] = pods_var_raw( 'pick_table_index', pods_var_raw( 'options', $field, $field ) );
-				$info['field_index']      = $info['meta_field_value'];
-				$info['meta_field_index'] = $info['meta_field_value'];
+
+			if ( ! empty( $field ) ) {
+				if ( ! is_array( $field ) ) {
+					if ( is_string( $pod ) ) {
+						$pod = pods( $pod );
+					}
+					if ( $pod && ! empty( $pod->fields[ $field ] ) ) {
+						$field = $pod->fields[ $field ];
+					}
+				}
+				if ( is_array( $field ) ) {
+					$info['table']       = pods_var_raw( 'pick_table', pods_var_raw( 'options', $field, $field ) );
+					$info['field_id']    = pods_var_raw( 'pick_table_id', pods_var_raw( 'options', $field, $field ) );
+					$info['meta_field_value'] = pods_var_raw( 'pick_table_index', pods_var_raw( 'options', $field, $field ) );
+					$info['field_index']      = $info['meta_field_value'];
+					$info['meta_field_index'] = $info['meta_field_value'];
+				}
 			}
 		}
 

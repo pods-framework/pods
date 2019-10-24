@@ -4929,10 +4929,15 @@ class PodsUI {
 					$restricted = false;
 				} else {
 
+					$pod = $this->pod;
+					if ( ! $pod->id() && $row ) {
+						$pod = pods( $this->pod->pod, $row );
+					}
+
 					// Check if the current user is the author of this item.
-					$author    = pods( $this->pod->pod, $row )->field( 'author', true );
+					$author    = $pod->field( 'author', true );
 					$is_author = false;
-					if ( $author && (int) wp_get_current_user()->ID === (int) $author->ID ) {
+					if ( $author && (int) wp_get_current_user()->ID === (int) pods_v( 'ID', $author, 0 ) ) {
 						$is_author = true;
 					}
 

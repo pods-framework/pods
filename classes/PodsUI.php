@@ -4655,9 +4655,13 @@ class PodsUI {
 
 		if ( false !== $this->pagination ) {
 			if ( 1 < $total_pages ) {
+				$first_link = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=1' );
+				$prev_link  = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . max( $this->page - 1, 1 ) );
+				$next_link  = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . min( $this->page + 1, $total_pages ) );
+				$last_link  = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . $total_pages );
 				?>
-				<a class="first-page<?php echo esc_attr( ( 1 < $this->page ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the first page', 'pods' ); ?>" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=1' ); ?>">&laquo;</a>
-				<a class="prev-page<?php echo esc_attr( ( 1 < $this->page ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . max( $this->page - 1, 1 ) ); ?>">&lsaquo;</a>
+				<a class="button first-page<?php echo esc_attr( ( 1 < $this->page ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the first page', 'pods' ); ?>" href="<?php echo $first_link; ?>">&laquo;</a>
+				<a class="button prev-page<?php echo esc_attr( ( 1 < $this->page ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo $prev_link; ?>">&lsaquo;</a>
 				<?php
 				if ( true == $header ) {
 					?>
@@ -4683,8 +4687,8 @@ class PodsUI {
 					<?php
 				}//end if
 				?>
-				<a class="next-page<?php echo esc_attr( ( $this->page < $total_pages ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the next page', 'pods' ); ?>" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . min( $this->page + 1, $total_pages ) ); ?>">&rsaquo;</a>
-				<a class="last-page<?php echo esc_attr( ( $this->page < $total_pages ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the last page', 'pods' ); ?>'" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . $total_pages ); ?>">&raquo;</a>
+				<a class="button next-page<?php echo esc_attr( ( $this->page < $total_pages ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the next page', 'pods' ); ?>" href="<?php echo $next_link; ?>">&rsaquo;</a>
+				<a class="button last-page<?php echo esc_attr( ( $this->page < $total_pages ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the last page', 'pods' ); ?>" href="<?php echo $last_link; ?>">&raquo;</a>
 				<?php
 			}//end if
 		}//end if

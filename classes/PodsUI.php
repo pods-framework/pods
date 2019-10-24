@@ -4931,7 +4931,7 @@ class PodsUI {
 
 					$pod = $this->pod;
 					if ( ! $pod->id() && $row ) {
-						$pod = pods( $this->pod->pod, $row );
+						$pod = $pod->fetch( $row );
 					}
 
 					// Check if the current user is the author of this item.

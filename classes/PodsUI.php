@@ -4636,7 +4636,7 @@ class PodsUI {
 				'page' . $this->num,
 				'post_type',
 				'taxonomy',
-				'action',
+				'action' . $this->num,
 			), $this->exclusion()
 		);
 

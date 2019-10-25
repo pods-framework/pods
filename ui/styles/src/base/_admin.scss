@@ -536,6 +536,29 @@ table.pods-admin {
 	max-width: initial;
 }
 
+
+/*
+ * Target Styles on a Settings Page
+ */
+body[class*="settings_page_pods-"] {
+	.pods-manage-field .pods-field-option input[type="text"],
+	.pods-manage-field .pods-field-option select,
+	.pods-manage-field .pods-field-option textarea,
+	.pods-manage-field .pods-field-option .pods-field.pods-boolean,
+	.pods-manage-field .pods-pick-values,
+	.pods-manage-field .pods-field-option .pods-form-ui-field-type-file,
+	.pods-manage-field .pods-slider-field {
+		float: none;
+	}
+}
+
+
+
+
+
+/*
+ * Media Queries
+ */
 @media only screen and (max-width: 850px) {
 	.pods-admin .pods_floatmenu {
 		position: static !important;

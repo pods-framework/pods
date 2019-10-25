@@ -65,17 +65,17 @@ class PodsField_DateTime extends PodsField {
 				'developer_mode'    => true,
 			),
 			static::$type . '_type'                  => array(
-				'label'                        => __( 'Date Format Type', 'pods' ),
-				'default'                      => 'format',
+				'label'      => __( 'Date Format Type', 'pods' ),
+				'default'    => 'format',
 				// Backwards compatibility
-										'type' => 'pick',
-				'help'                         => __( 'WordPress Default is the format used in Settings, General under "Date Format".', 'pods' ) . '<br>' . __( 'Predefined Format will allow you to select from a list of commonly used date formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
-				'data'                         => array(
+				'type'       => 'pick',
+				'help'       => __( 'WordPress Default is the format used in Settings, General under "Date Format".', 'pods' ) . '<br>' . __( 'Predefined Format will allow you to select from a list of commonly used date formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
+				'data'       => array(
 					'wp'     => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'date_format' ) ),
 					'format' => __( 'Predefined format', 'pods' ),
 					'custom' => __( 'Custom format', 'pods' ),
 				),
-				'dependency'                   => true,
+				'dependency' => true,
 			),
 			static::$type . '_format_custom'         => array(
 				'label'      => __( 'Date format for display', 'pods' ),
@@ -117,19 +117,19 @@ class PodsField_DateTime extends PodsField {
 				'dependency' => true,
 			),
 			static::$type . '_time_type'             => array(
-				'label'                        => __( 'Time Format Type', 'pods' ),
-				'excludes-on'                  => array( static::$type . '_format' => 'c' ),
-				'default'                      => '12',
+				'label'       => __( 'Time Format Type', 'pods' ),
+				'excludes-on' => array( static::$type . '_format' => 'c' ),
+				'default'     => '12',
 				// Backwards compatibility
-										'type' => 'pick',
-				'help'                         => __( 'WordPress Default is the format used in Settings, General under "Time Format".', 'pods' ) . '<br>' . __( '12/24 hour will allow you to select from a list of commonly used time formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
-				'data'                         => array(
+				'type'        => 'pick',
+				'help'        => __( 'WordPress Default is the format used in Settings, General under "Time Format".', 'pods' ) . '<br>' . __( '12/24 hour will allow you to select from a list of commonly used time formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
+				'data'        => array(
 					'wp'     => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'time_format' ) ),
 					'12'     => __( '12 hour', 'pods' ),
 					'24'     => __( '24 hour', 'pods' ),
 					'custom' => __( 'Custom', 'pods' ),
 				),
-				'dependency'                   => true,
+				'dependency'  => true,
 			),
 			static::$type . '_time_format_custom'    => array(
 				'label'       => __( 'Time format', 'pods' ),
@@ -179,6 +179,20 @@ class PodsField_DateTime extends PodsField {
 				'data'        => array(
 					'hh_mm'    => date_i18n( 'H:i' ),
 					'hh_mm_ss' => date_i18n( 'H:i:s' ),
+				),
+			),
+			static::$type . '_year_range_custom' => array(
+				'label'   => __( 'Year range', 'pods' ),
+				'default' => '',
+				'type'    => 'text',
+				'help'    => sprintf(
+					'%1$s<br /><a href="https://api.jqueryui.com/datepicker/#option-yearRange" target="_blank">%2$s</a>',
+					sprintf(
+						esc_html__( 'Example: %1$s for specifying a hard coded year range or %2$s for the last and next 10 years.', 'pods' ),
+						'<code>2010:2030</code>',
+						'<code>-10:+10</code>'
+					),
+					esc_html__( 'jQuery UI datepicker documentation', 'pods' )
 				),
 			),
 			static::$type . '_allow_empty'           => array(
@@ -389,6 +403,49 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function format_value_display( $value, $options, $js = false ) {
 
+		$format = $this->format_display( $options, $js );
+
+		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
+			// Try default storage format.
+			$date = $this->createFromFormat( static::$storage_format, (string) $value );
+
+			// Convert to timestamp.
+			if ( $date instanceof DateTime ) {
+				$timestamp = $date->getTimestamp();
+			} else {
+				// Try field format.
+				$date_local = $this->createFromFormat( $format, (string) $value );
+
+				if ( $date_local instanceof DateTime ) {
+					$timestamp = $date_local->getTimestamp();
+				} else {
+					// Fallback.
+					$timestamp = strtotime( (string) $value );
+				}
+			}
+
+			$value = date_i18n( $format, $timestamp );
+		} elseif ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
+			$value = date_i18n( $format );
+		} else {
+			$value = '';
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Build date and/or time display format string based on options
+	 *
+	 * @since 2.7.13
+	 *
+	 * @param  array $options Field options.
+	 * @param  bool  $js      Whether to return format for jQuery UI.
+	 *
+	 * @return string
+	 */
+	public function format_display( $options, $js = false ) {
+
 		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
 			$js = false;
 		}
@@ -397,27 +454,7 @@ class PodsField_DateTime extends PodsField {
 			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
 		}
 
-		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
-			// Try default storage format.
-			$date = $this->createFromFormat( static::$storage_format, (string) $value );
-
-			// Try field format.
-			$date_local = $this->createFromFormat( $format, (string) $value );
-
-			if ( $date instanceof DateTime ) {
-				$value = $date->format( $format );
-			} elseif ( $date_local instanceof DateTime ) {
-				$value = $date_local->format( $format );
-			} else {
-				$value = date_i18n( $format, strtotime( (string) $value ) );
-			}
-		} elseif ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
-			$value = date_i18n( $format );
-		} else {
-			$value = '';
-		}
-
-		return $value;
+		return $format;
 	}
 
 	/**
@@ -652,25 +689,17 @@ class PodsField_DateTime extends PodsField {
 
 		try {
 			if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
-				$timezone = get_option( 'timezone_string' );
 
-				if ( empty( $timezone ) ) {
-					$timezone = timezone_name_from_abbr( '', get_option( 'gmt_offset' ) * HOUR_IN_SECONDS, 0 );
+				$datetime = DateTime::createFromFormat( $format, (string) $date );
+
+				if ( false === $datetime ) {
+					$datetime = DateTime::createFromFormat( static::$storage_format, (string) $date );
 				}
 
-				if ( ! empty( $timezone ) ) {
-					$datetimezone = new DateTimeZone( $timezone );
-
-					$datetime = DateTime::createFromFormat( $format, (string) $date, $datetimezone );
-
-					if ( false === $datetime ) {
-						$datetime = DateTime::createFromFormat( static::$storage_format, (string) $date, $datetimezone );
-					}
-
-					if ( false !== $datetime && $return_timestamp ) {
-						return $datetime;
-					}
+				if ( false !== $datetime && $return_timestamp ) {
+					return $datetime;
 				}
+
 			}//end if
 
 			if ( in_array( $datetime, array( null, false ), true ) ) {

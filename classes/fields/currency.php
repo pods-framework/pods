@@ -95,7 +95,7 @@ class PodsField_Currency extends PodsField_Number {
 					'after_space'           => __( 'After with space (ex. 100 $)', 'pods' ),
 					'none'                  => __( 'None (ex. 100)', 'pods' ),
 					'beforeaftercode'       => __( 'Before with Currency Code after (ex. $100 USD)', 'pods' ),
-					'beforeaftercode_space' => __( 'Before width space and with Currency Code after (ex. $ 100 USD)', 'pods' ),
+					'beforeaftercode_space' => __( 'Before with space and with Currency Code after (ex. $ 100 USD)', 'pods' ),
 				),
 			),
 			static::$type . '_format'           => array(
@@ -476,14 +476,20 @@ class PodsField_Currency extends PodsField_Number {
 			'myr'     => array(
 				'label'  => 'MYR',
 				'name'   => __( 'Malaysian Ringgit', 'pods' ),
-				'sign'   => 'MR',
-				'entity' => 'MR',
+				'sign'   => 'RM',
+				'entity' => 'RM',
 			),
 			'mxn'     => array(
 				'label'  => 'MXN',
 				'name'   => __( 'Mexican Peso', 'pods' ),
 				'sign'   => '$',
 				'entity' => '&#36;',
+			),
+			'ngn'     => array(
+				'label'  => 'NGN',
+				'name'   => __( 'Nigerian Naira', 'pods' ),
+				'sign'   => '₦',
+				'entity' => '&#8358;',
 			),
 			'nzd'     => array(
 				'label'  => 'NZD',

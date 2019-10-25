@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
+/*global jQuery, _, Backbone, PodsMn, wp, PodsI18n */
 
 import { PodsDFVModal } from 'pods-dfv/_src/core/dfv-modal';
 

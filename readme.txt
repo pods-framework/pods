@@ -1,11 +1,11 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, pglewis, jimtrue, quasel, keraweb, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
+Contributors: sc0ttkclark, pglewis, jimtrue, keraweb, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.5
-Tested up to: 5.0
+Tested up to: 5.2
 Requires PHP: 5.3
-Stable tag: 2.7.13-a-1
+Stable tag: 2.7.16-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -179,26 +179,84 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
-= 2.7.12 December 20th 2018 =
+= 2.7.15 - September 5th 2019 =
+
+**Enhancements**
+* Enhancement: Add year range option to date & datetime fields. #5442 (@JoryHogeveen)
+* Enhancement: Support single select relationships in templates when using `[each]`. #4507 (@sc0ttkclark, @JoryHogeveen)
+* Enhancement: Prevent creation of Pods using reserved keywords from WordPress Codex and Pods. #5428 (@JoryHogeveen)
+* Enhancement: Allow all callables to be passed in magic tags. #5436 (@JoryHogeveen)
+
+**Bug Fixes**
+* Fixed: Always convert database value for date/time fields without timezone to maintain the actual value. #5423 & #5424 (@JoryHogeveen)
+* Fixed: Solve issues with saving date/time fields in other locales. #5444, #5421, #5415 & #5451 (@JoryHogeveen)
+* Fixed: Import from file with absolute path. #5430 (@mistraloz)
+* Fixed: Fix numeric soft format issue removing decimals & numeric slider input formatting. #5281 & #5215 (@JoryHogeveen)
+* Fixed: Fix & improve error handling & debug logs. #5452, #5450, #5440, #5419, #5435 & #5453 (@JoryHogeveen)
+* Fixed: Corrected Malaysian Ringgit currency sign. #5446 (@JoryHogeveen)
+* Fixed: Flush Pod cache before returning errors, #5420 (@JoryHogeveen)
+
+= 2.7.14 - July 9th 2019 =
 
 **Bug Fixes**
 
-Fixed: Serial comma display works again for Users, Comments, and Media relationships when used in Pods::display() and magic tag templating without specifying the object field you want to display, #5251 (@sc0ttkclark)
+* Fixed: Always convert database value for date/time fields with UTC timezone to maintain the actual value, #5382, #5402, #5403 (@JoryHogeveen)
+* Fixed: Stop add new button from being disabled when no selection has been made yet for single select, #5401 (@pglewis)
+* Fixed: Resolved PHP notices in `PodsAPI::save_pod_item()`, #5411 (@pglewis)
+
+= 2.7.13 - June 28th 2019 =
+
+**Enhancements**
+
+* Enhancement: Support meta fields as display field for relationships, #5299 (@sc0ttkclark)
+* Enhancement: DateTime/Time field code and performance #5302 (@JoryHogeveen)
+* Enhancement: Added Nigerian Naira currency, #5377 (@webcreativeng)
+* Enhancement: Added filter `pods_enqueue_dfv_on_front` for enqueueing DFV scripts on frontend, #5313 & #5303 (@nicdford)
+* Added: Add debug information for Pods to Site Health Info area, #5399 (@sc0ttclark, @JoryHogeveen)
+
+**Bug Fixes**
+
+* Fixed: Cursor is jumping to the start of the block when Gutenberg autosaves, #5274 (@pglewis)
+* Fixed: Select drop-downs set to required, #5031 (@pglewis)
+* Fixed: HTML escaping issue in the Manage Fields list, #5246 (@pglewis)
+* Fixed: Translate Pods stuck with Portuguese translation in the Admin menus, #5259 (@JoryHogeveen)
+* Fixed: option cache handling when using external object cache, #5294 (@sc0ttkclark)
+* Fixed: Fix force WWW option on website/URL fields, #4881 (@pglewis)
+* Fixed: Phone field should not put anything in the field input on 'blank' values, #4881 (@pglewis)
+* Fixed: Versioned tag names are not compatible with Composer, #5278 (@pglewis)
+* Fixed: `get_post_meta()` always retriggers `pods_transient_set()`, #4690 (@pglewis)
+* Fixed: Date output in magic tags for date fields uses DateTime class by default instead of date_il8n, #5296 (@JoryHogeveen)
+* Fixed: PHP 7.3 `compact()` notices due to undefined var names, #5266 (@sc0ttkclark)
+* Fixed: Use `Marionette.noConflict()` to keep a private copy of Marionette, #5237 & #5354 (@pglewis)
+* Fixed: Remove floats from fields within pods manage fields (UI), #5362 (@nicdford)
+* Fixed: Set table charset for Pods Advanced Content Types to WP default charset, #5276 (@JoryHogeveen)
+* Fixed: Avoid PHP warnings by removing unused $check_value logic in PodsField_Pick, #5205 (@ziqbal, @JoryHogeveen)
+* Fixed: Fix PodsData fetch for when using object cache and settings pages, #4960 (@pcfreak30, @sc0ttclark, @JoryHogeveen)
+* Fixed: Moved session_id() check outside the big conditional so it's always executed, #5182 (@mastef)
+* Fixed: Change deprecated (since WP 5.1) hook `wpmu_new_blog` to `wp_insert_site` with backwards compatibility, #5369 (@JoryHogeveen)
+* Fixed: Error when PodsInit isn't available on network pages, #3353 (@JoryHogeveen)
+* Fixed: Shortcodes no longer stop the page from loading when they encounter SQL errors, #5279 (@sc0ttclark, @JoryHogeveen)
+
+= 2.7.12 - December 20th 2018 =
 
 **Enhancements**
 
 * Enhancement: Sort currency list alphabetically by name, add Indonesian Rupiah (Rp) and US Cent currency support, #5247 (@sc0ttkclark)
 
+**Bug Fixes**
+
+Fixed: Serial comma display works again for Users, Comments, and Media relationships when used in Pods::display() and magic tag templating without specifying the object field you want to display, #5251 (@sc0ttkclark)
+
 = 2.7.11 - December 7th 2018 =
+
+**Enhancements**
+
+* Enhancement: Added: New pods_data_auto_calculate_total_found filter can be set to true to auto-calculate total_found() number right away after a Pods::find() query runs, defaults to false, #5232, (@sc0ttkclark)
 
 **Bug Fixes**
 
 * Fixed: Javascript errors on pages without the Gutenberg editor active under certain circumstances, #5225 (@pglewis)
 * Fixed: Avoid extra user queries when not necessary, #5230 (@sc0ttkclark)
-
-**Enhancements**
-
-* Enhancement: Added: New pods_data_auto_calculate_total_found filter can be set to true to auto-calculate total_found() number right away after a Pods::find() query runs, defaults to false, #5232, (@sc0ttkclark)
 
 = 2.7.10 - December 5th 2018 =
 

@@ -26,9 +26,9 @@ Please provide the version of Pods you are running:
 ## WordPress Environment
 <!-- This is REQUIRED for Bug Reports, so we can check for conflicts, version issues, etc. -->
 <details>
-```
-Copy and paste your System Details from **Pods Admin > Settings > Debug Information** in WordPress admin here.
-```
+
+Copy and paste your Tools > Site Health > Info. Use the 'Copy Site Info to Clipboard' and paste the results over this line.
+
 </details>
 
 ## Pods Package Export (helpful!)

@@ -344,7 +344,8 @@ class Pods_Templates_Auto_Template_Front_End {
 				if ( is_tax() ) {
 					global $wp_query;
 					$obj      = $wp_query->get_queried_object();
-					$pod_item = $obj->slug;
+					$pod_name = $obj->slug;
+					$pod_item = $obj->term_id;
 				}
 			}
 

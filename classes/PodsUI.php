@@ -4977,7 +4977,7 @@ class PodsUI {
 		}//end if
 
 		if ( $restricted && ! empty( $restrict ) ) {
-			$relation = strtoupper( trim( pods_var( 'relation', $restrict, 'AND', null, true ) ) );
+			$relation = strtoupper( trim( pods_v( 'relation', $restrict, 'AND', null, true ) ) );
 
 			if ( 'AND' !== $relation ) {
 				$relation = 'OR';
@@ -4993,7 +4993,7 @@ class PodsUI {
 				if ( is_array( $match ) ) {
 					$match_okay = true;
 
-					$match_relation = strtoupper( trim( pods_var( 'relation', $match, 'OR', null, true ) ) );
+					$match_relation = strtoupper( trim( pods_v( 'relation', $match, 'OR', null, true ) ) );
 
 					if ( 'AND' !== $match_relation ) {
 						$match_relation = 'OR';
@@ -5140,7 +5140,10 @@ class PodsUI {
 			}
 		}//end if
 
-		if ( isset( $this->actions_custom[ $action ] ) && is_array( $this->actions_custom[ $action ] ) && isset( $this->actions_custom[ $action ]['restrict_callback'] ) && is_callable( $this->actions_custom[ $action ]['restrict_callback'] ) ) {
+		if (
+			isset( $this->actions_custom[ $action ]['restrict_callback'] )
+			&& is_callable( $this->actions_custom[ $action ]['restrict_callback'] )
+		) {
 			$restricted = call_user_func( $this->actions_custom[ $action ]['restrict_callback'], $restricted, $restrict, $action, $row, $this );
 		}
 

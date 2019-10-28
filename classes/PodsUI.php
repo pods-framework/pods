@@ -5121,14 +5121,15 @@ class PodsUI {
 						if ( ! is_array( $author_restricted ) ) {
 							$author_restricted = (array) $author_restricted;
 						}
+						$author_restricted = array_map( 'intval', $author_restricted );
 
 						if ( is_array( $val ) ) {
 							foreach ( $val as $v ) {
-								if ( in_array( $v, $author_restricted ) ) {
+								if ( in_array( (int) $v, $author_restricted, true ) ) {
 									$restricted = false;
 								}
 							}
-						} elseif ( in_array( $val, $author_restricted ) ) {
+						} elseif ( in_array( (int) $val, $author_restricted, true ) ) {
 							$restricted = false;
 						}
 					}

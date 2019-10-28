@@ -4914,8 +4914,7 @@ class PodsUI {
 		$author_restrict = false;
 
 		if ( ! empty( $this->restrict['author_restrict'] ) && $restrict === $this->restrict['author_restrict'] ) {
-			$restricted = false;
-
+			$restricted      = false;
 			$author_restrict = true;
 
 			if ( is_object( $this->pod ) ) {
@@ -4928,6 +4927,8 @@ class PodsUI {
 				if ( pods_is_admin( array( 'pods', 'pods_content' ) ) ) {
 					$restricted = false;
 				} else {
+					// Disable legacy check.
+					$author_restrict = false;
 
 					$pod = $this->pod;
 					if ( ! $pod->id() && $row ) {
@@ -4970,18 +4971,9 @@ class PodsUI {
 						}
 					}
 				}
-			}//end if
-			/*
-			@todo determine proper logic for non-pods capabilities
-			else {
-			$restricted = true;
 
-			if ( pods_is_admin( array( 'pods', 'pods_content' ) ) )
-			$restricted = false;
-			elseif ( current_user_can( 'pods_' . $action . '_others_' . $_tbd ) )
-			$restricted = false;
-			}
-			*/
+			}//end if
+
 		}//end if
 
 		if ( $restricted && ! empty( $restrict ) ) {
@@ -5120,42 +5112,27 @@ class PodsUI {
 				}//end if
 			}//end foreach
 
-			if ( ! empty( $author_restrict ) ) {
-				if ( is_object( $this->pod ) && 'manage' === $action ) {
-					if ( ! in_array( 'edit', $this->actions_disabled ) && ! current_user_can( 'pods_edit_' . $this->pod->pod ) && ! in_array( 'delete', $this->actions_disabled ) && ! current_user_can( 'pods_delete_' . $this->pod->pod ) ) {
-						$okay = false;
-					}
-				}
-				if ( is_object( $this->pod ) && ! current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) ) {
-					$okay = false;
-				}
-				/*
-				@todo determine proper logic for non-pods capabilities
-				elseif ( !current_user_can( 'pods_' . $action . '_' . $_tbd ) )
-				$okay = false;
-				*/
+			// Legacy author restrict check.
+			if ( $author_restrict && ! $okay && ! empty( $row ) ) {
+				foreach ( $this->restrict['author_restrict'] as $key => $val ) {
+					$author_restricted = $this->get_field( $key );
 
-				if ( ! $okay && ! empty( $row ) ) {
-					foreach ( $this->restrict['author_restrict'] as $key => $val ) {
-						$author_restricted = $this->get_field( $key );
+					if ( ! empty( $author_restricted ) ) {
+						if ( ! is_array( $author_restricted ) ) {
+							$author_restricted = (array) $author_restricted;
+						}
 
-						if ( ! empty( $author_restricted ) ) {
-							if ( ! is_array( $author_restricted ) ) {
-								$author_restricted = (array) $author_restricted;
-							}
-
-							if ( is_array( $val ) ) {
-								foreach ( $val as $v ) {
-									if ( in_array( $v, $author_restricted ) ) {
-										$okay = true;
-									}
+						if ( is_array( $val ) ) {
+							foreach ( $val as $v ) {
+								if ( in_array( $v, $author_restricted ) ) {
+									$restricted = false;
 								}
-							} elseif ( in_array( $val, $author_restricted ) ) {
-								$okay = true;
 							}
+						} elseif ( in_array( $val, $author_restricted ) ) {
+							$restricted = false;
 						}
 					}
-				}//end if
+				}//end foreach
 			}//end if
 
 			if ( $okay ) {

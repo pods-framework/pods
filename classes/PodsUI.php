@@ -4656,10 +4656,10 @@ class PodsUI {
 
 		if ( false !== $this->pagination ) {
 			if ( 1 < $total_pages ) {
-				$first_link    = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=1' );
-				$prev_link     = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . max( $this->page - 1, 1 ) );
-				$next_link     = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . min( $this->page + 1, $total_pages ) );
-				$last_link     = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . $total_pages );
+				$first_link = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=1' );
+				$prev_link  = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . max( $this->page - 1, 1 ) );
+				$next_link  = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . min( $this->page + 1, $total_pages ) );
+				$last_link  = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . $total_pages );
 
 				$classes = '';
 				if ( 1 < $this->page ) {
@@ -4669,8 +4669,8 @@ class PodsUI {
 					$classes .= ' button';
 				}
 				?>
-				<a class="first-page<?php esc_attr_e( $classes ); ?>" title="<?php esc_attr_e( 'Go to the first page', 'pods' ); ?>" href="<?php echo $first_link; ?>">&laquo;</a>
-				<a class="prev-page<?php esc_attr_e( $classes ); ?>" title="<?php esc_attr_e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo $prev_link; ?>">&lsaquo;</a>
+				<a class="first-page<?php echo esc_attr( $classes ); ?>" title="<?php esc_attr_e( 'Go to the first page', 'pods' ); ?>" href="<?php echo $first_link; ?>">&laquo;</a>
+				<a class="prev-page<?php echo esc_attr( $classes ); ?>" title="<?php esc_attr_e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo $prev_link; ?>">&lsaquo;</a>
 				<?php
 				if ( true == $header ) {
 					?>
@@ -4703,8 +4703,8 @@ class PodsUI {
 					$classes .= ' button';
 				}
 				?>
-				<a class="next-page<?php esc_attr_e( $classes ); ?>" title="<?php esc_attr_e( 'Go to the next page', 'pods' ); ?>" href="<?php echo $next_link; ?>">&rsaquo;</a>
-				<a class="last-page<?php esc_attr_e( $classes ); ?>" title="<?php esc_attr_e( 'Go to the last page', 'pods' ); ?>" href="<?php echo $last_link; ?>">&raquo</a>
+				<a class="next-page<?php echo esc_attr( $classes ); ?>" title="<?php esc_attr_e( 'Go to the next page', 'pods' ); ?>" href="<?php echo $next_link; ?>">&rsaquo;</a>
+				<a class="last-page<?php echo esc_attr( $classes ); ?>" title="<?php esc_attr_e( 'Go to the last page', 'pods' ); ?>" href="<?php echo $last_link; ?>">&raquo</a>
 				<?php
 			}//end if
 		}//end if

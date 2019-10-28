@@ -4662,7 +4662,7 @@ class PodsUI {
 				$last_link  = esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . $total_pages );
 
 				$classes = '';
-				if ( 1 < $this->page ) {
+				if ( 1 >= $this->page ) {
 					$classes .= ' disabled';
 				}
 				if ( is_admin() ) {
@@ -4696,7 +4696,7 @@ class PodsUI {
 					<?php
 				}//end if
 				$classes = '';
-				if ( $this->page < $total_pages ) {
+				if ( $this->page >= $total_pages ) {
 					$classes .= ' disabled';
 				}
 				if ( is_admin() ) {

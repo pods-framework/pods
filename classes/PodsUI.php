@@ -4936,8 +4936,7 @@ class PodsUI {
 		$author_restrict = false;
 
 		if ( ! empty( $this->restrict['author_restrict'] ) && $restrict === $this->restrict['author_restrict'] ) {
-			$restricted = false;
-
+			$restricted      = false;
 			$author_restrict = true;
 
 			if ( is_object( $this->pod ) ) {
@@ -4949,33 +4948,58 @@ class PodsUI {
 
 				if ( pods_is_admin( array( 'pods', 'pods_content' ) ) ) {
 					$restricted = false;
-				} elseif ( 'manage' === $action ) {
-					if ( ! in_array( 'edit', $this->actions_disabled ) && ( current_user_can( 'pods_edit_' . $this->pod->pod ) || current_user_can( 'pods_edit_others_' . $this->pod->pod ) ) ) {
-						$restricted = false;
-					} elseif ( ! in_array( 'delete', $this->actions_disabled ) && ( current_user_can( 'pods_delete_' . $this->pod->pod ) || current_user_can( 'pods_delete_others_' . $this->pod->pod ) ) ) {
-						$restricted = false;
-					} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) || current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
-						$restricted = false;
-					}
-				} elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) || current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) ) {
-					$restricted = false;
-				}
-			}//end if
-			/*
-			@todo determine proper logic for non-pods capabilities
-			else {
-			$restricted = true;
+				} else {
+					// Disable legacy check.
+					$author_restrict = false;
 
-			if ( pods_is_admin( array( 'pods', 'pods_content' ) ) )
-			$restricted = false;
-			elseif ( current_user_can( 'pods_' . $action . '_others_' . $_tbd ) )
-			$restricted = false;
-			}
-			*/
+					$pod = $this->pod;
+					if ( ! $pod->id() && $row ) {
+						$pod->fetch( $row );
+					}
+
+					// Check if the current user is the author of this item.
+					$author    = $pod->field( 'author', true );
+					$is_author = false;
+					if ( $author && (int) wp_get_current_user()->ID === (int) pods_v( 'ID', $author, 0 ) ) {
+						$is_author = true;
+					}
+
+					$cap_actions = array( $action );
+					if ( 'manage' === $action || 'reorder' === $action ) {
+						if ( ! in_array( 'edit', $this->actions_disabled, true ) ) {
+							$cap_actions[] = 'edit';
+						}
+						if ( ! in_array( 'delete', $this->actions_disabled, true ) ) {
+							$cap_actions[] = 'delete';
+						}
+					}
+
+					foreach ( $cap_actions as $cap ) {
+						if ( $is_author ) {
+							// Only need regular capability.
+							if ( current_user_can( 'pods_' . $cap . '_' . $this->pod->pod ) ) {
+								$restricted = false;
+								break;
+							}
+						} else {
+							// This item is created by another user so the "others" capability is required as well.
+							if (
+								current_user_can( 'pods_' . $cap . '_' . $this->pod->pod ) &&
+								current_user_can( 'pods_' . $cap . '_others_' . $this->pod->pod )
+							) {
+								$restricted = false;
+								break;
+							}
+						}
+					}
+				}
+
+			}//end if
+
 		}//end if
 
 		if ( $restricted && ! empty( $restrict ) ) {
-			$relation = strtoupper( trim( pods_var( 'relation', $restrict, 'AND', null, true ) ) );
+			$relation = strtoupper( trim( pods_v( 'relation', $restrict, 'AND', null, true ) ) );
 
 			if ( 'AND' !== $relation ) {
 				$relation = 'OR';
@@ -4991,7 +5015,7 @@ class PodsUI {
 				if ( is_array( $match ) ) {
 					$match_okay = true;
 
-					$match_relation = strtoupper( trim( pods_var( 'relation', $match, 'OR', null, true ) ) );
+					$match_relation = strtoupper( trim( pods_v( 'relation', $match, 'OR', null, true ) ) );
 
 					if ( 'AND' !== $match_relation ) {
 						$match_relation = 'OR';
@@ -5110,42 +5134,28 @@ class PodsUI {
 				}//end if
 			}//end foreach
 
-			if ( ! empty( $author_restrict ) ) {
-				if ( is_object( $this->pod ) && 'manage' === $action ) {
-					if ( ! in_array( 'edit', $this->actions_disabled ) && ! current_user_can( 'pods_edit_' . $this->pod->pod ) && ! in_array( 'delete', $this->actions_disabled ) && ! current_user_can( 'pods_delete_' . $this->pod->pod ) ) {
-						$okay = false;
-					}
-				}
-				if ( is_object( $this->pod ) && ! current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) ) {
-					$okay = false;
-				}
-				/*
-				@todo determine proper logic for non-pods capabilities
-				elseif ( !current_user_can( 'pods_' . $action . '_' . $_tbd ) )
-				$okay = false;
-				*/
+			// Legacy author restrict check.
+			if ( $author_restrict && ! $okay && ! empty( $row ) ) {
+				foreach ( $this->restrict['author_restrict'] as $key => $val ) {
+					$author_restricted = $this->get_field( $key );
 
-				if ( ! $okay && ! empty( $row ) ) {
-					foreach ( $this->restrict['author_restrict'] as $key => $val ) {
-						$author_restricted = $this->get_field( $key );
+					if ( ! empty( $author_restricted ) ) {
+						if ( ! is_array( $author_restricted ) ) {
+							$author_restricted = (array) $author_restricted;
+						}
+						$author_restricted = array_map( 'intval', $author_restricted );
 
-						if ( ! empty( $author_restricted ) ) {
-							if ( ! is_array( $author_restricted ) ) {
-								$author_restricted = (array) $author_restricted;
-							}
-
-							if ( is_array( $val ) ) {
-								foreach ( $val as $v ) {
-									if ( in_array( $v, $author_restricted ) ) {
-										$okay = true;
-									}
+						if ( is_array( $val ) ) {
+							foreach ( $val as $v ) {
+								if ( in_array( (int) $v, $author_restricted, true ) ) {
+									$restricted = false;
 								}
-							} elseif ( in_array( $val, $author_restricted ) ) {
-								$okay = true;
 							}
+						} elseif ( in_array( (int) $val, $author_restricted, true ) ) {
+							$restricted = false;
 						}
 					}
-				}//end if
+				}//end foreach
 			}//end if
 
 			if ( $okay ) {
@@ -5153,7 +5163,10 @@ class PodsUI {
 			}
 		}//end if
 
-		if ( isset( $this->actions_custom[ $action ] ) && is_array( $this->actions_custom[ $action ] ) && isset( $this->actions_custom[ $action ]['restrict_callback'] ) && is_callable( $this->actions_custom[ $action ]['restrict_callback'] ) ) {
+		if (
+			isset( $this->actions_custom[ $action ]['restrict_callback'] )
+			&& is_callable( $this->actions_custom[ $action ]['restrict_callback'] )
+		) {
 			$restricted = call_user_func( $this->actions_custom[ $action ]['restrict_callback'], $restricted, $restrict, $action, $row, $this );
 		}
 

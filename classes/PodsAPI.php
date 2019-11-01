@@ -312,6 +312,7 @@ class PodsAPI {
 		foreach ( $post_meta as $meta_key => $meta_value ) {
 			// WordPress's *_post_meta() functions expect to receive 'slashed' data
 			$meta_value = pods_sanitize( $meta_value );
+
 			if ( null === $meta_value || ( $strict && '' === $post_meta[ $meta_key ] ) ) {
 				$old_meta_value = '';
 

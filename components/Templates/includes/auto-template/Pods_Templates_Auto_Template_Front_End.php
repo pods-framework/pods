@@ -342,8 +342,7 @@ class Pods_Templates_Auto_Template_Front_End {
 			} else {
 				// Outside the loop in a taxonomy, we want the term
 				if ( is_tax() ) {
-					global $wp_query;
-					$obj      = $wp_query->get_queried_object();
+					$obj      = get_queried_object();
 					$pod_name = $obj->slug;
 					$pod_item = $obj->term_id;
 				}

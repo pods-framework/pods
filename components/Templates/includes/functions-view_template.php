@@ -91,11 +91,13 @@ function frontier_decode_template( $code, $atts ) {
  */
 function frontier_if_block( $atts, $code ) {
 
-	$atts = wp_parse_args( $atts, array(
+	$defaults = array(
 		'pod'   => null,
 		'id'    => null,
 		'field' => null,
-	) );
+	);
+
+	$atts = wp_parse_args( $atts, $defaults );
 
 	$pod = pods( $atts['pod'], $atts['id'] );
 
@@ -140,8 +142,8 @@ function frontier_if_block( $atts, $code ) {
 					break;
 				}
 
-				$entries    = $field_pod->field( $field );
-				$rel_pod    = $field_pod->fields( $field, 'pick_val' );
+				$entries = $field_pod->field( $field );
+				$rel_pod = $field_pod->fields( $field, 'pick_val' );
 
 				if ( ! $entries || ! $rel_pod ) {
 					// No relationships or pod name found.

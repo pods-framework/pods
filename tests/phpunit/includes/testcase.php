@@ -649,6 +649,12 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 						self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ] = $field;
 					}
 
+					if ( in_array( $pod['name'], pods_reserved_keywords(), true ) ) {
+						// Extending objects when using reserved keywords.
+						// This will then accept `post`, `page` etc. as Pods object names.
+						$pod['create_extend'] = 'extend';
+					}
+
 					$id = $api->save_pod( $pod );
 
 					$load_pod = $api->load_pod( array( 'id' => $id ) );

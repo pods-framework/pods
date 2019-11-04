@@ -126,8 +126,11 @@ if (
 	}
 
 	if ( $html5 ) {
-		// HTML5 uses mysql date format.
-		$value = $mysql_value;
+		/**
+		 * HTML5 uses mysql date format separated with a T.
+		 * @link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
+		 */
+		$value = str_replace( ' ', 'T', $mysql_value );
 	}
 }
 
@@ -146,15 +149,15 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 
 <script>
-	jQuery( function () {
-		var $container = jQuery( '<div>' ).appendTo( 'body' ).addClass( 'pods-compat-container' ),
-			$element   = jQuery( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ),
+	jQuery( function ( $ ) {
+		var $container = $( '<div>' ).appendTo( 'body' ).addClass( 'pods-compat-container' ),
+			$element   = $( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ),
 			beforeShow = {
 				'beforeShow': function( textbox, instance) {
-					jQuery( '#ui-datepicker-div' ).appendTo( $container );
+					$( '#ui-datepicker-div' ).appendTo( $container );
 				}
 			},
-			args = jQuery.extend( <?php echo json_encode( $args ); ?>, beforeShow );
+			args = $.extend( <?php echo json_encode( $args ); ?>, beforeShow );
 
 		<?php
 		if ( 'text' !== $type ) {
@@ -165,9 +168,9 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 			input.setAttribute( 'type', '<?php echo $type; ?>' );
 
 			var notADateValue = 'not-a-date';
-			input.setAttribute('value', notADateValue);
+			input.setAttribute( 'value', notADateValue );
 
-			return (input.value !== notADateValue);
+			return ( input.value !== notADateValue );
 		}
 
 		if ( ! podsCheckHtml5() ) {
@@ -181,7 +184,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 		args = altField( args, $element );
 		$element.<?php echo esc_js( $method ); ?>( args );
 		<?php
-		}//end if
+		} //end if
 		?>
 		function altField( args, el ) {
 			var $el  = $( el ),

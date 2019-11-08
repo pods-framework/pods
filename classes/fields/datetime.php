@@ -562,12 +562,11 @@ class PodsField_DateTime extends PodsField {
 					$format = pods_v( static::$type . '_time_format_custom', $options, '' );
 				} else {
 					$format = pods_v( static::$type . '_time_format_custom_js', $options, '' );
-					// Already in JS format.
-					$js = false;
+					$js     = false; // Already in JS format.
 
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_time_format_custom', $options, '' );
-						$js = true;
+						$js     = true;
 					}
 				}
 
@@ -807,33 +806,33 @@ class PodsField_DateTime extends PodsField {
 		if ( 'time' === $args['type'] || 'time' === static::$type ) {
 
 			$symbols = array(
-				// AM/PM
+				// AM/PM.
 				'a' => 'tt',
 				'A' => 'TT',
-				// Swatch internet time (not supported)
+				// Swatch internet time (not supported).
 				'B' => '',
-				// Hour
+				// Hour.
 				'h' => 'hh',
 				'H' => 'HH',
 				'g' => 'h',
 				'G' => 'H',
-				// Minute
+				// Minute.
 				'i' => 'mm',
-				// Second
+				// Second.
 				's' => 'ss',
-				// Microsecond
+				// Microsecond.
 				'u' => 'c',
 			);
 
 			if ( version_compare( PHP_VERSION, '7.0.0' ) >= 0 ) {
-				// Millisecond
+				// Millisecond.
 				$symbols['v'] = 'l';
 			}
 
 		} else {
 
 			$symbols = array(
-				// Day
+				// Day.
 				'd' => 'dd',
 				'l' => 'DD',
 				'D' => 'D',
@@ -842,15 +841,15 @@ class PodsField_DateTime extends PodsField {
 				'S' => '',
 				'w' => '',
 				'z' => 'o',
-				// Week
+				// Week.
 				'W' => '',
-				// Month
+				// Month.
 				'F' => 'MM',
 				'm' => 'mm',
 				'M' => 'M',
 				'n' => 'm',
 				't' => '',
-				// Year
+				// Year.
 				'L' => '',
 				'o' => '',
 				'Y' => 'yy',

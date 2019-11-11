@@ -44,20 +44,20 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	// This should always be -2 versions behind the latest WP release
 	// To be updated each Major x.x Pods release
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_WP_VERSION_MINIMUM', '4.5' );
+		define( 'PODS_WP_VERSION_MINIMUM', '4.9' );
 	}
 
 	// This should match minimum WP requirements or usage (90%+)
 	// Found at: https://wordpress.org/about/stats/
 	if ( ! defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_PHP_VERSION_MINIMUM', '5.3' );
+		define( 'PODS_PHP_VERSION_MINIMUM', '5.6' );
 	}
 
 	// This should match minimum WP requirements or usage (90%+)
 	// Found at: https://wordpress.org/about/stats/
 	// Using 5.1 for now, many RedHat servers aren't EOL yet and they backport security releases
 	if ( ! defined( 'PODS_MYSQL_VERSION_MINIMUM' ) ) {
-		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.1' );
+		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.5' );
 	}
 
 	define( 'PODS_SLUG', plugin_basename( __FILE__ ) );

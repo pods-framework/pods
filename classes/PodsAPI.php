@@ -6083,6 +6083,7 @@ class PodsAPI {
 					$pod = array(
 						'id'      => 0,
 						'name'    => $params->name,
+						'object'  => $params->name,
 						'label'   => __( 'Pods', 'pods' ),
 						'type'    => 'post_type',
 						'storage' => 'meta',
@@ -6095,6 +6096,7 @@ class PodsAPI {
 					$pod = array(
 						'id'      => 0,
 						'name'    => $params->name,
+						'object'  => $params->name,
 						'label'   => __( 'Pod Fields', 'pods' ),
 						'type'    => 'post_type',
 						'storage' => 'meta',

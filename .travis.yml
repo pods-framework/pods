@@ -46,9 +46,6 @@ matrix:
   include:
     - env: NODE_RELEASE="skip"
       php: 7.0
-    - env: WP_VERSION="4.5" NODE_RELEASE="skip"
-      php: 5.6
-      dist: precise
 
 before_install:
   # Sourcing the .env file will make sure we use, in the environment configuration, the same variables the tests are using.

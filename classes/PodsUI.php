@@ -3953,6 +3953,12 @@ class PodsUI {
 
 						$toggle_class = '';
 
+						$field_id = '';
+
+						if ( ! empty( $row[ $this->sql['field_id'] ] ) ) {
+							$field_id = $row[ $this->sql['field_id'] ];
+						}
+
 						if ( is_array( $this->actions_custom ) && isset( $this->actions_custom['toggle'] ) ) {
 							$toggle_class = ' pods-toggled-on';
 
@@ -3961,12 +3967,12 @@ class PodsUI {
 							}
 						}
 						?>
-						<tr id="item-<?php echo esc_attr( $row[ $this->sql['field_id'] ] ); ?>" class="iedit<?php echo esc_attr( $toggle_class ); ?>">
+						<tr id="item-<?php echo esc_attr( $field_id ); ?>" class="iedit<?php echo esc_attr( $toggle_class ); ?>">
 							<?php
 							if ( ! empty( $this->actions_bulk ) ) {
 								?>
 								<th scope="row" class="check-column">
-									<input type="checkbox" name="action_bulk_ids<?php echo esc_attr( $this->num ); ?>[]" value="<?php echo esc_attr( $row[ $this->sql['field_id'] ] ); ?>">
+									<input type="checkbox" name="action_bulk_ids<?php echo esc_attr( $this->num ); ?>[]" value="<?php echo esc_attr( $field_id ); ?>">
 								</th>
 								<?php
 							}
@@ -4018,7 +4024,7 @@ class PodsUI {
 									global $wpdb;
 									$table = $attributes['custom_relate'];
 									$on    = $this->sql['field_id'];
-									$is    = $row[ $this->sql['field_id'] ];
+									$is    = $field_id;
 									$what  = array( 'name' );
 									if ( is_array( $table ) ) {
 										if ( isset( $table['on'] ) ) {
@@ -4154,7 +4160,7 @@ class PodsUI {
 										$link = pods_query_arg(
 											array(
 												'action' . $this->num => 'edit',
-												'id' . $this->num     => $row[ $this->sql['field_id'] ],
+												'id' . $this->num     => $field_id,
 											), self::$allowed, $this->exclusion()
 										);
 
@@ -4174,7 +4180,7 @@ class PodsUI {
 										$link = pods_query_arg(
 											array(
 												'action' . $this->num => 'view',
-												'id' . $this->num     => $row[ $this->sql['field_id'] ],
+												'id' . $this->num     => $field_id,
 											), self::$allowed, $this->exclusion()
 										);
 
@@ -4209,7 +4215,7 @@ class PodsUI {
 										$toggle = false;
 
 										$actions = $this->get_actions( $row );
-										$actions = $this->do_hook( 'row_actions', $actions, $row[ $this->sql['field_id'] ] );
+										$actions = $this->do_hook( 'row_actions', $actions, $field_id );
 
 										if ( ! empty( $actions ) ) {
 											?>
@@ -4226,7 +4232,7 @@ class PodsUI {
 										}
 									} else {
 										?>
-										<input type="hidden" name="order[]" value="<?php echo esc_attr( $row[ $this->sql['field_id'] ] ); ?>" />
+										<input type="hidden" name="order[]" value="<?php echo esc_attr( $field_id ); ?>" />
 										<?php
 									}//end if
 									?>
@@ -4321,13 +4327,19 @@ class PodsUI {
 	 */
 	public function get_actions( $row ) {
 
+		$field_id = '';
+
+		if ( ! empty( $row[ $this->sql['field_id'] ] ) ) {
+			$field_id = $row[ $this->sql['field_id'] ];
+		}
+
 		$actions = array();
 
 		if ( ! in_array( 'view', $this->actions_disabled ) && ! in_array( 'view', $this->actions_hidden ) ) {
 			$link = pods_query_arg(
 				array(
 					'action' . $this->num => 'view',
-					'id' . $this->num     => $row[ $this->sql['field_id'] ],
+					'id' . $this->num     => $field_id,
 				), self::$allowed, $this->exclusion()
 			);
 
@@ -4342,7 +4354,7 @@ class PodsUI {
 			$link = pods_query_arg(
 				array(
 					'action' . $this->num => 'edit',
-					'id' . $this->num     => $row[ $this->sql['field_id'] ],
+					'id' . $this->num     => $field_id,
 				), self::$allowed, $this->exclusion()
 			);
 
@@ -4357,7 +4369,7 @@ class PodsUI {
 			$link = pods_query_arg(
 				array(
 					'action' . $this->num => 'edit_proto',
-					'id' . $this->num     => $row[ $this->sql['field_id'] ],
+					'id' . $this->num     => $field_id,
 				), self::$allowed, $this->exclusion()
 			);
 
@@ -4372,7 +4384,7 @@ class PodsUI {
 			$link = pods_query_arg(
 				array(
 					'action' . $this->num => 'duplicate',
-					'id' . $this->num     => $row[ $this->sql['field_id'] ],
+					'id' . $this->num     => $field_id,
 				), self::$allowed, $this->exclusion()
 			);
 
@@ -4387,7 +4399,7 @@ class PodsUI {
 			$link = pods_query_arg(
 				array(
 					'action' . $this->num => 'delete',
-					'id' . $this->num     => $row[ $this->sql['field_id'] ],
+					'id' . $this->num     => $field_id,
 					'_wpnonce'            => wp_create_nonce( 'pods-ui-action-delete' ),
 				), self::$allowed, $this->exclusion()
 			);
@@ -4433,7 +4445,7 @@ class PodsUI {
 						if ( ! isset( $custom_data['link'] ) ) {
 							$vars = array(
 								'action'   => $custom_action,
-								'id'       => $row[ $this->sql['field_id'] ],
+								'id'       => $field_id,
 								'_wpnonce' => wp_create_nonce( 'pods-ui-action-' . $custom_action ),
 							);
 

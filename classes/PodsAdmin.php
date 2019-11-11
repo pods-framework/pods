@@ -2960,6 +2960,9 @@ class PodsAdmin {
 		}//end foreach
 
 		$ui = array(
+			'sql'              => array(
+				'field_id' => 'id',
+			),
 			'data'             => $components,
 			'total'            => count( $components ),
 			'total_found'      => count( $components ),

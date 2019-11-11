@@ -462,12 +462,11 @@ function pods_api_cache() {
 /**
  * Determine if Pods shortcodes can evaluate magic tags.
  *
- * @return bool
+ * @since 2.7.16
  *
- * @since 2.7.15
+ * @return bool
  */
 function pods_shortcode_allow_evaluate_tags() {
-
 	if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
 		return true;
 	}

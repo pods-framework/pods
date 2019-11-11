@@ -37,7 +37,6 @@
     "@babel/preset-env": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.4.4",
-    "@rollup/plugin-replace": "^2.1.1",
     "@wordpress/data": "^4.4.0",
     "@wordpress/eslint-plugin": "^2.0.0",
     "babel-eslint": "^10.0.1",

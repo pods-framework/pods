@@ -1588,6 +1588,9 @@ class Pods implements Iterator {
 
 							if ( $last_options ) {
 								$last_field_data = $last_options;
+							} elseif ( isset( $related_obj, $related_obj->fields, $related_obj->fields[ $field ] ) ) {
+								// Save related field data for later to be used for display formatting
+								$last_field_data = $related_obj->fields[ $field ];
 							}
 
 							break;
@@ -1615,7 +1618,6 @@ class Pods implements Iterator {
 			$field_data = $last_field_data;
 		}
 
-		// @todo Expand this into traversed fields too.
 		if ( ! empty( $field_data ) && ( $params->display || ! $params->raw ) && ! $params->in_form && ! $params->raw_display ) {
 			if ( $params->display || ( ( $params->get_meta || $params->deprecated ) && ! in_array( $field_data['type'], $tableless_field_types, true ) ) ) {
 				$field_data['options'] = pods_v( 'options', $field_data, array(), true );
@@ -3426,7 +3428,7 @@ class Pods implements Iterator {
 
 		if ( class_exists( 'Pods_Helpers' ) ) {
 			$value = Pods_Helpers::helper( $params, $this );
-		} elseif ( function_exists( $params['helper'] ) ) {
+		} elseif ( is_callable( $params['helper'] ) ) {
 			$disallowed = array(
 				'system',
 				'exec',

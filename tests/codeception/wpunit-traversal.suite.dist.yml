@@ -10,10 +10,10 @@ modules:
     config:
         WPLoader:
             wpRootFolder: %WP_ROOT_FOLDER%
-            dbName: %TEST_DB_NAME%
-            dbHost: %TEST_DB_HOST%
-            dbUser: %TEST_DB_USER%
-            dbPassword: %TEST_DB_PASSWORD%
+            dbName: %WP_TEST_DB_NAME%
+            dbHost: %WP_TEST_DB_HOST%
+            dbUser: %WP_TEST_DB_USER%
+            dbPassword: %WP_TEST_DB_PASSWORD%
             tablePrefix: test_
             domain: %WP_DOMAIN%
             adminEmail: admin@%WP_DOMAIN%

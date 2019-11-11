@@ -1499,12 +1499,13 @@ class PodsAPI {
 		}
 
 		$pod_params = array(
-			'name'    => '',
-			'label'   => '',
-			'type'    => '',
-			'storage' => 'table',
-			'object'  => '',
-			'options' => array()
+			'name'          => '',
+			'label'         => '',
+			'type'          => '',
+			'storage'       => 'table',
+			'object'        => '',
+			'options'       => array(),
+			'create_extend' => $params->create_extend,
 		);
 
 		if ( 'create' === $params->create_extend ) {
@@ -1528,7 +1529,7 @@ class PodsAPI {
 
 			if ( 'post_type' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 
 				$pod_params['storage'] = $params->create_storage;
@@ -1538,7 +1539,7 @@ class PodsAPI {
 				}
 			} elseif ( 'taxonomy' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 
 				$pod_params['storage'] = $params->create_storage;
@@ -1554,7 +1555,7 @@ class PodsAPI {
 				$pod_params['hierarchical'] = 1;
 			} elseif ( 'pod' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pod' ), $this );
 				}
 
 				if ( pods_tableless() ) {
@@ -1574,7 +1575,7 @@ class PodsAPI {
 				}
 
 				if ( empty( $pod_params['name'] ) ) {
-					return pods_error( 'Please enter a Name for this Pod', $this );
+					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 			}
 		} elseif ( 'extend' === $params->create_extend ) {
@@ -1652,6 +1653,7 @@ class PodsAPI {
 	 * $params['type'] string The Pod type
 	 * $params['object'] string The object being extended (if any)
 	 * $params['storage'] string The Pod storage
+	 * $params['create_extend'] string Create or Extend a Content Type
 	 *
 	 * @param array    $params    An associative array of parameters
 	 * @param bool     $sanitized (optional) Decides whether the params have been sanitized before being passed, will
@@ -1667,6 +1669,14 @@ class PodsAPI {
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 
 		$params = (object) $params;
+
+		$extend = false;
+
+		if ( isset( $params->create_extend ) ) {
+			$extend = 'extend' === $params->create_extend;
+
+			unset( $params->create_extend );
+		}
 
 		$load_params = array();
 
@@ -1694,6 +1704,8 @@ class PodsAPI {
 		}
 
 		if ( ! empty( $pod ) ) {
+			// Existing pod (update).
+
 			if ( isset( $params->id ) && 0 < $params->id ) {
 				$old_id = $params->id;
 			}
@@ -1704,27 +1716,30 @@ class PodsAPI {
 			$old_storage = $pod['storage'];
 			$old_fields  = $pod['fields'];
 
-			if ( ! isset( $params->name ) && empty( $params->name ) ) {
+			// Check if name is intentionally not set, set it as current name.
+			if ( ! isset( $params->name ) ) {
 				$params->name = $pod['name'];
 			}
 
-			if ( $old_name !== $params->name && false !== $this->pod_exists( array( 'name' => $params->name ) ) ) {
-				return pods_error( sprintf( __( 'Pod %1$s already exists, you cannot rename %2$s to that', 'pods' ), $params->name, $old_name ), $this );
-			}
+			if ( $old_name !== $params->name ) {
+				if ( false !== $this->pod_exists( array( 'name' => $params->name ) ) ) {
+					return pods_error( sprintf( __( 'Pod %1$s already exists, you cannot rename %2$s to that', 'pods' ), $params->name, $old_name ), $this );
+				}
 
-			if ( $old_name !== $params->name && in_array( $pod['type'], array(
-					'user',
-					'comment',
-					'media'
-				) ) && in_array( $pod['object'], array( 'user', 'comment', 'media' ) ) ) {
-				return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
-			}
+				if (
+					in_array( $pod['type'], array( 'user', 'comment', 'media' ), true )
+					&& in_array( $pod['object'], array( 'user', 'comment', 'media' ), true )
+				) {
+					return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
+				}
 
-			if ( $old_name !== $params->name && in_array( $pod['type'], array(
-					'post_type',
-					'taxonomy'
-				) ) && ! empty( $pod['object'] ) && $pod['object'] == $old_name ) {
-				return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
+				if (
+					in_array( $pod['type'], array( 'post_type', 'taxonomy' ), true )
+					&& ! empty( $pod['object'] )
+					&& $pod['object'] == $old_name
+				) {
+					return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
+				}
 			}
 
 			if ( $old_id != $params->id ) {
@@ -1734,13 +1749,30 @@ class PodsAPI {
 					return pods_error( sprintf( __( 'Pod %s already exists', 'pods' ), $params->name ), $this );
 				}
 			}
-		} elseif ( in_array( $params->name, array(
-				'order',
-				'orderby',
-				'post_type'
-			) ) && 'post_type' === pods_var( 'type', $params ) ) {
-			return pods_error( sprintf( 'There are certain names that a Custom Post Types cannot be named and unfortunately, %s is one of them.', $params->name ), $this );
 		} else {
+			// New pod (create).
+
+			if (
+				in_array( $params->name, pods_reserved_keywords(), true )
+				&& in_array( pods_v( 'type', $params ), array( 'post_type', 'taxonomy' ), true )
+			) {
+				$valid_name = false;
+
+				// Only if it's extending an existing content type then these
+				// names are still allowed, even if they are reserved.
+				if ( $extend ) {
+					if ( 'post_type' === pods_v( 'type', $params ) ) {
+						$valid_name = in_array( $params->name, get_post_types(), true );
+					} elseif ( 'taxonomy' === pods_v( 'type', $params ) ) {
+						$valid_name = in_array( $params->name, get_taxonomies(), true );
+					}
+				}
+
+				if ( ! $valid_name ) {
+					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
+				}
+			}
+
 			$pod = array(
 				'id'          => 0,
 				'name'        => $params->name,
@@ -1750,7 +1782,7 @@ class PodsAPI {
 				'storage'     => 'table',
 				'object'      => '',
 				'alias'       => '',
-				'fields'      => array()
+				'fields'      => array(),
 			);
 		}
 
@@ -2386,11 +2418,11 @@ class PodsAPI {
 			}
 		}
 
+		$this->cache_flush_pods( $pod );
+
 		if ( ! empty( $errors ) ) {
 			return pods_error( $errors, $this );
 		}
-
-		$this->cache_flush_pods( $pod );
 
 		$refresh_pod = $this->load_pod( array( 'name' => $pod['name'] ), false );
 
@@ -2531,7 +2563,7 @@ class PodsAPI {
 		$params->name = pods_clean_name( $params->name, true, ( 'meta' === $pod['storage'] ? false : true ) );
 
 		if ( empty( $params->name ) ) {
-			return pods_error( 'Pod field name is required', $this );
+			return pods_error( __( 'Pod field name is required', 'pods' ), $this );
 		}
 
 		$load_params = array(
@@ -2556,6 +2588,9 @@ class PodsAPI {
 		$old_options    = null;
 		$old_sister_id  = null;
 
+		// @todo pods_reserved_keywords();
+		$reserved_keywords = array( 'id', 'ID' );
+
 		if ( ! empty( $field ) ) {
 			$old_id        = pods_var( 'id', $field );
 			$old_name      = pods_clean_name( $field['name'], true, ( 'meta' === $pod['storage'] ? false : true ) );
@@ -2569,8 +2604,14 @@ class PodsAPI {
 				$field['name'] = $params->name;
 			}
 
-			if ( $old_name !== $field['name'] && false !== $this->field_exists( $params ) ) {
-				return pods_error( sprintf( __( 'Field %1$s already exists, you cannot rename %2$s to that', 'pods' ), $field['name'], $old_name ), $this );
+			if ( $old_name !== $field['name'] ) {
+				if ( in_array( $field['name'], $reserved_keywords, true ) ) {
+					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
+				}
+
+				if ( false !== $this->field_exists( $params ) ) {
+					return pods_error( sprintf( __( 'Field %1$s already exists, you cannot rename %2$s to that', 'pods' ), $field['name'], $old_name ), $this );
+				}
 			}
 
 			if ( ( $id_required || ! empty( $params->id ) ) && ( empty( $old_id ) || $old_id != $params->id ) ) {
@@ -2722,8 +2763,8 @@ class PodsAPI {
 				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 			}
 
-			if ( in_array( $field['name'], array( 'id', 'ID' ) ) ) {
-				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
+			if ( in_array( $field['name'], $reserved_keywords, true ) ) {
+				return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 			}
 
 			foreach ( $object_fields as $object_field => $object_field_opt ) {
@@ -3490,11 +3531,10 @@ class PodsAPI {
 
 		$fields_active = array();
 		$custom_data   = array();
+		$custom_fields = array();
 
 		// Find the active fields (loop through $params->data to retain order)
 		if ( ! empty( $params->data ) && is_array( $params->data ) ) {
-			$custom_fields = array();
-
 			foreach ( $params->data as $field => $value ) {
 				if ( isset( $object_fields[ $field ] ) ) {
 					$object_fields[ $field ]['value'] = $value;

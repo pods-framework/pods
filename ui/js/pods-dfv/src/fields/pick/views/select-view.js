@@ -230,12 +230,18 @@ export const SelectView = PodsMn.CollectionView.extend( {
 	},
 
 	/**
-	 * @var {RelationshipCollection} this.collection
 	 *
 	 * @returns {boolean} true if unlimited selections are allowed or we're below the selection limit
 	 */
 	validateSelectionLimit: function () {
 		let limit, numSelected;
+		const format_type = this.fieldConfig.pick_format_type;
+		const format_single = this.fieldConfig.pick_format_single;
+
+		// Selection limit should be clear if the placeholder is selected in a single-select dropdown
+		if ( "" === this.$el.val() && "single" === format_type && "dropdown" === format_single ) {
+			return true;
+		}
 
 		limit = +this.fieldConfig.pick_limit;  // Unary plus will implicitly cast to number
 		numSelected = this.collection.filterBySelected().length;

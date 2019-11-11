@@ -1371,8 +1371,12 @@ function pods_str_replace( $find, $replace, $string, $occurrences = - 1 ) {
 	} else {
 		$find = '/' . preg_quote( $find, '/' ) . '/';
 	}
-
-	return preg_replace( $find, $replace, $string, $occurrences );
+	if ( is_string( $string ) ) {
+		return preg_replace( $find, $replace, $string, $occurrences );
+	} else {
+		// Occasionally we will receive non string values (true, false, null).  Allow those to pass through
+		return $string;
+	}
 }
 
 /**

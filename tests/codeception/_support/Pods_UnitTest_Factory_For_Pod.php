@@ -29,6 +29,15 @@ class Pods_UnitTest_Factory_For_Pod extends \WP_UnitTest_Factory_For_Thing {
 	 * @return int
 	 */
 	public function create_object( $args ) {
+		if ( in_array( $args['name'], pods_reserved_keywords(), true ) ) {
+			/*
+			 * Extending objects when using reserved keywords.
+			 *
+			 * This will then accept `post`, `page` etc. as Pods object names.
+			 */
+			$args['create_extend'] = 'extend';
+		}
+
 		return pods_api()->save_pod( $args );
 	}
 

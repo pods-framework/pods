@@ -2,9 +2,9 @@
 
 namespace Pods_Unit_Tests\Pods;
 
+use Pods;
 use Pods_Unit_Tests\Pods_UnitTestCase;
 use PodsMeta;
-use Pods;
 
 /**
  * @group  pods-meta
@@ -89,8 +89,9 @@ class MetaTest extends Pods_UnitTestCase {
 		$api->save_field( $params );
 
 		$this->pod_id2 = $api->save_pod( array(
-			'type' => 'user',
-			'name' => $this->pod_name2,
+			'type'          => 'user',
+			'name'          => $this->pod_name2,
+			'create_extend' => 'extend',
 		) );
 
 		$this->pod  = pods( $this->pod_name );

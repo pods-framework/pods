@@ -5,6 +5,9 @@ language: php
 notifications:
   email: false
 
+services:
+    - mysql
+
 php:
   - 7.2
 

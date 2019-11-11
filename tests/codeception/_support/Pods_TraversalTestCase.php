@@ -128,6 +128,15 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 		);
 
 		foreach ( $config as $k => $pod ) {
+			if ( in_array( $pod['name'], pods_reserved_keywords(), true ) ) {
+				/*
+				 * Extending objects when using reserved keywords.
+				 *
+				 * This will then accept `post`, `page` etc. as Pods object names.
+				 */
+				$pod['create_extend'] = 'extend';
+			}
+
 			$pods_api->save_pod( $pod );
 
 			$pod = $pods_api->load_pod( $pod['name'] );

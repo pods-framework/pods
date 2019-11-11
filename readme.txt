@@ -1,5 +1,5 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, pglewis, jimtrue, quasel, keraweb, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
+Contributors: sc0ttkclark, pglewis, jimtrue, keraweb, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.5
@@ -179,6 +179,31 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.15 - September 5th 2019 =
+
+**Enhancements**
+* Enhancement: Add year range option to date & datetime fields. #5442 (@JoryHogeveen)
+* Enhancement: Support single select relationships in templates when using `[each]`. #4507 (@sc0ttkclark, @JoryHogeveen)
+* Enhancement: Prevent creation of Pods using reserved keywords from WordPress Codex and Pods. #5428 (@JoryHogeveen)
+* Enhancement: Allow all callables to be passed in magic tags. #5436 (@JoryHogeveen)
+
+**Bug Fixes**
+* Fixed: Always convert database value for date/time fields without timezone to maintain the actual value. #5423 & #5424 (@JoryHogeveen)
+* Fixed: Solve issues with saving date/time fields in other locales. #5444, #5421, #5415 & #5451 (@JoryHogeveen)
+* Fixed: Import from file with absolute path. #5430 (@mistraloz)
+* Fixed: Fix numeric soft format issue removing decimals & numeric slider input formatting. #5281 & #5215 (@JoryHogeveen)
+* Fixed: Fix & improve error handling & debug logs. #5452, #5450, #5440, #5419, #5435 & #5453 (@JoryHogeveen)
+* Fixed: Corrected Malaysian Ringgit currency sign. #5446 (@JoryHogeveen)
+* Fixed: Flush Pod cache before returning errors, #5420 (@JoryHogeveen)
+
+= 2.7.14 - July 9th 2019 =
+
+**Bug Fixes**
+
+* Fixed: Always convert database value for date/time fields with UTC timezone to maintain the actual value, #5382, #5402, #5403 (@JoryHogeveen)
+* Fixed: Stop add new button from being disabled when no selection has been made yet for single select, #5401 (@pglewis)
+* Fixed: Resolved PHP notices in `PodsAPI::save_pod_item()`, #5411 (@pglewis)
+
 = 2.7.13 - June 28th 2019 =
 
 **Enhancements**
@@ -232,10 +257,6 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 
 * Fixed: Javascript errors on pages without the Gutenberg editor active under certain circumstances, #5225 (@pglewis)
 * Fixed: Avoid extra user queries when not necessary, #5230 (@sc0ttkclark)
-
-**Enhancements**
-
-* Enhancement: Added: New pods_data_auto_calculate_total_found filter can be set to true to auto-calculate total_found() number right away after a Pods::find() query runs, defaults to false, #5232, (@sc0ttkclark)
 
 = 2.7.10 - December 5th 2018 =
 

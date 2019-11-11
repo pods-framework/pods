@@ -4,7 +4,9 @@
 # Emulate web requests and make application process them.
 class_name: IntegrationTester
 modules:
-    enabled: [WPLoader, \Helper\Integration]
+    enabled:
+        - \Helper\Integration
+        - WPLoader
     config:
         WPLoader:
             wpRootFolder: %WP_ROOT_FOLDER%

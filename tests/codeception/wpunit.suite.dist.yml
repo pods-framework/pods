@@ -10,9 +10,9 @@ modules:
         - WPLoader
     config:
         WPDb:
-            dsn: 'mysql:host=%DB_HOST%;dbname=%DB_NAME%'
-            user: %DB_USER%
-            password: %DB_PASSWORD%
+            dsn: 'mysql:host=%WP_DB_HOST%;dbname=%WP_DB_NAME%'
+            user: %WP_DB_USER%
+            password: %WP_DB_PASSWORD%
             dump: 'tests/codeception/_data/dump.sql'
             populate: true
             cleanup: false

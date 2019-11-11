@@ -6,7 +6,7 @@ notifications:
   email: false
 
 php:
-  - 7.2
+  - 7.0
 
 services:
   # Require docker and docker-compose as we'll need them to manage the containers.
@@ -40,12 +40,12 @@ matrix:
   allow_failures:
     - env: NODE_RELEASE="skip"
       php: 7.3
-    - env: WP_VERSION="nightly" NODE_RELEASE="skip"
-    - env: WP_VERSION="nightly" WP_MULTISITE=1 NODE_RELEASE="skip"
 
   include:
-    - env: NODE_RELEASE="skip"
+    - env: NODE_RELEASE="stable"
       php: 7.0
+    - env: NODE_RELEASE="skip"
+      php: 7.3
 
 before_install:
   # Sourcing the .env file will make sure we use, in the environment configuration, the same variables the tests are using.

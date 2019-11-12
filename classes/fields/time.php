@@ -172,6 +172,19 @@ class PodsField_Time extends PodsField_DateTime {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function format_display( $options, $js = false ) {
+
+		if ( $js && 'custom' === pods_v( static::$type . '_type', $options, 'format' ) ) {
+			$format = $this->format_datetime( $options, $js );
+			return $this->convert_format( $format, array( 'source' => 'jquery_ui', 'type' => 'time' ) );
+		}
+
+		return parent::format_display( $options, $js );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function format_datetime( $options, $js = false ) {
 
 		return $this->format_time( $options, $js );
@@ -209,7 +222,10 @@ class PodsField_Time extends PodsField_DateTime {
 
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_format_custom', $options, '' );
-						$format = $this->convert_format( $format, array( 'source' => 'php' ) );
+
+						if ( $js ) {
+							$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'time' ) );
+						}
 					}
 				}
 
@@ -218,7 +234,7 @@ class PodsField_Time extends PodsField_DateTime {
 				$format = get_option( 'time_format' );
 
 				if ( $js ) {
-					$format = $this->convert_format( $format, array( 'source' => 'php' ) );
+					$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'time' ) );
 				}
 
 				break;

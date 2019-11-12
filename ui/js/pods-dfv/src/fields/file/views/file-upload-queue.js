@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, PodsMn, wp */
-import template from 'pods-dfv/src/fields/file-upload/views/file-upload-queue.html';
+import template from 'pods-dfv/src/fields/file/views/file-upload-queue.html';
 
 export const FileUploadQueueModel = Backbone.Model.extend( {
 	defaults: {

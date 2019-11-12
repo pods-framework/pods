@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 
-export const PodsDFVTextArea = ( props ) => {
+export const PodsDFVParagraph = ( props ) => {
 
 	// Default implementation if onChange is omitted from props
 	function handleChange ( event ) {

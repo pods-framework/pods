@@ -10,11 +10,11 @@ const SCRIPT_TARGET = 'script.pods-dfv-field-data';   // What scripts to look fo
 
 const fieldClasses =  {
 	'file': {
-		FieldClass: fields.FileUpload,
+		FieldClass: fields.File,
 		renderer: mnRenderer
 	},
 	'avatar': {
-		FieldClass: fields.FileUpload,
+		FieldClass: fields.File,
 		renderer: mnRenderer
 	},
 	'pick': {
@@ -38,7 +38,7 @@ const fieldClasses =  {
 		renderer: reactRenderer
 	},
 	'paragraph': {
-		FieldClass: fields.PodsDFVTextArea,
+		FieldClass: fields.PodsDFVParagraph,
 		renderer: reactRenderer
 	},
 	'edit-pod': {

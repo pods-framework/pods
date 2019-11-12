@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, PodsMn, wp */
-import template from 'pods-dfv/src/fields/file-upload/views/file-upload-form.html';
+import template from 'pods-dfv/src/fields/file/views/file-upload-form.html';
 
 import { PodsFieldView } from 'pods-dfv/src/core/pods-field-views';
 

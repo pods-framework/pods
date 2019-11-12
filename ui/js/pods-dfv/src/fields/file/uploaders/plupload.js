@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 /*global jQuery, _, Backbone, PodsMn, wp, plupload, PodsI18n */
-import { PodsFileUploader } from 'pods-dfv/src/fields/file-upload/uploaders/pods-file-uploader';
-import { FileUploadQueueModel, FileUploadQueue } from 'pods-dfv/src/fields/file-upload/views/file-upload-queue';
+import { PodsFileUploader } from 'pods-dfv/src/fields/file/uploaders/pods-file-uploader';
+import { FileUploadQueueModel, FileUploadQueue } from 'pods-dfv/src/fields/file/views/file-upload-queue';
 
 export const Plupload = PodsFileUploader.extend( {
 	plupload: {},

@@ -1,15 +1,15 @@
 /*global jQuery, _, Backbone, PodsMn */
-import template from 'pods-dfv/src/fields/file-upload/file-upload-layout.html';
+import template from 'pods-dfv/src/fields/file/file-upload-layout.html';
 
 import { PodsDFVFieldLayout } from 'pods-dfv/src/core/pods-field-views';
 
-import { FileUploadCollection } from 'pods-dfv/src/fields/file-upload/file-upload-model';
+import { FileUploadCollection } from 'pods-dfv/src/fields/file/file-upload-model';
 
-import { FileUploadList } from 'pods-dfv/src/fields/file-upload/views/file-upload-list';
-import { FileUploadForm } from 'pods-dfv/src/fields/file-upload/views/file-upload-form';
+import { FileUploadList } from 'pods-dfv/src/fields/file/views/file-upload-list';
+import { FileUploadForm } from 'pods-dfv/src/fields/file/views/file-upload-form';
 
-import { Plupload } from 'pods-dfv/src/fields/file-upload/uploaders/plupload';
-import { MediaModal } from 'pods-dfv/src/fields/file-upload/uploaders/media-modal';
+import { Plupload } from 'pods-dfv/src/fields/file/uploaders/plupload';
+import { MediaModal } from 'pods-dfv/src/fields/file/uploaders/media-modal';
 
 const Uploaders = [
 	Plupload,
@@ -21,7 +21,7 @@ const UNLIMITED_FILES = 0;
 /**
  * @extends Backbone.View
  */
-export const FileUpload = PodsDFVFieldLayout.extend( {
+export const File = PodsDFVFieldLayout.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
 
 	template: _.template( template ),

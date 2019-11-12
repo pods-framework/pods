@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 /*global jQuery, _, Backbone, PodsMn, wp, PodsI18n */
-import { PodsFileUploader } from 'pods-dfv/src/fields/file-upload/uploaders/pods-file-uploader';
+import { PodsFileUploader } from 'pods-dfv/src/fields/file/uploaders/pods-file-uploader';
 
 export const MediaModal = PodsFileUploader.extend( {
 	mediaObject: {},

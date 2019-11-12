@@ -875,7 +875,6 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
-
 		$has_query_tags = array_intersect_key( array_diff( $tags, $defaults ), $default_query_tags );
 
 		if ( ( in_the_loop() || is_singular() ) && ! $has_query_tags ) {

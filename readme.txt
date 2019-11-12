@@ -193,10 +193,12 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 = 2.7.16 - November Xth 2019 =
 
 **Enhancements**
+* Enhancement: CSS fixes for WP 5.3. #5501 (@JoryHogeveen)
 * Enhancement: Format traversed fields proprely. #4932 (@jamesgol)
 * Enhancement: ACT list view pagination. #5510 (@JoryHogeveen)
 
 **Bug Fixes**
+* Fixed: jQuery date & time picker overlapping formats. #5467 (@JoryHogeveen)
 * Fixed: Fix datetime-local HTML5 input format. #5460 (@JoryHogeveen)
 * Fixed: Could not submit a form if required checkbox not ticked. #5481 (@Turkal)
 * Fixed: Allow migrate packages to import pages. #5476 (@jamesgol)

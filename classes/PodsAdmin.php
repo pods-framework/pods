@@ -43,7 +43,7 @@ class PodsAdmin {
 		add_action( 'admin_init', array( $this, 'admin_init' ), 9 );
 
 		// Menus
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 99 );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );
 
 		// AJAX for Admin
 		add_action( 'wp_ajax_pods_admin', array( $this, 'admin_ajax' ) );

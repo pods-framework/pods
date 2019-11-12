@@ -15,7 +15,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @var array
 	 *
-	 * @since 2.7.2
+	 * @since 2.7.16
 	 */
 	private $filtered_content = array();
 
@@ -97,7 +97,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	/**
 	 * Install the hooks specified by the filtered_content member
 	 *
-	 * @since 2.7.2
+	 * @since 2.7.16
 	 */
 	public function install_hooks() {
 
@@ -109,7 +109,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	/**
 	 * Remove the hooks specified by the filtered_content member
 	 *
-	 * @since 2.7.2
+	 * @since 2.7.16
 	 */
 	public function remove_hooks() {
 
@@ -356,7 +356,7 @@ class Pods_Templates_Auto_Template_Front_End {
 			 * except outside the loop in a taxonomy archive, in which case it
 			 * is the term the archive is for.
 			 *
-			 * @since 2.7.2
+			 * @since 2.7.16
 			 *
 			 * @param string $pod_name_and_item An array of the name of the pod to run the template against and the item (ID or slug) of the item in that pod to use.
 			 * @param string $template_source   The name of the pod from which the template was selected.

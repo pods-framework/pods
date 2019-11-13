@@ -59,6 +59,7 @@ if ( $use_time ) {
 	$args['timeFormat']    = PodsForm::field_method( $form_field_type, 'format_time', $options, true );
 	$args['altTimeFormat'] = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_time_format, array( 'type' => 'time' ) );
 	$args['ampm']          = ( false !== stripos( $args['timeFormat'], 'tt' ) );
+	$args['parse']         = 'loose';
 }
 
 $mysql_format = '';

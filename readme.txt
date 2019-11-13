@@ -19,7 +19,7 @@ Manage all your custom content needs in one location with the Pods Framework.
 * **Extend and customize content types** including posts, pages, categories, tags, users, and media
 * **Create custom settings pages** easily within seconds
 * **Add custom fields** to *any* content type or settings page
-* **Show your fields** anywhere using our [shortcodes](https://docs.pods.io/displaying-pods/pods-shortcode/), [widgets](https://docs.pods.io/displaying-pods/widgets/), the code-free [Pods Template](https://docs.pods.io/displaying-pods/pods-templates/) approach, or our [automatic theme integration](https://docs.pods.io/displaying-pods/wordpress-theme-templates/)
+* **Show your fields** anywhere using our [shortcodes](https://docs.pods.io/displaying-pods/pods-shortcode/), [widgets](https://pods.io/2015/05/03/podscast-005-templates-shortcodes-widgets-displaying-data-in-pods-pt-3/), the code-free [Pods Template](https://pods.io/2015/05/03/podscast-005-templates-shortcodes-widgets-displaying-data-in-pods-pt-3/) approach, or our [automatic theme integration](https://docs.pods.io/displaying-pods/wordpress-theme-templates/)
 * **Create connections** between any of your content with [relationship fields](https://docs.pods.io/fields/relationship-fields/) to keep your content organized
 
 Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out our [Documentation](https://docs.pods.io/), [Support Forums](https://wordpress.org/support/plugin/pods/), and our [Live Slack Chat](https://pods.io/chat/) to help you build your dream project with Pods.

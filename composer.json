@@ -59,7 +59,7 @@
     "wp-cli/wp-cli": "1.*",
     "phpunit/phpunit": "4.*",
     "mockery/mockery": "0.9.*",
-    "phpcompatibility/php-compatibility": "8.*"
+    "phpcompatibility/php-compatibility": "9.*"
   },
   "suggest": {
     "wp-cli/wp-cli": "Enables access to Pods CLI commands."

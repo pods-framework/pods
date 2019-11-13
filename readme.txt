@@ -190,6 +190,35 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.16 - November Xth 2019 =
+
+**Enhancements**
+* Enhancement: CSS fixes for WP 5.3. #5501 (@JoryHogeveen)
+* Enhancement: Format traversed fields properly. #4932 (@jamesgol)
+* Enhancement: ACT list view pagination. #5510 (@JoryHogeveen)
+* Enhancement: Add PODS_SHORTCODE_ALLOW_EVALUATE_TAGS to debug info. #5310 (@JoryHogeveen)
+
+**Bug Fixes**
+* Fixed: Avoid SQL errors when using special magic tags. #5310 (@sc0ttkclark)
+* Fixed: Validate shortcode query tags before default to current object. #5520 (@JoryHogeveen)
+* Fixed: Unslash simple relationship values to support saving quoted values. #5517 (@JoryHogeveen)
+* Fixed: Add sanitize_title optional to sluggables instead of applying default. #5516 (@JoryHogeveen)
+* Fixed: DateTime: Always parse any manual input data. Also fixes clearing values. #5488 (@JoryHogeveen)
+* Fixed: DateTime: jQuery date & time picker overlapping formats. #5467 (@JoryHogeveen)
+* Fixed: DateTime: Fix datetime-local HTML5 input format. #5460 (@JoryHogeveen)
+* Fixed: Could not submit a form if required checkbox not ticked. #5481 (@Turkal)
+* Fixed: Allow migrate packages to import pages. #5476 (@jamesgol)
+* Fixed: Allow pods_str_replace() function to handle non-strings. #5254 (@jamesgol)
+* Fixed: Refactor and fix issues with Advanced Content Types capabilities. #5504 (@JoryHogeveen)
+* Fixed: Sanitize meta values before passing to *_post_meta functions. #5511 (@jamesgol)
+* Fixed: Add `object` key to prevent undefined index notice. #5493 (@JoryHogeveen)
+* Fixed: Make sure number of arguments passed to PodsMeta->save_post() is correct. #5512 (@jamesgol)
+* Fixed: ACT pagination URL for child type. #5510 (@JoryHogeveen)
+* Fixed: Custom table relationships SQL error. #5505 (@JoryHogeveen)
+* Fixed: Allow Pods to ALTER table if the SQL field definition has changed. #5507 (@jamesgol)
+* Fixed: Admin menu: set hook priority to 9 instead of 99 to fix CPT submenu placement. #5497 (@JoryHogeveen)
+* Fixed: Make auto templates for a Taxonomy Pod behave sensibly. #5289 (@gwhitney, @sc0ttkclark, @JoryHogeveen)
+
 = 2.7.15 - September 5th 2019 =
 
 **Enhancements**

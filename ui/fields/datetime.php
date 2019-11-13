@@ -188,6 +188,9 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 		?>
 		function jQueryField( args, $element ) {
 			args = altField( args, $element );
+			args.onClose = function() {
+				$element.<?php echo esc_js( $method ); ?>( 'setDate', $element.val() );
+			};
 			$element.<?php echo esc_js( $method ); ?>( args );
 		}
 

@@ -196,10 +196,16 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Enhancement: CSS fixes for WP 5.3. #5501 (@JoryHogeveen)
 * Enhancement: Format traversed fields proprely. #4932 (@jamesgol)
 * Enhancement: ACT list view pagination. #5510 (@JoryHogeveen)
+* Enhancement: Add PODS_SHORTCODE_ALLOW_EVALUATE_TAGS to debug info. #5310 (@JoryHogeveen)
 
 **Bug Fixes**
-* Fixed: jQuery date & time picker overlapping formats. #5467 (@JoryHogeveen)
-* Fixed: Fix datetime-local HTML5 input format. #5460 (@JoryHogeveen)
+* Fixed: Avoid SQL errors when using special magic tags. #5310 (@sc0ttkclark)
+* Fixed: Validate shortcode query tags before default to current object. #5520 (@JoryHogeveen)
+* Fixed: Unslash simple relationship values to support saving quoted values. #5517 (@JoryHogeveen)
+* Fixed: Add sanitize_title optional to sluggables instead of applying default. #5516 (@JoryHogeveen)
+* Fixed: DateTime: Always parse any manual input data. Also fixes clearing values. #5488 (@JoryHogeveen)
+* Fixed: DateTime: jQuery date & time picker overlapping formats. #5467 (@JoryHogeveen)
+* Fixed: DateTime: Fix datetime-local HTML5 input format. #5460 (@JoryHogeveen)
 * Fixed: Could not submit a form if required checkbox not ticked. #5481 (@Turkal)
 * Fixed: Allow migrate packages to import pages. #5476 (@jamesgol)
 * Fixed: Allow pods_str_replace() function to handle non-strings. #5254 (@jamesgol)
@@ -211,6 +217,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Fixed: Custom table relationships SQL error. #5505 (@JoryHogeveen)
 * Fixed: Allow Pods to ALTER table if the SQL field definition has changed. #5507 (@jamesgol)
 * Fixed: Admin menu: set hook priority to 9 instead of 99 to fix CPT submenu placement. #5497 (@JoryHogeveen)
+* Fixed: Make auto templates for a Taxonomy Pod behave sensibly. #5289 (@gwhitney, @sc0ttkclark, @JoryHogeveen)
 
 = 2.7.15 - September 5th 2019 =
 

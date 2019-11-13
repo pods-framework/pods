@@ -56,7 +56,7 @@
     "wp-coding-standards/wpcs": "^2.1",
     "automattic/vipwpcs": "^2.0",
     "moderntribe/TribalScents": "dev-master",
-    "wp-cli/wp-cli": "1.*",
+    "wp-cli/wp-cli": "2.*",
     "phpunit/phpunit": "4.*",
     "mockery/mockery": "0.9.*",
     "phpcompatibility/php-compatibility": "8.*"

@@ -11,6 +11,15 @@ if ( class_exists( 'Pods_PFAT_Frontend' ) ) {
 class Pods_Templates_Auto_Template_Front_End {
 
 	/**
+	 * Currently filtered content functions.
+	 *
+	 * @var array
+	 *
+	 * @since 2.7.16
+	 */
+	private $filtered_content = array();
+
+	/**
 	 * Pods_Templates_Auto_Template_Front_End constructor.
 	 */
 	public function __construct() {
@@ -78,12 +87,35 @@ class Pods_Templates_Auto_Template_Front_End {
 			define( 'PFAT_USE_ON_EXCERPT', false );
 		}
 
-		add_filter( $filter, array( $this, 'front' ), 10.5 );
-
 		if ( PFAT_USE_ON_EXCERPT ) {
-			add_filter( 'the_excerpt', array( $this, 'front' ) );
+			$this->filtered_content['the_excerpt'] = 10;
 		}
 
+		$this->install_hooks();
+	}
+
+	/**
+	 * Install the hooks specified by the filtered_content member
+	 *
+	 * @since 2.7.16
+	 */
+	public function install_hooks() {
+
+		foreach ( $this->filtered_content as $filter => $priority ) {
+			add_filter( $filter, array( $this, 'front' ), $priority );
+		}
+	}
+
+	/**
+	 * Remove the hooks specified by the filtered_content member
+	 *
+	 * @since 2.7.16
+	 */
+	public function remove_hooks() {
+
+		foreach ( $this->filtered_content as $filter => $priority ) {
+			remove_filter( $filter, array( $this, 'front' ) );
+		}
 	}
 
 	/**
@@ -257,6 +289,12 @@ class Pods_Templates_Auto_Template_Front_End {
 			$current_post_type = false;
 		}
 
+		// Once we are in the loop, fair game to use the post itself to
+		// help determine the current post type
+		if ( ( ! $current_post_type || is_array( $current_post_type ) ) && in_the_loop() ) {
+			$current_post_type = get_post_type();
+		}
+
 		return $current_post_type;
 	}
 
@@ -297,29 +335,49 @@ class Pods_Templates_Auto_Template_Front_End {
 
 			// build Pods object for current item
 			global $post;
-			$pods = pods( $current_post_type, $post->ID );
-
-			if ( $this_pod['single'] && is_singular( $current_post_type ) ) {
-				// load the template
-				$content = $this->load_template( $this_pod['single'], $content, $pods, $this_pod['single_append'] );
-			} //end if
-			// check if we are on an archive of the post type
-			elseif ( $this_pod['archive'] && is_post_type_archive( $current_post_type ) ) {
-				// load the template
-				$content = $this->load_template( $this_pod['archive'], $content, $pods, $this_pod['archive_append'] );
-
-			} elseif ( is_home() && $this_pod['archive'] && $current_post_type === 'post' ) {
-				// if pfat_archive was set and we're in the blog index, try to append template
-				// append the template
-				$content = $this->load_template( $this_pod['archive'], $content, $pods, $this_pod['archive_append'] );
-
-			} elseif ( is_tax( $current_post_type ) ) {
-				// if is taxonomy archive of the selected taxonomy
-				// if pfat_single was set try to use that template
-				if ( $this_pod['archive'] ) {
-					// append the template
-					$content = $this->load_template( $this_pod['archive'], $content, $pods, $this_pod['archive_append'] );
+			$pod_name = $current_post_type;
+			$pod_item = $post->ID;
+			if ( in_the_loop() ) {
+				$pod_name = $post->post_type;
+			} else {
+				// Outside the loop in a taxonomy, we want the term
+				if ( is_tax() ) {
+					$obj      = get_queried_object();
+					$pod_name = $obj->slug;
+					$pod_item = $obj->term_id;
 				}
+			}
+
+			$pod_name_and_item = array( $pod_name, $pod_item );
+			/**
+			 * Change which pod and item to run the template against. The
+			 * default pod is the the post type of the post about to be
+			 * displayed, the default item is the post about to be displayed,
+			 * except outside the loop in a taxonomy archive, in which case it
+			 * is the term the archive is for.
+			 *
+			 * @since 2.7.16
+			 *
+			 * @param string $pod_name_and_item An array of the name of the pod to run the template against and the item (ID or slug) of the item in that pod to use.
+			 * @param string $template_source   The name of the pod from which the template was selected.
+			 * @param Post   $post              The Post object that is about to be displayed.
+			 */
+			$pod_name_and_item = apply_filters( 'pods_auto_template_pod_name_and_item', $pod_name_and_item, $current_post_type, $post );
+			$pods              = pods( $pod_name_and_item[0], $pod_name_and_item[1] );
+
+			// Heuristically decide if this is single or archive
+			$s_or_a        = 'archive';
+			$s_or_a_filter = 'archive_filter';
+			$s_or_a_append = 'archive_append';
+			if ( ! in_the_loop() || is_singular() ) {
+				$s_or_a        = 'single';
+				$s_or_a_filter = 'single_filter';
+				$s_or_a_append = 'single_append';
+			}
+
+			if ( $this_pod[ $s_or_a ] && current_filter() == $this_pod[ $s_or_a_filter ] ) {
+				// load the template
+				$content = $this->load_template( $this_pod[ $s_or_a ], $content, $pods, $this_pod[ $s_or_a_append ] );
 			}
 		}//end if
 
@@ -344,7 +402,11 @@ class Pods_Templates_Auto_Template_Front_End {
 	public function load_template( $template_name, $content, $pods, $append = true ) {
 
 		// prevent infinite loops caused by this method acting on post_content
-		remove_filter( 'the_content', array( $this, 'front' ) );
+		$this->remove_hooks();
+
+		// Allow template chosen to depend on post type or content via magic
+		// tags
+		$template_name = $pods->do_magic_tags( $template_name );
 
 		/**
 		 * Change which template -- by name -- to be used.
@@ -358,7 +420,9 @@ class Pods_Templates_Auto_Template_Front_End {
 		$template_name = apply_filters( 'pods_auto_template_template_name', $template_name, $pods, $append );
 
 		$template = $pods->template( $template_name );
-		add_filter( 'the_content', array( $this, 'front' ) );
+
+		// Restore the hooks for subsequent posts
+		$this->install_hooks();
 
 		// check if we have a valid template
 		if ( ! is_null( $template ) ) {
@@ -431,6 +495,7 @@ class Pods_Templates_Auto_Template_Front_End {
 					$meta = get_post_meta( $template_post['id'], 'view_template', true );
 
 					$frontier = new Pods_Frontier();
+
 					if ( ! empty( $meta['css'] ) ) {
 						$frontier_styles .= $meta['css'];
 					}

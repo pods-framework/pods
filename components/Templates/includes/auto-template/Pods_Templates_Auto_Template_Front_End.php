@@ -87,6 +87,8 @@ class Pods_Templates_Auto_Template_Front_End {
 			define( 'PFAT_USE_ON_EXCERPT', false );
 		}
 
+		$this->filtered_content[ $filter ] = 10.5;
+
 		if ( PFAT_USE_ON_EXCERPT ) {
 			$this->filtered_content['the_excerpt'] = 10;
 		}

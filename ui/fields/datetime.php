@@ -156,7 +156,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 		var $container = $( '<div>' ).appendTo( 'body' ).addClass( 'pods-compat-container' ),
 			$element   = $( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ),
 			$alt       = null,
-			args       = <?php echo json_encode( $args ); ?>;
+			args       = <?php echo wp_json_encode( $args ); ?>;
 
 		<?php
 		if ( 'text' !== $type ) {

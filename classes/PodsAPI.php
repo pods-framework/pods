@@ -3774,6 +3774,9 @@ class PodsAPI {
 
 						$custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $field_data['name'], $value, array_merge( $field_data, $options ), $pod, $params->id );
 
+						// Input values are unslashed. Unslash database values as well to ensure correct comparison.
+						$custom = pods_unslash( $custom );
+
 						if ( empty( $value ) || empty( $custom ) ) {
 							$value = '';
 						} elseif ( ! empty( $custom ) ) {

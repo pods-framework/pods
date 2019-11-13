@@ -155,12 +155,8 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 	jQuery( function ( $ ) {
 		var $container = $( '<div>' ).appendTo( 'body' ).addClass( 'pods-compat-container' ),
 			$element   = $( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ),
-			beforeShow = {
-				'beforeShow': function( textbox, instance) {
-					$( '#ui-datepicker-div' ).appendTo( $container );
-				}
-			},
-			args = $.extend( <?php echo json_encode( $args ); ?>, beforeShow );
+			$alt       = null,
+			args       = <?php echo json_encode( $args ); ?>;
 
 		<?php
 		if ( 'text' !== $type ) {
@@ -178,37 +174,37 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 
 		if ( ! podsCheckHtml5() ) {
 			$element.val( '<?php echo esc_js( $formatted_value ); ?>' );
-			jQueryField( args, $element );
+			jQueryField();
 		}
 		<?php
 		} else {
 		?>
-		jQueryField( args, $element );
+		jQueryField();
 		<?php
 		} //end if
 		?>
-		function jQueryField( args, $element ) {
-			args = altField( args, $element );
+		function jQueryField() {
+
+			// Create alt field.
+			$alt = $element.clone();
+			$alt.attr( 'type', 'hidden' );
+			$alt.val( '<?php echo esc_attr( $mysql_value ) ?>' );
+			$element.after( $alt );
+			$element.attr( 'name', $element.attr( 'name' ) + '__ui' );
+			$element.attr( 'id', $element.attr( 'id' ) + '__ui' );
+
+			// Add alt field option.
+			args.altField = 'input#' + $alt.attr( 'id' );
+			// Fix manual user input changes.
 			args.onClose = function() {
 				$element.<?php echo esc_js( $method ); ?>( 'setDate', $element.val() );
 			};
+			// Wrapper.
+			args.beforeShow = function( textbox, instance ) {
+				$( '#ui-datepicker-div' ).appendTo( $container );
+			};
+
 			$element.<?php echo esc_js( $method ); ?>( args );
-		}
-
-		function altField( args, el ) {
-			var $el  = $( el ),
-				$alt = $el.clone();
-
-			$alt.attr( 'type', 'hidden' );
-			$alt.val( '<?php echo esc_attr( $mysql_value ) ?>' );
-			$el.after( $alt );
-
-			$el.attr( 'name', $el.attr( 'name' ) + '__ui' );
-			$el.attr( 'id', $el.attr( 'id' ) + '__ui' );
-
-			args.altField = 'input#' + $alt.attr( 'id' );
-
-			return args;
 		}
 	} );
 </script>

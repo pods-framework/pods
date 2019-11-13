@@ -194,7 +194,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 **Enhancements**
 * Enhancement: CSS fixes for WP 5.3. #5501 (@JoryHogeveen)
-* Enhancement: Format traversed fields proprely. #4932 (@jamesgol)
+* Enhancement: Format traversed fields properly. #4932 (@jamesgol)
 * Enhancement: ACT list view pagination. #5510 (@JoryHogeveen)
 * Enhancement: Add PODS_SHORTCODE_ALLOW_EVALUATE_TAGS to debug info. #5310 (@JoryHogeveen)
 

@@ -190,7 +190,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
-= 2.7.16 - November Xth 2019 =
+= 2.7.16 - November 13th 2019 =
 
 **Enhancements**
 * Enhancement: CSS fixes for WP 5.3. #5501 (@JoryHogeveen)

@@ -59,6 +59,7 @@ if ( $use_time ) {
 	$args['timeFormat']    = PodsForm::field_method( $form_field_type, 'format_time', $options, true );
 	$args['altTimeFormat'] = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_time_format, array( 'type' => 'time' ) );
 	$args['ampm']          = ( false !== stripos( $args['timeFormat'], 'tt' ) );
+	$args['parse']         = 'loose';
 }
 
 $mysql_format = '';
@@ -154,12 +155,8 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 	jQuery( function ( $ ) {
 		var $container = $( '<div>' ).appendTo( 'body' ).addClass( 'pods-compat-container' ),
 			$element   = $( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ),
-			beforeShow = {
-				'beforeShow': function( textbox, instance) {
-					$( '#ui-datepicker-div' ).appendTo( $container );
-				}
-			},
-			args = $.extend( <?php echo json_encode( $args ); ?>, beforeShow );
+			$alt       = null,
+			args       = <?php echo wp_json_encode( $args ); ?>;
 
 		<?php
 		if ( 'text' !== $type ) {
@@ -176,32 +173,38 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 		}
 
 		if ( ! podsCheckHtml5() ) {
-			args = altField( args, $element );
 			$element.val( '<?php echo esc_js( $formatted_value ); ?>' );
-			$element.<?php echo esc_js( $method ); ?>( args );
+			jQueryField();
 		}
 		<?php
 		} else {
 		?>
-		args = altField( args, $element );
-		$element.<?php echo esc_js( $method ); ?>( args );
+		jQueryField();
 		<?php
 		} //end if
 		?>
-		function altField( args, el ) {
-			var $el  = $( el ),
-				$alt = $el.clone();
+		function jQueryField() {
 
+			// Create alt field.
+			$alt = $element.clone();
 			$alt.attr( 'type', 'hidden' );
 			$alt.val( '<?php echo esc_attr( $mysql_value ) ?>' );
-			$el.after( $alt );
+			$element.after( $alt );
+			$element.attr( 'name', $element.attr( 'name' ) + '__ui' );
+			$element.attr( 'id', $element.attr( 'id' ) + '__ui' );
 
-			$el.attr( 'name', $el.attr( 'name' ) + '__ui' );
-			$el.attr( 'id', $el.attr( 'id' ) + '__ui' );
-
+			// Add alt field option.
 			args.altField = 'input#' + $alt.attr( 'id' );
+			// Fix manual user input changes.
+			args.onClose = function() {
+				$element.<?php echo esc_js( $method ); ?>( 'setDate', $element.val() );
+			};
+			// Wrapper.
+			args.beforeShow = function( textbox, instance ) {
+				$( '#ui-datepicker-div' ).appendTo( $container );
+			};
 
-			return args;
-		};
+			$element.<?php echo esc_js( $method ); ?>( args );
+		}
 	} );
 </script>

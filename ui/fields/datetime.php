@@ -176,18 +176,21 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 		}
 
 		if ( ! podsCheckHtml5() ) {
-			args = altField( args, $element );
 			$element.val( '<?php echo esc_js( $formatted_value ); ?>' );
-			$element.<?php echo esc_js( $method ); ?>( args );
+			jQueryField( args, $element );
 		}
 		<?php
 		} else {
 		?>
-		args = altField( args, $element );
-		$element.<?php echo esc_js( $method ); ?>( args );
+		jQueryField( args, $element );
 		<?php
 		} //end if
 		?>
+		function jQueryField( args, $element ) {
+			args = altField( args, $element );
+			$element.<?php echo esc_js( $method ); ?>( args );
+		}
+
 		function altField( args, el ) {
 			var $el  = $( el ),
 				$alt = $el.clone();
@@ -202,6 +205,6 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 			args.altField = 'input#' + $alt.attr( 'id' );
 
 			return args;
-		};
+		}
 	} );
 </script>

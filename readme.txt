@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.3
 Requires PHP: 5.3
-Stable tag: 2.7.16.1
+Stable tag: 2.7.16.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,10 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.16.2 - November 14th 2019 =
+
+* Fixed: The last SVN tag was temporarily missing files, this release just ensures people get the update that has all files.
 
 = 2.7.16.1 - November 13th 2019 =
 

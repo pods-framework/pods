@@ -190,6 +190,10 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.16.2 - November 14th 2019 =
+
+* Fixed: The last SVN tag was temporarily missing files, this release just ensures people get the update that has all files.
+
 = 2.7.16.1 - November 13th 2019 =
 
 * Fixed: Reverted changes in #5289 to auto templates that introduced breaking changes. We will revisit this in a future maintenance release. #5531

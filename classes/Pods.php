@@ -903,6 +903,7 @@ class Pods implements Iterator {
 			'user',
 			'comment',
 		), true ) ) ) {
+			// Handle detail page links.
 			if ( 0 < strlen( $this->detail_page ) ) {
 				$value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
 			} elseif ( in_array( $this->pod_data['type'], array( 'post_type', 'media' ), true ) ) {
@@ -913,6 +914,16 @@ class Pods implements Iterator {
 				$value = get_author_posts_url( $this->id() );
 			} elseif ( 'comment' === $this->pod_data['type'] ) {
 				$value = get_comment_link( $this->id() );
+			}
+		} elseif ( in_array( $params->name, array(
+			'_total',
+			'_total_found',
+		), true ) ) {
+			// Handle total values.
+			if ( '_total' === $params->name ) {
+				$value = $this->total();
+			} elseif ( '_total_found' === $params->name ) {
+				$value = $this->total_found();
 			}
 		}
 
@@ -954,7 +965,7 @@ class Pods implements Iterator {
 			$params->output = 'arrays';
 		}
 
-		if ( empty( $value ) && in_array( $field_data['type'], $tableless_field_types, true ) ) {
+		if ( null === $value && in_array( $field_data['type'], $tableless_field_types, true ) ) {
 			$params->raw = true;
 
 			$value = false;
@@ -972,7 +983,7 @@ class Pods implements Iterator {
 			}
 		}
 
-		if ( empty( $value ) && isset( $this->row[ $params->name ] ) && ( ! in_array( $field_data['type'], $tableless_field_types, true ) || 'arrays' === $params->output ) ) {
+		if ( in_array( $value, array( false, null ), true ) && isset( $this->row[ $params->name ] ) && ( ! in_array( $field_data['type'], $tableless_field_types, true ) || 'arrays' === $params->output ) ) {
 			if ( empty( $field_data ) || in_array( $field_data['type'], array(
 				'boolean',
 				'number',
@@ -990,7 +1001,7 @@ class Pods implements Iterator {
 			}
 
 			$value = $this->row[ $params->name ];
-		} elseif ( empty( $value ) ) {
+		} elseif ( in_array( $value, array( false, null ), true ) ) {
 			$object_field_found = false;
 
 			if ( 'object_field' === $field_type ) {

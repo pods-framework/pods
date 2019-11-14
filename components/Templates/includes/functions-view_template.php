@@ -242,7 +242,13 @@ function frontier_template_once_blocks( $atts, $code ) {
 		$frontier_once_hashes = array();
 	}
 
-	$blockhash = md5( $code . $atts['id'] );
+	$id = '';
+
+	if ( ! empty( $atts['id'] ) ) {
+		$id = $atts['id'];
+	}
+
+	$blockhash = md5( trim( $code . $id ) );
 	if ( in_array( $blockhash, $frontier_once_hashes, true ) ) {
 		return '';
 	}

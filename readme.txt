@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.3
 Requires PHP: 5.3
-Stable tag: 2.7.17-a-1
+Stable tag: 2.7.16.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -190,6 +190,10 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.16.1 - November 13th 2019 =
+
+* Fixed: Reverted changes in #5289 to auto templates that introduced breaking changes. We will revisit this in a future maintenance release. #5531
+
 = 2.7.16 - November 13th 2019 =
 
 **Enhancements**
@@ -210,7 +214,6 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Fixed: Allow migrate packages to import pages. #5476 (@jamesgol)
 * Fixed: Allow pods_str_replace() function to handle non-strings. #5254 (@jamesgol)
 * Fixed: Refactor and fix issues with Advanced Content Types capabilities. #5504 (@JoryHogeveen)
-* Fixed: Sanitize meta values before passing to *_post_meta functions. #5511 (@jamesgol)
 * Fixed: Add `object` key to prevent undefined index notice. #5493 (@JoryHogeveen)
 * Fixed: Make sure number of arguments passed to PodsMeta->save_post() is correct. #5512 (@jamesgol)
 * Fixed: ACT pagination URL for child type. #5510 (@JoryHogeveen)

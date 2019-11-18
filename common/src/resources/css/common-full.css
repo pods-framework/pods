@@ -1,0 +1,2223 @@
+/**
+ * This CSS file was auto-generated via PostCSS
+ *
+ * Contributors should avoid editing this file, but instead edit the associated
+ * src/resources/postcss/ file. For more information, check out our engineering
+ * docs on how we handle CSS in our engineering docs.
+ *
+ * @see: http://moderntribe.github.io/products-engineering/css/
+ */
+
+/*
+ * Common Full CSS
+ *
+ * DO NOT EDIT THIS CSS FILE DIRECTLY.
+ * -------------------------------------------------------------
+ * This file is just a clearing-house, see the pcss directory
+ * and edit the source files found there.
+ */
+
+/* Reset */
+
+/* -----------------------------------------------------------------------------
+ *
+ * Resets Full
+ *
+ * This file is just a clearing-house.
+ * Make partials (start with an underscore) for any actual css code.
+ *
+ * ----------------------------------------------------------------------------- */
+
+/* Reset */
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Normalize "Light"
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common figure {
+		line-height: 0;
+	}
+
+.tribe-common figcaption {
+		line-height: normal;
+	}
+
+.tribe-common a {
+		background-color: transparent;
+		-webkit-text-decoration-skip: objects;
+	}
+
+.tribe-common abbr[title] {
+		border-bottom: none;
+		text-decoration: underline;
+		-webkit-text-decoration: underline dotted;
+		        text-decoration: underline dotted;
+	}
+
+.tribe-common code,
+	.tribe-common kbd,
+	.tribe-common pre,
+	.tribe-common samp {
+		font-family: monospace;
+		font-size: 1em;
+	}
+
+.tribe-common b,
+	.tribe-common strong {
+		font-weight: inherit;
+		font-weight: bolder;
+	}
+
+.tribe-common dfn {
+		font-style: italic;
+	}
+
+.tribe-common mark {
+		background-color: #ff0;
+		color: #000;
+	}
+
+.tribe-common small {
+		font-size: 80%;
+	}
+
+.tribe-common sub,
+	.tribe-common sup {
+		font-size: 75%;
+		line-height: 0;
+	}
+
+.tribe-common hr {
+		border: 0;
+		height: 0;
+	}
+
+/* Input: Kill browser input chrome */
+
+.tribe-common input[type="text"],
+	.tribe-common input[type="email"],
+	.tribe-common input[type="url"],
+	.tribe-common input[type="search"],
+	.tribe-common input[type="submit"],
+	.tribe-common input[type="password"],
+	.tribe-common input[type="reset"],
+	.tribe-common input[type="button"],
+	.tribe-common button,
+	.tribe-common textarea {
+		-webkit-appearance: none;
+		   -moz-appearance: none;
+		        appearance: none;
+	}
+
+.tribe-common input,
+	.tribe-common button,
+	.tribe-common select,
+	.tribe-common textarea,
+	.tribe-common optgroup {
+		color: inherit;
+		font: inherit;
+		line-height: normal;
+		-webkit-font-smoothing: antialiased;
+	}
+
+.tribe-common input,
+	.tribe-common button,
+	.tribe-common select,
+	.tribe-common textarea {
+		outline: 0;
+		border-radius: 0;
+	}
+
+.tribe-common select:-moz-focusring {
+			color: transparent;
+			text-shadow: 0 0 0 #000;
+		}
+
+.tribe-common optgroup {
+		font-weight: bold;
+	}
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Reset "Light"
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common h1,
+	.tribe-common h2,
+	.tribe-common h3,
+	.tribe-common h4,
+	.tribe-common h5,
+	.tribe-common h6,
+	.tribe-common p {
+		font-weight: normal;
+		text-rendering: optimizeLegibility;
+	}
+
+/* Theme Overrides */
+
+/* .tribe-theme-avada { */
+
+/* -------------------------------------------------------------------------
+	 * Reset Full Theme Overrides - Avada
+	 * ------------------------------------------------------------------------- */
+
+/* } */
+
+/* .tribe-theme-divi { */
+
+/* -------------------------------------------------------------------------
+	 * Reset Full Theme Overrides - Divi
+	 * ------------------------------------------------------------------------- */
+
+/* } */
+
+/* #top.tribe-theme-enfold .tribe-common { */
+
+/* -------------------------------------------------------------------------
+	 * Reset Full Theme Overrides - Enfold
+	 * ------------------------------------------------------------------------- */
+
+/* } */
+
+/* .tribe-theme-genesis { */
+
+/* -------------------------------------------------------------------------
+	 * Reset Full Theme Overrides - Genesis
+	 * ------------------------------------------------------------------------- */
+
+/* } */
+
+/* -------------------------------------------------------------------------
+	 * Reset Full Theme Overrides - Twenty Nineteen
+	 * ------------------------------------------------------------------------- */
+
+.tribe-theme-twentynineteen .tribe-common h1:before, .tribe-theme-twentynineteen .tribe-common h2:before {
+			content: none;
+		}
+
+.tribe-theme-twentynineteen .tribe-common button,
+	.tribe-theme-twentynineteen .tribe-common input[type="button"],
+	.tribe-theme-twentynineteen .tribe-common input[type="reset"],
+	.tribe-theme-twentynineteen .tribe-common input[type="submit"] {
+		outline: none;
+	}
+
+.tribe-theme-twentynineteen .tribe-common th,
+	.tribe-theme-twentynineteen .tribe-common td {
+		word-break: normal;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Reset Full Theme Overrides - Twenty Seventeen
+	 * ------------------------------------------------------------------------- */
+
+.tribe-theme-twentyseventeen .tribe-common h5 {
+		letter-spacing: normal;
+		text-transform: none;
+	}
+
+.tribe-theme-twentyseventeen .tribe-common input[type="text"] {
+		border-radius: 0;
+	}
+
+/* Utilities */
+
+/* -----------------------------------------------------------------------------
+ *
+ * Utilities
+ *
+ * This file is just a clearing-house.
+ * Make partials (start with an underscore) for any actual css code.
+ *
+ * ----------------------------------------------------------------------------- */
+
+/* Variables */
+
+:root {
+	/* -----------------------------------------------------------------------------
+	 * Borders - Radius
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Borders - Width
+	 * ----------------------------------------------------------------------------- */
+}
+
+:root {
+	/* -----------------------------------------------------------------------------
+	 * Box Shadows
+	 * ----------------------------------------------------------------------------- */
+}
+
+:root {
+	/* -----------------------------------------------------------------------------
+	 * Layers of z-index
+	 * ----------------------------------------------------------------------------- */
+}
+
+:root {
+	/* -----------------------------------------------------------------------------
+	 * Colors - Typography
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Colors - Iconography
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Colors - UI
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Colors - Borders & Misc
+	 * ----------------------------------------------------------------------------- */
+
+}
+
+:root {
+	/* -----------------------------------------------------------------------------
+	 * Forms - Colors
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Forms - Box Shadows
+	 * ----------------------------------------------------------------------------- */
+}
+
+:root {
+	/* -----------------------------------------------------------------------------
+	 * Gutter - Default
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Gutter - Page
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Grid Width - Default
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Grid Width - Relative
+	 * ----------------------------------------------------------------------------- */
+}
+
+:root {
+	/* -----------------------------------------------------------------------------
+	 * Opacities
+	 * ----------------------------------------------------------------------------- */
+}
+
+:root {
+	/* -----------------------------------------------------------------------------
+	 * Spacers
+	 * ----------------------------------------------------------------------------- */
+}
+
+/* -----------------------------------------------------------------------------
+ * SVG - Arrow Right
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Caret Down
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Caret Left
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Caret Right
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Caret Up
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Check
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Close
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Day
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Dropdown
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Featured
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Filters
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - List
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Location
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Map
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Messages
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Month
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - No Map
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Photo
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Recurring
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Reset
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Search
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Search Filter
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * SVG - Week
+ * ----------------------------------------------------------------------------- */
+
+:root {
+	/* -----------------------------------------------------------------------------
+	 * Transitions
+	 * ----------------------------------------------------------------------------- */
+}
+
+:root {
+	/* -----------------------------------------------------------------------------
+	 * Font Stacks
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Font Weights
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Font Sizing
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Line Height
+	 * ----------------------------------------------------------------------------- */
+}
+
+/* Mixins */
+
+/* -----------------------------------------------------------------------------
+ * Body
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Desktop Body 1
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Desktop Body 2
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Desktop Body 3
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Mobile Body 1
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Mobile Body 2
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Mobile Body 3
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Heading
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Heading 1
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Heading 2
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Heading 3
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Heading 4
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Heading 5
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Heading 6
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Heading 7
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Heading 8
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Anchor - Default
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Anchor - Alt
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Anchor - Thin
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Anchor - Thin
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Button - Global
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Button - Solid
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Button - Border
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Button - Icon Border
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Sliders & Toggles
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Sliders
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Hidden: Hide from both screenreaders and browsers
+ * @author: h5bp.com/u
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Visually Hide: Hide only visually, but have it available for screenreaders
+ * @author: h5bp.com/v
+ * ----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+ * Visually Show: Show element after has been hidden with %visually-hide
+ * ----------------------------------------------------------------------------- */
+
+/* Base */
+
+/* -----------------------------------------------------------------------------
+ *
+ * Base Full
+ *
+ * This file is just a clearing-house.
+ * Make partials (start with an underscore) for any actual css code.
+ *
+ * ----------------------------------------------------------------------------- */
+
+/* Forms */
+
+.tribe-common {
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Checkboxes & Radios Theme Overrides
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Form Control: Checkboxes Theme Overrides
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Form Control: Radios Theme Overrides
+	 * ----------------------------------------------------------------------------- */
+}
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Checkboxes & Radios
+	 *
+	 * Example (Checkboxes):
+	 * <fieldset>
+	 *   <legend>Legend for Checkboxes</legend>
+	 *   <div class="tribe-common-form-control-checkbox-radio-group">
+	 *     <div class="tribe-common-form-control-checkbox">
+	 *       <input
+	 *         class="tribe-common-form-control-checkbox__input"
+	 *         id="checkboxOne"
+	 *         name="checkboxGroup"
+	 *         type="checkbox"
+	 *         value="checkboxOne"
+	 *         checked="checked"
+	 *       />
+	 *       <label
+	 *         class="tribe-common-form-control-checkbox__label"
+	 *         for="checkboxOne"
+	 *       >
+	 *         Checkbox One
+	 *       </label>
+	 *     </div>
+	 *     <div class="tribe-common-form-control-checkbox">
+	 *       <input
+	 *         class="tribe-common-form-control-checkbox__input"
+	 *         id="checkboxTwo"
+	 *         name="checkboxGroup"
+	 *         type="checkbox"
+	 *         value="checkboxTwo"
+	 *       />
+	 *       <label
+	 *         class="tribe-common-form-control-checkbox__label"
+	 *         for="checkboxTwo"
+	 *       >
+	 *         Checkbox Two
+	 *       </label>
+	 *     </div>
+	 *   </div>
+	 * </fieldset>
+	 *
+	 * Example (Radios):
+	 * <div class="tribe-common-form-control-checkbox-radio-group">
+	 *   <div class="tribe-common-form-control-radio">
+	 *     <input
+	 *       class="tribe-common-form-control-radio__input"
+	 *       id="radioExample"
+	 *       name="radioExample"
+	 *       type="radio"
+	 *       value="RadioExample"
+	 *       checked="checked"
+	 *     />
+	 *     <label
+	 *       class="tribe-common-form-control-radio__label"
+	 *       for="radioExample"
+	 *     >
+	 *       Radio Example
+	 *     </label>
+	 *   </div>
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-form-control-checkbox,
+	.tribe-common .tribe-common-form-control-radio {
+		line-height: 0;
+	}
+
+.tribe-common .tribe-common-form-control-checkbox__label,
+	.tribe-common .tribe-common-form-control-radio__label {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-size: 14px;
+		line-height: 1.62;
+		font-weight: 400;
+
+		color: #727272;
+	}
+
+.tribe-common .tribe-common-form-control-checkbox__input,
+	.tribe-common .tribe-common-form-control-radio__input {
+		-webkit-appearance: none;
+		   -moz-appearance: none;
+		        appearance: none;
+		background-color: #FFFFFF;
+		border: 1px solid #141827;
+		height: 20px;
+		position: relative;
+		width: 20px;
+	}
+
+.tribe-common .tribe-common-form-control-checkbox__input:active,
+		.tribe-common .tribe-common-form-control-checkbox__input:focus,
+		.tribe-common .tribe-common-form-control-checkbox__input:hover,
+		.tribe-common .tribe-common-form-control-radio__input:active,
+		.tribe-common .tribe-common-form-control-radio__input:focus,
+		.tribe-common .tribe-common-form-control-radio__input:hover {
+			border: 1px solid #141827;
+		}
+
+.tribe-common .tribe-common-form-control-checkbox__input:checked, .tribe-common .tribe-common-form-control-radio__input:checked {
+			background-color: #141827;
+		}
+
+/* -----------------------------------------------------------------------------
+	 * Form Control: Checkboxes
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-form-control-checkbox__input:checked:before {
+			background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='12' height='9' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.6.1L3.9 6.8 1.4 4.3c-.1-.1-.3-.1-.4 0l-.8.8c-.1.1-.1.3 0 .4l3.4 3.4c.2.1.4.1.5 0l7.7-7.7c.1-.1.1-.3 0-.4L11 .1c-.1-.1-.3-.1-.4 0z' fill='%23FFFFFF'/%3E%3C/svg%3E");
+			background-repeat: no-repeat;
+			background-size: contain;
+			content: '';
+			display: block;
+			height: 9px;
+			left: 50%;
+			position: absolute;
+			top: 50%;
+			-webkit-transform: translate(-50%, -50%);
+			        transform: translate(-50%, -50%);
+			width: 12px;
+		}
+
+/* -----------------------------------------------------------------------------
+	 * Form Control: Radios
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-form-control-radio__input {
+		border-radius: 50%;
+	}
+
+.tribe-common .tribe-common-form-control-radio__input:checked:before {
+			background-color: #FFFFFF;
+			border-radius: 50%;
+			content: '';
+			display: block;
+			height: 8px;
+			left: 50%;
+			position: absolute;
+			top: 50%;
+			-webkit-transform: translate(-50%, -50%);
+			        transform: translate(-50%, -50%);
+			width: 8px;
+		}
+
+/* -----------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ----------------------------------------------------------------------------- */
+
+#top.tribe-theme-enfold .tribe-common .tribe-common-form-control-checkbox__label {
+			font-weight: 400;
+			font-size: 14px;
+		}
+
+/* -----------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ----------------------------------------------------------------------------- */
+
+#top.tribe-theme-enfold .tribe-common .tribe-common-form-control-radio__label {
+			font-weight: 400;
+			font-size: 14px;
+		}
+
+/* .tribe-common { */
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Groups (Checkbox & Radio)
+	 *
+	 * Example:
+	 * <div class="tribe-common-form-control-checkbox-radio-group">
+	 *   <div class="tribe-common-form-control-checkbox">
+	 *     <input id="checkboxOne" name="checkboxGroup" type="checkbox" value="checkboxOne" checked="checked" />
+	 *     <label for="checkboxOne">Checkbox One</label>
+	 *   </div>
+	 *   <div class="tribe-common-form-control-checkbox">
+	 *     <input id="checkboxTwo" name="checkboxGroup" type="checkbox" value="checkboxTwo" />
+	 *     <label for="checkboxTwo">Checkbox two</label>
+	 *   </div>
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+/* .tribe-common-form-control-checkbox-radio-group {} */
+
+/* } */
+
+.tribe-common {
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Sliders Theme Overrides
+	 *
+	 * ----------------------------------------------------------------------------- */
+}
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Sliders
+	 *
+	 * Example (Horizontal):
+	 * <div class="tribe-common-form-control-slider">
+	 *   <input
+	 *     class="tribe-common-form-control-slider__input"
+	 *     id="sliderOne"
+	 *     type="range"
+	 *     min="0"
+	 *     max="100"
+	 *     value="50"
+	 *   />
+	 *   <label class="tribe-common-form-control-slider__label" for="sliderOne">Slider One</label>
+	 * </div>
+	 *
+	 * Example (Vertical):
+	 * <div class="tribe-common-form-control-slider tribe-common-form-control-slider--vertical">
+	 *   <label class="tribe-common-form-control-slider__label" for="sliderOne">Slider One</label>
+	 *   <input
+	 *     class="tribe-common-form-control-slider__input"
+	 *     id="sliderOne"
+	 *     type="range"
+	 *     min="0"
+	 *     max="100"
+	 *     value="50"
+	 *   />
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-form-control-slider {
+		line-height: 0;
+	}
+
+.tribe-common .tribe-common-form-control-slider__input {
+		-webkit-appearance: none;
+		   -moz-appearance: none;
+		        appearance: none;
+		background-color: transparent;
+		border: 0;
+	}
+
+/* -----------------------------------------------------------------------------
+		 * Track styles
+		 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-form-control-slider__input::-webkit-slider-runnable-track {
+			border: none;
+			border-radius: 5px;
+			height: 10px;
+			margin: 5px 0;
+			padding: 0;
+			position: relative;
+			transition: background-color 0.2s ease;
+			background-color: #334AFF;
+		}
+
+.tribe-common .tribe-common-form-control-slider__input::-moz-range-track {
+			border: none;
+			border-radius: 5px;
+			height: 10px;
+			margin: 5px 0;
+			padding: 0;
+			position: relative;
+			transition: background-color 0.2s ease;
+			background-color: #334AFF;
+		}
+
+.tribe-common .tribe-common-form-control-slider__input::-ms-track {
+			background-color: transparent;
+			border-color: transparent;
+			border-width: 5px 0;
+			color: transparent;
+			height: 10px;
+		}
+
+.tribe-common .tribe-common-form-control-slider__input::-ms-fill-lower,
+		.tribe-common .tribe-common-form-control-slider__input::-ms-fill-upper {
+			background-color: #334AFF;
+			border-radius: 10px;
+		}
+
+/* -----------------------------------------------------------------------------
+		 * Thumb styles
+		 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-form-control-slider__input::-webkit-slider-thumb {
+			background-color: #FFFFFF;
+			border: 1px solid #D5D5D5;
+			border-radius: 50%;
+			box-shadow: 0 2px 5px 0 rgba(0,0,0, 0.14);
+			height: 20px;
+			width: 20px;
+			margin-top: -5px;
+
+			-webkit-appearance: none;
+
+			        appearance: none;
+		}
+
+.tribe-common .tribe-common-form-control-slider__input::-moz-range-thumb {
+			background-color: #FFFFFF;
+			border: 1px solid #D5D5D5;
+			border-radius: 50%;
+			box-shadow: 0 2px 5px 0 rgba(0,0,0, 0.14);
+			height: 20px;
+			width: 20px;
+			margin-top: -5px;
+		}
+
+.tribe-common .tribe-common-form-control-slider__input::-ms-thumb {
+			background-color: #FFFFFF;
+			border: 1px solid #D5D5D5;
+			border-radius: 50%;
+			box-shadow: 0 2px 5px 0 rgba(0,0,0, 0.14);
+			height: 20px;
+			width: 20px;
+			margin-top: -5px;
+
+			box-shadow: none;
+			margin-top: -1px;
+		}
+
+.tribe-common .tribe-common-form-control-slider__label {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-size: 12px;
+		line-height: 1.38;
+		font-weight: 400;
+
+		color: #727272;
+	}
+
+/* -----------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ----------------------------------------------------------------------------- */
+
+#top.tribe-theme-enfold .tribe-common .tribe-common-form-control-slider__label {
+			font-weight: 400;
+			font-size: 12px;
+		}
+
+.tribe-common {
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Text Theme Overrides
+	 *
+	 * ----------------------------------------------------------------------------- */
+}
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Text
+	 *
+	 * Example:
+	 * <div class="tribe-common-form-control-text">
+	 *   <label class="tribe-common-form-control-text__label" for="textInput">Text Input</label>
+	 *   <input
+	 *     class="tribe-common-form-control-text__input"
+	 *     id="textInput"
+	 *     name="textInput"
+	 *     type="text"
+	 *     placeholder="Text Input"
+	 *   />
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-form-control-text__input {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-size: 16px;
+		line-height: 1.62;
+		font-weight: 400;
+
+		border: 0;
+		border-bottom: 1px solid #D5D5D5;
+	}
+
+.tribe-common .tribe-common-form-control-text__input::-webkit-input-placeholder {
+			color: #727272;
+			font-style: normal;
+		}
+
+.tribe-common .tribe-common-form-control-text__input:-ms-input-placeholder {
+			color: #727272;
+			font-style: normal;
+		}
+
+.tribe-common .tribe-common-form-control-text__input::-ms-input-placeholder {
+			color: #727272;
+			font-style: normal;
+		}
+
+.tribe-common .tribe-common-form-control-text__input::placeholder {
+			color: #727272;
+			font-style: normal;
+		}
+
+.tribe-common .tribe-common-form-control-text__input:focus {
+			border-bottom-color: #141827;
+			outline: 0;
+		}
+
+/* -------------------------------------------------------------------------
+	 * Theme Overrides - Twenty Seventeen
+	 * ------------------------------------------------------------------------- */
+
+.tribe-theme-twentyseventeen .tribe-common .tribe-common-form-control-text__input {
+			color: #141827;
+		}
+
+/* -------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ------------------------------------------------------------------------- */
+
+#top.tribe-theme-enfold .tribe-common .tribe-common-form-control-text__input {
+			color: #141827;
+			font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+			font-size: 16px;
+			line-height: 1.62;
+			font-weight: 400;
+
+			border: 0;
+			border-bottom: 1px solid #D5D5D5;
+		}
+
+#top.tribe-theme-enfold .tribe-common .tribe-common-form-control-text__input:focus {
+				border-bottom-color: #141827;
+				box-shadow: none;
+			}
+
+.tribe-common {
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Toggles Theme Overrides
+	 *
+	 * ----------------------------------------------------------------------------- */
+}
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Toggles
+	 *
+	 * Example (Horizontal):
+	 * <div class="tribe-common-form-control-toggle">
+	 *   <input
+	 *     class="tribe-common-form-control-toggle__input"
+	 *     id="toggleOne"
+	 *     name="toggleGroup"
+	 *     type="checkbox"
+	 *     value="toggleOne"
+	 *   />
+	 *   <label class="tribe-common-form-control-toggle__label" for="toggleOne">Toggle One</label>
+	 * </div>
+	 *
+	 * Example (Vertical):
+	 * <div class="tribe-common-form-control-toggle tribe-common-form-control-toggle--vertical">
+	 *   <label class="tribe-common-form-control-toggle__label" for="toggleOne">Toggle One</label>
+	 *   <input
+	 *     class="tribe-common-form-control-toggle__input"
+	 *     id="toggleOne"
+	 *     name="toggleGroup"
+	 *     type="checkbox"
+	 *     value="toggleOne"
+	 *   />
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-form-control-toggle {
+		line-height: 0;
+	}
+
+.tribe-common .tribe-common-form-control-toggle__input {
+		border: none;
+		border-radius: 5px;
+		height: 10px;
+		margin: 5px 0;
+		padding: 0;
+		position: relative;
+		transition: background-color 0.2s ease;
+
+		-webkit-appearance: none;
+
+		   -moz-appearance: none;
+
+		        appearance: none;
+		background-color: #D5D5D5;
+		width: 40px;
+	}
+
+.tribe-common .tribe-common-form-control-toggle__input:after {
+			background-color: #FFFFFF;
+			border: 1px solid #D5D5D5;
+			border-radius: 50%;
+			box-shadow: 0 2px 5px 0 rgba(0,0,0, 0.14);
+			height: 20px;
+			width: 20px;
+
+			content: '';
+			left: 0;
+			position: absolute;
+			top: -5px;
+			transition: -webkit-transform 0.2s ease;
+			transition: transform 0.2s ease;
+			transition: transform 0.2s ease, -webkit-transform 0.2s ease;
+		}
+
+.tribe-common .tribe-common-form-control-toggle__input:checked {
+			background-color: #334AFF;
+		}
+
+.tribe-common .tribe-common-form-control-toggle__input:checked:after {
+				-webkit-transform: translateX(20px);
+				        transform: translateX(20px);
+			}
+
+.tribe-common .tribe-common-form-control-toggle__label {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-size: 12px;
+		line-height: 1.38;
+		font-weight: 400;
+
+		color: #727272;
+	}
+
+/* -----------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ----------------------------------------------------------------------------- */
+
+#top.tribe-theme-enfold .tribe-common .tribe-common-form-control-toggle__label {
+			font-weight: 400;
+			font-size: 12px;
+		}
+
+/* Grid */
+
+/* .tribe-common { */
+
+/* -----------------------------------------------------------------------------
+	 * Grid: Columns
+	 * ----------------------------------------------------------------------------- */
+
+/* } */
+
+/* .tribe-common { */
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Grid: Rows
+	 *
+	 * Example:
+	 * <div class="g-row">
+	 *   <div class="g-col">
+	 *     <p>Component or another grid layout, perhaps?</p>
+	 *   </div>
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+/* } */
+
+/* Typography */
+
+.tribe-common {
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * Anchor: Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+}
+
+.tribe-common a {
+		color: #141827;
+		outline: 0;
+		text-decoration: none;
+	}
+
+.tribe-common a:hover,
+		.tribe-common a:focus,
+		.tribe-common a:active,
+		.tribe-common a:visited {
+			color: #141827;
+			outline: 0;
+			text-decoration: none;
+		}
+
+/* -------------------------------------------------------------------------
+	 *
+	 * Anchor: Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+		 * Theme Overrides - Twenty Seventeen
+		 * ------------------------------------------------------------------------- */
+
+.tribe-theme-twentyseventeen .tribe-common a {
+			box-shadow: none;
+		}
+
+.tribe-theme-twentyseventeen .tribe-common a:hover,
+			.tribe-theme-twentyseventeen .tribe-common a:focus {
+				box-shadow: none;
+				color: #141827;
+			}
+
+/* -------------------------------------------------------------------------
+		 * Theme Overrides - Twenty Nineteen
+		 * ------------------------------------------------------------------------- */
+
+.tribe-theme-twentynineteen .entry .tribe-common a {
+			text-decoration: none;
+		}
+
+/* -------------------------------------------------------------------------
+	 *
+	 * Anchor
+	 *
+	 * Example:
+	 * <a class="tribe-common-anchor">Anchor Text</a>
+	 * <a class="tribe-common-anchor-alt">Anchor Alt Text</a>
+	 * <a class="tribe-common-anchor-thin">Anchor Thin Text</a>
+	 *
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-anchor {
+		border-bottom: 2px solid transparent;
+		transition: border-color 0.2s ease;
+	}
+
+.tribe-common .tribe-common-anchor:active,
+	.tribe-common .tribe-common-anchor:focus,
+	.tribe-common .tribe-common-anchor:hover {
+		border-bottom: 2px solid #141827;
+	}
+
+.tribe-common .tribe-common-anchor-alt {
+		border-bottom: 2px solid #334AFF;
+		color: #141827;
+		transition: color 0.2s ease;
+	}
+
+.tribe-common .tribe-common-anchor-alt:active,
+	.tribe-common .tribe-common-anchor-alt:focus,
+	.tribe-common .tribe-common-anchor-alt:hover {
+		border-bottom: 2px solid #334AFF;
+		color: #334AFF;
+	}
+
+.tribe-common .tribe-common-anchor-thin {
+		border-bottom: 1px solid transparent;
+		transition: border-color 0.2s ease;
+	}
+
+.tribe-common .tribe-common-anchor-thin:active,
+	.tribe-common .tribe-common-anchor-thin:focus,
+	.tribe-common .tribe-common-anchor-thin:hover {
+		border-bottom: 1px solid #141827;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Theme Overrides - Twenty Seventeen
+	 * ------------------------------------------------------------------------- */
+
+.tribe-theme-twentyseventeen .tribe-common .tribe-common-anchor-alt:hover,
+			.tribe-theme-twentyseventeen .tribe-common .tribe-common-anchor-alt:focus {
+				color: #334AFF;
+			}
+
+/* -------------------------------------------------------------------------
+	 * Body 1
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-b1 {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.62;
+	}
+
+/* -------------------------------------------------------------------------
+	 *
+	 * Body
+	 *
+	 * Example:
+	 * <p class="tribe-common-b1">Text here</p>
+	 *
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-b1--bold {
+		font-weight: 700;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Body 2
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-b2 {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 1.38;
+	}
+
+.tribe-common .tribe-common-b2--bold {
+		font-weight: 700;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Body 3
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-b3 {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-size: 11px;
+		font-weight: 400;
+		line-height: 1.5;
+	}
+
+.tribe-common .tribe-common-b3--bold {
+		font-weight: 700;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Body 1 for --viewport-medium
+	 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+	 * Body 2 for --viewport-medium
+	 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+	 * Body 3 for --viewport-medium
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common {
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * CTA: Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+}
+
+/* -------------------------------------------------------------------------
+	 *
+	 * CTA
+	 *
+	 * Example:
+	 * <a class="tribe-common-cta">Link Text</a>
+	 * <a class="tribe-common-cta tribe-common-cta--alt">Link Text Alt</a>
+	 *
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-cta {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-size: 12px;
+		line-height: 1.38;
+		font-weight: 400;
+		font-weight: 700;
+		border-bottom: 2px solid transparent;
+		transition: border-color 0.2s ease;
+	}
+
+.tribe-common .tribe-common-cta:active,
+	.tribe-common .tribe-common-cta:focus,
+	.tribe-common .tribe-common-cta:hover {
+		border-bottom: 2px solid #141827;
+	}
+
+.tribe-common .tribe-common-cta--alt {
+		border-bottom: 2px solid #334AFF;
+		color: #141827;
+		transition: color 0.2s ease;
+	}
+
+.tribe-common .tribe-common-cta--alt:active,
+	.tribe-common .tribe-common-cta--alt:focus,
+	.tribe-common .tribe-common-cta--alt:hover {
+		border-bottom: 2px solid #334AFF;
+		color: #334AFF;
+	}
+
+.tribe-common .tribe-common-cta--thin-alt {
+		border-bottom: 1px solid #334AFF;
+		color: #141827;
+		transition: color 0.2s ease;
+	}
+
+.tribe-common .tribe-common-cta--thin-alt:active,
+	.tribe-common .tribe-common-cta--thin-alt:focus,
+	.tribe-common .tribe-common-cta--thin-alt:hover {
+		border-bottom: 1px solid #334AFF;
+		color: #334AFF;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Theme Overrides - Twenty Seventeen
+	 * ------------------------------------------------------------------------- */
+
+.tribe-theme-twentyseventeen .tribe-common .tribe-common-cta--alt:hover,
+			.tribe-theme-twentyseventeen .tribe-common .tribe-common-cta--alt:focus,
+			.tribe-theme-twentyseventeen .tribe-common .tribe-common-cta--thin-alt:hover,
+			.tribe-theme-twentyseventeen .tribe-common .tribe-common-cta--thin-alt:focus {
+				color: #334AFF;
+			}
+
+.tribe-common {
+	/* -------------------------------------------------------------------------
+	 *
+	 * Heading
+	 *
+	 * Example:
+	 * <h1 class="tribe-common-h1">Heading Text</h1>
+	 *
+	 * ------------------------------------------------------------------------- */
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * Heading: Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+}
+
+/* -------------------------------------------------------------------------
+	 * Heading: h1
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-h1 {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-weight: 700;
+		font-size: 28px;
+		line-height: 1.42;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Heading: h2
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-h2 {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-weight: 700;
+		font-size: 24px;
+		line-height: 1.42;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Heading: h3
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-h3 {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-weight: 700;
+		font-size: 22px;
+		line-height: 1.5;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Heading: h4
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-h4 {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-weight: 700;
+		font-size: 20px;
+		line-height: 1.42;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Heading: h5
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-h5 {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-weight: 700;
+		font-size: 18px;
+		line-height: 1.5;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Heading: h6
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-h6 {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-weight: 700;
+		font-size: 16px;
+		line-height: 1.5;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Heading: h7
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-h7 {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-weight: 700;
+		font-size: 14px;
+		line-height: 1.62;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Heading: h8
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-h8 {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-weight: 700;
+		font-size: 12px;
+		line-height: 1.38;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Heading: h3 for --viewport-medium
+	 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+	 * Heading: h4 for --viewport-medium
+	 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+	 * Heading: h5 for --viewport-medium
+	 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+	 * Heading: h6 for --viewport-medium
+	 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+	 * Heading: h7 for --viewport-medium
+	 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+	 * Heading: alt style
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-h--alt {
+		font-weight: 400;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Theme Overrides - Avada
+	 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+		 * Heading: h1
+		 * ------------------------------------------------------------------------- */
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h1 {
+			color: #141827;
+			font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+			font-weight: 700;
+			font-size: 28px;
+			line-height: 1.42;
+		}
+
+/* -------------------------------------------------------------------------
+		 * Heading: h2
+		 * ------------------------------------------------------------------------- */
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h2 {
+			color: #141827;
+			font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+			font-weight: 700;
+			font-size: 24px;
+			line-height: 1.42;
+		}
+
+/* -------------------------------------------------------------------------
+		 * Heading: h3
+		 * ------------------------------------------------------------------------- */
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h3 {
+			color: #141827;
+			font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+			font-weight: 700;
+			font-size: 22px;
+			line-height: 1.5;
+		}
+
+/* -------------------------------------------------------------------------
+		 * Heading: h4
+		 * ------------------------------------------------------------------------- */
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h4 {
+			color: #141827;
+			font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+			font-weight: 700;
+			font-size: 20px;
+			line-height: 1.42;
+		}
+
+/* -------------------------------------------------------------------------
+		 * Heading: h5
+		 * ------------------------------------------------------------------------- */
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h5 {
+			color: #141827;
+			font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+			font-weight: 700;
+			font-size: 18px;
+			line-height: 1.5;
+		}
+
+/* -------------------------------------------------------------------------
+		 * Heading: h6
+		 * ------------------------------------------------------------------------- */
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h6 {
+			color: #141827;
+			font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+			font-weight: 700;
+			font-size: 16px;
+			line-height: 1.5;
+		}
+
+/* -------------------------------------------------------------------------
+		 * Heading: h7
+		 * ------------------------------------------------------------------------- */
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h7 {
+			color: #141827;
+			font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+			font-weight: 700;
+			font-size: 14px;
+			line-height: 1.62;
+		}
+
+/* -------------------------------------------------------------------------
+		 * Heading: h8
+		 * ------------------------------------------------------------------------- */
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h8 {
+			color: #141827;
+			font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+			font-weight: 700;
+			font-size: 12px;
+			line-height: 1.38;
+		}
+
+/* -------------------------------------------------------------------------
+		 * Heading: h3 for --viewport-medium
+		 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+		 * Heading: h4 for --viewport-medium
+		 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+		 * Heading: h5 for --viewport-medium
+		 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+		 * Heading: h6 for --viewport-medium
+		 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+		 * Heading: h7 for --viewport-medium
+		 * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+		 * Heading: alt style
+		 * ------------------------------------------------------------------------- */
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h--alt {
+			font-weight: 400;
+		}
+
+.tribe-common {
+	/* -------------------------------------------------------------------------
+	 * Lists
+	 * ------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Lists: Theme Overrides
+	 *
+	 * ----------------------------------------------------------------------------- */
+}
+
+.tribe-common {
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * Button: Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+}
+
+/* -------------------------------------------------------------------------
+	 * Button
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common button {
+		background-color: transparent;
+		border: none;
+	}
+
+.tribe-common button:hover,
+		.tribe-common button:focus {
+			background-color: transparent;
+		}
+
+/* -------------------------------------------------------------------------
+	 * Theme Overrides - Twenty Seventeen
+	 * ------------------------------------------------------------------------- */
+
+.tribe-theme-twentyseventeen .tribe-common button:hover,
+			.tribe-theme-twentyseventeen .tribe-common button:focus {
+				background-color: transparent;
+			}
+
+/* .tribe-common { */
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Layout: Global Content Container
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+/* } */
+
+/* -------------------------------------------------------------------------
+	 * SVG Icons
+	 * ------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-svgicon--featured {
+		background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='16' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h16v20l-7.902-5.122L0 20z' fill='%23334AFF'/%3E%3C/svg%3E");
+	}
+
+.tribe-common {
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Tables
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Tables: Theme Overrides
+	 * ----------------------------------------------------------------------------- */
+}
+
+/* -----------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-theme-enfold .tribe-common th {
+			letter-spacing: 0;
+			text-transform: none;
+		}
+
+/* Components */
+
+/* -----------------------------------------------------------------------------
+ *
+ * Components Full
+ *
+ * This file is just a clearing-house.
+ * Make partials (start with an underscore) for any actual css code.
+ *
+ * ----------------------------------------------------------------------------- */
+
+/* Buttons */
+
+.tribe-common {
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * Button: Border - Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+}
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Button: Border
+	 *
+	 * Example:
+	 * <button class="tribe-common-c-btn-border">...</button>
+	 * <a href="#" class="tribe-common-c-btn-border">...</a>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-c-btn-border,
+	.tribe-common a.tribe-common-c-btn-border {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-size: 12px;
+		line-height: 1.38;
+		font-weight: 400;
+		border: 0;
+		cursor: pointer;
+		display: inline-block;
+		height: auto;
+		padding: 0;
+		text-decoration: none;
+		width: auto;
+		background-color: #FFFFFF;
+		border: 1px solid #D5D5D5;
+		border-radius: 4px;
+		text-align: center;
+		transition: color 0.2s ease, border-color 0.2s ease;
+
+		color: #727272;
+		padding: 14px 20px 14px;
+	}
+
+.tribe-common .tribe-common-c-btn-border:hover,
+	.tribe-common .tribe-common-c-btn-border:focus,
+	.tribe-common a.tribe-common-c-btn-border:hover,
+	.tribe-common a.tribe-common-c-btn-border:focus {
+		background-color: #FFFFFF;
+	}
+
+.tribe-common .tribe-common-c-btn-border:active, .tribe-common a.tribe-common-c-btn-border:active {
+		border-color: #141827;
+	}
+
+.tribe-common .tribe-common-c-btn-border:active,
+		.tribe-common .tribe-common-c-btn-border:focus,
+		.tribe-common .tribe-common-c-btn-border:hover,
+		.tribe-common a.tribe-common-c-btn-border:active,
+		.tribe-common a.tribe-common-c-btn-border:focus,
+		.tribe-common a.tribe-common-c-btn-border:hover {
+			color: #141827;
+		}
+
+.tribe-common .tribe-common-c-btn-border:disabled, .tribe-common a.tribe-common-c-btn-border:disabled {
+			color: #D5D5D5
+		}
+
+/* -------------------------------------------------------------------------
+	 * Theme Overrides - Twenty Seventeen
+	 * ------------------------------------------------------------------------- */
+
+.tribe-theme-twentyseventeen .tribe-common .tribe-common-c-btn-border:hover {
+				background-color: #FFFFFF;
+			}
+
+.tribe-common {
+
+	/* -----------------------------------------------------------------------------
+	 * Button: Icon Caret Left
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Button: Icon Caret Right
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Button: Icon Filters
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Button: Icon Search
+	 * ----------------------------------------------------------------------------- */
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * Button: Icon Border - Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+}
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Button: Icon
+	 *
+	 * Example:
+	 * <button class="tribe-common-c-btn-icon tribe-common-c-btn-icon--filter">...</button>
+	 * <a href="#" class="tribe-common-c-btn-icon tribe-common-c-btn-icon--filter">...</a>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-c-btn-icon {
+		border: 0;
+		cursor: pointer;
+		display: inline-block;
+		height: auto;
+		padding: 0;
+		text-decoration: none;
+		width: auto;
+	}
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Button: Icon Border
+	 *
+	 * Example:
+	 * <button class="tribe-common-c-btn-icon tribe-common-c-btn-icon--border tribe-common-c-btn-icon--filter">...</button>
+	 * <a href="#" class="tribe-common-c-btn-icon tribe-common-c-btn-icon--border tribe-common-c-btn-icon--filter">...</a>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-c-btn-icon--border {
+		background-color: #FFFFFF;
+		border: 1px solid #D5D5D5;
+		align-items: center;
+		display: inline-flex;
+		height: 56px;
+		justify-content: center;
+		transition: none;
+		width: 56px;
+	}
+
+.tribe-common .tribe-common-c-btn-icon--border:hover,
+	.tribe-common .tribe-common-c-btn-icon--border:focus {
+		background-color: #FFFFFF;
+	}
+
+.tribe-common .tribe-common-c-btn-icon--border:active {
+		border-color: #141827;
+	}
+
+/* -------------------------------------------------------------------------
+	 * Theme Overrides - Twenty Seventeen
+	 * ------------------------------------------------------------------------- */
+
+.tribe-theme-twentyseventeen .tribe-common .tribe-common-c-btn-icon--border:hover {
+				background-color: #FFFFFF;
+			}
+
+.tribe-common {
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * Button: Solid - Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+}
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Button: Solid
+	 *
+	 * Example:
+	 * <button class="tribe-common-c-btn">...</button>
+	 * <a href="#" class="tribe-common-c-btn">...</a>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-c-btn,
+	.tribe-common a.tribe-common-c-btn {
+		color: #141827;
+		font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+		font-size: 14px;
+		line-height: 1.62;
+		font-weight: 400;
+		font-weight: 700;
+		border: 0;
+		cursor: pointer;
+		display: inline-block;
+		height: auto;
+		padding: 0;
+		text-decoration: none;
+		width: auto;
+		border-radius: 4px;
+		color: #FFFFFF;
+		text-align: center;
+		transition: background-color 0.2s ease;
+
+		padding: 11px 20px 11px;
+		background-color: #334AFF;
+	}
+
+.tribe-common .tribe-common-c-btn:focus,
+		.tribe-common .tribe-common-c-btn:hover,
+		.tribe-common a.tribe-common-c-btn:focus,
+		.tribe-common a.tribe-common-c-btn:hover {
+			background-color: rgba(51,74,255, 0.8);
+		}
+
+.tribe-common .tribe-common-c-btn:active, .tribe-common a.tribe-common-c-btn:active {
+			background-color: rgba(51,74,255, 0.9);
+		}
+
+.tribe-common .tribe-common-c-btn:disabled, .tribe-common a.tribe-common-c-btn:disabled {
+			background-color: rgba(51,74,255, 0.07);
+		}
+
+/* -------------------------------------------------------------------------
+	 * Theme Overrides - Twenty Seventeen
+	 * ------------------------------------------------------------------------- */
+
+.tribe-theme-twentyseventeen .tribe-common .tribe-common-c-btn:hover,
+			.tribe-theme-twentyseventeen .tribe-common .tribe-common-c-btn:focus {
+				background-color: rgba(51,74,255, 0.8);
+				color: #FFFFFF;
+			}
+
+/* .tribe-common { */
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Component: Image
+	 *
+	 * Example (Regular):
+	 * <img src="#" alt="" class="tribe-common-c-image" />
+	 *
+	 * Example (Background):
+	 * <div class="tribe-common-c-image tribe-common-c-image--bg">
+	 *   <div class="tribe-common-c-image__bg"></div>
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+/* } */
+
+/* -----------------------------------------------------------------------------
+	 *
+	 * Component: Loader
+	 *
+	 *
+	 * Example:
+	 * <div class="tribe-events-view-loader__dots tribe-common-c-loader">
+	 *    <div class="tribe-common-c-loader__dot tribe-common-c-loader__dot--first"></div>
+	 *    <div class="tribe-common-c-loader__dot tribe-common-c-loader__dot--second"></div>
+	 *    <div class="tribe-common-c-loader__dot tribe-common-c-loader__dot--third"></div>
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+.tribe-common .tribe-common-c-loader__dot {
+		-webkit-animation-name: tribe-common-c-loader-bounce;
+		        animation-name: tribe-common-c-loader-bounce;
+		-webkit-animation-duration: 2.24s;
+		        animation-duration: 2.24s;
+		-webkit-animation-iteration-count: infinite;
+		        animation-iteration-count: infinite;
+		-webkit-animation-direction: normal;
+		        animation-direction: normal;
+	}
+
+.tribe-common .tribe-common-c-loader__dot--first {
+		-webkit-animation-delay: 0.45s;
+		        animation-delay: 0.45s;
+	}
+
+.tribe-common .tribe-common-c-loader__dot--second {
+		-webkit-animation-delay: 1.05s;
+		        animation-delay: 1.05s;
+	}
+
+.tribe-common .tribe-common-c-loader__dot--third {
+		-webkit-animation-delay: 1.35s;
+		        animation-delay: 1.35s;
+	}
+
+@-webkit-keyframes tribe-common-c-loader-bounce {
+		0% {}
+
+		50% { background-color: #334AFF; }
+
+		100% {}
+	}
+
+@keyframes tribe-common-c-loader-bounce {
+		0% {}
+
+		50% { background-color: #334AFF; }
+
+		100% {}
+	}
+
+@media (min-width: 768px) {
+
+.tribe-common .tribe-common-form-control-text__input {
+			color: #141827;
+			font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+			font-size: 14px;
+			line-height: 1.62;
+			font-weight: 400;
+
+			border: 0
+	}
+
+#top.tribe-theme-enfold .tribe-common .tribe-common-form-control-text__input {
+				color: #141827;
+				font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+				font-size: 14px;
+				line-height: 1.62;
+				font-weight: 400;
+
+				border: 0
+		}
+
+.tribe-common .tribe-common-b1 {
+			font-size: 16px;
+			line-height: 1.62
+	}
+
+.tribe-common .tribe-common-b2 {
+			font-size: 14px;
+			line-height: 1.62
+	}
+
+.tribe-common .tribe-common-b3 {
+			font-size: 12px;
+			line-height: 1.38
+	}
+
+.tribe-common .tribe-common-b1--min-medium {
+			font-size: 16px;
+			line-height: 1.62
+	}
+
+.tribe-common .tribe-common-b2--min-medium {
+			font-size: 14px;
+			line-height: 1.62
+	}
+
+.tribe-common .tribe-common-b3--min-medium {
+			font-size: 12px;
+			line-height: 1.38
+	}
+
+.tribe-common .tribe-common-h1 {
+			font-size: 42px;
+			line-height: 1.38
+	}
+
+.tribe-common .tribe-common-h2 {
+			font-size: 32px;
+			line-height: 1.38
+	}
+
+.tribe-common .tribe-common-h3 {
+			font-size: 28px;
+			line-height: 1.42
+	}
+
+.tribe-common .tribe-common-h4 {
+			font-size: 24px;
+			line-height: 1.42
+	}
+
+.tribe-common .tribe-common-h6 {
+			font-size: 16px;
+			line-height: 1.62
+	}
+
+.tribe-common .tribe-common-h3--min-medium {
+			font-size: 28px;
+			line-height: 1.42
+	}
+
+.tribe-common .tribe-common-h4--min-medium {
+			font-size: 24px;
+			line-height: 1.42
+	}
+
+.tribe-common .tribe-common-h5--min-medium {
+			font-size: 18px;
+			line-height: 1.5
+	}
+
+.tribe-common .tribe-common-h6--min-medium {
+			font-size: 16px;
+			line-height: 1.62
+	}
+
+.tribe-common .tribe-common-h7--min-medium {
+			font-size: 14px;
+			line-height: 1.62
+	}
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h1 {
+				font-size: 42px;
+				line-height: 1.38
+		}
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h2 {
+				font-size: 32px;
+				line-height: 1.38
+		}
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h3 {
+				font-size: 28px;
+				line-height: 1.42
+		}
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h4 {
+				font-size: 24px;
+				line-height: 1.42
+		}
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h6 {
+				font-size: 16px;
+				line-height: 1.62
+		}
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h3--min-medium {
+				font-size: 28px;
+				line-height: 1.42
+		}
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h4--min-medium {
+				font-size: 24px;
+				line-height: 1.42
+		}
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h5--min-medium {
+				font-size: 18px;
+				line-height: 1.5
+		}
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h6--min-medium {
+				font-size: 16px;
+				line-height: 1.62
+		}
+
+.tribe-theme-avada #main .tribe-common .tribe-common-h7--min-medium {
+				font-size: 14px;
+				line-height: 1.62
+		}
+
+.tribe-common .tribe-common-c-btn-border,
+	.tribe-common a.tribe-common-c-btn-border {
+			padding: 6px 15px
+	}
+		}

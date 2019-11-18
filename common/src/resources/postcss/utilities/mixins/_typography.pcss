@@ -1,0 +1,299 @@
+/* -----------------------------------------------------------------------------
+ * Body
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin body {
+	color: var(--color-text-primary);
+	font-family: var(--font-family-sans-serif);
+}
+
+/* -----------------------------------------------------------------------------
+ * Desktop Body 1
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin desktop-body-1-sup {
+	font-size: var(--font-size-3);
+	line-height: var(--line-height-3);
+}
+
+@define-mixin desktop-body-1 {
+	@mixin body;
+	@mixin desktop-body-1-sup;
+
+	font-weight: var(--font-weight-regular);
+}
+
+@define-mixin desktop-body-1-bold {
+	@mixin desktop-body-1;
+
+	font-weight: var(--font-weight-bold);
+}
+
+/* -----------------------------------------------------------------------------
+ * Desktop Body 2
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin desktop-body-2-sup {
+	font-size: var(--font-size-2);
+	line-height: var(--line-height-3);
+}
+
+@define-mixin desktop-body-2 {
+	@mixin body;
+	@mixin desktop-body-2-sup;
+
+	font-weight: var(--font-weight-regular);
+}
+
+@define-mixin desktop-body-2-bold {
+	@mixin desktop-body-2;
+
+	font-weight: var(--font-weight-bold);
+}
+
+/* -----------------------------------------------------------------------------
+ * Desktop Body 3
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin desktop-body-3-sup {
+	font-size: var(--font-size-1);
+	line-height: var(--line-height-0);
+}
+
+@define-mixin desktop-body-3 {
+	@mixin body;
+	@mixin desktop-body-3-sup;
+
+	font-weight: var(--font-weight-regular);
+}
+
+@define-mixin desktop-body-3-bold {
+	@mixin desktop-body-3;
+
+	font-weight: var(--font-weight-bold);
+}
+
+/* -----------------------------------------------------------------------------
+ * Mobile Body 1
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin mobile-body-1 {
+	@mixin body;
+
+	font-size: var(--font-size-2);
+	font-weight: var(--font-weight-regular);
+	line-height: var(--line-height-3);
+}
+
+@define-mixin mobile-body-1-bold {
+	@mixin mobile-body-1;
+
+	font-weight: var(--font-weight-bold);
+}
+
+/* -----------------------------------------------------------------------------
+ * Mobile Body 2
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin mobile-body-2 {
+	@mixin body;
+
+	font-size: var(--font-size-1);
+	font-weight: var(--font-weight-regular);
+	line-height: var(--line-height-0);
+}
+
+@define-mixin mobile-body-2-bold {
+	@mixin mobile-body-2;
+
+	font-weight: var(--font-weight-bold);
+}
+
+/* -----------------------------------------------------------------------------
+ * Mobile Body 3
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin mobile-body-3 {
+	@mixin body;
+
+	font-size: var(--font-size-0);
+	font-weight: var(--font-weight-regular);
+	line-height: var(--line-height-2);
+}
+
+@define-mixin mobile-body-3-bold {
+	@mixin mobile-body-3;
+
+	font-weight: var(--font-weight-bold);
+}
+
+/* -----------------------------------------------------------------------------
+ * Heading
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin heading {
+	color: var(--color-text-primary);
+	font-family: var(--font-family-sans-serif);
+	font-weight: var(--font-weight-bold);
+}
+
+/* -----------------------------------------------------------------------------
+ * Heading 1
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin mobile-heading-1 {
+	font-size: var(--font-size-8);
+	line-height: var(--line-height-1);
+}
+
+@define-mixin desktop-heading-1 {
+	font-size: var(--font-size-10);
+	line-height: var(--line-height-0);
+}
+
+/* -----------------------------------------------------------------------------
+ * Heading 2
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin mobile-heading-2 {
+	font-size: var(--font-size-7);
+	line-height: var(--line-height-1);
+}
+
+@define-mixin desktop-heading-2 {
+	font-size: var(--font-size-9);
+	line-height: var(--line-height-0);
+}
+
+/* -----------------------------------------------------------------------------
+ * Heading 3
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin mobile-heading-3 {
+	font-size: var(--font-size-6);
+	line-height: var(--line-height-2);
+}
+
+@define-mixin desktop-heading-3 {
+	font-size: var(--font-size-8);
+	line-height: var(--line-height-1);
+}
+
+/* -----------------------------------------------------------------------------
+ * Heading 4
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin mobile-heading-4 {
+	font-size: var(--font-size-5);
+	line-height: var(--line-height-1);
+}
+
+@define-mixin desktop-heading-4 {
+	font-size: var(--font-size-7);
+	line-height: var(--line-height-1);
+}
+
+/* -----------------------------------------------------------------------------
+ * Heading 5
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin heading-5 {
+	font-size: var(--font-size-4);
+	line-height: var(--line-height-2);
+}
+
+/* -----------------------------------------------------------------------------
+ * Heading 6
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin mobile-heading-6 {
+	font-size: var(--font-size-3);
+	line-height: var(--line-height-2);
+}
+
+@define-mixin desktop-heading-6 {
+	font-size: var(--font-size-3);
+	line-height: var(--line-height-3);
+}
+
+/* -----------------------------------------------------------------------------
+ * Heading 7
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin heading-7 {
+	font-size: var(--font-size-2);
+	line-height: var(--line-height-3);
+}
+
+/* -----------------------------------------------------------------------------
+ * Heading 8
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin heading-8 {
+	font-size: var(--font-size-1);
+	line-height: var(--line-height-0);
+}
+
+/* -----------------------------------------------------------------------------
+ * Anchor - Default
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin anchor-default {
+	border-bottom: 2px solid transparent;
+	transition: var(--transition-border-color);
+
+	&:active,
+	&:focus,
+	&:hover {
+		border-bottom: 2px solid var(--color-text-primary);
+	}
+}
+
+/* -----------------------------------------------------------------------------
+ * Anchor - Alt
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin anchor-alt {
+	border-bottom: 2px solid var(--color-accent-primary);
+	color: var(--color-text-primary);
+	transition: var(--transition-color);
+
+	&:active,
+	&:focus,
+	&:hover {
+		border-bottom: 2px solid var(--color-accent-primary);
+		color: var(--color-accent-primary);
+	}
+}
+
+/* -----------------------------------------------------------------------------
+ * Anchor - Thin
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin anchor-thin {
+	border-bottom: 1px solid transparent;
+	transition: var(--transition-border-color);
+
+	&:active,
+	&:focus,
+	&:hover {
+		border-bottom: 1px solid var(--color-text-primary);
+	}
+}
+
+/* -----------------------------------------------------------------------------
+ * Anchor - Thin
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin anchor-thin-alt {
+	border-bottom: 1px solid var(--color-accent-primary);
+	color: var(--color-text-primary);
+	transition: var(--transition-color);
+
+	&:active,
+	&:focus,
+	&:hover {
+		border-bottom: 1px solid var(--color-accent-primary);
+		color: var(--color-accent-primary);
+	}
+}

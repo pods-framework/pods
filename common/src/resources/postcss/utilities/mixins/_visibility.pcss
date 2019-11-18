@@ -1,0 +1,37 @@
+/* -----------------------------------------------------------------------------
+ * Hidden: Hide from both screenreaders and browsers
+ * @author: h5bp.com/u
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin hidden {
+	display: none !important;
+	visibility: hidden;
+}
+
+/* -----------------------------------------------------------------------------
+ * Visually Hide: Hide only visually, but have it available for screenreaders
+ * @author: h5bp.com/v
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin visually-hide {
+	border: 0;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+}
+
+/* -----------------------------------------------------------------------------
+ * Visually Show: Show element after has been hidden with %visually-hide
+ * ----------------------------------------------------------------------------- */
+
+@define-mixin visually-show {
+	clip: auto;
+	width: auto;
+	height: auto;
+	margin: 0;
+	position: static;
+}

@@ -1,0 +1,29 @@
+/**
+ * This CSS file was auto-generated via PostCSS
+ *
+ * Contributors should avoid editing this file, but instead edit the associated
+ * src/resources/postcss/ file. For more information, check out our engineering
+ * docs on how we handle CSS in our engineering docs.
+ *
+ * @see: http://moderntribe.github.io/products-engineering/css/
+ */
+
+#wp-admin-bar-promoter-admin-bar a.ab-item {
+		display:     flex;
+		flex-wrap:   wrap;
+		align-items: center;
+	}
+
+		#wp-admin-bar-promoter-admin-bar a.ab-item .promoter-admin-bar__icon {
+			margin-right: 5px;
+			width:        20px;
+			height:       20px;
+			flex:         none;
+		}
+
+		#wp-admin-bar-promoter-admin-bar a.ab-item .promoter-admin-bar__text {
+			flex: none;
+		}
+	#wp-admin-bar-promoter-admin-bar:focus .promoter-admin-bar__icon svg path, #wp-admin-bar-promoter-admin-bar:hover .promoter-admin-bar__icon svg path {
+			fill: #00B9EB;
+		}

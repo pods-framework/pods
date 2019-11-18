@@ -1,0 +1,39 @@
+/**
+ * This CSS file was auto-generated via PostCSS
+ *
+ * Contributors should avoid editing this file, but instead edit the associated
+ * src/resources/postcss/ file. For more information, check out our engineering
+ * docs on how we handle CSS in our engineering docs.
+ *
+ * @see: http://moderntribe.github.io/products-engineering/css/
+ */
+
+.tribe-buttonset .tribe-button-field {
+		background-color: #f7f7f7;
+	}
+
+.tribe-button-field {
+	color: #444;
+	cursor: pointer;
+	display: inline-block;
+	text-decoration: none;
+	font-size: 13px;
+	line-height: 26px;
+	height: 28px;
+	margin: 0 0 3px;
+	padding: 0 10px 1px;
+	background-color: #fff;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #ddd;
+	-webkit-appearance: none;
+	border-radius: 3px;
+	white-space: nowrap;
+	box-sizing: border-box;
+}
+
+.tribe-button-field.tribe-active {
+		color: #fff;
+		background-color: #585858;
+		border-color: #585858;
+	}

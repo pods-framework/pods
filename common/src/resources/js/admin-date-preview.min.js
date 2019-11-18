@@ -1,0 +1,1 @@
+jQuery(document).ready(function(i){i(".live-date-preview").siblings("input").change(function(){var e=i(this),n=e.val(),t=e.siblings(".live-date-preview");t.append("<span class='spinner'></span>"),t.find(".spinner").css("visibility","visible");var a={action:"date_format",date:n};i.post(ajaxurl,a,function(e){e=i("<div/>").html(e).text(),t.html(e)},"text")})});

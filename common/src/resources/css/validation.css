@@ -1,0 +1,18 @@
+/**
+ * This CSS file was auto-generated via PostCSS
+ *
+ * Contributors should avoid editing this file, but instead edit the associated
+ * src/resources/postcss/ file. For more information, check out our engineering
+ * docs on how we handle CSS in our engineering docs.
+ *
+ * @see: http://moderntribe.github.io/products-engineering/css/
+ */
+
+.tribe-validation input[type="text"].tribe-validation-error, .tribe-validation input[type="password"].tribe-validation-error, .tribe-validation input[type="checkbox"].tribe-validation-error, .tribe-validation input[type="color"].tribe-validation-error, .tribe-validation input[type="date"].tribe-validation-error, .tribe-validation input[type="datetime"].tribe-validation-error, .tribe-validation input[type="datetime-local"].tribe-validation-error, .tribe-validation input[type="email"].tribe-validation-error, .tribe-validation input[type="month"].tribe-validation-error, .tribe-validation input[type="number"].tribe-validation-error, .tribe-validation input[type="search"].tribe-validation-error, .tribe-validation input[type="radio"].tribe-validation-error, .tribe-validation input[type="tel"].tribe-validation-error, .tribe-validation input[type="text"].tribe-validation-error, .tribe-validation input[type="time"].tribe-validation-error, .tribe-validation input[type="url"].tribe-validation-error, .tribe-validation input[type="week"].tribe-validation-error, .tribe-validation select.tribe-validation-error, .tribe-validation textarea.tribe-validation-error {
+			border-color: #dc3232;
+		}
+
+
+.tribe-validation .tribe-dropdown.tribe-validation-error .select2-choice {
+			border-color: #dc3232;
+		}

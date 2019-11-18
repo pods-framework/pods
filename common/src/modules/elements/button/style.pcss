@@ -1,0 +1,58 @@
+/* basic styles are in .tribe-editor__btn, this is kepted for backward compatibility */
+.tribe-editor__btn--label {
+	background-color: transparent;
+	border: none;
+	padding: 0;
+	margin: 0;
+	text-align: left;
+}
+
+.tribe-editor__button {
+
+	&,
+	/* extra editor-styles-wrapper class to override gutenberg styles */
+	.editor-styles-wrapper & {
+
+		background-color: transparent;
+		border: none;
+		padding: 0;
+		margin: 0;
+		font-family: 'Helvetica', 'sans-serif';
+		cursor: pointer;
+
+		&[disabled] {
+			cursor: default;
+		}
+	}
+}
+
+.tribe-editor__button--sm {
+
+	&,
+	/* extra editor-styles-wrapper class to override gutenberg styles */
+	.editor-styles-wrapper & {
+
+		background-color: #009fd4;
+		color: #ffffff;
+		padding: 11px 16px 9px;
+		font-size: 15px;
+		font-weight: bold;
+		line-height: 18px;
+		transition: background-color 0.2s ease;
+
+		&:hover,
+		&:focus {
+			background-color: #007bb4;
+		}
+
+		&[disabled] {
+
+			&,
+			&:hover,
+			&:focus {
+				background-color: #f3f4f5;
+				color: #8d949b;
+			}
+		}
+	}
+}

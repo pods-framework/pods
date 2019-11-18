@@ -1,0 +1,25 @@
+/* increased specificity required to override gutenberg editor styles */
+input.tribe-editor__input {
+
+	/* this list will grow with more input types used */
+	&[type=number],
+	&[type=text] {
+		color: #000000;
+		font-size: 16px;
+		line-height: 24px;
+		border: 1px solid #E1E3E6;
+		padding: 7px 15px;
+		margin: 0;
+		height: 40px;
+
+		&:focus {
+			color: #000000;
+			box-shadow: none;
+			outline: none;
+		}
+
+		&:disabled {
+			color: #AEB4BB;
+		}
+	}
+}

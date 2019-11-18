@@ -1,0 +1,54 @@
+.tribe-editor__label-with-link {
+
+	.tribe-editor__rsvp &,
+	.tribe-editor__ticket & {
+		display: flex;
+		align-items: center;
+		background-color: #FFFFFF;
+		padding: 10px 17px;
+		border: 1px solid #E1E3E6;
+	}
+
+	.tribe-editor__labeled-item__label {
+
+		.tribe-editor__rsvp &,
+		.tribe-editor__ticket & {
+			flex: auto;
+			color: #545D66;
+			font-size: 15px;
+			font-weight: bold;
+			line-height: 18px;
+			letter-spacing: 0.38px;
+			padding-right: 10px;
+		}
+	}
+
+	.tribe-editor__label-with-link__link {
+
+		.tribe-editor__rsvp &,
+		.tribe-editor__ticket & {
+			flex: none;
+			color: #009FD4;
+			font-size: 15px;
+			font-weight: bold;
+			line-height: 18px;
+			letter-spacing: 0.38px;
+			text-decoration: none;
+			box-shadow: none;
+			transition: color 0.2s ease;
+
+			&:hover,
+			&:focus {
+				color: #007BB4;
+			}
+		}
+	}
+
+	.tribe-editor__label-with-link__link.tribe-editor__label-with-link__link--disabled {
+
+		.tribe-editor__rsvp &,
+		.tribe-editor__ticket & {
+				color: #AEB4BB;
+		}
+	}
+}

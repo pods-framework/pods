@@ -1,0 +1,70 @@
+.tribe-common {
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Toggles
+	 *
+	 * Example (Horizontal):
+	 * <div class="tribe-common-form-control-toggle">
+	 *   <input
+	 *     class="tribe-common-form-control-toggle__input"
+	 *     id="toggleOne"
+	 *     name="toggleGroup"
+	 *     type="checkbox"
+	 *     value="toggleOne"
+	 *   />
+	 *   <label class="tribe-common-form-control-toggle__label" for="toggleOne">Toggle One</label>
+	 * </div>
+	 *
+	 * Example (Vertical):
+	 * <div class="tribe-common-form-control-toggle tribe-common-form-control-toggle--vertical">
+	 *   <label class="tribe-common-form-control-toggle__label" for="toggleOne">Toggle One</label>
+	 *   <input
+	 *     class="tribe-common-form-control-toggle__input"
+	 *     id="toggleOne"
+	 *     name="toggleGroup"
+	 *     type="checkbox"
+	 *     value="toggleOne"
+	 *   />
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	.tribe-common-form-control-toggle__input {
+		cursor: pointer;
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	.tribe-common-form-control-toggle__label {
+		cursor: pointer;
+		display: inline-block;
+		margin-left: 11px;
+		vertical-align: middle;
+	}
+
+	.tribe-common-form-control-toggle--vertical {
+
+		.tribe-common-form-control-toggle__label {
+			display: block;
+			margin: 0 0 6px;
+		}
+	}
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Toggles Theme Overrides
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ----------------------------------------------------------------------------- */
+
+	#top.tribe-theme-enfold & {
+
+		.tribe-common-form-control-toggle__input {
+			display: inline-block;
+			margin: 5px 0;
+		}
+	}
+}

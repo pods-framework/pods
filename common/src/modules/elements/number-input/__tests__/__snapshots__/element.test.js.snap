@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Input element Should render the component 1`] = `
+<input
+  className="tribe-editor__input tribe-editor__input--number"
+  type="number"
+/>
+`;
+
+exports[`Input element Should render the component with class 1`] = `
+<input
+  className="tribe-editor__input tribe-editor__input--number input-class"
+  type="number"
+/>
+`;
+
+exports[`Input element Should render the component with extra props 1`] = `
+<input
+  className="tribe-editor__input tribe-editor__input--number"
+  id="input-id"
+  type="number"
+/>
+`;
+
+exports[`Input element Should render the component with max 1`] = `
+<input
+  className="tribe-editor__input tribe-editor__input--number"
+  max={42}
+  type="number"
+/>
+`;
+
+exports[`Input element Should render the component with min 1`] = `
+<input
+  className="tribe-editor__input tribe-editor__input--number"
+  min={-42}
+  type="number"
+/>
+`;
+
+exports[`Input element Should render the component with onChange handler 1`] = `
+<input
+  className="tribe-editor__input tribe-editor__input--number"
+  onChange={[Function]}
+  type="number"
+/>
+`;
+
+exports[`Input element Should render the component with step 1`] = `
+<input
+  className="tribe-editor__input tribe-editor__input--number"
+  step={10}
+  type="number"
+/>
+`;

@@ -1,0 +1,84 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[STORE] - form reducer Should add a new form 1`] = `
+Object {
+  "create": false,
+  "edit": false,
+  "fields": Object {},
+  "saving": false,
+  "submit": false,
+  "type": "tribe_organizers",
+}
+`;
+
+exports[`[STORE] - form reducer Should clear a form 1`] = `
+Object {
+  "create": false,
+  "edit": false,
+  "fields": Object {},
+  "saving": false,
+  "submit": false,
+  "type": "tribe_organizers",
+}
+`;
+
+exports[`[STORE] - form reducer Should create a form draft 1`] = `
+Object {
+  "create": true,
+  "edit": false,
+  "fields": Object {
+    "id": 20,
+    "title": "Modern Tribe",
+  },
+  "saving": false,
+  "submit": false,
+  "type": "tribe_events",
+}
+`;
+
+exports[`[STORE] - form reducer Should edit the form entry 1`] = `
+Object {
+  "create": false,
+  "edit": true,
+  "fields": Object {
+    "description": "",
+    "title": "Tribe",
+  },
+  "saving": false,
+  "submit": false,
+  "type": "tribe_events",
+}
+`;
+
+exports[`[STORE] - form reducer Should submit the form 1`] = `
+Object {
+  "create": false,
+  "edit": false,
+  "fields": Object {},
+  "saving": false,
+  "submit": true,
+  "type": "tribe_events",
+}
+`;
+
+exports[`[STORE] - form reducer Should toggle the saving form flag 1`] = `
+Object {
+  "create": false,
+  "edit": false,
+  "fields": Object {},
+  "saving": true,
+  "submit": false,
+  "type": "tribe_events",
+}
+`;
+
+exports[`[STORE] - form reducer Should toggle the saving form flag 2`] = `
+Object {
+  "create": false,
+  "edit": false,
+  "fields": Object {},
+  "saving": false,
+  "submit": false,
+  "type": "tribe_events",
+}
+`;

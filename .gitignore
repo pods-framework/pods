@@ -40,39 +40,43 @@ npm-debug.log
 /package-lock.json
 
 # Common
-/common/
+/common/*
+!/common/lang
+/common/lang/*
 !/common/lang/*.pot
 !/common/lang/*.mo
 !/common/README.md
-!/common/src/**/*
+!/common/src
 !/common/tribe-autoload.php
+!/common/vendor
+/common/vendor/*
 !/common/vendor/autoload.php
 !/common/vendor/autoload_52.php
-!/common/vendor/composer/*
+!/common/vendor/composer/
 !/common/vendor/attrchange/js/*.js
 !/common/vendor/clipboard/*.js
 !/common/vendor/datatables/datatables*.css
 !/common/vendor/datatables/datatables*.js
 !/common/vendor/datatables/DataTables/images/*.png
 !/common/vendor/firebase/php-jwt/src/*.php
-!/common/vendor/freemius/**/*
-!/common/vendor/tooltipster/*
+!/common/vendor/freemius/
+!/common/vendor/tooltipster/
 !/common/vendor/handlebars/*.js
-!/common/vendor/jquery-tribe-timepicker/**/*.css
-!/common/vendor/jquery-tribe-timepicker/**/*.js
-!/common/vendor/jquery-tribe-timepicker/**/*.png
-!/common/vendor/jquery/**/*
-!/common/vendor/lucatume/di52/src/**
+!/common/vendor/jquery-tribe-timepicker/*/*.css
+!/common/vendor/jquery-tribe-timepicker/*/*.js
+!/common/vendor/jquery-tribe-timepicker/*/*.png
+!/common/vendor/jquery/
+!/common/vendor/lucatume/di52/src/
 !/common/vendor/momentjs/*.js
 !/common/vendor/momentjs/*.js
 !/common/vendor/tribe-select2/*.css
 !/common/vendor/tribe-select2/*.gif
 !/common/vendor/tribe-select2/*.js
 !/common/vendor/tribe-select2/*.png
-!/common/vendor/xrstf/composer-php52/*
+!/common/vendor/xrstf/composer-php52/
 !/common/vendor/psr/log/Psr/Log/*.php
 !/common/vendor/monolog/monolog/src/*.php
-!/common/vendor/monolog/monolog/src/**/*.php
+!/common/vendor/monolog/monolog/src/*/*.php
 
 # Source maps should just be built locally
 ui/js/pods-ui-ready.min.js.map

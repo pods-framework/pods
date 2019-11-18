@@ -1,0 +1,91 @@
+.tribe-common {
+
+	a {
+		color: var(--color-text-primary);
+		outline: 0;
+		text-decoration: none;
+
+		&:hover,
+		&:focus,
+		&:active,
+		&:visited {
+			color: var(--color-text-primary);
+			outline: 0;
+			text-decoration: none;
+		}
+	}
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * Anchor: Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+
+	a {
+		/* -------------------------------------------------------------------------
+		 * Theme Overrides - Twenty Seventeen
+		 * ------------------------------------------------------------------------- */
+
+		.tribe-theme-twentyseventeen & {
+			box-shadow: none;
+
+			&:hover,
+			&:focus {
+				box-shadow: none;
+				color: var(--color-text-primary);
+			}
+		}
+
+		/* -------------------------------------------------------------------------
+		 * Theme Overrides - Twenty Nineteen
+		 * ------------------------------------------------------------------------- */
+
+		.tribe-theme-twentynineteen .entry & {
+			text-decoration: none;
+		}
+	}
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * Anchor
+	 *
+	 * Example:
+	 * <a class="tribe-common-anchor">Anchor Text</a>
+	 * <a class="tribe-common-anchor-alt">Anchor Alt Text</a>
+	 * <a class="tribe-common-anchor-thin">Anchor Thin Text</a>
+	 *
+	 * ------------------------------------------------------------------------- */
+
+	.tribe-common-anchor {
+		@mixin anchor-default;
+	}
+
+	.tribe-common-anchor-alt {
+		@mixin anchor-alt;
+	}
+
+	.tribe-common-anchor-thin {
+		@mixin anchor-thin;
+	}
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * Anchor: Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+
+	/* -------------------------------------------------------------------------
+	 * Theme Overrides - Twenty Seventeen
+	 * ------------------------------------------------------------------------- */
+
+	.tribe-theme-twentyseventeen & {
+
+		.tribe-common-anchor-alt {
+
+			&:hover,
+			&:focus {
+				color: var(--color-accent-primary);
+			}
+		}
+	}
+}

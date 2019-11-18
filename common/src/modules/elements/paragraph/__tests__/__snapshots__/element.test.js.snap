@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Paragraph> default paragraph 1`] = `
+<p
+  className="tribe-editor__paragraph tribe-editor__paragraph--medium"
+>
+  Modern Tribe
+</p>
+`;
+
+exports[`<Paragraph> smaller paragraph 1`] = `
+<p
+  className="tribe-editor__paragraph tribe-editor__paragraph--small"
+>
+  Modern Tribe
+</p>
+`;

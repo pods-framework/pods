@@ -1,0 +1,37 @@
+.tribe-common__plugin-block-hook {
+
+	& .editor-inner-blocks {
+
+		& .editor-block-list__layout {
+			margin: 0;
+
+			& .editor-block-list__block {
+				margin: 0;
+				max-width: 100% !important;
+				padding: 0;
+
+				&.is-selected > .editor-block-list__block-edit:before,
+				&.is-selected-parent > .editor-block-list__block-edit:before,
+				&.is-hovered > .editor-block-list__block-edit:before {
+					outline: none;
+				}
+
+				& .editor-block-list__block-edit {
+					margin: 0;
+
+					&:before {
+						outline: none;
+					}
+
+					& .editor-block-contextual-toolbar {
+						display: none;
+					}
+				}
+
+				{
+					outline: none;
+				}
+			}
+		}
+	}
+}

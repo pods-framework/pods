@@ -1,0 +1,39 @@
+.tribe-common {
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Grid: Rows
+	 *
+	 * Example:
+	 * <div class="g-row">
+	 *   <div class="g-col">
+	 *     <p>Component or another grid layout, perhaps?</p>
+	 *   </div>
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	.tribe-common-g-row {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.tribe-common-g-row--gutters {
+		margin-left: var(--grid-gutter-small-half-negative);
+		margin-right: var(--grid-gutter-small-half-negative);
+
+		@media (--viewport-medium) {
+			margin-left: var(--grid-gutter-half-negative);
+			margin-right: var(--grid-gutter-half-negative);
+		}
+
+		& > .tribe-common-g-col {
+			padding-left: var(--grid-gutter-small-half);
+			padding-right: var(--grid-gutter-small-half);
+
+			@media (--viewport-medium) {
+				padding-left: var(--grid-gutter-half);
+				padding-right: var(--grid-gutter-half);
+			}
+		}
+	}
+}

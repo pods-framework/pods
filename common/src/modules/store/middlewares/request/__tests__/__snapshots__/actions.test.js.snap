@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[STORE] - Request actions WP Request action 1`] = `
+Object {
+  "meta": Object {
+    "actions": Object {},
+    "path": "tribe_organizer/1225",
+  },
+  "type": "@@MT/COMMON/WP_REQUEST",
+}
+`;

@@ -1,0 +1,75 @@
+.tribe-editor__creatable-select {
+
+	.tribe-editor__creatable-select__control {
+		height: 40px;
+		border: 1px solid #E1E3E6;
+		border-radius: 3px;
+		background-color: #FFFFFF;
+
+		&:hover {
+			border: 1px solid #E1E3E6;
+		}
+
+		&--is-focused {
+			box-shadow: none;
+		}
+	}
+
+	.tribe-editor__creatable-select__value-container {
+		padding: 2px 5px 2px 15px;
+	}
+
+	.tribe-editor__creatable-select__single-value {
+		margin: 0;
+		max-width: calc(100% - 15px);
+		font-size: 16px;
+		line-height: 1.5;
+	}
+
+	.tribe-editor__creatable-select__input {
+		font-size: 16px;
+
+		& > input {
+			margin: 0;
+			line-height: 1.5;
+
+			&,
+			&:focus {
+				box-shadow: none;
+			}
+		}
+	}
+
+	svg.tribe-editor__creatable-select__dropdown-indicator {
+		fill: #555D66;
+	}
+
+	.tribe-editor__creatable-select__menu {
+		margin: 0;
+		border: 1px solid #E1E3E6;
+		border-top: none;
+		border-radius: 0;
+		border-bottom-left-radius: 3px;
+		border-bottom-right-radius: 3px;
+		box-shadow: none;
+		transform: translateY(-7px);
+	}
+
+	.tribe-editor__creatable-select__menu-list {
+		padding: 0;
+	}
+
+	.tribe-editor__creatable-select__option {
+		font-size: 16px;
+		line-height: 1.5;
+		padding: 3px 15px;
+
+		&--is-focused {
+			background-color: #E7F5FA;
+		}
+
+		&--is-selected {
+			background-color: #11A0D2;
+		}
+	}
+}

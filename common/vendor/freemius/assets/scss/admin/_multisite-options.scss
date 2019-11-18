@@ -1,0 +1,40 @@
+.fs-multisite-options-container {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    padding: 5px;
+
+    a {
+        text-decoration: none;
+
+        &:focus {
+            box-shadow: none;
+        }
+
+        &.selected {
+            font-weight: bold;
+        }
+    }
+
+    &.fs-apply-on-all-sites {
+        border: 0 none;
+        padding: 0;
+
+        .fs-all-sites-options {
+            border-spacing: 0;
+
+            td:not(:first-child) {
+                display: none;
+            }
+        }
+    }
+
+    .fs-sites-list-container {
+        display: none;
+        overflow: auto;
+
+        table td {
+            border-top: 1px solid #ccc;
+            padding: 4px 2px;
+        }
+    }
+}

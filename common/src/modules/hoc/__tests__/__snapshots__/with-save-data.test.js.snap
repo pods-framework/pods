@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HOC - With Details Should render a component 1`] = `
+<div
+  attributes={
+    Object {
+      "description": "",
+      "organizers": Array [],
+      "title": "Modern Tribe",
+    }
+  }
+  description="The Next Generation of Digital Agency"
+  isolated={false}
+  name="tribe/event"
+  onBlockCreated={[Function]}
+  onBlockRemoved={[Function]}
+  organizers={Array []}
+  setAttributes={[MockFunction]}
+  setInitialState={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          Object {
+            "attributes": Object {
+              "description": "",
+              "organizers": Array [],
+              "title": "Modern Tribe",
+            },
+            "description": "The Next Generation of Digital Agency",
+            "get": [Function],
+            "isolated": false,
+            "name": "tribe/event",
+            "onBlockCreated": [Function],
+            "onBlockRemoved": [Function],
+            "organizers": Array [],
+            "setAttributes": [MockFunction],
+            "setInitialState": [MockFunction] {
+              "calls": [Circular],
+              "results": Array [
+                Object {
+                  "isThrow": false,
+                  "value": undefined,
+                },
+              ],
+            },
+            "title": "Modern Tribe!",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "isThrow": false,
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  title="Modern Tribe!"
+>
+  With Save Data!
+</div>
+`;

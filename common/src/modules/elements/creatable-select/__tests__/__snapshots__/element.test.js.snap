@@ -1,0 +1,241 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreatableSelect element Should render the component 1`] = `
+<div
+  className="css-10nd86i tribe-editor__creatable-select"
+  onKeyDown={[Function]}
+>
+  <div
+    className="css-vj8t7z tribe-editor__creatable-select__control"
+    onMouseDown={[Function]}
+    onTouchEnd={[Function]}
+  >
+    <div
+      className="css-1hwfws3 tribe-editor__creatable-select__value-container"
+    >
+      <div
+        className="css-1492t68 tribe-editor__creatable-select__placeholder"
+      >
+        Select...
+      </div>
+      <div
+        className="css-1g6gooi"
+      >
+        <div
+          className="tribe-editor__creatable-select__input"
+          style={
+            Object {
+              "display": "inline-block",
+            }
+          }
+        >
+          <input
+            aria-autocomplete="list"
+            autoCapitalize="none"
+            autoComplete="off"
+            autoCorrect="off"
+            disabled={false}
+            id="react-select-2-input"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            spellCheck="false"
+            style={
+              Object {
+                "background": 0,
+                "border": 0,
+                "boxSizing": "content-box",
+                "color": "inherit",
+                "fontSize": "inherit",
+                "opacity": 1,
+                "outline": 0,
+                "padding": 0,
+                "width": "1px",
+              }
+            }
+            tabIndex="0"
+            type="text"
+            value=""
+          />
+          <div
+            style={
+              Object {
+                "height": 0,
+                "left": 0,
+                "overflow": "scroll",
+                "position": "absolute",
+                "top": 0,
+                "visibility": "hidden",
+                "whiteSpace": "pre",
+              }
+            }
+          >
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-1wy0on6 tribe-editor__creatable-select__indicators"
+    >
+      <div
+        aria-hidden="true"
+        className="css-1ep9fjw tribe-editor__creatable-select__indicator tribe-editor__creatable-select__dropdown-indicator"
+        onMouseDown={[Function]}
+        onTouchEnd={[Function]}
+      >
+        <span
+          className="tribe-editor__creatable-select__dropdown-indicator"
+        >
+          arrow-down
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`CreatableSelect element Should render the component with class 1`] = `
+<div
+  className="css-10nd86i tribe-editor__creatable-select test-class"
+  onKeyDown={[Function]}
+>
+  <div
+    className="css-vj8t7z tribe-editor__creatable-select__control"
+    onMouseDown={[Function]}
+    onTouchEnd={[Function]}
+  >
+    <div
+      className="css-1hwfws3 tribe-editor__creatable-select__value-container"
+    >
+      <div
+        className="css-1492t68 tribe-editor__creatable-select__placeholder"
+      >
+        Select...
+      </div>
+      <div
+        className="css-1g6gooi"
+      >
+        <div
+          className="tribe-editor__creatable-select__input"
+          style={
+            Object {
+              "display": "inline-block",
+            }
+          }
+        >
+          <input
+            aria-autocomplete="list"
+            autoCapitalize="none"
+            autoComplete="off"
+            autoCorrect="off"
+            disabled={false}
+            id="react-select-3-input"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            spellCheck="false"
+            style={
+              Object {
+                "background": 0,
+                "border": 0,
+                "boxSizing": "content-box",
+                "color": "inherit",
+                "fontSize": "inherit",
+                "opacity": 1,
+                "outline": 0,
+                "padding": 0,
+                "width": "1px",
+              }
+            }
+            tabIndex="0"
+            type="text"
+            value=""
+          />
+          <div
+            style={
+              Object {
+                "height": 0,
+                "left": 0,
+                "overflow": "scroll",
+                "position": "absolute",
+                "top": 0,
+                "visibility": "hidden",
+                "whiteSpace": "pre",
+              }
+            }
+          >
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-1wy0on6 tribe-editor__creatable-select__indicators"
+    >
+      <div
+        aria-hidden="true"
+        className="css-1ep9fjw tribe-editor__creatable-select__indicator tribe-editor__creatable-select__dropdown-indicator"
+        onMouseDown={[Function]}
+        onTouchEnd={[Function]}
+      >
+        <span
+          className="tribe-editor__creatable-select__dropdown-indicator"
+        >
+          arrow-down
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`CreatableSelect element Should render the component with extra props 1`] = `
+<div
+  className="css-10nd86i tribe-editor__creatable-select"
+  onKeyDown={[Function]}
+>
+  <div
+    className="css-vj8t7z tribe-editor__creatable-select__control"
+    onMouseDown={[Function]}
+    onTouchEnd={[Function]}
+  >
+    <div
+      className="css-1hwfws3 tribe-editor__creatable-select__value-container"
+    >
+      <div
+        className="css-1492t68 tribe-editor__creatable-select__placeholder"
+      >
+        Select...
+      </div>
+      <input
+        className="css-14uuagi"
+        disabled={false}
+        id="react-select-4-input"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        readOnly={true}
+        tabIndex="0"
+        value=""
+      />
+    </div>
+    <div
+      className="css-1wy0on6 tribe-editor__creatable-select__indicators"
+    >
+      <div
+        aria-hidden="true"
+        className="css-1ep9fjw tribe-editor__creatable-select__indicator tribe-editor__creatable-select__dropdown-indicator"
+        onMouseDown={[Function]}
+        onTouchEnd={[Function]}
+      >
+        <span
+          className="tribe-editor__creatable-select__dropdown-indicator"
+        >
+          arrow-down
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

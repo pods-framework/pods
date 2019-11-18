@@ -1,0 +1,240 @@
+.tribe-common {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-smoothing: antialiased;
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Global "Resets"
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	* {
+		box-sizing: border-box;
+	}
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * HTML5 Elements
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	article,
+	aside,
+	details,
+	figcaption,
+	figure,
+	footer,
+	header,
+	main,
+	menu,
+	nav,
+	section,
+	summary {
+		display: block;
+	}
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Normalize "Light"
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	svg:not(:root) {
+		overflow: hidden;
+	}
+
+	audio,
+	canvas,
+	progress,
+	video {
+		display: inline-block;
+	}
+
+	audio:not([controls]) {
+		display: none;
+		height: 0;
+	}
+
+	progress {
+		vertical-align: baseline;
+	}
+
+	template,
+	[hidden] {
+		display: none;
+	}
+
+
+	pre {
+		overflow: auto;
+	}
+
+	sub,
+	sup {
+		position: relative;
+		vertical-align: baseline;
+	}
+
+	sup {
+		top: -0.5em;
+	}
+
+	sub {
+		bottom: -0.25em;
+	}
+
+	input,
+	button,
+	select,
+	textarea {
+		box-sizing: border-box;
+		margin: 0;
+	}
+
+	input[type="number"]::-webkit-inner-spin-button,
+	input[type="number"]::-webkit-outer-spin-button {
+		height: auto;
+	}
+
+	legend {
+		color: inherit;
+		display: table;
+		max-width: 100%;
+		white-space: normal;
+	}
+
+	textarea {
+		resize: none;
+		overflow: auto;
+	}
+
+
+	button,
+	input[type="button"],
+	input[type="reset"],
+	input[type="submit"] {
+		cursor: pointer;
+		overflow: visible;
+	}
+
+	button[disabled],
+	input[disabled] {
+		cursor: default;
+	}
+
+	button::-moz-focus-inner,
+	input::-moz-focus-inner {
+		border: 0;
+		padding: 0;
+	}
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Reset "Light"
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	div,
+	span,
+	applet,
+	object,
+	iframe,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	p,
+	blockquote,
+	pre,
+	a,
+	abbr,
+	acronym,
+	address,
+	big,
+	cite,
+	code,
+	del,
+	dfn,
+	em,
+	img,
+	ins,
+	kbd,
+	q,
+	s,
+	samp,
+	small,
+	strike,
+	strong,
+	sub,
+	sup,
+	tt,
+	var,
+	b,
+	u,
+	i,
+	center,
+	dl,
+	dt,
+	dd,
+	ol,
+	ul,
+	li,
+	fieldset,
+	form,
+	label,
+	legend,
+	table,
+	caption,
+	tbody,
+	tfoot,
+	thead,
+	tr,
+	th,
+	td,
+	article,
+	aside,
+	canvas,
+	details,
+	embed,
+	figure,
+	figcaption,
+	footer,
+	header,
+	main,
+	menu,
+	nav,
+	output,
+	ruby,
+	section,
+	summary,
+	time,
+	mark,
+	audio,
+	video {
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+
+	ol,
+	ul {
+		list-style: none;
+	}
+
+	img {
+		-ms-interpolation-mode: bicubic;
+		height: auto;
+		max-width: 100%;
+		border-style: none;
+	}
+
+	iframe,
+	video,
+	embed {
+		max-width: 100%;
+		max-height: 100%;
+	}
+}

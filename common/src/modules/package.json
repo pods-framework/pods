@@ -1,0 +1,17 @@
+{
+  "name": "@moderntribe/common",
+  "version": "0.3.2-alpha",
+  "description": "Common Blocks Editor modules",
+  "main": "src/resources/main.js",
+  "scripts": {},
+  "keywords": [
+    "gutenberg",
+    "common"
+  ],
+  "private": true,
+  "repository": "git+https://github.com/moderntribe/tribe-common.git",
+  "author": "Modern Tribe",
+  "license": "GPL-2.0-or-later",
+  "dependencies": {
+  }
+}

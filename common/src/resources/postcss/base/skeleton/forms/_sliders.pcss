@@ -1,0 +1,71 @@
+.tribe-common {
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Sliders
+	 *
+	 * Example (Horizontal):
+	 * <div class="tribe-common-form-control-slider">
+	 *   <input
+	 *     class="tribe-common-form-control-slider__input"
+	 *     id="sliderOne"
+	 *     type="range"
+	 *     min="0"
+	 *     max="100"
+	 *     value="50"
+	 *   />
+	 *   <label class="tribe-common-form-control-slider__label" for="sliderOne">Slider One</label>
+	 * </div>
+	 *
+	 * Example (Vertical):
+	 * <div class="tribe-common-form-control-slider tribe-common-form-control-slider--vertical">
+	 *   <label class="tribe-common-form-control-slider__label" for="sliderOne">Slider One</label>
+	 *   <input
+	 *     class="tribe-common-form-control-slider__input"
+	 *     id="sliderOne"
+	 *     type="range"
+	 *     min="0"
+	 *     max="100"
+	 *     value="50"
+	 *   />
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	.tribe-common-form-control-slider__input {
+		cursor: pointer;
+		display: inline-block;
+		margin: 0;
+		padding: 0;
+		width: 120px;
+		vertical-align: middle;
+
+		/* -----------------------------------------------------------------------------
+		 * Track styles
+		 * ----------------------------------------------------------------------------- */
+
+		/* -----------------------------------------------------------------------------
+		 * Thumb styles
+		 * ----------------------------------------------------------------------------- */
+	}
+
+	.tribe-common-form-control-slider__label {
+		cursor: pointer;
+		display: inline-block;
+		margin-left: 11px;
+		vertical-align: middle;
+	}
+
+	.tribe-common-form-control-slider--vertical {
+
+		.tribe-common-form-control-slider__label {
+			display: block;
+			margin: 0 0 6px;
+		}
+	}
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Sliders Theme Overrides
+	 *
+	 * ----------------------------------------------------------------------------- */
+}

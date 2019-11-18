@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Labeled Item Element renders labeled item 1`] = `
+<div
+  className="tribe-editor__labeled-item"
+>
+  <span
+    className="tribe-editor__labeled-item__label"
+  />
+  Test
+</div>
+`;
+
+exports[`Labeled Item Element renders labeled item with class 1`] = `
+<div
+  className="tribe-editor__labeled-item test-class"
+>
+  <span
+    className="tribe-editor__labeled-item__label"
+  />
+  Test
+</div>
+`;
+
+exports[`Labeled Item Element renders labeled item with label 1`] = `
+<div
+  className="tribe-editor__labeled-item"
+>
+  <span
+    className="tribe-editor__labeled-item__label"
+  >
+    test label
+  </span>
+  Test
+</div>
+`;
+
+exports[`Labeled Item Element renders labeled item with label element and for id 1`] = `
+<div
+  className="tribe-editor__labeled-item"
+>
+  <label
+    className="tribe-editor__labeled-item__label"
+    htmlFor="test-id"
+  >
+    test label
+  </label>
+  Test
+</div>
+`;

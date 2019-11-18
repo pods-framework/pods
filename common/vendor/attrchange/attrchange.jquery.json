@@ -1,0 +1,38 @@
+{
+    "name": "attrchange",
+    "version": "1.0.1",
+    "title": "jQuery attrchange Handler",
+    "description": "attrchange is a simple jQuery crossbrowser plugin to bind a listener function to any HTML element on attribute change. ",
+    "keyworkds": [
+        "attribute",
+        "attribute change",
+        "DOMAttrModified",
+        "MutationObserver",
+        "onchange",
+        "onpropertychange"
+    ],
+    "author": {
+        "name": "Selvakumar Arumugam",
+        "url": "http://meetselva.github.com/attrchange/"
+    },
+    "maintainers": [
+        {
+            "name": "Selvakumar Arumugam",
+            "email": "meetselva@gmail.com",
+            "url": "http://meetselva.github.com/attrchange/"
+        }
+    ],
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://raw.github.com/meetselva/attrchange/master/MIT-License.txt"
+        }
+    ],
+    "bugs": "https://github.com/meetselva/attrchange/issues?state=open",
+    "docs": "http://meetselva.github.com/attrchange/",
+    "homepage": "http://meetselva.github.com/attrchange/",
+    "download": "https://github.com/meetselva/attrchange/zipball/master",
+    "dependencies": {
+        "jquery": ">=1.7"
+ }
+}

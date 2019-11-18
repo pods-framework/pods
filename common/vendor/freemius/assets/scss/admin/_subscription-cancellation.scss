@@ -1,0 +1,30 @@
+.fs-modal.fs-modal-subscription-cancellation {
+	.fs-price-increase-warning {
+		color: red;
+		font-weight: bold;
+		padding: 0 25px;
+		margin-bottom: 0;
+	}
+
+    ul.subscription-actions label {
+        input {
+            float: left;
+            top: 5px;
+            position: relative;
+
+            .rtl & {
+                float: right;
+            }
+        }
+
+        span {
+            display: block;
+            margin-left: 24px;
+
+            .rtl & {
+                margin-left: 0;
+                margin-right: 24px;
+            }
+        }
+    }
+}

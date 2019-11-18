@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tests for time.js fromMilliseconds() test 1`] = `"Argument \`ms\` provided to \`fromMilliseconds\` is not a number or is NaN."`;
+
+exports[`Tests for time.js fromMilliseconds() test 2`] = `"Argument \`ms\` provided to \`fromMilliseconds\` is not a number or is NaN."`;
+
+exports[`Tests for time.js fromMilliseconds() test 3`] = `"Argument \`format\` provided to \`formatTime\` is not a recognized format."`;
+
+exports[`Tests for time.js fromSeconds() test 1`] = `"Argument \`s\` provided to \`fromSeconds\` is not a number or is NaN."`;
+
+exports[`Tests for time.js fromSeconds() test 2`] = `"Argument \`s\` provided to \`fromSeconds\` is not a number or is NaN."`;
+
+exports[`Tests for time.js fromSeconds() test 3`] = `"Argument \`format\` provided to \`formatTime\` is not a recognized format."`;
+
+exports[`Tests for time.js toMilliseconds() test 1`] = `"Argument \`time\` provided to \`toMilliseconds\` is not a recognized format."`;
+
+exports[`Tests for time.js toMilliseconds() test 2`] = `"Argument \`time\` provided to \`toMilliseconds\` is not a recognized format."`;
+
+exports[`Tests for time.js toMilliseconds() test 3`] = `"Argument \`time\` provided to \`toMilliseconds\` is not a recognized format."`;
+
+exports[`Tests for time.js toMilliseconds() test 4`] = `"Argument \`time\` provided to \`toMilliseconds\` contains minutes or seconds greater than 59."`;
+
+exports[`Tests for time.js toMilliseconds() test 5`] = `"Argument \`format\` provided to \`toMilliseconds\` is not a recognized format."`;
+
+exports[`Tests for time.js toSeconds() test 1`] = `"Argument \`time\` provided to \`toMilliseconds\` is not a recognized format."`;
+
+exports[`Tests for time.js toSeconds() test 2`] = `"Argument \`time\` provided to \`toMilliseconds\` is not a recognized format."`;
+
+exports[`Tests for time.js toSeconds() test 3`] = `"Argument \`time\` provided to \`toMilliseconds\` is not a recognized format."`;
+
+exports[`Tests for time.js toSeconds() test 4`] = `"Argument \`time\` provided to \`toMilliseconds\` contains minutes or seconds greater than 59."`;
+
+exports[`Tests for time.js toSeconds() test 5`] = `"Argument \`format\` provided to \`toMilliseconds\` is not a recognized format."`;

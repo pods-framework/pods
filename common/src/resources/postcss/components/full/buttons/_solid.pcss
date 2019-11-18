@@ -1,0 +1,54 @@
+.tribe-common {
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Button: Solid
+	 *
+	 * Example:
+	 * <button class="tribe-common-c-btn">...</button>
+	 * <a href="#" class="tribe-common-c-btn">...</a>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	.tribe-common-c-btn,
+	a.tribe-common-c-btn {
+		@mixin button-solid;
+
+		padding: 11px 20px 11px;
+		background-color: var(--color-accent-primary);
+
+		&:focus,
+		&:hover {
+			background-color: var(--color-accent-primary-hover);
+		}
+
+		&:active {
+			background-color: var(--color-accent-primary-active);
+		}
+
+		&:disabled {
+			background-color: var(--color-accent-primary-background);
+		}
+	}
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * Button: Solid - Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+
+	/* -------------------------------------------------------------------------
+	 * Theme Overrides - Twenty Seventeen
+	 * ------------------------------------------------------------------------- */
+
+	.tribe-theme-twentyseventeen & {
+
+		.tribe-common-c-btn {
+
+			&:hover,
+			&:focus {
+				background-color: var(--color-accent-primary-hover);
+				color: var(--color-background);
+			}
+		}
+	}
+}

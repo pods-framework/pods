@@ -1,0 +1,15 @@
+/**
+ * Internal dependencies
+ */
+import { PREFIX_COMMON_STORE } from '@moderntribe/common/data/utils';
+
+export const ADD_FORM = `${ PREFIX_COMMON_STORE }/ADD_FORM`;
+export const SET_FORM_FIELDS = `${ PREFIX_COMMON_STORE }/SET_FORM_FIELDS`;
+export const CREATE_FORM_DRAFT = `${ PREFIX_COMMON_STORE }/CREATE_FORM_DRAFT`;
+export const EDIT_FORM_ENTRY = `${ PREFIX_COMMON_STORE }/EDIT_FORM_ENTRY`;
+export const SUBMIT_FORM = `${ PREFIX_COMMON_STORE }/SUBMIT_FORM`;
+export const CLEAR_FORM = `${ PREFIX_COMMON_STORE }/CLEAR_FORM`;
+export const SET_SAVING_FORM = `${ PREFIX_COMMON_STORE }/SET_SAVING_FORM`;
+
+export const ADD_VOLATILE_ID = `${ PREFIX_COMMON_STORE }/ADD_VOLATILE_ID`;
+export const REMOVE_VOLATILE_ID = `${ PREFIX_COMMON_STORE }/REMOVE_VOLATILE_ID`;

@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Input element Should render the component 1`] = `
+<input
+  className="tribe-editor__input tribe-editor__input--checkbox"
+  type="checkbox"
+/>
+`;
+
+exports[`Input element Should render the component with checked 1`] = `
+<input
+  checked={true}
+  className="tribe-editor__input tribe-editor__input--checkbox"
+  type="checkbox"
+/>
+`;
+
+exports[`Input element Should render the component with checked 2`] = `
+<input
+  checked={false}
+  className="tribe-editor__input tribe-editor__input--checkbox"
+  type="checkbox"
+/>
+`;
+
+exports[`Input element Should render the component with class 1`] = `
+<input
+  className="tribe-editor__input tribe-editor__input--checkbox checkbox-class"
+  type="checkbox"
+/>
+`;
+
+exports[`Input element Should render the component with extra props 1`] = `
+<input
+  className="tribe-editor__input tribe-editor__input--checkbox"
+  id="checkbox-id"
+  type="checkbox"
+/>
+`;
+
+exports[`Input element Should render the component with onChange handler 1`] = `
+<input
+  className="tribe-editor__input tribe-editor__input--checkbox"
+  onChange={[Function]}
+  type="checkbox"
+/>
+`;

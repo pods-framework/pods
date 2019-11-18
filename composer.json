@@ -41,21 +41,28 @@
   },
   "repositories": [
     {
-      "name": "moderntribe/TribalScents",
+      "name": "moderntribe/tribalscents",
       "type": "github",
-      "url": "https://github.com/moderntribe/TribalScents",
+      "url": "https://github.com/moderntribe/tribalscents",
+      "no-api": true
+    },
+    {
+      "name": "moderntribe/tribe-common",
+      "type": "github",
+      "url": "https://github.com/moderntribe/tribe-common",
       "no-api": true
     }
   ],
   "require": {
     "composer/installers": "1.5.*",
-    "php": ">=5.3"
+    "php": ">=5.6",
+    "moderntribe/tribe-common": "^4.9.22"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",
     "wp-coding-standards/wpcs": "^2.1",
     "automattic/vipwpcs": "^2.0",
-    "moderntribe/TribalScents": "dev-master",
+    "moderntribe/tribalscents": "dev-master",
     "wp-cli/wp-cli": "1.*",
     "phpunit/phpunit": "4.*",
     "mockery/mockery": "0.9.*",
@@ -70,6 +77,21 @@
     "wp-cli/wp-cli": "Enables access to Pods CLI commands."
   },
   "extra": {
-    "installer-name": "pods"
+    "installer-name": "pods",
+    "installer-paths": {
+      "common": [ "moderntribe/tribe-common" ]
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "cd common && npm install --production",
+      "cd common && npm run build",
+      "cd common && composer install --no-dev"
+    ],
+    "post-update-cmd": [
+      "cd common && npm install --production",
+      "cd common && npm run build",
+      "cd common && composer install --no-dev"
+    ]
   }
 }

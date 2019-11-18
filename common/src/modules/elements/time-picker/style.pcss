@@ -1,0 +1,86 @@
+.tribe-editor__timepicker {
+	display: inline-block;
+}
+
+.tribe-editor__timepicker__toggle {
+	background-color: #FFF;
+	border: 1px solid #e1e3e6;
+	border-radius: 2px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	input.tribe-editor__timepicker__input[type="text"] {
+		font-family: Helvetica, sans-serif;
+		font-size: 14px;
+		line-height: 1.5;
+		padding: 6px 0 6px 10px;
+		border: none;
+		width: 80px;
+	}
+
+	button.tribe-editor__timepicker__toggle-btn {
+		padding: 10px;
+
+		&:disabled > svg.dashicon {
+			fill: #AEB4BB;
+		}
+	}
+
+	button.tribe-editor__timepicker__all-day-btn {
+		color: #545D66;
+		line-height: 20px;
+		padding: 6px 10px 6px;
+		text-decoration: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+.tribe-editor__timepicker__content {
+
+	&.components-popover {
+
+		.components-popover__content {
+			min-width: 110px;
+		}
+	}
+
+	.tribe-editor__timepicker__items {
+		height: 250px;
+		overflow: auto;
+
+		.components-placeholder {
+			height: inherit;
+		}
+	}
+
+	.tribe-editor__timepicker__item {
+		display: block;
+		width: 100%;
+		color: #555d66;
+		padding: 5px 12px;
+		cursor: pointer;
+		border-bottom: 1px solid #e2e4e7;
+		line-height: 20px;
+		background: transparent;
+		text-align: left;
+
+		&:hover,
+		&:focus {
+			background-color: #e7f5fa;
+		}
+
+		&--current {
+			color: #ffffff;
+			background-color: #009fd4;
+
+			&:hover,
+			&:focus {
+				color: #ffffff;
+				background-color: #009fd4;
+			}
+		}
+	}
+}

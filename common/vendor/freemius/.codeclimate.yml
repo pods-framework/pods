@@ -1,0 +1,19 @@
+engines:
+  phpcodesniffer:
+    enabled: true
+    config:
+      standard: "WordPress"
+    checks:
+      Squiz Commenting InlineComment InvalidEndChar:
+        enabled: false
+      Squiz Commenting InlineComment SpacingBefore:
+        enabled: false        
+      Squiz Commenting InlineComment WrongStyle:
+        enabled: false
+      Generic Commenting DocComment MissingShort:
+        enabled: false
+      Generic WhiteSpace ScopeIndent IncorrectExact:
+        enabled: false
+ratings:
+  paths:
+  - "**.php"

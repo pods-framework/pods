@@ -1,0 +1,55 @@
+.tribe-common {
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Text
+	 *
+	 * Example:
+	 * <div class="tribe-common-form-control-text">
+	 *   <label class="tribe-common-form-control-text__label" for="textInput">Text Input</label>
+	 *   <input
+	 *     class="tribe-common-form-control-text__input"
+	 *     id="textInput"
+	 *     name="textInput"
+	 *     type="text"
+	 *     placeholder="Text Input"
+	 *   />
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	.tribe-common-form-control-text__label {
+		@mixin visually-hide;
+	}
+
+	.tribe-common-form-control-text__input {
+		height: auto;
+		padding: var(--spacer-2) var(--spacer-6) var(--spacer-2) 0;
+		width: 100%;
+
+		@media (--viewport-medium) {
+			padding: var(--spacer-4) var(--spacer-4) var(--spacer-4) var(--spacer-8);
+		}
+	}
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Text Theme Overrides
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	/* -------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ------------------------------------------------------------------------- */
+
+	#top.tribe-theme-enfold & {
+
+		.tribe-common-form-control-text__input {
+			padding: var(--spacer-2) var(--spacer-6) var(--spacer-2) 0;
+			width: 100%;
+
+			@media (--viewport-medium) {
+				padding: var(--spacer-4) var(--spacer-4) var(--spacer-4) var(--spacer-8);
+			}
+		}
+	}
+}

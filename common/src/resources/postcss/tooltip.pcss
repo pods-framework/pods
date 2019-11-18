@@ -1,0 +1,102 @@
+/* = Tooltips
+============================ */
+
+.tribe-tooltip {
+	cursor: pointer;
+	display: inline-block;
+	margin: 0;
+	position: relative;
+	text-align: left;
+
+	.dashicons-info {
+		color: #a9a9a9;
+		font-size: 16px;
+		line-height: 1em;
+		vertical-align: middle;
+	}
+
+	/* defaults */
+	.down,
+	.left,
+	.right,
+	.up {
+		background-color: #fff;
+		box-shadow: 0 0 3px 3px rgba(4, 5, 5, 0.05);
+		box-sizing: border-box;
+		color: #333333;
+		font-size: 16px;
+		font-weight: 400;
+		max-weight: 100vw;
+		opacity: 0;
+		padding: 15px;
+		position: absolute;
+		transform: translate(-50%, 0);
+		transition: opacity 0.8s;
+		visibility: hidden;
+		width: 250px;
+		z-index: 99999999;
+
+		i {
+			height: 12px;
+			overflow: hidden;
+			position: absolute;
+			width: 24px;
+
+			&::after {
+				background-color: #fff;
+				content: '';
+				height: 12px;
+				position: absolute;
+				width: 24px;
+			}
+		}
+	}
+
+	&.large {
+		.down,
+		.left,
+		.right,
+		.up {
+			width: 400px;
+
+			@media screen and (max-width: 480px) {
+				width: 250px;
+			}
+		}
+	}
+
+	.tooltip-list {
+		padding-left: 10px;
+
+		li {
+			list-style-type: disc;
+		}
+	}
+}
+
+.tribe-tooltip .down {
+	left: 50%;
+	top: 28px;
+
+	i {
+		bottom: 100%;
+		left: 50%;
+		margin-left: -7px;
+
+		&::after {
+			box-shadow: 0 0 3px 3px rgba(4, 5, 5, 0.05);
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, 50%) rotate(45deg);
+		}
+	}
+}
+
+/* active (open) styles */
+.tribe-tooltip.active .down,
+.tribe-tooltip.active .left,
+.tribe-tooltip.active .right,
+.tribe-tooltip.active .up {
+	opacity: 1;
+	visibility: visible;
+}

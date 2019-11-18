@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Heading> <h1> 1`] = `
+<h1
+  className="tribe-editor__heading tribe-editor__heading--h1"
+>
+  Modern Tribe
+</h1>
+`;
+
+exports[`<Heading> <h2> 1`] = `
+<h2
+  className="tribe-editor__heading tribe-editor__heading--h2"
+>
+  Modern Tribe
+</h2>
+`;
+
+exports[`<Heading> <h3> 1`] = `
+<h3
+  className="tribe-editor__heading tribe-editor__heading--h3"
+>
+  Modern Tribe
+</h3>
+`;
+
+exports[`<Heading> <h4> 1`] = `
+<h4
+  className="tribe-editor__heading tribe-editor__heading--h4"
+>
+  Modern Tribe
+</h4>
+`;
+
+exports[`<Heading> <h5> 1`] = `
+<h5
+  className="tribe-editor__heading tribe-editor__heading--h5"
+>
+  Modern Tribe
+</h5>
+`;
+
+exports[`<Heading> <h6> 1`] = `
+<h6
+  className="tribe-editor__heading tribe-editor__heading--h6"
+>
+  Modern Tribe
+</h6>
+`;

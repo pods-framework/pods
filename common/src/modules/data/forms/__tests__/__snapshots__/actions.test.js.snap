@@ -1,0 +1,147 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[STORE] - Form actions Add volatile action 1`] = `
+Object {
+  "payload": Object {
+    "id": 20,
+  },
+  "type": "@@MT/COMMON/ADD_VOLATILE_ID",
+}
+`;
+
+exports[`[STORE] - Form actions Clear form action 1`] = `
+Object {
+  "payload": Object {
+    "id": 20,
+  },
+  "type": "@@MT/COMMON/CLEAR_FORM",
+}
+`;
+
+exports[`[STORE] - Form actions Create draft entry 1`] = `
+Object {
+  "payload": Object {
+    "fields": Object {
+      "title": "Modern Tribe",
+    },
+    "id": 20,
+  },
+  "type": "@@MT/COMMON/CREATE_FORM_DRAFT",
+}
+`;
+
+exports[`[STORE] - Form actions Edit the entry action 1`] = `
+Object {
+  "payload": Object {
+    "fields": Object {
+      "title": "Tribe",
+    },
+    "id": 20,
+  },
+  "type": "@@MT/COMMON/EDIT_FORM_ENTRY",
+}
+`;
+
+exports[`[STORE] - Form actions Register form action 1`] = `
+Object {
+  "payload": Object {
+    "id": 20,
+    "type": "tribe_organizers",
+  },
+  "type": "@@MT/COMMON/ADD_FORM",
+}
+`;
+
+exports[`[STORE] - Form actions Remove volatile action 1`] = `
+Object {
+  "payload": Object {
+    "id": 20,
+  },
+  "type": "@@MT/COMMON/REMOVE_VOLATILE_ID",
+}
+`;
+
+exports[`[STORE] - Form actions Set saving action 1`] = `
+Object {
+  "payload": Object {
+    "id": 20,
+    "saving": true,
+  },
+  "type": "@@MT/COMMON/SET_SAVING_FORM",
+}
+`;
+
+exports[`[STORE] - Form actions Set saving action 2`] = `
+Object {
+  "payload": Object {
+    "id": 20,
+    "saving": false,
+  },
+  "type": "@@MT/COMMON/SET_SAVING_FORM",
+}
+`;
+
+exports[`[STORE] - Form actions Set submit form 1`] = `
+Object {
+  "payload": Object {
+    "id": 20,
+  },
+  "type": "@@MT/COMMON/SUBMIT_FORM",
+}
+`;
+
+exports[`[STORE] - form thunk actions Maybe remove entry action with details 1`] = `
+Array [
+  Object {
+    "meta": Object {
+      "actions": Object {
+        "success": [Function],
+      },
+      "path": "tribe_venue/21",
+    },
+    "type": "@@MT/COMMON/WP_REQUEST",
+  },
+]
+`;
+
+exports[`[STORE] - form thunk actions Maybe remove entry action without details 1`] = `Array []`;
+
+exports[`[STORE] - form thunk actions Send the form action when creating 1`] = `
+Array [
+  Object {
+    "meta": Object {
+      "actions": Object {
+        "error": [Function],
+        "start": [Function],
+        "success": [Function],
+      },
+      "params": Object {
+        "body": "{\\"title\\":\\"Modern Tribe\\"}",
+        "method": "POST",
+      },
+      "path": "tribe_organizer",
+    },
+    "type": "@@MT/COMMON/WP_REQUEST",
+  },
+]
+`;
+
+exports[`[STORE] - form thunk actions Send the form when editing 1`] = `
+Array [
+  Object {
+    "meta": Object {
+      "actions": Object {
+        "error": [Function],
+        "start": [Function],
+        "success": [Function],
+      },
+      "params": Object {
+        "body": "{\\"title\\":\\"Tribe\\"}",
+        "method": "PUT",
+      },
+      "path": "tribe_venue/21",
+    },
+    "type": "@@MT/COMMON/WP_REQUEST",
+  },
+]
+`;

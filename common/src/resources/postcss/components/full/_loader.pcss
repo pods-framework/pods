@@ -1,0 +1,42 @@
+.tribe-common {
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Component: Loader
+	 *
+	 *
+	 * Example:
+	 * <div class="tribe-events-view-loader__dots tribe-common-c-loader">
+	 *    <div class="tribe-common-c-loader__dot tribe-common-c-loader__dot--first"></div>
+	 *    <div class="tribe-common-c-loader__dot tribe-common-c-loader__dot--second"></div>
+	 *    <div class="tribe-common-c-loader__dot tribe-common-c-loader__dot--third"></div>
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	.tribe-common-c-loader__dot {
+		animation-name: tribe-common-c-loader-bounce;
+		animation-duration: 2.24s;
+		animation-iteration-count: infinite;
+		animation-direction: normal;
+	}
+
+	.tribe-common-c-loader__dot--first {
+		animation-delay: 0.45s;
+	}
+
+	.tribe-common-c-loader__dot--second {
+		animation-delay: 1.05s;
+	}
+
+	.tribe-common-c-loader__dot--third {
+		animation-delay: 1.35s;
+	}
+
+	@keyframes tribe-common-c-loader-bounce {
+		0% {}
+
+		50% { background-color: var(--color-accent-primary); }
+
+		100% {}
+	}
+}

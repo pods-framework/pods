@@ -1,0 +1,112 @@
+.tribe-common {
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Sliders
+	 *
+	 * Example (Horizontal):
+	 * <div class="tribe-common-form-control-slider">
+	 *   <input
+	 *     class="tribe-common-form-control-slider__input"
+	 *     id="sliderOne"
+	 *     type="range"
+	 *     min="0"
+	 *     max="100"
+	 *     value="50"
+	 *   />
+	 *   <label class="tribe-common-form-control-slider__label" for="sliderOne">Slider One</label>
+	 * </div>
+	 *
+	 * Example (Vertical):
+	 * <div class="tribe-common-form-control-slider tribe-common-form-control-slider--vertical">
+	 *   <label class="tribe-common-form-control-slider__label" for="sliderOne">Slider One</label>
+	 *   <input
+	 *     class="tribe-common-form-control-slider__input"
+	 *     id="sliderOne"
+	 *     type="range"
+	 *     min="0"
+	 *     max="100"
+	 *     value="50"
+	 *   />
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	.tribe-common-form-control-slider {
+		line-height: 0;
+	}
+
+	.tribe-common-form-control-slider__input {
+		appearance: none;
+		background-color: transparent;
+		border: 0;
+
+		/* -----------------------------------------------------------------------------
+		 * Track styles
+		 * ----------------------------------------------------------------------------- */
+		&::-webkit-slider-runnable-track {
+			@mixin form-control-slider-track;
+		}
+
+		&::-moz-range-track {
+			@mixin form-control-slider-track;
+		}
+
+		&::-ms-track {
+			background-color: transparent;
+			border-color: transparent;
+			border-width: 5px 0;
+			color: transparent;
+			height: 10px;
+		}
+
+		&::-ms-fill-lower,
+		&::-ms-fill-upper {
+			background-color: var(--form-color-accent-primary);
+			border-radius: 10px;
+		}
+
+		/* -----------------------------------------------------------------------------
+		 * Thumb styles
+		 * ----------------------------------------------------------------------------- */
+		&::-webkit-slider-thumb {
+			@mixin form-control-slider-thumb;
+
+			appearance: none;
+		}
+
+		&::-moz-range-thumb {
+			@mixin form-control-slider-thumb;
+		}
+
+		&::-ms-thumb {
+			@mixin form-control-slider-thumb;
+
+			box-shadow: none;
+			margin-top: -1px;
+		}
+	}
+
+	.tribe-common-form-control-slider__label {
+		@mixin desktop-body-3;
+
+		color: var(--color-text-secondary);
+	}
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Sliders Theme Overrides
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ----------------------------------------------------------------------------- */
+
+	#top.tribe-theme-enfold & {
+
+		.tribe-common-form-control-slider__label {
+			font-weight: var(--font-weight-regular);
+			font-size: var(--font-size-1);
+		}
+	}
+}

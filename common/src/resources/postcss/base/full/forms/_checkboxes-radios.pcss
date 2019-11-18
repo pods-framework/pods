@@ -1,0 +1,178 @@
+.tribe-common {
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Checkboxes & Radios
+	 *
+	 * Example (Checkboxes):
+	 * <fieldset>
+	 *   <legend>Legend for Checkboxes</legend>
+	 *   <div class="tribe-common-form-control-checkbox-radio-group">
+	 *     <div class="tribe-common-form-control-checkbox">
+	 *       <input
+	 *         class="tribe-common-form-control-checkbox__input"
+	 *         id="checkboxOne"
+	 *         name="checkboxGroup"
+	 *         type="checkbox"
+	 *         value="checkboxOne"
+	 *         checked="checked"
+	 *       />
+	 *       <label
+	 *         class="tribe-common-form-control-checkbox__label"
+	 *         for="checkboxOne"
+	 *       >
+	 *         Checkbox One
+	 *       </label>
+	 *     </div>
+	 *     <div class="tribe-common-form-control-checkbox">
+	 *       <input
+	 *         class="tribe-common-form-control-checkbox__input"
+	 *         id="checkboxTwo"
+	 *         name="checkboxGroup"
+	 *         type="checkbox"
+	 *         value="checkboxTwo"
+	 *       />
+	 *       <label
+	 *         class="tribe-common-form-control-checkbox__label"
+	 *         for="checkboxTwo"
+	 *       >
+	 *         Checkbox Two
+	 *       </label>
+	 *     </div>
+	 *   </div>
+	 * </fieldset>
+	 *
+	 * Example (Radios):
+	 * <div class="tribe-common-form-control-checkbox-radio-group">
+	 *   <div class="tribe-common-form-control-radio">
+	 *     <input
+	 *       class="tribe-common-form-control-radio__input"
+	 *       id="radioExample"
+	 *       name="radioExample"
+	 *       type="radio"
+	 *       value="RadioExample"
+	 *       checked="checked"
+	 *     />
+	 *     <label
+	 *       class="tribe-common-form-control-radio__label"
+	 *       for="radioExample"
+	 *     >
+	 *       Radio Example
+	 *     </label>
+	 *   </div>
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	.tribe-common-form-control-checkbox,
+	.tribe-common-form-control-radio {
+		line-height: 0;
+	}
+
+	.tribe-common-form-control-checkbox__label,
+	.tribe-common-form-control-radio__label {
+		@mixin desktop-body-2;
+
+		color: var(--color-text-secondary);
+	}
+
+	.tribe-common-form-control-checkbox__input,
+	.tribe-common-form-control-radio__input {
+		appearance: none;
+		background-color: var(--form-color-background);
+		border: 1px solid var(--form-color-border-default);
+		height: 20px;
+		position: relative;
+		width: 20px;
+
+		&:active,
+		&:focus,
+		&:hover {
+			border: 1px solid var(--form-color-border-active);
+		}
+
+		&:checked {
+			background-color: var(--form-color-border-active);
+		}
+	}
+
+
+	/* -----------------------------------------------------------------------------
+	 * Form Control: Checkboxes
+	 * ----------------------------------------------------------------------------- */
+
+	.tribe-common-form-control-checkbox__input {
+
+		&:checked:before {
+			background-image: svg-inline(check-white);
+			background-repeat: no-repeat;
+			background-size: contain;
+			content: '';
+			display: block;
+			height: 9px;
+			left: 50%;
+			position: absolute;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			width: 12px;
+		}
+	}
+
+	/* -----------------------------------------------------------------------------
+	 * Form Control: Radios
+	 * ----------------------------------------------------------------------------- */
+
+	.tribe-common-form-control-radio__input {
+		border-radius: 50%;
+
+		&:checked:before {
+			background-color: var(--form-color-background);
+			border-radius: 50%;
+			content: '';
+			display: block;
+			height: 8px;
+			left: 50%;
+			position: absolute;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			width: 8px;
+		}
+	}
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Checkboxes & Radios Theme Overrides
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Form Control: Checkboxes Theme Overrides
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ----------------------------------------------------------------------------- */
+
+	#top.tribe-theme-enfold & {
+
+		.tribe-common-form-control-checkbox__label {
+			font-weight: var(--font-weight-regular);
+			font-size: var(--font-size-2);
+		}
+	}
+
+	/* -----------------------------------------------------------------------------
+	 * Form Control: Radios Theme Overrides
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ----------------------------------------------------------------------------- */
+
+	#top.tribe-theme-enfold & {
+
+		.tribe-common-form-control-radio__label {
+			font-weight: var(--font-weight-regular);
+			font-size: var(--font-size-2);
+		}
+	}
+}

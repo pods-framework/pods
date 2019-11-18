@@ -1,0 +1,127 @@
+.tribe-common {
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Normalize "Light"
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	figure {
+		line-height: 0;
+	}
+
+	figcaption {
+		line-height: normal;
+	}
+
+	a {
+		background-color: transparent;
+		-webkit-text-decoration-skip: objects;
+	}
+
+	abbr[title] {
+		border-bottom: none;
+		text-decoration: underline;
+		text-decoration: underline dotted;
+	}
+
+	code,
+	kbd,
+	pre,
+	samp {
+		font-family: monospace;
+		font-size: 1em;
+	}
+
+	b,
+	strong {
+		font-weight: inherit;
+		font-weight: bolder;
+	}
+
+	dfn {
+		font-style: italic;
+	}
+
+	mark {
+		background-color: #ff0;
+		color: #000;
+	}
+
+	small {
+		font-size: 80%;
+	}
+
+	sub,
+	sup {
+		font-size: 75%;
+		line-height: 0;
+	}
+
+	hr {
+		border: 0;
+		height: 0;
+	}
+
+	/* Input: Kill browser input chrome */
+	input[type="text"],
+	input[type="email"],
+	input[type="url"],
+	input[type="search"],
+	input[type="submit"],
+	input[type="password"],
+	input[type="reset"],
+	input[type="button"],
+	button,
+	textarea {
+		appearance: none;
+	}
+
+	input,
+	button,
+	select,
+	textarea,
+	optgroup {
+		color: inherit;
+		font: inherit;
+		line-height: normal;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	input,
+	button,
+	select,
+	textarea {
+		outline: 0;
+		border-radius: 0;
+	}
+
+	select {
+
+		&:-moz-focusring {
+			color: transparent;
+			text-shadow: 0 0 0 #000;
+		}
+	}
+
+	optgroup {
+		font-weight: bold;
+	}
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Reset "Light"
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	p {
+		font-weight: normal;
+		text-rendering: optimizeLegibility;
+	}
+}

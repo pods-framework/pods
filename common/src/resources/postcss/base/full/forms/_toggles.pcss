@@ -1,0 +1,85 @@
+.tribe-common {
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Toggles
+	 *
+	 * Example (Horizontal):
+	 * <div class="tribe-common-form-control-toggle">
+	 *   <input
+	 *     class="tribe-common-form-control-toggle__input"
+	 *     id="toggleOne"
+	 *     name="toggleGroup"
+	 *     type="checkbox"
+	 *     value="toggleOne"
+	 *   />
+	 *   <label class="tribe-common-form-control-toggle__label" for="toggleOne">Toggle One</label>
+	 * </div>
+	 *
+	 * Example (Vertical):
+	 * <div class="tribe-common-form-control-toggle tribe-common-form-control-toggle--vertical">
+	 *   <label class="tribe-common-form-control-toggle__label" for="toggleOne">Toggle One</label>
+	 *   <input
+	 *     class="tribe-common-form-control-toggle__input"
+	 *     id="toggleOne"
+	 *     name="toggleGroup"
+	 *     type="checkbox"
+	 *     value="toggleOne"
+	 *   />
+	 * </div>
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	.tribe-common-form-control-toggle {
+		line-height: 0;
+	}
+
+	.tribe-common-form-control-toggle__input {
+		@mixin form-control-slider-toggle-track;
+
+		appearance: none;
+		background-color: var(--form-color-border-secondary);
+		width: 40px;
+
+		&:after {
+			@mixin form-control-slider-toggle-thumb;
+
+			content: '';
+			left: 0;
+			position: absolute;
+			top: -5px;
+			transition: var(--transition-transform);
+		}
+
+		&:checked {
+			background-color: var(--form-color-accent-primary);
+
+			&:after {
+				transform: translateX(20px);
+			}
+		}
+	}
+
+	.tribe-common-form-control-toggle__label {
+		@mixin desktop-body-3;
+
+		color: var(--color-text-secondary);
+	}
+
+	/* -----------------------------------------------------------------------------
+	 *
+	 * Form Control: Toggles Theme Overrides
+	 *
+	 * ----------------------------------------------------------------------------- */
+
+	/* -----------------------------------------------------------------------------
+	 * Theme Overrides - Enfold
+	 * ----------------------------------------------------------------------------- */
+
+	#top.tribe-theme-enfold & {
+
+		.tribe-common-form-control-toggle__label {
+			font-weight: var(--font-weight-regular);
+			font-size: var(--font-size-1);
+		}
+	}
+}

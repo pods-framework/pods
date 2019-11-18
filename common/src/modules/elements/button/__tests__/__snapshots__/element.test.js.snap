@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button Element renders button 1`] = `
+<button
+  className="tribe-editor__button"
+  onClick={[Function]}
+  type="button"
+/>
+`;
+
+exports[`Button Element renders button with class 1`] = `
+<button
+  className="tribe-editor__button test-class"
+  onClick={[Function]}
+  type="button"
+/>
+`;
+
+exports[`Button Element renders button with extra attributes 1`] = `
+<button
+  className="tribe-editor__button"
+  hello="world"
+  onClick={[Function]}
+  test="one-two-three"
+  type="button"
+/>
+`;
+
+exports[`Button Element renders button with label 1`] = `
+<button
+  className="tribe-editor__button"
+  onClick={[Function]}
+  type="button"
+>
+  Hello
+</button>
+`;
+
+exports[`Button Element renders button with onClick handler 1`] = `
+<button
+  className="tribe-editor__button"
+  onClick={[MockFunction]}
+  type="button"
+/>
+`;
+
+exports[`Button Element renders button with set type 1`] = `
+<button
+  className="tribe-editor__button"
+  onClick={[Function]}
+  type="submit"
+/>
+`;
+
+exports[`Button Element renders disabled button 1`] = `
+<button
+  className="tribe-editor__button"
+  disabled={true}
+  onClick={[Function]}
+  type="button"
+/>
+`;

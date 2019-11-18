@@ -280,7 +280,7 @@ class Tribe__Context {
 			return false;
 		}
 
-		if ( ! empty( $post_or_type ) ) {
+		if ( null !== $post_or_type ) {
 			$lookup = array( $_GET, $_POST, $_REQUEST );
 
 			$current_post = Tribe__Utils__Array::get_in_any( $lookup, 'post', get_post() );
@@ -294,7 +294,7 @@ class Tribe__Context {
 
 			$post_types = is_array( $post_or_type ) ? $post_or_type : array( $post_or_type );
 
-			$post = $is_post ? get_post( $current_post ) : null;
+			$post = $is_post ? $current_post : null;
 
 			if ( count( array_filter( $post_types, 'is_numeric' ) ) === count( $post_types ) ) {
 				return ! empty( $post ) && in_array( $post->ID, $post_types );

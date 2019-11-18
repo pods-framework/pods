@@ -2,6 +2,7 @@
 
 namespace Pods\REST\V1;
 
+use Tribe__Documentation__Swagger__Builder_Interface as Swagger_Builder_Interface;
 use Pods\REST\V1\Endpoints\Swagger_Documentation;
 use Pods\REST\V1\Validator\Base;
 
@@ -76,10 +77,10 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 *
 	 * @since 2.8
 	 *
-	 * @return Tribe__Documentation__Swagger__Builder_Interface
+	 * @return Swagger_Builder_Interface
 	 */
 	protected function register_documentation_endpoint() {
-		/** @var Tribe__Documentation__Swagger__Builder_Interface $endpoint */
+		/** @var Swagger_Builder_Interface $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.documentation' );
 
 		register_rest_route( $this->namespace, '/doc', [

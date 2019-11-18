@@ -17,7 +17,7 @@ class Messages implements REST__Messages_Interface {
 	protected $message_prefix = 'rest-v1:';
 
 	/**
-	 * Tribe__Tickets__REST__V1__Messages constructor.
+	 * Messages constructor.
 	 *
 	 * @since 2.8
 	 */

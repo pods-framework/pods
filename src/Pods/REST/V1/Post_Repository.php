@@ -6,11 +6,12 @@ use Tribe__REST__Messages_Interface as REST_Messages_Interface;
 use Tribe__REST__Post_Repository as REST_Post_Repository;
 use WP_Post;
 
+/**
+ * Class Post_Repository
+ *
+ * @since 2.8
+ */
 class Post_Repository extends REST_Post_Repository {
-
-	const CONTEXT_PUBLIC = 'public';
-
-	const CONTEXT_EDITOR = 'editor';
 
 	/**
 	 * A post type to get data request handler map.
@@ -23,31 +24,6 @@ class Post_Repository extends REST_Post_Repository {
 	 * @var REST_Messages_Interface
 	 */
 	protected $messages;
-
-	/**
-	 * @var int Cached current ticket id.
-	 */
-	protected $current_ticket_id;
-
-	/**
-	 * @var Tribe__Tickets__Ticket_Object Cached current ticket object;
-	 */
-	protected $current_ticket_object;
-
-	/**
-	 * @var Tribe__Tickets__Tickets Cached current ticket provider.
-	 */
-	protected $current_ticket_provider;
-
-	/**
-	 * @var WP_Post Cached current ticket post.
-	 */
-	protected $current_ticket_post;
-
-	/**
-	 * @var string The context the data will be shown in; defaults to `public`.
-	 */
-	protected $permission = 'public';
 
 	/**
 	 * Post_Repository constructor.

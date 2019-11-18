@@ -35,7 +35,7 @@ abstract class Base {
 	protected $supported_query_vars = [];
 
 	/**
-	 * Tribe__Tickets__REST__V1__Endpoints__Base constructor.
+	 * Base constructor.
 	 *
 	 * @since 2.8
 	 *

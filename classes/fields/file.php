@@ -711,7 +711,7 @@ class PodsField_File extends PodsField {
 			$data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
 		}
 
-		$data[ 'full' ] = __( 'Full Size' ); // Translated by WordPress core.
+		$data['full'] = __( 'Full Size' ); // Translated by WordPress core.
 
 		return apply_filters( 'pods_form_ui_field_pick_data_image_sizes', $data, $name, $value, $options, $pod, $id );
 

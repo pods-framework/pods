@@ -193,6 +193,7 @@ class PodsField_Number extends PodsField {
 
 		$options         = (array) $options;
 		$form_field_type = PodsForm::$field_type;
+		$read_only       = false;
 
 		if ( is_array( $value ) ) {
 			$value = implode( '', $value );
@@ -206,15 +207,15 @@ class PodsField_Number extends PodsField {
 
 		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
-				$options['readonly'] = true;
-
-				$field_type = 'text';
-
-				$value = $this->format( $value, $name, $options, $pod, $id );
+				$read_only = true;
 			} else {
 				return;
 			}
 		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
+			$read_only = true;
+		}
+
+		if ( $read_only ) {
 			$options['readonly'] = true;
 
 			$field_type = 'text';

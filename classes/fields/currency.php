@@ -285,7 +285,7 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		if ( $this->is_empty() ) {
+		if ( $this->is_empty( $value ) ) {
 			// Don't enforce a default value here
 			return null;
 		}
@@ -332,7 +332,7 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
-		if ( $this->is_empty() ) {
+		if ( $this->is_empty( $value ) ) {
 			// Don't enforce a default value here
 			return null;
 		}

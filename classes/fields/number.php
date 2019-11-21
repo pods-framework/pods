@@ -168,9 +168,7 @@ class PodsField_Number extends PodsField {
 
 		$is_empty = false;
 
-		$value += 0;
-
-		if ( empty( $value ) ) {
+		if ( empty( $value ) && ( ! is_numeric( $value ) || 0.0 !== (float) $value ) ) {
 			$is_empty = true;
 		}
 

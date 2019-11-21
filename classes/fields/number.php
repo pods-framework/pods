@@ -250,7 +250,7 @@ class PodsField_Number extends PodsField {
 
 		$check = str_replace(
 			array( $thousands, $dot, html_entity_decode( $thousands ) ),
-			array( '', '.', '', ),
+			array( '', '.', '' ),
 			$value
 		);
 		$check = trim( $check );

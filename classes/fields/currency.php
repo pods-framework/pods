@@ -184,7 +184,7 @@ class PodsField_Currency extends PodsField_Number {
 
 		$placement = pods_v( static::$type . '_format_placement', $options, 'before', true );
 
-		// Currency placement policy
+		// Currency placement policy.
 		// Single sign currencies: 100$, £100
 		// Multiple sign currencies: 100 Fr, Kr 100
 		$currency_gap = '';
@@ -253,7 +253,7 @@ class PodsField_Currency extends PodsField_Number {
 		$currency_sign   = static::$currencies[ $currency ]['sign'];
 		$currency_entity = static::$currencies[ $currency ]['entity'];
 
-		// Remove currency and thousands symbols
+		// Remove currency and thousands symbols.
 		$check = str_replace(
 			array(
 				$thousands,
@@ -286,7 +286,7 @@ class PodsField_Currency extends PodsField_Number {
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
 		if ( $this->is_empty( $value ) ) {
-			// Don't enforce a default value here
+			// Don't enforce a default value here.
 			return null;
 		}
 
@@ -304,7 +304,7 @@ class PodsField_Currency extends PodsField_Number {
 		$currency_sign   = static::$currencies[ $currency ]['sign'];
 		$currency_entity = static::$currencies[ $currency ]['entity'];
 
-		// Convert decimal type for numeric type
+		// Convert decimal type for numeric type.
 		$value = str_replace(
 			array(
 				$thousands,
@@ -333,7 +333,7 @@ class PodsField_Currency extends PodsField_Number {
 	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
 		if ( $this->is_empty( $value ) ) {
-			// Don't enforce a default value here
+			// Don't enforce a default value here.
 			return null;
 		}
 
@@ -376,7 +376,7 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public static function data_currencies() {
 
-		// If it's already done, do not redo the filter
+		// If it's already done, do not redo the filter.
 		if ( ! empty( static::$currencies ) ) {
 			return static::$currencies;
 		}

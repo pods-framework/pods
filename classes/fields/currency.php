@@ -285,6 +285,11 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
+		if ( $this->is_empty() ) {
+			// Don't enforce a default value here
+			return null;
+		}
+
 		$format_args = $this->get_number_format_args( $options );
 		$thousands   = $format_args['thousands'];
 		$dot         = $format_args['dot'];
@@ -327,7 +332,7 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
-		if ( null === $value ) {
+		if ( $this->is_empty() ) {
 			// Don't enforce a default value here
 			return null;
 		}

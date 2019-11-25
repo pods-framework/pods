@@ -4,8 +4,7 @@
  *
  * Name: Markdown Syntax
  *
- * Description: Integration with Markdown (http://michelf.com/projects/php-markdown/); Adds an option to enable
- * Markdown syntax for Paragraph text fields.
+ * Description: Integration with Markdown (http://michelf.com/projects/php-markdown/); Adds an option to enable Markdown syntax for Paragraph text fields.
  *
  * Version: 1.0
  *

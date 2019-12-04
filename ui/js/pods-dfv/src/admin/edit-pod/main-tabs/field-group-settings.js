@@ -17,12 +17,36 @@ export const FieldGroupSettings = ( { groupName, show } ) => {
 			onRequestClose={( e ) => closeModal( e )}>
 			<div className="pods-field-group_settings-container">
 				<div className="pods-field-group_settings-options">
-					<div className="pods-field-group_settings-sidebar">
-						<div className="pods-field-group_settings-sidebar-item pods-field-group_settings-sidebar-item--active">{__( 'General', 'pods' )}</div>
-						<div className="pods-field-group_settings-sidebar-item">{__( 'Advanced', 'pods' )}</div>
-						<div className="pods-field-group_settings-sidebar-item">{__( 'Other Group Settings Tab', 'pods' )}</div>
+					<div className="pods-field-group_settings-sidebar" role="tablist" aria-label="Pods Field Group Settings">
+						<div className="pods-field-group_settings-sidebar-item pods-field-group_settings-sidebar-item--active" aria-selected="true" id="main" aria-controls="main-tab">
+							{__('General', 'pods')}
+						</div>
+						<div className="pods-field-group_settings-sidebar-item" aria-selected="false" id="advanced" aria-controls="advanced-tab">
+							{__('Advanced', 'pods')}
+						</div>
+						<div className="pods-field-group_settings-sidebar-item" aria-selected="false" id="other" aria-controls="other-tab">
+							{__('Other Group Settings Tab', 'pods')}
+						</div>
 					</div>
-					<div className="pods-field-group_settings-main">
+					<div className="pods-field-group_settings-main" role="tabpanel" aria-labelledby="main" id="main-tab">
+						<p>$id</p>
+						<p>$title</p>
+						<p>$callback</p>
+						<p>$screen</p>
+						<p>$context</p>
+						<p>$priority</p>
+						<p>$callback_args</p>
+					</div>
+					<div className="pods-field-group_settings-advanced" role="tabpanel" aria-labelledby="advanced" id="advanced-tab" hidden="hidden">
+						<p>$id</p>
+						<p>$title</p>
+						<p>$callback</p>
+						<p>$screen</p>
+						<p>$context</p>
+						<p>$priority</p>
+						<p>$callback_args</p>
+					</div>
+					<div className="pods-field-group_settings-other" role="tabpanel" aria-labelledby="other" id="other-tab" hidden="hidden">
 						<p>$id</p>
 						<p>$title</p>
 						<p>$callback</p>

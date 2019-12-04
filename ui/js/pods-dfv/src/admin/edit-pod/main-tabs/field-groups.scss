@@ -212,33 +212,36 @@
 // Group Settings Modal
 //
 .pods-field-group_settings {
-	display: none;
-	position: fixed;
-	top: 0;
-	right: 0;
 	width: 100%;
-	height: 100vh;
-	background-color: rgba(0, 0, 0, 0.2);
-	z-index: 999999;
+	height: 100%;
 
 	&--visible {
 		display: block;
 	}
 }
 
+.pods-field-group_settings .components-modal__content {
+	padding: 0;
+}
+
+.pods-field-group_settings .components-modal__header {
+	padding: 0 36px;
+	margin-bottom: 0;
+}
+
 .pods-field-group_settings-container {
-	max-width: 800px;
 	width: 100%;
 	margin: 0 auto;
-	background-color: white;
-	transform: translate(-50%, -50%);
+	background-color: #eeeeee;
 	position: absolute;
-	top: 50%;
-	left: 50%;
+	height: calc(100% - 56px);
 }
 
 .pods-field-group_settings-options {
 	display: flex;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
 }
 
 .pods-field-group_heading {
@@ -249,15 +252,17 @@
 }
 
 .pods-field-group_settings-sidebar {
-	width: 30%;
+	width: 35%;
 	background-color: #f3f3f3;
-	box-shadow: inset 0 4px 4px -4px rgba(0,0,0,.1);
-
-
+	position: absolute;
+	left: 0;
+	height: 100%;
+	
 	&-item {
 		padding: 10px;
-		border-bottom: 1px solid #e5e5e5;
+		border-bottom: 1px solid #c6cbd0;
 		cursor: pointer;
+		transition: 300ms ease background-color;
 
 		&:last-child {
 			border-bottom: none;
@@ -265,17 +270,44 @@
 
 		&--active {
 			background-color: #eee;
+			font-weight: bolder;
+			margin-right: -2px;
+		}
+
+		&:hover {
+			background-color: #eee;
 		}
 	}
 }
 
-.pods-field-group_settings-main {
-	width: 70%;
-	background-color: #fff;
-	padding: 0 20px;
-	box-shadow: inset 0 4px 4px -4px rgba(0, 0, 0, 0.1), 2px 0px 4px 2px rgba(0, 0, 0, 0.1);
+.pods-field-group_settings-main,
+.pods-field-group_settings-advanced,
+.pods-field-group_settings-other {
+	width: 65%;
+	padding: 20px;
+	position: absolute;
+	left: 35%;
 }
 
+.pods-input-container {
+	display: flex;
+	align-items: center;
+	padding-bottom: 20px;
+
+	&:last-child {
+		padding-bottom: 0;
+	}
+}
+
+.pods-label_text {
+	width: 30%;
+	padding-right: 20px;
+	font-weight: bold;
+}
+
+.pods-input {
+	width: 70%;
+}
 
 /* Media Queries */
 @media screen and (min-width: 850px) {

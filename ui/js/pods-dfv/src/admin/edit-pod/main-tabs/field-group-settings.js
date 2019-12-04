@@ -29,31 +29,40 @@ export const FieldGroupSettings = ( { groupName, show } ) => {
 						</div>
 					</div>
 					<div className="pods-field-group_settings-main" role="tabpanel" aria-labelledby="main" id="main-tab">
-						<p>$id</p>
-						<p>$title</p>
-						<p>$callback</p>
-						<p>$screen</p>
-						<p>$context</p>
-						<p>$priority</p>
-						<p>$callback_args</p>
+						<label class="pods-input-container">
+							<span class="pods-label_text">$id</span>
+							<input class="pods-input" type="text"></input>
+						</label>
+						<label class="pods-input-container">
+							<span class="pods-label_text">$title</span>
+							<input class="pods-input" type="text"></input>
+						</label>
+						<label class="pods-input-container">
+							<span class="pods-label_text">$callback</span>
+							<input class="pods-input" type="text"></input>
+						</label>
+						<label class="pods-input-container">
+							<span class="pods-label_text">$screen</span>
+							<input class="pods-input" type="text"></input>
+						</label>
+						<label class="pods-input-container">
+							<span class="pods-label_text">$context</span>
+							<input class="pods-input" type="text"></input>
+						</label>
+						<label class="pods-input-container">
+							<span class="pods-label_text">$priority</span>
+							<input class="pods-input" type="text"></input>
+						</label>
+						<label class="pods-input-container">
+							<span class="pods-label_text">$callback_args</span>
+							<input class="pods-input" type="text"></input>
+						</label>
 					</div>
 					<div className="pods-field-group_settings-advanced" role="tabpanel" aria-labelledby="advanced" id="advanced-tab" hidden="hidden">
-						<p>$id</p>
-						<p>$title</p>
-						<p>$callback</p>
-						<p>$screen</p>
-						<p>$context</p>
-						<p>$priority</p>
-						<p>$callback_args</p>
+						<p>Advanced tabpanel</p>
 					</div>
 					<div className="pods-field-group_settings-other" role="tabpanel" aria-labelledby="other" id="other-tab" hidden="hidden">
-						<p>$id</p>
-						<p>$title</p>
-						<p>$callback</p>
-						<p>$screen</p>
-						<p>$context</p>
-						<p>$priority</p>
-						<p>$callback_args</p>
+						<p>Other tabpanel</p>
 					</div>
 				</div>
 			</div>

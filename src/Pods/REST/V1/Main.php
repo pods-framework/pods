@@ -25,6 +25,15 @@ class Main extends REST__Main {
 	protected $url_prefix = '/pods/v1';
 
 	/**
+	 * REST API URL prefix.
+	 *
+	 * This prefix is appended to the REST API URL ones.
+	 *
+	 * @var string
+	 */
+	protected $namespace = 'pods';
+
+	/**
 	 * @var array
 	 */
 	protected $registered_endpoints = [];
@@ -52,6 +61,17 @@ class Main extends REST__Main {
 	}
 
 	/**
+	 * Returns the Pods REST API namespace string that hsould be used to register a route.
+	 *
+	 * @since 2.8
+	 *
+	 * @return string
+	 */
+	public function get_pods_route_namespace() {
+		return $this->get_namespace() . '/' . $this->get_version();
+	}
+
+	/**
 	 * Returns the REST API URL prefix that will be appended to the namespace.
 	 *
 	 * The prefix should be in the `/some/path` format.
@@ -62,6 +82,15 @@ class Main extends REST__Main {
 	 */
 	protected function url_prefix() {
 		return $this->url_prefix;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 2.8
+	 */
+	public function get_reference_url() {
+		return esc_url( 'https://docs.pods.io/' );
 	}
 
 }

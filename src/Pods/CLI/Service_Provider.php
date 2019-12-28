@@ -39,10 +39,8 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 * @since 2.8
 	 */
 	protected function hooks() {
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			tribe( 'pods.cli.commands.pods.pod' );
-			tribe( 'pods.cli.commands.pods.group' );
-			tribe( 'pods.cli.commands.pods.field' );
-		}
+		tribe( 'pods.cli.commands.pods.pod' );
+		tribe( 'pods.cli.commands.pods.group' );
+		tribe( 'pods.cli.commands.pods.field' );
 	}
 }

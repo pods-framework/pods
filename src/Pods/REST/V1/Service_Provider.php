@@ -2,9 +2,16 @@
 
 namespace Pods\REST\V1;
 
-use Tribe__Documentation__Swagger__Builder_Interface as Swagger_Builder_Interface;
+use Pods\REST\V1\Endpoints\Field;
+use Pods\REST\V1\Endpoints\Fields;
+use Pods\REST\V1\Endpoints\Group;
+use Pods\REST\V1\Endpoints\Groups;
+use Pods\REST\V1\Endpoints\Pod;
+use Pods\REST\V1\Endpoints\Pods;
 use Pods\REST\V1\Endpoints\Swagger_Documentation;
 use Pods\REST\V1\Validator\Base;
+use Tribe__Documentation__Swagger__Builder_Interface as Swagger_Builder_Interface;
+use WP_REST_Server;
 
 /**
  * Class Service_Provider
@@ -26,36 +33,22 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 * @since 2.8
 	 */
 	public function register() {
-		tribe_singleton( 'pods.rest-v1.main', Main::class, [ 'hook' ] );
+		tribe_singleton( 'pods.rest-v1.main', Main::class );
 		tribe_singleton( 'pods.rest-v1.messages', Messages::class );
 		tribe_singleton( 'pods.rest-v1.validator', Base::class );
 		tribe_singleton( 'pods.rest-v1.repository', Post_Repository::class );
 		tribe_singleton( 'pods.rest-v1.endpoints.documentation', Swagger_Documentation::class, [ 'hook' ] );
 
-		tribe_singleton(
-			'pods.rest-v1.endpoints.pods',
-			new Tribe__Tickets__REST__V1__Endpoints__Pods(
-				tribe( 'pods.rest-v1.messages' ),
-				tribe( 'pods.rest-v1.repository' ),
-				tribe( 'pods.rest-v1.validator' )
-			)
-		);
-		tribe_singleton(
-			'pods.rest-v1.endpoints.fields',
-			new Tribe__Tickets__REST__V1__Endpoints__Fields(
-				tribe( 'pods.rest-v1.messages' ),
-				tribe( 'pods.rest-v1.repository' ),
-				tribe( 'pods.rest-v1.validator' )
-			)
-		);
-		tribe_singleton(
-			'pods.rest-v1.endpoints.groups',
-			new Tribe__Tickets__REST__V1__Endpoints__Groups(
-				tribe( 'pods.rest-v1.messages' ),
-				tribe( 'pods.rest-v1.repository' ),
-				tribe( 'pods.rest-v1.validator' )
-			)
-		);
+		$messages        = tribe( 'pods.rest-v1.messages' );
+		$post_repository = tribe( 'pods.rest-v1.repository' );
+		$validator       = tribe( 'pods.rest-v1.validator' );
+
+		tribe_singleton( 'pods.rest-v1.endpoints.pods', new Pods( $messages, $post_repository, $validator ) );
+		tribe_singleton( 'pods.rest-v1.endpoints.pod', new Pod( $messages, $post_repository, $validator ) );
+		tribe_singleton( 'pods.rest-v1.endpoints.fields', new Fields( $messages, $post_repository, $validator ) );
+		tribe_singleton( 'pods.rest-v1.endpoints.field', new Field( $messages, $post_repository, $validator ) );
+		tribe_singleton( 'pods.rest-v1.endpoints.groups', new Groups( $messages, $post_repository, $validator ) );
+		tribe_singleton( 'pods.rest-v1.endpoints.group', new Group( $messages, $post_repository, $validator ) );
 
 		$this->hooks();
 	}
@@ -69,14 +62,16 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Main $main */
 		$main = tribe( 'pods.rest-v1.main' );
 
-		$this->namespace = $main->get_events_route_namespace();
+		$this->namespace = $main->get_pods_route_namespace();
 
-		$doc_endpoint = $this->register_documentation_endpoint();
+		$this->register_endpoint_documentation();
 
-		$this->register_endpoints();
-
-		// @todo add the endpoints as documentation providers here
-		$doc_endpoint->register_documentation_provider( '/doc', $doc_endpoint );
+		$this->register_endpoint_pods();
+		$this->register_endpoint_pod();
+		$this->register_endpoint_fields();
+		$this->register_endpoint_field();
+		$this->register_endpoint_groups();
+		$this->register_endpoint_group();
 	}
 
 	/**
@@ -86,7 +81,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 *
 	 * @return Swagger_Builder_Interface
 	 */
-	protected function register_documentation_endpoint() {
+	protected function register_endpoint_documentation() {
 		/** @var Swagger_Builder_Interface $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.documentation' );
 
@@ -95,26 +90,69 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 			'callback' => [ $endpoint, 'get' ],
 		] );
 
-		$endpoint->register_definition_provider( 'Attendee', new Tribe__Tickets__REST__V1__Documentation__Attendee_Definition_Provider() );
+		//$endpoint->register_definition_provider( 'Attendee', new Tribe__Tickets__REST__V1__Documentation__Attendee_Definition_Provider() );
+
+		$endpoint->register_documentation_provider( '/doc', $endpoint );
 
 		return $endpoint;
 	}
 
 	/**
-	 * Registers the REST API endpoints that will handle requests.
+	 * Registers the REST API endpoint that will handle requests.
 	 *
 	 * @since 2.8
 	 *
-	 * @return Tribe__Tickets__REST__V1__Endpoints__Pods
+	 * @return Pods
 	 */
 	protected function register_endpoint_pods() {
-		/** @var Tribe__Tickets__REST__V1__Endpoints__Pods $endpoint */
+		/** @var Pods $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.pods' );
 
-		register_rest_route( $this->namespace, '/tickets/(?P<id>\\d+)', [
-			'methods'  => WP_REST_Server::READABLE,
-			'args'     => $endpoint->READ_args(),
-			'callback' => [ $endpoint, 'get' ],
+		register_rest_route( $this->namespace, '/pods', [
+			[
+				'methods'  => WP_REST_Server::READABLE,
+				'args'     => $endpoint->READ_args(),
+				'callback' => [ $endpoint, 'get' ],
+			],
+			[
+				'methods'  => WP_REST_Server::CREATABLE,
+				'args'     => $endpoint->CREATE_args(),
+				'callback' => [ $endpoint, 'create' ],
+			],
+		] );
+
+		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/pods', $endpoint );
+
+		return $endpoint;
+	}
+
+	/**
+	 * Registers the REST API endpoint that will handle requests.
+	 *
+	 * @since 2.8
+	 *
+	 * @return Pod
+	 */
+	protected function register_endpoint_pod() {
+		/** @var Pod $endpoint */
+		$endpoint = tribe( 'pods.rest-v1.endpoints.pod' );
+
+		register_rest_route( $this->namespace, '/pods/(?P<id>\\d+)', [
+			[
+				'methods'  => WP_REST_Server::READABLE,
+				'args'     => $endpoint->READ_args(),
+				'callback' => [ $endpoint, 'get' ],
+			],
+			[
+				'methods'  => WP_REST_Server::EDITABLE,
+				'args'     => $endpoint->EDIT_args(),
+				'callback' => [ $endpoint, 'update' ],
+			],
+			[
+				'methods'  => WP_REST_Server::DELETABLE,
+				'args'     => $endpoint->DELETE_args(),
+				'callback' => [ $endpoint, 'delete' ],
+			],
 		] );
 
 		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/pods/{id}', $endpoint );
@@ -123,23 +161,127 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	}
 
 	/**
-	 * Registers the REST API endpoint that will handle ticket archive requests.
+	 * Registers the REST API endpoint that will handle requests.
 	 *
 	 * @since 2.8
 	 *
-	 * @return Tribe__Tickets__REST__V1__Endpoints__Ticket_Archive
+	 * @return Fields
 	 */
-	protected function register_ticket_archive_endpoint() {
-		/** @var Tribe__Tickets__REST__V1__Endpoints__Ticket_Archive $endpoint */
-		$endpoint = tribe( 'pods.rest-v1.endpoints.tickets-archive' );
+	protected function register_endpoint_fields() {
+		/** @var Fields $endpoint */
+		$endpoint = tribe( 'pods.rest-v1.endpoints.fields' );
 
-		register_rest_route( $this->namespace, '/tickets', [
-			'methods'  => WP_REST_Server::READABLE,
-			'args'     => $endpoint->READ_args(),
-			'callback' => [ $endpoint, 'get' ],
+		register_rest_route( $this->namespace, '/fields', [
+			[
+				'methods'  => WP_REST_Server::READABLE,
+				'args'     => $endpoint->READ_args(),
+				'callback' => [ $endpoint, 'get' ],
+			],
+			[
+				'methods'  => WP_REST_Server::CREATABLE,
+				'args'     => $endpoint->CREATE_args(),
+				'callback' => [ $endpoint, 'create' ],
+			],
 		] );
 
-		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/tickets', $endpoint );
+		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/fields', $endpoint );
+
+		return $endpoint;
+	}
+
+	/**
+	 * Registers the REST API endpoint that will handle requests.
+	 *
+	 * @since 2.8
+	 *
+	 * @return Field
+	 */
+	protected function register_endpoint_field() {
+		/** @var Field $endpoint */
+		$endpoint = tribe( 'pods.rest-v1.endpoints.field' );
+
+		register_rest_route( $this->namespace, '/fields/(?P<id>\\d+)', [
+			[
+				'methods'  => WP_REST_Server::READABLE,
+				'args'     => $endpoint->READ_args(),
+				'callback' => [ $endpoint, 'get' ],
+			],
+			[
+				'methods'  => WP_REST_Server::EDITABLE,
+				'args'     => $endpoint->EDIT_args(),
+				'callback' => [ $endpoint, 'update' ],
+			],
+			[
+				'methods'  => WP_REST_Server::DELETABLE,
+				'args'     => $endpoint->DELETE_args(),
+				'callback' => [ $endpoint, 'delete' ],
+			],
+		] );
+
+		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/fields/{id}', $endpoint );
+
+		return $endpoint;
+	}
+
+	/**
+	 * Registers the REST API endpoint that will handle requests.
+	 *
+	 * @since 2.8
+	 *
+	 * @return Groups
+	 */
+	protected function register_endpoint_groups() {
+		/** @var Groups $endpoint */
+		$endpoint = tribe( 'pods.rest-v1.endpoints.groups' );
+
+		register_rest_route( $this->namespace, '/groups', [
+			[
+				'methods'  => WP_REST_Server::READABLE,
+				'args'     => $endpoint->READ_args(),
+				'callback' => [ $endpoint, 'get' ],
+			],
+			[
+				'methods'  => WP_REST_Server::CREATABLE,
+				'args'     => $endpoint->CREATE_args(),
+				'callback' => [ $endpoint, 'create' ],
+			],
+		] );
+
+		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/groups', $endpoint );
+
+		return $endpoint;
+	}
+
+	/**
+	 * Registers the REST API endpoint that will handle requests.
+	 *
+	 * @since 2.8
+	 *
+	 * @return Group
+	 */
+	protected function register_endpoint_group() {
+		/** @var Group $endpoint */
+		$endpoint = tribe( 'pods.rest-v1.endpoints.group' );
+
+		register_rest_route( $this->namespace, '/groups/(?P<id>\\d+)', [
+			[
+				'methods'  => WP_REST_Server::READABLE,
+				'args'     => $endpoint->READ_args(),
+				'callback' => [ $endpoint, 'get' ],
+			],
+			[
+				'methods'  => WP_REST_Server::EDITABLE,
+				'args'     => $endpoint->EDIT_args(),
+				'callback' => [ $endpoint, 'update' ],
+			],
+			[
+				'methods'  => WP_REST_Server::DELETABLE,
+				'args'     => $endpoint->DELETE_args(),
+				'callback' => [ $endpoint, 'delete' ],
+			],
+		] );
+
+		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/groups/{id}', $endpoint );
 
 		return $endpoint;
 	}

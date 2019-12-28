@@ -2,8 +2,8 @@
 
 namespace Pods\REST\V1\Endpoints;
 
-use Pods\REST\Interfaces\Post_Repository;
 use Tribe__REST__Messages_Interface as Messages_Interface;
+use Tribe__REST__Post_Repository as Post_Repository;
 use Tribe__Validator__Interface as Validator_Interface;
 use Tribe__Utils__Array as Utils_Array;
 

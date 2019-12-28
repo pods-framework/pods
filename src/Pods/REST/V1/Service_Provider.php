@@ -117,7 +117,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Pods $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.pods' );
 
-		register_rest_route( $this->namespace, '/pods', [
+		register_rest_route( $this->namespace, $endpoint->route, [
 			[
 				'methods'  => WP_REST_Server::READABLE,
 				'args'     => $endpoint->READ_args(),
@@ -146,7 +146,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Pod $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.pod' );
 
-		register_rest_route( $this->namespace, '/pods/(?P<id>\\d+)', [
+		register_rest_route( $this->namespace, sprintf( str_replace( '$d', '$s', $endpoint->route ), '(?P<id>\\d+)' ), [
 			[
 				'methods'  => WP_REST_Server::READABLE,
 				'args'     => $endpoint->READ_args(),
@@ -180,7 +180,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Pod_Slug $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.pod-slug' );
 
-		register_rest_route( $this->namespace, '/pods/(?P<slug>[\w\_\-]+)', [
+		register_rest_route( $this->namespace, sprintf( $endpoint->route, '(?P<slug>[\w\_\-]+)' ), [
 			[
 				'methods'  => WP_REST_Server::READABLE,
 				'args'     => $endpoint->READ_args(),
@@ -214,7 +214,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Fields $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.fields' );
 
-		register_rest_route( $this->namespace, '/fields', [
+		register_rest_route( $this->namespace, $endpoint->route, [
 			[
 				'methods'  => WP_REST_Server::READABLE,
 				'args'     => $endpoint->READ_args(),
@@ -243,7 +243,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Field $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.field' );
 
-		register_rest_route( $this->namespace, '/fields/(?P<id>\\d+)', [
+		register_rest_route( $this->namespace, sprintf( str_replace( '$d', '$s', $endpoint->route ), '(?P<id>\\d+)' ), [
 			[
 				'methods'  => WP_REST_Server::READABLE,
 				'args'     => $endpoint->READ_args(),
@@ -277,7 +277,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Field_Slug $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.field-slug' );
 
-		register_rest_route( $this->namespace, '/fields/(?P<slug>[\w\_\-]+)', [
+		register_rest_route( $this->namespace, sprintf( $endpoint->route, '(?P<slug>[\w\_\-]+)' ), [
 			[
 				'methods'  => WP_REST_Server::READABLE,
 				'args'     => $endpoint->READ_args(),
@@ -311,7 +311,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Groups $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.groups' );
 
-		register_rest_route( $this->namespace, '/groups', [
+		register_rest_route( $this->namespace, $endpoint->route, [
 			[
 				'methods'  => WP_REST_Server::READABLE,
 				'args'     => $endpoint->READ_args(),
@@ -340,7 +340,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Group $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.group' );
 
-		register_rest_route( $this->namespace, '/groups/(?P<id>\\d+)', [
+		register_rest_route( $this->namespace, sprintf( str_replace( '$d', '$s', $endpoint->route ), '(?P<id>\\d+)' ), [
 			[
 				'methods'  => WP_REST_Server::READABLE,
 				'args'     => $endpoint->READ_args(),
@@ -374,7 +374,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Group_Slug $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.group-slug' );
 
-		register_rest_route( $this->namespace, '/groups/(?P<slug>[\w\_\-]+)', [
+		register_rest_route( $this->namespace, sprintf( $endpoint->route, '(?P<slug>[\w\_\-]+)' ), [
 			[
 				'methods'  => WP_REST_Server::READABLE,
 				'args'     => $endpoint->READ_args(),

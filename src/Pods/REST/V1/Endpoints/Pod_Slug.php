@@ -12,6 +12,13 @@ class Pod_Slug
 	 *
 	 * @since 2.8
 	 */
+	public $route = '/pods/%1$s';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since 2.8
+	 */
 	public function READ_args() {
 		return [
 			'slug' => [

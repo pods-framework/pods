@@ -20,6 +20,13 @@ class Field
 	 *
 	 * @since 2.8
 	 */
+	public $route = '/fields/%1$d';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since 2.8
+	 */
 	public function get_documentation() {
 		$GET_defaults = [
 			'in'      => 'query',

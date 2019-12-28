@@ -21,6 +21,13 @@ class Pod
 	 *
 	 * @since 2.8
 	 */
+	public $route = '/pods/%1$d';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since 2.8
+	 */
 	public function get_documentation() {
 		$GET_defaults = [
 			'in'      => 'query',

@@ -12,6 +12,13 @@ class Field_Slug
 	 *
 	 * @since 2.8
 	 */
+	public $route = '/fields/%1$s';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since 2.8
+	 */
 	public function READ_args() {
 		return [
 			'slug' => [

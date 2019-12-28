@@ -18,6 +18,13 @@ class Groups
 	 *
 	 * @since 2.8
 	 */
+	public $route = '/groups';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since 2.8
+	 */
 	public function get_documentation() {
 		$GET_defaults = [
 			'in'      => 'query',

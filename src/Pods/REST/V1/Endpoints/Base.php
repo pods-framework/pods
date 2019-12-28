@@ -15,21 +15,31 @@ use Tribe__Utils__Array as Utils_Array;
 abstract class Base {
 
 	/**
+	 * @since 2.8
+	 * @var string
+	 */
+	public $route;
+
+	/**
+	 * @since 2.8
 	 * @var Messages_Interface
 	 */
 	protected $messages;
 
 	/**
+	 * @since 2.8
 	 * @var Post_Repository
 	 */
 	protected $post_repository;
 
 	/**
+	 * @since 2.8
 	 * @var Validator_Interface
 	 */
 	protected $validator;
 
 	/**
+	 * @since 2.8
 	 * @var array
 	 */
 	protected $supported_query_vars = [];
@@ -188,5 +198,21 @@ abstract class Base {
 		];
 
 		return Utils_Array::get( $rest_to_swagger_type_map, $type, $type );
+	}
+
+	/**
+	 * Get the route path for this endpoint.
+	 *
+	 * @since 2.8
+	 *
+	 * @return string The route path.
+	 */
+	public function get_route() {
+		/** @var Main $main */
+		$main = tribe( 'pods.rest-v1.main' );
+
+		$namespace = $main->get_pods_route_namespace();
+
+		return $namespace . $this->route;
 	}
 }

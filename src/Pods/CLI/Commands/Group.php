@@ -20,6 +20,7 @@ class Group extends Base {
 	 * @since 2.8
 	 */
 	public function __construct() {
-		$this->endpoint = tribe( 'pods.rest-v1.endpoints.groups' );
+		$this->endpoint_archive = tribe( 'pods.rest-v1.endpoints.groups' );
+		$this->endpoint_single  = tribe( 'pods.rest-v1.endpoints.group' );
 	}
 }

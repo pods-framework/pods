@@ -126,12 +126,14 @@ class PodsInit {
 
 		self::$upgrade_needed = $this->needs_upgrade();
 
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 0 );
-		add_action( 'plugins_loaded', array( $this, 'activate_install' ), 9 );
+		add_action( 'plugins_loaded', [ $this, 'plugins_loaded' ], 0 );
+		add_action( 'plugins_loaded', [ $this, 'activate_install' ], 9 );
 
-		add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
+		add_action( 'wp_loaded', [ $this, 'flush_rewrite_rules' ] );
 
-		$this->maybe_set_common_lib_info();
+		// Setup common info for after TEC/ET load.
+		add_action( 'plugins_loaded', [ $this, 'maybe_set_common_lib_info' ], 1 );
+		add_action( 'tribe_common_loaded', [ $this, 'run' ], 0 );
 	}
 
 	/**
@@ -160,6 +162,15 @@ class PodsInit {
 				'dir'     => PODS_DIR . 'common/src/Tribe',
 				'version' => $common_version,
 			];
+
+			/**
+			 * After this method we can use any `Tribe__` and `\Pods\...` classes
+			 */
+			$this->init_autoloading();
+
+			// Start up Common.
+			$main = Tribe__Main::instance();
+			$main->plugins_loaded();
 		}
 	}
 
@@ -280,16 +291,6 @@ class PodsInit {
 		}
 
 		load_plugin_textdomain( 'pods' );
-
-		/**
-		 * After this method we can use any `Tribe__` and `\Pods\...` classes
-		 */
-		$this->init_autoloading();
-
-		// Start up Common.
-		Tribe__Main::instance();
-
-		add_action( 'tribe_common_loaded', [ $this, 'run' ], 0 );
 	}
 
 	/**

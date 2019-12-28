@@ -20,6 +20,7 @@ class Pod extends Base {
 	 * @since 2.8
 	 */
 	public function __construct() {
-		$this->endpoint = tribe( 'pods.rest-v1.endpoints.pods' );
+		$this->endpoint_archive = tribe( 'pods.rest-v1.endpoints.pods' );
+		$this->endpoint_single  = tribe( 'pods.rest-v1.endpoints.pod' );
 	}
 }

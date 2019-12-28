@@ -33,16 +33,24 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		tribe_singleton( 'pods.rest-v1.endpoints.documentation', Swagger_Documentation::class, [ 'hook' ] );
 
 		tribe_singleton(
-			'pods.rest-v1.endpoints.tickets-single',
-			new Tribe__Tickets__REST__V1__Endpoints__Single_Ticket(
+			'pods.rest-v1.endpoints.pods',
+			new Tribe__Tickets__REST__V1__Endpoints__Pods(
 				tribe( 'pods.rest-v1.messages' ),
 				tribe( 'pods.rest-v1.repository' ),
 				tribe( 'pods.rest-v1.validator' )
 			)
 		);
 		tribe_singleton(
-			'pods.rest-v1.endpoints.tickets-archive',
-			new Tribe__Tickets__REST__V1__Endpoints__Ticket_Archive(
+			'pods.rest-v1.endpoints.fields',
+			new Tribe__Tickets__REST__V1__Endpoints__Fields(
+				tribe( 'pods.rest-v1.messages' ),
+				tribe( 'pods.rest-v1.repository' ),
+				tribe( 'pods.rest-v1.validator' )
+			)
+		);
+		tribe_singleton(
+			'pods.rest-v1.endpoints.groups',
+			new Tribe__Tickets__REST__V1__Endpoints__Groups(
 				tribe( 'pods.rest-v1.messages' ),
 				tribe( 'pods.rest-v1.repository' ),
 				tribe( 'pods.rest-v1.validator' )
@@ -65,8 +73,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		$doc_endpoint = $this->register_documentation_endpoint();
 
-		$this->register_ticket_single_endpoint();
-		$this->register_ticket_archive_endpoint();
+		$this->register_endpoints();
 
 		// @todo add the endpoints as documentation providers here
 		$doc_endpoint->register_documentation_provider( '/doc', $doc_endpoint );
@@ -94,15 +101,15 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	}
 
 	/**
-	 * Registers the REST API endpoint that will handle single ticket requests.
+	 * Registers the REST API endpoints that will handle requests.
 	 *
 	 * @since 2.8
 	 *
-	 * @return Tribe__Tickets__REST__V1__Endpoints__Single_Ticket
+	 * @return Tribe__Tickets__REST__V1__Endpoints__Pods
 	 */
-	protected function register_ticket_single_endpoint() {
-		/** @var Tribe__Tickets__REST__V1__Endpoints__Single_Ticket $endpoint */
-		$endpoint = tribe( 'pods.rest-v1.endpoints.tickets-single' );
+	protected function register_endpoint_pods() {
+		/** @var Tribe__Tickets__REST__V1__Endpoints__Pods $endpoint */
+		$endpoint = tribe( 'pods.rest-v1.endpoints.pods' );
 
 		register_rest_route( $this->namespace, '/tickets/(?P<id>\\d+)', [
 			'methods'  => WP_REST_Server::READABLE,
@@ -110,7 +117,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 			'callback' => [ $endpoint, 'get' ],
 		] );
 
-		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/tickets/{id}', $endpoint );
+		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/pods/{id}', $endpoint );
 
 		return $endpoint;
 	}

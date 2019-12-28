@@ -25,7 +25,12 @@ abstract class Base {
 	/**
 	 * @var Base_Endpoint
 	 */
-	protected $endpoint;
+	protected $endpoint_single;
+
+	/**
+	 * @var Base_Endpoint
+	 */
+	protected $endpoint_archive;
 
 	/**
 	 * Handle setup of things needed by command.
@@ -42,28 +47,49 @@ abstract class Base {
 	 * @since 2.8
 	 */
 	public function add_commands() {
-		if ( method_exists( $this->endpoint, 'get' ) ) {
-			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'get' );
+		if ( method_exists( $this->endpoint_archive, 'get' ) ) {
+			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'list' );
 
-			WP_CLI::add_command( $command, [ $this, 'get', ], $this->build_command_args( 'get' ) );
+			WP_CLI::add_command( $command, [
+				$this,
+				'list_items',
+			], $this->build_command_args( 'list', $this->endpoint_archive ) );
 		}
 
-		if ( method_exists( $this->endpoint, 'create' ) ) {
+		if ( method_exists( $this->endpoint_archive, 'create' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'add' );
 
-			WP_CLI::add_command( $command, [ $this, 'add', ], $this->build_command_args( 'add' ) );
+			WP_CLI::add_command( $command, [
+				$this,
+				'add',
+			], $this->build_command_args( 'add', $this->endpoint_archive ) );
 		}
 
-		if ( method_exists( $this->endpoint, 'update' ) ) {
+		if ( method_exists( $this->endpoint_single, 'get' ) ) {
+			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'get' );
+
+			WP_CLI::add_command( $command, [
+				$this,
+				'get',
+			], $this->build_command_args( 'get', $this->endpoint_single ) );
+		}
+
+		if ( method_exists( $this->endpoint_single, 'update' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'update' );
 
-			WP_CLI::add_command( $command, [ $this, 'update', ], $this->build_command_args( 'update' ) );
+			WP_CLI::add_command( $command, [
+				$this,
+				'update',
+			], $this->build_command_args( 'update', $this->endpoint_single ) );
 		}
 
-		if ( method_exists( $this->endpoint, 'delete' ) ) {
+		if ( method_exists( $this->endpoint_single, 'delete' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'delete' );
 
-			WP_CLI::add_command( $command, [ $this, 'delete', ], $this->build_command_args( 'delete' ) );
+			WP_CLI::add_command( $command, [
+				$this,
+				'delete',
+			], $this->build_command_args( 'delete', $this->endpoint_single ) );
 		}
 	}
 
@@ -75,8 +101,8 @@ abstract class Base {
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
 	 */
-	public function get( array $args, array $assoc_args ) {
-		return $this->run_endpoint_method( $assoc_args, 'get' );
+	public function list_items( array $args, array $assoc_args ) {
+		return $this->run_endpoint_method( $assoc_args, 'get', $this->endpoint_archive );
 	}
 
 	/**
@@ -88,7 +114,19 @@ abstract class Base {
 	 * @param array $assoc_args List of associative arguments.
 	 */
 	public function add( array $args, array $assoc_args ) {
-		return $this->run_endpoint_method( $assoc_args, 'create' );
+		return $this->run_endpoint_method( $assoc_args, 'create', $this->endpoint_archive );
+	}
+
+	/**
+	 * Map the get CLI command to the Endpoint::get() method.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array $args       List of positional arguments.
+	 * @param array $assoc_args List of associative arguments.
+	 */
+	public function get( array $args, array $assoc_args ) {
+		return $this->run_endpoint_method( $assoc_args, 'get', $this->endpoint_single );
 	}
 
 	/**
@@ -100,7 +138,7 @@ abstract class Base {
 	 * @param array $assoc_args List of associative arguments.
 	 */
 	public function update( array $args, array $assoc_args ) {
-		return $this->run_endpoint_method( $assoc_args, 'update' );
+		return $this->run_endpoint_method( $assoc_args, 'update', $this->endpoint_single );
 	}
 
 	/**
@@ -112,7 +150,7 @@ abstract class Base {
 	 * @param array $assoc_args List of associative arguments.
 	 */
 	public function delete( array $args, array $assoc_args ) {
-		return $this->run_endpoint_method( $assoc_args, 'delete' );
+		return $this->run_endpoint_method( $assoc_args, 'delete', $this->endpoint_single );
 	}
 
 	/**
@@ -120,11 +158,12 @@ abstract class Base {
 	 *
 	 * @since 2.8
 	 *
-	 * @param array  $assoc_args List of associative arguments.
-	 * @param string $method     Method name.
+	 * @param array         $assoc_args List of associative arguments.
+	 * @param string        $method     Method name.
+	 * @param Base_Endpoint $endpoint   Endpoint object.
 	 */
-	public function run_endpoint_method( array $assoc_args, $method ) {
-		if ( ! method_exists( $this->endpoint, $method ) ) {
+	public function run_endpoint_method( array $assoc_args, $method, Base_Endpoint $endpoint ) {
+		if ( ! method_exists( $endpoint, $method ) ) {
 			return;
 		}
 
@@ -136,7 +175,7 @@ abstract class Base {
 			return $this->output_error_response( $valid );
 		}
 
-		$response = call_user_func( [ $this->endpoint, $method ], $assoc_args );
+		$response = $endpoint->$method( $assoc_args );
 
 		if ( is_wp_error( $response ) ) {
 			return $this->output_error_response( $response );
@@ -187,14 +226,16 @@ abstract class Base {
 	 *
 	 * @since 2.8
 	 *
-	 * @param string $command Command name.
+	 * @param string        $command  Command name.
+	 * @param Base_Endpoint $endpoint Endpoint object.
 	 *
 	 * @return array List of properly formatted CLI command arguments.
 	 */
-	public function build_command_args( $command ) {
+	public function build_command_args( $command, Base_Endpoint $endpoint ) {
 		$command_mapping = [
-			'get'    => 'READ_args',
+			'list'   => 'READ_args',
 			'add'    => 'CREATE_args',
+			'get'    => 'READ_args',
 			'update' => 'EDIT_args',
 			'delete' => 'DELETE_args',
 		];
@@ -205,17 +246,21 @@ abstract class Base {
 
 		$method = $command_mapping[ $command ];
 
-		if ( ! method_exists( $this->endpoint, $method ) ) {
+		if ( ! method_exists( $endpoint, $method ) ) {
 			return [];
 		}
 
-		$rest_args = call_user_func( [ $this->endpoint, $method ] );
+		$rest_args = $endpoint->$method();
 
 		if ( empty( $rest_args ) ) {
 			return [];
 		}
 
+		$cli_args = [];
+
 		// @todo Map the REST args to CLI args formatting.
+
+		return $cli_args;
 	}
 
 	/**

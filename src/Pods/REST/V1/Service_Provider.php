@@ -3,10 +3,13 @@
 namespace Pods\REST\V1;
 
 use Pods\REST\V1\Endpoints\Field;
+use Pods\REST\V1\Endpoints\Field_Slug;
 use Pods\REST\V1\Endpoints\Fields;
 use Pods\REST\V1\Endpoints\Group;
+use Pods\REST\V1\Endpoints\Group_Slug;
 use Pods\REST\V1\Endpoints\Groups;
 use Pods\REST\V1\Endpoints\Pod;
+use Pods\REST\V1\Endpoints\Pod_Slug;
 use Pods\REST\V1\Endpoints\Pods;
 use Pods\REST\V1\Endpoints\Swagger_Documentation;
 use Pods\REST\V1\Validator\Base;
@@ -45,10 +48,13 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		tribe_singleton( 'pods.rest-v1.endpoints.pods', new Pods( $messages, $post_repository, $validator ) );
 		tribe_singleton( 'pods.rest-v1.endpoints.pod', new Pod( $messages, $post_repository, $validator ) );
+		tribe_singleton( 'pods.rest-v1.endpoints.pod-slug', new Pod_Slug( $messages, $post_repository, $validator ) );
 		tribe_singleton( 'pods.rest-v1.endpoints.fields', new Fields( $messages, $post_repository, $validator ) );
 		tribe_singleton( 'pods.rest-v1.endpoints.field', new Field( $messages, $post_repository, $validator ) );
+		tribe_singleton( 'pods.rest-v1.endpoints.field-slug', new Field_Slug( $messages, $post_repository, $validator ) );
 		tribe_singleton( 'pods.rest-v1.endpoints.groups', new Groups( $messages, $post_repository, $validator ) );
 		tribe_singleton( 'pods.rest-v1.endpoints.group', new Group( $messages, $post_repository, $validator ) );
+		tribe_singleton( 'pods.rest-v1.endpoints.group-slug', new Group_Slug( $messages, $post_repository, $validator ) );
 
 		$this->hooks();
 	}
@@ -68,10 +74,13 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		$this->register_endpoint_pods();
 		$this->register_endpoint_pod();
+		$this->register_endpoint_pod_slug();
 		$this->register_endpoint_fields();
 		$this->register_endpoint_field();
+		$this->register_endpoint_field_slug();
 		$this->register_endpoint_groups();
 		$this->register_endpoint_group();
+		$this->register_endpoint_group_slug();
 	}
 
 	/**
@@ -165,6 +174,40 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 *
 	 * @since 2.8
 	 *
+	 * @return Pod_Slug
+	 */
+	protected function register_endpoint_pod_slug() {
+		/** @var Pod_Slug $endpoint */
+		$endpoint = tribe( 'pods.rest-v1.endpoints.pod-slug' );
+
+		register_rest_route( $this->namespace, '/pods/(?P<slug>[\w\_\-]+)', [
+			[
+				'methods'  => WP_REST_Server::READABLE,
+				'args'     => $endpoint->READ_args(),
+				'callback' => [ $endpoint, 'get' ],
+			],
+			[
+				'methods'  => WP_REST_Server::EDITABLE,
+				'args'     => $endpoint->EDIT_args(),
+				'callback' => [ $endpoint, 'update' ],
+			],
+			[
+				'methods'  => WP_REST_Server::DELETABLE,
+				'args'     => $endpoint->DELETE_args(),
+				'callback' => [ $endpoint, 'delete' ],
+			],
+		] );
+
+		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/pods/{slug}', $endpoint );
+
+		return $endpoint;
+	}
+
+	/**
+	 * Registers the REST API endpoint that will handle requests.
+	 *
+	 * @since 2.8
+	 *
 	 * @return Fields
 	 */
 	protected function register_endpoint_fields() {
@@ -228,6 +271,40 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 *
 	 * @since 2.8
 	 *
+	 * @return Field_Slug
+	 */
+	protected function register_endpoint_field_slug() {
+		/** @var Field_Slug $endpoint */
+		$endpoint = tribe( 'pods.rest-v1.endpoints.field-slug' );
+
+		register_rest_route( $this->namespace, '/fields/(?P<slug>[\w\_\-]+)', [
+			[
+				'methods'  => WP_REST_Server::READABLE,
+				'args'     => $endpoint->READ_args(),
+				'callback' => [ $endpoint, 'get' ],
+			],
+			[
+				'methods'  => WP_REST_Server::EDITABLE,
+				'args'     => $endpoint->EDIT_args(),
+				'callback' => [ $endpoint, 'update' ],
+			],
+			[
+				'methods'  => WP_REST_Server::DELETABLE,
+				'args'     => $endpoint->DELETE_args(),
+				'callback' => [ $endpoint, 'delete' ],
+			],
+		] );
+
+		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/fields/{slug}', $endpoint );
+
+		return $endpoint;
+	}
+
+	/**
+	 * Registers the REST API endpoint that will handle requests.
+	 *
+	 * @since 2.8
+	 *
 	 * @return Groups
 	 */
 	protected function register_endpoint_groups() {
@@ -282,6 +359,40 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		] );
 
 		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/groups/{id}', $endpoint );
+
+		return $endpoint;
+	}
+
+	/**
+	 * Registers the REST API endpoint that will handle requests.
+	 *
+	 * @since 2.8
+	 *
+	 * @return Group_Slug
+	 */
+	protected function register_endpoint_group_slug() {
+		/** @var Group_Slug $endpoint */
+		$endpoint = tribe( 'pods.rest-v1.endpoints.group-slug' );
+
+		register_rest_route( $this->namespace, '/groups/(?P<slug>[\w\_\-]+)', [
+			[
+				'methods'  => WP_REST_Server::READABLE,
+				'args'     => $endpoint->READ_args(),
+				'callback' => [ $endpoint, 'get' ],
+			],
+			[
+				'methods'  => WP_REST_Server::EDITABLE,
+				'args'     => $endpoint->EDIT_args(),
+				'callback' => [ $endpoint, 'update' ],
+			],
+			[
+				'methods'  => WP_REST_Server::DELETABLE,
+				'args'     => $endpoint->DELETE_args(),
+				'callback' => [ $endpoint, 'delete' ],
+			],
+		] );
+
+		tribe( 'pods.rest-v1.endpoints.documentation' )->register_documentation_provider( '/groups/{slug}', $endpoint );
 
 		return $endpoint;
 	}

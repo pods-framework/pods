@@ -104,9 +104,9 @@ class Field
 	public function get( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		$data = [];
-
-		return $data;
+		return $this->get_by_args( [
+			'id' => $id,
+		], $request );
 	}
 
 	/**
@@ -134,9 +134,9 @@ class Field
 	public function update( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		$data = [];
-
-		return $data;
+		return $this->get_by_args( [
+			'id' => $id,
+		], $request );
 	}
 
 	/**
@@ -174,9 +174,9 @@ class Field
 	public function delete( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		$data = [];
-
-		return $data;
+		return $this->get_by_args( [
+			'id' => $id,
+		], $request );
 	}
 
 	/**
@@ -187,5 +187,31 @@ class Field
 	public function can_delete() {
 		// @todo Check Pods permissions
 		return true;
+	}
+
+	/**
+	 * Get the response using PodsAPI::load_field() arguments.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array           $args    List of PodsAPI::load_field() arguments.
+	 * @param WP_REST_Request $request The request object.
+	 *
+	 * @return array|WP_Error The response or an error.
+	 * @throws \Exception
+	 */
+	public function get_by_args( array $args, WP_REST_Request $request ) {
+		$field = pods_api()->load_field( $args );
+
+		if ( empty( $field ) ) {
+			// @todo Fix error messaging.
+			return new WP_Error( 'no', 'Field not found' );
+		}
+
+		$data = [
+			'field' => $field,
+		];
+
+		return $data;
 	}
 }

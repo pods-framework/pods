@@ -32,6 +32,11 @@ abstract class Base {
 	/**
 	 * @var Base_Endpoint
 	 */
+	protected $endpoint_single_slug;
+
+	/**
+	 * @var Base_Endpoint
+	 */
 	protected $endpoint_archive;
 
 	/**
@@ -76,6 +81,15 @@ abstract class Base {
 			], $this->build_command_args( 'get', $this->endpoint_single ) );
 		}
 
+		if ( method_exists( $this->endpoint_single_slug, 'get' ) ) {
+			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'get-by-slug' );
+
+			WP_CLI::add_command( $command, [
+				$this,
+				'get',
+			], $this->build_command_args( 'get', $this->endpoint_single_slug ) );
+		}
+
 		if ( method_exists( $this->endpoint_single, 'update' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'update' );
 
@@ -85,6 +99,15 @@ abstract class Base {
 			], $this->build_command_args( 'update', $this->endpoint_single ) );
 		}
 
+		if ( method_exists( $this->endpoint_single_slug, 'update' ) ) {
+			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'update-by-slug' );
+
+			WP_CLI::add_command( $command, [
+				$this,
+				'update',
+			], $this->build_command_args( 'update', $this->endpoint_single_slug ) );
+		}
+
 		if ( method_exists( $this->endpoint_single, 'delete' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'delete' );
 
@@ -92,6 +115,15 @@ abstract class Base {
 				$this,
 				'delete',
 			], $this->build_command_args( 'delete', $this->endpoint_single ) );
+		}
+
+		if ( method_exists( $this->endpoint_single_slug, 'delete' ) ) {
+			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'delete-by-slug' );
+
+			WP_CLI::add_command( $command, [
+				$this,
+				'delete',
+			], $this->build_command_args( 'delete', $this->endpoint_single_slug ) );
 		}
 	}
 
@@ -132,6 +164,18 @@ abstract class Base {
 	}
 
 	/**
+	 * Map the get CLI command to the Endpoint::get() method.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array $args       List of positional arguments.
+	 * @param array $assoc_args List of associative arguments.
+	 */
+	public function get_by_slug( array $args, array $assoc_args ) {
+		return $this->run_endpoint_method( $assoc_args, 'get', $this->endpoint_single_slug );
+	}
+
+	/**
 	 * Map the update CLI command to the Endpoint::update() method.
 	 *
 	 * @since 2.8
@@ -144,6 +188,18 @@ abstract class Base {
 	}
 
 	/**
+	 * Map the update CLI command to the Endpoint::update() method.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array $args       List of positional arguments.
+	 * @param array $assoc_args List of associative arguments.
+	 */
+	public function update_by_slug( array $args, array $assoc_args ) {
+		return $this->run_endpoint_method( $assoc_args, 'update', $this->endpoint_single_slug );
+	}
+
+	/**
 	 * Map the delete CLI command to the Endpoint::delete() method.
 	 *
 	 * @since 2.8
@@ -153,6 +209,18 @@ abstract class Base {
 	 */
 	public function delete( array $args, array $assoc_args ) {
 		return $this->run_endpoint_method( $assoc_args, 'delete', $this->endpoint_single );
+	}
+
+	/**
+	 * Map the delete CLI command to the Endpoint::delete() method.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array $args       List of positional arguments.
+	 * @param array $assoc_args List of associative arguments.
+	 */
+	public function delete_by_slug( array $args, array $assoc_args ) {
+		return $this->run_endpoint_method( $assoc_args, 'delete', $this->endpoint_single_slug );
 	}
 
 	/**

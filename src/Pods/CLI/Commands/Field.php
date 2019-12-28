@@ -20,7 +20,8 @@ class Field extends Base {
 	 * @since 2.8
 	 */
 	public function __construct() {
-		$this->endpoint_archive = tribe( 'pods.rest-v1.endpoints.fields' );
-		$this->endpoint_single  = tribe( 'pods.rest-v1.endpoints.field' );
+		$this->endpoint_archive     = tribe( 'pods.rest-v1.endpoints.fields' );
+		$this->endpoint_single      = tribe( 'pods.rest-v1.endpoints.field' );
+		$this->endpoint_single_slug = tribe( 'pods.rest-v1.endpoints.field-slug' );
 	}
 }

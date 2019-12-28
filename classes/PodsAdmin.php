@@ -3707,51 +3707,52 @@ class PodsAdmin {
 	 * @return array
 	 */
 	public function add_rest_fields_to_field_editor( $options, $pod ) {
-
 		if ( $this->restable_pod( $pod ) ) {
-			$options['rest'][ __( 'Read/ Write', 'pods' ) ]                = array(
-				'rest_read'  => array(
-					'label'   => __( 'Read via REST API?', 'pods' ),
+			$options['rest'][ __( 'Read/ Write', 'pods' ) ] = [
+				'rest_read'  => [
+					'label'   => __( 'Read via REST API', 'pods' ),
 					'help'    => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
 					'type'    => 'boolean',
 					'default' => '',
-				),
-				'rest_write' => array(
-					'label'   => __( 'Write via REST API?', 'pods' ),
+				],
+				'rest_write' => [
+					'label'   => __( 'Write via REST API', 'pods' ),
 					'help'    => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
 					'type'    => 'boolean',
 					'default' => '',
-				),
-			);
-			$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = array(
-				'rest_pick_response' => array(
+				],
+			];
+
+			$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = [
+				'rest_pick_response' => [
 					'label'      => __( 'Response Type', 'pods' ),
 					'help'       => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
 					'type'       => 'pick',
 					'default'    => 'array',
-					'depends-on' => array( 'type' => 'pick' ),
-					'data'       => array(
+					'depends-on' => [ 'type' => 'pick' ],
+					'data'       => [
 						'array' => __( 'Full', 'pods' ),
 						'id'    => __( 'ID only', 'pods' ),
 						'name'  => __( 'Name', 'pods' ),
-
-					),
-				),
-				'rest_pick_depth'    => array(
+					],
+				],
+				'rest_pick_depth'    => [
 					'label'      => __( 'Depth', 'pods' ),
 					'help'       => __( 'How far to traverse relationships in response', 'pods' ),
 					'type'       => 'number',
 					'default'    => '2',
-					'depends-on' => array( 'type' => 'pick' ),
-
-				),
-
-			);
-
-		}//end if
+					'depends-on' => [ 'type' => 'pick' ],
+				],
+				'rest_pick_notice'   => [
+					'label'        => 'Relationship Options',
+					'type'         => 'html',
+					'html_content' => __( 'If you have a relationship field, you will see additional options to customize here.', 'pods' ),
+					'excludes-on'  => [ 'type' => 'pick' ],
+				],
+			];
+		}
 
 		return $options;
-
 	}
 
 	/**

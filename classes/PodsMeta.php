@@ -1493,7 +1493,7 @@ class PodsMeta {
 
 				// Manually force DFV initialization.  This is needed for attachments in "grid mode" in the
 				// media library.  Note that this should only occur for attachment_fields_to_edit (see #4785)
-				$dfv_init_script = "<script>PodsDFV.init();</script>";
+				$dfv_init_script = "<script>window.PodsDFV.init();</script>";
 
 				$form_fields[ 'pods_meta_' . $field['name'] ] = array(
 					'label' => $field['label'],

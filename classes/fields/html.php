@@ -114,6 +114,11 @@ class PodsField_HTML extends PodsField {
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
+		// Support passing html_content into the options for custom HTML option layouts.
+		if ( empty( $value ) && ! empty( $options['html_content'] ) ) {
+			$value = $options['html_content'];
+		}
+
 		$value = $this->strip_html( $value, $options );
 
 		if ( 1 === (int) pods_v( static::$type . '_oembed', $options, 0 ) ) {

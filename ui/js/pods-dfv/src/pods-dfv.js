@@ -47,7 +47,7 @@ const fieldClasses =  {
 	},
 };
 
-const PodsDFV = {
+window.PodsDFV = {
 	fields: fieldClasses,
 	models: models,
 	fieldInstances: {},
@@ -90,16 +90,15 @@ const PodsDFV = {
 		return ( wp.data !== undefined && wp.data.select( 'core/editor' ) !== undefined );
 	}
 };
-export default PodsDFV;
 
 /**
  * Kick everything off on DOMContentLoaded
  */
 document.addEventListener( 'DOMContentLoaded', () => {
-	PodsDFV.init();
+	window.PodsDFV.init();
 
 	// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
-	if ( PodsDFV.isModalWindow() && PodsDFV.isGutenbergEditorLoaded() ) {
+	if ( window.PodsDFV.isModalWindow() && window.PodsDFV.isGutenbergEditorLoaded() ) {
 		PodsGbModalListener.init();
 	}
 } );

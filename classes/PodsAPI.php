@@ -6243,6 +6243,14 @@ class PodsAPI {
 			$params['id'] = $params['ids'];
 		}
 
+		$include_internal = false;
+
+		if ( isset( $params['include_internal'] ) ) {
+			$include_internal = (boolean) $params['include_internal'];
+
+			unset( $params['include_internal'] );
+		}
+
 		if ( isset( $params['fields'] ) ) {
 			unset( $params['fields'] );
 		}
@@ -6279,7 +6287,21 @@ class PodsAPI {
 			}
 		}
 
-		return $this->load_object_pods( $params );
+		$loaded_pods = $this->load_object_pods( $params );
+
+		$the_pods = [];
+
+		if ( ! $include_internal ) {
+			foreach ( $loaded_pods as $pod ) {
+				if ( true !== $pod->get_arg( 'internal' ) ) {
+					$the_pods[] = $pod;
+				}
+			}
+		} else {
+			$the_pods = $loaded_pods;
+		}
+
+		return $the_pods;
 	}
 
 	/**
@@ -9126,6 +9148,22 @@ class PodsAPI {
 		$post_type_storage = $object_collection->get_storage_object( $this->get_default_object_storage_type() );
 
 		$objects = $post_type_storage->find( $params );
+
+		if ( ! empty( $params['return_type'] ) ) {
+			$return_type = $params['return_type'];
+
+			if ( 'names' === $return_type ) {
+				$params['names'] = true;
+			} elseif ( 'names_ids' === $return_type ) {
+				$params['names_ids'] = true;
+			} elseif ( 'ids' === $return_type ) {
+				$params['ids'] = true;
+			} elseif ( 'key_names' === $return_type ) {
+				$params['key_names'] = true;
+			} elseif ( 'count' === $return_type ) {
+				$params['count'] = true;
+			}
+		}
 
 		if ( ! empty( $params['count'] ) ) {
 			return count( $objects );

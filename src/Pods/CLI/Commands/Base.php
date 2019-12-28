@@ -3,7 +3,9 @@
 namespace Pods\CLI\Commands;
 
 use Pods\REST\V1\Endpoints\Base as Base_Endpoint;
+use WP_CLI;
 use WP_Error;
+use WP_REST_Request;
 
 /**
  * Class Base
@@ -175,13 +177,21 @@ abstract class Base {
 			return $this->output_error_response( $valid );
 		}
 
-		$response = $endpoint->$method( $assoc_args );
+		$attributes = [
+			'args' => $assoc_args,
+		];
+
+		$request = new WP_REST_Request( '', '', $attributes );
+
+		$response = $endpoint->$method( $request );
 
 		if ( is_wp_error( $response ) ) {
 			return $this->output_error_response( $response );
 		}
 
 		// @todo Output response data in a better way.
+
+		var_dump( $response );
 
 		WP_CLI::success( __( 'Command successful', 'pods' ) );
 	}
@@ -215,8 +225,15 @@ abstract class Base {
 	 *
 	 * @return true|WP_Error Whether the args validated or the WP_Error object with what failed.
 	 */
-	public function validate_args( array $assoc_args, $command ) {
+	public function validate_args( array $assoc_args, $command = null ) {
 		// @todo Get list of args and determine what's really required.
+
+		$runner    = WP_CLI::get_runner();
+		$arguments = $runner->arguments;
+
+		if ( null === $command && ! empty( $arguments ) ) {
+			$command = end( $arguments );
+		}
 
 		return true;
 	}

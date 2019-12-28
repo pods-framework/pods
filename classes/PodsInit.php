@@ -1846,6 +1846,8 @@ class PodsInit {
 		add_action( 'admin_menu', array( $this, 'remove_common_menu' ), 11 );
 		add_action( 'network_admin_menu', array( $this, 'remove_common_network_menu' ), 11 );
 
+		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
+
 		// Add WP-CLI commands.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			//require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
@@ -1853,8 +1855,6 @@ class PodsInit {
 
 			tribe_register_provider( \Pods\CLI\Service_Provider::class );
 		}
-
-		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
 	}
 
 	/**

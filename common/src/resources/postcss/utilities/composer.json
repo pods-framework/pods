@@ -1,9 +1,0 @@
-{
-    "name": "moderntribe/tribe-common-styles",
-    "description": "A library of Modern Tribe's common styles",
-    "type": "wordpress-plugin",
-    "license": "Private",
-    "require": {
-      "composer/installers": "~1.0"
-    }
-}

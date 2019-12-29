@@ -128,96 +128,112 @@ abstract class Base {
 	}
 
 	/**
-	 * Map the get CLI command to the Endpoint::get() method.
+	 * List items.
 	 *
 	 * @since 2.8
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
+	 *
+	 * @throws WP_CLI\ExitException
 	 */
 	public function list_items( array $args, array $assoc_args ) {
 		return $this->run_endpoint_method( $args, $assoc_args, 'get', $this->endpoint_archive );
 	}
 
 	/**
-	 * Map the add CLI command to the Endpoint::create() method.
+	 * Add an item.
 	 *
 	 * @since 2.8
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
+	 *
+	 * @throws WP_CLI\ExitException
 	 */
 	public function add( array $args, array $assoc_args ) {
 		return $this->run_endpoint_method( $args, $assoc_args, 'create', $this->endpoint_archive );
 	}
 
 	/**
-	 * Map the get CLI command to the Endpoint::get() method.
+	 * Get an item by ID.
 	 *
 	 * @since 2.8
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
+	 *
+	 * @throws WP_CLI\ExitException
 	 */
 	public function get( array $args, array $assoc_args ) {
 		return $this->run_endpoint_method( $args, $assoc_args, 'get', $this->endpoint_single );
 	}
 
 	/**
-	 * Map the get CLI command to the Endpoint::get() method.
+	 * Get an item by slug.
 	 *
 	 * @since 2.8
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
+	 *
+	 * @throws WP_CLI\ExitException
 	 */
 	public function get_by_slug( array $args, array $assoc_args ) {
 		return $this->run_endpoint_method( $args, $assoc_args, 'get', $this->endpoint_single_slug );
 	}
 
 	/**
-	 * Map the update CLI command to the Endpoint::update() method.
+	 * Update an item by ID.
 	 *
 	 * @since 2.8
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
+	 *
+	 * @throws WP_CLI\ExitException
 	 */
 	public function update( array $args, array $assoc_args ) {
 		return $this->run_endpoint_method( $args, $assoc_args, 'update', $this->endpoint_single );
 	}
 
 	/**
-	 * Map the update CLI command to the Endpoint::update() method.
+	 * Update an item by slug.
 	 *
 	 * @since 2.8
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
+	 *
+	 * @throws WP_CLI\ExitException
 	 */
 	public function update_by_slug( array $args, array $assoc_args ) {
 		return $this->run_endpoint_method( $args, $assoc_args, 'update', $this->endpoint_single_slug );
 	}
 
 	/**
-	 * Map the delete CLI command to the Endpoint::delete() method.
+	 * Delete an item by ID.
 	 *
 	 * @since 2.8
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
+	 *
+	 * @throws WP_CLI\ExitException
 	 */
 	public function delete( array $args, array $assoc_args ) {
 		return $this->run_endpoint_method( $args, $assoc_args, 'delete', $this->endpoint_single );
 	}
 
 	/**
-	 * Map the delete CLI command to the Endpoint::delete() method.
+	 * Delete an item by slug.
 	 *
 	 * @since 2.8
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
+	 *
+	 * @throws WP_CLI\ExitException
 	 */
 	public function delete_by_slug( array $args, array $assoc_args ) {
 		return $this->run_endpoint_method( $args, $assoc_args, 'delete', $this->endpoint_single_slug );
@@ -232,6 +248,8 @@ abstract class Base {
 	 * @param array         $assoc_args List of associative arguments.
 	 * @param string        $method     Method name.
 	 * @param Base_Endpoint $endpoint   Endpoint object.
+	 *
+	 * @throws WP_CLI\ExitException
 	 */
 	public function run_endpoint_method( array $args, array $assoc_args, $method, Base_Endpoint $endpoint ) {
 		if ( ! method_exists( $endpoint, $method ) ) {

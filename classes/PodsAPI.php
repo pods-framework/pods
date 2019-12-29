@@ -6289,16 +6289,24 @@ class PodsAPI {
 
 		$loaded_pods = $this->load_object_pods( $params );
 
+		if ( empty( $loaded_pods ) ) {
+			return [];
+		}
+
+
+		if ( $include_internal || ! is_array( $loaded_pods ) ) {
+			return $loaded_pods;
+		}
+
+		// Remove the internal Pods.
 		$the_pods = [];
 
-		if ( ! $include_internal ) {
-			foreach ( $loaded_pods as $pod ) {
-				if ( true !== $pod->get_arg( 'internal' ) ) {
-					$the_pods[] = $pod;
-				}
+		foreach ( $loaded_pods as $pod ) {
+			if ( is_object( $pod ) && true === $pod->get_arg( 'internal' ) ) {
+				continue;
 			}
-		} else {
-			$the_pods = $loaded_pods;
+
+			$the_pods[] = $pod;
 		}
 
 		return $the_pods;

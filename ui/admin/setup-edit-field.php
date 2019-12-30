@@ -32,7 +32,7 @@ if ( isset( $field['pick_val'] ) ) {
 }
 
 // Remove weight as we're going to allow reordering here
-unset( $field['weight'], $field['options'], $field['table_info'] );
+unset( $field['weight'] );
 
 // Remove options, we don't need it in the JSON
 $data = array(

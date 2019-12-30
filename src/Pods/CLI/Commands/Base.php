@@ -304,7 +304,13 @@ abstract class Base {
 
 		// @todo Output response data in a better way maybe.
 
-		WP_CLI::line( wp_json_encode( $response ) );
+		if ( null !== $response ) {
+			if ( is_object( $response ) || is_array( $response ) ) {
+				$response = wp_json_encode( $response );
+			}
+
+			WP_CLI::line( $response );
+		}
 
 		WP_CLI::success( __( 'Command successful', 'pods' ) );
 	}

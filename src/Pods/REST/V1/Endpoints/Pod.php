@@ -134,12 +134,25 @@ class Pod
 	 */
 	public function EDIT_args() {
 		return [
-			'id' => [
+			'id'    => [
 				'type'              => 'integer',
 				'in'                => 'path',
 				'description'       => __( 'The ID', 'pods' ),
 				'required'          => true,
 				'validate_callback' => [ $this->validator, 'is_positive_int' ],
+			],
+			'name'  => [
+				'type'        => 'string',
+				'description' => __( 'The new name of the pod', 'pods' ),
+			],
+			'label' => [
+				'type'        => 'string',
+				'description' => __( 'The singular label of the pod', 'pods' ),
+			],
+			'args'  => [
+				'required'     => false,
+				'description'  => __( 'A list of additional options to save to the Pod.', 'pods' ),
+				'swagger_type' => 'array',
 			],
 		];
 	}
@@ -152,8 +165,56 @@ class Pod
 	public function update( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		return $this->get_by_args( [
+		$pod = $this->get_by_args( [
 			'id' => $id,
+		], $request );
+
+		if ( is_wp_error( $pod ) ) {
+			return $pod;
+		}
+
+		// Get the pod from the response.
+		$pod = $pod['pod'];
+
+		$defaults = [
+			'id'            => null,
+			'name'          => null,
+			'label'         => null,
+			'args'          => null,
+		];
+
+		$params = wp_parse_args( $request->get_params(), $defaults );
+		$params = array_filter( $params, [ $this->validator, 'is_not_null' ] );
+
+		if ( isset( $params['args'] ) ) {
+			$args = $params['args'];
+
+			unset( $params['args'] );
+
+			// Attempt to convert from JSON to array if needed.
+			if ( is_string( $args ) ) {
+				$json = @json_decode( $args, true );
+
+				if ( is_array( $json ) ) {
+					$args = $json;
+				}
+			}
+
+			if ( is_array( $args ) ) {
+				$params = array_merge( $params, $args );
+			}
+		}
+
+		// Pass the pod object.
+		$params['pod'] = $pod;
+
+		// Handle update.
+		pods_api()->save_pod( $params );
+
+		// Return the refreshed pod data.
+		return $this->get_by_args( [
+			'id'           => $id,
+			'bypass_cache' => true,
 		], $request );
 	}
 

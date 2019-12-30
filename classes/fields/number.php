@@ -93,13 +93,13 @@ class PodsField_Number extends PodsField {
 			static::$type . '_min'         => array(
 				'label'      => __( 'Minimum Number', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
-				'default'    => 0,
+				'default'    => '',
 				'type'       => 'text',
 			),
 			static::$type . '_max'         => array(
 				'label'      => __( 'Maximum Number', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
-				'default'    => 100,
+				'default'    => '',
 				'type'       => 'text',
 			),
 			static::$type . '_max_length'  => array(

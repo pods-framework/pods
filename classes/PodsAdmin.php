@@ -1035,7 +1035,7 @@ class PodsAdmin {
 				'id'          => $pod['id'],
 				'label'       => pods_v( 'label', $pod ),
 				'name'        => pods_v( 'name', $pod ),
-				'object'      => pods_v( 'object', $pod ),
+				'object'      => pods_v( 'object', $pod, '' ),
 				'type'        => $pod_type,
 				'real_type'   => $pod_real_type,
 				'storage'     => $pod_storage,
@@ -1163,11 +1163,11 @@ class PodsAdmin {
 		$admin_ui = false;
 		$advanced = false;
 
-		if ( 'post_type' === pods_v( 'type', $pod ) && '' === pods_v( 'object', $pod ) ) {
+		if ( 'post_type' === pods_v( 'type', $pod ) && '' === pods_v( 'object', $pod, '' ) ) {
 			$labels   = true;
 			$admin_ui = true;
 			$advanced = true;
-		} elseif ( 'taxonomy' === pods_v( 'type', $pod ) && '' === pods_v( 'object', $pod ) ) {
+		} elseif ( 'taxonomy' === pods_v( 'type', $pod ) && '' === pods_v( 'object', $pod, '' ) ) {
 			$labels   = true;
 			$admin_ui = true;
 			$advanced = true;
@@ -1246,7 +1246,7 @@ class PodsAdmin {
 
 		$options = array();
 
-		if ( '' === pods_v( 'object', $pod ) && 'settings' !== pods_v( 'type', $pod ) ) {
+		if ( '' === pods_v( 'object', $pod, '' ) && 'settings' !== pods_v( 'type', $pod ) ) {
 			$labels = array(
 				'label'                            => array(
 					'label'           => __( 'Label', 'pods' ),

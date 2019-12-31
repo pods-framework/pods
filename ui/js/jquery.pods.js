@@ -1608,11 +1608,9 @@
 
                         $row_content.slideDown();
 
-
                         $row_content.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                             methods[ 'setup_dependencies' ]( $( this ) );
                         } );
-
                     }
 
                     $( this ).css( 'cursor', 'pointer' );

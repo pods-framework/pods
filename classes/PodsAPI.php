@@ -3555,8 +3555,8 @@ class PodsAPI {
 		$object_fields = $pod->get_object_fields();
 
 		// Map the fields to Value_Field to store values.
-		$fields        = array_map( '\Pods\API\Whatsit\Value_Field::init', $fields );
-		$object_fields = array_map( '\Pods\API\Whatsit\Value_Field::init', $object_fields );
+		$fields        = array_map( [ Value_Field::class, 'init' ], $fields );
+		$object_fields = array_map( [ Value_Field::class, 'init' ], $object_fields );
 
 		$fields_active = array();
 		$custom_data   = array();

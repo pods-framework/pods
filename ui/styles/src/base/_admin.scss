@@ -630,3 +630,93 @@ body[class*="settings_page_pods-"] {
 		clear: both;
 	}
 }
+
+.pods-admin {
+	display: flex;
+	align-items: center;
+}
+
+.pods-admin_friends-callout_container {
+	min-width: 250px;
+	padding: 40px 20px 20px;
+	margin-left: 20px;
+	background: #95bf3b;
+	box-shadow:
+		0 2.8px 2.2px rgba(0, 0, 0, 0.02),
+		0 6.7px 5.3px rgba(0, 0, 0, 0.028),
+		0 12.5px 10px rgba(0, 0, 0, 0.035),
+		0 22.3px 17.9px rgba(0, 0, 0, 0.042),
+		0 41.8px 33.4px rgba(0, 0, 0, 0.05),
+		0 100px 80px rgba(0, 0, 0, 0.07)
+	;
+}
+
+.pods-admin_friends-callout_logo {
+	width: 100%;
+	max-width: 250px;
+	margin: 0 auto;
+}
+
+.pods-admin_friends-callout_headline {
+	color: white;
+	text-align: center;
+	font-size: 20px;
+	line-height: 1.2;
+	font-weight: 100;
+	margin-top: .5em;
+}
+
+.pods-admin_friends-callout_text {
+	color: white;
+}
+
+.pods-admin_friends-callout_button-group {
+	display: flex;
+	justify-content: space-between;
+}
+
+.pods-admin_friends-callout_button {
+	padding: 10px 20px 8px;
+	color: #444;
+	background: #f6f6e8;
+	display: block;
+	text-align: center;
+	transition: 300ms ease all;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-decoration: none;
+	border: 1px solid #f6f6e8;
+
+	&:hover {
+		background: #ececce;
+		color: #000;
+	}
+
+	&:last-child {
+		background: #95bf3b;
+		border: 1px solid #f6f6e8;
+		color: #f6f6e8;
+
+		&:hover {
+			background: #85ab33;
+			color: #fff;
+		}
+	}
+}
+
+.pods-admin_friends-you {
+	font-weight: 700;
+	font-size: 24px;
+}
+
+.pods-admin_friends-callout_date {
+	display: block;
+	font-size: 70%;
+}
+
+@media (min-width: 1600px) {
+	.pods-admin_friends-callout_container {
+		margin-left: 40px;
+		margin-right: 80px;
+	}
+}

@@ -3203,12 +3203,16 @@ class PodsUI {
 			</form>
 		</div>
 		<div class="pods-admin_friends-callout_container">
-			<img class="pods-admin_friends-callout_logo" src="https://32z2oi1mh41t3vukd84dqy4f-wpengine.netdna-ssl.com/files/2018/04/friends-of-pods-logo.svg" alt="Friends of Pods Logo">
-			<h2 class="pods-admin_friends-callout_headline">We need <span class="pods-admin_friends-you">YOU</span> in 2020</h2>
-			<p class="pods-admin_friends-callout_text">Things they are a changin' and we want you to be a part of it. We need to reach 300 recurring donations in 2020. Read the full story of how we got here and where we're going.</p>
-			<div class="pods-admin_friends-callout_button-group">
-				<a href="https://friends.pods.io/" class="pods-admin_friends-callout_button">Learn More</a>
-				<a href="https://pods.io/friends-of-pods/membership-levels/" class="pods-admin_friends-callout_button">Join Now</a>
+			<div class="pods-admin_friends-callout_logo-container">
+				<img class="pods-admin_friends-callout_logo" src="https://32z2oi1mh41t3vukd84dqy4f-wpengine.netdna-ssl.com/files/2018/04/friends-of-pods-logo.svg" width="100px" alt="Friends of Pods Logo">
+			</div>
+			<div class="pods-admin_friends-callout_content-container">
+				<h2 class="pods-admin_friends-callout_headline">We need <span class="pods-admin_friends-you">YOU</span> in 2020!</h2>
+				<p class="pods-admin_friends-callout_text">Things they are a changin' and we want you to be a part of it! Our goal is to be fully funded by users like you. Help us reach 300 recurring donors in 2020.</p>
+				<div class="pods-admin_friends-callout_button-group">
+					<a href="https://friends.pods.io/" class="pods-admin_friends-callout_button">Learn More</a>
+					<a href="https://pods.io/friends-of-pods/membership-levels/" class="pods-admin_friends-callout_button--join">Join Now</a>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -631,6 +631,8 @@ body[class*="settings_page_pods-"] {
 	}
 }
 
+/* Pods Admin - Friends of Pods Callout
+======================= */
 .pods-admin {
 	display: flex;
 	align-items: center;
@@ -638,51 +640,62 @@ body[class*="settings_page_pods-"] {
 
 .pods-admin_friends-callout_container {
 	min-width: 250px;
-	padding: 40px 20px 20px;
 	margin-left: 20px;
-	background: #95bf3b;
-	box-shadow:
-		0 2.8px 2.2px rgba(0, 0, 0, 0.02),
-		0 6.7px 5.3px rgba(0, 0, 0, 0.028),
-		0 12.5px 10px rgba(0, 0, 0, 0.035),
-		0 22.3px 17.9px rgba(0, 0, 0, 0.042),
-		0 41.8px 33.4px rgba(0, 0, 0, 0.05),
-		0 100px 80px rgba(0, 0, 0, 0.07)
-	;
+	border: 1px solid #e5e5e5;
+	border-bottom: 5px solid #95bf3b;
+	background: white;
+}
+
+.pods-admin_friends-callout_logo-container {
+	width: calc(100% - 40px);
+	background-color: #95BF3B;
+	display: flex;
+	justify-content: center;
+	padding: 23px 20px 20px;
+}
+
+.pods-admin_friends-callout_content-container {
+	padding: 0 20px 20px;
 }
 
 .pods-admin_friends-callout_logo {
 	width: 100%;
-	max-width: 250px;
-	margin: 0 auto;
+	max-width: 175px;
 }
 
 .pods-admin_friends-callout_headline {
-	color: white;
-	text-align: center;
 	font-size: 20px;
 	line-height: 1.2;
 	font-weight: 100;
-	margin-top: .5em;
-}
-
-.pods-admin_friends-callout_text {
-	color: white;
+	margin-bottom: .5em;
 }
 
 .pods-admin_friends-callout_button-group {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 }
 
 .pods-admin_friends-callout_button {
-	padding: 10px 20px 8px;
+	padding: 0;
+	color: #444;
+	display: block;
+	font-weight: 600;
+	transition: 300ms ease color;
+
+	&:hover {
+		color: #95bf3b;
+	}
+}
+
+.pods-admin_friends-callout_button--join {
+	padding: 8px 10px;
 	color: #444;
 	background: #f6f6e8;
 	display: block;
 	text-align: center;
 	transition: 300ms ease all;
-	font-weight: bold;
+	font-weight: 600;
 	text-transform: uppercase;
 	text-decoration: none;
 	border: 1px solid #f6f6e8;

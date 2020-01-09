@@ -663,13 +663,26 @@ body[class*="settings_page_pods-"] {
 	background: none;
 	border: none;
 	position: absolute;
-	top: 5px;
-	right: 0px;
+	top: 4px;
+	right: 5px;
 	z-index: 999;
+	width: 25px;
+	height: 25px;
+	display: flex;
+	transition: 300ms ease background-color;
+	border-radius: 100%;
+
+	&:hover {
+		background-color: #85ab33;
+		cursor: pointer;
+	}
 
 	svg {
 		width: 15px;
+		display: block;
 		fill: white;
+		height: 13px;
+		line-height: 13px;
 	}
 }
 

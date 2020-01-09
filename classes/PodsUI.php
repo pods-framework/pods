@@ -3211,7 +3211,7 @@ class PodsUI {
 			</div>
 			<div class="pods-admin_friends-callout_content-container">
 				<h2 class="pods-admin_friends-callout_headline">We need <span class="pods-admin_friends-you">YOU</span> in 2020</h2>
-				<p class="pods-admin_friends-callout_text">Things they are a changin' and we want you to be a part of it! Our goal is to be fully funded by users like you. Help us reach 200 recurring donors in 2020.</p>
+				<p class="pods-admin_friends-callout_text"><?php esc_html_e( "Things they are a changin' and we want you to be a part of it! Our goal is to be fully funded by users like you. Help us reach our goal of 200 recurring donors in 2020.", 'pods' ); ?></p>
 				<div class="pods-admin_friends-callout_button-group">
 					<a href="https://friends.pods.io/" class="pods-admin_friends-callout_button">Learn More</a>
 					<a href="https://pods.io/friends-of-pods/membership-levels/" class="pods-admin_friends-callout_button--join">Join Now</a>

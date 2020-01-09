@@ -3207,14 +3207,14 @@ class PodsUI {
 				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 100 125" enable-background="new 0 0 100 100" xml:space="preserve"><polygon points="95,17 83,5 50,38 17,5 5,17 38,50 5,83 17,95 50,62 83,95 95,83 62,50 "/></svg>
 			</button>
 			<div class="pods-admin_friends-callout_logo-container">
-				<img class="pods-admin_friends-callout_logo" src="https://32z2oi1mh41t3vukd84dqy4f-wpengine.netdna-ssl.com/files/2018/04/friends-of-pods-logo.svg" width="100px" alt="Friends of Pods Logo">
+				<img class="pods-admin_friends-callout_logo" src="https://pods.io/files/2018/04/friends-of-pods-logo.svg" width="100px" alt="<?php esc_attr_e( 'Friends of Pods Logo', 'pods' ); ?>">
 			</div>
 			<div class="pods-admin_friends-callout_content-container">
 				<h2 class="pods-admin_friends-callout_headline">We need <span class="pods-admin_friends-you">YOU</span> in 2020</h2>
 				<p class="pods-admin_friends-callout_text"><?php esc_html_e( "Things they are a changin' and we want you to be a part of it! Our goal is to be fully funded by users like you. Help us reach our goal of 200 recurring donors in 2020.", 'pods' ); ?></p>
 				<div class="pods-admin_friends-callout_button-group">
-					<a href="https://friends.pods.io/" class="pods-admin_friends-callout_button">Learn More</a>
-					<a href="https://pods.io/friends-of-pods/membership-levels/" class="pods-admin_friends-callout_button--join">Join Now</a>
+					<a href="https://friends.pods.io/" class="pods-admin_friends-callout_button"><?php esc_html_e( 'Learn More', 'pods' ); ?></a>
+					<a href="https://pods.io/friends-of-pods/membership-levels/" class="pods-admin_friends-callout_button--join"><?php esc_html_e( 'Join Now', 'pods' ); ?></a>
 				</div>
 			</div>
 		</div>

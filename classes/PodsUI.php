@@ -3203,6 +3203,9 @@ class PodsUI {
 			</form>
 		</div>
 		<div class="pods-admin_friends-callout_container">
+			<button class="pods-admin_friends-callout_close">
+				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 100 125" enable-background="new 0 0 100 100" xml:space="preserve"><polygon points="95,17 83,5 50,38 17,5 5,17 38,50 5,83 17,95 50,62 83,95 95,83 62,50 "/></svg>
+			</button>
 			<div class="pods-admin_friends-callout_logo-container">
 				<img class="pods-admin_friends-callout_logo" src="https://32z2oi1mh41t3vukd84dqy4f-wpengine.netdna-ssl.com/files/2018/04/friends-of-pods-logo.svg" width="100px" alt="Friends of Pods Logo">
 			</div>

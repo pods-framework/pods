@@ -644,6 +644,7 @@ body[class*="settings_page_pods-"] {
 	border: 1px solid #e5e5e5;
 	border-bottom: 5px solid #95bf3b;
 	background: white;
+	position: relative;
 }
 
 .pods-admin_friends-callout_logo-container {
@@ -656,6 +657,20 @@ body[class*="settings_page_pods-"] {
 
 .pods-admin_friends-callout_content-container {
 	padding: 0 20px 20px;
+}
+
+.pods-admin_friends-callout_close {
+	background: none;
+	border: none;
+	position: absolute;
+	top: 5px;
+	right: 0px;
+	z-index: 999;
+
+	svg {
+		width: 15px;
+		fill: white;
+	}
 }
 
 .pods-admin_friends-callout_logo {

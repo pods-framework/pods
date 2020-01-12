@@ -433,6 +433,7 @@ class PodsUI {
 	 */
 	public $save = false;
 	// Allow custom save handling for tables that aren't Pod-based
+
 	/**
 	 * Generate UI for Data Management
 	 *
@@ -518,7 +519,7 @@ class PodsUI {
 		if ( ( ! is_object( $this->pod ) || 'Pods' != get_class( $this->pod ) ) && false === $this->sql['table'] && false === $this->data ) {
 			echo $this->error( __( '<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods' ) );
 
-			return false;
+			return null;
 		}
 
 		// Assign pod labels
@@ -1658,7 +1659,7 @@ class PodsUI {
 	/**
 	 * @param bool $duplicate
 	 *
-	 * @return mixed
+	 * @return bool|mixed
 	 */
 	public function edit( $duplicate = false ) {
 
@@ -2168,7 +2169,7 @@ class PodsUI {
 			$check = $wpdb->query( $wpdb->prepare( "INSERT INTO $this->sql['table'] SET $field_sql", $values ) );
 		}
 		if ( $check ) {
-			if ( 0 == $this->insert_id ) {
+			if ( empty( $this->insert_id ) ) {
 				$this->insert_id = $wpdb->insert_id;
 			}
 			$this->message( sprintf( __( '<strong>Success!</strong> %1\$s %2\$s successfully.', 'pods' ), $this->item, $action ) );
@@ -2365,7 +2366,7 @@ class PodsUI {
 						<li>
 							<label for="bulk_export_fields_<?php esc_attr_e( $field['name'] ); ?>">
 								<input type="checkbox" name="bulk_export_fields[]" id="bulk_export_fields_<?php esc_attr_e( $field['name'] ); ?>" value="<?php esc_attr_e( $field['name'] ); ?>" />
-								<?php echo esc_html( $field['label'] ); ?>
+								<?php esc_html_e( $field['label'] ); ?>
 							</label>
 						</li>
 					<?php } ?>
@@ -2987,7 +2988,7 @@ class PodsUI {
 									}
 									?>
 									<label for="pods-form-ui-filter-<?php esc_attr_e( $filter ); ?>_start">
-										<?php echo esc_html( $filter_field['label'] ); ?>
+										<?php esc_html_e( $filter_field['label'] ); ?>
 									</label>
 									<?php echo PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field['type'], $filter_field ); ?>
 
@@ -3014,7 +3015,7 @@ class PodsUI {
 									$options = array_merge( $filter_field, $filter_field['options'] );
 								?>
 									<label for="pods-form-ui-filter-<?php esc_attr_e( $filter ); ?>">
-										<?php echo esc_html( $filter_field['label'] ); ?>
+										<?php esc_html_e( $filter_field['label'] ); ?>
 									</label>
 								<?php
 									echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options );
@@ -3042,7 +3043,7 @@ class PodsUI {
 									$options = array_merge( $filter_field, $filter_field['options'] );
 									?>
 									<label for="pods-form-ui-filter-<?php esc_attr_e( $filter ); ?>">
-									<?php echo esc_html( $filter_field['label'] ); ?>
+									<?php esc_html_e( $filter_field['label'] ); ?>
 									</label>
 									<?php
 									echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options );
@@ -3060,7 +3061,7 @@ class PodsUI {
 									$options['input_helper'] = pods_var_raw( 'ui_input_helper', $options, $options['input_helper'], null, true );
 									?>
 									<label for="pods-form-ui-filter-<?php esc_attr_e( $filter ); ?>">
-										<?php echo esc_html( $filter_field['label'] ); ?>
+										<?php esc_html_e( $filter_field['label'] ); ?>
 									</label>
 									<?php
 									echo PodsForm::field( 'filter_' . $filter, $value, 'text', $options );
@@ -3124,7 +3125,7 @@ class PodsUI {
 									if ( ! isset( $action_data['label'] ) ) {
 										$action_data['label'] = ucwords( str_replace( '_', ' ', $action ) );}
 								?>
-								<option value="<?php esc_attr_e( $action ); ?>"><?php echo esc_html( $action_data['label'] ); ?></option>
+								<option value="<?php esc_attr_e( $action ); ?>"><?php esc_html_e( $action_data['label'] ); ?></option>
 								<?php
 								}
 								?>
@@ -3448,8 +3449,8 @@ class PodsUI {
 							?>
 							<li class="pods-ui-filter-bar-filter" data-filter="<?php esc_attr_e( $data_filter ); ?>">
 								<a href="#TB_inline?width=640&inlineId=pods-ui-posts-filter-popup" class="thickbox" title="<?php esc_attr_e( 'Advanced Filters', 'pods' ); ?>">
-									<strong><?php echo esc_html( $filter_field['label'] ); ?>:</strong>
-									<?php echo esc_html( $value_label ); ?>
+									<strong><?php esc_html_e( $filter_field['label'] ); ?>:</strong>
+									<?php esc_html_e( $value_label ); ?>
 								</a>
 
 								<a href="#remove-filter" class="remove-filter" title="<?php esc_attr_e( 'Remove Filter', 'pods' ); ?>">x</a>
@@ -3583,7 +3584,7 @@ class PodsUI {
 								<span class="pods-ui-posts-filter-toggle toggle-off<?php esc_attr_e( ( empty( $start ) && empty( $end ) ) ? ' pods-hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
 
 								<label for="pods-form-ui-filter-<?php esc_attr_e( $filter ); ?>_start">
-									<?php echo esc_html( $filter_field['label'] ); ?>
+									<?php esc_html_e( $filter_field['label'] ); ?>
 								</label>
 
 								<span class="pods-ui-posts-filter<?php esc_attr_e( ( empty( $start ) && empty( $end ) ) ? ' pods-hidden' : '' ); ?>">
@@ -3615,7 +3616,7 @@ class PodsUI {
 								<span class="pods-ui-posts-filter-toggle toggle-off<?php esc_attr_e( empty( $value ) ? ' pods-hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
 
 								<label for="pods-form-ui-filter-<?php esc_attr_e( $filter ); ?>">
-									<?php echo esc_html( $filter_field['label'] ); ?>
+									<?php esc_html_e( $filter_field['label'] ); ?>
 								</label>
 
 								<span class="pods-ui-posts-filter<?php esc_attr_e( strlen( $value ) < 1 ? ' pods-hidden' : '' ); ?>">
@@ -3650,7 +3651,7 @@ class PodsUI {
 								<span class="pods-ui-posts-filter-toggle toggle-off<?php esc_attr_e( empty( $value ) ? ' pods-hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
 
 								<label for="pods-form-ui-filter-<?php esc_attr_e( $filter ); ?>">
-									<?php echo esc_html( $filter_field['label'] ); ?>
+									<?php esc_html_e( $filter_field['label'] ); ?>
 								</label>
 
 								<span class="pods-ui-posts-filter<?php esc_attr_e( strlen( $value ) < 1 ? ' pods-hidden' : '' ); ?>">
@@ -3676,7 +3677,7 @@ class PodsUI {
 								<span class="pods-ui-posts-filter-toggle toggle-off<?php esc_attr_e( empty( $value ) ? ' pods-hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
 
 								<label for="pods-form-ui-filter-<?php esc_attr_e( $filter ); ?>">
-									<?php echo esc_html( $filter_field['label'] ); ?>
+									<?php esc_html_e( $filter_field['label'] ); ?>
 								</label>
 
 								<span class="pods-ui-posts-filter<?php esc_attr_e( empty( $value ) ? ' pods-hidden' : '' ); ?>">
@@ -3888,13 +3889,13 @@ class PodsUI {
 									);
 									?>
 									">
-										<span><?php echo esc_html( $attributes['label'] ); ?></span>
+										<span><?php esc_html_e( $attributes['label'] ); ?></span>
 										<span class="sorting-indicator"></span> </a>
 								</th>
 								<?php
 							} else {
 								?>
-								<th scope="col"<?php echo $att_id; ?> class="<?php esc_attr_e( implode( ' ', $column_classes ) ); ?>"<?php echo $width; ?>><?php echo esc_html( $attributes['label'] ); ?></th>
+								<th scope="col"<?php echo $att_id; ?> class="<?php esc_attr_e( implode( ' ', $column_classes ) ); ?>"<?php echo $width; ?>><?php esc_html_e( $attributes['label'] ); ?></th>
 								<?php
 							}//end if
 						}//end foreach
@@ -3950,12 +3951,12 @@ class PodsUI {
 											)
 										);
 										?>
-										"><span><?php echo esc_html( $attributes['label'] ); ?></span><span class="sorting-indicator"></span></a>
+										"><span><?php esc_html_e( $attributes['label'] ); ?></span><span class="sorting-indicator"></span></a>
 									</th>
 									<?php
 								} else {
 									?>
-									<th scope="col" class="manage-column column-<?php esc_attr_e( $id ); ?>"<?php echo $width; ?>><?php echo esc_html( $attributes['label'] ); ?></th>
+									<th scope="col" class="manage-column column-<?php esc_attr_e( $id ); ?>"<?php echo $width; ?>><?php esc_html_e( $attributes['label'] ); ?></th>
 									<?php
 								}//end if
 							}//end foreach
@@ -4552,7 +4553,7 @@ class PodsUI {
 											}
 											?>
 											<label for="<?php esc_attr_e( $field ); ?>-hide">
-												<input class="hide-column-tog" name="<?php esc_attr_e( $this->unique_identifier ); ?>_<?php esc_attr_e( $field ); ?>-hide" type="checkbox" id="<?php esc_attr_e( $field ); ?>-hide" value="<?php esc_attr_e( $field ); ?>" checked="checked"><?php echo esc_html( $attributes['label'] ); ?>
+												<input class="hide-column-tog" name="<?php esc_attr_e( $this->unique_identifier ); ?>_<?php esc_attr_e( $field ); ?>-hide" type="checkbox" id="<?php esc_attr_e( $field ); ?>-hide" value="<?php esc_attr_e( $field ); ?>" checked="checked"><?php esc_html_e( $attributes['label'] ); ?>
 											</label>
 											<?php
 										}
@@ -4568,7 +4569,7 @@ class PodsUI {
 									if ( true === $this->pagination ) {
 										?>
 										<input type="text" class="screen-per-page" name="wp_screen_options[value]" id="<?php esc_attr_e( $this->unique_identifier ); ?>_per_page" maxlength="3" value="20">
-										<label for="<?php esc_attr_e( $this->unique_identifier ); ?>_per_page"><?php echo esc_html( sprintf( __( '%s per page', 'pods' ), $this->items ) ); ?></label>
+										<label for="<?php esc_attr_e( $this->unique_identifier ); ?>_per_page"><?php esc_html_e( sprintf( __( '%s per page', 'pods' ), $this->items ) ); ?></label>
 										<?php
 									}
 									$this->do_hook( 'screen_meta_screen_submit' );

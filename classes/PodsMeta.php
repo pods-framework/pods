@@ -3098,8 +3098,8 @@ class PodsMeta {
 						'get_meta' => true
 					) );
 
-					if ( ( ! is_array( $meta_cache[ $meta_k ] ) || ! isset( $meta_cache[ $meta_k ][0] ) ) ) {
-						if ( empty( $meta_cache[ $meta_k ] ) && ! is_array( $meta_cache[ $meta_k ] ) && $single ) {
+					if ( ! is_array( $meta_cache[ $meta_k ] ) ) {
+						if ( ! isset( $meta_cache[ $meta_k ][0] ) ) {
 							$meta_cache[ $meta_k ] = array();
 						} else {
 							$meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
@@ -3121,8 +3121,8 @@ class PodsMeta {
 							'get_meta' => true
 						) );
 
-						if ( ( ! is_array( $meta_cache[ $meta_k ] ) || ! isset( $meta_cache[ $meta_k ][0] ) ) && $single ) {
-							if ( empty( $meta_cache[ $meta_k ] ) && ! is_array( $meta_cache[ $meta_k ] ) && $single ) {
+						if ( ! is_array( $meta_cache[ $meta_k ] ) ) {
+							if ( ! isset( $meta_cache[ $meta_k ][0] ) ) {
 								$meta_cache[ $meta_k ] = array();
 							} else {
 								$meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );

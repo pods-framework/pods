@@ -3105,7 +3105,7 @@ class PodsMeta {
 					) );
 
 					// Value should always be an array.
-					if ( ! is_array( $meta_cache[ $meta_k ] ) ) {
+					if ( $single || ! is_array( $meta_cache[ $meta_k ] ) ) {
 						$meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
 					}
 

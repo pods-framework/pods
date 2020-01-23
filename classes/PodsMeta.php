@@ -3104,12 +3104,9 @@ class PodsMeta {
 						'get_meta' => true
 					) );
 
+					// Value should always be an array.
 					if ( ! is_array( $meta_cache[ $meta_k ] ) ) {
-						if ( ! isset( $meta_cache[ $meta_k ][0] ) ) {
-							$meta_cache[ $meta_k ] = array();
-						} else {
-							$meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
-						}
+						$meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
 					}
 
 					if ( in_array( $pod->fields[ $first_meta_key ]['type'], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $first_meta_key ] ) ) {

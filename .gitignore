@@ -41,3 +41,11 @@ npm-debug.log
 
 # PHPunit config
 phpunit.xml
+
+# Source maps should just be built locally
+ui/js/pods-ui-ready.min.js.map
+/package-lock.json
+/phpcs.xml
+
+# PHPCS reports
+phpcs-report-*.txt

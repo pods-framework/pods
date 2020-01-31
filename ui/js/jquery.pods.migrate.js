@@ -1,3 +1,4 @@
+/*@global PodsI18n */
 (function ( $ ) {
     var methods = {
         prepare : function () {
@@ -66,7 +67,7 @@
                     },
                     error : function () {
                         $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
-                        $row.find( 'td span.pods-wizard-info' ).text( 'Unable to process request, please try again.' );
+                        $row.find( 'td span.pods-wizard-info' ).text( PodsI18n.__( 'Unable to process request, please try again.' ) );
                     },
                     dataType : 'html'
                 } );
@@ -172,7 +173,7 @@
                     },
                     error : function () {
                         $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
-                        $row.find( 'td span.pods-wizard-info' ).text( 'Unable to process request, please try again.' );
+                        $row.find( 'td span.pods-wizard-info' ).text( PodsI18n.__( 'Unable to process request, please try again.' ) );
                     },
                     dataType : 'html'
                 } );

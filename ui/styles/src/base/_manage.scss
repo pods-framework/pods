@@ -1,0 +1,314 @@
+form.pods-manage {
+
+	ol.form-fields {
+		list-style: none;
+		padding-left: 0;
+		margin: 0;
+	}
+
+	.chzn-container {
+		display: block;
+	}
+
+	.pods-field label {
+		cursor: pointer;
+		display: inline-block;
+		padding: 0 0 4px 2px;
+	}
+
+	.pods-field input, .pods-field textarea {
+		display: block;
+		width: 100%;
+	}
+
+	.pods-field textarea {
+		font-family: monospace;
+		height: 100%;
+		resize: none;
+	}
+
+	.pods-field p.pods-field-comment {
+		color: #aaa;
+		font-size: .9em;
+		font-style: italic;
+		margin: 5px 0 0 2px !important;
+	}
+
+	.pods-pick select {
+		display: block;
+		min-width: 125px;
+		padding: 4px;
+	}
+
+	.pods-boolean {
+		position: relative;
+		cursor: pointer;
+	}
+
+	.pods-boolean input {
+		display: block;
+		height: auto;
+		left: 2px;
+		margin: 1px 7px 0 0;
+		padding: 0;
+		position: absolute;
+		top: 10px;
+		width: auto;
+	}
+
+	.pods-boolean label {
+		margin-left: 20px;
+	}
+
+	/* DFV */
+
+	.pods-dfv-list-item label {
+		padding-bottom: 8px;
+	}
+
+	.pods-dfv-list-item input {
+		display: none;
+	}
+
+	ul.pods-dfv-list {
+		background: #fbfbfb;
+		border: 1px solid #dfdfdf;
+		border-bottom: 0;
+		border-radius: 3px;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	ul.pods-dfv-list li {
+		background: #fff;
+		border-bottom: 1px solid #dfdfdf;
+		margin: 0;
+		position: relative;
+		padding-bottom: 10px;
+	}
+
+	ul.pods-dfv-list li span {
+		display: inline-block;
+		float: none;
+	}
+
+	ul.pods-dfv-list li span.pods-file-reorder {
+		left: 3px;
+		position: absolute;
+		top: 15px;
+		width: 30px;
+	}
+
+	ul.pods-dfv-list li span.pods-file-reorder img {
+		cursor: move;
+		display: block;
+	}
+
+	ul.pods-dfv-list li span.pods-file-thumb {
+		left: 35px;
+		position: absolute;
+		top: 2px;
+		width: 45px;
+	}
+
+	ul.pods-dfv-list li span.pods-file-thumb .pinkynail {
+		float: none;
+		margin: 0;
+		max-width: 40px !important;
+		max-height: 40px !important;
+	}
+
+	ul.pods-dfv-list li span.pods-dfv-list-name {
+		padding: 11px 35px 0 85px;
+	}
+
+	ul.pods-dfv-list li span.pods-file-remove {
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		width: 25px;
+	}
+
+	ul.pods-dfv-list li span.pods-file-remove img {
+		cursor: pointer;
+		display: block;
+	}
+
+	/* Pick values */
+
+	.pods-pick-values {
+		background: #fff;
+		border: 1px solid #dfdfdf;
+		border-radius: 3px;
+		min-width: 125px;
+		overflow: auto;
+		padding: 2px 0;
+	}
+
+	.pods-pick-values ul {
+		overflow: auto;
+	}
+
+	.pods-pick-values li {
+		border-bottom: 1px solid #f4f4f4;
+		line-height: 1em;
+		margin: 0;
+		padding: 3px 6px 2px;
+	}
+
+	.pods-pick-values li:nth-child(even) {
+		background: #fcfcfc;
+	}
+
+	.pods-pick-values label {
+		padding-bottom: 3px;
+		padding-top: 3px;
+	}
+
+	.pods-pick-values li:last-of-type {
+		border-bottom: 0;
+	}
+
+	.pods-pick-values li .pods-field {
+		padding: 3px 0 2px;
+	}
+
+	.pods-pick-values li .pods-boolean input {
+		top: 5px;
+	}
+
+	.pods-pick-values li:hover {
+		background: #f5f5f5;
+	}
+
+	select.pods-pick-multi {
+		height: auto !important;
+	}
+
+	.pods-field, p.pods-add-file {
+		clear: both;
+		padding: 10px 0;
+	}
+
+	/* Text fields */
+
+	.pods-textfield input, .pods-textarea textarea {
+		width: 100%;
+	}
+
+	.pods-textfield input, .pods-textarea textarea {
+		padding: 5px 7px;
+		color: #808080;
+	}
+
+	.pods-textarea textarea {
+		resize: vertical;
+	}
+
+	.pods-textfield input:focus, .pods-textarea textarea:focus {
+		border-color: #a0a0a0;
+		box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+		color: #000;
+	}
+
+	/* Date */
+
+	.pods-date input, .pods-number input {
+		min-width: 125px;
+	}
+
+	.pods-date input.pods-date-field.hasDatepicker {
+		background: #fff url(#{$ImagesPath}/calendar16.png) no-repeat 5px 5px;
+		cursor: pointer;
+		padding-left: 25px !important;
+		padding-top: 6px !important;
+		width: 150px;
+	}
+
+	/* Slider */
+
+	.pods-slider-field {
+		margin: 10px 0;
+	}
+
+	.pods-slider-field-display {
+		padding: 10px 0;
+	}
+
+	/**
+	 * jQuery UI
+	 */
+
+	ul.ui-sortable li {
+		cursor: move;
+	}
+
+	ul.ui-sortable li:hover {
+		background: #f5f5f5;
+		cursor: move;
+	}
+
+	ul.ui-sortable li:hover {
+		background: #f5f5f5;
+	}
+
+	.ui-slider-handle {
+		z-index: 0 !important;
+	}
+
+	/**
+	 * Plupload
+	 */
+
+	table.plupload-queue tr.hide {
+		display: none;
+	}
+
+	table.plupload-queue td.progress {
+		width: 175px;
+	}
+
+	table.plupload-queue td.progress .progress-bar {
+		width: 0;
+		height: 14px;
+		background: black;
+	}
+
+	.plupload-queue {
+		width: 250px;
+	}
+
+	.plupload-progress {
+		position: relative;
+	}
+
+	.plupload-progress .progress-bar {
+		position: absolute;
+		height: 14px;
+		width: 0%;
+		background: #4d4d4d;
+		margin-left: 10px;
+	}
+
+	.plupload-progress .file-name {
+		vertical-align: top;
+	}
+
+	.pods-inline-files li {
+		margin-top: 10px;
+	}
+
+	.pods-inline-files li .file-name {
+		vertical-align: top !important;
+	}
+
+	.pods-inline-files li .remove {
+		cursor: pointer;
+	}
+
+	.pods-inline-files .plupload-progress {
+		width: 150px;
+	}
+
+}

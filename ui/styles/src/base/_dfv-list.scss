@@ -1,0 +1,395 @@
+ul.pods-dfv-list ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul.pods-dfv-list,
+.pods-dfv-field .pods-pick-values > ul {
+	background: #fff;
+	margin: 0 0 5px 0;
+	padding: 0;
+	border-radius: 0;
+	border: 1px solid #dfdfdf;
+	overflow: hidden;
+	max-height: 220px;
+	overflow-y: auto;
+}
+
+ul.pods-dfv-list:empty {
+	display: none;
+}
+
+ul.pods-dfv-list-meta {
+	display: block;
+	overflow: hidden;
+	zoom: 1;
+	position: relative;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-col {
+	float: left;
+	margin: 0;
+	padding: 0;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-icon {
+	width: 40px;
+	margin: 0 5px;
+	height: 32px;
+	font-size: 0; /* for aligning image */
+	line-height: 32px;
+	text-align: center;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-icon img {
+	display: inline-block;
+	vertical-align: middle;
+	float: none;
+	border-radius: 2px;
+	margin: 0;
+	max-height: 100%;
+	width: auto;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-icon span.pinkynail {
+	font-size: 32px;
+	width: 32px;
+	height: 32px;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-handle {
+	width: 25px;
+	height: 32px;
+	float: left;
+	cursor: move;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-edit,
+ul.pods-dfv-list li.pods-dfv-list-link,
+ul.pods-dfv-list li.pods-dfv-list-download,
+ul.pods-dfv-list li.pods-dfv-list-remove {
+	width: 25px;
+	height: 32px;
+	float: right;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-handle span,
+ul.pods-dfv-list li.pods-dfv-list-edit a,
+ul.pods-dfv-list li.pods-dfv-list-link a,
+ul.pods-dfv-list li.pods-dfv-list-download a,
+ul.pods-dfv-list li.pods-dfv-list-remove a {
+	display: block;
+	width: 25px;
+	height: 32px;
+	opacity: 0.40;
+	text-decoration: none;
+	color: #616161;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-handle span:hover,
+ul.pods-dfv-list li.pods-dfv-list-edit a:hover,
+ul.pods-dfv-list li.pods-dfv-list-link a:hover,
+ul.pods-dfv-list li.pods-dfv-list-download a:hover,
+ul.pods-dfv-list li.pods-dfv-list-remove a:hover {
+	opacity: 1;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-handle span:focus,
+ul.pods-dfv-list li.pods-dfv-list-edit a:focus,
+ul.pods-dfv-list li.pods-dfv-list-link a:focus,
+ul.pods-dfv-list li.pods-dfv-list-download a:focus,
+ul.pods-dfv-list li.pods-dfv-list-remove a:focus {
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-handle span:before,
+ul.pods-dfv-list li.pods-dfv-list-edit a:before,
+ul.pods-dfv-list li.pods-dfv-list-link a:before,
+ul.pods-dfv-list li.pods-dfv-list-download a:before,
+ul.pods-dfv-list li.pods-dfv-list-remove a:before {
+	margin: 0 24px 0 -24px;
+	font: 400 20px/1 dashicons;
+	line-height: 32px;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-handle span:before {
+	@include Dashicons-Sort;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-edit a:before {
+	@include Dashicons-Edit;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-link a:before {
+	@include Dashicons-External;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-download a:before {
+	@include Dashicons-Download;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-remove a:before {
+	@include Dashicons-No;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-handle span,
+ul.pods-dfv-list li.pods-dfv-list-edit a,
+ul.pods-dfv-list li.pods-dfv-list-link a,
+ul.pods-dfv-list li.pods-dfv-list-download a,
+ul.pods-dfv-list li.pods-dfv-list-remove a {
+	text-indent: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	box-shadow: none;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-name {
+	position: absolute;
+	left: 80px;
+	right: 105px; /* needed for action buttons */
+	padding: 3px 0;
+	line-height: 24px;
+	overflow: visible;
+	white-space: nowrap;
+}
+
+ul.pods-dfv-list li.pods-dfv-list-name input[type=text] {
+	width: 100% !important;
+	font-size: 1em; /*1vh*/
+	line-height: 1;
+	padding: .3vh 5px;
+	margin: 0;
+}
+
+li.pods-dfv-list-item,
+.pods-pick-values li.pods-dfv-list-item {
+	display: block;
+	padding: 6px 5px 6px 10px;
+	margin: 0;
+	border-bottom: 1px solid #efefef;
+}
+
+li.pods-dfv-list-item:hover {
+	background: #f5f5f5;
+}
+
+li.pods-dfv-list-item:last-of-type {
+	border-bottom: 0;
+}
+
+ul.pods-dfv-list-queue {
+	margin: 14px 0 5px;
+}
+
+ul.pods-dfv-list-queue li.pods-dfv-list-name {
+	position: relative;
+	width: 73%;
+	left: auto;
+	right: auto;
+	padding-top: 0;
+}
+
+ul.pods-dfv-list-queue li.pods-dfv-list-item li.pods-progress,
+ul.pods-dfv-list-queue li.pods-dfv-list-item li.pods-progress div.progress-bar {
+	border-radius: 10px;
+	height: 18px;
+}
+
+ul.pods-dfv-list-queue li.pods-dfv-list-item li.pods-progress {
+	position: relative;
+	width: 23%;
+	margin: 2px 2% 0 0;
+	background-color: #e8e8e8;
+}
+
+ul.pods-dfv-list-queue li.pods-dfv-list-item li.pods-progress div.progress-bar {
+	width: 0;
+	background-color: #1073AA;
+}
+
+li.pods-dfv-list-item:after,
+ul.pods-dfv-list li.pods-dfv-list-item ul.pods-dfv-list-meta:after,
+ul.pods-dfv-list-queue li.pods-dfv-list-item:after,
+ul.pods-dfv-list-queue li.pods-dfv-list-item ul.pods-dfv-list-meta:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+/**
+ * Tiles view
+ */
+.pods-field-template-tiles ul.pods-dfv-list {
+	max-height: 500px;
+}
+
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-item {
+	display: inline-block;
+	width: 150px;
+	border-bottom: 0;
+	padding: 5px 10px 10px;
+	vertical-align: top;
+}
+
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-icon {
+	width: auto;
+	float: none;
+	margin: 32px 0 0;
+	max-height: 150px;
+	height: 150px;
+	line-height: 150px;
+	text-align: center;
+}
+
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-handle span:before {
+	@include Dashicons-Move;
+}
+
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-icon img {
+	max-width: none;
+	max-height: none;
+	float: none;
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0;
+}
+
+form.pods-form .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-name {
+	position: static;
+	float: none;
+}
+form.pods-form .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-name input[type=text] {
+	margin: 0;
+	padding: .3vh 6px;
+}
+
+/*
+ * Select 2
+ */
+.pods-dfv-field .select2-container .select2-selection--single {
+	height: 30px;
+}
+.pods-dfv-field .select2-container--default .select2-selection--single .select2-selection__clear {
+	height: 28px;
+	line-height: 26px;
+}
+
+.pods-dfv-field .select2-container--default .select2-selection--multiple .select2-selection__rendered li {
+	background: none;
+}
+
+.pods-dfv-field .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+	margin-right: 5px;
+	line-height: 1;
+	vertical-align: top;
+}
+
+.pods-dfv-field .select2-container--default .select2-selection--multiple li.select2-selection__choice {
+	padding: 3px 5px;
+	background-color: #f5f5f5;
+	border-color: #dfdfdf;
+	line-height: 1.2;
+	margin: 5px 5px 5px 0;
+}
+
+.pods-dfv-field .select2-container--default .select2-selection--multiple li.select2-selection__choice:hover {
+	background-color: #fafafa;
+	border-color: #bbb;
+	cursor: move;
+}
+
+.pods-dfv-field .pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
+	height: auto;
+}
+
+.pods-dfv-field .select2-container--default .select2-selection--multiple {
+	border-color: #ddd;
+	border-radius: 1px;
+}
+
+/* WP focus style */
+.pods-dfv-field .select2-container--default.select2-container--focus .select2-selection--multiple {
+	border-color: #5b9dd9;
+	-webkit-box-shadow: 0 0 2px rgba( 30, 140, 190, 0.8 );
+	box-shadow: 0 0 2px rgba( 30, 140, 190, 0.8 );
+}
+/* Select2 list styles (overwrite default pick styles) */
+.pods-pick-values .select2-container li {
+	padding: 0;
+	line-height: inherit;
+}
+/* Select2 responsive search input issue, enhancement upon: https://github.com/select2/select2/issues/3278#issuecomment-298035731 */
+.select2-container .select2-selection--multiple .select2-search--inline {
+	float: none;
+}
+.select2-container .select2-selection--multiple .select2-search--inline:first-child .select2-search__field {
+	width: 100% !important;
+}
+
+/*
+ * @todo Probably remove this
+ */
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-handle,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-edit,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-link,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-download,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-remove {
+	position: absolute;
+	top: 0;
+}
+
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-handle {
+	left: 0;
+}
+
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-edit {
+	right: 75px;
+}
+
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-link {
+	right: 50px;
+}
+
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-download {
+	right: 25px;
+}
+
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-remove {
+	right: 0;
+}
+/*
+ * @todo until here
+ */
+
+ul.pods-dfv-list li.pods-dfv-list-actions {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-actions li.pods-dfv-list-edit,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-actions li.pods-dfv-list-link,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-actions li.pods-dfv-list-download,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-actions li.pods-dfv-list-remove {
+	position: static;
+	float: right;
+}
+
+
+a.pods-quick-add,
+span.pods-quick-add {
+	display: block;
+	line-height: 36px;
+	float: right;
+	margin-right: 15px;
+}
+
+div.open a.pods-quick-add,
+div.open span.pods-quick-add {
+	display: none;
+}
+
+.pods-ui-field .pods-dfv-list-add {
+	margin-bottom: 10px;
+}

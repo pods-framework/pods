@@ -1,17 +1,39 @@
 // change the menu position based on the scroll positon
-window.onscroll = function () {
-    if ( window.XMLHttpRequest ) {
-        if ( document.documentElement.scrollTop > 33 || self.pageYOffset > 33 ) {
-            jQuery( '.pods_floatmenu' ).css( 'position', 'fixed' );
-            jQuery( '.pods_floatmenu' ).css( 'top', '52px' );
-            jQuery( '.pods_floatmenu' ).css( 'right', '315px' );
+
+jQuery(document).ready(function($) {
+    $( '.pods_floatmenu' ).each(function() {
+        var floatmenu = $( this );
+        var margin = 20;
+        var offset = floatmenu.offset();
+        var top = margin;
+        if ( $('html').hasClass( 'wp-toolbar' ) ) {
+            offset.top -= parseInt( $('html').css('padding-top') );
+            top += parseInt( $('html').css('padding-top') );
         }
-        else if ( document.documentElement.scrollTop < 33 || self.pageYOffset < 33 ) {
-            jQuery( '.pods_floatmenu' ).css( 'position', 'relative' );
-            jQuery( '.pods_floatmenu' ).css( 'top', 'auto' );
-            jQuery( '.pods_floatmenu' ).css( 'right', 'auto' );
-            //jQuery('.pods_floatmenu').css('top','112px');
-            //jQuery('.pods_floatmenu').css('right','15px');
-        }
-    }
-}
+        offset.left -= margin;
+        offset.top -= margin;
+        var right = $(window).width() - offset.left;
+        window.onscroll = function () {
+            if ( window.XMLHttpRequest ) {
+                // Make sure the window height is larger than the floatmenu height
+                if ( $(window).height() < ( floatmenu.height() + ( 2 * margin ) ) ) {
+                    return;
+                }
+                if ( document.documentElement.scrollTop > offset.top || self.pageYOffset > offset.top ) {
+                    floatmenu.css( {
+                        'position': 'fixed',
+                        'top': top + 'px',
+                        'right': right + 'px'
+                    } );
+                }
+                else if ( document.documentElement.scrollTop < offset.top || self.pageYOffset < offset.top ) {
+                    floatmenu.css( {
+                        'position': 'relative',
+                        'top': 'auto',
+                        'right': 'auto'
+                    } );
+                }
+            }
+        };
+    });
+});

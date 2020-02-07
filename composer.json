@@ -48,7 +48,7 @@
     }
   ],
   "require": {
-    "composer/installers": "1.5.*",
+    "composer/installers": "1.8.*",
     "php": ">=5.3"
   },
   "require-dev": {

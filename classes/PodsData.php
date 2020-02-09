@@ -3296,7 +3296,7 @@ class PodsData {
                      LEFT JOIN `{$table_info['pod_table']}` AS `{$field_joined}` ON
                         `{$field_joined}`.`{$table_info['pod_field_id']}` = `{$traverse_recurse['rel_alias']}`.`{$joined_id}`
                  ";
-			} else {
+			} elseif ( pods_podsrel_enabled() ) {
 				if ( ( $traverse_recurse['depth'] + 2 ) === count( $traverse_recurse['fields'] ) && ( 'pick' !== $traverse['type'] || ! in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects, true ) ) && 'post_author' === $traverse_recurse['fields'][ $traverse_recurse['depth'] + 1 ] ) {
 					$table_info['recurse'] = false;
 				}

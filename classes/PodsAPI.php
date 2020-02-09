@@ -3034,61 +3034,61 @@ class PodsAPI {
 							AND pm.meta_key = 'sister_id'
 							AND pm.meta_value = %d
 					", array(
-						$params->id
+						$params->id,
 					) );
 
-				if ( ! pods_tableless() ) {
+				if ( pods_podsrel_enabled() ) {
 					pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}", false );
 
-					pods_query( "
-							UPDATE `@wp_podsrel`
-							SET `related_field_id` = 0
-							WHERE `field_id` = %d
-						", array(
-							$old_sister_id
-						) );
+					pods_query( '
+						UPDATE `@wp_podsrel`
+						SET `related_field_id` = 0
+						WHERE `field_id` = %d
+					', array(
+						$old_sister_id,
+					) );
 				}
 			}
 		} elseif ( 0 < $sister_id ) {
 			update_post_meta( $sister_id, 'sister_id', $params->id );
 
-			if ( true === $db && ( ! pods_tableless() ) ) {
-				pods_query( "
-						UPDATE `@wp_podsrel`
-						SET `related_field_id` = %d
-						WHERE `field_id` = %d
-					", array(
-						$params->id,
-						$sister_id
-					) );
+			if ( true === $db && pods_podsrel_enabled() ) {
+				pods_query( '
+					UPDATE `@wp_podsrel`
+					SET `related_field_id` = %d
+					WHERE `field_id` = %d
+				', array(
+					$params->id,
+					$sister_id,
+				) );
 			}
 		} elseif ( 0 < $old_sister_id ) {
 			delete_post_meta( $old_sister_id, 'sister_id' );
 
-			if ( true === $db && ( ! pods_tableless() ) ) {
-				pods_query( "
-						UPDATE `@wp_podsrel`
-						SET `related_field_id` = 0
-						WHERE `field_id` = %d
-					", array(
-						$old_sister_id
-					) );
+			if ( true === $db && pods_podsrel_enabled() ) {
+				pods_query( '
+					UPDATE `@wp_podsrel`
+					SET `related_field_id` = 0
+					WHERE `field_id` = %d
+				', array(
+					$old_sister_id,
+				) );
 			}
 		}
 
 		if ( ! empty( $old_id ) && $old_name !== $field['name'] && true === $db ) {
-			pods_query( "
-					UPDATE `@wp_postmeta`
-					SET `meta_value` = %s
-					WHERE
-						`post_id` = %d
-						AND `meta_key` = 'pod_index'
-						AND `meta_value` = %s
-				", array(
-					$field['name'],
-					$pod['id'],
-					$old_name
-				) );
+			pods_query( '
+				UPDATE `@wp_postmeta`
+				SET `meta_value` = %s
+				WHERE
+					`post_id` = %d
+					AND `meta_key` = "pod_index"
+					AND `meta_value` = %s
+			', array(
+				$field['name'],
+				$pod['id'],
+				$old_name,
+			) );
 		}
 
         $object_collection = Pods\Whatsit\Store::get_instance();
@@ -4534,12 +4534,12 @@ class PodsAPI {
 		}
 
 		// Relationships table
-		if ( ! pods_tableless() ) {
+		if ( pods_podsrel_enabled() ) {
 			$related_weight = 0;
 
 			foreach ( $related_ids as $related_id ) {
 				if ( in_array( $related_id, $current_ids ) ) {
-					pods_query( "
+					pods_query( '
 						UPDATE `@wp_podsrel`
 						SET
 							`pod_id` = %d,
@@ -4554,7 +4554,7 @@ class PodsAPI {
 							AND `field_id` = %d
 							AND `item_id` = %d
 							AND `related_item_id` = %d
-					", array(
+					', array(
 						$pod['id'],
 						$field['id'],
 						$id,
@@ -4569,7 +4569,7 @@ class PodsAPI {
 						$related_id,
 					) );
 				} else {
-					pods_query( "
+					pods_query( '
 						INSERT INTO `@wp_podsrel`
 							(
 								`pod_id`,
@@ -4581,14 +4581,14 @@ class PodsAPI {
 								`weight`
 							)
 						VALUES ( %d, %d, %d, %d, %d, %d, %d )
-					", array(
+					', array(
 						$pod['id'],
 						$field['id'],
 						$id,
 						$related_pod_id,
 						$related_field_id,
 						$related_id,
-						$related_weight
+						$related_weight,
 					) );
 				}
 
@@ -5145,7 +5145,7 @@ class PodsAPI {
 
 		foreach ( $params->order as $order => $id ) {
 			if ( isset( $pod['fields'][ $params->field ] ) || isset( $pod['object_fields'][ $params->field ] ) ) {
-				if ( 'table' === $pod['storage'] && ( ! pods_tableless() ) ) {
+				if ( 'table' === $pod['storage'] && ! pods_tableless() ) {
 					if ( isset( $pod['fields'][ $params->field ] ) ) {
 						pods_query( "UPDATE `@wp_pods_{$params->name}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
 					} else {
@@ -5209,7 +5209,9 @@ class PodsAPI {
 				}
 			}
 
-			pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
+			if ( pods_podsrel_enabled() ) {
+				pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
+			}
 		}
 
 		// @todo Delete relationships from tableless relationships
@@ -5385,7 +5387,9 @@ class PodsAPI {
 				}
 			}
 
-			pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
+			if ( pods_podsrel_enabled() ) {
+				pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
+			}
 		}
 
 		// @todo Delete relationships from tableless relationships
@@ -5552,7 +5556,7 @@ class PodsAPI {
 				ON p.post_type = '_pods_field' AND p.ID = pm.post_id
 			WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
-		if ( ( ! pods_tableless() ) && $table_operation ) {
+		if ( $table_operation && pods_podsrel_enabled() ) {
 			pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})", false );
 		}
 
@@ -5917,8 +5921,8 @@ class PodsAPI {
 			}
 		}
 
-		if ( ! empty( $pod ) && ! pods_tableless() ) {
-			pods_query( "
+		if ( ! empty( $pod ) && pods_podsrel_enabled() ) {
+			pods_query( '
 				DELETE FROM `@wp_podsrel`
 				WHERE
 				(
@@ -5929,12 +5933,12 @@ class PodsAPI {
 					`related_pod_id` = %d
 					AND `related_item_id` = %d
 				)
-			", array(
+			', array(
 				$pod['id'],
 				$id,
 
 				$pod['id'],
-				$id
+				$id,
 			) );
 		}
 
@@ -6036,8 +6040,8 @@ class PodsAPI {
 		}
 
 		// Relationships table
-		if ( ! pods_tableless() ) {
-			pods_query( "
+		if ( pods_podsrel_enabled() ) {
+			pods_query( '
 				DELETE FROM `@wp_podsrel`
 				WHERE
 				(
@@ -6052,7 +6056,7 @@ class PodsAPI {
 					AND `related_item_id` = %d
 					AND `item_id` = %d
 				)
-			", array(
+			', array(
 				$related_pod['id'],
 				$related_field['id'],
 				$related_id,
@@ -6061,7 +6065,7 @@ class PodsAPI {
 				$related_pod['id'],
 				$related_field['id'],
 				$related_id,
-				$id
+				$id,
 			) );
 		}
 
@@ -7239,20 +7243,20 @@ class PodsAPI {
 			$field_id  = (int) $field_id;
 			$sister_id = (int) pods_var_raw( 'sister_id', $field, 0 );
 
-			$related_where = "
-				`field_id` = {$field_id}
-				AND `item_id` IN ( {$ids} )
-			";
+			$relationships = array();
 
-			$sql = "
-				SELECT item_id, related_item_id, related_field_id
-				FROM `@wp_podsrel`
-				WHERE
-					{$related_where}
-				ORDER BY `weight`
-			";
+			if ( pods_podsrel_enabled() ) {
+				$sql = "
+					SELECT item_id, related_item_id, related_field_id
+					FROM `@wp_podsrel`
+					WHERE
+						`field_id` = {$field_id}
+						AND `item_id` IN ( {$ids} )
+					ORDER BY `weight`
+				";
 
-			$relationships = pods_query( $sql );
+				$relationships = pods_query( $sql );
+			}
 
 			if ( ! empty( $relationships ) ) {
 				foreach ( $relationships as $relation ) {
@@ -7404,20 +7408,20 @@ class PodsAPI {
 			$field_id  = (int) $field_id;
 			$sister_id = (int) pods_var_raw( 'sister_id', $field, 0 );
 
-			$related_where = "
-				`field_id` = {$field_id}
-				AND `related_item_id` = {$id}
-			";
+			$relationships = array();
 
-			$sql = "
-				SELECT *
-				FROM `@wp_podsrel`
-				WHERE
-					{$related_where}
-				ORDER BY `weight`
-			";
+			if ( pods_podsrel_enabled() ) {
+				$sql = "
+					SELECT *
+					FROM `@wp_podsrel`
+					WHERE
+						`field_id` = {$field_id}
+						AND `related_item_id` = {$id}
+					ORDER BY `weight`
+				";
 
-			$relationships = pods_query( $sql );
+				$relationships = pods_query( $sql );
+			}
 
 			if ( ! empty( $relationships ) ) {
 				$related_ids = array();

@@ -3869,6 +3869,10 @@ class PodsAdmin {
 					'label' => __( 'Pods Tableless Mode Activated', 'pods' ),
 					'value' => ( pods_tableless() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
+				'pods-relationship-table-enabled'             => array(
+					'label' => __( 'Pods Relationship Table Enabled', 'pods' ),
+					'value' => ( pods_podsrel_enabled() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
 				'pods-light-mode'                 => array(
 					'label' => __( 'Pods Light Mode Activated', 'pods' ),
 					'value' => ( pods_light() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),

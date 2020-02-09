@@ -378,6 +378,24 @@ function pods_tableless() {
 }
 
 /**
+ * Determine whether the wp_podsrel table is enabled.
+ *
+ * @return bool Whether the wp_podsrel table is enabled.
+ *
+ * @since TBD
+ */
+function pods_podsrel_enabled() {
+	/**
+	 * Allow filtering of whether or not the wp_podsrel table is enabled.
+	 *
+	 * @param bool $enabled Whether the wp_podsrel table is enabled.
+	 *
+	 * @since TBD
+	 */
+	return apply_filters( 'pods_podsrel_enabled', pods_tableless() ) ;
+}
+
+/**
  * Determine if Light Mode is enabled
  *
  * @return bool Whether Light Mode is enabled
@@ -2088,10 +2106,10 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 
 			if ( ! pods_tableless() ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-						array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
-						array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
-						array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 ),
-					) );
+					array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
+					array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
+					array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 ),
+				) );
 			}
 		}
 
@@ -2107,16 +2125,16 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 			// Handle *_term_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'term' ) ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-						array( 'get_term_metadata', array( PodsInit::$meta, 'get_term_meta' ), 10, 4 ),
-					) );
+					array( 'get_term_metadata', array( PodsInit::$meta, 'get_term_meta' ), 10, 4 ),
+				) );
 			}
 
 			if ( ! pods_tableless() ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-						array( 'add_term_metadata', array( PodsInit::$meta, 'add_term_meta' ), 10, 5 ),
-						array( 'update_term_metadata', array( PodsInit::$meta, 'update_term_meta' ), 10, 5 ),
-						array( 'delete_term_metadata', array( PodsInit::$meta, 'delete_term_meta' ), 10, 5 ),
-					) );
+					array( 'add_term_metadata', array( PodsInit::$meta, 'add_term_meta' ), 10, 5 ),
+					array( 'update_term_metadata', array( PodsInit::$meta, 'update_term_meta' ), 10, 5 ),
+					array( 'delete_term_metadata', array( PodsInit::$meta, 'delete_term_meta' ), 10, 5 ),
+				) );
 			}
 
 			$no_conflict['action'] = array(
@@ -2138,16 +2156,16 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 			// Handle *_post_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-						array( 'get_post_metadata', array( PodsInit::$meta, 'get_post_meta' ), 10, 4 ),
-					) );
+					array( 'get_post_metadata', array( PodsInit::$meta, 'get_post_meta' ), 10, 4 ),
+				) );
 			}
 
 			if ( ! pods_tableless() ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-						array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
-						array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
-						array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 ),
-					) );
+					array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
+					array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
+					array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 ),
+				) );
 			}
 
 			$no_conflict['action'] = array();
@@ -2165,10 +2183,10 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 
 			if ( ! pods_tableless() ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-						array( 'add_user_metadata', array( PodsInit::$meta, 'add_user_meta' ), 10, 5 ),
-						array( 'update_user_metadata', array( PodsInit::$meta, 'update_user_meta' ), 10, 5 ),
-						array( 'delete_user_metadata', array( PodsInit::$meta, 'delete_user_meta' ), 10, 5 ),
-					) );
+					array( 'add_user_metadata', array( PodsInit::$meta, 'add_user_meta' ), 10, 5 ),
+					array( 'update_user_metadata', array( PodsInit::$meta, 'update_user_meta' ), 10, 5 ),
+					array( 'delete_user_metadata', array( PodsInit::$meta, 'delete_user_meta' ), 10, 5 ),
+				) );
 			}
 		}
 
@@ -2190,10 +2208,10 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 
 			if ( ! pods_tableless() ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-						array( 'add_comment_metadata', array( PodsInit::$meta, 'add_comment_meta' ), 10, 5 ),
-						array( 'update_comment_metadata', array( PodsInit::$meta, 'update_comment_meta' ), 10, 5 ),
-						array( 'delete_comment_metadata', array( PodsInit::$meta, 'delete_comment_meta' ), 10, 5 ),
-					) );
+					array( 'add_comment_metadata', array( PodsInit::$meta, 'add_comment_meta' ), 10, 5 ),
+					array( 'update_comment_metadata', array( PodsInit::$meta, 'update_comment_meta' ), 10, 5 ),
+					array( 'delete_comment_metadata', array( PodsInit::$meta, 'delete_comment_meta' ), 10, 5 ),
+				) );
 			}
 		}
 

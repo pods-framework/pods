@@ -55,7 +55,14 @@ class PodsUpgrade {
 
 		do_action( 'pods_install', PODS_VERSION, $pods_version, $_blog_id );
 
-		if ( ( ! pods_tableless() ) && false !== apply_filters( 'pods_install_run', null, PODS_VERSION, $pods_version, $_blog_id ) && 0 === (int) pods_v( 'pods_bypass_install' ) ) {
+		/**
+		 * Allow filtering of whether the Pods SQL installation should be run. Return false to bypass.
+		 *
+		 * @param bool $run Whether the Pods SQL installation should be run.
+		 */
+		$run = apply_filters( 'pods_install_run', true, PODS_VERSION, $pods_version, $_blog_id );
+
+		if ( false !== $run && ! pods_tableless() && 0 === (int) pods_v( 'pods_bypass_install' ) ) {
 			$sql = file_get_contents( PODS_DIR . 'sql/dump.sql' );
 			$sql = apply_filters( 'pods_install_sql', $sql, PODS_VERSION, $pods_version, $_blog_id );
 

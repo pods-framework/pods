@@ -99,7 +99,7 @@ class Pods_Term_Splitting {
 		global $wpdb;
 
 		$task = "update_podsrel_taxonomy_{$pod_id}";
-		if ( ! $this->have_done( $task ) ) {
+		if ( pods_podsrel_enabled() && ! $this->have_done( $task ) ) {
 
 			// UPDATE {$wpdb->prefix}podsrel SET item_id = {$new_term_id} WHERE pod_id = {$pod_id} AND item_id = {$term_id}
 			$table        = "{$wpdb->prefix}podsrel";
@@ -199,7 +199,7 @@ class Pods_Term_Splitting {
 		global $wpdb;
 
 		$task = "update_podsrel_related_term_{$field_id}";
-		if ( ! $this->have_done( $task ) ) {
+		if ( pods_podsrel_enabled() && ! $this->have_done( $task ) ) {
 
 			// UPDATE {$wpdb->prefix}podsrel SET related_item_id = {$new_term_id} WHERE field_id = {$field_id} AND related_item_id = {$term_id}
 			$table        = "{$wpdb->prefix}podsrel";

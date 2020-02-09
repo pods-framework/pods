@@ -1798,6 +1798,15 @@ class PodsInit {
 			pods_query( $sql, false );
 		}
 
+		/**
+		 * Allow hooking into the attachment deletion process.
+		 *
+		 * @since TBD
+		 *
+		 * @param int $_ID The attachment ID being deleted.
+		 */
+		do_action( 'pods_init_delete_attachment', $_ID );
+
 		// Post Meta
 		if ( ! empty( PodsMeta::$post_types ) ) {
 			$sql = "

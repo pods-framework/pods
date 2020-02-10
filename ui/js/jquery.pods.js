@@ -135,8 +135,7 @@
 
 							var $fieldName = $fieldRow.find( 'label' ).text();
 
-							// @todo Needs i18n work
-							$fieldRow.append(' <td class="pods-validate-error-message">' + $fieldName.replace('*', '' ) + ' is required.</td>' );
+							$fieldRow.append(' <td class="pods-validate-error-message">' + PodsI18n.__( '%s is required.' ).replace( '%s', $fieldName.replace('*', '' ) ) + '</td>' );
 						}
 					} );
 

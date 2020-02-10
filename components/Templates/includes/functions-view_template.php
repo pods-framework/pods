@@ -169,7 +169,6 @@ function frontier_if_block( $atts, $code ) {
 				if ( $new_pod && $new_pod->valid() && $new_pod->exists() ) {
 					$field_pod = $new_pod;
 				}
-
 			} else {
 				$field_data = $field_pod->field( $field );
 				$field_type = $field_pod->fields( $field, 'type' );

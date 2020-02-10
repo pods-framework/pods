@@ -345,7 +345,7 @@ class PodsField_OEmbed extends PodsField {
 			return $this->providers;
 		}
 
-		if ( file_exists( ABSPATH . WPINC . '/class-oembed.php' ) ) {
+		if ( ! class_exists( 'WP_oEmbed' ) && file_exists( ABSPATH . WPINC . '/class-oembed.php' ) ) {
 			require_once ABSPATH . WPINC . '/class-oembed.php';
 		}
 
@@ -385,46 +385,32 @@ class PodsField_OEmbed extends PodsField {
 
 	/**
 	 * Takes a URL and returns the corresponding oEmbed provider's URL, if there is one.
-	 * This function is ripped from WP since Pods has support from 3.8 and in the WP core this function is 4.0+
-	 * We've stripped the autodiscover part from this function to keep it basic
 	 *
 	 * @since 2.7.0
 	 * @access public
 	 *
 	 * @see    WP_oEmbed::get_provider()
 	 *
-	 * @param string $url The URL to the content.
+	 * @param string       $url  The URL to the content.
+	 * @param string|array $args Optional provider arguments.
 	 *
 	 * @return false|string False on failure, otherwise the oEmbed provider URL.
 	 */
-	public function get_provider( $url ) {
+	public function get_provider( $url, $args = array() ) {
 
-		$provider = false;
+		if ( ! class_exists( 'WP_oEmbed' ) && file_exists( ABSPATH . WPINC . '/class-oembed.php' ) ) {
+			require_once ABSPATH . WPINC . '/class-oembed.php';
+		}
 
-		foreach ( $this->providers as $matchmask => $data ) {
-			if ( isset( $data['host'] ) ) {
-				unset( $data['host'] );
+		if ( function_exists( '_wp_oembed_get_object' ) ) {
+			$wp_oembed = _wp_oembed_get_object();
+
+			if ( is_callable( array( $wp_oembed, 'get_provider' ) ) ) {
+				return $wp_oembed->get_provider( $url, $args );
 			}
-			reset( $data );
+		}
 
-			list( $providerurl, $regex ) = $data;
-
-			$match = $matchmask;
-
-			// Turn the asterisk-type provider URLs into regex
-			if ( ! $regex ) {
-				$matchmask = '#' . str_replace( '___wildcard___', '(.+)', preg_quote( str_replace( '*', '___wildcard___', $matchmask ), '#' ) ) . '#i';
-				$matchmask = preg_replace( '|^#http\\\://|', '#https?\://', $matchmask );
-			}
-
-			if ( preg_match( $matchmask, $url ) ) {
-				$provider = $match;
-
-				break;
-			}
-		}//end foreach
-
-		return $provider;
+		return false;
 	}
 
 	/**

@@ -2,6 +2,9 @@ language: php
 
 sudo: false
 
+services:
+    - mysql
+
 php:
     - 7.1
 

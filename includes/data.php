@@ -1383,13 +1383,14 @@ function pods_absint( $maybeint, $strict = true, $allow_negative = false ) {
 /**
  * Functions like str_replace except it will restrict $occurrences
  *
+ * @since 2.0
+ *
  * @param mixed  $find
  * @param mixed  $replace
  * @param string $string
  * @param int    $occurrences (optional)
  *
  * @return mixed
- * @version 2.0
  */
 function pods_str_replace( $find, $replace, $string, $occurrences = - 1 ) {
 
@@ -1416,8 +1417,12 @@ function pods_str_replace( $find, $replace, $string, $occurrences = - 1 ) {
 	} else {
 		$find = '/' . preg_quote( $find, '/' ) . '/';
 	}
-
-	return preg_replace( $find, $replace, $string, $occurrences );
+	if ( is_string( $string ) ) {
+		return preg_replace( $find, $replace, $string, $occurrences );
+	} else {
+		// Occasionally we will receive non string values (true, false, null).  Allow those to pass through
+		return $string;
+	}
 }
 
 /**
@@ -1462,82 +1467,82 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
 }
 
 /**
- * Evaluate tags like magic tags but through pods_v
+ * Evaluate tags like magic tags but through pods_v.
  *
- * @param string|array|object $tags     String to be evaluated
- * @param bool                $sanitize Whether to sanitize tags
+ * @since 2.1
+ *
+ * @param string|array|object $tags     String to be evaluated.
+ * @param bool                $sanitize Whether to sanitize.
+ * @param null|mixed          $fallback The fallback value to use if not set, should already be sanitized.
  *
  * @return string
  *
- * @version 2.1
- *
- * @see     pods_evaluate_tag
+ * @see pods_evaluate_tag
  */
-function pods_evaluate_tags( $tags, $sanitize = false ) {
-
+function pods_evaluate_tags( $tags, $sanitize = false, $fallback = null ) {
 	if ( is_array( $tags ) ) {
 		foreach ( $tags as $k => $tag ) {
 			$tags[ $k ] = pods_evaluate_tags( $tag, $sanitize );
 		}
 
 		return $tags;
-	} elseif ( is_object( $tags ) ) {
+	}
+
+	if ( is_object( $tags ) ) {
 		$tags = get_object_vars( $tags );
 
-		foreach ( $tags as $k => $tag ) {
-			$tags[ $k ] = pods_evaluate_tags( $tag, $sanitize );
-		}
-
-		$tags = (object) $tags;
+		// Evaluate array and cast as object.
+		$tags = (object) pods_evaluate_tags( $tags );
 
 		return $tags;
 	}
 
-	$callback = 'pods_evaluate_tag';
-
-	if ( true === $sanitize ) {
-		$callback = 'pods_evaluate_tag_sanitized';
-	}
-
-	return preg_replace_callback( '/({@(.*?)})/m', $callback, (string) $tags );
-
+	return preg_replace_callback(
+		'/({@(.*?)})/m',
+		function ( $tag ) use ( $sanitize, $fallback ) {
+			return pods_evaluate_tag( $tag, $sanitize, $fallback );
+		},
+		(string) $tags
+	);
 }
 
 /**
- * Evaluate tag like magic tag but mapped through pods_v_sanitized
+ * Evaluate tag like magic tag but mapped through pods_v_sanitized.
  *
- * @param string|array $tag
+ * @since 2.1
  *
- * @return string
+ * @param string|array $tag String to be evaluated.
  *
- * @version 2.1
+ * @return string Evaluated content.
  *
- * @see     pods_evaluate_tag
+ * @see pods_evaluate_tag
  */
 function pods_evaluate_tag_sanitized( $tag ) {
-
 	return pods_evaluate_tag( $tag, true );
-
 }
 
 /**
- * Evaluate tag like magic tag but mapped through pods_v
+ * Evaluate tag like magic tag but mapped through pods_v.
  *
- * @param string|array $tag
- * @param bool         $sanitize Whether to sanitize tags
+ * @since 2.1
  *
- * @return string
+ * @param string|array $tag      String to be evaluated.
+ * @param bool         $sanitize Whether to sanitize tags.
+ * @param null|mixed   $fallback The fallback value to use if not set, should already be sanitized.
  *
- * @version 2.1
+ * @return string Evaluated content.
  */
-function pods_evaluate_tag( $tag, $sanitize = false ) {
-
+function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null ) {
 	global $wpdb;
 
 	// Handle pods_evaluate_tags
 	if ( is_array( $tag ) ) {
-		if ( ! isset( $tag[2] ) && strlen( trim( $tag[2] ) ) < 1 ) {
-			return '';
+		if ( ! isset( $tag[2] ) && '' === trim( $tag[2] ) ) {
+			if ( null === $fallback ) {
+				return '';
+			}
+
+			return $fallback;
 		}
 
 		$tag = $tag[2];
@@ -1546,8 +1551,12 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 	$tag = trim( $tag, ' {@}' );
 	$tag = explode( '.', $tag );
 
-	if ( empty( $tag ) || ! isset( $tag[0] ) || strlen( trim( $tag[0] ) ) < 1 ) {
-		return '';
+	if ( empty( $tag ) || ! isset( $tag[0] ) || '' === trim( $tag[0] ) ) {
+		if ( null === $fallback ) {
+			return '';
+		}
+
+		return $fallback;
 	}
 
 	// Fix formatting that may be after the first .
@@ -1584,16 +1593,16 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 	);
 
 	if ( in_array( $tag[0], $single_supported, true ) ) {
-		$value = pods_v( '', $tag[0], '', true );
-	} elseif ( 1 == count( $tag ) ) {
-		$value = pods_v( $tag[0], 'get', '', true );
-	} elseif ( 2 == count( $tag ) ) {
-		$value = pods_v( $tag[1], $tag[0], '', true );
+		$value = pods_v( '', $tag[0], null );
+	} elseif ( 1 === count( $tag ) ) {
+		$value = pods_v( $tag[0], 'get', null );
+	} elseif ( 2 === count( $tag ) ) {
+		$value = pods_v( $tag[1], $tag[0], null );
 	}
 
-	$value = apply_filters( 'pods_evaluate_tag', $value, $tag );
+	$value = apply_filters( 'pods_evaluate_tag', $value, $tag, $fallback );
 
-	if ( is_array( $value ) && 1 == count( $value ) ) {
+	if ( is_array( $value ) && 1 === count( $value ) ) {
 		$value = current( $value );
 	}
 
@@ -1601,12 +1610,19 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 		$value = pods_serial_comma( $value );
 	}
 
+	if ( null === $value ) {
+		$value = '';
+	}
+
 	if ( $sanitize ) {
 		$value = pods_sanitize( $value );
 	}
 
-	return $value;
+	if ( null !== $fallback && '' === $value ) {
+		$value = $fallback;
+	}
 
+	return $value;
 }
 
 /**

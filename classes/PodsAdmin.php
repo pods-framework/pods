@@ -43,7 +43,7 @@ class PodsAdmin {
 		add_action( 'admin_init', array( $this, 'admin_init' ), 9 );
 
 		// Menus
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 99 );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );
 
 		// AJAX for Admin
 		add_action( 'wp_ajax_pods_admin', array( $this, 'admin_ajax' ) );
@@ -3250,7 +3250,7 @@ class PodsAdmin {
 		$methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
 
 		if ( ! isset( $params->method ) || ! isset( $methods[ $params->method ] ) ) {
-			pods_error( 'Invalid AJAX request', $this );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), $this );
 		}
 
 		$defaults = array(
@@ -3294,7 +3294,7 @@ class PodsAdmin {
 			$output = (string) apply_filters( 'pods_api_migrate_run', $params );
 		} else {
 			if ( ! method_exists( $api, $method->name ) ) {
-				pods_error( 'API method does not exist', $this );
+				pods_error( __( 'API method does not exist', 'pods' ), $this );
 			} elseif ( 'save_pod' === $method->name ) {
 				if ( isset( $params->field_data_json ) && is_array( $params->field_data_json ) ) {
 					$params->fields = $params->field_data_json;
@@ -3337,7 +3337,7 @@ class PodsAdmin {
 				echo $output;
 			}
 		} else {
-			pods_error( 'There was a problem with your request.' );
+			pods_error( __( 'There was a problem with your request.', 'pods' ) );
 		}//end if
 
 		die();
@@ -3641,105 +3641,109 @@ class PodsAdmin {
 			'label'       => 'Pods',
 			'description' => __( 'Debug information for Pods installations.', 'pods' ),
 			'fields'      => array(
-				'pods-server-software'            => array(
+				'pods-server-software'               => array(
 					'label' => __( 'Server Software', 'pods' ),
 					'value' => ! empty( $_SERVER['SERVER_SOFTWARE'] ) ? $_SERVER['SERVER_SOFTWARE'] : 'N/A',
 				),
-				'pods-user-agent'                 => array(
+				'pods-user-agent'                    => array(
 					'label' => __( 'Your User Agent', 'pods' ),
 					'value' => ! empty( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : 'N/A',
 				),
-				'pods-session-save-path'          => array(
+				'pods-session-save-path'             => array(
 					'label' => __( 'Session Save Path', 'pods' ),
 					'value' => session_save_path(),
 				),
-				'pods-session-save-path-exists'   => array(
+				'pods-session-save-path-exists'      => array(
 					'label' => __( 'Session Save Path Exists', 'pods' ),
 					'value' => file_exists( session_save_path() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-session-save-path-writable' => array(
+				'pods-session-save-path-writable'    => array(
 					'label' => __( 'Session Save Path Writeable', 'pods' ),
 					'value' => is_writable( session_save_path() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-session-max-lifetime'       => array(
+				'pods-session-max-lifetime'          => array(
 					'label' => __( 'Session Max Lifetime', 'pods' ),
 					'value' => ini_get( 'session.gc_maxlifetime' ),
 				),
-				'pods-opcode-cache-apc'           => array(
+				'pods-opcode-cache-apc'              => array(
 					'label' => __( 'Opcode Cache: Apc', 'pods' ),
 					'value' => function_exists( 'apc_cache_info' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-opcode-cache-memcached'     => array(
+				'pods-opcode-cache-memcached'        => array(
 					'label' => __( 'Opcode Cache: Memcached', 'pods' ),
 					'value' => class_exists( 'eaccelerator_put' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-opcode-cache-opcache'       => array(
+				'pods-opcode-cache-opcache'          => array(
 					'label' => __( 'Opcode Cache: OPcache', 'pods' ),
 					'value' => function_exists( 'opcache_get_status' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-opcode-cache-redis'         => array(
+				'pods-opcode-cache-redis'            => array(
 					'label' => __( 'Opcode Cache: Redis', 'pods' ),
 					'value' => class_exists( 'xcache_set' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-object-cache-apc'           => array(
+				'pods-object-cache-apc'              => array(
 					'label' => __( 'Object Cache: APC', 'pods' ),
 					'value' => function_exists( 'apc_cache_info' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-object-cache-apcu'          => array(
+				'pods-object-cache-apcu'             => array(
 					'label' => __( 'Object Cache: APCu', 'pods' ),
 					'value' => function_exists( 'apcu_cache_info' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-object-cache-memcache'      => array(
+				'pods-object-cache-memcache'         => array(
 					'label' => __( 'Object Cache: Memcache', 'pods' ),
 					'value' => class_exists( 'Memcache' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-object-cache-memcached'     => array(
+				'pods-object-cache-memcached'        => array(
 					'label' => __( 'Object Cache: Memcached', 'pods' ),
 					'value' => class_exists( 'Memcached' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-object-cache-redis'         => array(
+				'pods-object-cache-redis'            => array(
 					'label' => __( 'Object Cache: Redis', 'pods' ),
 					'value' => class_exists( 'Redis' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-memory-current-usage'       => array(
+				'pods-memory-current-usage'          => array(
 					'label' => __( 'Current Memory Usage', 'pods' ),
 					'value' => number_format_i18n( memory_get_usage() / 1024 / 1024, 3 ) . 'M',
 				),
-				'pods-memory-current-usage-real'  => array(
+				'pods-memory-current-usage-real'     => array(
 					'label' => __( 'Current Memory Usage (real)', 'pods' ),
 					'value' => number_format_i18n( memory_get_usage( true ) / 1024 / 1024, 3 ) . 'M',
 				),
-				'pods-network-wide'               => array(
+				'pods-network-wide'                  => array(
 					'label' => __( 'Pods Network-Wide Activated', 'pods' ),
 					'value' => is_plugin_active_for_network( basename( PODS_DIR ) . '/init.php' ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-install-location'           => array(
+				'pods-install-location'              => array(
 					'label' => __( 'Pods Install Location', 'pods' ),
 					'value' => PODS_DIR,
 				),
-				'pods-developer'                  => array(
+				'pods-developer'                     => array(
 					'label' => __( 'Pods Developer Activated' ),
 					'value' => ( pods_developer() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-tableless-mode'             => array(
+				'pods-tableless-mode'                => array(
 					'label' => __( 'Pods Tableless Mode Activated', 'pods' ),
 					'value' => ( pods_tableless() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-light-mode'                 => array(
+				'pods-light-mode'                    => array(
 					'label' => __( 'Pods Light Mode Activated', 'pods' ),
 					'value' => ( pods_light() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-strict'                     => array(
+				'pods-strict'                        => array(
 					'label' => __( 'Pods Strict Activated' ),
 					'value' => ( pods_strict() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-allow-deprecated'           => array(
+				'pods-allow-deprecated'              => array(
 					'label' => __( 'Pods Allow Deprecated' ),
 					'value' => ( pods_allow_deprecated() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
-				'pods-api-cache'                  => array(
+				'pods-api-cache'                     => array(
 					'label' => __( 'Pods API Cache Activated' ),
 					'value' => ( pods_api_cache() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				),
+				'pods-shortcode-allow-evaluate-tags' => array(
+					'label' => __( 'Pods Shortcode Allow Evaluate Tags' ),
+					'value' => ( pods_shortcode_allow_evaluate_tags() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				),
 			),
 		);

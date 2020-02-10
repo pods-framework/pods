@@ -2,29 +2,30 @@ language: php
 
 sudo: false
 
+services:
+    - mysql
+
 php:
     - 7.1
 
 env:
-    - WP_VERSION=nightly WP_MULTISITE=0
-    - WP_VERSION=latest WP_MULTISITE=0
-    - WP_VERSION=latest WP_MULTISITE=1
+    - WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable
+    - WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
+    - WP_VERSION=latest WP_MULTISITE=1 NODE_RELEASE=stable
 
 matrix:
     allow_failures:
-     - env: WP_VERSION=nightly WP_MULTISITE=0
+    - env: WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable
+    - php: 7.3
+      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
 
     include:
+    - php: 7.2
+      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
     - php: 7.0
-      env: WP_VERSION=latest WP_MULTISITE=0
+      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
     - php: 5.6
-      env: WP_VERSION=latest WP_MULTISITE=0
-    - php: 5.3
-      env: WP_VERSION=4.4 WP_MULTISITE=0
-    # MySQL 5.7
-    #- env: DB=mysql-5.7 WP_VERSION=latest WP_MULTISITE=0
-    # MySQL 8.0
-    #- env: DB=mysql-8.0-dmr WP_VERSION=latest WP_MULTISITE=0
+      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
 
 ## Cache composer and node bits
 cache:
@@ -34,28 +35,22 @@ cache:
         - node_modules
         - $HOME/.composer/cache
 
-install:
-    # We need the latest stable node
-    - . $HOME/.nvm/nvm.sh
-    - nvm install stable
-    - nvm use stable
-
-    # Dependencies
-    - npm install
+before_install:
+    - | # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
+      if [ $NODE_RELEASE == "stable" ]; then
+          . $HOME/.nvm/nvm.sh;
+          nvm install ${NODE_RELEASE};
+          npm install;
+      fi
 
 before_script:
-    - phpenv config-rm xdebug.ini
-    - composer self-update
-    - composer install --no-interaction --prefer-source
+    - bash bin/init.sh
     - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
     - ln -s . /tmp/wordpress/wp-content/plugins/pods
 
 script:
     - vendor/bin/phpunit
-    - npm run pods-test-dfv
-
-branches:
-    only:
-        - master
-        - 2.x
-        - release/2.7
+    - | # Only run js tests if we're running the latest stable node (Pipe preserves subsequent whitespace)
+      if [ $NODE_RELEASE == "stable" ]; then
+          npm run test-dfv;
+      fi

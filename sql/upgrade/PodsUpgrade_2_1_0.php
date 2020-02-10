@@ -1,118 +1,133 @@
 <?php
+
 /**
  * @package Pods\Upgrade
  */
 class PodsUpgrade_2_1_0 extends PodsUpgrade {
 
-    /**
-     * @var string
-     */
-    protected $version = '2.1.0';
+	/**
+	 * @var string
+	 */
+	protected $version = '2.1.0';
 
-    /**
-     *
-     */
-    function __construct () {
-    }
+	/**
+	 *
+	 */
+	public function __construct() {
+	}
 
-    /**
-     * @return array|bool|int|mixed|null|void
-     */
-    public function prepare_relationships () {
-        $relationship_fields = $this->api->load_fields( array( 'type' => 'pick' ) );
+	/**
+	 * @return array|bool|int|mixed|null|void
+	 */
+	public function prepare_relationships() {
 
-        $count = 0;
+		$relationship_fields = $this->api->load_fields( array( 'type' => 'pick' ) );
 
-        if ( !empty( $relationship_fields ) )
-            $count = count( $relationship_fields );
+		$count = 0;
 
-        return $count;
-    }
+		if ( ! empty( $relationship_fields ) ) {
+			$count = count( $relationship_fields );
+		}
 
-    /**
-     * @return string
-     */
-    public function migrate_relationships () {
-        if ( true === $this->check_progress( __FUNCTION__ ) )
-            return '1';
+		return $count;
+	}
 
-        $migration_limit = (int) apply_filters( 'pods_upgrade_item_limit', 1500 );
-        $migration_limit = max( $migration_limit, 100 );
+	/**
+	 * @return string
+	 */
+	public function migrate_relationships() {
 
-        $last_id = (int) $this->check_progress( __FUNCTION__ );
+		if ( true === $this->check_progress( __FUNCTION__ ) ) {
+			return '1';
+		}
 
-        $relationship_fields = $this->api->load_fields( array( 'type' => array( 'pick', 'file' ) ) );
+		$migration_limit = (int) apply_filters( 'pods_upgrade_item_limit', 1500 );
+		$migration_limit = max( $migration_limit, 100 );
 
-        foreach ( $relationship_fields as $field ) {
-            $pod = $this->api->load_pod( array( 'pod' => $field[ 'pod' ] ) );
+		$last_id = (int) $this->check_progress( __FUNCTION__ );
 
-            // Only target pods that are meta-enabled
-            if ( !in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) )
-                continue;
+		$relationship_fields = $this->api->load_fields( array( 'type' => array( 'pick', 'file' ) ) );
 
-            // Only target multi-select relationships
-            $single_multi = pods_var( $field[ 'type' ] . '_format_type', $field[ 'options' ], 'single' );
+		foreach ( $relationship_fields as $field ) {
+			$pod = $this->api->load_pod( array( 'pod' => $field['pod'] ) );
 
-            if ( 'multi' == $single_multi )
-                $limit = (int) pods_var( $field[ 'type' ] . '_limit', $field[ 'options' ], 0 );
-            else
-                $limit = 1;
+			// Only target pods that are meta-enabled
+			if ( ! in_array( $pod['type'], array( 'post_type', 'media', 'user', 'comment' ), true ) ) {
+				continue;
+			}
 
-            if ( $limit <= 1 )
-                continue;
+			// Only target multi-select relationships
+			$single_multi = pods_v( $field['type'] . '_format_type', $field['options'], 'single' );
 
-            // Get and loop through relationship meta
-            $sql = "
+			if ( 'multi' === $single_multi ) {
+				$limit = (int) pods_v( $field['type'] . '_limit', $field['options'], 0 );
+			} else {
+				$limit = 1;
+			}
 
-            ";
+			if ( $limit <= 1 ) {
+				continue;
+			}
 
-            // if serialized (or array), save as individual meta items and save new order meta key
-        }
+			// Get and loop through relationship meta
+			$sql = '
 
-        $last_id = true;
+            ';
 
-        $rel = array();
+			// if serialized (or array), save as individual meta items and save new order meta key
+		}//end foreach
 
-        $this->update_progress( __FUNCTION__, $last_id );
+		$last_id = true;
 
-        if ( $migration_limit == count( $rel ) )
-            return '-2';
-        else
-            return '1';
-    }
+		$rel = array();
 
-    /**
-     * @return string
-     */
-    public function migrate_cleanup () {
-        $this->upgraded();
+		$this->update_progress( __FUNCTION__, $last_id );
 
-        $this->api->cache_flush_pods();
+		if ( count( $rel ) === $migration_limit ) {
+			return '-2';
+		} else {
+			return '1';
+		}
+	}
 
-        return '1';
-    }
+	/**
+	 * @return string
+	 */
+	public function migrate_cleanup() {
 
-    /**
-     *
-     */
-    public function restart () {
-        $upgraded = get_option( 'pods_framework_upgraded' );
+		$this->upgraded();
 
-        if ( empty( $upgraded ) || !is_array( $upgraded ) )
-            $upgraded = array();
+		$this->api->cache_flush_pods();
 
-        delete_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ) );
+		return '1';
+	}
 
-        if ( in_array( $this->version, $upgraded ) )
-            unset( $upgraded[ array_search( $this->version, $upgraded ) ] );
+	/**
+	 *
+	 */
+	public function restart() {
 
-        update_option( 'pods_framework_upgraded', $upgraded );
-    }
+		$upgraded = get_option( 'pods_framework_upgraded' );
 
-    /**
-     *
-     */
-    public function cleanup () {
-        $this->restart();
-    }
+		if ( empty( $upgraded ) || ! is_array( $upgraded ) ) {
+			$upgraded = array();
+		}
+
+		delete_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ) );
+
+		if ( in_array( $this->version, $upgraded, true ) ) {
+	        // @codingStandardsIgnoreLine
+			unset( $upgraded[ array_search( $this->version, $upgraded ) ] );
+		}
+
+		update_option( 'pods_framework_upgraded', $upgraded );
+	}
+
+	/**
+	 *
+	 */
+	public function cleanup() {
+
+		$this->restart();
+	}
 }

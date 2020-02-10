@@ -1,9 +1,9 @@
 /*global assert */
 const inspect = require( 'util' ).inspect;
 
-import {CheckboxView} from 'pods-dfv/_src/pick/views/checkbox-view';
-import {PodsDFVFieldModel} from 'pods-dfv/_src/core/pods-field-model';
-import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
+import {CheckboxView} from 'pods-dfv/src/fields/pick/views/checkbox-view';
+import {PodsDFVFieldModel} from 'pods-dfv/src/core/pods-field-model';
+import {RelationshipCollection} from 'pods-dfv/src/fields/pick/relationship-model';
 
 const collection = new RelationshipCollection( [
 	{ id: 0, name: 'zero' },

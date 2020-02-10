@@ -82,7 +82,7 @@ function pods_attachments ( src, file_limit ) {
         pods_file_context.find( 'li#pods-file-' + wp_media_id ).slideDown( 'fast' );
 
         var items = pods_file_context.find( 'li.pods-file' ),
-            itemCount = items.size();
+            itemCount = items.length;
 
         if ( 0 < file_limit && itemCount > file_limit ) {
             items.each( function ( idx, elem ) {

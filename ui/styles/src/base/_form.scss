@@ -1,0 +1,492 @@
+#post-body {
+	border: none;
+	background: none;
+}
+
+.pods-hidden {
+	display: none;
+}
+
+.pods-admin #navigation-actions .previous-item {
+	display: block;
+	text-align: left;
+	float: left;
+	width: 50%;
+}
+
+.pods-admin #navigation-actions .next-item {
+	display: block;
+	text-align: right;
+	float: right;
+	width: 50%;
+}
+
+/**
+	Form tables.
+ */
+
+.form-table tr.pods-field:last-child > th,
+.form-table tr.pods-field:last-child > td {
+	border-bottom: none;
+}
+
+.form-table td .pods-form-ui-field {
+	max-width: 95%;
+}
+
+.form-table.pods-form-ui-table-type-avatar tr.form-field > td,
+.form-table.pods-form-ui-table-type-file tr.form-field > td {
+	padding: 0 10px;
+}
+
+/**
+	Form fields.
+ */
+
+.pods-field {
+	padding: 10px 0;
+}
+
+.pods-field label {
+	cursor: pointer;
+	display: block;
+	padding: 0 0 4px 2px;
+}
+
+.pods-field input, .pods-field textarea {
+	display: block;
+}
+
+.pods-field .quicktags-toolbar input {
+	display: inline-block;
+	width: auto;
+}
+
+.pods-field p.pods-field-comment {
+	color: #aaa;
+	font-size: .9em;
+	font-style: italic;
+	margin: 5px 0 0 2px !important;
+}
+
+div.pods-textfield input,
+.pods-textarea textarea {
+	width: 100%;
+}
+
+/* textarea/wysiwyg */
+.pods-field .wp-editor-container {
+	background-color: #FFF;
+}
+
+textarea.pods-form-ui-field-type-paragraph {
+	font-family: monospace;
+	min-height: 100px;
+	resize: vertical;
+}
+
+/* Link */
+.pods-link-options {
+	background: #fff;
+	padding: 5px 10px 10px;
+	border: 1px solid #dfdfdf;
+}
+.pods-link-options > div {
+	display: inline-block;
+}
+
+/* Date */
+.pods-date input.pods-date-field.hasDatepicker {
+	background: #fff url(#{$ImagesPath}/calendar16.png) no-repeat 5px 5px;
+	cursor: pointer;
+	padding-left: 25px !important;
+	padding-top: 6px !important;
+	width: 150px;
+}
+
+/* Color */
+input.pods-form-ui-field-type-color {
+	width: 80px;
+}
+
+/* Codemirror */
+.pods-field .CodeMirror {
+	border: 1px solid #999;
+	background-color: #fff;
+	margin: 0;
+}
+
+/* Currency */
+.pods-currency-container {
+	position: relative;
+
+	code {
+		position: absolute;
+		transform: translate(0, -50%);
+		top: 50%;
+		pointer-events: none;
+		min-width: 10px;
+		text-align: center;
+		padding: 1px 5px;
+		line-height: 25px;
+	}
+
+	input {
+		padding-left: 25px;
+	}
+}
+
+/**
+	Form fields - boolean/pick/select values.
+ */
+
+.pods-boolean {
+	position: relative;
+	padding: 0;
+}
+
+.form-field .pods-boolean input,
+.pods-boolean input {
+	display: block;
+	min-height: 16px;
+	left: 2px;
+	margin-left: 3px;
+	padding: 0;
+	position: absolute;
+	top: 10px;
+	width: auto;
+	overflow: hidden;
+}
+
+.pods-boolean label {
+	padding: 7px 5px 7px 26px;
+	line-height: 1;
+	display: inline-block;
+}
+
+.pods-pick select {
+	display: block;
+	min-width: 125px;
+}
+
+.pods-pick-values {
+	border: 1px solid #dfdfdf;
+	border-radius: 3px;
+	min-width: 125px;
+	max-height: 250px;
+	overflow-y: auto;
+	padding: 2px 0;
+}
+
+/* Newer DFV based views don't all need borders but we don't want to break other applications of the rule above */
+.pods-form-ui-field .pods-pick-values,
+.pods-form-ui-field .pods-pick-values li.pods-dfv-list-col {
+	border: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* HTML select field fix */
+.pods-form-ui-row-type-pick .pods-form-ui-field select {
+	width: 25em;
+}
+
+/* This one does need a border, however */
+.pods-pick-values .pods-checkbox-view {
+	border: 1px solid #dfdfdf;
+}
+
+select.pods-form-ui-field-type-pick[multiple] {
+	background: #fff;
+	border: 1px solid #dfdfdf;
+	border-radius: 3px;
+	width: 100%;
+	max-width: none;
+	max-height: 200px;
+}
+
+select.pods-pick-multi {
+	height: auto !important;
+}
+
+.pods-pick-values ul {
+	overflow: auto;
+	margin: 0;
+	padding: 0;
+}
+
+.pods-pick-values li {
+	background-color: #fff;
+	border-bottom: 1px solid #f4f4f4;
+	line-height: 1em;
+	margin: 0;
+	padding: 0;
+}
+
+.pods-pick-values li:nth-child(even) {
+	background: #fcfcfc;
+}
+
+.pods-pick-values .pods-dfv-list-item li {
+	line-height: 0;
+}
+
+/* Remove backgrounds from inner child lists */
+.pods-pick-values li li:nth-child(even),
+.pods-pick-values li li {
+	background: transparent;
+}
+
+.pods-pick-values li:hover {
+	background: #f5f5f5;
+}
+
+.pods-pick-values li:last-of-type {
+	border-bottom: 0;
+}
+
+.pods-pick-values li .pods-field {
+	padding: 0;
+}
+
+.pods-pick-values .pods-boolean label {
+	display: block;
+}
+
+.pods-pick-values .pods-radio {
+	border: 1px solid #dfdfdf;
+}
+
+p.pods-add-file {
+	padding: 5px 0 10px;
+}
+
+.pods-metabox tr.pods-field {
+	border-top: 1px solid #ececec;
+}
+.pods-metabox tr.pods-field:first-child {
+	border-top: 0;
+}
+
+/* @todo Improve this, select2 adds inline fixed widths preventing responsive scaling */
+.pods-form-ui-field .select2-container {
+	width: 100% !important;
+}
+
+.pods-form-ui-field-type-select2 {
+	min-width: 20%;
+	width: auto;
+	min-height: 28px;
+}
+
+.pods-ui-add-new {
+	clear: both;
+}
+
+/* Side location */
+#side-sortables .form-table .pods-field {
+	display: block;
+}
+
+#side-sortables .form-table th {
+	display: block;
+	width: 100%;
+	padding: 0 0 10px;
+	margin: 0;
+}
+#side-sortables .form-table tr.pods-field > td {
+	display: block;
+	line-height: inherit;
+	padding: 0;
+	margin: 0;
+}
+
+/**
+	Pods form frontend
+ */
+.pods-form-front ul.pods-form-fields {
+	list-style: none;
+	margin: 0;
+}
+
+.pods-form-front .pods-field-label {
+	width: 20%;
+	min-width: 150px;
+	padding-top: 10px;
+	float: left;
+}
+
+.pods-form-front .pods-field-input {
+	width: 75%;
+	min-width: 200px;
+	float: left;
+}
+
+.pods-form-front .pods-field-input input,
+.pods-form .pods-field table.pods-metabox {
+	width: 95%;
+}
+
+.pods-form .pods-field-input textarea {
+	width: 95%;
+	min-height: 200px;
+}
+
+.pods-form-front .pods-field-input .quicktags-toolbar input {
+	display: inline-block;
+	width: auto;
+}
+
+.pods-form-front .pods-field-input .pods-boolean input {
+	width: auto;
+}
+
+.pods-form-front .pods-field-input select {
+	min-width: 200px;
+	border: 1px solid #CCC;
+	border-radius: 3px;
+	margin-top: 10px;
+}
+
+.pods-form-front .pods-field-input .CodeMirror {
+	width: auto;
+}
+
+.pods-form-front table.pods-metabox {
+	width: 100%;
+}
+
+.pods-form-front ul.pods-dfv-list li.pods-dfv-list-icon img {
+	width: 40px;
+}
+
+.pods-form-front .pods-file-add {
+	display: block;
+	margin: 10px;
+}
+
+.pods-form-front .pods-submit {
+	float: right;
+}
+
+.pods-form .pods-validate-error-message {
+	color: #790000;
+	font-weight: bold;
+	padding: 2px 0 5px;
+	display: inline-block;
+}
+
+.pods-form-front .pods-validate-error-message {
+	padding: 5px 10px 4px;
+}
+
+.pods-form {
+	overflow: hidden;
+}
+
+.pods-form img.waiting {
+	display: none;
+	vertical-align: middle;
+}
+
+.pods-form-front-success {
+	color: #4F8A10;
+	border: 1px solid;
+	margin: 10px 0;
+	padding: 15px 10px 15px 50px;
+	background: #DFF2BF url(#{$ImagesPath}/green-check.png) no-repeat 10px center;
+}
+
+.pods-form-ui-row-type-hidden {
+	display: none;
+	visibility: hidden;
+}
+
+.pods-slider-field {
+	max-width: 300px;
+}
+
+.pods-form div.pods-form-ui-field-type-avatar:after,
+.pods-form div.pods-form-ui-field-type-file:after,
+.pods-form div.pods-form-ui-field-type-pick:after,
+.pods-meta div.pods-form-ui-field-type-avatar:after,
+.pods-meta div.pods-form-ui-field-type-file:after,
+.pods-meta div.pods-form-ui-field-type-pick:after,
+.pods-form-front .pods-submittable-fields:after,
+.pods-form-front li.pods-field:after {
+	content: "\00a0";
+	clear: both;
+	display: block;
+	height: 0;
+}
+
+#wpbody .form-table td select.pods-form-ui-field-type-pick[multiple] {
+	height: 12em;
+}
+
+.pods-related-add-new {
+	margin-top: 1em !important;
+}
+
+@media screen and (max-width: 782px) {
+	.pods-boolean input,
+	.form-field .pods-boolean input,
+	.pods-pick-values li .pods-boolean input {
+		height: 25px;
+		width: 25px;
+		top: 4px;
+		margin: 0 3px;
+	}
+
+	.pods-boolean label,
+	.pods-pick-values .pods-boolean label {
+		margin-left: 36px;
+		padding: 10px 0;
+	}
+
+	.form-table td .pods-form-ui-field {
+		max-width: none;
+	}
+
+	/* WP fix */
+	.form-table td input,
+	.form-table td select {
+		margin: 0;
+	}
+	/* Fix for Pods field bottom border */
+	.pods-metabox tr.pods-field > th {
+		padding-top: 15px;
+	}
+	.pods-metabox tr.pods-field > td {
+		padding-bottom: 15px;
+	}
+	/* HTML select field fix */
+	.pods-form-ui-row-type-pick .pods-form-ui-field select {
+		width: 100%;
+	}
+}
+
+/*
+ * Modal For DFV List View Relationships
+ */
+.pods-modal-frame.hide-menu .media-frame-title {
+	left: 0;
+}
+.media-modal .media-modal-content .pods-modal-frame {
+	height: 100%;
+}
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe {
+	height: 100%;
+	padding-top: 50px;
+	box-sizing: border-box;
+}
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe {
+	height: 100%;
+	position: relative;
+}
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe iframe {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	border: none;
+}

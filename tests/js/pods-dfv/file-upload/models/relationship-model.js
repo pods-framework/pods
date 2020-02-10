@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, assert */
-import {RelationshipCollection, RelationshipModel} from 'pods-dfv/_src/pick/relationship-model';
+import {RelationshipCollection, RelationshipModel} from 'pods-dfv/src/fields/pick/relationship-model';
 
 const default_model = new RelationshipModel();
 
@@ -7,7 +7,6 @@ const test_data = {
 	id          : 1,
 	name        : 'def',
 	icon        : 'abc',
-	use_dashicon: true,
 	link        : 'http://www.example.com/link',
 	edit_link   : 'http://www.example.com/edit',
 	selected    : true
@@ -21,8 +20,6 @@ describe( 'RelationshipModel', function () {
 		assert.equal( default_model.get( 'id' ), 0, 'id' );
 		assert.equal( default_model.get( 'name' ), '', 'name' );
 		assert.equal( default_model.get( 'icon' ), '', 'icon' );
-		/* !! Todo: Not merged-in yet */
-		//assert.equal( default_model.get( 'use_dashicon' ), false, 'use_dashicon' );
 		assert.equal( default_model.get( 'link' ), '', 'link' );
 		assert.equal( default_model.get( 'edit_link' ), '', 'edit_link' );
 		assert.equal( default_model.get( 'selected' ), false, 'selected' );
@@ -32,7 +29,6 @@ describe( 'RelationshipModel', function () {
 		assert.equal( test_model.get( 'id' ), test_data.id, 'id' );
 		assert.equal( test_model.get( 'name' ), test_data.name, 'name' );
 		assert.equal( test_model.get( 'icon' ), test_data.icon, 'icon' );
-		assert.equal( test_model.get( 'use_dashicon' ), test_data.use_dashicon, 'use_dashicon' );
 		assert.equal( test_model.get( 'link' ), test_data.link, 'link' );
 		assert.equal( test_model.get( 'edit_link' ), test_data.edit_link, 'edit_link' );
 		assert.equal( test_model.get( 'selected' ), test_data.selected, 'selected' );

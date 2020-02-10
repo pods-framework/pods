@@ -1,9 +1,11 @@
 {
-    "presets": [ "es2015" ],
+    "presets": [
+			[ "@babel/preset-env" ]
+		],
     "plugins": [
-        [ "module-resolver", {
+        [ "babel-plugin-module-resolver", {
             "alias": { "pods-dfv": "./ui/js/pods-dfv" }
         } ],
-        "transform-html-import-to-string"
+        "babel-plugin-transform-html-import-to-string"
     ]
 }

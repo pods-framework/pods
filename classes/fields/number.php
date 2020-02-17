@@ -93,13 +93,13 @@ class PodsField_Number extends PodsField {
 			static::$type . '_min'         => array(
 				'label'      => __( 'Minimum Number', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
-				'default'    => 0,
+				'default'    => '',
 				'type'       => 'text',
 			),
 			static::$type . '_max'         => array(
 				'label'      => __( 'Maximum Number', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
-				'default'    => 100,
+				'default'    => '',
 				'type'       => 'text',
 			),
 			static::$type . '_max_length'  => array(
@@ -224,6 +224,8 @@ class PodsField_Number extends PodsField {
 			$value = $this->format( $value, $name, $options, $pod, $id );
 		}
 
+		return pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );
+
 		wp_enqueue_script( 'pods-dfv' );
 
 		$type = pods_v( 'type', $options, static::$type );
@@ -262,6 +264,7 @@ class PodsField_Number extends PodsField {
 				'',
 			), $value
 		);
+
 		$check = trim( $check );
 
 		$check = preg_replace( '/[0-9\.\-\s]/', '', $check );

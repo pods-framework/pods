@@ -1377,8 +1377,7 @@ class PodsField_Pick extends PodsField {
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
 			$related_pod = self::$api->load_pod(
 				array(
-					'name'       => $related_val,
-					'table_info' => false,
+					'name' => $related_val,
 				), false
 			);
 
@@ -1578,8 +1577,7 @@ class PodsField_Pick extends PodsField {
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
 			$related_pod = self::$api->load_pod(
 				array(
-					'name'       => $related_val,
-					'table_info' => false,
+					'name' => $related_val,
 				), false
 			);
 
@@ -1634,7 +1632,7 @@ class PodsField_Pick extends PodsField {
 	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
 
 		if ( isset( $options['options'] ) ) {
-			$options = array_merge( $options, $options['options'] );
+			$options = $options;
 
 			unset( $options['options'] );
 		}
@@ -1687,17 +1685,11 @@ class PodsField_Pick extends PodsField {
 	public function simple_value( $name, $value = null, $options = null, $pod = null, $id = null, $raw = false ) {
 
 		if ( in_array( pods_v( static::$type . '_object', $options ), self::simple_objects(), true ) ) {
-			if ( isset( $options['options'] ) ) {
-				$options = array_merge( $options, $options['options'] );
-
-				unset( $options['options'] );
-			}
-
 			if ( ! is_array( $value ) && 0 < strlen( $value ) ) {
 				$simple = @json_decode( $value, true );
 
 				if ( is_array( $simple ) ) {
-					$value = $simple;
+					$value = (array) $simple;
 				}
 			}
 
@@ -1791,7 +1783,7 @@ class PodsField_Pick extends PodsField {
 	public function value_to_label( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
 		if ( isset( $options['options'] ) ) {
-			$options = array_merge( $options, $options['options'] );
+			$options = $options;
 
 			unset( $options['options'] );
 		}
@@ -1839,16 +1831,16 @@ class PodsField_Pick extends PodsField {
 	 * Get available items from a relationship field.
 	 *
 	 * @param array|string $field         Field array or field name.
-	 * @param array        $options       Field options array overrides.
+	 * @param array        $deprecated       Field options array overrides.
 	 * @param array        $object_params Additional get_object_data options.
 	 *
 	 * @return array An array of available items from a relationship field
 	 */
-	public function get_field_data( $field, $options = array(), $object_params = array() ) {
+	public function get_field_data( $field, $deprecated = null, $object_params = array() ) {
+		$options = array();
 
-		// Handle field array overrides.
 		if ( is_array( $field ) ) {
-			$options = array_merge( $field, $options );
+			$options = $field;
 		}
 
 		// Get field name from array.
@@ -1858,9 +1850,6 @@ class PodsField_Pick extends PodsField {
 		if ( empty( $field ) || empty( $options ) ) {
 			return array();
 		}
-
-		// Options normalization.
-		$options = array_merge( $options, pods_v( 'options', $options, array(), true ) );
 
 		// Setup object params.
 		$object_params = array_merge(
@@ -1927,7 +1916,6 @@ class PodsField_Pick extends PodsField {
 			), $object_params
 		);
 
-		$object_params['options']     = (array) $object_params['options'];
 		$object_params['data_params'] = (array) $object_params['data_params'];
 
 		$name         = $object_params['name'];
@@ -1941,17 +1929,11 @@ class PodsField_Pick extends PodsField {
 		$limit        = (int) $object_params['limit'];
 		$autocomplete = false;
 
-		if ( isset( $options['options'] ) ) {
-			$options = array_merge( $options, $options['options'] );
-
-			unset( $options['options'] );
-		}
-
 		$data  = apply_filters( 'pods_field_pick_object_data', null, $name, $value, $options, $pod, $id, $object_params );
 		$items = array();
 
 		if ( ! isset( $options[ static::$type . '_object' ] ) ) {
-			$data = pods_v( 'data', $options, array(), true );
+			$data = pods_v( 'data', $options );
 		}
 
 		$simple = false;
@@ -1971,6 +1953,7 @@ class PodsField_Pick extends PodsField {
 						$custom = explode( "\n", trim( $custom ) );
 
 						foreach ( $custom as $custom_value ) {
+							$custom_value = trim( trim( $custom_value, '|' ) );
 							$custom_label = explode( '|', $custom_value );
 
 							if ( empty( $custom_label ) ) {
@@ -2512,7 +2495,7 @@ class PodsField_Pick extends PodsField {
 			// The value of the field.
 			'value'       => null,
 			// Field options.
-			'options'     => array_merge( $field, $field['options'] ),
+			'options'     => $field,
 			// Pod data.
 			'pod'         => $pod,
 			// Item ID.

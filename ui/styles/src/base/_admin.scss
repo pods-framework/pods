@@ -303,6 +303,16 @@ div.pods-manage-field div {
 	zoom: 1;
 }
 
+// The overflow: hidden above sucks for tooltips
+.pods-field-option .components-popover {
+	overflow: visible;
+}
+.pods-field-option .dashicons-editor-help {
+	color: #cccccc;
+	vertical-align: top;
+	padding-left: 3px;
+}
+
 div.pods-manage-field .description {
 	clear: both;
 }

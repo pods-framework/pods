@@ -1,0 +1,46 @@
+<?php
+/**
+ * The base configuration for WordPress in template form.
+ * Modified to handle wp-cli requests correctly.
+ */
+
+define( 'DB_NAME', '${WP_DB_NAME}' );
+define( 'DB_USER', 'root' );
+define( 'DB_PASSWORD', '' );
+
+// Depending on whether we are handling a container or wp-cli request the db host is different.
+// The format is "wonky" to keep the WordPress Docker image entrypoint from modifying it.
+define( 'DB_' . 'HOST', defined( 'WP_CLI' ) ? '127.0.0.1:${WP_DB_PORT}' : 'db' );
+
+define( 'DB_CHARSET', 'utf8' );
+define( 'DB_COLLATE', '' );
+
+define('AUTH_KEY',         'vBY6vuIj8bNMP9SZPxT2zN9BftEUTEKUAoo5RzLxoXpx0ZPzVE6gZetX/5gB53cT11z1ycvzhYhE2tZ1JEsmBA==');
+define('SECURE_AUTH_KEY',  'QAOT8nI+tymvmZPz895sF7yU8nDApMhOAHTrp6X4KdLs4HVQvKpLwP1vR1adEdG2c9209Kll2DrtWKYDq/7+pA==');
+define('LOGGED_IN_KEY',    'Iws+9tYXqC9aQv8nfSffgOnB7EjevMwQ7s6EgRDcNV5E9d9M4mqEpX1HbL5is48NCkrZMctPzT28HDJScazhHg==');
+define('NONCE_KEY',        'GwSYst8ptgcX4/l712TVZXef1vs7z/qI1GgBVPrJzpgDFptnvEWaoXbIWi/7F4c/jcDt5Xv+ljujagEhz26szA==');
+define('AUTH_SALT',        'IQDCLCodG5Yjr6KFqF0albORIjF2u+YLGsU/4pteOn8wpJsfPvHn0wqB8TNsOq/CSnMe7pOFjg2x1Bh4Dj1TXQ==');
+define('SECURE_AUTH_SALT', 'M3uV8dVP7hOXhSihD9Hk2QUtJYTy0HAAL/G2b+Q8T8u29w5NkladpoHndKdZy65C84qIGZ5xk0Ngwc4OwxsTtw==');
+define('LOGGED_IN_SALT',   'VSalEn41BRoHc9dQMmse1B3/hWBYhLBt46AL7TqMSzfVDH9K6wpUVjwDN/ZrJRDFIximTt3XMFUwad7yV19kdQ==');
+define('NONCE_SALT',       'YEtlkdHXTqBcv4nB0jR7EE0ayy3UelLxcYCZcS0B+HdS5fQWvDEuplMxs3A697yo5iywYzaM6f5y/OuqRmi3ig==');
+
+$table_prefix = '${WP_TABLE_PREFIX}';
+
+/*
+ * Override the site URL and home with the one WordPress is being requested with.
+ */
+if ( filter_has_var( INPUT_SERVER, 'HTTP_HOST' ) ) {
+    if ( ! defined( 'WP_HOME' ) ) {
+        define( 'WP_HOME', 'http://' . $_SERVER['HTTP_HOST'] );
+    }
+    if ( ! defined( 'WP_SITEURL' ) ) {
+        define( 'WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST'] );
+    }
+}
+
+/** Absolute path to the WordPress directory. */
+if ( ! defined( 'ABSPATH' ) )
+	define( 'ABSPATH', dirname( __FILE__ ) . '/' );
+
+/** Sets up WordPress vars and included files. */
+require_once ABSPATH . 'wp-settings.php';

@@ -3,10 +3,14 @@
 
   "parserOptions": {
     "ecmaVersion": 2016,
+    "ecmaFeatures": {
+      "jsx": true
+    },
     "sourceType": "module"
   },
 
   "extends": [
+    "eslint:recommended",
     "wordpress",
     "plugin:react/recommended"
   ],
@@ -50,5 +54,14 @@
       "error",
       "only-multiline"
     ]
-  }
+  },
+
+  "overrides": [
+    {
+      "files": [ "**/test/*.js" ],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
 }

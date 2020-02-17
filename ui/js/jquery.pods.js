@@ -1554,7 +1554,7 @@
                                 $field_wrapper.append( edit_row );
 
                                 // Duct tape to handle fields added dynamically
-                                PodsDFV.init();
+                                window.PodsDFV.init();
                             }
 
                             $field_wrapper.find( '.pods-depends-on' ).hide();
@@ -1627,11 +1627,9 @@
 
                         $row_content.slideDown();
 
-
                         $row_content.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                             methods[ 'setup_dependencies' ]( $( this ) );
                         } );
-
                     }
 
                     $( this ).css( 'cursor', 'pointer' );
@@ -1858,7 +1856,7 @@
                         $new_row = $tbody.find( 'tr#row-' + row_counter );
 
                         // Duct tape to handle fields added dynamically
-                        PodsDFV.init();
+                        window.PodsDFV.init();
 
                         $new_row.data( 'row', row_counter );
                         $new_row.find( '.pods-dependency .pods-depends-on' ).hide();
@@ -1916,7 +1914,7 @@
                         $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
 
                         // Duct tape to handle fields added dynamically
-                        PodsDFV.init();
+                        window.PodsDFV.init();
 
                         field_data[ 'name' ] += '_copy';
                         field_data[ 'label' ] += ' (' + PodsI18n.__( 'Copy' ) + ')';

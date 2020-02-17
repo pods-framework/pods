@@ -1999,10 +1999,11 @@ class PodsData {
 			$id   = pods_absint( $row );
 
 			if ( null !== $row && ( ! is_numeric( $row ) || 0 === strpos( $row, '0' ) || $row != preg_replace( '/[^0-9]/', '', $row ) ) ) {
-				if ( $this->id && is_numeric( $this->id ) ) {
+				if ( 'settings' === $this->pod_data['type'] || ( $this->id && is_numeric( $this->id ) ) ) {
 					$id = $this->id;
 				} else {
-					$id = $this->id;
+					$mode = 'slug';
+					$id   = $row;
 				}
 			}
 

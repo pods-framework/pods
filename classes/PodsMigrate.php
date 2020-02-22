@@ -113,7 +113,11 @@ class PodsMigrate {
 	}
 	
 	/**
-	 * @return array	Array of data items
+	 * Get items.
+	 *
+	 * @since 2.7.17
+	 *
+	 * @return array List of data items.
 	 */
 	private function get_items ( ) {
 		

@@ -1279,15 +1279,17 @@ class PodsMigrate {
 			'single' => $single,
 		);
 
-		// try to guess the column labels based on the supplied data
+		// Try to guess the column labels based on the supplied data.
 		$first_item = null;
+
 		if ( $single ) {
 			$first_item = $data;
 		} elseif ( is_array( $data ) ) {
 			$first_item = reset( $data );
 		}
+
 		if ( is_array( $first_item ) ) {
-			$fields = array_keys( $first_item );
+			$fields                  = array_keys( $first_item );
 			$migrate_data['columns'] = array_combine( $fields, $fields );
 		}
 

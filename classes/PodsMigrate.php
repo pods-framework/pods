@@ -119,7 +119,7 @@ class PodsMigrate {
 	 *
 	 * @return array List of data items.
 	 */
-	private function get_items ( ) {
+	private function get_items() {
 		
 		return empty( $this->data['single'] ) ? 
 			$this->data['items'] : 

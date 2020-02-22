@@ -585,7 +585,9 @@ class PodsMigrate {
 
 		$head = substr( $head, 0, - 1 );
 
-		foreach ( $this->get_items() as $item ) {
+		$items = $this->get_items();
+
+		foreach ( $items as $item ) {
 			$line = '';
 
 			foreach ( $this->data['columns'] as $column => $label ) {

@@ -417,6 +417,7 @@ class PodsAdmin {
 						}
 					}
 
+					// Check capabilities.
 					if ( ! pods_is_admin(
 						array(
 							'pods',
@@ -433,36 +434,36 @@ class PodsAdmin {
 						continue;
 					}
 
+					$menu_location        = pods_v( 'menu_location', $pod['options'], 'default' );
+
+					if ( 'default' === $menu_location ) {
+						continue;
+					}
+
 					$page_title = pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true );
 					$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 					$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
 					$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
-					$menu_position = pods_v( 'menu_position', $pod['options'], '', true );
-					$menu_icon     = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );
-
-					if ( empty( $menu_position ) ) {
-						$menu_position = null;
-					}
-
+					$menu_icon            = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );
 					$menu_slug            = 'edit-tags.php?taxonomy=' . $pod['name'];
-					$menu_location        = pods_v( 'menu_location', $pod['options'], 'default' );
 					$menu_location_custom = pods_v( 'menu_location_custom', $pod['options'], '' );
 
-					if ( 'default' === $menu_location ) {
-						continue;
+					$menu_position = pods_v( 'menu_position', $pod['options'], '', true );
+					if ( empty( $menu_position ) ) {
+						$menu_position = null;
 					}
 
 					$taxonomy_data = get_taxonomy( $pod['name'] );
 
 					foreach ( (array) $taxonomy_data->object_type as $post_type ) {
 						if ( 'post' === $post_type ) {
-							remove_submenu_page( 'edit.php', 'edit-tags.php?taxonomy=' . $pod['name'] );
+							remove_submenu_page( 'edit.php', $menu_slug );
 						} elseif ( 'attachment' === $post_type ) {
-							remove_submenu_page( 'upload.php', 'edit-tags.php?taxonomy=' . $pod['name'] . '&amp;post_type=' . $post_type );
+							remove_submenu_page( 'upload.php', $menu_slug . '&amp;post_type=' . $post_type );
 						} else {
-							remove_submenu_page( 'edit.php?post_type=' . $post_type, 'edit-tags.php?taxonomy=' . $pod['name'] . '&amp;post_type=' . $post_type );
+							remove_submenu_page( 'edit.php?post_type=' . $post_type, $menu_slug . '&amp;post_type=' . $post_type );
 						}
 					}
 
@@ -470,12 +471,7 @@ class PodsAdmin {
 						add_options_page( $page_title, $menu_label, 'read', $menu_slug );
 					} elseif ( 'appearances' === $menu_location ) {
 						add_theme_page( $page_title, $menu_label, 'read', $menu_slug );
-					} elseif ( 'objects' === $menu_location ) {
-						if ( empty( $menu_position ) ) {
-							$menu_position = null;
-						}
-						add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
-					} elseif ( 'top' === $menu_location ) {
+					} elseif ( 'objects' === $menu_location || 'top' === $menu_location ) {
 						add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
 					} elseif ( 'submenu' === $menu_location && ! empty( $menu_location_custom ) ) {
 						if ( ! isset( $submenu_items[ $menu_location_custom ] ) ) {
@@ -506,9 +502,9 @@ class PodsAdmin {
 					$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
 					$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
-					$menu_position = pods_v( 'menu_position', $pod['options'], '', true );
-					$menu_icon     = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );
+					$menu_icon = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );
 
+					$menu_position = pods_v( 'menu_position', $pod['options'], '', true );
 					if ( empty( $menu_position ) ) {
 						$menu_position = null;
 					}
@@ -516,38 +512,14 @@ class PodsAdmin {
 					$menu_slug            = 'pods-settings-' . $pod['name'];
 					$menu_location        = pods_v( 'menu_location', $pod['options'], 'settings' );
 					$menu_location_custom = pods_v( 'menu_location_custom', $pod['options'], '' );
+					$menu_callback        = array( $this, 'admin_content_settings' );
 
 					if ( 'settings' === $menu_location ) {
-						add_options_page(
-							$page_title, $menu_label, 'read', $menu_slug, array(
-								$this,
-								'admin_content_settings',
-							)
-						);
+						add_options_page( $page_title, $menu_label, 'read', $menu_slug, $menu_callback, $menu_position );
 					} elseif ( 'appearances' === $menu_location ) {
-						add_theme_page(
-							$page_title, $menu_label, 'read', $menu_slug, array(
-								$this,
-								'admin_content_settings',
-							)
-						);
-					} elseif ( 'objects' === $menu_location ) {
-						if ( empty( $menu_position ) ) {
-							$menu_position = null;
-						}
-						add_menu_page(
-							$page_title, $menu_label, 'read', $menu_slug, array(
-								$this,
-								'admin_content_settings',
-							), $menu_icon, $menu_position
-						);
-					} elseif ( 'top' === $menu_location ) {
-						add_menu_page(
-							$page_title, $menu_label, 'read', $menu_slug, array(
-								$this,
-								'admin_content_settings',
-							), $menu_icon, $menu_position
-						);
+						add_theme_page( $page_title, $menu_label, 'read', $menu_slug, $menu_callback, $menu_position );
+					} elseif ( 'objects' === $menu_location || 'top' === $menu_location ) {
+						add_menu_page( $page_title, $menu_label, 'read', $menu_slug, $menu_callback, $menu_icon, $menu_position );
 					} elseif ( 'submenu' === $menu_location && ! empty( $menu_location_custom ) ) {
 						if ( ! isset( $submenu_items[ $menu_location_custom ] ) ) {
 							$submenu_items[ $menu_location_custom ] = array();
@@ -559,7 +531,8 @@ class PodsAdmin {
 							$menu_label,
 							'read',
 							$menu_slug,
-							array( $this, 'admin_content_settings' ),
+							$menu_callback,
+							$menu_position,
 						);
 					}//end if
 				}//end foreach

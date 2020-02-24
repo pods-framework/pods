@@ -434,7 +434,7 @@ class PodsAdmin {
 						continue;
 					}
 
-					$menu_location        = pods_v( 'menu_location', $pod['options'], 'default' );
+					$menu_location = pods_v( 'menu_location', $pod['options'], 'default' );
 
 					if ( 'default' === $menu_location ) {
 						continue;

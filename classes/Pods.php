@@ -1679,7 +1679,9 @@ class Pods implements Iterator {
 
 									foreach ( $data as $item_id => $item ) {
 										// $field is 123x123, needs to be _src.123x123
-										$full_field = implode( '.', array_splice( $params->traverse, $key ) );
+										$traverse_fields = array_splice( $params->traverse, $key );
+										$full_field      = implode( '.', $traverse_fields );
+										$maybe_traverse  = false;
 
 										if ( is_array( $item ) && isset( $item[ $field ] ) ) {
 											if ( $table['field_id'] === $field ) {
@@ -1807,10 +1809,24 @@ class Pods implements Iterator {
 												$metadata_type = 'term';
 											}
 
-											$value[] = get_metadata( $metadata_type, $metadata_object_id, $field, true );
+											$maybe_traverse_val = get_metadata( $metadata_type, $metadata_object_id, $field, true );
+											$maybe_traverse     = true;
 										} elseif ( 'settings' === $object_type ) {
-											$value[] = get_option( $object . '_' . $field );
+											$maybe_traverse_val = get_option( $object . '_' . $field );
+											$maybe_traverse     = true;
 										}//end if
+
+										if ( isset( $maybe_traverse_val ) ) {
+											if ( $maybe_traverse && is_array( $maybe_traverse_val ) && 1 < count( $traverse_fields ) ) {
+												array_shift( $traverse_fields );
+												foreach ( $traverse_fields as $field ) {
+													if ( isset( $maybe_traverse_val[ $field ] ) ) {
+														$maybe_traverse_val = $maybe_traverse_val[ $field ];
+													}
+												}
+											}
+											$value[] = $maybe_traverse_val;
+										}
 									}//end foreach
 								}//end if
 

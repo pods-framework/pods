@@ -1821,9 +1821,11 @@ class Pods implements Iterator {
 											if ( $maybe_traverse && is_array( $maybe_traverse_val ) && 1 < count( $traverse_fields ) ) {
 												array_shift( $traverse_fields );
 												foreach ( $traverse_fields as $field ) {
-													if ( isset( $maybe_traverse_val[ $field ] ) ) {
-														$maybe_traverse_val = $maybe_traverse_val[ $field ];
+													if ( ! isset( $maybe_traverse_val[ $field ] ) ) {
+														break;
 													}
+
+													$maybe_traverse_val = $maybe_traverse_val[ $field ];
 												}
 											}
 											$value[] = $maybe_traverse_val;

@@ -1822,6 +1822,8 @@ class Pods implements Iterator {
 												array_shift( $traverse_fields );
 												foreach ( $traverse_fields as $field ) {
 													if ( ! isset( $maybe_traverse_val[ $field ] ) ) {
+														$maybe_traverse_val = null;
+
 														break;
 													}
 

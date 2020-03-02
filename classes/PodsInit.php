@@ -1665,6 +1665,9 @@ class PodsInit {
 		// Show admin bar links
 		add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
 
+		// Compatibility with WP 5.4 privacy export.
+		add_filter( 'wp_privacy_additional_user_profile_data', array( $this, 'filter_wp_privacy_additional_user_profile_data' ), 10, 3 );
+
 		// Compatibility for Query Monitor conditionals
 		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
 
@@ -1861,6 +1864,31 @@ class PodsInit {
 			}
 		}
 
+	}
+
+	/**
+	 * Add Pod fields to user export.
+	 * Requires WordPress 5.4+
+	 *
+	 * @since 2.7.17
+	 *
+	 * @param array   $additional_profile_data
+	 * @param WP_User $user
+	 * @param array   $reserved_names
+	 *
+	 * @return mixed
+	 */
+	public function filter_wp_privacy_additional_user_profile_data( $additional_profile_data, $user, $reserved_names ) {
+		$pod = pods( 'user', $user->ID );
+		if ( $pod->valid() ) {
+			foreach ( $pod->fields as $name => $field ) {
+				$additional_profile_data[] = array(
+					'name'  => $field['label'],
+					'value' => $pod->display( $name ),
+				);
+			}
+		}
+		return $additional_profile_data;
 	}
 
 	/**

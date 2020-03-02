@@ -1088,10 +1088,10 @@ function pods_shortcode_run( $tags, $content = null ) {
 	$content = trim( $content );
 
 	if ( empty( $content ) && ! empty( $tags['not_found'] ) ) {
-		echo $pod->do_magic_tags( $tags['not_found'] );
-	} else {
-		echo $content;
+		$content = $pod->do_magic_tags( $tags['not_found'] );
 	}
+
+	echo $content;
 
 	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array(
 		$tags['pagination_location'], array(

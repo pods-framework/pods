@@ -1883,7 +1883,7 @@ class PodsInit {
 		if ( $pod->valid() ) {
 			foreach ( $pod->fields as $name => $field ) {
 				$additional_profile_data[] = array(
-					'name'  => $field['label'],
+					'name'  => apply_filters( 'pods_form_ui_label_text', $field['label'], $name, '', $field ),
 					'value' => $pod->display( $name ),
 				);
 			}

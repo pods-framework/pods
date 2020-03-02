@@ -178,7 +178,9 @@ class PodsField_Boolean extends PodsField {
 
 		$yes_required = ( 'checkbox' === pods_v( static::$type . '_format_type', $options ) );
 
-		if ( pods_v( 'required', $options ) ) {
+		$required = (int) pods_v( 'required', $options );
+
+		if ( 1 === $required ) {
 			if ( $yes_required ) {
 				if ( 0 === $check ) {
 					$errors[] = __( 'This field is required.', 'pods' );

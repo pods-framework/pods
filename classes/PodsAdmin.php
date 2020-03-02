@@ -1085,9 +1085,9 @@ class PodsAdmin {
 		 */
 		$callout_friends = apply_filters( 'pods_admin_callouts_friends', empty( $callouts['friends_2020'] ) );
 
-		$disable_pods = (int) pods_v( 'pods_callout_friends_2020' );
+		$disable_pods = pods_v( 'pods_callout_dismiss' );
 
-		if ( 1 === $disable_pods ) {
+		if ( 'friends_2020' === $disable_pods ) {
 			$callouts['friends_2020'] = 0;
 
 			update_option( 'pods_callouts', $callouts );

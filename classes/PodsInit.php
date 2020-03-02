@@ -1887,14 +1887,18 @@ class PodsInit {
 	 */
 	public function filter_wp_privacy_additional_user_profile_data( $additional_user_profile_data, $user, $reserved_names ) {
 		$pod = pods( 'user', $user->ID );
-		if ( $pod->valid() ) {
-			foreach ( $pod->fields as $name => $field ) {
-				$additional_user_profile_data[] = array(
-					'name'  => apply_filters( 'pods_form_ui_label_text', $field['label'], $name, '', $field ),
-					'value' => $pod->display( $name ),
-				);
-			}
+
+		if ( ! $pod->valid() ) {
+			return $additional_user_profile_data;
 		}
+
+		foreach ( $pod->fields as $name => $field ) {
+			$additional_user_profile_data[] = array(
+				'name'  => apply_filters( 'pods_form_ui_label_text', $field['label'], $name, '', $field ),
+				'value' => $pod->display( $name ),
+			);
+		}
+
 		return $additional_user_profile_data;
 	}
 

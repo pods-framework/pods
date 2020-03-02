@@ -1070,6 +1070,14 @@ class PodsAdmin {
 	 * @since 2.7.17
 	 */
 	public function admin_manage_callouts() {
+		/**
+		 * Allow hooking into whether or not the Friends callout should show.
+		 *
+		 * @since 2.7.17
+		 */
+		$callout_friends = apply_filters( 'pods_admin_callouts_friends', true );
+
+		if ( $callout_friends ) {
 ?>
 		<div class="pods-admin_friends-callout_container">
 			<button class="pods-admin_friends-callout_close">
@@ -1088,6 +1096,7 @@ class PodsAdmin {
 			</div>
 		</div>
 <?php
+		}
 	}
 
 	/**

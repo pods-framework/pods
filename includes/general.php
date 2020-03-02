@@ -876,13 +876,20 @@ function pods_shortcode_run( $tags, $content = null ) {
 	if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
 		$has_query_tags = array_intersect_key( array_diff( $tags, $defaults ), $default_query_tags );
 
-		if ( ( in_the_loop() || is_singular() ) && ! $has_query_tags ) {
-			$pod = pods( get_post_type(), get_the_ID(), false );
+		// Only allow revert to current object if there are no query tags.
+		if ( ! $has_query_tags ) {
 
-			if ( ! empty( $pod ) ) {
-				$tags['name'] = get_post_type();
-				$id           = get_the_ID();
-				$tags['id']   = get_the_ID();
+			// Archives, Post type archives, singular posts.
+			if ( in_the_loop() ) {
+				$pod = pods( get_post_type(), get_the_ID(), false );
+
+				if ( ! empty( $pod ) ) {
+					$id           = get_the_ID();
+					$tags['id']   = $id;
+					$tags['name'] = get_post_type();
+				}
+			} else {
+				$tags['use_current'] = true;
 			}
 		}
 

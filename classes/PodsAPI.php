@@ -306,7 +306,7 @@ class PodsAPI {
 				if ( isset( $fields[ $meta_key ] ) ) {
 					$field_data = $fields[ $meta_key ];
 
-					$simple = ( 'pick' === $field_data['type'] && in_array( pods_var( 'pick_object', $field_data ), $simple_tableless_objects ) );
+					$simple = ( 'pick' === $field_data['type'] && in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects, true ) );
 				}
 
 				if ( $simple ) {
@@ -767,7 +767,7 @@ class PodsAPI {
 				if ( isset( $fields[ $meta_key ] ) ) {
 					$field_data = $fields[ $meta_key ];
 
-					$simple = ( 'pick' === $field_data['type'] && in_array( pods_var( 'pick_object', $field_data ), $simple_tableless_objects ) );
+					$simple = ( 'pick' === $field_data['type'] && in_array( pods_v( 'pick_object', $field_data ), $simple_tableless_objects, true ) );
 				}
 
 				if ( $simple ) {
@@ -2622,13 +2622,29 @@ class PodsAPI {
 				$params->id = $old_id;
 			}
 
-			if ( ! in_array( $old_type, $tableless_field_types, true ) || $old_simple ) {
-				$new_options = array_merge( $field['options'], $old_options );
-				$definition  = $this->get_field_definition( $old_type, $new_options );
+			$field_definition      = false;
+			$old_options           = array_merge( $field['options'], $old_options );
+			$old_type_is_tableless = in_array( $old_type, $tableless_field_types, true );
 
-				if ( 0 < strlen( $definition ) ) {
-					$old_definition = "`{$old_name}` " . $definition;
-				}
+			if ( $old_simple || ! $old_type_is_tableless ) {
+				$field_definition  = $this->get_field_definition( $old_type, $old_options );
+			}
+
+			/**
+			 * Allow filtering of the old field definition when saving updated field.
+			 *
+			 * @since TBD
+			 *
+			 * @param string|false       $field_definition The SQL definition to use for the field's table column.
+			 * @param string             $type             The field type.
+			 * @param Pods\Whatsit\Field $field            The field object.
+			 * @param array              $options          The field options.
+			 * @param bool               $simple           Whether the field is a simple tableless field.
+			 */
+			$field_definition = apply_filters( 'pods_api_save_field_old_definition', $field_definition, $old_type, $field, $old_options, $old_simple );
+
+			if ( ! empty( $field_definition ) ) {
+				$old_definition = "`{$old_name}` " . $field_definition;
 			}
 		} else {
 			$field = array(
@@ -2705,13 +2721,15 @@ class PodsAPI {
 			}
 		}
 
-		if ( strlen( $field['label'] ) < 1 ) {
+		if ( '' === $field['label'] ) {
 			$field['label'] = $field['name'];
 		}
 
-		if ( in_array( $field['type'], $tableless_field_types ) ) {
+		$type_is_tableless = in_array( $field['type'], $tableless_field_types, true );
+
+		if ( $type_is_tableless ) {
 			// Clean up special drop-down in field editor and save out pick_val
-			$field['pick_object'] = pods_var( 'pick_object', $field, '', null, true );
+			$field['pick_object'] = pods_v( 'pick_object', $field, '', true );
 
 			if ( 0 === strpos( $field['pick_object'], 'pod-' ) ) {
 				$field['pick_val']    = pods_str_replace( 'pod-', '', $field['pick_object'], 1 );
@@ -2740,26 +2758,29 @@ class PodsAPI {
 			$field[ $o ] = $v;
 		}
 
+		// Check for strict mode (default: strict).
+		$strict_mode = ! defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT;
+
 		$object_fields = (array) pods_var_raw( 'object_fields', $pod, array(), null, true );
 
-		if ( 0 < $old_id && defined( 'PODS_FIELD_STRICT' ) && ! PODS_FIELD_STRICT ) {
+		if ( 0 < $old_id && ! $strict_mode ) {
 			$params->id  = $old_id;
 			$field['id'] = $old_id;
 		}
 
 		// Add new field
 		if ( ! isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
-			if ( $table_operation && in_array( $field['name'], array(
+			if ( $table_operation && $strict_mode && in_array( $field['name'], [
 					'created',
-					'modified'
-				), true ) && ! in_array( $field['type'], array(
+					'modified',
+				], true ) && ! in_array( $field['type'], [
 					'date',
-					'datetime'
-				), true ) && ( ! defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) ) {
+					'datetime',
+				], true ) ) {
 				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 			}
 
-			if ( $table_operation && 'author' === $field['name'] && 'pick' !== $field['type'] && ( ! defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) ) {
+			if ( $table_operation && $strict_mode && 'author' === $field['name'] && 'pick' !== $field['type'] ) {
 				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 			}
 
@@ -2839,22 +2860,24 @@ class PodsAPI {
 				}
 			}
 
-			if ( null !== $old_name && $field['name'] !== $old_name && in_array( $field['name'], array(
-					'created',
-					'modified'
-				) ) && ! in_array( $field['type'], array(
-					'date',
-					'datetime'
-				) ) && ( ! defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) ) {
-				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
-			}
+			if ( $strict_mode && null !== $old_name && $field['name'] !== $old_name ) {
+				if ( in_array( $field['name'], [
+						'created',
+						'modified',
+					] ) && ! in_array( $field['type'], [
+						'date',
+						'datetime',
+					] ) ) {
+					return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
+				}
 
-			if ( null !== $old_name && $field['name'] !== $old_name && 'author' === $field['name'] && 'pick' !== $field['type'] && ( ! defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) ) {
-				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
+				if ( 'author' === $field['name'] && 'pick' !== $field['type'] ) {
+					return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
+				}
 			}
 
 			foreach ( $object_fields as $object_field => $object_field_opt ) {
-				if ( $object_field !== $field['name'] && ! in_array( $field['name'], $object_field_opt['alias'] ) ) {
+				if ( $object_field !== $field['name'] && ! in_array( $field['name'], $object_field_opt['alias'], true ) ) {
 					continue;
 				}
 
@@ -2936,29 +2959,46 @@ class PodsAPI {
 
 		$field['id'] = $params->id;
 
-		$simple = ( 'pick' === $field['type'] && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) );
+		$simple = ( 'pick' === $field['type'] && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
 
-		$definition = false;
+		$definition       = false;
+		$field_definition = false;
 
-		if ( ! in_array( $field['type'], $tableless_field_types ) || $simple ) {
+		if ( $simple || ! $type_is_tableless ) {
 			$field_definition = $this->get_field_definition( $field['type'], $field );
-
-			if ( 0 < strlen( $field_definition ) ) {
-				$definition = '`' . $field['name'] . '` ' . $field_definition;
-			}
 		}
+
+		/**
+		 * Allow filtering of the field definition when saving field.
+		 *
+		 * @since TBD
+		 *
+		 * @param string|false       $field_definition The SQL definition to use for the field's table column.
+		 * @param string             $type             The field type.
+		 * @param Pods\Whatsit\Field $field            The field object.
+		 * @param bool               $simple           Whether the field is a simple tableless field.
+		 */
+		$field_definition = apply_filters( 'pods_api_save_field_definition', $field_definition, $field['type'], $field, $simple );
+
+		if ( ! empty( $field_definition ) ) {
+			$definition = '`' . $field['name'] . '` ' . $field_definition;
+		}
+
+		$has_definition     = ! empty( $definition );
+		$has_old_definition = ! empty( $old_definition );
+		$simple_diff        = $old_simple !== $simple;
 
 		$sister_id = (int) pods_var( 'sister_id', $field, 0 );
 
 		if ( $table_operation && 'table' === $pod['storage'] && ! pods_tableless() ) {
 			if ( ! empty( $old_id ) ) {
-				if ( ( $field['type'] !== $old_type || $old_simple != $simple ) && empty( $definition ) ) {
+				if ( ( ( $field['type'] !== $old_type ) || $simple_diff ) && ! $has_definition ) {
 					pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
-				} elseif ( 0 < strlen( $definition ) ) {
-					if ( $old_name !== $field['name'] || $old_simple != $simple ) {
+				} elseif ( $has_definition ) {
+					if ( $simple_diff || $old_name !== $field['name'] ) {
 						$test = false;
 
-						if ( 0 < strlen( $old_definition ) ) {
+						if ( $has_old_definition ) {
 							$test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
 						}
 
@@ -2966,7 +3006,7 @@ class PodsAPI {
 						if ( false === $test ) {
 							pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
 						}
-					} elseif ( null !== $old_definition && $definition !== $old_definition ) {
+					} elseif ( $has_old_definition && $definition !== $old_definition ) {
 						$test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
 
 						// If the old field doesn't exist, continue to add a new field
@@ -2975,10 +3015,10 @@ class PodsAPI {
 						}
 					}
 				}
-			} elseif ( 0 < strlen( $definition ) ) {
+			} elseif ( $has_definition ) {
 				$test = false;
 
-				if ( 0 < strlen( $old_definition ) ) {
+				if ( $has_old_definition ) {
 					$test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $field['name'] . "` {$definition}", false );
 				}
 
@@ -3019,7 +3059,7 @@ class PodsAPI {
 			" . ( ! empty( $pod['field_type'] ) ? " AND `t`.`{$pod[ 'field_type' ]}` = %s" : "" ), $prepare );
 		}
 
-		if ( $field['type'] !== $old_type && in_array( $old_type, $tableless_field_types, true ) ) {
+		if ( $old_type_is_tableless && $field['type'] !== $old_type ) {
 			delete_post_meta( $old_sister_id, 'sister_id' );
 
 			if ( true === $db ) {
@@ -3909,7 +3949,7 @@ class PodsAPI {
 					if ( empty( $value ) ) {
 						$value = '';
 					} elseif ( is_array( $value ) ) {
-						if ( 1 == $pick_limit || 1 == count( $value ) ) {
+						if ( 1 === $pick_limit || 1 === count( $value ) ) {
 							// If there's just one item, don't save as an array, save the string
 							$value = implode( '', $value );
 						} elseif ( 'table' === pods_var( 'storage', $pod ) ) {
@@ -3920,13 +3960,13 @@ class PodsAPI {
 				}
 
 				// Prepare all table / meta data
-				if ( ! in_array( $type, $tableless_field_types, true ) || $simple ) {
-					if ( in_array( $type, $repeatable_field_types, true ) && 1 == pods_var( $type . '_repeatable', $field_data, 0 ) ) {
+				if ( $simple || ! in_array( $type, $tableless_field_types, true ) ) {
+					if ( in_array( $type, $repeatable_field_types, true ) && 1 === (int) pods_v( $type . '_repeatable', $field_data, 0 ) ) {
 						// Don't save an empty array, just make it an empty string
 						if ( empty( $value ) ) {
 							$value = '';
 						} elseif ( is_array( $value ) ) {
-							if ( 1 == count( $value ) ) {
+							if ( 1 === count( $value ) ) {
 								// If there's just one item, don't save as an array, save the string
 								$value = implode( '', $value );
 							} elseif ( 'table' === pods_var( 'storage', $pod ) ) {
@@ -4059,23 +4099,23 @@ class PodsAPI {
 				}
 
 				foreach ( $data as $field => $values ) {
-					$pick_val = pods_var( 'pick_val', $fields[ $field ] );
+					$pick_val = pods_v( 'pick_val', $fields[ $field ] );
 
-					if ( 'table' === pods_var( 'pick_object', $fields[ $field ] ) ) {
-						$pick_val = pods_var( 'pick_table', $fields[ $field ], $pick_val, null, true );
+					if ( 'table' === pods_v( 'pick_object', $fields[ $field ] ) ) {
+						$pick_val = pods_v( 'pick_table', $fields[ $field ], $pick_val, true );
 					}
 
 					if ( '__current__' === $pick_val ) {
 						if ( is_array( $pod ) || $pod instanceof Pods\Whatsit ) {
 							$pick_val = $pod['name'];
-						} elseif ( is_object( $pod ) ) {
+						} elseif ( is_object( $pod ) && isset( $pod->pod ) ) {
 							$pick_val = $pod->pod;
-						} elseif ( 0 < strlen( $pod ) ) {
+						} elseif ( is_string( $pod ) && 0 < strlen( $pod ) ) {
 							$pick_val = $pod;
 						}
 					}
 
-					$fields[ $field ]['table_info'] = pods_api()->get_table_info( pods_var( 'pick_object', $fields[ $field ] ), $pick_val, null, null, $fields[ $field ] );
+					$fields[ $field ]['table_info'] = pods_api()->get_table_info( pods_v( 'pick_object', $fields[ $field ] ), $pick_val, null, null, $fields[ $field ] );
 
 					if ( isset( $fields[ $field ]['table_info']['pod'] ) && ! empty( $fields[ $field ]['table_info']['pod'] ) && isset( $fields[ $field ]['table_info']['pod']['name'] ) ) {
 						$search_data = pods( $fields[ $field ]['table_info']['pod']['name'] );
@@ -4102,17 +4142,17 @@ class PodsAPI {
 						$find_rel_params = false;
 					}
 
-					$related_limit = (int) pods_var_raw( $type . '_limit', $fields[ $field ], 0 );
+					$related_limit = (int) pods_v( $type . '_limit', $fields[ $field ], 0 );
 
-					if ( 'single' === pods_var_raw( $type . '_format_type', $fields[ $field ] ) ) {
+					if ( 'single' === pods_v( $type . '_format_type', $fields[ $field ] ) ) {
 						$related_limit = 1;
 					}
 
 					// Enforce integers / unique values for IDs
 					$value_ids = array();
 
-					$is_file_field = in_array( $type, PodsForm::file_field_types() );
-					$is_taggable   = ( in_array( $type, PodsForm::tableless_field_types() ) && 1 == pods_v( $type . '_taggable', $fields[ $field ] ) );
+					$is_file_field = in_array( $type, PodsForm::file_field_types(), true );
+					$is_taggable   = ( in_array( $type, PodsForm::tableless_field_types(), true ) && 1 === (int) pods_v( $type . '_taggable', $fields[ $field ] ) );
 
 					// @todo Handle simple relationships eventually
 					foreach ( $values as $v ) {
@@ -4449,13 +4489,14 @@ class PodsAPI {
 	/**
 	 * Save relationships
 	 *
-	 * @param int       $id         ID of item
-	 * @param int|array $related_id ID or IDs to save
-	 * @param array     $pod        Pod data
-	 * @param array     $field      Field data
+	 * @param int                       $id          ID of item.
+	 * @param int|array                 $related_ids ID(s) for items to save.
+	 * @param array|\Pods\Whatsit\Pod   $pod         The Pod object.
+	 * @param array|\Pods\Whatsit\Field $field       The Field object.
+	 *
+	 * @return array List of ID(s) that were setup for saving.
 	 */
 	public function save_relationships( $id, $related_ids, $pod, $field ) {
-
 		// Get current values
 		if ( 'pick' === $field['type'] && isset( PodsField_Pick::$related_data[ $field['id'] ] ) && isset( PodsField_Pick::$related_data[ $field['id'] ]['current_ids'] ) ) {
 			$current_ids = PodsField_Pick::$related_data[ $field['id'] ]['current_ids'];
@@ -4484,9 +4525,9 @@ class PodsAPI {
 
 		$related_ids = array_unique( array_filter( $related_ids ) );
 
-		$related_limit = (int) pods_var_raw( $field['type'] . '_limit', $field, 0 );
+		$related_limit = (int) pods_v( $field['type'] . '_limit', $field, 0 );
 
-		if ( 'single' === pods_var_raw( $field['type'] . '_format_type', $field ) ) {
+		if ( 'single' === pods_v( $field['type'] . '_format_type', $field ) ) {
 			$related_limit = 1;
 		}
 
@@ -4496,10 +4537,16 @@ class PodsAPI {
 		}
 
 		// Post Types, Media, Users, and Comments (meta-based)
-		if ( in_array( $pod['type'], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
+		if ( pods_relationship_meta_storage_enabled( $field, $pod ) && in_array( $pod['type'], [
+				'post_type',
+				'media',
+				'taxonomy',
+				'user',
+				'comment',
+			], true ) ) {
 			$object_type = $pod['type'];
 
-			if ( in_array( $object_type, array( 'post_type', 'media' ), true ) ) {
+			if ( in_array( $object_type, [ 'post_type', 'media' ], true ) ) {
 				$object_type = 'post';
 			} elseif ( 'taxonomy' === $object_type ) {
 				$object_type = 'term';
@@ -4595,6 +4642,20 @@ class PodsAPI {
 				$related_weight ++;
 			}
 		}
+
+		/**
+		 * Allow custom saving actions for relationships.
+		 *
+		 * @since TBD
+		 *
+		 * @param int                       $id          ID of item.
+		 * @param array                     $related_ids ID(s) for items to save.
+		 * @param array|\Pods\Whatsit\Pod   $pod         The Pod object.
+		 * @param array|\Pods\Whatsit\Field $field       The Field object.
+		 */
+		do_action( 'pods_api_save_relationships', $id, $related_ids, $field, $pod );
+
+		return $related_ids;
 	}
 
 	/**
@@ -5851,7 +5912,7 @@ class PodsAPI {
 	}
 
 	/**
-	 * Delete an object from tableless fields
+	 * Delete an object from tableless fields.
 	 *
 	 * @param int    $id
 	 * @param string $type
@@ -5899,63 +5960,77 @@ class PodsAPI {
 			$params['args']['pick_val'] = $name;
 		}
 
-		$fields = $this->load_fields( $params );
+		try {
+			$fields = $this->load_fields( $params );
 
-		if ( ! empty( $pod ) && 'media' === $pod['type'] ) {
-			$params['args']['type'] = 'file';
+			if ( ! empty( $pod ) && 'media' === $pod['type'] ) {
+				$params['args']['type'] = 'file';
 
-			$fields = array_merge( $fields, $this->load_fields( $params ) );
-		}
-
-		if ( is_array( $fields ) && ! empty( $fields ) ) {
-			foreach ( $fields as $related_field ) {
-				$related_pod = $this->load_pod( array( 'id' => $related_field['pod_id'] ), false );
-
-				if ( empty( $related_pod ) ) {
-					continue;
-				}
-
-				$related_from = $this->lookup_related_items_from( $related_field['id'], $related_pod['id'], $id, $related_field, $related_pod );
-
-				$this->delete_relationships( $related_from, $id, $related_pod, $related_field );
+				$fields = array_merge( $fields, $this->load_fields( $params ) );
 			}
+
+			if ( is_array( $fields ) && ! empty( $fields ) ) {
+				foreach ( $fields as $related_field ) {
+					$related_pod = $this->load_pod( [ 'id' => $related_field['pod_id'] ], false );
+
+					if ( empty( $related_pod ) ) {
+						continue;
+					}
+
+					$related_from = $this->lookup_related_items_from( $related_field['id'], $related_pod['id'], $id, $related_field, $related_pod );
+
+					$this->delete_relationships( $related_from, $id, $related_pod, $related_field );
+				}
+			}
+		} catch ( Exception $exception ) {
+			// Nothing left to do here.
 		}
 
-		if ( ! empty( $pod ) && pods_podsrel_enabled() ) {
-			pods_query( '
-				DELETE FROM `@wp_podsrel`
-				WHERE
-				(
-					`pod_id` = %d
-					AND `item_id` = %d
-				)
-				OR (
-					`related_pod_id` = %d
-					AND `related_item_id` = %d
-				)
-			', array(
-				$pod['id'],
-				$id,
+		if ( ! empty( $pod ) ) {
+			if ( pods_podsrel_enabled() ) {
+				pods_query( '
+					DELETE FROM `@wp_podsrel`
+					WHERE
+					(
+						`pod_id` = %d
+						AND `item_id` = %d
+					)
+					OR (
+						`related_pod_id` = %d
+						AND `related_item_id` = %d
+					)
+				', [
+					$pod['id'],
+					$id,
 
-				$pod['id'],
-				$id,
-			) );
+					$pod['id'],
+					$id,
+				] );
+			}
+
+			/**
+			 * Allow custom deletion actions for relationships.
+			 *
+			 * @since TBD
+			 *
+			 * @param int                     $id  ID to remove.
+			 * @param array|\Pods\Whatsit\Pod $pod The Pod object.
+			 */
+			do_action( 'pods_api_delete_object_from_relationships', $id, $pod );
 		}
 
 		return true;
 	}
 
 	/**
-	 * Delete relationships
-	 *
-	 * @param int|array $related_id    IDs for items to save
-	 * @param int|array $id            ID or IDs to remove
-	 * @param array     $related_pod   Pod data
-	 * @param array     $related_field Field data
-	 *
-	 * @return void
+	 * Handle deletion of relationship data.
 	 *
 	 * @since 2.3.0
+	 *
+	 * @param int|array                 $related_id    ID(s) for items to save.
+	 * @param int|array                 $id            ID(s) to remove.
+	 * @param array|\Pods\Whatsit\Pod   $related_pod   The related Pod object.
+	 * @param array|\Pods\Whatsit\Field $related_field The related Field object.
 	 */
 	public function delete_relationships( $related_id, $id, $related_pod, $related_field ) {
 
@@ -6010,10 +6085,16 @@ class PodsAPI {
 		}
 
 		// Post Types, Media, Users, and Comments (meta-based)
-		if ( in_array( $related_pod['type'], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
+		if ( pods_relationship_meta_storage_enabled( $related_field, $related_pod ) && in_array( $related_pod['type'], [
+				'post_type',
+				'media',
+				'taxonomy',
+				'user',
+				'comment',
+			], true ) ) {
 			$object_type = $related_pod['type'];
 
-			if ( in_array( $object_type, array( 'post_type', 'media' ), true ) ) {
+			if ( in_array( $object_type, [ 'post_type', 'media' ], true ) ) {
 				$object_type = 'post';
 			} elseif ( 'taxonomy' === $object_type ) {
 				$object_type = 'term';
@@ -6068,6 +6149,18 @@ class PodsAPI {
 				$id,
 			) );
 		}
+
+		/**
+		 * Allow custom deletion actions for relationships.
+		 *
+		 * @since TBD
+		 *
+		 * @param int|array                 $related_id    ID(s) for items to save.
+		 * @param int|array                 $id            ID(s) to remove.
+		 * @param array|\Pods\Whatsit\Pod   $related_pod   The related Pod object.
+		 * @param array|\Pods\Whatsit\Field $related_field The related Field object.
+		 */
+		do_action( 'pods_api_delete_relationships', $related_id, $id, $related_field, $related_pod );
 
 		if ( ! $no_conflict ) {
 			pods_no_conflict_off( $related_pod['type'] );
@@ -7237,26 +7330,22 @@ class PodsAPI {
 			if ( ! is_wp_error( $related ) ) {
 				$related_ids = $related;
 			}
-		} elseif ( ! pods_tableless() ) {
+		} elseif ( ! pods_tableless() && pods_podsrel_enabled() ) {
 			$ids = implode( ', ', $ids );
 
 			$field_id  = (int) $field_id;
 			$sister_id = (int) pods_var_raw( 'sister_id', $field, 0 );
 
-			$relationships = array();
+			$sql = "
+				SELECT item_id, related_item_id, related_field_id
+				FROM `@wp_podsrel`
+				WHERE
+					`field_id` = {$field_id}
+					AND `item_id` IN ( {$ids} )
+				ORDER BY `weight`
+			";
 
-			if ( pods_podsrel_enabled() ) {
-				$sql = "
-					SELECT item_id, related_item_id, related_field_id
-					FROM `@wp_podsrel`
-					WHERE
-						`field_id` = {$field_id}
-						AND `item_id` IN ( {$ids} )
-					ORDER BY `weight`
-				";
-
-				$relationships = pods_query( $sql );
-			}
+			$relationships = pods_query( $sql );
 
 			if ( ! empty( $relationships ) ) {
 				foreach ( $relationships as $relation ) {
@@ -7317,7 +7406,7 @@ class PodsAPI {
 								}
 							}
 						}
-					} else {
+					} elseif ( pods_relationship_meta_storage_enabled( $field, $pod ) ) {
 						$related_id = get_metadata( $meta_type, $id, '_pods_' . $field['name'], true );
 
 						if ( empty( $related_id ) ) {
@@ -7359,6 +7448,7 @@ class PodsAPI {
 				$related_ids = array_slice( $related_ids, 0, $related_pick_limit );
 			}
 		}
+
 		if ( 0 != $pod_id && 0 != $field_id && ! empty( $related_ids ) ) {
 			// Only cache if $pod_id and $field_id were passed
 			self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] = $related_ids;

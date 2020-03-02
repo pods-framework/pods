@@ -179,7 +179,7 @@ if ( 0 < $pod->id() ) {
 		 */
 		do_action( 'pods_meta_box_pre', $pod, $obj );
 		?>
-		<div id="poststuff" class="metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
+		<div id="poststuff" class="poststuff metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
 			<div id="side-info-column" class="inner-sidebar">
 				<?php
 				/**

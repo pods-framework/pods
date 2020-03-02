@@ -155,6 +155,8 @@ class PodsInit {
 
 	/**
 	 * Add compatibility for other plugins.
+	 *
+	 * @since 2.7.17
 	 */
 	public function after_setup_theme() {
 

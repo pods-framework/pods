@@ -1664,7 +1664,7 @@ function pods_field_raw( $pod, $id = null, $name = null, $single = false ) {
  *
  * @return int|false The item ID or false if not saved.
  *
- * @since 2.7.2
+ * @since 2.7.17
  */
 function pods_field_update( $pod, $id = null, $name = null, $value = null ) {
 

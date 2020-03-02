@@ -380,19 +380,42 @@ function pods_tableless() {
 /**
  * Determine whether the wp_podsrel table is enabled.
  *
- * @return bool Whether the wp_podsrel table is enabled.
- *
  * @since TBD
+ *
+ * @return bool Whether the wp_podsrel table is enabled.
  */
 function pods_podsrel_enabled() {
 	/**
 	 * Allow filtering of whether or not the wp_podsrel table is enabled.
 	 *
+	 * @since TBD
+	 *
 	 * @param bool $enabled Whether the wp_podsrel table is enabled.
+	 */
+	return apply_filters( 'pods_podsrel_enabled', pods_tableless() );
+}
+
+/**
+ * Determine whether relationship meta storage is enabled.
+ *
+ * @since TBD
+ *
+ * @param array|\Pods\Whatsit\Field $field The field object.
+ * @param array|\Pods\Whatsit\Pod   $pod   The pod object.
+ *
+ * @return bool Whether relationship meta storage is enabled.
+ */
+function pods_relationship_meta_storage_enabled( $field, $pod ) {
+	/**
+	 * Allow filtering of whether or not relationship meta storage is enabled.
 	 *
 	 * @since TBD
+	 *
+	 * @param bool                      $enabled Whether relationship meta storage table is enabled.
+	 * @param array|\Pods\Whatsit\Field $field   The field object.
+	 * @param array|\Pods\Whatsit\Pod   $pod     The pod object.
 	 */
-	return apply_filters( 'pods_podsrel_enabled', pods_tableless() ) ;
+	return apply_filters( 'pods_relationship_meta_storage_enabled', true, $field, $pod );
 }
 
 /**

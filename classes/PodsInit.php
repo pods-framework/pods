@@ -1872,9 +1872,16 @@ class PodsInit {
 	 *
 	 * @since 2.7.17
 	 *
-	 * @param array   $additional_profile_data
-	 * @param WP_User $user
-	 * @param array   $reserved_names
+	 * @param array    $additional_user_profile_data {
+	 *     An array of name-value pairs of additional user data items.  Default: the empty array.
+	 *
+	 *     @type string $name  The user-facing name of an item name-value pair, e.g. 'IP Address'.
+	 *     @type string $value The user-facing value of an item data pair, e.g. '50.60.70.0'.
+	 * }
+	 * @param WP_User  $user           The user whose data is being exported.
+	 * @param array    $reserved_names An array of reserved names.  Any item in
+	 *                                 `$additional_user_data` that uses one of these
+	 *                                 for it's `name` will not be included in the export.
 	 *
 	 * @return mixed
 	 */

@@ -1883,7 +1883,7 @@ class PodsInit {
 	 *                                 `$additional_user_data` that uses one of these
 	 *                                 for it's `name` will not be included in the export.
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public function filter_wp_privacy_additional_user_profile_data( $additional_profile_data, $user, $reserved_names ) {
 		$pod = pods( 'user', $user->ID );

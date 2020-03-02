@@ -1070,12 +1070,28 @@ class PodsAdmin {
 	 * @since 2.7.17
 	 */
 	public function admin_manage_callouts() {
+		$callouts = get_option( 'pods_callouts' );
+
+		if ( ! $callouts ) {
+			$callouts = array();
+		}
+
 		/**
 		 * Allow hooking into whether or not the Friends callout should show.
 		 *
 		 * @since 2.7.17
+		 *
+		 * @param boolean $callout_friends Whether to enable the callout.
 		 */
-		$callout_friends = apply_filters( 'pods_admin_callouts_friends', true );
+		$callout_friends = apply_filters( 'pods_admin_callouts_friends', empty( $callouts['friends_2020'] ) );
+
+		$disable_pods = (int) pods_v( 'pods_callout_friends_2020' );
+
+		if ( 1 === $disable_pods ) {
+			$callouts['friends_2020'] = 0;
+
+			update_option( 'pods_callouts', $callouts );
+		}
 
 		if ( $callout_friends ) {
 ?>

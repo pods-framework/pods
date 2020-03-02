@@ -1098,6 +1098,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		$content = $pod->do_magic_tags( $tags['not_found'] );
 	}
 
+	// phpcs:ignore
 	echo $content;
 
 	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array(

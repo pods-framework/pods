@@ -364,12 +364,12 @@
 					$all_pods  = $api->load_pods( array( 'names' => true ) );
 					$pod_count = count( $all_pods );
 					?>
-					 <label for="pod_select"><?php _e( 'Choose a Pod', 'pods' ); ?></label>
+					<label for="pod_select"><?php _e( 'Choose a Pod', 'pods' ); ?></label>
 
 					<?php
 					if ( $pod_count > 0 ) {
-?>
- <select id="pod_select" name="pod_select">
+					?>
+                    <select id="pod_select" name="pod_select">
 					<?php foreach ( $all_pods as $pod_name => $pod_label ) { ?>
 					<option value="<?php echo esc_attr( $pod_name ); ?>">
 						<?php echo esc_html( $pod_label . ' (' . $pod_name . ')' ); ?>
@@ -379,7 +379,7 @@
 				<?php
 					} else {
 					?>
-					 <strong class="red" id="pod_select"><?php _e( 'None Found', 'pods' ); ?></strong> <?php } ?>
+					<strong class="red" id="pod_select"><?php _e( 'None Found', 'pods' ); ?></strong> <?php } ?>
 				</div>
 
 				<?php if ( class_exists( 'Pods_Templates' ) ) { ?>
@@ -388,7 +388,7 @@
 					$templates      = $api->load_templates();
 					$template_count = count( $templates );
 					?>
-					 <label for="pod_template"><?php _e( 'Template', 'pods' ); ?></label>
+					<label for="pod_template"><?php _e( 'Template', 'pods' ); ?></label>
 
 					<select id="pod_template" name="pod_template">
 						<option value="" SELECTED>- <?php _e( 'Custom Template', 'pods' ); ?> -</option>
@@ -424,7 +424,7 @@
 					$pages      = $api->load_pages();
 					$page_count = count( $pages );
 					?>
-					 <label for="pods_page"><?php _e( 'Pods Page', 'pods' ); ?></label>
+					<label for="pods_page"><?php _e( 'Pods Page', 'pods' ); ?></label>
 
 					<select id="pods_page" name="pods_page">
 						<?php foreach ( $pages as $page ) { ?>
@@ -503,7 +503,7 @@
 
 					$default_cache_mode = apply_filters( 'pods_shortcode_default_cache_mode', 'none' );
 					?>
-					 <select id="pod_cache_mode" name="pod_cache_mode">
+					<select id="pod_cache_mode" name="pod_cache_mode">
 					<?php foreach ( $cache_modes as $cache_mode_option => $cache_mode_label ) : ?>
 					<option value="<?php echo esc_attr( $cache_mode_option ); ?>"<?php selected( $default_cache_mode, $cache_mode_option ); ?>>
 						<?php echo esc_html( $cache_mode_label ); ?>

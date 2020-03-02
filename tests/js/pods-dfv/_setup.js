@@ -1,18 +1,18 @@
-require('jsdom-global')( ``, { beforeParse( window ) { window.alert = function(){}; } } );
+require( 'jsdom-global' )( '', { beforeParse ( window ) { window.alert = function () {}; } } );
 global.jQuery = require( 'jquery' );
 global._ = require( 'underscore' );
 global.Backbone = require( 'backbone' );
-global.Marionette = require( 'backbone.marionette' );
+global.PodsMn = require( 'backbone.marionette' );
 global.sprintf = require( 'sprintf-js' ).sprintf;
 global.assert = require( 'assert' );
 global.wp = {
 	media: {
 		view: {
 			Frame: {
-				extend : function(){}
+				extend: function(){}
 			},
 			Modal: {
-				extend : function(){}
+				extend: function(){}
 			}
 		}
 	}
@@ -20,7 +20,7 @@ global.wp = {
 
 //--!! We need to build the PodsI18n object as a module so it's importable
 /*global podsLocalizedStrings */
-global.PodsI18n = (function () {
+global.PodsI18n = ( function () {
 
 	/**
 	 * Only visible to the closure, not exposed externally.
@@ -28,9 +28,10 @@ global.PodsI18n = (function () {
 	 * @returns {string}
 	 */
 	var translateString = function ( str ) {
-		var translated = str, ref;
+		var translated = str;
+		var ref;
 
-		if ( typeof podsLocalizedStrings !== 'undefined' ) {
+		if ( 'undefined' !== typeof podsLocalizedStrings ) {
 
 			/**
 			 * Converts string into reference object variable
@@ -38,10 +39,9 @@ global.PodsI18n = (function () {
 			 */
 			ref = '__' + str;
 
-			if ( typeof podsLocalizedStrings[ ref ] !== 'undefined' ) {
+			if ( 'undefined' !== typeof podsLocalizedStrings[ ref ] ) {
 				translated = podsLocalizedStrings[ ref ];
-			}
-			else if ( podsLocalizedStrings.debug ) {
+			} else if ( podsLocalizedStrings.debug ) {
 				console.log( 'PodsI18n: String not found "' + str + '" (reference used: "' + ref + '")' );
 			}
 		}

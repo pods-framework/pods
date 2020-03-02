@@ -72,7 +72,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 	/**
 	 * Enqueue styles
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_assets() {
 
@@ -175,7 +175,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 	/**
 	 *
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param $post_type
 	 *
@@ -272,7 +272,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 	/**
 	 *
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param $taxonomy
 	 *
@@ -346,7 +346,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
 	/**
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function clean() {
 

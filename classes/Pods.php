@@ -257,7 +257,7 @@ class Pods implements Iterator {
 	 *
 	 * @var string
 	 *
-	 * @deprecated 2.0
+	 * @deprecated 2.0.0
 	 */
 	public $datatype;
 
@@ -266,7 +266,7 @@ class Pods implements Iterator {
 	 *
 	 * @var int
 	 *
-	 * @deprecated 2.0
+	 * @deprecated 2.0.0
 	 */
 	public $datatype_id;
 
@@ -391,7 +391,7 @@ class Pods implements Iterator {
 	 *
 	 * @return bool
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function valid() {
 
@@ -502,7 +502,7 @@ class Pods implements Iterator {
 	 *
 	 * @return bool
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function exists() {
 
@@ -521,7 +521,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array|bool An array of all rows returned from a find() call, or false if no items returned
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/data/
 	 */
 	public function data() {
@@ -587,7 +587,7 @@ class Pods implements Iterator {
 	 *
 	 * @return bool|mixed
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function fields( $field = null, $option = null ) {
 
@@ -647,7 +647,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array|false
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function row() {
 
@@ -670,7 +670,7 @@ class Pods implements Iterator {
 	 *
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/display/
 	 */
 	public function display( $name, $single = null ) {
@@ -730,7 +730,7 @@ class Pods implements Iterator {
 	 *
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/display/
 	 */
 	public function raw( $name, $single = null ) {
@@ -771,7 +771,7 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed|null Value returned depends on the field type, null if the field doesn't exist, false if no value
 	 *                    returned for tableless fields.
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/field/
 	 */
 	public function field( $name, $single = null, $raw = false ) {
@@ -788,6 +788,7 @@ class Pods implements Iterator {
 			'get_meta'    => false,
 			'output'      => null,
 			'deprecated'  => false,
+			'keyed'       => false,
 			// extra data to send to field handlers.
 			'args'        => array(),
 		);
@@ -1158,10 +1159,11 @@ class Pods implements Iterator {
 				}
 
 				if ( isset( $this->fields[ $params->name ], $this->fields[ $params->name ]['type'] ) ) {
+					$field_type = $this->fields[ $params->name ]['type'];
 					/**
 					 * Modify value returned by field() after its retrieved, but before its validated or formatted
 					 *
-					 * Filter name is set dynamically with name of field: "pods_pods_field_{field_name}"
+					 * Filter name is set dynamically with name of field: "pods_pods_field_{field_type}"
 					 *
 					 * @since unknown
 					 *
@@ -1170,7 +1172,7 @@ class Pods implements Iterator {
 					 * @param array             $params Params array passed to field().
 					 * @param object|Pods       $this   Current Pods object.
 					 */
-					$v = apply_filters( 'pods_pods_field_' . $this->fields[ $params->name ]['type'], null, $this->fields[ $params->name ], $this->row, $params, $this );
+					$v = apply_filters( "pods_pods_field_{$field_type}", null, $this->fields[ $params->name ], $this->row, $params, $this );
 
 					if ( null !== $v ) {
 						return $v;
@@ -1518,7 +1520,7 @@ class Pods implements Iterator {
 
 								$item_data = array();
 
-								if ( ! $related_obj ) {
+								if ( ! $related_obj || ! $related_obj->valid() ) {
 									if ( ! is_object( $this->alt_data ) ) {
 										$this->alt_data = pods_data( null, 0, true, true );
 									}
@@ -1691,6 +1693,9 @@ class Pods implements Iterator {
 											} else {
 												$value[] = $item->{$field};
 											}
+										} elseif ( ! empty( $related_obj ) && 0 === strpos( $full_field, 'post_thumbnail' ) ) {
+											// We want to catch post_thumbnail and post_thumbnail_url here
+											$value[] = $related_obj->field( $full_field );
 										} elseif ( ( ( false !== strpos( $full_field, '_src' ) || 'guid' === $field ) && ( in_array( $table['type'], array(
 											'attachment',
 											'media',
@@ -1826,7 +1831,7 @@ class Pods implements Iterator {
 									}
 
 									$value = PodsForm::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[ $pod ], 0, true );
-								} elseif ( false === $params->in_form && ! empty( $value ) && is_array( $value ) ) {
+								} elseif ( false === $params->in_form && ! empty( $value ) && is_array( $value ) && false === $params->keyed ) {
 									$value = array_values( $value );
 								}
 
@@ -1838,6 +1843,9 @@ class Pods implements Iterator {
 
 							if ( $last_options ) {
 								$last_field_data = $last_options;
+							} elseif ( isset( $related_obj, $related_obj->fields, $related_obj->fields[ $field ] ) ) {
+								// Save related field data for later to be used for display formatting
+								$last_field_data = $related_obj->fields[ $field ];
 							}
 
 							break;
@@ -1865,7 +1873,6 @@ class Pods implements Iterator {
 			$field_data = $last_field_data;
 		}
 
-		// @todo Expand this into traversed fields too.
 		if ( ! empty( $field_data ) && ( $params->display || ! $params->raw ) && ! $params->in_form && ! $params->raw_display ) {
 			if ( $params->display || ( ( $params->get_meta || $params->deprecated ) && ! in_array( $field_data['type'], $tableless_field_types, true ) ) ) {
 				$field_data['options'] = pods_v( 'options', $field_data, array(), true );
@@ -1873,6 +1880,7 @@ class Pods implements Iterator {
 				$post_temp   = false;
 				$old_post    = null;
 				$old_post_id = null;
+				$post_ID     = null;
 
 				if ( empty( $GLOBALS['post'] ) && 'post_type' === pods_v( 'type', $this->pod_data ) && 0 < $this->id() ) {
 					global $post_ID, $post;
@@ -2142,7 +2150,7 @@ class Pods implements Iterator {
 	 * Return the item ID
 	 *
 	 * @return int
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function id() {
 
@@ -2161,7 +2169,7 @@ class Pods implements Iterator {
 	 * @param array|object|null $params_override Override the find() parameters.
 	 *
 	 * @return int
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function prev_id( $id = null, $params_override = null ) {
 
@@ -2250,7 +2258,7 @@ class Pods implements Iterator {
 	 * @param array|object|null $params_override Override the find() parameters.
 	 *
 	 * @return int
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function next_id( $id = null, $params_override = null ) {
 
@@ -2318,7 +2326,7 @@ class Pods implements Iterator {
 	 * @param array|object|null $params_override Override the find() parameters.
 	 *
 	 * @return int
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function first_id( $params_override = null ) {
 
@@ -2363,7 +2371,7 @@ class Pods implements Iterator {
 	 * @param array|object|null $params_override Override the find() parameters.
 	 *
 	 * @return int
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function last_id( $params_override = null ) {
 
@@ -2433,7 +2441,7 @@ class Pods implements Iterator {
 	 * Return the item name
 	 *
 	 * @return string
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function index() {
 
@@ -2449,7 +2457,7 @@ class Pods implements Iterator {
 	 * @param string       $sql    (deprecated) For advanced use, a custom SQL query to run.
 	 *
 	 * @return \Pods The pod object
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/find/
 	 */
 	public function find( $params = null, $limit = 15, $where = null, $sql = null ) {
@@ -2695,7 +2703,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array An array of fields from the row
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/fetch/
 	 */
 	public function fetch( $id = null, $explicit_set = true ) {
@@ -2728,7 +2736,7 @@ class Pods implements Iterator {
 	 *
 	 * @return \Pods The pod object
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/reset/
 	 */
 	public function reset( $row = null ) {
@@ -2756,7 +2764,7 @@ class Pods implements Iterator {
 	 * @see   PodsData::total
 	 *
 	 * @return int Number of rows returned by find(), based on the 'limit' parameter set
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/total/
 	 */
 	public function total() {
@@ -2778,7 +2786,7 @@ class Pods implements Iterator {
 	 * @see   PodsData::total_found
 	 *
 	 * @return int Number of rows returned by find(), regardless of the 'limit' parameter
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/total-found/
 	 */
 	public function total_found() {
@@ -2852,7 +2860,7 @@ class Pods implements Iterator {
 	 * @param int|string $nth The $nth to match on the PodsData::row_number.
 	 *
 	 * @return bool Whether $nth matches
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function nth( $nth = null ) {
 
@@ -2867,7 +2875,7 @@ class Pods implements Iterator {
 	 * @see   PodsData::position
 	 *
 	 * @return int Current row number (+1)
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function position() {
 
@@ -2889,7 +2897,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int The item ID
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/add/
 	 */
 	public function add( $data = null, $value = null ) {
@@ -2925,7 +2933,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int The item ID
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function add_to( $field, $value, $id = null ) {
 
@@ -3182,12 +3190,12 @@ class Pods implements Iterator {
 	 *
 	 * @return int The item ID
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/save/
 	 */
 	public function save( $data = null, $value = null, $id = null, $params = null ) {
 
-		if ( null !== $value ) {
+		if ( null !== $data && ! is_array( $data ) ) {
 			$data = array( $data => $value );
 		}
 
@@ -3259,7 +3267,7 @@ class Pods implements Iterator {
 	 *
 	 * @return bool Whether the item was successfully deleted
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/delete/
 	 */
 	public function delete( $id = null ) {
@@ -3314,7 +3322,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int|bool ID of the new pod item
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/duplicate/
 	 */
 	public function duplicate( $id = null ) {
@@ -3348,7 +3356,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array IDs of imported items
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function import( $import_data, $numeric_mode = false, $format = null ) {
 
@@ -3366,7 +3374,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array|bool Data array of the exported pod item
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/export/
 	 */
 	public function export( $fields = null, $id = null, $format = null ) {
@@ -3419,7 +3427,7 @@ class Pods implements Iterator {
 	 *
 	 * @return array Data arrays of all exported pod items
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function export_data( $params = null ) {
 
@@ -3446,7 +3454,7 @@ class Pods implements Iterator {
 	 * @param array|object $params Associative array of parameters.
 	 *
 	 * @return string Pagination HTML
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/pagination/
 	 */
 	public function pagination( $params = null ) {
@@ -3525,7 +3533,7 @@ class Pods implements Iterator {
 	 *
 	 * @return string Filters HTML
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/filters/
 	 */
 	public function filters( $params = null ) {
@@ -3651,7 +3659,7 @@ class Pods implements Iterator {
 	 * @param string       $name   Field name.
 	 *
 	 * @return mixed Anything returned by the helper
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function helper( $helper, $value = null, $name = null ) {
 
@@ -3672,7 +3680,7 @@ class Pods implements Iterator {
 
 		if ( class_exists( 'Pods_Helpers' ) ) {
 			$value = Pods_Helpers::helper( $params, $this );
-		} elseif ( function_exists( $params['helper'] ) ) {
+		} elseif ( is_callable( $params['helper'] ) ) {
 			$disallowed = array(
 				'system',
 				'exec',
@@ -3694,7 +3702,7 @@ class Pods implements Iterator {
 			 * @param array $disallowed List of callbacks not allowed.
 			 * @param array $params     Parameters used by Pods::helper() method.
 			 *
-			 * @since 2.7
+			 * @since 2.7.0
 			 */
 			$disallowed = apply_filters( 'pods_helper_disallowed_callbacks', $disallowed, $params );
 
@@ -3704,7 +3712,7 @@ class Pods implements Iterator {
 			 * @param array $allowed List of callbacks explicitly allowed.
 			 * @param array $params  Parameters used by Pods::helper() method.
 			 *
-			 * @since 2.7
+			 * @since 2.7.0
 			 */
 			$allowed = apply_filters( 'pods_helper_allowed_callbacks', $allowed, $params );
 
@@ -3744,7 +3752,7 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed Template output
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/template/
 	 */
 	public function template( $template_name, $code = null, $deprecated = false ) {
@@ -3874,7 +3882,7 @@ class Pods implements Iterator {
 	 * @param string $thank_you (optional) Thank you URL to send to upon success.
 	 *
 	 * @return bool|mixed
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @link  https://pods.io/docs/form/
 	 */
 	public function form( $params = null, $label = null, $thank_you = null ) {
@@ -4000,7 +4008,7 @@ class Pods implements Iterator {
 				 *
 				 * @param string $message Success message.
 				 *
-				 * @since 2.7
+				 * @since 2.7.0
 				 */
 				$message = apply_filters( 'pods_pod_form_success_message', $message );
 
@@ -4103,7 +4111,7 @@ class Pods implements Iterator {
 	 *
 	 * @return string Code with Magic Tags evaluated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function do_magic_tags( $code ) {
 
@@ -4115,7 +4123,7 @@ class Pods implements Iterator {
 		 * @param string $code The content to evaluate.
 		 * @param Pods   $pods The Pods Object.
 		 *
-		 * @since 2.7
+		 * @since 2.7.0
 		 */
 		$pre = apply_filters( 'pods_pre_do_magic_tags', null, $code, $this );
 		if ( null !== $pre ) {
@@ -4358,7 +4366,8 @@ class Pods implements Iterator {
 				}
 			}//end if
 
-			$manage = apply_filters( 'pods_admin_ui_fields_' . $this->pod, apply_filters( 'pods_admin_ui_fields', $manage, $this->pod, $this ), $this->pod, $this );
+			$pod_name = $this->pod;
+			$manage   = apply_filters( "pods_admin_ui_fields_{$pod_name}", apply_filters( 'pods_admin_ui_fields', $manage, $this->pod, $this ), $this->pod, $this );
 
 			$icon = pods_v( 'ui_icon', $this->pod_data['options'] );
 
@@ -4440,7 +4449,8 @@ class Pods implements Iterator {
 			}
 
 			// @todo Customize the Add New / Manage links to point to their correct menu items.
-			$ui = apply_filters( 'pods_admin_ui_' . $this->pod, apply_filters( 'pods_admin_ui', $ui, $this->pod, $this ), $this->pod, $this );
+			$pod_name = $this->pod;
+			$ui       = apply_filters( "pods_admin_ui_{$pod_name}", apply_filters( 'pods_admin_ui', $ui, $this->pod, $this ), $this->pod, $this );
 
 			// Override UI options.
 			foreach ( $options as $option => $value ) {
@@ -4452,8 +4462,9 @@ class Pods implements Iterator {
 			return pods_ui( $this );
 		}//end if
 
+		$pod_name = $this->pod;
 		do_action( 'pods_admin_ui_custom', $this );
-		do_action( 'pods_admin_ui_custom_' . $this->pod, $this );
+		do_action( "pods_admin_ui_custom_{$pod_name}", $this );
 
 		return null;
 	}
@@ -4467,7 +4478,7 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed Value filtered
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	private function do_hook( $name ) {
 
@@ -4490,7 +4501,7 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __get( $name ) {
 
@@ -4532,7 +4543,7 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed|null
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __call( $name, $args ) {
 

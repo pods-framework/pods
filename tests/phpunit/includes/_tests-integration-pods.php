@@ -11,7 +11,7 @@ class Test_Pods extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	 * The pod name
 	 *
 	 * @var string
-	 * @since 3.0
+	 * @since 3.0.0
 	 */
 	private $pod_name = 'foo';
 
@@ -19,7 +19,7 @@ class Test_Pods extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	 * The id of the test pods
 	 *
 	 * @var int
-	 * @since 3.0
+	 * @since 3.0.0
 	 */
 	private $pod_id;
 
@@ -70,7 +70,7 @@ class Test_Pods extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::valid
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_valid() {
 
@@ -80,7 +80,7 @@ class Test_Pods extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	/**
 	 * @covers Pods::exists
 	 * @uses   ::pods
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_exists() {
 
@@ -91,7 +91,7 @@ class Test_Pods extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	/**
 	 * @covers Pods::row
 	 * uses    ::pods
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_row() {
 
@@ -102,7 +102,7 @@ class Test_Pods extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::find
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_find() {
 
@@ -112,7 +112,7 @@ class Test_Pods extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	/**
 	 * @covers Pods::fetch
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_fetch() {
 
@@ -122,7 +122,7 @@ class Test_Pods extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	/**
 	 * @covers Pods::display
 	 * @uses   Pods::fetch
-	 * @since  3.0
+	 * @since 3.0.0
 	 */
 	public function test_method_display() {
 

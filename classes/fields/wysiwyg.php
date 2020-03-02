@@ -240,7 +240,8 @@ class PodsField_WYSIWYG extends PodsField {
 			$field_type = 'cleditor';
 		} else {
 			// Support custom WYSIWYG integration
-			do_action( 'pods_form_ui_field_wysiwyg_' . pods_v( static::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
+			$editor_type = pods_v( static::$type . '_editor', $options );
+			do_action( "pods_form_ui_field_wysiwyg_{$editor_type}", $name, $value, $options, $pod, $id );
 			do_action( 'pods_form_ui_field_wysiwyg', pods_v( static::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
 
 			return;

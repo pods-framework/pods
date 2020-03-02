@@ -77,7 +77,8 @@ class PodsUpgrade {
 
 			$sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
 
-			for ( $i = 0, $z = count( $sql ); $i < $z; $i ++ ) {
+			$z = count( $sql );
+			for ( $i = 0; $i < $z; $i ++ ) {
 				$query = trim( $sql[ $i ] );
 
 				if ( empty( $query ) ) {
@@ -89,7 +90,7 @@ class PodsUpgrade {
 
 			// Auto activate component.
 			if ( ! PodsInit::$components ) {
-				if ( ! defined( 'PODS_LIGHT' ) || ! PODS_LIGHT ) {
+				if ( ! pods_light() ) {
 					PodsInit::$components = pods_components();
 				}
 			}

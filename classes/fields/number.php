@@ -279,12 +279,21 @@ class PodsField_Number extends PodsField {
 		$dot         = $format_args['dot'];
 		$decimals    = $format_args['decimals'];
 
-		$value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+		if ( 'slider' !== pods_v( static::$type . '_format_type', $options ) ) {
+			// Slider only supports `1234.00` format so no need for replacing characters.
+			$value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+		}
+
 		$value = trim( $value );
 
 		$value = preg_replace( '/[^0-9\.\-]/', '', $value );
 
 		$value = number_format( (float) $value, $decimals, '.', '' );
+
+		// Optionally remove trailing decimal zero's.
+		if ( pods_v( static::$type . '_format_soft', $options, false ) ) {
+			$value = $this->trim_decimals( $value, '.' );
+		}
 
 		return $value;
 	}
@@ -311,22 +320,41 @@ class PodsField_Number extends PodsField {
 		}
 
 		// Optionally remove trailing decimal zero's.
-		if ( pods_v( static::$type . '_format_soft', $options, 0 ) ) {
-			$parts = explode( $dot, $value );
-			if ( isset( $parts[1] ) ) {
-				$parts[1] = rtrim( $parts[1], '0' );
-				$parts    = array_filter( $parts );
-			}
-			$value = implode( $dot, $parts );
+		if ( pods_v( static::$type . '_format_soft', $options, false ) ) {
+			$value = $this->trim_decimals( $value, $dot );
 		}
 
 		return $value;
 	}
 
 	/**
+	 * Trim trailing 0 decimals from numbers.
+	 *
+	 * @since 2.7.15
+	 *
+	 * @param string $value
+	 * @param string $dot
+	 *
+	 * @return string
+	 */
+	public function trim_decimals( $value, $dot ) {
+		$parts = explode( $dot, $value );
+
+		if ( isset( $parts[1] ) ) {
+			$parts[1] = rtrim( $parts[1], '0' );
+
+			if ( empty( $parts[1] ) ) {
+				unset( $parts[1] );
+			}
+		}
+
+		return implode( $dot, $parts );
+	}
+
+	/**
 	 * Get the formatting arguments for numbers.
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 *
 	 * @param array $options Field options.
 	 *
@@ -338,30 +366,40 @@ class PodsField_Number extends PodsField {
 	 */
 	public function get_number_format_args( $options ) {
 
-		global $wp_locale;
+		$format = pods_v( static::$type . '_format', $options );
+		$format = pods_unslash( $format );
 
-		if ( '9.999,99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '.';
-			$dot       = ',';
-		} elseif ( '9,999.99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = ',';
-			$dot       = '.';
-		} elseif ( '9\'999.99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '\'';
-			$dot       = '.';
-		} elseif ( '9 999,99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = ' ';
-			$dot       = ',';
-		} elseif ( '9999.99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '';
-			$dot       = '.';
-		} elseif ( '9999,99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '';
-			$dot       = ',';
-		} else {
-			$thousands = $wp_locale->number_format['thousands_sep'];
-			$dot       = $wp_locale->number_format['decimal_point'];
-		}//end if
+		switch ( $format ) {
+			case '9.999,99':
+				$thousands = '.';
+				$dot       = ',';
+				break;
+			case '9,999.99':
+				$thousands = ',';
+				$dot       = '.';
+				break;
+			case '9\'999.99':
+				$thousands = '\'';
+				$dot       = '.';
+				break;
+			case '9 999,99':
+				$thousands = ' ';
+				$dot       = ',';
+				break;
+			case '9999.99':
+				$thousands = '';
+				$dot       = '.';
+				break;
+			case '9999,99':
+				$thousands = '';
+				$dot       = ',';
+				break;
+			default:
+				global $wp_locale;
+				$thousands = $wp_locale->number_format['thousands_sep'];
+				$dot       = $wp_locale->number_format['decimal_point'];
+				break;
+		}
 
 		$decimals = $this->get_max_decimals( $options );
 
@@ -375,7 +413,7 @@ class PodsField_Number extends PodsField {
 	/**
 	 * Get the max allowed decimals.
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 *
 	 * @param array $options Field options.
 	 *

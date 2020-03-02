@@ -403,7 +403,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = get_stylesheet_directory_uri();
 				break;
 			case 'site-url':
-				$blog_id = $scheme = null;
+				$blog_id = null;
+				$scheme  = null;
 				$path    = '';
 
 				if ( is_array( $var ) ) {
@@ -421,7 +422,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = get_site_url( $blog_id, $path, $scheme );
 				break;
 			case 'home-url':
-				$blog_id = $scheme = null;
+				$blog_id = null;
+				$scheme  = null;
 				$path    = '';
 
 				if ( is_array( $var ) ) {
@@ -439,7 +441,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = get_home_url( $blog_id, $path, $scheme );
 				break;
 			case 'admin-url':
-				$blog_id = $scheme = null;
+				$blog_id = null;
+				$scheme  = null;
 				$path    = '';
 
 				if ( is_array( $var ) ) {
@@ -463,7 +466,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = content_url( $var );
 				break;
 			case 'plugins-url':
-				$path = $plugin = '';
+				$path   = '';
+				$plugin = '';
 
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
@@ -785,7 +789,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = apply_filters( 'pods_var_post_id', $post_id, $default, $var, $strict, $params );
 				break;
 			default:
-				$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );
+				$output = apply_filters( "pods_var_{$type}", $default, $var, $strict, $params );
 		}//end switch
 	}//end if
 
@@ -973,7 +977,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 				$ret = $pods->save( $var, $value );
 			}
 		} else {
-			$ret = apply_filters( 'pods_var_set_' . $type, $value, $var );
+			$ret = apply_filters( "pods_var_set_{$type}", $value, $var );
 		}//end if
 	}//end if
 
@@ -996,7 +1000,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
  * @return mixed The variable (if exists), or default value
  * @since      1.10.6
  *
- * @deprecated 2.4 Use pods_v() or pods_v_sanitized() instead.
+ * @deprecated 2.4.0 Use pods_v() or pods_v_sanitized() instead.
  * @see        pods_v_sanitized
  */
 function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false, $context = 'display' ) {
@@ -1033,9 +1037,9 @@ function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = nul
  * @param bool   $casting (optional) Whether to cast the value returned like provided in $default
  *
  * @return mixed The variable (if exists), or default value
- * @since      2.0
+ * @since 2.0.0
  *
- * @deprecated 2.4 Use pods_v() instead.
+ * @deprecated 2.4.0 Use pods_v() instead.
  * @see        pods_v
  */
 function pods_var_raw( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false ) {
@@ -1059,7 +1063,7 @@ function pods_var_raw( $var = 'last', $type = 'get', $default = null, $allowed =
  * @return mixed $value (if set), $type (if $type is array or object), or $url (if $type is 'url')
  * @since      1.10.6
  *
- * @deprecated 2.4 Use pods_v_set() instead.
+ * @deprecated 2.4.0 Use pods_v_set() instead.
  * @see        pods_v_set
  */
 function pods_var_set( $value, $var = 'last', $type = 'url' ) {
@@ -1166,9 +1170,9 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
  *
  * @return mixed
  *
- * @since      2.0
+ * @since 2.0.0
  *
- * @deprecated 2.4 Use pods_query_arg() instead.
+ * @deprecated 2.4.0 Use pods_query_arg() instead.
  * @see        pods_query_arg
  */
 function pods_var_update( $array = null, $allowed = null, $excluded = null, $url = null ) {
@@ -1185,7 +1189,7 @@ function pods_var_update( $array = null, $allowed = null, $excluded = null, $url
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_cast( $value, $cast_from = null ) {
 
@@ -1361,7 +1365,7 @@ function pods_js_name( $orig, $lower = true ) {
  * @param bool   $allow_negative (optional)
  *
  * @return integer
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_absint( $maybeint, $strict = true, $allow_negative = false ) {
 
@@ -1379,13 +1383,14 @@ function pods_absint( $maybeint, $strict = true, $allow_negative = false ) {
 /**
  * Functions like str_replace except it will restrict $occurrences
  *
+ * @since 2.0
+ *
  * @param mixed  $find
  * @param mixed  $replace
  * @param string $string
  * @param int    $occurrences (optional)
  *
  * @return mixed
- * @version 2.0
  */
 function pods_str_replace( $find, $replace, $string, $occurrences = - 1 ) {
 
@@ -1412,8 +1417,12 @@ function pods_str_replace( $find, $replace, $string, $occurrences = - 1 ) {
 	} else {
 		$find = '/' . preg_quote( $find, '/' ) . '/';
 	}
-
-	return preg_replace( $find, $replace, $string, $occurrences );
+	if ( is_string( $string ) ) {
+		return preg_replace( $find, $replace, $string, $occurrences );
+	} else {
+		// Occasionally we will receive non string values (true, false, null).  Allow those to pass through
+		return $string;
+	}
 }
 
 /**
@@ -1458,82 +1467,82 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
 }
 
 /**
- * Evaluate tags like magic tags but through pods_v
+ * Evaluate tags like magic tags but through pods_v.
  *
- * @param string|array|object $tags     String to be evaluated
- * @param bool                $sanitize Whether to sanitize tags
+ * @since 2.1
+ *
+ * @param string|array|object $tags     String to be evaluated.
+ * @param bool                $sanitize Whether to sanitize.
+ * @param null|mixed          $fallback The fallback value to use if not set, should already be sanitized.
  *
  * @return string
  *
- * @version 2.1
- *
- * @see     pods_evaluate_tag
+ * @see pods_evaluate_tag
  */
-function pods_evaluate_tags( $tags, $sanitize = false ) {
-
+function pods_evaluate_tags( $tags, $sanitize = false, $fallback = null ) {
 	if ( is_array( $tags ) ) {
 		foreach ( $tags as $k => $tag ) {
 			$tags[ $k ] = pods_evaluate_tags( $tag, $sanitize );
 		}
 
 		return $tags;
-	} elseif ( is_object( $tags ) ) {
+	}
+
+	if ( is_object( $tags ) ) {
 		$tags = get_object_vars( $tags );
 
-		foreach ( $tags as $k => $tag ) {
-			$tags[ $k ] = pods_evaluate_tags( $tag, $sanitize );
-		}
-
-		$tags = (object) $tags;
+		// Evaluate array and cast as object.
+		$tags = (object) pods_evaluate_tags( $tags );
 
 		return $tags;
 	}
 
-	$callback = 'pods_evaluate_tag';
-
-	if ( true === $sanitize ) {
-		$callback = 'pods_evaluate_tag_sanitized';
-	}
-
-	return preg_replace_callback( '/({@(.*?)})/m', $callback, (string) $tags );
-
+	return preg_replace_callback(
+		'/({@(.*?)})/m',
+		function ( $tag ) use ( $sanitize, $fallback ) {
+			return pods_evaluate_tag( $tag, $sanitize, $fallback );
+		},
+		(string) $tags
+	);
 }
 
 /**
- * Evaluate tag like magic tag but mapped through pods_v_sanitized
+ * Evaluate tag like magic tag but mapped through pods_v_sanitized.
  *
- * @param string|array $tag
+ * @since 2.1
  *
- * @return string
+ * @param string|array $tag String to be evaluated.
  *
- * @version 2.1
+ * @return string Evaluated content.
  *
- * @see     pods_evaluate_tag
+ * @see pods_evaluate_tag
  */
 function pods_evaluate_tag_sanitized( $tag ) {
-
 	return pods_evaluate_tag( $tag, true );
-
 }
 
 /**
- * Evaluate tag like magic tag but mapped through pods_v
+ * Evaluate tag like magic tag but mapped through pods_v.
  *
- * @param string|array $tag
- * @param bool         $sanitize Whether to sanitize tags
+ * @since 2.1
  *
- * @return string
+ * @param string|array $tag      String to be evaluated.
+ * @param bool         $sanitize Whether to sanitize tags.
+ * @param null|mixed   $fallback The fallback value to use if not set, should already be sanitized.
  *
- * @version 2.1
+ * @return string Evaluated content.
  */
-function pods_evaluate_tag( $tag, $sanitize = false ) {
-
+function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null ) {
 	global $wpdb;
 
 	// Handle pods_evaluate_tags
 	if ( is_array( $tag ) ) {
-		if ( ! isset( $tag[2] ) && strlen( trim( $tag[2] ) ) < 1 ) {
-			return '';
+		if ( ! isset( $tag[2] ) && '' === trim( $tag[2] ) ) {
+			if ( null === $fallback ) {
+				return '';
+			}
+
+			return $fallback;
 		}
 
 		$tag = $tag[2];
@@ -1542,8 +1551,12 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 	$tag = trim( $tag, ' {@}' );
 	$tag = explode( '.', $tag );
 
-	if ( empty( $tag ) || ! isset( $tag[0] ) || strlen( trim( $tag[0] ) ) < 1 ) {
-		return '';
+	if ( empty( $tag ) || ! isset( $tag[0] ) || '' === trim( $tag[0] ) ) {
+		if ( null === $fallback ) {
+			return '';
+		}
+
+		return $fallback;
 	}
 
 	// Fix formatting that may be after the first .
@@ -1580,16 +1593,16 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 	);
 
 	if ( in_array( $tag[0], $single_supported, true ) ) {
-		$value = pods_v( '', $tag[0], '', true );
-	} elseif ( 1 == count( $tag ) ) {
-		$value = pods_v( $tag[0], 'get', '', true );
-	} elseif ( 2 == count( $tag ) ) {
-		$value = pods_v( $tag[1], $tag[0], '', true );
+		$value = pods_v( '', $tag[0], null );
+	} elseif ( 1 === count( $tag ) ) {
+		$value = pods_v( $tag[0], 'get', null );
+	} elseif ( 2 === count( $tag ) ) {
+		$value = pods_v( $tag[1], $tag[0], null );
 	}
 
-	$value = apply_filters( 'pods_evaluate_tag', $value, $tag );
+	$value = apply_filters( 'pods_evaluate_tag', $value, $tag, $fallback );
 
-	if ( is_array( $value ) && 1 == count( $value ) ) {
+	if ( is_array( $value ) && 1 === count( $value ) ) {
 		$value = current( $value );
 	}
 
@@ -1597,12 +1610,19 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 		$value = pods_serial_comma( $value );
 	}
 
+	if ( null === $value ) {
+		$value = '';
+	}
+
 	if ( $sanitize ) {
 		$value = pods_sanitize( $value );
 	}
 
-	return $value;
+	if ( null !== $fallback && '' === $value ) {
+		$value = $fallback;
+	}
 
+	return $value;
 }
 
 /**
@@ -1616,7 +1636,7 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
  *
  * @return string
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_serial_comma( $value, $field = null, $fields = null, $and = null, $field_index = null ) {
 
@@ -1658,7 +1678,19 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			} elseif ( in_array( $params->field['pick_object'], $simple_tableless_objects, true ) ) {
 				$simple = true;
 			} else {
-				$table = pods_api()->get_table_info( $params->field['pick_object'], $params->field['pick_val'], null, null, $params->field );
+				$pick_object = pods_v( 'pick_object', $params->field );
+				$pick_val    = pods_v( 'pick_val', $params->field );
+				$table       = null;
+
+				if ( ! empty( $pick_object ) && ( ! empty( $pick_val ) || in_array( $pick_object, array( 'user', 'media', 'comment' ), true ) ) ) {
+					$table = pods_api()->get_table_info(
+						$pick_object,
+						$pick_val,
+						null,
+						null,
+						$params->field
+					);
+				}
 
 				if ( ! empty( $table ) ) {
 					if ( null === $params->field_index ) {
@@ -1684,6 +1716,16 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	}
 
 	$last = '';
+
+	// If something happens with table info, and this is a single select relationship, avoid letting user pass through.
+	if ( isset( $value['user_pass'] ) ) {
+		unset( $value['user_pass'] );
+
+		// Since we know this is a single select, just pass display name through as the fallback.
+		if ( isset( $value['display_name'] ) ) {
+			$value = array( $value['display_name'] );
+		}
+	}
 
 	$original_value = $value;
 
@@ -1804,7 +1846,7 @@ function pods_var_user( $anon = false, $user = true, $capability = null ) {
  * @param array        $args Array of parent, children, and id keys to use
  *
  * @return array|object
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_hierarchical_list( $list, $args = array() ) {
 
@@ -1837,7 +1879,7 @@ function pods_hierarchical_list( $list, $args = array() ) {
  * @param array        $args   Array of parent, children, and id keys to use
  *
  * @return array|object
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_hierarchical_list_recurse( $parent, $list, &$args ) {
 
@@ -1942,7 +1984,7 @@ function pods_hierarchical_list_recurse( $parent, $list, &$args ) {
  * @return array|object
  * @internal param string $children_key Key to recurse children into
  *
- * @since    2.3
+ * @since 2.3.0
  */
 function pods_hierarchical_select( $list, $args = array() ) {
 
@@ -1984,7 +2026,7 @@ function pods_hierarchical_select( $list, $args = array() ) {
  * @internal param string $children_key Key to recurse children into
  *
  * @see      pods_hierarchical_select
- * @since    2.3
+ * @since 2.3.0
  */
 function pods_hierarchical_select_recurse( $items, $args, $depth = 0 ) {
 
@@ -2041,7 +2083,7 @@ function pods_hierarchical_select_recurse( $items, $args, $depth = 0 ) {
  *
  * @see   wp_list_filter
  * @return array
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_list_filter( $list, $args = array(), $operator = 'AND' ) {
 

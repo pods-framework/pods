@@ -734,7 +734,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 		$podsrel_field_id = $field['id'];
 		$podsrel_item_id  = $data['id'];
 
-		$prefix = $suffix = '';
+		$prefix = '';
+		$suffix = '';
 
 		if ( in_array( $field_type, array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
 			if ( ! isset( self::$related_items[ $field_name ] ) ) {
@@ -831,7 +832,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 					$related_pod_storage_type = 'meta';
 				}
 
-				$related_prefix = $related_suffix = '';
+				$related_prefix = '';
+				$related_suffix = '';
 
 				$related_where = array();
 
@@ -1324,7 +1326,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$this->assertEquals( $check_display_index, $p->display( $related_traverse_index ), sprintf( 'Deep Related Item index field display value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
 					}//end if
 				} elseif ( 'none' !== $related_pod_storage_type ) {
-					$check_related_value = $check_related_value_display = '';
+					$check_related_value         = '';
+					$check_related_value_display = '';
 
 					if ( isset( $related_data['data'][ $related_pod_field['name'] ] ) ) {
 						$check_related_value = $related_data['data'][ $related_pod_field['name'] ];

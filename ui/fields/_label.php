@@ -6,7 +6,7 @@
 		echo ' <abbr title="required" class="required">*</abbr>';
 	}
 
-	if ( 0 == pods_var( 'grouped', $options, 0, null, true ) && ! empty( $help ) && 'help' !== $help ) {
+	if ( 0 == pods_var( 'grouped', $options, 0, null, true ) && ! empty( $help ) && __( 'help', 'pods' ) !== $help ) {
 		pods_help( $help );
 	}
 	?>

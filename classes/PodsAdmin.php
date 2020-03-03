@@ -2944,6 +2944,9 @@ class PodsAdmin {
 			$ui['views']['dev'] = __( 'Developer Preview', 'pods' );
 		}
 
+		// Add our custom callouts.
+		add_action( 'pods_ui_manage_after_container', array( $this, 'admin_manage_callouts' ) );
+
 		pods_ui( $ui );
 	}
 

@@ -2754,6 +2754,9 @@ class PodsAdmin {
 	 */
 	public function admin_settings() {
 
+		// Add our custom callouts.
+		add_action( 'pods_admin_after_settings', array( $this, 'admin_manage_callouts' ) );
+
 		pods_view( PODS_DIR . 'ui/admin/settings.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 

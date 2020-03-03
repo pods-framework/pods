@@ -4,11 +4,14 @@
 
 .pods-admin .pods-leaf-watermark-right {
 	position: fixed;
-	width: 236px;
-	height: 178px;
-	bottom: 50px;
-	right: 16px;
+	width: 250px;
+	bottom: -50px;
+	right: -50px;
 	z-index: -1;
+	opacity: 0.3;
+	-webkit-transform: rotate(62deg);
+		-ms-transform: rotate(62deg);
+			transform: rotate(62deg);
 }
 
 .pods-admin .pods_floatmenu {
@@ -644,13 +647,14 @@ body[class*="settings_page_pods-"] {
 
 .pods-admin_friends-callout_container {
 	min-width: 250px;
+	width: 100%;
+	max-width: 250px;
 	margin-left: 20px;
 	border: 1px solid #e5e5e5;
 	border-bottom: 5px solid #95bf3b;
 	background: white;
 	position: relative;
 	margin-top: 52px;
-	max-width: 375px;
 }
 
 .pods-admin_friends-callout_logo-container {
@@ -660,8 +664,8 @@ body[class*="settings_page_pods-"] {
 	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-pack: center;
-	    -ms-flex-pack: center;
-	        justify-content: center;
+		-ms-flex-pack: center;
+			justify-content: center;
 	padding: 23px 20px 20px;
 }
 
@@ -726,11 +730,11 @@ body[class*="settings_page_pods-"] {
 	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-pack: justify;
-	    -ms-flex-pack: justify;
-	        justify-content: space-between;
+		-ms-flex-pack: justify;
+			justify-content: space-between;
 	-webkit-box-align: center;
-	    -ms-flex-align: center;
-	        align-items: center;
+		-ms-flex-align: center;
+			align-items: center;
 }
 
 .pods-admin_friends-callout_button {

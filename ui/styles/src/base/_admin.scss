@@ -634,8 +634,12 @@ body[class*="settings_page_pods-"] {
 /* Pods Admin - Friends of Pods Callout
 ======================= */
 .pods-admin {
+	display: -webkit-box;
+	display: -ms-flexbox;
 	display: flex;
-	align-items: center;
+	-webkit-box-align: center;
+	    -ms-flex-align: center;
+	        align-items: center;
 }
 
 .pods-admin_friends-callout_container {
@@ -650,8 +654,12 @@ body[class*="settings_page_pods-"] {
 .pods-admin_friends-callout_logo-container {
 	width: calc(100% - 40px);
 	background-color: #95BF3B;
+	display: -webkit-box;
+	display: -ms-flexbox;
 	display: flex;
-	justify-content: center;
+	-webkit-box-pack: center;
+	    -ms-flex-pack: center;
+	        justify-content: center;
 	padding: 23px 20px 20px;
 }
 
@@ -672,7 +680,11 @@ body[class*="settings_page_pods-"] {
 	z-index: 999;
 	width: 25px;
 	height: 25px;
+	display: -webkit-box;
+	display: -ms-flexbox;
 	display: flex;
+	-webkit-transition: 300ms ease background-color;
+	-o-transition: 300ms ease background-color;
 	transition: 300ms ease background-color;
 	border-radius: 100%;
 
@@ -703,9 +715,15 @@ body[class*="settings_page_pods-"] {
 }
 
 .pods-admin_friends-callout_button-group {
+	display: -webkit-box;
+	display: -ms-flexbox;
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	-webkit-box-pack: justify;
+	    -ms-flex-pack: justify;
+	        justify-content: space-between;
+	-webkit-box-align: center;
+	    -ms-flex-align: center;
+	        align-items: center;
 }
 
 .pods-admin_friends-callout_button {
@@ -713,6 +731,8 @@ body[class*="settings_page_pods-"] {
 	color: #444;
 	display: block;
 	font-weight: 600;
+	-webkit-transition: 300ms ease color;
+	-o-transition: 300ms ease color;
 	transition: 300ms ease color;
 
 	&:hover {
@@ -726,6 +746,8 @@ body[class*="settings_page_pods-"] {
 	background: #f6f6e8;
 	display: block;
 	text-align: center;
+	-webkit-transition: 300ms ease all;
+	-o-transition: 300ms ease all;
 	transition: 300ms ease all;
 	font-weight: 600;
 	text-transform: uppercase;

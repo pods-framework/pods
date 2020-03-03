@@ -1076,6 +1076,20 @@ class PodsAdmin {
 			$callouts = array();
 		}
 
+		$disable_pods = pods_v( 'pods_callout_dismiss' );
+
+		if ( 'friends_2020' === $disable_pods ) {
+			$callouts['friends_2020'] = 0;
+
+			update_option( 'pods_callouts', $callouts );
+		} elseif ( 'reset' === $disable_pods ) {
+			$callouts = array();
+
+			update_option( 'pods_callouts', $callouts );
+		}
+
+		$callout_friends = ! isset( $callouts['friends_2020'] ) || 1 === (int) $callouts['friends_2020'];
+
 		/**
 		 * Allow hooking into whether or not the Friends callout should show.
 		 *
@@ -1083,15 +1097,7 @@ class PodsAdmin {
 		 *
 		 * @param boolean $callout_friends Whether to enable the callout.
 		 */
-		$callout_friends = apply_filters( 'pods_admin_callouts_friends', empty( $callouts['friends_2020'] ) );
-
-		$disable_pods = pods_v( 'pods_callout_dismiss' );
-
-		if ( 'friends_2020' === $disable_pods ) {
-			$callouts['friends_2020'] = 0;
-
-			update_option( 'pods_callouts', $callouts );
-		}
+		$callout_friends = apply_filters( 'pods_admin_callouts_friends', $callout_friends );
 
 		if ( $callout_friends ) {
 ?>

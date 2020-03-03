@@ -1305,7 +1305,7 @@ class PodsField_Pick extends PodsField {
 		}
 
 		// Determine if this is a selected item.
-		// Issue history for setting selected: #4753, #4892, #5014
+		// Issue history for setting selected: #4753, #4892, #5014.
 		$selected = false;
 
 		$values = array();

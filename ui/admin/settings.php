@@ -43,14 +43,14 @@
 
 		echo pods_view( PODS_DIR . 'ui/admin/settings-' . $tab . '.php' );
 		?>
-
-		<?php
-		/**
-		 * Allow additional output after the container area of the Pods settings screen.
-		 *
-		 * @since 2.7.17
-		 */
-		do_action( 'pods_admin_after_settings' );
-		?>
 	</form>
+
+	<?php
+	/**
+	 * Allow additional output after the container area of the Pods settings screen.
+	 *
+	 * @since 2.7.17
+	 */
+	do_action( 'pods_admin_after_settings' );
+	?>
 </div>

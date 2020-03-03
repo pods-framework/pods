@@ -1112,8 +1112,8 @@ class PodsAdmin {
 				<h2 class="pods-admin_friends-callout_headline"><?php printf( esc_html__( 'We need %1$sYOU%2$s in 2020 and beyond', 'pods' ), '<span class="pods-admin_friends-you">', '</span>' ); ?></h2>
 				<p class="pods-admin_friends-callout_text"><?php esc_html_e( 'Things are changing for Pods and we want you to be a part of it! Our goal is to be fully funded by users like you. Help us reach our goal of 200 recurring donors in 2020.', 'pods' ); ?></p>
 				<div class="pods-admin_friends-callout_button-group">
-					<a href="https://friends.pods.io/" class="pods-admin_friends-callout_button"><?php esc_html_e( 'Learn More', 'pods' ); ?></a>
-					<a href="https://pods.io/friends-of-pods/membership-levels/" class="pods-admin_friends-callout_button--join"><?php esc_html_e( 'Join Now', 'pods' ); ?></a>
+					<a href="https://friends.pods.io/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2020" class="pods-admin_friends-callout_button"><?php esc_html_e( 'Learn More', 'pods' ); ?></a>
+					<a href="https://friends.pods.io/membership-levels/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2020" class="pods-admin_friends-callout_button--join"><?php esc_html_e( 'Join Now', 'pods' ); ?></a>
 				</div>
 			</div>
 		</div>

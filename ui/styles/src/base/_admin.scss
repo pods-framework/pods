@@ -637,6 +637,9 @@ body[class*="settings_page_pods-"] {
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
+	-webkit-box-align: start;
+	-ms-flex-align: start;
+	align-items: flex-start;
 }
 
 .pods-admin_friends-callout_container {

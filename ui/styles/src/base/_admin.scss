@@ -637,9 +637,6 @@ body[class*="settings_page_pods-"] {
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
-	-webkit-box-align: center;
-	    -ms-flex-align: center;
-	        align-items: center;
 }
 
 .pods-admin_friends-callout_container {
@@ -649,6 +646,7 @@ body[class*="settings_page_pods-"] {
 	border-bottom: 5px solid #95bf3b;
 	background: white;
 	position: relative;
+	margin-top: 52px;
 }
 
 .pods-admin_friends-callout_logo-container {

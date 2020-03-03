@@ -695,10 +695,15 @@ body[class*="settings_page_pods-"] {
 
 	svg {
 		width: 15px;
+		height: 15px;
 		display: block;
 		fill: white;
-		height: 13px;
-		line-height: 13px;
+		position: absolute;
+		top: 55%;
+		left: 50%;
+		-webkit-transform: translate(-51%, -50%);
+		-ms-transform: translate(-51%, -50%);
+			transform: translate(-51%, -50%);
 	}
 }
 
@@ -708,8 +713,8 @@ body[class*="settings_page_pods-"] {
 }
 
 .pods-admin_friends-callout_headline {
-	font-size: 20px;
-	line-height: 1.2;
+	font-size: 21px;
+	line-height: 1.3;
 	font-weight: 100;
 	margin-bottom: .5em;
 }

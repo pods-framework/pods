@@ -287,7 +287,7 @@ class PodsData {
 
 			if ( false === $this->pod_data ) {
 				if ( true === $strict ) {
-					return pods_error( 'Pod not found', $this );
+					return pods_error( __( 'Pod not found', 'pods' ), $this );
 				} else {
 					return $this;
 				}
@@ -638,11 +638,13 @@ class PodsData {
 		}
 
 		$wheres        = array();
-		$where_formats = $where_format = (array) $where_format;
+		$where_format  = (array) $where_format;
+		$where_formats = $where_format;
 
 		foreach ( (array) array_keys( $where ) as $field ) {
 			if ( ! empty( $where_format ) ) {
-				$form = ( $form = array_shift( $where_formats ) ) ? $form : $where_format[0];
+				$form = array_shift( $where_formats );
+				$form = $form ? $form : $where_format[0];
 			} elseif ( isset( self::$field_types[ $field ] ) ) {
 				$form = self::$field_types[ $field ];
 			} elseif ( isset( $wpdb->field_types[ $field ] ) ) {
@@ -678,7 +680,8 @@ class PodsData {
 
 		global $wpdb;
 
-		$cache_key = $results = false;
+		$cache_key = false;
+		$results   = false;
 
 		/**
 		 * Filter select parameters before the query
@@ -772,6 +775,20 @@ class PodsData {
 
 		if ( ! empty( $this->data ) ) {
 			$this->total = count( (array) $this->data );
+		}
+
+		/**
+		 * Filters whether the total_found should be calculated right away or not.
+		 *
+		 * @param boolean  $auto_calculate_total_found Whether to auto calculate total_found.
+		 * @param array    $params                     Select parameters.
+		 * @param PodsData $this                       The current PodsData instance.
+		 *
+		 * @since 2.7.11
+		 */
+		if ( apply_filters( 'pods_data_auto_calculate_total_found', false, $params, $this ) ) {
+			// Run the calculation logic.
+			$this->calculate_totals();
 		}
 
 		return $this->data;
@@ -1103,7 +1120,8 @@ class PodsData {
 		// Search.
 		if ( ! empty( $params->search ) && ! empty( $params->fields ) ) {
 			if ( false !== $params->search_query && 0 < strlen( $params->search_query ) ) {
-				$where = $having = array();
+				$where  = array();
+				$having = array();
 
 				if ( false !== $params->search_across ) {
 					foreach ( $params->fields as $key => $field ) {
@@ -1222,7 +1240,8 @@ class PodsData {
 
 			// Filter.
 			foreach ( $params->filters as $filter ) {
-				$where = $having = array();
+				$where  = array();
+				$having = array();
 
 				if ( ! isset( $params->fields[ $filter ] ) ) {
 					continue;
@@ -1376,13 +1395,17 @@ class PodsData {
 
 			preg_match_all( '/`?[\w\-]+`?(?:\\.`?[\w\-]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
 
-			$found = (array) @current( $found );
-			$find  = $replace = $traverse = array();
+			$found    = (array) @current( $found );
+			$find     = array();
+			$replace  = array();
+			$traverse = array();
 
 			foreach ( $found as $key => $value ) {
 				$value = str_replace( '`', '', $value );
 				$value = explode( '.', $value );
-				$dot   = $last_value = array_pop( $value );
+
+				$last_value = array_pop( $value );
+				$dot        = $last_value;
 
 				if ( 't' === $value[0] ) {
 					continue;
@@ -1976,8 +1999,12 @@ class PodsData {
 			$id   = pods_absint( $row );
 
 			if ( ! is_numeric( $row ) || 0 === strpos( $row, '0' ) || $row != preg_replace( '/[^0-9]/', '', $row ) ) {
-				$mode = 'slug';
-				$id   = $row;
+				if ( $this->id && is_numeric( $this->id ) ) {
+					$id = $this->id;
+				} else {
+					$mode = 'slug';
+					$id   = $row;
+				}
 			}
 
 			$row = false;
@@ -2058,7 +2085,9 @@ class PodsData {
 					$filter = 'raw';
 					$term   = $id;
 
-					if ( 'id' !== $mode || ! $_term = wp_cache_get( $term, $taxonomy ) ) {
+					$_term = wp_cache_get( $term, $taxonomy );
+
+					if ( 'id' !== $mode || ! $_term ) {
 						$_term = $wpdb->get_row( $wpdb->prepare( "SELECT t.*, tt.* FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id WHERE tt.taxonomy = %s AND {$term_where} LIMIT 1", $taxonomy, $term ) );
 
 						if ( $_term ) {
@@ -2260,8 +2289,8 @@ class PodsData {
 		 */
 		global $wpdb;
 
-		if ( $wpdb->show_errors ) {
-			self::$display_errors = true;
+		if ( isset( $wpdb->show_errors ) ) {
+			self::$display_errors = (bool) $wpdb->show_errors;
 		}
 
 		$display_errors = self::$display_errors;
@@ -3215,7 +3244,7 @@ class PodsData {
 			$traverse = array_merge( $traverse, (array) $this->traversal[ $traverse_recurse['pod'] ][ $traverse['name'] ] );
 		}
 
-		$traverse = apply_filters( 'pods_data_traverse', $traverse, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params' ), $this );
+		$traverse = apply_filters( 'pods_data_traverse', $traverse, $traverse_recurse, $this );
 
 		if ( empty( $traverse ) ) {
 			return $joins;

@@ -1,5 +1,6 @@
-/*global jQuery, _, Backbone, Marionette */
+/*global jQuery, _, Backbone, PodsMn */
 import { PodsDFVFieldModel } from 'pods-dfv/_src/core/pods-field-model';
+import { PodsGbModalListener } from 'pods-dfv/_src/core/gb-modal-listener';
 import * as fields from 'pods-dfv/_src/field-manifest';
 import * as models from 'pods-dfv/_src/model-manifest';
 
@@ -70,13 +71,26 @@ const PodsDFV = {
 				}
 			}
 		} );
+	},
+
+	isModalWindow: function () {
+		return ( -1 !== location.search.indexOf( 'pods_modal=' ) );
+	},
+
+	isGutenbergEditorLoaded: function () {
+		return ( wp.data !== undefined && wp.data.select( 'core/editor' ) !== undefined );
 	}
 };
 export default PodsDFV;
 
 /**
- * Kick everything off on document ready
+ * Kick everything off on DOMContentLoaded
  */
-jQuery( function () {
+document.addEventListener( 'DOMContentLoaded', () => {
 	PodsDFV.init();
+
+	// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
+	if ( PodsDFV.isModalWindow() && PodsDFV.isGutenbergEditorLoaded()) {
+		PodsGbModalListener.init();
+	}
 } );

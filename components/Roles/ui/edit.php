@@ -30,7 +30,7 @@
 
 			<p><?php _e( 'Choose below which Capabilities you would like this existing user role to have.', 'pods' ); ?></p>
 
-			<div id="poststuff">
+			<div id="poststuff" class="poststuff">
 				<div id="post-body" class="metabox-holder columns-2">
 
 					<div id="postbox-container-1" class="postbox-container">
@@ -128,7 +128,7 @@
 												</ul>
 
 												<p>
-													<a href="#add-capability" id="add-capability" class="button">Add Another Custom Capability</a>
+													<a href="#add-capability" id="add-capability" class="button"><?php _e( 'Add Another Custom Capability', 'pods' ); ?></a>
 												</p>
 											</div>
 										</div>
@@ -139,9 +139,8 @@
 							</div>
 							<!-- /#normal-sortables -->
 
-							<!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">
-						  </div>
-						   /#advanced-sortables -->
+							<!-- <div id="advanced-sortables" class="meta-box-sortables ui-sortable"></div> -->
+							<!-- /#advanced-sortables -->
 
 						</div>
 						<!-- /#post-body-content -->

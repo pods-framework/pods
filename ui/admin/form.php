@@ -14,8 +14,9 @@ if ( ! isset( $duplicate ) ) {
 
 $groups = PodsInit::$meta->groups_get( $pod->pod_data['type'], $pod->pod_data['name'], $fields );
 
+$pod_name    = $pod->pod_data['name'];
 $pod_options = $pod->pod_data['options'];
-$pod_options = apply_filters( 'pods_advanced_content_type_pod_data_' . $pod->pod_data['name'], $pod_options, $pod->pod_data['name'] );
+$pod_options = apply_filters( "pods_advanced_content_type_pod_data_{$pod_name}", $pod_options, $pod->pod_data['name'] );
 $pod_options = apply_filters( 'pods_advanced_content_type_pod_data', $pod_options, $pod->pod_data['name'] );
 
 $group_fields       = array();
@@ -178,7 +179,7 @@ if ( 0 < $pod->id() ) {
 		 */
 		do_action( 'pods_meta_box_pre', $pod, $obj );
 		?>
-		<div id="poststuff" class="metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
+		<div id="poststuff" class="poststuff metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
 			<div id="side-info-column" class="inner-sidebar">
 				<?php
 				/**
@@ -633,9 +634,8 @@ if ( 0 < $pod->id() ) {
 					}//end if
 					?>
 
-					<!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">
-					</div>
-					 /#advanced-sortables -->
+					<!-- <div id="advanced-sortables" class="meta-box-sortables ui-sortable"></div> -->
+					<!-- /#advanced-sortables -->
 
 				</div>
 				<!-- /#post-body-content -->

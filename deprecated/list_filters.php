@@ -22,7 +22,9 @@
 					$pick_object = $pick_pod['type'];
 					$pick_val    = $pick_pod['object'];
 				}
-				$pick_table     = $pick_join = $pick_where = '';
+				$pick_table     = '';
+				$pick_join      = '';
+				$pick_where     = '';
 				$pick_column_id = 'id';
 				switch ( $pick_object ) {
 					case 'pod':

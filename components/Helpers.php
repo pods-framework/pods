@@ -416,7 +416,7 @@ class Pods_Helpers extends PodsComponent {
 		$params = (object) $params;
 
 		if ( empty( $params->helper ) ) {
-			return pods_error( 'Helper name required', $obj );
+			return pods_error( __( 'Helper name required', 'pods' ), $obj );
 		} elseif ( ! is_array( $params->helper ) ) {
 			$params->helper = trim( $params->helper );
 		}
@@ -510,10 +510,12 @@ class Pods_Helpers extends PodsComponent {
 			}
 		}//end if
 
+		$slug = $helper['slug'];
+
 		$out = ob_get_clean();
 
 		$out = apply_filters( 'pods_helpers_post_helper', $out, $params, $helper );
-		$out = apply_filters( 'pods_helpers_post_helper_' . $helper['slug'], $out, $params, $helper );
+		$out = apply_filters( "pods_helpers_post_helper_{$slug}", $out, $params, $helper );
 
 		return $out;
 	}

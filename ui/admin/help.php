@@ -112,4 +112,12 @@
         }
     ?>
 
+	<?php
+	/**
+	 * Allow additional output after the container area of the Pods help screen.
+	 *
+	 * @since 2.7.17
+	 */
+	do_action( 'pods_admin_after_help' );
+	?>
 </div>

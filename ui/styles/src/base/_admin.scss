@@ -640,8 +640,21 @@ body[class*="settings_page_pods-"] {
 	-webkit-box-align: start;
 	-ms-flex-align: start;
 	align-items: flex-start;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
 }
 
+@media (min-width: 1200px) {
+	.pods-admin {
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+			-ms-flex-direction: row;
+				flex-direction: row;
+	}
+
+}
 .pods-admin_friends-callout_container {
 	min-width: 250px;
 	width: 100%;

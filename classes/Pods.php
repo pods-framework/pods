@@ -1015,12 +1015,25 @@ class Pods implements Iterator {
 						$field_names = explode( '.', $params->name );
 
 						if ( isset( $field_names[1] ) ) {
-							$size = $field_names[1];
+							$size    = $field_names[1];
+							$sizes   = get_intermediate_image_sizes();
+							// Not shown by default.
+							$sizes[] = 'full';
+							$sizes[] = 'original';
+							if ( ! in_array( $size, $sizes, true ) ) {
+								// No valid image size found.
+								$size = false;
+							}
 						}
 					}
 
-					// Pods will auto-get the thumbnail ID if this isn't an attachment.
-					$value = pods_image( $this->id(), $size, 0, null, true );
+					if ( $size ) {
+						// Pods will auto-get the thumbnail ID if this isn't an attachment.
+						$value = pods_image( $this->id(), $size, 0, null, true );
+					} else {
+						array_shift( $field_names );
+						$value = pods( 'media', get_post_thumbnail_id( $this->id() ) )->field( implode( '.', $field_names ));
+					}
 
 					$object_field_found = true;
 				} elseif ( ! isset( $this->fields['post_thumbnail_url'] ) && ( 'post_thumbnail_url' === $params->name || 0 === strpos( $params->name, 'post_thumbnail_url.' ) ) ) {

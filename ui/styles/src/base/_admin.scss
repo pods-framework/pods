@@ -640,22 +640,40 @@ body[class*="settings_page_pods-"] {
 	-webkit-box-align: start;
 	-ms-flex-align: start;
 	align-items: flex-start;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
 }
 
 .pods-admin_friends-callout_container {
 	min-width: 250px;
 	width: 100%;
-	max-width: 250px;
-	margin-left: 20px;
+	max-width: 100%;
 	border: 1px solid #e5e5e5;
 	border-bottom: 5px solid #95bf3b;
 	background: white;
 	position: relative;
-	margin-top: 52px;
+}
+
+@media (min-width: 1200px) {
+	.pods-admin {
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+			-ms-flex-direction: row;
+				flex-direction: row;
+	}
+
+	.pods-admin_friends-callout_container {
+		max-width: 250px;
+		margin-left: 20px;
+		margin-top: 52px;
+	}
 }
 
 .pods-admin_friends-callout_logo-container {
 	width: calc(100% - 40px);
+	max-height: 70px;
 	background-color: #95BF3B;
 	display: -webkit-box;
 	display: -ms-flexbox;

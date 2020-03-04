@@ -1276,8 +1276,9 @@
                 // Hide all dependents
                 $( '.pods-dependency .pods-depends-on, .pods-dependency .pods-excludes-on, .pods-dependency .pods-wildcard-on' ).hide();
 
+
                 // Handle dependent toggle
-                $( '.pods-admin, .pods-form-front' ).on( 'change', '.pods-dependent-toggle[data-name-clean]', function ( e ) {
+                $( '.pods-admin, .pods-form-front, .pods-form-settings' ).on( 'change', '.pods-dependent-toggle[data-name-clean]', function ( e ) {
                     var selectionTypeRegex = /pick-format-type$/g;
                     var elementId = $( this ).attr( 'id' );
                     var selectionType, selectionFormatId;

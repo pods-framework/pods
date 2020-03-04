@@ -120,10 +120,19 @@ $do = 'save';
 			<?php
 			$depends_on = false;
 
-			foreach ( $fields
-
-			as $field ) {
+			foreach ( $fields as $field ) {
 				if ( 'hidden' === $field['type'] ) {
+					continue;
+				}
+
+				if ( 'heading' === $field['type'] ) {
+				?>
+					</table>
+
+					<h2><?php echo esc_html( $field['label'] ); ?></h2>
+
+					<table class="form-table pods-manage-field">
+				<?php
 					continue;
 				}
 
@@ -188,7 +197,7 @@ $do = 'save';
 	jQuery( function ( $ ) {
 		$( document ).Pods( 'validate' );
 		$( document ).Pods( 'submit' );
-		$( document ).Pods( 'dependency' );
+		$( document ).Pods( 'dependency', true );
 		$( document ).Pods( 'confirm' );
 		$( document ).Pods( 'exit_confirm' );
 	} );

@@ -1,5 +1,5 @@
 <div class="wrap pods-admin">
-	<div class="pods-admin__content-container">
+	<div class="pods-admin-container">
 		<form action="" method="post">
 
 			<div id="icon-pods" class="icon32"><br /></div>

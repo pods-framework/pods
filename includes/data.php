@@ -1649,7 +1649,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		'fields'      => $fields,
 		'and'         => $and,
 		'field_index' => $field_index,
-		'separator'   => ',',
+		'separator'   => ', ',
 		'serial'      => true,
 	);
 
@@ -1767,7 +1767,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 				if ( null !== $params->field_index && isset( $v[ $params->field_index ] ) ) {
 					$v = $v[ $params->field_index ];
 				} elseif ( $simple ) {
-					$v = trim( implode( $params->separator . ' ', $v ), $params->separator . ' ' );
+					$v = trim( implode( $params->separator, $v ), $params->separator );
 				} else {
 					unset( $value[ $k ] );
 
@@ -1778,12 +1778,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			$value[ $k ] = $v;
 		}
 
-		if ( 1 == count( $value ) || ! $params->serial ) {
-			$value = trim( implode( $params->separator . ' ', $value ), $params->separator . ' ' );
-		} else {
-			$value = trim( implode( $params->separator . ' ', $value ), $params->separator . ' ' ) . apply_filters( 'pods_serial_comma', $params->separator . ' ', $value, $original_value, $params );
-		}
-
+		$value = trim( implode( $params->separator, $value ), $params->separator );
 		$value = trim( $value );
 		$last  = trim( $last );
 

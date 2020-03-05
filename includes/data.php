@@ -1729,6 +1729,8 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 
 	$original_value = $value;
 
+	$params->separator = apply_filters( 'pods_serial_comma', $params->separator, $value, $original_value, $params );
+
 	if ( ! empty( $value ) ) {
 		$last = array_pop( $value );
 	}

@@ -1711,12 +1711,6 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		return $value;
 	}
 
-	if ( null === $params->and ) {
-		$params->and = ' ' . __( 'and', 'pods' ) . ' ';
-	}
-
-	$last = '';
-
 	// If something happens with table info, and this is a single select relationship, avoid letting user pass through.
 	if ( isset( $value['user_pass'] ) ) {
 		unset( $value['user_pass'] );
@@ -1729,8 +1723,14 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 
 	$original_value = $value;
 
+	if ( null === $params->and ) {
+		$params->and = ' ' . __( 'and', 'pods' ) . ' ';
+	}
+
+	$params->and       = apply_filters( 'pods_serial_comma_and', $params->and, $value, $original_value, $params );
 	$params->separator = apply_filters( 'pods_serial_comma', $params->separator, $value, $original_value, $params );
 
+	$last = '';
 	if ( ! empty( $value ) ) {
 		$last = array_pop( $value );
 	}

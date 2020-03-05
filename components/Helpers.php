@@ -2,8 +2,7 @@
 /**
  * Name: Helpers
  *
- * Description: A holdover from Pods 1.x for backwards compatibility purposes, you most likely don't need these and we
- * recommend you use our WP filters and actions instead.
+ * Description: A holdover from Pods 1.x for backwards compatibility purposes, you most likely don't need these and we recommend you use our WP filters and actions instead.
  *
  * Version: 2.3
  *

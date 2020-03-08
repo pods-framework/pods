@@ -4,7 +4,7 @@
  *
  * Menu Name: Translate Pods
  *
- * Description: Allow UI of Pods and fields to be translated
+ * Description: Allow UI of Pods and fields to be translated.
  *
  * Version: 0.2
  *

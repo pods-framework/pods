@@ -8,7 +8,7 @@ wp_enqueue_style( 'pods-form' );
 ?>
 
 <div class="pods-submittable-fields">
-	<div id="poststuff" class="metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
+	<div id="poststuff" class="poststuff metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
 		<div id="side-info-column" class="inner-sidebar">
 			<div id="side-sortables" class="meta-box-sortables ui-sortable">
 				<!-- BEGIN PUBLISH DIV -->

@@ -346,8 +346,8 @@ class PodsInit {
 
 		// Check if Pod is a Modal Window
 		if ( pods_is_modal_window() ) {
-			add_filter( 'body_class', array( $this, 'add_classes_to_body_class' ) );
-			add_filter( 'admin_body_class', array( $this, 'add_classes_to_body_class' ) );
+			add_filter( 'body_class', array( $this, 'add_classes_to_modal_body' ) );
+			add_filter( 'admin_body_class', array( $this, 'add_classes_to_modal_body' ) );
 		}
 
 		// Deal with specifics on admin pages
@@ -408,13 +408,17 @@ class PodsInit {
 	}
 
 	/**
-	 * @param string $classes Body classes.
+	 * @param string|array $classes Body classes.
 	 *
-	 * @return string
+	 * @return string|array
 	 */
-	public function add_classes_to_body_class( $classes ) {
+	public function add_classes_to_modal_body( $classes ) {
 
-		$classes .= 'pods-modal-window';
+		if ( is_array( $classes ) ) {
+			$classes[] = 'pods-modal-window';
+		} else {
+			$classes .= ' pods-modal-window';
+		}
 
 		return $classes;
 	}
@@ -1382,6 +1386,8 @@ class PodsInit {
 	 */
 	public function deactivate() {
 
+		delete_option( 'pods_callouts' );
+
 		pods_api()->cache_flush_pods();
 
 	}
@@ -1663,6 +1669,9 @@ class PodsInit {
 		// Show admin bar links
 		add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
 
+		// Compatibility with WP 5.4 privacy export.
+		add_filter( 'wp_privacy_additional_user_profile_data', array( $this, 'filter_wp_privacy_additional_user_profile_data' ), 10, 3 );
+
 		// Compatibility for Query Monitor conditionals
 		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
 
@@ -1862,6 +1871,42 @@ class PodsInit {
 	}
 
 	/**
+	 * Add Pod fields to user export.
+	 * Requires WordPress 5.4+
+	 *
+	 * @since 2.7.17
+	 *
+	 * @param array   $additional_user_profile_data {
+	 *     An array of name-value pairs of additional user data items.  Default: the empty array.
+	 *
+	 *     @type string $name  The user-facing name of an item name-value pair, e.g. 'IP Address'.
+	 *     @type string $value The user-facing value of an item data pair, e.g. '50.60.70.0'.
+	 * }
+	 * @param WP_User $user           The user whose data is being exported.
+	 * @param array   $reserved_names An array of reserved names.  Any item in
+	 *                                 `$additional_user_data` that uses one of these
+	 *                                 for it's `name` will not be included in the export.
+	 *
+	 * @return array
+	 */
+	public function filter_wp_privacy_additional_user_profile_data( $additional_user_profile_data, $user, $reserved_names ) {
+		$pod = pods( 'user', $user->ID );
+
+		if ( ! $pod->valid() ) {
+			return $additional_user_profile_data;
+		}
+
+		foreach ( $pod->fields as $name => $field ) {
+			$additional_user_profile_data[] = array(
+				'name'  => apply_filters( 'pods_form_ui_label_text', $field['label'], $name, '', $field ),
+				'value' => $pod->display( $name ),
+			);
+		}
+
+		return $additional_user_profile_data;
+	}
+
+	/**
 	 * Add Pods conditional functions to Query Monitor.
 	 *
 	 * @param  array $conditionals
@@ -1874,6 +1919,7 @@ class PodsInit {
 		$conditionals[] = 'pods_strict';
 		$conditionals[] = 'pods_allow_deprecated';
 		$conditionals[] = 'pods_api_cache';
+		$conditionals[] = 'pods_shortcode_allow_evaluate_tags';
 		return $conditionals;
 	}
 }

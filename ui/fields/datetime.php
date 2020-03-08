@@ -45,7 +45,7 @@ $args = array(
 
 if ( $use_date ) {
 	$args['dateFormat']  = PodsForm::field_method( $form_field_type, 'format_date', $options, true );
-	$args['altFormat']   = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_date_format );
+	$args['altFormat']   = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_date_format, array( 'type' => 'date' ) );
 	$args['changeMonth'] = true;
 	$args['changeYear']  = true;
 	$args['firstDay']    = (int) get_option( 'start_of_week', 0 );
@@ -57,8 +57,9 @@ if ( $use_date ) {
 }
 if ( $use_time ) {
 	$args['timeFormat']    = PodsForm::field_method( $form_field_type, 'format_time', $options, true );
-	$args['altTimeFormat'] = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_time_format );
+	$args['altTimeFormat'] = PodsForm::field_method( $form_field_type, 'convert_format', $mysql_time_format, array( 'type' => 'time' ) );
 	$args['ampm']          = ( false !== stripos( $args['timeFormat'], 'tt' ) );
+	$args['parse']         = 'loose';
 }
 
 $mysql_format = '';
@@ -97,19 +98,12 @@ switch ( $form_field_type ) {
 $date         = PodsForm::field_method( $form_field_type, 'createFromFormat', $format, (string) $value );
 $date_default = PodsForm::field_method( $form_field_type, 'createFromFormat', $mysql_format, (string) $value );
 
-$formatted_value = $value;
+$formatted_value = PodsForm::field_method( $form_field_type, 'format_value_display', $value, $options, true );
 $mysql_value     = $value;
-
-$empty_values = array(
-	'',
-	'0000-00-00',
-	'0000-00-00 00:00:00',
-	'00:00:00',
-);
 
 if (
 	pods_v( $form_field_type . '_allow_empty', $options, true )
-	&& in_array( $value, $empty_values, true )
+	&& PodsForm::field_method( $form_field_type, 'is_empty', $value )
 ) {
 	$formatted_value = '';
 	$value           = '';
@@ -131,6 +125,8 @@ if (
 		 * @link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
 		 */
 		$value = str_replace( ' ', 'T', $mysql_value );
+	} else {
+		$value = $formatted_value;
 	}
 }
 
@@ -152,12 +148,8 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 	jQuery( function ( $ ) {
 		var $container = $( '<div>' ).appendTo( 'body' ).addClass( 'pods-compat-container' ),
 			$element   = $( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ),
-			beforeShow = {
-				'beforeShow': function( textbox, instance) {
-					$( '#ui-datepicker-div' ).appendTo( $container );
-				}
-			},
-			args = $.extend( <?php echo json_encode( $args ); ?>, beforeShow );
+			$alt       = null,
+			args       = <?php echo wp_json_encode( $args ); ?>;
 
 		<?php
 		if ( 'text' !== $type ) {
@@ -174,32 +166,38 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 		}
 
 		if ( ! podsCheckHtml5() ) {
-			args = altField( args, $element );
 			$element.val( '<?php echo esc_js( $formatted_value ); ?>' );
-			$element.<?php echo esc_js( $method ); ?>( args );
+			jQueryField();
 		}
 		<?php
 		} else {
 		?>
-		args = altField( args, $element );
-		$element.<?php echo esc_js( $method ); ?>( args );
+		jQueryField();
 		<?php
 		} //end if
 		?>
-		function altField( args, el ) {
-			var $el  = $( el ),
-				$alt = $el.clone();
+		function jQueryField() {
 
+			// Create alt field.
+			$alt = $element.clone();
 			$alt.attr( 'type', 'hidden' );
 			$alt.val( '<?php echo esc_attr( $mysql_value ) ?>' );
-			$el.after( $alt );
+			$element.after( $alt );
+			$element.attr( 'name', $element.attr( 'name' ) + '__ui' );
+			$element.attr( 'id', $element.attr( 'id' ) + '__ui' );
 
-			$el.attr( 'name', $el.attr( 'name' ) + '__ui' );
-			$el.attr( 'id', $el.attr( 'id' ) + '__ui' );
-
+			// Add alt field option.
 			args.altField = 'input#' + $alt.attr( 'id' );
+			// Fix manual user input changes.
+			args.onClose = function() {
+				$element.<?php echo esc_js( $method ); ?>( 'setDate', $element.val() );
+			};
+			// Wrapper.
+			args.beforeShow = function( textbox, instance ) {
+				$( '#ui-datepicker-div' ).appendTo( $container );
+			};
 
-			return args;
-		};
+			$element.<?php echo esc_js( $method ); ?>( args );
+		}
 	} );
 </script>

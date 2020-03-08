@@ -4,10 +4,7 @@
  *
  * Menu Name: Roles &amp; Capabilities
  *
- * Description: Create and Manage WordPress User Roles and Capabilities; Uses the '<a
- * href="http://wordpress.org/plugins/members/" target="_blank">Members</a>' plugin filters for additional plugin
- * integrations; Portions of code based on the '<a href="http://wordpress.org/plugins/members/"
- * target="_blank">Members</a>' plugin by Justin Tadlock
+ * Description: Create and Manage WordPress User Roles and Capabilities; Uses the '<a href="http://wordpress.org/plugins/members/" target="_blank">Members</a>' plugin filters for additional plugin integrations; Portions of code based on the '<a href="http://wordpress.org/plugins/members/" target="_blank">Members</a>' plugin by Justin Tadlock
  *
  * Version: 1.0
  *

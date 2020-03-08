@@ -30,7 +30,7 @@
 
 			<p><?php _e( 'Choose below which Capabilities you would like this existing user role to have.', 'pods' ); ?></p>
 
-			<div id="poststuff">
+			<div id="poststuff" class="poststuff">
 				<div id="post-body" class="metabox-holder columns-2">
 
 					<div id="postbox-container-1" class="postbox-container">

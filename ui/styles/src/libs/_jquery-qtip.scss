@@ -156,11 +156,7 @@
 .qtip-youtube .qtip-content {
 	padding: .75em;
 	font: 12px arial, sans-serif;
-	filter: progid:DXImageTransform.Microsoft.Gradient(
-			GradientType=0,
-			StartColorStr=#4a4a4a,
-			EndColorStr=#000000
-	);
+	filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#4a4a4a, EndColorStr=#000000);
 	-ms-filter: "progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#4a4a4a, EndColorStr=#000000);";
 }
 
@@ -198,18 +194,12 @@
 
 .qtip-jtools .qtip-titlebar {
 	background-color: transparent;
-	filter: progid:DXImageTransform.Microsoft.gradient(
-			startColorstr=#717171,
-			endColorstr=#4A4A4A
-	);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#717171, endColorstr=#4A4A4A);
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#717171, endColorstr=#4A4A4A)";
 }
 
 .qtip-jtools .qtip-content {
-	filter: progid:DXImageTransform.Microsoft.gradient(
-			startColorstr=#4A4A4A,
-			endColorstr=#232323
-	);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#4A4A4A, endColorstr=#232323);
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4A4A4A, endColorstr=#232323)";
 }
 
@@ -307,10 +297,7 @@
 	background-image: -moz-linear-gradient(top, #3A79B8, #2E629D);
 	background-image: -ms-linear-gradient(top, #3A79B8, #2E629D);
 	background-image: -o-linear-gradient(top, #3A79B8, #2E629D);
-	filter: progid:DXImageTransform.Microsoft.gradient(
-			startColorstr=#3A79B8,
-			endColorstr=#2E629D
-	);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#3A79B8, endColorstr=#2E629D);
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#3A79B8, endColorstr=#2E629D)";
 }
 

@@ -372,30 +372,40 @@ class PodsField_Number extends PodsField {
 	 */
 	public function get_number_format_args( $options ) {
 
-		global $wp_locale;
+		$format = pods_v( static::$type . '_format', $options );
+		$format = pods_unslash( $format );
 
-		if ( '9.999,99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '.';
-			$dot       = ',';
-		} elseif ( '9,999.99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = ',';
-			$dot       = '.';
-		} elseif ( '9\'999.99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '\'';
-			$dot       = '.';
-		} elseif ( '9 999,99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = ' ';
-			$dot       = ',';
-		} elseif ( '9999.99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '';
-			$dot       = '.';
-		} elseif ( '9999,99' === pods_v( static::$type . '_format', $options ) ) {
-			$thousands = '';
-			$dot       = ',';
-		} else {
-			$thousands = $wp_locale->number_format['thousands_sep'];
-			$dot       = $wp_locale->number_format['decimal_point'];
-		}//end if
+		switch ( $format ) {
+			case '9.999,99':
+				$thousands = '.';
+				$dot       = ',';
+				break;
+			case '9,999.99':
+				$thousands = ',';
+				$dot       = '.';
+				break;
+			case '9\'999.99':
+				$thousands = '\'';
+				$dot       = '.';
+				break;
+			case '9 999,99':
+				$thousands = ' ';
+				$dot       = ',';
+				break;
+			case '9999.99':
+				$thousands = '';
+				$dot       = '.';
+				break;
+			case '9999,99':
+				$thousands = '';
+				$dot       = ',';
+				break;
+			default:
+				global $wp_locale;
+				$thousands = $wp_locale->number_format['thousands_sep'];
+				$dot       = $wp_locale->number_format['decimal_point'];
+				break;
+		}
 
 		$decimals = $this->get_max_decimals( $options );
 

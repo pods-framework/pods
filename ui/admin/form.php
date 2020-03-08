@@ -583,34 +583,29 @@ if ( 0 < $pod->id() ) {
 														if ( 'hidden' === $field['type'] || $more === $field['name'] || ! isset( $group_fields[ $field['name'] ] ) ) {
 															continue;
 														}
-
-														if ( 'heading' === $field['type'] ) {
 														?>
 														<tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
-															<th scope="row" valign="top" colspan="2">
-																<h3><?php echo esc_html( $field['label'] ); ?></h3>
-																<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
-															</th>
-														</tr>
-														<?php
-															continue;
-														}
-														?>
-														<tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
-															<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
-															<td>
-																<?php
-																echo PodsForm::field(
-																	'pods_field_' . $field['name'], $pod->field(
-																		array(
-																			'name'    => $field['name'],
-																			'in_form' => true,
-																		)
-																	), $field['type'], $field, $pod, $pod->id()
-																);
-																?>
-																<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
-															</td>
+															<?php if ( 'heading' === $field['type'] ) : ?>
+																<td colspan="2">
+																	<h2><?php echo esc_html( $field['label'] ); ?></h2>
+																	<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
+																</td>
+															<?php else : ?>
+																<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
+																<td>
+																	<?php
+																	echo PodsForm::field(
+																		'pods_field_' . $field['name'], $pod->field(
+																			array(
+																				'name'    => $field['name'],
+																				'in_form' => true,
+																			)
+																		), $field['type'], $field, $pod, $pod->id()
+																	);
+																	?>
+																	<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
+																</td>
+															<?php endif; ?>
 														</tr>
 														<?php
 													}//end foreach

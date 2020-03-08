@@ -138,7 +138,6 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 				?>
 					<li class="pods-field <?php echo esc_attr( $html_class, true ); ?>" <?php PodsForm::data( $dep_data ); ?>>
 						<?php if ( 'heading' === $field['type'] ) : ?>
-							?>
 							<h3><?php echo esc_html( $field['label'] ); ?></h3>
 							<?php echo PodsForm::comment( $field_prefix . $field['name'], $field['description'], $field ); ?>
 						<?php else : ?>

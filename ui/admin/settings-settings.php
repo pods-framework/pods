@@ -86,18 +86,6 @@ $do = 'save';
 					continue;
 				}
 
-				if ( 'heading' === $field['type'] ) {
-				?>
-					</table>
-
-					<h2><?php echo esc_html( $field['label'] ); ?></h2>
-					<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
-
-					<table class="form-table pods-manage-field">
-				<?php
-					continue;
-				}
-
 				if ( ! isset( $field['name'] ) ) {
 					$field['name'] = $key;
 				}
@@ -129,13 +117,20 @@ $do = 'save';
 				}
 			?>
 			<tr valign="top" class="pods-field-option pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
-				<th>
-					<?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?>
-				</th>
-				<td>
-					<?php echo PodsForm::field( 'pods_field_' . $field['name'], pods_v( $field['name'], $settings ), $field['type'], $field ); ?>
-					<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
-				</td>
+				<?php if ( 'heading' === $field['type'] ) : ?>
+					<td colspan="2">
+						<h2><?php echo esc_html( $field['label'] ); ?></h2>
+						<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
+					</td>
+				<?php else : ?>
+					<th>
+						<?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?>
+					</th>
+					<td>
+						<?php echo PodsForm::field( 'pods_field_' . $field['name'], pods_v( $field['name'], $settings ), $field['type'], $field ); ?>
+						<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
+					</td>
+				<?php endif; ?>
 			</tr>
 			<?php
 			if ( false !== $depends_on || ! empty( $dep_classes ) ) {

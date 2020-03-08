@@ -236,10 +236,12 @@ tbody.pods-manage-list .pods-manage-row th.check-field {
 	padding: 3px 5px;
 	transition: border-color 300ms ease; /* ooh, fancy! */
 }
+
 /* Any changed or new field */
 tbody.pods-manage-list .pods-field-updated th.check-field {
 	border-left-color: #95BF3B;
 }
+
 /* Applies to a new field just added or existing field being modified. */
 tbody.pods-manage-list .pods-manage-row-expanded th.check-field,
 tbody.pods-manage-list .pods-field-new th.check-field {
@@ -312,6 +314,7 @@ div.pods-manage-field div {
 .pods-field-option .components-popover {
 	overflow: visible;
 }
+
 .pods-field-option .dashicons-editor-help {
 	color: #cccccc;
 	vertical-align: top;
@@ -422,6 +425,7 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 	vertical-align: middle;
 	position: static;
 }
+
 .pods-manage-field .pods-pick-values input[type="checkbox"],
 .pods-manage-field .pods-pick-values input[type="radio"] {
 	margin: 6px;
@@ -441,6 +445,7 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 	width: 100%;
 	max-width: 100%;
 }
+
 .pods-manage-field .pods-pick-values.pods-zebra li {
 	margin-bottom: 4px;
 }
@@ -448,6 +453,7 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 .pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean input {
 	margin: 4px;
 }
+
 .pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean label {
 	margin-left: 26px;
 	padding: 5px 0;
@@ -566,9 +572,6 @@ body[class*="settings_page_pods-"] {
 		float: none;
 	}
 }
-
-
-
 
 
 /*

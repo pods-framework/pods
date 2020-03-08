@@ -101,6 +101,7 @@ textarea.pods-form-ui-field-type-paragraph {
 	padding: 5px 10px 10px;
 	border: 1px solid #dfdfdf;
 }
+
 .pods-link-options > div {
 	display: inline-block;
 }
@@ -277,6 +278,7 @@ p.pods-add-file {
 .pods-metabox tr.pods-field {
 	border-top: 1px solid #ececec;
 }
+
 .pods-metabox tr.pods-field:first-child {
 	border-top: 0;
 }
@@ -307,6 +309,7 @@ p.pods-add-file {
 	padding: 0 0 10px;
 	margin: 0;
 }
+
 #side-sortables .form-table tr.pods-field > td {
 	display: block;
 	line-height: inherit;
@@ -485,18 +488,22 @@ p.pods-add-file {
 .pods-modal-frame.hide-menu .media-frame-title {
 	left: 0;
 }
+
 .media-modal .media-modal-content .pods-modal-frame {
 	height: 100%;
 }
+
 .media-modal .media-modal-content .pods-modal-frame .media-frame-iframe {
 	height: 100%;
 	padding-top: 50px;
 	box-sizing: border-box;
 }
+
 .media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe {
 	height: 100%;
 	position: relative;
 }
+
 .media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe iframe {
 	position: absolute;
 	height: 100%;

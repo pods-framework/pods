@@ -1925,18 +1925,10 @@ class PodsInit {
 			pods_query( $sql, false );
 		}
 
-		/**
-		 * Allow hooking into the attachment deletion process.
-		 *
-		 * @since TBD
-		 *
-		 * @param int $_ID The attachment ID being deleted.
-		 */
-		do_action( 'pods_init_delete_attachment', $_ID );
-
-		// Post Meta
-		if ( ! empty( PodsMeta::$post_types ) ) {
-			$sql = "
+		if ( pods_relationship_meta_storage_enabled() ) {
+			// Post Meta
+			if ( ! empty( PodsMeta::$post_types ) ) {
+				$sql = "
                 DELETE `rel`
                 FROM `@wp_postmeta` AS `rel`
                 LEFT JOIN `{$wpdb->posts}` AS `p`
@@ -1953,12 +1945,12 @@ class PodsInit {
                     AND `rel`.`meta_key` = `p`.`post_name`
                     AND `rel`.`meta_value` = '{$_ID}'";
 
-			pods_query( $sql, false );
-		}
+				pods_query( $sql, false );
+			}
 
-		// User Meta
-		if ( ! empty( PodsMeta::$user ) ) {
-			$sql = "
+			// User Meta
+			if ( ! empty( PodsMeta::$user ) ) {
+				$sql = "
                 DELETE `rel`
                 FROM `@wp_usermeta` AS `rel`
                 LEFT JOIN `{$wpdb->posts}` AS `p`
@@ -1975,12 +1967,12 @@ class PodsInit {
                     AND `rel`.`meta_key` = `p`.`post_name`
                     AND `rel`.`meta_value` = '{$_ID}'";
 
-			pods_query( $sql, false );
-		}
+				pods_query( $sql, false );
+			}
 
-		// Comment Meta
-		if ( ! empty( PodsMeta::$comment ) ) {
-			$sql = "
+			// Comment Meta
+			if ( ! empty( PodsMeta::$comment ) ) {
+				$sql = "
                 DELETE `rel`
                 FROM `@wp_commentmeta` AS `rel`
                 LEFT JOIN `{$wpdb->posts}` AS `p`
@@ -1997,8 +1989,18 @@ class PodsInit {
                     AND `rel`.`meta_key` = `p`.`post_name`
                     AND `rel`.`meta_value` = '{$_ID}'";
 
-			pods_query( $sql, false );
+				pods_query( $sql, false );
+			}
 		}
+
+		/**
+		 * Allow hooking into the attachment deletion process.
+		 *
+		 * @since TBD
+		 *
+		 * @param int $_ID The attachment ID being deleted.
+		 */
+		do_action( 'pods_init_delete_attachment', $_ID );
 	}
 
 	/**

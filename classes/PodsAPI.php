@@ -2583,7 +2583,7 @@ class PodsAPI {
 		$params->pod_id = $pod['id'];
 		$params->pod    = $pod['name'];
 
-		$params->name = pods_clean_name( $params->name, true, ( 'meta' === $pod['storage'] ? false : true ) );
+		$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
 
 		if ( empty( $params->name ) ) {
 			return pods_error( __( 'Pod field name is required', 'pods' ), $this );
@@ -2619,13 +2619,13 @@ class PodsAPI {
 		$reserved_keywords = array( 'id', 'ID' );
 
 		if ( ! empty( $field ) ) {
-			$old_id        = pods_var( 'id', $field );
-			$old_name      = pods_clean_name( $field['name'], true, ( 'meta' === $pod['storage'] ? false : true ) );
+			$old_id        = pods_v( 'id', $field );
+			$old_name      = pods_clean_name( $field['name'], true, 'meta' !== $pod['storage'] );
 			$old_type      = $field['type'];
 			$old_options   = $field['options'];
-			$old_sister_id = (int) pods_var( 'sister_id', $old_options, 0 );
+			$old_sister_id = (int) pods_v( 'sister_id', $old_options, 0 );
 
-			$old_simple = ( 'pick' === $old_type && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) );
+			$old_simple = ( 'pick' === $old_type && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
 
 			if ( isset( $params->name ) && ! empty( $params->name ) ) {
 				$field['name'] = $params->name;
@@ -2665,10 +2665,10 @@ class PodsAPI {
 			 * @param string|false       $field_definition The SQL definition to use for the field's table column.
 			 * @param string             $type             The field type.
 			 * @param Pods\Whatsit\Field $field            The field object.
-			 * @param array              $options          The field options.
 			 * @param bool               $simple           Whether the field is a simple tableless field.
+			 * @param array              $options          The field options.
 			 */
-			$field_definition = apply_filters( 'pods_api_save_field_old_definition', $field_definition, $old_type, $field, $old_options, $old_simple );
+			$field_definition = apply_filters( 'pods_api_save_field_old_definition', $field_definition, $old_type, $field, $old_simple, $old_options );
 
 			if ( ! empty( $field_definition ) ) {
 				$old_definition = "`{$old_name}` " . $field_definition;

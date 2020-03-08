@@ -994,10 +994,7 @@
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) ) {
                             if ( $field.is( ':checked' ) && ( 1 == $field.val() || $dependent_el.is( dependent_specific ) ) ) {
-                                if ( $dependent_el.is( 'tr' ) )
-                                    $dependent_el.show().addClass( 'pods-dependent-visible' );
-                                else
-                                    $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
+                                $dependent_el.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
                                 $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1022,10 +1019,7 @@
                             }
                         }
                         else if ( $dependent_el.is( dependent_specific ) ) {
-                            if ( $dependent_el.is( 'tr' ) )
-                                $dependent_el.show().addClass( 'pods-dependent-visible' );
-                            else
-                                $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
+                            $dependent_el.show().addClass( 'pods-dependent-visible' );
 
                             $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1109,10 +1103,7 @@
                                     $dependent_el.slideUp().removeClass( 'pods-dependent-visible' );
                             }
                             else if ( !$field.is( ':checked' ) && ( !$field.is( '.pods-dependent-multi' ) || $dependent_el.is( exclude_specific ) ) ) {
-                                if ( $dependent_el.is( 'tr' ) )
-                                    $dependent_el.show().addClass( 'pods-dependent-visible' );
-                                else
-                                    $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
+                                $dependent_el.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
                                 $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1137,10 +1128,7 @@
                                 $dependent_el.slideUp().removeClass( 'pods-dependent-visible' );
                         }
                         else {
-                            if ( $dependent_el.is( 'tr' ) )
-                                $dependent_el.show().addClass( 'pods-dependent-visible' );
-                            else
-                                $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
+                            $dependent_el.show().addClass( 'pods-dependent-visible' );
 
                             $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1230,12 +1218,7 @@
                     // Set the state of the dependent element
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( match_found ) {
-                            if ( $dependent_el.is( 'tr' ) ) {
-                                $dependent_el.show().addClass( 'pods-dependent-visible' );
-                            }
-                            else {
-                                $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
-                            }
+                            $dependent_el.show().addClass( 'pods-dependent-visible' );
 
                             $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1336,10 +1319,7 @@
 
                         if ( $dependent_el.parent().is( ':visible' ) ) {
                             if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) && 1 == $field.val() ) {
-                                if ( $dependent_el.is( 'tr' ) )
-                                    $dependent_el.show().addClass( 'pods-dependent-visible' );
-                                else
-                                    $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
+                                $dependent_el.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent_el.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
                                 $dependent_el.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
@@ -1349,10 +1329,7 @@
                                 } );
                             }
                             else if ( $dependent_el.is( dependent_specific ) ) {
-                                if ( $dependent_el.is( 'tr' ) )
-                                    $dependent_el.show().addClass( 'pods-dependent-visible' );
-                                else
-                                    $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
+                                $dependent_el.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent_el.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
                                 $dependent_el.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
@@ -1412,10 +1389,7 @@
                                     $dependent_el.slideUp().removeClass( 'pods-dependent-visible' );
                             }
                             else {
-                                if ( $dependent_el.is( 'tr' ) )
-                                    $dependent_el.show().addClass( 'pods-dependent-visible' );
-                                else
-                                    $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
+                                $dependent_el.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent_el.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
                                 $dependent_el.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();

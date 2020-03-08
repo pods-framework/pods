@@ -2,8 +2,7 @@
 /**
  * Name: Table Storage
  *
- * Description: Enable a custom database table for your custom fields on Post Types, Media, Taxonomies, Users, and
- * Comments.
+ * Description: Enable a custom database table for your custom fields on Post Types, Media, Taxonomies, Users, and Comments.
  *
  * Version: 2.3
  *

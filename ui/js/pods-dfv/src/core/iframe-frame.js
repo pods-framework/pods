@@ -28,9 +28,6 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 
 		this.on( 'title:create:default', this.createTitle, this );
 		this.title.mode( 'default' );
-		this.on( 'title:render', function ( view ) {
-			view.$el.append( '<span class="dashicons dashicons-arrow-down"></span>' );
-		} );
 	},
 
 	initState: function () {

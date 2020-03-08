@@ -465,6 +465,21 @@ function pods_api_cache() {
 }
 
 /**
+ * Determine if Pods shortcodes can evaluate magic tags.
+ *
+ * @since 2.7.16
+ *
+ * @return bool
+ */
+function pods_shortcode_allow_evaluate_tags() {
+	if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Marks a function as deprecated and informs when it has been used.
  *
  * There is a hook deprecated_function_run that will be called that can be used
@@ -785,7 +800,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 		$offset = max( $offset, 0 );
 	}
 
-	$defaults = array(
+	// Query related tags separated to use later.
+	$default_query_tags = array(
 		'use_current'         => false,
 		'name'                => null,
 		'id'                  => null,
@@ -807,20 +823,26 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'filters_location'    => 'before',
 		'pagination_label'    => null,
 		'pagination_location' => 'after',
-		'field'               => null,
-		'col'                 => null,
-		'template'            => null,
-		'pods_page'           => null,
-		'helper'              => null,
-		'form'                => null,
-		'fields'              => null,
-		'label'               => null,
-		'thank_you'           => null,
-		'view'                => null,
-		'cache_mode'          => 'none',
-		'expires'             => 0,
-		'shortcodes'          => false,
 	);
+
+	$default_other_tags = array(
+		'field'      => null,
+		'col'        => null,
+		'template'   => null,
+		'pods_page'  => null,
+		'helper'     => null,
+		'form'       => null,
+		'fields'     => null,
+		'label'      => null,
+		'thank_you'  => null,
+		'not_found'  => null,
+		'view'       => null,
+		'cache_mode' => 'none',
+		'expires'    => 0,
+		'shortcodes' => false,
+	);
+
+	$defaults = array_merge( $default_other_tags, $default_query_tags );
 
 	if ( ! empty( $tags ) ) {
 		$tags = array_merge( $defaults, $tags );
@@ -854,13 +876,22 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
-		if ( in_the_loop() || is_singular() ) {
-			$pod = pods( get_post_type(), get_the_ID(), false );
+		$has_query_tags = array_intersect_key( array_diff( $tags, $defaults ), $default_query_tags );
 
-			if ( ! empty( $pod ) ) {
-				$tags['name'] = get_post_type();
-				$id           = get_the_ID();
-				$tags['id']   = get_the_ID();
+		// Only allow revert to current object if there are no query tags.
+		if ( ! $has_query_tags ) {
+
+			// Archives, Post type archives, singular posts.
+			if ( in_the_loop() ) {
+				$pod = pods( get_post_type(), get_the_ID(), false );
+
+				if ( ! empty( $pod ) ) {
+					$id           = get_the_ID();
+					$tags['id']   = $id;
+					$tags['name'] = get_post_type();
+				}
+			} else {
+				$tags['use_current'] = true;
 			}
 		}
 
@@ -892,16 +923,16 @@ function pods_shortcode_run( $tags, $content = null ) {
 		if ( ! empty( $tags['slug'] ) ) {
 			$id = $tags['slug'];
 
-			if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-				$id = pods_evaluate_tags( $id );
+			if ( pods_shortcode_allow_evaluate_tags() ) {
+				$id = pods_evaluate_tags( $id, true );
 			}
 		}
 
 		if ( ! empty( $tags['id'] ) ) {
 			$id = $tags['id'];
 
-			if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-				$id = pods_evaluate_tags( $id );
+			if ( pods_shortcode_allow_evaluate_tags() ) {
+				$id = pods_evaluate_tags( $id, true );
 			}
 
 			if ( is_numeric( $id ) ) {
@@ -938,16 +969,16 @@ function pods_shortcode_run( $tags, $content = null ) {
 			if ( 0 < strlen( $tags['where'] ) ) {
 				$params['where'] = $tags['where'];
 
-				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-					$params['where'] = pods_evaluate_tags( html_entity_decode( $params['where'] ) );
+				if ( pods_shortcode_allow_evaluate_tags() ) {
+					$params['where'] = pods_evaluate_tags( html_entity_decode( $params['where'] ), true, '""' );
 				}
 			}
 
 			if ( 0 < strlen( $tags['having'] ) ) {
 				$params['having'] = $tags['having'];
 
-				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-					$params['having'] = pods_evaluate_tags( html_entity_decode( $params['having'] ) );
+				if ( pods_shortcode_allow_evaluate_tags() ) {
+					$params['having'] = pods_evaluate_tags( html_entity_decode( $params['having'] ), true, '""' );
 				}
 			}
 
@@ -1059,7 +1090,15 @@ function pods_shortcode_run( $tags, $content = null ) {
 		echo $pod->pagination( $tags['pagination_label'] );
 	}
 
-	echo $pod->template( $tags['template'], $content );
+	$content = $pod->template( $tags['template'], $content );
+	$content = trim( $content );
+
+	if ( empty( $content ) && ! empty( $tags['not_found'] ) ) {
+		$content = $pod->do_magic_tags( $tags['not_found'] );
+	}
+
+	// phpcs:ignore
+	echo $content;
 
 	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array( $tags['pagination_location'], array(
 			'after',

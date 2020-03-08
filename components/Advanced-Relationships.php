@@ -2,8 +2,7 @@
 /**
  * Name: Advanced Relationships
  *
- * Description: Add advanced relationship objects for relating to including Database Tables, Multisite Networks,
- * Multisite Sites, Themes, Page Templates, Sidebars, Post Type Objects, and Taxonomy Objects
+ * Description: Add advanced relationship objects for relating to including Database Tables, Multisite Networks, Multisite Sites, Themes, Page Templates, Sidebars, Post Type Objects, and Taxonomy Objects
  *
  * Version: 2.3
  *

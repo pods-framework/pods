@@ -90,17 +90,17 @@ $do = 'save';
 
 <form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo esc_attr( $pod->pod ); ?>">
 	<div class="pods-submittable-fields">
-		<?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
-		<?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
-		<?php echo PodsForm::field( 'do', $do, 'hidden' ); ?>
-		<?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
-		<?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
-		<?php echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' ); ?>
-		<?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
-		<?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' ); ?>
-		<?php echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' ); ?>
-
 		<?php
+		echo PodsForm::field( 'action', 'pods_admin', 'hidden' );
+		echo PodsForm::field( 'method', 'process_form', 'hidden' );
+		echo PodsForm::field( 'do', $do, 'hidden' );
+		echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' );
+		echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' );
+		echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' );
+		echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' );
+		echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' );
+		echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' );
+
 		foreach ( $fields as $field ) {
 			if ( 'hidden' !== $field['type'] ) {
 				continue;
@@ -130,6 +130,7 @@ $do = 'save';
 					</table>
 
 					<h2><?php echo esc_html( $field['label'] ); ?></h2>
+					<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
 
 					<table class="form-table pods-manage-field">
 				<?php
@@ -140,7 +141,7 @@ $do = 'save';
 				$dep_classes = $dep_options['classes'];
 				$dep_data    = $dep_options['data'];
 
-				if ( ( ! empty( $depends_on ) || ! empty( $dep_classes ) ) && $depends_on != $dep_classes ) {
+				if ( ( ! empty( $depends_on ) || ! empty( $dep_classes ) ) && $depends_on !== $dep_classes ) {
 					if ( ! empty( $depends_on ) ) {
 						?>
 						</tbody>

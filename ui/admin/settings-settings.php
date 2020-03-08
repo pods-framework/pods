@@ -91,6 +91,7 @@ $do = 'save';
 					</table>
 
 					<h2><?php echo esc_html( $field['label'] ); ?></h2>
+					<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
 
 					<table class="form-table pods-manage-field">
 				<?php

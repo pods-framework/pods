@@ -8286,16 +8286,17 @@ class PodsAPI {
 			$info['pod_table'] = $wpdb->prefix . 'pods_' . $info['table'];
 
 			if ( ! empty( $field ) ) {
-				if ( ! is_array( $field ) && ! $field instanceof Pods\Whatsit ) ) {
+				if ( ! is_array( $field ) && ! $field instanceof Pods\Whatsit ) {
 					if ( is_string( $pod ) ) {
 						$pod = pods( $pod );
 					}
-					if ( $pod && ! empty( $pod->fields[ $field ] ) ) {
+
+					if ( is_object( $pod ) && ! empty( $pod->fields[ $field ] ) ) {
 						$field = $pod->fields[ $field ];
 					}
 				}
 
-				if ( is_array( $field ) || $field instanceof Pods\Whatsit ) ) {
+				if ( is_array( $field ) || $field instanceof Pods\Whatsit ) {
 					$info['table']            = pods_var_raw( 'pick_table', pods_var_raw( 'options', $field, $field ) );
 					$info['field_id']         = pods_var_raw( 'pick_table_id', pods_var_raw( 'options', $field, $field ) );
 					$info['meta_field_value'] = pods_var_raw( 'pick_table_index', pods_var_raw( 'options', $field, $field ) );

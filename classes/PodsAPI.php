@@ -999,7 +999,7 @@ class PodsAPI {
 					'label'       => 'Status',
 					'type'        => 'pick',
 					'pick_object' => 'post-status',
-					'default'     => $this->do_hook( 'default_status_' . $pod_name, pods_var( 'default_status', pods_var_raw( 'options', $pod ), 'draft', null, true ), $pod ),
+					'default'     => $this->do_hook( 'default_status_' . $pod_name, pods_var( 'default_status', pods_v( 'options', $pod ), 'draft', null, true ), $pod ),
 					'alias'       => array( 'status' ),
 				),
 				'comment_status'        => array(
@@ -2769,7 +2769,7 @@ class PodsAPI {
 			} elseif ( 0 === strpos( $field['pick_object'], 'taxonomy-' ) ) {
 				$field['pick_val']    = pods_str_replace( 'taxonomy-', '', $field['pick_object'], 1 );
 				$field['pick_object'] = 'taxonomy';
-			} elseif ( 'table' === $field['pick_object'] && 0 < strlen( pods_var_raw( 'pick_table', $field ) ) ) {
+			} elseif ( 'table' === $field['pick_object'] && 0 < strlen( pods_v( 'pick_table', $field ) ) ) {
 				$field['pick_val']    = $field['pick_table'];
 				$field['pick_object'] = 'table';
 			} elseif ( false === strpos( $field['pick_object'], '-' ) && ! in_array( $field['pick_object'], array(
@@ -8297,9 +8297,9 @@ class PodsAPI {
 				}
 
 				if ( is_array( $field ) || $field instanceof Pods\Whatsit ) {
-					$info['table']            = pods_var_raw( 'pick_table', pods_var_raw( 'options', $field, $field ) );
-					$info['field_id']         = pods_var_raw( 'pick_table_id', pods_var_raw( 'options', $field, $field ) );
-					$info['meta_field_value'] = pods_var_raw( 'pick_table_index', pods_var_raw( 'options', $field, $field ) );
+					$info['table']            = pods_v( 'pick_table', pods_v( 'options', $field, $field ) );
+					$info['field_id']         = pods_v( 'pick_table_id', pods_v( 'options', $field, $field ) );
+					$info['meta_field_value'] = pods_v( 'pick_table_index', pods_v( 'options', $field, $field ) );
 					$info['field_index']      = $info['meta_field_value'];
 					$info['meta_field_index'] = $info['meta_field_value'];
 				}
@@ -8322,7 +8322,7 @@ class PodsAPI {
 			$info['orderby'] = '`t`.`' . $info['field_index'] . '`, `t`.`' . $info['field_id'] . '`';
 		}
 
-		if ( 'table' === pods_var_raw( 'storage', $info['pod'] ) && ! in_array( $object_type, array(
+		if ( 'table' === pods_v( 'storage', $info['pod'] ) && ! in_array( $object_type, array(
 				'pod',
 				'table'
 			), true ) ) {
@@ -8788,7 +8788,7 @@ class PodsAPI {
 		$data = array();
 
 		foreach ( $fields as $field ) {
-			$data[ $field ] = pods_var_raw( 'pods_field_' . $field, $params, '' );
+			$data[ $field ] = pods_v( 'pods_field_' . $field, $params, '' );
 		}
 
 		$params = array(

@@ -250,7 +250,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
 }
 ?>
 
-<div id="poststuff">
+<div id="poststuff" class="poststuff">
 <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 <!-- /inner-sidebar -->
 <div id="post-body" class="meta-box-holder columns-2">

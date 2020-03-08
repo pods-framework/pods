@@ -168,6 +168,19 @@ class PodsField_Date extends PodsField_DateTime {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function format_display( $options, $js = false ) {
+
+		if ( $js && 'custom' === pods_v( static::$type . '_type', $options, 'format' ) ) {
+			$format = $this->format_datetime( $options, $js );
+			return $this->convert_format( $format, array( 'source' => 'jquery_ui', 'type' => 'date' ) );
+		}
+
+		return parent::format_display( $options, $js );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function format_datetime( $options, $js = false ) {
 
 		return $this->format_date( $options, $js );

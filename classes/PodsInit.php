@@ -126,13 +126,72 @@ class PodsInit {
 
 		self::$upgrade_needed = $this->needs_upgrade();
 
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
-		add_action( 'plugins_loaded', array( $this, 'activate_install' ), 9 );
+		add_action( 'plugins_loaded', [ $this, 'plugins_loaded' ], 0 );
+		add_action( 'plugins_loaded', [ $this, 'activate_install' ], 9 );
 
-		add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
+		add_action( 'wp_loaded', [ $this, 'flush_rewrite_rules' ] );
 
-		$this->run();
+		// Setup common info for after TEC/ET load.
+		add_action( 'plugins_loaded', [ $this, 'maybe_set_common_lib_info' ], 1 );
+		add_action( 'tribe_common_loaded', [ $this, 'run' ], 0 );
+	}
 
+	/**
+	 * Setup of Common Library.
+	 *
+	 * @since 2.8
+	 */
+	public function maybe_set_common_lib_info() {
+		$common_version = file_get_contents( PODS_DIR . 'common/src/Tribe/Main.php' );
+
+		// If there isn't a tribe-common version, bail.
+		if ( ! preg_match( "/const\s+VERSION\s*=\s*'([^']+)'/m", $common_version, $matches ) ) {
+			add_action( 'admin_head', [ $this, 'missing_common_libs' ] );
+
+			return;
+		}
+
+		$common_version = $matches[1];
+
+		/**
+		 * If we don't have a version of Common or a Older version of the Lib
+		 * overwrite what should be loaded by the auto-loader.
+		 */
+		if ( empty( $GLOBALS['tribe-common-info'] ) || version_compare( $GLOBALS['tribe-common-info']['version'], $common_version, '<' ) ) {
+			$GLOBALS['tribe-common-info'] = [
+				'dir'     => PODS_DIR . 'common/src/Tribe',
+				'version' => $common_version,
+			];
+
+			/**
+			 * After this method we can use any `Tribe__` and `\Pods\...` classes
+			 */
+			$this->init_autoloading();
+
+			// Start up Common.
+			$main = Tribe__Main::instance();
+			$main->plugins_loaded();
+		}
+	}
+
+	/**
+	 * Display a missing-tribe-common library error.
+	 *
+	 * @since 2.8
+	 */
+	public function missing_common_libs() {
+		?>
+		<div class="error">
+			<p>
+				<?php
+				esc_html_e(
+					'It appears as if the tribe-common libraries cannot be found! The directory should be in the "common/" directory in the Pods plugin.',
+					'pods'
+				);
+				?>
+			</p>
+		</div>
+		<?php
 	}
 
 	/**
@@ -223,7 +282,6 @@ class PodsInit {
 	 * Load the plugin textdomain and set default constants
 	 */
 	public function plugins_loaded() {
-
 		if ( ! defined( 'PODS_LIGHT' ) ) {
 			define( 'PODS_LIGHT', false );
 		}
@@ -233,7 +291,35 @@ class PodsInit {
 		}
 
 		load_plugin_textdomain( 'pods' );
+	}
 
+	/**
+	 * Sets up autoloading.
+	 *
+	 * @since 2.8
+	 */
+	protected function init_autoloading() {
+		$autoloader = $this->get_autoloader_instance();
+		$autoloader->register_autoloader();
+	}
+
+	/**
+	 * Returns the autoloader singleton instance to use in a context-aware manner.
+	 *
+	 * @since 2.8
+	 *
+	 * @return \Tribe__Autoloader The singleton common Autoloader instance.
+	 */
+	public function get_autoloader_instance() {
+		if ( ! class_exists( 'Tribe__Autoloader' ) ) {
+			require_once $GLOBALS['tribe-common-info']['dir'] . '/Autoloader.php';
+
+			Tribe__Autoloader::instance()->register_prefixes( [
+				'Tribe__' => $GLOBALS['tribe-common-info']['dir'],
+			] );
+		}
+
+		return Tribe__Autoloader::instance();
 	}
 
 	/**
@@ -432,8 +518,8 @@ class PodsInit {
 
 		// Check if Pod is a Modal Window
 		if ( pods_is_modal_window() ) {
-			add_filter( 'body_class', array( $this, 'add_classes_to_body_class' ) );
-			add_filter( 'admin_body_class', array( $this, 'add_classes_to_body_class' ) );
+			add_filter( 'body_class', array( $this, 'add_classes_to_modal_body' ) );
+			add_filter( 'admin_body_class', array( $this, 'add_classes_to_modal_body' ) );
 		}
 
 		// Deal with specifics on admin pages
@@ -494,13 +580,17 @@ class PodsInit {
 	}
 
 	/**
-	 * @param string $classes Body classes.
+	 * @param string|array $classes Body classes.
 	 *
-	 * @return string
+	 * @return string|array
 	 */
-	public function add_classes_to_body_class( $classes ) {
+	public function add_classes_to_modal_body( $classes ) {
 
-		$classes .= 'pods-modal-window';
+		if ( is_array( $classes ) ) {
+			$classes[] = 'pods-modal-window';
+		} else {
+			$classes .= ' pods-modal-window';
+		}
 
 		return $classes;
 	}
@@ -1477,6 +1567,8 @@ class PodsInit {
 	 */
 	public function deactivate() {
 
+		delete_option( 'pods_callouts' );
+
 		pods_api()->cache_flush_pods();
 
 	}
@@ -1753,13 +1845,48 @@ class PodsInit {
 		// Show admin bar links
 		add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
 
+		// Compatibility with WP 5.4 privacy export.
+		add_filter( 'wp_privacy_additional_user_profile_data', array( $this, 'filter_wp_privacy_additional_user_profile_data' ), 10, 3 );
+
 		// Compatibility for Query Monitor conditionals
 		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
 
-		// Add WP-CLI commands
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-								}
+		// Remove Common menus
+		add_action( 'admin_menu', array( $this, 'remove_common_menu' ), 11 );
+		add_action( 'network_admin_menu', array( $this, 'remove_common_network_menu' ), 11 );
 
+		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
+
+		// Add WP-CLI commands.
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			//require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
+			//require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
+
+			tribe_register_provider( \Pods\CLI\Service_Provider::class );
+		}
+	}
+
+	/**
+	 * Remove Common menu.
+	 *
+	 * @since 2.8
+	 */
+	public function remove_common_menu() {
+		if ( ! class_exists( 'Tribe__Events__Main' ) && ! class_exists( 'Tribe__Tickets__Main' ) ) {
+			remove_menu_page( 'tribe-common' );
+		}
+	}
+
+	/**
+	 * Remove Common network menu.
+	 *
+	 * @since 2.8
+	 */
+	public function remove_common_network_menu() {
+		if ( ! class_exists( 'Tribe__Events__Main' ) && ! class_exists( 'Tribe__Tickets__Main' ) ) {
+			remove_submenu_page( 'settings.php', 'tribe-common' );
+			remove_submenu_page( 'settings.php', 'tribe-common-help' );
+		}
 	}
 
 	/**
@@ -1952,6 +2079,42 @@ class PodsInit {
 	}
 
 	/**
+	 * Add Pod fields to user export.
+	 * Requires WordPress 5.4+
+	 *
+	 * @since 2.7.17
+	 *
+	 * @param array   $additional_user_profile_data {
+	 *     An array of name-value pairs of additional user data items.  Default: the empty array.
+	 *
+	 *     @type string $name  The user-facing name of an item name-value pair, e.g. 'IP Address'.
+	 *     @type string $value The user-facing value of an item data pair, e.g. '50.60.70.0'.
+	 * }
+	 * @param WP_User $user           The user whose data is being exported.
+	 * @param array   $reserved_names An array of reserved names.  Any item in
+	 *                                 `$additional_user_data` that uses one of these
+	 *                                 for it's `name` will not be included in the export.
+	 *
+	 * @return array
+	 */
+	public function filter_wp_privacy_additional_user_profile_data( $additional_user_profile_data, $user, $reserved_names ) {
+		$pod = pods( 'user', $user->ID );
+
+		if ( ! $pod->valid() ) {
+			return $additional_user_profile_data;
+		}
+
+		foreach ( $pod->fields as $name => $field ) {
+			$additional_user_profile_data[] = array(
+				'name'  => apply_filters( 'pods_form_ui_label_text', $field['label'], $name, '', $field ),
+				'value' => $pod->display( $name ),
+			);
+		}
+
+		return $additional_user_profile_data;
+	}
+
+	/**
 	 * Add Pods conditional functions to Query Monitor.
 	 *
 	 * @param  array $conditionals
@@ -1964,6 +2127,7 @@ class PodsInit {
 		$conditionals[] = 'pods_strict';
 		$conditionals[] = 'pods_allow_deprecated';
 		$conditionals[] = 'pods_api_cache';
+		$conditionals[] = 'pods_shortcode_allow_evaluate_tags';
 		return $conditionals;
 	}
 }

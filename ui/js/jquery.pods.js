@@ -513,40 +513,55 @@
             sluggable_single : function ( sluggable ) {
                 var $slug = $( 'input[name="' + sluggable.replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' );
 
-                if ( $slug[ 0 ] ) {
-                    $( 'form' ).on( 'change', 'input[name="' + sluggable.replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]', function () {
-                        if ( 0 < $( this ).val().length ) {
-                            var slug = $( this ).val();
+                if ( $slug.length ) {
+	                $slug.on( 'change', function () {
+	                    // Strip HTML/code.
+	                    var slug = $( this ).val().replace( /<( ?:. )*?>/g, '' ),
+		                    name = $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' );
 
-                            slug = slug.replace( /<( ?:. )*?>/g, '' ).replace( /([^0-9a-zA-Z\_\- ])/g, '' );
+                        if ( slug.length ) {
 
-                            // update fields
-                            $( 'input.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' ).each( function () {
-                                if ( '' === $( this ).val() ) {
-                                    $( this ).val( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) );
-                                    $( this ).trigger( 'change' );
-                                }
+                            var slug_lower           = slug.toLowerCase(),
+	                            slug_sanitized       = slug.replace( /([^0-9a-zA-Z\_\- ])/g, '' ),
+	                            slug_sanitized_lower = slug_sanitized.toLowerCase();
+
+                            slug = slug.charAt( 0 ).toUpperCase() + slug.slice( 1 );
+
+	                        // Update elements and trigger change.
+                            $( '.pods-slugged[data-sluggable="' + name + '"], .pods-slugged-lower[data-sluggable="' + name + '"]' ).each( function() {
+                            	var $this          = $( this ),
+		                            lowercase      = $this.hasClass( 'pods-slugged-lower' ),
+		                            sanitize_title = $this.hasClass( 'pods-slugged-sanitize-title' ),
+		                            val            = slug;
+
+                            	if ( sanitize_title ) {
+                            		val = slug_sanitized;
+                            		if ( lowercase ) {
+                            			val = slug_sanitized_lower;
+		                            }
+	                            } else if ( lowercase ) {
+		                            val = slug_lower;
+	                            }
+
+                            	switch ( this.nodeName.toLowerCase() ) {
+		                            case 'input':
+		                            case 'textarea':
+			                            // Update fields.
+			                            if ( '' === $this.val() ) {
+				                            $this.val( val );
+			                            }
+		                            	break;
+		                            default:
+			                            // Update html.
+			                            $this.html( val );
+		                            	break;
+	                            }
+	                            $this.trigger( 'change' );
                             } );
-                            $( 'input.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' ).each( function () {
-                                if ( '' === $( this ).val() ) {
-                                    $( this ).val( slug.toLowerCase() );
-                                    $( this ).trigger( 'change' );
-                                }
-                            } );
-
-                            // update elements and trigger change
-                            $( '.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]:not(input )' )
-                                .html( slug.toLowerCase() )
-                                .trigger( 'change' );
-
-                            // trigger change
-                            $( '.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]:not(input )' )
-                                .html( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) )
-                                .trigger( 'change' );
                         }
                     } );
 
-                    if ( 0 < $slug.val().length ) {
+                    if ( $slug.val().length ) {
                         $slug.trigger( 'change' );
                     }
                 }
@@ -1609,11 +1624,9 @@
 
                         $row_content.slideDown();
 
-
                         $row_content.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                             methods[ 'setup_dependencies' ]( $( this ) );
                         } );
-
                     }
 
                     $( this ).css( 'cursor', 'pointer' );

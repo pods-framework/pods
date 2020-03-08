@@ -30,12 +30,14 @@
 	border-bottom: none;
 }
 
-.form-table td .pods-form-ui-field {
-	max-width: 95%;
-}
+.form-table td {
+	.pods-form-ui-field {
+		max-width: 95%;
+	}
 
-.form-table td .pods-form-ui-comment {
-	clear: both;
+	.pods-form-ui-comment {
+		clear: both;
+	}
 }
 
 .form-table.pods-form-ui-table-type-avatar tr.form-field > td,
@@ -49,6 +51,10 @@
 
 .pods-field {
 	padding: 10px 0;
+}
+
+tr.pods-field {
+	padding: 0;
 }
 
 .pods-field label {
@@ -192,6 +198,10 @@ input.pods-form-ui-field-type-color {
 /* HTML select field fix */
 .pods-form-ui-row-type-pick .pods-form-ui-field select {
 	width: 25em;
+}
+
+tr.pods-form-ui-row-type-heading td {
+	padding: 0;
 }
 
 /* This one does need a border, however */

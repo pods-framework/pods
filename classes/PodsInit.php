@@ -126,20 +126,162 @@ class PodsInit {
 
 		self::$upgrade_needed = $this->needs_upgrade();
 
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
-		add_action( 'plugins_loaded', array( $this, 'activate_install' ), 9 );
+		add_action( 'plugins_loaded', [ $this, 'plugins_loaded' ], 0 );
+		add_action( 'plugins_loaded', [ $this, 'activate_install' ], 9 );
 
-		add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
+		add_action( 'wp_loaded', [ $this, 'flush_rewrite_rules' ] );
 
-		$this->run();
+		// Setup common info for after TEC/ET load.
+		add_action( 'plugins_loaded', [ $this, 'maybe_set_common_lib_info' ], 1 );
+		add_action( 'tribe_common_loaded', [ $this, 'run' ], 0 );
+	}
 
+	/**
+	 * Setup of Common Library.
+	 *
+	 * @since 2.8
+	 */
+	public function maybe_set_common_lib_info() {
+		$common_version = file_get_contents( PODS_DIR . 'common/src/Tribe/Main.php' );
+
+		// If there isn't a tribe-common version, bail.
+		if ( ! preg_match( "/const\s+VERSION\s*=\s*'([^']+)'/m", $common_version, $matches ) ) {
+			add_action( 'admin_head', [ $this, 'missing_common_libs' ] );
+
+			return;
+		}
+
+		$common_version = $matches[1];
+
+		/**
+		 * If we don't have a version of Common or a Older version of the Lib
+		 * overwrite what should be loaded by the auto-loader.
+		 */
+		if ( empty( $GLOBALS['tribe-common-info'] ) || version_compare( $GLOBALS['tribe-common-info']['version'], $common_version, '<' ) ) {
+			$GLOBALS['tribe-common-info'] = [
+				'dir'     => PODS_DIR . 'common/src/Tribe',
+				'version' => $common_version,
+			];
+
+			/**
+			 * After this method we can use any `Tribe__` and `\Pods\...` classes
+			 */
+			$this->init_autoloading();
+
+			// Start up Common.
+			$main = Tribe__Main::instance();
+			$main->plugins_loaded();
+		}
+	}
+
+	/**
+	 * Display a missing-tribe-common library error.
+	 *
+	 * @since 2.8
+	 */
+	public function missing_common_libs() {
+		?>
+		<div class="error">
+			<p>
+				<?php
+				esc_html_e(
+					'It appears as if the tribe-common libraries cannot be found! The directory should be in the "common/" directory in the Pods plugin.',
+					'pods'
+				);
+				?>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Autoloader for Pods classes.
+	 *
+	 * @param string $class Class name.
+	 *
+	 * @since 2.8
+	 */
+	public static function autoload_class( $class ) {
+		// Bypass anything that doesn't start with Pods
+		if ( 0 !== strpos( $class, 'Pods' ) ) {
+			return;
+		}
+
+		$custom = array(
+			'Pods_CLI_Command'    => PODS_DIR . 'classes/cli/Pods_CLI_Command.php',
+			'PodsAPI_CLI_Command' => PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php',
+		);
+
+		if ( isset( $custom[ $class ] ) ) {
+			$path = $custom[ $class ];
+
+			require_once $path;
+
+			return;
+		}
+
+		$loaders = array(
+			array(
+				'prefix'    => 'Pods',
+				'separator' => '\\', // Namespace
+				'path'      => PODS_DIR . 'src',
+			),
+			array(
+				'prefix'         => 'PodsField_',
+				'filter'         => 'strtolower',
+				'exclude_prefix' => true,
+				'path'           => PODS_DIR . 'classes/fields',
+			),
+			array(
+				'prefix' => 'PodsWidget',
+				'path'   => PODS_DIR . 'classes/widgets',
+			),
+			array(
+				'prefix' => 'Pods',
+				'path'   => PODS_DIR . 'classes',
+			),
+		);
+
+		foreach ( $loaders as $loader ) {
+			if ( 0 !== strpos( $class, $loader['prefix'] ) ) {
+				continue;
+			}
+
+			$path = array(
+				$loader['path'],
+			);
+
+			if ( ! empty( $loader['exclude_prefix'] ) ) {
+				$class = substr( $class, strlen( $loader['prefix'] ) );
+			}
+
+			if ( ! empty( $loader['filter'] ) ) {
+				$class = call_user_func( $loader['filter'], $class );
+			}
+
+			if ( ! isset( $loader['separator'] ) ) {
+				$path[] = $class;
+			} else {
+				$separated_path = explode( $loader['separator'], $class );
+
+				/** @noinspection SlowArrayOperationsInLoopInspection */
+				$path = array_merge( $path, $separated_path );
+			}
+
+			$path = implode( DIRECTORY_SEPARATOR, $path ) . '.php';
+
+			if ( file_exists( $path ) ) {
+				require_once $path;
+
+				break;
+			}
+		}
 	}
 
 	/**
 	 * Load the plugin textdomain and set default constants
 	 */
 	public function plugins_loaded() {
-
 		if ( ! defined( 'PODS_LIGHT' ) ) {
 			define( 'PODS_LIGHT', false );
 		}
@@ -149,7 +291,35 @@ class PodsInit {
 		}
 
 		load_plugin_textdomain( 'pods' );
+	}
 
+	/**
+	 * Sets up autoloading.
+	 *
+	 * @since 2.8
+	 */
+	protected function init_autoloading() {
+		$autoloader = $this->get_autoloader_instance();
+		$autoloader->register_autoloader();
+	}
+
+	/**
+	 * Returns the autoloader singleton instance to use in a context-aware manner.
+	 *
+	 * @since 2.8
+	 *
+	 * @return \Tribe__Autoloader The singleton common Autoloader instance.
+	 */
+	public function get_autoloader_instance() {
+		if ( ! class_exists( 'Tribe__Autoloader' ) ) {
+			require_once $GLOBALS['tribe-common-info']['dir'] . '/Autoloader.php';
+
+			Tribe__Autoloader::instance()->register_prefixes( [
+				'Tribe__' => $GLOBALS['tribe-common-info']['dir'],
+			] );
+		}
+
+		return Tribe__Autoloader::instance();
 	}
 
 	/**
@@ -336,6 +506,8 @@ class PodsInit {
 				'jquery-ui-core',
 				'jquery-ui-sortable',
 				'wp-i18n',
+				'wp-components',
+				'wp-compose',
 				'marionette',
 				'media-views',
 				'media-models',
@@ -427,7 +599,6 @@ class PodsInit {
 	 * Register internal Post Types
 	 */
 	public function register_pods() {
-
 		$args = array(
 			'label'           => 'Pods',
 			'labels'          => array( 'singular_name' => 'Pod' ),
@@ -463,6 +634,24 @@ class PodsInit {
 		$args = self::object_label_fix( $args, 'post_type' );
 
 		register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
+
+		$args = array(
+			'label'           => 'Pod Groups',
+			'labels'          => array( 'singular_name' => 'Pod Group' ),
+			'public'          => false,
+			'can_export'      => false,
+			'query_var'       => false,
+			'rewrite'         => false,
+			'capability_type' => 'pods_pod',
+			'has_archive'     => false,
+			'hierarchical'    => true,
+			'supports'        => array( 'title', 'editor', 'author' ),
+			'menu_icon'       => 'dashicons-pods',
+		);
+
+		$args = self::object_label_fix( $args, 'post_type' );
+
+		register_post_type( '_pods_group', apply_filters( 'pods_internal_register_post_type_group', $args ) );
 	}
 
 	/**
@@ -484,8 +673,6 @@ class PodsInit {
 			return;
 		}
 
-		require_once PODS_DIR . 'classes/PodsRESTHandlers.php';
-		require_once PODS_DIR . 'classes/PodsRESTFields.php';
 
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
@@ -544,9 +731,6 @@ class PodsInit {
 					// Post type was setup and exists already, but we aren't forcing it to be setup again
 					continue;
 				}
-
-				$post_type['options']['name'] = $post_type['name'];
-				$post_type                    = array_merge( $post_type, (array) $post_type['options'] );
 
 				$post_type_name = pods_v_sanitized( 'name', $post_type );
 
@@ -781,9 +965,6 @@ class PodsInit {
 					// Taxonomy was setup and exists already, but we aren't forcing it to be setup again
 					continue;
 				}
-
-				$taxonomy['options']['name'] = $taxonomy['name'];
-				$taxonomy                    = array_merge( $taxonomy, (array) $taxonomy['options'] );
 
 				$taxonomy_name = pods_v( 'name', $taxonomy );
 
@@ -1078,9 +1259,9 @@ class PodsInit {
 				continue;
 			}
 
-			$pod_id = array_search( $post_type_name, $post_type_names, true );
+			$pod_id = array_search( $post_type_name, $post_type_names, false );
 
-			if ( ! $pod_id ) {
+			if ( ! $pod_id || ! isset( $post_types[ $pod_id ] ) ) {
 				// Post type not a pod
 				continue;
 			}
@@ -1109,9 +1290,9 @@ class PodsInit {
 				continue;
 			}
 
-			$pod_id = array_search( $taxonomy_name, $taxonomy_names, true );
+			$pod_id = array_search( $taxonomy_name, $taxonomy_names, false );
 
-			if ( ! $pod_id ) {
+			if ( ! $pod_id || ! isset( $taxonomies[ $pod_id ] ) ) {
 				// Taxonomy not a pod
 				continue;
 			}
@@ -1541,12 +1722,7 @@ class PodsInit {
 
 		$api = pods_api();
 
-		$pods = $api->load_pods(
-			array(
-				'names_ids'  => true,
-				'table_info' => false,
-			)
-		);
+		$pods = $api->load_pods( array( 'names_ids' => true ) );
 
 		foreach ( $pods as $pod_id => $pod_label ) {
 			$api->delete_pod( array( 'id' => $pod_id ) );
@@ -1675,12 +1851,42 @@ class PodsInit {
 		// Compatibility for Query Monitor conditionals
 		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
 
-		// Add WP-CLI commands
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
-			require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
-		}
+		// Remove Common menus
+		add_action( 'admin_menu', array( $this, 'remove_common_menu' ), 11 );
+		add_action( 'network_admin_menu', array( $this, 'remove_common_network_menu' ), 11 );
 
+		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
+
+		// Add WP-CLI commands.
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			//require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
+			//require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
+
+			tribe_register_provider( \Pods\CLI\Service_Provider::class );
+		}
+	}
+
+	/**
+	 * Remove Common menu.
+	 *
+	 * @since 2.8
+	 */
+	public function remove_common_menu() {
+		if ( ! class_exists( 'Tribe__Events__Main' ) && ! class_exists( 'Tribe__Tickets__Main' ) ) {
+			remove_menu_page( 'tribe-common' );
+		}
+	}
+
+	/**
+	 * Remove Common network menu.
+	 *
+	 * @since 2.8
+	 */
+	public function remove_common_network_menu() {
+		if ( ! class_exists( 'Tribe__Events__Main' ) && ! class_exists( 'Tribe__Tickets__Main' ) ) {
+			remove_submenu_page( 'settings.php', 'tribe-common' );
+			remove_submenu_page( 'settings.php', 'tribe-common-help' );
+		}
 	}
 
 	/**
@@ -1698,7 +1904,7 @@ class PodsInit {
 
 		$file_types = "'" . implode( "', '", PodsForm::file_field_types() ) . "'";
 
-		if ( ! pods_tableless() ) {
+		if ( pods_podsrel_enabled() ) {
 			$sql = "
                 DELETE `rel`
                 FROM `@wp_podsrel` AS `rel`
@@ -1719,9 +1925,10 @@ class PodsInit {
 			pods_query( $sql, false );
 		}
 
-		// Post Meta
-		if ( ! empty( PodsMeta::$post_types ) ) {
-			$sql = "
+		if ( pods_relationship_meta_storage_enabled() ) {
+			// Post Meta
+			if ( ! empty( PodsMeta::$post_types ) ) {
+				$sql = "
                 DELETE `rel`
                 FROM `@wp_postmeta` AS `rel`
                 LEFT JOIN `{$wpdb->posts}` AS `p`
@@ -1738,12 +1945,12 @@ class PodsInit {
                     AND `rel`.`meta_key` = `p`.`post_name`
                     AND `rel`.`meta_value` = '{$_ID}'";
 
-			pods_query( $sql, false );
-		}
+				pods_query( $sql, false );
+			}
 
-		// User Meta
-		if ( ! empty( PodsMeta::$user ) ) {
-			$sql = "
+			// User Meta
+			if ( ! empty( PodsMeta::$user ) ) {
+				$sql = "
                 DELETE `rel`
                 FROM `@wp_usermeta` AS `rel`
                 LEFT JOIN `{$wpdb->posts}` AS `p`
@@ -1760,12 +1967,12 @@ class PodsInit {
                     AND `rel`.`meta_key` = `p`.`post_name`
                     AND `rel`.`meta_value` = '{$_ID}'";
 
-			pods_query( $sql, false );
-		}
+				pods_query( $sql, false );
+			}
 
-		// Comment Meta
-		if ( ! empty( PodsMeta::$comment ) ) {
-			$sql = "
+			// Comment Meta
+			if ( ! empty( PodsMeta::$comment ) ) {
+				$sql = "
                 DELETE `rel`
                 FROM `@wp_commentmeta` AS `rel`
                 LEFT JOIN `{$wpdb->posts}` AS `p`
@@ -1782,8 +1989,18 @@ class PodsInit {
                     AND `rel`.`meta_key` = `p`.`post_name`
                     AND `rel`.`meta_value` = '{$_ID}'";
 
-			pods_query( $sql, false );
+				pods_query( $sql, false );
+			}
 		}
+
+		/**
+		 * Allow hooking into the attachment deletion process.
+		 *
+		 * @since TBD
+		 *
+		 * @param int $_ID The attachment ID being deleted.
+		 */
+		do_action( 'pods_init_delete_attachment', $_ID );
 	}
 
 	/**
@@ -1804,7 +2021,6 @@ class PodsInit {
 				continue;
 			}
 
-			require_once PODS_DIR . 'classes/widgets/' . $widget . '.php';
 
 			register_widget( $widget );
 		}
@@ -1821,13 +2037,7 @@ class PodsInit {
 			return;
 		}
 
-		$all_pods = pods_api()->load_pods(
-			array(
-				'type'       => 'pod',
-				'fields'     => false,
-				'table_info' => false,
-			)
-		);
+		$all_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
 
 		// Add New item links for all pods
 		foreach ( $all_pods as $pod ) {

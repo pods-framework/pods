@@ -274,7 +274,7 @@ class Pods_Component_I18n extends PodsComponent {
 		if ( is_array( $data ) && array_key_exists( $locale, $this->languages ) && $this->obj_is_language_enabled( $locale, $data ) ) {
 			// Add option keys to $data array
 			if ( ! empty( $data['options'] ) ) {
-				$data = array_merge( $data, $data['options'] );
+				$data = $data;
 			}
 			// Check if the i18n option exists and isn't empty
 			if ( ! empty( $data[ $key . '_' . $locale ] ) ) {

@@ -137,15 +137,23 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						$html_class = apply_filters( 'pods_form_html_class', 'pods-field-html-class', $field ) . $default_class;
 				?>
 					<li class="pods-field <?php echo esc_attr( $html_class, true ); ?>" <?php PodsForm::data( $dep_data ); ?>>
-						<div class="pods-field-label">
-							<?php echo PodsForm::label( $field_prefix . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
-						</div>
+						<?php if ( 'heading' === $field['type'] ) : ?>
+							<h3><?php echo esc_html( $field['label'] ); ?></h3>
+							<?php echo PodsForm::comment( $field_prefix . $field['name'], $field['description'], $field ); ?>
+						<?php else : ?>
+							<div class="pods-field-label">
+								<?php echo PodsForm::label( $field_prefix . $field['name'], $field['label'], $field['help'], $field ); ?>
+							</div>
 
-						<div class="pods-field-input">
-							<?php echo PodsForm::field( $field_prefix . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), $field[ 'type' ], $field, $pod, $pod->id() ); ?>
+							<div class="pods-field-input">
+								<?php echo PodsForm::field( $field_prefix . $field['name'], $pod->field( [
+									'name'    => $field['name'],
+									'in_form' => true,
+								] ), $field['type'], $field, $pod, $pod->id() ); ?>
 
-							<?php echo PodsForm::comment( $field_prefix . $field[ 'name' ], null, $field ); ?>
-						</div>
+								<?php echo PodsForm::comment( $field_prefix . $field['name'], null, $field ); ?>
+							</div>
+						<?php endif; ?>
 					</li>
 				<?php
 						/**

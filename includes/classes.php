@@ -1,7 +1,9 @@
 <?php
 /**
- * @package Pods\Global\Functions\Classes
+ * @package  Pods
+ * @category Utilities
  */
+
 /**
  * Include and Init the Pods class
  *
@@ -16,9 +18,6 @@
  * @link  https://pods.io/docs/pods/
  */
 function pods( $type = null, $id = null, $strict = null ) {
-
-	require_once PODS_DIR . 'classes/Pods.php';
-
 	$pod = new Pods( $type, $id );
 
 	if ( null === $strict ) {
@@ -47,9 +46,6 @@ function pods( $type = null, $id = null, $strict = null ) {
  * @link  https://pods.io/docs/pods-ui/
  */
 function pods_ui( $obj, $deprecated = false ) {
-
-	require_once PODS_DIR . 'classes/PodsUI.php';
-
 	return new PodsUI( $obj, $deprecated );
 }
 
@@ -67,31 +63,27 @@ function pods_ui( $obj, $deprecated = false ) {
  * @link  https://pods.io/docs/pods-api/
  */
 function pods_api( $pod = null, $format = null ) {
-
-	require_once PODS_DIR . 'classes/PodsAPI.php';
-
 	return PodsAPI::init( $pod, $format );
 }
 
 /**
- * Include and Init the PodsData class
+ * Include and Init the PodsData class.
  *
  * @see   PodsData
  *
- * @param string|\Pod $pod    The pod object to load
- * @param int         $id     (optional) Id of the pod to fetch
- * @param bool        $strict (optional) If true throw an error if the pod does not exist
- * @param bool        $unique (optional) If true always return a unique class
+ * @param string|Pod      $pod    The pod object to load.
+ * @param null|null|string $id     (optional) Id of the pod to fetch.
+ * @param bool             $strict (optional) If true throw an error if the pod does not exist.
+ * @param bool             $unique (optional) If true always return a unique class.
  *
  * @return PodsData
  *
  * @since 2.0.0
+ *
+ * @throws Exception
  */
 function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
-
-	require_once PODS_DIR . 'classes/PodsData.php';
-
-	if ( $unique && false !== $pod ) {
+	if ( $unique && ! in_array( $pod, array( null, false ), true ) ) {
 		return new PodsData( $pod, $id, $strict );
 	}
 
@@ -108,9 +100,6 @@ function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
  * @since 2.0.0
  */
 function pods_form() {
-
-	require_once PODS_DIR . 'classes/PodsForm.php';
-
 	return PodsForm::init();
 }
 
@@ -124,9 +113,6 @@ function pods_form() {
  * @since 2.0.0
  */
 function pods_init() {
-
-	require_once PODS_DIR . 'classes/PodsInit.php';
-
 	return PodsInit::init();
 }
 
@@ -140,10 +126,6 @@ function pods_init() {
  * @since 2.0.0
  */
 function pods_components() {
-
-	require_once PODS_DIR . 'classes/PodsComponents.php';
-	require_once PODS_DIR . 'classes/PodsComponent.php';
-
 	return PodsComponents::init();
 }
 
@@ -157,9 +139,6 @@ function pods_components() {
  * @since 2.0.0
  */
 function pods_admin() {
-
-	require_once PODS_DIR . 'classes/PodsAdmin.php';
-
 	return PodsAdmin::init();
 }
 
@@ -173,9 +152,6 @@ function pods_admin() {
  * @since 2.0.0
  */
 function pods_meta() {
-
-	require_once PODS_DIR . 'classes/PodsMeta.php';
-
 	return PodsMeta::init();
 }
 
@@ -191,9 +167,6 @@ function pods_meta() {
  * @since 2.0.0
  */
 function pods_array( $container ) {
-
-	require_once PODS_DIR . 'classes/PodsArray.php';
-
 	return new PodsArray( $container );
 }
 
@@ -201,9 +174,6 @@ function pods_array( $container ) {
  * @since 2.7.0
  */
 function pods_i18n() {
-
-	require_once PODS_DIR . 'classes/PodsI18n.php';
-
 	return PodsI18n::get_instance();
 }
 
@@ -225,9 +195,6 @@ function pods_i18n() {
  * @link  https://pods.io/docs/pods-view/
  */
 function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
-
-	require_once PODS_DIR . 'classes/PodsView.php';
-
 	$view = PodsView::view( $view, $data, $expires, $cache_mode );
 
 	if ( $return ) {
@@ -251,9 +218,6 @@ function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache'
  * @since 2.2.0
  */
 function pods_migrate( $type = null, $delimiter = null, $data = null ) {
-
-	require_once PODS_DIR . 'classes/PodsMigrate.php';
-
 	return new PodsMigrate( $type, $delimiter, $data );
 }
 
@@ -269,7 +233,6 @@ function pods_migrate( $type = null, $delimiter = null, $data = null ) {
  * @since 2.1.0
  */
 function pods_upgrade( $version = '' ) {
-
 	include_once PODS_DIR . 'sql/upgrade/PodsUpgrade.php';
 
 	$class_name = str_replace( '.', '_', $version );

@@ -32,6 +32,22 @@ This is a developer's portal for Pods Framework and should _not_ be used for sup
 
 If you find an issue that you believe to be a *bug*, [let us know](https://github.com/pods-framework/pods/issues?state=open).
 
+## Requirements
+
+### Recommended
+
+* WordPress 5.2+
+* PHP 7.3+
+* MySQL 5.6+ or MariaDB 10.1+
+
+### Minimum
+
+If you have restrictions on your server or site, these are the minimum versions that Pods will be supported to run on. Running the following minimum versions does bring with it their own risks including security and exposure to additional bugs that may have been resolved by the recommended versions above. 
+
+* WordPress 4.9+
+* PHP 5.6+
+* MySQL 5.5+
+
 ## Contributions Welcome
 
 Anyone is welcome to contribute to Pods Framework. Please read the [guidelines for contributing](CONTRIBUTING.md) to this repository.

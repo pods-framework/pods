@@ -12,6 +12,15 @@
 				'tools' => __( 'Tools', 'pods' ),
 				'reset' => __( 'Cleanup &amp; Reset', 'pods' ),
 			];
+
+			/**
+			 * Allow filtering of settings page tabs.
+			 *
+			 * @since TBD
+			 *
+			 * @param array $tabs List of settings page tabs.
+			 */
+			$tabs = apply_filters( 'pods_admin_settings_tabs', $tabs );
 			?>
 
 			<h2 class="nav-tab-wrapper">
@@ -19,7 +28,7 @@
 				foreach ( $tabs as $tab => $label ) {
 					$class = '';
 
-					if ( $tab === pods_v_sanitized( 'tab', 'get', $default ) ) {
+					if ( $tab === pods_v( 'tab', 'get', $default ) ) {
 						$class = ' nav-tab-active';
 
 						$label = 'Pods ' . $label;
@@ -42,7 +51,22 @@
 			$tab = pods_v_sanitized( 'tab', 'get', $default );
 			$tab = sanitize_title( $tab );
 
-			echo pods_view( PODS_DIR . 'ui/admin/settings-' . $tab . '.php' );
+			$supported = [
+				'settings',
+				'tools',
+				'reset',
+			];
+
+			if ( in_array( $tab, $supported, true ) ) {
+				echo pods_view( PODS_DIR . 'ui/admin/settings-' . $tab . '.php' );
+			}
+
+			/**
+			 * Allow customizations on tab page.
+			 *
+			 * @since TBD
+			 */
+			do_action( 'pods_admin_settings_page_' . $tab );
 			?>
 		</form>
 	</div>

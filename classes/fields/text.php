@@ -145,10 +145,12 @@ class PodsField_Text extends PodsField {
 			$options['readonly'] = true;
 		}
 
+		return pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
+
 		wp_enqueue_script( 'pods-dfv' );
 
 		$type = pods_v( 'type', $options, static::$type );
-		
+
 		$args = compact( array_keys( get_defined_vars() ) );
 		$args = (object) $args;
 

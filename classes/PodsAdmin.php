@@ -3627,7 +3627,7 @@ class PodsAdmin {
 					'add_rest_fields_to_field_editor',
 				), 12, 2
 			);
-			add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'add_rest_field_tab' ), 12 );
+			add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'add_rest_field_tab' ), 12, 2 );
 		}
 
 		add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'add_rest_settings_tab' ), 12, 2 );
@@ -3672,6 +3672,9 @@ class PodsAdmin {
 	 * @return array
 	 */
 	public function add_rest_settings_tab( $tabs, $pod ) {
+		if ( ! $this->restable_pod( $pod ) ) {
+			return $tabs;
+		}
 
 		$tabs['rest-api'] = __( 'REST API', 'pods' );
 
@@ -3690,62 +3693,43 @@ class PodsAdmin {
 	 * @return array
 	 */
 	public function add_rest_settings_tab_fields( $options, $pod ) {
+		if ( ! $this->restable_pod( $pod ) ) {
+			return $options;
+		}
 
-		if ( ! function_exists( 'register_rest_field' ) ) {
-			$options['rest-api'] = array(
-				'no_dependencies' => array(
-					'label' => sprintf( __( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', 'pods' ), '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta9</a>' ),
-					'help'  => sprintf( __( 'See %s for more information.', 'pods' ), '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/</a>' ),
-					'type'  => 'html',
-				),
-			);
-		} elseif ( $this->restable_pod( $pod ) ) {
-			$options['rest-api'] = array(
-				'rest_enable' => array(
-					'label'      => __( 'Enable', 'pods' ),
-					'help'       => __( 'Add REST API support for this Pod.', 'pods' ),
-					'type'       => 'boolean',
-					'default'    => '',
-					'dependency' => true,
-				),
-				'rest_base'   => array(
-					'label'      => __( 'REST Base (if any)', 'pods' ),
-					'help'       => __( 'This will form the url for the route. Default / empty value here will use the pod name.', 'pods' ),
-					'type'       => 'text',
-					'default'    => '',
-					'depends-on' => array( 'rest_enable' => true ),
-				),
-				'read_all'    => array(
-					'label'      => __( 'Show All Fields (read-only)', 'pods' ),
-					'help'       => __( 'Show all fields in REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
-					'type'       => 'boolean',
-					'default'    => '',
-					'depends-on' => array( 'rest_enable' => true ),
-				),
-				'write_all'   => array(
-					'label'             => __( 'Allow All Fields To Be Updated', 'pods' ),
-					'help'              => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => pods_v( 'name', $pod ),
-					'boolean_yes_label' => '',
-					'depends-on'        => array( 'rest_enable' => true ),
-				),
-
-			);
-
-		} else {
-			$options['rest-api'] = array(
-				'not_restable' => array(
-					'label' => __( 'Pods REST API support covers post type, taxonomy and user Pods.', 'pods' ),
-					'help'  => sprintf( __( 'See %s for more information.', 'pods' ), '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/"</a>' ),
-					'type'  => 'html',
-				),
-			);
-
-		}//end if
+		$options['rest-api'] = [
+			'rest_enable' => [
+				'label'      => __( 'Enable', 'pods' ),
+				'help'       => __( 'Add REST API support for this Pod.', 'pods' ),
+				'type'       => 'boolean',
+				'default'    => '',
+				'dependency' => true,
+			],
+			'rest_base'   => [
+				'label'      => __( 'REST Base (if any)', 'pods' ),
+				'help'       => __( 'This will form the url for the route. Default / empty value here will use the pod name.', 'pods' ),
+				'type'       => 'text',
+				'default'    => '',
+				'depends-on' => [ 'rest_enable' => true ],
+			],
+			'read_all'    => [
+				'label'      => __( 'Show All Fields (read-only)', 'pods' ),
+				'help'       => __( 'Show all fields in REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
+				'type'       => 'boolean',
+				'default'    => '',
+				'depends-on' => [ 'rest_enable' => true ],
+			],
+			'write_all'   => [
+				'label'             => __( 'Allow All Fields To Be Updated', 'pods' ),
+				'help'              => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => pods_v( 'name', $pod ),
+				'boolean_yes_label' => '',
+				'depends-on'        => [ 'rest_enable' => true ],
+			],
+		];
 
 		return $options;
-
 	}
 
 	/**
@@ -3759,50 +3743,52 @@ class PodsAdmin {
 	 * @return array
 	 */
 	public function add_rest_fields_to_field_editor( $options, $pod ) {
-		if ( $this->restable_pod( $pod ) ) {
-			$options['rest'][ __( 'Read/ Write', 'pods' ) ] = [
-				'rest_read'  => [
-					'label'   => __( 'Read via REST API', 'pods' ),
-					'help'    => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
-					'type'    => 'boolean',
-					'default' => '',
-				],
-				'rest_write' => [
-					'label'   => __( 'Write via REST API', 'pods' ),
-					'help'    => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
-					'type'    => 'boolean',
-					'default' => '',
-				],
-			];
-
-			$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = [
-				'rest_pick_response' => [
-					'label'      => __( 'Response Type', 'pods' ),
-					'help'       => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
-					'type'       => 'pick',
-					'default'    => 'array',
-					'depends-on' => [ 'type' => 'pick' ],
-					'data'       => [
-						'array' => __( 'Full', 'pods' ),
-						'id'    => __( 'ID only', 'pods' ),
-						'name'  => __( 'Name', 'pods' ),
-					],
-				],
-				'rest_pick_depth'    => [
-					'label'      => __( 'Depth', 'pods' ),
-					'help'       => __( 'How far to traverse relationships in response', 'pods' ),
-					'type'       => 'number',
-					'default'    => '2',
-					'depends-on' => [ 'type' => 'pick' ],
-				],
-				'rest_pick_notice'   => [
-					'label'        => 'Relationship Options',
-					'type'         => 'html',
-					'html_content' => __( 'If you have a relationship field, you will see additional options to customize here.', 'pods' ),
-					'excludes-on'  => [ 'type' => 'pick' ],
-				],
-			];
+		if ( ! $this->restable_pod( $pod ) ) {
+			return $options;
 		}
+
+		$options['rest'][ __( 'Read/ Write', 'pods' ) ] = [
+			'rest_read'  => [
+				'label'   => __( 'Read via REST API', 'pods' ),
+				'help'    => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+				'type'    => 'boolean',
+				'default' => '',
+			],
+			'rest_write' => [
+				'label'   => __( 'Write via REST API', 'pods' ),
+				'help'    => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+				'type'    => 'boolean',
+				'default' => '',
+			],
+		];
+
+		$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = [
+			'rest_pick_response' => [
+				'label'      => __( 'Response Type', 'pods' ),
+				'help'       => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+				'type'       => 'pick',
+				'default'    => 'array',
+				'depends-on' => [ 'type' => 'pick' ],
+				'data'       => [
+					'array' => __( 'Full', 'pods' ),
+					'id'    => __( 'ID only', 'pods' ),
+					'name'  => __( 'Name', 'pods' ),
+				],
+			],
+			'rest_pick_depth'    => [
+				'label'      => __( 'Depth', 'pods' ),
+				'help'       => __( 'How far to traverse relationships in response', 'pods' ),
+				'type'       => 'number',
+				'default'    => '2',
+				'depends-on' => [ 'type' => 'pick' ],
+			],
+			'rest_pick_notice'   => [
+				'label'        => 'Relationship Options',
+				'type'         => 'html',
+				'html_content' => __( 'If you have a relationship field, you will see additional options to customize here.', 'pods' ),
+				'excludes-on'  => [ 'type' => 'pick' ],
+			],
+		];
 
 		return $options;
 	}
@@ -3813,10 +3799,14 @@ class PodsAdmin {
 	 * @since 2.5.6
 	 *
 	 * @param array $tabs Tab list.
+	 * @param array $pod  The ood object.
 	 *
 	 * @return array
 	 */
-	public function add_rest_field_tab( $tabs ) {
+	public function add_rest_field_tab( $tabs, $pod ) {
+		if ( ! $this->restable_pod( $pod ) ) {
+			return $tabs;
+		}
 
 		$tabs['rest'] = __( 'REST API', 'pods' );
 

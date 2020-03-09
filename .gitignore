@@ -36,7 +36,9 @@ $RECYCLE.BIN/
 /composer.lock
 /node_modules/
 /vendor/*
-!/vendor/mustangostang
+!/vendor/mustangostang/COPYING
+!/vendor/mustangostang/README.md
+!/vendor/mustangostang/Spyc.php
 npm-debug.log
 /package-lock.json
 

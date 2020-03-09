@@ -893,6 +893,21 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
+	 * Get table name for object.
+	 *
+	 * @return string|null Table name for object or null if not set.
+	 */
+	public function get_table_name() {
+		$table_info = $this->get_table_info();
+
+		if ( ! empty( $table_info['table'] ) ) {
+			return $table_info['table'];
+		}
+
+		return null;
+	}
+
+	/**
 	 * Call magic methods.
 	 *
 	 * @param string $name      Method name.

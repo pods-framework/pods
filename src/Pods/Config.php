@@ -272,7 +272,7 @@ class Config {
 	 */
 	protected function load_configs() {
 		/**
-		 * @var $wp_filesystem WP_Filesystem_Base
+		 * @var $wp_filesystem \WP_Filesystem_Base
 		 */ global $wp_filesystem;
 
 		/**
@@ -280,7 +280,7 @@ class Config {
 		 *
 		 * @since 2.7.2
 		 *
-		 * @param PodsConfig $pods_config Pods config object.
+		 * @param Config $pods_config Pods config object.
 		 *
 		 */
 		do_action( 'pods_config_pre_load_configs', $this );
@@ -330,9 +330,9 @@ class Config {
 		$config = null;
 
 		if ( 'yml' === $config_type ) {
-			require_once PODS_DIR . 'vendor/mustangostang/spyc/spyc.php';
+			require_once PODS_DIR . 'vendor/mustangostang/spyc/Spyc.php';
 
-			$config = Spyc::YAMLLoadString( $raw_config );
+			$config = \Spyc::YAMLLoadString( $raw_config );
 		} elseif ( 'json' === $config_type ) {
 			$config = json_decode( $raw_config, true );
 		} else {

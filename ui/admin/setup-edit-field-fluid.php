@@ -42,7 +42,8 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 								continue;
 							}
 
-							$class = $extra_classes = '';
+							$class         = '';
+							$extra_classes = '';
 
 							$tab = sanitize_title( $tab );
 
@@ -79,7 +80,7 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 											'maxlength'      => 50,
 											'data-sluggable' => 'field_data[' . $pods_i . '][label]',
 										),
-										'class'      => 'pods-validate pods-validate-required pods-slugged-lower',
+										'class'      => 'pods-validate pods-validate-required pods-slugged-lower pods-slugged-sanitize-title',
 									)
 								);
 								?>

@@ -1,5 +1,4 @@
 <?php
-require_once PODS_DIR . 'classes/fields/website.php';
 
 /**
  * @package Pods\Fields
@@ -178,7 +177,7 @@ class PodsField_Link extends PodsField_Website {
 	 *
 	 * @return mixed|null|string
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function display_list( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 

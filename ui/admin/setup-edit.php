@@ -85,7 +85,9 @@ foreach ( $pod[ 'fields' ] as $_field => $_data ) {
     }
 }
 
-$field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );
+$pod_name = $pod[ 'name' ];
+
+$field_defaults = apply_filters( 'pods_field_defaults', apply_filters( "pods_field_defaults_{$pod_name}", $field_defaults, $pod ) );
 
 $pick_table = pods_transient_get( 'pods_tables' );
 
@@ -115,9 +117,9 @@ $field_settings = array(
     'sister_id' => array( '' => __( 'No Related Fields Found', 'pods' ) )
 );
 
-$field_settings = apply_filters( 'pods_field_settings', apply_filters( 'pods_field_settings_' . $pod[ 'name' ], $field_settings, $pod ) );
+$field_settings = apply_filters( 'pods_field_settings', apply_filters( "pods_field_settings_{$pod_name}", $field_settings, $pod ) );
 
-$pod[ 'fields' ] = apply_filters( 'pods_fields_edit', apply_filters( 'pods_fields_edit_' . $pod[ 'name' ], $pod[ 'fields' ], $pod ) );
+$pod[ 'fields' ] = apply_filters( 'pods_fields_edit', apply_filters( "pods_fields_edit_{$pod_name}", $pod[ 'fields' ], $pod ) );
 
 global $wpdb;
 $max_length_name = 64;
@@ -142,7 +144,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
  *
  * Currently only context 'side' is available
  *
- * @since 2.7
+ * @since 2.7.0
  * @see https://codex.wordpress.org/Plugin_API/Action_Reference/add_meta_boxes
  * @param array $pod The Pod object as an array
  */
@@ -242,13 +244,13 @@ if ( isset( $_GET[ 'do' ] ) ) {
     elseif ( 'duplicate' ==$do )
         $action = __( 'duplicated', 'pods' );
 
-    $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+    $message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
     echo $obj->message( $message );
 }
 ?>
 
-<div id="poststuff">
+<div id="poststuff" class="poststuff">
 <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 <!-- /inner-sidebar -->
 <div id="post-body" class="meta-box-holder columns-2">
@@ -809,7 +811,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
         sisterFieldsProcessing[ fieldKey ] = true;
 
-        fieldModel = new PodsDFV.models.PodsDFVFieldModel( {
+        fieldModel = new window.PodsDFV.models.PodsDFVFieldModel( {
             htmlAttr: {
                 id        : "pods-form-ui-field-data-" + id + "-sister-id",
                 "class"   : "pods-form-ui-field pods-form-ui-field-type-pick pods-form-ui-field-name-field-data-sister-id",
@@ -818,12 +820,12 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
             }
         } );
 
-        collection = new PodsDFV.models.RelationshipCollection( {
+        collection = new window.PodsDFV.models.RelationshipCollection( {
             id  : "",
             name: <?php echo json_encode( __( 'Loading available fields..', 'pods' ) ); ?>
         } );
 
-        selectField = new PodsDFV.fields.Pick( {
+        selectField = new window.PodsDFV.fields.pick.FieldClass( {
             el        : $container,
             model     : fieldModel,
             collection: collection

@@ -14,8 +14,9 @@ if ( ! isset( $duplicate ) ) {
 
 $groups = PodsInit::$meta->groups_get( $pod->pod_data['type'], $pod->pod_data['name'], $fields );
 
+$pod_name    = $pod->pod_data['name'];
 $pod_options = $pod->pod_data['options'];
-$pod_options = apply_filters( 'pods_advanced_content_type_pod_data_' . $pod->pod_data['name'], $pod_options, $pod->pod_data['name'] );
+$pod_options = apply_filters( "pods_advanced_content_type_pod_data_{$pod_name}", $pod_options, $pod->pod_data['name'] );
 $pod_options = apply_filters( 'pods_advanced_content_type_pod_data', $pod_options, $pod->pod_data['name'] );
 
 $group_fields       = array();
@@ -174,11 +175,11 @@ if ( 0 < $pod->id() ) {
 		 * @param Pods   $pod Current Pods object.
 		 * @param PodsUI $obj Current PodsUI object.
 		 *
-		 * @since 2.5
+		 * @since 2.5.0
 		 */
 		do_action( 'pods_meta_box_pre', $pod, $obj );
 		?>
-		<div id="poststuff" class="metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
+		<div id="poststuff" class="poststuff metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
 			<div id="side-info-column" class="inner-sidebar">
 				<?php
 				/**
@@ -253,7 +254,7 @@ if ( 0 < $pod->id() ) {
 												 * @param Pods   $pod Current Pods object.
 												 * @param PodsUI $obj Current PodsUI object.
 												 *
-												 * @since 2.5
+												 * @since 2.5.0
 												 */
 												do_action( 'pods_ui_form_misc_pub_actions', $pod, $obj );
 												?>
@@ -300,7 +301,7 @@ if ( 0 < $pod->id() ) {
 										 * @param Pods   $pod Current Pods object.
 										 * @param PodsUI $obj Current PodsUI object.
 										 *
-										 * @since 2.5
+										 * @since 2.5.0
 										 */
 										do_action( 'pods_ui_form_submit_area', $pod, $obj );
 										?>
@@ -319,7 +320,7 @@ if ( 0 < $pod->id() ) {
 								 * @param Pods   $pod Current Pods object.
 								 * @param PodsUI $obj Current PodsUI object.
 								 *
-								 * @since 2.5
+								 * @since 2.5.0
 								 */
 								do_action( 'pods_ui_form_publish_area', $pod, $obj );
 								?>
@@ -463,7 +464,7 @@ if ( 0 < $pod->id() ) {
 							 * @param Pods   $pod Current Pods object.
 							 * @param PodsUI $obj Current PodsUI object.
 							 *
-							 * @since 2.5
+							 * @since 2.5.0
 							 */
 							if ( pods_v( 'readonly', $field['options'], pods_v( 'readonly', $field, false ) ) || apply_filters( 'pods_ui_form_title_readonly', false, $pod, $obj ) ) {
 								?>
@@ -584,20 +585,27 @@ if ( 0 < $pod->id() ) {
 														}
 														?>
 														<tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
-															<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
-															<td>
-																<?php
-																echo PodsForm::field(
-																	'pods_field_' . $field['name'], $pod->field(
-																		array(
-																			'name'    => $field['name'],
-																			'in_form' => true,
-																		)
-																	), $field['type'], $field, $pod, $pod->id()
-																);
-																?>
-																<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
-															</td>
+															<?php if ( 'heading' === $field['type'] ) : ?>
+																<td colspan="2">
+																	<h2><?php echo esc_html( $field['label'] ); ?></h2>
+																	<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
+																</td>
+															<?php else : ?>
+																<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
+																<td>
+																	<?php
+																	echo PodsForm::field(
+																		'pods_field_' . $field['name'], $pod->field(
+																			array(
+																				'name'    => $field['name'],
+																				'in_form' => true,
+																			)
+																		), $field['type'], $field, $pod, $pod->id()
+																	);
+																	?>
+																	<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
+																</td>
+															<?php endif; ?>
 														</tr>
 														<?php
 													}//end foreach
@@ -633,9 +641,8 @@ if ( 0 < $pod->id() ) {
 					}//end if
 					?>
 
-					<!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">
-					</div>
-					 /#advanced-sortables -->
+					<!-- <div id="advanced-sortables" class="meta-box-sortables ui-sortable"></div> -->
+					<!-- /#advanced-sortables -->
 
 				</div>
 				<!-- /#post-body-content -->

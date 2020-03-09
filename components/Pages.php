@@ -2,8 +2,7 @@
 /**
  * Name: Pages
  *
- * Description: Creates advanced URL structures using wildcards in order to enable the front-end display of Pods
- * Advanced Content Types. Not recommended for use with other content types.
+ * Description: Creates advanced URL structures using wildcards in order to enable the front-end display of Pods Advanced Content Types. Not recommended for use with other content types.
  *
  * Version: 2.3
  *
@@ -30,7 +29,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @var array
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static $exists = null;
 
@@ -39,7 +38,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @var string
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	private $object_type = '_pods_page';
 
@@ -48,7 +47,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @var bool
 	 *
-	 * @since 2.1
+	 * @since 2.1.0
 	 */
 	public static $checked = false;
 
@@ -57,7 +56,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @var bool
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public static $content_called = false;
 
@@ -212,7 +211,7 @@ class Pods_Pages extends PodsComponent {
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
 			8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 			9  => sprintf(
-				__( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ), $labels->singular_name,
+				__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %4$s</a>', 'pods' ), $labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
 				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name
 			),
@@ -224,7 +223,7 @@ class Pods_Pages extends PodsComponent {
 			$messages[ $post_type->name ][6] = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
 			$messages[ $post_type->name ][8] = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
 			$messages[ $post_type->name ][9] = sprintf(
-				__( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels->singular_name,
+				__( '%1$s scheduled for: <strong>%2$s</strong>.', 'pods' ), $labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
 				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
 			);
@@ -237,7 +236,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Enqueue styles
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_assets() {
 
@@ -315,7 +314,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Clear cache on save
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param      $data
 	 * @param null $pod
@@ -356,7 +355,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Change post title placeholder text
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param $text
 	 * @param $post
@@ -371,7 +370,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Edit page form
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function edit_page_form() {
 
@@ -410,7 +409,7 @@ class Pods_Pages extends PodsComponent {
 	/**
 	 * Add meta boxes to the page
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function add_meta_boxes() {
 
@@ -1225,40 +1224,46 @@ class Pods_Pages extends PodsComponent {
 				$template = self::$exists['page_template'];
 				// found the template and included it, we're good to go!
 			} else {
-				$default_templates = array();
+				$located_template = apply_filters( 'pods_page_locate_template', $template, self::$exists );
 
-				$uri = explode( '?', self::$exists['uri'] );
-				$uri = explode( '#', $uri[0] );
-
-				$page_path = explode( '/', $uri[0] );
-
-				while ( $last = array_pop( $page_path ) ) {
-					$file_name = str_replace( '*', '-w-', implode( '/', $page_path ) . '/' . $last );
-					$sanitized = sanitize_title( $file_name );
-
-					$default_templates[] = 'pods/' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
-					$default_templates[] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
-				}
-
-				$default_templates[] = 'pods.php';
-
-				$default_templates = apply_filters( 'pods_page_default_templates', $default_templates );
-
-				$template = locate_template( $default_templates, true );
-
-				if ( '' !== $template ) {
-					// found the template and included it, we're good to go!
+				if ( $template !== $located_template ) {
+					$template = $located_template;
 				} else {
-					$template = false;
+					$default_templates = array();
 
-					// templates not found in theme, default output
-					do_action( 'pods_page_default', $template, self::$exists );
+					$uri = explode( '?', self::$exists['uri'] );
+					$uri = explode( '#', $uri[0] );
 
-					get_header();
-					pods_content();
-					get_sidebar();
-					get_footer();
-				}
+					$page_path = explode( '/', $uri[0] );
+
+					while ( $last = array_pop( $page_path ) ) {
+						$file_name = str_replace( '*', '-w-', implode( '/', $page_path ) . '/' . $last );
+						$sanitized = sanitize_title( $file_name );
+
+						$default_templates[] = 'pods/' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+						$default_templates[] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+					}
+
+					$default_templates[] = 'pods.php';
+
+					$default_templates = apply_filters( 'pods_page_default_templates', $default_templates );
+
+					$template = locate_template( $default_templates, true );
+
+					if ( '' !== $template ) {
+						// found the template and included it, we're good to go!
+					} else {
+						$template = false;
+
+						// templates not found in theme, default output
+						do_action( 'pods_page_default', $template, self::$exists );
+
+						get_header();
+						pods_content();
+						get_sidebar();
+						get_footer();
+					}
+				}//end if
 			}//end if
 
 			do_action( 'pods_page_end', $template, self::$exists );

@@ -2,8 +2,7 @@
 /**
  * Name: Advanced Relationships
  *
- * Description: Add advanced relationship objects for relating to including Database Tables, Multisite Networks,
- * Multisite Sites, Themes, Page Templates, Sidebars, Post Type Objects, and Taxonomy Objects
+ * Description: Add advanced relationship objects for relating to including Database Tables, Multisite Networks, Multisite Sites, Themes, Page Templates, Sidebars, Post Type Objects, and Taxonomy Objects
  *
  * Version: 2.3
  *
@@ -35,7 +34,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	/**
 	 * Add Advanced Related Objects
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function add_related_objects() {
 
@@ -103,7 +102,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_themes( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -115,7 +114,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			$data[ $theme->Template ] = $theme->Name;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_themes', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -129,7 +128,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_page_templates( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -157,7 +156,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			$data[ $page_template_file ] = $page_template;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_page_templates', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -171,7 +170,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_sidebars( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -185,7 +184,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			}
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_sidebars', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -199,7 +198,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_post_types( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -217,7 +216,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			$data[ $post_type->name ] = $post_type->label;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_post_types', $data, $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -231,7 +230,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_taxonomies( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -249,7 +248,7 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			$data[ $taxonomy->name ] = $taxonomy->label;
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		return apply_filters( 'pods_form_ui_field_pick_data_taxonomies', $data, $name, $value, $options, $pod, $id );
 	}
 
 }

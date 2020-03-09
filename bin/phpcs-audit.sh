@@ -17,8 +17,6 @@ file_path=${1:-$default_path}
 default_file_affix=""
 file_affix=${2:-$default_file_affix}
 
-ignore="\.idea,\.saas-cache,node_modules,vendor,bin,tests"
-
 declare -a types=("full" "source")
 
 echo Running PHPCS reports
@@ -26,5 +24,5 @@ echo Running PHPCS reports
 for type in ${types[@]}
 do
   echo Running PHPCS report: ${type}
-  ./vendor/bin/phpcs -v -s -p -d memory_limit="256M" --extensions="php" --report="${type}" --ignore="${ignore}" --report-file="report-${type}${file_affix}.txt" ${file_path}
+  ./vendor/bin/phpcs --report="${type}" --report-file="phpcs-report-${type}${file_affix}.txt" ${file_path}
 done;

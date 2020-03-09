@@ -1,29 +1,67 @@
 {
+  "parser": "babel-eslint",
+
   "parserOptions": {
     "ecmaVersion": 2016,
+    "ecmaFeatures": {
+      "jsx": true
+    },
     "sourceType": "module"
   },
 
-  "extends": ["wordpress"],
+  "extends": [
+    "eslint:recommended",
+    "wordpress",
+    "plugin:react/recommended"
+  ],
 
   "rules": {
-    "object-curly-spacing": ["error", "always"],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
 
-    "space-in-parens": ["error", "always"],
+    "space-in-parens": [
+      "error",
+      "always"
+    ],
 
-    "space-before-function-paren": ["error", {
-      "anonymous": "always",
-      "named": "always",
-      "asyncArrow": "always"
-    }],
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "always",
+        "asyncArrow": "always"
+      }
+    ],
 
-    "lines-around-comment": [ "error", {
-      "beforeLineComment": false,
-      "beforeBlockComment": false
-    }],
+    "lines-around-comment": [
+      "error",
+      {
+        "beforeLineComment": false,
+        "beforeBlockComment": false
+      }
+    ],
 
-    "space-unary-ops": [ "error", {
-      "nonwords": false
-    }]
-  }
+    "space-unary-ops": [
+      "error",
+      {
+        "nonwords": false
+      }
+    ],
+
+    "comma-dangle": [
+      "error",
+      "only-multiline"
+    ]
+  },
+
+  "overrides": [
+    {
+      "files": [ "**/test/*.js" ],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
 }

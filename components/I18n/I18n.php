@@ -4,9 +4,9 @@
  *
  * Menu Name: Translate Pods
  *
- * Description: Allow UI of Pods and fields to be translated
+ * Description: Allow UI of Pods and fields to be translated.
  *
- * Version: 0.1
+ * Version: 0.2
  *
  * Category: I18n
  *
@@ -62,7 +62,7 @@ class Pods_Component_I18n extends PodsComponent {
 			include_once plugin_dir_path( __FILE__ ) . 'I18n-polylang.php';
 		}
 		// WPML
-		if ( did_action( 'wpml_loaded' ) && file_exists( plugin_dir_path( __FILE__ ) . 'I18n-wpml.php' ) ) {
+		elseif ( did_action( 'wpml_loaded' ) && file_exists( plugin_dir_path( __FILE__ ) . 'I18n-wpml.php' ) ) {
 			include_once plugin_dir_path( __FILE__ ) . 'I18n-wpml.php';
 		}
 
@@ -70,8 +70,15 @@ class Pods_Component_I18n extends PodsComponent {
 		// Are there active languages?
 		if ( ! empty( $this->settings['enabled_languages'] ) ) {
 			$this->languages = $this->settings['enabled_languages'];
-			$this->locale    = get_locale();
-			$active          = true;
+
+			if ( function_exists( 'get_user_locale' ) ) {
+				// WP 4.7+
+				$this->locale = get_user_locale();
+			} else {
+				$this->locale = get_locale();
+			}
+
+			$active = true;
 		}
 
 		$is_component_page = false;
@@ -79,10 +86,12 @@ class Pods_Component_I18n extends PodsComponent {
 
 		if ( is_admin() && isset( $_GET['page'] ) ) {
 
+			$page = $_GET['page'];
+
 			// Is the current page the admin page of this component or a Pods edit page?
-			if ( $_GET['page'] === $this->admin_page ) {
+			if ( $this->admin_page === $page ) {
 				$is_component_page = true;
-			} elseif ( $_GET['page'] === 'pods' ) {
+			} elseif ( 'pods' === $page ) {
 				$is_pods_edit_page = true;
 			}
 
@@ -105,10 +114,10 @@ class Pods_Component_I18n extends PodsComponent {
 
 			// ACT's
 			add_filter(
-				'pods_advanced_content_type_pod_data', array(
-					$this,
-					'pods_filter_object_strings_i18n',
-				), 10, 2
+				'pods_advanced_content_type_pod_data',
+				array( $this, 'pods_filter_object_strings_i18n' ),
+				10,
+				2
 			);
 
 			// Setting pages
@@ -121,10 +130,10 @@ class Pods_Component_I18n extends PodsComponent {
 
 			foreach ( pods_form()->field_types() as $type => $data ) {
 				add_filter(
-					'pods_form_ui_field_' . $type . '_options', array(
-						$this,
-						'form_ui_field_options_i18n',
-					), 10, 5
+					'pods_form_ui_field_' . $type . '_options',
+					array( $this, 'form_ui_field_options_i18n' ),
+					10,
+					5
 				);
 			}
 
@@ -161,15 +170,19 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Load assets for this component
 	 *
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public function admin_assets() {
 
 		wp_enqueue_script(
-			'pods-admin-i18n', PODS_URL . 'components/I18n/pods-admin-i18n.js', array(
+			'pods-admin-i18n',
+			PODS_URL . 'components/I18n/pods-admin-i18n.js',
+			array(
 				'jquery',
 				'pods-i18n',
-			), '1.0', true
+			),
+			'1.0',
+			true
 		);
 		$localize_script = array();
 		if ( ! empty( $this->languages ) ) {
@@ -210,7 +223,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Check is a field name is set for translation
 	 *
-	 * @since 0.1
+	 * @since 0.1.0
 	 *
 	 * @param string $name
 	 *
@@ -246,7 +259,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Get a translated option for a field key (if available)
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  string $current Current value
 	 * @param  string $key     The key / opion name to search for
@@ -261,7 +274,7 @@ class Pods_Component_I18n extends PodsComponent {
 		if ( is_array( $data ) && array_key_exists( $locale, $this->languages ) && $this->obj_is_language_enabled( $locale, $data ) ) {
 			// Add option keys to $data array
 			if ( ! empty( $data['options'] ) ) {
-				$data = array_merge( $data, $data['options'] );
+				$data = $data;
 			}
 			// Check if the i18n option exists and isn't empty
 			if ( ! empty( $data[ $key . '_' . $locale ] ) ) {
@@ -275,7 +288,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Page title for setting pages
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsAdmin.php >> admin_menu()
 	 * @see    PodsAdmin.php >> admin_content_settings()
 	 *
@@ -292,7 +305,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Menu title for setting pages
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsAdmin.php >> admin_menu()
 	 *
 	 * @param  string $menu_label Current menu label
@@ -308,7 +321,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Returns the translated label if available
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_label_text' (filter)
 	 *
 	 * @param  string $label   The default label
@@ -326,7 +339,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Returns the translated description if available
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_comment_text' (filter)
 	 *
 	 * @param  string $message The default description
@@ -343,7 +356,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Replaces the default selected text with a translation if available
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    pick.php >> 'pods_field_pick_data' (filter)
 	 *
 	 * @param  array  $data    The default data of the field
@@ -370,7 +383,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Replaces the default values with a translation if available
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_field_' . $type . '_options' (filter)
 	 *
 	 * @param  array  $options The field options
@@ -396,7 +409,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Filter hook function to overwrite the labels and description with translations (if available)
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsInit.php >> setup_content_types()
 	 *
 	 * @param  array  $options The array of object options
@@ -419,57 +432,72 @@ class Pods_Component_I18n extends PodsComponent {
 			$pod[ $_option ] = $_value;
 		}
 
-		// Default
-		$locale_labels                          = array();
-		$locale_labels['name']                  = esc_html( pods_v( 'label_' . $locale, $pod, '', true ) );
-		$locale_labels['singular_name']         = esc_html( pods_v( 'label_singular_' . $locale, $pod, '', true ) );
-		$locale_labels['menu_name']             = pods_v( 'menu_name_' . $locale, $pod, '', true );
-		$locale_labels['add_new_item']          = pods_v( 'label_add_new_item_' . $locale, $pod, '', true );
-		$locale_labels['edit_item']             = pods_v( 'label_edit_item_' . $locale, $pod, '', true );
-		$locale_labels['view_item']             = pods_v( 'label_view_item_' . $locale, $pod, '', true );
-		$locale_labels['all_items']             = pods_v( 'label_all_items_' . $locale, $pod, '', true );
-		$locale_labels['search_items']          = pods_v( 'label_search_items_' . $locale, $pod, '', true );
-		$locale_labels['parent_item_colon']     = pods_v( 'label_parent_item_colon_' . $locale, $pod, '', true );
-		$locale_labels['not_found']             = pods_v( 'label_not_found_' . $locale, $pod, '', true );
-		$locale_labels['items_list_navigation'] = pods_v( 'label_items_list_navigation_' . $locale, $pod, '', true );
-		$locale_labels['items_list']            = pods_v( 'label_items_list_' . $locale, $pod, '', true );
+		$labels = array(
+			// Default
+			'name'                       => 'label', // Different.
+			'singular_name'              => 'label_singular', // Different.
+			'menu_name'                  => 'menu_name',
+			'add_new_item'               => 'label_add_new_item',
+			'edit_item'                  => 'label_edit_item',
+			'view_item'                  => 'label_view_item',
+			'all_items'                  => 'label_all_items',
+			'search_items'               => 'label_search_items',
+			'parent_item_colon'          => 'label_parent_item_colon',
+			'not_found'                  => 'label_not_found',
+			'items_list_navigation'      => 'label_items_list_navigation',
+			'items_list'                 => 'label_items_list',
 
-		// Post Types
-		$locale_labels['name_admin_bar']        = pods_v( 'name_admin_bar_' . $locale, $pod, '', true );
-		$locale_labels['add_new']               = pods_v( 'label_add_new_' . $locale, $pod, '', true );
-		$locale_labels['new_item']              = pods_v( 'label_new_item_' . $locale, $pod, '', true );
-		$locale_labels['edit']                  = pods_v( 'label_edit_' . $locale, $pod, '', true );
-		$locale_labels['view']                  = pods_v( 'label_view_' . $locale, $pod, '', true );
-		$locale_labels['view_items']            = pods_v( 'label_view_items_' . $locale, $pod, '', true );
-		$locale_labels['parent']                = pods_v( 'label_parent_' . $locale, $pod, '', true );
-		$locale_labels['not_found_in_trash']    = pods_v( 'label_not_found_in_trash_' . $locale, $pod, '', true );
-		$locale_labels['archives']              = pods_v( 'label_archives_' . $locale, $pod, '', true );
-		$locale_labels['attributes']            = pods_v( 'label_attributes_' . $locale, $pod, '', true );
-		$locale_labels['insert_into_item']      = pods_v( 'label_insert_into_item_' . $locale, $pod, '', true );
-		$locale_labels['uploaded_to_this_item'] = pods_v( 'label_uploaded_to_this_item_' . $locale, $pod, '', true );
-		$locale_labels['featured_image']        = pods_v( 'label_featured_image_' . $locale, $pod, '', true );
-		$locale_labels['set_featured_image']    = pods_v( 'label_set_featured_image_' . $locale, $pod, '', true );
-		$locale_labels['remove_featured_image'] = pods_v( 'label_remove_featured_image_' . $locale, $pod, '', true );
-		$locale_labels['use_featured_image']    = pods_v( 'label_use_featured_image_' . $locale, $pod, '', true );
-		$locale_labels['filter_items_list']     = pods_v( 'label_filter_items_list_' . $locale, $pod, '', true );
+			// Post Types
+			'name_admin_bar'             => 'name_admin_bar',
+			'add_new'                    => 'label_add_new',
+			'new_item'                   => 'label_new_item',
+			'edit'                       => 'label_edit',
+			'view'                       => 'label_view',
+			'view_items'                 => 'label_view_items',
+			'parent'                     => 'label_parent',
+			'not_found_in_trash'         => 'label_not_found_in_trash',
+			'archives'                   => 'label_archives',
+			'attributes'                 => 'label_attributes',
+			'insert_into_item'           => 'label_insert_into_item',
+			'uploaded_to_this_item'      => 'label_uploaded_to_this_item',
+			'featured_image'             => 'label_featured_image',
+			'set_featured_image'         => 'label_set_featured_image',
+			'remove_featured_image'      => 'label_remove_featured_image',
+			'use_featured_image'         => 'label_use_featured_image',
+			'filter_items_list'          => 'label_filter_items_list',
+			// Block Editor (WP 5.0+)
+			'item_published'             => 'label_item_published',
+			'item_published_privately'   => 'label_item_published_privately',
+			'item_reverted_to_draft'     => 'label_item_reverted_to_draft',
+			'item_scheduled'             => 'label_item_scheduled',
+			'item_updated'               => 'label_item_updated',
 
-		// Taxonomies
-		$locale_labels['update_item']                = pods_v( 'label_update_item_' . $locale, $pod, '', true );
-		$locale_labels['popular_items']              = pods_v( 'label_popular_items_' . $locale, $pod, '', true );
-		$locale_labels['parent_item']                = pods_v( 'label_parent_item_' . $locale, $pod, '', true );
-		$locale_labels['new_item_name']              = pods_v( 'label_new_item_name_' . $locale, $pod, '', true );
-		$locale_labels['separate_items_with_commas'] = pods_v( 'label_separate_items_with_commas_' . $locale, $pod, '', true );
-		$locale_labels['add_or_remove_items']        = pods_v( 'label_add_or_remove_items_' . $locale, $pod, '', true );
-		$locale_labels['choose_from_most_used']      = pods_v( 'label_choose_from_the_most_used_' . $locale, $pod, '', true );
-		$locale_labels['no_terms']                   = pods_v( 'label_no_terms_' . $locale, $pod, '', true );
+			// Taxonomies
+			'update_item'                => 'label_update_item',
+			'popular_items'              => 'label_popular_items',
+			'parent_item'                => 'label_parent_item',
+			'new_item_name'              => 'label_new_item_name',
+			'separate_items_with_commas' => 'label_separate_items_with_commas',
+			'add_or_remove_items'        => 'label_add_or_remove_items',
+			'choose_from_most_used'      => 'label_choose_from_the_most_used', // Different.
+			'no_terms'                   => 'label_no_terms',
+		);
 
-		// Assign to label array
-		if ( isset( $options['labels'] ) && is_array( $options['labels'] ) ) {
-			foreach ( $options['labels'] as $key => $value ) {
-				// @todo Currently I only overwrite, maybe also append even if the default locale isn't set?
-				if ( isset( $locale_labels[ $key ] ) && ! empty( $locale_labels[ $key ] ) ) {
-					$options['labels'][ $key ] = $locale_labels[ $key ];
+		if ( ! isset( $options['labels'] ) || ! is_array( $options['labels'] ) ) {
+			$options['labels'] = array();
+		} else {
+			// Try to find new labels.
+			foreach ( $options['labels'] as $key => $val ) {
+				if ( ! isset( $labels[ $key ] ) ) {
+					$labels[ $key ] = 'label_' . $key;
 				}
+			}
+		}
+
+		foreach ( $labels as $key => $pods_key ) {
+			$label = pods_v( $pods_key . '_' . $locale, $pod, '', true );
+			if ( $label ) {
+				$options['labels'][ $key ] = $label;
 			}
 		}
 
@@ -479,7 +507,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Filter hook function to overwrite the labels and description with translations (if available)
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsInit.php >> admin_menu()
 	 *
 	 * @param  array  $options The array of object options
@@ -516,7 +544,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Save component settings
 	 *
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public function admin_save() {
 
@@ -562,7 +590,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Build admin area
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  $options
 	 * @param  $component
@@ -650,7 +678,7 @@ class Pods_Component_I18n extends PodsComponent {
 		/**
 		 * Filter the language data
 		 *
-		 * @since 0.1
+		 * @since 0.1.0
 		 *
 		 * @param array
 		 */
@@ -659,7 +687,7 @@ class Pods_Component_I18n extends PodsComponent {
 		/**
 		 * Filter the UI fields
 		 *
-		 * @since 0.1
+		 * @since 0.1.0
 		 *
 		 * @param array
 		 */
@@ -696,7 +724,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 *
 	 * @todo   Remove if not used in final version
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  array $tabs
 	 * @param  array $pod
@@ -716,7 +744,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 *
 	 * @todo   Remove if not used in final version
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  array $options
 	 * @param  array $pod
@@ -750,7 +778,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Add the i18n metabox.
 	 *
-	 * @since 0.1
+	 * @since 0.1.0
 	 */
 	public function admin_meta_box() {
 
@@ -775,7 +803,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 *
 	 * @todo   Store enabled languages serialized instead of separate inputs
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 */
 	public function meta_box() {
 
@@ -783,9 +811,9 @@ class Pods_Component_I18n extends PodsComponent {
 
 		if ( ! empty( $this->languages ) ) {
 			?>
-			<p><?php _e( 'Enable/Disable languages for this Pod', 'pods' ); ?></p>
+			<p><?php esc_html_e( 'Enable/Disable languages for this Pod', 'pods' ); ?></p>
 			<p>
-				<small class="description"><?php _e( 'This overwrites the defaults set in the component admin.', 'pods' ); ?></small>
+				<small class="description"><?php esc_html_e( 'This overwrites the defaults set in the component admin.', 'pods' ); ?></small>
 			</p>
 			<div class="pods-field-enable-disable-language">
 				<?php
@@ -799,7 +827,10 @@ class Pods_Component_I18n extends PodsComponent {
 					<div class="pods-field-option pods-enable-disable-language" data-locale="<?php echo esc_attr( $locale ); ?>">
 						<?php
 						echo PodsForm::field(
-							'enable_i18n[' . $locale . ']', $pod['options']['enable_i18n'][ $locale ], 'boolean', array(
+							'enable_i18n[' . $locale . ']',
+							$pod['options']['enable_i18n'][ $locale ],
+							'boolean',
+							array(
 								'boolean_yes_label' => '<code>' . $locale . '</code> ' . $this->create_lang_label( $lang_data ),
 								'boolean_no_label'  => '',
 							)
@@ -812,7 +843,7 @@ class Pods_Component_I18n extends PodsComponent {
 			</div>
 			<hr>
 			<p>
-				<button id="toggle_i18n" class="button-secondary"><?php _e( 'Toggle translation visibility', 'pods' ); ?></button>
+				<button id="toggle_i18n" class="button-secondary"><?php esc_html_e( 'Toggle translation visibility', 'pods' ); ?></button>
 			</p>
 			<?php
 		}//end if
@@ -821,7 +852,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Adds translation inputs to fields
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_field_' . $type (filter)
 	 *
 	 * @param  string $output  The default output of the field
@@ -895,7 +926,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Check if a language is get to enabled for an object
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  string $locale The locale to validate
 	 * @param  array  $data   Object data
@@ -921,7 +952,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Create a label with the english and native name combined
 	 *
-	 * @since  0.1
+	 * @since 0.1.0
 	 *
 	 * @param  array $lang_data
 	 *
@@ -958,7 +989,7 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
-	 * @return mixed|void
+	 * @return array
 	 */
 	public function get_translatable_fields() {
 

@@ -58,6 +58,8 @@ class PodsField_File extends PodsField {
 			$image_sizes[ $size ] = ucwords( str_replace( '-', ' ', $size ) );
 		}
 
+		$type = static::$type;
+
 		$options = array(
 			static::$type . '_format_type'            => array(
 				'label'      => __( 'Upload Limit', 'pods' ),
@@ -74,7 +76,8 @@ class PodsField_File extends PodsField {
 				'default'    => 'attachment',
 				'type'       => 'pick',
 				'data'       => apply_filters(
-					'pods_form_ui_field_' . static::$type . '_uploader_options', array(
+					"pods_form_ui_field_{$type}_uploader_options",
+					array(
 						'attachment' => __( 'Upload and/or Select (Media Library)', 'pods' ),
 						'plupload'   => __( 'Upload only (Plupload)', 'pods' ),
 					)
@@ -122,10 +125,11 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_type'                   => array(
 				'label'      => __( 'Restrict File Types', 'pods' ),
-				'default'    => apply_filters( 'pods_form_ui_field_' . static::$type . '_type_default', 'images' ),
+				'default'    => apply_filters( "pods_form_ui_field_{$type}_type_default", 'images' ),
 				'type'       => 'pick',
 				'data'       => apply_filters(
-					'pods_form_ui_field_' . static::$type . '_type_options', array(
+					"pods_form_ui_field_{$type}_type_options",
+					array(
 						'images' => __( 'Images (jpg, jpeg, png, gif)', 'pods' ),
 						'video'  => __( 'Video (mpg, mov, flv, mp4, etc..)', 'pods' ),
 						'audio'  => __( 'Audio (mp3, m4a, wav, wma, etc..)', 'pods' ),
@@ -140,17 +144,18 @@ class PodsField_File extends PodsField {
 				'label'       => __( 'Allowed File Extensions', 'pods' ),
 				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
 				'depends-on'  => array( static::$type . '_type' => 'other' ),
-				'default'     => apply_filters( 'pods_form_ui_field_' . static::$type . '_extensions_default', '' ),
+				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
 				'type'        => 'text',
 			),
 			static::$type . '_field_template'         => array(
 				'label'      => __( 'List Style', 'pods' ),
 				'help'       => __( 'You can choose which style you would like the files to appear within the form.', 'pods' ),
 				'depends-on' => array( static::$type . '_type' => 'images' ),
-				'default'    => apply_filters( 'pods_form_ui_field_' . static::$type . '_template_default', 'rows' ),
+				'default'    => apply_filters( "pods_form_ui_field_{$type}_template_default", 'rows' ),
 				'type'       => 'pick',
 				'data'       => apply_filters(
-					'pods_form_ui_field_' . static::$type . '_type_templates', array(
+					"pods_form_ui_field_{$type}_type_templates",
+					array(
 						'rows'  => __( 'Rows', 'pods' ),
 						'tiles' => __( 'Tiles', 'pods' ),
 					)
@@ -447,11 +452,6 @@ class PodsField_File extends PodsField {
 
 		$is_user_logged_in = is_user_logged_in();
 
-		// @todo test frontend media modal
-		if ( empty( $options[ static::$type . '_uploader' ] ) || ! is_admin() || ! $is_user_logged_in || ( ! current_user_can( 'upload_files' ) && ! current_user_can( 'edit_files' ) ) ) {
-			$options[ static::$type . '_uploader' ] = 'plupload';
-		}
-
 		// @todo: plupload specific options need accommodation
 		if ( 'plupload' === $options[ static::$type . '_uploader' ] ) {
 			wp_enqueue_script( 'plupload-all' );
@@ -652,7 +652,8 @@ class PodsField_File extends PodsField {
 			$value = array( $value );
 		}
 
-		$image_size = apply_filters( 'pods_form_ui_field_' . static::$type . '_ui_image_size', 'thumbnail', $id, $value, $name, $options, $pod );
+		$type       = static::$type;
+		$image_size = apply_filters( "pods_form_ui_field_{$type}_ui_image_size", 'thumbnail', $id, $value, $name, $options, $pod );
 
 		return $this->images( $id, $value, $name, $options, $pod, $image_size );
 
@@ -669,7 +670,7 @@ class PodsField_File extends PodsField {
 	 * @param string $image_size Image size.
 	 *
 	 * @return string
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function images( $id, $value, $name = null, $options = null, $pod = null, $image_size = null ) {
 
@@ -698,7 +699,7 @@ class PodsField_File extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_image_sizes( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -710,14 +711,16 @@ class PodsField_File extends PodsField {
 			$data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		$data['full'] = __( 'Full Size' ); // Translated by WordPress core.
+
+		return apply_filters( 'pods_form_ui_field_pick_data_image_sizes', $data, $name, $value, $options, $pod, $id );
 
 	}
 
 	/**
 	 * Create a WP Gallery from the passed values (need to be attachments)
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 *
 	 * @param  string|array $value   The value(s).
 	 * @param  array        $options The field options.
@@ -789,9 +792,9 @@ class PodsField_File extends PodsField {
 	 * @param null|string     $link       Link URL.
 	 *
 	 * @return string
-	 * @since      2.0
+	 * @since 2.0.0
 	 *
-	 * @deprecated 2.7
+	 * @deprecated 2.7.0
 	 */
 	public function markup( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null, $linked = false, $link = null ) {
 
@@ -872,7 +875,7 @@ class PodsField_File extends PodsField {
 	/**
 	 * Handle AJAX plupload calls.
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function admin_ajax_upload() {
 
@@ -898,11 +901,11 @@ class PodsField_File extends PodsField {
 		);
 
 		if ( ! isset( $params->method ) || ! in_array( $params->method, $methods, true ) || ! isset( $params->pod ) || ! isset( $params->field ) || ! isset( $params->uri ) || empty( $params->uri ) ) {
-			pods_error( 'Invalid AJAX request', PodsInit::$admin );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		} elseif ( ! empty( $params->pod ) && empty( $params->field ) ) {
-			pods_error( 'Invalid AJAX request', PodsInit::$admin );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		} elseif ( empty( $params->pod ) && ! current_user_can( 'upload_files' ) ) {
-			pods_error( 'Invalid AJAX request', PodsInit::$admin );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		}
 
 		// Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead

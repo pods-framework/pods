@@ -31,7 +31,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		$pod = pods( $pod_name, null, false );
 
-		if ( $pod->valid() ) {
+		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );
 		}
 
@@ -91,11 +91,11 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		$pod = pods( $pod_name, $item, false );
 
-		if ( $pod->valid() ) {
+		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );
 		}
 
-		if ( null !== $item && $pod->exists() ) {
+		if ( null !== $item && ! $pod->exists() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%1$s" item "%2$s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
 		}
 
@@ -142,11 +142,11 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		$pod = pods( $assoc_args['pod'], $assoc_args['item'], false );
 
-		if ( $pod->valid() ) {
+		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );
 		}
 
-		if ( $pod->exists() ) {
+		if ( ! $pod->exists() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%1$s" item "%2$s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
 		}
 
@@ -189,11 +189,11 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		$pod = pods( $assoc_args['pod'], $assoc_args['item'], false );
 
-		if ( $pod->valid() ) {
+		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );
 		}
 
-		if ( $pod->exists() ) {
+		if ( ! $pod->exists() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%1$s" item "%2$s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
 		}
 
@@ -255,11 +255,11 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		$pod = pods( $pod_name, $item, false );
 
-		if ( $pod->valid() ) {
+		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );
 		}
 
-		if ( null !== $item && $pod->exists() ) {
+		if ( null !== $item && ! $pod->exists() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%1$s" item "%2$s" does not exist.', 'pods' ), $assoc_args['pod'], $assoc_args['item'] ) );
 		}
 
@@ -330,9 +330,9 @@ class Pods_CLI_Command extends WP_CLI_Command {
 
 		unset( $assoc_args['pod'] );
 
-		$pod = pods( $pod_name, null, false );
+		$pod = pods( $pod_name, array( 'limit' => -1 ), false );
 
-		if ( $pod->valid() ) {
+		if ( ! $pod->valid() ) {
 			WP_CLI::error( sprintf( __( 'Pod "%s" does not exist.', 'pods' ), $assoc_args['pod'] ) );
 		}
 

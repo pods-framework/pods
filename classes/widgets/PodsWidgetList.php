@@ -23,11 +23,11 @@ class PodsWidgetList extends WP_Widget {
 	public function widget( $args, $instance ) {
 
 		// Setup basic widget parameters.
-		$before_widget  = pods_v( 'before_widget', $instance );
-		$after_widget   = pods_v( 'after_widget', $instance );
-		$before_title   = pods_v( 'before_title', $instance );
+		$before_widget  = pods_v( 'before_widget', $args );
+		$after_widget   = pods_v( 'after_widget', $args );
+		$before_title   = pods_v( 'before_title', $args );
 		$title          = apply_filters( 'widget_title', pods_v( 'title', $instance ) );
-		$after_title    = pods_v( 'after_title', $instance );
+		$after_title    = pods_v( 'after_title', $args );
 		$before_content = pods_v( 'before_content', $instance );
 		$after_content  = pods_v( 'after_content', $instance );
 

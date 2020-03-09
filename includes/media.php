@@ -12,7 +12,6 @@
  * @since 2.0.5
  */
 function pods_image_id_from_field( $image ) {
-
 	$id = 0;
 
 	if ( ! empty( $image ) ) {
@@ -68,7 +67,6 @@ function pods_image_id_from_field( $image ) {
  * @since 2.0.5
  */
 function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = '', $force = false ) {
-
 	$html = '';
 
 	$id = pods_image_id_from_field( $image );
@@ -130,7 +128,6 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
  * @since 2.0.5
  */
 function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = false ) {
-
 	$url = '';
 
 	$id      = pods_image_id_from_field( $image );
@@ -196,10 +193,9 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
  *
  * @return int Attachment ID
  *
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_attachment_import( $url, $post_parent = null, $featured = false ) {
-
 	$filename = explode( '?', $url );
 	$filename = $filename[0];
 
@@ -210,7 +206,9 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 
 	$title = substr( $filename, 0, ( strrpos( $filename, '.' ) ) );
 
-	if ( ! ( ( $uploads = wp_upload_dir( current_time( 'mysql' ) ) ) && false === $uploads['error'] ) ) {
+	$uploads = wp_upload_dir( current_time( 'mysql' ) );
+
+	if ( ! ( $uploads && false === $uploads['error'] ) ) {
 		return 0;
 	}
 
@@ -252,7 +250,7 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 	require_once ABSPATH . 'wp-admin/includes/media.php';
 	require_once ABSPATH . 'wp-admin/includes/image.php';
 
-	wp_update_attachment_metadata( $attachment_id, $meta_data = wp_generate_attachment_metadata( $attachment_id, $new_file ) );
+	wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $new_file ) );
 
 	if ( 0 < $post_parent && $featured ) {
 		update_post_meta( $post_parent, '_thumbnail_id', $attachment_id );
@@ -269,10 +267,9 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
  *
  * @return boolean Image generation result
  *
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_image_resize( $attachment_id, $size ) {
-
 	$size_data = array();
 
 	if ( ! is_array( $size ) ) {
@@ -342,7 +339,7 @@ function pods_image_resize( $attachment_id, $size ) {
  *
  * @uses  wp_audio_shortcode()
  *
- * @since 2.5
+ * @since 2.5.0
  *
  * @param string|array $url  Can be a URL of the source file, or a Pods audio field.
  * @param bool|array   $args Optional. Additional arguments to pass to wp_audio_shortcode
@@ -350,7 +347,6 @@ function pods_image_resize( $attachment_id, $size ) {
  * @return string
  */
 function pods_audio( $url, $args = false ) {
-
 	if ( is_array( $url ) ) {
 		if ( ! is_null( pods_v( 'ID', $url ) ) ) {
 			$id  = pods_v( 'ID', $url );
@@ -367,7 +363,6 @@ function pods_audio( $url, $args = false ) {
 	}
 
 	return wp_audio_shortcode( $audio_args );
-
 }
 
 /**
@@ -375,7 +370,7 @@ function pods_audio( $url, $args = false ) {
  *
  * @uses  wp_video_shortcode()
  *
- * @since 2.5
+ * @since 2.5.0
  *
  * @param string|array $url  Can be a URL of the source file, or a Pods video field.
  * @param bool|array   $args Optional. Additional arguments to pass to wp_video_shortcode()
@@ -383,7 +378,6 @@ function pods_audio( $url, $args = false ) {
  * @return string
  */
 function pods_video( $url, $args = false ) {
-
 	if ( is_array( $url ) ) {
 		if ( ! is_null( pods_v( 'ID', $url ) ) ) {
 			$id  = pods_v( 'ID', $url );
@@ -400,5 +394,4 @@ function pods_video( $url, $args = false ) {
 	}
 
 	return wp_video_shortcode( $video_args );
-
 }

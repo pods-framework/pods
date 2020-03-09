@@ -104,7 +104,7 @@ class PodsMeta {
 	/**
 	 * @return \PodsMeta
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -329,7 +329,7 @@ class PodsMeta {
 				pods_transient_set( 'pods_pod_' . $pod_name, $pod );
 			}
 
-			self::$$type = array_merge( self::$$type, $objects );
+			self::${$type} = array_merge( self::${$type}, $objects );
 		}
 	}
 
@@ -451,8 +451,8 @@ class PodsMeta {
 	 */
 	public function integrations() {
 
-		// `ac_is_version_gte` is since AC 3.0+
-		if ( ! function_exists( 'ac_is_version_gte' ) ) {
+		// `AC()` is AC 3.0+, && `AC_FILE` is AC 3.2+
+		if ( ! function_exists( 'AC' ) && ! defined( 'AC_FILE' ) ) {
 			// Codepress Admin Columns < 2.x
 			add_filter( 'cac/storage_model/meta_keys', array( $this, 'cpac_meta_keys' ), 10, 2 );
 			add_filter( 'cac/post_types', array( $this, 'cpac_post_types' ), 10, 1 );
@@ -491,13 +491,17 @@ class PodsMeta {
 		}
 
 		if ( in_array( $type, array( 'wp-links', 'link' ), true ) ) {
-			$object_type = $object = 'link';
+			$object_type = 'link';
+			$object      = 'link';
 		} elseif ( in_array( $type, array( 'wp-media', 'media' ), true ) ) {
-			$object_type = $object = 'media';
+			$object_type = 'media';
+			$object      = 'media';
 		} elseif ( in_array( $type, array( 'wp-users', 'user' ), true ) ) {
-			$object_type = $object = 'user';
+			$object_type = 'user';
+			$object      = 'user';
 		} elseif ( in_array( $type, array( 'wp-comments', 'comment' ), true ) ) {
-			$object_type = $object = 'comment';
+			$object_type = 'comment';
+			$object      = 'comment';
 		} elseif ( 'taxonomy' === $type ) {
 			$object_type = 'taxonomy';
 			if ( ! $obj ) {
@@ -586,13 +590,17 @@ class PodsMeta {
 		}
 
 		if ( in_array( $type, array( 'wp-links', 'link' ), true ) ) {
-			$object_type = $object = 'link';
+			$object_type = 'link';
+			$object      = 'link';
 		} elseif ( in_array( $type, array( 'wp-media', 'media' ), true ) ) {
-			$object_type = $object = 'media';
+			$object_type = 'media';
+			$object      = 'media';
 		} elseif ( in_array( $type, array( 'wp-users', 'user' ), true ) ) {
-			$object_type = $object = 'user';
+			$object_type = 'user';
+			$object      = 'user';
 		} elseif ( in_array( $type, array( 'wp-comments', 'comment' ), true ) ) {
-			$object_type = $object = 'comment';
+			$object_type = 'comment';
+			$object      = 'comment';
 		} elseif ( 'taxonomy' === $type ) {
 			$object_type = 'taxonomy';
 			if ( ! method_exists( $obj, 'get_taxonomy' ) ) {
@@ -644,7 +652,7 @@ class PodsMeta {
 				$meta = $podterms->field( $field );
 			}
 
-			$meta = PodsForm::field_method( $pod['fields'][ $field ]['type'], 'ui', $id, $meta, $field, array_merge( $pod['fields'][ $field ], $pod['fields'][ $field ]['options'] ), $pod['fields'], $pod );
+			$meta = PodsForm::field_method( $pod['fields'][ $field ]['type'], 'ui', $id, $meta, $field, $pod['fields'][ $field ] );
 		}
 
 		return $meta;
@@ -662,7 +670,7 @@ class PodsMeta {
 	 * @param string       $priority (optional) The priority within the context where the boxes should show ('high',
 	 *                               'core', 'default' or 'low').
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @return mixed|void
 	 */
@@ -780,9 +788,11 @@ class PodsMeta {
 			'priority' => $priority
 		);
 
+		$pod_type = $pod['type'];
+
 		// Filter group data, pass vars separately for reference down the line (in case array changed by other filter)
-		$group = apply_filters( 'pods_meta_group_add_' . $pod['type'] . '_' . $object_name, $group, $pod, $label, $fields );
-		$group = apply_filters( 'pods_meta_group_add_' . $pod['type'], $group, $pod, $label, $fields );
+		$group = apply_filters( "pods_meta_group_add_{$pod_type}_{$object_name}", $group, $pod, $label, $fields );
+		$group = apply_filters( "pods_meta_group_add_{$pod_type}", $group, $pod, $label, $fields );
 		$group = apply_filters( 'pods_meta_group_add', $group, $pod, $label, $fields );
 
 		self::$groups[ $pod['type'] ][ $object_name ][] = $group;
@@ -857,7 +867,7 @@ class PodsMeta {
 			$object = self::$comment;
 		}
 
-		if ( 'pod' != $type && ! empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) ) {
+		if ( 'pod' !== $type && ! empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) ) {
 			$pod = $object[ $name ];
 		} else {
 			if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] != $name ) {
@@ -901,6 +911,12 @@ class PodsMeta {
 	 */
 	public function groups_get( $type, $name, $default_fields = null ) {
 
+		static $groups_cache = array();
+
+		if ( isset( $groups_cache[ $type . '/' . $name ] ) ) {
+			return $groups_cache[ $type . '/' . $name ];
+		}
+
 		if ( 'post_type' == $type && 'attachment' == $name ) {
 			$type = 'media';
 			$name = 'media';
@@ -927,6 +943,8 @@ class PodsMeta {
 			$object = self::$advanced_content_types;
 		}
 
+		// @todo Convert to Group
+
 		if ( ! empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) ) {
 			$fields = $object[ $name ]['fields'];
 		} else {
@@ -937,7 +955,7 @@ class PodsMeta {
 			$pod = self::$current_pod_data;
 
 			if ( ! empty( $pod ) ) {
-				$fields = $pod['fields'];
+				$fields = array();//$pod['fields'];
 			}
 		}
 
@@ -960,7 +978,9 @@ class PodsMeta {
 		}
 
 		if ( $pod['type'] != $type ) {
-			return array();
+			$groups_cache[ $type . '/' . $name ] = array();
+
+			return $groups_cache[ $type . '/' . $name ];
 		}
 
 		$groups = array(
@@ -999,7 +1019,11 @@ class PodsMeta {
 		 *
 		 * @since 2.6.6
 		 */
-		return apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
+		$groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
+
+		$groups_cache[ $type . '/' . $name ] = $groups;
+
+		return $groups_cache[ $type . '/' . $name ];
 	}
 
 	/**
@@ -1085,7 +1109,7 @@ class PodsMeta {
 			$pod_type = 'media';
 		}
 
-		do_action( 'pods_meta_' . __FUNCTION__, $post );
+		do_action( 'pods_meta_meta_post', $post );
 
 		$hidden_fields = array();
 
@@ -1161,7 +1185,8 @@ class PodsMeta {
 					$dep_classes = $dep_options['classes'];
 					$dep_data    = $dep_options['data'];
 
-					do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field['name'], $post, $field, $pod );
+					$field_name = $field['name'];
+					do_action( "pods_meta_meta_post_{$field_name}", $post, $field, $pod );
 					?>
 					<tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?> <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>">
 					<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
@@ -1179,14 +1204,14 @@ class PodsMeta {
 					</td>
 					</tr>
 					<?php
-					do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field['name'] . '_post', $post, $field, $pod );
+					do_action( "pods_meta_meta_post_{$field_name}_post", $post, $field, $pod );
 				}
 			}
 			?>
 		</table>
 
 		<?php
-		do_action( 'pods_meta_' . __FUNCTION__ . '_post', $post );
+		do_action( 'pods_meta_meta_post_post', $post );
 
 		foreach ( $hidden_fields as $hidden_field ) {
 			$field_data = $hidden_field['field'];
@@ -1197,7 +1222,6 @@ class PodsMeta {
 
 		<script type="text/javascript">
 			jQuery( function ( $ ) {
-				$( document ).Pods( 'validate' );
 				$( document ).Pods( 'submit_meta' );
 				$( document ).Pods( 'dependency', true );
 			} );
@@ -1263,7 +1287,8 @@ class PodsMeta {
 		$blacklisted_types = array(
 			'revision',
 			'_pods_pod',
-			'_pods_field'
+			'_pods_field',
+			'_pods_group',
 		);
 
 		$blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist_types', $blacklisted_types, $post_id, $post );
@@ -1271,7 +1296,7 @@ class PodsMeta {
 		// @todo Figure out how to hook into autosave for saving meta
 
 		// Block Autosave and Revisions
-		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) ) {
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types, true ) ) {
 			return;
 		}
 
@@ -1293,7 +1318,7 @@ class PodsMeta {
 
 		$blacklisted_status = apply_filters( 'pods_meta_save_post_blacklist_status', $blacklisted_status, $post_id, $post );
 
-		if ( in_array( $post->post_status, $blacklisted_status ) ) {
+		if ( in_array( $post->post_status, $blacklisted_status, true ) ) {
 			return;
 		}
 
@@ -1357,7 +1382,10 @@ class PodsMeta {
 				// Fix for Pods doing it's own sanitizing
 				$data = pods_unslash( (array) $data );
 
-				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
+				$pod->save( $data, null, null, array(
+					'is_new_item' => $is_new_item,
+					'podsmeta'    => true
+				) );
 			} elseif ( ! empty( $id ) ) {
 				foreach ( $data as $field => $value ) {
 					update_post_meta( $id, $field, $value );
@@ -1465,7 +1493,7 @@ class PodsMeta {
 
 				// Manually force DFV initialization.  This is needed for attachments in "grid mode" in the
 				// media library.  Note that this should only occur for attachment_fields_to_edit (see #4785)
-				$dfv_init_script = "<script>PodsDFV.init();</script>";
+				$dfv_init_script = "<script>window.PodsDFV.init();</script>";
 
 				$form_fields[ 'pods_meta_' . $field['name'] ] = array(
 					'label' => $field['label'],
@@ -1476,7 +1504,7 @@ class PodsMeta {
 			}
 		}
 
-		$form_fields = apply_filters( 'pods_meta_' . __FUNCTION__, $form_fields );
+		$form_fields = apply_filters( 'pods_meta_meta_media', $form_fields );
 
 		return $form_fields;
 	}
@@ -1627,7 +1655,7 @@ class PodsMeta {
 		wp_enqueue_style( 'pods-form' );
 		wp_enqueue_script( 'pods' );
 
-		do_action( 'pods_meta_' . __FUNCTION__, $tag, $taxonomy );
+		do_action( 'pods_meta_meta_taxonomy', $tag, $taxonomy );
 
 		$taxonomy_name = $taxonomy;
 
@@ -1705,7 +1733,7 @@ class PodsMeta {
 			}
 		}
 
-		do_action( 'pods_meta_' . __FUNCTION__ . '_post', $tag, $taxonomy );
+		do_action( 'pods_meta_meta_taxonomy_post', $tag, $taxonomy );
 	}
 
 	/**
@@ -1853,7 +1881,7 @@ class PodsMeta {
 		wp_enqueue_style( 'pods-form' );
 		wp_enqueue_script( 'pods' );
 
-		do_action( 'pods_meta_' . __FUNCTION__, $user_id );
+		do_action( 'pods_meta_meta_user', $user_id );
 
 		$groups = $this->groups_get( 'user', 'user' );
 
@@ -1940,7 +1968,7 @@ class PodsMeta {
 			}
 		}
 
-		do_action( 'pods_meta_' . __FUNCTION__ . '_post', $user_id );
+		do_action( 'pods_meta_meta_user_post', $user_id );
 	}
 
 	/**
@@ -1955,7 +1983,7 @@ class PodsMeta {
 
 		$is_new_item = false;
 
-		if ( 'user_register' == current_filter() ) {
+		if ( 'user_register' === current_filter() ) {
 			$is_new_item = true;
 		}
 
@@ -2081,7 +2109,7 @@ class PodsMeta {
 		wp_enqueue_style( 'pods-form' );
 		wp_enqueue_script( 'pods' );
 
-		do_action( 'pods_meta_' . __FUNCTION__, $commenter, $user_identity );
+		do_action( 'pods_meta_meta_comment_new_logged_in', $commenter, $user_identity );
 
 		$groups = $this->groups_get( 'comment', 'comment' );
 
@@ -2139,7 +2167,7 @@ class PodsMeta {
 			}
 		}
 
-		do_action( 'pods_meta_' . __FUNCTION__ . '_post', $commenter, $user_identity );
+		do_action( 'pods_meta_meta_comment_new_logged_in_post', $commenter, $user_identity );
 	}
 
 	/**
@@ -2212,7 +2240,7 @@ class PodsMeta {
 			}
 		}
 
-		$form_fields = apply_filters( 'pods_meta_' . __FUNCTION__, $form_fields );
+		$form_fields = apply_filters( 'pods_meta_meta_comment_new', $form_fields );
 
 		return $form_fields;
 	}
@@ -2279,7 +2307,7 @@ class PodsMeta {
 		wp_enqueue_style( 'pods-form' );
 		wp_enqueue_script( 'pods' );
 
-		do_action( 'pods_meta_' . __FUNCTION__, $comment, $metabox );
+		do_action( 'pods_meta_meta_comment', $comment, $metabox );
 
 		$hidden_fields = array();
 
@@ -2344,7 +2372,7 @@ class PodsMeta {
 			echo PodsForm::field( 'pods_meta_' . $field_data['name'], $hidden_field['value'], 'hidden', $field_data );
 		}
 
-		do_action( 'pods_meta_' . __FUNCTION__ . '_post', $comment, $metabox );
+		do_action( 'pods_meta_meta_comment_post', $comment, $metabox );
 	}
 
 	/**
@@ -3352,7 +3380,6 @@ class PodsMeta {
 	 */
 	public static function split_shared_term( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
 
-		require_once( PODS_DIR . 'classes/PodsTermSplitting.php' );
 
 		$term_splitting = new Pods_Term_Splitting( $term_id, $new_term_id, $taxonomy );
 		$term_splitting->split_shared_term();
@@ -3408,7 +3435,8 @@ class PodsMeta {
 			$params = array(
 				'pod'    => pods_var( 'name', $object ),
 				'pod_id' => pods_var( 'id', $object ),
-				'id'     => $id
+				'id'     => $id,
+				'strict' => false,
 			);
 
 			return pods_api()->delete_pod_item( $params, false );

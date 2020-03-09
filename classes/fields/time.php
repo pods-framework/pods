@@ -1,5 +1,4 @@
 <?php
-require_once PODS_DIR . 'classes/fields/datetime.php';
 
 /**
  * @package Pods\Fields
@@ -30,7 +29,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 * Storage format.
 	 *
 	 * @var string
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public static $storage_format = 'H:i:s';
 
@@ -38,9 +37,9 @@ class PodsField_Time extends PodsField_DateTime {
 	 * The default empty value (database)
 	 *
 	 * @var string
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
-	public static $empty_value = '00:00:00';
+	public static $empty_value = '';
 
 	/**
 	 * {@inheritdoc}
@@ -163,6 +162,28 @@ class PodsField_Time extends PodsField_DateTime {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function is_empty( $value = null ) {
+
+		$value = trim ( $value );
+		return empty( $value );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function format_display( $options, $js = false ) {
+
+		if ( $js && 'custom' === pods_v( static::$type . '_type', $options, 'format' ) ) {
+			$format = $this->format_datetime( $options, $js );
+			return $this->convert_format( $format, array( 'source' => 'jquery_ui', 'type' => 'time' ) );
+		}
+
+		return parent::format_display( $options, $js );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function format_datetime( $options, $js = false ) {
 
 		return $this->format_time( $options, $js );
@@ -175,35 +196,46 @@ class PodsField_Time extends PodsField_DateTime {
 	 * @param bool  $js      Return formatted from jQuery UI format? (only for custom formats).
 	 *
 	 * @return string
-	 * @since  2.7
+	 * @since 2.7.0
 	 */
 	public function format_time( $options, $js = false ) {
 
 		switch ( (string) pods_v( static::$type . '_type', $options, '12', true ) ) {
 			case '12':
 				$time_format = $this->get_time_formats( $js );
-				$format      = $time_format[ pods_v( static::$type . '_format', $options, 'hh_mm', true ) ];
+
+				$format = $time_format[ pods_v( static::$type . '_format', $options, 'hh_mm', true ) ];
+
 				break;
 			case '24':
 				$time_format_24 = $this->get_time_formats_24( $js );
-				$format         = $time_format_24[ pods_v( static::$type . '_format_24', $options, 'hh_mm', true ) ];
+
+				$format = $time_format_24[ pods_v( static::$type . '_format_24', $options, 'hh_mm', true ) ];
+
 				break;
 			case 'custom':
 				if ( ! $js ) {
 					$format = pods_v( static::$type . '_format_custom', $options, '' );
 				} else {
 					$format = pods_v( static::$type . '_format_custom_js', $options, '' );
+
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_format_custom', $options, '' );
-						$format = $this->convert_format( $format, array( 'source' => 'php' ) );
+
+						if ( $js ) {
+							$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'time' ) );
+						}
 					}
 				}
+
 				break;
 			default:
 				$format = get_option( 'time_format' );
+
 				if ( $js ) {
-					$format = $this->convert_format( $format, array( 'source' => 'php' ) );
+					$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'time' ) );
 				}
+
 				break;
 		}//end switch
 

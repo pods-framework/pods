@@ -251,7 +251,7 @@ class PodsField_DateTime extends PodsField {
 
 		$value = trim( $value );
 
-		if ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
+		if ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00' ), true ) ) {
 			$is_empty = true;
 		}
 
@@ -736,7 +736,7 @@ class PodsField_DateTime extends PodsField {
 
 		$date = '';
 
-		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ), true ) ) {
+		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00' ), true ) ) {
 			$date = $this->createFromFormat( $original_format, (string) $value, $return_timestamp );
 
 			if ( $date instanceof DateTime ) {

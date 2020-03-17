@@ -2912,15 +2912,15 @@ class PodsAPI {
 
 			if ( 'bypass' !== $definition_mode ) {
 				/**
-				 * Allow hooking into nefore the table has been altered for any custom functionality needed.
+				 * Allow hooking into before the table has been altered for any custom functionality needed.
 				 *
-				 * @since TBD
+				 * @since 2.7.17
 				 *
-				 * @param string             $definition_mode The definition mode used for the table field.
-				 * @param Pods\Whatsit\Pod   $pod             The pod object.
-				 * @param string             $type            The field type.
-				 * @param Pods\Whatsit\Field $field           The field object.
-				 * @param array              $extra_info      {
+				 * @param string $definition_mode The definition mode used for the table field.
+				 * @param array  $pod             The pod object.
+				 * @param string $type            The field type.
+				 * @param array  $field           The field object.
+				 * @param array  $extra_info      {
 				 *      Extra information about the field.
 				 *
 				 *      @type bool        $simple Whether the field is a simple tableless field.
@@ -2962,13 +2962,13 @@ class PodsAPI {
 				/**
 				 * Allow hooking into after the table has been altered for any custom functionality needed.
 				 *
-				 * @since TBD
+				 * @since 2.7.17
 				 *
-				 * @param string             $definition_mode The definition mode used for the table field.
-				 * @param Pods\Whatsit\Pod   $pod             The pod object.
-				 * @param string             $type            The field type.
-				 * @param Pods\Whatsit\Field $field           The field object.
-				 * @param array              $extra_info      {
+				 * @param string $definition_mode The definition mode used for the table field.
+				 * @param array  $pod             The pod object.
+				 * @param string $type            The field type.
+				 * @param array  $field           The field object.
+				 * @param array  $extra_info      {
 				 *      Extra information about the field.
 				 *
 				 *      @type bool        $simple Whether the field is a simple tableless field.

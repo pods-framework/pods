@@ -1404,6 +1404,8 @@ class PodsInit {
 	 */
 	public function deactivate() {
 
+		delete_option( 'pods_callouts' );
+
 		pods_api()->cache_flush_pods();
 
 	}

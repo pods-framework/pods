@@ -1737,6 +1737,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	 * @param object $params   The list of the setup parameters for pods_serial_comma.
 	 */
 	$params->and = apply_filters( 'pods_serial_comma_and', $params->and, $value, $params );
+
 	/**
 	 * Allow filtering the "separator" content used for pods_serial_comma.
 	 *
@@ -1799,7 +1800,26 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			$value[ $k ] = $v;
 		}
 
-		$value = trim( implode( $params->separator, $value ), $params->separator );
+		$value = trim( implode( $params->separator . ' ', $value ), $params->separator . ' ' );
+
+		// Add final serial comma.
+		if ( $params->serial && 1 < count( $value ) ) {
+			/**
+			 * Allow filtering the final serial comma (before the "and") used for pods_serial_comma.
+			 *
+			 * @since 2.7.17
+			 *
+			 * @param string $serial_comma   The serial comma content used, return an empty string to disable (default ", ").
+			 * @param string $value          The formatted value.
+			 * @param string $original_value The original value input into pods_serial_comma.
+			 * @param object $params         The list of the setup parameters for pods_serial_comma.
+			 */
+			$serial_comma = apply_filters( 'pods_serial_comma', $params->separator . ' ', $value, $params );
+
+			if ( '' !== $serial_comma ) {
+				$value .= $serial_comma;
+			}
+		}
 		$value = trim( $value );
 		$last  = trim( $last );
 

@@ -1,35 +1,33 @@
 var htmleditor;
 
-CodeMirror.defineMode("mustache", function(config, parserConfig) {
+CodeMirror.defineMode( "mustache", function ( config, parserConfig ) {
 	var mustacheOverlay = {
-		token: mustache
+		token : mustache
 	};
-	return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || "text/html"), mustacheOverlay);
-});
-
+	return CodeMirror.overlayMode( CodeMirror.getMode( config, parserConfig.backdrop || "text/html" ), mustacheOverlay );
+} );
 
 // setup pod selection
-jQuery(function($){
+jQuery( function ( $ ) {
 
-	htmleditor = CodeMirror.fromTextArea(document.getElementById("content"), {
-		lineNumbers: true,
-		matchBrackets: true,
-		mode: "mustache",
-		indentUnit: 4,
-		indentWithTabs: true,
-		enterMode: "keep",
-		tabMode: "shift",
-		lineWrapping: true
+	htmleditor = CodeMirror.fromTextArea( document.getElementById( "content" ), {
+		lineNumbers    : true,
+		matchBrackets  : true,
+		mode           : "mustache",
+		indentUnit     : 4,
+		indentWithTabs : true,
+		enterMode      : "keep",
+		tabMode        : "shift",
+		lineWrapping   : true
 
-	});
+	} );
 
 	/* Setup autocomplete */
-	htmleditor.on('keyup', podFields);
+	htmleditor.on( 'keyup', podFields );
 
-	$('.pod-switch').baldrick({
-		request: ajaxurl,
-		method: 'POST'
-	});
+	$( '.pod-switch' ).baldrick( {
+									 request : ajaxurl, method : 'POST'
+								 } );
 
-});
+} );
 

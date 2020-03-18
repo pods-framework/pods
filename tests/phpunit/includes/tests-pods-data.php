@@ -1,5 +1,7 @@
 <?php
+
 namespace Pods_Unit_Tests;
+
 use stdClass;
 
 require_once PODS_TEST_PLUGIN_DIR . '/classes/PodsData.php';
@@ -11,266 +13,268 @@ require_once PODS_TEST_PLUGIN_DIR . '/classes/PodsData.php';
  * @group   pods
  * @group   pods-data
  */
-class Test_PodsData extends Pods_UnitTestCase
-{
-    /**
-     * @covers ::pods_sanitize
-     */
-    public function test_pods_sanitize_returns_empty_string()
-    {
-        $this->assertEquals( '', pods_sanitize( '' ) );
-    }
+class Test_PodsData extends Pods_UnitTestCase {
 
-    /**
-     * @covers ::pods_sanitize
-     */
-    public function test_pods_sanitize_returns_int()
-    {
-        $this->assertEquals( 1, pods_sanitize( 1 ) );
-    }
+	/**
+	 * @covers ::pods_sanitize
+	 */
+	public function test_pods_sanitize_returns_empty_string() {
 
-    /**
-     * @covers ::pods_sanitize
-     */
-    public function test_pods_sanitize_returns_float()
-    {
-        $this->assertEquals( 12.348329, pods_sanitize( 12.348329 ) );
-    }
+		$this->assertEquals( '', pods_sanitize( '' ) );
+	}
 
-    /**
-     * @covers ::pods_sanitize
-     */
-    public function test_pods_sanitize_null()
-    {
-        $this->assertEquals( null, pods_sanitize( null ) );
-    }
+	/**
+	 * @covers ::pods_sanitize
+	 */
+	public function test_pods_sanitize_returns_int() {
 
-    /**
-     * @covers ::pods_sanitize
-     */
-    public function test_pods_sanitize_returns_object()
-    {
-        $object = new stdClass();
-        $object->foo = 1;
-        $object->bar = 'a test string';
+		$this->assertEquals( 1, pods_sanitize( 1 ) );
+	}
 
-        $this->assertEquals( $object, pods_sanitize( $object ) );
-    }
+	/**
+	 * @covers ::pods_sanitize
+	 */
+	public function test_pods_sanitize_returns_float() {
 
-    /**
-     * @covers ::pods_sanitize
-     */
-    public function test_pods_sanitize_returns_array()
-    {
-        $array = array( 'foo' => 1, 'bar' => 'a test string' );
-        $this->assertEquals( $array, pods_sanitize( $array ) );
-    }
+		$this->assertEquals( 12.348329, pods_sanitize( 12.348329 ) );
+	}
 
-    /**
-     * @covers ::pods_sanitize
-     */
-    public function test_pods_sanitize_string()
-    {
-        $original = "'\\`";
+	/**
+	 * @covers ::pods_sanitize
+	 */
+	public function test_pods_sanitize_null() {
 
-        $this->assertEquals( "\'\\\`", pods_sanitize( $original ) );
-    }
+		$this->assertEquals( null, pods_sanitize( null ) );
+	}
 
-    /**
-     * @covers ::pods_sanitize
-     */
-    public function test_pods_sanitize_sql()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	/**
+	 * @covers ::pods_sanitize
+	 */
+	public function test_pods_sanitize_returns_object() {
 
-    public function test_pods_sanitize_like()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$object      = new stdClass();
+		$object->foo = 1;
+		$object->bar = 'a test string';
 
-    public function test_pods_slash()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->assertEquals( $object, pods_sanitize( $object ) );
+	}
 
-    public function test_pods_unsanitize()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	/**
+	 * @covers ::pods_sanitize
+	 */
+	public function test_pods_sanitize_returns_array() {
 
-    public function test_pods_unslash()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$array = array(
+			'foo' => 1,
+			'bar' => 'a test string',
+		);
+		$this->assertEquals( $array, pods_sanitize( $array ) );
+	}
 
-    public function test_pods_trim()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	/**
+	 * @covers ::pods_sanitize
+	 */
+	public function test_pods_sanitize_string() {
 
-    public function test_pods_v()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$original = "'\\`";
 
-    public function test_pods_v_sanitized()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->assertEquals( "\'\\\`", pods_sanitize( $original ) );
+	}
 
-    public function test_pods_v_set()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	/**
+	 * @covers ::pods_sanitize
+	 */
+	public function test_pods_sanitize_sql() {
 
-    public function test_pods_var()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
-    
-    public function test_pods_var_raw()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    public function test_pods_var_set()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	public function test_pods_sanitize_like() {
 
-    public function test_pods_query_arg()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    public function test_pods_var_update()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	public function test_pods_slash() {
 
-    public function test_pods_cast()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    public function test_pods_create_slug()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	public function test_pods_unsanitize() {
 
-    public function test_pods_unique_slug()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    public function test_pods_clean_name()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	public function test_pods_unslash() {
 
-    /**
-     * @covers ::pods_absint
-     */
-    public function test_pods_absint()
-    {
-        $this->assertEquals( 1, pods_absint( 1.234 ) );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    /**
-     * @covers ::pods_absint
-     */
-    public function test_pods_absint_no_negative()
-    {
-        $this->assertEquals( 1, pods_absint( -1.234 ) );
-    }
+	public function test_pods_trim() {
 
-    /**
-     * @covers ::pods_absint
-     */
-    public function test_pods_absint_allows_negative()
-    {
-        $this->assertEquals( -1, pods_absint( -1.234, true, true ) );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    /**
-     * @covers ::pods_absint
-     */
-    public function test_pods_absint_returns_zero_for_string()
-    {
-        $this->assertEquals( 0, pods_absint( 'asdf' ) );
-    }
+	public function test_pods_v() {
 
-    public function test_pods_str_replace()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    /**
-     * @covers ::pods_mb_strlen
-     */
-    public function test_pods_mb_strlen()
-    {
-        $this->assertEquals( 4, pods_mb_strlen( 'asdf' ) );
-    }
+	public function test_pods_v_sanitized() {
 
-    /**
-     * @covers ::pods_mb_substr
-     */
-    public function test_pods_mb_substr()
-    {
-        $this->assertEquals( 'sd', pods_mb_substr( 'asdf', 1, 2 ) );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    public function test_pods_evaluate_tags()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	public function test_pods_v_set() {
 
-    public function test_pods_evaluate_tag_sanitized()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    public function test_pods_evaluate_tag()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	public function test_pods_var() {
 
-    public function test_pods_serial_comma()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    public function test_pods_var_user()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	public function test_pods_var_raw() {
 
-    public function test_pods_hierarchical_list()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    public function test_pods_hierarchical_list_recurse()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	public function test_pods_var_set() {
 
-    public function test_pods_hierarchical_select()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
-    public function test_pods_hierarchical_select_recurse()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+	public function test_pods_query_arg() {
 
-    public function test_pods_list_filter()
-    {
-        $this->markTestIncomplete( 'not yet implemented' );
-    }
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
+	public function test_pods_var_update() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_cast() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_create_slug() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_unique_slug() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_clean_name() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	/**
+	 * @covers ::pods_absint
+	 */
+	public function test_pods_absint() {
+
+		$this->assertEquals( 1, pods_absint( 1.234 ) );
+	}
+
+	/**
+	 * @covers ::pods_absint
+	 */
+	public function test_pods_absint_no_negative() {
+
+		$this->assertEquals( 1, pods_absint( - 1.234 ) );
+	}
+
+	/**
+	 * @covers ::pods_absint
+	 */
+	public function test_pods_absint_allows_negative() {
+
+		$this->assertEquals( - 1, pods_absint( - 1.234, true, true ) );
+	}
+
+	/**
+	 * @covers ::pods_absint
+	 */
+	public function test_pods_absint_returns_zero_for_string() {
+
+		$this->assertEquals( 0, pods_absint( 'asdf' ) );
+	}
+
+	public function test_pods_str_replace() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	/**
+	 * @covers ::pods_mb_strlen
+	 */
+	public function test_pods_mb_strlen() {
+
+		$this->assertEquals( 4, pods_mb_strlen( 'asdf' ) );
+	}
+
+	/**
+	 * @covers ::pods_mb_substr
+	 */
+	public function test_pods_mb_substr() {
+
+		$this->assertEquals( 'sd', pods_mb_substr( 'asdf', 1, 2 ) );
+	}
+
+	public function test_pods_evaluate_tags() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_evaluate_tag_sanitized() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_evaluate_tag() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_serial_comma() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_var_user() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_hierarchical_list() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_hierarchical_list_recurse() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_hierarchical_select() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_hierarchical_select_recurse() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
+
+	public function test_pods_list_filter() {
+
+		$this->markTestIncomplete( 'not yet implemented' );
+	}
 
 }

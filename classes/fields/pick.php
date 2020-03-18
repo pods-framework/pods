@@ -1336,28 +1336,41 @@ class PodsField_Pick extends PodsField {
 			$edit_link = add_query_arg( array( 'pods_modal' => '1' ), $edit_link );
 		}
 
-		// Determine if this is a selected item
+		// Determine if this is a selected item.
+		// Issue history for setting selected: #4753, #4892, #5014.
 		$selected = false;
 
-		if ( is_array( $args->value ) ) {
-			if ( ! isset( $args->value[0] ) ) {
-				$keys = array_map( 'strval', array_keys( $args->value ) );
+		$values = array();
 
-				if ( in_array( (string) $item_id, $keys, true ) ) {
-					$selected = true;
-				}
+		// If we have values, let's cast them.
+		if ( ! empty( $args->value ) ) {
+			// The value may be a single non-array value.
+			$values = (array) $args->value;
+		}
+
+		// Cast values in array as string.
+		$values = array_map( 'strval', $values );
+
+		// If the value array has keys as IDs, let's check for matches from the keys first.
+		if ( ! isset( $values[0] ) ) {
+			// Get values from keys.
+			$key_values = array_keys( $values );
+
+			// Cast key values in array as string.
+			$key_values = array_map( 'strval', $key_values );
+
+			// Let's check to see if the current $item_id matches any key values.
+			if ( in_array( (string) $item_id, $key_values, true ) ) {
+				$selected = true;
 			}
+		}
 
-			if ( ! $selected ) {
-				// Cast values in array as string.
-				$args->value = array_map( 'strval', $args->value );
-
-				if ( in_array( (string) $item_id, $args->value, true ) ) {
-					$selected = true;
-				}
+		// If we do not have a key match, the normal values may still match.
+		if ( ! $selected ) {
+			// Let's check to see if the current $item_id matches any values.
+			if ( in_array( (string) $item_id, $values, true ) ) {
+				$selected = true;
 			}
-		} elseif ( (string) $item_id === (string) $args->value ) {
-			$selected = true;
 		}
 
 		$item = array(

@@ -646,6 +646,10 @@ body[class*="settings_page_pods-"] {
 	        flex-direction: column;
 }
 
+.pods-admin > * {
+	flex-grow: 1;
+}
+
 .pods-admin_friends-callout_container {
 	min-width: 250px;
 	width: 100%;
@@ -656,7 +660,7 @@ body[class*="settings_page_pods-"] {
 	position: relative;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 851px) {
 	.pods-admin {
 		-webkit-box-orient: horizontal;
 		-webkit-box-direction: normal;

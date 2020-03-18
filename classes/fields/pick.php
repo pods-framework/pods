@@ -182,7 +182,7 @@ class PodsField_Pick extends PodsField {
 			),
 			static::$type . '_display_format_separator'   => array(
 				'label'      => __( 'Display Format Separator', 'pods' ),
-				'help'       => __( 'Used as separator for front-end display', 'pods' ),
+				'help'       => __( 'Used as separator for front-end display. This also turns off the "and" portion of the formatting.', 'pods' ),
 				'depends-on' => array(
 					static::$type . '_display_format_multi' => 'custom',
 					static::$type . '_format_type'          => 'multi',

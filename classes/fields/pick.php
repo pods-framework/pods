@@ -747,9 +747,14 @@ class PodsField_Pick extends PodsField {
 		);
 
 		if ( 'custom' === pods_v( static::$type . '_display_format_multi', $options, '' ) ) {
-			$args['separator'] = pods_v( static::$type . '_display_format_separator', $options, ',' );
-			// Replicate separator behavior.
-			$args['and'] = $args['separator'] . ' ';
+			$separator = pods_v( static::$type . '_display_format_separator', $options, ',' );
+
+			if ( ! empty( $separator ) ) {
+				$args['separator'] = pods_v( static::$type . '_display_format_separator', $options, ',' );
+
+				// Replicate separator behavior.
+				$args['and'] = $args['separator'] . ' ';
+			}
 		}
 
 		return pods_serial_comma( $value, $args );

@@ -1032,10 +1032,13 @@ class Pods implements Iterator {
 						$value = pods_image( $this->id(), $size, 0, null, true );
 					} else {
 						array_shift( $field_names );
-						$value = pods(
-							'media',
-							get_post_thumbnail_id( $this->id() ) )->field( implode( '.', $field_names )
-						);
+						$attachment_id = get_post_thumbnail_id( $this->id() );
+
+						$media = pods( 'media', $attachment_id );
+
+						if ( $media && $media->valid() && $media->exists() ) {
+							$value = $media->field( implode( '.', $field_names ) );
+						}
 					}
 
 					$object_field_found = true;

@@ -80,6 +80,15 @@ class PodsInit {
 	public static $upgrade_needed = false;
 
 	/**
+	 * Freemius object.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var \Freemius
+	 */
+	protected $freemius;
+
+	/**
 	 * Singleton handling for a basic pods_init() request
 	 *
 	 * @return \PodsInit
@@ -150,6 +159,56 @@ class PodsInit {
 
 		load_plugin_textdomain( 'pods' );
 
+		$this->freemius();
+
+	}
+
+	/**
+	 * Handle Freemius SDK registration.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return \Freemius
+	 */
+	public function freemius() {
+		if ( $this->freemius ) {
+			return $this->freemius;
+		}
+
+		require_once dirname( __DIR__ ) . '/vendor/freemius/wordpress-sdk/start.php';
+
+		try {
+			$this->freemius = fs_dynamic_init( [
+				'id'             => '5347',
+				'slug'           => 'pods',
+				'type'           => 'plugin',
+				'public_key'     => 'pk_737105490825babae220297e18920',
+				'is_premium'     => false,
+				'has_addons'     => true,
+				'has_paid_plans' => false,
+				'menu'           => [
+					'slug'        => 'pods-settings',
+					'contact'     => false,
+					'support'     => false,
+					'affiliation' => false,
+					'account'     => true,
+					'pricing'     => false,
+					'addons'      => true,
+					'parent'      => [
+						'slug' => 'pods',
+					],
+				],
+			] );
+
+			/**
+			 * Allow hooking into the Freemius registration after Pods has registered it's own Freemius.
+			 */
+			do_action( 'pods_freemius_init' );
+		} catch ( \Exception $exception ) {
+			return;
+		}
+
+		return $this->freemius;
 	}
 
 	/**

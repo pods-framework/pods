@@ -328,7 +328,14 @@
                 }
             }
 
-            $data->sections['description'] = fs_get_template( '/plugin-info/description.php', $view_vars );
+            $description = fs_get_template( '/plugin-info/description.php', $view_vars );
+            $description = trim( $description );
+
+            $description = $this->_fs->apply_filters( 'plugin_section_description', $description, $data );
+
+            if ( '' !== $description ) {
+            	$data->sections['description'] = $description;
+			}
 
             if ( $has_pricing ) {
                 // Add plans to data.

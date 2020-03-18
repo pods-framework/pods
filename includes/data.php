@@ -1814,7 +1814,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			 * @param string $original_value The original value input into pods_serial_comma.
 			 * @param object $params         The list of the setup parameters for pods_serial_comma.
 			 */
-			$serial_comma = apply_filters( 'pods_serial_comma', $params->separator . ' ', $value, $params );
+			$serial_comma = apply_filters( 'pods_serial_comma', $params->separator . ' ', $value, $original_value, $params );
 
 			if ( '' !== $serial_comma ) {
 				$value .= $serial_comma;

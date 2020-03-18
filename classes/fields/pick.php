@@ -176,7 +176,7 @@ class PodsField_Pick extends PodsField {
 				'type'       => 'pick',
 				'data'       => array(
 					'default' => __( 'Item 1, Item 2, and Item 3', 'pods' ),
-					'custom'  => __( 'Custom separator', 'pods' ),
+					'custom'  => __( 'Custom separator (with no "and")', 'pods' ),
 				),
 				'dependency' => true,
 			),

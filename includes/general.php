@@ -834,6 +834,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'fields'     => null,
 		'label'      => null,
 		'thank_you'  => null,
+		'not_found'  => null,
 		'view'       => null,
 		'cache_mode' => 'none',
 		'expires'    => 0,
@@ -1090,7 +1091,15 @@ function pods_shortcode_run( $tags, $content = null ) {
 		echo $pod->pagination( $tags['pagination_label'] );
 	}
 
-	echo $pod->template( $tags['template'], $content );
+	$content = $pod->template( $tags['template'], $content );
+	$content = trim( $content );
+
+	if ( empty( $content ) && ! empty( $tags['not_found'] ) ) {
+		$content = $pod->do_magic_tags( $tags['not_found'] );
+	}
+
+	// phpcs:ignore
+	echo $content;
 
 	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array(
 		$tags['pagination_location'], array(

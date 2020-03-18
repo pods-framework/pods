@@ -79,10 +79,9 @@ class PodsField_Boolean extends PodsField {
 
 		$is_empty = false;
 
-		$value = filter_var( $value, FILTER_VALIDATE_BOOLEAN );
-
-		if ( ! $value ) {
-			$is_empty = true;
+		// Boolean false and integer 0 are non-empty values.
+		if ( ! is_bool( $value ) && ! is_int( $value ) && '0' !== $value ) {
+			$is_empty = empty( $value );
 		}
 
 		return $is_empty;
@@ -173,12 +172,22 @@ class PodsField_Boolean extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-	
+
 		$errors = array();
 		$check  = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
-		if ( 1 === (int) pods_v( 'required', $options ) && 0 === $check ) {
-			$errors[] = __( 'This field is required.', 'pods' );
+		$yes_required = ( 'checkbox' === pods_v( static::$type . '_format_type', $options ) );
+
+		$required = (int) pods_v( 'required', $options );
+
+		if ( 1 === $required ) {
+			if ( $yes_required ) {
+				if ( 0 === $check ) {
+					$errors[] = __( 'This field is required.', 'pods' );
+				}
+			} elseif ( $this->is_empty( $value ) ) {
+				$errors[] = __( 'This field is required.', 'pods' );
+			}
 		}
 
 		if ( ! empty( $errors ) ) {

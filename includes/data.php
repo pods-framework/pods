@@ -1807,7 +1807,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			/**
 			 * Allow filtering the final serial comma (before the "and") used for pods_serial_comma.
 			 *
-			 * @since 2.7.17
+			 * @since unknown
 			 *
 			 * @param string $serial_comma   The serial comma content used, return an empty string to disable (default ", ").
 			 * @param string $value          The formatted value.

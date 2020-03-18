@@ -1789,7 +1789,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 				if ( null !== $params->field_index && isset( $v[ $params->field_index ] ) ) {
 					$v = $v[ $params->field_index ];
 				} elseif ( $simple ) {
-					$v = trim( implode( $params->separator, $v ), $params->separator );
+					$v = trim( implode( $params->separator . ' ', $v ), $params->separator . ' ' );
 				} else {
 					unset( $value[ $k ] );
 

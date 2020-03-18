@@ -466,8 +466,10 @@ final class PodsI18n {
 		 */
 		$lang_data = apply_filters( 'pods_get_current_language', $lang_data, $translator );
 
-		self::$current_language      = $lang_data['language'];
-		self::$current_language_data = $lang_data;
+		if ( $lang_data ) {
+			self::$current_language      = $lang_data['language'];
+			self::$current_language_data = $lang_data;
+		}
 
 		return $lang_data;
 

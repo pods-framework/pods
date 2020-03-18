@@ -1649,7 +1649,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		'fields'      => $fields,
 		'and'         => $and,
 		'field_index' => $field_index,
-		'separator'   => ', ',
+		'separator'   => ',',
 		'serial'      => true,
 	);
 
@@ -1727,8 +1727,26 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		$params->and = ' ' . __( 'and', 'pods' ) . ' ';
 	}
 
-	$params->and       = apply_filters( 'pods_serial_comma_and', $params->and, $value, $original_value, $params );
-	$params->separator = apply_filters( 'pods_serial_comma', $params->separator, $value, $original_value, $params );
+	/**
+	 * Allow filtering the "and" content used for pods_serial_comma.
+	 *
+	 * @since 2.7.17
+	 *
+	 * @param string|null $and The "and" content used, return null to disable.
+	 * @param string $value    The value input into pods_serial_comma.
+	 * @param object $params   The list of the setup parameters for pods_serial_comma.
+	 */
+	$params->and = apply_filters( 'pods_serial_comma_and', $params->and, $value, $params );
+	/**
+	 * Allow filtering the "separator" content used for pods_serial_comma.
+	 *
+	 * @since 2.7.17
+	 *
+	 * @param string $separator The "separator" content used (default ",").
+	 * @param string $value     The value input into pods_serial_comma.
+	 * @param object $params    The list of the setup parameters for pods_serial_comma.
+	 */
+	$params->separator = apply_filters( 'pods_serial_comma_separator', $params->separator, $value, $params );
 
 	$last = '';
 

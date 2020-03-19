@@ -204,30 +204,48 @@ class Pods_Templates_Frontier {
 
 		// add metabox
 		add_meta_box(
-			'view_template', __( 'Template', 'pods' ), array(
+			'view_template',
+			__( 'Template', 'pods' ),
+			array(
 				$this,
 				'render_metaboxes_custom',
-			), '_pods_template', 'normal', 'high', array(
+			),
+			'_pods_template',
+			'normal',
+			'high',
+			array(
 				'slug'   => 'view_template',
 				'groups' => array(),
 			)
 		);
 		add_meta_box(
-			'pod_reference', __( 'Pod Reference', 'pods' ), array(
+			'pod_reference',
+			__( 'Pod Reference', 'pods' ),
+			array(
 				$this,
 				'render_metaboxes_custom',
-			), '_pods_template', 'side', 'default', array(
+			),
+			'_pods_template',
+			'side',
+			'default',
+			array(
 				'slug'   => 'pod_reference',
 				'groups' => array(),
 			)
 		);
 		add_meta_box(
-			'pod_reference', __( 'Magic Tag Reference', 'pods' ), array(
+			'pod_reference',
+			__( 'Magic Tag Reference', 'pods' ),
+			array(
 				$this,
-				'render_metaboxes_custom'
-			), '_pods_template', 'side', 'default', array(
-				'slug' => 'tag_reference',
-				'groups' => array()
+				'render_metaboxes_custom',
+			),
+			'_pods_template',
+			'side',
+			'default',
+			array(
+				'slug'   => 'tag_reference',
+				'groups' => array(),
 			)
 		);
 

@@ -2871,7 +2871,7 @@ class PodsAPI {
 
 		$field['id'] = $params->id;
 
-		$simple = ( 'pick' === $field['type'] && in_array( pods_var( 'pick_object', $field['options'] ), $simple_tableless_objects ) );
+		$simple = ( 'pick' === $field['type'] && in_array( pods_v( 'pick_object', $field['options'] ), $simple_tableless_objects, true ) );
 
 		$definition = false;
 
@@ -2885,42 +2885,106 @@ class PodsAPI {
 
 		$sister_id = (int) pods_var( 'sister_id', $field['options'], 0 );
 
+		$definition_mode = 'bypass';
+
 		if ( $table_operation && 'table' === $pod['storage'] && ! pods_tableless() ) {
 			if ( ! empty( $old_id ) ) {
-				if ( ( $field['type'] !== $old_type || $old_simple != $simple ) && empty( $definition ) ) {
-					pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
+				if ( ( $field['type'] !== $old_type || $old_simple !== $simple ) && empty( $definition ) ) {
+					$definition_mode = 'drop';
 				} elseif ( 0 < strlen( $definition ) ) {
 					if ( $old_name !== $field['name'] || $old_simple !== $simple || $old_definition !== $definition ) {
-						$test = false;
+						$definition_mode = 'add';
 
 						if ( 0 < strlen( $old_definition ) ) {
-							$test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
-						}
-
-						// If the old field doesn't exist, continue to add a new field
-						if ( false === $test ) {
-							pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+							$definition_mode = 'change';
 						}
 					} elseif ( null !== $old_definition && $definition !== $old_definition ) {
-						$test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
-
-						// If the old field doesn't exist, continue to add a new field
-						if ( false === $test ) {
-							pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
-						}
+						$definition_mode = 'change';
 					}
 				}
 			} elseif ( 0 < strlen( $definition ) ) {
-				$test = false;
+				$definition_mode = 'add';
 
 				if ( 0 < strlen( $old_definition ) ) {
-					$test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $field['name'] . "` {$definition}", false );
+					$definition_mode = 'change';
+				}
+			}
+
+			if ( 'bypass' !== $definition_mode ) {
+				/**
+				 * Allow hooking into before the table has been altered for any custom functionality needed.
+				 *
+				 * @since 2.7.17
+				 *
+				 * @param string $definition_mode The definition mode used for the table field.
+				 * @param array  $pod             The pod object.
+				 * @param string $type            The field type.
+				 * @param array  $field           The field object.
+				 * @param array  $extra_info      {
+				 *      Extra information about the field.
+				 *
+				 *      @type bool        $simple Whether the field is a simple tableless field.
+				 *      @type string      $definition The field definition.
+				 *      @type null|string $old_name The old field name (if preexisting).
+				 *      @type null|string $old_definition The old field definition (if preexisting).
+				 *      @type null|array  $old_options The old field options (if preexisting).
+				 * }
+				 */
+				do_action( 'pods_api_save_field_table_pre_alter', $definition_mode, $pod, $field['type'], $field, [
+					'simple'         => $simple,
+					'definition'     => $definition,
+					'old_name'       => $old_name,
+					'old_definition' => $old_definition,
+					'old_options'    => $old_options,
+				] );
+
+				if ( 'drop' === $definition_mode ) {
+					// Drop field column.
+					pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
+				} elseif ( 'change' === $definition_mode ) {
+					// Change field column definition.
+					if ( $old_name && $old_name !== $field['name'] ) {
+						$test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
+					} else {
+						$test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` MODIFY {$definition}", false );
+					}
+
+					if ( false === $test ) {
+						$definition_mode = 'add';
+					}
 				}
 
 				// If the old field doesn't exist, continue to add a new field
-				if ( false === $test ) {
+				if ( 'add' === $definition_mode ) {
 					pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
 				}
+
+				/**
+				 * Allow hooking into after the table has been altered for any custom functionality needed.
+				 *
+				 * @since 2.7.17
+				 *
+				 * @param string $definition_mode The definition mode used for the table field.
+				 * @param array  $pod             The pod object.
+				 * @param string $type            The field type.
+				 * @param array  $field           The field object.
+				 * @param array  $extra_info      {
+				 *      Extra information about the field.
+				 *
+				 *      @type bool        $simple Whether the field is a simple tableless field.
+				 *      @type string      $definition The field definition.
+				 *      @type null|string $old_name The old field name (if preexisting).
+				 *      @type null|string $old_definition The old field definition (if preexisting).
+				 *      @type null|array  $old_options The old field options (if preexisting).
+				 * }
+				 */
+				do_action( 'pods_api_save_field_table_altered', $definition_mode, $pod, $field['type'], $field, [
+					'simple'         => $simple,
+					'definition'     => $definition,
+					'old_name'       => $old_name,
+					'old_definition' => $old_definition,
+					'old_options'    => $old_options,
+				] );
 			}
 		}
 

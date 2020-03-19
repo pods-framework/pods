@@ -750,7 +750,7 @@ class PodsField_Pick extends PodsField {
 			$separator = pods_v( static::$type . '_display_format_separator', $options, ', ' );
 
 			if ( ! empty( $separator ) ) {
-				$args['separator'] = pods_v( static::$type . '_display_format_separator', $options, ', ' );
+				$args['separator'] = $separator;
 
 				// Replicate separator behavior.
 				$args['and'] = $args['separator'] . ' ';

@@ -169,6 +169,28 @@ class PodsField_Pick extends PodsField {
 				),
 				'dependency' => true,
 			),
+			static::$type . '_display_format_multi'   => array(
+				'label'      => __( 'Display Format', 'pods' ),
+				'help'       => __( 'Used as format for front-end display', 'pods' ),
+				'depends-on' => array( static::$type . '_format_type' => 'multi' ),
+				'default'    => 'default',
+				'type'       => 'pick',
+				'data'       => array(
+					'default' => __( 'Item 1, Item 2, and Item 3', 'pods' ),
+					'custom'  => __( 'Custom separator (with no "and")', 'pods' ),
+				),
+				'dependency' => true,
+			),
+			static::$type . '_display_format_separator'   => array(
+				'label'      => __( 'Display Format Separator', 'pods' ),
+				'help'       => __( 'Used as separator for front-end display. This also turns off the "and" portion of the formatting.', 'pods' ),
+				'depends-on' => array(
+					static::$type . '_display_format_multi' => 'custom',
+					static::$type . '_format_type'          => 'multi',
+				),
+				'default'    => ', ',
+				'type'       => 'text',
+			),
 			static::$type . '_allow_add_new'  => array(
 				'label'       => __( 'Allow Add New', 'pods' ),
 				'help'        => __( 'Allow new related records to be created in a modal window', 'pods' ),
@@ -720,13 +742,23 @@ class PodsField_Pick extends PodsField {
 			}
 		}
 
-		return pods_serial_comma(
-			$value, array(
-				'field'  => $name,
-				'fields' => $fields,
-			)
+		$args = array(
+			'field'  => $name,
+			'fields' => $fields,
 		);
 
+		if ( 'custom' === pods_v( static::$type . '_display_format_multi', $options, 'default' ) ) {
+			$separator = pods_v( static::$type . '_display_format_separator', $options, ', ' );
+
+			if ( ! empty( $separator ) ) {
+				$args['separator'] = $separator;
+
+				// Replicate separator behavior.
+				$args['and'] = $args['separator'];
+			}
+		}
+
+		return pods_serial_comma( $value, $args );
 	}
 
 	/**

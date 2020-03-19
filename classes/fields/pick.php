@@ -188,7 +188,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_display_format_multi' => 'custom',
 					static::$type . '_format_type'          => 'multi',
 				),
-				'default'    => ',',
+				'default'    => ', ',
 				'type'       => 'text',
 			),
 			static::$type . '_allow_add_new'  => array(

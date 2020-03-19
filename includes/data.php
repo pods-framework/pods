@@ -1804,10 +1804,12 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			$value[ $k ] = $v;
 		}
 
+		$has_serial_comma = $params->serial && 1 < count( $value );
+
 		$value = trim( implode( $params->separator, $value ), $params->separator . ' ' );
 
 		// Add final serial comma.
-		if ( $params->serial && 1 < count( $value ) ) {
+		if ( $has_serial_comma ) {
 			/**
 			 * Allow filtering the final serial comma (before the "and") used for pods_serial_comma.
 			 *

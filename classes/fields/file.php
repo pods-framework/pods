@@ -182,7 +182,7 @@ class PodsField_File extends PodsField {
 			/* WP GALLERY OUTPUT */
 			static::$type . '_wp_gallery_output'      => array(
 				'label'      => __( 'Output as a WP Gallery', 'pods' ),
-				'help'       => sprintf( __( '<a href="%s" target="_blank">Click here for more info</a>', 'pods' ), 'https://codex.wordpress.org/The_WordPress_Gallery' ),
+				'help'       => sprintf( __( '<a href="%s" target="_blank">Click here for more info</a>', 'pods' ), 'https://wordpress.org/support/article/inserting-images-into-posts-and-pages/' ),
 				'depends-on' => array( static::$type . '_type' => 'images' ),
 				'dependency' => true,
 				'type'       => 'boolean',

@@ -1010,7 +1010,7 @@ class Pods implements Iterator {
 			// Default image field handlers.
 			$image_fields = array(
 				'image_attachment',
-				'image_attachment_url'
+				'image_attachment_url',
 			);
 
 			if ( 'post_type' === $this->pod_data['type'] ) {
@@ -1064,7 +1064,7 @@ class Pods implements Iterator {
 								$attachment_id = get_post_thumbnail_id();
 								break;
 							case 'image_attachment':
-								if ( isset ( $traverse_names[0] ) ) {
+								if ( isset( $traverse_names[0] ) ) {
 									$attachment_id = $traverse_names[0];
 									array_shift( $traverse_names );
 								}
@@ -1087,13 +1087,15 @@ class Pods implements Iterator {
 							}
 
 							if ( $url ) {
-								$value              = pods_image_url( $attachment_id, $size, 0, true );
+								$value = pods_image_url( $attachment_id, $size, 0, true );
+
 								$object_field_found = true;
 								break;
 							}
 
 							if ( $size ) {
 								$value = pods_image( $attachment_id, $size, 0, null, true );
+
 								$object_field_found = true;
 								break;
 							}

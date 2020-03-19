@@ -3935,6 +3935,10 @@ class PodsAdmin {
 					'label' => __( 'Pods Shortcode Allow Evaluate Tags' ),
 					'value' => ( pods_shortcode_allow_evaluate_tags() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
+				'pods-session-auto-start'            => [
+					'label' => __( 'Pods Session Auto Start' ),
+					'value' => ( pods_session_auto_start() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				],
 			],
 		];
 

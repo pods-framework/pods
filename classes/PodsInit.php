@@ -2130,6 +2130,7 @@ class PodsInit {
 		$conditionals[] = 'pods_allow_deprecated';
 		$conditionals[] = 'pods_api_cache';
 		$conditionals[] = 'pods_shortcode_allow_evaluate_tags';
+		$conditionals[] = 'pods_session_auto_start';
 		return $conditionals;
 	}
 }

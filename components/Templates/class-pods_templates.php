@@ -202,14 +202,13 @@ class Pods_Templates_Frontier {
 		wp_enqueue_script( $this->plugin_slug . '-handlebars-baldrick', $this->get_url( 'assets/js/handlebars.baldrick2.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
 		wp_enqueue_style( $this->plugin_slug . '-pod_reference-styles', $this->get_url( 'assets/css/styles-pod_reference.css', __FILE__ ), array(), self::VERSION );
 
+		$metabox_callback = array( $this, 'render_metaboxes_custom' );
+
 		// add metabox
 		add_meta_box(
 			'view_template',
 			__( 'Template', 'pods' ),
-			array(
-				$this,
-				'render_metaboxes_custom',
-			),
+			$metabox_callback,
 			'_pods_template',
 			'normal',
 			'high',
@@ -221,10 +220,7 @@ class Pods_Templates_Frontier {
 		add_meta_box(
 			'pod_reference',
 			__( 'Pod Reference', 'pods' ),
-			array(
-				$this,
-				'render_metaboxes_custom',
-			),
+			$metabox_callback,
 			'_pods_template',
 			'side',
 			'default',
@@ -236,10 +232,7 @@ class Pods_Templates_Frontier {
 		add_meta_box(
 			'pod_reference',
 			__( 'Magic Tag Reference', 'pods' ),
-			array(
-				$this,
-				'render_metaboxes_custom',
-			),
+			$metabox_callback,
 			'_pods_template',
 			'side',
 			'default',

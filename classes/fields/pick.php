@@ -753,7 +753,7 @@ class PodsField_Pick extends PodsField {
 				$args['separator'] = $separator;
 
 				// Replicate separator behavior.
-				$args['and'] = $args['separator'] . ' ';
+				$args['and'] = $args['separator'];
 			}
 		}
 

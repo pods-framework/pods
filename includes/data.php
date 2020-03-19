@@ -1649,7 +1649,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		'fields'      => $fields,
 		'and'         => $and,
 		'field_index' => $field_index,
-		'separator'   => ', ',
+		'separator'   => null,
 		'serial'      => true,
 	);
 
@@ -1722,6 +1722,10 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	}
 
 	$original_value = $value;
+
+	if ( in_array( $params->separator, array( '', null ), true ) ) {
+		$params->separator = ', ';
+	}
 
 	if ( null === $params->and ) {
 		$params->and = ' ' . __( 'and', 'pods' ) . ' ';
@@ -1820,6 +1824,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 				$value .= $serial_comma;
 			}
 		}
+
 		$value = trim( $value );
 		$last  = trim( $last );
 

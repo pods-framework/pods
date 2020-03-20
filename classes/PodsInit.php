@@ -128,8 +128,97 @@ class PodsInit {
 
 		add_action( 'plugins_loaded', [ $this, 'plugins_loaded' ], 0 );
 		add_action( 'plugins_loaded', [ $this, 'activate_install' ], 9 );
-
+		add_action( 'after_setup_theme', [ $this, 'after_setup_theme' ] );
 		add_action( 'wp_loaded', [ $this, 'flush_rewrite_rules' ] );
+
+		// Setup common info for after TEC/ET load.
+		add_action( 'plugins_loaded', [ $this, 'maybe_set_common_lib_info' ], 1 );
+		add_action( 'tribe_common_loaded', [ $this, 'run' ], 0 );
+	}
+
+	/**
+	 * Setup of Common Library.
+	 *
+	 * @since 2.8
+	 */
+	public function maybe_set_common_lib_info() {
+		$common_version = file_get_contents( PODS_DIR . 'common/src/Tribe/Main.php' );
+
+		// If there isn't a tribe-common version, bail.
+		if ( ! preg_match( "/const\s+VERSION\s*=\s*'([^']+)'/m", $common_version, $matches ) ) {
+			add_action( 'admin_head', [ $this, 'missing_common_libs' ] );
+
+			return;
+		}
+
+		$common_version = $matches[1];
+
+		/**
+		 * If we don't have a version of Common or a Older version of the Lib
+		 * overwrite what should be loaded by the auto-loader.
+		 */
+		if ( empty( $GLOBALS['tribe-common-info'] ) || version_compare( $GLOBALS['tribe-common-info']['version'], $common_version, '<' ) ) {
+			$GLOBALS['tribe-common-info'] = [
+				'dir'     => PODS_DIR . 'common/src/Tribe',
+				'version' => $common_version,
+			];
+
+			/**
+			 * After this method we can use any `Tribe__` and `\Pods\...` classes
+			 */
+			$this->init_autoloading();
+
+			// Start up Common.
+			$main = Tribe__Main::instance();
+			$main->plugins_loaded();
+		}
+	}
+
+	/**
+	 * Display a missing-tribe-common library error.
+	 *
+	 * @since 2.8
+	 */
+	public function missing_common_libs() {
+		?>
+		<div class="error">
+			<p>
+				<?php
+				esc_html_e(
+					'It appears as if the tribe-common libraries cannot be found! The directory should be in the "common/" directory in the Pods plugin.',
+					'pods'
+				);
+				?>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Autoloader for Pods classes.
+	 *
+	 * @param string $class Class name.
+	 *
+	 * @since 2.8
+	 */
+	public static function autoload_class( $class ) {
+		// Bypass anything that doesn't start with Pods
+		if ( 0 !== strpos( $class, 'Pods' ) ) {
+			return;
+		}
+
+		$custom = array(
+			'Pods_CLI_Command'    => PODS_DIR . 'classes/cli/Pods_CLI_Command.php',
+			'PodsAPI_CLI_Command' => PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php',
+		);
+
+		if ( isset( $custom[ $class ] ) ) {
+			$path = $custom[ $class ];
+
+			require_once $path;
+
+			return;
+		}
 
 		// Setup common info for after TEC/ET load.
 		add_action( 'plugins_loaded', [ $this, 'maybe_set_common_lib_info' ], 1 );
@@ -320,6 +409,23 @@ class PodsInit {
 		}
 
 		return Tribe__Autoloader::instance();
+	}
+
+	/**
+	 * Add compatibility for other plugins.
+	 *
+	 * @since 2.7.17
+	 */
+	public function after_setup_theme() {
+		if ( ! defined( 'PODS_COMPATIBILITY' ) ) {
+			define( 'PODS_COMPATIBILITY', true );
+		}
+
+		if ( ! PODS_COMPATIBILITY ) {
+			return;
+		}
+
+		require_once PODS_DIR . 'includes/compatibility/acf.php';
 	}
 
 	/**

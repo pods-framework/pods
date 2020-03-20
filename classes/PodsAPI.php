@@ -1487,7 +1487,7 @@ class PodsAPI {
 			'extend_storage_taxonomy' => '',
 		);
 
-		if( !function_exists( 'get_term_meta' ) ) {
+		if( ! function_exists( 'get_term_meta' ) ) {
 			$defaults['create_storage_taxonomy'] = 'none';
 			$defaults['extend_storage_taxonomy' ] = 'table' ;
 		}

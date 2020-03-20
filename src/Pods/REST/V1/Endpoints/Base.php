@@ -6,6 +6,7 @@ use Tribe__REST__Messages_Interface as Messages_Interface;
 use Tribe__REST__Post_Repository as Post_Repository;
 use Tribe__Validator__Interface as Validator_Interface;
 use Tribe__Utils__Array as Utils_Array;
+use WP_Error;
 
 /**
  * Class Base
@@ -214,5 +215,49 @@ abstract class Base {
 		$namespace = $main->get_pods_route_namespace();
 
 		return $namespace . $this->route;
+	}
+
+	/**
+	 * Get the response using PodsAPI::load_pod() arguments.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array           $args    List of PodsAPI::load_pod() arguments.
+	 * @param WP_REST_Request $request The request object.
+	 *
+	 * @return array|WP_Error The response or an error.
+	 * @throws \Exception
+	 */
+	public function get_pod_by_args( array $args, WP_REST_Request $request ) {
+		$api = pods_api();
+
+		$api->display_errors = 'wp_error';
+
+		$pod = $api->load_pod( $args );
+
+		if ( is_wp_error( $pod ) ) {
+			return $pod;
+		}
+
+		if ( empty( $pod ) ) {
+			// @todo Fix error messaging.
+			return new WP_Error( 'no', 'Pod not found' );
+		}
+
+		$data = [
+			'pod' => $pod->get_args(),
+		];
+
+		if ( 1 === $request['include_fields'] ) {
+			// Setup fields.
+			$data['fields'] = $pod->get_fields();
+		}
+
+		if ( 1 === $request['include_groups'] ) {
+			// Setup fields.
+			$data['groups'] = $pod->get_groups();
+		}
+
+		return $data;
 	}
 }

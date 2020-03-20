@@ -122,7 +122,7 @@ class Pod
 	public function get( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		return $this->get_by_args( [
+		return $this->get_pod_by_args( [
 			'id' => $id,
 		], $request );
 	}
@@ -163,10 +163,27 @@ class Pod
 	 * @since 2.8
 	 */
 	public function update( WP_REST_Request $request ) {
-		$id = $request['id'];
+		return $this->update_by_args( 'id', 'id', $request );
+	}
 
-		$pod = $this->get_by_args( [
-			'id' => $id,
+	/**
+	 * Handle updating of object using specific REST / Pods API arguments.
+	 *
+	 * @since 2.8
+	 *
+	 * @param string          $rest_param REST API parameter name to look for.
+	 * @param string          $api_arg    Pods API argument name to use for lookups.
+	 * @param WP_REST_Request $request    REST API Request object.
+	 *
+	 * @return array|WP_Error
+	 *
+	 * @throws \Exception
+	 */
+	public function update_by_args( $rest_param, $api_arg, WP_REST_Request $request ) {
+		$identifier = $request[ $rest_param ];
+
+		$pod = $this->get_pod_by_args( [
+			$api_arg => $identifier,
 		], $request );
 
 		if ( is_wp_error( $pod ) ) {
@@ -209,11 +226,15 @@ class Pod
 		$params['pod'] = $pod;
 
 		// Handle update.
-		pods_api()->save_pod( $params );
+		$api = pods_api();
+
+		$api->display_errors = 'wp_error';
+
+		$api->save_pod( $params );
 
 		// Return the refreshed pod data.
-		return $this->get_by_args( [
-			'id'           => $id,
+		return $this->get_pod_by_args( [
+			$api_arg       => $identifier,
 			'bypass_cache' => true,
 		], $request );
 	}
@@ -224,8 +245,7 @@ class Pod
 	 * @since 2.8
 	 */
 	public function can_edit() {
-		// @todo Check Pods permissions
-		return true;
+		return current_user_can( 'pods' );
 	}
 
 	/**
@@ -253,9 +273,25 @@ class Pod
 	public function delete( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		return $this->get_by_args( [
+		$api = pods_api();
+
+		$api->display_errors = 'wp_error';
+
+		$deleted = $api->delete_pod( [
 			'id' => $id,
-		], $request );
+		] );
+
+		if ( is_wp_error( $deleted ) ) {
+			return $deleted;
+		}
+
+		if ( ! $deleted ) {
+			// @todo Fix error messaging.
+			return new WP_Error( 'not-deleted', 'pod not deleted' );
+		}
+
+		// Empty success.
+		return [];
 	}
 
 	/**
@@ -264,43 +300,6 @@ class Pod
 	 * @since 2.8
 	 */
 	public function can_delete() {
-		// @todo Check Pods permissions
-		return true;
-	}
-
-	/**
-	 * Get the response using PodsAPI::load_pod() arguments.
-	 *
-	 * @since 2.8
-	 *
-	 * @param array           $args    List of PodsAPI::load_pod() arguments.
-	 * @param WP_REST_Request $request The request object.
-	 *
-	 * @return array|WP_Error The response or an error.
-	 * @throws \Exception
-	 */
-	public function get_by_args( array $args, WP_REST_Request $request ) {
-		$pod = pods_api()->load_pod( $args );
-
-		if ( empty( $pod ) ) {
-			// @todo Fix error messaging.
-			return new WP_Error( 'no', 'Pod not found' );
-		}
-
-		$data = [
-			'pod' => $pod,
-		];
-
-		if ( 1 === $request['include_fields'] ) {
-			// Setup fields.
-			$data['fields'] = $pod->get_fields();
-		}
-
-		if ( 1 === $request['include_groups'] ) {
-			// Setup fields.
-			$data['groups'] = $pod->get_groups();
-		}
-
-		return $data;
+		return current_user_can( 'pods' );
 	}
 }

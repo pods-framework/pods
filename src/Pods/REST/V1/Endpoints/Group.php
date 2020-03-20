@@ -117,7 +117,7 @@ class Group
 	public function get( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		return $this->get_by_args( [
+		return $this->get_group_by_args( [
 			'id' => $id,
 		], $request );
 	}
@@ -147,7 +147,7 @@ class Group
 	public function update( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		return $this->get_by_args( [
+		return $this->get_group_by_args( [
 			'id' => $id,
 		], $request );
 	}
@@ -158,8 +158,7 @@ class Group
 	 * @since 2.8
 	 */
 	public function can_edit() {
-		// @todo Check Pods permissions
-		return true;
+		return current_user_can( 'pods' );
 	}
 
 	/**
@@ -187,7 +186,7 @@ class Group
 	public function delete( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		return $this->get_by_args( [
+		return $this->get_group_by_args( [
 			'id' => $id,
 		], $request );
 	}
@@ -198,8 +197,7 @@ class Group
 	 * @since 2.8
 	 */
 	public function can_delete() {
-		// @todo Check Pods permissions
-		return true;
+		return current_user_can( 'pods' );
 	}
 
 	/**
@@ -213,8 +211,12 @@ class Group
 	 * @return array|WP_Error The response or an error.
 	 * @throws \Exception
 	 */
-	public function get_by_args( array $args, WP_REST_Request $request ) {
-		$group = pods_api()->load_group( $args );
+	public function get_group_by_args( array $args, WP_REST_Request $request ) {
+		$api = pods_api();
+
+		$api->display_errors = 'wp_error';
+
+		$group = $api->load_group( $args );
 
 		if ( empty( $group ) ) {
 			// @todo Fix error messaging.

@@ -43,7 +43,7 @@ class Group_Slug
 	public function get( WP_REST_Request $request ) {
 		$slug = $request['slug'];
 
-		return $this->get_by_args( [
+		return $this->get_group_by_args( [
 			'name' => $slug,
 		], $request );
 	}
@@ -72,19 +72,9 @@ class Group_Slug
 	public function update( WP_REST_Request $request ) {
 		$slug = $request['slug'];
 
-		return $this->get_by_args( [
+		return $this->get_group_by_args( [
 			'name' => $slug,
 		], $request );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since 2.8
-	 */
-	public function can_edit() {
-		// @todo Check Pods permissions
-		return true;
 	}
 
 	/**
@@ -111,18 +101,8 @@ class Group_Slug
 	public function delete( WP_REST_Request $request ) {
 		$slug = $request['slug'];
 
-		return $this->get_by_args( [
+		return $this->get_group_by_args( [
 			'name' => $slug,
 		], $request );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since 2.8
-	 */
-	public function can_delete() {
-		// @todo Check Pods permissions
-		return true;
 	}
 }

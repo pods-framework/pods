@@ -38,7 +38,7 @@ class Pod_Slug
 	public function get( WP_REST_Request $request ) {
 		$slug = $request['slug'];
 
-		return $this->get_by_args( [
+		return $this->get_pod_by_args( [
 			'name' => $slug,
 		], $request );
 	}
@@ -67,19 +67,9 @@ class Pod_Slug
 	public function update( WP_REST_Request $request ) {
 		$slug = $request['slug'];
 
-		return $this->get_by_args( [
+		return $this->get_pod_by_args( [
 			'name' => $slug,
 		], $request );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since 2.8
-	 */
-	public function can_edit() {
-		// @todo Check Pods permissions
-		return true;
 	}
 
 	/**
@@ -106,18 +96,24 @@ class Pod_Slug
 	public function delete( WP_REST_Request $request ) {
 		$slug = $request['slug'];
 
-		return $this->get_by_args( [
-			'name' => $slug,
-		], $request );
-	}
+		$api = pods_api();
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since 2.8
-	 */
-	public function can_delete() {
-		// @todo Check Pods permissions
-		return true;
+		$api->display_errors = 'wp_error';
+
+		$deleted = $api->delete_pod( [
+			'name' => $slug,
+		] );
+
+		if ( is_wp_error( $deleted ) ) {
+			return $deleted;
+		}
+
+		if ( ! $deleted ) {
+			// @todo Fix error messaging.
+			return new WP_Error( 'not-deleted', 'pod not deleted' );
+		}
+
+		// Empty success.
+		return [];
 	}
 }

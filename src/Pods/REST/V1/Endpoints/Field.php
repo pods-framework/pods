@@ -111,7 +111,7 @@ class Field
 	public function get( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		return $this->get_by_args( [
+		return $this->get_field_by_args( [
 			'id' => $id,
 		], $request );
 	}
@@ -141,7 +141,7 @@ class Field
 	public function update( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		return $this->get_by_args( [
+		return $this->get_field_by_args( [
 			'id' => $id,
 		], $request );
 	}
@@ -152,8 +152,7 @@ class Field
 	 * @since 2.8
 	 */
 	public function can_edit() {
-		// @todo Check Pods permissions
-		return true;
+		return current_user_can( 'pods' );
 	}
 
 	/**
@@ -181,7 +180,7 @@ class Field
 	public function delete( WP_REST_Request $request ) {
 		$id = $request['id'];
 
-		return $this->get_by_args( [
+		return $this->get_field_by_args( [
 			'id' => $id,
 		], $request );
 	}
@@ -192,8 +191,7 @@ class Field
 	 * @since 2.8
 	 */
 	public function can_delete() {
-		// @todo Check Pods permissions
-		return true;
+		return current_user_can( 'pods' );
 	}
 
 	/**
@@ -207,8 +205,12 @@ class Field
 	 * @return array|WP_Error The response or an error.
 	 * @throws \Exception
 	 */
-	public function get_by_args( array $args, WP_REST_Request $request ) {
-		$field = pods_api()->load_field( $args );
+	public function get_field_by_args( array $args, WP_REST_Request $request ) {
+		$api = pods_api();
+
+		$api->display_errors = 'wp_error';
+
+		$field = $api->load_field( $args );
 
 		if ( empty( $field ) ) {
 			// @todo Fix error messaging.

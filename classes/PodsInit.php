@@ -128,7 +128,7 @@ class PodsInit {
 
 		add_action( 'plugins_loaded', [ $this, 'plugins_loaded' ], 0 );
 		add_action( 'plugins_loaded', [ $this, 'activate_install' ], 9 );
-
+		add_action( 'after_setup_theme', [ $this, 'after_setup_theme' ] );
 		add_action( 'wp_loaded', [ $this, 'flush_rewrite_rules' ] );
 
 		// Setup common info for after TEC/ET load.
@@ -320,6 +320,23 @@ class PodsInit {
 		}
 
 		return Tribe__Autoloader::instance();
+	}
+
+	/**
+	 * Add compatibility for other plugins.
+	 *
+	 * @since 2.7.17
+	 */
+	public function after_setup_theme() {
+		if ( ! defined( 'PODS_COMPATIBILITY' ) ) {
+			define( 'PODS_COMPATIBILITY', true );
+		}
+
+		if ( ! PODS_COMPATIBILITY ) {
+			return;
+		}
+
+		require_once PODS_DIR . 'includes/compatibility/acf.php';
 	}
 
 	/**

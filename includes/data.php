@@ -1599,7 +1599,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		'fields'      => $fields,
 		'and'         => $and,
 		'field_index' => $field_index,
-		'separator'   => ',',
+		'separator'   => null,
 		'serial'      => true,
 	);
 
@@ -1661,12 +1661,6 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		return $value;
 	}
 
-	if ( null === $params->and ) {
-		$params->and = ' ' . __( 'and', 'pods' ) . ' ';
-	}
-
-	$last = '';
-
 	// If something happens with table info, and this is a single select relationship, avoid letting user pass through.
 	if ( isset( $value['user_pass'] ) ) {
 		unset( $value['user_pass'] );
@@ -1678,6 +1672,38 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	}
 
 	$original_value = $value;
+
+	if ( in_array( $params->separator, array( '', null ), true ) ) {
+		$params->separator = ', ';
+	}
+
+	if ( null === $params->and ) {
+		$params->and = ' ' . __( 'and', 'pods' ) . ' ';
+	}
+
+	/**
+	 * Allow filtering the "and" content used for pods_serial_comma.
+	 *
+	 * @since 2.7.17
+	 *
+	 * @param string|null $and The "and" content used, return null to disable.
+	 * @param string $value    The value input into pods_serial_comma.
+	 * @param object $params   The list of the setup parameters for pods_serial_comma.
+	 */
+	$params->and = apply_filters( 'pods_serial_comma_and', $params->and, $value, $params );
+
+	/**
+	 * Allow filtering the "separator" content used for pods_serial_comma.
+	 *
+	 * @since 2.7.17
+	 *
+	 * @param string $separator The "separator" content used (default ", ").
+	 * @param string $value     The value input into pods_serial_comma.
+	 * @param object $params    The list of the setup parameters for pods_serial_comma.
+	 */
+	$params->separator = apply_filters( 'pods_serial_comma_separator', $params->separator, $value, $params );
+
+	$last = '';
 
 	if ( ! empty( $value ) ) {
 		$last = array_pop( $value );
@@ -1717,7 +1743,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 				if ( null !== $params->field_index && isset( $v[ $params->field_index ] ) ) {
 					$v = $v[ $params->field_index ];
 				} elseif ( $simple ) {
-					$v = trim( implode( $params->separator . ' ', $v ), $params->separator . ' ' );
+					$v = trim( implode( $params->separator, $v ), $params->separator . ' ' );
 				} else {
 					unset( $value[ $k ] );
 
@@ -1728,10 +1754,27 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			$value[ $k ] = $v;
 		}
 
-		if ( 1 == count( $value ) || ! $params->serial ) {
-			$value = trim( implode( $params->separator . ' ', $value ), $params->separator . ' ' );
-		} else {
-			$value = trim( implode( $params->separator . ' ', $value ), $params->separator . ' ' ) . apply_filters( 'pods_serial_comma', $params->separator . ' ', $value, $original_value, $params );
+		$has_serial_comma = $params->serial && 1 < count( $value );
+
+		$value = trim( implode( $params->separator, $value ), $params->separator . ' ' );
+
+		// Add final serial comma.
+		if ( $has_serial_comma ) {
+			/**
+			 * Allow filtering the final serial comma (before the "and") used for pods_serial_comma.
+			 *
+			 * @since unknown
+			 *
+			 * @param string $serial_comma   The serial comma content used, return an empty string to disable (default ", ").
+			 * @param string $value          The formatted value.
+			 * @param string $original_value The original value input into pods_serial_comma.
+			 * @param object $params         The list of the setup parameters for pods_serial_comma.
+			 */
+			$serial_comma = apply_filters( 'pods_serial_comma', $params->separator, $value, $original_value, $params );
+
+			if ( '' !== $serial_comma ) {
+				$value .= $serial_comma;
+			}
 		}
 
 		$value = trim( $value );

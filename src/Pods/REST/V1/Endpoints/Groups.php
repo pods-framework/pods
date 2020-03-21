@@ -168,15 +168,24 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	 */
 	public function CREATE_args() {
 		return [
-			'name'  => [
+			'pod_id' => [
 				'type'        => 'string',
-				'description' => __( 'The new name of the Group.', 'pods' ),
+				'description' => __( 'The Pod ID.', 'pods' ),
 			],
-			'label' => [
+			'pod'    => [
+				'type'        => 'string',
+				'description' => __( 'The Pod name.', 'pods' ),
+			],
+			'name'   => [
+				'type'        => 'string',
+				'description' => __( 'The name of the Group.', 'pods' ),
+			],
+			'label'  => [
 				'type'        => 'string',
 				'description' => __( 'The singular label of the Group.', 'pods' ),
+				'required'    => true,
 			],
-			'args'  => [
+			'args'   => [
 				'required'     => false,
 				'description'  => __( 'A list of additional options to save to the Group.', 'pods' ),
 				'swagger_type' => 'array',

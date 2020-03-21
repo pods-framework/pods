@@ -98,9 +98,9 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 			'id'             => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID.', 'pods' ),
+				'description'       => __( 'The Pod ID.', 'pods' ),
 				'required'          => true,
-				'validate_callback' => [ $this->validator, 'is_positive_int' ],
+				'validate_callback' => [ $this->validator, 'is_pod_id' ],
 			],
 			'include_fields' => [
 				'type'        => 'integer',
@@ -145,9 +145,9 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 			'id'    => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID.', 'pods' ),
+				'description'       => __( 'The Pod ID.', 'pods' ),
 				'required'          => true,
-				'validate_callback' => [ $this->validator, 'is_positive_int' ],
+				'validate_callback' => [ $this->validator, 'is_pod_id' ],
 			],
 			'name'  => [
 				'type'        => 'string',
@@ -190,12 +190,21 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	 */
 	public function DELETE_args() {
 		return [
-			'id' => [
+			'id'         => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID.', 'pods' ),
+				'description'       => __( 'The Pod ID.', 'pods' ),
 				'required'          => true,
-				'validate_callback' => [ $this->validator, 'is_positive_int' ],
+				'validate_callback' => [ $this->validator, 'is_pod_id' ],
+			],
+			'delete_all' => [
+				'type'        => 'integer',
+				'description' => __( 'Whether to delete all content for Pod.', 'pods' ),
+				'default'     => 0,
+				'enum'        => [
+					0,
+					1,
+				],
 			],
 		];
 	}

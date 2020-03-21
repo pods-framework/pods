@@ -11,5 +11,67 @@ use Tribe__Validator__Interface as Validator_Interface;
  * @since 2.8
  */
 class Base extends Validator_Base implements Validator_Interface {
+	/**
+	 * Whether the value corresponds to an existing post ID or not.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 */
+	public function is_post_id( $value ) {
+		return is_numeric( $value ) && (bool) get_post( (int) $value );
+	}
 
+	/**
+	 * Whether the value corresponds to an existing Pod ID or not.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 */
+	public function is_pod_id( $value ) {
+		if ( ! is_numeric( $value ) ) {
+			return false;
+		}
+
+		return '_pods_pod' === get_post_type( (int) $value );
+	}
+
+	/**
+	 * Whether the value corresponds to an existing Group ID or not.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 */
+	public function is_group_id( $value ) {
+		if ( ! is_numeric( $value ) ) {
+			return false;
+		}
+
+		return '_pods_group' === get_post_type( (int) $value );
+	}
+
+	/**
+	 * Whether the value corresponds to an existing Field ID or not.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 */
+	public function is_field_id( $value ) {
+		if ( ! is_numeric( $value ) ) {
+			return false;
+		}
+
+		return '_pods_field' === get_post_type( (int) $value );
+	}
 }

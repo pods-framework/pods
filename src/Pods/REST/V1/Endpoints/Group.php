@@ -98,9 +98,9 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 			'id'             => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID.', 'pods' ),
+				'description'       => __( 'The Group ID.', 'pods' ),
 				'required'          => true,
-				'validate_callback' => [ $this->validator, 'is_positive_int' ],
+				'validate_callback' => [ $this->validator, 'is_group_id' ],
 			],
 			'include_fields' => [
 				'type'        => 'integer',
@@ -140,9 +140,9 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 			'id'    => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID.', 'pods' ),
+				'description'       => __( 'The Group ID.', 'pods' ),
 				'required'          => true,
-				'validate_callback' => [ $this->validator, 'is_positive_int' ],
+				'validate_callback' => [ $this->validator, 'is_group_id' ],
 			],
 			'name'  => [
 				'type'        => 'string',
@@ -192,9 +192,9 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 			'id' => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID.', 'pods' ),
+				'description'       => __( 'The Group ID.', 'pods' ),
 				'required'          => true,
-				'validate_callback' => [ $this->validator, 'is_positive_int' ],
+				'validate_callback' => [ $this->validator, 'is_group_id' ],
 			],
 		];
 	}

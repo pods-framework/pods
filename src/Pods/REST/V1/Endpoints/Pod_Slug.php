@@ -23,7 +23,7 @@ class Pod_Slug extends Pod {
 			'slug'           => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug.', 'pods' ),
+				'description' => __( 'The Pod slug.', 'pods' ),
 				'required'    => true,
 			],
 			'include_fields' => [
@@ -58,7 +58,7 @@ class Pod_Slug extends Pod {
 			'slug'     => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug.', 'pods' ),
+				'description' => __( 'The Pod slug.', 'pods' ),
 				'required'    => true,
 			],
 			'new_name' => [
@@ -93,11 +93,20 @@ class Pod_Slug extends Pod {
 	 */
 	public function DELETE_args() {
 		return [
-			'slug' => [
+			'slug'       => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug.', 'pods' ),
+				'description' => __( 'The Pod slug.', 'pods' ),
 				'required'    => true,
+			],
+			'delete_all' => [
+				'type'        => 'integer',
+				'description' => __( 'Whether to delete all content for Pod.', 'pods' ),
+				'default'     => 0,
+				'enum'        => [
+					0,
+					1,
+				],
 			],
 		];
 	}

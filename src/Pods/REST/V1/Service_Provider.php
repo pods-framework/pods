@@ -12,7 +12,7 @@ use Pods\REST\V1\Endpoints\Pod;
 use Pods\REST\V1\Endpoints\Pod_Slug;
 use Pods\REST\V1\Endpoints\Pods;
 use Pods\REST\V1\Endpoints\Swagger_Documentation;
-use Pods\REST\V1\Validator\Base;
+use Pods\REST\V1\Validator\Base as Base_Validator;
 use Tribe__Documentation__Swagger__Builder_Interface as Swagger_Builder_Interface;
 use WP_REST_Server;
 
@@ -38,7 +38,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	public function register() {
 		tribe_singleton( 'pods.rest-v1.main', Main::class );
 		tribe_singleton( 'pods.rest-v1.messages', Messages::class );
-		tribe_singleton( 'pods.rest-v1.validator', Base::class );
+		tribe_singleton( 'pods.rest-v1.validator', Base_Validator::class );
 		tribe_singleton( 'pods.rest-v1.repository', Post_Repository::class );
 		tribe_singleton( 'pods.rest-v1.endpoints.documentation', Swagger_Documentation::class, [ 'hook' ] );
 

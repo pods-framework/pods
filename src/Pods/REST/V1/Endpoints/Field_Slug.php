@@ -26,9 +26,8 @@ class Field_Slug extends Field {
 				'description' => __( 'The Field slug.', 'pods' ),
 				'required'    => true,
 			],
-			'pod_slug' => [
+			'pod'  => [
 				'type'        => 'string',
-				'in'          => 'path',
 				'description' => __( 'The Pod slug.', 'pods' ),
 				'required'    => true,
 			],
@@ -57,6 +56,11 @@ class Field_Slug extends Field {
 				'description' => __( 'The slug.', 'pods' ),
 				'required'    => true,
 			],
+			'pod'      => [
+				'type'        => 'string',
+				'description' => __( 'The Pod slug.', 'pods' ),
+				'required'    => true,
+			],
 			'new_name' => [
 				'type'        => 'string',
 				'description' => __( 'The new name of the Field.', 'pods' ),
@@ -64,6 +68,10 @@ class Field_Slug extends Field {
 			'label'    => [
 				'type'        => 'string',
 				'description' => __( 'The singular label of the Field.', 'pods' ),
+			],
+			'type'     => [
+				'type'        => 'string',
+				'description' => __( 'The type of the Field.', 'pods' ),
 			],
 			'args'     => [
 				'required'     => false,
@@ -93,6 +101,11 @@ class Field_Slug extends Field {
 				'type'        => 'string',
 				'in'          => 'path',
 				'description' => __( 'The slug.', 'pods' ),
+				'required'    => true,
+			],
+			'pod'  => [
+				'type'        => 'string',
+				'description' => __( 'The Pod slug.', 'pods' ),
 				'required'    => true,
 			],
 		];

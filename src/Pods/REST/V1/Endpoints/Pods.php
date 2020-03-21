@@ -191,6 +191,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 				'type'        => 'string',
 				'description' => __( 'The type of the Pod.', 'pods' ),
 				'enum'        => PodsForm::pod_types_list(),
+				'required'    => true,
 			],
 			'storage'       => [
 				'type'        => 'string',

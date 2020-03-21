@@ -184,11 +184,13 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 			'label'  => [
 				'type'        => 'string',
 				'description' => __( 'The singular label of the Field.', 'pods' ),
+				'required'    => true,
 			],
 			'type'   => [
 				'type'        => 'string',
 				'description' => __( 'The type of the Field.', 'pods' ),
 				'enum'        => PodsForm::field_types_list(),
+				'required'    => true,
 			],
 			'args'   => [
 				'required'     => false,

@@ -283,15 +283,39 @@ abstract class Base {
 	 * @throws Exception
 	 */
 	public function create_by_args( WP_REST_REQUEST $request, $return_id = false ) {
-		$params = [
-			'name'  => $request->get_param( 'name' ),
-			'label' => $request->get_param( 'label' ),
-			'type'  => $request->get_param( 'type' ),
-		];
+		$params = $this->setup_params( $request );
 
 		$api = pods_api();
 
 		$api->display_errors = 'wp_error';
+
+		if ( empty( $params['name'] ) && empty( $params['label'] ) ) {
+			return new WP_Error( 'rest-object-not-added-fields-required', sprintf( __( '%s not added, name or label is required.', 'pods' ), ucwords( $this->object ) ) );
+		}
+
+		if ( empty( $params['name'] ) ) {
+			$params['name'] = pods_clean_name( $params['label'], true );
+		}
+
+		$load_method = 'load_' . $this->object;
+
+		$load_params = [
+			'name' => $params['name'],
+		];
+
+		if ( ! empty( $params['pod'] ) ) {
+			$load_params['pod'] = $params['pod'];
+		}
+
+		if ( ! empty( $params['pod_id'] ) ) {
+			$load_params['pod_id'] = $params['pod_id'];
+		}
+
+		$loaded_object = $api->$load_method( $load_params );
+
+		if ( $loaded_object && ! is_wp_error( $loaded_object ) ) {
+			return new WP_Error( 'rest-object-not-added-already-exists', sprintf( __( '%s not added, it already exists.', 'pods' ), ucwords( $this->object ) ) );
+		}
 
 		$method = 'save_' . $this->object;
 
@@ -440,7 +464,7 @@ abstract class Base {
 	 *
 	 * @since 2.8
 	 *
-	 * @param string          $rest_param REST API parameter name to look for.
+	 * @param string|array    $rest_param REST API parameter name to look for OR arguments to pass to loader.
 	 * @param string          $api_arg    Pods API argument name to use for lookups.
 	 * @param WP_REST_Request $request    REST API Request object.
 	 *
@@ -449,7 +473,21 @@ abstract class Base {
 	 * @throws Exception
 	 */
 	public function delete_by_args( $rest_param, $api_arg, WP_REST_Request $request ) {
-		$identifier = $request[ $rest_param ];
+		if ( is_array( $rest_param ) ) {
+			$args = $rest_param;
+		} else {
+			$identifier = $request[ $rest_param ];
+
+			$args = [
+				$api_arg => $identifier,
+			];
+
+			if ( $rest_param !== $api_arg ) {
+				unset( $request[ $rest_param ] );
+			}
+		}
+
+		$args = array_merge( $request->get_params(), $args );
 
 		$api = pods_api();
 
@@ -457,9 +495,7 @@ abstract class Base {
 
 		$method = 'delete_' . $this->object;
 
-		$deleted = $api->$method( [
-			$api_arg => $identifier,
-		] );
+		$deleted = $api->$method( $args );
 
 		if ( is_wp_error( $deleted ) ) {
 			return $deleted;
@@ -469,8 +505,9 @@ abstract class Base {
 			return new WP_Error( 'rest-object-not-deleted', sprintf( __( '%s not deleted.', 'pods' ), ucwords( $this->object ) ) );
 		}
 
-		// Empty success.
-		return [];
+		return [
+			'status' => 'deleted',
+		];
 	}
 
 	/**

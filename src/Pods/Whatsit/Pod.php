@@ -19,6 +19,18 @@ class Pod extends Whatsit {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function get_args() {
+		$args = parent::get_args();
+
+		// Pods generally have no parent, group, or order.
+		unset( $args['parent'], $args['group'], $args['weight'] );
+
+		return $args;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function get_object_fields() {
 		if ( array() === $this->_object_fields ) {
 			return array();

@@ -169,20 +169,28 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	 */
 	public function CREATE_args() {
 		return [
-			'name'  => [
+			'pod_id' => [
 				'type'        => 'string',
-				'description' => __( 'The new name of the Field.', 'pods' ),
+				'description' => __( 'The Pod ID.', 'pods' ),
 			],
-			'label' => [
+			'pod'    => [
+				'type'        => 'string',
+				'description' => __( 'The Pod name.', 'pods' ),
+			],
+			'name'   => [
+				'type'        => 'string',
+				'description' => __( 'The name of the Field.', 'pods' ),
+			],
+			'label'  => [
 				'type'        => 'string',
 				'description' => __( 'The singular label of the Field.', 'pods' ),
 			],
-			'type'  => [
+			'type'   => [
 				'type'        => 'string',
 				'description' => __( 'The type of the Field.', 'pods' ),
 				'enum'        => PodsForm::field_types_list(),
 			],
-			'args'  => [
+			'args'   => [
 				'required'     => false,
 				'description'  => __( 'A list of additional options to save to the Field.', 'pods' ),
 				'swagger_type' => 'array',

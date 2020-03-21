@@ -281,6 +281,22 @@ abstract class Base {
 			$rest_method = $method_mapping[ $method ];
 		}
 
+		$permissions_mapping = [
+			'list'   => 'can_read',
+			'add'    => 'can_create',
+			'get'    => 'can_read',
+			'update' => 'can_edit',
+			'delete' => 'can_delete',
+		];
+
+		if ( isset( $permissions_mapping[ $method ] ) ) {
+			$permissions_method = $permissions_mapping[ $method ];
+
+			if ( method_exists( $endpoint, $permissions_method ) && ! $endpoint->$permissions_method() ) {
+				\WP_CLI::error( __( 'The current user does not have access to this endpoint.', 'pods' ) );
+			}
+		}
+
 		$route = $endpoint->get_route();
 
 		// Add numeric args.
@@ -306,7 +322,7 @@ abstract class Base {
 
 		if ( null !== $response ) {
 			if ( is_object( $response ) || is_array( $response ) ) {
-				$response = wp_json_encode( $response );
+				$response = wp_json_encode( $response, JSON_PRETTY_PRINT );
 			}
 
 			WP_CLI::line( $response );

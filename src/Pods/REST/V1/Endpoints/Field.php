@@ -40,11 +40,11 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 
 		return [
 			'get' => [
-				'summary'    => __( 'Returns a single ticket data', 'pods' ),
+				'summary'    => __( 'Returns a single ticket data.', 'pods' ),
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => __( 'Returns the data of the ticket with the specified post ID', 'pods' ),
+						'description' => __( 'Returns the data of the ticket with the specified post ID.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -98,7 +98,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 			'id' => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID', 'pods' ),
+				'description'       => __( 'The ID.', 'pods' ),
 				'required'          => true,
 				'validate_callback' => [ $this->validator, 'is_positive_int' ],
 			],
@@ -135,17 +135,21 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 			'id'    => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID', 'pods' ),
+				'description'       => __( 'The ID.', 'pods' ),
 				'required'          => true,
 				'validate_callback' => [ $this->validator, 'is_positive_int' ],
 			],
 			'name'  => [
 				'type'        => 'string',
-				'description' => __( 'The new name of the Field', 'pods' ),
+				'description' => __( 'The new name of the Field.', 'pods' ),
 			],
 			'label' => [
 				'type'        => 'string',
-				'description' => __( 'The singular label of the Field', 'pods' ),
+				'description' => __( 'The singular label of the Field.', 'pods' ),
+			],
+			'type'  => [
+				'type'        => 'string',
+				'description' => __( 'The type of the Field.', 'pods' ),
 			],
 			'args'  => [
 				'required'     => false,
@@ -183,7 +187,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 			'id' => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID', 'pods' ),
+				'description'       => __( 'The ID.', 'pods' ),
 				'required'          => true,
 				'validate_callback' => [ $this->validator, 'is_positive_int' ],
 			],

@@ -41,7 +41,7 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => __( 'Returns all the tickets matching the search criteria', 'pods' ),
+						'description' => __( 'Returns all the tickets matching the search criteria.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -50,15 +50,15 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 										'rest_url'    => [
 											'type'        => 'string',
 											'format'      => 'uri',
-											'description' => __( 'This results page REST URL', 'pods' ),
+											'description' => __( 'This results page REST URL.', 'pods' ),
 										],
 										'total'       => [
 											'type'        => 'integer',
-											'description' => __( 'The total number of results across all pages', 'pods' ),
+											'description' => __( 'The total number of results across all pages.', 'pods' ),
 										],
 										'total_pages' => [
 											'type'        => 'integer',
-											'description' => __( 'The total number of result pages matching the search criteria', 'pods' ),
+											'description' => __( 'The total number of result pages matching the search criteria.', 'pods' ),
 										],
 										'tickets'     => [
 											'type'  => 'array',
@@ -70,7 +70,7 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 						],
 					],
 					'400' => [
-						'description' => __( 'One or more of the specified query variables has a bad format', 'pods' ),
+						'description' => __( 'One or more of the specified query variables has a bad format.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -168,12 +168,18 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	 */
 	public function CREATE_args() {
 		return [
-			'provider' => [
-				'type'              => 'string',
-				'in'                => 'body',
-				'required'          => true,
-				'validate_callback' => [ $this->validator, 'is_string' ],
-				'sanitize_callback' => 'sanitize_text_field',
+			'name'  => [
+				'type'        => 'string',
+				'description' => __( 'The new name of the Group.', 'pods' ),
+			],
+			'label' => [
+				'type'        => 'string',
+				'description' => __( 'The singular label of the Group.', 'pods' ),
+			],
+			'args'  => [
+				'required'     => false,
+				'description'  => __( 'A list of additional options to save to the Group.', 'pods' ),
+				'swagger_type' => 'array',
 			],
 		];
 	}

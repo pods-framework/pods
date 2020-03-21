@@ -3,6 +3,7 @@
 namespace Pods\REST\V1\Endpoints;
 
 use Exception;
+use Pods\Whatsit;
 use Tribe__REST__Messages_Interface as Messages_Interface;
 use Tribe__REST__Post_Repository as Post_Repository;
 use Tribe__Utils__Array as Utils_Array;
@@ -85,7 +86,7 @@ abstract class Base {
 			return $args;
 		}
 
-		$no_description = __( 'No description provided', 'pods' );
+		$no_description = __( 'No description provided.', 'pods' );
 
 		$defaults = array_merge( [
 			'in'          => 'body',
@@ -227,11 +228,11 @@ abstract class Base {
 		}
 
 		if ( ! empty( $request['types'] ) ) {
-			$params['type'] = Tribe__Utils__Array::list_to_array( $request['types'] );
+			$params['type'] = Utils_Array::list_to_array( $request['types'] );
 		}
 
 		if ( ! empty( $request['ids'] ) ) {
-			$params['id'] = Tribe__Utils__Array::list_to_array( $request['ids'] );
+			$params['id'] = Utils_Array::list_to_array( $request['ids'] );
 		}
 
 		if ( ! empty( $request['args'] ) ) {
@@ -301,7 +302,7 @@ abstract class Base {
 		}
 
 		if ( empty( $id ) ) {
-			return new WP_Error( 'rest-object-not-saved', sprintf( __( '%s not saved.', 'pods' ), ucwords( $this->object ) ) );
+			return new WP_Error( 'rest-object-not-added', sprintf( __( '%s not added.', 'pods' ), ucwords( $this->object ) ) );
 		}
 
 		return $this->get_by_args( [
@@ -403,7 +404,7 @@ abstract class Base {
 			return $object;
 		}
 
-		if ( empty( $object ) ) {
+		if ( ! $object instanceof Whatsit ) {
 			return new WP_Error( 'rest-object-not-found', sprintf( __( '%s not found.', 'pods' ), ucwords( $this->object ) ) );
 		}
 
@@ -414,16 +415,62 @@ abstract class Base {
 		// Pass the object for reuse.
 		$params[ $this->object ] = $object;
 
+		if ( in_array( $this->object, [ 'group', 'field' ], true ) ) {
+			$params['pod'] = $object->get_parent_object();
+		}
+
 		$save_method = 'save_' . $this->object;
 
 		// Handle save.
-		$api->$save_method( $params );
+		$saved = $api->$save_method( $params );
+
+		if ( is_wp_error( $saved ) ) {
+			return $saved;
+		}
 
 		// Return the refreshed object data.
 		return $this->get_by_args( [
 			$api_arg       => $identifier,
 			'bypass_cache' => true,
 		], $api_arg, $request );
+	}
+
+	/**
+	 * Handle deleting the object using specific REST / Pods API arguments.
+	 *
+	 * @since 2.8
+	 *
+	 * @param string          $rest_param REST API parameter name to look for.
+	 * @param string          $api_arg    Pods API argument name to use for lookups.
+	 * @param WP_REST_Request $request    REST API Request object.
+	 *
+	 * @return array|WP_Error
+	 *
+	 * @throws Exception
+	 */
+	public function delete_by_args( $rest_param, $api_arg, WP_REST_Request $request ) {
+		$identifier = $request[ $rest_param ];
+
+		$api = pods_api();
+
+		$api->display_errors = 'wp_error';
+
+		$method = 'delete_' . $this->object;
+
+		$deleted = $api->$method( [
+			$api_arg => $identifier,
+		] );
+
+		if ( is_wp_error( $deleted ) ) {
+			return $deleted;
+		}
+
+		if ( ! $deleted ) {
+			return new WP_Error( 'rest-object-not-deleted', sprintf( __( '%s not deleted.', 'pods' ), ucwords( $this->object ) ) );
+		}
+
+		// Empty success.
+		return [];
 	}
 
 	/**
@@ -464,44 +511,6 @@ abstract class Base {
 		}
 
 		return $params;
-	}
-
-	/**
-	 * Handle deleting the object using specific REST / Pods API arguments.
-	 *
-	 * @since 2.8
-	 *
-	 * @param string          $rest_param REST API parameter name to look for.
-	 * @param string          $api_arg    Pods API argument name to use for lookups.
-	 * @param WP_REST_Request $request    REST API Request object.
-	 *
-	 * @return array|WP_Error
-	 *
-	 * @throws Exception
-	 */
-	public function delete_by_args( $rest_param, $api_arg, WP_REST_Request $request ) {
-		$identifier = $request[ $rest_param ];
-
-		$api = pods_api();
-
-		$api->display_errors = 'wp_error';
-
-		$method = 'delete_' . $this->object;
-
-		$deleted = $api->$method( [
-			$api_arg => $identifier,
-		] );
-
-		if ( is_wp_error( $deleted ) ) {
-			return $deleted;
-		}
-
-		if ( ! $deleted ) {
-			return new WP_Error( 'rest-object-not-deleted', sprintf( __( '%s not deleted.', 'pods' ), ucwords( $this->object ) ) );
-		}
-
-		// Empty success.
-		return [];
 	}
 
 	/**

@@ -23,12 +23,12 @@ class Group_Slug extends Group {
 			'slug'           => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug', 'pods' ),
+				'description' => __( 'The slug.', 'pods' ),
 				'required'    => true,
 			],
 			'include_fields' => [
 				'type'        => 'integer',
-				'description' => __( 'Whether to include fields (default: off)', 'pods' ),
+				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
 				'default'     => 0,
 			],
 		];
@@ -53,16 +53,16 @@ class Group_Slug extends Group {
 			'slug'     => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug', 'pods' ),
+				'description' => __( 'The slug.', 'pods' ),
 				'required'    => true,
 			],
 			'new_name' => [
 				'type'        => 'string',
-				'description' => __( 'The new name of the Group', 'pods' ),
+				'description' => __( 'The new name of the Group.', 'pods' ),
 			],
 			'label'    => [
 				'type'        => 'string',
-				'description' => __( 'The singular label of the Group', 'pods' ),
+				'description' => __( 'The singular label of the Group.', 'pods' ),
 			],
 			'args'     => [
 				'required'     => false,
@@ -91,7 +91,7 @@ class Group_Slug extends Group {
 			'slug' => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug', 'pods' ),
+				'description' => __( 'The slug.', 'pods' ),
 				'required'    => true,
 			],
 		];

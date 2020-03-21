@@ -40,11 +40,11 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 
 		return [
 			'get' => [
-				'summary'    => __( 'Returns a single ticket data', 'pods' ),
+				'summary'    => __( 'Returns a single ticket data.', 'pods' ),
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => __( 'Returns the data of the ticket with the specified post ID', 'pods' ),
+						'description' => __( 'Returns the data of the ticket with the specified post ID.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -98,13 +98,13 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 			'id'             => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID', 'pods' ),
+				'description'       => __( 'The ID.', 'pods' ),
 				'required'          => true,
 				'validate_callback' => [ $this->validator, 'is_positive_int' ],
 			],
 			'include_fields' => [
 				'type'        => 'integer',
-				'description' => __( 'Whether to include fields (default: off)', 'pods' ),
+				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
 				'default'     => 0,
 			],
 		];
@@ -140,17 +140,21 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 			'id'    => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID', 'pods' ),
+				'description'       => __( 'The ID.', 'pods' ),
 				'required'          => true,
 				'validate_callback' => [ $this->validator, 'is_positive_int' ],
 			],
 			'name'  => [
 				'type'        => 'string',
-				'description' => __( 'The new name of the Group', 'pods' ),
+				'description' => __( 'The new name of the Group.', 'pods' ),
 			],
 			'label' => [
 				'type'        => 'string',
-				'description' => __( 'The singular label of the Group', 'pods' ),
+				'description' => __( 'The singular label of the Group.', 'pods' ),
+			],
+			'type'  => [
+				'type'        => 'string',
+				'description' => __( 'The type of the Group.', 'pods' ),
 			],
 			'args'  => [
 				'required'     => false,
@@ -188,7 +192,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 			'id' => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID', 'pods' ),
+				'description'       => __( 'The ID.', 'pods' ),
 				'required'          => true,
 				'validate_callback' => [ $this->validator, 'is_positive_int' ],
 			],

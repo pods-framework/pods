@@ -23,17 +23,17 @@ class Pod_Slug extends Pod {
 			'slug'           => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug', 'pods' ),
+				'description' => __( 'The slug.', 'pods' ),
 				'required'    => true,
 			],
 			'include_fields' => [
 				'type'        => 'integer',
-				'description' => __( 'Whether to include fields (default: off)', 'pods' ),
+				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
 				'default'     => 0,
 			],
 			'include_groups' => [
 				'type'        => 'integer',
-				'description' => __( 'Whether to include groups (default: off)', 'pods' ),
+				'description' => __( 'Whether to include groups (default: off).', 'pods' ),
 				'default'     => 0,
 			],
 		];
@@ -58,16 +58,16 @@ class Pod_Slug extends Pod {
 			'slug'     => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug', 'pods' ),
+				'description' => __( 'The slug.', 'pods' ),
 				'required'    => true,
 			],
 			'new_name' => [
 				'type'        => 'string',
-				'description' => __( 'The new name of the Pod', 'pods' ),
+				'description' => __( 'The new name of the Pod.', 'pods' ),
 			],
 			'label'    => [
 				'type'        => 'string',
-				'description' => __( 'The singular label of the Pod', 'pods' ),
+				'description' => __( 'The singular label of the Pod.', 'pods' ),
 			],
 			'args'     => [
 				'required'     => false,
@@ -96,7 +96,7 @@ class Pod_Slug extends Pod {
 			'slug' => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug', 'pods' ),
+				'description' => __( 'The slug.', 'pods' ),
 				'required'    => true,
 			],
 		];

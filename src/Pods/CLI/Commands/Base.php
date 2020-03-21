@@ -54,6 +54,9 @@ abstract class Base {
 	 * @since 2.8
 	 */
 	public function add_commands() {
+		// Permissions are relaxed for WP-CLI context.
+		add_filter( 'pods_is_admin', '__return_true' );
+
 		if ( method_exists( $this->endpoint_archive, 'get' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'list' );
 

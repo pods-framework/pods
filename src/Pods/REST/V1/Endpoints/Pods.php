@@ -5,7 +5,6 @@ namespace Pods\REST\V1\Endpoints;
 use Tribe__Documentation__Swagger__Provider_Interface as Swagger_Interface;
 use Tribe__REST__Endpoints__CREATE_Endpoint_Interface as CREATE_Interface;
 use Tribe__REST__Endpoints__READ_Endpoint_Interface as READ_Interface;
-use Tribe__Utils__Array;
 use WP_Error;
 use WP_REST_Request;
 
@@ -17,6 +16,13 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 	 * @since 2.8
 	 */
 	public $route = '/pods';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since 2.8
+	 */
+	public $object = 'pod';
 
 	/**
 	 * {@inheritdoc}
@@ -97,7 +103,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 	public function READ_args() {
 		return [
 			'return_type' => [
-				'description' => __( 'The type of data to return for the Pods.', 'pods' ),
+				'description' => __( 'The type of data to return.', 'pods' ),
 				'type'        => 'string',
 				'default'     => 'full',
 				'required'    => false,
@@ -130,7 +136,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 			],
 			'args'        => [
 				'required'     => false,
-				'description'  => __( 'A list of arguments to filter Pods by.', 'pods' ),
+				'description'  => __( 'A list of arguments to filter by.', 'pods' ),
 				'swagger_type' => 'array',
 			],
 		];
@@ -142,47 +148,18 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 	 * @since 2.8
 	 */
 	public function get( WP_REST_Request $request ) {
-		if ( ! current_user_can( 'pods' ) ) {
-			// @todo Fix error messaging.
-			return new WP_Error( 'no access', 'bad access rights' );
-		}
+		$this->archive_by_args( $request );
+	}
 
-		$params = [
-			'return_type' => $request['return_type'],
-		];
-
-		if ( ! empty( $request['types'] ) ) {
-			$params['type'] = Tribe__Utils__Array::list_to_array( $request['types'] );
-		}
-
-		if ( ! empty( $request['ids'] ) ) {
-			$params['id'] = Tribe__Utils__Array::list_to_array( $request['ids'] );
-		}
-
-		if ( ! empty( $request['args'] ) ) {
-			$params['args'] = $request['args'];
-
-			// Attempt to convert from JSON to array if needed.
-			if ( is_string( $params['args'] ) ) {
-				$json = @json_decode( $params['args'], true );
-
-				if ( is_array( $json ) ) {
-					$params['args'] = $json;
-				}
-			}
-		}
-
-		if ( ! empty( $request['return_type'] ) ) {
-			$params['return_type'] = $request['return_type'];
-		}
-
-		$api = pods_api();
-
-		$api->display_errors = 'wp_error';
-
-		return [
-			'pods' => $api->load_pods( $params ),
-		];
+	/**
+	 * Determine whether access to READ is available.
+	 *
+	 * @since 2.8
+	 *
+	 * @return bool Whether access to READ is available.
+	 */
+	public function can_read() {
+		return pods_is_admin( 'pods' );
 	}
 
 	/**
@@ -264,9 +241,9 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 			return new WP_Error( 'not-saved', 'pod not saved' );
 		}
 
-		return $this->get_pod_by_args( [
+		return $this->get_by_args( [
 			'id' => $id,
-		], $request );
+		], 'id', $request, $return_id );
 	}
 
 	/**
@@ -275,6 +252,6 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 	 * @since 2.8
 	 */
 	public function can_create() {
-		return current_user_can( 'pods' );
+		return pods_is_admin( 'pods' );
 	}
 }

@@ -4,8 +4,7 @@ namespace Pods\REST\V1\Endpoints;
 
 use WP_REST_Request;
 
-class Field_Slug
-	extends Field {
+class Field_Slug extends Field {
 
 	/**
 	 * {@inheritdoc}
@@ -23,9 +22,9 @@ class Field_Slug
 		return [
 			'slug' => [
 				'type'        => 'string',
-				'in'                => 'path',
+				'in'          => 'path',
 				'description' => __( 'The slug', 'pods' ),
-				'required'          => true,
+				'required'    => true,
 			],
 		];
 	}
@@ -36,11 +35,7 @@ class Field_Slug
 	 * @since 2.8
 	 */
 	public function get( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_field_by_args( [
-			'name' => $slug,
-		], $request );
+		return $this->get_by_args( 'slug', 'name', $request );
 	}
 
 	/**
@@ -50,11 +45,24 @@ class Field_Slug
 	 */
 	public function EDIT_args() {
 		return [
-			'slug' => [
+			'slug'     => [
 				'type'        => 'string',
-				'in'                => 'path',
+				'in'          => 'path',
 				'description' => __( 'The slug', 'pods' ),
-				'required'          => true,
+				'required'    => true,
+			],
+			'new_name' => [
+				'type'        => 'string',
+				'description' => __( 'The new name of the Field', 'pods' ),
+			],
+			'label'    => [
+				'type'        => 'string',
+				'description' => __( 'The singular label of the Field', 'pods' ),
+			],
+			'args'     => [
+				'required'     => false,
+				'description'  => __( 'A list of additional options to save to the Field.', 'pods' ),
+				'swagger_type' => 'array',
 			],
 		];
 	}
@@ -65,11 +73,7 @@ class Field_Slug
 	 * @since 2.8
 	 */
 	public function update( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_field_by_args( [
-			'name' => $slug,
-		], $request );
+		return $this->update_by_args( 'slug', 'name', $request );
 	}
 
 	/**
@@ -81,9 +85,9 @@ class Field_Slug
 		return [
 			'slug' => [
 				'type'        => 'string',
-				'in'                => 'path',
+				'in'          => 'path',
 				'description' => __( 'The slug', 'pods' ),
-				'required'          => true,
+				'required'    => true,
 			],
 		];
 	}
@@ -94,10 +98,6 @@ class Field_Slug
 	 * @since 2.8
 	 */
 	public function delete( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_field_by_args( [
-			'name' => $slug,
-		], $request );
+		return $this->delete_by_args( 'slug', 'name', $request );
 	}
 }

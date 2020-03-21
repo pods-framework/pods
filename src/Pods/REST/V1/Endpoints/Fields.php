@@ -2,16 +2,12 @@
 
 namespace Pods\REST\V1\Endpoints;
 
+use Tribe__Documentation__Swagger__Provider_Interface as Swagger_Interface;
 use Tribe__REST__Endpoints__CREATE_Endpoint_Interface as CREATE_Interface;
 use Tribe__REST__Endpoints__READ_Endpoint_Interface as READ_Interface;
-use Tribe__Documentation__Swagger__Provider_Interface as Swagger_Interface;
 use WP_REST_Request;
 
-class Fields
-	extends Base
-	implements READ_Interface,
-	CREATE_Interface,
-	Swagger_Interface {
+class Fields extends Base implements READ_Interface, CREATE_Interface, Swagger_Interface {
 
 	/**
 	 * {@inheritdoc}
@@ -19,6 +15,13 @@ class Fields
 	 * @since 2.8
 	 */
 	public $route = '/fields';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since 2.8
+	 */
+	public $object = 'field';
 
 	/**
 	 * {@inheritdoc}
@@ -98,52 +101,42 @@ class Fields
 	 */
 	public function READ_args() {
 		return [
-			'page'     => [
-				'description'       => __( 'The page of results to return; defaults to 1', 'pods' ),
-				'type'              => 'integer',
-				'default'           => 1,
-				'sanitize_callback' => 'absint',
-				'minimum'           => 1,
-			],
-			'per_page' => [
-				'description'       => __( 'How many tickets to return per results page; defaults to posts_per_page.', 'pods' ),
-				'type'              => 'integer',
-				'default'           => get_option( 'posts_per_page' ),
-				'minimum'           => 1,
-				'maximum'           => 100,
-				'sanitize_callback' => 'absint',
-			],
-			'search'   => [
-				'description'       => __( 'Limit results to tickets containing the specified string in the title or description.', 'pods' ),
-				'type'              => 'string',
-				'required'          => false,
-				'validate_callback' => [ $this->validator, 'is_string' ],
-			],
-			'offset'   => [
-				'description' => __( 'Offset the results by a specific number of items.', 'pods' ),
-				'type'        => 'integer',
-				'required'    => false,
-				'min'         => 0,
-			],
-			'order'    => [
-				'description' => __( 'Sort results in ASC or DESC order. Defaults to ASC.', 'pods' ),
+			'return_type' => [
+				'description' => __( 'The type of data to return.', 'pods' ),
 				'type'        => 'string',
+				'default'     => 'full',
 				'required'    => false,
 				'enum'        => [
-					'ASC',
-					'DESC',
+					'full',
+					'names',
+					'names_ids',
+					'ids',
+					'key_names',
+					'count',
 				],
 			],
-			'orderby'  => [
-				'description' => __( 'Order the results by one of date, relevance, id, include, title, or slug; defaults to title.', 'pods' ),
-				'type'        => 'string',
-				'required'    => false,
-				'enum'        => [
-					'id',
-					'include',
-					'title',
-					'slug',
+			'types'       => [
+				'required'         => false,
+				'description'      => __( 'A list of types to filter by.', 'pods' ),
+				'swagger_type'     => 'array',
+				'items'            => [
+					'type' => 'string',
 				],
+				'collectionFormat' => 'csv',
+			],
+			'ids'         => [
+				'required'         => false,
+				'description'      => __( 'A list of IDs to filter by.', 'pods' ),
+				'swagger_type'     => 'array',
+				'items'            => [
+					'type' => 'integer',
+				],
+				'collectionFormat' => 'csv',
+			],
+			'args'        => [
+				'required'     => false,
+				'description'  => __( 'A list of arguments to filter by.', 'pods' ),
+				'swagger_type' => 'array',
 			],
 		];
 	}
@@ -154,9 +147,18 @@ class Fields
 	 * @since 2.8
 	 */
 	public function get( WP_REST_Request $request ) {
-		$data = [];
+		$this->archive_by_args( $request );
+	}
 
-		return $data;
+	/**
+	 * Determine whether access to READ is available.
+	 *
+	 * @since 2.8
+	 *
+	 * @return bool Whether access to READ is available.
+	 */
+	public function can_read() {
+		return pods_is_admin( 'pods' );
 	}
 
 	/**
@@ -182,9 +184,7 @@ class Fields
 	 * @since 2.8
 	 */
 	public function create( WP_REST_REQUEST $request, $return_id = false ) {
-		$data = [];
-
-		return $data;
+		return $this->create_by_args( $request, $return_id );
 	}
 
 	/**
@@ -193,7 +193,6 @@ class Fields
 	 * @since 2.8
 	 */
 	public function can_create() {
-		// @todo Check Pods permissions
-		return true;
+		return pods_is_admin( 'pods' );
 	}
 }

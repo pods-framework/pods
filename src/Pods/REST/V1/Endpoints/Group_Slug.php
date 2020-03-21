@@ -4,8 +4,7 @@ namespace Pods\REST\V1\Endpoints;
 
 use WP_REST_Request;
 
-class Group_Slug
-	extends Group {
+class Group_Slug extends Group {
 
 	/**
 	 * {@inheritdoc}
@@ -41,11 +40,7 @@ class Group_Slug
 	 * @since 2.8
 	 */
 	public function get( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_group_by_args( [
-			'name' => $slug,
-		], $request );
+		return $this->get_by_args( 'slug', 'name', $request );
 	}
 
 	/**
@@ -55,11 +50,24 @@ class Group_Slug
 	 */
 	public function EDIT_args() {
 		return [
-			'slug' => [
+			'slug'     => [
 				'type'        => 'string',
-				'in'                => 'path',
+				'in'          => 'path',
 				'description' => __( 'The slug', 'pods' ),
-				'required'          => true,
+				'required'    => true,
+			],
+			'new_name' => [
+				'type'        => 'string',
+				'description' => __( 'The new name of the Group', 'pods' ),
+			],
+			'label'    => [
+				'type'        => 'string',
+				'description' => __( 'The singular label of the Group', 'pods' ),
+			],
+			'args'     => [
+				'required'     => false,
+				'description'  => __( 'A list of additional options to save to the Group.', 'pods' ),
+				'swagger_type' => 'array',
 			],
 		];
 	}
@@ -70,11 +78,7 @@ class Group_Slug
 	 * @since 2.8
 	 */
 	public function update( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_group_by_args( [
-			'name' => $slug,
-		], $request );
+		return $this->update_by_args( 'slug', 'name', $request );
 	}
 
 	/**
@@ -86,9 +90,9 @@ class Group_Slug
 		return [
 			'slug' => [
 				'type'        => 'string',
-				'in'                => 'path',
+				'in'          => 'path',
 				'description' => __( 'The slug', 'pods' ),
-				'required'          => true,
+				'required'    => true,
 			],
 		];
 	}
@@ -99,10 +103,6 @@ class Group_Slug
 	 * @since 2.8
 	 */
 	public function delete( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_group_by_args( [
-			'name' => $slug,
-		], $request );
+		return $this->delete_by_args( 'slug', 'name', $request );
 	}
 }

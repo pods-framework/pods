@@ -1878,6 +1878,9 @@ class PodsAPI {
 			'object',
 			'alias',
 			'fields',
+			'weight',
+			'parent',
+			'group',
 		);
 
 		foreach ( $exclude as $k => $exclude_field ) {
@@ -1982,7 +1985,7 @@ class PodsAPI {
 				'post_title'   => $pod['label'],
 				'post_content' => $pod['description'],
 				'post_type'    => '_pods_pod',
-				'post_status'  => 'publish'
+				'post_status'  => 'publish',
 			);
 
 			if ( 'pod' === $pod['type'] && ( ! is_array( $pod['fields'] ) || empty( $pod['fields'] ) ) ) {
@@ -2308,7 +2311,7 @@ class PodsAPI {
         /** @var Pods\Whatsit\Storage\Post_Type $post_type_storage */
         $post_type_storage = $object_collection->get_storage_object( $this->get_default_object_storage_type() );
 
-        $object = $post_type_storage->to_object( $pod['id'] );
+        $object = $post_type_storage->to_object( $pod['id'], true );
 
         if ( ! $object ) {
         	$errors[] = __( 'Cannot save pod to collection', 'pods' );
@@ -2505,7 +2508,7 @@ class PodsAPI {
 	 *
 	 * @param array    $params          An associative array of parameters
 	 * @param bool     $table_operation (optional) Whether or not to handle table operations
-	 * @param bool     $sanitized       (optional) Decides wether the params have been sanitized before being passed,
+	 * @param bool     $sanitized       (optional) Decides whether the params have been sanitized before being passed,
 	 *                                  will sanitize them if false.
 	 * @param bool|int $db              (optional) Whether to save into the DB or just return field array.
 	 *
@@ -2603,7 +2606,7 @@ class PodsAPI {
 
 		$field = $this->load_field( $load_params );
 
-		if ( $field instanceof \Pods\Whatsit\Pod ) {
+		if ( $field instanceof \Pods\Whatsit\Field ) {
 			$field = $field->get_args();
 		}
 
@@ -3230,7 +3233,7 @@ class PodsAPI {
         /** @var Pods\Whatsit\Storage\Post_Type $post_type_storage */
         $post_type_storage = $object_collection->get_storage_object( $this->get_default_object_storage_type() );
 
-        $object = $post_type_storage->to_object( $field['id'] );
+        $object = $post_type_storage->to_object( $field['id'], true );
 
         if ( ! $object ) {
         	return pods_error( __( 'Cannot save field to collection', 'pods' ), $this );
@@ -3262,8 +3265,7 @@ class PodsAPI {
 	 * @since 2.3.3
 	 */
 	public function save_slug_fix( $slug, $post_ID, $post_status, $post_type, $post_parent = 0, $original_slug = null ) {
-
-		if ( in_array( $post_type, array( '_pods_pod', '_pods_field', '_pods_group' ), true ) && false !== strpos( $slug, '-' ) ) {
+		if ( in_array( $post_type, array( '_pods_pod', '_pods_group', '_pods_field' ), true ) && false !== strpos( $slug, '-' ) ) {
 			$slug = $original_slug;
 		}
 
@@ -3391,7 +3393,7 @@ class PodsAPI {
 	 * $params['code'] string The template code
 	 *
 	 * @param array|object $params    An associative array of parameters
-	 * @param bool         $sanitized (optional) Decides wether the params have been sanitized before being passed,
+	 * @param bool         $sanitized (optional) Decides whether the params have been sanitized before being passed,
 	 *                                will sanitize them if false.
 	 *
 	 * @return int The Template ID
@@ -3417,7 +3419,7 @@ class PodsAPI {
 	 * $params['code'] string The page code
 	 *
 	 * @param array|object $params    An associative array of parameters
-	 * @param bool         $sanitized (optional) Decides wether the params have been sanitized before being passed,
+	 * @param bool         $sanitized (optional) Decides whether the params have been sanitized before being passed,
 	 *                                will sanitize them if false.
 	 *
 	 * @return int The page ID
@@ -3454,7 +3456,7 @@ class PodsAPI {
 	 * $params['code'] string The helper code
 	 *
 	 * @param array $params    An associative array of parameters
-	 * @param bool  $sanitized (optional) Decides wether the params have been sanitized before being passed, will
+	 * @param bool  $sanitized (optional) Decides whether the params have been sanitized before being passed, will
 	 *                         sanitize them if false.
 	 *
 	 * @return int The helper ID

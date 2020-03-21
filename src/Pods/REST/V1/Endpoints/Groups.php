@@ -147,7 +147,7 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	 * @since 2.8
 	 */
 	public function get( WP_REST_Request $request ) {
-		$this->archive_by_args( $request );
+		return $this->archive_by_args( $request );
 	}
 
 	/**

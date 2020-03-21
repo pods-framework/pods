@@ -484,11 +484,12 @@ class Post_Type extends Collection {
 	/**
 	 * Setup object from a Post ID or Post object.
 	 *
-	 * @param \WP_Post|array|int $post Post object or ID of the object.
+	 * @param \WP_Post|array|int $post          Post object or ID of the object.
+	 * @param bool               $force_refresh Whether to force the refresh of the object.
 	 *
 	 * @return Whatsit|null
 	 */
-	public function to_object( $post ) {
+	public function to_object( $post, $force_refresh = false ) {
 		if ( null !== $post && ! $post instanceof \WP_Post ) {
 			$post = get_post( $post );
 		}
@@ -507,7 +508,11 @@ class Post_Type extends Collection {
 		$object = $object_collection->get_object( $post->ID );
 
 		if ( $object instanceof Whatsit && $post->post_type === '_pods_' . $object->get_object_type() ) {
-			return $object;
+			if ( ! $force_refresh ) {
+				return $object;
+			}
+
+			$object_collection->unregister_object( $object );
 		}
 
 		$args = array();

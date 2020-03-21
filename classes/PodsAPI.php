@@ -2517,6 +2517,16 @@ class PodsAPI {
 	 */
 	public function save_field( $params, $table_operation = true, $sanitized = false, $db = true ) {
 
+		$params = (object) $params;
+
+		$field = false;
+
+		if ( isset( $params->field ) && $params->field instanceof \Pods\Whatsit\Field ) {
+			$field = $params->field;
+
+			unset( $params->field );
+		}
+
 		/**
 		 * @var $wpdb wpdb
 		 */
@@ -2528,8 +2538,6 @@ class PodsAPI {
 
 		$tableless_field_types    = PodsForm::tableless_field_types();
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
-
-		$params = (object) $params;
 
 		$pod      = null;
 		$save_pod = false;
@@ -2589,26 +2597,36 @@ class PodsAPI {
 		$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
 
 		if ( empty( $params->name ) ) {
-			return pods_error( __( 'Pod field name is required', 'pods' ), $this );
+			if ( ! $field ) {
+				return pods_error( __( 'Pod field name is required', 'pods' ), $this );
+			}
+
+			$params->name = $field['name'];
 		}
 
-		$load_params = array(
-			'parent' => $params->pod_id,
-		);
+		$field_obj = $field;
 
-		if ( ! empty( $params->id ) ) {
-			$load_params['id'] = $params->id;
-		} elseif ( ! empty( $params->old_name ) ) {
-			$load_params['name'] = $params->old_name;
-		} elseif ( ! empty( $params->name ) ) {
-			$load_params['name'] = $params->name;
+		if ( ! $field ) {
+			$load_params = [
+				'parent' => $params->pod_id,
+			];
+
+			if ( ! empty( $params->id ) ) {
+				$load_params['id'] = $params->id;
+			} elseif ( ! empty( $params->old_name ) ) {
+				$load_params['name'] = $params->old_name;
+			} elseif ( ! empty( $params->name ) ) {
+				$load_params['name'] = $params->name;
+			}
+
+			$field_obj = $this->load_field( $load_params );
+
+			if ( empty( $field_obj ) || is_wp_error( $field_obj ) ) {
+				return $field_obj;
+			}
 		}
 
-		$field = $this->load_field( $load_params );
-
-		if ( $field instanceof \Pods\Whatsit\Field ) {
-			$field = $field->get_args();
-		}
+		$field = $field_obj->get_args();
 
 		$old_id         = null;
 		$old_name       = null;
@@ -2625,7 +2643,7 @@ class PodsAPI {
 			$old_id        = pods_v( 'id', $field );
 			$old_name      = pods_clean_name( $field['name'], true, 'meta' !== $pod['storage'] );
 			$old_type      = $field['type'];
-			$old_options   = $field->get_args();
+			$old_options   = $field;
 			$old_sister_id = (int) pods_v( 'sister_id', $old_options, 0 );
 
 			$old_simple = ( 'pick' === $old_type && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
@@ -2666,10 +2684,11 @@ class PodsAPI {
 			 *
 			 * @param string|false       $field_definition The SQL definition to use for the field's table column.
 			 * @param string             $type             The field type.
-			 * @param Pods\Whatsit\Field $field            The field object.
+			 * @param array              $field            The field data.
 			 * @param bool               $simple           Whether the field is a simple tableless field.
+			 * @param Pods\Whatsit\Field $field_obj        The field object.
 			 */
-			$field_definition = apply_filters( 'pods_api_save_field_old_definition', $field_definition, $old_type, $field, $old_simple );
+			$field_definition = apply_filters( 'pods_api_save_field_old_definition', $field_definition, $old_type, $field, $old_simple, $field_obj );
 
 			if ( ! empty( $field_definition ) ) {
 				$old_definition = "`{$old_name}` " . $field_definition;
@@ -2932,6 +2951,8 @@ class PodsAPI {
 			}
 		}
 
+		$field_types = PodsForm::field_types_list();
+
 		if ( true === $db ) {
 			if ( ! has_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ) ) ) {
 				add_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ), 100, 6 );
@@ -2974,6 +2995,16 @@ class PodsAPI {
 				}
 			}
 
+			// Get all field types except the current.
+			$field_types = array_diff( $field_types, [ $field['type'] ] );
+
+			$pattern = '/^(' . implode( '|', $field_types ) . ')_/';
+
+			// Filter meta that is not for the current field type.
+			$meta = array_filter( $meta, static function ( $value, $key ) use ( $pattern ) {
+				return 1 !== preg_match( $pattern, $key );
+			}, ARRAY_FILTER_USE_BOTH );
+
 			$params->id = $this->save_wp_object( 'post', $post_data, $meta, true, true );
 
 			if ( $conflicted ) {
@@ -3005,10 +3036,11 @@ class PodsAPI {
 		 *
 		 * @param string|false       $field_definition The SQL definition to use for the field's table column.
 		 * @param string             $type             The field type.
-		 * @param Pods\Whatsit\Field $field            The field object.
+		 * @param array              $field            The field data.
 		 * @param bool               $simple           Whether the field is a simple tableless field.
+		 * @param Pods\Whatsit\Field $field_obj        The field object.
 		 */
-		$field_definition = apply_filters( 'pods_api_save_field_definition', $field_definition, $field['type'], $field, $simple );
+		$field_definition = apply_filters( 'pods_api_save_field_definition', $field_definition, $field['type'], $field, $simple, $field_obj );
 
 		if ( ! empty( $field_definition ) ) {
 			$definition = '`' . $field['name'] . '` ' . $field_definition;
@@ -3046,8 +3078,6 @@ class PodsAPI {
 				}
 			}
 
-
-
 			if ( 'bypass' !== $definition_mode ) {
 				/**
 				 * Allow hooking into before the table has been altered for any custom functionality needed.
@@ -3057,15 +3087,16 @@ class PodsAPI {
 				 * @param string             $definition_mode The definition mode used for the table field.
 				 * @param Pods\Whatsit\Pod   $pod             The pod object.
 				 * @param string             $type            The field type.
-				 * @param Pods\Whatsit\Field $field           The field object.
+				 * @param array              $field           The field data.
 				 * @param array              $extra_info      {
 				 *      Extra information about the field.
 				 *
-				 *      @type bool        $simple Whether the field is a simple tableless field.
-				 *      @type string      $definition The field definition.
-				 *      @type null|string $old_name The old field name (if preexisting).
-				 *      @type null|string $old_definition The old field definition (if preexisting).
-				 *      @type null|array  $old_options The old field options (if preexisting).
+				 *      @type bool               $simple Whether the field is a simple tableless field.
+				 *      @type string             $definition The field definition.
+				 *      @type null|string        $old_name The old field name (if preexisting).
+				 *      @type null|string        $old_definition The old field definition (if preexisting).
+				 *      @type null|array         $old_options The old field options (if preexisting).
+				 *      @type Pods\Whatsit\Field $field_obj The field object.
 				 * }
 				 */
 				do_action( 'pods_api_save_field_table_pre_alter', $definition_mode, $pod, $field['type'], $field, [
@@ -3074,6 +3105,7 @@ class PodsAPI {
 					'old_name'       => $old_name,
 					'old_definition' => $old_definition,
 					'old_options'    => $old_options,
+					'field_obj'      => $field_obj,
 				] );
 
 				if ( 'drop' === $definition_mode ) {
@@ -3105,15 +3137,16 @@ class PodsAPI {
 				 * @param string             $definition_mode The definition mode used for the table field.
 				 * @param Pods\Whatsit\Pod   $pod             The pod object.
 				 * @param string             $type            The field type.
-				 * @param Pods\Whatsit\Field $field           The field object.
+				 * @param array $field           The field object.
 				 * @param array              $extra_info      {
 				 *      Extra information about the field.
 				 *
-				 *      @type bool        $simple Whether the field is a simple tableless field.
-				 *      @type string      $definition The field definition.
-				 *      @type null|string $old_name The old field name (if preexisting).
-				 *      @type null|string $old_definition The old field definition (if preexisting).
-				 *      @type null|array  $old_options The old field options (if preexisting).
+				 *      @type bool               $simple Whether the field is a simple tableless field.
+				 *      @type string             $definition The field definition.
+				 *      @type null|string        $old_name The old field name (if preexisting).
+				 *      @type null|string        $old_definition The old field definition (if preexisting).
+				 *      @type null|array         $old_options The old field options (if preexisting).
+				 *      @type Pods\Whatsit\Field $field_obj The field object.
 				 * }
 				 */
 				do_action( 'pods_api_save_field_table_altered', $definition_mode, $pod, $field['type'], $field, [
@@ -3122,6 +3155,7 @@ class PodsAPI {
 					'old_name'       => $old_name,
 					'old_definition' => $old_definition,
 					'old_options'    => $old_options,
+					'field_obj'      => $field_obj,
 				] );
 			}
 		}

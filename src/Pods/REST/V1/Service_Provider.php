@@ -119,14 +119,16 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		register_rest_route( $this->namespace, $endpoint->route, [
 			[
-				'methods'  => WP_REST_Server::READABLE,
-				'args'     => $endpoint->READ_args(),
-				'callback' => [ $endpoint, 'get' ],
+				'methods'             => WP_REST_Server::READABLE,
+				'args'                => $endpoint->READ_args(),
+				'callback'            => [ $endpoint, 'get' ],
+				'permission_callback' => [ $endpoint, 'can_read' ],
 			],
 			[
-				'methods'  => WP_REST_Server::CREATABLE,
-				'args'     => $endpoint->CREATE_args(),
-				'callback' => [ $endpoint, 'create' ],
+				'methods'             => WP_REST_Server::CREATABLE,
+				'args'                => $endpoint->CREATE_args(),
+				'callback'            => [ $endpoint, 'create' ],
+				'permission_callback' => [ $endpoint, 'can_create' ],
 			],
 		] );
 
@@ -148,19 +150,22 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		register_rest_route( $this->namespace, sprintf( str_replace( '$d', '$s', $endpoint->route ), '(?P<id>\\d+)' ), [
 			[
-				'methods'  => WP_REST_Server::READABLE,
-				'args'     => $endpoint->READ_args(),
-				'callback' => [ $endpoint, 'get' ],
+				'methods'             => WP_REST_Server::READABLE,
+				'args'                => $endpoint->READ_args(),
+				'callback'            => [ $endpoint, 'get' ],
+				'permission_callback' => [ $endpoint, 'can_read' ],
 			],
 			[
-				'methods'  => WP_REST_Server::EDITABLE,
-				'args'     => $endpoint->EDIT_args(),
-				'callback' => [ $endpoint, 'update' ],
+				'methods'             => WP_REST_Server::EDITABLE,
+				'args'                => $endpoint->EDIT_args(),
+				'callback'            => [ $endpoint, 'update' ],
+				'permission_callback' => [ $endpoint, 'can_edit' ],
 			],
 			[
-				'methods'  => WP_REST_Server::DELETABLE,
-				'args'     => $endpoint->DELETE_args(),
-				'callback' => [ $endpoint, 'delete' ],
+				'methods'             => WP_REST_Server::DELETABLE,
+				'args'                => $endpoint->DELETE_args(),
+				'callback'            => [ $endpoint, 'delete' ],
+				'permission_callback' => [ $endpoint, 'can_delete' ],
 			],
 		] );
 
@@ -182,19 +187,22 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		register_rest_route( $this->namespace, sprintf( $endpoint->route, '(?P<slug>[\w\_\-]+)' ), [
 			[
-				'methods'  => WP_REST_Server::READABLE,
-				'args'     => $endpoint->READ_args(),
-				'callback' => [ $endpoint, 'get' ],
+				'methods'             => WP_REST_Server::READABLE,
+				'args'                => $endpoint->READ_args(),
+				'callback'            => [ $endpoint, 'get' ],
+				'permission_callback' => [ $endpoint, 'can_read' ],
 			],
 			[
-				'methods'  => WP_REST_Server::EDITABLE,
-				'args'     => $endpoint->EDIT_args(),
-				'callback' => [ $endpoint, 'update' ],
+				'methods'             => WP_REST_Server::EDITABLE,
+				'args'                => $endpoint->EDIT_args(),
+				'callback'            => [ $endpoint, 'update' ],
+				'permission_callback' => [ $endpoint, 'can_edit' ],
 			],
 			[
-				'methods'  => WP_REST_Server::DELETABLE,
-				'args'     => $endpoint->DELETE_args(),
-				'callback' => [ $endpoint, 'delete' ],
+				'methods'             => WP_REST_Server::DELETABLE,
+				'args'                => $endpoint->DELETE_args(),
+				'callback'            => [ $endpoint, 'delete' ],
+				'permission_callback' => [ $endpoint, 'can_delete' ],
 			],
 		] );
 
@@ -216,14 +224,16 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		register_rest_route( $this->namespace, $endpoint->route, [
 			[
-				'methods'  => WP_REST_Server::READABLE,
-				'args'     => $endpoint->READ_args(),
-				'callback' => [ $endpoint, 'get' ],
+				'methods'             => WP_REST_Server::READABLE,
+				'args'                => $endpoint->READ_args(),
+				'callback'            => [ $endpoint, 'get' ],
+				'permission_callback' => [ $endpoint, 'can_read' ],
 			],
 			[
-				'methods'  => WP_REST_Server::CREATABLE,
-				'args'     => $endpoint->CREATE_args(),
-				'callback' => [ $endpoint, 'create' ],
+				'methods'             => WP_REST_Server::CREATABLE,
+				'args'                => $endpoint->CREATE_args(),
+				'callback'            => [ $endpoint, 'create' ],
+				'permission_callback' => [ $endpoint, 'can_create' ],
 			],
 		] );
 
@@ -245,19 +255,22 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		register_rest_route( $this->namespace, sprintf( str_replace( '$d', '$s', $endpoint->route ), '(?P<id>\\d+)' ), [
 			[
-				'methods'  => WP_REST_Server::READABLE,
-				'args'     => $endpoint->READ_args(),
-				'callback' => [ $endpoint, 'get' ],
+				'methods'             => WP_REST_Server::READABLE,
+				'args'                => $endpoint->READ_args(),
+				'callback'            => [ $endpoint, 'get' ],
+				'permission_callback' => [ $endpoint, 'can_read' ],
 			],
 			[
-				'methods'  => WP_REST_Server::EDITABLE,
-				'args'     => $endpoint->EDIT_args(),
-				'callback' => [ $endpoint, 'update' ],
+				'methods'             => WP_REST_Server::EDITABLE,
+				'args'                => $endpoint->EDIT_args(),
+				'callback'            => [ $endpoint, 'update' ],
+				'permission_callback' => [ $endpoint, 'can_edit' ],
 			],
 			[
-				'methods'  => WP_REST_Server::DELETABLE,
-				'args'     => $endpoint->DELETE_args(),
-				'callback' => [ $endpoint, 'delete' ],
+				'methods'             => WP_REST_Server::DELETABLE,
+				'args'                => $endpoint->DELETE_args(),
+				'callback'            => [ $endpoint, 'delete' ],
+				'permission_callback' => [ $endpoint, 'can_delete' ],
 			],
 		] );
 
@@ -279,19 +292,22 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		register_rest_route( $this->namespace, sprintf( $endpoint->route, '(?P<slug>[\w\_\-]+)' ), [
 			[
-				'methods'  => WP_REST_Server::READABLE,
-				'args'     => $endpoint->READ_args(),
-				'callback' => [ $endpoint, 'get' ],
+				'methods'             => WP_REST_Server::READABLE,
+				'args'                => $endpoint->READ_args(),
+				'callback'            => [ $endpoint, 'get' ],
+				'permission_callback' => [ $endpoint, 'can_read' ],
 			],
 			[
-				'methods'  => WP_REST_Server::EDITABLE,
-				'args'     => $endpoint->EDIT_args(),
-				'callback' => [ $endpoint, 'update' ],
+				'methods'             => WP_REST_Server::EDITABLE,
+				'args'                => $endpoint->EDIT_args(),
+				'callback'            => [ $endpoint, 'update' ],
+				'permission_callback' => [ $endpoint, 'can_edit' ],
 			],
 			[
-				'methods'  => WP_REST_Server::DELETABLE,
-				'args'     => $endpoint->DELETE_args(),
-				'callback' => [ $endpoint, 'delete' ],
+				'methods'             => WP_REST_Server::DELETABLE,
+				'args'                => $endpoint->DELETE_args(),
+				'callback'            => [ $endpoint, 'delete' ],
+				'permission_callback' => [ $endpoint, 'can_delete' ],
 			],
 		] );
 
@@ -313,14 +329,16 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		register_rest_route( $this->namespace, $endpoint->route, [
 			[
-				'methods'  => WP_REST_Server::READABLE,
-				'args'     => $endpoint->READ_args(),
-				'callback' => [ $endpoint, 'get' ],
+				'methods'             => WP_REST_Server::READABLE,
+				'args'                => $endpoint->READ_args(),
+				'callback'            => [ $endpoint, 'get' ],
+				'permission_callback' => [ $endpoint, 'can_read' ],
 			],
 			[
-				'methods'  => WP_REST_Server::CREATABLE,
-				'args'     => $endpoint->CREATE_args(),
-				'callback' => [ $endpoint, 'create' ],
+				'methods'             => WP_REST_Server::CREATABLE,
+				'args'                => $endpoint->CREATE_args(),
+				'callback'            => [ $endpoint, 'create' ],
+				'permission_callback' => [ $endpoint, 'can_create' ],
 			],
 		] );
 
@@ -342,19 +360,22 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		register_rest_route( $this->namespace, sprintf( str_replace( '$d', '$s', $endpoint->route ), '(?P<id>\\d+)' ), [
 			[
-				'methods'  => WP_REST_Server::READABLE,
-				'args'     => $endpoint->READ_args(),
-				'callback' => [ $endpoint, 'get' ],
+				'methods'             => WP_REST_Server::READABLE,
+				'args'                => $endpoint->READ_args(),
+				'callback'            => [ $endpoint, 'get' ],
+				'permission_callback' => [ $endpoint, 'can_read' ],
 			],
 			[
-				'methods'  => WP_REST_Server::EDITABLE,
-				'args'     => $endpoint->EDIT_args(),
-				'callback' => [ $endpoint, 'update' ],
+				'methods'             => WP_REST_Server::EDITABLE,
+				'args'                => $endpoint->EDIT_args(),
+				'callback'            => [ $endpoint, 'update' ],
+				'permission_callback' => [ $endpoint, 'can_edit' ],
 			],
 			[
-				'methods'  => WP_REST_Server::DELETABLE,
-				'args'     => $endpoint->DELETE_args(),
-				'callback' => [ $endpoint, 'delete' ],
+				'methods'             => WP_REST_Server::DELETABLE,
+				'args'                => $endpoint->DELETE_args(),
+				'callback'            => [ $endpoint, 'delete' ],
+				'permission_callback' => [ $endpoint, 'can_delete' ],
 			],
 		] );
 
@@ -376,19 +397,22 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 
 		register_rest_route( $this->namespace, sprintf( $endpoint->route, '(?P<slug>[\w\_\-]+)' ), [
 			[
-				'methods'  => WP_REST_Server::READABLE,
-				'args'     => $endpoint->READ_args(),
-				'callback' => [ $endpoint, 'get' ],
+				'methods'             => WP_REST_Server::READABLE,
+				'args'                => $endpoint->READ_args(),
+				'callback'            => [ $endpoint, 'get' ],
+				'permission_callback' => [ $endpoint, 'can_read' ],
 			],
 			[
-				'methods'  => WP_REST_Server::EDITABLE,
-				'args'     => $endpoint->EDIT_args(),
-				'callback' => [ $endpoint, 'update' ],
+				'methods'             => WP_REST_Server::EDITABLE,
+				'args'                => $endpoint->EDIT_args(),
+				'callback'            => [ $endpoint, 'update' ],
+				'permission_callback' => [ $endpoint, 'can_edit' ],
 			],
 			[
-				'methods'  => WP_REST_Server::DELETABLE,
-				'args'     => $endpoint->DELETE_args(),
-				'callback' => [ $endpoint, 'delete' ],
+				'methods'             => WP_REST_Server::DELETABLE,
+				'args'                => $endpoint->DELETE_args(),
+				'callback'            => [ $endpoint, 'delete' ],
+				'permission_callback' => [ $endpoint, 'can_delete' ],
 			],
 		] );
 

@@ -2058,7 +2058,7 @@ class PodsInit {
 
 		// Add New item links for all pods
 		foreach ( $all_pods as $pod ) {
-			if ( 0 === (int) $pod['options']['show_in_menu'] ) {
+			if ( ! isset( $pod['options']['show_in_menu'] ) || 0 === (int) $pod['options']['show_in_menu'] ) {
 				continue;
 			}
 

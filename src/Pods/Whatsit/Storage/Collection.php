@@ -3,8 +3,8 @@
 namespace Pods\Whatsit\Storage;
 
 use Pods\Whatsit;
-use Pods\Whatsit\Store;
 use Pods\Whatsit\Storage;
+use Pods\Whatsit\Store;
 
 /**
  * Collection class.
@@ -19,20 +19,28 @@ class Collection extends Storage {
 	protected static $type = 'collection';
 
 	/**
+	 * @var array
+	 */
+	protected $secondary_args = [
+		'parent',
+		'group',
+	];
+
+	/**
 	 * {@inheritdoc}
 	 */
-	public function get( array $args = array() ) {
+	public function get( array $args = [] ) {
 		// Object type is required.
 		if ( empty( $args['object_type'] ) ) {
 			return null;
 		}
 
 		if ( ! empty( $args['name'] ) ) {
-			$find_args = array(
+			$find_args = [
 				'object_type' => $args['object_type'],
 				'name'        => $args['name'],
 				'limit'       => 1,
-			);
+			];
 
 			$objects = $this->find( $find_args );
 
@@ -47,18 +55,19 @@ class Collection extends Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function find( array $args = array() ) {
+	public function find( array $args = [] ) {
 		// Object type OR parent is required.
 		if ( empty( $args['object_type'] ) && empty( $args['parent'] ) ) {
-			return array();
+			return [];
 		}
 
 		/**
 		 * Filter the maximum number of posts to get for post type storage.
 		 *
+		 * @since 2.8
+		 *
 		 * @param int $limit
 		 *
-		 * @since 2.8
 		 */
 		$limit = apply_filters( 'pods_whatsit_storage_post_type_find_limit', 300 );
 
@@ -99,17 +108,36 @@ class Collection extends Storage {
 		}
 
 		if ( ! isset( $args['args'] ) ) {
-			$args['args'] = array();
+			$args['args'] = [];
 		}
 
 		$args['args'] = (array) $args['args'];
 
+		$secondary_variations = [
+			'identifier',
+			'name',
+		];
+
 		foreach ( $this->secondary_args as $arg ) {
-			if ( ! isset( $args[ $arg ] ) ) {
+			$arg_value = [];
+
+			foreach ( $secondary_variations as $variation ) {
+				if ( ! isset( $args[ $arg . '_' . $variation ] ) ) {
+					continue;
+				}
+
+				$arg_value[] = $args[ $arg . '_' . $variation ];
+			}
+
+			if ( empty( $arg_value ) ) {
 				continue;
 			}
 
-			$args['args'][ $arg ] = $args[ $arg ];
+			if ( 1 === count( $arg_value ) ) {
+				$arg_value = current( $arg_value );
+			}
+
+			$args['args'][ $arg ] = $arg_value;
 		}
 
 		foreach ( $args['args'] as $arg => $value ) {
@@ -243,7 +271,7 @@ class Collection extends Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function save_object( Whatsit $object ) {
+	protected function save_object( Whatsit $object ) {
 		$storage_type = $object->get_storage_type();
 
 		if ( empty( $storage_type ) ) {
@@ -261,12 +289,12 @@ class Collection extends Storage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function delete_object( Whatsit $object ) {
+	protected function delete_object( Whatsit $object ) {
 		// If this object has fields or groups, delete them.
 		$objects = array_merge( $object->get_all_fields(), $object->get_groups() );
 
 		// Delete child objects.
-		array_map( array( $this, 'delete' ), $objects );
+		array_map( [ $this, 'delete' ], $objects );
 
 		pods_api()->cache_flush_pods( $object );
 

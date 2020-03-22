@@ -2,10 +2,10 @@
 
 namespace Pods;
 
-use Pods\Whatsit\Store;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Object_Field;
+use Pods\Whatsit\Store;
 
 /**
  * Whatsit abstract class.
@@ -905,6 +905,53 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get the full data from the object.
+	 *
+	 * @param array $args List of arguments.
+	 *
+	 * @return array Full data from the object.
+	 */
+	public function export( array $args = [] ) {
+		$include_groups        = ! isset( $args['include_groups'] ) || $args['include_groups'];
+		$include_group_fields  = ! isset( $args['include_group_fields'] ) || $args['include_group_fields'];
+		$include_fields        = ! isset( $args['include_fields'] ) || $args['include_fields'];
+		$include_object_fields = isset( $args['include_object_fields'] ) && $args['include_object_fields'];
+		$include_table_info    = isset( $args['include_table_info'] ) && $args['include_table_info'];
+
+		$data = $this->get_args();
+
+		if ( $include_groups ) {
+			$data['groups'] = array_map( static function ( $object ) use ( $include_group_fields ) {
+				$group = $object->get_args();
+
+				if ( $include_group_fields ) {
+					$group['fields'] = $object->get_fields();
+				}
+
+				return $group;
+			}, $this->get_groups() );
+		}
+
+		if ( $include_fields ) {
+			$data['fields'] = array_map( static function ( $object ) {
+				return $object->get_args();
+			}, $this->get_fields() );
+		}
+
+		if ( $include_object_fields ) {
+			$data['object_fields'] = array_map( static function ( $object ) {
+				return $object->get_args();
+			}, $this->get_object_fields() );
+		}
+
+		if ( $include_table_info ) {
+			$data['table_info'] = $this->get_table_info();
+		}
+
+		return $data;
 	}
 
 	/**

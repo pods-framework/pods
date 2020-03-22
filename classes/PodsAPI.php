@@ -2660,12 +2660,32 @@ class PodsAPI {
 
 			if ( isset( $params->new_name ) && ! empty( $params->new_name ) ) {
 				$field['name'] = $params->new_name;
+
+				unset( $params->new_name );
 			} elseif ( isset( $params->name ) && ! empty( $params->name ) ) {
 				$field['name'] = $params->name;
 			}
 
-			if ( isset( $params->new_group ) && ! empty( $params->new_group ) ) {
-				$field['group'] = $params->new_group;
+			if ( isset( $params->new_group_id ) && ! empty( $params->new_group_id ) ) {
+				$group = $this->load_group( [ 'id' => $params->new_group_id, 'pod' => $pod ] );
+
+				if ( ! $group instanceof \Pods\Whatsit\Group ) {
+					return pods_error( sprintf( __( 'New Group (ID: %d) for Field %s not found.', 'pods' ), $params->new_group_id, $field['name'] ), $this );
+				}
+
+				$field['group'] = $group->get_id();
+
+				unset( $params->new_group_id );
+			} elseif ( isset( $params->new_group ) && ! empty( $params->new_group ) ) {
+				$group = $this->load_group( [ 'name' => $params->new_group, 'pod' => $pod ] );
+
+				if ( ! $group instanceof \Pods\Whatsit\Group ) {
+					return pods_error( sprintf( __( 'New Group (Slug: %s) for Field %s not found.', 'pods' ), $params->new_group, $field['name'] ), $this );
+				}
+
+				$field['group'] = $group->get_id();
+
+				unset( $params->new_group );
 			}
 
 			if ( $old_name !== $field['name'] ) {
@@ -3000,9 +3020,11 @@ class PodsAPI {
 				'weight',
 				'options',
 				'fields',
-				'group',
 				'groups',
 				'object_fields',
+				'object_type',
+				'storage_type',
+				'parent',
 			);
 
 			foreach ( $excluded_meta as $meta_key ) {
@@ -3400,8 +3422,6 @@ class PodsAPI {
 			return pods_error( __( 'Pod not found', 'pods' ), $this );
 		}
 
-		\WP_CLI::error( 'Done' );
-
 		/** @var \Pods\Whatsit\Pod $pod */
 		$params->pod_id = $pod->get_id();
 		$params->pod    = $pod->get_name();
@@ -3744,6 +3764,8 @@ class PodsAPI {
         if ( ! $object ) {
         	return pods_error( __( 'Cannot save group to collection', 'pods' ), $this );
         }
+
+		$this->cache_flush_pods( $object );
 
 		if ( true === $db ) {
 			return $params->id;

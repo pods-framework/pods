@@ -19,6 +19,18 @@ class Group extends Whatsit {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function get_args() {
+		$args = parent::get_args();
+
+		// Groups have no group.
+		unset( $args['group'] );
+
+		return $args;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function get_fields() {
 		if ( array() === $this->_fields ) {
 			return array();
@@ -37,7 +49,7 @@ class Group extends Whatsit {
 				'object_type'      => 'field',
 				'orderby'          => 'menu_order title',
 				'order'            => 'ASC',
-				'group'            => $this->get_identifier(),
+				'group'            => $this->get_id(),
 				'group_id'         => $this->get_id(),
 				'group_name'       => $this->get_name(),
 				'group_identifier' => $this->get_identifier(),

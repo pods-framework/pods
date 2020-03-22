@@ -1185,9 +1185,24 @@ class PodsAdmin {
 	 * Prototype for testing
 	 *
 	 * @param $duplicate
-	 * @param $obj
+	 * @param PodsUI $obj
 	 */
 	public function admin_setup_edit_proto( $duplicate, $obj ) {
+		$api = pods_api();
+
+		$pod = $api->load_pod( [ 'id' => $obj->id ] );
+
+		if ( ! $pod instanceof \Pods\Whatsit\Pod ) {
+			return $obj->error( __( 'Invalid Pod configuration detected.' ) );
+		}
+
+		$config = $pod->export( [
+			'include_groups'       => true,
+			'include_group_fields' => true,
+			'include_fields'       => false,
+		] );
+
+		wp_localize_script( 'pods-dfv', 'podsAdminConfig', $config );
 
 		pods_view( PODS_DIR . 'ui/admin/setup-edit-proto.php', compact( array_keys( get_defined_vars() ) ) );
 	}

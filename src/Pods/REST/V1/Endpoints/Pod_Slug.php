@@ -30,11 +30,21 @@ class Pod_Slug extends Pod {
 				'type'        => 'integer',
 				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
 				'default'     => 0,
+				'enum'        => [
+					0,
+					1,
+				],
+				'cli_boolean' => true,
 			],
 			'include_groups' => [
 				'type'        => 'integer',
 				'description' => __( 'Whether to include groups (default: off).', 'pods' ),
 				'default'     => 0,
+				'enum'        => [
+					0,
+					1,
+				],
+				'cli_boolean' => true,
 			],
 		];
 	}
@@ -107,6 +117,7 @@ class Pod_Slug extends Pod {
 					0,
 					1,
 				],
+				'cli_boolean' => true,
 			],
 		];
 	}

@@ -562,13 +562,15 @@ abstract class Base {
 				$cli_arg['default'] = $arg['default'];
 			}
 
-			if ( ! empty( $arg['enum'] ) ) {
-				$cli_arg['options'] = $arg['enum'];
-			}
-
-			// Handle path args.
 			if ( isset( $arg['in'] ) && 'path' === $arg['in'] ) {
+				// Handle path args.
 				$cli_arg['type'] = 'positional';
+			} elseif ( isset( $arg['cli_boolean'] ) && $arg['cli_boolean'] ) {
+				// Handle flag args.
+				$cli_arg['type'] = 'flag';
+			} elseif ( ! empty( $arg['enum'] ) ) {
+				// Handle enum options.
+				$cli_arg['options'] = $arg['enum'];
 			}
 
 			$cli_args['synopsis'][] = $cli_arg;

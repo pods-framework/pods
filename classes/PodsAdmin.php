@@ -1184,7 +1184,7 @@ class PodsAdmin {
 	/**
 	 * Prototype for testing
 	 *
-	 * @param $duplicate
+	 * @param        $duplicate
 	 * @param PodsUI $obj
 	 */
 	public function admin_setup_edit_proto( $duplicate, $obj ) {
@@ -1204,13 +1204,186 @@ class PodsAdmin {
 
 		wp_localize_script( 'pods-dfv', 'podsAdminConfig', $config );
 
+		$global_config = $this->get_global_config( $pod );
+
+		wp_localize_script( 'pods-dfv', 'podsAdminGlobalConfig', $global_config );
+
 		pods_view( PODS_DIR . 'ui/admin/setup-edit-proto.php', compact( array_keys( get_defined_vars() ) ) );
+	}
+
+	/**
+	 * Get the global config for Pods admin.
+	 *
+	 * @since 2.8
+	 *
+	 * @param null|\Pods\Whatsit $pod
+	 *
+	 * @return array Global config array.
+	 */
+	public function get_global_config( $pod ) {
+		// Pod: Backwards compatible methods and hooks.
+		$tabs        = $this->admin_setup_edit_tabs( $pod );
+		$tab_options = $this->admin_setup_edit_options( $pod );
+
+		$this->backcompat_convert_tabs_to_groups( $tabs, $tab_options, '_pods_pod' );
+
+		// Group: Backwards compatible methods and hooks.
+		$group_tabs        = $this->admin_setup_edit_group_tabs( $pod );
+		$group_tab_options = $this->admin_setup_edit_group_options( $pod );
+
+		$this->backcompat_convert_tabs_to_groups( $group_tabs, $group_tab_options, '_pods_group' );
+
+		// Field: Backwards compatible methods and hooks.
+		$field_tabs        = $this->admin_setup_edit_field_tabs( $pod );
+		$field_tab_options = $this->admin_setup_edit_field_options( $pod );
+
+		$this->backcompat_convert_tabs_to_groups( $field_tabs, $field_tab_options, '_pods_field' );
+
+		$object_collection = Pods\Whatsit\Store::get_instance();
+
+		/** @var Pods\Whatsit\Storage $storage */
+		$storage = $object_collection->get_storage_object( 'collection' );
+
+		// Get objects from storage.
+		$pod_object = $storage->get( [
+			'object_type' => 'pod',
+			'name'        => '_pods_pod',
+		] );
+
+		$group_object = $storage->get( [
+			'object_type' => 'pod',
+			'name'        => '_pods_group',
+		] );
+
+		$field_object = $storage->get( [
+			'object_type' => 'pod',
+			'name'        => '_pods_field',
+		] );
+
+		return [
+			'pod'   => $pod_object->export( [
+				'include_groups'       => true,
+				'include_group_fields' => true,
+				'include_fields'       => false,
+			] ),
+			'group' => $group_object->export( [
+				'include_groups'       => true,
+				'include_group_fields' => true,
+				'include_fields'       => false,
+			] ),
+			'field' => $field_object->export( [
+				'include_groups'       => true,
+				'include_group_fields' => true,
+				'include_fields'       => false,
+			] ),
+		];
+
+		/**
+		 * Allow hooking into the global config setup for a Pod.
+		 *
+		 * @param null|\Pods\Whatsit $pod The Pod object.
+		 */
+		do_action( 'pods_admin_setup_global_config', $pod );
+	}
+
+	/**
+	 * Convet the tabs and their options to groups/fields in the collection storage.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array  $tabs    List of tabs.
+	 * @param array  $options List of tab options.
+	 * @param string $parent    The parent object to register to.
+	 *
+	 * @return array Global config array.
+	 */
+	protected function backcompat_convert_tabs_to_groups( array $tabs, array $options, $parent ) {
+		$object_collection = Pods\Whatsit\Store::get_instance();
+
+		/** @var Pods\Whatsit\Storage $storage */
+		$storage = $object_collection->get_storage_object( 'collection' );
+
+		$groups = [];
+		$fields = [];
+
+		foreach ( $tabs as $group_name => $group_label ) {
+			if ( empty( $options[ $group_name ] ) ) {
+				continue;
+			}
+
+			$group_args = [
+				'name'   => $group_name,
+				'label'  => $group_label,
+				'parent' => $parent,
+			];
+
+			$group = new \Pods\Whatsit\Group( $group_args );
+
+			$groups[] = $storage->add( $group );
+
+			$group_fields = $options[ $group_name ];
+
+			$sections = false;
+
+			foreach ( $group_fields as $field_name => $field_options ) {
+				// Support sections.
+				if ( ! isset( $field_options['label'] ) ) {
+					$sections = true;
+				}
+
+				break;
+			}
+
+			$group_sections = $group_fields;
+
+			// Store the same whether it's a section or not.
+			if ( ! $sections ) {
+				$group_sections = [
+					$group_fields,
+				];
+			}
+
+			foreach ( $group_sections as $section_label => $section_fields ) {
+				// Add section field (maybe).
+				if ( ! is_int( $section_label ) ) {
+					$field_args = [
+						'name'   => sanitize_title( $section_label ),
+						'label'  => $section_label,
+						'type'   => 'heading',
+						'parent' => $parent,
+						'group'  => 'group/' . $parent . '/' . $group_name,
+					];
+
+					$field = new \Pods\Whatsit\Field( $field_args );
+
+					$fields[] = $storage->add( $field );
+				}
+
+				// Add fields for section.
+				foreach ( $section_fields as $field_name => $field_options ) {
+					$field_args = $field_options;
+
+					if ( ! isset( $field_args['name'] ) ) {
+						$field_args['name'] = $field_name;
+					}
+
+					$field_args['parent'] = $parent;
+					$field_args['group']  = 'group/' . $parent . '/' . $group_name;
+
+					$field = new \Pods\Whatsit\Field( $field_args );
+
+					$fields[] = $storage->add( $field );
+				}
+			}
+		}
+
+		return compact( 'groups', 'fields' );
 	}
 
 	/**
 	 * Get list of Pod option tabs
 	 *
-	 * @param array $pod Pod options.
+	 * @param null|\Pods\Whatsit\Pod $pod Pod options.
 	 *
 	 * @return array
 	 */
@@ -1272,9 +1445,9 @@ class PodsAdmin {
 		/**
 		 * Add or modify tabs in Pods editor for a specific Pod
 		 *
-		 * @param array  $tabs       Tabs to set.
-		 * @param object $pod        Current Pods object.
-		 * @param array  $addtl_args Additional args.
+		 * @param array                  $tabs       Tabs to set.
+		 * @param null|\Pods\Whatsit\Pod $pod        Current Pods object.
+		 * @param array                  $addtl_args Additional args.
 		 *
 		 * @since  unknown
 		 */
@@ -1296,7 +1469,7 @@ class PodsAdmin {
 	/**
 	 * Get list of Pod options
 	 *
-	 * @param array $pod Pod options.
+	 * @param null|\Pods\Whatsit\Pod $pod Pod options.
 	 *
 	 * @return array
 	 */
@@ -2448,8 +2621,8 @@ class PodsAdmin {
 		/**
 		 * Add admin fields to the Pods editor for a specific Pod
 		 *
-		 * @param array  $options The Options fields.
-		 * @param object $pod     Current Pods object.
+		 * @param array                  $options The Options fields.
+		 * @param null|\Pods\Whatsit\Pod $pod     Current Pods object.
 		 *
 		 * @since  unkown
 		 */
@@ -2458,16 +2631,16 @@ class PodsAdmin {
 		/**
 		 * Add admin fields to the Pods editor for any Pod of a specific content type.
 		 *
-		 * @param array  $options The Options fields.
-		 * @param object $pod     Current Pods object.
+		 * @param array                  $options The Options fields.
+		 * @param null|\Pods\Whatsit\Pod $pod     Current Pods object.
 		 */
 		$options = apply_filters( "pods_admin_setup_edit_options_{$pod_type}", $options, $pod );
 
 		/**
 		 * Add admin fields to the Pods editor for all Pods
 		 *
-		 * @param array  $options The Options fields.
-		 * @param object $pod     Current Pods object.
+		 * @param array                  $options The Options fields.
+		 * @param null|\Pods\Whatsit\Pod $pod     Current Pods object.
 		 */
 		$options = apply_filters( 'pods_admin_setup_edit_options', $options, $pod );
 
@@ -2475,9 +2648,95 @@ class PodsAdmin {
 	}
 
 	/**
+	 * Get list of Pod Group option tabs
+	 *
+	 * @since 2.8
+	 *
+	 * @param \Pods\Whatsit\Pod $pod Pod options.
+	 *
+	 * @return array List of Group option tabs.
+	 */
+	public function admin_setup_edit_group_tabs( $pod ) {
+		$core_tabs = [
+			'basic' => __( 'Basic', 'pods' ),
+		];
+
+		/**
+		 * Filter the Group option tabs. Core tabs are added after this filter.
+		 *
+		 * @since 2.8
+		 *
+		 * @param array             $tabs Group option tabs.
+		 * @param \Pods\Whatsit\Pod $pod  Current Pods object.
+		 */
+		$tabs = apply_filters( 'pods_admin_setup_edit_group_tabs', [], $pod );
+
+		$tabs = array_merge( $core_tabs, $tabs );
+
+		return $tabs;
+	}
+
+	/**
+	 * Get list of Pod Group options
+	 *
+	 * @since 2.8
+	 *
+	 * @param \Pods\Whatsit\Pod $pod Pod data.
+	 *
+	 * @return array List of Group options.
+	 */
+	public function admin_setup_edit_group_options( $pod ) {
+		$options = [];
+
+		$options['basic'] = [
+			'label' => [
+				'name'    => 'label',
+				'label'   => __( 'Label', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'name' => [
+				'name'    => 'name',
+				'label'   => __( 'Name', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'slug',
+				'default' => '',
+			],
+			'description' => [
+				'name'    => 'description',
+				'label'   => __( 'Description', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			/*'type' => [
+				'name'    => 'type',
+				'label'   => __( 'Type', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'pick',
+				'default' => '',
+				'data'    => [],
+			],*/
+		];
+
+		/**
+		 * Filter the Group options.
+		 *
+		 * @since 2.8
+		 *
+		 * @param array             $options Tabs, indexed by label.
+		 * @param \Pods\Whatsit\Pod $pod     Pods object for the Pod this UI is for.
+		 */
+		$options = apply_filters( 'pods_admin_setup_edit_group_options', $options, $pod );
+
+		return $options;
+	}
+
+	/**
 	 * Get list of Pod field option tabs
 	 *
-	 * @param array $pod Pod options.
+	 * @param null|\Pods\Whatsit\Pod $pod Pod options.
 	 *
 	 * @return array
 	 */
@@ -2496,8 +2755,8 @@ class PodsAdmin {
 		 *
 		 * @since unknown
 		 *
-		 * @param array      $tabs Tabs to add, starts empty.
-		 * @param object|Pod $pod  Current Pods object.
+		 * @param array                  $tabs Tabs to add, starts empty.
+		 * @param null|\Pods\Whatsit\Pod $pod  Current Pods object.
 		 */
 		$tabs = apply_filters( 'pods_admin_setup_edit_field_tabs', array(), $pod );
 
@@ -2509,7 +2768,7 @@ class PodsAdmin {
 	/**
 	 * Get list of Pod field options
 	 *
-	 * @param array $pod Pod options.
+	 * @param null|\Pods\Whatsit\Pod $pod Pod options.
 	 *
 	 * @return array
 	 */
@@ -2553,10 +2812,10 @@ class PodsAdmin {
 			 *
 			 * @since 2.7.0
 			 *
-			 * @param array       $options Additional field type options,
-			 * @param string      $type    Field type,
-			 * @param array       $options Tabs, indexed by label,
-			 * @param object|Pods $pod     Pods object for the Pod this UI is for.
+			 * @param array                  $options Additional field type options,
+			 * @param string                 $type    Field type,
+			 * @param array                  $options Tabs, indexed by label,
+			 * @param null|\Pods\Whatsit\Pod $pod     Pods object for the Pod this UI is for.
 			 */
 			$options['additional-field'][ $type ] = apply_filters( "pods_admin_setup_edit_{$type}_additional_field_options", $options['additional-field'][ $type ], $type, $options, $pod );
 			$options['additional-field'][ $type ] = apply_filters( 'pods_admin_setup_edit_additional_field_options', $options['additional-field'][ $type ], $type, $options, $pod );
@@ -2746,8 +3005,8 @@ class PodsAdmin {
 		 *
 		 * @since unknown
 		 *
-		 * @param array       $options Tabs, indexed by label.
-		 * @param object|Pods $pod     Pods object for the Pod this UI is for.
+		 * @param array                  $options Tabs, indexed by label.
+		 * @param null|\Pods\Whatsit\Pod $pod     Pods object for the Pod this UI is for.
 		 */
 		$options = apply_filters( 'pods_admin_setup_edit_field_options', $options, $pod );
 

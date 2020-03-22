@@ -2658,8 +2658,14 @@ class PodsAPI {
 
 			$old_simple = ( 'pick' === $old_type && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
 
-			if ( isset( $params->name ) && ! empty( $params->name ) ) {
+			if ( isset( $params->new_name ) && ! empty( $params->new_name ) ) {
+				$field['name'] = $params->new_name;
+			} elseif ( isset( $params->name ) && ! empty( $params->name ) ) {
 				$field['name'] = $params->name;
+			}
+
+			if ( isset( $params->new_group ) && ! empty( $params->new_group ) ) {
+				$field['group'] = $params->new_group;
 			}
 
 			if ( $old_name !== $field['name'] ) {

@@ -11,7 +11,7 @@ class Field_Slug extends Field {
 	 *
 	 * @since 2.8
 	 */
-	public $route = '/fields/%1$s';
+	public $route = '/pods/%1$s/fields/%2$s';
 
 	/**
 	 * {@inheritdoc}
@@ -20,15 +20,17 @@ class Field_Slug extends Field {
 	 */
 	public function READ_args() {
 		return [
+			'pod'  => [
+				'type'              => 'string',
+				'in'                => 'path',
+				'description'       => __( 'The Pod slug.', 'pods' ),
+				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
 			'slug' => [
 				'type'        => 'string',
 				'in'          => 'path',
 				'description' => __( 'The Field slug.', 'pods' ),
-				'required'    => true,
-			],
-			'pod'  => [
-				'type'        => 'string',
-				'description' => __( 'The Pod slug.', 'pods' ),
 				'required'    => true,
 			],
 		];
@@ -50,20 +52,30 @@ class Field_Slug extends Field {
 	 */
 	public function EDIT_args() {
 		return [
+			'pod'      => [
+				'type'              => 'string',
+				'in'                => 'path',
+				'description'       => __( 'The Pod slug.', 'pods' ),
+				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
 			'slug'     => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug.', 'pods' ),
-				'required'    => true,
-			],
-			'pod'      => [
-				'type'        => 'string',
-				'description' => __( 'The Pod slug.', 'pods' ),
+				'description' => __( 'The Field slug.', 'pods' ),
 				'required'    => true,
 			],
 			'new_name' => [
 				'type'        => 'string',
 				'description' => __( 'The new name of the Field.', 'pods' ),
+			],
+			'new_group' => [
+				'type'        => 'string',
+				'description' => __( 'The new Group to use for the Field.', 'pods' ),
+			],
+			'new_group_id' => [
+				'type'        => 'string',
+				'description' => __( 'The new Group ID to use for the Field.', 'pods' ),
 			],
 			'label'    => [
 				'type'        => 'string',
@@ -97,15 +109,17 @@ class Field_Slug extends Field {
 	 */
 	public function DELETE_args() {
 		return [
+			'pod'  => [
+				'type'              => 'string',
+				'in'                => 'path',
+				'description'       => __( 'The Pod slug.', 'pods' ),
+				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
 			'slug' => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug.', 'pods' ),
-				'required'    => true,
-			],
-			'pod'  => [
-				'type'        => 'string',
-				'description' => __( 'The Pod slug.', 'pods' ),
+				'description' => __( 'The Field slug.', 'pods' ),
 				'required'    => true,
 			],
 		];

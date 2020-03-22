@@ -33,6 +33,19 @@ class Base extends Validator_Base implements Validator_Interface {
 	 *
 	 * @return bool
 	 */
+	public function is_pod_slug( $value ) {
+		return null !== get_page_by_path( $value, OBJECT, '_pods_pod' );
+	}
+
+	/**
+	 * Whether the value corresponds to an existing Pod ID or not.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 */
 	public function is_pod_id( $value ) {
 		if ( ! is_numeric( $value ) ) {
 			return false;

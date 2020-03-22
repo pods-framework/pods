@@ -290,7 +290,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Field_Slug $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.field-slug' );
 
-		register_rest_route( $this->namespace, sprintf( $endpoint->route, '(?P<slug>[\w\_\-]+)' ), [
+		register_rest_route( $this->namespace, sprintf( $endpoint->route, '(?P<pod>[\w\_\-]+)', '(?P<slug>[\w\_\-]+)' ), [
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'args'                => $endpoint->READ_args(),
@@ -395,7 +395,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		/** @var Group_Slug $endpoint */
 		$endpoint = tribe( 'pods.rest-v1.endpoints.group-slug' );
 
-		register_rest_route( $this->namespace, sprintf( $endpoint->route, '(?P<slug>[\w\_\-]+)' ), [
+		register_rest_route( $this->namespace, sprintf( $endpoint->route, '(?P<pod>[\w\_\-]+)', '(?P<slug>[\w\_\-]+)' ), [
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'args'                => $endpoint->READ_args(),

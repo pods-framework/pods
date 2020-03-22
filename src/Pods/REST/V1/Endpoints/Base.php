@@ -356,7 +356,13 @@ abstract class Base {
 			$args = [
 				$api_arg => $identifier,
 			];
+
+			if ( $rest_param !== $api_arg ) {
+				unset( $request[ $rest_param ] );
+			}
 		}
+
+		$args = array_merge( $request->get_params(), $args );
 
 		$api = pods_api();
 

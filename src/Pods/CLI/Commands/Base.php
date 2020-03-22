@@ -381,7 +381,7 @@ abstract class Base {
 					return new WP_Error( 'cli-missing-positional-argument', sprintf( __( 'Missing positional argument: %s', 'pods' ), $param ) );
 				}
 
-				$value = current( $args );
+				$value = array_shift( $args );
 
 				$value = $this->validate_arg( $value, $arg, $param );
 

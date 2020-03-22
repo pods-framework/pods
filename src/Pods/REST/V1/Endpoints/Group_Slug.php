@@ -11,7 +11,7 @@ class Group_Slug extends Group {
 	 *
 	 * @since 2.8
 	 */
-	public $route = '/groups/%1$s';
+	public $route = '/pods/%1$s/groups/%2$s';
 
 	/**
 	 * {@inheritdoc}
@@ -20,15 +20,17 @@ class Group_Slug extends Group {
 	 */
 	public function READ_args() {
 		return [
+			'pod'            => [
+				'type'              => 'string',
+				'in'                => 'path',
+				'description'       => __( 'The Pod slug.', 'pods' ),
+				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
 			'slug'           => [
 				'type'        => 'string',
 				'in'          => 'path',
 				'description' => __( 'The Group slug.', 'pods' ),
-				'required'    => true,
-			],
-			'pod'            => [
-				'type'        => 'string',
-				'description' => __( 'The Pod slug.', 'pods' ),
 				'required'    => true,
 			],
 			'include_fields' => [
@@ -55,15 +57,17 @@ class Group_Slug extends Group {
 	 */
 	public function EDIT_args() {
 		return [
+			'pod'      => [
+				'type'              => 'string',
+				'in'                => 'path',
+				'description'       => __( 'The Pod slug.', 'pods' ),
+				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
 			'slug'     => [
 				'type'        => 'string',
 				'in'          => 'path',
 				'description' => __( 'The Field slug.', 'pods' ),
-				'required'    => true,
-			],
-			'pod'      => [
-				'type'        => 'string',
-				'description' => __( 'The Pod slug.', 'pods' ),
 				'required'    => true,
 			],
 			'new_name' => [
@@ -102,15 +106,17 @@ class Group_Slug extends Group {
 	 */
 	public function DELETE_args() {
 		return [
+			'pod'  => [
+				'type'              => 'string',
+				'in'                => 'path',
+				'description'       => __( 'The Pod slug.', 'pods' ),
+				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
 			'slug' => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug.', 'pods' ),
-				'required'    => true,
-			],
-			'pod'  => [
-				'type'        => 'string',
-				'description' => __( 'The Pod slug.', 'pods' ),
+				'description' => __( 'The Group slug.', 'pods' ),
 				'required'    => true,
 			],
 		];

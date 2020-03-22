@@ -169,12 +169,14 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	public function CREATE_args() {
 		return [
 			'pod_id' => [
-				'type'        => 'string',
-				'description' => __( 'The Pod ID.', 'pods' ),
+				'type'              => 'string',
+				'description'       => __( 'The Pod ID.', 'pods' ),
+				'validate_callback' => [ $this->validator, 'is_pod_id' ],
 			],
 			'pod'    => [
-				'type'        => 'string',
-				'description' => __( 'The Pod name.', 'pods' ),
+				'type'              => 'string',
+				'description'       => __( 'The Pod name.', 'pods' ),
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
 			],
 			'name'   => [
 				'type'        => 'string',

@@ -1196,17 +1196,16 @@ class PodsAdmin {
 			return $obj->error( __( 'Invalid Pod configuration detected.' ) );
 		}
 
-		$config = $pod->export( [
-			'include_groups'       => true,
-			'include_group_fields' => true,
-			'include_fields'       => false,
-		] );
+		$config = [
+			'currentPod' => $pod->export( [
+				'include_groups'       => true,
+				'include_group_fields' => true,
+				'include_fields'       => false,
+			] ),
+			'global'     => $this->get_global_config( $pod ),
+		];
 
 		wp_localize_script( 'pods-dfv', 'podsAdminConfig', $config );
-
-		$global_config = $this->get_global_config( $pod );
-
-		wp_localize_script( 'pods-dfv', 'podsAdminGlobalConfig', $global_config );
 
 		pods_view( PODS_DIR . 'ui/admin/setup-edit-proto.php', compact( array_keys( get_defined_vars() ) ) );
 	}

@@ -110,6 +110,7 @@ class Post_Type extends Collection {
 				'publish',
 				'draft',
 			),
+			'suppress_filters' => false,
 		);
 
 		if ( ! empty( $args['object_type'] ) ) {
@@ -119,6 +120,11 @@ class Post_Type extends Collection {
 
 			foreach ( $object_types as $object_type ) {
 				$post_args['post_type'][] = '_pods_' . $object_type;
+			}
+
+			// There is some sort of bug when you pass a single value array for post_type that causes no results.
+			if ( 1 === count( $post_args['post_type'] ) ) {
+				$post_args['post_type'] = current( $post_args['post_type'] );
 			}
 		}
 
@@ -214,6 +220,10 @@ class Post_Type extends Collection {
 
 			if ( $args['status'] ) {
 				sort( $args['status'] );
+
+				if ( 1 === count( $args['status'] ) ) {
+					$args['status'] = current( $args['status'] );
+				}
 
 				$post_args['post_status'] = $args['status'];
 			}

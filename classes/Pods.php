@@ -288,16 +288,16 @@ class Pods implements Iterator {
 			if ( $queried_object ) {
 				$id_lookup = true;
 
-				if ( isset( $queried_object->post_type ) ) {
+				if ( $queried_object instanceof WP_Post ) {
 					// Post Type Singular.
 					$pod = $queried_object->post_type;
-				} elseif ( isset( $queried_object->taxonomy ) ) {
+				} elseif ( $queried_object instanceof WP_Term ) {
 					// Term Archive.
 					$pod = $queried_object->taxonomy;
-				} elseif ( isset( $queried_object->user_login ) ) {
+				} elseif ( $queried_object instanceof WP_User ) {
 					// Author Archive.
 					$pod = 'user';
-				} elseif ( isset( $queried_object->public, $queried_object->name ) ) {
+				} elseif ( $queried_object instanceof WP_Post_Type ) {
 					// Post Type Archive.
 					$pod = $queried_object->name;
 

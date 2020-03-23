@@ -168,7 +168,7 @@ class PodsField_Number extends PodsField {
 
 		$is_empty = false;
 
-		if ( empty( $value ) && ( ! is_numeric( $value ) || 0.0 !== (float) $value ) ) {
+		if ( empty( $value ) ) {
 			$is_empty = true;
 		}
 
@@ -271,7 +271,7 @@ class PodsField_Number extends PodsField {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		if ( $this->is_empty( $value ) ) {
+		if ( $this->is_empty( $value ) && ( ! is_numeric( $value ) || 0.0 !== (float) $value ) ) {
 			// Don't enforce a default value here.
 			return null;
 		}
@@ -305,7 +305,7 @@ class PodsField_Number extends PodsField {
 	 */
 	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
-		if ( $this->is_empty( $value ) ) {
+		if ( $this->is_empty( $value ) && ( ! is_numeric( $value ) || 0.0 !== (float) $value ) ) {
 			// Don't enforce a default value here.
 			return null;
 		}

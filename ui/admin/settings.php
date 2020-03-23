@@ -7,11 +7,11 @@
 			<?php
 			$default = 'tools';
 
-			$tabs = [
+			$tabs = array(
 				// 'settings' => __( 'Settings', 'pods' ),
 				'tools' => __( 'Tools', 'pods' ),
 				'reset' => __( 'Cleanup &amp; Reset', 'pods' ),
-			];
+			);
 			?>
 
 			<h2 class="nav-tab-wrapper">

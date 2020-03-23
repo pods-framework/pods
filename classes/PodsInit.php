@@ -178,7 +178,7 @@ class PodsInit {
 		require_once dirname( __DIR__ ) . '/vendor/freemius/wordpress-sdk/start.php';
 
 		try {
-			$this->freemius = fs_dynamic_init( [
+			$this->freemius = fs_dynamic_init( array(
 				'id'             => '5347',
 				'slug'           => 'pods',
 				'type'           => 'plugin',
@@ -186,7 +186,7 @@ class PodsInit {
 				'is_premium'     => false,
 				'has_addons'     => true,
 				'has_paid_plans' => false,
-				'menu'           => [
+				'menu'           => array(
 					'slug'        => 'pods-settings',
 					'contact'     => false,
 					'support'     => false,
@@ -194,25 +194,25 @@ class PodsInit {
 					'account'     => true,
 					'pricing'     => false,
 					'addons'      => true,
-					'parent'      => [
+					'parent'      => array(
 						'slug' => 'pods',
-					],
-				],
-			] );
+					),
+				),
+			) );
 
 			$this->override_freemius_strings();
 
-			add_filter( 'fs_plugins_api', [ $this, 'filter_freemius_plugins_api_data' ], 15 );
+			add_filter( 'fs_plugins_api', array( $this, 'filter_freemius_plugins_api_data' ), 15 );
 
-			$this->freemius->add_filter( 'templates/add-ons.php', [ $this, 'filter_freemius_addons_html' ] );
-			$this->freemius->add_filter( 'download_latest_url', [ $this, 'get_freemius_action_link' ]  );
+			$this->freemius->add_filter( 'templates/add-ons.php', array( $this, 'filter_freemius_addons_html' ) );
+			$this->freemius->add_filter( 'download_latest_url', array( $this, 'get_freemius_action_link' ) );
 
 			/**
 			 * Allow hooking into the Freemius registration after Pods has registered it's own Freemius.
 			 */
 			do_action( 'pods_freemius_init' );
 		} catch ( \Exception $exception ) {
-			return;
+			return null;
 		}
 
 		return $this->freemius;
@@ -222,11 +222,11 @@ class PodsInit {
 	 * Override Freemius strings.
 	 */
 	public function override_freemius_strings() {
-		$override_text = [
+		$override_text = array(
 			'free'                     => 'Free (WordPress.org)',
 			'install-free-version-now' => 'Install Now',
 			'download-latest'          => 'Donate',
-		];
+		);
 
 		$freemius_addons = $this->get_freemius_addons();
 
@@ -308,14 +308,14 @@ class PodsInit {
 	 * @return array List of add-ons for Freemius.
 	 */
 	public function get_freemius_addons() {
-		return [
+		return array(
 			'pods-beaver-builder-themer-add-on' => 'Pods Beaver Themer Add-On',
 			'pods-gravity-forms'                => 'Pods Gravity Forms Add-On',
 			'pods-alternative-cache'            => 'Pods Alternative Cache',
 			'pods-simple-relationships'         => 'Pods Simple Relationships',
 			'pods-seo'                          => 'Pods SEO',
 			'pods-ajax-views'                   => 'Pods AJAX Views',
-		];
+		);
 	}
 
 	/**
@@ -326,9 +326,9 @@ class PodsInit {
 	 * @return array List of Friends-only add-ons for Freemius.
 	 */
 	public function get_freemius_friends_addons() {
-		return [
+		return array(
 			'pods-simple-relationships' => 'Pods Simple Relationships',
-		];
+		);
 	}
 
 	/**

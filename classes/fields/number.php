@@ -162,11 +162,14 @@ class PodsField_Number extends PodsField {
 	}
 
 	/**
+	 * @todo 2.8 Centralize the usage of this methoc. See PR #5540.
 	 * {@inheritdoc}
 	 */
 	public function is_empty( $value = null ) {
 
 		$is_empty = false;
+
+		$value += 0; // Convert to numeric.
 
 		if ( empty( $value ) ) {
 			$is_empty = true;

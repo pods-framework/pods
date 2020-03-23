@@ -105,7 +105,7 @@ class Test_If extends \Pods_Unit_Tests\Pods_UnitTestCase {
 			array(
 				'name'    => __FUNCTION__ . '2',
 				'number1' => 456,
-				'number2' => null, // `0` is a valid number.
+				'number2' => 0,
 			)
 		);
 		$content = base64_encode( 'ABC' );
@@ -177,7 +177,7 @@ class Test_If extends \Pods_Unit_Tests\Pods_UnitTestCase {
 			array(
 				'name'    => 'my post title',
 				'number1' => 456,
-				'number2' => null, // `0` is a valid number.
+				'number2' => 0,
 			)
 		);
 		$content = base64_encode( '{@number2}[else]{@number1}' );

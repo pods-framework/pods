@@ -250,13 +250,15 @@ class PodsField_Currency extends PodsField_Number {
 		$currency_entity = static::$currencies[ $currency ]['entity'];
 
 		// Remove currency and thousands symbols.
-		$check = str_replace(
+		$value = str_replace(
 			array(
 				$currency_sign,
 				$currency_entity,
 				html_entity_decode( $currency_sign ),
 				html_entity_decode( $currency_entity ),
-			), '', $value
+			),
+			'',
+			$value
 		);
 
 		return parent::validate( $value, $name, $options, $fields, $pod, $id, $params );

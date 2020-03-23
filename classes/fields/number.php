@@ -286,7 +286,11 @@ class PodsField_Number extends PodsField {
 
 		if ( 'slider' !== pods_v( static::$type . '_format_type', $options ) ) {
 			// Slider only supports `1234.00` format so no need for replacing characters.
-			$value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+			$value = str_replace(
+				array( $thousands, $dot, html_entity_decode( $thousands ) ),
+				array( '', '.', '' ),
+				$value
+			);
 		}
 
 		$value = trim( $value );

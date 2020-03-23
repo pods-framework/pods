@@ -286,7 +286,9 @@ class PodsField_Currency extends PodsField_Number {
 				$currency_entity,
 				html_entity_decode( $currency_sign ),
 				html_entity_decode( $currency_entity ),
-			), '', $value
+			),
+			'',
+			$value
 		);
 
 		return parent::pre_save( $value, $id, $name, $options, $fields, $pod, $params );

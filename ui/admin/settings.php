@@ -25,7 +25,7 @@
 						$label = 'Pods ' . $label;
 					}
 
-					$url = pods_query_arg( [ 'tab' => $tab ], [ 'page' ] );
+					$url = pods_query_arg( array( 'tab' => $tab ), array( 'page' ) );
 					?>
 					<a href="<?php echo esc_url( $url ); ?>" class="nav-tab<?php echo esc_attr( $class ); ?>">
 						<?php echo $label; ?>

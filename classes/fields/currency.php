@@ -304,6 +304,8 @@ class PodsField_Currency extends PodsField_Number {
 		// Additional output handling for decimals
 		$decimal_handling = pods_v( static::$type . '_decimal_handling', $options, 'none' );
 		if ( 'none' !== $decimal_handling ) {
+			$format_args = $this->get_number_format_args( $options );
+			$dot         = $format_args['dot'];
 			$value_parts = explode( $dot, $value );
 			// Make sure decimals are empty.
 			if ( isset( $value_parts[1] ) && ! (int) $value_parts[1] ) {

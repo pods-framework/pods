@@ -297,7 +297,7 @@ class Pods implements Iterator {
 				} elseif ( $queried_object instanceof WP_User ) {
 					// Author Archive.
 					$pod = 'user';
-				} elseif ( $queried_object instanceof WP_Post_Type && $queried_object->public ) {
+				} elseif ( $queried_object instanceof WP_Post_Type ) {
 					// Post Type Archive.
 					$pod = $queried_object->name;
 

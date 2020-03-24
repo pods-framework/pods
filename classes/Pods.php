@@ -1061,7 +1061,7 @@ class Pods implements Iterator {
 						$attachment_id = 0;
 						switch ( $image_field ) {
 							case 'post_thumbnail':
-								$attachment_id = get_post_thumbnail_id();
+								$attachment_id = get_post_thumbnail_id( $this->id() );
 								break;
 							case 'image_attachment':
 								if ( isset( $traverse_names[0] ) ) {
@@ -1094,6 +1094,7 @@ class Pods implements Iterator {
 							}
 
 							if ( $size ) {
+								// Pods will auto-get the thumbnail ID if this isn't an attachment.
 								$value = pods_image( $attachment_id, $size, 0, null, true );
 
 								$object_field_found = true;

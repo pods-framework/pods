@@ -36,41 +36,6 @@ class Pods_Templates_Auto_Template_Front_End {
 	}
 
 	/**
-	 * Get the filter used for a Pod.
-	 *
-	 * @param string $pod_name      The pod name.
-	 * @param array  $possible_pods Array of available pods. See self::auto_pods().
-	 *
-	 * @return string
-	 * @since  1.7.2
-	 */
-	public function get_pod_filter( $pod_name = '', $possible_pods = array() ) {
-		$filter = 'the_content';
-
-		if ( ! $pod_name ) {
-			// Get the current post type.
-			$pod_name = $this->get_pod_name();
-		}
-
-		if ( ! $possible_pods ) {
-			// Now use other methods in class to build array to search in/ use.
-			$possible_pods = $this->auto_pods();
-		}
-
-		if ( isset( $possible_pods[ $pod_name ] ) ) {
-			$this_pod = $possible_pods[ $pod_name ];
-
-			if ( in_the_loop() && ! is_singular() ) {
-				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
-			} else {
-				$filter = pods_v( 'single_filter', $this_pod, $filter, true );
-			}
-		}
-
-		return $filter;
-	}
-
-	/**
 	 * Add hooks for output.
 	 *
 	 * @since 2.6.6
@@ -258,9 +223,44 @@ class Pods_Templates_Auto_Template_Front_End {
 	}
 
 	/**
-	 * Fetches the current post type.
+	 * Get the filter used for a Pod.
 	 *
-	 * @return string current post type.
+	 * @param string $pod_name      The pod name.
+	 * @param array  $possible_pods Array of available pods. See self::auto_pods().
+	 *
+	 * @return string
+	 * @since  1.7.2
+	 */
+	public function get_pod_filter( $pod_name = '', $possible_pods = array() ) {
+		$filter = 'the_content';
+
+		if ( ! $pod_name ) {
+			// Get the current post type.
+			$pod_name = $this->get_pod_name();
+		}
+
+		if ( ! $possible_pods ) {
+			// Now use other methods in class to build array to search in/ use.
+			$possible_pods = $this->auto_pods();
+		}
+
+		if ( isset( $possible_pods[ $pod_name ] ) ) {
+			$this_pod = $possible_pods[ $pod_name ];
+
+			if ( in_the_loop() && ! is_singular() ) {
+				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+			} else {
+				$filter = pods_v( 'single_filter', $this_pod, $filter, true );
+			}
+		}
+
+		return $filter;
+	}
+
+	/**
+	 * Fetches the current Pod name.
+	 *
+	 * @return string Pod name.
 	 *
 	 * @since 2.4.5
 	 */

@@ -217,14 +217,6 @@ class Pods_Templates_Auto_Template_Front_End {
 						$has_archive = true;
 					}
 
-					if ( empty( $single_filter ) ) {
-						$single_filter = 'the_content';
-					}
-
-					if ( empty( $archive_filter ) ) {
-						$archive_filter = 'the_content';
-					}
-
 					// build output array.
 					$auto_pods[ $the_pod ] = array(
 						'name'             => $the_pod,

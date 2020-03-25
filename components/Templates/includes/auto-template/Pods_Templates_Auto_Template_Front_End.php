@@ -303,6 +303,8 @@ class Pods_Templates_Auto_Template_Front_End {
 
 		// get the current post type.
 		$current_post_type = $this->current_post_type();
+		// The current pod type.
+		$pod_type = '';
 
 		// now use other methods in class to build array to search in/ use.
 		$possible_pods = $this->auto_pods();
@@ -310,21 +312,24 @@ class Pods_Templates_Auto_Template_Front_End {
 		// build Pods object for current item.
 		$pod_item = get_queried_object_id();
 		if ( is_singular() || in_the_loop() ) {
+			$pod_type = 'post';
 		}
 		// Outside the loop in a taxonomy, we want the term.
 		elseif ( is_tax() ) {
 			$obj      = get_queried_object();
+			$pod_type = 'taxonomy';
 			$pod_name = $obj->taxonomy;
 		} else {
 			// Backwards compatibility.
 			global $post;
 			if ( $post ) {
 				$pod_item = $post->ID;
+				$pod_type = 'post';
 			}
 		}
 
 		// check if $current_post_type is the key of the array of possible pods.
-		if ( isset( $possible_pods[ $pod_name ] ) ) {
+		if ( $pod_type && isset( $possible_pods[ $pod_name ] ) ) {
 			// get array for the current post type.
 			$this_pod = $possible_pods[ $pod_name ];
 
@@ -334,7 +339,7 @@ class Pods_Templates_Auto_Template_Front_End {
 				return $content;
 			}
 
-			if ( ! in_the_loop() && ! pods_v( 'run_outside_loop', $this_pod, false ) ) {
+			if ( 'post' === $pod_type && ! in_the_loop() && ! pods_v( 'run_outside_loop', $this_pod, false ) ) {
 				// If outside of the loop, exit quickly.
 				return $content;
 			}

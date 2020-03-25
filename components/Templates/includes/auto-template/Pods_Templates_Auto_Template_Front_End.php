@@ -377,7 +377,7 @@ class Pods_Templates_Auto_Template_Front_End {
 				$s_or_a_append = 'single_append';
 			}
 
-			if ( $this_pod[ $s_or_a ] && current_filter() == $this_pod[ $s_or_a_filter ] ) {
+			if ( ! empty( $this_pod[ $s_or_a ] ) && current_filter() == $this_pod[ $s_or_a_filter ] ) {
 				// load the template
 				$content = $this->load_template( $this_pod[ $s_or_a ], $content, $pods, $this_pod[ $s_or_a_append ] );
 			}

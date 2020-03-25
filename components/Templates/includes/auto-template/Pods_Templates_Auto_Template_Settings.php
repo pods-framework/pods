@@ -167,7 +167,7 @@ class Pods_Templates_Auto_Template_Settings {
 		// check if it's a taxonomy Pod, if so add fields for that
 		if ( $pod['type'] === 'taxonomy' ) {
 			$options['pods-pfat'] = array(
-				'pfat_enable'           => array(
+				'pfat_enable'        => array(
 					'label'             => __( 'Enable Automatic Pods Templates for this Taxonomy Pod?', 'pods' ),
 					'help'              => __( 'When enabled you can specify the names of a Pods Template to be used to display information about this taxonomy and/or posts in this taxonomy in the front-end.', 'pods' ),
 					'type'              => 'boolean',
@@ -175,49 +175,22 @@ class Pods_Templates_Auto_Template_Settings {
 					'dependency'        => true,
 					'boolean_yes_label' => '',
 				),
-				'pfat_run_outside_loop' => array(
-					'label'             => __( 'Execute Auto Template outside of the WordPress loop? (advanced)', 'pods' ),
-					'help'              => __( 'When enabled, the template will be executed whenever the specified filter is called.', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => false,
-					'depends-on'        => array( 'pfat_enable' => true ),
-					'boolean_yes_label' => '',
-				),
-				'pfat_single'           => array(
+				'pfat_single'        => array(
 					'label'      => __( 'Taxonomy Template', 'pods' ),
 					'help'       => __( 'Name of Pods template to use to present this taxonomy object itself.', 'pods' ),
 					'type'       => 'text',
 					'default'    => false,
 					'depends-on' => array( 'pfat_enable' => true ),
 				),
-				'pfat_append_single'    => array(
+				'pfat_append_single' => array(
 					'label'      => __( 'Template Location', 'pods' ),
 					'help'       => __( 'Whether the template will go before, after or in place of the post content.', 'pods' ),
 					'depends-on' => array( 'pfat_enable' => true ),
 				),
-				'pfat_filter_single'    => array(
+				'pfat_filter_single' => array(
 					'label'      => __( 'Taxonomy Template Filter', 'pods' ),
 					'help'       => __( 'Which filter to use for taxonomy view.', 'pods' ),
 					'default'    => 'get_the_archive_description',
-					'type'       => 'text',
-					'depends-on' => array( 'pfat_enable' => true ),
-				),
-				'pfat_archive'          => array(
-					'label'      => __( 'Taxonomy Archive Template', 'pods' ),
-					'help'       => __( 'Name of Pods template to use for posts in this taxonomy.', 'pods' ),
-					'type'       => 'text',
-					'default'    => false,
-					'depends-on' => array( 'pfat_enable' => true ),
-				),
-				'pfat_append_archive'   => array(
-					'label'      => __( 'Archive Template Location', 'pods' ),
-					'help'       => __( 'Whether the template will go before, after or in place of the post content.', 'pods' ),
-					'depends-on' => array( 'pfat_enable' => true ),
-				),
-				'pfat_filter_archive'   => array(
-					'label'      => __( 'Archive Template Filter', 'pods' ),
-					'help'       => __( 'Which filter to use for archives.', 'pods' ),
-					'default'    => 'the_content',
 					'type'       => 'text',
 					'depends-on' => array( 'pfat_enable' => true ),
 				),
@@ -239,10 +212,8 @@ class Pods_Templates_Auto_Template_Settings {
 
 			if ( ! empty( $titles ) ) {
 				foreach ( $pick as $k => $v ) {
-					$options['pods-pfat']['pfat_single'][ $k ] = $v;
-
+					$options['pods-pfat']['pfat_single'][ $k ]  = $v;
 					$options['pods-pfat']['pfat_archive'][ $k ] = $v;
-
 				}
 
 				$template_titles = array_combine( $this->get_template_titles(), $this->get_template_titles() );

@@ -308,17 +308,18 @@ class Pods_Templates_Auto_Template_Front_End {
 		$possible_pods = $this->auto_pods();
 
 		// build Pods object for current item.
-		global $post;
-		$pod_name = $current_post_type;
-		$pod_item = $post->ID;
-		if ( in_the_loop() ) {
-			$pod_name = $post->post_type;
+		$pod_item = get_queried_object_id();
+		if ( is_singular() || in_the_loop() ) {
+		}
+		// Outside the loop in a taxonomy, we want the term.
+		elseif ( is_tax() ) {
+			$obj      = get_queried_object();
+			$pod_name = $obj->taxonomy;
 		} else {
-			// Outside the loop in a taxonomy, we want the term.
-			if ( is_tax() ) {
-				$obj      = get_queried_object();
-				$pod_name = $obj->slug;
-				$pod_item = $obj->term_id;
+			// Backwards compatibility.
+			global $post;
+			if ( $post ) {
+				$pod_item = $post->ID;
 			}
 		}
 

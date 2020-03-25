@@ -330,6 +330,8 @@ class Pods_Templates_Auto_Template_Front_End {
 				$pod_type = 'post';
 			}
 		}
+		// @todo Users?
+		// @todo Media?
 
 		// check if $current_post_type is the key of the array of possible pods.
 		if ( $pod_type && isset( $possible_pods[ $pod_name ] ) ) {

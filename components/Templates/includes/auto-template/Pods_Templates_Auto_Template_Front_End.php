@@ -313,7 +313,7 @@ class Pods_Templates_Auto_Template_Front_End {
 		$possible_pods = $this->auto_pods();
 
 		// Build Pods object for current item.
-		$pod_item = get_queried_object_id();
+		$pod_id = get_queried_object_id();
 		if ( is_singular() || in_the_loop() ) {
 			$pod_type = 'post';
 		} elseif ( is_tax() ) {
@@ -325,7 +325,7 @@ class Pods_Templates_Auto_Template_Front_End {
 			// Backwards compatibility.
 			global $post;
 			if ( $post ) {
-				$pod_item = $post->ID;
+				$pod_id   = $post->ID;
 				$pod_type = 'post';
 			}
 		}
@@ -335,7 +335,7 @@ class Pods_Templates_Auto_Template_Front_End {
 		// Check if $current_post_type is the key of the array of possible pods.
 		if ( $pod_type && isset( $possible_pods[ $pod_name ] ) ) {
 			// Get array for the current post type.
-			$this_pod = $possible_pods[ $pod_name ];
+			$auto_pod = $possible_pods[ $pod_name ];
 
 			$filter = $this->get_pod_filter( $pod_name, $possible_pods );
 
@@ -343,12 +343,12 @@ class Pods_Templates_Auto_Template_Front_End {
 				return $content;
 			}
 
-			if ( 'post' === $pod_type && ! in_the_loop() && ! pods_v( 'run_outside_loop', $this_pod, false ) ) {
+			if ( 'post' === $pod_type && ! in_the_loop() && ! pods_v( 'run_outside_loop', $auto_pod, false ) ) {
 				// If outside of the loop, exit quickly.
 				return $content;
 			}
 
-			$pod_name_and_item = array( $pod_name, $pod_item );
+			$pod_name_and_id = array( $pod_name, $pod_id );
 			/**
 			 * Change which pod and item to run the template against. The
 			 * default pod is the the post type of the post about to be
@@ -356,28 +356,28 @@ class Pods_Templates_Auto_Template_Front_End {
 			 * except outside the loop in a taxonomy archive, in which case it
 			 * is the term the archive is for.
 			 *
-			 * @since 2.7.16
+			 * @since 2.7.17
 			 *
-			 * @param string $pod_name_and_item An array of the name of the pod to run the template against and the item (ID or slug) of the item in that pod to use.
-			 * @param string $template_source   The name of the pod from which the template was selected.
-			 * @param Post   $post              The Post object that is about to be displayed.
+			 * @param string          $pod_name_and_id An array of the name of the pod to run the template against and the ID of the item in that pod to use.
+			 * @param string          $pod_name        The name of the pod from which the template was selected.
+			 * @param WP_post|WP_Term $obj             The object that is about to be displayed.
 			 */
-			$pod_name_and_item = apply_filters( 'pods_auto_template_pod_name_and_item', $pod_name_and_item, $current_post_type, $post );
-			$pod               = pods( $pod_name_and_item[0], $pod_name_and_item[1] );
+			$pod_name_and_id = apply_filters( 'pods_auto_template_pod_name_and_id', $pod_name_and_id, $pod_name, $obj );
+			$pod             = pods( $pod_name_and_id[0], $pod_name_and_id[1] );
 
 			// Heuristically decide if this is single or archive.
-			$s_or_a        = 'archive';
-			$s_or_a_filter = 'archive_filter';
-			$s_or_a_append = 'archive_append';
+			$type        = 'archive';
+			$type_filter = 'archive_filter';
+			$type_append = 'archive_append';
 			if ( ! in_the_loop() || is_singular() ) {
-				$s_or_a        = 'single';
-				$s_or_a_filter = 'single_filter';
-				$s_or_a_append = 'single_append';
+				$type        = 'single';
+				$type_filter = 'single_filter';
+				$type_append = 'single_append';
 			}
 
-			if ( ! empty( $this_pod[ $s_or_a ] ) && current_filter() == $this_pod[ $s_or_a_filter ] ) {
+			if ( ! empty( $auto_pod[ $type ] ) && current_filter() == $auto_pod[ $type_filter ] ) {
 				// Load the template.
-				$content = $this->load_template( $this_pod[ $s_or_a ], $content, $pod, $this_pod[ $s_or_a_append ] );
+				$content = $this->load_template( $auto_pod[ $type ], $content, $pod, $auto_pod[ $type_append ] );
 			}
 		}//end if
 

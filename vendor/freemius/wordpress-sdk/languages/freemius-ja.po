@@ -1,0 +1,2762 @@
+# Copyright (C) 2019 freemius
+# This file is distributed under the same license as the freemius package.
+# Translators:
+# Odyssey <8bitodyssey+github@gmail.com>, 2016
+# Takayuki Miyauchi <miya0001@users.noreply.github.com>, 2016
+# Tomohyco Tsunoda, 2018
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress SDK\n"
+"Report-Msgid-Bugs-To: https://github.com/Freemius/wordpress-sdk/issues\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2019-12-14 09:08+0000\n"
+"Last-Translator: Vova Feldman <vova@freemius.com>\n"
+"Language-Team: Japanese (http://www.transifex.com/freemius/wordpress-sdk/language/ja/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: get_text_inline;fs_text_inline;fs_echo_inline;fs_esc_js_inline;fs_esc_attr_inline;fs_esc_attr_echo_inline;fs_esc_html_inline;fs_esc_html_echo_inline;get_text_x_inline:1,2c;fs_text_x_inline:1,2c;fs_echo_x_inline:1,2c;fs_esc_attr_x_inline:1,2c;fs_esc_js_x_inline:1,2c;fs_esc_js_echo_x_inline:1,2c;fs_esc_html_x_inline:1,2c;fs_esc_html_echo_x_inline:1,2c\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: includes/class-freemius.php1880, templates/account.php:840
+msgid ""
+"An update to a Beta version will replace your installed version of %s with "
+"the latest Beta release - use with caution, and not on production sites. You"
+" have been warned."
+msgstr ""
+
+#: includes/class-freemius.php:1887
+msgid "Would you like to proceed with the update?"
+msgstr ""
+
+#: includes/class-freemius.php:2095
+msgid ""
+"Freemius SDK couldn't find the plugin's main file. Please contact "
+"sdk@freemius.com with the current error."
+msgstr "Freemius SDK がプラグインのメインファイルを見つけることができませんでした。現在のエラーを添えて  sdk@freemius.com に連絡してください。"
+
+#: includes/class-freemius.php:2097
+msgid "Error"
+msgstr "エラー"
+
+#: includes/class-freemius.php:2491
+msgid "I found a better %s"
+msgstr "より良い %sを見つけました"
+
+#: includes/class-freemius.php:2493
+msgid "What's the %s's name?"
+msgstr "%sの名前は何ですか？"
+
+#: includes/class-freemius.php:2499
+msgid "It's a temporary %s. I'm just debugging an issue."
+msgstr "%sは一時的なものです。現在この問題をデバッグ中です。"
+
+#: includes/class-freemius.php:2501
+msgid "Deactivation"
+msgstr "無効化"
+
+#: includes/class-freemius.php:2502
+msgid "Theme Switch"
+msgstr "テーマ変更"
+
+#: includes/class-freemius.php2511, templates/forms/resend-key.php:24
+msgid "Other"
+msgstr "その他"
+
+#: includes/class-freemius.php:2519
+msgid "I no longer need the %s"
+msgstr "%sはもう不要です"
+
+#: includes/class-freemius.php:2526
+msgid "I only needed the %s for a short period"
+msgstr "短期間だけ %sが 必要です。"
+
+#: includes/class-freemius.php:2532
+msgid "The %s broke my site"
+msgstr "%s の影響でサイトを崩れました"
+
+#: includes/class-freemius.php:2539
+msgid "The %s suddenly stopped working"
+msgstr "%s の動作が突然停止しました"
+
+#: includes/class-freemius.php:2549
+msgid "I can't pay for it anymore"
+msgstr "もう払うことができません"
+
+#: includes/class-freemius.php:2551
+msgid "What price would you feel comfortable paying?"
+msgstr " 支払ってもよいと思う価格はいくらですか?"
+
+#: includes/class-freemius.php:2557
+msgid "I don't like to share my information with you"
+msgstr "自分の情報を共有したくありません"
+
+#: includes/class-freemius.php:2578
+msgid "The %s didn't work"
+msgstr "%s が動作しませんでした"
+
+#: includes/class-freemius.php:2588
+msgid "I couldn't understand how to make it work"
+msgstr "どうしたら動作するか分かりませんでした。"
+
+#: includes/class-freemius.php:2596
+msgid "The %s is great, but I need specific feature that you don't support"
+msgstr "%s は素晴らしいのですが、サポートされていないある機能が必要です"
+
+#: includes/class-freemius.php:2598
+msgid "What feature?"
+msgstr "何の機能ですか?"
+
+#: includes/class-freemius.php:2602
+msgid "The %s is not working"
+msgstr "%s が動作していません"
+
+#: includes/class-freemius.php:2604
+msgid "Kindly share what didn't work so we can fix it for future users..."
+msgstr "将来のユーザーのために修正できるよう、何が動作しなかったのかどうか共有してください…"
+
+#: includes/class-freemius.php:2608
+msgid "It's not what I was looking for"
+msgstr "探していたものではありません"
+
+#: includes/class-freemius.php:2610
+msgid "What you've been looking for?"
+msgstr "探していたのは何ですか?"
+
+#: includes/class-freemius.php:2614
+msgid "The %s didn't work as expected"
+msgstr "%sが期待通りに動きませんでした "
+
+#: includes/class-freemius.php:2616
+msgid "What did you expect?"
+msgstr "何を期待していましたか?"
+
+#: includes/class-freemius.php3471, templates/debug.php:20
+msgid "Freemius Debug"
+msgstr "Freemius デバッグ"
+
+#: includes/class-freemius.php:4223
+msgid "I don't know what is cURL or how to install it, help me!"
+msgstr "cURL がなにか、そのインストール方法を知りません。助けてください。"
+
+#: includes/class-freemius.php:4225
+msgid ""
+"We'll make sure to contact your hosting company and resolve the issue. You "
+"will get a follow-up email to %s once we have an update."
+msgstr "ホスティング会社に連絡して問題を解決してください。 更新が完了したら、 ％s へのフォローアップメールが届きます。"
+
+#: includes/class-freemius.php:4232
+msgid ""
+"Great, please install cURL and enable it in your php.ini file. In addition, "
+"search for the 'disable_functions' directive in your php.ini file and remove"
+" any disabled methods starting with 'curl_'. To make sure it was "
+"successfully activated, use 'phpinfo()'. Once activated, deactivate the %s "
+"and reactivate it back again."
+msgstr "すばらしい。cURL をインストールし、 php.ini ファイルで有効化してください。加えて、php.ini 内で 'disable_functions' ディレクティブを検索して、'curl_' で始まる無効化されたメソッドを削除してください。'phpinfo()' を使って正常に起動されたことを確認してください。有効化されている場合は %s を一度無効化し、再度有効化し直してください。"
+
+#: includes/class-freemius.php:4337
+msgid "Yes - do your thing"
+msgstr "はい - お構いなく"
+
+#: includes/class-freemius.php:4342
+msgid "No - just deactivate"
+msgstr "いいえ - すぐに無効化"
+
+#: includes/class-freemius.php4387, includes/class-freemius.php4881,
+#: includes/class-freemius.php6032, includes/class-freemius.php13153,
+#: includes/class-freemius.php16558, includes/class-freemius.php16646,
+#: includes/class-freemius.php16812, includes/class-freemius.php19040,
+#: includes/class-freemius.php19381, includes/class-freemius.php19391,
+#: includes/class-freemius.php20051, includes/class-freemius.php20924,
+#: includes/class-freemius.php21039, includes/class-freemius.php21183,
+#: templates/add-ons.php:57
+msgctxt "exclamation"
+msgid "Oops"
+msgstr "おっと"
+
+#: includes/class-freemius.php:4456
+msgid ""
+"Thank for giving us the chance to fix it! A message was just sent to our "
+"technical staff. We will get back to you as soon as we have an update to %s."
+" Appreciate your patience."
+msgstr "修正するチャンスをいただきありがとうございます! テクニカルスタッフにメッセージが送信されました。 ％s への更新が行われるとすぐにあなたに連絡します。 あなたの忍耐に感謝します。"
+
+#: includes/class-freemius.php:4878
+msgctxt "addonX cannot run without pluginY"
+msgid "%s cannot run without %s."
+msgstr "%s は、%s が無いと実行することができません。"
+
+#: includes/class-freemius.php:4879
+msgctxt "addonX cannot run..."
+msgid "%s cannot run without the plugin."
+msgstr "%s は、プラグインが無いと実行することができません。"
+
+#: includes/class-freemius.php5052, includes/class-freemius.php5077,
+#: includes/class-freemius.php:20122
+msgid ""
+"Unexpected API error. Please contact the %s's author with the following "
+"error."
+msgstr "予期しない API エラーです。%sの作者に次のエラーを連絡してください。"
+
+#: includes/class-freemius.php:5720
+msgid "Premium %s version was successfully activated."
+msgstr "プレミアムバージョンの %sは有効化に成功しました。"
+
+#: includes/class-freemius.php5732, includes/class-freemius.php:7599
+msgctxt ""
+"Used to express elation, enthusiasm, or triumph (especially in electronic "
+"communication)."
+msgid "W00t"
+msgstr "やったー"
+
+#: includes/class-freemius.php:5747
+msgid "You have a %s license."
+msgstr "%s ライセンスを持っています。"
+
+#: includes/class-freemius.php5751, includes/class-freemius.php15975,
+#: includes/class-freemius.php15986, includes/class-freemius.php19292,
+#: includes/class-freemius.php19642, includes/class-freemius.php19711,
+#: includes/class-freemius.php:19876
+msgctxt "interjection expressing joy or exuberance"
+msgid "Yee-haw"
+msgstr "ヤッホー"
+
+#: includes/class-freemius.php:6015
+msgid ""
+"%s free trial was successfully cancelled. Since the add-on is premium only "
+"it was automatically deactivated. If you like to use it in the future, "
+"you'll have to purchase a license."
+msgstr "%s の無料試用が正常にキャンセルされました。 アドオンはプレミアムなので、自動的に無効化されました。 将来使用したい場合は、ライセンスを購入する必要があります。"
+
+#: includes/class-freemius.php:6019
+msgid ""
+"%s is a premium only add-on. You have to purchase a license first before "
+"activating the plugin."
+msgstr "%s はプレミアムのみのアドオンです。そのプラグインを有効化する前にライセンスを購入する必要があります。"
+
+#: includes/class-freemius.php6028, templates/add-ons.php186,
+#: templates/account/partials/addon.php:381
+msgid "More information about %s"
+msgstr "%s に関する詳細情報"
+
+#: includes/class-freemius.php:6029
+msgid "Purchase License"
+msgstr "ライセンスを購入"
+
+#: includes/class-freemius.php6964, templates/connect.php:163
+msgid ""
+"You should receive an activation email for %s to your mailbox at %s. Please "
+"make sure you click the activation button in that email to %s."
+msgstr "%s のメールボックスに %s の有効化のメールを受け取っているはずです。%s のメールに記載された有効化ボタンをクリックしてください。"
+
+#: includes/class-freemius.php:6968
+msgid "start the trial"
+msgstr "トライアルを開始"
+
+#: includes/class-freemius.php6969, templates/connect.php:167
+msgid "complete the install"
+msgstr "インストールを完了"
+
+#: includes/class-freemius.php:7081
+msgid "You are just one step away - %s"
+msgstr "もうあとわずかです - %s"
+
+#: includes/class-freemius.php:7084
+msgctxt "%s - plugin name. As complete \"PluginX\" activation now"
+msgid "Complete \"%s\" Activation Now"
+msgstr "すぐに \"%s\" 有効化を完了してください"
+
+#: includes/class-freemius.php:7162
+msgid "We made a few tweaks to the %s, %s"
+msgstr "プラグインを微調整します、 %s, %s"
+
+#: includes/class-freemius.php:7166
+msgid "Opt in to make \"%s\" better!"
+msgstr ""
+
+#: includes/class-freemius.php:7598
+msgid "The upgrade of %s was successfully completed."
+msgstr "%s のアップグレードが完了しました。"
+
+#: includes/class-freemius.php9802, includes/class-fs-plugin-updater.php1038,
+#: includes/class-fs-plugin-updater.php1233,
+#: includes/class-fs-plugin-updater.php1240,
+#: templates/auto-installation.php:32
+msgid "Add-On"
+msgstr "アドオン"
+
+#: includes/class-freemius.php9804, templates/account.php335,
+#: templates/account.php343, templates/debug.php360, templates/debug.php:551
+msgid "Plugin"
+msgstr "プラグイン"
+
+#: includes/class-freemius.php9805, templates/account.php336,
+#: templates/account.php344, templates/debug.php360, templates/debug.php551,
+#: templates/forms/deactivation/form.php:71
+msgid "Theme"
+msgstr "テーマ"
+
+#: includes/class-freemius.php:12596
+msgid ""
+"An unknown error has occurred while trying to set the user's beta mode."
+msgstr ""
+
+#: includes/class-freemius.php:13020
+msgid "Invalid site details collection."
+msgstr ""
+
+#: includes/class-freemius.php:13140
+msgid ""
+"We couldn't find your email address in the system, are you sure it's the "
+"right address?"
+msgstr "システムではメールアドレスを見つけることができませんでした。メールアドレスが正しいか確認してください。"
+
+#: includes/class-freemius.php:13142
+msgid ""
+"We can't see any active licenses associated with that email address, are you"
+" sure it's the right address?"
+msgstr "メールアドレスに関連付けられた有効なライセンスが見つかりません。メールアドレスが正しいか確認してください。"
+
+#: includes/class-freemius.php:13416
+msgid "Account is pending activation."
+msgstr "アカウントは有効化待ちです。"
+
+#: includes/class-freemius.php13528,
+#: templates/forms/premium-versions-upgrade-handler.php:47
+msgid "Buy a license now"
+msgstr ""
+
+#: includes/class-freemius.php13540,
+#: templates/forms/premium-versions-upgrade-handler.php:46
+msgid "Renew your license now"
+msgstr ""
+
+#: includes/class-freemius.php:13544
+msgid "%s to access version %s security & feature updates, and support."
+msgstr ""
+
+#: includes/class-freemius.php:15957
+msgid "%s activation was successfully completed."
+msgstr "%s の有効化が成功しました。"
+
+#: includes/class-freemius.php:15971
+msgid "Your account was successfully activated with the %s plan."
+msgstr "アカウントが %s プランで有効化できました。"
+
+#: includes/class-freemius.php15982, includes/class-freemius.php:19707
+msgid "Your trial has been successfully started."
+msgstr "トライアル版の利用を開始しました。"
+
+#: includes/class-freemius.php16556, includes/class-freemius.php16644,
+#: includes/class-freemius.php:16810
+msgid "Couldn't activate %s."
+msgstr "%s を有効化できません。"
+
+#: includes/class-freemius.php16557, includes/class-freemius.php16645,
+#: includes/class-freemius.php:16811
+msgid "Please contact us with the following message:"
+msgstr "以下のメッセージとともに私たちに連絡をください。"
+
+#: includes/class-freemius.php16641, templates/forms/data-debug-mode.php:162
+msgid "An unknown error has occurred."
+msgstr ""
+
+#: includes/class-freemius.php17168, includes/class-freemius.php:22082
+msgid "Upgrade"
+msgstr "アップグレード"
+
+#: includes/class-freemius.php:17174
+msgid "Start Trial"
+msgstr "トライアルを開始"
+
+#: includes/class-freemius.php:17176
+msgid "Pricing"
+msgstr "料金表"
+
+#: includes/class-freemius.php17256, includes/class-freemius.php:17258
+msgid "Affiliation"
+msgstr "アフィリエイト"
+
+#: includes/class-freemius.php17286, includes/class-freemius.php17288,
+#: templates/account.php183, templates/debug.php:326
+msgid "Account"
+msgstr "アカウント"
+
+#: includes/class-freemius.php17302, includes/class-freemius.php17304,
+#: includes/customizer/class-fs-customizer-support-section.php:60
+msgid "Contact Us"
+msgstr "連絡"
+
+#: includes/class-freemius.php17315, includes/class-freemius.php17317,
+#: includes/class-freemius.php22096, templates/account.php111,
+#: templates/account/partials/addon.php:44
+msgid "Add-Ons"
+msgstr "アドオン"
+
+#: includes/class-freemius.php:17351
+msgctxt "ASCII arrow left icon"
+msgid "&#x2190;"
+msgstr ""
+
+#: includes/class-freemius.php:17351
+msgctxt "ASCII arrow right icon"
+msgid "&#x27a4;"
+msgstr ""
+
+#: includes/class-freemius.php17353, templates/pricing.php:103
+msgctxt "noun"
+msgid "Pricing"
+msgstr "料金表"
+
+#: includes/class-freemius.php17566,
+#: includes/customizer/class-fs-customizer-support-section.php:67
+msgid "Support Forum"
+msgstr "サポートフォーラム"
+
+#: includes/class-freemius.php:18536
+msgid "Your email has been successfully verified - you are AWESOME!"
+msgstr "あなたのメールアドレスの承認が完了しました。すごい！"
+
+#: includes/class-freemius.php:18537
+msgctxt "a positive response"
+msgid "Right on"
+msgstr "そうだ"
+
+#: includes/class-freemius.php:19041
+msgid "seems like the key you entered doesn't match our records."
+msgstr ""
+
+#: includes/class-freemius.php:19065
+msgid ""
+"Debug mode was successfully enabled and will be automatically disabled in 60"
+" min. You can also disable it earlier by clicking the \"Stop Debug\" link."
+msgstr ""
+
+#: includes/class-freemius.php:19283
+msgid "Your %s Add-on plan was successfully upgraded."
+msgstr "%s のアドオンのプランのアップグレードが完了しました。"
+
+#: includes/class-freemius.php:19285
+msgid "%s Add-on was successfully purchased."
+msgstr "%s のアドオンの支払いが完了しました。"
+
+#: includes/class-freemius.php:19288
+msgid "Download the latest version"
+msgstr "最新版をダウンロード"
+
+#: includes/class-freemius.php:19374
+msgid ""
+"Your server is blocking the access to Freemius' API, which is crucial for "
+"%1$s synchronization. Please contact your host to whitelist %2$s"
+msgstr ""
+
+#: includes/class-freemius.php19380, includes/class-freemius.php19390,
+#: includes/class-freemius.php19835, includes/class-freemius.php:19924
+msgid "Error received from the server:"
+msgstr "サーバーからエラーを受信しました。"
+
+#: includes/class-freemius.php:19390
+msgid ""
+"It seems like one of the authentication parameters is wrong. Update your "
+"Public Key, Secret Key & User ID, and try again."
+msgstr "認証パラメータの1つが間違っているようです。 公開鍵、秘密鍵、ユーザーIDを更新して、もう一度お試しください。"
+
+#: includes/class-freemius.php19604, includes/class-freemius.php19840,
+#: includes/class-freemius.php19895, includes/class-freemius.php:19998
+msgctxt ""
+"something somebody says when they are thinking about what you have just "
+"said."
+msgid "Hmm"
+msgstr "ふむ"
+
+#: includes/class-freemius.php:19617
+msgid ""
+"It looks like you are still on the %s plan. If you did upgrade or change "
+"your plan, it's probably an issue on our side - sorry."
+msgstr "まだ %s プランのようです。もしアップグレードやプランの変更をしたのなら、こちらで何らかの問題が発生しているようです。申し訳ありません。"
+
+#: includes/class-freemius.php19618, templates/account.php113,
+#: templates/add-ons.php250, templates/account/partials/addon.php:46
+msgctxt "trial period"
+msgid "Trial"
+msgstr "トライアル"
+
+#: includes/class-freemius.php:19623
+msgid ""
+"I have upgraded my account but when I try to Sync the License, the plan "
+"remains %s."
+msgstr "アカウントをアップグレードしましたが、ライセンスを同期しようとするとプランが %s のままです。"
+
+#: includes/class-freemius.php19627, includes/class-freemius.php:19686
+msgid "Please contact us here"
+msgstr "こちらで私たちに連絡をとってください。"
+
+#: includes/class-freemius.php:19638
+msgid "Your plan was successfully activated."
+msgstr ""
+
+#: includes/class-freemius.php:19639
+msgid "Your plan was successfully upgraded."
+msgstr "プランのアップグレードが成功しました。"
+
+#: includes/class-freemius.php:19656
+msgid "Your plan was successfully changed to %s."
+msgstr "プランの %s への変更が成功しました。"
+
+#: includes/class-freemius.php:19672
+msgid ""
+"Your license has expired. You can still continue using the free %s forever."
+msgstr "ライセンスの有効期限が切れました。無料バージョンの%s は引き続き利用できます。"
+
+#: includes/class-freemius.php:19674
+msgid ""
+"Your license has expired. %1$sUpgrade now%2$s to continue using the %3$s "
+"without interruptions."
+msgstr "ライセンスの有効期限が切れました。 %1$s  %3$sに邪魔されずに利用を継続するには，今すぐ%2$sアップグレードを行ってください。"
+
+#: includes/class-freemius.php:19682
+msgid ""
+"Your license has been cancelled. If you think it's a mistake, please contact"
+" support."
+msgstr "ライセンスはキャンセルされました。もしそれが間違いだと思うならサポートに連絡してください。"
+
+#: includes/class-freemius.php:19695
+msgid ""
+"Your license has expired. You can still continue using all the %s features, "
+"but you'll need to renew your license to continue getting updates and "
+"support."
+msgstr "ライセンスは有効期限がきれました。%s の機能を引き続き利用することができます。ただし、アップデートやサポートをうけるにはライセンスをアップデートする必要があります。"
+
+#: includes/class-freemius.php:19721
+msgid ""
+"Your free trial has expired. You can still continue using all our free "
+"features."
+msgstr "フリートライアル期間が終了しました。無料で使える機能は引き続き利用可能です。"
+
+#: includes/class-freemius.php:19723
+msgid ""
+"Your free trial has expired. %1$sUpgrade now%2$s to continue using the %3$s "
+"without interruptions."
+msgstr "フリートライアル期間が終了しました。%1$s %3$sに邪魔されずに利用を継続するには，今すぐ %2$s のアップグレードを行ってください。"
+
+#: includes/class-freemius.php:19831
+msgid "It looks like the license could not be activated."
+msgstr "ライセンスの有効化ができませんでした。"
+
+#: includes/class-freemius.php:19873
+msgid "Your license was successfully activated."
+msgstr "ライセンスの有効化が成功しました。"
+
+#: includes/class-freemius.php:19899
+msgid "It looks like your site currently doesn't have an active license."
+msgstr "サイトは有効なライセンスを持っていないようです。"
+
+#: includes/class-freemius.php:19923
+msgid "It looks like the license deactivation failed."
+msgstr "ライセンスの無効化ができませんでした。"
+
+#: includes/class-freemius.php:19951
+msgid ""
+"Your license was successfully deactivated, you are back to the %s plan."
+msgstr "ライセンスの無効化が完了しました。%s プランに戻りました。"
+
+#: includes/class-freemius.php:19952
+msgid "O.K"
+msgstr "O.K"
+
+#: includes/class-freemius.php:20005
+msgid ""
+"Seems like we are having some temporary issue with your subscription "
+"cancellation. Please try again in few minutes."
+msgstr ""
+
+#: includes/class-freemius.php:20014
+msgid ""
+"Your subscription was successfully cancelled. Your %s plan license will "
+"expire in %s."
+msgstr ""
+
+#: includes/class-freemius.php:20056
+msgid "You are already running the %s in a trial mode."
+msgstr "すでに%sをトライアルモードで利用中です。"
+
+#: includes/class-freemius.php:20067
+msgid "You already utilized a trial before."
+msgstr "以前すでに試用版を利用しました。"
+
+#: includes/class-freemius.php:20081
+msgid "Plan %s do not exist, therefore, can't start a trial."
+msgstr "%s プランは存在しないため、試用を開始できません。"
+
+#: includes/class-freemius.php:20092
+msgid "Plan %s does not support a trial period."
+msgstr "%s プランにはトライアル期間はありません。"
+
+#: includes/class-freemius.php:20103
+msgid "None of the %s's plans supports a trial period."
+msgstr "%sのプランにはトライアル期間はありません。"
+
+#: includes/class-freemius.php:20153
+msgid ""
+"It looks like you are not in trial mode anymore so there's nothing to cancel"
+" :)"
+msgstr "すでにトライアルモードではないようなので、キャンセルする必要はありません :)"
+
+#: includes/class-freemius.php:20189
+msgid ""
+"Seems like we are having some temporary issue with your trial cancellation. "
+"Please try again in few minutes."
+msgstr "トライアルのキャンセルに一時的な問題がありました。数分後に再度お試しください。"
+
+#: includes/class-freemius.php:20208
+msgid "Your %s free trial was successfully cancelled."
+msgstr "%s のフリートライアルはキャンセルされました。"
+
+#: includes/class-freemius.php:20524
+msgid "Version %s was released."
+msgstr "バージョン %s をリリースしました。"
+
+#: includes/class-freemius.php:20524
+msgid "Please download %s."
+msgstr "%s をダウンロードしてください。"
+
+#: includes/class-freemius.php:20531
+msgid "the latest %s version here"
+msgstr "最新の %s バージョンはこちらです。"
+
+#: includes/class-freemius.php:20536
+msgid "New"
+msgstr "新規"
+
+#: includes/class-freemius.php:20541
+msgid "Seems like you got the latest release."
+msgstr "最新版を取得できました。"
+
+#: includes/class-freemius.php:20542
+msgid "You are all good!"
+msgstr "すべて完璧です!"
+
+#: includes/class-freemius.php:20812
+msgid ""
+"Verification mail was just sent to %s. If you can't find it after 5 min, "
+"please check your spam box."
+msgstr "%s に確認メールを送信しました。もし5分以内にそれが届かない場合、迷惑メールボックスを確認してください。"
+
+#: includes/class-freemius.php:20951
+msgid "Site successfully opted in."
+msgstr "サイトのオプトインに成功しました。"
+
+#: includes/class-freemius.php20952, includes/class-freemius.php:21792
+msgid "Awesome"
+msgstr "すごい!"
+
+#: includes/class-freemius.php20968, templates/forms/optout.php:32
+msgid ""
+"We appreciate your help in making the %s better by letting us track some "
+"usage data."
+msgstr "使用データを追跡できるよう許可してくれたことで、%s をより良くするための手助けに感謝致します。"
+
+#: includes/class-freemius.php:20969
+msgid "Thank you!"
+msgstr "ありがとうございます！"
+
+#: includes/class-freemius.php:20976
+msgid "We will no longer be sending any usage data of %s on %s to %s."
+msgstr "もう%s上の%sから%sへのデータ送信は行いません。"
+
+#: includes/class-freemius.php:21105
+msgid ""
+"Please check your mailbox, you should receive an email via %s to confirm the"
+" ownership change. From security reasons, you must confirm the change within"
+" the next 15 min. If you cannot find the email, please check your spam "
+"folder."
+msgstr "メールボックスを確認してください。所有権の変更を確認するには、%s でメールを受け取る必要があります。 セキュリティ上の理由から、次の15分以内に変更を確認する必要があります。 電子メールが見つからない場合は、迷惑メールフォルダを確認してください。"
+
+#: includes/class-freemius.php:21111
+msgid ""
+"Thanks for confirming the ownership change. An email was just sent to %s for"
+" final approval."
+msgstr "所有権の変更を確認していただきありがとうございます。 %s に承認メールが送信されました。"
+
+#: includes/class-freemius.php:21116
+msgid "%s is the new owner of the account."
+msgstr "%s は新しいオーナーです。"
+
+#: includes/class-freemius.php:21118
+msgctxt "as congratulations"
+msgid "Congrats"
+msgstr "おめでとう"
+
+#: includes/class-freemius.php:21138
+msgid ""
+"Sorry, we could not complete the email update. Another user with the same "
+"email is already registered."
+msgstr "メールアドレスのアップデートを完了できませんでした。他のユーザーがすでに同じメールアドレスで登録しているようです。"
+
+#: includes/class-freemius.php:21139
+msgid ""
+"If you would like to give up the ownership of the %s's account to %s click "
+"the Change Ownership button."
+msgstr "%sの所有権を%sへ譲りたい場合は、所有権の変更ボタンをクリックしてください。"
+
+#: includes/class-freemius.php:21146
+msgid "Change Ownership"
+msgstr "オーナーを変更"
+
+#: includes/class-freemius.php:21154
+msgid ""
+"Your email was successfully updated. You should receive an email with "
+"confirmation instructions in few moments."
+msgstr "メールアドレスのアップデートが完了しました。まもなく確認メールが届きます。"
+
+#: includes/class-freemius.php:21166
+msgid "Please provide your full name."
+msgstr "フルネームを入力してください。"
+
+#: includes/class-freemius.php:21171
+msgid "Your name was successfully updated."
+msgstr "名前のアップデートが成功しました。"
+
+#: includes/class-freemius.php:21232
+msgid "You have successfully updated your %s."
+msgstr "%s のアップデートが成功しました。"
+
+#: includes/class-freemius.php:21372
+msgid ""
+"Just letting you know that the add-ons information of %s is being pulled "
+"from an external server."
+msgstr "%s のアドオンに関する情報は、外部サーバーから取得されます。"
+
+#: includes/class-freemius.php:21373
+msgctxt "advance notice of something that will need attention."
+msgid "Heads up"
+msgstr "警告"
+
+#: includes/class-freemius.php:21832
+msgctxt "exclamation"
+msgid "Hey"
+msgstr "ヘイ"
+
+#: includes/class-freemius.php:21832
+msgid ""
+"How do you like %s so far? Test all our %s premium features with a %d-day "
+"free trial."
+msgstr "%s はどうですか? 私たちの全ての %s のプレミアム機能をお試しください。"
+
+#: includes/class-freemius.php:21840
+msgid "No commitment for %s days - cancel anytime!"
+msgstr "%s 日以内であればいつでもキャンセルできます。"
+
+#: includes/class-freemius.php:21841
+msgid "No credit card required"
+msgstr "クレジットカードは必要ありません。"
+
+#: includes/class-freemius.php21848, templates/forms/trial-start.php:53
+msgctxt "call to action"
+msgid "Start free trial"
+msgstr "フリートライアルを開始"
+
+#: includes/class-freemius.php:21925
+msgid ""
+"Hey there, did you know that %s has an affiliate program? If you like the %s"
+" you can become our ambassador and earn some cash!"
+msgstr "こんにちは。%sにアフィリエイトプログラムがあるのはご存知でしたか？　%sがお好きなら、私たちのアンバサダーになって報酬を得ましょう！"
+
+#: includes/class-freemius.php:21934
+msgid "Learn more"
+msgstr "詳細はこちら"
+
+#: includes/class-freemius.php22120, templates/account.php499,
+#: templates/account.php624, templates/connect.php171,
+#: templates/connect.php421, templates/forms/license-activation.php27,
+#: templates/account/partials/addon.php:321
+msgid "Activate License"
+msgstr "ライセンスを有効化"
+
+#: includes/class-freemius.php22121, templates/account.php571,
+#: templates/account.php623, templates/account/partials/addon.php322,
+#: templates/account/partials/site.php:271
+msgid "Change License"
+msgstr "ライセンスを変更"
+
+#: includes/class-freemius.php22217, templates/account/partials/site.php:169
+msgid "Opt Out"
+msgstr "オプトアウト"
+
+#: includes/class-freemius.php22219, includes/class-freemius.php22225,
+#: templates/account/partials/site.php49,
+#: templates/account/partials/site.php:169
+msgid "Opt In"
+msgstr "オプトイン"
+
+#: includes/class-freemius.php:22453
+msgid ""
+" The paid version of %1$s is already installed. Please activate it to start "
+"benefiting the %2$s features. %3$s"
+msgstr ""
+
+#: includes/class-freemius.php:22461
+msgid "Activate %s features"
+msgstr ""
+
+#: includes/class-freemius.php:22474
+msgid "Please follow these steps to complete the upgrade"
+msgstr "アップグレードを完了するには以下の手順を完了させてください。"
+
+#: includes/class-freemius.php:22478
+msgid "Download the latest %s version"
+msgstr "最新の %s をダウンロード"
+
+#: includes/class-freemius.php:22482
+msgid "Upload and activate the downloaded version"
+msgstr "ダウンロードしたバージョンをアップロードして有効化"
+
+#: includes/class-freemius.php:22484
+msgid "How to upload and activate?"
+msgstr "アップロードと有効化の方法"
+
+#: includes/class-freemius.php:22618
+msgid ""
+"%sClick here%s to choose the sites where you'd like to activate the license "
+"on."
+msgstr "%sここをクリックして%s ライセンスを有効化したいサイトを選択してください。"
+
+#: includes/class-freemius.php:22779
+msgid "Auto installation only works for opted-in users."
+msgstr "自動インストールはオプトインしたユーザのみで動作します。"
+
+#: includes/class-freemius.php22789, includes/class-freemius.php22822,
+#: includes/class-fs-plugin-updater.php1212,
+#: includes/class-fs-plugin-updater.php:1226
+msgid "Invalid module ID."
+msgstr "モジュール ID が不正です"
+
+#: includes/class-freemius.php22798, includes/class-fs-plugin-updater.php:1248
+msgid "Premium version already active."
+msgstr "プレミアムバージョンはすでに有効になっています。"
+
+#: includes/class-freemius.php:22805
+msgid "You do not have a valid license to access the premium version."
+msgstr "プレミアムバージョンにアクセスできる有効なライセンス持っていません。"
+
+#: includes/class-freemius.php:22812
+msgid ""
+"Plugin is a \"Serviceware\" which means it does not have a premium code "
+"version."
+msgstr "プラグインはプレミアムコードバージョンのない「サービスウェア」です。"
+
+#: includes/class-freemius.php22830, includes/class-fs-plugin-updater.php:1247
+msgid "Premium add-on version already installed."
+msgstr "プレミアムアドオンバージョンはすでにインストール済みです。"
+
+#: includes/class-freemius.php:23180
+msgid "View paid features"
+msgstr "有料の機能を表示する"
+
+#: includes/class-freemius.php:23502
+msgid "Thank you so much for using %s and its add-ons!"
+msgstr "%sとアドオンのご利用ありがとうございます！"
+
+#: includes/class-freemius.php:23503
+msgid "Thank you so much for using %s!"
+msgstr "%sのご利用ありがとうございます！"
+
+#: includes/class-freemius.php:23509
+msgid ""
+"You've already opted-in to our usage-tracking, which helps us keep improving"
+" the %s."
+msgstr "%sの改善に役立つ使用状況のトラッキングにすでにオプトインしています。"
+
+#: includes/class-freemius.php:23513
+msgid "Thank you so much for using our products!"
+msgstr "プロダクトのご利用ありがとうございます！"
+
+#: includes/class-freemius.php:23514
+msgid ""
+"You've already opted-in to our usage-tracking, which helps us keep improving"
+" them."
+msgstr "プロダクトの改善に役立つ使用状況のトラッキングにすでにオプトインしています。"
+
+#: includes/class-freemius.php:23533
+msgid "%s and its add-ons"
+msgstr "%sとそのアドオン"
+
+#: includes/class-freemius.php:23542
+msgid "Products"
+msgstr "プロダクト"
+
+#: includes/class-freemius.php23549, templates/connect.php:272
+msgid "Yes"
+msgstr "はい"
+
+#: includes/class-freemius.php23550, templates/connect.php:273
+msgid "send me security & feature updates, educational content and offers."
+msgstr "セキュリティと機能のアップデート、学習用コンテンツやオファーを送ってください。"
+
+#: includes/class-freemius.php23551, templates/connect.php:278
+msgid "No"
+msgstr "いいえ"
+
+#: includes/class-freemius.php23553, templates/connect.php:280
+msgid ""
+"do %sNOT%s send me security & feature updates, educational content and "
+"offers."
+msgstr "セキュリティと機能のアップデート、学習用コンテンツやオファーを%s送らないでください%s。"
+
+#: includes/class-freemius.php:23563
+msgid ""
+"Due to the new %sEU General Data Protection Regulation (GDPR)%s compliance "
+"requirements it is required that you provide your explicit consent, again, "
+"confirming that you are onboard :-)"
+msgstr ""
+
+#: includes/class-freemius.php23565, templates/connect.php:287
+msgid ""
+"Please let us know if you'd like us to contact you for security & feature "
+"updates, educational content, and occasional offers:"
+msgstr "セキュリティや機能のアップデート、学習用用コンテンツ、およびオファーについてお問い合わせを希望される場合は、お知らせください。"
+
+#: includes/class-freemius.php:23847
+msgid "License key is empty."
+msgstr "ライセンスキーが空です。"
+
+#: includes/class-fs-plugin-updater.php206,
+#: templates/forms/premium-versions-upgrade-handler.php:57
+msgid "Renew license"
+msgstr "ライセンスを更新"
+
+#: includes/class-fs-plugin-updater.php211,
+#: templates/forms/premium-versions-upgrade-handler.php:58
+msgid "Buy license"
+msgstr ""
+
+#: includes/class-fs-plugin-updater.php321,
+#: includes/class-fs-plugin-updater.php:354
+msgid "There is a %s of %s available."
+msgstr ""
+
+#: includes/class-fs-plugin-updater.php323,
+#: includes/class-fs-plugin-updater.php:359
+msgid "new Beta version"
+msgstr ""
+
+#: includes/class-fs-plugin-updater.php324,
+#: includes/class-fs-plugin-updater.php:360
+msgid "new version"
+msgstr ""
+
+#: includes/class-fs-plugin-updater.php:383
+msgid "Important Upgrade Notice:"
+msgstr ""
+
+#: includes/class-fs-plugin-updater.php:1277
+msgid "Installing plugin: %s"
+msgstr "インストール中プラグイン: %s"
+
+#: includes/class-fs-plugin-updater.php:1318
+msgid "Unable to connect to the filesystem. Please confirm your credentials."
+msgstr "ファイルシステムに接続できません。視覚情報を確認してください。"
+
+#: includes/class-fs-plugin-updater.php:1500
+msgid ""
+"The remote plugin package does not contain a folder with the desired slug "
+"and renaming did not work."
+msgstr "リモートプラグインパッケージには、目的のスラッグを含むフォルダが含まれていないため、リねームが機能しませんでした。"
+
+#: includes/fs-plugin-info-dialog.php:535
+msgid "Purchase More"
+msgstr ""
+
+#: includes/fs-plugin-info-dialog.php536,
+#: templates/account/partials/addon.php:385
+msgctxt "verb"
+msgid "Purchase"
+msgstr "購入"
+
+#: includes/fs-plugin-info-dialog.php:540
+msgid "Start my free %s"
+msgstr "無料の %s を開始"
+
+#: includes/fs-plugin-info-dialog.php:738
+msgid "Install Free Version Update Now"
+msgstr "フリーバージョンの更新を今すぐインストール"
+
+#: includes/fs-plugin-info-dialog.php739, templates/account.php:560
+msgid "Install Update Now"
+msgstr "今すぐ更新をインストール"
+
+#: includes/fs-plugin-info-dialog.php:748
+msgid "Install Free Version Now"
+msgstr "フリーバージョンを今すぐインストール"
+
+#: includes/fs-plugin-info-dialog.php749, templates/add-ons.php323,
+#: templates/auto-installation.php111,
+#: templates/account/partials/addon.php365,
+#: templates/account/partials/addon.php:418
+msgid "Install Now"
+msgstr "今すぐインストール"
+
+#: includes/fs-plugin-info-dialog.php:765
+msgctxt "as download latest version"
+msgid "Download Latest Free Version"
+msgstr "最新のフリーバージョンをダウンロード"
+
+#: includes/fs-plugin-info-dialog.php766, templates/account.php91,
+#: templates/add-ons.php37, templates/account/partials/addon.php:25
+msgctxt "as download latest version"
+msgid "Download Latest"
+msgstr "最新版をダウンロード"
+
+#: includes/fs-plugin-info-dialog.php781, templates/add-ons.php329,
+#: templates/account/partials/addon.php356,
+#: templates/account/partials/addon.php:412
+msgid "Activate this add-on"
+msgstr "このアドオンを有効化"
+
+#: includes/fs-plugin-info-dialog.php783, templates/connect.php:418
+msgid "Activate Free Version"
+msgstr "フリーバージョンを有効化"
+
+#: includes/fs-plugin-info-dialog.php784, templates/account.php115,
+#: templates/add-ons.php330, templates/account/partials/addon.php:48
+msgid "Activate"
+msgstr "有効化"
+
+#: includes/fs-plugin-info-dialog.php:994
+msgctxt "Plugin installer section title"
+msgid "Description"
+msgstr "説明"
+
+#: includes/fs-plugin-info-dialog.php:995
+msgctxt "Plugin installer section title"
+msgid "Installation"
+msgstr "インストール"
+
+#: includes/fs-plugin-info-dialog.php:996
+msgctxt "Plugin installer section title"
+msgid "FAQ"
+msgstr "FAQ"
+
+#: includes/fs-plugin-info-dialog.php997,
+#: templates/plugin-info/description.php:55
+msgid "Screenshots"
+msgstr "スクリーンショット"
+
+#: includes/fs-plugin-info-dialog.php:998
+msgctxt "Plugin installer section title"
+msgid "Changelog"
+msgstr "変更履歴"
+
+#: includes/fs-plugin-info-dialog.php:999
+msgctxt "Plugin installer section title"
+msgid "Reviews"
+msgstr "レビュー"
+
+#: includes/fs-plugin-info-dialog.php:1000
+msgctxt "Plugin installer section title"
+msgid "Other Notes"
+msgstr "その他の記述"
+
+#: includes/fs-plugin-info-dialog.php:1015
+msgctxt "Plugin installer section title"
+msgid "Features & Pricing"
+msgstr "機能 & 料金"
+
+#: includes/fs-plugin-info-dialog.php:1025
+msgid "Plugin Install"
+msgstr "プラグインのインストール"
+
+#: includes/fs-plugin-info-dialog.php:1097
+msgctxt "e.g. Professional Plan"
+msgid "%s Plan"
+msgstr "%s プラン"
+
+#: includes/fs-plugin-info-dialog.php:1123
+msgctxt "e.g. the best product"
+msgid "Best"
+msgstr "ベスト"
+
+#: includes/fs-plugin-info-dialog.php1129,
+#: includes/fs-plugin-info-dialog.php:1149
+msgctxt "as every month"
+msgid "Monthly"
+msgstr "月"
+
+#: includes/fs-plugin-info-dialog.php:1132
+msgctxt "as once a year"
+msgid "Annual"
+msgstr "年次"
+
+#: includes/fs-plugin-info-dialog.php:1135
+msgid "Lifetime"
+msgstr "ライフタイム"
+
+#: includes/fs-plugin-info-dialog.php1149,
+#: includes/fs-plugin-info-dialog.php1151,
+#: includes/fs-plugin-info-dialog.php:1153
+msgctxt "e.g. billed monthly"
+msgid "Billed %s"
+msgstr "%s への請求"
+
+#: includes/fs-plugin-info-dialog.php:1151
+msgctxt "as once a year"
+msgid "Annually"
+msgstr "毎年"
+
+#: includes/fs-plugin-info-dialog.php:1153
+msgctxt "as once a year"
+msgid "Once"
+msgstr "一度"
+
+#: includes/fs-plugin-info-dialog.php:1159
+msgid "Single Site License"
+msgstr "シングルサイトライセンス"
+
+#: includes/fs-plugin-info-dialog.php:1161
+msgid "Unlimited Licenses"
+msgstr "無制限ライセンス"
+
+#: includes/fs-plugin-info-dialog.php:1163
+msgid "Up to %s Sites"
+msgstr "%sサイトまで"
+
+#: includes/fs-plugin-info-dialog.php1173,
+#: templates/plugin-info/features.php:82
+msgctxt "as monthly period"
+msgid "mo"
+msgstr "月"
+
+#: includes/fs-plugin-info-dialog.php1180,
+#: templates/plugin-info/features.php:80
+msgctxt "as annual period"
+msgid "year"
+msgstr "年"
+
+#: includes/fs-plugin-info-dialog.php:1234
+msgctxt "noun"
+msgid "Price"
+msgstr "料金"
+
+#: includes/fs-plugin-info-dialog.php:1282
+msgid "Save %s"
+msgstr "%s を保存"
+
+#: includes/fs-plugin-info-dialog.php:1292
+msgid "No commitment for %s - cancel anytime"
+msgstr "%s の拘束はありません。いつでもキャンセルできます。"
+
+#: includes/fs-plugin-info-dialog.php:1295
+msgid "After your free %s, pay as little as %s"
+msgstr "無料の %s の後は、わずか %s  だけお支払ください。"
+
+#: includes/fs-plugin-info-dialog.php:1306
+msgid "Details"
+msgstr "詳細"
+
+#: includes/fs-plugin-info-dialog.php1310, templates/account.php102,
+#: templates/debug.php203, templates/debug.php240, templates/debug.php457,
+#: templates/account/partials/addon.php:36
+msgctxt "product version"
+msgid "Version"
+msgstr "バージョン"
+
+#: includes/fs-plugin-info-dialog.php:1317
+msgctxt "as the plugin author"
+msgid "Author"
+msgstr "作者"
+
+#: includes/fs-plugin-info-dialog.php:1324
+msgid "Last Updated"
+msgstr "最終更新"
+
+#: includes/fs-plugin-info-dialog.php1329, templates/account.php:468
+msgctxt "x-ago"
+msgid "%s ago"
+msgstr "%s 前"
+
+#: includes/fs-plugin-info-dialog.php:1338
+msgid "Requires WordPress Version"
+msgstr "必要な WordPress のバージョン"
+
+#: includes/fs-plugin-info-dialog.php:1339
+msgid "%s or higher"
+msgstr "%sまたはそれ以上"
+
+#: includes/fs-plugin-info-dialog.php:1346
+msgid "Compatible up to"
+msgstr "互換性のある最新バージョン"
+
+#: includes/fs-plugin-info-dialog.php:1354
+msgid "Downloaded"
+msgstr "ダウンロード済み"
+
+#: includes/fs-plugin-info-dialog.php:1358
+msgid "%s time"
+msgstr "%s回"
+
+#: includes/fs-plugin-info-dialog.php:1360
+msgid "%s times"
+msgstr "%s回"
+
+#: includes/fs-plugin-info-dialog.php:1370
+msgid "WordPress.org Plugin Page"
+msgstr "WordPress.org のプラグインページ"
+
+#: includes/fs-plugin-info-dialog.php:1378
+msgid "Plugin Homepage"
+msgstr "プラグインのホームページ"
+
+#: includes/fs-plugin-info-dialog.php1386,
+#: includes/fs-plugin-info-dialog.php:1468
+msgid "Donate to this plugin"
+msgstr "このプラグインに寄付する"
+
+#: includes/fs-plugin-info-dialog.php:1393
+msgid "Average Rating"
+msgstr "レーティングの平均"
+
+#: includes/fs-plugin-info-dialog.php:1400
+msgid "based on %s"
+msgstr "%sを基に"
+
+#: includes/fs-plugin-info-dialog.php:1404
+msgid "%s rating"
+msgstr "%s評価"
+
+#: includes/fs-plugin-info-dialog.php:1406
+msgid "%s ratings"
+msgstr "%s評価"
+
+#: includes/fs-plugin-info-dialog.php:1421
+msgid "%s star"
+msgstr "%sスター"
+
+#: includes/fs-plugin-info-dialog.php:1423
+msgid "%s stars"
+msgstr "%sスター"
+
+#: includes/fs-plugin-info-dialog.php:1434
+msgid "Click to see reviews that provided a rating of %s"
+msgstr "クリックして%sの評価をしているレビューを観る"
+
+#: includes/fs-plugin-info-dialog.php:1447
+msgid "Contributors"
+msgstr "コントリビューター"
+
+#: includes/fs-plugin-info-dialog.php1476,
+#: includes/fs-plugin-info-dialog.php:1478
+msgid "Warning"
+msgstr "警告"
+
+#: includes/fs-plugin-info-dialog.php:1476
+msgid ""
+"This plugin has not been tested with your current version of WordPress."
+msgstr "このプラグインはインストールされた WordPress のバージョンでは検証されていません。"
+
+#: includes/fs-plugin-info-dialog.php:1478
+msgid ""
+"This plugin has not been marked as compatible with your version of "
+"WordPress."
+msgstr "このプラグインはインストールされた WordPress のバージョンに互換性がありません。"
+
+#: includes/fs-plugin-info-dialog.php:1497
+msgid "Paid add-on must be deployed to Freemius."
+msgstr "有料アドオンは Freemius にデプロイされている必要があります。"
+
+#: includes/fs-plugin-info-dialog.php:1498
+msgid "Add-on must be deployed to WordPress.org or Freemius."
+msgstr "アドオンが WordPress.org か Freemius にデプロイされている必要があります。"
+
+#: includes/fs-plugin-info-dialog.php:1519
+msgid "Newer Version (%s) Installed"
+msgstr "新しいバージョン (%s) がインストールされました"
+
+#: includes/fs-plugin-info-dialog.php:1520
+msgid "Newer Free Version (%s) Installed"
+msgstr "新しいフリーバージョン (%s) がインストールされました"
+
+#: includes/fs-plugin-info-dialog.php:1527
+msgid "Latest Version Installed"
+msgstr "最新版がイストールされました"
+
+#: includes/fs-plugin-info-dialog.php:1528
+msgid "Latest Free Version Installed"
+msgstr "最新のフリーバージョンがインストールされました"
+
+#: templates/account.php92, templates/forms/subscription-cancellation.php96,
+#: templates/account/partials/addon.php26,
+#: templates/account/partials/site.php:311
+msgid "Downgrading your plan"
+msgstr ""
+
+#: templates/account.php93, templates/forms/subscription-cancellation.php97,
+#: templates/account/partials/addon.php27,
+#: templates/account/partials/site.php:312
+msgid "Cancelling the subscription"
+msgstr ""
+
+#. translators: %1$s: Either 'Downgrading your plan' or 'Cancelling the
+#. subscription'
+#: templates/account.php95, templates/forms/subscription-cancellation.php99,
+#: templates/account/partials/site.php:314
+msgid ""
+"%1$s will immediately stop all future recurring payments and your %2$s plan "
+"license will expire in %3$s."
+msgstr ""
+
+#: templates/account.php96, templates/forms/subscription-cancellation.php100,
+#: templates/account/partials/addon.php30,
+#: templates/account/partials/site.php:315
+msgid ""
+"Please note that we will not be able to grandfather outdated pricing for "
+"renewals/new subscriptions after a cancellation. If you choose to renew the "
+"subscription manually in the future, after a price increase, which typically"
+" occurs once a year, you will be charged the updated price."
+msgstr ""
+
+#: templates/account.php97, templates/forms/subscription-cancellation.php106,
+#: templates/account/partials/addon.php:31
+msgid ""
+"Cancelling the trial will immediately block access to all premium features. "
+"Are you sure?"
+msgstr "トライアルをキャンセルするとすぐにすべてのプレミアム機能へのアクセスができなくなります。本当に実行しますか?"
+
+#: templates/account.php98, templates/forms/subscription-cancellation.php101,
+#: templates/account/partials/addon.php32,
+#: templates/account/partials/site.php:316
+msgid ""
+"You can still enjoy all %s features but you will not have access to %s "
+"security & feature updates, nor support."
+msgstr ""
+
+#: templates/account.php99, templates/forms/subscription-cancellation.php102,
+#: templates/account/partials/addon.php33,
+#: templates/account/partials/site.php:317
+msgid ""
+"Once your license expires you can still use the Free version but you will "
+"NOT have access to the %s features."
+msgstr "一度ライセンスの期限が切れると、フリーバージョンの利用は可能ですが、%sの機能を使うことができなくなります。"
+
+#. translators: %s: Plan title (e.g. "Professional")
+#: templates/account.php101,
+#: templates/account/partials/activate-license-button.php31,
+#: templates/account/partials/addon.php:35
+msgid "Activate %s Plan"
+msgstr "%s プランを有効化"
+
+#. translators: %s: Time period (e.g. Auto renews in "2 months")
+#: templates/account.php104, templates/account/partials/addon.php38,
+#: templates/account/partials/site.php:291
+msgid "Auto renews in %s"
+msgstr "%s に自動更新"
+
+#. translators: %s: Time period (e.g. Expires in "2 months")
+#: templates/account.php106, templates/account/partials/addon.php40,
+#: templates/account/partials/site.php:293
+msgid "Expires in %s"
+msgstr "%s で期間終了"
+
+#: templates/account.php:107
+msgctxt "as synchronize license"
+msgid "Sync License"
+msgstr "ライセンスを同期"
+
+#: templates/account.php108, templates/account/partials/addon.php:41
+msgid "Cancel Trial"
+msgstr "トライアルをキャンセル"
+
+#: templates/account.php109, templates/account/partials/addon.php:42
+msgid "Change Plan"
+msgstr "プラン変更"
+
+#: templates/account.php110, templates/account/partials/addon.php:43
+msgctxt "verb"
+msgid "Upgrade"
+msgstr "アップグレード"
+
+#: templates/account.php112, templates/account/partials/addon.php45,
+#: templates/account/partials/site.php:318
+msgctxt "verb"
+msgid "Downgrade"
+msgstr "ダウングレード"
+
+#: templates/account.php114, templates/add-ons.php246,
+#: templates/plugin-info/features.php72,
+#: templates/account/partials/addon.php47,
+#: templates/account/partials/site.php:33
+msgid "Free"
+msgstr "無料"
+
+#: templates/account.php116, templates/debug.php373,
+#: includes/customizer/class-fs-customizer-upsell-control.php110,
+#: templates/account/partials/addon.php:49
+msgctxt "as product pricing plan"
+msgid "Plan"
+msgstr "プラン"
+
+#: templates/account.php:117
+msgid "Bundle Plan"
+msgstr ""
+
+#: templates/account.php:191
+msgid "Free Trial"
+msgstr "フリートライアル"
+
+#: templates/account.php:202
+msgid "Account Details"
+msgstr "アカウント詳細"
+
+#: templates/account.php209, templates/forms/data-debug-mode.php:33
+msgid "Start Debug"
+msgstr ""
+
+#: templates/account.php:211
+msgid "Stop Debug"
+msgstr ""
+
+#: templates/account.php:218
+msgid "Billing & Invoices"
+msgstr ""
+
+#: templates/account.php:229
+msgid ""
+"Deleting the account will automatically deactivate your %s plan license so "
+"you can use it on other sites. If you want to terminate the recurring "
+"payments as well, click the \"Cancel\" button, and first \"Downgrade\" your "
+"account. Are you sure you would like to continue with the deletion?"
+msgstr "アカウントを削除すると自動的に %s プランライセンスが無効になり、他のサイトで使うことができます。定期の支払いも終了したい場合は、\"キャンセル\"ボタンをクリックし、まずアカウントを\"ダウングレード\"してください。本当に削除を続行してもいいですか?"
+
+#: templates/account.php:231
+msgid ""
+"Deletion is not temporary. Only delete if you no longer want to use this %s "
+"anymore. Are you sure you would like to continue with the deletion?"
+msgstr "削除は一時的なものではありません。本当に%sが必要なくなった時に行ってください。"
+
+#: templates/account.php:234
+msgid "Delete Account"
+msgstr "アカウントを削除"
+
+#: templates/account.php246, templates/account/partials/addon.php231,
+#: templates/account/partials/deactivate-license-button.php:35
+msgid "Deactivate License"
+msgstr "ライセンスを無効化"
+
+#: templates/account.php269, templates/forms/subscription-cancellation.php:125
+msgid "Are you sure you want to proceed?"
+msgstr "本当に続行していいですか?"
+
+#: templates/account.php269, templates/account/partials/addon.php:255
+msgid "Cancel Subscription"
+msgstr "サブスクリプションをキャンセルする"
+
+#: templates/account.php298, templates/account/partials/addon.php:340
+msgctxt "as synchronize"
+msgid "Sync"
+msgstr "同期"
+
+#: templates/account.php313, templates/debug.php:507
+msgid "Name"
+msgstr "名前"
+
+#: templates/account.php319, templates/debug.php:508
+msgid "Email"
+msgstr "Email"
+
+#: templates/account.php326, templates/debug.php371, templates/debug.php:557
+msgid "User ID"
+msgstr "ユーザー ID"
+
+#: templates/account.php344, templates/account.php637,
+#: templates/account.php682, templates/debug.php238, templates/debug.php365,
+#: templates/debug.php454, templates/debug.php506, templates/debug.php555,
+#: templates/debug.php632, templates/account/payments.php35,
+#: templates/debug/logger.php:21
+msgid "ID"
+msgstr "ID"
+
+#: templates/account.php:351
+msgid "Site ID"
+msgstr "サイト ID"
+
+#: templates/account.php:354
+msgid "No ID"
+msgstr "ID がありません"
+
+#: templates/account.php359, templates/debug.php245, templates/debug.php374,
+#: templates/debug.php458, templates/debug.php510,
+#: templates/account/partials/site.php:227
+msgid "Public Key"
+msgstr "公開鍵"
+
+#: templates/account.php365, templates/debug.php375, templates/debug.php459,
+#: templates/debug.php511, templates/account/partials/site.php:239
+msgid "Secret Key"
+msgstr "秘密鍵"
+
+#: templates/account.php:368
+msgctxt "as secret encryption key missing"
+msgid "No Secret"
+msgstr "秘密鍵がありません"
+
+#: templates/account.php395, templates/account/partials/site.php120,
+#: templates/account/partials/site.php:122
+msgid "Trial"
+msgstr "トライアル"
+
+#: templates/account.php422, templates/debug.php562,
+#: templates/account/partials/site.php:260
+msgid "License Key"
+msgstr "ライセンスキー"
+
+#: templates/account.php:453
+msgid "Join the Beta program"
+msgstr ""
+
+#: templates/account.php:459
+msgid "not verified"
+msgstr "未認証"
+
+#: templates/account.php468, templates/account/partials/addon.php:190
+msgid "Expired"
+msgstr "期限切れ"
+
+#: templates/account.php:528
+msgid "Premium version"
+msgstr "プレミアムバージョン"
+
+#: templates/account.php:530
+msgid "Free version"
+msgstr "フリーバージョン"
+
+#: templates/account.php:542
+msgid "Verify Email"
+msgstr "認証メール"
+
+#: templates/account.php:553
+msgid "Download %s Version"
+msgstr "%s バージョンをダウンロード"
+
+#: templates/account.php568, templates/account.php820,
+#: templates/account/partials/site.php248,
+#: templates/account/partials/site.php:270
+msgctxt "verb"
+msgid "Show"
+msgstr "表示"
+
+#: templates/account.php:583
+msgid "What is your %s?"
+msgstr "自分の %s はなんですか?"
+
+#: templates/account.php591, templates/account/billing.php:21
+msgctxt "verb"
+msgid "Edit"
+msgstr "編集"
+
+#: templates/account.php:616
+msgid "Sites"
+msgstr "サイト数"
+
+#: templates/account.php:629
+msgid "Search by address"
+msgstr "住所で検索する"
+
+#: templates/account.php638, templates/debug.php:368
+msgid "Address"
+msgstr "住所"
+
+#: templates/account.php:639
+msgid "License"
+msgstr "ライセンス"
+
+#: templates/account.php:640
+msgid "Plan"
+msgstr "プラン"
+
+#: templates/account.php:685
+msgctxt "as software license"
+msgid "License"
+msgstr "ライセンス"
+
+#: templates/account.php:814
+msgctxt "verb"
+msgid "Hide"
+msgstr "非表示"
+
+#: templates/account.php836, templates/forms/data-debug-mode.php:31
+msgid "Processing"
+msgstr ""
+
+#: templates/account.php:839
+msgid "Get updates for bleeding edge Beta versions of %s."
+msgstr ""
+
+#: templates/account.php:897
+msgid "Cancelling %s"
+msgstr ""
+
+#: templates/account.php897, templates/account.php914,
+#: templates/forms/subscription-cancellation.php27,
+#: templates/forms/deactivation/form.php:133
+msgid "trial"
+msgstr ""
+
+#: templates/account.php912, templates/forms/deactivation/form.php:150
+msgid "Cancelling %s..."
+msgstr ""
+
+#: templates/account.php915, templates/forms/subscription-cancellation.php28,
+#: templates/forms/deactivation/form.php:134
+msgid "subscription"
+msgstr ""
+
+#: templates/account.php:929
+msgid ""
+"Deactivating your license will block all premium features, but will enable "
+"activating the license on another site. Are you sure you want to proceed?"
+msgstr "ライセンスを無効化するとすべてのプレミアム機能が使えなくなりますが、他のサイトでライセンスを有効にすることができるようになります。本当に実行しますか？"
+
+#: templates/add-ons.php:38
+msgid "View details"
+msgstr "詳細を表示"
+
+#: templates/add-ons.php:48
+msgid "Add Ons for %s"
+msgstr "%s のアドオン"
+
+#: templates/add-ons.php:58
+msgid ""
+"We couldn't load the add-ons list. It's probably an issue on our side, "
+"please try to come back in few minutes."
+msgstr ""
+
+#: templates/add-ons.php:229
+msgctxt "active add-on"
+msgid "Active"
+msgstr "有効"
+
+#: templates/add-ons.php:230
+msgctxt "installed add-on"
+msgid "Installed"
+msgstr ""
+
+#: templates/admin-notice.php13, templates/forms/license-activation.php207,
+#: templates/forms/resend-key.php:77
+msgctxt "as close a window"
+msgid "Dismiss"
+msgstr "却下"
+
+#: templates/auto-installation.php:45
+msgid "%s sec"
+msgstr "%s秒"
+
+#: templates/auto-installation.php:83
+msgid "Automatic Installation"
+msgstr "自動インストール"
+
+#: templates/auto-installation.php:93
+msgid ""
+"An automated download and installation of %s (paid version) from %s will "
+"start in %s. If you would like to do it manually - click the cancellation "
+"button now."
+msgstr "%sから %s (有料版) の自動ダウンロードと自動インストールが%sで開始します。手動で行う場合は今すぐにキャンセルボタンをクリックしてください。"
+
+#: templates/auto-installation.php:104
+msgid ""
+"The installation process has started and may take a few minutes to complete."
+" Please wait until it is done - do not refresh this page."
+msgstr "インストールプロセスが開始され、数分で完了します。完了までしばらくお待ちください。ページのリフレッシュなどは行わないでください。"
+
+#: templates/auto-installation.php:109
+msgid "Cancel Installation"
+msgstr "インストールをキャンセルする"
+
+#: templates/checkout.php:180
+msgid "Checkout"
+msgstr "チェックアウト"
+
+#: templates/checkout.php:180
+msgid "PCI compliant"
+msgstr "PCI コンプライアント"
+
+#. translators: %s: name (e.g. Hey John,)
+#: templates/connect.php:112
+msgctxt "greeting"
+msgid "Hey %s,"
+msgstr "おおい %s さん、"
+
+#: templates/connect.php:154
+msgid "Allow & Continue"
+msgstr "許可して続ける"
+
+#: templates/connect.php:158
+msgid "Re-send activation email"
+msgstr "有効化メールを再送信"
+
+#: templates/connect.php:162
+msgid "Thanks %s!"
+msgstr "ありがとう $s さん!"
+
+#: templates/connect.php172, templates/forms/license-activation.php:46
+msgid "Agree & Activate License"
+msgstr "同意してライセンスを有効化"
+
+#: templates/connect.php:181
+msgid ""
+"Thanks for purchasing %s! To get started, please enter your license key:"
+msgstr "%s を購入いただきありがとうございます。はじめにライセンスキーを入力してください:"
+
+#: templates/connect.php:188
+msgid ""
+"Never miss an important update - opt in to our security & feature updates "
+"notifications, educational content, offers, and non-sensitive diagnostic "
+"tracking with %4$s."
+msgstr "重要な更新を逃さないように、セキュリティと更新通知、学習用コンテンツ、オファー、そして%4$s とセンシティブではない診断トラッキングをオプトインしてください。"
+
+#: templates/connect.php:189
+msgid ""
+"Never miss an important update - opt in to our security and feature updates "
+"notifications, and non-sensitive diagnostic tracking with %4$s."
+msgstr "重要な更新を逃さないように、セキュリティと更新通知、%4$s とセンシティブではない診断トラッキングをオプトインしてください。"
+
+#: templates/connect.php:195
+msgid ""
+"Never miss an important update - opt in to our security & feature updates "
+"notifications, educational content, offers, and non-sensitive diagnostic "
+"tracking with %4$s. If you skip this, that's okay! %1$s will still work just"
+" fine."
+msgstr "重要な更新を逃さないように、セキュリティと更新通知、学習用コンテンツ、オファー、そして%4$s とセンシティブではない診断トラッキングをオプトインしてください。これをスキップしても%1$sはもちろん動作します。"
+
+#: templates/connect.php:196
+msgid ""
+"Never miss an important update - opt in to our security & feature updates "
+"notifications, and non-sensitive diagnostic tracking with %4$s. If you skip "
+"this, that's okay! %1$s will still work just fine."
+msgstr "重要な更新を逃さないように、セキュリティと更新通知、学習用コンテンツ、オファー、そして%4$s とセンシティブではない診断トラッキングをオプトインしてください。これをスキップしても%1$sはもちろん動作します。"
+
+#: templates/connect.php:230
+msgid "We're excited to introduce the Freemius network-level integration."
+msgstr "Freeminus ネットワークレベルのインテグレーションをご紹介できることに興奮しています。"
+
+#: templates/connect.php:233
+msgid ""
+"During the update process we detected %d site(s) that are still pending "
+"license activation."
+msgstr "アップデートの処理中に%dサイトがライセンスの有効化が保留中であることを検知しました。"
+
+#: templates/connect.php:235
+msgid ""
+"If you'd like to use the %s on those sites, please enter your license key "
+"below and click the activation button."
+msgstr "これらのサイトで%sを使う場合は、ライセンスキーを入力し、アクティベーションボタンをクリックしてください。"
+
+#: templates/connect.php:237
+msgid "%s's paid features"
+msgstr "%sの有料機能"
+
+#: templates/connect.php:242
+msgid ""
+"Alternatively, you can skip it for now and activate the license later, in "
+"your %s's network-level Account page."
+msgstr "または、今すぐスキップして、%sのネットワークレベルのアカウントページでライセンスを有効にすることもできます。"
+
+#: templates/connect.php:244
+msgid ""
+"During the update process we detected %s site(s) in the network that are "
+"still pending your attention."
+msgstr "アップデートの処理中に、ネットワーク内の%dサイトが対応待ちになっていることを検知しました。"
+
+#: templates/connect.php253, templates/forms/data-debug-mode.php35,
+#: templates/forms/license-activation.php:49
+msgid "License key"
+msgstr "ライセンスキー"
+
+#: templates/connect.php256, templates/forms/license-activation.php:22
+msgid "Can't find your license key?"
+msgstr "ライセンスキーは見つかりませんか?"
+
+#: templates/connect.php315, templates/connect.php652,
+#: templates/forms/deactivation/retry-skip.php:20
+msgctxt "verb"
+msgid "Skip"
+msgstr "スキップ"
+
+#: templates/connect.php:318
+msgid "Delegate to Site Admins"
+msgstr "サイト管理者に委任する"
+
+#: templates/connect.php:318
+msgid ""
+"If you click it, this decision will be delegated to the sites "
+"administrators."
+msgstr "決定をサイトの管理者に委任するにはクリックしてください。"
+
+#: templates/connect.php:346
+msgid "Your Profile Overview"
+msgstr "プロフィール概要"
+
+#: templates/connect.php:347
+msgid "Name and email address"
+msgstr "名前とメールアドレス"
+
+#: templates/connect.php:352
+msgid "Your Site Overview"
+msgstr "サイト概要"
+
+#: templates/connect.php:353
+msgid "Site URL, WP version, PHP info, plugins & themes"
+msgstr "サイト URL、WP バージョン、PHP info、プラグインとテーマ"
+
+#: templates/connect.php:358
+msgid "Admin Notices"
+msgstr "管理者通知"
+
+#: templates/connect.php359, templates/connect.php:375
+msgid "Updates, announcements, marketing, no spam"
+msgstr "更新、発表、マーケティング、スパムなし"
+
+#: templates/connect.php:364
+msgid "Current %s Events"
+msgstr "現在%sイベント"
+
+#: templates/connect.php:365
+msgid "Activation, deactivation and uninstall"
+msgstr "有効化、無効化、アンインストール"
+
+#: templates/connect.php:374
+msgid "Newsletter"
+msgstr "ニュースレター"
+
+#: templates/connect.php391, templates/forms/license-activation.php:41
+msgid ""
+"The %1$s will be periodically sending data to %2$s to check for security and"
+" feature updates, and verify the validity of your license."
+msgstr "%1$sはセキュリティとアプデート、そしてライセンスの状態を確認するため、定期的に%2$sへデータを送信します。"
+
+#: templates/connect.php:396
+msgid "What permissions are being granted?"
+msgstr "付与されているパーミッションは何ですか?"
+
+#: templates/connect.php:417
+msgid "Don't have a license key?"
+msgstr "ライセンスキーをお持ちではありませんか?"
+
+#: templates/connect.php:420
+msgid "Have a license key?"
+msgstr "ライセンスキーはお持ちですか?"
+
+#: templates/connect.php:428
+msgid "Privacy Policy"
+msgstr "プライバシーポリシー"
+
+#: templates/connect.php:430
+msgid "License Agreement"
+msgstr ""
+
+#: templates/connect.php:430
+msgid "Terms of Service"
+msgstr "利用規約"
+
+#: templates/connect.php:805
+msgctxt "as in the process of sending an email"
+msgid "Sending email"
+msgstr "メール送信中"
+
+#: templates/connect.php:806
+msgctxt "as activating plugin"
+msgid "Activating"
+msgstr "有効化中"
+
+#: templates/contact.php:78
+msgid "Contact"
+msgstr "連絡"
+
+#: templates/debug.php:17
+msgctxt "as turned off"
+msgid "Off"
+msgstr "オフ"
+
+#: templates/debug.php:18
+msgctxt "as turned on"
+msgid "On"
+msgstr "オン"
+
+#: templates/debug.php:20
+msgid "SDK"
+msgstr "SDK"
+
+#: templates/debug.php:24
+msgctxt "as code debugging"
+msgid "Debugging"
+msgstr "デバッグ"
+
+#: templates/debug.php54, templates/debug.php250, templates/debug.php376,
+#: templates/debug.php:512
+msgid "Actions"
+msgstr "アクション"
+
+#: templates/debug.php:64
+msgid "Are you sure you want to delete all Freemius data?"
+msgstr "ほんとうに全ての Freemius データを削除しますか?"
+
+#: templates/debug.php:64
+msgid "Delete All Accounts"
+msgstr "全てのアカウントを削除"
+
+#: templates/debug.php:71
+msgid "Clear API Cache"
+msgstr "API キャッシュをクリア"
+
+#: templates/debug.php:79
+msgid "Clear Updates Transients"
+msgstr "アップデートのトランジエントをクリアーにする"
+
+#: templates/debug.php:86
+msgid "Sync Data From Server"
+msgstr "サーバーからのデータを同期"
+
+#: templates/debug.php:95
+msgid "Migrate Options to Network"
+msgstr ""
+
+#: templates/debug.php:100
+msgid "Load DB Option"
+msgstr "DB オプションを読み込む"
+
+#: templates/debug.php:103
+msgid "Set DB Option"
+msgstr "DB オプションを設定する"
+
+#: templates/debug.php:182
+msgid "Key"
+msgstr "キー"
+
+#: templates/debug.php:183
+msgid "Value"
+msgstr "値"
+
+#: templates/debug.php:199
+msgctxt "as software development kit versions"
+msgid "SDK Versions"
+msgstr "SDK バージョン"
+
+#: templates/debug.php:204
+msgid "SDK Path"
+msgstr "SDK のパス"
+
+#: templates/debug.php205, templates/debug.php:244
+msgid "Module Path"
+msgstr "モジュールのパス"
+
+#: templates/debug.php:206
+msgid "Is Active"
+msgstr "有効"
+
+#: templates/debug.php234, templates/debug/plugins-themes-sync.php:35
+msgid "Plugins"
+msgstr "プラグイン"
+
+#: templates/debug.php234, templates/debug/plugins-themes-sync.php:56
+msgid "Themes"
+msgstr "テーマ"
+
+#: templates/debug.php239, templates/debug.php370, templates/debug.php456,
+#: templates/debug/scheduled-crons.php:80
+msgid "Slug"
+msgstr "スラッグ"
+
+#: templates/debug.php241, templates/debug.php:455
+msgid "Title"
+msgstr "タイトル"
+
+#: templates/debug.php:242
+msgctxt "as application program interface"
+msgid "API"
+msgstr "API"
+
+#: templates/debug.php:243
+msgid "Freemius State"
+msgstr "Freemius ステータス"
+
+#: templates/debug.php:247
+msgid "Network Blog"
+msgstr "ネットワークブログ"
+
+#: templates/debug.php:248
+msgid "Network User"
+msgstr "ネットワークユーザ"
+
+#: templates/debug.php:285
+msgctxt "as connection was successful"
+msgid "Connected"
+msgstr "接続"
+
+#: templates/debug.php:286
+msgctxt "as connection blocked"
+msgid "Blocked"
+msgstr "ブロック"
+
+#: templates/debug.php:322
+msgid "Simulate Trial Promotion"
+msgstr ""
+
+#: templates/debug.php:334
+msgid "Simulate Network Upgrade"
+msgstr "ネットワークアップグレードをシミュレートする"
+
+#: templates/debug.php:359
+msgid "%s Installs"
+msgstr "%sインストール"
+
+#: templates/debug.php:361
+msgctxt "like websites"
+msgid "Sites"
+msgstr "サイト数"
+
+#: templates/debug.php367, templates/account/partials/site.php:156
+msgid "Blog ID"
+msgstr "ブログ ID"
+
+#: templates/debug.php:372
+msgid "License ID"
+msgstr ""
+
+#: templates/debug.php436, templates/debug.php535,
+#: templates/account/partials/addon.php:435
+msgctxt "verb"
+msgid "Delete"
+msgstr "削除"
+
+#: templates/debug.php:450
+msgid "Add Ons of module %s"
+msgstr "モジュールのアドオン%s"
+
+#: templates/debug.php:502
+msgid "Users"
+msgstr "ユーザー"
+
+#: templates/debug.php:509
+msgid "Verified"
+msgstr "認証済み"
+
+#: templates/debug.php:551
+msgid "%s Licenses"
+msgstr "%sラインセス"
+
+#: templates/debug.php:556
+msgid "Plugin ID"
+msgstr "プラグイン ID"
+
+#: templates/debug.php:558
+msgid "Plan ID"
+msgstr "プラン ID"
+
+#: templates/debug.php:559
+msgid "Quota"
+msgstr "クォータ"
+
+#: templates/debug.php:560
+msgid "Activated"
+msgstr "有効化済み"
+
+#: templates/debug.php:561
+msgid "Blocking"
+msgstr "ブロッキング"
+
+#: templates/debug.php:563
+msgctxt "as expiration date"
+msgid "Expiration"
+msgstr "期限切れ"
+
+#: templates/debug.php:590
+msgid "Debug Log"
+msgstr "デバッグログ"
+
+#: templates/debug.php:594
+msgid "All Types"
+msgstr "すべてのタイプ"
+
+#: templates/debug.php:601
+msgid "All Requests"
+msgstr "すべてのリクエスト"
+
+#: templates/debug.php606, templates/debug.php635,
+#: templates/debug/logger.php:25
+msgid "File"
+msgstr "ファイル"
+
+#: templates/debug.php607, templates/debug.php633,
+#: templates/debug/logger.php:23
+msgid "Function"
+msgstr "機能"
+
+#: templates/debug.php:608
+msgid "Process ID"
+msgstr "プロセス ID"
+
+#: templates/debug.php:609
+msgid "Logger"
+msgstr "ロガー"
+
+#: templates/debug.php610, templates/debug.php634,
+#: templates/debug/logger.php:24
+msgid "Message"
+msgstr "メッセージ"
+
+#: templates/debug.php:612
+msgid "Filter"
+msgstr "フィルター"
+
+#: templates/debug.php:620
+msgid "Download"
+msgstr "ダウンロード"
+
+#: templates/debug.php631, templates/debug/logger.php:22
+msgid "Type"
+msgstr "タイプ"
+
+#: templates/debug.php636, templates/debug/logger.php:26
+msgid "Timestamp"
+msgstr "タイムスタンプ"
+
+#: templates/secure-https-header.php:28
+msgid "Secure HTTPS %s page, running from an external domain"
+msgstr "外部ドメインで実行中のセキュアな HTTPS %sページ"
+
+#: includes/customizer/class-fs-customizer-support-section.php55,
+#: templates/plugin-info/features.php:43
+msgid "Support"
+msgstr "サポート"
+
+#: includes/debug/class-fs-debug-bar-panel.php48,
+#: templates/debug/api-calls.php54, templates/debug/logger.php:62
+msgctxt "milliseconds"
+msgid "ms"
+msgstr "ms"
+
+#: includes/debug/debug-bar-start.php:41
+msgid "Freemius API"
+msgstr "Freemius API"
+
+#: includes/debug/debug-bar-start.php:42
+msgid "Requests"
+msgstr "リクエスト数"
+
+#: templates/account/billing.php:22
+msgctxt "verb"
+msgid "Update"
+msgstr "更新"
+
+#: templates/account/billing.php:33
+msgid "Billing"
+msgstr "請求書"
+
+#: templates/account/billing.php38, templates/account/billing.php:38
+msgid "Business name"
+msgstr "商号"
+
+#: templates/account/billing.php39, templates/account/billing.php:39
+msgid "Tax / VAT ID"
+msgstr "税金 / VAT ID"
+
+#: templates/account/billing.php42, templates/account/billing.php42,
+#: templates/account/billing.php43, templates/account/billing.php:43
+msgid "Address Line %d"
+msgstr "住所欄 %d"
+
+#: templates/account/billing.php46, templates/account/billing.php:46
+msgid "City"
+msgstr "市"
+
+#: templates/account/billing.php46, templates/account/billing.php:46
+msgid "Town"
+msgstr "町"
+
+#: templates/account/billing.php47, templates/account/billing.php:47
+msgid "ZIP / Postal Code"
+msgstr "ZIP / 郵便番号"
+
+#: templates/account/billing.php:302
+msgid "Country"
+msgstr "国"
+
+#: templates/account/billing.php:304
+msgid "Select Country"
+msgstr "国を選択"
+
+#: templates/account/billing.php311, templates/account/billing.php:312
+msgid "State"
+msgstr "州"
+
+#: templates/account/billing.php311, templates/account/billing.php:312
+msgid "Province"
+msgstr "県・州・省"
+
+#: templates/account/payments.php:29
+msgid "Payments"
+msgstr "支払い"
+
+#: templates/account/payments.php:36
+msgid "Date"
+msgstr "日付"
+
+#: templates/account/payments.php:37
+msgid "Amount"
+msgstr "総額"
+
+#: templates/account/payments.php38, templates/account/payments.php:50
+msgid "Invoice"
+msgstr "請求書"
+
+#: templates/debug/api-calls.php:56
+msgid "API"
+msgstr "API"
+
+#: templates/debug/api-calls.php:68
+msgid "Method"
+msgstr "メソッド"
+
+#: templates/debug/api-calls.php:69
+msgid "Code"
+msgstr "コード"
+
+#: templates/debug/api-calls.php:70
+msgid "Length"
+msgstr "長さ"
+
+#: templates/debug/api-calls.php:71
+msgctxt "as file/folder path"
+msgid "Path"
+msgstr "パス"
+
+#: templates/debug/api-calls.php:73
+msgid "Body"
+msgstr "本文"
+
+#: templates/debug/api-calls.php:75
+msgid "Result"
+msgstr "結果"
+
+#: templates/debug/api-calls.php:76
+msgid "Start"
+msgstr "開始"
+
+#: templates/debug/api-calls.php:77
+msgid "End"
+msgstr "終了"
+
+#: templates/debug/logger.php:15
+msgid "Log"
+msgstr "グ"
+
+#. translators: %s: time period (e.g. In "2 hours")
+#: templates/debug/plugins-themes-sync.php18,
+#: templates/debug/scheduled-crons.php:91
+msgid "In %s"
+msgstr "%s 内"
+
+#. translators: %s: time period (e.g. "2 hours" ago)
+#: templates/debug/plugins-themes-sync.php20,
+#: templates/debug/scheduled-crons.php:93
+msgid "%s ago"
+msgstr "%s 前"
+
+#: templates/debug/plugins-themes-sync.php21,
+#: templates/debug/scheduled-crons.php:74
+msgctxt "seconds"
+msgid "sec"
+msgstr "秒"
+
+#: templates/debug/plugins-themes-sync.php:23
+msgid "Plugins & Themes Sync"
+msgstr "プラグインとテーマを同期"
+
+#: templates/debug/plugins-themes-sync.php:28
+msgid "Total"
+msgstr "トータル"
+
+#: templates/debug/plugins-themes-sync.php29,
+#: templates/debug/scheduled-crons.php:84
+msgid "Last"
+msgstr "最終"
+
+#: templates/debug/scheduled-crons.php:76
+msgid "Scheduled Crons"
+msgstr "スケジュール Cron"
+
+#: templates/debug/scheduled-crons.php:81
+msgid "Module"
+msgstr "モジュール"
+
+#: templates/debug/scheduled-crons.php:82
+msgid "Module Type"
+msgstr "モジュールタイプ"
+
+#: templates/debug/scheduled-crons.php:83
+msgid "Cron Type"
+msgstr "Cron タイプ"
+
+#: templates/debug/scheduled-crons.php:85
+msgid "Next"
+msgstr "次"
+
+#: templates/forms/affiliation.php:82
+msgid "Non-expiring"
+msgstr "期限のない"
+
+#: templates/forms/affiliation.php:85
+msgid "Apply to become an affiliate"
+msgstr "アフィリエイトに応募する"
+
+#: templates/forms/affiliation.php:104
+msgid ""
+"Your affiliate application for %s has been accepted! Log in to your "
+"affiliate area at: %s."
+msgstr "%sのアフィリエイト申請は受理されました！　次のリンクからアフィリエイトエリアにログインしてください:%s"
+
+#: templates/forms/affiliation.php:119
+msgid ""
+"Thank you for applying for our affiliate program, we'll review your details "
+"during the next 14 days and will get back to you with further information."
+msgstr "アフィリエイトプログラムに応募いただきありがとうございます。14日以内にお申し込み詳細をレビューし、改めてご連絡いたします。"
+
+#: templates/forms/affiliation.php:122
+msgid "Your affiliation account was temporarily suspended."
+msgstr "アフィリエイトアカウントは一時的に停止されました。"
+
+#: templates/forms/affiliation.php:125
+msgid ""
+"Thank you for applying for our affiliate program, unfortunately, we've "
+"decided at this point to reject your application. Please try again in 30 "
+"days."
+msgstr "アフィリエイトアカウントに応募いただきありがとうございます。残念ながら現時点では申請を受理することができませんでした。30日後に改めてお申込みください。"
+
+#: templates/forms/affiliation.php:128
+msgid ""
+"Due to violation of our affiliation terms, we decided to temporarily block "
+"your affiliation account. If you have any questions, please contact support."
+msgstr "アフィリエイト規約違反により、アフィリエイトアカウントを一時的に凍結させていただきました。ご質問等がありましたら、サポートにお問い合わせください。"
+
+#: templates/forms/affiliation.php:141
+msgid "Like the %s? Become our ambassador and earn cash ;-)"
+msgstr "%sは気に入りましたか？　アンバサダーになって報酬を得ましょう ;-)"
+
+#: templates/forms/affiliation.php:142
+msgid ""
+"Refer new customers to our %s and earn %s commission on each successful sale"
+" you refer!"
+msgstr "新規カスタマーに私たちの%sを紹介して、売り上げごとに%sのコミッションを得ましょう"
+
+#: templates/forms/affiliation.php:145
+msgid "Program Summary"
+msgstr "プログラム概要"
+
+#: templates/forms/affiliation.php:147
+msgid "%s commission when a customer purchases a new license."
+msgstr "カスタマーが新規ライセンスを購入するごとに%sのコミッションが発生します。"
+
+#: templates/forms/affiliation.php:149
+msgid "Get commission for automated subscription renewals."
+msgstr "サブスクリプションの自動更新でコミッションを得ましょう。"
+
+#: templates/forms/affiliation.php:152
+msgid ""
+"%s tracking cookie after the first visit to maximize earnings potential."
+msgstr "%s初回の訪問後、クッキーをトラッキングして収益の可能性を最大化しましょう。"
+
+#: templates/forms/affiliation.php:155
+msgid "Unlimited commissions."
+msgstr "無制限のコミッション。"
+
+#: templates/forms/affiliation.php:157
+msgid "%s minimum payout amount."
+msgstr "%sお支払いの最低金額"
+
+#: templates/forms/affiliation.php:158
+msgid "Payouts are in USD and processed monthly via PayPal."
+msgstr "お支払いは USD かつ PayPal 経由で毎月行われます。"
+
+#: templates/forms/affiliation.php:159
+msgid ""
+"As we reserve 30 days for potential refunds, we only pay commissions that "
+"are older than 30 days."
+msgstr "30日間の返金期間があるため、コミッションのお支払いは30日以降になります。"
+
+#: templates/forms/affiliation.php:162
+msgid "Affiliate"
+msgstr "アフィリエイト"
+
+#: templates/forms/affiliation.php165, templates/forms/resend-key.php:23
+msgid "Email address"
+msgstr "メールアドレス"
+
+#: templates/forms/affiliation.php:169
+msgid "Full name"
+msgstr "フルネーム"
+
+#: templates/forms/affiliation.php:173
+msgid "PayPal account email address"
+msgstr "PayPal アカウントのメールアドレス"
+
+#: templates/forms/affiliation.php:177
+msgid "Where are you going to promote the %s?"
+msgstr "%sのプロモーションを行うサイトはどこですか？"
+
+#: templates/forms/affiliation.php:179
+msgid ""
+"Enter the domain of your website or other websites from where you plan to "
+"promote the %s."
+msgstr "%sのプロモーションを行う予定のあなたのサイトや他のサイトのドメイン名を入力してください。"
+
+#: templates/forms/affiliation.php:181
+msgid "Add another domain"
+msgstr "ドメイン名を追加する"
+
+#: templates/forms/affiliation.php:185
+msgid "Extra Domains"
+msgstr "追加のドメイン名"
+
+#: templates/forms/affiliation.php:186
+msgid "Extra domains where you will be marketing the product from."
+msgstr "プロダクトフォームのマーケティングを行う追加ドメイン名。"
+
+#: templates/forms/affiliation.php:196
+msgid "Promotion methods"
+msgstr "プロモーション方法"
+
+#: templates/forms/affiliation.php:199
+msgid "Social media (Facebook, Twitter, etc.)"
+msgstr "ソーシャルメディア(Facebook、Twitter、その他)"
+
+#: templates/forms/affiliation.php:203
+msgid "Mobile apps"
+msgstr "モバイルアプリケーション"
+
+#: templates/forms/affiliation.php:207
+msgid "Website, email, and social media statistics (optional)"
+msgstr "ウェブサイト、Email またはソーシャルメディアの統計 (オプション)"
+
+#: templates/forms/affiliation.php:210
+msgid ""
+"Please feel free to provide any relevant website or social media statistics,"
+" e.g. monthly unique site visits, number of email subscribers, followers, "
+"etc. (we will keep this information confidential)."
+msgstr "関係のあるウェブサイトやソーシャルメディアの統計を提供してください。例: サイトの月間訪問者数、Emailの購読者数、フォロワー数等 (機密情報として取り扱います)"
+
+#: templates/forms/affiliation.php:214
+msgid "How will you promote us?"
+msgstr "どのように我々をプロモートしますか？"
+
+#: templates/forms/affiliation.php:217
+msgid ""
+"Please provide details on how you intend to promote %s (please be as "
+"specific as possible)."
+msgstr "どのように%sをプロモートするつもりなのか、詳細をお知らせください (できるだけ具体的にお願いします)"
+
+#: templates/forms/affiliation.php223, templates/forms/resend-key.php:22
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: templates/forms/affiliation.php:225
+msgid "Become an affiliate"
+msgstr "アフィリエイトになる"
+
+#: templates/forms/data-debug-mode.php:25
+msgid "Please enter the license key to enable the debug mode:"
+msgstr ""
+
+#: templates/forms/data-debug-mode.php:27
+msgid ""
+"To enter the debug mode, please enter the secret key of the license owner "
+"(UserID = %d), which you can find in your \"My Profile\" section of your "
+"User Dashboard:"
+msgstr ""
+
+#: templates/forms/data-debug-mode.php:32
+msgid "Submit"
+msgstr ""
+
+#: templates/forms/data-debug-mode.php:36
+msgid "User key"
+msgstr ""
+
+#: templates/forms/license-activation.php:23
+msgid ""
+"Please enter the license key that you received in the email right after the "
+"purchase:"
+msgstr "購入後すぐにメールで受け取ったライセンスキーを入力してください:"
+
+#: templates/forms/license-activation.php:28
+msgid "Update License"
+msgstr "ライセンスを更新"
+
+#: templates/forms/optout.php:30
+msgctxt "verb"
+msgid "Opt Out"
+msgstr "オプトアウト"
+
+#: templates/forms/optout.php:31
+msgctxt "verb"
+msgid "Opt In"
+msgstr "オプトイン"
+
+#: templates/forms/optout.php:33
+msgid ""
+"Usage tracking is done in the name of making %s better. Making a better user"
+" experience, prioritizing new features, and more good things. We'd really "
+"appreciate if you'll reconsider letting us continue with the tracking."
+msgstr "使用の追跡は %s をより良くする名目の下に行われています。ユーザー体験をより良くし、新機能に優先順位をつけるためなどに使います。追跡を続けてもよいと再考してくれるなら本当に感謝致します。"
+
+#: templates/forms/optout.php:35
+msgid ""
+"By clicking \"Opt Out\", we will no longer be sending any data from %s to "
+"%s."
+msgstr "\"オプトアウト\"をクリックすることで、もう %s から %s へのデータの送信は行いません。"
+
+#: templates/forms/premium-versions-upgrade-handler.php:40
+msgid "There is a new version of %s available."
+msgstr "%sの入手可能な新しいバージョンがあります"
+
+#: templates/forms/premium-versions-upgrade-handler.php:41
+msgid " %s to access version %s security & feature updates, and support."
+msgstr ""
+
+#: templates/forms/premium-versions-upgrade-handler.php:54
+msgid "New Version Available"
+msgstr "新しいバージョンがあります"
+
+#: templates/forms/premium-versions-upgrade-handler.php:75
+msgctxt "close a window"
+msgid "Dismiss"
+msgstr "却下"
+
+#: templates/forms/resend-key.php:21
+msgid "Send License Key"
+msgstr "ライセンスキーを送信"
+
+#: templates/forms/resend-key.php:57
+msgid ""
+"Enter the email address you've used for the upgrade below and we will resend"
+" you the license key."
+msgstr "アップグレードに使用したメールアドレスを下に入力してください。そうすれば、ライセンスキーをお送りします。"
+
+#: templates/forms/subscription-cancellation.php:37
+msgid ""
+"Deactivating or uninstalling the %s will automatically disable the license, "
+"which you'll be able to use on another site."
+msgstr ""
+
+#: templates/forms/subscription-cancellation.php:47
+msgid ""
+"In case you are NOT planning on using this %s on this site (or any other "
+"site) - would you like to cancel the %s as well?"
+msgstr ""
+
+#: templates/forms/subscription-cancellation.php:52
+msgid "license"
+msgstr ""
+
+#: templates/forms/subscription-cancellation.php:57
+msgid ""
+"Cancel %s - I no longer need any security & feature updates, nor support for"
+" %s because I'm not planning to use the %s on this, or any other site."
+msgstr ""
+
+#: templates/forms/subscription-cancellation.php:68
+msgid ""
+"Don't cancel %s - I'm still interested in getting security & feature "
+"updates, as well as be able to contact support."
+msgstr ""
+
+#: templates/forms/subscription-cancellation.php:103
+msgid ""
+"Once your license expires you will no longer be able to use the %s, unless "
+"you activate it again with a valid premium license."
+msgstr ""
+
+#: templates/forms/subscription-cancellation.php:136
+msgid "Cancel %s?"
+msgstr ""
+
+#: templates/forms/subscription-cancellation.php:143
+msgid "Proceed"
+msgstr ""
+
+#: templates/forms/subscription-cancellation.php191,
+#: templates/forms/deactivation/form.php:171
+msgid "Cancel %s & Proceed"
+msgstr ""
+
+#: templates/forms/trial-start.php:22
+msgid ""
+"You are 1-click away from starting your %1$s-day free trial of the %2$s "
+"plan."
+msgstr "%2$s プランの%1$s日間のフリートライアルを開始するまであとワンクリックです。"
+
+#: templates/forms/trial-start.php:28
+msgid ""
+"For compliance with the WordPress.org guidelines, before we start the trial "
+"we ask that you opt in with your user and non-sensitive site information, "
+"allowing the %s to periodically send data to %s to check for version updates"
+" and to validate your trial."
+msgstr "WordPress.orgのガイドラインに準拠するため、トライアルを開始する前に、ユーザーと重要でないサイト情報のオプトイン、更新の確認やトライアルの状態確認のために%sが%sに対して定期的にデータを送信する許可を得るように設定してください。"
+
+#: templates/js/style-premium-theme.php:39
+msgid "Premium"
+msgstr "プレミアム"
+
+#: templates/js/style-premium-theme.php:42
+msgid "Beta"
+msgstr ""
+
+#: templates/partials/network-activation.php:27
+msgid "Activate license on all sites in the network."
+msgstr "ネットワーク上にあるすべてのサイトのライセンスを有効にする。"
+
+#: templates/partials/network-activation.php:28
+msgid "Apply on all sites in the network."
+msgstr "ネットワーク上にあるすべてのサイトに対して反映させる。"
+
+#: templates/partials/network-activation.php:31
+msgid "Activate license on all pending sites."
+msgstr "保留中のサイトすべてでライセンスを有効にする。"
+
+#: templates/partials/network-activation.php:32
+msgid "Apply on all pending sites."
+msgstr "保留中のサイトすべてに反映させる。"
+
+#: templates/partials/network-activation.php40,
+#: templates/partials/network-activation.php:74
+msgid "allow"
+msgstr "許可"
+
+#: templates/partials/network-activation.php43,
+#: templates/partials/network-activation.php:77
+msgid "delegate"
+msgstr "代表"
+
+#: templates/partials/network-activation.php47,
+#: templates/partials/network-activation.php:81
+msgid "skip"
+msgstr "スキップ"
+
+#: templates/plugin-info/description.php72,
+#: templates/plugin-info/screenshots.php:31
+msgid "Click to view full-size screenshot %d"
+msgstr "クリックしてフルサイズのスクリーンショットを見る %d"
+
+#: templates/plugin-info/features.php:56
+msgid "Unlimited Updates"
+msgstr "無制限のアップデート"
+
+#: templates/account/partials/activate-license-button.php:46
+msgid "Localhost"
+msgstr "localhost"
+
+#: templates/account/partials/activate-license-button.php:50
+msgctxt "as 5 licenses left"
+msgid "%s left"
+msgstr "あと %s"
+
+#: templates/account/partials/activate-license-button.php:51
+msgid "Last license"
+msgstr "最新のライセンス"
+
+#. translators: %1$s: Either 'Downgrading your plan' or 'Cancelling the
+#. subscription'
+#: templates/account/partials/addon.php:29
+msgid ""
+"%1$s will immediately stop all future recurring payments and your %s plan "
+"license will expire in %s."
+msgstr ""
+
+#: templates/account/partials/addon.php:185
+msgid "Cancelled"
+msgstr "キャンセル"
+
+#: templates/account/partials/addon.php:195
+msgid "No expiration"
+msgstr "有効期限なし"
+
+#: templates/account/partials/site.php:189
+msgid "Owner Name"
+msgstr "所有者名"
+
+#: templates/account/partials/site.php:201
+msgid "Owner Email"
+msgstr "所有者の Email"
+
+#: templates/account/partials/site.php:213
+msgid "Owner ID"
+msgstr "オーナー ID"
+
+#: templates/account/partials/site.php:286
+msgid "Subscription"
+msgstr "サブスクリプション"
+
+#: templates/forms/deactivation/contact.php:19
+msgid ""
+"Sorry for the inconvenience and we are here to help if you give us a chance."
+msgstr "ご迷惑をおかけしてすいません。もし機会をいただけたらお手伝いをします。"
+
+#: templates/forms/deactivation/contact.php:22
+msgid "Contact Support"
+msgstr "サポートに連絡"
+
+#: templates/forms/deactivation/form.php:64
+msgid "Anonymous feedback"
+msgstr "匿名のフィードバック"
+
+#: templates/forms/deactivation/form.php:70
+msgid "Deactivate"
+msgstr "無効化"
+
+#: templates/forms/deactivation/form.php:72
+msgid "Activate %s"
+msgstr "%sを有効化する"
+
+#: templates/forms/deactivation/form.php:87
+msgid "Quick Feedback"
+msgstr ""
+
+#: templates/forms/deactivation/form.php:91
+msgid "If you have a moment, please let us know why you are %s"
+msgstr "お時間があれば、なぜ%sするのか理由を教えてください。"
+
+#: templates/forms/deactivation/form.php:91
+msgid "deactivating"
+msgstr "無効化中"
+
+#: templates/forms/deactivation/form.php:91
+msgid "switching"
+msgstr "変更中"
+
+#: templates/forms/deactivation/form.php:365
+msgid "Submit & %s"
+msgstr "送信と%s"
+
+#: templates/forms/deactivation/form.php:386
+msgid "Kindly tell us the reason so we can improve."
+msgstr "改善できるよう、どうか理由を教えてください。"
+
+#: templates/forms/deactivation/form.php:511
+msgid "Yes - %s"
+msgstr "はい"
+
+#: templates/forms/deactivation/form.php:518
+msgid "Skip & %s"
+msgstr "スキップと%s"
+
+#: templates/forms/deactivation/retry-skip.php:21
+msgid "Click here to use the plugin anonymously"
+msgstr "匿名でプラグインを使用するにはこちらをクリック"
+
+#: templates/forms/deactivation/retry-skip.php:23
+msgid ""
+"You might have missed it, but you don't have to share any data and can just "
+"%s the opt-in."
+msgstr "見逃していたかもしれませんが、どんな情報も共有する必要はなく、オプトインを $s することができます。 "

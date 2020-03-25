@@ -264,30 +264,28 @@ class Pods_Templates_Auto_Template_Front_End {
 	 */
 	public function current_post_type() {
 
-		// start by getting current post or stdClass object.
-		global $wp_query;
-		$obj = $wp_query->get_queried_object();
+		// If we are in the loop, fair game to use the post itself to help determine the current post type.
+		if ( in_the_loop() ) {
+			return get_post_type();
+		}
 
-		// see if we are on a post type and if so, set $current_post_type to post type.
+		// Start by getting current post or stdClass object.
+		$obj = get_queried_object();
+
+		// See if we are on a post type and if so, set $current_post_type to post type.
 		if ( isset( $obj->post_type ) ) {
-			$current_post_type = $obj->post_type;
-
+			$pod_name = $obj->post_type;
 		} elseif ( isset( $obj->taxonomy ) ) {
-			$current_post_type = $obj->taxonomy;
+			$pod_name = $obj->taxonomy;
 		} elseif ( isset( $obj->name ) ) {
-			$current_post_type = $obj->name;
+			$pod_name = $obj->name;
 		} elseif ( is_home() ) {
-			$current_post_type = 'post';
+			$pod_name = 'post';
 		} else {
-			$current_post_type = false;
+			$pod_name = false;
 		}
 
-		// Once we are in the loop, fair game to use the post itself to help determine the current post type.
-		if ( ( ! $current_post_type || is_array( $current_post_type ) ) && in_the_loop() ) {
-			$current_post_type = get_post_type();
-		}
-
-		return $current_post_type;
+		return $pod_name;
 	}
 
 	/**

@@ -319,12 +319,27 @@ class Pods_Templates_Auto_Template_Front_End {
 		// now use other methods in class to build array to search in/ use
 		$possible_pods = $this->auto_pods();
 
-		// check if $current_post_type is the key of the array of possible pods
-		if ( isset( $possible_pods[ $current_post_type ] ) ) {
-			// get array for the current post type
-			$this_pod = $possible_pods[ $current_post_type ];
+		// build Pods object for current item
+		global $post;
+		$pod_name = $current_post_type;
+		$pod_item = $post->ID;
+		if ( in_the_loop() ) {
+			$pod_name = $post->post_type;
+		} else {
+			// Outside the loop in a taxonomy, we want the term
+			if ( is_tax() ) {
+				$obj      = get_queried_object();
+				$pod_name = $obj->slug;
+				$pod_item = $obj->term_id;
+			}
+		}
 
-			$filter = $this->get_pod_filter( $current_post_type, $possible_pods );
+		// check if $current_post_type is the key of the array of possible pods
+		if ( isset( $possible_pods[ $pod_name ] ) ) {
+			// get array for the current post type
+			$this_pod = $possible_pods[ $pod_name ];
+
+			$filter = $this->get_pod_filter( $pod_name, $possible_pods );
 
 			if ( current_filter() !== $filter ) {
 				return $content;
@@ -333,21 +348,6 @@ class Pods_Templates_Auto_Template_Front_End {
 			if ( ! in_the_loop() && ! pods_v( 'run_outside_loop', $this_pod, false ) ) {
 				// If outside of the loop, exit quickly
 				return $content;
-			}
-
-			// build Pods object for current item
-			global $post;
-			$pod_name = $current_post_type;
-			$pod_item = $post->ID;
-			if ( in_the_loop() ) {
-				$pod_name = $post->post_type;
-			} else {
-				// Outside the loop in a taxonomy, we want the term
-				if ( is_tax() ) {
-					$obj      = get_queried_object();
-					$pod_name = $obj->slug;
-					$pod_item = $obj->term_id;
-				}
 			}
 
 			$pod_name_and_item = array( $pod_name, $pod_item );

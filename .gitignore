@@ -36,7 +36,7 @@ tests/clover.xml
 # NPM / Composer
 composer.lock
 /node_modules/
-/vendor/
+vendor/*
 npm-debug.log
 
 # PHPunit config
@@ -49,3 +49,6 @@ ui/js/pods-ui-ready.min.js.map
 
 # PHPCS reports
 phpcs-report-*.txt
+
+# Allowed vendor files
+!vendor/freemius

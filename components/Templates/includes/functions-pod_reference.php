@@ -45,7 +45,13 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 	if ( empty( $pod_name ) ) {
 		return $fields;
 	}
-	$pod           = pods( $pod_name );
+
+	$pod = pods( $pod_name );
+
+	if ( empty( $pod ) || ! $pod->valid() ) {
+		return $fields;
+	}
+
 	$recurse_queue = array();
 
 	foreach ( $pod->pod_data['object_fields'] as $name => $field ) {

@@ -59,14 +59,10 @@ class Pods_Templates_Auto_Template_Front_End {
 		if ( isset( $possible_pods[ $current_post_type ] ) ) {
 			$this_pod = $possible_pods[ $current_post_type ];
 
-			if ( is_singular( $current_post_type ) ) {
+			if ( in_the_loop() ) {
+				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+			} else {
 				$filter = pods_v( 'single_filter', $this_pod, $filter, true );
-			} elseif ( is_post_type_archive( $current_post_type ) ) {
-				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
-			} elseif ( is_home() && $current_post_type === 'post'  ) {
-				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
-			} elseif ( is_tax( $current_post_type )  ) {
-				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
 			}
 		}
 

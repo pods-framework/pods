@@ -365,7 +365,7 @@ class Pods_Templates_Auto_Template_Front_End {
 			 * @param Post   $post              The Post object that is about to be displayed.
 			 */
 			$pod_name_and_item = apply_filters( 'pods_auto_template_pod_name_and_item', $pod_name_and_item, $current_post_type, $post );
-			$pods              = pods( $pod_name_and_item[0], $pod_name_and_item[1] );
+			$pod               = pods( $pod_name_and_item[0], $pod_name_and_item[1] );
 
 			// Heuristically decide if this is single or archive
 			$s_or_a        = 'archive';
@@ -379,7 +379,7 @@ class Pods_Templates_Auto_Template_Front_End {
 
 			if ( ! empty( $this_pod[ $s_or_a ] ) && current_filter() == $this_pod[ $s_or_a_filter ] ) {
 				// load the template
-				$content = $this->load_template( $this_pod[ $s_or_a ], $content, $pods, $this_pod[ $s_or_a_append ] );
+				$content = $this->load_template( $this_pod[ $s_or_a ], $content, $pod, $this_pod[ $s_or_a_append ] );
 			}
 		}//end if
 
@@ -392,7 +392,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @param string      $template_name The name of a Pods Template to load.
 	 * @param string      $content       Post content
-	 * @param Pods        $pods          Current Pods object.
+	 * @param Pods        $pod           Current Pods object.
 	 * @param bool|string $append        Optional. Whether to append, prepend or replace content. Defaults to true,
 	 *                                   which appends, if false, content is replaced, if 'prepend' content is
 	 *                                   prepended.
@@ -401,7 +401,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @since 2.4.5
 	 */
-	public function load_template( $template_name, $content, $pods, $append = true ) {
+	public function load_template( $template_name, $content, $pod, $append = true ) {
 
 		// prevent infinite loops caused by this method acting on post_content
 		$this->remove_hooks();
@@ -415,12 +415,12 @@ class Pods_Templates_Auto_Template_Front_End {
 		 * @since 2.5.6
 		 *
 		 * @param string      $template_name The name of a Pods Template to load.
-		 * @param Pods        $pods          Current Pods object.
+		 * @param Pods        $pod           Current Pods object.
 		 * @param bool|string $append        Whether Template will be appended (true), prepended ("prepend") or replaced (false).
 		 */
-		$template_name = apply_filters( 'pods_auto_template_template_name', $template_name, $pods, $append );
+		$template_name = apply_filters( 'pods_auto_template_template_name', $template_name, $pod, $append );
 
-		$template = $pods->template( $template_name );
+		$template = $pod->template( $template_name );
 
 		// Restore the hooks for subsequent posts
 		$this->install_hooks();

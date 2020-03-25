@@ -28,7 +28,10 @@ class Pods_Templates_Auto_Template_Front_End {
 			add_action( 'wp', array( $this, 'set_frontier_style_script' ) );
 		}
 
+		// Setup initial hooks.
 		add_action( 'template_redirect', array( $this, 'hook_content' ) );
+		// Setup hooks after each new post in the loop.
+		add_action( 'the_post', array( $this, 'hook_content' ) );
 
 	}
 

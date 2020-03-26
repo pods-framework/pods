@@ -1,0 +1,2547 @@
+# Copyright (C) 2019 freemius
+# This file is distributed under the same license as the freemius package.
+# Translators:
+# Rami Yushuvaev <r_a_m_i@hotmail.com>, 2017
+# Vova Feldman <vova@freemius.com>, 2017-2018
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress SDK\n"
+"Report-Msgid-Bugs-To: https://github.com/Freemius/wordpress-sdk/issues\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2019-10-07 15:33+0000\n"
+"Last-Translator: Vova Feldman <vova@freemius.com>\n"
+"Language: he_IL\n"
+"Language-Team: Hebrew (Israel) (http://www.transifex.com/freemius/wordpress-sdk/language/he_IL/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;\n"
+"MIME-Version: 1.0\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: get_text_inline;fs_text_inline;fs_echo_inline;fs_esc_js_inline;fs_esc_attr_inline;fs_esc_attr_echo_inline;fs_esc_html_inline;fs_esc_html_echo_inline;get_text_x_inline:1,2c;fs_text_x_inline:1,2c;fs_echo_x_inline:1,2c;fs_esc_attr_x_inline:1,2c;fs_esc_js_x_inline:1,2c;fs_esc_js_echo_x_inline:1,2c;fs_esc_html_x_inline:1,2c;fs_esc_html_echo_x_inline:1,2c\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: includes/class-freemius.php1880, templates/account.php:840
+msgid "An update to a Beta version will replace your installed version of %s with the latest Beta release - use with caution, and not on production sites. You have been warned."
+msgstr "An update to a Beta version will replace your installed version of %s with the latest Beta release - use with caution, and not on production sites. You have been warned."
+
+#: includes/class-freemius.php:1887
+msgid "Would you like to proceed with the update?"
+msgstr "Would you like to proceed with the update?"
+
+#: includes/class-freemius.php:2095
+msgid "Freemius SDK couldn't find the plugin's main file. Please contact sdk@freemius.com with the current error."
+msgstr "Freemius SDK couldn't find the plugin's main file. Please contact sdk@freemius.com with the current error."
+
+#: includes/class-freemius.php:2097
+msgid "Error"
+msgstr "שגיאה"
+
+#: includes/class-freemius.php:2491
+msgid "I found a better %s"
+msgstr "מצאתי %s יותר טוב"
+
+#: includes/class-freemius.php:2493
+msgid "What's the %s's name?"
+msgstr "What's the %s's name?"
+
+#: includes/class-freemius.php:2499
+msgid "It's a temporary %s. I'm just debugging an issue."
+msgstr "It's a temporary %s. I'm just debugging an issue."
+
+#: includes/class-freemius.php:2501
+msgid "Deactivation"
+msgstr "דיאקטיבציה"
+
+#: includes/class-freemius.php:2502
+msgid "Theme Switch"
+msgstr "החלפת תֵמָה"
+
+#: includes/class-freemius.php2511, templates/forms/resend-key.php:24
+msgid "Other"
+msgstr "אחר"
+
+#: includes/class-freemius.php:2519
+msgid "I no longer need the %s"
+msgstr "I no longer need the %s"
+
+#: includes/class-freemius.php:2526
+msgid "I only needed the %s for a short period"
+msgstr "I only needed the %s for a short period"
+
+#: includes/class-freemius.php:2532
+msgid "The %s broke my site"
+msgstr "ה%s הרס לי את האתר"
+
+#: includes/class-freemius.php:2539
+msgid "The %s suddenly stopped working"
+msgstr "ה%s הפסיק פתאום לעבוד"
+
+#: includes/class-freemius.php:2549
+msgid "I can't pay for it anymore"
+msgstr "אני לא יכול/ה להמשיך לשלם על זה"
+
+#: includes/class-freemius.php:2551
+msgid "What price would you feel comfortable paying?"
+msgstr "מה המחיר שכן תרגיש\\י בנוח לשלם?"
+
+#: includes/class-freemius.php:2557
+msgid "I don't like to share my information with you"
+msgstr "אני לא אוהב את הרעיון של שיתוף מידע איתכם"
+
+#: includes/class-freemius.php:2578
+msgid "The %s didn't work"
+msgstr "ה%s לא עבד"
+
+#: includes/class-freemius.php:2588
+msgid "I couldn't understand how to make it work"
+msgstr "לא הצלחתי להבין איך לגרום לזה לעבוד"
+
+#: includes/class-freemius.php:2596
+msgid "The %s is great, but I need specific feature that you don't support"
+msgstr "The %s is great, but I need specific feature that you don't support"
+
+#: includes/class-freemius.php:2598
+msgid "What feature?"
+msgstr "איזה פיטצ'ר?"
+
+#: includes/class-freemius.php:2602
+msgid "The %s is not working"
+msgstr "ה%s לא עובד"
+
+#: includes/class-freemius.php:2604
+msgid "Kindly share what didn't work so we can fix it for future users..."
+msgstr "אנא שתפ\\י מה לא עבד כדי שנוכל לתקן זאת עבור משתמשים עתידיים..."
+
+#: includes/class-freemius.php:2608
+msgid "It's not what I was looking for"
+msgstr "חיפשתי משהו אחר"
+
+#: includes/class-freemius.php:2610
+msgid "What you've been looking for?"
+msgstr "מה חיפשת?"
+
+#: includes/class-freemius.php:2614
+msgid "The %s didn't work as expected"
+msgstr "ה%s לא עבד כמצופה"
+
+#: includes/class-freemius.php:2616
+msgid "What did you expect?"
+msgstr "למה ציפית?"
+
+#: includes/class-freemius.php3471, templates/debug.php:20
+msgid "Freemius Debug"
+msgstr "ניפוי תקלות פרימיוס"
+
+#: includes/class-freemius.php:4223
+msgid "I don't know what is cURL or how to install it, help me!"
+msgstr "אין לי מושג מה זה cURL או איך להתקין אותו - אשמח לעזרה!"
+
+#: includes/class-freemius.php:4225
+msgid "We'll make sure to contact your hosting company and resolve the issue. You will get a follow-up email to %s once we have an update."
+msgstr "We'll make sure to contact your hosting company and resolve the issue. You will get a follow-up email to %s once we have an update."
+
+#: includes/class-freemius.php:4232
+msgid "Great, please install cURL and enable it in your php.ini file. In addition, search for the 'disable_functions' directive in your php.ini file and remove any disabled methods starting with 'curl_'. To make sure it was successfully activated, use 'phpinfo()'. Once activated, deactivate the %s and reactivate it back again."
+msgstr "Great, please install cURL and enable it in your php.ini file. In addition, search for the 'disable_functions' directive in your php.ini file and remove any disabled methods starting with 'curl_'. To make sure it was successfully activated, use 'phpinfo()'. Once activated, deactivate the %s and reactivate it back again."
+
+#: includes/class-freemius.php:4337
+msgid "Yes - do your thing"
+msgstr "כן - בצעו את מה שצריך"
+
+#: includes/class-freemius.php:4342
+msgid "No - just deactivate"
+msgstr "לא - פשוט כבה"
+
+#: includes/class-freemius.php4387, includes/class-freemius.php4881,
+#: includes/class-freemius.php6032, includes/class-freemius.php13153,
+#: includes/class-freemius.php16558, includes/class-freemius.php16646,
+#: includes/class-freemius.php16812, includes/class-freemius.php19040,
+#: includes/class-freemius.php19381, includes/class-freemius.php19391,
+#: includes/class-freemius.php20051, includes/class-freemius.php20924,
+#: includes/class-freemius.php21039, includes/class-freemius.php21183,
+#: templates/add-ons.php:57
+msgctxt "exclamation"
+msgid "Oops"
+msgstr "אופס"
+
+#: includes/class-freemius.php:4456
+msgid "Thank for giving us the chance to fix it! A message was just sent to our technical staff. We will get back to you as soon as we have an update to %s. Appreciate your patience."
+msgstr "Thank for giving us the chance to fix it! A message was just sent to our technical staff. We will get back to you as soon as we have an update to %s. Appreciate your patience."
+
+#: includes/class-freemius.php:4878
+msgctxt "addonX cannot run without pluginY"
+msgid "%s cannot run without %s."
+msgstr "%s לא יכול לעבוד ללא %s."
+
+#: includes/class-freemius.php:4879
+msgctxt "addonX cannot run..."
+msgid "%s cannot run without the plugin."
+msgstr "ההרחבה %s אינה יכולה לפעול ללא התוסף."
+
+#: includes/class-freemius.php5052, includes/class-freemius.php5077,
+#: includes/class-freemius.php:20122
+msgid "Unexpected API error. Please contact the %s's author with the following error."
+msgstr "Unexpected API error. Please contact the %s's author with the following error."
+
+#: includes/class-freemius.php:5720
+msgid "Premium %s version was successfully activated."
+msgstr "Premium %s version was successfully activated."
+
+#: includes/class-freemius.php5732, includes/class-freemius.php:7599
+msgctxt ""
+msgid "W00t"
+msgstr "יש"
+
+#: includes/class-freemius.php:5747
+msgid "You have a %s license."
+msgstr "יש לך רישיון %s."
+
+#: includes/class-freemius.php5751, includes/class-freemius.php15975,
+#: includes/class-freemius.php15986, includes/class-freemius.php19292,
+#: includes/class-freemius.php19642, includes/class-freemius.php19711,
+#: includes/class-freemius.php:19876
+msgctxt "interjection expressing joy or exuberance"
+msgid "Yee-haw"
+msgstr "יששש"
+
+#: includes/class-freemius.php:6015
+msgid "%s free trial was successfully cancelled. Since the add-on is premium only it was automatically deactivated. If you like to use it in the future, you'll have to purchase a license."
+msgstr "%s free trial was successfully cancelled. Since the add-on is premium only it was automatically deactivated. If you like to use it in the future, you'll have to purchase a license."
+
+#: includes/class-freemius.php:6019
+msgid "%s is a premium only add-on. You have to purchase a license first before activating the plugin."
+msgstr "%s is a premium only add-on. You have to purchase a license first before activating the plugin."
+
+#: includes/class-freemius.php6028, templates/add-ons.php186,
+#: templates/account/partials/addon.php:381
+msgid "More information about %s"
+msgstr "מידע נוסף אודות %s"
+
+#: includes/class-freemius.php:6029
+msgid "Purchase License"
+msgstr "קניית רישיון"
+
+#: includes/class-freemius.php6964, templates/connect.php:163
+msgid "You should receive an activation email for %s to your mailbox at %s. Please make sure you click the activation button in that email to %s."
+msgstr "You should receive an activation email for %s to your mailbox at %s. Please make sure you click the activation button in that email to %s."
+
+#: includes/class-freemius.php:6968
+msgid "start the trial"
+msgstr "התחל תקופת ניסיון"
+
+#: includes/class-freemius.php6969, templates/connect.php:167
+msgid "complete the install"
+msgstr "השלם התקנה"
+
+#: includes/class-freemius.php:7081
+msgid "You are just one step away - %s"
+msgstr "You are just one step away - %s"
+
+#: includes/class-freemius.php:7084
+msgctxt "%s - plugin name. As complete \"PluginX\" activation now"
+msgid "Complete \"%s\" Activation Now"
+msgstr "השלם הפעלת \"%s\" עכשיו"
+
+#: includes/class-freemius.php:7162
+msgid "We made a few tweaks to the %s, %s"
+msgstr "We made a few tweaks to the %s, %s"
+
+#: includes/class-freemius.php:7166
+msgid "Opt in to make \"%s\" better!"
+msgstr "Opt in to make \"%s\" better!"
+
+#: includes/class-freemius.php:7598
+msgid "The upgrade of %s was successfully completed."
+msgstr "The upgrade of %s was successfully completed."
+
+#: includes/class-freemius.php9802, includes/class-fs-plugin-updater.php1038,
+#: includes/class-fs-plugin-updater.php1233,
+#: includes/class-fs-plugin-updater.php1240,
+#: templates/auto-installation.php:32
+msgid "Add-On"
+msgstr "Add-On"
+
+#: includes/class-freemius.php9804, templates/account.php335,
+#: templates/account.php343, templates/debug.php360, templates/debug.php:551
+msgid "Plugin"
+msgstr "תוסף"
+
+#: includes/class-freemius.php9805, templates/account.php336,
+#: templates/account.php344, templates/debug.php360, templates/debug.php551,
+#: templates/forms/deactivation/form.php:71
+msgid "Theme"
+msgstr "תבנית"
+
+#: includes/class-freemius.php:12596
+msgid "An unknown error has occurred while trying to set the user's beta mode."
+msgstr "An unknown error has occurred while trying to set the user's beta mode."
+
+#: includes/class-freemius.php:13020
+msgid "Invalid site details collection."
+msgstr "Invalid site details collection."
+
+#: includes/class-freemius.php:13140
+msgid "We couldn't find your email address in the system, are you sure it's the right address?"
+msgstr "We couldn't find your email address in the system, are you sure it's the right address?"
+
+#: includes/class-freemius.php:13142
+msgid "We can't see any active licenses associated with that email address, are you sure it's the right address?"
+msgstr "We can't see any active licenses associated with that email address, are you sure it's the right address?"
+
+#: includes/class-freemius.php:13416
+msgid "Account is pending activation."
+msgstr "Account is pending activation."
+
+#: includes/class-freemius.php13528,
+#: templates/forms/premium-versions-upgrade-handler.php:47
+msgid "Buy a license now"
+msgstr "Buy a license now"
+
+#: includes/class-freemius.php13540,
+#: templates/forms/premium-versions-upgrade-handler.php:46
+msgid "Renew your license now"
+msgstr "Renew your license now"
+
+#: includes/class-freemius.php:13544
+msgid "%s to access version %s security & feature updates, and support."
+msgstr "%s to access version %s security & feature updates, and support."
+
+#: includes/class-freemius.php:15957
+msgid "%s activation was successfully completed."
+msgstr "הפעלת %s הושלמה בהצלחה."
+
+#: includes/class-freemius.php:15971
+msgid "Your account was successfully activated with the %s plan."
+msgstr "חשבונך הופעל בהצלחה עם חבילת %s."
+
+#: includes/class-freemius.php15982, includes/class-freemius.php:19707
+msgid "Your trial has been successfully started."
+msgstr "הניסיון שלך הופעל בהצלחה."
+
+#: includes/class-freemius.php16556, includes/class-freemius.php16644,
+#: includes/class-freemius.php:16810
+msgid "Couldn't activate %s."
+msgstr "לא ניתן להפעיל את %s."
+
+#: includes/class-freemius.php16557, includes/class-freemius.php16645,
+#: includes/class-freemius.php:16811
+msgid "Please contact us with the following message:"
+msgstr "אנא צור איתנו קשר יחד עם ההודעה הבאה:"
+
+#: includes/class-freemius.php16641, templates/forms/data-debug-mode.php:162
+msgid "An unknown error has occurred."
+msgstr "An unknown error has occurred."
+
+#: includes/class-freemius.php17168, includes/class-freemius.php:22082
+msgid "Upgrade"
+msgstr "שדרג"
+
+#: includes/class-freemius.php:17174
+msgid "Start Trial"
+msgstr "התחל תקופת ניסיון"
+
+#: includes/class-freemius.php:17176
+msgid "Pricing"
+msgstr "מחירון"
+
+#: includes/class-freemius.php17256, includes/class-freemius.php:17258
+msgid "Affiliation"
+msgstr "אפיליאציה"
+
+#: includes/class-freemius.php17286, includes/class-freemius.php17288,
+#: templates/account.php183, templates/debug.php:326
+msgid "Account"
+msgstr "חשבון"
+
+#: includes/class-freemius.php17302, includes/class-freemius.php17304,
+#: includes/customizer/class-fs-customizer-support-section.php:60
+msgid "Contact Us"
+msgstr "יצירת קשר"
+
+#: includes/class-freemius.php17315, includes/class-freemius.php17317,
+#: includes/class-freemius.php22096, templates/account.php111,
+#: templates/account/partials/addon.php:44
+msgid "Add-Ons"
+msgstr "Add-Ons"
+
+#: includes/class-freemius.php:17351
+msgctxt "ASCII arrow left icon"
+msgid "&#x2190;"
+msgstr "&#x2190;"
+
+#: includes/class-freemius.php:17351
+msgctxt "ASCII arrow right icon"
+msgid "&#x27a4;"
+msgstr "&#x27a4;"
+
+#: includes/class-freemius.php17353, templates/pricing.php:103
+msgctxt "noun"
+msgid "Pricing"
+msgstr "מחירון"
+
+#: includes/class-freemius.php17566,
+#: includes/customizer/class-fs-customizer-support-section.php:67
+msgid "Support Forum"
+msgstr "פורום תמיכה"
+
+#: includes/class-freemius.php:18536
+msgid "Your email has been successfully verified - you are AWESOME!"
+msgstr "Your email has been successfully verified - you are AWESOME!"
+
+#: includes/class-freemius.php:18537
+msgctxt "a positive response"
+msgid "Right on"
+msgstr "מעולה"
+
+#: includes/class-freemius.php:19041
+msgid "seems like the key you entered doesn't match our records."
+msgstr "seems like the key you entered doesn't match our records."
+
+#: includes/class-freemius.php:19065
+msgid "Debug mode was successfully enabled and will be automatically disabled in 60 min. You can also disable it earlier by clicking the \"Stop Debug\" link."
+msgstr "Debug mode was successfully enabled and will be automatically disabled in 60 min. You can also disable it earlier by clicking the \"Stop Debug\" link."
+
+#: includes/class-freemius.php:19283
+msgid "Your %s Add-on plan was successfully upgraded."
+msgstr "חבילת ההרחבה %s שודרגה בהצלחה."
+
+#: includes/class-freemius.php:19285
+msgid "%s Add-on was successfully purchased."
+msgstr "ההרחבה %s נרכשה בהצלחה."
+
+#: includes/class-freemius.php:19288
+msgid "Download the latest version"
+msgstr "הורד את הגרסה האחרונה"
+
+#: includes/class-freemius.php:19374
+msgid "Your server is blocking the access to Freemius' API, which is crucial for %1$s synchronization. Please contact your host to whitelist %2$s"
+msgstr "Your server is blocking the access to Freemius' API, which is crucial for %1$s synchronization. Please contact your host to whitelist %2$s"
+
+#: includes/class-freemius.php19380, includes/class-freemius.php19390,
+#: includes/class-freemius.php19835, includes/class-freemius.php:19924
+msgid "Error received from the server:"
+msgstr "הוחזרה שגיאה מהשרת:"
+
+#: includes/class-freemius.php:19390
+msgid "It seems like one of the authentication parameters is wrong. Update your Public Key, Secret Key & User ID, and try again."
+msgstr "It seems like one of the authentication parameters is wrong. Update your Public Key, Secret Key & User ID, and try again."
+
+#: includes/class-freemius.php19604, includes/class-freemius.php19840,
+#: includes/class-freemius.php19895, includes/class-freemius.php:19998
+msgctxt ""
+msgid "Hmm"
+msgstr "אממ"
+
+#: includes/class-freemius.php:19617
+msgid "It looks like you are still on the %s plan. If you did upgrade or change your plan, it's probably an issue on our side - sorry."
+msgstr "It looks like you are still on the %s plan. If you did upgrade or change your plan, it's probably an issue on our side - sorry."
+
+#: includes/class-freemius.php19618, templates/account.php113,
+#: templates/add-ons.php250, templates/account/partials/addon.php:46
+msgctxt "trial period"
+msgid "Trial"
+msgstr "ניסיון"
+
+#: includes/class-freemius.php:19623
+msgid "I have upgraded my account but when I try to Sync the License, the plan remains %s."
+msgstr "שידרגתי את החשבון שלי אבל כשאני מנסה לבצע סנכרון לרישיון החבילה נשארת %s."
+
+#: includes/class-freemius.php19627, includes/class-freemius.php:19686
+msgid "Please contact us here"
+msgstr "אנא צור איתנו קשר כאן"
+
+#: includes/class-freemius.php:19638
+msgid "Your plan was successfully activated."
+msgstr "Your plan was successfully activated."
+
+#: includes/class-freemius.php:19639
+msgid "Your plan was successfully upgraded."
+msgstr "החבילה שודרגה בהצלחה."
+
+#: includes/class-freemius.php:19656
+msgid "Your plan was successfully changed to %s."
+msgstr "החבילה עודכנה בהצלחה אל %s."
+
+#: includes/class-freemius.php:19672
+msgid "Your license has expired. You can still continue using the free %s forever."
+msgstr "Your license has expired. You can still continue using the free %s forever."
+
+#: includes/class-freemius.php:19674
+msgid "Your license has expired. %1$sUpgrade now%2$s to continue using the %3$s without interruptions."
+msgstr "Your license has expired. %1$sUpgrade now%2$s to continue using the %3$s without interruptions."
+
+#: includes/class-freemius.php:19682
+msgid "Your license has been cancelled. If you think it's a mistake, please contact support."
+msgstr "רשיונך בוטל. אם לדעתך זו טעות, נא ליצור קשר עם התמיכה."
+
+#: includes/class-freemius.php:19695
+msgid "Your license has expired. You can still continue using all the %s features, but you'll need to renew your license to continue getting updates and support."
+msgstr "Your license has expired. You can still continue using all the %s features, but you'll need to renew your license to continue getting updates and support."
+
+#: includes/class-freemius.php:19721
+msgid "Your free trial has expired. You can still continue using all our free features."
+msgstr "תקופת הניסיון שלך הסתיימה. הפיטצ'רים החינאמיים עדיין ניתנים לשימוש."
+
+#: includes/class-freemius.php:19723
+msgid "Your free trial has expired. %1$sUpgrade now%2$s to continue using the %3$s without interruptions."
+msgstr "Your free trial has expired. %1$sUpgrade now%2$s to continue using the %3$s without interruptions."
+
+#: includes/class-freemius.php:19831
+msgid "It looks like the license could not be activated."
+msgstr "נראה שלא ניתן להפעיל את הרישיון."
+
+#: includes/class-freemius.php:19873
+msgid "Your license was successfully activated."
+msgstr "הרישיון הופעל בהצלחה."
+
+#: includes/class-freemius.php:19899
+msgid "It looks like your site currently doesn't have an active license."
+msgstr "נראה לאתר עדיין אין רישיון פעיל."
+
+#: includes/class-freemius.php:19923
+msgid "It looks like the license deactivation failed."
+msgstr "נראה שניתוק הרישיון נכשל."
+
+#: includes/class-freemius.php:19951
+msgid "Your license was successfully deactivated, you are back to the %s plan."
+msgstr "רישיונך נותק בהצלחה, חזרת לחבילת %s"
+
+#: includes/class-freemius.php:19952
+msgid "O.K"
+msgstr "אוקיי"
+
+#: includes/class-freemius.php:20005
+msgid "Seems like we are having some temporary issue with your subscription cancellation. Please try again in few minutes."
+msgstr "Seems like we are having some temporary issue with your subscription cancellation. Please try again in few minutes."
+
+#: includes/class-freemius.php:20014
+msgid "Your subscription was successfully cancelled. Your %s plan license will expire in %s."
+msgstr "Your subscription was successfully cancelled. Your %s plan license will expire in %s."
+
+#: includes/class-freemius.php:20056
+msgid "You are already running the %s in a trial mode."
+msgstr "You are already running the %s in a trial mode."
+
+#: includes/class-freemius.php:20067
+msgid "You already utilized a trial before."
+msgstr "הניסיון כבר נוצל בעבר."
+
+#: includes/class-freemius.php:20081
+msgid "Plan %s do not exist, therefore, can't start a trial."
+msgstr "החבילה %s אינה קיימת, לכן, לא ניתן להתחיל תקופת ניסיון."
+
+#: includes/class-freemius.php:20092
+msgid "Plan %s does not support a trial period."
+msgstr "תוכנית %s אינה תומכת בתקופת ניסיון."
+
+#: includes/class-freemius.php:20103
+msgid "None of the %s's plans supports a trial period."
+msgstr "None of the %s's plans supports a trial period."
+
+#: includes/class-freemius.php:20153
+msgid "It looks like you are not in trial mode anymore so there's nothing to cancel :)"
+msgstr "It looks like you are not in trial mode anymore so there's nothing to cancel :)"
+
+#: includes/class-freemius.php:20189
+msgid "Seems like we are having some temporary issue with your trial cancellation. Please try again in few minutes."
+msgstr "נראה שיש תקלה זמנית המונעת את ביטול הניסיון. אנא נסו שוב בעוד כמה דקות."
+
+#: includes/class-freemius.php:20208
+msgid "Your %s free trial was successfully cancelled."
+msgstr "תקופת הניסיון החינמית של %s בוטלה בהצלחה."
+
+#: includes/class-freemius.php:20524
+msgid "Version %s was released."
+msgstr "גרסה %s הושקה."
+
+#: includes/class-freemius.php:20524
+msgid "Please download %s."
+msgstr "נא להוריד את %s."
+
+#: includes/class-freemius.php:20531
+msgid "the latest %s version here"
+msgstr "גרסת ה-%s האחרונה כאן"
+
+#: includes/class-freemius.php:20536
+msgid "New"
+msgstr "חדש"
+
+#: includes/class-freemius.php:20541
+msgid "Seems like you got the latest release."
+msgstr "נראה שיש לך את הגרסה האחרונה."
+
+#: includes/class-freemius.php:20542
+msgid "You are all good!"
+msgstr "את\\ה מסודר!"
+
+#: includes/class-freemius.php:20812
+msgid "Verification mail was just sent to %s. If you can't find it after 5 min, please check your spam box."
+msgstr "Verification mail was just sent to %s. If you can't find it after 5 min, please check your spam box."
+
+#: includes/class-freemius.php:20951
+msgid "Site successfully opted in."
+msgstr "Site successfully opted in."
+
+#: includes/class-freemius.php20952, includes/class-freemius.php:21792
+msgid "Awesome"
+msgstr "אדיר"
+
+#: includes/class-freemius.php20968, templates/forms/optout.php:32
+msgid "We appreciate your help in making the %s better by letting us track some usage data."
+msgstr "We appreciate your help in making the %s better by letting us track some usage data."
+
+#: includes/class-freemius.php:20969
+msgid "Thank you!"
+msgstr "תודה רבה!"
+
+#: includes/class-freemius.php:20976
+msgid "We will no longer be sending any usage data of %s on %s to %s."
+msgstr "We will no longer be sending any usage data of %s on %s to %s."
+
+#: includes/class-freemius.php:21105
+msgid "Please check your mailbox, you should receive an email via %s to confirm the ownership change. From security reasons, you must confirm the change within the next 15 min. If you cannot find the email, please check your spam folder."
+msgstr "Please check your mailbox, you should receive an email via %s to confirm the ownership change. From security reasons, you must confirm the change within the next 15 min. If you cannot find the email, please check your spam folder."
+
+#: includes/class-freemius.php:21111
+msgid "Thanks for confirming the ownership change. An email was just sent to %s for final approval."
+msgstr "תודה על אישור ביצוע החלפת הבעלות. הרגע נשלח מייל ל-%s כדי לקבל אישור סופי."
+
+#: includes/class-freemius.php:21116
+msgid "%s is the new owner of the account."
+msgstr "%s הינו הבעלים החד של חשבון זה."
+
+#: includes/class-freemius.php:21118
+msgctxt "as congratulations"
+msgid "Congrats"
+msgstr "מזל טוב"
+
+#: includes/class-freemius.php:21138
+msgid "Sorry, we could not complete the email update. Another user with the same email is already registered."
+msgstr "Sorry, we could not complete the email update. Another user with the same email is already registered."
+
+#: includes/class-freemius.php:21139
+msgid "If you would like to give up the ownership of the %s's account to %s click the Change Ownership button."
+msgstr "If you would like to give up the ownership of the %s's account to %s click the Change Ownership button."
+
+#: includes/class-freemius.php:21146
+msgid "Change Ownership"
+msgstr "עדכון בעלות"
+
+#: includes/class-freemius.php:21154
+msgid "Your email was successfully updated. You should receive an email with confirmation instructions in few moments."
+msgstr "כתובת הדואל שלך עודכנה בהצלחה. הודעת אישור אמורה להתקבל בדואל שלך ברגעים הקרובים."
+
+#: includes/class-freemius.php:21166
+msgid "Please provide your full name."
+msgstr "נא למלא את שמך המלא."
+
+#: includes/class-freemius.php:21171
+msgid "Your name was successfully updated."
+msgstr "שמך עודכן בהצלחה."
+
+#: includes/class-freemius.php:21232
+msgid "You have successfully updated your %s."
+msgstr "עידכנת בהצלחה את ה%s."
+
+#: includes/class-freemius.php:21372
+msgid "Just letting you know that the add-ons information of %s is being pulled from an external server."
+msgstr "Just letting you know that the add-ons information of %s is being pulled from an external server."
+
+#: includes/class-freemius.php:21373
+msgctxt "advance notice of something that will need attention."
+msgid "Heads up"
+msgstr "לתשמות לבך"
+
+#: includes/class-freemius.php:21832
+msgctxt "exclamation"
+msgid "Hey"
+msgstr "היי"
+
+#: includes/class-freemius.php:21832
+msgid "How do you like %s so far? Test all our %s premium features with a %d-day free trial."
+msgstr "How do you like %s so far? Test all our %s premium features with a %d-day free trial."
+
+#: includes/class-freemius.php:21840
+msgid "No commitment for %s days - cancel anytime!"
+msgstr "ללא התחייבות ל-%s ימין - בטלו בכל רגע!"
+
+#: includes/class-freemius.php:21841
+msgid "No credit card required"
+msgstr "לא נדרש כרטיס אשראי"
+
+#: includes/class-freemius.php21848, templates/forms/trial-start.php:53
+msgctxt "call to action"
+msgid "Start free trial"
+msgstr "התחלת ניסיון חינם"
+
+#: includes/class-freemius.php:21925
+msgid "Hey there, did you know that %s has an affiliate program? If you like the %s you can become our ambassador and earn some cash!"
+msgstr "Hey there, did you know that %s has an affiliate program? If you like the %s you can become our ambassador and earn some cash!"
+
+#: includes/class-freemius.php:21934
+msgid "Learn more"
+msgstr "Learn more"
+
+#: includes/class-freemius.php22120, templates/account.php499,
+#: templates/account.php624, templates/connect.php171,
+#: templates/connect.php421, templates/forms/license-activation.php27,
+#: templates/account/partials/addon.php:321
+msgid "Activate License"
+msgstr "הפעלת רישיון"
+
+#: includes/class-freemius.php22121, templates/account.php571,
+#: templates/account.php623, templates/account/partials/addon.php322,
+#: templates/account/partials/site.php:271
+msgid "Change License"
+msgstr "שינוי רישיון"
+
+#: includes/class-freemius.php22217, templates/account/partials/site.php:169
+msgid "Opt Out"
+msgstr "Opt Out"
+
+#: includes/class-freemius.php22219, includes/class-freemius.php22225,
+#: templates/account/partials/site.php49,
+#: templates/account/partials/site.php:169
+msgid "Opt In"
+msgstr "Opt In"
+
+#: includes/class-freemius.php:22453
+msgid " The paid version of %1$s is already installed. Please activate it to start benefiting the %2$s features. %3$s"
+msgstr " The paid version of %1$s is already installed. Please activate it to start benefiting the %2$s features. %3$s"
+
+#: includes/class-freemius.php:22461
+msgid "Activate %s features"
+msgstr "Activate %s features"
+
+#: includes/class-freemius.php:22474
+msgid "Please follow these steps to complete the upgrade"
+msgstr "נא לבצע את הצעדים הבאים להשלמת השידרוג"
+
+#: includes/class-freemius.php:22478
+msgid "Download the latest %s version"
+msgstr "הורד\\י את גרסת ה-%s העדכנית"
+
+#: includes/class-freemius.php:22482
+msgid "Upload and activate the downloaded version"
+msgstr "העלה\\י והפעיל\\י את הגרסה שהורדת"
+
+#: includes/class-freemius.php:22484
+msgid "How to upload and activate?"
+msgstr "איך להעלות ולהפעיל?"
+
+#: includes/class-freemius.php:22618
+msgid "%sClick here%s to choose the sites where you'd like to activate the license on."
+msgstr "%sClick here%s to choose the sites where you'd like to activate the license on."
+
+#: includes/class-freemius.php:22779
+msgid "Auto installation only works for opted-in users."
+msgstr "Auto installation only works for opted-in users."
+
+#: includes/class-freemius.php22789, includes/class-freemius.php22822,
+#: includes/class-fs-plugin-updater.php1212,
+#: includes/class-fs-plugin-updater.php:1226
+msgid "Invalid module ID."
+msgstr "מזהה המודול לא תקני."
+
+#: includes/class-freemius.php22798, includes/class-fs-plugin-updater.php:1248
+msgid "Premium version already active."
+msgstr "הגרסה בתשלום כבר פעילה."
+
+#: includes/class-freemius.php:22805
+msgid "You do not have a valid license to access the premium version."
+msgstr "אין ברשותך רישיון בר תוקף לשימוש בגרסת הפרימיום."
+
+#: includes/class-freemius.php:22812
+msgid "Plugin is a \"Serviceware\" which means it does not have a premium code version."
+msgstr "Plugin is a \"Serviceware\" which means it does not have a premium code version."
+
+#: includes/class-freemius.php22830, includes/class-fs-plugin-updater.php:1247
+msgid "Premium add-on version already installed."
+msgstr "Premium add-on version already installed."
+
+#: includes/class-freemius.php:23180
+msgid "View paid features"
+msgstr "צפה בפיטצ'רים שבתשלום"
+
+#: includes/class-freemius.php:23502
+msgid "Thank you so much for using %s and its add-ons!"
+msgstr "Thank you so much for using %s and its add-ons!"
+
+#: includes/class-freemius.php:23503
+msgid "Thank you so much for using %s!"
+msgstr "אנו מודים לך על היותך כמשתמש של %s!"
+
+#: includes/class-freemius.php:23509
+msgid "You've already opted-in to our usage-tracking, which helps us keep improving the %s."
+msgstr "You've already opted-in to our usage-tracking, which helps us keep improving the %s."
+
+#: includes/class-freemius.php:23513
+msgid "Thank you so much for using our products!"
+msgstr "אנו מודים לך על השימוש במוצרים שלנו!"
+
+#: includes/class-freemius.php:23514
+msgid "You've already opted-in to our usage-tracking, which helps us keep improving them."
+msgstr "You've already opted-in to our usage-tracking, which helps us keep improving them."
+
+#: includes/class-freemius.php:23533
+msgid "%s and its add-ons"
+msgstr "%s and its add-ons"
+
+#: includes/class-freemius.php:23542
+msgid "Products"
+msgstr "מוצרים"
+
+#: includes/class-freemius.php23549, templates/connect.php:272
+msgid "Yes"
+msgstr "כן"
+
+#: includes/class-freemius.php23550, templates/connect.php:273
+msgid "send me security & feature updates, educational content and offers."
+msgstr "תשלחו לי עדכוני אבטחה ופיטצ'רים, תוכן חינוכי, ומידע אודות מבצעים."
+
+#: includes/class-freemius.php23551, templates/connect.php:278
+msgid "No"
+msgstr "לא"
+
+#: includes/class-freemius.php23553, templates/connect.php:280
+msgid "do %sNOT%s send me security & feature updates, educational content and offers."
+msgstr "%sאל%2$s תשלחו לי עדכוני אבטחה, פיטצ'רים, תוכן חינוכי, ומידע על מבצעים."
+
+#: includes/class-freemius.php:23563
+msgid "Due to the new %sEU General Data Protection Regulation (GDPR)%s compliance requirements it is required that you provide your explicit consent, again, confirming that you are onboard :-)"
+msgstr "Due to the new %sEU General Data Protection Regulation (GDPR)%s compliance requirements it is required that you provide your explicit consent, again, confirming that you are onboard :-)"
+
+#: includes/class-freemius.php23565, templates/connect.php:287
+msgid "Please let us know if you'd like us to contact you for security & feature updates, educational content, and occasional offers:"
+msgstr "Please let us know if you'd like us to contact you for security & feature updates, educational content, and occasional offers:"
+
+#: includes/class-freemius.php:23847
+msgid "License key is empty."
+msgstr "מפתח הרישיון ריק."
+
+#: includes/class-fs-plugin-updater.php206,
+#: templates/forms/premium-versions-upgrade-handler.php:57
+msgid "Renew license"
+msgstr "חידוש רישיון"
+
+#: includes/class-fs-plugin-updater.php211,
+#: templates/forms/premium-versions-upgrade-handler.php:58
+msgid "Buy license"
+msgstr "Buy license"
+
+#: includes/class-fs-plugin-updater.php321,
+#: includes/class-fs-plugin-updater.php:354
+msgid "There is a %s of %s available."
+msgstr "There is a %s of %s available."
+
+#: includes/class-fs-plugin-updater.php323,
+#: includes/class-fs-plugin-updater.php:359
+msgid "new Beta version"
+msgstr "new Beta version"
+
+#: includes/class-fs-plugin-updater.php324,
+#: includes/class-fs-plugin-updater.php:360
+msgid "new version"
+msgstr "new version"
+
+#: includes/class-fs-plugin-updater.php:383
+msgid "Important Upgrade Notice:"
+msgstr "Important Upgrade Notice:"
+
+#: includes/class-fs-plugin-updater.php:1277
+msgid "Installing plugin: %s"
+msgstr "Installing plugin: %s"
+
+#: includes/class-fs-plugin-updater.php:1318
+msgid "Unable to connect to the filesystem. Please confirm your credentials."
+msgstr "Unable to connect to the filesystem. Please confirm your credentials."
+
+#: includes/class-fs-plugin-updater.php:1500
+msgid "The remote plugin package does not contain a folder with the desired slug and renaming did not work."
+msgstr "The remote plugin package does not contain a folder with the desired slug and renaming did not work."
+
+#: includes/fs-plugin-info-dialog.php:535
+msgid "Purchase More"
+msgstr "Purchase More"
+
+#: includes/fs-plugin-info-dialog.php536,
+#: templates/account/partials/addon.php:385
+msgctxt "verb"
+msgid "Purchase"
+msgstr "רכישה"
+
+#: includes/fs-plugin-info-dialog.php:540
+msgid "Start my free %s"
+msgstr "התחל את %s הניסיון שלי"
+
+#: includes/fs-plugin-info-dialog.php:738
+msgid "Install Free Version Update Now"
+msgstr "התקן עדכון גרסה חינאמית עכשיו"
+
+#: includes/fs-plugin-info-dialog.php739, templates/account.php:560
+msgid "Install Update Now"
+msgstr "התקן עדכון במיידי"
+
+#: includes/fs-plugin-info-dialog.php:748
+msgid "Install Free Version Now"
+msgstr "התקן גרסה חינאמית עכשיו"
+
+#: includes/fs-plugin-info-dialog.php749, templates/add-ons.php323,
+#: templates/auto-installation.php111,
+#: templates/account/partials/addon.php365,
+#: templates/account/partials/addon.php:418
+msgid "Install Now"
+msgstr "התקן עכשיו"
+
+#: includes/fs-plugin-info-dialog.php:765
+msgctxt "as download latest version"
+msgid "Download Latest Free Version"
+msgstr "Download Latest Free Version"
+
+#: includes/fs-plugin-info-dialog.php766, templates/account.php91,
+#: templates/add-ons.php37, templates/account/partials/addon.php:25
+msgctxt "as download latest version"
+msgid "Download Latest"
+msgstr "הורד גרסה אחרונה"
+
+#: includes/fs-plugin-info-dialog.php781, templates/add-ons.php329,
+#: templates/account/partials/addon.php356,
+#: templates/account/partials/addon.php:412
+msgid "Activate this add-on"
+msgstr "הפעל את ההרחבה"
+
+#: includes/fs-plugin-info-dialog.php783, templates/connect.php:418
+msgid "Activate Free Version"
+msgstr "הפעלת גירסה חינאמית"
+
+#: includes/fs-plugin-info-dialog.php784, templates/account.php115,
+#: templates/add-ons.php330, templates/account/partials/addon.php:48
+msgid "Activate"
+msgstr "הפעלה"
+
+#: includes/fs-plugin-info-dialog.php:994
+msgctxt "Plugin installer section title"
+msgid "Description"
+msgstr "תיאור"
+
+#: includes/fs-plugin-info-dialog.php:995
+msgctxt "Plugin installer section title"
+msgid "Installation"
+msgstr "התקנה"
+
+#: includes/fs-plugin-info-dialog.php:996
+msgctxt "Plugin installer section title"
+msgid "FAQ"
+msgstr "שאלות נפוצות"
+
+#: includes/fs-plugin-info-dialog.php997,
+#: templates/plugin-info/description.php:55
+msgid "Screenshots"
+msgstr "צילומי מסך"
+
+#: includes/fs-plugin-info-dialog.php:998
+msgctxt "Plugin installer section title"
+msgid "Changelog"
+msgstr "לוג שינויים"
+
+#: includes/fs-plugin-info-dialog.php:999
+msgctxt "Plugin installer section title"
+msgid "Reviews"
+msgstr "ביקורות"
+
+#: includes/fs-plugin-info-dialog.php:1000
+msgctxt "Plugin installer section title"
+msgid "Other Notes"
+msgstr "היערות נוספות"
+
+#: includes/fs-plugin-info-dialog.php:1015
+msgctxt "Plugin installer section title"
+msgid "Features & Pricing"
+msgstr "פיטצ'רים ומחירים"
+
+#: includes/fs-plugin-info-dialog.php:1025
+msgid "Plugin Install"
+msgstr "התקנת תוסף"
+
+#: includes/fs-plugin-info-dialog.php:1097
+msgctxt "e.g. Professional Plan"
+msgid "%s Plan"
+msgstr "חבילה %s"
+
+#: includes/fs-plugin-info-dialog.php:1123
+msgctxt "e.g. the best product"
+msgid "Best"
+msgstr "הכי טוב"
+
+#: includes/fs-plugin-info-dialog.php1129,
+#: includes/fs-plugin-info-dialog.php:1149
+msgctxt "as every month"
+msgid "Monthly"
+msgstr "חודשי"
+
+#: includes/fs-plugin-info-dialog.php:1132
+msgctxt "as once a year"
+msgid "Annual"
+msgstr "שנתי"
+
+#: includes/fs-plugin-info-dialog.php:1135
+msgid "Lifetime"
+msgstr "לכל החיים"
+
+#: includes/fs-plugin-info-dialog.php1149,
+#: includes/fs-plugin-info-dialog.php1151,
+#: includes/fs-plugin-info-dialog.php:1153
+msgctxt "e.g. billed monthly"
+msgid "Billed %s"
+msgstr "מחוייב על בסיס %s"
+
+#: includes/fs-plugin-info-dialog.php:1151
+msgctxt "as once a year"
+msgid "Annually"
+msgstr "שנתי"
+
+#: includes/fs-plugin-info-dialog.php:1153
+msgctxt "as once a year"
+msgid "Once"
+msgstr "פעם אחת"
+
+#: includes/fs-plugin-info-dialog.php:1159
+msgid "Single Site License"
+msgstr "רשיון לאתר אחד"
+
+#: includes/fs-plugin-info-dialog.php:1161
+msgid "Unlimited Licenses"
+msgstr "רשיונות ללא הגבלה"
+
+#: includes/fs-plugin-info-dialog.php:1163
+msgid "Up to %s Sites"
+msgstr "עד %s אתרים"
+
+#: includes/fs-plugin-info-dialog.php1173,
+#: templates/plugin-info/features.php:82
+msgctxt "as monthly period"
+msgid "mo"
+msgstr "חודשים"
+
+#: includes/fs-plugin-info-dialog.php1180,
+#: templates/plugin-info/features.php:80
+msgctxt "as annual period"
+msgid "year"
+msgstr "שנה"
+
+#: includes/fs-plugin-info-dialog.php:1234
+msgctxt "noun"
+msgid "Price"
+msgstr "מחיר"
+
+#: includes/fs-plugin-info-dialog.php:1282
+msgid "Save %s"
+msgstr "שמירת %s"
+
+#: includes/fs-plugin-info-dialog.php:1292
+msgid "No commitment for %s - cancel anytime"
+msgstr "No commitment for %s - cancel anytime"
+
+#: includes/fs-plugin-info-dialog.php:1295
+msgid "After your free %s, pay as little as %s"
+msgstr "After your free %s, pay as little as %s"
+
+#: includes/fs-plugin-info-dialog.php:1306
+msgid "Details"
+msgstr "פרטים"
+
+#: includes/fs-plugin-info-dialog.php1310, templates/account.php102,
+#: templates/debug.php203, templates/debug.php240, templates/debug.php457,
+#: templates/account/partials/addon.php:36
+msgctxt "product version"
+msgid "Version"
+msgstr "גרסה"
+
+#: includes/fs-plugin-info-dialog.php:1317
+msgctxt "as the plugin author"
+msgid "Author"
+msgstr "Author"
+
+#: includes/fs-plugin-info-dialog.php:1324
+msgid "Last Updated"
+msgstr "עודכן לאחרונה"
+
+#: includes/fs-plugin-info-dialog.php1329, templates/account.php:468
+msgctxt "x-ago"
+msgid "%s ago"
+msgstr "לפני %s"
+
+#: includes/fs-plugin-info-dialog.php:1338
+msgid "Requires WordPress Version"
+msgstr "Requires WordPress Version"
+
+#: includes/fs-plugin-info-dialog.php:1339
+msgid "%s or higher"
+msgstr "%s ומעלה"
+
+#: includes/fs-plugin-info-dialog.php:1346
+msgid "Compatible up to"
+msgstr "Compatible up to"
+
+#: includes/fs-plugin-info-dialog.php:1354
+msgid "Downloaded"
+msgstr "Downloaded"
+
+#: includes/fs-plugin-info-dialog.php:1358
+msgid "%s time"
+msgstr "פעם %s"
+
+#: includes/fs-plugin-info-dialog.php:1360
+msgid "%s times"
+msgstr "%s פעמים"
+
+#: includes/fs-plugin-info-dialog.php:1370
+msgid "WordPress.org Plugin Page"
+msgstr "WordPress.org Plugin Page"
+
+#: includes/fs-plugin-info-dialog.php:1378
+msgid "Plugin Homepage"
+msgstr "עמוד התוסף"
+
+#: includes/fs-plugin-info-dialog.php1386,
+#: includes/fs-plugin-info-dialog.php:1468
+msgid "Donate to this plugin"
+msgstr "תרום לתוסף"
+
+#: includes/fs-plugin-info-dialog.php:1393
+msgid "Average Rating"
+msgstr "דירוג ממוצע"
+
+#: includes/fs-plugin-info-dialog.php:1400
+msgid "based on %s"
+msgstr "מבוסס על %s"
+
+#: includes/fs-plugin-info-dialog.php:1404
+msgid "%s rating"
+msgstr "דרוג %s"
+
+#: includes/fs-plugin-info-dialog.php:1406
+msgid "%s ratings"
+msgstr "%s דרוגים"
+
+#: includes/fs-plugin-info-dialog.php:1421
+msgid "%s star"
+msgstr "כוכב %s"
+
+#: includes/fs-plugin-info-dialog.php:1423
+msgid "%s stars"
+msgstr "%s כוכבים"
+
+#: includes/fs-plugin-info-dialog.php:1434
+msgid "Click to see reviews that provided a rating of %s"
+msgstr "Click to see reviews that provided a rating of %s"
+
+#: includes/fs-plugin-info-dialog.php:1447
+msgid "Contributors"
+msgstr "תורמים"
+
+#: includes/fs-plugin-info-dialog.php1476,
+#: includes/fs-plugin-info-dialog.php:1478
+msgid "Warning"
+msgstr "Warning"
+
+#: includes/fs-plugin-info-dialog.php:1476
+msgid "This plugin has not been tested with your current version of WordPress."
+msgstr "תוסף זה לא נבדק עם גרסת הוורדפרס שלך."
+
+#: includes/fs-plugin-info-dialog.php:1478
+msgid "This plugin has not been marked as compatible with your version of WordPress."
+msgstr "התוסף לא סומן כתואם לגרסת הוורדפרס שלך."
+
+#: includes/fs-plugin-info-dialog.php:1497
+msgid "Paid add-on must be deployed to Freemius."
+msgstr "Paid add-on must be deployed to Freemius."
+
+#: includes/fs-plugin-info-dialog.php:1498
+msgid "Add-on must be deployed to WordPress.org or Freemius."
+msgstr "Add-on must be deployed to WordPress.org or Freemius."
+
+#: includes/fs-plugin-info-dialog.php:1519
+msgid "Newer Version (%s) Installed"
+msgstr "גרסה חדשה (%s) הותקנה"
+
+#: includes/fs-plugin-info-dialog.php:1520
+msgid "Newer Free Version (%s) Installed"
+msgstr "Newer Free Version (%s) Installed"
+
+#: includes/fs-plugin-info-dialog.php:1527
+msgid "Latest Version Installed"
+msgstr "הגרסה האחרונה הותקנה"
+
+#: includes/fs-plugin-info-dialog.php:1528
+msgid "Latest Free Version Installed"
+msgstr "גרסה חינאמית עדכנית הותקנה"
+
+#: templates/account.php92, templates/forms/subscription-cancellation.php96,
+#: templates/account/partials/addon.php26,
+#: templates/account/partials/site.php:311
+msgid "Downgrading your plan"
+msgstr "Downgrading your plan"
+
+#: templates/account.php93, templates/forms/subscription-cancellation.php97,
+#: templates/account/partials/addon.php27,
+#: templates/account/partials/site.php:312
+msgid "Cancelling the subscription"
+msgstr "Cancelling the subscription"
+
+#. translators: %1$s: Either 'Downgrading your plan' or 'Cancelling the
+#. subscription'
+#: templates/account.php95, templates/forms/subscription-cancellation.php99,
+#: templates/account/partials/site.php:314
+msgid "%1$s will immediately stop all future recurring payments and your %2$s plan license will expire in %3$s."
+msgstr "%1$s will immediately stop all future recurring payments and your %2$s plan license will expire in %3$s."
+
+#: templates/account.php96, templates/forms/subscription-cancellation.php100,
+#: templates/account/partials/addon.php30,
+#: templates/account/partials/site.php:315
+msgid "Please note that we will not be able to grandfather outdated pricing for renewals/new subscriptions after a cancellation. If you choose to renew the subscription manually in the future, after a price increase, which typically occurs once a year, you will be charged the updated price."
+msgstr "Please note that we will not be able to grandfather outdated pricing for renewals/new subscriptions after a cancellation. If you choose to renew the subscription manually in the future, after a price increase, which typically occurs once a year, you will be charged the updated price."
+
+#: templates/account.php97, templates/forms/subscription-cancellation.php106,
+#: templates/account/partials/addon.php:31
+msgid "Cancelling the trial will immediately block access to all premium features. Are you sure?"
+msgstr "ביטול הניסיון יחסום מייד את הפיטצ'רים שהינם בתשלום. האם ברצונך בכל זאת להמשיך?"
+
+#: templates/account.php98, templates/forms/subscription-cancellation.php101,
+#: templates/account/partials/addon.php32,
+#: templates/account/partials/site.php:316
+msgid "You can still enjoy all %s features but you will not have access to %s security & feature updates, nor support."
+msgstr "You can still enjoy all %s features but you will not have access to %s security & feature updates, nor support."
+
+#: templates/account.php99, templates/forms/subscription-cancellation.php102,
+#: templates/account/partials/addon.php33,
+#: templates/account/partials/site.php:317
+msgid "Once your license expires you can still use the Free version but you will NOT have access to the %s features."
+msgstr "Once your license expires you can still use the Free version but you will NOT have access to the %s features."
+
+#. translators: %s: Plan title (e.g. "Professional")
+#: templates/account.php101,
+#: templates/account/partials/activate-license-button.php31,
+#: templates/account/partials/addon.php:35
+msgid "Activate %s Plan"
+msgstr "הפעל חבילה %s"
+
+#. translators: %s: Time period (e.g. Auto renews in "2 months")
+#: templates/account.php104, templates/account/partials/addon.php38,
+#: templates/account/partials/site.php:291
+msgid "Auto renews in %s"
+msgstr "עדכן אוטומטית בעוד %s"
+
+#. translators: %s: Time period (e.g. Expires in "2 months")
+#: templates/account.php106, templates/account/partials/addon.php40,
+#: templates/account/partials/site.php:293
+msgid "Expires in %s"
+msgstr "פג תוקף בעוד %s"
+
+#: templates/account.php:107
+msgctxt "as synchronize license"
+msgid "Sync License"
+msgstr "סינכרן רישיון"
+
+#: templates/account.php108, templates/account/partials/addon.php:41
+msgid "Cancel Trial"
+msgstr "ביט"
+
+#: templates/account.php109, templates/account/partials/addon.php:42
+msgid "Change Plan"
+msgstr "שינוי חבילה"
+
+#: templates/account.php110, templates/account/partials/addon.php:43
+msgctxt "verb"
+msgid "Upgrade"
+msgstr "שדרג"
+
+#: templates/account.php112, templates/account/partials/addon.php45,
+#: templates/account/partials/site.php:318
+msgctxt "verb"
+msgid "Downgrade"
+msgstr "שנמך"
+
+#: templates/account.php114, templates/add-ons.php246,
+#: templates/plugin-info/features.php72,
+#: templates/account/partials/addon.php47,
+#: templates/account/partials/site.php:33
+msgid "Free"
+msgstr "חינם"
+
+#: templates/account.php116, templates/debug.php373,
+#: includes/customizer/class-fs-customizer-upsell-control.php110,
+#: templates/account/partials/addon.php:49
+msgctxt "as product pricing plan"
+msgid "Plan"
+msgstr "חבילה"
+
+#: templates/account.php:117
+msgid "Bundle Plan"
+msgstr "Bundle Plan"
+
+#: templates/account.php:191
+msgid "Free Trial"
+msgstr "ניסיון חינם"
+
+#: templates/account.php:202
+msgid "Account Details"
+msgstr "פרטי חשבון"
+
+#: templates/account.php209, templates/forms/data-debug-mode.php:33
+msgid "Start Debug"
+msgstr "Start Debug"
+
+#: templates/account.php:211
+msgid "Stop Debug"
+msgstr "Stop Debug"
+
+#: templates/account.php:218
+msgid "Billing & Invoices"
+msgstr "Billing & Invoices"
+
+#: templates/account.php:229
+msgid "Deleting the account will automatically deactivate your %s plan license so you can use it on other sites. If you want to terminate the recurring payments as well, click the \"Cancel\" button, and first \"Downgrade\" your account. Are you sure you would like to continue with the deletion?"
+msgstr "Deleting the account will automatically deactivate your %s plan license so you can use it on other sites. If you want to terminate the recurring payments as well, click the \"Cancel\" button, and first \"Downgrade\" your account. Are you sure you would like to continue with the deletion?"
+
+#: templates/account.php:231
+msgid "Deletion is not temporary. Only delete if you no longer want to use this %s anymore. Are you sure you would like to continue with the deletion?"
+msgstr "Deletion is not temporary. Only delete if you no longer want to use this %s anymore. Are you sure you would like to continue with the deletion?"
+
+#: templates/account.php:234
+msgid "Delete Account"
+msgstr "מחיקת חשבון"
+
+#: templates/account.php246, templates/account/partials/addon.php231,
+#: templates/account/partials/deactivate-license-button.php:35
+msgid "Deactivate License"
+msgstr "שיחרור רישיון"
+
+#: templates/account.php269, templates/forms/subscription-cancellation.php:125
+msgid "Are you sure you want to proceed?"
+msgstr "האם את/ה בטוח רוצה להמשיך?"
+
+#: templates/account.php269, templates/account/partials/addon.php:255
+msgid "Cancel Subscription"
+msgstr "בטל מנוי"
+
+#: templates/account.php298, templates/account/partials/addon.php:340
+msgctxt "as synchronize"
+msgid "Sync"
+msgstr "סינכרון"
+
+#: templates/account.php313, templates/debug.php:507
+msgid "Name"
+msgstr "שם"
+
+#: templates/account.php319, templates/debug.php:508
+msgid "Email"
+msgstr "דוא\"ל"
+
+#: templates/account.php326, templates/debug.php371, templates/debug.php:557
+msgid "User ID"
+msgstr "מזהה משתמש"
+
+#: templates/account.php344, templates/account.php637,
+#: templates/account.php682, templates/debug.php238, templates/debug.php365,
+#: templates/debug.php454, templates/debug.php506, templates/debug.php555,
+#: templates/debug.php632, templates/account/payments.php35,
+#: templates/debug/logger.php:21
+msgid "ID"
+msgstr "מזהה"
+
+#: templates/account.php:351
+msgid "Site ID"
+msgstr "מזהה אתר"
+
+#: templates/account.php:354
+msgid "No ID"
+msgstr "אין מזהה"
+
+#: templates/account.php359, templates/debug.php245, templates/debug.php374,
+#: templates/debug.php458, templates/debug.php510,
+#: templates/account/partials/site.php:227
+msgid "Public Key"
+msgstr "מפתח פומבי"
+
+#: templates/account.php365, templates/debug.php375, templates/debug.php459,
+#: templates/debug.php511, templates/account/partials/site.php:239
+msgid "Secret Key"
+msgstr "מפתח סודי"
+
+#: templates/account.php:368
+msgctxt "as secret encryption key missing"
+msgid "No Secret"
+msgstr "אין מפתח סודי"
+
+#: templates/account.php395, templates/account/partials/site.php120,
+#: templates/account/partials/site.php:122
+msgid "Trial"
+msgstr "ניסיון"
+
+#: templates/account.php422, templates/debug.php562,
+#: templates/account/partials/site.php:260
+msgid "License Key"
+msgstr "License Key"
+
+#: templates/account.php:453
+msgid "Join the Beta program"
+msgstr "Join the Beta program"
+
+#: templates/account.php:459
+msgid "not verified"
+msgstr "לא מאומת"
+
+#: templates/account.php468, templates/account/partials/addon.php:190
+msgid "Expired"
+msgstr "פג תוקף"
+
+#: templates/account.php:528
+msgid "Premium version"
+msgstr "גירסת פרימיום"
+
+#: templates/account.php:530
+msgid "Free version"
+msgstr "גירסה חינאמית"
+
+#: templates/account.php:542
+msgid "Verify Email"
+msgstr "אמת כתובת דוא\"ל"
+
+#: templates/account.php:553
+msgid "Download %s Version"
+msgstr "הורד גרסת %s"
+
+#: templates/account.php568, templates/account.php820,
+#: templates/account/partials/site.php248,
+#: templates/account/partials/site.php:270
+msgctxt "verb"
+msgid "Show"
+msgstr "הצג"
+
+#: templates/account.php:583
+msgid "What is your %s?"
+msgstr "מה ה%s שלך?"
+
+#: templates/account.php591, templates/account/billing.php:21
+msgctxt "verb"
+msgid "Edit"
+msgstr "ערוך"
+
+#: templates/account.php:616
+msgid "Sites"
+msgstr "אתרים"
+
+#: templates/account.php:629
+msgid "Search by address"
+msgstr "חפש לפי כתובת"
+
+#: templates/account.php638, templates/debug.php:368
+msgid "Address"
+msgstr "כתובת"
+
+#: templates/account.php:639
+msgid "License"
+msgstr "רישיון"
+
+#: templates/account.php:640
+msgid "Plan"
+msgstr "חבילה"
+
+#: templates/account.php:685
+msgctxt "as software license"
+msgid "License"
+msgstr "רישיון"
+
+#: templates/account.php:814
+msgctxt "verb"
+msgid "Hide"
+msgstr "הסתר"
+
+#: templates/account.php836, templates/forms/data-debug-mode.php:31
+msgid "Processing"
+msgstr "Processing"
+
+#: templates/account.php:839
+msgid "Get updates for bleeding edge Beta versions of %s."
+msgstr "Get updates for bleeding edge Beta versions of %s."
+
+#: templates/account.php:897
+msgid "Cancelling %s"
+msgstr "Cancelling %s"
+
+#: templates/account.php897, templates/account.php914,
+#: templates/forms/subscription-cancellation.php27,
+#: templates/forms/deactivation/form.php:133
+msgid "trial"
+msgstr "trial"
+
+#: templates/account.php912, templates/forms/deactivation/form.php:150
+msgid "Cancelling %s..."
+msgstr "Cancelling %s..."
+
+#: templates/account.php915, templates/forms/subscription-cancellation.php28,
+#: templates/forms/deactivation/form.php:134
+msgid "subscription"
+msgstr "subscription"
+
+#: templates/account.php:929
+msgid "Deactivating your license will block all premium features, but will enable activating the license on another site. Are you sure you want to proceed?"
+msgstr "ביטול הרישיון יחסום את כל הפיטצ'רים שבתשלום אך יאפשר להפעיל את הרישיון על אתר אחר. האם תרצו להמשיך בכל זאת?"
+
+#: templates/add-ons.php:38
+msgid "View details"
+msgstr "פרטים נוספים"
+
+#: templates/add-ons.php:48
+msgid "Add Ons for %s"
+msgstr "הרחבות עבור %s"
+
+#: templates/add-ons.php:58
+msgid "We couldn't load the add-ons list. It's probably an issue on our side, please try to come back in few minutes."
+msgstr "We couldn't load the add-ons list. It's probably an issue on our side, please try to come back in few minutes."
+
+#: templates/add-ons.php:229
+msgctxt "active add-on"
+msgid "Active"
+msgstr "Active"
+
+#: templates/add-ons.php:230
+msgctxt "installed add-on"
+msgid "Installed"
+msgstr "Installed"
+
+#: templates/admin-notice.php13, templates/forms/license-activation.php207,
+#: templates/forms/resend-key.php:77
+msgctxt "as close a window"
+msgid "Dismiss"
+msgstr "סגירה"
+
+#: templates/auto-installation.php:45
+msgid "%s sec"
+msgstr "%s שניות"
+
+#: templates/auto-installation.php:83
+msgid "Automatic Installation"
+msgstr "התקנה אוטומטית"
+
+#: templates/auto-installation.php:93
+msgid "An automated download and installation of %s (paid version) from %s will start in %s. If you would like to do it manually - click the cancellation button now."
+msgstr "הורדה והתקנה אוטומטית של %s (גרסה בתשלום) מ-%2$s תתחיל בעוד %3$s. אם ברצונך לבצע את ההתקנה ידנית - לחץ על כפתור הביטול עכשיו."
+
+#: templates/auto-installation.php:104
+msgid "The installation process has started and may take a few minutes to complete. Please wait until it is done - do not refresh this page."
+msgstr "תהליך ההתקנה התחיל ויכול לקחת מספר דקות לסיום. אנא המתינו בסבלנות עד לסיום מבלי לרענן את הדפדפן."
+
+#: templates/auto-installation.php:109
+msgid "Cancel Installation"
+msgstr "בטל התקנה"
+
+#: templates/checkout.php:180
+msgid "Checkout"
+msgstr "Checkout"
+
+#: templates/checkout.php:180
+msgid "PCI compliant"
+msgstr "עומד בתקן PCI"
+
+#. translators: %s: name (e.g. Hey John,)
+#: templates/connect.php:112
+msgctxt "greeting"
+msgid "Hey %s,"
+msgstr "היי %s,"
+
+#: templates/connect.php:154
+msgid "Allow & Continue"
+msgstr "אפשר\\י והמשכ\\י"
+
+#: templates/connect.php:158
+msgid "Re-send activation email"
+msgstr "שליחה חוזרת של מייל האקטיבציה"
+
+#: templates/connect.php:162
+msgid "Thanks %s!"
+msgstr "תודה %s!"
+
+#: templates/connect.php172, templates/forms/license-activation.php:46
+msgid "Agree & Activate License"
+msgstr "הסכמה והפעלת רישיון"
+
+#: templates/connect.php:181
+msgid "Thanks for purchasing %s! To get started, please enter your license key:"
+msgstr "Thanks for purchasing %s! To get started, please enter your license key:"
+
+#: templates/connect.php:188
+msgid "Never miss an important update - opt in to our security & feature updates notifications, educational content, offers, and non-sensitive diagnostic tracking with %4$s."
+msgstr "Never miss an important update - opt in to our security & feature updates notifications, educational content, offers, and non-sensitive diagnostic tracking with %4$s."
+
+#: templates/connect.php:189
+msgid "Never miss an important update - opt in to our security and feature updates notifications, and non-sensitive diagnostic tracking with %4$s."
+msgstr "Never miss an important update - opt in to our security and feature updates notifications, and non-sensitive diagnostic tracking with %4$s."
+
+#: templates/connect.php:195
+msgid "Never miss an important update - opt in to our security & feature updates notifications, educational content, offers, and non-sensitive diagnostic tracking with %4$s. If you skip this, that's okay! %1$s will still work just fine."
+msgstr "Never miss an important update - opt in to our security & feature updates notifications, educational content, offers, and non-sensitive diagnostic tracking with %4$s. If you skip this, that's okay! %1$s will still work just fine."
+
+#: templates/connect.php:196
+msgid "Never miss an important update - opt in to our security & feature updates notifications, and non-sensitive diagnostic tracking with %4$s. If you skip this, that's okay! %1$s will still work just fine."
+msgstr "Never miss an important update - opt in to our security & feature updates notifications, and non-sensitive diagnostic tracking with %4$s. If you skip this, that's okay! %1$s will still work just fine."
+
+#: templates/connect.php:230
+msgid "We're excited to introduce the Freemius network-level integration."
+msgstr "We're excited to introduce the Freemius network-level integration."
+
+#: templates/connect.php:233
+msgid "During the update process we detected %d site(s) that are still pending license activation."
+msgstr "During the update process we detected %d site(s) that are still pending license activation."
+
+#: templates/connect.php:235
+msgid "If you'd like to use the %s on those sites, please enter your license key below and click the activation button."
+msgstr "If you'd like to use the %s on those sites, please enter your license key below and click the activation button."
+
+#: templates/connect.php:237
+msgid "%s's paid features"
+msgstr "%s's paid features"
+
+#: templates/connect.php:242
+msgid "Alternatively, you can skip it for now and activate the license later, in your %s's network-level Account page."
+msgstr "Alternatively, you can skip it for now and activate the license later, in your %s's network-level Account page."
+
+#: templates/connect.php:244
+msgid "During the update process we detected %s site(s) in the network that are still pending your attention."
+msgstr "During the update process we detected %s site(s) in the network that are still pending your attention."
+
+#: templates/connect.php253, templates/forms/data-debug-mode.php35,
+#: templates/forms/license-activation.php:49
+msgid "License key"
+msgstr "מפתח רישיון"
+
+#: templates/connect.php256, templates/forms/license-activation.php:22
+msgid "Can't find your license key?"
+msgstr "האם אינך מוצא את מפתח הרישיון?"
+
+#: templates/connect.php315, templates/connect.php652,
+#: templates/forms/deactivation/retry-skip.php:20
+msgctxt "verb"
+msgid "Skip"
+msgstr "דלג"
+
+#: templates/connect.php:318
+msgid "Delegate to Site Admins"
+msgstr "האצלה למנהלי האתרים"
+
+#: templates/connect.php:318
+msgid "If you click it, this decision will be delegated to the sites administrators."
+msgstr "If you click it, this decision will be delegated to the sites administrators."
+
+#: templates/connect.php:346
+msgid "Your Profile Overview"
+msgstr "פרטים כלליים על הפרופיל"
+
+#: templates/connect.php:347
+msgid "Name and email address"
+msgstr "שם וכתובת דו\"אל"
+
+#: templates/connect.php:352
+msgid "Your Site Overview"
+msgstr "פרטים כלליים על האתר"
+
+#: templates/connect.php:353
+msgid "Site URL, WP version, PHP info, plugins & themes"
+msgstr "כתובת אתר, גרסת וורדפרס, פרטי PHP, תוספים ותבניות"
+
+#: templates/connect.php:358
+msgid "Admin Notices"
+msgstr "התראות מנהל"
+
+#: templates/connect.php359, templates/connect.php:375
+msgid "Updates, announcements, marketing, no spam"
+msgstr "עדכונים, הכרזות, הודעות שיווקיות, ללא דואר זבל"
+
+#: templates/connect.php:364
+msgid "Current %s Events"
+msgstr "Current %s Events"
+
+#: templates/connect.php:365
+msgid "Activation, deactivation and uninstall"
+msgstr "הפעלה, כיבוי והסרה"
+
+#: templates/connect.php:374
+msgid "Newsletter"
+msgstr "ניוסלטר"
+
+#: templates/connect.php391, templates/forms/license-activation.php:41
+msgid "The %1$s will be periodically sending data to %2$s to check for security and feature updates, and verify the validity of your license."
+msgstr "The %1$s will be periodically sending data to %2$s to check for security and feature updates, and verify the validity of your license."
+
+#: templates/connect.php:396
+msgid "What permissions are being granted?"
+msgstr "מהן ההרשאות המוענקות?"
+
+#: templates/connect.php:417
+msgid "Don't have a license key?"
+msgstr "האם אין ברשותך מפתח רישיון?"
+
+#: templates/connect.php:420
+msgid "Have a license key?"
+msgstr "האם ברשותך רישיון?"
+
+#: templates/connect.php:428
+msgid "Privacy Policy"
+msgstr "מדיניות פרטיות"
+
+#: templates/connect.php:430
+msgid "License Agreement"
+msgstr "License Agreement"
+
+#: templates/connect.php:430
+msgid "Terms of Service"
+msgstr "תנאי השירות"
+
+#: templates/connect.php:805
+msgctxt "as in the process of sending an email"
+msgid "Sending email"
+msgstr "שולח דוא\"ל"
+
+#: templates/connect.php:806
+msgctxt "as activating plugin"
+msgid "Activating"
+msgstr "מפעיל"
+
+#: templates/contact.php:78
+msgid "Contact"
+msgstr "Contact"
+
+#: templates/debug.php:17
+msgctxt "as turned off"
+msgid "Off"
+msgstr "כבוי"
+
+#: templates/debug.php:18
+msgctxt "as turned on"
+msgid "On"
+msgstr "דלוק"
+
+#: templates/debug.php:20
+msgid "SDK"
+msgstr "SDK"
+
+#: templates/debug.php:24
+msgctxt "as code debugging"
+msgid "Debugging"
+msgstr "דיבוג"
+
+#: templates/debug.php54, templates/debug.php250, templates/debug.php376,
+#: templates/debug.php:512
+msgid "Actions"
+msgstr "פעולות"
+
+#: templates/debug.php:64
+msgid "Are you sure you want to delete all Freemius data?"
+msgstr "Are you sure you want to delete all Freemius data?"
+
+#: templates/debug.php:64
+msgid "Delete All Accounts"
+msgstr "מחיקת כל החשבונות"
+
+#: templates/debug.php:71
+msgid "Clear API Cache"
+msgstr "ניקוי מטמון ה-API"
+
+#: templates/debug.php:79
+msgid "Clear Updates Transients"
+msgstr "Clear Updates Transients"
+
+#: templates/debug.php:86
+msgid "Sync Data From Server"
+msgstr "סנכרון מידע מהשרת"
+
+#: templates/debug.php:95
+msgid "Migrate Options to Network"
+msgstr "Migrate Options to Network"
+
+#: templates/debug.php:100
+msgid "Load DB Option"
+msgstr "Load DB Option"
+
+#: templates/debug.php:103
+msgid "Set DB Option"
+msgstr "Set DB Option"
+
+#: templates/debug.php:182
+msgid "Key"
+msgstr "Key"
+
+#: templates/debug.php:183
+msgid "Value"
+msgstr "Value"
+
+#: templates/debug.php:199
+msgctxt "as software development kit versions"
+msgid "SDK Versions"
+msgstr "גרסאות SDK"
+
+#: templates/debug.php:204
+msgid "SDK Path"
+msgstr "מיקום SDK"
+
+#: templates/debug.php205, templates/debug.php:244
+msgid "Module Path"
+msgstr "Module Path"
+
+#: templates/debug.php:206
+msgid "Is Active"
+msgstr "האם פעיל"
+
+#: templates/debug.php234, templates/debug/plugins-themes-sync.php:35
+msgid "Plugins"
+msgstr "תוספים"
+
+#: templates/debug.php234, templates/debug/plugins-themes-sync.php:56
+msgid "Themes"
+msgstr "תבניות"
+
+#: templates/debug.php239, templates/debug.php370, templates/debug.php456,
+#: templates/debug/scheduled-crons.php:80
+msgid "Slug"
+msgstr "מזהה כתובת"
+
+#: templates/debug.php241, templates/debug.php:455
+msgid "Title"
+msgstr "כותרת"
+
+#: templates/debug.php:242
+msgctxt "as application program interface"
+msgid "API"
+msgstr "API"
+
+#: templates/debug.php:243
+msgid "Freemius State"
+msgstr "מצב פרימיוס"
+
+#: templates/debug.php:247
+msgid "Network Blog"
+msgstr "Network Blog"
+
+#: templates/debug.php:248
+msgid "Network User"
+msgstr "משתמש רשת"
+
+#: templates/debug.php:285
+msgctxt "as connection was successful"
+msgid "Connected"
+msgstr "מחובר"
+
+#: templates/debug.php:286
+msgctxt "as connection blocked"
+msgid "Blocked"
+msgstr "חסום"
+
+#: templates/debug.php:322
+msgid "Simulate Trial Promotion"
+msgstr "Simulate Trial Promotion"
+
+#: templates/debug.php:334
+msgid "Simulate Network Upgrade"
+msgstr "סמלוץ עדכון לרשת"
+
+#: templates/debug.php:359
+msgid "%s Installs"
+msgstr "%s התקנות"
+
+#: templates/debug.php:361
+msgctxt "like websites"
+msgid "Sites"
+msgstr "אתרים"
+
+#: templates/debug.php367, templates/account/partials/site.php:156
+msgid "Blog ID"
+msgstr "מזהה בלוג"
+
+#: templates/debug.php:372
+msgid "License ID"
+msgstr "License ID"
+
+#: templates/debug.php436, templates/debug.php535,
+#: templates/account/partials/addon.php:435
+msgctxt "verb"
+msgid "Delete"
+msgstr "מחק"
+
+#: templates/debug.php:450
+msgid "Add Ons of module %s"
+msgstr "Add Ons of module %s"
+
+#: templates/debug.php:502
+msgid "Users"
+msgstr "משתמשים"
+
+#: templates/debug.php:509
+msgid "Verified"
+msgstr "מאומת"
+
+#: templates/debug.php:551
+msgid "%s Licenses"
+msgstr "%s Licenses"
+
+#: templates/debug.php:556
+msgid "Plugin ID"
+msgstr "Plugin ID"
+
+#: templates/debug.php:558
+msgid "Plan ID"
+msgstr "Plan ID"
+
+#: templates/debug.php:559
+msgid "Quota"
+msgstr "Quota"
+
+#: templates/debug.php:560
+msgid "Activated"
+msgstr "Activated"
+
+#: templates/debug.php:561
+msgid "Blocking"
+msgstr "Blocking"
+
+#: templates/debug.php:563
+msgctxt "as expiration date"
+msgid "Expiration"
+msgstr "תפוגה"
+
+#: templates/debug.php:590
+msgid "Debug Log"
+msgstr "Debug Log"
+
+#: templates/debug.php:594
+msgid "All Types"
+msgstr "כל הסוגים"
+
+#: templates/debug.php:601
+msgid "All Requests"
+msgstr "כל הבקשות"
+
+#: templates/debug.php606, templates/debug.php635,
+#: templates/debug/logger.php:25
+msgid "File"
+msgstr "קובץ"
+
+#: templates/debug.php607, templates/debug.php633,
+#: templates/debug/logger.php:23
+msgid "Function"
+msgstr "פונקציה"
+
+#: templates/debug.php:608
+msgid "Process ID"
+msgstr "Process ID"
+
+#: templates/debug.php:609
+msgid "Logger"
+msgstr "Logger"
+
+#: templates/debug.php610, templates/debug.php634,
+#: templates/debug/logger.php:24
+msgid "Message"
+msgstr "הודעה"
+
+#: templates/debug.php:612
+msgid "Filter"
+msgstr "פילטר"
+
+#: templates/debug.php:620
+msgid "Download"
+msgstr "הורדה"
+
+#: templates/debug.php631, templates/debug/logger.php:22
+msgid "Type"
+msgstr "סוג"
+
+#: templates/debug.php636, templates/debug/logger.php:26
+msgid "Timestamp"
+msgstr "Timestamp"
+
+#: templates/secure-https-header.php:28
+msgid "Secure HTTPS %s page, running from an external domain"
+msgstr "Secure HTTPS %s page, running from an external domain"
+
+#: includes/customizer/class-fs-customizer-support-section.php55,
+#: templates/plugin-info/features.php:43
+msgid "Support"
+msgstr "תמיכה"
+
+#: includes/debug/class-fs-debug-bar-panel.php48,
+#: templates/debug/api-calls.php54, templates/debug/logger.php:62
+msgctxt "milliseconds"
+msgid "ms"
+msgstr "ms"
+
+#: includes/debug/debug-bar-start.php:41
+msgid "Freemius API"
+msgstr "Freemius API"
+
+#: includes/debug/debug-bar-start.php:42
+msgid "Requests"
+msgstr "Requests"
+
+#: templates/account/billing.php:22
+msgctxt "verb"
+msgid "Update"
+msgstr "עדכן"
+
+#: templates/account/billing.php:33
+msgid "Billing"
+msgstr "בילינג"
+
+#: templates/account/billing.php38, templates/account/billing.php:38
+msgid "Business name"
+msgstr "שם עסק"
+
+#: templates/account/billing.php39, templates/account/billing.php:39
+msgid "Tax / VAT ID"
+msgstr "ח.פ."
+
+#: templates/account/billing.php42, templates/account/billing.php42,
+#: templates/account/billing.php43, templates/account/billing.php:43
+msgid "Address Line %d"
+msgstr "כתובת %s"
+
+#: templates/account/billing.php46, templates/account/billing.php:46
+msgid "City"
+msgstr "עיר"
+
+#: templates/account/billing.php46, templates/account/billing.php:46
+msgid "Town"
+msgstr "כפר"
+
+#: templates/account/billing.php47, templates/account/billing.php:47
+msgid "ZIP / Postal Code"
+msgstr "מיקוד / תא דואר"
+
+#: templates/account/billing.php:302
+msgid "Country"
+msgstr "מדינה"
+
+#: templates/account/billing.php:304
+msgid "Select Country"
+msgstr "בחר מדינה"
+
+#: templates/account/billing.php311, templates/account/billing.php:312
+msgid "State"
+msgstr "מחוז/מדינה"
+
+#: templates/account/billing.php311, templates/account/billing.php:312
+msgid "Province"
+msgstr "פרובינציה"
+
+#: templates/account/payments.php:29
+msgid "Payments"
+msgstr "תשלומים"
+
+#: templates/account/payments.php:36
+msgid "Date"
+msgstr "תאריך"
+
+#: templates/account/payments.php:37
+msgid "Amount"
+msgstr "סכום"
+
+#: templates/account/payments.php38, templates/account/payments.php:50
+msgid "Invoice"
+msgstr "חשבונית"
+
+#: templates/debug/api-calls.php:56
+msgid "API"
+msgstr "API"
+
+#: templates/debug/api-calls.php:68
+msgid "Method"
+msgstr "Method"
+
+#: templates/debug/api-calls.php:69
+msgid "Code"
+msgstr "Code"
+
+#: templates/debug/api-calls.php:70
+msgid "Length"
+msgstr "Length"
+
+#: templates/debug/api-calls.php:71
+msgctxt "as file/folder path"
+msgid "Path"
+msgstr "נתיב"
+
+#: templates/debug/api-calls.php:73
+msgid "Body"
+msgstr "Body"
+
+#: templates/debug/api-calls.php:75
+msgid "Result"
+msgstr "Result"
+
+#: templates/debug/api-calls.php:76
+msgid "Start"
+msgstr "Start"
+
+#: templates/debug/api-calls.php:77
+msgid "End"
+msgstr "End"
+
+#: templates/debug/logger.php:15
+msgid "Log"
+msgstr "Log"
+
+#. translators: %s: time period (e.g. In "2 hours")
+#: templates/debug/plugins-themes-sync.php18,
+#: templates/debug/scheduled-crons.php:91
+msgid "In %s"
+msgstr "בעוד %s"
+
+#. translators: %s: time period (e.g. "2 hours" ago)
+#: templates/debug/plugins-themes-sync.php20,
+#: templates/debug/scheduled-crons.php:93
+msgid "%s ago"
+msgstr "לפני %s"
+
+#: templates/debug/plugins-themes-sync.php21,
+#: templates/debug/scheduled-crons.php:74
+msgctxt "seconds"
+msgid "sec"
+msgstr "sec"
+
+#: templates/debug/plugins-themes-sync.php:23
+msgid "Plugins & Themes Sync"
+msgstr "Plugins & Themes Sync"
+
+#: templates/debug/plugins-themes-sync.php:28
+msgid "Total"
+msgstr "Total"
+
+#: templates/debug/plugins-themes-sync.php29,
+#: templates/debug/scheduled-crons.php:84
+msgid "Last"
+msgstr "Last"
+
+#: templates/debug/scheduled-crons.php:76
+msgid "Scheduled Crons"
+msgstr "Scheduled Crons"
+
+#: templates/debug/scheduled-crons.php:81
+msgid "Module"
+msgstr "מודול"
+
+#: templates/debug/scheduled-crons.php:82
+msgid "Module Type"
+msgstr "סוג מודול"
+
+#: templates/debug/scheduled-crons.php:83
+msgid "Cron Type"
+msgstr "Cron Type"
+
+#: templates/debug/scheduled-crons.php:85
+msgid "Next"
+msgstr "Next"
+
+#: templates/forms/affiliation.php:82
+msgid "Non-expiring"
+msgstr "Non-expiring"
+
+#: templates/forms/affiliation.php:85
+msgid "Apply to become an affiliate"
+msgstr "Apply to become an affiliate"
+
+#: templates/forms/affiliation.php:104
+msgid "Your affiliate application for %s has been accepted! Log in to your affiliate area at: %s."
+msgstr "Your affiliate application for %s has been accepted! Log in to your affiliate area at: %s."
+
+#: templates/forms/affiliation.php:119
+msgid "Thank you for applying for our affiliate program, we'll review your details during the next 14 days and will get back to you with further information."
+msgstr "Thank you for applying for our affiliate program, we'll review your details during the next 14 days and will get back to you with further information."
+
+#: templates/forms/affiliation.php:122
+msgid "Your affiliation account was temporarily suspended."
+msgstr "Your affiliation account was temporarily suspended."
+
+#: templates/forms/affiliation.php:125
+msgid "Thank you for applying for our affiliate program, unfortunately, we've decided at this point to reject your application. Please try again in 30 days."
+msgstr "Thank you for applying for our affiliate program, unfortunately, we've decided at this point to reject your application. Please try again in 30 days."
+
+#: templates/forms/affiliation.php:128
+msgid "Due to violation of our affiliation terms, we decided to temporarily block your affiliation account. If you have any questions, please contact support."
+msgstr "Due to violation of our affiliation terms, we decided to temporarily block your affiliation account. If you have any questions, please contact support."
+
+#: templates/forms/affiliation.php:141
+msgid "Like the %s? Become our ambassador and earn cash ;-)"
+msgstr "Like the %s? Become our ambassador and earn cash ;-)"
+
+#: templates/forms/affiliation.php:142
+msgid "Refer new customers to our %s and earn %s commission on each successful sale you refer!"
+msgstr "Refer new customers to our %s and earn %s commission on each successful sale you refer!"
+
+#: templates/forms/affiliation.php:145
+msgid "Program Summary"
+msgstr "Program Summary"
+
+#: templates/forms/affiliation.php:147
+msgid "%s commission when a customer purchases a new license."
+msgstr "%s commission when a customer purchases a new license."
+
+#: templates/forms/affiliation.php:149
+msgid "Get commission for automated subscription renewals."
+msgstr "Get commission for automated subscription renewals."
+
+#: templates/forms/affiliation.php:152
+msgid "%s tracking cookie after the first visit to maximize earnings potential."
+msgstr "%s tracking cookie after the first visit to maximize earnings potential."
+
+#: templates/forms/affiliation.php:155
+msgid "Unlimited commissions."
+msgstr "Unlimited commissions."
+
+#: templates/forms/affiliation.php:157
+msgid "%s minimum payout amount."
+msgstr "%s minimum payout amount."
+
+#: templates/forms/affiliation.php:158
+msgid "Payouts are in USD and processed monthly via PayPal."
+msgstr "Payouts are in USD and processed monthly via PayPal."
+
+#: templates/forms/affiliation.php:159
+msgid "As we reserve 30 days for potential refunds, we only pay commissions that are older than 30 days."
+msgstr "As we reserve 30 days for potential refunds, we only pay commissions that are older than 30 days."
+
+#: templates/forms/affiliation.php:162
+msgid "Affiliate"
+msgstr "Affiliate"
+
+#: templates/forms/affiliation.php165, templates/forms/resend-key.php:23
+msgid "Email address"
+msgstr "כתובת דוא\"ל"
+
+#: templates/forms/affiliation.php:169
+msgid "Full name"
+msgstr "Full name"
+
+#: templates/forms/affiliation.php:173
+msgid "PayPal account email address"
+msgstr "PayPal account email address"
+
+#: templates/forms/affiliation.php:177
+msgid "Where are you going to promote the %s?"
+msgstr "Where are you going to promote the %s?"
+
+#: templates/forms/affiliation.php:179
+msgid "Enter the domain of your website or other websites from where you plan to promote the %s."
+msgstr "Enter the domain of your website or other websites from where you plan to promote the %s."
+
+#: templates/forms/affiliation.php:181
+msgid "Add another domain"
+msgstr "Add another domain"
+
+#: templates/forms/affiliation.php:185
+msgid "Extra Domains"
+msgstr "Extra Domains"
+
+#: templates/forms/affiliation.php:186
+msgid "Extra domains where you will be marketing the product from."
+msgstr "Extra domains where you will be marketing the product from."
+
+#: templates/forms/affiliation.php:196
+msgid "Promotion methods"
+msgstr "Promotion methods"
+
+#: templates/forms/affiliation.php:199
+msgid "Social media (Facebook, Twitter, etc.)"
+msgstr "Social media (Facebook, Twitter, etc.)"
+
+#: templates/forms/affiliation.php:203
+msgid "Mobile apps"
+msgstr "Mobile apps"
+
+#: templates/forms/affiliation.php:207
+msgid "Website, email, and social media statistics (optional)"
+msgstr "Website, email, and social media statistics (optional)"
+
+#: templates/forms/affiliation.php:210
+msgid "Please feel free to provide any relevant website or social media statistics, e.g. monthly unique site visits, number of email subscribers, followers, etc. (we will keep this information confidential)."
+msgstr "Please feel free to provide any relevant website or social media statistics, e.g. monthly unique site visits, number of email subscribers, followers, etc. (we will keep this information confidential)."
+
+#: templates/forms/affiliation.php:214
+msgid "How will you promote us?"
+msgstr "How will you promote us?"
+
+#: templates/forms/affiliation.php:217
+msgid "Please provide details on how you intend to promote %s (please be as specific as possible)."
+msgstr "Please provide details on how you intend to promote %s (please be as specific as possible)."
+
+#: templates/forms/affiliation.php223, templates/forms/resend-key.php:22
+msgid "Cancel"
+msgstr "בטל"
+
+#: templates/forms/affiliation.php:225
+msgid "Become an affiliate"
+msgstr "Become an affiliate"
+
+#: templates/forms/data-debug-mode.php:25
+msgid "Please enter the license key to enable the debug mode:"
+msgstr "Please enter the license key to enable the debug mode:"
+
+#: templates/forms/data-debug-mode.php:27
+msgid "To enter the debug mode, please enter the secret key of the license owner (UserID = %d), which you can find in your \"My Profile\" section of your User Dashboard:"
+msgstr "To enter the debug mode, please enter the secret key of the license owner (UserID = %d), which you can find in your \"My Profile\" section of your User Dashboard:"
+
+#: templates/forms/data-debug-mode.php:32
+msgid "Submit"
+msgstr "Submit"
+
+#: templates/forms/data-debug-mode.php:36
+msgid "User key"
+msgstr "User key"
+
+#: templates/forms/license-activation.php:23
+msgid "Please enter the license key that you received in the email right after the purchase:"
+msgstr "אנא הזן את הרישיון שקיבלת לתיבת הדואל שלך לאחר השלמת הרכישה."
+
+#: templates/forms/license-activation.php:28
+msgid "Update License"
+msgstr "עדכון רישיון"
+
+#: templates/forms/optout.php:30
+msgctxt "verb"
+msgid "Opt Out"
+msgstr "Opt Out"
+
+#: templates/forms/optout.php:31
+msgctxt "verb"
+msgid "Opt In"
+msgstr "Opt In"
+
+#: templates/forms/optout.php:33
+msgid "Usage tracking is done in the name of making %s better. Making a better user experience, prioritizing new features, and more good things. We'd really appreciate if you'll reconsider letting us continue with the tracking."
+msgstr "Usage tracking is done in the name of making %s better. Making a better user experience, prioritizing new features, and more good things. We'd really appreciate if you'll reconsider letting us continue with the tracking."
+
+#: templates/forms/optout.php:35
+msgid "By clicking \"Opt Out\", we will no longer be sending any data from %s to %s."
+msgstr "By clicking \"Opt Out\", we will no longer be sending any data from %s to %s."
+
+#: templates/forms/premium-versions-upgrade-handler.php:40
+msgid "There is a new version of %s available."
+msgstr "יש גרסה חדשה עבור ה%s."
+
+#: templates/forms/premium-versions-upgrade-handler.php:41
+msgid " %s to access version %s security & feature updates, and support."
+msgstr " %s to access version %s security & feature updates, and support."
+
+#: templates/forms/premium-versions-upgrade-handler.php:54
+msgid "New Version Available"
+msgstr "יש גרסה חדשה"
+
+#: templates/forms/premium-versions-upgrade-handler.php:75
+msgctxt "close a window"
+msgid "Dismiss"
+msgstr "סגירה"
+
+#: templates/forms/resend-key.php:21
+msgid "Send License Key"
+msgstr "שליחת מפתח רישיון"
+
+#: templates/forms/resend-key.php:57
+msgid "Enter the email address you've used for the upgrade below and we will resend you the license key."
+msgstr "הזן את כתובת הדואל שאיתה שידרגת כדי לקבל את הרישיון שוב."
+
+#: templates/forms/subscription-cancellation.php:37
+msgid "Deactivating or uninstalling the %s will automatically disable the license, which you'll be able to use on another site."
+msgstr "Deactivating or uninstalling the %s will automatically disable the license, which you'll be able to use on another site."
+
+#: templates/forms/subscription-cancellation.php:47
+msgid "In case you are NOT planning on using this %s on this site (or any other site) - would you like to cancel the %s as well?"
+msgstr "In case you are NOT planning on using this %s on this site (or any other site) - would you like to cancel the %s as well?"
+
+#: templates/forms/subscription-cancellation.php:52
+msgid "license"
+msgstr "license"
+
+#: templates/forms/subscription-cancellation.php:57
+msgid "Cancel %s - I no longer need any security & feature updates, nor support for %s because I'm not planning to use the %s on this, or any other site."
+msgstr "Cancel %s - I no longer need any security & feature updates, nor support for %s because I'm not planning to use the %s on this, or any other site."
+
+#: templates/forms/subscription-cancellation.php:68
+msgid "Don't cancel %s - I'm still interested in getting security & feature updates, as well as be able to contact support."
+msgstr "Don't cancel %s - I'm still interested in getting security & feature updates, as well as be able to contact support."
+
+#: templates/forms/subscription-cancellation.php:103
+msgid "Once your license expires you will no longer be able to use the %s, unless you activate it again with a valid premium license."
+msgstr "Once your license expires you will no longer be able to use the %s, unless you activate it again with a valid premium license."
+
+#: templates/forms/subscription-cancellation.php:136
+msgid "Cancel %s?"
+msgstr "Cancel %s?"
+
+#: templates/forms/subscription-cancellation.php:143
+msgid "Proceed"
+msgstr "Proceed"
+
+#: templates/forms/subscription-cancellation.php191,
+#: templates/forms/deactivation/form.php:171
+msgid "Cancel %s & Proceed"
+msgstr "Cancel %s & Proceed"
+
+#: templates/forms/trial-start.php:22
+msgid "You are 1-click away from starting your %1$s-day free trial of the %2$s plan."
+msgstr "You are 1-click away from starting your %1$s-day free trial of the %2$s plan."
+
+#: templates/forms/trial-start.php:28
+msgid "For compliance with the WordPress.org guidelines, before we start the trial we ask that you opt in with your user and non-sensitive site information, allowing the %s to periodically send data to %s to check for version updates and to validate your trial."
+msgstr "For compliance with the WordPress.org guidelines, before we start the trial we ask that you opt in with your user and non-sensitive site information, allowing the %s to periodically send data to %s to check for version updates and to validate your trial."
+
+#: templates/js/style-premium-theme.php:39
+msgid "Premium"
+msgstr "Premium"
+
+#: templates/js/style-premium-theme.php:42
+msgid "Beta"
+msgstr "Beta"
+
+#: templates/partials/network-activation.php:27
+msgid "Activate license on all sites in the network."
+msgstr "הפעלת רישיון על כל האתרים ברשת."
+
+#: templates/partials/network-activation.php:28
+msgid "Apply on all sites in the network."
+msgstr "יישום על כל האתרים ברשת."
+
+#: templates/partials/network-activation.php:31
+msgid "Activate license on all pending sites."
+msgstr "הפעלת רישיון על כל האתרים התלויים והעומדים."
+
+#: templates/partials/network-activation.php:32
+msgid "Apply on all pending sites."
+msgstr "יישום על כל האתרים התלויים והעומדים."
+
+#: templates/partials/network-activation.php40,
+#: templates/partials/network-activation.php:74
+msgid "allow"
+msgstr "אפשר"
+
+#: templates/partials/network-activation.php43,
+#: templates/partials/network-activation.php:77
+msgid "delegate"
+msgstr "האצל"
+
+#: templates/partials/network-activation.php47,
+#: templates/partials/network-activation.php:81
+msgid "skip"
+msgstr "דלג"
+
+#: templates/plugin-info/description.php72,
+#: templates/plugin-info/screenshots.php:31
+msgid "Click to view full-size screenshot %d"
+msgstr "Click to view full-size screenshot %d"
+
+#: templates/plugin-info/features.php:56
+msgid "Unlimited Updates"
+msgstr "עדכונים ללא הגבלה"
+
+#: templates/account/partials/activate-license-button.php:46
+msgid "Localhost"
+msgstr "שרת לוקאלי"
+
+#: templates/account/partials/activate-license-button.php:50
+msgctxt "as 5 licenses left"
+msgid "%s left"
+msgstr "נשארו %s"
+
+#: templates/account/partials/activate-license-button.php:51
+msgid "Last license"
+msgstr "רישיון אחרון"
+
+#. translators: %1$s: Either 'Downgrading your plan' or 'Cancelling the
+#. subscription'
+#: templates/account/partials/addon.php:29
+msgid "%1$s will immediately stop all future recurring payments and your %s plan license will expire in %s."
+msgstr "%1$s will immediately stop all future recurring payments and your %s plan license will expire in %s."
+
+#: templates/account/partials/addon.php:185
+msgid "Cancelled"
+msgstr "בוטל"
+
+#: templates/account/partials/addon.php:195
+msgid "No expiration"
+msgstr "ללא תפוגה"
+
+#: templates/account/partials/site.php:189
+msgid "Owner Name"
+msgstr "שם הבעלים"
+
+#: templates/account/partials/site.php:201
+msgid "Owner Email"
+msgstr "מייל הבעלים"
+
+#: templates/account/partials/site.php:213
+msgid "Owner ID"
+msgstr "מזהה הבעלים"
+
+#: templates/account/partials/site.php:286
+msgid "Subscription"
+msgstr "מנוי"
+
+#: templates/forms/deactivation/contact.php:19
+msgid "Sorry for the inconvenience and we are here to help if you give us a chance."
+msgstr "מצטערים על חוסר הנעימות, אנחנו כאן כדי לעזור אם תאפשר\\י זאת."
+
+#: templates/forms/deactivation/contact.php:22
+msgid "Contact Support"
+msgstr "צור קשר"
+
+#: templates/forms/deactivation/form.php:64
+msgid "Anonymous feedback"
+msgstr "פידבק אנונימי"
+
+#: templates/forms/deactivation/form.php:70
+msgid "Deactivate"
+msgstr "כיבוי"
+
+#: templates/forms/deactivation/form.php:72
+msgid "Activate %s"
+msgstr "Activate %s"
+
+#: templates/forms/deactivation/form.php:87
+msgid "Quick Feedback"
+msgstr "Quick Feedback"
+
+#: templates/forms/deactivation/form.php:91
+msgid "If you have a moment, please let us know why you are %s"
+msgstr "If you have a moment, please let us know why you are %s"
+
+#: templates/forms/deactivation/form.php:91
+msgid "deactivating"
+msgstr "deactivating"
+
+#: templates/forms/deactivation/form.php:91
+msgid "switching"
+msgstr "switching"
+
+#: templates/forms/deactivation/form.php:365
+msgid "Submit & %s"
+msgstr "Submit & %s"
+
+#: templates/forms/deactivation/form.php:386
+msgid "Kindly tell us the reason so we can improve."
+msgstr "אנא שתף את הסיבה כדי שנוכל להשתפר."
+
+#: templates/forms/deactivation/form.php:511
+msgid "Yes - %s"
+msgstr "Yes - %s"
+
+#: templates/forms/deactivation/form.php:518
+msgid "Skip & %s"
+msgstr "דלג ו%s"
+
+#: templates/forms/deactivation/retry-skip.php:21
+msgid "Click here to use the plugin anonymously"
+msgstr "Click here to use the plugin anonymously"
+
+#: templates/forms/deactivation/retry-skip.php:23
+msgid "You might have missed it, but you don't have to share any data and can just %s the opt-in."
+msgstr "אולי פספסת את זה אבל אינך חייב\\ת לשתף כל מידע איתנו, ביכולתך %s על שיתוף המידע."

@@ -2,8 +2,7 @@
 /**
  * Name: Templates
  *
- * Description: An easy to use templating engine for Pods. Use {@field_name} magic tags to output values, within your
- * HTML markup.
+ * Description: An easy to use templating engine for Pods. Use {@field_name} magic tags to output values, within your HTML markup.
  *
  * Version: 2.3
  *
@@ -100,7 +99,7 @@ class Pods_Templates extends PodsComponent {
 		if ( is_admin() ) {
 			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 
-			add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ) );
+			add_action( 'add_meta_boxes_' . $this->object_type, array( $this, 'edit_page_form' ) );
 
 			add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
 

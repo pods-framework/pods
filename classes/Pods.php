@@ -288,16 +288,16 @@ class Pods implements Iterator {
 			if ( $queried_object ) {
 				$id_lookup = true;
 
-				if ( isset( $queried_object->post_type ) ) {
+				if ( $queried_object instanceof WP_Post ) {
 					// Post Type Singular.
 					$pod = $queried_object->post_type;
-				} elseif ( isset( $queried_object->taxonomy ) ) {
+				} elseif ( $queried_object instanceof WP_Term ) {
 					// Term Archive.
 					$pod = $queried_object->taxonomy;
-				} elseif ( isset( $queried_object->user_login ) ) {
+				} elseif ( $queried_object instanceof WP_User ) {
 					// Author Archive.
 					$pod = 'user';
-				} elseif ( isset( $queried_object->public, $queried_object->name ) ) {
+				} elseif ( $queried_object instanceof WP_Post_Type ) {
 					// Post Type Archive.
 					$pod = $queried_object->name;
 
@@ -1007,82 +1007,15 @@ class Pods implements Iterator {
 				}
 			}
 
-			if ( 'post_type' === $this->pod_data['type'] && ! isset( $this->fields[ $params->name ] ) ) {
-				if ( ! isset( $this->fields['post_thumbnail'] ) && ( 'post_thumbnail' === $params->name || 0 === strpos( $params->name, 'post_thumbnail.' ) ) ) {
-					$size = 'thumbnail';
+			// Default image field handlers.
+			$image_fields = array(
+				'image_attachment',
+				'image_attachment_url',
+			);
 
-					if ( 0 === strpos( $params->name, 'post_thumbnail.' ) ) {
-						$field_names = explode( '.', $params->name );
-
-						if ( isset( $field_names[1] ) ) {
-							$size = $field_names[1];
-						}
-					}
-
-					// Pods will auto-get the thumbnail ID if this isn't an attachment.
-					$value = pods_image( $this->id(), $size, 0, null, true );
-
-					$object_field_found = true;
-				} elseif ( ! isset( $this->fields['post_thumbnail_url'] ) && ( 'post_thumbnail_url' === $params->name || 0 === strpos( $params->name, 'post_thumbnail_url.' ) ) ) {
-					$size = 'thumbnail';
-
-					if ( 0 === strpos( $params->name, 'post_thumbnail_url.' ) ) {
-						$field_names = explode( '.', $params->name );
-
-						if ( isset( $field_names[1] ) ) {
-							$size = $field_names[1];
-						}
-					}
-
-					// Pods will auto-get the thumbnail ID if this isn't an attachment.
-					$value = pods_image_url( $this->id(), $size, 0, true );
-
-					$object_field_found = true;
-				} elseif ( 0 === strpos( $params->name, 'image_attachment.' ) ) {
-					$size = 'thumbnail';
-
-					$image_id = 0;
-
-					$field_names = explode( '.', $params->name );
-
-					if ( isset( $field_names[1] ) ) {
-						$image_id = $field_names[1];
-					}
-
-					if ( isset( $field_names[2] ) ) {
-						$size = $field_names[2];
-					}
-
-					if ( ! empty( $image_id ) ) {
-						$value = pods_image( $image_id, $size, 0, null, true );
-
-						if ( ! empty( $value ) ) {
-							$object_field_found = true;
-						}
-					}
-				} elseif ( 0 === strpos( $params->name, 'image_attachment_url.' ) ) {
-					$size = 'thumbnail';
-
-					$image_id = 0;
-
-					$field_names = explode( '.', $params->name );
-
-					if ( isset( $field_names[1] ) ) {
-						$image_id = $field_names[1];
-					}
-
-					if ( isset( $field_names[2] ) ) {
-						$size = $field_names[2];
-					}
-
-					if ( ! empty( $image_id ) ) {
-						$value = pods_image_url( $image_id, $size, 0, true );
-
-						if ( ! empty( $value ) ) {
-							$object_field_found = true;
-						}
-					}
-				}//end if
+			if ( 'post_type' === $this->pod_data['type'] ) {
+				$image_fields[] = 'post_thumbnail';
+				$image_fields[] = 'post_thumbnail_url';
 			} elseif ( 'user' === $this->pod_data['type'] && ! isset( $this->fields[ $params->name ] ) ) {
 				if ( ! isset( $this->fields['avatar'] ) && ( 'avatar' === $params->name || 0 === strpos( $params->name, 'avatar.' ) ) ) {
 					$size = null;
@@ -1103,51 +1036,114 @@ class Pods implements Iterator {
 
 					$object_field_found = true;
 				}
-			} elseif ( 0 === strpos( $params->name, 'image_attachment.' ) ) {
-				$size = 'thumbnail';
+			}
 
-				$image_id = 0;
-
-				$field_names = explode( '.', $params->name );
-
-				if ( isset( $field_names[1] ) ) {
-					$image_id = $field_names[1];
-				}
-
-				if ( isset( $field_names[2] ) ) {
-					$size = $field_names[2];
-				}
-
-				if ( ! empty( $image_id ) ) {
-					$value = pods_image( $image_id, $size, 0, null, true );
-
-					if ( ! empty( $value ) ) {
-						$object_field_found = true;
+			if ( ! $object_field_found ) {
+				foreach ( $image_fields as $image_field ) {
+					if ( isset( $this->fields[ $image_field ] ) ) {
+						// Skip any names that are registered fields within this Pod.
+						continue;
 					}
-				}
-			} elseif ( 0 === strpos( $params->name, 'image_attachment_url.' ) ) {
-				$size = 'thumbnail';
+					if (
+						$image_field === $params->name ||
+						0 === strpos( $params->name, $image_field . '.' )
+					) {
+						// Is it a URL request?
+						$url = '_url' === substr( $image_field, -4 );
+						if ( $url ) {
+							$image_field = substr( $image_field, 0, -4 );
+						}
 
-				$image_id = 0;
+						// Results in an empty array if no traversal names are passed.
+						$traverse_names = explode( '.', $params->name );
+						array_shift( $traverse_names );
 
-				$field_names = explode( '.', $params->name );
+						$attachment_id = 0;
+						switch ( $image_field ) {
+							case 'post_thumbnail':
+								$attachment_id = get_post_thumbnail_id( $this->id() );
+								break;
+							case 'image_attachment':
+								if ( isset( $traverse_names[0] ) ) {
+									$attachment_id = $traverse_names[0];
+									array_shift( $traverse_names );
+								}
+								break;
+						}
 
-				if ( isset( $field_names[1] ) ) {
-					$image_id = $field_names[1];
-				}
+						if ( $attachment_id ) {
 
-				if ( isset( $field_names[2] ) ) {
-					$size = $field_names[2];
-				}
+							$size = 'thumbnail';
+							if ( isset( $traverse_names[0] ) ) {
+								$size  = $traverse_names[0];
+								$sizes = get_intermediate_image_sizes();
+								// Not shown by default.
+								$sizes[] = 'full';
+								$sizes[] = 'original';
+								if ( ! in_array( $size, $sizes, true ) ) {
+									// No valid image size found.
+									$size = false;
+								}
+							}
 
-				if ( ! empty( $image_id ) ) {
-					$value = pods_image_url( $image_id, $size, 0, true );
+							if ( $url ) {
+								$value = pods_image_url( $attachment_id, $size, 0, true );
 
-					if ( ! empty( $value ) ) {
-						$object_field_found = true;
-					}
-				}
-			}//end if
+								$object_field_found = true;
+								break;
+							}
+
+							if ( $size ) {
+								// Pods will auto-get the thumbnail ID if this isn't an attachment.
+								$value = pods_image( $attachment_id, $size, 0, null, true );
+
+								$object_field_found = true;
+								break;
+							}
+
+							// Fallback to attachment Post object to look for other image properties.
+							$media = pods( 'media', $attachment_id );
+
+							if ( $media && $media->valid() && $media->exists() ) {
+								$value = $media->field( implode( '.', $traverse_names ) );
+							} else {
+								// Fallback to default attachment object.
+								$attachment = get_post( $attachment_id );
+								$value      = pods_v( implode( '.', $traverse_names ), $attachment, '' );
+								if ( ! $value ) {
+									$meta_key = array_shift( $traverse_names );
+									$value    = get_post_meta( $attachment_id, $meta_key, true );
+
+									// Maybe traverse.
+									if ( count( $traverse_names ) ) {
+										if ( is_array( $value ) ) {
+											foreach ( $traverse_names as $field ) {
+												if ( ! isset( $value[ $field ] ) ) {
+													$value = null;
+
+													break;
+												}
+
+												$value = $value[ $field ];
+											}
+										} else {
+											$value = null;
+										}
+									}
+								}
+							}
+
+							if ( null !== $value ) {
+								$object_field_found = true;
+								break;
+							}
+						}
+
+						// Already found a matching field name. Stop foreach loop.
+						break;
+					} //end if
+				} //end foreach
+			}
 
 			if ( false === $object_field_found ) {
 				$params->traverse = array( $params->name );

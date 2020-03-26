@@ -2,8 +2,7 @@
 /**
  * Name: Pages
  *
- * Description: Creates advanced URL structures using wildcards in order to enable the front-end display of Pods
- * Advanced Content Types. Not recommended for use with other content types.
+ * Description: Creates advanced URL structures using wildcards in order to enable the front-end display of Pods Advanced Content Types. Not recommended for use with other content types.
  *
  * Version: 2.3
  *
@@ -106,7 +105,7 @@ class Pods_Pages extends PodsComponent {
 		} else {
 			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 
-			add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ) );
+			add_action( 'add_meta_boxes_' . $this->object_type, array( $this, 'edit_page_form' ) );
 
 			add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
 			add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
@@ -374,13 +373,6 @@ class Pods_Pages extends PodsComponent {
 	 * @since 2.0.0
 	 */
 	public function edit_page_form() {
-
-		global $post_type;
-
-		if ( $this->object_type != $post_type ) {
-			return;
-		}
-
 		add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
 	}
 

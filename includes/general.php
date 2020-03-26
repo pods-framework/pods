@@ -834,6 +834,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'fields'     => null,
 		'label'      => null,
 		'thank_you'  => null,
+		'not_found'  => null,
 		'view'       => null,
 		'cache_mode' => 'none',
 		'expires'    => 0,
@@ -876,13 +877,20 @@ function pods_shortcode_run( $tags, $content = null ) {
 	if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
 		$has_query_tags = array_intersect_key( array_diff( $tags, $defaults ), $default_query_tags );
 
-		if ( ( in_the_loop() || is_singular() ) && ! $has_query_tags ) {
-			$pod = pods( get_post_type(), get_the_ID(), false );
+		// Only allow revert to current object if there are no query tags.
+		if ( ! $has_query_tags ) {
 
-			if ( ! empty( $pod ) ) {
-				$tags['name'] = get_post_type();
-				$id           = get_the_ID();
-				$tags['id']   = get_the_ID();
+			// Archives, Post type archives, singular posts.
+			if ( in_the_loop() ) {
+				$pod = pods( get_post_type(), get_the_ID(), false );
+
+				if ( ! empty( $pod ) ) {
+					$id           = get_the_ID();
+					$tags['id']   = $id;
+					$tags['name'] = get_post_type();
+				}
+			} else {
+				$tags['use_current'] = true;
 			}
 		}
 
@@ -1083,7 +1091,15 @@ function pods_shortcode_run( $tags, $content = null ) {
 		echo $pod->pagination( $tags['pagination_label'] );
 	}
 
-	echo $pod->template( $tags['template'], $content );
+	$content = $pod->template( $tags['template'], $content );
+	$content = trim( $content );
+
+	if ( empty( $content ) && ! empty( $tags['not_found'] ) ) {
+		$content = $pod->do_magic_tags( $tags['not_found'] );
+	}
+
+	// phpcs:ignore
+	echo $content;
 
 	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array(
 		$tags['pagination_location'], array(
@@ -1536,97 +1552,152 @@ function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null
 }
 
 /**
- * Get a field value from a Pod
+ * Get a field value from a Pod.
  *
- * @param string       $pod    The pod name
- * @param mixed        $id     (optional) The ID or slug, to load a single record; Provide array of $params to run
- *                             'find'
- * @param string|array $name   The field name, or an associative array of parameters
- * @param boolean      $single (optional) For tableless fields, to return the whole array or the just the first item
+ * @param string|null  $pod    The pod name.
+ * @param mixed|null   $id     The ID or slug of the item.
+ * @param string|array $name   The field name, or an associative array of parameters.
+ * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
  *
- * @return mixed Field value
+ * @return mixed Field value.
  *
  * @since 2.1.0
  */
-function pods_field( $pod, $id = false, $name = null, $single = false ) {
+function pods_field( $pod, $id = null, $name = null, $single = false ) {
 
 	// allow for pods_field( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
 		$single = (boolean) $id;
 
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
 		$pod = get_post_type();
 		$id  = get_the_ID();
 	}
 
-	$pod = pods( $pod, $id );
+	$pod_object = pods( $pod, $id );
 
-	if ( is_object( $pod ) ) {
-		return $pod->field( $name, $single );
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->field( $name, $single );
 	}
 
 	return null;
 }
 
 /**
- * Get a field display value from a Pod
+ * Get a field display value from a Pod.
  *
- * @param string       $pod    The pod name
- * @param mixed        $id     (optional) The ID or slug, to load a single record; Provide array of $params to run
- *                             'find'
- * @param string|array $name   The field name, or an associative array of parameters
- * @param boolean      $single (optional) For tableless fields, to return the whole array or the just the first item
+ * @param string|null  $pod    The pod name.
+ * @param mixed|null   $id     The ID or slug of the item.
+ * @param string|array $name   The field name, or an associative array of parameters.
+ * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
  *
- * @return mixed Field value
+ * @return mixed Field value.
  *
  * @since 2.1.0
  */
-function pods_field_display( $pod, $id = false, $name = null, $single = false ) {
+function pods_field_display( $pod, $id = null, $name = null, $single = false ) {
 
 	// allow for pods_field_display( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
 		$single = (boolean) $id;
 
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
 		$pod = get_post_type();
 		$id  = get_the_ID();
 	}
 
-	$pod = pods( $pod, $id );
+	$pod_object = pods( $pod, $id );
 
-	if ( is_object( $pod ) ) {
-		return $pod->display( $name, $single );
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->display( $name, $single );
 	}
 
 	return null;
 }
 
 /**
- * Get a field raw value from a Pod
+ * Get a field raw value from a Pod.
  *
- * @param string       $pod    The pod name
- * @param mixed        $id     (optional) The ID or slug, to load a single record; Provide array of $params to run
- *                             'find'
- * @param string|array $name   The field name, or an associative array of parameters
- * @param boolean      $single (optional) For tableless fields, to return the whole array or the just the first item
+ * @param string|null  $pod    The pod name.
+ * @param mixed|null   $id     The ID or slug of the item.
+ * @param string|array $name   The field name, or an associative array of parameters.
+ * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
  *
- * @return mixed Field value
+ * @return mixed Field value.
  *
  * @since 2.1.0
  */
-function pods_field_raw( $pod, $id = false, $name = null, $single = false ) {
+function pods_field_raw( $pod, $id = null, $name = null, $single = false ) {
 
 	// allow for pods_field_raw( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
 		$single = (boolean) $id;
 
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
 		$pod = get_post_type();
 		$id  = get_the_ID();
 	}
 
-	return pods( $pod, $id )->raw( $name, $single );
+	$pod_object = pods( $pod, $id );
 
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->raw( $name, $single );
+	}
+
+	return null;
+
+}
+
+/**
+ * Update a field value for a Pod.
+ *
+ * @param string|null  $pod   The pod name.
+ * @param mixed|null   $id    The ID or slug of the item.
+ * @param string|array $name  The field name, or an associative array of parameters.
+ * @param boolean      $value Value to save.
+ *
+ * @return int|false The item ID or false if not saved.
+ *
+ * @since 2.7.17
+ */
+function pods_field_update( $pod, $id = null, $name = null, $value = null ) {
+
+	// allow for pods_field( 'field_name' );
+	if ( null === $name ) {
+		$name  = $pod;
+		$value = $id;
+
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
+		$pod = get_post_type();
+		$id  = get_the_ID();
+	}
+
+	$pod_object = pods( $pod, $id );
+
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->save( $name, $value );
+	}
+
+	return false;
 }
 
 /**

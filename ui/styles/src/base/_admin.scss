@@ -4,11 +4,11 @@
 
 .pods-admin .pods-leaf-watermark-right {
 	position: fixed;
-	width: 236px;
-	height: 178px;
-	bottom: 50px;
-	right: 16px;
+	width: 250px;
+	bottom: -50px;
+	right: -50px;
 	z-index: -1;
+	opacity: 0.1;
 }
 
 .pods-admin .pods_floatmenu {
@@ -628,5 +628,192 @@ body[class*="settings_page_pods-"] {
 		width: 100%;
 		float: none;
 		clear: both;
+	}
+}
+
+/* Pods Admin - Friends of Pods Callout
+======================= */
+.pods-admin--flex {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-align: start;
+	-ms-flex-align: start;
+	align-items: flex-start;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
+}
+
+.pods-admin--flex > * {
+	flex-grow: 1;
+}
+
+.pods-admin_friends-callout_container {
+	min-width: 250px;
+	width: 100%;
+	max-width: 100%;
+	border: 1px solid #e5e5e5;
+	border-bottom: 5px solid #95bf3b;
+	background: white;
+	position: relative;
+}
+
+@media (min-width: 851px) {
+	.pods-admin--flex {
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+			-ms-flex-direction: row;
+				flex-direction: row;
+	}
+
+	.pods-admin_friends-callout_container {
+		max-width: 250px;
+		margin-left: 20px;
+		margin-top: 52px;
+	}
+}
+
+.pods-admin_friends-callout_logo-container {
+	width: calc(100% - 40px);
+	max-height: 70px;
+	background-color: #95BF3B;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: center;
+		-ms-flex-pack: center;
+			justify-content: center;
+	padding: 23px 20px 20px;
+}
+
+.pods-admin_friends-callout_logo-container svg {
+	width: 80%;
+}
+
+.pods-admin_friends-callout_content-container {
+	padding: 0 20px 20px;
+}
+
+.pods-admin_friends-callout_close {
+	background: none;
+	border: none;
+	position: absolute;
+	top: 4px;
+	right: 5px;
+	z-index: 999;
+	width: 25px;
+	height: 25px;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-transition: 300ms ease background-color;
+	-o-transition: 300ms ease background-color;
+	transition: 300ms ease background-color;
+	border-radius: 100%;
+
+	&:hover {
+		background-color: #85ab33;
+		cursor: pointer;
+	}
+
+	svg {
+		width: 15px;
+		height: 15px;
+		display: block;
+		fill: white;
+		position: absolute;
+		top: 55%;
+		left: 50%;
+		-webkit-transform: translate(-51%, -50%);
+		-ms-transform: translate(-51%, -50%);
+			transform: translate(-51%, -50%);
+	}
+}
+
+.pods-admin_friends-callout_logo {
+	width: 100%;
+	max-width: 175px;
+}
+
+.pods-admin_friends-callout_headline {
+	font-size: 21px;
+	line-height: 1.3;
+	font-weight: 100;
+	margin-bottom: .5em;
+}
+
+.pods-admin_friends-callout_button-group {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: justify;
+		-ms-flex-pack: justify;
+			justify-content: space-between;
+	-webkit-box-align: center;
+		-ms-flex-align: center;
+			align-items: center;
+}
+
+.pods-admin_friends-callout_button {
+	padding: 0;
+	color: #444;
+	display: block;
+	font-weight: 600;
+	-webkit-transition: 300ms ease color;
+	-o-transition: 300ms ease color;
+	transition: 300ms ease color;
+
+	&:hover {
+		color: #95bf3b;
+	}
+}
+
+.pods-admin_friends-callout_button--join {
+	padding: 8px 10px;
+	color: #444;
+	background: #f6f6e8;
+	display: block;
+	text-align: center;
+	-webkit-transition: 300ms ease all;
+	-o-transition: 300ms ease all;
+	transition: 300ms ease all;
+	font-weight: 600;
+	text-transform: uppercase;
+	text-decoration: none;
+	border: 1px solid #f6f6e8;
+
+	&:hover {
+		background: #ececce;
+		color: #000;
+	}
+
+	&:last-child {
+		background: #95bf3b;
+		border: 1px solid #f6f6e8;
+		color: #f6f6e8;
+
+		&:hover {
+			background: #85ab33;
+			color: #fff;
+		}
+	}
+}
+
+.pods-admin_friends-you {
+	font-weight: 700;
+	font-size: 24px;
+}
+
+.pods-admin_friends-callout_date {
+	display: block;
+	font-size: 70%;
+}
+
+@media (min-width: 1600px) {
+	.pods-admin_friends-callout_container {
+		margin-left: 40px;
+		margin-right: 80px;
 	}
 }

@@ -3,9 +3,9 @@ Contributors: sc0ttkclark, pglewis, jimtrue, keraweb, quasel, jamesgol, ramoonus
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.5
-Tested up to: 5.3
+Tested up to: 5.4
 Requires PHP: 5.3
-Stable tag: 2.7.16.2
+Stable tag: 2.7.17-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,39 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.17 - March 26th 2020 =
+
+**New Features & Enhancements**
+* Added: New callout for our Friends of Pods program will show up on the Pods Admin > Pods list so we can let people know how to donate. #5571 (@nicdford, @sc0ttkclark, @JoryHogeveen)
+* Added: Freemius integration to support our new Friends of Pods add-ons and enable us to let people opt-in to usage stats for planning future compatibility decisions.  #5624 (@sc0ttkclark)
+* Added: New `not_found` tag to the Pods shortcode to return default string if no output is empty. #5580 (@JoryHogeveen)
+* Added: New hooks when saving field table definitions (table-based Pods). #5623 (@sc0ttkclark)
+* Added: New custom multi-relationship display format. #5612 (@JoryHogeveen)
+* Added: Support traversing into post thumbnails objects. #5610 (@JoryHogeveen)
+* Compatibility: Add ACF backwards compatibility functions/shortcode. #4855 (@sc0ttkclark)
+* Compatibility: WordPress 5.4 - Add user Pod fields to privacy export data. #5606 (@JoryHogeveen)
+* Compatibility: Match WordPress 5.4 CSS changes. #5608 (@JoryHogeveen)
+* Enhancement: Shortcodes now automatically revert to the current queried object. #5598 (@JoryHogeveen)
+* Enhancement: Add "full" to available image sizes. #5185 (@JoryHogeveen)
+* Enhancement: Set Pods current queried object detection based on class instances instead of class parameters. #5617 (@JoryHogeveen)
+* Docs: Update inline docs for pick field selected logic. #5014 & #5017 (@sc0ttkclark)
+
+**Bug Fixes**
+* Fixed: Date/Time - Correct empty value validation. #5534 & #5544 (@JoryHogeveen)
+* Fixed: Date/Time - Allow midnight (00:00:00) as time value. #5616 (@JoryHogeveen)
+* Fixed: Number/Currency - Parsing error for number format 9'999.99. #5559 & #5597 (@JoryHogeveen)
+* Fixed: Number/Currency - Do not set default value of `0` if field is empty. #5539 (@JoryHogeveen)
+* Fixed: CLI export/export-item commands. #5041 (@0xLBF)
+* Fixed: Allow No (0) as an answer for radio and select boolean fields. #5549 (@JoryHogeveen)
+* Fixed: Prevent get_meta() cache loop. #5577 (@JoryHogeveen)
+* Fixed: Pods component descriptions. #5543 (@JoryHogeveen)
+* Fixed: PHP 7.4 - Array and string offset access syntax with curly braces is deprecated. #5582 (@JoryHogeveen)
+* Fixed: PHP 7.4 - Trying to access array offset on value of type bool. #5556 & #5615 (@JoryHogeveen)
+* Fixed: PHP 7.4 - Array access notices. #5631 (@JoryHogeveen)
+* Fixed: Replaced hook used for meta boxes in admin for custom component integrations to avoid deprecated notices from WordPress. #5622 (@sc0ttkclark)
+* Fixed: Prevented potential fatal errors on Pod Template editor screen when pod configuration is broken. #5622 (@sc0ttkclark)
+* Docs: Link to Gallery Documentation in Image field inline help doc. #5541 (@wpacademy)
 
 = 2.7.16.2 - November 14th 2019 =
 

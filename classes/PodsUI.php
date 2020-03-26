@@ -2830,7 +2830,7 @@ class PodsUI {
 		 * @param array  $custom_container_classes List of custom classes to use.
 		 * @param PodsUI $this                     PodsUI instance.
 		 */
-		$custom_container_classes = apply_filters( 'pods_ui_manage_custom_container_classes', [] );
+		$custom_container_classes = apply_filters( 'pods_ui_manage_custom_container_classes', array() );
 
 		$custom_container_classes = array_map( 'sanitize_html_class', $custom_container_classes );
 		$custom_container_classes = implode( ' ', $custom_container_classes );

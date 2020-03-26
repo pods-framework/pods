@@ -3001,6 +3001,7 @@ class PodsAdmin {
 		}
 
 		// Add our custom callouts.
+		add_filter( 'pods_ui_manage_custom_container_classes', array( $this, 'admin_manage_container_class' ) );
 		add_action( 'pods_ui_manage_after_container', array( $this, 'admin_manage_callouts' ) );
 
 		pods_ui( $ui );

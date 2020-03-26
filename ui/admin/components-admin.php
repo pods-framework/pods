@@ -1,4 +1,4 @@
-<div class="wrap pods-admin pods-admin--flex">
+<div class="wrap pods-admin">
 	<div id="icon-pods" class="icon32"><br /></div>
 	<form action="" method="post" class="pods-submittable">
 		<div class="pods-submittable-fields">

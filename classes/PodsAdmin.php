@@ -1059,17 +1059,20 @@ class PodsAdmin {
 		}
 
 		// Add our custom callouts.
+		add_filter( 'pods_ui_manage_custom_container_classes', array( $this, 'admin_manage_container_class' ) );
 		add_action( 'pods_ui_manage_after_container', array( $this, 'admin_manage_callouts' ) );
 
 		pods_ui( $ui );
 	}
 
 	/**
-	 * Add callouts to let admins know about certain things.
+	 * Get list of callouts to show.
 	 *
 	 * @since 2.7.17
+	 *
+	 * @return array List of callouts.
 	 */
-	public function admin_manage_callouts() {
+	public function get_callouts() {
 		$force_callouts = false;
 
 		$page = pods_v( 'page' );
@@ -1086,6 +1089,7 @@ class PodsAdmin {
 
 		$disable_pods = pods_v( 'pods_callout_dismiss' );
 
+		// Disable Friends of Pods 2020 callout.
 		if ( 'friends_2020' === $disable_pods ) {
 			$callouts['friends_2020'] = 0;
 
@@ -1096,18 +1100,57 @@ class PodsAdmin {
 			update_option( 'pods_callouts', $callouts );
 		}
 
-		$callout_friends = ! isset( $callouts['friends_2020'] ) || 1 === (int) $callouts['friends_2020'] || $force_callouts;
+		// Handle Friends of Pods 2020 callout logic.
+		$callouts['friends_2020'] = ! isset( $callouts['friends_2020'] ) || $callouts['friends_2020'] || $force_callouts ? 1 : 0;
 
 		/**
-		 * Allow hooking into whether or not the Friends callout should show.
+		 * Allow hooking into whether or not the specific callouts should show.
 		 *
 		 * @since 2.7.17
 		 *
-		 * @param boolean $callout_friends Whether to enable the callout.
+		 * @param array List of callouts to enable.
 		 */
-		$callout_friends = apply_filters( 'pods_admin_callouts_friends', $callout_friends );
+		$callouts = apply_filters( 'pods_admin_callouts', $callouts );
 
-		if ( $callout_friends ) {
+		return $callouts;
+	}
+
+	/**
+	 * Add class to container if we have callouts to show.
+	 *
+	 * @since 2.7.17
+	 *
+	 * @param array $classes List of classes to use.
+	 *
+	 * @return array List of classes to use.
+	 */
+	public function admin_manage_container_class( $classes ) {
+		$callouts = $this->get_callouts();
+
+		if ( ! empty( $callouts ) ) {
+			$classes[] = 'pods-admin--flex';
+		}
+
+		return $classes;
+	}
+
+	/**
+	 * Add callouts to let admins know about certain things.
+	 *
+	 * @since 2.7.17
+	 */
+	public function admin_manage_callouts() {
+		$force_callouts = false;
+
+		$page = pods_v( 'page' );
+
+		if ( in_array( $page, array( 'pods-settings', 'pods-help' ), true ) ) {
+			$force_callouts = true;
+		}
+
+		$callouts = $this->get_callouts();
+
+		if ( ! empty( $callouts['friends_2020'] ) ) {
 ?>
 		<div class="pods-admin_friends-callout_container">
 			<?php if ( ! $force_callouts ) : ?>

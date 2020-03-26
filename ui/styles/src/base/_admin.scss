@@ -633,7 +633,7 @@ body[class*="settings_page_pods-"] {
 
 /* Pods Admin - Friends of Pods Callout
 ======================= */
-.pods-admin {
+.pods-admin--flex {
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
@@ -646,7 +646,7 @@ body[class*="settings_page_pods-"] {
 	        flex-direction: column;
 }
 
-.pods-admin > * {
+.pods-admin--flex > * {
 	flex-grow: 1;
 }
 
@@ -661,7 +661,7 @@ body[class*="settings_page_pods-"] {
 }
 
 @media (min-width: 851px) {
-	.pods-admin {
+	.pods-admin--flex {
 		-webkit-box-orient: horizontal;
 		-webkit-box-direction: normal;
 			-ms-flex-direction: row;

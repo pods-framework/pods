@@ -1,4 +1,4 @@
-<div class="wrap pods-admin">
+<div class="wrap pods-admin pods-admin--flex">
 	<div class="pods-admin__content-container">
 		<div id="icon-pods" class="icon32"><br /></div>
 		<h2><?php _e( 'Pods Help', 'pods' ); ?></h2>

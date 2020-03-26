@@ -1,4 +1,4 @@
-<div class="wrap pods-admin">
+<div class="wrap pods-admin pods-admin--flex">
 	<div class="pods-admin__content-container">
 		<form action="" method="post">
 

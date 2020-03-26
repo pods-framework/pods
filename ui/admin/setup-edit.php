@@ -155,7 +155,7 @@ $pod_post = get_post( $pod['id'] );
 /** This action is documented in wp-admin/edit-form-advanced.php */
 do_action( 'add_meta_boxes', $pod_post->post_type, $pod_post );
 ?>
-<div class="wrap pods-admin">
+<div class="wrap pods-admin pods-admin--flex">
 <div id="icon-pods" class="icon32"><br /></div>
 <form action="" method="post" class="pods-submittable pods-nav-tabbed">
 <div class="pods-submittable-fields">

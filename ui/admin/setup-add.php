@@ -16,7 +16,7 @@
 	}
 ?>
 
-<div class="wrap pods-admin">
+<div class="wrap pods-admin pods-admin--flex">
 	<script>
 		var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
 	</script>

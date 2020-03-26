@@ -1021,6 +1021,8 @@ class PodsMeta {
 		 */
 		$groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
 
+		// @todo Pull in the real groups for the pod for backcompat.
+
 		$groups_cache[ $type . '/' . $name ] = $groups;
 
 		return $groups_cache[ $type . '/' . $name ];

@@ -1127,6 +1127,9 @@ class PodsAdmin {
 	public function admin_manage_container_class( $classes ) {
 		$callouts = $this->get_callouts();
 
+		// Only get enabled callouts.
+		$callouts = array_filter( $callouts );
+
 		if ( ! empty( $callouts ) ) {
 			$classes[] = 'pods-admin--flex';
 		}

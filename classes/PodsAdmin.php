@@ -1059,6 +1059,8 @@ class PodsAdmin {
 		}
 
 		// Add our custom callouts.
+		$this->handle_callouts_updates();
+
 		add_filter( 'pods_ui_manage_custom_container_classes', array( $this, 'admin_manage_container_class' ) );
 		add_action( 'pods_ui_manage_after_container', array( $this, 'admin_manage_callouts' ) );
 
@@ -1084,20 +1086,9 @@ class PodsAdmin {
 		$callouts = get_option( 'pods_callouts' );
 
 		if ( ! $callouts ) {
-			$callouts = array();
-		}
-
-		$disable_pods = pods_v( 'pods_callout_dismiss' );
-
-		// Disable Friends of Pods 2020 callout.
-		if ( 'friends_2020' === $disable_pods ) {
-			$callouts['friends_2020'] = 0;
-
-			update_option( 'pods_callouts', $callouts );
-		} elseif ( 'reset' === $disable_pods ) {
-			$callouts = array();
-
-			update_option( 'pods_callouts', $callouts );
+			$callouts = array(
+				'friends_2020' => 1,
+			);
 		}
 
 		// Handle Friends of Pods 2020 callout logic.
@@ -1113,6 +1104,32 @@ class PodsAdmin {
 		$callouts = apply_filters( 'pods_admin_callouts', $callouts );
 
 		return $callouts;
+	}
+
+	/**
+	 * Handle callouts update logic.
+	 *
+	 * @since 2.7.17
+	 */
+	public function handle_callouts_updates() {
+		$callouts = get_option( 'pods_callouts' );
+
+		if ( ! $callouts ) {
+			$callouts = array();
+		}
+
+		$disable_pods = pods_v( 'pods_callout_dismiss' );
+
+		// Disable Friends of Pods 2020 callout.
+		if ( 'friends_2020' === $disable_pods ) {
+			$callouts['friends_2020'] = 0;
+
+			update_option( 'pods_callouts', $callouts );
+		} elseif ( 'reset' === $disable_pods ) {
+			$callouts = array();
+
+			update_option( 'pods_callouts', $callouts );
+		}
 	}
 
 	/**
@@ -3004,6 +3021,8 @@ class PodsAdmin {
 		}
 
 		// Add our custom callouts.
+		$this->handle_callouts_updates();
+
 		add_filter( 'pods_ui_manage_custom_container_classes', array( $this, 'admin_manage_container_class' ) );
 		add_action( 'pods_ui_manage_after_container', array( $this, 'admin_manage_callouts' ) );
 
@@ -3152,6 +3171,8 @@ class PodsAdmin {
 	public function admin_help() {
 
 		// Add our custom callouts.
+		$this->handle_callouts_updates();
+
 		add_action( 'pods_admin_after_help', array( $this, 'admin_manage_callouts' ) );
 
 		pods_view( PODS_DIR . 'ui/admin/help.php', compact( array_keys( get_defined_vars() ) ) );

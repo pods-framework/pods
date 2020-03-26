@@ -2348,7 +2348,7 @@ class PodsUI {
 	public function export_fields_form() {
 
 		?>
-		<div class="wrap pods-admin pods-admin--flex pods-ui">
+		<div class="wrap pods-admin pods-ui">
 			<h2><?php echo __( 'Choose Export Fields', 'pods' ); ?></h2>
 
 			<form method="post" id="pods_admin_ui_export_form">

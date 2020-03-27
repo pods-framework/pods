@@ -244,7 +244,53 @@ class Test_PodsData extends Pods_UnitTestCase {
 
 	public function test_pods_serial_comma() {
 
-		$this->markTestIncomplete( 'not yet implemented' );
+		$values = array(
+			'test1',
+			'test2',
+			'test3',
+		);
+
+		$result = 'test1, test2, and test3';
+
+		$this->assertEquals( $result, pods_serial_comma( $values ) );
+
+		$args = array(
+			'serial' => false,
+		);
+
+		$result = 'test1, test2 and test3';
+
+		$this->assertEquals( $result, pods_serial_comma( $values, $args ) );
+
+		$args = array(
+			'separator' => ' | ',
+			'serial'    => false,
+		);
+
+		$result = 'test1 | test2 and test3';
+
+		$this->assertEquals( $result, pods_serial_comma( $values, $args ) );
+
+		$args = array(
+			'and'       => ' & ',
+			'serial'    => false,
+		);
+
+		$result = 'test1, test2 & test3';
+
+		$this->assertEquals( $result, pods_serial_comma( $values, $args ) );
+
+		$args = array(
+			'separator' => ' | ',
+			'and'       => ' | ',
+			'serial'    => false,
+		);
+
+		$result = 'test1 | test2 | test3';
+
+		$this->assertEquals( $result, pods_serial_comma( $values, $args ) );
+
+		//$this->markTestIncomplete( 'not yet implemented' );
 	}
 
 	public function test_pods_var_user() {

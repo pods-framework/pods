@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.4
 Requires PHP: 5.3
-Stable tag: 2.7.17
+Stable tag: 2.7.17.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -190,9 +190,18 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.17.1 - March 27th 2020 =
+
+**Bug Fixes**
+
+* Fixed: Double comma in custom pick display formats. #5637 (@JoryHogeveen)
+* Fixed: Auto `use_current` not working correctly outside the loop. #5636 (@JoryHogeveen)
+* Fixed: pods_trim() does not trim whitespaces by default. #5640 (@JoryHogeveen)
+
 = 2.7.17 - March 26th 2020 =
 
 **New Features & Enhancements**
+
 * Added: New callout for our Friends of Pods program will show up on the Pods Admin > Pods list so we can let people know how to donate. #5571 (@nicdford, @sc0ttkclark, @JoryHogeveen)
 * Added: Freemius integration to support our new Friends of Pods add-ons and enable us to let people opt-in to usage stats for planning future compatibility decisions.  #5624 (@sc0ttkclark)
 * Added: New `not_found` tag to the Pods shortcode to return default string if no output is empty. #5580 (@JoryHogeveen)
@@ -208,6 +217,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Docs: Update inline docs for pick field selected logic. #5014 & #5017 (@sc0ttkclark)
 
 **Bug Fixes**
+
 * Fixed: Date/Time - Correct empty value validation. #5534 & #5544 (@JoryHogeveen)
 * Fixed: Date/Time - Allow midnight (00:00:00) as time value. #5616 (@JoryHogeveen)
 * Fixed: Number/Currency - Parsing error for number format 9'999.99. #5559 & #5597 (@JoryHogeveen)
@@ -234,12 +244,14 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 = 2.7.16 - November 13th 2019 =
 
 **Enhancements**
+
 * Enhancement: CSS fixes for WP 5.3. #5501 (@JoryHogeveen)
 * Enhancement: Format traversed fields properly. #4932 (@jamesgol)
 * Enhancement: ACT list view pagination. #5510 (@JoryHogeveen)
 * Enhancement: Add PODS_SHORTCODE_ALLOW_EVALUATE_TAGS to debug info. #5310 (@JoryHogeveen)
 
 **Bug Fixes**
+
 * Fixed: Avoid SQL errors when using special magic tags. #5310 (@sc0ttkclark)
 * Fixed: Validate shortcode query tags before default to current object. #5520 (@JoryHogeveen)
 * Fixed: Unslash simple relationship values to support saving quoted values. #5517 (@JoryHogeveen)
@@ -262,12 +274,14 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 = 2.7.15 - September 5th 2019 =
 
 **Enhancements**
+
 * Enhancement: Add year range option to date & datetime fields. #5442 (@JoryHogeveen)
 * Enhancement: Support single select relationships in templates when using `[each]`. #4507 (@sc0ttkclark, @JoryHogeveen)
 * Enhancement: Prevent creation of Pods using reserved keywords from WordPress Codex and Pods. #5428 (@JoryHogeveen)
 * Enhancement: Allow all callables to be passed in magic tags. #5436 (@JoryHogeveen)
 
 **Bug Fixes**
+
 * Fixed: Always convert database value for date/time fields without timezone to maintain the actual value. #5423 & #5424 (@JoryHogeveen)
 * Fixed: Solve issues with saving date/time fields in other locales. #5444, #5421, #5415 & #5451 (@JoryHogeveen)
 * Fixed: Import from file with absolute path. #5430 (@mistraloz)

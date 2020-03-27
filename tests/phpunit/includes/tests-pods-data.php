@@ -111,7 +111,79 @@ class Test_PodsData extends Pods_UnitTestCase {
 
 	public function test_pods_trim() {
 
-		$this->markTestIncomplete( 'not yet implemented' );
+		$string = ' test ';
+
+		$this->assertEquals( 'test', pods_trim( $string ) );
+
+		$this->assertEquals( ' test', pods_trim( $string, null, 'r' ) );
+
+		$this->assertEquals( 'test ', pods_trim( $string, null, 'l' ) );
+
+		$string = ' test & ';
+
+		$this->assertEquals( 'test', pods_trim( $string, ' &' ) );
+
+		$this->assertEquals( ' test', pods_trim( $string, ' &', 'r' ) );
+
+		// Arrays.
+
+		$array = array(
+			' test ',
+			' test2 ',
+		);
+
+		$result = array(
+			'test',
+			'test2'
+		);
+
+		$this->assertEquals( $result, pods_trim( $array ) );
+
+		$result = array(
+			' test',
+			' test2'
+		);
+
+		$this->assertEquals( $result, pods_trim( $array, null, 'r' ) );
+
+		$array = array(
+			' test  & ',
+			' test2 ',
+		);
+
+		$result = array(
+			' test',
+			' test2'
+		);
+
+		$this->assertEquals( $result, pods_trim( $array, ' &', 'r' ) );
+
+		// Objects.
+
+		$object = new stdClass();
+		$object->test = ' test ';
+		$object->test2 = ' test2 ';
+
+		$result = new stdClass();
+		$result->test = 'test';
+		$result->test2 = 'test2';
+
+		$this->assertEquals( $result, pods_trim( $object ) );
+
+		$result->test = ' test';
+		$result->test2 = ' test2';
+
+		$this->assertEquals( $result, pods_trim( $object, null, 'r' ) );
+
+		$object->test = ' test  & ';
+		$object->test2 = ' test2 ';
+
+		$result->test = ' test';
+		$result->test2 = ' test2';
+
+		$this->assertEquals( $result, pods_trim( $object, ' &', 'r' ) );
+
+		//$this->markTestIncomplete( 'not yet implemented' );
 	}
 
 	public function test_pods_v() {
@@ -244,7 +316,53 @@ class Test_PodsData extends Pods_UnitTestCase {
 
 	public function test_pods_serial_comma() {
 
-		$this->markTestIncomplete( 'not yet implemented' );
+		$values = array(
+			'test1',
+			'test2',
+			'test3',
+		);
+
+		$result = 'test1, test2, and test3';
+
+		$this->assertEquals( $result, pods_serial_comma( $values ) );
+
+		$args = array(
+			'serial' => false,
+		);
+
+		$result = 'test1, test2 and test3';
+
+		$this->assertEquals( $result, pods_serial_comma( $values, $args ) );
+
+		$args = array(
+			'separator' => ' | ',
+			'serial'    => false,
+		);
+
+		$result = 'test1 | test2 and test3';
+
+		$this->assertEquals( $result, pods_serial_comma( $values, $args ) );
+
+		$args = array(
+			'and'       => ' & ',
+			'serial'    => false,
+		);
+
+		$result = 'test1, test2 & test3';
+
+		$this->assertEquals( $result, pods_serial_comma( $values, $args ) );
+
+		$args = array(
+			'separator' => ' | ',
+			'and'       => ' | ',
+			'serial'    => false,
+		);
+
+		$result = 'test1 | test2 | test3';
+
+		$this->assertEquals( $result, pods_serial_comma( $values, $args ) );
+
+		//$this->markTestIncomplete( 'not yet implemented' );
 	}
 
 	public function test_pods_var_user() {

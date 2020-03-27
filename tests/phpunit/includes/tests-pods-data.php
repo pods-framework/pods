@@ -300,7 +300,7 @@ class Test_PodsData extends Pods_UnitTestCase {
 		wp_set_current_user( $user_id );
 		$this->assertEquals(
 			get_current_user_id(),
-			pods_evaluate_tag( '{@user.id}' )
+			pods_evaluate_tag( '{@user.id}' ) // Should be `ID` but added lowercase for backwards compatibility.
 		);
 
 		//$this->markTestIncomplete( 'not yet implemented' );

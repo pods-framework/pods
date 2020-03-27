@@ -584,6 +584,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_user_logged_in() ) {
 					$user = get_userdata( get_current_user_id() );
 
+					// Prevent deprecation notice from WP.
+					if ( 'id' === $var ) {
+						$var = 'ID';
+					}
+
 					if ( isset( $user->{$var} ) ) {
 						$value = $user->{$var};
 					} elseif ( 'role' === $var ) {

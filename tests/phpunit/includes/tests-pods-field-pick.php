@@ -70,7 +70,7 @@ class Test_PodsField_Pick extends Pods_UnitTestCase {
 		$this->assertEquals( $expected, $this->field->display( $value, null, $options ) );
 
 		// no_serial display format.
-		$options[ 'pick_display_format_multi' ] = 'no_serial';
+		$options[ 'pick_display_format_multi' ] = 'non_serial';
 
 		$expected = 'item1, item2 and item3';
 

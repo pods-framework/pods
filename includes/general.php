@@ -894,7 +894,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			}
 		}
 
-		if ( empty( $tags['name'] ) ) {
+		if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
 			return '<p>' . __( 'Please provide a Pod name', 'pods' ) . '</p>';
 		}
 	}

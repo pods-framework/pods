@@ -238,27 +238,66 @@ class Test_PodsData extends Pods_UnitTestCase {
 		 * Special magic tags.
 		 * @link https://docs.pods.io/displaying-pods/magic-tags/special-magic-tags/
 		 */
-		$tests = array(
-			'{@prefix}'              => $wpdb->prefix,
-			'{@template-url}'        => get_template_directory_uri(),
-			'{@stylesheet-url}'      => get_stylesheet_directory_uri(),
-			'{@site-url}'            => site_url(),
-			'{@home-url}'            => home_url(),
-			'{@admin-url}'           => admin_url(),
-			'{@includes-url}'        => includes_url(),
-			'{@plugins-url}'         => plugins_url(),
-			'{@network-site-url}'    => network_site_url(),
-			'{@network-home-url}'    => network_home_url(),
-			'{@network-admin-url}'   => network_admin_url(),
-			'{@user-admin-url}'      => user_admin_url(),
-			'{@user.id}'             => get_current_user_id(),
-			'{@date.Y-m-d}'          => date_i18n( 'Y-m-d' ),
-			'{@date.Y-m-d|tomorrow}' => date_i18n( 'Y-m-d', strtotime( 'tomorrow' ) ),
+		$this->assertEquals(
+			$wpdb->prefix,
+			pods_evaluate_tag( '{@prefix}' )
 		);
-
-		foreach ( $tests as $tag => $value ) {
-			$this->assertEquals( $value, pods_evaluate_tags( $tag ) );
-		}
+		$this->assertEquals(
+			get_template_directory_uri(),
+			pods_evaluate_tag( '{@template-url}' )
+		);
+		$this->assertEquals(
+			get_stylesheet_directory_uri(),
+			pods_evaluate_tag( '{@stylesheet-url}' )
+		);
+		$this->assertEquals(
+			site_url(),
+			pods_evaluate_tag( '{@site-url}' )
+		);
+		$this->assertEquals(
+			home_url(),
+			pods_evaluate_tag( '{@home-url}' )
+		);
+		$this->assertEquals(
+			admin_url(),
+			pods_evaluate_tag( '{@admin-url}' )
+		);
+		$this->assertEquals(
+			includes_url(),
+			pods_evaluate_tag( '{@includes-url}' )
+		);
+		$this->assertEquals(
+			plugins_url(),
+			pods_evaluate_tag( '{@plugins-url}' )
+		);
+		$this->assertEquals(
+			network_site_url(),
+			pods_evaluate_tag( '{@network-site-url}' )
+		);
+		$this->assertEquals(
+			network_home_url(),
+			pods_evaluate_tag( '{@network-home-url}' )
+		);
+		$this->assertEquals(
+			network_admin_url(),
+			pods_evaluate_tag( '{@network-admin-url}' )
+		);
+		$this->assertEquals(
+			user_admin_url(),
+			pods_evaluate_tag( '{@user-admin-url}' )
+		);
+		$this->assertEquals(
+			get_current_user_id(),
+			pods_evaluate_tag( '{@user.id}' )
+		);
+		$this->assertEquals(
+			date_i18n( 'Y-m-d' ),
+			pods_evaluate_tag( '{@date.Y-m-d}' )
+		);
+		$this->assertEquals(
+			date_i18n( 'Y-m-d',
+			strtotime( 'tomorrow' ) ), pods_evaluate_tag( '{@date.Y-m-d|tomorrow}' )
+		);
 
 		//$this->markTestIncomplete( 'not yet implemented' );
 	}

@@ -895,7 +895,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		}
 
 		if ( empty( $tags['name'] ) ) {
-			return '<p>Please provide a Pod name</p>';
+			return '<p>' . __( 'Please provide a Pod name', 'pods' ) . '</p>';
 		}
 	}
 
@@ -912,7 +912,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( empty( $content ) && empty( $tags['pods_page'] ) && empty( $tags['template'] ) && empty( $tags['field'] ) && empty( $tags['form'] ) ) {
-		return '<p>Please provide either a template or field name</p>';
+		return '<p>' . __( 'Please provide either a template or field name', 'pods' ) . '</p>';
 	}
 
 	if ( ! $tags['use_current'] && ! isset( $id ) ) {

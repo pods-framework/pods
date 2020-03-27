@@ -227,9 +227,40 @@ class Test_PodsData extends Pods_UnitTestCase {
 		$this->assertEquals( 'sd', pods_mb_substr( 'asdf', 1, 2 ) );
 	}
 
+	/**
+	 * @covers ::pods_evaluate_tags
+	 * @covers ::pods_evaluate_tag
+	 */
 	public function test_pods_evaluate_tags() {
+		global $wpdb;
 
-		$this->markTestIncomplete( 'not yet implemented' );
+		/**
+		 * Special magic tags.
+		 * @link https://docs.pods.io/displaying-pods/magic-tags/special-magic-tags/
+		 */
+		$tests = array(
+			'{@prefix}'             => $wpdb->prefix,
+			'{@template-url}'       => get_template_directory_uri(),
+			'{@stylesheet-url}'     => get_stylesheet_directory_uri(),
+			'{@site-url}'           => site_url(),
+			'{@home-url}'           => home_url(),
+			'{@admin-url}'          => admin_url(),
+			'{@includes-url}'       => includes_url(),
+			'{@plugins-url}'        => plugins_url(),
+			'{@network-site-url}'   => network_site_url(),
+			'{@network-home-url}'   => network_home_url(),
+			'{@network-admin-url}'  => network_admin_url(),
+			'{@user-admin-url}'     => user_admin_url(),
+			'{@user.id}'            => get_current_user_id(),
+			'{@date.Y-m-d}'          => date_i18n( 'Y-m-d' ),
+			'{@date.Y-m-d|tomorrow}' => date_i18n( 'Y-m-d', strtotime( 'tomorrow' ) ),
+		);
+
+		foreach ( $tests as $tag => $value ) {
+			$this->assertEquals( $value, pods_evaluate_tags( $tag ) );
+		}
+
+		//$this->markTestIncomplete( 'not yet implemented' );
 	}
 
 	public function test_pods_evaluate_tag_sanitized() {

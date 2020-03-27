@@ -950,7 +950,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( empty( $pod ) || ! $pod->valid() ) {
-		return '<p>Pod not found</p>';
+		return '<p>' . __( 'Pod not found', 'pods' ) . '</p>';
 	}
 
 	$found = 0;

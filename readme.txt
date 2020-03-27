@@ -192,7 +192,11 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 = 2.7.17.1 - March 27th 2020 =
 
+**Bug Fixes**
 
+* Fixed: Double comma in custom pick display formats. #5637 (@JoryHogeveen)
+* Fixed: Auto `use_current` not working correctly outside the loop. #5636 (@JoryHogeveen)
+* Fixed: pods_trim() does not trim whitespaces by default. #5640 (@JoryHogeveen)
 
 = 2.7.17 - March 26th 2020 =
 

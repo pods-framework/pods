@@ -3,7 +3,7 @@ namespace Pods_Unit_Tests;
 
 use PodsField_Pick;
 
-require PODS_TEST_PLUGIN_DIR . '/classes/fields/pick.php';
+require_once PODS_TEST_PLUGIN_DIR . '/classes/fields/pick.php';
 
 /**
  * Class Test_PodsField_Boolean

@@ -24,4 +24,4 @@
 - [ ] My code is tested.
 - [ ] My code follows the WordPress code style.
 - [ ] My code follows has proper inline documentation.
-- [ ] My code include PHP Unit Tests (if applicable)
+- [ ] My code includes PHP Unit Tests (if applicable)

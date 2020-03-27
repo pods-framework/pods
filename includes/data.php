@@ -292,13 +292,18 @@ function pods_trim( $input, $charlist = null, $lr = null ) {
 			$output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
 		}
 	} else {
-		if ( 'l' === $lr ) {
-			$output = ltrim( $input, $charlist );
-		} elseif ( 'r' === $lr ) {
-			$output = rtrim( $input, $charlist );
-		} else {
-			$output = trim( $input, $charlist );
+		$args = array( $input );
+		if ( null !== $charlist ) {
+			$args[] = $charlist;
 		}
+		if ( 'l' === $lr ) {
+			$function = 'ltrim';
+		} elseif ( 'r' === $lr ) {
+			$function = 'rtrim';
+		} else {
+			$function = 'trim';
+		}
+		$output = call_user_func_array( $function, $args );
 	}//end if
 
 	return $output;

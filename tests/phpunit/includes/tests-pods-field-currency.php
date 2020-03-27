@@ -3,7 +3,7 @@ namespace Pods_Unit_Tests;
 
 use PodsField_Currency;
 
-require PODS_TEST_PLUGIN_DIR . '/classes/fields/currency.php';
+require_once PODS_TEST_PLUGIN_DIR . '/classes/fields/currency.php';
 
 /**
  * Class Test_PodsField_Boolean

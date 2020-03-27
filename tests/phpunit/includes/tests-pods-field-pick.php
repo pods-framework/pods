@@ -38,7 +38,7 @@ class Test_PodsField_Pick extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @dataProvider formatDefaultsProvider
+	 * Single values.
 	 */
 	public function test_format_defaults() {
 		$options = $this->defaultOptions;

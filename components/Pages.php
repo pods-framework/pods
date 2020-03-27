@@ -2,6 +2,8 @@
 /**
  * Name: Pages
  *
+ * Menu Name: Pod Pages
+ *
  * Description: Creates advanced URL structures using wildcards in order to enable the front-end display of Pods Advanced Content Types. Not recommended for use with other content types.
  *
  * Version: 2.3

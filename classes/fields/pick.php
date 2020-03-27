@@ -748,8 +748,9 @@ class PodsField_Pick extends PodsField {
 		);
 
 		if ( 'custom' === pods_v( static::$type . '_display_format_multi', $options, 'default' ) ) {
-			$separator = pods_v( static::$type . '_display_format_separator', $options, ', ' );
+			$args['serial'] = false;
 
+			$separator = pods_v( static::$type . '_display_format_separator', $options, ', ' );
 			if ( ! empty( $separator ) ) {
 				$args['separator'] = $separator;
 

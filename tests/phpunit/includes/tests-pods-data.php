@@ -287,16 +287,19 @@ class Test_PodsData extends Pods_UnitTestCase {
 			pods_evaluate_tag( '{@user-admin-url}' )
 		);
 		$this->assertEquals(
-			get_current_user_id(),
-			pods_evaluate_tag( '{@user.id}' )
-		);
-		$this->assertEquals(
 			date_i18n( 'Y-m-d' ),
 			pods_evaluate_tag( '{@date.Y-m-d}' )
 		);
 		$this->assertEquals(
 			date_i18n( 'Y-m-d',
 			strtotime( 'tomorrow' ) ), pods_evaluate_tag( '{@date.Y-m-d|tomorrow}' )
+		);
+
+		// First log in the user.
+		wp_set_current_user( 1 );
+		$this->assertEquals(
+			get_current_user_id(),
+			pods_evaluate_tag( '{@user.id}' )
 		);
 
 		//$this->markTestIncomplete( 'not yet implemented' );

@@ -90,6 +90,7 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 
 	/**
 	 * @dataProvider formatDecimalDashProvider
+	 * @covers ::trim_decimals
 	 */
 	public function test_format_decimal_dash( $value, $expected ) {
 		$options = $this->defaultOptions;
@@ -192,6 +193,160 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 			array( "1000", "1,000.00 $" ),
 			array( "10000", "10,000.00 $" ),
 			array( "1000000", "1,000,000.00 $" ),
+		);
+	}
+
+	/**
+	 * @dataProvider saveDefaultsProvider
+	 */
+	public function test_save_defaults( $value, $expected ) {
+		$options = $this->defaultOptions;
+
+		$this->assertEquals( $expected, $this->field->format( $value, null, $options ) );
+	}
+
+	public function saveDefaultsProvider() {
+
+		return array(
+			array( "-1.00", "-1.00" ),
+			array( "0.00", "0.00" ),
+			array( "1.00", "1.00" ),
+			array( "1.50", "1.50" ),
+			array( "10.00", "10.00" ),
+			array( "10.01", "10.01" ),
+			array( "100.00", "100.00" ),
+			array( "1,000.00", "1000.00" ),
+			array( "10,000.00", "10000.00" ),
+			array( "1,000,000.00", "1000000.00" ),
+		);
+	}
+
+	/**
+	 * @dataProvider saveDecimalCommaProvider
+	 */
+	public function test_save_decimal_comma( $value, $expected ) {
+		$options = $this->defaultOptions;
+		$options[ 'currency_format' ] = '9.999,99';
+
+		$this->assertEquals( $expected, $this->field->format( $value, null, $options ) );
+	}
+
+	public function saveDecimalCommaProvider() {
+
+		return array(
+			array( "-1,00", "-1.00" ),
+			array( "0,00", "0.00" ),
+			array( "1,00", "1.00" ),
+			array( "1,50", "1.50" ),
+			array( "10,00", "10.00" ),
+			array( "10,01", "10.01" ),
+			array( "100,00", "100.00" ),
+			array( "1.000,00", "1000.00" ),
+			array( "10.000,00", "10000.00" ),
+			array( "1.000.000,00", "1000000.00" ),
+		);
+	}
+
+	/**
+	 * @dataProvider saveDecimalDashProvider
+	 */
+	public function test_save_decimal_dash( $value, $expected ) {
+		$options = $this->defaultOptions;
+		$options[ 'currency_decimal_handling' ] = 'dash';
+
+		$this->assertEquals( $expected, $this->field->format( $value, null, $options ) );
+	}
+
+	public function saveDecimalDashProvider() {
+
+		return array(
+			array( "-1.-", "-1.00" ),
+			array( "0.-", "0.00" ),
+			array( "1.-", "1.00" ),
+			array( "1.50", "1.50" ),
+			array( "10.-", "10.00" ),
+			array( "10.01", "10.01" ),
+			array( "100.-", "100.00" ),
+			array( "1,000.-", "1000.00" ),
+			array( "10,000.-", "10000.00" ),
+			array( "1,000,000.-", "1000000.00" ),
+		);
+	}
+
+	/**
+	 * @dataProvider saveDefaultsCurrencyProvider
+	 */
+	public function test_save_defaults_currency( $value, $expected ) {
+		$options = $this->defaultOptions;
+
+		$this->assertEquals( $expected, $this->field->display( $value, null, $options ) );
+	}
+
+	public function saveDefaultsCurrencyProvider() {
+
+		return array(
+			array( "$-1.00", "-1.00" ),
+			array( "$0.00", "0.00" ),
+			array( "$1.00", "1.00" ),
+			array( "$1.50", "1.50" ),
+			array( "$10.00", "10.00" ),
+			array( "$10.01", "10.01" ),
+			array( "$100.00", "100.00" ),
+			array( "$1,000.00", "1000.00" ),
+			array( "$10,000.00", "10000.00" ),
+			array( "$1,000,000.00", "1000000.00" ),
+		);
+	}
+
+	/**
+	 * @dataProvider saveFormatAfterProvider
+	 */
+	public function test_save_format_after( $value, $expected ) {
+		$options = $this->defaultOptions;
+		$options[ 'currency_format_placement' ] = 'after';
+
+		$this->assertEquals( $expected, $this->field->display( $value, null, $options ) );
+	}
+
+	public function saveFormatAfterProvider() {
+
+		return array(
+			array( "-1.00$", "-1.00" ),
+			array( "0.00$", "0.00" ),
+			array( "1.00$", "1.00" ),
+			array( "1.50$", "1.50" ),
+			array( "10.00$", "10.00" ),
+			array( "10.01$", "10.01" ),
+			array( "100.00$", "100.00" ),
+			array( "1,000.00$", "1000.00" ),
+			array( "10,000.00$", "10000.00" ),
+			array( "1,000,000.00$", "1000000.00" ),
+		);
+	}
+
+	/**
+	 * @dataProvider saveFormatAfterSpaceProvider
+	 */
+	public function test_save_format_after_space( $value, $expected ) {
+		$options = $this->defaultOptions;
+		$options[ 'currency_format_placement' ] = 'after_space';
+
+		$this->assertEquals( $expected, $this->field->pre_save( $value, null, $options ) );
+	}
+
+	public function saveFormatAfterSpaceProvider() {
+
+		return array(
+			array( "-1.00 $", "-1.00" ),
+			array( "0.00 $", "0.00" ),
+			array( "1.00 $", "1.00" ),
+			array( "1.50 $", "1.50" ),
+			array( "10.00 $", "10.00" ),
+			array( "10.01 $", "10.01" ),
+			array( "100.00 $", "100.00" ),
+			array( "1,000.00 $", "1000.00" ),
+			array( "10,000.00 $", "10000.00" ),
+			array( "1,000,000.00 $", "1000000.00" ),
 		);
 	}
 

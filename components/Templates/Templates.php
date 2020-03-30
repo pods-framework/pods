@@ -2,6 +2,8 @@
 /**
  * Name: Templates
  *
+ * Menu Name: Pod Templates
+ *
  * Description: An easy to use templating engine for Pods. Use {@field_name} magic tags to output values, within your HTML markup.
  *
  * Version: 2.3

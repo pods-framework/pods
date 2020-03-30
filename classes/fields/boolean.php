@@ -79,6 +79,7 @@ class PodsField_Boolean extends PodsField {
 
 		$is_empty = false;
 
+		// is_empty() is used for if/else statements. Value should be true to pass.
 		$value = $this->pre_save( $value );
 
 		if ( ! $value ) {

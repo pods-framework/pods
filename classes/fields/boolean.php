@@ -75,22 +75,6 @@ class PodsField_Boolean extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function is_empty( $value = null ) {
-
-		$is_empty = false;
-
-		// Boolean false and integer 0 are non-empty values.
-		if ( ! is_bool( $value ) && ! is_int( $value ) && '0' !== $value ) {
-			$is_empty = empty( $value );
-		}
-
-		return $is_empty;
-
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
 		$yesno = array(

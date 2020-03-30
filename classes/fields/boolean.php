@@ -199,7 +199,7 @@ class PodsField_Boolean extends PodsField {
 	}
 
 	/**
-	 * Replicates filter_var with FILTER_VALIDATE_BOOLEAN and adds custom input for yes/no values.
+	 * Replicates filter_var() with `FILTER_VALIDATE_BOOLEAN` and adds custom input for yes/no values.
 	 *
 	 * {@inheritdoc}
 	 */

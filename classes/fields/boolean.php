@@ -208,13 +208,17 @@ class PodsField_Boolean extends PodsField {
 		$yes = strtolower( pods_v( static::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ) );
 		$no  = strtolower( pods_v( static::$type . '_no_label', $options, __( 'No', 'pods' ), true ) );
 
+		if ( is_string( $value ) ) {
+			$value = strtolower( $value );
+		}
+
 		$yes_values = array( 'yes', 'true', 'on', '1', $yes );
 		$no_values  = array( 'no', 'false', 'off', '0', $no );
 
 		// Only allow 0 / 1
-		if ( in_array( strtolower( $value ), $yes_values, true ) ) {
+		if ( in_array( $value, $yes_values, true ) ) {
 			$value = 1;
-		} elseif ( in_array( strtolower( $value ), $no_values, true ) ) {
+		} elseif ( in_array( $value, $no_values, true ) ) {
 			$value = 0;
 		} elseif ( 0 !== (int) $value ) {
 			$value = 1;

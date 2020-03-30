@@ -1113,23 +1113,7 @@ class Pods implements Iterator {
 								if ( ! $value ) {
 									$meta_key = array_shift( $traverse_names );
 									$value    = get_post_meta( $attachment_id, $meta_key, true );
-
-									// Maybe traverse.
-									if ( count( $traverse_names ) ) {
-										if ( is_array( $value ) ) {
-											foreach ( $traverse_names as $field ) {
-												if ( ! isset( $value[ $field ] ) ) {
-													$value = null;
-
-													break;
-												}
-
-												$value = $value[ $field ];
-											}
-										} else {
-											$value = null;
-										}
-									}
+									$value    = pods_traverse( $traverse_names, $value );
 								}
 							}
 
@@ -1677,8 +1661,7 @@ class Pods implements Iterator {
 										// $field is 123x123, needs to be _src.123x123
 										$traverse_fields    = array_splice( $params->traverse, $key );
 										$full_field         = implode( '.', $traverse_fields );
-										$maybe_traverse     = false;
-										$maybe_traverse_val = null;
+										array_shift( $traverse_fields );
 
 										if ( is_array( $item ) && isset( $item[ $field ] ) ) {
 											if ( $table['field_id'] === $field ) {
@@ -1806,28 +1789,12 @@ class Pods implements Iterator {
 												$metadata_type = 'term';
 											}
 
-											$maybe_traverse_val = get_metadata( $metadata_type, $metadata_object_id, $field, true );
-											$maybe_traverse     = true;
+											$meta_value = get_metadata( $metadata_type, $metadata_object_id, $field, true );
+											$value[]    = pods_traverse( $traverse_fields, $meta_value );
 										} elseif ( 'settings' === $object_type ) {
-											$maybe_traverse_val = get_option( $object . '_' . $field );
-											$maybe_traverse     = true;
+											$option_value = get_option( $object . '_' . $field );
+											$value[]      = pods_traverse( $traverse_fields, $option_value );
 										}//end if
-
-										if ( isset( $maybe_traverse_val ) ) {
-											if ( $maybe_traverse && is_array( $maybe_traverse_val ) && 1 < count( $traverse_fields ) ) {
-												array_shift( $traverse_fields );
-												foreach ( $traverse_fields as $field ) {
-													if ( ! isset( $maybe_traverse_val[ $field ] ) ) {
-														$maybe_traverse_val = null;
-
-														break;
-													}
-
-													$maybe_traverse_val = $maybe_traverse_val[ $field ];
-												}
-											}
-											$value[] = $maybe_traverse_val;
-										}
 									}//end foreach
 								}//end if
 

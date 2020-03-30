@@ -263,8 +263,8 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 		$this->assertTrue( $this->field->validate( 'False', null, $options ) );
 
 		// Other
-		$this->assertTrue( $this->field->validate( 'Foobar', null, $options ) );
 		$this->assertTrue( $this->field->validate( '', null, $options ) );
+		$this->assertTrue( $this->field->validate( 'Foobar', null, $options ) );
 
 		$options = array(
 			'boolean_format_type' => 'radio',
@@ -288,8 +288,8 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 		$this->assertTrue( $this->field->validate( 'False', null, $options ) );
 
 		// Other
-		$this->assertTrue( $this->field->validate( 'Foobar', null, $options ) );
 		$this->assertTrue( $this->field->validate( '', null, $options ) );
+		$this->assertTrue( $this->field->validate( 'Foobar', null, $options ) );
 
 		$options = array(
 			'boolean_format_type' => 'checkbox',
@@ -313,8 +313,8 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 		$this->assertTrue( $this->field->validate( 'False', null, $options ) );
 
 		// Other
-		$this->assertTrue( $this->field->validate( 'Foobar', null, $options ) );
 		$this->assertTrue( $this->field->validate( '', null, $options ) );
+		$this->assertTrue( $this->field->validate( 'Foobar', null, $options ) );
 
 
 		/**
@@ -344,8 +344,8 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 		$this->assertFalse( $this->field->validate( 'False', null, $options ) );
 
 		// Other
-		$this->assertFalse( $this->field->validate( '', null, $options ) ); // Parses to 0.
-		$this->assertTrue( $this->field->validate( 'Foobar', null, $options ) ); // Parses to 1.
+		$this->assertNotTrue( $this->field->validate( '', null, $options ) ); // Parses to 0.
+		$this->assertNotTrue( $this->field->validate( 'Foobar', null, $options ) ); // Parses to 0.
 	}
 
 	/**
@@ -371,7 +371,7 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 
 		// Other
 		$this->assertTrue( $this->field->is_empty( '' ) ); // Parses to 0.
-		$this->assertFalse( $this->field->is_empty( 'Foobar' ) ); // Parses to 1.
+		$this->assertTrue( $this->field->is_empty( 'Foobar' ) ); // Parses to 0.
 	}
 
 	/**

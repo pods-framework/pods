@@ -1322,7 +1322,11 @@ class Pods implements Iterator {
 						$simple       = false;
 						$last_options = array();
 
-						if ( $field_exists && 'pick' === $all_fields[ $pod ][ $field ]['type'] && in_array( $all_fields[ $pod ][ $field ]['pick_object'], $simple_tableless_objects, true ) ) {
+						if (
+							$field_exists &&
+							'pick' === $all_fields[ $pod ][ $field ]['type'] &&
+							in_array( $all_fields[ $pod ][ $field ]['pick_object'], $simple_tableless_objects, true )
+						) {
 							$simple       = true;
 							$last_options = $all_fields[ $pod ][ $field ];
 						}

@@ -197,7 +197,7 @@ class Test_PodsData extends Pods_UnitTestCase {
 		$value = array(
 			'foobar',
 			'one' => 1,
-			'two' => 2,
+			'two' => '2',
 			'decimals' => array(
 				'no_key',
 				'second_no_key',
@@ -211,12 +211,14 @@ class Test_PodsData extends Pods_UnitTestCase {
 		$this->assertEquals( $value, pods_traverse( null, $value ) );
 
 		// String traversal.
+		$this->assertEquals( 1, pods_traverse( 'one', $value ) );
 		$this->assertEquals( '2', pods_traverse( 'two', $value ) );
 		$this->assertEquals( 1.5, pods_traverse( 'decimals.onehalf', $value ) );
 		$this->assertEquals( null, pods_traverse( 'invalid', $value ) );
 		$this->assertEquals( null, pods_traverse( 'decimals.invalid', $value ) );
 
 		// Array traversal.
+		$this->assertEquals( 1, pods_traverse( array( 'one' ), $value ) );
 		$this->assertEquals( '2', pods_traverse( array( 'two' ), $value ) );
 		$this->assertEquals( 1.5, pods_traverse( array( 'decimals', 'onehalf' ), $value ) );
 		$this->assertEquals( null, pods_traverse( array( 'invalid' ), $value ) );
@@ -234,7 +236,7 @@ class Test_PodsData extends Pods_UnitTestCase {
 		 */
 		$value                    = new stdClass();
 		$value->one               = 1;
-		$value->two               = 2;
+		$value->two               = '2';
 		$value->decimals          = new stdClass();
 		$value->decimals->half    = 0.5;
 		$value->decimals->onehalf = 1.5;
@@ -243,12 +245,14 @@ class Test_PodsData extends Pods_UnitTestCase {
 		$this->assertEquals( $value, pods_traverse( null, $value ) );
 
 		// String traversal.
+		$this->assertEquals( 1, pods_traverse( 'one', $value ) );
 		$this->assertEquals( '2', pods_traverse( 'two', $value ) );
 		$this->assertEquals( 1.5, pods_traverse( 'decimals.onehalf', $value ) );
 		$this->assertEquals( null, pods_traverse( 'invalid', $value ) );
 		$this->assertEquals( null, pods_traverse( 'decimals.invalid', $value ) );
 
 		// Array traversal.
+		$this->assertEquals( 1, pods_traverse( array( 'one' ), $value ) );
 		$this->assertEquals( '2', pods_traverse( array( 'two' ), $value ) );
 		$this->assertEquals( 1.5, pods_traverse( array( 'decimals', 'onehalf' ), $value ) );
 		$this->assertEquals( null, pods_traverse( array( 'invalid' ), $value ) );

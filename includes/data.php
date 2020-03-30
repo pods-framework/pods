@@ -270,8 +270,8 @@ function pods_unslash( $input ) {
  *
  * @since 2.7.18
  *
- * @param array|string $traverse
- * @param array|object $value
+ * @param array|string $traverse The traversal names.
+ * @param array|object $value    The value to traverse into.
  *
  * @return mixed
  */

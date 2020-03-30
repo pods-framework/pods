@@ -1659,8 +1659,8 @@ class Pods implements Iterator {
 
 									foreach ( $data as $item_id => $item ) {
 										// $field is 123x123, needs to be _src.123x123
-										$traverse_fields    = array_splice( $params->traverse, $key );
-										$full_field         = implode( '.', $traverse_fields );
+										$traverse_fields = array_splice( $params->traverse, $key );
+										$full_field      = implode( '.', $traverse_fields );
 										array_shift( $traverse_fields );
 
 										if ( is_array( $item ) && isset( $item[ $field ] ) ) {

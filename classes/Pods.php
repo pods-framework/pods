@@ -1398,12 +1398,13 @@ class Pods implements Iterator {
 							}
 						} else {
 							// Assume last iteration.
-							if ( 0 === $key ) {
-								// Invalid field.
-								return false;
-							}
-
 							$last_loop = true;
+
+							if ( 0 === $key ) {
+								// This is also the first loop. Assume metadata or options to traverse into.
+								$last_object   = $this->pod_data['object_type'];
+								$last_pick_val = $this->pod_data['name'];
+							}
 						}//end if
 
 						if ( $last_loop ) {

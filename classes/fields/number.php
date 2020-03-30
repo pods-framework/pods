@@ -288,14 +288,14 @@ class PodsField_Number extends PodsField {
 			);
 		}
 
+		$value = trim( $value );
+
+		$value = preg_replace( '/[^0-9\.\-]/', '', $value );
+
 		if ( $this->is_empty( $value ) && ( ! is_numeric( $value ) || 0.0 !== (float) $value ) ) {
 			// Don't enforce a default value here.
 			return null;
 		}
-
-		$value = trim( $value );
-
-		$value = preg_replace( '/[^0-9\.\-]/', '', $value );
 
 		$value = number_format( (float) $value, $decimals, '.', '' );
 

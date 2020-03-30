@@ -239,7 +239,73 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 	 */
 	public function test_method_validate() {
 
-		$this->assertTrue( $this->field->validate( 'foo' ) );
+		$options = array(
+			'boolean_format_type' => 'radio',
+			'boolean_required'    => false,
+		);
+
+		// All values are valid as they are parsed to integers (1 or 0).
+		$this->assertTrue( $this->field->validate( 'foo', null, $options ) );
+		$this->assertTrue( $this->field->validate( 'Yes', null, $options ) );
+		$this->assertTrue( $this->field->validate( 'No', null, $options ) );
+		$this->assertTrue( $this->field->validate( '1', null, $options ) );
+		$this->assertTrue( $this->field->validate( '0', null, $options ) );
+		$this->assertTrue( $this->field->validate( '', null, $options ) );
+		$this->assertTrue( $this->field->validate( 1, null, $options ) );
+		$this->assertTrue( $this->field->validate( 0, null, $options ) );
+		$this->assertTrue( $this->field->validate( true, null, $options ) );
+		$this->assertTrue( $this->field->validate( false, null, $options ) );
+
+		$options = array(
+			'boolean_format_type' => 'radio',
+			'boolean_required'    => true,
+		);
+
+		// All values are valid as they are parsed to integers (1 or 0).
+		$this->assertTrue( $this->field->validate( 'foo', null, $options ) );
+		$this->assertTrue( $this->field->validate( 'Yes', null, $options ) );
+		$this->assertTrue( $this->field->validate( 'No', null, $options ) );
+		$this->assertTrue( $this->field->validate( '1', null, $options ) );
+		$this->assertTrue( $this->field->validate( '0', null, $options ) );
+		$this->assertTrue( $this->field->validate( '', null, $options ) );
+		$this->assertTrue( $this->field->validate( 1, null, $options ) );
+		$this->assertTrue( $this->field->validate( 0, null, $options ) );
+		$this->assertTrue( $this->field->validate( true, null, $options ) );
+		$this->assertTrue( $this->field->validate( false, null, $options ) );
+
+		$options = array(
+			'boolean_format_type' => 'checkbox',
+			'boolean_required'    => false,
+		);
+
+		// All values are valid as they are parsed to integers (1 or 0).
+		$this->assertTrue( $this->field->validate( 'foo', null, $options ) );
+		$this->assertTrue( $this->field->validate( 'Yes', null, $options ) );
+		$this->assertTrue( $this->field->validate( 'No', null, $options ) );
+		$this->assertTrue( $this->field->validate( '1', null, $options ) );
+		$this->assertTrue( $this->field->validate( '0', null, $options ) );
+		$this->assertTrue( $this->field->validate( '', null, $options ) );
+		$this->assertTrue( $this->field->validate( 1, null, $options ) );
+		$this->assertTrue( $this->field->validate( 0, null, $options ) );
+		$this->assertTrue( $this->field->validate( true, null, $options ) );
+		$this->assertTrue( $this->field->validate( false, null, $options ) );
+
+		$options = array(
+			'boolean_format_type' => 'checkbox',
+			'boolean_required'    => true,
+		);
+
+		// Only non_empty values are valid since a required checkbox only has one value.
+		$this->assertTrue( $this->field->validate( 'foo', null, $options ) ); // Parses to 1.
+		$this->assertTrue( $this->field->validate( 'Yes', null, $options ) );
+		$this->assertFalse( $this->field->validate( 'No', null, $options ) ); // Parses to 0.
+		$this->assertTrue( $this->field->validate( '1', null, $options ) );
+		$this->assertFalse( $this->field->validate( '0', null, $options ) );
+		$this->assertFalse( $this->field->validate( '', null, $options ) );
+		$this->assertFalse( $this->field->validate( 1, null, $options ) );
+		$this->assertFalse( $this->field->validate( 0, null, $options ) );
+		$this->assertFalse( $this->field->validate( true, null, $options ) );
+		$this->assertFalse( $this->field->validate( false, null, $options ) );
 	}
 
 	/**

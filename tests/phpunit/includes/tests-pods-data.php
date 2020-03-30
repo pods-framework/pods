@@ -186,6 +186,76 @@ class Test_PodsData extends Pods_UnitTestCase {
 		//$this->markTestIncomplete( 'not yet implemented' );
 	}
 
+	/**
+	 * @covers pods_traverse
+	 */
+	public function test_pods_traverse() {
+
+		/**
+		 * Array values.
+		 */
+		$value = array(
+			'foobar',
+			'one' => 1,
+			'two' => 2,
+			'decimals' => array(
+				'no_key',
+				'second_no_key',
+				'third_no_key',
+				'half'    => 0.5,
+				'onehalf' => 1.5,
+			),
+		);
+
+		// No traversal.
+		$this->assertEquals( $value, pods_traverse( null, $value ) );
+
+		// String traversal.
+		$this->assertEquals( '2', pods_traverse( 'two', $value ) );
+		$this->assertEquals( 1.5, pods_traverse( 'decimals.onehalf', $value ) );
+		$this->assertEquals( null, pods_traverse( 'invalid', $value ) );
+		$this->assertEquals( null, pods_traverse( 'decimals.invalid', $value ) );
+
+		// Array traversal.
+		$this->assertEquals( '2', pods_traverse( array( 'two' ), $value ) );
+		$this->assertEquals( 1.5, pods_traverse( array( 'decimals', 'onehalf' ), $value ) );
+		$this->assertEquals( null, pods_traverse( array( 'invalid' ), $value ) );
+		$this->assertEquals( null, pods_traverse( array( 'decimals', 'invalid' ), $value ) );
+
+		// Numeric array keys.
+		$this->assertEquals( 'foobar', pods_traverse( 0, $value ) );
+		$this->assertEquals( 'third_no_key', pods_traverse( 'decimals.2', $value ) );
+		$this->assertEquals( 'foobar', pods_traverse( array( 0 ), $value ) );
+		$this->assertEquals( 'third_no_key', pods_traverse( array( 'decimals', 2 ), $value ) );
+
+		/**
+		 * Object values.
+		 * Numeric keys not available in objects.
+		 */
+		$value                    = new stdClass();
+		$value->one               = 1;
+		$value->two               = 2;
+		$value->decimals          = new stdClass();
+		$value->decimals->half    = 0.5;
+		$value->decimals->onehalf = 1.5;
+
+		// No traversal.
+		$this->assertEquals( $value, pods_traverse( null, $value ) );
+
+		// String traversal.
+		$this->assertEquals( '2', pods_traverse( 'two', $value ) );
+		$this->assertEquals( 1.5, pods_traverse( 'decimals.onehalf', $value ) );
+		$this->assertEquals( null, pods_traverse( 'invalid', $value ) );
+		$this->assertEquals( null, pods_traverse( 'decimals.invalid', $value ) );
+
+		// Array traversal.
+		$this->assertEquals( '2', pods_traverse( array( 'two' ), $value ) );
+		$this->assertEquals( 1.5, pods_traverse( array( 'decimals', 'onehalf' ), $value ) );
+		$this->assertEquals( null, pods_traverse( array( 'invalid' ), $value ) );
+		$this->assertEquals( null, pods_traverse( array( 'decimals', 'invalid' ), $value ) );
+
+	}
+
 	public function test_pods_v() {
 
 		$this->markTestIncomplete( 'not yet implemented' );

@@ -336,12 +336,12 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 		$this->assertTrue( $this->field->validate( 'True', null, $options ) );
 
 		// Non empty values.
-		$this->assertFalse( $this->field->validate( false, null, $options ) );
-		$this->assertFalse( $this->field->validate( 0, null, $options ) );
-		$this->assertFalse( $this->field->validate( '0', null, $options ) );
-		$this->assertFalse( $this->field->validate( 'No', null, $options ) );
-		$this->assertFalse( $this->field->validate( 'Off', null, $options ) );
-		$this->assertFalse( $this->field->validate( 'False', null, $options ) );
+		$this->assertNotTrue( $this->field->validate( false, null, $options ) );
+		$this->assertNotTrue( $this->field->validate( 0, null, $options ) );
+		$this->assertNotTrue( $this->field->validate( '0', null, $options ) );
+		$this->assertNotTrue( $this->field->validate( 'No', null, $options ) );
+		$this->assertNotTrue( $this->field->validate( 'Off', null, $options ) );
+		$this->assertNotTrue( $this->field->validate( 'False', null, $options ) );
 
 		// Other
 		$this->assertNotTrue( $this->field->validate( '', null, $options ) ); // Parses to 0.

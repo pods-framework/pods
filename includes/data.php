@@ -266,6 +266,43 @@ function pods_unslash( $input ) {
 }
 
 /**
+ * Traverse an array or object by array values order or a string (name.name.name).
+ *
+ * @since 2.7.18
+ *
+ * @param array|string $traverse
+ * @param array|object $value
+ *
+ * @return mixed
+ */
+function pods_traverse( $traverse, $value ) {
+	if ( ! count( $traverse ) ) {
+		return $value;
+	}
+	if ( is_scalar( $value ) ) {
+		return null;
+	}
+	if ( is_object( $value ) ) {
+		$value = (array) $value;
+	}
+
+	if ( ! is_array( $traverse ) ) {
+		$traverse = explode( '.', $traverse );
+	}
+	$key = array_shift( $traverse );
+
+	if ( ! isset( $value[ $key ] ) ) {
+		return null;
+	}
+	$value = $value[ $key ];
+
+	if ( $traverse ) {
+		$value = pods_traverse( $traverse, $value );
+	}
+	return $value;
+}
+
+/**
  * Filter input and return sanitized output
  *
  * @param mixed  $input    The string, array, or object to sanitize

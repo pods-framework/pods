@@ -1109,10 +1109,15 @@ class Pods implements Iterator {
 							} else {
 								// Fallback to default attachment object.
 								$attachment = get_post( $attachment_id );
-								$value      = pods_v( implode( '.', $traverse_names ), $attachment, '' );
-								if ( ! $value ) {
-									$meta_key = array_shift( $traverse_names );
-									$value    = get_post_meta( $attachment_id, $meta_key, true );
+								$value      = pods_v( implode( '.', $traverse_names ), $attachment, null );
+
+								if ( null === $value ) {
+									// Start traversal though object property or metadata.
+									$name_key = array_shift( $traverse_names );
+									$value    = pods_v( $name_key, $attachment, null );
+									if ( null === $value ) {
+										$value    = get_post_meta( $attachment_id, $name_key, true );
+									}
 									$value    = pods_traverse( $traverse_names, $value );
 								}
 							}

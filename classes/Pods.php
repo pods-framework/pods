@@ -1194,7 +1194,9 @@ class Pods implements Iterator {
 					$is_tableless_field = in_array( $this->fields[ $params->name ]['type'], $tableless_field_types, true );
 				}
 
-				if ( 1 >= $params->traverse && ( $simple || ! $is_field_set || ! $is_tableless_field ) ) {
+				$is_traversal = 1 < count( $params->traverse );
+
+				if ( ! $is_traversal && ( $simple || ! $is_field_set || ! $is_tableless_field ) ) {
 					if ( null === $params->single ) {
 						if ( $is_field_set && ! $is_tableless_field ) {
 							$params->single = true;

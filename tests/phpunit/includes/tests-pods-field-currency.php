@@ -99,7 +99,6 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 	}
 
 	public function formatThousandsQuoteProvider() {
-
 		return array(
 			array( "1000", "1'000.00" ),
 			array( "10000", "10'000.00" ),

@@ -243,7 +243,7 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 
 		$options = array(
 			'boolean_format_type' => 'radio',
-			'boolean_required'    => false,
+			'required'            => false,
 		);
 
 		// Empty values.
@@ -268,7 +268,7 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 
 		$options = array(
 			'boolean_format_type' => 'radio',
-			'boolean_required'    => true,
+			'required'            => true,
 		);
 
 		// Empty values.
@@ -293,7 +293,7 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 
 		$options = array(
 			'boolean_format_type' => 'checkbox',
-			'boolean_required'    => false,
+			'required'            => false,
 		);
 
 		// Empty values.
@@ -324,7 +324,7 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 
 		$options = array(
 			'boolean_format_type' => 'checkbox',
-			'boolean_required'    => true,
+			'required'            => true,
 		);
 
 		// Empty values.

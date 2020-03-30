@@ -247,7 +247,9 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		return array(
 			array( "-1.00", "-1.00" ),
 			array( "0.00", "0.00" ),
+			array( "1", "1.00" ),
 			array( "1.00", "1.00" ),
+			array( "1.0000", "1.00" ),
 			array( "1.50", "1.50" ),
 			array( "10.00", "10.00" ),
 			array( "10.01", "10.01" ),
@@ -273,7 +275,10 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		return array(
 			array( "-1,00", "-1.00" ),
 			array( "0,00", "0.00" ),
+			array( "1", "1.00" ),
+			array( "1,", "1.00" ),
 			array( "1,00", "1.00" ),
+			array( "1,0000", "1.00" ),
 			array( "1,50", "1.50" ),
 			array( "10,00", "10.00" ),
 			array( "10,01", "10.01" ),
@@ -337,7 +342,11 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		return array(
 			array( "-1.-", "-1.00" ),
 			array( "0.-", "0.00" ),
+			array( "1", "1.00" ),
 			array( "1.-", "1.00" ),
+			array( "1.--", "1.00" ),
+			array( "1.00", "1.00" ),
+			array( "1.0000", "1.00" ),
 			array( "1.50", "1.50" ),
 			array( "10.-", "10.00" ),
 			array( "10.01", "10.01" ),
@@ -362,7 +371,9 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		return array(
 			array( "$-1.00", "-1.00" ),
 			array( "$0.00", "0.00" ),
+			array( "$1", "1.00" ),
 			array( "$1.00", "1.00" ),
+			array( "$1.0000", "1.00" ),
 			array( "$1.50", "1.50" ),
 			array( "$10.00", "10.00" ),
 			array( "$10.01", "10.01" ),
@@ -388,7 +399,9 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		return array(
 			array( "-1.00$", "-1.00" ),
 			array( "0.00$", "0.00" ),
+			array( "1$", "1.00" ),
 			array( "1.00$", "1.00" ),
+			array( "1.0000$", "1.00" ),
 			array( "1.50$", "1.50" ),
 			array( "10.00$", "10.00" ),
 			array( "10.01$", "10.01" ),
@@ -414,7 +427,9 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		return array(
 			array( "-1.00 $", "-1.00" ),
 			array( "0.00 $", "0.00" ),
+			array( "1 $", "1.00" ),
 			array( "1.00 $", "1.00" ),
+			array( "1.0000 $", "1.00" ),
 			array( "1.50 $", "1.50" ),
 			array( "10.00 $", "10.00" ),
 			array( "10.01 $", "10.01" ),

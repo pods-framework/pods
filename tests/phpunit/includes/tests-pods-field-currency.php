@@ -239,7 +239,7 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 	public function test_save_defaults( $value, $expected ) {
 		$options = $this->defaultOptions;
 
-		$this->assertEquals( $expected, $this->field->pre_save( $value, null, $options ) );
+		$this->assertEquals( $expected, $this->field->pre_save( $value, null, null, $options ) );
 	}
 
 	public function saveDefaultsProvider() {
@@ -265,7 +265,7 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		$options = $this->defaultOptions;
 		$options[ 'currency_format' ] = '9.999,99';
 
-		$this->assertEquals( $expected, $this->field->pre_save( $value, null, $options ) );
+		$this->assertEquals( $expected, $this->field->pre_save( $value, null, null, $options ) );
 	}
 
 	public function saveFormatDecimalCommaProvider() {
@@ -291,7 +291,7 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		$options = $this->defaultOptions;
 		$options[ 'currency_format' ] = '9\'999.99';
 
-		$this->assertEquals( $expected, $this->field->pre_save( $value, null, $options ) );
+		$this->assertEquals( $expected, $this->field->pre_save( $value, null, null, $options ) );
 	}
 
 	public function saveFormatThousandsQuoteProvider() {
@@ -310,7 +310,7 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		$options = $this->defaultOptions;
 		$options[ 'currency_format' ] = '9 999,99';
 
-		$this->assertEquals( $expected, $this->field->pre_save( $value, null, $options ) );
+		$this->assertEquals( $expected, $this->field->pre_save( $value, null, null, $options ) );
 	}
 
 	public function saveFormatSpaceCommaProvider() {
@@ -329,7 +329,7 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		$options = $this->defaultOptions;
 		$options[ 'currency_decimal_handling' ] = 'dash';
 
-		$this->assertEquals( $expected, $this->field->pre_save( $value, null, $options ) );
+		$this->assertEquals( $expected, $this->field->pre_save( $value, null, null, $options ) );
 	}
 
 	public function saveFormatDecimalDashProvider() {
@@ -354,7 +354,7 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 	public function test_save_format_defaults_currency( $value, $expected ) {
 		$options = $this->defaultOptions;
 
-		$this->assertEquals( $expected, $this->field->pre_save( $value, null, $options ) );
+		$this->assertEquals( $expected, $this->field->pre_save( $value, null, null, $options ) );
 	}
 
 	public function saveFormatCurrencyDefaultProvider() {
@@ -380,7 +380,7 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		$options = $this->defaultOptions;
 		$options[ 'currency_format_placement' ] = 'after';
 
-		$this->assertEquals( $expected, $this->field->pre_save( $value, null, $options ) );
+		$this->assertEquals( $expected, $this->field->pre_save( $value, null, null, $options ) );
 	}
 
 	public function saveFormatCurrencyAfterProvider() {
@@ -406,7 +406,7 @@ class Test_PodsField_Currency extends Pods_UnitTestCase {
 		$options = $this->defaultOptions;
 		$options[ 'currency_format_placement' ] = 'after_space';
 
-		$this->assertEquals( $expected, $this->field->pre_save( $value, null, $options ) );
+		$this->assertEquals( $expected, $this->field->pre_save( $value, null, null, $options ) );
 	}
 
 	public function saveFormatCurrencyAfterSpaceProvider() {

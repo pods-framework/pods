@@ -212,18 +212,11 @@ class PodsField_Boolean extends PodsField {
 			$value = strtolower( $value );
 		}
 
-		$yes_values = array( 'yes', 'true', 'on', '1', $yes );
-		$no_values  = array( 'no', 'false', 'off', '0', $no );
-
-		// Only allow 0 / 1
-		if ( in_array( $value, $yes_values, true ) ) {
-			$value = 1;
-		} elseif ( in_array( $value, $no_values, true ) ) {
-			$value = 0;
-		} elseif ( 0 !== (int) $value ) {
+		if ( $yes === $value ) {
 			$value = 1;
 		} else {
-			$value = 0;
+			// Validate: 1", "true", "on", and "yes" as 1, all others are 0.
+			$value = (int) filter_var( $value, FILTER_VALIDATE_BOOLEAN );
 		}
 
 		return $value;

@@ -321,7 +321,7 @@ function pods_trim( $input, $charlist = null, $lr = null ) {
  * @return mixed
  */
 function pods_traverse( $traverse, $value ) {
-	if ( ! count( $traverse ) ) {
+	if ( ! $traverse ) {
 		return $value;
 	}
 	if ( is_scalar( $value ) ) {

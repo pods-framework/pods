@@ -174,7 +174,8 @@ class PodsField_Boolean extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-		if ( ! $this->is_required( $options ); ) {
+
+		if ( ! $this->is_required( $options ) ) {
 			// Any value can be parsed to boolean.
 			return true;
 		}

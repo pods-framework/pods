@@ -464,7 +464,52 @@ class Test_PodsData extends Pods_UnitTestCase {
 		$this->markTestIncomplete( 'not yet implemented' );
 	}
 
+	/**
+	 * @covers ::pods_list_filter
+	 */
 	public function test_pods_list_filter() {
+
+		// Test objects since that is not supported by wp_list_filter.
+
+		$obj = new stdClass();
+		$obj->obj1 = new stdClass();
+		$obj->obj2 = new stdClass();
+		$obj->obj3 = new stdClass();
+		$obj->obj4 = new stdClass();
+
+		$obj->obj1->status = 'published';
+		$obj->obj2->status = 'published';
+		$obj->obj3->status = 'draft';
+		$obj->obj4->status = 'published';
+
+		$obj->obj1->param = 'valid';
+		$obj->obj2->param = 'invalid';
+		$obj->obj3->param = 'valid';
+		$obj->obj4->param = 'valid';
+
+		$args = array(
+			'status' => 'published',
+			'param'  => 'valid',
+		);
+
+		$result = $obj;
+		unset( $result->obj2 );
+		unset( $result->obj3 );
+
+		$this->assertEquals( $result, pods_list_filter( $obj, $args ) );
+
+		// NOT operator.
+
+		$args = array(
+			'status' => 'published',
+		);
+
+		$result = $obj;
+		unset( $result->obj1 );
+		unset( $result->obj2 );
+		unset( $result->obj4 );
+
+		$this->assertEquals( $result, pods_list_filter( $obj, $args, 'NOT' ) );
 
 		$this->markTestIncomplete( 'not yet implemented' );
 	}

@@ -1116,9 +1116,9 @@ class Pods implements Iterator {
 									$name_key = array_shift( $traverse_names );
 									$value    = pods_v( $name_key, $attachment, null );
 									if ( null === $value ) {
-										$value    = get_post_meta( $attachment_id, $name_key, true );
+										$value = get_post_meta( $attachment_id, $name_key, true );
 									}
-									$value    = pods_traverse( $traverse_names, $value );
+									$value = pods_traverse( $traverse_names, $value );
 								}
 							}
 

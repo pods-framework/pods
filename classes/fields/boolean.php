@@ -215,7 +215,7 @@ class PodsField_Boolean extends PodsField {
 		if ( $yes === $value ) {
 			$value = 1;
 		} else {
-			// Validate: 1", "true", "on", and "yes" as 1, all others are 0.
+			// Validate: 1, "1", true, "true", "on", and "yes" as 1, all others are 0.
 			$value = (int) filter_var( $value, FILTER_VALIDATE_BOOLEAN );
 		}
 

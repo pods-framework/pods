@@ -299,9 +299,83 @@ class Test_PodsData extends Pods_UnitTestCase {
 		$this->assertEquals( 'sd', pods_mb_substr( 'asdf', 1, 2 ) );
 	}
 
+	/**
+	 * @covers ::pods_evaluate_tags
+	 * @covers ::pods_evaluate_tag
+	 */
 	public function test_pods_evaluate_tags() {
+		global $wpdb;
 
-		$this->markTestIncomplete( 'not yet implemented' );
+		/**
+		 * Special magic tags.
+		 * @link https://docs.pods.io/displaying-pods/magic-tags/special-magic-tags/
+		 */
+		$this->assertEquals(
+			$wpdb->prefix,
+			pods_evaluate_tag( '{@prefix}' )
+		);
+		$this->assertEquals(
+			get_template_directory_uri(),
+			pods_evaluate_tag( '{@template-url}' )
+		);
+		$this->assertEquals(
+			get_stylesheet_directory_uri(),
+			pods_evaluate_tag( '{@stylesheet-url}' )
+		);
+		$this->assertEquals(
+			site_url(),
+			pods_evaluate_tag( '{@site-url}' )
+		);
+		$this->assertEquals(
+			home_url(),
+			pods_evaluate_tag( '{@home-url}' )
+		);
+		$this->assertEquals(
+			admin_url(),
+			pods_evaluate_tag( '{@admin-url}' )
+		);
+		$this->assertEquals(
+			includes_url(),
+			pods_evaluate_tag( '{@includes-url}' )
+		);
+		$this->assertEquals(
+			plugins_url(),
+			pods_evaluate_tag( '{@plugins-url}' )
+		);
+		$this->assertEquals(
+			network_site_url(),
+			pods_evaluate_tag( '{@network-site-url}' )
+		);
+		$this->assertEquals(
+			network_home_url(),
+			pods_evaluate_tag( '{@network-home-url}' )
+		);
+		$this->assertEquals(
+			network_admin_url(),
+			pods_evaluate_tag( '{@network-admin-url}' )
+		);
+		$this->assertEquals(
+			user_admin_url(),
+			pods_evaluate_tag( '{@user-admin-url}' )
+		);
+		$this->assertEquals(
+			date_i18n( 'Y-m-d' ),
+			pods_evaluate_tag( '{@date.Y-m-d}' )
+		);
+		$this->assertEquals(
+			date_i18n( 'Y-m-d',
+			strtotime( 'tomorrow' ) ), pods_evaluate_tag( '{@date.Y-m-d|tomorrow}' )
+		);
+
+		// First log in the user.
+		$user_id = $this->factory->user->create();
+		wp_set_current_user( $user_id );
+		$this->assertEquals(
+			get_current_user_id(),
+			pods_evaluate_tag( '{@user.id}' ) // Should be `ID` but added lowercase for backwards compatibility.
+		);
+
+		//$this->markTestIncomplete( 'not yet implemented' );
 	}
 
 	public function test_pods_evaluate_tag_sanitized() {

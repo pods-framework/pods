@@ -315,13 +315,13 @@ function pods_trim( $input, $charlist = null, $lr = null ) {
  *
  * @since 2.7.18
  *
- * @param array|string $traverse The traversal names.
- * @param array|object $value    The value to traverse into.
+ * @param array|string|int $traverse The traversal names/keys.
+ * @param array|object     $value    The value to traverse into.
  *
  * @return mixed
  */
 function pods_traverse( $traverse, $value ) {
-	if ( ! $traverse ) {
+	if ( ! $traverse && ! is_numeric( $traverse ) ) {
 		return $value;
 	}
 	if ( is_scalar( $value ) ) {

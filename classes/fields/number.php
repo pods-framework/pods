@@ -274,11 +274,6 @@ class PodsField_Number extends PodsField {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		if ( $this->is_empty( $value ) && ( ! is_numeric( $value ) || 0.0 !== (float) $value ) ) {
-			// Don't enforce a default value here.
-			return null;
-		}
-
 		$format_args = $this->get_number_format_args( $options );
 		$thousands   = $format_args['thousands'];
 		$dot         = $format_args['dot'];
@@ -287,8 +282,8 @@ class PodsField_Number extends PodsField {
 		if ( 'slider' !== pods_v( static::$type . '_format_type', $options ) ) {
 			// Slider only supports `1234.00` format so no need for replacing characters.
 			$value = str_replace(
-				array( $thousands, $dot, html_entity_decode( $thousands ) ),
-				array( '', '.', '' ),
+				array( $thousands, html_entity_decode( $thousands ), $dot, html_entity_decode( $dot ) ),
+				array( '', '', '.', '.' ),
 				$value
 			);
 		}
@@ -296,6 +291,11 @@ class PodsField_Number extends PodsField {
 		$value = trim( $value );
 
 		$value = preg_replace( '/[^0-9\.\-]/', '', $value );
+
+		if ( $this->is_empty( $value ) && ( ! is_numeric( $value ) || 0.0 !== (float) $value ) ) {
+			// Don't enforce a default value here.
+			return null;
+		}
 
 		$value = number_format( (float) $value, $decimals, '.', '' );
 

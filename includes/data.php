@@ -589,6 +589,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_user_logged_in() ) {
 					$user = get_userdata( get_current_user_id() );
 
+					// Prevent deprecation notice from WP.
+					if ( 'id' === $var ) {
+						$var = 'ID';
+					}
+
 					if ( isset( $user->{$var} ) ) {
 						$value = $user->{$var};
 					} elseif ( 'role' === $var ) {
@@ -2148,37 +2153,7 @@ function pods_list_filter( $list, $args = array(), $operator = 'AND' ) {
 		$data   = get_object_vars( $data );
 	}
 
-	$operator = strtoupper( $operator );
-	$count    = count( $args );
-	$filtered = array();
-
-	foreach ( $data as $key => $obj ) {
-		$to_match = $obj;
-
-		if ( is_object( $to_match ) ) {
-			$to_match = get_object_vars( $to_match );
-		} elseif ( ! is_array( $to_match ) ) {
-			continue;
-		}
-
-		$matched = 0;
-
-		foreach ( $args as $m_key => $m_value ) {
-			if ( array_key_exists( $m_key, $to_match ) && $m_value == $to_match[ $m_key ] ) {
-				$matched ++;
-			}
-		}
-
-		if ( 'AND' === $operator && $matched == $count ) {
-			$filtered[ $key ] = $obj;
-		} elseif ( 'OR' === $operator && $matched > 0 ) {
-			$filtered[ $key ] = $obj;
-		} elseif ( 'NOT' === $operator && 0 == $matched ) {
-			$filtered[ $key ] = $obj;
-		} else {
-			continue;
-		}
-	}//end foreach
+	$filtered = wp_list_filter( $data, $args, $operator );
 
 	if ( $object ) {
 		$filtered = (object) $filtered;

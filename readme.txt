@@ -192,9 +192,20 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 = 2.7.18 - April 3rd 2020 =
 
+**New Features & Enhancements**
+
+* Added: Add is_required() helper method for fields objects to abstract some logic. #5657 (@JoryHogeveen)
+* Updated: Removed duplicate code from pods_list_filter() that is now in wp_list_filter(). #5644 (@JoryHogeveen)
+* Updated: Now prefixing the Templates and Pages component menu items with "Pod" so they aren't as easily confused with normal WordPress menu items. #5647 (@JoryHogeveen)
+
 **Bug Fixes**
 
 * Fixed: Compatibility layer for ACF so it won't conflict anymore. #5667 (@sc0ttkclark)
+* Fixed: Remove PHP 5.6+ only code that was causing issues for those running older PHP versions. #5659 (@JoryHogeveen)
+* Fixed: Prevent PHP errors when enforcing numeric values during validation of number fields. #5666 (@JoryHogeveen)
+* Fixed: Prevent deprecated warnings with special magic tags usage like `{@user.id}` instead of `{@user.ID}`. #5642 (@JoryHogeveen)
+* Fixed: Fix the decimal/thousands separator logic used for number and currency field validation and saving. #5653 (@JoryHogeveen)
+* Fixed: Resolve issues with `[if]` and `[else]` logic for boolean fields that was causing it to always evaluate to true. #5656 (@JoryHogeveen)
 
 = 2.7.17.1 - March 27th 2020 =
 

@@ -190,6 +190,12 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.18 - April 3rd 2020 =
+
+**Bug Fixes**
+
+* Fixed: Compatibility layer for ACF so it won't conflict anymore. #5667 (@sc0ttkclark)
+
 = 2.7.17.1 - March 27th 2020 =
 
 **Bug Fixes**

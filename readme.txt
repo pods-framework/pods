@@ -206,6 +206,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Fixed: Prevent deprecated warnings with special magic tags usage like `{@user.id}` instead of `{@user.ID}`. #5642 (@JoryHogeveen)
 * Fixed: Fix the decimal/thousands separator logic used for number and currency field validation and saving. #5653 (@JoryHogeveen)
 * Fixed: Resolve issues with `[if]` and `[else]` logic for boolean fields that was causing it to always evaluate to true. #5656 (@JoryHogeveen)
+* Fixed: Only load Freemius on Pods Admin, Plugins, or the Updates screens. (@sc0ttkclark)
 
 = 2.7.17.1 - March 27th 2020 =
 

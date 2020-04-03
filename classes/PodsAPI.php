@@ -310,6 +310,10 @@ class PodsAPI {
 		}
 
 		foreach ( $post_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value || ( $strict && '' === $post_meta[ $meta_key ] ) ) {
 				$old_meta_value = '';
 

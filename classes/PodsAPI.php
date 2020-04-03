@@ -2930,13 +2930,13 @@ class PodsAPI {
 				 *      @type null|array  $old_options The old field options (if preexisting).
 				 * }
 				 */
-				do_action( 'pods_api_save_field_table_pre_alter', $definition_mode, $pod, $field['type'], $field, [
+				do_action( 'pods_api_save_field_table_pre_alter', $definition_mode, $pod, $field['type'], $field, array(
 					'simple'         => $simple,
 					'definition'     => $definition,
 					'old_name'       => $old_name,
 					'old_definition' => $old_definition,
 					'old_options'    => $old_options,
-				] );
+				) );
 
 				if ( 'drop' === $definition_mode ) {
 					// Drop field column.
@@ -2978,13 +2978,13 @@ class PodsAPI {
 				 *      @type null|array  $old_options The old field options (if preexisting).
 				 * }
 				 */
-				do_action( 'pods_api_save_field_table_altered', $definition_mode, $pod, $field['type'], $field, [
+				do_action( 'pods_api_save_field_table_altered', $definition_mode, $pod, $field['type'], $field, array(
 					'simple'         => $simple,
 					'definition'     => $definition,
 					'old_name'       => $old_name,
 					'old_definition' => $old_definition,
 					'old_options'    => $old_options,
-				] );
+				) );
 			}
 		}
 

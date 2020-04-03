@@ -343,7 +343,7 @@ class PodsInit {
 			define( 'PODS_COMPATIBILITY', true );
 		}
 
-		if ( ! PODS_COMPATIBILITY ) {
+		if ( ! PODS_COMPATIBILITY || is_admin() ) {
 			return;
 		}
 

@@ -375,6 +375,42 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers  ::is_required
+	 */
+	public function test_method_is_required() {
+
+		// Default
+		$options = array();
+		$this->assertFalse( $this->field->is_required( $options ) );
+
+		// Int value.
+		$options['required'] = 1;
+		$this->assertTrue( $this->field->is_required( $options ) );
+		$options['required'] = 0;
+		$this->assertFalse( $this->field->is_required( $options ) );
+
+		// Bool value.
+		$options['required'] = true;
+		$this->assertTrue( $this->field->is_required( $options ) );
+		$options['required'] = false;
+		$this->assertFalse( $this->field->is_required( $options ) );
+
+		// String values.
+		$options['required'] = '1';
+		$this->assertTrue( $this->field->is_required( $options ) );
+		$options['required'] = '0';
+		$this->assertFalse( $this->field->is_required( $options ) );
+		$options['required'] = 'true';
+		$this->assertTrue( $this->field->is_required( $options ) );
+		$options['required'] = 'false';
+		$this->assertFalse( $this->field->is_required( $options ) );
+		$options['required'] = 'yes';
+		$this->assertTrue( $this->field->is_required( $options ) );
+		$options['required'] = 'no';
+		$this->assertFalse( $this->field->is_required( $options ) );
+	}
+
+	/**
 	 * @covers ::pre_save
 	 */
 	public function test_method_pre_save_exists() {

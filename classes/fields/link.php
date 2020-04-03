@@ -219,7 +219,7 @@ class PodsField_Link extends PodsField_Website {
 			$errors = $check;
 		} else {
 			if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid link provided for the field %s.', 'pods' ), $label );

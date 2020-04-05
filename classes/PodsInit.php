@@ -184,6 +184,7 @@ class PodsInit {
 			'plugins.php' !== $pagenow
 			&& 'update-core.php' !== $pagenow
 			&& 'update.php' !== $pagenow
+			&& ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
 			&& ( ! isset( $_GET['page'] ) || 0 !== strpos( $_GET['page'], 'pods' ) )
 		) {
 			return;

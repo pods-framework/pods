@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.4
 Requires PHP: 5.3
-Stable tag: 2.7.18.1
+Stable tag: 2.7.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -190,11 +190,15 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
-= 2.7.18.1 - April 5th 2020 =
+= 2.7.20 - April 5th 2020 =
 
 **Bug Fixes**
 
 * Fixed: Resolved issues with Freemius notices not being able to be properly dismissed. (@sc0ttkclark)
+
+= 2.7.19 - April 5th 2020 =
+
+This version was bugged due to a deployment that sent out a copy of 2.7.18 as 2.7.19.
 
 = 2.7.18 - April 3rd 2020 =
 

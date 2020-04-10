@@ -1140,7 +1140,7 @@ class Pods implements Iterator {
 
 				foreach ( $date_fields as $date_field ) {
 					if (
-						0 === strpos( $params->name, $date_field . '._format' )
+						0 === strpos( $params->name, $date_field . '.' )
 					) {
 						$field = explode( '.', $params->name );
 

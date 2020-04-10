@@ -1140,19 +1140,28 @@ class Pods implements Iterator {
 
 				foreach ( $date_fields as $date_field ) {
 					if (
-						$date_field === $params->name ||
-						0 === strpos( $params->name, $date_field . '.' )
+						0 === strpos( $params->name, $date_field . '._format' )
 					) {
 						$field = explode( '.', $params->name );
 
 						if ( 1 < count( $field ) ) {
-							array_shift( $field );
-							$format = implode( '.', $field );
-							$value  = date_i18n( $format, strtotime( $value ) );
+							array_shift( $field ); // Remove field name.
+							$type = array_shift( $field );
+							switch ( $type ) {
+								case '_format':
+									if ( $field ) {
+										$format = implode( '.', $field );
+										$value  = date_i18n( $format, strtotime( $value ) );
 
-							$field_data['options']['datetime_type']          = 'custom';
-							$field_data['options']['datetime_time_type']     = 'custom';
-							$field_data['options']['datetime_format_custom'] = $format;
+										$field_data['options']['datetime_type']          = 'custom';
+										$field_data['options']['datetime_time_type']     = 'custom';
+										$field_data['options']['datetime_format_custom'] = $format;
+									} else {
+										$field_data['options']['datetime_type']          = 'wp';
+										$field_data['options']['datetime_time_type']     = 'wp';
+									}
+									break;
+							}
 						}
 						break;
 					}

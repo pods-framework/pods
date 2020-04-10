@@ -1003,7 +1003,7 @@ class PodsAPI {
 					'name'  => 'post_date',
 					'label' => 'Publish Date',
 					'type'  => 'datetime',
-					'alias' => array( 'created', 'date' )
+					'alias' => array( 'created', 'date' ),
 				),
 				'post_date_gmt'         => array(
 					'name'   => 'post_date_gmt',

@@ -993,29 +993,23 @@ class Pods implements Iterator {
 		} elseif ( empty( $value ) ) {
 			$object_field_found = false;
 
-			if ( 'object_field' === $field_type ) {
-				$object_field_found = true;
-
-				if ( isset( $this->row[ $first_field ] ) ) {
-					$value = $this->row[ $first_field ];
-				} elseif ( in_array( $field_data['type'], $tableless_field_types, true ) ) {
-					$this->fields[ $first_field ] = $field_data;
-
-					$object_field_found = false;
-				} else {
-					return null;
-				}
-			}
-
 			// Default image field handlers.
 			$image_fields = array(
 				'image_attachment',
 				'image_attachment_url',
 			);
 
+			// Default date field handlers.
+			$date_fields = array(
+				'date',
+			);
+
 			if ( 'post_type' === $this->pod_data['type'] ) {
 				$image_fields[] = 'post_thumbnail';
 				$image_fields[] = 'post_thumbnail_url';
+
+				$date_fields[] = 'post_date';
+				$date_fields[] = 'post_date_gmt';
 			} elseif ( 'user' === $this->pod_data['type'] && ! isset( $this->fields[ $params->name ] ) ) {
 				if ( ! isset( $this->fields['avatar'] ) && ( 'avatar' === $params->name || 0 === strpos( $params->name, 'avatar.' ) ) ) {
 					$size = null;
@@ -1143,9 +1137,43 @@ class Pods implements Iterator {
 						break;
 					} //end if
 				} //end foreach
+
+				foreach ( $date_fields as $date_field ) {
+					if (
+						$date_field === $params->name ||
+						0 === strpos( $params->name, $date_field . '.' )
+					) {
+						$field = explode( '.', $params->name );
+
+						if ( 1 < count( $field ) ) {
+							array_shift( $field );
+							$format = implode( '.', $field );
+							$value  = date_i18n( $format, strtotime( $value ) );
+
+							$field_data['options']['datetime_type']          = 'custom';
+							$field_data['options']['datetime_time_type']     = 'custom';
+							$field_data['options']['datetime_format_custom'] = $format;
+						}
+						break;
+					}
+				}
 			}
 
-			if ( false === $object_field_found ) {
+			if ( ! $object_field_found && 'object_field' === $field_type ) {
+				$object_field_found = true;
+
+				if ( isset( $this->row[ $first_field ] ) ) {
+					$value = $this->row[ $first_field ];
+				} elseif ( in_array( $field_data['type'], $tableless_field_types, true ) ) {
+					$this->fields[ $first_field ] = $field_data;
+
+					$object_field_found = false;
+				} else {
+					return null;
+				}
+			}
+
+			if ( ! $object_field_found ) {
 				$params->traverse = array( $params->name );
 
 				if ( false !== strpos( $params->name, '.' ) ) {

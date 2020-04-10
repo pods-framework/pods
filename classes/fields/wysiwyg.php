@@ -71,6 +71,13 @@ class PodsField_WYSIWYG extends PodsField {
 					),
 				),
 			),
+			static::$type . '_editor_height'     => array(
+				'label'           => __( 'Editor Height', 'pods' ),
+				'default'         => '',
+				'type'            => 'number',
+				'depends-on'      => array( static::$type . '_editor' => 'tinymce' ),
+				'number_decimals' => 0,
+			),
 			'output_options'                     => array(
 				'label' => __( 'Output Options', 'pods' ),
 				'group' => array(

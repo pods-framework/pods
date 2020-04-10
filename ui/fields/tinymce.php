@@ -6,6 +6,11 @@ if ( ! ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPL
 	$settings['media_buttons'] = (boolean) pods_var( 'wysiwyg_media_buttons', $options, true );
 }
 
+$editor_height = pods_v( 'wysiwyg_editor_height', $options, false );
+if ( $editor_height ) {
+	$settings['editor_height'] = $editor_height;
+}
+
 if ( isset( $options['settings'] ) ) {
 	$settings = array_merge( $settings, $options['settings'] );
 }

@@ -929,15 +929,22 @@ class Pods implements Iterator {
 			}
 		}
 
-		$last_field_data = false;
-		$field_source    = false;
+		/**
+		 * @var array  $field_data      The field data.
+		 * @var string $field_source    Regular field or object field.
+		 * @var array  $traverse_fields All the traversal field names.
+		 * @var string $first_field     The name of the fieds without the traversal names from $params->name.
+		 * @var array  $last_field_data The field data used in traversal loop.
+		 */
 
 		$is_field_set       = isset( $this->fields[ $params->name ] );
 		$is_tableless_field = false;
 		$field_data         = ( $is_field_set ) ? $this->fields[ $params->name ] : array();
-
-		$traverse_fields = explode( '.', $params->name );
-		$first_field     = $traverse_fields[0];
+		$field_source       = '';
+		$field_type         = '';
+		$traverse_fields    = explode( '.', $params->name );
+		$first_field        = $traverse_fields[0];
+		$last_field_data    = null;
 
 		// Get the field type and it's data.
 		if ( isset( $this->fields[ $first_field ] ) ) {
@@ -968,13 +975,8 @@ class Pods implements Iterator {
 			}
 		}//end if
 
+		/** @var string $field_type The field type. */
 		$field_type = pods_v( 'type', $field_data, '' );
-
-		/**
-		 * @var array  $field_data   The field type data.
-		 * @var string $field_source Regular field or object field.
-		 * @var string $field_type   The field type.
-		 */
 
 		// Simple fields have no other output options.
 		if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {

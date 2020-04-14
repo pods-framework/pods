@@ -1077,7 +1077,7 @@ class Pods implements Iterator {
 
 					$object_field_found = true;
 
-				} elseif( in_array( $first_field, $image_fields, true ) ) {
+				} elseif ( in_array( $first_field, $image_fields, true ) ) {
 					// Default image field handlers.
 
 					$image_field = $first_field;

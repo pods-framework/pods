@@ -890,19 +890,24 @@ class Pods implements Iterator {
 
 		$params->traverse = array();
 
-		if ( in_array( $params->name, array(
+		$permalink_fields = array(
 			'_link',
 			'detail_url',
-		), true ) || ( in_array( $params->name, array(
 			'permalink',
 			'the_permalink',
-		), true ) && in_array( $this->pod_data['type'], array(
+		);
+
+		$wp_object_types = array(
 			'post_type',
 			'taxonomy',
 			'media',
 			'user',
 			'comment',
-		), true ) ) ) {
+		);
+
+		$is_wp_object = in_array( $this->pod_data['type'], $wp_object_types, true );
+
+		if ( $is_wp_object && in_array( $params->name, $permalink_fields, true ) ) {
 			if ( 0 < strlen( $this->detail_page ) ) {
 				$value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
 			} elseif ( in_array( $this->pod_data['type'], array( 'post_type', 'media' ), true ) ) {

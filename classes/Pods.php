@@ -1187,32 +1187,30 @@ class Pods implements Iterator {
 
 				$simple = false;
 
-				if ( isset( $this->fields[ $params->name ] ) ) {
-					if ( 'meta' === $this->pod_data['storage'] && ! in_array( $this->fields[ $params->name ]['type'], $tableless_field_types, true ) ) {
+				$is_field_set       = isset( $this->fields[ $params->name ] );
+				$is_tableless_field = false;
+				$field              = array();
+				$field_type         = '';
+
+				if ( $is_field_set ) {
+					$field = $this->fields[ $params->name ];
+
+					if ( 'meta' === $this->pod_data['storage'] && ! in_array( $field['type'], $tableless_field_types, true ) ) {
 						$simple = true;
 					}
 
-					if ( in_array( $this->fields[ $params->name ]['type'], $tableless_field_types, true ) ) {
+					if ( in_array( $field_type, $tableless_field_types, true ) ) {
 						$params->raw = true;
 
-						if ( 'pick' === $this->fields[ $params->name ]['type'] && in_array( $this->fields[ $params->name ]['pick_object'], $simple_tableless_objects, true ) ) {
+						if ( 'pick' === $field_type && in_array( $field['pick_object'], $simple_tableless_objects, true ) ) {
 							$simple         = true;
 							$params->single = true;
 						}
-					} elseif ( in_array( $this->fields[ $params->name ]['type'], array(
-						'boolean',
-						'number',
-						'currency',
-					), true ) ) {
+					} elseif ( in_array( $field_type, array( 'boolean', 'number', 'currency' ), true ) ) {
 						$params->raw = true;
 					}
-				}
 
-				$is_field_set       = isset( $this->fields[ $params->name ] );
-				$is_tableless_field = false;
-
-				if ( $is_field_set ) {
-					$is_tableless_field = in_array( $this->fields[ $params->name ]['type'], $tableless_field_types, true );
+					$is_tableless_field = in_array( $field_type, $tableless_field_types, true );
 				}
 
 				if ( $simple || ! $is_field_set || ! $is_tableless_field ) {
@@ -1235,18 +1233,18 @@ class Pods implements Iterator {
 
 						$metadata_type = $this->pod_data['type'];
 
-						if ( in_array( $this->pod_data['type'], array( 'post_type', 'media' ), true ) ) {
+						if ( in_array( $metadata_type, array( 'post_type', 'media' ), true ) ) {
 							$metadata_type = 'post';
 
 							// Support for WPML 'duplicated' translation handling.
 							if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_is_translated_post_type', false, $this->pod_data['name'] ) ) {
 								$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $id );
 
-								if ( 0 < $master_post_id ) {
+								if ( $master_post_id ) {
 									$id = $master_post_id;
 								}
 							}
-						} elseif ( 'taxonomy' === $this->pod_data['type'] ) {
+						} elseif ( 'taxonomy' === $metadata_type ) {
 							$metadata_type = 'term';
 						}
 
@@ -1254,8 +1252,8 @@ class Pods implements Iterator {
 
 						$single_multi = 'single';
 
-						if ( $is_field_set ) {
-							$single_multi = pods_v( $this->fields[ $params->name ]['type'] . '_format_type', $this->fields[ $params->name ]['options'], $single_multi );
+						if ( $field_type ) {
+							$single_multi = pods_v( $field_type . '_format_type', $this->fields[ $params->name ]['options'], $single_multi );
 						}
 
 						if ( $simple && ! is_array( $value ) && 'single' !== $single_multi ) {

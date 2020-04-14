@@ -933,6 +933,7 @@ class Pods implements Iterator {
 
 		// Get the field type and it's data.
 		if ( isset( $this->fields[ $first_field ] ) ) {
+			$is_field_set = true;
 			$field_data   = $this->fields[ $first_field ];
 			$field_source = 'field';
 		} elseif ( ! empty( $this->pod_data['object_fields'] ) ) {
@@ -1022,58 +1023,28 @@ class Pods implements Iterator {
 				} else {
 					return null;
 				}
-			}
 
-			// Default image field handlers.
-			$image_fields = array(
-				'image_attachment',
-				'image_attachment_url',
-			);
+			} elseif ( ! $is_field_set ) {
 
-			if ( 'post_type' === $this->pod_data['type'] ) {
-				$image_fields[] = 'post_thumbnail';
-				$image_fields[] = 'post_thumbnail_url';
-			} elseif ( 'user' === $this->pod_data['type'] && ! isset( $this->fields[ $params->name ] ) ) {
-				if ( ! isset( $this->fields['avatar'] ) && ( 'avatar' === $params->name || 0 === strpos( $params->name, 'avatar.' ) ) ) {
-					$size = null;
+				// Handle special field tags.
+				switch ( $first_field ) {
 
-					if ( 0 === strpos( $params->name, 'avatar.' ) ) {
-						$field_names = explode( '.', $params->name );
-
-						if ( isset( $field_names[1] ) ) {
-							$size = (int) $field_names[1];
-						}
-					}
-
-					if ( 0 < $size ) {
-						$value = get_avatar( $this->id(), $size );
-					} else {
-						$value = get_avatar( $this->id() );
-					}
-
-					$object_field_found = true;
-				}
-			}
-
-			if ( ! $object_field_found ) {
-				foreach ( $image_fields as $image_field ) {
-					if ( isset( $this->fields[ $image_field ] ) ) {
-						// Skip any names that are registered fields within this Pod.
-						continue;
-					}
-					if (
-						$image_field === $params->name ||
-						0 === strpos( $params->name, $image_field . '.' )
-					) {
+					// Default image field handlers.
+					case 'image_attachment':
+					case 'image_attachment_url':
+					case 'post_thumbnail':
+					case 'post_thumbnail_url':
+						$image_field = $first_field;
 						// Is it a URL request?
 						$url = '_url' === substr( $image_field, -4 );
 						if ( $url ) {
 							$image_field = substr( $image_field, 0, -4 );
 						}
 
-						// Results in an empty array if no traversal names are passed.
-						$traverse_names = explode( '.', $params->name );
-						array_shift( $traverse_names );
+						// Copy traversal parameters.
+						$traverse_params = $traverse_fields;
+						// Results in an empty array if no traversal params are passed.
+						array_shift( $traverse_params );
 
 						$attachment_id = 0;
 						switch ( $image_field ) {
@@ -1081,9 +1052,9 @@ class Pods implements Iterator {
 								$attachment_id = get_post_thumbnail_id( $this->id() );
 								break;
 							case 'image_attachment':
-								if ( isset( $traverse_names[0] ) ) {
-									$attachment_id = $traverse_names[0];
-									array_shift( $traverse_names );
+								if ( isset( $traverse_params[0] ) ) {
+									$attachment_id = $traverse_params[0];
+									array_shift( $traverse_params );
 								}
 								break;
 						}
@@ -1091,8 +1062,8 @@ class Pods implements Iterator {
 						if ( $attachment_id ) {
 
 							$size = 'thumbnail';
-							if ( isset( $traverse_names[0] ) ) {
-								$size  = $traverse_names[0];
+							if ( isset( $traverse_params[0] ) ) {
+								$size  = $traverse_params[0];
 								$sizes = get_intermediate_image_sizes();
 								// Not shown by default.
 								$sizes[] = 'full';
@@ -1122,19 +1093,19 @@ class Pods implements Iterator {
 							$media = pods( 'media', $attachment_id );
 
 							if ( $media && $media->valid() && $media->exists() ) {
-								$value = $media->field( implode( '.', $traverse_names ) );
+								$value = $media->field( implode( '.', $traverse_params ) );
 							} else {
 								// Fallback to default attachment object.
 								$attachment = get_post( $attachment_id );
-								$value      = pods_v( implode( '.', $traverse_names ), $attachment, '' );
+								$value      = pods_v( implode( '.', $traverse_params ), $attachment, '' );
 								if ( ! $value ) {
-									$meta_key = array_shift( $traverse_names );
+									$meta_key = array_shift( $traverse_params );
 									$value    = get_post_meta( $attachment_id, $meta_key, true );
 
 									// Maybe traverse.
-									if ( count( $traverse_names ) ) {
+									if ( count( $traverse_params ) ) {
 										if ( is_array( $value ) ) {
-											foreach ( $traverse_names as $field ) {
+											foreach ( $traverse_params as $field ) {
 												if ( ! isset( $value[ $field ] ) ) {
 													$value = null;
 
@@ -1155,13 +1126,32 @@ class Pods implements Iterator {
 								break;
 							}
 						}
-
-						// Already found a matching field name. Stop foreach loop.
 						break;
-					} //end if
-				} //end foreach
+
+					// User avatar.
+					case 'avatar':
+						$size = null;
+
+						if ( 0 === strpos( $params->name, 'avatar.' ) ) {
+							$field_names = explode( '.', $params->name );
+
+							if ( isset( $field_names[1] ) ) {
+								$size = (int) $field_names[1];
+							}
+						}
+
+						if ( 0 < $size ) {
+							$value = get_avatar( $this->id(), $size );
+						} else {
+							$value = get_avatar( $this->id() );
+						}
+
+						$object_field_found = true;
+						break;
+				}
 			}
 
+			// Continue regular field parsing.
 			if ( false === $object_field_found ) {
 				$params->traverse = array( $params->name );
 

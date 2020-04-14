@@ -923,19 +923,19 @@ class Pods implements Iterator {
 
 		$field_data      = false;
 		$last_field_data = false;
-		$field_type      = false;
+		$field_source    = false;
 
 		$first_field = explode( '.', $params->name );
 		$first_field = $first_field[0];
 
 		// Get the field type and it's data.
 		if ( isset( $this->fields[ $first_field ] ) ) {
-			$field_data = $this->fields[ $first_field ];
-			$field_type = 'field';
+			$field_data   = $this->fields[ $first_field ];
+			$field_source = 'field';
 		} elseif ( ! empty( $this->pod_data['object_fields'] ) ) {
 			if ( isset( $this->pod_data['object_fields'][ $first_field ] ) ) {
-				$field_data = $this->pod_data['object_fields'][ $first_field ];
-				$field_type = 'object_field';
+				$field_data   = $this->pod_data['object_fields'][ $first_field ];
+				$field_source = 'object_field';
 			} else {
 				$object_fields = (array) $this->pod_data['object_fields'];
 
@@ -945,9 +945,9 @@ class Pods implements Iterator {
 							$params->name = $object_field;
 						}
 
-						$first_field = $object_field;
-						$field_data  = $object_field_opt;
-						$field_type  = 'object_field';
+						$first_field  = $object_field;
+						$field_data   = $object_field_opt;
+						$field_source = 'object_field';
 
 						break;
 					}
@@ -1004,7 +1004,7 @@ class Pods implements Iterator {
 		} elseif ( empty( $value ) ) {
 			$object_field_found = false;
 
-			if ( 'object_field' === $field_type ) {
+			if ( 'object_field' === $field_source ) {
 				$object_field_found = true;
 
 				if ( isset( $this->row[ $first_field ] ) ) {

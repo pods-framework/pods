@@ -958,12 +958,15 @@ class Pods implements Iterator {
 			}
 		}//end if
 
+		$field_type = pods_v( 'type', $field_data, '' );
+
 		// Simple fields have no other output options.
-		if ( 'pick' === $field_data['type'] && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
+		if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
 			$params->output = 'arrays';
 		}
 
-		if ( empty( $value ) && in_array( $field_data['type'], $tableless_field_types, true ) ) {
+		// Enforce output type for tableless fields in forms.
+		if ( empty( $value ) && in_array( $field_type, $tableless_field_types, true ) ) {
 			$params->raw = true;
 
 			$value = false;
@@ -979,7 +982,7 @@ class Pods implements Iterator {
 			if (
 				false !== $value &&
 				! is_array( $value ) &&
-				'pick' === $field_data['type'] &&
+				'pick' === $field_type &&
 				in_array( $field_data['pick_object'], $simple_tableless_objects, true )
 			) {
 				$value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $field_data, $this->pod_data, $this->id(), true );
@@ -989,9 +992,9 @@ class Pods implements Iterator {
 		if (
 			empty( $value ) &&
 			isset( $this->row[ $params->name ] ) &&
-			( ! in_array( $field_data['type'], $tableless_field_types, true ) || 'arrays' === $params->output )
+			( ! in_array( $field_type, $tableless_field_types, true ) || 'arrays' === $params->output )
 		) {
-			if ( empty( $field_data ) || in_array( $field_data['type'], array( 'boolean', 'number', 'currency' ), true ) ) {
+			if ( in_array( $field_type, array( 'boolean', 'number', 'currency' ), true ) ) {
 				$params->raw = true;
 			}
 
@@ -1012,7 +1015,7 @@ class Pods implements Iterator {
 
 				if ( isset( $this->row[ $first_field ] ) ) {
 					$value = $this->row[ $first_field ];
-				} elseif ( in_array( $field_data['type'], $tableless_field_types, true ) ) {
+				} elseif ( in_array( $field_type, $tableless_field_types, true ) ) {
 					$this->fields[ $first_field ] = $field_data;
 
 					$object_field_found = false;
@@ -1168,8 +1171,8 @@ class Pods implements Iterator {
 					$params->name = $params->traverse[0];
 				}
 
-				if ( isset( $this->fields[ $params->name ], $this->fields[ $params->name ]['type'] ) ) {
-					$field_type = $this->fields[ $params->name ]['type'];
+				if ( $field_type ) {
+
 					/**
 					 * Modify value returned by field() after its retrieved, but before its validated or formatted
 					 *
@@ -1190,11 +1193,6 @@ class Pods implements Iterator {
 				}
 
 				$simple = false;
-
-				$is_field_set       = isset( $this->fields[ $params->name ] );
-				$is_tableless_field = false;
-				$field              = array();
-				$field_type         = '';
 
 				if ( $is_field_set ) {
 					$field = $this->fields[ $params->name ];

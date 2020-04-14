@@ -972,17 +972,22 @@ class Pods implements Iterator {
 				$value = $this->row[ $params->name ];
 			}
 
-			if ( false !== $value && ! is_array( $value ) && 'pick' === $field_data['type'] && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
+			if (
+				false !== $value &&
+				! is_array( $value ) &&
+				'pick' === $field_data['type'] &&
+				in_array( $field_data['pick_object'], $simple_tableless_objects, true )
+			) {
 				$value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $field_data, $this->pod_data, $this->id(), true );
 			}
 		}
 
-		if ( empty( $value ) && isset( $this->row[ $params->name ] ) && ( ! in_array( $field_data['type'], $tableless_field_types, true ) || 'arrays' === $params->output ) ) {
-			if ( empty( $field_data ) || in_array( $field_data['type'], array(
-				'boolean',
-				'number',
-				'currency',
-			), true ) ) {
+		if (
+			empty( $value ) &&
+			isset( $this->row[ $params->name ] ) &&
+			( ! in_array( $field_data['type'], $tableless_field_types, true ) || 'arrays' === $params->output )
+		) {
+			if ( empty( $field_data ) || in_array( $field_data['type'], array( 'boolean', 'number', 'currency' ), true ) ) {
 				$params->raw = true;
 			}
 

@@ -1052,8 +1052,8 @@ class Pods implements Iterator {
 					// Default image field handlers.
 					case 'image_attachment':
 					case 'image_attachment_url':
-					case 'post_thumbnail':
-					case 'post_thumbnail_url':
+					case 'post_thumbnail' && 'post_type' === $pod_type:
+					case 'post_thumbnail_url' && 'post_type' === $pod_type:
 						$image_field = $first_field;
 						// Is it a URL request?
 						$url = '_url' === substr( $image_field, -4 );
@@ -1149,7 +1149,7 @@ class Pods implements Iterator {
 						break;
 
 					// User avatar.
-					case 'avatar':
+					case 'avatar' && 'user' === $pod_type:
 						$size = null;
 
 						if ( 0 === strpos( $params->name, 'avatar.' ) ) {

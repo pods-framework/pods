@@ -914,7 +914,7 @@ class Pods implements Iterator {
 			if ( 0 < strlen( $this->detail_page ) ) {
 				$value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
 			} else {
-				switch( $pod_type ) {
+				switch ( $pod_type ) {
 					case 'post_type':
 					case 'media':
 						$value = get_permalink( $this->id() );

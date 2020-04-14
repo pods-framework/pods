@@ -1224,6 +1224,7 @@ class Pods implements Iterator {
 					$no_conflict = pods_no_conflict_check( $this->pod_data['type'] );
 
 					if ( ! $no_conflict ) {
+						// Temporarily enable no conflict.
 						pods_no_conflict_on( $this->pod_data['type'] );
 					}
 
@@ -1272,6 +1273,7 @@ class Pods implements Iterator {
 					}
 
 					if ( ! $no_conflict ) {
+						// Revert temporarily no conflict mode.
 						pods_no_conflict_off( $this->pod_data['type'] );
 					}
 				} else {
@@ -1651,20 +1653,14 @@ class Pods implements Iterator {
 									$object_type = 'post';
 								}
 
-								$no_conflict = true;
 
-								if ( in_array( $object_type, array(
-									'post',
-									'taxonomy',
-									'user',
-									'comment',
-									'settings',
-								), true ) ) {
-									$no_conflict = pods_no_conflict_check( $object_type );
+								$object_no_conflict = in_array( $object_type, array( 'post', 'taxonomy', 'user', 'comment', 'settings' ), true );
 
-									if ( ! $no_conflict ) {
-										pods_no_conflict_on( $object_type );
-									}
+								$no_conflict = pods_no_conflict_check( $object_type );
+
+								if ( $object_no_conflict && ! $no_conflict ) {
+									// Temporarily enable no conflict.
+									pods_no_conflict_on( $object_type );
 								}
 
 								if ( $is_field_output_full ) {
@@ -1811,13 +1807,8 @@ class Pods implements Iterator {
 									}//end foreach
 								}//end if
 
-								if ( ! $no_conflict && in_array( $object_type, array(
-									'post',
-									'taxonomy',
-									'user',
-									'comment',
-									'settings',
-								), true ) ) {
+								if ( $object_no_conflict && ! $no_conflict ) {
+									// Revert temporarily no conflict mode.
 									pods_no_conflict_off( $object_type );
 								}
 

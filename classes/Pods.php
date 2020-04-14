@@ -954,9 +954,8 @@ class Pods implements Iterator {
 
 		// Get the field type and it's data.
 		if ( isset( $this->fields[ $first_field ] ) ) {
-			$is_field_set = true;
-			$field_data   = $this->fields[ $first_field ];
-			$field_source = 'field';
+			$field_data         = $this->fields[ $first_field ];
+			$field_source       = 'field';
 		} elseif ( ! empty( $this->pod_data['object_fields'] ) ) {
 			if ( isset( $this->pod_data['object_fields'][ $first_field ] ) ) {
 				$field_data   = $this->pod_data['object_fields'][ $first_field ];
@@ -1047,7 +1046,8 @@ class Pods implements Iterator {
 					return null;
 				}
 
-			} elseif ( ! $is_field_set ) {
+			}
+			elseif ( ! $is_field_set ) {
 
 				$image_fields = array(
 					'image_attachment',

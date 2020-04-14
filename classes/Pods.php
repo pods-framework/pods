@@ -1689,16 +1689,16 @@ class Pods implements Iterator {
 										} elseif ( ! empty( $related_obj ) && 0 === strpos( $full_field, 'post_thumbnail' ) ) {
 											// We want to catch post_thumbnail and post_thumbnail_url here
 											$value[] = $related_obj->field( $full_field );
-										} elseif ( ( ( false !== strpos( $full_field, '_src' ) || 'guid' === $field ) && ( in_array( $table['type'], array(
-											'attachment',
-											'media',
-										), true ) || in_array( $last_type, PodsForm::file_field_types(), true ) ) ) || ( in_array( $field, array(
-											'_link',
-											'detail_url',
-										), true ) || in_array( $field, array(
-											'permalink',
-											'the_permalink',
-										), true ) && in_array( $last_type, PodsForm::file_field_types(), true ) ) ) {
+										} elseif (
+											(
+												( false !== strpos( $full_field, '_src' ) || 'guid' === $field ) &&
+												(
+													in_array( $table['type'], array( 'attachment', 'media' ), true ) ||
+													in_array( $last_type, PodsForm::file_field_types(), true )
+												)
+											) ||
+											( in_array( $field, $permalink_fields, true ) && in_array( $last_type, PodsForm::file_field_types(), true ) )
+										) {
 											// @todo Refactor the above condition statement.
 											$size = 'full';
 

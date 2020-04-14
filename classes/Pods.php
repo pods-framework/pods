@@ -988,13 +988,15 @@ class Pods implements Iterator {
 		$field_type    = pods_v( 'type', $field_data, '' );
 		$field_options = pods_v( 'options', $field_data, array() );
 
+		$is_tableless_field = in_array( $field_type, $tableless_field_types, true );
+
 		// Simple fields have no other output options.
 		if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
 			$params->output = 'arrays';
 		}
 
 		// Enforce output type for tableless fields in forms.
-		if ( empty( $value ) && in_array( $field_type, $tableless_field_types, true ) ) {
+		if ( empty( $value ) && $is_tableless_field ) {
 			$params->raw = true;
 
 			$value = false;
@@ -1020,14 +1022,14 @@ class Pods implements Iterator {
 		if (
 			empty( $value ) &&
 			isset( $this->row[ $params->name ] ) &&
-			( ! in_array( $field_type, $tableless_field_types, true ) || 'arrays' === $params->output )
+			( ! $is_tableless_field || 'arrays' === $params->output )
 		) {
 			if ( empty( $field_data ) || in_array( $field_type, array( 'boolean', 'number', 'currency' ), true ) ) {
 				$params->raw = true;
 			}
 
 			if ( null === $params->single ) {
-				if ( ! in_array( $field_type, $tableless_field_types, true ) ) {
+				if ( ! $is_tableless_field ) {
 					$params->single = true;
 				} else {
 					$params->single = false;
@@ -1043,7 +1045,7 @@ class Pods implements Iterator {
 
 				if ( isset( $this->row[ $first_field ] ) ) {
 					$value = $this->row[ $first_field ];
-				} elseif ( in_array( $field_type, $tableless_field_types, true ) ) {
+				} elseif ( $is_tableless_field ) {
 					$this->fields[ $first_field ] = $field_data;
 
 					$object_field_found = false;
@@ -1207,11 +1209,11 @@ class Pods implements Iterator {
 
 				if ( $is_field_set ) {
 
-					if ( 'meta' === $this->pod_data['storage'] && ! in_array( $field_type, $tableless_field_types, true ) ) {
+					if ( 'meta' === $this->pod_data['storage'] && ! $is_tableless_field ) {
 						$simple = true;
 					}
 
-					if ( in_array( $field_type, $tableless_field_types, true ) ) {
+					if ( $is_tableless_field ) {
 						$params->raw = true;
 
 						if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
@@ -1221,8 +1223,6 @@ class Pods implements Iterator {
 					} elseif ( in_array( $field_type, array( 'boolean', 'number', 'currency' ), true ) ) {
 						$params->raw = true;
 					}
-
-					$is_tableless_field = in_array( $field_type, $tableless_field_types, true );
 				}
 
 				if ( $simple || ! $is_field_set || ! $is_tableless_field ) {

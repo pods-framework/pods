@@ -1260,7 +1260,7 @@ class Pods implements Iterator {
 
 						$single_multi = 'single';
 
-						if ( $field_type ) {
+						if ( $is_field_set && $field_type ) {
 							$single_multi = pods_v( $field_type . '_format_type', $this->fields[ $params->name ]['options'], $single_multi );
 						}
 

@@ -1015,7 +1015,7 @@ class Pods implements Iterator {
 			isset( $this->row[ $params->name ] ) &&
 			( ! in_array( $field_type, $tableless_field_types, true ) || 'arrays' === $params->output )
 		) {
-			if ( in_array( $field_type, array( 'boolean', 'number', 'currency' ), true ) ) {
+			if ( empty( $field_data ) || in_array( $field_type, array( 'boolean', 'number', 'currency' ), true ) ) {
 				$params->raw = true;
 			}
 

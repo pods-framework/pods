@@ -952,11 +952,12 @@ class Pods implements Iterator {
 		$first_field        = $traverse_fields[0];
 		$last_field_data    = null;
 
-		// Get the field type and it's data.
 		if ( isset( $this->fields[ $first_field ] ) ) {
-			$field_data         = $this->fields[ $first_field ];
-			$field_source       = 'field';
+			// Get the first field name data.
+			$field_data   = $this->fields[ $first_field ];
+			$field_source = 'field';
 		} elseif ( ! empty( $this->pod_data['object_fields'] ) ) {
+			// Get the object field data.
 			if ( isset( $this->pod_data['object_fields'][ $first_field ] ) ) {
 				$field_data   = $this->pod_data['object_fields'][ $first_field ];
 				$field_source = 'object_field';
@@ -1045,9 +1046,7 @@ class Pods implements Iterator {
 				} else {
 					return null;
 				}
-
-			}
-			elseif ( ! $is_field_set ) {
+			} elseif ( ! $is_field_set ) {
 
 				$image_fields = array(
 					'image_attachment',

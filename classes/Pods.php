@@ -1046,69 +1046,86 @@ class Pods implements Iterator {
 
 			} elseif ( ! $is_field_set ) {
 
+				$image_fields = array(
+					'image_attachment',
+					'image_attachment_url',
+				);
+
+				if ( 'post_type' === $pod_type ) {
+					$image_fields[] = 'post_thumbnail';
+					$image_fields[] = 'post_thumbnail_url';
+				}
+
 				// Handle special field tags.
-				switch ( $first_field ) {
+				if ( 'avatar' === $first_field && 'user' === $pod_type ) {
+					// User avatar.
+					$size = null;
 
+					if ( 0 === strpos( $params->name, 'avatar.' ) ) {
+						$field_names = explode( '.', $params->name );
+
+						if ( isset( $field_names[1] ) ) {
+							$size = (int) $field_names[1];
+						}
+					}
+
+					if ( 0 < $size ) {
+						$value = get_avatar( $this->id(), $size );
+					} else {
+						$value = get_avatar( $this->id() );
+					}
+
+					$object_field_found = true;
+
+				} elseif( in_array( $first_field, $image_fields, true ) ) {
 					// Default image field handlers.
-					case 'image_attachment':
-					case 'image_attachment_url':
-					case 'post_thumbnail' && 'post_type' === $pod_type:
-					case 'post_thumbnail_url' && 'post_type' === $pod_type:
-						$image_field = $first_field;
-						// Is it a URL request?
-						$url = '_url' === substr( $image_field, -4 );
-						if ( $url ) {
-							$image_field = substr( $image_field, 0, -4 );
-						}
 
-						// Copy traversal parameters.
-						$traverse_params = $traverse_fields;
-						// Results in an empty array if no traversal params are passed.
-						array_shift( $traverse_params );
+					$image_field = $first_field;
+					// Is it a URL request?
+					$url = '_url' === substr( $image_field, - 4 );
+					if ( $url ) {
+						$image_field = substr( $image_field, 0, - 4 );
+					}
 
-						$attachment_id = 0;
-						switch ( $image_field ) {
-							case 'post_thumbnail':
-								$attachment_id = get_post_thumbnail_id( $this->id() );
-								break;
-							case 'image_attachment':
-								if ( isset( $traverse_params[0] ) ) {
-									$attachment_id = $traverse_params[0];
-									array_shift( $traverse_params );
-								}
-								break;
-						}
+					// Copy traversal parameters.
+					$traverse_params = $traverse_fields;
+					// Results in an empty array if no traversal params are passed.
+					array_shift( $traverse_params );
 
-						if ( $attachment_id ) {
-
-							$size = 'thumbnail';
+					$attachment_id = 0;
+					switch ( $image_field ) {
+						case 'post_thumbnail':
+							$attachment_id = get_post_thumbnail_id( $this->id() );
+							break;
+						case 'image_attachment':
 							if ( isset( $traverse_params[0] ) ) {
-								$size  = $traverse_params[0];
-								$sizes = get_intermediate_image_sizes();
-								// Not shown by default.
-								$sizes[] = 'full';
-								$sizes[] = 'original';
-								if ( ! in_array( $size, $sizes, true ) ) {
-									// No valid image size found.
-									$size = false;
-								}
+								$attachment_id = $traverse_params[0];
+								array_shift( $traverse_params );
 							}
+							break;
+					}
 
-							if ( $url ) {
-								$value = pods_image_url( $attachment_id, $size, 0, true );
+					if ( $attachment_id ) {
 
-								$object_field_found = true;
-								break;
+						$size = 'thumbnail';
+						if ( isset( $traverse_params[0] ) ) {
+							$size  = $traverse_params[0];
+							$sizes = get_intermediate_image_sizes();
+							// Not shown by default.
+							$sizes[] = 'full';
+							$sizes[] = 'original';
+							if ( ! in_array( $size, $sizes, true ) ) {
+								// No valid image size found.
+								$size = false;
 							}
+						}
 
-							if ( $size ) {
-								// Pods will auto-get the thumbnail ID if this isn't an attachment.
-								$value = pods_image( $attachment_id, $size, 0, null, true );
-
-								$object_field_found = true;
-								break;
-							}
-
+						if ( $url ) {
+							$value = pods_image_url( $attachment_id, $size, 0, true );
+						} elseif ( $size ) {
+							// Pods will auto-get the thumbnail ID if this isn't an attachment.
+							$value = pods_image( $attachment_id, $size, 0, null, true );
+						} else {
 							// Fallback to attachment Post object to look for other image properties.
 							$media = pods( 'media', $attachment_id );
 
@@ -1140,34 +1157,12 @@ class Pods implements Iterator {
 									}
 								}
 							}
-
-							if ( null !== $value ) {
-								$object_field_found = true;
-								break;
-							}
-						}
-						break;
-
-					// User avatar.
-					case 'avatar' && 'user' === $pod_type:
-						$size = null;
-
-						if ( 0 === strpos( $params->name, 'avatar.' ) ) {
-							$field_names = explode( '.', $params->name );
-
-							if ( isset( $field_names[1] ) ) {
-								$size = (int) $field_names[1];
-							}
 						}
 
-						if ( 0 < $size ) {
-							$value = get_avatar( $this->id(), $size );
-						} else {
-							$value = get_avatar( $this->id() );
+						if ( null !== $value ) {
+							$object_field_found = true;
 						}
-
-						$object_field_found = true;
-						break;
+					}
 				}
 			}
 

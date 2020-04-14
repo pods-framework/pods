@@ -964,10 +964,10 @@ class Pods implements Iterator {
 
 			$value = false;
 
-			$row_key = sprintf( '_%s_%s', $params->output, $params->name );
+			$row_key = '_' . $params->output . '_' . $params->name;
 
 			if ( 'arrays' !== $params->output && isset( $this->row[ $row_key ] ) ) {
-				$value = $this->row[ '_' . $params->output . '_' . $params->name ];
+				$value = $this->row[ $row_key ];
 			} elseif ( 'arrays' === $params->output && isset( $this->row[ $params->name ] ) ) {
 				$value = $this->row[ $params->name ];
 			}

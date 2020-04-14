@@ -1203,16 +1203,15 @@ class Pods implements Iterator {
 				$simple = false;
 
 				if ( $is_field_set ) {
-					$field = $this->fields[ $params->name ];
 
-					if ( 'meta' === $this->pod_data['storage'] && ! in_array( $field['type'], $tableless_field_types, true ) ) {
+					if ( 'meta' === $this->pod_data['storage'] && ! in_array( $field_type, $tableless_field_types, true ) ) {
 						$simple = true;
 					}
 
 					if ( in_array( $field_type, $tableless_field_types, true ) ) {
 						$params->raw = true;
 
-						if ( 'pick' === $field_type && in_array( $field['pick_object'], $simple_tableless_objects, true ) ) {
+						if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
 							$simple         = true;
 							$params->single = true;
 						}

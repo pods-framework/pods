@@ -905,7 +905,10 @@ class Pods implements Iterator {
 			'comment',
 		);
 
-		$is_wp_object = in_array( $this->pod_data['type'], $wp_object_types, true );
+		/** @var string $pod_type The pod object type. */
+		$pod_type = pods_v( 'type', $this->pod_data, '' );
+
+		$is_wp_object = in_array( $pod_type, $wp_object_types, true );
 
 		if ( $is_wp_object && in_array( $params->name, $permalink_fields, true ) ) {
 			if ( 0 < strlen( $this->detail_page ) ) {
@@ -1231,17 +1234,17 @@ class Pods implements Iterator {
 						}
 					}
 
-					$no_conflict = pods_no_conflict_check( $this->pod_data['type'] );
+					$no_conflict = pods_no_conflict_check( $pod_type );
 
 					if ( ! $no_conflict ) {
 						// Temporarily enable no conflict.
-						pods_no_conflict_on( $this->pod_data['type'] );
+						pods_no_conflict_on( $pod_type );
 					}
 
 					if ( $is_wp_object ) {
 						$id = $this->id();
 
-						$metadata_type = $this->pod_data['type'];
+						$metadata_type = $pod_type;
 
 						if ( in_array( $metadata_type, array( 'post_type', 'media' ), true ) ) {
 							$metadata_type = 'post';
@@ -1269,7 +1272,7 @@ class Pods implements Iterator {
 						if ( $simple && ! is_array( $value ) && 'single' !== $single_multi ) {
 							$value = get_metadata( $metadata_type, $id, $params->name );
 						}
-					} elseif ( 'settings' === $this->pod_data['type'] ) {
+					} elseif ( 'settings' === $pod_type ) {
 						$value = get_option( $this->pod_data['name'] . '_' . $params->name, null );
 					}//end if
 
@@ -1284,7 +1287,7 @@ class Pods implements Iterator {
 
 					if ( ! $no_conflict ) {
 						// Revert temporarily no conflict mode.
-						pods_no_conflict_off( $this->pod_data['type'] );
+						pods_no_conflict_off( $pod_type );
 					}
 				} else {
 					// Dot-traversal.

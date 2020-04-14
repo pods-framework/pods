@@ -928,6 +928,7 @@ class Pods implements Iterator {
 		$first_field = explode( '.', $params->name );
 		$first_field = $first_field[0];
 
+		// Get the field type and it's data.
 		if ( isset( $this->fields[ $first_field ] ) ) {
 			$field_data = $this->fields[ $first_field ];
 			$field_type = 'field';

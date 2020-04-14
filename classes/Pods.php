@@ -910,14 +910,22 @@ class Pods implements Iterator {
 		if ( $is_wp_object && in_array( $params->name, $permalink_fields, true ) ) {
 			if ( 0 < strlen( $this->detail_page ) ) {
 				$value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
-			} elseif ( in_array( $this->pod_data['type'], array( 'post_type', 'media' ), true ) ) {
-				$value = get_permalink( $this->id() );
-			} elseif ( 'taxonomy' === $this->pod_data['type'] ) {
-				$value = get_term_link( $this->id(), $this->pod_data['name'] );
-			} elseif ( 'user' === $this->pod_data['type'] ) {
-				$value = get_author_posts_url( $this->id() );
-			} elseif ( 'comment' === $this->pod_data['type'] ) {
-				$value = get_comment_link( $this->id() );
+			} else {
+				switch( $pod_type ) {
+					case 'post_type':
+					case 'media':
+						$value = get_permalink( $this->id() );
+						break;
+					case 'taxonomy':
+						$value = get_term_link( $this->id(), $this->pod_data['name'] );
+						break;
+					case 'user':
+						$value = get_author_posts_url( $this->id() );
+						break;
+					case 'comment':
+						$value = get_comment_link( $this->id() );
+						break;
+				}
 			}
 		}
 

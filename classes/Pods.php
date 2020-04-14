@@ -945,14 +945,18 @@ class Pods implements Iterator {
 		$is_field_set       = isset( $this->fields[ $params->name ] );
 		$is_tableless_field = false;
 		$field_source       = '';
-		$field_data         = ( $is_field_set ) ? $this->fields[ $params->name ] : array();
+		$field_data         = array();
 		$field_options      = array();
 		$field_type         = '';
 		$traverse_fields    = explode( '.', $params->name );
 		$first_field        = $traverse_fields[0];
 		$last_field_data    = null;
 
-		if ( isset( $this->fields[ $first_field ] ) ) {
+		if ( $is_field_set ) {
+			// Get the full field name data.
+			$field_data   = $this->fields[ $params->name ];
+			$field_source = 'field';
+		} elseif ( isset( $this->fields[ $first_field ] ) ) {
 			// Get the first field name data.
 			$field_data   = $this->fields[ $first_field ];
 			$field_source = 'field';

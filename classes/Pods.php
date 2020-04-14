@@ -943,6 +943,7 @@ class Pods implements Iterator {
 			} else {
 				$object_fields = (array) $this->pod_data['object_fields'];
 
+				// Search through field aliases.
 				foreach ( $object_fields as $object_field => $object_field_opt ) {
 					if ( in_array( $first_field, $object_field_opt['alias'], true ) ) {
 						if ( $first_field === $params->name ) {
@@ -960,6 +961,12 @@ class Pods implements Iterator {
 		}//end if
 
 		$field_type = pods_v( 'type', $field_data, '' );
+
+		/**
+		 * @var array  $field_data   The field type data.
+		 * @var string $field_source Regular field or object field.
+		 * @var string $field_type   The field type.
+		 */
 
 		// Simple fields have no other output options.
 		if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {

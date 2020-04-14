@@ -1027,7 +1027,7 @@ class Pods implements Iterator {
 			}
 
 			if ( null === $params->single ) {
-				if ( isset( $this->fields[ $params->name ] ) && ! in_array( $this->fields[ $params->name ]['type'], $tableless_field_types, true ) ) {
+				if ( ! in_array( $field_type, $tableless_field_types, true ) ) {
 					$params->single = true;
 				} else {
 					$params->single = false;

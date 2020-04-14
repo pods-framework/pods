@@ -933,8 +933,10 @@ class Pods implements Iterator {
 		}
 
 		/**
-		 * @var array  $field_data      The field data.
 		 * @var string $field_source    Regular field or object field.
+		 * @var array  $field_data      The field data.
+		 * @var string $field_type      The field type.
+		 * @var array  $field_options   The field options.
 		 * @var array  $traverse_fields All the traversal field names.
 		 * @var string $first_field     The name of the fieds without the traversal names from $params->name.
 		 * @var array  $last_field_data The field data used in traversal loop.
@@ -942,8 +944,9 @@ class Pods implements Iterator {
 
 		$is_field_set       = isset( $this->fields[ $params->name ] );
 		$is_tableless_field = false;
-		$field_data         = ( $is_field_set ) ? $this->fields[ $params->name ] : array();
 		$field_source       = '';
+		$field_data         = ( $is_field_set ) ? $this->fields[ $params->name ] : array();
+		$field_options      = array();
 		$field_type         = '';
 		$traverse_fields    = explode( '.', $params->name );
 		$first_field        = $traverse_fields[0];
@@ -978,8 +981,8 @@ class Pods implements Iterator {
 			}
 		}//end if
 
-		/** @var string $field_type The field type. */
-		$field_type = pods_v( 'type', $field_data, '' );
+		$field_type    = pods_v( 'type', $field_data, '' );
+		$field_options = pods_v( 'options', $field_data, array() );
 
 		// Simple fields have no other output options.
 		if ( 'pick' === $field_type && in_array( $field_data['pick_object'], $simple_tableless_objects, true ) ) {
@@ -1261,7 +1264,7 @@ class Pods implements Iterator {
 						$single_multi = 'single';
 
 						if ( $is_field_set && $field_type ) {
-							$single_multi = pods_v( $field_type . '_format_type', $this->fields[ $params->name ]['options'], $single_multi );
+							$single_multi = pods_v( $field_type . '_format_type', $field_options, $single_multi );
 						}
 
 						if ( $simple && ! is_array( $value ) && 'single' !== $single_multi ) {
@@ -1328,10 +1331,10 @@ class Pods implements Iterator {
 					$last_object   = '';
 					$last_pick_val = '';
 
-					$single_multi = pods_v( $this->fields[ $params->name ]['type'] . '_format_type', $this->fields[ $params->name ]['options'], 'single' );
+					$single_multi = pods_v( $field_type . '_format_type', $field_options, 'single' );
 
 					if ( 'multi' === $single_multi ) {
-						$limit = (int) pods_v( $this->fields[ $params->name ]['type'] . '_limit', $this->fields[ $params->name ]['options'], 0 );
+						$limit = (int) pods_v( $field_type . '_limit', $field_options, 0 );
 					} else {
 						$limit = 1;
 					}

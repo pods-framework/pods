@@ -1230,13 +1230,7 @@ class Pods implements Iterator {
 						pods_no_conflict_on( $this->pod_data['type'] );
 					}
 
-					if ( in_array( $this->pod_data['type'], array(
-						'post_type',
-						'media',
-						'taxonomy',
-						'user',
-						'comment',
-					), true ) ) {
+					if ( $is_wp_object ) {
 						$id = $this->id();
 
 						$metadata_type = $this->pod_data['type'];

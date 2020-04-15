@@ -1711,13 +1711,13 @@ class Pods implements Iterator {
 											$value[] = $related_obj->field( $full_field );
 										} elseif (
 											(
-												( false !== strpos( $full_field, '_src' ) || 'guid' === $field ) &&
-												(
-													in_array( $table['type'], array( 'attachment', 'media' ), true ) ||
-													in_array( $last_type, PodsForm::file_field_types(), true )
+												( false !== strpos( $full_field, '_src' ) || 'guid' === $field )
+												&& (
+													in_array( $table['type'], array( 'attachment', 'media' ), true )
+													|| in_array( $last_type, PodsForm::file_field_types(), true )
 												)
-											) ||
-											( in_array( $field, $permalink_fields, true ) && in_array( $last_type, PodsForm::file_field_types(), true ) )
+											)
+											|| ( in_array( $field, $permalink_fields, true ) && in_array( $last_type, PodsForm::file_field_types(), true ) )
 										) {
 											// @todo Refactor the above condition statement.
 											$size = 'full';

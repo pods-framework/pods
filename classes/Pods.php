@@ -933,38 +933,43 @@ class Pods implements Iterator {
 		}
 
 		/**
-		 * @var string $field_source    Regular field or object field.
-		 * @var array  $field_data      The field data.
-		 * @var string $field_type      The field type.
-		 * @var array  $field_options   The field options.
-		 * @var array  $traverse_fields All the traversal field names.
-		 * @var string $first_field     The name of the fieds without the traversal names from $params->name.
-		 * @var array  $last_field_data The field data used in traversal loop.
+		 * @var bool   $is_field_set       Is the field found.
+		 * @var bool   $is_tableless_field Is it a tableless field.
+		 * @var string $field_source       Regular field or object field.
+		 * @var array  $field_data         The field data.
+		 * @var string $field_type         The field type.
+		 * @var array  $field_options      The field options.
+		 * @var array  $traverse_fields    All the traversal field names.
+		 * @var string $first_field        The name of the fieds without the traversal names from $params->name.
+		 * @var array  $last_field_data    The field data used in traversal loop.
 		 */
 
-		$is_field_set       = isset( $this->fields[ $params->name ] );
+		$is_field_set       = false;
 		$is_tableless_field = false;
 		$field_source       = '';
 		$field_data         = array();
-		$field_options      = array();
 		$field_type         = '';
+		$field_options      = array();
 		$traverse_fields    = explode( '.', $params->name );
 		$first_field        = $traverse_fields[0];
 		$last_field_data    = null;
 
-		if ( $is_field_set ) {
+		if ( isset( $this->fields[ $params->name ] ) ) {
 			// Get the full field name data.
 			$field_data   = $this->fields[ $params->name ];
 			$field_source = 'field';
+			$is_field_set = true;
 		} elseif ( isset( $this->fields[ $first_field ] ) ) {
 			// Get the first field name data.
 			$field_data   = $this->fields[ $first_field ];
 			$field_source = 'field';
+			$is_field_set = true;
 		} elseif ( ! empty( $this->pod_data['object_fields'] ) ) {
 			// Get the object field data.
 			if ( isset( $this->pod_data['object_fields'][ $first_field ] ) ) {
 				$field_data   = $this->pod_data['object_fields'][ $first_field ];
 				$field_source = 'object_field';
+				$is_field_set = true;
 			} else {
 				$object_fields = (array) $this->pod_data['object_fields'];
 
@@ -978,6 +983,7 @@ class Pods implements Iterator {
 						$first_field  = $object_field;
 						$field_data   = $object_field_opt;
 						$field_source = 'object_field';
+						$is_field_set = true;
 
 						break;
 					}
@@ -985,9 +991,9 @@ class Pods implements Iterator {
 			}
 		}//end if
 
-		$field_type    = pods_v( 'type', $field_data, '' );
-		$field_options = pods_v( 'options', $field_data, array() );
-
+		// Store field info.
+		$field_type         = pods_v( 'type', $field_data, '' );
+		$field_options      = pods_v( 'options', $field_data, array() );
 		$is_tableless_field = in_array( $field_type, $tableless_field_types, true );
 
 		// Simple fields have no other output options.
@@ -1046,6 +1052,7 @@ class Pods implements Iterator {
 				if ( isset( $this->row[ $first_field ] ) ) {
 					$value = $this->row[ $first_field ];
 				} elseif ( $is_tableless_field ) {
+					// Overwrite existing field data.
 					$this->fields[ $first_field ] = $field_data;
 
 					$object_field_found = false;

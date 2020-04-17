@@ -64,6 +64,28 @@ class Test_PodsField_DateTime extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @dataProvider displayCustomFormatDMYProvider
+	 */
+	public function test_display_custom_format_dmy( $value, $expected ) {
+		$options = $this->defaultOptions;
+
+		$options['datetime_type']          = 'custom';
+		$options['datetime_format_custom'] = 'd/m/Y'; // Days and months switched.
+
+		$this->assertEquals( $expected, $this->field->display( $value, null, $options ) );
+	}
+
+	public function displayCustomFormatDMYProvider() {
+
+		return array(
+			array( '2017-12-06'         , '06/12/2017 12:00am' ),
+			array( '2017-12-06 15:04'   , '06/12/2017 3:04pm' ),
+			array( '2017-12-06 15:04:50', '06/12/2017 3:04pm' ),
+			array( '2017-06-12 15:04:50', '12/06/2017 3:04pm' ),
+		);
+	}
+
+	/**
 	 * @dataProvider saveDefaultsProvider
 	 */
 	public function test_save_defaults( $value, $expected ) {
@@ -87,6 +109,32 @@ class Test_PodsField_DateTime extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @dataProvider saveCustomFormatDMYProvider
+	 */
+	public function test_save_custom_format_dmy( $value, $expected ) {
+		$options = $this->defaultOptions;
+
+		$options['datetime_type']          = 'custom';
+		$options['datetime_format_custom'] = 'd/m/Y'; // Days and months switched.
+
+		$this->assertEquals( $expected, $this->field->pre_save( $value, null, null, $options ) );
+	}
+
+	public function saveCustomFormatDMYProvider() {
+
+		return array(
+			array( '2017-12-06'         , '2017-12-06 00:00:00' ),
+			array( '2017-12-06 15:04'   , '2017-12-06 15:04:00' ),
+			array( '2017-12-06 15:04:50', '2017-12-06 15:04:50' ),
+			array( '2017-06-12 15:04:50', '2017-06-12 15:04:50' ),
+			// Display format d/m/Y.
+			array( '12/06/2017 12:00am' , '2017-06-12 00:00:00' ),
+			array( '12/06/2017 3:04pm'  , '2017-06-12 15:04:00' ),
+			array( '06/12/2017 3:04pm'  , '2017-12-06 15:04:00' ),
+		);
+	}
+
+	/**
 	 * @dataProvider validateDefaultsProvider
 	 */
 	public function test_validate_defaults( $value, $expected ) {
@@ -96,6 +144,29 @@ class Test_PodsField_DateTime extends Pods_UnitTestCase {
 	}
 
 	public function validateDefaultsProvider() {
+
+		return array(
+			array( '2017-12-06'         , true ),
+			array( '2017-12-06 15:04'   , true ),
+			array( '2017-12-06 15:04:50', true ),
+			array( '2017-06-12 15:04:50', true ),
+			// Display format.
+			array( '12/06/2017 12:00am' , true ),
+			array( '12/06/2017 3:04pm'  , true ),
+			array( '06/12/2017 3:04pm'  , true ),
+		);
+	}
+
+	/**
+	 * @dataProvider validateCustomFormatDMYProvider
+	 */
+	public function test_validate_custom_format_dmy( $value, $expected ) {
+		$options = $this->defaultOptions;
+
+		$this->assertEquals( $expected, $this->field->validate( $value, null, null, $options ) );
+	}
+
+	public function validateCustomFormatDMYProvider() {
 
 		return array(
 			array( '2017-12-06'         , true ),

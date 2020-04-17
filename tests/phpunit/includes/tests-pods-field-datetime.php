@@ -21,7 +21,18 @@ class Test_PodsField_DateTime extends Pods_UnitTestCase {
 	 * Default time type: 12h
 	 * Default time format: h_mma (g:ia)
 	 */
-	public $defaultOptions = array();
+	public $defaultOptions = array(
+		'datetime_type'                  => 'format',
+		'datetime_format_custom'         => '',
+		'datetime_format_custom_js'      => '',
+		'datetime_format'                => 'mdy',
+		'datetime_time_type'             => '12',
+		'datetime_time_format_custom'    => '',
+		'datetime_time_format_custom_js' => '',
+		'datetime_time_format'           => 'h_mma',
+		'datetime_time_format_24'        => 'hh_mm',
+		'datetime_allow_empty'           => 1,
+	);
 
 	public function setUp() {
 

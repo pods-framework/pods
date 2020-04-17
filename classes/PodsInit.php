@@ -172,6 +172,24 @@ class PodsInit {
 	 * @return \Freemius
 	 */
 	public function freemius() {
+		// Admin only.
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		global $pagenow;
+
+		// Pods admin pages or plugins/update page only.
+		if (
+			'plugins.php' !== $pagenow
+			&& 'update-core.php' !== $pagenow
+			&& 'update.php' !== $pagenow
+			&& ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
+			&& ( ! isset( $_GET['page'] ) || 0 !== strpos( $_GET['page'], 'pods' ) )
+		) {
+			return;
+		}
+
 		if ( $this->freemius ) {
 			return $this->freemius;
 		}
@@ -224,9 +242,10 @@ class PodsInit {
 	 */
 	public function override_freemius_strings() {
 		$override_text = array(
-			'free'                     => 'Free (WordPress.org)',
-			'install-free-version-now' => 'Install Now',
-			'download-latest'          => 'Donate',
+			'free'                     => __( 'Free (WordPress.org)', 'pods' ),
+			'install-free-version-now' => __( 'Install Now', 'pods' ),
+			'download-latest'          => __( 'Donate', 'pods' ),
+			'complete-the-install'     => __( 'complete the process', 'pods' ),
 		);
 
 		$freemius_addons = $this->get_freemius_addons();
@@ -343,7 +362,7 @@ class PodsInit {
 			define( 'PODS_COMPATIBILITY', true );
 		}
 
-		if ( ! PODS_COMPATIBILITY ) {
+		if ( ! PODS_COMPATIBILITY || is_admin() ) {
 			return;
 		}
 

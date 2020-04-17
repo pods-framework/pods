@@ -309,11 +309,6 @@ class PodsField_DateTime extends PodsField {
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
 		if ( ! $this->is_empty( $value ) ) {
-			$js = true;
-
-			if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
-				$js = false;
-			}
 
 			// Value should always be passed as storage format since 2.7.15.
 			$format = static::$storage_format;

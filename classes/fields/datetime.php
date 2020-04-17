@@ -725,12 +725,19 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Check if a value is compatible with the storage format.
 	 *
-	 * @param  string $value
+	 * Valid:
+	 * - 0000-00-00 00:00:00
+	 * - 0000-00-00 00:00
+	 * - 0000-00-00
+	 * - 0000-00
+	 * - etc.
+	 *
+	 * @param  string $value The date value.
 	 * @return bool
 	 */
 	public function is_storage_format( $value ) {
 		$value_parts  = str_split( $value );
-		$format_parts = str_split( date( static::$storage_format ) );
+		$format_parts = str_split( gmdate( static::$storage_format ) );
 
 		$valid = true;
 		foreach ( $value_parts as $i => $part ) {

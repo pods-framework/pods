@@ -163,6 +163,9 @@ class Test_PodsField_DateTime extends Pods_UnitTestCase {
 	public function test_validate_custom_format_dmy( $value, $expected ) {
 		$options = $this->defaultOptions;
 
+		$options['datetime_type']          = 'custom';
+		$options['datetime_format_custom'] = 'd/m/Y'; // Days and months switched.
+
 		$this->assertEquals( $expected, $this->field->validate( $value, null, null, $options ) );
 	}
 

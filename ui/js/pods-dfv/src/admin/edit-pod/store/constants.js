@@ -38,6 +38,9 @@ export const groupConstants = {
 	actions: {
 		SET_GROUP_LIST: 'SET_GROUP_LIST',
 		MOVE_GROUP: 'MOVE_GROUP',
+		ADD_GROUP: 'ADD_GROUP',
+		SET_GROUP_FIELDS: 'SET_GROUP_FIELDS',
+		ADD_GROUP_FIELD: 'ADD_GROUP_FIELD'
 	},
 };
 

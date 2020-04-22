@@ -84,6 +84,24 @@ export const groups = ( state = {}, action = {} ) => {
 			...state,
 			[ paths.GROUP_LIST.tailPath ]: action.groupList
 		};
+	} else if (actions.ADD_GROUP === action.type) {
+		state.currentPod.groups.push({
+			name: action.group,
+			label: action.group,
+			fields: []
+		});
+
+		return {...state};
+	} else if (actions.SET_GROUP_FIELDS === action.type) {
+		var group = _.find(state.currentPod.groups, function(group) {return group.name == action.groupName});
+		group.fields = action.fields;
+
+		return {...state};
+	} else if (actions.ADD_GROUP_FIELD === action.type) {
+		var group = _.find(state.currentPod.groups, function(group) {return group.name == action.groupName});
+		group.fields.push(action.field)
+
+		return {...state};
 	} else {
 
 		return state;

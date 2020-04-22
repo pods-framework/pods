@@ -127,7 +127,9 @@ $data = array(
 		'byName'         => $dummy_groups,
 		'groupList'      => $dummy_group_list,
 		'groupFieldList' => $dummy_group_field_list,
-	),
+		'currentPod' => $config['currentPod'],
+		'global' => $config['global']
+	)	
 );
 $data = wp_json_encode( $data, JSON_HEX_TAG );
 ?>

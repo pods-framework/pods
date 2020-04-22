@@ -53,6 +53,27 @@ export const moveGroup = ( oldIndex, newIndex ) => {
 	};
 };
 
+export const addGroupList = ( group ) => {
+	return {
+		type: groupConstants.actions.ADD_GROUP,
+		group
+	}
+}
+
+export const setGroupFields = (groupName, fields) => {
+	return {
+		type: groupConstants.actions.SET_GROUP_FIELDS,
+		groupName, fields
+	}
+}
+
+export const addGroupField = (groupName, field) => {
+	return {
+		type: groupConstants.actions.ADD_GROUP_FIELD,
+		groupName, field
+	}
+}
+
 /**
  * Pod meta
  */

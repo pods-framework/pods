@@ -54,17 +54,26 @@ export const getOptionValue = ( state, optionName ) =>
 export const getGroupList = state =>
 	paths.GROUP_LIST.getFrom( state );
 
+export const getGroupFieldList = state =>
+	paths.GROUP_FIELD_LIST.getFrom( state );
+
 export const getGroup = ( state, groupName ) =>
 	paths.GROUPS_BY_NAME.getFrom( state )[ groupName ];
 
 export const getGroups = state =>
-	getGroupList( state ).map( groupName => getGroup( state, groupName ) );
+	state.groups.currentPod.groups;
+	// paths.CURRENT_POD.getFrom( state );
+	// getGroupList( state ).map( groupName => getGroup( state, groupName ) );
 
 export const getFieldList = ( state, groupName ) =>
 	paths.GROUP_FIELD_LIST.getFrom( state )[ groupName ];
 
-export const getGroupFields = ( state, groupName ) =>
-	getFieldList( state, groupName ).map( fieldName => getField( state, fieldName ) );
+export const getGroupFields = ( state, groupName ) => {
+	var group = _.find(state.groups.currentPod.groups, function(group) {return group.name == groupName});
+
+	return group.fields;
+	// getFieldList( state, groupName ).map( fieldName => getField( state, fieldName ) );
+}
 
 //-- Fields
 export const getFields = state => paths.FIELDS.getFrom( state );

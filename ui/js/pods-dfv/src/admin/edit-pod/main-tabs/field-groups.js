@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as PropTypes from 'prop-types';
 
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 import './field-groups.scss';
 
-export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, moveGroup } ) => {
+export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, addGroup, moveGroup, groupFieldList, setGroupFields, addGroupField, fields, setFields } ) => {
 	const [ originalList, setOriginalList ] = useState( groupList );
+
+	const [originalGroupFieldList, setOriginalGroupFieldList] = useState(groupFieldList)
+
+	useEffect(() => {
+		setOriginalGroupFieldList(groupFieldList)
+	}, [groupFieldList])
 
 	const handleBeginDrag = () => {
 		// Take a snapshot of the list state when dragging begins
@@ -18,8 +24,29 @@ export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, 
 		setGroupList( originalList );
 	};
 
+	const handleAddGroup = (e) => {
+		e.preventDefault();
+
+		var str = randomString(6);
+		var name = 'Group ' + str;
+		addGroup(name)
+	};
+
+	const randomString = (length) => {
+		var result = '';
+		var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		var charactersLength = characters.length;
+		for (var i = 0; i < length; i++) {
+			result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		}
+		return result;
+	}
+
 	return (
 		<div className="field-groups">
+			<div className="pods-button-group_container">
+				<a href="#" class="button-primary" onClick={(e) => handleAddGroup(e)}>Add Group</a>
+			</div>
 			{groups.map( ( group, index ) => (
 				<FieldGroup
 					key={group.name}
@@ -29,11 +56,17 @@ export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, 
 					moveGroup={moveGroup}
 					handleBeginDrag={handleBeginDrag}
 					handleDragCancel={handleDragCancel}
+					fields={fields}
+					groupFieldList={groupFieldList}
+					setGroupFields={setGroupFields}
+					addGroupField={addGroupField}
+					setFields={setFields}
+					randomString={randomString}
 				/>
 			) )}
 			<GroupDragLayer />
 			<div className="pods-button-group_container">
-				<a href="#">Add Group</a> <a href="#">Add Field</a>
+				<a href="#" class="button-primary" onClick={(e) => handleAddGroup(e)}>Add Group</a>
 			</div>
 		</div>
 	);

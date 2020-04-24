@@ -19,6 +19,8 @@ const StoreSubscribe = compose( [
 			getOptionValue: storeSelect.getOptionValue,
 			getGroupFields: storeSelect.getGroupFields,
 			groupList: storeSelect.getGroupList(),
+			groupFieldList: storeSelect.getGroupFieldList(),
+			fields: storeSelect.getFields()
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
@@ -26,6 +28,10 @@ const StoreSubscribe = compose( [
 		return {
 			setOptionValue: storeDispatch.setOptionValue,
 			setGroupList: storeDispatch.setGroupList,
+			addGroup: storeDispatch.addGroupList,
+			setGroupFields: storeDispatch.setGroupFields,
+			addGroupField: storeDispatch.addGroupField,
+			setFields: storeDispatch.setFields,
 			moveGroup: storeDispatch.moveGroup,
 		};
 	} )
@@ -46,7 +52,13 @@ export const ActiveTabContent = StoreSubscribe ( ( props ) => {
 				getGroupFields={props.getGroupFields}
 				groupList={props.groupList}
 				setGroupList={props.setGroupList}
+				addGroup={props.addGroup}
 				moveGroup={props.moveGroup}
+				groupFieldList={props.groupFieldList}
+				setGroupFields={props.setGroupFields}
+				addGroupField={props.addGroupField}
+				setFields={props.setFields}
+				fields={props.fields}
 			/>
 		);
 	} else {

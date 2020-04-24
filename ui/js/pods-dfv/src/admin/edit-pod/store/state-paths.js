@@ -76,3 +76,6 @@ export const TAB_OPTIONS_LIST = createStatePath( `${TABS.path}.tabOptionsList` )
 // { can_export: {object}, show_ui: {object}, etc }
 export const OPTIONS = createStatePath( 'options' );
 
+export const CURRENT_POD = createStatePath( `${GROUPS.path}.currentPod` );
+
+export const GLOBAL = createStatePath( `${GROUPS.path}.global` );

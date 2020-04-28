@@ -144,37 +144,6 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	}
 
 	/**
-	 * Registers a documentation provider for a path.
-	 *
-	 * @since 2.8
-	 *
-	 * @param string             $path     Documentation path.
-	 * @param Provider_Interface $endpoint Docuemntation endpoint object.
-	 */
-	public function register_documentation_provider( $path, Provider_Interface $endpoint ) {
-		$this->documentation_providers[ $path ] = $endpoint;
-	}
-
-	/**
-	 * Get REST API Documentation for the Swagger endpoint.
-	 *
-	 * @since 2.8
-	 *
-	 * @return array REST API Documentation for the Swagger endpoint.
-	 */
-	protected function get_own_documentation() {
-		return [
-			'get' => [
-				'responses' => [
-					'200' => [
-						'description' => __( 'Returns the documentation for the Pods REST API in Swagger consumable format.', 'pods' ),
-					],
-				],
-			],
-		];
-	}
-
-	/**
 	 * Get the list of REST API definitions.
 	 *
 	 * @since 2.8
@@ -189,6 +158,18 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 		}
 
 		return $definitions;
+	}
+
+	/**
+	 * Registers a documentation provider for a path.
+	 *
+	 * @since 2.8
+	 *
+	 * @param string             $path     Documentation path.
+	 * @param Provider_Interface $endpoint Docuemntation endpoint object.
+	 */
+	public function register_documentation_provider( $path, Provider_Interface $endpoint ) {
+		$this->documentation_providers[ $path ] = $endpoint;
 	}
 
 	/**
@@ -235,5 +216,24 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	 */
 	public function READ_args() {
 		return [];
+	}
+
+	/**
+	 * Get REST API Documentation for the Swagger endpoint.
+	 *
+	 * @since 2.8
+	 *
+	 * @return array REST API Documentation for the Swagger endpoint.
+	 */
+	protected function get_own_documentation() {
+		return [
+			'get' => [
+				'responses' => [
+					'200' => [
+						'description' => __( 'Returns the documentation for the Pods REST API in Swagger consumable format.', 'pods' ),
+					],
+				],
+			],
+		];
 	}
 }

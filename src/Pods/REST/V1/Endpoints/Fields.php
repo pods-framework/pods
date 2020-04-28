@@ -102,7 +102,7 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	 */
 	public function READ_args() {
 		return [
-			'return_type' => [
+			'return_type'    => [
 				'description' => __( 'The type of data to return.', 'pods' ),
 				'type'        => 'string',
 				'default'     => 'full',
@@ -116,7 +116,7 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 					'count',
 				],
 			],
-			'types'       => [
+			'types'          => [
 				'required'         => false,
 				'description'      => __( 'A list of types to filter by.', 'pods' ),
 				'swagger_type'     => 'array',
@@ -125,7 +125,7 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 				],
 				'collectionFormat' => 'csv',
 			],
-			'ids'         => [
+			'ids'            => [
 				'required'         => false,
 				'description'      => __( 'A list of IDs to filter by.', 'pods' ),
 				'swagger_type'     => 'array',
@@ -134,10 +134,20 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 				],
 				'collectionFormat' => 'csv',
 			],
-			'args'        => [
+			'args'           => [
 				'required'     => false,
 				'description'  => __( 'A list of arguments to filter by.', 'pods' ),
 				'swagger_type' => 'array',
+			],
+			'include_parent' => [
+				'type'        => 'integer',
+				'description' => __( 'Whether to include the parent Pod details (default: off).', 'pods' ),
+				'default'     => '0',
+				'enum'        => [
+					'0',
+					'1',
+				],
+				'cli_boolean' => true,
 			],
 		];
 	}

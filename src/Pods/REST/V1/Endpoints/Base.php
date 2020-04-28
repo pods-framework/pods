@@ -265,6 +265,14 @@ abstract class Base {
 			return $objects;
 		}
 
+		// Handle parent details.
+		if ( in_array( $this->object, [ 'group', 'field' ], true ) && 1 === (int) $request['include_parent'] ) {
+			foreach ( $objects as $k => $object ) {
+				// Set temporary data so parent data gets exported.
+				$object->set_arg( 'parent_data', $object->get_parent() );
+			}
+		}
+
 		return [
 			$object_plural => $objects,
 		];
@@ -335,6 +343,46 @@ abstract class Base {
 	}
 
 	/**
+	 * Setup the parameters for saving.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 *
+	 * @return array Parameters for saving.
+	 */
+	protected function setup_params( WP_REST_Request $request ) {
+		$defaults = [
+			'id'    => null,
+			'name'  => null,
+			'label' => null,
+			'args'  => null,
+		];
+
+		$params = wp_parse_args( $request->get_params(), $defaults );
+		$params = array_filter( $params, [ $this->validator, 'is_not_null' ] );
+
+		if ( isset( $params['args'] ) ) {
+			$args = $params['args'];
+
+			unset( $params['args'] );
+
+			// Attempt to convert from JSON to array if needed.
+			if ( is_string( $args ) ) {
+				$json = @json_decode( $args, true );
+
+				if ( is_array( $json ) ) {
+					$args = $json;
+				}
+			}
+
+			if ( is_array( $args ) ) {
+				$params = array_merge( $params, $args );
+			}
+		}
+
+		return $params;
+	}
+
+	/**
 	 * Handle getting the object using specific REST / Pods API arguments.
 	 *
 	 * @since 2.8
@@ -385,12 +433,12 @@ abstract class Base {
 		];
 
 		// Setup groups.
-		if ( 'pod' === $this->object && 1 === $request['include_groups'] ) {
+		if ( 'pod' === $this->object && 1 === (int) $request['include_groups'] ) {
 			$data['groups'] = $object->get_groups();
 		}
 
 		// Setup fields.
-		if ( in_array( $this->object, [ 'pod', 'group' ], true ) && 1 === $request['include_fields'] ) {
+		if ( in_array( $this->object, [ 'pod', 'group' ], true ) && 1 === (int) $request['include_fields'] ) {
 			$data['fields'] = $object->get_fields();
 		}
 
@@ -514,46 +562,6 @@ abstract class Base {
 		return [
 			'status' => 'deleted',
 		];
-	}
-
-	/**
-	 * Setup the parameters for saving.
-	 *
-	 * @param WP_REST_Request $request The request object.
-	 *
-	 * @return array Parameters for saving.
-	 */
-	protected function setup_params( WP_REST_Request $request ) {
-		$defaults = [
-			'id'    => null,
-			'name'  => null,
-			'label' => null,
-			'args'  => null,
-		];
-
-		$params = wp_parse_args( $request->get_params(), $defaults );
-		$params = array_filter( $params, [ $this->validator, 'is_not_null' ] );
-
-		if ( isset( $params['args'] ) ) {
-			$args = $params['args'];
-
-			unset( $params['args'] );
-
-			// Attempt to convert from JSON to array if needed.
-			if ( is_string( $args ) ) {
-				$json = @json_decode( $args, true );
-
-				if ( is_array( $json ) ) {
-					$args = $json;
-				}
-			}
-
-			if ( is_array( $args ) ) {
-				$params = array_merge( $params, $args );
-			}
-		}
-
-		return $params;
 	}
 
 	/**

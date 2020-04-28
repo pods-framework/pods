@@ -29,20 +29,20 @@ class Pod_Slug extends Pod {
 			'include_fields' => [
 				'type'        => 'integer',
 				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
-				'default'     => 0,
+				'default'     => '0',
 				'enum'        => [
-					0,
-					1,
+					'0',
+					'1',
 				],
 				'cli_boolean' => true,
 			],
 			'include_groups' => [
 				'type'        => 'integer',
 				'description' => __( 'Whether to include groups (default: off).', 'pods' ),
-				'default'     => 0,
+				'default'     => '0',
 				'enum'        => [
-					0,
-					1,
+					'0',
+					'1',
 				],
 				'cli_boolean' => true,
 			],
@@ -111,11 +111,11 @@ class Pod_Slug extends Pod {
 			],
 			'delete_all' => [
 				'type'        => 'integer',
-				'description' => __( 'Whether to delete all content for Pod.', 'pods' ),
-				'default'     => 0,
+				'description' => __( 'Whether to delete all content for Pod (default: off).', 'pods' ),
+				'default'     => '0',
 				'enum'        => [
-					0,
-					1,
+					'0',
+					'1',
 				],
 				'cli_boolean' => true,
 			],

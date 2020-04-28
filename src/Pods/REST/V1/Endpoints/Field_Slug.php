@@ -52,24 +52,24 @@ class Field_Slug extends Field {
 	 */
 	public function EDIT_args() {
 		return [
-			'pod'      => [
+			'pod'          => [
 				'type'              => 'string',
 				'in'                => 'path',
 				'description'       => __( 'The Pod slug.', 'pods' ),
 				'required'          => true,
 				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
 			],
-			'slug'     => [
+			'slug'         => [
 				'type'        => 'string',
 				'in'          => 'path',
 				'description' => __( 'The Field slug.', 'pods' ),
 				'required'    => true,
 			],
-			'new_name' => [
+			'new_name'     => [
 				'type'        => 'string',
 				'description' => __( 'The new name of the Field.', 'pods' ),
 			],
-			'new_group' => [
+			'new_group'    => [
 				'type'        => 'string',
 				'description' => __( 'The new Group to use for the Field.', 'pods' ),
 			],
@@ -77,15 +77,15 @@ class Field_Slug extends Field {
 				'type'        => 'string',
 				'description' => __( 'The new Group ID to use for the Field.', 'pods' ),
 			],
-			'label'    => [
+			'label'        => [
 				'type'        => 'string',
 				'description' => __( 'The singular label of the Field.', 'pods' ),
 			],
-			'type'     => [
+			'type'         => [
 				'type'        => 'string',
 				'description' => __( 'The type of the Field.', 'pods' ),
 			],
-			'args'     => [
+			'args'         => [
 				'required'     => false,
 				'description'  => __( 'A list of additional options to save to the Field.', 'pods' ),
 				'swagger_type' => 'array',

@@ -105,10 +105,10 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 			'include_fields' => [
 				'type'        => 'integer',
 				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
-				'default'     => 0,
+				'default'     => '0',
 				'enum'        => [
-					0,
-					1,
+					'0',
+					'1',
 				],
 				'cli_boolean' => true,
 			],

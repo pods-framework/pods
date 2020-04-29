@@ -102,11 +102,13 @@ class PodsField_Pick extends PodsField {
 		add_action( 'edit_form_top', array( $this, 'admin_modal_input' ) );
 		add_action( 'show_user_profile', array( $this, 'admin_modal_input' ) );
 		add_action( 'edit_user_profile', array( $this, 'admin_modal_input' ) );
-		add_action( 'edit_category_form', array( $this, 'admin_modal_input' ) );
-		add_action( 'edit_link_category_form', array( $this, 'admin_modal_input' ) );
-		add_action( 'edit_tag_form', array( $this, 'admin_modal_input' ) );
-		// @todo add_tag_form is deprecated, replace our hook usage.
-		add_action( 'add_tag_form', array( $this, 'admin_modal_input' ) );
+		foreach ( get_taxonomies() as $taxonomy ) {
+			if ( $taxonomy instanceof WP_Term ) {
+				$taxonomy = $taxonomy->name;
+			}
+			add_action( $taxonomy . '_add_form', array( $this, 'admin_modal_input' ) );
+			add_action( $taxonomy . '_edit_form', array( $this, 'admin_modal_input' ) );
+		}
 		add_action( 'pods_meta_box_pre', array( $this, 'admin_modal_input' ) );
 
 		// Handle modal saving.

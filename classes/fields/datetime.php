@@ -309,14 +309,14 @@ class PodsField_DateTime extends PodsField {
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
 		if ( ! $this->is_empty( $value ) ) {
-			$js = true;
-
-			if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
-				$js = false;
-			}
 
 			// Value should always be passed as storage format since 2.7.15.
 			$format = static::$storage_format;
+
+			if ( ! $this->is_storage_format( $value ) ) {
+				// Allow input values compatible with the display format.
+				$format = $this->format_display( $options, false );
+			}
 
 			$check = $this->convert_date( $value, static::$storage_format, $format, true );
 
@@ -339,6 +339,10 @@ class PodsField_DateTime extends PodsField {
 		$format = static::$storage_format;
 
 		if ( ! $this->is_empty( $value ) ) {
+			if ( ! $this->is_storage_format( $value ) ) {
+				// Allow input values compatible with the display format.
+				$format = $this->format_display( $options, false );
+			}
 			$value = $this->convert_date( $value, static::$storage_format, $format );
 		} elseif ( pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
 			$value = static::$empty_value;
@@ -719,6 +723,40 @@ class PodsField_DateTime extends PodsField {
 	}
 
 	/**
+	 * Check if a value is compatible with the storage format.
+	 *
+	 * Valid:
+	 * - 0000-00-00 00:00:00
+	 * - 0000-00-00 00:00
+	 * - 0000-00-00
+	 * - 0000-00
+	 * - etc.
+	 *
+	 * @param  string $value The date value.
+	 * @return bool
+	 */
+	public function is_storage_format( $value ) {
+		$value_parts  = str_split( $value );
+		$format_parts = str_split( gmdate( static::$storage_format ) );
+
+		$valid = true;
+		foreach ( $value_parts as $i => $part ) {
+			if ( isset( $format_parts[ $i ] ) ) {
+				if ( is_numeric( $format_parts[ $i ] ) ) {
+					if ( ! is_numeric( $part ) ) {
+						$valid = false;
+						break;
+					}
+				} elseif ( $format_parts[ $i ] !== $part ) {
+					$valid = false;
+					break;
+				}
+			}
+		}
+		return $valid;
+	}
+
+	/**
 	 * Convert a date from one format to another.
 	 *
 	 * @param string  $value            Field value.
@@ -736,7 +774,7 @@ class PodsField_DateTime extends PodsField {
 
 		$date = '';
 
-		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00' ), true ) ) {
+		if ( ! $this->is_empty( $value ) ) {
 			$date = $this->createFromFormat( $original_format, (string) $value, $return_timestamp );
 
 			if ( $date instanceof DateTime ) {

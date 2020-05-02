@@ -99,15 +99,18 @@ class PodsField_Pick extends PodsField {
 		add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
 
 		// Handle modal input.
+		add_action( 'pods_meta_box_pre', array( $this, 'admin_modal_input' ) );
 		add_action( 'edit_form_top', array( $this, 'admin_modal_input' ) );
 		add_action( 'show_user_profile', array( $this, 'admin_modal_input' ) );
 		add_action( 'edit_user_profile', array( $this, 'admin_modal_input' ) );
-		add_action( 'edit_category_form', array( $this, 'admin_modal_input' ) );
-		add_action( 'edit_link_category_form', array( $this, 'admin_modal_input' ) );
-		add_action( 'edit_tag_form', array( $this, 'admin_modal_input' ) );
-		// @todo add_tag_form is deprecated, replace our hook usage.
-		add_action( 'add_tag_form', array( $this, 'admin_modal_input' ) );
-		add_action( 'pods_meta_box_pre', array( $this, 'admin_modal_input' ) );
+
+		// Hook into every taxonomy form.
+		$taxonomies = get_taxonomies();
+
+		foreach ( $taxonomies as $taxonomy ) {
+			add_action( $taxonomy . '_add_form', array( $this, 'admin_modal_input' ) );
+			add_action( $taxonomy . '_edit_form', array( $this, 'admin_modal_input' ) );
+		}
 
 		// Handle modal saving.
 		add_filter( 'redirect_post_location', array( $this, 'admin_modal_bail_post_redirect' ), 10, 2 );

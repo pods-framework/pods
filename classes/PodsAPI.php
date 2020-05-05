@@ -5025,7 +5025,7 @@ class PodsAPI {
 
 								$related_item = $this->export_pod_item_level( $related_pod, $related_params );
 
-								$related_data[ $related_id ] = $this->do_hook( 'export_pod_item_level', $related_item, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ), $params );
+								$related_data[] = $this->do_hook( 'export_pod_item_level', $related_item, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ), $params );
 							}
 						}
 

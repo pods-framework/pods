@@ -3695,7 +3695,7 @@ class PodsAdmin {
 				),
 				'rest_write' => array(
 					'label'   => __( 'Write via REST API?', 'pods' ),
-					'help'    => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+					'help'    => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
 					'type'    => 'boolean',
 					'default' => '',
 				),
@@ -3703,7 +3703,7 @@ class PodsAdmin {
 			$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = array(
 				'rest_pick_response' => array(
 					'label'      => __( 'Response Type', 'pods' ),
-					'help'       => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+					'help'       => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
 					'type'       => 'pick',
 					'default'    => 'array',
 					'depends-on' => array( 'type' => 'pick' ),

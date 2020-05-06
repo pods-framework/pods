@@ -45,7 +45,7 @@ export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, 
 	return (
 		<div className="field-groups">
 			<div className="pods-button-group_container">
-				<a href="#" class="button-primary" onClick={(e) => handleAddGroup(e)}>Add Group</a>
+				<a href="#" className="button-primary" onClick={(e) => handleAddGroup(e)}>Add Group</a>
 			</div>
 			{groups.map( ( group, index ) => (
 				<FieldGroup
@@ -66,7 +66,7 @@ export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, 
 			) )}
 			<GroupDragLayer />
 			<div className="pods-button-group_container">
-				<a href="#" class="button-primary" onClick={(e) => handleAddGroup(e)}>Add Group</a>
+				<a href="#" className="button-primary" onClick={(e) => handleAddGroup(e)}>Add Group</a>
 			</div>
 		</div>
 	);

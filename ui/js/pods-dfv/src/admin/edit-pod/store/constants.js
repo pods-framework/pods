@@ -4,6 +4,7 @@ export const uiConstants = {
 	actions: {
 		SET_ACTIVE_TAB: 'SET_ACTIVE_TAB',
 		SET_SAVE_STATUS: 'SET_SAVE_STATUS',
+		SET_DELETE_STATUS: 'SET_DELETE_STATUS',
 	},
 
 	tabNames: {
@@ -13,6 +14,13 @@ export const uiConstants = {
 		ADVANCED_OPTIONS: 'advanced',
 		AUTO_TEMPLATE_OPTIONS: 'pods-pfat',
 		REST_API: 'rest-api',
+	},
+
+	deleteStatuses: {
+		NONE: '',
+		DELETING: 'DELETING',
+		DELETE_SUCCESS: 'DELETE_SUCCESS',
+		DELETE_ERROR: 'DELETE_ERROR',
 	},
 
 	saveStatuses: {
@@ -51,7 +59,9 @@ export const podMetaConstants = {
 	},
 };
 
+
 export const initialUIState = {
 	activeTab: uiConstants.tabNames.MANAGE_FIELDS,
 	saveStatus: uiConstants.saveStatuses.NONE,
+	deleteStatus: uiConstants.deleteStatuses.NONE,
 };

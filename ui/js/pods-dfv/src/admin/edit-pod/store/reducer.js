@@ -20,7 +20,11 @@ export const setObjectValue = ( object, key, value ) => {
 
 // UI
 export const ui = ( state = initialUIState, action = {} ) => {
-	const { actions, saveStatuses } = uiConstants;
+	const {
+		actions,
+		saveStatuses,
+		deleteStatuses,
+	} = uiConstants;
 
 	switch ( action.type ) {
 		case actions.SET_ACTIVE_TAB: {
@@ -46,6 +50,16 @@ export const ui = ( state = initialUIState, action = {} ) => {
 			return {
 				...state,
 				saveStatus: newStatus
+			};
+		}
+		case actions.SET_DELETE_STATUS: {
+			const newStatus = Object.values( deleteStatuses ).includes( action.deleteStatus )
+				? action.deleteStatus
+				: initialUIState.deleteStatus;
+
+			return {
+				...state,
+				deleteStatus: newStatus,
 			};
 		}
 

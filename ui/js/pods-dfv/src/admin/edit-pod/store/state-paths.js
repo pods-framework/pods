@@ -58,6 +58,7 @@ export const GROUP_FIELD_LIST = createStatePath( `${GROUPS.path}.groupFieldList`
 export const UI = createStatePath( 'ui' );
 export const ACTIVE_TAB = createStatePath( `${UI.path}.activeTab` );
 export const SAVE_STATUS = createStatePath( `${UI.path}.saveStatus` );
+export const DELETE_STATUS = createStatePath( `${UI.path}.deleteStatus` );
 
 export const TABS = createStatePath( `${UI.path}.tabs` );
 

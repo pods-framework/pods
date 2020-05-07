@@ -22,6 +22,14 @@ export const setSaveStatus = ( saveStatus ) => {
 	};
 };
 
+export const setDeleteStatus = ( deleteStatus, id ) => {
+	return {
+		type: uiConstants.actions.SET_DELETE_STATUS,
+		deleteStatus,
+		id,
+	};
+};
+
 /**
  * Options
  */

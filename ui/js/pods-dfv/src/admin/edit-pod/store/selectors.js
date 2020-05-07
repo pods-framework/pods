@@ -5,6 +5,10 @@ import { uiConstants } from './constants';
 export const getState = state => state;
 
 //-- Pod meta
+export const getPodID = state => {
+	return paths.POD_ID.getFrom( state );
+};
+
 export const getPodName = state => {
 	return paths.POD_NAME.getFrom( state );
 };
@@ -39,6 +43,9 @@ export const getSaveStatus = state => paths.SAVE_STATUS.getFrom( state );
 
 export const isSaving = state =>
 	paths.SAVE_STATUS.getFrom( state ) === uiConstants.saveStatuses.SAVING;
+
+//-- Delete status
+export const getDeleteStatus = state => paths.DELETE_STATUS.getFrom( state );
 
 //-- Options
 export const getOption = ( state, optionName ) =>

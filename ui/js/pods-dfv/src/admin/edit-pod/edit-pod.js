@@ -8,7 +8,7 @@ import { SaveStatusMessage } from './save-status-message';
 import { EditPodName } from './edit-pod-name';
 import { PodsNavTab } from 'pods-dfv/src/components/tabs/pods-nav-tab';
 import { ActiveTabContent } from './main-tabs/active-tab-content';
-import { Postbox } from './postbox';
+import Postbox from './postbox';
 
 // WordPress dependencies
 const { withSelect, withDispatch } = wp.data;

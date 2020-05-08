@@ -10,8 +10,7 @@
   },
 
   "extends": [
-    "eslint:recommended",
-    "wordpress",
+    "plugin:@wordpress/eslint-plugin/recommended",
     "plugin:react/recommended"
   ],
 
@@ -58,6 +57,7 @@
 
   "overrides": [
     {
+      "excludedFiles": "*.min.js",
       "files": [ "**/test/*.js" ],
       "env": {
         "jest": true

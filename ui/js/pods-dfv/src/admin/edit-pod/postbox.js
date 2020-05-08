@@ -12,46 +12,97 @@ import {
 	uiConstants,
 } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
-const { deleteStatuses: DELETE_STATUSES } = uiConstants;
+const {
+	saveStatuses: SAVE_STATUSES,
+	deleteStatuses: DELETE_STATUSES,
+} = uiConstants;
 
+// Helper functions
+const savePod = async ( podID, podName, options, groups, fields, setSaveStatus ) => {
+	const data = {
+		name: podName,
+		label: options.label || '',
+		args: {
+			...options,
+			// @todo Re-enable `fields` and `groups` once Scott updates
+			// the API endpoint to accept fields and groups:
+			// groups,
+			// fields,
+		},
+	};
+
+	// The label doesn't need to be repeated in 'args'.
+	if ( data.args.label ) {
+		delete data.args.label;
+	}
+
+	try {
+		await apiFetch(
+			{
+				path: `/pods/v1/pods/${ podID }`,
+				method: 'post',
+				parse: true,
+				body: JSON.stringify( data ),
+			}
+		);
+
+		setSaveStatus( SAVE_STATUSES.SAVE_SUCCESS );
+	} catch ( error ) {
+		setSaveStatus( SAVE_STATUSES.SAVE_ERROR );
+	}
+};
+
+const deletePod = async ( podID, setDeleteStatus ) => {
+	try {
+		await apiFetch(
+			{
+				path: `/pods/v1/pods/${ podID }`,
+				method: 'delete',
+				parse: true,
+			}
+		);
+
+		setDeleteStatus( DELETE_STATUSES.DELETE_SUCCESS );
+	} catch ( error ) {
+		setDeleteStatus( DELETE_STATUSES.DELETE_ERROR );
+	}
+};
+
+// Helper components
 const Spinner = () => (
 	<img src='/wp-admin/images/wpspin_light.gif' alt='' />
 );
 
-export const Postbox = ( { podID, isSaving, deleteStatus, setDeleteStatus } ) => {
-	useEffect( () => {
-		const deletePod = async () => {
-			try {
-				await apiFetch(
-					{
-						path: `/pods/v1/pods/${ podID }`,
-						method: 'delete',
-						parse: true,
-					}
-				);
+export const Postbox = ( {
+	podID,
+	podName,
+	options,
+	groups,
+	fields,
+	saveStatus,
+	deleteStatus,
+	setSaveStatus,
+	setDeleteStatus,
+} ) => {
 
-				setDeleteStatus(
-					uiConstants.deleteStatuses.DELETE_SUCCESS,
-					podID
-				);
-			} catch ( error ) {
-				setDeleteStatus(
-					uiConstants.deleteStatuses.DELETE_ERROR,
-					podID
-				);
-			}
-		};
+	const isSaving = saveStatus === SAVE_STATUSES.SAVING;
+
+	useEffect( () => {
+		// Try to delete the Pod if the status is set to DELETING.
+		if ( saveStatus === SAVE_STATUSES.SAVING ) {
+			savePod( podID, podName, options, groups, fields, setSaveStatus );
+		}
 
 		// Try to delete the Pod if the status is set to DELETING.
 		if ( deleteStatus === DELETE_STATUSES.DELETING ) {
-			deletePod();
+			deletePod( podID, setDeleteStatus );
 		}
 
 		// Redirect if the Pod has successfully been deleted.
 		if ( deleteStatus === DELETE_STATUSES.DELETE_SUCCESS ) {
 			window.location.replace( '/wp-admin/admin.php?page=pods&deleted=1' );
 		}
-	}, [ podID, deleteStatus ] );
+	}, [ podID, deleteStatus, saveStatus, podName, options, groups, fields ] );
 
 	return (
 		<div id='postbox-container-1' className='postbox-container pods_floatmenu'>
@@ -80,7 +131,7 @@ export const Postbox = ( { podID, isSaving, deleteStatus, setDeleteStatus } ) =>
 												);
 
 												if ( confirm ) {
-													setDeleteStatus( DELETE_STATUSES.DELETING, podID );
+													setDeleteStatus( DELETE_STATUSES.DELETING );
 												}
 											} }
 											className="components-button editor-post-trash is-link"
@@ -91,7 +142,14 @@ export const Postbox = ( { podID, isSaving, deleteStatus, setDeleteStatus } ) =>
 									<div id='publishing-action'>
 										{isSaving && <Spinner />}
 										{'\u00A0' /* &nbsp; */}
-										<button className='button-primary' type='submit'>
+										<button
+											className="button-primary"
+											type="submit"
+											disabled={ isSaving }
+											onClick={ () => {
+												setSaveStatus( SAVE_STATUSES.SAVING );
+											} }
+										>
 											{__( 'Save Pod', 'pods' )}
 										</button>
 									</div>
@@ -113,10 +171,33 @@ export default compose( [
 	withSelect( ( select ) => {
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 
+		// Reduce 'options' down to key/values.
+		const allOptionData = storeSelect.getOptions();
+		const optionEntries = Object.entries( allOptionData );
+		const options = {};
+
+		optionEntries.forEach( ( [ key, value ] ) => {
+			options[ key ] = value.value || null;
+		} );
+
+		// Reduce groups to their IDs.
+		const groups = storeSelect.getGroups().map( ( group ) => group.name );
+
+		// Reduce fields to their IDs grouped by Group.
+		const fields = {};
+
+		storeSelect.getGroups().forEach( ( group ) => {
+			fields[ group.name ] = group.fields.map( ( field ) => field.id );
+		} );
+
 		return {
-			isSaving: storeSelect.isSaving(),
+			saveStatus: storeSelect.getSaveStatus(),
 			deleteStatus: storeSelect.getDeleteStatus(),
 			podID: storeSelect.getPodID(),
+			podName: storeSelect.getPodName(),
+			options,
+			groups,
+			fields,
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
@@ -124,6 +205,7 @@ export default compose( [
 
 		return {
 			setDeleteStatus: storeDispatch.setDeleteStatus,
+			setSaveStatus: storeDispatch.setSaveStatus,
 		};
 	} )
 ] )(Postbox);

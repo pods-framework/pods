@@ -22,11 +22,10 @@ export const setSaveStatus = ( saveStatus ) => {
 	};
 };
 
-export const setDeleteStatus = ( deleteStatus, id ) => {
+export const setDeleteStatus = ( deleteStatus ) => {
 	return {
 		type: uiConstants.actions.SET_DELETE_STATUS,
 		deleteStatus,
-		id,
 	};
 };
 

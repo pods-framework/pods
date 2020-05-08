@@ -52,6 +52,24 @@ describe( 'actions', () => {
 				expect( setSaveStatus( saveStatus ) ).toEqual( expected );
 			} );
 		} );
+
+		describe( 'setDeleteStatus()', () => {
+			const action = actions.SET_DELETE_STATUS;
+
+			it( 'Should define the action constant', () => {
+				expect( action ).toBeDefined();
+			} );
+
+			it( 'Should return the correct action', () => {
+				const deleteStatus = saveStatuses.DELETE_SUCCESS;
+				const expected = {
+					type: action,
+					deleteStatus: deleteStatus,
+				};
+
+				expect( setDeleteStatus( deleteStatus ) ).toEqual( expected );
+			} );
+		} );
 	} );
 
 	// Options

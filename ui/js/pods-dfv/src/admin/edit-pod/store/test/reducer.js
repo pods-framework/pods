@@ -238,10 +238,6 @@ describe( 'reducer', () => {
 		describe( 'save status', () => {
 			const { saveStatuses } = uiConstants;
 
-			it( 'Should define the SET_SAVE_STATUS action', () => {
-				expect( actions.SET_SAVE_STATUS ).toBeDefined();
-			} );
-
 			it( 'Should properly change the save status', () => {
 				const action = {
 					type: actions.SET_SAVE_STATUS,
@@ -258,6 +254,28 @@ describe( 'reducer', () => {
 				};
 				state = ui( state, action );
 				expect( state.saveStatus ).toEqual( initialUIState.saveStatus );
+			} );
+		} );
+
+		describe( 'delete status', () => {
+			const { deleteStatuses } = uiConstants;
+
+			it( 'Should properly change the delete status', () => {
+				const action = {
+					type: actions.SET_DELETE_STATUS,
+					saveStatus: deleteStatuses.DELETING,
+				};
+				state = ui( state, action );
+				expect( state.deleteStatus ).toEqual( saveStatuses.DELETING );
+			} );
+
+			it( 'Should use the default for an unknown status', () => {
+				const action = {
+					type: actions.SET_DELETE_STATUS,
+					saveStatus: 'xyzzy',
+				};
+				state = ui( state, action );
+				expect( state.deleteStatus ).toEqual( initialUIState.deleteStatus );
 			} );
 		} );
 

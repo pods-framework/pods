@@ -48,6 +48,9 @@ export const isSaving = state =>
 export const getDeleteStatus = state => paths.DELETE_STATUS.getFrom( state );
 
 //-- Options
+export const getOptions = ( state ) =>
+	paths.OPTIONS.getFrom( state );
+
 export const getOption = ( state, optionName ) =>
 	paths.OPTIONS.getFrom( state )[ optionName ];
 

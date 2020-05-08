@@ -20,7 +20,7 @@ const StoreSubscribe = compose( [
 			getGroupFields: storeSelect.getGroupFields,
 			groupList: storeSelect.getGroupList(),
 			groupFieldList: storeSelect.getGroupFieldList(),
-			fields: storeSelect.getFields()
+			fields: storeSelect.getFields(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
@@ -34,7 +34,7 @@ const StoreSubscribe = compose( [
 			setFields: storeDispatch.setFields,
 			moveGroup: storeDispatch.moveGroup,
 		};
-	} )
+	} ),
 ] );
 
 /**
@@ -42,41 +42,41 @@ const StoreSubscribe = compose( [
  *
  * Display the content for the active tab, manage-fields is treated special
  */
-export const ActiveTabContent = StoreSubscribe ( ( props ) => {
+export const ActiveTabContent = StoreSubscribe( ( props ) => {
 	let Component;
 
 	if ( 'manage-fields' === props.activeTab ) {
 		Component = (
 			<FieldGroups
-				groups={props.groups}
-				getGroupFields={props.getGroupFields}
-				groupList={props.groupList}
-				setGroupList={props.setGroupList}
-				addGroup={props.addGroup}
-				moveGroup={props.moveGroup}
-				groupFieldList={props.groupFieldList}
-				setGroupFields={props.setGroupFields}
-				addGroupField={props.addGroupField}
-				setFields={props.setFields}
-				fields={props.fields}
+				groups={ props.groups }
+				getGroupFields={ props.getGroupFields }
+				groupList={ props.groupList }
+				setGroupList={ props.setGroupList }
+				addGroup={ props.addGroup }
+				moveGroup={ props.moveGroup }
+				groupFieldList={ props.groupFieldList }
+				setGroupFields={ props.setGroupFields }
+				addGroupField={ props.addGroupField }
+				setFields={ props.setFields }
+				fields={ props.fields }
 			/>
 		);
 	} else {
 		Component = (
 			<DynamicTabContent
-				tabOptions={props.tabOptions}
-				getOptionValue={props.getOptionValue}
-				setOptionValue={props.setOptionValue}
+				tabOptions={ props.tabOptions }
+				getOptionValue={ props.getOptionValue }
+				setOptionValue={ props.setOptionValue }
 			/>
 		);
 	}
 
 	return (
 		<div
-			id='post-body-content'
-			className='pods-nav-tab-group pods-manage-field'
+			id="post-body-content"
+			className="pods-nav-tab-group pods-manage-field"
 		>
-			{Component}
+			{ Component }
 		</div>
 	);
 } );

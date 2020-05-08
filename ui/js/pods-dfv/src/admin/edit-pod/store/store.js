@@ -9,10 +9,7 @@ import * as actions from './actions';
 const { registerStore } = wp.data;
 
 export const initStore = ( props ) => {
-	const initialState = merge(
-		paths.UI.createTree( initialUIState ),
-		props
-	);
+	const initialState = merge( paths.UI.createTree( initialUIState ), props );
 
 	return registerStore( STORE_KEY_EDIT_POD, {
 		reducer,

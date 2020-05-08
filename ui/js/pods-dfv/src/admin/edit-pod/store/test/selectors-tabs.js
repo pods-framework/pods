@@ -2,12 +2,7 @@ import deepFreeze from 'deep-freeze';
 import { merge } from 'lodash';
 
 import * as paths from '../state-paths';
-import {
-	getTabList,
-	getTab,
-	getTabs,
-	getTabOptions,
-} from '../selectors';
+import { getTabList, getTab, getTabs, getTabOptions } from '../selectors';
 
 const testTabs = {
 	foo: { name: 'foo', titleText: 'Foo' },
@@ -40,9 +35,7 @@ describe( 'tabs selectors', () => {
 
 	describe( 'getTab()', () => {
 		const targetTab = 'bar';
-		const state = deepFreeze(
-			paths.TABS_BY_NAME.createTree( testTabs )
-		);
+		const state = deepFreeze( paths.TABS_BY_NAME.createTree( testTabs ) );
 
 		it( 'Should return the specified tab', () => {
 			const result = getTab( state, targetTab );
@@ -60,10 +53,12 @@ describe( 'tabs selectors', () => {
 
 	describe( 'getTabs()', () => {
 		it( 'Should return the ordered tabs', () => {
-			const state = deepFreeze( merge(
-				paths.TABS_BY_NAME.createTree( testTabs ),
-				paths.TAB_LIST.createTree( [ 'bar', 'foo' ] )
-			) );
+			const state = deepFreeze(
+				merge(
+					paths.TABS_BY_NAME.createTree( testTabs ),
+					paths.TAB_LIST.createTree( [ 'bar', 'foo' ] )
+				)
+			);
 			const result = getTabs( state );
 			const expected = [ testTabs.bar, testTabs.foo ];
 
@@ -74,11 +69,13 @@ describe( 'tabs selectors', () => {
 
 	describe( 'getTabOptions()', () => {
 		it( 'Should get the ordered options for the specified tab', () => {
-			const state = deepFreeze( merge(
-				paths.TABS_BY_NAME.createTree( testTabs ),
-				paths.OPTIONS.createTree( options ),
-				paths.TAB_OPTIONS_LIST.createTree( tabOptionsList ),
-			) );
+			const state = deepFreeze(
+				merge(
+					paths.TABS_BY_NAME.createTree( testTabs ),
+					paths.OPTIONS.createTree( options ),
+					paths.TAB_OPTIONS_LIST.createTree( tabOptionsList )
+				)
+			);
 
 			const result = getTabOptions( state, 'bar' );
 			const expected = [
@@ -91,4 +88,3 @@ describe( 'tabs selectors', () => {
 		} );
 	} );
 } );
-

@@ -3,11 +3,7 @@ import deepFreeze from 'deep-freeze';
 import * as paths from '../state-paths';
 import { uiConstants } from '../constants';
 
-import {
-	getActiveTab,
-	getSaveStatus,
-	isSaving,
-} from '../selectors';
+import { getActiveTab, getSaveStatus, isSaving } from '../selectors';
 
 describe( 'ui selectors', () => {
 	describe( 'tabs', () => {

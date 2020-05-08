@@ -20,10 +20,10 @@ export const PodsDFVNumber = ( props ) => {
 	// noinspection JSUnresolvedVariable
 	return (
 		<PodsDFVBaseInput
-			type={'1' === props.fieldConfig.number_html5 ? 'number' : 'text'}
+			type={ '1' === props.fieldConfig.number_html5 ? 'number' : 'text' }
 			//min={props.fieldConfig.number_min} Enable this only for slider
 			//max={props.fieldConfig.number_max} Enable this only for slider
-			{...props}
+			{ ...props }
 		/>
 	);
 };

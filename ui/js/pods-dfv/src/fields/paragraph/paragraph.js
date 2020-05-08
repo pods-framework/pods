@@ -2,7 +2,6 @@
 import React from 'react';
 
 export const PodsDFVParagraph = ( props ) => {
-
 	// Default implementation if onChange is omitted from props
 	function handleChange ( event ) {
 		props.setValue( event.target.value );

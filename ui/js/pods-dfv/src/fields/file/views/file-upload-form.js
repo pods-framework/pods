@@ -11,10 +11,10 @@ export const FileUploadForm = PodsFieldView.extend( {
 	template: _.template( template ),
 
 	ui: {
-		addButton: '.pods-dfv-list-add'
+		addButton: '.pods-dfv-list-add',
 	},
 
 	triggers: {
-		'click @ui.addButton': 'childview:add:file:click'
-	}
+		'click @ui.addButton': 'childview:add:file:click',
+	},
 } );

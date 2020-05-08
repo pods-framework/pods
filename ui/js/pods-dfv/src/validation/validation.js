@@ -21,7 +21,7 @@ export const podsValidation = () => {
 	 * @param conditionalRules
 	 */
 	const addRules = ( conditionalRules ) => {
-		conditionalRules.forEach( conditionalRule => {
+		conditionalRules.forEach( ( conditionalRule ) => {
 			if ( conditionalRule.condition ) {
 				rules.push( conditionalRule.rule );
 				if ( conditionalRule.rule.facts ) {
@@ -41,17 +41,16 @@ export const podsValidation = () => {
 
 		return new Promise( ( resolve ) => {
 			// noinspection JSUnresolvedFunction
-			rulesEngine.run( facts )
-			.then(
-				events => {
-					events.forEach( event => {
+			rulesEngine
+				.run( facts )
+				.then( ( events ) => {
+					events.forEach( ( event ) => {
 						messages.push( event.message );
 					} );
-				}
-			)
-			.finally( () => {
-				resolve( messages );
-			} );
+				} )
+				.finally( () => {
+					resolve( messages );
+				} );
 		} );
 	};
 
@@ -63,15 +62,16 @@ export const podsValidation = () => {
 	 */
 	const useValidation = ( value ) => {
 		useEffect( () => {
-			checkValidation()
-			.then( messages => setValidationMessages( messages ) );
+			checkValidation().then( ( messages ) =>
+				setValidationMessages( messages )
+			);
 		}, [ value ] );
 
 		return validationMessages;
 	};
 
 	return {
-		addRules: addRules,
-		useValidation: useValidation
+		addRules,
+		useValidation,
 	};
 };

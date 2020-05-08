@@ -5,17 +5,17 @@
  */
 export const RelationshipModel = Backbone.Model.extend( {
 	defaults: {
-		'id': 0,
-		'name': '',
-		'icon': '',
-		'link': '',
-		'edit_link': '',
-		'selected': false
+		id: 0,
+		name: '',
+		icon: '',
+		link: '',
+		edit_link: '',
+		selected: false,
 	},
 
-	toggleSelected: function () {
-		this.set( 'selected', !this.get( 'selected' ) );
-	}
+	toggleSelected() {
+		this.set( 'selected', ! this.get( 'selected' ) );
+	},
 } );
 
 /**
@@ -28,8 +28,8 @@ export const RelationshipCollection = Backbone.Collection.extend( {
 	 *
 	 * @param { ?string[] } ids
 	 */
-	setSelected: function ( ids ) {
-		this.map( function ( thisModel ) {
+	setSelected( ids ) {
+		this.map( function( thisModel ) {
 			const selected = _.contains( ids, thisModel.get( 'id' ) + '' );
 			thisModel.set( 'selected', selected );
 		} );
@@ -38,13 +38,12 @@ export const RelationshipCollection = Backbone.Collection.extend( {
 	/**
 	 * Return a new collection containing just the selected items in this one
 	 *
-	 * @returns {*}
+	 * @return {*}
 	 */
-	filterBySelected: function () {
-
+	filterBySelected() {
 		// Get an array with only the selected items
-		const filtered = this.filter( function ( itemModel ) {
-			return ( itemModel.get( 'selected' ) );
+		const filtered = this.filter( function( itemModel ) {
+			return itemModel.get( 'selected' );
 		} );
 
 		// this.filter is going to return an array, so create a collection out of it
@@ -54,18 +53,15 @@ export const RelationshipCollection = Backbone.Collection.extend( {
 	/**
 	 * Return a new collection containing just the unselected items in this one
 	 *
-	 * @returns {*}
+	 * @return {*}
 	 */
-	filterByUnselected: function () {
-
+	filterByUnselected() {
 		// Get an array with only the unselected items
-		const filtered = this.filter( function ( itemModel ) {
-			return !( itemModel.get( 'selected' ) );
+		const filtered = this.filter( function( itemModel ) {
+			return ! itemModel.get( 'selected' );
 		} );
 
 		// this.filter is going to return an array, so create a collection out of it
 		return new RelationshipCollection( filtered );
-	}
-
+	},
 } );
-

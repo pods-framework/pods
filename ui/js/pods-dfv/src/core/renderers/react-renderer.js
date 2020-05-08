@@ -6,10 +6,7 @@ export function reactRenderer ( FieldClass, element, props ) {
 	const Field = React.createFactory( FieldClass );
 
 	ReactDOM.render(
-		<PodsDFVFieldContainer
-			fieldComponent={ Field }
-			{ ...props }
-		/>,
+		<PodsDFVFieldContainer fieldComponent={ Field } { ...props } />,
 		element
 	);
 }

@@ -4,11 +4,11 @@ export const handleSubmit = ( e, props ) => {
 	e.preventDefault();
 
 	const requestData = {
-		'id': props.podMeta.id,
-		'name': props.podMeta.name,
-		'old_name': props.podMeta.name,
-		'_wpnonce': props.nonce,
-		'fields': props.fields
+		id: props.podMeta.id,
+		name: props.podMeta.name,
+		old_name: props.podMeta.name,
+		_wpnonce: props.nonce,
+		fields: props.fields,
 	};
 
 	/*

@@ -11,15 +11,12 @@ import { FileUploadForm } from 'pods-dfv/src/fields/file/views/file-upload-form'
 import { Plupload } from 'pods-dfv/src/fields/file/uploaders/plupload';
 import { MediaModal } from 'pods-dfv/src/fields/file/uploaders/media-modal';
 
-const Uploaders = [
-	Plupload,
-	MediaModal
-];
+const Uploaders = [ Plupload, MediaModal ];
 
 const UNLIMITED_FILES = 0;
 
 /**
- * @extends Backbone.View
+ * @augments Backbone.View
  */
 export const File = PodsDFVFieldLayout.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
@@ -29,12 +26,12 @@ export const File = PodsDFVFieldLayout.extend( {
 	regions: {
 		list: '.pods-ui-file-list',
 		uiRegion: '.pods-ui-region', // "Utility" container for uploaders to use
-		form: '.pods-ui-form'
+		form: '.pods-ui-form',
 	},
 
 	childViewEvents: {
 		'childview:remove:file:click': 'onChildviewRemoveFileClick',
-		'childview:add:file:click': 'onChildviewAddFileClick'
+		'childview:add:file:click': 'onChildviewAddFileClick',
 	},
 
 	uploader: {},
@@ -42,14 +39,17 @@ export const File = PodsDFVFieldLayout.extend( {
 	/**
 	 *
 	 */
-	onBeforeRender: function () {
+	onBeforeRender() {
 		if ( this.collection === undefined ) {
 			this.collection = new FileUploadCollection( this.fieldItemData );
 		}
 	},
 
-	onRender: function () {
-		const listView = new FileUploadList( { collection: this.collection, fieldModel: this.model } );
+	onRender() {
+		const listView = new FileUploadList( {
+			collection: this.collection,
+			fieldModel: this.model,
+		} );
 		const formView = new FileUploadForm( { fieldModel: this.model } );
 
 		this.showChildView( 'list', listView );
@@ -65,7 +65,7 @@ export const File = PodsDFVFieldLayout.extend( {
 	 *
 	 * @param childView View that was the source of the event
 	 */
-	onChildviewRemoveFileClick: function ( childView ) {
+	onChildviewRemoveFileClick( childView ) {
 		this.collection.remove( childView.model );
 	},
 
@@ -76,8 +76,7 @@ export const File = PodsDFVFieldLayout.extend( {
 	 * event internally.  But this event does still come through with plupload fields in some browser
 	 * environments for reasons we've been unable to determine.
 	 */
-	onChildviewAddFileClick: function () {
-
+	onChildviewAddFileClick() {
 		// Invoke the uploader
 		if ( 'function' === typeof this.uploader.invoke ) {
 			this.uploader.invoke();
@@ -89,9 +88,9 @@ export const File = PodsDFVFieldLayout.extend( {
 	 *
 	 * @param {Object[]} data An array of model objects to be added
 	 */
-	onAddedFiles: function ( data ) {
+	onAddedFiles( data ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
-		const fileLimit = +fieldConfig[ 'file_limit' ]; // Unary plus to force to number
+		const fileLimit = +fieldConfig.file_limit; // Unary plus to force to number
 		let newCollection, filteredModels;
 
 		// Get a copy of the existing collection with the new files added
@@ -103,20 +102,23 @@ export const File = PodsDFVFieldLayout.extend( {
 			filteredModels = newCollection.models;
 		} else {
 			// Number of uploads is limited: keep the last N models, FIFO/queue style
-			filteredModels = newCollection.filter( function ( model ) {
-				return ( newCollection.indexOf( model ) >= newCollection.length - fileLimit );
+			filteredModels = newCollection.filter( function( model ) {
+				return (
+					newCollection.indexOf( model ) >=
+					newCollection.length - fileLimit
+				);
 			} );
 		}
 
 		this.collection.reset( filteredModels );
 	},
 
-	createUploader: function () {
+	createUploader() {
 		const fieldConfig = this.model.get( 'fieldConfig' );
-		const targetUploader = fieldConfig[ 'file_uploader' ];
+		const targetUploader = fieldConfig.file_uploader;
 		let Uploader;
 
-		jQuery.each( Uploaders, function ( index, thisUploader ) {
+		jQuery.each( Uploaders, function( index, thisUploader ) {
 			if ( targetUploader === thisUploader.prototype.fileUploader ) {
 				Uploader = thisUploader;
 				return false;
@@ -126,14 +128,16 @@ export const File = PodsDFVFieldLayout.extend( {
 		if ( Uploader !== undefined ) {
 			this.uploader = new Uploader( {
 				// We provide regular DOM element for the button
-				browseButton: this.getRegion( 'form' ).getEl( '.pods-dfv-list-add' ).get(),
+				browseButton: this.getRegion( 'form' )
+					.getEl( '.pods-dfv-list-add' )
+					.get(),
 				uiRegion: this.getRegion( 'uiRegion' ),
-				fieldConfig: fieldConfig
+				fieldConfig,
 			} );
 			return this.uploader;
 		} else {
 			// @todo sprintf type with PodsI18n.__()
-			throw `Could not locate file uploader '${targetUploader}'`;
+			throw `Could not locate file uploader '${ targetUploader }'`;
 		}
-	}
+	},
 } );

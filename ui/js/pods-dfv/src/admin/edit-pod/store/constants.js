@@ -49,7 +49,7 @@ export const groupConstants = {
 		MOVE_GROUP: 'MOVE_GROUP',
 		ADD_GROUP: 'ADD_GROUP',
 		SET_GROUP_FIELDS: 'SET_GROUP_FIELDS',
-		ADD_GROUP_FIELD: 'ADD_GROUP_FIELD'
+		ADD_GROUP_FIELD: 'ADD_GROUP_FIELD',
 	},
 };
 
@@ -59,7 +59,6 @@ export const podMetaConstants = {
 		SET_POD_META_VALUE: 'SET_POD_META_VALUE',
 	},
 };
-
 
 export const initialUIState = {
 	activeTab: uiConstants.tabNames.MANAGE_FIELDS,

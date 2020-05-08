@@ -16,24 +16,23 @@ export const PodsDFVFieldContainer = ( props ) => {
 		{
 			rule: validationRules.required( value, props.fieldConfig.label ),
 			condition: '1' === props.fieldConfig.required,
-		}
+		},
 	] );
 
-	const fieldClasses = classNames(
-		props.htmlAttr.class,
-		{ 'pods-validate-error': validationMessages.length }
-	);
+	const fieldClasses = classNames( props.htmlAttr.class, {
+		'pods-validate-error': validationMessages.length,
+	} );
 
 	return (
 		<div className="pods-dfv-container">
 			<Field
-				value={value}
-				setValue={setValue}
-				validation={validation}
-				className={fieldClasses}
-				{...props}
+				value={ value }
+				setValue={ setValue }
+				validation={ validation }
+				className={ fieldClasses }
+				{ ...props }
 			/>
-			<PodsDFVValidationMessages messages={validationMessages} />
+			<PodsDFVValidationMessages messages={ validationMessages } />
 		</div>
 	);
 };

@@ -1,18 +1,21 @@
 /* eslint-disable camelcase */
 /*global jQuery, _, Backbone, PodsMn, wp, plupload, PodsI18n */
 import { PodsFileUploader } from 'pods-dfv/src/fields/file/uploaders/pods-file-uploader';
-import { FileUploadQueueModel, FileUploadQueue } from 'pods-dfv/src/fields/file/views/file-upload-queue';
+import {
+	FileUploadQueueModel,
+	FileUploadQueue,
+} from 'pods-dfv/src/fields/file/views/file-upload-queue';
 
 export const Plupload = PodsFileUploader.extend( {
 	plupload: {},
 
 	fileUploader: 'plupload',
 
-	initialize: function () {
+	initialize() {
 		// Set the browse button argument for plupload... it's required
-		this.fieldConfig[ 'plupload_init' ][ 'browse_button' ] = this.browseButton;
+		this.fieldConfig.plupload_init.browse_button = this.browseButton;
 
-		this.plupload = new plupload.Uploader( this.fieldConfig[ 'plupload_init' ] );
+		this.plupload = new plupload.Uploader( this.fieldConfig.plupload_init );
 		this.plupload.init();
 
 		// Setup all callbacks: ( event_name, callback, context )
@@ -27,25 +30,23 @@ export const Plupload = PodsFileUploader.extend( {
 	 * @param up
 	 * @param files
 	 */
-	onFilesAdded: function ( up, files ) {
-		let model,
-			collection,
-			view;
+	onFilesAdded( up, files ) {
+		let model, collection, view;
 
 		// Assemble the collection data for the file queue
 		collection = new Backbone.Collection();
-		jQuery.each( files, function ( index, file ) {
+		jQuery.each( files, function( index, file ) {
 			model = new FileUploadQueueModel( {
 				id: file.id,
-				filename: file.name
+				filename: file.name,
 			} );
 
 			collection.add( model );
 		} );
 
 		// Create a new view based on the collection
-		view = new FileUploadQueue( { collection: collection } );
-		view.render();  // Generate the HTML, not attached to the DOM yet
+		view = new FileUploadQueue( { collection } );
+		view.render(); // Generate the HTML, not attached to the DOM yet
 
 		// Reset the region in case any error messages are hanging around from a previous upload
 		// and show the new file upload queue
@@ -64,7 +65,7 @@ export const Plupload = PodsFileUploader.extend( {
 	 * @param up
 	 * @param file
 	 */
-	onUploadProgress: function ( up, file ) {
+	onUploadProgress( up, file ) {
 		const model = this.queueCollection.get( file.id );
 		model.set( { progress: file.percent } );
 	},
@@ -75,7 +76,7 @@ export const Plupload = PodsFileUploader.extend( {
 	 * @param file
 	 * @param resp
 	 */
-	onFileUploaded: function ( up, file, resp ) {
+	onFileUploaded( up, file, resp ) {
 		const model = this.queueCollection.get( file.id );
 		let response = resp.response;
 		let newFile = [];
@@ -90,7 +91,7 @@ export const Plupload = PodsFileUploader.extend( {
 
 			model.set( {
 				progress: 0,
-				errorMsg: response
+				errorMsg: response,
 			} );
 
 			// Error condition 2
@@ -102,7 +103,7 @@ export const Plupload = PodsFileUploader.extend( {
 
 			model.set( {
 				progress: 0,
-				errorMsg: response
+				errorMsg: response,
 			} );
 		} else {
 			json = response.match( /{.*}$/ );
@@ -123,7 +124,8 @@ export const Plupload = PodsFileUploader.extend( {
 
 				model.set( {
 					progress: 0,
-					errorMsg: PodsI18n.__( 'Error uploading file: ' ) + file.name
+					errorMsg:
+						PodsI18n.__( 'Error uploading file: ' ) + file.name,
 				} );
 				return;
 			}
@@ -134,14 +136,12 @@ export const Plupload = PodsFileUploader.extend( {
 				name: json.post_title,
 				edit_link: json.edit_link,
 				link: json.link,
-				download: json.download
+				download: json.download,
 			};
 
 			// Remove the file from the upload queue model and trigger an event for the hosting container
 			model.trigger( 'destroy', model );
 			this.trigger( 'added:files', newFile );
 		}
-	}
-
+	},
 } );
-

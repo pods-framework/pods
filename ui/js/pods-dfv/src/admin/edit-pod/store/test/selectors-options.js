@@ -1,11 +1,7 @@
 import deepFreeze from 'deep-freeze';
 
 import * as paths from '../state-paths';
-import {
-	getOption,
-	getOptionItemValue,
-	getOptionValue,
-} from '../selectors';
+import { getOption, getOptionItemValue, getOptionValue } from '../selectors';
 
 describe( 'options selectors', () => {
 	describe( 'getOption()', () => {
@@ -16,9 +12,7 @@ describe( 'options selectors', () => {
 		};
 
 		it( 'Should return the specified option', () => {
-			const state = deepFreeze(
-				paths.OPTIONS.createTree( options )
-			);
+			const state = deepFreeze( paths.OPTIONS.createTree( options ) );
 			const result = getOption( state, 'opt2' );
 			const expected = options.opt2;
 
@@ -35,9 +29,7 @@ describe( 'options selectors', () => {
 		};
 
 		it( 'Should return the specified option item value', () => {
-			const state = deepFreeze(
-				paths.OPTIONS.createTree( options )
-			);
+			const state = deepFreeze( paths.OPTIONS.createTree( options ) );
 			const result = getOptionItemValue( state, 'opt2', 'label' );
 			const expected = options.opt2.label;
 
@@ -54,9 +46,7 @@ describe( 'options selectors', () => {
 		};
 
 		it( 'Should return the specified option value', () => {
-			const state = deepFreeze(
-				paths.OPTIONS.createTree( options )
-			);
+			const state = deepFreeze( paths.OPTIONS.createTree( options ) );
 			const result = getOptionValue( state, 'opt2' );
 			const expected = options.opt2.value;
 

@@ -21,7 +21,8 @@ const dropSpec = {
 			return;
 		}
 		const hoverBoundingRect = node.getBoundingClientRect();
-		const hoverMiddleY = ( hoverBoundingRect.bottom - hoverBoundingRect.top ) / 2;
+		const hoverMiddleY =
+			( hoverBoundingRect.bottom - hoverBoundingRect.top ) / 2;
 		const clientOffset = monitor.getClientOffset();
 		const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
@@ -46,7 +47,7 @@ const dropSpec = {
 	},
 };
 
-const collect = connect => ( {
+const collect = ( connect ) => ( {
 	connectDropTarget: connect.dropTarget(),
 } );
 

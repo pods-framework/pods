@@ -9,7 +9,7 @@ const { Dashicon } = wp.components;
 const getLayerStyles = ( { item } ) => {
 	return {
 		position: 'fixed',
-		opacity: .6,
+		opacity: 0.6,
 		pointerEvents: 'none',
 		zIndex: 100,
 		left: item.left,
@@ -17,25 +17,23 @@ const getLayerStyles = ( { item } ) => {
 		width: '100%',
 		height: '100%',
 	};
-
 };
 
 // Lock the dragging axis
 const getItemStyles = ( { item, initialOffset, currentOffset } ) => {
-	if ( !initialOffset || !currentOffset ) {
+	if ( ! initialOffset || ! currentOffset ) {
 		return {
-			display: 'none'
-		};
-	} else {
-		return {
-			width: item.width,
-			transform: `translate(${initialOffset.x}px, ${currentOffset.y}px`,
-			filter: 'drop-shadow(5px 5px 5px #BBB)',
+			display: 'none',
 		};
 	}
+	return {
+		width: item.width,
+		transform: `translate(${ initialOffset.x }px, ${ currentOffset.y }px`,
+		filter: 'drop-shadow(5px 5px 5px #BBB)',
+	};
 };
 
-const CustomDragLayer = props => {
+const CustomDragLayer = ( props ) => {
 	const { item, itemType, isDragging } = props;
 
 	if ( !isDragging || uiConstants.dragItemTypes.GROUP !== itemType ) {
@@ -43,17 +41,22 @@ const CustomDragLayer = props => {
 	}
 
 	return (
-		<div style={getLayerStyles( props )}>
-			<div style={getItemStyles( props )}>
-				<div className="pods-field-group-wrapper" style={{ cursor: 'ns-resize' }}>
+		<div style={ getLayerStyles( props ) }>
+			<div style={ getItemStyles( props ) }>
+				<div
+					className="pods-field-group-wrapper"
+					style={ { cursor: 'ns-resize' } }
+				>
 					<div className="pods-field-group_title">
 						<div className="pods-field-group_handle">
-							<Dashicon icon='menu' />
+							<Dashicon icon="menu" />
 						</div>
-						<div className="pods-field-group_name">{item.groupName}</div>
+						<div className="pods-field-group_name">
+							{ item.groupName }
+						</div>
 						<div className="pods-field-group_manage">
 							<div className="pods-field-group_toggle">
-								<Dashicon icon={'arrow-down'} />
+								<Dashicon icon={ 'arrow-down' } />
 							</div>
 						</div>
 					</div>
@@ -66,7 +69,7 @@ const CustomDragLayer = props => {
 CustomDragLayer.propTypes = {
 	item: PropTypes.shape( {
 		groupName: PropTypes.string.isRequired,
-		index: PropTypes.number.isRequired
+		index: PropTypes.number.isRequired,
 	} ),
 
 	itemType: PropTypes.string,
@@ -75,20 +78,19 @@ CustomDragLayer.propTypes = {
 
 	currentOffset: PropTypes.shape( {
 		x: PropTypes.number,
-		y: PropTypes.number
+		y: PropTypes.number,
 	} ),
 
 	initialOffset: PropTypes.shape( {
 		x: PropTypes.number,
-		y: PropTypes.number
+		y: PropTypes.number,
 	} ),
 };
 
-export default DragLayer( monitor => ( {
+export default DragLayer( ( monitor ) => ( {
 	item: monitor.getItem(),
 	itemType: monitor.getItemType(),
 	initialOffset: monitor.getInitialSourceClientOffset(),
 	currentOffset: monitor.getSourceClientOffset(),
-	isDragging: monitor.isDragging()
+	isDragging: monitor.isDragging(),
 } ) )( CustomDragLayer );
-

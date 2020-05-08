@@ -5,9 +5,9 @@ const { Tooltip, Dashicon } = wp.components;
 
 export const HelpTooltip = ( props ) => {
 	return (
-		<Tooltip text={props.helpText}>
+		<Tooltip text={ props.helpText }>
 			<span>
-				<Dashicon icon='editor-help' />
+				<Dashicon icon="editor-help" />
 			</span>
 		</Tooltip>
 	);

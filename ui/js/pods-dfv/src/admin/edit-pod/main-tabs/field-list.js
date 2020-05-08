@@ -1,16 +1,15 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from 'react';
+import React, { useRef } from 'react';
 import * as PropTypes from 'prop-types';
 import { useDrag, useDrop } from 'react-dnd';
 
 import './manage-fields.scss';
 
 // WordPress dependencies
-// noinspection JSUnresolvedVariable
-const { __ } = wp.i18n;
+import { __ } from '@wordpress/i18n';
 const { Dashicon } = wp.components;
 
 export const FieldList = ( props ) => {
-	const { groupName, cloneField, deleteField, fields, moveField } = props;
+	const { groupName, cloneField, deleteField, moveField } = props;
 
 	if ( 0 === props.fields.length ) {
 		return (
@@ -48,10 +47,6 @@ FieldList.propTypes = {
 	fields: PropTypes.array.isRequired,
 };
 
-/**
- * @param props
- * @param ref
- */
 export const FieldListItem = ( props, ref ) => {
 	const { id, fieldName, fieldLabel, required, type, index, moveField, groupName, cloneField, deleteField } = props;
 
@@ -105,7 +100,11 @@ export const FieldListItem = ( props, ref ) => {
 			isDragging: monitor.isDragging(),
 		} ),
 	} );
+
+	// @todo is this variable going to be used?
+	// eslint-disable-next-line no-unused-vars
 	const opacity = isDragging ? 0 : 1;
+
 	drag( drop( wref ) );
 	return (
 		<div className="pods-field_wrapper" ref={ wref }>

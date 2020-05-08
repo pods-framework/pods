@@ -1,10 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
-const { useState } = React;
 
 /* WordPress dependencies */
-// noinspection JSUnresolvedVariable
-const { __ } = wp.i18n;
+import { __ } from '@wordpress/i18n';
 
 export const PodsDFVSluggable = ( props ) => {
 	const [ editing, setEditing ] = useState( false );

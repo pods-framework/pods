@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import * as paths from './state-paths';
 
 import {
@@ -107,15 +109,15 @@ export const groups = ( state = {}, action = {} ) => {
 
 		return { ...state };
 	} else if ( actions.SET_GROUP_FIELDS === action.type ) {
-		var group = _.find( state.currentPod.groups, function( group ) {
-			return group.name == action.groupName;
+		const group = _.find( state.currentPod.groups, function( podGroup ) {
+			return podGroup.name === action.groupName;
 		} );
 		group.fields = action.fields;
 
 		return { ...state };
 	} else if ( actions.ADD_GROUP_FIELD === action.type ) {
-		var group = _.find( state.currentPod.groups, function( group ) {
-			return group.name == action.groupName;
+		const group = _.find( state.currentPod.groups, function( podGroup ) {
+			return podGroup.name === action.groupName;
 		} );
 		group.fields.push( action.field );
 
@@ -186,7 +188,7 @@ export const podMeta = ( state = {}, action = {} ) => {
 };
 
 // Fields
-export const fields = ( state = {}, action = {} ) => {
+export const fields = ( state = {} ) => {
 	return state;
 };
 

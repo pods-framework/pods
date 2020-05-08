@@ -29,11 +29,6 @@ const MISSING = __( '[MISSING DEFAULT]', 'pods' );
  * }
  */
 
-/**
- * DynamicTabContent
- *
- * @param props
- */
 export const DynamicTabContent = ( props ) => {
 	const { tabOptions, getOptionValue, setOptionValue } = props;
 
@@ -66,22 +61,16 @@ DynamicTabContent.propTypes = {
 	setOptionValue: PropTypes.func.isRequired,
 };
 
-/**
- * DependentFieldOption
- *
- * Conditionally display a FieldOption (depends-on support)
- *
- * @param props
- */
+// Conditionally display a FieldOption (depends-on support)
 const DependentFieldOption = ( props ) => {
 	const { fieldType, name, label, value, dependents } = props;
 	const { getOptionValue, setOptionValue } = props;
 
 	const handleInputChange = ( e ) => {
 		const target = e.target;
-		const value = 'checkbox' === target.type ? target.checked : target.value;
+		const checkedValue = 'checkbox' === target.type ? target.checked : target.value;
 
-		setOptionValue( name, value );
+		setOptionValue( name, checkedValue );
 	};
 
 	if ( ! meetsDependencies( dependents, getOptionValue ) ) {
@@ -111,6 +100,7 @@ DependentFieldOption.propTypes = {
 };
 
 /**
+ * Check if option meets dependencies, helper function.
  *
  * @param {Object|Object[]} dependencies Dictionary in the form optionName: requiredVal
  * @param {Function} getOptionValue Selector to lookup option values by name
@@ -124,7 +114,7 @@ const meetsDependencies = ( dependencies, getOptionValue ) => {
 		each( dependencies, ( dependentValue, dependentOptionName ) => {
 			// Loose comparison required, values may be 1/0 expecting true/false
 			// noinspection EqualityComparisonWithCoercionJS
-			if ( getOptionValue( dependentOptionName ) != dependentValue ) {
+			if ( getOptionValue( dependentOptionName ) !== dependentValue ) {
 				retVal = false;
 				return false; // Early-exits the loop only, not the function
 			}

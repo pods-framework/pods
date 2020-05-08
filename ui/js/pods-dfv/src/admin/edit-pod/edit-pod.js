@@ -7,17 +7,15 @@ import { compose } from '@wordpress/compose';
 // Pods dependencies
 import withDragDropContext from './with-drag-drop-context';
 import { STORE_KEY_EDIT_POD } from './store/constants';
-import { handleSubmit } from './handle-submit';
 import SaveStatusMessage from './save-status-message';
-import { EditPodName } from './edit-pod-name';
+import EditPodName from './edit-pod-name';
 import { PodsNavTab } from 'pods-dfv/src/components/tabs/pods-nav-tab';
 import { ActiveTabContent } from './main-tabs/active-tab-content';
 import Postbox from './postbox';
 
 const EditPod = ( props ) => {
 	return (
-		<form
-			onSubmit={ ( e ) => handleSubmit( e, props ) }>
+		<div>
 			<div>
 				<EditPodName />
 				<SaveStatusMessage />
@@ -33,7 +31,7 @@ const EditPod = ( props ) => {
 					<Postbox />
 				</div>
 			</div>
-		</form>
+		</div>
 	);
 };
 

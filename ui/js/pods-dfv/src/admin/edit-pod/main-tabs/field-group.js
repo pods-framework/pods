@@ -1,3 +1,6 @@
+// @todo File has many eslint warnings, come back to this when working on the Groups.
+/* eslint-disable */
+
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import * as PropTypes from 'prop-types';
 import { flow, max, map } from 'lodash';
@@ -98,15 +101,15 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		if ( groupName === item.groupName ) {
 			const fields = getGroupFields( item.groupName );
 			const movedItem = fields.find( ( itm, index ) => index === hoverIndex );
-		    const remainingItems = fields.filter( ( itm, index ) => index !== hoverIndex );
+			const remainingItems = fields.filter( ( itm, index ) => index !== hoverIndex );
 
-		    const reorderedItems = [
-		        ...remainingItems.slice( 0, dragIndex ),
-		        movedItem,
-		        ...remainingItems.slice( dragIndex ),
-		    ];
+			const reorderedItems = [
+				...remainingItems.slice( 0, dragIndex ),
+				movedItem,
+				...remainingItems.slice( dragIndex ),
+			];
 
-		    setGroupFields( groupName, reorderedItems );
+			setGroupFields( groupName, reorderedItems );
 		} else {
 			// console.log(item)
 			// let oldGroupFields = groupFieldList[item.groupName]

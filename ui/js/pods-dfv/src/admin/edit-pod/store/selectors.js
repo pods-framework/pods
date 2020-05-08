@@ -83,8 +83,8 @@ export const getFieldList = ( state, groupName ) =>
 	paths.GROUP_FIELD_LIST.getFrom( state )[ groupName ];
 
 export const getGroupFields = ( state, groupName ) => {
-	const group = _.find( state.groups.currentPod.groups, function( group ) {
-		return group.name == groupName;
+	const group = _.find( state.groups.currentPod.groups, function( podGroup ) {
+		return podGroup.name === groupName;
 	} );
 
 	return group.fields;

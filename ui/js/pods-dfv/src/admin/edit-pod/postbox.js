@@ -136,6 +136,7 @@ export const Postbox = ( {
 									<div id="delete-action">
 										<button
 											onClick={ () => {
+												// eslint-disable-next-line no-alert
 												const confirm = window.confirm(
 													__( 'Are you sure you want to delete this Pod? All fields and data will be removed.', 'pods' )
 												);

@@ -5,11 +5,7 @@ import {
 	podMetaConstants,
 } from 'pods-dfv/src/admin/edit-pod/store/constants';
 
-/**
- * UI
- *
- * @param activeTab
- */
+// UI
 export const setActiveTab = ( activeTab ) => {
 	return {
 		type: uiConstants.actions.SET_ACTIVE_TAB,
@@ -33,10 +29,7 @@ export const setDeleteStatus = ( deleteStatus, message = '' ) => {
 	};
 };
 
-/**
- * Options
- */
-
+// Options
 export const setOptionValue = ( name, value ) => setOptionItemValue( name, 'value', value );
 
 export const setOptionItemValue = ( optionName, itemName, itemValue ) => {
@@ -55,11 +48,7 @@ export const setOptionsValues = ( options = {} ) => {
 	};
 };
 
-/**
- * Groups
- *
- * @param groupList
- */
+// Groups
 export const setGroupList = ( groupList ) => {
 	return {
 		type: groupConstants.actions.SET_GROUP_LIST,
@@ -96,11 +85,7 @@ export const addGroupField = ( groupName, field ) => {
 	};
 };
 
-/**
- * Pod meta
- *
- * @param name
- */
+// Pod meta
 export const setPodName = ( name ) => {
 	return {
 		type: podMetaConstants.actions.SET_POD_NAME,

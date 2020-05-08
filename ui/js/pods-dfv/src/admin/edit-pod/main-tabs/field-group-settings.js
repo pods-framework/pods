@@ -1,8 +1,8 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 
+import { __ } from '@wordpress/i18n';
 const { Modal } = wp.components;
-const { __ } = wp.i18n;
 
 export const FieldGroupSettings = ( { groupName, show } ) => {
 	const closeModal = ( e ) => {

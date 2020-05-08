@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-const { __ } = wp.i18n;
+import { __ } from '@wordpress/i18n';
 
-export const PodsDFVEditFieldBasicOptions = ( props ) => {
+export const PodsDFVEditFieldBasicOptions = () => {
 	// Todo: this is all just copy/paste hardcoded as placeholders, not wired up, would be dynamically assembled
 	return (
 		<div className="pods-manage-field">
@@ -44,6 +44,7 @@ export const PodsDFVEditFieldBasicOptions = ( props ) => {
 							className="pods-form-ui-field pods-form-ui-field-type-text pods-form-ui-field-name-field-data-name pods-validate pods-validate-required pods-slugged-lower"
 							type="text"
 							value=""
+							// eslint-disable-next-line jsx-a11y/tabindex-no-positive
 							tabIndex="2"
 							maxLength="50"
 						/>

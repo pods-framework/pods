@@ -42,14 +42,14 @@ export const ui = ( state = initialUIState, action = {} ) => {
 			};
 		}
 		case actions.SET_SAVE_STATUS: {
-			let newStatus = action.saveStatus;
+			const newStatus = Object.values( saveStatuses ).includes( action.saveStatus )
+				? action.saveStatus
+				: initialUIState.saveStatus;
 
-			if ( !Object.values( saveStatuses ).includes( newStatus ) ) {
-				newStatus = initialUIState.saveStatus;
-			}
 			return {
 				...state,
-				saveStatus: newStatus
+				saveStatus: newStatus,
+				saveMessage: action.message,
 			};
 		}
 		case actions.SET_DELETE_STATUS: {
@@ -60,6 +60,7 @@ export const ui = ( state = initialUIState, action = {} ) => {
 			return {
 				...state,
 				deleteStatus: newStatus,
+				deleteMessage: action.message,
 			};
 		}
 

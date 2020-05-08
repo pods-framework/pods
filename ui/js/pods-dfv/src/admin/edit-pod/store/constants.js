@@ -64,4 +64,6 @@ export const initialUIState = {
 	activeTab: uiConstants.tabNames.MANAGE_FIELDS,
 	saveStatus: uiConstants.saveStatuses.NONE,
 	deleteStatus: uiConstants.deleteStatuses.NONE,
+	saveMessage: null,
+	deleteMessage: null,
 };

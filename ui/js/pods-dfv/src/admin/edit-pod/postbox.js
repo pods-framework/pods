@@ -48,7 +48,7 @@ const savePod = async ( podID, podName, options, groups, fields, setSaveStatus )
 
 		setSaveStatus( SAVE_STATUSES.SAVE_SUCCESS );
 	} catch ( error ) {
-		setSaveStatus( SAVE_STATUSES.SAVE_ERROR );
+		setSaveStatus( SAVE_STATUSES.SAVE_ERROR, error );
 	}
 };
 

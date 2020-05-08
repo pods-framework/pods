@@ -15,17 +15,19 @@ export const setActiveTab = ( activeTab ) => {
 	};
 };
 
-export const setSaveStatus = ( saveStatus ) => {
+export const setSaveStatus = ( saveStatus, message = '' ) => {
 	return {
 		type: uiConstants.actions.SET_SAVE_STATUS,
-		saveStatus
+		saveStatus,
+		message,
 	};
 };
 
-export const setDeleteStatus = ( deleteStatus ) => {
+export const setDeleteStatus = ( deleteStatus, message = '' ) => {
 	return {
 		type: uiConstants.actions.SET_DELETE_STATUS,
 		deleteStatus,
+		message,
 	};
 };
 

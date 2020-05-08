@@ -41,6 +41,8 @@ export const getTabOptions = ( state, tabName ) => {
 //-- Save status
 export const getSaveStatus = state => paths.SAVE_STATUS.getFrom( state );
 
+export const getSaveMessage = state => paths.SAVE_MESSAGE.getFrom( state );
+
 export const isSaving = state =>
 	paths.SAVE_STATUS.getFrom( state ) === uiConstants.saveStatuses.SAVING;
 

@@ -64,7 +64,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			name: fieldName,
 			label: 'Field ' + str,
 			position: maxPosition + 1,
-			type: type
+			type: type,
+			required: false,
 		};
 
 		addGroupField(groupName, field)
@@ -79,7 +80,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		var newFields = fields.filter(function(obj) {
 			return obj.name != fieldName;
 		});
-		
+
 		setGroupFields(groupName, newFields);
 
 		// var fields = getGroupFields(groupName);
@@ -98,7 +99,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			var fields = getGroupFields(item.groupName);
 			var movedItem = fields.find((itm, index) => index === hoverIndex);
 		    var remainingItems = fields.filter((itm, index) => index !== hoverIndex);
-		  
+
 		    var reorderedItems = [
 		        ...remainingItems.slice(0, dragIndex),
 		        movedItem,
@@ -160,8 +161,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			</div>
 
 			{expanded && !isDragging &&
-			<FieldList 
-				fields={getGroupFields( groupName )} 
+			<FieldList
+				fields={getGroupFields( groupName )}
 				setGroupFields={setGroupFields}
 				moveField={moveField}
 				groupName={groupName}

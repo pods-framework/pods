@@ -10,9 +10,8 @@ const { __ } = wp.i18n;
 const { Dashicon } = wp.components;
 
 export const FieldList = ( props ) => {
-
 	const { groupName, cloneField, deleteField, fields, moveField } = props;
-console.log(props.fields)
+
 	if ( 0 === props.fields.length ) {
 		return (
 			<div className='pods-manage-fields no-fields'>
@@ -115,7 +114,7 @@ export const FieldListItem = ( props, ref ) => {
 	<div className="pods-field pods-field_label">
 	<b>Field Label</b>
 	<br />
-	{fieldLabel}<span className={required && 'pods-field_required'}>*</span>
+	{fieldLabel}<span className={required ? 'pods-field_required' : ''}>*</span>
 	<div className="pods-field_id"> [id = {id}]</div>
 	</div>
 	<div className="pods-field pods-field_name">
@@ -130,7 +129,7 @@ export const FieldListItem = ( props, ref ) => {
 	<div className="pods-field_id"> [type = [STILL NEED THIS]]</div>
 	</div>
 	<div className="pods-field pods-field_actions">
-	<Dashicon icon='edit' /> 
+	<Dashicon icon='edit' />
 	<Dashicon icon='admin-page' onClick={(e) => { e.stopPropagation(); cloneField(groupName, type); }} />
 	<Dashicon icon='trash' onClick={(e) => { e.stopPropagation(); deleteField(groupName, fieldName); }} />
 	</div>
@@ -139,10 +138,10 @@ export const FieldListItem = ( props, ref ) => {
 };
 
 FieldListItem.propTypes = {
-	id: PropTypes.number.isRequired,
+	id: PropTypes.string.isRequired,
 	fieldName: PropTypes.string.isRequired,
 	fieldLabel: PropTypes.string.isRequired,
-	required: PropTypes.string.isRequired,
+	required: PropTypes.bool.isRequired,
 	type: PropTypes.string.isRequired,
 };
 

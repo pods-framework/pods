@@ -1,5 +1,9 @@
 import React from 'react';
 
+// WordPress dependencies
+import { withSelect, withDispatch } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
+
 // Pods dependencies
 import withDragDropContext from './with-drag-drop-context';
 import { STORE_KEY_EDIT_POD } from './store/constants';
@@ -10,33 +14,7 @@ import { PodsNavTab } from 'pods-dfv/src/components/tabs/pods-nav-tab';
 import { ActiveTabContent } from './main-tabs/active-tab-content';
 import Postbox from './postbox';
 
-// WordPress dependencies
-const { withSelect, withDispatch } = wp.data;
-const { compose } = wp.compose;
-
-const StoreSubscribe = compose( [
-	withSelect( ( select ) => {
-		const storeSelect = select( STORE_KEY_EDIT_POD );
-		return {
-			tabs: storeSelect.getTabs(),
-			activeTab: storeSelect.getActiveTab(),
-		};
-	} ),
-	withDispatch( ( dispatch ) => {
-		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
-		return {
-			setActiveTab: storeDispatch.setActiveTab,
-		};
-	} )
-] );
-
-const EditPod = StoreSubscribe( ( props ) => {
-
-//--! Todo: debugging only
-	window.select = wp.data.select( 'pods/edit-pod' );
-	window.dispatch = wp.data.dispatch( 'pods/edit-pod' );
-//--! Todo: debugging only
-
+const EditPod = ( props ) => {
 	return (
 		<form
 			onSubmit={( e ) => handleSubmit( e, props )}>
@@ -57,6 +35,21 @@ const EditPod = StoreSubscribe( ( props ) => {
 			</div>
 		</form>
 	);
-} );
+};
 
-export const PodsDFVEditPod = withDragDropContext( EditPod );
+export default compose( [
+	withSelect( ( select ) => {
+		const storeSelect = select( STORE_KEY_EDIT_POD );
+		return {
+			tabs: storeSelect.getTabs(),
+			activeTab: storeSelect.getActiveTab(),
+		};
+	} ),
+	withDispatch( ( dispatch ) => {
+		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+		return {
+			setActiveTab: storeDispatch.setActiveTab,
+		};
+	} ),
+	withDragDropContext,
+] )( EditPod );

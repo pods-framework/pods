@@ -11,7 +11,7 @@ export const SaveStatusMessage = ( { saveStatus, saveMessage } ) => {
 		case uiConstants.saveStatuses.SAVING:
 			return (
 				<div id="message" className="notice notice-warning">
-					<p><b>{__( 'Saving Pod...', 'pods' )}</b></p>
+					<p><b>{ __( 'Saving Pod…', 'pods' ) }</b></p>
 				</div>
 			);
 
@@ -19,9 +19,9 @@ export const SaveStatusMessage = ( { saveStatus, saveMessage } ) => {
 			return (
 				<div id="message" className="updated fade">
 					<p>
-						<strong>{__( 'Success!', 'pods' )}</strong>
-						{'\u00A0' /* &nbsp; */}
-						{__( 'Pod saved successfully.', 'pods' )}
+						<strong>{ __( 'Success!', 'pods' ) }</strong>
+						{ '\u00A0' /* &nbsp; */ }
+						{ __( 'Pod saved successfully.', 'pods' ) }
 					</p>
 				</div>
 			);
@@ -44,5 +44,5 @@ export default compose( [
 			saveStatus: select( STORE_KEY_EDIT_POD ).getSaveStatus(),
 			saveMessage: select( STORE_KEY_EDIT_POD ).getSaveMessage(),
 		};
-	} )
+	} ),
 ] )( SaveStatusMessage );

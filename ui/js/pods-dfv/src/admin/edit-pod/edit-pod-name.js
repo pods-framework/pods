@@ -10,26 +10,26 @@ const { __ } = wp.i18n;
 const { withSelect, withDispatch } = wp.data;
 const { compose } = wp.compose;
 
-export const EditPodName = compose ( [
+export const EditPodName = compose( [
 	withSelect( ( select ) => {
 		return {
-			podName: select( STORE_KEY_EDIT_POD ).getPodName()
+			podName: select( STORE_KEY_EDIT_POD ).getPodName(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
 		return {
-			setPodName: dispatch( STORE_KEY_EDIT_POD ).setPodName
+			setPodName: dispatch( STORE_KEY_EDIT_POD ).setPodName,
 		};
-	} )
+	} ),
 ] )
 ( ( props ) => {
 	return (
 		<h2>
-			{__( 'Edit Pod: ', 'pods' )}
-			{'\u00A0' /* &nbsp; */}
+			{ __( 'Edit Pod: ', 'pods' ) }
+			{ '\u00A0' /* &nbsp; */ }
 			<PodsDFVSluggable
-				value={props.podName}
-				updateValue={props.setPodName}
+				value={ props.podName }
+				updateValue={ props.setPodName }
 			/>
 		</h2>
 	);

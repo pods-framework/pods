@@ -10,50 +10,17 @@
   },
 
   "extends": [
-    "plugin:@wordpress/eslint-plugin/recommended",
-    "plugin:react/recommended"
+    "plugin:@wordpress/eslint-plugin/custom",
+    "plugin:@wordpress/eslint-plugin/esnext",
+    "plugin:@wordpress/eslint-plugin/es5",
+    "plugin:@wordpress/eslint-plugin/jsx-a11y",
+    "plugin:@wordpress/eslint-plugin/react",
+    "plugin:@wordpress/eslint-plugin/i18n",
+    "plugin:@wordpress/eslint-plugin/test-e2e",
+    "plugin:@wordpress/eslint-plugin/test-unit"
   ],
 
-  "rules": {
-    "object-curly-spacing": [
-      "error",
-      "always"
-    ],
-
-    "space-in-parens": [
-      "error",
-      "always"
-    ],
-
-    "space-before-function-paren": [
-      "error",
-      {
-        "anonymous": "always",
-        "named": "always",
-        "asyncArrow": "always"
-      }
-    ],
-
-    "lines-around-comment": [
-      "error",
-      {
-        "beforeLineComment": false,
-        "beforeBlockComment": false
-      }
-    ],
-
-    "space-unary-ops": [
-      "error",
-      {
-        "nonwords": false
-      }
-    ],
-
-    "comma-dangle": [
-      "error",
-      "only-multiline"
-    ]
-  },
+  "rules": {},
 
   "overrides": [
     {

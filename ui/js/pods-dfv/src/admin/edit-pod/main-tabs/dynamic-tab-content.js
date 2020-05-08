@@ -31,12 +31,14 @@ const MISSING = __( '[MISSING DEFAULT]', 'pods' );
 
 /**
  * DynamicTabContent
+ *
+ * @param props
  */
 export const DynamicTabContent = ( props ) => {
 	const { tabOptions, getOptionValue, setOptionValue } = props;
 
 	const getLabelValue = ( labelFormat, paramOption, paramDefault ) => {
-		if ( !paramOption ) {
+		if ( ! paramOption ) {
 			return labelFormat;
 		}
 
@@ -44,17 +46,17 @@ export const DynamicTabContent = ( props ) => {
 		return sprintf( labelFormat, param );
 	};
 
-	return tabOptions.map( option => (
+	return tabOptions.map( ( option ) => (
 		<DependentFieldOption
-			key={option.name}
-			fieldType={option.type}
-			name={option.name}
-			label={getLabelValue( option.label, option.label_param, option.param_default )}
-			value={option.value || ''}
-			dependents={option[ 'depends-on' ]}
-			helpText={option.help}
-			getOptionValue={getOptionValue}
-			setOptionValue={setOptionValue}
+			key={ option.name }
+			fieldType={ option.type }
+			name={ option.name }
+			label={ getLabelValue( option.label, option.label_param, option.param_default ) }
+			value={ option.value || '' }
+			dependents={ option[ 'depends-on' ] }
+			helpText={ option.help }
+			getOptionValue={ getOptionValue }
+			setOptionValue={ setOptionValue }
 		/>
 	) );
 };
@@ -68,6 +70,8 @@ DynamicTabContent.propTypes = {
  * DependentFieldOption
  *
  * Conditionally display a FieldOption (depends-on support)
+ *
+ * @param props
  */
 const DependentFieldOption = ( props ) => {
 	const { fieldType, name, label, value, dependents } = props;
@@ -80,18 +84,18 @@ const DependentFieldOption = ( props ) => {
 		setOptionValue( name, value );
 	};
 
-	if ( !meetsDependencies( dependents, getOptionValue ) ) {
+	if ( ! meetsDependencies( dependents, getOptionValue ) ) {
 		return null;
 	}
 
 	return (
 		<PodsFieldOption
-			fieldType={fieldType}
-			name={name}
-			value={value}
-			label={label}
-			onChange={handleInputChange}
-			helpText={props.helpText}
+			fieldType={ fieldType }
+			name={ name }
+			value={ value }
+			label={ label }
+			onChange={ handleInputChange }
+			helpText={ props.helpText }
 		/>
 	);
 };
@@ -108,8 +112,8 @@ DependentFieldOption.propTypes = {
 
 /**
  *
- * @param {object|object[]} dependencies Dictionary in the form optionName: requiredVal
- * @param {function} getOptionValue Selector to lookup option values by name
+ * @param {Object|Object[]} dependencies Dictionary in the form optionName: requiredVal
+ * @param {Function} getOptionValue Selector to lookup option values by name
  *
  * @return {boolean} Whether or not the specified dependencies are met
  */

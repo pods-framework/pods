@@ -19,8 +19,8 @@
   "scripts": {
     "build-dev": "npm run webpack-dev; npm run scss",
     "build-production": "npm run webpack-production; npm run scss",
-    "format-js": "./node_modules/.bin/eslint ./ui/js/pods-dfv/**/*.js --fix",
-    "lint-js": "./node_modules/.bin/eslint ./ui/js/pods-dfv/**/*.js",
+    "format-js": "./node_modules/.bin/eslint --fix ./ui/js/pods-dfv/src/admin/**",
+    "lint-js": "./node_modules/.bin/eslint ./ui/js/pods-dfv/src/admin/**",
     "jest-tests": "jest --config jest.config.json",
     "scss:watch": "node-sass --output-style compressed -w ui/styles/src -o ui/styles/dist",
     "scss": "node-sass --output-style compressed ui/styles/src -o ui/styles/dist --source-map ui/styles/src/sourcemaps",

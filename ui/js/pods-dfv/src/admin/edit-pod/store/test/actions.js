@@ -14,7 +14,6 @@ import {
 } from '../actions.js';
 
 describe( 'actions', () => {
-
 	// UI
 	describe( 'ui actions', () => {
 		const { actions, tabNames, saveStatuses } = uiConstants;
@@ -30,7 +29,7 @@ describe( 'actions', () => {
 				const activeTab = tabNames.LABELS;
 				const expected = {
 					type: action,
-					activeTab: activeTab,
+					activeTab,
 				};
 
 				expect( setActiveTab( activeTab ) ).toEqual( expected );
@@ -48,7 +47,7 @@ describe( 'actions', () => {
 				const saveStatus = saveStatuses.SAVE_SUCCESS;
 				const expected = {
 					type: action,
-					saveStatus: saveStatus,
+					saveStatus,
 					message: '',
 				};
 
@@ -67,7 +66,7 @@ describe( 'actions', () => {
 				const deleteStatus = saveStatuses.DELETE_SUCCESS;
 				const expected = {
 					type: action,
-					deleteStatus: deleteStatus,
+					deleteStatus,
 					message: '',
 				};
 
@@ -93,9 +92,9 @@ describe( 'actions', () => {
 				const itemValue = 'baz';
 				const expected = {
 					type: action,
-					optionName: optionName,
-					itemName: itemName,
-					itemValue: itemValue
+					optionName,
+					itemName,
+					itemValue,
 				};
 				const result = setOptionItemValue( optionName, itemName, itemValue );
 
@@ -109,7 +108,7 @@ describe( 'actions', () => {
 					type: action,
 					optionName: name,
 					itemName: 'value',
-					itemValue: value
+					itemValue: value,
 				};
 
 				expect( setOptionValue( name, value ) ).toEqual( expected );
@@ -161,7 +160,7 @@ describe( 'actions', () => {
 				const groupList = [ 'foo', 'bar', 'baz' ];
 				const expected = {
 					type: action,
-					groupList: groupList
+					groupList,
 				};
 
 				const result = setGroupList( groupList );
@@ -182,7 +181,7 @@ describe( 'actions', () => {
 				const expected = {
 					type: action,
 					oldIndex,
-					newIndex
+					newIndex,
 				};
 
 				const result = moveGroup( oldIndex, newIndex );
@@ -206,7 +205,7 @@ describe( 'actions', () => {
 				const name = 'xyzzyy';
 				const expected = {
 					type: action,
-					name: name,
+					name,
 				};
 
 				expect( setPodName( name ) ).toEqual( expected );
@@ -225,8 +224,8 @@ describe( 'actions', () => {
 				const value = 'bar';
 				const expected = {
 					type: action,
-					key: key,
-					value: value,
+					key,
+					value,
 				};
 				const result = setPodMetaValue( key, value );
 

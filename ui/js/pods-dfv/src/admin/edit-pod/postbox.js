@@ -50,7 +50,9 @@ const savePod = async ( podID, podName, options, groups, fields, setSaveStatus, 
 
 		// Re-update our options in case any of them changed server-side.
 		const updatedOptions = {};
-		optionKeys.forEach( ( key ) => { updatedOptions[ key ] = result.pod[ key ] || null } );
+		optionKeys.forEach( ( key ) => {
+			updatedOptions[ key ] = result.pod[ key ] || null;
+		} );
 
 		setOptionsValues( updatedOptions );
 
@@ -78,7 +80,7 @@ const deletePod = async ( podID, setDeleteStatus ) => {
 
 // Helper components
 const Spinner = () => (
-	<img src='/wp-admin/images/wpspin_light.gif' alt='' />
+	<img src="/wp-admin/images/wpspin_light.gif" alt="" />
 );
 
 export const Postbox = ( {
@@ -93,7 +95,6 @@ export const Postbox = ( {
 	setDeleteStatus,
 	setOptionsValues,
 } ) => {
-
 	const isSaving = saveStatus === SAVE_STATUSES.SAVING;
 
 	useEffect( () => {
@@ -114,25 +115,25 @@ export const Postbox = ( {
 	}, [ podID, deleteStatus, saveStatus, podName, options, groups, fields ] );
 
 	return (
-		<div id='postbox-container-1' className='postbox-container pods_floatmenu'>
-			<div id='side-info-field' className='inner-sidebar'>
-				<div id='side-sortables'>
-					<div id='submitdiv' className='postbox pods-no-toggle'>
+		<div id="postbox-container-1" className="postbox-container pods_floatmenu">
+			<div id="side-info-field" className="inner-sidebar">
+				<div id="side-sortables">
+					<div id="submitdiv" className="postbox pods-no-toggle">
 						<h3>
 							<span>
-								{__( 'Manage', 'pods' )}
-								{'\u00A0' /* &nbsp; */}
+								{ __( 'Manage', 'pods' ) }
+								{ '\u00A0' /* &nbsp; */ }
 								<small>
-									(<a href='/wp-admin/admin.php?page=pods&amp;action=manage'>
-										{__( '« Back to Manage', 'pods' )}
+									(<a href="/wp-admin/admin.php?page=pods&amp;action=manage">
+										{ __( '« Back to Manage', 'pods' ) }
 									</a>)
 								</small>
 							</span>
 						</h3>
-						<div className='inside'>
-							<div className='submitbox' id='submitpost'>
-								<div id='major-publishing-actions'>
-									<div id='delete-action'>
+						<div className="inside">
+							<div className="submitbox" id="submitpost">
+								<div id="major-publishing-actions">
+									<div id="delete-action">
 										<button
 											onClick={ () => {
 												const confirm = window.confirm(
@@ -145,12 +146,12 @@ export const Postbox = ( {
 											} }
 											className="components-button editor-post-trash is-link"
 										>
-											{__( 'Delete Pod', 'pods' )}
+											{ __( 'Delete Pod', 'pods' ) }
 										</button>
 									</div>
-									<div id='publishing-action'>
-										{isSaving && <Spinner />}
-										{'\u00A0' /* &nbsp; */}
+									<div id="publishing-action">
+										{ isSaving && <Spinner /> }
+										{ '\u00A0' /* &nbsp; */ }
 										<button
 											className="button-primary"
 											type="submit"
@@ -159,16 +160,16 @@ export const Postbox = ( {
 												setSaveStatus( SAVE_STATUSES.SAVING );
 											} }
 										>
-											{__( 'Save Pod', 'pods' )}
+											{ __( 'Save Pod', 'pods' ) }
 										</button>
 									</div>
-									<div className='clear'></div>
+									<div className="clear"></div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div className='pods-submittable-fields'>
-						<div id='side-sortables' className='meta-box-sortables'></div>
+					<div className="pods-submittable-fields">
+						<div id="side-sortables" className="meta-box-sortables"></div>
 					</div>
 				</div>
 			</div>
@@ -217,5 +218,5 @@ export default compose( [
 			setSaveStatus: storeDispatch.setSaveStatus,
 			setOptionsValues: storeDispatch.setOptionsValues,
 		};
-	} )
-] )(Postbox);
+	} ),
+] )( Postbox );

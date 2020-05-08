@@ -17,18 +17,18 @@ import Postbox from './postbox';
 const EditPod = ( props ) => {
 	return (
 		<form
-			onSubmit={( e ) => handleSubmit( e, props )}>
+			onSubmit={ ( e ) => handleSubmit( e, props ) }>
 			<div>
 				<EditPodName />
 				<SaveStatusMessage />
 				<PodsNavTab
-					tabs={props.tabs}
-					activeTab={props.activeTab}
-					setActiveTab={props.setActiveTab}
+					tabs={ props.tabs }
+					activeTab={ props.activeTab }
+					setActiveTab={ props.setActiveTab }
 				/>
 			</div>
-			<div id='poststuff'>
-				<div id='post-body' className='columns-2'>
+			<div id="poststuff">
+				<div id="post-body" className="columns-2">
 					<ActiveTabContent />
 					<Postbox />
 				</div>

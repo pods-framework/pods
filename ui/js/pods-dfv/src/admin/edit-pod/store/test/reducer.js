@@ -19,7 +19,6 @@ import {
 } from '../reducer';
 
 describe( 'reducer', () => {
-
 	// Pod Meta
 	describe( 'podMeta', () => {
 		const { actions } = podMetaConstants;
@@ -77,9 +76,9 @@ describe( 'reducer', () => {
 			const itemValue = 'baz';
 			const action = {
 				type: actions.SET_OPTION_ITEM_VALUE,
-				optionName: optionName,
-				itemName: itemName,
-				itemValue: itemValue
+				optionName,
+				itemName,
+				itemValue,
 			};
 
 			const expected = { [ optionName ]: { [ itemName ]: itemValue } };
@@ -94,20 +93,20 @@ describe( 'reducer', () => {
 			const itemName = 'bar';
 			const itemValue = 'baz';
 			const initialState = deepFreeze( {
-				[ optionName ]: { name: optionName, [ itemName ]: 'old value' }
+				[ optionName ]: { name: optionName, [ itemName ]: 'old value' },
 			} );
 			const action = {
 				type: actions.SET_OPTION_ITEM_VALUE,
-				optionName: optionName,
-				itemName: itemName,
-				itemValue: itemValue
+				optionName,
+				itemName,
+				itemValue,
 			};
 
 			const expected = {
 				[ optionName ]: {
 					name: optionName,
-					[ itemName ]: itemValue
-				}
+					[ itemName ]: itemValue,
+				},
 			};
 			const result = options( initialState, action );
 
@@ -167,7 +166,7 @@ describe( 'reducer', () => {
 				},
 				sixth: {
 					value: 'New option',
-				}
+				},
 			};
 
 			const result = options( initialState, action );
@@ -196,7 +195,7 @@ describe( 'reducer', () => {
 			it( 'Should create a new group list if it doesn\'t exist', () => {
 				const action = {
 					type: actionType,
-					groupList: initialGroupList
+					groupList: initialGroupList,
 				};
 				const expected = GROUP_LIST.tailCreateTree( initialGroupList );
 				const result = groups( undefined, action );
@@ -233,7 +232,7 @@ describe( 'reducer', () => {
 				const action = {
 					type: actionType,
 					oldIndex,
-					newIndex
+					newIndex,
 				};
 				const result = groups( initialState, action );
 
@@ -267,7 +266,7 @@ describe( 'reducer', () => {
 				tabNames.ADMIN_UI,
 				tabNames.ADVANCED_OPTIONS,
 				tabNames.AUTO_TEMPLATE_OPTIONS,
-				tabNames.REST_API
+				tabNames.REST_API,
 			];
 
 			it( 'Should define the proper action', () => {
@@ -339,6 +338,5 @@ describe( 'reducer', () => {
 				expect( state.deleteStatus ).toEqual( initialUIState.deleteStatus );
 			} );
 		} );
-
 	} );
 } );

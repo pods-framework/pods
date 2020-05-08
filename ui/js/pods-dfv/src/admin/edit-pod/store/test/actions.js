@@ -4,9 +4,11 @@ import {
 	setPodName,
 	setPodMetaValue,
 	setSaveStatus,
+	setDeleteStatus,
 	setActiveTab,
 	setOptionValue,
 	setOptionItemValue,
+	setOptionsValues,
 	setGroupList,
 	moveGroup,
 } from '../actions.js';
@@ -47,6 +49,7 @@ describe( 'actions', () => {
 				const expected = {
 					type: action,
 					saveStatus: saveStatus,
+					message: '',
 				};
 
 				expect( setSaveStatus( saveStatus ) ).toEqual( expected );
@@ -65,6 +68,7 @@ describe( 'actions', () => {
 				const expected = {
 					type: action,
 					deleteStatus: deleteStatus,
+					message: '',
 				};
 
 				expect( setDeleteStatus( deleteStatus ) ).toEqual( expected );
@@ -109,6 +113,35 @@ describe( 'actions', () => {
 				};
 
 				expect( setOptionValue( name, value ) ).toEqual( expected );
+			} );
+		} );
+
+		describe( 'setOptionsValues()', () => {
+			const action = actions.SET_OPTIONS_VALUES;
+
+			it( 'Should define the action constant', () => {
+				expect( action ).toBeDefined();
+			} );
+
+			test( 'setOptionsValues() should return the correct action', () => {
+				const newOptions = {
+					first: 'First Value',
+					second: 'Second Value',
+					third: true,
+					fourth: 12,
+				};
+
+				const expected = {
+					type: action,
+					options: {
+						first: 'First Value',
+						second: 'Second Value',
+						third: true,
+						fourth: 12,
+					},
+				};
+
+				expect( setOptionsValues( newOptions ) ).toEqual( expected );
 			} );
 		} );
 	} );

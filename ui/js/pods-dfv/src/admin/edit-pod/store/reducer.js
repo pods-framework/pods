@@ -42,9 +42,9 @@ export const ui = ( state = initialUIState, action = {} ) => {
 			};
 		}
 		case actions.SET_SAVE_STATUS: {
-			const newStatus = Object.values( saveStatuses ).includes( action.saveStatus )
-				? action.saveStatus
-				: initialUIState.saveStatus;
+			const newStatus = Object.values( saveStatuses ).includes( action.saveStatus ) ?
+				action.saveStatus :
+				initialUIState.saveStatus;
 
 			return {
 				...state,
@@ -53,9 +53,9 @@ export const ui = ( state = initialUIState, action = {} ) => {
 			};
 		}
 		case actions.SET_DELETE_STATUS: {
-			const newStatus = Object.values( deleteStatuses ).includes( action.deleteStatus )
-				? action.deleteStatus
-				: initialUIState.deleteStatus;
+			const newStatus = Object.values( deleteStatuses ).includes( action.deleteStatus ) ?
+				action.deleteStatus :
+				initialUIState.deleteStatus;
 
 			return {
 				...state,
@@ -126,14 +126,38 @@ export const groups = ( state = {}, action = {} ) => {
 export const options = ( state = {}, action = {} ) => {
 	const { actions } = optionConstants;
 
-	if ( actions.SET_OPTION_ITEM_VALUE === action.type ) {
-		const { optionName, itemName, itemValue } = action;
-		return {
-			...state,
-			[ optionName ]: setObjectValue( state[ optionName ], itemName, itemValue )
-		};
-	} else {
-		return state;
+	switch ( action.type ) {
+		case actions.SET_OPTION_ITEM_VALUE: {
+			const { optionName, itemName, itemValue } = action;
+
+			return {
+				...state,
+				[ optionName ]: setObjectValue( state[ optionName ], itemName, itemValue )
+			};
+		}
+		case actions.SET_OPTIONS_VALUES: {
+			const entries = Object.entries( action.options );
+
+			const updatedOptions = entries.reduce(
+				( accumulator, currentValue ) => {
+					const [ optionName, value ] = currentValue;
+
+					return {
+						...accumulator,
+						[ optionName ]: setObjectValue( state[ optionName ], 'value', value )
+					};
+				},
+				{}
+			);
+
+			return {
+				...state,
+				...updatedOptions,
+			};
+		}
+		default: {
+			return state;
+		}
 	}
 };
 

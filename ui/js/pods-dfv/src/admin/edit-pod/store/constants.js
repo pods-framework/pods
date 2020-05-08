@@ -39,6 +39,7 @@ export const uiConstants = {
 export const optionConstants = {
 	actions: {
 		SET_OPTION_ITEM_VALUE: 'SET_OPTION_ITEM_VALUE',
+		SET_OPTIONS_VALUES: 'SET_OPTIONS_VALUES',
 	},
 };
 

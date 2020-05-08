@@ -34,7 +34,9 @@ export const setDeleteStatus = ( deleteStatus, message = '' ) => {
 /**
  * Options
  */
+
 export const setOptionValue = ( name, value ) => setOptionItemValue( name, 'value', value );
+
 export const setOptionItemValue = ( optionName, itemName, itemValue ) => {
 	return {
 		type: optionConstants.actions.SET_OPTION_ITEM_VALUE,
@@ -43,6 +45,13 @@ export const setOptionItemValue = ( optionName, itemName, itemValue ) => {
 		itemValue
 	};
 };
+
+export const setOptionsValues = ( options = {} ) => {
+	return {
+		type: optionConstants.actions.SET_OPTIONS_VALUES,
+		options,
+	};
+}
 
 /**
  * Groups

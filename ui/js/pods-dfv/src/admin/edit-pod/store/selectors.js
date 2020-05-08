@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import * as paths from './state-paths';
 import { uiConstants } from './constants';
 

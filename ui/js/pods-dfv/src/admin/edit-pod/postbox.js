@@ -18,7 +18,9 @@ const {
 } = uiConstants;
 
 // Helper functions
-const savePod = async ( podID, podName, options, groups, fields, setSaveStatus ) => {
+const savePod = async ( podID, podName, options, groups, fields, setSaveStatus, setOptionsValues ) => {
+	const optionKeys = Object.keys( options );
+
 	const data = {
 		name: podName,
 		label: options.label || '',
@@ -37,7 +39,7 @@ const savePod = async ( podID, podName, options, groups, fields, setSaveStatus )
 	}
 
 	try {
-		await apiFetch(
+		const result = await apiFetch(
 			{
 				path: `/pods/v1/pods/${ podID }`,
 				method: 'post',
@@ -45,6 +47,12 @@ const savePod = async ( podID, podName, options, groups, fields, setSaveStatus )
 				body: JSON.stringify( data ),
 			}
 		);
+
+		// Re-update our options in case any of them changed server-side.
+		const updatedOptions = {};
+		optionKeys.forEach( ( key ) => { updatedOptions[ key ] = result.pod[ key ] || null } );
+
+		setOptionsValues( updatedOptions );
 
 		setSaveStatus( SAVE_STATUSES.SAVE_SUCCESS );
 	} catch ( error ) {
@@ -83,6 +91,7 @@ export const Postbox = ( {
 	deleteStatus,
 	setSaveStatus,
 	setDeleteStatus,
+	setOptionsValues,
 } ) => {
 
 	const isSaving = saveStatus === SAVE_STATUSES.SAVING;
@@ -90,7 +99,7 @@ export const Postbox = ( {
 	useEffect( () => {
 		// Try to delete the Pod if the status is set to DELETING.
 		if ( saveStatus === SAVE_STATUSES.SAVING ) {
-			savePod( podID, podName, options, groups, fields, setSaveStatus );
+			savePod( podID, podName, options, groups, fields, setSaveStatus, setOptionsValues );
 		}
 
 		// Try to delete the Pod if the status is set to DELETING.
@@ -206,6 +215,7 @@ export default compose( [
 		return {
 			setDeleteStatus: storeDispatch.setDeleteStatus,
 			setSaveStatus: storeDispatch.setSaveStatus,
+			setOptionsValues: storeDispatch.setOptionsValues,
 		};
 	} )
 ] )(Postbox);

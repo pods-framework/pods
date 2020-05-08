@@ -38,9 +38,13 @@
     "@babel/preset-env": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.4.4",
+    "@wordpress/block-editor": "^3.9.1",
     "@wordpress/data": "^4.15.0",
     "@wordpress/dependency-extraction-webpack-plugin": "^2.6.0",
+    "@wordpress/date": "^3.9.0",
     "@wordpress/eslint-plugin": "^2.0.0",
+    "@wordpress/jest-preset-default": "^6.0.0",
+    "@wordpress/scripts": "^8.0.1",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "babel-plugin-module-resolver": "^3.2.0",
@@ -60,7 +64,7 @@
     "grunt-git": "^1.0.13",
     "grunt-text-replace": "^0.4.0",
     "install": "^0.10.2",
-    "jest": "^24.7.1",
+    "jest": "^25.2.7",
     "jquery": "^3.4.1",
     "jsdom": "^15.0.0",
     "jsdom-global": "3.0.2",
@@ -86,8 +90,12 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
+    "classnames": "^2.2.6",
+    "html-to-react": "^1.4.2",
     "immutability-helper": "^3.0.1",
     "memoize-one": "^5.1.1",
-    "react-sortly": "^3.0.4"
+    "react-select": "^3.1.0",
+    "react-sortly": "^3.0.4",
+    "sanitize-html": "^1.22.1"
   }
 }

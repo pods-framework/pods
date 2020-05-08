@@ -7,13 +7,11 @@ import {
 
 /**
  * UI
- *
- * @param activeTab
  */
 export const setActiveTab = ( activeTab ) => {
 	return {
 		type: uiConstants.actions.SET_ACTIVE_TAB,
-		activeTab,
+		activeTab
 	};
 };
 
@@ -37,15 +35,14 @@ export const setDeleteStatus = ( deleteStatus, message = '' ) => {
  * Options
  */
 
-export const setOptionValue = ( name, value ) =>
-	setOptionItemValue( name, 'value', value );
+export const setOptionValue = ( name, value ) => setOptionItemValue( name, 'value', value );
 
 export const setOptionItemValue = ( optionName, itemName, itemValue ) => {
 	return {
 		type: optionConstants.actions.SET_OPTION_ITEM_VALUE,
 		optionName,
 		itemName,
-		itemValue,
+		itemValue
 	};
 };
 
@@ -54,17 +51,15 @@ export const setOptionsValues = ( options = {} ) => {
 		type: optionConstants.actions.SET_OPTIONS_VALUES,
 		options,
 	};
-};
+}
 
 /**
  * Groups
- *
- * @param groupList
  */
 export const setGroupList = ( groupList ) => {
 	return {
 		type: groupConstants.actions.SET_GROUP_LIST,
-		groupList,
+		groupList
 	};
 };
 
@@ -72,42 +67,38 @@ export const moveGroup = ( oldIndex, newIndex ) => {
 	return {
 		type: groupConstants.actions.MOVE_GROUP,
 		oldIndex,
-		newIndex,
+		newIndex
 	};
 };
 
 export const addGroupList = ( group ) => {
 	return {
 		type: groupConstants.actions.ADD_GROUP,
-		group,
-	};
-};
+		group
+	}
+}
 
-export const setGroupFields = ( groupName, fields ) => {
+export const setGroupFields = (groupName, fields) => {
 	return {
 		type: groupConstants.actions.SET_GROUP_FIELDS,
-		groupName,
-		fields,
-	};
-};
+		groupName, fields
+	}
+}
 
-export const addGroupField = ( groupName, field ) => {
+export const addGroupField = (groupName, field) => {
 	return {
 		type: groupConstants.actions.ADD_GROUP_FIELD,
-		groupName,
-		field,
-	};
-};
+		groupName, field
+	}
+}
 
 /**
  * Pod meta
- *
- * @param name
  */
 export const setPodName = ( name ) => {
 	return {
 		type: podMetaConstants.actions.SET_POD_NAME,
-		name,
+		name
 	};
 };
 
@@ -115,6 +106,6 @@ export const setPodMetaValue = ( key, value ) => {
 	return {
 		type: podMetaConstants.actions.SET_POD_META_VALUE,
 		key,
-		value,
+		value
 	};
 };

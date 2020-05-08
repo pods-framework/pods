@@ -6,15 +6,13 @@
  * @augments wp.media.view.Frame
  */
 export const PodsDFVModal = wp.media.view.Modal.extend( {
+
 	/**
 	 * @param {Object} options
-	 * @return {wp.media.view.Modal} Returns itself to allow chaining
+	 * @returns {wp.media.view.Modal} Returns itself to allow chaining
 	 */
-	close( options ) {
-		const retVal = wp.media.view.Modal.prototype.close.apply(
-			this,
-			options
-		);
+	close: function ( options ) {
+		const retVal = wp.media.view.Modal.prototype.close.apply( this, options );
 
 		// Alert the listening control when we've been cancelled
 		if ( options && options.escape ) {
@@ -22,5 +20,6 @@ export const PodsDFVModal = wp.media.view.Modal.extend( {
 		}
 
 		return retVal;
-	},
+	}
+
 } );

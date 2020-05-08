@@ -10,9 +10,16 @@ import {
 	initialUIState,
 } from '../constants';
 
-import { podMeta, options, groups, fields, ui } from '../reducer';
+import {
+	podMeta,
+	options,
+	groups,
+	fields,
+	ui,
+} from '../reducer';
 
 describe( 'reducer', () => {
+
 	// Pod Meta
 	describe( 'podMeta', () => {
 		const { actions } = podMetaConstants;
@@ -64,15 +71,15 @@ describe( 'reducer', () => {
 			expect( actions.SET_OPTION_ITEM_VALUE ).toBeDefined();
 		} );
 
-		test( "When passed a SET_OPTION_ITEM_VALUE action, should create a new options object if it doesn't exist", () => {
+		test( 'When passed a SET_OPTION_ITEM_VALUE action, should create a new options object if it doesn\'t exist', () => {
 			const optionName = 'foo';
 			const itemName = 'bar';
 			const itemValue = 'baz';
 			const action = {
 				type: actions.SET_OPTION_ITEM_VALUE,
-				optionName,
-				itemName,
-				itemValue,
+				optionName: optionName,
+				itemName: itemName,
+				itemValue: itemValue
 			};
 
 			const expected = { [ optionName ]: { [ itemName ]: itemValue } };
@@ -82,25 +89,25 @@ describe( 'reducer', () => {
 			expect( result ).toEqual( expected );
 		} );
 
-		test( "When passed a SET_OPTION_ITEM_VALUE action, should update an existing option item's value", () => {
+		test( 'When passed a SET_OPTION_ITEM_VALUE action, should update an existing option item\'s value', () => {
 			const optionName = 'foo';
 			const itemName = 'bar';
 			const itemValue = 'baz';
 			const initialState = deepFreeze( {
-				[ optionName ]: { name: optionName, [ itemName ]: 'old value' },
+				[ optionName ]: { name: optionName, [ itemName ]: 'old value' }
 			} );
 			const action = {
 				type: actions.SET_OPTION_ITEM_VALUE,
-				optionName,
-				itemName,
-				itemValue,
+				optionName: optionName,
+				itemName: itemName,
+				itemValue: itemValue
 			};
 
 			const expected = {
 				[ optionName ]: {
 					name: optionName,
-					[ itemName ]: itemValue,
-				},
+					[ itemName ]: itemValue
+				}
 			};
 			const result = options( initialState, action );
 
@@ -160,7 +167,7 @@ describe( 'reducer', () => {
 				},
 				sixth: {
 					value: 'New option',
-				},
+				}
 			};
 
 			const result = options( initialState, action );
@@ -186,10 +193,10 @@ describe( 'reducer', () => {
 				expect( actionType ).toBeDefined();
 			} );
 
-			it( "Should create a new group list if it doesn't exist", () => {
+			it( 'Should create a new group list if it doesn\'t exist', () => {
 				const action = {
 					type: actionType,
-					groupList: initialGroupList,
+					groupList: initialGroupList
 				};
 				const expected = GROUP_LIST.tailCreateTree( initialGroupList );
 				const result = groups( undefined, action );
@@ -221,24 +228,17 @@ describe( 'reducer', () => {
 				expect( actionType ).toBeDefined();
 			} );
 
-			test.each( cases )(
-				'Attempt to move %i to %i',
-				( oldIndex, newIndex, expected ) => {
-					const initialState = GROUP_LIST.tailCreateTree(
-						initialGroupList
-					);
-					const action = {
-						type: actionType,
-						oldIndex,
-						newIndex,
-					};
-					const result = groups( initialState, action );
+			test.each( cases )( 'Attempt to move %i to %i', ( oldIndex, newIndex, expected ) => {
+				const initialState = GROUP_LIST.tailCreateTree( initialGroupList );
+				const action = {
+					type: actionType,
+					oldIndex,
+					newIndex
+				};
+				const result = groups( initialState, action );
 
-					expect( result ).toEqual(
-						GROUP_LIST.tailCreateTree( expected )
-					);
-				}
-			);
+				expect( result ).toEqual( GROUP_LIST.tailCreateTree( expected ) );
+			} );
 		} );
 	} );
 
@@ -267,7 +267,7 @@ describe( 'reducer', () => {
 				tabNames.ADMIN_UI,
 				tabNames.ADVANCED_OPTIONS,
 				tabNames.AUTO_TEMPLATE_OPTIONS,
-				tabNames.REST_API,
+				tabNames.REST_API
 			];
 
 			it( 'Should define the proper action', () => {
@@ -336,10 +336,9 @@ describe( 'reducer', () => {
 					deleteStatus: 'xyzzy',
 				};
 				state = ui( state, action );
-				expect( state.deleteStatus ).toEqual(
-					initialUIState.deleteStatus
-				);
+				expect( state.deleteStatus ).toEqual( initialUIState.deleteStatus );
 			} );
 		} );
+
 	} );
 } );

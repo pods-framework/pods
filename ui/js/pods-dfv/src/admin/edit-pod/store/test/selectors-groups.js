@@ -30,14 +30,12 @@ const fields = {
 	foo3: { name: 'foo3', label: 'foo label3' },
 };
 
-const state = deepFreeze(
-	merge(
-		paths.GROUP_LIST.createTree( groupList ),
-		paths.GROUPS_BY_NAME.createTree( groups ),
-		paths.GROUP_FIELD_LIST.createTree( groupFieldList ),
-		paths.FIELDS.createTree( fields )
-	)
-);
+const state = deepFreeze( merge(
+	paths.GROUP_LIST.createTree( groupList ),
+	paths.GROUPS_BY_NAME.createTree( groups ),
+	paths.GROUP_FIELD_LIST.createTree( groupFieldList ),
+	paths.FIELDS.createTree( fields ),
+) );
 
 /**
  *

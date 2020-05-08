@@ -13,19 +13,19 @@ export const AddNew = PodsFieldView.extend( {
 	className: 'podsform-dfv-list-relationship-container',
 
 	ui: {
-		addButton: 'a.pods-related-add-new',
+		addButton: 'a.pods-related-add-new'
 	},
 
 	template: _.template( template ),
 
 	triggers: {
-		'click @ui.addButton': 'add:new:click',
+		'click @ui.addButton': 'add:new:click'
 	},
 
 	/**
 	 *
 	 */
-	disable() {
+	disable: function () {
 		const addButton = this.getUI( 'addButton' );
 		addButton.addClass( DISABLED_CLASS ); // Note: this just styles the link (button), click event enforces
 	},
@@ -33,7 +33,7 @@ export const AddNew = PodsFieldView.extend( {
 	/**
 	 *
 	 */
-	enable() {
+	enable: function () {
 		const addButton = this.getUI( 'addButton' );
 		addButton.removeClass( DISABLED_CLASS ); // Note: this just styles the link (button), click event enforces
 	},
@@ -41,12 +41,12 @@ export const AddNew = PodsFieldView.extend( {
 	/**
 	 *
 	 */
-	onAddNewClick() {
+	onAddNewClick: function () {
 		const addButton = this.getUI( 'addButton' );
 
 		// Only pass the event up the view chain if we're enabled
-		if ( ! addButton.hasClass( DISABLED_CLASS ) ) {
+		if ( !addButton.hasClass( DISABLED_CLASS ) ) {
 			this.trigger( 'childview:add:new', this );
 		}
-	},
+	}
 } );

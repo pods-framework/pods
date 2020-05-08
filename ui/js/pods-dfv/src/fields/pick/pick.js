@@ -18,17 +18,17 @@ import { ListView } from 'pods-dfv/src/fields/pick/views/list-view';
 import { AddNew } from 'pods-dfv/src/fields/pick/views/add-new';
 
 const views = {
-	checkbox: CheckboxView,
-	select: SelectView,
-	select2: SelectView, // SelectView handles select2 as well
-	radio: RadioView,
-	list: ListView,
+	'checkbox': CheckboxView,
+	'select': SelectView,
+	'select2': SelectView,  // SelectView handles select2 as well
+	'radio': RadioView,
+	'list': ListView
 };
 
 let modalIFrame;
 
 /**
- * @augments Backbone.View
+ * @extends Backbone.View
  */
 export const Pick = PodsDFVFieldLayout.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
@@ -38,7 +38,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	regions: {
 		autocomplete: '.pods-ui-list-autocomplete',
 		list: '.pods-pick-values',
-		addNew: '.pods-ui-add-new',
+		addNew: '.pods-ui-add-new'
 	},
 
 	childViewEvents: {
@@ -47,13 +47,13 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		'childview:selection:limit:over': 'onChildviewSelectionLimitOver',
 		'childview:selection:limit:under': 'onChildviewSelectionLimitUnder',
 		'childview:change:selected': 'onChildviewChangeSelected',
-		'childview:add:new': 'onChildviewAddNew',
+		'childview:add:new': 'onChildviewAddNew'
 	},
 
 	/**
 	 *
 	 */
-	onBeforeRender() {
+	onBeforeRender: function () {
 		if ( this.collection === undefined ) {
 			this.collection = new RelationshipCollection( this.fieldItemData );
 		}
@@ -62,17 +62,12 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 *
 	 */
-	onRender() {
-		this.fieldConfig = new PickFieldModel(
-			this.model.get( 'fieldConfig' )
-		);
+	onRender: function () {
+		this.fieldConfig = new PickFieldModel( this.model.get( 'fieldConfig' ) );
 
 		// Add New?
 		// noinspection EqualityComparisonWithCoercionJS (why would we reject "1"?)
-		if (
-			'' !== this.fieldConfig.get( 'iframe_src' ) &&
-			1 == this.fieldConfig.get( 'pick_allow_add_new' )
-		) {
+		if ( '' !== this.fieldConfig.get( 'iframe_src' ) && 1 == this.fieldConfig.get( 'pick_allow_add_new' ) ) {
 			this.showAddNew();
 		}
 
@@ -88,7 +83,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 * This is for the List View's autocomplete for select from existing
 	 */
-	buildAutocomplete() {
+	buildAutocomplete: function () {
 		let fieldConfig, model, collection, view;
 		const pickLimit = +this.fieldConfig.get( 'pick_limit' ); // Unary plus forces cast to number
 
@@ -99,23 +94,23 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			ajax_data: this.fieldConfig.get( 'ajax_data' ),
 			select2_overrides: this.fieldConfig.get( 'select2_overrides' ),
 			label: this.fieldConfig.get( 'label' ),
-			pick_limit: pickLimit,
+			pick_limit: pickLimit
 		};
 
 		// The autocomplete portion of List View doesn't track selected items; disable if we're at the selection limit
-		if (
-			this.collection.filterBySelected().length >= pickLimit &&
-			0 !== pickLimit
-		) {
+		if ( this.collection.filterBySelected().length >= pickLimit && 0 !== pickLimit ) {
+
 			fieldConfig.limitDisable = true;
 			this.onChildviewSelectionLimitOver();
+
 		} else {
+
 			this.onChildviewSelectionLimitUnder();
 		}
 
-		model = new PodsDFVFieldModel( { fieldConfig } );
+		model = new PodsDFVFieldModel( { fieldConfig: fieldConfig } );
 		collection = this.collection.filterByUnselected();
-		view = new SelectView( { collection, fieldModel: model } );
+		view = new SelectView( { collection: collection, fieldModel: model } );
 
 		// Provide a custom list filter for the autocomplete portion's AJAX data lists
 		view.filterAjaxList = this.filterAjaxList.bind( this );
@@ -127,19 +122,16 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 *
 	 */
-	showList() {
+	showList: function () {
 		let viewName, View, list;
 
 		// Setup the view to be used
 		viewName = this.fieldConfig.get( 'view_name' );
 		if ( views[ viewName ] === undefined ) {
-			throw new Error( `Invalid view name "${ viewName }"` );
+			throw new Error( `Invalid view name "${viewName}"` );
 		}
 		View = views[ viewName ];
-		list = new View( {
-			collection: this.collection,
-			fieldModel: this.model,
-		} );
+		list = new View( { collection: this.collection, fieldModel: this.model } );
 
 		this.showChildView( 'list', list );
 	},
@@ -147,8 +139,8 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 *
 	 */
-	showAddNew() {
-		const addNew = new AddNew( { fieldModel: this.model } );
+	showAddNew: function () {
+		let addNew = new AddNew( { fieldModel: this.model } );
 		this.showChildView( 'addNew', addNew );
 	},
 
@@ -158,34 +150,32 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 *
 	 * @param data
 	 */
-	filterAjaxList( data ) {
+	filterAjaxList: function ( data ) {
 		const selectedItems = this.collection.filterBySelected();
 		const returnList = [];
 
 		// Loop through the items returned via ajax
-		_.each( data.results, function( element ) {
+		_.each( data.results, function ( element ) {
 			element.text = element.name; // Select2 needs the "text" key but our model uses "name"
 
 			// Only keep choices that haven't been selected yet, we don't want selected items in the autocomplete portion
-			if ( ! selectedItems.get( element.id ) ) {
+			if ( !selectedItems.get( element.id ) ) {
 				returnList.push( element );
 			}
 		} );
 
 		// The collection may be partial in ajax mode, make sure we add any items we didn't yet have
 		this.collection.add( returnList );
-		this.getChildView( 'autocomplete' ).setCollection(
-			this.collection.filterByUnselected()
-		);
+		this.getChildView( 'autocomplete' ).setCollection( this.collection.filterByUnselected() );
 
-		return { results: returnList };
+		return { 'results': returnList };
 	},
 
 	/**
 	 *
 	 * @param childView
 	 */
-	onChildviewSelectionLimitOver( childView ) {
+	onChildviewSelectionLimitOver: function ( childView ) {
 		const addNew = this.getChildView( 'addNew' );
 		if ( addNew ) {
 			addNew.disable();
@@ -196,7 +186,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 *
 	 * @param childView
 	 */
-	onChildviewSelectionLimitUnder( childView ) {
+	onChildviewSelectionLimitUnder: function ( childView ) {
 		const addNew = this.getChildView( 'addNew' );
 		if ( addNew ) {
 			addNew.enable();
@@ -208,7 +198,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 *
 	 * @param childView
 	 */
-	onChildviewRemoveItemClick( childView ) {
+	onChildviewRemoveItemClick: function ( childView ) {
 		childView.model.toggleSelected();
 		this.getChildView( 'list' ).render();
 
@@ -221,12 +211,12 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 * @param childView
 	 */
-	onChildviewAddNew( childView ) {
+	onChildviewAddNew: function ( childView ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
 		modalIFrame = new IframeFrame( {
 			title: fieldConfig.iframe_title_add,
-			src: fieldConfig.iframe_src,
+			src: fieldConfig.iframe_src
 		} );
 
 		this.setModalListeners();
@@ -236,12 +226,12 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 * @param childView
 	 */
-	onChildviewEditItemClick( childView ) {
+	onChildviewEditItemClick: function ( childView ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
 		modalIFrame = new IframeFrame( {
 			title: fieldConfig.iframe_title_edit,
-			src: childView.ui.editButton.attr( 'href' ),
+			src: childView.ui.editButton.attr( 'href' )
 		} );
 
 		this.setModalListeners();
@@ -252,7 +242,8 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 *
 	 * @param childView
 	 */
-	onChildviewChangeSelected( childView ) {
+	onChildviewChangeSelected: function ( childView ) {
+
 		// Refresh the autocomplete and List View lists on autocomplete selection
 		if ( childView.fieldConfig.selectFromExisting ) {
 			_.defer( this.buildAutocomplete.bind( this ) );
@@ -260,18 +251,12 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		}
 	},
 
-	setModalListeners() {
-		jQuery( window ).on(
-			'dfv:modal:update',
-			this.modalSuccess.bind( this )
-		);
-		jQuery( window ).on(
-			'dfv:modal:cancel',
-			this.modalCancel.bind( this )
-		);
+	setModalListeners: function () {
+		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+		jQuery( window ).on( 'dfv:modal:cancel', this.modalCancel.bind( this ) );
 	},
 
-	clearModalListeners() {
+	clearModalListeners: function () {
 		jQuery( window ).off( 'dfv:modal:update' );
 		jQuery( window ).off( 'dfv:modal:cancel' );
 	},
@@ -280,7 +265,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 * @param event
 	 * @param data
 	 */
-	modalSuccess( event, data ) {
+	modalSuccess: function ( event, data ) {
 		const itemModel = this.collection.get( data.id );
 
 		if ( itemModel ) {
@@ -299,7 +284,8 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 *
 	 */
-	modalCancel() {
+	modalCancel: function () {
 		this.clearModalListeners();
-	},
+	}
+
 } );

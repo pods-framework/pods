@@ -1,10 +1,7 @@
 /*global jQuery, _, Backbone, PodsMn, wp */
 import template from 'pods-dfv/src/fields/pick/views/radio-item.html';
 
-import {
-	PodsFieldListView,
-	PodsFieldView,
-} from 'pods-dfv/src/core/pods-field-views';
+import { PodsFieldListView, PodsFieldView } from 'pods-dfv/src/core/pods-field-views';
 
 /**
  *
@@ -16,15 +13,16 @@ export const RadioItem = PodsFieldView.extend( {
 
 	template: _.template( template ),
 
-	templateContext() {
+	templateContext: function () {
 		return {
-			ordinal: this.model.collection.indexOf( this.model ) + 1, // One based indexing unlike checkboxes
+			ordinal: this.model.collection.indexOf( this.model ) + 1 // One based indexing unlike checkboxes
 		};
 	},
 
-	modelChanged() {
+	modelChanged: function () {
 		this.render();
-	},
+	}
+
 } );
 
 /**
@@ -37,5 +35,5 @@ export const RadioView = PodsFieldListView.extend( {
 
 	className: 'pods-radio',
 
-	childView: RadioItem,
+	childView: RadioItem
 } );

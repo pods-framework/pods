@@ -5,28 +5,14 @@ import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 import './field-groups.scss';
 
-export const FieldGroups = ( {
-	groups,
-	getGroupFields,
-	groupList,
-	setGroupList,
-	addGroup,
-	moveGroup,
-	groupFieldList,
-	setGroupFields,
-	addGroupField,
-	fields,
-	setFields,
-} ) => {
+export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, addGroup, moveGroup, groupFieldList, setGroupFields, addGroupField, fields, setFields } ) => {
 	const [ originalList, setOriginalList ] = useState( groupList );
 
-	const [ originalGroupFieldList, setOriginalGroupFieldList ] = useState(
-		groupFieldList
-	);
+	const [originalGroupFieldList, setOriginalGroupFieldList] = useState(groupFieldList)
 
-	useEffect( () => {
-		setOriginalGroupFieldList( groupFieldList );
-	}, [ groupFieldList ] );
+	useEffect(() => {
+		setOriginalGroupFieldList(groupFieldList)
+	}, [groupFieldList])
 
 	const handleBeginDrag = () => {
 		// Take a snapshot of the list state when dragging begins
@@ -38,64 +24,49 @@ export const FieldGroups = ( {
 		setGroupList( originalList );
 	};
 
-	const handleAddGroup = ( e ) => {
+	const handleAddGroup = (e) => {
 		e.preventDefault();
 
-		const str = randomString( 6 );
-		const name = 'Group ' + str;
-		addGroup( name );
+		var str = randomString(6);
+		var name = 'Group ' + str;
+		addGroup(name)
 	};
 
-	const randomString = ( length ) => {
-		let result = '';
-		const characters =
-			'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		const charactersLength = characters.length;
-		for ( let i = 0; i < length; i++ ) {
-			result += characters.charAt(
-				Math.floor( Math.random() * charactersLength )
-			);
+	const randomString = (length) => {
+		var result = '';
+		var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		var charactersLength = characters.length;
+		for (var i = 0; i < length; i++) {
+			result += characters.charAt(Math.floor(Math.random() * charactersLength));
 		}
 		return result;
-	};
+	}
 
 	return (
 		<div className="field-groups">
 			<div className="pods-button-group_container">
-				<a
-					href="#"
-					className="button-primary"
-					onClick={ ( e ) => handleAddGroup( e ) }
-				>
-					Add Group
-				</a>
+				<a href="#" className="button-primary" onClick={(e) => handleAddGroup(e)}>Add Group</a>
 			</div>
-			{ groups.map( ( group, index ) => (
+			{groups.map( ( group, index ) => (
 				<FieldGroup
-					key={ group.name }
-					groupName={ group.name }
-					index={ index }
-					getGroupFields={ getGroupFields }
-					moveGroup={ moveGroup }
-					handleBeginDrag={ handleBeginDrag }
-					handleDragCancel={ handleDragCancel }
-					fields={ fields }
-					groupFieldList={ groupFieldList }
-					setGroupFields={ setGroupFields }
-					addGroupField={ addGroupField }
-					setFields={ setFields }
-					randomString={ randomString }
+					key={group.name}
+					groupName={group.name}
+					index={index}
+					getGroupFields={getGroupFields}
+					moveGroup={moveGroup}
+					handleBeginDrag={handleBeginDrag}
+					handleDragCancel={handleDragCancel}
+					fields={fields}
+					groupFieldList={groupFieldList}
+					setGroupFields={setGroupFields}
+					addGroupField={addGroupField}
+					setFields={setFields}
+					randomString={randomString}
 				/>
-			) ) }
+			) )}
 			<GroupDragLayer />
 			<div className="pods-button-group_container">
-				<a
-					href="#"
-					className="button-primary"
-					onClick={ ( e ) => handleAddGroup( e ) }
-				>
-					Add Group
-				</a>
+				<a href="#" className="button-primary" onClick={(e) => handleAddGroup(e)}>Add Group</a>
 			</div>
 		</div>
 	);

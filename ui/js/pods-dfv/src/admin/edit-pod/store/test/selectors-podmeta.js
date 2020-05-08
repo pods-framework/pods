@@ -1,7 +1,10 @@
 import deepFreeze from 'deep-freeze';
 
 import * as paths from '../state-paths';
-import { getPodName, getPodMetaValue } from '../selectors';
+import {
+	getPodName,
+	getPodMetaValue,
+} from '../selectors';
 
 describe( 'podMeta selectors', () => {
 	describe( 'getPodName()', () => {

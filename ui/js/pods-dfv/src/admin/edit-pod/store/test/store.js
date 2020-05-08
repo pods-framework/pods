@@ -3,7 +3,11 @@ import deepFreeze from 'deep-freeze';
 
 import { initStore } from '../store';
 import * as paths from '../state-paths';
-import { STORE_KEY_EDIT_POD, uiConstants, initialUIState } from '../constants';
+import {
+	STORE_KEY_EDIT_POD,
+	uiConstants,
+	initialUIState,
+} from '../constants';
 
 const testStore = {
 	select: null,
@@ -13,7 +17,7 @@ const testStore = {
 		initStore( initialState );
 		testStore.select = wp.data.select( STORE_KEY_EDIT_POD );
 		testStore.dispatch = wp.data.dispatch( STORE_KEY_EDIT_POD );
-	},
+	}
 };
 
 describe( 'store', () => {
@@ -28,8 +32,8 @@ describe( 'store', () => {
 			paths.FIELDS.createTree( [ 'field 1', 'field 2', 'field 3' ] ),
 			paths.GROUPS.createTree( {
 				'Group 1': { name: 'Group 1' },
-				'Group 2': { name: 'Group 2' },
-			} )
+				'Group 2': { name: 'Group 2' }
+			} ),
 		);
 
 		it( 'Initializes properly', () => {
@@ -54,7 +58,7 @@ describe( 'store', () => {
 				paths.POD_META.createTree( {} ),
 				paths.OPTIONS.createTree( {} ),
 				paths.GROUPS.createTree( {} ),
-				paths.FIELDS.createTree( {} )
+				paths.FIELDS.createTree( {} ),
 			);
 
 			expect( result ).toBeDefined();
@@ -72,11 +76,9 @@ describe( 'store', () => {
 						uiConstants.tabNames.ADMIN_UI,
 						uiConstants.tabNames.ADVANCED_OPTIONS,
 						uiConstants.tabNames.AUTO_TEMPLATE_OPTIONS,
-						uiConstants.tabNames.REST_API,
+						uiConstants.tabNames.REST_API
 					];
-					const initialState = paths.TAB_LIST.createTree(
-						orderedList
-					);
+					const initialState = paths.TAB_LIST.createTree( orderedList );
 
 					testStore.initStore( deepFreeze( initialState ) );
 					const state = testStore.select.getState();
@@ -108,9 +110,7 @@ describe( 'store', () => {
 				test( 'Initializes state with the proper default value', () => {
 					testStore.initStore( deepFreeze( {} ) );
 					const expected = initialUIState.saveStatus;
-					const result = paths.SAVE_STATUS.getFrom(
-						testStore.select.getState()
-					);
+					const result = paths.SAVE_STATUS.getFrom( testStore.select.getState() );
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( expected );
@@ -137,16 +137,12 @@ describe( 'store', () => {
 				} );
 
 				test( 'isSaving() should be true when saving', () => {
-					testStore.dispatch.setSaveStatus(
-						uiConstants.saveStatuses.SAVING
-					);
+					testStore.dispatch.setSaveStatus( uiConstants.saveStatuses.SAVING );
 					expect( testStore.select.isSaving() ).toBe( true );
 				} );
 
 				test( 'isSaving() should be false when not saving', () => {
-					testStore.dispatch.setSaveStatus(
-						uiConstants.saveStatuses.NONE
-					);
+					testStore.dispatch.setSaveStatus( uiConstants.saveStatuses.NONE );
 					expect( testStore.select.isSaving() ).toBe( false );
 				} );
 			} );
@@ -155,9 +151,7 @@ describe( 'store', () => {
 		describe( 'options', () => {
 			test( 'Initializes with an empty object', () => {
 				testStore.initStore( deepFreeze( {} ) );
-				const result = paths.OPTIONS.getFrom(
-					testStore.select.getState()
-				);
+				const result = paths.OPTIONS.getFrom( testStore.select.getState() );
 
 				expect( result ).toBeDefined();
 				expect( result ).toEqual( {} );
@@ -187,15 +181,8 @@ describe( 'store', () => {
 				const optName = 'theOption';
 				const optItemName = 'optionItem';
 				const optItemValue = 'Initial Value';
-				testStore.dispatch.setOptionItemValue(
-					optName,
-					optItemName,
-					optItemValue
-				);
-				const result = testStore.select.getOptionItemValue(
-					optName,
-					optItemName
-				);
+				testStore.dispatch.setOptionItemValue( optName, optItemName, optItemValue );
+				const result = testStore.select.getOptionItemValue( optName, optItemName );
 
 				expect( result ).toBeDefined();
 				expect( result ).toEqual( optItemValue );
@@ -205,15 +192,8 @@ describe( 'store', () => {
 				const optName = 'theOption';
 				const optItemName = 'optionItem';
 				const optItemValue = 'New Value';
-				testStore.dispatch.setOptionItemValue(
-					optName,
-					optItemName,
-					optItemValue
-				);
-				const result = testStore.select.getOptionItemValue(
-					optName,
-					optItemName
-				);
+				testStore.dispatch.setOptionItemValue( optName, optItemName, optItemValue );
+				const result = testStore.select.getOptionItemValue( optName, optItemName );
 
 				expect( result ).toBeDefined();
 				expect( result ).toEqual( optItemValue );
@@ -223,9 +203,7 @@ describe( 'store', () => {
 		describe( 'groups', () => {
 			test( 'Initializes with an empty object', () => {
 				testStore.initStore( deepFreeze( {} ) );
-				const result = paths.GROUPS.getFrom(
-					testStore.select.getState()
-				);
+				const result = paths.GROUPS.getFrom( testStore.select.getState() );
 				const expected = {};
 
 				expect( result ).toEqual( expected );
@@ -259,22 +237,16 @@ describe( 'store', () => {
 				test( 'Initializes state with the Pod ID when provided', () => {
 					const initialState = paths.POD_ID.createTree( testID );
 					testStore.initStore( deepFreeze( initialState ) );
-					const result = paths.POD_ID.getFrom(
-						testStore.select.getState()
-					);
+					const result = paths.POD_ID.getFrom( testStore.select.getState() );
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( testID );
 				} );
 
 				test( 'Initializes state with the Pod name when provided', () => {
-					const initialState = paths.POD_NAME.createTree(
-						initialName
-					);
+					const initialState = paths.POD_NAME.createTree( initialName );
 					testStore.initStore( deepFreeze( initialState ) );
-					const result = paths.POD_NAME.getFrom(
-						testStore.select.getState()
-					);
+					const result = paths.POD_NAME.getFrom( testStore.select.getState() );
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( initialName );
@@ -300,9 +272,7 @@ describe( 'store', () => {
 			describe( 'General meta', () => {
 				test( 'Initializes with an empty object', () => {
 					testStore.initStore( deepFreeze( {} ) );
-					const result = paths.POD_META.getFrom(
-						testStore.select.getState()
-					);
+					const result = paths.POD_META.getFrom( testStore.select.getState() );
 
 					expect( result ).toBeDefined();
 					expect( result ).toEqual( {} );
@@ -340,9 +310,7 @@ describe( 'store', () => {
 
 			it( 'Initializes the state with fields when provided', () => {
 				testStore.initStore( deepFreeze( initialState ) );
-				const result = paths.FIELDS.getFrom(
-					testStore.select.getState()
-				);
+				const result = paths.FIELDS.getFrom( testStore.select.getState() );
 
 				expect( result ).toBeDefined();
 				expect( result ).toEqual( fieldArray );

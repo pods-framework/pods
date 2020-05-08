@@ -14,8 +14,8 @@ export const PodsDFVEmail = ( props ) => {
 	// noinspection JSUnresolvedVariable
 	return (
 		<PodsDFVBaseInput
-			type={ '1' === props.fieldConfig.email_html5 ? 'email' : 'text' }
-			{ ...props }
+			type={'1' === props.fieldConfig.email_html5 ? 'email' : 'text'}
+			{...props}
 		/>
 	);
 };

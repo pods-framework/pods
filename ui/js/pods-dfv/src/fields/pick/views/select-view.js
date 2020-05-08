@@ -1,10 +1,7 @@
 /*global jQuery, _, Backbone, PodsMn, select2, sprintf, wp, ajaxurl, PodsI18n */
 
 // Note: this is a template-less view
-import {
-	PodsFieldListView,
-	PodsFieldView,
-} from 'pods-dfv/src/core/pods-field-views';
+import { PodsFieldListView, PodsFieldView } from 'pods-dfv/src/core/pods-field-views';
 import { RelationshipCollection } from 'pods-dfv/src/fields/pick/relationship-model';
 
 const SELECT2_UL_TARGET = 'ul.select2-selection__rendered';
@@ -13,7 +10,7 @@ const SELECT2_SELECTED_TARGET = '.select2-selection__choice';
 /**
  * option
  *
- * @augments Backbone.View
+ * @extends Backbone.View
  */
 export const SelectItem = PodsFieldView.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
@@ -22,7 +19,7 @@ export const SelectItem = PodsFieldView.extend( {
 
 	template: false,
 
-	initialize( options ) {
+	initialize: function ( options ) {
 		this.$el.val( this.model.get( 'id' ) );
 
 		this.$el.html( this.model.get( 'name' ) );
@@ -30,13 +27,13 @@ export const SelectItem = PodsFieldView.extend( {
 		if ( this.model.get( 'selected' ) ) {
 			this.$el.prop( 'selected', 'selected' );
 		}
-	},
+	}
 } );
 
 /**
  * optgroup
  *
- * @augments Backbone.View
+ * @extends Backbone.View
  */
 export const Optgroup = PodsFieldListView.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
@@ -45,17 +42,17 @@ export const Optgroup = PodsFieldListView.extend( {
 
 	childView: SelectItem,
 
-	attributes() {
+	attributes: function () {
 		return {
-			label: this.model.get( 'label' ),
+			label: this.model.get( 'label' )
 		};
-	},
+	}
 } );
 
 /**
  * select
  *
- * @augments Backbone.View
+ * @extends Backbone.View
  */
 export const SelectView = PodsMn.CollectionView.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
@@ -63,10 +60,10 @@ export const SelectView = PodsMn.CollectionView.extend( {
 	tagName: 'select',
 
 	triggers: {
-		change: {
+		'change': {
 			event: 'change:selected',
-			stopPropagation: false,
-		},
+			stopPropagation: false
+		}
 	},
 
 	multiLastValidSelection: [],
@@ -75,7 +72,7 @@ export const SelectView = PodsMn.CollectionView.extend( {
 	 *
 	 * @param newCollection
 	 */
-	setCollection( newCollection ) {
+	setCollection: function ( newCollection ) {
 		this.collection = newCollection;
 	},
 
@@ -83,7 +80,7 @@ export const SelectView = PodsMn.CollectionView.extend( {
 	 *
 	 * @param options
 	 */
-	initialize( options ) {
+	initialize: function ( options ) {
 		this.fieldModel = options.fieldModel;
 		this.fieldConfig = this.fieldModel.get( 'fieldConfig' );
 	},
@@ -92,9 +89,9 @@ export const SelectView = PodsMn.CollectionView.extend( {
 	 * Set the proper child view (optgroups or no)
 	 *
 	 * @param item
-	 * @return {*}
+	 * @returns {*}
 	 */
-	childView( item ) {
+	childView: function ( item ) {
 		if ( this.fieldConfig.optgroup ) {
 			return Optgroup;
 		} else {
@@ -107,15 +104,13 @@ export const SelectView = PodsMn.CollectionView.extend( {
 	 *
 	 * @param model
 	 * @param index
-	 * @return {{fieldModel: *}}
+	 * @returns {{fieldModel: *}}
 	 */
-	childViewOptions( model, index ) {
-		const returnOptions = { fieldModel: this.fieldModel };
+	childViewOptions: function ( model, index ) {
+		let returnOptions = { fieldModel: this.fieldModel };
 
 		if ( this.fieldConfig.optgroup ) {
-			returnOptions.collection = new RelationshipCollection(
-				model.get( 'collection' )
-			);
+			returnOptions.collection = new RelationshipCollection( model.get( 'collection' ) );
 		}
 
 		return returnOptions;
@@ -124,11 +119,11 @@ export const SelectView = PodsMn.CollectionView.extend( {
 	/**
 	 * todo: We're bypassing the PodsFieldListView functionality, need to explicitly include it for now
 	 *
-	 * @return {{}}
+	 * @returns {{}}
 	 */
-	serializeData() {
+	serializeData: function () {
 		const fieldModel = this.options.fieldModel;
-		const data = this.model ? this.model.toJSON() : {};
+		let data = this.model ? this.model.toJSON() : {};
 
 		data.htmlAttr = fieldModel.get( 'attributes' );
 		data.fieldConfig = fieldModel.get( 'fieldConfig' );
@@ -139,7 +134,8 @@ export const SelectView = PodsMn.CollectionView.extend( {
 	/**
 	 *
 	 */
-	attributes() {
+	attributes: function () {
+
 		/**
 		 * @param {string} htmlAttr.name
 		 * @param {string} htmlAttr.class
@@ -157,21 +153,21 @@ export const SelectView = PodsMn.CollectionView.extend( {
 			name = name + '[]';
 		}
 		return {
-			name,
-			class: htmlAttr.class,
+			'name': name,
+			'class': htmlAttr.class,
 			'data-name-clean': htmlAttr.name_clean,
-			id: htmlAttr.id,
-			tabindex: '2',
-			multiple: 'multi' === fieldConfig.pick_format_type,
+			'id': htmlAttr.id,
+			'tabindex': '2',
+			'multiple': ( 'multi' === fieldConfig.pick_format_type )
 		};
 	},
 
 	/**
 	 * Setup to be done once attached to the DOM.  Select2 has some setup needs.
 	 *
-	 * @member {RelationshipCollection} this.collection
+	 * @var {RelationshipCollection} this.collection
 	 */
-	onAttach() {
+	onAttach: function () {
 		const view_name = this.fieldConfig.view_name;
 		const format_type = this.fieldConfig.pick_format_type;
 
@@ -182,40 +178,34 @@ export const SelectView = PodsMn.CollectionView.extend( {
 
 		// Check initial selection limit status for regular multiselect and enforce it if needed
 		if ( 'select' === view_name && 'multi' === format_type ) {
+
 			// Store initial selection in case we need to revert back from an invalid state
 			this.multiLastValidSelection = this.$el.val();
 		}
 
 		// If we're at the limit: disable all unselected items so no selections can be added
-		if ( ! this.validateSelectionLimit() ) {
+		if ( !this.validateSelectionLimit() ) {
 			this.selectionLimitOver();
 		}
 	},
 
 	/**
-	 * @member {RelationshipCollection} this.collection
+	 * @var {RelationshipCollection} this.collection
 	 */
-	onChangeSelected() {
+	onChangeSelected: function () {
 		const limit = +this.fieldConfig.pick_limit; // Unary plus will implicitly cast to number
 		const view_name = this.fieldConfig.view_name;
 		const format_type = this.fieldConfig.pick_format_type;
 
 		// Regular multiselect may need to reject the selection change
 		if ( 'select' === view_name && 'multi' === format_type ) {
+
 			// Has the selection gone OVER the limit?  Can occur with consecutive item selection.
-			if (
-				null !== this.$el.val() &&
-				0 !== limit &&
-				limit < this.$el.val().length
-			) {
+			if ( null !== this.$el.val() && 0 !== limit && limit < this.$el.val().length ) {
+
 				// Revert to the last valid selection and punt on what they attempted
 				this.$el.val( this.multiLastValidSelection );
-				window.alert(
-					`${ PodsI18n.__( 'You can only select' ) } ${ sprintf(
-						PodsI18n._n( '%s item', '%s items', limit ),
-						limit
-					) }`
-				);
+				window.alert( `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}` );
 				this.trigger( 'childview:change:selected', this );
 				return;
 			}
@@ -235,29 +225,25 @@ export const SelectView = PodsMn.CollectionView.extend( {
 		this.trigger( 'childview:change:selected', this );
 	},
 
-	onBeforeDetach () {
+	onBeforeDetach: function() {
 		this.$el.selectWoo( 'destroy' );
 	},
 
 	/**
 	 *
-	 * @return {boolean} true if unlimited selections are allowed or we're below the selection limit
+	 * @returns {boolean} true if unlimited selections are allowed or we're below the selection limit
 	 */
-	validateSelectionLimit() {
+	validateSelectionLimit: function () {
 		let limit, numSelected;
 		const format_type = this.fieldConfig.pick_format_type;
 		const format_single = this.fieldConfig.pick_format_single;
 
 		// Selection limit should be clear if the placeholder is selected in a single-select dropdown
-		if (
-			'' === this.$el.val() &&
-			'single' === format_type &&
-			'dropdown' === format_single
-		) {
+		if ( "" === this.$el.val() && "single" === format_type && "dropdown" === format_single ) {
 			return true;
 		}
 
-		limit = +this.fieldConfig.pick_limit; // Unary plus will implicitly cast to number
+		limit = +this.fieldConfig.pick_limit;  // Unary plus will implicitly cast to number
 		numSelected = this.collection.filterBySelected().length;
 
 		return 0 === limit || numSelected < limit;
@@ -266,7 +252,7 @@ export const SelectView = PodsMn.CollectionView.extend( {
 	/**
 	 *
 	 */
-	selectionLimitOver() {
+	selectionLimitOver: function () {
 		const viewName = this.fieldConfig.view_name;
 		const formatType = this.fieldConfig.pick_format_type;
 
@@ -281,7 +267,7 @@ export const SelectView = PodsMn.CollectionView.extend( {
 	/**
 	 *
 	 */
-	selectionLimitUnder() {
+	selectionLimitUnder: function () {
 		const viewName = this.fieldConfig.view_name;
 		const formatType = this.fieldConfig.pick_format_type;
 
@@ -299,33 +285,33 @@ export const SelectView = PodsMn.CollectionView.extend( {
 	 *
 	 * @param data
 	 */
-	filterAjaxList( data ) {
+	filterAjaxList: function ( data ) {
 		const selectedItems = this.collection.filterBySelected();
 		const returnList = [];
 
-		_.each( data.results, function( element ) {
+		_.each( data.results, function ( element ) {
 			element.text = element.name; // Select2 needs the "text" key but our model uses "name"
 
 			// Only keep choices that haven't been selected yet, we don't want selected items in the autocomplete portion
-			if ( ! selectedItems.get( element.id ) ) {
+			if ( !selectedItems.get( element.id ) ) {
 				returnList.push( element );
 			}
 		} );
 
-		return { results: returnList };
+		return { 'results': returnList };
 	},
 
 	/**
 	 * Initialize Select2, setup drag-drop reordering
 	 */
-	setupSelect2() {
+	setupSelect2: function () {
 		const self = this;
 		const $select2 = this.$el;
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
 		const ajaxData = fieldConfig.ajax_data;
 		const select2Overrides = fieldConfig.select2_overrides;
 		const limit = fieldConfig.pick_limit;
-		const isSingle = 'single' === fieldConfig.pick_format_type;
+		const isSingle = ( 'single' === fieldConfig.pick_format_type );
 		const selectedCount = this.collection.filterBySelected().length;
 		let $ulContainer, select2Options, placeholder;
 
@@ -343,25 +329,20 @@ export const SelectView = PodsMn.CollectionView.extend( {
 		// for regular autocomplete.  This function should be generic and not have to poke around with
 		// special properties like this for exception cases.
 		if ( fieldConfig.limitDisable ) {
-			placeholder = `${ PodsI18n.__( 'You can only select' ) } ${ sprintf(
-				PodsI18n._n( '%s item', '%s items', limit ),
-				limit
-			) }`;
+			placeholder = `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}`;
 		} else {
-			placeholder = `${ PodsI18n.__( 'Search' ) } ${
-				fieldConfig.label
-			}...`;
+			placeholder = `${PodsI18n.__( 'Search' )} ${fieldConfig.label}...`;
 		}
 
 		select2Options = {
 			maximumSelectionLength: isSingle ? undefined : limit, // Should not be set for single select, messes up placeholder
-			placeholder,
+			placeholder: placeholder,
 			allowClear: isSingle,
 			disabled: fieldConfig.limitDisable,
 			tags: fieldConfig.pick_taggable,
-			escapeMarkup ( text ) {
+			escapeMarkup: function ( text ) {
 				return text;
-			},
+			}
 		};
 
 		if ( ajaxData.ajax ) {
@@ -372,7 +353,7 @@ export const SelectView = PodsMn.CollectionView.extend( {
 					type: 'POST',
 					dataType: 'json',
 					delay: ajaxData.delay,
-					data ( params ) {
+					data: function ( params ) {
 						return {
 							_wpnonce: ajaxData._wpnonce,
 							action: 'pods_relationship',
@@ -381,45 +362,39 @@ export const SelectView = PodsMn.CollectionView.extend( {
 							field: ajaxData.field,
 							uri: ajaxData.uri,
 							id: ajaxData.id,
-							query: params.term, // ToDo: term{lang}
+							query: params.term // ToDo: term{lang}
 						};
 					},
-					processResults ( data, params ) {
+					processResults: function ( data, params ) {
 						return self.filterAjaxList( data, params );
-					},
-				},
+					}
+				}
 			} );
 		}
 
 		// Initialize select2
-		$select2.selectWoo(
-			jQuery.extend( true, select2Options, select2Overrides )
-		);
+		$select2.selectWoo( jQuery.extend( true, select2Options, select2Overrides ) );
 
 		// Get a reference to the ul container of the visual UI portion.  Can't do this until select2 is initialized
 		$ulContainer = $select2.parent().find( SELECT2_UL_TARGET );
 
 		// Make the list drag-drop sortable
 		$ulContainer.sortable( {
-			containment: 'parent',
+			containment: 'parent'
 		} );
 
 		// With select2 4.0, sortable is just reordering the UI elements.  Keep the underlying select/option list
 		// synced with the changes.  See: https://github.com/select2/select2/issues/3004
-		$ulContainer.on( 'sortstop', function() {
-			const $selected = $ulContainer
-				.find( SELECT2_SELECTED_TARGET )
-				.get()
-				.reverse();
+		$ulContainer.on( 'sortstop', function () {
+			const $selected = $ulContainer.find( SELECT2_SELECTED_TARGET ).get().reverse();
 
-			jQuery( $selected ).each( function() {
+			jQuery( $selected ).each( function () {
 				const id = jQuery( this ).data( 'data' ).id;
-				const option = $select2.find(
-					'option[value="' + id + '"]'
-				)[ 0 ];
+				const option = $select2.find( 'option[value="' + id + '"]' )[ 0 ];
 
 				$select2.prepend( option );
 			} );
 		} );
-	},
+	}
+
 } );

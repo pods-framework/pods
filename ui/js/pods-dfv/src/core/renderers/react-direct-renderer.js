@@ -13,5 +13,8 @@ export function reactDirectRenderer ( FieldClass, element, props ) {
 	//
 	initStore( props );
 
-	ReactDOM.render( Field( props ), element );
+	ReactDOM.render(
+		Field( props ),
+		element
+	);
 }

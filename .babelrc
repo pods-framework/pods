@@ -12,9 +12,15 @@
 				}
 			}
 		],
-		"babel-plugin-transform-html-import-to-string"
+		"babel-plugin-transform-html-import-to-string",
+		"@babel/plugin-transform-strict-mode"
 	],
 	"env": {
+		"development": {
+			"presets": [
+				[ "@babel/preset-react", { "development": true } ]
+			]
+		},
 		"production": {
 			"plugins": [
 				"transform-react-remove-prop-types"

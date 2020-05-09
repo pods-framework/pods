@@ -138,7 +138,7 @@ export const Postbox = ( {
 											onClick={ () => {
 												// eslint-disable-next-line no-alert
 												const confirm = window.confirm(
-													__( 'Are you sure you want to delete this Pod? All fields and data will be removed.', 'pods' )
+													__( 'You are about to permanently delete this pod configuration, make sure you have recent backups just in case. Are you sure you would like to delete this Pod?\n\nClick \'OK\' to continue, or \'Cancel\' to make no changes.', 'pods' )
 												);
 
 												if ( confirm ) {

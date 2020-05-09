@@ -5,4 +5,4 @@ export { PodsDFVPassword } from 'pods-dfv/src/fields/password/password';
 export { PodsDFVNumber } from 'pods-dfv/src/fields/number/number';
 export { PodsDFVEmail } from 'pods-dfv/src/fields/email/email';
 export { PodsDFVParagraph } from 'pods-dfv/src/fields/paragraph/paragraph';
-export { PodsDFVEditPod } from 'pods-dfv/src/admin/edit-pod/edit-pod';
+export { default as PodsDFVEditPod } from 'pods-dfv/src/admin/edit-pod/edit-pod';

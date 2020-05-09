@@ -1,3 +1,5 @@
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+
 const path = require( 'path' );
 
 module.exports = {
@@ -49,4 +51,10 @@ module.exports = {
 			}
 		]
 	},
+
+	plugins: [
+		new DependencyExtractionWebpackPlugin( {
+			outputFormat: 'json',
+		} ),
+	]
 };

@@ -19,7 +19,6 @@ import {
 } from '../reducer';
 
 describe( 'reducer', () => {
-
 	// Pod Meta
 	describe( 'podMeta', () => {
 		const { actions } = podMetaConstants;
@@ -71,15 +70,15 @@ describe( 'reducer', () => {
 			expect( actions.SET_OPTION_ITEM_VALUE ).toBeDefined();
 		} );
 
-		test( 'Should create a new options object if it doesn\'t exist', () => {
+		test( 'When passed a SET_OPTION_ITEM_VALUE action, should create a new options object if it doesn\'t exist', () => {
 			const optionName = 'foo';
 			const itemName = 'bar';
 			const itemValue = 'baz';
 			const action = {
 				type: actions.SET_OPTION_ITEM_VALUE,
-				optionName: optionName,
-				itemName: itemName,
-				itemValue: itemValue
+				optionName,
+				itemName,
+				itemValue,
 			};
 
 			const expected = { [ optionName ]: { [ itemName ]: itemValue } };
@@ -89,29 +88,89 @@ describe( 'reducer', () => {
 			expect( result ).toEqual( expected );
 		} );
 
-		test( 'Should update an existing option item\'s value', () => {
+		test( 'When passed a SET_OPTION_ITEM_VALUE action, should update an existing option item\'s value', () => {
 			const optionName = 'foo';
 			const itemName = 'bar';
 			const itemValue = 'baz';
 			const initialState = deepFreeze( {
-				[ optionName ]: { name: optionName, [ itemName ]: 'old value' }
+				[ optionName ]: { name: optionName, [ itemName ]: 'old value' },
 			} );
 			const action = {
 				type: actions.SET_OPTION_ITEM_VALUE,
-				optionName: optionName,
-				itemName: itemName,
-				itemValue: itemValue
+				optionName,
+				itemName,
+				itemValue,
 			};
 
 			const expected = {
 				[ optionName ]: {
 					name: optionName,
-					[ itemName ]: itemValue
-				}
+					[ itemName ]: itemValue,
+				},
 			};
 			const result = options( initialState, action );
 
 			expect( result ).toBeDefined();
+			expect( result ).toEqual( expected );
+		} );
+
+		test( 'When passed a SET_OPTIONS_VALUES value, should update options based on the provided keys and values', () => {
+			const initialState = deepFreeze( {
+				first: {
+					value: 'Old Value',
+					anotherValue: true,
+				},
+				second: {
+					value: 'Another old Value',
+					somethingElse: 'something',
+				},
+				third: {
+					value: false,
+				},
+				fourth: {
+					value: 3,
+				},
+				fifth: {
+					value: 'Remains unchanged',
+				},
+			} );
+
+			const action = {
+				type: actions.SET_OPTIONS_VALUES,
+				options: {
+					first: 'First Value',
+					second: 'Second Value',
+					third: true,
+					fourth: 12,
+					sixth: 'New option',
+				},
+			};
+
+			const expected = {
+				first: {
+					value: 'First Value',
+					anotherValue: true,
+				},
+				second: {
+					value: 'Second Value',
+					somethingElse: 'something',
+				},
+				third: {
+					value: true,
+				},
+				fourth: {
+					value: 12,
+				},
+				fifth: {
+					value: 'Remains unchanged',
+				},
+				sixth: {
+					value: 'New option',
+				},
+			};
+
+			const result = options( initialState, action );
+
 			expect( result ).toEqual( expected );
 		} );
 	} );
@@ -136,7 +195,7 @@ describe( 'reducer', () => {
 			it( 'Should create a new group list if it doesn\'t exist', () => {
 				const action = {
 					type: actionType,
-					groupList: initialGroupList
+					groupList: initialGroupList,
 				};
 				const expected = GROUP_LIST.tailCreateTree( initialGroupList );
 				const result = groups( undefined, action );
@@ -173,7 +232,7 @@ describe( 'reducer', () => {
 				const action = {
 					type: actionType,
 					oldIndex,
-					newIndex
+					newIndex,
 				};
 				const result = groups( initialState, action );
 
@@ -207,7 +266,7 @@ describe( 'reducer', () => {
 				tabNames.ADMIN_UI,
 				tabNames.ADVANCED_OPTIONS,
 				tabNames.AUTO_TEMPLATE_OPTIONS,
-				tabNames.REST_API
+				tabNames.REST_API,
 			];
 
 			it( 'Should define the proper action', () => {
@@ -238,10 +297,6 @@ describe( 'reducer', () => {
 		describe( 'save status', () => {
 			const { saveStatuses } = uiConstants;
 
-			it( 'Should define the SET_SAVE_STATUS action', () => {
-				expect( actions.SET_SAVE_STATUS ).toBeDefined();
-			} );
-
 			it( 'Should properly change the save status', () => {
 				const action = {
 					type: actions.SET_SAVE_STATUS,
@@ -261,5 +316,27 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		describe( 'delete status', () => {
+			const { deleteStatuses } = uiConstants;
+
+			it( 'Should properly change the delete status', () => {
+				const action = {
+					type: actions.SET_DELETE_STATUS,
+					deleteStatus: deleteStatuses.DELETING,
+					message: '',
+				};
+				state = ui( state, action );
+				expect( state.deleteStatus ).toEqual( deleteStatuses.DELETING );
+			} );
+
+			it( 'Should use the default for an unknown status', () => {
+				const action = {
+					type: actions.SET_DELETE_STATUS,
+					deleteStatus: 'xyzzy',
+				};
+				state = ui( state, action );
+				expect( state.deleteStatus ).toEqual( initialUIState.deleteStatus );
+			} );
+		} );
 	} );
 } );

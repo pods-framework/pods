@@ -4,13 +4,13 @@ import { uiConstants } from 'pods-dfv/src/admin/edit-pod/store/constants';
 const { dragItemTypes } = uiConstants;
 
 const dropSpec = {
-	hover ( props, monitor, component ) {
-		if ( !component ) {
+	hover( props, monitor, component ) {
+		if ( ! component ) {
 			return null;
 		}
 		// node = HTML Div element from imperative API
 		const node = component.getWrapperNode();
-		if ( !node ) {
+		if ( ! node ) {
 			return null;
 		}
 		const dragIndex = monitor.getItem().index;
@@ -46,7 +46,7 @@ const dropSpec = {
 	},
 };
 
-const collect = connect => ( {
+const collect = ( connect ) => ( {
 	connectDropTarget: connect.dropTarget(),
 } );
 

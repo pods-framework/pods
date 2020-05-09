@@ -1,4 +1,5 @@
 import lodash from 'lodash';
+import React from 'react';
 
 import {
 	combineReducers,
@@ -9,6 +10,13 @@ import {
 	withDispatch,
 } from '@wordpress/data';
 
+global.React = React;
+
+global.window.matchMedia = () => ( {
+	matches: false,
+	addListener: () => {},
+	removeListener: () => {},
+} );
 
 global.lodash = lodash;
 

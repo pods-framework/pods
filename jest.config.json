@@ -1,5 +1,9 @@
 {
-  "roots": [ "<rootDir>/ui/js/pods-dfv/src/" ],
+  "preset": "@wordpress/jest-preset-default",
+  "roots": [
+    "<rootDir>/ui/js/pods-dfv/src/",
+    "<rootDir>/ui/js/blocks/src/"
+  ],
   "setupFiles": [
     "<rootDir>/jest-setup-wordpress-globals.js"
   ],

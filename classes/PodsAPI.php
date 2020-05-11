@@ -3137,7 +3137,7 @@ class PodsAPI {
 				 *      @type Pods\Whatsit\Field $field_obj The field object.
 				 * }
 				 */
-				do_action( 'pods_api_save_field_table_pre_alter', $definition_mode, $pod, $field['type'], $field, array(
+				do_action( 'pods_api_save_field_table_pre_alter', $definition_mode, $pod, $field['type'], $field, [
 					'simple'         => $simple,
 					'definition'     => $definition,
 					'old_name'       => $old_name,
@@ -3187,7 +3187,7 @@ class PodsAPI {
 				 *      @type Pods\Whatsit\Field $field_obj The field object.
 				 * }
 				 */
-				do_action( 'pods_api_save_field_table_altered', $definition_mode, $pod, $field['type'], $field, array(
+				do_action( 'pods_api_save_field_table_altered', $definition_mode, $pod, $field['type'], $field, [
 					'simple'         => $simple,
 					'definition'     => $definition,
 					'old_name'       => $old_name,

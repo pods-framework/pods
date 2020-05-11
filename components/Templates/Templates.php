@@ -2,6 +2,8 @@
 /**
  * Name: Templates
  *
+ * Menu Name: Pod Templates
+ *
  * Description: An easy to use templating engine for Pods. Use {@field_name} magic tags to output values, within your HTML markup.
  *
  * Version: 2.3
@@ -580,8 +582,6 @@ class Pods_Templates extends PodsComponent {
 			return '';
 		}
 
-		$code = trim( $code );
-
 		if ( false !== strpos( $code, '<?' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
 			pods_deprecated( 'Pod Template PHP code has been deprecated, please use WP Templates instead of embedding PHP.', '2.3' );
 
@@ -597,6 +597,11 @@ class Pods_Templates extends PodsComponent {
 		}
 
 		$out = $obj->do_magic_tags( $out );
+
+		// Prevent blank whitespace from being output if nothing came through.
+		if ( '' === trim( $out ) ) {
+			$out = '';
+		}
 
 		return apply_filters( 'pods_templates_do_template', $out, $code, $obj );
 	}

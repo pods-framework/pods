@@ -176,8 +176,9 @@ class PodsField_Pick extends PodsField {
 				'default'    => 'default',
 				'type'       => 'pick',
 				'data'       => array(
-					'default' => __( 'Item 1, Item 2, and Item 3', 'pods' ),
-					'custom'  => __( 'Custom separator (with no "and")', 'pods' ),
+					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
+					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
+					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
 				),
 				'dependency' => true,
 			),
@@ -747,9 +748,16 @@ class PodsField_Pick extends PodsField {
 			'fields' => $fields,
 		);
 
-		if ( 'custom' === pods_v( static::$type . '_display_format_multi', $options, 'default' ) ) {
-			$separator = pods_v( static::$type . '_display_format_separator', $options, ', ' );
+		$display_format = pods_v( static::$type . '_display_format_multi', $options, 'default' );
 
+		if ( 'non_serial' === $display_format ) {
+			$args['serial'] = false;
+		}
+
+		if ( 'custom' === $display_format ) {
+			$args['serial'] = false;
+
+			$separator = pods_v( static::$type . '_display_format_separator', $options, ', ' );
 			if ( ! empty( $separator ) ) {
 				$args['separator'] = $separator;
 

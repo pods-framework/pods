@@ -2827,8 +2827,20 @@ class PodsUI {
 			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
 		}
 
+		/**
+		 * Allow adding custom CSS classes to the Pods::manage() container.
+		 *
+		 * @since 2.6.8
+		 *
+		 * @param array  $custom_container_classes List of custom classes to use.
+		 * @param PodsUI $this                     PodsUI instance.
+		 */
+		$custom_container_classes = apply_filters( 'pods_ui_manage_custom_container_classes', array() );
+
+		$custom_container_classes = array_map( 'sanitize_html_class', $custom_container_classes );
+		$custom_container_classes = implode( ' ', $custom_container_classes );
 		?>
-	<div class="wrap pods-admin pods-ui">
+	<div class="wrap pods-admin pods-ui <?php echo esc_attr( $custom_container_classes ); ?>">
 		<div class="pods-admin-container">
 			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
 				<br />

@@ -1088,9 +1088,99 @@ class PodsAdmin {
 		}
 
 		// Add our custom callouts.
+		$this->handle_callouts_updates();
+
+		add_filter( 'pods_ui_manage_custom_container_classes', array( $this, 'admin_manage_container_class' ) );
 		add_action( 'pods_ui_manage_after_container', array( $this, 'admin_manage_callouts' ) );
 
 		pods_ui( $ui );
+	}
+
+	/**
+	 * Get list of callouts to show.
+	 *
+	 * @since 2.7.17
+	 *
+	 * @return array List of callouts.
+	 */
+	public function get_callouts() {
+		$force_callouts = false;
+
+		$page = pods_v( 'page' );
+
+		if ( in_array( $page, array( 'pods-settings', 'pods-help' ), true ) ) {
+			$force_callouts = true;
+		}
+
+		$callouts = get_option( 'pods_callouts' );
+
+		if ( ! $callouts ) {
+			$callouts = array(
+				'friends_2020' => 1,
+			);
+		}
+
+		// Handle Friends of Pods 2020 callout logic.
+		$callouts['friends_2020'] = ! isset( $callouts['friends_2020'] ) || $callouts['friends_2020'] || $force_callouts ? 1 : 0;
+
+		/**
+		 * Allow hooking into whether or not the specific callouts should show.
+		 *
+		 * @since 2.7.17
+		 *
+		 * @param array List of callouts to enable.
+		 */
+		$callouts = apply_filters( 'pods_admin_callouts', $callouts );
+
+		return $callouts;
+	}
+
+	/**
+	 * Handle callouts update logic.
+	 *
+	 * @since 2.7.17
+	 */
+	public function handle_callouts_updates() {
+		$callouts = get_option( 'pods_callouts' );
+
+		if ( ! $callouts ) {
+			$callouts = array();
+		}
+
+		$disable_pods = pods_v( 'pods_callout_dismiss' );
+
+		// Disable Friends of Pods 2020 callout.
+		if ( 'friends_2020' === $disable_pods ) {
+			$callouts['friends_2020'] = 0;
+
+			update_option( 'pods_callouts', $callouts );
+		} elseif ( 'reset' === $disable_pods ) {
+			$callouts = array();
+
+			update_option( 'pods_callouts', $callouts );
+		}
+	}
+
+	/**
+	 * Add class to container if we have callouts to show.
+	 *
+	 * @since 2.7.17
+	 *
+	 * @param array $classes List of classes to use.
+	 *
+	 * @return array List of classes to use.
+	 */
+	public function admin_manage_container_class( $classes ) {
+		$callouts = $this->get_callouts();
+
+		// Only get enabled callouts.
+		$callouts = array_filter( $callouts );
+
+		if ( ! empty( $callouts ) ) {
+			$classes[] = 'pods-admin--flex';
+		}
+
+		return $classes;
 	}
 
 	/**
@@ -1107,36 +1197,9 @@ class PodsAdmin {
 			$force_callouts = true;
 		}
 
-		$callouts = get_option( 'pods_callouts' );
+		$callouts = $this->get_callouts();
 
-		if ( ! $callouts ) {
-			$callouts = array();
-		}
-
-		$disable_pods = pods_v( 'pods_callout_dismiss' );
-
-		if ( 'friends_2020' === $disable_pods ) {
-			$callouts['friends_2020'] = 0;
-
-			update_option( 'pods_callouts', $callouts );
-		} elseif ( 'reset' === $disable_pods ) {
-			$callouts = array();
-
-			update_option( 'pods_callouts', $callouts );
-		}
-
-		$callout_friends = ! isset( $callouts['friends_2020'] ) || 1 === (int) $callouts['friends_2020'] || $force_callouts;
-
-		/**
-		 * Allow hooking into whether or not the Friends callout should show.
-		 *
-		 * @since 2.7.17
-		 *
-		 * @param boolean $callout_friends Whether to enable the callout.
-		 */
-		$callout_friends = apply_filters( 'pods_admin_callouts_friends', $callout_friends );
-
-		if ( $callout_friends ) {
+		if ( ! empty( $callouts['friends_2020'] ) ) {
 ?>
 		<div class="pods-admin_friends-callout_container">
 			<?php if ( ! $force_callouts ) : ?>
@@ -2158,8 +2221,8 @@ class PodsAdmin {
 					'depends-on' => array( 'rewrite' => true ),
 				),
 				'rewrite_with_front'      => array(
-					'label'             => __( 'Allow Front Prepend', 'pods' ),
-					'help'              => __( 'Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)', 'pods' ),
+					'label'             => __( 'Rewrite with Front', 'pods' ),
+					'help'              => __( 'Allows permalinks to be prepended with your front base (example: if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/)', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
@@ -3075,6 +3138,9 @@ class PodsAdmin {
 		}
 
 		// Add our custom callouts.
+		$this->handle_callouts_updates();
+
+		add_filter( 'pods_ui_manage_custom_container_classes', array( $this, 'admin_manage_container_class' ) );
 		add_action( 'pods_ui_manage_after_container', array( $this, 'admin_manage_callouts' ) );
 
 		pods_ui( $ui );
@@ -3222,6 +3288,8 @@ class PodsAdmin {
 	public function admin_help() {
 
 		// Add our custom callouts.
+		$this->handle_callouts_updates();
+
 		add_action( 'pods_admin_after_help', array( $this, 'admin_manage_callouts' ) );
 
 		pods_view( PODS_DIR . 'ui/admin/help.php', compact( array_keys( get_defined_vars() ) ) );
@@ -3756,7 +3824,7 @@ class PodsAdmin {
 			],
 			'rest_write' => [
 				'label'   => __( 'Write via REST API', 'pods' ),
-				'help'    => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+				'help'    => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
 				'type'    => 'boolean',
 				'default' => '',
 			],
@@ -3765,7 +3833,7 @@ class PodsAdmin {
 		$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = [
 			'rest_pick_response' => [
 				'label'      => __( 'Response Type', 'pods' ),
-				'help'       => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+					'help'       => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
 				'type'       => 'pick',
 				'default'    => 'array',
 				'depends-on' => [ 'type' => 'pick' ],

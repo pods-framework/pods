@@ -941,8 +941,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 			}
 		}
 
-		if ( empty( $tags['name'] ) ) {
-			return '<p>Please provide a Pod name</p>';
+		if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
+			return '<p>' . __( 'Please provide a Pod name', 'pods' ) . '</p>';
 		}
 	}
 
@@ -959,7 +959,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( empty( $content ) && empty( $tags['pods_page'] ) && empty( $tags['template'] ) && empty( $tags['field'] ) && empty( $tags['form'] ) ) {
-		return '<p>Please provide either a template or field name</p>';
+		return '<p>' . __( 'Please provide either a template or field name', 'pods' ) . '</p>';
 	}
 
 	if ( ! $tags['use_current'] && ! isset( $id ) ) {
@@ -997,7 +997,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( empty( $pod ) || ! $pod->valid() ) {
-		return '<p>Pod not found</p>';
+		return '<p>' . __( 'Pod not found', 'pods' ) . '</p>';
 	}
 
 	$found = 0;
@@ -1137,7 +1137,6 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	$content = $pod->template( $tags['template'], $content );
-	$content = trim( $content );
 
 	if ( empty( $content ) && ! empty( $tags['not_found'] ) ) {
 		$content = $pod->do_magic_tags( $tags['not_found'] );

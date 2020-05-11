@@ -35,7 +35,7 @@ $RECYCLE.BIN/
 # NPM / Composer
 /composer.lock
 /node_modules/
-/vendor/
+vendor/*
 npm-debug.log
 /package-lock.json
 
@@ -56,3 +56,6 @@ tests/codeception/_support/_generated
 # Tests - local output files
 tests/codeception/_output
 /coverage/
+
+# Allowed vendor files
+!vendor/freemius

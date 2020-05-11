@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import * as paths from './state-paths';
 
 import {
@@ -14,19 +16,23 @@ const { combineReducers } = wp.data;
 export const setObjectValue = ( object, key, value ) => {
 	return {
 		...object,
-		[ key ]: value
+		[ key ]: value,
 	};
 };
 
 // UI
 export const ui = ( state = initialUIState, action = {} ) => {
-	const { actions, saveStatuses } = uiConstants;
+	const {
+		actions,
+		saveStatuses,
+		deleteStatuses,
+	} = uiConstants;
 
 	switch ( action.type ) {
 		case actions.SET_ACTIVE_TAB: {
 			// Use the default if the tab name doesn't exist
 			let newTab = initialUIState.activeTab;
-			let tabIndex = paths.TAB_LIST.tailGetFrom( state ).indexOf( action.activeTab );
+			const tabIndex = paths.TAB_LIST.tailGetFrom( state ).indexOf( action.activeTab );
 
 			if ( -1 !== tabIndex ) {
 				newTab = action.activeTab;
@@ -34,18 +40,29 @@ export const ui = ( state = initialUIState, action = {} ) => {
 
 			return {
 				...state,
-				activeTab: newTab
+				activeTab: newTab,
 			};
 		}
 		case actions.SET_SAVE_STATUS: {
-			let newStatus = action.saveStatus;
+			const newStatus = Object.values( saveStatuses ).includes( action.saveStatus )
+				? action.saveStatus
+				: initialUIState.saveStatus;
 
-			if ( !Object.values( saveStatuses ).includes( newStatus ) ) {
-				newStatus = initialUIState.saveStatus;
-			}
 			return {
 				...state,
-				saveStatus: newStatus
+				saveStatus: newStatus,
+				saveMessage: action.message,
+			};
+		}
+		case actions.SET_DELETE_STATUS: {
+			const newStatus = Object.values( deleteStatuses ).includes( action.deleteStatus )
+				? action.deleteStatus
+				: initialUIState.deleteStatus;
+
+			return {
+				...state,
+				deleteStatus: newStatus,
+				deleteMessage: action.message,
 			};
 		}
 
@@ -76,31 +93,75 @@ export const groups = ( state = {}, action = {} ) => {
 		newGroupList.splice( newIndex, 0, newGroupList.splice( oldIndex, 1 )[ 0 ] );
 		return {
 			...state,
-			[ paths.GROUP_LIST.tailPath ]: newGroupList
+			[ paths.GROUP_LIST.tailPath ]: newGroupList,
 		};
-
 	} else if ( actions.SET_GROUP_LIST === action.type ) {
 		return {
 			...state,
-			[ paths.GROUP_LIST.tailPath ]: action.groupList
+			[ paths.GROUP_LIST.tailPath ]: action.groupList,
 		};
-	} else {
+	} else if ( actions.ADD_GROUP === action.type ) {
+		state.currentPod.groups.push( {
+			name: action.group,
+			label: action.group,
+			fields: [],
+		} );
 
-		return state;
+		return { ...state };
+	} else if ( actions.SET_GROUP_FIELDS === action.type ) {
+		const group = _.find( state.currentPod.groups, function( podGroup ) {
+			return podGroup.name === action.groupName;
+		} );
+		group.fields = action.fields;
+
+		return { ...state };
+	} else if ( actions.ADD_GROUP_FIELD === action.type ) {
+		const group = _.find( state.currentPod.groups, function( podGroup ) {
+			return podGroup.name === action.groupName;
+		} );
+		group.fields.push( action.field );
+
+		return { ...state };
 	}
+
+	return state;
 };
 
 export const options = ( state = {}, action = {} ) => {
 	const { actions } = optionConstants;
 
-	if ( actions.SET_OPTION_ITEM_VALUE === action.type ) {
-		const { optionName, itemName, itemValue } = action;
-		return {
-			...state,
-			[ optionName ]: setObjectValue( state[ optionName ], itemName, itemValue )
-		};
-	} else {
-		return state;
+	switch ( action.type ) {
+		case actions.SET_OPTION_ITEM_VALUE: {
+			const { optionName, itemName, itemValue } = action;
+
+			return {
+				...state,
+				[ optionName ]: setObjectValue( state[ optionName ], itemName, itemValue ),
+			};
+		}
+		case actions.SET_OPTIONS_VALUES: {
+			const entries = Object.entries( action.options );
+
+			const updatedOptions = entries.reduce(
+				( accumulator, currentValue ) => {
+					const [ optionName, value ] = currentValue;
+
+					return {
+						...accumulator,
+						[ optionName ]: setObjectValue( state[ optionName ], 'value', value ),
+					};
+				},
+				{}
+			);
+
+			return {
+				...state,
+				...updatedOptions,
+			};
+		}
+		default: {
+			return state;
+		}
 	}
 };
 
@@ -112,13 +173,13 @@ export const podMeta = ( state = {}, action = {} ) => {
 		case actions.SET_POD_NAME:
 			return {
 				...state,
-				name: action.name
+				name: action.name,
 			};
 
 		case actions.SET_POD_META_VALUE:
 			return {
 				...state,
-				[ action.key ]: action.value
+				[ action.key ]: action.value,
 			};
 
 		default:
@@ -127,7 +188,7 @@ export const podMeta = ( state = {}, action = {} ) => {
 };
 
 // Fields
-export const fields = ( state = {}, action = {} ) => {
+export const fields = ( state = {} ) => {
 	return state;
 };
 

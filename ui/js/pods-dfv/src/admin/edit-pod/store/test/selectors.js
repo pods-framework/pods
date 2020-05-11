@@ -7,19 +7,18 @@ import {
 } from '../selectors';
 
 describe( 'selectors', () => {
-
 	describe( 'getState()', () => {
 		it( 'Should return the full state', () => {
 			const state = deepFreeze( {
 				foo: {
-					'xyzzy': 42,
-					'plugh': false
+					xyzzy: 42,
+					plugh: false,
 				},
 				bar: {
 					name: 'bob',
-					relationship: 'your uncle'
+					relationship: 'your uncle',
 				},
-				baz: [ 0, 1, 2 ]
+				baz: [ 0, 1, 2 ],
 			} );
 			const result = getState( state );
 

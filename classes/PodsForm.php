@@ -1528,15 +1528,43 @@ class PodsForm {
 	}
 
 	/**
-	 * Get a list of all available field types and include
+	 * Get a list of all available Pod types.
 	 *
-	 * @return array Registered Field Types data
+	 * @return string[] List of Pod types.
 	 *
-	 * @since 2.3.0
+	 * @since 2.8.0
 	 */
-	public static function field_types() {
+	public static function pod_types_list() {
+		$pod_types = [
+			'post_type',
+			'taxonomy',
+			'user',
+			'media',
+			'comment',
+			'settings',
+			'pod',
+			'table',
+		];
 
-		$field_types = array(
+		/**
+		 * Allow filtering of the supported Pod types.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array $pod_types List of Pod types supported.
+		 */
+		return apply_filters( 'pods_api_pod_types', $pod_types );
+	}
+
+	/**
+	 * Get a list of all available Field types.
+	 *
+	 * @return string[] List of Field types.
+	 *
+	 * @since 2.8.0
+	 */
+	public static function field_types_list() {
+		$field_types = [
 			'text',
 			'website',
 			// 'link',
@@ -1558,13 +1586,25 @@ class PodsForm {
 			'boolean',
 			'color',
 			'slug',
-		);
+		];
 
 		$field_types = array_merge( $field_types, array_keys( self::$field_types ) );
 
 		$field_types = array_filter( array_unique( $field_types ) );
 
-		$types = apply_filters( 'pods_api_field_types', $field_types );
+		return apply_filters( 'pods_api_field_types', $field_types );
+	}
+
+	/**
+	 * Get a list of all available field types and include
+	 *
+	 * @return array Registered Field Types data
+	 *
+	 * @since 2.3.0
+	 */
+	public static function field_types() {
+
+		$types = self::field_types_list();
 
 		$field_types = pods_transient_get( 'pods_field_types' );
 

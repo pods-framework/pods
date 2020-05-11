@@ -16,14 +16,13 @@ const dragSpec = {
 			groupName: props.groupName,
 			index: props.index,
 			width: wrapperRect.width,
-			left: wrapperRect.left - handleRect.left
+			left: wrapperRect.left - handleRect.left,
 		};
 	},
 
 	endDrag: ( props, monitor ) => {
-
 		// Items are re-ordered on the fly, be sure to reset on cancel
-		if ( !monitor.didDrop() ) {
+		if ( ! monitor.didDrop() ) {
 			props.handleDragCancel();
 		}
 	},

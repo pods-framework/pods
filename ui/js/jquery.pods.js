@@ -481,7 +481,7 @@
 
                         last_slug = $( this ).parent().find( 'input[type=text]' ).val();
 
-                        last_slug = last_slug.replace( /<( ?:. )*?>/g, '' ).replace( /([^0-9a-zA-Z\_\- ])/g, '' );
+                        last_slug = last_slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z\_\- ])/g, '' );
 
                         $( this ).closest( '.pods-sluggable' ).find( '.pods-slug em' ).html( last_slug );
                         $( '.pods-slugged-lower:not(.pods-slugged[data-sluggable])' ).html( last_slug.toLowerCase() );

@@ -716,18 +716,27 @@ class PodsInit {
 		);
 
 		// MV stuff
+		$pods_dfv_options_file = file_get_contents( PODS_DIR . 'ui/js/pods-dfv/pods-dfv.min.asset.json' );
+
+		$pods_dfv_options = json_decode( $pods_dfv_options_file, true );
+
 		wp_register_script(
-			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js', array(
-				'jquery',
-				'jquery-ui-core',
-				'jquery-ui-sortable',
-				'wp-i18n',
-				'wp-components',
-				'wp-compose',
-				'marionette',
-				'media-views',
-				'media-models',
-			), PODS_VERSION, true
+			'pods-dfv',
+			PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js',
+			array_merge(
+				$pods_dfv_options['dependencies'] ?? [],
+				[
+					'jquery',
+					'jquery-ui-core',
+					'jquery-ui-sortable',
+					'marionette',
+					'media-views',
+					'media-models',
+					'wp-components',
+				]
+			),
+			$pods_dfv_options['version'] ?? PODS_VERSION,
+			true
 		);
 
 		wp_set_script_translations( 'pods-dfv', 'pods' );
@@ -816,8 +825,8 @@ class PodsInit {
 	 */
 	public function register_pods() {
 		$args = array(
-			'label'           => 'Pods',
-			'labels'          => array( 'singular_name' => 'Pod' ),
+			'label'           => __( 'Pods', 'pods' ),
+			'labels'          => array( 'singular_name' => __( 'Pod', 'pods' ) ),
 			'public'          => false,
 			'can_export'      => false,
 			'query_var'       => false,
@@ -834,26 +843,8 @@ class PodsInit {
 		register_post_type( '_pods_pod', apply_filters( 'pods_internal_register_post_type_pod', $args ) );
 
 		$args = array(
-			'label'           => 'Pod Fields',
-			'labels'          => array( 'singular_name' => 'Pod Field' ),
-			'public'          => false,
-			'can_export'      => false,
-			'query_var'       => false,
-			'rewrite'         => false,
-			'capability_type' => 'pods_pod',
-			'has_archive'     => false,
-			'hierarchical'    => true,
-			'supports'        => array( 'title', 'editor', 'author' ),
-			'menu_icon'       => 'dashicons-pods',
-		);
-
-		$args = self::object_label_fix( $args, 'post_type' );
-
-		register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
-
-		$args = array(
-			'label'           => 'Pod Groups',
-			'labels'          => array( 'singular_name' => 'Pod Group' ),
+			'label'           => __( 'Pod Groups', 'pods' ),
+			'labels'          => array( 'singular_name' => __( 'Pod Group', 'pods' ) ),
 			'public'          => false,
 			'can_export'      => false,
 			'query_var'       => false,
@@ -868,6 +859,24 @@ class PodsInit {
 		$args = self::object_label_fix( $args, 'post_type' );
 
 		register_post_type( '_pods_group', apply_filters( 'pods_internal_register_post_type_group', $args ) );
+
+		$args = array(
+			'label'           => __( 'Pod Fields', 'pods' ),
+			'labels'          => array( 'singular_name' => __( 'Pod Field', 'pods' ) ),
+			'public'          => false,
+			'can_export'      => false,
+			'query_var'       => false,
+			'rewrite'         => false,
+			'capability_type' => 'pods_pod',
+			'has_archive'     => false,
+			'hierarchical'    => true,
+			'supports'        => array( 'title', 'editor', 'author' ),
+			'menu_icon'       => 'dashicons-pods',
+		);
+
+		$args = self::object_label_fix( $args, 'post_type' );
+
+		register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
 	}
 
 	/**
@@ -2257,7 +2266,7 @@ class PodsInit {
 
 		// Add New item links for all pods
 		foreach ( $all_pods as $pod ) {
-			if ( 0 === (int) $pod['options']['show_in_menu'] ) {
+			if ( ! isset( $pod['options']['show_in_menu'] ) || 0 === (int) $pod['options']['show_in_menu'] ) {
 				continue;
 			}
 

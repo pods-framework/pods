@@ -4,15 +4,16 @@ import {
 	setPodName,
 	setPodMetaValue,
 	setSaveStatus,
+	setDeleteStatus,
 	setActiveTab,
 	setOptionValue,
 	setOptionItemValue,
+	setOptionsValues,
 	setGroupList,
 	moveGroup,
 } from '../actions.js';
 
 describe( 'actions', () => {
-
 	// UI
 	describe( 'ui actions', () => {
 		const { actions, tabNames, saveStatuses } = uiConstants;
@@ -28,7 +29,7 @@ describe( 'actions', () => {
 				const activeTab = tabNames.LABELS;
 				const expected = {
 					type: action,
-					activeTab: activeTab,
+					activeTab,
 				};
 
 				expect( setActiveTab( activeTab ) ).toEqual( expected );
@@ -46,10 +47,30 @@ describe( 'actions', () => {
 				const saveStatus = saveStatuses.SAVE_SUCCESS;
 				const expected = {
 					type: action,
-					saveStatus: saveStatus,
+					saveStatus,
+					message: '',
 				};
 
 				expect( setSaveStatus( saveStatus ) ).toEqual( expected );
+			} );
+		} );
+
+		describe( 'setDeleteStatus()', () => {
+			const action = actions.SET_DELETE_STATUS;
+
+			it( 'Should define the action constant', () => {
+				expect( action ).toBeDefined();
+			} );
+
+			it( 'Should return the correct action', () => {
+				const deleteStatus = saveStatuses.DELETE_SUCCESS;
+				const expected = {
+					type: action,
+					deleteStatus,
+					message: '',
+				};
+
+				expect( setDeleteStatus( deleteStatus ) ).toEqual( expected );
 			} );
 		} );
 	} );
@@ -71,9 +92,9 @@ describe( 'actions', () => {
 				const itemValue = 'baz';
 				const expected = {
 					type: action,
-					optionName: optionName,
-					itemName: itemName,
-					itemValue: itemValue
+					optionName,
+					itemName,
+					itemValue,
 				};
 				const result = setOptionItemValue( optionName, itemName, itemValue );
 
@@ -87,10 +108,39 @@ describe( 'actions', () => {
 					type: action,
 					optionName: name,
 					itemName: 'value',
-					itemValue: value
+					itemValue: value,
 				};
 
 				expect( setOptionValue( name, value ) ).toEqual( expected );
+			} );
+		} );
+
+		describe( 'setOptionsValues()', () => {
+			const action = actions.SET_OPTIONS_VALUES;
+
+			it( 'Should define the action constant', () => {
+				expect( action ).toBeDefined();
+			} );
+
+			test( 'setOptionsValues() should return the correct action', () => {
+				const newOptions = {
+					first: 'First Value',
+					second: 'Second Value',
+					third: true,
+					fourth: 12,
+				};
+
+				const expected = {
+					type: action,
+					options: {
+						first: 'First Value',
+						second: 'Second Value',
+						third: true,
+						fourth: 12,
+					},
+				};
+
+				expect( setOptionsValues( newOptions ) ).toEqual( expected );
 			} );
 		} );
 	} );
@@ -110,7 +160,7 @@ describe( 'actions', () => {
 				const groupList = [ 'foo', 'bar', 'baz' ];
 				const expected = {
 					type: action,
-					groupList: groupList
+					groupList,
 				};
 
 				const result = setGroupList( groupList );
@@ -131,7 +181,7 @@ describe( 'actions', () => {
 				const expected = {
 					type: action,
 					oldIndex,
-					newIndex
+					newIndex,
 				};
 
 				const result = moveGroup( oldIndex, newIndex );
@@ -155,7 +205,7 @@ describe( 'actions', () => {
 				const name = 'xyzzyy';
 				const expected = {
 					type: action,
-					name: name,
+					name,
 				};
 
 				expect( setPodName( name ) ).toEqual( expected );
@@ -174,8 +224,8 @@ describe( 'actions', () => {
 				const value = 'bar';
 				const expected = {
 					type: action,
-					key: key,
-					value: value,
+					key,
+					value,
 				};
 				const result = setPodMetaValue( key, value );
 

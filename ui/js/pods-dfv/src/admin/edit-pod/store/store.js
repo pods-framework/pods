@@ -15,9 +15,9 @@ export const initStore = ( props ) => {
 	);
 
 	return registerStore( STORE_KEY_EDIT_POD, {
-		reducer: reducer,
-		selectors: selectors,
-		actions: actions,
-		initialState: initialState,
+		reducer,
+		selectors,
+		actions,
+		initialState,
 	} );
 };

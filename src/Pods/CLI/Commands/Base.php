@@ -54,6 +54,9 @@ abstract class Base {
 	 * @since 2.8
 	 */
 	public function add_commands() {
+		// Permissions are relaxed for WP-CLI context.
+		add_filter( 'pods_is_admin', '__return_true' );
+
 		if ( method_exists( $this->endpoint_archive, 'get' ) ) {
 			$command = sprintf( '%1$s %2$s %3$s', $this->namespace, $this->command, 'list' );
 
@@ -281,6 +284,22 @@ abstract class Base {
 			$rest_method = $method_mapping[ $method ];
 		}
 
+		$permissions_mapping = [
+			'list'   => 'can_read',
+			'add'    => 'can_create',
+			'get'    => 'can_read',
+			'update' => 'can_edit',
+			'delete' => 'can_delete',
+		];
+
+		if ( isset( $permissions_mapping[ $method ] ) ) {
+			$permissions_method = $permissions_mapping[ $method ];
+
+			if ( method_exists( $endpoint, $permissions_method ) && ! $endpoint->$permissions_method() ) {
+				\WP_CLI::error( __( 'The current user does not have access to this endpoint.', 'pods' ) );
+			}
+		}
+
 		$route = $endpoint->get_route();
 
 		// Add numeric args.
@@ -302,11 +321,9 @@ abstract class Base {
 			return $this->output_error_response( $response );
 		}
 
-		// @todo Output response data in a better way maybe.
-
 		if ( null !== $response ) {
 			if ( is_object( $response ) || is_array( $response ) ) {
-				$response = wp_json_encode( $response );
+				$response = wp_json_encode( $response, JSON_PRETTY_PRINT );
 			}
 
 			WP_CLI::line( $response );
@@ -347,24 +364,7 @@ abstract class Base {
 	 * @return array|WP_Error The associative args that validated or the WP_Error object with what failed.
 	 */
 	public function validate_args( array $args, array $assoc_args, $method, Base_Endpoint $endpoint ) {
-		$methdod_mapping = [
-			'get'    => 'READ_args',
-			'create' => 'CREATE_args',
-			'update' => 'EDIT_args',
-			'delete' => 'DELETE_args',
-		];
-
-		if ( ! isset( $methdod_mapping[ $method ] ) ) {
-			return $assoc_args;
-		}
-
-		$method = $methdod_mapping[ $method ];
-
-		if ( ! method_exists( $endpoint, $method ) ) {
-			return $assoc_args;
-		}
-
-		$rest_args = $endpoint->$method();
+		$rest_args = $this->get_rest_args( $method, $endpoint );
 
 		if ( empty( $rest_args ) ) {
 			return $assoc_args;
@@ -378,11 +378,10 @@ abstract class Base {
 						continue;
 					}
 
-					// @todo Fix messaging.
-					return new WP_Error( 'no', 'Missing positional argument' );
+					return new WP_Error( 'cli-missing-positional-argument', sprintf( __( 'Missing positional argument: %s', 'pods' ), $param ) );
 				}
 
-				$value = current( $args );
+				$value = array_shift( $args );
 
 				$value = $this->validate_arg( $value, $arg, $param );
 
@@ -436,19 +435,38 @@ abstract class Base {
 				return $value;
 			}
 
-			// @todo Fix messaging.
-			return new WP_Error( 'no', 'Argument is required' );
+			return new WP_Error( 'cli-argument-required', sprintf( __( 'Argument is required: %s', 'pods' ), $param ) );
 		}
 
 		if ( 'integer' === $arg['type'] ) {
 			$value = (int) $value;
 		}
 
-		if ( isset( $arg['validate_callback'] ) && is_callable( $arg['validate_callback'] ) ) {
+		if ( ! empty( $arg['validate_callback'] ) && is_callable( $arg['validate_callback'] ) ) {
 			$valid = call_user_func( $arg['validate_callback'], $value );
 
 			if ( ! $valid ) {
-				return '';
+				$callable_name = null;
+
+				if ( is_array( $arg['validate_callback'] ) ) {
+					$callable_name = '';
+
+					if ( is_object( $arg['validate_callback'][0] ) ) {
+						$callable_name = get_class( $arg['validate_callback'][0] ) . '::';
+					} elseif ( is_string( $arg['validate_callback'][0] ) ) {
+						$callable_name = $arg['validate_callback'][0] . '::';
+					}
+
+					$callable_name .= $arg['validate_callback'][1];
+				} elseif ( is_string( $arg['validate_callback'] ) ) {
+					$callable_name = $arg['validate_callback'];
+				}
+
+				if ( empty( $callable_name ) ) {
+					return new WP_Error( 'cli-argument-not-valid', sprintf( __( 'Argument not provided as expected: %s', 'pods' ), $param ) );
+				}
+
+				return new WP_Error( 'cli-argument-not-valid-with-callback', sprintf( __( 'Argument not provided as expected (%1$s): %2$s', 'pods' ), $callable_name, $param ) );
 			}
 
 			if ( is_wp_error( $valid ) ) {
@@ -470,19 +488,20 @@ abstract class Base {
 	}
 
 	/**
-	 * Get list of properly formatted CLI command arguments.
+	 * Get list of REST API arguments from endpoint.
 	 *
 	 * @since 2.8
 	 *
 	 * @param string        $command  Command name.
 	 * @param Base_Endpoint $endpoint Endpoint object.
 	 *
-	 * @return array List of properly formatted CLI command arguments.
+	 * @return array List of REST API arguments.
 	 */
-	public function build_command_args( $command, Base_Endpoint $endpoint ) {
+	public function get_rest_args( $command, Base_Endpoint $endpoint ) {
 		$command_mapping = [
 			'list'   => 'READ_args',
 			'add'    => 'CREATE_args',
+			'create' => 'CREATE_args',
 			'get'    => 'READ_args',
 			'update' => 'EDIT_args',
 			'delete' => 'DELETE_args',
@@ -499,6 +518,26 @@ abstract class Base {
 		}
 
 		$rest_args = $endpoint->$method();
+
+		if ( empty( $rest_args ) ) {
+			return [];
+		}
+
+		return $rest_args;
+	}
+
+	/**
+	 * Get list of properly formatted CLI command arguments.
+	 *
+	 * @since 2.8
+	 *
+	 * @param string        $command  Command name.
+	 * @param Base_Endpoint $endpoint Endpoint object.
+	 *
+	 * @return array List of properly formatted CLI command arguments.
+	 */
+	public function build_command_args( $command, Base_Endpoint $endpoint ) {
+		$rest_args = $this->get_rest_args( $command, $endpoint );
 
 		if ( empty( $rest_args ) ) {
 			return [];
@@ -523,13 +562,15 @@ abstract class Base {
 				$cli_arg['default'] = $arg['default'];
 			}
 
-			if ( ! empty( $arg['enum'] ) ) {
-				$cli_arg['options'] = $arg['enum'];
-			}
-
-			// Handle path args.
 			if ( isset( $arg['in'] ) && 'path' === $arg['in'] ) {
+				// Handle path args.
 				$cli_arg['type'] = 'positional';
+			} elseif ( isset( $arg['cli_boolean'] ) && $arg['cli_boolean'] ) {
+				// Handle flag args.
+				$cli_arg['type'] = 'flag';
+			} elseif ( ! empty( $arg['enum'] ) ) {
+				// Handle enum options.
+				$cli_arg['options'] = $arg['enum'];
 			}
 
 			$cli_args['synopsis'][] = $cli_arg;

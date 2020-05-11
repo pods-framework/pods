@@ -17,7 +17,7 @@ const testStore = {
 		initStore( initialState );
 		testStore.select = wp.data.select( STORE_KEY_EDIT_POD );
 		testStore.dispatch = wp.data.dispatch( STORE_KEY_EDIT_POD );
-	}
+	},
 };
 
 describe( 'store', () => {
@@ -32,7 +32,7 @@ describe( 'store', () => {
 			paths.FIELDS.createTree( [ 'field 1', 'field 2', 'field 3' ] ),
 			paths.GROUPS.createTree( {
 				'Group 1': { name: 'Group 1' },
-				'Group 2': { name: 'Group 2' }
+				'Group 2': { name: 'Group 2' },
 			} ),
 		);
 
@@ -76,7 +76,7 @@ describe( 'store', () => {
 						uiConstants.tabNames.ADMIN_UI,
 						uiConstants.tabNames.ADVANCED_OPTIONS,
 						uiConstants.tabNames.AUTO_TEMPLATE_OPTIONS,
-						uiConstants.tabNames.REST_API
+						uiConstants.tabNames.REST_API,
 					];
 					const initialState = paths.TAB_LIST.createTree( orderedList );
 

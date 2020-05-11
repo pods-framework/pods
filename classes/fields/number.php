@@ -162,13 +162,14 @@ class PodsField_Number extends PodsField {
 	}
 
 	/**
+	 * @todo 2.8 Centralize the usage of this method. See PR #5540.
 	 * {@inheritdoc}
 	 */
 	public function is_empty( $value = null ) {
 
 		$is_empty = false;
 
-		$value += 0;
+		$value = (float) $value;
 
 		if ( empty( $value ) ) {
 			$is_empty = true;
@@ -195,6 +196,7 @@ class PodsField_Number extends PodsField {
 
 		$options         = (array) $options;
 		$form_field_type = PodsForm::$field_type;
+		$is_read_only    = false;
 
 		if ( is_array( $value ) ) {
 			$value = implode( '', $value );
@@ -208,15 +210,15 @@ class PodsField_Number extends PodsField {
 
 		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
-				$options['readonly'] = true;
-
-				$field_type = 'text';
-
-				$value = $this->format( $value, $name, $options, $pod, $id );
+				$is_read_only = true;
 			} else {
 				return;
 			}
 		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
+			$is_read_only = true;
+		}
+
+		if ( $is_read_only ) {
 			$options['readonly'] = true;
 
 			$field_type = 'text';
@@ -258,11 +260,9 @@ class PodsField_Number extends PodsField {
 		$dot         = $format_args['dot'];
 
 		$check = str_replace(
-			array( $thousands, $dot, html_entity_decode( $thousands ) ), array(
-				'',
-				'.',
-				'',
-			), $value
+			array( $thousands, $dot, html_entity_decode( $thousands ) ),
+			array( '', '.', '' ),
+			$value
 		);
 
 		$check = trim( $check );
@@ -290,12 +290,21 @@ class PodsField_Number extends PodsField {
 
 		if ( 'slider' !== pods_v( static::$type . '_format_type', $options ) ) {
 			// Slider only supports `1234.00` format so no need for replacing characters.
-			$value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+			$value = str_replace(
+				array( $thousands, html_entity_decode( $thousands ), $dot, html_entity_decode( $dot ) ),
+				array( '', '', '.', '.' ),
+				$value
+			);
 		}
 
 		$value = trim( $value );
 
 		$value = preg_replace( '/[^0-9\.\-]/', '', $value );
+
+		if ( $this->is_empty( $value ) && ( ! is_numeric( $value ) || 0.0 !== (float) $value ) ) {
+			// Don't enforce a default value here.
+			return null;
+		}
 
 		$value = number_format( (float) $value, $decimals, '.', '' );
 
@@ -312,7 +321,7 @@ class PodsField_Number extends PodsField {
 	 */
 	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
-		if ( null === $value ) {
+		if ( $this->is_empty( $value ) && ( ! is_numeric( $value ) || 0.0 !== (float) $value ) ) {
 			// Don't enforce a default value here.
 			return null;
 		}

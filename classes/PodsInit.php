@@ -80,6 +80,15 @@ class PodsInit {
 	public static $upgrade_needed = false;
 
 	/**
+	 * Freemius object.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var \Freemius
+	 */
+	protected $freemius;
+
+	/**
 	 * Singleton handling for a basic pods_init() request
 	 *
 	 * @return \PodsInit
@@ -291,6 +300,196 @@ class PodsInit {
 		}
 
 		load_plugin_textdomain( 'pods' );
+
+		$this->freemius();
+
+	}
+
+	/**
+	 * Handle Freemius SDK registration.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return \Freemius
+	 */
+	public function freemius() {
+		// Admin only.
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		global $pagenow;
+
+		// Pods admin pages or plugins/update page only.
+		if (
+			'plugins.php' !== $pagenow
+			&& 'update-core.php' !== $pagenow
+			&& 'update.php' !== $pagenow
+			&& ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
+			&& ( ! isset( $_GET['page'] ) || 0 !== strpos( $_GET['page'], 'pods' ) )
+		) {
+			return;
+		}
+
+		if ( $this->freemius ) {
+			return $this->freemius;
+		}
+
+		require_once dirname( __DIR__ ) . '/vendor/freemius/wordpress-sdk/start.php';
+
+		try {
+			$this->freemius = fs_dynamic_init( array(
+				'id'             => '5347',
+				'slug'           => 'pods',
+				'type'           => 'plugin',
+				'public_key'     => 'pk_737105490825babae220297e18920',
+				'is_premium'     => false,
+				'has_addons'     => true,
+				'has_paid_plans' => false,
+				'menu'           => array(
+					'slug'        => 'pods-settings',
+					'contact'     => false,
+					'support'     => false,
+					'affiliation' => false,
+					'account'     => true,
+					'pricing'     => false,
+					'addons'      => true,
+					'parent'      => array(
+						'slug' => 'pods',
+					),
+				),
+			) );
+
+			$this->override_freemius_strings();
+
+			add_filter( 'fs_plugins_api', array( $this, 'filter_freemius_plugins_api_data' ), 15 );
+
+			$this->freemius->add_filter( 'templates/add-ons.php', array( $this, 'filter_freemius_addons_html' ) );
+			$this->freemius->add_filter( 'download_latest_url', array( $this, 'get_freemius_action_link' ) );
+
+			/**
+			 * Allow hooking into the Freemius registration after Pods has registered it's own Freemius.
+			 */
+			do_action( 'pods_freemius_init' );
+		} catch ( \Exception $exception ) {
+			return null;
+		}
+
+		return $this->freemius;
+	}
+
+	/**
+	 * Override Freemius strings.
+	 */
+	public function override_freemius_strings() {
+		$override_text = array(
+			'free'                     => __( 'Free (WordPress.org)', 'pods' ),
+			'install-free-version-now' => __( 'Install Now', 'pods' ),
+			'download-latest'          => __( 'Donate', 'pods' ),
+			'complete-the-install'     => __( 'complete the process', 'pods' ),
+		);
+
+		$freemius_addons = $this->get_freemius_addons();
+
+		fs_override_i18n( $override_text, 'pods' );
+
+		foreach ( $freemius_addons as $addon_slug => $addon ) {
+			fs_override_i18n( $override_text, $addon_slug );
+		}
+	}
+
+	/**
+	 * Filter the Freemius plugins API data.
+	 *
+	 * @since TBD
+	 *
+	 * @param object $data Freemius plugins API data.
+	 *
+	 * @return object Freemius plugins API data.
+	 */
+	public function filter_freemius_plugins_api_data( $data ) {
+		if ( empty( $data->sections['features'] ) ) {
+			return $data;
+		}
+
+		$data->sections['features'] = preg_replace( '/(<span\s+class="fs-price"><\/span>)/Uim', '<span class="fs-price">Friends-only</span>', $data->sections['features'] );
+
+		return $data;
+	}
+
+	/**
+	 * Filter the Freemius add-ons HTML.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $html Freemius add-ons HTML.
+	 *
+	 * @return string Freemius add-ons HTML.
+	 */
+	public function filter_freemius_addons_html( $html ) {
+		$freemius_friends_addons = $this->get_freemius_friends_addons();
+
+		// Replace blank prices with Friends-only.
+		$html = preg_replace( '/<span\s+class="fs-price"><\/span>/Uim', '<span class="fs-price">Friends-only</span>', $html );
+
+		// Remove dropdown arrow for action links.
+		$html = preg_replace( '/<div\s+class="button button-primary fs-dropdown-arrow-button">/Uim', '<div class="hidden">', $html );
+
+		// Use landing page for Become a Friend link.
+		$replace = '$1<a target="_blank" href="' . esc_url( $this->get_freemius_action_link() ) . '"$2class="$3">';
+
+		// Replace all Friends-only add-on links.
+		foreach ( $freemius_friends_addons as $addon_slug => $addon ) {
+			$pattern = '/(<li class="fs-card fs-addon" data-slug="' . preg_quote( esc_attr( $addon_slug ), '/' ) . '">\s+)<a href="[^"]+"([^>]+)class="thickbox([^>]+)">/Uim';
+
+			$html = preg_replace( $pattern, $replace, $html );
+		}
+
+		return $html;
+	}
+
+	/**
+	 * Get action link URL.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $url Action link URL.
+	 *
+	 * @return string Action link URL.
+	 */
+	public function get_freemius_action_link( $url = null ) {
+		return 'https://friends.pods.io/add-ons/';
+	}
+
+	/**
+	 * Get list of add-ons for Freemius.
+	 *
+	 * @since TBD
+	 *
+	 * @return array List of add-ons for Freemius.
+	 */
+	public function get_freemius_addons() {
+		return array(
+			'pods-beaver-builder-themer-add-on' => 'Pods Beaver Themer Add-On',
+			'pods-gravity-forms'                => 'Pods Gravity Forms Add-On',
+			'pods-alternative-cache'            => 'Pods Alternative Cache',
+			'pods-simple-relationships'         => 'Pods Simple Relationships',
+			'pods-seo'                          => 'Pods SEO',
+			'pods-ajax-views'                   => 'Pods AJAX Views',
+		);
+	}
+
+	/**
+	 * Get list of Friends-only add-ons for Freemius.
+	 *
+	 * @since TBD
+	 *
+	 * @return array List of Friends-only add-ons for Freemius.
+	 */
+	public function get_freemius_friends_addons() {
+		return array(
+			'pods-simple-relationships' => 'Pods Simple Relationships',
+		);
 	}
 
 	/**
@@ -332,7 +531,7 @@ class PodsInit {
 			define( 'PODS_COMPATIBILITY', true );
 		}
 
-		if ( ! PODS_COMPATIBILITY ) {
+		if ( ! PODS_COMPATIBILITY || is_admin() ) {
 			return;
 		}
 

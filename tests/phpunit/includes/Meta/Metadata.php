@@ -107,7 +107,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						break;
 					case 'taxonomy':
 						$id = wp_insert_term( $title, $name );
-						$id_key = 'term_ID';
+						$id_key = 'term_id';
 						break;
 					case 'user':
 						$login = str_replace( '-', '', sanitize_title_with_dashes( $title ) );

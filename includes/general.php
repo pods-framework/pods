@@ -328,6 +328,7 @@ function pods_is_admin( $cap = null ) {
 		}
 
 		$pods_admin_capabilities = array();
+
 		if ( ! is_multisite() ) {
 			// Default is_super_admin() checks against this capability.
 			$pods_admin_capabilities[] = 'delete_users';

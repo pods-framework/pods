@@ -25,6 +25,7 @@ export const uiConstants = {
 
 	saveStatuses: {
 		NONE: '',
+		SHOULD_SAVE: 'SHOULD_SAVE',
 		SAVING: 'SAVING',
 		SAVE_SUCCESS: 'SAVE_SUCCESS',
 		SAVE_ERROR: 'SAVE_ERROR',

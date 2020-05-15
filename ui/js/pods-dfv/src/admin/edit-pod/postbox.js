@@ -18,7 +18,16 @@ const {
 } = uiConstants;
 
 // Helper functions
-const savePod = async ( podID, podName, options, groups, fields, setSaveStatus, setOptionsValues ) => {
+const savePod = async (
+	podID,
+	podName,
+	options,
+	groups,
+	fields,
+	setSaveStatus,
+	setOptionsValues,
+	setPodName
+) => {
 	const optionKeys = Object.keys( options );
 
 	const data = {
@@ -55,6 +64,7 @@ const savePod = async ( podID, podName, options, groups, fields, setSaveStatus, 
 		} );
 
 		setOptionsValues( updatedOptions );
+		setPodName( result.pod.name );
 
 		setSaveStatus( SAVE_STATUSES.SAVE_SUCCESS );
 	} catch ( error ) {
@@ -94,13 +104,25 @@ export const Postbox = ( {
 	setSaveStatus,
 	setDeleteStatus,
 	setOptionsValues,
+	setPodName,
 } ) => {
 	const isSaving = saveStatus === SAVE_STATUSES.SAVING;
 
 	useEffect( () => {
 		// Try to delete the Pod if the status is set to DELETING.
-		if ( saveStatus === SAVE_STATUSES.SAVING ) {
-			savePod( podID, podName, options, groups, fields, setSaveStatus, setOptionsValues );
+		if ( saveStatus === SAVE_STATUSES.SHOULD_SAVE ) {
+			setSaveStatus( SAVE_STATUSES.SAVING );
+
+			savePod(
+				podID,
+				podName,
+				options,
+				groups,
+				fields,
+				setSaveStatus,
+				setOptionsValues,
+				setPodName
+			);
 		}
 
 		// Try to delete the Pod if the status is set to DELETING.
@@ -138,6 +160,7 @@ export const Postbox = ( {
 											onClick={ () => {
 												// eslint-disable-next-line no-alert
 												const confirm = window.confirm(
+													// eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
 													__( 'You are about to permanently delete this pod configuration, make sure you have recent backups just in case. Are you sure you would like to delete this Pod?\n\nClick \'OK\' to continue, or \'Cancel\' to make no changes.', 'pods' )
 												);
 
@@ -158,7 +181,7 @@ export const Postbox = ( {
 											type="submit"
 											disabled={ isSaving }
 											onClick={ () => {
-												setSaveStatus( SAVE_STATUSES.SAVING );
+												setSaveStatus( SAVE_STATUSES.SHOULD_SAVE );
 											} }
 										>
 											{ __( 'Save Pod', 'pods' ) }
@@ -218,6 +241,7 @@ export default compose( [
 			setDeleteStatus: storeDispatch.setDeleteStatus,
 			setSaveStatus: storeDispatch.setSaveStatus,
 			setOptionsValues: storeDispatch.setOptionsValues,
+			setPodName: storeDispatch.setPodName,
 		};
 	} ),
 ] )( Postbox );

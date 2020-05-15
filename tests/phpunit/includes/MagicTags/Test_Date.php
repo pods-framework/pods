@@ -11,6 +11,8 @@ class Date extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	 * @group pods-issue-4525
 	 */
 	public function test_create_template() {
+		update_option( 'date_format', 'F j, Y' );
+
 		$pod_name = __FUNCTION__;
 		$pod_id = pods_api()->save_pod( array( 'storage' => 'meta', 'type' => 'post_type', 'name' => $pod_name ) );
 		$params = array(

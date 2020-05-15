@@ -1,17 +1,16 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 
-export const PodsDFVValidationMessage = ( props ) => {
-	return ( <div className="notice notice-error">{props.message}</div> );
+const PodsDFVValidationMessage = ( { message } ) => (
+	<div className="notice notice-error">{ message }</div>
+);
+
+const PodsDFVValidationMessages = ( { messages } ) => {
+	return messages.map( ( thisMessage ) => (
+		<PodsDFVValidationMessage
+			key={ thisMessage }
+			message={ thisMessage }
+		/>
+	) );
 };
 
-export const PodsDFVValidationMessages = ( props ) => {
-	return props.messages.map( thisMessage => {
-		return (
-			<PodsDFVValidationMessage
-				key={thisMessage}
-				message={thisMessage}
-			/>
-		);
-	} );
-};
+export default PodsDFVValidationMessages;

@@ -1,94 +1,107 @@
-import jQuery from 'jquery';
-import { mnRenderer } from 'pods-dfv/src/core/renderers/mn-renderer';
-import { reactRenderer } from 'pods-dfv/src/core/renderers/react-renderer';
-import { reactDirectRenderer } from 'pods-dfv/src/core/renderers/react-direct-renderer';
+import mnRenderer from 'pods-dfv/src/core/renderers/mn-renderer';
+import reactRenderer from 'pods-dfv/src/core/renderers/react-renderer';
+import reactDirectRenderer from 'pods-dfv/src/core/renderers/react-direct-renderer';
 import { PodsGbModalListener } from 'pods-dfv/src/core/gb-modal-listener';
+
 import * as fields from 'pods-dfv/src/field-manifest';
 import * as models from 'pods-dfv/src/model-manifest';
 
-const SCRIPT_TARGET = 'script.pods-dfv-field-data';   // What scripts to look for
+// Loads data from an object in this script tag.
+const SCRIPT_TARGET = 'script.pods-dfv-field-data';
 
-const fieldClasses =  {
-	'file': {
+const fieldClasses = {
+	file: {
 		FieldClass: fields.File,
-		renderer: mnRenderer
+		renderer: mnRenderer,
 	},
-	'avatar': {
+	avatar: {
 		FieldClass: fields.File,
-		renderer: mnRenderer
+		renderer: mnRenderer,
 	},
-	'pick': {
+	pick: {
 		FieldClass: fields.Pick,
-		renderer: mnRenderer
+		renderer: mnRenderer,
 	},
-	'text': {
+	text: {
 		FieldClass: fields.PodsDFVText,
-		renderer: reactRenderer
+		renderer: reactRenderer,
 	},
-	'password': {
+	password: {
 		FieldClass: fields.PodsDFVPassword,
-		renderer: reactRenderer
+		renderer: reactRenderer,
 	},
-	'number': {
+	number: {
 		FieldClass: fields.PodsDFVNumber,
-		renderer: reactRenderer
+		renderer: reactRenderer,
 	},
-	'email': {
+	email: {
 		FieldClass: fields.PodsDFVEmail,
-		renderer: reactRenderer
+		renderer: reactRenderer,
 	},
-	'paragraph': {
+	paragraph: {
 		FieldClass: fields.PodsDFVParagraph,
-		renderer: reactRenderer
+		renderer: reactRenderer,
 	},
 	'edit-pod': {
 		FieldClass: fields.PodsDFVEditPod,
-		renderer: reactDirectRenderer
+		renderer: reactDirectRenderer,
 	},
 };
 
 window.PodsDFV = {
 	fields: fieldClasses,
-	models: models,
+	models,
 	fieldInstances: {},
 
 	/**
-	 *
+	 * Initialize Pod data.
 	 */
-	init: function () {
+	init() {
 		// Find all in-line data scripts
-		jQuery( SCRIPT_TARGET ).each( function () {
-			const parent = jQuery( this ).parent().get( 0 );
-			const data = jQuery.parseJSON( jQuery( this ).html() );
+		const dataTags = [ ...document.querySelectorAll( SCRIPT_TARGET ) ];
+
+		dataTags.forEach( ( tag ) => {
+			const data = JSON.parse( tag.innerHTML );
+
+			console.log( data );
 
 			// Kludge to disable the "Add New" button if we're inside a media modal.  This should
 			// eventually be ironed out so we can use Add New from this context (see #4864)
-			if ( jQuery( this ).parents( '.media-modal-content' ).length ) {
-				// eslint-disable-next-line
+			if ( tag.closest( '.media-modal-content' ) ) {
 				data.fieldConfig.pick_allow_add_new = 0;
 			}
 
 			// Ignore anything that doesn't have the field type set
-			if ( data.fieldType !== undefined ) {
-				let field = fieldClasses[ data.fieldType ];
-
-				if ( field !== undefined ) {
-					//self.fieldInstances[ data.htmlAttr.id ] = field.renderer( field.fieldClass, data );
-					field.renderer( field.FieldClass, parent, data );
-				}
+			if ( data.fieldType === undefined ) {
+				return;
 			}
 
-			jQuery( this ).remove();
+			const field = fieldClasses[ data.fieldType ];
+
+			// @todo remove this later
+			// We need to only depend on the `config` and `fieldType`
+			// properties, so discard the others for now, until they're
+			// removed from the API.
+			const actualData = {
+				config: {
+					...data.config,
+				},
+				fieldType: data.fieldType,
+			};
+
+			if ( field !== undefined ) {
+				field.renderer( field.FieldClass, tag.parentNode, data );
+			}
 		} );
 	},
 
-	isModalWindow: function () {
+	isModalWindow() {
 		return ( -1 !== location.search.indexOf( 'pods_modal=' ) );
 	},
 
-	isGutenbergEditorLoaded: function () {
+	isGutenbergEditorLoaded() {
 		return ( wp.data !== undefined && wp.data.select( 'core/editor' ) !== undefined );
-	}
+	},
 };
 
 /**

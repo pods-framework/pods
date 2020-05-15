@@ -99,6 +99,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 					case 'post_type':
 						$object['post_title']  = $title;
 						$object['post_status'] = 'published';
+						$object['post_type']   = $name;
 
 						$id = wp_insert_post( $object );
 						break;

@@ -324,9 +324,11 @@ function pods_traverse( $traverse, $value ) {
 	if ( ! $traverse && ! is_numeric( $traverse ) ) {
 		return $value;
 	}
+
 	if ( is_scalar( $value ) ) {
 		return null;
 	}
+
 	if ( is_object( $value ) ) {
 		$value = (array) $value;
 	}
@@ -334,16 +336,19 @@ function pods_traverse( $traverse, $value ) {
 	if ( ! is_array( $traverse ) ) {
 		$traverse = explode( '.', $traverse );
 	}
+
 	$key = array_shift( $traverse );
 
 	if ( ! isset( $value[ $key ] ) ) {
 		return null;
 	}
+
 	$value = $value[ $key ];
 
 	if ( $traverse ) {
 		$value = pods_traverse( $traverse, $value );
 	}
+
 	return $value;
 }
 

@@ -131,9 +131,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			self::$obj_ids[ $type ] = $objects;
 
+			$update_meta = 'update_' . $name;
 			foreach ( $objects as $key => $id ) {
-
-				$update_meta = 'update_' . $name;
 
 				switch ( $key ) {
 					case 0:

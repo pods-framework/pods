@@ -159,7 +159,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 		foreach ( self::$obj_ids as $type => $ids ) {
 
-			$get_meta = 'get_' . self::$pod_names[ $type ];
+			$name     = self::$pod_names[ $type ];
+			$get_meta = 'get_' . $name;
 			foreach ( $ids as $key => $id ) {
 
 				$single        = call_user_func( $get_meta, $id, 'related_single', false );

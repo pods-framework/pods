@@ -26,6 +26,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 	protected static $pod_ids = array();
 
+	protected static $obj_ids = array();
+
 	public static function wpSetUpBeforeClass() {
 		self::create_pods();
 		self::load_pods();
@@ -127,7 +129,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				$objects[ $key ] = pods_v( $id_key, $id, $id );
 			}
 
-			self::$pod_ids[ $type ] = $objects;
+			self::$obj_ids[ $type ] = $objects;
 
 			foreach ( $objects as $key => $id ) {
 
@@ -156,7 +158,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 		add_filter( 'pods_pods_field_related_output_type', array( $this, 'filter_output_type_ids' ) );
 
-		foreach ( self::$pod_ids as $type => $ids ) {
+		foreach ( self::$obj_ids as $type => $ids ) {
 
 			$get_meta = 'get_' . self::$pod_names[ $type ];
 			foreach ( $ids as $key => $id ) {
@@ -185,8 +187,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						// Single related to: 2
 						// Multi related to: 2
 
-						$single_rel = self::$pod_ids[ $type ][ 2 ];
-						$multi_rel  = self::$pod_ids[ $type ][ 2 ];
+						$single_rel = self::$obj_ids[ $type ][ 2 ];
+						$multi_rel  = self::$obj_ids[ $type ][ 2 ];
 
 						// Single param false
 						$this->assertEquals( array( $single_rel ), $single, $message );
@@ -201,10 +203,10 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						// Single related to: 1
 						// Multi related to: 0 and 1
 
-						$single_rel = self::$pod_ids[ $type ][ 1 ];
+						$single_rel = self::$obj_ids[ $type ][ 1 ];
 						$multi_rel  = array(
-							self::$pod_ids[ $type ][ 0 ],
-							self::$pod_ids[ $type ][ 1 ]
+							self::$obj_ids[ $type ][ 0 ],
+							self::$obj_ids[ $type ][ 1 ]
 						);
 
 						// Single param false

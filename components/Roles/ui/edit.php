@@ -15,13 +15,14 @@
 			<h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Edit Role', 'pods' ); ?></h2>
 
 			<?php
-			if ( isset( $_GET[ 'do' ] ) ) {
+			if ( isset( $_GET['do'] ) ) {
 				$action = __( 'saved', 'pods' );
 
-				if ( 'create' == pods_var( 'do', 'get', 'save' ) )
+				if ( 'create' == pods_var( 'do', 'get', 'save' ) ) {
 					$action = __( 'created', 'pods' );
+				}
 
-				$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+				$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 				echo $obj->message( $message );
 			}
@@ -29,7 +30,7 @@
 
 			<p><?php _e( 'Choose below which Capabilities you would like this existing user role to have.', 'pods' ); ?></p>
 
-			<div id="poststuff">
+			<div id="poststuff" class="poststuff">
 				<div id="post-body" class="metabox-holder columns-2">
 
 					<div id="postbox-container-1" class="postbox-container">
@@ -91,12 +92,13 @@
 													foreach ( $capabilities as $capability ) {
 														$checked = false;
 
-														if ( true === (boolean) pods_var( $capability, $role_capabilities, false ) )
+														if ( true === (boolean) pods_var( $capability, $role_capabilities, false ) ) {
 															$checked = true;
+														}
 
 														$class = ( $zebra ? 'even' : 'odd' );
 
-														$zebra = ( !$zebra );
+														$zebra = ( ! $zebra );
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
 															<?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
@@ -125,7 +127,9 @@
 													</li>
 												</ul>
 
-												<p><a href="#add-capability" id="add-capability" class="button">Add Another Custom Capability</a></p>
+												<p>
+													<a href="#add-capability" id="add-capability" class="button"><?php _e( 'Add Another Custom Capability', 'pods' ); ?></a>
+												</p>
 											</div>
 										</div>
 									</div>
@@ -135,9 +139,8 @@
 							</div>
 							<!-- /#normal-sortables -->
 
-							<!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">
-						  </div>
-						   /#advanced-sortables -->
+							<!-- <div id="advanced-sortables" class="meta-box-sortables ui-sortable"></div> -->
+							<!-- /#advanced-sortables -->
 
 						</div>
 						<!-- /#post-body-content -->
@@ -178,7 +181,7 @@
 
 			$( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', toggle_all );
 
-			toggle_all = ( !toggle_all );
+			toggle_all = (!toggle_all);
 		} );
 
 		$( '#add-capability' ).on( 'click', function ( e ) {

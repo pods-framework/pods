@@ -1,61 +1,76 @@
 {
-    "name": "pods-framework/pods",
-    "type": "wordpress-plugin",
-    "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
-    "keywords": [
-        "pods",
-        "custom",
-        "fields"
-    ],
-    "homepage": "http://pods.io/",
-    "license": "GPL-2.0+",
-    "authors": [
-        {
-            "name": "Scott Kingsley Clark",
-            "email": "scott@pods.io",
-            "homepage": "http://scottkclark.com/",
-            "role": "Lead Developer"
-        },
-        {
-            "name": "Phil Lewis",
-            "email": "phil@pods.io",
-            "role": "Developer"
-        },
-        {
-            "name": "Josh Pollock",
-            "email": "josh@pods.io",
-            "role": "Developer"
-        },
-        {
-            "name": "Dan Stefan Oprean",
-            "role": "Developer"
-        },
-        {
-            "name": "David Cramer",
-            "role": "Developer"
-        },
-        {
-            "name": "Mike Green",
-            "role": "Developer"
-        },
-        {
-            "name": "Jonathan Christopher",
-            "role": "Developer"
-        },
-        {
-            "name": "Matt Gibbs",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "composer/installers": "1.3.*",
-        "php": ">=5.2.4"
+  "name": "pods-framework/pods",
+  "type": "wordpress-plugin",
+  "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
+  "keywords": [
+    "wordpress",
+    "content",
+    "fields"
+  ],
+  "homepage": "https://pods.io/",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Scott Kingsley Clark",
+      "email": "scott@pods.io",
+      "homepage": "https://www.scottkclark.com/",
+      "role": "Lead Developer"
     },
-    "require-dev": {
-        "phpunit/phpunit": "4.8.*",
-        "mockery/mockery": "0.9.*"
+    {
+      "name": "Phil Lewis",
+      "homepage": "https://github.com/pglewis",
+      "role": "Developer"
     },
-    "extra": {
-        "installer-name": "pods"
+    {
+      "name": "Jim True",
+      "homepage": "https://jimtrue.com/",
+      "role": "Developer and Support"
+    },
+    {
+      "name": "Matt Gibbs",
+      "homepage": "https://facetwp.com/",
+      "role": "Founding Developer"
     }
+  ],
+  "support": {
+    "email": "support@pods.io",
+    "issues": "https://github.com/pods-framework/pods/issues",
+    "forum": "https://wordpress.org/support/plugin/pods",
+    "source": "https://github.com/pods-framework/pods",
+    "docs": "https://pods.io/docs/"
+  },
+  "repositories": [
+    {
+      "name": "moderntribe/tribalscents",
+      "type": "github",
+      "url": "https://github.com/moderntribe/tribalscents",
+      "no-api": true
+    }
+  ],
+  "require": {
+    "composer/installers": "1.8.*",
+    "php": ">=5.6",
+    "freemius/wordpress-sdk": "2.3.2"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
+    "wp-coding-standards/wpcs": "^2.1",
+    "automattic/vipwpcs": "^2.0",
+    "moderntribe/TribalScents": "dev-master",
+    "wp-cli/wp-cli": "2.*",
+    "phpunit/phpunit": "4.*",
+    "mockery/mockery": "1.3.*",
+    "phpcompatibility/php-compatibility": "9.*",
+    "lucatume/wp-browser": "^2.0.5 || dev-php-56-compat",
+    "mockery/mockery": "0.9.*",
+    "vlucas/phpdotenv": "^2.4"
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "suggest": {
+    "wp-cli/wp-cli": "Enables access to Pods CLI commands."
+  },
+  "extra": {
+    "installer-name": "pods"
+  }
 }

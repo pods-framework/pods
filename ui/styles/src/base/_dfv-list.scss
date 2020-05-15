@@ -1,3 +1,9 @@
+ul.pods-dfv-list ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
 ul.pods-dfv-list,
 .pods-dfv-field .pods-pick-values > ul {
 	background: #fff;
@@ -136,6 +142,7 @@ ul.pods-dfv-list li.pods-dfv-list-remove a {
 	text-indent: 100%;
 	white-space: nowrap;
 	overflow: hidden;
+	box-shadow: none;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-name {

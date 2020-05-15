@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class PodsRESTHandlers
  *
@@ -61,7 +62,6 @@ class PodsRESTHandlers {
 		/**
 		 * If $pod_name in the line above is empty then the route invoked
 		 * may be for a taxonomy, so lets try and check for that
-		 *
 		 */
 		if ( empty( $pod_name ) ) {
 			$pod_name = pods_v( 'taxonomy', $object );
@@ -69,7 +69,6 @@ class PodsRESTHandlers {
 
 		/**
 		 * $pod_name is still empty, so check lets check $object_type
-		 *
 		 */
 
 		if ( empty( $pod_name ) ) {
@@ -91,9 +90,9 @@ class PodsRESTHandlers {
 		 * @param WP_REST_Request $request     Current request
 		 * @param string          $object_type Rest Object type
 		 */
-		$pod_name = apply_filters( 'pods_rest_api_pod_name', $pod_name, $object, $field_name, $request, $object_type  );
+		$pod_name = apply_filters( 'pods_rest_api_pod_name', $pod_name, $object, $field_name, $request, $object_type );
 
-		$id  = pods_v( 'id', $object );
+		$id = pods_v( 'id', $object );
 
 		if ( empty( $id ) ) {
 			$id = pods_v( 'ID', $object );
@@ -114,7 +113,7 @@ class PodsRESTHandlers {
 				/**
 				 * What output type to use for a related field REST response.
 				 *
-				 * @since 2.7
+				 * @since 2.7.0
 				 *
 				 * @param string                 $output_type The pick response output type.
 				 * @param string                 $field_name  The name of the field
@@ -168,7 +167,7 @@ class PodsRESTHandlers {
 								 * @param object|WP_REST_Request Current     request object.
 								 */
 								$fields = apply_filters( 'pods_rest_api_fields_for_relationship_response', $fields, $field_name, $pod, $related_pod, $id, $request );
-							}
+							}//end if
 
 							/**
 							 * What depth to use for a related field REST response.
@@ -191,22 +190,22 @@ class PodsRESTHandlers {
 							);
 
 							$items[] = $related_pod->export( $params );
-						}
+						}//end foreach
 
 						$value = $items;
-					}
-				}
+					}//end if
+				}//end if
 
 				$params = array(
 					'output' => $output_type,
 				);
-			}
+			}//end if
 
 			// If no value set yet, get normal field value
 			if ( ! $value && ! is_array( $value ) ) {
 				$value = $pod->field( $field_name, $params );
 			}
-		}
+		}//end if
 
 		return $value;
 
@@ -244,7 +243,7 @@ class PodsRESTHandlers {
 		} else {
 			// Not a supported object
 			return;
-		}
+		}//end if
 
 		$pod = self::get_pod( $pod_name, $id );
 
@@ -276,7 +275,7 @@ class PodsRESTHandlers {
 			if ( ! empty( $save_fields ) || $creating ) {
 				$pod->save( $save_fields, null, null, $params );
 			}
-		}
+		}//end if
 
 	}
 

@@ -1,7 +1,6 @@
 # [Pods Framework](https://pods.io) #
-[![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=release/2.7)](http://travis-ci.org/pods-framework/pods)
-[![Dependency Status](https://gemnasium.com/badges/github.com/pods-framework/pods.svg)](https://gemnasium.com/github.com/pods-framework/pods)
-[![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/release/2.7/license.txt)
+[![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=master)](http://travis-ci.org/pods-framework/pods)
+[![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/master/license.txt)
 
 [![WordPress Plugin version](https://img.shields.io/wordpress/plugin/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
 [![WordPress Plugin WP tested version](https://img.shields.io/wordpress/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
@@ -32,9 +31,25 @@ This is a developer's portal for Pods Framework and should _not_ be used for sup
 
 If you find an issue that you believe to be a *bug*, [let us know](https://github.com/pods-framework/pods/issues?state=open).
 
+## Requirements
+
+### Recommended
+
+* WordPress 5.2+
+* PHP 7.3+
+* MySQL 5.6+ or MariaDB 10.1+
+
+### Minimum
+
+If you have restrictions on your server or site, these are the minimum versions that Pods will be supported to run on. Running the following minimum versions does bring with it their own risks including security and exposure to additional bugs that may have been resolved by the recommended versions above. 
+
+* WordPress 4.9+
+* PHP 5.6+
+* MySQL 5.5+
+
 ## Contributions Welcome
 
-Anyone is welcome to contribute to Pods Framework. Please read the [guidelines for contributing](https://github.com/pods-framework/pods/blob/release/2.7/CONTRIBUTING.md) to this repository.
+Anyone is welcome to contribute to Pods Framework. Please read the [guidelines for contributing](CONTRIBUTING.md) to this repository.
 
 There are various ways you can contribute:
 

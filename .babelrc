@@ -1,9 +1,30 @@
 {
-    "presets": [ "es2015" ],
-    "plugins": [
-        [ "module-resolver", {
-            "alias": { "pods-dfv": "./ui/js/pods-dfv" }
-        } ],
-        "transform-html-import-to-string"
-    ]
+	"presets": [
+		[ "@babel/preset-env" ],
+		[ "@babel/preset-react" ]
+	],
+	"plugins": [
+		[
+			"babel-plugin-module-resolver",
+			{
+				"alias": {
+					"pods-dfv": "./ui/js/pods-dfv"
+				}
+			}
+		],
+		"babel-plugin-transform-html-import-to-string",
+		"@babel/plugin-transform-strict-mode"
+	],
+	"env": {
+		"development": {
+			"presets": [
+				[ "@babel/preset-react", { "development": true } ]
+			]
+		},
+		"production": {
+			"plugins": [
+				"transform-react-remove-prop-types"
+			]
+		}
+	}
 }

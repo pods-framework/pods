@@ -1,16 +1,15 @@
 <?php
 /*
 Plugin Name: Pods - Custom Content Types and Fields
-Plugin URI: http://pods.io/
+Plugin URI: https://pods.io/
 Description: Pods is a framework for creating, managing, and deploying customized content types and fields
-Version: 2.7.0-rc-1
+Version: 2.8.0-a-2
 Author: Pods Framework Team
-Author URI: http://pods.io/about/
+Author URI: https://pods.io/about/
 Text Domain: pods
 GitHub Plugin URI: https://github.com/pods-framework/pods
-GitHub Branch: release/2.7
 
-Copyright 2009-2017  Pods Foundation, Inc  (email : contact@podsfoundation.org)
+Copyright 2009-2019  Pods Foundation, Inc  (email : contact@podsfoundation.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,7 +36,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	add_action( 'init', 'pods_deactivate_pods_ui' );
 } else {
 	// Current version
-	define( 'PODS_VERSION', '2.7.0-rc-1' );
+	define( 'PODS_VERSION', '2.8.0-a-2' );
 
 	// Version tracking between DB updates themselves
 	define( 'PODS_DB_VERSION', '2.3.5' );
@@ -45,17 +44,18 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	// This should always be -2 versions behind the latest WP release
 	// To be updated each Major x.x Pods release
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_WP_VERSION_MINIMUM', '4.5' );
+		define( 'PODS_WP_VERSION_MINIMUM', '4.9' );
 	}
 
 	// This should match minimum WP requirements or usage (90%+)
 	// Found at: https://wordpress.org/about/stats/
 	if ( ! defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_PHP_VERSION_MINIMUM', '5.3' );
+		define( 'PODS_PHP_VERSION_MINIMUM', '5.6' );
 	}
 
 	// This should match minimum WP requirements or usage (90%+)
 	// Found at: https://wordpress.org/about/stats/
+	// Using 5.1 for now, many RedHat servers aren't EOL yet and they backport security releases
 	if ( ! defined( 'PODS_MYSQL_VERSION_MINIMUM' ) ) {
 		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.5' );
 	}
@@ -70,17 +70,21 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	} else {
 		global $pods, $pods_init, $pods_form;
 
-		require_once( PODS_DIR . 'includes/classes.php' );
-		require_once( PODS_DIR . 'includes/data.php' );
-		require_once( PODS_DIR . 'includes/general.php' );
+		// Init custom autoloader.
+		require_once PODS_DIR . 'classes/PodsInit.php';
+		spl_autoload_register( array( 'PodsInit', 'autoload_class' ) );
+
+		require_once PODS_DIR . 'includes/classes.php';
+		require_once PODS_DIR . 'includes/data.php';
+		require_once PODS_DIR . 'includes/general.php';
 
 		if ( ! defined( 'PODS_MEDIA' ) || PODS_MEDIA ) {
-			require_once( PODS_DIR . 'includes/media.php' );
+			require_once PODS_DIR . 'includes/media.php';
 		}
 
 		if ( ! defined( 'SHORTINIT' ) || ! SHORTINIT ) {
 			if ( pods_allow_deprecated() ) {
-				require_once( PODS_DIR . 'deprecated/deprecated.php' );
+				require_once PODS_DIR . 'deprecated/deprecated.php';
 			}
 
 			if ( false !== pods_compatibility_check() ) {

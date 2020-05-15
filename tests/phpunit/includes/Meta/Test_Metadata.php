@@ -33,11 +33,18 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 		self::load_pods();
 	}
 
+	/*public function setUp() {
+		parent::setUp();
+
+		self::create_pods();
+		self::load_pods();
+	}*/
+
 	public static function wpTearDownAfterClass() {
 		foreach ( self::$pod_names as $type => $name ) {
 			// Delete all pod objects as well.
 			$delete_all = true;
-			pods_api()->delete_pod( $name, false, $delete_all );
+			//pods_api()->delete_pod( $name, false, $delete_all );
 		}
 	}
 
@@ -88,7 +95,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			pods_api()->save_field( $params );
 		}
-		pods_init()->setup_content_types( true );
 	}
 
 	public static function load_pods() {
@@ -165,13 +171,18 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 	public function test_get_metadata() {
 
-		add_filter( 'pods_pods_field_related_output_type', array( $this, 'filter_output_type_ids' ) );
+		//add_filter( 'pods_pods_field_related_output_type', array( $this, 'filter_output_type_ids' ) );
+		//remove_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10 );
 
 		foreach ( self::$obj_ids as $type => $ids ) {
 
 			$name     = self::$pod_names[ $type ];
 			$get_meta = 'get_' . $name;
+
 			foreach ( $ids as $key => $id ) {
+				var_dump( get_post( $id )->post_type );
+
+				//var_dump( pods( self::$pod_names[ $type ], $id ) );
 
 				$single        = call_user_func( $get_meta, $id, 'related_single', false );
 				$single_single = call_user_func( $get_meta, $id, 'related_single', true );
@@ -183,17 +194,18 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 				switch ( $key ) {
 					case 0:
+
+						// Single param false
 						$text = call_user_func( $get_meta, $id, 'text', false );
 						$this->assertEquals( array( 'text' ), $text, $message );
 
-						$text = call_user_func( $get_meta, $id, 'text', true );
-						$this->assertEquals( 'text', $text, $message );
-
-						// Single param false
 						$this->assertEquals( array(), $single, $message );
 						$this->assertEquals( array(), $multi, $message );
 
 						// Single param true
+						$text = call_user_func( $get_meta, $id, 'text', true );
+						$this->assertEquals( 'text', $text, $message );
+
 						$this->assertEquals( '', $single_single, $message );
 						$this->assertEquals( '', $multi_single, $message );
 

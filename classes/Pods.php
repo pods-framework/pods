@@ -1145,8 +1145,11 @@ class Pods implements Iterator {
 						$field = explode( '.', $params->name );
 
 						if ( 1 < count( $field ) ) {
-							array_shift( $field ); // Remove field name.
+							// Remove field name.
+							array_shift( $field );
+
 							$type = array_shift( $field );
+
 							switch ( $type ) {
 								case '_format':
 									if ( $field ) {
@@ -1157,8 +1160,8 @@ class Pods implements Iterator {
 										$field_data['options']['datetime_time_type']     = 'custom';
 										$field_data['options']['datetime_format_custom'] = $format;
 									} else {
-										$field_data['options']['datetime_type']          = 'wp';
-										$field_data['options']['datetime_time_type']     = 'wp';
+										$field_data['options']['datetime_type']      = 'wp';
+										$field_data['options']['datetime_time_type'] = 'wp';
 									}
 									break;
 							}

@@ -145,7 +145,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						break;
 					case 2:
 						call_user_func( $update_meta, $id, 'related_single', $objects[ 1 ] );
-						// Multi relationship.
+						// Multi relationship. Should trigger Pods update metadata handler for multiple values.
 						call_user_func( $update_meta, $id, 'related_multi', array( $objects[ 0 ], $objects[ 1 ] ) );
 						break;
 				}

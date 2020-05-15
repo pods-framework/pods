@@ -58,6 +58,15 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 			$params = array(
 				'pod'              => $name,
 				'pod_id'           => $pod_id,
+				'name'             => 'text',
+				'type'             => 'text',
+			);
+
+			pods_api()->save_field( $params );
+
+			$params = array(
+				'pod'              => $name,
+				'pod_id'           => $pod_id,
 				'name'             => 'related_single',
 				'type'             => 'pick',
 				'pick_object'      => $type,
@@ -136,7 +145,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 				switch ( $key ) {
 					case 0:
-						// Only empty fields.
+						call_user_func( $update_meta, $id, 'text', 'text' );
+						// No relationship fields.
 						break;
 					case 1:
 						call_user_func( $update_meta, $id, 'related_single', $objects[ 2 ] );
@@ -173,6 +183,11 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 				switch ( $key ) {
 					case 0:
+						$text = call_user_func( $get_meta, $id, 'text', false );
+						$this->assertEquals( array( 'text' ), $text, $message );
+
+						$text = call_user_func( $get_meta, $id, 'text', true );
+						$this->assertEquals( 'text', $text, $message );
 
 						// Single param false
 						$this->assertEquals( array(), $single, $message );

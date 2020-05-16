@@ -51,6 +51,8 @@ export const FieldGroups = ( { groups, getGroupFields, groupList, setGroupList, 
 				<FieldGroup
 					key={ group.name }
 					groupName={ group.name }
+					groupLabel={ group.label }
+					groupID={ group.id }
 					index={ index }
 					getGroupFields={ getGroupFields }
 					moveGroup={ moveGroup }

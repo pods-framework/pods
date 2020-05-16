@@ -4110,6 +4110,7 @@ class PodsAdmin {
 				'type'       => 'pick',
 				'default'    => 'array',
 				'depends-on' => [ 'type' => 'pick' ],
+				'dependency' => true,
 				'data'       => [
 					'array' => __( 'Full', 'pods' ),
 					'id'    => __( 'ID only', 'pods' ),
@@ -4121,7 +4122,10 @@ class PodsAdmin {
 				'help'       => __( 'How far to traverse relationships in response', 'pods' ),
 				'type'       => 'number',
 				'default'    => '2',
-				'depends-on' => [ 'type' => 'pick' ],
+				'depends-on' => [
+					'type'               => 'pick',
+					'rest_pick_response' => 'array',
+ ],
 			],
 			'rest_pick_notice'   => [
 				'label'        => 'Relationship Options',

@@ -4440,7 +4440,7 @@ class PodsAPI {
 		}
 
 		if ( ! is_array( $related_ids ) ) {
-			$related_ids = implode( ',', $related_ids );
+			$related_ids = explode( ',', $related_ids );
 		}
 
 		foreach ( $related_ids as $k => $related_id ) {
@@ -4449,10 +4449,14 @@ class PodsAPI {
 
 		$related_ids = array_unique( array_filter( $related_ids ) );
 
-		$related_limit = (int) pods_var_raw( $field['type'] . '_limit', $field['options'], 0 );
+		$is_single = false;
 
-		if ( 'single' === pods_var_raw( $field['type'] . '_format_type', $field['options'] ) ) {
+		$related_limit = (int) pods_v( $field['type'] . '_limit', $field['options'], 0 );
+
+		if ( 'single' === pods_v( $field['type'] . '_format_type', $field['options'] ) ) {
 			$related_limit = 1;
+
+			$is_single = true;
 		}
 
 		// Limit values
@@ -4470,12 +4474,16 @@ class PodsAPI {
 				$object_type = 'term';
 			}
 
-			delete_metadata( $object_type, $id, $field['name'] );
+			$new_ids = array_diff( $related_ids, $current_ids );
 
 			if ( ! empty( $related_ids ) ) {
-				update_metadata( $object_type, $id, '_pods_' . $field['name'], $related_ids );
+				if ( $is_single ) {
+					update_metadata( $object_type, $id, '_pods_' . $field['name'], $related_ids );
+				} else {
+					delete_metadata( $object_type, $id, '_pods_' . $field['name'] );
+				}
 
-				foreach ( $related_ids as $related_id ) {
+				foreach ( $new_ids as $related_id ) {
 					add_metadata( $object_type, $id, $field['name'], $related_id );
 				}
 			} else {
@@ -4500,42 +4508,10 @@ class PodsAPI {
 
 		// Relationships table
 		if ( ! pods_tableless() ) {
-			$related_weight = 0;
-
-			foreach ( $related_ids as $related_id ) {
-				if ( in_array( $related_id, $current_ids ) ) {
-					pods_query( "
-						UPDATE `@wp_podsrel`
-						SET
-							`pod_id` = %d,
-							`field_id` = %d,
-							`item_id` = %d,
-							`related_pod_id` = %d,
-							`related_field_id` = %d,
-							`related_item_id` = %d,
-							`weight` = %d
-						WHERE
-							`pod_id` = %d
-							AND `field_id` = %d
-							AND `item_id` = %d
-							AND `related_item_id` = %d
-					", array(
-						$pod['id'],
-						$field['id'],
-						$id,
-						$related_pod_id,
-						$related_field_id,
-						$related_id,
-						$related_weight,
-
-						$pod['id'],
-						$field['id'],
-						$id,
-						$related_id,
-					) );
-				} else {
-					pods_query( "
-						INSERT INTO `@wp_podsrel`
+			if ( ! empty( $new_ids ) ) {
+				foreach ( $new_ids as $related_id ) {
+					pods_query( '
+							INSERT INTO `@wp_podsrel`
 							(
 								`pod_id`,
 								`field_id`,
@@ -4545,19 +4521,44 @@ class PodsAPI {
 								`related_item_id`,
 								`weight`
 							)
-						VALUES ( %d, %d, %d, %d, %d, %d, %d )
-					", array(
-						$pod['id'],
-						$field['id'],
-						$id,
-						$related_pod_id,
-						$related_field_id,
-						$related_id,
-						$related_weight
-					) );
+							VALUES ( %d, %d, %d, %d, %d, %d, 0 )
+						', array(
+							$pod['id'],
+							$field['id'],
+							$id,
+							$related_pod_id,
+							$related_field_id,
+							$related_id,
+						)
+					);
 				}
 
-				$related_weight ++;
+				$related_ids_sql = implode( ', ', array_fill( 0, count( $related_ids ), '%d' ) );
+
+				$prepare = array(
+					$pod['id'],
+					$field['id'],
+					$related_pod_id,
+					$related_field_id,
+				);
+
+				$prepare = array_merge( $prepare, $related_ids );
+
+				// Reset weights for related items.
+				pods_query( 'SET @weight = 0' );
+				pods_query( "
+						UPDATE `@wp_podsrel`
+						SET
+							`weight` = @weight:=@weight+1
+						WHERE
+							`pod_id` = %d
+							AND `field_id` = %d
+							AND `related_pod_id` = %d
+							AND `related_field_id` = %d
+							AND `related_item_id` IN ( {$related_ids_sql} )
+					",
+					$prepare
+				);
 			}
 		}
 	}
@@ -5902,14 +5903,10 @@ class PodsAPI {
 				$object_type = 'term';
 			}
 
-			delete_metadata( $object_type, $related_id, $related_field['name'] );
+			delete_metadata( $object_type, $related_id, $related_field[ 'name' ], $id );
 
 			if ( ! empty( $related_ids ) ) {
 				update_metadata( $object_type, $related_id, '_pods_' . $related_field['name'], $related_ids );
-
-				foreach ( $related_ids as $rel_id ) {
-					add_metadata( $object_type, $related_id, $related_field['name'], $rel_id );
-				}
 			} else {
 				delete_metadata( $object_type, $related_id, '_pods_' . $related_field['name'] );
 			}

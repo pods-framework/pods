@@ -16,7 +16,7 @@
  * @since 2.0.0
  */
 function pods_query( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
-	$podsdata = pods_data();
+	$podsdata = pods_data( null, null, true, false );
 
 	$sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
 	$sql = $podsdata->get_sql( $sql );

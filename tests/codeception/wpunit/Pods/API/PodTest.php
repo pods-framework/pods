@@ -46,9 +46,11 @@ class PodTest extends Pods_UnitTestCase {
 	public function populate_pod() {
 		$this->pod    = 'test_pod';
 		$this->pod_id = $this->api->save_pod( [
-			'name'  => $this->pod,
-			'type'  => 'post_type',
-			'label' => 'Test pod',
+			'name'            => $this->pod,
+			'type'            => 'post_type',
+			'label'           => 'Test pod',
+			'some_custom_key' => 'Some custom value',
+			'another_key'     => 1,
 		] );
 	}
 
@@ -223,5 +225,399 @@ class PodTest extends Pods_UnitTestCase {
 		$pod = $this->api->load_pod( get_post( $this->pod_id ) );
 
 		$this->assertInstanceOf( Pod::class, $pod );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pods
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_pods_has_pods() {
+		$this->populate_pod();
+
+		$pods = $this->api->load_pods();
+
+		$pods = wp_list_pluck( $pods, 'object_type' );
+		$pods = array_values( array_unique( $pods ) );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( 'pod', $pods );
+
+		$params = [
+			'object_type' => 'field',
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$pods = wp_list_pluck( $pods, 'object_type' );
+		$pods = array_values( array_unique( $pods ) );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( 'pod', $pods );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pods
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_pods_by_type() {
+		$this->populate_pod();
+
+		$pod_id2 = $this->api->save_pod( [
+			'name'  => 'test_another_pod',
+			'type'  => 'taxonomy',
+			'label' => 'Another test pod',
+		] );
+
+		$params = [
+			'type' => 'taxonomy',
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$pods = wp_list_pluck( $pods, 'type', 'id' );
+
+		$this->assertArrayHasKey( $pod_id2, $pods );
+
+		$pods = array_values( array_unique( $pods ) );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( 'taxonomy', $pods );
+
+		$params = [
+			'type' => [
+				'taxonomy',
+				'post_type',
+			],
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$pods = wp_list_pluck( $pods, 'type', 'id' );
+
+		$this->assertArrayHasKey( $this->pod_id, $pods );
+		$this->assertArrayHasKey( $pod_id2, $pods );
+
+		$pods = array_values( array_unique( $pods ) );
+
+		$this->assertCount( 2, $pods );
+		$this->assertContains( 'taxonomy', $pods );
+		$this->assertContains( 'post_type', $pods );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pods
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_pods_by_id() {
+		$this->populate_pod();
+
+		$pod_id2 = $this->api->save_pod( [
+			'name'  => 'test_another_pod',
+			'type'  => 'taxonomy',
+			'label' => 'Another test pod',
+		] );
+
+		$params = [
+			'id' => $pod_id2,
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$pods = wp_list_pluck( $pods, 'id' );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( $pod_id2, $pods );
+
+		$params = [
+			'id' => [
+				$pod_id2,
+				$this->pod_id,
+			],
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$pods = wp_list_pluck( $pods, 'id' );
+
+		$this->assertCount( 2, $pods );
+		$this->assertContains( $pod_id2, $pods );
+		$this->assertContains( $this->pod_id, $pods );
+
+		$params = [
+			'ids' => $pod_id2,
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$pods = wp_list_pluck( $pods, 'id' );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( $pod_id2, $pods );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pods
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_pods_by_args() {
+		$this->populate_pod();
+
+		$params = [
+			'args' => [
+				'another_key' => 1,
+			],
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$pods = wp_list_pluck( $pods, 'id' );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( $this->pod_id, $pods );
+
+		$params = [
+			'args' => [
+				'some_custom_key' => 'Some',
+			],
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertCount( 0, $pods );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pods
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_pods_by_options() {
+		$this->populate_pod();
+
+		$params = [
+			'options' => [
+				'another_key' => 1,
+			],
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$pods = wp_list_pluck( $pods, 'id' );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( $this->pod_id, $pods );
+
+		$params = [
+			'options' => [
+				'some_custom_key' => 'Some',
+			],
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertCount( 0, $pods );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pods
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_pods_by_where() {
+		$this->populate_pod();
+
+		$params = [
+			'where' => [
+				[
+					'key'   => 'another_key',
+					'value' => 1,
+				],
+			],
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$pods = wp_list_pluck( $pods, 'id' );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( $this->pod_id, $pods );
+
+		$params = [
+			'where' => [
+				[
+					'key'   => 'some_custom_key',
+					'value' => 'Some',
+				],
+			],
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertCount( 0, $pods );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pods
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_pods_include_internal() {
+		$this->populate_pod();
+
+		$params = [
+			'include_internal' => true,
+			'name'             => '_pods_pod',
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertCount( 1, $pods );
+		$this->assertArrayHasKey( '_pods_pod', $pods );
+
+		$params = [
+			'name' => '_pods_pod',
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertCount( 0, $pods );
+
+		$params = [
+			'include_internal' => true,
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertArrayHasKey( '_pods_pod', $pods );
+
+		$params = [];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertArrayNotHasKey( '_pods_pod', $pods );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pods
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_pods_with_names() {
+		$this->populate_pod();
+
+		$params = [
+			'id'    => $this->pod_id,
+			'names' => true,
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( $this->pod, $pods );
+
+		$params = [
+			'id'          => $this->pod_id,
+			'return_type' => 'names',
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( $this->pod, $pods );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pods
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_pods_with_names_ids() {
+		$this->populate_pod();
+
+		$params = [
+			'id'        => $this->pod_id,
+			'names_ids' => true,
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( $this->pod, $pods );
+		$this->assertArrayHasKey( $this->pod_id, $pods );
+
+		$params = [
+			'id'          => $this->pod_id,
+			'return_type' => 'names_ids',
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( $this->pod, $pods );
+		$this->assertArrayHasKey( $this->pod_id, $pods );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pods
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_pods_with_ids() {
+		$this->populate_pod();
+
+		$params = [
+			'id'          => $this->pod_id,
+			'return_type' => 'ids',
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertCount( 1, $pods );
+		$this->assertContains( $this->pod_id, $pods );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pods
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_pods_with_count() {
+		$this->populate_pod();
+
+		$pod_id2 = $this->api->save_pod( [
+			'name'  => 'test_another_pod',
+			'type'  => 'taxonomy',
+			'label' => 'Another test pod',
+		] );
+
+		$params = [
+			'id'    => [
+				$this->pod_id,
+				$pod_id2,
+			],
+			'count' => true,
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertInternalType( 'int', $pods );
+		$this->assertEquals( 2, $pods );
+
+		$params = [
+			'id'          => [
+				$this->pod_id,
+				$pod_id2,
+			],
+			'return_type' => 'count',
+		];
+
+		$pods = $this->api->load_pods( $params );
+
+		$this->assertInternalType( 'int', $pods );
+		$this->assertEquals( 2, $pods );
 	}
 }

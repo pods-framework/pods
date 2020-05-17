@@ -14,6 +14,8 @@ const dragSpec = {
 
 		return {
 			groupName: props.groupName,
+			groupLabel: props.groupLabel,
+			groupID: props.groupID,
 			index: props.index,
 			width: wrapperRect.width,
 			left: wrapperRect.left - handleRect.left,

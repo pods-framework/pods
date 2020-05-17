@@ -2,10 +2,10 @@
 
 namespace Pods_Unit_Tests\Pods;
 
+use Codeception\Module\WPDb;
 use Pods\Whatsit\Field;
-use PodsAPI;
-use PodsForm;
 use Pods_Unit_Tests\Pods_UnitTestCase;
+use PodsAPI;
 
 /**
  * @group  pods
@@ -42,7 +42,23 @@ class APITest extends Pods_UnitTestCase {
 		parent::setUp();
 
 		$this->api = pods_api();
+	}
 
+	/**
+	 *
+	 */
+	public function tearDown() {
+		$this->pod_id  = null;
+		$this->pod_id2 = null;
+		$this->api     = null;
+
+		parent::tearDown();
+	}
+
+	/**
+	 *
+	 */
+	public function populate() {
 		$this->pod_id = $this->api->save_pod( array(
 			'storage' => 'meta',
 			'type'    => 'post_type',
@@ -95,17 +111,6 @@ class APITest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 *
-	 */
-	public function tearDown() {
-		$this->pod_id  = null;
-		$this->pod_id2 = null;
-		$this->api     = null;
-
-		parent::tearDown();
-	}
-
-	/**
 	 * @covers PodsAPI::init
 	 * @since  2.8
 	 */
@@ -143,6 +148,8 @@ class APITest extends Pods_UnitTestCase {
 	 */
 	public function test_method_traverse_fields() {
 		$this->assertTrue( method_exists( $this->api, 'traverse_fields' ), 'Method traverse_fields does not exist' );
+
+		$this->populate();
 
 		// Test getting just one related field.
 		$params = array(

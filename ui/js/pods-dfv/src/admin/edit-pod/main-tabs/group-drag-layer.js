@@ -48,7 +48,10 @@ const CustomDragLayer = ( props ) => {
 						<div className="pods-field-group_handle">
 							<Dashicon icon="menu" />
 						</div>
-						<div className="pods-field-group_name">{ item.groupName }</div>
+						<div className="pods-field-group_name">
+							{ item.groupLabel } ({ item.groupName })
+							 <span className="pods-field-group_id">ID: { item.groupID }</span>
+						</div>
 						<div className="pods-field-group_manage">
 							<div className="pods-field-group_toggle">
 								<Dashicon icon={ 'arrow-down' } />
@@ -64,6 +67,8 @@ const CustomDragLayer = ( props ) => {
 CustomDragLayer.propTypes = {
 	item: PropTypes.shape( {
 		groupName: PropTypes.string.isRequired,
+		groupLabel: PropTypes.string.isRequired,
+		groupID: PropTypes.number.isRequired,
 		index: PropTypes.number.isRequired,
 	} ),
 

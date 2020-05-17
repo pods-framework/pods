@@ -1259,6 +1259,13 @@ class PodsAdmin {
 			return $obj->error( __( 'Invalid Pod configuration detected.' ) );
 		}
 
+		$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+
+		// Check again in case the pod migrated wrong.
+		if ( ! $pod instanceof \Pods\Whatsit\Pod ) {
+			return $obj->error( __( 'Invalid Pod configuration detected.' ) );
+		}
+
 		$config = [
 			'currentPod' => $pod->export( [
 				'include_groups'       => true,
@@ -1271,6 +1278,63 @@ class PodsAdmin {
 		wp_localize_script( 'pods-dfv', 'podsAdminConfig', $config );
 
 		pods_view( PODS_DIR . 'ui/admin/setup-edit-proto.php', compact( array_keys( get_defined_vars() ) ) );
+	}
+
+	/**
+	 * Maybe migrate pod fields into a group (if they have no group).
+	 *
+	 * @since TBD
+	 *
+	 * @param \Pods\Whatsit\Pod $pod The pod object.
+	 *
+	 * @return \Pods\Whatsit\Pod The pod object.
+	 */
+	public function maybe_migrate_pod_fields_into_group( $pod ) {
+		$groups = $pod->get_groups();
+
+		// Only migrate if there are no groups.
+		if ( ! empty( $groups ) ) {
+			return $pod;
+		}
+
+		$fields = $pod->get_fields();
+
+		$api = pods_api();
+
+		/**
+		 * Filter the title of the Pods Metabox used in the post editor.
+		 *
+		 * @since unknown
+		 *
+		 * @param string  $title  The title to use, default is 'More Fields'.
+		 * @param obj|Pod $pod    Current Pods Object.
+		 * @param array   $fields Array of fields that will go in the metabox.
+		 * @param string  $type   The type of Pod.
+		 * @param string  $name   Name of the Pod.
+		 */
+		$label = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $pod->get_type(), $pod->get_name() );
+		$name  = pods_create_slug( $label );
+
+		// Setup first group.
+		$group_id = $api->save_group( [
+			'pod'    => $pod,
+			'name'   => $name,
+			'label'  => $label,
+		] );
+
+		foreach ( $fields as $field ) {
+			$api->save_field( [
+				'pod'          => $pod,
+				'field'        => $field,
+				'new_group_id' => $group_id,
+			] );
+		}
+
+		// Refresh pod object.
+		return $api->load_pod( [
+			'id'           => $pod->get_id(),
+			'bypass_cache' => true,
+		] );
 	}
 
 	/**
@@ -4110,6 +4174,7 @@ class PodsAdmin {
 				'type'       => 'pick',
 				'default'    => 'array',
 				'depends-on' => [ 'type' => 'pick' ],
+				'dependency' => true,
 				'data'       => [
 					'array' => __( 'Full', 'pods' ),
 					'id'    => __( 'ID only', 'pods' ),
@@ -4121,7 +4186,10 @@ class PodsAdmin {
 				'help'       => __( 'How far to traverse relationships in response', 'pods' ),
 				'type'       => 'number',
 				'default'    => '2',
-				'depends-on' => [ 'type' => 'pick' ],
+				'depends-on' => [
+					'type'               => 'pick',
+					'rest_pick_response' => 'array',
+ ],
 			],
 			'rest_pick_notice'   => [
 				'label'        => 'Relationship Options',

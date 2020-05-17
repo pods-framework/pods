@@ -1770,6 +1770,10 @@ class PodsAPI {
 		} else {
 			// New pod (create).
 
+			if ( empty( $params->name ) ) {
+				return pods_error( __( 'Pod name is required', 'pods' ), $this );
+			}
+
 			if (
 				in_array( $params->name, pods_reserved_keywords(), true )
 				&& in_array( pods_v( 'type', $params ), array( 'post_type', 'taxonomy' ), true )
@@ -2542,7 +2546,12 @@ class PodsAPI {
 		$pod      = null;
 		$save_pod = false;
 
-		if ( isset( $params->pod_data ) ) {
+		if ( isset( $params->pod ) && $params->pod instanceof \Pods\Whatsit\Pod ) {
+			$pod = $params->pod;
+
+			$params->pod_id = $pod['id'];
+			$params->pod    = $pod['name'];
+		} elseif ( isset( $params->pod_data ) ) {
 			$pod = $params->pod_data;
 
 			unset( $params->pod_data );
@@ -2594,7 +2603,9 @@ class PodsAPI {
 		$params->pod_id = $pod['id'];
 		$params->pod    = $pod['name'];
 
-		$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
+		if ( isset( $params->name ) ) {
+			$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
+		}
 
 		if ( empty( $params->name ) ) {
 			if ( $field ) {
@@ -2638,13 +2649,14 @@ class PodsAPI {
 			$field = $field_obj->get_args();
 		}
 
-		$old_id         = null;
-		$old_name       = null;
-		$old_type       = null;
-		$old_definition = null;
-		$old_simple     = null;
-		$old_options    = null;
-		$old_sister_id  = null;
+		$old_id                = null;
+		$old_name              = null;
+		$old_type              = null;
+		$old_definition        = null;
+		$old_simple            = null;
+		$old_options           = null;
+		$old_sister_id         = null;
+		$old_type_is_tableless = false;
 
 		// @todo pods_reserved_keywords();
 		$reserved_keywords = array( 'id', 'ID' );
@@ -3426,7 +3438,9 @@ class PodsAPI {
 		$params->pod_id = $pod->get_id();
 		$params->pod    = $pod->get_name();
 
-		$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
+		if ( isset( $params->name ) ) {
+			$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
+		}
 
 		if ( empty( $params->name ) ) {
 			return pods_error( __( 'Pod group name is required', 'pods' ), $this );
@@ -3452,6 +3466,9 @@ class PodsAPI {
 
 		// @todo pods_reserved_keywords();
 		$reserved_keywords = array( 'id', 'ID' );
+
+		$old_id   = null;
+		$old_name = null;
 
 		if ( ! empty( $group ) ) {
 			$old_id        = $group->get_id();
@@ -3556,66 +3573,20 @@ class PodsAPI {
 		// Check for strict mode (default: strict).
 		$strict_mode = ! defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT;
 
-		$object_groups = (array) pods_var_raw( 'object_groups', $pod, array(), null, true );
-
 		if ( 0 < $old_id && ! $strict_mode ) {
 			$params->id  = $old_id;
 			$group['id'] = $old_id;
 		}
 
-		// Add new group
+		// Add new group.
 		if ( ! isset( $params->id ) || empty( $params->id ) || empty( $group ) ) {
-			if ( $table_operation && $strict_mode && in_array( $group['name'], [
-					'created',
-					'modified',
-				], true ) && ! in_array( $group['type'], [
-					'date',
-					'datetime',
-				], true ) ) {
-				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $group['name'] ), $this );
-			}
-
-			if ( $table_operation && $strict_mode && 'author' === $group['name'] && 'pick' !== $group['type'] ) {
-				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $group['name'] ), $this );
-			}
-
 			if ( in_array( $group['name'], $reserved_keywords, true ) ) {
 				return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $group['name'] ), $this );
-			}
-
-			foreach ( $object_groups as $object_group => $object_group_opt ) {
-				if ( $object_group === $group['name'] || in_array( $group['name'], $object_group_opt['alias'], true ) ) {
-					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in.', 'pods' ), $group['name'] ), $this );
-				}
 			}
 
 			 // Reserved post_name values that can't be used as group names
 			if ( 'rss' === $group['name'] ) {
 				$group['name'] .= '2';
-			}
-
-			if ( 'slug' === $group['type'] && true === $db ) {
-				if ( in_array( $pod['type'], array( 'post_type', 'taxonomy', 'user' ) ) ) {
-					return pods_error( __( 'This pod already has an internal WordPress permalink group', 'pods' ), $this );
-				}
-
-				$slug_group = get_posts( array(
-					'post_type'      => '_pods_group',
-					'orderby'        => 'menu_order',
-					'order'          => 'ASC',
-					'posts_per_page' => 1,
-					'post_parent'    => $group['pod_id'],
-					'meta_query'     => array(
-						array(
-							'key'   => 'type',
-							'value' => 'slug'
-						)
-					)
-				) );
-
-				if ( ! empty( $slug_group ) ) {
-					return pods_error( __( 'This pod already has a permalink group', 'pods' ), $this );
-				}
 			}
 
 			// Sink the new group to the bottom of the list
@@ -3650,34 +3621,6 @@ class PodsAPI {
 			if ( in_array( $group['name'], array( 'id', 'ID' ) ) ) {
 				if ( null !== $old_name ) {
 					return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $group['name'] ), $this );
-				} else {
-					return pods_error( sprintf( __( '%s is not editable', 'pods' ), $group['name'] ), $this );
-				}
-			}
-
-			if ( $strict_mode && null !== $old_name && $group['name'] !== $old_name ) {
-				if ( in_array( $group['name'], [
-						'created',
-						'modified',
-					] ) && ! in_array( $group['type'], [
-						'date',
-						'datetime',
-					] ) ) {
-					return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $group['name'] ), $this );
-				}
-
-				if ( 'author' === $group['name'] && 'pick' !== $group['type'] ) {
-					return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $group['name'] ), $this );
-				}
-			}
-
-			foreach ( $object_groups as $object_group => $object_group_opt ) {
-				if ( $object_group !== $group['name'] && ! in_array( $group['name'], $object_group_opt['alias'], true ) ) {
-					continue;
-				}
-
-				if ( null !== $old_name ) {
-					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $group['name'] ), $this );
 				} else {
 					return pods_error( sprintf( __( '%s is not editable', 'pods' ), $group['name'] ), $this );
 				}
@@ -3729,8 +3672,8 @@ class PodsAPI {
 				'options',
 				'groups',
 				'group',
-				'groups',
-				'object_groups',
+				'fields',
+				'object_fields',
 			);
 
 			foreach ( $excluded_meta as $meta_key ) {
@@ -6250,6 +6193,92 @@ class PodsAPI {
 	}
 
 	/**
+	 * Delete a Pod and all its content
+	 *
+	 * $params['id'] int The Group ID
+	 * $params['name'] string The Group name
+	 * $params['pod'] string|Pods\Whatsit\Pod The Pod name or object.
+	 * $params['pod_id'] string The Pod ID.
+	 *
+	 * @since TBD
+	 *
+	 * @param array|string|int $params     An associative array of parameters, the pod name, or pod ID.
+	 * @param bool             $strict     (optional) Makes sure a group exists, if it doesn't throws an error.
+	 * @param bool             $delete_all (optional) Whether to delete all fields from the group too.
+	 *
+	 * @return bool Whether the group was deleted successfully.
+	 */
+	public function delete_group( $params, $strict = false, $delete_all = false ) {
+		/**
+		 * @var $wpdb wpdb
+		 */
+		global $wpdb;
+
+		if ( ! is_object( $params ) && ! is_array( $params ) ) {
+			if ( is_numeric( $params ) ) {
+				$params = [ 'id' => $params ];
+			} else {
+				$params = [ 'name' => $params ];
+			}
+
+			$params = (object) pods_sanitize( $params );
+		} else {
+			$params = (object) pods_sanitize( $params );
+		}
+
+		if ( ! isset( $params->delete_all ) ) {
+			$params->delete_all = (boolean) $delete_all;
+		}
+
+		$group = $this->load_group( $params, false );
+
+		if ( empty( $group ) ) {
+			if ( false !== $strict ) {
+				return pods_error( __( 'Group not found', 'pods' ), $this );
+			}
+
+			return false;
+		}
+
+		$pod = $group->get_parent();
+
+		$params->id   = (int) $group['id'];
+		$params->name = $group['name'];
+
+		// Delete all fields.
+		if ( true === $params->delete_all ) {
+			foreach ( $group['fields'] as $field ) {
+				$delete_field = [
+					'id'   => $field->get_id(),
+					'name' => $field->get_name(),
+					'pod'  => $pod,
+				];
+
+				$this->delete_field( $delete_field, false );
+			}
+		}
+
+		$object_collection = Pods\Whatsit\Store::get_instance();
+
+		/** @var Pods\Whatsit\Storage\Post_Type $post_type_storage */
+		$post_type_storage = $object_collection->get_storage_object( $this->get_default_object_storage_type() );
+
+		$object = $post_type_storage->to_object( $params->id );
+
+		$success = false;
+
+		if ( $object ) {
+			$success = $post_type_storage->delete( $object );
+		}
+
+		if ( ! $success ) {
+			return pods_error( __( 'Group unable to be deleted', 'pods' ), $this );
+		}
+
+		return true;
+	}
+
+	/**
 	 * Drop a Pod Object
 	 *
 	 * $params['id'] int The object ID
@@ -6878,6 +6907,10 @@ class PodsAPI {
 	 * @since 1.7.9
 	 */
 	public function load_pod( $params, $strict = false ) {
+		if ( $params instanceof \Pods\Whatsit\Pod ) {
+			return $params;
+		}
+
 		if ( $params instanceof WP_Post || is_int( $params ) ) {
 			return $this->get_pods_object_from_wp_post( $params );
 		}
@@ -7087,6 +7120,10 @@ class PodsAPI {
 	 * @since 1.7.9
 	 */
 	public function load_field( $params, $strict = false ) {
+		if ( $params instanceof \Pods\Whatsit\Field ) {
+			return $params;
+		}
+
 		if ( $params instanceof WP_Post || is_int( $params ) ) {
 			return $this->get_pods_object_from_wp_post( $params );
 		}
@@ -7306,12 +7343,17 @@ class PodsAPI {
 	 * @since 2.8
 	 */
 	public function load_group( $params, $strict = false ) {
+		if ( $params instanceof \Pods\Whatsit\Group ) {
+			return $params;
+		}
+
 		if ( $params instanceof WP_Post || is_int( $params ) ) {
 			return $this->get_pods_object_from_wp_post( $params );
 		}
 
-		if ( empty( $params ) || ! is_array( $params ) ) {
-			return false;
+		// Backwards compatibility handling.
+		if ( is_object( $params ) ) {
+			$params = get_object_vars( (object) $params );
 		}
 
 		// Check if we need to bypass cache automatically.
@@ -7321,6 +7363,30 @@ class PodsAPI {
 			if ( ! $api_cache ) {
 				$params['bypass_cache'] = true;
 			}
+		}
+
+		if ( isset( $params['table_info'] ) ) {
+			unset( $params['table_info'] );
+		}
+
+		if ( isset( $params['pod_id'] ) ) {
+			$params['parent'] = (int) $params['pod_id'];
+
+			unset( $params['pod_id'] );
+		}
+
+		if ( isset( $params['pod'] ) ) {
+			if ( empty( $params['parent'] ) ) {
+				$params['parent'] = 0;
+
+				$pod = $this->load_pod( $params['pod'], false );
+
+				if ( $pod ) {
+					$params['parent'] = $pod->get_id();
+				}
+			}
+
+			unset( $params['pod'] );
 		}
 
 		return $this->load_object_group( $params, $strict );

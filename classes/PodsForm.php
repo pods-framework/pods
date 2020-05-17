@@ -610,21 +610,26 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function options( $type, $options ) {
+		if ( is_object( $options ) ) {
+			$options_array                  = $options->get_args();
+			$options_array['_field_object'] = $options;
+		} else {
+			$options_array                  = (array) $options;
+			$options_array['_field_object'] = null;
+		}
 
-		$options = (array) $options;
+		$defaults = self::options_setup( $type, $options_array );
 
-		$defaults = self::options_setup( $type, $options );
-
-		$core_defaults = array(
+		$core_defaults = [
 			'id'          => 0,
 			'label'       => '',
 			'description' => '',
 			'help'        => '',
 			'default'     => null,
-			'attributes'  => array(),
+			'attributes'  => [],
 			'class'       => '',
 			'grouped'     => 0,
-		);
+		];
 
 		$defaults = array_merge( $core_defaults, $defaults );
 
@@ -635,12 +640,12 @@ class PodsForm {
 				$default = $settings['default'];
 			}
 
-			if ( ! isset( $options[ $option ] ) ) {
-				$options[ $option ] = $default;
+			if ( ! isset( $options_array[ $option ] ) ) {
+				$options_array[ $option ] = $default;
 			}
 		}
 
-		return $options;
+		return $options_array;
 	}
 
 	/**

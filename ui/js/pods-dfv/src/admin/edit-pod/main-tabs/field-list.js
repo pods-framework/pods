@@ -142,7 +142,7 @@ export const FieldListItem = ( props, ref ) => {
 };
 
 FieldListItem.propTypes = {
-	id: PropTypes.string.isRequired,
+	id: PropTypes.number.isRequired,
 	fieldName: PropTypes.string.isRequired,
 	fieldLabel: PropTypes.string.isRequired,
 	required: PropTypes.bool.isRequired,

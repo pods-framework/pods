@@ -19,7 +19,7 @@ const { __ } = wp.i18n;
 // eslint-disable-next-line react/display-name
 const FieldGroup = forwardRef( ( props, ref ) => {
 	const { connectDragSource, connectDropTarget, connectDragPreview, isDragging } = props;
-	const { groupName, getGroupFields, fields, groupFieldList, randomString, setGroupFields, addGroupField, setFields } = props;
+	const { groupName, groupLabel, groupID, getGroupFields, fields, groupFieldList, randomString, setGroupFields, addGroupField, setFields } = props;
 	const [ expanded, setExpanded ] = useState( false );
 	const [ showSettings, setShowSettings ] = useState( false );
 	const wrapperRef = useRef( ref );
@@ -137,7 +137,10 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 					<div ref={ dragHandleRef } className="pods-field-group_handle" style={ { cursor: isDragging ? 'ns-resize' : null } }>
 						<Dashicon icon="menu" />
 					</div>
-					<div className="pods-field-group_name">{ groupName }</div>
+					<div className="pods-field-group_name">
+						{ groupLabel } ({ groupName })
+						 <span className="pods-field-group_id">ID: { groupID }</span>
+					</div>
 				</div>
 
 				<div>
@@ -179,6 +182,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 FieldGroup.propTypes = {
 	groupName: PropTypes.string.isRequired,
+	groupLabel: PropTypes.string.isRequired,
+	groupID: PropTypes.number.isRequired,
 	index: PropTypes.number.isRequired,
 	getGroupFields: PropTypes.func.isRequired,
 	handleBeginDrag: PropTypes.func.isRequired,

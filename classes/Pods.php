@@ -1260,7 +1260,7 @@ class Pods implements Iterator {
 
 								if ( ! $related_obj || ! $related_obj->valid() ) {
 									if ( ! is_object( $this->alt_data ) ) {
-										$this->alt_data = pods_data( null, null, true, true );
+										$this->alt_data = pods_data();
 									}
 
 									$item_data = $this->alt_data->select( $sql );

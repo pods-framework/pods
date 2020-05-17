@@ -612,7 +612,7 @@ class PodsMeta {
 			}
 		}
 
-		$field      = ( "cpachidden" === substr( $obj->get_option( 'field' ), 0, 10 ) ) ? str_replace( 'cpachidden', '', $obj->get_option( 'field' ) ) : $obj->get_option( 'field' );
+		$field      = ( 'cpachidden' === substr( $obj->get_option( 'field' ), 0, 10 ) ) ? str_replace( 'cpachidden', '', $obj->get_option( 'field' ) ) : $obj->get_option( 'field' );
 		$field_type = $obj->get_option( 'field_type' );
 
 		if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] !== $object ) {
@@ -675,7 +675,6 @@ class PodsMeta {
 	 * @return mixed|void
 	 */
 	public function group_add( $pod, $label, $fields, $context = 'normal', $priority = 'default' ) {
-
 		if ( is_array( $pod ) && ! empty( $pod ) && ! isset( $pod['name'] ) ) {
 			foreach ( $pod as $p ) {
 				$this->group_add( $p, $label, $fields, $context, $priority );
@@ -903,15 +902,16 @@ class PodsMeta {
 	}
 
 	/**
-	 * @param $type
-	 * @param $name
-	 * @param $default_fields
+	 * Get groups of fields for the content type.
 	 *
-	 * @return array
+	 * @param $type           Content type.
+	 * @param $name           Content name.
+	 * @param $default_fields List of default fields to include.
+	 *
+	 * @return array List of groups and their fields.
 	 */
 	public function groups_get( $type, $name, $default_fields = null ) {
-
-		static $groups_cache = array();
+		static $groups_cache = [];
 
 		if ( isset( $groups_cache[ $type . '/' . $name ] ) ) {
 			return $groups_cache[ $type . '/' . $name ];
@@ -926,8 +926,8 @@ class PodsMeta {
 
 		do_action( 'pods_meta_groups', $type, $name );
 
-		$pod    = array();
-		$fields = array();
+		$pod    = [];
+		$fields = [];
 
 		$object = self::$post_types;
 
@@ -943,19 +943,17 @@ class PodsMeta {
 			$object = self::$advanced_content_types;
 		}
 
-		// @todo Convert to Group
-
 		if ( ! empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) ) {
 			$fields = $object[ $name ]['fields'];
 		} else {
-			if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] != $name ) {
-				self::$current_pod_data = pods_api()->load_pod( array( 'name' => $name ), false );
+			if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] !== $name ) {
+				self::$current_pod_data = pods_api()->load_pod( [ 'name' => $name ], false );
 			}
 
 			$pod = self::$current_pod_data;
 
-			if ( ! empty( $pod ) ) {
-				$fields = array();//$pod['fields'];
+			if ( ! empty( $pod ) && empty( $pod['groups'] ) ) {
+				$fields = $pod['fields'];
 			}
 		}
 
@@ -963,65 +961,87 @@ class PodsMeta {
 			$fields = $default_fields;
 		}
 
-		$defaults = array(
+		$defaults = [
 			'name'   => 'post',
 			'object' => 'post',
-			'type'   => 'post_type'
-		);
+			'type'   => 'post_type',
+		];
 
-		$pod = array_merge( $defaults, (array) $pod );
+		if ( is_array( $pod ) ) {
+			$pod = array_merge( $defaults, $pod );
 
-		if ( empty( $pod['name'] ) ) {
-			$pod['name'] = $pod['object'];
-		} elseif ( empty( $pod['object'] ) ) {
-			$pod['object'] = $pod['name'];
+			if ( empty( $pod['name'] ) ) {
+				$pod['name'] = $pod['object'];
+			} elseif ( empty( $pod['object'] ) ) {
+				$pod['object'] = $pod['name'];
+			}
 		}
 
-		if ( $pod['type'] != $type ) {
-			$groups_cache[ $type . '/' . $name ] = array();
+		if ( $pod['type'] !== $type ) {
+			$groups_cache[ $type . '/' . $name ] = [];
 
 			return $groups_cache[ $type . '/' . $name ];
 		}
 
-		$groups = array(
-			array(
+		/**
+		 * Filter the title of the Pods Metabox used in the post editor.
+		 *
+		 * @since unknown
+		 *
+		 * @param string  $title  The title to use, default is 'More Fields'.
+		 * @param obj|Pod $pod    Current Pods Object.
+		 * @param array   $fields Array of fields that will go in the metabox.
+		 * @param string  $type   The type of Pod.
+		 * @param string  $name   Name of the Pod.
+		 */
+		$title = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name );
+
+		$groups = [];
+
+		$has_custom_groups = ! empty( self::$groups[ $type ][ $name ] );
+
+		if ( ! empty( $pod['groups'] ) ) {
+			foreach ( $pod['groups'] as $group ) {
+				if ( empty( $group['fields'] ) ) {
+					continue;
+				}
+
+				$groups[] = [
+					'pod'      => $pod,
+					'label'    => $group['label'],
+					'fields'   => $group['fields'],
+					// @todo Support context and priority coming from $group.
+					'context'  => 'normal',
+					'priority' => 'default',
+				];
+			}
+
+			if ( $has_custom_groups ) {
+				$groups = array_merge( $groups, self::$groups[ $type ][ $name ] );
+			}
+		} elseif ( ! empty( self::$groups[ $type ][ $name ] ) ) {
+			$groups = self::$groups[ $type ][ $name ];
+		} else {
+			$groups[] = [
 				'pod'      => $pod,
-				/**
-				 * Filter the title of the Pods Metabox In The Post Editor
-				 *
-				 * @param string  $title  The title to use, default is 'More Fields'
-				 * @param obj|Pod $pod    Current Pods Object
-				 * @param array   $fields Array of fields that will go in the metabox
-				 * @param string  $type   The type of Pod
-				 * @param string  $name   Name of the Pod
-				 *
-				 * @return string The title for the metabox.
-				 *
-				 * @since unknown
-				 */
-				'label'    => apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name ),
+				'label'    => $title,
 				'fields'   => $fields,
 				'context'  => 'normal',
-				'priority' => 'default'
-			)
-		);
-
-		if ( isset( self::$groups[ $type ] ) && isset( self::$groups[ $type ][ $name ] ) ) {
-			$groups = self::$groups[ $type ][ $name ];
+				'priority' => 'default',
+			];
 		}
 
 		/**
 		 * Filter the array of field groups
 		 *
-		 * @param array  $groups Array of groups
+		 * @since 2.6.6
+		 *
 		 * @param string $type   The type of Pod
 		 * @param string $name   Name of the Pod
 		 *
-		 * @since 2.6.6
+		 * @param array  $groups Array of groups
 		 */
 		$groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
-
-		// @todo Pull in the real groups for the pod for backcompat.
 
 		$groups_cache[ $type . '/' . $name ] = $groups;
 

@@ -3438,7 +3438,9 @@ class PodsAPI {
 		$params->pod_id = $pod->get_id();
 		$params->pod    = $pod->get_name();
 
-		$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
+		if ( isset( $params->name ) ) {
+			$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
+		}
 
 		if ( empty( $params->name ) ) {
 			return pods_error( __( 'Pod group name is required', 'pods' ), $this );
@@ -6905,6 +6907,10 @@ class PodsAPI {
 	 * @since 1.7.9
 	 */
 	public function load_pod( $params, $strict = false ) {
+		if ( $params instanceof \Pods\Whatsit\Pod ) {
+			return $params;
+		}
+
 		if ( $params instanceof WP_Post || is_int( $params ) ) {
 			return $this->get_pods_object_from_wp_post( $params );
 		}
@@ -7114,6 +7120,10 @@ class PodsAPI {
 	 * @since 1.7.9
 	 */
 	public function load_field( $params, $strict = false ) {
+		if ( $params instanceof \Pods\Whatsit\Field ) {
+			return $params;
+		}
+
 		if ( $params instanceof WP_Post || is_int( $params ) ) {
 			return $this->get_pods_object_from_wp_post( $params );
 		}
@@ -7333,6 +7343,10 @@ class PodsAPI {
 	 * @since 2.8
 	 */
 	public function load_group( $params, $strict = false ) {
+		if ( $params instanceof \Pods\Whatsit\Group ) {
+			return $params;
+		}
+
 		if ( $params instanceof WP_Post || is_int( $params ) ) {
 			return $this->get_pods_object_from_wp_post( $params );
 		}

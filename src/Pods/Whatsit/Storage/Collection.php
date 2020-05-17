@@ -258,6 +258,16 @@ class Collection extends Storage {
 			}
 		}
 
+		if ( isset( $args['internal'] ) ) {
+			foreach ( $objects as $k => $object ) {
+				if ( $args['internal'] === $object->get_arg( 'internal' ) ) {
+					continue;
+				}
+
+				unset( $objects[ $k ] );
+			}
+		}
+
 		if ( ! empty( $args['limit'] ) ) {
 			$objects = array_slice( $objects, 0, $args['limit'], true );
 		}

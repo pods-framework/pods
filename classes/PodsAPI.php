@@ -1770,6 +1770,10 @@ class PodsAPI {
 		} else {
 			// New pod (create).
 
+			if ( empty( $params->name ) ) {
+				return pods_error( __( 'Pod name is required', 'pods' ), $this );
+			}
+
 			if (
 				in_array( $params->name, pods_reserved_keywords(), true )
 				&& in_array( pods_v( 'type', $params ), array( 'post_type', 'taxonomy' ), true )
@@ -2645,13 +2649,14 @@ class PodsAPI {
 			$field = $field_obj->get_args();
 		}
 
-		$old_id         = null;
-		$old_name       = null;
-		$old_type       = null;
-		$old_definition = null;
-		$old_simple     = null;
-		$old_options    = null;
-		$old_sister_id  = null;
+		$old_id                = null;
+		$old_name              = null;
+		$old_type              = null;
+		$old_definition        = null;
+		$old_simple            = null;
+		$old_options           = null;
+		$old_sister_id         = null;
+		$old_type_is_tableless = false;
 
 		// @todo pods_reserved_keywords();
 		$reserved_keywords = array( 'id', 'ID' );

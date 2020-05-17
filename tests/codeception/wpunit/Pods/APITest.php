@@ -2,10 +2,10 @@
 
 namespace Pods_Unit_Tests\Pods;
 
+use Codeception\Module\WPDb;
 use Pods\Whatsit\Field;
-use PodsAPI;
-use PodsForm;
 use Pods_Unit_Tests\Pods_UnitTestCase;
+use PodsAPI;
 
 /**
  * @group  pods
@@ -42,7 +42,23 @@ class APITest extends Pods_UnitTestCase {
 		parent::setUp();
 
 		$this->api = pods_api();
+	}
 
+	/**
+	 *
+	 */
+	public function tearDown() {
+		$this->pod_id  = null;
+		$this->pod_id2 = null;
+		$this->api     = null;
+
+		parent::tearDown();
+	}
+
+	/**
+	 *
+	 */
+	public function populate() {
 		$this->pod_id = $this->api->save_pod( array(
 			'storage' => 'meta',
 			'type'    => 'post_type',
@@ -95,17 +111,6 @@ class APITest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 *
-	 */
-	public function tearDown() {
-		$this->pod_id  = null;
-		$this->pod_id2 = null;
-		$this->api     = null;
-
-		parent::tearDown();
-	}
-
-	/**
 	 * @covers PodsAPI::init
 	 * @since  2.8
 	 */
@@ -143,6 +148,8 @@ class APITest extends Pods_UnitTestCase {
 	 */
 	public function test_method_traverse_fields() {
 		$this->assertTrue( method_exists( $this->api, 'traverse_fields' ), 'Method traverse_fields does not exist' );
+
+		$this->populate();
 
 		// Test getting just one related field.
 		$params = array(
@@ -217,5 +224,112 @@ class APITest extends Pods_UnitTestCase {
 		$this->assertEquals( $this->pod_name, $traversed[2]['pod'] );
 		$this->assertInstanceOf( Field::class, $traversed[3] );
 		$this->assertEquals( $this->pod_name2, $traversed[3]['pod'] );
+	}
+
+	/**
+	 * @covers PodsAPI::save_pod
+	 * @throws \Exception
+	 * @since  2.8
+	 */
+	public function test_save_pod_with_empty_params() {
+		$params = [];
+
+		$this->expectExceptionMessage( 'Pod name is required' );
+		$this->expectException( \Exception::class );
+
+		$this->api->save_pod( $params );
+	}
+
+	public function get_save_pod_configs() {
+		yield 'Post Type' => [
+			[
+				'name'  => 'test_1',
+				'type'  => 'post_type',
+				'label' => 'Test pod for Post Type',
+			],
+		];
+
+		yield 'Taxonomy' => [
+			[
+				'name'  => 'test_2',
+				'type'  => 'taxonomy',
+				'label' => 'Test pod for Taxonomy',
+			],
+		];
+
+		yield 'Advanced Content Type' => [
+			[
+				'name'  => 'test_3',
+				'type'  => 'pod',
+				'label' => 'Test pod for Advanced Content Type',
+			],
+		];
+	}
+
+	/**
+	 * @covers PodsAPI::save_pod
+	 * @throws \Exception
+	 * @since  2.8
+	 *
+	 * @dataProvider get_save_pod_configs
+	 */
+	public function test_save_pod_table( $config ) {
+		/** @var WPDb $db */
+		$db = $this->getModule( 'WPDb' );
+
+		$params = $config;
+
+		$params['storage'] = 'table';
+		$params['name']   .= $params['storage'];
+
+		$response = $this->api->save_pod( $params );
+
+		$this->assertInternalType( 'int', $response );
+
+		$pod = $this->api->load_pod( [ 'name' => $params['name'] ] );
+
+		$this->assertEquals( $params['name'], $pod['name'] );
+		$this->assertEquals( $params['type'], $pod['type'] );
+		$this->assertEquals( $params['label'], $pod['label'] );
+		$this->assertEquals( $params['storage'], $pod['storage'] );
+
+		global $wpdb;
+
+		$wpdb->get_var( 'SELECT id FROM `' . $db->grabTablePrefix() . 'pods_' . $params['name'] . '`' );
+
+		$this->assertEmpty( $wpdb->last_error );
+	}
+
+	/**
+	 * @covers PodsAPI::save_pod
+	 * @throws \Exception
+	 * @since  2.8
+	 *
+	 * @dataProvider get_save_pod_configs
+	 */
+	public function test_save_pod_meta( $config ) {
+		$db = $this->getModule( 'WPDb' );
+
+		$params = $config;
+
+		$params['storage'] = 'meta';
+		$params['name']   .= $params['storage'];
+
+		$response = $this->api->save_pod( $params );
+
+		$this->assertInternalType( 'int', $response );
+
+		$pod = $this->api->load_pod( [ 'name' => $params['name'] ] );
+
+		$this->assertEquals( $params['name'], $pod['name'] );
+		$this->assertEquals( $params['type'], $pod['type'] );
+		$this->assertEquals( $params['label'], $pod['label'] );
+		$this->assertEquals( $params['storage'], $pod['storage'] );
+
+		global $wpdb;
+
+		$wpdb->get_var( 'SELECT id FROM `' . $db->grabTablePrefix() . 'pods_' . $params['name'] . '`' );
+
+		$this->assertContains( $db->grabTablePrefix() . 'pods_' . $params['name'] . '\' doesn\'t exist', $wpdb->last_error );
 	}
 }

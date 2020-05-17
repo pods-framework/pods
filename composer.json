@@ -53,17 +53,18 @@
     "freemius/wordpress-sdk": "2.3.2"
   },
   "require-dev": {
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
-    "wp-coding-standards/wpcs": "^2.1",
     "automattic/vipwpcs": "^2.0",
-    "moderntribe/TribalScents": "dev-master",
-    "wp-cli/wp-cli": "2.*",
-    "phpunit/phpunit": "4.*",
-    "mockery/mockery": "1.3.*",
-    "phpcompatibility/php-compatibility": "9.*",
-    "lucatume/wp-browser": "^2.0.5 || dev-php-56-compat",
-    "mockery/mockery": "0.9.*",
-    "vlucas/phpdotenv": "^2.4"
+    "codeception/codeception": "^2.5.6",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
+    "fzaninotto/faker": "^1.8",
+    "lucatume/function-mocker": "^1.3.8",
+    "lucatume/function-mocker-le": "^1.0.1",
+    "lucatume/wp-browser": "2.2.15",
+    "lucatume/wp-snaphot-assertions": "^1.0",
+    "moderntribe/tribalscents": "dev-master",
+    "phpunit/phpunit": "^6.5.14",
+    "spatie/phpunit-snapshot-assertions": "^1.4.2",
+    "wp-coding-standards/wpcs": "^2.1"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,

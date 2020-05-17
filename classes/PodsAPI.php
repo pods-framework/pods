@@ -6962,7 +6962,6 @@ class PodsAPI {
 	 * @type boolean      $count        Return only a count of pods.
 	 * @type boolean      $names        Return only an array of name => label.
 	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $key_names    Return pods keyed by name.
 	 * @type boolean      $bypass_cache Bypass the cache when getting data.
 	 * }
 	 *
@@ -6972,23 +6971,10 @@ class PodsAPI {
 	 *
 	 * @since 2.0.0
 	 */
-	public function load_pods( $params = null ) {
+	public function load_pods( $params = [] ) {
 		// Backwards compatibility handling.
 		if ( is_object( $params ) ) {
 			$params = get_object_vars( (object) $params );
-		}
-
-		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
-			$api_cache = pods_api_cache();
-
-			if ( ! $api_cache ) {
-				$params['bypass_cache'] = true;
-			}
-		}
-
-		if ( ! empty( $params['ids'] ) ) {
-			$params['id'] = $params['ids'];
 		}
 
 		$include_internal = false;
@@ -6997,6 +6983,10 @@ class PodsAPI {
 			$include_internal = (boolean) $params['include_internal'];
 
 			unset( $params['include_internal'] );
+		}
+
+		if ( ! $include_internal ) {
+			$params['internal'] = false;
 		}
 
 		if ( isset( $params['fields'] ) ) {
@@ -7011,53 +7001,14 @@ class PodsAPI {
 			unset( $params['object_fields'] );
 		}
 
-		if ( isset( $params['options'] ) ) {
-			$params['args'] = $params['options'];
+		// Backcompat handling.
+		if ( ! empty( $params['ids'] ) ) {
+			$params['id'] = $params['ids'];
 
-			unset( $params['options'] );
+			unset( $params['ids'] );
 		}
 
-		if ( isset( $params['where'] ) ) {
-			$where = $params['where'];
-
-			unset( $params['where'] );
-
-			if ( ! isset( $params['args'] ) ) {
-				$params['args'] = array();
-			}
-
-			foreach ( $where as $arg ) {
-				if ( ! isset( $arg['key'], $arg['value'] ) ) {
-					continue;
-				}
-
-				$params['args'][ $arg['key'] ] = $arg['value'];
-			}
-		}
-
-		$loaded_pods = $this->load_object_pods( $params );
-
-		if ( empty( $loaded_pods ) ) {
-			return [];
-		}
-
-
-		if ( $include_internal || ! is_array( $loaded_pods ) ) {
-			return $loaded_pods;
-		}
-
-		// Remove the internal Pods.
-		$the_pods = [];
-
-		foreach ( $loaded_pods as $pod ) {
-			if ( is_object( $pod ) && true === $pod->get_arg( 'internal' ) ) {
-				continue;
-			}
-
-			$the_pods[] = $pod;
-		}
-
-		return $the_pods;
+		return $this->load_object_pods( $params );
 	}
 
 	/**
@@ -7262,7 +7213,6 @@ class PodsAPI {
 	 * @type boolean      $count        Return only a count of fields.
 	 * @type boolean      $names        Return only an array of name => label.
 	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $key_names    Return fields keyed by name.
 	 * @type boolean      $bypass_cache Bypass the cache when getting data.
 	 * }
 	 *
@@ -7272,51 +7222,33 @@ class PodsAPI {
 	 *
 	 * @since 1.7.9
 	 */
-	public function load_fields( $params ) {
+	public function load_fields( $params = [] ) {
 		// Backwards compatibility handling.
 		if ( is_object( $params ) ) {
 			$params = get_object_vars( $params );
 		}
 
-		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
-			$api_cache = pods_api_cache();
+		$include_internal = false;
 
-			if ( ! $api_cache ) {
-				$params['bypass_cache'] = true;
-			}
+		if ( isset( $params['include_internal'] ) ) {
+			$include_internal = (boolean) $params['include_internal'];
+
+			unset( $params['include_internal'] );
+		}
+
+		if ( ! $include_internal ) {
+			$params['internal'] = false;
 		}
 
 		if ( isset( $params['table_info'] ) ) {
 			unset( $params['table_info'] );
 		}
 
-		if ( isset( $params['object_fields'] ) ) {
-			unset( $params['object_fields'] );
-		}
+		// Backcompat handling.
+		if ( ! empty( $params['ids'] ) ) {
+			$params['id'] = $params['ids'];
 
-		if ( isset( $params['options'] ) ) {
-			$params['args'] = $params['options'];
-
-			unset( $params['options'] );
-		}
-
-		if ( isset( $params['where'] ) ) {
-			$where = $params['where'];
-
-			unset( $params['where'] );
-
-			if ( ! isset( $params['args'] ) ) {
-				$params['args'] = array();
-			}
-
-			foreach ( $where as $arg ) {
-				if ( ! isset( $arg['key'], $arg['value'] ) ) {
-					continue;
-				}
-
-				$params['args'][ $arg['key'] ] = $arg['value'];
-			}
+			unset( $params['ids'] );
 		}
 
 		return $this->load_object_fields( $params );
@@ -7407,7 +7339,6 @@ class PodsAPI {
 	 * @type boolean      $count        Return only a count of objects.
 	 * @type boolean      $names        Return only an array of name => label.
 	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $key_names    Return objects keyed by name.
 	 * @type boolean      $bypass_cache Bypass the cache when getting data.
 	 * }
 	 *
@@ -7417,14 +7348,30 @@ class PodsAPI {
 	 *
 	 * @since 2.8
 	 */
-	public function load_groups( $params = null ) {
-		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
-			$api_cache = pods_api_cache();
+	public function load_groups( $params = [] ) {
+		// Backwards compatibility handling.
+		if ( is_object( $params ) ) {
+			$params = get_object_vars( $params );
+		}
 
-			if ( ! $api_cache ) {
-				$params['bypass_cache'] = true;
-			}
+		$include_internal = false;
+
+		if ( isset( $params['include_internal'] ) ) {
+			$include_internal = (boolean) $params['include_internal'];
+
+			unset( $params['include_internal'] );
+		}
+
+		if ( ! $include_internal ) {
+			$params['internal'] = false;
+		}
+
+		if ( isset( $params['table_info'] ) ) {
+			unset( $params['table_info'] );
+		}
+
+		if ( isset( $params['object_fields'] ) ) {
+			unset( $params['object_fields'] );
 		}
 
 		return $this->load_object_groups( $params );
@@ -7500,6 +7447,8 @@ class PodsAPI {
 
 		if ( isset( $params['ids'] ) ) {
 			$params['id'] = $params['ids'];
+
+			unset( $params['ids'] );
 		}
 
 		// Check if we need to bypass cache automatically.
@@ -9700,7 +9649,6 @@ class PodsAPI {
 	 * @type boolean      $count        Return only a count of pods.
 	 * @type boolean      $names        Return only an array of name => label.
 	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $key_names    Return pods keyed by name.
 	 * @type boolean      $bypass_cache Bypass the cache when getting data.
 	 * }
 	 *
@@ -9768,7 +9716,6 @@ class PodsAPI {
 	 * @type boolean      $count        Return only a count of fields.
 	 * @type boolean      $names        Return only an array of name => label.
 	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $key_names    Return fields keyed by name.
 	 * @type boolean      $bypass_cache Bypass the cache when getting data.
 	 * }
 	 *
@@ -9838,7 +9785,6 @@ class PodsAPI {
 	 * @type boolean      $count        Return only a count of objects.
 	 * @type boolean      $names        Return only an array of name => label.
 	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $key_names    Return objects keyed by name.
 	 * @type boolean      $bypass_cache Bypass the cache when getting data.
 	 * }
 	 *
@@ -9922,7 +9868,6 @@ class PodsAPI {
 	 * @type boolean      $count        Return only a count of fields.
 	 * @type boolean      $names        Return only an array of name => label.
 	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $key_names    Return fields keyed by name.
 	 * @type boolean      $bypass_cache Bypass the cache when getting data.
 	 * }
 	 *
@@ -9933,6 +9878,39 @@ class PodsAPI {
 	public function _load_objects( array $params ) {
 		if ( empty( $params['object_type'] ) ) {
 			return array();
+		}
+
+		// Check if we need to bypass cache automatically.
+		if ( empty( $params['bypass_cache'] ) ) {
+			$api_cache = pods_api_cache();
+
+			if ( ! $api_cache ) {
+				$params['bypass_cache'] = true;
+			}
+		}
+
+		if ( isset( $params['options'] ) ) {
+			$params['args'] = $params['options'];
+
+			unset( $params['options'] );
+		}
+
+		if ( isset( $params['where'] ) ) {
+			$where = $params['where'];
+
+			unset( $params['where'] );
+
+			if ( ! isset( $params['args'] ) ) {
+				$params['args'] = array();
+			}
+
+			foreach ( $where as $arg ) {
+				if ( ! isset( $arg['key'], $arg['value'] ) ) {
+					continue;
+				}
+
+				$params['args'][ $arg['key'] ] = $arg['value'];
+			}
 		}
 
 		// @todo SKC remove when done testing.
@@ -9956,8 +9934,6 @@ class PodsAPI {
 				$params['names_ids'] = true;
 			} elseif ( 'ids' === $return_type ) {
 				$params['ids'] = true;
-			} elseif ( 'key_names' === $return_type ) {
-				$params['key_names'] = true;
 			} elseif ( 'count' === $return_type ) {
 				$params['count'] = true;
 			}
@@ -9972,20 +9948,11 @@ class PodsAPI {
 		}
 
 		if ( ! empty( $params['names_ids'] ) ) {
-			$names = wp_list_pluck( $objects, 'name' );
-			$ids   = wp_list_pluck( $objects, 'id' );
-
-			return array_combine( $names, $ids );
+			return wp_list_pluck( $objects, 'name', 'id' );
 		}
 
 		if ( ! empty( $params['ids'] ) ) {
 			return wp_list_pluck( $objects, 'id' );
-		}
-
-		if ( ! empty( $params['key_names'] ) ) {
-			$names = wp_list_pluck( $objects, 'name' );
-
-			return array_combine( $names, $objects );
 		}
 
 		return $objects;

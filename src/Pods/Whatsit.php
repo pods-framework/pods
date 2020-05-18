@@ -784,15 +784,9 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		$object_collection = Store::get_instance();
-		$storage_object    = $object_collection->get_storage_object( $this->get_arg( 'storage_type' ) );
-
-		if ( ! $storage_object ) {
-			return [];
-		}
 
 		if ( null === $this->_fields ) {
 			$args = [
-				'object_type'       => 'field',
 				'orderby'           => 'menu_order title',
 				'order'             => 'ASC',
 				'parent'            => $this->get_id(),
@@ -801,8 +795,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				'parent_identifier' => $this->get_identifier(),
 			];
 
-			/** @var Field[] $objects */
-			$objects = $storage_object->find( $args );
+			$objects = pods_api()->load_fields( $args );
 
 			$this->_fields = wp_list_pluck( $objects, 'id' );
 
@@ -848,15 +841,9 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		$object_collection = Store::get_instance();
-		$storage_object    = $object_collection->get_storage_object( $this->get_arg( 'storage_type' ) );
-
-		if ( ! $storage_object ) {
-			return [];
-		}
 
 		if ( null === $this->_groups ) {
 			$args = [
-				'object_type'       => 'group',
 				'orderby'           => 'menu_order title',
 				'order'             => 'ASC',
 				'parent'            => $this->get_id(),
@@ -865,8 +852,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				'parent_identifier' => $this->get_identifier(),
 			];
 
-			/** @var Group[] $objects */
-			$objects = $storage_object->find( $args );
+			$objects = pods_api()->load_groups( $args );
 
 			$this->_groups = wp_list_pluck( $objects, 'id' );
 

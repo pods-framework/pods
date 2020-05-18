@@ -2,6 +2,8 @@
 
 namespace Pods_Unit_Tests;
 
+use stdClass;
+
 /**
  * @group pods
  * @group pods-functions
@@ -41,7 +43,7 @@ class DataTest extends Pods_UnitTestCase {
 	 * @covers ::pods_sanitize
 	 */
 	public function test_pods_sanitize_returns_object() {
-		$object      = new \stdClass();
+		$object      = new stdClass();
 		$object->foo = 1;
 		$object->bar = 'a test string';
 
@@ -72,7 +74,7 @@ class DataTest extends Pods_UnitTestCase {
 	 * @covers ::pods_sanitize
 	 */
 	public function test_pods_sanitize_sql() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 	/**

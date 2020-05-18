@@ -95,7 +95,7 @@ class PodsField_PickTest extends Pods_UnitTestCase {
 	 * @todo Cover display tests with actual relationship values.
 	 */
 	public function test_display_format_multi_relationship() {
-		$this->markTestIncomplete( 'not yet implemented' );
+		$this->markTestSkipped( 'not yet implemented' );
 	}
 
 }

@@ -314,7 +314,7 @@ class Post_Type extends Collection {
 
 		$posts = array_combine( $names, $posts );
 
-		if ( empty( $args['status'] ) || \in_array( 'publish', $args['status'], true ) ) {
+		if ( empty( $args['status'] ) || \in_array( 'publish', (array) $args['status'], true ) ) {
 			$posts = array_merge( $posts, parent::find( $args ) );
 		}
 

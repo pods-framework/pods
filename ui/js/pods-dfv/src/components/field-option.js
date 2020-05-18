@@ -1,11 +1,21 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
+import sanitizeHtml from 'sanitize-html';
+
+import { removep } from '@wordpress/autop';
 
 import HelpTooltip from 'pods-dfv/src/components/help-tooltip';
+import { richText } from '../../../blocks/src/config/html';
 
-const PodsFieldOption = ( props ) => {
-	const { fieldType, name, value, label, onChange, helpText } = props;
-
+const PodsFieldOption = ( {
+	fieldType,
+	name,
+	value,
+	label,
+	onChange,
+	helpText,
+	description,
+} ) => {
 	const toBool = ( stringOrNumber ) => {
 		// Force any strings to numeric first
 		return !! ( +stringOrNumber );
@@ -41,17 +51,24 @@ const PodsFieldOption = ( props ) => {
 				/>
 			)
 			}
+			{ !! description && (
+				<p
+					className="description"
+					dangerouslySetInnerHTML={ removep( sanitizeHtml( description, richText ) ) }
+				/>
+			) }
 		</div>
 	);
 };
 
 PodsFieldOption.propTypes = {
+	description: PropTypes.string,
 	fieldType: PropTypes.string.isRequired,
-	name: PropTypes.string.isRequired,
-	value: PropTypes.any.isRequired,
-	label: PropTypes.string.isRequired,
-	onChange: PropTypes.func.isRequired,
 	helpText: PropTypes.string,
+	label: PropTypes.string.isRequired,
+	name: PropTypes.string.isRequired,
+	onChange: PropTypes.func.isRequired,
+	value: PropTypes.any.isRequired,
 };
 
 export default PodsFieldOption;

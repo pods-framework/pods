@@ -95,6 +95,9 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			pods_api()->save_field( $params );
 		}
+
+		// Reload PodsMeta.
+		pods_meta()->core();
 	}
 
 	public static function load_pods() {

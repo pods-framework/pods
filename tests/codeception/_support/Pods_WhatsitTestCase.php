@@ -12,7 +12,7 @@ use Pods\Whatsit;
 class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 
 	/**
-	 * @var Storage
+	 * @var Storage\Post_Type
 	 */
 	protected $pods_object_storage;
 

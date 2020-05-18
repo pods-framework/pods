@@ -1,5 +1,10 @@
 <?php
 
+use Pods\API\Whatsit\Pod;
+use Pods\API\Whatsit\Group;
+use Pods\API\Whatsit\Field;
+use Pods\API\Whatsit\Value_Field;
+
 /**
  * @package Pods
  */

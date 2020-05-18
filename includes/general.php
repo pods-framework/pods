@@ -1092,7 +1092,6 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	$content = $pod->template( $tags['template'], $content );
-	$content = trim( $content );
 
 	if ( empty( $content ) && ! empty( $tags['not_found'] ) ) {
 		$content = $pod->do_magic_tags( $tags['not_found'] );

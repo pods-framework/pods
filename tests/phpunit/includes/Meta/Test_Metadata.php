@@ -44,7 +44,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 		foreach ( self::$pod_names as $type => $name ) {
 			// Delete all pod objects as well.
 			$delete_all = true;
-			//pods_api()->delete_pod( $name, false, $delete_all );
+			pods_api()->delete_pod( $name, false, $delete_all );
 		}
 	}
 

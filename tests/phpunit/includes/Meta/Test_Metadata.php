@@ -115,7 +115,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				switch ( $type ) {
 					case 'post_type':
 						$object['post_title']  = $title;
-						$object['post_status'] = 'published';
+						$object['post_status'] = 'publish';
 						$object['post_type']   = $name;
 
 						$id = wp_insert_post( $object );

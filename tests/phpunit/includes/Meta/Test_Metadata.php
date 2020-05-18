@@ -202,9 +202,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 			$get_meta = 'get_' . $name;
 
 			foreach ( $ids as $key => $id ) {
-				var_dump( get_post( $id )->post_type );
-
-				//var_dump( pods( self::$pod_names[ $type ], $id ) );
 
 				$single        = call_user_func( $get_meta, $id, 'related_single', false );
 				$single_single = call_user_func( $get_meta, $id, 'related_single', true );

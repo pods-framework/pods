@@ -268,36 +268,6 @@ describe( 'store', () => {
 					expect( result ).toEqual( rename );
 				} );
 			} );
-
-			describe( 'General meta', () => {
-				test( 'Initializes with an empty object', () => {
-					testStore.initStore( deepFreeze( {} ) );
-					const result = paths.POD_META.getFrom( testStore.select.getState() );
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( {} );
-				} );
-
-				test( 'setPodMetaValue() should create a new meta value', () => {
-					const key = 'foo';
-					const value = 'bar';
-					testStore.dispatch.setPodMetaValue( key, value );
-					const result = testStore.select.getPodMetaValue( key );
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( value );
-				} );
-
-				test( 'setPodMetaValue() should update an existing meta value', () => {
-					const key = 'foo';
-					const value = 'baz';
-					testStore.dispatch.setPodMetaValue( key, value );
-					const result = testStore.select.getPodMetaValue( key );
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( value );
-				} );
-			} );
 		} );
 
 		describe( 'fields', () => {

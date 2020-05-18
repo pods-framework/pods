@@ -13,7 +13,8 @@
 			}
 		],
 		"babel-plugin-transform-html-import-to-string",
-		"@babel/plugin-transform-strict-mode"
+		"@babel/plugin-transform-strict-mode",
+		"@babel/plugin-proposal-optional-chaining"
 	],
 	"env": {
 		"development": {

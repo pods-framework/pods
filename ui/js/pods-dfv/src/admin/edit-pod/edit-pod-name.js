@@ -1,13 +1,13 @@
 import React from 'react';
 
-// Pods dependencies
-import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
-import { PodsDFVSluggable } from 'pods-dfv/src/admin/edit-pod/sluggable';
-
 // WordPress dependencies
 import { __ } from '@wordpress/i18n';
-const { withSelect, withDispatch } = wp.data;
-const { compose } = wp.compose;
+import { withSelect, withDispatch } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
+
+// Pods dependencies
+import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
+import PodsDFVSluggable from 'pods-dfv/src/admin/edit-pod/sluggable';
 
 const EditPodName = ( props ) => {
 	return (

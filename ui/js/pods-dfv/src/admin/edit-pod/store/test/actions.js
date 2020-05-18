@@ -2,7 +2,6 @@ import { uiConstants, podMetaConstants, optionConstants, groupConstants } from '
 
 import {
 	setPodName,
-	setPodMetaValue,
 	setSaveStatus,
 	setDeleteStatus,
 	setActiveTab,
@@ -209,27 +208,6 @@ describe( 'actions', () => {
 				};
 
 				expect( setPodName( name ) ).toEqual( expected );
-			} );
-		} );
-
-		describe( 'setPodMetaValue()', () => {
-			const action = actions.SET_POD_META_VALUE;
-
-			it( 'Should define the action constant', () => {
-				expect( action ).toBeDefined();
-			} );
-
-			it( 'Should return the correct action', () => {
-				const key = 'foo';
-				const value = 'bar';
-				const expected = {
-					type: action,
-					key,
-					value,
-				};
-				const result = setPodMetaValue( key, value );
-
-				expect( result ).toEqual( expected );
 			} );
 		} );
 	} );

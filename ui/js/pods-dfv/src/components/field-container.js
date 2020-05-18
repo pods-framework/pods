@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import { PodsDFVValidationMessages } from 'pods-dfv/src/components/validation-messages';
+
+import PodsDFVValidationMessages from 'pods-dfv/src/components/validation-messages';
 import { validationRules } from 'pods-dfv/src/validation/validation-rules';
 import { podsValidation } from 'pods-dfv/src/validation/validation';
 

@@ -90,7 +90,7 @@ window.PodsDFV = {
 			};
 
 			if ( field !== undefined ) {
-				field.renderer( field.FieldClass, tag.parentNode, data );
+				field.renderer( field.FieldClass, tag.parentNode, actualData );
 			}
 		} );
 	},

@@ -1,36 +1,21 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
-import { each, isObject } from 'lodash';
 
 // WordPress Dependencies
-// noinspection JSUnresolvedVariable
-const { sprintf, __ } = wp.i18n;
+import { __, sprintf } from '@wordpress/i18n';
 
 // Pod dependencies
-import { PodsFieldOption } from 'pods-dfv/src/components/field-option';
+import DependentFieldOption from 'pods-dfv/src/components/dependent-field-option';
+// import { getOption } from 'backbone.marionette';
 
 const MISSING = __( '[MISSING DEFAULT]', 'pods' );
 
-/**
- * option data format
- * {
- *     optionName: {
- *         // default may get removed... merge it into value on the server side,
- *         // it's a one-time thing
- *         default: '',
- *         depends-on: { optionName: dependentValue },
- *         help: 'help',
- *         label: 'XXX %s',
- *         label_param: 'optionName',
- *         param_default: 'Item',
- *         type: 'text, boolean, number, pick, file'
- *         value: ''
- *     }
- * }
- */
-
-export const DynamicTabContent = ( props ) => {
-	const { tabOptions, getOptionValue, setOptionValue } = props;
+const DynamicTabContent = ( props ) => {
+	const {
+		tabOptions,
+		getOptionValue,
+		setOptionValue,
+	} = props;
 
 	const getLabelValue = ( labelFormat, paramOption, paramDefault ) => {
 		if ( ! paramOption ) {
@@ -41,85 +26,54 @@ export const DynamicTabContent = ( props ) => {
 		return sprintf( labelFormat, param );
 	};
 
-	return tabOptions.map( ( option ) => (
+	return tabOptions.map( ( {
+		name,
+		default: defaultValue,
+		type,
+		label,
+		help,
+		'depends-on': dependsOn,
+	} ) => (
 		<DependentFieldOption
-			key={ option.name }
-			fieldType={ option.type }
-			name={ option.name }
-			label={ getLabelValue( option.label, option.label_param, option.param_default ) }
-			value={ option.value || '' }
-			dependents={ option[ 'depends-on' ] }
-			helpText={ option.help }
+			key={ name }
+			fieldType={ type }
+			name={ name }
+			label={ getLabelValue( label, 'label', defaultValue ) }
+			value={ getOptionValue( name ) || defaultValue }
+			dependents={ dependsOn }
+			helpText={ help }
 			getOptionValue={ getOptionValue }
 			setOptionValue={ setOptionValue }
 		/>
 	) );
 };
+
 DynamicTabContent.propTypes = {
-	tabOptions: PropTypes.array.isRequired,
+	tabOptions: PropTypes.arrayOf(
+		// @todo break out PropTypes, this can be re-used as a "Field"
+		PropTypes.shape( {
+			boolean_yes_label: PropTypes.string,
+			default: PropTypes.oneOfType( [
+				PropTypes.string,
+				PropTypes.bool,
+				PropTypes.number,
+			] ),
+			'depends-on': PropTypes.object,
+			description: PropTypes.string.isRequired,
+			group: PropTypes.string.isRequired,
+			help: PropTypes.string.isRequired,
+			id: PropTypes.string.isRequired,
+			label: PropTypes.string.isRequired,
+			name: PropTypes.string.isRequired,
+			object_type: PropTypes.string.isRequired,
+			parent: PropTypes.string.isRequired,
+			storage_type: PropTypes.string.isRequired,
+			text_max_length: PropTypes.number,
+			type: PropTypes.string.isRequired,
+		} )
+	).isRequired,
 	getOptionValue: PropTypes.func.isRequired,
 	setOptionValue: PropTypes.func.isRequired,
 };
 
-// Conditionally display a FieldOption (depends-on support)
-const DependentFieldOption = ( props ) => {
-	const { fieldType, name, label, value, dependents } = props;
-	const { getOptionValue, setOptionValue } = props;
-
-	const handleInputChange = ( e ) => {
-		const target = e.target;
-		const checkedValue = 'checkbox' === target.type ? target.checked : target.value;
-
-		setOptionValue( name, checkedValue );
-	};
-
-	if ( ! meetsDependencies( dependents, getOptionValue ) ) {
-		return null;
-	}
-
-	return (
-		<PodsFieldOption
-			fieldType={ fieldType }
-			name={ name }
-			value={ value }
-			label={ label }
-			onChange={ handleInputChange }
-			helpText={ props.helpText }
-		/>
-	);
-};
-DependentFieldOption.propTypes = {
-	fieldType: PropTypes.string.isRequired,
-	name: PropTypes.string.isRequired,
-	value: PropTypes.any.isRequired,
-	label: PropTypes.string.isRequired,
-	dependents: PropTypes.object,
-	helpText: PropTypes.any,
-	getOptionValue: PropTypes.func.isRequired,
-	setOptionValue: PropTypes.func.isRequired,
-};
-
-/**
- * Check if option meets dependencies, helper function.
- *
- * @param {Object|Object[]} dependencies Dictionary in the form optionName: requiredVal
- * @param {Function} getOptionValue Selector to lookup option values by name
- *
- * @return {boolean} Whether or not the specified dependencies are met
- */
-const meetsDependencies = ( dependencies, getOptionValue ) => {
-	let retVal = true;
-
-	if ( dependencies && isObject( dependencies ) ) {
-		each( dependencies, ( dependentValue, dependentOptionName ) => {
-			// Loose comparison required, values may be 1/0 expecting true/false
-			// noinspection EqualityComparisonWithCoercionJS
-			if ( getOptionValue( dependentOptionName ) !== dependentValue ) {
-				retVal = false;
-				return false; // Early-exits the loop only, not the function
-			}
-		} );
-	}
-
-	return retVal;
-};
+export default DynamicTabContent;

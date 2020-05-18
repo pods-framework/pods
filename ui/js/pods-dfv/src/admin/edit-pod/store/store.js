@@ -11,8 +11,10 @@ const { registerStore } = wp.data;
 export const initStore = ( props ) => {
 	const initialState = merge(
 		paths.UI.createTree( initialUIState ),
-		props
+		props.config || {}
 	);
+
+	console.log( 'initialState', initialState );
 
 	return registerStore( STORE_KEY_EDIT_POD, {
 		reducer,

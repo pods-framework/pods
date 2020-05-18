@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import {
 	GROUPS as GROUPS_PATH,
-	GLOBAL_GROUPS,
 } from './state-paths';
 
 import {
@@ -21,7 +20,6 @@ export const setObjectValue = ( object, key, value ) => {
 	};
 };
 
-// UI
 export const ui = ( state = initialUIState, action = {} ) => {
 	const {
 		actions: ACTIONS,
@@ -74,6 +72,22 @@ export const currentPod = ( state = {}, action = {} ) => {
 			return {
 				...state,
 				name: action.name,
+			};
+		}
+
+		case ACTIONS.SET_OPTION_VALUE: {
+			const { optionName, value } = action;
+
+			return {
+				...state,
+				[ optionName ]: value,
+			};
+		}
+
+		case ACTIONS.SET_OPTIONS_VALUES: {
+			return {
+				...state,
+				...action.options,
 			};
 		}
 
@@ -133,22 +147,6 @@ export const currentPod = ( state = {}, action = {} ) => {
 			group.fields.push( action.field );
 
 			return { ...state };
-		}
-
-		case ACTIONS.SET_OPTION_VALUE: {
-			const { optionName, value } = action;
-
-			return {
-				...state,
-				[ optionName ]: value,
-			};
-		}
-
-		case ACTIONS.SET_OPTIONS_VALUES: {
-			return {
-				...state,
-				...action.options,
-			};
 		}
 
 		default: {

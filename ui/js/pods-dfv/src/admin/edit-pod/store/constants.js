@@ -7,15 +7,6 @@ export const uiConstants = {
 		SET_DELETE_STATUS: 'SET_DELETE_STATUS',
 	},
 
-	tabNames: {
-		MANAGE_FIELDS: 'manage-fields',
-		LABELS: 'labels',
-		ADMIN_UI: 'admin-ui',
-		ADVANCED_OPTIONS: 'advanced',
-		AUTO_TEMPLATE_OPTIONS: 'pods-pfat',
-		REST_API: 'rest-api',
-	},
-
 	deleteStatuses: {
 		NONE: '',
 		DELETING: 'DELETING',
@@ -53,7 +44,7 @@ export const currentPodConstants = {
 };
 
 export const initialUIState = {
-	activeTab: uiConstants.tabNames.MANAGE_FIELDS,
+	activeTab: 'manage-fields',
 	saveStatus: uiConstants.saveStatuses.NONE,
 	deleteStatus: uiConstants.deleteStatuses.NONE,
 	saveMessage: null,

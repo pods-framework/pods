@@ -1152,16 +1152,22 @@ class Pods implements Iterator {
 
 							switch ( $type ) {
 								case '_format':
-									if ( $field ) {
-										$format = implode( '.', $field );
+									$format    = implode( '.', $field );
+									$wp_format = in_array( strtolower( $format ), array( 'wp', 'wordpress' ), true );
+
+									if ( $format && ! $wp_format ) {
 										$value  = date_i18n( $format, strtotime( $value ) );
 
-										$field_data['options']['datetime_type']          = 'custom';
-										$field_data['options']['datetime_time_type']     = 'custom';
-										$field_data['options']['datetime_format_custom'] = $format;
+										$field_data['options'][ $field_data['type'] . '_type' ]          = 'custom';
+										$field_data['options'][ $field_data['type'] . '_time_type' ]     = 'custom';
+										$field_data['options'][ $field_data['type'] . '_format_custom' ] = $format;
 									} else {
-										$field_data['options']['datetime_type']      = 'wp';
-										$field_data['options']['datetime_time_type'] = 'wp';
+										if ( ! isset( $field_data['options'][ $field_data['type'] . '_type'] ) || $wp_format ) {
+											$field_data['options']['datetime_time_type'] = 'wp';
+										}
+										if ( ! isset( $field_data['options'][ $field_data['type'] . '_time_type'] ) || $wp_format ) {
+											$field_data['options']['datetime_type'] = 'wp';
+										}
 									}
 									break;
 							}
@@ -1716,6 +1722,7 @@ class Pods implements Iterator {
 									foreach ( $data as $item_id => $item ) {
 										// $field is 123x123, needs to be _src.123x123
 										$full_field = implode( '.', array_splice( $params->traverse, $key ) );
+										var_dump( $full_field );
 
 										if ( is_array( $item ) && isset( $item[ $field ] ) ) {
 											if ( $table['field_id'] === $field ) {

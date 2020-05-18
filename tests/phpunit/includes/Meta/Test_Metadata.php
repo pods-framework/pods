@@ -156,20 +156,33 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 				switch ( $key ) {
 					case 0:
-						call_user_func( $update_meta, $id, 'text', 'text' );
-						// No relationship fields.
+						$data = array(
+							'text' => 'text',
+							// No relationship fields.
+						);
 						break;
 					case 1:
-						call_user_func( $update_meta, $id, 'related_single', $objects[ 2 ] );
-						// Single multi relationship.
-						call_user_func( $update_meta, $id, 'related_multi', $objects[ 2 ] );
+						$data = array(
+							'related_single' => $objects[ 2 ],
+							// Single multi relationship.
+							'related_multi'  => $objects[ 2 ],
+						);
 						break;
 					case 2:
-						call_user_func( $update_meta, $id, 'related_single', $objects[ 1 ] );
-						// Multi relationship. Should trigger Pods update metadata handler for multiple values.
-						call_user_func( $update_meta, $id, 'related_multi', array( $objects[ 0 ], $objects[ 1 ] ) );
+						$data = array(
+							'related_single' => $objects[ 1 ],
+							'related_multi'  => array( $objects[ 0 ], $objects[ 1 ] ),
+						);
 						break;
 				}
+
+				// Pods doesn't fully handle update_metadata requests.
+				/*foreach ( $data as $meta_key => $meta_value ) {
+					call_user_func( $update_meta, $id, $meta_key, $meta_value );
+				}*/
+
+				$pod = pods( $name, $id );
+				$pod->save( $data );
 			}
 		}
 	}

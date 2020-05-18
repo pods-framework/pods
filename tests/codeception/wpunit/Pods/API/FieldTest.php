@@ -67,26 +67,32 @@ class FieldTest extends Pods_UnitTestCase {
 	public function populate() {
 		$this->pod    = 'test_groups_pod';
 		$this->pod_id = $this->api->save_pod( [
-			'name'  => $this->pod,
-			'type'  => 'post_type',
-			'label' => 'Test pod for groups',
+			'name'            => $this->pod,
+			'type'            => 'post_type',
+			'label'           => 'Test pod for groups',
+			'some_custom_key' => 'Some custom value',
+			'another_key'     => - 1,
 		] );
 
 		$this->group    = 'test_group';
 		$this->group_id = $this->api->save_group( [
-			'pod_id' => $this->pod_id,
-			'name'   => $this->group,
-			'label'  => 'Test group',
+			'pod_id'          => $this->pod_id,
+			'name'            => $this->group,
+			'label'           => 'Test group',
+			'some_custom_key' => 'One custom value',
+			'another_key'     => 0,
 		] );
 	}
 
 	public function populate_field() {
 		$this->field    = 'test_field';
 		$this->field_id = $this->api->save_field( [
-			'pod_id'       => $this->pod_id,
-			'name'         => $this->field,
-			'label'        => 'Test field',
-			'new_group_id' => $this->group_id,
+			'pod_id'          => $this->pod_id,
+			'group_id'        => $this->group_id,
+			'name'            => $this->field,
+			'label'           => 'Test field',
+			'some_custom_key' => 'Field custom value',
+			'another_key'     => 1,
 		] );
 	}
 
@@ -114,7 +120,7 @@ class FieldTest extends Pods_UnitTestCase {
 			'pod_id' => $this->pod_id,
 		];
 
-		$this->expectExceptionMessage( 'Pod field name is required' );
+		$this->expectExceptionMessage( 'Pod field name or label is required' );
 		$this->expectException( \Exception::class );
 
 		$this->api->save_field( $params );
@@ -125,11 +131,12 @@ class FieldTest extends Pods_UnitTestCase {
 	 * @since  2.8
 	 * @throws \Exception
 	 */
-	public function test_save_field_with_pod_id() {
+	public function test_save_field_with_group_id() {
 		$params = [
-			'pod_id' => $this->pod_id,
-			'name'   => 'test_group',
-			'label'  => 'Test group',
+			'pod_id'   => $this->pod_id,
+			'group_id' => $this->group_id,
+			'name'     => 'test_field',
+			'label'    => 'Test field',
 		];
 
 		$response = $this->api->save_field( $params );
@@ -141,6 +148,8 @@ class FieldTest extends Pods_UnitTestCase {
 		$this->assertEquals( $params['name'], $field['name'] );
 		$this->assertEquals( 'text', $field['type'] );
 		$this->assertEquals( $params['label'], $field['label'] );
+		$this->assertEquals( $this->group_id, $field->get_group_id() );
+		$this->assertEquals( $this->group, $field->get_group_name() );
 	}
 
 	/**
@@ -148,11 +157,12 @@ class FieldTest extends Pods_UnitTestCase {
 	 * @since  2.8
 	 * @throws \Exception
 	 */
-	public function test_save_field_with_pod_name() {
+	public function test_save_field_with_group_name() {
 		$params = [
 			'pod'   => $this->pod,
-			'name'  => 'test_group',
-			'label' => 'Test group',
+			'group' => $this->group,
+			'name'  => 'test_field',
+			'label' => 'Test field',
 		];
 
 		$response = $this->api->save_field( $params );
@@ -164,6 +174,8 @@ class FieldTest extends Pods_UnitTestCase {
 		$this->assertEquals( $params['name'], $field['name'] );
 		$this->assertEquals( 'text', $field['type'] );
 		$this->assertEquals( $params['label'], $field['label'] );
+		$this->assertEquals( $this->group_id, $field->get_group_id() );
+		$this->assertEquals( $this->group, $field->get_group_name() );
 	}
 
 	/**
@@ -171,13 +183,15 @@ class FieldTest extends Pods_UnitTestCase {
 	 * @since  2.8
 	 * @throws \Exception
 	 */
-	public function test_save_field_with_pod_object() {
-		$pod = $this->api->load_pod( [ 'id' => $this->pod_id ] );
+	public function test_save_field_with_group_object() {
+		$pod   = $this->api->load_pod( [ 'id' => $this->pod_id ] );
+		$group = $this->api->load_group( [ 'id' => $this->group_id ] );
 
 		$params = [
 			'pod'   => $pod,
-			'name'  => 'test_group',
-			'label' => 'Test group',
+			'group' => $group,
+			'name'  => 'test_field',
+			'label' => 'Test field',
 		];
 
 		$response = $this->api->save_field( $params );
@@ -189,6 +203,45 @@ class FieldTest extends Pods_UnitTestCase {
 		$this->assertEquals( $params['name'], $field['name'] );
 		$this->assertEquals( 'text', $field['type'] );
 		$this->assertEquals( $params['label'], $field['label'] );
+		$this->assertEquals( $this->group_id, $field->get_group_id() );
+		$this->assertEquals( $this->group, $field->get_group_name() );
+	}
+
+	/**
+	 * @covers PodsAPI::save_field
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_save_field_with_new_group_id() {
+		$this->populate_field();
+
+		$group2    = 'test_another_group';
+		$group_id2 = $this->api->save_group( [
+			'pod_id'          => $this->pod_id,
+			'name'            => $group2,
+			'label'           => 'Test another group',
+			'some_custom_key' => 'Another custom value',
+			'another_key'     => 2,
+		] );
+
+		$params = [
+			'pod_id'       => $this->pod_id,
+			'group_id'     => $this->group_id,
+			'id'           => $this->field_id,
+			'new_group_id' => $group_id2,
+		];
+
+		$response = $this->api->save_field( $params );
+
+		$this->assertInternalType( 'int', $response );
+
+		$field = $this->api->load_field( $response );
+
+		$this->assertEquals( $this->field, $field['name'] );
+		$this->assertEquals( 'text', $field['type'] );
+		$this->assertEquals( 'Test field', $field['label'] );
+		$this->assertEquals( $group_id2, $field->get_group_id() );
+		$this->assertEquals( $group2, $field->get_group_name() );
 	}
 
 	/**
@@ -196,10 +249,14 @@ class FieldTest extends Pods_UnitTestCase {
 	 * @since  2.8
 	 * @throws \Exception
 	 */
-	public function test_load_field_with_pod_id() {
+	public function test_load_field_with_group_id() {
 		$this->populate_field();
 
-		$field = $this->api->load_field( [ 'pod_id' => $this->pod_id, 'name' => $this->field ] );
+		$field = $this->api->load_field( [
+			'pod_id'   => $this->pod_id,
+			'group_id' => $this->group_id,
+			'name'     => $this->field,
+		] );
 
 		$this->assertInstanceOf( Field::class, $field );
 	}
@@ -209,10 +266,14 @@ class FieldTest extends Pods_UnitTestCase {
 	 * @since  2.8
 	 * @throws \Exception
 	 */
-	public function test_load_field_with_pod_name() {
+	public function test_load_field_with_group_name() {
 		$this->populate_field();
 
-		$field = $this->api->load_field( [ 'pod' => $this->pod, 'name' => $this->field ] );
+		$field = $this->api->load_field( [
+			'pod'   => $this->pod,
+			'group' => $this->group,
+			'name'  => $this->field,
+		] );
 
 		$this->assertInstanceOf( Field::class, $field );
 	}
@@ -222,12 +283,17 @@ class FieldTest extends Pods_UnitTestCase {
 	 * @since  2.8
 	 * @throws \Exception
 	 */
-	public function test_load_field_with_pod_object() {
-		$pod = $this->api->load_pod( [ 'id' => $this->pod_id ] );
+	public function test_load_field_with_group_object() {
+		$pod   = $this->api->load_pod( [ 'id' => $this->pod_id ] );
+		$group = $this->api->load_group( [ 'id' => $this->group_id ] );
 
 		$this->populate_field();
 
-		$field = $this->api->load_field( [ 'pod' => $pod, 'name' => $this->field ] );
+		$field = $this->api->load_field( [
+			'pod'   => $pod,
+			'group' => $group,
+			'name'  => $this->field,
+		] );
 
 		$this->assertInstanceOf( Field::class, $field );
 	}
@@ -240,7 +306,9 @@ class FieldTest extends Pods_UnitTestCase {
 	public function test_load_field_with_id() {
 		$this->populate_field();
 
-		$field = $this->api->load_field( [ 'id' => $this->field_id ] );
+		$field = $this->api->load_field( [
+			'id' => $this->field_id,
+		] );
 
 		$this->assertInstanceOf( Field::class, $field );
 	}
@@ -283,5 +351,353 @@ class FieldTest extends Pods_UnitTestCase {
 		$field = $this->api->load_field( $field );
 
 		$this->assertInstanceOf( Field::class, $field );
+	}
+
+	/**
+	 * @covers PodsAPI::load_fields
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_fields_has_fields() {
+		$this->populate_field();
+
+		$fields = $this->api->load_fields();
+
+		$fields = wp_list_pluck( $fields, 'object_type' );
+		$fields = array_values( array_unique( $fields ) );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( 'field', $fields );
+
+		$params = [
+			'object_type' => 'pod',
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$fields = wp_list_pluck( $fields, 'object_type' );
+		$fields = array_values( array_unique( $fields ) );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( 'field', $fields );
+	}
+
+	/**
+	 * @covers PodsAPI::load_fields
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_fields_by_type() {
+		$this->populate_field();
+
+		$field_id2 = $this->api->save_field( [
+			'pod_id'   => $this->pod_id,
+			'group_id' => $this->group_id,
+			'name'     => 'test_another_field',
+			'type'     => 'number',
+			'label'    => 'Another test field',
+		] );
+
+		$params = [
+			'type' => 'number',
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$fields = wp_list_pluck( $fields, 'type', 'id' );
+
+		$this->assertArrayHasKey( $field_id2, $fields );
+
+		$fields = array_values( array_unique( $fields ) );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( 'number', $fields );
+
+		$params = [
+			'type' => [
+				'number',
+				'text',
+			],
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$fields = wp_list_pluck( $fields, 'type', 'id' );
+
+		$this->assertArrayHasKey( $this->field_id, $fields );
+		$this->assertArrayHasKey( $field_id2, $fields );
+
+		$fields = array_values( array_unique( $fields ) );
+
+		$this->assertCount( 2, $fields );
+		$this->assertContains( 'number', $fields );
+		$this->assertContains( 'text', $fields );
+	}
+
+	/**
+	 * @covers PodsAPI::load_fields
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_fields_by_id() {
+		$this->populate_field();
+
+		$field_id2 = $this->api->save_field( [
+			'pod_id'   => $this->pod_id,
+			'group_id' => $this->group_id,
+			'name'     => 'test_another_field',
+			'type'     => 'number',
+			'label'    => 'Another test field',
+		] );
+
+		$params = [
+			'id' => $field_id2,
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$fields = wp_list_pluck( $fields, 'id' );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( $field_id2, $fields );
+
+		$params = [
+			'id' => [
+				$field_id2,
+				$this->field_id,
+			],
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$fields = wp_list_pluck( $fields, 'id' );
+
+		$this->assertCount( 2, $fields );
+		$this->assertContains( $field_id2, $fields );
+		$this->assertContains( $this->field_id, $fields );
+	}
+
+	/**
+	 * @covers PodsAPI::load_fields
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_fields_by_args() {
+		$this->populate_field();
+
+		$params = [
+			'args' => [
+				'another_key' => 1,
+			],
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$fields = wp_list_pluck( $fields, 'id' );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( $this->field_id, $fields );
+
+		$params = [
+			'args' => [
+				'some_custom_key' => 'Some',
+			],
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$this->assertCount( 0, $fields );
+	}
+
+	/**
+	 * @covers PodsAPI::load_fields
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_fields_by_options() {
+		$this->populate_field();
+
+		$params = [
+			'options' => [
+				'another_key' => 1,
+			],
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$fields = wp_list_pluck( $fields, 'id' );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( $this->field_id, $fields );
+
+		$params = [
+			'options' => [
+				'some_custom_key' => 'Some',
+			],
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$this->assertCount( 0, $fields );
+	}
+
+	/**
+	 * @covers PodsAPI::load_fields
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_fields_by_where() {
+		$this->populate_field();
+
+		$params = [
+			'where' => [
+				[
+					'key'   => 'another_key',
+					'value' => 1,
+				],
+			],
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$fields = wp_list_pluck( $fields, 'id' );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( $this->field_id, $fields );
+
+		$params = [
+			'where' => [
+				[
+					'key'   => 'some_custom_key',
+					'value' => 'Some',
+				],
+			],
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$this->assertCount( 0, $fields );
+	}
+
+	/**
+	 * @covers PodsAPI::load_fields
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_fields_with_names() {
+		$this->populate_field();
+
+		$params = [
+			'id'    => $this->field_id,
+			'names' => true,
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( $this->field, $fields );
+
+		$params = [
+			'id'          => $this->field_id,
+			'return_type' => 'names',
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( $this->field, $fields );
+	}
+
+	/**
+	 * @covers PodsAPI::load_fields
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_fields_with_names_ids() {
+		$this->populate_field();
+
+		$params = [
+			'id'        => $this->field_id,
+			'names_ids' => true,
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( $this->field, $fields );
+		$this->assertArrayHasKey( $this->field_id, $fields );
+
+		$params = [
+			'id'          => $this->field_id,
+			'return_type' => 'names_ids',
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( $this->field, $fields );
+		$this->assertArrayHasKey( $this->field_id, $fields );
+	}
+
+	/**
+	 * @covers PodsAPI::load_fields
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_fields_with_ids() {
+		$this->populate_field();
+
+		$params = [
+			'id'          => $this->field_id,
+			'return_type' => 'ids',
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$this->assertCount( 1, $fields );
+		$this->assertContains( $this->field_id, $fields );
+	}
+
+	/**
+	 * @covers PodsAPI::load_fields
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_load_fields_with_count() {
+		$this->populate_field();
+
+		$field_id2 = $this->api->save_field( [
+			'pod_id'   => $this->pod_id,
+			'group_id' => $this->group_id,
+			'name'     => 'test_another_field',
+			'type'     => 'number',
+			'label'    => 'Another test field',
+		] );
+
+		$params = [
+			'id'    => [
+				$this->field_id,
+				$field_id2,
+			],
+			'count' => true,
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$this->assertInternalType( 'int', $fields );
+		$this->assertEquals( 2, $fields );
+
+		$params = [
+			'id'          => [
+				$this->field_id,
+				$field_id2,
+			],
+			'return_type' => 'count',
+		];
+
+		$fields = $this->api->load_fields( $params );
+
+		$this->assertInternalType( 'int', $fields );
+		$this->assertEquals( 2, $fields );
 	}
 }

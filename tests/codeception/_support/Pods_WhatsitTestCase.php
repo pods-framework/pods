@@ -32,17 +32,17 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 	protected $field_args;
 
 	/**
-	 * @var Whatsit
+	 * @var Whatsit\Pod
 	 */
 	protected $pods_object_pod;
 
 	/**
-	 * @var Whatsit
+	 * @var Whatsit\Group
 	 */
 	protected $pods_object_group;
 
 	/**
-	 * @var Whatsit
+	 * @var Whatsit\Field
 	 */
 	protected $pods_object_field;
 

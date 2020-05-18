@@ -2566,6 +2566,67 @@ class PodsAPI {
 			$params->pod_id = (int) $db;
 		}
 
+		$group                = null;
+		$new_group            = null;
+		$group_identifier     = null;
+		$new_group_identifier = null;
+
+		if ( ! empty( $params->group_id ) ) {
+			$group_identifier = 'ID: ' . $params->group_id;
+
+			$group = $this->load_group( [
+				'id'  => $params->group_id,
+				'pod' => $pod,
+			] );
+		} elseif ( ! empty( $params->group ) ) {
+			if ( $params->group instanceof \Pods\Whatsit\Group ) {
+				$group = $params->group;
+			} else {
+				$group_identifier = 'Slug: ' . $params->group;
+
+				$group = $this->load_group( [
+					'name' => $params->group,
+					'pod'  => $pod,
+				] );
+			}
+		}
+
+		// Handle assigning to new groups.
+		if ( ! empty( $params->new_group_id ) ) {
+			$new_group_identifier = 'ID: ' . $params->new_group_id;
+
+			$new_group = $this->load_group( [
+				'id'  => $params->new_group_id,
+				'pod' => $pod,
+			] );
+
+			unset( $params->new_group_id );
+		} elseif ( ! empty( $params->new_group ) ) {
+			if ( $params->new_group instanceof \Pods\Whatsit\Group ) {
+				$new_group = $params->new_group;
+			} else {
+				$new_group_identifier = 'Slug: ' . $params->new_group;
+
+				$new_group = $this->load_group( [
+					'name' => $params->new_group,
+					'pod'  => $pod,
+				] );
+			}
+
+			unset( $params->new_group );
+		}
+
+		if ( $group instanceof \Pods\Whatsit\Group ) {
+			$params->group_id = $group['id'];
+			$params->group    = $group['name'];
+		} elseif ( false === $group ) {
+			return pods_error( sprintf( __( 'Group (%s) not found.', 'pods' ), $group_identifier ), $this );
+		}
+
+		if ( false === $new_group ) {
+			return pods_error( sprintf( __( 'New group (%s) not found.', 'pods' ), $new_group_identifier ), $this );
+		}
+
 		if ( false === $sanitized ) {
 			$params = pods_sanitize( $params );
 		}
@@ -2607,19 +2668,11 @@ class PodsAPI {
 			$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
 		}
 
-		if ( empty( $params->name ) ) {
-			if ( $field ) {
-				$params->name = $field['name'];
-			} else {
-				return pods_error( __( 'Pod field name is required', 'pods' ), $this );
-			}
-		}
-
 		$field_obj = $field;
 
 		if ( ! $field ) {
 			$load_params = [
-				'parent' => $params->pod_id,
+				'pod_id' => $params->pod_id,
 			];
 
 			$fail_on_load = false;
@@ -2634,19 +2687,33 @@ class PodsAPI {
 				$fail_on_load = true;
 			} elseif ( ! empty( $params->name ) ) {
 				$load_params['name'] = $params->name;
-			} else {
+			} elseif ( ! empty( $params->label ) ) {
+				$load_params = false;
+			} else{
 				return pods_error( __( 'Pod field name or label is required', 'pods' ), $this );
 			}
 
-			$field_obj = $this->load_field( $load_params );
+			if ( $load_params ) {
+				$field_obj = $this->load_field( $load_params );
 
-			if ( $fail_on_load && ( empty( $field_obj ) || is_wp_error( $field_obj ) ) ) {
-				return $field_obj;
+				if ( $fail_on_load && ( empty( $field_obj ) || is_wp_error( $field_obj ) ) ) {
+					return $field_obj;
+				}
 			}
 		}
 
 		if ( $field_obj ) {
 			$field = $field_obj->get_args();
+		}
+
+		if ( empty( $params->name ) ) {
+			if ( $field ) {
+				$params->name = $field['name'];
+			} elseif ( ! empty( $params->label ) ) {
+				$params->name = pods_clean_name( $params->label, true, 'meta' !== $pod['storage'] );
+			} else {
+				return pods_error( __( 'Pod field name or label is required', 'pods' ), $this );
+			}
 		}
 
 		$old_id                = null;
@@ -2678,26 +2745,8 @@ class PodsAPI {
 				$field['name'] = $params->name;
 			}
 
-			if ( isset( $params->new_group_id ) && ! empty( $params->new_group_id ) ) {
-				$group = $this->load_group( [ 'id' => $params->new_group_id, 'pod' => $pod ] );
-
-				if ( ! $group instanceof \Pods\Whatsit\Group ) {
-					return pods_error( sprintf( __( 'New Group (ID: %d) for Field %s not found.', 'pods' ), $params->new_group_id, $field['name'] ), $this );
-				}
-
-				$field['group'] = $group->get_id();
-
-				unset( $params->new_group_id );
-			} elseif ( isset( $params->new_group ) && ! empty( $params->new_group ) ) {
-				$group = $this->load_group( [ 'name' => $params->new_group, 'pod' => $pod ] );
-
-				if ( ! $group instanceof \Pods\Whatsit\Group ) {
-					return pods_error( sprintf( __( 'New Group (Slug: %s) for Field %s not found.', 'pods' ), $params->new_group, $field['name'] ), $this );
-				}
-
-				$field['group'] = $group->get_id();
-
-				unset( $params->new_group );
+			if ( $new_group && ( ! $group || $group->get_id() !== $new_group->get_id() ) ) {
+				$field['group'] = $new_group->get_id();
 			}
 
 			if ( $old_name !== $field['name'] ) {
@@ -2742,7 +2791,7 @@ class PodsAPI {
 				$old_definition = "`{$old_name}` " . $field_definition;
 			}
 		} else {
-			$field = array(
+			$field = [
 				'id'          => 0,
 				'pod_id'      => $params->pod_id,
 				'name'        => $params->name,
@@ -2753,8 +2802,14 @@ class PodsAPI {
 				'pick_val'    => '',
 				'sister_id'   => '',
 				'weight'      => null,
-				'options'     => array()
-			);
+				'options'     => [],
+			];
+
+			if ( $group ) {
+				$field['group'] = $group->get_id();
+			} elseif ( $new_group ) {
+				$field['group'] = $new_group->get_id();
+			}
 		}
 
 		// Setup options
@@ -6911,8 +6966,18 @@ class PodsAPI {
 			return $params;
 		}
 
-		if ( $params instanceof WP_Post || is_int( $params ) ) {
+		if ( $params instanceof WP_Post ) {
 			return $this->get_pods_object_from_wp_post( $params );
+		}
+
+		if ( is_numeric( $params ) ) {
+			$params = [
+				'id' => $params,
+			];
+		} elseif ( is_string( $params ) ) {
+			$params = [
+				'name' => $params,
+			];
 		}
 
 		// Backwards compatibility handling.
@@ -6947,7 +7012,43 @@ class PodsAPI {
 			unset( $params['table_info'] );
 		}
 
-		return $this->load_object_pod( $params, $strict );
+		$params['object_type'] = 'pod';
+
+		if ( isset( $params['name'] ) && '' === $params['name'] ) {
+			unset( $params['name'] );
+		}
+
+		if ( isset( $params['id'] ) && in_array( $params['id'], array( '', 0 ), true ) ) {
+			unset( $params['id'] );
+		}
+
+		if ( 1 === count( $params ) ) {
+			$pod = var_export( $params, true );
+			trigger_error( 'test: ' . $pod );
+			codecept_debug( 'test: ' . $pod );
+
+			return false;
+		}
+
+		$object = $this->_load_object( $params );
+
+		$pod = 'n/a';
+
+		if ( ! empty( $params['name'] ) ) {
+			$pod = $params['name'];
+		} elseif ( ! empty( $params['id'] ) ) {
+			$pod = $params['id'];
+		}
+
+		if ( $object ) {
+			return $object;
+		}
+
+		if ( $strict ) {
+			return pods_error( __( 'Pod not found', 'pods' ), $this );
+		}
+
+		return false;
 	}
 
 	/**
@@ -7008,7 +7109,9 @@ class PodsAPI {
 			unset( $params['ids'] );
 		}
 
-		return $this->load_object_pods( $params );
+		$params['object_type'] = 'pod';
+
+		return $this->_load_objects( $params );
 	}
 
 	/**
@@ -7075,8 +7178,18 @@ class PodsAPI {
 			return $params;
 		}
 
-		if ( $params instanceof WP_Post || is_int( $params ) ) {
+		if ( $params instanceof WP_Post ) {
 			return $this->get_pods_object_from_wp_post( $params );
+		}
+
+		if ( is_numeric( $params ) ) {
+			$params = [
+				'id' => $params,
+			];
+		} elseif ( is_string( $params ) ) {
+			$params = [
+				'name' => $params,
+			];
 		}
 
 		// Backwards compatibility handling.
@@ -7117,7 +7230,33 @@ class PodsAPI {
 			unset( $params['pod'] );
 		}
 
-		return $this->load_object_field( $params, $strict );
+		if ( isset( $params['group_id'] ) ) {
+			$params['group'] = (int) $params['group_id'];
+
+			unset( $params['group_id'] );
+		}
+
+		if ( isset( $params['group'] ) ) {
+			$group = $this->load_group( $params['group'], false );
+
+			if ( $group ) {
+				$params['group'] = $group->get_id();
+			}
+		}
+
+		$params['object_type'] = 'field';
+
+		$object = $this->_load_object( $params );
+
+		if ( $object ) {
+			return $object;
+		}
+
+		if ( $strict ) {
+			return pods_error( __( 'Pod field not found', 'pods' ), $this );
+		}
+
+		return false;
 	}
 
 	/**
@@ -7251,7 +7390,43 @@ class PodsAPI {
 			unset( $params['ids'] );
 		}
 
-		return $this->load_object_fields( $params );
+		if ( isset( $params['pod_id'] ) ) {
+			$params['parent'] = (int) $params['pod_id'];
+
+			unset( $params['pod_id'] );
+		}
+
+		if ( isset( $params['pod'] ) ) {
+			if ( empty( $params['parent'] ) ) {
+				$params['parent'] = 0;
+
+				$pod = $this->load_pod( $params['pod'], false );
+
+				if ( $pod ) {
+					$params['parent'] = $pod->get_id();
+				}
+			}
+
+			unset( $params['pod'] );
+		}
+
+		if ( isset( $params['group_id'] ) ) {
+			$params['group'] = (int) $params['group_id'];
+
+			unset( $params['group_id'] );
+		}
+
+		if ( isset( $params['group'] ) ) {
+			$group = $this->load_group( $params['group'], false );
+
+			if ( $group ) {
+				$params['group'] = $group->get_id();
+			}
+		}
+
+		$params['object_type'] = 'field';
+
+		return $this->_load_objects( $params );
 	}
 
 	/**
@@ -7279,8 +7454,18 @@ class PodsAPI {
 			return $params;
 		}
 
-		if ( $params instanceof WP_Post || is_int( $params ) ) {
+		if ( $params instanceof WP_Post ) {
 			return $this->get_pods_object_from_wp_post( $params );
+		}
+
+		if ( is_numeric( $params ) ) {
+			$params = [
+				'id' => $params,
+			];
+		} elseif ( is_string( $params ) ) {
+			$params = [
+				'name' => $params,
+			];
 		}
 
 		// Backwards compatibility handling.
@@ -7321,7 +7506,19 @@ class PodsAPI {
 			unset( $params['pod'] );
 		}
 
-		return $this->load_object_group( $params, $strict );
+		$params['object_type'] = 'group';
+
+		$object = $this->_load_object( $params );
+
+		if ( $object ) {
+			return $object;
+		}
+
+		if ( $strict ) {
+			return pods_error( __( 'Pod group not found', 'pods' ), $this );
+		}
+
+		return false;
 	}
 
 	/**
@@ -7374,7 +7571,29 @@ class PodsAPI {
 			unset( $params['object_fields'] );
 		}
 
-		return $this->load_object_groups( $params );
+		if ( isset( $params['pod_id'] ) ) {
+			$params['parent'] = (int) $params['pod_id'];
+
+			unset( $params['pod_id'] );
+		}
+
+		if ( isset( $params['pod'] ) ) {
+			if ( empty( $params['parent'] ) ) {
+				$params['parent'] = 0;
+
+				$pod = $this->load_pod( $params['pod'], false );
+
+				if ( $pod ) {
+					$params['parent'] = $pod->get_id();
+				}
+			}
+
+			unset( $params['pod'] );
+		}
+
+		$params['object_type'] = 'group';
+
+		return $this->_load_objects( $params );
 	}
 
 	/**
@@ -9578,226 +9797,6 @@ class PodsAPI {
 		$post_type_storage = $object_collection->get_storage_object( $this->get_default_object_storage_type() );
 
 		return $post_type_storage->to_object( $post );
-	}
-
-	/**
-	 * Load a Pod and all of its fields.
-	 *
-	 * @param array  $params       {
-	 *                             An associative array of parameters.
-	 *
-	 * @type int     $id           The Pod ID.
-	 * @type string  $name         The Pod name.
-	 * @type boolean $bypass_cache Bypass the cache when getting data.
-	 * }
-	 *
-	 * @param bool   $strict       Makes sure the pod exists, throws an error if it doesn't work.
-	 *
-	 * @return Pods\Whatsit\Pod|false Pod object or false if not found.
-	 * @throws \Exception
-	 *
-	 * @since 2.8
-	 */
-	public function load_object_pod( array $params, $strict = false ) {
-		$params['object_type'] = 'pod';
-
-		if ( isset( $params['name'] ) && '' === $params['name'] ) {
-			unset( $params['name'] );
-		}
-
-		if ( isset( $params['id'] ) && in_array( $params['id'], array( '', 0 ), true ) ) {
-			unset( $params['id'] );
-		}
-
-		if ( 1 === count( $params ) ) {
-			$pod = var_export( $params, true );
-			trigger_error( 'test: ' . $pod );
-
-			return false;
-		}
-
-		$object = $this->_load_object( $params );
-
-		$pod = 'n/a';
-
-		if ( ! empty( $params['name'] ) ) {
-			$pod = $params['name'];
-		} elseif ( ! empty( $params['id'] ) ) {
-			$pod = $params['id'];
-		}
-
-		if ( $object ) {
-			return $object;
-		}
-
-		if ( $strict ) {
-			return pods_error( __( 'Pod not found', 'pods' ), $this );
-		}
-
-		return false;
-	}
-
-	/**
-	 * Load a list of Pods based on filters specified.
-	 *
-	 * @param array       $params       {
-	 *                                  An associative array of parameters
-	 *
-	 * @type string|array $type         Pod type(s) to filter by.
-	 * @type string|array $id           ID(s) of Objects.
-	 * @type array        $args         Arg(s) key=>value to filter by.
-	 * @type boolean      $count        Return only a count of pods.
-	 * @type boolean      $names        Return only an array of name => label.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
-	 * }
-	 *
-	 * @return Pods\Whatsit\Pod[]|int List of pod objects or count.
-	 *
-	 * @since 2.8
-	 */
-	public function load_object_pods( array $params = array() ) {
-		$params['object_type'] = 'pod';
-
-		return $this->_load_objects( $params );
-	}
-
-	/**
-	 * Load a field.
-	 *
-	 * @param array   $params       {
-	 *                              An associative array of parameters.
-	 *
-	 * @type int      $pod_id       The Pod ID.
-	 * @type string   $pod          The Pod name.
-	 * @type int      $id           The field ID.
-	 * @type string   $name         The field name.
-	 * @type boolean  $bypass_cache Bypass the cache when getting data.
-	 * }
-	 *
-	 * @param boolean $strict       Whether to require a field exist or not when loading the info.
-	 *
-	 * @return Pods\Whatsit\Field|false Field object or false if not found.
-	 *
-	 * @throws Exception
-	 *
-	 * @since 2.8
-	 */
-	public function load_object_field( array $params, $strict = false ) {
-		$params['object_type'] = 'field';
-
-		// @todo Handle pod_id and pod params.
-
-		$object = $this->_load_object( $params );
-
-		if ( $object ) {
-			return $object;
-		}
-
-		if ( $strict ) {
-			return pods_error( __( 'Pod field not found', 'pods' ), $this );
-		}
-
-		return false;
-	}
-
-	/**
-	 * Load fields by Pod, ID, Name, and/or Type.
-	 *
-	 * @param array       $params       {
-	 *                                  An associative array of parameters.
-	 *
-	 * @type int          $pod_id       The Pod ID.
-	 * @type string       $pod          The Pod name.
-	 * @type string|array $id           The field ID(s).
-	 * @type array        $name         The field names.
-	 * @type array        $type         The field types.
-	 * @type array        $args         Arg(s) key=>value to filter by.
-	 * @type boolean      $count        Return only a count of fields.
-	 * @type boolean      $names        Return only an array of name => label.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
-	 * }
-	 *
-	 * @return Pods\Whatsit\Field[]|int List of field objects or count.
-	 *
-	 * @since 2.8
-	 */
-	public function load_object_fields( array $params ) {
-		$params['object_type'] = 'field';
-
-		// @todo Handle pod_id and pod params.
-
-		return $this->_load_objects( $params );
-	}
-
-	/**
-	 * Load a group.
-	 *
-	 * @param array   $params       {
-	 *                              An associative array of parameters.
-	 *
-	 * @type int      $pod_id       The Pod ID.
-	 * @type string   $pod          The Pod name.
-	 * @type int      $id           The group ID.
-	 * @type string   $name         The group name.
-	 * @type boolean  $bypass_cache Bypass the cache when getting data.
-	 * }
-	 *
-	 * @param boolean $strict       Whether to require a group exist or not when loading the info.
-	 *
-	 * @return Pods\Whatsit\Group|false Group object or false if not found.
-	 *
-	 * @throws Exception
-	 *
-	 * @since 2.8
-	 */
-	public function load_object_group( array $params, $strict = false ) {
-		$params['object_type'] = 'group';
-
-		// @todo Handle pod_id and pod params.
-
-		$object = $this->_load_object( $params );
-
-		if ( $object ) {
-			return $object;
-		}
-
-		if ( $strict ) {
-			return pods_error( __( 'Pod group not found', 'pods' ), $this );
-		}
-
-		return false;
-	}
-
-	/**
-	 * Load Groups by Pod, ID, Name, and/or Type.
-	 *
-	 * @param array       $params       {
-	 *                                  An associative array of parameters.
-	 *
-	 * @type int          $pod_id       The Pod ID.
-	 * @type string       $pod          The Pod name.
-	 * @type string|array $id           The group ID(s).
-	 * @type array        $name         The group names.
-	 * @type array        $type         The group types.
-	 * @type array        $args         Arg(s) key=>value to filter by.
-	 * @type boolean      $count        Return only a count of objects.
-	 * @type boolean      $names        Return only an array of name => label.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
-	 * }
-	 *
-	 * @return Pods\Whatsit\Group[]|int List of group objects or count.
-	 *
-	 * @since 2.8
-	 */
-	public function load_object_groups( array $params ) {
-		$params['object_type'] = 'group';
-
-		// @todo Handle pod_id and pod params.
-
-		return $this->_load_objects( $params );
 	}
 
 	/**

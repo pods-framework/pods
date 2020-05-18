@@ -32,44 +32,37 @@ class Group extends Whatsit {
 	 * {@inheritdoc}
 	 */
 	public function get_fields() {
-		if ( array() === $this->_fields ) {
-			return array();
+		if ( [] === $this->_fields ) {
+			return [];
 		}
 
 		$object_collection = Store::get_instance();
 
-		$storage_object = $object_collection->get_storage_object( $this->get_arg( 'storage_type' ) );
-
-		if ( ! $storage_object ) {
-			return array();
-		}
-
 		if ( null === $this->_fields ) {
-			$args = array(
-				'object_type'      => 'field',
+			$args = [
 				'orderby'          => 'menu_order title',
 				'order'            => 'ASC',
-				'group'            => $this->get_id(),
+				'group'            => $this->get_name(),
 				'group_id'         => $this->get_id(),
 				'group_name'       => $this->get_name(),
 				'group_identifier' => $this->get_identifier(),
-			);
+			];
 
-			$fields = $storage_object->find( $args );
+			$objects = pods_api()->load_fields( $args );
 
-			$this->_fields = wp_list_pluck( $fields, 'id' );
+			$this->_fields = wp_list_pluck( $objects, 'id' );
 
-			return $fields;
+			return $objects;
 		}
 
-		$fields = array_map( array( $object_collection, 'get_object' ), $this->_fields );
-		$fields = array_filter( $fields );
+		$objects = array_map( [ $object_collection, 'get_object' ], $this->_fields );
+		$objects = array_filter( $objects );
 
-		$names = wp_list_pluck( $fields, 'name' );
+		$names = wp_list_pluck( $objects, 'name' );
 
-		$fields = array_combine( $names, $fields );
+		$objects = array_combine( $names, $objects );
 
-		return $fields;
+		return $objects;
 	}
 
 	/**

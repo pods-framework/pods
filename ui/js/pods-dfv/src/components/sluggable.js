@@ -93,6 +93,7 @@ const Editing = ( {
 			{ '\u00A0' /* &nbsp; */ }
 			<Button
 				isTertiary
+				isLink
 				onClick={ handleCancelClick }
 			>
 				{ __( 'Cancel', 'pods' ) }

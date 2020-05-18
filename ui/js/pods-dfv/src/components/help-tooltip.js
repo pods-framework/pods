@@ -4,10 +4,18 @@ import * as PropTypes from 'prop-types';
 import { Tooltip, Dashicon } from '@wordpress/components';
 
 const HelpTooltip = ( { helpText } ) => (
-	<Tooltip text={ helpText }>
-		<span>
+	<Tooltip
+		text={ helpText }
+		position="right"
+	>
+		<div
+			style={ {
+				display: 'inline-block',
+				verticalAlign: 'bottom',
+			} }
+		>
 			<Dashicon icon="editor-help" />
-		</span>
+		</div>
 	</Tooltip>
 );
 

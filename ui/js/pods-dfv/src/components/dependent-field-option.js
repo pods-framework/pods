@@ -36,7 +36,7 @@ const DependentFieldOption = ( {
 	label,
 	value,
 	dependents,
-	help,
+	helpText,
 	getOptionValue,
 	setOptionValue,
 } ) => {
@@ -58,7 +58,7 @@ const DependentFieldOption = ( {
 			value={ value }
 			label={ label }
 			onChange={ handleInputChange }
-			help={ help }
+			helpText={ helpText }
 		/>
 	);
 };
@@ -73,7 +73,7 @@ DependentFieldOption.propTypes = {
 	] ),
 	label: PropTypes.string.isRequired,
 	dependents: PropTypes.object,
-	help: PropTypes.string.isRequired,
+	helpText: PropTypes.string,
 	getOptionValue: PropTypes.func.isRequired,
 	setOptionValue: PropTypes.func.isRequired,
 };

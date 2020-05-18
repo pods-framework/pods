@@ -61,7 +61,7 @@ DynamicTabContent.propTypes = {
 			'depends-on': PropTypes.object,
 			description: PropTypes.string.isRequired,
 			group: PropTypes.string.isRequired,
-			help: PropTypes.string.isRequired,
+			help: PropTypes.string,
 			id: PropTypes.string.isRequired,
 			label: PropTypes.string.isRequired,
 			name: PropTypes.string.isRequired,

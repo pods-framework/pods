@@ -11,13 +11,15 @@ const PodsFieldOption = ( props ) => {
 		return !! ( +stringOrNumber );
 	};
 
+	const shouldShowHelpText = helpText && ( 'help' !== helpText );
+
 	return (
 		<div className="pods-field-option">
 			<label
 				className={ `pods-form-ui-label pods-form-ui-label-${ name }` }
 				htmlFor={ name }>
 				{ label }
-				{ helpText && ( 'help' !== helpText ) && ( <HelpTooltip helpText={ helpText } /> ) }
+				{ shouldShowHelpText && ( <HelpTooltip helpText={ helpText } /> ) }
 			</label>
 			{ 'boolean' === fieldType ? (
 				<input
@@ -26,6 +28,7 @@ const PodsFieldOption = ( props ) => {
 					name={ name }
 					checked={ toBool( value ) }
 					onChange={ onChange }
+					aria-label={ shouldShowHelpText && helpText }
 				/>
 			) : (
 				<input
@@ -34,6 +37,7 @@ const PodsFieldOption = ( props ) => {
 					name={ name }
 					value={ value }
 					onChange={ onChange }
+					aria-label={ shouldShowHelpText && helpText }
 				/>
 			)
 			}
@@ -47,7 +51,7 @@ PodsFieldOption.propTypes = {
 	value: PropTypes.any.isRequired,
 	label: PropTypes.string.isRequired,
 	onChange: PropTypes.func.isRequired,
-	helpText: PropTypes.any,
+	helpText: PropTypes.string,
 };
 
 export default PodsFieldOption;

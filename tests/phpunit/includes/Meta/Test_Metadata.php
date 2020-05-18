@@ -118,10 +118,12 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						$object['post_status'] = 'publish';
 						$object['post_type']   = $name;
 
-						$id = wp_insert_post( $object );
+						$id = self::factory()->post->create( $object );
 						break;
 					case 'taxonomy':
-						$id = wp_insert_term( $title, $name );
+						$object['taxonomy'] = $name;
+						$object['name']     = $title;
+						$id = self::factory()->term->create( $object );
 						$id_key = 'term_id';
 						break;
 					case 'user':
@@ -130,18 +132,21 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						$object['user_pass'] = $login;
 						$object['user_email'] = $login . '@test.local';
 
-						$id = wp_insert_user( $object );
+						$id = self::factory()->user->create( $object );
 						break;
 					case 'comment':
 						$object['comment_content']  = $title;
 						$object['comment_approved'] = 1;
 
-						$id = wp_insert_comment( $object );
+						$id = self::factory()->comment->create( $object );
 						$id_key = 'comment_ID';
 						break;
 				}
 
-				$objects[ $key ] = pods_v( $id_key, $id, $id );
+				if ( ! is_numeric( $id ) ) {
+					$id = pods_v( $id_key, $id, $id );
+				}
+				$objects[ $key ] = $id;
 			}
 
 			self::$obj_ids[ $type ] = $objects;

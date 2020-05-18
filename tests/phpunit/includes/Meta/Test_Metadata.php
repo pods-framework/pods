@@ -74,6 +74,16 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 			$params = array(
 				'pod'              => $name,
 				'pod_id'           => $pod_id,
+				'name'             => 'images',
+				'type'             => 'file',
+				'file_format_type' => 'multi',
+			);
+
+			pods_api()->save_field( $params );
+
+			$params = array(
+				'pod'              => $name,
+				'pod_id'           => $pod_id,
 				'name'             => 'related_single',
 				'type'             => 'pick',
 				'pick_object'      => $type,
@@ -126,8 +136,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 					case 'taxonomy':
 						$object['taxonomy'] = $name;
 						$object['name']     = $title;
+
 						$id = self::factory()->term->create( $object );
-						$id_key = 'term_id';
 						break;
 					case 'user':
 						$login = str_replace( '-', '', sanitize_title_with_dashes( $title ) );
@@ -142,12 +152,11 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						$object['comment_approved'] = 1;
 
 						$id = self::factory()->comment->create( $object );
-						$id_key = 'comment_ID';
 						break;
 				}
 
 				if ( ! is_numeric( $id ) ) {
-					$id = pods_v( $id_key, $id, $id );
+					$id = pods_v( self::get_id_key( $type ), $id, $id );
 				}
 				$objects[ $key ] = $id;
 			}
@@ -160,7 +169,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				switch ( $key ) {
 					case 0:
 						$data = array(
-							'text' => 'text',
+							'text'   => 'text',
+							'images' => self::get_images(),
 							// No relationship fields.
 						);
 						break;
@@ -190,6 +200,17 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 		}
 	}
 
+	public static function get_images() {
+		static $images = null;
+		if ( ! $images ) {
+			$images = array(
+				self::factory()->attachment->create(),
+				self::factory()->attachment->create(),
+			);
+		}
+		return $images;
+	}
+
 	public function test_get_metadata() {
 
 		// Make sure we return ID's.
@@ -214,16 +235,24 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				switch ( $key ) {
 					case 0:
 
+						$images = self::get_images();
+
 						// Single param false
-						$text = call_user_func( $get_meta, $id, 'text', false );
-						$this->assertEquals( array( 'text' ), $text, $message );
+						$value = call_user_func( $get_meta, $id, 'text', false );
+						$this->assertEquals( array( 'text' ), $value, $message );
+
+						$value = call_user_func( $get_meta, $id, 'images', false );
+						$this->assertEquals( $images, $value, $message );
 
 						$this->assertEquals( array(), $single, $message );
 						$this->assertEquals( array(), $multi, $message );
 
 						// Single param true
-						$text = call_user_func( $get_meta, $id, 'text', true );
-						$this->assertEquals( 'text', $text, $message );
+						$value = call_user_func( $get_meta, $id, 'text', true );
+						$this->assertEquals( 'text', $value, $message );
+
+						$value = call_user_func( $get_meta, $id, 'images', true );
+						$this->assertEquals( $images[0], $value, $message );
 
 						$this->assertEquals( '', $single_single, $message );
 						$this->assertEquals( '', $multi_single, $message );
@@ -272,6 +301,20 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 		}
 
 		remove_filter( 'pods_pods_field_related_output_type', array( $this, 'filter_output_type_ids' ) );
+	}
+
+	public static function get_id_key( $type ) {
+		$id_key = 'ID';
+		switch ( $type ) {
+			case 'comment':
+				$id_key = 'comment_ID';
+				break;
+			case 'term':
+			case 'taxonomy':
+				$id_key = 'term_id';
+				break;
+		}
+		return $id_key;
 	}
 
 	public function filter_output_type_ids() {

@@ -29,7 +29,11 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 	protected static $obj_ids = array();
 
 	public static function wpSetUpBeforeClass() {
+
 		self::create_pods();
+		// Reload PodsMeta.
+		pods_meta()->core();
+
 		self::load_pods();
 	}
 
@@ -105,9 +109,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			pods_api()->save_field( $params );
 		}
-
-		// Reload PodsMeta.
-		pods_meta()->core();
 	}
 
 	public static function load_pods() {
@@ -232,7 +233,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				$single_single = isset( $single_single[ $id_key ] ) ? $single_single[ $id_key ] : $single_single;
 				$multi_single  = isset( $multi_single[ $id_key ] ) ? $multi_single[ $id_key ] : $multi_single;
 
-				// Add a bit of context when a assertion has failed.
+				// Add a bit of context when an assertion has failed.
 				$message = "Method: `{$get_meta}()`:";
 
 				switch ( $key ) {

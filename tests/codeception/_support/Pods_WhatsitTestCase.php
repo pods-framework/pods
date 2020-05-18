@@ -95,7 +95,7 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 			'label'       => 'Test field',
 			'description' => 'Testing field',
 			'parent'      => $this->pods_object_pod->get_id(),
-			'group'       => $this->pods_object_group->get_identifier(),
+			'group'       => $this->pods_object_group->get_id(),
 			'type'        => 'text',
 		);
 

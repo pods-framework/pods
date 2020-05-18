@@ -17,11 +17,16 @@ const EditPod = ( {
 	tabs,
 	activeTab,
 	setActiveTab,
+	podName,
+	setPodName,
 } ) => {
 	return (
 		<div>
 			<div>
-				<EditPodName />
+				<EditPodName
+					podName={ podName }
+					setPodName={ setPodName }
+				/>
 				<SaveStatusMessage />
 				<PodsNavTab
 					tabs={ tabs }
@@ -47,12 +52,15 @@ export default compose( [
 		return {
 			tabs: storeSelect.getGlobalGroups(),
 			activeTab: storeSelect.getActiveTab(),
+			podName: storeSelect.getPodName(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
 		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+
 		return {
 			setActiveTab: storeDispatch.setActiveTab,
+			setPodName: storeDispatch.setPodName,
 		};
 	} ),
 	withDragDropContext,

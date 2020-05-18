@@ -2107,8 +2107,8 @@ class PodsAdmin {
 					'depends-on' => array( 'rewrite' => true ),
 				),
 				'rewrite_with_front'      => array(
-					'label'             => __( 'Allow Front Prepend', 'pods' ),
-					'help'              => __( 'Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)', 'pods' ),
+					'label'             => __( 'Rewrite with Front', 'pods' ),
+					'help'              => __( 'Allows permalinks to be prepended with your front base (example: if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/)', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
@@ -3695,7 +3695,7 @@ class PodsAdmin {
 				),
 				'rest_write' => array(
 					'label'   => __( 'Write via REST API?', 'pods' ),
-					'help'    => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+					'help'    => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
 					'type'    => 'boolean',
 					'default' => '',
 				),
@@ -3703,15 +3703,15 @@ class PodsAdmin {
 			$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = array(
 				'rest_pick_response' => array(
 					'label'      => __( 'Response Type', 'pods' ),
-					'help'       => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+					'help'       => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
 					'type'       => 'pick',
 					'default'    => 'array',
 					'depends-on' => array( 'type' => 'pick' ),
+					'dependency' => true,
 					'data'       => array(
 						'array' => __( 'Full', 'pods' ),
 						'id'    => __( 'ID only', 'pods' ),
 						'name'  => __( 'Name', 'pods' ),
-
 					),
 				),
 				'rest_pick_depth'    => array(
@@ -3719,8 +3719,10 @@ class PodsAdmin {
 					'help'       => __( 'How far to traverse relationships in response', 'pods' ),
 					'type'       => 'number',
 					'default'    => '2',
-					'depends-on' => array( 'type' => 'pick' ),
-
+					'depends-on' => array(
+						'type'               => 'pick',
+						'rest_pick_response' => 'array',
+					),
 				),
 
 			);

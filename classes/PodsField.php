@@ -733,6 +733,19 @@ class PodsField {
 	}
 
 	/**
+	 * Check if the field is required.
+	 *
+	 * @param array $options Field options.
+	 *
+	 * @return bool
+	 *
+	 * @since 2.7.18
+	 */
+	public function is_required( $options ) {
+		return filter_var( pods_v( 'required', $options, false ), FILTER_VALIDATE_BOOLEAN );
+	}
+
+	/**
 	 * Strip HTML based on options.
 	 *
 	 * @param string|array $value   Field value.

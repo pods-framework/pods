@@ -189,8 +189,9 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 	public function test_get_metadata() {
 
-		//add_filter( 'pods_pods_field_related_output_type', array( $this, 'filter_output_type_ids' ) );
-		//remove_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10 );
+		// Make sure we return ID's.
+		add_filter( 'pods_pods_field_related_output_type', array( $this, 'filter_output_type_ids' ) );
+		//remove_filter( 'get_post_metadata', array( pods_meta(), 'get_post_meta' ), 10 );
 
 		foreach ( self::$obj_ids as $type => $ids ) {
 

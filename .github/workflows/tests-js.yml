@@ -1,0 +1,41 @@
+name: 'JS Tests'
+on: [pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Checkout automation tools
+        uses: actions/checkout@v1
+        with:
+          repository: moderntribe/products-test-automation
+          ref: master
+          path: tric
+          fetch-depth: 1
+      - name: Add tric to the PATH
+        run: echo "::set-env name=PATH::${GITHUB_WORKSPACE}/../tric/dev:$PATH"
+      - name: Set products-test-automation run_context() to tric
+        run: echo "::set-env name=TRIC::1"
+      - name: Start ssh-agent
+        run: |
+          mkdir -p "${HOME}/.ssh";
+          ssh-agent -a /tmp/ssh_agent.sock;
+      - name: Export SSH_AUTH_SOCK env var
+        run: echo "::set-env name=SSH_AUTH_SOCK::/tmp/ssh_agent.sock"
+      - name: tric use events-virtual
+        run: |
+          cd ${GITHUB_WORKSPACE}/..
+          tric interactive off
+          tric build-prompt off
+          tric here
+          tric use events-virtual
+          tric debug on
+      - name: tric npm install
+        run: tric npm install
+      - name: Run JS DFV test suite
+        run: tric npm run test-dfv
+      - name: Run JS Jest test suite
+        run: tric npm run jest-tests

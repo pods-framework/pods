@@ -62,13 +62,6 @@ before_install:
   #- git submodule update --init
   #- git submodule foreach --recursive "[ -f .gitmodules ] && sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules; git submodule update --init;"
 
-  # Only do npm install if we're running the latest stable node (Pipe preserves subsequent whitespace)
-  - |
-    if [ $NODE_RELEASE == "stable" ]; then
-        . $HOME/.nvm/nvm.sh;
-        nvm install ${NODE_RELEASE};
-        npm install;
-    fi
 install:
   # Disable XDebug to speed up the tests.
   - phpenv config-rm xdebug.ini
@@ -162,13 +155,6 @@ script:
 
   # Only run traversal tests
   - codecept run wpunit-traversal --skip-group='pods-traversal-deep'
-
-  # Only run js tests if we're running the latest stable node (Pipe preserves subsequent whitespace)
-  - |
-    if [ $NODE_RELEASE == "stable" ]; then
-        npm run test-dfv;
-        npm run jest-tests;
-    fi
 
 after_failure:
   # if the build failed let's see why

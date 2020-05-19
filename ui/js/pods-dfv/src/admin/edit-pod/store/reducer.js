@@ -122,13 +122,17 @@ export const currentPod = ( state = {}, action = {} ) => {
 		}
 
 		case ACTIONS.ADD_GROUP: {
-			state.currentPod.groups.push( {
-				name: action.group,
-				label: action.group,
-				fields: [],
-			} );
-
-			return { ...state };
+			return {
+				...state,
+				groups: [
+					...state.groups,
+					{
+						name: action.group,
+						label: action.group,
+						fields: [],
+					},
+				],
+			};
 		}
 
 		case ACTIONS.SET_GROUP_FIELDS: {

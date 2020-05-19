@@ -68,7 +68,7 @@ export const moveGroup = ( oldIndex, newIndex ) => {
 	};
 };
 
-export const addGroupList = ( group ) => {
+export const addGroup = ( group ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.ADD_GROUP,
 		group,

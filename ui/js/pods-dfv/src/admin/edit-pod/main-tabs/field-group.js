@@ -182,7 +182,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 FieldGroup.propTypes = {
 	groupName: PropTypes.string.isRequired,
 	groupLabel: PropTypes.string.isRequired,
-	groupID: PropTypes.number.isRequired,
+	groupID: PropTypes.number,
 	index: PropTypes.number.isRequired,
 	getGroupFields: PropTypes.func.isRequired,
 	handleBeginDrag: PropTypes.func.isRequired,

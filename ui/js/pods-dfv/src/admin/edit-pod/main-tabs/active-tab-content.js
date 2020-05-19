@@ -94,7 +94,7 @@ export default compose( [
 		return {
 			setOptionValue: storeDispatch.setOptionValue,
 			setGroupList: storeDispatch.setGroupList,
-			addGroup: storeDispatch.addGroupList,
+			addGroup: storeDispatch.addGroup,
 			setGroupFields: storeDispatch.setGroupFields,
 			addGroupField: storeDispatch.addGroupField,
 			setFields: storeDispatch.setFields,

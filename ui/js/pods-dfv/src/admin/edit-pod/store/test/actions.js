@@ -17,7 +17,7 @@ import {
 	moveGroup,
 
 	// @todo create these tests when working on the Manage Groups functionality
-	// addGroupList,
+	addGroup,
 	// setGroupFields,
 	// addGroupField,
 } from '../actions.js';
@@ -71,7 +71,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	// Options
+	// Current Pod Options
 	describe( 'option actions', () => {
 		const { actions } = currentPodConstants;
 
@@ -122,6 +122,17 @@ describe( 'actions', () => {
 			};
 
 			expect( setOptionsValues( newOptions ) ).toEqual( expected );
+		} );
+
+		test( 'addGroup() returns an action to create a new group', () => {
+			const action = actions.ADD_GROUP;
+
+			const expected = {
+				type: action,
+				group: 'New Group Name 123',
+			};
+
+			expect( addGroup( 'New Group Name 123' ) ).toEqual( expected );
 		} );
 
 		test( 'setGroupList() should return an action to set the group list', () => {

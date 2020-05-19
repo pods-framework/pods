@@ -112,4 +112,18 @@ class Field extends Whatsit {
 		return $related_name;
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_fields() {
+		return [];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_groups() {
+		return [];
+	}
+
 }

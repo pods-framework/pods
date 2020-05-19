@@ -1,236 +1,154 @@
-import { uiConstants, podMetaConstants, optionConstants, groupConstants } from '../constants';
+import {
+	uiConstants,
+	currentPodConstants,
+} from '../constants';
 
 import {
-	setPodName,
-	setPodMetaValue,
+	// UI
+	setActiveTab,
 	setSaveStatus,
 	setDeleteStatus,
-	setActiveTab,
+
+	// Current Pod options
+	setPodName,
 	setOptionValue,
-	setOptionItemValue,
 	setOptionsValues,
 	setGroupList,
 	moveGroup,
+
+	// @todo create these tests when working on the Manage Groups functionality
+	// addGroupList,
+	// setGroupFields,
+	// addGroupField,
 } from '../actions.js';
 
 describe( 'actions', () => {
 	// UI
 	describe( 'ui actions', () => {
-		const { actions, tabNames, saveStatuses } = uiConstants;
+		const {
+			actions,
+			saveStatuses,
+			deleteStatuses,
+		} = uiConstants;
 
-		describe( 'setActiveTab()', () => {
-			const action = actions.SET_ACTIVE_TAB;
+		test( 'setActiveTab() creates an action to set the active tab', () => {
+			const expected = {
+				type: actions.SET_ACTIVE_TAB,
+				activeTab: 'labels',
+			};
 
-			it( 'Should define the action constant', () => {
-				expect( action ).toBeDefined();
-			} );
-
-			it( 'Should return the correct action', () => {
-				const activeTab = tabNames.LABELS;
-				const expected = {
-					type: action,
-					activeTab,
-				};
-
-				expect( setActiveTab( activeTab ) ).toEqual( expected );
-			} );
+			expect( setActiveTab( 'labels' ) ).toEqual( expected );
 		} );
 
-		describe( 'setSaveStatus()', () => {
-			const action = actions.SET_SAVE_STATUS;
+		test( 'setSaveStatus() creates an action to change the save status', () => {
+			const expected = {
+				type: actions.SET_SAVE_STATUS,
+				saveStatus: saveStatuses.SAVE_SUCCESS,
+				message: 'Saved successfully.',
+			};
 
-			it( 'Should define the action constant', () => {
-				expect( action ).toBeDefined();
-			} );
+			const result = setSaveStatus(
+				saveStatuses.SAVE_SUCCESS,
+				'Saved successfully.'
+			);
 
-			it( 'Should return the correct action', () => {
-				const saveStatus = saveStatuses.SAVE_SUCCESS;
-				const expected = {
-					type: action,
-					saveStatus,
-					message: '',
-				};
-
-				expect( setSaveStatus( saveStatus ) ).toEqual( expected );
-			} );
+			expect( result ).toEqual( expected );
 		} );
 
-		describe( 'setDeleteStatus()', () => {
-			const action = actions.SET_DELETE_STATUS;
+		test( 'setDeleteStatus() creates an action to change the delete status', () => {
+			const expected = {
+				type: actions.SET_DELETE_STATUS,
+				deleteStatus: deleteStatuses.DELETING,
+				message: 'Deleted.',
+			};
 
-			it( 'Should define the action constant', () => {
-				expect( action ).toBeDefined();
-			} );
+			const result = setDeleteStatus(
+				deleteStatuses.DELETING,
+				'Deleted.'
+			);
 
-			it( 'Should return the correct action', () => {
-				const deleteStatus = saveStatuses.DELETE_SUCCESS;
-				const expected = {
-					type: action,
-					deleteStatus,
-					message: '',
-				};
-
-				expect( setDeleteStatus( deleteStatus ) ).toEqual( expected );
-			} );
+			expect( result ).toEqual( expected );
 		} );
 	} );
 
 	// Options
 	describe( 'option actions', () => {
-		const { actions } = optionConstants;
+		const { actions } = currentPodConstants;
 
-		describe( 'setOptionValue()/setOptionItemValue()', () => {
-			const action = actions.SET_OPTION_ITEM_VALUE;
+		test( 'setPodName() should return an action to set the pod name', () => {
+			const action = actions.SET_POD_NAME;
+			const name = 'xyzzyy';
 
-			it( 'Should define the action constant', () => {
-				expect( action ).toBeDefined();
-			} );
+			const expected = {
+				type: action,
+				name,
+			};
 
-			test( 'setOptionItemValue() should return the correct action', () => {
-				const optionName = 'foo';
-				const itemName = 'bar';
-				const itemValue = 'baz';
-				const expected = {
-					type: action,
-					optionName,
-					itemName,
-					itemValue,
-				};
-				const result = setOptionItemValue( optionName, itemName, itemValue );
-
-				expect( result ).toEqual( expected );
-			} );
-
-			test( 'setOptionValue() should return the correct action', () => {
-				const name = 'foo';
-				const value = 'bar';
-				const expected = {
-					type: action,
-					optionName: name,
-					itemName: 'value',
-					itemValue: value,
-				};
-
-				expect( setOptionValue( name, value ) ).toEqual( expected );
-			} );
+			expect( setPodName( name ) ).toEqual( expected );
 		} );
 
-		describe( 'setOptionsValues()', () => {
+		test( 'setOptionValue() should return an action to set the option value', () => {
+			const action = actions.SET_OPTION_VALUE;
+			const name = 'foo';
+			const value = 'bar';
+
+			const expected = {
+				type: action,
+				optionName: name,
+				value,
+			};
+
+			expect( setOptionValue( name, value ) ).toEqual( expected );
+		} );
+
+		test( 'setOptionsValues()', () => {
 			const action = actions.SET_OPTIONS_VALUES;
 
-			it( 'Should define the action constant', () => {
-				expect( action ).toBeDefined();
-			} );
+			const newOptions = {
+				first: 'First Value',
+				second: 'Second Value',
+				third: true,
+				fourth: 12,
+			};
 
-			test( 'setOptionsValues() should return the correct action', () => {
-				const newOptions = {
+			const expected = {
+				type: action,
+				options: {
 					first: 'First Value',
 					second: 'Second Value',
 					third: true,
 					fourth: 12,
-				};
+				},
+			};
 
-				const expected = {
-					type: action,
-					options: {
-						first: 'First Value',
-						second: 'Second Value',
-						third: true,
-						fourth: 12,
-					},
-				};
-
-				expect( setOptionsValues( newOptions ) ).toEqual( expected );
-			} );
+			expect( setOptionsValues( newOptions ) ).toEqual( expected );
 		} );
-	} );
 
-	// Groups
-	describe( 'group actions', () => {
-		const { actions } = groupConstants;
-
-		describe( 'setGroupList()', () => {
+		test( 'setGroupList() should return an action to set the group list', () => {
 			const action = actions.SET_GROUP_LIST;
+			const groupList = [ 'foo', 'bar', 'baz' ];
 
-			test( 'The action constant is defined', () => {
-				expect( action ).toBeDefined();
-			} );
+			const expected = {
+				type: action,
+				groupList,
+			};
 
-			test( 'setGroupList() should return the correct action', () => {
-				const groupList = [ 'foo', 'bar', 'baz' ];
-				const expected = {
-					type: action,
-					groupList,
-				};
-
-				const result = setGroupList( groupList );
-				expect( result ).toEqual( expected );
-			} );
+			expect( setGroupList( groupList ) ).toEqual( expected );
 		} );
 
-		describe( 'moveGroup()', () => {
+		test( 'moveGroup() should return an action to move a group', () => {
 			const action = actions.MOVE_GROUP;
+			const oldIndex = 3;
+			const newIndex = 1;
 
-			test( 'The action constant is defined', () => {
-				expect( action ).toBeDefined();
-			} );
+			const expected = {
+				type: action,
+				oldIndex,
+				newIndex,
+			};
 
-			test( 'moveGroup() should return the correct action', () => {
-				const oldIndex = 3;
-				const newIndex = 1;
-				const expected = {
-					type: action,
-					oldIndex,
-					newIndex,
-				};
-
-				const result = moveGroup( oldIndex, newIndex );
-				expect( result ).toEqual( expected );
-			} );
-		} );
-	} );
-
-	// Pod meta
-	describe( 'pod meta actions', () => {
-		const { actions } = podMetaConstants;
-
-		describe( 'setPodName()', () => {
-			const action = actions.SET_POD_NAME;
-
-			it( 'Should define the action constant', () => {
-				expect( action ).toBeDefined();
-			} );
-
-			it( 'Should return the correct action', () => {
-				const name = 'xyzzyy';
-				const expected = {
-					type: action,
-					name,
-				};
-
-				expect( setPodName( name ) ).toEqual( expected );
-			} );
-		} );
-
-		describe( 'setPodMetaValue()', () => {
-			const action = actions.SET_POD_META_VALUE;
-
-			it( 'Should define the action constant', () => {
-				expect( action ).toBeDefined();
-			} );
-
-			it( 'Should return the correct action', () => {
-				const key = 'foo';
-				const value = 'bar';
-				const expected = {
-					type: action,
-					key,
-					value,
-				};
-				const result = setPodMetaValue( key, value );
-
-				expect( result ).toEqual( expected );
-			} );
+			const result = moveGroup( oldIndex, newIndex );
+			expect( result ).toEqual( expected );
 		} );
 	} );
 } );

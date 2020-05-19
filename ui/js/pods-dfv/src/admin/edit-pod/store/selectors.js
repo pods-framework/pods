@@ -1,96 +1,77 @@
-import _ from 'lodash';
-
-import * as paths from './state-paths';
-import { uiConstants } from './constants';
+import {
+	POD_ID,
+	POD_NAME,
+	// Current Pod
+	CURRENT_POD,
+	GLOBAL_POD,
+	GROUPS,
+	// Global Pod
+	GLOBAL_GROUPS,
+	// UI
+	ACTIVE_TAB,
+	SAVE_STATUS,
+	SAVE_MESSAGE,
+	DELETE_STATUS,
+} from './state-paths';
 
 // Everything
 export const getState = ( state ) => state;
 
-//-- Pod meta
-export const getPodID = ( state ) => {
-	return paths.POD_ID.getFrom( state );
-};
+// Current Pod
+export const getPodID = ( state ) => POD_ID.getFrom( state );
 
-export const getPodName = ( state ) => {
-	return paths.POD_NAME.getFrom( state );
-};
+export const getPodName = ( state ) => POD_NAME.getFrom( state );
 
-export const getPodMetaValue = ( state, key ) => {
-	return paths.POD_META.getFrom( state )[ key ];
-};
+export const getPodOptions = ( state ) => CURRENT_POD.getFrom( state );
 
-//-- Tabs
-export const getActiveTab = ( state ) => paths.ACTIVE_TAB.getFrom( state );
+export const getPodOption = ( state, key ) => CURRENT_POD.getFrom( state )[ key ];
 
-export const getTab = ( state, tabName ) =>
-	paths.TABS_BY_NAME.getFrom( state )[ tabName ];
+//-- Pod Groups
+export const getGroups = ( state ) => GROUPS.getFrom( state );
 
-export const getTabList = ( state ) =>
-	paths.TAB_LIST.getFrom( state );
+export const getGroupList = ( state ) => getGroups( state )
+	.map( ( ( group ) => group.id ) );
 
-export const getTabs = ( state ) =>
-	getTabList( state ).map( ( tabName ) => getTab( state, tabName ) );
-
-export const getTabOptionsList = ( state, tabName ) =>
-	paths.TAB_OPTIONS_LIST.getFrom( state )[ tabName ];
-
-export const getTabOptions = ( state, tabName ) => {
-	return getTabOptionsList( state, tabName ).map(
-		( optionName ) => getOption( state, optionName )
-	);
-};
-
-//-- Save status
-export const getSaveStatus = ( state ) => paths.SAVE_STATUS.getFrom( state );
-
-export const getSaveMessage = ( state ) => paths.SAVE_MESSAGE.getFrom( state );
-
-export const isSaving = ( state ) =>
-	paths.SAVE_STATUS.getFrom( state ) === uiConstants.saveStatuses.SAVING;
-
-//-- Delete status
-export const getDeleteStatus = ( state ) => paths.DELETE_STATUS.getFrom( state );
-
-//-- Options
-export const getOptions = ( state ) =>
-	paths.OPTIONS.getFrom( state );
-
-export const getOption = ( state, optionName ) =>
-	paths.OPTIONS.getFrom( state )[ optionName ];
-
-export const getOptionItemValue = ( state, optionName, itemName ) =>
-	paths.OPTIONS.getFrom( state )[ optionName ][ itemName ];
-
-export const getOptionValue = ( state, optionName ) =>
-	paths.OPTIONS.getFrom( state )[ optionName ].value;
-
-//-- Groups
-export const getGroupList = ( state ) =>
-	paths.GROUP_LIST.getFrom( state );
-
-export const getGroupFieldList = ( state ) =>
-	paths.GROUP_FIELD_LIST.getFrom( state );
-
-export const getGroup = ( state, groupName ) =>
-	paths.GROUPS_BY_NAME.getFrom( state )[ groupName ];
-
-export const getGroups = ( state ) =>
-	state.groups.currentPod.groups;
-	// paths.CURRENT_POD.getFrom( state );
-	// getGroupList( state ).map( groupName => getGroup( state, groupName ) );
-
-export const getFieldList = ( state, groupName ) =>
-	paths.GROUP_FIELD_LIST.getFrom( state )[ groupName ];
+export const getGroup = ( state, groupName ) => getGroups( state )[ groupName ];
 
 export const getGroupFields = ( state, groupName ) => {
-	const group = _.find( state.groups.currentPod.groups, function( podGroup ) {
-		return podGroup.name === groupName;
-	} );
-
-	return group.fields;
-	// getFieldList( state, groupName ).map( fieldName => getField( state, fieldName ) );
+	if ( getGroups( state )[ groupName ] && getGroups( state )[ groupName ].fields ) {
+		return getGroups( state )[ groupName ].fields;
+	}
+	return [];
 };
 
-//-- Fields
-export const getFields = ( state ) => paths.FIELDS.getFrom( state );
-export const getField = ( state, fieldName ) => getFields( state )[ fieldName ];
+export const groupFieldList = ( state ) => getGroups( state ).reduce(
+	( accumulator, group ) => {
+		const groupName = group.name;
+		const groupFieldIDs = group.fields.map( ( field ) => field.id );
+
+		return {
+			...accumulator,
+			[ groupName ]: groupFieldIDs,
+		};
+	},
+	{}
+);
+
+// Global Pod
+export const getGlobalPodOptions = ( state ) => GLOBAL_POD.getFrom( state );
+
+export const getGlobalPodOption = ( state, key ) => GLOBAL_POD.getFrom( state )[ key ];
+
+export const getGlobalGroups = ( state ) => GLOBAL_GROUPS.getFrom( state );
+
+export const getGlobalGroup = ( state, groupName ) => getGlobalGroups( state ).find(
+	( group ) => group.name === groupName
+);
+
+export const getGlobalGroupFields = ( state, groupName ) => getGlobalGroup( state, groupName )?.fields || [];
+
+// UI
+export const getActiveTab = ( state ) => ACTIVE_TAB.getFrom( state );
+
+export const getSaveStatus = ( state ) => SAVE_STATUS.getFrom( state );
+
+export const getSaveMessage = ( state ) => SAVE_MESSAGE.getFrom( state );
+
+export const getDeleteStatus = ( state ) => DELETE_STATUS.getFrom( state );

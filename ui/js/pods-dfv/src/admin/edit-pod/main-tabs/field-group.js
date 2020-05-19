@@ -1,7 +1,7 @@
 // @todo File has many eslint warnings, come back to this when working on the Groups.
 /* eslint-disable */
 
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import * as PropTypes from 'prop-types';
 import { flow, max, map } from 'lodash';
 import { getEmptyImage } from 'react-dnd-html5-backend';
@@ -12,9 +12,8 @@ import { FieldGroupSettings } from './field-group-settings';
 import { FieldList } from 'pods-dfv/src/admin/edit-pod/main-tabs/field-list';
 import update from 'immutability-helper';
 
-const { useState } = React;
-const { Dashicon } = wp.components;
-const { __ } = wp.i18n;
+import { Dashicon } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 // eslint-disable-next-line react/display-name
 const FieldGroup = forwardRef( ( props, ref ) => {

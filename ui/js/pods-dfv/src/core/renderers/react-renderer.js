@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { PodsDFVFieldContainer } from 'pods-dfv/src/components/field-container';
+import PodsDFVFieldContainer from 'pods-dfv/src/components/field-container';
 
-export function reactRenderer ( FieldClass, element, props ) {
+function reactRenderer( FieldClass, element, props ) {
 	const Field = React.createFactory( FieldClass );
 
 	ReactDOM.render(
@@ -13,3 +13,5 @@ export function reactRenderer ( FieldClass, element, props ) {
 		element
 	);
 }
+
+export default reactRenderer;

@@ -2,7 +2,7 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-export const PodsNavTab = ( { tabs, activeTab, setActiveTab } ) => {
+const PodsNavTab = ( { tabs, activeTab, setActiveTab } ) => {
 	const getClassName = ( tabName ) => {
 		return classNames(
 			'nav-tab pods-nav-tab-link',
@@ -15,27 +15,37 @@ export const PodsNavTab = ( { tabs, activeTab, setActiveTab } ) => {
 		setActiveTab( tabName );
 	};
 
+	const allTabs = [
+		{
+			name: 'manage-fields',
+			label: 'Fields',
+		},
+		...tabs,
+	];
+
 	return (
-		<h2 className='nav-tab-wrapper pods-nav-tabs'>
-			{tabs.map( thisTab => (
+		<h2 className="nav-tab-wrapper pods-nav-tabs">
+			{ allTabs.map( ( { name, label } ) => (
 				<a
-					key={thisTab.name}
-					href={`#pods-${thisTab.name}`}
-					className={getClassName( thisTab.name )}
-					onClick={( e ) => handleClick( e, thisTab.name )}
+					key={ name }
+					href={ `#pods-${ name }` }
+					className={ getClassName( name ) }
+					onClick={ ( e ) => handleClick( e, name ) }
 				>
-					{thisTab.titleText}
+					{ label }
 				</a>
-			) )}
+			) ) }
 		</h2>
 	);
 };
 
 PodsNavTab.propTypes = {
 	tabs: PropTypes.arrayOf( PropTypes.shape( {
-		name: PropTypes.string,
-		titleText: PropTypes.string,
+		name: PropTypes.string.isRequired,
+		label: PropTypes.string.isRequired,
 	} ) ).isRequired,
 	activeTab: PropTypes.string.isRequired,
 	setActiveTab: PropTypes.func.isRequired,
 };
+
+export default PodsNavTab;

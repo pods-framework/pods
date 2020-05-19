@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
+import { omit } from 'lodash';
 
 import apiFetch from '@wordpress/api-fetch';
 import { withSelect, withDispatch } from '@wordpress/data';
@@ -205,14 +205,10 @@ export default compose( [
 	withSelect( ( select ) => {
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 
-		// Reduce 'options' down to key/values.
-		const allOptionData = storeSelect.getOptions();
-		const optionEntries = Object.entries( allOptionData );
-		const options = {};
-
-		optionEntries.forEach( ( [ key, value ] ) => {
-			options[ key ] = value.value || null;
-		} );
+		const options = omit(
+			storeSelect.getPodOptions(),
+			[ 'fields', 'groups' ]
+		);
 
 		// Reduce groups to their IDs.
 		const groups = storeSelect.getGroups().map( ( group ) => group.name );

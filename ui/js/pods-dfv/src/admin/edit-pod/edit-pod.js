@@ -9,26 +9,36 @@ import withDragDropContext from './with-drag-drop-context';
 import { STORE_KEY_EDIT_POD } from './store/constants';
 import SaveStatusMessage from './save-status-message';
 import EditPodName from './edit-pod-name';
-import { PodsNavTab } from 'pods-dfv/src/components/tabs/pods-nav-tab';
-import { ActiveTabContent } from './main-tabs/active-tab-content';
+import PodsNavTab from 'pods-dfv/src/components/tabs/pods-nav-tab';
+import ActiveTabContent from './main-tabs/active-tab-content';
 import Postbox from './postbox';
 
-const EditPod = ( props ) => {
+const EditPod = ( {
+	tabs,
+	activeTab,
+	setActiveTab,
+	podName,
+	setPodName,
+} ) => {
 	return (
 		<div>
 			<div>
-				<EditPodName />
+				<EditPodName
+					podName={ podName }
+					setPodName={ setPodName }
+				/>
 				<SaveStatusMessage />
 				<PodsNavTab
-					tabs={ props.tabs }
-					activeTab={ props.activeTab }
-					setActiveTab={ props.setActiveTab }
+					tabs={ tabs }
+					activeTab={ activeTab }
+					setActiveTab={ setActiveTab }
 				/>
 			</div>
 			<div id="poststuff">
 				<div id="post-body" className="columns-2">
 					<ActiveTabContent />
 					<Postbox />
+					<br className="clear" />
 				</div>
 			</div>
 		</div>
@@ -38,15 +48,19 @@ const EditPod = ( props ) => {
 export default compose( [
 	withSelect( ( select ) => {
 		const storeSelect = select( STORE_KEY_EDIT_POD );
+
 		return {
-			tabs: storeSelect.getTabs(),
+			tabs: storeSelect.getGlobalGroups(),
 			activeTab: storeSelect.getActiveTab(),
+			podName: storeSelect.getPodName(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
 		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+
 		return {
 			setActiveTab: storeDispatch.setActiveTab,
+			setPodName: storeDispatch.setPodName,
 		};
 	} ),
 	withDragDropContext,

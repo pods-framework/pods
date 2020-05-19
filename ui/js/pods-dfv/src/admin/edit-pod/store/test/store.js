@@ -1,5 +1,6 @@
-import { merge } from 'lodash';
 import deepFreeze from 'deep-freeze';
+
+import { select, dispatch } from '@wordpress/data';
 
 import { initStore } from '../store';
 import * as paths from '../state-paths';
@@ -9,319 +10,160 @@ import {
 	initialUIState,
 } from '../constants';
 
+import { TEST_CONFIG_DATA } from '../testData';
+
 const testStore = {
 	select: null,
 	dispatch: null,
 
 	initStore: ( initialState ) => {
-		initStore( initialState );
-		testStore.select = wp.data.select( STORE_KEY_EDIT_POD );
-		testStore.dispatch = wp.data.dispatch( STORE_KEY_EDIT_POD );
+		initStore( { config: initialState } );
+		testStore.select = select( STORE_KEY_EDIT_POD );
+		testStore.dispatch = dispatch( STORE_KEY_EDIT_POD );
 	},
 };
 
 describe( 'store', () => {
-	describe( 'initStore() with initialState', () => {
-		const initialState = merge(
-			paths.POD_NAME.createTree( 'Podname' ),
-			paths.POD_ID.createTree( 42 ),
-			paths.OPTIONS.createTree( {
-				xyzzy: { name: 'xyzzy', value: 'Value 1' },
-				plugh: { name: 'plugh', value: 'Value 2' },
-			} ),
-			paths.FIELDS.createTree( [ 'field 1', 'field 2', 'field 3' ] ),
-			paths.GROUPS.createTree( {
-				'Group 1': { name: 'Group 1' },
-				'Group 2': { name: 'Group 2' },
-			} ),
-		);
+	test( 'initStore() with initialState initializes properly', () => {
+		const initialState = {
+			...paths.UI.createTree( initialUIState ),
+			...TEST_CONFIG_DATA,
+		};
 
-		it( 'Initializes properly', () => {
-			testStore.initStore( deepFreeze( initialState ) );
-			const result = testStore.select.getState();
-			const expected = merge(
-				paths.UI.createTree( initialUIState ),
-				initialState
-			);
+		testStore.initStore( deepFreeze( initialState ) );
+		const result = testStore.select.getState();
 
-			expect( result ).toBeDefined();
-			expect( result ).toEqual( expected );
-		} );
+		expect( result ).toEqual( initialState );
 	} );
 
-	describe( 'initStore() empty', () => {
-		it( 'Initializes properly', () => {
-			testStore.initStore( deepFreeze( {} ) );
-			const result = testStore.select.getState();
-			const expected = merge(
-				paths.UI.createTree( initialUIState ),
-				paths.POD_META.createTree( {} ),
-				paths.OPTIONS.createTree( {} ),
-				paths.GROUPS.createTree( {} ),
-				paths.FIELDS.createTree( {} ),
-			);
+	test( 'initStore() empty initializes properly', () => {
+		const expected = {
+			...paths.UI.createTree( initialUIState ),
+			currentPod: {},
+			global: {},
+		};
 
-			expect( result ).toBeDefined();
-			expect( result ).toEqual( expected );
-		} );
+		testStore.initStore( deepFreeze( {} ) );
+		const result = testStore.select.getState();
+
+		expect( result ).toEqual( expected );
+	} );
+} );
+
+describe( 'UI store integration', () => {
+	beforeEach( () => {
+		testStore.initStore( deepFreeze( {} ) );
 	} );
 
-	describe( 'store integration', () => {
-		describe( 'ui', () => {
-			describe( 'Active tab', () => {
-				test( 'orderedList is initialized properly', () => {
-					const orderedList = [
-						uiConstants.tabNames.MANAGE_FIELDS,
-						uiConstants.tabNames.LABELS,
-						uiConstants.tabNames.ADMIN_UI,
-						uiConstants.tabNames.ADVANCED_OPTIONS,
-						uiConstants.tabNames.AUTO_TEMPLATE_OPTIONS,
-						uiConstants.tabNames.REST_API,
-					];
-					const initialState = paths.TAB_LIST.createTree( orderedList );
+	test( 'getActiveTab() should return the default on empty init', () => {
+		const expected = initialUIState.activeTab;
+		const result = testStore.select.getActiveTab();
 
-					testStore.initStore( deepFreeze( initialState ) );
-					const state = testStore.select.getState();
-					const result = paths.TAB_LIST.getFrom( state );
+		expect( result ).toEqual( expected );
+	} );
 
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( orderedList );
-				} );
+	test( 'setActiveTab() should change the active tab', () => {
+		const newTab = 'labels';
 
-				test( 'getActiveTab() should return the default on empty init', () => {
-					const expected = initialUIState.activeTab;
-					const result = testStore.select.getActiveTab();
+		testStore.dispatch.setActiveTab( newTab );
+		const result = testStore.select.getActiveTab();
 
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( expected );
-				} );
+		expect( result ).toEqual( newTab );
+	} );
 
-				test( 'setActiveTab() should change the active tab', () => {
-					const newTab = uiConstants.tabNames.LABELS;
-					testStore.dispatch.setActiveTab( newTab );
-					const result = testStore.select.getActiveTab();
+	test( 'getSaveStatus() should return the default on empty init', () => {
+		const expected = initialUIState.saveStatus;
+		const result = testStore.select.getSaveStatus();
 
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( newTab );
-				} );
-			} );
+		expect( result ).toEqual( expected );
+	} );
 
-			describe( 'Save status', () => {
-				test( 'Initializes state with the proper default value', () => {
-					testStore.initStore( deepFreeze( {} ) );
-					const expected = initialUIState.saveStatus;
-					const result = paths.SAVE_STATUS.getFrom( testStore.select.getState() );
+	test( 'setSaveStatus() should change the status', () => {
+		const newStatus = uiConstants.saveStatuses.SAVE_SUCCESS;
 
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( expected );
-				} );
+		testStore.dispatch.setSaveStatus( newStatus );
+		const result = testStore.select.getSaveStatus();
 
-				test( 'getSaveStatus() should return the default on empty init', () => {
-					const expected = initialUIState.saveStatus;
-					const result = testStore.select.getSaveStatus();
+		expect( result ).toEqual( newStatus );
+	} );
+} );
 
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( expected );
-				} );
+describe( 'current pod options', () => {
+	const testPodID = 42;
+	const intialPodName = 'plugh';
+	const newPodName = 'xyzzy';
 
-				test( 'isSaving() should initially be false', () => {
-					expect( testStore.select.isSaving() ).toBe( false );
-				} );
+	test( 'Initializes state with the Pod ID when provided', () => {
+		const initialState = paths.POD_ID.createTree( testPodID );
 
-				test( 'setSaveStatus() should change the status', () => {
-					const newStatus = uiConstants.saveStatuses.SAVE_SUCCESS;
-					testStore.dispatch.setSaveStatus( newStatus );
-					const result = testStore.select.getSaveStatus();
+		testStore.initStore( deepFreeze( initialState ) );
+		const result = testStore.select.getPodID();
 
-					expect( result ).toEqual( newStatus );
-				} );
+		expect( result ).toEqual( testPodID );
+	} );
 
-				test( 'isSaving() should be true when saving', () => {
-					testStore.dispatch.setSaveStatus( uiConstants.saveStatuses.SAVING );
-					expect( testStore.select.isSaving() ).toBe( true );
-				} );
+	test( 'Initializes state with the Pod name when provided', () => {
+		const initialState = paths.POD_NAME.createTree( intialPodName );
 
-				test( 'isSaving() should be false when not saving', () => {
-					testStore.dispatch.setSaveStatus( uiConstants.saveStatuses.NONE );
-					expect( testStore.select.isSaving() ).toBe( false );
-				} );
-			} );
-		} );
+		testStore.initStore( deepFreeze( initialState ) );
+		const result = testStore.select.getPodName();
 
-		describe( 'options', () => {
-			test( 'Initializes with an empty object', () => {
-				testStore.initStore( deepFreeze( {} ) );
-				const result = paths.OPTIONS.getFrom( testStore.select.getState() );
+		expect( result ).toEqual( intialPodName );
+	} );
 
-				expect( result ).toBeDefined();
-				expect( result ).toEqual( {} );
-			} );
+	test( 'setPodName() should update the pod name', () => {
+		const initialState = paths.POD_NAME.createTree( intialPodName );
+		testStore.initStore( deepFreeze( initialState ) );
 
-			test( 'setOptionValue() should create a new option value', () => {
-				const name = 'foo1';
-				const value = 'Foo1 Value';
-				testStore.dispatch.setOptionValue( name, value );
-				const result = testStore.select.getOptionValue( name );
+		testStore.dispatch.setPodName( newPodName );
+		const result = testStore.select.getPodName();
 
-				expect( result ).toBeDefined();
-				expect( result ).toEqual( value );
-			} );
+		expect( result ).toEqual( newPodName );
+	} );
 
-			test( 'setOptionValue() should update an existing option value', () => {
-				const name = 'foo1';
-				const value = 'Foo1 New Value';
-				testStore.dispatch.setOptionValue( name, value );
-				const result = testStore.select.getOptionValue( name );
+	test( 'setOptionValue() should create a new option value', () => {
+		const name = 'foo1';
+		const value = 'Foo1 Value';
 
-				expect( result ).toBeDefined();
-				expect( result ).toEqual( value );
-			} );
+		testStore.initStore( deepFreeze( {} ) );
+		testStore.dispatch.setOptionValue( name, value );
+		const result = testStore.select.getPodOption( name );
 
-			test( 'setOptionItemValue() should create a new option item/value pair', () => {
-				const optName = 'theOption';
-				const optItemName = 'optionItem';
-				const optItemValue = 'Initial Value';
-				testStore.dispatch.setOptionItemValue( optName, optItemName, optItemValue );
-				const result = testStore.select.getOptionItemValue( optName, optItemName );
+		expect( result ).toEqual( value );
+	} );
 
-				expect( result ).toBeDefined();
-				expect( result ).toEqual( optItemValue );
-			} );
+	test( 'setOptionValue() should update an existing option value', () => {
+		const name = 'foo1';
+		const value = 'Foo1 New Value';
+		const secondValue = 'Foo2 New Value';
 
-			test( 'setOptionItemValue() should update an existing option item value', () => {
-				const optName = 'theOption';
-				const optItemName = 'optionItem';
-				const optItemValue = 'New Value';
-				testStore.dispatch.setOptionItemValue( optName, optItemName, optItemValue );
-				const result = testStore.select.getOptionItemValue( optName, optItemName );
+		testStore.initStore( deepFreeze( {} ) );
+		testStore.dispatch.setOptionValue( name, value );
+		testStore.dispatch.setOptionValue( name, secondValue );
 
-				expect( result ).toBeDefined();
-				expect( result ).toEqual( optItemValue );
-			} );
-		} );
+		const result = testStore.select.getPodOption( name );
 
-		describe( 'groups', () => {
-			test( 'Initializes with an empty object', () => {
-				testStore.initStore( deepFreeze( {} ) );
-				const result = paths.GROUPS.getFrom( testStore.select.getState() );
-				const expected = {};
+		expect( result ).toEqual( secondValue );
+	} );
 
-				expect( result ).toEqual( expected );
-			} );
+	// @todo re-enable and fix when doing the manage group work
+	test.skip( 'setGroupList() should set the group list', () => {
+		const groupList = [ 'group0', 'group1', 'group2', 'group3' ];
 
-			test( 'setGroupList() should set the group list', () => {
-				const groupList = [ 'group0', 'group1', 'group2', 'group3' ];
-				testStore.dispatch.setGroupList( groupList );
+		testStore.initStore( deepFreeze( {} ) );
+		testStore.dispatch.setGroupList( groupList );
+		const result = testStore.select.getGroupList();
 
-				const result = testStore.select.getGroupList();
+		expect( result ).toEqual( groupList );
+	} );
 
-				expect( result ).toEqual( groupList );
-			} );
+	test.skip( 'moveGroup() should reorder the group list', () => {
+		const expected = [ 'group3', 'group0', 'group1', 'group2' ];
 
-			test( 'moveGroup() should reorder the group list', () => {
-				const expected = [ 'group3', 'group0', 'group1', 'group2' ];
-				testStore.dispatch.moveGroup( 3, 0 );
+		testStore.initStore( deepFreeze( {} ) );
+		testStore.dispatch.moveGroup( 3, 0 );
+		const result = testStore.select.getGroupList();
 
-				const result = testStore.select.getGroupList();
-
-				expect( result ).toEqual( expected );
-			} );
-		} );
-
-		describe( 'podMeta', () => {
-			describe( 'Pod name/id', () => {
-				const testID = 42;
-				const initialName = 'plugh';
-				const rename = 'xyzzy';
-
-				test( 'Initializes state with the Pod ID when provided', () => {
-					const initialState = paths.POD_ID.createTree( testID );
-					testStore.initStore( deepFreeze( initialState ) );
-					const result = paths.POD_ID.getFrom( testStore.select.getState() );
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( testID );
-				} );
-
-				test( 'Initializes state with the Pod name when provided', () => {
-					const initialState = paths.POD_NAME.createTree( initialName );
-					testStore.initStore( deepFreeze( initialState ) );
-					const result = paths.POD_NAME.getFrom( testStore.select.getState() );
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( initialName );
-				} );
-
-				test( 'getPodName() should retrieve the pod name', () => {
-					const expected = initialName;
-					const result = testStore.select.getPodName();
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( expected );
-				} );
-
-				test( 'setPodName() should update the pod name', () => {
-					testStore.dispatch.setPodName( rename );
-					const result = testStore.select.getPodName();
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( rename );
-				} );
-			} );
-
-			describe( 'General meta', () => {
-				test( 'Initializes with an empty object', () => {
-					testStore.initStore( deepFreeze( {} ) );
-					const result = paths.POD_META.getFrom( testStore.select.getState() );
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( {} );
-				} );
-
-				test( 'setPodMetaValue() should create a new meta value', () => {
-					const key = 'foo';
-					const value = 'bar';
-					testStore.dispatch.setPodMetaValue( key, value );
-					const result = testStore.select.getPodMetaValue( key );
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( value );
-				} );
-
-				test( 'setPodMetaValue() should update an existing meta value', () => {
-					const key = 'foo';
-					const value = 'baz';
-					testStore.dispatch.setPodMetaValue( key, value );
-					const result = testStore.select.getPodMetaValue( key );
-
-					expect( result ).toBeDefined();
-					expect( result ).toEqual( value );
-				} );
-			} );
-		} );
-
-		describe( 'fields', () => {
-			const fieldArray = [
-				{ name: 'foo', label: 'label1' },
-				{ name: 'bar', label: 'label2' },
-				{ name: 'baz', label: 'label3' },
-			];
-			const initialState = paths.FIELDS.createTree( fieldArray );
-
-			it( 'Initializes the state with fields when provided', () => {
-				testStore.initStore( deepFreeze( initialState ) );
-				const result = paths.FIELDS.getFrom( testStore.select.getState() );
-
-				expect( result ).toBeDefined();
-				expect( result ).toEqual( fieldArray );
-			} );
-
-			test( 'getFields() should return the fields array', () => {
-				const result = testStore.select.getFields();
-
-				expect( result ).toBeDefined();
-				expect( result ).toEqual( fieldArray );
-			} );
-		} );
+		expect( result ).toEqual( expected );
 	} );
 } );

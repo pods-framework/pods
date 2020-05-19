@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { initStore } from 'pods-dfv/src/admin/edit-pod/store/store';
 
-export function reactDirectRenderer ( FieldClass, element, props ) {
+function reactDirectRenderer( FieldClass, element, props ) {
 	const Field = React.createFactory( FieldClass );
 
 	// Todo:
@@ -18,3 +18,5 @@ export function reactDirectRenderer ( FieldClass, element, props ) {
 		element
 	);
 }
+
+export default reactDirectRenderer;

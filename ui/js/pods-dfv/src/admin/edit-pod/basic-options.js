@@ -1,8 +1,7 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-export const PodsDFVEditFieldBasicOptions = () => {
+const PodsDFVEditFieldBasicOptions = () => {
 	// Todo: this is all just copy/paste hardcoded as placeholders, not wired up, would be dynamically assembled
 	return (
 		<div className="pods-manage-field">
@@ -77,3 +76,5 @@ export const PodsDFVEditFieldBasicOptions = () => {
 		</div>
 	);
 };
+
+export default PodsDFVEditFieldBasicOptions;

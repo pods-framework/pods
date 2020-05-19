@@ -1,21 +1,22 @@
 import {
 	uiConstants,
-	optionConstants,
-	groupConstants,
-	podMetaConstants,
+	currentPodConstants,
 } from 'pods-dfv/src/admin/edit-pod/store/constants';
+
+const { actions: UI_ACTIONS } = uiConstants;
+const { actions: CURRENT_POD_ACTIONS } = currentPodConstants;
 
 // UI
 export const setActiveTab = ( activeTab ) => {
 	return {
-		type: uiConstants.actions.SET_ACTIVE_TAB,
+		type: UI_ACTIONS.SET_ACTIVE_TAB,
 		activeTab,
 	};
 };
 
 export const setSaveStatus = ( saveStatus, message = '' ) => {
 	return {
-		type: uiConstants.actions.SET_SAVE_STATUS,
+		type: UI_ACTIONS.SET_SAVE_STATUS,
 		saveStatus,
 		message,
 	};
@@ -23,42 +24,45 @@ export const setSaveStatus = ( saveStatus, message = '' ) => {
 
 export const setDeleteStatus = ( deleteStatus, message = '' ) => {
 	return {
-		type: uiConstants.actions.SET_DELETE_STATUS,
+		type: UI_ACTIONS.SET_DELETE_STATUS,
 		deleteStatus,
 		message,
 	};
 };
 
 // Options
-export const setOptionValue = ( name, value ) => setOptionItemValue( name, 'value', value );
-
-export const setOptionItemValue = ( optionName, itemName, itemValue ) => {
+export const setPodName = ( name ) => {
 	return {
-		type: optionConstants.actions.SET_OPTION_ITEM_VALUE,
+		type: CURRENT_POD_ACTIONS.SET_POD_NAME,
+		name,
+	};
+};
+
+export const setOptionValue = ( optionName, value ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.SET_OPTION_VALUE,
 		optionName,
-		itemName,
-		itemValue,
+		value,
 	};
 };
 
 export const setOptionsValues = ( options = {} ) => {
 	return {
-		type: optionConstants.actions.SET_OPTIONS_VALUES,
+		type: CURRENT_POD_ACTIONS.SET_OPTIONS_VALUES,
 		options,
 	};
 };
 
-// Groups
 export const setGroupList = ( groupList ) => {
 	return {
-		type: groupConstants.actions.SET_GROUP_LIST,
+		type: CURRENT_POD_ACTIONS.SET_GROUP_LIST,
 		groupList,
 	};
 };
 
 export const moveGroup = ( oldIndex, newIndex ) => {
 	return {
-		type: groupConstants.actions.MOVE_GROUP,
+		type: CURRENT_POD_ACTIONS.MOVE_GROUP,
 		oldIndex,
 		newIndex,
 	};
@@ -66,37 +70,21 @@ export const moveGroup = ( oldIndex, newIndex ) => {
 
 export const addGroupList = ( group ) => {
 	return {
-		type: groupConstants.actions.ADD_GROUP,
+		type: CURRENT_POD_ACTIONS.ADD_GROUP,
 		group,
 	};
 };
 
 export const setGroupFields = ( groupName, fields ) => {
 	return {
-		type: groupConstants.actions.SET_GROUP_FIELDS,
+		type: CURRENT_POD_ACTIONS.SET_GROUP_FIELDS,
 		groupName, fields,
 	};
 };
 
 export const addGroupField = ( groupName, field ) => {
 	return {
-		type: groupConstants.actions.ADD_GROUP_FIELD,
+		type: CURRENT_POD_ACTIONS.ADD_GROUP_FIELD,
 		groupName, field,
-	};
-};
-
-// Pod meta
-export const setPodName = ( name ) => {
-	return {
-		type: podMetaConstants.actions.SET_POD_NAME,
-		name,
-	};
-};
-
-export const setPodMetaValue = ( key, value ) => {
-	return {
-		type: podMetaConstants.actions.SET_POD_META_VALUE,
-		key,
-		value,
 	};
 };

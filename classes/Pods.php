@@ -4179,8 +4179,8 @@ class Pods implements Iterator {
 		if (
 			! $value
 			&& ! is_numeric( $value )
+			&& ! $this->fields( $field_name )
 			&& pods_shortcode_allow_evaluate_tags()
-			&& null === $this->fields( $field_name )
 		) {
 			$value = pods_evaluate_tag( $field_name );
 		}

@@ -1,5 +1,9 @@
 <?php
 
+use Pods\Whatsit\Pod;
+use Pods\Whatsit\Group;
+use Pods\Whatsit\Field;
+
 /**
  * @package Pods
  */
@@ -1346,7 +1350,7 @@ class PodsAdmin {
 	 *
 	 * @return array Global config array.
 	 */
-	public function get_global_config( $pod ) {
+	public function get_global_config( $pod = null ) {
 		// Pod: Backwards compatible methods and hooks.
 		$tabs        = $this->admin_setup_edit_tabs( $pod );
 		$tab_options = $this->admin_setup_edit_options( $pod );
@@ -1386,7 +1390,7 @@ class PodsAdmin {
 			'name'        => '_pods_field',
 		] );
 
-		return [
+		$pod = [
 			'pod'   => $pod_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
@@ -1409,7 +1413,9 @@ class PodsAdmin {
 		 *
 		 * @param null|\Pods\Whatsit $pod The Pod object.
 		 */
-		do_action( 'pods_admin_setup_global_config', $pod );
+		$pod = apply_filters( 'pods_admin_setup_global_config', $pod );
+
+		return $pod;
 	}
 
 	/**
@@ -1483,6 +1489,10 @@ class PodsAdmin {
 					$field = new \Pods\Whatsit\Field( $field_args );
 
 					$fields[] = $storage->add( $field );
+				}
+
+				if ( ! is_array( $section_fields ) ) {
+					continue;
 				}
 
 				// Add fields for section.
@@ -1559,7 +1569,7 @@ class PodsAdmin {
 			$tabs['advanced'] = __( 'Advanced Options', 'pods' );
 		}
 
-		if ( 'taxonomy' === pods_v( 'type', $pod ) && ! $fields ) {
+		if ( ! $fields && 'taxonomy' === pods_v( 'type', $pod ) ) {
 			$tabs['extra-fields'] = __( 'Extra Fields', 'pods' );
 		}
 
@@ -1581,11 +1591,23 @@ class PodsAdmin {
 
 		/**
 		 * Add or modify tabs for any Pod in Pods editor of a specific post type.
+		 *
+		 * @param array                  $tabs       Tabs to set.
+		 * @param null|\Pods\Whatsit\Pod $pod        Current Pods object.
+		 * @param array                  $addtl_args Additional args.
+		 *
+		 * @since  unknown
 		 */
 		$tabs = apply_filters( "pods_admin_setup_edit_tabs_{$pod_type}", $tabs, $pod, $addtl_args );
 
 		/**
 		 * Add or modify tabs in Pods editor for all pods.
+		 *
+		 * @param array                  $tabs       Tabs to set.
+		 * @param null|\Pods\Whatsit\Pod $pod        Current Pods object.
+		 * @param array                  $addtl_args Additional args.
+		 *
+		 * @since  unknown
 		 */
 		$tabs = apply_filters( 'pods_admin_setup_edit_tabs', $tabs, $pod, $addtl_args );
 

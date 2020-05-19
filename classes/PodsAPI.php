@@ -1,8 +1,8 @@
 <?php
 
-use Pods\API\Whatsit\Pod;
-use Pods\API\Whatsit\Group;
 use Pods\API\Whatsit\Field;
+use Pods\API\Whatsit\Group;
+use Pods\API\Whatsit\Pod;
 use Pods\API\Whatsit\Value_Field;
 
 /**
@@ -7017,7 +7017,8 @@ class PodsAPI {
 			unset( $params['table_info'] );
 		}
 
-		$params['object_type'] = 'pod';
+		$params['object_type']      = 'pod';
+		$params['include_internal'] = true;
 
 		if ( isset( $params['name'] ) && '' === $params['name'] ) {
 			unset( $params['name'] );
@@ -7249,7 +7250,8 @@ class PodsAPI {
 			}
 		}
 
-		$params['object_type'] = 'field';
+		$params['object_type']      = 'field';
+		$params['include_internal'] = true;
 
 		$object = $this->_load_object( $params );
 
@@ -7511,7 +7513,8 @@ class PodsAPI {
 			unset( $params['pod'] );
 		}
 
-		$params['object_type'] = 'group';
+		$params['object_type']      = 'group';
+		$params['include_internal'] = true;
 
 		$object = $this->_load_object( $params );
 

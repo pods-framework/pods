@@ -67,7 +67,7 @@
     "grunt-git": "^1.0.13",
     "grunt-text-replace": "^0.4.0",
     "install": "^0.10.2",
-    "jest": "^26.0.1",
+    "jest": "^25.0.0",
     "jquery": "^3.5.1",
     "jsdom": "^16.2.2",
     "jsdom-global": "3.0.2",

@@ -48,7 +48,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	required: PropTypes.oneOf( BOOLEAN_STRINGS ).isRequired,
 	// @todo this should be unserialized to an object?
 	roles_allowed: PropTypes.string,
-	storage_type: PropTypes.string.isRequired,
+	storage_type: PropTypes.string,
 	text_allow_html: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	text_allow_shortcode: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	// @todo can this be an integer from the PHP side?

@@ -14,18 +14,6 @@ import FieldGroups from './field-groups';
 const ActiveTabContent = ( {
 	activeTab,
 	activeTabOptions,
-	groups,
-	getGroupFields,
-	groupList,
-	setGroupList,
-	addGroup,
-	deleteGroup,
-	moveGroup,
-	groupFieldList,
-	setGroupFields,
-	addGroupField,
-	setFields,
-	fields,
 	getPodOption,
 	setOptionValue,
 } ) => {
@@ -37,20 +25,7 @@ const ActiveTabContent = ( {
 			className="pods-nav-tab-group pods-manage-field"
 		>
 			{ isManageFieldsTabActive ? (
-				<FieldGroups
-					groups={ groups }
-					getGroupFields={ getGroupFields }
-					groupList={ groupList }
-					setGroupList={ setGroupList }
-					addGroup={ addGroup }
-					deleteGroup={ deleteGroup }
-					moveGroup={ moveGroup }
-					groupFieldList={ groupFieldList }
-					setGroupFields={ setGroupFields }
-					addGroupField={ addGroupField }
-					setFields={ setFields }
-					fields={ fields }
-				/>
+				<FieldGroups />
 			) : (
 				<DynamicTabContent
 					tabOptions={ activeTabOptions }
@@ -65,12 +40,7 @@ const ActiveTabContent = ( {
 ActiveTabContent.propTypes = {
 	activeTab: PropTypes.string.isRequired,
 	activeTabOptions: PropTypes.array,
-	groups: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	getPodOption: PropTypes.func.isRequired,
-	getGroupFields: PropTypes.func.isRequired,
-	groupList: PropTypes.arrayOf( PropTypes.number ).isRequired,
-	groupFieldList: PropTypes.object.isRequired,
-	fields: PropTypes.arrayOf( PropTypes.object ).isRequired,
 };
 
 export default compose( [
@@ -82,26 +52,12 @@ export default compose( [
 		return {
 			activeTab,
 			activeTabOptions: storeSelect.getGlobalPodGroupFields( activeTab ),
-			groups: storeSelect.getGroups(),
 			getPodOption: storeSelect.getPodOption,
-			getGroupFields: storeSelect.getGroupFields,
-			groupList: storeSelect.getGroupList(),
-			groupFieldList: storeSelect.groupFieldList(),
-			fields: [],
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
-		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
-
 		return {
-			setOptionValue: storeDispatch.setOptionValue,
-			setGroupList: storeDispatch.setGroupList,
-			addGroup: storeDispatch.addGroup,
-			deleteGroup: storeDispatch.deleteGroup,
-			setGroupFields: storeDispatch.setGroupFields,
-			addGroupField: storeDispatch.addGroupField,
-			setFields: storeDispatch.setFields,
-			moveGroup: storeDispatch.moveGroup,
+			setOptionValue: dispatch( STORE_KEY_EDIT_POD ).setOptionValue,
 		};
 	} ),
 ] )( ActiveTabContent );

@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import * as PropTypes from 'prop-types';
 
+// WordPress dependencies
+import { withSelect, withDispatch } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 import './field-groups.scss';
 
 const FieldGroups = ( {
+	podName,
 	groups,
 	getGroupFields,
 	groupList,
@@ -19,8 +24,8 @@ const FieldGroups = ( {
 	groupFieldList,
 	setGroupFields,
 	addGroupField,
-	fields,
 	setFields,
+	editGroupPod,
 } ) => {
 	// If there's only one group, expand that group initially.
 	const [ expandedGroups, setExpandedGroups ] = useState(
@@ -80,28 +85,31 @@ const FieldGroups = ( {
 				</Button>
 			</div>
 
-			{ groups.map( ( group, index ) => (
-				<FieldGroup
-					key={ group.name }
-					groupName={ group.name }
-					groupLabel={ group.label }
-					groupID={ group.id }
-					index={ index }
-					getGroupFields={ getGroupFields }
-					deleteGroup={ deleteGroup }
-					moveGroup={ moveGroup }
-					handleBeginDrag={ handleBeginDrag }
-					handleDragCancel={ handleDragCancel }
-					fields={ fields }
-					groupFieldList={ groupFieldList }
-					setGroupFields={ setGroupFields }
-					addGroupField={ addGroupField }
-					setFields={ setFields }
-					randomString={ randomString }
-					isExpanded={ expandedGroups[ group.name ] || false }
-					toggleExpanded={ createToggleExpandGroup( group.name ) }
-				/>
-			) ) }
+			{ groups.map( ( group, index ) => {
+				return (
+					<FieldGroup
+						key={ group.name }
+						podName={ podName }
+						groupName={ group.name }
+						groupLabel={ group.label }
+						groupID={ group.id }
+						index={ index }
+						fields={ getGroupFields( group.name ) }
+						editGroupPod={ editGroupPod }
+						deleteGroup={ deleteGroup }
+						moveGroup={ moveGroup }
+						handleBeginDrag={ handleBeginDrag }
+						handleDragCancel={ handleDragCancel }
+						groupFieldList={ groupFieldList }
+						setGroupFields={ setGroupFields }
+						addGroupField={ addGroupField }
+						setFields={ setFields }
+						randomString={ randomString }
+						isExpanded={ expandedGroups[ group.name ] || false }
+						toggleExpanded={ createToggleExpandGroup( group.name ) }
+					/>
+				);
+			} ) }
 
 			<GroupDragLayer />
 
@@ -118,13 +126,42 @@ const FieldGroups = ( {
 };
 
 FieldGroups.propTypes = {
-	groups: PropTypes.array.isRequired,
+	podName: PropTypes.string.isRequired,
+	// @todo make a group proptype shape
+	groups: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	getGroupFields: PropTypes.func.isRequired,
 	addGroup: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	groupList: PropTypes.arrayOf( PropTypes.number ).isRequired,
 	setGroupList: PropTypes.func.isRequired,
+	editGroupPod: PropTypes.object.isRequired,
 };
 
-export default FieldGroups;
+export default compose( [
+	withSelect( ( select ) => {
+		const storeSelect = select( STORE_KEY_EDIT_POD );
+
+		return {
+			podName: storeSelect.getPodName(),
+			groups: storeSelect.getGroups(),
+			getGroupFields: storeSelect.getGroupFields,
+			groupList: storeSelect.getGroupList(),
+			groupFieldList: storeSelect.groupFieldList(),
+			editGroupPod: storeSelect.getGlobalGroupOptions(),
+		};
+	} ),
+	withDispatch( ( dispatch ) => {
+		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+
+		return {
+			setGroupList: storeDispatch.setGroupList,
+			addGroup: storeDispatch.addGroup,
+			deleteGroup: storeDispatch.deleteGroup,
+			setGroupFields: storeDispatch.setGroupFields,
+			addGroupField: storeDispatch.addGroupField,
+			setFields: storeDispatch.setFields,
+			moveGroup: storeDispatch.moveGroup,
+		};
+	} ),
+] )( FieldGroups );

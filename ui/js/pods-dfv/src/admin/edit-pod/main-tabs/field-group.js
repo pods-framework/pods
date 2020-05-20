@@ -22,10 +22,10 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 	} = props;
 
 	const {
+		podName,
 		groupName,
 		groupLabel,
 		groupID,
-		getGroupFields,
 		fields,
 		groupFieldList,
 		randomString,
@@ -35,6 +35,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		setFields,
 		isExpanded,
 		toggleExpanded,
+		editGroupPod,
 	} = props;
 
 	const wrapperRef = useRef( ref );
@@ -89,7 +90,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		}
 	};
 
-	const addField = ( newGroupName, type = 'text' ) => {
+	const addField = ( group ) => ( type = 'text' ) => {
 		const str = randomString( 6 );
 		const fieldName = 'field_' + str;
 
@@ -106,28 +107,31 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			position: maxPosition + 1,
 			type,
 			required: '0',
+			group,
+			object_type: 'field',
+			parent: podName,
 		};
 
-		addGroupField( newGroupName, field );
+		addGroupField( group, field );
 	};
 
-	const cloneField = ( newGroupName, type ) => {
-		addField( newGroupName, type );
+	const cloneField = ( group ) => ( type ) => {
+		addField( group, type );
 	};
 
-	const deleteField = ( groupName, fieldName ) => {
+	const deleteField = ( group ) => ( fieldName ) => {
 		const newFields = fields.filter( function( obj ) {
-			return obj.name != fieldName;
+			return obj.name !== fieldName;
 		} );
 
-		setGroupFields( groupName, newFields );
+		setGroupFields( group, newFields );
 	};
 
 	const moveField = ( groupName, field, dragIndex, hoverIndex, item ) => {
 		if ( groupName === item.groupName ) {
-			const fields = getGroupFields( item.groupName );
-			const movedItem = fields.find( ( itm, index ) => index === hoverIndex );
-			const remainingItems = fields.filter( ( itm, index ) => index !== hoverIndex );
+			const localFields = [ ...fields ];
+			const movedItem = localFields.find( ( itm, index ) => index === hoverIndex );
+			const remainingItems = localFields.filter( ( itm, index ) => index !== hoverIndex );
 
 			const reorderedItems = [
 				...remainingItems.slice( 0, dragIndex ),
@@ -223,19 +227,20 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 					<FieldGroupSettings
 						groupName={ groupName }
 						show={ setShowSettings }
+						editGroupPod={ editGroupPod }
 					/>
 				) }
 			</div>
 
 			{ isExpanded && ! isDragging && (
 				<FieldList
-					fields={ getGroupFields( groupName ) }
+					fields={ fields }
 					setGroupFields={ setGroupFields }
 					moveField={ moveField }
 					groupName={ groupName }
-					cloneField={ cloneField }
-					deleteField={ deleteField }
-					addField={ addField }
+					cloneField={ cloneField( groupName ) }
+					deleteField={ deleteField( groupName ) }
+					addField={ addField( groupName ) }
 				/>
 			) }
 		</div>
@@ -243,15 +248,16 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 } );
 
 FieldGroup.propTypes = {
+	podName: PropTypes.string.isRequired,
 	groupName: PropTypes.string.isRequired,
 	groupLabel: PropTypes.string.isRequired,
 	groupID: PropTypes.number,
 	index: PropTypes.number.isRequired,
 	isExpanded: PropTypes.bool.isRequired,
+	editGroupPod: PropTypes.object.isRequired,
 
 	toggleExpanded: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
-	getGroupFields: PropTypes.func.isRequired,
 	handleBeginDrag: PropTypes.func.isRequired,
 	handleDragCancel: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,

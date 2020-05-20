@@ -4,11 +4,18 @@ import * as PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
 import { Modal } from '@wordpress/components';
 
-const FieldGroupSettings = ( { groupName, show } ) => {
+const FieldGroupSettings = ( {
+	groupName,
+	show,
+	editGroupPod,
+} ) => {
 	const closeModal = ( e ) => {
 		e.stopPropagation();
 		show( false );
 	};
+
+	// eslint-disable-next-line
+	console.log( 'edit group pod options, these will be used later: ', editGroupPod );
 
 	return (
 		<Modal
@@ -77,6 +84,7 @@ const FieldGroupSettings = ( { groupName, show } ) => {
 FieldGroupSettings.propTypes = {
 	groupName: PropTypes.string.isRequired,
 	show: PropTypes.func.isRequired,
+	editGroupPod: PropTypes.object.isRequired,
 };
 
 export default FieldGroupSettings;

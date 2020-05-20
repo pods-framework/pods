@@ -21,8 +21,8 @@ const EditPod = ( {
 	setPodName,
 } ) => {
 	return (
-		<div>
-			<div>
+		<>
+			<div className="pods-edit-pod-header">
 				<EditPodName
 					podName={ podName }
 					setPodName={ setPodName }
@@ -41,7 +41,7 @@ const EditPod = ( {
 					<br className="clear" />
 				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 

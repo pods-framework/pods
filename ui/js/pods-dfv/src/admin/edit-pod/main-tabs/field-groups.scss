@@ -97,13 +97,11 @@
 	display: none;
 }
 
-
 .pods-field_wrapper-labels {
 	display: flex;
 	width: 100%;
 	background-color: #f5f5f5;
 	font-weight: 600;
-	// padding: 6px 0;
 	border: 1px solid #e5e5e5;
 	border-left: none;
 	border-right: none;
@@ -154,12 +152,11 @@
 	justify-content: space-between;
 	color: #333;
 	border: 1px solid #e5e5e5;
-	// border-left: 3px solid #94bf3a;
 	align-items: center;
+}
 
-	div {
-		display: flex;
-	}
+.pods-field-group_title > button {
+	flex-shrink: 0;
 }
 
 .pods-field-group_handle {
@@ -168,16 +165,12 @@
 	cursor: move;
 }
 
-.pods-field-group_edit,
-.pods-field-group_manage_link,
-.pods-field-group_add_field_link {
-	color: #0073aa;
-    transition-property: border,background,color;
-    transition-duration: .05s;
-	transition-timing-function: ease-in-out;
-	text-decoration: underline;
-	margin-right: 10px;
-	cursor: pointer;
+.pods-field-group_name {
+	margin-right: auto;
+}
+
+.pods-field-group_name__id {
+	color: #333333;
 }
 
 .pods-button-group_container {
@@ -263,7 +256,7 @@
 	position: absolute;
 	left: 0;
 	height: 100%;
-	
+
 	&-item {
 		padding: 10px;
 		border-bottom: 1px solid #c6cbd0;

@@ -19,6 +19,7 @@ const ActiveTabContent = ( {
 	groupList,
 	setGroupList,
 	addGroup,
+	deleteGroup,
 	moveGroup,
 	groupFieldList,
 	setGroupFields,
@@ -42,6 +43,7 @@ const ActiveTabContent = ( {
 					groupList={ groupList }
 					setGroupList={ setGroupList }
 					addGroup={ addGroup }
+					deleteGroup={ deleteGroup }
 					moveGroup={ moveGroup }
 					groupFieldList={ groupFieldList }
 					setGroupFields={ setGroupFields }
@@ -95,6 +97,7 @@ export default compose( [
 			setOptionValue: storeDispatch.setOptionValue,
 			setGroupList: storeDispatch.setGroupList,
 			addGroup: storeDispatch.addGroup,
+			deleteGroup: storeDispatch.deleteGroup,
 			setGroupFields: storeDispatch.setGroupFields,
 			addGroupField: storeDispatch.addGroupField,
 			setFields: storeDispatch.setFields,

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import * as PropTypes from 'prop-types';
 
+import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 import './field-groups.scss';
@@ -11,6 +14,7 @@ const FieldGroups = ( {
 	groupList,
 	setGroupList,
 	addGroup,
+	deleteGroup,
 	moveGroup,
 	groupFieldList,
 	setGroupFields,
@@ -18,8 +22,12 @@ const FieldGroups = ( {
 	fields,
 	setFields,
 } ) => {
-	const [ originalList, setOriginalList ] = useState( groupList );
+	// If there's only one group, expand that group initially.
+	const [ expandedGroups, setExpandedGroups ] = useState(
+		1 === groups.length ? { [ groups[ 0 ].name ]: true } : {}
+	);
 
+	const [ originalList, setOriginalList ] = useState( groupList );
 	const [ originalGroupFieldList, setOriginalGroupFieldList ] = useState( groupFieldList );
 
 	useEffect( () => {
@@ -44,6 +52,13 @@ const FieldGroups = ( {
 		addGroup( name );
 	};
 
+	const createToggleExpandGroup = ( groupName ) => () => {
+		setExpandedGroups( {
+			...expandedGroups,
+			[ groupName ]: expandedGroups[ groupName ] ? false : true,
+		} );
+	};
+
 	const randomString = ( length ) => {
 		let result = '';
 		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -57,8 +72,14 @@ const FieldGroups = ( {
 	return (
 		<div className="field-groups">
 			<div className="pods-button-group_container">
-				<button className="button-primary" onClick={ ( e ) => handleAddGroup( e ) }>Add Group</button>
+				<Button
+					isPrimary
+					onClick={ ( e ) => handleAddGroup( e ) }
+				>
+					{ __( '+ Add New Group', 'pods' ) }
+				</Button>
 			</div>
+
 			{ groups.map( ( group, index ) => (
 				<FieldGroup
 					key={ group.name }
@@ -67,6 +88,7 @@ const FieldGroups = ( {
 					groupID={ group.id }
 					index={ index }
 					getGroupFields={ getGroupFields }
+					deleteGroup={ deleteGroup }
 					moveGroup={ moveGroup }
 					handleBeginDrag={ handleBeginDrag }
 					handleDragCancel={ handleDragCancel }
@@ -76,11 +98,20 @@ const FieldGroups = ( {
 					addGroupField={ addGroupField }
 					setFields={ setFields }
 					randomString={ randomString }
+					isExpanded={ expandedGroups[ group.name ] || false }
+					toggleExpanded={ createToggleExpandGroup( group.name ) }
 				/>
 			) ) }
+
 			<GroupDragLayer />
+
 			<div className="pods-button-group_container">
-				<button className="button-primary" onClick={ ( e ) => handleAddGroup( e ) }>Add Group</button>
+				<Button
+					isPrimary
+					onClick={ ( e ) => handleAddGroup( e ) }
+				>
+					{ __( '+ Add New Group', 'pods' ) }
+				</Button>
 			</div>
 		</div>
 	);
@@ -89,6 +120,8 @@ const FieldGroups = ( {
 FieldGroups.propTypes = {
 	groups: PropTypes.array.isRequired,
 	getGroupFields: PropTypes.func.isRequired,
+	addGroup: PropTypes.func.isRequired,
+	deleteGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	groupList: PropTypes.arrayOf( PropTypes.number ).isRequired,
 	setGroupList: PropTypes.func.isRequired,

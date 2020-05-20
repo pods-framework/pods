@@ -2,53 +2,28 @@ import React, { useRef } from 'react';
 import * as PropTypes from 'prop-types';
 import { useDrag, useDrop } from 'react-dnd';
 
-import './manage-fields.scss';
-
 // WordPress dependencies
 import { __ } from '@wordpress/i18n';
-const { Dashicon } = wp.components;
+import { Dashicon } from '@wordpress/components';
+import { FIELD_PROP_TYPE_SHAPE } from 'pods-dfv/src/prop-types';
 
-export const FieldList = ( props ) => {
-	const { groupName, cloneField, deleteField, moveField } = props;
-
-	if ( 0 === props.fields.length ) {
-		return (
-			<div className="pods-manage-fields no-fields">
-				{ __( 'There are no fields in this group', 'pods' ) }
-			</div>
-		);
-	}
-
-	return (
-		<div className="pods-manage-fields">
-			<FieldHeader />
-			{ props.fields.map( ( field, index ) => (
-				<FieldListItem
-					key={ field.id }
-					id={ field.id }
-					index={ index }
-					fieldLabel={ field.label }
-					fieldName={ field.name }
-					required={ field.required }
-					type={ field.type }
-					position={ field.position }
-					moveField={ moveField }
-					groupName={ groupName }
-					cloneField={ cloneField }
-					deleteField={ deleteField }
-				/>
-			) ) }
-			<FieldHeader />
-		</div>
-	);
-};
-
-FieldList.propTypes = {
-	fields: PropTypes.array.isRequired,
-};
+import './manage-fields.scss';
 
 export const FieldListItem = ( props, ref ) => {
-	const { id, fieldName, fieldLabel, required, type, index, moveField, groupName, cloneField, deleteField } = props;
+	const {
+		field: {
+			id,
+			name,
+			label,
+			required,
+			type,
+		},
+		index,
+		moveField,
+		groupName,
+		cloneField,
+		deleteField,
+	} = props;
 
 	const wref = useRef( ref );
 	const [ , drop ] = useDrop( {
@@ -86,7 +61,7 @@ export const FieldListItem = ( props, ref ) => {
 			}
 			// console.log("movefield")
 			// Time to actually perform the action
-			moveField( groupName, fieldName, dragIndex, hoverIndex, item );
+			moveField( groupName, name, dragIndex, hoverIndex, item );
 			// Note: we're mutating the monitor item here!
 			// Generally it's better to avoid mutations,
 			// but it's good here for the sake of performance
@@ -95,7 +70,7 @@ export const FieldListItem = ( props, ref ) => {
 		},
 	} );
 	const [ { isDragging }, drag ] = useDrag( {
-		item: { type: 'field-list-item', id, index, groupName, fieldName },
+		item: { type: 'field-list-item', id, index, groupName, name },
 		collect: ( monitor ) => ( {
 			isDragging: monitor.isDragging(),
 		} ),
@@ -114,13 +89,13 @@ export const FieldListItem = ( props, ref ) => {
 			<div className="pods-field pods-field_label">
 				<b>Field Label</b>
 				<br />
-				{ fieldLabel }<span className={ required ? 'pods-field_required' : '' }>*</span>
+				{ label }<span className={ required ? 'pods-field_required' : '' }>*</span>
 				<div className="pods-field_id"> [id = { id }]</div>
 			</div>
 			<div className="pods-field pods-field_name">
 				<b>Field Name</b>
 				<br />
-				{ fieldName }
+				{ name }
 			</div>
 			<div className="pods-field pods-field_type">
 				<b>Type</b>
@@ -134,7 +109,7 @@ export const FieldListItem = ( props, ref ) => {
 					e.stopPropagation(); cloneField( groupName, type );
 				} } />
 				<Dashicon icon="trash" onClick={ ( e ) => {
-					e.stopPropagation(); deleteField( groupName, fieldName );
+					e.stopPropagation(); deleteField( groupName, name );
 				} } />
 			</div>
 		</div>
@@ -142,22 +117,72 @@ export const FieldListItem = ( props, ref ) => {
 };
 
 FieldListItem.propTypes = {
-	id: PropTypes.number.isRequired,
-	fieldName: PropTypes.string.isRequired,
-	fieldLabel: PropTypes.string.isRequired,
-	required: PropTypes.bool.isRequired,
-	type: PropTypes.string.isRequired,
+	field: FIELD_PROP_TYPE_SHAPE,
+	// position: PropTypes.number.isRequired,
+	index: PropTypes.number.isRequired,
+	groupName: PropTypes.string.isRequired,
+	moveField: PropTypes.func.isRequired,
+	cloneField: PropTypes.func.isRequired,
+	deleteField: PropTypes.func.isRequired,
 };
 
-/**
- *
- */
-export const FieldHeader = () => {
+const FieldList = ( props ) => {
+	const { groupName, addField, cloneField, deleteField, moveField } = props;
+
+	if ( 0 === props.fields.length ) {
+		return (
+			<div className="pods-manage-fields no-fields">
+				<button
+					className="pods-field-group_add_field_link"
+					onClick={ () => addField( groupName ) }
+				>
+					{ __( 'Add Field', 'pods' ) }
+				</button>
+				{ __( 'There are no fields in this group', 'pods' ) }
+			</div>
+		);
+	}
+
 	return (
-		<div className="pods-field_wrapper-labels">
-			<div className="pods-field_wrapper-label-items">Label</div>
-			<div className="pods-field_wrapper-label-items">Name</div>
-			<div className="pods-field_wrapper-label-items">Field Type</div>
+		<div className="pods-manage-fields">
+			<div className="pods-field_wrapper-labels">
+				<div className="pods-field_wrapper-label-items">Label</div>
+				<div className="pods-field_wrapper-label-items">Name</div>
+				<div className="pods-field_wrapper-label-items">Field Type</div>
+			</div>
+
+			<button
+				className="pods-field-group_add_field_link"
+				onClick={ () => addField( groupName ) }
+			>
+				{ __( 'Add Field', 'pods' ) }
+			</button>
+
+			{ props.fields.map( ( field, index ) => (
+				<FieldListItem
+					key={ field.id }
+					field={ field }
+					index={ index }
+					// position={ field.position }
+					moveField={ moveField }
+					groupName={ groupName }
+					cloneField={ cloneField }
+					deleteField={ deleteField }
+				/>
+			) ) }
 		</div>
 	);
 };
+
+FieldList.propTypes = {
+	fields: PropTypes.arrayOf(
+		FIELD_PROP_TYPE_SHAPE
+	).isRequired,
+	addField: PropTypes.func.isRequired,
+	groupName: PropTypes.string.isRequired,
+	cloneField: PropTypes.func.isRequired,
+	deleteField: PropTypes.func.isRequired,
+	moveField: PropTypes.func.isRequired,
+};
+
+export default FieldList;

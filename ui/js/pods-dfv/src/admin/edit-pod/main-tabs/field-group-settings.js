@@ -2,9 +2,9 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 
 import { __ } from '@wordpress/i18n';
-const { Modal } = wp.components;
+import { Modal } from '@wordpress/components';
 
-export const FieldGroupSettings = ( { groupName, show } ) => {
+const FieldGroupSettings = ( { groupName, show } ) => {
 	const closeModal = ( e ) => {
 		e.stopPropagation();
 		show( false );
@@ -74,3 +74,5 @@ FieldGroupSettings.propTypes = {
 	groupName: PropTypes.string.isRequired,
 	show: PropTypes.func.isRequired,
 };
+
+export default FieldGroupSettings;

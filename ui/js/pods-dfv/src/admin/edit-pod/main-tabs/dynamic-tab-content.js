@@ -6,6 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 
 // Pod dependencies
 import DependentFieldOption from 'pods-dfv/src/components/dependent-field-option';
+import { FIELD_PROP_TYPE_SHAPE } from 'pods-dfv/src/prop-types';
 // import { getOption } from 'backbone.marionette';
 
 const MISSING = __( '[MISSING DEFAULT]', 'pods' );
@@ -50,27 +51,7 @@ const DynamicTabContent = ( props ) => {
 
 DynamicTabContent.propTypes = {
 	tabOptions: PropTypes.arrayOf(
-		// @todo break out PropTypes, this can be re-used as a "Field"
-		PropTypes.shape( {
-			boolean_yes_label: PropTypes.string,
-			default: PropTypes.oneOfType( [
-				PropTypes.string,
-				PropTypes.bool,
-				PropTypes.number,
-			] ),
-			'depends-on': PropTypes.object,
-			description: PropTypes.string.isRequired,
-			group: PropTypes.string.isRequired,
-			help: PropTypes.string,
-			id: PropTypes.string.isRequired,
-			label: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
-			object_type: PropTypes.string.isRequired,
-			parent: PropTypes.string.isRequired,
-			storage_type: PropTypes.string.isRequired,
-			text_max_length: PropTypes.number,
-			type: PropTypes.string.isRequired,
-		} )
+		PropTypes.shape( FIELD_PROP_TYPE_SHAPE )
 	).isRequired,
 	getOptionValue: PropTypes.func.isRequired,
 	setOptionValue: PropTypes.func.isRequired,

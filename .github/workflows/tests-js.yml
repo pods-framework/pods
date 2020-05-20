@@ -25,13 +25,13 @@ jobs:
           ssh-agent -a /tmp/ssh_agent.sock;
       - name: Export SSH_AUTH_SOCK env var
         run: echo "::set-env name=SSH_AUTH_SOCK::/tmp/ssh_agent.sock"
-      - name: tric use events-virtual
+      - name: tric use pods
         run: |
           cd ${GITHUB_WORKSPACE}/..
           tric interactive off
           tric build-prompt off
           tric here
-          tric use events-virtual
+          tric use pods
           tric debug on
       - name: tric npm install
         run: tric npm install

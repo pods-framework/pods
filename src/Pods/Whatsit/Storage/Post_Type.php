@@ -35,7 +35,6 @@ class Post_Type extends Collection {
 	protected $secondary_args = [
 		'type',
 		'object',
-		'group',
 	];
 
 	/**
@@ -133,6 +132,52 @@ class Post_Type extends Collection {
 
 		$args['args'] = (array) $args['args'];
 
+		$secondary_variations = [
+			'identifier',
+			'id',
+			'name',
+		];
+
+		$secondary_object_args = [
+			'parent',
+			'group',
+		];
+
+		foreach ( $secondary_object_args as $arg ) {
+			$arg_value = [];
+
+			if ( isset( $args[ $arg ] ) ) {
+				if ( $args[ $arg ] instanceof Whatsit ) {
+					$args[ $arg ]                 = (array) $args[ $arg ]->get_name();
+					$args[ $arg . '_identifier' ] = (array) $args[ $arg ]->get_identifier();
+					$args[ $arg . '_id' ]         = (array) $args[ $arg ]->get_id();
+					$args[ $arg . '_name' ]       = (array) $args[ $arg ]->get_name();
+				}
+
+				$arg_value[] = (array) $args[ $arg ];
+			}
+
+			foreach ( $secondary_variations as $variation ) {
+				if ( ! isset( $args[ $arg . '_' . $variation ] ) ) {
+					continue;
+				}
+
+				$arg_value[] = (array) $args[ $arg . '_' . $variation ];
+			}
+
+			if ( empty( $arg_value ) ) {
+				continue;
+			}
+
+			$arg_value = array_merge( ...$arg_value );
+
+			if ( 1 === count( $arg_value ) ) {
+				$arg_value = current( $arg_value );
+			}
+
+			$args['args'][ $arg ] = $arg_value;
+		}
+
 		foreach ( $this->secondary_args as $arg ) {
 			if ( ! isset( $args[ $arg ] ) ) {
 				continue;
@@ -201,13 +246,13 @@ class Post_Type extends Collection {
 		}
 
 		if ( ! empty( $args['parent'] ) ) {
-			$args['parent'] = (array) $args['parent'];
-			$args['parent'] = array_map( 'absint', $args['parent'] );
-			$args['parent'] = array_unique( $args['parent'] );
-			$args['parent'] = array_filter( $args['parent'] );
+			$post_args['post_parent__in'] = (array) $args['parent'];
+			$post_args['post_parent__in'] = array_map( 'absint', $post_args['post_parent__in'] );
+			$post_args['post_parent__in'] = array_unique( $post_args['post_parent__in'] );
+			$post_args['post_parent__in'] = array_filter( $post_args['post_parent__in'] );
 
-			if ( $args['parent'] ) {
-				$post_args['post_parent__in'] = $args['parent'];
+			if ( empty( $post_args['post_parent__in'] ) ) {
+				unset( $post_args['post_parent__in'] );
 			}
 		}
 

@@ -21,10 +21,7 @@ class Collection extends Storage {
 	/**
 	 * @var array
 	 */
-	protected $secondary_args = [
-		'parent',
-		'group',
-	];
+	protected $secondary_args = [];
 
 	/**
 	 * {@inheritdoc}
@@ -115,29 +112,56 @@ class Collection extends Storage {
 
 		$secondary_variations = [
 			'identifier',
+			'id',
 			'name',
 		];
 
-		foreach ( $this->secondary_args as $arg ) {
+		$secondary_object_args = [
+			'parent',
+			'group',
+		];
+
+		foreach ( $secondary_object_args as $arg ) {
 			$arg_value = [];
+
+			if ( isset( $args[ $arg ] ) ) {
+				if ( $args[ $arg ] instanceof Whatsit ) {
+					$args[ $arg ]                 = (array) $args[ $arg ]->get_name();
+					$args[ $arg . '_identifier' ] = (array) $args[ $arg ]->get_identifier();
+					$args[ $arg . '_id' ]         = (array) $args[ $arg ]->get_id();
+					$args[ $arg . '_name' ]       = (array) $args[ $arg ]->get_name();
+				}
+
+				$arg_value[] = (array) $args[ $arg ];
+			}
 
 			foreach ( $secondary_variations as $variation ) {
 				if ( ! isset( $args[ $arg . '_' . $variation ] ) ) {
 					continue;
 				}
 
-				$arg_value[] = $args[ $arg . '_' . $variation ];
+				$arg_value[] = (array) $args[ $arg . '_' . $variation ];
 			}
 
 			if ( empty( $arg_value ) ) {
 				continue;
 			}
 
+			$arg_value = array_merge( ...$arg_value );
+
 			if ( 1 === count( $arg_value ) ) {
 				$arg_value = current( $arg_value );
 			}
 
 			$args['args'][ $arg ] = $arg_value;
+		}
+
+		foreach ( $this->secondary_args as $arg ) {
+			if ( ! isset( $args[ $arg ] ) ) {
+				continue;
+			}
+
+			$args['args'][ $arg ] = $args[ $arg ];
 		}
 
 		foreach ( $args['args'] as $arg => $value ) {
@@ -161,7 +185,7 @@ class Collection extends Storage {
 				$value = trim( $value );
 
 				foreach ( $objects as $k => $object ) {
-					if ( $value === $object->get_arg( $arg ) ) {
+					if ( $value === (string) $object->get_arg( $arg ) ) {
 						continue;
 					}
 
@@ -182,7 +206,7 @@ class Collection extends Storage {
 
 			if ( $value ) {
 				foreach ( $objects as $k => $object ) {
-					if ( in_array( $object->get_arg( $arg ), $value, true ) ) {
+					if ( in_array( (string) $object->get_arg( $arg ), $value, true ) ) {
 						continue;
 					}
 
@@ -237,30 +261,9 @@ class Collection extends Storage {
 			}
 		}
 
-		if ( ! empty( $args['parent'] ) ) {
-			$args['parent'] = (array) $args['parent'];
-			$args['parent'] = array_map( 'absint', $args['parent'] );
-			$args['parent'] = array_unique( $args['parent'] );
-			$args['parent'] = array_filter( $args['parent'] );
-
-			if ( $args['parent'] ) {
-				foreach ( $objects as $k => $object ) {
-					if ( in_array( $object->get_parent(), $args['parent'], true ) ) {
-						continue;
-					}
-
-					unset( $objects[ $k ] );
-				}
-
-				if ( empty( $objects ) ) {
-					return $objects;
-				}
-			}
-		}
-
 		if ( isset( $args['internal'] ) ) {
 			foreach ( $objects as $k => $object ) {
-				if ( $args['internal'] === $object->get_arg( 'internal' ) ) {
+				if ( $args['internal'] === (boolean) $object->get_arg( 'internal' ) ) {
 					continue;
 				}
 

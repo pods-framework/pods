@@ -75,6 +75,13 @@ export const addGroup = ( group ) => {
 	};
 };
 
+export const deleteGroup = ( groupName ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.DELETE_GROUP,
+		groupName,
+	};
+};
+
 export const setGroupFields = ( groupName, fields ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.SET_GROUP_FIELDS,
@@ -85,6 +92,7 @@ export const setGroupFields = ( groupName, fields ) => {
 export const addGroupField = ( groupName, field ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.ADD_GROUP_FIELD,
-		groupName, field,
+		groupName,
+		field,
 	};
 };

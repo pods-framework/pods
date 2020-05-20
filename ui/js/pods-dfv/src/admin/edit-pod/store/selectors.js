@@ -32,11 +32,13 @@ export const getGroups = ( state ) => GROUPS.getFrom( state );
 export const getGroupList = ( state ) => getGroups( state )
 	.map( ( ( group ) => group.id ) );
 
-export const getGroup = ( state, groupName ) => getGroups( state )[ groupName ];
+export const getGroup = ( state, groupName ) => getGroups( state ).find(
+	( group ) => groupName === group.name
+);
 
 export const getGroupFields = ( state, groupName ) => {
-	if ( getGroups( state )[ groupName ] && getGroups( state )[ groupName ].fields ) {
-		return getGroups( state )[ groupName ].fields;
+	if ( getGroup( state, groupName )?.fields ) {
+		return getGroup( state, groupName ).fields;
 	}
 	return [];
 };

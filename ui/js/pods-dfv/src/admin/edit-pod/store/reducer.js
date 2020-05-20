@@ -135,22 +135,52 @@ export const currentPod = ( state = {}, action = {} ) => {
 			};
 		}
 
-		case ACTIONS.SET_GROUP_FIELDS: {
-			const group = _.find( state.currentPod.groups, function( podGroup ) {
-				return podGroup.name === action.groupName;
-			} );
-			group.fields = action.fields;
+		case ACTIONS.DELETE_GROUP: {
+			return {
+				...state,
+				groups: state.groups.filter(
+					( group ) => group.name !== action.groupName
+				),
+			};
+		}
 
-			return { ...state };
+		case ACTIONS.SET_GROUP_FIELDS: {
+			const groups = state.groups.map( ( group ) => {
+				if ( group.name !== action.groupName ) {
+					return group;
+				}
+
+				return {
+					...group,
+					fields: action.fields,
+				};
+			} );
+
+			return {
+				...state,
+				groups,
+			};
 		}
 
 		case ACTIONS.ADD_GROUP_FIELD: {
-			const group = _.find( state.currentPod.groups, function( podGroup ) {
-				return podGroup.name === action.groupName;
-			} );
-			group.fields.push( action.field );
+			const groups = state.groups.map( ( group ) => {
+				if ( group.name !== action.groupName ) {
+					return group;
+				}
 
-			return { ...state };
+				return {
+					...group,
+					fields: [
+						...group.fields,
+						action.field,
+					],
+				};
+			} );
+
+			return {
+				...state,
+				groups,
+			};
 		}
 
 		default: {

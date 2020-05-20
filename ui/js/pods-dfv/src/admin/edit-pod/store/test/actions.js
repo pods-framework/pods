@@ -16,8 +16,8 @@ import {
 	setGroupList,
 	moveGroup,
 
-	// @todo create these tests when working on the Manage Groups functionality
 	addGroup,
+	deleteGroup,
 	// setGroupFields,
 	// addGroupField,
 } from '../actions.js';
@@ -133,6 +133,17 @@ describe( 'actions', () => {
 			};
 
 			expect( addGroup( 'New Group Name 123' ) ).toEqual( expected );
+		} );
+
+		test( 'deleteGroup() returns an action to delete a group by its name', () => {
+			const action = actions.DELETE_GROUP;
+
+			const expected = {
+				type: action,
+				groupName: 'New Group Name 123',
+			};
+
+			expect( deleteGroup( 'New Group Name 123' ) ).toEqual( expected );
 		} );
 
 		test( 'setGroupList() should return an action to set the group list', () => {

@@ -166,18 +166,6 @@ describe( 'currentPod Reducer', () => {
 	} );
 
 	// @todo re-enable and fix these when working on Managing Groups work
-	test.skip( 'create a new group list if it doesn\'t exist', () => {
-		const action = {
-			type: actions.SET_GROUP_LIST,
-			groupList: initialGroupList,
-		};
-		const expected = GROUPS.tailCreateTree( initialGroupList );
-
-		const result = currentPod( undefined, action );
-
-		expect( result ).toEqual( expected );
-	} );
-
 	describe.skip( 'should move groups', () => {
 		const cases = [
 			[ 0, 0, initialGroupList ], // Nothing changes

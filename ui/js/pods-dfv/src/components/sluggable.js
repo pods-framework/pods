@@ -19,9 +19,8 @@ const NotEditing = ( {
 	value,
 } ) => {
 	const handleKeyPress = ( event ) => {
-		// "Enter" key
 		if ( event.keyCode === ENTER_KEY ) {
-			this.handleEditClick();
+			handleEditClick();
 		}
 	};
 

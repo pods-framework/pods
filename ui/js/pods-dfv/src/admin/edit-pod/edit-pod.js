@@ -50,7 +50,7 @@ export default compose( [
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 
 		return {
-			tabs: storeSelect.getGlobalGroups(),
+			tabs: storeSelect.getGlobalPodGroups(),
 			activeTab: storeSelect.getActiveTab(),
 			podName: storeSelect.getPodName(),
 		};

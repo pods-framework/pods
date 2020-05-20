@@ -81,7 +81,7 @@ export default compose( [
 
 		return {
 			activeTab,
-			activeTabOptions: storeSelect.getGlobalGroupFields( activeTab ),
+			activeTabOptions: storeSelect.getGlobalPodGroupFields( activeTab ),
 			groups: storeSelect.getGroups(),
 			getPodOption: storeSelect.getPodOption,
 			getGroupFields: storeSelect.getGroupFields,

@@ -14,7 +14,8 @@ const FieldGroupSettings = ( { groupName, show } ) => {
 		<Modal
 			className="pods-field-group_settings pods-field-group_settings--visible"
 			title={ `${ groupName } ` + __( 'Settings', 'pods' ) }
-			onRequestClose={ ( e ) => closeModal( e ) }>
+			onRequestClose={ ( e ) => closeModal( e ) }
+		>
 			<div className="pods-field-group_settings-container">
 				<div className="pods-field-group_settings-options">
 					<div className="pods-field-group_settings-sidebar" role="tablist" aria-label="Pods Field Group Settings">
@@ -28,6 +29,7 @@ const FieldGroupSettings = ( { groupName, show } ) => {
 							{ __( 'Other Group Settings Tab', 'pods' ) }
 						</div>
 					</div>
+
 					<div className="pods-field-group_settings-main" role="tabpanel" aria-labelledby="main" id="main-tab">
 						<label className="pods-input-container">
 							<span className="pods-label_text">$id</span>
@@ -58,9 +60,11 @@ const FieldGroupSettings = ( { groupName, show } ) => {
 							<input className="pods-input" type="text"></input>
 						</label>
 					</div>
+
 					<div className="pods-field-group_settings-advanced" role="tabpanel" aria-labelledby="advanced" id="advanced-tab" hidden="hidden">
 						<p>Advanced tabpanel</p>
 					</div>
+
 					<div className="pods-field-group_settings-other" role="tabpanel" aria-labelledby="other" id="other-tab" hidden="hidden">
 						<p>Other tabpanel</p>
 					</div>

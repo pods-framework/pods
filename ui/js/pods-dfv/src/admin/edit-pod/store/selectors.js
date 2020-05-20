@@ -5,8 +5,10 @@ import {
 	CURRENT_POD,
 	GLOBAL_POD,
 	GROUPS,
-	// Global Pod
-	GLOBAL_GROUPS,
+	// Global
+	GLOBAL_POD_GROUPS,
+	GLOBAL_GROUP,
+	GLOBAL_FIELD,
 	// UI
 	ACTIVE_TAB,
 	SAVE_STATUS,
@@ -56,18 +58,24 @@ export const groupFieldList = ( state ) => getGroups( state ).reduce(
 	{}
 );
 
-// Global Pod
+// Global Pod config
 export const getGlobalPodOptions = ( state ) => GLOBAL_POD.getFrom( state );
 
 export const getGlobalPodOption = ( state, key ) => GLOBAL_POD.getFrom( state )[ key ];
 
-export const getGlobalGroups = ( state ) => GLOBAL_GROUPS.getFrom( state );
+export const getGlobalPodGroups = ( state ) => GLOBAL_POD_GROUPS.getFrom( state );
 
-export const getGlobalGroup = ( state, groupName ) => getGlobalGroups( state ).find(
+export const getGlobalPodGroup = ( state, groupName ) => getGlobalPodGroups( state ).find(
 	( group ) => group.name === groupName
 );
 
-export const getGlobalGroupFields = ( state, groupName ) => getGlobalGroup( state, groupName )?.fields || [];
+export const getGlobalPodGroupFields = ( state, groupName ) => getGlobalPodGroup( state, groupName )?.fields || [];
+
+// -- Global Groups config
+export const getGlobalGroupOptions = ( state ) => GLOBAL_GROUP.getFrom( state );
+
+// -- Global Field config
+export const getGlobalFieldOptions = ( state ) => GLOBAL_FIELD.getFrom( state );
 
 // UI
 export const getActiveTab = ( state ) => ACTIVE_TAB.getFrom( state );

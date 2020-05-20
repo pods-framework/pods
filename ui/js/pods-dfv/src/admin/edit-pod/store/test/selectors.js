@@ -24,9 +24,10 @@ import {
 	// Global Pod
 	getGlobalPodOptions,
 	getGlobalPodOption,
-	getGlobalGroups,
-	getGlobalGroup,
-	getGlobalGroupFields,
+	getGlobalPodGroups,
+	getGlobalPodGroup,
+	getGlobalPodGroupFields,
+	getGlobalGroupOptions,
 
 	// UI
 	getActiveTab,
@@ -37,7 +38,11 @@ import {
 
 import { uiConstants } from '../constants';
 
-import { POD, GLOBAL_POD } from '../testData';
+import {
+	POD,
+	GLOBAL_POD,
+	GLOBAL_GROUP,
+} from '../testData';
 
 test( 'getState() returns the full state', () => {
 	const state = deepFreeze( {
@@ -105,7 +110,8 @@ describe( 'Global Pod option selectors', () => {
 
 	beforeEach( () => {
 		state = deepFreeze(
-			paths.GLOBAL_POD.createTree( GLOBAL_POD )
+			paths.GLOBAL_POD.createTree( GLOBAL_POD ),
+			paths.GLOBAL_GROUP.createTree( GLOBAL_GROUP ),
 		);
 	} );
 
@@ -121,23 +127,29 @@ describe( 'Global Pod option selectors', () => {
 		expect( result ).toEqual( 'Pod configuration' );
 	} );
 
-	test( 'getGlobalGroups returns the global pod\'s groups', () => {
-		const result = getGlobalGroups( state );
+	test( 'getGlobalPodGroups returns the global pod\'s groups', () => {
+		const result = getGlobalPodGroups( state );
 
 		expect( result.length ).toEqual( 2 );
 		expect( result[ 0 ].label ).toEqual( 'Labels' );
 		expect( result[ 1 ].label ).toEqual( 'REST API' );
 	} );
 
-	test( 'getGlobalGroup returns a specific global pod group', () => {
-		const result = getGlobalGroup( state, 'rest-api' );
+	test( 'getGlobalPodGroup returns a specific global pod group', () => {
+		const result = getGlobalPodGroup( state, 'rest-api' );
 
 		expect( result.label ).toEqual( 'REST API' );
 		expect( result.fields ).toBeDefined();
 	} );
 
-	test( 'getGlobalGroupFields returns a specific global pod group\'s fields', () => {
-		const result = getGlobalGroupFields( state, 'rest-api' );
+	test( 'getGlobalPodGroupFields returns a specific global pod group\'s fields', () => {
+		const result = getGlobalPodGroupFields( state, 'rest-api' );
+
+		expect( result.length ).toEqual( 2 );
+	} );
+
+	test( 'getGlobalGroupOptions returns a the group config fields', () => {
+		const result = getGlobalGroupOptions( state );
 
 		expect( result.length ).toEqual( 2 );
 	} );

@@ -176,6 +176,17 @@ export const GLOBAL_POD = {
 	],
 };
 
+export const GLOBAL_GROUP = {
+	description: 'Pod Group configuration',
+	groups: [],
+	id: '',
+	internal: true,
+	label: 'Pod Group',
+	name: '_pods_group',
+	object_type: 'pod',
+	storage_type: 'collection',
+};
+
 export const TEST_CONFIG_DATA = {
 	currentPod: POD,
 	global: {

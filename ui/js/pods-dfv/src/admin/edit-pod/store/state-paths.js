@@ -39,16 +39,20 @@ export const createStatePath = ( path ) => {
 	};
 };
 
-export const CURRENT_POD = createStatePath( 'currentPod' );
-export const GLOBAL_POD = createStatePath( 'global.pod' );
-
 // Current Pod
+export const CURRENT_POD = createStatePath( 'currentPod' );
 export const POD_NAME = createStatePath( `${ CURRENT_POD.path }.name` );
 export const POD_ID = createStatePath( `${ CURRENT_POD.path }.id` );
 export const GROUPS = createStatePath( `${ CURRENT_POD.path }.groups` );
 
-// Global Pod
-export const GLOBAL_GROUPS = createStatePath( `${ GLOBAL_POD.path }.groups` );
+// Global
+export const GLOBAL = createStatePath( 'global' );
+
+export const GLOBAL_POD = createStatePath( `${ GLOBAL.path }.pod` );
+export const GLOBAL_POD_GROUPS = createStatePath( `${ GLOBAL_POD.path }.groups` );
+
+export const GLOBAL_GROUP = createStatePath( `${ GLOBAL.path }.group` );
+export const GLOBAL_FIELD = createStatePath( `${ GLOBAL.path }.field` );
 
 // UI
 export const UI = createStatePath( 'ui' );

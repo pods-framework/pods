@@ -61,7 +61,7 @@ export const FieldListItem = ( props, ref ) => {
 			}
 			// console.log("movefield")
 			// Time to actually perform the action
-			moveField( groupName, name, dragIndex, hoverIndex, item );
+			moveField( name, dragIndex, hoverIndex, item );
 			// Note: we're mutating the monitor item here!
 			// Generally it's better to avoid mutations,
 			// but it's good here for the sake of performance
@@ -106,10 +106,10 @@ export const FieldListItem = ( props, ref ) => {
 			<div className="pods-field pods-field_actions">
 				<Dashicon icon="edit" />
 				<Dashicon icon="admin-page" onClick={ ( e ) => {
-					e.stopPropagation(); cloneField( groupName, type );
+					e.stopPropagation(); cloneField( type );
 				} } />
 				<Dashicon icon="trash" onClick={ ( e ) => {
-					e.stopPropagation(); deleteField( groupName, name );
+					e.stopPropagation(); deleteField( name );
 				} } />
 			</div>
 		</div>
@@ -134,7 +134,7 @@ const FieldList = ( props ) => {
 			<div className="pods-manage-fields no-fields">
 				<button
 					className="pods-field-group_add_field_link"
-					onClick={ () => addField( groupName ) }
+					onClick={ () => addField() }
 				>
 					{ __( 'Add Field', 'pods' ) }
 				</button>
@@ -153,7 +153,7 @@ const FieldList = ( props ) => {
 
 			<button
 				className="pods-field-group_add_field_link"
-				onClick={ () => addField( groupName ) }
+				onClick={ () => addField() }
 			>
 				{ __( 'Add Field', 'pods' ) }
 			</button>

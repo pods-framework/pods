@@ -147,7 +147,7 @@
 }
 
 .pods-field-group_title {
-	padding: 10px;
+	padding: 0.5em;
 	display: flex;
 	justify-content: space-between;
 	color: #333;
@@ -159,14 +159,17 @@
 	flex-shrink: 0;
 }
 
-.pods-field-group_handle {
-	padding-right: 13px;
-	display: flex;
+.pods-field-group_name {
 	cursor: move;
+	margin-right: auto;
+	padding: 0.5em;
+	user-select: none;
 }
 
-.pods-field-group_name {
-	margin-right: auto;
+.pods-field-group_handle {
+	display: inline-block;
+	padding-right: 13px;
+	vertical-align: middle;
 }
 
 .pods-field-group_name__id {

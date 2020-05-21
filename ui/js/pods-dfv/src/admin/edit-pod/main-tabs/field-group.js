@@ -10,6 +10,7 @@ import dragSource from './group-drag-source';
 import dropTarget from './group-drop-target';
 import FieldGroupSettings from './field-group-settings';
 import FieldList from 'pods-dfv/src/admin/edit-pod/main-tabs/field-list';
+import { GROUP_PROP_TYPE_SHAPE } from 'pods-dfv/src/prop-types';
 
 const ENTER_KEY = 13;
 
@@ -23,16 +24,16 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 	const {
 		podName,
-		groupName,
-		groupLabel,
-		groupID,
-		fields,
-		groupFieldList,
+		group: {
+			name: groupName,
+			label: groupLabel,
+			id: groupID,
+			fields,
+		},
 		randomString,
 		deleteGroup,
 		setGroupFields,
 		addGroupField,
-		setFields,
 		isExpanded,
 		toggleExpanded,
 		editGroupPod,
@@ -43,7 +44,6 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 	const [ isHovered, setIsHovered ] = useState( false );
 	const [ showSettings, setShowSettings ] = useState( false );
-	const [ originalFields, setOriginalFields ] = useState( fields );
 
 	useEffect( () => {
 		if ( connectDragPreview ) {
@@ -115,9 +115,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		addGroupField( group, field );
 	};
 
-	const cloneField = ( group ) => ( type ) => {
-		addField( group, type );
-	};
+	const cloneField = ( group ) => ( type ) => addField( group, type );
 
 	const deleteField = ( group ) => ( fieldName ) => {
 		const newFields = fields.filter( function( obj ) {
@@ -127,8 +125,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		setGroupFields( group, newFields );
 	};
 
-	const moveField = ( groupName, field, dragIndex, hoverIndex, item ) => {
-		if ( groupName === item.groupName ) {
+	const moveField = ( group ) => ( field, dragIndex, hoverIndex, item ) => {
+		if ( group === item.groupName ) {
 			const localFields = [ ...fields ];
 			const movedItem = localFields.find( ( itm, index ) => index === hoverIndex );
 			const remainingItems = localFields.filter( ( itm, index ) => index !== hoverIndex );
@@ -139,18 +137,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 				...remainingItems.slice( dragIndex ),
 			];
 
-			setGroupFields( groupName, reorderedItems );
-		} else {
-			// console.log(item)
-			// let oldGroupFields = groupFieldList[item.groupName]
-			// console.log(oldGroupFields)
-			// var movedFieldIndex = oldGroupFields.indexOf(item.fieldName)
-			// setGroupFields(groupName, update(groupFieldList[groupName], {
-			// 	$splice: [
-			// 		[dragIndex, 1],
-			// 		[hoverIndex, 0, item.fieldName],
-			// 	],
-			// }))
+			setGroupFields( group, reorderedItems );
 		}
 	};
 
@@ -171,15 +158,16 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 				onKeyPress={ handleKeyPress }
 			>
 				<div
+					className="pods-field-group_name"
 					ref={ dragHandleRef }
-					className="pods-field-group_handle"
 					style={ { cursor: isDragging ? 'ns-resize' : null } }
 				>
-					<Dashicon icon="menu" />
-				</div>
+					<div className="pods-field-group_handle">
+						<Dashicon icon="menu" />
+					</div>
 
-				<div className="pods-field-group_name">
 					{ groupLabel }
+
 					{ !! groupID && (
 						<span
 							className="pods-field-group_name__id"
@@ -249,17 +237,14 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 FieldGroup.propTypes = {
 	podName: PropTypes.string.isRequired,
-	groupName: PropTypes.string.isRequired,
-	groupLabel: PropTypes.string.isRequired,
-	groupID: PropTypes.number,
+	group: GROUP_PROP_TYPE_SHAPE,
+
 	index: PropTypes.number.isRequired,
 	isExpanded: PropTypes.bool.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
 
 	toggleExpanded: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
-	handleBeginDrag: PropTypes.func.isRequired,
-	handleDragCancel: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 
 	// This comes from the drop target
@@ -270,5 +255,7 @@ FieldGroup.propTypes = {
 	connectDragPreview: PropTypes.func.isRequired,
 	isDragging: PropTypes.bool.isRequired,
 };
+
+FieldGroup.displayName = 'FieldGroup';
 
 export default flow( dropTarget, dragSource )( FieldGroup );

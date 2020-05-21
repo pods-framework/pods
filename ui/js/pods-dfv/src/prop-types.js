@@ -57,3 +57,9 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	type: PropTypes.string.isRequired,
 	weight: PropTypes.number,
 } );
+
+export const GROUP_PROP_TYPE_SHAPE = PropTypes.exact( {
+	name: PropTypes.string.isRequired,
+	label: PropTypes.string.isRequired,
+	fields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ),
+} );

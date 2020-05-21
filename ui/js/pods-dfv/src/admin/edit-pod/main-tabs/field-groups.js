@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
 
 // WordPress dependencies
@@ -10,14 +10,13 @@ import { __ } from '@wordpress/i18n';
 import { STORE_KEY_EDIT_POD } from 'pods-dfv/src/admin/edit-pod/store/constants';
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
+import { GROUP_PROP_TYPE_SHAPE } from 'pods-dfv/src/prop-types';
+
 import './field-groups.scss';
 
 const FieldGroups = ( {
 	podName,
 	groups,
-	getGroupFields,
-	groupList,
-	setGroupList,
 	addGroup,
 	deleteGroup,
 	moveGroup,
@@ -31,23 +30,6 @@ const FieldGroups = ( {
 	const [ expandedGroups, setExpandedGroups ] = useState(
 		1 === groups.length ? { [ groups[ 0 ].name ]: true } : {}
 	);
-
-	const [ originalList, setOriginalList ] = useState( groupList );
-	const [ originalGroupFieldList, setOriginalGroupFieldList ] = useState( groupFieldList );
-
-	useEffect( () => {
-		setOriginalGroupFieldList( groupFieldList );
-	}, [ groupFieldList ] );
-
-	const handleBeginDrag = () => {
-		// Take a snapshot of the list state when dragging begins
-		setOriginalList( groupList );
-	};
-
-	const handleDragCancel = () => {
-		// Items are re-ordered on the fly, be sure to reset on cancel
-		setGroupList( originalList );
-	};
 
 	const handleAddGroup = ( e ) => {
 		e.preventDefault();
@@ -90,16 +72,11 @@ const FieldGroups = ( {
 					<FieldGroup
 						key={ group.name }
 						podName={ podName }
-						groupName={ group.name }
-						groupLabel={ group.label }
-						groupID={ group.id }
+						group={ group }
 						index={ index }
-						fields={ getGroupFields( group.name ) }
 						editGroupPod={ editGroupPod }
 						deleteGroup={ deleteGroup }
 						moveGroup={ moveGroup }
-						handleBeginDrag={ handleBeginDrag }
-						handleDragCancel={ handleDragCancel }
 						groupFieldList={ groupFieldList }
 						setGroupFields={ setGroupFields }
 						addGroupField={ addGroupField }
@@ -127,14 +104,10 @@ const FieldGroups = ( {
 
 FieldGroups.propTypes = {
 	podName: PropTypes.string.isRequired,
-	// @todo make a group proptype shape
-	groups: PropTypes.arrayOf( PropTypes.object ).isRequired,
-	getGroupFields: PropTypes.func.isRequired,
+	groups: PropTypes.arrayOf( GROUP_PROP_TYPE_SHAPE ).isRequired,
 	addGroup: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
-	groupList: PropTypes.arrayOf( PropTypes.number ).isRequired,
-	setGroupList: PropTypes.func.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
 };
 
@@ -145,8 +118,6 @@ export default compose( [
 		return {
 			podName: storeSelect.getPodName(),
 			groups: storeSelect.getGroups(),
-			getGroupFields: storeSelect.getGroupFields,
-			groupList: storeSelect.getGroupList(),
 			groupFieldList: storeSelect.groupFieldList(),
 			editGroupPod: storeSelect.getGlobalGroupOptions(),
 		};
@@ -155,7 +126,6 @@ export default compose( [
 		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
 
 		return {
-			setGroupList: storeDispatch.setGroupList,
 			addGroup: storeDispatch.addGroup,
 			deleteGroup: storeDispatch.deleteGroup,
 			setGroupFields: storeDispatch.setGroupFields,

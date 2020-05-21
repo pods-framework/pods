@@ -32,7 +32,7 @@ export const getPodOption = ( state, key ) => CURRENT_POD.getFrom( state )[ key 
 export const getGroups = ( state ) => GROUPS.getFrom( state );
 
 export const getGroupList = ( state ) => getGroups( state )
-	.map( ( ( group ) => group.id ) );
+	.map( ( ( group ) => group.name ) );
 
 export const getGroup = ( state, groupName ) => getGroups( state ).find(
 	( group ) => groupName === group.name

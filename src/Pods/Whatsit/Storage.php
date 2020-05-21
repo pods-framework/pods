@@ -27,6 +27,11 @@ abstract class Storage {
 	protected $secondary_args = array();
 
 	/**
+	 * @var bool
+	 */
+	protected $fallback_mode = true;
+
+	/**
 	 * Storage constructor.
 	 */
 	public function __construct() {
@@ -60,6 +65,69 @@ abstract class Storage {
 	 */
 	public function find( array $args = array() ) {
 		return array();
+	}
+
+	/**
+	 * Setup arg with any potential variations.
+	 *
+	 * @param array  $args List of arguments.
+	 * @param string $arg  Argument to setup.
+	 *
+	 * @return array List of arguments with arg values setup.
+	 */
+	public function setup_arg( array $args, $arg ) {
+		if ( isset( $args[ $arg ] ) ) {
+			if ( $args[ $arg ] instanceof Whatsit ) {
+				$args[ $arg . '_identifier' ] = (array) $args[ $arg ]->get_identifier();
+				$args[ $arg . '_id' ]         = (array) $args[ $arg ]->get_id();
+				$args[ $arg . '_name' ]       = (array) $args[ $arg ]->get_name();
+				$args[ $arg ]                 = (array) $args[ $arg ]->get_name();
+			}
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Get arg value.
+	 *
+	 * @param array  $args List of arguments.
+	 * @param string $arg  Argument to get values for.
+	 *
+	 * @return array|string|int|null Arg value(s).
+	 */
+	public function get_arg_value( $args, $arg ) {
+		$arg_value = [];
+
+		if ( isset( $args[ $arg ] ) ) {
+			$arg_value[] = (array) $args[ $arg ];
+		}
+
+		$secondary_variations = [
+			'identifier',
+			'id',
+			'name',
+		];
+
+		foreach ( $secondary_variations as $variation ) {
+			if ( ! isset( $args[ $arg . '_' . $variation ] ) ) {
+				continue;
+			}
+
+			$arg_value[] = (array) $args[ $arg . '_' . $variation ];
+		}
+
+		if ( empty( $arg_value ) ) {
+			return '_null';
+		}
+
+		$arg_value = array_merge( ...$arg_value );
+
+		if ( 1 === count( $arg_value ) ) {
+			$arg_value = current( $arg_value );
+		}
+
+		return $arg_value;
 	}
 
 	/**
@@ -347,6 +415,15 @@ abstract class Storage {
 	 */
 	public function save_args( Whatsit $object ) {
 		return false;
+	}
+
+	/**
+	 * Whether to enable fallback mode for falling back to parent storage options.
+	 *
+	 * @param bool $enabled Whether to enable fallback mode.
+	 */
+	public function fallback_mode( $enabled = true ) {
+		$this->fallback_mode = (boolean) $enabled;
 	}
 
 }

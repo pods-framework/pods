@@ -132,47 +132,17 @@ class Post_Type extends Collection {
 
 		$args['args'] = (array) $args['args'];
 
-		$secondary_variations = [
-			'identifier',
-			'id',
-			'name',
-		];
-
 		$secondary_object_args = [
 			'parent',
 			'group',
 		];
 
 		foreach ( $secondary_object_args as $arg ) {
-			$arg_value = [];
+			$args      = $this->setup_arg( $args, $arg );
+			$arg_value = $this->get_arg_value( $args, $arg );
 
-			if ( isset( $args[ $arg ] ) ) {
-				if ( $args[ $arg ] instanceof Whatsit ) {
-					$args[ $arg ]                 = (array) $args[ $arg ]->get_name();
-					$args[ $arg . '_identifier' ] = (array) $args[ $arg ]->get_identifier();
-					$args[ $arg . '_id' ]         = (array) $args[ $arg ]->get_id();
-					$args[ $arg . '_name' ]       = (array) $args[ $arg ]->get_name();
-				}
-
-				$arg_value[] = (array) $args[ $arg ];
-			}
-
-			foreach ( $secondary_variations as $variation ) {
-				if ( ! isset( $args[ $arg . '_' . $variation ] ) ) {
-					continue;
-				}
-
-				$arg_value[] = (array) $args[ $arg . '_' . $variation ];
-			}
-
-			if ( empty( $arg_value ) ) {
+			if ( '_null' === $arg_value ) {
 				continue;
-			}
-
-			$arg_value = array_merge( ...$arg_value );
-
-			if ( 1 === count( $arg_value ) ) {
-				$arg_value = current( $arg_value );
 			}
 
 			$args['args'][ $arg ] = $arg_value;
@@ -187,6 +157,10 @@ class Post_Type extends Collection {
 		}
 
 		foreach ( $args['args'] as $arg => $value ) {
+			if ( 'parent' === $arg ) {
+				continue;
+			}
+
 			if ( null === $value ) {
 				$post_args['meta_query'][] = [
 					'key'     => $arg,
@@ -245,8 +219,8 @@ class Post_Type extends Collection {
 			}
 		}
 
-		if ( ! empty( $args['parent'] ) ) {
-			$post_args['post_parent__in'] = (array) $args['parent'];
+		if ( ! empty( $args['args']['parent'] ) ) {
+			$post_args['post_parent__in'] = (array) $args['args']['parent'];
 			$post_args['post_parent__in'] = array_map( 'absint', $post_args['post_parent__in'] );
 			$post_args['post_parent__in'] = array_unique( $post_args['post_parent__in'] );
 			$post_args['post_parent__in'] = array_filter( $post_args['post_parent__in'] );
@@ -359,7 +333,7 @@ class Post_Type extends Collection {
 
 		$posts = array_combine( $names, $posts );
 
-		if ( empty( $args['status'] ) || \in_array( 'publish', (array) $args['status'], true ) ) {
+		if ( $this->fallback_mode && ( empty( $args['status'] ) || \in_array( 'publish', (array) $args['status'], true ) ) ) {
 			$posts = array_merge( $posts, parent::find( $args ) );
 		}
 

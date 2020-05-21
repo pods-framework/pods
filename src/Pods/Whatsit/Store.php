@@ -444,12 +444,14 @@ class Store {
 
 	/**
 	 * Delete all objects and then flush them from collection.
+	 *
+	 * @param bool $include_default_objects Whether to include default (internal) objects.
 	 */
-	public function delete_objects() {
+	public function delete_objects( $include_default_objects = false ) {
 		$default_objects = $this->get_default_objects();
 
 		foreach ( $this->objects as $identifier => $object ) {
-			if ( isset( $default_objects[ $identifier ] ) ) {
+			if ( false === $include_default_objects && isset( $default_objects[ $identifier ] ) ) {
 				continue;
 			}
 

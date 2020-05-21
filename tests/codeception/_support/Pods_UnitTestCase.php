@@ -38,7 +38,7 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 			PodsMeta::$settings               = array();
 
 			$object_collection = Store::get_instance();
-			$object_collection->delete_objects();
+			$object_collection->delete_objects( true );
 
 			pods_api()->cache_flush_pods();
 		}

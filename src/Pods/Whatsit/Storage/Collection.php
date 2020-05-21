@@ -110,11 +110,6 @@ class Collection extends Storage {
 
 		$args['args'] = (array) $args['args'];
 
-		$secondary_variations = [
-			'identifier',
-			'id',
-			'name',
-		];
 
 		$secondary_object_args = [
 			'parent',
@@ -122,35 +117,11 @@ class Collection extends Storage {
 		];
 
 		foreach ( $secondary_object_args as $arg ) {
-			$arg_value = [];
+			$args      = $this->setup_arg( $args, $arg );
+			$arg_value = $this->get_arg_value( $args, $arg );
 
-			if ( isset( $args[ $arg ] ) ) {
-				if ( $args[ $arg ] instanceof Whatsit ) {
-					$args[ $arg ]                 = (array) $args[ $arg ]->get_name();
-					$args[ $arg . '_identifier' ] = (array) $args[ $arg ]->get_identifier();
-					$args[ $arg . '_id' ]         = (array) $args[ $arg ]->get_id();
-					$args[ $arg . '_name' ]       = (array) $args[ $arg ]->get_name();
-				}
-
-				$arg_value[] = (array) $args[ $arg ];
-			}
-
-			foreach ( $secondary_variations as $variation ) {
-				if ( ! isset( $args[ $arg . '_' . $variation ] ) ) {
-					continue;
-				}
-
-				$arg_value[] = (array) $args[ $arg . '_' . $variation ];
-			}
-
-			if ( empty( $arg_value ) ) {
+			if ( '_null' === $arg_value ) {
 				continue;
-			}
-
-			$arg_value = array_merge( ...$arg_value );
-
-			if ( 1 === count( $arg_value ) ) {
-				$arg_value = current( $arg_value );
 			}
 
 			$args['args'][ $arg ] = $arg_value;

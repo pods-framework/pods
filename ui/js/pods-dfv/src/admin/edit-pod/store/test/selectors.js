@@ -16,7 +16,6 @@ import {
 	// @todo add these tests back in when working on
 	// the Manage Groups functionality
 	// getGroups,
-	// getGroupList,
 	// getGroup,
 	// getGroupFields,
 	// groupFieldList,

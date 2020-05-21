@@ -13,7 +13,6 @@ import {
 	setPodName,
 	setOptionValue,
 	setOptionsValues,
-	setGroupList,
 	moveGroup,
 
 	addGroup,
@@ -144,18 +143,6 @@ describe( 'actions', () => {
 			};
 
 			expect( deleteGroup( 'New Group Name 123' ) ).toEqual( expected );
-		} );
-
-		test( 'setGroupList() should return an action to set the group list', () => {
-			const action = actions.SET_GROUP_LIST;
-			const groupList = [ 'foo', 'bar', 'baz' ];
-
-			const expected = {
-				type: action,
-				groupList,
-			};
-
-			expect( setGroupList( groupList ) ).toEqual( expected );
 		} );
 
 		test( 'moveGroup() should return an action to move a group', () => {

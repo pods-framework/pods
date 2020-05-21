@@ -53,13 +53,6 @@ export const setOptionsValues = ( options = {} ) => {
 	};
 };
 
-export const setGroupList = ( groupList ) => {
-	return {
-		type: CURRENT_POD_ACTIONS.SET_GROUP_LIST,
-		groupList,
-	};
-};
-
 export const moveGroup = ( oldIndex, newIndex ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.MOVE_GROUP,

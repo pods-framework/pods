@@ -147,22 +147,12 @@ describe( 'current pod options', () => {
 	} );
 
 	// @todo re-enable and fix when doing the manage group work
-	test.skip( 'setGroupList() should set the group list', () => {
-		const groupList = [ 'group0', 'group1', 'group2', 'group3' ];
-
-		testStore.initStore( deepFreeze( {} ) );
-		testStore.dispatch.setGroupList( groupList );
-		const result = testStore.select.getGroupList();
-
-		expect( result ).toEqual( groupList );
-	} );
-
 	test.skip( 'moveGroup() should reorder the group list', () => {
 		const expected = [ 'group3', 'group0', 'group1', 'group2' ];
 
 		testStore.initStore( deepFreeze( {} ) );
 		testStore.dispatch.moveGroup( 3, 0 );
-		const result = testStore.select.getGroupList();
+		// const result = testStore.select.getGroupList();
 
 		expect( result ).toEqual( expected );
 	} );

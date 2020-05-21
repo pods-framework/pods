@@ -2806,7 +2806,9 @@ class PodsAdmin {
 	 */
 	public function admin_setup_edit_group_tabs( $pod ) {
 		$core_tabs = [
-			'basic' => __( 'Basic', 'pods' ),
+			'basic'        => __( 'Basic', 'pods' ),
+			'advanced_tab' => __( 'Advanced', 'pods' ),
+			'rest-api'     => __( 'REST API', 'pods' ),
 		];
 
 		/**
@@ -2866,6 +2868,68 @@ class PodsAdmin {
 				'default' => '',
 				'data'    => [],
 			],*/
+		];
+
+		$options['advanced_tab'] = [
+			'custom_field_1' => [
+				'name'    => 'custom_field_1',
+				'label'   => __( 'Custom Field 1', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_2' => [
+				'name'    => 'custom_field_2',
+				'label'   => __( 'Custom Field 2', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_3' => [
+				'name'    => 'custom_field_3',
+				'label'   => __( 'Custom Field 3', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_4' => [
+				'name'    => 'custom_field_4',
+				'label'   => __( 'Custom Field 4', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+		];
+
+		$options['rest-api'] = [
+			'custom_field_5' => [
+				'name'    => 'custom_field_5',
+				'label'   => __( 'Custom Field 5', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_6' => [
+				'name'    => 'custom_field_6',
+				'label'   => __( 'Custom Field 6', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_7' => [
+				'name'    => 'custom_field_7',
+				'label'   => __( 'Custom Field 7', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_8' => [
+				'name'    => 'custom_field_8',
+				'label'   => __( 'Custom Field 8', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
 		];
 
 		/**

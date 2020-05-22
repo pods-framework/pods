@@ -3,11 +3,6 @@
 namespace Pods\Whatsit;
 
 use Pods\Whatsit;
-use Pods\Whatsit\Pod;
-use Pods\Whatsit\Field;
-use Pods\Whatsit\Group;
-use Pods\Whatsit\Storage;
-use Pods\Whatsit\Storage\Post_Type;
 
 /**
  * Store class.
@@ -443,15 +438,48 @@ class Store {
 	}
 
 	/**
-	 * Delete all objects and then flush them from collection.
-	 *
-	 * @param bool $include_default_objects Whether to include default (internal) objects.
+	 * Flatten objects so that PHP objects are removed but are still registered.
 	 */
-	public function delete_objects( $include_default_objects = false ) {
+	public function flatten_objects() {
+		foreach ( $this->objects as $identifier => $object ) {
+			if ( ! $object instanceof Whatsit ) {
+				continue;
+			}
+
+			// Ensure reference gets killed.
+			$object = null;
+
+			$this->flatten_object( $identifier );
+		}
+	}
+
+	/**
+	 * Flatten objects so that PHP objects are removed but are still registered.
+	 */
+	public function flatten_object( $identifier ) {
+		if ( $identifier instanceof Whatsit ) {
+			$identifier = $identifier->get_identifier();
+		}
+
+		if ( ! isset( $this->objects[ $identifier ] ) ) {
+			return;
+		}
+
+		if ( ! $this->objects[ $identifier ] instanceof Whatsit ) {
+			return;
+		}
+
+		$this->objects[ $identifier ] = $this->objects[ $identifier ]->get_args();
+	}
+
+	/**
+	 * Delete all objects and then flush them from collection.
+	 */
+	public function delete_objects() {
 		$default_objects = $this->get_default_objects();
 
 		foreach ( $this->objects as $identifier => $object ) {
-			if ( false === $include_default_objects && isset( $default_objects[ $identifier ] ) ) {
+			if ( isset( $default_objects[ $identifier ] ) ) {
 				continue;
 			}
 

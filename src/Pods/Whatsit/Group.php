@@ -48,6 +48,8 @@ class Group extends Whatsit {
 				'group_identifier' => $this->get_identifier(),
 			];
 
+			$args = array_filter( $args );
+
 			$objects = pods_api()->load_fields( $args );
 
 			$this->_fields = wp_list_pluck( $objects, 'id' );

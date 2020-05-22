@@ -1432,7 +1432,7 @@ class PodsAdmin {
 	protected function backcompat_convert_tabs_to_groups( array $tabs, array $options, $parent ) {
 		$object_collection = Pods\Whatsit\Store::get_instance();
 
-		/** @var Pods\Whatsit\Storage $storage */
+		/** @var Pods\Whatsit\Storage\Collection $storage */
 		$storage = $object_collection->get_storage_object( 'collection' );
 
 		$groups = [];

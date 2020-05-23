@@ -364,7 +364,7 @@ class PodsCest extends BaseRestCest {
 
 	public function provider_args() {
 		yield 'match' => [
-			'args'  => [
+			'args'     => [
 				'pod_index' => 'name',
 			],
 			'expected' => [
@@ -373,7 +373,7 @@ class PodsCest extends BaseRestCest {
 		];
 
 		yield 'match multi args' => [
-			'args'  => [
+			'args'     => [
 				'pod_index' => 'name',
 				'storage'   => 'table',
 			],
@@ -383,7 +383,7 @@ class PodsCest extends BaseRestCest {
 		];
 
 		yield 'no match' => [
-			'args'  => [
+			'args'     => [
 				'pod_index' => 'something-else',
 			],
 			'expected' => [],
@@ -415,5 +415,139 @@ class PodsCest extends BaseRestCest {
 		sort( $pods );
 
 		$I->assertEquals( $variation['expected'], $pods );
+	}
+
+	public function provider_add_pod() {
+		yield 'create new pod' => [
+			'args'                   => [
+				'mode'           => 'create',
+				'name'           => 'my-name',
+				'label'          => 'my-label-plural',
+				'type'           => 'post_type',
+				'storage'        => 'meta',
+				'label_singular' => 'my-label-singular',
+			],
+			'expected_response_code' => 200,
+		];
+
+		yield 'create new settings pod' => [
+			'args'                   => [
+				'mode'           => 'create',
+				'name'           => 'my-name',
+				'label'          => 'my-label-plural',
+				'type'           => 'settings',
+				'storage'        => 'none',
+				'label_singular' => 'my-label-singular',
+				'menu_name'      => 'my-label-menu',
+				'menu_location'  => 'menu-location',
+			],
+			'expected_response_code' => 200,
+		];
+
+		yield 'extend pod' => [
+			'args'                   => [
+				'mode'    => 'extend',
+				'name'    => 'topic',
+				'type'    => 'post_type',
+				'storage' => 'meta',
+			],
+			'expected_response_code' => 200,
+		];
+
+		yield 'extend pod that already exists' => [
+			'args'                   => [
+				'mode'    => 'extend',
+				'name'    => 'post',
+				'type'    => 'post_type',
+				'storage' => 'meta',
+			],
+			'expected_response_code' => 500,
+			'expected_message'       => 'Pod using post already exists, you can not reuse an object across multiple pods',
+		];
+
+		yield 'create pod with unknown mode' => [
+			'args'                   => [
+				'mode'    => 'unknown-mode',
+				'name'    => 'my-pod',
+				'label'   => 'my-label-plural',
+				'type'    => 'post_type',
+				'storage' => 'meta',
+			],
+			'expected_response_code' => 400,
+			'expected_message'       => 'Invalid parameter(s): mode',
+		];
+
+		yield 'create pod with unknown type' => [
+			'args'                   => [
+				'mode'    => 'create',
+				'name'    => 'my-pod',
+				'label'   => 'my-label-plural',
+				'type'    => 'unknown',
+				'storage' => 'meta',
+			],
+			'expected_response_code' => 400,
+			'expected_message'       => 'Invalid parameter(s): type',
+		];
+
+		yield 'create pod with unknown storage' => [
+			'args'                   => [
+				'mode'    => 'create',
+				'name'    => 'my-pod',
+				'label'   => 'my-label-plural',
+				'type'    => 'post_type',
+				'storage' => 'unknown',
+			],
+			'expected_response_code' => 400,
+			'expected_message'       => 'Invalid parameter(s): storage',
+		];
+	}
+
+	/**
+	 * It should allow adding new pod.
+	 *
+	 * @test
+	 * @dataProvider provider_add_pod
+	 */
+	public function should_allow_adding_new_pod( Restv1Tester $I, Example $example ) {
+		$variation = $example->getIterator()->getArrayCopy();
+
+		$args = $variation['args'];
+
+		$I->generate_nonce_for_role( 'administrator' );
+
+		$I->sendPOST( $this->test_rest_url, $args );
+
+		$I->seeResponseIsJson();
+		$I->seeResponseCodeIs( $variation['expected_response_code'] );
+
+		if ( ! empty( $variation['expected_message'] ) ) {
+			$I->canSeeResponseContainsJson( [
+				'message' => $variation['expected_message'],
+			] );
+
+			return;
+		}
+
+		$response = json_decode( $I->grabResponse(), true );
+
+		codecept_debug( var_export( $response, true ) );
+
+		$I->assertArrayHasKey( 'pod', $response );
+
+		foreach ( $args as $arg => $value ) {
+			if ( 'mode' === $arg ) {
+				if ( 'create' === $value ) {
+					$I->assertArrayNotHasKey( 'object', $response['pod'] );
+				} else {
+					$I->assertArrayHasKey( 'object', $response['pod'] );
+					$I->assertEquals( $args['name'], $response['pod']['object'] );
+				}
+
+				continue;
+			}
+
+			$I->assertArrayHasKey( $arg, $response['pod'] );
+			$I->assertEquals( $value, $response['pod'][ $arg ] );
+		}
 	}
 }

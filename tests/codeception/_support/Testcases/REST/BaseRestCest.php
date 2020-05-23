@@ -46,6 +46,10 @@ class BaseRestCest {
 		wp_set_current_user( 0 );
 	}
 
+	public function _after( Restv1Tester $I ) {
+		// Do any other tear down here.
+	}
+
 	/**
 	 * Set name for snapshot.
 	 *

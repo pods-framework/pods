@@ -926,20 +926,25 @@ class PodsAdmin {
 
 		$pod_types_found = array();
 
-		$fields = array(
-			'label'       => array( 'label' => __( 'Label', 'pods' ) ),
-			'name'        => array( 'label' => __( 'Name', 'pods' ) ),
-			'type'        => array( 'label' => __( 'Type', 'pods' ) ),
-			'storage'     => array(
+		$fields = [
+			'label'       => [ 'label' => __( 'Label', 'pods' ) ],
+			'name'        => [ 'label' => __( 'Name', 'pods' ) ],
+			'type'        => [ 'label' => __( 'Type', 'pods' ) ],
+			'storage'     => [
 				'label' => __( 'Storage Type', 'pods' ),
 				'width' => '10%',
-			),
-			'field_count' => array(
-				'label' => __( 'Number of Fields', 'pods' ),
+			],
+			'group_count' => [
+				'label' => __( 'Groups', 'pods' ),
 				'width' => '8%',
-			),
-		);
+			],
+			'field_count' => [
+				'label' => __( 'Fields', 'pods' ),
+				'width' => '8%',
+			],
+		];
 
+		$total_groups = 0;
 		$total_fields = 0;
 
 		/**
@@ -1016,9 +1021,11 @@ class PodsAdmin {
 				'type'        => $pod_type,
 				'real_type'   => $pod_real_type,
 				'storage'     => $pod_storage,
+				'group_count' => count( $pod['groups'] ),
 				'field_count' => count( $pod['fields'] ),
 			);
 
+			$total_groups += $pod['group_count'];
 			$total_fields += $pod['field_count'];
 
 			$pod_list[] = $pod;
@@ -1076,7 +1083,8 @@ class PodsAdmin {
 			'sortable'         => true,
 			'pagination'       => false,
 			'extra'            => array(
-				'total' => ', ' . number_format_i18n( $total_fields ) . ' ' . _n( 'field', 'fields', $total_fields, 'pods' ),
+				'total' => ', ' . number_format_i18n( $total_groups ) . ' ' . _n( 'group', 'groups', $total_groups, 'pods' )
+					. ', ' . number_format_i18n( $total_fields ) . ' ' . _n( 'field', 'fields', $total_fields, 'pods' ),
 			),
 		);
 
@@ -1333,6 +1341,8 @@ class PodsAdmin {
 				'new_group_id' => $group_id,
 			] );
 		}
+
+		pods_api()->cache_flush_pods( $pod );
 
 		// Refresh pod object.
 		return $api->load_pod( [

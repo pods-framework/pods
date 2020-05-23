@@ -1,0 +1,43 @@
+class_name: Restv1Tester
+modules:
+    enabled:
+        - \Helper\Restv1
+        - REST
+        - WPDb
+        - WPBrowser
+        - WPFilesystem
+        - WPLoader
+        - Asserts
+    config:
+        WPDb:
+            dsn: 'mysql:host=%WP_DB_HOST%;dbname=%WP_DB_NAME%'
+            user: %WP_DB_USER%
+            password: %WP_DB_PASSWORD%
+            dump: 'tests/codeception/_data/dump.sql'
+            populate: true
+            cleanup: true
+            url: %WP_URL%
+            tablePrefix: %WP_TABLE_PREFIX%
+            waitlock: 10
+        WPBrowser:
+            url: %WP_URL%
+            adminUsername: %WP_ADMIN_USERNAME%
+            adminPassword: %WP_ADMIN_PASSWORD%
+            adminUrl: /wp-admin
+        WPFilesystem:
+            wpRootFolder: %WP_ROOT_FOLDER%
+            themes: '/wp-content/themes'
+            plugins: '/wp-content/plugins'
+            mu-plugins: '/wp-content/mu-plugins'
+            uploads: '/wp-content/uploads'
+        REST:
+            depends: WPBrowser
+            url: '%WP_URL%/wp-json/'
+        WPLoader:
+            # just load WordPress using the same db as WPDb
+            loadOnly: true
+            wpRootFolder: %WP_ROOT_FOLDER%
+            dbName: %WP_DB_NAME%
+            dbHost: %WP_DB_HOST%
+            dbUser: %WP_DB_USER%
+            dbPassword: %WP_DB_PASSWORD%

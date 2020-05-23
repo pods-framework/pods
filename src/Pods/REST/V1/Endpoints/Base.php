@@ -265,11 +265,16 @@ abstract class Base {
 			return $objects;
 		}
 
-		// Handle parent details.
-		if ( in_array( $this->object, [ 'group', 'field' ], true ) && 1 === (int) $request['include_parent'] ) {
-			foreach ( $objects as $k => $object ) {
-				// Set temporary data so parent data gets exported.
-				$object->set_arg( 'parent_data', $object->get_parent() );
+		if ( is_array( $objects ) ) {
+			// Prevent objects.
+			$objects = array_values( $objects );
+
+			// Handle parent details.
+			if ( in_array( $this->object, [ 'group', 'field' ], true ) && 1 === (int) $request['include_parent'] ) {
+				foreach ( $objects as $k => $object ) {
+					// Set temporary data so parent data gets exported.
+					$object->set_arg( 'parent_data', $object->get_parent() );
+				}
 			}
 		}
 

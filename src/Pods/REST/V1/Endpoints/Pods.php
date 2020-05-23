@@ -49,44 +49,11 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 								'schema' => [
 									'type'       => 'object',
 									'properties' => [
-										'rest_url'    => [
-											'type'        => 'string',
-											'format'      => 'uri',
-											'description' => __( 'This results page REST URL.', 'pods' ),
-										],
-										'total'       => [
-											'type'        => 'integer',
-											'description' => __( 'The total number of results across all pages.', 'pods' ),
-										],
-										'total_pages' => [
-											'type'        => 'integer',
-											'description' => __( 'The total number of result pages matching the search criteria.', 'pods' ),
-										],
-										'tickets'     => [
+										'pods'     => [
 											'type'  => 'array',
-											'items' => [ '$ref' => '#/components/schemas/Ticket' ],
+											'items' => [ '$ref' => '#/components/schemas/Pod' ],
 										],
 									],
-								],
-							],
-						],
-					],
-					'400' => [
-						'description' => __( 'One or more of the specified query variables has a bad format.', 'pods' ),
-						'content'     => [
-							'application/json' => [
-								'schema' => [
-									'type' => 'object',
-								],
-							],
-						],
-					],
-					'404' => [
-						'description' => __( 'The requested page was not found.', 'pods' ),
-						'content'     => [
-							'application/json' => [
-								'schema' => [
-									'type' => 'object',
 								],
 							],
 						],
@@ -111,9 +78,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 				'enum'        => [
 					'full',
 					'names',
-					'names_ids',
 					'ids',
-					'key_names',
 					'count',
 				],
 			],

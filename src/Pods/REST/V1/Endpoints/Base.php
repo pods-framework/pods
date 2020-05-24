@@ -433,21 +433,20 @@ abstract class Base {
 			return new WP_Error( 'rest-object-not-found', sprintf( __( '%s not found.', 'pods' ), ucwords( $this->object ) ) );
 		}
 
-		$data = [
-			$this->object => $object->get_args(),
+		// Handle parent details.
+		if ( in_array( $this->object, [ 'group', 'field' ], true ) && 1 === (int) $request['include_parent'] ) {
+			// Set temporary data so parent data gets exported.
+			$object->set_arg( 'parent_data', $object->get_parent() );
+		}
+
+		/** @var Whatsit $object */
+		return [
+			$this->object => $object->export( [
+				'include_groups'       => 'pod' === $this->object && 1 === (int) $request['include_groups'],
+				'include_group_fields' => 'pod' === $this->object && 1 === (int) $request['include_group_fields'],
+				'include_fields'       => in_array( $this->object, [ 'pod', 'group' ], true ) && 1 === (int) $request['include_fields'],
+			] ),
 		];
-
-		// Setup groups.
-		if ( 'pod' === $this->object && 1 === (int) $request['include_groups'] ) {
-			$data['groups'] = $object->get_groups();
-		}
-
-		// Setup fields.
-		if ( in_array( $this->object, [ 'pod', 'group' ], true ) && 1 === (int) $request['include_fields'] ) {
-			$data['fields'] = $object->get_fields();
-		}
-
-		return $data;
 	}
 
 	/**

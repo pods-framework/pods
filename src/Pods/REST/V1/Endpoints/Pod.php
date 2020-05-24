@@ -122,6 +122,16 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 				],
 				'cli_boolean' => true,
 			],
+			'include_group_fields' => [
+				'type'        => 'integer',
+				'description' => __( 'Whether to include group fields (default: off).', 'pods' ),
+				'default'     => '0',
+				'enum'        => [
+					'0',
+					'1',
+				],
+				'cli_boolean' => true,
+			],
 		];
 	}
 

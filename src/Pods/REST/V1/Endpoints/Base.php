@@ -392,18 +392,18 @@ abstract class Base {
 	 *
 	 * @since 2.8
 	 *
-	 * @param string|array    $rest_param REST API parameter name to look for OR arguments to pass to loader.
-	 * @param string          $api_arg    Pods API argument name to use for lookups.
-	 * @param WP_REST_Request $request    The request object.
-	 * @param bool            $return_id  Whether to return the object ID (off returns full response).
+	 * @param string|array         $rest_param REST API parameter name to look for OR arguments to pass to loader.
+	 * @param string               $api_arg    Pods API argument name to use for lookups.
+	 * @param WP_REST_Request|null $request    The request object.
+	 * @param bool                 $return_id  Whether to return the object ID (off returns full response).
 	 *
 	 * @return array|WP_Error The response or an error.
 	 * @throws Exception
 	 */
-	public function get_by_args( $rest_param, $api_arg, WP_REST_Request $request, $return_id = false ) {
+	public function get_by_args( $rest_param, $api_arg, WP_REST_Request $request = null, $return_id = false ) {
 		if ( is_array( $rest_param ) ) {
 			$args = $rest_param;
-		} else {
+		} elseif ( $request ) {
 			$identifier = $request[ $rest_param ];
 
 			$args = [
@@ -415,7 +415,9 @@ abstract class Base {
 			}
 		}
 
-		$args = array_merge( $request->get_params(), $args );
+		if ( $request ) {
+			$args = array_merge( $request->get_params(), $args );
+		}
 
 		$api = pods_api();
 
@@ -430,7 +432,7 @@ abstract class Base {
 		}
 
 		if ( empty( $object ) ) {
-			return new WP_Error( 'rest-object-not-found', sprintf( __( '%s not found.', 'pods' ), ucwords( $this->object ) ) );
+			return new WP_Error( 'rest-object-not-found', sprintf( __( '%s not found.', 'pods' ), ucwords( $this->object ) ), $args );
 		}
 
 		// Handle parent details.
@@ -487,7 +489,7 @@ abstract class Base {
 		}
 
 		if ( ! $object instanceof Whatsit ) {
-			return new WP_Error( 'rest-object-not-found', sprintf( __( '%s not found.', 'pods' ), ucwords( $this->object ) ) );
+			return new WP_Error( 'rest-object-not-found-cannot-update', sprintf( __( '%s was not found, cannot update.', 'pods' ), ucwords( $this->object ), $args ) );
 		}
 
 		$params = $this->setup_params( $request );
@@ -514,7 +516,7 @@ abstract class Base {
 		return $this->get_by_args( [
 			$api_arg       => $identifier,
 			'bypass_cache' => true,
-		], $api_arg, $request );
+		], $api_arg );
 	}
 
 	/**

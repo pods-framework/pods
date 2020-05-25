@@ -14,7 +14,7 @@ modules:
             dbHost: %WP_TEST_DB_HOST%
             dbUser: %WP_TEST_DB_USER%
             dbPassword: %WP_TEST_DB_PASSWORD%
-            tablePrefix: test_
+            tablePrefix: %WP_TABLE_PREFIX%
             domain: %WP_DOMAIN%
             adminEmail: admin@%WP_DOMAIN%
             title: 'Pods Tests'

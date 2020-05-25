@@ -15,6 +15,13 @@ use WP_Post;
  */
 class Post_TypeTest extends Pods_WhatsitTestCase {
 
+	public function tearDown() {
+		// Reset fallback mode.
+		$this->pods_object_storage->fallback_mode( true );
+
+		parent::tearDown();
+	}
+
 	/**
 	 * @covers Post_Type::get_storage_type
 	 */
@@ -222,10 +229,15 @@ class Post_TypeTest extends Pods_WhatsitTestCase {
 
 		$args = array(
 			'object_type' => $this->pods_object_pod->get_object_type(),
-			'parent'      => 0,
 		);
 
+		// Post type + Collection (_pods_pod, _pods_group, _pods_field)
 		$this->assertCount( 4, $this->pods_object_storage->find( $args ) );
+
+		$this->pods_object_storage->fallback_mode( false );
+
+		// Post type only
+		$this->assertCount( 1, $this->pods_object_storage->find( $args ) );
 	}
 
 	/**

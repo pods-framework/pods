@@ -49,44 +49,11 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 								'schema' => [
 									'type'       => 'object',
 									'properties' => [
-										'rest_url'    => [
-											'type'        => 'string',
-											'format'      => 'uri',
-											'description' => __( 'This results page REST URL.', 'pods' ),
-										],
-										'total'       => [
-											'type'        => 'integer',
-											'description' => __( 'The total number of results across all pages.', 'pods' ),
-										],
-										'total_pages' => [
-											'type'        => 'integer',
-											'description' => __( 'The total number of result pages matching the search criteria.', 'pods' ),
-										],
-										'tickets'     => [
+										'pods' => [
 											'type'  => 'array',
-											'items' => [ '$ref' => '#/components/schemas/Ticket' ],
+											'items' => [ '$ref' => '#/components/schemas/Pod' ],
 										],
 									],
-								],
-							],
-						],
-					],
-					'400' => [
-						'description' => __( 'One or more of the specified query variables has a bad format.', 'pods' ),
-						'content'     => [
-							'application/json' => [
-								'schema' => [
-									'type' => 'object',
-								],
-							],
-						],
-					],
-					'404' => [
-						'description' => __( 'The requested page was not found.', 'pods' ),
-						'content'     => [
-							'application/json' => [
-								'schema' => [
-									'type' => 'object',
 								],
 							],
 						],
@@ -111,9 +78,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 				'enum'        => [
 					'full',
 					'names',
-					'names_ids',
 					'ids',
-					'key_names',
 					'count',
 				],
 			],
@@ -170,7 +135,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 	 */
 	public function CREATE_args() {
 		return [
-			'mode'          => [
+			'mode'           => [
 				'type'        => 'string',
 				'description' => __( 'The mode for creating the Pod.', 'pods' ),
 				'default'     => 'create',
@@ -179,21 +144,21 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 					'extend',
 				],
 			],
-			'name'          => [
+			'name'           => [
 				'type'        => 'string',
 				'description' => __( 'The name of the Pod.', 'pods' ),
 			],
-			'label'         => [
+			'label'          => [
 				'type'        => 'string',
-				'description' => __( 'The singular label of the Pod.', 'pods' ),
+				'description' => __( 'The plural label of the Pod.', 'pods' ),
 			],
-			'type'          => [
+			'type'           => [
 				'type'        => 'string',
 				'description' => __( 'The type of the Pod.', 'pods' ),
 				'enum'        => PodsForm::pod_types_list(),
 				'required'    => true,
 			],
-			'storage'       => [
+			'storage'        => [
 				'type'        => 'string',
 				'description' => __( 'The storage used for the Pod.', 'pods' ),
 				'default'     => 'meta',
@@ -203,19 +168,15 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 					'none',
 				],
 			],
-			'label_plural'  => [
+			'label_singular' => [
 				'type'        => 'string',
-				'description' => __( 'The plural label of the Pod.', 'pods' ),
+				'description' => __( 'The singular label of the Pod.', 'pods' ),
 			],
-			'label_title'   => [
-				'type'        => 'string',
-				'description' => __( 'The title label of the Pod.', 'pods' ),
-			],
-			'label_menu'    => [
+			'menu_name'      => [
 				'type'        => 'string',
 				'description' => __( 'The menu label of the Pod.', 'pods' ),
 			],
-			'menu_location' => [
+			'menu_location'  => [
 				'type'        => 'string',
 				'description' => __( 'The menu location of the Pod.', 'pods' ),
 			],
@@ -228,6 +189,14 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 	 * @since 2.8
 	 */
 	public function create( WP_REST_REQUEST $request, $return_id = false ) {
+		if ( ! empty( $request['groups'] ) ) {
+			$request->set_param( 'groups', null );
+		}
+
+		if ( ! empty( $request['fields'] ) ) {
+			$request->set_param( 'fields', null );
+		}
+
 		$mode    = $request->get_param( 'mode' );
 		$type    = $request->get_param( 'type' );
 		$storage = $request->get_param( 'storage' );
@@ -255,12 +224,15 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 				'create_extend'         => 'create',
 				'create_pod_type'       => $type,
 				'create_storage'        => $storage,
-				'create_label_singular' => $request->get_param( 'label' ),
-				'create_label_plural'   => $request->get_param( 'label_plural' ),
-				'create_label_title'    => $request->get_param( 'label_title' ),
-				'create_label_menu'     => $request->get_param( 'label_menu' ),
+				'create_label_plural'   => $request->get_param( 'label' ),
+				'create_label_singular' => $request->get_param( 'label_singular' ),
+				'create_label_menu'     => $request->get_param( 'menu_name' ),
 				'create_menu_location'  => $request->get_param( 'menu_location' ),
 			];
+
+			if ( 'settings' === $params['create_pod_type'] ) {
+				$params['create_label_title'] = $params['create_label_plural'];
+			}
 
 			$name = $request->get_param( 'name' );
 
@@ -288,7 +260,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 
 		return $this->get_by_args( [
 			'id' => $id,
-		], 'id', $request, $return_id );
+		], 'id', null, $return_id );
 	}
 
 	/**

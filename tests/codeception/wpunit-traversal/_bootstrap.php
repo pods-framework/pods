@@ -1,7 +1,7 @@
 <?php
 // Here you can initialize variables that will be available to your tests
 
-add_filter( 'pods_error_mode', function() { return 'exception'; } );
+add_filter( 'pods_error_mode', static function() { return 'exception'; } );
 
 $rebuild_data = filter_var( getenv( 'PODS_REBUILD_DATA' ), FILTER_VALIDATE_BOOLEAN );
 

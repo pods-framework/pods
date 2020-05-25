@@ -68,9 +68,9 @@ class PodsInit {
 	/**
 	 * Whether an Upgrade for 1.x has happened
 	 *
-	 * @var bool
+	 * @var int
 	 */
-	public static $upgraded;
+	public static $upgraded = 0;
 
 	/**
 	 * Whether an Upgrade is needed
@@ -117,7 +117,10 @@ class PodsInit {
 		self::$version      = get_option( 'pods_framework_version' );
 		self::$version_last = get_option( 'pods_framework_version_last' );
 		self::$db_version   = get_option( 'pods_framework_db_version' );
-		self::$upgraded     = (int) get_option( 'pods_framework_upgraded_1_x' );
+
+		if ( ! pods_strict( false ) ) {
+			self::$upgraded = (int) get_option( 'pods_framework_upgraded_1_x' );
+		}
 
 		if ( empty( self::$version_last ) && 0 < strlen( get_option( 'pods_version' ) ) ) {
 			$old_version = get_option( 'pods_version' );
@@ -299,9 +302,13 @@ class PodsInit {
 			define( 'PODS_TABLELESS', false );
 		}
 
-		load_plugin_textdomain( 'pods' );
+		if ( ! defined( 'PODS_TEXTDOMAIN' ) || PODS_TEXTDOMAIN ) {
+			load_plugin_textdomain( 'pods' );
+		}
 
-		$this->freemius();
+		if ( ! defined( 'PODS_FREEMIUS' ) || PODS_FREEMIUS ) {
+			$this->freemius();
+		}
 
 	}
 
@@ -314,7 +321,10 @@ class PodsInit {
 	 */
 	public function freemius() {
 		// Admin only.
-		if ( ! is_admin() ) {
+		if (
+			! is_admin()
+			&& ! wp_doing_cron()
+		) {
 			return;
 		}
 
@@ -327,6 +337,7 @@ class PodsInit {
 			&& 'update.php' !== $pagenow
 			&& ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
 			&& ( ! isset( $_GET['page'] ) || 0 !== strpos( $_GET['page'], 'pods' ) )
+			&& ! wp_doing_cron()
 		) {
 			return;
 		}
@@ -585,18 +596,21 @@ class PodsInit {
 		add_shortcode( 'pods-form', 'pods_shortcode_form' );
 
 		$security_settings = array(
-			'pods_disable_file_browser'     => 0,
-			'pods_files_require_login'      => 1,
+			'pods_disable_file_browser'     => false,
+			'pods_files_require_login'      => true,
 			'pods_files_require_login_cap'  => '',
-			'pods_disable_file_upload'      => 0,
-			'pods_upload_require_login'     => 1,
+			'pods_disable_file_upload'      => false,
+			'pods_upload_require_login'     => true,
 			'pods_upload_require_login_cap' => '',
 		);
 
-		foreach ( $security_settings as $security_setting => $setting ) {
-			$setting = get_option( $security_setting );
-			if ( ! empty( $setting ) ) {
-				$security_settings[ $security_setting ] = $setting;
+		if ( ! pods_strict( false ) ) {
+			foreach ( $security_settings as $security_setting => $setting ) {
+				$setting = get_option( $security_setting );
+
+				if ( ! empty( $setting ) ) {
+					$security_settings[ $security_setting ] = $setting;
+				}
 			}
 		}
 

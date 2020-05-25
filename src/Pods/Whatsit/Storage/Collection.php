@@ -265,8 +265,6 @@ class Collection extends Storage {
 		$object_collection = Store::get_instance();
 		$object_collection->register_object( $object );
 
-		pods_api()->cache_flush_pods( $object );
-
 		return true;
 	}
 
@@ -279,8 +277,6 @@ class Collection extends Storage {
 
 		// Delete child objects.
 		array_map( [ $this, 'delete' ], $objects );
-
-		pods_api()->cache_flush_pods( $object );
 
 		$object_collection = Store::get_instance();
 		$object_collection->unregister_object( $object );

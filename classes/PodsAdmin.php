@@ -4426,7 +4426,7 @@ class PodsAdmin {
 				],
 				'pods-strict'                        => [
 					'label' => __( 'Pods Strict Activated' ),
-					'value' => ( pods_strict() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+					'value' => ( pods_strict( false ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-allow-deprecated'              => [
 					'label' => __( 'Pods Allow Deprecated' ),

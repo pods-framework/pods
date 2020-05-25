@@ -109,9 +109,15 @@ describe( 'Global Pod option selectors', () => {
 
 	beforeEach( () => {
 		state = deepFreeze(
-			paths.GLOBAL_POD.createTree( GLOBAL_POD ),
-			paths.GLOBAL_GROUP.createTree( GLOBAL_GROUP ),
+			{
+				global: {
+					pod: GLOBAL_POD,
+					group: GLOBAL_GROUP,
+				},
+			},
 		);
+
+		console.log( state );
 	} );
 
 	test( 'getGlobalPodOptions returns all of the global pod\'s options', () => {
@@ -147,7 +153,7 @@ describe( 'Global Pod option selectors', () => {
 		expect( result.length ).toEqual( 2 );
 	} );
 
-	test( 'getGlobalGroupOptions returns a the group config fields', () => {
+	test( 'getGlobalGroupOptions returns the group config fields', () => {
 		const result = getGlobalGroupOptions( state );
 
 		expect( result.length ).toEqual( 2 );

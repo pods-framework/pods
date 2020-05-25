@@ -12,6 +12,8 @@ import {
 
 import { TEST_CONFIG_DATA } from '../testData';
 
+console.log( dispatch( STORE_KEY_EDIT_POD ) );
+
 const testStore = {
 	select: null,
 	dispatch: null,
@@ -81,7 +83,7 @@ describe( 'UI store integration', () => {
 	test( 'setSaveStatus() should change the status', () => {
 		const newStatus = uiConstants.saveStatuses.SAVE_SUCCESS;
 
-		testStore.dispatch.setSaveStatus( newStatus );
+		testStore.dispatch.setSaveStatus( newStatus )();
 		const result = testStore.select.getSaveStatus();
 
 		expect( result ).toEqual( newStatus );

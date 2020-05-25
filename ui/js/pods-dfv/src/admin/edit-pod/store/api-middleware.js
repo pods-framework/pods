@@ -34,7 +34,7 @@ const apiMiddleware = ( { dispatch } ) => ( next ) => async ( action ) => {
 				path: url,
 				method,
 				parse: true,
-				body: JSON.stringify( data ),
+				data,
 			}
 		);
 

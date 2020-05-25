@@ -413,10 +413,10 @@ abstract class Base {
 			if ( $rest_param !== $api_arg ) {
 				unset( $request[ $rest_param ] );
 			}
-		}
 
-		if ( $request ) {
 			$args = array_merge( $request->get_params(), $args );
+		} else {
+			return new WP_Error( 'rest-object-not-found', sprintf( __( '%s not found.', 'pods' ), ucwords( $this->object ) ) );
 		}
 
 		$api = pods_api();

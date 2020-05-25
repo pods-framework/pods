@@ -319,4 +319,58 @@ class PodCest extends BaseRestCest {
 		$I->assertArrayNotHasKey( 'groups', $response['pod'] );
 		$I->assertArrayNotHasKey( 'fields', $response['pod'] );
 	}
+
+	/**
+	 * It should allow deleting Pod.
+	 *
+	 * @test
+	 */
+	public function should_allow_deleting_pod( Restv1Tester $I ) {
+		$I->generate_nonce_for_role( 'administrator' );
+
+		$post_id = $I->havePostInDatabase( [
+			'post_type'    => 'my-pod',
+			'post_title'   => 'Test content',
+			'post_content' => 'Test content',
+		] );
+
+		$I->sendDELETE( sprintf( $this->test_rest_url, $this->pod_id ) );
+
+		$I->seeResponseIsJson();
+		$I->seeResponseCodeIs( 200 );
+		$I->seeResponseContainsJson( [
+			'status' => 'deleted',
+		] );
+
+		$I->seePostInDatabase( [ 'ID' => $post_id ] );
+	}
+
+	/**
+	 * It should allow deleting Pod and all content.
+	 *
+	 * @test
+	 */
+	public function should_allow_deleting_pod_and_all_content( Restv1Tester $I ) {
+		$I->generate_nonce_for_role( 'administrator' );
+
+		$post_id = $I->havePostInDatabase( [
+			'post_type'    => 'my-pod',
+			'post_title'   => 'Test content',
+			'post_content' => 'Test content',
+		] );
+
+		$args = [
+			'delete_all' => 1,
+		];
+
+		$I->sendDELETE( sprintf( $this->test_rest_url, $this->pod_id ), $args );
+
+		$I->seeResponseIsJson();
+		$I->seeResponseCodeIs( 200 );
+		$I->seeResponseContainsJson( [
+			'status' => 'deleted',
+		] );
+
+		$I->dontSeePostInDatabase( [ 'ID' => $post_id ] );
+	}
 }

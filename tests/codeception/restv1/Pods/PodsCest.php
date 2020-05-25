@@ -521,7 +521,7 @@ class PodsCest extends BaseRestCest {
 		$I->seeResponseCodeIs( $variation['expected_response_code'] );
 
 		if ( ! empty( $variation['expected_message'] ) ) {
-			$I->canSeeResponseContainsJson( [
+			$I->seeResponseContainsJson( [
 				'message' => $variation['expected_message'],
 			] );
 

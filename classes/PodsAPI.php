@@ -1659,6 +1659,7 @@ class PodsAPI {
 	 * $params['object'] string The object being extended (if any)
 	 * $params['storage'] string The Pod storage
 	 * $params['create_extend'] string Create or Extend a Content Type
+	 * $params['order'] array List of group and field IDs to reorder
 	 *
 	 * @param array    $params    An associative array of parameters
 	 * @param bool     $sanitized (optional) Decides whether the params have been sanitized before being passed, will
@@ -1724,6 +1725,14 @@ class PodsAPI {
 
 		if ( isset( $params->name ) && ! isset( $params->object ) ) {
 			$params->name = pods_clean_name( $params->name );
+		}
+
+		$order_group_fields = null;
+
+		if ( isset( $params->order ) ) {
+			$order_group_fields = $params->order;
+
+			unset( $params->order );
 		}
 
 		if ( ! empty( $pod ) ) {
@@ -2450,6 +2459,41 @@ class PodsAPI {
 			// Update field index if the name has changed or the field has been removed
 			if ( false !== $field_index_change && true === $db ) {
 				update_post_meta( $pod['id'], 'pod_index', $field_index_change );
+			}
+		}
+
+		if ( is_array( $order_group_fields ) && ! empty( $order_group_fields['groups'] ) ) {
+			$group_order = 0;
+
+			foreach ( $order_group_fields['groups'] as $order_group ) {
+				if ( ! is_array( $order_group ) || empty( $order_group['group_id'] ) ) {
+					continue;
+				}
+
+				$save_group_response = $this->save_group( [
+					'pod_id' => $pod['id'],
+					'id'     => (int) $order_group['group_id'],
+					'weight' => $group_order,
+				], false, $db );
+
+				$group_order ++;
+
+				if ( empty( $order_group['fields'] ) ) {
+					continue;
+				}
+
+				$group_field_order = 0;
+
+				foreach ( $order_group['fields'] as $order_field_id ) {
+					$save_field_response = $this->save_field( [
+						'pod_data' => $object,
+						'group_id' => (int) $order_group['group_id'],
+						'id'       => (int) $order_field_id,
+						'weight'   => $group_field_order,
+					], false, false, $db );
+
+					$group_field_order ++;
+				}
 			}
 		}
 
@@ -3502,7 +3546,7 @@ class PodsAPI {
 			$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
 		}
 
-		if ( empty( $params->name ) ) {
+		if ( empty( $params->name ) && empty( $params->id ) ) {
 			return pods_error( __( 'Pod group name is required', 'pods' ), $this );
 		}
 
@@ -3531,10 +3575,10 @@ class PodsAPI {
 		$old_name = null;
 
 		if ( ! empty( $group ) ) {
-			$old_id        = $group->get_id();
-			$old_name      = $group->get_name();
-			$old_type      = $group->get_type();
-			$old_options   = $group->get_args();
+			$old_id        = $group['id'];
+			$old_name      = $group['name'];
+			$old_type      = $group['type'];
+			$old_options   = $group;
 
 			if ( isset( $params->name ) && ! empty( $params->name ) ) {
 				$group['name'] = $params->name;

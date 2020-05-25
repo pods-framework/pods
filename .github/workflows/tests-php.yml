@@ -14,13 +14,13 @@ jobs:
       - name: Checkout automation tools
         uses: actions/checkout@v1
         with:
-          repository: moderntribe/products-test-automation
+          repository: moderntribe/tric
           ref: master
           path: tric
           fetch-depth: 1
       - name: Add tric to the PATH
-        run: echo "::set-env name=PATH::${GITHUB_WORKSPACE}/../tric/dev:$PATH"
-      - name: Set products-test-automation run_context() to tric
+        run: echo "::set-env name=PATH::${GITHUB_WORKSPACE}/../tric:$PATH"
+      - name: Set tric run_context() for tric
         run: echo "::set-env name=TRIC::1"
       - name: Start ssh-agent
         run: |

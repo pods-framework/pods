@@ -479,7 +479,7 @@ function pods_strict( $include_debug = true ) {
  * @since 2.3.10
  */
 function pods_allow_deprecated( $strict = true ) {
-	if ( $strict && pods_strict() ) {
+	if ( $strict && pods_strict( false ) ) {
 		return false;
 	} elseif ( ! defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED ) {
 		return true;

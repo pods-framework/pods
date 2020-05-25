@@ -543,7 +543,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$output = $wpdb->prefix;
 				break;
 			case 'server':
-				if ( ! pods_strict() ) {
+				if ( ! pods_strict( false ) ) {
 					if ( isset( $_SERVER[ $var ] ) ) {
 						$output = pods_unslash( $_SERVER[ $var ] );
 					} elseif ( isset( $_SERVER[ strtoupper( $var ) ] ) ) {

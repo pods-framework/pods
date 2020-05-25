@@ -179,6 +179,17 @@ class PodTest extends Pods_UnitTestCase {
 	 * @since  2.8
 	 * @throws \Exception
 	 */
+	public function test_load_pod_with_internal() {
+		$pod = $this->api->load_pod( [ 'name' => '_pods_pod' ] );
+
+		$this->assertInstanceOf( Pod::class, $pod );
+	}
+
+	/**
+	 * @covers PodsAPI::load_pod
+	 * @since  2.8
+	 * @throws \Exception
+	 */
 	public function test_load_pod_with_name() {
 		$this->populate_pod();
 

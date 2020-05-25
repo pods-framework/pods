@@ -6008,11 +6008,13 @@ class PodsAPI {
 			$params = (object) pods_sanitize( $params );
 		}
 
+		$pod = $this->load_pod( $params, false );
+
 		if ( ! isset( $params->delete_all ) ) {
-			$params->delete_all = (boolean) $delete_all;
+			$params->delete_all = $delete_all;
 		}
 
-		$pod = $this->load_pod( $params, false );
+		$params->delete_all = (boolean) $params->delete_all;
 
 		if ( empty( $pod ) ) {
 			if ( false !== $strict ) {

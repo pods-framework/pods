@@ -53,7 +53,7 @@ const savePod = async (
 				path: `/pods/v1/pods/${ podID }`,
 				method: 'post',
 				parse: true,
-				body: JSON.stringify( data ),
+				data,
 			}
 		);
 

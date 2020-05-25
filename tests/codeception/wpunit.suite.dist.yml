@@ -16,8 +16,8 @@ modules:
             dump: 'tests/codeception/_data/dump.sql'
             populate: true
             cleanup: false
-            url: '%WP_URL%'
-            tablePrefix: test_
+            url: %WP_URL%
+            tablePrefix: %WP_TABLE_PREFIX%
             waitlock: 0
         WPLoader:
             wpRootFolder: %WP_ROOT_FOLDER%
@@ -25,7 +25,7 @@ modules:
             dbHost: %WP_TEST_DB_HOST%
             dbUser: %WP_TEST_DB_USER%
             dbPassword: %WP_TEST_DB_PASSWORD%
-            tablePrefix: test_
+            tablePrefix: %WP_TABLE_PREFIX%
             domain: %WP_DOMAIN%
             adminEmail: admin@%WP_DOMAIN%
             title: 'Pods Tests'

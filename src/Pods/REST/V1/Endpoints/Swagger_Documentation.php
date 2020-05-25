@@ -137,6 +137,10 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 		$paths = [];
 
 		foreach ( $this->documentation_providers as $path => $endpoint ) {
+			if ( $this === $endpoint ) {
+				continue;
+			}
+
 			$paths[ $path ] = $endpoint->get_documentation();
 		}
 

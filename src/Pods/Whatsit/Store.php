@@ -3,11 +3,6 @@
 namespace Pods\Whatsit;
 
 use Pods\Whatsit;
-use Pods\Whatsit\Pod;
-use Pods\Whatsit\Field;
-use Pods\Whatsit\Group;
-use Pods\Whatsit\Storage;
-use Pods\Whatsit\Storage\Post_Type;
 
 /**
  * Store class.
@@ -440,6 +435,41 @@ class Store {
 
 			$this->unregister_object( $object );
 		}
+	}
+
+	/**
+	 * Flatten objects so that PHP objects are removed but are still registered.
+	 */
+	public function flatten_objects() {
+		foreach ( $this->objects as $identifier => $object ) {
+			if ( ! $object instanceof Whatsit ) {
+				continue;
+			}
+
+			// Ensure reference gets killed.
+			$object = null;
+
+			$this->flatten_object( $identifier );
+		}
+	}
+
+	/**
+	 * Flatten objects so that PHP objects are removed but are still registered.
+	 */
+	public function flatten_object( $identifier ) {
+		if ( $identifier instanceof Whatsit ) {
+			$identifier = $identifier->get_identifier();
+		}
+
+		if ( ! isset( $this->objects[ $identifier ] ) ) {
+			return;
+		}
+
+		if ( ! $this->objects[ $identifier ] instanceof Whatsit ) {
+			return;
+		}
+
+		$this->objects[ $identifier ] = $this->objects[ $identifier ]->get_args();
 	}
 
 	/**

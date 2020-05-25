@@ -926,20 +926,25 @@ class PodsAdmin {
 
 		$pod_types_found = array();
 
-		$fields = array(
-			'label'       => array( 'label' => __( 'Label', 'pods' ) ),
-			'name'        => array( 'label' => __( 'Name', 'pods' ) ),
-			'type'        => array( 'label' => __( 'Type', 'pods' ) ),
-			'storage'     => array(
+		$fields = [
+			'label'       => [ 'label' => __( 'Label', 'pods' ) ],
+			'name'        => [ 'label' => __( 'Name', 'pods' ) ],
+			'type'        => [ 'label' => __( 'Type', 'pods' ) ],
+			'storage'     => [
 				'label' => __( 'Storage Type', 'pods' ),
 				'width' => '10%',
-			),
-			'field_count' => array(
-				'label' => __( 'Number of Fields', 'pods' ),
+			],
+			'group_count' => [
+				'label' => __( 'Groups', 'pods' ),
 				'width' => '8%',
-			),
-		);
+			],
+			'field_count' => [
+				'label' => __( 'Fields', 'pods' ),
+				'width' => '8%',
+			],
+		];
 
+		$total_groups = 0;
 		$total_fields = 0;
 
 		/**
@@ -1016,9 +1021,11 @@ class PodsAdmin {
 				'type'        => $pod_type,
 				'real_type'   => $pod_real_type,
 				'storage'     => $pod_storage,
+				'group_count' => count( $pod['groups'] ),
 				'field_count' => count( $pod['fields'] ),
 			);
 
+			$total_groups += $pod['group_count'];
 			$total_fields += $pod['field_count'];
 
 			$pod_list[] = $pod;
@@ -1076,7 +1083,8 @@ class PodsAdmin {
 			'sortable'         => true,
 			'pagination'       => false,
 			'extra'            => array(
-				'total' => ', ' . number_format_i18n( $total_fields ) . ' ' . _n( 'field', 'fields', $total_fields, 'pods' ),
+				'total' => ', ' . number_format_i18n( $total_groups ) . ' ' . _n( 'group', 'groups', $total_groups, 'pods' )
+					. ', ' . number_format_i18n( $total_fields ) . ' ' . _n( 'field', 'fields', $total_fields, 'pods' ),
 			),
 		);
 
@@ -1334,6 +1342,8 @@ class PodsAdmin {
 			] );
 		}
 
+		pods_api()->cache_flush_pods( $pod );
+
 		// Refresh pod object.
 		return $api->load_pod( [
 			'id'           => $pod->get_id(),
@@ -1432,7 +1442,7 @@ class PodsAdmin {
 	protected function backcompat_convert_tabs_to_groups( array $tabs, array $options, $parent ) {
 		$object_collection = Pods\Whatsit\Store::get_instance();
 
-		/** @var Pods\Whatsit\Storage $storage */
+		/** @var Pods\Whatsit\Storage\Collection $storage */
 		$storage = $object_collection->get_storage_object( 'collection' );
 
 		$groups = [];
@@ -2806,7 +2816,9 @@ class PodsAdmin {
 	 */
 	public function admin_setup_edit_group_tabs( $pod ) {
 		$core_tabs = [
-			'basic' => __( 'Basic', 'pods' ),
+			'basic'        => __( 'Basic', 'pods' ),
+			'advanced_tab' => __( 'Advanced', 'pods' ),
+			'rest-api'     => __( 'REST API', 'pods' ),
 		];
 
 		/**
@@ -2866,6 +2878,68 @@ class PodsAdmin {
 				'default' => '',
 				'data'    => [],
 			],*/
+		];
+
+		$options['advanced_tab'] = [
+			'custom_field_1' => [
+				'name'    => 'custom_field_1',
+				'label'   => __( 'Custom Field 1', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_2' => [
+				'name'    => 'custom_field_2',
+				'label'   => __( 'Custom Field 2', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_3' => [
+				'name'    => 'custom_field_3',
+				'label'   => __( 'Custom Field 3', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_4' => [
+				'name'    => 'custom_field_4',
+				'label'   => __( 'Custom Field 4', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+		];
+
+		$options['rest-api'] = [
+			'custom_field_5' => [
+				'name'    => 'custom_field_5',
+				'label'   => __( 'Custom Field 5', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_6' => [
+				'name'    => 'custom_field_6',
+				'label'   => __( 'Custom Field 6', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_7' => [
+				'name'    => 'custom_field_7',
+				'label'   => __( 'Custom Field 7', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_8' => [
+				'name'    => 'custom_field_8',
+				'label'   => __( 'Custom Field 8', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
 		];
 
 		/**
@@ -4352,7 +4426,7 @@ class PodsAdmin {
 				],
 				'pods-strict'                        => [
 					'label' => __( 'Pods Strict Activated' ),
-					'value' => ( pods_strict() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+					'value' => ( pods_strict( false ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 				'pods-allow-deprecated'              => [
 					'label' => __( 'Pods Allow Deprecated' ),

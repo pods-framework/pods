@@ -1,20 +1,10 @@
-// .pods-field_wrapper {
-// 	display: flex;
-// 	width: 100%;
-// 	background-color: #fff;
-// 	align-items: center;
-// 	transition: 200ms ease background-color;
-// 	padding-right: 10px;
-
-// 	&:hover {
-// 		background-color: #fbfbfb;
-// 	}
-// }
+$border-radius: 9px;
+$color--light-grey: #E2E4E7;
+$color--super-light-grey: #F9F9F9;
 
 .pods-manage-fields {
-	// border-left: 5px solid #94bf3a;
-	border-left: 1px solid #e5e5e5;
-	border-right: 1px solid #e5e5e5;
+	margin: 2em;
+	overflow: visible !important; // TODO: this is being overridden by old 2.x styles
 }
 
 .pods-manage-fields.no-fields {
@@ -60,6 +50,18 @@
 	}
 }
 
+.pods-field_controls-container span {
+	border-right: 1px solid inherit;
+	padding-right: 5px;
+	margin-right: 5px;
+
+	&:last-child {
+		margin-right: 0;
+		padding-right: 0;
+		border-right: none;
+	}
+}
+
 .pods-field_id {
 	font-size: 13px;
 	color: #999;
@@ -90,16 +92,26 @@
 .pods-field_wrapper-labels {
 	display: flex;
 	width: 100%;
-	background-color: #fff;
-	border-bottom: 2px solid whitesmoke;
 }
 
 .pods-field_wrapper-label-items {
 	width: 172px;
-	padding: 20px 20px 17px;
+	padding: 1em 1em 1em 0;
 	justify-content: flex-start;
+	width: 25%;
 
 	&:first-child {
-		margin-left: 36px;
+		margin-left: 40px;
+		width: 50%;
 	}
+}
+
+.pods-field_wrapper-items {
+	border: 1px solid $color--light-grey;
+	border-radius: $border-radius;
+	margin: 1em 0;
+}
+
+.pods-field_wrapper:nth-child(even) {
+	background-color: $color--super-light-grey;
 }

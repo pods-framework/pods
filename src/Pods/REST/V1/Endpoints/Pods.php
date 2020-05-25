@@ -189,6 +189,14 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 	 * @since 2.8
 	 */
 	public function create( WP_REST_REQUEST $request, $return_id = false ) {
+		if ( ! empty( $request['groups'] ) ) {
+			$request->set_param( 'groups', null );
+		}
+
+		if ( ! empty( $request['fields'] ) ) {
+			$request->set_param( 'fields', null );
+		}
+
 		$mode    = $request->get_param( 'mode' );
 		$type    = $request->get_param( 'type' );
 		$storage = $request->get_param( 'storage' );
@@ -252,7 +260,7 @@ class Pods extends Base implements READ_Interface, CREATE_Interface, Swagger_Int
 
 		return $this->get_by_args( [
 			'id' => $id,
-		], 'id', $request, $return_id );
+		], 'id', null, $return_id );
 	}
 
 	/**

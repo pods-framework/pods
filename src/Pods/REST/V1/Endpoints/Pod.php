@@ -191,6 +191,14 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	 * @since 2.8
 	 */
 	public function update( WP_REST_Request $request ) {
+		if ( ! empty( $request['groups'] ) ) {
+			$request->set_param( 'groups', null );
+		}
+
+		if ( ! empty( $request['fields'] ) ) {
+			$request->set_param( 'fields', null );
+		}
+
 		return $this->update_by_args( 'id', 'id', $request );
 	}
 

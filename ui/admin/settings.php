@@ -7,7 +7,7 @@
 			<?php
 			$default = 'tools';
 
-			$tabs = array(
+			$tabs = [
 				// 'settings' => __( 'Settings', 'pods' ),
 				'tools' => __( 'Tools', 'pods' ),
 				'reset' => __( 'Cleanup &amp; Reset', 'pods' ),
@@ -34,7 +34,7 @@
 						$label = 'Pods ' . $label;
 					}
 
-					$url = pods_query_arg( array( 'tab' => $tab ), array( 'page' ) );
+					$url = pods_query_arg( [ 'tab' => $tab ], [ 'page' ] );
 					?>
 					<a href="<?php echo esc_url( $url ); ?>" class="nav-tab<?php echo esc_attr( $class ); ?>">
 						<?php echo $label; ?>

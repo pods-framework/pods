@@ -88,6 +88,14 @@ class Post_Type extends Collection {
 			}
 		}
 
+		if ( ! isset( $args['bypass_post_type_find'] ) ) {
+			$args['bypass_post_type_find'] = false;
+		}
+
+		if ( isset( $args['fallback_mode'] ) ) {
+			$this->fallback_mode( (boolean) $args['fallback_mode'] );
+		}
+
 		/**
 		 * Filter the maximum number of posts to get for post type storage.
 		 *
@@ -132,47 +140,17 @@ class Post_Type extends Collection {
 
 		$args['args'] = (array) $args['args'];
 
-		$secondary_variations = [
-			'identifier',
-			'id',
-			'name',
-		];
-
 		$secondary_object_args = [
 			'parent',
 			'group',
 		];
 
 		foreach ( $secondary_object_args as $arg ) {
-			$arg_value = [];
+			$args      = $this->setup_arg( $args, $arg );
+			$arg_value = $this->get_arg_value( $args, $arg );
 
-			if ( isset( $args[ $arg ] ) ) {
-				if ( $args[ $arg ] instanceof Whatsit ) {
-					$args[ $arg ]                 = (array) $args[ $arg ]->get_name();
-					$args[ $arg . '_identifier' ] = (array) $args[ $arg ]->get_identifier();
-					$args[ $arg . '_id' ]         = (array) $args[ $arg ]->get_id();
-					$args[ $arg . '_name' ]       = (array) $args[ $arg ]->get_name();
-				}
-
-				$arg_value[] = (array) $args[ $arg ];
-			}
-
-			foreach ( $secondary_variations as $variation ) {
-				if ( ! isset( $args[ $arg . '_' . $variation ] ) ) {
-					continue;
-				}
-
-				$arg_value[] = (array) $args[ $arg . '_' . $variation ];
-			}
-
-			if ( empty( $arg_value ) ) {
+			if ( '_null' === $arg_value ) {
 				continue;
-			}
-
-			$arg_value = array_merge( ...$arg_value );
-
-			if ( 1 === count( $arg_value ) ) {
-				$arg_value = current( $arg_value );
 			}
 
 			$args['args'][ $arg ] = $arg_value;
@@ -187,6 +165,10 @@ class Post_Type extends Collection {
 		}
 
 		foreach ( $args['args'] as $arg => $value ) {
+			if ( 'parent' === $arg ) {
+				continue;
+			}
+
 			if ( null === $value ) {
 				$post_args['meta_query'][] = [
 					'key'     => $arg,
@@ -231,6 +213,9 @@ class Post_Type extends Collection {
 
 			if ( $args['id'] ) {
 				$post_args['post__in'] = $args['id'];
+			} else {
+				// Bypass WP_Query if we know there are things that won't match.
+				$args['bypass_post_type_find'] = true;
 			}
 		}
 
@@ -240,19 +225,25 @@ class Post_Type extends Collection {
 			$args['name'] = array_unique( $args['name'] );
 			$args['name'] = array_filter( $args['name'] );
 
-			if ( $args['name'] ) {
+			if (  $args['name'] ) {
 				$post_args['post_name__in'] = $args['name'];
+			} else {
+				// Bypass WP_Query if we know there are things that won't match.
+				$args['bypass_post_type_find'] = true;
 			}
 		}
 
-		if ( ! empty( $args['parent'] ) ) {
-			$post_args['post_parent__in'] = (array) $args['parent'];
+		if ( ! empty( $args['args']['parent'] ) ) {
+			$post_args['post_parent__in'] = (array) $args['args']['parent'];
 			$post_args['post_parent__in'] = array_map( 'absint', $post_args['post_parent__in'] );
 			$post_args['post_parent__in'] = array_unique( $post_args['post_parent__in'] );
 			$post_args['post_parent__in'] = array_filter( $post_args['post_parent__in'] );
 
-			if ( empty( $post_args['post_parent__in'] ) ) {
+			if ( ! $post_args['post_parent__in'] ) {
 				unset( $post_args['post_parent__in'] );
+
+				// Bypass WP_Query if we know there are things that won't match.
+				$args['bypass_post_type_find'] = true;
 			}
 		}
 
@@ -270,6 +261,9 @@ class Post_Type extends Collection {
 				}
 
 				$post_args['post_status'] = $args['status'];
+			} else {
+				// Bypass WP_Query if we know there are things that won't match.
+				$args['bypass_post_type_find'] = true;
 			}
 		}
 
@@ -316,7 +310,7 @@ class Post_Type extends Collection {
 		$cache_key = null;
 		$posts     = false;
 
-		if ( empty( $args['bypass_cache'] ) ) {
+		if ( empty( $args['bypass_cache'] ) && empty( $args['bypass_post_type_find'] ) ) {
 			$cache_key_parts = [
 				'pods_whatsit_storage_post_type_find',
 				$current_language,
@@ -345,10 +339,14 @@ class Post_Type extends Collection {
 		}//end if
 
 		if ( ! is_array( $posts ) ) {
-			$posts = get_posts( $post_args );
+			$posts = [];
 
-			if ( empty( $args['bypass_cache'] ) ) {
-				pods_transient_set( $cache_key, $posts );
+			if ( empty( $args['bypass_post_type_find'] ) ) {
+				$posts = get_posts( $post_args );
+
+				if ( empty( $args['bypass_cache'] ) ) {
+					pods_transient_set( $cache_key, $posts );
+				}
 			}
 		}
 
@@ -359,7 +357,7 @@ class Post_Type extends Collection {
 
 		$posts = array_combine( $names, $posts );
 
-		if ( empty( $args['status'] ) || \in_array( 'publish', (array) $args['status'], true ) ) {
+		if ( $this->fallback_mode && ( empty( $args['status'] ) || \in_array( 'publish', (array) $args['status'], true ) ) ) {
 			$posts = array_merge( $posts, parent::find( $args ) );
 		}
 

@@ -795,6 +795,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				'parent_identifier' => $this->get_identifier(),
 			];
 
+			$args = array_filter( $args );
+
 			$objects = pods_api()->load_fields( $args );
 
 			$this->_fields = wp_list_pluck( $objects, 'id' );
@@ -851,6 +853,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				'parent_name'       => $this->get_name(),
 				'parent_identifier' => $this->get_identifier(),
 			];
+
+			$args = array_filter( $args );
 
 			$objects = pods_api()->load_groups( $args );
 

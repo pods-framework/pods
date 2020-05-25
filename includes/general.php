@@ -322,16 +322,19 @@ function pods_is_debug_display() {
 function pods_is_admin( $cap = null ) {
 
 	if ( is_user_logged_in() ) {
-		// Default is_super_admin() checks against this.
-		$pods_admin_capabilities = array(
-			'delete_users',
-		);
-
-		$pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
 
 		if ( is_multisite() && is_super_admin() ) {
 			return apply_filters( 'pods_is_admin', true, $cap, '_super_admin' );
 		}
+
+		$pods_admin_capabilities = array();
+
+		if ( ! is_multisite() ) {
+			// Default is_super_admin() checks against this capability.
+			$pods_admin_capabilities[] = 'delete_users';
+		}
+
+		$pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
 
 		if ( empty( $cap ) ) {
 			$cap = array();

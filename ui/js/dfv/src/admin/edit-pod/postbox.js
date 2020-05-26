@@ -10,7 +10,7 @@ import { compose } from '@wordpress/compose';
 import {
 	STORE_KEY_EDIT_POD,
 	uiConstants,
-} from 'pods-dfv/src/admin/edit-pod/store/constants';
+} from 'dfv/src/admin/edit-pod/store/constants';
 
 const {
 	saveStatuses: SAVE_STATUSES,

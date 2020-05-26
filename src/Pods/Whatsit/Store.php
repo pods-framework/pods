@@ -68,6 +68,7 @@ class Store {
 			'group'        => __NAMESPACE__ . '\Group',
 			'template'     => __NAMESPACE__ . '\Template',
 			'page'         => __NAMESPACE__ . '\Page',
+			'block'        => __NAMESPACE__ . '\Block',
 		);
 	}
 
@@ -98,6 +99,14 @@ class Store {
 				'label'        => __( 'Pod', 'pods' ),
 				'description'  => __( 'Pod configuration', 'pods' ),
 			),
+			'pod/_pods_group' => array(
+				'internal'     => true,
+				'object_type'  => 'pod',
+				'storage_type' => 'collection',
+				'name'         => '_pods_group',
+				'label'        => __( 'Pod Group', 'pods' ),
+				'description'  => __( 'Pod Group configuration', 'pods' ),
+			),
 			'pod/_pods_field' => array(
 				'internal'     => true,
 				'object_type'  => 'pod',
@@ -106,13 +115,12 @@ class Store {
 				'label'        => __( 'Pod Field', 'pods' ),
 				'description'  => __( 'Pod Field configuration', 'pods' ),
 			),
-			'pod/_pods_group' => array(
-				'internal'     => true,
-				'object_type'  => 'pod',
+			'block/pods_block_test'   => array(
+				'object_type'  => 'block',
 				'storage_type' => 'collection',
-				'name'         => '_pods_group',
-				'label'        => __( 'Pod Group', 'pods' ),
-				'description'  => __( 'Pod Group configuration', 'pods' ),
+				'name'         => 'pods_block_test',
+				'label'        => __( 'Pod Block Test', 'pods' ),
+				'description'  => __( 'Block that does things', 'pods' ),
 			),
 		);
 	}

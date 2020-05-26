@@ -1,5 +1,5 @@
 import jQuery from 'jquery';
-import { PodsDFVFieldModel } from 'pods-dfv/src/core/pods-field-model';
+import { PodsDFVFieldModel } from 'dfv/src/core/pods-field-model';
 
 function mnRenderer( FieldClass, element, data ) {
 	// Assemble the model and create the field

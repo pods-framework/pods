@@ -33,20 +33,6 @@ export const Postbox = ( {
 } ) => {
 	const isSaving = saveStatus === SAVE_STATUSES.SAVING;
 
-	const saveHandler = () => {
-		const data = {
-			name: podName,
-			label: options.label || '',
-			args: {
-				...options,
-				groups,
-				fields,
-			},
-		};
-
-		savePod( data, podID );
-	};
-
 	const deleteHandler = () => {
 		// eslint-disable-next-line no-alert
 		const confirm = window.confirm(
@@ -100,7 +86,7 @@ export const Postbox = ( {
 											className="button-primary"
 											type="submit"
 											disabled={ isSaving }
-											onClick={ saveHandler }
+											onClick={ () => savePod( options, podID ) }
 										>
 											{ __( 'Save Pod', 'pods' ) }
 										</button>

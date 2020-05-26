@@ -18,7 +18,6 @@ import BlockPreview from './components/BlockPreview';
 const createBlockEditComponent = ( block ) => ( props ) => {
 	const {
 		fields = [],
-		template,
 	} = block;
 
 	const {
@@ -37,8 +36,7 @@ const createBlockEditComponent = ( block ) => ( props ) => {
 				/>
 			</InspectorControls>
 			<BlockPreview
-				template={ template }
-				fields={ fields }
+				block={ block }
 				attributes={ attributes }
 			/>
 		</div>

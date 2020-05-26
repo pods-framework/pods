@@ -1574,7 +1574,7 @@ class PodsInit {
 			}
 		}
 
-		do_action( 'pods_after_setup_content_types' );
+		do_action( 'pods_setup_content_types' );
 	}
 
 	/**
@@ -2042,6 +2042,17 @@ class PodsInit {
 
 		$ran = true;
 
+		tribe_register_provider( \Pods\Blocks\Service_Provider::class );
+		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
+
+		// Add WP-CLI commands.
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			//require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
+			//require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
+
+			tribe_register_provider( \Pods\CLI\Service_Provider::class );
+		}
+
 		$this->load_i18n();
 
 		if ( ! did_action( 'plugins_loaded' ) ) {
@@ -2094,20 +2105,6 @@ class PodsInit {
 		// Remove Common menus
 		add_action( 'admin_menu', array( $this, 'remove_common_menu' ), 11 );
 		add_action( 'network_admin_menu', array( $this, 'remove_common_network_menu' ), 11 );
-
-		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
-
-		// Add WP-CLI commands.
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			//require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
-			//require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
-
-			tribe_register_provider( \Pods\CLI\Service_Provider::class );
-		}
-
-		tribe_singleton( 'pods.blocks', \Pods\Blocks::class );
-
-		add_action( 'pods_after_setup_content_types', tribe_callback( 'pods.blocks', 'register_blocks' ) );
 	}
 
 	/**

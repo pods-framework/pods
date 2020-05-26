@@ -1365,19 +1365,19 @@ class PodsAdmin {
 		$tabs        = $this->admin_setup_edit_tabs( $pod );
 		$tab_options = $this->admin_setup_edit_options( $pod );
 
-		$this->backcompat_convert_tabs_to_groups( $tabs, $tab_options, '_pods_pod' );
+		$this->backcompat_convert_tabs_to_groups( $tabs, $tab_options, 'pod/_pods_pod' );
 
 		// Group: Backwards compatible methods and hooks.
 		$group_tabs        = $this->admin_setup_edit_group_tabs( $pod );
 		$group_tab_options = $this->admin_setup_edit_group_options( $pod );
 
-		$this->backcompat_convert_tabs_to_groups( $group_tabs, $group_tab_options, '_pods_group' );
+		$this->backcompat_convert_tabs_to_groups( $group_tabs, $group_tab_options, 'pod/_pods_group' );
 
 		// Field: Backwards compatible methods and hooks.
 		$field_tabs        = $this->admin_setup_edit_field_tabs( $pod );
 		$field_tab_options = $this->admin_setup_edit_field_options( $pod );
 
-		$this->backcompat_convert_tabs_to_groups( $field_tabs, $field_tab_options, '_pods_field' );
+		$this->backcompat_convert_tabs_to_groups( $field_tabs, $field_tab_options, 'pod/_pods_field' );
 
 		$object_collection = Pods\Whatsit\Store::get_instance();
 

@@ -3,6 +3,8 @@
 namespace Pods\Whatsit;
 
 use Pods\Whatsit;
+use Pods\Whatsit\Storage\Collection;
+use Pods\Whatsit\Storage\Post_Type;
 
 /**
  * Store class.
@@ -19,32 +21,32 @@ class Store {
 	/**
 	 * @var string[]
 	 */
-	protected $object_types = array();
+	protected $object_types = [];
 
 	/**
 	 * @var string[]
 	 */
-	protected $storage_types = array();
+	protected $storage_types = [];
 
 	/**
 	 * @var Storage[]
 	 */
-	protected $storage_engine = array();
+	protected $storage_engine = [];
 
 	/**
 	 * @var Whatsit[]
 	 */
-	protected $objects = array();
+	protected $objects = [];
 
 	/**
 	 * @var string[]
 	 */
-	protected $object_ids = array();
+	protected $object_ids = [];
 
 	/**
 	 * @var array[]
 	 */
-	protected $objects_in_storage = array();
+	protected $objects_in_storage = [];
 
 	/**
 	 * Store constructor.
@@ -61,15 +63,16 @@ class Store {
 	 * @return string[] List of object type classes.
 	 */
 	public function get_default_object_types() {
-		return array(
-			'pod'          => __NAMESPACE__ . '\Pod',
-			'field'        => __NAMESPACE__ . '\Field',
-			'object-field' => __NAMESPACE__ . '\Object_Field',
-			'group'        => __NAMESPACE__ . '\Group',
-			'template'     => __NAMESPACE__ . '\Template',
-			'page'         => __NAMESPACE__ . '\Page',
-			'block'        => __NAMESPACE__ . '\Block',
-		);
+		return [
+			'pod'          => Pod::class,
+			'field'        => Field::class,
+			'object-field' => Object_Field::class,
+			'group'        => Group::class,
+			'template'     => Template::class,
+			'page'         => Page::class,
+			'block'        => Block::class,
+			'block-field'  => Block_Field::class,
+		];
 	}
 
 	/**
@@ -78,10 +81,10 @@ class Store {
 	 * @return string[] List of storage type classes.
 	 */
 	public function get_default_storage_types() {
-		return array(
-			'collection' => __NAMESPACE__ . '\Storage\Collection',
-			'post_type'  => __NAMESPACE__ . '\Storage\Post_Type',
-		);
+		return [
+			'collection' => Collection::class,
+			'post_type'  => Post_Type::class,
+		];
 	}
 
 	/**
@@ -90,39 +93,32 @@ class Store {
 	 * @return array List of objects.
 	 */
 	public function get_default_objects() {
-		return array(
-			'pod/_pods_pod'   => array(
+		return [
+			'pod/_pods_pod'   => [
 				'internal'     => true,
 				'object_type'  => 'pod',
 				'storage_type' => 'collection',
 				'name'         => '_pods_pod',
 				'label'        => __( 'Pod', 'pods' ),
 				'description'  => __( 'Pod configuration', 'pods' ),
-			),
-			'pod/_pods_group' => array(
+			],
+			'pod/_pods_group' => [
 				'internal'     => true,
 				'object_type'  => 'pod',
 				'storage_type' => 'collection',
 				'name'         => '_pods_group',
 				'label'        => __( 'Pod Group', 'pods' ),
 				'description'  => __( 'Pod Group configuration', 'pods' ),
-			),
-			'pod/_pods_field' => array(
+			],
+			'pod/_pods_field' => [
 				'internal'     => true,
 				'object_type'  => 'pod',
 				'storage_type' => 'collection',
 				'name'         => '_pods_field',
 				'label'        => __( 'Pod Field', 'pods' ),
 				'description'  => __( 'Pod Field configuration', 'pods' ),
-			),
-			'block/pods_block_test'   => array(
-				'object_type'  => 'block',
-				'storage_type' => 'collection',
-				'name'         => 'pods_block_test',
-				'label'        => __( 'Pod Block Test', 'pods' ),
-				'description'  => __( 'Block that does things', 'pods' ),
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -195,21 +191,6 @@ class Store {
 	}
 
 	/**
-	 * Get object type class.
-	 *
-	 * @param string $object_type Object type.
-	 *
-	 * @return string Object type class.
-	 */
-	public function get_object_type( $object_type ) {
-		if ( isset( $this->object_types[ $object_type ] ) ) {
-			return $this->object_types[ $object_type ];
-		}
-
-		return null;
-	}
-
-	/**
 	 * Register an object storage type to collection.
 	 *
 	 * @param string         $storage_type Pods object storage type.
@@ -278,46 +259,6 @@ class Store {
 	}
 
 	/**
-	 * Get object storage type class.
-	 *
-	 * @param string $storage_type Object storage type.
-	 *
-	 * @return string Storage type class.
-	 */
-	public function get_storage_type( $storage_type ) {
-		if ( isset( $this->storage_types[ $storage_type ] ) ) {
-			return $this->storage_types[ $storage_type ];
-		}
-
-		return null;
-	}
-
-	/**
-	 * Get storage type object.
-	 *
-	 * @param string $storage_type Object storage type.
-	 *
-	 * @return Storage Storage type object.
-	 */
-	public function get_storage_object( $storage_type ) {
-		if ( isset( $this->storage_engine[ $storage_type ] ) ) {
-			return $this->storage_engine[ $storage_type ];
-		}
-
-		$class_name = $this->get_storage_type( $storage_type );
-
-		if ( ! $class_name || ! class_exists( $class_name ) ) {
-			return null;
-		}
-
-		$storage_object = new $class_name();
-
-		$this->storage_engine[ $storage_type ] = $storage_object;
-
-		return $storage_object;
-	}
-
-	/**
 	 * Register an object to collection.
 	 *
 	 * @param Whatsit|array $object Pods object.
@@ -351,7 +292,7 @@ class Store {
 			$this->object_ids[ $id ] = $identifier;
 
 			if ( ! isset( $this->objects_in_storage[ $storage_type ] ) ) {
-				$this->objects_in_storage[ $storage_type ] = array();
+				$this->objects_in_storage[ $storage_type ] = [];
 			}
 
 			$this->objects_in_storage[ $storage_type ][] = $identifier;
@@ -362,6 +303,21 @@ class Store {
 		}
 
 		$this->objects[ $identifier ] = $object;
+	}
+
+	/**
+	 * Remove all objects from collection.
+	 */
+	public function flush_objects() {
+		$default_objects = $this->get_default_objects();
+
+		foreach ( $this->objects as $identifier => $object ) {
+			if ( isset( $default_objects[ $identifier ] ) ) {
+				continue;
+			}
+
+			$this->unregister_object( $object );
+		}
 	}
 
 	/**
@@ -431,21 +387,6 @@ class Store {
 	}
 
 	/**
-	 * Remove all objects from collection.
-	 */
-	public function flush_objects() {
-		$default_objects = $this->get_default_objects();
-
-		foreach ( $this->objects as $identifier => $object ) {
-			if ( isset( $default_objects[ $identifier ] ) ) {
-				continue;
-			}
-
-			$this->unregister_object( $object );
-		}
-	}
-
-	/**
 	 * Flatten objects so that PHP objects are removed but are still registered.
 	 */
 	public function flatten_objects() {
@@ -509,12 +450,52 @@ class Store {
 	}
 
 	/**
+	 * Get storage type object.
+	 *
+	 * @param string $storage_type Object storage type.
+	 *
+	 * @return Storage Storage type object.
+	 */
+	public function get_storage_object( $storage_type ) {
+		if ( isset( $this->storage_engine[ $storage_type ] ) ) {
+			return $this->storage_engine[ $storage_type ];
+		}
+
+		$class_name = $this->get_storage_type( $storage_type );
+
+		if ( ! $class_name || ! class_exists( $class_name ) ) {
+			return null;
+		}
+
+		$storage_object = new $class_name();
+
+		$this->storage_engine[ $storage_type ] = $storage_object;
+
+		return $storage_object;
+	}
+
+	/**
+	 * Get object storage type class.
+	 *
+	 * @param string $storage_type Object storage type.
+	 *
+	 * @return string Storage type class.
+	 */
+	public function get_storage_type( $storage_type ) {
+		if ( isset( $this->storage_types[ $storage_type ] ) ) {
+			return $this->storage_types[ $storage_type ];
+		}
+
+		return null;
+	}
+
+	/**
 	 * Get objects from collection.
 	 *
 	 * @return Whatsit[] List of objects.
 	 */
 	public function get_objects() {
-		$objects = array_map( array( $this, 'get_object' ), $this->objects );
+		$objects = array_map( [ $this, 'get_object' ], $this->objects );
 		$objects = array_filter( $objects );
 
 		return $objects;
@@ -589,6 +570,21 @@ class Store {
 		$this->objects[ $object->get_identifier() ] = $object;
 
 		return $object;
+	}
+
+	/**
+	 * Get object type class.
+	 *
+	 * @param string $object_type Object type.
+	 *
+	 * @return string Object type class.
+	 */
+	public function get_object_type( $object_type ) {
+		if ( isset( $this->object_types[ $object_type ] ) ) {
+			return $this->object_types[ $object_type ];
+		}
+
+		return null;
 	}
 
 }

@@ -26,6 +26,34 @@ export const TEXT_FIELD = {
 	weight: 0,
 };
 
+export const SECOND_TEXT_FIELD = {
+	admin_only: '0',
+	description: '',
+	group: '122',
+	hidden: '0',
+	id: 139,
+	label: 'Text Field',
+	name: 'text_field_2',
+	object_type: 'field',
+	parent: 118,
+	read_only: '0',
+	required: '0',
+	rest_pick_depth: '2',
+	rest_pick_response: 'array',
+	rest_read: '0',
+	rest_write: '0',
+	restrict_capability: '0',
+	restrict_role: '0',
+	roles_allowed: [ 'administrator' ],
+	storage_type: 'post_type',
+	text_allow_html: '0',
+	text_allow_shortcode: '0',
+	text_allowed_html_tags: 'strong em a ul ol li b i',
+	text_max_length: '255',
+	type: 'text',
+	weight: 0,
+};
+
 export const GROUP = {
 	description: '',
 	id: 122,

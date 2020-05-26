@@ -245,6 +245,51 @@ class FieldTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers PodsAPI::save_field
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_save_field_with_weight() {
+		$this->populate_field();
+
+		$params = [
+			'pod_id'   => $this->pod_id,
+			'group_id' => $this->group_id,
+			'name'     => 'test_field2',
+			'label'    => 'Test field2',
+			'weight' => 10,
+		];
+
+		$response = $this->api->save_field( $params );
+
+		$this->assertInternalType( 'int', $response );
+
+		$field = $this->api->load_field( $response );
+
+		$this->assertEquals( $params['name'], $field['name'] );
+		$this->assertEquals( 'text', $field['type'] );
+		$this->assertEquals( $params['label'], $field['label'] );
+		$this->assertEquals( $params['weight'], $field['weight'] );
+
+		$params = [
+			'pod_id'   => $this->pod_id,
+			'id'       => $this->field_id,
+			'weight'   => 15,
+		];
+
+		$response = $this->api->save_field( $params );
+
+		$this->assertInternalType( 'int', $response );
+
+		$field = $this->api->load_field( $response );
+
+		$this->assertEquals( $this->field, $field['name'] );
+		$this->assertEquals( 'text', $field['type'] );
+		$this->assertEquals( 'Test field', $field['label'] );
+		$this->assertEquals( $params['weight'], $field['weight'] );
+	}
+
+	/**
 	 * @covers PodsAPI::load_field
 	 * @since  2.8
 	 * @throws \Exception

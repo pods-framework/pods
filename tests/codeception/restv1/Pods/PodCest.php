@@ -293,13 +293,19 @@ class PodCest extends BaseRestCest {
 			],
 			'order' => [
 				'groups' => [
-					$this->group_id => [
-						$this->field_id2,
-						$this->field_id,
+					[
+						'group_id' => $this->group_id2,
+						'fields'   => [
+							$this->field_id4,
+							$this->field_id3,
+						],
 					],
-					$this->group_id2 => [
-						$this->field_id4,
-						$this->field_id3,
+					[
+						'group_id' => $this->group_id,
+						'fields'   => [
+							$this->field_id2,
+							$this->field_id,
+						],
 					],
 				],
 			],
@@ -318,6 +324,42 @@ class PodCest extends BaseRestCest {
 		$I->assertEquals( $args['args']['test_update'], $response['pod']['test_update'] );
 		$I->assertArrayNotHasKey( 'groups', $response['pod'] );
 		$I->assertArrayNotHasKey( 'fields', $response['pod'] );
+
+		$I->sendGET( sprintf( $this->test_rest_url, $this->pod_id ), [
+			'include_groups'       => 1,
+			'include_group_fields' => 1,
+		] );
+
+		$I->seeResponseIsJson();
+		$I->seeResponseCodeIs( 200 );
+
+		$response = json_decode( $I->grabResponse(), true );
+
+		$I->seePostInDatabase( [
+			'ID'         => $this->group_id2,
+			'menu_order' => 0,
+		] );
+		$I->seePostInDatabase( [
+			'ID'         => $this->field_id4,
+			'menu_order' => 0,
+		] );
+		$I->seePostInDatabase( [
+			'ID'         => $this->field_id3,
+			'menu_order' => 1,
+		] );
+
+		$I->seePostInDatabase( [
+			'ID'         => $this->group_id,
+			'menu_order' => 1,
+		] );
+		$I->seePostInDatabase( [
+			'ID'         => $this->field_id2,
+			'menu_order' => 0,
+		] );
+		$I->seePostInDatabase( [
+			'ID'         => $this->field_id,
+			'menu_order' => 1,
+		] );
 	}
 
 	/**

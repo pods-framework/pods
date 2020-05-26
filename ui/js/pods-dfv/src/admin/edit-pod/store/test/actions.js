@@ -191,11 +191,36 @@ describe( 'actions', () => {
 		} );
 
 		test( 'savePod() returns an action to save a pod by its ID', () => {
-			const action = CURRENT_POD_ACTIONS.API_REQUEST;
+			const data = {
+				// The following values should be stripped out.
+				id: 117,
+				label: 'Test Pod Label',
+				name: 'test-pod-name',
+				object_type: 'pod',
+				storage: 'test',
+				storage_type: 'collection',
+				type: 'post_type',
+				_locale: 'user',
+				// The following should be included.
+				label_add_new: 'Add New Something',
+				rest_enable: '0',
+				groups: [],
+				description: 'Test',
+			};
 
-			const result = savePod( 123 );
+			const result = savePod( data, 123 );
 
-			expect( result.type ).toEqual( action );
+			expect( result.type ).toEqual( CURRENT_POD_ACTIONS.API_REQUEST );
+			expect( result.payload.data ).toEqual( {
+				label: 'Test Pod Label',
+				name: 'test-pod-name',
+				args: {
+					label_add_new: 'Add New Something',
+					rest_enable: '0',
+					groups: [],
+					description: 'Test',
+				},
+			} );
 			expect( result.payload.onSuccess[ 0 ]().type ).toEqual( UI_ACTIONS.SET_SAVE_STATUS );
 			expect( result.payload.onSuccess[ 1 ]().type ).toEqual( CURRENT_POD_ACTIONS.SET_OPTIONS_VALUES );
 			expect( result.payload.onFailure().type ).toEqual( UI_ACTIONS.SET_SAVE_STATUS );

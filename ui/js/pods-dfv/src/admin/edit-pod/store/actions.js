@@ -1,3 +1,5 @@
+import { omit } from 'lodash';
+
 import {
 	uiConstants,
 	currentPodConstants,
@@ -130,12 +132,33 @@ export const addGroupField = ( groupName, field ) => {
 
 // API
 export const savePod = ( data, podId ) => {
+	// Not all values that exist need to be passed.
+	const relevantArgs = omit(
+		data,
+		[
+			'id',
+			'label',
+			'name',
+			'object_type',
+			'storage',
+			'storage_type',
+			'type',
+			'_locale',
+		]
+	);
+
+	const cleanedData = {
+		name: data.name || '',
+		label: data.label || '',
+		args: relevantArgs,
+	};
+
 	return {
 		type: CURRENT_POD_ACTIONS.API_REQUEST,
 		payload: {
 			url: podId ? `/pods/v1/pods/${ podId }` : '/pods/v1/pods',
 			method: 'POST',
-			data,
+			data: cleanedData,
 			onSuccess: [
 				setSaveStatus( SAVE_STATUSES.SAVE_SUCCESS ),
 				refreshPodData,

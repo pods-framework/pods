@@ -8,7 +8,7 @@
 			"babel-plugin-module-resolver",
 			{
 				"alias": {
-					"pods-dfv": "./ui/js/pods-dfv"
+					"dfv": "./ui/js/dfv"
 				}
 			}
 		],

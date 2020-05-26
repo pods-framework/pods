@@ -196,7 +196,7 @@ class PodsAdmin {
 			wp_enqueue_script( 'pods-dfv' );
 		}
 
-		// New Styles Enqueue
+		// New styles enqueue.
 		wp_enqueue_style( 'pods-styles' );
 	}
 
@@ -2176,6 +2176,7 @@ class PodsAdmin {
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
+					'description'       => 'Some text here',
 					'boolean_yes_label' => '',
 				),
 				'publicly_queryable'      => array(
@@ -2240,22 +2241,6 @@ class PodsAdmin {
 					'default'           => false,
 					'dependency'        => true,
 					'boolean_yes_label' => '',
-				),
-				'label_parent_item_colon' => array(
-					'label'      => __( 'Label: Parent %s', 'pods' ),
-					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
-					'help'       => __( 'help', 'pods' ),
-					'type'       => 'text',
-					'default'    => '',
-					'depends-on' => array( 'hierarchical' => true ),
-				),
-				'label_parent'            => array(
-					'label'      => __( 'Label: Parent', 'pods' ),
-					'help'       => __( 'help', 'pods' ),
-					'type'       => 'text',
-					'default'    => '',
-					'depends-on' => array( 'hierarchical' => true ),
 				),
 				'rewrite'                 => array(
 					'label'             => __( 'Rewrite', 'pods' ),
@@ -2462,31 +2447,6 @@ class PodsAdmin {
 					'default'           => true,
 					'dependency'        => true,
 					'boolean_yes_label' => '',
-				),
-				'label_parent_item_colon' => array(
-					'label'      => __( 'Label: Parent %s', 'pods' ),
-					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
-					'help'       => __( 'help', 'pods' ),
-					'type'       => 'text',
-					'default'    => '',
-					'depends-on' => array( 'hierarchical' => true ),
-				),
-				'label_parent'            => array(
-					'label'      => __( 'Label: Parent', 'pods' ),
-					'help'       => __( 'help', 'pods' ),
-					'type'       => 'text',
-					'default'    => '',
-					'depends-on' => array( 'hierarchical' => true ),
-				),
-				'label_no_terms'          => array(
-					'label'      => __( 'Label: No %s', 'pods' ),
-					'label_param'   => 'label',
-					'param_default' => __( 'Items', 'pods' ),
-					'help'       => __( 'help', 'pods' ),
-					'type'       => 'text',
-					'default'    => '',
-					'depends-on' => array( 'hierarchical' => true ),
 				),
 				'rewrite'                 => array(
 					'label'             => __( 'Rewrite', 'pods' ),

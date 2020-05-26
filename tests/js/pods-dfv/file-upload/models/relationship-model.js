@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, assert */
-import {RelationshipCollection, RelationshipModel} from 'pods-dfv/src/fields/pick/relationship-model';
+import {RelationshipCollection, RelationshipModel} from 'dfv/src/fields/pick/relationship-model';
 
 const default_model = new RelationshipModel();
 

@@ -196,7 +196,7 @@ class PodsAdmin {
 			wp_enqueue_script( 'pods-dfv' );
 		}
 
-		// New Styles Enqueue
+		// New styles enqueue.
 		wp_enqueue_style( 'pods-styles' );
 	}
 

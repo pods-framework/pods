@@ -59,7 +59,21 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 } );
 
 export const GROUP_PROP_TYPE_SHAPE = PropTypes.exact( {
-	name: PropTypes.string.isRequired,
-	label: PropTypes.string.isRequired,
+	description: PropTypes.string,
 	fields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ),
+	// @todo this should maybe just be number
+	id: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.number,
+	] ),
+	label: PropTypes.string.isRequired,
+	name: PropTypes.string.isRequired,
+	object_type: PropTypes.string,
+	// @todo this should maybe just be number
+	parent: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.number,
+	] ),
+	storage_type: PropTypes.string,
+	weight: PropTypes.number,
 } );

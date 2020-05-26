@@ -1,4 +1,5 @@
-import { createStore, applyMiddleware } from 'redux';
+// import { createStore, applyMiddleware } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 
 import { registerGenericStore } from '@wordpress/data';
 
@@ -15,11 +16,11 @@ export const initStore = ( props ) => {
 		...props.config || {},
 	};
 
-	const reduxStore = createStore(
+	const reduxStore = configureStore( {
 		reducer,
-		initialState,
-		applyMiddleware( apiMiddleware )
-	);
+		middleware: [ apiMiddleware ],
+		preloadedState: initialState,
+	} );
 
 	const mappedSelectors = Object.keys( selectors ).reduce( ( acc, selectorKey ) => {
 		acc[ selectorKey ] = ( ...args ) =>

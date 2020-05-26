@@ -10,19 +10,17 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
 const MISSING = __( '[MISSING DEFAULT]', 'pods' );
 
-const DynamicTabContent = ( props ) => {
-	const {
-		tabOptions,
-		getOptionValue,
-		setOptionValue,
-	} = props;
-
+const DynamicTabContent = ( {
+	tabOptions,
+	optionValues,
+	setOptionValue,
+} ) => {
 	const getLabelValue = ( labelFormat, paramOption, paramDefault ) => {
 		if ( ! paramOption ) {
 			return labelFormat;
 		}
 
-		const param = getOptionValue( paramOption ) || paramDefault || MISSING;
+		const param = optionValues[ paramOption ] || paramDefault || MISSING;
 		return sprintf( labelFormat, param );
 	};
 
@@ -39,20 +37,18 @@ const DynamicTabContent = ( props ) => {
 			fieldType={ type }
 			name={ name }
 			label={ getLabelValue( label, 'label', defaultValue ) }
-			value={ getOptionValue( name ) || defaultValue }
+			allOptionValues={ optionValues }
+			value={ optionValues[ name ] || defaultValue }
 			dependents={ dependsOn }
 			helpText={ help }
-			getOptionValue={ getOptionValue }
 			setOptionValue={ setOptionValue }
 		/>
 	) );
 };
 
 DynamicTabContent.propTypes = {
-	tabOptions: PropTypes.arrayOf(
-		PropTypes.shape( FIELD_PROP_TYPE_SHAPE )
-	).isRequired,
-	getOptionValue: PropTypes.func.isRequired,
+	tabOptions: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
+	optionValues: PropTypes.object.isRequired,
 	setOptionValue: PropTypes.func.isRequired,
 };
 

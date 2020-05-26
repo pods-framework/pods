@@ -9,17 +9,20 @@ import PodsFieldOption from 'dfv/src/components/field-option';
  * Check if option meets dependencies, helper function.
  *
  * @param {Object|Object[]} dependencies Dictionary in the form optionName: requiredVal
- * @param {Function} getOptionValue Selector to lookup option values by name
+ * @param {Object} allOptionValues Map of all option values.
  *
  * @return {boolean} Whether or not the specified dependencies are met
  */
-const meetsDependencies = ( dependencies, getOptionValue ) => {
+const meetsDependencies = ( dependencies, allOptionValues ) => {
 	let retVal = true;
+
+	console.log( 'meetsDependencies', dependencies, allOptionValues );
 
 	if ( dependencies && isObject( dependencies ) ) {
 		each( dependencies, ( dependentValue, dependentOptionName ) => {
 			// Loose comparison required, values may be 1/0 expecting true/false
-			if ( getOptionValue( dependentOptionName ) !== dependentValue ) {
+			// eslint-disable-next-line eqeqeq
+			if ( allOptionValues[ dependentOptionName ] != dependentValue ) {
 				retVal = false;
 				return false; // Early-exits the loop only, not the function
 			}
@@ -35,20 +38,25 @@ const DependentFieldOption = ( {
 	name,
 	label,
 	value,
+	allOptionValues,
 	dependents,
 	description,
 	helpText,
-	getOptionValue,
 	setOptionValue,
 } ) => {
-	const handleInputChange = ( e ) => {
-		const target = e.target;
-		const checkedValue = 'checkbox' === target.type ? target.checked : target.value;
+	const handleInputChange = ( event ) => {
+		const { target } = event;
 
-		setOptionValue( name, checkedValue );
+		if ( 'checkbox' === target.type ) {
+			const binaryStringFromBoolean = target.checked ? '1' : '0';
+
+			setOptionValue( name, binaryStringFromBoolean );
+		} else {
+			setOptionValue( name, target.value );
+		}
 	};
 
-	if ( ! meetsDependencies( dependents, getOptionValue ) ) {
+	if ( ! meetsDependencies( dependents, allOptionValues ) ) {
 		return null;
 	}
 
@@ -77,7 +85,11 @@ DependentFieldOption.propTypes = {
 	label: PropTypes.string.isRequired,
 	dependents: PropTypes.object,
 	helpText: PropTypes.string,
-	getOptionValue: PropTypes.func.isRequired,
+	value: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.bool,
+		PropTypes.number,
+	] ),
 	setOptionValue: PropTypes.func.isRequired,
 };
 

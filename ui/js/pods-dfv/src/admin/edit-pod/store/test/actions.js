@@ -41,6 +41,8 @@ const {
 
 const { actions: CURRENT_POD_ACTIONS } = currentPodConstants;
 
+import { GROUP, SECOND_TEXT_FIELD } from '../testData';
+
 describe( 'actions', () => {
 	// UI
 	describe( 'ui actions', () => {
@@ -204,8 +206,17 @@ describe( 'actions', () => {
 				// The following should be included.
 				label_add_new: 'Add New Something',
 				rest_enable: '0',
-				groups: [],
 				description: 'Test',
+				// Groups/fields will change into the "order" data.
+				groups: [
+					GROUP,
+					{
+						...GROUP,
+						id: 123,
+						name: 'another-group',
+						fields: [ SECOND_TEXT_FIELD ],
+					},
+				],
 			};
 
 			const result = savePod( data, 123 );
@@ -217,8 +228,19 @@ describe( 'actions', () => {
 				args: {
 					label_add_new: 'Add New Something',
 					rest_enable: '0',
-					groups: [],
 					description: 'Test',
+				},
+				order: {
+					groups: [
+						{
+							group_id: 122,
+							fields: [ 119 ],
+						},
+						{
+							group_id: 123,
+							fields: [ 139 ],
+						},
+					],
 				},
 			} );
 			expect( result.payload.onSuccess[ 0 ]().type ).toEqual( UI_ACTIONS.SET_SAVE_STATUS );

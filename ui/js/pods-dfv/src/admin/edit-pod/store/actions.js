@@ -144,13 +144,24 @@ export const savePod = ( data, podId ) => {
 			'storage_type',
 			'type',
 			'_locale',
+			'groups',
 		]
 	);
+
+	const order = {
+		groups: ( data.groups || [] ).map( ( group ) => {
+			return {
+				group_id: group.id,
+				fields: ( group.fields || [] ).map( ( field ) => field.id ),
+			};
+		} ),
+	};
 
 	const cleanedData = {
 		name: data.name || '',
 		label: data.label || '',
 		args: relevantArgs,
+		order,
 	};
 
 	return {

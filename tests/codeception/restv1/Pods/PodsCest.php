@@ -530,8 +530,6 @@ class PodsCest extends BaseRestCest {
 
 		$response = json_decode( $I->grabResponse(), true );
 
-		codecept_debug( var_export( $response, true ) );
-
 		$I->assertArrayHasKey( 'pod', $response );
 
 		foreach ( $args as $arg => $value ) {

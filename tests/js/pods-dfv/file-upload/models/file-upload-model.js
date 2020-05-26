@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, assert */
-import {FileUploadCollection, FileUploadModel} from 'pods-dfv/src/fields/file-upload/file-upload-model';
+import {FileUploadCollection, FileUploadModel} from 'dfv/src/fields/file-upload/file-upload-model';
 
 const default_model = new FileUploadModel();
 

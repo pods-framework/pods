@@ -730,15 +730,15 @@ class PodsInit {
 		);
 
 		// MV stuff
-		$pods_dfv_options_file = file_get_contents( PODS_DIR . 'ui/js/pods-dfv/pods-dfv.min.asset.json' );
+		$pods_dfv_options_file = file_get_contents( PODS_DIR . 'ui/js/dfv/pods-dfv.min.asset.json' );
 
 		$pods_dfv_options = json_decode( $pods_dfv_options_file, true );
 
 		wp_register_script(
 			'pods-dfv',
-			PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js',
+			PODS_URL . 'ui/js/dfv/pods-dfv.min.js',
 			array_merge(
-				$pods_dfv_options['dependencies'] ?? [],
+				$pods_dfv_options['dependencies'],
 				[
 					'jquery',
 					'jquery-ui-core',
@@ -749,7 +749,7 @@ class PodsInit {
 					'wp-components',
 				]
 			),
-			$pods_dfv_options['version'] ?? PODS_VERSION,
+			$pods_dfv_options['version'],
 			true
 		);
 

@@ -6,7 +6,7 @@ import {
 const {
 	actions: UI_ACTIONS,
 	saveStatuses: SAVE_STATUSES,
-	DELETE_Statuses: DELETE_STATUSES,
+	deleteStatuses: DELETE_STATUSES,
 } = uiConstants;
 
 const { actions: CURRENT_POD_ACTIONS } = currentPodConstants;

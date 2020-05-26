@@ -8,63 +8,107 @@ import {
 	setActiveTab,
 	setSaveStatus,
 	setDeleteStatus,
+	setGroupSaveStatus,
+	setGroupDeleteStatus,
+	// @todo add Field tests:
+	// setFieldSaveStatus,
+	// setFieldDeleteStatus,
 
 	// Current Pod options
 	setPodName,
 	setOptionValue,
 	setOptionsValues,
 	moveGroup,
-
 	addGroup,
+
+	// API
+	savePod,
+	deletePod,
+	saveGroup,
 	deleteGroup,
+
 	// setGroupFields,
 	// addGroupField,
+	// saveField,
+	// deleteField,
 } from '../actions.js';
+
+const {
+	actions: UI_ACTIONS,
+	saveStatuses: SAVE_STATUSES,
+	deleteStatuses: DELETE_STATUSES,
+} = uiConstants;
+
+const { actions: CURRENT_POD_ACTIONS } = currentPodConstants;
 
 describe( 'actions', () => {
 	// UI
 	describe( 'ui actions', () => {
-		const {
-			actions,
-			saveStatuses,
-			deleteStatuses,
-		} = uiConstants;
-
 		test( 'setActiveTab() creates an action to set the active tab', () => {
 			const expected = {
-				type: actions.SET_ACTIVE_TAB,
+				type: UI_ACTIONS.SET_ACTIVE_TAB,
 				activeTab: 'labels',
 			};
 
 			expect( setActiveTab( 'labels' ) ).toEqual( expected );
 		} );
 
-		test( 'setSaveStatus() creates an action to change the save status', () => {
+		test( 'setSaveStatus() creates a function to create an action to change the save status', () => {
 			const expected = {
-				type: actions.SET_SAVE_STATUS,
-				saveStatus: saveStatuses.SAVE_SUCCESS,
+				type: UI_ACTIONS.SET_SAVE_STATUS,
+				saveStatus: SAVE_STATUSES.SAVE_SUCCESS,
+				result: {},
 				message: 'Saved successfully.',
 			};
 
 			const result = setSaveStatus(
-				saveStatuses.SAVE_SUCCESS,
-				'Saved successfully.'
-			);
+				SAVE_STATUSES.SAVE_SUCCESS,
+			)( {}, 'Saved successfully.' );
 
 			expect( result ).toEqual( expected );
 		} );
 
-		test( 'setDeleteStatus() creates an action to change the delete status', () => {
+		test( 'setDeleteStatus() creates a function to create action to change the delete status', () => {
 			const expected = {
-				type: actions.SET_DELETE_STATUS,
-				deleteStatus: deleteStatuses.DELETING,
+				type: UI_ACTIONS.SET_DELETE_STATUS,
+				deleteStatus: DELETE_STATUSES.DELETING,
+				result: {},
 				message: 'Deleted.',
 			};
 
 			const result = setDeleteStatus(
-				deleteStatuses.DELETING,
-				'Deleted.'
-			);
+				DELETE_STATUSES.DELETING,
+			)( {}, 'Deleted.' );
+
+			expect( result ).toEqual( expected );
+		} );
+
+		test( 'setGroupSaveStatus() creates a function to create an action to change the group\'s save status', () => {
+			const expected = {
+				type: UI_ACTIONS.SET_GROUP_SAVE_STATUS,
+				saveStatus: SAVE_STATUSES.SAVE_SUCCESS,
+				result: {},
+				message: 'Saved successfully.',
+			};
+
+			const result = setGroupSaveStatus(
+				SAVE_STATUSES.SAVE_SUCCESS,
+			)( {}, 'Saved successfully.' );
+
+			expect( result ).toEqual( expected );
+		} );
+
+		test( 'setGroupDeleteStatus() creates a function to create action to change the group\'s delete status', () => {
+			const expected = {
+				type: UI_ACTIONS.SET_GROUP_DELETE_STATUS,
+				deleteStatus: DELETE_STATUSES.DELETING,
+				result: {},
+				message: 'Deleted.',
+			};
+
+			const result = setGroupDeleteStatus(
+				DELETE_STATUSES.DELETING,
+			)( {}, 'Deleted.' );
 
 			expect( result ).toEqual( expected );
 		} );
@@ -72,10 +116,8 @@ describe( 'actions', () => {
 
 	// Current Pod Options
 	describe( 'option actions', () => {
-		const { actions } = currentPodConstants;
-
 		test( 'setPodName() should return an action to set the pod name', () => {
-			const action = actions.SET_POD_NAME;
+			const action = CURRENT_POD_ACTIONS.SET_POD_NAME;
 			const name = 'xyzzyy';
 
 			const expected = {
@@ -87,7 +129,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'setOptionValue() should return an action to set the option value', () => {
-			const action = actions.SET_OPTION_VALUE;
+			const action = CURRENT_POD_ACTIONS.SET_OPTION_VALUE;
 			const name = 'foo';
 			const value = 'bar';
 
@@ -101,7 +143,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'setOptionsValues()', () => {
-			const action = actions.SET_OPTIONS_VALUES;
+			const action = CURRENT_POD_ACTIONS.SET_OPTIONS_VALUES;
 
 			const newOptions = {
 				first: 'First Value',
@@ -124,7 +166,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'addGroup() returns an action to create a new group', () => {
-			const action = actions.ADD_GROUP;
+			const action = CURRENT_POD_ACTIONS.ADD_GROUP;
 
 			const expected = {
 				type: action,
@@ -134,30 +176,63 @@ describe( 'actions', () => {
 			expect( addGroup( 'New Group Name 123' ) ).toEqual( expected );
 		} );
 
-		test( 'deleteGroup() returns an action to delete a group by its name', () => {
-			const action = actions.DELETE_GROUP;
-
-			const expected = {
-				type: action,
-				groupName: 'New Group Name 123',
-			};
-
-			expect( deleteGroup( 'New Group Name 123' ) ).toEqual( expected );
-		} );
-
 		test( 'moveGroup() should return an action to move a group', () => {
-			const action = actions.MOVE_GROUP;
 			const oldIndex = 3;
 			const newIndex = 1;
 
 			const expected = {
-				type: action,
+				type: CURRENT_POD_ACTIONS.MOVE_GROUP,
 				oldIndex,
 				newIndex,
 			};
 
 			const result = moveGroup( oldIndex, newIndex );
 			expect( result ).toEqual( expected );
+		} );
+
+		test( 'savePod() returns an action to save a pod by its ID', () => {
+			const action = CURRENT_POD_ACTIONS.API_REQUEST;
+
+			const result = savePod( 123 );
+
+			expect( result.type ).toEqual( action );
+			expect( result.payload.onSuccess[ 0 ]().type ).toEqual( UI_ACTIONS.SET_SAVE_STATUS );
+			expect( result.payload.onSuccess[ 1 ]().type ).toEqual( CURRENT_POD_ACTIONS.SET_OPTIONS_VALUES );
+			expect( result.payload.onFailure().type ).toEqual( UI_ACTIONS.SET_SAVE_STATUS );
+			expect( result.payload.onStart().type ).toEqual( UI_ACTIONS.SET_SAVE_STATUS );
+		} );
+
+		test( 'deletePod() returns an action to delete a pod by its ID', () => {
+			const action = CURRENT_POD_ACTIONS.API_REQUEST;
+
+			const result = deletePod( 123 );
+
+			expect( result.type ).toEqual( action );
+			expect( result.payload.onSuccess().type ).toEqual( UI_ACTIONS.SET_DELETE_STATUS );
+			expect( result.payload.onFailure().type ).toEqual( UI_ACTIONS.SET_DELETE_STATUS );
+			expect( result.payload.onStart().type ).toEqual( UI_ACTIONS.SET_DELETE_STATUS );
+		} );
+
+		test( 'saveGroup() returns an action to save a pod by its ID', () => {
+			const action = CURRENT_POD_ACTIONS.API_REQUEST;
+
+			const result = saveGroup( 123 );
+
+			expect( result.type ).toEqual( action );
+			expect( result.payload.onSuccess().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
+			expect( result.payload.onFailure().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
+			expect( result.payload.onStart().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
+		} );
+
+		test( 'deleteGroup() returns an action to delete a group by its ID', () => {
+			const action = CURRENT_POD_ACTIONS.API_REQUEST;
+
+			const result = deleteGroup( 123 );
+
+			expect( result.type ).toEqual( action );
+			expect( result.payload.onSuccess().type ).toEqual( UI_ACTIONS.SET_GROUP_DELETE_STATUS );
+			expect( result.payload.onFailure().type ).toEqual( UI_ACTIONS.SET_GROUP_DELETE_STATUS );
+			expect( result.payload.onStart().type ).toEqual( UI_ACTIONS.SET_GROUP_DELETE_STATUS );
 		} );
 	} );
 } );

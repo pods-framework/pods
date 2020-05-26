@@ -138,9 +138,9 @@ export const currentPod = ( state = {}, action = {} ) => {
 		case ACTIONS.DELETE_GROUP: {
 			return {
 				...state,
-				groups: state.groups.filter(
+				groups: state.groups ? state.groups.filter(
 					( group ) => group.name !== action.groupName
-				),
+				) : undefined,
 			};
 		}
 

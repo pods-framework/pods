@@ -13,20 +13,26 @@ import {
 	getPodOption,
 
 	//-- Pod Groups
-	// @todo add these tests back in when working on
-	// the Manage Groups functionality
-	// getGroups,
-	// getGroup,
+	getGroups,
+	getGroup,
+
+	// @todo add these when working on Manage Fields work
 	// getGroupFields,
 	// groupFieldList,
 
-	// Global Pod
+	// Global Pod config
 	getGlobalPodOptions,
 	getGlobalPodOption,
 	getGlobalPodGroups,
 	getGlobalPodGroup,
 	getGlobalPodGroupFields,
+
+	// -- Global Groups config
 	getGlobalGroupOptions,
+
+	// @todo enable this when working on the Manage Fields work
+	// -- Global Field config
+	// getGlobalFieldOptions
 
 	// UI
 	getActiveTab,
@@ -102,6 +108,56 @@ describe( 'Current Pod option selectors', () => {
 
 		expect( result ).toEqual( 'bar' );
 	} );
+
+	test( 'getGroups returns the pod\'s groups', () => {
+		const groups = [
+			{
+				id: 1,
+				name: 'test-group',
+				fields: [],
+			},
+			{
+				id: 2,
+				name: 'test-group-2',
+				fields: [],
+			},
+		];
+
+		const state = deepFreeze(
+			paths.CURRENT_POD.createTree( { groups } )
+		);
+
+		const result = getGroups( state );
+
+		expect( result ).toEqual( groups );
+	} );
+
+	test( 'getGroup returns a pod\'s group by name', () => {
+		const groups = [
+			{
+				id: 1,
+				name: 'test-group',
+				fields: [],
+			},
+			{
+				id: 2,
+				name: 'test-group-2',
+				fields: [],
+			},
+		];
+
+		const state = deepFreeze(
+			paths.CURRENT_POD.createTree( { groups } )
+		);
+
+		const result = getGroup( state, 'test-group-2' );
+
+		expect( result ).toEqual( {
+			id: 2,
+			name: 'test-group-2',
+			fields: [],
+		} );
+	} );
 } );
 
 describe( 'Global Pod option selectors', () => {
@@ -116,8 +172,6 @@ describe( 'Global Pod option selectors', () => {
 				},
 			},
 		);
-
-		console.log( state );
 	} );
 
 	test( 'getGlobalPodOptions returns all of the global pod\'s options', () => {
@@ -156,7 +210,7 @@ describe( 'Global Pod option selectors', () => {
 	test( 'getGlobalGroupOptions returns the group config fields', () => {
 		const result = getGlobalGroupOptions( state );
 
-		expect( result.length ).toEqual( 2 );
+		expect( result ).toEqual( GLOBAL_GROUP );
 	} );
 } );
 

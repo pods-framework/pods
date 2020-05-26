@@ -730,15 +730,15 @@ class PodsInit {
 		);
 
 		// MV stuff
-		$pods_dfv_options_file = file_get_contents( PODS_DIR . 'ui/js/pods-dfv/pods-dfv.min.asset.json' );
+		$pods_dfv_options_file = file_get_contents( PODS_DIR . 'ui/js/dfv/pods-dfv.min.asset.json' );
 
 		$pods_dfv_options = json_decode( $pods_dfv_options_file, true );
 
 		wp_register_script(
 			'pods-dfv',
-			PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js',
+			PODS_URL . 'ui/js/dfv/pods-dfv.min.js',
 			array_merge(
-				$pods_dfv_options['dependencies'] ?? [],
+				$pods_dfv_options['dependencies'],
 				[
 					'jquery',
 					'jquery-ui-core',
@@ -749,7 +749,7 @@ class PodsInit {
 					'wp-components',
 				]
 			),
-			$pods_dfv_options['version'] ?? PODS_VERSION,
+			$pods_dfv_options['version'],
 			true
 		);
 
@@ -1574,6 +1574,7 @@ class PodsInit {
 			}
 		}
 
+		do_action( 'pods_setup_content_types' );
 	}
 
 	/**
@@ -2041,6 +2042,17 @@ class PodsInit {
 
 		$ran = true;
 
+		tribe_register_provider( \Pods\Blocks\Service_Provider::class );
+		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
+
+		// Add WP-CLI commands.
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			//require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
+			//require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
+
+			tribe_register_provider( \Pods\CLI\Service_Provider::class );
+		}
+
 		$this->load_i18n();
 
 		if ( ! did_action( 'plugins_loaded' ) ) {
@@ -2093,16 +2105,6 @@ class PodsInit {
 		// Remove Common menus
 		add_action( 'admin_menu', array( $this, 'remove_common_menu' ), 11 );
 		add_action( 'network_admin_menu', array( $this, 'remove_common_network_menu' ), 11 );
-
-		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
-
-		// Add WP-CLI commands.
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			//require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
-			//require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
-
-			tribe_register_provider( \Pods\CLI\Service_Provider::class );
-		}
 	}
 
 	/**

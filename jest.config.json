@@ -1,7 +1,7 @@
 {
   "preset": "@wordpress/jest-preset-default",
   "roots": [
-    "<rootDir>/ui/js/pods-dfv/src/",
+    "<rootDir>/ui/js/dfv/src/",
     "<rootDir>/ui/js/blocks/src/"
   ],
   "setupFiles": [

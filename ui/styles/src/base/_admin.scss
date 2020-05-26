@@ -833,3 +833,12 @@ body[class*="settings_page_pods-"] {
 		margin-right: 80px;
 	}
 }
+
+.pods-inspector-row .components-datetime {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.pods-inspector-row .full-width-base-control {
+	width: 100%;
+}

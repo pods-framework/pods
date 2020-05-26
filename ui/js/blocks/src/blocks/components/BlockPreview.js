@@ -18,6 +18,8 @@ import {
 	format as formatDate,
 } from '@wordpress/date';
 
+import ServerSideRender from '@wordpress/server-side-render';
+
 /**
  * Internal dependencies
  */
@@ -203,10 +205,25 @@ const renderField = ( field, attributes ) => {
 };
 
 const BlockPreview = ( {
-	template,
-	fields = [],
+	block,
 	attributes = {}
 } ) => {
+	const {
+		fields = [],
+		template,
+		blockName,
+		renderType,
+	} = block;
+
+	if ( 'php' === renderType ) {
+		return (
+			<ServerSideRender
+				block={ blockName }
+				attributes={ attributes }
+			/>
+		);
+	}
+
 	return (
 		<>
 			{ renderTemplate( template, fields, attributes, renderField ) }

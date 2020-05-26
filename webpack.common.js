@@ -4,8 +4,8 @@ const path = require( 'path' );
 
 module.exports = {
 	entry: {
-		'pods-dfv/pods-dfv': './ui/js/pods-dfv/src/pods-dfv.js',
-		'blocks/build/block-creator': './ui/js/blocks/src/index.js',
+		'dfv/pods-dfv': './ui/js/dfv/src/pods-dfv.js',
+		'blocks/pods-blocks-api': './ui/js/blocks/src/index.js',
 	},
 	output: {
 		path: path.resolve( __dirname, 'ui/js' ),

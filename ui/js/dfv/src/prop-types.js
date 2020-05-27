@@ -86,4 +86,5 @@ export const GROUP_PROP_TYPE_SHAPE = PropTypes.exact( {
 	] ),
 	storage_type: PropTypes.string,
 	weight: PropTypes.number,
+	_locale: PropTypes.string,
 } );

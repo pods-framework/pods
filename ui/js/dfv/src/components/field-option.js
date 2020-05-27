@@ -70,7 +70,11 @@ PodsFieldOption.propTypes = {
 	label: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	onChange: PropTypes.func.isRequired,
-	value: PropTypes.any.isRequired,
+	value: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.bool,
+		PropTypes.number,
+	] ),
 };
 
 export default PodsFieldOption;

@@ -258,10 +258,18 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 			if ( ( 'test_rel_media' === $pod_name || 'media' === $pod_name ) && empty( self::$related_fields[ $field_name ]['id'] ) ) {
 				// Get and store sample image for use later
-				$sample_image_id = pods_attachment_import( self::$sample_image, null, false, true );
+				$attachment = [
+					'post_mime_type' => 'image/png',
+					'guid'           => self::$sample_image,
+					'post_parent'    => null,
+					'post_title'     => basename( self::$sample_image ),
+					'post_content'   => '',
+				];
+
+				$sample_image_id = wp_insert_attachment( $attachment );
 
 				if ( empty( $sample_image_id ) ) {
-					throw new \Exception( sprintf( 'The sample image may have been deleted! Sample image: %s', self::$sample_image ) );
+					throw new \Exception( sprintf( 'The sample image wp_insert_attachment is not working', self::$sample_image ) );
 				}
 
 				self::$related_fields[ $field_name ]['id'] = $sample_image_id;

@@ -11,6 +11,9 @@ on:
       - '.github/workflows/tests-js.yml'
 jobs:
   test:
+    strategy:
+      matrix:
+        suite: [ 'test-dfv', 'jest-tests' ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,7 +23,5 @@ jobs:
           node-version: '12.x'
       - name: Install dependencies
         run: npm install
-      - name: Run JS DFV test suite
-        run: npm run test-dfv
-      - name: Run JS Jest test suite
-        run: npm run jest-tests
+      - name: Run JS test suite
+        run: npm run ${{ matrix.suite }}

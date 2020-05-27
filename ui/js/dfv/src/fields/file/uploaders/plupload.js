@@ -116,8 +116,6 @@ export const Plupload = PodsFileUploader.extend( {
 			if ( 'object' !== typeof json || jQuery.isEmptyObject( json ) ) {
 				if ( window.console ) {
 					console.log( response );
-				}
-				if ( window.console ) {
 					console.log( json );
 				}
 

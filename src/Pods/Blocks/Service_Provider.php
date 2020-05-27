@@ -3,7 +3,6 @@
 namespace Pods\Blocks;
 
 use Pods\Blocks\Types\Field;
-use Pods\Blocks\Types\Field_Current;
 use Pods\Blocks\Types\Form;
 use Pods\Blocks\Types\Item_List;
 use Pods\Blocks\Types\Item_Single;
@@ -32,7 +31,6 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	public function register() {
 		tribe_singleton( 'pods.blocks', API::class );
 		tribe_singleton( 'pods.blocks.field', Field::class, [ 'register_with_pods' ] );
-		tribe_singleton( 'pods.blocks.field-current', Field_Current::class, [ 'register_with_pods' ] );
 		tribe_singleton( 'pods.blocks.form', Form::class, [ 'register_with_pods' ] );
 		tribe_singleton( 'pods.blocks.list', Item_List::class, [ 'register_with_pods' ] );
 		tribe_singleton( 'pods.blocks.single', Item_Single::class, [ 'register_with_pods' ] );

@@ -16,8 +16,6 @@ import PodsFieldOption from 'dfv/src/components/field-option';
 const meetsDependencies = ( dependencies, allOptionValues ) => {
 	let retVal = true;
 
-	console.log( 'meetsDependencies', dependencies, allOptionValues );
-
 	if ( dependencies && isObject( dependencies ) ) {
 		each( dependencies, ( dependentValue, dependentOptionName ) => {
 			// Loose comparison required, values may be 1/0 expecting true/false
@@ -38,6 +36,7 @@ const DependentFieldOption = ( {
 	name,
 	label,
 	value,
+	default: defaultValue,
 	allOptionValues,
 	dependents,
 	description,
@@ -64,7 +63,7 @@ const DependentFieldOption = ( {
 		<PodsFieldOption
 			fieldType={ fieldType }
 			name={ name }
-			value={ value }
+			value={ value || defaultValue }
 			label={ label }
 			onChange={ handleInputChange }
 			helpText={ helpText }

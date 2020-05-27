@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
-import sanitizeHtml from 'sanitize-html';
 
 /* WordPress dependencies */
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
-import { cleanForSlug } from '@wordpress/editor';
+
+import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 
 const ENTER_KEY = 13;
 const ESCAPE_KEY = 27;
-
-// Helper functions
-const sanitizeSlug = ( value ) => cleanForSlug( sanitizeHtml( value, { allowedTags: [] } ) );
 
 // Helper components
 const NotEditing = ( {
@@ -128,8 +125,10 @@ const Sluggable = ( {
 		// if that happens.
 		if ( ! cleanLocalValue.length ) {
 			setLocalValue( value );
+			return;
 		}
 
+		setLocalValue( cleanLocalValue );
 		updateValue( cleanLocalValue );
 	};
 

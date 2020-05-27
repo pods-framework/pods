@@ -281,6 +281,7 @@ class IfTest extends Pods_UnitTestCase {
 		$site_url = site_url();
 
 		$valid = array(
+			'<a href="' . $site_url . '/first-post-title">first post title</a>',
 			'<a href="' . $site_url . '/?test_if=first-post-title">first post title</a>',
 			'<a href="' . $site_url . '/?p=' . $id1. '">first post title</a>',
 		);

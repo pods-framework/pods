@@ -4,7 +4,6 @@ import * as PropTypes from 'prop-types';
 // WordPress dependencies
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import { STORE_KEY_EDIT_POD } from 'dfv/src/admin/edit-pod/store/constants';
@@ -59,12 +58,12 @@ const FieldGroups = ( {
 	return (
 		<div className="field-groups">
 			<div className="pods-button-group_container">
-				<Button
-					isPrimary
+				<button
+					className="pods-button-group_add-new"
 					onClick={ ( e ) => handleAddGroup( e ) }
 				>
 					{ __( '+ Add New Group', 'pods' ) }
-				</Button>
+				</button>
 			</div>
 
 			{ groups.map( ( group, index ) => {
@@ -91,12 +90,12 @@ const FieldGroups = ( {
 			<GroupDragLayer />
 
 			<div className="pods-button-group_container">
-				<Button
-					isPrimary
+				<button
+					className="pods-button-group_add-new"
 					onClick={ ( e ) => handleAddGroup( e ) }
 				>
 					{ __( '+ Add New Group', 'pods' ) }
-				</Button>
+				</button>
 			</div>
 		</div>
 	);

@@ -1,3 +1,7 @@
+$border-radius: 9px;
+$color--light-grey: #E2E4E7;
+$color--super-light-grey: #F9F9F9;
+
 .opacity-ghost {
 	transition: all .8s ease;
 	opacity: 0.4;
@@ -11,8 +15,7 @@
 	background-color: #fff;
 	align-items: center;
 	transition: 200ms ease background-color;
-	// border-bottom: 1px solid #f3f3f3;
-
+	padding: .7em 0;
 
 	&:hover {
 		background-color: #f3f3f3;
@@ -90,29 +93,11 @@
 
 .pods-field_label,
 .pods-field_type {
-	width: 30%;
+	// width: 30%;
 }
 
 .pods-field_name {
 	display: none;
-}
-
-.pods-field_wrapper-labels {
-	display: flex;
-	width: 100%;
-	background-color: #f5f5f5;
-	font-weight: 600;
-	border: 1px solid #e5e5e5;
-	border-left: none;
-	border-right: none;
-
-	&:first-child {
-		border-top: none;
-	}
-
-	&:last-child {
-		// border-bottom: none;
-	}
 }
 
 .pods-field_wrapper-labels .pods-field_handle {
@@ -130,8 +115,10 @@
 }
 
 .pods-field-group-wrapper {
-	background-color: #fff;
 	margin-bottom: 10px;
+	border-radius: $border-radius;
+	border: 1px solid $color--light-grey;
+	background-color: #fff;
 
 	&>.pods-field_wrapper {
 		background-color: #f3f3f3;
@@ -151,8 +138,9 @@
 	display: flex;
 	justify-content: space-between;
 	color: #333;
-	border: 1px solid #e5e5e5;
+	// border: 1px solid #e5e5e5;
 	align-items: center;
+	// border-radius: $border-radius;
 }
 
 .pods-field-group_title > button {
@@ -182,6 +170,22 @@
 	justify-content: flex-end;
 	margin-top: 10px;
 	margin-bottom: 10px;
+}
+
+.pods-button-group_add-new {
+	text-align: center;
+	border: 2px dashed $color--light-grey;
+	background: none;
+	width: 100%;
+	border-radius: $border-radius;
+	padding: .7em 1em;
+	transition: 300ms ease background-color;
+}
+
+.pods-button-group_add-new:focus,
+.pods-button-group_add-new:hover {
+	background-color: $color--light-grey;
+	cursor: pointer;
 }
 
 .pods-field-group_toggle {

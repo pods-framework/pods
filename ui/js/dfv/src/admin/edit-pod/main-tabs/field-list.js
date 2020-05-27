@@ -4,7 +4,7 @@ import { useDrag, useDrop } from 'react-dnd';
 
 // WordPress dependencies
 import { __ } from '@wordpress/i18n';
-import { Dashicon } from '@wordpress/components';
+import { Dashicon, Button } from '@wordpress/components';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
 import './manage-fields.scss';
@@ -87,30 +87,33 @@ export const FieldListItem = ( props, ref ) => {
 				<Dashicon icon="menu" />
 			</div>
 			<div className="pods-field pods-field_label">
-				<b>Field Label</b>
-				<br />
 				{ label }<span className={ required ? 'pods-field_required' : '' }>*</span>
 				<div className="pods-field_id"> [id = { id }]</div>
+				<div className="pods-field_controls-container">
+					{/* TODO: This whole section should probably be rewritten to use wp components to match core better */}
+					<span onClick={ ( e ) => {
+						console.log(e); // TODO: Needs to edit field
+					} }>
+						Edit
+					</span>
+					<span onClick={ ( e ) => {
+						e.stopPropagation(); cloneField( type );
+					} }>
+						Duplicate
+					</span>
+					<span onClick={ ( e ) => {
+						e.stopPropagation(); deleteField( name );
+					} }>
+						Delete
+					</span>
+				</div>
 			</div>
 			<div className="pods-field pods-field_name">
-				<b>Field Name</b>
-				<br />
 				{ name }
 			</div>
 			<div className="pods-field pods-field_type">
-				<b>Type</b>
-				<br />
 				{ type }
 				<div className="pods-field_id"> [type = [STILL NEED THIS]]</div>
-			</div>
-			<div className="pods-field pods-field_actions">
-				<Dashicon icon="edit" />
-				<Dashicon icon="admin-page" onClick={ ( e ) => {
-					e.stopPropagation(); cloneField( type );
-				} } />
-				<Dashicon icon="trash" onClick={ ( e ) => {
-					e.stopPropagation(); deleteField( name );
-				} } />
 			</div>
 		</div>
 	);
@@ -132,12 +135,13 @@ const FieldList = ( props ) => {
 	if ( 0 === props.fields.length ) {
 		return (
 			<div className="pods-manage-fields no-fields">
-				<button
+				<Button
+					isPrimary
 					className="pods-field-group_add_field_link"
 					onClick={ () => addField() }
 				>
 					{ __( 'Add Field', 'pods' ) }
-				</button>
+				</Button>
 				{ __( 'There are no fields in this group', 'pods' ) }
 			</div>
 		);
@@ -145,31 +149,44 @@ const FieldList = ( props ) => {
 
 	return (
 		<div className="pods-manage-fields">
+
+			<Button
+				isPrimary
+				className="pods-field-group_add_field_link"
+				onClick={ () => addField() } // TODO: This should add field to top of list, not the bottom
+			>
+				{ __( 'Add Field', 'pods' ) }
+			</Button>
+
 			<div className="pods-field_wrapper-labels">
 				<div className="pods-field_wrapper-label-items">Label</div>
 				<div className="pods-field_wrapper-label-items">Name</div>
 				<div className="pods-field_wrapper-label-items">Field Type</div>
 			</div>
 
-			<button
+			<div className="pods-field_wrapper-items">
+				{ props.fields.map( ( field, index ) => (
+					<FieldListItem
+						key={ field.id }
+						field={ field }
+						index={ index }
+						// position={ field.position }
+						moveField={ moveField }
+						groupName={ groupName }
+						cloneField={ cloneField }
+						deleteField={ deleteField }
+					/>
+				) ) }
+			</div>
+
+			<Button
+				isPrimary
 				className="pods-field-group_add_field_link"
 				onClick={ () => addField() }
 			>
 				{ __( 'Add Field', 'pods' ) }
-			</button>
+			</Button>
 
-			{ props.fields.map( ( field, index ) => (
-				<FieldListItem
-					key={ field.id }
-					field={ field }
-					index={ index }
-					// position={ field.position }
-					moveField={ moveField }
-					groupName={ groupName }
-					cloneField={ cloneField }
-					deleteField={ deleteField }
-				/>
-			) ) }
 		</div>
 	);
 };

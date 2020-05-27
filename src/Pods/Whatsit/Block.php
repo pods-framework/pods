@@ -33,19 +33,20 @@ class Block extends Pod {
 		$name      = str_replace( '_', '-', sanitize_title_with_dashes( $name ) );
 
 		$block_args = [
-			'blockName'     => $namespace . '/' . $name,
-			'title'         => $this->get_arg( 'label' ),
-			'description'   => $this->get_arg( 'description' ),
-			'renderType'    => $this->get_arg( 'renderType', 'js' ),
-			'category'      => $this->get_arg( 'category', 'layout' ),
-			'icon'          => $this->get_arg( 'icon', 'editor-insertmore' ),
-			'keywords'      => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
-			'supports'      => $this->get_arg( 'supports', [
+			'blockName'       => $namespace . '/' . $name,
+			'blockGroupLabel' => $this->get_arg( 'group_label', __( 'Options', 'pods' ) ),
+			'title'           => $this->get_arg( 'label' ),
+			'description'     => $this->get_arg( 'description' ),
+			'renderType'      => $this->get_arg( 'renderType', 'js' ),
+			'category'        => $this->get_arg( 'category', 'layout' ),
+			'icon'            => $this->get_arg( 'icon', 'editor-insertmore' ),
+			'keywords'        => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
+			'supports'        => $this->get_arg( 'supports', [
 				'html' => false,
 			] ),
-			'editor_script' => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
-			'fields'        => $this->get_block_fields(),
-			'attributes'    => [
+			'editor_script'   => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
+			'fields'          => $this->get_block_fields(),
+			'attributes'      => [
 				'className' => [
 					'type' => 'string',
 				],
@@ -88,27 +89,6 @@ class Block extends Pod {
 		$fields = array_values( array_filter( $fields ) );
 
 		return $fields;
-	}
-
-	/**
-	 * Get list of Block API fields for the block.
-	 *
-	 * @since 2.8
-	 *
-	 * @return array List of Block API fields.
-	 */
-	public function get_block_field_attributes() {
-		/** @var Block_Field[] $fields */
-		$fields = $this->get_fields();
-
-		$attributes = array_map( static function ( $field ) {
-			return $field->get_block_attribute_args();
-		}, $fields );
-
-		// Ensure the response has no empty values.
-		$attributes = array_filter( $attributes );
-
-		return $attributes;
 	}
 
 	/**

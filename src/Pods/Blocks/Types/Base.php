@@ -85,4 +85,24 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 	public function block() {
 		return [];
 	}
+
+	/*
+	 * {@inheritDoc}
+	 *
+	 * @since TBD
+	*/
+	public function attributes( $params = [] ) {
+		// Convert any potential array values for pick/boolean.
+		foreach ( $params as $param => $value ) {
+			if ( is_array( $value ) ) {
+				if ( isset( $value['label'], $value['value'] ) ) {
+					$params[ $param ] = $value['value'];
+				} elseif ( isset( $value[0]['label'], $value[0]['value'] ) ) {
+					$params[ $param ] = array_values( wp_list_pluck( $value, 'value' ) );
+				}
+			}
+		}
+
+		return parent::attributes( $params );
+	}
 }

@@ -52,7 +52,49 @@ class Item_Single extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		return [];
+		$api = pods_api();
+
+		$all_pods = $api->load_pods( [ 'names' => true ] );
+		$all_pods = array_merge( [
+			'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
+		], $all_pods );
+
+		$all_templates = $api->load_templates( [ 'names' => true ] );
+		$all_templates = array_merge( [
+			'' => '- ' . __( 'Use Custom Template', 'pods' ) . ' -',
+		], $all_templates );
+
+		return [
+			[
+				'name'    => 'name',
+				'label'   => __( 'Pod name', 'pods' ),
+				'type'    => 'pick',
+				'data'    => $all_pods,
+				'default' => '',
+			],
+			[
+				'name'  => 'slug',
+				'label' => __( 'Slug / ID (optional)', 'pods' ),
+				'type'  => 'text',
+			],
+			[
+				'name'  => 'use_current',
+				'label' => __( 'Use Current Item (optional)', 'pods' ),
+				'type'  => 'boolean',
+			],
+			[
+				'name'    => 'template',
+				'label'   => __( 'Template (optional)', 'pods' ),
+				'type'    => 'pick',
+				'data'    => $all_templates,
+				'default' => '',
+			],
+			[
+				'name'  => 'template_custom',
+				'label' => __( 'Custom Template (optional)', 'pods' ),
+				'type'  => 'paragraph',
+			],
+		];
 	}
 
 	/**
@@ -66,14 +108,16 @@ class Item_Single extends Base {
 	 */
 	public function render( $attributes = [] ) {
 		$attributes = $this->attributes( $attributes );
-
 		$attributes = array_map( 'trim', $attributes );
 
-		if ( empty( $attributes['field'] ) ) {
+		if ( ( ( empty( $args['name'] ) && empty( $args['slug'] ) ) || empty( $args['use_current'] ) ) && empty( $attributes['template'] ) && empty( $attributes['template_custom'] ) ) {
+			if ( is_admin() || wp_is_json_request() ) {
+				return __( 'No preview available, please fill in more Block details.', 'pods' );
+			}
+
 			return '';
 		}
 
-		// Handle name/slug.
-		return pods_shortcode( $attributes );
+		return pods_shortcode( $attributes, $attributes['template_custom'] );
 	}
 }

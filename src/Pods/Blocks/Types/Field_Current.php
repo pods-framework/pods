@@ -66,13 +66,12 @@ class Field_Current extends Base {
 
 		if ( empty( $attributes['field'] ) ) {
 			if ( is_admin() || wp_is_json_request() ) {
-				return __( 'No preview available.', 'pods' );
+				return __( 'No preview available, please specify "Field name".', 'pods' );
 			}
 
 			return '';
 		}
 
-		// Handle name/slug.
 		return pods_shortcode( $attributes );
 	}
 

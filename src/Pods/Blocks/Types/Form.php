@@ -51,7 +51,36 @@ class Form extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		return [];
+		$all_pods = pods_api()->load_pods( [ 'names' => true ] );
+
+		return [
+			[
+				'name'  => 'name',
+				'label' => __( 'Pod name', 'pods' ),
+				'type'  => 'pick',
+				'data'  => $all_pods,
+			],
+			[
+				'name'  => 'slug',
+				'label' => __( 'Slug or ID (optional)', 'pods' ),
+				'type'  => 'text',
+			],
+			[
+				'name'  => 'fields',
+				'label' => __( 'Field names (comma-separated) (optional)', 'pods' ),
+				'type'  => 'paragraph',
+			],
+			[
+				'name'  => 'label',
+				'label' => __( 'Submit button label (optional)', 'pods' ),
+				'type'  => 'text',
+			],
+			[
+				'name'  => 'thank_you',
+				'label' => __( 'Redirect URL (optional)', 'pods' ),
+				'type'  => 'text',
+			],
+		];
 	}
 
 	/**
@@ -65,14 +94,21 @@ class Form extends Base {
 	 */
 	public function render( $attributes = [] ) {
 		$attributes = $this->attributes( $attributes );
-
 		$attributes = array_map( 'trim', $attributes );
 
-		if ( empty( $attributes['field'] ) ) {
+		if ( empty( $attributes['name'] ) ) {
+			if ( is_admin() || wp_is_json_request() ) {
+				return __( 'No preview available, please specify "Pod name".', 'pods' );
+			}
+
 			return '';
 		}
 
-		// Handle name/slug.
-		return pods_shortcode( $attributes );
+		// Prevent any previews of this block.
+		if ( is_admin() || wp_is_json_request() ) {
+			return __( 'No preview is available for this Pods Form, you will see it on the frontend.', 'pods' );
+		}
+
+		return pods_shortcode_form( $attributes );
 	}
 }

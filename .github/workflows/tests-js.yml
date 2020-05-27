@@ -11,13 +11,13 @@ jobs:
       - name: Checkout automation tools
         uses: actions/checkout@v1
         with:
-          repository: moderntribe/products-test-automation
+          repository: moderntribe/tric
           ref: master
           path: tric
           fetch-depth: 1
       - name: Add tric to the PATH
-        run: echo "::set-env name=PATH::${GITHUB_WORKSPACE}/../tric/dev:$PATH"
-      - name: Set products-test-automation run_context() to tric
+        run: echo "::set-env name=PATH::${GITHUB_WORKSPACE}/../tric:$PATH"
+      - name: Set tric run_context() for tric
         run: echo "::set-env name=TRIC::1"
       - name: Start ssh-agent
         run: |
@@ -25,14 +25,21 @@ jobs:
           ssh-agent -a /tmp/ssh_agent.sock;
       - name: Export SSH_AUTH_SOCK env var
         run: echo "::set-env name=SSH_AUTH_SOCK::/tmp/ssh_agent.sock"
-      - name: tric use pods
+      - name: Set up tric for CI
         run: |
           cd ${GITHUB_WORKSPACE}/..
+          tric here
           tric interactive off
           tric build-prompt off
-          tric here
-          tric use pods
+          tric xdebug off
           tric debug on
+          tric info
+       - name: Print the current tric configuration
+         run: tric config
+       - name: Set up pods
+         run: |
+           tric use pods
+           tric composer install
       - name: tric npm install
         run: tric npm install
       - name: Run JS DFV test suite

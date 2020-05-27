@@ -43,12 +43,12 @@ jobs:
           tric xdebug off
           tric debug on
           tric info
-       - name: Print the current tric configuration
-         run: tric config
-       - name: Set up pods
-         run: |
-           tric use pods
-           tric composer install
+      - name: Print the current tric configuration
+        run: tric config
+      - name: Set up pods
+        run: |
+          tric use pods
+          tric composer install
       - name: tric npm install
         run: tric npm install
       - name: Run JS DFV test suite

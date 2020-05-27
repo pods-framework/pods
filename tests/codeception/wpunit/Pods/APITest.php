@@ -38,7 +38,7 @@ class APITest extends Pods_UnitTestCase {
 	 */
 	protected $pod_id2 = 0;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->api = pods_api();
@@ -47,7 +47,7 @@ class APITest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->pod_id  = null;
 		$this->pod_id2 = null;
 		$this->api     = null;

@@ -25,13 +25,13 @@ class PodsField_CurrencyTest extends Pods_UnitTestCase {
 		'currency_decimal_handling' => 'default',
 	];
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->field = new PodsField_Currency();
 
 		parent::setUp();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $this->field );
 
 		parent::tearDown();

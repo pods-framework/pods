@@ -15,7 +15,7 @@ use WP_Post;
  */
 class Post_TypeTest extends Pods_WhatsitTestCase {
 
-	public function tearDown() {
+	public function tearDown(): void {
 		// Reset fallback mode.
 		$this->pods_object_storage->fallback_mode( true );
 

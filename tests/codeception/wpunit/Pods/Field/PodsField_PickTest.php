@@ -24,13 +24,13 @@ class PodsField_PickTest extends Pods_UnitTestCase {
 		'pick_display_format_separator' => ', ',
 	];
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->field = new PodsField_Pick();
 
 		parent::setUp();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $this->field );
 
 		parent::tearDown();

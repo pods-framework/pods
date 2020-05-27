@@ -31,7 +31,7 @@ class EachTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		add_shortcode( 'test_each_recurse', function ( $args, $content ) {
@@ -78,7 +78,7 @@ class EachTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		if ( shortcode_exists( 'test_each_recurse' ) ) {
 			remove_shortcode( 'test_each_recurse' );
 		}

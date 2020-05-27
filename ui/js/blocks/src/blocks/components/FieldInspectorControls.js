@@ -35,18 +35,13 @@ const FieldInspectorControls = ( {
 				} = field;
 
 				return (
-					<PanelBody
-						title={ heading || label }
-						key={ name }
-					>
-						<PanelRow className="pods-inspector-row">
-							<RenderedField
-								field={ field}
-								attributes={ attributes }
-								setAttributes={setAttributes}
-							/>
-						</PanelRow>
-					</PanelBody>
+					<PanelRow className="pods-inspector-row">
+						<RenderedField
+							field={ field}
+							attributes={ attributes }
+							setAttributes={setAttributes}
+						/>
+					</PanelRow>
 				)
 			} ) }
 		</>

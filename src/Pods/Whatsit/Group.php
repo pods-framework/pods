@@ -52,7 +52,7 @@ class Group extends Whatsit {
 
 			$objects = pods_api()->load_fields( $args );
 
-			$this->_fields = wp_list_pluck( $objects, 'id' );
+			$this->_fields = wp_list_pluck( $objects, 'identifier' );
 
 			return $objects;
 		}

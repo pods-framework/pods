@@ -3,6 +3,9 @@
  */
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
+import {
+	PanelBody,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -18,7 +21,8 @@ import BlockPreview from './components/BlockPreview';
 const createBlockEditComponent = ( block ) => ( props ) => {
 	const {
 		fields = [],
-		template,
+		blockName,
+		blockGroupLabel,
 	} = block;
 
 	const {
@@ -30,15 +34,19 @@ const createBlockEditComponent = ( block ) => ( props ) => {
 	return (
 		<div className={ className }>
 			<InspectorControls>
-				<FieldInspectorControls
-					fields={ fields }
-					attributes={ attributes }
-					setAttributes={ setAttributes }
-				/>
+				<PanelBody
+					title={ blockGroupLabel }
+					key={ blockName }
+				>
+					<FieldInspectorControls
+						fields={ fields }
+						attributes={ attributes }
+						setAttributes={ setAttributes }
+					/>
+				</PanelBody>
 			</InspectorControls>
 			<BlockPreview
-				template={ template }
-				fields={ fields }
+				block={ block }
 				attributes={ attributes }
 			/>
 		</div>

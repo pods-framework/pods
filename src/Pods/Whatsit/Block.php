@@ -3,6 +3,7 @@
 namespace Pods\Whatsit;
 
 use Pods\Whatsit;
+use Tribe__Utils__Array;
 
 /**
  * Block class.
@@ -24,21 +25,49 @@ class Block extends Pod {
 	 * @return array List of Block API arguments.
 	 */
 	public function get_block_args() {
-		return [
-			'title'         => $this->get_arg( 'label' ),
-			'description'   => $this->get_arg( 'description' ),
-			'blockName'     => 'pods/' . $this->get_arg( 'name' ),
-			'editor_script' => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
-			'renderType'    => $this->get_arg( 'renderType', 'js' ),
-			'category'      => $this->get_arg( 'category', 'layout' ),
-			'icon'          => $this->get_arg( 'icon', 'editor-insertmore' ),
-			'keywords'      => \Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
-			'template'      => $this->get_arg( 'template', '' ),
-			'supports'      => $this->get_arg( 'supports', [
+		$namespace = $this->get_arg( 'namespace', 'pods' );
+		$name      = $this->get_arg( 'name' );
+
+		// Blocks are only allowed A-Z0-9- characters, no underscores.
+		$namespace = str_replace( '_', '-', sanitize_title_with_dashes( $namespace ) );
+		$name      = str_replace( '_', '-', sanitize_title_with_dashes( $name ) );
+
+		$block_args = [
+			'blockName'       => $namespace . '/' . $name,
+			'blockGroupLabel' => $this->get_arg( 'group_label', __( 'Options', 'pods' ) ),
+			'title'           => $this->get_arg( 'label' ),
+			'description'     => $this->get_arg( 'description' ),
+			'renderType'      => $this->get_arg( 'renderType', 'js' ),
+			'category'        => $this->get_arg( 'category', 'layout' ),
+			'icon'            => $this->get_arg( 'icon', 'editor-insertmore' ),
+			'keywords'        => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
+			'supports'        => $this->get_arg( 'supports', [
 				'html' => false,
 			] ),
-			'fields'        => $this->get_block_fields(),
+			'editor_script'   => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
+			'fields'          => $this->get_block_fields(),
+			'attributes'      => [
+				'className' => [
+					'type' => 'string',
+				],
+			],
 		];
+
+		foreach ( $block_args['fields'] as $field ) {
+			if ( ! isset( $field['attributeOptions'] ) ) {
+				continue;
+			}
+
+			$block_args['attributes'][ $field['name'] ] = $field['attributeOptions'];
+		}
+
+		if ( 'js' === $block_args['renderType'] ) {
+			$block_args['template'] = $this->get_arg( 'template', __( 'No block preview is available', 'pods' ) );
+		} elseif ( 'php' === $block_args['renderType'] ) {
+			$block_args['render_callback'] = $this->get_arg( 'render_callback' );
+		}
+
+		return $block_args;
 	}
 
 	/**
@@ -49,212 +78,17 @@ class Block extends Pod {
 	 * @return array List of Block API fields.
 	 */
 	public function get_block_fields() {
-		return [];
+		/** @var Block_Field[] $fields */
 		$fields = $this->get_fields();
 
-		foreach ( $fields as $field ) {
+		$fields = array_map( static function ( $field ) {
+			return $field->get_block_args();
+		}, $fields );
 
-		}
+		// Ensure the response is an array with no empty values.
+		$fields = array_values( array_filter( $fields ) );
 
-		return [
-			[
-				'type'             => 'TextControl',
-				'name'             => 'textField',
-				'fieldOptions'     => [
-					'className' => 'text__container',
-					'type'      => 'text',
-					'help'      => 'Some help text',
-					'label'     => 'Label for the text field',
-				],
-				'attributeOptions' => [
-					'type' => 'string',
-				],
-			],
-			[
-				'type'             => 'TextareaControl',
-				'name'             => 'textareaField',
-				'fieldOptions'     => [
-					'className' => 'textarea__container',
-					'help'      => 'Some help text',
-					'label'     => 'Label for the textarea field',
-					'auto_p'    => true,
-				],
-				'attributeOptions' => [
-					'type' => 'string',
-				],
-			],
-			// @todo Add support for RichText at a later time.
-			// [
-			// 	'type'             => 'RichText',
-			// 	'name'             => 'richTextField',
-			// 	'fieldOptions'     => [
-			// 		'tagName'   => 'p',
-			// 		'className' => 'custom__container',
-			// 		'label'     => 'Label for the richtext field',
-			// 	],
-			// 	'attributeOptions' => [
-			// 		'type' => 'string',
-			// 	],
-			// ],
-			[
-				'type'             => 'CheckboxControl',
-				'name'             => 'checkboxField',
-				'fieldOptions'     => [
-					'heading' => 'Checkbox Field (single)',
-					'label'   => 'Checkbox single',
-					'help'    => 'Additional help text',
-				],
-				'attributeOptions' => [
-					'type' => 'boolean',
-					//'default' => true,
-				],
-			],
-			[
-				'type'             => 'CheckboxGroup',
-				'name'             => 'checkboxGroup',
-				'fieldOptions'     => [
-					'heading' => 'Checkbox Field (multiple)',
-					'help'    => 'Additional help text',
-					'options' => [
-						[
-							'label' => 'First Option',
-							'value' => 'first',
-						],
-						[
-							'label' => 'Second Option',
-							'value' => 'second',
-						],
-						[
-							'label' => 'Third Option',
-							'value' => 'third',
-						],
-					],
-				],
-				'attributeOptions' => [
-					'type' => 'array',
-				],
-			],
-			[
-				'type'             => 'RadioControl',
-				'name'             => 'radioControl',
-				'fieldOptions'     => [
-					'heading' => 'Radio Controls (multiple)',
-					'help'    => 'Additional help text',
-					'options' => [
-						[
-							'label' => 'First Option',
-							'value' => 'first',
-						],
-						[
-							'label' => 'Second Option',
-							'value' => 'second',
-						],
-						[
-							'label' => 'Third Option',
-							'value' => 'third',
-						],
-					],
-				],
-				'attributeOptions' => [
-					'type' => 'string',
-				],
-			],
-			[
-				'type'             => 'SelectControl',
-				'name'             => 'selectControl',
-				'fieldOptions'     => [
-					'heading' => 'Select Control',
-					'help'    => 'Additional help text',
-					'options' => [
-						[
-							'label' => 'First Option',
-							'value' => 'first',
-						],
-						[
-							'label' => 'Second Option',
-							'value' => 'second',
-						],
-						[
-							'label' => 'Third Option',
-							'value' => 'third',
-						],
-					],
-				],
-				'attributeOptions' => [
-					'type' => 'object',
-				],
-			],
-			[
-				'type'             => 'SelectControl',
-				'name'             => 'multipleSelectControl',
-				'fieldOptions'     => [
-					'multiple' => true,
-					'heading'  => 'Select Control (Multiple)',
-					'help'     => 'Additional help text',
-					'options'  => [
-						[
-							'label' => 'First Option',
-							'value' => 'first',
-						],
-						[
-							'label' => 'Second Option',
-							'value' => 'second',
-						],
-						[
-							'label' => 'Third Option',
-							'value' => 'third',
-						],
-					],
-				],
-				'attributeOptions' => [
-					'type' => 'array',
-				],
-			],
-			[
-				'type'             => 'DateTimePicker',
-				'name'             => 'dateTimeField',
-				'fieldOptions'     => [
-					'is12Hour' => true,
-					'label'    => 'Label for the datetime field',
-				],
-				'attributeOptions' => [
-					'type' => 'string',
-				],
-			],
-			[
-				'type'             => 'NumberControl',
-				'name'             => 'numberField',
-				'fieldOptions'     => [
-					'isShiftStepEnabled' => false,
-					'shiftStep'          => false,
-					'step'               => 1,
-					'label'              => 'Label for the number field',
-				],
-				'attributeOptions' => [
-					'type' => 'number',
-				],
-			],
-			[
-				'type'             => 'MediaUpload',
-				'name'             => 'mediaUpload',
-				'fieldOptions'     => [
-					'label' => 'Media Uploader',
-				],
-				'attributeOptions' => [
-					'type' => 'object',
-				],
-			],
-			[
-				'type'             => 'ColorPicker',
-				'name'             => 'colorPicker',
-				'fieldOptions'     => [
-					'label' => 'Color Picker Field',
-				],
-				'attributeOptions' => [
-					'type' => 'string',
-				],
-			],
-		];
+		return $fields;
 	}
 
 	/**
@@ -267,6 +101,49 @@ class Block extends Pod {
 		unset( $args['parent'], $args['group'] );
 
 		return $args;
+	}
+
+	/**
+	 * Get fields for object.
+	 *
+	 * @return Field[] List of field objects.
+	 */
+	public function get_fields() {
+		if ( [] === $this->_fields ) {
+			return [];
+		}
+
+		$object_collection = Store::get_instance();
+
+		if ( null === $this->_fields ) {
+			$args = [
+				'object_type'       => 'block-field',
+				'orderby'           => 'menu_order title',
+				'order'             => 'ASC',
+				'parent'            => $this->get_id(),
+				'parent_id'         => $this->get_id(),
+				'parent_name'       => $this->get_name(),
+				'parent_identifier' => $this->get_identifier(),
+			];
+
+			$args = array_filter( $args );
+
+			/** @var Block[] $blocks */
+			$objects = pods_api()->_load_objects( $args );
+
+			$this->_fields = wp_list_pluck( $objects, 'identifier' );
+
+			return $objects;
+		}
+
+		$objects = array_map( [ $object_collection, 'get_object' ], $this->_fields );
+		$objects = array_filter( $objects );
+
+		$names = wp_list_pluck( $objects, 'name' );
+
+		$objects = array_combine( $names, $objects );
+
+		return $objects;
 	}
 
 	/**

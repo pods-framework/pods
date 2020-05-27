@@ -36,6 +36,7 @@ const DependentFieldOption = ( {
 	name,
 	label,
 	value,
+	default: defaultValue,
 	allOptionValues,
 	dependents,
 	description,
@@ -62,7 +63,7 @@ const DependentFieldOption = ( {
 		<PodsFieldOption
 			fieldType={ fieldType }
 			name={ name }
-			value={ value }
+			value={ value || defaultValue }
 			label={ label }
 			onChange={ handleInputChange }
 			helpText={ helpText }

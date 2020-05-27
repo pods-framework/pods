@@ -58,7 +58,7 @@ const FieldGroups = ( {
 		);
 
 		saveGroup( {
-			pod_id: podID,
+			pod_id: podID.toString(),
 			name,
 			label: name, // @todo use a real label. But this will be moved anyway
 			args: {},

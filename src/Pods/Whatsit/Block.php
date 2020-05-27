@@ -34,7 +34,7 @@ class Block extends Pod {
 
 		$block_args = [
 			'blockName'       => $namespace . '/' . $name,
-			'blockGroupLabel' => __( 'Options', 'pods' ),
+			'blockGroupLabel' => $this->get_arg( 'group_label', __( 'Options', 'pods' ) ),
 			'title'           => $this->get_arg( 'label' ),
 			'description'     => $this->get_arg( 'description' ),
 			'renderType'      => $this->get_arg( 'renderType', 'js' ),

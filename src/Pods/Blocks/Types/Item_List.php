@@ -51,7 +51,53 @@ class Item_List extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		return [];
+		return [
+			[
+				'name'  => 'name',
+				'label' => __( 'Pod name', 'pods' ),
+				'type'  => 'text',
+				//'type'     => 'pick',
+				//'pick_val' => $all_pods,
+			],
+			[
+				'name'  => 'template',
+				'label' => __( 'Template (optional)', 'pods' ),
+				'type'  => 'text',
+			],
+			[
+				'name'    => 'limit',
+				'label'   => __( 'Limit', 'pods' ),
+				'type'    => 'number',
+				'default' => 15,
+			],
+			[
+				'name'  => 'orderby',
+				'label' => __( 'Order By (optional)', 'pods' ),
+				'type'  => 'text',
+			],
+			[
+				'name'  => 'where',
+				'label' => __( 'Where (optional)', 'pods' ),
+				'type'  => 'text',
+			],
+			[
+				'name'    => 'expires',
+				'label'   => __( 'Expires (optional)', 'pods' ),
+				'type'    => 'number',
+				'default' => ( MINUTE_IN_SECONDS * 5 ),
+			],
+			[
+				'name'    => 'cache_mode',
+				'label'   => __( 'Cache Mode (optional)', 'pods' ),
+				'type'    => 'text',
+				'default' => 'none',
+			],
+			[
+				'name'  => 'template_custom',
+				'label' => __( 'Custom Template', 'pods' ),
+				'type'  => 'paragraph',
+			],
+		];
 	}
 
 	/**
@@ -65,14 +111,16 @@ class Item_List extends Base {
 	 */
 	public function render( $attributes = [] ) {
 		$attributes = $this->attributes( $attributes );
-
 		$attributes = array_map( 'trim', $attributes );
 
-		if ( empty( $attributes['field'] ) ) {
+		if ( empty( $attributes['name'] ) || ( empty( $attributes['template'] ) && empty( $attributes['template_custom'] ) ) ) {
+			if ( is_admin() || wp_is_json_request() ) {
+				return __( 'No preview available, please fill in more Block details.', 'pods' );
+			}
+
 			return '';
 		}
 
-		// Handle name/slug.
-		return pods_shortcode( $attributes );
+		return pods_shortcode( $attributes, $attributes['template_custom'] );
 	}
 }

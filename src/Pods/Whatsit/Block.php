@@ -33,19 +33,20 @@ class Block extends Pod {
 		$name      = str_replace( '_', '-', sanitize_title_with_dashes( $name ) );
 
 		$block_args = [
-			'blockName'     => $namespace . '/' . $name,
-			'title'         => $this->get_arg( 'label' ),
-			'description'   => $this->get_arg( 'description' ),
-			'renderType'    => $this->get_arg( 'renderType', 'js' ),
-			'category'      => $this->get_arg( 'category', 'layout' ),
-			'icon'          => $this->get_arg( 'icon', 'editor-insertmore' ),
-			'keywords'      => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
-			'supports'      => $this->get_arg( 'supports', [
+			'blockName'       => $namespace . '/' . $name,
+			'blockGroupLabel' => __( 'Options', 'pods' ),
+			'title'           => $this->get_arg( 'label' ),
+			'description'     => $this->get_arg( 'description' ),
+			'renderType'      => $this->get_arg( 'renderType', 'js' ),
+			'category'        => $this->get_arg( 'category', 'layout' ),
+			'icon'            => $this->get_arg( 'icon', 'editor-insertmore' ),
+			'keywords'        => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
+			'supports'        => $this->get_arg( 'supports', [
 				'html' => false,
 			] ),
-			'editor_script' => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
-			'fields'        => $this->get_block_fields(),
-			'attributes'    => [
+			'editor_script'   => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
+			'fields'          => $this->get_block_fields(),
+			'attributes'      => [
 				'className' => [
 					'type' => 'string',
 				],

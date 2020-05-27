@@ -51,7 +51,25 @@ class View extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		return [];
+		return [
+			[
+				'name'    => 'view',
+				'label'   => __( 'File to include from theme', 'pods' ),
+				'type'    => 'text',
+			],
+			[
+				'name'    => 'expires',
+				'label'   => __( 'Expires (optional)', 'pods' ),
+				'type'    => 'number',
+				'default' => ( MINUTE_IN_SECONDS * 5 ),
+			],
+			[
+				'name'    => 'cache_mode',
+				'label'   => __( 'Cache Mode (optional)', 'pods' ),
+				'type'    => 'text',
+				'default' => 'none',
+			],
+		];
 	}
 
 	/**
@@ -65,14 +83,21 @@ class View extends Base {
 	 */
 	public function render( $attributes = [] ) {
 		$attributes = $this->attributes( $attributes );
-
 		$attributes = array_map( 'trim', $attributes );
 
-		if ( empty( $attributes['field'] ) ) {
+		if ( empty( $attributes['view'] ) ) {
+			if ( is_admin() || wp_is_json_request() ) {
+				return __( 'No preview available, please specify "View".', 'pods' );
+			}
+
 			return '';
 		}
 
-		// Handle name/slug.
+		// Prevent any previews of this block.
+		if ( is_admin() || wp_is_json_request() ) {
+			return __( 'No preview is available for this Pods View, you will see it on the frontend.', 'pods' );
+		}
+
 		return pods_shortcode( $attributes );
 	}
 }

@@ -52,7 +52,35 @@ class Item_Single extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		return [];
+		return [
+			[
+				'name'  => 'name',
+				'label' => __( 'Pod name', 'pods' ),
+				'type'  => 'text',
+				//'type'     => 'pick',
+				//'pick_val' => $all_pods,
+			],
+			[
+				'name'  => 'slug',
+				'label' => __( 'Slug / ID (optional)', 'pods' ),
+				'type'  => 'text',
+			],
+			[
+				'name'  => 'template',
+				'label' => __( 'Template (optional)', 'pods' ),
+				'type'  => 'text',
+			],
+			[
+				'name'  => 'use_current',
+				'label' => __( 'Use Current', 'pods' ),
+				'type'  => 'boolean',
+			],
+			[
+				'name'  => 'template_custom',
+				'label' => __( 'Custom Template', 'pods' ),
+				'type'  => 'paragraph',
+			],
+		];
 	}
 
 	/**
@@ -66,14 +94,26 @@ class Item_Single extends Base {
 	 */
 	public function render( $attributes = [] ) {
 		$attributes = $this->attributes( $attributes );
-
 		$attributes = array_map( 'trim', $attributes );
 
-		if ( empty( $attributes['field'] ) ) {
+		if (
+			(
+				(
+					empty( $args['name'] )
+					&& empty( $args['slug'] )
+				)
+				|| empty( $args['use_current'] )
+			)
+			&& empty( $attributes['template'] )
+			&& empty( $attributes['template_custom'] )
+		) {
+			if ( is_admin() || wp_is_json_request() ) {
+				return __( 'No preview available, please fill in more Block details.', 'pods' );
+			}
+
 			return '';
 		}
 
-		// Handle name/slug.
-		return pods_shortcode( $attributes );
+		return pods_shortcode( $attributes, $attributes['template_custom'] );
 	}
 }

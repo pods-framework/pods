@@ -6,7 +6,6 @@ import { initStore } from '../store';
 import * as paths from '../state-paths';
 import {
 	STORE_KEY_EDIT_POD,
-	uiConstants,
 	initialUIState,
 } from '../constants';
 

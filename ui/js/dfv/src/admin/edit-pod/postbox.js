@@ -22,10 +22,7 @@ const Spinner = () => (
 
 export const Postbox = ( {
 	podID,
-	podName,
 	options,
-	groups,
-	fields,
 	saveStatus,
 	deleteStatus,
 	savePod,
@@ -109,24 +106,11 @@ export default compose( [
 	withSelect( ( select ) => {
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 
-		// Reduce groups to their IDs.
-		const groups = storeSelect.getGroups().map( ( group ) => group.name );
-
-		// Reduce fields to their IDs grouped by Group.
-		const fields = {};
-
-		storeSelect.getGroups().forEach( ( group ) => {
-			fields[ group.name ] = group.fields.map( ( field ) => field.id );
-		} );
-
 		return {
 			saveStatus: storeSelect.getSaveStatus(),
 			deleteStatus: storeSelect.getDeleteStatus(),
 			podID: storeSelect.getPodID(),
-			podName: storeSelect.getPodName(),
 			options: storeSelect.getPodOptions(),
-			groups,
-			fields,
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

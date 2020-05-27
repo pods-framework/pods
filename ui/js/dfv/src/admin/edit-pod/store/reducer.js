@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import {
 	GROUPS as GROUPS_PATH,
 } from './state-paths';

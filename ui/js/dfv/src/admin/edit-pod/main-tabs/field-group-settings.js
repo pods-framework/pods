@@ -38,6 +38,10 @@ const FieldGroupSettings = ( {
 					</div>
 
 					<div className="pods-field-group_settings-main" role="tabpanel" aria-labelledby="main" id="main-tab">
+						{
+							// Enable eslint once this is improved
+							/* eslint-disable */
+						}
 						<label className="pods-input-container">
 							<span className="pods-label_text">$id</span>
 							<input className="pods-input" type="text"></input>
@@ -66,6 +70,7 @@ const FieldGroupSettings = ( {
 							<span className="pods-label_text">$callback_args</span>
 							<input className="pods-input" type="text"></input>
 						</label>
+						{ /* eslint-enable */ }
 					</div>
 
 					<div className="pods-field-group_settings-advanced" role="tabpanel" aria-labelledby="advanced" id="advanced-tab" hidden="hidden">

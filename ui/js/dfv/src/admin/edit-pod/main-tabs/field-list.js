@@ -90,6 +90,7 @@ export const FieldListItem = ( props, ref ) => {
 				{ label }<span className={ required ? 'pods-field_required' : '' }>*</span>
 				<div className="pods-field_id"> [id = { id }]</div>
 				<div className="pods-field_controls-container">
+					{ /* eslint-disable */ }
 					{/* TODO: This whole section should probably be rewritten to use wp components to match core better */}
 					<span onClick={ ( e ) => {
 						console.log(e); // TODO: Needs to edit field
@@ -106,6 +107,7 @@ export const FieldListItem = ( props, ref ) => {
 					} }>
 						Delete
 					</span>
+					{ /* eslint-enable */ }
 				</div>
 			</div>
 			<div className="pods-field pods-field_name">

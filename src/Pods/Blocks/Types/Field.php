@@ -62,8 +62,13 @@ class Field extends Base {
 			],
 			[
 				'name'  => 'slug',
-				'label' => __( 'Slug or ID', 'pods' ),
+				'label' => __( 'Slug or ID (optional)', 'pods' ),
 				'type'  => 'text',
+			],
+			[
+				'name'  => 'use_current',
+				'label' => __( 'Use Current Item (optional)', 'pods' ),
+				'type'  => 'boolean',
 			],
 			[
 				'name'  => 'field',

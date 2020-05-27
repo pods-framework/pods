@@ -108,7 +108,7 @@ class Item_List extends Base {
 			],
 			[
 				'name'  => 'template_custom',
-				'label' => __( 'Custom Template', 'pods' ),
+				'label' => __( 'Custom Template (optional)', 'pods' ),
 				'type'  => 'paragraph',
 			],
 			[

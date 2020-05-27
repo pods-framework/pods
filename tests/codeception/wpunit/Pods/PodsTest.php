@@ -16,11 +16,11 @@ class PodsTest extends Pods_UnitTestCase {
 	 */
 	private $pod;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->pod = pods();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $this->pod );
 	}
 

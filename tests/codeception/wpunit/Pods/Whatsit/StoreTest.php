@@ -28,7 +28,7 @@ class StoreTest extends Pods_UnitTestCase {
 	 */
 	private $pods_object_collection;
 
-	public function setUp() {
+	public function setUp(): void {
 		if ( ! class_exists( __NAMESPACE__ . '\Whatsit__Custom' ) ) {
 			eval( 'namespace ' . __NAMESPACE__ . '; class Whatsit__Custom extends \Pods\Whatsit { protected static $type = "custom"; }' );
 		}
@@ -40,7 +40,7 @@ class StoreTest extends Pods_UnitTestCase {
 		$this->pods_object_collection = Store::get_instance();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		Store::destroy();
 	}
 

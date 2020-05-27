@@ -31,7 +31,7 @@ class IfTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		add_shortcode( 'test_if_text', function ( $args, $content ) {
@@ -81,7 +81,7 @@ class IfTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		if ( shortcode_exists( 'test_if_text' ) ) {
 			remove_shortcode( 'test_if_text' );
 		}

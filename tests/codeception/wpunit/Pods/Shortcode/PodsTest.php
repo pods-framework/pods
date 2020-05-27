@@ -31,7 +31,7 @@ class PodsTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$api = pods_api();
@@ -55,7 +55,7 @@ class PodsTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->pod_id = null;
 		$this->pod    = null;
 

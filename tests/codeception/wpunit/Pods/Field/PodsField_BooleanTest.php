@@ -16,11 +16,11 @@ class PodsField_BooleanTest extends Pods_UnitTestCase {
 	 */
 	private $field;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->field = new PodsField_Boolean();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $this->field );
 	}
 

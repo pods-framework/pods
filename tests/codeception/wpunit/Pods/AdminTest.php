@@ -23,7 +23,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 	 */
 	protected $admin;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->api   = pods_api();
@@ -33,7 +33,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 	/**
 	 *
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->api   = null;
 		$this->admin = null;
 

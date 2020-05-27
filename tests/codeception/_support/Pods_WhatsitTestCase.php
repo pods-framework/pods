@@ -56,7 +56,7 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 	 */
 	protected $storage_type = 'post_type';
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$object_collection = Store::get_instance();
@@ -102,7 +102,7 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 		$this->pods_object_field = $this->setup_pods_object( $field_args, 'field' );
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $this->pods_object_pod, $this->pods_object_group, $this->pods_object_field );
 
 		$this->setup_objects = array();

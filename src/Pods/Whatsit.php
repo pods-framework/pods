@@ -511,6 +511,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$arg = (string) $arg;
 
 		$special_args = [
+			'identifier'    => 'get_identifier',
 			'fields'        => 'get_fields',
 			'object_fields' => 'get_object_fields',
 			'all_fields'    => 'get_all_fields',

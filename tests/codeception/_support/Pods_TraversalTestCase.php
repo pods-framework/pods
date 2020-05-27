@@ -65,7 +65,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		static $counter = 0;
 
 		if ( static::$db_reset_teardown ) {

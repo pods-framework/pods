@@ -1,17 +1,17 @@
 import jQuery from 'jquery';
 import { PodsDFVFieldModel } from 'dfv/src/core/pods-field-model';
 
-function mnRenderer( FieldClass, element, data ) {
+function mnRenderer( FieldClass, element, props ) {
 	// Assemble the model and create the field
 	const fieldModel = new PodsDFVFieldModel( {
-		htmlAttr: data.htmlAttr,
-		fieldConfig: data.fieldConfig,
+		htmlAttr: props.data.htmlAttr,
+		fieldConfig: props.data.fieldConfig,
 	} );
 
 	const newField = new FieldClass( {
 		el: element,
 		model: fieldModel,
-		fieldItemData: data.fieldItemData,
+		fieldItemData: props.data.fieldItemData,
 	} );
 
 	// Render the field, trigger an event for the outside world, and stash a reference

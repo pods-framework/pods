@@ -85,6 +85,7 @@ window.PodsDFV = {
 					...data.config,
 				},
 				fieldType: data.fieldType,
+				data,
 			};
 
 			// eslint-disable-next-line no-console

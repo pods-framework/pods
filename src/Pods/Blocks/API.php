@@ -17,8 +17,6 @@ class API {
 	 * @since TBD
 	 */
 	public function register_blocks() {
-		$this->setup_core_blocks();
-
 		$blocks = $this->get_blocks();
 
 		// Pods Blocks API.
@@ -56,7 +54,6 @@ class API {
 	 */
 	public function setup_core_blocks() {
 		tribe( 'pods.blocks.field' );
-		tribe( 'pods.blocks.field-current' );
 		tribe( 'pods.blocks.form' );
 		tribe( 'pods.blocks.list' );
 		tribe( 'pods.blocks.single' );
@@ -78,6 +75,8 @@ class API {
 		if ( ! empty( $blocks ) ) {
 			return $blocks;
 		}
+
+		$this->setup_core_blocks();
 
 		$api = pods_api();
 

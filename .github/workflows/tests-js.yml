@@ -7,7 +7,8 @@ on:
       - 'package.json'
       - 'webpack.*.js'
       - 'jest-setup-wordpress-globals.js'
-      - 'jes.config.json'
+      - 'jest.config.json'
+      - '.github/workflows/tests-js.yml'
 jobs:
   test:
     runs-on: ubuntu-latest

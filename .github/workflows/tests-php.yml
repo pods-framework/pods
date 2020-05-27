@@ -12,6 +12,7 @@ on:
       - '*.php'
       - 'composer.json'
       - 'codeception.*.yml'
+      - '.github/workflows/tests-php.yml'
 jobs:
   test:
     strategy:

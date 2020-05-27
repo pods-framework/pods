@@ -12,10 +12,8 @@ import {
 } from '@wordpress/components';
 
 const CheckboxControlExtended = ( {
-	id,
 	className,
 	heading,
-	name,
 	label,
 	help,
 	checked,
@@ -35,10 +33,8 @@ const CheckboxControlExtended = ( {
 };
 
 CheckboxControlExtended.propTypes = {
-	id: PropTypes.string,
 	className: PropTypes.string,
 	heading: PropTypes.string,
-	name: PropTypes.string,
 	label: PropTypes.string,
 	help: PropTypes.string,
 	checked: PropTypes.bool,
@@ -46,10 +42,8 @@ CheckboxControlExtended.propTypes = {
 };
 
 CheckboxControlExtended.defaultProps = {
-	id: '',
 	className: null,
 	heading: null,
-	name: '',
 	label: null,
 	help: null,
 	checked: false,

@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } f
 import * as PropTypes from 'prop-types';
 import { flow, max, map } from 'lodash';
 import { getEmptyImage } from 'react-dnd-html5-backend';
+import classnames from 'classnames';
 
 import { Button, Dashicon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -36,6 +37,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		setGroupFields,
 		addGroupField,
 		isExpanded,
+		hasMoved,
 		toggleExpanded,
 		editGroupPod,
 	} = props;
@@ -142,9 +144,16 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		}
 	};
 
+	const classes = classnames(
+		'pods-field-group-wrapper',
+		{
+			'pods-unsaved-data': hasMoved,
+		}
+	);
+
 	return (
 		<div
-			className="pods-field-group-wrapper"
+			className={ classes }
 			ref={ wrapperRef }
 			style={ { opacity: isDragging ? 0 : 1 } }
 			onMouseEnter={ () => setIsHovered( true ) }
@@ -243,6 +252,7 @@ FieldGroup.propTypes = {
 	index: PropTypes.number.isRequired,
 	isExpanded: PropTypes.bool.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
+	hasMoved: PropTypes.bool.isRequired,
 
 	toggleExpanded: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,

@@ -5,7 +5,7 @@ import * as paths from '../state-paths';
 import {
 	uiConstants,
 	currentPodConstants,
-	initialUIState,
+	INITIAL_UI_STATE,
 } from '../constants';
 
 import {
@@ -26,7 +26,7 @@ describe( 'UI reducer', () => {
 	let state;
 
 	beforeEach( () => {
-		state = { ...initialUIState };
+		state = { ...INITIAL_UI_STATE };
 	} );
 
 	afterEach( () => {
@@ -36,7 +36,7 @@ describe( 'UI reducer', () => {
 	it( 'has the proper defaults', () => {
 		const newState = ui( undefined, undefined );
 
-		expect( newState ).toEqual( initialUIState );
+		expect( newState ).toEqual( INITIAL_UI_STATE );
 	} );
 
 	it( 'changes the active tab', () => {
@@ -71,7 +71,7 @@ describe( 'UI reducer', () => {
 
 		const newState = ui( state, action );
 
-		expect( newState.saveStatus ).toEqual( initialUIState.saveStatus );
+		expect( newState.saveStatus ).toEqual( INITIAL_UI_STATE.saveStatus );
 	} );
 
 	it( 'changes the delete status', () => {
@@ -95,7 +95,7 @@ describe( 'UI reducer', () => {
 
 		const newState = ui( state, action );
 
-		expect( newState.deleteStatus ).toEqual( initialUIState.deleteStatus );
+		expect( newState.deleteStatus ).toEqual( INITIAL_UI_STATE.deleteStatus );
 	} );
 } );
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as PropTypes from 'prop-types';
 
 // WordPress dependencies
@@ -6,17 +6,27 @@ import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 
-import { STORE_KEY_EDIT_POD } from 'dfv/src/admin/edit-pod/store/constants';
+import {
+	STORE_KEY_EDIT_POD,
+	uiConstants,
+} from 'dfv/src/admin/edit-pod/store/constants';
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
+const {
+	saveStatuses: SAVE_STATUSES,
+} = uiConstants;
+
 import './field-groups.scss';
 
 const FieldGroups = ( {
+	podID,
 	podName,
+	podSaveStatus,
 	groups,
 	addGroup,
+	saveGroup,
 	deleteGroup,
 	moveGroup,
 	groupFieldList,
@@ -30,12 +40,29 @@ const FieldGroups = ( {
 		1 === groups.length ? { [ groups[ 0 ].name ]: true } : {}
 	);
 
-	const handleAddGroup = ( e ) => {
-		e.preventDefault();
+	const [ groupsMovedSinceLastSave, setGroupsMovedSinceLastSave ] = useState( {} );
+
+	const handleAddGroup = ( event ) => {
+		event.preventDefault();
 
 		const str = randomString( 6 );
 		const name = 'Group ' + str;
+
 		addGroup( name );
+
+		setGroupsMovedSinceLastSave(
+			{
+				...groupsMovedSinceLastSave,
+				[ name ]: true,
+			},
+		);
+
+		saveGroup( {
+			pod_id: podID,
+			name,
+			label: name, // @todo use a real label. But this will be moved anyway
+			args: {},
+		} );
 	};
 
 	const createToggleExpandGroup = ( groupName ) => () => {
@@ -55,6 +82,28 @@ const FieldGroups = ( {
 		return result;
 	};
 
+	// Mark the group as being unsaved and move the group
+	const handleGroupMove = ( oldIndex, newIndex ) => {
+		setGroupsMovedSinceLastSave(
+			{
+				...groupsMovedSinceLastSave,
+				[ groups[ oldIndex ].name ]: true,
+			},
+		);
+
+		moveGroup( oldIndex, newIndex );
+	};
+
+	// After the pod has been saved, reset the list of groups
+	// that haven't been saved.
+	useEffect( () => {
+		const hasSaved = podSaveStatus === SAVE_STATUSES.SAVE_SUCCESS;
+
+		if ( hasSaved ) {
+			setGroupsMovedSinceLastSave( {} );
+		}
+	}, [ podSaveStatus ] );
+
 	return (
 		<div className="field-groups">
 			<div className="pods-button-group_container">
@@ -67,6 +116,8 @@ const FieldGroups = ( {
 			</div>
 
 			{ groups.map( ( group, index ) => {
+				const hasMoved = !! groupsMovedSinceLastSave[ group.name ];
+
 				return (
 					<FieldGroup
 						key={ group.name }
@@ -75,7 +126,7 @@ const FieldGroups = ( {
 						index={ index }
 						editGroupPod={ editGroupPod }
 						deleteGroup={ deleteGroup }
-						moveGroup={ moveGroup }
+						moveGroup={ handleGroupMove }
 						groupFieldList={ groupFieldList }
 						setGroupFields={ setGroupFields }
 						addGroupField={ addGroupField }
@@ -83,6 +134,7 @@ const FieldGroups = ( {
 						randomString={ randomString }
 						isExpanded={ expandedGroups[ group.name ] || false }
 						toggleExpanded={ createToggleExpandGroup( group.name ) }
+						hasMoved={ hasMoved }
 					/>
 				);
 			} ) }
@@ -102,7 +154,9 @@ const FieldGroups = ( {
 };
 
 FieldGroups.propTypes = {
+	podID: PropTypes.number.isRequired,
 	podName: PropTypes.string.isRequired,
+	podSaveStatus: PropTypes.string.isRequired,
 	groups: PropTypes.arrayOf( GROUP_PROP_TYPE_SHAPE ).isRequired,
 	addGroup: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
@@ -115,7 +169,9 @@ export default compose( [
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 
 		return {
+			podID: storeSelect.getPodID(),
 			podName: storeSelect.getPodName(),
+			podSaveStatus: storeSelect.getSaveStatus(),
 			groups: storeSelect.getGroups(),
 			groupFieldList: storeSelect.groupFieldList(),
 			editGroupPod: storeSelect.getGlobalGroupOptions(),
@@ -126,6 +182,7 @@ export default compose( [
 
 		return {
 			addGroup: storeDispatch.addGroup,
+			saveGroup: storeDispatch.saveGroup,
 			deleteGroup: storeDispatch.deleteGroup,
 			setGroupFields: storeDispatch.setGroupFields,
 			addGroupField: storeDispatch.addGroupField,

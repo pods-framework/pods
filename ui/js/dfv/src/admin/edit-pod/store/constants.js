@@ -50,10 +50,14 @@ export const currentPodConstants = {
 	},
 };
 
-export const initialUIState = {
+export const INITIAL_UI_STATE = {
 	activeTab: 'manage-fields',
 	saveStatus: uiConstants.saveStatuses.NONE,
 	deleteStatus: uiConstants.deleteStatuses.NONE,
 	saveMessage: null,
 	deleteMessage: null,
+	groupSaveStatuses: {},
+	groupDeleteStatuses: {},
+	fieldSaveStatuses: {},
+	fieldDeleteStatuses: {},
 };

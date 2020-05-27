@@ -119,6 +119,23 @@ $color--super-light-grey: #F9F9F9;
 	border-radius: $border-radius;
 	border: 1px solid $color--light-grey;
 	background-color: #fff;
+	position: relative;
+
+	&::before {
+		content: " ";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 5px;
+		border-left: 5px solid transparent;
+		transition: border 300ms ease;
+	}
+
+	&.pods-unsaved-data::before  {
+		border-left-color: #95BF3B;
+	}
 
 	&>.pods-field_wrapper {
 		background-color: #f3f3f3;
@@ -138,9 +155,7 @@ $color--super-light-grey: #F9F9F9;
 	display: flex;
 	justify-content: space-between;
 	color: #333;
-	// border: 1px solid #e5e5e5;
 	align-items: center;
-	// border-radius: $border-radius;
 }
 
 .pods-field-group_title > button {

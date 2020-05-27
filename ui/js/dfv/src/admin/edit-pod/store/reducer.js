@@ -5,7 +5,7 @@ import {
 import {
 	uiConstants,
 	currentPodConstants,
-	initialUIState,
+	INITIAL_UI_STATE,
 } from './constants';
 
 const { combineReducers } = wp.data;
@@ -18,7 +18,7 @@ export const setObjectValue = ( object, key, value ) => {
 	};
 };
 
-export const ui = ( state = initialUIState, action = {} ) => {
+export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 	const {
 		actions: ACTIONS,
 		saveStatuses: SAVE_STATUSES,
@@ -35,7 +35,7 @@ export const ui = ( state = initialUIState, action = {} ) => {
 		case ACTIONS.SET_SAVE_STATUS: {
 			const newStatus = Object.values( SAVE_STATUSES ).includes( action.saveStatus )
 				? action.saveStatus
-				: initialUIState.saveStatus;
+				: INITIAL_UI_STATE.saveStatus;
 
 			return {
 				...state,
@@ -46,12 +46,42 @@ export const ui = ( state = initialUIState, action = {} ) => {
 		case ACTIONS.SET_DELETE_STATUS: {
 			const newStatus = Object.values( DELETE_STATUSES ).includes( action.deleteStatus )
 				? action.deleteStatus
-				: initialUIState.deleteStatus;
+				: INITIAL_UI_STATE.deleteStatus;
 
 			return {
 				...state,
 				deleteStatus: newStatus,
 				deleteMessage: action.message,
+			};
+		}
+
+		case ACTIONS.SET_GROUP_SAVE_STATUS: {
+			const newStatus = Object.values( SAVE_STATUSES ).includes( action.saveStatus )
+				? action.saveStatus
+				: INITIAL_UI_STATE.saveStatus;
+
+			return {
+				...state,
+				groupSaveStatuses: {
+					...state.groupSaveStatuses,
+					// @todo does the API result have this?
+					[ action.result.id ]: newStatus,
+				},
+			};
+		}
+
+		case ACTIONS.SET_GROUP_DELETE_STATUS: {
+			const newStatus = Object.values( DELETE_STATUSES ).includes( action.deleteStatus )
+				? action.deleteStatus
+				: INITIAL_UI_STATE.deleteStatus;
+
+			return {
+				...state,
+				groupDeleteStatuses: {
+					...state.groupDeleteStatuses,
+					// @todo does the API result have this?
+					[ action.result.id ]: newStatus,
+				},
 			};
 		}
 
@@ -91,24 +121,24 @@ export const currentPod = ( state = {}, action = {} ) => {
 
 		case ACTIONS.MOVE_GROUP: {
 			const { oldIndex, newIndex } = action;
-			const groupList = GROUPS_PATH.tailGetFrom( state );
 
 			// Index bounds checking
 			if ( null === oldIndex || null === newIndex || oldIndex === newIndex ) {
 				return state;
 			}
-			if ( oldIndex >= groupList.length || 0 > oldIndex ) {
+			if ( oldIndex >= state.groups.length || 0 > oldIndex ) {
 				return state;
 			}
-			if ( newIndex >= groupList.length || 0 > newIndex ) {
+			if ( newIndex >= state.groups.length || 0 > newIndex ) {
 				return state;
 			}
 
-			const newGroupList = [ ...groupList ];
+			const newGroupList = [ ...state.groups ];
 			newGroupList.splice( newIndex, 0, newGroupList.splice( oldIndex, 1 )[ 0 ] );
+
 			return {
 				...state,
-				[ GROUPS_PATH.tailPath ]: newGroupList,
+				groups: newGroupList,
 			};
 		}
 

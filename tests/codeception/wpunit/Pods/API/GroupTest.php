@@ -37,7 +37,7 @@ class GroupTest extends Pods_UnitTestCase {
 	 */
 	protected $group_id;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->api = pods_api();
@@ -48,7 +48,7 @@ class GroupTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->api = null;
 
 		parent::tearDown();

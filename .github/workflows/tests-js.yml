@@ -1,41 +1,27 @@
 name: 'JS Tests'
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+      - 'tests/js/**'
+      - 'ui/js/**'
+      - 'package.json'
+      - 'webpack.*.js'
+      - 'jest-setup-wordpress-globals.js'
+      - 'jest.config.json'
+      - '.github/workflows/tests-js.yml'
 jobs:
   test:
+    strategy:
+      matrix:
+        suite: [ 'test-dfv', 'jest-tests' ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
         with:
-          fetch-depth: 1
-      - name: Checkout automation tools
-        uses: actions/checkout@v1
-        with:
-          repository: moderntribe/products-test-automation
-          ref: master
-          path: tric
-          fetch-depth: 1
-      - name: Add tric to the PATH
-        run: echo "::set-env name=PATH::${GITHUB_WORKSPACE}/../tric/dev:$PATH"
-      - name: Set products-test-automation run_context() to tric
-        run: echo "::set-env name=TRIC::1"
-      - name: Start ssh-agent
-        run: |
-          mkdir -p "${HOME}/.ssh";
-          ssh-agent -a /tmp/ssh_agent.sock;
-      - name: Export SSH_AUTH_SOCK env var
-        run: echo "::set-env name=SSH_AUTH_SOCK::/tmp/ssh_agent.sock"
-      - name: tric use pods
-        run: |
-          cd ${GITHUB_WORKSPACE}/..
-          tric interactive off
-          tric build-prompt off
-          tric here
-          tric use pods
-          tric debug on
-      - name: tric npm install
-        run: tric npm install
-      - name: Run JS DFV test suite
-        run: tric npm run test-dfv
-      - name: Run JS Jest test suite
-        run: tric npm run jest-tests
+          node-version: '12.x'
+      - name: Install dependencies
+        run: npm install
+      - name: Run JS test suite
+        run: npm run ${{ matrix.suite }}

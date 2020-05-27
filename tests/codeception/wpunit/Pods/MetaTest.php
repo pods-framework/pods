@@ -51,7 +51,7 @@ class MetaTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$api = pods_api();
@@ -109,7 +109,7 @@ class MetaTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->_reset_hooks();
 		$this->_remove_save_actions();
 

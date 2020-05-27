@@ -2,7 +2,12 @@ name: MT Code Review
 on:
   pull_request:
     paths:
+      - 'classes/**.php'
+      - 'components/**.php'
+      - 'includes/**.php'
       - 'src/**.php'
+      - 'sql/**.php'
+      - 'ui/**.php'
       - '*.php'
 jobs:
   phpcs:

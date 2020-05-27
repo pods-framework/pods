@@ -31,13 +31,13 @@ class PodsField_DateTimeTest extends Pods_UnitTestCase {
 		'datetime_allow_empty'           => 1,
 	];
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->field = new PodsField_DateTime();
 
 		parent::setUp();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $this->field );
 
 		parent::tearDown();

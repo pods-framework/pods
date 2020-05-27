@@ -16,11 +16,11 @@ class PodsField_TextTest extends Pods_UnitTestCase {
 	 */
 	private $field;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->field = new PodsField_Text();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		if ( shortcode_exists( 'fooshortcode' ) ) {
 			remove_shortcode( 'fooshortcode' );
 		}

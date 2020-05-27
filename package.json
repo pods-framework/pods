@@ -31,9 +31,10 @@
     "webpack-production": "webpack -p --config webpack.prod.js --progress"
   },
   "engines": {
-    "node": "12.6.0",
-    "npm": "6.9.0"
+    "node": ">=12.6.0",
+    "npm": ">=6.9.0"
   },
+  "engineStrict": true,
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.9.6",

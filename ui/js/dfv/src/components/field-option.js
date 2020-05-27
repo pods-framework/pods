@@ -31,34 +31,36 @@ const PodsFieldOption = ( {
 				{ label }
 				{ shouldShowHelpText && ( <HelpTooltip helpText={ helpText } /> ) }
 			</label>
-			{ 'boolean' === fieldType ? (
-				<input
-					type="checkbox"
-					id={ name }
-					name={ name }
-					checked={ toBool( value ) }
-					onChange={ onChange }
-					aria-label={ shouldShowHelpText && helpText }
-				/>
-			) : (
-				<input
-					type="text"
-					id={ name }
-					name={ name }
-					value={ value }
-					onChange={ onChange }
-					aria-label={ shouldShowHelpText && helpText }
-				/>
-			)
-			}
-			{ !! description && (
-				<p
-					className="description"
-					dangerouslySetInnerHTML={ {
-						__html: removep( sanitizeHtml( description, richText ) ),
-					} }
-				/>
-			) }
+			<div className="pods-field-option__field">
+				{ 'boolean' === fieldType ? (
+					<input
+						type="checkbox"
+						id={ name }
+						name={ name }
+						checked={ toBool( value ) }
+						onChange={ onChange }
+						aria-label={ shouldShowHelpText && helpText }
+					/>
+				) : (
+					<input
+						type="text"
+						id={ name }
+						name={ name }
+						value={ value }
+						onChange={ onChange }
+						aria-label={ shouldShowHelpText && helpText }
+					/>
+				)
+				}
+				{ !! description && (
+					<p
+						className="description"
+						dangerouslySetInnerHTML={ {
+							__html: removep( sanitizeHtml( description, richText ) ),
+						} }
+					/>
+				) }
+			</div>
 		</div>
 	);
 };

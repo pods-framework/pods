@@ -51,15 +51,14 @@ class Field extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		//all_pods = pods_api()->load_pods( [ 'names' => true ] );
+		$all_pods = pods_api()->load_pods( [ 'names' => true ] );
 
 		return [
 			[
-				'name'     => 'name',
-				'label'    => __( 'Pod', 'pods' ),
-				'type'     => 'text',
-				//'type'     => 'pick',
-				//'pick_val' => $all_pods,
+				'name'  => 'name',
+				'label' => __( 'Pod name', 'pods' ),
+				'type'  => 'pick',
+				'data'  => $all_pods,
 			],
 			[
 				'name'  => 'slug',
@@ -89,13 +88,12 @@ class Field extends Base {
 
 		if ( empty( $attributes['name'] ) || empty( $attributes['slug'] ) || empty( $attributes['field'] ) ) {
 			if ( is_admin() || wp_is_json_request() ) {
-				return __( 'No preview available.', 'pods' );
+				return __( 'No preview available, please fill in more Block details.', 'pods' );
 			}
 
 			return '';
 		}
 
-		// Handle name/slug.
 		return pods_shortcode( $attributes );
 	}
 }

@@ -25,14 +25,11 @@ class Block_Field extends Field {
 	 */
 	protected function get_block_arg_mapping() {
 		return [
-			'text' => [
+			'text'      => [
 				'type'             => 'TextControl',
-				//'name'             => 'textField',
 				'fieldOptions'     => [
 					'className' => 'text__container',
 					'type'      => 'text',
-					//'help'      => 'Some help text',
-					//'label'     => 'Label for the text field',
 				],
 				'attributeOptions' => [
 					'type' => 'string',
@@ -40,11 +37,8 @@ class Block_Field extends Field {
 			],
 			'paragraph' => [
 				'type'             => 'TextareaControl',
-				//'name'             => 'textareaField',
 				'fieldOptions'     => [
 					'className' => 'textarea__container',
-					//'help'      => 'Some help text',
-					//'label'     => 'Label for the textarea field',
 					'auto_p'    => true,
 				],
 				'attributeOptions' => [
@@ -64,173 +58,36 @@ class Block_Field extends Field {
 			// 		'type' => 'string',
 			// 	],
 			// ],
-			'boolean' => [
-				'type'             => 'CheckboxControl',
-				//'name'             => 'checkboxField',
-				'fieldOptions'     => [
-					//'heading' => 'Checkbox Field (single)',
-					//'label'   => 'Checkbox single',
-					//'help'    => 'Additional help text',
-				],
-				'attributeOptions' => [
-					'type' => 'boolean',
-					//'default' => true,
-				],
-			],
-			/*[
-				'type'             => 'CheckboxControl',
-				//'name'             => 'checkboxField',
-				'fieldOptions'     => [
-					//'heading' => 'Checkbox Field (single)',
-					//'label'   => 'Checkbox single',
-					//'help'    => 'Additional help text',
-				],
-				'attributeOptions' => [
-					'type' => 'boolean',
-					//'default' => true,
-				],
-			],
-			[
-				'type'             => 'CheckboxGroup',
-				'name'             => 'checkboxGroup',
-				'fieldOptions'     => [
-					'heading' => 'Checkbox Field (multiple)',
-					'help'    => 'Additional help text',
-					'options' => [
-						[
-							'label' => 'First Option',
-							'value' => 'first',
-						],
-						[
-							'label' => 'Second Option',
-							'value' => 'second',
-						],
-						[
-							'label' => 'Third Option',
-							'value' => 'third',
-						],
-					],
-				],
-				'attributeOptions' => [
-					'type' => 'array',
-				],
-			],
-			[
-				'type'             => 'RadioControl',
-				'name'             => 'radioControl',
-				'fieldOptions'     => [
-					'heading' => 'Radio Controls (multiple)',
-					'help'    => 'Additional help text',
-					'options' => [
-						[
-							'label' => 'First Option',
-							'value' => 'first',
-						],
-						[
-							'label' => 'Second Option',
-							'value' => 'second',
-						],
-						[
-							'label' => 'Third Option',
-							'value' => 'third',
-						],
-					],
-				],
-				'attributeOptions' => [
-					'type' => 'string',
-				],
-			],
-			[
-				'type'             => 'SelectControl',
-				'name'             => 'selectControl',
-				'fieldOptions'     => [
-					'heading' => 'Select Control',
-					'help'    => 'Additional help text',
-					'options' => [
-						[
-							'label' => 'First Option',
-							'value' => 'first',
-						],
-						[
-							'label' => 'Second Option',
-							'value' => 'second',
-						],
-						[
-							'label' => 'Third Option',
-							'value' => 'third',
-						],
-					],
-				],
-				'attributeOptions' => [
-					'type' => 'object',
-				],
-			],
-			[
-				'type'             => 'SelectControl',
-				'name'             => 'multipleSelectControl',
-				'fieldOptions'     => [
-					'multiple' => true,
-					'heading'  => 'Select Control (Multiple)',
-					'help'     => 'Additional help text',
-					'options'  => [
-						[
-							'label' => 'First Option',
-							'value' => 'first',
-						],
-						[
-							'label' => 'Second Option',
-							'value' => 'second',
-						],
-						[
-							'label' => 'Third Option',
-							'value' => 'third',
-						],
-					],
-				],
-				'attributeOptions' => [
-					'type' => 'array',
-				],
-			],*/
-			'datetime' => [
+			'datetime'  => [
 				'type'             => 'DateTimePicker',
-				//'name'             => 'dateTimeField',
 				'fieldOptions'     => [
 					'is12Hour' => true,
-					//'label'    => 'Label for the datetime field',
 				],
 				'attributeOptions' => [
 					'type' => 'string',
 				],
 			],
-			'number' => [
+			'number'    => [
 				'type'             => 'NumberControl',
-				//'name'             => 'numberField',
 				'fieldOptions'     => [
 					'isShiftStepEnabled' => false,
 					'shiftStep'          => false,
 					'step'               => 1,
-					//'label'              => 'Label for the number field',
 				],
 				'attributeOptions' => [
 					'type' => 'number',
 				],
 			],
-			'file' => [
+			'file'      => [
 				'type'             => 'MediaUpload',
-				//'name'             => 'mediaUpload',
-				'fieldOptions'     => [
-					//'label' => 'Media Uploader',
-				],
+				'fieldOptions'     => [],
 				'attributeOptions' => [
 					'type' => 'object',
 				],
 			],
-			'color' => [
+			'color'     => [
 				'type'             => 'ColorPicker',
-				//'name'             => 'colorPicker',
-				'fieldOptions'     => [
-					//'label' => 'Color Picker Field',
-				],
+				'fieldOptions'     => [],
 				'attributeOptions' => [
 					'type' => 'string',
 				],
@@ -251,11 +108,9 @@ class Block_Field extends Field {
 		$type = $this->get_arg( 'type' );
 
 		if ( 'pick' === $type ) {
-			return $this->get_pick_block_args();
-		}
-
-		if ( 'boolean' === $type ) {
-			return $this->get_boolean_block_args();
+			$field_mapping[ $type ] = $this->get_pick_block_args();
+		} elseif ( 'boolean' === $type ) {
+			$field_mapping[ $type ] = $this->get_boolean_block_args();
 		}
 
 		if ( ! isset( $field_mapping[ $type ] ) ) {
@@ -274,82 +129,170 @@ class Block_Field extends Field {
 		$block_args['name'] = $name;
 
 		$block_args['fieldOptions']['help'] = $this->get_arg( 'description' );
-		$block_args['fieldOptions']['label'] = $this->get_arg( 'label' );
 
-		$default = $this->get_arg( 'default' );
+		if ( 'boolean' !== $type ) {
+			$block_args['fieldOptions']['label'] = $this->get_arg( 'label' );
 
-		if ( ! in_array( $default, [ '', null ], true ) ) {
-			$block_args['attributeOptions']['default'] = $default;
+			if ( 'pick' !== $type ) {
+				$default = $this->get_arg( 'default' );
+
+				if ( ! in_array( $default, [ '', null ], true ) ) {
+					$block_args['attributeOptions']['default'] = $default;
+				}
+			}
 		}
 
 		return $block_args;
 	}
 
-	public function get_pick_block_args() {
-		return [];
-	}
-
-	public function get_boolean_block_args() {
-		return [];
-	}
-
 	/**
-	 * Get list of block args used for each field type.
+	 * Get block args for a pick field type.
 	 *
-	 * @since TBD
-	 *
-	 * @return array[] List of block args used for each field type.
+	 * @return array Block args.
 	 */
-	protected function get_block_attribute_arg_mapping() {
+	public function get_pick_block_args() {
+		$format_type   = $this->get_arg( 'pick_format_type', 'single' );
+		$format_single = $this->get_arg( 'pick_format_single', 'dropdown' );
+		$format_multi  = $this->get_arg( 'pick_format_multi', 'checkbox' );
+
+		// Support raw data for now.
+		$raw_data = (array) $this->get_arg( 'data', [] );
+		$data     = [];
+
+		foreach ( $raw_data as $key => $item ) {
+			if ( ! is_array( $item ) ) {
+				$item = [
+					'label' => $item,
+					'value' => $key,
+				];
+			}
+
+			if ( ! isset( $item['label'], $item['value'] ) ) {
+				continue;
+			}
+
+			$data[] = $item;
+		}
+
+		$label   = $this->get_arg( 'label' );
+		$default = $this->get_arg( 'default', '' );
+
+		if ( 'single' === $format_type ) {
+			if ( 'radio' === $format_single ) {
+				return [
+					'type'             => 'RadioControl',
+					'fieldOptions'     => [
+						'heading' => $label,
+						'options' => $data,
+					],
+					'attributeOptions' => [
+						'type'    => 'string',
+						'default' => $default,
+					],
+				];
+			}
+
+			return [
+				'type'             => 'SelectControl',
+				'fieldOptions'     => [
+					'heading' => $label,
+					'options' => $data,
+				],
+				'attributeOptions' => [
+					'type'    => 'object',
+					'default' => $default,
+				],
+			];
+		}
+
+		if ( in_array( $format_multi, [ 'multiselect', 'autocomplete' ], true ) ) {
+			return [
+				'type'             => 'SelectControl',
+				'fieldOptions'     => [
+					'multiple' => true,
+					'heading'  => $label,
+					'options'  => $data,
+				],
+				'attributeOptions' => [
+					'type' => 'array',
+				],
+			];
+		}
+
 		return [
-			'text' => [
-				'type' => 'string',
+			'type'             => 'CheckboxGroup',
+			'name'             => 'checkboxGroup',
+			'fieldOptions'     => [
+				'heading' => $label,
+				'options' => $data,
 			],
-			'paragraph' => [
-				'type' => 'string',
-			],
-			'boolean' => [
-				'type' => 'boolean',
-			],
-			'datetime' => [
-				'type' => 'string',
-			],
-			'number' => [
-				'type' => 'number',
-			],
-			'file' => [
-				'type' => 'object',
-			],
-			'color' => [
-				'type' => 'string',
+			'attributeOptions' => [
+				'type' => 'array',
 			],
 		];
 	}
 
-	public function get_block_attribute_args() {
-		$field_mapping = $this->get_block_attribute_arg_mapping();
+	/**
+	 * Get block args for a boolean field type.
+	 *
+	 * @return array Block args.
+	 */
+	public function get_boolean_block_args() {
+		$format_type = $this->get_arg( 'boolean_format_type', 'checkbox' );
 
-		$type = $this->get_arg( 'type' );
+		$data = [
+			[
+				'label' => $this->get_arg( 'boolean_yes_label', __( 'Yes', 'pods' ) ),
+				'value' => 1,
+			],
+			[
+				'label' => $this->get_arg( 'boolean_no_label', __( 'No', 'pods' ) ),
+				'value' => 0,
+			],
+		];
 
-		if ( 'pick' === $type ) {
-			return null;
-			//return $this->get_pick_block_args();
+		$label   = $this->get_arg( 'label' );
+		$default = (boolean) $this->get_arg( 'default', 0 );
+
+		if ( 'radio' === $format_type ) {
+			return [
+				'type'             => 'RadioControl',
+				'fieldOptions'     => [
+					'heading' => $label,
+					'options' => $data,
+				],
+				'attributeOptions' => [
+					'type'    => 'string',
+					'default' => $default,
+				],
+			];
 		}
 
-		if ( 'boolean' === $type ) {
-			return null;
-			//return $this->get_boolean_block_args();
+		if ( 'dropdown' === $format_type ) {
+			return [
+				'type'             => 'SelectControl',
+				'fieldOptions'     => [
+					'heading' => $label,
+					'options' => $data,
+				],
+				'attributeOptions' => [
+					'type'    => 'object',
+					'default' => $default,
+				],
+			];
 		}
 
-		if ( ! isset( $field_mapping[ $type ] ) ) {
-			return null;
-		}
-
-		if ( 'file' === $type && 'multi' === $this->get_arg( 'file__format_type' ) ) {
-			return null;
-		}
-
-		return $field_mapping[ $type ];
+		return [
+			'type'             => 'CheckboxControl',
+			'fieldOptions'     => [
+				'heading' => $label,
+				'label'   => $data[0]['label'],
+			],
+			'attributeOptions' => [
+				'type'    => 'boolean',
+				'default' => $default,
+			],
+		];
 	}
 
 	/**

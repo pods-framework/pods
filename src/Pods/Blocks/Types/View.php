@@ -51,7 +51,54 @@ class View extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		return [];
+		$cache_modes = [
+			[
+				'label' => 'Disable Caching',
+				'value' => 'none',
+			],
+			[
+				'label' => 'Object Cache',
+				'value' => 'cache',
+			],
+			[
+				'label' => 'Transient',
+				'value' => 'transient',
+			],
+			[
+				'label' => 'Site Transient',
+				'value' => 'site-transient',
+			],
+		];
+
+		/**
+		 * Allow filtering of the default cache mode used for the Pods shortcode.
+		 *
+		 * @since TBD
+		 *
+		 * @param string $default_cache_mode Default cache mode.
+		 */
+		$default_cache_mode = apply_filters( 'pods_shortcode_default_cache_mode', 'none' );
+
+		return [
+			[
+				'name'  => 'view',
+				'label' => __( 'File to include from theme', 'pods' ),
+				'type'  => 'text',
+			],
+			[
+				'name'    => 'expires',
+				'label'   => __( 'Expires (optional)', 'pods' ),
+				'type'    => 'number',
+				'default' => ( MINUTE_IN_SECONDS * 5 ),
+			],
+			[
+				'name'    => 'cache_mode',
+				'label'   => __( 'Cache Mode (optional)', 'pods' ),
+				'type'    => 'pick',
+				'data'    => $cache_modes,
+				'default' => $default_cache_mode,
+			],
+		];
 	}
 
 	/**
@@ -65,14 +112,21 @@ class View extends Base {
 	 */
 	public function render( $attributes = [] ) {
 		$attributes = $this->attributes( $attributes );
-
 		$attributes = array_map( 'trim', $attributes );
 
-		if ( empty( $attributes['field'] ) ) {
+		if ( empty( $attributes['view'] ) ) {
+			if ( is_admin() || wp_is_json_request() ) {
+				return __( 'No preview available, please specify "View".', 'pods' );
+			}
+
 			return '';
 		}
 
-		// Handle name/slug.
+		// Prevent any previews of this block.
+		if ( is_admin() || wp_is_json_request() ) {
+			return __( 'No preview is available for this Pods View, you will see it on the frontend.', 'pods' );
+		}
+
 		return pods_shortcode( $attributes );
 	}
 }

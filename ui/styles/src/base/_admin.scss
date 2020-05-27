@@ -839,6 +839,22 @@ body[class*="settings_page_pods-"] {
 	padding-right: 0;
 }
 
-.pods-inspector-row .full-width-base-control {
-	width: 100%;
+.pods-inspector-row {
+	.full-width-base-control {
+		width: 100%;
+	}
+
+	.components-block-fields-checkbox-control__help {
+		margin-top: 10px;
+		font-style: italic;
+	}
+
+	.components-block-fields-checkbox-group__help {
+		margin-top: 10px;
+		font-style: italic;
+	}
+
+	.components-block-fields-checkbox-group .components-base-control {
+		margin-bottom: 10px;
+	}
 }

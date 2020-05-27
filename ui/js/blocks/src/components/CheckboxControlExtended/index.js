@@ -15,7 +15,7 @@ const CheckboxControlExtended = ( {
 	id,
 	className,
 	heading,
-									  name,
+	name,
 	label,
 	help,
 	checked,

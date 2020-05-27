@@ -8,7 +8,7 @@ function reactRenderer( FieldClass, element, props ) {
 	ReactDOM.render(
 		<PodsDFVFieldContainer
 			fieldComponent={ Field }
-			{ ...props }
+			{ ...props.data }
 		/>,
 		element
 	);

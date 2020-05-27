@@ -87,6 +87,7 @@ window.PodsDFV = {
 					...data.config,
 				},
 				fieldType: data.fieldType,
+				data,
 			};
 
 			if ( field !== undefined ) {

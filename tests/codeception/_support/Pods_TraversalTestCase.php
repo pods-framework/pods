@@ -37,7 +37,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	 * @var string
 	 * @static
 	 */
-	public static $sample_image = 'http://en.gravatar.com/userimage/3291122/ee00b7f0e64c35bc6463829c7c9e1f22.png?size=200';
+	public static $sample_image = 'http://pods.io/files/2020/03/pods-2.7.17-update-195x79.png';
 
 	/**
 	 * A collection of pre-built pod objects

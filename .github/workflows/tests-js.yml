@@ -1,5 +1,13 @@
 name: 'JS Tests'
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+      - 'tests/js/**'
+      - 'ui/js/**'
+      - 'package.json'
+      - 'webpack.*.js'
+      - 'jest-setup-wordpress-globals.js'
+      - 'jes.config.json'
 jobs:
   test:
     runs-on: ubuntu-latest

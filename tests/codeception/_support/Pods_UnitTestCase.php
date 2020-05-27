@@ -25,7 +25,7 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 	/**
 	 *
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		if ( static::$db_reset_teardown ) {
 			parent::tearDown();
 

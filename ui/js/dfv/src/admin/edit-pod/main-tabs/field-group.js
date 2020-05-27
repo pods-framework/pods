@@ -1,29 +1,50 @@
-// @todo File has many eslint warnings, come back to this when working on the Groups.
-/* eslint-disable */
-
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import * as PropTypes from 'prop-types';
 import { flow, max, map } from 'lodash';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
-import dragSource from './group-drag-source';
-import dropTarget from './group-drop-target';
-import { FieldGroupSettings } from './field-group-settings';
-import { FieldList } from 'dfv/src/admin/edit-pod/main-tabs/field-list';
-import update from 'immutability-helper';
-
-import { Dashicon } from '@wordpress/components';
+import { Button, Dashicon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-// eslint-disable-next-line react/display-name
+import dragSource from './group-drag-source';
+import dropTarget from './group-drop-target';
+
+import FieldGroupSettings from './field-group-settings';
+import FieldList from 'dfv/src/admin/edit-pod/main-tabs/field-list';
+import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+
+const ENTER_KEY = 13;
+
 const FieldGroup = forwardRef( ( props, ref ) => {
-	const { connectDragSource, connectDropTarget, connectDragPreview, isDragging } = props;
-	const { groupName, groupLabel, groupID, getGroupFields, fields, groupFieldList, randomString, setGroupFields, addGroupField, setFields } = props;
-	const [ expanded, setExpanded ] = useState( false );
-	const [ showSettings, setShowSettings ] = useState( false );
+	const {
+		connectDragSource,
+		connectDropTarget,
+		connectDragPreview,
+		isDragging,
+	} = props;
+
+	const {
+		podName,
+		group: {
+			name: groupName,
+			label: groupLabel,
+			id: groupID,
+			fields,
+		},
+		randomString,
+		deleteGroup,
+		setGroupFields,
+		addGroupField,
+		isExpanded,
+		toggleExpanded,
+		editGroupPod,
+	} = props;
+
 	const wrapperRef = useRef( ref );
 	const dragHandleRef = useRef( ref );
-	const [ originalFields, setOriginalFields ] = useState( fields );
+
+	const [ isHovered, setIsHovered ] = useState( false );
+	const [ showSettings, setShowSettings ] = useState( false );
 
 	useEffect( () => {
 		if ( connectDragPreview ) {
@@ -45,15 +66,34 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		getHandleNode: () => dragHandleRef.current,
 	} ) );
 
-	const onEditGroupClick = ( e ) => {
-		e.stopPropagation();
+	const handleKeyPress = ( event ) => {
+		if ( event.keyCode === ENTER_KEY ) {
+			toggleExpanded();
+		}
+	};
+
+	const onEditGroupClick = ( event ) => {
+		event.stopPropagation();
 		setShowSettings( true );
 	};
 
-	const addField = ( groupName, type = 'text' ) => {
+	const onDeleteGroupClick = ( event ) => {
+		event.stopPropagation();
+
+		// eslint-disable-next-line no-alert
+		const confirmation = confirm(
+			// eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
+			__( 'You are about to permanently delete this Field Group and all of the Fields within it. Make sure you have recent backups just in case. Are you sure you would like to delete this Group?\n\nClick ‘OK’ to continue, or ‘Cancel’ to make no changes.', 'pods' )
+		);
+
+		if ( confirmation ) {
+			deleteGroup( groupName );
+		}
+	};
+
+	const addField = ( group ) => ( type = 'text' ) => {
 		const str = randomString( 6 );
 		const fieldName = 'field_' + str;
-		const fields = getGroupFields( groupName );
 
 		let maxPosition = max( map( fields, ( f ) => f.position ) );
 
@@ -67,40 +107,30 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			label: 'Field ' + str,
 			position: maxPosition + 1,
 			type,
-			required: false,
+			required: '0',
+			group,
+			object_type: 'field',
+			parent: podName,
 		};
 
-		addGroupField( groupName, field );
+		addGroupField( group, field );
 	};
 
-	const cloneField = ( groupName, type ) => {
-		addField( groupName, type );
-	};
+	const cloneField = ( group ) => ( type ) => addField( group, type );
 
-	const deleteField = ( groupName, fieldName ) => {
-		const fields = getGroupFields( groupName );
+	const deleteField = ( group ) => ( fieldName ) => {
 		const newFields = fields.filter( function( obj ) {
-			return obj.name != fieldName;
+			return obj.name !== fieldName;
 		} );
 
-		setGroupFields( groupName, newFields );
-
-		// var fields = getGroupFields(groupName);
-		// var index = fields.indexOf(fieldName);
-
-		// if (index !== -1) {
-		// 	// fields.splice(index, 1);
-		// 	delete fields[fieldName];
-		// 	// setFields(originalFields)
-		// 	setGroupFields(groupName, fields);
-		// }
+		setGroupFields( group, newFields );
 	};
 
-	const moveField = ( groupName, field, dragIndex, hoverIndex, item ) => {
-		if ( groupName === item.groupName ) {
-			const fields = getGroupFields( item.groupName );
-			const movedItem = fields.find( ( itm, index ) => index === hoverIndex );
-			const remainingItems = fields.filter( ( itm, index ) => index !== hoverIndex );
+	const moveField = ( group ) => ( field, dragIndex, hoverIndex, item ) => {
+		if ( group === item.groupName ) {
+			const localFields = [ ...fields ];
+			const movedItem = localFields.find( ( itm, index ) => index === hoverIndex );
+			const remainingItems = localFields.filter( ( itm, index ) => index !== hoverIndex );
 
 			const reorderedItems = [
 				...remainingItems.slice( 0, dragIndex ),
@@ -108,18 +138,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 				...remainingItems.slice( dragIndex ),
 			];
 
-			setGroupFields( groupName, reorderedItems );
-		} else {
-			// console.log(item)
-			// let oldGroupFields = groupFieldList[item.groupName]
-			// console.log(oldGroupFields)
-			// var movedFieldIndex = oldGroupFields.indexOf(item.fieldName)
-			// setGroupFields(groupName, update(groupFieldList[groupName], {
-			// 	$splice: [
-			// 		[dragIndex, 1],
-			// 		[hoverIndex, 0, item.fieldName],
-			// 	],
-			// }))
+			setGroupFields( group, reorderedItems );
 		}
 	};
 
@@ -127,66 +146,106 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		<div
 			className="pods-field-group-wrapper"
 			ref={ wrapperRef }
-			style={ { opacity: isDragging ? 0 : 1 } }>
-
-			<div className="pods-field-group_title"
-				onClick={ () => setExpanded( ! expanded ) }>
-
-				<div>
-					<div ref={ dragHandleRef } className="pods-field-group_handle" style={ { cursor: isDragging ? 'ns-resize' : null } }>
+			style={ { opacity: isDragging ? 0 : 1 } }
+			onMouseEnter={ () => setIsHovered( true ) }
+			onMouseLeave={ () => setIsHovered( false ) }
+		>
+			<div
+				tabIndex={ 0 }
+				role="button"
+				className="pods-field-group_title"
+				onClick={ toggleExpanded }
+				style={ { cursor: 'pointer' } }
+				onKeyPress={ handleKeyPress }
+			>
+				<div
+					className="pods-field-group_name"
+					ref={ dragHandleRef }
+					style={ { cursor: isDragging ? 'ns-resize' : null } }
+				>
+					<div className="pods-field-group_handle">
 						<Dashicon icon="menu" />
 					</div>
-					<div className="pods-field-group_name">
-						{ groupLabel } ({ groupName })
-						 <span className="pods-field-group_id">ID: { groupID }</span>
-					</div>
+
+					{ groupLabel }
+
+					{ !! groupID && (
+						<span
+							className="pods-field-group_name__id"
+							style={ { opacity: isHovered ? 1 : 0 } }
+						>
+							{ `\u00A0 ID: ${ groupID }` }
+						</span>
+					) }
 				</div>
 
-				<div>
-					{ expanded &&
-						<div className="pods-field-group_add_field_link" onClick={ ( e ) => {
-							e.stopPropagation(); addField( groupName );
-						} }>
-							{ __( 'Add Field', 'pods' ) }
-						</div> }
-
-					<div className="pods-field-group_manage_link" onClick={ ( e ) => setExpanded( ! expanded ) }>
+				{ ! isExpanded && (
+					<Button
+						className="pods-field-group_manage_link"
+						onClick={ toggleExpanded }
+						isTertiary
+						style={ { opacity: isHovered ? 1 : 0 } }
+					>
 						{ __( 'Manage Fields', 'pods' ) }
-					</div>
-					<div className="pods-field-group_edit" onClick={ ( e ) => onEditGroupClick( e ) }>
-						{ __( 'Edit Group', 'pods' ) }
-					</div>
-					<div className="pods-field-group_manage">
-						<div className="pods-field-group_toggle">
-							<Dashicon icon={ expanded ? 'arrow-up' : 'arrow-down' } />
-						</div>
-					</div>
-				</div>
+					</Button>
+				) }
 
-				{ showSettings && <FieldGroupSettings groupName={ groupName } show={ setShowSettings } /> }
+				<Button
+					className="pods-field-group_edit"
+					onClick={ ( event ) => onEditGroupClick( event ) }
+					isTertiary
+					style={ { opacity: isHovered ? 1 : 0 } }
+				>
+					{ __( 'Edit', 'pods' ) }
+				</Button>
+
+				<Button
+					className="pods-field-group_delete"
+					onClick={ onDeleteGroupClick }
+					isTertiary
+					style={ { opacity: isHovered ? 1 : 0 } }
+				>
+					{ __( 'Delete', 'pods' ) }
+				</Button>
+
+				<Button className="pods-field-group_manage">
+					<Dashicon icon={ isExpanded ? 'arrow-up' : 'arrow-down' } />
+				</Button>
+
+				{ showSettings && (
+					<FieldGroupSettings
+						groupName={ groupName }
+						show={ setShowSettings }
+						editGroupPod={ editGroupPod }
+					/>
+				) }
 			</div>
 
-			{ expanded && ! isDragging &&
-			<FieldList
-				fields={ getGroupFields( groupName ) }
-				setGroupFields={ setGroupFields }
-				moveField={ moveField }
-				groupName={ groupName }
-				cloneField={ cloneField }
-				deleteField={ deleteField }
-			/> }
+			{ isExpanded && ! isDragging && (
+				<FieldList
+					fields={ fields }
+					setGroupFields={ setGroupFields }
+					moveField={ moveField }
+					groupName={ groupName }
+					cloneField={ cloneField( groupName ) }
+					deleteField={ deleteField( groupName ) }
+					addField={ addField( groupName ) }
+				/>
+			) }
 		</div>
 	);
 } );
 
 FieldGroup.propTypes = {
-	groupName: PropTypes.string.isRequired,
-	groupLabel: PropTypes.string.isRequired,
-	groupID: PropTypes.number.isRequired,
+	podName: PropTypes.string.isRequired,
+	group: GROUP_PROP_TYPE_SHAPE,
+
 	index: PropTypes.number.isRequired,
-	getGroupFields: PropTypes.func.isRequired,
-	handleBeginDrag: PropTypes.func.isRequired,
-	handleDragCancel: PropTypes.func.isRequired,
+	isExpanded: PropTypes.bool.isRequired,
+	editGroupPod: PropTypes.object.isRequired,
+
+	toggleExpanded: PropTypes.func.isRequired,
+	deleteGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 
 	// This comes from the drop target
@@ -197,5 +256,7 @@ FieldGroup.propTypes = {
 	connectDragPreview: PropTypes.func.isRequired,
 	isDragging: PropTypes.bool.isRequired,
 };
+
+FieldGroup.displayName = 'FieldGroup';
 
 export default flow( dropTarget, dragSource )( FieldGroup );

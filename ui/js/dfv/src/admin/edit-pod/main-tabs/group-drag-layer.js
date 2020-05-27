@@ -2,9 +2,8 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 import { DragLayer } from 'react-dnd';
 
+import { Dashicon } from '@wordpress/components';
 import { uiConstants } from 'dfv/src/admin/edit-pod/store/constants';
-
-const { Dashicon } = wp.components;
 
 const getLayerStyles = ( { item } ) => {
 	return {
@@ -43,15 +42,19 @@ const CustomDragLayer = ( props ) => {
 	return (
 		<div style={ getLayerStyles( props ) }>
 			<div style={ getItemStyles( props ) }>
-				<div className="pods-field-group-wrapper" style={ { cursor: 'ns-resize' } }>
+				<div
+					className="pods-field-group-wrapper"
+					style={ { cursor: 'ns-resize' } }
+				>
 					<div className="pods-field-group_title">
-						<div className="pods-field-group_handle">
-							<Dashicon icon="menu" />
-						</div>
 						<div className="pods-field-group_name">
-							{ item.groupLabel } ({ item.groupName })
-							 <span className="pods-field-group_id">ID: { item.groupID }</span>
+							<div className="pods-field-group_handle">
+								<Dashicon icon="menu" />
+							</div>
+
+							{ item.groupLabel }
 						</div>
+
 						<div className="pods-field-group_manage">
 							<div className="pods-field-group_toggle">
 								<Dashicon icon={ 'arrow-down' } />
@@ -68,30 +71,28 @@ CustomDragLayer.propTypes = {
 	item: PropTypes.shape( {
 		groupName: PropTypes.string.isRequired,
 		groupLabel: PropTypes.string.isRequired,
-		groupID: PropTypes.number.isRequired,
+		groupID: PropTypes.number,
 		index: PropTypes.number.isRequired,
 	} ),
-
 	itemType: PropTypes.string,
-
 	isDragging: PropTypes.bool.isRequired,
-
 	currentOffset: PropTypes.shape( {
 		x: PropTypes.number,
 		y: PropTypes.number,
 	} ),
-
 	initialOffset: PropTypes.shape( {
 		x: PropTypes.number,
 		y: PropTypes.number,
 	} ),
 };
 
-export default DragLayer( ( monitor ) => ( {
-	item: monitor.getItem(),
-	itemType: monitor.getItemType(),
-	initialOffset: monitor.getInitialSourceClientOffset(),
-	currentOffset: monitor.getSourceClientOffset(),
-	isDragging: monitor.isDragging(),
-} ) )( CustomDragLayer );
+export default DragLayer( ( monitor ) => {
+	return {
+		item: monitor.getItem(),
+		itemType: monitor.getItemType(),
+		initialOffset: monitor.getInitialSourceClientOffset(),
+		currentOffset: monitor.getSourceClientOffset(),
+		isDragging: monitor.isDragging(),
+	};
+} )( CustomDragLayer );
 

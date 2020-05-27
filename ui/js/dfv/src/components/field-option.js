@@ -54,7 +54,9 @@ const PodsFieldOption = ( {
 			{ !! description && (
 				<p
 					className="description"
-					dangerouslySetInnerHTML={ removep( sanitizeHtml( description, richText ) ) }
+					dangerouslySetInnerHTML={ {
+						__html: removep( sanitizeHtml( description, richText ) ),
+					} }
 				/>
 			) }
 		</div>

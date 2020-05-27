@@ -6,7 +6,6 @@ import { initStore } from '../store';
 import * as paths from '../state-paths';
 import {
 	STORE_KEY_EDIT_POD,
-	uiConstants,
 	initialUIState,
 } from '../constants';
 
@@ -77,15 +76,6 @@ describe( 'UI store integration', () => {
 
 		expect( result ).toEqual( expected );
 	} );
-
-	test( 'setSaveStatus() should change the status', () => {
-		const newStatus = uiConstants.saveStatuses.SAVE_SUCCESS;
-
-		testStore.dispatch.setSaveStatus( newStatus );
-		const result = testStore.select.getSaveStatus();
-
-		expect( result ).toEqual( newStatus );
-	} );
 } );
 
 describe( 'current pod options', () => {
@@ -146,23 +136,15 @@ describe( 'current pod options', () => {
 		expect( result ).toEqual( secondValue );
 	} );
 
-	// @todo re-enable and fix when doing the manage group work
-	test.skip( 'setGroupList() should set the group list', () => {
-		const groupList = [ 'group0', 'group1', 'group2', 'group3' ];
+	test( 'moveGroup() should reorder the group list', () => {
+		const initialGroups = [ 'group0', 'group1', 'group2', 'group3' ];
+		const initialState = paths.GROUPS.createTree( initialGroups );
 
-		testStore.initStore( deepFreeze( {} ) );
-		testStore.dispatch.setGroupList( groupList );
-		const result = testStore.select.getGroupList();
-
-		expect( result ).toEqual( groupList );
-	} );
-
-	test.skip( 'moveGroup() should reorder the group list', () => {
 		const expected = [ 'group3', 'group0', 'group1', 'group2' ];
 
-		testStore.initStore( deepFreeze( {} ) );
+		testStore.initStore( deepFreeze( initialState ) );
 		testStore.dispatch.moveGroup( 3, 0 );
-		const result = testStore.select.getGroupList();
+		const result = testStore.select.getGroups();
 
 		expect( result ).toEqual( expected );
 	} );

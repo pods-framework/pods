@@ -9,23 +9,13 @@ import { compose } from '@wordpress/compose';
 import { STORE_KEY_EDIT_POD } from 'dfv/src/admin/edit-pod/store/constants';
 import DynamicTabContent from './dynamic-tab-content';
 import FieldGroups from './field-groups';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
 // Display the content for the active tab, manage-fields is treated special
 const ActiveTabContent = ( {
 	activeTab,
 	activeTabOptions,
-	groups,
-	getGroupFields,
-	groupList,
-	setGroupList,
-	addGroup,
-	moveGroup,
-	groupFieldList,
-	setGroupFields,
-	addGroupField,
-	setFields,
-	fields,
-	getPodOption,
+	activeTabOptionValues,
 	setOptionValue,
 } ) => {
 	const isManageFieldsTabActive = 'manage-fields' === activeTab;
@@ -36,23 +26,11 @@ const ActiveTabContent = ( {
 			className="pods-nav-tab-group pods-manage-field"
 		>
 			{ isManageFieldsTabActive ? (
-				<FieldGroups
-					groups={ groups }
-					getGroupFields={ getGroupFields }
-					groupList={ groupList }
-					setGroupList={ setGroupList }
-					addGroup={ addGroup }
-					moveGroup={ moveGroup }
-					groupFieldList={ groupFieldList }
-					setGroupFields={ setGroupFields }
-					addGroupField={ addGroupField }
-					setFields={ setFields }
-					fields={ fields }
-				/>
+				<FieldGroups />
 			) : (
 				<DynamicTabContent
 					tabOptions={ activeTabOptions }
-					getOptionValue={ getPodOption }
+					optionValues={ activeTabOptionValues }
 					setOptionValue={ setOptionValue }
 				/>
 			) }
@@ -62,13 +40,8 @@ const ActiveTabContent = ( {
 
 ActiveTabContent.propTypes = {
 	activeTab: PropTypes.string.isRequired,
-	activeTabOptions: PropTypes.array,
-	groups: PropTypes.arrayOf( PropTypes.object ).isRequired,
-	getPodOption: PropTypes.func.isRequired,
-	getGroupFields: PropTypes.func.isRequired,
-	groupList: PropTypes.arrayOf( PropTypes.number ).isRequired,
-	groupFieldList: PropTypes.object.isRequired,
-	fields: PropTypes.arrayOf( PropTypes.object ).isRequired,
+	activeTabOptions: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
+	activeTabOptionValues: PropTypes.object.isRequired,
 };
 
 export default compose( [
@@ -79,26 +52,13 @@ export default compose( [
 
 		return {
 			activeTab,
-			activeTabOptions: storeSelect.getGlobalGroupFields( activeTab ),
-			groups: storeSelect.getGroups(),
-			getPodOption: storeSelect.getPodOption,
-			getGroupFields: storeSelect.getGroupFields,
-			groupList: storeSelect.getGroupList(),
-			groupFieldList: storeSelect.groupFieldList(),
-			fields: [],
+			activeTabOptions: storeSelect.getGlobalPodGroupFields( activeTab ),
+			activeTabOptionValues: storeSelect.getPodOptions(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
-		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
-
 		return {
-			setOptionValue: storeDispatch.setOptionValue,
-			setGroupList: storeDispatch.setGroupList,
-			addGroup: storeDispatch.addGroupList,
-			setGroupFields: storeDispatch.setGroupFields,
-			addGroupField: storeDispatch.addGroupField,
-			setFields: storeDispatch.setFields,
-			moveGroup: storeDispatch.moveGroup,
+			setOptionValue: dispatch( STORE_KEY_EDIT_POD ).setOptionValue,
 		};
 	} ),
 ] )( ActiveTabContent );

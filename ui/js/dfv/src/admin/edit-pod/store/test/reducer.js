@@ -14,6 +14,8 @@ import {
 	global,
 } from '../reducer';
 
+const { actions: CURRENT_POD_ACTIONS } = currentPodConstants;
+
 describe( 'UI reducer', () => {
 	const {
 		actions,
@@ -98,10 +100,7 @@ describe( 'UI reducer', () => {
 } );
 
 describe( 'currentPod Reducer', () => {
-	const { actions } = currentPodConstants;
 	const { GROUPS } = paths;
-
-	const initialGroupList = [ 'zero', 'one', 'two', 'three' ];
 
 	it( 'returns an empty object by default', () => {
 		expect( currentPod( undefined, undefined ) ).toEqual( {} );
@@ -109,7 +108,7 @@ describe( 'currentPod Reducer', () => {
 
 	it( 'updates the pod name', () => {
 		const action = {
-			type: actions.SET_POD_NAME,
+			type: CURRENT_POD_ACTIONS.SET_POD_NAME,
 			name: 'plugh',
 		};
 
@@ -120,7 +119,7 @@ describe( 'currentPod Reducer', () => {
 
 	it( 'Should update pod options', () => {
 		const action = {
-			type: actions.SET_OPTION_VALUE,
+			type: CURRENT_POD_ACTIONS.SET_OPTION_VALUE,
 			optionName: 'foo',
 			value: 'bar',
 		};
@@ -141,7 +140,7 @@ describe( 'currentPod Reducer', () => {
 		} );
 
 		const action = {
-			type: actions.SET_OPTIONS_VALUES,
+			type: CURRENT_POD_ACTIONS.SET_OPTIONS_VALUES,
 			options: {
 				first: 'First Value',
 				second: 'Another string value',
@@ -165,20 +164,9 @@ describe( 'currentPod Reducer', () => {
 		expect( result ).toEqual( expected );
 	} );
 
-	// @todo re-enable and fix these when working on Managing Groups work
-	test.skip( 'create a new group list if it doesn\'t exist', () => {
-		const action = {
-			type: actions.SET_GROUP_LIST,
-			groupList: initialGroupList,
-		};
-		const expected = GROUPS.tailCreateTree( initialGroupList );
+	describe( 'should move groups', () => {
+		const initialGroupList = [ 'zero', 'one', 'two', 'three' ];
 
-		const result = currentPod( undefined, action );
-
-		expect( result ).toEqual( expected );
-	} );
-
-	describe.skip( 'should move groups', () => {
 		const cases = [
 			[ 0, 0, initialGroupList ], // Nothing changes
 			[ -1, 0, initialGroupList ], // oldIndex out of bounds low
@@ -198,7 +186,7 @@ describe( 'currentPod Reducer', () => {
 		test.each( cases )( 'Attempt to move %i to %i', ( oldIndex, newIndex, expected ) => {
 			const initialState = GROUPS.tailCreateTree( initialGroupList );
 			const action = {
-				type: actions.MOVE_GROUP,
+				type: CURRENT_POD_ACTIONS.MOVE_GROUP,
 				oldIndex,
 				newIndex,
 			};

@@ -1,7 +1,5 @@
 import React from 'react';
-import { omit } from 'lodash';
 
-import apiFetch from '@wordpress/api-fetch';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -17,77 +15,6 @@ const {
 	deleteStatuses: DELETE_STATUSES,
 } = uiConstants;
 
-// Helper functions
-const savePod = async (
-	podID,
-	podName,
-	options,
-	groups,
-	fields,
-	setSaveStatus,
-	setOptionsValues,
-	setPodName
-) => {
-	const optionKeys = Object.keys( options );
-
-	const data = {
-		name: podName,
-		label: options.label || '',
-		args: {
-			...options,
-			// @todo Re-enable `fields` and `groups` once Scott updates
-			// the API endpoint to accept fields and groups:
-			// groups,
-			// fields,
-		},
-	};
-
-	// The label doesn't need to be repeated in 'args'.
-	if ( data.args.label ) {
-		delete data.args.label;
-	}
-
-	try {
-		const result = await apiFetch(
-			{
-				path: `/pods/v1/pods/${ podID }`,
-				method: 'post',
-				parse: true,
-				data,
-			}
-		);
-
-		// Re-update our options in case any of them changed server-side.
-		const updatedOptions = {};
-		optionKeys.forEach( ( key ) => {
-			updatedOptions[ key ] = result.pod[ key ] || null;
-		} );
-
-		setOptionsValues( updatedOptions );
-		setPodName( result.pod.name );
-
-		setSaveStatus( SAVE_STATUSES.SAVE_SUCCESS );
-	} catch ( error ) {
-		setSaveStatus( SAVE_STATUSES.SAVE_ERROR, error );
-	}
-};
-
-const deletePod = async ( podID, setDeleteStatus ) => {
-	try {
-		await apiFetch(
-			{
-				path: `/pods/v1/pods/${ podID }`,
-				method: 'delete',
-				parse: true,
-			}
-		);
-
-		setDeleteStatus( DELETE_STATUSES.DELETE_SUCCESS );
-	} catch ( error ) {
-		setDeleteStatus( DELETE_STATUSES.DELETE_ERROR );
-	}
-};
-
 // Helper components
 const Spinner = () => (
 	<img src="/wp-admin/images/wpspin_light.gif" alt="" />
@@ -95,46 +22,32 @@ const Spinner = () => (
 
 export const Postbox = ( {
 	podID,
-	podName,
 	options,
-	groups,
-	fields,
 	saveStatus,
 	deleteStatus,
-	setSaveStatus,
-	setDeleteStatus,
-	setOptionsValues,
-	setPodName,
+	savePod,
+	deletePod,
 } ) => {
 	const isSaving = saveStatus === SAVE_STATUSES.SAVING;
 
+	const deleteHandler = () => {
+		// eslint-disable-next-line no-alert
+		const confirm = window.confirm(
+			// eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
+			__( 'You are about to permanently delete this pod configuration, make sure you have recent backups just in case. Are you sure you would like to delete this Pod?\n\nClick \'OK\' to continue, or \'Cancel\' to make no changes.', 'pods' )
+		);
+
+		if ( confirm ) {
+			deletePod( podID );
+		}
+	};
+
 	useEffect( () => {
-		// Try to delete the Pod if the status is set to DELETING.
-		if ( saveStatus === SAVE_STATUSES.SHOULD_SAVE ) {
-			setSaveStatus( SAVE_STATUSES.SAVING );
-
-			savePod(
-				podID,
-				podName,
-				options,
-				groups,
-				fields,
-				setSaveStatus,
-				setOptionsValues,
-				setPodName
-			);
-		}
-
-		// Try to delete the Pod if the status is set to DELETING.
-		if ( deleteStatus === DELETE_STATUSES.DELETING ) {
-			deletePod( podID, setDeleteStatus );
-		}
-
 		// Redirect if the Pod has successfully been deleted.
 		if ( deleteStatus === DELETE_STATUSES.DELETE_SUCCESS ) {
 			window.location.replace( '/wp-admin/admin.php?page=pods&deleted=1' );
 		}
-	}, [ podID, deleteStatus, saveStatus, podName, options, groups, fields ] );
+	}, [ deleteStatus ] );
 
 	return (
 		<div id="postbox-container-1" className="postbox-container pods_floatmenu">
@@ -157,17 +70,7 @@ export const Postbox = ( {
 								<div id="major-publishing-actions">
 									<div id="delete-action">
 										<button
-											onClick={ () => {
-												// eslint-disable-next-line no-alert
-												const confirm = window.confirm(
-													// eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
-													__( 'You are about to permanently delete this pod configuration, make sure you have recent backups just in case. Are you sure you would like to delete this Pod?\n\nClick \'OK\' to continue, or \'Cancel\' to make no changes.', 'pods' )
-												);
-
-												if ( confirm ) {
-													setDeleteStatus( DELETE_STATUSES.DELETING );
-												}
-											} }
+											onClick={ deleteHandler }
 											className="components-button editor-post-trash is-link"
 										>
 											{ __( 'Delete Pod', 'pods' ) }
@@ -180,9 +83,7 @@ export const Postbox = ( {
 											className="button-primary"
 											type="submit"
 											disabled={ isSaving }
-											onClick={ () => {
-												setSaveStatus( SAVE_STATUSES.SHOULD_SAVE );
-											} }
+											onClick={ () => savePod( options, podID ) }
 										>
 											{ __( 'Save Pod', 'pods' ) }
 										</button>
@@ -205,37 +106,19 @@ export default compose( [
 	withSelect( ( select ) => {
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 
-		const options = omit(
-			storeSelect.getPodOptions(),
-			[ 'fields', 'groups' ]
-		);
-
-		// Reduce groups to their IDs.
-		const groups = storeSelect.getGroups().map( ( group ) => group.name );
-
-		// Reduce fields to their IDs grouped by Group.
-		const fields = {};
-
-		storeSelect.getGroups().forEach( ( group ) => {
-			fields[ group.name ] = group.fields.map( ( field ) => field.id );
-		} );
-
 		return {
 			saveStatus: storeSelect.getSaveStatus(),
 			deleteStatus: storeSelect.getDeleteStatus(),
 			podID: storeSelect.getPodID(),
-			podName: storeSelect.getPodName(),
-			options,
-			groups,
-			fields,
+			options: storeSelect.getPodOptions(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
 		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
 
 		return {
-			setDeleteStatus: storeDispatch.setDeleteStatus,
-			setSaveStatus: storeDispatch.setSaveStatus,
+			savePod: storeDispatch.savePod,
+			deletePod: storeDispatch.deletePod,
 			setOptionsValues: storeDispatch.setOptionsValues,
 			setPodName: storeDispatch.setPodName,
 		};

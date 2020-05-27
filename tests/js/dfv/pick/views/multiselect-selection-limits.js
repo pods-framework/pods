@@ -110,7 +110,7 @@ const cases = [
 			{
 				desc            : "Deselect third option, selection should be empty again",
 				optionIndexes   : [ '2' ],
-				expectedValue   : null,  // Note: behavior for val() changes to an empty array in jQuery 3.0
+				expectedValue   : [],  // Note: behavior for val() changes to an empty array in jQuery 3.0
 				expectedDisabled: []
 			}
 		]
@@ -128,7 +128,7 @@ const cases = [
 			{
 				desc            : "Select five items, should be refused",
 				optionIndexes   : [ '0', '1', '2', '3', '4' ],
-				expectedValue   : null, // Note: behavior for val() changes to an empty array in jQuery 3.0
+				expectedValue   : [], // Note: behavior for val() changes to an empty array in jQuery 3.0
 				expectedDisabled: []
 			},
 			{

@@ -63,8 +63,6 @@ window.PodsDFV = {
 		dataTags.forEach( ( tag ) => {
 			const data = JSON.parse( tag.innerHTML );
 
-			console.log( data );
-
 			// Kludge to disable the "Add New" button if we're inside a media modal.  This should
 			// eventually be ironed out so we can use Add New from this context (see #4864)
 			if ( tag.closest( '.media-modal-content' ) ) {
@@ -89,6 +87,9 @@ window.PodsDFV = {
 				fieldType: data.fieldType,
 				data,
 			};
+
+			// eslint-disable-next-line no-console
+			console.log( 'config data:', actualData );
 
 			if ( field !== undefined ) {
 				field.renderer( field.FieldClass, tag.parentNode, actualData );

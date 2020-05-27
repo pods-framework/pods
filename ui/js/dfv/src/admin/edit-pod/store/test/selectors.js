@@ -13,20 +13,26 @@ import {
 	getPodOption,
 
 	//-- Pod Groups
-	// @todo add these tests back in when working on
-	// the Manage Groups functionality
-	// getGroups,
-	// getGroupList,
-	// getGroup,
+	getGroups,
+	getGroup,
+
+	// @todo add these when working on Manage Fields work
 	// getGroupFields,
 	// groupFieldList,
 
-	// Global Pod
+	// Global Pod config
 	getGlobalPodOptions,
 	getGlobalPodOption,
-	getGlobalGroups,
-	getGlobalGroup,
-	getGlobalGroupFields,
+	getGlobalPodGroups,
+	getGlobalPodGroup,
+	getGlobalPodGroupFields,
+
+	// -- Global Groups config
+	getGlobalGroupOptions,
+
+	// @todo enable this when working on the Manage Fields work
+	// -- Global Field config
+	// getGlobalFieldOptions
 
 	// UI
 	getActiveTab,
@@ -37,7 +43,11 @@ import {
 
 import { uiConstants } from '../constants';
 
-import { POD, GLOBAL_POD } from '../testData';
+import {
+	POD,
+	GLOBAL_POD,
+	GLOBAL_GROUP,
+} from '../testData';
 
 test( 'getState() returns the full state', () => {
 	const state = deepFreeze( {
@@ -98,6 +108,56 @@ describe( 'Current Pod option selectors', () => {
 
 		expect( result ).toEqual( 'bar' );
 	} );
+
+	test( 'getGroups returns the pod\'s groups', () => {
+		const groups = [
+			{
+				id: 1,
+				name: 'test-group',
+				fields: [],
+			},
+			{
+				id: 2,
+				name: 'test-group-2',
+				fields: [],
+			},
+		];
+
+		const state = deepFreeze(
+			paths.CURRENT_POD.createTree( { groups } )
+		);
+
+		const result = getGroups( state );
+
+		expect( result ).toEqual( groups );
+	} );
+
+	test( 'getGroup returns a pod\'s group by name', () => {
+		const groups = [
+			{
+				id: 1,
+				name: 'test-group',
+				fields: [],
+			},
+			{
+				id: 2,
+				name: 'test-group-2',
+				fields: [],
+			},
+		];
+
+		const state = deepFreeze(
+			paths.CURRENT_POD.createTree( { groups } )
+		);
+
+		const result = getGroup( state, 'test-group-2' );
+
+		expect( result ).toEqual( {
+			id: 2,
+			name: 'test-group-2',
+			fields: [],
+		} );
+	} );
 } );
 
 describe( 'Global Pod option selectors', () => {
@@ -105,7 +165,12 @@ describe( 'Global Pod option selectors', () => {
 
 	beforeEach( () => {
 		state = deepFreeze(
-			paths.GLOBAL_POD.createTree( GLOBAL_POD )
+			{
+				global: {
+					pod: GLOBAL_POD,
+					group: GLOBAL_GROUP,
+				},
+			},
 		);
 	} );
 
@@ -121,25 +186,31 @@ describe( 'Global Pod option selectors', () => {
 		expect( result ).toEqual( 'Pod configuration' );
 	} );
 
-	test( 'getGlobalGroups returns the global pod\'s groups', () => {
-		const result = getGlobalGroups( state );
+	test( 'getGlobalPodGroups returns the global pod\'s groups', () => {
+		const result = getGlobalPodGroups( state );
 
 		expect( result.length ).toEqual( 2 );
 		expect( result[ 0 ].label ).toEqual( 'Labels' );
 		expect( result[ 1 ].label ).toEqual( 'REST API' );
 	} );
 
-	test( 'getGlobalGroup returns a specific global pod group', () => {
-		const result = getGlobalGroup( state, 'rest-api' );
+	test( 'getGlobalPodGroup returns a specific global pod group', () => {
+		const result = getGlobalPodGroup( state, 'rest-api' );
 
 		expect( result.label ).toEqual( 'REST API' );
 		expect( result.fields ).toBeDefined();
 	} );
 
-	test( 'getGlobalGroupFields returns a specific global pod group\'s fields', () => {
-		const result = getGlobalGroupFields( state, 'rest-api' );
+	test( 'getGlobalPodGroupFields returns a specific global pod group\'s fields', () => {
+		const result = getGlobalPodGroupFields( state, 'rest-api' );
 
 		expect( result.length ).toEqual( 2 );
+	} );
+
+	test( 'getGlobalGroupOptions returns the group config fields', () => {
+		const result = getGlobalGroupOptions( state );
+
+		expect( result ).toEqual( GLOBAL_GROUP );
 	} );
 } );
 

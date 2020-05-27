@@ -6,29 +6,28 @@ import { __, sprintf } from '@wordpress/i18n';
 
 // Pod dependencies
 import DependentFieldOption from 'dfv/src/components/dependent-field-option';
-// import { getOption } from 'backbone.marionette';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
 const MISSING = __( '[MISSING DEFAULT]', 'pods' );
 
-const DynamicTabContent = ( props ) => {
-	const {
-		tabOptions,
-		getOptionValue,
-		setOptionValue,
-	} = props;
-
+const DynamicTabContent = ( {
+	tabOptions,
+	optionValues,
+	setOptionValue,
+} ) => {
 	const getLabelValue = ( labelFormat, paramOption, paramDefault ) => {
 		if ( ! paramOption ) {
 			return labelFormat;
 		}
 
-		const param = getOptionValue( paramOption ) || paramDefault || MISSING;
+		const param = optionValues[ paramOption ] || paramDefault || MISSING;
 		return sprintf( labelFormat, param );
 	};
 
 	return tabOptions.map( ( {
 		name,
 		default: defaultValue,
+		description,
 		type,
 		label,
 		help,
@@ -38,41 +37,20 @@ const DynamicTabContent = ( props ) => {
 			key={ name }
 			fieldType={ type }
 			name={ name }
+			description={ description }
 			label={ getLabelValue( label, 'label', defaultValue ) }
-			value={ getOptionValue( name ) || defaultValue }
+			allOptionValues={ optionValues }
+			value={ optionValues[ name ] || defaultValue }
 			dependents={ dependsOn }
 			helpText={ help }
-			getOptionValue={ getOptionValue }
 			setOptionValue={ setOptionValue }
 		/>
 	) );
 };
 
 DynamicTabContent.propTypes = {
-	tabOptions: PropTypes.arrayOf(
-		// @todo break out PropTypes, this can be re-used as a "Field"
-		PropTypes.shape( {
-			boolean_yes_label: PropTypes.string,
-			default: PropTypes.oneOfType( [
-				PropTypes.string,
-				PropTypes.bool,
-				PropTypes.number,
-			] ),
-			'depends-on': PropTypes.object,
-			description: PropTypes.string.isRequired,
-			group: PropTypes.string.isRequired,
-			help: PropTypes.string,
-			id: PropTypes.string.isRequired,
-			label: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
-			object_type: PropTypes.string.isRequired,
-			parent: PropTypes.string.isRequired,
-			storage_type: PropTypes.string.isRequired,
-			text_max_length: PropTypes.number,
-			type: PropTypes.string.isRequired,
-		} )
-	).isRequired,
-	getOptionValue: PropTypes.func.isRequired,
+	tabOptions: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
+	optionValues: PropTypes.object.isRequired,
 	setOptionValue: PropTypes.func.isRequired,
 };
 

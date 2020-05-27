@@ -10,23 +10,14 @@ const dragSpec = {
 		const wrapperRect = wrapperNode.getBoundingClientRect();
 		const handleRect = handleNode.getBoundingClientRect();
 
-		props.handleBeginDrag();
-
 		return {
-			groupName: props.groupName,
-			groupLabel: props.groupLabel,
-			groupID: props.groupID,
+			groupName: props.group.name,
+			groupLabel: props.group.label,
+			groupID: props.group.id,
 			index: props.index,
 			width: wrapperRect.width,
 			left: wrapperRect.left - handleRect.left,
 		};
-	},
-
-	endDrag: ( props, monitor ) => {
-		// Items are re-ordered on the fly, be sure to reset on cancel
-		if ( ! monitor.didDrop() ) {
-			props.handleDragCancel();
-		}
 	},
 };
 

@@ -1,3 +1,7 @@
+$border-radius: 9px;
+$color--light-grey: #E2E4E7;
+$color--super-light-grey: #F9F9F9;
+
 .opacity-ghost {
 	transition: all .8s ease;
 	opacity: 0.4;
@@ -11,8 +15,7 @@
 	background-color: #fff;
 	align-items: center;
 	transition: 200ms ease background-color;
-	// border-bottom: 1px solid #f3f3f3;
-
+	padding: .7em 0;
 
 	&:hover {
 		background-color: #f3f3f3;
@@ -90,31 +93,11 @@
 
 .pods-field_label,
 .pods-field_type {
-	width: 30%;
+	// width: 30%;
 }
 
 .pods-field_name {
 	display: none;
-}
-
-
-.pods-field_wrapper-labels {
-	display: flex;
-	width: 100%;
-	background-color: #f5f5f5;
-	font-weight: 600;
-	// padding: 6px 0;
-	border: 1px solid #e5e5e5;
-	border-left: none;
-	border-right: none;
-
-	&:first-child {
-		border-top: none;
-	}
-
-	&:last-child {
-		// border-bottom: none;
-	}
 }
 
 .pods-field_wrapper-labels .pods-field_handle {
@@ -132,8 +115,10 @@
 }
 
 .pods-field-group-wrapper {
-	background-color: #fff;
 	margin-bottom: 10px;
+	border-radius: $border-radius;
+	border: 1px solid $color--light-grey;
+	background-color: #fff;
 
 	&>.pods-field_wrapper {
 		background-color: #f3f3f3;
@@ -149,35 +134,34 @@
 }
 
 .pods-field-group_title {
-	padding: 10px;
+	padding: 0.5em;
 	display: flex;
 	justify-content: space-between;
 	color: #333;
-	border: 1px solid #e5e5e5;
-	// border-left: 3px solid #94bf3a;
+	// border: 1px solid #e5e5e5;
 	align-items: center;
+	// border-radius: $border-radius;
+}
 
-	div {
-		display: flex;
-	}
+.pods-field-group_title > button {
+	flex-shrink: 0;
+}
+
+.pods-field-group_name {
+	cursor: move;
+	margin-right: auto;
+	padding: 0.5em;
+	user-select: none;
 }
 
 .pods-field-group_handle {
+	display: inline-block;
 	padding-right: 13px;
-	display: flex;
-	cursor: move;
+	vertical-align: middle;
 }
 
-.pods-field-group_edit,
-.pods-field-group_manage_link,
-.pods-field-group_add_field_link {
-	color: #0073aa;
-    transition-property: border,background,color;
-    transition-duration: .05s;
-	transition-timing-function: ease-in-out;
-	text-decoration: underline;
-	margin-right: 10px;
-	cursor: pointer;
+.pods-field-group_name__id {
+	color: #333333;
 }
 
 .pods-button-group_container {
@@ -186,6 +170,22 @@
 	justify-content: flex-end;
 	margin-top: 10px;
 	margin-bottom: 10px;
+}
+
+.pods-button-group_add-new {
+	text-align: center;
+	border: 2px dashed $color--light-grey;
+	background: none;
+	width: 100%;
+	border-radius: $border-radius;
+	padding: .7em 1em;
+	transition: 300ms ease background-color;
+}
+
+.pods-button-group_add-new:focus,
+.pods-button-group_add-new:hover {
+	background-color: $color--light-grey;
+	cursor: pointer;
 }
 
 .pods-field-group_toggle {
@@ -263,7 +263,7 @@
 	position: absolute;
 	left: 0;
 	height: 100%;
-	
+
 	&-item {
 		padding: 10px;
 		border-bottom: 1px solid #c6cbd0;

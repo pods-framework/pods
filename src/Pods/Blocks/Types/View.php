@@ -51,11 +51,39 @@ class View extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
+		$cache_modes = [
+			[
+				'label' => 'Disable Caching',
+				'value' => 'none',
+			],
+			[
+				'label' => 'Object Cache',
+				'value' => 'cache',
+			],
+			[
+				'label' => 'Transient',
+				'value' => 'transient',
+			],
+			[
+				'label' => 'Site Transient',
+				'value' => 'site-transient',
+			],
+		];
+
+		/**
+		 * Allow filtering of the default cache mode used for the Pods shortcode.
+		 *
+		 * @since TBD
+		 *
+		 * @param string $default_cache_mode Default cache mode.
+		 */
+		$default_cache_mode = apply_filters( 'pods_shortcode_default_cache_mode', 'none' );
+
 		return [
 			[
-				'name'    => 'view',
-				'label'   => __( 'File to include from theme', 'pods' ),
-				'type'    => 'text',
+				'name'  => 'view',
+				'label' => __( 'File to include from theme', 'pods' ),
+				'type'  => 'text',
 			],
 			[
 				'name'    => 'expires',
@@ -66,8 +94,9 @@ class View extends Base {
 			[
 				'name'    => 'cache_mode',
 				'label'   => __( 'Cache Mode (optional)', 'pods' ),
-				'type'    => 'text',
-				'default' => 'none',
+				'type'    => 'pick',
+				'data'    => $cache_modes,
+				'default' => $default_cache_mode,
 			],
 		];
 	}

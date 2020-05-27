@@ -51,18 +51,65 @@ class Item_List extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		return [
+		$api = pods_api();
+
+		$all_pods = $api->load_pods( [ 'names' => true ] );
+		$all_pods = array_merge( [
+			'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
+		], $all_pods );
+
+		$all_templates = $api->load_templates( [ 'names' => true ] );
+		$all_templates = array_merge( [
+			'' => '- ' . __( 'Use Custom Template', 'pods' ) . ' -',
+		], $all_templates );
+
+		$cache_modes = [
 			[
-				'name'  => 'name',
-				'label' => __( 'Pod name', 'pods' ),
-				'type'  => 'text',
-				//'type'     => 'pick',
-				//'pick_val' => $all_pods,
+				'label' => 'Disable Caching',
+				'value' => 'none',
 			],
 			[
-				'name'  => 'template',
-				'label' => __( 'Template (optional)', 'pods' ),
-				'type'  => 'text',
+				'label' => 'Object Cache',
+				'value' => 'cache',
+			],
+			[
+				'label' => 'Transient',
+				'value' => 'transient',
+			],
+			[
+				'label' => 'Site Transient',
+				'value' => 'site-transient',
+			],
+		];
+
+		/**
+		 * Allow filtering of the default cache mode used for the Pods shortcode.
+		 *
+		 * @since TBD
+		 *
+		 * @param string $default_cache_mode Default cache mode.
+		 */
+		$default_cache_mode = apply_filters( 'pods_shortcode_default_cache_mode', 'none' );
+
+		return [
+			[
+				'name'    => 'name',
+				'label'   => __( 'Pod name', 'pods' ),
+				'type'    => 'pick',
+				'data'    => $all_pods,
+				'default' => '',
+			],
+			[
+				'name'    => 'template',
+				'label'   => __( 'Template (optional)', 'pods' ),
+				'type'    => 'pick',
+				'data'    => $all_templates,
+				'default' => '',
+			],
+			[
+				'name'  => 'template_custom',
+				'label' => __( 'Custom Template', 'pods' ),
+				'type'  => 'paragraph',
 			],
 			[
 				'name'    => 'limit',
@@ -89,13 +136,9 @@ class Item_List extends Base {
 			[
 				'name'    => 'cache_mode',
 				'label'   => __( 'Cache Mode (optional)', 'pods' ),
-				'type'    => 'text',
-				'default' => 'none',
-			],
-			[
-				'name'  => 'template_custom',
-				'label' => __( 'Custom Template', 'pods' ),
-				'type'  => 'paragraph',
+				'type'    => 'pick',
+				'data'    => $cache_modes,
+				'default' => $default_cache_mode,
 			],
 		];
 	}

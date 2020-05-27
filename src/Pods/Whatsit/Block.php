@@ -92,27 +92,6 @@ class Block extends Pod {
 	}
 
 	/**
-	 * Get list of Block API fields for the block.
-	 *
-	 * @since 2.8
-	 *
-	 * @return array List of Block API fields.
-	 */
-	public function get_block_field_attributes() {
-		/** @var Block_Field[] $fields */
-		$fields = $this->get_fields();
-
-		$attributes = array_map( static function ( $field ) {
-			return $field->get_block_attribute_args();
-		}, $fields );
-
-		// Ensure the response has no empty values.
-		$attributes = array_filter( $attributes );
-
-		return $attributes;
-	}
-
-	/**
 	 * {@inheritdoc}
 	 */
 	public function get_args() {

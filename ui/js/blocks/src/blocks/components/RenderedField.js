@@ -15,7 +15,6 @@ import {
 } from '@wordpress/block-editor';
 
 import {
-	CheckboxControl,
 	TextControl,
 	TextareaControl,
 	BaseControl,
@@ -31,6 +30,7 @@ import { useInstanceId } from '@wordpress/compose';
  * Internal dependencies
  */
 import CheckboxGroup from '../../components/CheckboxGroup';
+import CheckboxControlExtended from '../../components/CheckboxControlExtended';
 import NumberControl from '../../components/NumberControl';
 
 /**
@@ -118,11 +118,13 @@ const RenderedField = ( {
 			const {
 				label,
 				help,
+				heading = '',
 			} = fieldOptions;
 
 			return (
-				<CheckboxControl
-					key={ name }
+				<CheckboxControlExtended
+					name={ name }
+					heading={ heading }
 					label={ label }
 					help={ help }
 					checked={ fieldValue }
@@ -134,11 +136,13 @@ const RenderedField = ( {
 			const {
 				help,
 				options,
+				heading = '',
 			} = fieldOptions;
 
 			return (
 				<CheckboxGroup
 					key={ name }
+					heading={ heading }
 					help={ help }
 					options={ options }
 					values={ fieldValue }

@@ -51,13 +51,14 @@ class Form extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
+		$all_pods = pods_api()->load_pods( [ 'names' => true ] );
+
 		return [
 			[
 				'name'  => 'name',
 				'label' => __( 'Pod name', 'pods' ),
-				'type'  => 'text',
-				//'type'     => 'pick',
-				//'pick_val' => $all_pods,
+				'type'  => 'pick',
+				'data'  => $all_pods,
 			],
 			[
 				'name'  => 'slug',

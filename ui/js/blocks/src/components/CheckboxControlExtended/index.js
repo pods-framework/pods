@@ -25,7 +25,6 @@ const CheckboxControlExtended = ( {
 		<fieldset className={ classNames( 'components-block-fields-checkbox-control', className ) }>
 			{ heading && <legend>{ heading }</legend> }
 			<CheckboxControl
-				key={ name }
 				label={ label }
 				help={ help }
 				checked={ checked }

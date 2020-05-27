@@ -123,7 +123,7 @@ const RenderedField = ( {
 
 			return (
 				<CheckboxControlExtended
-					name={ name }
+					key={ name }
 					heading={ heading }
 					label={ label }
 					help={ help }

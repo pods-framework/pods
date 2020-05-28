@@ -51,19 +51,26 @@ class Form extends Base {
 	 * @return array List of Field configurations.
 	 */
 	public function fields() {
-		$all_pods = pods_api()->load_pods( [ 'names' => true ] );
+		$api = pods_api();
+
+		$all_pods = $api->load_pods( [ 'names' => true ] );
+		$all_pods = array_merge( [
+			'' => '- ' . __( 'Use Current Pod', 'pods' ) . ' -',
+		], $all_pods );
 
 		return [
 			[
-				'name'  => 'name',
-				'label' => __( 'Pod name', 'pods' ),
-				'type'  => 'pick',
-				'data'  => $all_pods,
+				'name'    => 'name',
+				'label'   => __( 'Pod name', 'pods' ),
+				'type'    => 'pick',
+				'data'    => $all_pods,
+				'default' => '',
 			],
 			[
-				'name'  => 'slug',
-				'label' => __( 'Slug or ID (optional)', 'pods' ),
-				'type'  => 'text',
+				'name'        => 'slug',
+				'label'       => __( 'Slug or ID (optional)', 'pods' ),
+				'type'        => 'text',
+				'description' => __( 'Use this to enable editing of an item.', 'pods' ),
 			],
 			[
 				'name'  => 'fields',
@@ -95,14 +102,6 @@ class Form extends Base {
 	public function render( $attributes = [] ) {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'trim', $attributes );
-
-		if ( empty( $attributes['name'] ) ) {
-			if ( is_admin() || wp_is_json_request() ) {
-				return __( 'No preview available, please specify "Pod name".', 'pods' );
-			}
-
-			return '';
-		}
 
 		// Prevent any previews of this block.
 		if ( is_admin() || wp_is_json_request() ) {

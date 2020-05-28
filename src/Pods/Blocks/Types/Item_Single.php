@@ -73,14 +73,10 @@ class Item_Single extends Base {
 				'default' => '',
 			],
 			[
-				'name'  => 'slug',
-				'label' => __( 'Slug / ID (optional)', 'pods' ),
-				'type'  => 'text',
-			],
-			[
-				'name'  => 'use_current',
-				'label' => __( 'Use Current Item (optional)', 'pods' ),
-				'type'  => 'boolean',
+				'name'        => 'slug',
+				'label'       => __( 'Slug or ID (optional)', 'pods' ),
+				'type'        => 'text',
+				'description' => __( 'Defaults to using the current pod item.', 'pods' ),
 			],
 			[
 				'name'    => 'template',
@@ -110,12 +106,36 @@ class Item_Single extends Base {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'trim', $attributes );
 
-		if ( ( ( empty( $args['name'] ) && empty( $args['slug'] ) ) || empty( $args['use_current'] ) ) && empty( $attributes['template'] ) && empty( $attributes['template_custom'] ) ) {
+		if (
+			empty( $attributes['template'] )
+			&& empty( $attributes['template_custom'] )
+		) {
 			if ( is_admin() || wp_is_json_request() ) {
 				return __( 'No preview available, please fill in more Block details.', 'pods' );
 			}
 
 			return '';
+		}
+
+		if ( empty( $attributes['name'] ) || empty( $attributes['slug'] ) ) {
+			$attributes['use_current'] = true;
+		}
+
+		if (
+			! empty( $attributes['use_current'] )
+			&& ! empty( $_GET['post_id'] )
+			&& (
+				is_admin()
+				|| wp_is_json_request()
+			)
+		) {
+			$attributes['slug'] = absint( $_GET['post_id'] );
+
+			if ( empty( $attributes['name'] ) ) {
+				$attributes['name'] = get_post_type( $attributes['slug'] );
+			}
+
+			unset( $attributes['use_current'] );
 		}
 
 		return pods_shortcode( $attributes, $attributes['template_custom'] );

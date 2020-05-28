@@ -112,6 +112,24 @@ class Item_List extends Base {
 				'type'  => 'paragraph',
 			],
 			[
+				'name'        => 'content_before',
+				'label'       => __( 'Content Before List (optional)', 'pods' ),
+				'type'        => 'paragraph',
+				'description' => __( 'This only shows if the list is not empty.', 'pods' ),
+			],
+			[
+				'name'        => 'content_after',
+				'label'       => __( 'Content After List (optional)', 'pods' ),
+				'type'        => 'paragraph',
+				'description' => __( 'This only shows if the list is not empty.', 'pods' ),
+			],
+			[
+				'name'        => 'not_found',
+				'label'       => __( 'Not Found Content (optional)', 'pods' ),
+				'type'        => 'paragraph',
+				'description' => __( 'This only shows if the list is empty.', 'pods' ),
+			],
+			[
 				'name'    => 'limit',
 				'label'   => __( 'Limit', 'pods' ),
 				'type'    => 'number',
@@ -126,6 +144,43 @@ class Item_List extends Base {
 				'name'  => 'where',
 				'label' => __( 'Where (optional)', 'pods' ),
 				'type'  => 'text',
+			],
+			[
+				'name'  => 'pagination',
+				'label' => __( 'Enable Pagination (optional)', 'pods' ),
+				'type'  => 'boolean',
+			],
+			[
+				'name'  => 'pagination_location',
+				'label' => __( 'Pagination Location (optional)', 'pods' ),
+				'type'  => 'pick',
+				'data'  => [
+					'before' => __( 'Before list', 'pods' ),
+					'after'  => __( 'After list', 'pods' ),
+					'both'   => __( 'Before and After list', 'pods' ),
+				],
+				'default' => 'after',
+			],
+			[
+				'name'        => 'filters',
+				'label'       => __( 'Filters (optional)', 'pods' ),
+				'type'        => 'text',
+				'description' => __( 'Comma-separated list of fields you want to allow filtering by.', 'pods' ),
+			],
+			[
+				'name'  => 'filters_label',
+				'label' => __( 'Custom Filters Label (optional)', 'pods' ),
+				'type'  => 'text',
+			],
+			[
+				'name'  => 'filters_location',
+				'label' => __( 'Filters Location (optional)', 'pods' ),
+				'type'  => 'pick',
+				'data'  => [
+					'before' => __( 'Before list', 'pods' ),
+					'after'  => __( 'After list', 'pods' ),
+				],
+				'default' => 'before',
 			],
 			[
 				'name'    => 'expires',
@@ -156,7 +211,7 @@ class Item_List extends Base {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'trim', $attributes );
 
-		if ( empty( $attributes['name'] ) || ( empty( $attributes['template'] ) && empty( $attributes['template_custom'] ) ) ) {
+		if ( empty( $attributes['template'] ) && empty( $attributes['template_custom'] ) ) {
 			if ( is_admin() || wp_is_json_request() ) {
 				return __( 'No preview available, please fill in more Block details.', 'pods' );
 			}
@@ -164,6 +219,38 @@ class Item_List extends Base {
 			return '';
 		}
 
-		return pods_shortcode( $attributes, $attributes['template_custom'] );
+		if ( empty( $attributes['name'] ) ) {
+			if (
+				! empty( $_GET['post_id'] )
+				&& (
+					is_admin()
+					|| wp_is_json_request()
+				)
+			) {
+				$post_id = absint( $_GET['post_id'] );
+
+				$attributes['name'] = get_post_type( $post_id );
+			} else {
+				$attributes['name'] = get_post_type();
+			}
+		}
+
+		if ( empty( $attributes['filters'] ) ) {
+			$attributes['filters'] = false;
+		}
+
+		$content = pods_shortcode( $attributes, $attributes['template_custom'] );
+
+		if ( '' !== $content ) {
+			if ( ! empty( $attributes['content_before'] ) ) {
+				$content = $attributes['content_before'] . $content;
+			}
+
+			if ( ! empty( $attributes['content_after'] ) ) {
+				$content .= $attributes['content_after'];
+			}
+		}
+
+		return $content;
 	}
 }

@@ -76,13 +76,11 @@ abstract class Storage {
 	 * @return array List of arguments with arg values setup.
 	 */
 	public function setup_arg( array $args, $arg ) {
-		if ( isset( $args[ $arg ] ) ) {
-			if ( $args[ $arg ] instanceof Whatsit ) {
-				$args[ $arg . '_identifier' ] = (array) $args[ $arg ]->get_identifier();
-				$args[ $arg . '_id' ]         = (array) $args[ $arg ]->get_id();
-				$args[ $arg . '_name' ]       = (array) $args[ $arg ]->get_name();
-				$args[ $arg ]                 = (array) $args[ $arg ]->get_name();
-			}
+		if ( isset( $args[ $arg ] ) && $args[ $arg ] instanceof Whatsit ) {
+			$args[ $arg . '_identifier' ] = (array) $args[ $arg ]->get_identifier();
+			$args[ $arg . '_id' ]         = (array) $args[ $arg ]->get_id();
+			$args[ $arg . '_name' ]       = (array) $args[ $arg ]->get_name();
+			$args[ $arg ]                 = (array) $args[ $arg ]->get_name();
 		}
 
 		return $args;
@@ -99,8 +97,8 @@ abstract class Storage {
 	public function get_arg_value( $args, $arg ) {
 		$arg_value = [];
 
-		if ( isset( $args[ $arg ] ) ) {
-			$arg_value[] = (array) $args[ $arg ];
+		if ( array_key_exists( $arg, $args ) ) {
+			$arg_value[] = is_array( $args[ $arg ] ) ? $args[ $arg ] : array( $args[ $arg ] );
 		}
 
 		$secondary_variations = [
@@ -110,11 +108,11 @@ abstract class Storage {
 		];
 
 		foreach ( $secondary_variations as $variation ) {
-			if ( ! isset( $args[ $arg . '_' . $variation ] ) ) {
+			if ( ! array_key_exists( $arg . '_' . $variation, $args ) ) {
 				continue;
 			}
 
-			$arg_value[] = (array) $args[ $arg . '_' . $variation ];
+			$arg_value[] = is_array( $args[ $arg . '_' . $variation ] ) ? $args[ $arg . '_' . $variation ] : array( $args[ $arg . '_' . $variation ] );
 		}
 
 		if ( empty( $arg_value ) ) {
@@ -122,6 +120,7 @@ abstract class Storage {
 		}
 
 		$arg_value = array_merge( ...$arg_value );
+		$arg_value = array_unique( $arg_value );
 
 		if ( 1 === count( $arg_value ) ) {
 			$arg_value = current( $arg_value );

@@ -3545,7 +3545,32 @@ class PodsData {
 	 * @since 2.8
 	 */
 	public function __isset( $name ) {
-		// Don't do anything.
+		// Handle alias Pods\Whatsit\Pod properties.
+		$supported_pods_object = array(
+			'pod'           => 'name',
+			'pod_id'        => 'id',
+			'fields'        => 'fields',
+			'detail_page'   => 'detail_url',
+			'detail_url'    => 'detail_url',
+			'select'        => 'select',
+			'table'         => 'table',
+			'field_id'      => 'field_id',
+			'field_index'   => 'field_index',
+			'field_slug'    => 'field_slug',
+			'join'          => 'join',
+			'where'         => 'where',
+			'where_default' => 'where_default',
+			'orderby'       => 'orderby',
+		);
+
+		if ( isset( $supported_pods_object[ $name ] ) ) {
+			if ( ! is_object( $this->pod_data ) ) {
+				return false;
+			}
+
+			return null !== $this->pod_data->get_arg( $supported_pods_object[ $name ] );
+		}
+
 		return false;
 	}
 

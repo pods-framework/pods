@@ -257,6 +257,7 @@ FieldGroup.propTypes = {
 	toggleExpanded: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
+	handleGroupDrop: PropTypes.func.isRequired,
 
 	// This comes from the drop target
 	connectDropTarget: PropTypes.func.isRequired,

@@ -52,13 +52,6 @@ const FieldGroups = ( {
 
 		addGroup( name );
 
-		setGroupsMovedSinceLastSave(
-			{
-				...groupsMovedSinceLastSave,
-				[ name ]: true,
-			},
-		);
-
 		saveGroup( {
 			pod_id: podID.toString(),
 			name,
@@ -84,16 +77,20 @@ const FieldGroups = ( {
 		return result;
 	};
 
-	// Mark the group as being unsaved and move the group
 	const handleGroupMove = ( oldIndex, newIndex ) => {
-		setGroupsMovedSinceLastSave(
-			{
-				...groupsMovedSinceLastSave,
-				[ groups[ oldIndex ].name ]: true,
-			},
-		);
-
 		moveGroup( oldIndex, newIndex );
+	};
+
+	const handleGroupDrop = () => {
+		// Mark all groups as being edited
+		setGroupsMovedSinceLastSave(
+			groups.reduce( ( accumulator, current ) => {
+				return {
+					...accumulator,
+					[ current.name ]: true,
+				};
+			}, {} )
+		);
 	};
 
 	// After the pod has been saved, reset the list of groups
@@ -129,6 +126,7 @@ const FieldGroups = ( {
 						editGroupPod={ editGroupPod }
 						deleteGroup={ deleteAndRemoveGroup }
 						moveGroup={ handleGroupMove }
+						handleGroupDrop={ handleGroupDrop }
 						groupFieldList={ groupFieldList }
 						setGroupFields={ setGroupFields }
 						addGroupField={ addGroupField }

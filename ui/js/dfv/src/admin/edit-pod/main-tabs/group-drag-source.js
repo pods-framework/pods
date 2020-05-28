@@ -19,6 +19,14 @@ const dragSpec = {
 			left: wrapperRect.left - handleRect.left,
 		};
 	},
+	// eslint-disable-next-line no-unused-vars
+	endDrag: ( props, monitor, component ) => {
+		if ( ! monitor.didDrop() ) {
+			return;
+		}
+
+		props.handleGroupDrop();
+	},
 };
 
 const collect = ( connect, monitor ) => ( {

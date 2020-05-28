@@ -5,7 +5,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import classnames from 'classnames';
 
 import { Button, Dashicon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 
 import dragSource from './group-drag-source';
 import dropTarget from './group-drop-target';
@@ -226,6 +226,12 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 						groupName={ groupName }
 						show={ setShowSettings }
 						editGroupPod={ editGroupPod }
+						title={ sprintf(
+							/* translators: %1$s: Pod Label, %2$s Group Label */
+							__( '%1$s > %2$s > Edit Group', 'pods' ),
+							podName,
+							groupLabel
+						) }
 					/>
 				) }
 			</div>

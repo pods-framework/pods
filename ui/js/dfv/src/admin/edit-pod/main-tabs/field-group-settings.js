@@ -5,8 +5,8 @@ import { __ } from '@wordpress/i18n';
 import { Modal } from '@wordpress/components';
 
 const FieldGroupSettings = ( {
-	groupName,
 	show,
+	title,
 	editGroupPod,
 } ) => {
 	const closeModal = ( e ) => {
@@ -20,7 +20,7 @@ const FieldGroupSettings = ( {
 	return (
 		<Modal
 			className="pods-field-group_settings pods-field-group_settings--visible"
-			title={ `${ groupName } ` + __( 'Settings', 'pods' ) }
+			title={ title }
 			onRequestClose={ ( e ) => closeModal( e ) }
 		>
 			<div className="pods-field-group_settings-container">
@@ -87,8 +87,8 @@ const FieldGroupSettings = ( {
 };
 
 FieldGroupSettings.propTypes = {
-	groupName: PropTypes.string.isRequired,
 	show: PropTypes.func.isRequired,
+	title: PropTypes.string.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
 };
 

@@ -1132,26 +1132,50 @@ function pods_shortcode_run( $tags, $content = null ) {
 		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
 	}
 
-	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array( $tags['pagination_location'], array(
+	if (
+		! $is_singular
+		&& 0 < $found
+		&& (
+			empty( $params['limit'] )
+			|| (
+				0 < $params['limit']
+				&& $params['limit'] < $found
+			)
+		)
+		&& true === $tags['pagination']
+		&& in_array( $tags['pagination_location'], [
 			'before',
 			'both',
-		), true ) ) {
+		], true )
+	) {
 		echo $pod->pagination( $tags['pagination_label'] );
 	}
 
 	$content = $pod->template( $tags['template'], $content );
 
-	if ( empty( $content ) && ! empty( $tags['not_found'] ) ) {
+	if ( '' === trim( $content ) && ! empty( $tags['not_found'] ) ) {
 		$content = $pod->do_magic_tags( $tags['not_found'] );
 	}
 
 	// phpcs:ignore
 	echo $content;
 
-	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array( $tags['pagination_location'], array(
+	if (
+		! $is_singular
+		&& 0 < $found
+		&& (
+			empty( $params['limit'] )
+			|| (
+				0 < $params['limit']
+				&& $params['limit'] < $found
+			)
+		)
+		&& true === $tags['pagination']
+		&& in_array( $tags['pagination_location'], [
 			'after',
 			'both',
-		), true ) ) {
+		], true )
+	) {
 		echo $pod->pagination( $tags['pagination_label'] );
 	}
 

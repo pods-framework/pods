@@ -777,30 +777,49 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Get fields for object.
 	 *
+	 * @param array $args List of arguments to filter by.
+	 *
 	 * @return Field[] List of field objects.
 	 */
-	public function get_fields() {
+	public function get_fields( array $args = [] ) {
 		if ( [] === $this->_fields ) {
 			return [];
 		}
 
 		$object_collection = Store::get_instance();
 
-		if ( null === $this->_fields ) {
-			$args = [
-				'orderby'           => 'menu_order title',
-				'order'             => 'ASC',
+		$has_custom_args = ! empty( $args );
+
+		if ( null === $this->_fields || $has_custom_args ) {
+			$filtered_args = [
 				'parent'            => $this->get_id(),
 				'parent_id'         => $this->get_id(),
 				'parent_name'       => $this->get_name(),
 				'parent_identifier' => $this->get_identifier(),
 			];
 
-			$args = array_filter( $args );
+			$filtered_args = array_filter( $filtered_args );
 
-			$objects = pods_api()->load_fields( $args );
+			$args = array_merge( [
+				'orderby'           => 'menu_order title',
+				'order'             => 'ASC',
+			], $filtered_args, $args );
 
-			$this->_fields = wp_list_pluck( $objects, 'identifier' );
+			try {
+				$api = pods_api();
+
+				if ( ! empty( $args['object_type'] ) ) {
+					$objects = $api->_load_objects( $args );
+				} else {
+					$objects = $api->load_fields( $args );
+				}
+			} catch ( \Exception $exception ) {
+				$objects = [];
+			}
+
+			if ( ! $has_custom_args ) {
+				$this->_fields = wp_list_pluck( $objects, 'identifier' );
+			}
 
 			return $objects;
 		}
@@ -836,30 +855,49 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Get groups for object.
 	 *
+	 * @param array $args List of arguments to filter by.
+	 *
 	 * @return Group[] List of group objects.
 	 */
-	public function get_groups() {
+	public function get_groups( array $args = [] ) {
 		if ( [] === $this->_groups ) {
 			return [];
 		}
 
 		$object_collection = Store::get_instance();
 
-		if ( null === $this->_groups ) {
-			$args = [
-				'orderby'           => 'menu_order title',
-				'order'             => 'ASC',
+		$has_custom_args = ! empty( $args );
+
+		if ( null === $this->_groups || $has_custom_args ) {
+			$filtered_args = [
 				'parent'            => $this->get_id(),
 				'parent_id'         => $this->get_id(),
 				'parent_name'       => $this->get_name(),
 				'parent_identifier' => $this->get_identifier(),
 			];
 
-			$args = array_filter( $args );
+			$filtered_args = array_filter( $filtered_args );
 
-			$objects = pods_api()->load_groups( $args );
+			$args = array_merge( [
+				'orderby'           => 'menu_order title',
+				'order'             => 'ASC',
+			], $filtered_args, $args );
 
-			$this->_groups = wp_list_pluck( $objects, 'identifier' );
+			try {
+				$api = pods_api();
+
+				if ( ! empty( $args['object_type'] ) ) {
+					$objects = $api->_load_objects( $args );
+				} else {
+					$objects = $api->load_groups( $args );
+				}
+			} catch ( \Exception $exception ) {
+				$objects = [];
+			}
+
+			if ( ! $has_custom_args ) {
+				$this->_groups = wp_list_pluck( $objects, 'identifier' );
+			}
 
 			return $objects;
 		}
@@ -1046,6 +1084,16 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}//end if
 
 		return null;
+	}
+
+	/**
+	 * Flush object of cached child data.
+	 */
+	public function flush() {
+		$this->_fields        = null;
+		$this->_groups        = null;
+		$this->_object_fields = null;
+		$this->_table_info    = null;
 	}
 
 }

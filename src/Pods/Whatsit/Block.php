@@ -104,34 +104,27 @@ class Block extends Pod {
 	}
 
 	/**
-	 * Get fields for object.
-	 *
-	 * @return Field[] List of field objects.
+	 * {@inheritdoc}
 	 */
-	public function get_fields() {
+	public function get_fields( array $args = [] ) {
 		if ( [] === $this->_fields ) {
 			return [];
 		}
 
 		$object_collection = Store::get_instance();
 
-		if ( null === $this->_fields ) {
-			$args = [
-				'object_type'       => 'block-field',
-				'orderby'           => 'menu_order title',
-				'order'             => 'ASC',
-				'parent'            => $this->get_id(),
-				'parent_id'         => $this->get_id(),
-				'parent_name'       => $this->get_name(),
-				'parent_identifier' => $this->get_identifier(),
-			];
+		$has_custom_args = ! empty( $args );
 
-			$args = array_filter( $args );
+		if ( null === $this->_fields || $has_custom_args ) {
+			$args = array_merge( [
+				'object_type' => 'block-field',
+			], $args );
 
-			/** @var Block[] $blocks */
-			$objects = pods_api()->_load_objects( $args );
+			$objects = parent::get_fields( $args );
 
-			$this->_fields = wp_list_pluck( $objects, 'identifier' );
+			if ( ! $has_custom_args ) {
+				$this->_fields = wp_list_pluck( $objects, 'identifier' );
+			}
 
 			return $objects;
 		}

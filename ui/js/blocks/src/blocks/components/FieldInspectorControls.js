@@ -28,10 +28,6 @@ const FieldInspectorControls = ( {
 			{ fields.map( ( field ) => {
 				const {
 					name,
-					fieldOptions: {
-						label,
-						heading,
-					},
 				} = field;
 
 				return (

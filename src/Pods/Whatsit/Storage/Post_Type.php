@@ -92,8 +92,10 @@ class Post_Type extends Collection {
 			$args['bypass_post_type_find'] = false;
 		}
 
+		$fallback_mode = $this->fallback_mode;
+
 		if ( isset( $args['fallback_mode'] ) ) {
-			$this->fallback_mode( (boolean) $args['fallback_mode'] );
+			$fallback_mode = (boolean) $args['fallback_mode'];
 		}
 
 		/**
@@ -157,7 +159,7 @@ class Post_Type extends Collection {
 		}
 
 		foreach ( $this->secondary_args as $arg ) {
-			if ( ! isset( $args[ $arg ] ) ) {
+			if ( ! array_key_exists( $arg, $args ) ) {
 				continue;
 			}
 
@@ -192,7 +194,9 @@ class Post_Type extends Collection {
 			$value = (array) $value;
 			$value = array_map( 'trim', $value );
 			$value = array_unique( $value );
-			$value = array_filter( $value );
+			$value = array_filter( $value, static function( $v ) {
+				return null !== $v;
+			} );
 
 			if ( $value ) {
 				sort( $value );
@@ -357,7 +361,7 @@ class Post_Type extends Collection {
 
 		$posts = array_combine( $names, $posts );
 
-		if ( $this->fallback_mode && ( empty( $args['status'] ) || \in_array( 'publish', (array) $args['status'], true ) ) ) {
+		if ( $fallback_mode && ( empty( $args['status'] ) || \in_array( 'publish', (array) $args['status'], true ) ) ) {
 			$posts = array_merge( $posts, parent::find( $args ) );
 		}
 

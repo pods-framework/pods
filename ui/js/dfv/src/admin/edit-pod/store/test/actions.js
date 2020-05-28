@@ -1,6 +1,8 @@
 import {
-	uiConstants,
-	currentPodConstants,
+	SAVE_STATUSES,
+	DELETE_STATUSES,
+	UI_ACTIONS,
+	CURRENT_POD_ACTIONS,
 } from '../constants';
 
 import {
@@ -32,14 +34,6 @@ import {
 	// saveField,
 	// deleteField,
 } from '../actions.js';
-
-const {
-	actions: UI_ACTIONS,
-	saveStatuses: SAVE_STATUSES,
-	deleteStatuses: DELETE_STATUSES,
-} = uiConstants;
-
-const { actions: CURRENT_POD_ACTIONS } = currentPodConstants;
 
 import { GROUP, SECOND_TEXT_FIELD } from '../testData';
 

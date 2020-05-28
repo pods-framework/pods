@@ -4,18 +4,21 @@ import { __ } from '@wordpress/i18n';
 import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
-import { STORE_KEY_EDIT_POD, uiConstants } from 'dfv/src/admin/edit-pod/store/constants';
+import {
+	STORE_KEY_EDIT_POD,
+	SAVE_STATUSES,
+} from 'dfv/src/admin/edit-pod/store/constants';
 
 export const SaveStatusMessage = ( { saveStatus, saveMessage } ) => {
 	switch ( saveStatus ) {
-		case uiConstants.saveStatuses.SAVING:
+		case SAVE_STATUSES.SAVING:
 			return (
 				<div id="message" className="notice notice-warning">
 					<p><b>{ __( 'Saving Pod…', 'pods' ) }</b></p>
 				</div>
 			);
 
-		case uiConstants.saveStatuses.SAVE_SUCCESS:
+		case SAVE_STATUSES.SAVE_SUCCESS:
 			return (
 				<div id="message" className="updated fade">
 					<p>
@@ -26,7 +29,7 @@ export const SaveStatusMessage = ( { saveStatus, saveMessage } ) => {
 				</div>
 			);
 
-		case uiConstants.saveStatuses.SAVE_ERROR:
+		case SAVE_STATUSES.SAVE_ERROR:
 			return (
 				<div id="message" className="notice error">
 					<p><b>{ !! saveMessage ? saveMessage : __( 'Save Error', 'pods' ) }</b></p>

@@ -7,13 +7,9 @@ import { compose } from '@wordpress/compose';
 
 import {
 	STORE_KEY_EDIT_POD,
-	uiConstants,
+	SAVE_STATUSES,
+	DELETE_STATUSES,
 } from 'dfv/src/admin/edit-pod/store/constants';
-
-const {
-	saveStatuses: SAVE_STATUSES,
-	deleteStatuses: DELETE_STATUSES,
-} = uiConstants;
 
 // Helper components
 const Spinner = () => (

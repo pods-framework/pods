@@ -1,17 +1,11 @@
 import { omit } from 'lodash';
 
 import {
-	uiConstants,
-	currentPodConstants,
+	SAVE_STATUSES,
+	DELETE_STATUSES,
+	UI_ACTIONS,
+	CURRENT_POD_ACTIONS,
 } from 'dfv/src/admin/edit-pod/store/constants';
-
-const {
-	actions: UI_ACTIONS,
-	saveStatuses: SAVE_STATUSES,
-	deleteStatuses: DELETE_STATUSES,
-} = uiConstants;
-
-const { actions: CURRENT_POD_ACTIONS } = currentPodConstants;
 
 // UI
 export const setActiveTab = ( activeTab ) => {

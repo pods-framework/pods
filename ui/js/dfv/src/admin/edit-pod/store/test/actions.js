@@ -266,7 +266,8 @@ describe( 'actions', () => {
 			const result = saveGroup( 123 );
 
 			expect( result.type ).toEqual( action );
-			expect( result.payload.onSuccess().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
+			expect( result.payload.onSuccess[ 0 ]().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
+			expect( result.payload.onSuccess[ 1 ]().type ).toEqual( CURRENT_POD_ACTIONS.SET_GROUP_DATA );
 			expect( result.payload.onFailure().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
 			expect( result.payload.onStart().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
 		} );

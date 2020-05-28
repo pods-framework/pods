@@ -89,7 +89,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		);
 
 		if ( confirmation ) {
-			deleteGroup( groupName );
+			deleteGroup( groupID );
 		}
 	};
 

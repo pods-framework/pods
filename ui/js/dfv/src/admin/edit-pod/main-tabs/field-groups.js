@@ -10,6 +10,7 @@ import {
 	STORE_KEY_EDIT_POD,
 	uiConstants,
 } from 'dfv/src/admin/edit-pod/store/constants';
+import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
@@ -27,7 +28,7 @@ const FieldGroups = ( {
 	groups,
 	addGroup,
 	saveGroup,
-	deleteGroup,
+	deleteAndRemoveGroup,
 	moveGroup,
 	groupFieldList,
 	setGroupFields,
@@ -46,7 +47,8 @@ const FieldGroups = ( {
 		event.preventDefault();
 
 		const str = randomString( 6 );
-		const name = 'Group ' + str;
+		const label = 'Group ' + str;
+		const name = sanitizeSlug( label );
 
 		addGroup( name );
 
@@ -125,7 +127,7 @@ const FieldGroups = ( {
 						group={ group }
 						index={ index }
 						editGroupPod={ editGroupPod }
-						deleteGroup={ deleteGroup }
+						deleteGroup={ deleteAndRemoveGroup }
 						moveGroup={ handleGroupMove }
 						groupFieldList={ groupFieldList }
 						setGroupFields={ setGroupFields }
@@ -159,7 +161,7 @@ FieldGroups.propTypes = {
 	podSaveStatus: PropTypes.string.isRequired,
 	groups: PropTypes.arrayOf( GROUP_PROP_TYPE_SHAPE ).isRequired,
 	addGroup: PropTypes.func.isRequired,
-	deleteGroup: PropTypes.func.isRequired,
+	deleteAndRemoveGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
 };
@@ -183,7 +185,10 @@ export default compose( [
 		return {
 			addGroup: storeDispatch.addGroup,
 			saveGroup: storeDispatch.saveGroup,
-			deleteGroup: storeDispatch.deleteGroup,
+			deleteAndRemoveGroup: ( groupID ) => {
+				storeDispatch.deleteGroup( groupID );
+				storeDispatch.removeGroup( groupID );
+			},
 			setGroupFields: storeDispatch.setGroupFields,
 			addGroupField: storeDispatch.addGroupField,
 			setFields: storeDispatch.setFields,

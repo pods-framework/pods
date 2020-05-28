@@ -163,11 +163,11 @@ export const currentPod = ( state = {}, action = {} ) => {
 			};
 		}
 
-		case ACTIONS.DELETE_GROUP: {
+		case ACTIONS.REMOVE_GROUP: {
 			return {
 				...state,
 				groups: state.groups ? state.groups.filter(
-					( group ) => group.name !== action.groupName
+					( group ) => group.id !== action.groupID
 				) : undefined,
 			};
 		}
@@ -202,6 +202,24 @@ export const currentPod = ( state = {}, action = {} ) => {
 						...group.fields,
 						action.field,
 					],
+				};
+			} );
+
+			return {
+				...state,
+				groups,
+			};
+		}
+
+		case ACTIONS.SET_GROUP_DATA: {
+			const groups = state.groups.map( ( group ) => {
+				if ( group.name !== action?.result?.group?.name ) {
+					return group;
+				}
+
+				return {
+					...action.result.group,
+					fields: action?.result?.group?.fields || [],
 				};
 			} );
 

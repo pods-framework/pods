@@ -2486,10 +2486,10 @@ class PodsAPI {
 
 				foreach ( $order_group['fields'] as $order_field_id ) {
 					$save_field_response = $this->save_field( [
-						'pod_data' => $object,
-						'group_id' => (int) $order_group['group_id'],
-						'id'       => (int) $order_field_id,
-						'weight'   => $group_field_order,
+						'pod_data'     => $object,
+						'id'           => (int) $order_field_id,
+						'new_group_id' => (int) $order_group['group_id'],
+						'weight'       => $group_field_order,
 					], false, false, $db );
 
 					$group_field_order ++;
@@ -2865,6 +2865,9 @@ class PodsAPI {
 		$options = get_object_vars( $params );
 
 		$options_ignore = array(
+			'object_type',
+			'storage_type',
+			'parent',
 			'method',
 			'table_info',
 			'attributes',
@@ -7461,20 +7464,6 @@ class PodsAPI {
 			}
 
 			unset( $params['pod'] );
-		}
-
-		if ( isset( $params['group_id'] ) ) {
-			$params['group'] = (int) $params['group_id'];
-
-			unset( $params['group_id'] );
-		}
-
-		if ( isset( $params['group'] ) ) {
-			$group = $this->load_group( $params['group'], false );
-
-			if ( $group ) {
-				$params['group'] = $group->get_id();
-			}
 		}
 
 		$params['object_type'] = 'field';

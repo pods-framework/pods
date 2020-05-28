@@ -1,8 +1,6 @@
 <?php
 
 use Pods\Whatsit\Pod;
-use Pods\Whatsit\Group;
-use Pods\Whatsit\Field;
 
 /**
  * @package Pods
@@ -1302,53 +1300,83 @@ class PodsAdmin {
 	 * @return \Pods\Whatsit\Pod The pod object.
 	 */
 	public function maybe_migrate_pod_fields_into_group( $pod ) {
-		$groups = $pod->get_groups();
+		$groups = $pod->get_groups( [
+			'fallback_mode' => false,
+		] );
 
-		// Only migrate if there are no groups.
-		if ( ! empty( $groups ) ) {
-			return $pod;
-		}
-
-		$fields = $pod->get_fields();
+		$has_orphan_fields = empty( $groups );
 
 		$api = pods_api();
 
-		/**
-		 * Filter the title of the Pods Metabox used in the post editor.
-		 *
-		 * @since unknown
-		 *
-		 * @param string  $title  The title to use, default is 'More Fields'.
-		 * @param obj|Pod $pod    Current Pods Object.
-		 * @param array   $fields Array of fields that will go in the metabox.
-		 * @param string  $type   The type of Pod.
-		 * @param string  $name   Name of the Pod.
-		 */
-		$label = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $pod->get_type(), $pod->get_name() );
-		$name  = pods_create_slug( $label );
+		$fields   = null;
+		$group_id = null;
 
-		// Setup first group.
-		$group_id = $api->save_group( [
-			'pod'    => $pod,
-			'name'   => $name,
-			'label'  => $label,
-		] );
+		// Only migrate if there are no groups or orphan fields.
+		if ( ! $has_orphan_fields ) {
+			$fields = $pod->get_fields( [
+				'fallback_mode' => false,
+				'group'         => null,
+			] );
 
-		foreach ( $fields as $field ) {
-			$api->save_field( [
-				'pod'          => $pod,
-				'field'        => $field,
-				'new_group_id' => $group_id,
+			$has_orphan_fields = ! empty( $fields );
+
+			if ( ! $has_orphan_fields ) {
+				return $pod;
+			}
+
+			$groups = wp_list_pluck( $groups, 'id' );
+			$groups = array_filter( $groups );
+
+			if ( ! empty( $groups ) ) {
+				$group_id = reset( $groups );
+			}
+		}
+
+		if ( empty( $group_id ) ) {
+			if ( empty( $fields ) ) {
+				$fields = $pod->get_fields( [
+					'fallback_mode' => false,
+				] );
+			}
+
+			/**
+			 * Filter the title of the Pods Metabox used in the post editor.
+			 *
+			 * @since unknown
+			 *
+			 * @param string  $title  The title to use, default is 'More Fields'.
+			 * @param obj|Pod $pod    Current Pods Object.
+			 * @param array   $fields Array of fields that will go in the metabox.
+			 * @param string  $type   The type of Pod.
+			 * @param string  $name   Name of the Pod.
+			 */
+			$label = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $pod->get_type(), $pod->get_name() );
+			$name  = pods_create_slug( $label );
+
+			// Setup first group.
+			$group_id = $api->save_group( [
+				'pod'    => $pod,
+				'name'   => $name,
+				'label'  => $label,
 			] );
 		}
 
-		pods_api()->cache_flush_pods( $pod );
+		foreach ( $fields as $field ) {
+			$api->save_field( [
+				'pod_data'     => $pod,
+				'field'        => $field,
+				'new_group_id' => $group_id,
+			], false );
+
+			$field->set_arg( 'group_id', $group_id );
+		}
+
+		$api->cache_flush_pods( $pod );
 
 		// Refresh pod object.
-		return $api->load_pod( [
-			'id'           => $pod->get_id(),
-			'bypass_cache' => true,
-		] );
+		$pod->flush();
+
+		return $pod;
 	}
 
 	/**

@@ -3,8 +3,10 @@ import deepFreeze from 'deep-freeze';
 import * as paths from '../state-paths';
 
 import {
-	uiConstants,
-	currentPodConstants,
+	SAVE_STATUSES,
+	DELETE_STATUSES,
+	CURRENT_POD_ACTIONS,
+	UI_ACTIONS,
 	INITIAL_UI_STATE,
 } from '../constants';
 
@@ -14,15 +16,7 @@ import {
 	global,
 } from '../reducer';
 
-const { actions: CURRENT_POD_ACTIONS } = currentPodConstants;
-
 describe( 'UI reducer', () => {
-	const {
-		actions,
-		saveStatuses,
-		deleteStatuses,
-	} = uiConstants;
-
 	let state;
 
 	beforeEach( () => {
@@ -41,7 +35,7 @@ describe( 'UI reducer', () => {
 
 	it( 'changes the active tab', () => {
 		const action = {
-			type: actions.SET_ACTIVE_TAB,
+			type: UI_ACTIONS.SET_ACTIVE_TAB,
 			activeTab: 'labels',
 		};
 
@@ -52,8 +46,8 @@ describe( 'UI reducer', () => {
 
 	it( 'changes the save status', () => {
 		const action = {
-			type: actions.SET_SAVE_STATUS,
-			saveStatus: saveStatuses.SAVING,
+			type: UI_ACTIONS.SET_SAVE_STATUS,
+			saveStatus: SAVE_STATUSES.SAVING,
 			message: 'Saving...',
 		};
 
@@ -65,7 +59,7 @@ describe( 'UI reducer', () => {
 
 	it( 'uses the default for an unknown save status', () => {
 		const action = {
-			type: actions.SET_SAVE_STATUS,
+			type: UI_ACTIONS.SET_SAVE_STATUS,
 			saveStatus: 'xyzzy',
 		};
 
@@ -76,20 +70,20 @@ describe( 'UI reducer', () => {
 
 	it( 'changes the delete status', () => {
 		const action = {
-			type: actions.SET_DELETE_STATUS,
-			deleteStatus: deleteStatuses.DELETING,
+			type: UI_ACTIONS.SET_DELETE_STATUS,
+			deleteStatus: DELETE_STATUSES.DELETING,
 			message: 'Deleting...',
 		};
 
 		const newState = ui( state, action );
 
-		expect( newState.deleteStatus ).toEqual( deleteStatuses.DELETING );
+		expect( newState.deleteStatus ).toEqual( DELETE_STATUSES.DELETING );
 		expect( newState.deleteMessage ).toEqual( 'Deleting...' );
 	} );
 
 	it( 'uses the default for an unknown delete status', () => {
 		const action = {
-			type: actions.SET_DELETE_STATUS,
+			type: UI_ACTIONS.SET_DELETE_STATUS,
 			deleteStatus: 'xyzzy',
 		};
 

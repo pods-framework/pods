@@ -3,8 +3,10 @@ import {
 } from './state-paths';
 
 import {
-	uiConstants,
-	currentPodConstants,
+	SAVE_STATUSES,
+	DELETE_STATUSES,
+	UI_ACTIONS,
+	CURRENT_POD_ACTIONS,
 	INITIAL_UI_STATE,
 } from './constants';
 
@@ -19,20 +21,14 @@ export const setObjectValue = ( object, key, value ) => {
 };
 
 export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
-	const {
-		actions: ACTIONS,
-		saveStatuses: SAVE_STATUSES,
-		deleteStatuses: DELETE_STATUSES,
-	} = uiConstants;
-
 	switch ( action.type ) {
-		case ACTIONS.SET_ACTIVE_TAB: {
+		case UI_ACTIONS.SET_ACTIVE_TAB: {
 			return {
 				...state,
 				activeTab: action.activeTab,
 			};
 		}
-		case ACTIONS.SET_SAVE_STATUS: {
+		case UI_ACTIONS.SET_SAVE_STATUS: {
 			const newStatus = Object.values( SAVE_STATUSES ).includes( action.saveStatus )
 				? action.saveStatus
 				: INITIAL_UI_STATE.saveStatus;
@@ -43,7 +39,7 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 				saveMessage: action.message,
 			};
 		}
-		case ACTIONS.SET_DELETE_STATUS: {
+		case UI_ACTIONS.SET_DELETE_STATUS: {
 			const newStatus = Object.values( DELETE_STATUSES ).includes( action.deleteStatus )
 				? action.deleteStatus
 				: INITIAL_UI_STATE.deleteStatus;
@@ -55,7 +51,7 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 			};
 		}
 
-		case ACTIONS.SET_GROUP_SAVE_STATUS: {
+		case UI_ACTIONS.SET_GROUP_SAVE_STATUS: {
 			const newStatus = Object.values( SAVE_STATUSES ).includes( action.saveStatus )
 				? action.saveStatus
 				: INITIAL_UI_STATE.saveStatus;
@@ -70,7 +66,7 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 			};
 		}
 
-		case ACTIONS.SET_GROUP_DELETE_STATUS: {
+		case UI_ACTIONS.SET_GROUP_DELETE_STATUS: {
 			const newStatus = Object.values( DELETE_STATUSES ).includes( action.deleteStatus )
 				? action.deleteStatus
 				: INITIAL_UI_STATE.deleteStatus;
@@ -91,19 +87,15 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 };
 
 export const currentPod = ( state = {}, action = {} ) => {
-	const {
-		actions: ACTIONS,
-	} = currentPodConstants;
-
 	switch ( action.type ) {
-		case ACTIONS.SET_POD_NAME: {
+		case CURRENT_POD_ACTIONS.SET_POD_NAME: {
 			return {
 				...state,
 				name: action.name,
 			};
 		}
 
-		case ACTIONS.SET_OPTION_VALUE: {
+		case CURRENT_POD_ACTIONS.SET_OPTION_VALUE: {
 			const { optionName, value } = action;
 
 			return {
@@ -112,14 +104,14 @@ export const currentPod = ( state = {}, action = {} ) => {
 			};
 		}
 
-		case ACTIONS.SET_OPTIONS_VALUES: {
+		case CURRENT_POD_ACTIONS.SET_OPTIONS_VALUES: {
 			return {
 				...state,
 				...action.options,
 			};
 		}
 
-		case ACTIONS.MOVE_GROUP: {
+		case CURRENT_POD_ACTIONS.MOVE_GROUP: {
 			const { oldIndex, newIndex } = action;
 
 			// Index bounds checking
@@ -142,14 +134,14 @@ export const currentPod = ( state = {}, action = {} ) => {
 			};
 		}
 
-		case ACTIONS.SET_GROUP_LIST: {
+		case CURRENT_POD_ACTIONS.SET_GROUP_LIST: {
 			return {
 				...state,
 				[ GROUPS_PATH.tailPath ]: action.groupList,
 			};
 		}
 
-		case ACTIONS.ADD_GROUP: {
+		case CURRENT_POD_ACTIONS.ADD_GROUP: {
 			return {
 				...state,
 				groups: [
@@ -163,7 +155,7 @@ export const currentPod = ( state = {}, action = {} ) => {
 			};
 		}
 
-		case ACTIONS.REMOVE_GROUP: {
+		case CURRENT_POD_ACTIONS.REMOVE_GROUP: {
 			return {
 				...state,
 				groups: state.groups ? state.groups.filter(
@@ -172,7 +164,7 @@ export const currentPod = ( state = {}, action = {} ) => {
 			};
 		}
 
-		case ACTIONS.SET_GROUP_FIELDS: {
+		case CURRENT_POD_ACTIONS.SET_GROUP_FIELDS: {
 			const groups = state.groups.map( ( group ) => {
 				if ( group.name !== action.groupName ) {
 					return group;
@@ -190,7 +182,7 @@ export const currentPod = ( state = {}, action = {} ) => {
 			};
 		}
 
-		case ACTIONS.ADD_GROUP_FIELD: {
+		case CURRENT_POD_ACTIONS.ADD_GROUP_FIELD: {
 			const groups = state.groups.map( ( group ) => {
 				if ( group.name !== action.groupName ) {
 					return group;
@@ -211,7 +203,7 @@ export const currentPod = ( state = {}, action = {} ) => {
 			};
 		}
 
-		case ACTIONS.SET_GROUP_DATA: {
+		case CURRENT_POD_ACTIONS.SET_GROUP_DATA: {
 			const groups = state.groups.map( ( group ) => {
 				if ( group.name !== action?.result?.group?.name ) {
 					return group;

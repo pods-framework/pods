@@ -8,16 +8,12 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	STORE_KEY_EDIT_POD,
-	uiConstants,
+	SAVE_STATUSES,
 } from 'dfv/src/admin/edit-pod/store/constants';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
-
-const {
-	saveStatuses: SAVE_STATUSES,
-} = uiConstants;
 
 import './field-groups.scss';
 

@@ -1,6 +1,8 @@
 import {
-	uiConstants,
-	currentPodConstants,
+	SAVE_STATUSES,
+	DELETE_STATUSES,
+	UI_ACTIONS,
+	CURRENT_POD_ACTIONS,
 } from '../constants';
 
 import {
@@ -32,14 +34,6 @@ import {
 	// saveField,
 	// deleteField,
 } from '../actions.js';
-
-const {
-	actions: UI_ACTIONS,
-	saveStatuses: SAVE_STATUSES,
-	deleteStatuses: DELETE_STATUSES,
-} = uiConstants;
-
-const { actions: CURRENT_POD_ACTIONS } = currentPodConstants;
 
 import { GROUP, SECOND_TEXT_FIELD } from '../testData';
 
@@ -266,7 +260,8 @@ describe( 'actions', () => {
 			const result = saveGroup( 123 );
 
 			expect( result.type ).toEqual( action );
-			expect( result.payload.onSuccess().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
+			expect( result.payload.onSuccess[ 0 ]().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
+			expect( result.payload.onSuccess[ 1 ]().type ).toEqual( CURRENT_POD_ACTIONS.SET_GROUP_DATA );
 			expect( result.payload.onFailure().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
 			expect( result.payload.onStart().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
 		} );

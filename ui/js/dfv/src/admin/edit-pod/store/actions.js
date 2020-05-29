@@ -33,36 +33,42 @@ export const setDeleteStatus = ( deleteStatus ) => ( result = {}, message = '' )
 	};
 };
 
-export const setGroupSaveStatus = ( saveStatus ) => ( result = {}, message = '' ) => {
+export const setGroupSaveStatus = ( saveStatus, previousGroupName ) => ( result = {}, message = '' ) => {
 	return {
 		type: UI_ACTIONS.SET_GROUP_SAVE_STATUS,
+		// The group name may not have changed, but we call it "previousGroupName" just
+		// in case it has so that the old one is changed.
+		previousGroupName,
 		saveStatus,
 		result,
 		message,
 	};
 };
 
-export const setGroupDeleteStatus = ( deleteStatus ) => ( result = {}, message = '' ) => {
+export const setGroupDeleteStatus = ( deleteStatus, previousGroupName ) => ( result = {}, message = '' ) => {
 	return {
 		type: UI_ACTIONS.SET_GROUP_DELETE_STATUS,
+		previousGroupName,
 		deleteStatus,
 		result,
 		message,
 	};
 };
 
-export const setFieldSaveStatus = ( saveStatus ) => ( result = {}, message = '' ) => {
+export const setFieldSaveStatus = ( saveStatus, previousFieldName ) => ( result = {}, message = '' ) => {
 	return {
 		type: UI_ACTIONS.SET_FIELD_SAVE_STATUS,
+		previousFieldName,
 		saveStatus,
 		result,
 		message,
 	};
 };
 
-export const setFieldDeleteStatus = ( deleteStatus ) => ( result = {}, message = '' ) => {
+export const setFieldDeleteStatus = ( deleteStatus, previousFieldName ) => ( result = {}, message = '' ) => {
 	return {
 		type: UI_ACTIONS.SET_FIELD_DELETE_STATUS,
+		previousFieldName,
 		deleteStatus,
 		result,
 		message,
@@ -201,19 +207,25 @@ export const deletePod = ( podId ) => {
 	};
 };
 
-export const saveGroup = ( data, groupId ) => {
+export const saveGroup = ( podID, previousName, name, label, args = {}, groupId ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.API_REQUEST,
 		payload: {
 			url: groupId ? `/pods/v1/groups/${ groupId }` : '/pods/v1/groups',
 			method: 'POST',
-			data,
+			data: {
+				pod_id: podID,
+				name: previousName === name ? name : undefined,
+				new_name: previousName !== name ? name : undefined,
+				label,
+				args,
+			},
 			onSuccess: [
-				setGroupSaveStatus( SAVE_STATUSES.SAVE_SUCCESS ),
+				setGroupSaveStatus( SAVE_STATUSES.SAVE_SUCCESS, name ),
 				setGroupData,
 			],
-			onFailure: setGroupSaveStatus( SAVE_STATUSES.SAVE_ERROR ),
-			onStart: setGroupSaveStatus( SAVE_STATUSES.SAVING ),
+			onFailure: setGroupSaveStatus( SAVE_STATUSES.SAVE_ERROR, name ),
+			onStart: setGroupSaveStatus( SAVE_STATUSES.SAVING, name ),
 		},
 	};
 };
@@ -224,36 +236,40 @@ export const deleteGroup = ( groupId ) => {
 		payload: {
 			url: `/pods/v1/groups/${ groupId }`,
 			method: 'DELETE',
-			onSuccess: setGroupDeleteStatus( DELETE_STATUSES.DELETE_SUCCESS ),
-			onFailure: setGroupDeleteStatus( DELETE_STATUSES.DELETE_ERROR ),
-			onStart: setGroupDeleteStatus( DELETE_STATUSES.DELETING ),
+			onSuccess: setGroupDeleteStatus( DELETE_STATUSES.DELETE_SUCCESS, name ),
+			onFailure: setGroupDeleteStatus( DELETE_STATUSES.DELETE_ERROR, name ),
+			onStart: setGroupDeleteStatus( DELETE_STATUSES.DELETING, name ),
 		},
 	};
 };
 
-export const saveField = ( data, fieldId ) => {
+export const saveField = ( podID, name, args, fieldId ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.API_REQUEST,
 		payload: {
 			url: fieldId ? `/pods/v1/fields/${ fieldId }` : '/pods/v1/fields',
 			method: 'POST',
-			data,
-			onSuccess: setFieldSaveStatus( SAVE_STATUSES.SAVE_SUCCESS ),
-			onFailure: setFieldSaveStatus( SAVE_STATUSES.SAVE_ERROR ),
-			onStart: setFieldSaveStatus( SAVE_STATUSES.SAVING ),
+			data: {
+				pod_id: podID,
+				name,
+				args,
+			},
+			onSuccess: setFieldSaveStatus( SAVE_STATUSES.SAVE_SUCCESS, name ),
+			onFailure: setFieldSaveStatus( SAVE_STATUSES.SAVE_ERROR, name ),
+			onStart: setFieldSaveStatus( SAVE_STATUSES.SAVING, name ),
 		},
 	};
 };
 
-export const deleteField = ( data, fieldId ) => {
+export const deleteField = ( podID, name, fieldId ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.API_REQUEST,
 		payload: {
 			url: `/pods/v1/fields/${ fieldId }`,
 			method: 'DELETE',
-			onSuccess: setFieldDeleteStatus( DELETE_STATUSES.DELETE_SUCCESS ),
-			onFailure: setFieldDeleteStatus( DELETE_STATUSES.DELETE_ERROR ),
-			onStart: setFieldDeleteStatus( DELETE_STATUSES.DELETING ),
+			onSuccess: setFieldDeleteStatus( DELETE_STATUSES.DELETE_SUCCESS, name ),
+			onFailure: setFieldDeleteStatus( DELETE_STATUSES.DELETE_ERROR, name ),
+			onStart: setFieldDeleteStatus( DELETE_STATUSES.DELETING, name ),
 		},
 	};
 };

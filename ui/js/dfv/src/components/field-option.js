@@ -65,6 +65,10 @@ const PodsFieldOption = ( {
 	);
 };
 
+PodsFieldOption.defaultProps = {
+	value: '',
+};
+
 PodsFieldOption.propTypes = {
 	description: PropTypes.string,
 	fieldType: PropTypes.string.isRequired,

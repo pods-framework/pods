@@ -1,84 +1,103 @@
-import React from 'react';
+import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import { __ } from '@wordpress/i18n';
-import { Modal } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
+
+import DynamicTabContent from './dynamic-tab-content';
+
+const ENTER_KEY = 13;
 
 const FieldGroupSettings = ( {
-	show,
 	title,
-	editGroupPod,
+	editGroupPod: {
+		groups: editGroupSections = [],
+	} = {},
+	hasSaveError,
+	groupOptions,
+	cancelEditing,
+	save,
 } ) => {
-	const closeModal = ( e ) => {
-		e.stopPropagation();
-		show( false );
-	};
+	const [ selectedTab, setSelectedTab ] = useState( editGroupSections[ 0 ].name );
 
-	// eslint-disable-next-line
-	console.log( 'edit group pod options, these will be used later: ', editGroupPod );
+	const [ changedOptions, setChangedOptions ] = useState( groupOptions );
 
 	return (
 		<Modal
 			className="pods-field-group_settings pods-field-group_settings--visible"
 			title={ title }
-			onRequestClose={ ( e ) => closeModal( e ) }
+			isDismissible={ true }
+			onRequestClose={ cancelEditing }
 		>
+			<Button isPrimary onClick={ () => save( changedOptions ) }>
+				{ __( 'Save Group', 'pods' ) }
+			</Button>
+
+			<Button isSecondary onClick={ cancelEditing }>
+				{ __( 'Cancel', 'pods' ) }
+			</Button>
+
+			{ hasSaveError && (
+				<span className="pod-field-group_settings-error-message">
+					{ __( 'There was an error saving the group, please try again.', 'pods' ) }
+				</span>
+			) }
+
 			<div className="pods-field-group_settings-container">
 				<div className="pods-field-group_settings-options">
-					<div className="pods-field-group_settings-sidebar" role="tablist" aria-label="Pods Field Group Settings">
-						<div className="pods-field-group_settings-sidebar-item pods-field-group_settings-sidebar-item--active" aria-selected="true" id="main" aria-controls="main-tab">
-							{ __( 'General', 'pods' ) }
-						</div>
-						<div className="pods-field-group_settings-sidebar-item" aria-selected="false" id="advanced" aria-controls="advanced-tab">
-							{ __( 'Advanced', 'pods' ) }
-						</div>
-						<div className="pods-field-group_settings-sidebar-item" aria-selected="false" id="other" aria-controls="other-tab">
-							{ __( 'Other Group Settings Tab', 'pods' ) }
-						</div>
+					<div
+						className="pods-field-group_settings-sidebar"
+						role="tablist"
+						aria-label={ __( 'Pods Field Group Settings', 'pods' ) }
+					>
+						{ editGroupSections.map( ( {
+							name: sectionName,
+							label: sectionLabel,
+						} ) => {
+							const isActive = selectedTab === sectionName;
+
+							const classes = classNames(
+								'pods-field-group_settings-sidebar-item',
+								{
+									'pods-field-group_settings-sidebar-item--active': isActive,
+								}
+							);
+
+							return (
+								<div
+									className={ classes }
+									aria-controls={ `${ sectionName }-tab` }
+									role="button"
+									tabIndex={ 0 }
+									key={ sectionName }
+									onClick={ () => setSelectedTab( sectionName ) }
+									onKeyPress={ ( event ) => event.keyCode === ENTER_KEY && setSelectedTab( sectionName ) }
+								>
+									{ sectionLabel }
+								</div>
+							);
+						} ) }
 					</div>
 
-					<div className="pods-field-group_settings-main" role="tabpanel" aria-labelledby="main" id="main-tab">
+					<div
+						className="pods-field-group_settings-main"
+						role="tabpanel"
+						aria-labelledby="main"
+						id="main-tab"
+					>
 						{
-							// Enable eslint once this is improved
-							/* eslint-disable */
+							<DynamicTabContent
+								tabOptions={ editGroupSections.find( ( section ) => section.name === selectedTab ).fields }
+								optionValues={ changedOptions }
+								setOptionValue={ ( optionName, value ) => {
+									setChangedOptions( {
+										...changedOptions,
+										[ optionName ]: value,
+									} );
+								} }
+							/>
 						}
-						<label className="pods-input-container">
-							<span className="pods-label_text">$id</span>
-							<input className="pods-input" type="text"></input>
-						</label>
-						<label className="pods-input-container">
-							<span className="pods-label_text">$title</span>
-							<input className="pods-input" type="text"></input>
-						</label>
-						<label className="pods-input-container">
-							<span className="pods-label_text">$callback</span>
-							<input className="pods-input" type="text"></input>
-						</label>
-						<label className="pods-input-container">
-							<span className="pods-label_text">$screen</span>
-							<input className="pods-input" type="text"></input>
-						</label>
-						<label className="pods-input-container">
-							<span className="pods-label_text">$context</span>
-							<input className="pods-input" type="text"></input>
-						</label>
-						<label className="pods-input-container">
-							<span className="pods-label_text">$priority</span>
-							<input className="pods-input" type="text"></input>
-						</label>
-						<label className="pods-input-container">
-							<span className="pods-label_text">$callback_args</span>
-							<input className="pods-input" type="text"></input>
-						</label>
-						{ /* eslint-enable */ }
-					</div>
-
-					<div className="pods-field-group_settings-advanced" role="tabpanel" aria-labelledby="advanced" id="advanced-tab" hidden="hidden">
-						<p>Advanced tabpanel</p>
-					</div>
-
-					<div className="pods-field-group_settings-other" role="tabpanel" aria-labelledby="other" id="other-tab" hidden="hidden">
-						<p>Other tabpanel</p>
 					</div>
 				</div>
 			</div>
@@ -87,9 +106,12 @@ const FieldGroupSettings = ( {
 };
 
 FieldGroupSettings.propTypes = {
-	show: PropTypes.func.isRequired,
-	title: PropTypes.string.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
+	groupOptions: PropTypes.object.isRequired,
+	title: PropTypes.string.isRequired,
+	hasSaveError: PropTypes.bool.isRequired,
+	cancelEditing: PropTypes.func.isRequired,
+	save: PropTypes.func.isRequired,
 };
 
 export default FieldGroupSettings;

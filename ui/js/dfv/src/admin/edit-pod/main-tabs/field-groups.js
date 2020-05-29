@@ -26,6 +26,7 @@ const FieldGroups = ( {
 	saveGroup,
 	deleteAndRemoveGroup,
 	moveGroup,
+	groupSaveStatuses,
 	groupFieldList,
 	setGroupFields,
 	addGroupField,
@@ -48,12 +49,13 @@ const FieldGroups = ( {
 
 		addGroup( name );
 
-		saveGroup( {
-			pod_id: podID.toString(),
+		saveGroup(
+			podID.toString(),
 			name,
-			label: name, // @todo use a real label. But this will be moved anyway
-			args: {},
-		} );
+			name,
+			name,
+			{},
+		);
 	};
 
 	const createToggleExpandGroup = ( groupName ) => () => {
@@ -116,6 +118,7 @@ const FieldGroups = ( {
 				return (
 					<FieldGroup
 						key={ group.name }
+						podID={ podID }
 						podName={ podName }
 						group={ group }
 						index={ index }
@@ -126,6 +129,8 @@ const FieldGroups = ( {
 						groupFieldList={ groupFieldList }
 						setGroupFields={ setGroupFields }
 						addGroupField={ addGroupField }
+						saveStatus={ groupSaveStatuses[ group.name ] }
+						saveGroup={ saveGroup }
 						setFields={ setFields }
 						randomString={ randomString }
 						isExpanded={ expandedGroups[ group.name ] || false }
@@ -158,6 +163,7 @@ FieldGroups.propTypes = {
 	deleteAndRemoveGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
+	groupSaveStatuses: PropTypes.object.isRequired,
 };
 
 export default compose( [
@@ -171,6 +177,7 @@ export default compose( [
 			groups: storeSelect.getGroups(),
 			groupFieldList: storeSelect.groupFieldList(),
 			editGroupPod: storeSelect.getGlobalGroupOptions(),
+			groupSaveStatuses: storeSelect.getGroupSaveStatuses(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

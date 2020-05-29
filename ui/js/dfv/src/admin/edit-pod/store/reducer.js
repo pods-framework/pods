@@ -1,3 +1,7 @@
+import { omit } from 'lodash';
+
+import { combineReducers } from '@wordpress/data';
+
 import {
 	GROUPS as GROUPS_PATH,
 } from './state-paths';
@@ -9,8 +13,6 @@ import {
 	CURRENT_POD_ACTIONS,
 	INITIAL_UI_STATE,
 } from './constants';
-
-const { combineReducers } = wp.data;
 
 // Helper function
 export const setObjectValue = ( object, key, value ) => {
@@ -56,13 +58,21 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 				? action.saveStatus
 				: INITIAL_UI_STATE.saveStatus;
 
+			// The group's name may have changed during the save. Because the map of
+			// group save statuses uses the group name, we may need to remove the old name
+			// and set the new name, or just update the old/same name.
+			const hasNameChange = action.result?.group?.name === action.previousGroupName;
+
+			const name = hasNameChange ? action.result?.group?.name : action.previousGroupName;
+
+			const groupSaveStatuses = {
+				...omit( state.groupSaveStatuses, [ action.previousGroupName ] ),
+				[ name ]: newStatus,
+			};
+
 			return {
 				...state,
-				groupSaveStatuses: {
-					...state.groupSaveStatuses,
-					// @todo does the API result have this?
-					[ action.result.id ]: newStatus,
-				},
+				groupSaveStatuses,
 			};
 		}
 
@@ -71,12 +81,15 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 				? action.deleteStatus
 				: INITIAL_UI_STATE.deleteStatus;
 
+			if ( ! action.result?.group?.name ) {
+				return state;
+			}
+
 			return {
 				...state,
 				groupDeleteStatuses: {
 					...state.groupDeleteStatuses,
-					// @todo does the API result have this?
-					[ action.result.id ]: newStatus,
+					[ action.result.group.name ]: newStatus,
 				},
 			};
 		}

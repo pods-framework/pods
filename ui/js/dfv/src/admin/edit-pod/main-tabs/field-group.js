@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types';
 import { flow, max, map } from 'lodash';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import classnames from 'classnames';
+import { omit } from 'lodash';
 
 import { Button, Dashicon } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
@@ -13,6 +14,8 @@ import dropTarget from './group-drop-target';
 import FieldGroupSettings from './field-group-settings';
 import FieldList from 'dfv/src/admin/edit-pod/main-tabs/field-list';
 import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+
+import { SAVE_STATUSES } from 'dfv/src/admin/edit-pod/store/constants';
 
 const ENTER_KEY = 13;
 
@@ -25,22 +28,27 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 	} = props;
 
 	const {
+		podID,
 		podName,
-		group: {
-			name: groupName,
-			label: groupLabel,
-			id: groupID,
-			fields,
-		},
-		randomString,
-		deleteGroup,
-		setGroupFields,
-		addGroupField,
+		group,
 		isExpanded,
 		hasMoved,
+		saveStatus,
+		randomString,
+		deleteGroup,
+		saveGroup,
+		setGroupFields,
+		addGroupField,
 		toggleExpanded,
 		editGroupPod,
 	} = props;
+
+	const {
+		name: groupName,
+		label: groupLabel,
+		id: groupID,
+		fields,
+	} = group;
 
 	const wrapperRef = useRef( ref );
 	const dragHandleRef = useRef( ref );
@@ -59,6 +67,14 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			} );
 		}
 	} );
+
+	useEffect( () => {
+		console.log( 'saveStatus changed', groupName, saveStatus );
+		// Close the Group Settings modal if we finished saving.
+		if ( SAVE_STATUSES.SAVE_SUCCESS === saveStatus ) {
+			setShowSettings( false );
+		}
+	}, [ saveStatus ] );
 
 	connectDropTarget( wrapperRef );
 	connectDragSource( dragHandleRef );
@@ -79,6 +95,21 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		setShowSettings( true );
 	};
 
+	const onEditGroupCancel = () => {
+		setShowSettings( false );
+	};
+
+	const onEditGroupSave = ( updatedOptions = {} ) => {
+		saveGroup(
+			podID,
+			groupName,
+			updatedOptions.name || groupName,
+			updatedOptions.label || groupLabel || groupName,
+			omit( updatedOptions, [ 'name', 'label', 'new_name', 'id' ] ),
+			groupID,
+		);
+	};
+
 	const onDeleteGroupClick = ( event ) => {
 		event.stopPropagation();
 
@@ -93,7 +124,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		}
 	};
 
-	const addField = ( group ) => ( type = 'text' ) => {
+	const addField = () => ( type = 'text' ) => {
 		const str = randomString( 6 );
 		const fieldName = 'field_' + str;
 
@@ -118,9 +149,9 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		addGroupField( group, field );
 	};
 
-	const cloneField = ( group ) => ( type ) => addField( group, type );
+	const cloneField = () => ( type ) => addField( group, type );
 
-	const deleteField = ( group ) => ( fieldName ) => {
+	const deleteField = () => ( fieldName ) => {
 		const newFields = fields.filter( function( obj ) {
 			return obj.name !== fieldName;
 		} );
@@ -128,7 +159,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		setGroupFields( group, newFields );
 	};
 
-	const moveField = ( group ) => ( field, dragIndex, hoverIndex, item ) => {
+	const moveField = () => ( field, dragIndex, hoverIndex, item ) => {
 		if ( group === item.groupName ) {
 			const localFields = [ ...fields ];
 			const movedItem = localFields.find( ( itm, index ) => index === hoverIndex );
@@ -223,15 +254,17 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 				{ showSettings && (
 					<FieldGroupSettings
-						groupName={ groupName }
-						show={ setShowSettings }
 						editGroupPod={ editGroupPod }
+						groupOptions={ omit( group, [ 'fields' ] ) }
 						title={ sprintf(
 							/* translators: %1$s: Pod Label, %2$s Group Label */
 							__( '%1$s > %2$s > Edit Group', 'pods' ),
 							podName,
 							groupLabel
 						) }
+						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
+						cancelEditing={ onEditGroupCancel }
+						save={ onEditGroupSave }
 					/>
 				) }
 			</div>
@@ -252,6 +285,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 } );
 
 FieldGroup.propTypes = {
+	podID: PropTypes.number.isRequired,
 	podName: PropTypes.string.isRequired,
 	group: GROUP_PROP_TYPE_SHAPE,
 
@@ -259,9 +293,11 @@ FieldGroup.propTypes = {
 	isExpanded: PropTypes.bool.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
 	hasMoved: PropTypes.bool.isRequired,
+	saveStatus: PropTypes.string,
 
 	toggleExpanded: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
+	saveGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	handleGroupDrop: PropTypes.func.isRequired,
 

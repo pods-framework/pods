@@ -68,7 +68,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	weight: PropTypes.number,
 } );
 
-export const GROUP_PROP_TYPE_SHAPE = PropTypes.exact( {
+export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {
 	description: PropTypes.string,
 	fields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ),
 	// @todo this should maybe just be number

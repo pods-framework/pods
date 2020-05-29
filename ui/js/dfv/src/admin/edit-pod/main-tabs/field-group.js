@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import * as PropTypes from 'prop-types';
-import { flow, max, map } from 'lodash';
+import { flow, max, map, omit } from 'lodash';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import classnames from 'classnames';
-import { omit } from 'lodash';
 
 import { Button, Dashicon } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
@@ -69,7 +68,6 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 	} );
 
 	useEffect( () => {
-		console.log( 'saveStatus changed', groupName, saveStatus );
 		// Close the Group Settings modal if we finished saving.
 		if ( SAVE_STATUSES.SAVE_SUCCESS === saveStatus ) {
 			setShowSettings( false );

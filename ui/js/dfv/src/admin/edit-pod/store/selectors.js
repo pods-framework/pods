@@ -15,7 +15,7 @@ import {
 	SAVE_MESSAGE,
 	DELETE_STATUS,
 	GROUP_SAVE_STATUSES,
-	GROUP_DELETE_STATUSES
+	GROUP_DELETE_STATUSES,
 } from './state-paths';
 
 // Everything

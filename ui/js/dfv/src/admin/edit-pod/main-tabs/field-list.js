@@ -137,6 +137,7 @@ const FieldList = ( props ) => {
 	if ( 0 === props.fields.length ) {
 		return (
 			<div className="pods-manage-fields no-fields">
+				<p>{__('There are no fields in this group.', 'pods')}</p>
 				<Button
 					isPrimary
 					className="pods-field-group_add_field_link"
@@ -144,7 +145,6 @@ const FieldList = ( props ) => {
 				>
 					{ __( 'Add Field', 'pods' ) }
 				</Button>
-				{ __( 'There are no fields in this group', 'pods' ) }
 			</div>
 		);
 	}
@@ -153,7 +153,7 @@ const FieldList = ( props ) => {
 		<div className="pods-manage-fields">
 
 			<Button
-				isPrimary
+				isSecondary
 				className="pods-field-group_add_field_link"
 				onClick={ () => addField() } // TODO: This should add field to top of list, not the bottom
 			>
@@ -161,9 +161,9 @@ const FieldList = ( props ) => {
 			</Button>
 
 			<div className="pods-field_wrapper-labels">
-				<div className="pods-field_wrapper-label-items">Label</div>
-				<div className="pods-field_wrapper-label-items">Name</div>
-				<div className="pods-field_wrapper-label-items">Field Type</div>
+				<div className="pods-field_wrapper-label">Label</div>
+				<div className="pods-field_wrapper-label_name">Name</div>
+				<div className="pods-field_wrapper-label_type">Field Type</div>
 			</div>
 
 			<div className="pods-field_wrapper-items">
@@ -182,7 +182,7 @@ const FieldList = ( props ) => {
 			</div>
 
 			<Button
-				isPrimary
+				isSecondary
 				className="pods-field-group_add_field_link"
 				onClick={ () => addField() }
 			>

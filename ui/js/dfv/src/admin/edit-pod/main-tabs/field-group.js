@@ -103,7 +103,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			groupName,
 			updatedOptions.name || groupName,
 			updatedOptions.label || groupLabel || groupName,
-			omit( updatedOptions, [ 'name', 'label', 'new_name', 'id' ] ),
+			omit( updatedOptions, [ 'name', 'label', 'id' ] ),
 			groupID,
 		);
 	};

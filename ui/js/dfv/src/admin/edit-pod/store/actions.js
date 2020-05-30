@@ -215,8 +215,7 @@ export const saveGroup = ( podID, previousName, name, label, args = {}, groupId 
 			method: 'POST',
 			data: {
 				pod_id: podID,
-				name: previousName === name ? name : undefined,
-				new_name: previousName !== name ? name : undefined,
+				name,
 				label,
 				args,
 			},

@@ -9,19 +9,20 @@ import DynamicTabContent from './dynamic-tab-content';
 
 const ENTER_KEY = 13;
 
-const FieldGroupSettings = ( {
+const SettingsModal = ( {
 	title,
-	editGroupPod: {
-		groups: editGroupSections = [],
+	optionsPod: {
+		groups: optionsSections = [],
 	} = {},
 	hasSaveError,
-	groupOptions,
+	errorMessage,
+	selectedOptions,
 	cancelEditing,
 	save,
 } ) => {
-	const [ selectedTab, setSelectedTab ] = useState( editGroupSections[ 0 ].name );
+	const [ selectedTab, setSelectedTab ] = useState( optionsSections[ 0 ].name );
 
-	const [ changedOptions, setChangedOptions ] = useState( groupOptions );
+	const [ changedOptions, setChangedOptions ] = useState( selectedOptions );
 
 	return (
 		<Modal
@@ -32,16 +33,16 @@ const FieldGroupSettings = ( {
 		>
 			{ hasSaveError && (
 				<span className="pod-field-group_settings-error-message">
-					{ __( 'There was an error saving the group, please try again.', 'pods' ) }
+					{ errorMessage }
 				</span>
 			) }
 
 			<div
 				className="pods-settings-modal__tabs"
 				role="tablist"
-				aria-label={ __( 'Pods Field Group Settings', 'pods' ) }
+				aria-label={ __( 'Settings', 'pods' ) }
 			>
-				{ editGroupSections.map( ( {
+				{ optionsSections.map( ( {
 					name: sectionName,
 					label: sectionLabel,
 				} ) => {
@@ -78,7 +79,7 @@ const FieldGroupSettings = ( {
 			>
 				{
 					<DynamicTabContent
-						tabOptions={ editGroupSections.find( ( section ) => section.name === selectedTab ).fields }
+						tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab ).fields }
 						optionValues={ changedOptions }
 						setOptionValue={ ( optionName, value ) => {
 							setChangedOptions( {
@@ -95,19 +96,20 @@ const FieldGroupSettings = ( {
 			</Button>
 
 			<Button isPrimary onClick={ () => save( changedOptions ) }>
-				{ __( 'Save Group', 'pods' ) }
+				{ __( 'Save', 'pods' ) }
 			</Button>
 		</Modal>
 	);
 };
 
-FieldGroupSettings.propTypes = {
-	editGroupPod: PropTypes.object.isRequired,
-	groupOptions: PropTypes.object.isRequired,
+SettingsModal.propTypes = {
+	optionsPod: PropTypes.object.isRequired,
+	selectedOptions: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	hasSaveError: PropTypes.bool.isRequired,
+	errorMessage: PropTypes.string.isRequired,
 	cancelEditing: PropTypes.func.isRequired,
 	save: PropTypes.func.isRequired,
 };
 
-export default FieldGroupSettings;
+export default SettingsModal;

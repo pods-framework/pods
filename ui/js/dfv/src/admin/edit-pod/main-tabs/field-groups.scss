@@ -1,6 +1,4 @@
-$border-radius: 9px;
-$color--light-grey: #ccd0d4;
-$color--super-light-grey: #e8e8e8;
+@import './edit-pod-variables';
 
 .opacity-ghost {
 	transition: all .8s ease;
@@ -17,11 +15,6 @@ $color--super-light-grey: #e8e8e8;
 	transition: 200ms ease background-color;
 	padding: .7em 0;
 }
-
-// .pods-field {
-// 	width: 25%;
-// 	padding: 5px 20px;
-// }
 
 .pods-field_handle {
 	width: 20px;
@@ -167,8 +160,6 @@ $color--super-light-grey: #e8e8e8;
 	&:last-child {
 		background-color: #94bf3a;
 		color: white;
-		// padding-left: 30px;
-		// padding-right: 30px;
 
 		&:hover {
 			background-color: #7c9e33;
@@ -275,15 +266,4 @@ $color--super-light-grey: #e8e8e8;
 
 .pods-input {
 	width: 70%;
-}
-
-/* Media Queries */
-@media screen and (min-width: 850px) {
-	// .pods-field_name {
-	// 	display: block;
-	// }
-
-	// .pods-field_id {
-	// 	display: inline;
-	// }
 }

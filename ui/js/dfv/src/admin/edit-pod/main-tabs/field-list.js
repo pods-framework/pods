@@ -8,6 +8,7 @@ import { Dashicon, Button } from '@wordpress/components';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
 import './manage-fields.scss';
+import './field-list.scss';
 
 export const FieldListItem = ( props, ref ) => {
 	const {
@@ -91,20 +92,25 @@ export const FieldListItem = ( props, ref ) => {
 				<div className="pods-field_id"> [id = { id }]</div>
 				<div className="pods-field_controls-container">
 					{ /* eslint-disable */ }
-					{/* TODO: This whole section should probably be rewritten to use wp components to match core better */}
-					<span onClick={ ( e ) => {
-						console.log(e); // TODO: Needs to edit field
-					} }>
+					<span
+                        className="pods-field_edit"
+                    >
 						Edit
 					</span>
-					<span onClick={ ( e ) => {
-						e.stopPropagation(); cloneField( type );
-					} }>
+					<span 
+                        className="pods-field_duplicate"
+                        onClick={ ( e ) => {
+						    e.stopPropagation(); cloneField( type );
+					    } }
+                    >
 						Duplicate
 					</span>
-					<span onClick={ ( e ) => {
-						e.stopPropagation(); deleteField( name );
-					} }>
+					<span 
+                        className="pods-field_delete"
+                        onClick={ ( e ) => {
+						    e.stopPropagation(); deleteField( name );
+					    } }
+                    >
 						Delete
 					</span>
 					{ /* eslint-enable */ }

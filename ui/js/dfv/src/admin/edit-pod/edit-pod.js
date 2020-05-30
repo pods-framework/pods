@@ -9,7 +9,7 @@ import withDragDropContext from './with-drag-drop-context';
 import { STORE_KEY_EDIT_POD } from './store/constants';
 import SaveStatusMessage from './save-status-message';
 import EditPodName from './edit-pod-name';
-import PodsNavTab from 'dfv/src/components/tabs/pods-nav-tab';
+import PodsNavTab from 'dfv/src/components/pods-nav-tab';
 import ActiveTabContent from './main-tabs/active-tab-content';
 import Postbox from './postbox';
 

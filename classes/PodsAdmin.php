@@ -2886,9 +2886,10 @@ class PodsAdmin {
 			'custom_field_3' => [
 				'name'    => 'custom_field_3',
 				'label'   => __( 'Custom Field 3', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
+				'help'    => __( 'Example help here', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
+				'description' => 'Example description here',
 			],
 			'custom_field_4' => [
 				'name'    => 'custom_field_4',
@@ -2896,6 +2897,22 @@ class PodsAdmin {
 				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
+			],
+			'custom_field_bool' => [
+				'name'       => 'custom_field_bool',
+				'label'      => __( 'Custom Field Boolean', 'pods' ),
+				'help'       => __( 'help', 'pods' ),
+				'type'       => 'boolean',
+				'default'    => '',
+				'dependency' => true,
+			],
+			'custom_field_5' => [
+				'name'    => 'custom_field_5',
+				'label'   => __( 'Custom Field 5', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+				'depends-on' => array( 'custom_field_bool' => true ),
 			],
 		];
 

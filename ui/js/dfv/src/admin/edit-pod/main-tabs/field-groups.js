@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as PropTypes from 'prop-types';
 
 // WordPress dependencies
@@ -6,7 +6,11 @@ import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 
-import { STORE_KEY_EDIT_POD } from 'dfv/src/admin/edit-pod/store/constants';
+import {
+	STORE_KEY_EDIT_POD,
+	SAVE_STATUSES,
+} from 'dfv/src/admin/edit-pod/store/constants';
+import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
@@ -14,10 +18,13 @@ import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 import './field-groups.scss';
 
 const FieldGroups = ( {
+	podID,
 	podName,
+	podSaveStatus,
 	groups,
 	addGroup,
-	deleteGroup,
+	saveGroup,
+	deleteAndRemoveGroup,
 	moveGroup,
 	groupFieldList,
 	setGroupFields,
@@ -30,12 +37,23 @@ const FieldGroups = ( {
 		1 === groups.length ? { [ groups[ 0 ].name ]: true } : {}
 	);
 
-	const handleAddGroup = ( e ) => {
-		e.preventDefault();
+	const [ groupsMovedSinceLastSave, setGroupsMovedSinceLastSave ] = useState( {} );
+
+	const handleAddGroup = ( event ) => {
+		event.preventDefault();
 
 		const str = randomString( 6 );
-		const name = 'Group ' + str;
+		const label = 'Group ' + str;
+		const name = sanitizeSlug( label );
+
 		addGroup( name );
+
+		saveGroup( {
+			pod_id: podID.toString(),
+			name,
+			label: name, // @todo use a real label. But this will be moved anyway
+			args: {},
+		} );
 	};
 
 	const createToggleExpandGroup = ( groupName ) => () => {
@@ -55,6 +73,32 @@ const FieldGroups = ( {
 		return result;
 	};
 
+	const handleGroupMove = ( oldIndex, newIndex ) => {
+		moveGroup( oldIndex, newIndex );
+	};
+
+	const handleGroupDrop = () => {
+		// Mark all groups as being edited
+		setGroupsMovedSinceLastSave(
+			groups.reduce( ( accumulator, current ) => {
+				return {
+					...accumulator,
+					[ current.name ]: true,
+				};
+			}, {} )
+		);
+	};
+
+	// After the pod has been saved, reset the list of groups
+	// that haven't been saved.
+	useEffect( () => {
+		const hasSaved = podSaveStatus === SAVE_STATUSES.SAVE_SUCCESS;
+
+		if ( hasSaved ) {
+			setGroupsMovedSinceLastSave( {} );
+		}
+	}, [ podSaveStatus ] );
+
 	return (
 		<div className="field-groups">
 			<div className="pods-button-group_container">
@@ -67,6 +111,8 @@ const FieldGroups = ( {
 			</div>
 
 			{ groups.map( ( group, index ) => {
+				const hasMoved = !! groupsMovedSinceLastSave[ group.name ];
+
 				return (
 					<FieldGroup
 						key={ group.name }
@@ -74,8 +120,9 @@ const FieldGroups = ( {
 						group={ group }
 						index={ index }
 						editGroupPod={ editGroupPod }
-						deleteGroup={ deleteGroup }
-						moveGroup={ moveGroup }
+						deleteGroup={ deleteAndRemoveGroup }
+						moveGroup={ handleGroupMove }
+						handleGroupDrop={ handleGroupDrop }
 						groupFieldList={ groupFieldList }
 						setGroupFields={ setGroupFields }
 						addGroupField={ addGroupField }
@@ -83,6 +130,7 @@ const FieldGroups = ( {
 						randomString={ randomString }
 						isExpanded={ expandedGroups[ group.name ] || false }
 						toggleExpanded={ createToggleExpandGroup( group.name ) }
+						hasMoved={ hasMoved }
 					/>
 				);
 			} ) }
@@ -102,10 +150,12 @@ const FieldGroups = ( {
 };
 
 FieldGroups.propTypes = {
+	podID: PropTypes.number.isRequired,
 	podName: PropTypes.string.isRequired,
+	podSaveStatus: PropTypes.string.isRequired,
 	groups: PropTypes.arrayOf( GROUP_PROP_TYPE_SHAPE ).isRequired,
 	addGroup: PropTypes.func.isRequired,
-	deleteGroup: PropTypes.func.isRequired,
+	deleteAndRemoveGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
 };
@@ -115,7 +165,9 @@ export default compose( [
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 
 		return {
+			podID: storeSelect.getPodID(),
 			podName: storeSelect.getPodName(),
+			podSaveStatus: storeSelect.getSaveStatus(),
 			groups: storeSelect.getGroups(),
 			groupFieldList: storeSelect.groupFieldList(),
 			editGroupPod: storeSelect.getGlobalGroupOptions(),
@@ -126,7 +178,11 @@ export default compose( [
 
 		return {
 			addGroup: storeDispatch.addGroup,
-			deleteGroup: storeDispatch.deleteGroup,
+			saveGroup: storeDispatch.saveGroup,
+			deleteAndRemoveGroup: ( groupID ) => {
+				storeDispatch.deleteGroup( groupID );
+				storeDispatch.removeGroup( groupID );
+			},
 			setGroupFields: storeDispatch.setGroupFields,
 			addGroupField: storeDispatch.addGroupField,
 			setFields: storeDispatch.setFields,

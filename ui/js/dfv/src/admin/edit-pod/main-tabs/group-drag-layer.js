@@ -3,7 +3,7 @@ import * as PropTypes from 'prop-types';
 import { DragLayer } from 'react-dnd';
 
 import { Dashicon } from '@wordpress/components';
-import { uiConstants } from 'dfv/src/admin/edit-pod/store/constants';
+import { DRAG_ITEM_TYPES } from 'dfv/src/admin/edit-pod/store/constants';
 
 const getLayerStyles = ( { item } ) => {
 	return {
@@ -35,7 +35,7 @@ const getItemStyles = ( { item, initialOffset, currentOffset } ) => {
 const CustomDragLayer = ( props ) => {
 	const { item, itemType, isDragging } = props;
 
-	if ( ! isDragging || uiConstants.dragItemTypes.GROUP !== itemType ) {
+	if ( ! isDragging || DRAG_ITEM_TYPES.GROUP !== itemType ) {
 		return null;
 	}
 

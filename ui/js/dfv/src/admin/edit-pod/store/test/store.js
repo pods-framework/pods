@@ -6,7 +6,7 @@ import { initStore } from '../store';
 import * as paths from '../state-paths';
 import {
 	STORE_KEY_EDIT_POD,
-	initialUIState,
+	INITIAL_UI_STATE,
 } from '../constants';
 
 import { TEST_CONFIG_DATA } from '../testData';
@@ -25,7 +25,7 @@ const testStore = {
 describe( 'store', () => {
 	test( 'initStore() with initialState initializes properly', () => {
 		const initialState = {
-			...paths.UI.createTree( initialUIState ),
+			...paths.UI.createTree( INITIAL_UI_STATE ),
 			...TEST_CONFIG_DATA,
 		};
 
@@ -37,7 +37,7 @@ describe( 'store', () => {
 
 	test( 'initStore() empty initializes properly', () => {
 		const expected = {
-			...paths.UI.createTree( initialUIState ),
+			...paths.UI.createTree( INITIAL_UI_STATE ),
 			currentPod: {},
 			global: {},
 		};
@@ -55,7 +55,7 @@ describe( 'UI store integration', () => {
 	} );
 
 	test( 'getActiveTab() should return the default on empty init', () => {
-		const expected = initialUIState.activeTab;
+		const expected = INITIAL_UI_STATE.activeTab;
 		const result = testStore.select.getActiveTab();
 
 		expect( result ).toEqual( expected );
@@ -71,7 +71,7 @@ describe( 'UI store integration', () => {
 	} );
 
 	test( 'getSaveStatus() should return the default on empty init', () => {
-		const expected = initialUIState.saveStatus;
+		const expected = INITIAL_UI_STATE.saveStatus;
 		const result = testStore.select.getSaveStatus();
 
 		expect( result ).toEqual( expected );

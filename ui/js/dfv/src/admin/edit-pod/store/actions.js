@@ -1,17 +1,11 @@
 import { omit } from 'lodash';
 
 import {
-	uiConstants,
-	currentPodConstants,
+	SAVE_STATUSES,
+	DELETE_STATUSES,
+	UI_ACTIONS,
+	CURRENT_POD_ACTIONS,
 } from 'dfv/src/admin/edit-pod/store/constants';
-
-const {
-	actions: UI_ACTIONS,
-	saveStatuses: SAVE_STATUSES,
-	deleteStatuses: DELETE_STATUSES,
-} = uiConstants;
-
-const { actions: CURRENT_POD_ACTIONS } = currentPodConstants;
 
 // UI
 export const setActiveTab = ( activeTab ) => {
@@ -115,6 +109,13 @@ export const addGroup = ( group ) => {
 	};
 };
 
+export const removeGroup = ( groupID ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.REMOVE_GROUP,
+		groupID,
+	};
+};
+
 export const setGroupFields = ( groupName, fields ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.SET_GROUP_FIELDS,
@@ -127,6 +128,13 @@ export const addGroupField = ( groupName, field ) => {
 		type: CURRENT_POD_ACTIONS.ADD_GROUP_FIELD,
 		groupName,
 		field,
+	};
+};
+
+export const setGroupData = ( result ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.SET_GROUP_DATA,
+		result,
 	};
 };
 
@@ -200,7 +208,10 @@ export const saveGroup = ( data, groupId ) => {
 			url: groupId ? `/pods/v1/groups/${ groupId }` : '/pods/v1/groups',
 			method: 'POST',
 			data,
-			onSuccess: setGroupSaveStatus( SAVE_STATUSES.SAVE_SUCCESS ),
+			onSuccess: [
+				setGroupSaveStatus( SAVE_STATUSES.SAVE_SUCCESS ),
+				setGroupData,
+			],
 			onFailure: setGroupSaveStatus( SAVE_STATUSES.SAVE_ERROR ),
 			onStart: setGroupSaveStatus( SAVE_STATUSES.SAVING ),
 		},

@@ -4,7 +4,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { registerGenericStore } from '@wordpress/data';
 
 import * as paths from './state-paths';
-import { STORE_KEY_EDIT_POD, initialUIState } from './constants';
+import { STORE_KEY_EDIT_POD, INITIAL_UI_STATE } from './constants';
 import reducer from './reducer';
 import * as selectors from './selectors';
 import * as actions from './actions';
@@ -12,7 +12,7 @@ import apiMiddleware from './api-middleware';
 
 export const initStore = ( props ) => {
 	const initialState = {
-		...paths.UI.createTree( initialUIState ),
+		...paths.UI.createTree( INITIAL_UI_STATE ),
 		...props.config || {},
 	};
 

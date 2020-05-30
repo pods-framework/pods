@@ -1,12 +1,10 @@
 import apiFetch from '@wordpress/api-fetch';
 
-import { currentPodConstants } from 'dfv/src/admin/edit-pod/store/constants';
+import { CURRENT_POD_ACTIONS } from 'dfv/src/admin/edit-pod/store/constants';
 
 const {
-	actions: {
-		API_REQUEST,
-	},
-} = currentPodConstants;
+	API_REQUEST,
+} = CURRENT_POD_ACTIONS;
 
 const apiMiddleware = ( { dispatch } ) => ( next ) => async ( action ) => {
 	next( action );

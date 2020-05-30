@@ -41,7 +41,10 @@ import {
 	getDeleteStatus,
 } from '../selectors';
 
-import { uiConstants } from '../constants';
+import {
+	SAVE_STATUSES,
+	DELETE_STATUSES,
+} from '../constants';
 
 import {
 	POD,
@@ -227,12 +230,12 @@ describe( 'UI selectors', () => {
 
 	test( 'getSaveStatus() returns the save status', () => {
 		const state = deepFreeze(
-			paths.SAVE_STATUS.createTree( uiConstants.saveStatuses.SAVE_SUCCESS )
+			paths.SAVE_STATUS.createTree( SAVE_STATUSES.SAVE_SUCCESS )
 		);
 
 		const result = getSaveStatus( state );
 
-		expect( result ).toEqual( uiConstants.saveStatuses.SAVE_SUCCESS );
+		expect( result ).toEqual( SAVE_STATUSES.SAVE_SUCCESS );
 	} );
 
 	test( 'getSaveMessage() returns the save message', () => {
@@ -247,13 +250,13 @@ describe( 'UI selectors', () => {
 	} );
 
 	test( 'getDeleteStatus() returns the delete status', () => {
-		const deleteStatus = uiConstants.deleteStatuses.DELETE_SUCCESS;
+		const deleteStatus = DELETE_STATUSES.DELETE_SUCCESS;
 		const state = deepFreeze(
 			paths.DELETE_STATUS.createTree( deleteStatus )
 		);
 
 		const result = getDeleteStatus( state );
 
-		expect( result ).toEqual( uiConstants.deleteStatuses.DELETE_SUCCESS );
+		expect( result ).toEqual( DELETE_STATUSES.DELETE_SUCCESS );
 	} );
 } );

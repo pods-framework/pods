@@ -1,7 +1,5 @@
 import { DragSource } from 'react-dnd';
-import { uiConstants } from 'dfv/src/admin/edit-pod/store/constants';
-
-const { dragItemTypes } = uiConstants;
+import { DRAG_ITEM_TYPES } from 'dfv/src/admin/edit-pod/store/constants';
 
 const dragSpec = {
 	beginDrag: ( props, monitor, component ) => {
@@ -19,6 +17,14 @@ const dragSpec = {
 			left: wrapperRect.left - handleRect.left,
 		};
 	},
+	// eslint-disable-next-line no-unused-vars
+	endDrag: ( props, monitor, component ) => {
+		if ( ! monitor.didDrop() ) {
+			return;
+		}
+
+		props.handleGroupDrop();
+	},
 };
 
 const collect = ( connect, monitor ) => ( {
@@ -27,4 +33,4 @@ const collect = ( connect, monitor ) => ( {
 	isDragging: monitor.isDragging(),
 } );
 
-export default DragSource( dragItemTypes.GROUP, dragSpec, collect );
+export default DragSource( DRAG_ITEM_TYPES.GROUP, dragSpec, collect );

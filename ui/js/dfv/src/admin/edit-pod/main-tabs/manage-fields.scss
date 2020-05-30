@@ -1,6 +1,4 @@
-$border-radius: 9px;
-$color--light-grey: #ccd0d4;
-$color--super-light-grey: #e8e8e8;
+@import './edit-pod-variables';
 
 .pods-manage-fields {
 	margin: 0 2em 2em;

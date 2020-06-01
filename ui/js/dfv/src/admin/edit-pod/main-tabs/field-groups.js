@@ -44,7 +44,9 @@ const FieldGroups = ( {
 
 	const [ groupsMovedSinceLastSave, setGroupsMovedSinceLastSave ] = useState( {} );
 
-	const handleAddGroup = ( options = {} ) => {
+	const handleAddGroup = ( options = {} ) => ( event ) => {
+		event.stopPropagation();
+
 		setAddedGroupName( options.name );
 
 		saveGroup(
@@ -120,7 +122,7 @@ const FieldGroups = ( {
 			<div className="pods-button-group_container">
 				<button
 					className="pods-button-group_add-new"
-					onClick={ ( e ) => handleAddGroup( e ) }
+					onClick={ () => setShowAddGroupModal( true ) }
 				>
 					{ __( '+ Add New Group', 'pods' ) }
 				</button>

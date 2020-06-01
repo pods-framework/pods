@@ -1,0 +1,18 @@
+@import './edit-pod-variables';
+
+.pods-field_edit,
+.pods-field_duplicate {
+    color: $color--wp-blue;
+    
+    &:hover {
+        color: $color--wp-blue-light;
+    }
+}
+
+.pods-field_delete {
+    color: $color--red;
+    
+    &:hover {
+        color: $color--red-dark;
+    }
+}

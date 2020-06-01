@@ -7,6 +7,8 @@ import { Modal, Button } from '@wordpress/components';
 
 import DynamicTabContent from './dynamic-tab-content';
 
+import './settings-modal.scss';
+
 const ENTER_KEY = 13;
 
 const SettingsModal = ( {
@@ -37,67 +39,71 @@ const SettingsModal = ( {
 				</span>
 			) }
 
-			<div
-				className="pods-settings-modal__tabs"
-				role="tablist"
-				aria-label={ __( 'Settings', 'pods' ) }
-			>
-				{ optionsSections.map( ( {
-					name: sectionName,
-					label: sectionLabel,
-				} ) => {
-					const isActive = selectedTab === sectionName;
+			<div className="pods-settings-modal__container">
+				<div
+					className="pods-settings-modal__tabs"
+					role="tablist"
+					aria-label={ __( 'Pods Field Group Settings', 'pods' ) }
+				>
+					{ optionsSections.map( ( {
+						name: sectionName,
+						label: sectionLabel,
+					} ) => {
+						const isActive = selectedTab === sectionName;
 
-					const classes = classNames(
-						'pods-settings-modal__tab-item',
-						{
-							'pods-settings-modal__tab-item--active': isActive,
-						}
-					);
+						const classes = classNames(
+							'pods-settings-modal__tab-item',
+							{
+								'pods-settings-modal__tab-item--active': isActive,
+							}
+						);
 
-					return (
-						<div
-							className={ classes }
-							aria-controls={ `${ sectionName }-tab` }
-							role="button"
-							tabIndex={ 0 }
-							key={ sectionName }
-							onClick={ () => setSelectedTab( sectionName ) }
-							onKeyPress={ ( event ) => event.keyCode === ENTER_KEY && setSelectedTab( sectionName ) }
-						>
-							{ sectionLabel }
-						</div>
-					);
-				} ) }
+						return (
+							<div
+								className={ classes }
+								aria-controls={ `${ sectionName }-tab` }
+								role="button"
+								tabIndex={ 0 }
+								key={ sectionName }
+								onClick={ () => setSelectedTab( sectionName ) }
+								onKeyPress={ ( event ) => event.keyCode === ENTER_KEY && setSelectedTab( sectionName ) }
+							>
+								{ sectionLabel }
+							</div>
+						);
+					} ) }
+				</div>
+
+				<div
+					className="pods-settings-modal__panel"
+					role="tabpanel"
+					aria-labelledby="main"
+					id="main-tab"
+				>
+					{
+						<DynamicTabContent
+							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab ).fields }
+							optionValues={ changedOptions }
+							setOptionValue={ ( optionName, value ) => {
+								setChangedOptions( {
+									...changedOptions,
+									[ optionName ]: value,
+								} );
+							} }
+						/>
+					}
+				</div>
 			</div>
 
-			<div
-				className="pods-settings-modal__panel"
-				role="tabpanel"
-				aria-labelledby="main"
-				id="main-tab"
-			>
-				{
-					<DynamicTabContent
-						tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab ).fields }
-						optionValues={ changedOptions }
-						setOptionValue={ ( optionName, value ) => {
-							setChangedOptions( {
-								...changedOptions,
-								[ optionName ]: value,
-							} );
-						} }
-					/>
-				}
+			<div className="pods-setting-modal__button-group">
+				<Button isSecondary onClick={ cancelEditing }>
+					{ __( 'Cancel', 'pods' ) }
+				</Button>
+
+				<Button isPrimary onClick={ () => save( changedOptions ) }>
+					{ __( 'Save Group', 'pods' ) }
+				</Button>
 			</div>
-
-			<Button isSecondary onClick={ cancelEditing }>
-				{ __( 'Cancel', 'pods' ) }
-			</Button>
-
-			<Button isPrimary onClick={ () => save( changedOptions ) }>
-				{ __( 'Save', 'pods' ) }
-			</Button>
 		</Modal>
 	);
 };

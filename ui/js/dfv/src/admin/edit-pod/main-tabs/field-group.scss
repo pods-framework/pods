@@ -1,0 +1,11 @@
+@import './edit-pod-variables';
+
+.components-button.is-tertiary.pods-field-group_delete {
+    color: $color--red;
+    
+    &:hover,
+    &:hover:not(:disabled) {
+        color: $color--red-dark;
+        box-shadow: inset 0 0 0 1px $color--red-dark;
+    }
+}

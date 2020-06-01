@@ -18,6 +18,18 @@ import { SAVE_STATUSES } from 'dfv/src/admin/edit-pod/store/constants';
 
 const ENTER_KEY = 13;
 
+// Helper function
+// @todo delete this once it's no longer needed.
+const randomString = ( length ) => {
+	let result = '';
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const charactersLength = characters.length;
+	for ( let i = 0; i < length; i++ ) {
+		result += characters.charAt( Math.floor( Math.random() * charactersLength ) );
+	}
+	return result;
+};
+
 const FieldGroup = forwardRef( ( props, ref ) => {
 	const {
 		connectDragSource,
@@ -33,7 +45,6 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		isExpanded,
 		hasMoved,
 		saveStatus,
-		randomString,
 		deleteGroup,
 		saveGroup,
 		setGroupFields,

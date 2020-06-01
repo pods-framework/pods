@@ -164,12 +164,20 @@ describe( 'actions', () => {
 		test( 'addGroup() returns an action to create a new group', () => {
 			const action = CURRENT_POD_ACTIONS.ADD_GROUP;
 
-			const expected = {
-				type: action,
-				group: 'New Group Name 123',
+			const result = {
+				group: {
+					id: 115,
+					name: 'new_group_name',
+					label: 'New Group Name 123',
+				},
 			};
 
-			expect( addGroup( 'New Group Name 123' ) ).toEqual( expected );
+			const expected = {
+				type: action,
+				result,
+			};
+
+			expect( addGroup( result ) ).toEqual( expected );
 		} );
 
 		test( 'moveGroup() should return an action to move a group', () => {
@@ -261,7 +269,7 @@ describe( 'actions', () => {
 
 			expect( result.type ).toEqual( action );
 			expect( result.payload.onSuccess[ 0 ]().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
-			expect( result.payload.onSuccess[ 1 ]().type ).toEqual( CURRENT_POD_ACTIONS.SET_GROUP_DATA );
+			expect( result.payload.onSuccess[ 1 ]().type ).toEqual( CURRENT_POD_ACTIONS.ADD_GROUP );
 			expect( result.payload.onFailure().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
 			expect( result.payload.onStart().type ).toEqual( UI_ACTIONS.SET_GROUP_SAVE_STATUS );
 		} );

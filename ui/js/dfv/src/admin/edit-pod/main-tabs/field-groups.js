@@ -56,7 +56,8 @@ const FieldGroups = ( {
 		);
 	};
 
-	const toggleExpandGroup = ( groupName ) => () => {
+	const toggleExpandGroup = ( groupName ) => ( event ) => {
+		event.stopPropagation();
 		setExpandedGroups( {
 			...expandedGroups,
 			[ groupName ]: expandedGroups[ groupName ] ? false : true,
@@ -86,6 +87,17 @@ const FieldGroups = ( {
 			setGroupsMovedSinceLastSave( {} );
 		}
 	}, [ podSaveStatus ] );
+
+	// After a new group has successfully been added, close
+	// the modal.
+	useEffect( () => {
+		if (
+			!! addedGroupName &&
+			groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVE_SUCCESS
+		) {
+			setShowAddGroupModal( false );
+		}
+	}, [ addedGroupName, setShowAddGroupModal, groupSaveStatuses ] );
 
 	return (
 		<div className="field-groups">
@@ -184,7 +196,7 @@ export default compose( [
 		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
 
 		return {
-			saveGroup: storeDispatch.saveGroup(),
+			saveGroup: storeDispatch.saveGroup,
 			deleteAndRemoveGroup: ( groupID ) => {
 				storeDispatch.deleteGroup( groupID );
 				storeDispatch.removeGroup( groupID );

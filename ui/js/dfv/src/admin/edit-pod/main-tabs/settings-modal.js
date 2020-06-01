@@ -34,9 +34,9 @@ const SettingsModal = ( {
 			onRequestClose={ cancelEditing }
 		>
 			{ hasSaveError && (
-				<span className="pod-field-group_settings-error-message">
+				<div className="pod-field-group_settings-error-message">
 					{ errorMessage }
-				</span>
+				</div>
 			) }
 
 			<div className="pods-settings-modal__container">
@@ -100,7 +100,7 @@ const SettingsModal = ( {
 					{ __( 'Cancel', 'pods' ) }
 				</Button>
 
-				<Button isPrimary onClick={ () => save( changedOptions ) }>
+				<Button isPrimary onClick={ save( changedOptions ) }>
 					{ __( 'Save Group', 'pods' ) }
 				</Button>
 			</div>

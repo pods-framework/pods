@@ -106,11 +106,13 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		setShowSettings( true );
 	};
 
-	const onEditGroupCancel = () => {
+	const onEditGroupCancel = ( event ) => {
+		event.stopPropagation();
 		setShowSettings( false );
 	};
 
-	const onEditGroupSave = ( updatedOptions = {} ) => {
+	const onEditGroupSave = ( updatedOptions = {} ) => ( event ) => {
+		event.stopPropagation();
 		saveGroup(
 			podID,
 			groupName,

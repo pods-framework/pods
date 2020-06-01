@@ -155,7 +155,7 @@ export const currentPod = ( state = {}, action = {} ) => {
 		}
 
 		case CURRENT_POD_ACTIONS.ADD_GROUP: {
-			if ( action?.result?.group?.id ) {
+			if ( ! action?.result?.group?.id ) {
 				return state;
 			}
 

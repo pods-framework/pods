@@ -38,16 +38,13 @@ export const getGroup = ( state, groupName ) => getGroups( state ).find(
 );
 
 export const getGroupFields = ( state, groupName ) => {
-	if ( getGroup( state, groupName )?.fields ) {
-		return getGroup( state, groupName ).fields;
-	}
-	return [];
+	return getGroup( state, groupName )?.fields ?? [];
 };
 
 export const groupFieldList = ( state ) => getGroups( state ).reduce(
 	( accumulator, group ) => {
 		const groupName = group.name;
-		const groupFieldIDs = group.fields.map( ( field ) => field.id );
+		const groupFieldIDs = ( group?.fields || [] ).map( ( field ) => field.id );
 
 		return {
 			...accumulator,

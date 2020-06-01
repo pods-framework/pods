@@ -214,7 +214,7 @@ export const saveGroup = ( podID, previousName, name, label, args = {}, groupId 
 			url: groupId ? `/pods/v1/groups/${ groupId }` : '/pods/v1/groups',
 			method: 'POST',
 			data: {
-				pod_id: podID,
+				pod_id: podID.toString(),
 				name,
 				label,
 				args,
@@ -249,7 +249,7 @@ export const saveField = ( podID, name, args, fieldId ) => {
 			url: fieldId ? `/pods/v1/fields/${ fieldId }` : '/pods/v1/fields',
 			method: 'POST',
 			data: {
-				pod_id: podID,
+				pod_id: podID.toString(),
 				name,
 				args,
 			},

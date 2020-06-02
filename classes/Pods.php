@@ -4182,7 +4182,7 @@ class Pods implements Iterator {
 			&& pods_shortcode_allow_evaluate_tags()
 			&& ! $this->fields( $field_name )
 		) {
-			$value = pods_evaluate_tag( $field_name, true );
+			$value = pods_evaluate_tag( implode( ',', $tag ), true );
 		}
 
 		if ( isset( $tag[2] ) && ! empty( $tag[2] ) ) {

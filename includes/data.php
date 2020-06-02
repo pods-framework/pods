@@ -372,7 +372,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( 'first' === $var ) {
 					$var = 0;
 				} elseif ( 'last' === $var ) {
-					$var = - 1;
+					$var = -1;
 				}
 
 				if ( is_numeric( $var ) ) {
@@ -394,7 +394,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( 'first' === $var ) {
 					$var = 0;
 				} elseif ( 'last' === $var ) {
-					$var = - 1;
+					$var = -1;
 				}
 
 				if ( is_numeric( $var ) ) {
@@ -415,9 +415,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$blog_id = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$path = $var[1];
-					} elseif ( isset( $var[2] ) ) {
+					}
+					if ( isset( $var[2] ) ) {
 						$scheme = $var[2];
 					}
 				} else {
@@ -434,9 +436,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$blog_id = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$path = $var[1];
-					} elseif ( isset( $var[2] ) ) {
+					}
+					if ( isset( $var[2] ) ) {
 						$scheme = $var[2];
 					}
 				} else {
@@ -453,9 +457,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$blog_id = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$path = $var[1];
-					} elseif ( isset( $var[2] ) ) {
+					}
+					if ( isset( $var[2] ) ) {
 						$scheme = $var[2];
 					}
 				} else {
@@ -477,7 +483,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$path = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$plugin = $var[1];
 					}
 				} else {
@@ -493,7 +500,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$path = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$scheme = $var[1];
 					}
 				} else {
@@ -509,7 +517,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$path = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$scheme = $var[1];
 					}
 				} else {
@@ -525,7 +534,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$path = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$scheme = $var[1];
 					}
 				} else {
@@ -541,7 +551,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$path = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$scheme = $var[1];
 					}
 				} else {

@@ -1610,9 +1610,7 @@ function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null, $pod = nu
 		);
 	}
 
-	foreach ( $tag as $k => $v ) {
-		$tag[ $k ] = trim( $v );
-	}
+	$tag = pods_trim( $tag );
 
 	$value = '';
 

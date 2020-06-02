@@ -1634,8 +1634,9 @@ function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null, $pod = nu
 		$value = pods_v( '', $tag[0], null );
 	} elseif ( 1 === count( $tag ) ) {
 		$value = pods_v( $tag[0], 'get', null );
-	} elseif ( 2 === count( $tag ) ) {
-		$value = pods_v( $tag[1], $tag[0], null );
+	} else {
+		// Some magic tags support traversal.
+		$value = pods_v( implode( '.', array_slice( $tag, 1 ) ), $tag[0], null );
 	}
 
 	if ( $helper ) {

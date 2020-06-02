@@ -1558,7 +1558,11 @@ function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null ) {
 	}
 
 	$tag = trim( $tag, ' {@}' );
-	$tag = explode( '.', $tag );
+	$tag = explode( ',', $tag );
+
+	$helper = isset( $tag[1] ) ? $tag[1] : null;
+
+	$tag = explode( '.', $tag[0] );
 
 	if ( empty( $tag ) || ! isset( $tag[0] ) || '' === trim( $tag[0] ) ) {
 		if ( null === $fallback ) {
@@ -1607,6 +1611,11 @@ function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null ) {
 		$value = pods_v( $tag[0], 'get', null );
 	} elseif ( 2 === count( $tag ) ) {
 		$value = pods_v( $tag[1], $tag[0], null );
+	}
+
+	if ( $helper ) {
+		$pod   = pods();
+		$value = $pod->helper( $helper, $value );
 	}
 
 	$value = apply_filters( 'pods_evaluate_tag', $value, $tag, $fallback );

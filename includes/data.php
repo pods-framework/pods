@@ -1543,7 +1543,6 @@ function pods_evaluate_tag_sanitized( $tag ) {
  * @return string Evaluated content.
  */
 function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null ) {
-	global $wpdb;
 
 	// Handle pods_evaluate_tags
 	if ( is_array( $tag ) ) {

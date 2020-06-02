@@ -4155,9 +4155,7 @@ class Pods implements Iterator {
 			return '';
 		}
 
-		foreach ( $tag as $k => $v ) {
-			$tag[ $k ] = trim( $v );
-		}
+		$tag = pods_trim( $tag );
 
 		$field_name = $tag[0];
 
@@ -4165,7 +4163,7 @@ class Pods implements Iterator {
 		$before      = '';
 		$after       = '';
 
-		if ( isset( $tag[1] ) && ! empty( $tag[1] ) ) {
+		if ( ! empty( $tag[1] ) ) {
 			$value = $this->field( $field_name );
 
 			$helper_name = $tag[1];
@@ -4175,11 +4173,11 @@ class Pods implements Iterator {
 			$value = $this->display( $field_name );
 		}
 
-		if ( isset( $tag[2] ) && ! empty( $tag[2] ) ) {
+		if ( ! empty( $tag[2] ) ) {
 			$before = $tag[2];
 		}
 
-		if ( isset( $tag[3] ) && ! empty( $tag[3] ) ) {
+		if ( ! empty( $tag[3] ) ) {
 			$after = $tag[3];
 		}
 

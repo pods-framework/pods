@@ -112,14 +112,6 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
 
             width : 'resolve',
 
-			<?php
-				if ( 1 == (int) pods_v( $form_field_type . '_allow_html', $options ) ) {
-			?>
-				escapeMarkup : function (m) { return m; },
-			<?php
-				}
-			?>
-
             initSelection : function ( element, callback ) {
                 var data = [];
 

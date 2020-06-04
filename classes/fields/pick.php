@@ -1333,8 +1333,6 @@ class PodsField_Pick extends PodsField {
 		// Parse icon type
 		if ( 'none' === $icon || 'div' === $icon ) {
 			$icon         = '';
-		} elseif ( 0 === strpos( $icon, 'data:image/svg+xml;base64,' ) ) {
-			$icon         = esc_attr( $icon );
 		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
 			$icon         = sanitize_html_class( $icon );
 		}
@@ -1383,11 +1381,11 @@ class PodsField_Pick extends PodsField {
 		}
 
 		$item = array(
-			'id'           => $item_id,
-			'icon'         => $icon,
-			'name'         => $item_title,
-			'edit_link'    => $edit_link,
-			'link'         => $link,
+			'id'           => esc_html( $item_id ),
+			'icon'         => esc_attr( $icon ),
+			'name'         => esc_html( $item_title ),
+			'edit_link'    => esc_url( $edit_link ),
+			'link'         => esc_url( $link ),
 			'selected'     => $selected,
 		);
 

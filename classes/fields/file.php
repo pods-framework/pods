@@ -560,12 +560,12 @@ class PodsField_File extends PodsField {
 			}
 
 			$data[] = array(
-				'id'        => $id,
-				'icon'      => $icon,
-				'name'      => $title,
-				'edit_link' => $edit_link,
-				'link'      => $link,
-				'download'  => $download,
+				'id'        => esc_html( $id ),
+				'icon'      => esc_attr( $icon ),
+				'name'      => esc_html( $title ),
+				'edit_link' => esc_url( $edit_link ),
+				'link'      => esc_url( $link ),
+				'download'  => esc_url( $download ),
 			);
 		}//end foreach
 

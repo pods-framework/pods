@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.4
 Requires PHP: 5.3
-Stable tag: 2.7.20
+Stable tag: 2.7.20.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,10 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.20.1 - June 4th 2020 =
+
+* Security: Remove deprecated usage of escapeMarkup in selectWoo and tighten JS rendering (@sc0ttkclark, @miha.jirov)
 
 = 2.7.20 - April 5th 2020 =
 

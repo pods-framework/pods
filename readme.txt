@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.9.1
-Stable tag: 2.4.3
+Stable tag: 2.4.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -153,6 +153,14 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * And more in progress! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods/dev
 
 == Changelog ==
+
+= 2.4.4.1 - June 4th, 2020 =
+* Security: Remove deprecated usage of escapeMarkup in Select2 (@sc0ttkclark, @miha.jirov)
+
+= 2.4.4 - March 16th, 2015 =
+* Security Update: We recommend all Pods 1.x/2.x installations be updated to the latest version of Pods
+* or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
+* Fixed: Pods UI orderby now strictly enforces Database column format
 
 = 2.4.3 - June 23rd, 2014 =
 * Fixed: Pods Templates component now has better handling of the new shortcodes

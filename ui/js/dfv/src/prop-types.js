@@ -62,9 +62,18 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	storage_type: PropTypes.string,
 	text_allow_html: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	text_allow_shortcode: PropTypes.oneOf( BOOLEAN_STRINGS ),
-	text_max_length: PropTypes.number,
+	text_max_length: PropTypes.oneOfType( [
+		PropTypes.number,
+		PropTypes.string,
+	] ),
 	text_allowed_html_tags: PropTypes.string,
 	type: PropTypes.string.isRequired,
+	website_format: PropTypes.string,
+	website_allow_port: PropTypes.string,
+	website_clickable: PropTypes.string,
+	website_new_window: PropTypes.string,
+	website_max_length: PropTypes.string,
+	website_html5: PropTypes.string,
 	weight: PropTypes.number,
 } );
 

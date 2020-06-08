@@ -285,7 +285,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 			{ isExpanded && ! isDragging && (
 				<FieldList
-					fields={ fields }
+					fields={ fields || [] }
 					setGroupFields={ setGroupFields }
 					moveField={ moveField }
 					groupName={ groupName }

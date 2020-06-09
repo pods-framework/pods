@@ -1,11 +1,13 @@
 import * as PropTypes from 'prop-types';
 
 // @todo can these be changed to real Booleans on the PHP side?
-const BOOLEAN_STRINGS = [ '0', '1' ];
+const BOOLEAN_STRINGS = [ '0', '1', 0, 1 ];
 
 export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	admin_only: PropTypes.oneOf( BOOLEAN_STRINGS ),
+	attributes: PropTypes.array,
 	boolean_yes_label: PropTypes.string,
+	class: PropTypes.string,
 	data: PropTypes.object,
 	datetime_type: PropTypes.string,
 	datetime_format: PropTypes.string,
@@ -19,11 +21,23 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.bool,
 		PropTypes.number,
 	] ),
-	'depends-on': PropTypes.object,
+	'depends-on': PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.array,
+	] ),
 	dependency: PropTypes.bool,
 	description: PropTypes.string,
+	developer_mode: PropTypes.bool,
+	'excludes-on': PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.array,
+	] ),
 	group: PropTypes.string.isRequired,
-	help: PropTypes.string,
+	grouped: PropTypes.number,
+	help: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.arrayOf( PropTypes.string ),
+	] ),
 	hidden: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	// @todo this should maybe just be number
 	id: PropTypes.oneOfType( [
@@ -75,6 +89,10 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	website_max_length: PropTypes.string,
 	website_html5: PropTypes.string,
 	weight: PropTypes.number,
+	'wildcard-on': PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.array,
+	] ),
 } );
 
 export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {

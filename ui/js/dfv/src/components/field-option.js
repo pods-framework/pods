@@ -12,6 +12,7 @@ const PodsFieldOption = ( {
 	name,
 	value,
 	label,
+	data = {},
 	onChange,
 	helpText,
 	description,
@@ -23,35 +24,66 @@ const PodsFieldOption = ( {
 
 	const shouldShowHelpText = helpText && ( 'help' !== helpText );
 
+	// It's possible to get an array of strings for the help text, but it
+	// will usually be a string.
+	const helpTextString = Array.isArray( helpText ) ? helpText.join( '\n' ) : helpText;
+
 	return (
 		<div className="pods-field-option">
 			<label
 				className={ `pods-form-ui-label pods-form-ui-label-${ name }` }
 				htmlFor={ name }>
 				{ label }
-				{ shouldShowHelpText && ( <HelpTooltip helpText={ helpText } /> ) }
+				{ shouldShowHelpText && ( <HelpTooltip helpText={ helpTextString } /> ) }
 			</label>
+
 			<div className="pods-field-option__field">
-				{ 'boolean' === fieldType ? (
-					<input
-						type="checkbox"
-						id={ name }
-						name={ name }
-						checked={ toBool( value ) }
-						onChange={ onChange }
-						aria-label={ shouldShowHelpText && helpText }
-					/>
-				) : (
-					<input
-						type="text"
-						id={ name }
-						name={ name }
-						value={ value }
-						onChange={ onChange }
-						aria-label={ shouldShowHelpText && helpText }
-					/>
-				)
-				}
+				{ ( () => {
+					switch ( fieldType ) {
+						case 'boolean': {
+							return (
+								<input
+									type="checkbox"
+									id={ name }
+									name={ name }
+									checked={ toBool( value ) }
+									onChange={ onChange }
+									aria-label={ shouldShowHelpText && helpText }
+								/>
+							);
+						}
+						case 'pick': {
+							return (
+								<select
+									id={ name }
+									name={ name }
+									selected={ value }
+								>
+									{ Object.entries( data ).map( ( [ optionValue, optionLabel ] ) => {
+										return (
+											<option key={ optionValue } value={ optionValue }>
+												{ optionLabel }
+											</option>
+										);
+									} ) }
+								</select>
+							);
+						}
+						default: {
+							return (
+								<input
+									type="text"
+									id={ name }
+									name={ name }
+									value={ value }
+									onChange={ onChange }
+									aria-label={ shouldShowHelpText && helpText }
+								/>
+							);
+						}
+					}
+				} )() }
+
 				{ !! description && (
 					<p
 						className="description"
@@ -72,7 +104,11 @@ PodsFieldOption.defaultProps = {
 PodsFieldOption.propTypes = {
 	description: PropTypes.string,
 	fieldType: PropTypes.string.isRequired,
-	helpText: PropTypes.string,
+	helpText: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.arrayOf( PropTypes.string ),
+	] ),
+	data: PropTypes.object,
 	label: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	onChange: PropTypes.func.isRequired,

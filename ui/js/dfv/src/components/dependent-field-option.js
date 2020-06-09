@@ -37,6 +37,7 @@ const DependentFieldOption = ( {
 	label,
 	value,
 	default: defaultValue,
+	data,
 	allOptionValues,
 	dependents,
 	description,
@@ -65,6 +66,7 @@ const DependentFieldOption = ( {
 			name={ name }
 			value={ value || defaultValue }
 			label={ label }
+			data={ data }
 			onChange={ handleInputChange }
 			helpText={ helpText }
 			description={ description }
@@ -75,6 +77,7 @@ const DependentFieldOption = ( {
 DependentFieldOption.propTypes = {
 	fieldType: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
+	data: PropTypes.object,
 	default: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,
@@ -82,8 +85,16 @@ DependentFieldOption.propTypes = {
 	] ),
 	description: PropTypes.string,
 	label: PropTypes.string.isRequired,
-	dependents: PropTypes.object,
-	helpText: PropTypes.string,
+	dependents: PropTypes.oneOfType( [
+		// The API may provide an empty array if empty, or an object
+		// if there are any values.
+		PropTypes.array,
+		PropTypes.object,
+	] ),
+	helpText: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.arrayOf( PropTypes.string ),
+	] ),
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,

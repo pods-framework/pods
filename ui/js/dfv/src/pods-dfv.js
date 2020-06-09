@@ -91,6 +91,78 @@ window.PodsDFV = {
 			// eslint-disable-next-line no-console
 			console.log( 'config data:', actualData );
 
+			// @todo remove this
+			// Hack for missing basic field type information
+			/* eslint-disable */
+			if ( actualData.config?.global?.field?.groups ) {
+				actualData.config.global.field.groups = [
+					{
+						object_type: 'group',
+						storage_type: 'collection',
+						name: 'basic',
+						id: '',
+						parent: 'pod/_pods_field',
+						label: 'Basic',
+						description: '',
+						fields: [
+							{
+								object_type: "field",
+								storage_type: "collection",
+								name: "label",
+								id: "",
+								parent: "pod/_pods_field",
+								group: "group/pod/_pods_field/basic",
+								label: "Label",
+								description: "",
+								help: "help",
+								type: "text",
+								default: ""
+							},
+							{
+								object_type: "field",
+								storage_type: "collection",
+								name: "name",
+								id: "",
+								parent: "pod/_pods_field",
+								group: "group/pod/_pods_field/basic",
+								label: "Name",
+								description: "",
+								help: "help",
+								type: "slug",
+								default: ""
+							},
+							{
+								object_type: "field",
+								storage_type: "collection",
+								name: "field_type",
+								id: "",
+								parent: "pod/_pods_field",
+								group: "group/pod/_pods_field/additional-field",
+								label: "Field Type",
+								description: "",
+								help: "",
+								default: "text",
+								attributes: [],
+								class: "",
+								type: "pick",
+								grouped: 0,
+								developer_mode: false,
+								dependency: true,
+								'depends-on': [],
+								'excludes-on': [],
+								data: {
+									"text": "Plain Text",
+									"boolean": "Yes / No",
+									"color": "Color"
+								}
+							},
+						],
+					},
+					...actualData.config.global.field.groups,
+				];
+			}
+			/* eslint-enable */
+
 			if ( field !== undefined ) {
 				field.renderer( field.FieldClass, tag.parentNode, actualData );
 			}

@@ -16,11 +16,11 @@
     font-weight: 700;
     padding: 1em .2em;
     margin: 0 .8em;
-    
+
     &:hover {
         cursor: pointer;
     }
-    
+
     &.pods-settings-modal__tab-item--active {
         color: $color--wp-blue;
         border-bottom: 5px solid $color--wp-blue;
@@ -40,8 +40,8 @@
 .pods-field-option {
     margin-bottom: 1em;
 }
-   
-.pods-field-option input {
+
+.pods-field-option input[type="text"] {
     width: 100%;
 }
 
@@ -59,7 +59,7 @@
 
 .pods-setting-modal__button-group button {
     margin-right: 5px;
-    
+
     &:last-child {
         margin-right: 0;
     }
@@ -76,11 +76,11 @@
     .components-modal__frame.pods-settings-modal {
         min-width: 800px;
     }
-    
+
     .pods-settings-modal__container {
         flex-flow: row nowrap;
     }
-    
+
     .pods-settings-modal__tabs {
         flex-flow: column nowrap;
         margin-bottom: 0;
@@ -89,22 +89,22 @@
         padding-top: 24px;
         border-right: 1px solid $color--super-light-grey;
     }
-    
+
     .pods-settings-modal__tab-item {
         width: 200px;
         margin: 0 10px 0 0;
     }
-    
+
     .pods-settings-modal__tab-item.pods-settings-modal__tab-item--active {
         border-bottom: none;
         border-right: 5px solid $color--wp-blue;
     }
-    
+
     .pods-settings-modal__panel {
         flex: 1 1 auto;
         margin: 0 0 1em 0;
     }
-    
+
     .pods-setting-modal__button-group {
         border-top: 1px solid $color--super-light-grey;
         padding-top: 12px;

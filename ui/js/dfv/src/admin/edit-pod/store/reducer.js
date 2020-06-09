@@ -155,15 +155,15 @@ export const currentPod = ( state = {}, action = {} ) => {
 		}
 
 		case CURRENT_POD_ACTIONS.ADD_GROUP: {
+			if ( ! action?.result?.group?.id ) {
+				return state;
+			}
+
 			return {
 				...state,
 				groups: [
 					...state.groups,
-					{
-						name: action.group,
-						label: action.group,
-						fields: [],
-					},
+					action?.result?.group,
 				],
 			};
 		}

@@ -10,7 +10,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import dragSource from './group-drag-source';
 import dropTarget from './group-drop-target';
 
-import FieldGroupSettings from './field-group-settings';
+import SettingsModal from './settings-modal';
 import FieldList from 'dfv/src/admin/edit-pod/main-tabs/field-list';
 import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
@@ -19,6 +19,18 @@ import { SAVE_STATUSES } from 'dfv/src/admin/edit-pod/store/constants';
 import './field-group.scss';
 
 const ENTER_KEY = 13;
+
+// Helper function
+// @todo delete this once it's no longer needed.
+const randomString = ( length ) => {
+	let result = '';
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const charactersLength = characters.length;
+	for ( let i = 0; i < length; i++ ) {
+		result += characters.charAt( Math.floor( Math.random() * charactersLength ) );
+	}
+	return result;
+};
 
 const FieldGroup = forwardRef( ( props, ref ) => {
 	const {
@@ -35,7 +47,6 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		isExpanded,
 		hasMoved,
 		saveStatus,
-		randomString,
 		deleteGroup,
 		saveGroup,
 		setGroupFields,
@@ -95,11 +106,13 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		setShowSettings( true );
 	};
 
-	const onEditGroupCancel = () => {
+	const onEditGroupCancel = ( event ) => {
+		event.stopPropagation();
 		setShowSettings( false );
 	};
 
-	const onEditGroupSave = ( updatedOptions = {} ) => {
+	const onEditGroupSave = ( updatedOptions = {} ) => ( event ) => {
+		event.stopPropagation();
 		saveGroup(
 			podID,
 			groupName,
@@ -253,9 +266,9 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 				</Button>
 
 				{ showSettings && (
-					<FieldGroupSettings
-						editGroupPod={ editGroupPod }
-						groupOptions={ omit( group, [ 'fields' ] ) }
+					<SettingsModal
+						optionsPod={ editGroupPod }
+						selectedOptions={ omit( group, [ 'fields' ] ) }
 						title={ sprintf(
 							/* translators: %1$s: Pod Label, %2$s Group Label */
 							__( '%1$s > %2$s > Edit Group', 'pods' ),
@@ -263,6 +276,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 							groupLabel
 						) }
 						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
+						errorMessage={ __( 'There was an error saving the group, please try again.', 'pods' ) }
 						cancelEditing={ onEditGroupCancel }
 						save={ onEditGroupSave }
 					/>

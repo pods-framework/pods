@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import * as PropTypes from 'prop-types';
+import { omit } from 'lodash';
 
 // WordPress dependencies
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 
+import SettingsModal from './settings-modal';
 import {
 	STORE_KEY_EDIT_POD,
 	SAVE_STATUSES,
 } from 'dfv/src/admin/edit-pod/store/constants';
-import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
+
 import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
 import './field-groups.scss';
@@ -22,7 +24,6 @@ const FieldGroups = ( {
 	podName,
 	podSaveStatus,
 	groups,
-	addGroup,
 	saveGroup,
 	deleteAndRemoveGroup,
 	moveGroup,
@@ -33,6 +34,9 @@ const FieldGroups = ( {
 	setFields,
 	editGroupPod,
 } ) => {
+	const [ showAddGroupModal, setShowAddGroupModal ] = useState( false );
+	const [ addedGroupName, setAddedGroupName ] = useState( null );
+
 	// If there's only one group, expand that group initially.
 	const [ expandedGroups, setExpandedGroups ] = useState(
 		1 === groups.length ? { [ groups[ 0 ].name ]: true } : {}
@@ -40,39 +44,26 @@ const FieldGroups = ( {
 
 	const [ groupsMovedSinceLastSave, setGroupsMovedSinceLastSave ] = useState( {} );
 
-	const handleAddGroup = ( event ) => {
-		event.preventDefault();
+	const handleAddGroup = ( options = {} ) => ( event ) => {
+		event.stopPropagation();
 
-		const str = randomString( 6 );
-		const label = 'Group ' + str;
-		const name = sanitizeSlug( label );
-
-		addGroup( name );
+		setAddedGroupName( options.name );
 
 		saveGroup(
-			podID.toString(),
-			name,
-			name,
-			name,
-			{},
+			podID,
+			options.name,
+			options.name,
+			options.label,
+			omit( options, [ 'name', 'label', 'id' ] )
 		);
 	};
 
-	const createToggleExpandGroup = ( groupName ) => () => {
+	const toggleExpandGroup = ( groupName ) => ( event ) => {
+		event.stopPropagation();
 		setExpandedGroups( {
 			...expandedGroups,
 			[ groupName ]: expandedGroups[ groupName ] ? false : true,
 		} );
-	};
-
-	const randomString = ( length ) => {
-		let result = '';
-		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		const charactersLength = characters.length;
-		for ( let i = 0; i < length; i++ ) {
-			result += characters.charAt( Math.floor( Math.random() * charactersLength ) );
-		}
-		return result;
 	};
 
 	const handleGroupMove = ( oldIndex, newIndex ) => {
@@ -94,19 +85,44 @@ const FieldGroups = ( {
 	// After the pod has been saved, reset the list of groups
 	// that haven't been saved.
 	useEffect( () => {
-		const hasSaved = podSaveStatus === SAVE_STATUSES.SAVE_SUCCESS;
-
-		if ( hasSaved ) {
+		if ( podSaveStatus === SAVE_STATUSES.SAVE_SUCCESS ) {
 			setGroupsMovedSinceLastSave( {} );
 		}
 	}, [ podSaveStatus ] );
 
+	// After a new group has successfully been added, close
+	// the modal.
+	useEffect( () => {
+		if (
+			!! addedGroupName &&
+			groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVE_SUCCESS
+		) {
+			setShowAddGroupModal( false );
+		}
+	}, [ addedGroupName, setShowAddGroupModal, groupSaveStatuses ] );
+
 	return (
 		<div className="field-groups">
+			{ showAddGroupModal && (
+				<SettingsModal
+					optionsPod={ editGroupPod }
+					selectedOptions={ {} }
+					title={ sprintf(
+						/* translators: %1$s: Pod Label */
+						__( '%1$s > Add Group', 'pods' ),
+						podName,
+					) }
+					hasSaveError={ groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVE_ERROR || false }
+					errorMessage={ __( 'There was an error saving the group, please try again.', 'pods' ) }
+					cancelEditing={ () => setShowAddGroupModal( false ) }
+					save={ handleAddGroup }
+				/>
+			) }
+
 			<div className="pods-button-group_container">
 				<button
 					className="pods-button-group_add-new"
-					onClick={ ( e ) => handleAddGroup( e ) }
+					onClick={ () => setShowAddGroupModal( true ) }
 				>
 					{ __( '+ Add New Group', 'pods' ) }
 				</button>
@@ -132,9 +148,8 @@ const FieldGroups = ( {
 						saveStatus={ groupSaveStatuses[ group.name ] }
 						saveGroup={ saveGroup }
 						setFields={ setFields }
-						randomString={ randomString }
 						isExpanded={ expandedGroups[ group.name ] || false }
-						toggleExpanded={ createToggleExpandGroup( group.name ) }
+						toggleExpanded={ toggleExpandGroup( group.name ) }
 						hasMoved={ hasMoved }
 					/>
 				);
@@ -145,7 +160,7 @@ const FieldGroups = ( {
 			<div className="pods-button-group_container">
 				<button
 					className="pods-button-group_add-new"
-					onClick={ ( e ) => handleAddGroup( e ) }
+					onClick={ () => setShowAddGroupModal( true ) }
 				>
 					{ __( '+ Add New Group', 'pods' ) }
 				</button>
@@ -159,7 +174,6 @@ FieldGroups.propTypes = {
 	podName: PropTypes.string.isRequired,
 	podSaveStatus: PropTypes.string.isRequired,
 	groups: PropTypes.arrayOf( GROUP_PROP_TYPE_SHAPE ).isRequired,
-	addGroup: PropTypes.func.isRequired,
 	deleteAndRemoveGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
@@ -184,7 +198,6 @@ export default compose( [
 		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
 
 		return {
-			addGroup: storeDispatch.addGroup,
 			saveGroup: storeDispatch.saveGroup,
 			deleteAndRemoveGroup: ( groupID ) => {
 				storeDispatch.deleteGroup( groupID );

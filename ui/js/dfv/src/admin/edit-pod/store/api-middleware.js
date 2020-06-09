@@ -42,7 +42,7 @@ const apiMiddleware = ( { dispatch } ) => ( next ) => async ( action ) => {
 			dispatch( onSuccess( result ) );
 		}
 	} catch ( error ) {
-		if ( Array.isArray( onSuccess ) ) {
+		if ( Array.isArray( onFailure ) ) {
 			onFailure.forEach( ( actionCreator ) => dispatch( actionCreator( error ) ) );
 		} else {
 			dispatch( onFailure( error ) );

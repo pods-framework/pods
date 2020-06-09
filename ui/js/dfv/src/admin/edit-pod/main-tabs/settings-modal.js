@@ -7,23 +7,24 @@ import { Modal, Button } from '@wordpress/components';
 
 import DynamicTabContent from './dynamic-tab-content';
 
-import './field-group-settings.scss';
+import './settings-modal.scss';
 
 const ENTER_KEY = 13;
 
-const FieldGroupSettings = ( {
+const SettingsModal = ( {
 	title,
-	editGroupPod: {
-		groups: editGroupSections = [],
+	optionsPod: {
+		groups: optionsSections = [],
 	} = {},
 	hasSaveError,
-	groupOptions,
+	errorMessage,
+	selectedOptions,
 	cancelEditing,
 	save,
 } ) => {
-	const [ selectedTab, setSelectedTab ] = useState( editGroupSections[ 0 ].name );
+	const [ selectedTab, setSelectedTab ] = useState( optionsSections[ 0 ].name );
 
-	const [ changedOptions, setChangedOptions ] = useState( groupOptions );
+	const [ changedOptions, setChangedOptions ] = useState( selectedOptions );
 
 	return (
 		<Modal
@@ -33,19 +34,18 @@ const FieldGroupSettings = ( {
 			onRequestClose={ cancelEditing }
 		>
 			{ hasSaveError && (
-				<span className="pod-field-group_settings-error-message">
-					{ __( 'There was an error saving the group, please try again.', 'pods' ) }
-				</span>
+				<div className="pod-field-group_settings-error-message">
+					{ errorMessage }
+				</div>
 			) }
 
 			<div className="pods-settings-modal__container">
-
 				<div
 					className="pods-settings-modal__tabs"
 					role="tablist"
 					aria-label={ __( 'Pods Field Group Settings', 'pods' ) }
 				>
-					{ editGroupSections.map( ( {
+					{ optionsSections.map( ( {
 						name: sectionName,
 						label: sectionLabel,
 					} ) => {
@@ -82,7 +82,7 @@ const FieldGroupSettings = ( {
 				>
 					{
 						<DynamicTabContent
-							tabOptions={ editGroupSections.find( ( section ) => section.name === selectedTab ).fields }
+							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab ).fields }
 							optionValues={ changedOptions }
 							setOptionValue={ ( optionName, value ) => {
 								setChangedOptions( {
@@ -93,33 +93,29 @@ const FieldGroupSettings = ( {
 						/>
 					}
 				</div>
-
 			</div>
-            
-            <div
-                className="pods-setting-modal__button-group"
-            >
 
-                <Button isSecondary onClick={ cancelEditing }>
-                    { __( 'Cancel', 'pods' ) }
-                </Button>
+			<div className="pods-setting-modal__button-group">
+				<Button isSecondary onClick={ cancelEditing }>
+					{ __( 'Cancel', 'pods' ) }
+				</Button>
 
-                <Button isPrimary onClick={ () => save( changedOptions ) }>
-                    { __( 'Save Group', 'pods' ) }
-                </Button>
-                
-            </div>
+				<Button isPrimary onClick={ save( changedOptions ) }>
+					{ __( 'Save Group', 'pods' ) }
+				</Button>
+			</div>
 		</Modal>
 	);
 };
 
-FieldGroupSettings.propTypes = {
-	editGroupPod: PropTypes.object.isRequired,
-	groupOptions: PropTypes.object.isRequired,
+SettingsModal.propTypes = {
+	optionsPod: PropTypes.object.isRequired,
+	selectedOptions: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	hasSaveError: PropTypes.bool.isRequired,
+	errorMessage: PropTypes.string.isRequired,
 	cancelEditing: PropTypes.func.isRequired,
 	save: PropTypes.func.isRequired,
 };
 
-export default FieldGroupSettings;
+export default SettingsModal;

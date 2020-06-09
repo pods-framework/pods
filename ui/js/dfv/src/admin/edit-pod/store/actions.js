@@ -108,10 +108,10 @@ export const moveGroup = ( oldIndex, newIndex ) => {
 	};
 };
 
-export const addGroup = ( group ) => {
+export const addGroup = ( result ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.ADD_GROUP,
-		group,
+		result,
 	};
 };
 
@@ -214,14 +214,14 @@ export const saveGroup = ( podID, previousName, name, label, args = {}, groupId 
 			url: groupId ? `/pods/v1/groups/${ groupId }` : '/pods/v1/groups',
 			method: 'POST',
 			data: {
-				pod_id: podID,
+				pod_id: podID.toString(),
 				name,
 				label,
 				args,
 			},
 			onSuccess: [
 				setGroupSaveStatus( SAVE_STATUSES.SAVE_SUCCESS, name ),
-				setGroupData,
+				groupId ? setGroupData : addGroup,
 			],
 			onFailure: setGroupSaveStatus( SAVE_STATUSES.SAVE_ERROR, name ),
 			onStart: setGroupSaveStatus( SAVE_STATUSES.SAVING, name ),
@@ -249,7 +249,7 @@ export const saveField = ( podID, name, args, fieldId ) => {
 			url: fieldId ? `/pods/v1/fields/${ fieldId }` : '/pods/v1/fields',
 			method: 'POST',
 			data: {
-				pod_id: podID,
+				pod_id: podID.toString(),
 				name,
 				args,
 			},

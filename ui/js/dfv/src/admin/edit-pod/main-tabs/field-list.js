@@ -97,7 +97,7 @@ export const FieldListItem = ( props, ref ) => {
                     >
 						Edit
 					</span>
-					<span 
+					<span
                         className="pods-field_duplicate"
                         onClick={ ( e ) => {
 						    e.stopPropagation(); cloneField( type );
@@ -105,7 +105,7 @@ export const FieldListItem = ( props, ref ) => {
                     >
 						Duplicate
 					</span>
-					<span 
+					<span
                         className="pods-field_delete"
                         onClick={ ( e ) => {
 						    e.stopPropagation(); deleteField( name );
@@ -143,7 +143,7 @@ const FieldList = ( props ) => {
 	if ( 0 === props.fields.length ) {
 		return (
 			<div className="pods-manage-fields no-fields">
-				<p>{__('There are no fields in this group.', 'pods')}</p>
+				<p>{ __( 'There are no fields in this group.', 'pods' ) }</p>
 				<Button
 					isPrimary
 					className="pods-field-group_add_field_link"

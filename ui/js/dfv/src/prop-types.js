@@ -63,6 +63,8 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	pick_format_type: PropTypes.string,
 	// @todo does position actually belong here?
 	position: PropTypes.number,
+	// @todo this seems like it shouldn't be here
+	post_status: PropTypes.string,
 	read_only: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	rest_read: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	rest_write: PropTypes.oneOf( BOOLEAN_STRINGS ),
@@ -81,6 +83,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.string,
 	] ),
 	text_allowed_html_tags: PropTypes.string,
+	text_repeatable: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	type: PropTypes.string.isRequired,
 	website_format: PropTypes.string,
 	website_allow_port: PropTypes.string,
@@ -93,6 +96,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.object,
 		PropTypes.array,
 	] ),
+	_locale: PropTypes.string,
 } );
 
 export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {

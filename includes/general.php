@@ -972,7 +972,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 				$params['where'] = $tags['where'];
 
 				if ( pods_shortcode_allow_evaluate_tags() ) {
-					$params['where'] = pods_evaluate_tags( html_entity_decode( $params['where'] ), true, '""', true );
+					$params['where'] = pods_evaluate_tags( html_entity_decode( $params['where'] ), true, '""', $pod );
 				}
 			}
 
@@ -980,7 +980,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 				$params['having'] = $tags['having'];
 
 				if ( pods_shortcode_allow_evaluate_tags() ) {
-					$params['having'] = pods_evaluate_tags( html_entity_decode( $params['having'] ), true, '""', true );
+					$params['having'] = pods_evaluate_tags( html_entity_decode( $params['having'] ), true, '""', $pod );
 				}
 			}
 

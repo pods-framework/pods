@@ -28,10 +28,6 @@ const FieldGroups = ( {
 	deleteAndRemoveGroup,
 	moveGroup,
 	groupSaveStatuses,
-	groupFieldList,
-	setGroupFields,
-	addGroupField,
-	setFields,
 	editGroupPod,
 } ) => {
 	const [ showAddGroupModal, setShowAddGroupModal ] = useState( false );
@@ -142,12 +138,8 @@ const FieldGroups = ( {
 						deleteGroup={ deleteAndRemoveGroup }
 						moveGroup={ handleGroupMove }
 						handleGroupDrop={ handleGroupDrop }
-						groupFieldList={ groupFieldList }
-						setGroupFields={ setGroupFields }
-						addGroupField={ addGroupField }
 						saveStatus={ groupSaveStatuses[ group.name ] }
 						saveGroup={ saveGroup }
-						setFields={ setFields }
 						isExpanded={ expandedGroups[ group.name ] || false }
 						toggleExpanded={ toggleExpandGroup( group.name ) }
 						hasMoved={ hasMoved }
@@ -189,7 +181,6 @@ export default compose( [
 			podName: storeSelect.getPodName(),
 			podSaveStatus: storeSelect.getSaveStatus(),
 			groups: storeSelect.getGroups(),
-			groupFieldList: storeSelect.groupFieldList(),
 			editGroupPod: storeSelect.getGlobalGroupOptions(),
 			groupSaveStatuses: storeSelect.getGroupSaveStatuses(),
 		};
@@ -203,9 +194,6 @@ export default compose( [
 				storeDispatch.deleteGroup( groupID );
 				storeDispatch.removeGroup( groupID );
 			},
-			setGroupFields: storeDispatch.setGroupFields,
-			addGroupField: storeDispatch.addGroupField,
-			setFields: storeDispatch.setFields,
 			moveGroup: storeDispatch.moveGroup,
 		};
 	} ),

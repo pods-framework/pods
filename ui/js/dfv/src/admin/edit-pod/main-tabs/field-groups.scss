@@ -14,6 +14,10 @@
 	align-items: center;
 	transition: 200ms ease background-color;
 	padding: .7em 0;
+
+	&:hover .pods-field_controls-container {
+		opacity: 1;
+	}
 }
 
 .pods-field_handle {

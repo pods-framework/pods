@@ -43,25 +43,13 @@
 	padding-left: 0;
 }
 
-.pods-field_label,
-.pods-field_type {
+.pods-field_controls-container {
+	opacity: 0;
 
-	&:hover {
-		.pods-field_id {
-			opacity: 1;
-		}
-	}
-}
-
-.pods-field_controls-container span {
-	border-right: 1px solid inherit;
-	padding-right: 5px;
-	margin-right: 5px;
-
-	&:last-child {
-		margin-right: 0;
-		padding-right: 0;
-		border-right: none;
+	button {
+		height: auto;
+		padding: 0;
+		margin-right: 0.5em;
 	}
 }
 

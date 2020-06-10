@@ -926,7 +926,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			$id = $tags['slug'];
 
 			if ( pods_shortcode_allow_evaluate_tags() ) {
-				$id = pods_evaluate_tags( $id, true );
+				$id = pods_evaluate_tags( $id, true, null, true );
 			}
 		}
 
@@ -934,7 +934,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			$id = $tags['id'];
 
 			if ( pods_shortcode_allow_evaluate_tags() ) {
-				$id = pods_evaluate_tags( $id, true );
+				$id = pods_evaluate_tags( $id, true, null, true );
 			}
 
 			if ( is_numeric( $id ) ) {
@@ -972,7 +972,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 				$params['where'] = $tags['where'];
 
 				if ( pods_shortcode_allow_evaluate_tags() ) {
-					$params['where'] = pods_evaluate_tags( html_entity_decode( $params['where'] ), true, '""', true);
+					$params['where'] = pods_evaluate_tags( html_entity_decode( $params['where'] ), true, '""', true );
 				}
 			}
 

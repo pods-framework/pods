@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -25,6 +25,30 @@ const SettingsModal = ( {
 	const [ selectedTab, setSelectedTab ] = useState( optionsSections[ 0 ].name );
 
 	const [ changedOptions, setChangedOptions ] = useState( selectedOptions );
+
+	// When the modal first opens, set any options to their defaults, unless
+	// they're already set.
+	useEffect( () => {
+		const defaultOptions = {
+			...changedOptions,
+		};
+
+		optionsSections.forEach( ( optionsSection ) => {
+			( optionsSection.fields || [] ).forEach( ( field ) => {
+				// Only set the value if it wasn't previously supplied,
+				// and only if a default is provided.
+				if (
+					'undefined' === typeof defaultOptions[ field.name ] &&
+					'undefined' !== typeof field.default &&
+					'' !== field.default
+				) {
+					defaultOptions[ field.name ] = field.default;
+				}
+			} );
+		} );
+
+		setChangedOptions( defaultOptions );
+	}, [] );
 
 	return (
 		<Modal

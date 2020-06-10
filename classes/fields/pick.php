@@ -1337,6 +1337,11 @@ class PodsField_Pick extends PodsField {
 			$icon         = sanitize_html_class( $icon );
 		}
 
+		// #5740 Check for WP_Error object.
+		if ( ! is_string( $link ) ) {
+			$link = '';
+		}
+
 		// Support modal editing
 		if ( ! empty( $edit_link ) ) {
 			// @todo: Replace string literal with defined constant

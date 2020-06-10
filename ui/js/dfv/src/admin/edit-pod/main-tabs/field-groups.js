@@ -109,6 +109,7 @@ const FieldGroups = ( {
 						podName,
 					) }
 					hasSaveError={ groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVE_ERROR || false }
+					saveButtonText={ __( 'Save New Group', 'pods' ) }
 					errorMessage={ __( 'There was an error saving the group, please try again.', 'pods' ) }
 					cancelEditing={ () => setShowAddGroupModal( false ) }
 					save={ handleAddGroup }

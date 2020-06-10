@@ -17,6 +17,7 @@ const SettingsModal = ( {
 		groups: optionsSections = [],
 	} = {},
 	hasSaveError,
+	saveButtonText,
 	errorMessage,
 	selectedOptions,
 	cancelEditing,
@@ -125,7 +126,7 @@ const SettingsModal = ( {
 				</Button>
 
 				<Button isPrimary onClick={ save( changedOptions ) }>
-					{ __( 'Save Group', 'pods' ) }
+					{ saveButtonText }
 				</Button>
 			</div>
 		</Modal>
@@ -138,6 +139,7 @@ SettingsModal.propTypes = {
 	title: PropTypes.string.isRequired,
 	hasSaveError: PropTypes.bool.isRequired,
 	errorMessage: PropTypes.string.isRequired,
+	saveButtonText: PropTypes.string.isRequired,
 	cancelEditing: PropTypes.func.isRequired,
 	save: PropTypes.func.isRequired,
 };

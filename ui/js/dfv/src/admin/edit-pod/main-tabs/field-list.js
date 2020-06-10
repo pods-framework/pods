@@ -41,11 +41,8 @@ const FieldList = ( props ) => {
 	const handleAddField = ( options = {} ) => ( event ) => {
 		event.stopPropagation();
 
-		console.log( 'handleAddField', options );
-
 		setAddedFieldName( options.name );
 
-		// @todo we're not getting Default values when this happens.
 		saveField(
 			podID,
 			groupName,
@@ -105,6 +102,7 @@ const FieldList = ( props ) => {
 						groupLabel,
 					) }
 					hasSaveError={ fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_ERROR || false }
+					saveButtonText={ __( 'Save New Field', 'pods' ) }
 					errorMessage={ __( 'There was an error saving the field, please try again.', 'pods' ) }
 					cancelEditing={ () => setShowAddFieldModal( false ) }
 					save={ handleAddField }

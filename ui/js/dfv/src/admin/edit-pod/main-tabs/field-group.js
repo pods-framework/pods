@@ -210,6 +210,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 						) }
 						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
 						errorMessage={ __( 'There was an error saving the group, please try again.', 'pods' ) }
+						saveButtonText={ __( 'Save Group', 'pods' ) }
 						cancelEditing={ onEditGroupCancel }
 						save={ onEditGroupSave }
 					/>

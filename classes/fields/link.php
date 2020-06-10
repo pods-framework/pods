@@ -146,7 +146,7 @@ class PodsField_Link extends PodsField_Website {
 
 			if ( ! empty( $value['target'] ) || ( ! isset( $value['target'] ) && 1 === (int) pods_v( static::$type . '_new_window', $options ) ) ) {
 				// Possible support for other targets in future
-				$atts .= ' target="' . esc_attr( $value['target'] ) . '"';
+				$atts .= ' target="' . esc_attr( $value['target'] ) . '" rel="noopener noreferrer"';
 			}
 
 			// Do shortcodes if this is enabled

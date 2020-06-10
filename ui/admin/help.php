@@ -6,13 +6,13 @@
 
 		<h3><?php _e( 'Pods Support' , 'pods'); ?></h3>
 
-		<p><?php _e( 'There are many resources available to help you learn to use Pods on our site, <a href="https://pods.io/" target="_blank">Pods.io</a>:', 'pods'); ?></p>
+		<p><?php _e( 'There are many resources available to help you learn to use Pods on our site, <a href="https://pods.io/" target="_blank" rel="noopener noreferrer">Pods.io</a>:', 'pods'); ?></p>
 		<ul class="ul-disc">
-			<li><?php _e('To learn more about using Pods, see our <a href="https://pods.io/docs/" target="_blank">documentation</a> and subscribe to our <a href="https://www.youtube.com/user/podsframework/" target="_blank">YouTube Channel</a>', 'pods'); ?>.
+			<li><?php _e('To learn more about using Pods, see our <a href="https://pods.io/docs/" target="_blank" rel="noopener noreferrer">documentation</a> and subscribe to our <a href="https://www.youtube.com/user/podsframework/" target="_blank" rel="noopener noreferrer">YouTube Channel</a>', 'pods'); ?>.
 
-			<li><?php _e( 'To get help with a specific issue, you can ask in our <a href="https://wordpress.org/support/plugin/pods" target="_blank">support forums</a>, or you can join <a href="https://pods.io/chat/" target="_blank">our Slack chat</a>', 'pods'); ?>.
+			<li><?php _e( 'To get help with a specific issue, you can ask in our <a href="https://wordpress.org/support/plugin/pods" target="_blank" rel="noopener noreferrer">support forums</a>, or you can join <a href="https://pods.io/chat/" target="_blank" rel="noopener noreferrer">our Slack chat</a>', 'pods'); ?>.
 
-			<li><?php _e('To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank">GitHub</a>.', 'pods' ); ?></li>
+			<li><?php _e('To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank" rel="noopener noreferrer">GitHub</a>.', 'pods' ); ?></li>
 
 			<li><?php _e( "Pods is open source, so if you want to get into the code and submit your own fixes or features, go at it, we'd love to have you contribute on our project! With GitHub, it's really easy to contribute back, so why not give it a try?", 'pods'); ?></li>
 		</ul>
@@ -30,7 +30,7 @@
 
 				if ( 0 < $max_items ) {
 		?>
-			<h3><?php _e( 'Latest Forum Posts at <a href="https://wordpress.org/support/plugin/pods" target="_blank">wordpress.org</a>', 'pods'); ?></h3>
+			<h3><?php _e( 'Latest Forum Posts at <a href="https://wordpress.org/support/plugin/pods" target="_blank" rel="noopener noreferrer">wordpress.org</a>', 'pods'); ?></h3>
 
 			<ul class="ul-disc">
 				<?php
@@ -43,7 +43,7 @@
 							$author_text = '<br /> by ';
 
 							if ( !empty( $author->link ) )
-								$author_text .= '<a href="' . $author->link . '" target="_blank">';
+								$author_text .= '<a href="' . $author->link . '" target="_blank" rel="noopener noreferrer">';
 
 							$author_text .= $author->name;
 
@@ -77,7 +77,7 @@
 
 				if ( 0 < $max_items ) {
 		?>
-			<h3><?php _e( 'Latest Activity on <a href="http://github.com/pods-framework/pods" target="_blank">GitHub</a>', 'pods' ); ?></h3>
+			<h3><?php _e( 'Latest Activity on <a href="http://github.com/pods-framework/pods" target="_blank" rel="noopener noreferrer">GitHub</a>', 'pods' ); ?></h3>
 
 			<ul class="ul-disc">
 				<?php
@@ -90,7 +90,7 @@
 							$author_text = '<br /> by ';
 
 							if ( !empty( $author->link ) )
-								$author_text .= '<a href="' . $author->link . '" target="_blank">';
+								$author_text .= '<a href="' . $author->link . '" target="_blank" rel="noopener noreferrer">';
 
 							$author_text .= $author->name;
 

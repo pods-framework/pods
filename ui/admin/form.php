@@ -87,7 +87,7 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 		$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 		if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) {
-			$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
+			$message .= ' <a target="_blank" rel="noopener noreferrer" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 		}
 
 		$error = sprintf( __( '<strong>Error:</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
@@ -112,7 +112,7 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 	$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 	if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) {
-		$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
+		$message .= ' <a target="_blank" rel="noopener noreferrer" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 	}
 
 	$error = sprintf( __( '<strong>Error:</strong> %1$s not %2$s.', 'pods' ), $obj->item, $action );
@@ -213,7 +213,7 @@ if ( 0 < $pod->id() ) {
 											?>
 											<div id="minor-publishing-actions">
 												<div id="preview-action">
-													<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
+													<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank" rel="noopener noreferrer"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
 												</div>
 												<div class="clear"></div>
 											</div>

@@ -122,24 +122,41 @@ export const removeGroup = ( groupID ) => {
 	};
 };
 
-export const setGroupFields = ( groupName, fields ) => {
-	return {
-		type: CURRENT_POD_ACTIONS.SET_GROUP_FIELDS,
-		groupName, fields,
-	};
-};
-
-export const addGroupField = ( groupName, field ) => {
-	return {
-		type: CURRENT_POD_ACTIONS.ADD_GROUP_FIELD,
-		groupName,
-		field,
-	};
-};
-
 export const setGroupData = ( result ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.SET_GROUP_DATA,
+		result,
+	};
+};
+
+export const setGroupFields = ( groupName, fields ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.SET_GROUP_FIELDS,
+		groupName,
+		fields,
+	};
+};
+
+export const addGroupField = ( groupName ) => ( result ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.ADD_GROUP_FIELD,
+		groupName,
+		result,
+	};
+};
+
+export const removeGroupField = ( groupID, fieldID ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.REMOVE_GROUP_FIELD,
+		groupID,
+		fieldID,
+	};
+};
+
+export const setGroupFieldData = ( groupName ) => ( result ) => {
+	return {
+		type: CURRENT_POD_ACTIONS.SET_GROUP_FIELD_DATA,
+		groupName,
 		result,
 	};
 };
@@ -242,29 +259,34 @@ export const deleteGroup = ( groupId ) => {
 	};
 };
 
-export const saveField = ( podID, name, args, fieldId ) => {
+export const saveField = ( podID, groupName, name, label, type, args, fieldID ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.API_REQUEST,
 		payload: {
-			url: fieldId ? `/pods/v1/fields/${ fieldId }` : '/pods/v1/fields',
+			url: fieldID ? `/pods/v1/fields/${ fieldID }` : '/pods/v1/fields',
 			method: 'POST',
 			data: {
 				pod_id: podID.toString(),
 				name,
+				label,
+				type,
 				args,
 			},
-			onSuccess: setFieldSaveStatus( SAVE_STATUSES.SAVE_SUCCESS, name ),
+			onSuccess: [
+				setFieldSaveStatus( SAVE_STATUSES.SAVE_SUCCESS, name ),
+				fieldID ? setGroupFieldData( groupName ) : addGroupField( groupName ),
+			],
 			onFailure: setFieldSaveStatus( SAVE_STATUSES.SAVE_ERROR, name ),
 			onStart: setFieldSaveStatus( SAVE_STATUSES.SAVING, name ),
 		},
 	};
 };
 
-export const deleteField = ( podID, name, fieldId ) => {
+export const deleteField = ( fieldID, name ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.API_REQUEST,
 		payload: {
-			url: `/pods/v1/fields/${ fieldId }`,
+			url: `/pods/v1/fields/${ fieldID }`,
 			method: 'DELETE',
 			onSuccess: setFieldDeleteStatus( DELETE_STATUSES.DELETE_SUCCESS, name ),
 			onFailure: setFieldDeleteStatus( DELETE_STATUSES.DELETE_ERROR, name ),

@@ -1578,8 +1578,10 @@ function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null, $pod = nu
 		if ( true === $pod ) {
 			$pod = pods(); // Current pod object.
 		}
+
 		if ( $pod instanceof Pods ) {
 			$value = $pod->do_magic_tags( $tag );
+
 			if ( ! $value ) {
 				if ( null === $fallback ) {
 					return '';
@@ -1591,6 +1593,7 @@ function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null, $pod = nu
 			if ( $sanitize ) {
 				$value = pods_sanitize( $value );
 			}
+
 			return $value;
 		}
 	}

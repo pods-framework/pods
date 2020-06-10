@@ -1490,8 +1490,9 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
 /**
  * Evaluate tags like magic tags but through pods_v.
  *
- * @param string|array|object $tags     String to be evaluated.
+ * @param string|array|object $tags String to be evaluated.
  * @param array               $args {
+ *     Function arguments.
  *     @type bool       $sanitize Whether to sanitize.
  *     @type null|mixed $fallback The fallback value to use if not set, should already be sanitized.
  *     @type bool|Pods  $pod      Pod to parse the tags through.
@@ -1545,7 +1546,8 @@ function pods_evaluate_tags( $tags, $args = array() ) {
  * @since 2.1
  *
  * @param string|array $tag String to be evaluated.
- * @param array               $args {
+ * @param array        $args {
+ *     Function arguments.
  *     @type null|mixed $fallback The fallback value to use if not set, should already be sanitized.
  *     @type bool|Pods  $pod      Pod to parse the tags through.
  * }
@@ -1569,6 +1571,7 @@ function pods_evaluate_tag_sanitized( $tag, $args = array() ) {
  *
  * @param string|array $tag      String to be evaluated.
  * @param array        $args {
+ *     Function arguments.
  *     @type bool       $sanitize Whether to sanitize.
  *     @type null|mixed $fallback The fallback value to use if not set, should already be sanitized.
  *     @type bool|Pods  $pod      Pod to parse the tags through.

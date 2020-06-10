@@ -200,6 +200,10 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 *
 
+= 2.7.20.1 - June 4th 2020 =
+
+* Security: Remove deprecated usage of escapeMarkup in selectWoo and tighten JS rendering (@sc0ttkclark, @miha.jirov)
+
 = 2.7.20 - April 5th 2020 =
 
 **Bug Fixes**

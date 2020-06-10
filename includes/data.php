@@ -1508,8 +1508,8 @@ function pods_evaluate_tags( $tags, $args = array() ) {
 	// Back compat.
 	if ( is_bool( $args ) ) {
 		$prev_args = array( 'tags', 'sanitize', 'fallback' );
-		$args = func_get_args();
-		$args = array_combine( array_slice( $prev_args, 0, count( $args ) ), $args );
+		$args      = func_get_args();
+		$args      = array_combine( array_slice( $prev_args, 0, count( $args ) ), $args );
 		unset( $args['tags'] );
 	}
 
@@ -1583,6 +1583,7 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 		'pod'      => null,
 	);
 
+	// Back compat.
 	if ( is_bool( $args ) ) {
 		$args = func_get_args();
 		$defaults['sanitize'] = $args[1];
@@ -1592,7 +1593,7 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 		$args = array();
 	}
 
-	$args = wp_parse_args( $args, $defaults );
+	$args     = wp_parse_args( $args, $defaults );
 	$sanitize = $args['sanitize'];
 	$fallback = $args['fallback'];
 	$pod      = $args['pod'];

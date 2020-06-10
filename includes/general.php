@@ -926,7 +926,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			$id = $tags['slug'];
 
 			if ( pods_shortcode_allow_evaluate_tags() ) {
-				$id = pods_evaluate_tags( $id, true, null, true );
+				$id = pods_evaluate_tags( $id, true );
 			}
 		}
 
@@ -934,7 +934,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			$id = $tags['id'];
 
 			if ( pods_shortcode_allow_evaluate_tags() ) {
-				$id = pods_evaluate_tags( $id, true, null, true );
+				$id = pods_evaluate_tags( $id, true );
 			}
 
 			if ( is_numeric( $id ) ) {

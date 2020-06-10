@@ -1569,7 +1569,7 @@ function pods_evaluate_tag_sanitized( $tag, $args = array() ) {
  *
  * @since 2.1
  *
- * @param string|array $tag      String to be evaluated.
+ * @param string|array $tag String to be evaluated.
  * @param array        $args {
  *     Function arguments.
  *     @type bool       $sanitize Whether to sanitize.
@@ -1589,6 +1589,7 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 	// Back compat.
 	if ( is_bool( $args ) ) {
 		$args = func_get_args();
+
 		$defaults['sanitize'] = $args[1];
 		if ( isset( $args[2] ) ) {
 			$defaults['fallback'] = $args[2];

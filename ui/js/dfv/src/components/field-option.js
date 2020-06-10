@@ -58,13 +58,31 @@ const PodsFieldOption = ( {
 									id={ name }
 									name={ name }
 									selected={ value }
+									onBlur={ onChange }
 								>
-									{ Object.entries( data ).map( ( [ optionValue, optionLabel ] ) => {
-										return (
-											<option key={ optionValue } value={ optionValue }>
-												{ optionLabel }
-											</option>
-										);
+									{ Object.entries( data ).map( ( [ optionValue, option ] ) => {
+										if ( 'string' === typeof option ) {
+											return (
+												<option key={ optionValue } value={ optionValue }>
+													{ option }
+												</option>
+											);
+										} else if ( 'object' === typeof option ) {
+											const optgroupOptions = Object.entries( option );
+
+											return (
+												<optgroup label={ optionValue } key={ optionValue }>
+													{ optgroupOptions.map( ( [ suboptionValue, suboptionLabel ] ) => {
+														return (
+															<option key={ suboptionValue } value={ suboptionValue }>
+																{ suboptionLabel }
+															</option>
+														);
+													} ) }
+												</optgroup>
+											);
+										}
+										return null;
 									} ) }
 								</select>
 							);

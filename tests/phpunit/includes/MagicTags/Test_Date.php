@@ -29,12 +29,12 @@ class Date extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$pod->fetch( $id );
 		$result = $pod->do_magic_tags( '{@post_date}' );
-		$this->assertEquals( 'October 25, 2017', $result );
+		$this->assertEquals( 'October 25, 2017 12:34 pm', $result );
 
 		// Some additional tests which aren't exactly related to the Magic tag but further test the Pods functionality
 		// Eventually these should get broken off to some field/post date specific tests
 		$this->assertEquals( 'October 25, 2017', get_the_date( null, $id ) );
 		$this->assertEquals( '2017-10-25 12:34:00', $pod->field( 'post_date' ) );
-		$this->assertEquals( 'October 25, 2017', $pod->display( 'post_date' ) );
+		$this->assertEquals( 'October 25, 2017 12:34 pm', $pod->display( 'post_date' ) );
 	}
 }

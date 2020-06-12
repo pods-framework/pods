@@ -1173,7 +1173,7 @@ class Pods implements Iterator {
 					} //end if
 				} elseif ( in_array( $first_field, $date_fields, true ) ) {
 					// Date field handlers.
-					// Currently only modifies field data so object_field_fould should be false.
+					// Currently only modifies field data so $object_field_found should be false.
 					$object_field_found = false;
 
 					if ( 1 < count( $traverse_fields ) ) {
@@ -1192,17 +1192,19 @@ class Pods implements Iterator {
 								if ( $format && ! $wp_format ) {
 									$value  = date_i18n( $format, strtotime( $value ) );
 
-									$field_data['options'][ $field_data['type'] . '_type' ]          = 'custom';
-									$field_data['options'][ $field_data['type'] . '_time_type' ]     = 'custom';
-									$field_data['options'][ $field_data['type'] . '_format_custom' ] = $format;
+									$field_data['options'][ $field_type . '_type' ]          = 'custom';
+									$field_data['options'][ $field_type . '_time_type' ]     = 'custom';
+									$field_data['options'][ $field_type . '_format_custom' ] = $format;
 								} else {
-									if ( ! isset( $field_data['options'][ $field_data['type'] . '_type'] ) || $wp_format ) {
-										$field_data['options']['datetime_time_type'] = 'wp';
+									if ( ! isset( $field_data['options'][ $field_type . '_type'] ) || $wp_format ) {
+										$field_data['options'][ $field_type . '_type' ] = 'wp';
 									}
-									if ( ! isset( $field_data['options'][ $field_data['type'] . '_time_type'] ) || $wp_format ) {
-										$field_data['options']['datetime_type'] = 'wp';
+									if ( ! isset( $field_data['options'][ $field_type . '_time_type'] ) || $wp_format ) {
+										$field_data['options'][ $field_type . '_time_type' ] = 'wp';
 									}
 								}
+								// Overwrite $field_options with changes.
+								$field_options = pods_v( 'options', $field_data, $field_options );
 								break;
 						}
 					}

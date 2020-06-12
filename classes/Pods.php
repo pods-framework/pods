@@ -1225,13 +1225,8 @@ class Pods implements Iterator {
 			}
 
 			if ( ! $object_field_found ) {
-				$params->traverse = array( $params->name );
-
-				if ( false !== strpos( $params->name, '.' ) ) {
-					$params->traverse = explode( '.', $params->name );
-
-					$params->name = $params->traverse[0];
-				}
+				$params->traverse = $traverse_fields;
+				$params->name     = $first_field;
 
 				if ( $field_type ) {
 

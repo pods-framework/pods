@@ -1722,7 +1722,6 @@ class Pods implements Iterator {
 									foreach ( $data as $item_id => $item ) {
 										// $field is 123x123, needs to be _src.123x123
 										$full_field = implode( '.', array_splice( $params->traverse, $key ) );
-										var_dump( $full_field );
 
 										if ( is_array( $item ) && isset( $item[ $field ] ) ) {
 											if ( $table['field_id'] === $field ) {

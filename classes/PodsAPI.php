@@ -1009,7 +1009,7 @@ class PodsAPI {
 					'name'   => 'post_date_gmt',
 					'label'  => 'Publish Date (GMT)',
 					'type'   => 'datetime',
-					'alias'  => array(),
+					'alias' => array( 'created_gmt', 'date_gmt' ),
 					'hidden' => true
 				),
 				'post_status'           => array(

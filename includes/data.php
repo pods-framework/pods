@@ -363,6 +363,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					$output = pods_unslash( $_REQUEST[ $var ] );
 				}
 				break;
+			case 'query':
+				$output = get_query_var( $var, $default );
+				break;
 			case 'url':
 			case 'uri':
 				$url = parse_url( pods_current_url() );

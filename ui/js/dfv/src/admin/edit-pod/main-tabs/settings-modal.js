@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -17,6 +17,7 @@ const SettingsModal = ( {
 		groups: optionsSections = [],
 	} = {},
 	hasSaveError,
+	saveButtonText,
 	errorMessage,
 	selectedOptions,
 	cancelEditing,
@@ -25,6 +26,30 @@ const SettingsModal = ( {
 	const [ selectedTab, setSelectedTab ] = useState( optionsSections[ 0 ].name );
 
 	const [ changedOptions, setChangedOptions ] = useState( selectedOptions );
+
+	// When the modal first opens, set any options to their defaults, unless
+	// they're already set.
+	useEffect( () => {
+		const defaultOptions = {
+			...changedOptions,
+		};
+
+		optionsSections.forEach( ( optionsSection ) => {
+			( optionsSection.fields || [] ).forEach( ( field ) => {
+				// Only set the value if it wasn't previously supplied,
+				// and only if a default is provided.
+				if (
+					'undefined' === typeof defaultOptions[ field.name ] &&
+					'undefined' !== typeof field.default &&
+					'' !== field.default
+				) {
+					defaultOptions[ field.name ] = field.default;
+				}
+			} );
+		} );
+
+		setChangedOptions( defaultOptions );
+	}, [] );
 
 	return (
 		<Modal
@@ -101,7 +126,7 @@ const SettingsModal = ( {
 				</Button>
 
 				<Button isPrimary onClick={ save( changedOptions ) }>
-					{ __( 'Save Group', 'pods' ) }
+					{ saveButtonText }
 				</Button>
 			</div>
 		</Modal>
@@ -114,6 +139,7 @@ SettingsModal.propTypes = {
 	title: PropTypes.string.isRequired,
 	hasSaveError: PropTypes.bool.isRequired,
 	errorMessage: PropTypes.string.isRequired,
+	saveButtonText: PropTypes.string.isRequired,
 	cancelEditing: PropTypes.func.isRequired,
 	save: PropTypes.func.isRequired,
 };

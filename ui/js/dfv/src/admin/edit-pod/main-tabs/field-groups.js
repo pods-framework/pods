@@ -28,10 +28,6 @@ const FieldGroups = ( {
 	deleteAndRemoveGroup,
 	moveGroup,
 	groupSaveStatuses,
-	groupFieldList,
-	setGroupFields,
-	addGroupField,
-	setFields,
 	editGroupPod,
 } ) => {
 	const [ showAddGroupModal, setShowAddGroupModal ] = useState( false );
@@ -113,6 +109,7 @@ const FieldGroups = ( {
 						podName,
 					) }
 					hasSaveError={ groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVE_ERROR || false }
+					saveButtonText={ __( 'Save New Group', 'pods' ) }
 					errorMessage={ __( 'There was an error saving the group, please try again.', 'pods' ) }
 					cancelEditing={ () => setShowAddGroupModal( false ) }
 					save={ handleAddGroup }
@@ -142,12 +139,8 @@ const FieldGroups = ( {
 						deleteGroup={ deleteAndRemoveGroup }
 						moveGroup={ handleGroupMove }
 						handleGroupDrop={ handleGroupDrop }
-						groupFieldList={ groupFieldList }
-						setGroupFields={ setGroupFields }
-						addGroupField={ addGroupField }
 						saveStatus={ groupSaveStatuses[ group.name ] }
 						saveGroup={ saveGroup }
-						setFields={ setFields }
 						isExpanded={ expandedGroups[ group.name ] || false }
 						toggleExpanded={ toggleExpandGroup( group.name ) }
 						hasMoved={ hasMoved }
@@ -189,7 +182,6 @@ export default compose( [
 			podName: storeSelect.getPodName(),
 			podSaveStatus: storeSelect.getSaveStatus(),
 			groups: storeSelect.getGroups(),
-			groupFieldList: storeSelect.groupFieldList(),
 			editGroupPod: storeSelect.getGlobalGroupOptions(),
 			groupSaveStatuses: storeSelect.getGroupSaveStatuses(),
 		};
@@ -203,9 +195,6 @@ export default compose( [
 				storeDispatch.deleteGroup( groupID );
 				storeDispatch.removeGroup( groupID );
 			},
-			setGroupFields: storeDispatch.setGroupFields,
-			addGroupField: storeDispatch.addGroupField,
-			setFields: storeDispatch.setFields,
 			moveGroup: storeDispatch.moveGroup,
 		};
 	} ),

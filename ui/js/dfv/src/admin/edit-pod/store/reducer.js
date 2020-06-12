@@ -94,6 +94,47 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 			};
 		}
 
+		case UI_ACTIONS.SET_FIELD_SAVE_STATUS: {
+			const newStatus = Object.values( SAVE_STATUSES ).includes( action.saveStatus )
+				? action.saveStatus
+				: INITIAL_UI_STATE.saveStatus;
+
+			// The group's name may have changed during the save. Because the map of
+			// group save statuses uses the group name, we may need to remove the old name
+			// and set the new name, or just update the old/same name.
+			const hasNameChange = action.result?.field?.name === action.previousFieldName;
+
+			const name = hasNameChange ? action.result?.field?.name : action.previousFieldName;
+
+			const fieldSaveStatuses = {
+				...omit( state.fieldSaveStatuses, [ action.previousFieldName ] ),
+				[ name ]: newStatus,
+			};
+
+			return {
+				...state,
+				fieldSaveStatuses,
+			};
+		}
+
+		case UI_ACTIONS.SET_FIELD_DELETE_STATUS: {
+			const newStatus = Object.values( DELETE_STATUSES ).includes( action.deleteStatus )
+				? action.deleteStatus
+				: INITIAL_UI_STATE.deleteStatus;
+
+			if ( ! action.result?.field?.name ) {
+				return state;
+			}
+
+			return {
+				...state,
+				fieldDeleteStatuses: {
+					...state.fieldDeleteStatuses,
+					[ action.result.field.name ]: newStatus,
+				},
+			};
+		}
+
 		default:
 			return state;
 	}
@@ -177,6 +218,24 @@ export const currentPod = ( state = {}, action = {} ) => {
 			};
 		}
 
+		case CURRENT_POD_ACTIONS.SET_GROUP_DATA: {
+			const groups = state.groups.map( ( group ) => {
+				if ( group.name !== action?.result?.group?.name ) {
+					return group;
+				}
+
+				return {
+					...action.result.group,
+					fields: action?.result?.group?.fields || [],
+				};
+			} );
+
+			return {
+				...state,
+				groups,
+			};
+		}
+
 		case CURRENT_POD_ACTIONS.SET_GROUP_FIELDS: {
 			const groups = state.groups.map( ( group ) => {
 				if ( group.name !== action.groupName ) {
@@ -196,6 +255,10 @@ export const currentPod = ( state = {}, action = {} ) => {
 		}
 
 		case CURRENT_POD_ACTIONS.ADD_GROUP_FIELD: {
+			if ( ! action?.result?.field?.id ) {
+				return state;
+			}
+
 			const groups = state.groups.map( ( group ) => {
 				if ( group.name !== action.groupName ) {
 					return group;
@@ -205,7 +268,7 @@ export const currentPod = ( state = {}, action = {} ) => {
 					...group,
 					fields: [
 						...group.fields,
-						action.field,
+						action.result.field,
 					],
 				};
 			} );
@@ -216,15 +279,17 @@ export const currentPod = ( state = {}, action = {} ) => {
 			};
 		}
 
-		case CURRENT_POD_ACTIONS.SET_GROUP_DATA: {
+		case CURRENT_POD_ACTIONS.REMOVE_GROUP_FIELD: {
 			const groups = state.groups.map( ( group ) => {
-				if ( group.name !== action?.result?.group?.name ) {
+				if ( group.id !== action.groupID ) {
 					return group;
 				}
 
 				return {
-					...action.result.group,
-					fields: action?.result?.group?.fields || [],
+					...group,
+					fields: group.fields.filter(
+						( field ) => field.id !== action.fieldID
+					),
 				};
 			} );
 

@@ -1,11 +1,13 @@
 import * as PropTypes from 'prop-types';
 
 // @todo can these be changed to real Booleans on the PHP side?
-const BOOLEAN_STRINGS = [ '0', '1' ];
+const BOOLEAN_STRINGS = [ '0', '1', 0, 1 ];
 
 export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	admin_only: PropTypes.oneOf( BOOLEAN_STRINGS ),
+	attributes: PropTypes.array,
 	boolean_yes_label: PropTypes.string,
+	class: PropTypes.string,
 	data: PropTypes.object,
 	datetime_type: PropTypes.string,
 	datetime_format: PropTypes.string,
@@ -19,11 +21,23 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.bool,
 		PropTypes.number,
 	] ),
-	'depends-on': PropTypes.object,
+	'depends-on': PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.array,
+	] ),
 	dependency: PropTypes.bool,
 	description: PropTypes.string,
+	developer_mode: PropTypes.bool,
+	'excludes-on': PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.array,
+	] ),
 	group: PropTypes.string.isRequired,
-	help: PropTypes.string,
+	grouped: PropTypes.number,
+	help: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.arrayOf( PropTypes.string ),
+	] ),
 	hidden: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	// @todo this should maybe just be number
 	id: PropTypes.oneOfType( [
@@ -49,6 +63,8 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	pick_format_type: PropTypes.string,
 	// @todo does position actually belong here?
 	position: PropTypes.number,
+	// @todo this seems like it shouldn't be here
+	post_status: PropTypes.string,
 	read_only: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	rest_read: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	rest_write: PropTypes.oneOf( BOOLEAN_STRINGS ),
@@ -62,10 +78,25 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	storage_type: PropTypes.string,
 	text_allow_html: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	text_allow_shortcode: PropTypes.oneOf( BOOLEAN_STRINGS ),
-	text_max_length: PropTypes.number,
+	text_max_length: PropTypes.oneOfType( [
+		PropTypes.number,
+		PropTypes.string,
+	] ),
 	text_allowed_html_tags: PropTypes.string,
+	text_repeatable: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	type: PropTypes.string.isRequired,
+	website_format: PropTypes.string,
+	website_allow_port: PropTypes.string,
+	website_clickable: PropTypes.string,
+	website_new_window: PropTypes.string,
+	website_max_length: PropTypes.string,
+	website_html5: PropTypes.string,
 	weight: PropTypes.number,
+	'wildcard-on': PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.array,
+	] ),
+	_locale: PropTypes.string,
 } );
 
 export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {

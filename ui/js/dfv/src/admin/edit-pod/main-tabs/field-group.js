@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import * as PropTypes from 'prop-types';
-import { flow, max, map, omit } from 'lodash';
+import { flow, omit } from 'lodash';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import classnames from 'classnames';
 
@@ -20,18 +20,6 @@ import './field-group.scss';
 
 const ENTER_KEY = 13;
 
-// Helper function
-// @todo delete this once it's no longer needed.
-const randomString = ( length ) => {
-	let result = '';
-	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	const charactersLength = characters.length;
-	for ( let i = 0; i < length; i++ ) {
-		result += characters.charAt( Math.floor( Math.random() * charactersLength ) );
-	}
-	return result;
-};
-
 const FieldGroup = forwardRef( ( props, ref ) => {
 	const {
 		connectDragSource,
@@ -49,8 +37,6 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		saveStatus,
 		deleteGroup,
 		saveGroup,
-		setGroupFields,
-		addGroupField,
 		toggleExpanded,
 		editGroupPod,
 	} = props;
@@ -137,62 +123,9 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		}
 	};
 
-	const addField = () => ( type = 'text' ) => {
-		const str = randomString( 6 );
-		const fieldName = 'field_' + str;
-
-		let maxPosition = max( map( fields, ( f ) => f.position ) );
-
-		if ( ! maxPosition ) {
-			maxPosition = 0;
-		}
-
-		const field = {
-			id: str,
-			name: fieldName,
-			label: 'Field ' + str,
-			position: maxPosition + 1,
-			type,
-			required: '0',
-			group,
-			object_type: 'field',
-			parent: podName,
-		};
-
-		addGroupField( group, field );
-	};
-
-	const cloneField = () => ( type ) => addField( group, type );
-
-	const deleteField = () => ( fieldName ) => {
-		const newFields = fields.filter( function( obj ) {
-			return obj.name !== fieldName;
-		} );
-
-		setGroupFields( group, newFields );
-	};
-
-	const moveField = () => ( field, dragIndex, hoverIndex, item ) => {
-		if ( group === item.groupName ) {
-			const localFields = [ ...fields ];
-			const movedItem = localFields.find( ( itm, index ) => index === hoverIndex );
-			const remainingItems = localFields.filter( ( itm, index ) => index !== hoverIndex );
-
-			const reorderedItems = [
-				...remainingItems.slice( 0, dragIndex ),
-				movedItem,
-				...remainingItems.slice( dragIndex ),
-			];
-
-			setGroupFields( group, reorderedItems );
-		}
-	};
-
 	const classes = classnames(
 		'pods-field-group-wrapper',
-		{
-			'pods-unsaved-data': hasMoved,
-		}
+		{ 'pods-unsaved-data': hasMoved }
 	);
 
 	return (
@@ -277,6 +210,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 						) }
 						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
 						errorMessage={ __( 'There was an error saving the group, please try again.', 'pods' ) }
+						saveButtonText={ __( 'Save Group', 'pods' ) }
 						cancelEditing={ onEditGroupCancel }
 						save={ onEditGroupSave }
 					/>
@@ -285,13 +219,12 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 			{ isExpanded && ! isDragging && (
 				<FieldList
-					fields={ fields }
-					setGroupFields={ setGroupFields }
-					moveField={ moveField }
+					fields={ fields || [] }
+					podID={ podID }
+					podName={ podName }
 					groupName={ groupName }
-					cloneField={ cloneField( groupName ) }
-					deleteField={ deleteField( groupName ) }
-					addField={ addField( groupName ) }
+					groupID={ groupID }
+					groupLabel={ groupLabel }
 				/>
 			) }
 		</div>

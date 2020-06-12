@@ -1,213 +1,206 @@
-import React, { useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as PropTypes from 'prop-types';
-import { useDrag, useDrop } from 'react-dnd';
+import classnames from 'classnames';
+import { omit } from 'lodash';
 
 // WordPress dependencies
-import { __ } from '@wordpress/i18n';
-import { Dashicon, Button } from '@wordpress/components';
+import { sprintf, __ } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
+import { withSelect, withDispatch } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
+import {
+	STORE_KEY_EDIT_POD,
+	SAVE_STATUSES,
+} from 'dfv/src/admin/edit-pod/store/constants';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+
+import SettingsModal from './settings-modal';
+import FieldListItem from './field-list-item';
 
 import './manage-fields.scss';
 import './field-list.scss';
 
-export const FieldListItem = ( props, ref ) => {
+const FieldList = ( props ) => {
 	const {
-		field: {
-			id,
-			name,
-			label,
-			required,
-			type,
-		},
-		index,
-		moveField,
+		podID,
+		podName,
 		groupName,
-		cloneField,
-		deleteField,
+		groupLabel,
+		groupID,
+		fieldSaveStatuses,
+		editFieldPod,
+		saveField,
+		deleteAndRemoveField,
+		fields,
+		setGroupFields,
 	} = props;
 
-	const wref = useRef( ref );
-	const [ , drop ] = useDrop( {
-		accept: 'field-list-item',
-		hover( item, monitor ) {
-			if ( ! wref.current ) {
-				return;
-			}
-			const dragIndex = item.index;
-			const hoverIndex = index;
-			// Don't replace items with themselves
-			if ( dragIndex === hoverIndex ) {
-				return;
-			}
-			// Determine rectangle on screen
-			const hoverBoundingRect = wref.current.getBoundingClientRect();
-			// Get vertical middle
-			const hoverMiddleY =
-			( hoverBoundingRect.bottom - hoverBoundingRect.top ) / 2;
-			// Determine mouse position
-			const clientOffset = monitor.getClientOffset();
-			// Get pixels to the top
-			const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-			// Only perform the move when the mouse has crossed half of the items height
-			// When dragging downwards, only move when the cursor is below 50%
-			// When dragging upwards, only move when the cursor is above 50%
-			// Dragging downwards
+	const [ showAddFieldModal, setShowAddFieldModal ] = useState( false );
+	const [ addedFieldName, setAddedFieldName ] = useState( null );
 
-			if ( dragIndex < hoverIndex && hoverClientY < hoverMiddleY ) {
-				return;
-			}
-			// Dragging upwards
-			if ( dragIndex > hoverIndex && hoverClientY > hoverMiddleY ) {
-				return;
-			}
-			// console.log("movefield")
-			// Time to actually perform the action
-			moveField( name, dragIndex, hoverIndex, item );
-			// Note: we're mutating the monitor item here!
-			// Generally it's better to avoid mutations,
-			// but it's good here for the sake of performance
-			// to avoid expensive index searches.
-			item.index = hoverIndex;
-		},
-	} );
-	const [ { isDragging }, drag ] = useDrag( {
-		item: { type: 'field-list-item', id, index, groupName, name },
-		collect: ( monitor ) => ( {
-			isDragging: monitor.isDragging(),
-		} ),
-	} );
+	const handleAddField = ( options = {} ) => ( event ) => {
+		event.stopPropagation();
 
-	// @todo is this variable going to be used?
-	// eslint-disable-next-line no-unused-vars
-	const opacity = isDragging ? 0 : 1;
+		setAddedFieldName( options.name );
 
-	drag( drop( wref ) );
-	return (
-		<div className="pods-field_wrapper" ref={ wref }>
-			<div className="pods-field pods-field_handle">
-				<Dashicon icon="menu" />
-			</div>
-			<div className="pods-field pods-field_label">
-				{ label }<span className={ required ? 'pods-field_required' : '' }>*</span>
-				<div className="pods-field_id"> [id = { id }]</div>
-				<div className="pods-field_controls-container">
-					{ /* eslint-disable */ }
-					<span
-                        className="pods-field_edit"
-                    >
-						Edit
-					</span>
-					<span
-                        className="pods-field_duplicate"
-                        onClick={ ( e ) => {
-						    e.stopPropagation(); cloneField( type );
-					    } }
-                    >
-						Duplicate
-					</span>
-					<span
-                        className="pods-field_delete"
-                        onClick={ ( e ) => {
-						    e.stopPropagation(); deleteField( name );
-					    } }
-                    >
-						Delete
-					</span>
-					{ /* eslint-enable */ }
-				</div>
-			</div>
-			<div className="pods-field pods-field_name">
-				{ name }
-			</div>
-			<div className="pods-field pods-field_type">
-				{ type }
-				<div className="pods-field_id"> [type = [STILL NEED THIS]]</div>
-			</div>
-		</div>
-	);
-};
-
-FieldListItem.propTypes = {
-	field: FIELD_PROP_TYPE_SHAPE,
-	// position: PropTypes.number.isRequired,
-	index: PropTypes.number.isRequired,
-	groupName: PropTypes.string.isRequired,
-	moveField: PropTypes.func.isRequired,
-	cloneField: PropTypes.func.isRequired,
-	deleteField: PropTypes.func.isRequired,
-};
-
-const FieldList = ( props ) => {
-	const { groupName, addField, cloneField, deleteField, moveField } = props;
-
-	if ( 0 === props.fields.length ) {
-		return (
-			<div className="pods-manage-fields no-fields">
-				<p>{ __( 'There are no fields in this group.', 'pods' ) }</p>
-				<Button
-					isPrimary
-					className="pods-field-group_add_field_link"
-					onClick={ () => addField() }
-				>
-					{ __( 'Add Field', 'pods' ) }
-				</Button>
-			</div>
+		saveField(
+			podID,
+			groupName,
+			options.name,
+			options.label,
+			options.field_type,
+			omit( options, [ 'name', 'label', 'id', 'field_type' ] )
 		);
-	}
+	};
+
+	// @todo
+	const handleCloneField = () => {};
+
+	const moveField = () => ( field, dragIndex, hoverIndex, item ) => {
+		if ( groupName === item.groupName ) {
+			const localFields = [ ...fields ];
+			const movedItem = localFields.find( ( itm, index ) => index === hoverIndex );
+			const remainingItems = localFields.filter( ( itm, index ) => index !== hoverIndex );
+
+			const reorderedItems = [
+				...remainingItems.slice( 0, dragIndex ),
+				movedItem,
+				...remainingItems.slice( dragIndex ),
+			];
+
+			setGroupFields( groupName, reorderedItems );
+		}
+	};
+
+	// Close the modal after a new field has been successfully added.
+	useEffect( () => {
+		if (
+			!! addedFieldName &&
+			fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_SUCCESS
+		) {
+			setShowAddFieldModal( false );
+		}
+	}, [ addedFieldName, setShowAddFieldModal, fieldSaveStatuses ] );
+
+	const isEmpty = 0 === fields.length;
+
+	const classes = classnames(
+		'pods-manage-fields',
+		{ 'no-fields': isEmpty }
+	);
 
 	return (
-		<div className="pods-manage-fields">
+		<div className={ classes }>
+			{ showAddFieldModal && (
+				<SettingsModal
+					optionsPod={ editFieldPod }
+					selectedOptions={ {} }
+					title={ sprintf(
+						/* translators: %1$s: Pod Label, %2$s Group Label */
+						__( '%1$s > %2$s > Add Group', 'pods' ),
+						podName,
+						groupLabel,
+					) }
+					hasSaveError={ fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_ERROR || false }
+					saveButtonText={ __( 'Save New Field', 'pods' ) }
+					errorMessage={ __( 'There was an error saving the field, please try again.', 'pods' ) }
+					cancelEditing={ () => setShowAddFieldModal( false ) }
+					save={ handleAddField }
+				/>
+			) }
 
-			<Button
-				isSecondary
-				className="pods-field-group_add_field_link"
-				onClick={ () => addField() } // TODO: This should add field to top of list, not the bottom
-			>
-				{ __( 'Add Field', 'pods' ) }
-			</Button>
+			{ isEmpty ? (
+				<>
+					<p>{ __( 'There are no fields in this group.', 'pods' ) }</p>
 
-			<div className="pods-field_wrapper-labels">
-				<div className="pods-field_wrapper-label">Label</div>
-				<div className="pods-field_wrapper-label_name">Name</div>
-				<div className="pods-field_wrapper-label_type">Field Type</div>
-			</div>
+					<Button
+						isPrimary
+						className="pods-field-group_add_field_link"
+						onClick={ () => setShowAddFieldModal( true ) }
+					>
+						{ __( 'Add Field', 'pods' ) }
+					</Button>
+				</>
+			) : (
+				<>
+					<Button
+						isSecondary
+						className="pods-field-group_add_field_link"
+						onClick={ () => setShowAddFieldModal( true ) }
+					>
+						{ __( 'Add Field', 'pods' ) }
+					</Button>
 
-			<div className="pods-field_wrapper-items">
-				{ props.fields.map( ( field, index ) => (
-					<FieldListItem
-						key={ field.id }
-						field={ field }
-						index={ index }
-						// position={ field.position }
-						moveField={ moveField }
-						groupName={ groupName }
-						cloneField={ cloneField }
-						deleteField={ deleteField }
-					/>
-				) ) }
-			</div>
+					<div className="pods-field_wrapper-labels">
+						<div className="pods-field_wrapper-label">{ __( 'Label', 'pods' ) }</div>
+						<div className="pods-field_wrapper-label_name">{ __( 'Name', 'pods' ) }</div>
+						<div className="pods-field_wrapper-label_type">{ __( 'Type', 'pods' ) }</div>
+					</div>
 
-			<Button
-				isSecondary
-				className="pods-field-group_add_field_link"
-				onClick={ () => addField() }
-			>
-				{ __( 'Add Field', 'pods' ) }
-			</Button>
+					<div className="pods-field_wrapper-items">
+						{ fields.map( ( field, index ) => (
+							<FieldListItem
+								key={ field.id }
+								field={ field }
+								index={ index }
+								// position={ field.position }
+								moveField={ moveField }
+								groupName={ groupName }
+								groupID={ groupID }
+								cloneField={ handleCloneField }
+								deleteField={ deleteAndRemoveField }
+							/>
+						) ) }
+					</div>
 
+					<Button
+						isSecondary
+						className="pods-field-group_add_field_link"
+						onClick={ () => setShowAddFieldModal( true ) }
+					>
+						{ __( 'Add Field', 'pods' ) }
+					</Button>
+				</>
+			) }
 		</div>
 	);
 };
 
 FieldList.propTypes = {
+	podName: PropTypes.string.isRequired,
+	podID: PropTypes.number.isRequired,
+	groupName: PropTypes.string.isRequired,
+	groupLabel: PropTypes.string.isRequired,
+	groupID: PropTypes.number.isRequired,
 	fields: PropTypes.arrayOf(
 		FIELD_PROP_TYPE_SHAPE
 	).isRequired,
-	addField: PropTypes.func.isRequired,
-	groupName: PropTypes.string.isRequired,
-	cloneField: PropTypes.func.isRequired,
-	deleteField: PropTypes.func.isRequired,
-	moveField: PropTypes.func.isRequired,
+	fieldSaveStatuses: PropTypes.object.isRequired,
+	editFieldPod: PropTypes.object.isRequired,
+	deleteAndRemoveField: PropTypes.func.isRequired,
+	saveField: PropTypes.func.isRequired,
 };
 
-export default FieldList;
+export default compose( [
+	withSelect( ( select ) => {
+		const storeSelect = select( STORE_KEY_EDIT_POD );
+
+		return {
+			editFieldPod: storeSelect.getGlobalFieldOptions(),
+			fieldSaveStatuses: storeSelect.getFieldSaveStatuses(),
+		};
+	} ),
+	withDispatch( ( dispatch ) => {
+		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+
+		return {
+			setGroupFields: storeDispatch.setGroupFields,
+			deleteAndRemoveField: ( groupID, fieldID ) => {
+				storeDispatch.deleteField( fieldID );
+				storeDispatch.removeGroupField( groupID, fieldID );
+			},
+			saveField: storeDispatch.saveField,
+		};
+	} ),
+] )( FieldList );
+

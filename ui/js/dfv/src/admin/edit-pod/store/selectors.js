@@ -16,6 +16,8 @@ import {
 	DELETE_STATUS,
 	GROUP_SAVE_STATUSES,
 	GROUP_DELETE_STATUSES,
+	FIELD_SAVE_STATUSES,
+	FIELD_DELETE_STATUSES,
 } from './state-paths';
 
 // Everything
@@ -89,3 +91,11 @@ export const getGroupSaveStatus = ( state, groupName ) => GROUP_SAVE_STATUSES.ge
 export const getGroupDeleteStatuses = ( state ) => GROUP_DELETE_STATUSES.getFrom( state );
 
 export const getGroupDeleteStatus = ( state, groupName ) => GROUP_DELETE_STATUSES.getFrom( state )[ groupName ];
+
+export const getFieldSaveStatuses = ( state ) => FIELD_SAVE_STATUSES.getFrom( state );
+
+export const getFieldSaveStatus = ( state, fieldName ) => FIELD_SAVE_STATUSES.getFrom( state )[ fieldName ];
+
+export const getFieldDeleteStatuses = ( state ) => FIELD_SAVE_STATUSES.getFrom( state );
+
+export const getFieldDeleteStatus = ( state, fieldName ) => FIELD_SAVE_STATUSES.getFrom( state )[ fieldName ];

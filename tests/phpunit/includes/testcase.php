@@ -370,10 +370,25 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		 */
 	);
 
+	/**
+	 * Fetches the factory object for generating WordPress & Pods fixtures.
+	 *
+	 * @return Pods_UnitTest_Factory The fixture factory.
+	 */
+	protected static function factory() {
+		static $factory = null;
+		if ( ! $factory ) {
+			$factory = new Pods_UnitTest_Factory();
+		}
+		return $factory;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public function setUp() {
 
 		parent::setUp();
-		$this->factory = new Pods_UnitTest_Factory();
 
 		pods_require_component( 'table-storage' );
 		pods_require_component( 'advanced-relationships' );

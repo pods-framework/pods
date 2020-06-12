@@ -22,7 +22,7 @@ export const SelectItem = PodsFieldView.extend( {
 	initialize: function ( options ) {
 		this.$el.val( this.model.get( 'id' ) );
 
-		this.$el.html( this.model.get( 'name' ) );
+		this.$el.text( this.model.get( 'name' ) );
 
 		if ( this.model.get( 'selected' ) ) {
 			this.$el.prop( 'selected', 'selected' );
@@ -339,10 +339,7 @@ export const SelectView = PodsMn.CollectionView.extend( {
 			placeholder: placeholder,
 			allowClear: isSingle,
 			disabled: fieldConfig.limitDisable,
-			tags: fieldConfig.pick_taggable,
-			escapeMarkup: function ( text ) {
-				return text;
-			}
+			tags: fieldConfig.pick_taggable
 		};
 
 		if ( ajaxData.ajax ) {

@@ -368,7 +368,7 @@ class Test_PodsData extends Pods_UnitTestCase {
 		);
 
 		// First log in the user.
-		$user_id = $this->factory->user->create();
+		$user_id = $this->factory()->user->create();
 		wp_set_current_user( $user_id );
 		$this->assertEquals(
 			get_current_user_id(),

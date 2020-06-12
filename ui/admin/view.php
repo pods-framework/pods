@@ -27,7 +27,7 @@ wp_enqueue_style( 'pods-form' );
 										?>
 										<div id="minor-publishing-actions">
 											<div id="preview-action">
-												<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
+												<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank" rel="noopener noreferrer"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
 											</div>
 											<div class="clear"></div>
 										</div>

@@ -2444,7 +2444,7 @@ class PodsUI {
 
 		$export_file = $migrate->save( $save_params );
 
-		$this->message( sprintf( __( '<strong>Success:</strong> Your export is ready, you can download it <a href="%s" target="_blank">here</a>', 'pods' ), $export_file ) );
+		$this->message( sprintf( __( '<strong>Success:</strong> Your export is ready, you can download it <a href="%s" target="_blank" rel="noopener noreferrer">here</a>', 'pods' ), $export_file ) );
 
 		// echo '<script type="text/javascript">window.open("' . esc_js( $export_file ) . '");</script>';
 		$this->get_data();

@@ -99,15 +99,22 @@ class PodsField_Pick extends PodsField {
 		add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
 
 		// Handle modal input.
+		add_action( 'pods_meta_box_pre', array( $this, 'admin_modal_input' ) );
 		add_action( 'edit_form_top', array( $this, 'admin_modal_input' ) );
 		add_action( 'show_user_profile', array( $this, 'admin_modal_input' ) );
 		add_action( 'edit_user_profile', array( $this, 'admin_modal_input' ) );
-		add_action( 'edit_category_form', array( $this, 'admin_modal_input' ) );
-		add_action( 'edit_link_category_form', array( $this, 'admin_modal_input' ) );
-		add_action( 'edit_tag_form', array( $this, 'admin_modal_input' ) );
-		// @todo add_tag_form is deprecated, replace our hook usage.
-		add_action( 'add_tag_form', array( $this, 'admin_modal_input' ) );
-		add_action( 'pods_meta_box_pre', array( $this, 'admin_modal_input' ) );
+
+		// Hook into every taxonomy form.
+		$taxonomies = get_taxonomies();
+
+		foreach ( $taxonomies as $taxonomy ) {
+			if ( $taxonomy instanceof WP_Term ) {
+				$taxonomy = $taxonomy->name;
+			}
+
+			add_action( $taxonomy . '_add_form', array( $this, 'admin_modal_input' ) );
+			add_action( $taxonomy . '_edit_form', array( $this, 'admin_modal_input' ) );
+		}
 
 		// Handle modal saving.
 		add_filter( 'redirect_post_location', array( $this, 'admin_modal_bail_post_redirect' ), 10, 2 );
@@ -1333,8 +1340,6 @@ class PodsField_Pick extends PodsField {
 		// Parse icon type
 		if ( 'none' === $icon || 'div' === $icon ) {
 			$icon         = '';
-		} elseif ( 0 === strpos( $icon, 'data:image/svg+xml;base64,' ) ) {
-			$icon         = esc_attr( $icon );
 		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
 			$icon         = sanitize_html_class( $icon );
 		}
@@ -1383,11 +1388,11 @@ class PodsField_Pick extends PodsField {
 		}
 
 		$item = array(
-			'id'           => $item_id,
-			'icon'         => $icon,
-			'name'         => $item_title,
-			'edit_link'    => $edit_link,
-			'link'         => $link,
+			'id'           => esc_html( $item_id ),
+			'icon'         => esc_attr( $icon ),
+			'name'         => esc_html( $item_title ),
+			'edit_link'    => esc_url( $edit_link ),
+			'link'         => esc_url( $link ),
 			'selected'     => $selected,
 		);
 

@@ -105,7 +105,7 @@ class PodsField_Color extends PodsField {
 			$color = str_replace( '#', '', $check );
 
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				} else {
 					// @todo Ask for a specific format in error message

@@ -172,6 +172,24 @@ class PodsInit {
 	 * @return \Freemius
 	 */
 	public function freemius() {
+		// Admin only.
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		global $pagenow;
+
+		// Pods admin pages or plugins/update page only.
+		if (
+			'plugins.php' !== $pagenow
+			&& 'update-core.php' !== $pagenow
+			&& 'update.php' !== $pagenow
+			&& ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
+			&& ( ! isset( $_GET['page'] ) || 0 !== strpos( $_GET['page'], 'pods' ) )
+		) {
+			return;
+		}
+
 		if ( $this->freemius ) {
 			return $this->freemius;
 		}
@@ -224,9 +242,10 @@ class PodsInit {
 	 */
 	public function override_freemius_strings() {
 		$override_text = array(
-			'free'                     => 'Free (WordPress.org)',
-			'install-free-version-now' => 'Install Now',
-			'download-latest'          => 'Donate',
+			'free'                     => __( 'Free (WordPress.org)', 'pods' ),
+			'install-free-version-now' => __( 'Install Now', 'pods' ),
+			'download-latest'          => __( 'Donate', 'pods' ),
+			'complete-the-install'     => __( 'complete the process', 'pods' ),
 		);
 
 		$freemius_addons = $this->get_freemius_addons();
@@ -276,7 +295,7 @@ class PodsInit {
 		$html = preg_replace( '/<div\s+class="button button-primary fs-dropdown-arrow-button">/Uim', '<div class="hidden">', $html );
 
 		// Use landing page for Become a Friend link.
-		$replace = '$1<a target="_blank" href="' . esc_url( $this->get_freemius_action_link() ) . '"$2class="$3">';
+		$replace = '$1<a target="_blank" rel="noopener noreferrer" href="' . esc_url( $this->get_freemius_action_link() ) . '"$2class="$3">';
 
 		// Replace all Friends-only add-on links.
 		foreach ( $freemius_friends_addons as $addon_slug => $addon ) {
@@ -343,7 +362,7 @@ class PodsInit {
 			define( 'PODS_COMPATIBILITY', true );
 		}
 
-		if ( ! PODS_COMPATIBILITY ) {
+		if ( ! PODS_COMPATIBILITY || is_admin() ) {
 			return;
 		}
 
@@ -1426,13 +1445,13 @@ class PodsInit {
 				5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels['singular_name'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 				6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
 				7  => sprintf( __( '%s saved.', 'pods' ), $labels['singular_name'] ),
-				8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
+				8  => sprintf( __( '%1$s submitted. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
 				9  => sprintf(
-					__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %4$s</a>', 'pods' ), $labels['singular_name'],
+					__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" rel="noopener noreferrer" href="%3$s">Preview %4$s</a>', 'pods' ), $labels['singular_name'],
 					// translators: Publish box date format, see http://php.net/date
 					date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels['singular_name']
 				),
-				10 => sprintf( __( '%1$s draft updated. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
+				10 => sprintf( __( '%1$s draft updated. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
 			);
 
 			if ( false === (boolean) $pods_cpt_ct['post_types'][ $post_type['name'] ]['public'] ) {

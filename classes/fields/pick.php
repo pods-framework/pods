@@ -1388,7 +1388,7 @@ class PodsField_Pick extends PodsField {
 		$item = array(
 			'id'        => esc_html( $item_id ),
 			'icon'      => esc_attr( $icon ),
-			'name'      => esc_html( wp_kses_post( html_entity_decode( $title ) ) ),
+			'name'      => esc_html( wp_kses_post( html_entity_decode( $item_title ) ) ),
 			'edit_link' => esc_url( $edit_link ),
 			'link'      => esc_url( $link ),
 			'selected'  => $selected,

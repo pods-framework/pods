@@ -339,7 +339,30 @@ export const SelectView = PodsMn.CollectionView.extend( {
 			placeholder: placeholder,
 			allowClear: isSingle,
 			disabled: fieldConfig.limitDisable,
-			tags: fieldConfig.pick_taggable
+			tags: fieldConfig.pick_taggable,
+			escapeMarkup: function( html ) {
+				// Do not try to escape the markup if it's not a string.
+				if ( 'string' !== typeof html ) {
+					return html;
+				}
+
+				// Escape potential script tags.
+				return String( html ).replace( /<script|<\/script/g, function( html ) {
+					let replaceMap = {
+						'\\': '&#92;',
+						'&': '&amp;',
+						'<': '&lt;',
+						'>': '&gt;',
+						'"': '&quot;',
+						'\'': '&#39;',
+						'/': '&#47;'
+					};
+
+					return String( html ).replace( /[&<>"'\/\\]/g, function( match ) {
+						return replaceMap[ match ];
+					} );
+				} );
+			}
 		};
 
 		if ( ajaxData.ajax ) {

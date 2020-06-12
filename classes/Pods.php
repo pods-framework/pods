@@ -1025,6 +1025,58 @@ class Pods implements Iterator {
 			}
 		}
 
+		// Date field option overwrites.
+		if ( in_array( $field_type, PodsForm::date_field_types(), true ) ) {
+
+			if ( 1 < count( $traverse_fields ) ) {
+				$date_field_traverse = $traverse_fields;
+
+				// Remove field name.
+				array_shift( $date_field_traverse );
+
+				$traverse_type = array_shift( $date_field_traverse );
+
+				switch ( $traverse_type ) {
+					case '_format':
+						$format    = implode( '.', $date_field_traverse );
+						$wp_format = in_array( strtolower( $format ), array( 'wp', 'wordpress' ), true );
+
+						if ( $format && ! $wp_format ) {
+							$value  = date_i18n( $format, strtotime( $value ) );
+
+							$field_data['options'][ $field_type . '_type' ]          = 'custom';
+							$field_data['options'][ $field_type . '_time_type' ]     = 'custom';
+							$field_data['options'][ $field_type . '_format_custom' ] = $format;
+						} else {
+							if ( ! isset( $field_data['options'][ $field_type . '_type'] ) || $wp_format ) {
+								$field_data['options'][ $field_type . '_type' ] = 'wp';
+							}
+							if ( ! isset( $field_data['options'][ $field_type . '_time_type'] ) || $wp_format ) {
+								$field_data['options'][ $field_type . '_time_type' ] = 'wp';
+							}
+						}
+
+						// Overwrite $field_options with changes.
+						$field_options = pods_v( 'options', $field_data, $field_options );
+						break;
+				}
+			} elseif ( $params->display && $is_field_set && 'object_field' === $field_source ) {
+				// Replicate default WordPress behavior.
+				switch ( $first_field ) {
+					case 'date':
+					case 'post_date':
+					case 'post_date_gmt':
+					case 'post_modified':
+					case 'post_modified_gmt':
+						$field_data['options'][ $field_type . '_type' ]      = 'wp';
+						$field_data['options'][ $field_type . '_time_type' ] = 'wp';
+						// Overwrite $field_options with changes.
+						$field_options = pods_v( 'options', $field_data, $field_options );
+						break;
+				}
+			}
+		}
+
 		if (
 			empty( $value ) &&
 			isset( $this->row[ $params->name ] ) &&
@@ -1054,17 +1106,9 @@ class Pods implements Iterator {
 					'image_attachment_url',
 				);
 
-				// Default date field handlers.
-				$date_fields = array(
-					'date',
-				);
-
 				if ( 'post_type' === $pod_type ) {
 					$image_fields[] = 'post_thumbnail';
 					$image_fields[] = 'post_thumbnail_url';
-
-					$date_fields[] = 'post_date';
-					$date_fields[] = 'post_date_gmt';
 				}
 
 				// Handle special field tags.
@@ -1171,43 +1215,6 @@ class Pods implements Iterator {
 							}
 						}
 					} //end if
-				} elseif ( in_array( $first_field, $date_fields, true ) ) {
-					// Date field handlers.
-					// Currently only modifies field data so $object_field_found should be false.
-					$object_field_found = false;
-
-					if ( 1 < count( $traverse_fields ) ) {
-						$date_field_traverse = $traverse_fields;
-
-						// Remove field name.
-						array_shift( $date_field_traverse );
-
-						$traverse_type = array_shift( $date_field_traverse );
-
-						switch ( $traverse_type ) {
-							case '_format':
-								$format    = implode( '.', $date_field_traverse );
-								$wp_format = in_array( strtolower( $format ), array( 'wp', 'wordpress' ), true );
-
-								if ( $format && ! $wp_format ) {
-									$value  = date_i18n( $format, strtotime( $value ) );
-
-									$field_data['options'][ $field_type . '_type' ]          = 'custom';
-									$field_data['options'][ $field_type . '_time_type' ]     = 'custom';
-									$field_data['options'][ $field_type . '_format_custom' ] = $format;
-								} else {
-									if ( ! isset( $field_data['options'][ $field_type . '_type'] ) || $wp_format ) {
-										$field_data['options'][ $field_type . '_type' ] = 'wp';
-									}
-									if ( ! isset( $field_data['options'][ $field_type . '_time_type'] ) || $wp_format ) {
-										$field_data['options'][ $field_type . '_time_type' ] = 'wp';
-									}
-								}
-								// Overwrite $field_options with changes.
-								$field_options = pods_v( 'options', $field_data, $field_options );
-								break;
-						}
-					}
 				}
 			}
 

@@ -674,7 +674,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
     <p><?php echo sprintf( __( 'Enabling extra fields for this taxonomy will add a custom table into your database as <em>%s</em>.', 'pods' ), $wpdb->prefix . 'pods_' . pods_v( 'name', $pod ) ); ?></p>
 
-    <p><a href="https://pods.io/docs/comparisons/compare-storage-types/" target="_blank"><?php _e( 'Find out more', 'pods' ); ?> &raquo;</a></p>
+    <p><a href="https://pods.io/docs/comparisons/compare-storage-types/" target="_blank" rel="noopener noreferrer"><?php _e( 'Find out more', 'pods' ); ?> &raquo;</a></p>
 
     <p class="submit">
         <a href="<?php echo esc_url( pods_query_arg( array( 'enable_extra_fields' => 1 ) ) ); ?>" class="button-primary"><?php _e( 'Enable Extra Fields', 'pods' ); ?></a>

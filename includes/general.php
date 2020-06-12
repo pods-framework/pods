@@ -562,7 +562,7 @@ function pods_help( $text, $url = null ) {
 	}
 
 	if ( 0 < strlen( $url ) ) {
-		$text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+		$text .= '<br /><br /><a href="' . $url . '" target="_blank" rel="noopener noreferrer">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
 	}
 
 	echo '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';

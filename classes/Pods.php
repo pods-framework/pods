@@ -940,6 +940,7 @@ class Pods implements Iterator {
 		 * @var string $field_type         The field type.
 		 * @var array  $field_options      The field options.
 		 * @var array  $traverse_fields    All the traversal field names.
+		 * @var bool   $is_traversal       Is it a traversal field request.
 		 * @var string $first_field        The name of the fieds without the traversal names from $params->name.
 		 * @var array  $last_field_data    The field data used in traversal loop.
 		 */
@@ -951,6 +952,7 @@ class Pods implements Iterator {
 		$field_type         = '';
 		$field_options      = array();
 		$traverse_fields    = explode( '.', $params->name );
+		$is_traversal       = 1 < count( $traverse_fields );
 		$first_field        = $traverse_fields[0];
 		$last_field_data    = null;
 
@@ -1149,27 +1151,18 @@ class Pods implements Iterator {
 							} else {
 								// Fallback to default attachment object.
 								$attachment = get_post( $attachment_id );
-								$value      = pods_v( implode( '.', $traverse_params ), $attachment, '' );
-								if ( ! $value ) {
-									$meta_key = array_shift( $traverse_params );
-									$value    = get_post_meta( $attachment_id, $meta_key, true );
+								$value      = pods_v( implode( '.', $traverse_params ), $attachment, null );
 
-									// Maybe traverse.
-									if ( count( $traverse_params ) ) {
-										if ( is_array( $value ) ) {
-											foreach ( $traverse_params as $field ) {
-												if ( ! isset( $value[ $field ] ) ) {
-													$value = null;
+								if ( null === $value ) {
+									// Start traversal though object property or metadata.
+									$name_key = array_shift( $traverse_params );
+									$value    = pods_v( $name_key, $attachment, null );
 
-													break;
-												}
-
-												$value = $value[ $field ];
-											}
-										} else {
-											$value = null;
-										}
+									if ( null === $value ) {
+										$value = get_post_meta( $attachment_id, $name_key, true );
 									}
+
+									$value = pods_traverse( $traverse_params, $value );
 								}
 							}
 						}
@@ -1232,7 +1225,7 @@ class Pods implements Iterator {
 					}
 				}
 
-				if ( $simple || ! $is_field_set || ! $is_tableless_field ) {
+				if ( ! $is_traversal && ( $simple || ! $is_field_set || ! $is_tableless_field ) ) {
 					if ( null === $params->single ) {
 						if ( $is_field_set && ! $is_tableless_field ) {
 							$params->single = true;
@@ -1361,7 +1354,11 @@ class Pods implements Iterator {
 						$simple       = false;
 						$last_options = array();
 
-						if ( $field_exists && 'pick' === $all_fields[ $pod ][ $field ]['type'] && in_array( $all_fields[ $pod ][ $field ]['pick_object'], $simple_tableless_objects, true ) ) {
+						if (
+							$field_exists &&
+							'pick' === $all_fields[ $pod ][ $field ]['type'] &&
+							in_array( $all_fields[ $pod ][ $field ]['pick_object'], $simple_tableless_objects, true )
+						) {
 							$simple       = true;
 							$last_options = $all_fields[ $pod ][ $field ];
 						}
@@ -1437,12 +1434,13 @@ class Pods implements Iterator {
 							}
 						} else {
 							// Assume last iteration.
-							if ( 0 === $key ) {
-								// Invalid field.
-								return false;
-							}
-
 							$last_loop = true;
+
+							if ( 0 === $key ) {
+								// This is also the first loop. Assume metadata or options to traverse into.
+								$last_object   = $this->pod_data['object_type'];
+								$last_pick_val = $this->pod_data['name'];
+							}
 						}//end if
 
 						if ( $last_loop ) {
@@ -1692,7 +1690,9 @@ class Pods implements Iterator {
 
 									foreach ( $data as $item_id => $item ) {
 										// $field is 123x123, needs to be _src.123x123
-										$full_field = implode( '.', array_splice( $params->traverse, $key ) );
+										$traverse_fields = array_splice( $params->traverse, $key );
+										$full_field      = implode( '.', $traverse_fields );
+										array_shift( $traverse_fields );
 
 										if ( is_array( $item ) && isset( $item[ $field ] ) ) {
 											if ( $table['field_id'] === $field ) {
@@ -1820,9 +1820,11 @@ class Pods implements Iterator {
 												$metadata_type = 'term';
 											}
 
-											$value[] = get_metadata( $metadata_type, $metadata_object_id, $field, true );
+											$meta_value = get_metadata( $metadata_type, $metadata_object_id, $field, true );
+											$value[]    = pods_traverse( $traverse_fields, $meta_value );
 										} elseif ( 'settings' === $object_type ) {
-											$value[] = get_option( $object . '_' . $field );
+											$option_value = get_option( $object . '_' . $field );
+											$value[]      = pods_traverse( $traverse_fields, $option_value );
 										}//end if
 									}//end foreach
 								}//end if

@@ -632,7 +632,7 @@ class PodsField_File extends PodsField {
 
 			// Update the attachment if it the data array is not still empty.
 			if ( ! empty( $attachment_data ) ) {
-				$attachment_data['ID']        = $id;
+				$attachment_data['ID'] = $id;
 
 				if ( $attachment ) {
 					$attachment_data['post_type'] = $attachment->post_type;

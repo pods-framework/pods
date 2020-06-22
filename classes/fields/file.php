@@ -635,6 +635,7 @@ class PodsField_File extends PodsField {
 				$attachment_data['ID'] = $id;
 
 				if ( $attachment ) {
+					// Add post type to trigger attachment update filters from other plugins.
 					$attachment_data['post_type'] = $attachment->post_type;
 				}
 

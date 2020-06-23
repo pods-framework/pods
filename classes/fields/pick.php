@@ -1991,6 +1991,29 @@ class PodsField_Pick extends PodsField {
 			), $object_params
 		);
 
+		/**
+		 * Overwrite get_object_data parameters.
+		 *
+		 * @since 2.7.21
+		 *
+		 * @param array  $object_params       {
+		 *     Get object parameters
+		 *
+		 *     @type string     $name        Field name.
+		 *     @type mixed      $value       Current value.
+		 *     @type array      $options     Field options.
+		 *     @type array      $pod         Pod data.
+		 *     @type int|string $id          Current item ID.
+		 *     @type string     $context     Data context.
+		 *     @type array      $data_params Data parameters.
+		 *     @type int        $page        Page number of results to get.
+		 *     @type int        $limit       How many data items to limit to (autocomplete defaults to 30, set to -1 or 1+ to override).
+		 * }
+		 *
+		 * @return array
+		 */
+		$object_params = apply_filters( 'pods_field_pick_object_data_params', $object_params );
+
 		$object_params['options']     = (array) $object_params['options'];
 		$object_params['data_params'] = (array) $object_params['data_params'];
 

@@ -1992,7 +1992,7 @@ class PodsField_Pick extends PodsField {
 		);
 
 		/**
-		 * Overwrite get_object_data parameters.
+		 * Overwrite parameters used by PodsField_Pick::get_object_data.
 		 *
 		 * @since 2.7.21
 		 *
@@ -2009,8 +2009,6 @@ class PodsField_Pick extends PodsField {
 		 *     @type int        $page        Page number of results to get.
 		 *     @type int        $limit       How many data items to limit to (autocomplete defaults to 30, set to -1 or 1+ to override).
 		 * }
-		 *
-		 * @return array
 		 */
 		$object_params = apply_filters( 'pods_field_pick_object_data_params', $object_params );
 

@@ -194,11 +194,25 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 **New Features & Enhancements**
 
-*
+* Added: New filter: `pods_field_pick_object_data_params`. #5756 (@JoryHogeveen)
+* Added: Pods fields & magic tags: Traverse through serialized metadata. #5603 (@JoryHogeveen)
+* Added: Support `get_query_var()` in pods_v (and thus special magic tags: `{@query.##}`). #5719 (@JoryHogeveen)
+* Added: WYSIWYG field option for custom editor height. #5673 (@JoryHogeveen)
+* Enhancement: REST field options: Only display depth for array response type. #5714 (@JoryHogeveen)
+* Updated: Refactor Pods::field() method. #5682 (@JoryHogeveen)
 
 **Bug Fixes**
 
-*
+* Fixed: Relationship dropdown error & encoding. #5740 (@JoryHogeveen)
+* Fixed: Getting single vs multiple metadata values edge case errors. #5661 (@JoryHogeveen)
+* Fixed: Nested relationship fields should render as array of objects in REST. #5745 (@lkraav)
+* Fixed: Add `noopener` and `noreferrer` for all target `_blank` links. #5742 (@JoryHogeveen)
+* Fixed: Only check `delete_users` for single installations in `pods_is_admin()`. #5712 (@JoryHogeveen)
+* Fixed: Deprecated taxonomy form actions. #5700 (@JoryHogeveen)
+* Fixed: DateTime field: Allow input values compatible with the display format. #5687 (@JoryHogeveen)
+* Fixed: Whitespace trimming for templates. #5672 (@sc0ttkclark)
+* Fixed: Taxonomy option rewrite with front label tooltip. #5681 (@JoryHogeveen)
+* Fixed: Pods test factory compatibility with WP core text factory. #5716 (@JoryHogeveen)
 
 = 2.7.20.1 - June 4th 2020 =
 

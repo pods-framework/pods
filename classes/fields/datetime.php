@@ -83,7 +83,7 @@ class PodsField_DateTime extends PodsField {
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="http://php.net/manual/function.date.php" target="_blank">%s</a>',
+					'<a href="http://php.net/manual/function.date.php" target="_blank" rel="noopener noreferrer">%s</a>',
 					esc_html__( 'PHP date documentation', 'pods' )
 				),
 			),
@@ -93,7 +93,7 @@ class PodsField_DateTime extends PodsField {
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="https://api.jqueryui.com/datepicker/" target="_blank">%1$s</a><br />%2$s',
+					'<a href="https://api.jqueryui.com/datepicker/" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
 					esc_html__( 'jQuery UI datepicker documentation', 'pods' ),
 					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
 				),
@@ -137,7 +137,7 @@ class PodsField_DateTime extends PodsField {
 				'excludes-on' => array( static::$type . '_format' => 'c' ),
 				'default'     => '',
 				'type'        => 'text',
-				'help'        => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
+				'help'        => '<a href="http://php.net/manual/function.date.php" target="_blank" rel="noopener noreferrer">' . __( 'PHP date documentation', 'pods' ) . '</a>',
 			),
 			static::$type . '_time_format_custom_js' => array(
 				'label'       => __( 'Time format field input', 'pods' ),
@@ -146,7 +146,7 @@ class PodsField_DateTime extends PodsField {
 				'default'     => '',
 				'type'        => 'text',
 				'help'        => sprintf(
-					'<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank">%1$s</a><br />%2$s',
+					'<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
 					esc_html__( 'jQuery UI timepicker documentation', 'pods' ),
 					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
 				),
@@ -186,7 +186,7 @@ class PodsField_DateTime extends PodsField {
 				'default' => '',
 				'type'    => 'text',
 				'help'    => sprintf(
-					'%1$s<br /><a href="https://api.jqueryui.com/datepicker/#option-yearRange" target="_blank">%2$s</a>',
+					'%1$s<br /><a href="https://api.jqueryui.com/datepicker/#option-yearRange" target="_blank" rel="noopener noreferrer">%2$s</a>',
 					sprintf(
 						esc_html__( 'Example: %1$s for specifying a hard coded year range or %2$s for the last and next 10 years.', 'pods' ),
 						'<code>2010:2030</code>',
@@ -309,14 +309,14 @@ class PodsField_DateTime extends PodsField {
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
 		if ( ! $this->is_empty( $value ) ) {
-			$js = true;
-
-			if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
-				$js = false;
-			}
 
 			// Value should always be passed as storage format since 2.7.15.
 			$format = static::$storage_format;
+
+			if ( ! $this->is_storage_format( $value ) ) {
+				// Allow input values compatible with the display format.
+				$format = $this->format_display( $options, false );
+			}
 
 			$check = $this->convert_date( $value, static::$storage_format, $format, true );
 
@@ -339,6 +339,10 @@ class PodsField_DateTime extends PodsField {
 		$format = static::$storage_format;
 
 		if ( ! $this->is_empty( $value ) ) {
+			if ( ! $this->is_storage_format( $value ) ) {
+				// Allow input values compatible with the display format.
+				$format = $this->format_display( $options, false );
+			}
 			$value = $this->convert_date( $value, static::$storage_format, $format );
 		} elseif ( pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
 			$value = static::$empty_value;
@@ -719,6 +723,40 @@ class PodsField_DateTime extends PodsField {
 	}
 
 	/**
+	 * Check if a value is compatible with the storage format.
+	 *
+	 * Valid:
+	 * - 0000-00-00 00:00:00
+	 * - 0000-00-00 00:00
+	 * - 0000-00-00
+	 * - 0000-00
+	 * - etc.
+	 *
+	 * @param  string $value The date value.
+	 * @return bool
+	 */
+	public function is_storage_format( $value ) {
+		$value_parts  = str_split( $value );
+		$format_parts = str_split( gmdate( static::$storage_format ) );
+
+		$valid = true;
+		foreach ( $value_parts as $i => $part ) {
+			if ( isset( $format_parts[ $i ] ) ) {
+				if ( is_numeric( $format_parts[ $i ] ) ) {
+					if ( ! is_numeric( $part ) ) {
+						$valid = false;
+						break;
+					}
+				} elseif ( $format_parts[ $i ] !== $part ) {
+					$valid = false;
+					break;
+				}
+			}
+		}
+		return $valid;
+	}
+
+	/**
 	 * Convert a date from one format to another.
 	 *
 	 * @param string  $value            Field value.
@@ -736,7 +774,7 @@ class PodsField_DateTime extends PodsField {
 
 		$date = '';
 
-		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00' ), true ) ) {
+		if ( ! $this->is_empty( $value ) ) {
 			$date = $this->createFromFormat( $original_format, (string) $value, $return_timestamp );
 
 			if ( $date instanceof DateTime ) {

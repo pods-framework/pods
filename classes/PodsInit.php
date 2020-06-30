@@ -260,7 +260,7 @@ class PodsInit {
 	/**
 	 * Filter the Freemius plugins API data.
 	 *
-	 * @since TBD
+	 * @since 2.7.17
 	 *
 	 * @param object $data Freemius plugins API data.
 	 *
@@ -279,7 +279,7 @@ class PodsInit {
 	/**
 	 * Filter the Freemius add-ons HTML.
 	 *
-	 * @since TBD
+	 * @since 2.7.17
 	 *
 	 * @param string $html Freemius add-ons HTML.
 	 *
@@ -310,7 +310,7 @@ class PodsInit {
 	/**
 	 * Get action link URL.
 	 *
-	 * @since TBD
+	 * @since 2.7.17
 	 *
 	 * @param string $url Action link URL.
 	 *
@@ -323,7 +323,7 @@ class PodsInit {
 	/**
 	 * Get list of add-ons for Freemius.
 	 *
-	 * @since TBD
+	 * @since 2.7.17
 	 *
 	 * @return array List of add-ons for Freemius.
 	 */
@@ -341,7 +341,7 @@ class PodsInit {
 	/**
 	 * Get list of Friends-only add-ons for Freemius.
 	 *
-	 * @since TBD
+	 * @since TB2.7.17D
 	 *
 	 * @return array List of Friends-only add-ons for Freemius.
 	 */

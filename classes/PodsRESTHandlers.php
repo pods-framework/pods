@@ -72,11 +72,12 @@ class PodsRESTHandlers {
 		 */
 
 		if ( empty( $pod_name ) ) {
-			if ( 'attachment' === $object_type ) {
-				$pod_name = 'media';
-			} else {
-				$pod_name = $object_type;
-			}
+			$pod_name = $object_type;
+		}
+
+		// Fix media pod name.
+		if ( 'attachment' === $pod_name ) {
+			$pod_name = 'media';
 		}
 
 		/**

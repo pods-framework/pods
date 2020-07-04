@@ -299,6 +299,48 @@ function pods_trim( $input, $charlist = " \t\n\r\0\x0B", $lr = null ) {
 }
 
 /**
+ * Traverse an array or object by array values order or a string (name.name.name).
+ *
+ * @since 2.7.18
+ *
+ * @param array|string|int $traverse The traversal names/keys.
+ * @param array|object     $value    The value to traverse into.
+ *
+ * @return mixed
+ */
+function pods_traverse( $traverse, $value ) {
+	if ( ! $traverse && ! is_numeric( $traverse ) ) {
+		return $value;
+	}
+
+	if ( is_scalar( $value ) ) {
+		return null;
+	}
+
+	if ( is_object( $value ) ) {
+		$value = (array) $value;
+	}
+
+	if ( ! is_array( $traverse ) ) {
+		$traverse = explode( '.', $traverse );
+	}
+
+	$key = array_shift( $traverse );
+
+	if ( ! isset( $value[ $key ] ) ) {
+		return null;
+	}
+
+	$value = $value[ $key ];
+
+	if ( $traverse ) {
+		$value = pods_traverse( $traverse, $value );
+	}
+
+	return $value;
+}
+
+/**
  * Return a variable (if exists)
  *
  * @param mixed               $var     The variable name, can also be a modifier for specific types
@@ -349,6 +391,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( isset( $_REQUEST[ $var ] ) ) {
 					$output = pods_unslash( $_REQUEST[ $var ] );
 				}
+				break;
+			case 'query':
+				$output = get_query_var( $var, $default );
 				break;
 			case 'url':
 			case 'uri':

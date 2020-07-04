@@ -22,7 +22,7 @@ export const SelectItem = PodsFieldView.extend( {
 	initialize: function ( options ) {
 		this.$el.val( this.model.get( 'id' ) );
 
-		this.$el.html( this.model.get( 'name' ) );
+		this.$el.text( this.model.get( 'name' ) );
 
 		if ( this.model.get( 'selected' ) ) {
 			this.$el.prop( 'selected', 'selected' );
@@ -340,8 +340,28 @@ export const SelectView = PodsMn.CollectionView.extend( {
 			allowClear: isSingle,
 			disabled: fieldConfig.limitDisable,
 			tags: fieldConfig.pick_taggable,
-			escapeMarkup: function ( text ) {
-				return text;
+			escapeMarkup: function( html ) {
+				// Do not try to escape the markup if it's not a string.
+				if ( 'string' !== typeof html ) {
+					return html;
+				}
+
+				// Escape potential script tags.
+				return String( html ).replace( /<script|<\/script/g, function( html ) {
+					let replaceMap = {
+						'\\': '&#92;',
+						'&': '&amp;',
+						'<': '&lt;',
+						'>': '&gt;',
+						'"': '&quot;',
+						'\'': '&#39;',
+						'/': '&#47;'
+					};
+
+					return String( html ).replace( /[&<>"'\/\\]/g, function( match ) {
+						return replaceMap[ match ];
+					} );
+				} );
 			}
 		};
 

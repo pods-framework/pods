@@ -133,7 +133,7 @@ class PodsField_Website extends PodsField {
 			$atts = '';
 
 			if ( 1 === (int) pods_v( static::$type . '_new_window', $options ) ) {
-				$atts .= ' target="_blank"';
+				$atts .= ' target="_blank" rel="noopener noreferrer"';
 			}
 
 			$value = sprintf( $link, esc_url( $value ), $atts, esc_html( $value ) );

@@ -2842,6 +2842,7 @@ class PodsAdmin {
 				'label'   => __( 'Label', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
+				'required' => true,
 				'default' => '',
 			],
 			'name' => [
@@ -2849,6 +2850,7 @@ class PodsAdmin {
 				'label'   => __( 'Name', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'type'    => 'slug',
+				'required' => true,
 				'default' => '',
 			],
 			'description' => [

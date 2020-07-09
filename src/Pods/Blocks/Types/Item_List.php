@@ -33,6 +33,8 @@ class Item_List extends Base {
 			'label'           => __( 'Pods Item List', 'pods' ),
 			'description'     => __( 'List multiple Pod items.', 'pods' ),
 			'namespace'       => 'pods',
+			'category'        => 'pods',
+			'icon'            => 'pods',
 			'renderType'      => 'php',
 			'render_callback' => [ $this, 'render' ],
 			'keywords'        => [

@@ -33,6 +33,8 @@ class Item_Single extends Base {
 			'label'           => __( 'Pods Single Item', 'pods' ),
 			'description'     => __( 'Display a single Pod item.', 'pods' ),
 			'namespace'       => 'pods',
+			'category'        => 'pods',
+			'icon'            => 'pods',
 			'renderType'      => 'php',
 			'render_callback' => [ $this, 'render' ],
 			'keywords'        => [

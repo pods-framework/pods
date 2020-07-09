@@ -33,6 +33,8 @@ class View extends Base {
 			'label'           => __( 'Pods View', 'pods' ),
 			'description'     => __( 'Include a file from a theme, with caching options', 'pods' ),
 			'namespace'       => 'pods',
+			'category'        => 'pods',
+			'icon'            => 'pods',
 			'renderType'      => 'php',
 			'render_callback' => [ $this, 'render' ],
 			'keywords'        => [

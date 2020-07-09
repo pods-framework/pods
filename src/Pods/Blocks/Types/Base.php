@@ -13,7 +13,7 @@ use Tribe__Editor__Blocks__Abstract;
 abstract class Base extends Tribe__Editor__Blocks__Abstract {
 
 	/**
-	 * Set the default attributes of this block
+	 * Set the default attributes of this block.
 	 *
 	 * @since TBD
 	 *

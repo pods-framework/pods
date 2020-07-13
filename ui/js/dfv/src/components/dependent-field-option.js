@@ -47,12 +47,15 @@ const DependentFieldOption = ( {
 	const handleInputChange = ( event ) => {
 		const { target } = event;
 
+		// If there's a default, then don't allow an empty value.
+		const newValue = target.value || defaultValue;
+
 		if ( 'checkbox' === target.type ) {
 			const binaryStringFromBoolean = target.checked ? '1' : '0';
 
 			setOptionValue( name, binaryStringFromBoolean );
 		} else {
-			setOptionValue( name, target.value );
+			setOptionValue( name, newValue );
 		}
 	};
 

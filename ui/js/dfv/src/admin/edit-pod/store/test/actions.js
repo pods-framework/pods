@@ -54,12 +54,13 @@ describe( 'actions', () => {
 				type: UI_ACTIONS.SET_SAVE_STATUS,
 				saveStatus: SAVE_STATUSES.SAVE_SUCCESS,
 				result: {},
-				message: 'Saved successfully.',
 			};
 
 			const result = setSaveStatus(
 				SAVE_STATUSES.SAVE_SUCCESS,
-			)( {}, 'Saved successfully.' );
+			)( {
+				message: 'Saved successfully.',
+			}, 'Saved successfully.' );
 
 			expect( result ).toEqual( expected );
 		} );

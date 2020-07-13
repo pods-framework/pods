@@ -64,14 +64,15 @@ class Store {
 	 */
 	public function get_default_object_types() {
 		return [
-			'pod'          => Pod::class,
-			'field'        => Field::class,
-			'object-field' => Object_Field::class,
-			'group'        => Group::class,
-			'template'     => Template::class,
-			'page'         => Page::class,
-			'block'        => Block::class,
-			'block-field'  => Block_Field::class,
+			'pod'              => Pod::class,
+			'field'            => Field::class,
+			'object-field'     => Object_Field::class,
+			'group'            => Group::class,
+			'template'         => Template::class,
+			'page'             => Page::class,
+			'block'            => Block::class,
+			'block-field'      => Block_Field::class,
+			'block-collection' => Block_Collection::class,
 		];
 	}
 

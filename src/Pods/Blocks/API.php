@@ -17,6 +17,12 @@ class API {
 	 * @since TBD
 	 */
 	public function register_blocks() {
+		static $registered = false;
+
+		if ( $registered ) {
+			return;
+		}
+
 		$blocks = $this->get_blocks();
 
 		// Pods Blocks API.
@@ -29,14 +35,18 @@ class API {
 		wp_set_script_translations( 'pods-blocks-api', 'pods' );
 
 		wp_localize_script( 'pods-blocks-api', 'podsBlocksConfig', [
-			'blocks' => array_map( static function( $block ) {
+			'blocks'      => array_map( static function ( $block ) {
 				$js_block = $block;
 
 				unset( $js_block['render_callback'] );
 
 				return $js_block;
 			}, $blocks ),
+			// No custom collections to register directly with JS right now.
+			'collections' => [],
 		] );
+
+		add_filter( 'block_categories', [ $this, 'register_block_collections' ] );
 
 		foreach ( $blocks as $block ) {
 			$block_name = $block['blockName'];
@@ -45,6 +55,8 @@ class API {
 
 			register_block_type( $block_name, $block );
 		}
+
+		$registered = true;
 	}
 
 	/**
@@ -53,6 +65,13 @@ class API {
 	 * @since TBD
 	 */
 	public function setup_core_blocks() {
+		static $setup = false;
+
+		if ( $setup ) {
+			return;
+		}
+
+		tribe( 'pods.blocks.collection.pods' );
 		tribe( 'pods.blocks.field' );
 		tribe( 'pods.blocks.form' );
 		tribe( 'pods.blocks.list' );
@@ -60,6 +79,8 @@ class API {
 		tribe( 'pods.blocks.view' );
 
 		do_action( 'pods_blocks_api_setup_core_blocks' );
+
+		$setup = true;
 	}
 
 	/**
@@ -93,5 +114,65 @@ class API {
 		}, $blocks );
 
 		return $blocks;
+	}
+
+	/**
+	 * Get list of registered block collections for the Pods Blocks API.
+	 *
+	 * @since TBD
+	 *
+	 * @return array List of registered block collections.
+	 */
+	public function get_block_collections() {
+		static $collections = [];
+
+		if ( ! empty( $collections ) ) {
+			return $collections;
+		}
+
+		$this->setup_core_blocks();
+
+		$api = pods_api();
+
+		/** @var Block_Collection[] $block_collections */
+		$block_collections = $api->_load_objects( [
+			'object_type' => 'block-collection',
+		] );
+
+		// Ensure the response is an array.
+		$block_collections = array_values( $block_collections );
+
+		$block_collections = array_map( static function ( $block_collection ) {
+			return $block_collection->get_block_collection_args();
+		}, $block_collections );
+
+		return $block_collections;
+	}
+
+	/**
+	 * Register block collections by adding them to the list of 'categories'.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array $collections List of block 'categories' from WordPress.
+	 *
+	 * @return array List of block 'categories' with custom block collections added.
+	 */
+	public function register_block_collections( array $collections ) {
+		$block_collections = $this->get_block_collections();
+
+		if ( empty( $block_collections ) ) {
+			return $collections;
+		}
+
+		foreach ( $block_collections as $collection ) {
+			$collections[] = [
+				'slug'  => $collection['namespace'],
+				'title' => $collection['title'],
+				'icon'  => $collection['icon'],
+			];
+		}
+
+		return $collections;
 	}
 }

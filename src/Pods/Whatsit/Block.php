@@ -39,7 +39,7 @@ class Block extends Pod {
 			'description'     => $this->get_arg( 'description' ),
 			'renderType'      => $this->get_arg( 'renderType', 'js' ),
 			'category'        => $this->get_arg( 'category', 'layout' ),
-			'icon'            => $this->get_arg( 'icon', 'editor-insertmore' ),
+			'icon'            => $this->get_arg( 'icon', 'align-right' ),
 			'keywords'        => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
 			'supports'        => $this->get_arg( 'supports', [
 				'html' => false,

@@ -33,6 +33,8 @@ class Form extends Base {
 			'label'           => __( 'Pods Form', 'pods' ),
 			'description'     => __( 'Display a form for creating and editing Pod items.', 'pods' ),
 			'namespace'       => 'pods',
+			'category'        => 'pods',
+			'icon'            => 'pods',
 			'renderType'      => 'php',
 			'render_callback' => [ $this, 'render' ],
 			'keywords'        => [

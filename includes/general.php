@@ -609,7 +609,7 @@ function pods_help( $text, $url = null ) {
 	}
 
 	if ( 0 < strlen( $url ) ) {
-		$text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+		$text .= '<br /><br /><a href="' . $url . '" target="_blank" rel="noopener noreferrer">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
 	}
 
 	echo '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
@@ -2202,7 +2202,7 @@ function pods_no_conflict_check( $object_type = 'post' ) {
 		pods_init();
 	}
 
-	if ( ! empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
+	if ( ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
 		return true;
 	}
 
@@ -2230,7 +2230,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 		pods_init();
 	}
 
-	if ( ! empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
+	if ( ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
 		return true;
 	}
 
@@ -2420,7 +2420,7 @@ function pods_no_conflict_off( $object_type = 'post' ) {
 		pods_init();
 	}
 
-	if ( empty( PodsInit::$no_conflict ) || ! isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) ) {
+	if ( empty( PodsInit::$no_conflict[ $object_type ] ) ) {
 		return false;
 	}
 

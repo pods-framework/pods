@@ -1,7 +1,8 @@
 <?php
 
-namespace Pods_Unit_Tests;
+namespace Pods_Unit_Tests\Functions;
 
+use Pods_Unit_Tests\Pods_UnitTestCase;
 use stdClass;
 
 /**
@@ -190,6 +191,80 @@ class DataTest extends Pods_UnitTestCase {
 		$this->assertEquals( $result, pods_trim( $object, ' &', 'r' ) );
 	}
 
+	/**
+	 * @covers pods_traverse
+	 */
+	public function test_pods_traverse() {
+
+		/**
+		 * Array values.
+		 */
+		$value = array(
+			'foobar',
+			'one' => 1,
+			'two' => '2',
+			'decimals' => array(
+				'no_key',
+				'second_no_key',
+				'third_no_key',
+				'half'    => 0.5,
+				'onehalf' => 1.5,
+			),
+		);
+
+		// No traversal.
+		$this->assertEquals( $value, pods_traverse( null, $value ) );
+
+		// String traversal.
+		$this->assertEquals( 1, pods_traverse( 'one', $value ) );
+		$this->assertEquals( '2', pods_traverse( 'two', $value ) );
+		$this->assertEquals( 1.5, pods_traverse( 'decimals.onehalf', $value ) );
+		$this->assertEquals( null, pods_traverse( 'invalid', $value ) );
+		$this->assertEquals( null, pods_traverse( 'decimals.invalid', $value ) );
+
+		// Array traversal.
+		$this->assertEquals( 1, pods_traverse( array( 'one' ), $value ) );
+		$this->assertEquals( '2', pods_traverse( array( 'two' ), $value ) );
+		$this->assertEquals( 1.5, pods_traverse( array( 'decimals', 'onehalf' ), $value ) );
+		$this->assertEquals( null, pods_traverse( array( 'invalid' ), $value ) );
+		$this->assertEquals( null, pods_traverse( array( 'decimals', 'invalid' ), $value ) );
+
+		// Numeric array keys.
+		$this->assertEquals( 'foobar', pods_traverse( 0, $value ) );
+		$this->assertEquals( 'third_no_key', pods_traverse( 'decimals.2', $value ) );
+		$this->assertEquals( 'foobar', pods_traverse( array( 0 ), $value ) );
+		$this->assertEquals( 'third_no_key', pods_traverse( array( 'decimals', 2 ), $value ) );
+
+		/**
+		 * Object values.
+		 * Numeric keys not available in objects.
+		 */
+		$value                    = new stdClass();
+		$value->one               = 1;
+		$value->two               = '2';
+		$value->decimals          = new stdClass();
+		$value->decimals->half    = 0.5;
+		$value->decimals->onehalf = 1.5;
+
+		// No traversal.
+		$this->assertEquals( $value, pods_traverse( null, $value ) );
+
+		// String traversal.
+		$this->assertEquals( 1, pods_traverse( 'one', $value ) );
+		$this->assertEquals( '2', pods_traverse( 'two', $value ) );
+		$this->assertEquals( 1.5, pods_traverse( 'decimals.onehalf', $value ) );
+		$this->assertEquals( null, pods_traverse( 'invalid', $value ) );
+		$this->assertEquals( null, pods_traverse( 'decimals.invalid', $value ) );
+
+		// Array traversal.
+		$this->assertEquals( 1, pods_traverse( array( 'one' ), $value ) );
+		$this->assertEquals( '2', pods_traverse( array( 'two' ), $value ) );
+		$this->assertEquals( 1.5, pods_traverse( array( 'decimals', 'onehalf' ), $value ) );
+		$this->assertEquals( null, pods_traverse( array( 'invalid' ), $value ) );
+		$this->assertEquals( null, pods_traverse( array( 'decimals', 'invalid' ), $value ) );
+
+	}
+
 	public function test_pods_v() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}
@@ -312,7 +387,7 @@ class DataTest extends Pods_UnitTestCase {
 		$this->assertEquals( date_i18n( 'Y-m-d', strtotime( 'tomorrow' ) ), pods_evaluate_tag( '{@date.Y-m-d|tomorrow}' ) );
 
 		// First log in the user.
-		$user_id = $this->factory->user->create();
+		$user_id = $this->factory()->user->create();
 		wp_set_current_user( $user_id );
 
 		// Should be `ID` but added lowercase for backwards compatibility.

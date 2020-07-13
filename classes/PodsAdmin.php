@@ -2167,7 +2167,7 @@ class PodsAdmin {
 				),
 				'menu_icon'            => array(
 					'label'      => __( 'Menu Icon', 'pods' ),
-					'help'       => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank">site tag</a> type <a href="https://pods.io/docs/build/special-magic-tags/" target="_blank">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
+					'help'       => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank" rel="noopener noreferrer">site tag</a> type <a href="https://pods.io/docs/build/special-magic-tags/" target="_blank" rel="noopener noreferrer">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank" rel="noopener noreferrer">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => array( 'show_in_menu' => true ),
@@ -2842,6 +2842,7 @@ class PodsAdmin {
 				'label'   => __( 'Label', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
+				'required' => true,
 				'default' => '',
 			],
 			'name' => [
@@ -2849,6 +2850,7 @@ class PodsAdmin {
 				'label'   => __( 'Name', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'type'    => 'slug',
+				'required' => true,
 				'default' => '',
 			],
 			'description' => [
@@ -3607,7 +3609,7 @@ class PodsAdmin {
 				}
 
 				if ( ! empty( $website ) ) {
-					$website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $website . '" target="_blank">' . $website . '</a>' );
+					$website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $website . '" target="_blank" rel="noopener noreferrer">' . $website . '</a>' );
 				}
 
 				$message = sprintf( __( 'The %1$s component requires that you have the <strong>%2$s</strong> plugin installed and activated.', 'pods' ), PodsInit::$components->components[ $component ]['Name'], $dependency[0] ) . $website;
@@ -3629,7 +3631,7 @@ class PodsAdmin {
 				$website = '';
 
 				if ( isset( $dependency[2] ) ) {
-					$website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $dependency[2] . '" target="_blank">' . $dependency[2] . '</a>' );
+					$website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $dependency[2] . '" target="_blank" rel="noopener noreferrer">' . $dependency[2] . '</a>' );
 				}
 
 				$message = sprintf( __( 'The %1$s component requires that you have the <strong>%2$s</strong> theme installed and activated.', 'pods' ), PodsInit::$components->components[ $component ]['Name'], $dependency[0] ) . $website;

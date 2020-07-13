@@ -33,6 +33,8 @@ class Field extends Base {
 			'label'           => __( 'Pods Field Value', 'pods' ),
 			'description'     => __( 'Display a single Pod item\'s field value.', 'pods' ),
 			'namespace'       => 'pods',
+			'category'        => 'pods',
+			'icon'            => 'pods',
 			'renderType'      => 'php',
 			'render_callback' => [ $this, 'render' ],
 			'keywords'        => [

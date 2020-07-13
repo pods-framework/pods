@@ -128,8 +128,6 @@ class PodsField_Avatar extends PodsField_File {
 	 *
 	 * @since 2.7.22
 	 *
-	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
-	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
 	 * @param array $args {
 	 *     Optional. Arguments to return instead of the default arguments.
 	 *
@@ -151,6 +149,8 @@ class PodsField_Avatar extends PodsField_File {
 	 *                                  plus a "found_avatar" guess. Pass as a reference. Default null.
 	 *     @type string $extra_attr     HTML attributes to insert in the IMG element. Is not sanitized. Default empty.
 	 * }
+	 * @param mixed $id_or_email The Gravatar to retrieve. Accepts a user ID, Gravatar MD5 hash,
+	 *                           user email, WP_User object, WP_Post object, or WP_Comment object.
 	 * @return array {
 	 *     Along with the arguments passed in `$args`, this will contain a couple of extra arguments.
 	 *

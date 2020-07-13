@@ -14,6 +14,7 @@ import {
 } from 'dfv/src/admin/edit-pod/store/constants';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
+// Internal dependencies
 import SettingsModal from './settings-modal';
 import FieldListItem from './field-list-item';
 
@@ -97,7 +98,7 @@ const FieldList = ( props ) => {
 					selectedOptions={ {} }
 					title={ sprintf(
 						/* translators: %1$s: Pod Label, %2$s Group Label */
-						__( '%1$s > %2$s > Add Group', 'pods' ),
+						__( '%1$s > %2$s > Add New Field', 'pods' ),
 						podName,
 						groupLabel,
 					) }
@@ -141,14 +142,20 @@ const FieldList = ( props ) => {
 						{ fields.map( ( field, index ) => (
 							<FieldListItem
 								key={ field.id }
+								podID={ podID }
+								podName={ podName }
+								groupLabel={ groupLabel }
 								field={ field }
+								saveStatus={ fieldSaveStatuses[ field.name ] }
 								index={ index }
 								// position={ field.position }
+								saveField={ saveField }
 								moveField={ moveField }
 								groupName={ groupName }
 								groupID={ groupID }
 								cloneField={ handleCloneField }
 								deleteField={ deleteAndRemoveField }
+								editFieldPod={ editFieldPod }
 							/>
 						) ) }
 					</div>

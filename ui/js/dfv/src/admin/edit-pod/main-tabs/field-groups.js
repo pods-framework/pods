@@ -119,7 +119,11 @@ const FieldGroups = ( {
 			<div className="pods-button-group_container">
 				<button
 					className="pods-button-group_add-new"
-					onClick={ () => setShowAddGroupModal( true ) }
+					onClick={ ( event ) => {
+						event.target.blur();
+
+						setShowAddGroupModal( true );
+					} }
 				>
 					{ __( '+ Add New Group', 'pods' ) }
 				</button>

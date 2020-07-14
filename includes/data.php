@@ -1493,9 +1493,10 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
  * @param string|array|object $tags String to be evaluated.
  * @param array               $args {
  *     Function arguments.
- *     @type bool       $sanitize Whether to sanitize.
- *     @type null|mixed $fallback The fallback value to use if not set, should already be sanitized.
- *     @type bool|Pods  $pod      Pod to parse the tags through.
+ *     @type bool       $sanitize        Whether to sanitize.
+ *     @type null|mixed $fallback        The fallback value to use if not set, should already be sanitized.
+ *     @type Pods       $pod             Pod to parse the tags through.
+ *     @type bool       $use_current_pod Whether to auto-detect the current Pod.
  * }
  *
  * @return string
@@ -1548,8 +1549,9 @@ function pods_evaluate_tags( $tags, $args = array() ) {
  * @param string|array $tag String to be evaluated.
  * @param array        $args {
  *     Function arguments.
- *     @type null|mixed $fallback The fallback value to use if not set, should already be sanitized.
- *     @type bool|Pods  $pod      Pod to parse the tags through.
+ *     @type null|mixed $fallback        The fallback value to use if not set, should already be sanitized.
+ *     @type Pods       $pod             Pod to parse the tags through.
+ *     @type bool       $use_current_pod Whether to auto-detect the current Pod.
  * }
  *
  * @return string Evaluated content.
@@ -1572,18 +1574,20 @@ function pods_evaluate_tag_sanitized( $tag, $args = array() ) {
  * @param string|array $tag String to be evaluated.
  * @param array        $args {
  *     Function arguments.
- *     @type bool       $sanitize Whether to sanitize.
- *     @type null|mixed $fallback The fallback value to use if not set, should already be sanitized.
- *     @type bool|Pods  $pod      Pod to parse the tags through.
+ *     @type bool       $sanitize        Whether to sanitize.
+ *     @type null|mixed $fallback        The fallback value to use if not set, should already be sanitized.
+ *     @type bool|Pods  $pod             Pod to parse the tags through.
+ *     @type bool       $use_current_pod Whether to auto-detect the current Pod.
  * }
  *
  * @return string Evaluated content.
  */
 function pods_evaluate_tag( $tag, $args = array() ) {
 	$defaults = array(
-		'sanitize' => false,
-		'fallback' => null,
-		'pod'      => null,
+		'sanitize'        => false,
+		'fallback'        => null,
+		'pod'             => null,
+		'use_current_pod' => false,
 	);
 
 	// Back compat.
@@ -1615,30 +1619,28 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 		$tag = $tag[2];
 	}
 
+	if ( $args['use_current_pod'] ) {
+		$pod = pods();
+	}
+
 	// Handle Pod fields.
 	// The Pod will call this function without Pod param if no field is found.
-	if ( $pod ) {
-		if ( true === $pod ) {
-			$pod = pods(); // Current pod object.
-		}
+	if ( $pod instanceof Pods ) {
+		$value = $pod->do_magic_tags( $tag );
 
-		if ( $pod instanceof Pods ) {
-			$value = $pod->do_magic_tags( $tag );
-
-			if ( ! $value ) {
-				if ( null === $fallback ) {
-					return '';
-				}
-
-				return $fallback;
+		if ( ! $value ) {
+			if ( null === $fallback ) {
+				return '';
 			}
 
-			if ( $sanitize ) {
-				$value = pods_sanitize( $value );
-			}
-
-			return $value;
+			return $fallback;
 		}
+
+		if ( $sanitize ) {
+			$value = pods_sanitize( $value );
+		}
+
+		return $value;
 	}
 
 	$tag = trim( $tag, ' {@}' );
@@ -1699,7 +1701,9 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 	}
 
 	if ( $helper ) {
-		$pod   = pods();
+		if ( ! $pod ) {
+			$pod   = pods();
+		}
 		$value = $pod->helper( $helper, $value );
 	}
 

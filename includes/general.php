@@ -923,9 +923,9 @@ function pods_shortcode_run( $tags, $content = null ) {
 		$id = null;
 
 		$evaluate_tags_args = array(
-			'sanitize' => true,
-			'fallback' => null,
-			'pod'      => true, // Check current queried Pod.
+			'sanitize'        => true,
+			'fallback'        => null,
+			'use_current_pod' => true,
 		);
 
 		if ( ! empty( $tags['slug'] ) ) {
@@ -971,9 +971,9 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 		if ( ! defined( 'PODS_DISABLE_SHORTCODE_SQL' ) || ! PODS_DISABLE_SHORTCODE_SQL ) {
 			$evaluate_tags_args = array(
-				'sanitize' => true,
-				'fallback' => '""',
-				'pod'      => true, // Check current queried Pod.
+				'sanitize'        => true,
+				'fallback'        => '""',
+				'use_current_pod' => true,
 			);
 
 			if ( 0 < strlen( $tags['orderby'] ) ) {

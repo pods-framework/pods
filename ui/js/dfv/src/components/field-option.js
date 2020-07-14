@@ -5,7 +5,7 @@ import sanitizeHtml from 'sanitize-html';
 import { removep } from '@wordpress/autop';
 
 import HelpTooltip from 'dfv/src/components/help-tooltip';
-import { richText } from '../../../blocks/src/config/html';
+import { richTextNoLinks } from '../../../blocks/src/config/html';
 
 const PodsFieldOption = ( {
 	fieldType,
@@ -106,7 +106,7 @@ const PodsFieldOption = ( {
 					<p
 						className="description"
 						dangerouslySetInnerHTML={ {
-							__html: removep( sanitizeHtml( description, richText ) ),
+							__html: removep( sanitizeHtml( description, richTextNoLinks ) ),
 						} }
 					/>
 				) }

@@ -1409,6 +1409,12 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$return = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
+
+		$errors = array();
+		if ( is_array( $return ) ) {
+			$errors = $return;
+		}
 
 		if ( empty( self::$api ) ) {
 			self::$api = pods_api();
@@ -1490,7 +1496,8 @@ class PodsField_Pick extends PodsField {
 							self::$related_data[ $options['id'] ][ 'related_ids_' . $related_id ] = $bidirectional_ids;
 
 							if ( empty( $bidirectional_ids ) || ( in_array( (int) $id, $bidirectional_ids, true ) && 1 === count( $bidirectional_ids ) ) ) {
-								return sprintf( __( 'The %1$s field is required and cannot be removed by the %2$s field', 'pods' ), $related_field['label'], $options['label'] );
+								$errors[] = sprintf( __( 'The %1$s field is required and cannot be removed by the %2$s field', 'pods' ), $related_field['label'], $options['label'] );
+								return $errors;
 							}
 						}
 					}
@@ -1526,7 +1533,11 @@ class PodsField_Pick extends PodsField {
 			}
 		}//end if
 
-		return true;
+		if ( ! empty( $errors ) ) {
+			return $errors;
+		}
+
+		return $return;
 
 	}
 

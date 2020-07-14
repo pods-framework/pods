@@ -149,8 +149,12 @@ class PodsField_Phone extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$return = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
+		if ( is_array( $return ) ) {
+			$errors = $return;
+		}
 
 		$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
@@ -172,7 +176,7 @@ class PodsField_Phone extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $return;
 	}
 
 	/**

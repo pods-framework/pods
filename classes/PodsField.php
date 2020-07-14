@@ -603,7 +603,22 @@ class PodsField {
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
-		return apply_filters( 'pods_field_validate_' . static::$type, true, $value, $name, $options, $fields, $pod, $id, $params );
+		/**
+		 * Filter field validation return.
+		 *
+		 * @param mixed|null      $value   Current value.
+		 * @param string|null     $name    Field name.
+		 * @param array|null      $options Field options.
+		 * @param array|null      $fields  Pod fields.
+		 * @param array|null      $pod     Pod information.
+		 * @param int|string|null $id      Current item ID.
+		 * @param array|null      $params  Additional parameters.
+		 */
+		$return = apply_filters( 'pods_field_validate_' . static::$type, true, $value, $name, $options, $fields, $pod, $id, $params );
+		if ( ! is_bool( $return ) ) {
+			$return = (array) $return;
+		}
+		return $return;
 
 	}
 

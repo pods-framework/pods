@@ -727,6 +727,34 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
+	 * @todo 2.8 Centralize the usage of this method. See PR #5540.
+	 * {@inheritdoc}
+	 */
+	public function is_empty( $value = null ) {
+
+		$is_empty = false;
+
+		if ( is_array( $value ) ) {
+			foreach ( $value as $key => $val ) {
+				if ( $this->is_empty( $val ) ) {
+					unset( $value[ $key ] );
+				}
+			}
+		}
+
+		/**
+		 * @todo Find a way to check for relationship type before comparing to `0` as this is still empty for posts/terms/users etc.
+		 *       Currently not possible since this method doesn't get any options passed as parameters.
+		 */
+		if ( empty( $value ) && '0' !== (string) $value ) {
+			$is_empty = true;
+		}
+
+		return $is_empty;
+
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {

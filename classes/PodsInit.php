@@ -471,7 +471,7 @@ class PodsInit {
 		}
 
 		if ( method_exists( $avatar, 'get_avatar_data' ) ) {
-			add_filter( 'get_avatar_data', array( $avatar, 'get_avatar_data', 10, 2 ) );
+			add_filter( 'get_avatar_data', array( $avatar, 'get_avatar_data' ), 10, 2 );
 		}
 	}
 

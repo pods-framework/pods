@@ -1,4 +1,5 @@
 import React from 'react';
+import * as PropTypes from 'prop-types';
 
 // WordPress dependencies
 import { withSelect, withDispatch } from '@wordpress/data';
@@ -19,6 +20,7 @@ const EditPod = ( {
 	setActiveTab,
 	podName,
 	setPodName,
+	isExtended,
 } ) => {
 	return (
 		<>
@@ -26,6 +28,7 @@ const EditPod = ( {
 				<EditPodName
 					podName={ podName }
 					setPodName={ setPodName }
+					isEditable={ ! isExtended }
 				/>
 				<SaveStatusMessage />
 				<PodsNavTab
@@ -45,6 +48,18 @@ const EditPod = ( {
 	);
 };
 
+EditPod.propTypes = {
+	tabs: PropTypes.arrayOf( PropTypes.shape( {
+		name: PropTypes.string.isRequired,
+		label: PropTypes.string.isRequired,
+	} ) ).isRequired,
+	activeTab: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
+	isExtended: PropTypes.bool.isRequired,
+	setActiveTab: PropTypes.func.isRequired,
+	setPodName: PropTypes.func.isRequired,
+};
+
 export default compose( [
 	withSelect( ( select ) => {
 		const storeSelect = select( STORE_KEY_EDIT_POD );
@@ -53,6 +68,7 @@ export default compose( [
 			tabs: storeSelect.getGlobalPodGroups(),
 			activeTab: storeSelect.getActiveTab(),
 			podName: storeSelect.getPodName(),
+			isExtended: !! storeSelect.getPodOption( 'object' ),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

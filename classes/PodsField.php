@@ -606,6 +606,7 @@ class PodsField {
 		/**
 		 * Filter field validation return.
 		 *
+		 * @param true            $true    Default validation return.
 		 * @param mixed|null      $value   Current value.
 		 * @param string|null     $name    Field name.
 		 * @param array|null      $options Field options.

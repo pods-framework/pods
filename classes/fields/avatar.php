@@ -79,13 +79,8 @@ class PodsField_Avatar extends PodsField_File {
 	 */
 	public function get_avatar( $avatar, $id_or_email, $size, $default = '', $alt = '' ) {
 
-		// Don't replace for the Avatars section of the Discussion settings page.
-		if ( is_admin() ) {
-			$current_screen = get_current_screen();
-
-			if ( null !== $current_screen && 'options-discussion' === $current_screen->id && 32 === $size ) {
-				return $avatar;
-			}
+		if ( ! $this->allow_avatar_overwrite() ) {
+			return $avatar;
 		}
 
 		$user_id = $this->get_avatar_user_id( $id_or_email );
@@ -160,6 +155,10 @@ class PodsField_Avatar extends PodsField_File {
 	 * }
 	 */
 	public function get_avatar_data( $args, $id_or_email ) {
+		if ( ! $this->allow_avatar_overwrite() ) {
+			return $args;
+		}
+
 		$return_args = $args;
 
 		$args = wp_parse_args(
@@ -294,6 +293,33 @@ class PodsField_Avatar extends PodsField_File {
 		}
 
 		return (int) $user_id;
+	}
+
+	/**
+	 * Checks if we're not on WordPress admin pages where we shouldn't overwrite.
+	 *
+	 * @since 2.7.22
+	 *
+	 * @return bool
+	 */
+	public function allow_avatar_overwrite() {
+
+		// Don't replace for the Avatars section of the Discussion settings page.
+		if ( is_admin() && ! doing_action( 'admin_bar_menu' ) ) {
+			$current_screen = get_current_screen();
+
+			$screens = array(
+				'profile',
+				'user-edit',
+				'options-discussion',
+			);
+
+			if ( null !== $current_screen && in_array( $current_screen->id, $screens, true ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 }

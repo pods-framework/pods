@@ -160,6 +160,8 @@ class PodsField_Avatar extends PodsField_File {
 	 * }
 	 */
 	public function get_avatar_data( $args, $id_or_email ) {
+		$return_args = $args;
+
 		$args = wp_parse_args(
 			$args,
 			array(
@@ -203,12 +205,12 @@ class PodsField_Avatar extends PodsField_File {
 			}
 
 			if ( $user_avatar_url ) {
-				$args['url']          = $user_avatar_url;
-				$args['found_avatar'] = true;
+				$return_args['url']          = $user_avatar_url;
+				$return_args['found_avatar'] = true;
 			}
 		}
 
-		return $args;
+		return $return_args;
 	}
 
 	/**

@@ -1203,6 +1203,18 @@ class PodsAPI {
 					'type'  => 'slug',
 					'alias' => array( 'nicename', 'slug', 'permalink' )
 				),
+				'first_name'  => array(
+					'name'  => 'first_name',
+					'label' => 'First Name',
+					'type'  => 'text',
+					'alias' => array( 'firstname' )
+				),
+				'last_name'  => array(
+					'name'  => 'last_name',
+					'label' => 'Last Name',
+					'type'  => 'text',
+					'alias' => array( 'lastname' )
+				),
 				'display_name'    => array(
 					'name'  => 'display_name',
 					'label' => 'Display Name',

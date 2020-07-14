@@ -1185,8 +1185,8 @@ class PodsAPI {
 					'type'    => 'number',
 					'alias'   => array( 'id' ),
 					'options' => array(
-						'number_format' => '9999.99'
-					)
+						'number_format' => '9999.99',
+					),
 				),
 				'user_login'      => array(
 					'name'    => 'user_login',
@@ -1194,32 +1194,32 @@ class PodsAPI {
 					'type'    => 'text',
 					'alias'   => array( 'login' ),
 					'options' => array(
-						'required' => 1
-					)
+						'required' => 1,
+					),
 				),
 				'user_nicename'   => array(
 					'name'  => 'user_nicename',
 					'label' => 'Permalink',
 					'type'  => 'slug',
-					'alias' => array( 'nicename', 'slug', 'permalink' )
+					'alias' => array( 'nicename', 'slug', 'permalink' ),
 				),
-				'first_name'  => array(
+				'first_name'      => array(
 					'name'  => 'first_name',
 					'label' => 'First Name',
 					'type'  => 'text',
-					'alias' => array( 'firstname' )
+					'alias' => array( 'firstname' ),
 				),
-				'last_name'  => array(
+				'last_name'       => array(
 					'name'  => 'last_name',
 					'label' => 'Last Name',
 					'type'  => 'text',
-					'alias' => array( 'lastname' )
+					'alias' => array( 'lastname' ),
 				),
 				'display_name'    => array(
 					'name'  => 'display_name',
 					'label' => 'Display Name',
 					'type'  => 'text',
-					'alias' => array( 'title', 'name' )
+					'alias' => array( 'title', 'name' ),
 				),
 				'user_pass'       => array(
 					'name'    => 'user_pass',
@@ -1228,8 +1228,8 @@ class PodsAPI {
 					'alias'   => array( 'password', 'pass' ),
 					'options' => array(
 						'required'         => 1,
-						'text_format_type' => 'password'
-					)
+						'text_format_type' => 'password',
+					),
 				),
 				'user_email'      => array(
 					'name'    => 'user_email',
@@ -1238,8 +1238,8 @@ class PodsAPI {
 					'alias'   => array( 'email' ),
 					'options' => array(
 						'required'         => 1,
-						'text_format_type' => 'email'
-					)
+						'text_format_type' => 'email',
+					),
 				),
 				'user_url'        => array(
 					'name'    => 'user_url',
@@ -1249,8 +1249,8 @@ class PodsAPI {
 					'options' => array(
 						'required'            => 0,
 						'text_format_type'    => 'website',
-						'text_format_website' => 'normal'
-					)
+						'text_format_website' => 'normal',
+					),
 				),
 				'user_registered' => array(
 					'name'    => 'user_registered',
@@ -1258,9 +1258,9 @@ class PodsAPI {
 					'type'    => 'date',
 					'alias'   => array( 'created', 'date', 'registered' ),
 					'options' => array(
-						'date_format_type' => 'datetime'
-					)
-				)
+						'date_format_type' => 'datetime',
+					),
+				),
 			);
 		} elseif ( 'comment' === $object ) {
 			$fields = array(

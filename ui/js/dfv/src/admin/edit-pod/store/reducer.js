@@ -38,7 +38,7 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 			return {
 				...state,
 				saveStatus: newStatus,
-				saveMessage: action.message,
+				saveMessage: action.result?.message || '',
 			};
 		}
 		case UI_ACTIONS.SET_DELETE_STATUS: {
@@ -49,7 +49,7 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 			return {
 				...state,
 				deleteStatus: newStatus,
-				deleteMessage: action.message,
+				deleteMessage: action.result?.message || '',
 			};
 		}
 
@@ -70,9 +70,15 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 				[ name ]: newStatus,
 			};
 
+			const groupSaveMessages = {
+				...omit( state.groupSaveMessages, [ action.previousGroupName ] ),
+				[ name ]: action.result?.message || '',
+			};
+
 			return {
 				...state,
 				groupSaveStatuses,
+				groupSaveMessages,
 			};
 		}
 
@@ -90,6 +96,10 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 				groupDeleteStatuses: {
 					...state.groupDeleteStatuses,
 					[ action.result.group.name ]: newStatus,
+				},
+				groupDeleteMessages: {
+					...state.groupDeleteMessages,
+					[ name ]: action.result?.message || '',
 				},
 			};
 		}
@@ -111,9 +121,15 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 				[ name ]: newStatus,
 			};
 
+			const fieldSaveMessages = {
+				...omit( state.fieldSaveMessages, [ action.previousFieldName ] ),
+				[ name ]: action.result?.message || '',
+			};
+
 			return {
 				...state,
 				fieldSaveStatuses,
+				fieldSaveMessages,
 			};
 		}
 
@@ -131,6 +147,10 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 				fieldDeleteStatuses: {
 					...state.fieldDeleteStatuses,
 					[ action.result.field.name ]: newStatus,
+				},
+				fieldDeleteMessages: {
+					...state.fieldDeleteMessages,
+					[ action.result.field.name ]: action.result?.message,
 				},
 			};
 		}

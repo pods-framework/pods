@@ -52,6 +52,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	number_format: PropTypes.string,
 	number_format_soft: PropTypes.number,
 	object_type: PropTypes.string.isRequired,
+	old_name: PropTypes.string,
 	param_default: PropTypes.string,
 	// @todo this should maybe just be number
 	parent: PropTypes.oneOfType( [

@@ -56,7 +56,6 @@ describe( 'actions', () => {
 				result: {
 					message: 'Saved successfully.',
 				},
-				message: 'Saved successfully.',
 			};
 
 			const setSaveStatusSuccess = setSaveStatus( SAVE_STATUSES.SAVE_SUCCESS );
@@ -75,7 +74,6 @@ describe( 'actions', () => {
 				result: {
 					message: 'Deleted.',
 				},
-				message: 'Deleted.',
 			};
 
 			const setDeleteStatusDeleted = setDeleteStatus( DELETE_STATUSES.DELETE_SUCCESS );
@@ -91,13 +89,16 @@ describe( 'actions', () => {
 			const expected = {
 				type: UI_ACTIONS.SET_GROUP_SAVE_STATUS,
 				saveStatus: SAVE_STATUSES.SAVE_SUCCESS,
-				result: {},
-				message: 'Saved successfully.',
+				result: {
+					message: 'Saved successfully.',
+				},
 			};
 
 			const result = setGroupSaveStatus(
 				SAVE_STATUSES.SAVE_SUCCESS,
-			)( {}, 'Saved successfully.' );
+			)( {
+				message: 'Saved successfully.',
+			} );
 
 			expect( result ).toEqual( expected );
 		} );
@@ -106,13 +107,16 @@ describe( 'actions', () => {
 			const expected = {
 				type: UI_ACTIONS.SET_GROUP_DELETE_STATUS,
 				deleteStatus: DELETE_STATUSES.DELETING,
-				result: {},
-				message: 'Deleted.',
+				result: {
+					message: 'Deleted.',
+				},
 			};
 
 			const result = setGroupDeleteStatus(
 				DELETE_STATUSES.DELETING,
-			)( {}, 'Deleted.' );
+			)( {
+				message: 'Deleted.',
+			} );
 
 			expect( result ).toEqual( expected );
 		} );

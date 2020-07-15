@@ -22,12 +22,14 @@ import './field-groups.scss';
 const FieldGroups = ( {
 	podID,
 	podName,
+	podLabel,
 	podSaveStatus,
 	groups,
 	saveGroup,
 	deleteAndRemoveGroup,
 	moveGroup,
 	groupSaveStatuses,
+	groupSaveMessages,
 	editGroupPod,
 } ) => {
 	const [ showAddGroupModal, setShowAddGroupModal ] = useState( false );
@@ -94,6 +96,7 @@ const FieldGroups = ( {
 			groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVE_SUCCESS
 		) {
 			setShowAddGroupModal( false );
+			setAddedGroupName( null );
 		}
 	}, [ addedGroupName, setShowAddGroupModal, groupSaveStatuses ] );
 
@@ -106,12 +109,15 @@ const FieldGroups = ( {
 					title={ sprintf(
 						/* translators: %1$s: Pod Label */
 						__( '%1$s > Add Group', 'pods' ),
-						podName,
+						podLabel,
 					) }
 					hasSaveError={ groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVE_ERROR || false }
 					saveButtonText={ __( 'Save New Group', 'pods' ) }
-					errorMessage={ __( 'There was an error saving the group, please try again.', 'pods' ) }
-					cancelEditing={ () => setShowAddGroupModal( false ) }
+					errorMessage={ groupSaveMessages[ addedGroupName ] || __( 'There was an error saving the group, please try again.', 'pods' ) }
+					cancelEditing={ () => {
+						setShowAddGroupModal( false );
+						setAddedGroupName( null );
+					} }
 					save={ handleAddGroup }
 				/>
 			) }
@@ -169,12 +175,14 @@ const FieldGroups = ( {
 FieldGroups.propTypes = {
 	podID: PropTypes.number.isRequired,
 	podName: PropTypes.string.isRequired,
+	podLabel: PropTypes.string.isRequired,
 	podSaveStatus: PropTypes.string.isRequired,
 	groups: PropTypes.arrayOf( GROUP_PROP_TYPE_SHAPE ).isRequired,
 	deleteAndRemoveGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
 	groupSaveStatuses: PropTypes.object.isRequired,
+	groupSaveMessages: PropTypes.object.isRequired,
 };
 
 export default compose( [
@@ -184,10 +192,12 @@ export default compose( [
 		return {
 			podID: storeSelect.getPodID(),
 			podName: storeSelect.getPodName(),
+			podLabel: storeSelect.getPodOption( 'label' ),
 			podSaveStatus: storeSelect.getSaveStatus(),
 			groups: storeSelect.getGroups(),
 			editGroupPod: storeSelect.getGlobalGroupOptions(),
 			groupSaveStatuses: storeSelect.getGroupSaveStatuses(),
+			groupSaveMessages: storeSelect.getGroupSaveMessages(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

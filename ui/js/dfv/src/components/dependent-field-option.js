@@ -34,6 +34,7 @@ const meetsDependencies = ( dependencies, allOptionValues ) => {
 const DependentFieldOption = ( {
 	fieldType,
 	name,
+	required,
 	label,
 	value,
 	default: defaultValue,
@@ -67,6 +68,7 @@ const DependentFieldOption = ( {
 		<PodsFieldOption
 			fieldType={ fieldType }
 			name={ name }
+			required={ required }
 			value={ value || defaultValue }
 			label={ label }
 			data={ data }
@@ -80,6 +82,7 @@ const DependentFieldOption = ( {
 DependentFieldOption.propTypes = {
 	fieldType: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
+	required: PropTypes.bool.isRequired,
 	data: PropTypes.object,
 	default: PropTypes.oneOfType( [
 		PropTypes.string,

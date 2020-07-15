@@ -27,6 +27,8 @@ const SettingsModal = ( {
 
 	const [ changedOptions, setChangedOptions ] = useState( selectedOptions );
 
+	const [ isValid, setIsValid ] = useState( false );
+
 	// When the modal first opens, set any options to their defaults, unless
 	// they're already set.
 	useEffect( () => {
@@ -50,6 +52,33 @@ const SettingsModal = ( {
 
 		setChangedOptions( defaultOptions );
 	}, [] );
+
+	// Check validity if any of the options have changed.
+	useEffect( () => {
+		// Go through each section, check that each one has all valid fields.
+		const validity = optionsSections.every(
+			( section ) => {
+				return section.fields.every(
+					( field ) => {
+						// Fields that aren't required are automatically valid.
+						if ( ! field.required ) {
+							return true;
+						}
+
+						// Boolean values could be falsey and still valid.
+						if ( 'boolean' === field.type ) {
+							return 'undefined' !== typeof changedOptions[ field.name ];
+						}
+
+						return 'undefined' !== typeof changedOptions[ field.name ] &&
+							'' !== changedOptions[ field.name ].toString();
+					}
+				);
+			}
+		);
+
+		setIsValid( validity );
+	}, [ changedOptions ] );
 
 	return (
 		<Modal
@@ -122,11 +151,18 @@ const SettingsModal = ( {
 			</div>
 
 			<div className="pods-setting-modal__button-group">
-				<Button isSecondary onClick={ cancelEditing }>
+				<Button
+					isSecondary
+					onClick={ cancelEditing }
+				>
 					{ __( 'Cancel', 'pods' ) }
 				</Button>
 
-				<Button isPrimary onClick={ save( changedOptions ) }>
+				<Button
+					isPrimary
+					onClick={ save( changedOptions ) }
+					disabled={ ! isValid }
+				>
 					{ saveButtonText }
 				</Button>
 			</div>

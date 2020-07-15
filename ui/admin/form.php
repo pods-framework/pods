@@ -537,7 +537,7 @@ if ( 0 < $pod->id() ) {
                             <h3 class="hndle">
                                 <span>
                                     <?php
-                                        if ( ! $more && 1 == count( $groups ) && $group[ 'label' ] == __( 'More Fields', 'pods' ) ) {
+                                        if ( ! $more && 1 == count( $groups ) && $group[ 'label' ] === __( 'More Fields', 'pods' ) ) {
                                             $title = __( 'Fields', 'pods' );
                                         }
                                         else {

@@ -97,7 +97,7 @@ const FieldList = ( props ) => {
 					selectedOptions={ {} }
 					title={ sprintf(
 						/* translators: %1$s: Pod Label, %2$s Group Label */
-						__( '%1$s > %2$s > Add Group', 'pods' ),
+						__( '%1$s > %2$s > Add Field', 'pods' ),
 						podName,
 						groupLabel,
 					) }

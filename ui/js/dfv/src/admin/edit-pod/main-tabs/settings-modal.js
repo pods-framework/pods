@@ -80,8 +80,21 @@ const SettingsModal = ( {
 				return section.fields.every(
 					( field ) => {
 						// Fields that aren't required are automatically valid.
-						if ( ! field.required ) {
+						if ( undefined === typeof field.required || ! field.required ) {
 							return true;
+						}
+
+						// Skip fields won't be shown because their dependency isn't met.
+						if ( field[ 'depends-on' ] ) {
+							const dependsOnKeys = Object.keys( field[ 'depends-on' ] );
+
+							const meetsDeps = dependsOnKeys.some(
+								( key ) => changedOptions[ key ] === field[ 'depends-on' ][ key ]
+							);
+
+							if ( ! meetsDeps ) {
+								return true;
+							}
 						}
 
 						// Boolean values could be falsey and still valid.

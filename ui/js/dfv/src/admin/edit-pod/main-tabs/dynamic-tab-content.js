@@ -31,6 +31,7 @@ const DynamicTabContent = ( {
 		data,
 		type,
 		label,
+		label_param: labelParam,
 		help,
 		'depends-on': dependsOn,
 	} ) => (
@@ -39,10 +40,11 @@ const DynamicTabContent = ( {
 			fieldType={ type }
 			name={ name }
 			description={ description }
-			label={ getLabelValue( label, 'label', defaultValue ) }
+			label={ getLabelValue( label, labelParam, defaultValue ) }
 			data={ data }
 			allOptionValues={ optionValues }
-			value={ optionValues[ name ] || defaultValue }
+			value={ optionValues[ name ] }
+			default={ defaultValue }
 			dependents={ dependsOn }
 			helpText={ help }
 			setOptionValue={ setOptionValue }

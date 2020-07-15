@@ -10,15 +10,22 @@ import Sluggable from 'dfv/src/components/sluggable';
 const EditPodName = ( {
 	podName,
 	setPodName,
+	isEditable,
 } ) => {
 	return (
 		<h2>
 			{ __( 'Edit Pod: ', 'pods' ) }
 			{ '\u00A0' /* &nbsp; */ }
-			<Sluggable
-				value={ podName }
-				updateValue={ setPodName }
-			/>
+			{ isEditable ? (
+				<Sluggable
+					value={ podName }
+					updateValue={ setPodName }
+				/>
+			) : (
+				<strong>
+					{ podName }
+				</strong>
+			) }
 		</h2>
 	);
 };
@@ -26,6 +33,7 @@ const EditPodName = ( {
 EditPodName.propTypes = {
 	podName: PropTypes.string.isRequired,
 	setPodName: PropTypes.func.isRequired,
+	isEditable: PropTypes.bool.isRequired,
 };
 
 export default EditPodName;

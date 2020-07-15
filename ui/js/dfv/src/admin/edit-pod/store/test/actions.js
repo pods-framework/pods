@@ -53,13 +53,17 @@ describe( 'actions', () => {
 			const expected = {
 				type: UI_ACTIONS.SET_SAVE_STATUS,
 				saveStatus: SAVE_STATUSES.SAVE_SUCCESS,
-				result: {},
+				result: {
+					message: 'Saved successfully.',
+				},
 				message: 'Saved successfully.',
 			};
 
-			const result = setSaveStatus(
-				SAVE_STATUSES.SAVE_SUCCESS,
-			)( {}, 'Saved successfully.' );
+			const setSaveStatusSuccess = setSaveStatus( SAVE_STATUSES.SAVE_SUCCESS );
+
+			const result = setSaveStatusSuccess( {
+				message: 'Saved successfully.',
+			} );
 
 			expect( result ).toEqual( expected );
 		} );
@@ -67,14 +71,18 @@ describe( 'actions', () => {
 		test( 'setDeleteStatus() creates a function to create action to change the delete status', () => {
 			const expected = {
 				type: UI_ACTIONS.SET_DELETE_STATUS,
-				deleteStatus: DELETE_STATUSES.DELETING,
-				result: {},
+				deleteStatus: DELETE_STATUSES.DELETE_SUCCESS,
+				result: {
+					message: 'Deleted.',
+				},
 				message: 'Deleted.',
 			};
 
-			const result = setDeleteStatus(
-				DELETE_STATUSES.DELETING,
-			)( {}, 'Deleted.' );
+			const setDeleteStatusDeleted = setDeleteStatus( DELETE_STATUSES.DELETE_SUCCESS );
+
+			const result = setDeleteStatusDeleted( {
+				message: 'Deleted.',
+			} );
 
 			expect( result ).toEqual( expected );
 		} );

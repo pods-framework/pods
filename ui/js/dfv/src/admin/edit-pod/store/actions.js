@@ -15,21 +15,21 @@ export const setActiveTab = ( activeTab ) => {
 	};
 };
 
-export const setSaveStatus = ( saveStatus ) => ( result = {}, message = '' ) => {
+export const setSaveStatus = ( saveStatus ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_SAVE_STATUS,
 		saveStatus,
 		result,
-		message,
+		message: result.message || '',
 	};
 };
 
-export const setDeleteStatus = ( deleteStatus ) => ( result = {}, message = '' ) => {
+export const setDeleteStatus = ( deleteStatus ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_DELETE_STATUS,
 		deleteStatus,
 		result,
-		message,
+		message: result.message || '',
 	};
 };
 

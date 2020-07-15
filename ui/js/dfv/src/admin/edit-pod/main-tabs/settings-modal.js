@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Modal, Button } from '@wordpress/components';
 
 import DynamicTabContent from './dynamic-tab-content';
+import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 
 import './settings-modal.scss';
 
@@ -28,6 +29,24 @@ const SettingsModal = ( {
 	const [ changedOptions, setChangedOptions ] = useState( selectedOptions );
 
 	const [ isValid, setIsValid ] = useState( false );
+
+	// Wrapper around setChangedOptions(), which also sets the name/slug
+	// based on the Label, if the slug hasn't previously been set.
+	const setOptionValue = ( optionName, value ) => {
+		const newOptions = {
+			[ optionName ]: value,
+		};
+
+		// Generate a slug if needed.
+		if ( 'label' === optionName && 'undefined' === typeof selectedOptions.name ) {
+			newOptions.name = sanitizeSlug( value );
+		}
+
+		setChangedOptions( {
+			...changedOptions,
+			...newOptions,
+		} );
+	};
 
 	// When the modal first opens, set any options to their defaults, unless
 	// they're already set.
@@ -139,12 +158,7 @@ const SettingsModal = ( {
 						<DynamicTabContent
 							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab ).fields }
 							optionValues={ changedOptions }
-							setOptionValue={ ( optionName, value ) => {
-								setChangedOptions( {
-									...changedOptions,
-									[ optionName ]: value,
-								} );
-							} }
+							setOptionValue={ setOptionValue }
 						/>
 					}
 				</div>

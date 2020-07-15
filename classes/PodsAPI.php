@@ -663,7 +663,9 @@ class PodsAPI {
 		$conflicted = pods_no_conflict_check( 'taxonomy' );
 
 		if ( ! is_array( $term_data ) || empty( $term_data ) ) {
-			$term_data = array( 'name' => '' );
+			$term_data = [
+				'name' => '',
+			];
 		}
 
 		if ( ! $conflicted ) {
@@ -684,9 +686,13 @@ class PodsAPI {
 		unset( $term_data['taxonomy'] );
 
 		if ( empty( $term_data['term_id'] ) ) {
-			$term_name = $term_data['name'];
+			$term_name = '';
 
-			unset( $term_data['name'] );
+			if ( ! empty( $term_data['name'] ) ) {
+				$term_name = $term_data['name'];
+
+				unset( $term_data['name'] );
+			}
 
 			$term_data['term_id'] = wp_insert_term( $term_name, $taxonomy, $term_data );
 		} elseif ( 1 < count( $term_data ) ) {

@@ -28,6 +28,7 @@ class MetadataTest extends Pods_UnitTestCase {
 	protected static $obj_ids = [];
 
 	public function setUp() : void {
+		return;
 		self::create_pods();
 		// Reload PodsMeta.
 		pods_meta()->core();
@@ -36,6 +37,7 @@ class MetadataTest extends Pods_UnitTestCase {
 	}
 
 	public function tearDown() : void {
+		return;
 		$api = pods_api();
 
 		foreach ( self::$pod_names as $name ) {
@@ -201,6 +203,8 @@ class MetadataTest extends Pods_UnitTestCase {
 	}
 
 	public function test_get_metadata() {
+		$this->markTestSkipped( 'This test class needs to be revamped for Codeception' );
+
 		foreach ( self::$obj_ids as $type => $ids ) {
 			$id_key   = self::get_id_key( $type );
 			$name     = self::$pod_names[ $type ];
@@ -291,6 +295,8 @@ class MetadataTest extends Pods_UnitTestCase {
 	}
 
 	public function test_get_metadata_ids() {
+		$this->markTestSkipped( 'This test class needs to be revamped for Codeception' );
+
 		// Make sure we return ID's.
 		add_filter( 'pods_pods_field_related_output_type', [ $this, 'filter_output_type_ids' ] );
 		//remove_filter( 'get_post_metadata', array( pods_meta(), 'get_post_meta' ), 10 );

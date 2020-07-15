@@ -1027,6 +1027,58 @@ class Pods implements Iterator {
 			}
 		}
 
+		// Date field option overwrites.
+		if ( in_array( $field_type, PodsForm::date_field_types(), true ) ) {
+
+			if ( 1 < count( $traverse_fields ) ) {
+				$date_field_traverse = $traverse_fields;
+
+				// Remove field name.
+				array_shift( $date_field_traverse );
+
+				$traverse_type = array_shift( $date_field_traverse );
+
+				switch ( $traverse_type ) {
+					case '_format':
+						$format    = implode( '.', $date_field_traverse );
+						$wp_format = in_array( strtolower( $format ), array( 'wp', 'wordpress' ), true );
+
+						if ( $format && ! $wp_format ) {
+							$value  = date_i18n( $format, strtotime( $value ) );
+
+							$field_data['options'][ $field_type . '_type' ]          = 'custom';
+							$field_data['options'][ $field_type . '_time_type' ]     = 'custom';
+							$field_data['options'][ $field_type . '_format_custom' ] = $format;
+						} else {
+							if ( ! isset( $field_data['options'][ $field_type . '_type'] ) || $wp_format ) {
+								$field_data['options'][ $field_type . '_type' ] = 'wp';
+							}
+							if ( ! isset( $field_data['options'][ $field_type . '_time_type'] ) || $wp_format ) {
+								$field_data['options'][ $field_type . '_time_type' ] = 'wp';
+							}
+						}
+
+						// Overwrite $field_options with changes.
+						$field_options = pods_v( 'options', $field_data, $field_options );
+						break;
+				}
+			} elseif ( $params->display && $is_field_set && 'object_field' === $field_source ) {
+				// Replicate default WordPress behavior.
+				switch ( $first_field ) {
+					case 'date':
+					case 'post_date':
+					case 'post_date_gmt':
+					case 'post_modified':
+					case 'post_modified_gmt':
+						$field_data['options'][ $field_type . '_type' ]      = 'wp';
+						$field_data['options'][ $field_type . '_time_type' ] = 'wp';
+						// Overwrite $field_options with changes.
+						$field_options = pods_v( 'options', $field_data, $field_options );
+						break;
+				}
+			}
+		}
+
 		if (
 			empty( $value ) &&
 			isset( $this->row[ $params->name ] ) &&
@@ -1048,21 +1100,9 @@ class Pods implements Iterator {
 		} elseif ( empty( $value ) ) {
 			$object_field_found = false;
 
-			if ( 'object_field' === $field_source ) {
-				$object_field_found = true;
+			if ( ! $is_field_set ) {
 
-				if ( isset( $this->row[ $first_field ] ) ) {
-					$value = $this->row[ $first_field ];
-				} elseif ( $is_tableless_field ) {
-					// Overwrite existing field data.
-					$this->fields[ $first_field ] = $field_data;
-
-					$object_field_found = false;
-				} else {
-					return null;
-				}
-			} elseif ( ! $is_field_set ) {
-
+				// Default image field handlers.
 				$image_fields = array(
 					'image_attachment',
 					'image_attachment_url',
@@ -1096,6 +1136,7 @@ class Pods implements Iterator {
 
 				} elseif ( in_array( $first_field, $image_fields, true ) ) {
 					// Default image field handlers.
+					$object_field_found = true;
 
 					$image_field = $first_field;
 					// Is it a URL request?
@@ -1166,23 +1207,28 @@ class Pods implements Iterator {
 								}
 							}
 						}
-
-						if ( null !== $value ) {
-							$object_field_found = true;
-						}
-					}
+					} //end if
 				}
 			}
 
-			// Continue regular field parsing.
-			if ( false === $object_field_found ) {
-				$params->traverse = array( $params->name );
+			if ( ! $object_field_found && 'object_field' === $field_source ) {
+				$object_field_found = true;
 
-				if ( false !== strpos( $params->name, '.' ) ) {
-					$params->traverse = explode( '.', $params->name );
+				if ( isset( $this->row[ $first_field ] ) ) {
+					$value = $this->row[ $first_field ];
+				} elseif ( $is_tableless_field ) {
+					// Overwrite existing field data.
+					$this->fields[ $first_field ] = $field_data;
 
-					$params->name = $params->traverse[0];
+					$object_field_found = false;
+				} else {
+					return null;
 				}
+			}
+
+			if ( ! $object_field_found ) {
+				$params->traverse = $traverse_fields;
+				$params->name     = $first_field;
 
 				if ( $field_type ) {
 

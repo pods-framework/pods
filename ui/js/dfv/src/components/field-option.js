@@ -10,6 +10,7 @@ import { richTextNoLinks } from '../../../blocks/src/config/html';
 const PodsFieldOption = ( {
 	fieldType,
 	name,
+	required,
 	value,
 	label,
 	data = {},
@@ -34,6 +35,7 @@ const PodsFieldOption = ( {
 				className={ `pods-form-ui-label pods-form-ui-label-${ name }` }
 				htmlFor={ name }>
 				{ label }
+				{ required && ( <span className="pods-form-ui-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
 				{ shouldShowHelpText && ( <HelpTooltip helpText={ helpTextString } /> ) }
 			</label>
 
@@ -129,6 +131,7 @@ PodsFieldOption.propTypes = {
 	data: PropTypes.object,
 	label: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
+	required: PropTypes.bool.isRequired,
 	onChange: PropTypes.func.isRequired,
 	value: PropTypes.oneOfType( [
 		PropTypes.string,

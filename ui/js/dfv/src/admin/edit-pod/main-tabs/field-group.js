@@ -30,7 +30,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 	const {
 		podID,
-		podName,
+		podLabel,
 		group,
 		isExpanded,
 		hasMoved,
@@ -205,7 +205,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 						title={ sprintf(
 							/* translators: %1$s: Pod Label, %2$s Group Label */
 							__( '%1$s > %2$s > Edit Group', 'pods' ),
-							podName,
+							podLabel,
 							groupLabel
 						) }
 						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
@@ -221,7 +221,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 				<FieldList
 					fields={ fields || [] }
 					podID={ podID }
-					podName={ podName }
+					podLabel={ podLabel }
 					groupName={ groupName }
 					groupID={ groupID }
 					groupLabel={ groupLabel }
@@ -233,7 +233,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 FieldGroup.propTypes = {
 	podID: PropTypes.number.isRequired,
-	podName: PropTypes.string.isRequired,
+	podLabel: PropTypes.string.isRequired,
 	group: GROUP_PROP_TYPE_SHAPE,
 
 	index: PropTypes.number.isRequired,

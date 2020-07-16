@@ -48,7 +48,9 @@ describe( 'UI reducer', () => {
 		const action = {
 			type: UI_ACTIONS.SET_SAVE_STATUS,
 			saveStatus: SAVE_STATUSES.SAVING,
-			message: 'Saving...',
+			result: {
+				message: 'Saving...',
+			},
 		};
 
 		const newState = ui( state, action );
@@ -72,7 +74,9 @@ describe( 'UI reducer', () => {
 		const action = {
 			type: UI_ACTIONS.SET_DELETE_STATUS,
 			deleteStatus: DELETE_STATUSES.DELETING,
-			message: 'Deleting...',
+			result: {
+				message: 'Deleting...',
+			},
 		};
 
 		const newState = ui( state, action );

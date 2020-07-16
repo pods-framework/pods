@@ -26,6 +26,7 @@ const DynamicTabContent = ( {
 
 	return tabOptions.map( ( {
 		name,
+		required = false,
 		default: defaultValue,
 		description,
 		data,
@@ -39,6 +40,7 @@ const DynamicTabContent = ( {
 			key={ name }
 			fieldType={ type }
 			name={ name }
+			required={ required }
 			description={ description }
 			label={ getLabelValue( label, labelParam, defaultValue ) }
 			data={ data }

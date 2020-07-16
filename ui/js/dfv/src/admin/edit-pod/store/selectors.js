@@ -14,8 +14,12 @@ import {
 	SAVE_STATUS,
 	SAVE_MESSAGE,
 	DELETE_STATUS,
+
 	GROUP_SAVE_STATUSES,
+	GROUP_SAVE_MESSAGES,
 	GROUP_DELETE_STATUSES,
+	GROUP_DELETE_MESSAGES,
+
 	FIELD_SAVE_STATUSES,
 	FIELD_DELETE_STATUSES,
 } from './state-paths';
@@ -85,17 +89,20 @@ export const getSaveMessage = ( state ) => SAVE_MESSAGE.getFrom( state );
 export const getDeleteStatus = ( state ) => DELETE_STATUS.getFrom( state );
 
 export const getGroupSaveStatuses = ( state ) => GROUP_SAVE_STATUSES.getFrom( state );
-
 export const getGroupSaveStatus = ( state, groupName ) => GROUP_SAVE_STATUSES.getFrom( state )[ groupName ];
 
-export const getGroupDeleteStatuses = ( state ) => GROUP_DELETE_STATUSES.getFrom( state );
+export const getGroupSaveMessages = ( state ) => GROUP_SAVE_MESSAGES.getFrom( state );
+export const getGroupSaveMessage = ( state, groupName ) => GROUP_SAVE_MESSAGES.getFrom( state )[ groupName ];
 
+
+export const getGroupDeleteStatuses = ( state ) => GROUP_DELETE_STATUSES.getFrom( state );
 export const getGroupDeleteStatus = ( state, groupName ) => GROUP_DELETE_STATUSES.getFrom( state )[ groupName ];
 
-export const getFieldSaveStatuses = ( state ) => FIELD_SAVE_STATUSES.getFrom( state );
+export const getGroupDeleteMessages = ( state ) => GROUP_DELETE_MESSAGES.getFrom( state );
+export const getGroupDeleteMessage = ( state, groupName ) => GROUP_DELETE_MESSAGES.getFrom( state )[ groupName ];
 
+export const getFieldSaveStatuses = ( state ) => FIELD_SAVE_STATUSES.getFrom( state );
 export const getFieldSaveStatus = ( state, fieldName ) => FIELD_SAVE_STATUSES.getFrom( state )[ fieldName ];
 
-export const getFieldDeleteStatuses = ( state ) => FIELD_SAVE_STATUSES.getFrom( state );
-
-export const getFieldDeleteStatus = ( state, fieldName ) => FIELD_SAVE_STATUSES.getFrom( state )[ fieldName ];
+export const getFieldDeleteStatuses = ( state ) => FIELD_DELETE_STATUSES.getFrom( state );
+export const getFieldDeleteStatus = ( state, fieldName ) => FIELD_DELETE_STATUSES.getFrom( state )[ fieldName ];

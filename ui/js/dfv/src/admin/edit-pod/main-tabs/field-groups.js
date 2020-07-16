@@ -21,7 +21,6 @@ import './field-groups.scss';
 
 const FieldGroups = ( {
 	podID,
-	podName,
 	podLabel,
 	podSaveStatus,
 	groups,
@@ -142,7 +141,7 @@ const FieldGroups = ( {
 					<FieldGroup
 						key={ group.name }
 						podID={ podID }
-						podName={ podName }
+						podLabel={ podLabel }
 						group={ group }
 						index={ index }
 						editGroupPod={ editGroupPod }
@@ -174,7 +173,6 @@ const FieldGroups = ( {
 
 FieldGroups.propTypes = {
 	podID: PropTypes.number.isRequired,
-	podName: PropTypes.string.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	podSaveStatus: PropTypes.string.isRequired,
 	groups: PropTypes.arrayOf( GROUP_PROP_TYPE_SHAPE ).isRequired,
@@ -191,7 +189,6 @@ export default compose( [
 
 		return {
 			podID: storeSelect.getPodID(),
-			podName: storeSelect.getPodName(),
 			podLabel: storeSelect.getPodOption( 'label' ),
 			podSaveStatus: storeSelect.getSaveStatus(),
 			groups: storeSelect.getGroups(),

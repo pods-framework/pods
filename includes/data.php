@@ -1748,7 +1748,7 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 	}
 
 	if ( $helper ) {
-		if ( ! $pod instanceof Pods  ) {
+		if ( ! $pod instanceof Pods ) {
 			$pod = pods();
 		}
 		$value = $pod->helper( $helper, $value );

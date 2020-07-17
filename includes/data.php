@@ -1690,8 +1690,12 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 
 	$tag = trim( $tag, ' {@}' );
 	$tag = explode( ',', $tag );
+	$tag = pods_trim( $tag );
 
+	$value  = '';
 	$helper = isset( $tag[1] ) ? $tag[1] : null;
+	$before = isset( $tag[2] ) ? $tag[2] : '';
+	$after  = isset( $tag[3] ) ? $tag[3] : '';
 
 	$tag = explode( '.', $tag[0] );
 
@@ -1715,8 +1719,6 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 	}
 
 	$tag = pods_trim( $tag );
-
-	$value = '';
 
 	$single_supported = array(
 		'template-url',
@@ -1774,7 +1776,7 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 		$value = $fallback;
 	}
 
-	return $value;
+	return $before . $value . $after;
 }
 
 /**

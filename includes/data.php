@@ -1671,7 +1671,7 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 	// Handle Pod fields.
 	// The Pod will call this function without Pod param if no field is found.
 	if ( $pod instanceof Pods ) {
-		$value = $pod->do_magic_tags( $tag );
+		$value = $pod->do_magic_tags( '{@' . $tag . '}' );
 
 		if ( ! $value ) {
 			if ( null === $fallback ) {

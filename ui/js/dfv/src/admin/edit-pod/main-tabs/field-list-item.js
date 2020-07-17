@@ -18,7 +18,7 @@ const ENTER_KEY = 13;
 export const FieldListItem = ( props, ref ) => {
 	const {
 		podID,
-		podName,
+		podLabel,
 		groupLabel,
 		field,
 		saveStatus,
@@ -36,9 +36,10 @@ export const FieldListItem = ( props, ref ) => {
 		id,
 		name,
 		label,
-		required,
 		type,
 	} = field;
+
+	const required = ( field.required && '0' !== field.required ) ? true : false;
 
 	const [ showEditFieldSettings, setShowEditFieldSettings ] = useState( false );
 
@@ -159,7 +160,7 @@ export const FieldListItem = ( props, ref ) => {
 					title={ sprintf(
 						/* translators: %1$s: Pod Label, %2$s Group Label */
 						__( '%1$s > %2$s > %3$s > Edit Field', 'pods' ),
-						podName,
+						podLabel,
 						groupLabel,
 						label,
 					) }
@@ -183,7 +184,8 @@ export const FieldListItem = ( props, ref ) => {
 					style={ { cursor: 'pointer' } }
 					onKeyPress={ handleKeyPress }
 				>
-					{ label }<span className={ required ? 'pods-field_required' : '' }>*</span>
+					{ label }
+					{ required && ( <span className="pods-field_required">&nbsp;*</span> ) }
 				</span>
 
 				<div className="pods-field_id"> [id = { id }]</div>
@@ -232,7 +234,7 @@ export const FieldListItem = ( props, ref ) => {
 
 FieldListItem.propTypes = {
 	podID: PropTypes.number.isRequired,
-	podName: PropTypes.string.isRequired,
+	podLabel: PropTypes.string.isRequired,
 	field: FIELD_PROP_TYPE_SHAPE,
 	saveStatus: PropTypes.string,
 	// position: PropTypes.number.isRequired,

@@ -143,7 +143,7 @@ const FieldList = ( props ) => {
 							<FieldListItem
 								key={ field.id }
 								podID={ podID }
-								podName={ podName }
+								podLabel={ podLabel }
 								groupLabel={ groupLabel }
 								field={ field }
 								saveStatus={ fieldSaveStatuses[ field.name ] }

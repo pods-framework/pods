@@ -34,6 +34,7 @@ const meetsDependencies = ( dependencies, allOptionValues ) => {
 const DependentFieldOption = ( {
 	fieldType,
 	name,
+	required,
 	label,
 	value,
 	default: defaultValue,
@@ -47,12 +48,15 @@ const DependentFieldOption = ( {
 	const handleInputChange = ( event ) => {
 		const { target } = event;
 
+		// If there's a default, then don't allow an empty value.
+		const newValue = target.value || defaultValue;
+
 		if ( 'checkbox' === target.type ) {
 			const binaryStringFromBoolean = target.checked ? '1' : '0';
 
 			setOptionValue( name, binaryStringFromBoolean );
 		} else {
-			setOptionValue( name, target.value );
+			setOptionValue( name, newValue );
 		}
 	};
 
@@ -64,6 +68,7 @@ const DependentFieldOption = ( {
 		<PodsFieldOption
 			fieldType={ fieldType }
 			name={ name }
+			required={ required }
 			value={ value || defaultValue }
 			label={ label }
 			data={ data }
@@ -77,6 +82,7 @@ const DependentFieldOption = ( {
 DependentFieldOption.propTypes = {
 	fieldType: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
+	required: PropTypes.bool.isRequired,
 	data: PropTypes.object,
 	default: PropTypes.oneOfType( [
 		PropTypes.string,

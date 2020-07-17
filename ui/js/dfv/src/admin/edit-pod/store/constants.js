@@ -54,12 +54,25 @@ export const CURRENT_POD_ACTIONS = {
 
 export const INITIAL_UI_STATE = {
 	activeTab: 'manage-fields',
+
+	// Pod status and result message
 	saveStatus: SAVE_STATUSES.NONE,
-	deleteStatus: DELETE_STATUSES.NONE,
 	saveMessage: null,
+
+	deleteStatus: DELETE_STATUSES.NONE,
 	deleteMessage: null,
+
+	// Group statuses and result messages
 	groupSaveStatuses: {},
+	groupSaveMessages: {},
+
 	groupDeleteStatuses: {},
+	groupDeleteMessages: {},
+
+	// Field statuses and result messages
 	fieldSaveStatuses: {},
+	fieldSaveMessages: {},
+
 	fieldDeleteStatuses: {},
+	fieldDeleteMessages: {},
 };

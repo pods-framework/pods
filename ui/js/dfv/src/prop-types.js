@@ -2,6 +2,7 @@ import * as PropTypes from 'prop-types';
 
 // @todo can these be changed to real Booleans on the PHP side?
 const BOOLEAN_STRINGS = [ '0', '1', 0, 1 ];
+const BOOLEAN_ALL_TYPES = [ '0', '1', 0, 1, true, false ];
 
 export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	admin_only: PropTypes.oneOf( BOOLEAN_STRINGS ),
@@ -51,6 +52,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	number_format: PropTypes.string,
 	number_format_soft: PropTypes.number,
 	object_type: PropTypes.string.isRequired,
+	old_name: PropTypes.string,
 	param_default: PropTypes.string,
 	// @todo this should maybe just be number
 	parent: PropTypes.oneOfType( [
@@ -72,7 +74,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	rest_pick_depth: PropTypes.string,
 	restrict_capability: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	restrict_role: PropTypes.oneOf( BOOLEAN_STRINGS ),
-	required: PropTypes.oneOf( BOOLEAN_STRINGS ),
+	required: PropTypes.oneOf( BOOLEAN_ALL_TYPES ),
 	// @todo this should be unserialized to an object?
 	roles_allowed: PropTypes.string,
 	storage_type: PropTypes.string,

@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: moderntribe/tric
-          ref: master
+          ref: main
           path: tric
           fetch-depth: 1
       - name: Add tric to the PATH

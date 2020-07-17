@@ -2919,13 +2919,6 @@ class PodsAdmin {
 		];
 
 		$options['rest-api'] = [
-			'custom_field_5' => [
-				'name'    => 'custom_field_5',
-				'label'   => __( 'Custom Field 5', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
-			],
 			'custom_field_6' => [
 				'name'    => 'custom_field_6',
 				'label'   => __( 'Custom Field 6', 'pods' ),
@@ -2943,6 +2936,13 @@ class PodsAdmin {
 			'custom_field_8' => [
 				'name'    => 'custom_field_8',
 				'label'   => __( 'Custom Field 8', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'type'    => 'text',
+				'default' => '',
+			],
+			'custom_field_9' => [
+				'name'    => 'custom_field_9',
+				'label'   => __( 'Custom Field 9', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
 				'default' => '',

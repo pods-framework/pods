@@ -15,25 +15,23 @@ export const setActiveTab = ( activeTab ) => {
 	};
 };
 
-export const setSaveStatus = ( saveStatus ) => ( result = {}, message = '' ) => {
+export const setSaveStatus = ( saveStatus ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_SAVE_STATUS,
 		saveStatus,
 		result,
-		message,
 	};
 };
 
-export const setDeleteStatus = ( deleteStatus ) => ( result = {}, message = '' ) => {
+export const setDeleteStatus = ( deleteStatus ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_DELETE_STATUS,
 		deleteStatus,
 		result,
-		message,
 	};
 };
 
-export const setGroupSaveStatus = ( saveStatus, previousGroupName ) => ( result = {}, message = '' ) => {
+export const setGroupSaveStatus = ( saveStatus, previousGroupName ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_GROUP_SAVE_STATUS,
 		// The group name may not have changed, but we call it "previousGroupName" just
@@ -41,37 +39,33 @@ export const setGroupSaveStatus = ( saveStatus, previousGroupName ) => ( result 
 		previousGroupName,
 		saveStatus,
 		result,
-		message,
 	};
 };
 
-export const setGroupDeleteStatus = ( deleteStatus, previousGroupName ) => ( result = {}, message = '' ) => {
+export const setGroupDeleteStatus = ( deleteStatus, previousGroupName ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_GROUP_DELETE_STATUS,
 		previousGroupName,
 		deleteStatus,
 		result,
-		message,
 	};
 };
 
-export const setFieldSaveStatus = ( saveStatus, previousFieldName ) => ( result = {}, message = '' ) => {
+export const setFieldSaveStatus = ( saveStatus, previousFieldName ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_FIELD_SAVE_STATUS,
 		previousFieldName,
 		saveStatus,
 		result,
-		message,
 	};
 };
 
-export const setFieldDeleteStatus = ( deleteStatus, previousFieldName ) => ( result = {}, message = '' ) => {
+export const setFieldDeleteStatus = ( deleteStatus, previousFieldName ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_FIELD_DELETE_STATUS,
 		previousFieldName,
 		deleteStatus,
 		result,
-		message,
 	};
 };
 

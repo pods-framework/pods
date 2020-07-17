@@ -1477,10 +1477,10 @@ class PodsField_Pick extends PodsField {
 					// Get ids to remove.
 					$remove_ids = array_diff( $current_ids, $value_ids );
 
-					$related_required   = (boolean) pods_v( 'required', $related_field['options'], 0 );
-					$related_pick_limit = (int) pods_v( static::$type . '_limit', $related_field['options'], 0 );
+					$related_required   = (boolean) pods_v( 'required', $related_field, 0 );
+					$related_pick_limit = (int) pods_v( static::$type . '_limit', $related_field, 0 );
 
-					if ( 'single' === pods_v( static::$type . '_format_type', $related_field['options'] ) ) {
+					if ( 'single' === pods_v( static::$type . '_format_type', $related_field ) ) {
 						$related_pick_limit = 1;
 					}
 
@@ -1511,9 +1511,9 @@ class PodsField_Pick extends PodsField {
 			self::$related_data[ $options['id'] ]['related_field']      = $related_field;
 			self::$related_data[ $options['id'] ]['related_pick_limit'] = $related_pick_limit;
 
-			$pick_limit = (int) pods_v( static::$type . '_limit', $options['options'], 0 );
+			$pick_limit = (int) pods_v( static::$type . '_limit', $options, 0 );
 
-			if ( 'single' === pods_v( static::$type . '_format_type', $options['options'] ) ) {
+			if ( 'single' === pods_v( static::$type . '_format_type', $options ) ) {
 				$pick_limit = 1;
 			}
 
@@ -1697,13 +1697,6 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
-
-		if ( isset( $options['options'] ) ) {
-			$options = $options;
-
-			unset( $options['options'] );
-		}
-
 		$data = pods_v( 'data', $options, null, true );
 
 		$object_params = array(
@@ -1848,13 +1841,6 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.2.0
 	 */
 	public function value_to_label( $name, $value = null, $options = null, $pod = null, $id = null ) {
-
-		if ( isset( $options['options'] ) ) {
-			$options = $options;
-
-			unset( $options['options'] );
-		}
-
 		$data = pods_v( 'data', $options, null, true );
 
 		$object_params = array(
@@ -2004,7 +1990,6 @@ class PodsField_Pick extends PodsField {
 		 */
 		$object_params = apply_filters( 'pods_field_pick_object_data_params', $object_params );
 
-		$object_params['options']     = (array) $object_params['options'];
 		$object_params['data_params'] = (array) $object_params['data_params'];
 
 		$name         = $object_params['name'];
@@ -2035,7 +2020,9 @@ class PodsField_Pick extends PodsField {
 		if ( null === $data ) {
 			$data = array();
 
-			if ( 'custom-simple' === $options[ static::$type . '_object' ] ) {
+			$pick_object = pods_v( static::$type . '_object', $options, null, true );
+
+			if ( 'custom-simple' === $pick_object ) {
 				$custom = pods_v( static::$type . '_custom', $options, '' );
 
 				$custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id, $object_params );
@@ -2072,19 +2059,28 @@ class PodsField_Pick extends PodsField {
 
 					$simple = true;
 				}//end if
-			} elseif ( isset( self::$related_objects[ $options[ static::$type . '_object' ] ] ) && isset( self::$related_objects[ $options[ static::$type . '_object' ] ]['data'] ) && ! empty( self::$related_objects[ $options[ static::$type . '_object' ] ]['data'] ) ) {
+			} elseif (
+				$pick_object
+				&& isset( self::$related_objects[ $pick_object ] )
+				&& ! empty( self::$related_objects[$pick_object ]['data'] )
+			) {
 				$data = self::$related_objects[ $options[ static::$type . '_object' ] ]['data'];
 
 				$simple = true;
-			} elseif ( isset( self::$related_objects[ $options[ static::$type . '_object' ] ] ) && isset( self::$related_objects[ $options[ static::$type . '_object' ] ]['data_callback'] ) && is_callable( self::$related_objects[ $options[ static::$type . '_object' ] ]['data_callback'] ) ) {
+			} elseif (
+				$pick_object
+				&& isset( self::$related_objects[ $pick_object ] )
+				&& isset( self::$related_objects[ $pick_object ]['data_callback'] )
+				&& is_callable( self::$related_objects[ $pick_object ]['data_callback'] )
+			) {
 				$data = call_user_func_array(
-					self::$related_objects[ $options[ static::$type . '_object' ] ]['data_callback'], array(
+					self::$related_objects[ $options[ static::$type . '_object' ] ]['data_callback'], [
 						$name,
 						$value,
 						$options,
 						$pod,
 						$id,
-					)
+					]
 				);
 
 				if ( 'data' === $context ) {
@@ -2374,7 +2370,7 @@ class PodsField_Pick extends PodsField {
 				$ids = array();
 
 				if ( ! empty( $results ) ) {
-					$display_filter = pods_v( 'display_filter', pods_v( 'options', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) ) );
+					$display_filter = pods_v( 'display_filter', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) );
 
 					foreach ( $results as $result ) {
 						$result = get_object_vars( $result );
@@ -2398,7 +2394,7 @@ class PodsField_Pick extends PodsField {
 						}
 
 						if ( 0 < strlen( $display_filter ) ) {
-							$display_filter_args = pods_v( 'display_filter_args', pods_v( 'options', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) ) );
+							$display_filter_args = pods_v( 'display_filter_args', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) );
 
 							$filter_args = array(
 								$display_filter,

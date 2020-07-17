@@ -60,7 +60,11 @@ export const ACTIVE_TAB = createStatePath( `${ UI.path }.activeTab` );
 export const SAVE_STATUS = createStatePath( `${ UI.path }.saveStatus` );
 export const DELETE_STATUS = createStatePath( `${ UI.path }.deleteStatus` );
 export const SAVE_MESSAGE = createStatePath( `${ UI.path }.saveMessage` );
+
 export const GROUP_SAVE_STATUSES = createStatePath( `${ UI.path }.groupSaveStatuses` );
+export const GROUP_SAVE_MESSAGES = createStatePath( `${ UI.path }.groupSaveMessages` );
 export const GROUP_DELETE_STATUSES = createStatePath( `${ UI.path }.groupDeleteStatuses` );
+export const GROUP_DELETE_MESSAGES = createStatePath( `${ UI.path }.groupDeleteMessages` );
+
 export const FIELD_SAVE_STATUSES = createStatePath( `${ UI.path }.fieldSaveStatuses` );
 export const FIELD_DELETE_STATUSES = createStatePath( `${ UI.path }.fieldDeleteStatuses` );

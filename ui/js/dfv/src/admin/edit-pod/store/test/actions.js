@@ -53,13 +53,16 @@ describe( 'actions', () => {
 			const expected = {
 				type: UI_ACTIONS.SET_SAVE_STATUS,
 				saveStatus: SAVE_STATUSES.SAVE_SUCCESS,
-				result: {},
-				message: 'Saved successfully.',
+				result: {
+					message: 'Saved successfully.',
+				},
 			};
 
-			const result = setSaveStatus(
-				SAVE_STATUSES.SAVE_SUCCESS,
-			)( {}, 'Saved successfully.' );
+			const setSaveStatusSuccess = setSaveStatus( SAVE_STATUSES.SAVE_SUCCESS );
+
+			const result = setSaveStatusSuccess( {
+				message: 'Saved successfully.',
+			} );
 
 			expect( result ).toEqual( expected );
 		} );
@@ -67,14 +70,17 @@ describe( 'actions', () => {
 		test( 'setDeleteStatus() creates a function to create action to change the delete status', () => {
 			const expected = {
 				type: UI_ACTIONS.SET_DELETE_STATUS,
-				deleteStatus: DELETE_STATUSES.DELETING,
-				result: {},
-				message: 'Deleted.',
+				deleteStatus: DELETE_STATUSES.DELETE_SUCCESS,
+				result: {
+					message: 'Deleted.',
+				},
 			};
 
-			const result = setDeleteStatus(
-				DELETE_STATUSES.DELETING,
-			)( {}, 'Deleted.' );
+			const setDeleteStatusDeleted = setDeleteStatus( DELETE_STATUSES.DELETE_SUCCESS );
+
+			const result = setDeleteStatusDeleted( {
+				message: 'Deleted.',
+			} );
 
 			expect( result ).toEqual( expected );
 		} );
@@ -83,13 +89,16 @@ describe( 'actions', () => {
 			const expected = {
 				type: UI_ACTIONS.SET_GROUP_SAVE_STATUS,
 				saveStatus: SAVE_STATUSES.SAVE_SUCCESS,
-				result: {},
-				message: 'Saved successfully.',
+				result: {
+					message: 'Saved successfully.',
+				},
 			};
 
 			const result = setGroupSaveStatus(
 				SAVE_STATUSES.SAVE_SUCCESS,
-			)( {}, 'Saved successfully.' );
+			)( {
+				message: 'Saved successfully.',
+			} );
 
 			expect( result ).toEqual( expected );
 		} );
@@ -98,13 +107,16 @@ describe( 'actions', () => {
 			const expected = {
 				type: UI_ACTIONS.SET_GROUP_DELETE_STATUS,
 				deleteStatus: DELETE_STATUSES.DELETING,
-				result: {},
-				message: 'Deleted.',
+				result: {
+					message: 'Deleted.',
+				},
 			};
 
 			const result = setGroupDeleteStatus(
 				DELETE_STATUSES.DELETING,
-			)( {}, 'Deleted.' );
+			)( {
+				message: 'Deleted.',
+			} );
 
 			expect( result ).toEqual( expected );
 		} );

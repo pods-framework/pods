@@ -24,7 +24,7 @@ import './field-list.scss';
 const FieldList = ( props ) => {
 	const {
 		podID,
-		podName,
+		podLabel,
 		groupName,
 		groupLabel,
 		groupID,
@@ -98,8 +98,8 @@ const FieldList = ( props ) => {
 					selectedOptions={ {} }
 					title={ sprintf(
 						/* translators: %1$s: Pod Label, %2$s Group Label */
-						__( '%1$s > %2$s > Add New Field', 'pods' ),
-						podName,
+						__( '%1$s > %2$s > Add Field', 'pods' ),
+						podLabel,
 						groupLabel,
 					) }
 					hasSaveError={ fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_ERROR || false }
@@ -174,7 +174,7 @@ const FieldList = ( props ) => {
 };
 
 FieldList.propTypes = {
-	podName: PropTypes.string.isRequired,
+	podLabel: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
 	groupName: PropTypes.string.isRequired,
 	groupLabel: PropTypes.string.isRequired,

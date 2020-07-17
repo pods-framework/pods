@@ -1082,7 +1082,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 			$pod->find( $params );
 
-			$found = $pod->total();
+			$found = $pod->total_found();
 		}//end if
 	}//end if
 

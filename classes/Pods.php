@@ -793,9 +793,6 @@ class Pods implements Iterator {
 				if ( isset( $this->data->row[ $first_field ] ) ) {
 					$value = $this->data->row[ $first_field ];
 				} elseif ( $is_tableless_field ) {
-					// Overwrite existing field data.
-					$this->fields[ $first_field ] = $field_data;
-
 					$object_field_found = false;
 				} else {
 					return null;

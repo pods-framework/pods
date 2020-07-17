@@ -4194,7 +4194,8 @@ class Pods implements Iterator {
 			&& pods_shortcode_allow_evaluate_tags()
 			&& ! $this->fields( $field_name )
 		) {
-			$value = pods_evaluate_tag( implode( ',', $tag ) );
+			// Do not pass before and after tags (key 2 and 3) or these get processed twice.
+			$value = pods_evaluate_tag( implode( ',', array_slice( $tag, 0, 2 ) ) );
 		}
 
 		if ( ! empty( $tag[2] ) ) {

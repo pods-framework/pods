@@ -13,8 +13,8 @@ import {
 	setGroupSaveStatus,
 	setGroupDeleteStatus,
 	// @todo add Field tests:
-	// setFieldSaveStatus,
-	// setFieldDeleteStatus,
+	setFieldSaveStatus,
+	setFieldDeleteStatus,
 
 	// Current Pod options
 	setPodName,
@@ -113,6 +113,42 @@ describe( 'actions', () => {
 			};
 
 			const result = setGroupDeleteStatus(
+				DELETE_STATUSES.DELETING,
+			)( {
+				message: 'Deleted.',
+			} );
+
+			expect( result ).toEqual( expected );
+		} );
+
+		test( 'setFieldSaveStatus() creates a function to create an action to change the field\'s save status', () => {
+			const expected = {
+				type: UI_ACTIONS.SET_FIELD_SAVE_STATUS,
+				saveStatus: SAVE_STATUSES.SAVE_SUCCESS,
+				result: {
+					message: 'Saved successfully.',
+				},
+			};
+
+			const result = setFieldSaveStatus(
+				SAVE_STATUSES.SAVE_SUCCESS,
+			)( {
+				message: 'Saved successfully.',
+			} );
+
+			expect( result ).toEqual( expected );
+		} );
+
+		test( 'setFieldDeleteStatus() creates a function to create action to change the field\'s delete status', () => {
+			const expected = {
+				type: UI_ACTIONS.SET_FIELD_DELETE_STATUS,
+				deleteStatus: DELETE_STATUSES.DELETING,
+				result: {
+					message: 'Deleted.',
+				},
+			};
+
+			const result = setFieldDeleteStatus(
 				DELETE_STATUSES.DELETING,
 			)( {
 				message: 'Deleted.',

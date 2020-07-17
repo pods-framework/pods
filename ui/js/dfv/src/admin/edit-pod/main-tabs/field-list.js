@@ -55,7 +55,10 @@ const FieldList = ( props ) => {
 	};
 
 	// @todo
-	const handleCloneField = () => {};
+	const handleCloneField = () => {
+		// eslint-disable-next-line
+		console.log( 'clicked Duplicate Field' );
+	};
 
 	const moveField = () => ( field, dragIndex, hoverIndex, item ) => {
 		if ( groupName === item.groupName ) {
@@ -80,6 +83,7 @@ const FieldList = ( props ) => {
 			fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_SUCCESS
 		) {
 			setShowAddFieldModal( false );
+			setAddedFieldName( null );
 		}
 	}, [ addedFieldName, setShowAddFieldModal, fieldSaveStatuses ] );
 
@@ -105,7 +109,10 @@ const FieldList = ( props ) => {
 					hasSaveError={ fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_ERROR || false }
 					saveButtonText={ __( 'Save New Field', 'pods' ) }
 					errorMessage={ __( 'There was an error saving the field, please try again.', 'pods' ) }
-					cancelEditing={ () => setShowAddFieldModal( false ) }
+					cancelEditing={ () => {
+						setShowAddFieldModal( false );
+						setAddedFieldName( null );
+					} }
 					save={ handleAddField }
 				/>
 			) }

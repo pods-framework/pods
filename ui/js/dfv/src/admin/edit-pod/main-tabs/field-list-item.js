@@ -158,10 +158,9 @@ export const FieldListItem = ( props, ref ) => {
 					optionsPod={ editFieldPod }
 					selectedOptions={ field }
 					title={ sprintf(
-						/* translators: %1$s: Pod Label, %2$s Group Label */
-						__( '%1$s > %2$s > %3$s > Edit Field', 'pods' ),
+						/* translators: %1$s: Pod Label, %2$s Field Label */
+						__( '%1$s > %3$s > Edit Field', 'pods' ),
 						podLabel,
-						groupLabel,
 						label,
 					) }
 					hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }

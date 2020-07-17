@@ -910,8 +910,9 @@ class Pods implements Iterator {
 
 		$is_wp_object = in_array( $pod_type, $wp_object_types, true );
 
-		if ( $is_wp_object && in_array( $params->name, $permalink_fields, true ) ) {
-			if ( 0 < strlen( $this->detail_page ) ) {
+		if ( in_array( $params->name, $permalink_fields, true ) ) {
+			if ( 0 < strlen( $this->detail_page ) && false === strpos( $params->name, 'permalink' ) ) {
+				// ACT Pods. Prevent tag loop by not parsing `permalink`.
 				$value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
 			} else {
 				switch ( $pod_type ) {

@@ -37,12 +37,14 @@ const FieldList = ( props ) => {
 	} = props;
 
 	const [ showAddFieldModal, setShowAddFieldModal ] = useState( false );
+	const [ newFieldOptions, setNewFieldOptions ] = useState( {} );
 	const [ addedFieldName, setAddedFieldName ] = useState( null );
 
 	const handleAddField = ( options = {} ) => ( event ) => {
 		event.stopPropagation();
 
 		setAddedFieldName( options.name );
+		setNewFieldOptions( {} );
 
 		saveField(
 			podID,
@@ -54,10 +56,17 @@ const FieldList = ( props ) => {
 		);
 	};
 
-	// @todo
-	const handleCloneField = () => {
-		// eslint-disable-next-line
-		console.log( 'clicked Duplicate Field' );
+	const handleCloneField = ( field ) => () => {
+		setNewFieldOptions(
+			{
+				...omit( field, [ 'id', 'group' ] ),
+				/* translators: %1$s: Field Label */
+				label: sprintf( __( '%1$s (Copy)', 'pods' ), field.label ),
+				name: `${ field.name }_copy`,
+			}
+		);
+
+		setShowAddFieldModal( true );
 	};
 
 	const moveField = () => ( field, dragIndex, hoverIndex, item ) => {
@@ -84,6 +93,7 @@ const FieldList = ( props ) => {
 		) {
 			setShowAddFieldModal( false );
 			setAddedFieldName( null );
+			setNewFieldOptions( {} );
 		}
 	}, [ addedFieldName, setShowAddFieldModal, fieldSaveStatuses ] );
 
@@ -99,7 +109,7 @@ const FieldList = ( props ) => {
 			{ showAddFieldModal && (
 				<SettingsModal
 					optionsPod={ editFieldPod }
-					selectedOptions={ {} }
+					selectedOptions={ newFieldOptions }
 					title={ sprintf(
 						/* translators: %1$s: Pod Label, %2$s Group Label */
 						__( '%1$s > %2$s > Add Field', 'pods' ),
@@ -160,7 +170,7 @@ const FieldList = ( props ) => {
 								moveField={ moveField }
 								groupName={ groupName }
 								groupID={ groupID }
-								cloneField={ handleCloneField }
+								cloneField={ handleCloneField( field ) }
 								deleteField={ deleteAndRemoveField }
 								editFieldPod={ editFieldPod }
 							/>

@@ -153,7 +153,12 @@ window.PodsDFV = {
 								data: {
 									"text": "Plain Text",
 									"boolean": "Yes / No",
-									"color": "Color"
+									"color": "Color",
+									"Relationships / Media": {
+										"file": "File / Image / Video",
+										"oembed": "oEmbed",
+										"pick": "Relationship",
+									},
 								}
 							},
 						],

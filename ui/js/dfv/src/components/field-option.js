@@ -59,7 +59,7 @@ const PodsFieldOption = ( {
 								<select
 									id={ name }
 									name={ name }
-									selected={ value }
+									value={ value }
 									onBlur={ onChange }
 								>
 									{ Object.entries( data ).map( ( [ optionValue, option ] ) => {

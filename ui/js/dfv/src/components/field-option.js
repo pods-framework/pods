@@ -56,11 +56,12 @@ const PodsFieldOption = ( {
 						}
 						case 'pick': {
 							return (
+								/* eslint-disable-next-line jsx-a11y/no-onchange */
 								<select
 									id={ name }
 									name={ name }
 									value={ value }
-									onBlur={ onChange }
+									onChange={ onChange }
 								>
 									{ Object.entries( data ).map( ( [ optionValue, option ] ) => {
 										if ( 'string' === typeof option ) {

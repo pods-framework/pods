@@ -95,7 +95,7 @@ const PodsFieldOption = ( {
 									type="text"
 									id={ name }
 									name={ name }
-									value={ value }
+									value={ value || '' }
 									onChange={ onChange }
 									aria-label={ shouldShowHelpText && helpText }
 								/>

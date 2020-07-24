@@ -1,23 +1,30 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { omit } from 'lodash';
 import * as PropTypes from 'prop-types';
 
 // WordPress dependencies
 import { Dashicon, Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 
+// Internal dependencies
+import SettingsModal from './settings-modal';
+
+import { SAVE_STATUSES } from 'dfv/src/admin/edit-pod/store/constants';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+
+const ENTER_KEY = 13;
 
 export const FieldListItem = ( props, ref ) => {
 	const {
-		field: {
-			id,
-			name,
-			label,
-			required,
-			type,
-		},
+		podID,
+		podLabel,
+		groupLabel,
+		field,
+		saveStatus,
 		index,
+		editFieldPod,
+		saveField,
 		moveField,
 		groupName,
 		groupID,
@@ -25,7 +32,49 @@ export const FieldListItem = ( props, ref ) => {
 		deleteField,
 	} = props;
 
+	const {
+		id,
+		name,
+		label,
+		type,
+	} = field;
+
+	const required = ( field.required && '0' !== field.required ) ? true : false;
+
+	const [ showEditFieldSettings, setShowEditFieldSettings ] = useState( false );
+
 	const wref = useRef( ref );
+
+	const handleKeyPress = ( event ) => {
+		if ( event.keyCode === ENTER_KEY ) {
+			event.stopPropagation();
+			setShowEditFieldSettings( true );
+		}
+	};
+
+	const onEditFieldClick = ( event ) => {
+		event.stopPropagation();
+		setShowEditFieldSettings( true );
+	};
+
+	const onEditFieldCancel = ( event ) => {
+		event.stopPropagation();
+		setShowEditFieldSettings( false );
+	};
+
+	const onEditFieldSave = ( updatedOptions = {} ) => ( event ) => {
+		event.stopPropagation();
+
+		saveField(
+			podID,
+			groupName,
+			updatedOptions.name || name,
+			updatedOptions.label || label || name,
+			updatedOptions.field_type || type,
+			omit( updatedOptions, [ 'name', 'label', 'field_type', 'id' ] ),
+			id,
+		);
+	};
 
 	const onDeleteFieldClick = ( event ) => {
 		event.stopPropagation();
@@ -94,19 +143,57 @@ export const FieldListItem = ( props, ref ) => {
 
 	drag( drop( wref ) );
 
+	useEffect( () => {
+		// Close the Field Settings modal if we finished saving.
+		if ( SAVE_STATUSES.SAVE_SUCCESS === saveStatus ) {
+			setShowEditFieldSettings( false );
+		}
+	}, [ saveStatus ] );
+
 	return (
 		<div className="pods-field_wrapper" ref={ wref }>
+
+			{ showEditFieldSettings && (
+				<SettingsModal
+					optionsPod={ editFieldPod }
+					selectedOptions={ field }
+					title={ sprintf(
+						/* translators: %1$s: Pod Label, %2$s Field Label */
+						__( '%1$s > %3$s > Edit Field', 'pods' ),
+						podLabel,
+						label,
+					) }
+					hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
+					errorMessage={ __( 'There was an error saving the field, please try again.', 'pods' ) }
+					saveButtonText={ __( 'Save Field', 'pods' ) }
+					cancelEditing={ onEditFieldCancel }
+					save={ onEditFieldSave }
+				/>
+			) }
+
 			<div className="pods-field pods-field_handle">
 				<Dashicon icon="menu" />
 			</div>
+
 			<div className="pods-field pods-field_label">
-				{ label }<span className={ required ? 'pods-field_required' : '' }>*</span>
+				<span
+					tabIndex={ 0 }
+					role="button"
+					onClick={ onEditFieldClick }
+					style={ { cursor: 'pointer' } }
+					onKeyPress={ handleKeyPress }
+				>
+					{ label }
+					{ required && ( <span className="pods-field_required">&nbsp;*</span> ) }
+				</span>
+
 				<div className="pods-field_id"> [id = { id }]</div>
 
 				<div className="pods-field_controls-container">
 					<Button
 						className="pods-field_edit"
 						isTertiary
+						onClick={ onEditFieldClick }
 					>
 						{ __( 'Edit', 'pods' ) }
 					</Button>
@@ -145,11 +232,19 @@ export const FieldListItem = ( props, ref ) => {
 };
 
 FieldListItem.propTypes = {
+	podID: PropTypes.number.isRequired,
+	podLabel: PropTypes.string.isRequired,
 	field: FIELD_PROP_TYPE_SHAPE,
+	saveStatus: PropTypes.string,
 	// position: PropTypes.number.isRequired,
 	index: PropTypes.number.isRequired,
 	groupName: PropTypes.string.isRequired,
+	groupLabel: PropTypes.string.isRequired,
 	groupID: PropTypes.number.isRequired,
+
+	editFieldPod: PropTypes.object.isRequired,
+
+	saveField: PropTypes.func.isRequired,
 	moveField: PropTypes.func.isRequired,
 	cloneField: PropTypes.func.isRequired,
 	deleteField: PropTypes.func.isRequired,

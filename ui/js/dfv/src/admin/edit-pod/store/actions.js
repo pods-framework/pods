@@ -231,11 +231,11 @@ export const saveGroup = ( podID, previousName, name, label, args = {}, groupId 
 				args,
 			},
 			onSuccess: [
-				setGroupSaveStatus( SAVE_STATUSES.SAVE_SUCCESS, name ),
+				setGroupSaveStatus( SAVE_STATUSES.SAVE_SUCCESS, previousName ),
 				groupId ? setGroupData : addGroup,
 			],
-			onFailure: setGroupSaveStatus( SAVE_STATUSES.SAVE_ERROR, name ),
-			onStart: setGroupSaveStatus( SAVE_STATUSES.SAVING, name ),
+			onFailure: setGroupSaveStatus( SAVE_STATUSES.SAVE_ERROR, previousName ),
+			onStart: setGroupSaveStatus( SAVE_STATUSES.SAVING, previousName ),
 		},
 	};
 };

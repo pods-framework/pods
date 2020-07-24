@@ -14,6 +14,7 @@ import {
 } from 'dfv/src/admin/edit-pod/store/constants';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
+// Internal dependencies
 import SettingsModal from './settings-modal';
 import FieldListItem from './field-list-item';
 
@@ -54,7 +55,10 @@ const FieldList = ( props ) => {
 	};
 
 	// @todo
-	const handleCloneField = () => {};
+	const handleCloneField = () => {
+		// eslint-disable-next-line
+		console.log( 'clicked Duplicate Field' );
+	};
 
 	const moveField = () => ( field, dragIndex, hoverIndex, item ) => {
 		if ( groupName === item.groupName ) {
@@ -79,6 +83,7 @@ const FieldList = ( props ) => {
 			fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_SUCCESS
 		) {
 			setShowAddFieldModal( false );
+			setAddedFieldName( null );
 		}
 	}, [ addedFieldName, setShowAddFieldModal, fieldSaveStatuses ] );
 
@@ -104,7 +109,10 @@ const FieldList = ( props ) => {
 					hasSaveError={ fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_ERROR || false }
 					saveButtonText={ __( 'Save New Field', 'pods' ) }
 					errorMessage={ __( 'There was an error saving the field, please try again.', 'pods' ) }
-					cancelEditing={ () => setShowAddFieldModal( false ) }
+					cancelEditing={ () => {
+						setShowAddFieldModal( false );
+						setAddedFieldName( null );
+					} }
 					save={ handleAddField }
 				/>
 			) }
@@ -141,14 +149,20 @@ const FieldList = ( props ) => {
 						{ fields.map( ( field, index ) => (
 							<FieldListItem
 								key={ field.id }
+								podID={ podID }
+								podLabel={ podLabel }
+								groupLabel={ groupLabel }
 								field={ field }
+								saveStatus={ fieldSaveStatuses[ field.name ] }
 								index={ index }
 								// position={ field.position }
+								saveField={ saveField }
 								moveField={ moveField }
 								groupName={ groupName }
 								groupID={ groupID }
 								cloneField={ handleCloneField }
 								deleteField={ deleteAndRemoveField }
+								editFieldPod={ editFieldPod }
 							/>
 						) ) }
 					</div>

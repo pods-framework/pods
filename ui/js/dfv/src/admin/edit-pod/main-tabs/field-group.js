@@ -82,6 +82,10 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 	} ) );
 
 	const handleKeyPress = ( event ) => {
+		if ( showSettings ) {
+			return;
+		}
+
 		if ( event.keyCode === ENTER_KEY ) {
 			toggleExpanded();
 		}
@@ -140,7 +144,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 				tabIndex={ 0 }
 				role="button"
 				className="pods-field-group_title"
-				onClick={ toggleExpanded }
+				onClick={ ! showSettings ? toggleExpanded : undefined }
 				style={ { cursor: 'pointer' } }
 				onKeyPress={ handleKeyPress }
 			>

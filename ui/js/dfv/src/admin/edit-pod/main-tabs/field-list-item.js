@@ -19,7 +19,6 @@ export const FieldListItem = ( props, ref ) => {
 	const {
 		podID,
 		podLabel,
-		groupLabel,
 		field,
 		saveStatus,
 		index,
@@ -71,7 +70,7 @@ export const FieldListItem = ( props, ref ) => {
 			updatedOptions.name || name,
 			updatedOptions.label || label || name,
 			updatedOptions.field_type || type,
-			omit( updatedOptions, [ 'name', 'label', 'field_type', 'id' ] ),
+			omit( updatedOptions, [ 'name', 'label', 'id', 'group' ] ),
 			id,
 		);
 	};

@@ -33,6 +33,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.object,
 		PropTypes.array,
 	] ),
+	field_type: PropTypes.string,
 	group: PropTypes.string.isRequired,
 	grouped: PropTypes.number,
 	help: PropTypes.oneOfType( [
@@ -59,10 +60,19 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.string,
 		PropTypes.number,
 	] ).isRequired,
+	pick_allow_add_new: PropTypes.string,
 	pick_object: PropTypes.string,
 	pick_format: PropTypes.string,
+	pick_display_format_multi: PropTypes.string,
+	pick_display_format_separator: PropTypes.string,
 	pick_format_single: PropTypes.string,
+	pick_format_multi: PropTypes.string,
 	pick_format_type: PropTypes.string,
+	pick_limit: PropTypes.string,
+	pick_show_edit_link: PropTypes.string,
+	pick_show_icon: PropTypes.string,
+	pick_show_view_link: PropTypes.string,
+	pick_taggable: PropTypes.string,
 	// @todo does position actually belong here?
 	position: PropTypes.number,
 	// @todo this seems like it shouldn't be here

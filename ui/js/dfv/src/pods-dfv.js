@@ -137,7 +137,7 @@ window.PodsDFV = {
 								name: "field_type",
 								id: "",
 								parent: "pod/_pods_field",
-								group: "group/pod/_pods_field/additional-field",
+								group: "group/pod/_pods_field/basic",
 								label: "Field Type",
 								description: "",
 								help: "",
@@ -153,8 +153,36 @@ window.PodsDFV = {
 								data: {
 									"text": "Plain Text",
 									"boolean": "Yes / No",
-									"color": "Color"
+									"color": "Color",
+									"Relationships / Media": {
+										"file": "File / Image / Video",
+										"oembed": "oEmbed",
+										"pick": "Relationship",
+									},
 								}
+							},
+							{
+								object_type: "field",
+								storage_type: "collection",
+								name: "pick_object",
+								id: "",
+								parent: "pod/_pods_field",
+								group: "group/pod/_pods_field/basic",
+								label: "Related To",
+								description: "",
+								help: "",
+								default: "text",
+								attributes: [],
+								class: "",
+								type: "pick",
+								grouped: 0,
+								developer_mode: false,
+								dependency: true,
+								'depends-on': {
+									'field_type': 'pick',
+								},
+								'excludes-on': [],
+								data: {}
 							},
 						],
 					},

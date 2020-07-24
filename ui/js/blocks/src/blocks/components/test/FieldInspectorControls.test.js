@@ -6,10 +6,7 @@ import { mount } from 'enzyme';
 /**
  * WordPress dependencies
  */
-import {
-	RichText,
-	MediaUpload,
-} from '@wordpress/block-editor';
+import { RichText } from '@wordpress/block-editor';
 
 import {
 	CheckboxControl,
@@ -17,7 +14,6 @@ import {
 	TextControl,
 	TextareaControl,
 	RadioControl,
-	ColorPicker,
 } from '@wordpress/components';
 
 /**

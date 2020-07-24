@@ -1,10 +1,7 @@
 /**
  * WordPress dependencies
  */
-import {
-	PanelBody,
-	PanelRow,
-} from '@wordpress/components';
+import { PanelRow } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -17,14 +14,14 @@ import RenderedField from './RenderedField';
 const FieldInspectorControls = ( {
 	fields = [],
 	attributes,
-	setAttributes
+	setAttributes,
 } ) => {
 	if ( ! fields.length ) {
 		return null;
 	}
 
 	return (
-		<>
+		<div className="pods-inspector-rows">
 			{ fields.map( ( field ) => {
 				const {
 					name,
@@ -33,15 +30,15 @@ const FieldInspectorControls = ( {
 				return (
 					<PanelRow key={ name } className="pods-inspector-row">
 						<RenderedField
-							field={ field}
+							field={ field }
 							attributes={ attributes }
-							setAttributes={setAttributes}
+							setAttributes={ setAttributes }
 						/>
 					</PanelRow>
-				)
+				);
 			} ) }
-		</>
-	)
+		</div>
+	);
 };
 
 export default FieldInspectorControls;

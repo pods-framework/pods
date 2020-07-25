@@ -175,6 +175,10 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	 * @since 2.8
 	 */
 	public function update( WP_REST_Request $request ) {
+		if ( ! empty( $request['fields'] ) ) {
+			$request->set_param( 'fields', null );
+		}
+
 		return $this->update_by_args( 'id', 'id', $request );
 	}
 
@@ -194,7 +198,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	 */
 	public function DELETE_args() {
 		return [
-			'id' => [
+			'id'         => [
 				'type'              => 'integer',
 				'in'                => 'path',
 				'description'       => __( 'The Group ID.', 'pods' ),

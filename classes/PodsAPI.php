@@ -3504,14 +3504,12 @@ class PodsAPI {
 
 			unset( $params->group );
 
-			$params->name    = $group->get_name();
-			$params->id = $group->get_id();
+			$params->id   = $group->get_id();
 		} elseif ( isset( $params->group ) && is_array( $params->group ) ) {
 			$group = $params->group;
 
 			unset( $params->group );
 
-			$params->name = $group['name'];
 			$params->id   = $group['id'];
 		} elseif ( isset( $params->id ) ) {
 			$params->id = pods_absint( $params->id );
@@ -3589,8 +3587,8 @@ class PodsAPI {
 			$old_type      = $group['type'];
 			$old_options   = $group;
 
-			if ( isset( $params->name ) && ! empty( $params->name ) ) {
-				$group['name'] = $params->name;
+			if ( ! isset( $params->name ) ) {
+				$params->name = $group['name'];
 			}
 
 			if ( $old_name !== $group['name'] ) {
@@ -6276,7 +6274,7 @@ class PodsAPI {
 		$simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
 		// @todo Push this logic into pods_object_storage_delete_pod action.
-		if ( $table_operation && 'table' === $pod['storage'] && ( ! in_array( $field['type'], $tableless_field_types ) || $simple ) ) {
+		if ( $table_operation && 'table' === $pod['storage'] && ( ! in_array( $field['type'], $tableless_field_types, true ) || $simple ) ) {
 			pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$params->name}`", false );
 		}
 

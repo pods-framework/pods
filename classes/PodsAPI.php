@@ -6211,13 +6211,13 @@ class PodsAPI {
 		if ( ! ( is_array( $pod ) || $pod instanceof Pods\Whatsit ) ) {
 			$load_params = array();
 
-			if ( $params->pod_id ) {
+			if ( ! empty( $params->pod_id ) ) {
 				$load_params['id'] = $params->pod_id;
-			} elseif ( is_int( $pod ) ) {
+			} elseif ( is_int( $pod ) && ! empty( $pod ) ) {
 				$load_params['id'] = $pod;
-			} elseif ( $params->pod ) {
+			} elseif ( ! empty( $params->pod ) ) {
 				$load_params['name'] = $params->pod;
-			} elseif ( is_string( $pod ) ) {
+			} elseif ( is_string( $pod ) && 0 < strlen( $pod ) ) {
 				$load_params['name'] = $pod;
 			}
 
@@ -6270,7 +6270,7 @@ class PodsAPI {
 		$params->id   = $field['id'];
 		$params->name = $field['name'];
 
-		$simple = ( 'pick' === $field['type'] && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) );
+		$simple = ( 'pick' === $field['type'] && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
 		$simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
 		// @todo Push this logic into pods_object_storage_delete_pod action.
@@ -7086,14 +7086,6 @@ class PodsAPI {
 
 		if ( isset( $params['id'] ) && in_array( $params['id'], array( '', 0 ), true ) ) {
 			unset( $params['id'] );
-		}
-
-		if ( 1 === count( $params ) ) {
-			$pod = var_export( $params, true );
-			trigger_error( 'test: ' . $pod );
-			codecept_debug( 'test: ' . $pod );
-
-			return false;
 		}
 
 		$object = $this->_load_object( $params );

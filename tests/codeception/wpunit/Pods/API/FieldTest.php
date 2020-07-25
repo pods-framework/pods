@@ -745,4 +745,37 @@ class FieldTest extends Pods_UnitTestCase {
 		$this->assertInternalType( 'int', $fields );
 		$this->assertEquals( 2, $fields );
 	}
+
+	/**
+	 * @covers PodsAPI::delete_field
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_delete_field() {
+		$this->populate_field();
+
+		$params = [
+			'id' => $this->field_id,
+		];
+
+		$result = $this->api->delete_field( $params );
+
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * @covers PodsAPI::delete_field
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_delete_field_with_field_not_found() {
+		$params = [
+			'id' => 1234567,
+		];
+
+		$this->expectExceptionMessage( 'Field not found' );
+		$this->expectException( \Exception::class );
+
+		$this->api->delete_field( $params );
+	}
 }

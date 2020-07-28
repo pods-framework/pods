@@ -126,7 +126,20 @@ class View extends Base {
 
 		// Prevent any previews of this block.
 		if ( is_admin() || wp_is_json_request() ) {
-			return __( 'No preview is available for this Pods View, you will see it on the frontend.', 'pods' );
+			ob_start();
+			?>
+				<div class="pods-block-placeholder_container">
+					<div class="pods-block-placeholder_content-container">
+						<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-green.svg" alt="Pods logo" class="pods-logo">
+						<div class="pods-block-placeholder_content">
+							<h2 class="pods-block-placeholder_title">View</h2>
+							<p><?php echo __( 'No preview is available for this Pods Form, you will see it on the frontend.', 'pods' ); ?></p>
+						</div>
+					</div>
+					<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-view-placeholder.svg" alt="Generic placeholder image depicting a common form layout" class="pods-block-placeholder_image">
+				</div>
+			<?
+			return ob_get_clean();
 		}
 
 		return pods_shortcode( $attributes );

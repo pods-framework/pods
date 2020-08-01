@@ -3097,6 +3097,14 @@ class PodsAdmin {
 					],
 					'help'       => __( 'Bi-directional fields will update their related field for any item you select. This feature is only available for two relationships between two Pods.<br /><br />For example, when you update a Parent pod item to relate to a Child item, when you go to edit that Child item you will see the Parent pod item selected.', 'pods' ),
 				],
+				'required'    => [
+					'name'              => 'required',
+					'label'             => __( 'Required', 'pods' ),
+					'type'              => 'boolean',
+					'default'           => 0,
+					'boolean_yes_label' => __( 'Require this field to not be empty in forms', 'pods' ),
+					'help'              => 'help',
+				],
 			],
 			'additional-field' => [],
 			'advanced'         => [
@@ -3384,6 +3392,19 @@ class PodsAdmin {
 				'depends-on' => [ 'unique' => true ],
 			],
 		] );*/
+
+		if ( 'table' === $pod['storage'] ) {
+			Tribe__Main::array_insert_after_key( 'required', $options['basic'], [
+				'unique' => [
+					'name'              => 'unique',
+					'label'             => __( 'Unique', 'pods' ),
+					'type'              => 'boolean',
+					'default'           => 0,
+					'boolean_yes_label' => __( 'Require this field to be a unique value when adding a new item', 'pods' ),
+					'help'              => 'help',
+				],
+			] );
+		}
 
 		if ( class_exists( 'Pods_Helpers' ) ) {
 			$input_helpers = [

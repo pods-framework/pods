@@ -85,9 +85,7 @@ window.PodsDFV = {
 			// properties, so discard the others for now, until they're
 			// removed from the API.
 			const actualData = {
-				config: {
-					...data.config,
-				},
+				config: window.podsAdminConfig,
 				fieldType: data.fieldType,
 				data,
 			};

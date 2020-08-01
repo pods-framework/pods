@@ -1669,14 +1669,14 @@ class PodsAdmin {
 					'label'           => __( 'Label', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
-					'default'         => str_replace( '_', ' ', pods_v( 'name', $pod ) ),
+					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
 					'text_max_length' => 30,
 				],
 				'label_singular'                   => [
 					'label'           => __( 'Singular Label', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
-					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
+					'default'         => pods_v( 'label_singular', $pod, pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ) ),
 					'text_max_length' => 30,
 				],
 				'label_add_new'                    => [

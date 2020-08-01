@@ -652,10 +652,16 @@ elseif ( 'pod' == $pod_type ) {
 foreach ( $tabs as $tab => $tab_label ) {
     $tab = sanitize_title( $tab );
 
-    if ( in_array( $tab, array( 'manage-fields', 'labels', 'advanced', 'extra-fields' ), true ) || !isset( $tab_options[ $tab ] ) || empty( $tab_options[ $tab ] ) )
-        continue;
-?>
-    <div id="pods-<?php echo esc_attr( $tab ); ?>" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
+	if ( empty( $tab_options[ $tab ] ) || in_array( $tab, [
+			'manage-fields',
+			'labels',
+			'advanced',
+			'extra-fields',
+		], true ) ) {
+		continue;
+	}
+	?>
+	<div id="pods-<?php echo esc_attr( $tab ); ?>" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
         <?php
             $fields = $tab_options[ $tab ];
             $field_options = PodsForm::fields_setup( $fields );

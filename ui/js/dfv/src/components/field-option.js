@@ -31,17 +31,27 @@ const PodsFieldOption = ( {
 
 	return (
 		<div className="pods-field-option">
-			<label
-				className={ `pods-form-ui-label pods-form-ui-label-${ name }` }
-				htmlFor={ name }>
-				{ label }
-				{ required && ( <span className="pods-form-ui-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
-				{ shouldShowHelpText && ( <HelpTooltip helpText={ helpTextString } /> ) }
-			</label>
+			{ 'heading' !== fieldType && (
+				<label
+					className={ `pods-form-ui-label pods-form-ui-label-${ name }` }
+					htmlFor={ name }>
+					{ label }
+					{ required && ( <span className="pods-form-ui-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
+					{ shouldShowHelpText && ( <HelpTooltip helpText={ helpTextString } /> ) }
+				</label>
+			) }
 
 			<div className="pods-field-option__field">
 				{ ( () => {
 					switch ( fieldType ) {
+						case 'heading': {
+							return (
+								<h3 className={ `pods-form-ui-heading pods-form-ui-heading-${ name }` }>
+									{ label }
+									{ shouldShowHelpText && ( <HelpTooltip helpText={ helpTextString } /> ) }
+								</h3>
+							);
+						}
 						case 'boolean': {
 							return (
 								<input

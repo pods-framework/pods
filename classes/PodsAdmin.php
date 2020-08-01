@@ -1391,19 +1391,19 @@ class PodsAdmin {
 	public function get_global_config( $pod = null ) {
 		// Pod: Backwards compatible methods and hooks.
 		$tabs        = $this->admin_setup_edit_tabs( $pod );
-		$tab_options = $this->admin_setup_edit_options( $pod );
+		$tab_options = $this->admin_setup_edit_options( $pod, $tabs );
 
 		$this->backcompat_convert_tabs_to_groups( $tabs, $tab_options, 'pod/_pods_pod' );
 
 		// Group: Backwards compatible methods and hooks.
 		$group_tabs        = $this->admin_setup_edit_group_tabs( $pod );
-		$group_tab_options = $this->admin_setup_edit_group_options( $pod );
+		$group_tab_options = $this->admin_setup_edit_group_options( $pod, $group_tabs );
 
 		$this->backcompat_convert_tabs_to_groups( $group_tabs, $group_tab_options, 'pod/_pods_group' );
 
 		// Field: Backwards compatible methods and hooks.
 		$field_tabs        = $this->admin_setup_edit_field_tabs( $pod );
-		$field_tab_options = $this->admin_setup_edit_field_options( $pod );
+		$field_tab_options = $this->admin_setup_edit_field_options( $pod, $field_tabs );
 
 		$this->backcompat_convert_tabs_to_groups( $field_tabs, $field_tab_options, 'pod/_pods_field' );
 
@@ -1457,13 +1457,13 @@ class PodsAdmin {
 	}
 
 	/**
-	 * Convet the tabs and their options to groups/fields in the collection storage.
+	 * Convert the tabs and their options to groups/fields in the collection storage.
 	 *
 	 * @since 2.8
 	 *
-	 * @param array  $tabs    List of tabs.
+	 * @param array  $tabs    List of registered tabs.
 	 * @param array  $options List of tab options.
-	 * @param string $parent    The parent object to register to.
+	 * @param string $parent  The parent object to register to.
 	 *
 	 * @return array Global config array.
 	 */
@@ -1655,507 +1655,507 @@ class PodsAdmin {
 	/**
 	 * Get list of Pod options
 	 *
-	 * @param null|\Pods\Whatsit\Pod $pod Pod options.
+	 * @param null|\Pods\Whatsit\Pod $pod  Pod options.
+	 * @param array                  $tabs List of registered tabs.
 	 *
 	 * @return array
 	 */
-	public function admin_setup_edit_options( $pod ) {
-
-		$options = array();
+	public function admin_setup_edit_options( $pod, $tabs = [] ) {
+		$options = [];
 
 		if ( '' === pods_v( 'object', $pod, '' ) && 'settings' !== pods_v( 'type', $pod ) ) {
-			$labels = array(
-				'label'                            => array(
+			$labels = [
+				'label'                            => [
 					'label'           => __( 'Label', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
 					'default'         => str_replace( '_', ' ', pods_v( 'name', $pod ) ),
 					'text_max_length' => 30,
-				),
-				'label_singular'                   => array(
+				],
+				'label_singular'                   => [
 					'label'           => __( 'Singular Label', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
 					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
 					'text_max_length' => 30,
-				),
-				'label_add_new'                    => array(
+				],
+				'label_add_new'                    => [
 					'label'       => __( 'Add New', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
-					'object_type' => array( 'post_type', 'pod' ),
-				),
-				'label_add_new_item'               => array(
+					'object_type' => [ 'post_type', 'pod' ],
+				],
+				'label_add_new_item'               => [
 					'label'         => __( 'Add new %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods'),
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-				),
-				'label_new_item'                   => array(
+				],
+				'label_new_item'                   => [
 					'label'         => __( 'New %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods'),
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type', 'pod' ),
-				),
-				'label_new_item_name'              => array(
+					'object_type'   => [ 'post_type', 'pod' ],
+				],
+				'label_new_item_name'              => [
 					'label'         => __( 'New %s Name', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods'),
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'taxonomy' ),
-				),
-				'label_edit'                       => array(
+					'object_type'   => [ 'taxonomy' ],
+				],
+				'label_edit'                       => [
 					'label'       => __( 'Edit', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
-					'object_type' => array( 'pod' ),
-				),
-				'label_edit_item'                  => array(
+					'object_type' => [ 'pod' ],
+				],
+				'label_edit_item'                  => [
 					'label'         => __( 'Edit %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods'),
+					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-				),
-				'label_update_item'                => array(
+				],
+				'label_update_item'                => [
 					'label'         => __( 'Update %s', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'taxonomy', 'pod' ),
-				),
-				'label_duplicate'                  => array(
+					'object_type'   => [ 'taxonomy', 'pod' ],
+				],
+				'label_duplicate'                  => [
 					'label'       => __( 'Duplicate', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
-					'object_type' => array( 'pod' ),
-				),
-				'label_duplicate_item'             => array(
+					'object_type' => [ 'pod' ],
+				],
+				'label_duplicate_item'             => [
 					'label'         => __( 'Duplicate %s', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'pod' ),
-				),
-				'label_delete_item'                => array(
+					'object_type'   => [ 'pod' ],
+				],
+				'label_delete_item'                => [
 					'label'         => __( 'Delete %s', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'pod' ),
-				),
-				'label_view'                       => array(
+					'object_type'   => [ 'pod' ],
+				],
+				'label_view'                       => [
 					'label'       => __( 'View', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
-					'object_type' => array( 'pod' ),
-				),
-				'label_view_item'                  => array(
+					'object_type' => [ 'pod' ],
+				],
+				'label_view_item'                  => [
 					'label'         => __( 'View %s', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-				),
-				'label_view_items'                 => array(
+				],
+				'label_view_items'                 => [
 					'label'         => __( 'View %s', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type' ),
-				),
-				'label_back_to_manage'             => array(
+					'object_type'   => [ 'post_type' ],
+				],
+				'label_back_to_manage'             => [
 					'label'       => __( 'Back to Manage', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
-					'object_type' => array( 'pod' ),
-				),
-				'label_manage'                     => array(
+					'object_type' => [ 'pod' ],
+				],
+				'label_manage'                     => [
 					'label'       => __( 'Manage', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
-					'object_type' => array( 'pod' ),
-				),
-				'label_manage_items'               => array(
+					'object_type' => [ 'pod' ],
+				],
+				'label_manage_items'               => [
 					'label'         => __( 'Manage %s', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'pod' ),
-				),
-				'label_reorder'                    => array(
+					'object_type'   => [ 'pod' ],
+				],
+				'label_reorder'                    => [
 					'label'       => __( 'Reorder', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
-					'object_type' => array( 'pod' ),
-				),
-				'label_reorder_items'              => array(
+					'object_type' => [ 'pod' ],
+				],
+				'label_reorder_items'              => [
 					'label'         => __( 'Reorder %s', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'pod' ),
-				),
-				'label_all_items'                  => array(
+					'object_type'   => [ 'pod' ],
+				],
+				'label_all_items'                  => [
 					'label'         => __( 'All %s', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-				),
-				'label_search'                     => array(
+				],
+				'label_search'                     => [
 					'label'       => __( 'Search', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
-					'object_type' => array( 'pod' ),
-				),
-				'label_search_items'               => array(
+					'object_type' => [ 'pod' ],
+				],
+				'label_search_items'               => [
 					'label'         => __( 'Search %s', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-				),
-				'label_popular_items'              => array(
+				],
+				'label_popular_items'              => [
 					'label'         => __( 'Popular %s', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'taxonomy' ),
-				),
+					'object_type'   => [ 'taxonomy' ],
+				],
 				// @todo Why was label_parent added previously? Can't find it in WP
-				'label_parent'                     => array(
+				'label_parent'                     => [
 					'label'         => __( 'Parent %s', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type', 'pod' ),
-				),
-				'label_parent_item'                => array(
+					'object_type'   => [ 'post_type', 'pod' ],
+				],
+				'label_parent_item'                => [
 					'label'         => __( 'Parent %s', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'taxonomy' ),
-				),
-				'label_parent_item_colon'          => array(
+					'object_type'   => [ 'taxonomy' ],
+				],
+				'label_parent_item_colon'          => [
 					'label'         => __( 'Parent %s:', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-				),
-				'label_not_found'                  => array(
+				],
+				'label_not_found'                  => [
 					'label'   => __( 'Not Found', 'pods' ),
 					'help'    => __( 'help', 'pods' ),
 					'type'    => 'text',
 					'default' => '',
-				),
-				'label_no_items_found'             => array(
+				],
+				'label_no_items_found'             => [
 					'label'         => __( 'No %s Found', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'pod' ),
-				),
-				'label_not_found_in_trash'         => array(
+					'object_type'   => [ 'pod' ],
+				],
+				'label_not_found_in_trash'         => [
 					'label'       => __( 'Not Found in Trash', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
-					'object_type' => array( 'post_type', 'pod' ),
-				),
-				'label_archives'                   => array(
+					'object_type' => [ 'post_type', 'pod' ],
+				],
+				'label_archives'                   => [
 					'label'         => __( '%s Archives', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type' ),
-				),
-				'label_attributes'                 => array(
+					'object_type'   => [ 'post_type' ],
+				],
+				'label_attributes'                 => [
 					'label'         => __( '%s Attributes', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type' ),
-				),
-				'label_insert_into_item'           => array(
+					'object_type'   => [ 'post_type' ],
+				],
+				'label_insert_into_item'           => [
 					'label'         => __( 'Insert into %s', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type' ),
-				),
-				'label_uploaded_to_this_item'      => array(
+					'object_type'   => [ 'post_type' ],
+				],
+				'label_uploaded_to_this_item'      => [
 					'label'         => __( 'Uploaded to this %s', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type' ),
-				),
-				'label_featured_image'             => array(
+					'object_type'   => [ 'post_type' ],
+				],
+				'label_featured_image'             => [
 					'label'       => __( 'Featured Image', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
 					// 'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
-					'object_type' => array( 'post_type' ),
-				),
-				'label_set_featured_image'         => array(
+					'object_type' => [ 'post_type' ],
+				],
+				'label_set_featured_image'         => [
 					'label'       => __( 'Set featured Image', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
 					// 'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
-					'object_type' => array( 'post_type' ),
-				),
-				'label_remove_featured_image'      => array(
+					'object_type' => [ 'post_type' ],
+				],
+				'label_remove_featured_image'      => [
 					'label'       => __( 'Remove featured Image', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
 					// 'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
-					'object_type' => array( 'post_type' ),
-				),
-				'label_use_featured_image'         => array(
+					'object_type' => [ 'post_type' ],
+				],
+				'label_use_featured_image'         => [
 					'label'       => __( 'Use as featured Image', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'text',
 					'default'     => '',
 					// 'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
-					'object_type' => array( 'post_type' ),
-				),
-				'label_filter_items_list'          => array(
+					'object_type' => [ 'post_type' ],
+				],
+				'label_filter_items_list'          => [
 					'label'         => __( 'Filter %s', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type' ),
-				),
-				'label_items_list_navigation'      => array(
+					'object_type'   => [ 'post_type' ],
+				],
+				'label_items_list_navigation'      => [
 					'label'         => __( '%s list navigation', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type', 'taxonomy' ),
-				),
-				'label_items_list'                 => array(
+					'object_type'   => [ 'post_type', 'taxonomy' ],
+				],
+				'label_items_list'                 => [
 					'label'         => __( '%s list', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type', 'taxonomy' ),
-				),
-				'label_separate_items_with_commas' => array(
+					'object_type'   => [ 'post_type', 'taxonomy' ],
+				],
+				'label_separate_items_with_commas' => [
 					'label'         => __( 'Separate %s with commas', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'taxonomy' ),
-				),
-				'label_add_or_remove_items'        => array(
+					'object_type'   => [ 'taxonomy' ],
+				],
+				'label_add_or_remove_items'        => [
 					'label'         => __( 'Add or remove %s', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'taxonomy' ),
-				),
-				'label_choose_from_the_most_used'  => array(
+					'object_type'   => [ 'taxonomy' ],
+				],
+				'label_choose_from_the_most_used'  => [
 					'label'         => __( 'Choose from the most used %s', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'taxonomy' ),
-				),
-				'label_no_terms'                   => array(
+					'object_type'   => [ 'taxonomy' ],
+				],
+				'label_no_terms'                   => [
 					'label'         => __( 'No %s', 'pods' ),
 					'label_param'   => 'label',
 					'param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'taxonomy' ),
-				),
-				'label_item_published'             => array(
+					'object_type'   => [ 'taxonomy' ],
+				],
+				'label_item_published'             => [
 					'label'         => __( '%s Published.', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type' ),
-				),
-				'label_item_published_privately'   => array(
+					'object_type'   => [ 'post_type' ],
+				],
+				'label_item_published_privately'   => [
 					'label'         => __( '%s published privately.', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type' ),
-				),
-				'label_item_reverted_to_draft'     => array(
+					'object_type'   => [ 'post_type' ],
+				],
+				'label_item_reverted_to_draft'     => [
 					'label'         => __( '%s reverted to draft.', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type' ),
-				),
-				'label_item_scheduled'             => array(
+					'object_type'   => [ 'post_type' ],
+				],
+				'label_item_scheduled'             => [
 					'label'         => __( '%s scheduled.', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type' ),
-				),
-				'label_item_updated'               => array(
+					'object_type'   => [ 'post_type' ],
+				],
+				'label_item_updated'               => [
 					'label'         => __( '%s updated.', 'pods' ),
 					'label_param'   => 'label_singular',
 					'param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
-					'object_type'   => array( 'post_type' ),
-				),
-			);
+					'object_type'   => [ 'post_type' ],
+				],
+			];
 
-			$options['labels'] = array();
+			$options['labels'] = [];
 
 			/**
 			 * Filter through all labels if they have an object_type set and match it against the current object type
 			 */
-			foreach ( $labels as $label => $labeldata ) {
-				if ( array_key_exists( 'object_type', $labeldata ) ) {
-					if ( in_array( pods_v( 'type', $pod ), $labeldata['object_type'], true ) ) {
+			foreach ( $labels as $label => $label_data ) {
+				if ( array_key_exists( 'object_type', $label_data ) ) {
+					if ( in_array( pods_v( 'type', $pod ), $label_data['object_type'], true ) ) {
 						// Do not add the object_type to the actual label data
-						unset( $labeldata['object_type'] );
-						$options['labels'][ $label ] = $labeldata;
+						unset( $label_data['object_type'] );
+
+						$options['labels'][ $label ] = $label_data;
 					}
 				} else {
-					$options['labels'][ $label ] = $labeldata;
+					$options['labels'][ $label ] = $label_data;
 				}
 			}
 		} elseif ( 'settings' === pods_v( 'type', $pod ) ) {
-
-			$options['labels'] = array(
-				'label'     => array(
+			$options['labels'] = [
+				'label'     => [
 					'label'           => __( 'Page Title', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
 					'default'         => str_replace( '_', ' ', pods_v( 'name', $pod ) ),
 					'text_max_length' => 30,
-				),
-				'menu_name' => array(
+				],
+				'menu_name' => [
 					'label'           => __( 'Menu Name', 'pods' ),
 					'help'            => __( 'help', 'pods' ),
 					'type'            => 'text',
 					'default'         => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
 					'text_max_length' => 30,
-				),
-			);
+				],
+			];
 		}//end if
 
 		if ( 'post_type' === $pod['type'] ) {
-			$options['admin-ui'] = array(
-				'description'          => array(
+			$options['admin-ui'] = [
+				'description'          => [
 					'label'   => __( 'Post Type Description', 'pods' ),
 					'help'    => __( 'A short descriptive summary of what the post type is.', 'pods' ),
 					'type'    => 'text',
 					'default' => '',
-				),
-				'show_ui'              => array(
+				],
+				'show_ui'              => [
 					'label'             => __( 'Show Admin UI', 'pods' ),
 					'help'              => __( 'Whether to generate a default UI for managing this post type in the admin.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => pods_v( 'public', $pod, true ),
 					'boolean_yes_label' => '',
-				),
-				'show_in_menu'         => array(
+				],
+				'show_in_menu'         => [
 					'label'             => __( 'Show Admin Menu in Dashboard', 'pods' ),
 					'help'              => __( 'Whether to show the post type in the admin menu.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => pods_v( 'public', $pod, true ),
 					'dependency'        => true,
 					'boolean_yes_label' => '',
-				),
-				'menu_location_custom' => array(
+				],
+				'menu_location_custom' => [
 					'label'      => __( 'Parent Menu ID (optional)', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
-					'depends-on' => array( 'show_in_menu' => true ),
-				),
-				'menu_name'            => array(
+					'depends-on' => [ 'show_in_menu' => true ],
+				],
+				'menu_name'            => [
 					'label'      => __( 'Menu Name', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array( 'show_in_menu' => true ),
-				),
-				'menu_position'        => array(
+					'depends-on' => [ 'show_in_menu' => true ],
+				],
+				'menu_position'        => [
 					'label'              => __( 'Menu Position', 'pods' ),
 					'help'               => __( 'help', 'pods' ),
 					'type'               => 'number',
@@ -2163,229 +2163,229 @@ class PodsAdmin {
 					'number_format'      => '9999.99',
 					'number_format_soft' => 1,
 					'default'            => 0,
-					'depends-on'         => array( 'show_in_menu' => true ),
-				),
-				'menu_icon'            => array(
+					'depends-on'         => [ 'show_in_menu' => true ],
+				],
+				'menu_icon'            => [
 					'label'      => __( 'Menu Icon', 'pods' ),
 					'help'       => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank" rel="noopener noreferrer">site tag</a> type <a href="https://pods.io/docs/build/special-magic-tags/" target="_blank" rel="noopener noreferrer">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank" rel="noopener noreferrer">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array( 'show_in_menu' => true ),
-				),
-				'show_in_nav_menus'    => array(
+					'depends-on' => [ 'show_in_menu' => true ],
+				],
+				'show_in_nav_menus'    => [
 					'label'             => __( 'Show in Navigation Menus', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
-				),
-				'show_in_admin_bar'    => array(
+				],
+				'show_in_admin_bar'    => [
 					'label'             => __( 'Show in Admin Bar "New" Menu', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'dependency'        => true,
 					'boolean_yes_label' => '',
-				),
-				'name_admin_bar'       => array(
+				],
+				'name_admin_bar'       => [
 					'label'      => __( 'Admin bar name', 'pods' ),
 					'help'       => __( 'Defaults to singular name', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array( 'show_in_admin_bar' => true ),
-				),
-			);
+					'depends-on' => [ 'show_in_admin_bar' => true ],
+				],
+			];
 
 			$post_type_name = pods_v( 'name', $pod, 'post_type', true );
 
-			$options['advanced'] = array(
-				'public'                  => array(
+			$options['advanced'] = [
+				'public'                 => [
 					'label'             => __( 'Public', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'description'       => 'Some text here',
 					'boolean_yes_label' => '',
-				),
-				'publicly_queryable'      => array(
+				],
+				'publicly_queryable'     => [
 					'label'             => __( 'Publicly Queryable', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => pods_v( 'public', $pod, true ),
 					'boolean_yes_label' => '',
-				),
-				'exclude_from_search'     => array(
+				],
+				'exclude_from_search'    => [
 					'label'             => __( 'Exclude from Search', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => ! pods_v( 'public', $pod, true ),
 					'boolean_yes_label' => '',
-				),
-				'capability_type'         => array(
+				],
+				'capability_type'        => [
 					'label'      => __( 'User Capability', 'pods' ),
-					'help'       => __( 'Uses these capabilties for access to this post type: edit_{capability}, read_{capability}, and delete_{capability}', 'pods' ),
+					'help'       => __( 'Uses these capabilities for access to this post type: edit_{capability}, read_{capability}, and delete_{capability}', 'pods' ),
 					'type'       => 'pick',
 					'default'    => 'post',
-					'data'       => array(
+					'data'       => [
 						'post'   => 'post',
 						'page'   => 'page',
 						'custom' => __( 'Custom Capability', 'pods' ),
-					),
+					],
 					'dependency' => true,
-				),
-				'capability_type_custom'  => array(
+				],
+				'capability_type_custom' => [
 					'label'      => __( 'Custom User Capability', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => pods_v( 'name', $pod ),
-					'depends-on' => array( 'capability_type' => 'custom' ),
-				),
-				'capability_type_extra'   => array(
+					'depends-on' => [ 'capability_type' => 'custom' ],
+				],
+				'capability_type_extra'  => [
 					'label'             => __( 'Additional User Capabilities', 'pods' ),
 					'help'              => __( 'Enables additional capabilities for this Post Type including: delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, and edit_published_{capability}s', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
-				),
-				'has_archive'             => array(
+				],
+				'has_archive'            => [
 					'label'             => __( 'Enable Archive Page', 'pods' ),
 					'help'              => __( 'If enabled, creates an archive page with list of of items in this custom post type. Functions like a category page for posts. Can be controlled with a template in your theme called "archive-{$post-type}.php".', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'dependency'        => true,
 					'boolean_yes_label' => '',
-				),
-				'has_archive_slug'        => array(
+				],
+				'has_archive_slug'       => [
 					'label'      => __( 'Archive Page Slug Override', 'pods' ),
 					'help'       => __( 'If archive page is enabled, you can override the slug used by WordPress, which defaults to the name of the post type.', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array( 'has_archive' => true ),
-				),
-				'hierarchical'            => array(
+					'depends-on' => [ 'has_archive' => true ],
+				],
+				'hierarchical'           => [
 					'label'             => __( 'Hierarchical', 'pods' ),
 					'help'              => __( 'Allows for parent/ child relationships between items, just like with Pages. Note: To edit relationships in the post editor, you must enable "Page Attributes" in the "Supports" section below.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'dependency'        => true,
 					'boolean_yes_label' => '',
-				),
-				'rewrite'                 => array(
+				],
+				'rewrite'                => [
 					'label'             => __( 'Rewrite', 'pods' ),
 					'help'              => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Permalinks. If not enabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'dependency'        => true,
 					'boolean_yes_label' => '',
-				),
-				'rewrite_custom_slug'     => array(
+				],
+				'rewrite_custom_slug'    => [
 					'label'      => __( 'Custom Rewrite Slug', 'pods' ),
 					'help'       => __( 'Changes the first segment of the URL, which by default is the name of the Pod. For example, if your Pod is called "foo", if this field is left blank, your link will be "example.com/foo/post_slug", but if you were to enter "bar" your link will be "example.com/bar/post_slug".', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array( 'rewrite' => true ),
-				),
-				'rewrite_with_front'      => array(
+					'depends-on' => [ 'rewrite' => true ],
+				],
+				'rewrite_with_front'     => [
 					'label'             => __( 'Rewrite with Front', 'pods' ),
 					'help'              => __( 'Allows permalinks to be prepended with your front base (example: if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/)', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
-					'depends-on'        => array( 'rewrite' => true ),
+					'depends-on'        => [ 'rewrite' => true ],
 					'boolean_yes_label' => '',
-				),
-				'rewrite_feeds'           => array(
+				],
+				'rewrite_feeds'          => [
 					'label'             => __( 'Rewrite Feeds', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
-					'depends-on'        => array( 'rewrite' => true ),
+					'depends-on'        => [ 'rewrite' => true ],
 					'boolean_yes_label' => '',
-				),
-				'rewrite_pages'           => array(
+				],
+				'rewrite_pages'          => [
 					'label'             => __( 'Rewrite Pages', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
-					'depends-on'        => array( 'rewrite' => true ),
+					'depends-on'        => [ 'rewrite' => true ],
 					'boolean_yes_label' => '',
-				),
-				'query_var'               => array(
+				],
+				'query_var'              => [
 					'label'             => __( 'Query Var', 'pods' ),
 					'help'              => __( 'The Query Var is used in the URL and underneath the WordPress Rewrite API to tell WordPress what page or post type you are on. For a list of reserved Query Vars, read <a href="http://codex.wordpress.org/WordPress_Query_Vars">WordPress Query Vars</a> from the WordPress Codex.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
-				),
-				'can_export'              => array(
+				],
+				'can_export'             => [
 					'label'             => __( 'Exportable', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
-				),
-				'default_status'          => array(
+				],
+				'default_status'         => [
 					'label'       => __( 'Default Status', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'pick',
 					'pick_object' => 'post-status',
 					'default'     => apply_filters( "pods_api_default_status_{$post_type_name}", 'draft', $pod ),
-				),
-			);
+				],
+			];
 		} elseif ( 'taxonomy' === $pod['type'] ) {
-			$options['admin-ui'] = array(
-				'description'           => array(
+			$options['admin-ui'] = [
+				'description'           => [
 					'label'   => __( 'Taxonomy Description', 'pods' ),
 					'help'    => __( 'A short descriptive summary of what the taxonomy is.', 'pods' ),
 					'type'    => 'text',
 					'default' => '',
-				),
-				'show_ui'               => array(
+				],
+				'show_ui'               => [
 					'label'             => __( 'Show Admin UI', 'pods' ),
 					'help'              => __( 'Whether to generate a default UI for managing this taxonomy.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => pods_v( 'public', $pod, true ),
 					'dependency'        => true,
 					'boolean_yes_label' => '',
-				),
-				'show_in_menu'          => array(
+				],
+				'show_in_menu'          => [
 					'label'             => __( 'Show Admin Menu in Dashboard', 'pods' ),
 					'help'              => __( 'Whether to show the taxonomy in the admin menu.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => pods_v( 'public', $pod, true ),
 					'dependency'        => true,
-					'depends-on'        => array( 'show_ui' => true ),
+					'depends-on'        => [ 'show_ui' => true ],
 					'boolean_yes_label' => '',
-				),
-				'menu_name'             => array(
+				],
+				'menu_name'             => [
 					'label'      => __( 'Menu Name', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array( 'show_ui' => true ),
-				),
-				'menu_location'         => array(
+					'depends-on' => [ 'show_ui' => true ],
+				],
+				'menu_location'         => [
 					'label'      => __( 'Menu Location', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'pick',
 					'default'    => 'default',
-					'depends-on' => array( 'show_ui' => true ),
-					'data'       => array(
+					'depends-on' => [ 'show_ui' => true ],
+					'data'       => [
 						'default'     => __( 'Default - Add to associated Post Type(s) menus', 'pods' ),
 						'settings'    => __( 'Add a submenu item to Settings menu', 'pods' ),
 						'appearances' => __( 'Add a submenu item to Appearances menu', 'pods' ),
 						'submenu'     => __( 'Add a submenu item to another menu', 'pods' ),
 						'objects'     => __( 'Make a new menu item', 'pods' ),
 						'top'         => __( 'Make a new menu item below Settings', 'pods' ),
-					),
+					],
 					'dependency' => true,
-				),
-				'menu_location_custom'  => array(
+				],
+				'menu_location_custom'  => [
 					'label'      => __( 'Custom Menu Location', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
-					'depends-on' => array( 'menu_location' => 'submenu' ),
-				),
-				'menu_position'         => array(
+					'depends-on' => [ 'menu_location' => 'submenu' ],
+				],
+				'menu_position'         => [
 					'label'              => __( 'Menu Position', 'pods' ),
 					'help'               => __( 'help', 'pods' ),
 					'type'               => 'number',
@@ -2393,208 +2393,210 @@ class PodsAdmin {
 					'number_format'      => '9999.99',
 					'number_format_soft' => 1,
 					'default'            => 0,
-					'depends-on'         => array( 'menu_location' => array( 'objects', 'top' ) ),
-				),
-				'menu_icon'             => array(
+					'depends-on'         => [ 'menu_location' => [ 'objects', 'top' ] ],
+				],
+				'menu_icon'             => [
 					'label'      => __( 'Menu Icon URL', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array( 'menu_location' => array( 'objects', 'top' ) ),
-				),
-				'show_in_nav_menus'     => array(
+					'depends-on' => [ 'menu_location' => [ 'objects', 'top' ] ],
+				],
+				'show_in_nav_menus'     => [
 					'label'             => __( 'Show in Navigation Menus', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => pods_v( 'public', $pod, true ),
 					'boolean_yes_label' => '',
-				),
-				'show_tagcloud'         => array(
-					'label'             => __( 'Allow in Tagcloud Widget', 'pods' ),
+				],
+				'show_tagcloud'         => [
+					'label'             => __( 'Allow in Tag Cloud Widget', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => pods_v( 'show_ui', $pod, pods_v( 'public', $pod, true ) ),
 					'boolean_yes_label' => '',
-				),
+				],
 				// @todo check https://core.trac.wordpress.org/ticket/36964
-				'show_tagcloud_in_edit' => array(
-					'label'             => __( 'Allow Tagcloud on term edit pages', 'pods' ),
+				'show_tagcloud_in_edit' => [
+					'label'             => __( 'Allow Tag Cloud on term edit pages', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => pods_v( 'show_ui', $pod, pods_v( 'show_tagcloud', $pod, true ) ),
 					'boolean_yes_label' => '',
-				),
-				'show_in_quick_edit'    => array(
+				],
+				'show_in_quick_edit'    => [
 					'label'             => __( 'Allow in quick/bulk edit panel', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => pods_v( 'show_ui', $pod, pods_v( 'public', $pod, true ) ),
 					'boolean_yes_label' => '',
-				),
-			);
+				],
+			];
 
-			$options['admin-ui']['show_admin_column'] = array(
+			$options['admin-ui']['show_admin_column'] = [
 				'label'             => __( 'Show Taxonomy column on Post Types', 'pods' ),
 				'help'              => __( 'Whether to add a column for this taxonomy on the associated post types manage screens', 'pods' ),
 				'type'              => 'boolean',
 				'default'           => false,
 				'boolean_yes_label' => '',
-			);
+			];
 
 			// Integration for Single Value Taxonomy UI
 			if ( function_exists( 'tax_single_value_meta_box' ) ) {
-				$options['admin-ui']['single_value'] = array(
+				$options['admin-ui']['single_value'] = [
 					'label'             => __( 'Single Value Taxonomy', 'pods' ),
 					'help'              => __( 'Use a drop-down for the input instead of the WordPress default', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'boolean_yes_label' => '',
-				);
+				];
 
-				$options['admin-ui']['single_value_required'] = array(
+				$options['admin-ui']['single_value_required'] = [
 					'label'             => __( 'Single Value Taxonomy - Required', 'pods' ),
 					'help'              => __( 'A term will be selected by default in the Post Editor, not optional', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'boolean_yes_label' => '',
-				);
+				];
 			}
 
-			$options['advanced'] = array(
-				'public'                  => array(
+			$options['advanced'] = [
+				'public'                 => [
 					'label'             => __( 'Public', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
-				),
-				'hierarchical'            => array(
+				],
+				'hierarchical'           => [
 					'label'             => __( 'Hierarchical', 'pods' ),
 					'help'              => __( 'Hierarchical taxonomies will have a list with checkboxes to select an existing category in the taxonomy admin box on the post edit page (like default post categories). Non-hierarchical taxonomies will just have an empty text field to type-in taxonomy terms to associate with the post (like default post tags).', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'dependency'        => true,
 					'boolean_yes_label' => '',
-				),
-				'rewrite'                 => array(
+				],
+				'rewrite'                => [
 					'label'             => __( 'Rewrite', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'dependency'        => true,
 					'boolean_yes_label' => '',
-				),
-				'rewrite_custom_slug'     => array(
+				],
+				'rewrite_custom_slug'    => [
 					'label'      => __( 'Custom Rewrite Slug', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array( 'rewrite' => true ),
-				),
-				'rewrite_with_front'      => array(
+					'depends-on' => [ 'rewrite' => true ],
+				],
+				'rewrite_with_front'     => [
 					'label'             => __( 'Rewrite with Front', 'pods' ),
 					'help'              => __( 'Allows permalinks to be prepended with your front base (example: if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/)', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
-					'depends-on'        => array( 'rewrite' => true ),
-				),
-				'rewrite_hierarchical'    => array(
+					'depends-on'        => [ 'rewrite' => true ],
+				],
+				'rewrite_hierarchical'   => [
 					'label'             => __( 'Hierarchical Permalinks', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
-					'depends-on'        => array( 'rewrite' => true ),
-				),
-				'capability_type'         => array(
+					'depends-on'        => [ 'rewrite' => true ],
+				],
+				'capability_type'        => [
 					'label'      => __( 'User Capability', 'pods' ),
 					'help'       => __( 'Uses WordPress term capabilities by default', 'pods' ),
 					'type'       => 'pick',
 					'default'    => 'default',
-					'data'       => array(
+					'data'       => [
 						'default' => 'Default',
 						'custom'  => __( 'Custom Capability', 'pods' ),
-					),
+					],
 					'dependency' => true,
-				),
-				'capability_type_custom'  => array(
+				],
+				'capability_type_custom' => [
 					'label'      => __( 'Custom User Capability', 'pods' ),
 					'help'       => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
 					'type'       => 'text',
 					'default'    => pods_v( 'name', $pod ),
-					'depends-on' => array( 'capability_type' => 'custom' ),
-				),
-				'query_var'               => array(
+					'depends-on' => [ 'capability_type' => 'custom' ],
+				],
+				'query_var'              => [
 					'label'             => __( 'Query Var', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'boolean_yes_label' => '',
-				),
-				'query_var'               => array(
+				],
+				'query_var'              => [
 					'label'             => __( 'Query Var', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'dependency'        => true,
 					'boolean_yes_label' => '',
-				),
-				'query_var_string'        => array(
+				],
+				'query_var_string'       => [
 					'label'      => __( 'Custom Query Var Name', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array( 'query_var' => true ),
-				),
-				'sort'                    => array(
+					'depends-on' => [ 'query_var' => true ],
+				],
+				'sort'                   => [
 					'label'             => __( 'Remember order saved on Post Types', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'boolean_yes_label' => '',
-				),
-				'update_count_callback'   => array(
+				],
+				'update_count_callback'  => [
 					'label'   => __( 'Function to call when updating counts', 'pods' ),
 					'help'    => __( 'help', 'pods' ),
 					'type'    => 'text',
 					'default' => '',
-				),
-			);
+				],
+			];
+
+			// @todo Handle extra-fields content here.
 		} elseif ( 'settings' === $pod['type'] ) {
-			$options['admin-ui'] = array(
-				'ui_style'             => array(
+			$options['admin-ui'] = [
+				'ui_style'             => [
 					'label'      => __( 'Admin UI Style', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'pick',
 					'default'    => 'settings',
-					'data'       => array(
+					'data'       => [
 						'settings'  => __( 'Normal Settings Form', 'pods' ),
 						'post_type' => __( 'Post Type UI', 'pods' ),
 						'custom'    => __( 'Custom (hook into pods_admin_ui_custom or pods_admin_ui_custom_{podname} action)', 'pods' ),
-					),
+					],
 					'dependency' => true,
-				),
-				'menu_location'        => array(
+				],
+				'menu_location'        => [
 					'label'      => __( 'Menu Location', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'pick',
 					'default'    => 'settings',
-					'data'       => array(
+					'data'       => [
 						'settings'    => __( 'Add a submenu item to Settings menu', 'pods' ),
 						'appearances' => __( 'Add a submenu item to Appearances menu', 'pods' ),
 						'submenu'     => __( 'Add a submenu item to another menu', 'pods' ),
 						'top'         => __( 'Make a new menu item below Settings', 'pods' ),
-					),
+					],
 					'dependency' => true,
-				),
-				'menu_location_custom' => array(
+				],
+				'menu_location_custom' => [
 					'label'      => __( 'Custom Menu Location', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
-					'depends-on' => array( 'menu_location' => 'submenu' ),
-				),
-				'menu_position'        => array(
+					'depends-on' => [ 'menu_location' => 'submenu' ],
+				],
+				'menu_position'        => [
 					'label'              => __( 'Menu Position', 'pods' ),
 					'help'               => __( 'help', 'pods' ),
 					'type'               => 'number',
@@ -2602,67 +2604,67 @@ class PodsAdmin {
 					'number_format'      => '9999.99',
 					'number_format_soft' => 1,
 					'default'            => 0,
-					'depends-on'         => array( 'menu_location' => 'top' ),
-				),
-				'menu_icon'            => array(
+					'depends-on'         => [ 'menu_location' => 'top' ],
+				],
+				'menu_icon'            => [
 					'label'      => __( 'Menu Icon URL', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array( 'menu_location' => 'top' ),
-				),
-			);
+					'depends-on' => [ 'menu_location' => 'top' ],
+				],
+			];
 
 			// @todo fill this in
-			$options['advanced'] = array(
+			$options['advanced'] = [
 				'temporary' => 'This type has the fields hardcoded',
-			// :(
-			);
+				// :(
+			];
 		} elseif ( 'pod' === $pod['type'] ) {
-			$actions_enabled = array(
+			$actions_enabled = [
 				'add',
 				'edit',
 				'duplicate',
 				'delete',
-			);
+			];
 
 			if ( 1 === (int) pods_v( 'ui_export', $pod ) ) {
-				$actions_enabled = array(
+				$actions_enabled = [
 					'add',
 					'edit',
 					'duplicate',
 					'delete',
 					'export',
-				);
+				];
 			}
 
-			$options['admin-ui'] = array(
-				'ui_style'             => array(
+			$options['admin-ui'] = [
+				'ui_style'             => [
 					'label'      => __( 'Admin UI Style', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'pick',
 					'default'    => 'settings',
-					'data'       => array(
+					'data'       => [
 						'post_type' => __( 'Normal (Looks like the Post Type UI)', 'pods' ),
 						'custom'    => __( 'Custom (hook into pods_admin_ui_custom or pods_admin_ui_custom_{podname} action)', 'pods' ),
-					),
+					],
 					'dependency' => true,
-				),
-				'show_in_menu'         => array(
+				],
+				'show_in_menu'         => [
 					'label'             => __( 'Show Admin Menu in Dashboard', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'boolean_yes_label' => '',
 					'dependency'        => true,
-				),
-				'menu_location_custom' => array(
+				],
+				'menu_location_custom' => [
 					'label'      => __( 'Parent Menu ID (optional)', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
-					'depends-on' => array( 'show_in_menu' => true ),
-				),
-				'menu_position'        => array(
+					'depends-on' => [ 'show_in_menu' => true ],
+				],
+				'menu_position'        => [
 					'label'              => __( 'Menu Position', 'pods' ),
 					'help'               => __( 'help', 'pods' ),
 					'type'               => 'number',
@@ -2670,63 +2672,63 @@ class PodsAdmin {
 					'number_format'      => '9999.99',
 					'number_format_soft' => 1,
 					'default'            => 0,
-					'depends-on'         => array( 'show_in_menu' => true ),
-				),
-				'menu_icon'            => array(
+					'depends-on'         => [ 'show_in_menu' => true ],
+				],
+				'menu_icon'            => [
 					'label'      => __( 'Menu Icon URL', 'pods' ),
 					'help'       => __( 'This is the icon shown to the left of the menu text for this content type.', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array( 'show_in_menu' => true ),
-				),
-				'ui_icon'              => array(
+					'depends-on' => [ 'show_in_menu' => true ],
+				],
+				'ui_icon'              => [
 					'label'           => __( 'Header Icon', 'pods' ),
 					'help'            => __( 'This is the icon shown to the left of the heading text at the top of the manage pages for this content type.', 'pods' ),
 					'type'            => 'file',
 					'default'         => '',
 					'file_edit_title' => 0,
-					'depends-on'      => array( 'show_in_menu' => true ),
-				),
-				'ui_actions_enabled'   => array(
+					'depends-on'      => [ 'show_in_menu' => true ],
+				],
+				'ui_actions_enabled'   => [
 					'label'            => __( 'Actions Available', 'pods' ),
 					'help'             => __( 'help', 'pods' ),
 					'type'             => 'pick',
 					'default'          => $actions_enabled,
-					'data'             => array(
+					'data'             => [
 						'add'       => __( 'Add New', 'pods' ),
 						'edit'      => __( 'Edit', 'pods' ),
 						'duplicate' => __( 'Duplicate', 'pods' ),
 						'delete'    => __( 'Delete', 'pods' ),
 						'reorder'   => __( 'Reorder', 'pods' ),
 						'export'    => __( 'Export', 'pods' ),
-					),
+					],
 					'pick_format_type' => 'multi',
 					'dependency'       => true,
-				),
-				'ui_reorder_field'     => array(
+				],
+				'ui_reorder_field'     => [
 					'label'      => __( 'Reorder Field', 'pods' ),
 					'help'       => __( 'This is the field that will be reordered on, it should be numeric.', 'pods' ),
 					'type'       => 'text',
 					'default'    => 'menu_order',
-					'depends-on' => array( 'ui_actions_enabled' => 'reorder' ),
-				),
-				'ui_fields_manage'     => array(
+					'depends-on' => [ 'ui_actions_enabled' => 'reorder' ],
+				],
+				'ui_fields_manage'     => [
 					'label'            => __( 'Admin Table Columns', 'pods' ),
 					'help'             => __( 'help', 'pods' ),
 					'type'             => 'pick',
-					'default'          => array(),
-					'data'             => array(),
+					'default'          => [],
+					'data'             => [],
 					'pick_format_type' => 'multi',
-				),
-				'ui_filters'           => array(
+				],
+				'ui_filters'           => [
 					'label'            => __( 'Search Filters', 'pods' ),
 					'help'             => __( 'help', 'pods' ),
 					'type'             => 'pick',
-					'default'          => array(),
-					'data'             => array(),
+					'default'          => [],
+					'data'             => [],
 					'pick_format_type' => 'multi',
-				),
-			);
+				],
+			];
 
 			if ( ! empty( $pod['fields'] ) ) {
 				if ( isset( $pod['fields'][ pods_v( 'pod_index', $pod, 'name' ) ] ) ) {
@@ -2755,40 +2757,42 @@ class PodsAdmin {
 			}//end if
 
 			// @todo fill this in
-			$options['advanced'] = array(
+			$options['advanced'] = [
 				'temporary' => 'This type has the fields hardcoded',
-			// :(
-			);
+				// :(
+			];
 		}//end if
 
 		$pod_type = $pod['type'];
 		$pod_name = $pod['name'];
 
 		/**
-		 * Add admin fields to the Pods editor for a specific Pod
+		 * Add admin fields to the Pods editor for a specific Pod.
 		 *
-		 * @param array                  $options The Options fields.
 		 * @param null|\Pods\Whatsit\Pod $pod     Current Pods object.
 		 *
-		 * @since  unkown
+		 * @param array                  $options The Options fields.
+		 * @param array                  $tabs    List of registered tabs.
 		 */
-		$options = apply_filters( "pods_admin_setup_edit_options_{$pod_type}_{$pod_name}", $options, $pod );
+		$options = apply_filters( "pods_admin_setup_edit_options_{$pod_type}_{$pod_name}", $options, $pod, $tabs );
 
 		/**
 		 * Add admin fields to the Pods editor for any Pod of a specific content type.
 		 *
 		 * @param array                  $options The Options fields.
 		 * @param null|\Pods\Whatsit\Pod $pod     Current Pods object.
+		 * @param array                  $tabs    List of registered tabs.
 		 */
-		$options = apply_filters( "pods_admin_setup_edit_options_{$pod_type}", $options, $pod );
+		$options = apply_filters( "pods_admin_setup_edit_options_{$pod_type}", $options, $pod, $tabs );
 
 		/**
-		 * Add admin fields to the Pods editor for all Pods
+		 * Add admin fields to the Pods editor for all Pods.
 		 *
 		 * @param array                  $options The Options fields.
 		 * @param null|\Pods\Whatsit\Pod $pod     Current Pods object.
+		 * @param array                  $tabs    List of registered tabs.
 		 */
-		$options = apply_filters( 'pods_admin_setup_edit_options', $options, $pod );
+		$options = apply_filters( 'pods_admin_setup_edit_options', $options, $pod, $tabs );
 
 		return $options;
 	}
@@ -2829,29 +2833,30 @@ class PodsAdmin {
 	 *
 	 * @since 2.8
 	 *
-	 * @param \Pods\Whatsit\Pod $pod Pod data.
+	 * @param \Pods\Whatsit\Pod $pod  Pod data.
+	 * @param array             $tabs List of registered tabs.
 	 *
 	 * @return array List of Group options.
 	 */
-	public function admin_setup_edit_group_options( $pod ) {
+	public function admin_setup_edit_group_options( $pod, $tabs ) {
 		$options = [];
 
 		$options['basic'] = [
-			'label' => [
-				'name'    => 'label',
-				'label'   => __( 'Label', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'type'    => 'text',
+			'label'       => [
+				'name'     => 'label',
+				'label'    => __( 'Label', 'pods' ),
+				'help'     => __( 'help', 'pods' ),
+				'type'     => 'text',
 				'required' => true,
-				'default' => '',
+				'default'  => '',
 			],
-			'name' => [
-				'name'    => 'name',
-				'label'   => __( 'Name', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'type'    => 'slug',
+			'name'        => [
+				'name'     => 'name',
+				'label'    => __( 'Name', 'pods' ),
+				'help'     => __( 'help', 'pods' ),
+				'type'     => 'slug',
 				'required' => true,
-				'default' => '',
+				'default'  => '',
 			],
 			'description' => [
 				'name'    => 'description',
@@ -2871,29 +2876,29 @@ class PodsAdmin {
 		];
 
 		$options['advanced_tab'] = [
-			'custom_field_1' => [
+			'custom_field_1'    => [
 				'name'    => 'custom_field_1',
 				'label'   => __( 'Custom Field 1', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 			],
-			'custom_field_2' => [
+			'custom_field_2'    => [
 				'name'    => 'custom_field_2',
 				'label'   => __( 'Custom Field 2', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 			],
-			'custom_field_3' => [
-				'name'    => 'custom_field_3',
-				'label'   => __( 'Custom Field 3', 'pods' ),
-				'help'    => __( 'Example help here', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
+			'custom_field_3'    => [
+				'name'        => 'custom_field_3',
+				'label'       => __( 'Custom Field 3', 'pods' ),
+				'help'        => __( 'Example help here', 'pods' ),
+				'type'        => 'text',
+				'default'     => '',
 				'description' => 'Example description here',
 			],
-			'custom_field_4' => [
+			'custom_field_4'    => [
 				'name'    => 'custom_field_4',
 				'label'   => __( 'Custom Field 4', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
@@ -2908,13 +2913,13 @@ class PodsAdmin {
 				'default'    => '',
 				'dependency' => true,
 			],
-			'custom_field_5' => [
-				'name'    => 'custom_field_5',
-				'label'   => __( 'Custom Field 5', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
-				'depends-on' => array( 'custom_field_bool' => true ),
+			'custom_field_5'    => [
+				'name'       => 'custom_field_5',
+				'label'      => __( 'Custom Field 5', 'pods' ),
+				'help'       => __( 'help', 'pods' ),
+				'type'       => 'text',
+				'default'    => '',
+				'depends-on' => [ 'custom_field_bool' => true ],
 			],
 		];
 
@@ -2956,8 +2961,9 @@ class PodsAdmin {
 		 *
 		 * @param array             $options Tabs, indexed by label.
 		 * @param \Pods\Whatsit\Pod $pod     Pods object for the Pod this UI is for.
+		 * @param array             $tabs    List of registered tabs.
 		 */
-		$options = apply_filters( 'pods_admin_setup_edit_group_options', $options, $pod );
+		$options = apply_filters( 'pods_admin_setup_edit_group_options', $options, $pod, $tabs );
 
 		return $options;
 	}
@@ -2970,24 +2976,21 @@ class PodsAdmin {
 	 * @return array
 	 */
 	public function admin_setup_edit_field_tabs( $pod ) {
-
-		$core_tabs = array(
+		$core_tabs = [
 			'basic'            => __( 'Basic', 'pods' ),
 			'additional-field' => __( 'Additional Field Options', 'pods' ),
 			'advanced'         => __( 'Advanced', 'pods' ),
-		);
+		];
 
 		/**
-		 * Field option tabs
-		 *
-		 * Use to add new tabs, default tabs are added after this filter (IE you can't remove/modify them with this, kthanksbye).
+		 * Filter the Field option tabs. Core tabs are added after this filter.
 		 *
 		 * @since unknown
 		 *
 		 * @param array                  $tabs Tabs to add, starts empty.
 		 * @param null|\Pods\Whatsit\Pod $pod  Current Pods object.
 		 */
-		$tabs = apply_filters( 'pods_admin_setup_edit_field_tabs', array(), $pod );
+		$tabs = apply_filters( 'pods_admin_setup_edit_field_tabs', [], $pod );
 
 		$tabs = array_merge( $core_tabs, $tabs );
 
@@ -2997,150 +3000,186 @@ class PodsAdmin {
 	/**
 	 * Get list of Pod field options
 	 *
-	 * @param null|\Pods\Whatsit\Pod $pod Pod options.
+	 * @param null|\Pods\Whatsit\Pod $pod  Pod options.
+	 * @param array                  $tabs List of registered tabs.
 	 *
 	 * @return array
 	 */
-	public function admin_setup_edit_field_options( $pod ) {
-
-		$options = array();
-
-		$options['additional-field'] = array();
-
+	public function admin_setup_edit_field_options( $pod, $tabs = [] ) {
 		$field_types = PodsForm::field_types();
 
-		foreach ( $field_types as $type => $field_type_data ) {
-			/**
-			 * @var $field_type PodsField
-			 */
-			$field_type = PodsForm::field_loader( $type, $field_type_data['file'] );
-
-			$field_type_vars = get_class_vars( get_class( $field_type ) );
-
-			if ( ! isset( $field_type_vars['pod_types'] ) ) {
-				$field_type_vars['pod_types'] = true;
-			}
-
-			$options['additional-field'][ $type ] = array();
-
-			// Only show supported field types
-			if ( true !== $field_type_vars['pod_types'] ) {
-				if ( empty( $field_type_vars['pod_types'] ) ) {
-					continue;
-				} elseif ( is_array( $field_type_vars['pod_types'] ) && ! in_array( pods_v( 'type', $pod ), $field_type_vars['pod_types'], true ) ) {
-					continue;
-				} elseif ( ! is_array( $field_type_vars['pod_types'] ) && pods_v( 'type', $pod ) !== $field_type_vars['pod_types'] ) {
-					continue;
-				}
-			}
-
-			$options['additional-field'][ $type ] = PodsForm::ui_options( $type );
-
-			/**
-			 * Modify Additional Field Options tab
-			 *
-			 * @since 2.7.0
-			 *
-			 * @param array                  $options Additional field type options,
-			 * @param string                 $type    Field type,
-			 * @param array                  $options Tabs, indexed by label,
-			 * @param null|\Pods\Whatsit\Pod $pod     Pods object for the Pod this UI is for.
-			 */
-			$options['additional-field'][ $type ] = apply_filters( "pods_admin_setup_edit_{$type}_additional_field_options", $options['additional-field'][ $type ], $type, $options, $pod );
-			$options['additional-field'][ $type ] = apply_filters( 'pods_admin_setup_edit_additional_field_options', $options['additional-field'][ $type ], $type, $options, $pod );
-		}//end foreach
-
-		$input_helpers = array(
-			'' => '-- Select --',
-		);
-
-		if ( class_exists( 'Pods_Helpers' ) ) {
-			$helpers = pods_api()->load_helpers( array( 'options' => array( 'helper_type' => 'input' ) ) );
-
-			foreach ( $helpers as $helper ) {
-				$input_helpers[ $helper['name'] ] = $helper['name'];
-			}
-		}
-
-		$options['advanced'] = array(
-			__( 'Visual', 'pods' )     => array(
-				'class'        => array(
+		$options = [
+			'basic'            => [
+				'label'       => [
+					'name'     => 'label',
+					'label'    => __( 'Label', 'pods' ),
+					'type'     => 'text',
+					'default'  => '',
+					'help'     => 'help',
+					'required' => true,
+				],
+				'name'        => [
+					'name'       => 'name',
+					'label'      => __( 'Name', 'pods' ),
+					'type'       => 'slug',
+					'default'    => '',
+					'attributes' => [
+						'maxlength' => 50,
+					],
+					'help'       => 'help',
+					'required'   => true,
+				],
+				'description' => [
+					'name'    => 'description',
+					'label'   => __( 'Description', 'pods' ),
+					'type'    => 'text',
+					'default' => '',
+					'help'    => 'help',
+				],
+				'type'        => [
+					'name'         => 'type',
+					'label'        => __( 'Field Type', 'pods' ),
+					'type'         => 'pick',
+					'default'      => 'text',
+					'data'         => [],
+					'type_objects' => $field_types,
+					'dependency'   => true,
+					'help'         => 'help',
+				],
+				'pick_object' => [
+					'name'       => 'pick_object',
+					'label'      => __( 'Related Type', 'pods' ),
+					'type'       => 'pick',
+					'default'    => '',
+					'required'   => true,
+					'data'       => [],
+					'dependency' => true,
+					'depends-on' => [
+						'type' => 'pick',
+					],
+					'help'       => 'help',
+				],
+				'pick_custom' => [
+					'name'       => 'pick_custom',
+					'label'      => __( 'Custom Defined Options', 'pods' ),
+					'type'       => 'paragraph',
+					'default'    => '',
+					'required'   => true,
+					'depends-on' => [
+						'type'        => 'pick',
+						'pick_object' => 'custom-simple',
+					],
+					'help'       => __( 'One option per line, use <em>value|Label</em> for separate values and labels', 'pods' ),
+				],
+				'pick_table'  => [
+					'name'       => 'pick_table',
+					'label'      => __( 'Related Table', 'pods' ),
+					'type'       => 'pick',
+					'default'    => '',
+					'required'   => true,
+					'data'       => [],
+					'depends-on' => [
+						'type'        => 'pick',
+						'pick_object' => 'table',
+					],
+					'help'       => 'help',
+				],
+				'sister_id'   => [
+					'name'       => 'sister_id',
+					'label'      => __( 'Bi-directional Field', 'pods' ),
+					'type'       => 'pick',
+					'default'    => '',
+					'required'   => true,
+					'data'       => [],
+					'depends-on' => [
+						'type'        => 'pick',
+						'pick_object' => PodsForm::field_method( 'pick', 'bidirectional_objects' ),
+					],
+					'help'       => __( 'Bi-directional fields will update their related field for any item you select. This feature is only available for two relationships between two Pods.<br /><br />For example, when you update a Parent pod item to relate to a Child item, when you go to edit that Child item you will see the Parent pod item selected.', 'pods' ),
+				],
+			],
+			'additional-field' => [],
+			'advanced'         => [
+				'visual'                  => [
+					'name'  => 'visual',
+					'label' => __( 'Visual', 'pods' ),
+					'type'  => 'heading',
+				],
+				'class'                   => [
 					'name'    => 'class',
 					'label'   => __( 'Additional CSS Classes', 'pods' ),
 					'help'    => __( 'help', 'pods' ),
 					'type'    => 'text',
 					'default' => '',
-				),
-				'input_helper' => array(
-					'name'    => 'input_helper',
-					'label'   => __( 'Input Helper', 'pods' ),
-					'help'    => __( 'help', 'pods' ),
-					'type'    => 'pick',
-					'default' => '',
-					'data'    => $input_helpers,
-				),
-			),
-			__( 'Values', 'pods' )     => array(
-				'default_value'           => array(
+				],
+				'values'                  => [
+					'name'  => 'values',
+					'label' => __( 'Values', 'pods' ),
+					'type'  => 'heading',
+				],
+				'default_value'           => [
 					'name'    => 'default_value',
 					'label'   => __( 'Default Value', 'pods' ),
 					'help'    => __( 'help', 'pods' ),
 					'type'    => 'text',
 					'default' => '',
-					'options' => array(
+					'options' => [
 						'text_max_length' => - 1,
-					),
-				),
-				'default_value_parameter' => array(
+					],
+				],
+				'default_value_parameter' => [
 					'name'    => 'default_value_parameter',
 					'label'   => __( 'Set Default Value via Parameter', 'pods' ),
 					'help'    => __( 'help', 'pods' ),
 					'type'    => 'text',
 					'default' => '',
-				),
-			),
-			__( 'Visibility', 'pods' ) => array(
-				'restrict_access'    => array(
+				],
+				'visibility'              => [
+					'name'  => 'visibility',
+					'label' => __( 'Visibility', 'pods' ),
+					'type'  => 'heading',
+				],
+				'restrict_access'         => [
 					'name'  => 'restrict_access',
 					'label' => __( 'Restrict Access', 'pods' ),
-					'group' => array(
-						'admin_only'          => array(
+					'group' => [
+						'admin_only'          => [
 							'name'       => 'admin_only',
 							'label'      => __( 'Restrict access to Admins?', 'pods' ),
 							'default'    => 0,
 							'type'       => 'boolean',
 							'dependency' => true,
 							'help'       => __( 'This field will only be able to be edited by users with the ability to manage_options or delete_users, or super admins of a WordPress Multisite network', 'pods' ),
-						),
-						'restrict_role'       => array(
+						],
+						'restrict_role'       => [
 							'name'       => 'restrict_role',
 							'label'      => __( 'Restrict access by Role?', 'pods' ),
 							'default'    => 0,
 							'type'       => 'boolean',
 							'dependency' => true,
-						),
-						'restrict_capability' => array(
+						],
+						'restrict_capability' => [
 							'name'       => 'restrict_capability',
 							'label'      => __( 'Restrict access by Capability?', 'pods' ),
 							'default'    => 0,
 							'type'       => 'boolean',
 							'dependency' => true,
-						),
-						'hidden'              => array(
+						],
+						'hidden'              => [
 							'name'    => 'hidden',
 							'label'   => __( 'Hide field from UI', 'pods' ),
 							'default' => 0,
 							'type'    => 'boolean',
-							'help'    => __( 'This option is overriden by access restrictions. If the user does not have access to edit this field, it will be hidden. If no access restrictions are set, this field will always be hidden.', 'pods' ),
-						),
-						'read_only'           => array(
+							'help'    => __( 'This option is overridden by access restrictions. If the user does not have access to edit this field, it will be hidden. If no access restrictions are set, this field will always be hidden.', 'pods' ),
+						],
+						'read_only'           => [
 							'name'       => 'read_only',
 							'label'      => __( 'Make field "Read Only" in UI', 'pods' ),
 							'default'    => 0,
 							'type'       => 'boolean',
-							'help'       => __( 'This option is overriden by access restrictions. If the user does not have access to edit this field, it will be read only. If no access restrictions are set, this field will always be read only.', 'pods' ),
-							'depends-on' => array(
-								'type' => array(
+							'help'       => __( 'This option is overridden by access restrictions. If the user does not have access to edit this field, it will be read only. If no access restrictions are set, this field will always be read only.', 'pods' ),
+							'depends-on' => [
+								'type' => [
 									'boolean',
 									'color',
 									'currency',
@@ -3155,12 +3194,12 @@ class PodsAdmin {
 									'text',
 									'time',
 									'website',
-								),
-							),
-						),
-					),
-				),
-				'roles_allowed'      => array(
+								],
+							],
+						],
+					],
+				],
+				'roles_allowed'           => [
 					'name'             => 'roles_allowed',
 					'label'            => __( 'Role(s) Allowed', 'pods' ),
 					'help'             => __( 'help', 'pods' ),
@@ -3168,76 +3207,217 @@ class PodsAdmin {
 					'pick_object'      => 'role',
 					'pick_format_type' => 'multi',
 					'default'          => 'administrator',
-					'depends-on'       => array(
+					'depends-on'       => [
 						'restrict_role' => true,
-					),
-				),
-				'capability_allowed' => array(
+					],
+				],
+				'capability_allowed'      => [
 					'name'       => 'capability_allowed',
 					'label'      => __( 'Capability Allowed', 'pods' ),
-					'help'       => __( 'Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
+					'help'       => __( 'Comma-separated list of capabilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => array(
+					'depends-on' => [
 						'restrict_capability' => true,
-					),
-				),
-			),
-		);
+					],
+				],
+			],
+		];
 
-		/*
-		$options['advanced'][ __( 'Visibility', 'pods' ) ]['search'] = array(
-			'label'   => __( 'Include in searches', 'pods' ),
-			'help'    => __( 'help', 'pods' ),
-			'default' => 1,
-			'type'    => 'boolean',
-		);
-		*/
+		$pick_tables = pods_transient_get( 'pods_tables' );
 
-		/*
-		$options['advanced'][ __( 'Validation', 'pods' ) ] = array(
-			'regex_validation' => array(
+		if ( empty( $pick_tables ) ) {
+			$pick_tables = [
+				'' => __( '-- Select Table --', 'pods' ),
+			];
+
+			global $wpdb;
+
+			$tables = $wpdb->get_results( 'SHOW TABLES', ARRAY_N );
+
+			if ( ! empty( $tables ) ) {
+				foreach ( $tables as $table ) {
+					$pick_tables[ $table[0] ] = $table[0];
+				}
+			}
+
+			pods_transient_set( 'pods_tables', $pick_tables, WEEK_IN_SECONDS );
+		}
+
+		$field_settings = [
+			'field_types_select' => [],
+			'pick_object'        => PodsForm::field_method( 'pick', 'related_objects', true ),
+			'pick_table'         => $pick_tables,
+			'sister_id'          => [
+				'' => __( 'No Related Fields Found', 'pods' ),
+			],
+		];
+
+		$pod_name = $pod['name'];
+		$pod_type = $pod['type'];
+
+		foreach ( $field_types as $type => $field_type_data ) {
+			/**
+			 * @var $field_type PodsField
+			 */
+			$field_type_object = PodsForm::field_loader( $type, $field_type_data['file'] );
+
+			$field_type_vars = get_class_vars( get_class( $field_type_object ) );
+
+			if ( ! isset( $field_type_vars['pod_types'] ) ) {
+				$field_type_vars['pod_types'] = true;
+			}
+
+			$options['additional-field'][ $type ] = [];
+
+			// Only show supported field types
+			if ( true !== $field_type_vars['pod_types'] ) {
+				if ( empty( $field_type_vars['pod_types'] ) ) {
+					continue;
+				} elseif ( is_array( $field_type_vars['pod_types'] ) && ! in_array( $pod_type, $field_type_vars['pod_types'], true ) ) {
+					continue;
+				} elseif ( ! is_array( $field_type_vars['pod_types'] ) && $pod_type !== $field_type_vars['pod_types'] ) {
+					continue;
+				}
+			}
+
+			if ( ! empty( PodsForm::$field_group ) ) {
+				if ( ! isset( $field_settings['field_types_select'][ PodsForm::$field_group ] ) ) {
+					$field_settings['field_types_select'][ PodsForm::$field_group ] = [];
+				}
+
+				$field_settings['field_types_select'][ PodsForm::$field_group ][ $type ] = $field_type_data['label'];
+			} else {
+				if ( ! isset( $field_settings['field_types_select'][ __( 'Other', 'pods' ) ] ) ) {
+					$field_settings['field_types_select'][ __( 'Other', 'pods' ) ] = [];
+				}
+
+				$field_settings['field_types_select'][ __( 'Other', 'pods' ) ][ $type ] = $field_type_data['label'];
+			}
+
+			// @todo Store additional fields in additional-field list as normal fields.
+			// @todo Figure out how to handle conditional logic for UI to separate field options by type.
+			$type_options = PodsForm::ui_options( $type );
+
+			$dev_mode = pods_developer();
+
+			if ( ! $dev_mode ) {
+				foreach ( $type_options as $type_option => $option_data ) {
+					if ( ! empty( $option_data['developer_mode'] ) ) {
+						unset( $type_options[ $type_option ] );
+					}
+				}
+			}
+
+			/**
+			 * Modify Additional Field Options tab
+			 *
+			 * @since 2.7.0
+			 *
+			 * @param array                  $type_options Additional field type options,
+			 * @param string                 $type         Field type,
+			 * @param array                  $options      Tabs, indexed by label,
+			 * @param null|\Pods\Whatsit\Pod $pod          Pods object for the Pod this UI is for.
+			 */
+			$type_options = apply_filters( "pods_admin_setup_edit_{$type}_additional_field_options", $type_options, $type, $options, $pod );
+			$type_options = apply_filters( 'pods_admin_setup_edit_additional_field_options', $type_options, $type, $options, $pod );
+
+			$options['additional-field'][ $type ] = $type_options;
+		}//end foreach
+
+		/**
+		 * Allow filtering the field settings by pod name.
+		 *
+		 * @param array                  $field_settings List of field settings to use.
+		 * @param null|\Pods\Whatsit\Pod $pod            Pods object for the Pod this UI is for.
+		 * @param array                  $tabs           List of registered tabs
+		 */
+		$field_settings = apply_filters( "pods_field_settings_{$pod_name}", $field_settings, $pod );
+
+		/**
+		 * Allow filtering the field settings by pod name.
+		 *
+		 * @param array                  $field_settings List of field settings to use.
+		 * @param null|\Pods\Whatsit\Pod $pod            Pods object for the Pod this UI is for.
+		 * @param array                  $tabs           List of registered tabs
+		 */
+		$field_settings = apply_filters( 'pods_field_settings', $field_settings, $pod, $tabs );
+
+		$options['basic']['type']['data']        = $field_settings['field_types_select'];
+		$options['basic']['pick_object']['data'] = $field_settings['pick_object'];
+		$options['basic']['pick_table']['data']  = $field_settings['pick_table'];
+
+		/*Tribe__Main::array_insert_after_key( 'visibility', $options['advanced'], [
+			'search' => [
+				'label'   => __( 'Include in searches', 'pods' ),
+				'help'    => __( 'help', 'pods' ),
+				'default' => 1,
+				'type'    => 'boolean',
+			],
+		] );
+
+		Tribe__Main::array_insert_after_key( 'validation', $options['advanced'], [
+			'regex_validation' => [
 				'label'   => __( 'RegEx Validation', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
-			),
-			'message_regex'    => array(
+			],
+			'message_regex'    => [
 				'label'   => __( 'Message if field does not pass RegEx', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
-			),
-			'message_required' => array(
+			],
+			'message_required' => [
 				'label'      => __( 'Message if field is blank', 'pods' ),
 				'help'       => __( 'help', 'pods' ),
 				'type'       => 'text',
 				'default'    => '',
-				'depends-on' => array( 'required' => true ),
-			),
-			'message_unique'   => array(
+				'depends-on' => [ 'required' => true ],
+			],
+			'message_unique'   => [
 				'label'      => __( 'Message if field is not unique', 'pods' ),
 				'help'       => __( 'help', 'pods' ),
 				'type'       => 'text',
 				'default'    => '',
-				'depends-on' => array( 'unique' => true ),
-			),
-		);
-		*/
+				'depends-on' => [ 'unique' => true ],
+			],
+		] );*/
 
-		if ( ! class_exists( 'Pods_Helpers' ) ) {
-			unset( $options['advanced']['input_helper'] );
+		if ( class_exists( 'Pods_Helpers' ) ) {
+			$input_helpers = [
+				'' => '-- Select --',
+			];
+
+			if ( class_exists( 'Pods_Helpers' ) ) {
+				$helpers = pods_api()->load_helpers( [ 'options' => [ 'helper_type' => 'input' ] ] );
+
+				foreach ( $helpers as $helper ) {
+					$input_helpers[ $helper['name'] ] = $helper['name'];
+				}
+			}
+
+			Tribe__Main::array_insert_after_key( 'class', $options['advanced'], [
+				'input_helper' => [
+					'name'    => 'input_helper',
+					'label'   => __( 'Input Helper', 'pods' ),
+					'help'    => __( 'help', 'pods' ),
+					'type'    => 'pick',
+					'default' => '',
+					'data'    => $input_helpers,
+				],
+			] );
 		}
 
 		/**
-		 * Modify tabs and their contents for field options
-		 *
-		 * @since unknown
+		 * Modify tabs and their contents for field options.
 		 *
 		 * @param array                  $options Tabs, indexed by label.
 		 * @param null|\Pods\Whatsit\Pod $pod     Pods object for the Pod this UI is for.
+		 * @param array                  $tabs    List of registered tabs.
 		 */
-		$options = apply_filters( 'pods_admin_setup_edit_field_options', $options, $pod );
+		$options = apply_filters( 'pods_admin_setup_edit_field_options', $options, $pod, $tabs );
 
 		return $options;
 	}
@@ -3248,7 +3428,6 @@ class PodsAdmin {
 	 * @param PodsUI $obj PodsUI object.
 	 */
 	public function admin_setup_duplicate( $obj ) {
-
 		$new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
 
 		if ( 0 < $new_id ) {

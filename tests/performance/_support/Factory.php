@@ -265,6 +265,14 @@ class Factory {
 			$api->delete_pod( [ 'id' => $pod['id'] ] );
 		}
 
+		$api->cache_flush_pods();
+
+		wp_cache_flush();
+
+		global $wpdb;
+
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_%'" );
+
 		$this->counter        = 0;
 		$this->user_ids       = [];
 		$this->attachment_ids = [];

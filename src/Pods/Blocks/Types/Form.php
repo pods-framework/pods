@@ -111,15 +111,15 @@ class Form extends Base {
 			?>
 				<div class="pods-block-placeholder_container">
 					<div class="pods-block-placeholder_content-container">
-						<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-green.svg" alt="Pods logo" class="pods-logo">
+						<img src="<?php echo esc_url( PODS_URL . 'ui/images/pods-logo-green.svg' ); ?>" alt="<?php esc_attr_e( 'Pods logo', 'pods' ); ?>" class="pods-logo">
 						<div class="pods-block-placeholder_content">
-							<h2 class="pods-block-placeholder_title">Form</h2>
-							<p><?php echo __( 'No preview is available for this Pods Form, you will see it on the frontend.', 'pods' ); ?></p>
+							<h2 class="pods-block-placeholder_title"><?php esc_html_e( 'Form', 'pods' ); ?></h2>
+							<p><?php esc_html_e( 'No preview is available for this Pods Form, you will see it on the frontend.', 'pods' ); ?></p>
 						</div>
 					</div>
-					<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-form-placeholder.svg" alt="Generic placeholder image depicting a common form layout" class="pods-block-placeholder_image">
+					<img src="<?php echo esc_url( PODS_URL . 'ui/images/pods-form-placeholder.svg' ); ?>" alt="<?php esc_attr_e( 'Generic placeholder image depicting a common form layout', 'pods' ); ?>" class="pods-block-placeholder_image">
 				</div>
-			<?
+			<?php
 			return ob_get_clean();
 		}
 

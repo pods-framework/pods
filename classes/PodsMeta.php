@@ -3104,8 +3104,8 @@ class PodsMeta {
 						'get_meta' => true,
 					) );
 
-					if ( $single && ( ! is_array( $meta_cache[ $meta_k ] ) || ! isset( $meta_cache[ $meta_k ][0] ) ) ) {
-						if ( empty( $meta_cache[ $meta_k ] ) && ! is_array( $meta_cache[ $meta_k ] ) ) {
+					if ( ! is_array( $meta_cache[ $meta_k ] ) || ! isset( $meta_cache[ $meta_k ][0] ) ) {
+						if ( empty( $meta_cache[ $meta_k ] ) ) {
 							$meta_cache[ $meta_k ] = array();
 						} else {
 							$meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );

@@ -1340,10 +1340,13 @@ class PodsField_Pick extends PodsField {
 		// Parse icon type
 		if ( 'none' === $icon || 'div' === $icon ) {
 			$icon         = '';
-		} elseif ( 0 === strpos( $icon, 'data:image/svg+xml;base64,' ) ) {
-			$icon         = esc_attr( $icon );
 		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
 			$icon         = sanitize_html_class( $icon );
+		}
+
+		// #5740 Check for WP_Error object.
+		if ( ! is_string( $link ) ) {
+			$link = '';
 		}
 
 		// Support modal editing
@@ -1390,12 +1393,12 @@ class PodsField_Pick extends PodsField {
 		}
 
 		$item = array(
-			'id'           => $item_id,
-			'icon'         => $icon,
-			'name'         => $item_title,
-			'edit_link'    => $edit_link,
-			'link'         => $link,
-			'selected'     => $selected,
+			'id'        => esc_html( $item_id ),
+			'icon'      => esc_attr( $icon ),
+			'name'      => esc_html( wp_kses_post( html_entity_decode( $item_title ) ) ),
+			'edit_link' => esc_url( $edit_link ),
+			'link'      => esc_url( $link ),
+			'selected'  => $selected,
 		);
 
 		return $item;
@@ -1987,6 +1990,27 @@ class PodsField_Pick extends PodsField {
 				'limit'       => 0,
 			), $object_params
 		);
+
+		/**
+		 * Overwrite parameters used by PodsField_Pick::get_object_data.
+		 *
+		 * @since 2.7.21
+		 *
+		 * @param array  $object_params       {
+		 *     Get object parameters
+		 *
+		 *     @type string     $name        Field name.
+		 *     @type mixed      $value       Current value.
+		 *     @type array      $options     Field options.
+		 *     @type array      $pod         Pod data.
+		 *     @type int|string $id          Current item ID.
+		 *     @type string     $context     Data context.
+		 *     @type array      $data_params Data parameters.
+		 *     @type int        $page        Page number of results to get.
+		 *     @type int        $limit       How many data items to limit to (autocomplete defaults to 30, set to -1 or 1+ to override).
+		 * }
+		 */
+		$object_params = apply_filters( 'pods_field_pick_object_data_params', $object_params );
 
 		$object_params['options']     = (array) $object_params['options'];
 		$object_params['data_params'] = (array) $object_params['data_params'];

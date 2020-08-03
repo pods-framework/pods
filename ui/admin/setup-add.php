@@ -65,7 +65,7 @@
 							<p>
 								<?php _e( 'Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments.', 'pods' ); ?>
 								<br /><br />
-								<?php _e( 'Not sure what content type you should use? Check out our <a href="https://pods.io/docs/comparisons/compare-content-types/" target="_blank">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
+								<?php _e( 'Not sure what content type you should use? Check out our <a href="https://pods.io/docs/comparisons/compare-content-types/" target="_blank" rel="noopener noreferrer">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
 							</p>
 
 						</div>

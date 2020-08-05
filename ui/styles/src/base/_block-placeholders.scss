@@ -7,6 +7,9 @@
 	
 		& .pods-block-placeholder_image {
 			width: 100%;
+			max-width: 750px;
+			margin: 2em auto 1em;
+			display: block;
 		}
 	
 		& .pods-block-placeholder_content-container {
@@ -18,7 +21,12 @@
 		& .pods-block-placeholder_title {
 			margin-bottom: 0;
 			margin-top: 0;
-			font-size: 1.4em;
+			font-size: 1em;
+			font-weight: bold;
+
+			&:before {
+				display: none;
+			}
 		}
 
 		& p {

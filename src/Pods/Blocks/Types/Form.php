@@ -107,7 +107,20 @@ class Form extends Base {
 
 		// Prevent any previews of this block.
 		if ( is_admin() || wp_is_json_request() ) {
-			return __( 'No preview is available for this Pods Form, you will see it on the frontend.', 'pods' );
+			ob_start();
+			?>
+				<div class="pods-block-placeholder_container">
+					<div class="pods-block-placeholder_content-container">
+						<img src="<?php echo esc_url( PODS_URL . 'ui/images/pods-logo-green.svg' ); ?>" alt="<?php esc_attr_e( 'Pods logo', 'pods' ); ?>" class="pods-logo">
+						<div class="pods-block-placeholder_content">
+							<h2 class="pods-block-placeholder_title"><?php esc_html_e( 'Form', 'pods' ); ?></h2>
+							<p><?php esc_html_e( 'No preview is available for this Pods Form, you will see it when you view or preview this on the front of your site.', 'pods' ); ?></p>
+						</div>
+					</div>
+					<img src="<?php echo esc_url( PODS_URL . 'ui/images/pods-form-placeholder.svg' ); ?>" alt="<?php esc_attr_e( 'Generic placeholder image depicting a common form layout', 'pods' ); ?>" class="pods-block-placeholder_image">
+				</div>
+			<?php
+			return ob_get_clean();
 		}
 
 		return pods_shortcode_form( $attributes );

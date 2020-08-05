@@ -72,6 +72,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -107,6 +108,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -140,6 +142,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -173,6 +176,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -208,6 +212,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -243,6 +248,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -276,6 +282,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -309,6 +316,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -340,6 +348,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -371,6 +380,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -401,6 +411,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 						],
@@ -430,6 +441,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 						],
@@ -460,6 +472,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -491,6 +504,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 							'rest',
@@ -522,6 +536,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 						],
@@ -553,6 +568,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 					],
 					'field' => [
 						'groups' => [
+							'basic',
 							'additional-field',
 							'advanced',
 						],

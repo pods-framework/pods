@@ -17,11 +17,6 @@
       "role": "Lead Developer"
     },
     {
-      "name": "Phil Lewis",
-      "homepage": "https://github.com/pglewis",
-      "role": "Developer"
-    },
-    {
       "name": "Jim True",
       "homepage": "https://jimtrue.com/",
       "role": "Developer and Support"
@@ -30,6 +25,11 @@
       "name": "Matt Gibbs",
       "homepage": "https://facetwp.com/",
       "role": "Founding Developer"
+    },
+    {
+      "name": "Phil Lewis",
+      "homepage": "https://github.com/pglewis",
+      "role": "Contributing Developer"
     }
   ],
   "support": {
@@ -54,6 +54,7 @@
   },
   "require-dev": {
     "automattic/vipwpcs": "^2.0",
+    "bvanhoekelen/performance": "^2.5.1",
     "codeception/codeception": "^2.5.6",
     "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
     "fzaninotto/faker": "^1.8",

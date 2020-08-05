@@ -30,7 +30,8 @@ class PodsField_Email extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'E-mail', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'E-mail', 'pods' );
 	}
 
 	/**

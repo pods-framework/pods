@@ -33,7 +33,7 @@ class PodsField_Slug extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Permalink (url-friendly)', 'pods' );
+		static::$label = __( 'Permalink (url-friendly)', 'pods' );
 	}
 
 	/**

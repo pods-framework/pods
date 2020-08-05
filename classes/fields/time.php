@@ -46,6 +46,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 */
 	public function setup() {
 
+		static::$group = __( 'Date / Time', 'pods' );
 		static::$label = __( 'Time', 'pods' );
 	}
 

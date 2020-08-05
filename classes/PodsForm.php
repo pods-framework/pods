@@ -1787,28 +1787,30 @@ class PodsForm {
 	}
 
 	/**
-	 * Get list of available text field types
+	 * Get list of available Layout field types
 	 *
 	 * @return array Text field types
 	 *
 	 * @since 2.3.0
 	 */
-	public static function block_field_types() {
+	public static function layout_field_types() {
 
 		static $field_types = null;
 
 		if ( null === $field_types ) {
-			$field_types = array( 'heading', 'html' );
+			$field_types = [
+				'heading',
+				'html',
+			];
 
 			/**
-			 * Returns the available text field types
+			 * Allow filtering of the list of Layout field types.
 			 *
-			 * @since unknown
+			 * @since 2.8
 			 *
-			 * @param object $field_types Outputs the field types
+			 * @param array $field_types The list of Layout field types.
 			 */
-
-			$field_types = apply_filters( 'pods_block_field_types', $field_types );
+			$field_types = apply_filters( 'pods_layout_field_types', $field_types );
 		}
 
 		return $field_types;

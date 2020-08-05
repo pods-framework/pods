@@ -14,6 +14,10 @@ const fieldClasses = {
 		FieldClass: fields.PodsDFVHeading,
 		renderer: reactRenderer,
 	},
+	html: {
+		FieldClass: fields.PodsDFVHTML,
+		renderer: reactRenderer,
+	},
 	file: {
 		FieldClass: fields.File,
 		renderer: mnRenderer,

@@ -6,4 +6,5 @@ export { PodsDFVNumber } from 'dfv/src/fields/number/number';
 export { PodsDFVEmail } from 'dfv/src/fields/email/email';
 export { PodsDFVParagraph } from 'dfv/src/fields/paragraph/paragraph';
 export { PodsDFVHeading } from 'dfv/src/fields/heading/heading';
+export { PodsDFVHTML } from 'dfv/src/fields/heading/html';
 export { default as PodsDFVEditPod } from 'dfv/src/admin/edit-pod/edit-pod';

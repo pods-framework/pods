@@ -32,7 +32,8 @@ class PodsField_Code extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Code (Syntax Highlighting)', 'pods' );
+		static::$group = __( 'Paragraph', 'pods' );
+		static::$label = __( 'Code (Syntax Highlighting)', 'pods' );
 	}
 
 	/**

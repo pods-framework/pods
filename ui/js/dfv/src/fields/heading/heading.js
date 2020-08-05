@@ -1,5 +1,4 @@
 import React from 'react';
-import { PodsDFVBaseInput } from 'dfv/src/components/base-input';
 import HelpTooltip from 'dfv/src/components/help-tooltip';
 
 export const PodsDFVHeading = ( props ) => {

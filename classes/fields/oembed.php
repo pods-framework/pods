@@ -54,7 +54,8 @@ class PodsField_OEmbed extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'oEmbed', 'pods' );
+		static::$group = __( 'Relationships / Media', 'pods' );
+		static::$label = __( 'oEmbed', 'pods' );
 	}
 
 	/**

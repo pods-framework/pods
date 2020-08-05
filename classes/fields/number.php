@@ -30,7 +30,8 @@ class PodsField_Number extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Plain Number', 'pods' );
+		static::$group = __( 'Number', 'pods' );
+		static::$label = __( 'Plain Number', 'pods' );
 	}
 
 	/**

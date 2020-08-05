@@ -86,7 +86,8 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Relationship', 'pods' );
+		static::$group = __( 'Relationships / Media', 'pods' );
+		static::$label = __( 'Relationship', 'pods' );
 	}
 
 	/**

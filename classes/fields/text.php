@@ -30,7 +30,8 @@ class PodsField_Text extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Plain Text', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Plain Text', 'pods' );
 	}
 
 	/**

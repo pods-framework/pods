@@ -30,7 +30,8 @@ class PodsField_Link extends PodsField_Website {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Link', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Link', 'pods' );
 	}
 
 	/**

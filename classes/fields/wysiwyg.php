@@ -30,7 +30,8 @@ class PodsField_WYSIWYG extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'WYSIWYG (Visual Editor)', 'pods' );
+		static::$group = __( 'Paragraph', 'pods' );
+		static::$label = __( 'WYSIWYG (Visual Editor)', 'pods' );
 	}
 
 	/**

@@ -29,7 +29,8 @@ class PodsField_Website extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Website', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Website', 'pods' );
 
 	}
 

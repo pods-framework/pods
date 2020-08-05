@@ -30,7 +30,8 @@ class PodsField_File extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'File / Image / Video', 'pods' );
+		static::$group = __( 'Relationships / Media', 'pods' );
+		static::$label = __( 'File / Image / Video', 'pods' );
 
 	}
 

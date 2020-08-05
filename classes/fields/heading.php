@@ -3,7 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class PodsField_HTML extends PodsField {
+class PodsField_Heading extends PodsField {
 
 	/**
 	 * {@inheritdoc}
@@ -13,12 +13,12 @@ class PodsField_HTML extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $type = 'html';
+	public static $type = 'heading';
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $label = 'HTML Content';
+	public static $label = 'Heading';
 
 	/**
 	 * {@inheritdoc}
@@ -30,7 +30,7 @@ class PodsField_HTML extends PodsField {
 	 */
 	public function setup() {
 		static::$group = __( 'Layout Elements', 'pods' );
-		static::$label = __( 'HTML Content', 'pods' );
+		static::$label = __( 'Heading', 'pods' );
 	}
 
 	/**
@@ -47,15 +47,6 @@ class PodsField_HTML extends PodsField {
 						'type'       => 'boolean',
 						'dependency' => true,
 					],
-					static::$type . '_oembed'          => [
-						'label'   => __( 'Enable oEmbed?', 'pods' ),
-						'default' => 0,
-						'type'    => 'boolean',
-						'help'    => [
-							__( 'Embed videos, images, tweets, and other content.', 'pods' ),
-							'http://codex.wordpress.org/Embeds',
-						],
-					],
 					static::$type . '_wptexturize'     => [
 						'label'   => __( 'Enable wptexturize?', 'pods' ),
 						'default' => 1,
@@ -63,24 +54,6 @@ class PodsField_HTML extends PodsField {
 						'help'    => [
 							__( 'Transforms less-beautiful text characters into stylized equivalents.', 'pods' ),
 							'http://codex.wordpress.org/Function_Reference/wptexturize',
-						],
-					],
-					static::$type . '_convert_chars'   => [
-						'label'   => __( 'Enable convert_chars?', 'pods' ),
-						'default' => 1,
-						'type'    => 'boolean',
-						'help'    => [
-							__( 'Converts text into valid XHTML and Unicode', 'pods' ),
-							'http://codex.wordpress.org/Function_Reference/convert_chars',
-						],
-					],
-					static::$type . '_wpautop'         => [
-						'label'   => __( 'Enable wpautop?', 'pods' ),
-						'default' => 1,
-						'type'    => 'boolean',
-						'help'    => [
-							__( 'Changes double line-breaks in the text into HTML paragraphs.', 'pods' ),
-							'http://codex.wordpress.org/Function_Reference/wpautop',
 						],
 					],
 					static::$type . '_allow_shortcode' => [
@@ -126,29 +99,11 @@ class PodsField_HTML extends PodsField {
 
 		$value = $this->strip_html( $value, $options );
 
-		if ( 1 === (int) pods_v( static::$type . '_oembed', $options, 0 ) ) {
-			$embed = $GLOBALS['wp_embed'];
-			$value = $embed->run_shortcode( $value );
-			$value = $embed->autoembed( $value );
-		}
-
 		if ( 1 === (int) pods_v( static::$type . '_wptexturize', $options, 1 ) ) {
 			$value = wptexturize( $value );
 		}
 
-		if ( 1 === (int) pods_v( static::$type . '_convert_chars', $options, 1 ) ) {
-			$value = convert_chars( $value );
-		}
-
-		if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
-			$value = wpautop( $value );
-		}
-
 		if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
-			if ( 1 === (int) pods_v( static::$type . '_wpautop', $options, 1 ) ) {
-				$value = shortcode_unautop( $value );
-			}
-
 			$value = do_shortcode( $value );
 		}
 

@@ -27,7 +27,7 @@ class PodsField_Boolean extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Yes / No', 'pods' );
+		static::$label = __( 'Yes / No', 'pods' );
 	}
 
 	/**

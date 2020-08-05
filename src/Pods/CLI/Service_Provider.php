@@ -26,9 +26,9 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	 * @since 2.8
 	 */
 	public function register() {
-		tribe_singleton( 'pods.cli.commands.pods.pod', Pod::class, [ 'hook' ] );
-		tribe_singleton( 'pods.cli.commands.pods.group', Group::class, [ 'hook' ] );
-		tribe_singleton( 'pods.cli.commands.pods.field', Field::class, [ 'hook' ] );
+		$this->container->singleton( 'pods.cli.commands.pods.pod', Pod::class, [ 'hook' ] );
+		$this->container->singleton( 'pods.cli.commands.pods.group', Group::class, [ 'hook' ] );
+		$this->container->singleton( 'pods.cli.commands.pods.field', Field::class, [ 'hook' ] );
 
 		$this->hooks();
 	}

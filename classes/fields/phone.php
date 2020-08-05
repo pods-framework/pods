@@ -30,7 +30,8 @@ class PodsField_Phone extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Phone', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Phone', 'pods' );
 	}
 
 	/**

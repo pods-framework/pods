@@ -20,23 +20,18 @@ use tad_DI52_ServiceProvider;
 class Service_Provider extends tad_DI52_ServiceProvider {
 
 	/**
-	 * Binds and sets up implementations.
-	 */
-	public $namespace;
-
-	/**
-	 * Registers the classes and functionality needed fro REST API
+	 * Registers the classes and functionality needed for the Blocks API.
 	 *
 	 * @since 2.8
 	 */
 	public function register() {
-		tribe_singleton( 'pods.blocks', API::class );
-		tribe_singleton( 'pods.blocks.collection.pods', Pods::class, [ 'register_with_pods' ] );
-		tribe_singleton( 'pods.blocks.field', Field::class, [ 'register_with_pods' ] );
-		tribe_singleton( 'pods.blocks.form', Form::class, [ 'register_with_pods' ] );
-		tribe_singleton( 'pods.blocks.list', Item_List::class, [ 'register_with_pods' ] );
-		tribe_singleton( 'pods.blocks.single', Item_Single::class, [ 'register_with_pods' ] );
-		tribe_singleton( 'pods.blocks.view', View::class, [ 'register_with_pods' ] );
+		$this->container->singleton( 'pods.blocks', API::class );
+		$this->container->singleton( 'pods.blocks.collection.pods', Pods::class, [ 'register_with_pods' ] );
+		$this->container->singleton( 'pods.blocks.field', Field::class, [ 'register_with_pods' ] );
+		$this->container->singleton( 'pods.blocks.form', Form::class, [ 'register_with_pods' ] );
+		$this->container->singleton( 'pods.blocks.list', Item_List::class, [ 'register_with_pods' ] );
+		$this->container->singleton( 'pods.blocks.single', Item_Single::class, [ 'register_with_pods' ] );
+		$this->container->singleton( 'pods.blocks.view', View::class, [ 'register_with_pods' ] );
 
 		$this->hooks();
 	}

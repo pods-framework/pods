@@ -38,7 +38,9 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Currency', 'pods' );
+		static::$group = __( 'Number', 'pods' );
+		static::$label = __( 'Currency', 'pods' );
+
 		static::data_currencies();
 	}
 

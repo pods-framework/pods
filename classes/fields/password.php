@@ -30,7 +30,8 @@ class PodsField_Password extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Password', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Password', 'pods' );
 	}
 
 	/**

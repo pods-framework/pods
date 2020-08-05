@@ -25,10 +25,42 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 		$defaults = [];
 
 		foreach ( $fields as $field ) {
-			$defaults[ $field['name'] ] = isset( $field['default'] ) ? $field['default'] : '';
+			$defaults[ $field['name'] ] = $this->default_attribute( $field );
 		}
 
 		return $defaults;
+	}
+
+	/**
+	 * Get the default attribute for a field.
+	 *
+	 * @since TBD
+	 *
+	 * @param array $field The field to get the default attribute for.
+	 *
+	 * @return mixed The default attribute for a field.
+	 */
+	public function default_attribute( $field ) {
+		$default_value = isset( $field['default'] ) ? $field['default'] : '';
+
+		if ( 'pick' === $field['type'] && isset( $field['data'] ) ) {
+			foreach ( $field['data'] as $key => $value ) {
+				if ( ! is_array( $value ) ) {
+					$value = [
+						'label' => $value,
+						'value' => $key,
+					];
+				}
+
+				if ( $default_value === $value['value'] ) {
+					$default_value = $value;
+
+					break;
+				}
+			}
+		}
+
+		return $default_value;
 	}
 
 	/**

@@ -133,12 +133,10 @@ class Block_Field extends Field {
 		if ( 'boolean' !== $type ) {
 			$block_args['fieldOptions']['label'] = $this->get_arg( 'label' );
 
-			if ( 'pick' !== $type ) {
-				$default = $this->get_arg( 'default' );
+			$default_value = $this->get_arg( 'default' );
 
-				if ( ! in_array( $default, [ '', null ], true ) ) {
-					$block_args['attributeOptions']['default'] = $default;
-				}
+			if ( 'pick' !== $type && ! in_array( $default_value, [ '', null ], true ) ) {
+				$block_args['attributeOptions']['default'] = $default_value;
 			}
 		}
 
@@ -190,6 +188,14 @@ class Block_Field extends Field {
 						'default' => $default,
 					],
 				];
+			}
+
+			foreach ( $data as $data_value ) {
+				if ( $default === $data_value['value'] ) {
+					$default = $data_value;
+
+					break;
+				}
 			}
 
 			return [

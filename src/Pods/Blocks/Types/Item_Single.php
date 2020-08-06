@@ -69,7 +69,7 @@ class Item_Single extends Base {
 		return [
 			[
 				'name'    => 'name',
-				'label'   => __( 'Pod name', 'pods' ),
+				'label'   => __( 'Pod Name', 'pods' ),
 				'type'    => 'pick',
 				'data'    => $all_pods,
 				'default' => '',
@@ -113,7 +113,10 @@ class Item_Single extends Base {
 			&& empty( $attributes['template_custom'] )
 		) {
 			if ( is_admin() || wp_is_json_request() ) {
-				return __( 'No preview available, please fill in more Block details.', 'pods' );
+				return $this->render_placeholder(
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Single Item - Block Error', 'pods' ),
+					esc_html__( 'This block is not configured properly, please specify a "Template" or "Custom Template" to use.', 'pods' )
+				);
 			}
 
 			return '';

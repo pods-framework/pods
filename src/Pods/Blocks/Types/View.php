@@ -118,7 +118,10 @@ class View extends Base {
 
 		if ( empty( $attributes['view'] ) ) {
 			if ( is_admin() || wp_is_json_request() ) {
-				return __( 'No preview available, please specify "View".', 'pods' );
+				return $this->render_placeholder(
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods View - Block Error', 'pods' ),
+					esc_html__( 'This block is not configured properly, please specify a "View" to use.', 'pods' )
+				);
 			}
 
 			return '';
@@ -126,20 +129,11 @@ class View extends Base {
 
 		// Prevent any previews of this block.
 		if ( is_admin() || wp_is_json_request() ) {
-			ob_start();
-			?>
-				<div class="pods-block-placeholder_container">
-					<div class="pods-block-placeholder_content-container">
-						<img src="<?php echo esc_url( PODS_URL . 'ui/images/pods-logo-green.svg' ); ?>" alt="<?php esc_attr_e( 'Pods logo', 'pods' ); ?>" class="pods-logo">
-						<div class="pods-block-placeholder_content">
-							<h2 class="pods-block-placeholder_title"><?php esc_html_e( 'View', 'pods' ); ?></h2>
-							<p><?php esc_html_e( 'No preview is available for this Pods View, you will see it when you view or preview this on the front of your site.', 'pods' ); ?></p>
-						</div>
-					</div>
-					<img src="<?php echo esc_url( PODS_URL . 'ui/images/pods-view-placeholder.svg' ); ?>" alt="<?php esc_attr_e( 'Generic placeholder image depicting a common view layout', 'pods' ); ?>" class="pods-block-placeholder_image">
-				</div>
-			<?php
-			return ob_get_clean();
+			return $this->render_placeholder(
+				esc_html__( 'View', 'pods' ),
+				esc_html__( 'No preview is available for this Pods View, you will see it when you view or preview this on the front of your site.', 'pods' ),
+				'<img src="' . esc_url( PODS_URL . 'ui/images/pods-view-placeholder.svg' ) . '" alt="' . esc_attr__( 'Generic placeholder image depicting a common view layout', 'pods' ) . '" class="pods-block-placeholder_image">'
+			);
 		}
 
 		return pods_shortcode( $attributes );

@@ -63,7 +63,7 @@ class Field extends Base {
 		return [
 			[
 				'name'  => 'name',
-				'label' => __( 'Pod name', 'pods' ),
+				'label' => __( 'Pod Name', 'pods' ),
 				'type'  => 'pick',
 				'data'  => $all_pods,
 			],
@@ -75,7 +75,7 @@ class Field extends Base {
 			],
 			[
 				'name'  => 'field',
-				'label' => __( 'Field name', 'pods' ),
+				'label' => __( 'Field Name', 'pods' ),
 				'type'  => 'text',
 			],
 		];
@@ -96,7 +96,10 @@ class Field extends Base {
 
 		if ( empty( $attributes['field'] ) ) {
 			if ( is_admin() || wp_is_json_request() ) {
-				return __( 'No preview available, please fill in "Field name".', 'pods' );
+				return $this->render_placeholder(
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Field Value - Block Error', 'pods' ),
+					esc_html__( 'This block is not configured properly, please specify a "Field Name" to use.', 'pods' )
+				);
 			}
 
 			return '';

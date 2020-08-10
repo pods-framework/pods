@@ -116,7 +116,7 @@ export const removeGroup = ( groupID ) => {
 	};
 };
 
-export const setGroupData = ( result ) => {
+export const setGroupData = ( result = {} ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.SET_GROUP_DATA,
 		result,

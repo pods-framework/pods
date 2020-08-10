@@ -54,6 +54,8 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 		}
 
 		case UI_ACTIONS.SET_GROUP_SAVE_STATUS: {
+			const { result } = action;
+
 			const newStatus = Object.values( SAVE_STATUSES ).includes( action.saveStatus )
 				? action.saveStatus
 				: INITIAL_UI_STATE.saveStatus;
@@ -61,9 +63,9 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 			// The group's name may have changed during the save. Because the map of
 			// group save statuses uses the group name, we may need to remove the old name
 			// and set the new name, or just update the old/same name.
-			const hasNameChange = action.result?.group?.name !== action.previousGroupName;
+			const hasNameChange = ( result.group?.name && result.group?.name !== action.previousGroupName ) || false;
 
-			const name = hasNameChange ? action.result?.group?.name : action.previousGroupName;
+			const name = hasNameChange ? result.group?.name : action.previousGroupName;
 
 			const groupSaveStatuses = {
 				...omit( state.groupSaveStatuses, [ action.previousGroupName ] ),
@@ -241,14 +243,16 @@ export const currentPod = ( state = {}, action = {} ) => {
 		}
 
 		case CURRENT_POD_ACTIONS.SET_GROUP_DATA: {
+			const { result } = action;
+
 			const groups = state.groups.map( ( group ) => {
-				if ( group.name !== action?.result?.group?.name ) {
+				if ( group.id !== result.group?.id ) {
 					return group;
 				}
 
 				return {
 					...action.result.group,
-					fields: action?.result?.group?.fields || [],
+					fields: result.group?.fields || [],
 				};
 			} );
 

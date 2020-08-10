@@ -67,6 +67,7 @@ export const FieldListItem = ( props, ref ) => {
 		saveField(
 			podID,
 			groupName,
+			name,
 			updatedOptions.name || name,
 			updatedOptions.label || label || name,
 			updatedOptions.field_type || type,
@@ -158,9 +159,9 @@ export const FieldListItem = ( props, ref ) => {
 					selectedOptions={ field }
 					title={ sprintf(
 						/* translators: %1$s: Pod Label, %2$s Field Label */
-						__( '%1$s > %3$s > Edit Field', 'pods' ),
+						__( '%1$s > %2$s > Edit Field', 'pods' ),
 						podLabel,
-						label,
+						label
 					) }
 					hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
 					errorMessage={ __( 'There was an error saving the field, please try again.', 'pods' ) }

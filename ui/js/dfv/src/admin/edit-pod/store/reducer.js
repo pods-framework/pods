@@ -61,7 +61,7 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 			// The group's name may have changed during the save. Because the map of
 			// group save statuses uses the group name, we may need to remove the old name
 			// and set the new name, or just update the old/same name.
-			const hasNameChange = action.result?.group?.name === action.previousGroupName;
+			const hasNameChange = action.result?.group?.name !== action.previousGroupName;
 
 			const name = hasNameChange ? action.result?.group?.name : action.previousGroupName;
 
@@ -105,6 +105,8 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 		}
 
 		case UI_ACTIONS.SET_FIELD_SAVE_STATUS: {
+			const { result } = action;
+
 			const newStatus = Object.values( SAVE_STATUSES ).includes( action.saveStatus )
 				? action.saveStatus
 				: INITIAL_UI_STATE.saveStatus;
@@ -112,9 +114,9 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 			// The group's name may have changed during the save. Because the map of
 			// group save statuses uses the group name, we may need to remove the old name
 			// and set the new name, or just update the old/same name.
-			const hasNameChange = action.result?.field?.name === action.previousFieldName;
+			const hasNameChange = ( result.field?.name && result.field?.name !== action.previousFieldName ) || false;
 
-			const name = hasNameChange ? action.result?.field?.name : action.previousFieldName;
+			const name = hasNameChange ? result.field.name : action.previousFieldName;
 
 			const fieldSaveStatuses = {
 				...omit( state.fieldSaveStatuses, [ action.previousFieldName ] ),
@@ -310,6 +312,30 @@ export const currentPod = ( state = {}, action = {} ) => {
 					fields: group.fields.filter(
 						( field ) => field.id !== action.fieldID
 					),
+				};
+			} );
+
+			return {
+				...state,
+				groups,
+			};
+		}
+
+		case CURRENT_POD_ACTIONS.SET_GROUP_FIELD_DATA: {
+			const { result } = action;
+
+			const groups = state.groups.map( ( group ) => {
+				if ( group.name !== action.groupName ) {
+					return group;
+				}
+
+				const fields = group.fields.map( ( field ) => {
+					return ( field.id === result.field.id ) ? result.field : field;
+				} );
+
+				return {
+					...group,
+					fields,
 				};
 			} );
 

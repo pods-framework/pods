@@ -1,5 +1,17 @@
 @import './edit-pod-variables';
 
+.pod-field-group_settings-error-message {
+	border: 1px solid $color--light-grey;
+	border-left: 4px solid $color--red;
+    margin: -12px 0 12px;
+	padding: 12px;
+	position: relative;
+
+	@media screen and (min-width: 851px) {
+		margin-bottom: 36px;
+	}
+}
+
 .pods-settings-modal__container {
     display: flex;
     flex-flow: column nowrap;

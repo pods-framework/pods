@@ -83,7 +83,10 @@ DependentFieldOption.propTypes = {
 	fieldType: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	required: PropTypes.bool.isRequired,
-	data: PropTypes.object,
+	data: PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.array,
+	] ),
 	default: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,

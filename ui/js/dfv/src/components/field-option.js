@@ -27,7 +27,10 @@ const PodsFieldOption = ( {
 
 	// It's possible to get an array of strings for the help text, but it
 	// will usually be a string.
-	const helpTextString = Array.isArray( helpText ) ? helpText.join( '\n' ) : helpText;
+	const helpTextString = Array.isArray( helpText ) ? helpText[ 0 ] : helpText;
+	const helpLink = ( Array.isArray( helpText ) && !! helpText[ 1 ] )
+		? helpText[ 1 ]
+		: undefined;
 
 	return (
 		<div className="pods-field-option">
@@ -37,7 +40,11 @@ const PodsFieldOption = ( {
 					htmlFor={ name }>
 					{ label }
 					{ required && ( <span className="pods-form-ui-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
-					{ shouldShowHelpText && ( <HelpTooltip helpText={ helpTextString } /> ) }
+					{ shouldShowHelpText && (
+						<HelpTooltip
+							helpText={ helpTextString }
+							helpLink={ helpLink }
+						/> ) }
 				</label>
 			) }
 
@@ -48,7 +55,11 @@ const PodsFieldOption = ( {
 							return (
 								<h3 className={ `pods-form-ui-heading pods-form-ui-heading-${ name }` }>
 									{ label }
-									{ shouldShowHelpText && ( <HelpTooltip helpText={ helpTextString } /> ) }
+									{ shouldShowHelpText && (
+										<HelpTooltip
+											helpText={ helpTextString }
+											helpLink={ helpLink }
+										/> ) }
 								</h3>
 							);
 						}

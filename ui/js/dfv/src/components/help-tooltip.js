@@ -1,26 +1,68 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import * as PropTypes from 'prop-types';
 
-import { Tooltip, Dashicon } from '@wordpress/components';
+import { Dashicon } from '@wordpress/components';
 
-const HelpTooltip = ( { helpText } ) => (
-	<Tooltip
-		text={ helpText }
-		position="right"
-	>
+import './help-tooltip.scss';
+
+const ENTER_KEY = 13;
+
+const HelpTooltip = ( {
+	helpText,
+	helpLink,
+} ) => {
+	const [ showTooltip, setShowTooltip ] = useState( false );
+	const tooltipRef = useRef( null );
+
+	useEffect( () => {
+		if ( tooltipRef?.current ) {
+			tooltipRef.current.focus();
+		}
+
+		const handleClickOutside = ( event ) => {
+			if (
+				tooltipRef?.current &&
+				! tooltipRef.current.contains( event.target )
+			) {
+				setShowTooltip( false );
+			}
+		};
+
+		document.addEventListener( 'mousedown', handleClickOutside );
+
+		return () => {
+			document.removeEventListener( 'mousedown', handleClickOutside );
+		};
+	}, [ tooltipRef, setShowTooltip ] );
+
+	return (
 		<div
-			style={ {
-				display: 'inline-block',
-				verticalAlign: 'bottom',
-			} }
+			className="pods-help-tooltip"
+			tabIndex="0"
+			onFocus={ () => setShowTooltip( true ) }
 		>
 			<Dashicon icon="editor-help" />
+
+			{ showTooltip && (
+				<div
+					className="pods-help-tooltip__tooltip"
+					tabIndex="-1"
+					ref={ tooltipRef }
+				>
+					<i></i>
+					{ helpLink
+						? ( <a href={ helpLink }>{ helpText }</a> )
+						: ( <span>{ helpText }</span> )
+					}
+				</div>
+			) }
 		</div>
-	</Tooltip>
-);
+	);
+};
 
 HelpTooltip.propTypes = {
 	helpText: PropTypes.string.isRequired,
+	helpLink: PropTypes.string,
 };
 
 export default HelpTooltip;

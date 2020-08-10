@@ -190,7 +190,7 @@ export const FieldListItem = ( props, ref ) => {
 
 				<div className="pods-field_controls-container">
 					<Button
-						className="pods-field_edit"
+						className="pods-field_button pods-field_edit"
 						isTertiary
 						onClick={ onEditFieldClick }
 					>
@@ -198,7 +198,7 @@ export const FieldListItem = ( props, ref ) => {
 					</Button>
 
 					<Button
-						className="pods-field_duplicate"
+						className="pods-field_button pods-field_duplicate"
 						onClick={ ( e ) => {
 							e.stopPropagation();
 							cloneField( type );
@@ -209,7 +209,7 @@ export const FieldListItem = ( props, ref ) => {
 					</Button>
 
 					<Button
-						className="pods-field_delete"
+						className="pods-field_button pods-field_delete"
 						onClick={ onDeleteFieldClick }
 						isTertiary
 					>

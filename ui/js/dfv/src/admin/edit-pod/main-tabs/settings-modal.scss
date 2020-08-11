@@ -61,6 +61,11 @@
     width: 100%;
 }
 
+.components-modal__frame .pods-field-option input[type="checkbox"]:checked {
+	// Fixes conflicting different WP checkbox styles
+    background: white;
+}
+
 .pods-field-option label {
     margin-bottom: .2em;
 }

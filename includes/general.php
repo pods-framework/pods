@@ -2504,6 +2504,8 @@ function pods_reserved_keywords() {
 		'post_mime_type',
 		'post_status',
 		'post_tag',
+		'post_thumbnail',
+		'post_thumbnail_url',
 		'post_type',
 		'posts',
 		'posts_per_archive_page',

@@ -147,7 +147,6 @@ export const removeGroupField = ( groupID, fieldID ) => {
 	};
 };
 
-// @todo there is no reducer for this?
 export const setGroupFieldData = ( groupName ) => ( result = {} ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.SET_GROUP_FIELD_DATA,

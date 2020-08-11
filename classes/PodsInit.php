@@ -1085,6 +1085,7 @@ class PodsInit {
 					'capabilities'          => $tax_capabilities,
 					// 'map_meta_cap'          => (boolean) pods_v( 'capability_type_extra', $taxonomy, true ),
 					'update_count_callback' => pods_v( 'update_count_callback', $taxonomy, null, true ),
+					'default_term'          => pods_v( 'default_term', $taxonomy, null, true ),
 					'query_var'             => ( false !== (boolean) pods_v( 'query_var', $taxonomy, true ) ? pods_v( 'query_var_string', $taxonomy, $taxonomy_name, true ) : false ),
 					'rewrite'               => $ct_rewrite,
 					'show_admin_column'     => (boolean) pods_v( 'show_admin_column', $taxonomy, false ),

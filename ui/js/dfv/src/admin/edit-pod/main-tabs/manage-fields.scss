@@ -24,33 +24,8 @@
 	color: red;
 }
 
-.pods-field_actions {
-	display: flex;
-	width: auto;
-}
-
-.pods-field_actions .dashicon {
-	padding: 12px 10px;
-	color: #0073aa;
-
-	&:hover {
-		cursor: pointer;
-		color: #00a0d2;
-	}
-}
-
 .pods-field_label {
 	padding-left: 0;
-}
-
-.pods-field_controls-container {
-	opacity: 0;
-
-	button {
-		height: auto;
-		padding: 0;
-		margin-right: 0.5em;
-	}
 }
 
 .pods-field-group_name:hover > .pods-field-group_name__id {

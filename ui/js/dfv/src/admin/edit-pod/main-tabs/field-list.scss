@@ -1,18 +1,44 @@
 @import './edit-pod-variables';
 
+.pods-field_controls-container {
+	opacity: 0;
+}
+
+.components-button.pods-field_button {
+	height: auto;
+	margin-right: 0.5em;
+	overflow: visible;
+	padding: 0 0.5em 0 0;
+
+	&::after {
+		background: $color--light-grey;
+		content: '';
+		height: 1em;
+		left: 0.5em;
+		position: relative;
+		top: 0.1em;
+		width: 1px;
+		z-index: 1;
+	}
+}
+
 .pods-field_edit,
 .pods-field_duplicate {
     color: $color--wp-blue;
-    
+
     &:hover {
         color: $color--wp-blue-light;
     }
 }
 
-.pods-field_delete {
+.components-button.pods-field_delete {
     color: $color--red;
-    
+
     &:hover {
         color: $color--red-dark;
-    }
+	}
+
+	&::after {
+		content: none;
+	}
 }

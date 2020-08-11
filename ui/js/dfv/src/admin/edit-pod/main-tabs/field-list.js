@@ -122,6 +122,7 @@ const FieldList = ( props ) => {
 					cancelEditing={ () => {
 						setShowAddFieldModal( false );
 						setAddedFieldName( null );
+						setNewFieldOptions( {} );
 					} }
 					save={ handleAddField }
 				/>

@@ -116,7 +116,7 @@ export const removeGroup = ( groupID ) => {
 	};
 };
 
-export const setGroupData = ( result ) => {
+export const setGroupData = ( result = {} ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.SET_GROUP_DATA,
 		result,
@@ -147,7 +147,7 @@ export const removeGroupField = ( groupID, fieldID ) => {
 	};
 };
 
-export const setGroupFieldData = ( groupName ) => ( result ) => {
+export const setGroupFieldData = ( groupName ) => ( result = {} ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.SET_GROUP_FIELD_DATA,
 		groupName,
@@ -218,7 +218,14 @@ export const deletePod = ( podId ) => {
 	};
 };
 
-export const saveGroup = ( podID, previousName, name, label, args = {}, groupId ) => {
+export const saveGroup = (
+	podID,
+	previousName,
+	name,
+	label,
+	args = {},
+	groupId
+) => {
 	return {
 		type: CURRENT_POD_ACTIONS.API_REQUEST,
 		payload: {
@@ -253,7 +260,16 @@ export const deleteGroup = ( groupId ) => {
 	};
 };
 
-export const saveField = ( podID, groupName, name, label, type, args, fieldID ) => {
+export const saveField = (
+	podID,
+	groupName,
+	previousName,
+	name,
+	label,
+	type,
+	args,
+	fieldID
+) => {
 	return {
 		type: CURRENT_POD_ACTIONS.API_REQUEST,
 		payload: {
@@ -267,11 +283,11 @@ export const saveField = ( podID, groupName, name, label, type, args, fieldID ) 
 				args,
 			},
 			onSuccess: [
-				setFieldSaveStatus( SAVE_STATUSES.SAVE_SUCCESS, name ),
+				setFieldSaveStatus( SAVE_STATUSES.SAVE_SUCCESS, previousName ),
 				fieldID ? setGroupFieldData( groupName ) : addGroupField( groupName ),
 			],
-			onFailure: setFieldSaveStatus( SAVE_STATUSES.SAVE_ERROR, name ),
-			onStart: setFieldSaveStatus( SAVE_STATUSES.SAVING, name ),
+			onFailure: setFieldSaveStatus( SAVE_STATUSES.SAVE_ERROR, previousName ),
+			onStart: setFieldSaveStatus( SAVE_STATUSES.SAVING, previousName ),
 		},
 	};
 };

@@ -26,6 +26,7 @@ export const FieldListItem = ( props, ref ) => {
 		saveField,
 		moveField,
 		groupName,
+		groupLabel,
 		groupID,
 		cloneField,
 		deleteField,
@@ -67,6 +68,7 @@ export const FieldListItem = ( props, ref ) => {
 		saveField(
 			podID,
 			groupName,
+			name,
 			updatedOptions.name || name,
 			updatedOptions.label || label || name,
 			updatedOptions.field_type || type,
@@ -157,10 +159,11 @@ export const FieldListItem = ( props, ref ) => {
 					optionsPod={ editFieldPod }
 					selectedOptions={ field }
 					title={ sprintf(
-						/* translators: %1$s: Pod Label, %2$s Field Label */
-						__( '%1$s > %3$s > Edit Field', 'pods' ),
+						/* translators: %1$s: Pod Label, %2$s Group Label, %3$s Field Label */
+						__( '%1$s > %2$s > %3$s > Edit Field', 'pods' ),
 						podLabel,
-						label,
+						groupLabel,
+						label
 					) }
 					hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
 					errorMessage={ __( 'There was an error saving the field, please try again.', 'pods' ) }
@@ -190,7 +193,7 @@ export const FieldListItem = ( props, ref ) => {
 
 				<div className="pods-field_controls-container">
 					<Button
-						className="pods-field_edit"
+						className="pods-field_button pods-field_edit"
 						isTertiary
 						onClick={ onEditFieldClick }
 					>
@@ -198,7 +201,7 @@ export const FieldListItem = ( props, ref ) => {
 					</Button>
 
 					<Button
-						className="pods-field_duplicate"
+						className="pods-field_button pods-field_duplicate"
 						onClick={ ( e ) => {
 							e.stopPropagation();
 							cloneField( type );
@@ -209,7 +212,7 @@ export const FieldListItem = ( props, ref ) => {
 					</Button>
 
 					<Button
-						className="pods-field_delete"
+						className="pods-field_button pods-field_delete"
 						onClick={ onDeleteFieldClick }
 						isTertiary
 					>

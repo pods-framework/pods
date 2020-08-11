@@ -171,7 +171,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 				{ ! isExpanded && (
 					<Button
-						className="pods-field-group_manage_link"
+						className="pods-field-group_button pods-field-group_manage_link"
 						onClick={ toggleExpanded }
 						isTertiary
 						style={ { opacity: isHovered ? 1 : 0 } }
@@ -181,7 +181,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 				) }
 
 				<Button
-					className="pods-field-group_edit"
+					className="pods-field-group_button pods-field-group_edit"
 					onClick={ ( event ) => onEditGroupClick( event ) }
 					isTertiary
 					style={ { opacity: isHovered ? 1 : 0 } }
@@ -190,7 +190,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 				</Button>
 
 				<Button
-					className="pods-field-group_delete"
+					className="pods-field-group_button pods-field-group_delete"
 					onClick={ onDeleteGroupClick }
 					isTertiary
 					style={ { opacity: isHovered ? 1 : 0 } }

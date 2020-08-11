@@ -1490,11 +1490,16 @@ class PodsAdmin {
 				continue;
 			}
 
-			$group_args = [
-				'name'   => $group_name,
-				'label'  => $group_label,
-				'parent' => $parent,
-			];
+			if ( is_array( $group_label ) ) {
+				$group_args = $group_label;
+			} else {
+				$group_args = [
+					'name'   => $group_name,
+					'label'  => $group_label,
+				];
+			}
+
+			$group_args['parent'] = $parent;
 
 			$group = new \Pods\Whatsit\Group( $group_args );
 

@@ -13,6 +13,8 @@ import SettingsModal from './settings-modal';
 import { SAVE_STATUSES } from 'dfv/src/admin/edit-pod/store/constants';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
+import './field-list-item.scss';
+
 const ENTER_KEY = 13;
 
 export const FieldListItem = ( props, ref ) => {

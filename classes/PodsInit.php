@@ -1085,12 +1085,21 @@ class PodsInit {
 					'capabilities'          => $tax_capabilities,
 					// 'map_meta_cap'          => (boolean) pods_v( 'capability_type_extra', $taxonomy, true ),
 					'update_count_callback' => pods_v( 'update_count_callback', $taxonomy, null, true ),
-					'default_term'          => pods_v( 'default_term', $taxonomy, null, true ),
 					'query_var'             => ( false !== (boolean) pods_v( 'query_var', $taxonomy, true ) ? pods_v( 'query_var_string', $taxonomy, $taxonomy_name, true ) : false ),
 					'rewrite'               => $ct_rewrite,
 					'show_admin_column'     => (boolean) pods_v( 'show_admin_column', $taxonomy, false ),
 					'sort'                  => (boolean) pods_v( 'sort', $taxonomy, false ),
 				);
+
+				// @since WP 5.5: Default terms.
+				$default_term_name = pods_v( 'default_term_name', $taxonomy, null, true );
+				if ( $default_term_name ) {
+					$pods_taxonomies[ $taxonomy_name ][ 'default_term' ] = array(
+						'name'        => $default_term_name,
+						'slug'        => pods_v( 'default_term_slug', $taxonomy, null, true ),
+						'description' => pods_v( 'default_term_description', $taxonomy, null, true ),
+					);
+				}
 
 				if ( is_array( $ct_rewrite ) && ! $pods_taxonomies[ $taxonomy_name ]['query_var'] ) {
 					$pods_taxonomies[ $taxonomy_name ]['query_var'] = pods_v( 'query_var_string', $taxonomy, $taxonomy_name, true );

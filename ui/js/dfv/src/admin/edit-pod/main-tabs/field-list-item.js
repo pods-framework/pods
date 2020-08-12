@@ -24,6 +24,7 @@ export const FieldListItem = ( props, ref ) => {
 		field,
 		saveStatus,
 		index,
+		type,
 		editFieldPod,
 		saveField,
 		moveField,
@@ -38,7 +39,6 @@ export const FieldListItem = ( props, ref ) => {
 		id,
 		name,
 		label,
-		type,
 	} = field;
 
 	const required = ( field.required && '0' !== field.required ) ? true : false;
@@ -206,7 +206,7 @@ export const FieldListItem = ( props, ref ) => {
 						className="pods-field_button pods-field_duplicate"
 						onClick={ ( e ) => {
 							e.stopPropagation();
-							cloneField( type );
+							cloneField( type.type );
 						} }
 						isTertiary
 					>
@@ -228,8 +228,10 @@ export const FieldListItem = ( props, ref ) => {
 			</div>
 
 			<div className="pods-field pods-field_type">
-				{ type }
-				<div className="pods-field_id"> [type = [STILL NEED THIS]]</div>
+				{ type?.label }
+				{ type.type && (
+					<div className="pods-field_id"> [type = { type.type }]</div>
+				) }
 			</div>
 		</div>
 	);
@@ -245,7 +247,7 @@ FieldListItem.propTypes = {
 	groupName: PropTypes.string.isRequired,
 	groupLabel: PropTypes.string.isRequired,
 	groupID: PropTypes.number.isRequired,
-
+	type: PropTypes.object.isRequired,
 	editFieldPod: PropTypes.object.isRequired,
 
 	saveField: PropTypes.func.isRequired,

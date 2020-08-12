@@ -34,6 +34,7 @@ const FieldList = ( props ) => {
 		deleteAndRemoveField,
 		fields,
 		setGroupFields,
+		typeObjects,
 	} = props;
 
 	const [ showAddFieldModal, setShowAddFieldModal ] = useState( false );
@@ -166,6 +167,7 @@ const FieldList = ( props ) => {
 								field={ field }
 								saveStatus={ fieldSaveStatuses[ field.name ] }
 								index={ index }
+								type={ typeObjects[ field.type ] }
 								// position={ field.position }
 								saveField={ saveField }
 								moveField={ moveField }
@@ -200,6 +202,7 @@ FieldList.propTypes = {
 	fields: PropTypes.arrayOf(
 		FIELD_PROP_TYPE_SHAPE
 	).isRequired,
+	typeObjects: PropTypes.object.isRequired,
 	fieldSaveStatuses: PropTypes.object.isRequired,
 	editFieldPod: PropTypes.object.isRequired,
 	deleteAndRemoveField: PropTypes.func.isRequired,
@@ -213,6 +216,7 @@ export default compose( [
 		return {
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
 			fieldSaveStatuses: storeSelect.getFieldSaveStatuses(),
+			typeObjects: storeSelect.getFieldTypeObjects(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

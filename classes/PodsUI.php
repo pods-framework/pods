@@ -2994,7 +2994,7 @@ class PodsUI {
 									continue;
 								}
 								?>
-								<span class="pods-form-ui-filter-container pods-form-ui-filter-container-<?php esc_attr_e( $filter ); ?>">
+								<span class="pods-form-ui-filter-container pods-form-ui-filter-container-<?php echo esc_attr( $filter ); ?>">
 								<?php
 								if ( in_array( $filter_field['type'], array( 'date', 'datetime', 'time' ) ) ) {
 									$start = pods_var_raw( 'filter_' . $filter . '_start', 'get', pods_var_raw( 'filter_default', $filter_field, '', null, true ), null, true );

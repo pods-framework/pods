@@ -910,8 +910,9 @@ class Pods implements Iterator {
 
 		$is_wp_object = in_array( $pod_type, $wp_object_types, true );
 
-		if ( $is_wp_object && in_array( $params->name, $permalink_fields, true ) ) {
-			if ( 0 < strlen( $this->detail_page ) ) {
+		if ( in_array( $params->name, $permalink_fields, true ) ) {
+			if ( 0 < strlen( $this->detail_page ) && false === strpos( $params->name, 'permalink' ) ) {
+				// ACT Pods. Prevent tag loop by not parsing `permalink`.
 				$value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
 			} else {
 				switch ( $pod_type ) {
@@ -1075,6 +1076,7 @@ class Pods implements Iterator {
 
 				// Handle special field tags.
 				if ( 'avatar' === $first_field && 'user' === $pod_type ) {
+					$object_field_found = true;
 					// User avatar.
 					$size = null;
 
@@ -1092,10 +1094,9 @@ class Pods implements Iterator {
 						$value = get_avatar( $this->id() );
 					}
 
-					$object_field_found = true;
-
 				} elseif ( in_array( $first_field, $image_fields, true ) ) {
 					// Default image field handlers.
+					$object_field_found = true;
 
 					$image_field = $first_field;
 					// Is it a URL request?
@@ -1165,10 +1166,6 @@ class Pods implements Iterator {
 									$value = pods_traverse( $traverse_params, $value );
 								}
 							}
-						}
-
-						if ( null !== $value ) {
-							$object_field_found = true;
 						}
 					}
 				}

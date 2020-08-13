@@ -13,6 +13,10 @@
 	}
 }
 
+.pods-field_wrapper--unsaved {
+	border-left: 5px #95BF3B solid;
+}
+
 .pods-field_handle {
 	width: 30px;
 	flex: 0 0 30px;
@@ -43,6 +47,7 @@
 
 .pods-field_label {
 	padding-left: 0;
+	user-select: none;
 }
 
 .pods-field_id,
@@ -57,10 +62,13 @@
 .pods-field_type,
 .pods-field_wrapper-label_type {
 	width: 60px;
+	user-select: none;
 }
 
 .pods-field_label,
 .pods-field_type {
+	user-select: none;
+
 	&:hover {
 		.pods-field_id {
 			opacity: 1;
@@ -74,7 +82,6 @@
 	color: #0073aa;
 
 	&:hover {
-		cursor: pointer;
 		color: #00a0d2;
 	}
 }
@@ -82,14 +89,11 @@
 .pods-field_name {
 	padding-right: 1em;
 	text-overflow: ellipsis;
+	user-select: none;
 }
 
 .pods-field-group_name:hover > .pods-field-group_name__id {
 	opacity: 1;
-}
-
-.pods-field_wrapper-labels .pods-field_handle {
-	cursor: inherit;
 }
 
 .pods-field_wrapper-labels {

@@ -1802,4 +1802,14 @@ class PodsForm {
 		return $object_types;
 	}
 
+	/**
+	 * Render the postbox header in a compatible way.
+	 *
+	 * @since 2.7.22
+	 *
+	 * @param string $title Header title.
+	 */
+	public static function render_postbox_header( $title ) {
+		pods_view( PODS_DIR . 'ui/admin/postbox-header.php', compact( array_keys( get_defined_vars() ) ) );
+	}
 }

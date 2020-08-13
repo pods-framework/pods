@@ -3158,7 +3158,7 @@ class PodsUI {
 							if ( false !== $this->do_hook( 'filters_show_search', true ) ) {
 							?>
 								<span class="pods-form-ui-filter-container pods-form-ui-filter-container-search">
-									<label<?php echo ( empty( $this->filters ) ) ? ' class="screen-reader-text"' : ''; ?> for="page-search<?php esc_attr_e( $this->num ); ?>-input"><?php _e( 'Search', 'pods' ); ?>:</label>
+									<label<?php echo ( empty( $this->filters ) ) ? ' class="screen-reader-text"' : ''; ?> for="page-search<?php echo esc_attr( $this->num ); ?>-input"><?php _e( 'Search', 'pods' ); ?>:</label>
 									<?php echo PodsForm::field( 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search' . $this->num . '-input' ) ) ); ?>
 								</span>
 							<?php

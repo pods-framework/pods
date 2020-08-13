@@ -190,6 +190,18 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.22 - August 13th 2020 =
+
+**Bug Fixes**
+
+* Fixed: WP 5.5+ compatibility layer for postbox headers so they appear and work correctly while still working for previous versions of WordPress. #5806 (@sc0ttkclark)
+* Fixed: Patched a Freemius JS file that needed updating for WP 5.5+ compatibility. #5806 (@sc0ttkclark)
+* Fixed: Prevent fatal errors about memory when using preview links for Advanced Content Types. #5783 (@JoryHogeveen)
+* Fixed: Prevent fatal errors about memory when using certain magic tag / thumbnail combinations. #5805 (@JoryHogeveen)
+* Fixed: Resolve our DFV JS `<div>` issues with `PodsUI` filters and add `.toggle-row` class handling for frontend. #5806 (@sc0ttkclark)
+* Fixed: Ensure REST API responses for Media returns correct value when extended by Pods. #5763 (@JoryHogeveen)
+* Fixed: Ensure pods_permission() unserializes when role/capability data is serialized. #5768 (@JoryHogeveen)
+
 = 2.7.21 - June 30th 2020 =
 
 **New Features & Enhancements**

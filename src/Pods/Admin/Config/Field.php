@@ -23,10 +23,23 @@ class Field extends Base {
 	 */
 	public function get_tabs( \Pods\Whatsit\Pod $pod ) {
 		$core_tabs = [
-			'basic'            => __( 'Basic', 'pods' ),
-			'additional-field' => __( 'Additional Field Options', 'pods' ),
-			'advanced'         => __( 'Advanced', 'pods' ),
+			'basic' => __( 'Basic', 'pods' ),
 		];
+
+		$field_types = PodsForm::field_types();
+
+		foreach ( $field_types as $type => $field_type_data ) {
+			$core_tabs[ 'additional-field-' . $type ] = [
+				'name'       => 'additional-field-' . $type,
+				/* translators: %s: Field type label. */
+				'label'      => sprintf( _x( '%s Options', 'Field type options', 'pods' ), $field_type_data['label'] ),
+				'depends-on' => [
+					'type' => $type,
+				],
+			];
+		}
+
+		$core_tabs['advanced'] = __( 'Advanced', 'pods' );
 
 		/**
 		 * Filter the Field option tabs. Core tabs are added after this filter.
@@ -154,7 +167,6 @@ class Field extends Base {
 					'help'              => 'help',
 				],
 			],
-			'additional-field' => [],
 			'advanced'         => [
 				'visual'                  => [
 					'name'  => 'visual',
@@ -324,7 +336,7 @@ class Field extends Base {
 				$field_type_vars['pod_types'] = true;
 			}
 
-			$options['additional-field'][ $type ] = [];
+			$options[ 'additional-field-' . $type ] = [];
 
 			// Only show supported field types
 			if ( true !== $field_type_vars['pod_types'] ) {
@@ -378,7 +390,7 @@ class Field extends Base {
 			$type_options = apply_filters( "pods_admin_setup_edit_{$type}_additional_field_options", $type_options, $type, $options, $pod );
 			$type_options = apply_filters( 'pods_admin_setup_edit_additional_field_options', $type_options, $type, $options, $pod );
 
-			$options['additional-field'][ $type ] = $type_options;
+			$options[ 'additional-field-' . $type ] = $type_options;
 		}//end foreach
 
 		/**

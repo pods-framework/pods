@@ -2958,8 +2958,9 @@ class PodsUI {
 					// we have the data already as an array
 					$this->sort_data();}
 
-					if ( ! in_array( 'export', $this->actions_disabled ) && 'export' === $this->action ) {
-						$this->export();}
+					if ( 'export' === $this->action && ! in_array( 'export', $this->actions_disabled, true ) ) {
+						$this->export();
+					}
 
 					if ( ( ! empty( $this->data ) || false !== $this->search || ( $this->filters_enhanced && ! empty( $this->views ) ) ) && ( ( $this->filters_enhanced && ! empty( $this->views ) ) || false !== $this->searchable ) ) {
 						wp_enqueue_style( 'pods-styles' );
@@ -3017,14 +3018,14 @@ class PodsUI {
 									<?php
 										// Prevent p div issues.
 										echo str_replace(
-											[
+											array(
 												'<div',
 												'</div>',
-											],
-											[
+											),
+											array(
 												'<span',
 												'</span>',
-											],
+											),
 											PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field['type'], $filter_field )
 										);
 									?>
@@ -3035,14 +3036,14 @@ class PodsUI {
 								<?php
 									// Prevent p div issues.
 									echo str_replace(
-										[
+										array(
 											'<div',
 											'</div>',
-										],
-										[
+										),
+										array(
 											'<span',
 											'</span>',
-										],
+										),
 										PodsForm::field( 'filter_' . $filter . '_end', $end, $filter_field['type'], $filter_field )
 									);
 								} elseif ( 'pick' === $filter_field['type'] ) {
@@ -3069,14 +3070,14 @@ class PodsUI {
 								<?php
 									// Prevent p div issues.
 									echo str_replace(
-										[
+										array(
 											'<div',
 											'</div>',
-										],
-										[
+										),
+										array(
 											'<span',
 											'</span>',
-										],
+										),
 										PodsForm::field( 'filter_' . $filter, $value, 'pick', $options )
 									);
 								} elseif ( 'boolean' === $filter_field['type'] ) {
@@ -3109,14 +3110,14 @@ class PodsUI {
 									<?php
 									// Prevent p div issues.
 									echo str_replace(
-										[
+										array(
 											'<div',
 											'</div>',
-										],
-										[
+										),
+										array(
 											'<span',
 											'</span>',
-										],
+										),
 										PodsForm::field( 'filter_' . $filter, $value, 'pick', $options )
 									);
 								} else {
@@ -3138,14 +3139,14 @@ class PodsUI {
 									<?php
 									// Prevent p div issues.
 									echo str_replace(
-										[
+										array(
 											'<div',
 											'</div>',
-										],
-										[
+										),
+										array(
 											'<span',
 											'</span>',
-										],
+										),
 										PodsForm::field( 'filter_' . $filter, $value, 'text', $options )
 									);
 								}//end if
@@ -3683,14 +3684,14 @@ class PodsUI {
 								<?php
 								// Prevent p div issues.
 								echo str_replace(
-									[
+									array(
 										'<div',
 										'</div>',
-									],
-									[
+									),
+									array(
 										'<span',
 										'</span>',
-									],
+									),
 									PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field['type'], $filter_field )
 								);
 								?>
@@ -3699,14 +3700,14 @@ class PodsUI {
 									<?php
 									// Prevent p div issues.
 									echo str_replace(
-										[
+										array(
 											'<div',
 											'</div>',
-										],
-										[
+										),
+										array(
 											'<span',
 											'</span>',
-										],
+										),
 										PodsForm::field( 'filter_' . $filter . '_end', $end, $filter_field['type'], $filter_field )
 									);
 									?>
@@ -3742,14 +3743,14 @@ class PodsUI {
 								<?php
 								// Prevent p div issues.
 								echo str_replace(
-									[
+									array(
 										'<div',
 										'</div>',
-									],
-									[
+									),
+									array(
 										'<span',
 										'</span>',
-									],
+									),
 									PodsForm::field( 'filter_' . $filter, $value, 'pick', $options )
 								);
 								?>
@@ -3791,14 +3792,14 @@ class PodsUI {
 								<?php
 								// Prevent p div issues.
 								echo str_replace(
-									[
+									array(
 										'<div',
 										'</div>',
-									],
-									[
+									),
+									array(
 										'<span',
 										'</span>',
-									],
+									),
 									PodsForm::field( 'filter_' . $filter, $value, 'pick', $options )
 								);
 								?>
@@ -3830,14 +3831,14 @@ class PodsUI {
 								<?php
 								// Prevent p div issues.
 								echo str_replace(
-									[
+									array(
 										'<div',
 										'</div>',
-									],
-									[
+									),
+									array(
 										'<span',
 										'</span>',
-									],
+									),
 									PodsForm::field( 'filter_' . $filter, $value, 'text', $options )
 								);
 								?>

@@ -1076,6 +1076,7 @@ class Pods implements Iterator {
 
 				// Handle special field tags.
 				if ( 'avatar' === $first_field && 'user' === $pod_type ) {
+					$object_field_found = true;
 					// User avatar.
 					$size = null;
 
@@ -1093,10 +1094,9 @@ class Pods implements Iterator {
 						$value = get_avatar( $this->id() );
 					}
 
-					$object_field_found = true;
-
 				} elseif ( in_array( $first_field, $image_fields, true ) ) {
 					// Default image field handlers.
+					$object_field_found = true;
 
 					$image_field = $first_field;
 					// Is it a URL request?
@@ -1166,10 +1166,6 @@ class Pods implements Iterator {
 									$value = pods_traverse( $traverse_params, $value );
 								}
 							}
-						}
-
-						if ( null !== $value ) {
-							$object_field_found = true;
 						}
 					}
 				}

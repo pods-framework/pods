@@ -164,7 +164,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 							className="pods-field-group_name__id"
 							style={ { opacity: isHovered ? 1 : 0 } }
 						>
-							{ `\u00A0 ID: ${ groupID }` }
+							{ `\u00A0 [id = ${ groupID }]` }
 						</span>
 					) }
 				</div>

@@ -100,7 +100,6 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	text_allowed_html_tags: PropTypes.string,
 	text_repeatable: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	type: PropTypes.string.isRequired,
-	type_objects: PropTypes.object,
 	website_format: PropTypes.string,
 	website_allow_port: PropTypes.string,
 	website_clickable: PropTypes.string,

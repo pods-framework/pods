@@ -26,6 +26,7 @@ export const FieldListItem = ( {
 	podSaveStatus,
 	index,
 	type,
+	relatedObject,
 	editFieldPod,
 	saveField,
 	moveField,
@@ -261,8 +262,14 @@ export const FieldListItem = ( {
 
 				<div className="pods-field pods-field_type">
 					{ type?.label }
-					{ type.type && (
+					{ type?.type && (
 						<div className="pods-field_id"> [type = { type.type }]</div>
+					) }
+					{ relatedObject?.label && (
+						<div className="pods-field_related_object">
+							&raquo; { relatedObject.label }
+							<div className="pods-field_id"> [object = { relatedObject.name }]</div>
+						</div>
 					) }
 				</div>
 			</div>
@@ -281,6 +288,7 @@ FieldListItem.propTypes = {
 	groupLabel: PropTypes.string.isRequired,
 	groupID: PropTypes.number.isRequired,
 	type: PropTypes.object.isRequired,
+	relatedObject: PropTypes.object,
 	editFieldPod: PropTypes.object.isRequired,
 
 	saveField: PropTypes.func.isRequired,

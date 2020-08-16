@@ -54,6 +54,10 @@ export const GLOBAL_POD_GROUPS = createStatePath( `${ GLOBAL_POD.path }.groups` 
 export const GLOBAL_GROUP = createStatePath( `${ GLOBAL.path }.group` );
 export const GLOBAL_FIELD = createStatePath( `${ GLOBAL.path }.field` );
 
+// Additional Global Config
+export const GLOBAL_FIELD_TYPES = createStatePath( 'fieldTypes' );
+export const GLOBAL_RELATED_OBJECTS = createStatePath( 'relatedObjects' );
+
 // UI
 export const UI = createStatePath( 'ui' );
 export const ACTIVE_TAB = createStatePath( `${ UI.path }.activeTab` );

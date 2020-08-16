@@ -35,6 +35,7 @@ const FieldList = ( {
 	fields,
 	setGroupFields,
 	typeObjects,
+	relatedObjects,
 } ) => {
 	const [ showAddFieldModal, setShowAddFieldModal ] = useState( false );
 	const [ newFieldOptions, setNewFieldOptions ] = useState( {} );
@@ -164,6 +165,8 @@ const FieldList = ( {
 
 					<div className="pods-field_wrapper-items">
 						{ fields.map( ( field, index ) => {
+							const relatedObject = 'pick' === field.type && field?.pick_object ? relatedObjects[ field.pick_object ] : null;
+
 							return (
 								<FieldListItem
 									key={ field.id }
@@ -175,6 +178,7 @@ const FieldList = ( {
 									podSaveStatus={ podSaveStatus }
 									index={ index }
 									type={ typeObjects[ field.type ] }
+									relatedObject={ relatedObject }
 									saveField={ saveField }
 									moveField={ moveField }
 									groupName={ groupName }
@@ -225,6 +229,7 @@ export default compose( [
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
 			fieldSaveStatuses: storeSelect.getFieldSaveStatuses(),
 			typeObjects: storeSelect.getFieldTypeObjects(),
+			relatedObjects: storeSelect.getRelatedObjects(),
 			podSaveStatus: storeSelect.getSaveStatus(),
 		};
 	} ),

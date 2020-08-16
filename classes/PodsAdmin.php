@@ -1277,17 +1277,43 @@ class PodsAdmin {
 		}
 
 		$config = [
-			'currentPod' => $pod->export( [
+			'currentPod'     => $pod->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
 			] ),
-			'global'     => $this->get_global_config( $pod ),
+			'global'         => $this->get_global_config( $pod ),
+			'fieldTypes'     => PodsForm::field_types(),
+			'relatedObjects' => $this->get_field_related_objects(),
 		];
 
 		wp_localize_script( 'pods-dfv', 'podsAdminConfig', $config );
 
 		pods_view( PODS_DIR . 'ui/admin/setup-edit-proto.php', compact( array_keys( get_defined_vars() ) ) );
+	}
+
+	/**
+	 * Get list of field related objects.
+	 *
+	 * @since TBD
+	 *
+	 * @return array List of field related objects.
+	 */
+	protected function get_field_related_objects() {
+		$related_object_groups = PodsForm::field_method( 'pick', 'related_objects', true );
+
+		$related_objects = [];
+
+		foreach ( $related_object_groups as $group => $group_objects ) {
+			foreach ( $group_objects as $name => $label ) {
+				$related_objects[ $name ] = [
+					'name'  => $name,
+					'label' => $label,
+				];
+			}
+		}
+
+		return $related_objects;
 	}
 
 	/**

@@ -9,6 +9,9 @@ import {
 	GLOBAL_POD_GROUPS,
 	GLOBAL_GROUP,
 	GLOBAL_FIELD,
+	// Additional Global Config
+	GLOBAL_FIELD_TYPES,
+	GLOBAL_RELATED_OBJECTS,
 	// UI
 	ACTIVE_TAB,
 	SAVE_STATUS,
@@ -79,8 +82,13 @@ export const getGlobalGroupOptions = ( state ) => GLOBAL_GROUP.getFrom( state );
 // -- Global Field config
 export const getGlobalFieldOptions = ( state ) => GLOBAL_FIELD.getFrom( state );
 
-// eslint-disable-next-line camelcase
-export const getFieldTypeObjects = ( state ) => getGlobalFieldOptions( state )?.groups[0]?.fields[3]?.type_objects;
+// Additional Global Config
+
+// -- Global Field Types config
+export const getFieldTypeObjects = ( state ) => GLOBAL_FIELD_TYPES.getFrom( state );
+
+// -- Global Related Objects config
+export const getRelatedObjects = ( state ) => GLOBAL_RELATED_OBJECTS.getFrom( state );
 
 // UI
 export const getActiveTab = ( state ) => ACTIVE_TAB.getFrom( state );

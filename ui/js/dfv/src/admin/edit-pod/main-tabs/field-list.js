@@ -165,7 +165,7 @@ const FieldList = ( {
 
 					<div className="pods-field_wrapper-items">
 						{ fields.map( ( field, index ) => {
-							const relatedObject = 'pick' === field.type && field?.pick_object ? relatedObjects[ field.pick_object ] : null;
+							const relatedObject = 'pick' === field.type && field.pick_object ? relatedObjects[ field.pick_object ] : null;
 
 							return (
 								<FieldListItem
@@ -214,6 +214,7 @@ FieldList.propTypes = {
 		FIELD_PROP_TYPE_SHAPE
 	).isRequired,
 	typeObjects: PropTypes.object.isRequired,
+	relatedObjects: PropTypes.object.isRequired,
 	fieldSaveStatuses: PropTypes.object.isRequired,
 	podSaveStatus: PropTypes.string.isRequired,
 	editFieldPod: PropTypes.object.isRequired,
@@ -229,7 +230,7 @@ export default compose( [
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
 			fieldSaveStatuses: storeSelect.getFieldSaveStatuses(),
 			typeObjects: storeSelect.getFieldTypeObjects(),
-			relatedObjects: storeSelect.getRelatedObjects(),
+			relatedObjects: storeSelect.getFieldRelatedObjects(),
 			podSaveStatus: storeSelect.getSaveStatus(),
 		};
 	} ),

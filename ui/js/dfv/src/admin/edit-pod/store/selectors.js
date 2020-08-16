@@ -88,7 +88,7 @@ export const getGlobalFieldOptions = ( state ) => GLOBAL_FIELD.getFrom( state );
 export const getFieldTypeObjects = ( state ) => GLOBAL_FIELD_TYPES.getFrom( state );
 
 // -- Global Related Objects config
-export const getRelatedObjects = ( state ) => GLOBAL_RELATED_OBJECTS.getFrom( state );
+export const getFieldRelatedObjects = ( state ) => GLOBAL_RELATED_OBJECTS.getFrom( state );
 
 // UI
 export const getActiveTab = ( state ) => ACTIVE_TAB.getFrom( state );

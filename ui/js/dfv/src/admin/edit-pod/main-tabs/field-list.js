@@ -21,21 +21,21 @@ import FieldListItem from './field-list-item';
 import './manage-fields.scss';
 import './field-list.scss';
 
-const FieldList = ( props ) => {
-	const {
-		podID,
-		podLabel,
-		groupName,
-		groupLabel,
-		groupID,
-		fieldSaveStatuses,
-		editFieldPod,
-		saveField,
-		deleteAndRemoveField,
-		fields,
-		setGroupFields,
-	} = props;
-
+const FieldList = ( {
+	podID,
+	podLabel,
+	groupName,
+	groupLabel,
+	groupID,
+	fieldSaveStatuses,
+	podSaveStatus,
+	editFieldPod,
+	saveField,
+	deleteAndRemoveField,
+	fields,
+	setGroupFields,
+	typeObjects,
+} ) => {
 	const [ showAddFieldModal, setShowAddFieldModal ] = useState( false );
 	const [ newFieldOptions, setNewFieldOptions ] = useState( {} );
 	const [ addedFieldName, setAddedFieldName ] = useState( null );
@@ -49,9 +49,10 @@ const FieldList = ( props ) => {
 		saveField(
 			podID,
 			groupName,
+			undefined,
 			options.name,
 			options.label,
-			options.field_type,
+			options.type,
 			omit( options, [ 'name', 'label', 'id', 'field_type' ] )
 		);
 	};
@@ -69,20 +70,25 @@ const FieldList = ( props ) => {
 		setShowAddFieldModal( true );
 	};
 
-	const moveField = () => ( field, dragIndex, hoverIndex, item ) => {
-		if ( groupName === item.groupName ) {
-			const localFields = [ ...fields ];
-			const movedItem = localFields.find( ( itm, index ) => index === hoverIndex );
-			const remainingItems = localFields.filter( ( itm, index ) => index !== hoverIndex );
+	const findField = ( id ) => {
+		return {
+			field: fields.find( ( item ) => item.id === id ),
+			index: fields.findIndex( ( item ) => item.id === id ),
+		};
+	};
 
-			const reorderedItems = [
-				...remainingItems.slice( 0, dragIndex ),
-				movedItem,
-				...remainingItems.slice( dragIndex ),
-			];
+	const moveField = ( id, atIndex ) => {
+		const { field, index } = findField( id );
 
-			setGroupFields( groupName, reorderedItems );
-		}
+		const remainingItems = fields.filter( ( item, itemIndex ) => index !== itemIndex );
+
+		const reorderedItems = [
+			...remainingItems.slice( 0, atIndex ),
+			field,
+			...remainingItems.slice( atIndex ),
+		];
+
+		setGroupFields( groupName, reorderedItems );
 	};
 
 	// Close the modal after a new field has been successfully added.
@@ -157,25 +163,28 @@ const FieldList = ( props ) => {
 					</div>
 
 					<div className="pods-field_wrapper-items">
-						{ fields.map( ( field, index ) => (
-							<FieldListItem
-								key={ field.id }
-								podID={ podID }
-								podLabel={ podLabel }
-								groupLabel={ groupLabel }
-								field={ field }
-								saveStatus={ fieldSaveStatuses[ field.name ] }
-								index={ index }
-								// position={ field.position }
-								saveField={ saveField }
-								moveField={ moveField }
-								groupName={ groupName }
-								groupID={ groupID }
-								cloneField={ handleCloneField( field ) }
-								deleteField={ deleteAndRemoveField }
-								editFieldPod={ editFieldPod }
-							/>
-						) ) }
+						{ fields.map( ( field, index ) => {
+							return (
+								<FieldListItem
+									key={ field.id }
+									podID={ podID }
+									podLabel={ podLabel }
+									groupLabel={ groupLabel }
+									field={ field }
+									saveStatus={ fieldSaveStatuses[ field.name ] }
+									podSaveStatus={ podSaveStatus }
+									index={ index }
+									type={ typeObjects[ field.type ] }
+									saveField={ saveField }
+									moveField={ moveField }
+									groupName={ groupName }
+									groupID={ groupID }
+									cloneField={ handleCloneField( field ) }
+									deleteField={ deleteAndRemoveField }
+									editFieldPod={ editFieldPod }
+								/>
+							);
+						} ) }
 					</div>
 
 					<Button
@@ -200,7 +209,9 @@ FieldList.propTypes = {
 	fields: PropTypes.arrayOf(
 		FIELD_PROP_TYPE_SHAPE
 	).isRequired,
+	typeObjects: PropTypes.object.isRequired,
 	fieldSaveStatuses: PropTypes.object.isRequired,
+	podSaveStatus: PropTypes.string.isRequired,
 	editFieldPod: PropTypes.object.isRequired,
 	deleteAndRemoveField: PropTypes.func.isRequired,
 	saveField: PropTypes.func.isRequired,
@@ -213,6 +224,8 @@ export default compose( [
 		return {
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
 			fieldSaveStatuses: storeSelect.getFieldSaveStatuses(),
+			typeObjects: storeSelect.getFieldTypeObjects(),
+			podSaveStatus: storeSelect.getSaveStatus(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

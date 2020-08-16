@@ -79,6 +79,9 @@ export const getGlobalGroupOptions = ( state ) => GLOBAL_GROUP.getFrom( state );
 // -- Global Field config
 export const getGlobalFieldOptions = ( state ) => GLOBAL_FIELD.getFrom( state );
 
+// eslint-disable-next-line camelcase
+export const getFieldTypeObjects = ( state ) => getGlobalFieldOptions( state )?.groups[0]?.fields[3]?.type_objects;
+
 // UI
 export const getActiveTab = ( state ) => ACTIVE_TAB.getFrom( state );
 
@@ -93,7 +96,6 @@ export const getGroupSaveStatus = ( state, groupName ) => GROUP_SAVE_STATUSES.ge
 
 export const getGroupSaveMessages = ( state ) => GROUP_SAVE_MESSAGES.getFrom( state );
 export const getGroupSaveMessage = ( state, groupName ) => GROUP_SAVE_MESSAGES.getFrom( state )[ groupName ];
-
 
 export const getGroupDeleteStatuses = ( state ) => GROUP_DELETE_STATUSES.getFrom( state );
 export const getGroupDeleteStatus = ( state, groupName ) => GROUP_DELETE_STATUSES.getFrom( state )[ groupName ];

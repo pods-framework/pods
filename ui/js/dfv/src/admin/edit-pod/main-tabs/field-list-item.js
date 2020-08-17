@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import * as PropTypes from 'prop-types';
 
 // WordPress dependencies
-import { Dashicon, Button } from '@wordpress/components';
+import { Dashicon } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 
 // Internal dependencies
@@ -223,32 +223,29 @@ export const FieldListItem = ( props ) => {
 					<div className="pods-field_id"> [id = { id }]</div>
 
 					<div className="pods-field_controls-container">
-						<Button
+						<button
 							className="pods-field_button pods-field_edit"
-							isTertiary
 							onClick={ onEditFieldClick }
 						>
 							{ __( 'Edit', 'pods' ) }
-						</Button>
+						</button>
 
-						<Button
+						<button
 							className="pods-field_button pods-field_duplicate"
 							onClick={ ( e ) => {
 								e.stopPropagation();
 								cloneField( typeObject.type );
 							} }
-							isTertiary
 						>
 							{ __( 'Duplicate', 'pods' ) }
-						</Button>
+						</button>
 
-						<Button
+						<button
 							className="pods-field_button pods-field_delete"
 							onClick={ onDeleteFieldClick }
-							isTertiary
 						>
 							{ __( 'Delete', 'pods' ) }
-						</Button>
+						</button>
 					</div>
 				</div>
 

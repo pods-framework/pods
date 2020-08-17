@@ -308,20 +308,8 @@ tr.pods-toggled-off {
 /*
  * Pods Fields
  */
-div.pods-manage-field div {
-	overflow: hidden;
+div.pods-manage-field {
 	zoom: 1;
-}
-
-// The overflow: hidden above sucks for tooltips
-.pods-field-option .components-popover {
-	overflow: visible;
-}
-
-.pods-field-option .dashicons-editor-help {
-	color: #cccccc;
-	vertical-align: top;
-	padding-left: 3px;
 }
 
 div.pods-manage-field .description {
@@ -333,6 +321,12 @@ div.pods-manage-field .pods-field-option-group {
 	background: #fcfcfc;
 	border-bottom: 1px solid #CCD0D4;
 	padding: 10px;
+
+	&::after {
+		content: "";
+		display: table;
+		clear: both;
+	}
 }
 
 div.pods-manage-field .pods-pick-values li,

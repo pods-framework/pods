@@ -2,6 +2,12 @@
 	display: inline-block;
 	position: relative;
 	vertical-align: bottom;
+	white-space: normal;
+}
+
+.pods-help-tooltip__icon {
+	color: #cccccc;
+	vertical-align: middle;
 }
 
 .pods-help-tooltip__tooltip {
@@ -11,6 +17,7 @@
 	color:#ffffff;
 	display: block;
 	left: 15%;
+	overflow: visible;
 	padding: 15px;
 	position: absolute;
 	top: calc(100% + 4px);

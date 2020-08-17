@@ -214,7 +214,6 @@ export const FieldListItem = ( props ) => {
 						tabIndex={ 0 }
 						role="button"
 						onClick={ onEditFieldClick }
-						style={ { cursor: 'pointer' } }
 						onKeyPress={ handleKeyPress }
 					>
 						{ label }
@@ -253,7 +252,13 @@ export const FieldListItem = ( props ) => {
 					</div>
 				</div>
 
-				<div className="pods-field pods-field_name">
+				<div
+					tabIndex={ 0 }
+					role="button"
+					className="pods-field pods-field_name"
+					onClick={ onEditFieldClick }
+					onKeyPress={ handleKeyPress }
+				>
 					{ name }
 				</div>
 

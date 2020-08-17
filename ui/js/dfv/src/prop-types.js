@@ -4,15 +4,18 @@ import * as PropTypes from 'prop-types';
 const BOOLEAN_STRINGS = [ '0', '1', 0, 1 ];
 const BOOLEAN_ALL_TYPES = [ '0', '1', 0, 1, true, false ];
 
+// Handles issue where objects get passed as arrays when empty from PHP.
+const OBJECT_OR_ARRAY = PropTypes.oneOfType( [
+	PropTypes.object,
+	PropTypes.array,
+] );
+
 export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	admin_only: PropTypes.oneOf( BOOLEAN_STRINGS ),
-	attributes: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.array,
-	] ),
+	attributes: OBJECT_OR_ARRAY,
 	boolean_yes_label: PropTypes.string,
 	class: PropTypes.string,
-	data: PropTypes.object,
+	data: OBJECT_OR_ARRAY,
 	datetime_type: PropTypes.string,
 	datetime_format: PropTypes.string,
 	datetime_time_type: PropTypes.string,
@@ -25,17 +28,11 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.bool,
 		PropTypes.number,
 	] ),
-	'depends-on': PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.array,
-	] ),
+	'depends-on': OBJECT_OR_ARRAY,
 	dependency: PropTypes.bool,
 	description: PropTypes.string,
 	developer_mode: PropTypes.bool,
-	'excludes-on': PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.array,
-	] ),
+	'excludes-on': OBJECT_OR_ARRAY,
 	field_type: PropTypes.string,
 	group: PropTypes.string.isRequired,
 	grouped: PropTypes.number,
@@ -77,7 +74,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	pick_show_view_link: PropTypes.string,
 	pick_taggable: PropTypes.string,
 	// @todo does position actually belong here?
-	position: PropTypes.number,
+	// position: PropTypes.number,
 	// @todo this seems like it shouldn't be here
 	post_status: PropTypes.string,
 	read_only: PropTypes.oneOf( BOOLEAN_STRINGS ),
@@ -107,10 +104,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	website_max_length: PropTypes.string,
 	website_html5: PropTypes.string,
 	weight: PropTypes.number,
-	'wildcard-on': PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.array,
-	] ),
+	'wildcard-on': OBJECT_OR_ARRAY,
 	_locale: PropTypes.string,
 } );
 

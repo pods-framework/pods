@@ -142,6 +142,7 @@
 	border: 1px solid $color--light-grey;
 	border-radius: $border-radius;
 	margin: 1em 0;
+	overflow: hidden;
 }
 
 .pods-field_wrapper:nth-child(even) {

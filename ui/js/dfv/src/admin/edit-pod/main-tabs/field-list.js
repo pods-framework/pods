@@ -165,7 +165,10 @@ const FieldList = ( {
 
 					<div className="pods-field_wrapper-items">
 						{ fields.map( ( field, index ) => {
-							const relatedObject = 'pick' === field.type && field.pick_object ? relatedObjects[ field.pick_object ] : null;
+							// eslint-disable-next-line camelcase
+							const relatedObject = ( 'pick' === field?.type && field?.pick_object )
+								? relatedObjects[ field.pick_object ]
+								: null;
 
 							return (
 								<FieldListItem
@@ -177,7 +180,7 @@ const FieldList = ( {
 									saveStatus={ fieldSaveStatuses[ field.name ] }
 									podSaveStatus={ podSaveStatus }
 									index={ index }
-									type={ typeObjects[ field.type ] }
+									typeObject={ typeObjects[ field.type ] }
 									relatedObject={ relatedObject }
 									saveField={ saveField }
 									moveField={ moveField }

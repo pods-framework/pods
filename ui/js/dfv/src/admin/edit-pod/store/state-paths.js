@@ -55,8 +55,10 @@ export const GLOBAL_GROUP = createStatePath( `${ GLOBAL.path }.group` );
 export const GLOBAL_FIELD = createStatePath( `${ GLOBAL.path }.field` );
 
 // Additional Global Config
-export const GLOBAL_FIELD_TYPES = createStatePath( 'fieldTypes' );
-export const GLOBAL_RELATED_OBJECTS = createStatePath( 'relatedObjects' );
+export const DATA = createStatePath( 'data' );
+
+export const GLOBAL_FIELD_TYPES = createStatePath( `${ DATA.path }.fieldTypes` );
+export const GLOBAL_RELATED_OBJECTS = createStatePath( `${ DATA.path }.relatedObjects` );
 
 // UI
 export const UI = createStatePath( 'ui' );

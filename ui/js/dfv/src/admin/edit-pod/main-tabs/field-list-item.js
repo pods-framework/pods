@@ -18,28 +18,31 @@ import './field-list-item.scss';
 
 const ENTER_KEY = 13;
 
-export const FieldListItem = ( {
-	podID,
-	podLabel,
-	field,
-	saveStatus,
-	podSaveStatus,
-	index,
-	type,
-	relatedObject,
-	editFieldPod,
-	saveField,
-	moveField,
-	groupName,
-	groupLabel,
-	groupID,
-	cloneField,
-	deleteField,
-} ) => {
+export const FieldListItem = ( props ) => {
+	const {
+		podID,
+		podLabel,
+		field,
+		saveStatus,
+		podSaveStatus,
+		index,
+		typeObject,
+		relatedObject,
+		editFieldPod,
+		saveField,
+		moveField,
+		groupName,
+		groupLabel,
+		groupID,
+		cloneField,
+		deleteField,
+	} = props;
+
 	const {
 		id,
 		name,
 		label,
+		type,
 	} = field;
 
 	const required = ( field.required && '0' !== field.required ) ? true : false;
@@ -97,14 +100,8 @@ export const FieldListItem = ( {
 
 	const [ { isDragging }, drag, preview ] = useDrag( {
 		item: {
+			...field,
 			type: 'field-list-item',
-			podID,
-			podLabel,
-			id,
-			index,
-			groupName,
-			groupLabel,
-			name,
 		},
 		collect: ( monitor ) => ( {
 			isDragging: monitor.isDragging(),
@@ -239,7 +236,7 @@ export const FieldListItem = ( {
 							className="pods-field_button pods-field_duplicate"
 							onClick={ ( e ) => {
 								e.stopPropagation();
-								cloneField( type.type );
+								cloneField( typeObject.type );
 							} }
 							isTertiary
 						>
@@ -261,9 +258,9 @@ export const FieldListItem = ( {
 				</div>
 
 				<div className="pods-field pods-field_type">
-					{ type?.label }
-					{ type?.type && (
-						<div className="pods-field_id"> [type = { type.type }]</div>
+					{ typeObject?.label }
+					{ typeObject?.type && (
+						<div className="pods-field_id"> [type = { typeObject.type }]</div>
 					) }
 					{ relatedObject?.label && (
 						<div className="pods-field_related_object">
@@ -287,7 +284,7 @@ FieldListItem.propTypes = {
 	groupName: PropTypes.string.isRequired,
 	groupLabel: PropTypes.string.isRequired,
 	groupID: PropTypes.number.isRequired,
-	type: PropTypes.object.isRequired,
+	typeObject: PropTypes.object.isRequired,
 	relatedObject: PropTypes.object,
 	editFieldPod: PropTypes.object.isRequired,
 

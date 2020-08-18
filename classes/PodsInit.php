@@ -562,6 +562,13 @@ class PodsInit {
 			), PODS_VERSION, true
 		);
 
+		/**
+		 * Page builders.
+		 */
+		if ( isset( $_GET['fl_builder'] ) ) {
+			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
+		}
+
 		// Check if Pod is a Modal Window
 		if ( pods_is_modal_window() ) {
 			add_filter( 'body_class', array( $this, 'add_classes_to_modal_body' ) );

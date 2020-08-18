@@ -535,7 +535,7 @@ class PodsInit {
 		// Marionette dependencies for MV fields
 		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '2.0.0', true );
 		wp_register_script(
-			'marionette',
+			'pods-marionette',
 			PODS_URL . 'ui/js/marionette/backbone.marionette.min.js',
 			array(
 				'backbone',
@@ -543,7 +543,7 @@ class PodsInit {
 			), '3.3.1', true
 		);
 		wp_add_inline_script(
-			'marionette',
+			'pods-marionette',
 			'PodsMn = Backbone.Marionette.noConflict();'
 		);
 
@@ -554,7 +554,7 @@ class PodsInit {
 				'jquery-ui-core',
 				'jquery-ui-sortable',
 				'pods-i18n',
-				'marionette',
+				'pods-marionette',
 				'media-views',
 				'media-models',
 			), PODS_VERSION, true

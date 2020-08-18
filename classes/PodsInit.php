@@ -478,6 +478,8 @@ class PodsInit {
 
 		$maybe_min = SCRIPT_DEBUG ? '' : '.min';
 
+		do_action( 'pods_before_enqueue_scripts', $maybe_min );
+
 		wp_register_script( 'pods-json', PODS_URL . 'ui/js/jquery.json.js', array( 'jquery' ), '2.3' );
 
 		if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
@@ -598,6 +600,8 @@ class PodsInit {
 			wp_enqueue_script( 'pods-dfv' );
 			wp_enqueue_style( 'pods-form' );
 		}
+
+		do_action( 'pods_after_enqueue_scripts', $maybe_min );
 	}
 
 	/**

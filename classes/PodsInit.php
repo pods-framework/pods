@@ -565,7 +565,10 @@ class PodsInit {
 		/**
 		 * Page builders.
 		 */
-		if ( isset( $_GET['fl_builder'] ) ) {
+		if (
+			doing_action( 'elementor/editor/before_enqueue_scripts' ) ||
+			isset( $_GET['fl_builder'] )
+		) {
 			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
 		}
 
@@ -1886,6 +1889,8 @@ class PodsInit {
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 		add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+		// Elementor Page Builder.
+		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 
 		add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 		add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );

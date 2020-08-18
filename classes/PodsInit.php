@@ -567,8 +567,8 @@ class PodsInit {
 		 */
 		if (
 			doing_action( 'elementor/editor/before_enqueue_scripts' ) || // Elementor
-			isset( $_GET['fl_builder'] ) || // Beaver Builder
-			isset( $_GET['et_fb'] ) // Divi
+			null !== pods_v( 'fl_builder', 'get' ) || // Beaver Builder
+			null !== pods_v( 'et_fb', 'get' ) // Divi
 		) {
 			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
 		}

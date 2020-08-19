@@ -16,6 +16,12 @@ Next you'll install the packages for this repo using: `npm install`
 * Set new version in `package.json` (it might be something like `1.2.3-a-1`, so set it to `1.2.3`)
 * Run the `version_number` task using `npm run version_number`
 * _TODO: Would be great if running `npm run version_number` would ask for the version number to save a step_
+* Commit / merge changes into `release/x.x.x` branch
+
+## Asset Build for Production
+
+* Run `npm run build-production` to ensure assets will be built and minimized correctly
+* Commit / merge changes into `release/x.x.x` branch 
 
 ## Release
 

@@ -4,7 +4,7 @@ import { flow, omit } from 'lodash';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import classnames from 'classnames';
 
-import { Button, Dashicon } from '@wordpress/components';
+import { Dashicon } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 
 import dragSource from './group-drag-source';
@@ -170,37 +170,36 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 				</div>
 
 				{ ! isExpanded && (
-					<Button
+					<button
 						className="pods-field-group_button pods-field-group_manage_link"
 						onClick={ toggleExpanded }
-						isTertiary
 						style={ { opacity: isHovered ? 1 : 0 } }
 					>
 						{ __( 'Manage Fields', 'pods' ) }
-					</Button>
+					</button>
 				) }
 
-				<Button
+				<button
 					className="pods-field-group_button pods-field-group_edit"
 					onClick={ ( event ) => onEditGroupClick( event ) }
-					isTertiary
 					style={ { opacity: isHovered ? 1 : 0 } }
 				>
 					{ __( 'Edit', 'pods' ) }
-				</Button>
+				</button>
 
-				<Button
+				<button
 					className="pods-field-group_button pods-field-group_delete"
 					onClick={ onDeleteGroupClick }
-					isTertiary
 					style={ { opacity: isHovered ? 1 : 0 } }
 				>
 					{ __( 'Delete', 'pods' ) }
-				</Button>
+				</button>
 
-				<Button className="pods-field-group_manage">
+				<button
+					className="pods-field-group_button pods-field-group_manage"
+				>
 					<Dashicon icon={ isExpanded ? 'arrow-up' : 'arrow-down' } />
-				</Button>
+				</button>
 
 				{ showSettings && (
 					<SettingsModal

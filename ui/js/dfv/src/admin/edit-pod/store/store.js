@@ -1,5 +1,5 @@
-// import { createStore, applyMiddleware } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
+import { omit } from 'lodash';
 
 import { registerGenericStore } from '@wordpress/data';
 
@@ -10,10 +10,14 @@ import * as selectors from './selectors';
 import * as actions from './actions';
 import apiMiddleware from './api-middleware';
 
-export const initStore = ( props ) => {
+export const initStore = ( props = {} ) => {
 	const initialState = {
 		...paths.UI.createTree( INITIAL_UI_STATE ),
-		...props.config || {},
+		data: {
+			fieldTypes: { ...props.config?.fieldTypes || {} },
+			relatedObjects: { ...props.config?.relatedObjects || {} },
+		},
+		...omit( props?.config || {}, [ 'fieldTypes', 'relatedObjects' ] ),
 	};
 
 	const reduxStore = configureStore( {

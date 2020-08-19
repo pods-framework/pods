@@ -41,10 +41,14 @@ const PodsFieldOption = ( {
 					{ label }
 					{ required && ( <span className="pods-form-ui-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
 					{ shouldShowHelpText && (
-						<HelpTooltip
-							helpText={ helpTextString }
-							helpLink={ helpLink }
-						/> ) }
+						<span style={ { whiteSpace: 'nowrap' } }>
+							{ '\u00A0' /* &nbsp; */ }
+							<HelpTooltip
+								helpText={ helpTextString }
+								helpLink={ helpLink }
+							/>
+						</span>
+					) }
 				</label>
 			) }
 

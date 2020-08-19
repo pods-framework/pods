@@ -359,8 +359,13 @@ export const global = ( state = {} ) => {
 	return state;
 };
 
+export const data = ( state = {} ) => {
+	return state;
+};
+
 export default ( combineReducers( {
 	ui,
 	currentPod,
 	global,
+	data,
 } ) );

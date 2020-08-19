@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import * as PropTypes from 'prop-types';
 
 // WordPress dependencies
-import { Dashicon, Button } from '@wordpress/components';
+import { Dashicon } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 
 // Internal dependencies
@@ -18,28 +18,31 @@ import './field-list-item.scss';
 
 const ENTER_KEY = 13;
 
-export const FieldListItem = ( {
-	podID,
-	podLabel,
-	field,
-	saveStatus,
-	podSaveStatus,
-	index,
-	type,
-	relatedObject,
-	editFieldPod,
-	saveField,
-	moveField,
-	groupName,
-	groupLabel,
-	groupID,
-	cloneField,
-	deleteField,
-} ) => {
+export const FieldListItem = ( props ) => {
+	const {
+		podID,
+		podLabel,
+		field,
+		saveStatus,
+		podSaveStatus,
+		index,
+		typeObject,
+		relatedObject,
+		editFieldPod,
+		saveField,
+		moveField,
+		groupName,
+		groupLabel,
+		groupID,
+		cloneField,
+		deleteField,
+	} = props;
+
 	const {
 		id,
 		name,
 		label,
+		type,
 	} = field;
 
 	const required = ( field.required && '0' !== field.required ) ? true : false;
@@ -97,14 +100,8 @@ export const FieldListItem = ( {
 
 	const [ { isDragging }, drag, preview ] = useDrag( {
 		item: {
+			...field,
 			type: 'field-list-item',
-			podID,
-			podLabel,
-			id,
-			index,
-			groupName,
-			groupLabel,
-			name,
 		},
 		collect: ( monitor ) => ( {
 			isDragging: monitor.isDragging(),
@@ -217,7 +214,6 @@ export const FieldListItem = ( {
 						tabIndex={ 0 }
 						role="button"
 						onClick={ onEditFieldClick }
-						style={ { cursor: 'pointer' } }
 						onKeyPress={ handleKeyPress }
 					>
 						{ label }
@@ -227,43 +223,46 @@ export const FieldListItem = ( {
 					<div className="pods-field_id"> [id = { id }]</div>
 
 					<div className="pods-field_controls-container">
-						<Button
+						<button
 							className="pods-field_button pods-field_edit"
-							isTertiary
 							onClick={ onEditFieldClick }
 						>
 							{ __( 'Edit', 'pods' ) }
-						</Button>
+						</button>
 
-						<Button
+						<button
 							className="pods-field_button pods-field_duplicate"
 							onClick={ ( e ) => {
 								e.stopPropagation();
-								cloneField( type.type );
+								cloneField( typeObject.type );
 							} }
-							isTertiary
 						>
 							{ __( 'Duplicate', 'pods' ) }
-						</Button>
+						</button>
 
-						<Button
+						<button
 							className="pods-field_button pods-field_delete"
 							onClick={ onDeleteFieldClick }
-							isTertiary
 						>
 							{ __( 'Delete', 'pods' ) }
-						</Button>
+						</button>
 					</div>
 				</div>
 
-				<div className="pods-field pods-field_name">
+				<div
+					tabIndex={ 0 }
+					role="button"
+					className="pods-field pods-field_name"
+					onClick={ onEditFieldClick }
+					onKeyPress={ handleKeyPress }
+				>
 					{ name }
 				</div>
 
 				<div className="pods-field pods-field_type">
-					{ type?.label }
-					{ type?.type && (
-						<div className="pods-field_id"> [type = { type.type }]</div>
+					{ typeObject?.label }
+					{ typeObject?.type && (
+						<div className="pods-field_id"> [type = { typeObject.type }]</div>
 					) }
 					{ relatedObject?.label && (
 						<div className="pods-field_related_object">
@@ -287,7 +286,7 @@ FieldListItem.propTypes = {
 	groupName: PropTypes.string.isRequired,
 	groupLabel: PropTypes.string.isRequired,
 	groupID: PropTypes.number.isRequired,
-	type: PropTypes.object.isRequired,
+	typeObject: PropTypes.object.isRequired,
 	relatedObject: PropTypes.object,
 	editFieldPod: PropTypes.object.isRequired,
 

@@ -41,7 +41,10 @@ const HelpTooltip = ( {
 			tabIndex="0"
 			onFocus={ () => setShowTooltip( true ) }
 		>
-			<Dashicon icon="editor-help" />
+			<Dashicon
+				icon="editor-help"
+				className="pods-help-tooltip__icon"
+			/>
 
 			{ showTooltip && (
 				<div
@@ -51,7 +54,14 @@ const HelpTooltip = ( {
 				>
 					<i></i>
 					{ helpLink
-						? ( <a href={ helpLink }>{ helpText }</a> )
+						? (
+							<a href={ helpLink } target="_blank" rel="noreferrer">
+								{ helpText }
+								<Dashicon
+									icon="external"
+								/>
+							</a>
+						)
 						: ( <span>{ helpText }</span> )
 					}
 				</div>

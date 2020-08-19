@@ -80,6 +80,7 @@
 .pods-field_label,
 .pods-field_name {
 	color: #0073aa;
+	cursor: pointer;
 
 	&:hover {
 		color: #00a0d2;
@@ -142,9 +143,43 @@
 	border: 1px solid $color--light-grey;
 	border-radius: $border-radius;
 	margin: 1em 0;
+	overflow: hidden;
 }
 
 .pods-field_wrapper:nth-child(even) {
 	background-color: $color--super-light-grey;
 }
 
+.pods-field_button {
+	background: transparent;
+	border: none;
+	border-right: 1px solid $color--light-grey;
+	color: $color--wp-blue;
+	height: auto;
+	margin-right: 0.5em;
+	margin-top: 0.25em;
+	overflow: visible;
+	padding: 0 0.5em;
+	position: relative;
+
+	&:first-child {
+		margin-left: -0.5em;
+	}
+
+	&:hover,
+	&:focus {
+		color: $color--wp-blue-light;
+	}
+}
+
+.pods-field_button.pods-field_delete {
+    color: $color--red;
+
+    &:hover {
+        color: $color--red-dark;
+	}
+
+	&::after {
+		content: none;
+	}
+}

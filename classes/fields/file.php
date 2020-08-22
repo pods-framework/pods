@@ -730,6 +730,10 @@ class PodsField_File extends PodsField {
 	 */
 	public function do_wp_gallery( $value, $options ) {
 
+		if ( ! $value ) {
+			return '';
+		}
+
 		$shortcode_args = array();
 
 		if ( ! empty( $options[ static::$type . '_wp_gallery_columns' ] ) ) {
@@ -753,7 +757,7 @@ class PodsField_File extends PodsField {
 		} else {
 			$images = array();
 
-			foreach ( $value as $v ) {
+			foreach ( (array) $value as $v ) {
 				if ( ! is_array( $v ) ) {
 					$images[] = (int) $v;
 				} elseif ( isset( $v['ID'] ) ) {

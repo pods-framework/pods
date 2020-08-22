@@ -31,7 +31,7 @@ class Block_Collection extends Pod {
 
 		return [
 			'namespace' => $namespace,
-			'title'     => $this->get_arg( 'label' ),
+			'title'     => $this->get_arg( 'title', $this->get_arg( 'label' ) ),
 			'icon'      => $this->get_arg( 'icon', '' ),
 		];
 	}

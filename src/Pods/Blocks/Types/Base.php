@@ -86,25 +86,12 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 			return;
 		}
 
-		$block['object_type']  = 'block';
-		$block['storage_type'] = 'collection';
-		$block['name']         = $this->slug();
+		$block['name'] = $this->slug();
 
 		$this->assets();
 		$this->hook();
 
-		$object_collection = Store::get_instance();
-		$object_collection->register_object( $block );
-
-		$fields = $this->fields();
-
-		foreach ( $fields as $field ) {
-			$field['object_type']  = 'block-field';
-			$field['storage_type'] = 'collection';
-			$field['parent']       = 'block/' . $block['name'];
-
-			$object_collection->register_object( $field );
-		}
+		pods_register_block_type( $block, $this->fields() );
 	}
 
 	/**

@@ -26,19 +26,21 @@ class Block extends Pod {
 	 */
 	public function get_block_args() {
 		$namespace = $this->get_arg( 'namespace', 'pods' );
-		$name      = $this->get_arg( 'name' );
+		$name      = $this->get_arg( 'slug', $this->get_arg( 'name' ) );
+		$category  = $this->get_arg( 'category', 'layout' );
 
 		// Blocks are only allowed A-Z0-9- characters, no underscores.
 		$namespace = str_replace( '_', '-', sanitize_title_with_dashes( $namespace ) );
 		$name      = str_replace( '_', '-', sanitize_title_with_dashes( $name ) );
+		$category  = str_replace( '_', '-', sanitize_title_with_dashes( $category ) );
 
 		$block_args = [
 			'blockName'       => $namespace . '/' . $name,
 			'blockGroupLabel' => $this->get_arg( 'group_label', __( 'Options', 'pods' ) ),
-			'title'           => $this->get_arg( 'label' ),
+			'title'           => $this->get_arg( 'title', $this->get_arg( 'label' ) ),
 			'description'     => $this->get_arg( 'description' ),
-			'renderType'      => $this->get_arg( 'renderType', 'js' ),
-			'category'        => $this->get_arg( 'category', 'layout' ),
+			'renderType'      => $this->get_arg( 'renderType', $this->get_arg( 'render_type', 'js' ) ),
+			'category'        => $category,
 			'icon'            => $this->get_arg( 'icon', 'align-right' ),
 			'keywords'        => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
 			'supports'        => $this->get_arg( 'supports', [
@@ -53,6 +55,9 @@ class Block extends Pod {
 			],
 		];
 
+		// @todo Look into supporting example.
+		// @todo Look into supporting variations.
+
 		foreach ( $block_args['fields'] as $field ) {
 			if ( ! isset( $field['attributeOptions'] ) ) {
 				continue;
@@ -62,7 +67,7 @@ class Block extends Pod {
 		}
 
 		if ( 'js' === $block_args['renderType'] ) {
-			$block_args['template'] = $this->get_arg( 'template', __( 'No block preview is available', 'pods' ) );
+			$block_args['render_template'] = $this->get_arg( 'render_template', __( 'No block preview is available', 'pods' ) );
 		} elseif ( 'php' === $block_args['renderType'] ) {
 			$block_args['render_callback'] = $this->get_arg( 'render_callback' );
 		}

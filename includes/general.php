@@ -2,6 +2,9 @@
 /**
  * @package Pods\Global\Functions\General
  */
+
+use Pods\Whatsit\Store;
+
 /**
  * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
  *
@@ -2101,6 +2104,72 @@ function pods_register_field_type( $type, $file = null ) {
  */
 function pods_register_related_object( $name, $label, $options = null ) {
 	return PodsForm::field_method( 'pick', 'register_related_object', $name, $label, $options );
+}
+
+/**
+ * Register a block type with Pods. Always register during the `pods_blocks_api_init` action.
+ *
+ * @since TBD
+ *
+ * @param array $block  The block configuration, compatible with `register_block_type()`.
+ * @param array $fields List of fields to use for inspector controls.
+ *
+ * @return true|WP_Error True if successful, or else an WP_Error with the problem.
+ *
+ * @see register_block_type
+ * @see Pods\Blocks\Types\Base
+ */
+function pods_register_block_type( array $block, array $fields = [] ) {
+	if ( empty( $block['namespace'] ) ) {
+		return new WP_Error( 'pods-blocks-api-block-type-invalid', __( 'Invalid block type configuration provided', 'pods' ) );
+	}
+
+	$block['object_type']  = 'block';
+	$block['storage_type'] = 'collection';
+	$block['name']         = pods_v( 'name', $block, pods_v( 'slug', $block ) );
+	$block['label']        = pods_v( 'label', $block, pods_v( 'title', $block ) );
+	$block['category']     = pods_v( 'category', $block, pods_v( 'collection', $block ) );
+
+	$object_collection = Store::get_instance();
+	$object_collection->register_object( $block );
+
+	foreach ( $fields as $field ) {
+		$field['object_type']  = 'block-field';
+		$field['storage_type'] = 'collection';
+		$field['parent']       = 'block/' . $block['name'];
+		$field['name']         = pods_v( 'name', $field, pods_v( 'slug', $field ) );
+		$field['label']        = pods_v( 'label', $field, pods_v( 'title', $field ) );
+
+		$object_collection->register_object( $field );
+	}
+
+	return true;
+}
+
+/**
+ * Register a block collection with Pods. Always register during the `pods_blocks_api_init` action.
+ *
+ * @since TBD
+ *
+ * @param array $collection The block collection configuration, compatible with `block_categories` filter.
+ *
+ * @return true|WP_Error True if successful, or else an WP_Error with the problem.
+ *
+ * @see Pods\Blocks\Collections\Base
+ */
+function pods_register_block_collection( array $collection ) {
+	if ( empty( $collection['namespace'] ) ) {
+		return new WP_Error( 'pods-blocks-api-block-collection-invalid', __( 'Invalid block collection configuration provided', 'pods' ) );
+	}
+
+	$collection['object_type']  = 'block-collection';
+	$collection['storage_type'] = 'collection';
+	$collection['label']        = pods_v( 'label', $collection, pods_v( 'title', $collection ) );
+
+	$object_collection = Store::get_instance();
+	$object_collection->register_object( $collection );
+
+	return true;
 }
 
 /**

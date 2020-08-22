@@ -67,7 +67,7 @@ class Block extends Pod {
 		}
 
 		if ( 'js' === $block_args['renderType'] ) {
-			$block_args['render_template'] = $this->get_arg( 'render_template', __( 'No block preview is available', 'pods' ) );
+			$block_args['renderTemplate'] = $this->get_arg( 'render_template', $this->get_arg( 'renderTemplate', __( 'No block preview is available', 'pods' ) ) );
 		} elseif ( 'php' === $block_args['renderType'] ) {
 			$block_args['render_callback'] = $this->get_arg( 'render_callback' );
 		}

@@ -18,20 +18,20 @@ import { richText } from '../config/html';
  * final string back to a React component? The parser may have
  * callbacks that we can use.
  *
- * @param {string} template Template string.
+ * @param {string} renderTemplate Template string.
  * @param {Object} fields Fields used in the Block.
  * @param {Object} attributes Block attributes with values.
  * @param {Function} renderField Function that should return a rendered field.
  * @param {Function} setAttributes setAttributes function for the block (Optional).
  */
-const renderTemplate = (
-	template = '',
+const renderBlockTemplate = (
+	renderTemplate = '',
 	fields = [],
 	attributes = {},
 	renderField,
 	setAttributes
 ) => {
-	let htmlWithRenderedFields = sanitizeHtml( template, richText );
+	let htmlWithRenderedFields = sanitizeHtml( renderTemplate, richText );
 
 	// Replace all of the placeholders in the format of `{@fieldName}` with the
 	// rendered field. To do this, we first need to create the React component for
@@ -78,4 +78,4 @@ const renderTemplate = (
 	return parsedComponents;
 };
 
-export default renderTemplate;
+export default renderBlockTemplate;

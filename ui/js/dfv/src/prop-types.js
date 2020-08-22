@@ -53,6 +53,10 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	number_format: PropTypes.string,
 	number_format_soft: PropTypes.number,
 	object_type: PropTypes.string.isRequired,
+	oembed_height: PropTypes.string,
+	oembed_width: PropTypes.string,
+	oembed_show_preview: PropTypes.oneOf( BOOLEAN_ALL_TYPES ),
+	oembed_restrict_providers: PropTypes.oneOf( BOOLEAN_ALL_TYPES ),
 	old_name: PropTypes.string,
 	param_default: PropTypes.string,
 	// @todo this should maybe just be number

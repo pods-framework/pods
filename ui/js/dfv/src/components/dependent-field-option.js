@@ -1,34 +1,9 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
-import { each, isObject } from 'lodash';
 
 // Pod dependencies
 import PodsFieldOption from 'dfv/src/components/field-option';
-
-/**
- * Check if option meets dependencies, helper function.
- *
- * @param {Object|Object[]} dependencies Dictionary in the form optionName: requiredVal
- * @param {Object} allOptionValues Map of all option values.
- *
- * @return {boolean} Whether or not the specified dependencies are met
- */
-const meetsDependencies = ( dependencies, allOptionValues ) => {
-	let retVal = true;
-
-	if ( dependencies && isObject( dependencies ) ) {
-		each( dependencies, ( dependentValue, dependentOptionName ) => {
-			// Loose comparison required, values may be 1/0 expecting true/false
-			// eslint-disable-next-line eqeqeq
-			if ( allOptionValues[ dependentOptionName ] != dependentValue ) {
-				retVal = false;
-				return false; // Early-exits the loop only, not the function
-			}
-		} );
-	}
-
-	return retVal;
-};
+import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
 
 // Conditionally display a FieldOption (depends-on support)
 const DependentFieldOption = ( {
@@ -60,7 +35,7 @@ const DependentFieldOption = ( {
 		}
 	};
 
-	if ( ! meetsDependencies( dependents, allOptionValues ) ) {
+	if ( ! validateFieldDependencies( allOptionValues, dependents ) ) {
 		return null;
 	}
 

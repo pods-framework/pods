@@ -1533,21 +1533,37 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
  * @see pods_evaluate_tag
  */
 function pods_evaluate_tags_sql( $tags ) {
-	$return = pods_evaluate_tags( $tags, true, '__PODS_TMP__EMPTY_VALUE__' );
+	// The temporary placeholder we will use.
+	$placeholder = '__PODS__TMP__EMPTY_VALUE__';
+
+	// Evaluate the magic tags.
+	$evaluated = pods_evaluate_tags( $tags, true, $placeholder );
 
 	$find = array(
-		'=__PODS_TMP__EMPTY_VALUE__',
-		'= __PODS_TMP__EMPTY_VALUE__',
-		'__PODS_TMP__EMPTY_VALUE__',
+		'= ' . placeholder,
+		'=' . placeholder,
+		$placeholder,
 	);
 
 	$replace = array(
 		'= ""',
-		'= ""',
+		'=""',
 		'',
 	);
 
-	return str_replace( $find, $replace, $return );
+	// Finish sanitizing the string so it is SQL-safe.
+	$sanitized = str_replace( $find, $replace, $evaluated );
+
+	/**
+	 * Allow filtering the result of how we evaluate and sanitize the SQL.
+	 *
+	 * @since 2.7.23
+	 *
+	 * @param string              $sanitized The evaluated and sanitized string.
+	 * @param string              $evaluated The evaluated string.
+	 * @param string|array|object $tags      Original string to be evaluated.
+	 */
+	return apply_filters( 'pods_evaluate_tags_sql', $sanitized, $evaluated, $tags );
 }
 
 /**

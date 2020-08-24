@@ -1522,6 +1522,35 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
 }
 
 /**
+ * Evaluate tags like magic tags but through pods_v and sanitize for SQL.
+ *
+ * @since 2.7.23
+ *
+ * @param string|array|object $tags     String to be evaluated.
+ *
+ * @return string
+ *
+ * @see pods_evaluate_tag
+ */
+function pods_evaluate_tags_sql( $tags ) {
+	$return = pods_evaluate_tags( $tags, true, '__PODS_TMP__EMPTY_VALUE__' );
+
+	$find = array(
+		'=__PODS_TMP__EMPTY_VALUE__',
+		'= __PODS_TMP__EMPTY_VALUE__',
+		'__PODS_TMP__EMPTY_VALUE__',
+	);
+
+	$replace = array(
+		'= ""',
+		'= ""',
+		'',
+	);
+
+	return str_replace( $find, $replace, $return );
+}
+
+/**
  * Evaluate tags like magic tags but through pods_v.
  *
  * @since 2.1

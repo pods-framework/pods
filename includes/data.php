@@ -1522,13 +1522,13 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
 }
 
 /**
- * Evaluate tags like magic tags but through pods_v and sanitize for SQL.
+ * Evaluate tags like magic tags but through pods_v and sanitize for SQL with an empty double quote if needed.
  *
  * @since 2.7.23
  *
- * @param string|array|object $tags     String to be evaluated.
+ * @param string|array|object $tags String to be evaluated.
  *
- * @return string
+ * @return string Evaluated string.
  *
  * @see pods_evaluate_tag
  */

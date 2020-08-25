@@ -161,7 +161,7 @@ export const simpleBlock = {
       html: false
     },
     title: 'Custom Block',
-    template: basicTemplate,
+	renderTemplate: basicTemplate,
 	fields: [
 		textField,
 		checkboxField,
@@ -187,7 +187,7 @@ export const allFieldsBlock = {
       html: false
     },
     title: 'All Field Block',
-    template: templateWithEveryFieldType,
+	renderTemplate: templateWithEveryFieldType,
 	fields: [
 		textField,
 		textareaField,

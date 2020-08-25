@@ -71,6 +71,13 @@ class API {
 			return;
 		}
 
+		/**
+		 * Allow any integrations to be set up before core blocks and collections are called.
+		 *
+		 * @since TBD
+		 */
+		do_action( 'pods_blocks_api_pre_init' );
+
 		tribe( 'pods.blocks.collection.pods' );
 		tribe( 'pods.blocks.field' );
 		tribe( 'pods.blocks.form' );
@@ -78,7 +85,12 @@ class API {
 		tribe( 'pods.blocks.single' );
 		tribe( 'pods.blocks.view' );
 
-		do_action( 'pods_blocks_api_setup_core_blocks' );
+		/**
+		 * Allow custom blocks to be registered with Pods.
+		 *
+		 * @since TBD
+		 */
+		do_action( 'pods_blocks_api_init' );
 
 		$setup = true;
 	}

@@ -31,7 +31,7 @@ class Pods extends Base {
 		return [
 			'internal'  => true,
 			'label'     => __( 'Pods Blocks', 'pods' ),
-			'namespace' => 'pods',
+			'namespace' => $this->slug(),
 			'icon'      => 'pods',
 		];
 	}

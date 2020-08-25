@@ -23,7 +23,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 /**
  * Internal dependencies
  */
-import renderTemplate from '../../utils/renderTemplate';
+import renderBlockTemplate from '../../utils/renderBlockTemplate';
 import { plainText } from '../../config/html';
 
 /**
@@ -210,7 +210,7 @@ const BlockPreview = ( {
 } ) => {
 	const {
 		fields = [],
-		template,
+		renderTemplate,
 		blockName,
 		renderType,
 	} = block;
@@ -226,7 +226,7 @@ const BlockPreview = ( {
 
 	return (
 		<>
-			{ renderTemplate( template, fields, attributes, renderField ) }
+			{ renderBlockTemplate( renderTemplate, fields, attributes, renderField ) }
 		</>
 	)
 };

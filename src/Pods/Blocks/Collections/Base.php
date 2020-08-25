@@ -2,8 +2,6 @@
 
 namespace Pods\Blocks\Collections;
 
-use Pods\Whatsit\Store;
-
 /**
  * Block Collection functionality class.
  *
@@ -17,18 +15,15 @@ abstract class Base {
 	 * @since TBD
 	 */
 	public function register_with_pods() {
-		$block_collection = $this->block_collection();
+		$collection = $this->block_collection();
 
-		if ( empty( $block_collection ) ) {
+		if ( empty( $collection ) ) {
 			return;
 		}
 
-		$block_collection['object_type']  = 'block-collection';
-		$block_collection['storage_type'] = 'collection';
-		$block_collection['name']         = $this->slug();
+		$collection['name'] = $this->slug();
 
-		$object_collection = Store::get_instance();
-		$object_collection->register_object( $block_collection );
+		pods_register_block_collection( $collection );
 	}
 
 	/**

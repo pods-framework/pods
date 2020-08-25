@@ -6,7 +6,7 @@ import { mount } from 'enzyme';
 /**
  * Internal dependencies
  */
-import renderTemplate from '../renderTemplate';
+import renderBlockTemplate from '../renderBlockTemplate';
 
 import {
 	textField,
@@ -33,9 +33,9 @@ const fields = [
 	numberField,
 ];
 
-describe( 'renderTemplate', () => {
+describe( 'renderBlockTemplate', () => {
 	it( 'renders simple template with no setAttributes function included', () => {
-		const renderedTree = renderTemplate(
+		const renderedTree = renderBlockTemplate(
 			basicTemplate,
 			fields,
 			{
@@ -51,7 +51,7 @@ describe( 'renderTemplate', () => {
 	} );
 
 	it( 'renders more complex template with no setAttributes function included', () => {
-		const renderedTree = renderTemplate(
+		const renderedTree = renderBlockTemplate(
 			multipleFieldsTemplate,
 			fields,
 			{

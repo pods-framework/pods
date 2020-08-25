@@ -149,7 +149,6 @@ class Field extends Base {
 					'label'      => __( 'Bi-directional Field', 'pods' ),
 					'type'       => 'pick',
 					'default'    => '',
-					'required'   => true,
 					'data'       => [],
 					'depends-on' => [
 						'type'        => 'pick',

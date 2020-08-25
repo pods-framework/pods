@@ -65,6 +65,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.number,
 	] ).isRequired,
 	pick_allow_add_new: PropTypes.string,
+	pick_custom: PropTypes.string,
 	pick_object: PropTypes.string,
 	pick_format: PropTypes.string,
 	pick_display_format_multi: PropTypes.string,
@@ -76,6 +77,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	pick_show_edit_link: PropTypes.string,
 	pick_show_icon: PropTypes.string,
 	pick_show_view_link: PropTypes.string,
+	pick_table: PropTypes.string,
 	pick_taggable: PropTypes.string,
 	// @todo does position actually belong here?
 	// position: PropTypes.number,

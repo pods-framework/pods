@@ -10,6 +10,11 @@ const OBJECT_OR_ARRAY = PropTypes.oneOfType( [
 	PropTypes.array,
 ] );
 
+const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
+	PropTypes.string,
+	PropTypes.number,
+] );
+
 export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	admin_only: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	attributes: OBJECT_OR_ARRAY,
@@ -42,10 +47,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	] ),
 	hidden: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	// @todo this should maybe just be number
-	id: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.number,
-	] ).isRequired,
+	id: NUMBER_OR_NUMBER_AS_STRING.isRequired,
 	label: PropTypes.string.isRequired,
 	label_param: PropTypes.string,
 	name: PropTypes.string.isRequired,
@@ -59,11 +61,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	oembed_restrict_providers: PropTypes.oneOf( BOOLEAN_ALL_TYPES ),
 	old_name: PropTypes.string,
 	param_default: PropTypes.string,
-	// @todo this should maybe just be number
-	parent: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.number,
-	] ).isRequired,
+	parent: NUMBER_OR_NUMBER_AS_STRING.isRequired,
 	pick_allow_add_new: PropTypes.string,
 	pick_custom: PropTypes.string,
 	pick_object: PropTypes.string,
@@ -79,9 +77,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	pick_show_view_link: PropTypes.string,
 	pick_table: PropTypes.string,
 	pick_taggable: PropTypes.string,
-	// @todo does position actually belong here?
-	// position: PropTypes.number,
-	// @todo this seems like it shouldn't be here
+	pick_val: PropTypes.string,
 	post_status: PropTypes.string,
 	read_only: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	rest_read: PropTypes.oneOf( BOOLEAN_STRINGS ),
@@ -91,15 +87,12 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	restrict_capability: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	restrict_role: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	required: PropTypes.oneOf( BOOLEAN_ALL_TYPES ),
-	// @todo this should be unserialized to an object?
 	roles_allowed: PropTypes.string,
+	sister_id: NUMBER_OR_NUMBER_AS_STRING,
 	storage_type: PropTypes.string,
 	text_allow_html: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	text_allow_shortcode: PropTypes.oneOf( BOOLEAN_STRINGS ),
-	text_max_length: PropTypes.oneOfType( [
-		PropTypes.number,
-		PropTypes.string,
-	] ),
+	text_max_length: NUMBER_OR_NUMBER_AS_STRING,
 	text_allowed_html_tags: PropTypes.string,
 	text_repeatable: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	type: PropTypes.string.isRequired,
@@ -117,19 +110,11 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {
 	description: PropTypes.string,
 	fields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ),
-	// @todo this should maybe just be number
-	id: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.number,
-	] ),
+	id: NUMBER_OR_NUMBER_AS_STRING.isRequired,
 	label: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	object_type: PropTypes.string,
-	// @todo this should maybe just be number
-	parent: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.number,
-	] ),
+	parent: NUMBER_OR_NUMBER_AS_STRING.isRequired,
 	storage_type: PropTypes.string,
 	weight: PropTypes.number,
 	_locale: PropTypes.string,

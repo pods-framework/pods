@@ -113,10 +113,10 @@ const SettingsModal = ( {
 			newOptions.name = sanitizeSlug( value );
 		}
 
-		setChangedOptions( {
-			...changedOptions,
+		setChangedOptions( ( previousChangedOptions ) => ( {
+			...previousChangedOptions,
 			...newOptions,
-		} );
+		} ) );
 	};
 
 	// When the modal first opens, set any options to their defaults, unless

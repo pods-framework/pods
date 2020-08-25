@@ -80,10 +80,10 @@ const DependentFieldOption = ( {
 			const endpointParams = new URLSearchParams( {
 				types: 'pick',
 				include_parent: 1,
+				pod: podValue,
 				args: JSON.stringify( {
 					pick_object: podType,
 					pick_val: podName,
-					pod: podValue,
 				} ),
 			} );
 
@@ -103,13 +103,12 @@ const DependentFieldOption = ( {
 						...accumulator,
 						[ field.id ]: `${ field.label } (${ field.name }) [Pod: ${ field.parent_data?.name }]`,
 					} ),
-					{}
+					{
+						'': __( '-- Select Related Field --', 'pods' ),
+					}
 				);
 
-				setDataOptions( {
-					'': __( '-- Select Related Field --', 'pods' ),
-					...processedFields,
-				} );
+				setDataOptions( processedFields );
 			} catch ( error ) {
 				setDataOptions( { '': __( 'No Related Fields Found', 'pods' ) } );
 			}

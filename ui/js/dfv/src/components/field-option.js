@@ -88,30 +88,41 @@ const PodsFieldOption = ( {
 									value={ value }
 									onChange={ onChange }
 								>
-									{ Object.entries( data ).map( ( [ optionValue, option ] ) => {
-										if ( 'string' === typeof option ) {
-											return (
-												<option key={ optionValue } value={ optionValue }>
-													{ option }
-												</option>
-											);
-										} else if ( 'object' === typeof option ) {
-											const optgroupOptions = Object.entries( option );
+									{ Object.keys( data )
+										// This custom sorting function is necessary because
+										// JS will change the ordering of the keys in the object
+										// if one of them is an empty string (which we may want as
+										// the placeholder value), and will send the empty string
+										// to the end of the object when it is enumerated.
+										//
+										// eslint-disable-next-line no-unused-vars
+										.sort( ( a, b ) => a === '' ? -1 : 0 )
+										.map( ( optionValue ) => {
+											const option = data[ optionValue ];
 
-											return (
-												<optgroup label={ optionValue } key={ optionValue }>
-													{ optgroupOptions.map( ( [ suboptionValue, suboptionLabel ] ) => {
-														return (
-															<option key={ suboptionValue } value={ suboptionValue }>
-																{ suboptionLabel }
-															</option>
-														);
-													} ) }
-												</optgroup>
-											);
-										}
-										return null;
-									} ) }
+											if ( 'string' === typeof option ) {
+												return (
+													<option key={ optionValue } value={ optionValue }>
+														{ option }
+													</option>
+												);
+											} else if ( 'object' === typeof option ) {
+												const optgroupOptions = Object.entries( option );
+
+												return (
+													<optgroup label={ optionValue } key={ optionValue }>
+														{ optgroupOptions.map( ( [ suboptionValue, suboptionLabel ] ) => {
+															return (
+																<option key={ suboptionValue } value={ suboptionValue }>
+																	{ suboptionLabel }
+																</option>
+															);
+														} ) }
+													</optgroup>
+												);
+											}
+											return null;
+										} ) }
 								</select>
 							);
 						}

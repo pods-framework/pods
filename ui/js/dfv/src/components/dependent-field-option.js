@@ -4,13 +4,17 @@ import * as PropTypes from 'prop-types';
 // WordPress dependencies
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
+import { withSelect } from '@wordpress/data';
 
 // Pod dependencies
 import PodsFieldOption from 'dfv/src/components/field-option';
 import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
+import { STORE_KEY_EDIT_POD } from 'dfv/src/admin/edit-pod/store/constants';
 
 // Conditionally display a FieldOption (depends-on support)
 const DependentFieldOption = ( {
+	podType,
+	podName,
 	fieldType,
 	name,
 	required,
@@ -59,22 +63,16 @@ const DependentFieldOption = ( {
 			return;
 		}
 
-		console.log( 'looking at bidirectional field', [ name, fieldTypeOption, relatedTypeOption ] );
-
 		// Only get results if "Related Type"/"pick_object" is a Post Type,
 		// Taxonomy, or Pod.
-		let pickObject = '';
-		let pickVal = '';
+		let podValue = '';
 
 		if ( relatedTypeOption.startsWith( 'post_type-' ) ) {
-			pickObject = 'post_type';
-			pickVal = relatedTypeOption.substring( 10 ); // everything after 'post_type-'
+			podValue = relatedTypeOption.substring( 10 ); // everything after 'post_type-'
 		} else if ( relatedTypeOption.startsWith( 'taxonomy-' ) ) {
-			pickObject = 'taxonomy';
-			pickVal = relatedTypeOption.substring( 9 ); // everything after 'taxonomy-'
+			podValue = relatedTypeOption.substring( 9 ); // everything after 'taxonomy-'
 		} else if ( relatedTypeOption.startsWith( 'pod-' ) ) {
-			pickObject = 'pod';
-			pickVal = relatedTypeOption.substring( 4 ); // everything after 'pod-'
+			podValue = relatedTypeOption.substring( 4 ); // everything after 'pod-'
 		} else {
 			return;
 		}
@@ -84,8 +82,9 @@ const DependentFieldOption = ( {
 				types: 'pick',
 				include_parent: 1,
 				args: JSON.stringify( {
-					pick_object: pickObject,
-					pick_val: pickVal,
+					pick_object: podType,
+					pick_val: podName,
+					pod: podValue,
 				} ),
 			} );
 
@@ -93,8 +92,6 @@ const DependentFieldOption = ( {
 				const results = await apiFetch(
 					{ path: `pods/v1/fields?${ endpointParams.toString() }` }
 				);
-
-				console.log( 'fields loaded', results );
 
 				if ( ! results.fields || ! results.fields.length ) {
 					setDataOptions( { '': __( 'No Related Fields Found', 'pods' ) } );
@@ -120,7 +117,7 @@ const DependentFieldOption = ( {
 		};
 
 		loadBidirectionalFieldData();
-	}, [ name, fieldTypeOption, relatedTypeOption, setDataOptions ] );
+	}, [ podType, podName, name, fieldTypeOption, relatedTypeOption, setDataOptions ] );
 
 	// Don't render a field that hasn't had its dependencies met.
 	if ( ! validateFieldDependencies( allOptionValues, dependents ) ) {
@@ -143,6 +140,8 @@ const DependentFieldOption = ( {
 };
 
 DependentFieldOption.propTypes = {
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	fieldType: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	required: PropTypes.bool.isRequired,
@@ -175,4 +174,11 @@ DependentFieldOption.propTypes = {
 	setOptionValue: PropTypes.func.isRequired,
 };
 
-export default DependentFieldOption;
+export default withSelect( ( select ) => {
+	const storeSelect = select( STORE_KEY_EDIT_POD );
+
+	return {
+		podType: storeSelect.getPodOption( 'type' ),
+		podName: storeSelect.getPodOption( 'name' ),
+	};
+} )( DependentFieldOption );

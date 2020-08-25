@@ -18,7 +18,7 @@ const validateDependencies = ( options, dependsOn ) => {
 		return true;
 	}
 
-	return dependsOnKeys.some(
+	return dependsOnKeys.every(
 		( key ) => {
 			// We could either have an array of possible values,
 			// or a string that is the possible value.

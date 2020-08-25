@@ -51,7 +51,6 @@ const DependentFieldOption = ( {
 	// from all other fields - the data isn't loaded along with the others.
 	// We need to watch the "Field Type" and "Related Type" fields for changes
 	// to load the appropriate options here.
-	// @todo move to a custom hook.
 	const fieldTypeOption = allOptionValues.type;
 
 	const relatedTypeOption = allOptionValues.pick_object;
@@ -89,9 +88,9 @@ const DependentFieldOption = ( {
 			} );
 
 			try {
-				const results = await apiFetch(
-					{ path: `pods/v1/fields?${ endpointParams.toString() }` }
-				);
+				const requestPath = `pods/v1/fields?${ endpointParams.toString() }`;
+
+				const results = await apiFetch( { path: requestPath } );
 
 				if ( ! results.fields || ! results.fields.length ) {
 					setDataOptions( { '': __( 'No Related Fields Found', 'pods' ) } );

@@ -36,6 +36,7 @@ const FieldList = ( {
 } ) => {
 	const [ showAddFieldModal, setShowAddFieldModal ] = useState( false );
 	const [ newFieldOptions, setNewFieldOptions ] = useState( {} );
+	const [ newFieldIndex, setNewFieldIndex ] = useState( null );
 	const [ addedFieldName, setAddedFieldName ] = useState( null );
 
 	const handleAddField = ( options = {} ) => ( event ) => {
@@ -43,6 +44,7 @@ const FieldList = ( {
 
 		setAddedFieldName( options.name );
 		setNewFieldOptions( {} );
+		setNewFieldIndex( null );
 
 		saveField(
 			podID,
@@ -51,7 +53,9 @@ const FieldList = ( {
 			options.name,
 			options.label,
 			options.type,
-			omit( options, [ 'name', 'label', 'id', 'field_type' ] )
+			omit( options, [ 'name', 'label', 'id', 'field_type' ] ),
+			undefined,
+			newFieldIndex
 		);
 	};
 
@@ -64,6 +68,12 @@ const FieldList = ( {
 				name: `${ field.name }_copy`,
 			}
 		);
+
+		const originalFieldIndex = fields.findIndex(
+			( searched ) => searched.name === field.name
+		);
+
+		setNewFieldIndex( originalFieldIndex + 1 );
 
 		setShowAddFieldModal( true );
 	};
@@ -132,6 +142,7 @@ const FieldList = ( {
 					cancelEditing={ () => {
 						setShowAddFieldModal( false );
 						setAddedFieldName( null );
+						setNewFieldIndex( null );
 						setNewFieldOptions( {} );
 					} }
 					save={ handleAddField }

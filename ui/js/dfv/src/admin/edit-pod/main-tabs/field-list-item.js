@@ -339,7 +339,7 @@ export default compose( [
 		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
 
 		return {
-			deleteAndRemoveField: ( groupID, fieldID ) => {
+			deleteField: ( groupID, fieldID ) => {
 				storeDispatch.deleteField( fieldID );
 				storeDispatch.removeGroupField( groupID, fieldID );
 			},

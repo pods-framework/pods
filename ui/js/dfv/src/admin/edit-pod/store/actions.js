@@ -140,10 +140,11 @@ export const setGroupFields = ( groupName, fields ) => {
 	};
 };
 
-export const addGroupField = ( groupName ) => ( result ) => {
+export const addGroupField = ( groupName, index ) => ( result ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.ADD_GROUP_FIELD,
 		groupName,
+		index,
 		result,
 	};
 };
@@ -277,7 +278,8 @@ export const saveField = (
 	label,
 	type,
 	args,
-	fieldID
+	fieldID,
+	index = null
 ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.API_REQUEST,
@@ -293,7 +295,7 @@ export const saveField = (
 			},
 			onSuccess: [
 				setFieldSaveStatus( SAVE_STATUSES.SAVE_SUCCESS, previousName ),
-				fieldID ? setGroupFieldData( groupName ) : addGroupField( groupName ),
+				fieldID ? setGroupFieldData( groupName ) : addGroupField( groupName, index ),
 			],
 			onFailure: setFieldSaveStatus( SAVE_STATUSES.SAVE_ERROR, previousName ),
 			onStart: setFieldSaveStatus( SAVE_STATUSES.SAVING, previousName ),

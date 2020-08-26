@@ -83,26 +83,32 @@ const DependentFieldOption = ( {
 
 		// Only get results if "Related Type"/"pick_object" is a Post Type,
 		// Taxonomy, or Pod.
-		let podValue = '';
+		let podValue = relatedTypeOption;
 
 		if ( relatedTypeOption.startsWith( 'post_type-' ) ) {
 			podValue = relatedTypeOption.substring( 10 ); // everything after 'post_type-'
 		} else if ( relatedTypeOption.startsWith( 'taxonomy-' ) ) {
 			podValue = relatedTypeOption.substring( 9 ); // everything after 'taxonomy-'
+		} else if ( relatedTypeOption.startsWith( 'comment-' ) ) {
+			podValue = relatedTypeOption.substring( 8 ); // everything after 'comment-'
 		} else if ( relatedTypeOption.startsWith( 'pod-' ) ) {
 			podValue = relatedTypeOption.substring( 4 ); // everything after 'pod-'
-		} else {
+		} else if ( ! [ 'user', 'media', 'comment' ].includes( relatedTypeOption ) ) {
+			// We only support post types, taxonomies, comments, users, and media for bi-directional relationships.
 			return;
 		}
 
 		const loadBidirectionalFieldData = async () => {
+			// Initialize the field with loading text.
+			setDataOptions( { '': __( 'Loading available fields...', 'pods' ) } );
+
 			const args = {
 				pick_object: podType,
 			};
 
 			// If the current pod is a post_type, taxonomy, or pod,
 			// set the `pick_val` to the pod name being edited.
-			if ( [ 'post_type', 'taxonomy', 'user' ].includes( podType ) ) {
+			if ( [ 'post_type', 'taxonomy', 'pod' ].includes( podType ) ) {
 				args.pick_val = podName;
 			}
 

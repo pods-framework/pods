@@ -272,8 +272,9 @@ abstract class Base {
 			// Handle parent details.
 			if ( in_array( $this->object, [ 'group', 'field' ], true ) && 1 === (int) $request['include_parent'] ) {
 				foreach ( $objects as $k => $object ) {
+					/** @var $object Whatsit\Field|Whatsit\Group */
 					// Set temporary data so parent data gets exported.
-					$object->set_arg( 'parent_data', $object->get_parent() );
+					$object->set_arg( 'parent_data', $object->get_parent_object() );
 				}
 			}
 		}
@@ -438,7 +439,7 @@ abstract class Base {
 		// Handle parent details.
 		if ( in_array( $this->object, [ 'group', 'field' ], true ) && 1 === (int) $request['include_parent'] ) {
 			// Set temporary data so parent data gets exported.
-			$object->set_arg( 'parent_data', $object->get_parent() );
+			$object->set_arg( 'parent_data', $object->get_parent_data() );
 		}
 
 		/** @var Whatsit $object */

@@ -69,8 +69,8 @@ const CustomDragLayer = ( props ) => {
 
 CustomDragLayer.propTypes = {
 	item: PropTypes.shape( {
-		groupName: PropTypes.string.isRequired,
-		groupLabel: PropTypes.string.isRequired,
+		groupName: PropTypes.string,
+		groupLabel: PropTypes.string,
 		groupID: PropTypes.number,
 		index: PropTypes.number.isRequired,
 	} ),

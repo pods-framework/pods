@@ -220,4 +220,8 @@ export const TEST_CONFIG_DATA = {
 	global: {
 		pod: GLOBAL_POD,
 	},
+	data: {
+		fieldTypes: {},
+		relatedObjects: {},
+	},
 };

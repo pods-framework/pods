@@ -1,4 +1,4 @@
-@import './edit-pod-variables';
+@import '../edit-pod-variables';
 
 .pods-field_wrapper {
 	display: flex;
@@ -155,7 +155,7 @@
 
 .pods-field_controls-container {
 	color: $color--light-grey;
-	margin-left: -1em;
+	margin-left: -0.5em;
 	padding-top: 0.25em;
 }
 
@@ -165,9 +165,8 @@
 	color: $color--wp-blue;
 	cursor: pointer;
 	height: auto;
-	margin: 0 1em;
 	overflow: visible;
-	padding: 0;
+	padding: 0 0.5em;
 	position: relative;
 
 	&:hover,

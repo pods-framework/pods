@@ -14,6 +14,8 @@ import PodsNavTab from 'dfv/src/components/pods-nav-tab';
 import ActiveTabContent from './main-tabs/active-tab-content';
 import Postbox from './postbox';
 
+import './edit-pod.scss';
+
 const EditPod = ( {
 	tabs,
 	activeTab,

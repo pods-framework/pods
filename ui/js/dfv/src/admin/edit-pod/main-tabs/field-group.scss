@@ -1,4 +1,4 @@
-@import './edit-pod-variables';
+@import '../edit-pod-variables';
 
 .pods-field-group_name__id {
 	font-size: 13px;
@@ -27,7 +27,7 @@
 	color: $color--wp-blue;
 	cursor: pointer;
 	height: auto;
-	margin: 0.25em 0.5em;
+	margin: 0.25em 0;
 	overflow: visible;
 	padding: 0 0.5em;
 	position: relative;

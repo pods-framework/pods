@@ -1806,7 +1806,7 @@ class PodsData {
 			$sql .= ' IF NOT EXISTS';
 		}
 
-		$sql .= " `{$wpdb->prefix}" . self::$prefix . "{$table}` ({$fields})";
+		$sql .= " `" . self::get_pods_prefix() . "{$table}` ({$fields})";
 
 		if ( ! empty( $wpdb->charset ) ) {
 			$sql .= " DEFAULT CHARACTER SET {$wpdb->charset}";
@@ -1833,12 +1833,7 @@ class PodsData {
 	 */
 	public static function table_alter( $table, $changes ) {
 
-		/**
-		 * @var $wpdb wpdb
-		 */
-		global $wpdb;
-
-		$sql = "ALTER TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}` {$changes}";
+		$sql = "ALTER TABLE `" . self::get_pods_prefix() . "{$table}` {$changes}";
 
 		return self::query( $sql );
 	}
@@ -1856,12 +1851,7 @@ class PodsData {
 	 */
 	public static function table_truncate( $table ) {
 
-		/**
-		 * @var $wpdb wpdb
-		 */
-		global $wpdb;
-
-		$sql = "TRUNCATE TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}`";
+		$sql = "TRUNCATE TABLE `" . self::get_pods_prefix() . "{$table}`";
 
 		return self::query( $sql );
 	}
@@ -1881,12 +1871,7 @@ class PodsData {
 	 */
 	public static function table_drop( $table ) {
 
-		/**
-		 * @var $wpdb wpdb
-		 */
-		global $wpdb;
-
-		$sql = "DROP TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}`";
+		$sql = "DROP TABLE `" . self::get_pods_prefix() . "{$table}`";
 
 		return self::query( $sql );
 	}
@@ -2201,7 +2186,7 @@ class PodsData {
 
 			if ( 'table' === $this->pod_data['storage'] && false !== $get_table_data && is_numeric( $current_row_id ) ) {
 				$params = array(
-					'table'   => $wpdb->prefix . 'pods_',
+					'table'   => self::get_pods_prefix(),
 					'where'   => "`t`.`id` = {$current_row_id}",
 					'orderby' => '`t`.`id` DESC',
 					'page'    => 1,
@@ -2409,7 +2394,7 @@ class PodsData {
 		$finalTables = array();
 
 		foreach ( $showTables as $table ) {
-			if ( ! $pods_tables && 0 === ( strpos( $table[0], $wpdb->prefix . rtrim( self::$prefix, '_' ) ) ) ) {
+			if ( ! $pods_tables && 0 === ( strpos( $table[0], rtrim( self::get_pods_prefix(), '_' ) ) ) ) {
 				// don't include pods tables.
 				continue;
 			} elseif ( ! $wp_core && in_array( $table[0], $core_wp_tables, true ) ) {
@@ -3524,6 +3509,20 @@ class PodsData {
 		$name = array_shift( $args );
 
 		return pods_do_hook( 'data', $name, $args );
+	}
+
+	/**
+	 * Get full prefix for Pods tables.
+	 *
+	 * @since 2.7.23
+	 *
+	 * @return string
+	 */
+	public static function get_pods_prefix() {
+
+		global $wpdb;
+
+		return $wpdb->prefix . self::$prefix;
 	}
 
 	/**

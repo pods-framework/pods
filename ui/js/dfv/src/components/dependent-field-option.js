@@ -40,6 +40,7 @@ const DependentFieldOption = ( {
 	// after a UI update, but will be wrong after the update from saving to the API,
 	// so we'll check that the values haven't already been merged.
 	let processedValue = value;
+	let processedAllOptionValues = allOptionValues;
 
 	if (
 		'pick_object' === name &&
@@ -47,6 +48,7 @@ const DependentFieldOption = ( {
 		! value.includes( `-${ allOptionValues.pick_val }`, `-${ allOptionValues.pick_val }`.length )
 	) {
 		processedValue = `${ value }-${ allOptionValues.pick_val }`;
+		processedAllOptionValues.pick_object = `${ value }-${ allOptionValues.pick_val }`;
 	}
 
 	const handleInputChange = ( event ) => {
@@ -142,7 +144,7 @@ const DependentFieldOption = ( {
 	}, [ podType, podName, name, fieldTypeOption, relatedTypeOption, setDataOptions ] );
 
 	// Don't render a field that hasn't had its dependencies met.
-	if ( ! validateFieldDependencies( allOptionValues, dependents ) ) {
+	if ( ! validateFieldDependencies( processedAllOptionValues, dependents ) ) {
 		return null;
 	}
 

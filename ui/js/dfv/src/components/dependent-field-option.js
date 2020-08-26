@@ -77,14 +77,21 @@ const DependentFieldOption = ( {
 		}
 
 		const loadBidirectionalFieldData = async () => {
+			const args = {
+				pick_object: podType,
+			};
+
+			// If the current pod is a post_type, taxonomy, or pod,
+			// set the `pick_val` to the pod name being edited.
+			if ( [ 'post_type', 'taxonomy', 'user' ].includes( podType ) ) {
+				args.pick_val = podName;
+			}
+
 			const endpointParams = new URLSearchParams( {
 				types: 'pick',
 				include_parent: 1,
 				pod: podValue,
-				args: JSON.stringify( {
-					pick_object: podType,
-					pick_val: podName,
-				} ),
+				args: JSON.stringify( args ),
 			} );
 
 			try {

@@ -211,6 +211,7 @@ export const FieldListItem = ( props ) => {
 
 				<div className="pods-field pods-field_label">
 					<span
+						className="pods-field_label__link"
 						tabIndex={ 0 }
 						role="button"
 						onClick={ onEditFieldClick }

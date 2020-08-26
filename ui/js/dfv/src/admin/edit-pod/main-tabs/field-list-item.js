@@ -110,7 +110,7 @@ export const FieldListItem = ( props ) => {
 	const [ { isDragging }, drag, preview ] = useDrag( {
 		item: {
 			...field,
-			type: 'field-list-item',
+			type: `field-list-item${ groupName }`,
 		},
 		collect: ( monitor ) => ( {
 			isDragging: monitor.isDragging(),
@@ -119,7 +119,7 @@ export const FieldListItem = ( props ) => {
 	} );
 
 	const [ , drop ] = useDrop( {
-		accept: 'field-list-item',
+		accept: `field-list-item${ groupName }`,
 		hover( item, monitor ) {
 			if ( ! fieldRef.current ) {
 				return;
@@ -242,7 +242,7 @@ export const FieldListItem = ( props ) => {
 						>
 							{ __( 'Edit', 'pods' ) }
 						</button>
-
+						|
 						<button
 							className="pods-field_button pods-field_duplicate"
 							onClick={ ( e ) => {
@@ -252,7 +252,7 @@ export const FieldListItem = ( props ) => {
 						>
 							{ __( 'Duplicate', 'pods' ) }
 						</button>
-
+						|
 						<button
 							className="pods-field_button pods-field_delete"
 							onClick={ onDeleteFieldClick }

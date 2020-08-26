@@ -37,8 +37,13 @@ const PodsFieldOption = ( {
 			{ 'heading' !== fieldType && (
 				<label
 					className={ `pods-form-ui-label pods-form-ui-label-${ name }` }
-					htmlFor={ name }>
-					{ label }
+					htmlFor={ name }
+				>
+					<span
+						dangerouslySetInnerHTML={ {
+							__html: removep( sanitizeHtml( label, richTextNoLinks ) ),
+						} }
+					/>
 					{ required && ( <span className="pods-form-ui-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
 					{ shouldShowHelpText && (
 						<span style={ { whiteSpace: 'nowrap' } }>

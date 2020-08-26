@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
+import sanitizeHtml from 'sanitize-html';
 import * as PropTypes from 'prop-types';
 
 import { Dashicon } from '@wordpress/components';
 
+import { richTextNoLinks } from '../../../blocks/src/config/html';
 import './help-tooltip.scss';
 
 const ENTER_KEY = 13;
@@ -56,13 +58,23 @@ const HelpTooltip = ( {
 					{ helpLink
 						? (
 							<a href={ helpLink } target="_blank" rel="noreferrer">
-								{ helpText }
+								<span
+									dangerouslySetInnerHTML={ {
+										__html: sanitizeHtml( helpText, richTextNoLinks ),
+									} }
+								/>
 								<Dashicon
 									icon="external"
 								/>
 							</a>
 						)
-						: ( <span>{ helpText }</span> )
+						: (
+							<span
+								dangerouslySetInnerHTML={ {
+									__html: sanitizeHtml( helpText, richTextNoLinks ),
+								} }
+							/>
+						)
 					}
 				</div>
 			) }

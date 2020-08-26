@@ -24,7 +24,9 @@ import {
 	GROUP_DELETE_MESSAGES,
 
 	FIELD_SAVE_STATUSES,
+	FIELD_SAVE_MESSAGES,
 	FIELD_DELETE_STATUSES,
+	FIELD_DELETE_MESSAGES,
 } from './state-paths';
 
 // Everything
@@ -86,6 +88,7 @@ export const getGlobalFieldOptions = ( state ) => GLOBAL_FIELD.getFrom( state );
 
 // -- Global Field Types config
 export const getFieldTypeObjects = ( state ) => GLOBAL_FIELD_TYPES.getFrom( state );
+export const getFieldTypeObject = ( state, fieldName ) => GLOBAL_FIELD_TYPES.getFrom( state )[ fieldName ];
 
 // -- Global Related Objects config
 export const getFieldRelatedObjects = ( state ) => GLOBAL_RELATED_OBJECTS.getFrom( state );
@@ -114,5 +117,11 @@ export const getGroupDeleteMessage = ( state, groupName ) => GROUP_DELETE_MESSAG
 export const getFieldSaveStatuses = ( state ) => FIELD_SAVE_STATUSES.getFrom( state );
 export const getFieldSaveStatus = ( state, fieldName ) => FIELD_SAVE_STATUSES.getFrom( state )[ fieldName ];
 
+export const getFieldSaveMessages = ( state ) => FIELD_SAVE_MESSAGES.getFrom( state );
+export const getFieldSaveMessage = ( state, fieldName ) => FIELD_SAVE_MESSAGES.getFrom( state )[ fieldName ];
+
 export const getFieldDeleteStatuses = ( state ) => FIELD_DELETE_STATUSES.getFrom( state );
 export const getFieldDeleteStatus = ( state, fieldName ) => FIELD_DELETE_STATUSES.getFrom( state )[ fieldName ];
+
+export const getFieldDeleteMessages = ( state ) => FIELD_DELETE_MESSAGES.getFrom( state );
+export const getFieldDeleteMessage = ( state, fieldName ) => FIELD_DELETE_MESSAGES.getFrom( state )[ fieldName ];

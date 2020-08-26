@@ -290,12 +290,15 @@ export const currentPod = ( state = {}, action = {} ) => {
 					return group;
 				}
 
+				// An index may or may not be specified, if not, then put it at the end.
+				const calculatedIndex = action.index ? action.index : group.fields.length;
+
+				const fields = [ ...group.fields ];
+				fields.splice( calculatedIndex, 0, action.result.field );
+
 				return {
 					...group,
-					fields: [
-						...group.fields,
-						action.result.field,
-					],
+					fields,
 				};
 			} );
 

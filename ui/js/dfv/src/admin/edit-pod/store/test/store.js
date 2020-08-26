@@ -40,6 +40,10 @@ describe( 'store', () => {
 			...paths.UI.createTree( INITIAL_UI_STATE ),
 			currentPod: {},
 			global: {},
+			data: {
+				fieldTypes: {},
+				relatedObjects: {},
+			},
 		};
 
 		testStore.initStore( deepFreeze( {} ) );

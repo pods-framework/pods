@@ -28,17 +28,15 @@ const FieldList = ( {
 	groupLabel,
 	groupID,
 	fieldSaveStatuses,
-	podSaveStatus,
+	fieldSaveMessages,
 	editFieldPod,
 	saveField,
-	deleteAndRemoveField,
 	fields,
 	setGroupFields,
-	typeObjects,
-	relatedObjects,
 } ) => {
 	const [ showAddFieldModal, setShowAddFieldModal ] = useState( false );
 	const [ newFieldOptions, setNewFieldOptions ] = useState( {} );
+	const [ newFieldIndex, setNewFieldIndex ] = useState( null );
 	const [ addedFieldName, setAddedFieldName ] = useState( null );
 
 	const handleAddField = ( options = {} ) => ( event ) => {
@@ -46,15 +44,18 @@ const FieldList = ( {
 
 		setAddedFieldName( options.name );
 		setNewFieldOptions( {} );
+		setNewFieldIndex( null );
 
 		saveField(
 			podID,
 			groupName,
-			undefined,
+			options.name,
 			options.name,
 			options.label,
 			options.type,
-			omit( options, [ 'name', 'label', 'id', 'field_type' ] )
+			omit( options, [ 'name', 'label', 'id', 'field_type' ] ),
+			undefined,
+			newFieldIndex
 		);
 	};
 
@@ -67,6 +68,12 @@ const FieldList = ( {
 				name: `${ field.name }_copy`,
 			}
 		);
+
+		const originalFieldIndex = fields.findIndex(
+			( searched ) => searched.name === field.name
+		);
+
+		setNewFieldIndex( originalFieldIndex + 1 );
 
 		setShowAddFieldModal( true );
 	};
@@ -123,12 +130,19 @@ const FieldList = ( {
 						podLabel,
 						groupLabel,
 					) }
-					hasSaveError={ fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_ERROR || false }
+					hasSaveError={
+						fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_ERROR ||
+						false
+					}
 					saveButtonText={ __( 'Save New Field', 'pods' ) }
-					errorMessage={ __( 'There was an error saving the field, please try again.', 'pods' ) }
+					errorMessage={
+						fieldSaveMessages[ addedFieldName ] ||
+						__( 'There was an error saving the field, please try again.', 'pods' )
+					}
 					cancelEditing={ () => {
 						setShowAddFieldModal( false );
 						setAddedFieldName( null );
+						setNewFieldIndex( null );
 						setNewFieldOptions( {} );
 					} }
 					save={ handleAddField }
@@ -165,11 +179,6 @@ const FieldList = ( {
 
 					<div className="pods-field_wrapper-items">
 						{ fields.map( ( field, index ) => {
-							// eslint-disable-next-line camelcase
-							const relatedObject = ( 'pick' === field?.type && field?.pick_object )
-								? relatedObjects[ field.pick_object ]
-								: null;
-
 							return (
 								<FieldListItem
 									key={ field.id }
@@ -177,18 +186,11 @@ const FieldList = ( {
 									podLabel={ podLabel }
 									groupLabel={ groupLabel }
 									field={ field }
-									saveStatus={ fieldSaveStatuses[ field.name ] }
-									podSaveStatus={ podSaveStatus }
 									index={ index }
-									typeObject={ typeObjects[ field.type ] }
-									relatedObject={ relatedObject }
-									saveField={ saveField }
 									moveField={ moveField }
 									groupName={ groupName }
 									groupID={ groupID }
 									cloneField={ handleCloneField( field ) }
-									deleteField={ deleteAndRemoveField }
-									editFieldPod={ editFieldPod }
 								/>
 							);
 						} ) }
@@ -216,12 +218,9 @@ FieldList.propTypes = {
 	fields: PropTypes.arrayOf(
 		FIELD_PROP_TYPE_SHAPE
 	).isRequired,
-	typeObjects: PropTypes.object.isRequired,
-	relatedObjects: PropTypes.object.isRequired,
 	fieldSaveStatuses: PropTypes.object.isRequired,
-	podSaveStatus: PropTypes.string.isRequired,
+	fieldSaveMessages: PropTypes.object.isRequired,
 	editFieldPod: PropTypes.object.isRequired,
-	deleteAndRemoveField: PropTypes.func.isRequired,
 	saveField: PropTypes.func.isRequired,
 };
 
@@ -232,9 +231,7 @@ export default compose( [
 		return {
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
 			fieldSaveStatuses: storeSelect.getFieldSaveStatuses(),
-			typeObjects: storeSelect.getFieldTypeObjects(),
-			relatedObjects: storeSelect.getFieldRelatedObjects(),
-			podSaveStatus: storeSelect.getSaveStatus(),
+			fieldSaveMessages: storeSelect.getFieldSaveMessages(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
@@ -242,10 +239,6 @@ export default compose( [
 
 		return {
 			setGroupFields: storeDispatch.setGroupFields,
-			deleteAndRemoveField: ( groupID, fieldID ) => {
-				storeDispatch.deleteField( fieldID );
-				storeDispatch.removeGroupField( groupID, fieldID );
-			},
 			saveField: storeDispatch.saveField,
 		};
 	} ),

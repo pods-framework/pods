@@ -80,14 +80,18 @@
 .pods-field_label,
 .pods-field_name {
 	color: #0073aa;
-	cursor: pointer;
 
 	&:hover {
 		color: #00a0d2;
 	}
 }
 
+.pods-field_label__link {
+	cursor: pointer;
+}
+
 .pods-field_name {
+	cursor: pointer;
 	padding-right: 1em;
 	text-overflow: ellipsis;
 	user-select: none;
@@ -155,6 +159,7 @@
 	border: none;
 	border-right: 1px solid $color--light-grey;
 	color: $color--wp-blue;
+	cursor: pointer;
 	height: auto;
 	margin-right: 0.5em;
 	margin-top: 0.25em;
@@ -164,6 +169,10 @@
 
 	&:first-child {
 		margin-left: -0.5em;
+	}
+
+	&:last-child {
+		border-right: none;
 	}
 
 	&:hover,

@@ -7,6 +7,11 @@ import { removep } from '@wordpress/autop';
 import HelpTooltip from 'dfv/src/components/help-tooltip';
 import { richTextNoLinks } from '../../../blocks/src/config/html';
 
+const toBool = ( stringOrNumber ) => {
+	// Force any strings to numeric first
+	return !! ( +stringOrNumber );
+};
+
 const PodsFieldOption = ( {
 	fieldType,
 	name,
@@ -18,11 +23,6 @@ const PodsFieldOption = ( {
 	helpText,
 	description,
 } ) => {
-	const toBool = ( stringOrNumber ) => {
-		// Force any strings to numeric first
-		return !! ( +stringOrNumber );
-	};
-
 	const shouldShowHelpText = helpText && ( 'help' !== helpText );
 
 	// It's possible to get an array of strings for the help text, but it
@@ -88,33 +88,54 @@ const PodsFieldOption = ( {
 									value={ value }
 									onChange={ onChange }
 								>
-									{ Object.entries( data ).map( ( [ optionValue, option ] ) => {
-										if ( 'string' === typeof option ) {
-											return (
-												<option key={ optionValue } value={ optionValue }>
-													{ option }
-												</option>
-											);
-										} else if ( 'object' === typeof option ) {
-											const optgroupOptions = Object.entries( option );
+									{ Object.keys( data )
+										// This custom sorting function is necessary because
+										// JS will change the ordering of the keys in the object
+										// if one of them is an empty string (which we may want as
+										// the placeholder value), and will send the empty string
+										// to the end of the object when it is enumerated.
+										//
+										// eslint-disable-next-line no-unused-vars
+										.sort( ( a, b ) => a === '' ? -1 : 0 )
+										.map( ( optionValue ) => {
+											const option = data[ optionValue ];
 
-											return (
-												<optgroup label={ optionValue } key={ optionValue }>
-													{ optgroupOptions.map( ( [ suboptionValue, suboptionLabel ] ) => {
-														return (
-															<option key={ suboptionValue } value={ suboptionValue }>
-																{ suboptionLabel }
-															</option>
-														);
-													} ) }
-												</optgroup>
-											);
-										}
-										return null;
-									} ) }
+											if ( 'string' === typeof option ) {
+												return (
+													<option key={ optionValue } value={ optionValue }>
+														{ option }
+													</option>
+												);
+											} else if ( 'object' === typeof option ) {
+												const optgroupOptions = Object.entries( option );
+
+												return (
+													<optgroup label={ optionValue } key={ optionValue }>
+														{ optgroupOptions.map( ( [ suboptionValue, suboptionLabel ] ) => {
+															return (
+																<option key={ suboptionValue } value={ suboptionValue }>
+																	{ suboptionLabel }
+																</option>
+															);
+														} ) }
+													</optgroup>
+												);
+											}
+											return null;
+										} ) }
 								</select>
 							);
 						}
+						case 'paragraph':
+							return (
+								<textarea
+									id={ name }
+									name={ name }
+									value={ value || '' }
+									onChange={ onChange }
+									aria-label={ shouldShowHelpText && helpText }
+								/>
+							);
 						default: {
 							return (
 								<input
@@ -154,7 +175,10 @@ PodsFieldOption.propTypes = {
 		PropTypes.string,
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
-	data: PropTypes.object,
+	data: PropTypes.oneOfType( [
+		PropTypes.array,
+		PropTypes.object,
+	] ),
 	label: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	required: PropTypes.bool.isRequired,

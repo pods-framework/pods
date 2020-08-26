@@ -7,10 +7,81 @@ import { Modal, Button } from '@wordpress/components';
 
 import DynamicTabContent from './dynamic-tab-content';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
+import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
 
 import './settings-modal.scss';
 
 const ENTER_KEY = 13;
+
+/**
+ * Helper function to check the validity of the form.
+ *
+ * @param {Array} sections Array of sections, each one having the structure
+ *                         of a "group" containing an array of fields.
+ * @param {Object} options Key/value of options to apply.
+ */
+const checkFormValidity = ( sections, options ) => {
+	// Go through each section, check that each one has all valid fields.
+	return sections.every(
+		( section ) => {
+			const {
+				fields,
+				'depends-on': dependsOn,
+			} = section;
+
+			// Skip the section if it doesn't have any fields.
+			if ( ! fields ) {
+				return true;
+			}
+
+			// Skip the section if it isn't being shown because it's deps aren't met.
+			if ( dependsOn && ! validateFieldDependencies( options, dependsOn ) ) {
+				return true;
+			}
+
+			// If we haven't skipped the section, look through each field.
+			return fields.every(
+				( field ) => {
+					const {
+						required: fieldRequired,
+						'depends-on': fieldDependsOn,
+						type: fieldType,
+						name: fieldName,
+					} = field;
+
+					// Fields that aren't required are automatically valid.
+					if ( undefined === typeof fieldRequired || ! fieldRequired ) {
+						return true;
+					}
+
+					// Skip fields won't be shown because their dependency isn't met.
+					if ( fieldDependsOn && ! validateFieldDependencies( options, fieldDependsOn ) ) {
+						return true;
+					}
+
+					// Boolean values could be falsey and still valid.
+					if (
+						'boolean' === fieldType &&
+						'undefined' !== typeof options[ fieldName ]
+					) {
+						return true;
+					}
+
+					// If the option's value is not undefined, and not an empty
+					// string, return true;
+					if (
+						'undefined' !== typeof options[ fieldName ] &&
+						'' !== options[ fieldName ].toString()
+					) {
+						return true;
+					}
+
+					return false;
+				}
+			);
+		}
+	);
+};
 
 const SettingsModal = ( {
 	title,
@@ -42,75 +113,73 @@ const SettingsModal = ( {
 			newOptions.name = sanitizeSlug( value );
 		}
 
-		setChangedOptions( {
-			...changedOptions,
+		setChangedOptions( ( previousChangedOptions ) => ( {
+			...previousChangedOptions,
 			...newOptions,
-		} );
+		} ) );
 	};
 
 	// When the modal first opens, set any options to their defaults, unless
-	// they're already set.
+	// they're already set. This will need to happen again when any option changes,
+	// because a new option may reveal fields with dependencies that were previously unset.
 	useEffect( () => {
-		const defaultOptions = {
-			...changedOptions,
-		};
+		const defaultOptions = {};
 
 		optionsSections.forEach( ( optionsSection ) => {
-			( optionsSection.fields || [] ).forEach( ( field ) => {
+			if ( ! optionsSection.fields.length ) {
+				return;
+			}
+
+			optionsSection.fields.forEach( ( field ) => {
+				// Don't overwrite values that we already took from the changedOptions.
+				if ( 'undefined' !== typeof changedOptions[ field.name ] ) {
+					return;
+				}
+
 				// Only set the value if it wasn't previously supplied,
-				// and only if a default is provided.
+				// and only if a default is provided. Unless it's a select
+				// menu, then go ahead and set the first option.
 				if (
-					'undefined' === typeof defaultOptions[ field.name ] &&
 					'undefined' !== typeof field.default &&
 					'' !== field.default
 				) {
 					defaultOptions[ field.name ] = field.default;
+				} else if ( ( 'pick' === field.type ) && field.data ) {
+					// A select menu could have data with just key/values,
+					// or it could have option groups. If the first option is
+					// a string, use it, but if it's an object, find the first option
+					// in the option group.
+					const pickKeys = Object.keys( field.data );
+
+					if ( 'object' === typeof field?.data[ pickKeys[ 0 ] ] ) {
+						const firstOptionGroup = field.data[ pickKeys[ 0 ] ];
+
+						const firstOptionGroupKeys = Object.keys( firstOptionGroup );
+
+						if ( firstOptionGroupKeys.length ) {
+							defaultOptions[ field.name ] = firstOptionGroupKeys[ 0 ];
+						}
+					} else if ( 'string' === typeof field?.data[ pickKeys[ 0 ] ] ) {
+						defaultOptions[ field.name ] = field.data[ pickKeys[ 0 ] ];
+					}
 				}
 			} );
 		} );
 
-		setChangedOptions( defaultOptions );
-	}, [] );
+		// Update changed options, but give priority to
+		// any changedOptions that already existed.
+		setChangedOptions( ( prevChangedOptions ) => ( {
+			...defaultOptions,
+			...prevChangedOptions,
+		} ) );
+	}, [ setChangedOptions ] );
 
 	// Check validity if any of the options have changed.
 	useEffect( () => {
-		// Go through each section, check that each one has all valid fields.
-		const validity = optionsSections.every(
-			( section ) => {
-				return section.fields.every(
-					( field ) => {
-						// Fields that aren't required are automatically valid.
-						if ( undefined === typeof field.required || ! field.required ) {
-							return true;
-						}
-
-						// Skip fields won't be shown because their dependency isn't met.
-						if ( field[ 'depends-on' ] ) {
-							const dependsOnKeys = Object.keys( field[ 'depends-on' ] );
-
-							const meetsDeps = dependsOnKeys.some(
-								( key ) => changedOptions[ key ] === field[ 'depends-on' ][ key ]
-							);
-
-							if ( ! meetsDeps ) {
-								return true;
-							}
-						}
-
-						// Boolean values could be falsey and still valid.
-						if ( 'boolean' === field.type ) {
-							return 'undefined' !== typeof changedOptions[ field.name ];
-						}
-
-						return 'undefined' !== typeof changedOptions[ field.name ] &&
-							'' !== changedOptions[ field.name ].toString();
-					}
-				);
-			}
-		);
+		const validity = checkFormValidity( optionsSections, changedOptions );
 
 		setIsValid( validity );
-	}, [ changedOptions ] );
+	}, [ changedOptions, setIsValid ] );
 
 	return (
 		<Modal
@@ -135,7 +204,19 @@ const SettingsModal = ( {
 					{ optionsSections.map( ( {
 						name: sectionName,
 						label: sectionLabel,
+						'depends-on': dependsOn = {},
+						fields,
 					} ) => {
+						// Hide any sections that are missing fields.
+						if ( ! fields.length ) {
+							return null;
+						}
+
+						// Check that dependencies are met.
+						if ( ! validateFieldDependencies( changedOptions, dependsOn ) ) {
+							return null;
+						}
+
 						const isActive = selectedTab === sectionName;
 
 						const classes = classNames(

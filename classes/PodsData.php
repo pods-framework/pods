@@ -3055,7 +3055,14 @@ class PodsData {
 		if ( 0 === $traverse_recurse['depth'] && ! empty( $traverse_recurse['pod'] ) && ! empty( $traverse_recurse ['last_table_info'] ) && isset( $traverse_recurse ['last_table_info']['id'] ) ) {
 			$pod_data = $traverse_recurse ['last_table_info'];
 		} elseif ( empty( $traverse_recurse['pod'] ) ) {
-			if ( ! empty( $traverse_recurse['params'] ) && ! empty( $traverse_recurse['params']->table ) && 0 === strpos( $traverse_recurse['params']->table, $wpdb->prefix ) ) {
+			if (
+				! empty( $traverse_recurse['params'] ) &&
+				! empty( $traverse_recurse['params']->table ) &&
+				(
+					! $wpdb->prefix || // Make sure there is a prefix.
+					0 === strpos( $traverse_recurse['params']->table, $wpdb->prefix )
+				)
+			) {
 				if ( $wpdb->posts === $traverse_recurse['params']->table ) {
 					$traverse_recurse['pod'] = 'post_type';
 				} elseif ( $wpdb->terms === $traverse_recurse['params']->table ) {

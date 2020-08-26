@@ -60,6 +60,15 @@ export const setFieldSaveStatus = ( saveStatus, previousFieldName ) => ( result 
 	};
 };
 
+export const resetFieldSaveStatus = ( fieldName ) => {
+	return {
+		type: UI_ACTIONS.SET_FIELD_SAVE_STATUS,
+		previousFieldName: fieldName,
+		saveStatus: SAVE_STATUSES.NONE,
+		result: {},
+	};
+};
+
 export const setFieldDeleteStatus = ( deleteStatus, previousFieldName ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_FIELD_DELETE_STATUS,

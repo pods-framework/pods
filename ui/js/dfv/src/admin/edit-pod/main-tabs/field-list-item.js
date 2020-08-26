@@ -7,11 +7,17 @@ import * as PropTypes from 'prop-types';
 // WordPress dependencies
 import { Dashicon } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
+import { withSelect, withDispatch } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
 
 // Internal dependencies
 import SettingsModal from './settings-modal';
 
-import { SAVE_STATUSES } from 'dfv/src/admin/edit-pod/store/constants';
+import {
+	STORE_KEY_EDIT_POD,
+	SAVE_STATUSES,
+} from 'dfv/src/admin/edit-pod/store/constants';
+
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
 
 import './field-list-item.scss';
@@ -24,12 +30,14 @@ export const FieldListItem = ( props ) => {
 		podLabel,
 		field,
 		saveStatus,
+		saveMessage,
 		podSaveStatus,
 		index,
 		typeObject,
 		relatedObject,
 		editFieldPod,
 		saveField,
+		resetFieldSaveStatus,
 		moveField,
 		groupName,
 		groupLabel,
@@ -65,6 +73,7 @@ export const FieldListItem = ( props ) => {
 	const onEditFieldCancel = ( event ) => {
 		event.stopPropagation();
 		setShowEditFieldSettings( false );
+		resetFieldSaveStatus( name );
 	};
 
 	const onEditFieldSave = ( updatedOptions = {} ) => ( event ) => {
@@ -198,7 +207,10 @@ export const FieldListItem = ( props ) => {
 							label
 						) }
 						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
-						errorMessage={ __( 'There was an error saving the field, please try again.', 'pods' ) }
+						errorMessage={
+							saveMessage ||
+							__( 'There was an error saving the field, please try again.', 'pods' )
+						}
 						saveButtonText={ __( 'Save Field', 'pods' ) }
 						cancelEditing={ onEditFieldCancel }
 						save={ onEditFieldSave }
@@ -282,6 +294,7 @@ FieldListItem.propTypes = {
 	podLabel: PropTypes.string.isRequired,
 	field: FIELD_PROP_TYPE_SHAPE,
 	saveStatus: PropTypes.string,
+	saveMessage: PropTypes.string,
 	podSaveStatus: PropTypes.string.isRequired,
 	index: PropTypes.number.isRequired,
 	groupName: PropTypes.string.isRequired,
@@ -292,9 +305,46 @@ FieldListItem.propTypes = {
 	editFieldPod: PropTypes.object.isRequired,
 
 	saveField: PropTypes.func.isRequired,
+	resetFieldSaveStatus: PropTypes.func.isRequired,
 	moveField: PropTypes.func.isRequired,
 	cloneField: PropTypes.func.isRequired,
 	deleteField: PropTypes.func.isRequired,
 };
 
-export default FieldListItem;
+export default compose( [
+	withSelect( ( select, ownProps ) => {
+		const {
+			field,
+		} = ownProps;
+
+		const storeSelect = select( STORE_KEY_EDIT_POD );
+
+		const relatedObjects = storeSelect.getFieldRelatedObjects();
+
+		// eslint-disable-next-line camelcase
+		const relatedObject = ( 'pick' === field?.type && field?.pick_object )
+			? relatedObjects[ field.pick_object ]
+			: null;
+
+		return {
+			editFieldPod: storeSelect.getGlobalFieldOptions(),
+			relatedObject,
+			typeObject: storeSelect.getFieldTypeObject( field.type ),
+			podSaveStatus: storeSelect.getSaveStatus(),
+			saveStatus: storeSelect.getFieldSaveStatus( field.name ),
+			saveMessage: storeSelect.getFieldSaveMessage( field.name ),
+		};
+	} ),
+	withDispatch( ( dispatch ) => {
+		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+
+		return {
+			deleteAndRemoveField: ( groupID, fieldID ) => {
+				storeDispatch.deleteField( fieldID );
+				storeDispatch.removeGroupField( groupID, fieldID );
+			},
+			resetFieldSaveStatus: storeDispatch.resetFieldSaveStatus,
+			saveField: storeDispatch.saveField,
+		};
+	} ),
+] )( FieldListItem );

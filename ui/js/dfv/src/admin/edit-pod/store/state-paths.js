@@ -73,4 +73,6 @@ export const GROUP_DELETE_STATUSES = createStatePath( `${ UI.path }.groupDeleteS
 export const GROUP_DELETE_MESSAGES = createStatePath( `${ UI.path }.groupDeleteMessages` );
 
 export const FIELD_SAVE_STATUSES = createStatePath( `${ UI.path }.fieldSaveStatuses` );
+export const FIELD_SAVE_MESSAGES = createStatePath( `${ UI.path }.fieldSaveMessages` );
 export const FIELD_DELETE_STATUSES = createStatePath( `${ UI.path }.fieldDeleteStatuses` );
+export const FIELD_DELETE_MESSAGES = createStatePath( `${ UI.path }.fieldDeleteMessages` );

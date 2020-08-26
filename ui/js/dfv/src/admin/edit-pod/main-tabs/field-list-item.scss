@@ -50,8 +50,7 @@
 	user-select: none;
 }
 
-.pods-field_id,
-.pods-field-group_name__id {
+.pods-field_id {
 	font-size: 13px;
 	color: #999;
 	display: inline;
@@ -80,14 +79,14 @@
 .pods-field_label,
 .pods-field_name {
 	color: #0073aa;
-
-	&:hover {
-		color: #00a0d2;
-	}
 }
 
 .pods-field_label__link {
 	cursor: pointer;
+
+	&:hover {
+		color: #00a0d2;
+	}
 }
 
 .pods-field_name {
@@ -154,26 +153,22 @@
 	background-color: $color--super-light-grey;
 }
 
+.pods-field_controls-container {
+	color: $color--light-grey;
+	margin-left: -1em;
+	padding-top: 0.25em;
+}
+
 .pods-field_button {
 	background: transparent;
 	border: none;
-	border-right: 1px solid $color--light-grey;
 	color: $color--wp-blue;
 	cursor: pointer;
 	height: auto;
-	margin-right: 0.5em;
-	margin-top: 0.25em;
+	margin: 0 1em;
 	overflow: visible;
-	padding: 0 0.5em;
+	padding: 0;
 	position: relative;
-
-	&:first-child {
-		margin-left: -0.5em;
-	}
-
-	&:last-child {
-		border-right: none;
-	}
 
 	&:hover,
 	&:focus {

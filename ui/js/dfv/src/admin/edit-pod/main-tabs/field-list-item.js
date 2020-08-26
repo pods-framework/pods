@@ -242,7 +242,7 @@ export const FieldListItem = ( props ) => {
 						>
 							{ __( 'Edit', 'pods' ) }
 						</button>
-
+						|
 						<button
 							className="pods-field_button pods-field_duplicate"
 							onClick={ ( e ) => {
@@ -252,7 +252,7 @@ export const FieldListItem = ( props ) => {
 						>
 							{ __( 'Duplicate', 'pods' ) }
 						</button>
-
+						|
 						<button
 							className="pods-field_button pods-field_delete"
 							onClick={ onDeleteFieldClick }

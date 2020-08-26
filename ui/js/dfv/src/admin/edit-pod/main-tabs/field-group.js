@@ -51,7 +51,6 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 	const wrapperRef = useRef( ref );
 	const dragHandleRef = useRef( ref );
 
-	const [ isHovered, setIsHovered ] = useState( false );
 	const [ showSettings, setShowSettings ] = useState( false );
 
 	useEffect( () => {
@@ -137,8 +136,6 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			className={ classes }
 			ref={ wrapperRef }
 			style={ { opacity: isDragging ? 0 : 1 } }
-			onMouseEnter={ () => setIsHovered( true ) }
-			onMouseLeave={ () => setIsHovered( false ) }
 		>
 			<div
 				tabIndex={ 0 }
@@ -160,40 +157,39 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 					{ groupLabel }
 
 					{ !! groupID && (
-						<span
-							className="pods-field-group_name__id"
-							style={ { opacity: isHovered ? 1 : 0 } }
-						>
+						<span className="pods-field-group_name__id">
 							{ `\u00A0 [id = ${ groupID }]` }
 						</span>
 					) }
 				</div>
 
-				{ ! isExpanded && (
+				<div className="pods-field-group_buttons">
+					{ ! isExpanded && (
+						<>
+							<button
+								className="pods-field-group_button pods-field-group_manage_link"
+								onClick={ toggleExpanded }
+							>
+								{ __( 'Manage Fields', 'pods' ) }
+							</button>
+							|
+						</>
+					) }
+
 					<button
-						className="pods-field-group_button pods-field-group_manage_link"
-						onClick={ toggleExpanded }
-						style={ { opacity: isHovered ? 1 : 0 } }
+						className="pods-field-group_button pods-field-group_edit"
+						onClick={ ( event ) => onEditGroupClick( event ) }
 					>
-						{ __( 'Manage Fields', 'pods' ) }
+						{ __( 'Edit', 'pods' ) }
 					</button>
-				) }
-
-				<button
-					className="pods-field-group_button pods-field-group_edit"
-					onClick={ ( event ) => onEditGroupClick( event ) }
-					style={ { opacity: isHovered ? 1 : 0 } }
-				>
-					{ __( 'Edit', 'pods' ) }
-				</button>
-
-				<button
-					className="pods-field-group_button pods-field-group_delete"
-					onClick={ onDeleteGroupClick }
-					style={ { opacity: isHovered ? 1 : 0 } }
-				>
-					{ __( 'Delete', 'pods' ) }
-				</button>
+					|
+					<button
+						className="pods-field-group_button pods-field-group_delete"
+						onClick={ onDeleteGroupClick }
+					>
+						{ __( 'Delete', 'pods' ) }
+					</button>
+				</div>
 
 				<button
 					className="pods-field-group_button pods-field-group_manage"

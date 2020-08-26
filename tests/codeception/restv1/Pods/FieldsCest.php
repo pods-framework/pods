@@ -37,7 +37,10 @@ class FieldsCest extends PodsRestCest {
 	public function should_allow_getting_all_fields( Restv1Tester $I ) {
 		$I->generate_nonce_for_role( 'administrator' );
 
-		$I->sendGET( $this->test_rest_url );
+		$I->sendGET( $this->test_rest_url, [
+			'types'          => 'text',
+			'include_parent' => 1,
+		] );
 
 		$I->seeResponseIsJson();
 		$I->seeResponseCodeIs( 200 );
@@ -45,9 +48,10 @@ class FieldsCest extends PodsRestCest {
 		$response = json_decode( $I->grabResponse(), true );
 
 		$I->assertArrayHasKey( 'fields', $response );
-		$I->assertCount( 16, $response['fields'] );
+		$I->assertCount( 6, $response['fields'] );
 		$I->assertContains( 'my-field', wp_list_pluck( $response['fields'], 'name' ) );
 		$I->assertContains( $this->field_id, wp_list_pluck( $response['fields'], 'id' ) );
+		$I->assertContains( $this->pod_id, wp_list_pluck( wp_list_pluck( $response['fields'], 'parent_data' ), 'id' ) );
 	}
 
 	/**
@@ -78,9 +82,10 @@ class FieldsCest extends PodsRestCest {
 
 		// Get fields related to our current pod, on the new pod.
 		$I->sendGET( $this->test_rest_url, [
-			'types' => 'pick',
-			'pod'  => 'my-pod2',
-			'args' => [
+			'types'          => 'pick',
+			'pod'            => 'my-pod2',
+			'include_parent' => 1,
+			'args'           => [
 				'pick_object' => 'post_type',
 				'pick_val'    => 'my-pod',
 			],
@@ -96,5 +101,8 @@ class FieldsCest extends PodsRestCest {
 		$I->assertEquals( 'my-related-field', $response['fields'][0]['name'] );
 		$I->assertEquals( 'pick', $response['fields'][0]['type'] );
 		$I->assertEquals( $related_field_id, $response['fields'][0]['id'] );
+		$I->assertArrayHasKey( 'parent_data', $response['fields'][0] );
+		$I->assertEquals( $pod_id2, $response['fields'][0]['parent_data']['id'] );
+		$I->assertEquals( 'my-pod2', $response['fields'][0]['parent_data']['name'] );
 	}
 }

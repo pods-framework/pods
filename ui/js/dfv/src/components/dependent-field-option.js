@@ -29,8 +29,25 @@ const DependentFieldOption = ( {
 	setOptionValue,
 } ) => {
 	// In most cases, the 'data' passed to the field will be the 'data'
-	// prop, unless it's the Bidirectional Field.
+	// prop, unless it's the "Bidirectional Field"/"sister_id".
 	const [ dataOptions, setDataOptions ] = useState( data );
+
+	// Workaround for the pick_object value: this value should be changed
+	// to a combination of the `pick_object` sent by the API and the
+	// `pick_val`. This was originally done to make the form easier to select.
+	//
+	// But this processing may not need to happen - it'll get set correctly
+	// after a UI update, but will be wrong after the update from saving to the API,
+	// so we'll check that the values haven't already been merged.
+	let processedValue = value;
+
+	if (
+		'pick_object' === name &&
+		allOptionValues.pick_val &&
+		! value.includes( `-${ allOptionValues.pick_val }`, `-${ allOptionValues.pick_val }`.length )
+	) {
+		processedValue = `${ value }-${ allOptionValues.pick_val }`;
+	}
 
 	const handleInputChange = ( event ) => {
 		const { target } = event;
@@ -134,7 +151,7 @@ const DependentFieldOption = ( {
 			fieldType={ fieldType }
 			name={ name }
 			required={ required }
-			value={ value || defaultValue }
+			value={ processedValue || defaultValue }
 			label={ label }
 			data={ dataOptions }
 			onChange={ handleInputChange }

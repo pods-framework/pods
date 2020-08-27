@@ -87,7 +87,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			return;
 		}
 
-		if ( event.keyCode === ENTER_KEY ) {
+		if ( event.charCode === ENTER_KEY ) {
 			toggleExpanded();
 		}
 	};

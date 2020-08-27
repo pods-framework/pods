@@ -31,7 +31,12 @@
 
     &:hover {
         cursor: pointer;
-    }
+	}
+
+	&:focus {
+		outline: 1px solid $color--wp-blue;
+		outline-offset: 1px;
+	}
 
     &.pods-settings-modal__tab-item--active {
         color: $color--wp-blue;

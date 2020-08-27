@@ -5,18 +5,18 @@
 	position: relative;
 	vertical-align: bottom;
 	white-space: normal;
-
-	&:focus {
-		.pods-help-tooltip__icon {
-			outline: 1px solid $color--wp-blue;
-			outline-offset: 1px;
-		}
-	}
 }
 
 .pods-help-tooltip__icon {
-	color: #cccccc;
-	vertical-align: middle;
+	&:focus {
+		outline: 1px solid $color--wp-blue;
+		outline-offset: 1px;
+	}
+
+	> svg {
+		color: #cccccc;
+		vertical-align: middle;
+	}
 }
 
 .pods-help-tooltip__tooltip {

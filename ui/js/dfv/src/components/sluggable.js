@@ -16,7 +16,7 @@ const NotEditing = ( {
 	value,
 } ) => {
 	const handleKeyPress = ( event ) => {
-		if ( event.keyCode === ENTER_KEY ) {
+		if ( event.charCode === ENTER_KEY ) {
 			handleEditClick();
 		}
 	};
@@ -58,9 +58,9 @@ const Editing = ( {
 
 	const handleKeyDown = ( event ) => {
 		// "Enter" or "Escape" keys
-		if ( event.keyCode === ENTER_KEY ) {
+		if ( event.charCode === ENTER_KEY ) {
 			handleOkClick();
-		} else if ( event.keyCode === ESCAPE_KEY ) {
+		} else if ( event.charCode === ESCAPE_KEY ) {
 			handleCancelClick();
 		}
 	};

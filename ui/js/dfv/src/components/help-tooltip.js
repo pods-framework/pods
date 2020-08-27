@@ -16,6 +16,8 @@ const HelpTooltip = ( {
 	const [ showTooltip, setShowTooltip ] = useState( false );
 	const tooltipRef = useRef( null );
 
+	const toggleTooltip = () => setShowTooltip( ( previousValue ) => ! previousValue );
+
 	useEffect( () => {
 		if ( tooltipRef?.current ) {
 			tooltipRef.current.focus();
@@ -38,19 +40,19 @@ const HelpTooltip = ( {
 	}, [ tooltipRef, setShowTooltip ] );
 
 	return (
-		<div
-			className="pods-help-tooltip"
-			tabIndex="0"
-			onClick={ ( event ) => event.preventDefault() }
-			onKeyPress={ ( event ) => event.keyCode === ENTER_KEY && setShowTooltip( true ) }
-			onFocus={ () => setShowTooltip( true ) }
-			onBlur={ () => setShowTooltip( false ) }
-			role="button"
-		>
-			<Dashicon
-				icon="editor-help"
+		<div className="pods-help-tooltip">
+			<span
 				className="pods-help-tooltip__icon"
-			/>
+				tabIndex="0"
+				onClick={ ( event ) => {
+					event.preventDefault();
+					toggleTooltip();
+				} }
+				onKeyPress={ ( event ) => event.charCode === ENTER_KEY && toggleTooltip() }
+				role="button"
+			>
+				<Dashicon icon="editor-help" />
+			</span>
 
 			{ showTooltip && (
 				<div

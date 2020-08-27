@@ -234,7 +234,7 @@ const SettingsModal = ( {
 								tabIndex={ 0 }
 								key={ sectionName }
 								onClick={ () => setSelectedTab( sectionName ) }
-								onKeyPress={ ( event ) => event.keyCode === ENTER_KEY && setSelectedTab( sectionName ) }
+								onKeyPress={ ( event ) => event.charCode === ENTER_KEY && setSelectedTab( sectionName ) }
 							>
 								{ sectionLabel }
 							</div>

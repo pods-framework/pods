@@ -476,9 +476,16 @@ class PodsInit {
 	 */
 	public function register_assets() {
 
-		$maybe_min = SCRIPT_DEBUG ? '' : '.min';
+		$suffix_min = SCRIPT_DEBUG ? '' : '.min';
 
-		do_action( 'pods_before_enqueue_scripts', $maybe_min );
+		/**
+		 * Fires before Pods assets are registered.
+		 *
+		 * @since 2.7.23
+		 *
+		 * @param bool $suffix_min Minimized script suffix.
+		 */
+		do_action( 'pods_before_enqueue_scripts', $suffix_min );
 
 		wp_register_script( 'pods-json', PODS_URL . 'ui/js/jquery.json.js', array( 'jquery' ), '2.3' );
 
@@ -513,7 +520,7 @@ class PodsInit {
 
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
 			wp_register_script(
-				'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js', array(
+				'jquery-ui-timepicker', PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.js", array(
 					'jquery',
 					'jquery-ui-core',
 					'jquery-ui-datepicker',
@@ -523,16 +530,16 @@ class PodsInit {
 			);
 		}
 		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
-			wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.css', array(), '1.6.3' );
+			wp_register_style( 'jquery-ui-timepicker', PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.css", array(), '1.6.3' );
 		}
 
 		wp_register_script(
-			'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js", array(
+			'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.js", array(
 				'jquery',
 				'pods-i18n',
 			), '1.0.1'
 		);
-		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.css", array(), '1.0.2' );
+		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.css", array(), '1.0.2' );
 
 		// Marionette dependencies for MV fields
 		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '2.0.0', true );
@@ -612,7 +619,14 @@ class PodsInit {
 			wp_enqueue_style( 'pods-form' );
 		}
 
-		do_action( 'pods_after_enqueue_scripts', $maybe_min );
+		/**
+		 * Fires after Pods assets are registered.
+		 *
+		 * @since 2.7.23
+		 *
+		 * @param bool $suffix_min Minimized script suffix.
+		 */
+		do_action( 'pods_after_enqueue_scripts', $suffix_min );
 	}
 
 	/**

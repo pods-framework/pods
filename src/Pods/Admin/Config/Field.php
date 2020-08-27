@@ -23,7 +23,7 @@ class Field extends Base {
 	 */
 	public function get_tabs( \Pods\Whatsit\Pod $pod ) {
 		$core_tabs = [
-			'basic' => __( 'Basic', 'pods' ),
+			'basic' => __( 'Field Details', 'pods' ),
 		];
 
 		$field_types = PodsForm::field_types();

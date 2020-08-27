@@ -20,9 +20,7 @@ class Group extends Base {
 	 */
 	public function get_tabs( \Pods\Whatsit\Pod $pod ) {
 		$core_tabs = [
-			'basic'        => __( 'Basic', 'pods' ),
-			'advanced_tab' => __( 'Advanced', 'pods' ),
-			'rest-api'     => __( 'REST API', 'pods' ),
+			'basic' => __( 'Group Details', 'pods' ),
 		];
 
 		/**
@@ -85,85 +83,6 @@ class Group extends Base {
 				'default' => '',
 				'data'    => [],
 			],*/
-		];
-
-		$options['advanced_tab'] = [
-			'custom_field_1'    => [
-				'name'    => 'custom_field_1',
-				'label'   => __( 'Custom Field 1', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
-			],
-			'custom_field_2'    => [
-				'name'    => 'custom_field_2',
-				'label'   => __( 'Custom Field 2', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
-			],
-			'custom_field_3'    => [
-				'name'        => 'custom_field_3',
-				'label'       => __( 'Custom Field 3', 'pods' ),
-				'help'        => __( 'Example help here', 'pods' ),
-				'type'        => 'text',
-				'default'     => '',
-				'description' => 'Example description here',
-			],
-			'custom_field_4'    => [
-				'name'    => 'custom_field_4',
-				'label'   => __( 'Custom Field 4', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
-			],
-			'custom_field_bool' => [
-				'name'       => 'custom_field_bool',
-				'label'      => __( 'Custom Field Boolean', 'pods' ),
-				'help'       => __( 'help', 'pods' ),
-				'type'       => 'boolean',
-				'default'    => '',
-				'dependency' => true,
-			],
-			'custom_field_5'    => [
-				'name'       => 'custom_field_5',
-				'label'      => __( 'Custom Field 5', 'pods' ),
-				'help'       => __( 'help', 'pods' ),
-				'type'       => 'text',
-				'default'    => '',
-				'depends-on' => [ 'custom_field_bool' => true ],
-			],
-		];
-
-		$options['rest-api'] = [
-			'custom_field_6' => [
-				'name'    => 'custom_field_6',
-				'label'   => __( 'Custom Field 6', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
-			],
-			'custom_field_7' => [
-				'name'    => 'custom_field_7',
-				'label'   => __( 'Custom Field 7', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
-			],
-			'custom_field_8' => [
-				'name'    => 'custom_field_8',
-				'label'   => __( 'Custom Field 8', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
-			],
-			'custom_field_9' => [
-				'name'    => 'custom_field_9',
-				'label'   => __( 'Custom Field 9', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'type'    => 'text',
-				'default' => '',
-			],
 		];
 
 		/**

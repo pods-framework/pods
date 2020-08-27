@@ -27,6 +27,7 @@ const FieldGroups = ( {
 	saveGroup,
 	deleteAndRemoveGroup,
 	moveGroup,
+	resetGroupSaveStatus,
 	groupSaveStatuses,
 	groupSaveMessages,
 	editGroupPod,
@@ -154,6 +155,7 @@ const FieldGroups = ( {
 						saveStatus={ groupSaveStatuses[ group.name ] }
 						saveMessage={ groupSaveMessages[ group.name ] }
 						saveGroup={ saveGroup }
+						resetGroupSaveStatus={ resetGroupSaveStatus }
 						isExpanded={ expandedGroups[ group.name ] || false }
 						toggleExpanded={ toggleExpandGroup( group.name ) }
 						hasMoved={ hasMoved }
@@ -183,6 +185,7 @@ FieldGroups.propTypes = {
 	deleteAndRemoveGroup: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
+	resetGroupSaveStatus: PropTypes.func.isRequired,
 	groupSaveStatuses: PropTypes.object.isRequired,
 	groupSaveMessages: PropTypes.object.isRequired,
 };
@@ -211,6 +214,7 @@ export default compose( [
 				storeDispatch.removeGroup( groupID );
 			},
 			moveGroup: storeDispatch.moveGroup,
+			resetGroupSaveStatus: storeDispatch.resetGroupSaveStatus,
 		};
 	} ),
 ] )( FieldGroups );

@@ -36,6 +36,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		hasMoved,
 		saveStatus,
 		saveMessage,
+		resetGroupSaveStatus,
 		deleteGroup,
 		saveGroup,
 		toggleExpanded,
@@ -99,6 +100,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 	const onEditGroupCancel = ( event ) => {
 		event.stopPropagation();
 		setShowSettings( false );
+		resetGroupSaveStatus( groupName );
 	};
 
 	const onEditGroupSave = ( updatedOptions = {} ) => ( event ) => {
@@ -249,6 +251,7 @@ FieldGroup.propTypes = {
 	toggleExpanded: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
 	saveGroup: PropTypes.func.isRequired,
+	resetGroupSaveStatus: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	handleGroupDrop: PropTypes.func.isRequired,
 

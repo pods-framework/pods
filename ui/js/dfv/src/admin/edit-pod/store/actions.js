@@ -42,6 +42,15 @@ export const setGroupSaveStatus = ( saveStatus, previousGroupName ) => ( result 
 	};
 };
 
+export const resetGroupSaveStatus = ( groupName ) => {
+	return {
+		type: UI_ACTIONS.SET_GROUP_SAVE_STATUS,
+		previousGroupName: groupName,
+		saveStatus: SAVE_STATUSES.NONE,
+		result: {},
+	};
+};
+
 export const setGroupDeleteStatus = ( deleteStatus, previousGroupName ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_GROUP_DELETE_STATUS,

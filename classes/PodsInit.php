@@ -542,10 +542,10 @@ class PodsInit {
 		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.css", array(), '1.0.2' );
 
 		// Marionette dependencies for MV fields
-		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '2.0.0', true );
+		wp_register_script( 'backbone.radio', PODS_URL . "ui/js/marionette/backbone.radio{$suffix_min}.js", array( 'backbone' ), '2.0.0', true );
 		wp_register_script(
 			'pods-marionette',
-			PODS_URL . 'ui/js/marionette/backbone.marionette.min.js',
+			PODS_URL . "ui/js/marionette/backbone.marionette{$suffix_min}.js",
 			array(
 				'backbone',
 				'backbone.radio',

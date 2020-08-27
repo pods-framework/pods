@@ -130,6 +130,40 @@ class GroupTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers PodsAPI::save_group
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_save_group_with_pod_id_and_rename() {
+		$params = [
+			'pod_id' => $this->pod_id,
+			'name'   => 'test_group',
+			'label'  => 'Test group',
+		];
+
+		$response = $this->api->save_group( $params );
+
+		$this->assertInternalType( 'int', $response );
+
+		$params = [
+			'id'     => $response,
+			'pod_id' => $this->pod_id,
+			'name'   => 'test_group2',
+			'label'  => 'Test group',
+		];
+
+		$response2 = $this->api->save_group( $params );
+
+		$this->assertEquals( $response, $response2 );
+
+		$group = $this->api->load_group( $response2 );
+
+		$this->assertEquals( $params['name'], $group['name'] );
+		$this->assertEquals( '', $group['type'] );
+		$this->assertEquals( $params['label'], $group['label'] );
+	}
+
+	/**
 	 * @covers PodsAPI::add_group
 	 * @since  2.8
 	 * @throws \Exception

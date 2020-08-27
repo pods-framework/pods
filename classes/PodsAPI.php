@@ -3718,7 +3718,7 @@ class PodsAPI {
 		// Setup options
 		$options = get_object_vars( $params );
 
-		$options_ignore = array(
+		$options_ignore = [
 			'method',
 			'table_info',
 			'attributes',
@@ -3730,7 +3730,10 @@ class PodsAPI {
 			'excludes-on',
 			'object_type',
 			'storage_type',
-		);
+			'is_new',
+			'_locale',
+			'old_name',
+		];
 
 		foreach ( $options_ignore as $ignore ) {
 			if ( isset( $options[ $ignore ] ) ) {
@@ -3738,7 +3741,7 @@ class PodsAPI {
 			}
 		}
 
-		$exclude = array(
+		$exclude = [
 			'id',
 			'pod_id',
 			'pod',
@@ -3747,8 +3750,10 @@ class PodsAPI {
 			'description',
 			'type',
 			'weight',
-			'options'
-		);
+			'options',
+			'is_new',
+			'_locale',
+		];
 
 		foreach ( $exclude as $k => $exclude_group ) {
 			$aliases = array( $exclude_group );
@@ -3879,6 +3884,8 @@ class PodsAPI {
 				'group',
 				'fields',
 				'object_fields',
+				'is_new',
+				'_locale',
 			);
 
 			foreach ( $excluded_meta as $meta_key ) {

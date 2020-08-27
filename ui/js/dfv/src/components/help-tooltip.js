@@ -4,10 +4,8 @@ import * as PropTypes from 'prop-types';
 
 import { Dashicon } from '@wordpress/components';
 
-import { richTextNoLinks } from '../../../blocks/src/config/html';
+import { richTextInlineOnly } from '../../../blocks/src/config/html';
 import './help-tooltip.scss';
-
-const ENTER_KEY = 13;
 
 const HelpTooltip = ( {
 	helpText,
@@ -60,7 +58,7 @@ const HelpTooltip = ( {
 							<a href={ helpLink } target="_blank" rel="noreferrer">
 								<span
 									dangerouslySetInnerHTML={ {
-										__html: sanitizeHtml( helpText, richTextNoLinks ),
+										__html: sanitizeHtml( helpText, richTextInlineOnly ),
 									} }
 								/>
 								<Dashicon
@@ -71,7 +69,7 @@ const HelpTooltip = ( {
 						: (
 							<span
 								dangerouslySetInnerHTML={ {
-									__html: sanitizeHtml( helpText, richTextNoLinks ),
+									__html: sanitizeHtml( helpText, richTextInlineOnly ),
 								} }
 							/>
 						)

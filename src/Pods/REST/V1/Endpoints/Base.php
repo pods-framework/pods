@@ -333,7 +333,7 @@ abstract class Base {
 
 		$method = 'save_' . $this->object;
 
-		if ( 'group' === $this->object ) {
+		if ( in_array( $this->object, [ 'field', 'group' ], true ) ) {
 			$method = 'add_' . $this->object;
 		}
 

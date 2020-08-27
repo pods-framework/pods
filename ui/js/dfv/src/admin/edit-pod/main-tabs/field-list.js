@@ -48,6 +48,7 @@ const FieldList = ( {
 
 		saveField(
 			podID,
+			groupID,
 			groupName,
 			options.name,
 			options.name,

@@ -272,6 +272,7 @@ export const deleteGroup = ( groupId ) => {
 
 export const saveField = (
 	podID,
+	groupID,
 	groupName,
 	previousName,
 	name,
@@ -288,6 +289,7 @@ export const saveField = (
 			method: 'POST',
 			data: {
 				pod_id: podID.toString(),
+				group_id: groupID.toString(),
 				name,
 				label,
 				type,

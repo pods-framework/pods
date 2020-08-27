@@ -59,7 +59,7 @@ export const FieldListItem = ( props ) => {
 	const [ hasMoved, setHasMoved ] = useState( false );
 
 	const handleKeyPress = ( event ) => {
-		if ( event.keyCode === ENTER_KEY ) {
+		if ( event.charCode === ENTER_KEY ) {
 			event.stopPropagation();
 			setShowEditFieldSettings( true );
 		}

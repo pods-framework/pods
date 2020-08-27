@@ -494,13 +494,16 @@ class PodsInit {
 		}
 
 		wp_register_script(
-			'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
+			'pods', PODS_URL . 'ui/js/jquery.pods.js',
+			array(
 				'jquery',
 				'pods-dfv',
 				'pods-i18n',
 				'pods-json',
 				'jquery-qtip2',
-			), PODS_VERSION, true
+			),
+			PODS_VERSION,
+			true
 		);
 
 		wp_register_script( 'pods-cleditor', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
@@ -513,50 +516,74 @@ class PodsInit {
 		wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
 		wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', array( 'pods-codemirror' ), '4.8', true );
 
+		// jQuery Timepicker.
 		if ( ! wp_script_is( 'jquery-ui-slideraccess', 'registered' ) ) {
 			// No need to add dependencies. All managed by jquery-ui-timepicker.
-			wp_register_script( 'jquery-ui-slideraccess', PODS_URL . 'ui/js/timepicker/jquery-ui-sliderAccess.js', array(), '0.3' );
+			wp_register_script('jquery-ui-slideraccess', PODS_URL . 'ui/js/timepicker/jquery-ui-sliderAccess.js', array(), '0.3' );
 		}
-
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
 			wp_register_script(
-				'jquery-ui-timepicker', PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.js", array(
+				'jquery-ui-timepicker', PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.js",
+				array(
 					'jquery',
 					'jquery-ui-core',
 					'jquery-ui-datepicker',
 					'jquery-ui-slider',
 					'jquery-ui-slideraccess',
-				), '1.6.3'
+				),
+				'1.6.3'
 			);
 		}
 		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
-			wp_register_style( 'jquery-ui-timepicker', PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.css", array(), '1.6.3' );
+			wp_register_style(
+				'jquery-ui-timepicker',
+				PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.css",
+				array(),
+				'1.6.3'
+			);
 		}
 
+		// Select 2.
 		wp_register_script(
-			'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.js", array(
+			'pods-select2',
+			PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.js",
+			array(
 				'jquery',
 				'pods-i18n',
-			), '1.0.1'
+			),
+			'1.0.1'
 		);
-		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.css", array(), '1.0.2' );
+		wp_register_style(
+			'pods-select2',
+			PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.css",
+			array(),
+			'1.0.2'
+		);
 
-		// Marionette dependencies for MV fields
-		wp_register_script( 'backbone.radio', PODS_URL . "ui/js/marionette/backbone.radio{$suffix_min}.js", array( 'backbone' ), '2.0.0', true );
+		// Marionette dependencies for DFV/MV fields.
+		wp_register_script(
+			'backbone.radio',
+			PODS_URL . "ui/js/marionette/backbone.radio{$suffix_min}.js",
+			array( 'backbone' ),
+			'2.0.0',
+			true
+		);
 		wp_register_script(
 			'pods-marionette',
 			PODS_URL . "ui/js/marionette/backbone.marionette{$suffix_min}.js",
 			array(
 				'backbone',
 				'backbone.radio',
-			), '3.3.1', true
+			),
+			'3.3.1',
+			true
 		);
 		wp_add_inline_script(
 			'pods-marionette',
 			'PodsMn = Backbone.Marionette.noConflict();'
 		);
 
-		// MV stuff
+		// DFV/MV.
 		wp_register_script(
 			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js', array(
 				'jquery',
@@ -569,9 +596,7 @@ class PodsInit {
 			), PODS_VERSION, true
 		);
 
-		/**
-		 * Page builders.
-		 */
+		// Page builders.
 		if (
 			doing_action( 'elementor/editor/before_enqueue_scripts' ) || // Elementor.
 			null !== pods_v( 'fl_builder', 'get' ) || // Beaver Builder.
@@ -580,13 +605,13 @@ class PodsInit {
 			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
 		}
 
-		// Check if Pod is a Modal Window
+		// Check if Pod is a Modal Window.
 		if ( pods_is_modal_window() ) {
 			add_filter( 'body_class', array( $this, 'add_classes_to_modal_body' ) );
 			add_filter( 'admin_body_class', array( $this, 'add_classes_to_modal_body' ) );
 		}
 
-		// Deal with specifics on admin pages
+		// Deal with specifics on admin pages.
 		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 

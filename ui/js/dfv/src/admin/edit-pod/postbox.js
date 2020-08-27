@@ -78,7 +78,7 @@ export const Postbox = ( {
 												{ __( 'Storage', 'pods' ) }: <strong>{ window.podsAdminConfig.currentPod.storageType.label }</strong>
 											</span>
 										</div>
-										<div class="clear"></div>
+										<div className="clear"></div>
 									</div>
 								</div>
 								<div id="major-publishing-actions">

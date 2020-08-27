@@ -7272,29 +7272,29 @@ class PodsAPI {
 	 * @since 1.12
 	 */
 	public function field_exists( $params, $allow_id = true ) {
+		$params = (object) $params;
+
+		$allowed = [
+			'name',
+			'pod_id',
+			'pod',
+		];
+
+		if ( $allow_id ) {
+			$allowed[] = 'id';
+		}
+
+		$load_params = [];
+
+		foreach ( $allowed as $param ) {
+			if ( ! isset( $params->{$param} ) ) {
+				continue;
+			}
+
+			$load_params[ $param ] = $params->{$param};
+		}
+
 		try {
-			$params = (object) $params;
-
-			$allowed = [
-				'name',
-				'pod_id',
-				'pod',
-			];
-
-			if ( $allow_id ) {
-				$allowed[] = 'id';
-			}
-
-			$load_params = [];
-
-			foreach ( $allowed as $param ) {
-				if ( ! isset( $params->{$param} ) ) {
-					continue;
-				}
-
-				$load_params[ $param ] = $params->{$param};
-			}
-
 			return (boolean) $this->load_field( $load_params );
 		} catch ( Exception $exception ) {
 			return false;
@@ -7584,29 +7584,29 @@ class PodsAPI {
 	 * @since TBD
 	 */
 	public function group_exists( $params, $allow_id = true ) {
+		$params = (object) $params;
+
+		$allowed = [
+			'name',
+			'pod_id',
+			'pod',
+		];
+
+		if ( $allow_id ) {
+			$allowed[] = 'id';
+		}
+
+		$load_params = [];
+
+		foreach ( $allowed as $param ) {
+			if ( ! isset( $params->{$param} ) ) {
+				continue;
+			}
+
+			$load_params[ $param ] = $params->{$param};
+		}
+
 		try {
-			$params = (object) $params;
-
-			$allowed = [
-				'name',
-				'pod_id',
-				'pod',
-			];
-
-			if ( $allow_id ) {
-				$allowed[] = 'id';
-			}
-
-			$load_params = [];
-
-			foreach ( $allowed as $param ) {
-				if ( ! isset( $params->{$param} ) ) {
-					continue;
-				}
-
-				$load_params[ $param ] = $params->{$param};
-			}
-
 			return (boolean) $this->load_group( $load_params );
 		} catch ( Exception $exception ) {
 			return false;

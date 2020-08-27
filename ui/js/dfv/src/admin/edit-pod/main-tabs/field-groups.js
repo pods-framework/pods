@@ -110,9 +110,12 @@ const FieldGroups = ( {
 						__( '%1$s > Add Group', 'pods' ),
 						podLabel,
 					) }
-					hasSaveError={ groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVE_ERROR || false }
+					hasSaveError={ groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVE_ERROR }
 					saveButtonText={ __( 'Save New Group', 'pods' ) }
-					errorMessage={ groupSaveMessages[ addedGroupName ] || __( 'There was an error saving the group, please try again.', 'pods' ) }
+					errorMessage={
+						groupSaveMessages[ addedGroupName ] ||
+						__( 'There was an error saving the group, please try again.', 'pods' )
+					}
 					cancelEditing={ () => {
 						setShowAddGroupModal( false );
 						setAddedGroupName( null );
@@ -149,6 +152,7 @@ const FieldGroups = ( {
 						moveGroup={ handleGroupMove }
 						handleGroupDrop={ handleGroupDrop }
 						saveStatus={ groupSaveStatuses[ group.name ] }
+						saveMessage={ groupSaveMessages[ group.name ] }
 						saveGroup={ saveGroup }
 						isExpanded={ expandedGroups[ group.name ] || false }
 						toggleExpanded={ toggleExpandGroup( group.name ) }

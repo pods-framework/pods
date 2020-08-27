@@ -131,10 +131,7 @@ const FieldList = ( {
 						podLabel,
 						groupLabel,
 					) }
-					hasSaveError={
-						fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_ERROR ||
-						false
-					}
+					hasSaveError={ fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_ERROR }
 					saveButtonText={ __( 'Save New Field', 'pods' ) }
 					errorMessage={
 						fieldSaveMessages[ addedFieldName ] ||

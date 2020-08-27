@@ -35,6 +35,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		isExpanded,
 		hasMoved,
 		saveStatus,
+		saveMessage,
 		deleteGroup,
 		saveGroup,
 		toggleExpanded,
@@ -208,7 +209,10 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 							groupLabel
 						) }
 						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
-						errorMessage={ __( 'There was an error saving the group, please try again.', 'pods' ) }
+						errorMessage={
+							saveMessage ||
+							__( 'There was an error saving the group, please try again.', 'pods' )
+						}
 						saveButtonText={ __( 'Save Group', 'pods' ) }
 						cancelEditing={ onEditGroupCancel }
 						save={ onEditGroupSave }
@@ -240,6 +244,7 @@ FieldGroup.propTypes = {
 	editGroupPod: PropTypes.object.isRequired,
 	hasMoved: PropTypes.bool.isRequired,
 	saveStatus: PropTypes.string,
+	saveMessage: PropTypes.string,
 
 	toggleExpanded: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,

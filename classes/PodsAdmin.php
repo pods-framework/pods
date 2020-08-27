@@ -971,6 +971,10 @@ class PodsAdmin {
 				$pod_storage = 'meta';
 			}
 
+			if ( 'settings' === $pod_type ) {
+				$pod_storage = 'options';
+			}
+
 			if ( isset( $types[ $pod_type ] ) ) {
 				$pod_type_label = $types[ $pod_type ];
 			}
@@ -1298,9 +1302,10 @@ class PodsAdmin {
 				'internal'  => _x( 'Pods Internal', 'pod type label', 'pods' ),
 			],
 			'storageTypes'   => [
-				'none'  => _x( 'None (No Fields)', 'storage type label', 'pods' ),
-				'meta'  => _x( 'Meta', 'storage type label', 'pods' ),
-				'table' => _x( 'Table', 'storage type label', 'pods' ),
+				'none'    => _x( 'None (No Fields)', 'storage type label', 'pods' ),
+				'options' => _x( 'Options', 'storage type label', 'pods' ),
+				'meta'    => _x( 'Meta', 'storage type label', 'pods' ),
+				'table'   => _x( 'Table', 'storage type label', 'pods' ),
 			],
 		];
 
@@ -1326,6 +1331,10 @@ class PodsAdmin {
 
 		if ( ! empty( $config['podTypes'][ $config['currentPod']['podType']['name'] ] ) ) {
 			$config['currentPod']['podType']['label'] = $config['podTypes'][ $config['currentPod']['podType']['name'] ];
+		}
+
+		if ( 'settings' === $config['currentPod']['type'] ) {
+			$config['currentPod']['storageType']['name'] = 'options';
 		}
 
 		$config['currentPod']['storageType']['label'] = ucwords( $config['currentPod']['storageType']['name'] );

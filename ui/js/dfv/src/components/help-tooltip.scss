@@ -1,8 +1,17 @@
+@import '../admin/edit-pod/edit-pod-variables';
+
 .pods-help-tooltip {
 	display: inline-block;
 	position: relative;
 	vertical-align: bottom;
 	white-space: normal;
+
+	&:focus {
+		.pods-help-tooltip__icon {
+			outline: 1px solid $color--wp-blue;
+			outline-offset: 1px;
+		}
+	}
 }
 
 .pods-help-tooltip__icon {
@@ -44,7 +53,7 @@
 		box-shadow: 0 1px 8px rgba(0,0,0,0.5);
 	}
 
-	> a {
+	a {
 		color: #ffffff;
 
 		&:hover,

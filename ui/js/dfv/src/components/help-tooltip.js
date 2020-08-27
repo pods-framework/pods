@@ -7,6 +7,8 @@ import { Dashicon } from '@wordpress/components';
 import { richTextInlineOnly } from '../../../blocks/src/config/html';
 import './help-tooltip.scss';
 
+const ENTER_KEY = 13;
+
 const HelpTooltip = ( {
 	helpText,
 	helpLink,
@@ -39,7 +41,11 @@ const HelpTooltip = ( {
 		<div
 			className="pods-help-tooltip"
 			tabIndex="0"
+			onClick={ ( event ) => event.preventDefault() }
+			onKeyPress={ ( event ) => event.keyCode === ENTER_KEY && setShowTooltip( true ) }
 			onFocus={ () => setShowTooltip( true ) }
+			onBlur={ () => setShowTooltip( false ) }
+			role="button"
 		>
 			<Dashicon
 				icon="editor-help"

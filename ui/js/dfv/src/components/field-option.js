@@ -35,16 +35,19 @@ const PodsFieldOption = ( {
 	return (
 		<div className="pods-field-option">
 			{ 'heading' !== fieldType && (
-				<label
-					className={ `pods-form-ui-label pods-form-ui-label-${ name }` }
-					htmlFor={ name }
-				>
-					<span
-						dangerouslySetInnerHTML={ {
-							__html: removep( sanitizeHtml( label, richTextNoLinks ) ),
-						} }
-					/>
-					{ required && ( <span className="pods-form-ui-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
+				<div className={ `pods-form-ui-label pods-form-ui-label-${ name }` }>
+					<label
+						className="pods-form-ui-label__label"
+						htmlFor={ name }
+					>
+						<span
+							dangerouslySetInnerHTML={ {
+								__html: removep( sanitizeHtml( label, richTextNoLinks ) ),
+							} }
+						/>
+						{ required && ( <span className="pods-form-ui-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
+					</label>
+
 					{ shouldShowHelpText && (
 						<span style={ { whiteSpace: 'nowrap' } }>
 							{ '\u00A0' /* &nbsp; */ }
@@ -54,7 +57,7 @@ const PodsFieldOption = ( {
 							/>
 						</span>
 					) }
-				</label>
+				</div>
 			) }
 
 			<div className="pods-field-option__field">

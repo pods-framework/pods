@@ -189,6 +189,16 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 				'description'       => __( 'The Pod name.', 'pods' ),
 				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
 			],
+			'group_id' => [
+				'type'              => 'string',
+				'description'       => __( 'The Group ID.', 'pods' ),
+				'validate_callback' => [ $this->validator, 'is_group_id' ],
+			],
+			'group'    => [
+				'type'              => 'string',
+				'description'       => __( 'The Group name.', 'pods' ),
+				'validate_callback' => [ $this->validator, 'is_group_slug' ],
+			],
 			'name'   => [
 				'type'        => 'string',
 				'description' => __( 'The name of the Field.', 'pods' ),

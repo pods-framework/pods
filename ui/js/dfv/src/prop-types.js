@@ -40,13 +40,13 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	'excludes-on': OBJECT_OR_ARRAY,
 	field_type: PropTypes.string,
 	group: PropTypes.string.isRequired,
+	group_id: NUMBER_OR_NUMBER_AS_STRING,
 	grouped: PropTypes.number,
 	help: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
 	hidden: PropTypes.oneOf( BOOLEAN_STRINGS ),
-	// @todo this should maybe just be number
 	id: NUMBER_OR_NUMBER_AS_STRING.isRequired,
 	label: PropTypes.string.isRequired,
 	label_param: PropTypes.string,

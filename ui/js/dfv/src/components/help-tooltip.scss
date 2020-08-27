@@ -8,6 +8,8 @@
 }
 
 .pods-help-tooltip__icon {
+	cursor: pointer;
+
 	&:focus {
 		outline: 1px solid $color--wp-blue;
 		outline-offset: 1px;
@@ -24,6 +26,7 @@
 	border-radius: 0 8px 8px 8px;
 	box-shadow: 0 1px 8px #00000080;
 	color:#ffffff;
+	cursor: pointer;
 	display: block;
 	left: 15%;
 	overflow: visible;

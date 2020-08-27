@@ -55,10 +55,12 @@ const HelpTooltip = ( {
 			</span>
 
 			{ showTooltip && (
+				// eslint-disable-next-line
 				<div
 					className="pods-help-tooltip__tooltip"
 					tabIndex="-1"
 					ref={ tooltipRef }
+					onClick={ () => setShowTooltip( false ) }
 				>
 					<i></i>
 					{ helpLink

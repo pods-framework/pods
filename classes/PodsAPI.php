@@ -2759,18 +2759,8 @@ class PodsAPI {
 		if ( isset( $params->name ) ) {
 			$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
 
-			if ( $params->is_new ) {
-				if ( isset( $params->id ) ) {
-					$params->id = null;
-				}
-
-				if ( in_array( $params->name, $reserved_keywords, true ) ) {
-					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
-				}
-
-				if ( false !== $this->field_exists( $params ) ) {
-					return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $params->name ), $this );
-				}
+			if ( $params->is_new && isset( $params->id ) ) {
+				$params->id = null;
 			}
 		}
 
@@ -2852,17 +2842,17 @@ class PodsAPI {
 				$field['group'] = $new_group->get_id();
 			}
 
-			if ( $old_name !== $field['name'] ) {
+			if ( $old_name !== $field['name'] || empty( $params->id ) || $old_id !== $params->id ) {
 				if ( in_array( $field['name'], $reserved_keywords, true ) ) {
 					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 				}
 
-				if ( false !== $this->field_exists( $params ) ) {
+				if ( false !== $this->field_exists( $params, false ) ) {
 					return pods_error( sprintf( __( 'Field %1$s already exists, you cannot rename %2$s to that', 'pods' ), $field['name'], $old_name ), $this );
 				}
 			}
 
-			if ( ( $id_required || ! empty( $params->id ) ) && ( empty( $old_id ) || $old_id != $params->id ) ) {
+			if ( ( $id_required || ! empty( $params->id ) ) && ( empty( $old_id ) || $old_id !== $params->id ) ) {
 				return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $field['name'] ), $this );
 			}
 
@@ -3637,18 +3627,8 @@ class PodsAPI {
 		if ( isset( $params->name ) ) {
 			$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
 
-			if ( $params->is_new ) {
-				if ( isset( $params->id ) ) {
-					$params->id = null;
-				}
-
-				if ( in_array( $params->name, $reserved_keywords, true ) ) {
-					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
-				}
-
-				if ( false !== $this->group_exists( $params ) ) {
-					return pods_error( sprintf( __( 'Group %s already exists', 'pods' ), $params->name ), $this );
-				}
+			if ( $params->is_new && isset( $params->id ) ) {
+				$params->id = null;
 			}
 		}
 
@@ -3681,16 +3661,20 @@ class PodsAPI {
 			$old_id   = $group['id'];
 			$old_name = $group['name'];
 
-			if ( ! isset( $params->name ) ) {
-				$params->name = $group['name'];
+			if ( isset( $params->new_name ) && ! empty( $params->new_name ) ) {
+				$group['name'] = $params->new_name;
+
+				unset( $params->new_name );
+			} elseif ( isset( $params->name ) ) {
+				$group['name'] = $params->name;
 			}
 
-			if ( $old_name !== $params->name || $old_id !== $params->id ) {
+			if ( $old_name !== $group['name'] || empty( $params->id ) || $old_id !== $params->id ) {
 				if ( in_array( $params->name, $reserved_keywords, true ) ) {
 					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
 				}
 
-				if ( false !== $this->group_exists( $params ) ) {
+				if ( false !== $this->group_exists( $params, false ) ) {
 					return pods_error( sprintf( __( 'Group %1$s already exists, you cannot rename %2$s to that', 'pods' ), $params->name, $old_name ), $this );
 				}
 			}
@@ -7280,15 +7264,38 @@ class PodsAPI {
 	 * $params['id'] int The field ID
 	 * $params['name'] string The field name
 	 *
-	 * @param array $params An associative array of parameters
+	 * @param array   $params   An associative array of parameters
+	 * @param boolean $allow_id Whether to allow the ID when checking if the group exists.
 	 *
 	 * @return bool
 	 *
 	 * @since 1.12
 	 */
-	public function field_exists( $params ) {
+	public function field_exists( $params, $allow_id = true ) {
 		try {
-			return (boolean) $this->load_field( $params );
+			$params = (object) $params;
+
+			$allowed = [
+				'name',
+				'pod_id',
+				'pod',
+			];
+
+			if ( $allow_id ) {
+				$allowed[] = 'id';
+			}
+
+			$load_params = [];
+
+			foreach ( $allowed as $param ) {
+				if ( ! isset( $params->{$param} ) ) {
+					continue;
+				}
+
+				$load_params[ $param ] = $params->{$param};
+			}
+
+			return (boolean) $this->load_field( $load_params );
 		} catch ( Exception $exception ) {
 			return false;
 		}
@@ -7570,14 +7577,37 @@ class PodsAPI {
 	 * @type string             $name                The Group name.
 	 * @type boolean            $bypass_cache        Bypass the cache when getting data.
 	 * }
+	 * @param boolean $allow_id Whether to allow the ID when checking if the group exists.
 	 *
 	 * @return bool
 	 *
 	 * @since TBD
 	 */
-	public function group_exists( $params ) {
+	public function group_exists( $params, $allow_id = true ) {
 		try {
-			return (boolean) $this->load_group( $params );
+			$params = (object) $params;
+
+			$allowed = [
+				'name',
+				'pod_id',
+				'pod',
+			];
+
+			if ( $allow_id ) {
+				$allowed[] = 'id';
+			}
+
+			$load_params = [];
+
+			foreach ( $allowed as $param ) {
+				if ( ! isset( $params->{$param} ) ) {
+					continue;
+				}
+
+				$load_params[ $param ] = $params->{$param};
+			}
+
+			return (boolean) $this->load_group( $load_params );
 		} catch ( Exception $exception ) {
 			return false;
 		}
@@ -10065,11 +10095,6 @@ class PodsAPI {
 
 				$params['args'][ $arg['key'] ] = $arg['value'];
 			}
-		}
-
-		// @todo SKC remove when done testing.
-		if ( 'field' === $params['object_type'] && isset( $params['id'] ) && empty( $params['id'] ) ) {
-			trigger_error( 'test: ' . var_export( $params, true ) );
 		}
 
 		$object_collection = Pods\Whatsit\Store::get_instance();

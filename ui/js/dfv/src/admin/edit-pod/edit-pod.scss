@@ -1,5 +1,13 @@
 @import './edit-pod-variables';
 
+#misc-publishing-actions {
+	svg.dashicon {
+		color: $color--grey;
+		vertical-align: middle;
+		margin-right: 0.25em;
+	}
+}
+
 #major-publishing-actions {
 	.editor-post-trash {
 		margin-left: 0;

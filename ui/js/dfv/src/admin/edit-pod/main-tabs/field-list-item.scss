@@ -1,16 +1,19 @@
-@import './edit-pod-variables';
+@import '../edit-pod-variables';
 
 .pods-field_wrapper {
 	display: flex;
 	width: auto;
-	background-color: #fff;
 	align-items: center;
-	transition: 200ms ease background-color;
 	padding: .7em 0;
 
 	&:hover .pods-field_controls-container {
 		opacity: 1;
 	}
+}
+
+.pods-field_outer-wrapper:nth-child(odd) {
+	background-color: $color--zebra-grey;
+	transition: 200ms ease background-color;
 }
 
 .pods-field_wrapper--unsaved {
@@ -155,7 +158,7 @@
 
 .pods-field_controls-container {
 	color: $color--light-grey;
-	margin-left: -1em;
+	margin-left: -0.5em;
 	padding-top: 0.25em;
 }
 
@@ -164,10 +167,10 @@
 	border: none;
 	color: $color--wp-blue;
 	cursor: pointer;
+	font-size: 0.95em;
 	height: auto;
-	margin: 0 1em;
 	overflow: visible;
-	padding: 0;
+	padding: 0 0.5em;
 	position: relative;
 
 	&:hover,

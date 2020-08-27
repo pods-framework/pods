@@ -4,6 +4,7 @@ import { withSelect, withDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
+import { Dashicon } from '@wordpress/components';
 
 import {
 	STORE_KEY_EDIT_POD,
@@ -63,6 +64,23 @@ export const Postbox = ( {
 						</h3>
 						<div className="inside">
 							<div className="submitbox" id="submitpost">
+								<div id="minor-publishing">
+									<div id="misc-publishing-actions">
+										<div className="misc-pub-section pods-pod-type">
+											<span>
+												<Dashicon icon="admin-page" size="16" />
+												{ __( 'Type', 'pods' ) }: <strong>{ window.podsAdminConfig.currentPod.podType.label }</strong>
+											</span>
+										</div>
+										<div className="misc-pub-section pods-storage-type">
+											<span>
+												<Dashicon icon="admin-tools" size="16" />
+												{ __( 'Storage', 'pods' ) }: <strong>{ window.podsAdminConfig.currentPod.storageType.label }</strong>
+											</span>
+										</div>
+										<div class="clear"></div>
+									</div>
+								</div>
 								<div id="major-publishing-actions">
 									<div id="delete-action">
 										<button

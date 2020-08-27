@@ -333,6 +333,10 @@ abstract class Base {
 
 		$method = 'save_' . $this->object;
 
+		if ( in_array( $this->object, [ 'field', 'group' ], true ) ) {
+			$method = 'add_' . $this->object;
+		}
+
 		$id = $api->$method( $params );
 
 		if ( is_wp_error( $id ) ) {

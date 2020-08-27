@@ -130,6 +130,33 @@ class GroupTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers PodsAPI::add_group
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_add_group_with_pod_id_using_existing_group_name() {
+		$params = [
+			'pod_id' => $this->pod_id,
+			'name'   => 'test_group',
+			'label'  => 'Test group',
+		];
+
+		$response = $this->api->add_group( $params );
+
+		$this->assertInternalType( 'int', $response );
+
+		$params = [
+			'pod_id' => $this->pod_id,
+			'name'   => 'test_group',
+			'label'  => 'Test group 2',
+		];
+
+		$this->expectExceptionMessage( 'Group test_group already exists' );
+
+		$this->api->add_group( $params );
+	}
+
+	/**
 	 * @covers PodsAPI::save_group
 	 * @since  2.8
 	 * @throws \Exception

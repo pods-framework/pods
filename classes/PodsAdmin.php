@@ -1285,7 +1285,65 @@ class PodsAdmin {
 			'global'         => $this->get_global_config( $pod ),
 			'fieldTypes'     => PodsForm::field_types(),
 			'relatedObjects' => $this->get_field_related_objects(),
+			'podTypes'       => [
+				'post_type' => _x( 'Post Type (extended)', 'pod type label', 'pods' ),
+				'taxonomy'  => _x( 'Taxonomy (extended)', 'pod type label', 'pods' ),
+				'cpt'       => _x( 'Custom Post Type', 'pod type label', 'pods' ),
+				'ct'        => _x( 'Custom Taxonomy', 'pod type label', 'pods' ),
+				'user'      => _x( 'User (extended)', 'pod type label', 'pods' ),
+				'media'     => _x( 'Media (extended)', 'pod type label', 'pods' ),
+				'comment'   => _x( 'Comments (extended)', 'pod type label', 'pods' ),
+				'pod'       => _x( 'Advanced Content Type', 'pod type label', 'pods' ),
+				'settings'  => _x( 'Custom Settings Page', 'pod type label', 'pods' ),
+				'internal'  => _x( 'Pods Internal', 'pod type label', 'pods' ),
+			],
+			'storageTypes'   => [
+				'none'  => _x( 'None (No Fields)', 'storage type label', 'pods' ),
+				'meta'  => _x( 'Meta', 'storage type label', 'pods' ),
+				'table' => _x( 'Table', 'storage type label', 'pods' ),
+			],
 		];
+
+		$config['currentPod']['podType'] = [
+			'name' => $config['currentPod']['type'],
+		];
+
+		$config['currentPod']['storageType'] = [
+			'name' => $config['currentPod']['storage'],
+		];
+
+		if ( ! empty( $config['currentPod']['internal'] ) ) {
+			$config['currentPod']['podType']['name'] = 'internal';
+		} elseif ( empty( $config['currentPod']['object'] ) ) {
+			if ( 'post_type' === $config['currentPod']['type'] ) {
+				$config['currentPod']['podType']['name'] = 'cpt';
+			} elseif ( 'taxonomy' === $config['currentPod']['type'] ) {
+				$config['currentPod']['podType']['name'] = 'ct';
+			}
+		}
+
+		$config['currentPod']['podType']['label'] = ucwords( str_replace( '_', ' ', $config['currentPod']['podType']['name'] ) );
+
+		if ( ! empty( $config['podTypes'][ $config['currentPod']['podType']['name'] ] ) ) {
+			$config['currentPod']['podType']['label'] = $config['podTypes'][ $config['currentPod']['podType']['name'] ];
+		}
+
+		$config['currentPod']['storageType']['label'] = ucwords( $config['currentPod']['storageType']['name'] );
+
+		if ( ! empty( $config['storageTypes'][ $config['currentPod']['storageType']['name'] ] ) ) {
+			$config['currentPod']['storageType']['label'] = $config['storageTypes'][ $config['currentPod']['storageType']['name'] ];
+		}
+
+		/**
+		 * Allow filtering hte admin config data.
+		 *
+		 * @since TBD
+		 *
+		 * @param array $config The admin config data.
+		 * @param Pod The pod object.
+		 * @param PodsUI $obj The PodsUI object.
+		 */
+		$config = apply_filters( 'pods_admin_setup_edit_pod_config', $config, $pod, $obj );
 
 		wp_localize_script( 'pods-dfv', 'podsAdminConfig', $config );
 

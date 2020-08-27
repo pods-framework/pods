@@ -46,6 +46,32 @@ class AdminTest extends Pods_WhatsitTestCase {
 	 * @return array
 	 */
 	public function provider_global_config_checks() {
+		$groups_for_group = [
+			'basic',
+		];
+
+		$groups_for_field = [
+			'basic',
+			'additional-field-text',
+			'additional-field-website',
+			'additional-field-phone',
+			'additional-field-email',
+			'additional-field-password',
+			'additional-field-paragraph',
+			'additional-field-wysiwyg',
+			'additional-field-code',
+			'additional-field-datetime',
+			'additional-field-date',
+			'additional-field-time',
+			'additional-field-number',
+			'additional-field-currency',
+			'additional-field-file',
+			'additional-field-oembed',
+			'additional-field-pick',
+			'additional-field-boolean',
+			'advanced',
+		];
+
 		yield 'new post type with meta storage' => [
 			[
 				'pod_args' => [
@@ -64,19 +90,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-							'rest',
-						],
+						'groups' => array_merge( $groups_for_field, [ 'rest' ] ),
 					],
 				],
 			],
@@ -100,19 +117,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-							'rest',
-						],
+						'groups' => array_merge( $groups_for_field, [ 'rest' ] ),
 					],
 				],
 			],
@@ -134,19 +142,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-							'rest',
-						],
+						'groups' => array_merge( $groups_for_field, [ 'rest' ] ),
 					],
 				],
 			],
@@ -168,19 +167,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-							'rest',
-						],
+						'groups' => array_merge( $groups_for_field, [ 'rest' ] ),
 					],
 				],
 			],
@@ -204,19 +194,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-							'rest',
-						],
+						'groups' => array_merge( $groups_for_field, [ 'rest' ] ),
 					],
 				],
 			],
@@ -240,19 +221,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-							'rest',
-						],
+						'groups' => array_merge( $groups_for_field, [ 'rest' ] ),
 					],
 				],
 			],
@@ -274,19 +246,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-							'rest',
-						],
+						'groups' => array_merge( $groups_for_field, [ 'rest' ] ),
 					],
 				],
 			],
@@ -308,19 +271,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-							'rest',
-						],
+						'groups' => array_merge( $groups_for_field, [ 'rest' ] ),
 					],
 				],
 			],
@@ -340,19 +294,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-							'rest',
-						],
+						'groups' => array_merge( $groups_for_field, [ 'rest' ] ),
 					],
 				],
 			],
@@ -372,19 +317,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-							'rest',
-						],
+						'groups' => array_merge( $groups_for_field, [ 'rest' ] ),
 					],
 				],
 			],
@@ -403,18 +339,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-						],
+						'groups' => $groups_for_field,
 					],
 				],
 			],
@@ -433,18 +361,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-						],
+						'groups' => $groups_for_field,
 					],
 				],
 			],
@@ -464,16 +384,29 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
 						'groups' => [
 							'basic',
-							'additional-field',
+							'additional-field-text',
+							'additional-field-website',
+							'additional-field-phone',
+							'additional-field-email',
+							'additional-field-password',
+							'additional-field-paragraph',
+							'additional-field-wysiwyg',
+							'additional-field-code',
+							'additional-field-datetime',
+							'additional-field-date',
+							'additional-field-time',
+							'additional-field-number',
+							'additional-field-currency',
+							'additional-field-file',
+							'additional-field-avatar',
+							'additional-field-oembed',
+							'additional-field-pick',
+							'additional-field-boolean',
 							'advanced',
 							'rest',
 						],
@@ -496,16 +429,29 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
 						'groups' => [
 							'basic',
-							'additional-field',
+							'additional-field-text',
+							'additional-field-website',
+							'additional-field-phone',
+							'additional-field-email',
+							'additional-field-password',
+							'additional-field-paragraph',
+							'additional-field-wysiwyg',
+							'additional-field-code',
+							'additional-field-datetime',
+							'additional-field-date',
+							'additional-field-time',
+							'additional-field-number',
+							'additional-field-currency',
+							'additional-field-file',
+							'additional-field-avatar',
+							'additional-field-oembed',
+							'additional-field-pick',
+							'additional-field-boolean',
 							'advanced',
 							'rest',
 						],
@@ -528,18 +474,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
-						'groups' => [
-							'basic',
-							'additional-field',
-							'advanced',
-						],
+						'groups' => $groups_for_field,
 					],
 				],
 			],
@@ -560,16 +498,29 @@ class AdminTest extends Pods_WhatsitTestCase {
 						],
 					],
 					'group' => [
-						'groups' => [
-							'basic',
-							'advanced_tab',
-							'rest-api',
-						],
+						'groups' => $groups_for_group,
 					],
 					'field' => [
 						'groups' => [
 							'basic',
-							'additional-field',
+							'additional-field-text',
+							'additional-field-website',
+							'additional-field-phone',
+							'additional-field-email',
+							'additional-field-password',
+							'additional-field-paragraph',
+							'additional-field-wysiwyg',
+							'additional-field-code',
+							'additional-field-datetime',
+							'additional-field-date',
+							'additional-field-time',
+							'additional-field-number',
+							'additional-field-currency',
+							'additional-field-file',
+							'additional-field-oembed',
+							'additional-field-pick',
+							'additional-field-boolean',
+							'additional-field-slug',
 							'advanced',
 						],
 					],

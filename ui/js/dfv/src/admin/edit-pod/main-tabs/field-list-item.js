@@ -81,6 +81,7 @@ export const FieldListItem = ( props ) => {
 
 		saveField(
 			podID,
+			groupID,
 			groupName,
 			name,
 			updatedOptions.name || name,

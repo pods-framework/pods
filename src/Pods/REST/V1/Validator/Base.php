@@ -25,7 +25,7 @@ class Base extends Validator_Base implements Validator_Interface {
 	}
 
 	/**
-	 * Whether the value corresponds to an existing Pod ID or not.
+	 * Whether the value corresponds to an existing Pod slug or not.
 	 *
 	 * @since 2.8.0
 	 *
@@ -35,6 +35,32 @@ class Base extends Validator_Base implements Validator_Interface {
 	 */
 	public function is_pod_slug( $value ) {
 		return null !== get_page_by_path( $value, OBJECT, '_pods_pod' );
+	}
+
+	/**
+	 * Whether the value corresponds to an existing Group slug or not.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 */
+	public function is_group_slug( $value ) {
+		return null !== get_page_by_path( $value, OBJECT, '_pods_group' );
+	}
+
+	/**
+	 * Whether the value corresponds to an existing Field slug or not.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 */
+	public function is_field_slug( $value ) {
+		return null !== get_page_by_path( $value, OBJECT, '_pods_field' );
 	}
 
 	/**

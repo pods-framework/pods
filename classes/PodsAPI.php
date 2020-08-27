@@ -2551,6 +2551,39 @@ class PodsAPI {
 	}
 
 	/**
+	 * Add field within a Pod
+	 *
+	 * $params['id'] int Field ID (id OR pod_id+pod+name required)
+	 * $params['pod_id'] int Pod ID (id OR pod_id+pod+name required)
+	 * $params['pod'] string Pod name (id OR pod_id+pod+name required)
+	 * $params['name'] string Field name (id OR pod_id+pod+name required)
+	 * $params['label'] string (optional) Field label
+	 * $params['type'] string (optional) Field type (avatar, boolean, code, color, currency, date, datetime, email,
+	 * file, number, paragraph, password, phone, pick, slug, text, time, website, wysiwyg)
+	 * $params['pick_object'] string (optional) Related Object (for relationships)
+	 * $params['pick_val'] string (optional) Related Object name (for relationships)
+	 * $params['sister_id'] int (optional) Related Field ID (for bidirectional relationships)
+	 * $params['weight'] int (optional) Order in which the field appears
+	 *
+	 * @param array    $params          An associative array of parameters
+	 * @param bool     $table_operation (optional) Whether or not to handle table operations
+	 * @param bool     $sanitized       (optional) Decides whether the params have been sanitized before being passed,
+	 *                                  will sanitize them if false.
+	 * @param bool|int $db              (optional) Whether to save into the DB or just return field array.
+	 *
+	 * @return int|array The field ID or field array (if !$db)
+	 *
+	 * @since TBD
+	 */
+	public function add_field( $params, $table_operation = true, $sanitized = false, $db = true ) {
+		$params = (object) $params;
+
+		$params->is_new = true;
+
+		return $this->save_field( $params, $table_operation, $sanitized, $db );
+	}
+
+	/**
 	 * Add or edit a field within a Pod
 	 *
 	 * $params['id'] int Field ID (id OR pod_id+pod+name required)
@@ -2719,8 +2752,26 @@ class PodsAPI {
 		$params->pod_id = $pod['id'];
 		$params->pod    = $pod['name'];
 
+		$params->is_new = isset( $params->is_new ) ? (boolean) $params->is_new : false;
+
+		$reserved_keywords = pods_reserved_keywords();
+
 		if ( isset( $params->name ) ) {
 			$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
+
+			if ( $params->is_new ) {
+				if ( isset( $params->id ) ) {
+					$params->id = null;
+				}
+
+				if ( in_array( $params->name, $reserved_keywords, true ) ) {
+					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
+				}
+
+				if ( false !== $this->field_exists( $params ) ) {
+					return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $params->name ), $this );
+				}
+			}
 		}
 
 		$field_obj = $field;
@@ -2779,9 +2830,6 @@ class PodsAPI {
 		$old_options           = null;
 		$old_sister_id         = null;
 		$old_type_is_tableless = false;
-
-		// @todo pods_reserved_keywords();
-		$reserved_keywords = array( 'id', 'ID' );
 
 		if ( ! empty( $field ) ) {
 			$old_id        = pods_v( 'id', $field );
@@ -3454,6 +3502,38 @@ class PodsAPI {
 	}
 
 	/**
+	 * Add a Group within a Pod.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array    $params          {
+	 *      An associative array of parameters
+	 *
+	 *      @type int|null    $id     The Group ID (id OR pod_id+name OR pod+name required).
+	 *      @type string|null $name   The Group name (id OR pod_id+name OR pod+name required).
+	 *      @type int|null    $pod_id The Pod ID (id OR pod_id+name OR pod+name required).
+	 *      @type string|null $pod    The Pod name (id OR pod_id+name OR pod+name required).
+	 *      @type string|null $label  The Group label.
+	 *      @type string|null $type   The Group type.
+	 *      @type int|null    $weight The order in which the Group appears.
+	 * }
+	 * @param bool     $sanitized       (optional) Decides whether the params have been sanitized before being passed,
+	 *                                  will sanitize them if false.
+	 * @param bool|int $db              (optional) Whether to save into the DB or just return group array.
+	 *
+	 * @return int|array The group ID or group array (if !$db)
+	 *
+	 * @throws \Exception
+	 */
+	public function add_group( $params, $sanitized = false, $db = true ) {
+		$params = (object) $params;
+
+		$params->is_new = true;
+
+		return $this->save_group( $params, $sanitized, $db );
+	}
+
+	/**
 	 * Add or edit a Group within a Pod.
 	 *
 	 * @since 2.8
@@ -3468,6 +3548,7 @@ class PodsAPI {
 	 *      @type string|null $label  The Group label.
 	 *      @type string|null $type   The Group type.
 	 *      @type int|null    $weight The order in which the Group appears.
+	 *      @type bool        $is_new Whether to try to add the group as a new group when passing name.
 	 * }
 	 * @param bool     $sanitized       (optional) Decides whether the params have been sanitized before being passed,
 	 *                                  will sanitize them if false.
@@ -3527,6 +3608,8 @@ class PodsAPI {
 			unset( $params->id_required );
 		}
 
+		$params->is_new = isset( $params->is_new ) ? (boolean) $params->is_new : false;
+
 		if ( ! $pod && ( ! isset( $params->pod ) || empty( $params->pod ) ) && ( ! isset( $params->pod_id ) || empty( $params->pod_id ) ) ) {
 			return pods_error( __( 'Pod ID or name is required', 'pods' ), $this );
 		}
@@ -3545,12 +3628,28 @@ class PodsAPI {
 			return pods_error( __( 'Pod not found', 'pods' ), $this );
 		}
 
+		$reserved_keywords = pods_reserved_keywords();
+
 		/** @var \Pods\Whatsit\Pod $pod */
 		$params->pod_id = $pod->get_id();
 		$params->pod    = $pod->get_name();
 
 		if ( isset( $params->name ) ) {
 			$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
+
+			if ( $params->is_new ) {
+				if ( isset( $params->id ) ) {
+					$params->id = null;
+				}
+
+				if ( in_array( $params->name, $reserved_keywords, true ) ) {
+					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
+				}
+
+				if ( false !== $this->group_exists( $params ) ) {
+					return pods_error( sprintf( __( 'Group %s already exists', 'pods' ), $params->name ), $this );
+				}
+			}
 		}
 
 		if ( empty( $params->name ) && empty( $params->id ) ) {
@@ -3575,34 +3674,29 @@ class PodsAPI {
 			$group = $group->get_args();
 		}
 
-		// @todo pods_reserved_keywords();
-		$reserved_keywords = array( 'id', 'ID' );
-
 		$old_id   = null;
 		$old_name = null;
 
 		if ( ! empty( $group ) ) {
-			$old_id        = $group['id'];
-			$old_name      = $group['name'];
-			$old_type      = $group['type'];
-			$old_options   = $group;
+			$old_id   = $group['id'];
+			$old_name = $group['name'];
 
 			if ( ! isset( $params->name ) ) {
 				$params->name = $group['name'];
 			}
 
-			if ( $old_name !== $group['name'] ) {
-				if ( in_array( $group['name'], $reserved_keywords, true ) ) {
-					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $group['name'] ), $this );
+			if ( $old_name !== $params->name || $old_id !== $params->id ) {
+				if ( in_array( $params->name, $reserved_keywords, true ) ) {
+					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
 				}
 
 				if ( false !== $this->group_exists( $params ) ) {
-					return pods_error( sprintf( __( 'Group %1$s already exists, you cannot rename %2$s to that', 'pods' ), $group['name'], $old_name ), $this );
+					return pods_error( sprintf( __( 'Group %1$s already exists, you cannot rename %2$s to that', 'pods' ), $params->name, $old_name ), $this );
 				}
 			}
 
 			if ( ( $id_required || ! empty( $params->id ) ) && ( empty( $old_id ) || $old_id !== $params->id ) ) {
-				return pods_error( sprintf( __( 'Group %s already exists', 'pods' ), $group['name'] ), $this );
+				return pods_error( sprintf( __( 'Group %s already exists', 'pods' ), $params->name ), $this );
 			}
 
 			if ( empty( $params->id ) ) {
@@ -7186,28 +7280,11 @@ class PodsAPI {
 	 * @since 1.12
 	 */
 	public function field_exists( $params ) {
-
-		$params = (object) pods_sanitize( $params );
-
-		if ( ( ! empty( $params->id ) || ! empty( $params->name ) ) && isset( $params->pod_id ) && ! empty( $params->pod_id ) ) {
-			if ( ! isset( $params->name ) ) {
-				$dummy = (int) $params->id;
-				$field = get_post( $dummy );
-			} else {
-				$field = get_posts( array(
-					'name'           => $params->name,
-					'post_type'      => '_pods_field',
-					'posts_per_page' => 1,
-					'post_parent'    => $params->pod_id
-				) );
-			}
-
-			if ( ! empty( $field ) ) {
-				return true;
-			}
+		try {
+			return (boolean) $this->load_field( $params );
+		} catch ( Exception $exception ) {
+			return false;
 		}
-
-		return false;
 	}
 
 	/**
@@ -7472,6 +7549,31 @@ class PodsAPI {
 		$params['object_type'] = 'field';
 
 		return $this->_load_objects( $params );
+	}
+
+	/**
+	 * Check if a Pod's group exists
+	 *
+	 * @param array|int|WP_Post $params              {
+	 *                                               An associative array of parameters.
+	 *
+	 * @type int                $pod_id              The Pod ID.
+	 * @type string             $pod                 The Pod name.
+	 * @type int                $id                  The Group ID.
+	 * @type string             $name                The Group name.
+	 * @type boolean            $bypass_cache        Bypass the cache when getting data.
+	 * }
+	 *
+	 * @return bool
+	 *
+	 * @since TBD
+	 */
+	public function group_exists( $params ) {
+		try {
+			return (boolean) $this->load_group( $params );
+		} catch ( Exception $exception ) {
+			return false;
+		}
 	}
 
 	/**

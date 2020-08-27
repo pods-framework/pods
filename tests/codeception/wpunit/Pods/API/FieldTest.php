@@ -153,6 +153,35 @@ class FieldTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers PodsAPI::add_field
+	 * @since  2.8
+	 * @throws \Exception
+	 */
+	public function test_add_field_with_group_id_using_existing_field_name() {
+		$params = [
+			'pod_id'   => $this->pod_id,
+			'group_id' => $this->group_id,
+			'name'     => 'test_field',
+			'label'    => 'Test field',
+		];
+
+		$response = $this->api->save_field( $params );
+
+		$this->assertInternalType( 'int', $response );
+
+		$params = [
+			'pod_id'   => $this->pod_id,
+			'group_id' => $this->group_id,
+			'name'     => 'test_field',
+			'label'    => 'Test field 2',
+		];
+
+		$this->expectExceptionMessage( 'Field test_field already exists' );
+
+		$this->api->add_field( $params );
+	}
+
+	/**
 	 * @covers PodsAPI::save_field
 	 * @since  2.8
 	 * @throws \Exception

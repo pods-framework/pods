@@ -59,6 +59,10 @@ foreach ( $field_options as $field_name => $field_option ) {
 			</h4>
 			<?php
 			continue;
+		} elseif ( 'html' === $field_option['type'] ) {
+			echo PodsForm::field( $field_option['name'], null, $field_option['type'], $field_option );
+
+			continue;
 		}
 		?>
 		<div class="pods-field-option">
@@ -72,6 +76,10 @@ foreach ( $field_options as $field_name => $field_option ) {
 					<?php echo $field_option['label']; ?>
 				</h4>
 			<?php
+			continue;
+		} elseif ( 'html' === $field_option['type'] ) {
+			echo PodsForm::field( $field_option['name'], null, $field_option['type'], $field_option );
+
 			continue;
 		}
 		?>

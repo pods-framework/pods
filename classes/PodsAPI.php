@@ -4170,6 +4170,7 @@ class PodsAPI {
 
 		$tableless_field_types    = PodsForm::tableless_field_types();
 		$repeatable_field_types   = PodsForm::repeatable_field_types();
+		$layout_field_types       = PodsForm::layout_field_types();
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 
 		$error_mode = $this->display_errors;
@@ -4598,6 +4599,10 @@ class PodsAPI {
 			$value   = $field_data['value'];
 			$type    = $field_data['type'];
 			$options = pods_var( 'options', $field_data, array() );
+
+			if ( in_array( $type, $layout_field_types, true ) ) {
+				continue;
+			}
 
 			// WPML AJAX compatibility
 			if ( is_admin()

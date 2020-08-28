@@ -1268,7 +1268,13 @@ class PodsUI {
 				}
 
 				if ( is_object( $this->pod ) && isset( $this->pod->fields ) && isset( $this->pod->fields[ $attributes['real_name'] ] ) ) {
-					$attributes = array_merge( $this->pod->fields[ $attributes['real_name'] ], $attributes );
+					$field_attributes = $this->pod->fields[ $attributes['real_name'] ];
+
+					if ( is_a( $field_attributes, \Pods\Whatsit\Field::class ) ) {
+						$field_attributes = $field_attributes->get_args();
+					}
+
+					$attributes = array_merge( $field_attributes, $attributes );
 				}
 
 				if ( ! isset( $attributes['options'] ) ) {
@@ -1862,12 +1868,24 @@ class PodsUI {
 			}
 
 			if ( isset( $object_fields[ $field['name'] ] ) ) {
-				$field = array_merge( $field, $object_fields[ $field['name'] ] );
+				$field_attributes = $object_fields[ $field['name'] ];
+
+				if ( is_a( $field_attributes, \Pods\Whatsit\Field::class ) ) {
+					$field_attributes = $field_attributes->get_args();
+				}
+
+				$field = array_merge( $field, $field_attributes );
 			} elseif ( isset( $this->pod->fields[ $field['name'] ] ) ) {
-				$field = array_merge( $this->pod->fields[ $field['name'] ], $field );
+				$field_attributes = $this->pod->fields[ $field['name'] ];
+
+				if ( is_a( $field_attributes, \Pods\Whatsit\Field::class ) ) {
+					$field_attributes = $field_attributes->get_args();
+				}
+
+				$field = array_merge( $field_attributes, $field );
 			}
 
-			if ( pods_var_raw( 'hidden', $field, false, null, true ) ) {
+			if ( pods_v( 'hidden', $field, false ) ) {
 				$field['type'] = 'hidden';
 			}
 

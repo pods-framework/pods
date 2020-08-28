@@ -38,7 +38,11 @@ class PodsField_HTML extends PodsField {
 	 */
 	public function options() {
 		return [
-			'output_options' => [
+			static::$type . '_content' => [
+				'label' => __( 'HTML Content', 'pods' ),
+				'type'  => 'code',
+			],
+			'output_options'           => [
 				'label' => __( 'Output Options', 'pods' ),
 				'group' => [
 					static::$type . '_allow_html'      => [
@@ -120,8 +124,8 @@ class PodsField_HTML extends PodsField {
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 		// Support passing html_content into the options for custom HTML option layouts.
-		if ( empty( $value ) && ! empty( $options[ static::$type . '_content' ] ) ) {
-			$value = $options[ static::$type . '_content' ];
+		if ( in_array( $value, [ '', null ], true ) ) {
+			$value = pods_v( static::$type . '_content', $options, '' );
 		}
 
 		$value = $this->strip_html( $value, $options );

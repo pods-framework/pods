@@ -85,6 +85,49 @@ class Group extends Base {
 			],*/
 		];
 
+		$object_type = $pod->get_type();
+
+		$is_post_type = 'post_type' === $object_type;
+		$is_comment_type = 'comment' === $object_type;
+
+		if ( $is_post_type || $is_comment_type ) {
+			$options['basic']['meta_box_context'] = [
+				'name'    => 'meta_box_context',
+				'label'   => __( 'Meta Box Context', 'pods' ),
+				'help'    => [
+					__( 'See add_meta_box() documentation.', 'pods' ),
+					'https://developer.wordpress.org/reference/functions/add_meta_box/#parameters',
+				],
+				'type'    => 'pick',
+				'default' => 'normal',
+				'data'    => [
+					'normal'   => __( 'Normal', 'pods' ),
+					'side'     => __( 'Side', 'pods' ),
+					'advanced' => __( 'Advanced', 'pods' ),
+				],
+			];
+
+			if ( $is_comment_type ) {
+				unset( $options['basic']['group_context']['data']['advanced'] );
+			}
+
+			$options['basic']['meta_box_priority'] = [
+				'name'    => 'meta_box_priority',
+				'label'   => __( 'Meta Box Priority', 'pods' ),
+				'help'    => [
+					__( 'See add_meta_box() documentation.', 'pods' ),
+					'https://developer.wordpress.org/reference/functions/add_meta_box/#parameters',
+				],
+				'type'    => 'pick',
+				'default' => 'default',
+				'data'    => [
+					'high'    => __( 'High', 'pods' ),
+					'default' => __( 'Default', 'pods' ),
+					'low'     => __( 'Low', 'pods' ),
+				],
+			];
+		}
+
 		/**
 		 * Filter the Group options.
 		 *

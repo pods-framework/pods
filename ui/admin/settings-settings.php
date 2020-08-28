@@ -122,6 +122,10 @@ $do = 'save';
 						<h2><?php echo esc_html( $field['label'] ); ?></h2>
 						<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
 					</td>
+				<?php elseif ( 'html' === $field['type'] ) : ?>
+					<td colspan="2">
+						<?php echo PodsForm::field( 'pods_field_' . $field['name'], pods_v( $field['name'], $settings ), $field['type'], $field ); ?>
+					</td>
 				<?php else : ?>
 					<th>
 						<?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?>

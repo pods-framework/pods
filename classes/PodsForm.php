@@ -1591,6 +1591,8 @@ class PodsForm {
 			'boolean',
 			'color',
 			'slug',
+			'heading',
+			'html',
 		];
 
 		$field_types = array_merge( $field_types, array_keys( self::$field_types ) );

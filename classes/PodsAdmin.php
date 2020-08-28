@@ -1432,6 +1432,12 @@ class PodsAdmin {
 				] );
 			}
 
+			$label = __( 'Details', 'pods' );
+
+			if ( in_array( $pod->get_type(), [ 'post_type', 'taxonomy', 'user', 'comment', 'media' ], true ) ) {
+				$label = __( 'More Fields', 'pods' );
+			}
+
 			/**
 			 * Filter the title of the Pods Metabox used in the post editor.
 			 *
@@ -1443,8 +1449,8 @@ class PodsAdmin {
 			 * @param string  $type   The type of Pod.
 			 * @param string  $name   Name of the Pod.
 			 */
-			$label = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $pod->get_type(), $pod->get_name() );
-			$name  = pods_create_slug( $label );
+			$label = apply_filters( 'pods_meta_default_box_title', $label, $pod, $fields, $pod->get_type(), $pod->get_name() );
+			$name  = sanitize_key( $label );
 
 			// Setup first group.
 			$group_id = $api->save_group( [
@@ -1456,6 +1462,7 @@ class PodsAdmin {
 
 		foreach ( $fields as $field ) {
 			$api->save_field( [
+				'id'           => $field->get_id(),
 				'pod_data'     => $pod,
 				'field'        => $field,
 				'new_group_id' => $group_id,

@@ -2616,6 +2616,8 @@ class PodsAPI {
 		if ( isset( $params->field ) && $params->field instanceof \Pods\Whatsit\Field ) {
 			$field = $params->field;
 
+			$params->id = $field->get_id();
+
 			unset( $params->field );
 		}
 

@@ -39,10 +39,11 @@ class PodsField_Heading extends PodsField {
 	public function options() {
 		return [
 			static::$type . '_tag' => [
-				'label'   => __( 'Heading Tag', 'pods' ),
-				'type'    => 'text',
-				'default' => 'h2',
-				'help'    => __( 'This is the heading HTML tag to use for the heading text.', 'pods' ),
+				'label'   => __( 'Heading HTML Tag', 'pods' ),
+				'type'        => 'text',
+				'default'     => '',
+				'description' => __( 'Leave this empty to use the default heading tag for the form context the heading appears in.', 'pods' ),
+				'help'        => __( 'This is the heading HTML tag to use for the heading text. Example "h2" will output your heading as <code>&lt;h2&gt;Heading Text&lt;/h2&gt;</code>', 'pods' ),
 			],
 			'output_options' => [
 				'label' => __( 'Output Options', 'pods' ),

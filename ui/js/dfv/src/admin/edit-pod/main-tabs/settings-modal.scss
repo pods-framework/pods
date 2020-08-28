@@ -47,6 +47,10 @@
 // Panel
 .pods-settings-modal__panel {
 	margin: 1em;
+
+    .pods-field-option {
+        margin-bottom: 1em;
+    }
 }
 
 .pods-form-ui-label {
@@ -54,12 +58,12 @@
     display: block;
 }
 
-.pods-form-ui-label__required {
-	color: red;
+.pods-field-option label {
+    margin-bottom: .2em;
 }
 
-.pods-field-option {
-    margin-bottom: 1em;
+.pods-form-ui-label__required {
+	color: red;
 }
 
 .pods-field-option input[type="text"] {
@@ -69,10 +73,6 @@
 .components-modal__frame .pods-field-option input[type="checkbox"]:checked {
 	// Fixes conflicting different WP checkbox styles
     background: white;
-}
-
-.pods-field-option label {
-    margin-bottom: .2em;
 }
 
 // Footer

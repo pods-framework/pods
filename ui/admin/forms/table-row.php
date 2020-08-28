@@ -12,10 +12,12 @@
 <tr valign="top" class="pods-field pods-field-option <?php echo esc_attr( $row_classes ); ?>"
 	style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
 	<?php if ( 'heading' === $field['type'] ) : ?>
+		<?php $heading_tag = pods_v( $field['type'] . '_tag', $field, 'h2', true ); ?>
 		<td colspan="2">
-			<<?php echo esc_html( pods_v( 'heading_tag', $field, 'h2', true ) ); ?>>
+			<<?php echo esc_html( $heading_tag ); ?>
+				class="pods-form-ui-heading pods-form-ui-heading-<?php echo esc_attr( $field['name'] ); ?>">
 				<?php echo esc_html( $field['label'] ); ?>
-			</<?php echo esc_html( pods_v( 'heading_tag', $field, 'h2', true ) ); ?>>
+			</<?php echo esc_html( $heading_tag ); ?>>
 			<?php echo PodsForm::comment( $field_prefix . $field['name'], $field['description'], $field ); ?>
 		</td>
 	<?php elseif ( 'html' === $field['type'] ) : ?>

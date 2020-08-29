@@ -209,8 +209,6 @@ class PodsAdmin {
 		$taxonomies             = PodsMeta::$taxonomies;
 		$settings               = PodsMeta::$settings;
 
-		$all_pods = pods_api()->load_pods( array( 'count' => true ) );
-
 		if ( ! PodsInit::$upgrade_needed || ( pods_is_admin() && 1 === (int) pods_v( 'pods_upgrade_bypass' ) ) ) {
 			$submenu_items = array();
 
@@ -574,10 +572,6 @@ class PodsAdmin {
 				),
 			);
 
-			if ( empty( $all_pods ) ) {
-				unset( $admin_menus['pods'] );
-			}
-
 			add_filter( 'parent_file', array( $this, 'parent_file' ) );
 		} else {
 			$admin_menus = array(
@@ -869,6 +863,7 @@ class PodsAdmin {
 	public function admin_setup() {
 
 		$pods = pods_api()->load_pods( array( 'fields' => false ) );
+		$pods = [];
 
 		$view = pods_v( 'view', 'get', 'all', true );
 
@@ -878,8 +873,12 @@ class PodsAdmin {
 			$_GET['action'] = 'add';
 		}
 
+		if ( 'pods' === $_GET['page'] && empty( $pods ) ) {
+			pods_ui_message( __( 'You do not have any Pods set up yet. You can set up your very first Pod below.', 'pods ' ) );
+		}
+
 		// @codingStandardsIgnoreLine
-		if ( 'pods-add-new' === $_GET['page'] ) {
+		if ( 'pods-add-new' === $_GET['page'] || empty( $pods ) ) {
 			// @codingStandardsIgnoreLine
 			if ( isset( $_GET['action'] ) && 'add' !== $_GET['action'] ) {
 				pods_redirect(
@@ -1040,11 +1039,13 @@ class PodsAdmin {
 			unset( $_GET['id'], $_GET['action'] );
 		}
 
+		$total_pods = count( $pod_list );
+
 		$ui = array(
 			'data'             => $pod_list,
 			'row'              => $row,
-			'total'            => count( $pod_list ),
-			'total_found'      => count( $pod_list ),
+			'total'            => $total_pods,
+			'total_found'      => $total_pods,
 			'items'            => 'Pods',
 			'item'             => 'Pod',
 			'fields'           => array(
@@ -1090,13 +1091,13 @@ class PodsAdmin {
 		);
 
 		if ( 1 < count( $pod_types_found ) ) {
-			$ui['views']            = array( 'all' => __( 'All', 'pods' ) );
+			$ui['views']            = array( 'all' => __( 'All', 'pods' ) . ' (' . $total_pods . ')' );
 			$ui['view']             = $view;
 			$ui['heading']          = array( 'views' => __( 'Type', 'pods' ) );
 			$ui['filters_enhanced'] = true;
 
 			foreach ( $pod_types_found as $pod_type => $number_found ) {
-				$ui['views'][ $pod_type ] = $types[ $pod_type ];
+				$ui['views'][ $pod_type ] = $types[ $pod_type ] . ' (' . $number_found . ')';
 			}
 		}
 

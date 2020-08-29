@@ -1202,7 +1202,7 @@ class PodsMeta {
 				do_action( "pods_meta_meta_post_post_row_{$field_name}", $post, $field, $pod );
 			};
 
-			pods_view( PODS_DIR . 'ui/admin/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
+			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 			?>
 		</table>
 
@@ -1734,9 +1734,9 @@ class PodsMeta {
 			};
 
 			if ( null === $id ) {
-				pods_view( PODS_DIR . 'ui/admin/forms/div-rows.php', compact( array_keys( get_defined_vars() ) ) );
+				pods_view( PODS_DIR . 'ui/forms/div-rows.php', compact( array_keys( get_defined_vars() ) ) );
 			} else {
-				pods_view( PODS_DIR . 'ui/admin/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
+				pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 			}
 		}
 
@@ -1956,7 +1956,7 @@ class PodsMeta {
 					do_action( "pods_meta_meta_user_post_row_{$field_name}", $post, $field, $pod );
 				};
 
-				pods_view( PODS_DIR . 'ui/admin/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
+				pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 				?>
 				</tbody>
 			</table>
@@ -2169,7 +2169,7 @@ class PodsMeta {
 				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $post, $field, $pod );
 			};
 
-			pods_view( PODS_DIR . 'ui/admin/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
+			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 
 		do_action( 'pods_meta_meta_comment_new_logged_in_post', $commenter, $user_identity );
@@ -2273,7 +2273,7 @@ class PodsMeta {
 					$pre_callback( $field['name'], $id, $field, $pod );
 				}
 
-				pods_view( PODS_DIR . 'ui/admin/forms/p-row.php', compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
+				pods_view( PODS_DIR . 'ui/forms/p-row.php', compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
 
 				if ( ! empty( $post_callback ) && is_callable( $post_callback ) ) {
 					$post_callback( $field['name'], $id, $field, $pod );
@@ -2400,7 +2400,7 @@ class PodsMeta {
 				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $post, $field, $pod );
 			};
 
-			pods_view( PODS_DIR . 'ui/admin/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
+			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 			?>
 		</table>
 		<?php

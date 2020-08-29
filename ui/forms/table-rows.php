@@ -8,7 +8,17 @@
  * @var callable|null $value_callback
  * @var callable|null $pre_callback
  * @var callable|null $post_callback
+ * @var string        $th_scope
  */
+
+$pod               = isset( $pod ) ? $pod : null;
+$id                = isset( $id ) ? $id : 0;
+$field_row_classes = isset( $field_row_classes ) ? $field_row_classes : '';
+$field_prefix      = isset( $field_prefix ) ? $field_prefix : '';
+$value_callback    = isset( $value_callback ) ? $value_callback : null;
+$pre_callback      = isset( $pre_callback ) ? $pre_callback : null;
+$post_callback     = isset( $post_callback ) ? $post_callback : null;
+$th_scope          = isset( $th_scope ) ? $th_scope : '';
 
 $depends_on = false;
 
@@ -41,13 +51,13 @@ foreach ( $fields as $field ) {
 	if ( ( ! empty( $depends_on ) || ! empty( $dep_classes ) ) && $depends_on !== $dep_classes ) {
 		if ( ! empty( $depends_on ) ) {
 			?>
-			</div>
+			</tbody>
 			<?php
 		}
 
 		if ( ! empty( $dep_classes ) ) {
 			?>
-			<div class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
+			<tbody class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
 			<?php
 		}
 	}
@@ -59,7 +69,7 @@ foreach ( $fields as $field ) {
 		$pre_callback( $field['name'], $id, $field, $pod );
 	}
 
-	pods_view( PODS_DIR . 'ui/admin/forms/p-row.php', compact( array_keys( get_defined_vars() ) ) );
+	pods_view( PODS_DIR . 'ui/forms/table-row.php', compact( array_keys( get_defined_vars() ) ) );
 
 	if ( ! empty( $post_callback ) && is_callable( $post_callback ) ) {
 		$post_callback( $field['name'], $id, $field, $pod );
@@ -72,6 +82,6 @@ foreach ( $fields as $field ) {
 
 if ( ! empty( $depends_on ) ) {
 	?>
-	</div>
+	</tbody>
 	<?php
 }

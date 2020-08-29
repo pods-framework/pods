@@ -6,11 +6,13 @@
  * @var \Pods\Whatsit\Field $field
  * @var string              $row_classes
  * @var mixed               $value
+ * @var string|null         $heading_tag
  */
 ?>
-<div class="pods-field pods-field-option" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
+<li class="pods-field pods-field-option <?php echo esc_attr( $row_classes ); ?>"
+	style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
 	<?php if ( 'heading' === $field['type'] ) : ?>
-		<?php $heading_tag = pods_v( $field['type'] . '_tag', $field, 'h2', true ); ?>
+		<?php $heading_tag = pods_v( $field['type'] . '_tag', $field, isset( $heading_tag ) ? $heading_tag : 'h2', true ); ?>
 		<<?php echo esc_html( $heading_tag ); ?>
 			class="pods-form-ui-heading pods-form-ui-heading-<?php echo esc_attr( $field['name'] ); ?>">
 			<?php echo esc_html( $field['label'] ); ?>
@@ -19,14 +21,13 @@
 	<?php elseif ( 'html' === $field['type'] ) : ?>
 		<?php echo PodsForm::field( $field_prefix . $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
 	<?php else : ?>
-		<p<?php if ( ! empty( $row_classes ) ) : ?>
-			class="<?php echo esc_attr( $row_classes ); ?>
-					<?php endif; ?>>
-					<?php
-			echo PodsForm::label( $field_prefix . $field['name'], $field['label'], $field['help'], $field );
-			echo PodsForm::field( $field_prefix . $field['name'], $value, $field['type'], $field, $pod, $id );
-			echo PodsForm::comment( $field_prefix . $field['name'], $field['description'], $field );
-			?>
-		</p>
+		<div class="pods-field-label">
+			<?php echo PodsForm::label( $field_prefix . $field['name'], $field['label'], $field['help'], $field ); ?>
+		</div>
+
+		<div class="pods-field-input">
+			<?php echo PodsForm::field( $field_prefix . $field['name'], $value, $field['type'], $field, $pod, $pod->id() ); ?>
+			<?php echo PodsForm::comment( $field_prefix . $field['name'], null, $field ); ?>
+		</div>
 	<?php endif; ?>
-</div>
+</li>

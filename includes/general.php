@@ -2636,10 +2636,12 @@ function pods_reserved_keywords() {
 }
 
 /**
- * Safely start a new session (without whitescreening on certain hosts,
- * which have no session path or isn't writable)
+ * Safely start a new session (without white screening on certain hosts,
+ * which have no session path or the path is not writable).
  *
  * @since 2.3.10
+ *
+ * @return boolean Whether the session was started.
  */
 function pods_session_start() {
 	$save_path = session_save_path();
@@ -2651,7 +2653,7 @@ function pods_session_start() {
 		// We do not need a session ID if there is a valid user logged in
 		return false;
 	} elseif ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
-		// Allow for bypassing Pods session autostarting.
+		// Allow for bypassing Pods session starting.
 		return false;
 	} elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
 		// Allow for non-file based sessions, like Memcache.
@@ -2661,16 +2663,48 @@ function pods_session_start() {
 		return false;
 	}
 
-	if ( '' !== session_id() ) {
-		// Check if session ID is already set.
-		// In separate if clause, to also check for non-file based sessions.
+	if ( '' !== pods_session_id() ) {
+		// Check if session ID is already set or if session should start.
 		return false;
 	}
 
 	// Start session
-	@session_start();
+	return @session_start();
+}
 
-	return true;
+/**
+ * Safely get a session ID or not.
+ *
+ * @since TBD
+ *
+ * @return string The session ID.
+ */
+function pods_session_id() {
+	/**
+	 * Allow filtering the session ID that Pods will use.
+	 *
+	 * @since TBD
+	 *
+	 * @param null|string $session_id The session ID (default null), return a string to bypass PHP session usage.
+	 */
+	$session_id = apply_filters( 'pods_session_id', null );
+
+	if ( null !== $session_id ) {
+		return $session_id;
+	}
+
+	if ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
+		// Allow for bypassing Pods sessions.
+		return '';
+	}
+
+	$session_id = @session_id();
+
+	if ( empty( $session_id ) ) {
+		return '';
+	}
+
+	return $session_id;
 }
 
 /**

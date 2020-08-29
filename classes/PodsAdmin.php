@@ -1686,7 +1686,11 @@ class PodsAdmin {
 					)
 				)
 			);
+
+			return;
 		}
+
+		$obj->error( __( 'An error occurred, the Pod was not duplicated.', 'pods' ) );
 	}
 
 	/**

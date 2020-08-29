@@ -355,23 +355,33 @@ class Pods implements Iterator {
 	 * @param null $field  Field name.
 	 * @param null $option Option name.
 	 *
-	 * @return bool|mixed
+	 * @return array|\Pods\Whatsit\Field|mixed|null
 	 *
 	 * @since 2.0.0
 	 */
-	public function fields( $field = null, $option = null ) {
+	public function fields( $field_name = null, $option = null ) {
 
 		$field_data = null;
 
-		if ( empty( $this->pod_data ) || ! $this->pod_data instanceof \Pods\Whatsit\Pod ) {
-			return $field_data;
+		if ( empty( $this->pod_data ) ) {
+			return null;
 		}
 
-		if ( empty( $field ) ) {
+		if ( empty( $field_name ) ) {
 			// Return all fields.
-			$field_data = (array) $this->pod_data->get_all_fields();
+			if ( is_object( $this->pod_data ) ) {
+				$field_data = (array) $this->pod_data->get_all_fields();
+			} else {
+				$field_data = array_merge( pods_v( 'fields', $this->pod_data, [] ), pods_v( 'object_fields', $this->pod_data, [] ) );
+			}
 		} else {
-			$field = $this->pod_data->get_field( $field );
+			if ( is_object( $this->pod_data ) ) {
+				$field = $this->pod_data->get_field( $field_name );
+			} else {
+				$field_data = array_merge( pods_v( 'fields', $this->pod_data, [] ), pods_v( 'object_fields', $this->pod_data, [] ) );
+
+				$field = pods_v( $field_name, $field_data );
+			}
 
 			if ( empty( $option ) ) {
 				$field_data = $field;
@@ -389,12 +399,13 @@ class Pods implements Iterator {
 		 *
 		 * @since unknown
 		 *
-		 * @param array       $field_data The data for the field.
-		 * @param string|null $field      The specific field that data is being return for, if set when method is called or null.
-		 * @param string|null $option     Value of option param when method was called. Can be used to get a list of available items from a relationship field.
-		 * @param Pods|object $this       The current Pods class instance.
+		 * @param array|\Pods\Whatsit\Field|mixed $field_data The data to be returned for the field / option.
+		 * @param array|\Pods\Whatsit\Field       $field      The field information.
+		 * @param string|null                     $field_name The specific field that data is being return for, if set when method is called or null.
+		 * @param string|null                     $option     Value of option param when method was called. Can be used to get a list of available items from a relationship field.
+		 * @param Pods|object                     $this       The current Pods class instance.
 		 */
-		return apply_filters( 'pods_pods_fields', $field_data, $field, $option, $this );
+		return apply_filters( 'pods_pods_fields', $field_data, $field_name, $option, $this );
 
 	}
 
@@ -714,11 +725,11 @@ class Pods implements Iterator {
 		$last_field_data    = null;
 
 		// Get the first field name data.
-		$field_data = $this->pod_data->get_field( $first_field );
+		$field_data = $this->fields( $first_field );
 
 		if ( ! $field_data ) {
 			// Get the full field name data.
-			$field_data = $this->pod_data->get_field( $params->name );
+			$field_data = $this->fields( $params->name );
 		}
 
 		if ( $field_data instanceof \Pods\Whatsit\Object_Field ) {
@@ -2221,14 +2232,14 @@ class Pods implements Iterator {
 			return $this;
 		}
 
-		if ( 'table' === $this->pod_data->get_arg( 'storage' ) && ! in_array( $this->pod_data->get_arg( 'type' ), array(
+		if ( 'table' === $this->pod_data['storage'] && ! in_array( $this->pod_data['type'], array(
 			'pod',
 			'table',
 		), true ) ) {
 			$select .= ', `d`.*';
 		}
 
-		$table = $this->pod_data->get_arg( 'table' );
+		$table = $this->pod_data['table'];
 
 		if ( empty( $table ) ) {
 			return $this;
@@ -2314,7 +2325,7 @@ class Pods implements Iterator {
 						$order = 'DESC';
 					}
 
-					$order_field = $this->pod_data->get_field( $k );
+					$order_field = $this->fields( $k );
 
 					if ( $order_field && in_array( $order_field['type'], $tableless_field_types, true ) ) {
 						$order_object_type = $order_field->get_related_object_type();
@@ -2404,7 +2415,7 @@ class Pods implements Iterator {
 
 					$key = $k;
 
-					$order_field = $this->pod_data->get_field( $k );
+					$order_field = $this->fields( $k );
 
 					if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ), true ) ) {
 						if ( isset( $this->pod_data['object_fields'][ $k ] ) ) {
@@ -4295,7 +4306,7 @@ class Pods implements Iterator {
 				return null;
 			}
 
-			return $this->pod_data->get_arg( $supported_pods_object[ $name ] );
+			return pods_v( $supported_pods_object[ $name ], $this->pod_data );
 		}
 
 		// Handle sending previously mapped PodsData properties directly to their correct place.
@@ -4304,7 +4315,7 @@ class Pods implements Iterator {
 				return null;
 			}
 
-			return $this->pod_data->get_arg( $name );
+			return pods_v( $name, $this->pod_data );
 		}
 
 		// Map deprecated properties to Pods\Whatsit\Pod properties.

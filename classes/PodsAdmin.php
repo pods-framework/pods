@@ -863,7 +863,6 @@ class PodsAdmin {
 	public function admin_setup() {
 
 		$pods = pods_api()->load_pods( array( 'fields' => false ) );
-		$pods = [];
 
 		$view = pods_v( 'view', 'get', 'all', true );
 

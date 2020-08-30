@@ -1124,13 +1124,13 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 	foreach ( $query_args as $key => $val ) {
 		if ( is_array( $val ) && empty( $val ) ) {
 			$query_args[ $key ] = false;
-		} elseif ( ! is_array( $val ) && strlen( $val ) < 1 ) {
+		} elseif ( ! is_array( $val ) && '' === $val ) {
 			$query_args[ $key ] = false;
 		} elseif ( ! empty( $allowed ) ) {
 			$allow_it = false;
 
 			foreach ( $allowed as $allow ) {
-				if ( $allow == $key ) {
+				if ( $allow === $key ) {
 					$allow_it = true;
 				} elseif ( false !== strpos( $allow, '*' ) && 0 === strpos( $key, trim( $allow, '*' ) ) ) {
 					$allow_it = true;
@@ -1158,7 +1158,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 					$query_args[ $key ] = $val;
 				} elseif ( ! is_array( $val ) && 0 < strlen( $val ) ) {
 					$query_args[ $key ] = $val;
-				} elseif ( isset( $query_args[ $key ] ) ) {
+				} else {
 					$query_args[ $key ] = false;
 				}
 			} else {

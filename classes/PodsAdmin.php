@@ -1789,7 +1789,11 @@ class PodsAdmin {
 
 		pods_api()->delete_pod( array( 'id' => $id ) );
 
-		unset( $obj->data[ $pod['id'] ] );
+		foreach ( $obj->data as $key => $data_pod ) {
+			if ( (int) $id === (int) $data_pod['id'] ) {
+				unset( $obj->data[ $key ] );
+			}
+		}
 
 		$obj->total       = count( $obj->data );
 		$obj->total_found = count( $obj->data );

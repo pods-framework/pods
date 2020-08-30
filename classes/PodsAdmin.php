@@ -883,9 +883,9 @@ class PodsAdmin {
 				pods_redirect(
 					pods_query_arg(
 						array(
-							'page'   => 'pods',
+							'page'     => 'pods',
 							// @codingStandardsIgnoreLine
-							'action' => $_GET['action'],
+							'action'   => $_GET['action'],
 						)
 					)
 				);
@@ -898,8 +898,11 @@ class PodsAdmin {
 			pods_redirect(
 				pods_query_arg(
 					array(
-						'page'   => 'pods-add-new',
-						'action' => '',
+						'page'     => 'pods-add-new',
+						'action'   => '',
+						'id'       => '',
+						'do'       => '',
+						'_wpnonce' => '',
 					)
 				)
 			);
@@ -1009,7 +1012,7 @@ class PodsAdmin {
 			}//end if
 
 			// @codingStandardsIgnoreLine
-			if ( 'delete' !== pods_v( 'action' ) && $pod['id'] == pods_v( 'id' ) ) {
+			if ( 'delete' !== pods_v( 'action' ) && $pod['id'] === (int) pods_v( 'id' ) ) {
 				$row = $pod;
 			}
 
@@ -1073,10 +1076,11 @@ class PodsAdmin {
 			),
 			'action_links'     => array(
 				'add' => pods_query_arg( array(
-						'page'   => 'pods-add-new',
-						'action' => '',
-						'id'     => '',
-						'do'     => '',
+						'page'     => 'pods-add-new',
+						'action'   => '',
+						'id'       => '',
+						'do'       => '',
+						'_wpnonce' => '',
 					) ),
 			),
 			'search'           => false,

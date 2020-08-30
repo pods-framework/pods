@@ -2834,6 +2834,15 @@ class PodsAPI {
 		$old_sister_id         = null;
 		$old_type_is_tableless = false;
 
+		$act_safe_keywords = [
+			'name',
+			'author',
+			'permalink',
+			'slug',
+		];
+
+		$is_act = 'pod' === $pod->get_type();
+
 		if ( ! empty( $field ) ) {
 			$old_id        = pods_v( 'id', $field );
 			$old_name      = pods_clean_name( $field['name'], true, 'meta' !== $pod['storage'] );
@@ -2856,7 +2865,13 @@ class PodsAPI {
 			}
 
 			if ( $old_name !== $field['name'] || empty( $params->id ) || $old_id !== $params->id ) {
-				if ( in_array( $field['name'], $reserved_keywords, true ) ) {
+				if (
+					in_array( $field['name'], $reserved_keywords, true )
+					&& (
+						! $is_act
+						|| ! in_array( $field['name'], $act_safe_keywords, true )
+					)
+				) {
 					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 				}
 
@@ -3056,7 +3071,13 @@ class PodsAPI {
 				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 			}
 
-			if ( in_array( $field['name'], $reserved_keywords, true ) ) {
+			if (
+				in_array( $field['name'], $reserved_keywords, true )
+				&& (
+					! $is_act
+					|| ! in_array( $field['name'], $act_safe_keywords, true )
+				)
+			) {
 				return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 			}
 

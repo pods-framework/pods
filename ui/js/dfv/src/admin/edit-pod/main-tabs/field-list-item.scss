@@ -147,7 +147,6 @@
 
 .pods-field_wrapper-items {
 	border: 1px solid $color--light-grey;
-	border-radius: $border-radius;
 	margin: 1em 0;
 	overflow: hidden;
 }
@@ -180,10 +179,10 @@
 }
 
 .pods-field_button.pods-field_delete {
-    color: $color--red;
+	color: $color--red;
 
-    &:hover {
-        color: $color--red-dark;
+	&:hover {
+		color: $color--red-dark;
 	}
 
 	&::after {

@@ -17,8 +17,8 @@
   "license": "GPL-2.0+",
   "contributors": "https://github.com/pods-framework/pods/graphs/contributors",
   "scripts": {
-    "build-dev": "npm run webpack-dev; npm run scss",
-    "build-production": "npm run webpack-production; npm run scss",
+    "build-dev": "npm run webpack-dev && npm run scss",
+    "build-production": "npm run webpack-production && npm run scss",
     "format-js": "./node_modules/.bin/eslint --fix ./ui/js/dfv/src/admin/**",
     "jest-tests": "jest --config jest.config.json",
     "lint-js": "./node_modules/.bin/eslint ./ui/js/dfv/src/admin/**",

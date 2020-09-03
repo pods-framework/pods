@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { PodsDFVBaseInput } from 'dfv/src/components/base-input';
-import { validationRules } from 'dfv/src/validation/validation-rules';
+import { emailFormat } from 'dfv/src/validation/validation-rules';
 
 export const PodsDFVEmail = ( props ) => {
 	props.validation.addRules( [
 		{
-			rule: validationRules.emailFormat( props.value ),
+			rule: emailFormat( props.value ),
 			condition: true,
 		},
 	] );

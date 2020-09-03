@@ -3,26 +3,32 @@ import * as PropTypes from 'prop-types';
 import sanitizeHtml from 'sanitize-html';
 
 import { removep } from '@wordpress/autop';
+import { __, sprintf } from '@wordpress/i18n';
 
+import PodsDFVFieldContainer from 'dfv/src/components/field-container';
 import HelpTooltip from 'dfv/src/components/help-tooltip';
 import { richTextNoLinks } from '../../../blocks/src/config/html';
+
+import FIELD_MAP from 'dfv/src/config/field-map';
 
 const toBool = ( stringOrNumber ) => {
 	// Force any strings to numeric first
 	return !! ( +stringOrNumber );
 };
 
-const PodsFieldOption = ( {
-	fieldType,
-	name,
-	required,
-	value,
-	label,
-	data = {},
-	onChange,
-	helpText,
-	description,
-} ) => {
+const PodsFieldOption = ( props ) => {
+	const {
+		fieldType,
+		name,
+		required,
+		value,
+		label,
+		data = {},
+		onChange,
+		helpText,
+		description,
+	} = props;
+
 	const shouldShowHelpText = helpText && ( 'help' !== helpText );
 
 	// It's possible to get an array of strings for the help text, but it
@@ -62,6 +68,51 @@ const PodsFieldOption = ( {
 
 			<div className="pods-field-option__field">
 				{ ( () => {
+					// Show an error if the field doesn't exist in the config map.
+					if ( ! Object.keys( FIELD_MAP ).includes( fieldType ) ) {
+						return (
+							<span className="pods-field-option__invalid-field">
+								{ sprintf(
+									// translators: Message showing that the field type doesn't exist.
+									__( 'The field type \'%s\' was invalid.', 'pods' ),
+									fieldType
+								) }
+							</span>
+						);
+					}
+
+					// Show an error if the field isn't in the React format yet.
+					// @todo this can probably be removed later.
+					if ( FIELD_MAP[ fieldType ]?.renderer?.name !== 'reactRenderer' ) {
+						return (
+							<span className="pods-field-option__invalid-field">
+								{ sprintf(
+									// translators: Message showing that the field type doesn't exist.
+									__( 'The field \'%s\' does not have a React renderer yet.', 'pods' ),
+									fieldType
+								) }
+							</span>
+						);
+					}
+
+					const field = FIELD_MAP[ fieldType ]?.FieldClass;
+
+					console.log( FIELD_MAP[ fieldType ] );
+
+					return (
+						<PodsDFVFieldContainer
+							fieldComponent={ field }
+							fieldConfig={ { label } }
+							fieldItemData={ [
+								value,
+							] }
+						/>
+					);
+
+					// Skip this but keep the code around for reference for now...
+					// @todo remove all this.
+					/* eslint-disable */
+					return;
 					switch ( fieldType ) {
 						case 'heading': {
 							return (
@@ -157,6 +208,7 @@ const PodsFieldOption = ( {
 							);
 						}
 					}
+					/* eslint-enable */
 				} )() }
 
 				{ !! description && (

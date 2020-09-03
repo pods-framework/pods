@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { PodsDFVBaseInput } from 'dfv/src/components/base-input';
-import { validationRules } from 'dfv/src/validation/validation-rules';
+import * as validationRules from 'dfv/src/validation/validation-rules';
 
 export const PodsDFVNumber = ( props ) => {
 	// noinspection JSUnresolvedVariable

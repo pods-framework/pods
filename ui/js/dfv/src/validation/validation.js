@@ -1,27 +1,13 @@
-import React from 'react';
-const useState = React.useState;
-const useEffect = React.useEffect;
+import React, { useState, useEffect } from 'react';
 import Engine from 'json-rules-engine-simplified';
 
-/**
- *
- * @return
- * {
- *     {function} addRules
- *     {function} useValidation,
- * 	}
- */
 export const podsValidation = () => {
 	const [ validationMessages, setValidationMessages ] = useState( [] );
 	const rules = [];
 	let facts = {};
 
-	/**
-	 *
-	 * @param conditionalRules
-	 */
 	const addRules = ( conditionalRules ) => {
-		conditionalRules.forEach( conditionalRule => {
+		conditionalRules.forEach( ( conditionalRule ) => {
 			if ( conditionalRule.condition ) {
 				rules.push( conditionalRule.rule );
 				if ( conditionalRule.rule.facts ) {
@@ -31,10 +17,6 @@ export const podsValidation = () => {
 		} );
 	};
 
-	/**
-	 *
-	 * @return {Promise<any>}
-	 */
 	const checkValidation = () => {
 		const rulesEngine = new Engine( rules );
 		const messages = [];
@@ -42,36 +24,30 @@ export const podsValidation = () => {
 		return new Promise( ( resolve ) => {
 			// noinspection JSUnresolvedFunction
 			rulesEngine.run( facts )
-			.then(
-				events => {
-					events.forEach( event => {
-						messages.push( event.message );
-					} );
-				}
-			)
-			.finally( () => {
-				resolve( messages );
-			} );
+				.then(
+					( events ) => {
+						events.forEach( event => {
+							messages.push( event.message );
+						} );
+					}
+				)
+				.finally( () => {
+					resolve( messages );
+				} );
 		} );
 	};
 
-	/**
-	 *
-	 * @param {string} value The field's value
-	 *
-	 * @return {string} Array of messages for all validation failures
-	 */
 	const useValidation = ( value ) => {
 		useEffect( () => {
 			checkValidation()
-			.then( messages => setValidationMessages( messages ) );
+				.then( ( messages ) => setValidationMessages( messages ) );
 		}, [ value ] );
 
 		return validationMessages;
 	};
 
 	return {
-		addRules: addRules,
-		useValidation: useValidation
+		addRules,
+		useValidation,
 	};
 };

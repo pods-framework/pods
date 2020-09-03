@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import { initStore } from 'dfv/src/admin/edit-pod/store/store';
 
 function reactDirectRenderer( FieldClass, element, props ) {
-	const Field = React.createFactory( FieldClass );
-
 	// Todo:
 	//
 	// Need a generic way to initialize the stores.  This can't be inside
@@ -14,7 +12,7 @@ function reactDirectRenderer( FieldClass, element, props ) {
 	initStore( props );
 
 	ReactDOM.render(
-		Field( props ),
+		<FieldClass { ...props } />,
 		element
 	);
 }

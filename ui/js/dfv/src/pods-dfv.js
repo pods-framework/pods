@@ -1,63 +1,12 @@
-import mnRenderer from 'dfv/src/core/renderers/mn-renderer';
-import reactRenderer from 'dfv/src/core/renderers/react-renderer';
-import reactDirectRenderer from 'dfv/src/core/renderers/react-direct-renderer';
 import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
-
-import * as fields from 'dfv/src/field-manifest';
 import * as models from 'dfv/src/model-manifest';
+import FIELD_MAP from 'dfv/src/config/field-map';
 
 // Loads data from an object in this script tag.
 const SCRIPT_TARGET = 'script.pods-dfv-field-data';
 
-const fieldClasses = {
-	heading: {
-		FieldClass: fields.PodsDFVHeading,
-		renderer: reactRenderer,
-	},
-	html: {
-		FieldClass: fields.PodsDFVHTML,
-		renderer: reactRenderer,
-	},
-	file: {
-		FieldClass: fields.File,
-		renderer: mnRenderer,
-	},
-	avatar: {
-		FieldClass: fields.File,
-		renderer: mnRenderer,
-	},
-	pick: {
-		FieldClass: fields.Pick,
-		renderer: mnRenderer,
-	},
-	text: {
-		FieldClass: fields.PodsDFVText,
-		renderer: reactRenderer,
-	},
-	password: {
-		FieldClass: fields.PodsDFVPassword,
-		renderer: reactRenderer,
-	},
-	number: {
-		FieldClass: fields.PodsDFVNumber,
-		renderer: reactRenderer,
-	},
-	email: {
-		FieldClass: fields.PodsDFVEmail,
-		renderer: reactRenderer,
-	},
-	paragraph: {
-		FieldClass: fields.PodsDFVParagraph,
-		renderer: reactRenderer,
-	},
-	'edit-pod': {
-		FieldClass: fields.PodsDFVEditPod,
-		renderer: reactDirectRenderer,
-	},
-};
-
 window.PodsDFV = {
-	fields: fieldClasses,
+	fields: FIELD_MAP,
 	models,
 	fieldInstances: {},
 
@@ -82,7 +31,7 @@ window.PodsDFV = {
 				return;
 			}
 
-			const field = fieldClasses[ data.fieldType ];
+			const field = FIELD_MAP[ data.fieldType ];
 
 			// @todo remove this later
 			// We need to only depend on the `config` and `fieldType`

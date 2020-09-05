@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { PodsDFVBaseInput } from 'dfv/src/components/base-input';
-import * as validationRules from 'dfv/src/validation/validation-rules';
+import BaseInput from 'dfv/src/fields/base-input';
+// import * as validationRules from 'dfv/src/validation/validation-rules';
 
-export const PodsDFVNumber = ( props ) => {
+const NumberField = ( props ) => {
 	// noinspection JSUnresolvedVariable
 	/* Enable this only for slider
 	props.validation.addRules( [
@@ -19,11 +19,13 @@ export const PodsDFVNumber = ( props ) => {
 
 	// noinspection JSUnresolvedVariable
 	return (
-		<PodsDFVBaseInput
-			type={'1' === props.fieldConfig.number_html5 ? 'number' : 'text'}
+		<BaseInput
+			type={ '1' === props.fieldConfig.number_html5 ? 'number' : 'text' }
 			//min={props.fieldConfig.number_min} Enable this only for slider
 			//max={props.fieldConfig.number_max} Enable this only for slider
-			{...props}
+			{ ...props }
 		/>
 	);
 };
+
+export default NumberField;

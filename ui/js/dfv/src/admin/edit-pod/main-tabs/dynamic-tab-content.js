@@ -6,7 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 
 // Pod dependencies
 import DependentFieldOption from 'dfv/src/components/dependent-field-option';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 const MISSING = __( '[MISSING DEFAULT]', 'pods' );
 

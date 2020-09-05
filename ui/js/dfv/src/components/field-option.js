@@ -5,16 +5,12 @@ import sanitizeHtml from 'sanitize-html';
 import { removep } from '@wordpress/autop';
 import { __, sprintf } from '@wordpress/i18n';
 
-import PodsDFVFieldContainer from 'dfv/src/components/field-container';
+import FieldContainer from 'dfv/src/components/field-container';
 import HelpTooltip from 'dfv/src/components/help-tooltip';
 import { richTextNoLinks } from '../../../blocks/src/config/html';
+import toBool from 'dfv/src/helpers/toBool';
 
-import FIELD_MAP from 'dfv/src/config/field-map';
-
-const toBool = ( stringOrNumber ) => {
-	// Force any strings to numeric first
-	return !! ( +stringOrNumber );
-};
+import FIELD_MAP from 'dfv/src/fields/field-map';
 
 const PodsFieldOption = ( props ) => {
 	const {
@@ -95,14 +91,15 @@ const PodsFieldOption = ( props ) => {
 						);
 					}
 
-					const field = FIELD_MAP[ fieldType ]?.FieldClass;
-
-					console.log( FIELD_MAP[ fieldType ] );
+					const field = FIELD_MAP[ fieldType ]?.fieldComponent;
 
 					return (
-						<PodsDFVFieldContainer
+						<FieldContainer
 							fieldComponent={ field }
-							fieldConfig={ { label } }
+							fieldConfig={ {
+								label,
+								required,
+							} }
 							fieldItemData={ [
 								value,
 							] }

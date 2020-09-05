@@ -15,7 +15,7 @@ import {
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 
-import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './field-groups.scss';
 

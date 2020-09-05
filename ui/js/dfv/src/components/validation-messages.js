@@ -1,16 +1,27 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-const PodsDFVValidationMessage = ( { message } ) => (
-	<div className="notice notice-error">{ message }</div>
-);
+const ValidationMessages = ( { messages } ) => {
+	if ( ! messages.length ) {
+		return null;
+	}
 
-const PodsDFVValidationMessages = ( { messages } ) => {
-	return messages.map( ( thisMessage ) => (
-		<PodsDFVValidationMessage
-			key={ thisMessage }
-			message={ thisMessage }
-		/>
-	) );
+	return (
+		<div className="pods-validation-messages">
+			{ messages.map( ( message ) => (
+				<div
+					className="notice notice-error"
+					key={ message }
+				>
+					{ message }
+				</div>
+			) ) }
+		</div>
+	);
 };
 
-export default PodsDFVValidationMessages;
+ValidationMessages.propTypes = {
+	messages: PropTypes.arrayOf( PropTypes.string ).isRequired,
+};
+
+export default ValidationMessages;

@@ -1,7 +1,7 @@
 import React from 'react';
 import HelpTooltip from 'dfv/src/components/help-tooltip';
 
-export const PodsDFVHeading = ( props ) => {
+const Heading = ( props ) => {
 	const shouldShowHelpText = props.helpText && ( 'help' !== props.helpText );
 
 	// It's possible to get an array of strings for the help text, but it
@@ -15,3 +15,5 @@ export const PodsDFVHeading = ( props ) => {
 		</h3>
 	);
 };
+
+export default Heading;

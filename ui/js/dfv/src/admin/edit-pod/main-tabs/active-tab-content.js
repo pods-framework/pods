@@ -9,7 +9,7 @@ import { compose } from '@wordpress/compose';
 import { STORE_KEY_EDIT_POD } from 'dfv/src/admin/edit-pod/store/constants';
 import DynamicTabContent from './dynamic-tab-content';
 import FieldGroups from './field-groups';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 // Display the content for the active tab, manage-fields is treated special
 const ActiveTabContent = ( {

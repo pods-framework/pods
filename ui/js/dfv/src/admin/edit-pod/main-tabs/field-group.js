@@ -12,7 +12,7 @@ import dropTarget from './group-drop-target';
 
 import SettingsModal from './settings-modal';
 import FieldList from 'dfv/src/admin/edit-pod/main-tabs/field-list';
-import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import { SAVE_STATUSES } from 'dfv/src/admin/edit-pod/store/constants';
 

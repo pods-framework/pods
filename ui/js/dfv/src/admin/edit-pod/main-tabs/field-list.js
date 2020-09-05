@@ -12,7 +12,7 @@ import {
 	STORE_KEY_EDIT_POD,
 	SAVE_STATUSES,
 } from 'dfv/src/admin/edit-pod/store/constants';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 // Internal dependencies
 import SettingsModal from './settings-modal';

@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 
-export const PodsDFVParagraph = ( props ) => {
-
+const Paragraph = ( props ) => {
 	// Default implementation if onChange is omitted from props
-	function handleChange ( event ) {
+	function handleChange( event ) {
 		props.setValue( event.target.value );
 	}
 
@@ -23,3 +22,5 @@ export const PodsDFVParagraph = ( props ) => {
 		</textarea>
 	);
 };
+
+export default Paragraph;

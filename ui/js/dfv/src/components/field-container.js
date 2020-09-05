@@ -1,12 +1,55 @@
-import React, { useState } from 'react';
-import classNames from 'classnames';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import PodsDFVValidationMessages from 'dfv/src/components/validation-messages';
-import * as validationRules from 'dfv/src/validation/validation-rules';
-import { podsValidation } from 'dfv/src/validation/validation';
+import ValidationMessages from 'dfv/src/components/validation-messages';
+import { requiredValidator } from 'dfv/src/helpers/validators';
+import toBool from 'dfv/src/helpers/toBool';
 
-const PodsDFVFieldContainer = ( props ) => {
+// Set up validation rules. The only one set up by default here
+// is to validate a required field, but the field child component
+// may set additional rules.
+const useValidation = ( defaultRules = [], value ) => {
+	const [ validationRules, setValidationRules ] = useState( defaultRules );
+	const [ validationMessages, setValidationMessages ] = useState( [] );
+
+	useEffect( () => {
+		const newMessages = [];
+
+		validationRules.forEach( ( rule ) => {
+			if ( ! rule.condition() ) {
+				return;
+			}
+
+			try {
+				rule.rule( value );
+			} catch ( error ) {
+				if ( typeof error === 'string' ) {
+					newMessages.push( error );
+				}
+			}
+		} );
+
+		setValidationMessages( newMessages );
+	}, [ value ] );
+
+	const addValidationRules = ( rules = [] ) => {
+		rules.forEach( ( rule ) => {
+			setValidationRules( ( previousValidationRules ) => {
+				return [
+					...previousValidationRules,
+					rule,
+				];
+			} );
+		} );
+	};
+
+	return [
+		validationMessages,
+		addValidationRules,
+	];
+};
+
+const FieldContainer = ( props ) => {
 	const {
 		fieldComponent: Field,
 		fieldConfig,
@@ -15,49 +58,47 @@ const PodsDFVFieldContainer = ( props ) => {
 	} = props;
 
 	const [ value, setValue ] = useState( fieldItemData[ 0 ] || '' );
-	const validation = podsValidation();
-	const validationMessages = validation.useValidation( value );
 
-	validation.addRules( [
-		{
-			rule: validationRules.required( value, fieldConfig.label ),
-			condition: '1' === props.fieldConfig.required,
-		},
-	] );
-
-	const fieldClasses = classNames(
-		htmlAttr.class || '',
-		{ 'pods-validate-error': validationMessages.length }
+	const [ validationMessages, addValidationRules ] = useValidation(
+		[
+			{
+				rule: requiredValidator( fieldConfig.label ),
+				condition: () => true === toBool( fieldConfig.required ),
+			},
+		],
+		value
 	);
 
 	return (
 		<div className="pods-dfv-container">
 			<Field
 				value={ value }
-				setValue={ setValue }
-				validation={ validation }
-				className={ fieldClasses }
+				setValue={ ( newValue ) => setValue( newValue ) }
+				isValid={ !! validationMessages.length }
+				addValidationRules={ addValidationRules }
+				htmlAttr={ htmlAttr }
 				{ ...props }
 			/>
-			<PodsDFVValidationMessages messages={ validationMessages } />
+
+			{ !! validationMessages.length && (
+				<ValidationMessages
+					messages={ validationMessages }
+				/>
+			) }
 		</div>
 	);
 };
 
-PodsDFVFieldContainer.defaultProps = {
+FieldContainer.defaultProps = {
 	fieldItemData: [],
-	htmlAttr: {},
 };
 
-PodsDFVFieldContainer.propTypes = {
+FieldContainer.propTypes = {
 	fieldComponent: PropTypes.func.isRequired,
 	// @todo specify shape
 	fieldConfig: PropTypes.object,
 	// @todo specify types of items in array
 	fieldItemData: PropTypes.array,
-	htmlAttr: PropTypes.shape( {
-		class: PropTypes.string,
-	} ),
 };
 
-export default PodsDFVFieldContainer;
+export default FieldContainer;

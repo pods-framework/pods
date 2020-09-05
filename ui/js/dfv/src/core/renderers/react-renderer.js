@@ -1,14 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PodsDFVFieldContainer from 'dfv/src/components/field-container';
+import FieldContainer from 'dfv/src/components/field-container';
 
-function reactRenderer( FieldClass, element, props ) {
-	const Field = React.createFactory( FieldClass );
+function reactRenderer( component, element, props ) {
+	const FieldComponent = component;
 
-	console.log('reactRenderer', FieldClass, element, props );
+	const Field = React.createFactory( FieldComponent );
+
+	// eslint-disable-next-line no-console
+	console.log( 'reactRenderer', FieldComponent, element, props );
 
 	ReactDOM.render(
-		<PodsDFVFieldContainer
+		<FieldContainer
 			fieldComponent={ Field }
 			{ ...props.data }
 		/>,

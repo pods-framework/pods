@@ -1,6 +1,6 @@
 import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
-import * as models from 'dfv/src/model-manifest';
-import FIELD_MAP from 'dfv/src/config/field-map';
+import * as models from 'dfv/src/config/model-manifest';
+import FIELD_MAP from 'dfv/src/fields/field-map';
 
 // Loads data from an object in this script tag.
 const SCRIPT_TARGET = 'script.pods-dfv-field-data';
@@ -47,7 +47,7 @@ window.PodsDFV = {
 			console.log( 'config data:', actualData );
 
 			if ( field !== undefined ) {
-				field.renderer( field.FieldClass, tag.parentNode, actualData );
+				field.renderer( field.fieldComponent, tag.parentNode, actualData );
 			}
 		} );
 	},

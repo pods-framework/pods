@@ -21,6 +21,7 @@
     "build-production": "npm run webpack-production && npm run scss",
     "format-js": "./node_modules/.bin/eslint --fix ./ui/js/dfv/src/admin/**",
     "jest-tests": "jest --config jest.config.json",
+    "jest-watch": "jest --config jest.config.json --watch",
     "lint-js": "./node_modules/.bin/eslint ./ui/js/dfv/src/admin/**",
     "rebuild": "rm -rf node_modules && composer update && npm install && npm run build",
     "scss": "node-sass --output-style compressed ui/styles/src -o ui/styles/dist",

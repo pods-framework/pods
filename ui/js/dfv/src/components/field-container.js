@@ -1,53 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import ValidationMessages from 'dfv/src/components/validation-messages';
 import { requiredValidator } from 'dfv/src/helpers/validators';
 import toBool from 'dfv/src/helpers/toBool';
-
-// Set up validation rules. The only one set up by default here
-// is to validate a required field, but the field child component
-// may set additional rules.
-const useValidation = ( defaultRules = [], value ) => {
-	const [ validationRules, setValidationRules ] = useState( defaultRules );
-	const [ validationMessages, setValidationMessages ] = useState( [] );
-
-	useEffect( () => {
-		const newMessages = [];
-
-		validationRules.forEach( ( rule ) => {
-			if ( ! rule.condition() ) {
-				return;
-			}
-
-			try {
-				rule.rule( value );
-			} catch ( error ) {
-				if ( typeof error === 'string' ) {
-					newMessages.push( error );
-				}
-			}
-		} );
-
-		setValidationMessages( newMessages );
-	}, [ value ] );
-
-	const addValidationRules = ( rules = [] ) => {
-		rules.forEach( ( rule ) => {
-			setValidationRules( ( previousValidationRules ) => {
-				return [
-					...previousValidationRules,
-					rule,
-				];
-			} );
-		} );
-	};
-
-	return [
-		validationMessages,
-		addValidationRules,
-	];
-};
+import useValidation from 'dfv/src/hooks/useValidation';
 
 const FieldContainer = ( props ) => {
 	const {
@@ -59,6 +16,9 @@ const FieldContainer = ( props ) => {
 
 	const [ value, setValue ] = useState( fieldItemData[ 0 ] || '' );
 
+	// The only one set up by default here
+	// is to validate a required field, but the field child component
+	// may set additional rules.
 	const [ validationMessages, addValidationRules ] = useValidation(
 		[
 			{

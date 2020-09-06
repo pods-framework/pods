@@ -12,17 +12,17 @@ const Email = ( props ) => {
 	} = props;
 
 	useEffect( () => {
-		addValidationRules( [
-			{
-				rule: emailValidator(),
-				condition: () => true,
-			},
-		] );
+		const emailValidationRule = {
+			rule: emailValidator(),
+			condition: () => true,
+		};
+
+		addValidationRules( [ emailValidationRule ] );
 	}, [] );
 
 	return (
 		<BaseInput
-			type={ true === toBool( fieldConfig.email_html5 ? 'email' : 'text' ) }
+			type={ true === toBool( fieldConfig.email_html5 ) ? 'email' : 'text' }
 			{ ...props }
 		/>
 	);

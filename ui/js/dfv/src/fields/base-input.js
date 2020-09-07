@@ -1,51 +1,55 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { toBool } from 'dfv/src/helpers/booleans';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+
 const BaseInput = ( props ) => {
+	const {
+		fieldConfig = {},
+		onBlur,
+		onChange,
+		setValue,
+		type,
+		value,
+	} = props;
+
 	// Default implementation if onChange is omitted from props
-	const handleChange = ( event ) => {
-		props.setValue( event.target.value );
-	};
+	const handleChange = ( event ) => setValue( event.target.value );
 
 	return (
 		<input
-			type={ props.type }
-			name={ props.htmlAttr?.name }
-			id={ props.htmlAttr?.id }
 			className={ props.className }
+			type={ type }
+			name={ fieldConfig.htmlAttr?.name }
+			id={ fieldConfig.htmlAttr?.id }
 			// eslint-disable-next-line camelcase
-			data-name-clean={ props.htmlAttr?.name_clean }
-			placeholder={ props.fieldConfig.text_placeholder }
-			maxLength={ props.fieldConfig.text_max_length }
-			value={ props.value }
-			readOnly={ !! props.fieldConfig.readonly }
-			onChange={ props.onChange || handleChange }
-			onBlur={ props.onBlur }
-			min={ props.min }
-			max={ props.max }
+			data-name-clean={ fieldConfig.htmlAttr?.name_clean }
+			placeholder={ fieldConfig.placeholder }
+			maxLength={ fieldConfig.max_length }
+			value={ type !== 'checkbox' ? value : undefined }
+			checked={ type === 'checkbox' ? toBool( value ) : undefined }
+			readOnly={ !! fieldConfig.readonly }
+			onChange={ onChange || handleChange }
+			onBlur={ onBlur }
+			min={ fieldConfig.min }
+			max={ fieldConfig.max }
 		/>
 	);
 };
 
 BaseInput.propTypes = {
 	className: PropTypes.string,
-	fieldConfig: PropTypes.shape( {
-		readonly: PropTypes.bool,
-		text_placeholder: PropTypes.string,
-		text_max_length: PropTypes.string,
-	} ),
-	htmlAttr: PropTypes.shape( {
-		name: PropTypes.string,
-		name_clean: PropTypes.string,
-		id: PropTypes.string,
-	} ),
-	min: PropTypes.number,
-	max: PropTypes.number,
+	fieldConfig: FIELD_PROP_TYPE_SHAPE,
 	onBlur: PropTypes.func,
 	onChange: PropTypes.func,
+	value: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.bool,
+		PropTypes.number,
+	] ),
+	setValue: PropTypes.func.isRequired,
 	type: PropTypes.string.isRequired,
-	// @todo something stricter than any
-	value: PropTypes.any,
 };
 
 export default BaseInput;

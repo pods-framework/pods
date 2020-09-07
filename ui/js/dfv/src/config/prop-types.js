@@ -50,6 +50,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	id: NUMBER_OR_NUMBER_AS_STRING.isRequired,
 	label: PropTypes.string.isRequired,
 	label_param: PropTypes.string,
+	max_length: PropTypes.number,
 	name: PropTypes.string.isRequired,
 	number_decimals: PropTypes.number,
 	number_format: PropTypes.string,

@@ -10,24 +10,24 @@ import { withSelect } from '@wordpress/data';
 import PodsFieldOption from 'dfv/src/components/field-option';
 import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
 import { STORE_KEY_EDIT_POD } from 'dfv/src/admin/edit-pod/store/constants';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 // Conditionally display a FieldOption (depends-on support)
 const DependentFieldOption = ( {
 	podType,
 	podName,
-	fieldType,
-	name,
-	required,
-	label,
+	field,
 	value,
-	default: defaultValue,
-	data,
 	allOptionValues,
-	dependents,
-	description,
-	helpText,
 	setOptionValue,
 } ) => {
+	const {
+		data,
+		default: defaultValue,
+		'depends-on': dependsOn,
+		name,
+	} = field;
+
 	// In most cases, the 'data' passed to the field will be the 'data'
 	// prop, unless it's the "Bidirectional Field"/"sister_id".
 	const [ dataOptions, setDataOptions ] = useState( data );
@@ -40,7 +40,7 @@ const DependentFieldOption = ( {
 	// after a UI update, but will be wrong after the update from saving to the API,
 	// so we'll check that the values haven't already been merged.
 	let processedValue = value;
-	let processedAllOptionValues = allOptionValues;
+	const processedAllOptionValues = allOptionValues;
 
 	if (
 		'pick_object' === name &&
@@ -51,14 +51,12 @@ const DependentFieldOption = ( {
 		processedAllOptionValues.pick_object = `${ value }-${ allOptionValues.pick_val }`;
 	}
 
-	const handleInputChange = ( event ) => {
-		const { target } = event;
-
+	const handleInputChange = ( newValue ) => {
 		// If there's a default, then don't allow an empty value.
-		const newValue = target.value || defaultValue;
+		const newValueWithDefault = newValue || defaultValue;
 
-		if ( 'checkbox' === target.type ) {
-			const binaryStringFromBoolean = target.checked ? '1' : '0';
+		if ( 'boolean' === field.type ) {
+			const binaryStringFromBoolean = newValueWithDefault ? '1' : '0';
 
 			setOptionValue( name, binaryStringFromBoolean );
 		} else {
@@ -100,7 +98,7 @@ const DependentFieldOption = ( {
 
 		const loadBidirectionalFieldData = async () => {
 			// Initialize the field with loading text.
-			setDataOptions( { '': __( 'Loading available fields...', 'pods' ) } );
+			setDataOptions( { '': __( 'Loading available fields…', 'pods' ) } );
 
 			const args = {
 				pick_object: podType,
@@ -131,9 +129,9 @@ const DependentFieldOption = ( {
 
 				// Reduce the API results to an ID for the value and a label.
 				const processedFields = results.fields.reduce(
-					( accumulator, field ) => ( {
+					( accumulator, currentField ) => ( {
 						...accumulator,
-						[ field.id ]: `${ field.label } (${ field.name }) [Pod: ${ field.parent_data?.name }]`,
+						[ currentField.id ]: `${ currentField.label } (${ currentField.name }) [Pod: ${ currentField.parent_data?.name }]`,
 					} ),
 					{
 						'': __( '-- Select Related Field --', 'pods' ),
@@ -150,21 +148,16 @@ const DependentFieldOption = ( {
 	}, [ podType, podName, name, fieldTypeOption, relatedTypeOption, setDataOptions ] );
 
 	// Don't render a field that hasn't had its dependencies met.
-	if ( ! validateFieldDependencies( processedAllOptionValues, dependents ) ) {
+	if ( ! validateFieldDependencies( processedAllOptionValues, dependsOn ) ) {
 		return null;
 	}
 
 	return (
 		<PodsFieldOption
-			fieldType={ fieldType }
-			name={ name }
-			required={ required }
-			value={ processedValue || defaultValue }
-			label={ label }
+			field={ field }
 			data={ dataOptions }
-			onChange={ handleInputChange }
-			helpText={ helpText }
-			description={ description }
+			value={ processedValue || defaultValue }
+			setValue={ handleInputChange }
 		/>
 	);
 };
@@ -172,30 +165,7 @@ const DependentFieldOption = ( {
 DependentFieldOption.propTypes = {
 	podType: PropTypes.string.isRequired,
 	podName: PropTypes.string.isRequired,
-	fieldType: PropTypes.string.isRequired,
-	name: PropTypes.string.isRequired,
-	required: PropTypes.bool.isRequired,
-	data: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.array,
-	] ),
-	default: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.bool,
-		PropTypes.number,
-	] ),
-	description: PropTypes.string,
-	label: PropTypes.string.isRequired,
-	dependents: PropTypes.oneOfType( [
-		// The API may provide an empty array if empty, or an object
-		// if there are any values.
-		PropTypes.array,
-		PropTypes.object,
-	] ),
-	helpText: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.arrayOf( PropTypes.string ),
-	] ),
+	field: FIELD_PROP_TYPE_SHAPE,
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,

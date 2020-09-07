@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 
 import BaseInput from 'dfv/src/fields/base-input';
 import { emailValidator } from 'dfv/src/helpers/validators';
-import toBool from 'dfv/src/helpers/toBool';
+import { toBool } from 'dfv/src/helpers/booleans';
+
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 const Email = ( props ) => {
 	const {
@@ -22,6 +24,7 @@ const Email = ( props ) => {
 
 	return (
 		<BaseInput
+			fieldConfig={ fieldConfig }
 			type={ true === toBool( fieldConfig.email_html5 ) ? 'email' : 'text' }
 			{ ...props }
 		/>
@@ -30,8 +33,9 @@ const Email = ( props ) => {
 
 Email.propTypes = {
 	addValidationRules: PropTypes.func.isRequired,
-	// @todo the shape of this object
-	fieldConfig: PropTypes.object,
+	fieldConfig: FIELD_PROP_TYPE_SHAPE,
+	setValue: PropTypes.func.isRequired,
+	value: PropTypes.string.isRequired,
 };
 
 export default Email;

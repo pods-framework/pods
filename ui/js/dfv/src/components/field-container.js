@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import ValidationMessages from 'dfv/src/components/validation-messages';
 import { requiredValidator } from 'dfv/src/helpers/validators';
-import toBool from 'dfv/src/helpers/toBool';
+import { toBool } from 'dfv/src/helpers/booleans';
 import useValidation from 'dfv/src/hooks/useValidation';
+
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './field-container.scss';
 
@@ -12,11 +14,10 @@ const FieldContainer = ( props ) => {
 	const {
 		fieldComponent: Field,
 		fieldConfig,
-		fieldItemData,
 		htmlAttr = {},
+		value,
+		setValue,
 	} = props;
-
-	const [ value, setValue ] = useState( fieldItemData[ 0 ] || '' );
 
 	// The only one set up by default here
 	// is to validate a required field, but the field child component
@@ -35,7 +36,7 @@ const FieldContainer = ( props ) => {
 		<div className="pods-dfv-container">
 			<Field
 				value={ value }
-				setValue={ ( newValue ) => setValue( newValue ) }
+				setValue={ setValue }
 				isValid={ !! validationMessages.length }
 				addValidationRules={ addValidationRules }
 				htmlAttr={ htmlAttr }
@@ -57,10 +58,9 @@ FieldContainer.defaultProps = {
 
 FieldContainer.propTypes = {
 	fieldComponent: PropTypes.func.isRequired,
-	// @todo specify shape
-	fieldConfig: PropTypes.object,
-	// @todo specify types of items in array
-	fieldItemData: PropTypes.array,
+	fieldConfig: FIELD_PROP_TYPE_SHAPE,
+	value: PropTypes.any.isRequired,
+	setValue: PropTypes.func.isRequired,
 };
 
 export default FieldContainer;

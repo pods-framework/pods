@@ -24,34 +24,27 @@ const DynamicTabContent = ( {
 		return sprintf( labelFormat, param );
 	};
 
-	return tabOptions.map( ( {
-		name,
-		required = false,
-		default: defaultValue,
-		description,
-		data,
-		type,
-		label,
-		label_param: labelParam,
-		help,
-		'depends-on': dependsOn,
-	} ) => (
-		<DependentFieldOption
-			key={ name }
-			fieldType={ type }
-			name={ name }
-			required={ required }
-			description={ description }
-			label={ getLabelValue( label, labelParam, defaultValue ) }
-			data={ data }
-			allOptionValues={ optionValues }
-			value={ optionValues[ name ] }
-			default={ defaultValue }
-			dependents={ dependsOn }
-			helpText={ help }
-			setOptionValue={ setOptionValue }
-		/>
-	) );
+	return tabOptions.map( ( field ) => {
+		const {
+			defaultValue,
+			label,
+			labelParam,
+			name,
+		} = field;
+
+		return (
+			<DependentFieldOption
+				key={ name }
+				field={ {
+					...field,
+					label: getLabelValue( label, labelParam, defaultValue ),
+				} }
+				value={ optionValues[ name ] }
+				allOptionValues={ optionValues }
+				setOptionValue={ setOptionValue }
+			/>
+		);
+	} );
 };
 
 DynamicTabContent.propTypes = {

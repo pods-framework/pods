@@ -1,3 +1,5 @@
+import { toNumericBool } from './booleans';
+
 /**
  * Helper function to validate that a field or tab's field dependencies
  * have been met.
@@ -26,7 +28,12 @@ const validateDependencies = ( options, dependsOn ) => {
 				return dependsOn[ key ].includes( options[ key ] );
 			}
 
-			return options[ key ] === dependsOn[ key ];
+			// Work around weird typing issues with how boolean fields are saved.
+			const processedDependsOnValue = typeof dependsOn[ key ] === 'boolean'
+				? toNumericBool( dependsOn[ key ] )
+				: dependsOn[ key ];
+
+			return options[ key ] === processedDependsOnValue;
 		}
 	);
 };

@@ -2,6 +2,7 @@ import mnRenderer from 'dfv/src/core/renderers/mn-renderer';
 import reactRenderer from 'dfv/src/core/renderers/react-renderer';
 import reactDirectRenderer from 'dfv/src/core/renderers/react-direct-renderer';
 
+import Boolean from 'dfv/src/fields/boolean';
 import EditPod from 'dfv/src/admin/edit-pod/edit-pod';
 import Email from 'dfv/src/fields/email';
 import Heading from 'dfv/src/fields/heading';
@@ -19,6 +20,10 @@ const FIELD_MAP = {
 	avatar: {
 		fieldComponent: File,
 		renderer: mnRenderer,
+	},
+	boolean: {
+		fieldComponent: Boolean,
+		renderer: reactRenderer,
 	},
 	'edit-pod': {
 		fieldComponent: EditPod,

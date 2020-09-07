@@ -8,22 +8,25 @@ import { __, sprintf } from '@wordpress/i18n';
 import FieldContainer from 'dfv/src/components/field-container';
 import HelpTooltip from 'dfv/src/components/help-tooltip';
 import { richTextNoLinks } from '../../../blocks/src/config/html';
-import toBool from 'dfv/src/helpers/toBool';
+import { toBool } from 'dfv/src/helpers/booleans';
 
 import FIELD_MAP from 'dfv/src/fields/field-map';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 const PodsFieldOption = ( props ) => {
 	const {
-		fieldType,
-		name,
-		required,
+		field = {},
 		value,
-		label,
-		data = {},
-		onChange,
-		helpText,
-		description,
+		setValue,
 	} = props;
+
+	const {
+		description,
+		helpText,
+		label,
+		required,
+		type: fieldType,
+	} = field;
 
 	const shouldShowHelpText = helpText && ( 'help' !== helpText );
 
@@ -91,18 +94,14 @@ const PodsFieldOption = ( props ) => {
 						);
 					}
 
-					const field = FIELD_MAP[ fieldType ]?.fieldComponent;
+					const fieldComponent = FIELD_MAP[ fieldType ]?.fieldComponent;
 
 					return (
 						<FieldContainer
-							fieldComponent={ field }
-							fieldConfig={ {
-								label,
-								required,
-							} }
-							fieldItemData={ [
-								value,
-							] }
+							fieldComponent={ fieldComponent }
+							fieldConfig={ field }
+							value={ value }
+							setValue={ setValue }
 						/>
 					);
 
@@ -121,18 +120,6 @@ const PodsFieldOption = ( props ) => {
 											helpLink={ helpLink }
 										/> ) }
 								</h3>
-							);
-						}
-						case 'boolean': {
-							return (
-								<input
-									type="checkbox"
-									id={ name }
-									name={ name }
-									checked={ toBool( value ) }
-									onChange={ onChange }
-									aria-label={ shouldShowHelpText && helpText }
-								/>
 							);
 						}
 						case 'pick': {
@@ -192,18 +179,6 @@ const PodsFieldOption = ( props ) => {
 									aria-label={ shouldShowHelpText && helpText }
 								/>
 							);
-						default: {
-							return (
-								<input
-									type="text"
-									id={ name }
-									name={ name }
-									value={ value || '' }
-									onChange={ onChange }
-									aria-label={ shouldShowHelpText && helpText }
-								/>
-							);
-						}
 					}
 					/* eslint-enable */
 				} )() }
@@ -226,25 +201,13 @@ PodsFieldOption.defaultProps = {
 };
 
 PodsFieldOption.propTypes = {
-	description: PropTypes.string,
-	fieldType: PropTypes.string.isRequired,
-	helpText: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.arrayOf( PropTypes.string ),
-	] ),
-	data: PropTypes.oneOfType( [
-		PropTypes.array,
-		PropTypes.object,
-	] ),
-	label: PropTypes.string.isRequired,
-	name: PropTypes.string.isRequired,
-	required: PropTypes.bool.isRequired,
-	onChange: PropTypes.func.isRequired,
+	field: FIELD_PROP_TYPE_SHAPE,
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,
 		PropTypes.number,
 	] ),
+	setValue: PropTypes.func.isRequired,
 };
 
 export default PodsFieldOption;

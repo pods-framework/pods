@@ -6,6 +6,8 @@ import { requiredValidator } from 'dfv/src/helpers/validators';
 import toBool from 'dfv/src/helpers/toBool';
 import useValidation from 'dfv/src/hooks/useValidation';
 
+import './field-container.scss';
+
 const FieldContainer = ( props ) => {
 	const {
 		fieldComponent: Field,

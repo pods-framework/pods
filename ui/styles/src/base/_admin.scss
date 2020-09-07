@@ -370,19 +370,6 @@ div.pods-manage-field .pods-field-option-group .pods-field-option__field {
 	max-width: 100%;
 }
 
-.pods-manage-field .pods-field-option input[type="text"],
-.pods-manage-field .pods-field-option select,
-.pods-manage-field .pods-field-option textarea,
-.pods-manage-field .pods-field-option .pods-field.pods-boolean,
-.pods-manage-field .pods-pick-values,
-.pods-manage-field .pods-field-option .pods-form-ui-field-type-file,
-.pods-manage-field .pods-slider-field {
-	display: block;
-	float: left;
-	width: 65%;
-	max-width: 45em;
-}
-
 .pods-manage-field label + div .pods-pick-values {
 	/* Match width to input fields */
 	width: 96%;
@@ -411,15 +398,6 @@ div.pods-manage-field .pods-field-option-group .pods-field-option__field {
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file table.form-table,
 .pods-manage-field .pods-field-option-group p.pods-field-option-group-label {
 	margin-top: 0;
-}
-
-.pods-manage-field input[type="checkbox"],
-.pods-manage-field input[type="radio"] {
-	display: inline-block;
-	margin: 6px 6px 6px 1px;
-	float: left;
-	vertical-align: middle;
-	position: static;
 }
 
 .pods-manage-field .pods-pick-values input[type="checkbox"],

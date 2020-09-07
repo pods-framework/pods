@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { Notice } from '@wordpress/components';
+
 const ValidationMessages = ( { messages } ) => {
 	if ( ! messages.length ) {
 		return null;
@@ -9,12 +11,14 @@ const ValidationMessages = ( { messages } ) => {
 	return (
 		<div className="pods-validation-messages">
 			{ messages.map( ( message ) => (
-				<div
-					className="notice notice-error"
-					key={ message }
+				<Notice
+					key="message"
+					status="error"
+					isDismissible={ false }
+					politeness="polite"
 				>
 					{ message }
-				</div>
+				</Notice>
 			) ) }
 		</div>
 	);

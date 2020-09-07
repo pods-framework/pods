@@ -6,28 +6,27 @@ import { mount } from 'enzyme';
 /**
  * Internal dependencies
  */
-import Email from '..';
+import Text from '..';
 
 const BASE_PROPS = {
 	value: '',
 	setValue: jest.fn(),
-	addValidationRules: jest.fn(),
 	fieldConfig: {
 		group: 'group/pod/_pods_pod/dfv-demo',
 		id: 'some_id',
-		label: 'Test Email Field',
-		name: 'test_email_field',
+		label: 'Test Text Field',
+		name: 'test_text_field',
 		object_type: 'field',
 		parent: 'pod/_pods_pod',
-		type: 'email',
+		type: 'text',
 	},
 };
 
-describe( 'Email field component', () => {
-	it( 'creates a text field if the HTML5 email option is not set', () => {
+describe( 'Text field component', () => {
+	it( 'creates a text field', () => {
 		const props = { ...BASE_PROPS };
 
-		const wrapper = mount( <Email { ...props } /> );
+		const wrapper = mount( <Text { ...props } /> );
 
 		expect(
 			wrapper.find( 'input' ).props().type
@@ -39,16 +38,15 @@ describe( 'Email field component', () => {
 			...BASE_PROPS,
 			fieldConfig: {
 				...BASE_PROPS.fieldConfig,
-				email_html5: true,
-				email_max_length: 20,
-				email_placeholder: 'Some placeholder for the field',
+				text_max_length: 20,
+				text_placeholder: 'Some placeholder for the field',
 			},
 		};
 
-		const wrapper = mount( <Email { ...props } /> );
+		const wrapper = mount( <Text { ...props } /> );
 		const input = wrapper.find( 'input' );
 
-		expect( input.props().type ).toEqual( 'email' );
+		expect( input.props().type ).toEqual( 'text' );
 		expect( input.props().maxLength ).toEqual( 20 );
 		expect( input.props().placeholder ).toEqual( 'Some placeholder for the field' );
 	} );
@@ -59,7 +57,7 @@ describe( 'Email field component', () => {
 			setValue: jest.fn(),
 		};
 
-		const wrapper = mount( <Email { ...props } /> );
+		const wrapper = mount( <Text { ...props } /> );
 		const input = wrapper.find( 'input' ).first();
 		input.simulate( 'change', {
 			target: { value: 'test@example.com' },

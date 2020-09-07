@@ -10,8 +10,11 @@ import HTMLField from 'dfv/src/fields/html-field';
 import NumberField from 'dfv/src/fields/number-field';
 import Password from 'dfv/src/fields/password';
 import Paragraph from 'dfv/src/fields/paragraph';
+import Phone from 'dfv/src/fields/phone';
 import Pick from 'dfv/src/fields/pick';
+import Slug from 'dfv/src/fields/slug';
 import Text from 'dfv/src/fields/text';
+import Website from 'dfv/src/fields/website';
 
 // Backbone fields, may not work:
 import { File } from 'dfv/src/fields/file';
@@ -57,12 +60,24 @@ const FIELD_MAP = {
 		fieldComponent: Password,
 		renderer: reactRenderer,
 	},
+	phone: {
+		fieldComponent: Phone,
+		renderer: reactRenderer,
+	},
 	pick: {
 		fieldComponent: Pick,
 		renderer: reactRenderer,
 	},
+	slug: {
+		fieldComponent: Slug,
+		renderer: reactRenderer,
+	},
 	text: {
 		fieldComponent: Text,
+		renderer: reactRenderer,
+	},
+	website: {
+		fieldComponent: Website,
 		renderer: reactRenderer,
 	},
 };

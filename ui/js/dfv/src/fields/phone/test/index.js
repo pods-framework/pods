@@ -6,7 +6,7 @@ import { mount } from 'enzyme';
 /**
  * Internal dependencies
  */
-import Email from '..';
+import Phone from '..';
 
 const BASE_PROPS = {
 	value: '',
@@ -15,19 +15,19 @@ const BASE_PROPS = {
 	fieldConfig: {
 		group: 'group/pod/_pods_pod/dfv-demo',
 		id: 'some_id',
-		label: 'Test Email Field',
-		name: 'test_email_field',
+		label: 'Test Phone Field',
+		name: 'test_phone_field',
 		object_type: 'field',
 		parent: 'pod/_pods_pod',
-		type: 'email',
+		type: 'phone',
 	},
 };
 
-describe( 'Email field component', () => {
-	it( 'creates a text field if the HTML5 email option is not set', () => {
+describe( 'Phone field component', () => {
+	it( 'creates a text field if the HTML5 phone option is not set', () => {
 		const props = { ...BASE_PROPS };
 
-		const wrapper = mount( <Email { ...props } /> );
+		const wrapper = mount( <Phone { ...props } /> );
 
 		expect(
 			wrapper.find( 'input' ).props().type
@@ -39,16 +39,16 @@ describe( 'Email field component', () => {
 			...BASE_PROPS,
 			fieldConfig: {
 				...BASE_PROPS.fieldConfig,
-				email_html5: true,
-				email_max_length: 20,
-				email_placeholder: 'Some placeholder for the field',
+				phone_html5: true,
+				phone_max_length: 20,
+				phone_placeholder: 'Some placeholder for the field',
 			},
 		};
 
-		const wrapper = mount( <Email { ...props } /> );
+		const wrapper = mount( <Phone { ...props } /> );
 		const input = wrapper.find( 'input' );
 
-		expect( input.props().type ).toEqual( 'email' );
+		expect( input.props().type ).toEqual( 'tel' );
 		expect( input.props().maxLength ).toEqual( 20 );
 		expect( input.props().placeholder ).toEqual( 'Some placeholder for the field' );
 	} );
@@ -59,12 +59,12 @@ describe( 'Email field component', () => {
 			setValue: jest.fn(),
 		};
 
-		const wrapper = mount( <Email { ...props } /> );
+		const wrapper = mount( <Phone { ...props } /> );
 		const input = wrapper.find( 'input' ).first();
 		input.simulate( 'change', {
-			target: { value: 'test@example.com' },
+			target: { value: '123-456-7890' },
 		} );
 
-		expect( props.setValue ).toHaveBeenCalledWith( 'test@example.com' );
+		expect( props.setValue ).toHaveBeenCalledWith( '123-456-7890' );
 	} );
 } );

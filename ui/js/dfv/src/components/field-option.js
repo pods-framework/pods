@@ -8,7 +8,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import FieldContainer from 'dfv/src/components/field-container';
 import HelpTooltip from 'dfv/src/components/help-tooltip';
 import { richTextNoLinks } from '../../../blocks/src/config/html';
-import { toBool } from 'dfv/src/helpers/booleans';
 
 import FIELD_MAP from 'dfv/src/fields/field-map';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
@@ -104,83 +103,6 @@ const PodsFieldOption = ( props ) => {
 							setValue={ setValue }
 						/>
 					);
-
-					// Skip this but keep the code around for reference for now...
-					// @todo remove all this.
-					/* eslint-disable */
-					return;
-					switch ( fieldType ) {
-						case 'heading': {
-							return (
-								<h3 className={ `pods-form-ui-heading pods-form-ui-heading-${ name }` }>
-									{ label }
-									{ shouldShowHelpText && (
-										<HelpTooltip
-											helpText={ helpTextString }
-											helpLink={ helpLink }
-										/> ) }
-								</h3>
-							);
-						}
-						case 'pick': {
-							return (
-								/* eslint-disable-next-line jsx-a11y/no-onchange */
-								<select
-									id={ name }
-									name={ name }
-									value={ value }
-									onChange={ onChange }
-								>
-									{ Object.keys( data )
-										// This custom sorting function is necessary because
-										// JS will change the ordering of the keys in the object
-										// if one of them is an empty string (which we may want as
-										// the placeholder value), and will send the empty string
-										// to the end of the object when it is enumerated.
-										//
-										// eslint-disable-next-line no-unused-vars
-										.sort( ( a, b ) => a === '' ? -1 : 0 )
-										.map( ( optionValue ) => {
-											const option = data[ optionValue ];
-
-											if ( 'string' === typeof option ) {
-												return (
-													<option key={ optionValue } value={ optionValue }>
-														{ option }
-													</option>
-												);
-											} else if ( 'object' === typeof option ) {
-												const optgroupOptions = Object.entries( option );
-
-												return (
-													<optgroup label={ optionValue } key={ optionValue }>
-														{ optgroupOptions.map( ( [ suboptionValue, suboptionLabel ] ) => {
-															return (
-																<option key={ suboptionValue } value={ suboptionValue }>
-																	{ suboptionLabel }
-																</option>
-															);
-														} ) }
-													</optgroup>
-												);
-											}
-											return null;
-										} ) }
-								</select>
-							);
-						}
-						case 'paragraph':
-							return (
-								<textarea
-									id={ name }
-									name={ name }
-									value={ value || '' }
-									onChange={ onChange }
-									aria-label={ shouldShowHelpText && helpText }
-								/>
-							);
-					}
-					/* eslint-enable */
 				} )() }
 
 				{ !! description && (

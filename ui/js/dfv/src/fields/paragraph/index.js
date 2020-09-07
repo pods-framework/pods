@@ -1,6 +1,7 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 
+// @todo this is an incomplete field component
+// @todo add tests?
 const Paragraph = ( props ) => {
 	// Default implementation if onChange is omitted from props
 	function handleChange( event ) {

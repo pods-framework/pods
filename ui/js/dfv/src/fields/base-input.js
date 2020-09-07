@@ -7,6 +7,7 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 const BaseInput = ( props ) => {
 	const {
 		fieldConfig = {},
+		maxLength,
 		onBlur,
 		onChange,
 		setValue,
@@ -26,7 +27,7 @@ const BaseInput = ( props ) => {
 			// eslint-disable-next-line camelcase
 			data-name-clean={ fieldConfig.htmlAttr?.name_clean }
 			placeholder={ fieldConfig.placeholder }
-			maxLength={ fieldConfig.max_length }
+			maxLength={ maxLength }
 			value={ type !== 'checkbox' ? value : undefined }
 			checked={ type === 'checkbox' ? toBool( value ) : undefined }
 			readOnly={ !! fieldConfig.readonly }
@@ -50,6 +51,7 @@ BaseInput.propTypes = {
 	] ),
 	setValue: PropTypes.func.isRequired,
 	type: PropTypes.string.isRequired,
+	maxLength: PropTypes.number,
 };
 
 export default BaseInput;

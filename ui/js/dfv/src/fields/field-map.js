@@ -10,11 +10,11 @@ import HTMLField from 'dfv/src/fields/html-field';
 import NumberField from 'dfv/src/fields/number-field';
 import Password from 'dfv/src/fields/password';
 import Paragraph from 'dfv/src/fields/paragraph';
+import Pick from 'dfv/src/fields/pick';
 import Text from 'dfv/src/fields/text';
 
 // Backbone fields, may not work:
 import { File } from 'dfv/src/fields/file';
-import { Pick } from 'dfv/src/fields/pick';
 
 const FIELD_MAP = {
 	avatar: {
@@ -59,7 +59,7 @@ const FIELD_MAP = {
 	},
 	pick: {
 		fieldComponent: Pick,
-		renderer: mnRenderer,
+		renderer: reactRenderer,
 	},
 	text: {
 		fieldComponent: Text,

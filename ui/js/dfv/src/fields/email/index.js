@@ -7,11 +7,17 @@ import { toBool } from 'dfv/src/helpers/booleans';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
+// @todo this may be an incomplete field component
+// @todo add tests?
 const Email = ( props ) => {
 	const {
 		addValidationRules,
 		fieldConfig = {},
 	} = props;
+
+	const {
+		email_max_length: maxLength,
+	} = fieldConfig;
 
 	useEffect( () => {
 		const emailValidationRule = {
@@ -26,6 +32,7 @@ const Email = ( props ) => {
 		<BaseInput
 			fieldConfig={ fieldConfig }
 			type={ true === toBool( fieldConfig.email_html5 ) ? 'email' : 'text' }
+			maxLength={ maxLength }
 			{ ...props }
 		/>
 	);

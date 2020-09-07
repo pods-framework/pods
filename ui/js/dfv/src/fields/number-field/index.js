@@ -3,6 +3,8 @@ import React from 'react';
 import BaseInput from 'dfv/src/fields/base-input';
 // import * as validationRules from 'dfv/src/validation/validation-rules';
 
+// @todo this is an incomplete field component
+// @todo add tests?
 const NumberField = ( props ) => {
 	// noinspection JSUnresolvedVariable
 	/* Enable this only for slider

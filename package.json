@@ -53,6 +53,7 @@
     "@wordpress/components": "^10.0.6",
     "@wordpress/data": "^4.22.2",
     "@wordpress/date": "^3.10.0",
+    "@wordpress/editor": "^9.21.0",
     "@wordpress/dependency-extraction-webpack-plugin": "^2.8.0",
     "@wordpress/eslint-plugin": "^7.1.0",
     "@wordpress/jest-preset-default": "^6.0.0",

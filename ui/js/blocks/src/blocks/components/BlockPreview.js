@@ -18,6 +18,7 @@ import {
 	format as formatDate,
 } from '@wordpress/date';
 
+import ServerSideRender from '@wordpress/server-side-render';
 import { PodsServerSideRender } from './PodsServerSideRender';
 
 /**
@@ -213,15 +214,27 @@ const BlockPreview = ( {
 		renderTemplate,
 		blockName,
 		renderType,
+		supports = {
+			jsx: false,
+		},
 	} = block;
 
 	if ( 'php' === renderType ) {
-		return (
-			<PodsServerSideRender
-				block={ blockName }
-				attributes={ attributes }
-			/>
-		);
+		if ( true === supports.jsx ) {
+			return (
+				<PodsServerSideRender
+					block={ blockName }
+					attributes={ attributes }
+				/>
+			);
+		} else {
+			return (
+				<ServerSideRender
+					block={ blockName }
+					attributes={ attributes }
+				/>
+			);
+		}
 	}
 
 	return (

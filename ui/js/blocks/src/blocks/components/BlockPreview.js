@@ -18,7 +18,7 @@ import {
 	format as formatDate,
 } from '@wordpress/date';
 
-import ServerSideRender from '@wordpress/server-side-render';
+import { PodsServerSideRender } from './PodsServerSideRender';
 
 /**
  * Internal dependencies
@@ -217,7 +217,7 @@ const BlockPreview = ( {
 
 	if ( 'php' === renderType ) {
 		return (
-			<ServerSideRender
+			<PodsServerSideRender
 				block={ blockName }
 				attributes={ attributes }
 			/>

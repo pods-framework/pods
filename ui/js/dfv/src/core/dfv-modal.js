@@ -1,4 +1,3 @@
-/*global jQuery, _, Backbone, PodsMn, wp, PodsI18n */
 
 /**
  * A frame for displaying a modal popup with iframe content

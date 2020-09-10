@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
-import { G, Path, SVG } from '@wordpress/components';
 import parse from 'html-react-parser';
 
 /**

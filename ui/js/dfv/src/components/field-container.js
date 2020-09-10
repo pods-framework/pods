@@ -3,12 +3,12 @@ import classNames from 'classnames';
 
 import PodsDFVValidationMessages from 'dfv/src/components/validation-messages';
 import { validationRules } from 'dfv/src/validation/validation-rules';
-import { podsValidation } from 'dfv/src/validation/validation';
+import { PodsValidation } from 'dfv/src/validation/validation';
 
 const PodsDFVFieldContainer = ( props ) => {
 	const Field = props.fieldComponent;
 	const [ value, setValue ] = useState( props.fieldItemData[ 0 ] || '' );
-	const validation = podsValidation();
+	const validation = PodsValidation();
 	const validationMessages = validation.useValidation( value );
 
 	validation.addRules( [

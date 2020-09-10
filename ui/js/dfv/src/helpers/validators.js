@@ -2,7 +2,7 @@ import { __, sprintf } from '@wordpress/i18n';
 
 export const requiredValidator = ( fieldLabel ) => ( value ) => {
 	if ( ! value ) {
-		// translators: Field label required message.
+		// translators: %s is the Field label of the required field.
 		throw sprintf( __( '%s is required.', 'pods' ), fieldLabel );
 	}
 
@@ -11,7 +11,7 @@ export const requiredValidator = ( fieldLabel ) => ( value ) => {
 
 export const maxValidator = ( maxValue ) => ( value ) => {
 	if ( parseFloat( value ) > parseFloat( maxValue ) ) {
-		// translators: Exceeds a maximum value.
+		// translators: %s is the maximum number value allowed.
 		throw sprintf( __( 'Exceeds the maximum value of %s.', 'pods' ), maxValue );
 	}
 
@@ -20,7 +20,7 @@ export const maxValidator = ( maxValue ) => ( value ) => {
 
 export const minValidator = ( minValue ) => ( value ) => {
 	if ( parseFloat( value ) < parseFloat( minValue ) ) {
-		// translators: Below a minimum value.
+		// translators: %s is the minimum number value allowed.
 		throw sprintf( __( 'Below the minimum value of %s.', 'pods' ), minValue );
 	}
 

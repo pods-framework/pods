@@ -152,41 +152,41 @@ export const templateWithEveryFieldType = `<div>
 // Full Blocks
 export const simpleBlock = {
 	blockName: 'test/custom-block',
-    renderType: 'js',
-    category: 'layout',
-    description: 'A block to test defining the fields.',
-    icon: 'editor-insertmore',
-    keywords:[ 'test' ],
-    supports: {
-      html: false
-    },
-    title: 'Custom Block',
+	renderType: 'js',
+	category: 'layout',
+	description: 'A block to test defining the fields.',
+	icon: 'editor-insertmore',
+	keywords: [ 'test' ],
+	supports: {
+		html: false,
+	},
+	title: 'Custom Block',
 	renderTemplate: basicTemplate,
 	fields: [
 		textField,
 		checkboxField,
-	]
+	],
 };
 
 export const simpleBlockProps = {
 	className: 'simple-block-test',
 	attributes: {
-		'textField': 'Some content',
-		'checkboxField': true,
+		textField: 'Some content',
+		checkboxField: true,
 	},
 };
 
 export const allFieldsBlock = {
 	blockName: 'test/all-fields',
-    renderType: 'js',
-    category: 'layout',
-    description: 'A block to test all supported fields.',
-    icon: 'editor-insertmore',
-    keywords:[ 'test' ],
-    supports: {
-      html: false
-    },
-    title: 'All Field Block',
+	renderType: 'js',
+	category: 'layout',
+	description: 'A block to test all supported fields.',
+	icon: 'editor-insertmore',
+	keywords: [ 'test' ],
+	supports: {
+		html: false,
+	},
+	title: 'All Field Block',
 	renderTemplate: templateWithEveryFieldType,
 	fields: [
 		textField,
@@ -198,24 +198,24 @@ export const allFieldsBlock = {
 		selectField,
 		dateTimeField,
 		numberField,
-	]
+	],
 };
 
 export const allFieldsBlockProps = {
 	className: 'all-fields-block-test',
 	attributes: {
-		'textField': '<em>Content for the text field</em>, but these <script></script>tags will be stripped <strong>out</strong>',
-		'textareaField': '<em>Content for the textarea field</em>, but these <script></script>tags will be stripped <strong>out</strong>',
-		'richTextField': 'Some content',
-		'checkboxField': true,
-		'checkboxGroup': [
+		textField: '<em>Content for the text field</em>, but these <script></script>tags will be stripped <strong>out</strong>',
+		textareaField: '<em>Content for the textarea field</em>, but these <script></script>tags will be stripped <strong>out</strong>',
+		richTextField: 'Some content',
+		checkboxField: true,
+		checkboxGroup: [
 			{ value: 'first', checked: true },
 			{ value: 'second', checked: true },
 			{ value: 'third', checked: false },
 		],
-		'radioField': 'first',
-		'selectField': 'second',
-		'dateTimeField': '1986-10-18T23:00:00',
-		'numberField': 123456
+		radioField: 'first',
+		selectField: 'second',
+		dateTimeField: '1986-10-18T23:00:00',
+		numberField: 123456,
 	},
 };

@@ -2,9 +2,8 @@
 import React from 'react';
 
 export const PodsDFVBaseInput = ( props ) => {
-
 	// Default implementation if onChange is omitted from props
-	function handleChange ( event ) {
+	function handleChange( event ) {
 		props.setValue( event.target.value );
 	}
 
@@ -19,7 +18,7 @@ export const PodsDFVBaseInput = ( props ) => {
 			placeholder={ props.fieldConfig.text_placeholder }
 			maxLength={ props.fieldConfig.text_max_length }
 			value={ props.value }
-			readOnly={ !!props.fieldConfig.readonly }
+			readOnly={ !! props.fieldConfig.readonly }
 			onChange={ props.onChange || handleChange }
 			onBlur={ props.onBlur }
 			min={ props.min }

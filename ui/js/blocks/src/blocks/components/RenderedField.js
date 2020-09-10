@@ -44,17 +44,22 @@ import NumberControl from '../../components/NumberControl';
  */
 const createChangeHandler = ( name, setAttributes, type ) => ( newValue ) => {
 	setAttributes( {
-			[ name ]: 'NumberControl' === type ? parseInt( newValue, 10 ) : newValue,
+		[ name ]: 'NumberControl' === type ? parseInt( newValue, 10 ) : newValue,
 	} );
-}
+};
 
 /**
  * Renders an individual field to be used in a template.
+ *
+ * @param {Object} root0
+ * @param {Object} root0.field
+ * @param {Object} root0.attributes
+ * @param {Object} root0.setAttributes
  */
 const RenderedField = ( {
 	field,
 	attributes,
-	setAttributes
+	setAttributes,
 } ) => {
 	const {
 		name,
@@ -69,7 +74,7 @@ const RenderedField = ( {
 	switch ( type ) {
 		case 'TextControl': {
 			const {
-				type = 'text',
+				fieldType = 'text',
 				help,
 				label,
 			} = fieldOptions;
@@ -79,7 +84,7 @@ const RenderedField = ( {
 					key={ name }
 					label={ label }
 					value={ fieldValue }
-					type={ type }
+					type={ fieldType }
 					help={ help }
 					onChange={ changeHandler }
 				/>
@@ -192,9 +197,9 @@ const RenderedField = ( {
 						onChange={ changeHandler }
 						styles={ {
 							container: ( provided ) => ( {
-							...provided,
-							width: '100%',
-							} )
+								...provided,
+								width: '100%',
+							} ),
 						} }
 					/>
 				</BaseControl>
@@ -258,7 +263,9 @@ const RenderedField = ( {
 				<div>
 					<MediaUploadCheck>
 						<MediaUpload
-							onSelect={ ( media ) => { changeHandler( { id: media.id, url: media.url, title: media.title } ); } }
+							onSelect={ ( media ) => {
+								changeHandler( { id: media.id, url: media.url, title: media.title } );
+							} }
 							allowedTypes={ ALLOWED_MEDIA_TYPES }
 							value={ fieldValue }
 							render={ ( { open } ) => (

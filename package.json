@@ -26,7 +26,6 @@
     "rebuild": "rm -rf node_modules && composer update && npm install && npm run build",
     "scss": "node-sass --output-style compressed ui/styles/src -o ui/styles/dist",
     "scss:watch": "node-sass --output-style compressed -w ui/styles/src -o ui/styles/dist",
-    "test-dfv": "node node_modules/mocha/bin/mocha --require @babel/register --reporter dot --recursive tests/js",
     "version_number": "grunt version_number",
     "webpack-dev": "webpack --config webpack.dev.js --progress",
     "webpack-dev:watch": "webpack --config webpack.dev.js --progress -w",

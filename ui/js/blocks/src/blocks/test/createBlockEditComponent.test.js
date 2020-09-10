@@ -26,7 +26,7 @@ describe( 'createBlockEditComponent', () => {
 	beforeAll( () => {
 		SimpleEditComponent = createBlockEditComponent( simpleBlock );
 		AllFieldsEditComponent = createBlockEditComponent( allFieldsBlock );
-	} )
+	} );
 
 	test( 'creates a valid block "edit" component', () => {
 		expect( typeof SimpleEditComponent ).toBe( 'function' );

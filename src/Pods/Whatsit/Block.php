@@ -43,17 +43,77 @@ class Block extends Pod {
 			'category'        => $category,
 			'icon'            => $this->get_arg( 'icon', 'align-right' ),
 			'keywords'        => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
-			'supports'        => $this->get_arg( 'supports', [
-				'html' => false,
-			] ),
+			'supports'        => $this->get_arg( 'supports', [] ),
 			'editor_script'   => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
 			'fields'          => $this->get_block_fields(),
-			'attributes'      => [
-				'className' => [
-					'type' => 'string',
-				],
+			'attributes'      => $this->get_arg( 'attributes', [] ),
+		];
+
+		$default_supports = [
+			'html'                     => false,
+			// Extra block controls.
+			'align'                    => true,
+			'alignWide'                => true,
+			'anchor'                   => true,
+			'customClassName'          => true,
+			// Block functionality.
+			'inserter'                 => true,
+			'multiple'                 => true,
+			'reusable'                 => true,
+			// Experimental options.
+			'__experimentalColor'      => true,
+			'__experimentalFontSize'   => true,
+			// Experimental options not yet confirmed working.
+			'__experimentalPadding'    => true,
+			'__experimentalLineHeight' => true,
+			// Custom Pods functionality.
+			'jsx'                      => false,
+		];
+
+		$block_args['supports'] = array_merge( $default_supports, $block_args['supports'] );
+
+		// Custom supports handling for attributes.
+		$custom_supports = [
+			'className' => 'string',
+			'align'     => 'string',
+			'anchor'    => 'string',
+		];
+
+		// Experimental supports handling for attributes.
+		$experimental_supports = [
+			'__experimentalColor'    => [
+				'textColor'       => 'string',
+				'backgroundColor' => 'string',
+			],
+			'__experimentalFontSize' => [
+				'fontSize' => 'string',
+			],
+			'__experimentalPadding'  => [
+				'style' => 'string',
 			],
 		];
+
+		foreach ( $custom_supports as $support => $attribute_type ) {
+			if ( empty( $block_args['supports'][ $support ] ) ) {
+				continue;
+			}
+
+			$block_args['attributes'][ $support ] = [
+				'type' => $attribute_type,
+			];
+		}
+
+		foreach ( $experimental_supports as $support => $support_attributes ) {
+			if ( empty( $block_args['supports'][ $support ] ) ) {
+				continue;
+			}
+
+			foreach ( $support_attributes as $attribute_key => $attribute_type ) {
+				$block_args['attributes'][ $attribute_key ] = [
+					'type' => $attribute_type,
+				];
+			}
+		}
 
 		// @todo Look into supporting example.
 		// @todo Look into supporting variations.

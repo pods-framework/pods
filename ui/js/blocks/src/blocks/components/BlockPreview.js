@@ -19,6 +19,7 @@ import {
 } from '@wordpress/date';
 
 import ServerSideRender from '@wordpress/server-side-render';
+import PodsServerSideRender from './PodsServerSideRender';
 
 /**
  * Internal dependencies
@@ -73,7 +74,7 @@ const renderField = ( field, attributes ) => {
 			return (
 				<RichText.Content
 					key={ name }
-					tagName='p'
+					tagName="p"
 					value={ fieldValue }
 					className="field--richtext"
 				/>
@@ -92,14 +93,14 @@ const renderField = ( field, attributes ) => {
 			} = fieldOptions;
 
 			const values = Array.isArray( fieldValue )
-				? fieldValue.filter( value => !! value.checked )
+				? fieldValue.filter( ( value ) => !! value.checked )
 				: [];
 
 			return (
 				<div key={ name } className="field--checkbox-group">
 					{ values.length
 						? values.map( ( value, index ) => {
-							const matchingOption = options.find( option => value.value === option.value );
+							const matchingOption = options.find( ( option ) => value.value === option.value );
 
 							return (
 								<span
@@ -109,7 +110,7 @@ const renderField = ( field, attributes ) => {
 									{ matchingOption.label }
 									{ ( index < values.length - 1 ) ? ', ' : '' }
 								</span>
-							)
+							);
 						} )
 						: 'N/A' }
 				</div>
@@ -118,7 +119,7 @@ const renderField = ( field, attributes ) => {
 		case 'RadioControl': {
 			const { options } = fieldOptions;
 
-			const matchingOption = options.find( option => fieldValue === option.value );
+			const matchingOption = options.find( ( option ) => fieldValue === option.value );
 
 			return (
 				<div key={ name } className="field--radio-control">
@@ -134,27 +135,26 @@ const renderField = ( field, attributes ) => {
 						{ fieldValue.label || 'N/A' }
 					</div>
 				);
-			} else {
-				const values = fieldValue;
-
-				return (
-					<div key={ name } className="field--select-control field--multiple-select-control">
-						{ values.length
-							? values.map( ( value, index ) => {
-								return (
-									<span
-										className="field--select-group__item"
-										key={ value }
-									>
-										{ value.label }
-										{ ( index < values.length - 1 ) ? ', ' : '' }
-									</span>
-								)
-							} )
-							: 'N/A' }
-					</div>
-				);
 			}
+			const values = fieldValue;
+
+			return (
+				<div key={ name } className="field--select-control field--multiple-select-control">
+					{ values.length
+						? values.map( ( value, index ) => {
+							return (
+								<span
+									className="field--select-group__item"
+									key={ value }
+								>
+									{ value.label }
+									{ ( index < values.length - 1 ) ? ', ' : '' }
+								</span>
+							);
+						} )
+						: 'N/A' }
+				</div>
+			);
 		}
 		case 'DateTimePicker': {
 			const dateFormat = __experimentalGetSettings().formats.datetime;
@@ -206,16 +206,27 @@ const renderField = ( field, attributes ) => {
 
 const BlockPreview = ( {
 	block,
-	attributes = {}
+	attributes = {},
 } ) => {
 	const {
 		fields = [],
 		renderTemplate,
 		blockName,
 		renderType,
+		supports = {
+			jsx: false,
+		},
 	} = block;
 
 	if ( 'php' === renderType ) {
+		if ( true === supports.jsx ) {
+			return (
+				<PodsServerSideRender
+					block={ blockName }
+					attributes={ attributes }
+				/>
+			);
+		}
 		return (
 			<ServerSideRender
 				block={ blockName }
@@ -228,8 +239,7 @@ const BlockPreview = ( {
 		<>
 			{ renderBlockTemplate( renderTemplate, fields, attributes, renderField ) }
 		</>
-	)
+	);
 };
 
 export default BlockPreview;
-

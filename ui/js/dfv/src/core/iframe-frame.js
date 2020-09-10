@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, PodsMn, wp, PodsI18n */
+/*global _, PodsI18n */
 
 import { PodsDFVModal } from 'dfv/src/core/dfv-modal';
 
@@ -14,7 +14,7 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 
 	regions: [ 'title', 'iframe' ],
 
-	initialize: function () {
+	initialize() {
 		wp.media.view.Frame.prototype.initialize.apply( this, arguments );
 
 		// Ensure core UI is enabled.
@@ -30,32 +30,32 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 		this.title.mode( 'default' );
 	},
 
-	initState: function () {
+	initState() {
 		const title = this.options.title || PodsI18n.__( 'Add New Record' );
 		const src = this.options.src || '/';
 
 		this.states.add( [
 			new wp.media.controller.State( {
 				id: 'default',
-				title: title,
-				src: src
-			} )
+				title,
+				src,
+			} ),
 		] );
 
 		this.options.state = 'default';
 	},
 
-	initModal: function () {
+	initModal() {
 		this.modal = new PodsDFVModal( {
-			controller: this
+			controller: this,
 		} );
 
 		this.modal.content( this );
 	},
 
-	render: function () {
+	render() {
 		// Activate the default state if no active state exists.
-		if ( !this.state() && this.options.state ) {
+		if ( ! this.state() && this.options.state ) {
 			this.setState( this.options.state );
 		}
 
@@ -69,16 +69,16 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 	 * @param {Object} content
 	 * @this wp.media.controller.Region
 	 */
-	iframeContent: function ( content ) {
+	iframeContent( content ) {
 		content.view = new wp.media.view.Iframe( {
-			controller: this
+			controller: this,
 		} );
 	},
 
-	createTitle: function ( title ) {
+	createTitle( title ) {
 		title.view = new wp.media.View( {
 			controller: this,
-			tagName: 'h1'
+			tagName: 'h1',
 		} );
-	}
+	},
 } );

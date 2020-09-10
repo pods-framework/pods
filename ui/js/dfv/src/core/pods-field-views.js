@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, PodsMn */
+/*global PodsMn */
 
 /**
  *
@@ -6,27 +6,27 @@
 export const PodsFieldListView = PodsMn.CollectionView.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
 
-	initialize: function ( options ) {
+	initialize( options ) {
 		this.fieldModel = options.fieldModel;
 		this.childViewOptions = { fieldModel: options.fieldModel };
-	}
+	},
 } );
 
 /**
- * @extends Backbone.View
+ * @augments Backbone.View
  */
 export const PodsFieldView = PodsMn.View.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
 
-	serializeData: function () {
+	serializeData() {
 		const fieldModel = this.options.fieldModel;
-		let data = this.model ? this.model.toJSON() : {};
+		const data = this.model ? this.model.toJSON() : {};
 
 		data.htmlAttr = fieldModel.get( 'htmlAttr' );
 		data.fieldConfig = fieldModel.get( 'fieldConfig' );
 
 		return data;
-	}
+	},
 } );
 
 /**
@@ -35,7 +35,7 @@ export const PodsFieldView = PodsMn.View.extend( {
 export const PodsDFVFieldLayout = PodsMn.View.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
 
-	initialize: function ( options ) {
+	initialize( options ) {
 		this.fieldItemData = options.fieldItemData;
-	}
+	},
 } );

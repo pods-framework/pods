@@ -13,7 +13,7 @@ let unSubscribe;
  * init() is the only exposed interface
  */
 export const PodsGbModalListener = {
-	init: function () {
+	init() {
 		if ( editorData.isCurrentPostPublished() ) {
 			// Post is published, this is an edit
 			unSubscribe = wp.data.subscribe( saveListener );
@@ -21,7 +21,7 @@ export const PodsGbModalListener = {
 			// Unpublished post, this is an "add new" modal
 			unSubscribe = wp.data.subscribe( publishListener );
 		}
-	}
+	},
 };
 
 //-------------------------------------------
@@ -29,15 +29,16 @@ export const PodsGbModalListener = {
 //-------------------------------------------
 
 /**
+ * Get the featured image URL.
  *
- * @return string
+ * @return {string} The featured image URL.
  */
-function getFeaturedImageURL () {
+function getFeaturedImageURL() {
 	const featuredImageId = editorData.getCurrentPostAttribute( 'featured_media' );
 	let url = '';
 
 	// Early exit if nothing was set
-	if ( !featuredImageId ) {
+	if ( ! featuredImageId ) {
 		return url;
 	}
 
@@ -58,16 +59,15 @@ function getFeaturedImageURL () {
 /**
  * Handles "add new" modals
  */
-function publishListener () {
-
+function publishListener() {
 	if ( editorData.isCurrentPostPublished() ) {
 		unSubscribe();
 
 		triggerUpdateEvent( {
-			'icon': getFeaturedImageURL(),
-			'link': editorData.getPermalink(),
-			'edit_link': `post.php?post=${editorData.getCurrentPostId()}&action=edit&pods_modal=1`,
-			'selected': true // Automatically select add new records
+			icon: getFeaturedImageURL(),
+			link: editorData.getPermalink(),
+			edit_link: `post.php?post=${ editorData.getCurrentPostId() }&action=edit&pods_modal=1`,
+			selected: true, // Automatically select add new records
 		} );
 	}
 }
@@ -75,14 +75,11 @@ function publishListener () {
 /**
  * Handles "edit existing" modals
  */
-function saveListener () {
-
+function saveListener() {
 	if ( saveListener.wasSaving ) {
-
 		// The wasSaving flag already ignores autosave so we only need to
 		// check isSavingPost()
-		if ( !editorData.isSavingPost() ) {
-
+		if ( ! editorData.isSavingPost() ) {
 			// Currently on save failure we'll remain subscribed and try
 			// listening for the next save attempt
 			saveListener.wasSaving = false;
@@ -90,7 +87,7 @@ function saveListener () {
 			if ( editorData.didPostSaveRequestSucceed() ) {
 				unSubscribe();
 				triggerUpdateEvent( {
-					'icon': getFeaturedImageURL()
+					icon: getFeaturedImageURL(),
 				} );
 			}
 		}
@@ -102,19 +99,21 @@ function saveListener () {
 /**
  * Whether or not an active save is in progress due to user action (ignore autosaves)
  *
- * @return boolean
+ * @return {boolean} Whether editor is saving.
  */
-function isUserSaving () {
-	return !!( editorData.isSavingPost() && !editorData.isAutosavingPost() );
+function isUserSaving() {
+	return !! ( editorData.isSavingPost() && ! editorData.isAutosavingPost() );
 }
 
 /**
  * The event listener in the parent window will take care of closing the modal
+ *
+ * @param {Object} optionalData
  */
-function triggerUpdateEvent ( optionalData ) {
+function triggerUpdateEvent( optionalData ) {
 	const defaultData = {
-		'id': editorData.getCurrentPostId(),
-		'name': editorData.getCurrentPostAttribute( 'title' )
+		id: editorData.getCurrentPostId(),
+		name: editorData.getCurrentPostAttribute( 'title' ),
 	};
 	const postData = Object.assign( defaultData, optionalData );
 

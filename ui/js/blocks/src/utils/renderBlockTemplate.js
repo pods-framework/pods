@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { renderToString } from '@wordpress/element';
-import { Parser, ProcessNodeDefinitions } from 'html-to-react';
+import parse from 'html-react-parser';
 import sanitizeHtml from 'sanitize-html';
 
 /**
@@ -58,24 +58,8 @@ const renderBlockTemplate = (
 		);
 	} );
 
-	// Parse the rendered template, setting the props back to their saved values.
-	const processNodeDefinitions = new ProcessNodeDefinitions();
-	const htmlParser = new Parser();
-
-	const processingInstructions = [
-		{
-			shouldProcessNode: () => true,
-			processNode: processNodeDefinitions.processDefaultNode,
-		},
-	];
-
-	const parsedComponents = htmlParser.parseWithInstructions(
-		htmlWithRenderedFields,
-		() => true,
-		processingInstructions
-	);
-
-	return parsedComponents;
+	// @todo Support <InnerBlocks>
+	return parse( htmlWithRenderedFields );
 };
 
 export default renderBlockTemplate;

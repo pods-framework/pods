@@ -25,7 +25,7 @@ const CheckboxGroup = ( {
 	const handleCheckboxControlChange = ( value, checked ) => {
 		const updatedValues = [ ...values ];
 
-		const updatedIndex = updatedValues.findIndex( field => field.value === value );
+		const updatedIndex = updatedValues.findIndex( ( field ) => field.value === value );
 
 		if ( -1 !== updatedIndex ) {
 			updatedValues[ updatedIndex ].checked = checked;
@@ -37,14 +37,14 @@ const CheckboxGroup = ( {
 		}
 
 		onChange( updatedValues );
-	}
+	};
 
 	return (
 		<fieldset className={ classNames( 'components-block-fields-checkbox-group', className ) }>
 			{ heading && <legend>{ heading }</legend> }
 
-			{ options.map( option => {
-				const matchingValue = values.find( value => value.value === option.value ) || false;
+			{ options.map( ( option ) => {
+				const matchingValue = values.find( ( value ) => value.value === option.value ) || false;
 
 				return (
 					<CheckboxControl

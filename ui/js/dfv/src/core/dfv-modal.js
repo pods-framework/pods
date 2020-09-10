@@ -1,4 +1,3 @@
-/*global jQuery, _, Backbone, PodsMn, wp, PodsI18n */
 
 /**
  * A frame for displaying a modal popup with iframe content
@@ -9,9 +8,9 @@ export const PodsDFVModal = wp.media.view.Modal.extend( {
 
 	/**
 	 * @param {Object} options
-	 * @returns {wp.media.view.Modal} Returns itself to allow chaining
+	 * @return {wp.media.view.Modal} Returns itself to allow chaining
 	 */
-	close: function ( options ) {
+	close( options ) {
 		const retVal = wp.media.view.Modal.prototype.close.apply( this, options );
 
 		// Alert the listening control when we've been cancelled
@@ -20,6 +19,6 @@ export const PodsDFVModal = wp.media.view.Modal.extend( {
 		}
 
 		return retVal;
-	}
+	},
 
 } );

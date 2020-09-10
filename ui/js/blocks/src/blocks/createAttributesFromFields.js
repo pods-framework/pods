@@ -5,7 +5,7 @@
  * @param {Array} fields Array of field data, each containing a `name`
  *                       and array of `attributeOptions`.
  *
- * @returns {Object} Attributes object to pass to registerBlockType().
+ * @return {Object} Attributes object to pass to registerBlockType().
  */
 const createAttributesFromFields = ( fields ) =>
 	fields.reduce( ( attributes, currentField ) => {

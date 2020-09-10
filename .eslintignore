@@ -6,5 +6,8 @@ ui/js/sprintf
 ui/js/timepicker
 ui/js/*.js
 
+# Ignore minified files
+**/*.min.js
+
 # Remove these from the ignore file as part of the DFV work:
 ui/js/dfv/src/fields

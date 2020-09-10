@@ -10,6 +10,11 @@ import RenderedField from './RenderedField';
 
 /**
  * Renders the fields that live in the Inspector on the sidebar.
+ *
+ * @param root0
+ * @param root0.fields
+ * @param root0.attributes
+ * @param root0.setAttributes
  */
 const FieldInspectorControls = ( {
 	fields = [],

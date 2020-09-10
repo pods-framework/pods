@@ -44,17 +44,22 @@ import NumberControl from '../../components/NumberControl';
  */
 const createChangeHandler = ( name, setAttributes, type ) => ( newValue ) => {
 	setAttributes( {
-			[ name ]: 'NumberControl' === type ? parseInt( newValue, 10 ) : newValue,
+		[ name ]: 'NumberControl' === type ? parseInt( newValue, 10 ) : newValue,
 	} );
-}
+};
 
 /**
  * Renders an individual field to be used in a template.
+ *
+ * @param root0
+ * @param root0.field
+ * @param root0.attributes
+ * @param root0.setAttributes
  */
 const RenderedField = ( {
 	field,
 	attributes,
-	setAttributes
+	setAttributes,
 } ) => {
 	const {
 		name,
@@ -192,9 +197,9 @@ const RenderedField = ( {
 						onChange={ changeHandler }
 						styles={ {
 							container: ( provided ) => ( {
-							...provided,
-							width: '100%',
-							} )
+								...provided,
+								width: '100%',
+							} ),
 						} }
 					/>
 				</BaseControl>
@@ -258,7 +263,9 @@ const RenderedField = ( {
 				<div>
 					<MediaUploadCheck>
 						<MediaUpload
-							onSelect={ ( media ) => { changeHandler( { id: media.id, url: media.url, title: media.title } ); } }
+							onSelect={ ( media ) => {
+								changeHandler( { id: media.id, url: media.url, title: media.title } );
+							} }
 							allowedTypes={ ALLOWED_MEDIA_TYPES }
 							value={ fieldValue }
 							render={ ( { open } ) => (

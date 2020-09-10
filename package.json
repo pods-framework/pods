@@ -54,7 +54,7 @@
     "@wordpress/data": "^4.22.2",
     "@wordpress/date": "^3.10.0",
     "@wordpress/dependency-extraction-webpack-plugin": "^2.8.0",
-    "@wordpress/eslint-plugin": "^7.1.0",
+    "@wordpress/eslint-plugin": "7.1.0",
     "@wordpress/jest-preset-default": "^6.0.0",
     "@wordpress/scripts": "^12.1.1",
     "@wordpress/server-side-render": "^1.16.2",

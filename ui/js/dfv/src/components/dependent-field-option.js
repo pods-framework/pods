@@ -40,7 +40,7 @@ const DependentFieldOption = ( {
 	// after a UI update, but will be wrong after the update from saving to the API,
 	// so we'll check that the values haven't already been merged.
 	let processedValue = value;
-	let processedAllOptionValues = allOptionValues;
+	const processedAllOptionValues = allOptionValues;
 
 	if (
 		'pick_object' === name &&
@@ -100,7 +100,7 @@ const DependentFieldOption = ( {
 
 		const loadBidirectionalFieldData = async () => {
 			// Initialize the field with loading text.
-			setDataOptions( { '': __( 'Loading available fields...', 'pods' ) } );
+			setDataOptions( { '': __( 'Loading available fields…', 'pods' ) } );
 
 			const args = {
 				pick_object: podType,

@@ -58,6 +58,7 @@ const renderBlockTemplate = (
 		);
 	} );
 
+	// @todo Support <InnerBlocks>
 	return parse( htmlWithRenderedFields );
 };
 

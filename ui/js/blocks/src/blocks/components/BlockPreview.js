@@ -226,14 +226,13 @@ const BlockPreview = ( {
 					attributes={ attributes }
 				/>
 			);
-		} else {
-			return (
-				<ServerSideRender
-					block={ blockName }
-					attributes={ attributes }
-				/>
-			);
 		}
+		return (
+			<ServerSideRender
+				block={ blockName }
+				attributes={ attributes }
+			/>
+		);
 	}
 
 	return (

@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, PodsMn */
+/*global PodsMn */
 
 /**
  *

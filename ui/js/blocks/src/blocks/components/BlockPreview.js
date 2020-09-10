@@ -19,6 +19,7 @@ import {
 } from '@wordpress/date';
 
 import ServerSideRender from '@wordpress/server-side-render';
+import PodsServerSideRender from './PodsServerSideRender';
 
 /**
  * Internal dependencies
@@ -212,9 +213,20 @@ const BlockPreview = ( {
 		renderTemplate,
 		blockName,
 		renderType,
+		supports = {
+			jsx: false,
+		},
 	} = block;
 
 	if ( 'php' === renderType ) {
+		if ( true === supports.jsx ) {
+			return (
+				<PodsServerSideRender
+					block={ blockName }
+					attributes={ attributes }
+				/>
+			);
+		}
 		return (
 			<ServerSideRender
 				block={ blockName }
@@ -231,4 +243,3 @@ const BlockPreview = ( {
 };
 
 export default BlockPreview;
-

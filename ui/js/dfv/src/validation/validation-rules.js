@@ -6,6 +6,7 @@ export const validationRules = {
 			facts: { value },
 			conditions: { value: { equal: '' } },
 			event: {
+				/** translators: %s is the field label */
 				message: sprintf( __( '%s is required.', 'pods' ), fieldLabel ),
 			},
 		};
@@ -16,6 +17,7 @@ export const validationRules = {
 			facts: { numericValue: value * 1, max: max * 1 },
 			conditions: { numericValue: { greater: '$max' } },
 			event: {
+				/** translators: %s is the maximum number allowed */
 				message: sprintf( __( 'Exceeds the maximum value of %s', 'pods' ), max ),
 			},
 
@@ -27,6 +29,7 @@ export const validationRules = {
 			facts: { numericValue: value * 1, min: min * 1 },
 			conditions: { numericValue: { less: '$min' } },
 			event: {
+				/** translators: %s is the minimum number allowed */
 				message: sprintf( __( 'Below the minimum value of %s', 'pods' ), min ),
 			},
 

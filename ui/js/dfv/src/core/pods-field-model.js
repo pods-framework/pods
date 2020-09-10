@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, PodsMn */
+/*global Backbone */
 export const PodsDFVFieldModel = Backbone.Model.extend( {
 	defaults: {
 		htmlAttr: {},

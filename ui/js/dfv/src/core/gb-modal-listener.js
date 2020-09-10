@@ -29,8 +29,9 @@ export const PodsGbModalListener = {
 //-------------------------------------------
 
 /**
+ * Get the featured image URL.
  *
- * @return string
+ * @return {string} The featured image URL.
  */
 function getFeaturedImageURL() {
 	const featuredImageId = editorData.getCurrentPostAttribute( 'featured_media' );
@@ -98,7 +99,7 @@ function saveListener() {
 /**
  * Whether or not an active save is in progress due to user action (ignore autosaves)
  *
- * @return boolean
+ * @return {boolean} Whether editor is saving.
  */
 function isUserSaving() {
 	return !! ( editorData.isSavingPost() && ! editorData.isAutosavingPost() );
@@ -107,7 +108,7 @@ function isUserSaving() {
 /**
  * The event listener in the parent window will take care of closing the modal
  *
- * @param optionalData
+ * @param {Object} optionalData
  */
 function triggerUpdateEvent( optionalData ) {
 	const defaultData = {

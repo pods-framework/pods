@@ -5,20 +5,16 @@ import Engine from 'json-rules-engine-simplified';
 
 /**
  *
- * @return
- * {
- *     {function} addRules
- *     {function} useValidation,
- * 	}
+ * @return {Object} The addRules and useValidation functions.
  */
-export const podsValidation = () => {
+export const PodsValidation = () => {
 	const [ validationMessages, setValidationMessages ] = useState( [] );
 	const rules = [];
 	let facts = {};
 
 	/**
 	 *
-	 * @param conditionalRules
+	 * @param {Array} conditionalRules
 	 */
 	const addRules = ( conditionalRules ) => {
 		conditionalRules.forEach( ( conditionalRule ) => {
@@ -33,7 +29,7 @@ export const podsValidation = () => {
 
 	/**
 	 *
-	 * @return {Promise<any>}
+	 * @return {Promise<any>} The validation promise.
 	 */
 	const checkValidation = () => {
 		const rulesEngine = new Engine( rules );
@@ -59,7 +55,7 @@ export const podsValidation = () => {
 	 *
 	 * @param {string} value The field's value
 	 *
-	 * @return {string} Array of messages for all validation failures
+	 * @return {Array} Array of messages for all validation failures
 	 */
 	const useValidation = ( value ) => {
 		useEffect( () => {

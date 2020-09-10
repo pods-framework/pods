@@ -51,10 +51,10 @@ const createChangeHandler = ( name, setAttributes, type ) => ( newValue ) => {
 /**
  * Renders an individual field to be used in a template.
  *
- * @param root0
- * @param root0.field
- * @param root0.attributes
- * @param root0.setAttributes
+ * @param {Object} root0
+ * @param {Object} root0.field
+ * @param {Object} root0.attributes
+ * @param {Object} root0.setAttributes
  */
 const RenderedField = ( {
 	field,
@@ -74,7 +74,7 @@ const RenderedField = ( {
 	switch ( type ) {
 		case 'TextControl': {
 			const {
-				type = 'text',
+				fieldType = 'text',
 				help,
 				label,
 			} = fieldOptions;
@@ -84,7 +84,7 @@ const RenderedField = ( {
 					key={ name }
 					label={ label }
 					value={ fieldValue }
-					type={ type }
+					type={ fieldType }
 					help={ help }
 					onChange={ changeHandler }
 				/>

@@ -13,7 +13,7 @@ import createAttributesFromFields from './createAttributesFromFields';
 /**
  * Registers a block from the provided data.
  *
- * @param block
+ * @param {Object} block
  */
 const createBlock = ( block ) => {
 	const {

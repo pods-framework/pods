@@ -6,7 +6,7 @@ import { registerBlockCollection } from '@wordpress/blocks';
 /**
  * Registers a block collection from the provided data.
  *
- * @param blockCollection
+ * @param {Object} blockCollection
  */
 const createBlockCollection = ( blockCollection ) => {
 	const {

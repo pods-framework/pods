@@ -19,7 +19,7 @@ const Website = ( props ) => {
 		<BaseInput
 			fieldConfig={ fieldConfig }
 			type={ true === toBool( html5 ) ? 'url' : 'text' }
-			maxLength={ maxLength }
+			maxLength={ parseInt( maxLength, 10 ) }
 			placeholder={ placeholder }
 			{ ...props }
 		/>

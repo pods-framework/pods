@@ -32,7 +32,7 @@ const Email = ( props ) => {
 		<BaseInput
 			fieldConfig={ fieldConfig }
 			type={ true === toBool( html5 ) ? 'email' : 'text' }
-			maxLength={ maxLength }
+			maxLength={ parseInt( maxLength, 10 ) }
 			placeholder={ placeholder }
 			{ ...props }
 		/>

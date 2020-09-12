@@ -81,7 +81,7 @@ const PodsFieldOption = ( props ) => {
 
 					// Show an error if the field isn't in the React format yet.
 					// @todo this can probably be removed later.
-					if ( FIELD_MAP[ fieldType ]?.renderer?.name !== 'reactRenderer' ) {
+					if ( FIELD_MAP[ fieldType ]?.renderer?.name === 'mnRenderer' ) {
 						return (
 							<span className="pods-field-option__invalid-field">
 								{ sprintf(

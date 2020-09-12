@@ -15,7 +15,7 @@ const Text = ( props ) => {
 	return (
 		<BaseInput
 			type="text"
-			maxLength={ maxLength }
+			maxLength={ parseInt( maxLength, 10 ) }
 			placeholder={ placeholder }
 			{ ...props }
 		/>

@@ -5,6 +5,7 @@ import reactDirectRenderer from 'dfv/src/core/renderers/react-direct-renderer';
 import Boolean from 'dfv/src/fields/boolean';
 import EditPod from 'dfv/src/admin/edit-pod/edit-pod';
 import Email from 'dfv/src/fields/email';
+import File from 'dfv/src/fields/file';
 import Heading from 'dfv/src/fields/heading';
 import HTMLField from 'dfv/src/fields/html-field';
 import NumberField from 'dfv/src/fields/number-field';
@@ -16,13 +17,10 @@ import Slug from 'dfv/src/fields/slug';
 import Text from 'dfv/src/fields/text';
 import Website from 'dfv/src/fields/website';
 
-// Backbone fields, may not work:
-import { File } from 'dfv/src/fields/file';
-
 const FIELD_MAP = {
 	avatar: {
 		fieldComponent: File,
-		renderer: mnRenderer,
+		renderer: reactRenderer,
 	},
 	boolean: {
 		fieldComponent: Boolean,
@@ -38,7 +36,7 @@ const FIELD_MAP = {
 	},
 	file: {
 		fieldComponent: File,
-		renderer: mnRenderer,
+		renderer: reactRenderer,
 	},
 	heading: {
 		fieldComponent: Heading,

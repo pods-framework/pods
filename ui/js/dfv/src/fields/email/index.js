@@ -43,7 +43,7 @@ Email.propTypes = {
 	addValidationRules: PropTypes.func.isRequired,
 	fieldConfig: FIELD_PROP_TYPE_SHAPE,
 	setValue: PropTypes.func.isRequired,
-	value: PropTypes.string.isRequired,
+	value: PropTypes.string,
 };
 
 export default Email;

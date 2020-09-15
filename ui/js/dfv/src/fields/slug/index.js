@@ -33,7 +33,7 @@ const Slug = ( props ) => {
 Slug.propTypes = {
 	fieldConfig: FIELD_PROP_TYPE_SHAPE,
 	setValue: PropTypes.func.isRequired,
-	value: PropTypes.string.isRequired,
+	value: PropTypes.string,
 };
 
 export default Slug;

@@ -17,10 +17,12 @@ export const MediaModal = PodsFileUploader.extend( {
 
 		const defaultExt = wp.Uploader.defaults.filters.mime_types[ 0 ].extensions;
 
-		wp.Uploader.defaults.filters.mime_types[ 0 ].extensions = this.fieldConfig.limit_extensions;
+		// eslint-disable-next-line camelcase
+		if ( this.fieldConfig?.limit_extensions ) {
+			wp.Uploader.defaults.filters.mime_types[ 0 ].extensions = this.fieldConfig.limit_extensions;
+		}
 
 		// set our settings
-		// noinspection EqualityComparisonWithCoercionJS ("1" is every bit as valid to us as 1)
 		this.mediaObject = wp.media( {
 			title: this.fieldConfig.file_modal_title,
 			multiple: ( 1 !== parseInt( this.fieldConfig.file_limit, 10 ) ),

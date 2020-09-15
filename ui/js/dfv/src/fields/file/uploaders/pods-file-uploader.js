@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, PodsMn */
+/*global PodsMn */
 /**
  *
  * @param {Object} options
@@ -20,15 +20,13 @@
  * @class
  */
 export const PodsFileUploader = PodsMn.Object.extend( {
-
-	constructor: function ( options ) {
+	constructor( options ) {
 		// Magically set the object properties we need, they'll just "be there" for the concrete instance
 		this.browseButton = options.browseButton;
 		this.uiRegion = options.uiRegion;
 		this.fieldConfig = options.fieldConfig;
 
 		PodsMn.Object.call( this, options );
-	}
-
+	},
 } );
 

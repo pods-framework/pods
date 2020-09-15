@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, PodsMn, wp */
+/*global _ */
 import template from 'dfv/src/fields/file/views/file-upload-item.html';
 
 import { PodsFieldListView, PodsFieldView } from 'dfv/src/core/pods-field-views';
@@ -26,7 +26,7 @@ export const FileUploadItem = PodsFieldView.extend( {
 
 	triggers: {
 		'click @ui.removeButton': 'remove:file:click'
-	}
+	},
 } );
 
 /**
@@ -45,28 +45,28 @@ export const FileUploadList = PodsFieldListView.extend( {
 		'remove:file:click': 'childview:remove:file:click'
 	},
 
-	onAttach: function () {
+	onAttach() {
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
-		let sort_axis = 'y';
+		// eslint-disable-next-line camelcase
+		let sortAxis = 'y';
 
 		// @todo
 		// http://stackoverflow.com/questions/1735372/jquery-sortable-list-scroll-bar-jumps-up-when-sorting/4187833#4187833
 
-		if ( 1 != fieldConfig[ 'file_limit' ] ) {
-
-			if ( 'tiles' == fieldConfig[ 'file_field_template' ] ) {
-				sort_axis = '';
+		if ( 1 !== parseInt( fieldConfig.file_limit, 10 ) ) {
+			if ( 'tiles' === fieldConfig.file_field_template ) {
+				sortAxis = '';
 			}
 
 			// init sortable
 			this.$el.sortable( {
 				containment: 'parent',
-				axis: sort_axis,
+				axis: sortAxis,
 				scrollSensitivity: 40,
 				tolerance: 'pointer',
-				opacity: 0.6
+				opacity: 0.6,
 			} );
 		}
-	}
+	},
 } );
 

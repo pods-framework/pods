@@ -6,20 +6,25 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 class MarionetteAdapter extends React.Component {
 	componentDidMount() {
+		const {
+			htmlAttr = {},
+			fieldConfig = {},
+		} = this.props;
+
 		this.fieldModel = new PodsDFVFieldModel( {
-			htmlAttr: this.props.htmlAttr || {},
-			fieldConfig: this.props.fieldConfig || {},
+			htmlAttr,
+			fieldConfig,
 		} );
 
 		this.renderMarionetteComponent();
 	}
 
 	componentDidUpdate() {
-		this.renderMarionetteComponent();
-	}
+		if ( this.marionetteComponent ) {
+			this.marionetteComponent.destroy();
+		}
 
-	componentWillUpdate() {
-		this.marionetteComponent.destroy();
+		this.renderMarionetteComponent();
 	}
 
 	componentWillUnmount() {
@@ -27,22 +32,46 @@ class MarionetteAdapter extends React.Component {
 	}
 
 	renderMarionetteComponent() {
-		const { View } = this.props;
+		const {
+			View,
+			value,
+		} = this.props;
 
 		this.marionetteComponent = new View( {
 			model: this.fieldModel,
-			// fieldItemData: this.props.data.fieldItemData,
+			fieldItemData: value,
 		} );
+
 		this.marionetteComponent.render();
+
 		this.element.appendChild( this.marionetteComponent.el );
+
+		// @todo does this work? What if it's a model not a collection?
+		this.marionetteComponent.collection.on( 'all', ( eventName, collection ) => {
+			if ( ! [ 'update', 'remove', 'reset' ].includes( eventName ) ) {
+				return;
+			}
+
+			console.log( 'collection changed', eventName, collection, collection.models );
+
+			this.props.setValue( collection.models || [] );
+		} );
+
+		// for debugging
+		window.marionetteViews = window.marionetteViews || {};
+		window.marionetteViews[ this.props.fieldConfig.name ] = this.marionetteComponent;
 	}
 
 	render() {
+		const { className } = this.props;
+
 		return (
-			<div
-				className={this.props.className}
-				ref={(element) => { this.element = element; }}
-			/>
+			<div className="pods-marionette-adapter-wrapper">
+				<div
+					className={ className }
+					ref={ ( element ) => this.element = element }
+				/>
+			</div>
 		);
 	}
 }
@@ -50,8 +79,14 @@ class MarionetteAdapter extends React.Component {
 MarionetteAdapter.propTypes = {
 	className: PropTypes.string,
 	htmlAttr: PropTypes.object,
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	View: PropTypes.func,
+	fieldConfig: FIELD_PROP_TYPE_SHAPE.isRequired,
+	setValue: PropTypes.func.isRequired,
+	value: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.array,
+		PropTypes.object,
+	] ),
+	View: PropTypes.func.isRequired,
 };
 
 // Add an error boundary, because this may not be completely
@@ -73,10 +108,6 @@ class MarionetteAdapterWithErrorBoundary extends React.Component {
 		};
 	}
 
-	componentDidCatch( error, errorInfo ) {
-		console.warn( 'Error rendering Marionette component', error, errorInfo );
-	}
-
 	render() {
 		if ( this.state.hasError ) {
 			return (
@@ -85,9 +116,9 @@ class MarionetteAdapterWithErrorBoundary extends React.Component {
 		}
 
 		return (
-			<MarionetteAdapter {...this.props} />
+			<MarionetteAdapter { ...this.props } />
 		);
 	}
-  }
+}
 
 export default MarionetteAdapterWithErrorBoundary;

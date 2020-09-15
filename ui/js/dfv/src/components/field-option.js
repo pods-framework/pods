@@ -118,16 +118,13 @@ const PodsFieldOption = ( props ) => {
 	);
 };
 
-PodsFieldOption.defaultProps = {
-	value: '',
-};
-
 PodsFieldOption.propTypes = {
 	field: FIELD_PROP_TYPE_SHAPE,
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,
 		PropTypes.number,
+		PropTypes.array,
 	] ),
 	setValue: PropTypes.func.isRequired,
 };

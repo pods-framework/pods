@@ -59,7 +59,7 @@ FieldContainer.defaultProps = {
 FieldContainer.propTypes = {
 	fieldComponent: PropTypes.func.isRequired,
 	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	value: PropTypes.any.isRequired,
+	value: PropTypes.any,
 	setValue: PropTypes.func.isRequired,
 };
 

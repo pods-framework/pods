@@ -1,4 +1,5 @@
-/*global jQuery, _, Backbone, PodsMn */
+/* global jQuery, _ */
+/* eslint-disable */
 import template from 'dfv/src/fields/file/file-upload-layout.html';
 
 import { PodsDFVFieldLayout } from 'dfv/src/core/pods-field-views';

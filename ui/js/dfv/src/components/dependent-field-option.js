@@ -170,6 +170,7 @@ DependentFieldOption.propTypes = {
 		PropTypes.string,
 		PropTypes.bool,
 		PropTypes.number,
+		PropTypes.array,
 	] ),
 	setOptionValue: PropTypes.func.isRequired,
 };

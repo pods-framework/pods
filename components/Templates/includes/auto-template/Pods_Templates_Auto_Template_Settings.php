@@ -274,7 +274,7 @@ class Pods_Templates_Auto_Template_Settings {
 				'prepend' => __( 'Before', 'pods' ),
 				'replace' => __( 'Replace', 'pods' ),
 			);
-			$pick['data']  = $location_data;
+			$pick['data'] = $location_data;
 
 			// add location options to fields without type set.
 			foreach ( $options['pods-pfat'] as $k => $option ) {

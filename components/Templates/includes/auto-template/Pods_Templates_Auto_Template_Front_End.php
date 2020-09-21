@@ -106,6 +106,7 @@ class Pods_Templates_Auto_Template_Front_End {
 					'type'  => array(
 						'taxonomy',
 						'post_type',
+						'comment',
 					),
 					'names' => true,
 				)

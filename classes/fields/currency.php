@@ -291,6 +291,9 @@ class PodsField_Currency extends PodsField_Number {
 			$value
 		);
 
+		// Remove trailing dash only from the end of the string.
+		$value = rtrim( $value, '-' );
+
 		return parent::pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
 	}

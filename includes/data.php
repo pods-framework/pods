@@ -292,17 +292,64 @@ function pods_trim( $input, $charlist = null, $lr = null ) {
 			$output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
 		}
 	} else {
-		if ( 'l' === $lr ) {
-			$output = ltrim( $input, $charlist );
-		} elseif ( 'r' === $lr ) {
-			$output = rtrim( $input, $charlist );
-		} else {
-			$output = trim( $input, $charlist );
+		$args = array( $input );
+		if ( null !== $charlist ) {
+			$args[] = $charlist;
 		}
+		if ( 'l' === $lr ) {
+			$function = 'ltrim';
+		} elseif ( 'r' === $lr ) {
+			$function = 'rtrim';
+		} else {
+			$function = 'trim';
+		}
+		$output = call_user_func_array( $function, $args );
 	}//end if
 
 	return $output;
 
+}
+
+/**
+ * Traverse an array or object by array values order or a string (name.name.name).
+ *
+ * @since 2.7.18
+ *
+ * @param array|string|int $traverse The traversal names/keys.
+ * @param array|object     $value    The value to traverse into.
+ *
+ * @return mixed
+ */
+function pods_traverse( $traverse, $value ) {
+	if ( ! $traverse && ! is_numeric( $traverse ) ) {
+		return $value;
+	}
+
+	if ( is_scalar( $value ) ) {
+		return null;
+	}
+
+	if ( is_object( $value ) ) {
+		$value = (array) $value;
+	}
+
+	if ( ! is_array( $traverse ) ) {
+		$traverse = explode( '.', $traverse );
+	}
+
+	$key = array_shift( $traverse );
+
+	if ( ! isset( $value[ $key ] ) ) {
+		return null;
+	}
+
+	$value = $value[ $key ];
+
+	if ( $traverse ) {
+		$value = pods_traverse( $traverse, $value );
+	}
+
+	return $value;
 }
 
 /**
@@ -357,6 +404,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( isset( $_REQUEST[ $var ] ) ) {
 					$output = pods_unslash( $_REQUEST[ $var ] );
 				}
+				break;
+			case 'query':
+				$output = get_query_var( $var, $default );
 				break;
 			case 'url':
 			case 'uri':
@@ -583,6 +633,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 			case 'user':
 				if ( is_user_logged_in() ) {
 					$user = get_userdata( get_current_user_id() );
+
+					// Prevent deprecation notice from WP.
+					if ( 'id' === $var ) {
+						$var = 'ID';
+					}
 
 					if ( isset( $user->{$var} ) ) {
 						$value = $user->{$var};
@@ -2143,37 +2198,7 @@ function pods_list_filter( $list, $args = array(), $operator = 'AND' ) {
 		$data   = get_object_vars( $data );
 	}
 
-	$operator = strtoupper( $operator );
-	$count    = count( $args );
-	$filtered = array();
-
-	foreach ( $data as $key => $obj ) {
-		$to_match = $obj;
-
-		if ( is_object( $to_match ) ) {
-			$to_match = get_object_vars( $to_match );
-		} elseif ( ! is_array( $to_match ) ) {
-			continue;
-		}
-
-		$matched = 0;
-
-		foreach ( $args as $m_key => $m_value ) {
-			if ( array_key_exists( $m_key, $to_match ) && $m_value == $to_match[ $m_key ] ) {
-				$matched ++;
-			}
-		}
-
-		if ( 'AND' === $operator && $matched == $count ) {
-			$filtered[ $key ] = $obj;
-		} elseif ( 'OR' === $operator && $matched > 0 ) {
-			$filtered[ $key ] = $obj;
-		} elseif ( 'NOT' === $operator && 0 == $matched ) {
-			$filtered[ $key ] = $obj;
-		} else {
-			continue;
-		}
-	}//end foreach
+	$filtered = wp_list_filter( $data, $args, $operator );
 
 	if ( $object ) {
 		$filtered = (object) $filtered;

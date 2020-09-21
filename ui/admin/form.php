@@ -87,7 +87,7 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 		$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 		if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) {
-			$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
+			$message .= ' <a target="_blank" rel="noopener noreferrer" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 		}
 
 		$error = sprintf( __( '<strong>Error:</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
@@ -112,7 +112,7 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 	$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 	if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) {
-		$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
+		$message .= ' <a target="_blank" rel="noopener noreferrer" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 	}
 
 	$error = sprintf( __( '<strong>Error:</strong> %1$s not %2$s.', 'pods' ), $obj->item, $action );
@@ -197,10 +197,7 @@ if ( 0 < $pod->id() ) {
 				<div id="side-sortables" class="meta-box-sortables ui-sortable">
 					<!-- BEGIN PUBLISH DIV -->
 					<div id="submitdiv" class="postbox">
-						<div class="handlediv" title="Click to toggle"><br /></div>
-						<h3 class="hndle">
-							<span><?php echo pods_v( 'label_manage', $pod_options, __( 'Manage', 'pods' ) ); ?></span>
-						</h3>
+						<?php PodsForm::render_postbox_header( pods_v( 'label_manage', $pod_options, __( 'Manage', 'pods' ) ) ); ?>
 
 						<div class="inside">
 							<div class="submitbox" id="submitpost">
@@ -213,7 +210,7 @@ if ( 0 < $pod->id() ) {
 											?>
 											<div id="minor-publishing-actions">
 												<div id="preview-action">
-													<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
+													<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank" rel="noopener noreferrer"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
 												</div>
 												<div class="clear"></div>
 											</div>
@@ -369,10 +366,9 @@ if ( 0 < $pod->id() ) {
 								 * @since 2.4.1
 								 */
 								do_action( 'pods_act_editor_before_navigation', $pod, $obj );
-								?>
-								<div class="handlediv" title="Click to toggle"><br /></div>
-								<h3 class="hndle"><span><?php _e( 'Navigate', 'pods' ); ?></span></h3>
 
+								PodsForm::render_postbox_header( __( 'Navigate', 'pods' ) );
+								?>
 								<div class="inside">
 									<div class="pods-admin" id="navigatebox">
 										<div id="navigation-actions">
@@ -555,12 +551,7 @@ if ( 0 < $pod->id() ) {
 									 * @since 2.4.1
 									 */
 									do_action( 'pods_act_editor_before_metabox', $pod );
-									?>
-									<div id="pods-meta-box-<?php echo esc_attr( sanitize_title( $group['label'] ) ); ?>" class="postbox">
-										<div class="handlediv" title="Click to toggle"><br /></div>
-										<h3 class="hndle">
-								<span>
-									<?php
+
 									if ( ! $more && 1 == count( $groups ) ) {
 										$title = __( 'Fields', 'pods' );
 									} else {
@@ -568,10 +559,10 @@ if ( 0 < $pod->id() ) {
 									}
 
 									/** This filter is documented in classes/PodsMeta.php */
-									echo apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->api->pod_data['type'], $pod->pod );
+									$title = apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->api->pod_data['type'], $pod->pod );
 									?>
-								</span>
-										</h3>
+									<div id="pods-meta-box-<?php echo esc_attr( sanitize_title( $group['label'] ) ); ?>" class="postbox">
+										<?php PodsForm::render_postbox_header( $title ); ?>
 
 										<div class="inside">
 											<?php

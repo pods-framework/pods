@@ -15,13 +15,13 @@ When contributing please ensure you follow the guidelines below so that we can k
 
 * Fork the repository on GitHub
 * Make the changes to your forked repository's code
-  * Ensure you stick to the [WordPress Coding Standards](http://codex.wordpress.org/WordPress_Coding_Standards)
-* Create a new branch, named according to our [git workflow](git-workflow.md)
+  * Ensure you stick to the [WordPress Coding Standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/)
+* Create a new branch, named according to our [git workflow](docs/git-workflow.md)
 * When committing, reference your issue (if present) and include a note about the fix
-* Push the changes to the branch you created and submit a pull request for the 2.x branch according to our [git workflow](git-workflow.md)
+* Push the changes to the branch you created and submit a pull request against the corresponding branch according to our [git workflow](docs/git-workflow.md)
 
 At this point you're waiting on us to merge your pull request. We'll review all pull requests, and make suggestions and changes if necessary.
 
 # Additional Resources
-* [General GitHub documentation](http://help.github.com/)
-* [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
+* [General GitHub documentation](https://help.github.com/)
+* [GitHub pull request documentation](https://help.github.com/send-pull-requests/)

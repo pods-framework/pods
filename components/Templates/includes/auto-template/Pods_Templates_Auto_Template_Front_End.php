@@ -164,22 +164,36 @@ class Pods_Templates_Auto_Template_Front_End {
 			foreach ( $the_pods as $the_pod => $the_pod_label ) {
 				// get this Pods' data.
 				$pod_data = $api->load_pod( array( 'name' => $the_pod ) );
+				$options  = pods_v( 'options', $pod_data, array() );
 
 				// if auto template is enabled add info about Pod to array.
-				if ( 1 == pods_v( 'pfat_enable', $pod_data['options'] ) ) {
+				if ( 1 == pods_v( 'pfat_enable', $options ) ) {
+					$type = pods_v( 'type', $pod_data, false, true );
+
+					switch( $type ) {
+						case 'comment':
+							$default_hook = 'comment_text';
+							break;
+						case 'taxonomy':
+							$default_hook = 'get_the_archive_description';
+							break;
+						default:
+							$default_hook = 'the_content';
+							break;
+					}
+
 					// check if pfat_single and pfat_archive are set.
-					$single           = pods_v( 'pfat_single', $pod_data['options'], false, true );
-					$archive          = pods_v( 'pfat_archive', $pod_data['options'], false, true );
-					$single_append    = pods_v( 'pfat_append_single', $pod_data['options'], true, true );
-					$archive_append   = pods_v( 'pfat_append_archive', $pod_data['options'], true, true );
-					$single_filter    = pods_v( 'pfat_filter_single', $pod_data['options'], 'the_content', true );
-					$archive_filter   = pods_v( 'pfat_filter_archive', $pod_data['options'], 'the_content', true );
-					$run_outside_loop = pods_v( 'pfat_run_outside_loop', $pod_data['options'], false, true );
-					$type             = pods_v( 'type', $pod_data, false, true );
+					$single           = pods_v( 'pfat_single', $options, false, true );
+					$archive          = pods_v( 'pfat_archive', $options, false, true );
+					$single_append    = pods_v( 'pfat_append_single', $options, true, true );
+					$archive_append   = pods_v( 'pfat_append_archive', $options, true, true );
+					$single_filter    = pods_v( 'pfat_filter_single', $options, $default_hook, true );
+					$archive_filter   = pods_v( 'pfat_filter_archive', $options, $default_hook, true );
+					$run_outside_loop = pods_v( 'pfat_run_outside_loop', $options, false, true );
 
 					// Check if it's a post type that has an archive.
 					if ( $type === 'post_type' && $the_pod !== 'post' || $the_pod !== 'page' ) {
-						$has_archive = pods_v( 'has_archive', $pod_data['options'], false, true );
+						$has_archive = pods_v( 'has_archive', $options, false, true );
 					} else {
 						$has_archive = true;
 					}

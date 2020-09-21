@@ -255,14 +255,22 @@ class Pods_Templates_Auto_Template_Settings {
 
 			if ( ! empty( $titles ) ) {
 				foreach ( $pick as $k => $v ) {
-					$options['pods-pfat']['pfat_single'][ $k ]  = $v;
-					$options['pods-pfat']['pfat_archive'][ $k ] = $v;
+					if ( isset( $options['pods-pfat']['pfat_single'] ) ) {
+						$options['pods-pfat']['pfat_single'][ $k ] = $v;
+					}
+					if ( isset( $options['pods-pfat']['pfat_archive'] ) ) {
+						$options['pods-pfat']['pfat_archive'][ $k ] = $v;
+					}
 				}
 
-				$template_titles = array_combine( $this->get_template_titles(), $this->get_template_titles() );
+				$titles_data = array( null => __( '-- Select One --', 'pods' ) ) + array_combine( $titles, $titles );
 
-				$options['pods-pfat']['pfat_archive']['data'] = array( null => __( 'No Archive view template', 'pods' ) ) + $template_titles;
-				$options['pods-pfat']['pfat_single']['data']  = array( null => __( 'No view template', 'pods' ) ) + $template_titles;
+				if ( isset( $options['pods-pfat']['pfat_single'] ) ) {
+					$options['pods-pfat']['pfat_single']['data'] = $titles_data;
+				}
+				if ( isset( $options['pods-pfat']['pfat_archive'] ) ) {
+					$options['pods-pfat']['pfat_archive']['data'] = $titles_data;
+				}
 			}
 
 			// Add data to $pick for template location

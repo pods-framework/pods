@@ -309,6 +309,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 * Outputs templates after the content as needed.
 	 *
 	 * @param string $content Post content
+	 * @param mixed  $obj     Object context
 	 *
 	 * @uses  'the_content' filter
 	 *
@@ -316,7 +317,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @since 2.4.5
 	 */
-	public function front( $content ) {
+	public function front( $content, $obj = null ) {
 
 		// The current pod type.
 		$pod_type = '';
@@ -327,21 +328,41 @@ class Pods_Templates_Auto_Template_Front_End {
 		// Now use other methods in class to build array to search in/ use.
 		$possible_pods = $this->auto_pods();
 
-		// Build Pods object for current item.
-		$pod_id = get_queried_object_id();
-		if ( is_singular() || in_the_loop() ) {
-			$pod_type = 'post';
-		} elseif ( is_tax() ) {
-			// Outside the loop in a taxonomy, we want the term.
-			$obj      = get_queried_object();
-			$pod_type = 'taxonomy';
-			$pod_name = $obj->taxonomy;
-		} else {
-			// Backwards compatibility.
-			global $post;
-			if ( $post ) {
-				$pod_id   = $post->ID;
+		if ( $obj ) {
+			if ( $obj instanceof WP_Post ) {
 				$pod_type = 'post';
+				$pod_name = $obj->post_type;
+				$pod_id   = $obj->ID;
+			} elseif ( $obj instanceof WP_Term ) {
+				$pod_type = 'taxonomy';
+				$pod_name = $obj->taxonomy;
+				$pod_id   = $obj->term_id;
+			} elseif ( $obj instanceof WP_Comment ) {
+				$pod_type = 'comment';
+				$pod_name = 'comment';
+				$pod_id   = $obj->comment_ID;
+			} else {
+				$obj = null;
+			}
+		}
+
+		if ( ! $pod_type ) {
+			// Build Pods object for current item.
+			$pod_id = get_queried_object_id();
+			if ( is_singular() || in_the_loop() ) {
+				$pod_type = 'post';
+			} elseif ( is_tax() ) {
+				// Outside the loop in a taxonomy, we want the term.
+				$obj      = get_queried_object();
+				$pod_type = 'taxonomy';
+				$pod_name = $obj->taxonomy;
+			} else {
+				// Backwards compatibility.
+				global $post;
+				if ( $post ) {
+					$pod_id   = $post->ID;
+					$pod_type = 'post';
+				}
 			}
 		}
 		// @todo Users?

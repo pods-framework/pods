@@ -221,6 +221,15 @@ class Pods_Templates_Auto_Template_Settings {
 						'help'       => __( 'Whether the template will go before, after or in place of the comment text.', 'pods' ),
 						'depends-on' => array( 'pfat_enable' => true ),
 					),
+					// @todo support other hooks.
+					/*'pfat_filter_single'    => array(
+						'label'       => __( 'Template Filter', 'pods' ),
+						'help'        => __( 'Which filter to use for views.', 'pods' ),
+						'description' => __( 'When choosing a different filter make sure this filter passes the comment as a parameter.', 'pods' ),
+						'default'     => 'comment_text',
+						'type'        => 'text',
+						'depends-on'  => array( 'pfat_enable' => true ),
+					),*/
 				);
 				break;
 		}

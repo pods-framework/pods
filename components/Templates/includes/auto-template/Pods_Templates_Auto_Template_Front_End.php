@@ -33,6 +33,8 @@ class Pods_Templates_Auto_Template_Front_End {
 		// Setup hooks after each new post in the loop.
 		add_action( 'the_post', array( $this, 'hook_content' ) );
 
+		// Setup comment hooks.
+		add_action( 'template_redirect', array( $this, 'maybe_hook_comment' ) );
 	}
 
 	/**
@@ -59,6 +61,16 @@ class Pods_Templates_Auto_Template_Front_End {
 		}
 
 		$this->install_hooks();
+	}
+
+	public function maybe_hook_comment() {
+		$possible_pods = $this->auto_pods();
+
+		if ( isset( $possible_pods['comment'] ) ) {
+
+			// Comment auto templates.
+			add_filter( 'comment_text', array( $this, 'front' ), 99, 2 );
+		}
 	}
 
 	/**

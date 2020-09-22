@@ -47,6 +47,9 @@ class Pods_Templates_Auto_Template_Settings {
 		// add the same tab for comments
 		add_filter( 'pods_admin_setup_edit_tabs_comment', array( $this, 'tab' ), 11, 3 );
 
+		// add the same tab for users / authors.
+		add_filter( 'pods_admin_setup_edit_tabs_user', array( $this, 'tab' ), 11, 3 );
+
 		// Add options to the new tab
 		add_filter( 'pods_admin_setup_edit_options', array( $this, 'options' ), 12, 2 );
 
@@ -106,8 +109,16 @@ class Pods_Templates_Auto_Template_Settings {
 	 * @since 2.5.5
 	 */
 	public function options( $options, $pod ) {
+		$default_hooks = array(
+			'post_type' => 'the_content',
+			'taxonomy'  => 'get_the_archive_description',
+			'user'      => 'get_the_author_description',
+			'comment'   => 'comment_text',
+		);
 
-		switch ( $pod['type'] ) {
+		$type = $pod['type'];
+
+		switch ( $type ) {
 			case 'post_type':
 				$options['pods-pfat'] = array(
 					'pfat_enable'           => array(
@@ -127,7 +138,7 @@ class Pods_Templates_Auto_Template_Settings {
 						'boolean_yes_label' => '',
 					),
 					'pfat_single'           => array(
-						'label'      => __( 'Single item view template', 'pods' ),
+						'label'      => __( 'Single view template', 'pods' ),
 						'help'       => __( 'Name of Pods template to use for single item view.', 'pods' ),
 						'type'       => 'text',
 						'default'    => false,
@@ -160,7 +171,7 @@ class Pods_Templates_Auto_Template_Settings {
 					'pfat_filter_archive'   => array(
 						'label'      => __( 'Archive Template Filter', 'pods' ),
 						'help'       => __( 'Which filter to use for archives.', 'pods' ),
-						'default'    => 'the_content',
+						'default'    => 'the_excerpt',
 						'type'       => 'text',
 						'depends-on' => array( 'pfat_enable' => true ),
 					),
@@ -168,18 +179,20 @@ class Pods_Templates_Auto_Template_Settings {
 				break;
 
 			case 'taxonomy':
+			case 'user':
+			case 'comment':
 				$options['pods-pfat'] = array(
 					'pfat_enable'        => array(
-						'label'             => __( 'Enable Automatic Pods Templates for this Taxonomy Pod?', 'pods' ),
-						'help'              => __( 'When enabled you can specify the names of a Pods Template to be used to display information about this taxonomy and/or posts in this taxonomy in the front-end.', 'pods' ),
+						'label'             => __( 'Enable Automatic Pods Templates for this Pod?', 'pods' ),
+						'help'              => __( 'When enabled you can specify the names of Pods Templates to be used to display items in this Pod in the front-end.', 'pods' ),
 						'type'              => 'boolean',
 						'default'           => false,
 						'dependency'        => true,
 						'boolean_yes_label' => '',
 					),
 					'pfat_single'        => array(
-						'label'      => __( 'Taxonomy Template', 'pods' ),
-						'help'       => __( 'Name of Pods template to use to present this taxonomy object itself.', 'pods' ),
+						'label'      => __( 'Template', 'pods' ),
+						'help'       => __( 'Name of Pods template to use.', 'pods' ),
 						'type'       => 'text',
 						'default'    => false,
 						'depends-on' => array( 'pfat_enable' => true ),
@@ -190,51 +203,46 @@ class Pods_Templates_Auto_Template_Settings {
 						'depends-on' => array( 'pfat_enable' => true ),
 					),
 					'pfat_filter_single' => array(
-						'label'      => __( 'Taxonomy Template Filter', 'pods' ),
-						'help'       => __( 'Which filter to use for taxonomy view.', 'pods' ),
-						'default'    => 'get_the_archive_description',
+						'label'      => __( 'Template Filter', 'pods' ),
+						'help'       => __( 'Which filter to use for this template.', 'pods' ),
+						'default'    => $default_hooks[ $type ],
 						'type'       => 'text',
 						'depends-on' => array( 'pfat_enable' => true ),
 					),
-				);
-				break;
-
-			case 'comment':
-				$options['pods-pfat'] = array(
-					'pfat_enable'           => array(
-						'label'             => __( 'Enable Automatic Pods Templates for this Pod?', 'pods' ),
-						'help'              => __( 'When enabled you can specify the names of a Pods Template to be used to display items in this Pod in the front-end.', 'pods' ),
-						'type'              => 'boolean',
-						'default'           => false,
-						'dependency'        => true,
-						'boolean_yes_label' => '',
-					),
-					'pfat_single'           => array(
-						'label'      => __( 'Item view template', 'pods' ),
-						'help'       => __( 'Name of Pods template to use for single comment view.', 'pods' ),
+					'pfat_archive'          => array(
+						'label'      => __( 'Archive view template', 'pods' ),
+						'help'       => __( 'Name of Pods template to use for use while in the loop.', 'pods' ),
 						'type'       => 'text',
 						'default'    => false,
 						'depends-on' => array( 'pfat_enable' => true ),
 					),
-					'pfat_append_single'    => array(
-						'label'      => __( 'Template Location', 'pods' ),
-						'help'       => __( 'Whether the template will go before, after or in place of the comment text.', 'pods' ),
+					'pfat_append_archive'   => array(
+						'label'      => __( 'Archive Template Location', 'pods' ),
+						'help'       => __( 'Whether the template will go before, after or in place of the existing content.', 'pods' ),
 						'depends-on' => array( 'pfat_enable' => true ),
 					),
-					// @todo support other hooks.
-					/*'pfat_filter_single'    => array(
-						'label'       => __( 'Template Filter', 'pods' ),
-						'help'        => __( 'Which filter to use for views.', 'pods' ),
-						'description' => __( 'When choosing a different filter make sure this filter passes the comment as a parameter.', 'pods' ),
-						'default'     => 'comment_text',
-						'type'        => 'text',
-						'depends-on'  => array( 'pfat_enable' => true ),
-					),*/
+					'pfat_filter_archive'   => array(
+						'label'      => __( 'Archive Template Filter', 'pods' ),
+						'help'       => __( 'Which filter to use for archives.', 'pods' ),
+						'default'    => $default_hooks[ $type ],
+						'type'       => 'text',
+						'depends-on' => array( 'pfat_enable' => true ),
+					),
 				);
 				break;
 		}
 
 		if ( isset( $options['pods-pfat'] ) ) {
+
+			if ( 'taxonomy' === $type ) {
+				// Taxonomies do not have archives, they are archives.
+				unset( $options['pods-pfat']['pfat_archive'] );
+				unset( $options['pods-pfat']['pfat_append_archive'] );
+				unset( $options['pods-pfat']['pfat_filter_archive'] );
+			} elseif ( 'comment' === $type ) {
+				// @todo support other hooks.
+				unset( $options['pods-pfat']['pfat_filter_single'] );
+			}
 
 			// field options pick values
 			$pick = array(

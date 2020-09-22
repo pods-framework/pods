@@ -124,6 +124,7 @@ class Pods_Templates_Auto_Template_Front_End {
 						'taxonomy',
 						'post_type',
 						'comment',
+						'user',
 					),
 					'names' => true,
 				)
@@ -191,6 +192,9 @@ class Pods_Templates_Auto_Template_Front_End {
 					switch( $type ) {
 						case 'comment':
 							$default_hook = 'comment_text';
+							break;
+						case 'user':
+							$default_hook = 'get_the_author_description';
 							break;
 						case 'taxonomy':
 							$default_hook = 'get_the_archive_description';
@@ -307,10 +311,12 @@ class Pods_Templates_Auto_Template_Front_End {
 		$obj = get_queried_object();
 
 		// See if we are on a post type and if so, set $current_post_type to post type.
-		if ( isset( $obj->post_type ) ) {
+		if ( $obj instanceof WP_Post ) {
 			$pod_name = $obj->post_type;
-		} elseif ( isset( $obj->taxonomy ) ) {
+		} elseif ( $obj instanceof WP_Term ) {
 			$pod_name = $obj->taxonomy;
+		} elseif ( $obj instanceof WP_User ) {
+			$pod_name = 'user';
 		} elseif ( isset( $obj->name ) ) {
 			$pod_name = $obj->name;
 		} elseif ( is_home() ) {

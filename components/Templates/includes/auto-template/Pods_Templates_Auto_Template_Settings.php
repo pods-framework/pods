@@ -242,6 +242,7 @@ class Pods_Templates_Auto_Template_Settings {
 			} elseif ( 'comment' === $type ) {
 				// @todo support other hooks.
 				unset( $options['pods-pfat']['pfat_filter_single'] );
+				unset( $options['pods-pfat']['pfat_filter_archive'] );
 			}
 
 			// field options pick values

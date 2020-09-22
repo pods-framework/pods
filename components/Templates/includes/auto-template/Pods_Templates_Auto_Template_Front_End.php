@@ -63,6 +63,11 @@ class Pods_Templates_Auto_Template_Front_End {
 		$this->install_hooks();
 	}
 
+	/**
+	 * Check whether to add the hook for comment templates.
+	 *
+	 * @since 2.7.23
+	 */
 	public function maybe_hook_comment() {
 		$possible_pods = $this->auto_pods();
 

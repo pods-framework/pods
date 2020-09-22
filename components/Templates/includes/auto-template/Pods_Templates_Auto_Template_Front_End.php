@@ -352,6 +352,7 @@ class Pods_Templates_Auto_Template_Front_End {
 
 		// The current pod type.
 		$pod_type = '';
+		$pod_id   = null;
 
 		// Get the current pod name.
 		$pod_name = $this->get_pod_name();
@@ -372,12 +373,29 @@ class Pods_Templates_Auto_Template_Front_End {
 				$pod_type = 'comment';
 				$pod_name = 'comment';
 				$pod_id   = $obj->comment_ID;
+			} elseif ( $obj instanceof WP_User ) {
+				$pod_type = 'user';
+				$pod_name = 'user';
+				$pod_id   = $obj->ID;
+			} elseif ( is_numeric( $obj ) ) {
+				$current_filter = current_filter();
+
+				foreach ( $possible_pods as $possible_pod => $possible_pod_data ) {
+					if (
+						$current_filter === $possible_pod_data['single_filter'] ||
+						$current_filter === $possible_pod_data['archive_filter']
+					) {
+						$pod_id   = (int) $obj;
+						$pod_name = $possible_pod;
+						$pod_type = $possible_pod_data['type'];
+					}
+				}
 			} else {
 				$obj = null;
 			}
 		}
 
-		if ( ! $pod_type ) {
+		if ( ! $pod_id ) {
 			// Build Pods object for current item.
 			$pod_id = get_queried_object_id();
 			if ( is_singular() || in_the_loop() ) {

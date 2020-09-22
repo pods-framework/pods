@@ -34,7 +34,7 @@ class Pods_Templates_Auto_Template_Front_End {
 		add_action( 'the_post', array( $this, 'hook_content' ) );
 
 		// Setup comment hooks.
-		add_action( 'template_redirect', array( $this, 'maybe_hook_comment' ) );
+		add_action( 'template_redirect', array( $this, 'maybe_hook_content' ) );
 	}
 
 	/**
@@ -68,13 +68,21 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @since 2.7.23
 	 */
-	public function maybe_hook_comment() {
+	public function maybe_hook_content() {
 		$possible_pods = $this->auto_pods();
 
 		if ( isset( $possible_pods['comment'] ) ) {
 
 			// Comment auto templates.
 			add_filter( 'comment_text', array( $this, 'front' ), 99, 2 );
+		}
+
+		if ( isset( $possible_pods['user'] ) ) {
+			// User auto templates.
+			add_filter( $possible_pods['user']['single_filter'], array( $this, 'front' ), 99, 2 );
+			if ( is_archive() ) {
+				add_filter( $possible_pods['user']['archive_filter'], array( $this, 'front' ), 99, 2 );
+			}
 		}
 	}
 

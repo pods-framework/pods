@@ -81,10 +81,13 @@ const SimpleSelect = ( {
 
 SimpleSelect.propTypes = {
 	name: PropTypes.string.isRequired,
-	value: PropTypes.string,
+	value: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.arrayOf( PropTypes.string ),
+	] ),
 	setValue: PropTypes.func.isRequired,
 	options: PropTypes.object.isRequired,
-	placeholder: PropTypes.string.isRequired,
+	placeholder: PropTypes.string,
 	isMulti: PropTypes.bool,
 };
 

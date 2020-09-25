@@ -2607,15 +2607,15 @@ function pods_session_start() {
  *
  * @since 2.7.23
  *
- * @return false|string
+ * @return string
  */
 function pods_session_id() {
 	if ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
-		return false;
+		return '';
 	}
 	if ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
 		// Sessions are disabled.
-		return false;
+		return '';
 	}
 	return @session_id();
 }

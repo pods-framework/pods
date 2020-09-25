@@ -2580,9 +2580,9 @@ function pods_session_start() {
 		return false;
 	}
 
-	if ( '' !== session_id() ) {
-		// Check if session ID is already set.
-		// In separate if clause, to also check for non-file based sessions.
+	// Check if session is already set.
+	// In separate if clause, to also check for non-file based sessions.
+	if ( pods_session_id() ) {
 		return false;
 	}
 
@@ -2591,6 +2591,20 @@ function pods_session_start() {
 
 	return true;
 
+}
+
+/**
+ * Get current session ID.
+ *
+ * @since 2.7.23
+ *
+ * @return false|string
+ */
+function pods_session_id() {
+	if ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
+		return false;
+	}
+	return @session_id();
 }
 
 /**

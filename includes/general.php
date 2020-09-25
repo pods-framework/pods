@@ -2572,6 +2572,9 @@ function pods_session_start() {
 	} elseif ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
 		// Allow for bypassing Pods session autostarting.
 		return false;
+	} elseif ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
+		// Sessions are disabled.
+		return false;
 	} elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
 		// Allow for non-file based sessions, like Memcache.
 		// This is OK, but we don't want to check if file_exists on next statement.
@@ -2582,8 +2585,14 @@ function pods_session_start() {
 
 	// Check if session is already set.
 	// In separate if clause, to also check for non-file based sessions.
-	if ( pods_session_id() ) {
-		return false;
+	if ( function_exists( 'session_status' ) ) { // PHP >=5.4.
+		if ( PHP_SESSION_ACTIVE === session_status() ) {
+			return false;
+		}
+	} else { // PHP <5.4.
+		if ( pods_session_id() ) {
+			return false;
+		}
 	}
 
 	// Start session
@@ -2602,6 +2611,10 @@ function pods_session_start() {
  */
 function pods_session_id() {
 	if ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
+		return false;
+	}
+	if ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
+		// Sessions are disabled.
 		return false;
 	}
 	return @session_id();

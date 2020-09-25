@@ -9254,7 +9254,7 @@ class PodsAPI {
 			return pods_error( __( 'Invalid submission', 'pods' ), $this );
 		}
 
-		$uid = @session_id();
+		$uid = pods_session_id();
 
 		if ( is_user_logged_in() ) {
 			$uid = 'user_' . get_current_user_id();

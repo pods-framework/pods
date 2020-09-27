@@ -243,12 +243,12 @@ class Pods_Templates_Auto_Template_Settings {
 				'depends-on' => array( 'pfat_enable' => true, 'pfat_filter_archive' => 'custom' ),
 			),
 			'pfat_run_outside_loop' => array(
-				'label'             => __( 'Execute Auto Template outside of the WordPress loop? (advanced)', 'pods' ),
-				'help'              => __( 'When enabled, the template will be executed whenever the specified filter is called.', 'pods' ),
+				'label'             => __( 'Run outside loop', 'pods' ),
+				'help'              => __( 'When enabled, the template will be executed whenever the specified filter is called. Only use this if you know you need to. There could be unforeseen consequences such as content in widgets and other areas of the site getting the templates added.', 'pods' ),
 				'type'              => 'boolean',
 				'default'           => false,
 				'depends-on'        => array( 'pfat_enable' => true ),
-				'boolean_yes_label' => '',
+				'boolean_yes_label' => __( 'Execute Auto Template outside of the WordPress loop (advanced)', 'pods' ),
 			),
 		);
 

@@ -41,13 +41,13 @@ class Pods_Templates_Auto_Template_Settings {
 		// Add option tab for post types
 		add_filter( 'pods_admin_setup_edit_tabs_post_type', array( $this, 'tab' ), 11, 3 );
 
-		// add the same tab for taxonomies
+		// Add the same tab for taxonomies.
 		add_filter( 'pods_admin_setup_edit_tabs_taxonomy', array( $this, 'tab' ), 11, 3 );
 
-		// add the same tab for comments
+		// Add the same tab for comments.
 		add_filter( 'pods_admin_setup_edit_tabs_comment', array( $this, 'tab' ), 11, 3 );
 
-		// add the same tab for users / authors.
+		// Add the same tab for users / authors.
 		add_filter( 'pods_admin_setup_edit_tabs_user', array( $this, 'tab' ), 11, 3 );
 
 		// Add options to the new tab

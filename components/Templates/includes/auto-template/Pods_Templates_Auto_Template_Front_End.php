@@ -197,7 +197,7 @@ class Pods_Templates_Auto_Template_Front_End {
 				if ( 1 == pods_v( 'pfat_enable', $options ) ) {
 					$type = pods_v( 'type', $pod_data, false, true );
 
-					switch( $type ) {
+					switch ( $type ) {
 						case 'comment':
 							$default_hook = 'comment_text';
 							break;
@@ -339,8 +339,8 @@ class Pods_Templates_Auto_Template_Front_End {
 	/**
 	 * Outputs templates after the content as needed.
 	 *
-	 * @param string $content Post content
-	 * @param mixed  $obj     Object context
+	 * @param string $content Post content.
+	 * @param mixed  $obj     Object context.
 	 *
 	 * @uses  'the_content' filter
 	 *

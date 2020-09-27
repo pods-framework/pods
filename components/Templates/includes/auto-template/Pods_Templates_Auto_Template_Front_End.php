@@ -20,21 +20,26 @@ class Pods_Templates_Auto_Template_Front_End {
 	private $filtered_content = array();
 
 	/**
+	 * List of auto pods.
+	 *
+	 * @var array
+	 *
+	 * @since TBD
+	 */
+	private $auto_pods = [];
+
+	/**
 	 * Pods_Templates_Auto_Template_Front_End constructor.
 	 */
 	public function __construct() {
-
 		if ( ! is_admin() ) {
 			add_action( 'wp', array( $this, 'set_frontier_style_script' ) );
+
+			$this->auto_pods = $this->auto_pods();
 		}
 
 		// Setup initial hooks.
 		add_action( 'template_redirect', array( $this, 'hook_content' ) );
-		// Setup hooks after each new post in the loop.
-		add_action( 'the_post', array( $this, 'hook_content' ) );
-
-		// Setup comment hooks.
-		add_action( 'template_redirect', array( $this, 'maybe_hook_content' ) );
 	}
 
 	/**
@@ -42,9 +47,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @since 2.6.6
 	 */
-	public function hook_content(){
-		$filter = $this->get_pod_filter();
-
+	public function hook_content() {
 		/**
 		 * Allows plugin to append/replace the_excerpt.
 		 *
@@ -54,36 +57,19 @@ class Pods_Templates_Auto_Template_Front_End {
 			define( 'PFAT_USE_ON_EXCERPT', false );
 		}
 
-		$this->filtered_content[ $filter ] = 10.5;
+		$possible_pods = $this->auto_pods();
 
-		if ( PFAT_USE_ON_EXCERPT ) {
-			$this->filtered_content['the_excerpt'] = 10;
+		foreach ( $possible_pods as $pod_name => $pod ) {
+			$filter = $this->get_pod_filter( $pod_name );
+
+			$this->filtered_content[ $filter ] = 10.5;
+
+			if ( PFAT_USE_ON_EXCERPT && ! empty( $possible_pods[ $pod_name ]['type'] ) && 'post_type' === $possible_pods[ $pod_name ]['type'] ) {
+				$this->filtered_content['the_excerpt'] = 10;
+			}
 		}
 
 		$this->install_hooks();
-	}
-
-	/**
-	 * Check whether to add the hook for comment templates.
-	 *
-	 * @since 2.7.23
-	 */
-	public function maybe_hook_content() {
-		$possible_pods = $this->auto_pods();
-
-		if ( isset( $possible_pods['comment'] ) ) {
-			// Comment auto templates.
-			add_filter( 'comment_text', array( $this, 'front' ), 99, 2 );
-		}
-
-		if ( isset( $possible_pods['user'] ) ) {
-			// User auto templates.
-			add_filter( $possible_pods['user']['single_filter'], array( $this, 'front' ), 99, 2 );
-
-			if ( is_archive() ) {
-				add_filter( $possible_pods['user']['archive_filter'], array( $this, 'front' ), 99, 2 );
-			}
-		}
 	}
 
 	/**
@@ -94,7 +80,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	public function install_hooks() {
 
 		foreach ( $this->filtered_content as $filter => $priority ) {
-			add_filter( $filter, array( $this, 'front' ), $priority );
+			add_filter( $filter, array( $this, 'front' ), $priority, 2 );
 		}
 	}
 
@@ -128,13 +114,15 @@ class Pods_Templates_Auto_Template_Front_End {
 			// get all post type pods.
 			$the_pods = pods_api()->load_pods(
 				array(
-					'type'  => array(
-						'taxonomy',
+					'type'       => array(
 						'post_type',
+						'taxonomy',
 						'comment',
 						'user',
 					),
-					'names' => true,
+					'names'      => true,
+					'fields'     => false,
+					'table_info' => false,
 				)
 			);
 
@@ -155,6 +143,9 @@ class Pods_Templates_Auto_Template_Front_End {
 	 * @since 2.4.5
 	 */
 	public function auto_pods() {
+		if ( ! empty( $this->auto_pods ) ) {
+			return $this->auto_pods;
+		}
 
 		/**
 		 * Filter to override all settings for which templates are used.
@@ -178,6 +169,13 @@ class Pods_Templates_Auto_Template_Front_End {
 
 		// check if we already have the results cached & use it if we can.
 		if ( $auto_pods === false ) {
+			$default_hooks = array(
+				'post_type' => 'the_content',
+				'taxonomy'  => 'get_the_archive_description',
+				'user'      => 'get_the_author_description',
+				'comment'   => 'comment_text',
+			);
+
 			// get possible pods
 			$the_pods = $this->the_pods();
 
@@ -190,27 +188,15 @@ class Pods_Templates_Auto_Template_Front_End {
 			// loop through each to see if auto templates is enabled.
 			foreach ( $the_pods as $the_pod => $the_pod_label ) {
 				// get this Pods' data.
-				$pod_data = $api->load_pod( array( 'name' => $the_pod ) );
+				$pod_data = $api->load_pod( array( 'name' => $the_pod, 'fields' => false, 'table_info' => false ) );
 				$options  = pods_v( 'options', $pod_data, array() );
 
 				// if auto template is enabled add info about Pod to array.
-				if ( 1 == pods_v( 'pfat_enable', $options ) ) {
+				if ( 1 === (int) pods_v( 'pfat_enable', $options ) ) {
 					$type = pods_v( 'type', $pod_data, false, true );
 
-					switch ( $type ) {
-						case 'comment':
-							$default_hook = 'comment_text';
-							break;
-						case 'user':
-							$default_hook = 'get_the_author_description';
-							break;
-						case 'taxonomy':
-							$default_hook = 'get_the_archive_description';
-							break;
-						default:
-							$default_hook = 'the_content';
-							break;
-					}
+					// Get default hook.
+					$default_hook = pods_v( $type, $default_hooks, '' );
 
 					// check if pfat_single and pfat_archive are set.
 					$single           = pods_v( 'pfat_single', $options, false, true );
@@ -229,10 +215,28 @@ class Pods_Templates_Auto_Template_Front_End {
 						$archive_filter = pods_v( 'pfat_filter_archive_custom', $options, $default_hook, true );
 					}
 
-					// Check if it's a post type that has an archive.
-					if ( 'post_type' === $type && ! in_array( $the_pod, array( 'post', 'page' ), true ) ) {
-						$has_archive = pods_v( 'has_archive', $options, false, true );
+					if ( 'taxonomy' === $type ) {
+						// We are treating taxonomy post archive as a taxonomy singular so disable the filter.
+						$archive_filter = '';
+					}
+
+					// Check if it's a type that supports archive templates. This will be used for admin checks.
+					if ( 'post_type' === $type ) {
+						if ( empty( $pod_data['object'] ) ) {
+							// Custom post types.
+							$has_archive = pods_v( 'has_archive', $options, false, true );
+						} else {
+							// Extended post types (use what they have).
+							// $has_archive = get_post_type_object( $the_pod )->has_archive;
+
+							// Force archive as true since we don't allow overriding the option in the admin.
+							$has_archive = true;
+						}
+					} elseif ( 'taxonomy' === $type ) {
+						// We are treating taxonomy post archive as a taxonomy singular.
+						$has_archive = false;
 					} else {
+						// All other types have singular and archive views.
 						$has_archive = true;
 					}
 
@@ -277,13 +281,12 @@ class Pods_Templates_Auto_Template_Front_End {
 	/**
 	 * Get the filter used for a Pod.
 	 *
-	 * @param string $pod_name      The pod name.
-	 * @param array  $possible_pods Array of available pods. See self::auto_pods().
+	 * @param string $pod_name The pod name.
 	 *
 	 * @return string
 	 * @since  1.7.2
 	 */
-	public function get_pod_filter( $pod_name = '', $possible_pods = array() ) {
+	public function get_pod_filter( $pod_name = '' ) {
 		$filter = 'the_content';
 
 		if ( ! $pod_name ) {
@@ -291,10 +294,8 @@ class Pods_Templates_Auto_Template_Front_End {
 			$pod_name = $this->get_pod_name();
 		}
 
-		if ( ! $possible_pods ) {
-			// Now use other methods in class to build array to search in/ use.
-			$possible_pods = $this->auto_pods();
-		}
+		// Now use other methods in class to build array to search in/ use.
+		$possible_pods = $this->auto_pods();
 
 		if ( isset( $possible_pods[ $pod_name ] ) ) {
 			$this_pod = $possible_pods[ $pod_name ];
@@ -358,90 +359,46 @@ class Pods_Templates_Auto_Template_Front_End {
 	 */
 	public function front( $content, $obj = null ) {
 
-		// The current pod type.
-		$pod_type = '';
-		$pod_id   = null;
+		static $running = false;
 
-		// Get the current pod name.
-		$pod_name = $this->get_pod_name();
+		if ( $running ) {
+			return;
+		}
+
+		$running = true;
 
 		// Now use other methods in class to build array to search in/ use.
 		$possible_pods = $this->auto_pods();
 
-		if ( $obj ) {
-			if ( $obj instanceof WP_Post ) {
-				$pod_type = 'post';
-				$pod_name = $obj->post_type;
-				$pod_id   = $obj->ID;
-			} elseif ( $obj instanceof WP_Term ) {
-				$pod_type = 'taxonomy';
-				$pod_name = $obj->taxonomy;
-				$pod_id   = $obj->term_id;
-			} elseif ( $obj instanceof WP_Comment ) {
-				$pod_type = 'comment';
-				$pod_name = 'comment';
-				$pod_id   = $obj->comment_ID;
-			} elseif ( $obj instanceof WP_User ) {
-				$pod_type = 'user';
-				$pod_name = 'user';
-				$pod_id   = $obj->ID;
-			} elseif ( is_numeric( $obj ) ) {
-				$current_filter = current_filter();
+		$current_filter = current_filter();
+		$in_the_loop    = in_the_loop();
 
-				foreach ( $possible_pods as $possible_pod => $possible_pod_data ) {
-					if (
-						$current_filter === $possible_pod_data['single_filter'] ||
-						$current_filter === $possible_pod_data['archive_filter']
-					) {
-						$pod_id   = (int) $obj;
-						$pod_name = $possible_pod;
-						$pod_type = $possible_pod_data['type'];
-					}
-				}
-			} else {
+		if ( null === $obj && $in_the_loop ) {
+			$obj = get_post();
+		}
+
+		if ( null !== $obj ) {
+			$pod_info = $this->get_pod_info( $obj );
+
+			if ( empty( $pod_info['pod_type'] ) ) {
 				$obj = null;
+
+				$pod_info = $this->get_pod_info();
 			}
+		} else {
+			$pod_info = $this->get_pod_info();
 		}
 
-		if ( ! $pod_id ) {
-			// Build Pods object for current item.
-			$pod_id = get_queried_object_id();
-			if ( is_singular() || in_the_loop() ) {
-				$pod_type = 'post';
-			} elseif ( is_tax() ) {
-				// Outside the loop in a taxonomy, we want the term.
-				$obj      = get_queried_object();
-				$pod_type = 'taxonomy';
-				$pod_name = $obj->taxonomy;
-			} else {
-				// Backwards compatibility.
-				global $post;
-				if ( $post ) {
-					$pod_id   = $post->ID;
-					$pod_type = 'post';
-				}
-			}
-		}
-		// @todo Users?
+		$pod_id   = $pod_info['pod_id'];
+		$pod_name = $pod_info['pod_name'];
+		$pod_type = $pod_info['pod_type'];
+
 		// @todo Media?
 
 		// Check if $current_post_type is the key of the array of possible pods.
 		if ( $pod_type && isset( $possible_pods[ $pod_name ] ) ) {
-			// Get array for the current post type.
-			$auto_pod = $possible_pods[ $pod_name ];
-
-			$filter = $this->get_pod_filter( $pod_name, $possible_pods );
-
-			if ( current_filter() !== $filter ) {
-				return $content;
-			}
-
-			if ( 'post' === $pod_type && ! in_the_loop() && ! pods_v( 'run_outside_loop', $auto_pod, false ) ) {
-				// If outside of the loop, exit quickly.
-				return $content;
-			}
-
 			$pod_name_and_id = array( $pod_name, $pod_id );
+
 			/**
 			 * Change which pod and item to run the template against. The
 			 * default pod is the the post type of the post about to be
@@ -456,26 +413,143 @@ class Pods_Templates_Auto_Template_Front_End {
 			 * @param WP_post|WP_Term $obj             The object that is about to be displayed.
 			 */
 			$pod_name_and_id = apply_filters( 'pods_auto_template_pod_name_and_id', $pod_name_and_id, $pod_name, $obj );
-			$pod             = pods( $pod_name_and_id[0], $pod_name_and_id[1] );
+
+			if ( empty( $possible_pods[ $pod_name ] ) ) {
+				$running = false;
+
+				return $content;
+			}
+
+			// Get array for the current post type.
+			$auto_pod = $possible_pods[ $pod_name ];
+
+			if ( 'post' === $pod_type ) {
+				if ( ! $in_the_loop && ! pods_v( 'run_outside_loop', $auto_pod, false ) ) {
+					// If outside of the loop, exit quickly.
+					$running = false;
+
+					return $content;
+				}
+
+				if ( 'the_excerpt' === $current_filter && ( is_single() || is_singular() ) ) {
+					// Do not run excerpts on single.
+					$running = false;
+
+					return $content;
+				}
+			}
+
+			$pod = pods( $pod_name_and_id[0], $pod_name_and_id[1] );
 
 			// Heuristically decide if this is single or archive.
 			$type        = 'archive';
 			$type_filter = 'archive_filter';
 			$type_append = 'archive_append';
-			if ( ! in_the_loop() || is_singular() ) {
+
+			$is_single = true;
+
+			if ( null !== $obj ) {
+				$pod_info_check = $this->get_pod_info();
+
+				if ( $pod_info !== $pod_info_check ) {
+					$is_single = false;
+				}
+			}
+
+			if ( $is_single && ( ! $in_the_loop || is_singular() ) ) {
 				$type        = 'single';
 				$type_filter = 'single_filter';
 				$type_append = 'single_append';
 			}
 
-			if ( ! empty( $auto_pod[ $type ] ) && current_filter() == $auto_pod[ $type_filter ] ) {
+			if ( ! empty( $auto_pod[ $type ] ) && $current_filter === $auto_pod[ $type_filter ] ) {
 				// Load the template.
 				$content = $this->load_template( $auto_pod[ $type ], $content, $pod, $auto_pod[ $type_append ] );
 			}
 		}//end if
 
+		$running = false;
+
 		return $content;
 
+	}
+
+	/**
+	 * Get list of pod information based on an object or the detected current context.
+	 *
+	 * @since TBD
+	 *
+	 * @param null|object $obj The object to get pod information from or null to detect from current context.
+	 *
+	 * @return array List of pod information.
+	 */
+	public function get_pod_info( $obj = null ) {
+		$pod_id   = null;
+		$pod_type = '';
+		$pod_name = '';
+
+		if ( null !== $obj ) {
+			if ( $obj instanceof WP_Post ) {
+				$pod_type = 'post';
+				$pod_name = $obj->post_type;
+				$pod_id   = (int) $obj->ID;
+			} elseif ( $obj instanceof WP_Term ) {
+				$pod_type = 'taxonomy';
+				$pod_name = $obj->taxonomy;
+				$pod_id   = (int) $obj->term_id;
+			} elseif ( $obj instanceof WP_Comment ) {
+				$pod_type = 'comment';
+				$pod_name = 'comment';
+				$pod_id   = (int) $obj->comment_ID;
+			} elseif ( $obj instanceof WP_User ) {
+				$pod_type = 'user';
+				$pod_name = 'user';
+				$pod_id   = (int) $obj->ID;
+			} elseif ( is_numeric( $obj ) ) {
+				$current_filter = current_filter();
+
+				$possible_pods = $this->auto_pods();
+
+				foreach ( $possible_pods as $possible_pod => $possible_pod_data ) {
+					if (
+						$current_filter === $possible_pod_data['single_filter'] ||
+						$current_filter === $possible_pod_data['archive_filter']
+					) {
+						$pod_id   = (int) $obj;
+						$pod_name = $possible_pod;
+						$pod_type = $possible_pod_data['type'];
+
+						break;
+					}
+				}
+			}
+
+			return compact( 'pod_id', 'pod_type', 'pod_name' );
+		}
+
+		// Build Pods object for current item.
+		$obj      = get_queried_object();
+		$pod_id   = (int) get_queried_object_id();
+		$pod_type = '';
+		$pod_name = '';
+
+		if ( is_author() ) {
+			$pod_type = 'user';
+			$pod_name = 'user';
+		} elseif ( is_singular() || in_the_loop() ) {
+			return $this->get_pod_info( $obj );
+		} elseif ( is_tax() || is_category() || is_tag() ) {
+			return $this->get_pod_info( $obj );
+		} else {
+			// Backwards compatibility.
+			global $post;
+
+			if ( $post ) {
+				return $this->get_pod_info( $post );
+			}
+		}
+
+		return compact( 'pod_id', 'pod_type', 'pod_name' );
 	}
 
 	/**
@@ -493,9 +567,6 @@ class Pods_Templates_Auto_Template_Front_End {
 	 * @since 2.4.5
 	 */
 	public function load_template( $template_name, $content, $pod, $append = true ) {
-
-		// Prevent infinite loops caused by this method acting on post_content.
-		$this->remove_hooks();
 
 		// Allow magic tags for content type related templates.
 		$template_name = trim( $pod->do_magic_tags( $template_name ) );

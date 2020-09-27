@@ -122,8 +122,8 @@ class Pods_Templates_Auto_Template_Settings {
 			case 'post_type':
 				$options['pods-pfat'] = array(
 					'pfat_enable'           => array(
-						'label'             => __( 'Enable Automatic Pods Templates for this Pod?', 'pods' ),
-						'help'              => __( 'When enabled you can specify the names of Pods Templates to be used to display items in this Pod in the front-end.', 'pods' ),
+						'label'             => __( 'Enable Automatic Pod Templates for this Pod?', 'pods' ),
+						'help'              => __( 'When enabled you can specify the names of Pod Templates to be used to display items in this Pod in the front-end.', 'pods' ),
 						'type'              => 'boolean',
 						'default'           => false,
 						'dependency'        => true,
@@ -183,35 +183,47 @@ class Pods_Templates_Auto_Template_Settings {
 			case 'comment':
 				$options['pods-pfat'] = array(
 					'pfat_enable'        => array(
-						'label'             => __( 'Enable Automatic Pods Templates for this Pod?', 'pods' ),
-						'help'              => __( 'When enabled you can specify the names of Pods Templates to be used to display items in this Pod in the front-end.', 'pods' ),
+						'label'             => __( 'Enable Auto Templates', 'pods' ),
+						'help'              => __( 'When enabled you can specify the names of Pod Templates to be used to display items in this Pod in the front-end.', 'pods' ),
 						'type'              => 'boolean',
 						'default'           => false,
 						'dependency'        => true,
-						'boolean_yes_label' => '',
+						'boolean_yes_label' => __( 'Enable Automatic Pod Templates for this Pod', 'pods' ),
 					),
 					'pfat_single'        => array(
 						'label'      => __( 'Template', 'pods' ),
-						'help'       => __( 'Name of Pods template to use.', 'pods' ),
+						'help'       => __( 'Name of Pod Template to use.', 'pods' ),
 						'type'       => 'text',
 						'default'    => false,
 						'depends-on' => array( 'pfat_enable' => true ),
 					),
 					'pfat_append_single' => array(
 						'label'      => __( 'Template Location', 'pods' ),
-						'help'       => __( 'Whether the template will go before, after or in place of the post content.', 'pods' ),
+						'help'       => __( 'Whether the template will go before, after or in place of the existing content.', 'pods' ),
 						'depends-on' => array( 'pfat_enable' => true ),
 					),
 					'pfat_filter_single' => array(
 						'label'      => __( 'Template Filter', 'pods' ),
-						'help'       => __( 'Which filter to use for this template.', 'pods' ),
+						'help'       => __( 'Which filter to use for singular views.', 'pods' ),
 						'default'    => $default_hooks[ $type ],
-						'type'       => 'text',
+						'type'       => 'pick',
+						'data'       => array(
+							$default_hooks[ $type ] => sprintf( __( 'Filter: %s', 'pods' ), $default_hooks[ $type ] ),
+							'custom'                => __( 'Use a custom hook', 'pods' ),
+						),
 						'depends-on' => array( 'pfat_enable' => true ),
+						'dependency' => true,
+					),
+					'pfat_filter_single_custom' => array(
+						'label'      => __( 'Custom Template Filter', 'pods' ),
+						'help'       => __( 'Which custom filter to use for singular views.', 'pods' ),
+						'default'    => '',
+						'type'       => 'text',
+						'depends-on' => array( 'pfat_enable' => true, 'pfat_filter_single' => 'custom' ),
 					),
 					'pfat_archive'          => array(
 						'label'      => __( 'Archive view template', 'pods' ),
-						'help'       => __( 'Name of Pods template to use for use while in the loop.', 'pods' ),
+						'help'       => __( 'Name of Pod Template to use for use while in the loop.', 'pods' ),
 						'type'       => 'text',
 						'default'    => false,
 						'depends-on' => array( 'pfat_enable' => true ),
@@ -223,10 +235,21 @@ class Pods_Templates_Auto_Template_Settings {
 					),
 					'pfat_filter_archive'   => array(
 						'label'      => __( 'Archive Template Filter', 'pods' ),
-						'help'       => __( 'Which filter to use for archives.', 'pods' ),
-						'default'    => $default_hooks[ $type ],
-						'type'       => 'text',
+						'help'       => __( 'Which filter to use for archive views.', 'pods' ),
+						'type'       => 'pick',
+						'data'       => array(
+							$default_hooks[ $type ] => sprintf( __( 'Filter: %s', 'pods' ), $default_hooks[ $type ] ),
+							'custom'                => __( 'Use a custom hook', 'pods' ),
+						),
 						'depends-on' => array( 'pfat_enable' => true ),
+						'dependency' => true,
+					),
+					'pfat_filter_archive_custom' => array(
+						'label'      => __( 'Custom Archive Template Filter', 'pods' ),
+						'help'       => __( 'Which custom filter to use for archive views.', 'pods' ),
+						'default'    => '',
+						'type'       => 'text',
+						'depends-on' => array( 'pfat_enable' => true, 'pfat_filter_archive' => 'custom' ),
 					),
 				);
 				break;
@@ -238,10 +261,6 @@ class Pods_Templates_Auto_Template_Settings {
 				// Taxonomies do not have archives, they are archives.
 				unset( $options['pods-pfat']['pfat_archive'] );
 				unset( $options['pods-pfat']['pfat_append_archive'] );
-				unset( $options['pods-pfat']['pfat_filter_archive'] );
-			} elseif ( 'comment' === $type ) {
-				// @todo support other hooks.
-				unset( $options['pods-pfat']['pfat_filter_single'] );
 				unset( $options['pods-pfat']['pfat_filter_archive'] );
 			}
 
@@ -372,7 +391,7 @@ class Pods_Templates_Auto_Template_Settings {
 			$auto_pods = $front->auto_pods();
 
 			foreach ( $auto_pods as $name => $pod ) {
-				if ( ! $pod['has_archive'] && $pod['archive'] && $pod['type'] !== 'taxonomy' && ! in_array(
+				if ( ! $pod['has_archive'] && $pod['archive'] && 'post_type' === $pod['type'] && ! in_array(
 					$name, array(
 						'post',
 						'page',
@@ -416,7 +435,7 @@ class Pods_Templates_Auto_Template_Settings {
 	}
 
 	/**
-	 * Get titles of all Pods Templates
+	 * Get titles of all Pod Templates
 	 *
 	 * @return string[] Array of template names
 	 *

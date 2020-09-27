@@ -72,7 +72,6 @@ class Pods_Templates_Auto_Template_Front_End {
 		$possible_pods = $this->auto_pods();
 
 		if ( isset( $possible_pods['comment'] ) ) {
-
 			// Comment auto templates.
 			add_filter( 'comment_text', array( $this, 'front' ), 99, 2 );
 		}
@@ -80,6 +79,7 @@ class Pods_Templates_Auto_Template_Front_End {
 		if ( isset( $possible_pods['user'] ) ) {
 			// User auto templates.
 			add_filter( $possible_pods['user']['single_filter'], array( $this, 'front' ), 99, 2 );
+
 			if ( is_archive() ) {
 				add_filter( $possible_pods['user']['archive_filter'], array( $this, 'front' ), 99, 2 );
 			}
@@ -221,8 +221,16 @@ class Pods_Templates_Auto_Template_Front_End {
 					$archive_filter   = pods_v( 'pfat_filter_archive', $options, $default_hook, true );
 					$run_outside_loop = pods_v( 'pfat_run_outside_loop', $options, false, true );
 
+					if ( 'custom' === $single_filter ) {
+						$single_filter = pods_v( 'pfat_filter_single_custom', $options, $default_hook, true );
+					}
+
+					if ( 'custom' === $archive_filter ) {
+						$archive_filter = pods_v( 'pfat_filter_archive_custom', $options, $default_hook, true );
+					}
+
 					// Check if it's a post type that has an archive.
-					if ( $type === 'post_type' && $the_pod !== 'post' || $the_pod !== 'page' ) {
+					if ( 'post_type' === $type && ! in_array( $the_pod, array( 'post', 'page' ), true ) ) {
 						$has_archive = pods_v( 'has_archive', $options, false, true );
 					} else {
 						$has_archive = true;

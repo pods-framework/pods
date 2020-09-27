@@ -537,12 +537,16 @@ class Pods_Templates_Auto_Template_Front_End {
 			$pod_type = 'user';
 			$pod_name = 'user';
 		} elseif ( is_singular() || in_the_loop() ) {
+			if ( null === $obj ) {
+				$obj = get_post();
+			}
+
 			return $this->get_pod_info( $obj );
-		} elseif ( is_tax() || is_category() || is_tag() ) {
+		} elseif ( $obj && ( is_tax() || is_category() || is_tag() ) ) {
 			return $this->get_pod_info( $obj );
 		} else {
 			// Backwards compatibility.
-			global $post;
+			$post = get_post();
 
 			if ( $post ) {
 				return $this->get_pod_info( $post );

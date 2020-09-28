@@ -363,7 +363,7 @@ class Pods_Templates_Auto_Template_Front_End {
 		static $running = false;
 
 		if ( $running ) {
-			return;
+			return $content;
 		}
 
 		$running = true;

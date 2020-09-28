@@ -216,7 +216,7 @@ class Pods_Templates_Auto_Template_Front_End {
 						$archive_filter = pods_v( 'pfat_filter_archive_custom', $options, $default_hook, true );
 					}
 
-					if ( 'taxonomy' === $type ) {
+					if ( 'taxonomy' === $type || 'comment' === $type ) {
 						// We are treating taxonomy post archive as a taxonomy singular so disable the filter.
 						$archive_filter = '';
 					}
@@ -233,7 +233,7 @@ class Pods_Templates_Auto_Template_Front_End {
 							// Force archive as true since we don't allow overriding the option in the admin.
 							$has_archive = true;
 						}
-					} elseif ( 'taxonomy' === $type ) {
+					} elseif ( 'taxonomy' === $type || 'comment' === $type ) {
 						// We are treating taxonomy post archive as a taxonomy singular.
 						$has_archive = false;
 					} else {
@@ -449,7 +449,7 @@ class Pods_Templates_Auto_Template_Front_End {
 
 			$is_single = true;
 
-			if ( null !== $obj ) {
+			if ( null !== $obj && 'comment' !== $pod_type ) {
 				$pod_info_check = $this->get_pod_info();
 
 				if ( $pod_info !== $pod_info_check ) {

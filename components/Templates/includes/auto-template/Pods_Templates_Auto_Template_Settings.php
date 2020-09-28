@@ -271,11 +271,11 @@ class Pods_Templates_Auto_Template_Settings {
 			unset( $options['pods-pfat']['pfat_filter_archive'] );
 			unset( $options['pods-pfat']['pfat_filter_archive_custom'] );
 		} elseif ( 'comment' === $type ) {
-			// Taxonomies do not have archives, they only have singular view.
-			unset( $options['pods-pfat']['pfat_single'] );
-			unset( $options['pods-pfat']['pfat_append_single'] );
-			unset( $options['pods-pfat']['pfat_filter_single'] );
-			unset( $options['pods-pfat']['pfat_filter_single_custom'] );
+			// Comments do not have archives, they only have singular view.
+			unset( $options['pods-pfat']['pfat_archive'] );
+			unset( $options['pods-pfat']['pfat_append_archive'] );
+			unset( $options['pods-pfat']['pfat_filter_archive'] );
+			unset( $options['pods-pfat']['pfat_filter_archive_custom'] );
 		}
 
 		// Non-post types do not check for loop.

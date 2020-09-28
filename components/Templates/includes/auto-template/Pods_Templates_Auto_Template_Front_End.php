@@ -415,6 +415,9 @@ class Pods_Templates_Auto_Template_Front_End {
 			 */
 			$pod_name_and_id = apply_filters( 'pods_auto_template_pod_name_and_id', $pod_name_and_id, $pod_name, $obj );
 
+			$pod_name = $pod_name_and_id[0];
+			$pod_id   = $pod_name_and_id[1];
+
 			if ( empty( $possible_pods[ $pod_name ] ) ) {
 				$running = false;
 
@@ -440,7 +443,7 @@ class Pods_Templates_Auto_Template_Front_End {
 				}
 			}
 
-			$pod = pods( $pod_name_and_id[0], $pod_name_and_id[1] );
+			$pod = pods( $pod_name, $pod_id );
 
 			// Heuristically decide if this is single or archive.
 			$type        = 'archive';

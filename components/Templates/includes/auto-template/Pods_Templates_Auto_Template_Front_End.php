@@ -35,7 +35,8 @@ class Pods_Templates_Auto_Template_Front_End {
 		if ( ! is_admin() ) {
 			add_action( 'wp', array( $this, 'set_frontier_style_script' ) );
 
-			$this->auto_pods = $this->auto_pods();
+			// Load autopods.
+			$this->auto_pods();
 		}
 
 		// Setup initial hooks.
@@ -272,9 +273,9 @@ class Pods_Templates_Auto_Template_Front_End {
 		 *
 		 * @since 2.4.5
 		 */
-		$auto_pods = apply_filters( 'pods_pfat_auto_pods', $auto_pods );
+		$this->auto_pods = apply_filters( 'pods_pfat_auto_pods', $auto_pods );
 
-		return $auto_pods;
+		return $this->auto_pods;
 
 	}
 

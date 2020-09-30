@@ -265,13 +265,13 @@ class Pods_Templates_Auto_Template_Settings {
 
 		// Handle type exceptions.
 		if ( 'taxonomy' === $type ) {
-			// Taxonomies do not have archives, they only have singular view.
+			// Taxonomies do not have archives, they only have a singular view.
 			unset( $options['pods-pfat']['pfat_archive'] );
 			unset( $options['pods-pfat']['pfat_append_archive'] );
 			unset( $options['pods-pfat']['pfat_filter_archive'] );
 			unset( $options['pods-pfat']['pfat_filter_archive_custom'] );
 		} elseif ( 'comment' === $type ) {
-			// Taxonomies do not have archives, they only have singular view.
+			// Comments do not have singular views, they only have archive/loop views.
 			unset( $options['pods-pfat']['pfat_single'] );
 			unset( $options['pods-pfat']['pfat_append_single'] );
 			unset( $options['pods-pfat']['pfat_filter_single'] );

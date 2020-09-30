@@ -35,7 +35,8 @@ class Pods_Templates_Auto_Template_Front_End {
 		if ( ! is_admin() ) {
 			add_action( 'wp', array( $this, 'set_frontier_style_script' ) );
 
-			$this->auto_pods = $this->auto_pods();
+			// Load autopods.
+			$this->auto_pods();
 		}
 
 		// Setup initial hooks.
@@ -192,7 +193,7 @@ class Pods_Templates_Auto_Template_Front_End {
 				$options  = pods_v( 'options', $pod_data, array() );
 
 				// if auto template is enabled add info about Pod to array.
-				if ( 1 === (int) pods_v( 'pfat_enable', $options ) ) {
+				if ( 1 === (int) pods_v( 'pfat_enable', $options, 0 ) ) {
 					$type = pods_v( 'type', $pod_data, false, true );
 
 					// Get default hook.
@@ -272,9 +273,9 @@ class Pods_Templates_Auto_Template_Front_End {
 		 *
 		 * @since 2.4.5
 		 */
-		$auto_pods = apply_filters( 'pods_pfat_auto_pods', $auto_pods );
+		$this->auto_pods = apply_filters( 'pods_pfat_auto_pods', $auto_pods );
 
-		return $auto_pods;
+		return $this->auto_pods;
 
 	}
 
@@ -362,7 +363,7 @@ class Pods_Templates_Auto_Template_Front_End {
 		static $running = false;
 
 		if ( $running ) {
-			return;
+			return $content;
 		}
 
 		$running = true;
@@ -414,6 +415,9 @@ class Pods_Templates_Auto_Template_Front_End {
 			 */
 			$pod_name_and_id = apply_filters( 'pods_auto_template_pod_name_and_id', $pod_name_and_id, $pod_name, $obj );
 
+			$pod_name = $pod_name_and_id[0];
+			$pod_id   = $pod_name_and_id[1];
+
 			if ( empty( $possible_pods[ $pod_name ] ) ) {
 				$running = false;
 
@@ -439,7 +443,7 @@ class Pods_Templates_Auto_Template_Front_End {
 				}
 			}
 
-			$pod = pods( $pod_name_and_id[0], $pod_name_and_id[1] );
+			$pod = pods( $pod_name, $pod_id );
 
 			// Heuristically decide if this is single or archive.
 			$type        = 'archive';

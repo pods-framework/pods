@@ -212,20 +212,20 @@ class Pods_Templates_Auto_Template_Settings {
 				'depends-on' => array( 'pfat_enable' => true, 'pfat_filter_single' => 'custom' ),
 			),
 			'pfat_archive'          => array(
-				'label'      => __( 'Archive view template', 'pods' ),
-				'help'       => __( 'Name of Pod Template to use for use while in the loop.', 'pods' ),
+				'label'      => __( 'List Template', 'pods' ),
+				'help'       => __( 'Name of Pod Template to use. This will be used when outside the Singular context. For comments, there are no Singular comment views so they will always use the List Template.', 'pods' ),
 				'type'       => 'text',
 				'default'    => false,
 				'depends-on' => array( 'pfat_enable' => true ),
 			),
 			'pfat_append_archive'   => array(
-				'label'      => __( 'Archive Template Location', 'pods' ),
+				'label'      => __( 'List Template Location', 'pods' ),
 				'help'       => __( 'Whether the template will go before, after or in place of the existing content.', 'pods' ),
 				'depends-on' => array( 'pfat_enable' => true ),
 			),
 			'pfat_filter_archive'   => array(
-				'label'      => __( 'Archive Template Filter', 'pods' ),
-				'help'       => __( 'Which filter to use for archive views.', 'pods' ),
+				'label'      => __( 'List Template Filter', 'pods' ),
+				'help'       => __( 'Which filter to use for archive/list views.', 'pods' ),
 				'type'       => 'pick',
 				'default'    => $default_archive_hook,
 				'data'       => array(
@@ -236,8 +236,8 @@ class Pods_Templates_Auto_Template_Settings {
 				'dependency' => true,
 			),
 			'pfat_filter_archive_custom' => array(
-				'label'      => __( 'Custom Archive Template Filter', 'pods' ),
-				'help'       => __( 'Which custom filter to use for archive views.', 'pods' ),
+				'label'      => __( 'Custom List Template Filter', 'pods' ),
+				'help'       => __( 'Which custom filter to use for archive/list views.', 'pods' ),
 				'default'    => $default_archive_hook_custom,
 				'type'       => 'text',
 				'depends-on' => array( 'pfat_enable' => true, 'pfat_filter_archive' => 'custom' ),

@@ -193,7 +193,7 @@ class Pods_Templates_Auto_Template_Front_End {
 				$options  = pods_v( 'options', $pod_data, array() );
 
 				// if auto template is enabled add info about Pod to array.
-				if ( pods_v( 'pfat_enable', $options, false ) ) {
+				if ( 1 === (int) pods_v( 'pfat_enable', $options, 0 ) ) {
 					$type = pods_v( 'type', $pod_data, false, true );
 
 					// Get default hook.

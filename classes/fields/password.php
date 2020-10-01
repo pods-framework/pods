@@ -30,7 +30,8 @@ class PodsField_Password extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Password', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Password', 'pods' );
 	}
 
 	/**
@@ -122,7 +123,7 @@ class PodsField_Password extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}
 			}

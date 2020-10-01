@@ -1,0 +1,45 @@
+<input
+	name="<%- htmlAttr.name %>[<%- id %>][id]"
+	data-name-clean="<%- htmlAttr.name_clean %>-id"
+	id="<%- htmlAttr.id %>-<%- id %>-id"
+	class="<%- htmlAttr.class %>"
+	type="hidden"
+	value="<%- id %>" />
+<ul class="pods-dfv-list-meta media-item">
+	<% if ( 1 != fieldConfig.file_limit ) { %>
+		<li class="pods-dfv-list-col pods-dfv-list-handle"><span><%- PodsI18n.__( 'Reorder' ) %></span></li>
+	<% } %>
+	<li class="pods-dfv-list-col pods-dfv-list-icon"><img class="pinkynail" src="<%- icon %>" alt="<%- PodsI18n.__( 'Icon' ) %>"></li>
+	<li class="pods-dfv-list-col pods-dfv-list-name">
+		<% if ( 0 != fieldConfig.file_edit_title ) { %>
+			<input
+				name="<%- htmlAttr.name %>[<%- id %>][title]"
+				data-name-clean="<%- htmlAttr.name_clean %>-title"
+				id="pods-form-ui-<%- htmlAttr.name_clean %>-<%- id %>-title"
+				class="pods-form-ui-field-type-text pods-form-ui-field-name-<%- htmlAttr.name_clean %>-title"
+				type="text"
+				value="<%- name %>"
+				tabindex="2"
+				maxlength="255" />
+		<% } else { %>
+			<%- name %>
+		<% } %>
+	</li>
+	<li class="pods-dfv-list-col pods-dfv-list-actions">
+		<ul>
+			<li class="pods-dfv-list-col pods-dfv-list-remove">
+				<a href="#remove" title="<%- PodsI18n.__( 'Deselect' ) %>"><%- PodsI18n.__( 'Deselect' ) %></a>
+			</li>
+			<% if ( 1 == fieldConfig.file_linked && '' != download ) { %>
+				<li class="pods-dfv-list-col pods-dfv-list-download">
+					<a href="<%- download %>" target="_blank" rel="noopener noreferrer" title="<%- PodsI18n.__( 'Download' ) %>"><%- PodsI18n.__( 'Download' ) %></a>
+				</li>
+			<% } %>
+			<% if ( 1 == fieldConfig.file_show_edit_link && '' != edit_link ) { %>
+				<li class="pods-dfv-list-col pods-dfv-list-edit">
+					<a href="<%- edit_link %>" target="_blank" rel="noopener noreferrer" title="<%- PodsI18n.__( 'Edit' ) %>"><%- PodsI18n.__( 'Edit' ) %></a>
+				</li>
+			<% } %>
+		</ul>
+	</li>
+</ul>

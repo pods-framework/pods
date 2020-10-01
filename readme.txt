@@ -3,9 +3,9 @@ Contributors: sc0ttkclark, pglewis, jimtrue, keraweb, quasel, jamesgol, ramoonus
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.9
-Tested up to: 5.4
+Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 2.8.0-a-2
+Stable tag: 2.8.0-a-3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -191,6 +191,117 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.22 - August 13th 2020 =
+
+**Bug Fixes**
+
+* Fixed: WP 5.5+ compatibility layer for postbox headers so they appear and work correctly while still working for previous versions of WordPress. #5806 (@sc0ttkclark)
+* Fixed: Patched a Freemius JS file that needed updating for WP 5.5+ compatibility. #5806 (@sc0ttkclark)
+* Fixed: Prevent fatal errors about memory when using preview links for Advanced Content Types. #5783 (@JoryHogeveen)
+* Fixed: Prevent fatal errors about memory when using certain magic tag / thumbnail combinations. #5805 (@JoryHogeveen)
+* Fixed: Resolve our DFV JS `<div>` issues with `PodsUI` filters and add `.toggle-row` class handling for frontend. #5806 (@sc0ttkclark)
+* Fixed: Ensure REST API responses for Media returns correct value when extended by Pods. #5763 (@JoryHogeveen)
+* Fixed: Ensure pods_permission() unserializes when role/capability data is serialized. #5768 (@JoryHogeveen)
+
+= 2.7.21 - June 30th 2020 =
+
+**New Features & Enhancements**
+
+* Added: New filter: `pods_field_pick_object_data_params`. #5756 (@JoryHogeveen)
+* Added: Pods fields & magic tags: Traverse through serialized metadata. #5603 (@JoryHogeveen)
+* Added: Support `get_query_var()` in pods_v (and thus special magic tags: `{@query.##}`). #5719 (@JoryHogeveen)
+* Added: WYSIWYG field option for custom editor height. #5673 (@JoryHogeveen)
+* Enhancement: REST field options: Only display depth for array response type. #5714 (@JoryHogeveen)
+* Updated: Refactor Pods::field() method. #5682 (@JoryHogeveen)
+
+**Bug Fixes**
+
+* Fixed: Relationship dropdown error & encoding. #5740 (@JoryHogeveen)
+* Fixed: Getting single vs multiple metadata values edge case errors. #5661 (@JoryHogeveen)
+* Fixed: Nested relationship fields should render as array of objects in REST. #5745 (@lkraav)
+* Fixed: Add `noopener` and `noreferrer` for all target `_blank` links. #5742 (@JoryHogeveen)
+* Fixed: Only check `delete_users` for single installations in `pods_is_admin()`. #5712 (@JoryHogeveen)
+* Fixed: Deprecated taxonomy form actions. #5700 (@JoryHogeveen)
+* Fixed: DateTime field: Allow input values compatible with the display format. #5687 (@JoryHogeveen)
+* Fixed: Whitespace trimming for templates. #5672 (@sc0ttkclark)
+* Fixed: Taxonomy option rewrite with front label tooltip. #5681 (@JoryHogeveen)
+* Fixed: Pods test factory compatibility with WP core text factory. #5716 (@JoryHogeveen)
+
+= 2.7.20.1 - June 4th 2020 =
+
+* Security: Remove deprecated usage of escapeMarkup in selectWoo and tighten JS rendering (@sc0ttkclark, @miha.jirov)
+
+= 2.7.20 - April 5th 2020 =
+
+**Bug Fixes**
+
+* Fixed: Resolved issues with Freemius notices not being able to be properly dismissed. (@sc0ttkclark)
+
+= 2.7.19 - April 5th 2020 =
+
+This version was bugged due to a deployment that sent out a copy of 2.7.18 as 2.7.19.
+
+= 2.7.18 - April 3rd 2020 =
+
+**New Features & Enhancements**
+
+* Added: Add is_required() helper method for fields objects to abstract some logic. #5657 (@JoryHogeveen)
+* Updated: Removed duplicate code from pods_list_filter() that is now in wp_list_filter(). #5644 (@JoryHogeveen)
+* Updated: Now prefixing the Templates and Pages component menu items with "Pod" so they aren't as easily confused with normal WordPress menu items. #5647 (@JoryHogeveen)
+
+**Bug Fixes**
+
+* Fixed: Compatibility layer for ACF so it won't conflict anymore. #5667 (@sc0ttkclark)
+* Fixed: Remove PHP 5.6+ only code that was causing issues for those running older PHP versions. #5659 (@JoryHogeveen)
+* Fixed: Prevent PHP errors when enforcing numeric values during validation of number fields. #5666 (@JoryHogeveen)
+* Fixed: Prevent deprecated warnings with special magic tags usage like `{@user.id}` instead of `{@user.ID}`. #5642 (@JoryHogeveen)
+* Fixed: Fix the decimal/thousands separator logic used for number and currency field validation and saving. #5653 (@JoryHogeveen)
+* Fixed: Resolve issues with `[if]` and `[else]` logic for boolean fields that was causing it to always evaluate to true. #5656 (@JoryHogeveen)
+* Fixed: Only load Freemius on Pods Admin, Plugins, or the Updates screens. (@sc0ttkclark)
+
+= 2.7.17.1 - March 27th 2020 =
+
+**Bug Fixes**
+
+* Fixed: Double comma in custom pick display formats. #5637 (@JoryHogeveen)
+* Fixed: Auto `use_current` not working correctly outside the loop. #5636 (@JoryHogeveen)
+* Fixed: pods_trim() does not trim whitespaces by default. #5640 (@JoryHogeveen)
+
+= 2.7.17 - March 26th 2020 =
+
+**New Features & Enhancements**
+
+* Added: New callout for our Friends of Pods program will show up on the Pods Admin > Pods list so we can let people know how to donate. #5571 (@nicdford, @sc0ttkclark, @JoryHogeveen)
+* Added: Freemius integration to support our new Friends of Pods add-ons and enable us to let people opt-in to usage stats for planning future compatibility decisions.  #5624 (@sc0ttkclark)
+* Added: New `not_found` tag to the Pods shortcode to return default string if no output is empty. #5580 (@JoryHogeveen)
+* Added: New hooks when saving field table definitions (table-based Pods). #5623 (@sc0ttkclark)
+* Added: New custom multi-relationship display format. #5612 (@JoryHogeveen)
+* Added: Support traversing into post thumbnails objects. #5610 (@JoryHogeveen)
+* Compatibility: Add ACF backwards compatibility functions/shortcode. #4855 (@sc0ttkclark)
+* Compatibility: WordPress 5.4 - Add user Pod fields to privacy export data. #5606 (@JoryHogeveen)
+* Compatibility: Match WordPress 5.4 CSS changes. #5608 (@JoryHogeveen)
+* Enhancement: Shortcodes now automatically revert to the current queried object. #5598 (@JoryHogeveen)
+* Enhancement: Add "full" to available image sizes. #5185 (@JoryHogeveen)
+* Enhancement: Set Pods current queried object detection based on class instances instead of class parameters. #5617 (@JoryHogeveen)
+* Docs: Update inline docs for pick field selected logic. #5014 & #5017 (@sc0ttkclark)
+
+**Bug Fixes**
+
+* Fixed: Date/Time - Correct empty value validation. #5534 & #5544 (@JoryHogeveen)
+* Fixed: Date/Time - Allow midnight (00:00:00) as time value. #5616 (@JoryHogeveen)
+* Fixed: Number/Currency - Parsing error for number format 9'999.99. #5559 & #5597 (@JoryHogeveen)
+* Fixed: Number/Currency - Do not set default value of `0` if field is empty. #5539 (@JoryHogeveen)
+* Fixed: CLI export/export-item commands. #5041 (@0xLBF)
+* Fixed: Allow No (0) as an answer for radio and select boolean fields. #5549 (@JoryHogeveen)
+* Fixed: Prevent get_meta() cache loop. #5577 (@JoryHogeveen)
+* Fixed: Pods component descriptions. #5543 (@JoryHogeveen)
+* Fixed: PHP 7.4 - Array and string offset access syntax with curly braces is deprecated. #5582 (@JoryHogeveen)
+* Fixed: PHP 7.4 - Trying to access array offset on value of type bool. #5556 & #5615 (@JoryHogeveen)
+* Fixed: PHP 7.4 - Array access notices. #5631 (@JoryHogeveen)
+* Fixed: Replaced hook used for meta boxes in admin for custom component integrations to avoid deprecated notices from WordPress. #5622 (@sc0ttkclark)
+* Fixed: Prevented potential fatal errors on Pod Template editor screen when pod configuration is broken. #5622 (@sc0ttkclark)
+* Docs: Link to Gallery Documentation in Image field inline help doc. #5541 (@wpacademy)
+
 = 2.7.16.2 - November 14th 2019 =
 
 * Fixed: The last SVN tag was temporarily missing files, this release just ensures people get the update that has all files.
@@ -202,12 +313,14 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 = 2.7.16 - November 13th 2019 =
 
 **Enhancements**
+
 * Enhancement: CSS fixes for WP 5.3. #5501 (@JoryHogeveen)
 * Enhancement: Format traversed fields properly. #4932 (@jamesgol)
 * Enhancement: ACT list view pagination. #5510 (@JoryHogeveen)
 * Enhancement: Add PODS_SHORTCODE_ALLOW_EVALUATE_TAGS to debug info. #5310 (@JoryHogeveen)
 
 **Bug Fixes**
+
 * Fixed: Avoid SQL errors when using special magic tags. #5310 (@sc0ttkclark)
 * Fixed: Validate shortcode query tags before default to current object. #5520 (@JoryHogeveen)
 * Fixed: Unslash simple relationship values to support saving quoted values. #5517 (@JoryHogeveen)
@@ -230,12 +343,14 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 = 2.7.15 - September 5th 2019 =
 
 **Enhancements**
+
 * Enhancement: Add year range option to date & datetime fields. #5442 (@JoryHogeveen)
 * Enhancement: Support single select relationships in templates when using `[each]`. #4507 (@sc0ttkclark, @JoryHogeveen)
 * Enhancement: Prevent creation of Pods using reserved keywords from WordPress Codex and Pods. #5428 (@JoryHogeveen)
 * Enhancement: Allow all callables to be passed in magic tags. #5436 (@JoryHogeveen)
 
 **Bug Fixes**
+
 * Fixed: Always convert database value for date/time fields without timezone to maintain the actual value. #5423 & #5424 (@JoryHogeveen)
 * Fixed: Solve issues with saving date/time fields in other locales. #5444, #5421, #5415 & #5451 (@JoryHogeveen)
 * Fixed: Import from file with absolute path. #5430 (@mistraloz)

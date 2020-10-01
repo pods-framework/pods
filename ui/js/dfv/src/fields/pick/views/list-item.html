@@ -1,0 +1,43 @@
+<input
+		<% if ( 'single' === fieldConfig.pick_format_type ) { %>
+			name="<%- htmlAttr.name %>"
+			id="<%- htmlAttr.id %>"
+		<% } else { %>
+			name="<%- htmlAttr.name %>[<%= ordinal %>]"
+			id="<%- htmlAttr.id %><%= ordinal %>"
+		<% } %>
+		data-name-clean="<%- htmlAttr.name_clean %>"
+		type="hidden"
+		value="<%- id %>">
+<ul class="pods-dfv-list-meta relationship-item">
+	<% if ( 1 != fieldConfig.pick_limit ) { %>
+		<li class="pods-dfv-list-col pods-dfv-list-handle"><span><%- PodsI18n.__( 'Reorder' ) %></span></li>
+	<% } %>
+	<% if ( 1 == fieldConfig.pick_show_icon ) { %>
+		<li class="pods-dfv-list-col pods-dfv-list-icon">
+			<% if ( '' == icon ) { %>
+				<% if ( /^dashicons/.test( fieldConfig.default_icon ) ) { %>
+					<span class="pinkynail dashicons <%- fieldConfig.default_icon %>"></span>
+				<% } else { %>
+					<img class="pinkynail" src="<%- fieldConfig.default_icon %>" alt="Icon">
+				<% } %>
+			<% } else { %>
+				<% if ( /^dashicons/.test( icon ) ) { %>
+					<span class="pinkynail dashicons <%- icon %>"></span>
+				<% } else { %>
+					<img class="pinkynail" src="<%- icon %>" alt="Icon">
+				<% } %>
+			<% } %>
+		</li>
+	<% } %>
+	<li class="pods-dfv-list-col pods-dfv-list-name">
+		<%= name %>
+	</li>
+	<li class="pods-dfv-list-col pods-dfv-list-remove"><a href="#remove" title="<%- PodsI18n.__( 'Deselect' ) %>"><%- PodsI18n.__( 'Deselect' ) %></a></li>
+	<% if ( 1 == fieldConfig.pick_show_view_link && '' != link ) { %>
+		<li class="pods-dfv-list-col pods-dfv-list-link"><a href="<%- link %>" title="<%- PodsI18n.__( 'View' ) %>"  target="_blank" rel="noopener noreferrer"><%- PodsI18n.__( 'View' ) %></a></li>
+	<% } %>
+	<% if ( 1 == fieldConfig.pick_show_edit_link && '' != edit_link ) { %>
+		<li class="pods-dfv-list-col pods-dfv-list-edit"><a href="<%- edit_link %>" title="<%- PodsI18n.__( 'Edit' ) %>" target="_blank" rel="noopener noreferrer"><%- PodsI18n.__( 'Edit' ) %></a></li>
+	<% } %>
+</ul>

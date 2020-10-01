@@ -237,7 +237,11 @@ class PodsData {
 			return;
 		}
 
-		$this->pod_data = $this->api->load_pod( array( 'name' => $pod ), false );
+		if ( $pod instanceof \Pods\Whatsit\Pod ) {
+			$this->pod_data = $pod;
+		} else {
+			$this->pod_data = $this->api->load_pod( [ 'name' => $pod ], false );
+		}
 
 		if ( empty( $this->pod_data ) ) {
 			return;
@@ -301,7 +305,6 @@ class PodsData {
 	 * @param string       $object
 	 */
 	public function table( $table, $object = '' ) {
-
 		global $wpdb;
 
 		if ( ! is_array( $table ) ) {
@@ -316,10 +319,10 @@ class PodsData {
 			} elseif ( $wpdb->options === $table ) {
 				$object_type = 'settings';
 			}
-		}
 
-		if ( ! empty( $object_type ) ) {
-			$table = $this->api->get_table_info( $object_type, $object );
+			if ( ! empty( $object_type ) ) {
+				$table = $this->api->get_table_info( $object_type, $object );
+			}
 		}
 
 		// @todo Revisit this mess, $this->pod_data can't be an array anymore.
@@ -338,12 +341,14 @@ class PodsData {
 				}
 
 				$table['storage']       = pods_v( 'storage', $table['pod'], $default_storage, true );
-				$table['fields']        = pods_v( 'fields', $table['pod'], array() );
+				$table['fields']        = pods_v( 'fields', $table['pod'], [] );
 				$table['object_fields'] = pods_v( 'object_fields', $table['pod'], $this->api->get_wp_object_fields( $table['object_type'] ), true );
 			}
 
+			$this->pod      = $table['name'];
+			$this->fields   = $table['fields'];
 			$this->pod_data = $table;
-		}//end if
+		}
 	}
 
 	/**
@@ -921,7 +926,7 @@ class PodsData {
 		}
 
 		if ( ! empty( $params->orderby ) ) {
-			if ( 'post_type' === $pod['type'] && $is_pod_meta_storage && is_array( $params->orderby ) ) {
+			if ( ! empty( $pod ) && 'post_type' === $pod['type'] && $is_pod_meta_storage && is_array( $params->orderby ) ) {
 
 				foreach ( $params->orderby as $i => $orderby ) {
 					if ( strpos( $orderby, '.meta_value_num' ) ) {
@@ -2084,7 +2089,9 @@ class PodsData {
 					$params['where'] = "`t`.`{$this->field_slug}` = '{$id}'";
 				}
 
-				$this->row = pods_data()->select( $params );
+				$new_data = new PodsData();
+
+				$this->row = $new_data->select( $params );
 
 				if ( empty( $this->row ) ) {
 					$this->row = false;
@@ -2115,7 +2122,9 @@ class PodsData {
 					$params['table'] .= $this->pod_data['object'];
 				}
 
-				$row = pods_data()->select( $params );
+				$new_data = new PodsData();
+
+				$row = $new_data->select( $params );
 
 				if ( ! empty( $row ) ) {
 					$current_row = (array) $row;
@@ -2231,7 +2240,7 @@ class PodsData {
 					$params->sql = self::prepare( $sql[0], array( $sql[1], $sql[2], $sql[3] ) );
 				}
 			} else {
-				$params = array_merge( $params, $sql );
+				$params = (object) array_merge( get_object_vars( $params ), $sql );
 			}
 
 			if ( 1 === (int) pods_v( 'pods_debug_sql_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
@@ -3536,7 +3545,32 @@ class PodsData {
 	 * @since 2.8
 	 */
 	public function __isset( $name ) {
-		// Don't do anything.
+		// Handle alias Pods\Whatsit\Pod properties.
+		$supported_pods_object = array(
+			'pod'           => 'name',
+			'pod_id'        => 'id',
+			'fields'        => 'fields',
+			'detail_page'   => 'detail_url',
+			'detail_url'    => 'detail_url',
+			'select'        => 'select',
+			'table'         => 'table',
+			'field_id'      => 'field_id',
+			'field_index'   => 'field_index',
+			'field_slug'    => 'field_slug',
+			'join'          => 'join',
+			'where'         => 'where',
+			'where_default' => 'where_default',
+			'orderby'       => 'orderby',
+		);
+
+		if ( isset( $supported_pods_object[ $name ] ) ) {
+			if ( ! is_object( $this->pod_data ) ) {
+				return false;
+			}
+
+			return null !== $this->pod_data->get_arg( $supported_pods_object[ $name ] );
+		}
+
 		return false;
 	}
 

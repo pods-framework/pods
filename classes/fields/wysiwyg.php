@@ -30,7 +30,8 @@ class PodsField_WYSIWYG extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'WYSIWYG (Visual Editor)', 'pods' );
+		static::$group = __( 'Paragraph', 'pods' );
+		static::$label = __( 'WYSIWYG (Visual Editor)', 'pods' );
 	}
 
 	/**
@@ -71,6 +72,14 @@ class PodsField_WYSIWYG extends PodsField {
 					),
 				),
 			),
+			static::$type . '_editor_height'     => array(
+				'label'           => __( 'Editor Height', 'pods' ),
+				'help'            => __( 'Height in pixels', 'pods' ),
+				'default'         => '',
+				'type'            => 'number',
+				'depends-on'      => array( static::$type . '_editor' => 'tinymce' ),
+				'number_decimals' => 0,
+			),
 			'output_options'                     => array(
 				'label' => __( 'Output Options', 'pods' ),
 				'group' => array(
@@ -88,7 +97,7 @@ class PodsField_WYSIWYG extends PodsField {
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => array(
-							__( 'Transforms less-beautfiul text characters into stylized equivalents.', 'pods' ),
+							__( 'Transforms less-beautiful text characters into stylized equivalents.', 'pods' ),
 							'http://codex.wordpress.org/Function_Reference/wptexturize',
 						),
 					),

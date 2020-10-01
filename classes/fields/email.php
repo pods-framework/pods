@@ -30,7 +30,8 @@ class PodsField_Email extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'E-mail', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'E-mail', 'pods' );
 	}
 
 	/**
@@ -144,7 +145,7 @@ class PodsField_Email extends PodsField {
 			if ( 0 < strlen( $value ) && '' === $check ) {
 				$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = sprintf( __( '%s is required', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid e-mail provided for %s', 'pods' ), $label );

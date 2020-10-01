@@ -35,7 +35,7 @@ $RECYCLE.BIN/
 # NPM / Composer
 /composer.lock
 /node_modules/
-/vendor/*
+vendor/*
 !/vendor/mustangostang/COPYING
 !/vendor/mustangostang/README.md
 !/vendor/mustangostang/Spyc.php
@@ -59,3 +59,6 @@ tests/codeception/_support/_generated
 # Tests - local output files
 tests/codeception/_output
 /coverage/
+
+# Allowed vendor files
+!vendor/freemius

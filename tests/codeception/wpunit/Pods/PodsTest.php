@@ -2,7 +2,6 @@
 
 namespace Pods_Unit_Tests\Pods;
 
-use Mockery;
 use Pods_Unit_Tests\Pods_UnitTestCase;
 
 /**
@@ -17,11 +16,11 @@ class PodsTest extends Pods_UnitTestCase {
 	 */
 	private $pod;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->pod = pods();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $this->pod );
 	}
 
@@ -308,9 +307,6 @@ class PodsTest extends Pods_UnitTestCase {
 	 * @depends test_method_exists_call
 	 */
 	public function test_method_call_method_does_not_exist() {
-		$deprecated            = Mockery::mock( 'Pods_Deprecated' );
-		$this->pod->deprecated = $deprecated;
-
 		$this->assertNull( $this->pod->__call( 'foo', array() ) );
 
 		$this->expectDeprecated();

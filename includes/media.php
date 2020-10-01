@@ -185,17 +185,18 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 }
 
 /**
- * Import media from a specific URL, saving as an attachment
+ * Import media from a specific URL, saving as an attachment.
  *
- * @param string  $url         URL to media for import
- * @param int     $post_parent ID of post parent, default none
- * @param boolean $featured    Whether to set it as the featured (post thumbnail) of the post parent
+ * @param string  $url         URL to media for import.
+ * @param int     $post_parent ID of post parent, default none.
+ * @param boolean $featured    Whether to set it as the featured (post thumbnail) of the post parent.
+ * @param boolean $strict      Whether to return errors upon failure.
  *
  * @return int Attachment ID
  *
  * @since 2.3.0
  */
-function pods_attachment_import( $url, $post_parent = null, $featured = false ) {
+function pods_attachment_import( $url, $post_parent = null, $featured = false, $strict = false ) {
 	$filename = explode( '?', $url );
 	$filename = $filename[0];
 
@@ -209,6 +210,10 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 	$uploads = wp_upload_dir( current_time( 'mysql' ) );
 
 	if ( ! ( $uploads && false === $uploads['error'] ) ) {
+		if ( $strict ) {
+			throw new \Exception( sprintf( 'Attachment import failed, uploads directory has a problem: %s', var_export( $uploads, true ) ) );
+		}
+
 		return 0;
 	}
 
@@ -218,6 +223,10 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 	$file_data = @file_get_contents( $url );
 
 	if ( ! $file_data ) {
+		if ( $strict ) {
+			throw new \Exception( 'Attachment import failed, file_get_contents had a problem' );
+		}
+
 		return 0;
 	}
 
@@ -230,6 +239,10 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 	$wp_filetype = wp_check_filetype( $filename );
 
 	if ( ! $wp_filetype['type'] || ! $wp_filetype['ext'] ) {
+		if ( $strict ) {
+			throw new \Exception( sprintf( 'Attachment import failed, filetype check failed: %s', var_export( $wp_filetype, true ) ) );
+		}
+
 		return 0;
 	}
 
@@ -244,6 +257,10 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 	$attachment_id = wp_insert_attachment( $attachment, $new_file, $post_parent );
 
 	if ( is_wp_error( $attachment_id ) ) {
+		if ( $strict ) {
+			throw new \Exception( sprintf( 'Attachment import failed, wp_insert_attachment failed: %s', var_export( $attachment_id, true ) ) );
+		}
+
 		return 0;
 	}
 

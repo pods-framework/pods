@@ -48,7 +48,7 @@ class Bug_4097Test extends Pods_UnitTestCase {
 		return $pod_name;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->pod_id = null;
 	}
 

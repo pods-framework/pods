@@ -29,7 +29,8 @@ class PodsField_Website extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Website', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Website', 'pods' );
 
 	}
 
@@ -133,7 +134,7 @@ class PodsField_Website extends PodsField {
 			$atts = '';
 
 			if ( 1 === (int) pods_v( static::$type . '_new_window', $options ) ) {
-				$atts .= ' target="_blank"';
+				$atts .= ' target="_blank" rel="noopener noreferrer"';
 			}
 
 			$value = sprintf( $link, esc_url( $value ), $atts, esc_html( $value ) );
@@ -185,7 +186,7 @@ class PodsField_Website extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid website provided for the field %s.', 'pods' ), $label );

@@ -13,8 +13,7 @@ wp_enqueue_style( 'pods-form' );
 			<div id="side-sortables" class="meta-box-sortables ui-sortable">
 				<!-- BEGIN PUBLISH DIV -->
 				<div id="submitdiv" class="postbox">
-					<div class="handlediv" title="Click to toggle"><br /></div>
-					<h3 class="hndle"><span><?php _e( 'Manage', 'pods' ); ?></span></h3>
+					<?php PodsForm::render_postbox_header( __( 'Manage', 'pods' ) ); ?>
 
 					<div class="inside">
 						<div class="submitbox" id="submitpost">
@@ -27,7 +26,7 @@ wp_enqueue_style( 'pods-form' );
 										?>
 										<div id="minor-publishing-actions">
 											<div id="preview-action">
-												<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
+												<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank" rel="noopener noreferrer"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
 											</div>
 											<div class="clear"></div>
 										</div>
@@ -107,8 +106,7 @@ wp_enqueue_style( 'pods-form' );
 					if ( 0 < $prev || 0 < $next ) {
 						?>
 						<div id="navigatediv" class="postbox">
-							<div class="handlediv" title="Click to toggle"><br /></div>
-							<h3 class="hndle"><span><?php _e( 'Navigate', 'pods' ); ?></span></h3>
+							<?php PodsForm::render_postbox_header( __( 'Navigate', 'pods' ) ); ?>
 
 							<div class="inside">
 								<div class="pods-admin" id="navigatebox">
@@ -182,24 +180,18 @@ wp_enqueue_style( 'pods-form' );
 				}//end if
 
 				if ( 0 < count( $fields ) ) {
+					if ( $more ) {
+						$title = __( 'More Fields', 'pods' );
+					} else {
+						$title = __( 'Fields', 'pods' );
+					}
+
+					/** This filter is documented in classes/PodsMeta.php */
+					$title = apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->api->pod_data['type'], $pod->pod );
 					?>
 					<div id="normal-sortables" class="meta-box-sortables ui-sortable">
 						<div id="pods-meta-box" class="postbox" style="">
-							<div class="handlediv" title="Click to toggle"><br /></div>
-							<h3 class="hndle">
-						<span>
-							<?php
-							if ( $more ) {
-								$title = __( 'More Fields', 'pods' );
-							} else {
-								$title = __( 'Fields', 'pods' );
-							}
-
-							/** This filter is documented in classes/PodsMeta.php */
-							echo apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->api->pod_data['type'], $pod->pod );
-							?>
-						</span>
-							</h3>
+							<?php PodsForm::render_postbox_header( $title ); ?>
 
 							<div class="inside">
 								<table class="form-table pods-metabox">

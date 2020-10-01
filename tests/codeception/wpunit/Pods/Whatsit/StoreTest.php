@@ -28,7 +28,7 @@ class StoreTest extends Pods_UnitTestCase {
 	 */
 	private $pods_object_collection;
 
-	public function setUp() {
+	public function setUp(): void {
 		if ( ! class_exists( __NAMESPACE__ . '\Whatsit__Custom' ) ) {
 			eval( 'namespace ' . __NAMESPACE__ . '; class Whatsit__Custom extends \Pods\Whatsit { protected static $type = "custom"; }' );
 		}
@@ -40,7 +40,7 @@ class StoreTest extends Pods_UnitTestCase {
 		$this->pods_object_collection = Store::get_instance();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		Store::destroy();
 	}
 
@@ -93,7 +93,7 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object( $object );
 
-		$this->assertCount( 7, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 10, $this->pods_object_collection->get_object_types() );
 		$this->assertCount( 3, $this->pods_object_collection->get_storage_types() );
 		$this->assertCount( 4, $this->pods_object_collection->get_objects() );
 
@@ -101,7 +101,7 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection = Store::get_instance();
 
-		$this->assertCount( 6, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 9, $this->pods_object_collection->get_object_types() );
 		$this->assertCount( 2, $this->pods_object_collection->get_storage_types() );
 		$this->assertCount( 3, $this->pods_object_collection->get_objects() );
 	}
@@ -115,7 +115,7 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object_type( 'custom', Whatsit__Custom::class );
 
-		$this->assertCount( 7, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 10, $this->pods_object_collection->get_object_types() );
 	}
 
 	/**
@@ -128,11 +128,11 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object_type( 'custom', Whatsit__Custom::class );
 
-		$this->assertCount( 7, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 10, $this->pods_object_collection->get_object_types() );
 
 		$this->assertTrue( $this->pods_object_collection->unregister_object_type( 'custom' ) );
 
-		$this->assertCount( 6, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 9, $this->pods_object_collection->get_object_types() );
 
 		$this->assertFalse( $this->pods_object_collection->unregister_object_type( 'nope' ) );
 	}
@@ -147,11 +147,11 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object_type( 'custom', Whatsit__Custom::class );
 
-		$this->assertCount( 7, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 10, $this->pods_object_collection->get_object_types() );
 
 		$this->pods_object_collection->flush_object_types();
 
-		$this->assertCount( 6, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 9, $this->pods_object_collection->get_object_types() );
 	}
 
 	/**
@@ -163,7 +163,7 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object_type( 'custom', Whatsit__Custom::class );
 
-		$this->assertCount( 7, $this->pods_object_collection->get_object_types() );
+		$this->assertCount( 10, $this->pods_object_collection->get_object_types() );
 	}
 
 	/**

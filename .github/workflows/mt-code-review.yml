@@ -1,17 +1,31 @@
 name: MT Code Review
 on:
   pull_request:
-    paths-ignore:
-      - 'lang/**'
-      - '**.txt'
-      - '**.md'
-      - '.editorconfig'
-      - 'CODEOWNERS'
+    paths:
+      - 'classes/**.php'
+      - 'components/**.php'
+      - 'includes/**.php'
+      - 'src/**.php'
+      - 'sql/**.php'
+      - 'ui/**.php'
+      - '*.php'
 jobs:
   phpcs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+        with:
+          fetch-depth: 100
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
       - uses: moderntribe/action-tribe-phpcs@master
         with:
           github-bot-token: ${{ secrets.GH_BOT_TOKEN }}

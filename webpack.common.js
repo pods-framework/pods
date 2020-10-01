@@ -1,10 +1,15 @@
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+
 const path = require( 'path' );
 
 module.exports = {
-	entry: './ui/js/pods-dfv/src/pods-dfv.js',
+	entry: {
+		'dfv/pods-dfv': './ui/js/dfv/src/pods-dfv.js',
+		'blocks/pods-blocks-api': './ui/js/blocks/src/index.js',
+	},
 	output: {
-		path: path.resolve( __dirname, 'ui/js/pods-dfv/' ),
-		filename: 'pods-dfv.min.js',
+		path: path.resolve( __dirname, 'ui/js' ),
+		filename: '[name].min.js',
 	},
 
 	externals: {
@@ -30,7 +35,7 @@ module.exports = {
 			{
 				test: /\.(js|jsx)$/,
 				exclude: /node_modules/,
-				use: [ 'babel-loader' ]
+				use: [ 'babel-loader' ],
 			},
 			{
 				test: /\.scss$/,
@@ -46,4 +51,10 @@ module.exports = {
 			}
 		]
 	},
+
+	plugins: [
+		new DependencyExtractionWebpackPlugin( {
+			outputFormat: 'json',
+		} ),
+	],
 };

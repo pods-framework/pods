@@ -37,7 +37,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	 * @var string
 	 * @static
 	 */
-	public static $sample_image = 'http://en.gravatar.com/userimage/3291122/ee00b7f0e64c35bc6463829c7c9e1f22.png?size=200';
+	public static $sample_image = 'http://pods.io/files/2020/03/pods-2.7.17-update-195x79.png';
 
 	/**
 	 * A collection of pre-built pod objects
@@ -65,7 +65,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		static $counter = 0;
 
 		if ( static::$db_reset_teardown ) {
@@ -258,10 +258,18 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 			if ( ( 'test_rel_media' === $pod_name || 'media' === $pod_name ) && empty( self::$related_fields[ $field_name ]['id'] ) ) {
 				// Get and store sample image for use later
-				$sample_image_id = pods_attachment_import( self::$sample_image );
+				$attachment = [
+					'post_mime_type' => 'image/png',
+					'guid'           => self::$sample_image,
+					'post_parent'    => null,
+					'post_title'     => basename( self::$sample_image ),
+					'post_content'   => '',
+				];
+
+				$sample_image_id = wp_insert_attachment( $attachment );
 
 				if ( empty( $sample_image_id ) ) {
-					throw new \Exception( sprintf( 'The sample image may have been deleted! Sample image: %s', self::$sample_image ) );
+					throw new \Exception( sprintf( 'The sample image wp_insert_attachment is not working', self::$sample_image ) );
 				}
 
 				self::$related_fields[ $field_name ]['id'] = $sample_image_id;

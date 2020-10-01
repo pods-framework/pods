@@ -34,7 +34,8 @@ class PodsField_Paragraph extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Plain Paragraph Text', 'pods' );
+		static::$group = __( 'Paragraph', 'pods' );
+		static::$label = __( 'Plain Paragraph Text', 'pods' );
 	}
 
 	/**
@@ -75,7 +76,7 @@ class PodsField_Paragraph extends PodsField {
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => array(
-							__( 'Transforms less-beautfiul text characters into stylized equivalents.', 'pods' ),
+							__( 'Transforms less-beautiful text characters into stylized equivalents.', 'pods' ),
 							'http://codex.wordpress.org/Function_Reference/wptexturize',
 						),
 					),

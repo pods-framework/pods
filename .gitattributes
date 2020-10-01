@@ -16,8 +16,9 @@ tests/_support/_generated/* linguist-generated=true
 /dev export-ignore
 /docs export-ignore
 /tests export-ignore
-/ui/js/pods-dfv/src export-ignore
-/ui/js/pods-dfv/pods-dfv.min.js.map export-ignore
+/ui/js/blocks/src export-ignore
+/ui/js/dfv/src export-ignore
+/ui/js/dfv/pods-dfv.min.js.map export-ignore
 /ui/styles/src export-ignore
 
 # Files
@@ -34,6 +35,7 @@ tests/_support/_generated/* linguist-generated=true
 .travis.yml export-ignore
 
 CODEOWNERS export-ignore
+CODE_OF_CONDUCT.md export-ignore
 CONTRIBUTING.md export-ignore
 Gruntfile.js export-ignore
 README.md export-ignore
@@ -41,8 +43,6 @@ TESTS.md export-ignore
 codeception.dist.yml export-ignore
 codeception.example.yml export-ignore
 composer.json export-ignore
-git-workflow.md export-ignore
-grunt-workflow.md export-ignore
 jest-setup-wordpress-globals.js export-ignore
 jest.config.json export-ignore
 package.json export-ignore

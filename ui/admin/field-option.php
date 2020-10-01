@@ -51,12 +51,37 @@ foreach ( $field_options as $field_name => $field_option ) {
 				}
 			}
 		}
+
+		if ( 'heading' === $field_option['type'] ) {
+			?>
+			<h4>
+				<?php echo $field_option['label']; ?>
+			</h4>
+			<?php
+			continue;
+		} elseif ( 'html' === $field_option['type'] ) {
+			echo PodsForm::field( $field_option['name'], null, $field_option['type'], $field_option );
+
+			continue;
+		}
 		?>
 		<div class="pods-field-option">
 			<?php echo PodsForm::row( $row_name, $value, $field_option['type'], $field_option ); ?>
 		</div>
 		<?php
 	} else {
+		if ( 'heading' === $field_option['type'] ) {
+			?>
+				<h4>
+					<?php echo $field_option['label']; ?>
+				</h4>
+			<?php
+			continue;
+		} elseif ( 'html' === $field_option['type'] ) {
+			echo PodsForm::field( $field_option['name'], null, $field_option['type'], $field_option );
+
+			continue;
+		}
 		?>
 		<div class="pods-field-option-group">
 			<p class="pods-field-option-group-label">

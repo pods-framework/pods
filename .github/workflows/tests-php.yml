@@ -1,0 +1,65 @@
+name: 'Codeception Tests'
+on:
+  pull_request:
+    paths:
+      - 'classes/**.php'
+      - 'components/**.php'
+      - 'includes/**.php'
+      - 'src/**.php'
+      - 'sql/**.php'
+      - 'tests/codeception/**'
+      - 'ui/**.php'
+      - '*.php'
+      - 'composer.json'
+      - 'codeception.*.yml'
+      - '.github/workflows/tests-php.yml'
+jobs:
+  test:
+    strategy:
+      matrix:
+        suite:
+          - 'wpunit'
+          - 'wpunit-traversal'
+          - 'restv1'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Checkout automation tools
+        uses: actions/checkout@v1
+        with:
+          repository: moderntribe/tric
+          ref: main
+          path: tric
+          fetch-depth: 1
+      - name: Add tric to the PATH
+        run: echo "::set-env name=PATH::${GITHUB_WORKSPACE}/../tric:$PATH"
+      - name: Set tric run_context() for tric
+        run: echo "::set-env name=TRIC::1"
+      - name: Start ssh-agent
+        run: |
+          mkdir -p "${HOME}/.ssh";
+          ssh-agent -a /tmp/ssh_agent.sock;
+      - name: Export SSH_AUTH_SOCK env var
+        run: echo "::set-env name=SSH_AUTH_SOCK::/tmp/ssh_agent.sock"
+      - name: Set up tric for CI
+        run: |
+          cd ${GITHUB_WORKSPACE}/..
+          tric here
+          tric interactive off
+          tric build-prompt off
+          tric xdebug off
+          tric debug on
+          tric info
+      - name: Print the current tric configuration
+        run: tric config
+      - name: Set up pods
+        run: |
+          tric use pods
+          tric composer install
+      - name: Init the WordPress container
+        run: tric up wordpress
+      - name: Run suite tests
+        run: tric run ${{ matrix.suite }}

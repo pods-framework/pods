@@ -25,7 +25,7 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 	/**
 	 *
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		if ( static::$db_reset_teardown ) {
 			parent::tearDown();
 
@@ -39,6 +39,31 @@ class Pods_UnitTestCase extends \Codeception\TestCase\WPTestCase {
 
 			$object_collection = Store::get_instance();
 			$object_collection->delete_objects();
+
+			$objects = $object_collection->get_objects();
+			$default_objects = $object_collection->get_default_objects();
+
+			/** @var Pods\Whatsit\Storage\Collection $storage */
+			$storage = $object_collection->get_storage_object( 'collection' );
+
+			// Delete groups/fields for internal objects.
+			foreach ( $objects as $identifier => $object ) {
+				if ( ! isset( $default_objects[ $identifier ] ) ) {
+					continue;
+				}
+
+				// If this object has fields or groups, delete them.
+				$child_objects = array_merge( $object->get_all_fields(), $object->get_groups() );
+
+				// Delete child objects.
+				array_map( [ $storage, 'delete' ], $child_objects );
+
+				$object = null;
+
+				unset( $object );
+
+				$object_collection->flatten_object( $identifier );
+			}
 
 			pods_api()->cache_flush_pods();
 		}

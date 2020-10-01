@@ -2,6 +2,9 @@
 /**
  * @package Pods\Global\Functions\General
  */
+
+use Pods\Whatsit\Store;
+
 /**
  * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
  *
@@ -16,7 +19,7 @@
  * @since 2.0.0
  */
 function pods_query( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
-	$podsdata = pods_data();
+	$podsdata = pods_data( null, null, true, false );
 
 	$sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
 	$sql = $podsdata->get_sql( $sql );
@@ -318,16 +321,19 @@ function pods_is_debug_display() {
  */
 function pods_is_admin( $cap = null ) {
 	if ( is_user_logged_in() ) {
-		// Default is_super_admin() checks against this.
-		$pods_admin_capabilities = array(
-			'delete_users',
-		);
-
-		$pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
 
 		if ( is_multisite() && is_super_admin() ) {
 			return apply_filters( 'pods_is_admin', true, $cap, '_super_admin' );
 		}
+
+		$pods_admin_capabilities = array();
+
+		if ( ! is_multisite() ) {
+			// Default is_super_admin() checks against this capability.
+			$pods_admin_capabilities[] = 'delete_users';
+		}
+
+		$pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
 
 		if ( empty( $cap ) ) {
 			$cap = array();
@@ -479,7 +485,7 @@ function pods_strict( $include_debug = true ) {
  * @since 2.3.10
  */
 function pods_allow_deprecated( $strict = true ) {
-	if ( $strict && pods_strict() ) {
+	if ( $strict && pods_strict( false ) ) {
 		return false;
 	} elseif ( ! defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED ) {
 		return true;
@@ -606,7 +612,7 @@ function pods_help( $text, $url = null ) {
 	}
 
 	if ( 0 < strlen( $url ) ) {
-		$text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+		$text .= '<br /><br /><a href="' . $url . '" target="_blank" rel="noopener noreferrer">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
 	}
 
 	echo '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
@@ -941,8 +947,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 			}
 		}
 
-		if ( empty( $tags['name'] ) ) {
-			return '<p>Please provide a Pod name</p>';
+		if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
+			return '<p>' . __( 'Please provide a Pod name', 'pods' ) . '</p>';
 		}
 	}
 
@@ -959,7 +965,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( empty( $content ) && empty( $tags['pods_page'] ) && empty( $tags['template'] ) && empty( $tags['field'] ) && empty( $tags['form'] ) ) {
-		return '<p>Please provide either a template or field name</p>';
+		return '<p>' . __( 'Please provide either a template or field name', 'pods' ) . '</p>';
 	}
 
 	if ( ! $tags['use_current'] && ! isset( $id ) ) {
@@ -997,7 +1003,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( empty( $pod ) || ! $pod->valid() ) {
-		return '<p>Pod not found</p>';
+		return '<p>' . __( 'Pod not found', 'pods' ) . '</p>';
 	}
 
 	$found = 0;
@@ -1079,7 +1085,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 			$pod->find( $params );
 
-			$found = $pod->total();
+			$found = $pod->total_found();
 		}//end if
 	}//end if
 
@@ -1129,27 +1135,50 @@ function pods_shortcode_run( $tags, $content = null ) {
 		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
 	}
 
-	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array( $tags['pagination_location'], array(
+	if (
+		! $is_singular
+		&& 0 < $found
+		&& (
+			empty( $params['limit'] )
+			|| (
+				0 < $params['limit']
+				&& $params['limit'] < $found
+			)
+		)
+		&& true === $tags['pagination']
+		&& in_array( $tags['pagination_location'], [
 			'before',
 			'both',
-		), true ) ) {
+		], true )
+	) {
 		echo $pod->pagination( $tags['pagination_label'] );
 	}
 
 	$content = $pod->template( $tags['template'], $content );
-	$content = trim( $content );
 
-	if ( empty( $content ) && ! empty( $tags['not_found'] ) ) {
+	if ( '' === trim( $content ) && ! empty( $tags['not_found'] ) ) {
 		$content = $pod->do_magic_tags( $tags['not_found'] );
 	}
 
 	// phpcs:ignore
 	echo $content;
 
-	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array( $tags['pagination_location'], array(
+	if (
+		! $is_singular
+		&& 0 < $found
+		&& (
+			empty( $params['limit'] )
+			|| (
+				0 < $params['limit']
+				&& $params['limit'] < $found
+			)
+		)
+		&& true === $tags['pagination']
+		&& in_array( $tags['pagination_location'], [
 			'after',
 			'both',
-		), true ) ) {
+		], true )
+	) {
 		echo $pod->pagination( $tags['pagination_label'] );
 	}
 
@@ -1450,7 +1479,7 @@ function pods_permission( $options ) {
 	}
 
 	if ( ! $permission && 1 === (int) pods_v( 'restrict_role', $options, 0 ) ) {
-		$roles = pods_v( 'roles_allowed', $options );
+		$roles = maybe_unserialize( pods_v( 'roles_allowed', $options ) );
 
 		if ( ! is_array( $roles ) ) {
 			$roles = explode( ',', $roles );
@@ -1468,7 +1497,7 @@ function pods_permission( $options ) {
 	}
 
 	if ( ! $permission && 1 === (int) pods_v( 'restrict_capability', $options, 0 ) ) {
-		$capabilities = pods_v( 'capability_allowed', $options );
+		$capabilities = maybe_unserialize( pods_v( 'capability_allowed', $options ) );
 
 		if ( ! is_array( $capabilities ) ) {
 			$capabilities = explode( ',', $capabilities );
@@ -1578,93 +1607,149 @@ function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null
 }
 
 /**
- * Get a field value from a Pod
+ * Get a field value from a Pod.
  *
- * @param string       $pod    The pod name
- * @param mixed        $id     (optional) The ID or slug, to load a single record; Provide array of $params to run
- *                             'find'
- * @param string|array $name   The field name, or an associative array of parameters
- * @param boolean      $single (optional) For tableless fields, to return the whole array or the just the first item
+ * @param string|null  $pod    The pod name.
+ * @param mixed|null   $id     The ID or slug of the item.
+ * @param string|array $name   The field name, or an associative array of parameters.
+ * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
  *
- * @return mixed Field value
+ * @return mixed Field value.
  *
  * @since 2.1.0
  */
-function pods_field( $pod, $id = false, $name = null, $single = false ) {
+function pods_field( $pod, $id = null, $name = null, $single = false ) {
 	// allow for pods_field( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
 		$single = (boolean) $id;
 
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
 		$pod = get_post_type();
 		$id  = get_the_ID();
 	}
 
-	$pod = pods( $pod, $id );
+	$pod_object = pods( $pod, $id );
 
-	if ( is_object( $pod ) ) {
-		return $pod->field( $name, $single );
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->field( $name, $single );
 	}
 
 	return null;
 }
 
 /**
- * Get a field display value from a Pod
+ * Get a field display value from a Pod.
  *
- * @param string       $pod    The pod name
- * @param mixed        $id     (optional) The ID or slug, to load a single record; Provide array of $params to run
- *                             'find'
- * @param string|array $name   The field name, or an associative array of parameters
- * @param boolean      $single (optional) For tableless fields, to return the whole array or the just the first item
+ * @param string|null  $pod    The pod name.
+ * @param mixed|null   $id     The ID or slug of the item.
+ * @param string|array $name   The field name, or an associative array of parameters.
+ * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
  *
- * @return mixed Field value
+ * @return mixed Field value.
  *
  * @since 2.1.0
  */
-function pods_field_display( $pod, $id = false, $name = null, $single = false ) {
+function pods_field_display( $pod, $id = null, $name = null, $single = false ) {
 	// allow for pods_field_display( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
 		$single = (boolean) $id;
 
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
 		$pod = get_post_type();
 		$id  = get_the_ID();
 	}
 
-	$pod = pods( $pod, $id );
+	$pod_object = pods( $pod, $id );
 
-	if ( is_object( $pod ) ) {
-		return $pod->display( $name, $single );
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->display( $name, $single );
 	}
 
 	return null;
 }
 
 /**
- * Get a field raw value from a Pod
+ * Get a field raw value from a Pod.
  *
- * @param string       $pod    The pod name
- * @param mixed        $id     (optional) The ID or slug, to load a single record; Provide array of $params to run
- *                             'find'
- * @param string|array $name   The field name, or an associative array of parameters
- * @param boolean      $single (optional) For tableless fields, to return the whole array or the just the first item
+ * @param string|null  $pod    The pod name.
+ * @param mixed|null   $id     The ID or slug of the item.
+ * @param string|array $name   The field name, or an associative array of parameters.
+ * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
  *
- * @return mixed Field value
+ * @return mixed Field value.
  *
  * @since 2.1.0
  */
-function pods_field_raw( $pod, $id = false, $name = null, $single = false ) {
+function pods_field_raw( $pod, $id = null, $name = null, $single = false ) {
 	// allow for pods_field_raw( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
 		$single = (boolean) $id;
 
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
 		$pod = get_post_type();
 		$id  = get_the_ID();
 	}
 
-	return pods( $pod, $id )->raw( $name, $single );
+	$pod_object = pods( $pod, $id );
+
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->raw( $name, $single );
+	}
+
+	return null;
+
+}
+
+/**
+ * Update a field value for a Pod.
+ *
+ * @param string|null  $pod   The pod name.
+ * @param mixed|null   $id    The ID or slug of the item.
+ * @param string|array $name  The field name, or an associative array of parameters.
+ * @param boolean      $value Value to save.
+ *
+ * @return int|false The item ID or false if not saved.
+ *
+ * @since 2.7.17
+ */
+function pods_field_update( $pod, $id = null, $name = null, $value = null ) {
+
+	// allow for pods_field( 'field_name' );
+	if ( null === $name ) {
+		$name  = $pod;
+		$value = $id;
+
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
+		$pod = get_post_type();
+		$id  = get_the_ID();
+	}
+
+	$pod_object = pods( $pod, $id );
+
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->save( $name, $value );
+	}
+
+	return false;
 }
 
 /**
@@ -2022,6 +2107,72 @@ function pods_register_related_object( $name, $label, $options = null ) {
 }
 
 /**
+ * Register a block type with Pods. Always register during the `pods_blocks_api_init` action.
+ *
+ * @since TBD
+ *
+ * @param array $block  The block configuration, compatible with `register_block_type()`.
+ * @param array $fields List of fields to use for inspector controls.
+ *
+ * @return true|WP_Error True if successful, or else an WP_Error with the problem.
+ *
+ * @see register_block_type
+ * @see Pods\Blocks\Types\Base
+ */
+function pods_register_block_type( array $block, array $fields = [] ) {
+	if ( empty( $block['namespace'] ) ) {
+		return new WP_Error( 'pods-blocks-api-block-type-invalid', __( 'Invalid block type configuration provided', 'pods' ) );
+	}
+
+	$block['object_type']  = 'block';
+	$block['storage_type'] = 'collection';
+	$block['name']         = pods_v( 'name', $block, pods_v( 'slug', $block ) );
+	$block['label']        = pods_v( 'label', $block, pods_v( 'title', $block ) );
+	$block['category']     = pods_v( 'category', $block, pods_v( 'collection', $block ) );
+
+	$object_collection = Store::get_instance();
+	$object_collection->register_object( $block );
+
+	foreach ( $fields as $field ) {
+		$field['object_type']  = 'block-field';
+		$field['storage_type'] = 'collection';
+		$field['parent']       = 'block/' . $block['name'];
+		$field['name']         = pods_v( 'name', $field, pods_v( 'slug', $field ) );
+		$field['label']        = pods_v( 'label', $field, pods_v( 'title', $field ) );
+
+		$object_collection->register_object( $field );
+	}
+
+	return true;
+}
+
+/**
+ * Register a block collection with Pods. Always register during the `pods_blocks_api_init` action.
+ *
+ * @since TBD
+ *
+ * @param array $collection The block collection configuration, compatible with `block_categories` filter.
+ *
+ * @return true|WP_Error True if successful, or else an WP_Error with the problem.
+ *
+ * @see Pods\Blocks\Collections\Base
+ */
+function pods_register_block_collection( array $collection ) {
+	if ( empty( $collection['namespace'] ) ) {
+		return new WP_Error( 'pods-blocks-api-block-collection-invalid', __( 'Invalid block collection configuration provided', 'pods' ) );
+	}
+
+	$collection['object_type']  = 'block-collection';
+	$collection['storage_type'] = 'collection';
+	$collection['label']        = pods_v( 'label', $collection, pods_v( 'title', $collection ) );
+
+	$object_collection = Store::get_instance();
+	$object_collection->register_object( $collection );
+
+	return true;
+}
+
+/**
  * Require a component (always-on)
  *
  * @param string $component Component ID
@@ -2120,7 +2271,7 @@ function pods_no_conflict_check( $object_type = 'post' ) {
 		pods_init();
 	}
 
-	if ( ! empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
+	if ( ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
 		return true;
 	}
 
@@ -2148,7 +2299,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 		pods_init();
 	}
 
-	if ( ! empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
+	if ( ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
 		return true;
 	}
 
@@ -2338,7 +2489,7 @@ function pods_no_conflict_off( $object_type = 'post' ) {
 		pods_init();
 	}
 
-	if ( empty( PodsInit::$no_conflict ) || ! isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) ) {
+	if ( empty( PodsInit::$no_conflict[ $object_type ] ) ) {
 		return false;
 	}
 
@@ -2435,6 +2586,8 @@ function pods_reserved_keywords() {
 		'post_mime_type',
 		'post_status',
 		'post_tag',
+		'post_thumbnail',
+		'post_thumbnail_url',
 		'post_type',
 		'posts',
 		'posts_per_archive_page',
@@ -2483,10 +2636,12 @@ function pods_reserved_keywords() {
 }
 
 /**
- * Safely start a new session (without whitescreening on certain hosts,
- * which have no session path or isn't writable)
+ * Safely start a new session (without white screening on certain hosts,
+ * which have no session path or the path is not writable).
  *
  * @since 2.3.10
+ *
+ * @return boolean Whether the session was started.
  */
 function pods_session_start() {
 	$save_path = session_save_path();
@@ -2498,7 +2653,7 @@ function pods_session_start() {
 		// We do not need a session ID if there is a valid user logged in
 		return false;
 	} elseif ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
-		// Allow for bypassing Pods session autostarting.
+		// Allow for bypassing Pods session starting.
 		return false;
 	} elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
 		// Allow for non-file based sessions, like Memcache.
@@ -2508,16 +2663,48 @@ function pods_session_start() {
 		return false;
 	}
 
-	if ( '' !== session_id() ) {
-		// Check if session ID is already set.
-		// In separate if clause, to also check for non-file based sessions.
+	if ( '' !== pods_session_id() ) {
+		// Check if session ID is already set or if session should start.
 		return false;
 	}
 
 	// Start session
-	@session_start();
+	return @session_start();
+}
 
-	return true;
+/**
+ * Safely get a session ID or not.
+ *
+ * @since TBD
+ *
+ * @return string The session ID.
+ */
+function pods_session_id() {
+	/**
+	 * Allow filtering the session ID that Pods will use.
+	 *
+	 * @since TBD
+	 *
+	 * @param null|string $session_id The session ID (default null), return a string to bypass PHP session usage.
+	 */
+	$session_id = apply_filters( 'pods_session_id', null );
+
+	if ( null !== $session_id ) {
+		return $session_id;
+	}
+
+	if ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
+		// Allow for bypassing Pods sessions.
+		return '';
+	}
+
+	$session_id = @session_id();
+
+	if ( empty( $session_id ) ) {
+		return '';
+	}
+
+	return $session_id;
 }
 
 /**

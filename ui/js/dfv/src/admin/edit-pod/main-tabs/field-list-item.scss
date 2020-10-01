@@ -1,0 +1,191 @@
+@import '../edit-pod-variables';
+
+.pods-field_wrapper {
+	display: flex;
+	width: auto;
+	align-items: center;
+	padding: .7em 0;
+
+	&:hover .pods-field_controls-container {
+		opacity: 1;
+	}
+}
+
+.pods-field_outer-wrapper:nth-child(odd) {
+	background-color: $color--zebra-grey;
+	transition: 200ms ease background-color;
+}
+
+.pods-field_wrapper--unsaved {
+	border-left: 5px #95BF3B solid;
+}
+
+.pods-field_handle {
+	width: 30px;
+	flex: 0 0 30px;
+	opacity: .2;
+	padding-left: 10px;
+	padding-right: 10px;
+	cursor: move;
+	margin-bottom: 1em;
+}
+
+.pods-field_required {
+	color: red;
+}
+
+.pods-field_actions {
+	display: flex;
+}
+
+.pods-field_actions i {
+	padding: 10px;
+	color: #0073aa;
+
+	&:hover {
+		cursor: pointer;
+		color: #00a0d2;
+	}
+}
+
+.pods-field_label {
+	padding-left: 0;
+	user-select: none;
+}
+
+.pods-field_id {
+	font-size: 13px;
+	color: #999;
+	display: inline;
+	opacity: 0;
+	transition: 200ms ease opacity;
+}
+
+.pods-field_type,
+.pods-field_wrapper-label_type {
+	width: 60px;
+	user-select: none;
+}
+
+.pods-field_label,
+.pods-field_type {
+	user-select: none;
+
+	&:hover {
+		.pods-field_id {
+			opacity: 1;
+			height: auto;
+		}
+	}
+}
+
+.pods-field_label,
+.pods-field_name {
+	color: #0073aa;
+}
+
+.pods-field_label__link {
+	cursor: pointer;
+
+	&:hover {
+		color: #00a0d2;
+	}
+}
+
+.pods-field_name {
+	cursor: pointer;
+	padding-right: 1em;
+	text-overflow: ellipsis;
+	user-select: none;
+}
+
+.pods-field-group_name:hover > .pods-field-group_name__id {
+	opacity: 1;
+}
+
+.pods-field_wrapper-labels {
+	display: flex;
+	width: 100%;
+	margin-top: .3em;
+
+	& + .pods-field_wrapper-items {
+		margin-top: .7em;
+		width: 100%;
+	}
+}
+
+.pods-field_wrapper-label,
+.pods-field_label {
+	width: calc(50% - 30px);
+	flex: 0 0 calc(50% - 30px);
+}
+
+.pods-field_wrapper-label:first-child {
+	margin-left: 40px;
+}
+
+.pods-field_name,
+.pods-field_type,
+.pods-field_wrapper-label_name,
+.pods-field_wrapper-label_type {
+	width: 25%;
+	flex: 0 0 25%;
+	padding-bottom: 1em;
+}
+
+.pods-field_wrapper-label-items {
+	width: 172px;
+	padding: 1em 1em 1em 0;
+	justify-content: flex-start;
+	width: 25%;
+
+	&:first-child {
+		margin-left: 40px;
+		width: 50%;
+	}
+}
+
+.pods-field_wrapper-items {
+	border: 1px solid $color--light-grey;
+	margin: 1em 0;
+	overflow: hidden;
+}
+
+.pods-field_wrapper:nth-child(even) {
+	background-color: $color--super-light-grey;
+}
+
+.pods-field_controls-container {
+	color: $color--light-grey;
+	margin-left: -0.5em;
+	padding-top: 0.25em;
+}
+
+.pods-field_button {
+	background: transparent;
+	border: none;
+	color: $color--wp-blue;
+	cursor: pointer;
+	font-size: 0.95em;
+	height: auto;
+	overflow: visible;
+	padding: 0 0.5em;
+	position: relative;
+
+	&:hover,
+	&:focus {
+		color: $color--wp-blue-light;
+	}
+}
+
+.pods-field_button.pods-field_delete {
+	color: $color--red;
+
+	&:hover {
+		color: $color--red-dark;
+	}
+
+	&::after {
+		content: none;
+	}
+}

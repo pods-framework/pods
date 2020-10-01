@@ -54,7 +54,8 @@ class PodsField_OEmbed extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'oEmbed', 'pods' );
+		static::$group = __( 'Relationships / Media', 'pods' );
+		static::$label = __( 'oEmbed', 'pods' );
 	}
 
 	/**
@@ -206,7 +207,7 @@ class PodsField_OEmbed extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}
 			}

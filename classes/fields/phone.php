@@ -30,7 +30,8 @@ class PodsField_Phone extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Phone', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Phone', 'pods' );
 	}
 
 	/**
@@ -160,7 +161,7 @@ class PodsField_Phone extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid phone number provided for the field %s.', 'pods' ), $label );

@@ -33,7 +33,13 @@ const formatOptionsForReactSelectComponent = ( options ) => {
 		);
 };
 
-const formatValuesForReactSelectComponent = ( value, options = {}, isMulti = false ) => {
+const formatValuesForReactSelectComponent = (
+	value,
+	options = {},
+	isMulti = false
+) => {
+	console.log( 'formatValuesForReactSelectComponent', value, options, isMulti );
+
 	if ( ! value ) {
 		return isMulti ? [] : undefined;
 	}
@@ -98,8 +104,8 @@ const Pick = ( props ) => {
 			rest_pick_depth: pickDepth,
 			rest_pick_response: pickResponse,
 			// pick_where,
-			data = [],
 		},
+		data = {},
 		setValue,
 		value,
 	} = props;
@@ -149,7 +155,7 @@ const Pick = ( props ) => {
 			// @todo add cases for taxonomies, etc and fall through?
 			case 'post-type':
 				// @todo get request working
-				setDataOptions( [] );
+				setDataOptions( {} );
 				// @todo
 				break;
 			default:
@@ -171,7 +177,9 @@ const Pick = ( props ) => {
 
 	if ( isMulti && 'checkbox' === formatMulti ) {
 		// @todo is the API returning the correct format?
-		const formattedValue = Array.isArray( value ) ? value : ( value || '' ).split( ',' );
+		const formattedValue = Array.isArray( value )
+			? value
+			: ( value || '' ).split( ',' );
 
 		return (
 			<CheckboxSelect
@@ -187,7 +195,7 @@ const Pick = ( props ) => {
 		( isSingle && 'list' === formatSingle ) ||
 		( isMulti && 'list' === formatMulti )
 	) {
-		const formattedValue = value
+		const formattedValue = ( Object.keys( dataOptions ).length && value )
 			? formatValuesForReactSelectComponent( value, dataOptions, isMulti )
 			: undefined;
 

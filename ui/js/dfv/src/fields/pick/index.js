@@ -178,7 +178,7 @@ const Pick = ( props ) => {
 				name={ name }
 				value={ formattedValue }
 				setValue={ setValue }
-				options={ options }
+				options={ dataOptions }
 			/>
 		);
 	}
@@ -188,7 +188,7 @@ const Pick = ( props ) => {
 		( isMulti && 'list' === formatMulti )
 	) {
 		const formattedValue = value
-			? formatValuesForReactSelectComponent( value, options, isMulti )
+			? formatValuesForReactSelectComponent( value, dataOptions, isMulti )
 			: undefined;
 
 		return (
@@ -196,7 +196,7 @@ const Pick = ( props ) => {
 				name={ name }
 				value={ formattedValue }
 				setValue={ setValue }
-				options={ formatOptionsForReactSelectComponent( options ) }
+				options={ formatOptionsForReactSelectComponent( dataOptions ) }
 				// translators: Placeholder with the field label.
 				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
 				isMulti={ isMulti }
@@ -212,12 +212,12 @@ const Pick = ( props ) => {
 		( isSingle && 'autocomplete' === formatSingle ) ||
 		( isMulti && 'autocomplete' === formatMulti )
 	) {
-		const formattedValue = formatValuesForReactSelectComponent( value, options, isMulti );
+		const formattedValue = formatValuesForReactSelectComponent( value, dataOptions, isMulti );
 
 		return (
 			<Select
 				name={ name }
-				options={ formatOptionsForReactSelectComponent( options ) }
+				options={ formatOptionsForReactSelectComponent( dataOptions ) }
 				value={ formattedValue }
 				// translators: Placeholder with the field label.
 				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
@@ -238,7 +238,7 @@ const Pick = ( props ) => {
 			name={ name }
 			value={ formatValuesForHTMLSelectElement( value, isMulti ) }
 			setValue={ ( newValue ) => setValue( newValue ) }
-			options={ options }
+			options={ dataOptions }
 			placeholder={ selectText }
 			isMulti={ isMulti }
 		/>

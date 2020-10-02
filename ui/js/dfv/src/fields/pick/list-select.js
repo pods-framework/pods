@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 
 import { __ } from '@wordpress/i18n';
 
+import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
+
 const ListSelect = ( {
 	name,
 	value,
@@ -148,10 +150,7 @@ ListSelect.propTypes = {
 		} ) ),
 	] ),
 	setValue: PropTypes.func.isRequired,
-	options: PropTypes.arrayOf( PropTypes.shape( {
-		label: PropTypes.string.isRequired,
-		value: PropTypes.string.isRequired,
-	} ) ).isRequired,
+	options: PICK_OPTIONS.isRequired,
 	placeholder: PropTypes.string.isRequired,
 	isMulti: PropTypes.bool.isRequired,
 	limit: PropTypes.number.isRequired,

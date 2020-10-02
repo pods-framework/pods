@@ -16,21 +16,17 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './pick.scss';
 
-// The react-select component needs options in the format of
-// [ { value: '', label: '' } ] instead of a simple map.
-const formatOptionsForReactSelectComponent = ( options ) => {
+// We may receive data in the form of a Object hash map, but
+// we need to convert those to an array of objects with values/labels.
+const formatOptionsToArray = ( options = {} ) => {
 	return Object
 		.keys( options )
-		.reduce(
-			( accumulator, current ) => ( [
-				...accumulator,
-				{
-					value: current,
-					label: options[ current ],
-				},
-			] ),
-			[]
-		);
+		.map( ( option ) => {
+			return {
+				value: option,
+				label: options[ option ],
+			};
+		} );
 };
 
 const formatValuesForReactSelectComponent = (
@@ -38,8 +34,6 @@ const formatValuesForReactSelectComponent = (
 	options = {},
 	isMulti = false
 ) => {
-	console.log( 'formatValuesForReactSelectComponent', value, options, isMulti );
-
 	if ( ! value ) {
 		return isMulti ? [] : undefined;
 	}
@@ -115,7 +109,9 @@ const Pick = ( props ) => {
 
 	// The options could be derived from the `data` prop (as a default),
 	// or we may need to do more work to break them apart or load them by the API.
-	const [ dataOptions, setDataOptions ] = useState( data );
+	const [ dataOptions, setDataOptions ] = useState(
+		formatOptionsToArray( data )
+	);
 
 	useEffect( () => {
 		// const loadAjaxOptions = async () => {
@@ -148,14 +144,24 @@ const Pick = ( props ) => {
 			case 'custom-simple':
 				// @todo better error handling
 				const unsplitOptions = pickCustomOptions.split( '\n' );
-				const optionEntries = unsplitOptions.map( ( unsplitOption ) => unsplitOption.split( '|' ) );
 
-				setDataOptions( Object.fromEntries( optionEntries ) );
+				const optionEntries = unsplitOptions.map(
+					( unsplitOption ) => {
+						const splitOption = unsplitOption.split( '|' );
+
+						return {
+							value: splitOption[ 0 ],
+							label: splitOption[ 1 ],
+						};
+					}
+				);
+
+				setDataOptions( optionEntries );
 				break;
 			// @todo add cases for taxonomies, etc and fall through?
 			case 'post-type':
 				// @todo get request working
-				setDataOptions( {} );
+				setDataOptions( [] );
 				// @todo
 				break;
 			default:
@@ -175,16 +181,24 @@ const Pick = ( props ) => {
 		);
 	}
 
-	if ( isMulti && 'checkbox' === formatMulti ) {
+	if (
+		( isSingle && 'checkbox' === formatSingle ) ||
+		( isMulti && 'checkbox' === formatMulti )
+	) {
 		// @todo is the API returning the correct format?
-		const formattedValue = Array.isArray( value )
-			? value
-			: ( value || '' ).split( ',' );
+		let formattedValue = value;
+
+		if ( isMulti ) {
+			formattedValue = Array.isArray( value )
+				? value
+				: ( value || '' ).split( ',' );
+		}
 
 		return (
 			<CheckboxSelect
 				name={ name }
 				value={ formattedValue }
+				isMulti={ isMulti }
 				setValue={ setValue }
 				options={ dataOptions }
 			/>
@@ -204,7 +218,7 @@ const Pick = ( props ) => {
 				name={ name }
 				value={ formattedValue }
 				setValue={ setValue }
-				options={ formatOptionsForReactSelectComponent( dataOptions ) }
+				options={ dataOptions }
 				// translators: Placeholder with the field label.
 				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
 				isMulti={ isMulti }
@@ -225,7 +239,7 @@ const Pick = ( props ) => {
 		return (
 			<Select
 				name={ name }
-				options={ formatOptionsForReactSelectComponent( dataOptions ) }
+				options={ dataOptions }
 				value={ formattedValue }
 				// translators: Placeholder with the field label.
 				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }

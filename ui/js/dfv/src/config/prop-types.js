@@ -243,6 +243,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	] ),
 	pick_format_single: PropTypes.oneOf( [
 		'autocomplete',
+		'checkbox',
 		'dropdown',
 		'list',
 		'radio',
@@ -324,3 +325,18 @@ export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {
 	weight: PropTypes.number,
 	_locale: PropTypes.string,
 } );
+
+export const PICK_OPTIONS = PropTypes.arrayOf(
+	PropTypes.shape( {
+		label: PropTypes.string.isRequired,
+		value: PropTypes.oneOfType( [
+			PropTypes.string.isRequired,
+			PropTypes.arrayOf(
+				PropTypes.shape( {
+					label: PropTypes.string.isRequired,
+					value: PropTypes.string.isRequired,
+				} )
+			),
+		] ),
+	} )
+);

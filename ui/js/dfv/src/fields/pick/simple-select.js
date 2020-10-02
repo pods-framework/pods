@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import { __ } from '@wordpress/i18n';
 
+import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
+
 const SimpleSelect = ( {
 	name,
 	value,
@@ -17,7 +19,7 @@ const SimpleSelect = ( {
 	// the placeholder value), and will send the empty string
 	// to the end of the object when it is enumerated.
 	//
-	const optionKeys = Object.keys( options )
+	const optionKeys = options.map( ( option ) => option.value )
 		// eslint-disable-next-line no-unused-vars
 		.sort( ( a, b ) => a[ 0 ] === '' ? -1 : 0 );
 
@@ -48,17 +50,19 @@ const SimpleSelect = ( {
 					</option>
 				) }
 
-				{ optionKeys.map( ( optionValue ) => {
-					const option = options[ optionValue ];
-
-					if ( 'string' === typeof option ) {
+				{ options.map( (
+					{
+						label: optionLabel,
+						value: optionValue,
+					} ) => {
+					if ( 'string' === typeof optionValue ) {
 						return (
 							<option key={ optionValue } value={ optionValue }>
-								{ option }
+								{ optionLabel }
 							</option>
 						);
-					} else if ( 'object' === typeof option ) {
-						const optgroupOptions = Object.entries( option );
+					} else if ( 'object' === typeof optionValue ) {
+						const optgroupOptions = Object.entries( optionValue );
 
 						return (
 							<optgroup label={ optionValue } key={ optionValue }>
@@ -86,7 +90,7 @@ SimpleSelect.propTypes = {
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
 	setValue: PropTypes.func.isRequired,
-	options: PropTypes.object.isRequired,
+	options: PICK_OPTIONS.isRequired,
 	placeholder: PropTypes.string,
 	isMulti: PropTypes.bool,
 };

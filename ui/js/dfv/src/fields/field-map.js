@@ -3,6 +3,7 @@ import reactRenderer from 'dfv/src/core/renderers/react-renderer';
 import reactDirectRenderer from 'dfv/src/core/renderers/react-direct-renderer';
 
 import Boolean from 'dfv/src/fields/boolean';
+import Color from 'dfv/src/fields/color';
 import EditPod from 'dfv/src/admin/edit-pod/edit-pod';
 import Email from 'dfv/src/fields/email';
 import File from 'dfv/src/fields/file';
@@ -24,6 +25,10 @@ const FIELD_MAP = {
 	},
 	boolean: {
 		fieldComponent: Boolean,
+		renderer: reactRenderer,
+	},
+	color: {
+		fieldComponent: Color,
 		renderer: reactRenderer,
 	},
 	'edit-pod': {

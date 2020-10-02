@@ -12,7 +12,10 @@ import CheckboxSelect from './checkbox-select';
 import ListSelect from './list-select';
 
 import { toBool } from 'dfv/src/helpers/booleans';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import {
+	PICK_OPTIONS,
+	FIELD_PROP_TYPE_SHAPE,
+} from 'dfv/src/config/prop-types';
 
 import './pick.scss';
 
@@ -99,7 +102,7 @@ const Pick = ( props ) => {
 			rest_pick_response: pickResponse,
 			// pick_where,
 		},
-		data = {},
+		data = [],
 		setValue,
 		value,
 	} = props;
@@ -109,9 +112,7 @@ const Pick = ( props ) => {
 
 	// The options could be derived from the `data` prop (as a default),
 	// or we may need to do more work to break them apart or load them by the API.
-	const [ dataOptions, setDataOptions ] = useState(
-		formatOptionsToArray( data )
-	);
+	const [ dataOptions, setDataOptions ] = useState( data );
 
 	useEffect( () => {
 		// const loadAjaxOptions = async () => {
@@ -274,7 +275,7 @@ Pick.propTypes = {
 		PropTypes.arrayOf( PropTypes.string ),
 		PropTypes.string,
 	] ),
-	data: PropTypes.object,
+	data: PICK_OPTIONS,
 };
 
 export default Pick;

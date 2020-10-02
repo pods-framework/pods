@@ -98,7 +98,12 @@ const DependentFieldOption = ( {
 
 		const loadBidirectionalFieldData = async () => {
 			// Initialize the field with loading text.
-			setDataOptions( { '': __( 'Loading available fields…', 'pods' ) } );
+			setDataOptions( [
+				{
+					value: '',
+					label: __( 'Loading available fields…', 'pods' ),
+				},
+			] );
 
 			const args = {
 				pick_object: podType,
@@ -123,24 +128,34 @@ const DependentFieldOption = ( {
 				const results = await apiFetch( { path: requestPath } );
 
 				if ( ! results.fields || ! results.fields.length ) {
-					setDataOptions( { '': __( 'No Related Fields Found', 'pods' ) } );
+					setDataOptions( [
+						{
+							value: '',
+							label: __( 'No Related Fields Found', 'pods' ),
+						},
+					] );
 					return;
 				}
 
 				// Reduce the API results to an ID for the value and a label.
-				const processedFields = results.fields.reduce(
-					( accumulator, currentField ) => ( {
-						...accumulator,
-						[ currentField.id ]: `${ currentField.label } (${ currentField.name }) [Pod: ${ currentField.parent_data?.name }]`,
-					} ),
-					{
-						'': __( '-- Select Related Field --', 'pods' ),
-					}
-				);
+				const processedFields = results.fields.map( ( currentField ) => {
+					return {
+						value: currentField.id,
+						label: `${ currentField.label } (${ currentField.name }) [Pod: ${ currentField.parent_data?.name }]`,
+					};
+				} );
+
+				processedFields.unshift( {
+					value: '',
+					label: __( '-- Select Related Field --', 'pods' ),
+				} );
 
 				setDataOptions( processedFields );
 			} catch ( error ) {
-				setDataOptions( { '': __( 'No Related Fields Found', 'pods' ) } );
+				setDataOptions( {
+					value: '',
+					label: __( 'No Related Fields Found', 'pods' ),
+				} );
 			}
 		};
 

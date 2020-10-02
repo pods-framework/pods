@@ -23,7 +23,7 @@ const RadioSelect = ( {
 								htmlFor={ `pods-${ name }-${ optionLabel }` }
 							>
 								<input
-									name={ `pods-${ name }-${ optionLabel }` }
+									name={ `pods_${ name }` }
 									id={ `pods-${ name }-${ optionLabel }` }
 									checked={ value === optionValue }
 									className="pods-form-ui-field-type-pick"

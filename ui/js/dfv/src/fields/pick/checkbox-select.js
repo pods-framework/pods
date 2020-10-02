@@ -24,10 +24,13 @@ const CheckboxSelect = ( {
 			className={ classnames( 'pods-checkbox-pick', options.length === 1 && 'pods-checkbox-pick--single' ) }
 			id={ name }
 		>
-			{ options.map( ( {
-				value: optionValue,
-				label: optionLabel,
-			} ) => {
+			{ options.map( (
+				{
+					value: optionValue,
+					label: optionLabel,
+				},
+				optionIndex
+			) => {
 				return (
 					<li
 						key={ optionValue }
@@ -39,14 +42,14 @@ const CheckboxSelect = ( {
 								htmlFor={ `pods-${ name }-${ optionLabel }` }
 							>
 								<input
-									id={ `pods-${ name }-${ optionLabel }` }
+									name={ `pods_${ name }[${ optionIndex }]` }
+									id={ `pods_${ name }` }
 									checked={ isMulti ? value.includes( optionValue ) : value === optionValue }
 									className="pods-form-ui-field-type-pick"
 									type="checkbox"
 									value={ optionValue }
 									onChange={ () => {
 										if ( isMulti ) {
-											console.log( 'multi checkbox, setting ', optionValue );
 											toggleValueOption( optionValue );
 										} else {
 											setValue( value === optionValue ? undefined : optionValue );

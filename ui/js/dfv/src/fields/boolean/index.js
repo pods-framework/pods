@@ -24,13 +24,11 @@ const Boolean = ( {
 	const numericBooleanValue = toNumericBool( value );
 	const setBooleanValue = ( newValue ) => setValue( toBool( newValue ) );
 
-	const options = 'checkbox' === formatType
-		? {
-			1: yesLabel,
-		} : {
-			1: yesLabel,
-			0: noLabel,
-		};
+	const options = [ { value: '1', label: yesLabel } ];
+
+	if ( 'checkbox' !== formatType ) {
+		options.push( { value: '0', label: noLabel } );
+	}
 
 	return (
 		<Pick

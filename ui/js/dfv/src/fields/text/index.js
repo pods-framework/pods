@@ -14,10 +14,10 @@ const Text = ( props ) => {
 
 	return (
 		<BaseInput
-			type="text"
-			maxLength={ parseInt( maxLength, 10 ) }
-			placeholder={ placeholder }
 			{ ...props }
+			type="text"
+			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
+			placeholder={ placeholder }
 		/>
 	);
 };

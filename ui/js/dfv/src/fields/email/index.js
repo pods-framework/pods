@@ -30,11 +30,11 @@ const Email = ( props ) => {
 
 	return (
 		<BaseInput
+			{ ...props }
 			fieldConfig={ fieldConfig }
 			type={ true === toBool( html5 ) ? 'email' : 'text' }
-			maxLength={ parseInt( maxLength, 10 ) }
+			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
 			placeholder={ placeholder }
-			{ ...props }
 		/>
 	);
 };

@@ -17,7 +17,7 @@ const Password = ( props ) => {
 		<BaseInput
 			fieldConfig={ fieldConfig }
 			type={ 'password' }
-			maxLength={ parseInt( maxLength, 10 ) }
+			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
 			placeholder={ placeholder }
 			{ ...props }
 		/>

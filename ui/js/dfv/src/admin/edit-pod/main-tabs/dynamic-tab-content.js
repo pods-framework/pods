@@ -40,7 +40,6 @@ const DynamicTabContent = ( {
 					label: getLabelValue( label, labelParam, defaultValue ),
 				} }
 				value={ optionValues[ name ] }
-				allOptionValues={ optionValues }
 				setOptionValue={ setOptionValue }
 			/>
 		);

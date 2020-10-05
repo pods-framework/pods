@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { isEqual } from 'lodash';
 import * as PropTypes from 'prop-types';
 
 // WordPress dependencies
@@ -18,7 +19,7 @@ const DependentFieldOption = ( {
 	podName,
 	field,
 	value,
-	allOptionValues,
+	dependencyValues,
 	setOptionValue,
 } ) => {
 	const {
@@ -40,15 +41,15 @@ const DependentFieldOption = ( {
 	// after a UI update, but will be wrong after the update from saving to the API,
 	// so we'll check that the values haven't already been merged.
 	let processedValue = value;
-	const processedAllOptionValues = allOptionValues;
+	const processedAllOptionValues = dependencyValues;
 
 	if (
 		'pick_object' === name &&
-		allOptionValues.pick_val &&
-		! value.includes( `-${ allOptionValues.pick_val }`, `-${ allOptionValues.pick_val }`.length )
+		dependencyValues.pick_val &&
+		! value.includes( `-${ dependencyValues.pick_val }`, `-${ dependencyValues.pick_val }`.length )
 	) {
-		processedValue = `${ value }-${ allOptionValues.pick_val }`;
-		processedAllOptionValues.pick_object = `${ value }-${ allOptionValues.pick_val }`;
+		processedValue = `${ value }-${ dependencyValues.pick_val }`;
+		processedAllOptionValues.pick_object = `${ value }-${ dependencyValues.pick_val }`;
 	}
 
 	const handleInputChange = ( newValue ) => {
@@ -68,9 +69,9 @@ const DependentFieldOption = ( {
 	// from all other fields - the data isn't loaded along with the others.
 	// We need to watch the "Field Type" and "Related Type" fields for changes
 	// to load the appropriate options here.
-	const fieldTypeOption = allOptionValues.type;
+	const fieldTypeOption = dependencyValues.type;
 
-	const relatedTypeOption = allOptionValues.pick_object;
+	const relatedTypeOption = dependencyValues.pick_object;
 
 	useEffect( () => {
 		// We only need to fetch data if we're creating a "Relationship"/"pick" field
@@ -180,6 +181,7 @@ const DependentFieldOption = ( {
 DependentFieldOption.propTypes = {
 	podType: PropTypes.string.isRequired,
 	podName: PropTypes.string.isRequired,
+	dependencyValues: PropTypes.object.isRequired,
 	field: FIELD_PROP_TYPE_SHAPE,
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
@@ -190,11 +192,27 @@ DependentFieldOption.propTypes = {
 	setOptionValue: PropTypes.func.isRequired,
 };
 
-export default withSelect( ( select ) => {
+const MemoizedDependentFieldOption = React.memo(
+	DependentFieldOption,
+	( prevProps, nextProps ) => isEqual( prevProps, nextProps )
+);
+
+export default withSelect( ( select, ownProps ) => {
 	const storeSelect = select( STORE_KEY_EDIT_POD );
+
+	// Get the values of the fields that this one depends on.
+	const dependencyFieldNames = Object.keys( ownProps.field[ 'depends-on' ] || {} );
+
+	const allOptions = storeSelect.getPodOptions();
+
+	const dependencyValueEntries = dependencyFieldNames.map( ( fieldName ) => ( [
+		fieldName,
+		allOptions[ fieldName ],
+	] ) );
 
 	return {
 		podType: storeSelect.getPodOption( 'type' ),
 		podName: storeSelect.getPodOption( 'name' ),
+		dependencyValues: Object.fromEntries( dependencyValueEntries ),
 	};
-} )( DependentFieldOption );
+} )( MemoizedDependentFieldOption );

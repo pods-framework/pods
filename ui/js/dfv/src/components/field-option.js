@@ -12,7 +12,7 @@ import { richTextNoLinks } from '../../../blocks/src/config/html';
 import FIELD_MAP from 'dfv/src/fields/field-map';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-const PodsFieldOption = ( props ) => {
+const FieldOption = ( props ) => {
 	const {
 		field = {},
 		value,
@@ -118,7 +118,7 @@ const PodsFieldOption = ( props ) => {
 	);
 };
 
-PodsFieldOption.propTypes = {
+FieldOption.propTypes = {
 	field: FIELD_PROP_TYPE_SHAPE,
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
@@ -129,4 +129,4 @@ PodsFieldOption.propTypes = {
 	setValue: PropTypes.func.isRequired,
 };
 
-export default PodsFieldOption;
+export default FieldOption;

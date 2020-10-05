@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 import ValidationMessages from 'dfv/src/components/validation-messages';
@@ -33,7 +34,14 @@ const FieldContainer = ( props ) => {
 	);
 
 	return (
-		<div className="pods-dfv-container">
+		<div
+			className={
+				classnames(
+					'pods-dfv-container',
+					`pods-dfv-container-${ fieldConfig?.type }`
+				)
+			}
+		>
 			<Field
 				value={ value }
 				setValue={ setValue }

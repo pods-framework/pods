@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import numberFormat from 'dfv/src/helpers/numberFormat';
+import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './number-field.scss';
@@ -64,8 +65,8 @@ const NumberField = ( {
 		htmlAttr: htmlAttributes = {},
 		readonly: readOnly,
 		number_decimals: decimals,
-		number_format: format, // 'i18n', '9,999.99', '9.999,99"', '9 999,99', '9999.99', '9999,99', etc?
-		number_format_soft: softFormat, // boolean, Remove trailing decimals
+		number_format: format,
+		number_format_soft: softFormat,
 		number_format_type: type,
 		number_max: max,
 		number_max_length: maxLength,
@@ -74,7 +75,11 @@ const NumberField = ( {
 		number_step: step,
 	} = fieldConfig;
 
-	const handleChange = ( event ) => setValue( event.target.value );
+	const correctedDecimals = toBool( softFormat ) ? 0 : decimals;
+
+	const handleChange = ( event ) => setValue(
+		formatValue( event.target.value, correctedDecimals, format )
+	);
 
 	if ( 'number' === type ) {
 		return (
@@ -108,7 +113,7 @@ const NumberField = ( {
 			/>
 
 			<div className="pods-slider-field-display">
-				{ formatValue( value, decimals, format ) }
+				{ formatValue( value, correctedDecimals, format ) }
 			</div>
 		</div>
 	);

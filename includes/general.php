@@ -1433,7 +1433,7 @@ function pods_permission( $options ) {
 	}
 
 	if ( ! $permission && 1 === (int) pods_v( 'restrict_role', $options, 0 ) ) {
-		$roles = pods_v( 'roles_allowed', $options );
+		$roles = maybe_unserialize( pods_v( 'roles_allowed', $options ) );
 
 		if ( ! is_array( $roles ) ) {
 			$roles = explode( ',', $roles );
@@ -1451,7 +1451,7 @@ function pods_permission( $options ) {
 	}
 
 	if ( ! $permission && 1 === (int) pods_v( 'restrict_capability', $options, 0 ) ) {
-		$capabilities = pods_v( 'capability_allowed', $options );
+		$capabilities = maybe_unserialize( pods_v( 'capability_allowed', $options ) );
 
 		if ( ! is_array( $capabilities ) ) {
 			$capabilities = explode( ',', $capabilities );
@@ -2513,6 +2513,8 @@ function pods_reserved_keywords() {
 		'post_mime_type',
 		'post_status',
 		'post_tag',
+		'post_thumbnail',
+		'post_thumbnail_url',
 		'post_type',
 		'posts',
 		'posts_per_archive_page',

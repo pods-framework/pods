@@ -3,12 +3,11 @@
 namespace Pods_Unit_Tests\Meta;
 
 /**
- * Class Test_Each
+ * Class Metadata
  *
  * @package Pods_Unit_Tests
  * @group   pods_acceptance_tests
- * @group   pods-shortcodes
- * @group   pods-shortcodes-each
+ * @group   pods_meta
  */
 class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 {

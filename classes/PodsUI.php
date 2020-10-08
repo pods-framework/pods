@@ -2444,7 +2444,7 @@ class PodsUI {
 
 		$export_file = $migrate->save( $save_params );
 
-		$this->message( sprintf( __( '<strong>Success:</strong> Your export is ready, you can download it <a href="%s" target="_blank">here</a>', 'pods' ), $export_file ) );
+		$this->message( sprintf( __( '<strong>Success:</strong> Your export is ready, you can download it <a href="%s" target="_blank" rel="noopener noreferrer">here</a>', 'pods' ), $export_file ) );
 
 		// echo '<script type="text/javascript">window.open("' . esc_js( $export_file ) . '");</script>';
 		$this->get_data();
@@ -2911,6 +2911,10 @@ class PodsUI {
 				foreach ( $filters as $k => $filter ) {
 					if ( isset( $this->pod->fields[ $filter ] ) ) {
 						$filter_field = $this->pod->fields[ $filter ];
+
+						if ( isset( $this->fields['manage'][ $filter ] ) && is_array( $this->fields['manage'][ $filter ] ) ) {
+							$filter_field = array_merge( $filter_field, $this->fields['manage'][ $filter ] );
+						}
 					} elseif ( isset( $this->fields['manage'][ $filter ] ) ) {
 						$filter_field = $this->fields['manage'][ $filter ];
 					} else {
@@ -2954,10 +2958,13 @@ class PodsUI {
 					// we have the data already as an array
 					$this->sort_data();}
 
-					if ( ! in_array( 'export', $this->actions_disabled ) && 'export' === $this->action ) {
-						$this->export();}
+					if ( 'export' === $this->action && ! in_array( 'export', $this->actions_disabled, true ) ) {
+						$this->export();
+					}
 
 					if ( ( ! empty( $this->data ) || false !== $this->search || ( $this->filters_enhanced && ! empty( $this->views ) ) ) && ( ( $this->filters_enhanced && ! empty( $this->views ) ) || false !== $this->searchable ) ) {
+						wp_enqueue_style( 'pods-styles' );
+
 						if ( $this->filters_enhanced ) {
 							$this->filters();
 						} else {
@@ -2977,12 +2984,18 @@ class PodsUI {
 							foreach ( $this->filters as $filter ) {
 								if ( isset( $this->pod->fields[ $filter ] ) ) {
 									$filter_field = $this->pod->fields[ $filter ];
+
+									if ( isset( $this->fields['manage'][ $filter ] ) && is_array( $this->fields['manage'][ $filter ] ) ) {
+										$filter_field = array_merge( $filter_field, $this->fields['manage'][ $filter ] );
+									}
 								} elseif ( isset( $this->fields['manage'][ $filter ] ) ) {
 									$filter_field = $this->fields['manage'][ $filter ];
 								} else {
 									continue;
 								}
-
+								?>
+								<span class="pods-form-ui-filter-container pods-form-ui-filter-container-<?php echo esc_attr( $filter ); ?>">
+								<?php
 								if ( in_array( $filter_field['type'], array( 'date', 'datetime', 'time' ) ) ) {
 									$start = pods_var_raw( 'filter_' . $filter . '_start', 'get', pods_var_raw( 'filter_default', $filter_field, '', null, true ), null, true );
 									$end   = pods_var_raw( 'filter_' . $filter . '_end', 'get', pods_var_raw( 'filter_ongoing_default', $filter_field, '', null, true ), null, true );
@@ -3002,13 +3015,37 @@ class PodsUI {
 									<label for="pods-form-ui-filter-<?php esc_attr_e( $filter ); ?>_start">
 										<?php esc_html_e( $filter_field['label'] ); ?>
 									</label>
-									<?php echo PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field['type'], $filter_field ); ?>
+									<?php
+										// Prevent p div issues.
+										echo str_replace(
+											array(
+												'<div',
+												'</div>',
+											),
+											array(
+												'<span',
+												'</span>',
+											),
+											PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field['type'], $filter_field )
+										);
+									?>
 
 									<label for="pods-form-ui-filter-<?php esc_attr_e( $filter ); ?>_end">
 										to
 									</label>
 								<?php
-									echo PodsForm::field( 'filter_' . $filter . '_end', $end, $filter_field['type'], $filter_field );
+									// Prevent p div issues.
+									echo str_replace(
+										array(
+											'<div',
+											'</div>',
+										),
+										array(
+											'<span',
+											'</span>',
+										),
+										PodsForm::field( 'filter_' . $filter . '_end', $end, $filter_field['type'], $filter_field )
+									);
 								} elseif ( 'pick' === $filter_field['type'] ) {
 									$value = pods_var_raw( 'filter_' . $filter );
 
@@ -3020,6 +3057,7 @@ class PodsUI {
 
 									$filter_field['options']['pick_format_type']   = 'single';
 									$filter_field['options']['pick_format_single'] = 'dropdown';
+									$filter_field['options']['pick_allow_add_new'] = 0;
 
 									$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields['search'], array(), null, true ), array(), null, true ), '', null, true );
 									$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', $filter_field['options'], $filter_field['options']['input_helper'], null, true );
@@ -3030,7 +3068,18 @@ class PodsUI {
 										<?php esc_html_e( $filter_field['label'] ); ?>
 									</label>
 								<?php
-									echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options );
+									// Prevent p div issues.
+									echo str_replace(
+										array(
+											'<div',
+											'</div>',
+										),
+										array(
+											'<span',
+											'</span>',
+										),
+										PodsForm::field( 'filter_' . $filter, $value, 'pick', $options )
+									);
 								} elseif ( 'boolean' === $filter_field['type'] ) {
 									$value = pods_var_raw( 'filter_' . $filter, 'get', '' );
 
@@ -3042,6 +3091,7 @@ class PodsUI {
 
 									$filter_field['options']['pick_format_type']   = 'single';
 									$filter_field['options']['pick_format_single'] = 'dropdown';
+									$filter_field['options']['pick_allow_add_new'] = 0;
 
 									$filter_field['options']['pick_object'] = 'custom-simple';
 									$filter_field['options']['pick_custom'] = array(
@@ -3058,7 +3108,18 @@ class PodsUI {
 									<?php esc_html_e( $filter_field['label'] ); ?>
 									</label>
 									<?php
-									echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options );
+									// Prevent p div issues.
+									echo str_replace(
+										array(
+											'<div',
+											'</div>',
+										),
+										array(
+											'<span',
+											'</span>',
+										),
+										PodsForm::field( 'filter_' . $filter, $value, 'pick', $options )
+									);
 								} else {
 									$value = pods_var_raw( 'filter_' . $filter );
 
@@ -3076,14 +3137,30 @@ class PodsUI {
 										<?php esc_html_e( $filter_field['label'] ); ?>
 									</label>
 									<?php
-									echo PodsForm::field( 'filter_' . $filter, $value, 'text', $options );
+									// Prevent p div issues.
+									echo str_replace(
+										array(
+											'<div',
+											'</div>',
+										),
+										array(
+											'<span',
+											'</span>',
+										),
+										PodsForm::field( 'filter_' . $filter, $value, 'text', $options )
+									);
 								}//end if
+								?>
+									</span>
+								<?php
 							}//end foreach
 
 							if ( false !== $this->do_hook( 'filters_show_search', true ) ) {
 							?>
-								<label<?php echo ( empty( $this->filters ) ) ? ' class="screen-reader-text"' : ''; ?> for="page-search<?php esc_attr_e( $this->num ); ?>-input"><?php _e( 'Search', 'pods' ); ?>:</label>
-								<?php echo PodsForm::field( 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search' . $this->num . '-input' ) ) ); ?>
+								<span class="pods-form-ui-filter-container pods-form-ui-filter-container-search">
+									<label<?php echo ( empty( $this->filters ) ) ? ' class="screen-reader-text"' : ''; ?> for="page-search<?php echo esc_attr( $this->num ); ?>-input"><?php _e( 'Search', 'pods' ); ?>:</label>
+									<?php echo PodsForm::field( 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search' . $this->num . '-input' ) ) ); ?>
+								</span>
 							<?php
 							} else {
 								echo PodsForm::field( 'search' . $this->num, '', 'hidden' );
@@ -3247,13 +3324,16 @@ class PodsUI {
 
 		wp_enqueue_script( 'thickbox' );
 		wp_enqueue_style( 'thickbox' );
-		wp_enqueue_style( 'pods-styles' );
 
 		$filters = $this->filters;
 
 		foreach ( $filters as $k => $filter ) {
 			if ( isset( $this->pod->fields[ $filter ] ) ) {
 				$filter_field = $this->pod->fields[ $filter ];
+
+				if ( isset( $this->fields['manage'][ $filter ] ) && is_array( $this->fields['manage'][ $filter ] ) ) {
+					$filter_field = array_merge( $filter_field, $this->fields['manage'][ $filter ] );
+				}
 			} elseif ( isset( $this->fields['manage'][ $filter ] ) ) {
 				$filter_field = $this->fields['manage'][ $filter ];
 			} else {
@@ -3396,6 +3476,10 @@ class PodsUI {
 
 							if ( isset( $this->pod->fields[ $filter ] ) ) {
 								$filter_field = $this->pod->fields[ $filter ];
+
+								if ( isset( $this->fields['manage'][ $filter ] ) && is_array( $this->fields['manage'][ $filter ] ) ) {
+									$filter_field = array_merge( $filter_field, $this->fields['manage'][ $filter ] );
+								}
 							} elseif ( isset( $this->fields['manage'][ $filter ] ) ) {
 								$filter_field = $this->fields['manage'][ $filter ];
 							} else {
@@ -3549,6 +3633,10 @@ class PodsUI {
 
 						if ( isset( $this->pod->fields[ $filter ] ) ) {
 							$filter_field = $this->pod->fields[ $filter ];
+
+							if ( isset( $this->fields['manage'][ $filter ] ) && is_array( $this->fields['manage'][ $filter ] ) ) {
+								$filter_field = array_merge( $filter_field, $this->fields['manage'][ $filter ] );
+							}
 						} elseif ( isset( $this->fields['manage'][ $filter ] ) ) {
 							$filter_field = $this->fields['manage'][ $filter ];
 						} else {
@@ -3593,10 +3681,36 @@ class PodsUI {
 								</label>
 
 								<span class="pods-ui-posts-filter<?php esc_attr_e( ( empty( $start ) && empty( $end ) ) ? ' pods-hidden' : '' ); ?>">
-								<?php echo PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field['type'], $filter_field ); ?>
+								<?php
+								// Prevent p div issues.
+								echo str_replace(
+									array(
+										'<div',
+										'</div>',
+									),
+									array(
+										'<span',
+										'</span>',
+									),
+									PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field['type'], $filter_field )
+								);
+								?>
 
 									<label for="pods-form-ui-filter-<?php esc_attr_e( $filter ); ?>_end">to</label>
-									<?php echo PodsForm::field( 'filter_' . $filter . '_end', $end, $filter_field['type'], $filter_field ); ?>
+									<?php
+									// Prevent p div issues.
+									echo str_replace(
+										array(
+											'<div',
+											'</div>',
+										),
+										array(
+											'<span',
+											'</span>',
+										),
+										PodsForm::field( 'filter_' . $filter . '_end', $end, $filter_field['type'], $filter_field )
+									);
+									?>
 							</span>
 								<?php
 							} elseif ( 'pick' === $filter_field['type'] ) {
@@ -3611,6 +3725,7 @@ class PodsUI {
 
 								$filter_field['options']['pick_format_type']   = 'single';
 								$filter_field['options']['pick_format_single'] = 'dropdown';
+								$filter_field['options']['pick_allow_add_new'] = 0;
 
 								$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields['search'], array(), null, true ), array(), null, true ), '', null, true );
 								$filter_field['options']['input_helper'] = pods_var_raw( 'ui_input_helper', $filter_field['options'], $filter_field['options']['input_helper'], null, true );
@@ -3625,7 +3740,20 @@ class PodsUI {
 								</label>
 
 								<span class="pods-ui-posts-filter<?php esc_attr_e( strlen( $value ) < 1 ? ' pods-hidden' : '' ); ?>">
-								<?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options ); ?>
+								<?php
+								// Prevent p div issues.
+								echo str_replace(
+									array(
+										'<div',
+										'</div>',
+									),
+									array(
+										'<span',
+										'</span>',
+									),
+									PodsForm::field( 'filter_' . $filter, $value, 'pick', $options )
+								);
+								?>
 							</span>
 								<?php
 							} elseif ( 'boolean' === $filter_field['type'] ) {
@@ -3640,6 +3768,7 @@ class PodsUI {
 
 								$filter_field['options']['pick_format_type']   = 'single';
 								$filter_field['options']['pick_format_single'] = 'dropdown';
+								$filter_field['options']['pick_allow_add_new'] = 0;
 
 								$filter_field['options']['pick_object'] = 'custom-simple';
 								$filter_field['options']['pick_custom'] = array(
@@ -3660,7 +3789,20 @@ class PodsUI {
 								</label>
 
 								<span class="pods-ui-posts-filter<?php esc_attr_e( strlen( $value ) < 1 ? ' pods-hidden' : '' ); ?>">
-								<?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options ); ?>
+								<?php
+								// Prevent p div issues.
+								echo str_replace(
+									array(
+										'<div',
+										'</div>',
+									),
+									array(
+										'<span',
+										'</span>',
+									),
+									PodsForm::field( 'filter_' . $filter, $value, 'pick', $options )
+								);
+								?>
 							</span>
 								<?php
 							} else {
@@ -3686,7 +3828,20 @@ class PodsUI {
 								</label>
 
 								<span class="pods-ui-posts-filter<?php esc_attr_e( empty( $value ) ? ' pods-hidden' : '' ); ?>">
-								<?php echo PodsForm::field( 'filter_' . $filter, $value, 'text', $options ); ?>
+								<?php
+								// Prevent p div issues.
+								echo str_replace(
+									array(
+										'<div',
+										'</div>',
+									),
+									array(
+										'<span',
+										'</span>',
+									),
+									PodsForm::field( 'filter_' . $filter, $value, 'text', $options )
+								);
+								?>
 							</span>
 								<?php
 							}//end if

@@ -32,12 +32,12 @@
 			</li>
 			<% if ( 1 == fieldConfig.file_linked && '' != download ) { %>
 				<li class="pods-dfv-list-col pods-dfv-list-download">
-					<a href="<%- download %>" target="_blank" title="<%- PodsI18n.__( 'Download' ) %>"><%- PodsI18n.__( 'Download' ) %></a>
+					<a href="<%- download %>" target="_blank" rel="noopener noreferrer" title="<%- PodsI18n.__( 'Download' ) %>"><%- PodsI18n.__( 'Download' ) %></a>
 				</li>
 			<% } %>
 			<% if ( 1 == fieldConfig.file_show_edit_link && '' != edit_link ) { %>
 				<li class="pods-dfv-list-col pods-dfv-list-edit">
-					<a href="<%- edit_link %>" target="_blank" title="<%- PodsI18n.__( 'Edit' ) %>"><%- PodsI18n.__( 'Edit' ) %></a>
+					<a href="<%- edit_link %>" target="_blank" rel="noopener noreferrer" title="<%- PodsI18n.__( 'Edit' ) %>"><%- PodsI18n.__( 'Edit' ) %></a>
 				</li>
 			<% } %>
 		</ul>

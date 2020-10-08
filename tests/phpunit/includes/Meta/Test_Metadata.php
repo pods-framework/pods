@@ -72,7 +72,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				'name'             => 'text',
 				'type'             => 'text',
 			);
-
 			pods_api()->save_field( $params );
 
 			$params = array(
@@ -82,7 +81,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				'type'             => 'file',
 				'file_format_type' => 'multi',
 			);
-
 			pods_api()->save_field( $params );
 
 			$params = array(
@@ -94,7 +92,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				'pick_val'         => $name,
 				'pick_format_type' => 'single',
 			);
-
 			pods_api()->save_field( $params );
 
 			$params = array(
@@ -106,7 +103,15 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				'pick_val'         => $name,
 				'pick_format_type' => 'multi',
 			);
+			pods_api()->save_field( $params );
 
+			// PR #5665
+			$params = array(
+				'pod'              => $name,
+				'pod_id'           => $pod_id,
+				'name'             => 'slash',
+				'type'             => 'test',
+			);
 			pods_api()->save_field( $params );
 		}
 	}
@@ -173,6 +178,9 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 							'text'   => 'text',
 							'images' => self::get_images(),
 							// No relationship fields.
+
+							// PR #5665
+							'slash'  => 'Test \backslash',
 						);
 						break;
 					case 1:
@@ -262,6 +270,10 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 						$this->assertEquals( '', $single_single, $message );
 						$this->assertEquals( '', $multi_single, $message );
+
+						// PR #5665
+						$value = call_user_func( $get_meta, $id, 'slash', true );
+						$this->assertEquals( 'Test \backslash', $value, $message );
 
 						break;
 					case 1:

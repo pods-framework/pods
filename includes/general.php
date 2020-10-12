@@ -2613,10 +2613,12 @@ function pods_session_id() {
 	if ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
 		return '';
 	}
+
 	if ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
 		// Sessions are disabled.
 		return '';
 	}
+
 	return @session_id();
 }
 

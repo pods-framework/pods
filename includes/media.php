@@ -122,7 +122,8 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
  *
  * @param array|int|string $image   The image field array, ID, or guid
  * @param string|array     $size    Image size to use
- * @param int              $default Default image to show if image not found, can be field array, ID, or guid
+ * @param int              $default Default image to show if image not found, can be field array, ID, or guid.
+ *                                  Passing `-1` prevents default filter.
  * @param boolean          $force   Force generation of image (if custom size array provided)
  *
  * @return string Image URL or empty if image not found
@@ -131,8 +132,20 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
  */
 function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = false ) {
 
-	$url = '';
+	if ( ! $default && -1 !== $default ) {
+		/**
+		 * Filter for default value
+		 *
+		 * Use to set a fallback image to be used when the image passed to pods_image can not be found. Will only take effect if $default is not set.
+		 *
+		 * @since 2.7.23
+		 *
+		 * @param array|int|string $default Default image to show if image not found, can be field array, ID, or guid
+		 */
+		$default = apply_filters( 'pods_image_url_default', $default );
+	}
 
+	$url     = '';
 	$id      = pods_image_id_from_field( $image );
 	$default = pods_image_id_from_field( $default );
 
@@ -161,7 +174,7 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 	}//end if
 
 	if ( empty( $url ) && 0 < $default ) {
-		$url = pods_image_url( $default, $size, 0, $force );
+		$url = pods_image_url( $default, $size, -1, $force );
 	}//end if
 
 	return $url;

@@ -161,27 +161,7 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 	}//end if
 
 	if ( empty( $url ) && 0 < $default ) {
-		if ( $force ) {
-			$full = wp_get_attachment_image_src( $default, 'full' );
-			$src  = wp_get_attachment_image_src( $default, $size );
-
-			if ( 'full' !== $size && $full[0] == $src[0] ) {
-				pods_image_resize( $default, $size );
-			}
-		}
-
-		$src = wp_get_attachment_image_src( $default, $size );
-
-		if ( ! empty( $src ) ) {
-			$url = $src[0];
-		} else {
-			// Handle non-images
-			$attachment = get_post( $default );
-
-			if ( ! preg_match( '!^image/!', get_post_mime_type( $attachment ) ) ) {
-				$url = wp_get_attachment_url( $default );
-			}
-		}
+		$url = pods_image_url( $default, $size, 0, $force );
 	}//end if
 
 	return $url;

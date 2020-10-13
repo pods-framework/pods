@@ -60,6 +60,7 @@ function pods_image_id_from_field( $image ) {
  * @param array|int|string $image      The image field array, ID, or guid
  * @param string|array     $size       Image size to use
  * @param int              $default    Default image to show if image not found, can be field array, ID, or guid
+ *                                     Passing `-1` prevents default filter.
  * @param string|array     $attributes <img> Attributes array or string (passed to wp_get_attachment_image
  * @param boolean          $force      Force generation of image (if custom size array provided)
  *
@@ -69,11 +70,7 @@ function pods_image_id_from_field( $image ) {
  */
 function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = '', $force = false ) {
 
-	$html = '';
-
-	$id = pods_image_id_from_field( $image );
-
-	if ( 0 == $default ) {
+	if ( ! $default && -1 !== $default ) {
 		/**
 		 * Filter for default value
 		 *
@@ -86,6 +83,8 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 		$default = apply_filters( 'pods_image_default', $default );
 	}
 
+	$html    = '';
+	$id      = pods_image_id_from_field( $image );
 	$default = pods_image_id_from_field( $default );
 
 	if ( 0 < $id ) {
@@ -102,16 +101,7 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 	}
 
 	if ( empty( $html ) && 0 < $default ) {
-		if ( $force ) {
-			$full = wp_get_attachment_image_src( $default, 'full' );
-			$src  = wp_get_attachment_image_src( $default, $size );
-
-			if ( 'full' !== $size && $full[0] == $src[0] ) {
-				pods_image_resize( $default, $size );
-			}
-		}
-
-		$html = wp_get_attachment_image( $default, $size, true, $attributes );
+		$html = pods_image( $default, $size, -1, $attributes, $force );
 	}
 
 	return $html;

@@ -329,6 +329,9 @@ function frontier_do_subtemplate( $atts, $content ) {
 		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] ) {
 			$template = frontier_decode_template( $content, $atts );
 			foreach ( $entries as $key => $entry ) {
+				// Fix for lowercase ID's.
+				$entry['id'] = $entry['ID'];
+
 				$content = str_replace( '{_index}', $key, $template );
 				$content = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $content );
 				$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $content );

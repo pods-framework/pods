@@ -1055,7 +1055,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		if ( ! empty( $tags['template'] ) ) {
 			// @todo Single Pods query based on relationship field.
 			$return  = '';
-			$related = $pod->field( $tags['field'], array( 'output' => 'pods' ) );
+			$related = (array) $pod->field( $tags['field'], array( 'output' => 'pods', 'single' => false ) );
 			/** @var Pods $rel_pod */
 			foreach ( $related as $rel_pod ) {
 				if ( $rel_pod instanceof Pods ) {

@@ -1058,7 +1058,9 @@ function pods_shortcode_run( $tags, $content = null ) {
 			$related = $pod->field( $tags['field'], array( 'output' => 'pods' ) );
 			/** @var Pods $rel_pod */
 			foreach ( $related as $rel_pod ) {
-				$return .= $rel_pod->template( $tags['template'], $content );
+				if ( $rel_pod instanceof Pods ) {
+					$return .= $rel_pod->template( $tags['template'], $content );
+				}
 			}
 		} elseif ( empty( $tags['helper'] ) ) {
 			$return = $pod->display( $tags['field'] );

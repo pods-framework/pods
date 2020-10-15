@@ -1799,7 +1799,9 @@ class PodsData {
 			$sql .= ' IF NOT EXISTS';
 		}
 
-		$sql .= " `" . self::get_pods_prefix() . "{$table}` ({$fields})";
+		$pods_prefix = self::get_pods_prefix();
+
+		$sql .= " `{$pods_prefix}{$table}` ({$fields})";
 
 		if ( ! empty( $wpdb->charset ) ) {
 			$sql .= " DEFAULT CHARACTER SET {$wpdb->charset}";
@@ -1826,7 +1828,9 @@ class PodsData {
 	 */
 	public static function table_alter( $table, $changes ) {
 
-		$sql = "ALTER TABLE `" . self::get_pods_prefix() . "{$table}` {$changes}";
+		$pods_prefix = self::get_pods_prefix();
+
+		$sql = "ALTER TABLE `{$pods_prefix}{$table}` {$changes}";
 
 		return self::query( $sql );
 	}
@@ -1844,7 +1848,9 @@ class PodsData {
 	 */
 	public static function table_truncate( $table ) {
 
-		$sql = "TRUNCATE TABLE `" . self::get_pods_prefix() . "{$table}`";
+		$pods_prefix = self::get_pods_prefix();
+
+		$sql = "TRUNCATE TABLE `{$pods_prefix}{$table}`";
 
 		return self::query( $sql );
 	}
@@ -3028,11 +3034,11 @@ class PodsData {
 			$pod_data = $traverse_recurse ['last_table_info'];
 		} elseif ( empty( $traverse_recurse['pod'] ) ) {
 			if (
-				! empty( $traverse_recurse['params'] ) &&
-				! empty( $traverse_recurse['params']->table ) &&
-				(
-					! $wpdb->prefix || // Make sure there is a prefix.
-					0 === strpos( $traverse_recurse['params']->table, $wpdb->prefix )
+				! empty( $traverse_recurse['params'] )
+				&& ! empty( $traverse_recurse['params']->table )
+				&& (
+					! $wpdb->prefix // Make sure there is a prefix.
+					|| 0 === strpos( $traverse_recurse['params']->table, $wpdb->prefix )
 				)
 			) {
 				if ( $wpdb->posts === $traverse_recurse['params']->table ) {

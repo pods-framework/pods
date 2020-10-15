@@ -519,11 +519,12 @@ class PodsInit {
 		// jQuery Timepicker.
 		if ( ! wp_script_is( 'jquery-ui-slideraccess', 'registered' ) ) {
 			// No need to add dependencies. All managed by jquery-ui-timepicker.
-			wp_register_script('jquery-ui-slideraccess', PODS_URL . 'ui/js/timepicker/jquery-ui-sliderAccess.js', array(), '0.3' );
+			wp_register_script( 'jquery-ui-slideraccess', PODS_URL . 'ui/js/timepicker/jquery-ui-sliderAccess.js', array(), '0.3' );
 		}
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
 			wp_register_script(
-				'jquery-ui-timepicker', PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.js",
+				'jquery-ui-timepicker',
+				PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.js",
 				array(
 					'jquery',
 					'jquery-ui-core',

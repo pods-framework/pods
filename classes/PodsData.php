@@ -1870,7 +1870,9 @@ class PodsData {
 	 */
 	public static function table_drop( $table ) {
 
-		$sql = "DROP TABLE `" . self::get_pods_prefix() . "{$table}`";
+		$pods_prefix = self::get_pods_prefix();
+
+		$sql = "DROP TABLE `{$pods_prefix}{$table}`";
 
 		return self::query( $sql );
 	}

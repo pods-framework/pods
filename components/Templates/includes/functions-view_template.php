@@ -327,7 +327,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 
 			}//end foreach
 		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] ) {
-			$template = frontier_decode_template( $content, $atts );
+			$template  = frontier_decode_template( $content, $atts );
 			$entry_pod = pods( 'media' );
 
 			foreach ( $entries as $key => $entry ) {

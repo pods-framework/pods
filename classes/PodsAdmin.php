@@ -578,8 +578,9 @@ class PodsAdmin {
 					// Replace `pods` page param with first existing pod page and redirect.
 					$url = add_query_arg( 'page', key( $admin_menus ) );
 					$url = get_site_url( null, $url );
+
 					wp_safe_redirect( $url );
-					die;
+					die();
 				}
 			}
 

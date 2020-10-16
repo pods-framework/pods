@@ -155,12 +155,14 @@ class PodsAPI {
 			$object_type = 'term';
 		}
 
+		$is_meta_object = in_array( $object_type, array( 'post', 'term', 'user', 'comment' ) );
+
 		if ( $sanitized ) {
 			$data = pods_unsanitize( $data );
 			$meta = pods_unsanitize( $meta );
 		}
 
-		if ( in_array( $object_type, array( 'post', 'term', 'user', 'comment' ) ) ) {
+		if ( $is_meta_object ) {
 			return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict, false, $fields );
 		} elseif ( 'settings' === $object_type ) {
 			// Nothing to save

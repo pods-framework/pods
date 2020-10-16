@@ -1053,14 +1053,10 @@ function pods_shortcode_run( $tags, $content = null ) {
 		return $pod->form( $tags['fields'], $tags['label'], $tags['thank_you'] );
 	} elseif ( ! empty( $tags['field'] ) ) {
 		if ( ! empty( $tags['template'] ) ) {
-			// @todo Single Pods query based on relationship field.
 			$return  = '';
-			$related = (array) $pod->field( $tags['field'], array( 'output' => 'pods', 'single' => false ) );
-			/** @var Pods $rel_pod */
-			foreach ( $related as $rel_pod ) {
-				if ( $rel_pod instanceof Pods ) {
-					$return .= $rel_pod->template( $tags['template'], $content );
-				}
+			$related = $pod->field( $tags['field'], array( 'output' => 'find' ) );
+			if ( $related instanceof Pods && $related->valid() ) {
+				$return .= $related->template( $tags['template'], $content );
 			}
 		} elseif ( empty( $tags['helper'] ) ) {
 			$return = $pod->display( $tags['field'] );

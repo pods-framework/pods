@@ -19,8 +19,9 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 	protected static $pod_names = array(
 		'post_type' => 'post_meta',
 		'taxonomy'  => 'term_meta',
-		'comment'   => 'comment_meta',
-		'user'      => 'user_meta',
+		// Name should be equal as WP object name.
+		'comment'   => 'comment',
+		'user'      => 'user',
 	);
 
 	protected static $obj_ids = array();
@@ -43,6 +44,9 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 	public static function wpTearDownAfterClass() {
 		foreach ( self::$pod_names as $type => $name ) {
+			if ( in_array( $name, array( 'comment', 'user' ) ) ){
+				continue;
+			}
 			// Delete all pod objects as well.
 			$delete_all = true;
 			pods_api()->delete_pod( $name, false, $delete_all );

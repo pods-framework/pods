@@ -159,9 +159,7 @@ class PodsAPI {
 
 		if ( $sanitized ) {
 			$data = pods_unsanitize( $data );
-
-			// Do not unsanitize metadata. This is already done by WP.
-			//$meta = pods_unsanitize( $meta );
+			// Do not unsanitize $meta. This is already done by WP.
 		}
 
 		if ( $is_meta_object ) {

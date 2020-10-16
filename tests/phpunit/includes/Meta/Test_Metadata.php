@@ -225,7 +225,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			$id_key   = self::get_id_key( $type );
 			$name     = self::$pod_names[ $type ];
-			$get_meta = 'get_' . $name;
+			$get_meta = self::get_meta_function( 'get', $type );
 
 			foreach ( $ids as $key => $id ) {
 
@@ -327,7 +327,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 		foreach ( self::$obj_ids as $type => $ids ) {
 
 			$name     = self::$pod_names[ $type ];
-			$get_meta = 'get_' . $name;
+			$get_meta = self::get_meta_function( 'get', $type );
 
 			foreach ( $ids as $key => $id ) {
 
@@ -408,6 +408,18 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 		}
 
 		remove_filter( 'pods_pods_field_related_output_type', array( $this, 'filter_output_type_ids' ) );
+	}
+
+	public static function get_meta_function( $action, $type ) {
+		switch ( $type ) {
+			case 'post_type':
+				$type = 'post';
+				break;
+			case 'taxonomy':
+				$type = 'term';
+				break;
+		}
+		return $action . '_' . $type . '_meta';
 	}
 
 	public static function get_id_key( $type ) {

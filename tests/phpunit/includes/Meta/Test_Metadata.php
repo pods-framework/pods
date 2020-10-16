@@ -170,6 +170,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			$update_meta = 'update_' . $name;
 			foreach ( $objects as $key => $id ) {
+				$data = array();
 
 				switch ( $key ) {
 					case 0:

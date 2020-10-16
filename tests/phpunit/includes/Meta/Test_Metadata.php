@@ -279,8 +279,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						// Single related to: 2
 						// Multi related to: 2
 
-						$single_rel = self::$obj_ids[ $type ][ 2 ];
-						$multi_rel  = self::$obj_ids[ $type ][ 2 ];
+						$single_rel = $ids[ 2 ];
+						$multi_rel  = $ids[ 2 ];
 
 						// Single param false
 						$this->assertEquals( array( $single_rel ), $single, $message );
@@ -295,10 +295,10 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						// Single related to: 1
 						// Multi related to: 0 and 1
 
-						$single_rel = self::$obj_ids[ $type ][ 1 ];
+						$single_rel = $ids[ 1 ];
 						$multi_rel  = array(
-							self::$obj_ids[ $type ][ 0 ],
-							self::$obj_ids[ $type ][ 1 ]
+							$ids[ 0 ],
+							$ids[ 1 ]
 						);
 
 						// Single param false
@@ -369,8 +369,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						// Single related to: 2
 						// Multi related to: 2
 
-						$single_rel = self::$obj_ids[ $type ][ 2 ];
-						$multi_rel  = self::$obj_ids[ $type ][ 2 ];
+						$single_rel = $ids[ 2 ];
+						$multi_rel  = $ids[ 2 ];
 
 						// Single param false
 						$this->assertEquals( array( $single_rel ), $single, $message );
@@ -385,10 +385,10 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						// Single related to: 1
 						// Multi related to: 0 and 1
 
-						$single_rel = self::$obj_ids[ $type ][ 1 ];
+						$single_rel = $ids[ 1 ];
 						$multi_rel  = array(
-							self::$obj_ids[ $type ][ 0 ],
-							self::$obj_ids[ $type ][ 1 ]
+							$ids[ 0 ],
+							$ids[ 1 ]
 						);
 
 						// Single param false

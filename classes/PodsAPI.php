@@ -470,6 +470,10 @@ class PodsAPI {
 		$meta = get_user_meta( $id );
 
 		foreach ( $user_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value ) {
 				$old_meta_value = '';
 
@@ -613,6 +617,10 @@ class PodsAPI {
 		$meta = get_comment_meta( $id );
 
 		foreach ( $comment_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value ) {
 				$old_meta_value = '';
 
@@ -779,6 +787,10 @@ class PodsAPI {
 		}
 
 		foreach ( $term_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value || ( $strict && '' === $term_meta[ $meta_key ] ) ) {
 				$old_meta_value = '';
 

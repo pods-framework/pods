@@ -23,8 +23,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 		'user'      => 'user_meta',
 	);
 
-	protected static $pod_ids = array();
-
 	protected static $obj_ids = array();
 
 	public static function wpSetUpBeforeClass() {
@@ -55,7 +53,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 		foreach ( self::$pod_names as $type => $name ) {
 
-			self::$pod_ids[ $type ] = pods_api()->save_pod(
+			pods_api()->save_pod(
 				array(
 					'storage' => 'meta',
 					'type'    => $type,
@@ -63,11 +61,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				)
 			);
 
-			$pod_id = self::$pod_ids[ $type ];
-
 			$params = array(
 				'pod'              => $name,
-				'pod_id'           => $pod_id,
 				'name'             => 'text',
 				'type'             => 'text',
 			);
@@ -75,7 +70,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			$params = array(
 				'pod'              => $name,
-				'pod_id'           => $pod_id,
 				'name'             => 'images',
 				'type'             => 'file',
 				'file_format_type' => 'multi',
@@ -84,7 +78,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			$params = array(
 				'pod'              => $name,
-				'pod_id'           => $pod_id,
 				'name'             => 'related_single',
 				'type'             => 'pick',
 				'pick_object'      => $type,
@@ -95,7 +88,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			$params = array(
 				'pod'              => $name,
-				'pod_id'           => $pod_id,
 				'name'             => 'related_multi',
 				'type'             => 'pick',
 				'pick_object'      => $type,
@@ -107,7 +99,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 			// PR #5665
 			$params = array(
 				'pod'              => $name,
-				'pod_id'           => $pod_id,
 				'name'             => 'slash',
 				'type'             => 'test',
 			);

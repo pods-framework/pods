@@ -1553,7 +1553,7 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
 function pods_evaluate_tags( $tags, $args = array() ) {
 
 	// Back compat.
-	if ( is_bool( $args ) ) {
+	if ( ! is_array( $args ) ) {
 		$prev_args = array( 'tags', 'sanitize', 'fallback' );
 		$args      = func_get_args();
 		$args      = array_combine( array_slice( $prev_args, 0, count( $args ) ), $args );
@@ -1636,7 +1636,7 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 	);
 
 	// Back compat.
-	if ( is_bool( $args ) ) {
+	if ( ! is_array( $args ) ) {
 		$args = func_get_args();
 
 		$defaults['sanitize'] = $args[1];

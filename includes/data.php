@@ -1605,7 +1605,7 @@ function pods_evaluate_tags( $tags, $args = array() ) {
  */
 function pods_evaluate_tag_sanitized( $tag, $args = array() ) {
 	if ( ! is_array( $args ) ) {
-		$args = array( 'fallback' => $args );
+		$args = array();
 	}
 	$args['sanitize'] = true;
 	return pods_evaluate_tag( $tag, $args );

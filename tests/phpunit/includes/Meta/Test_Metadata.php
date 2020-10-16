@@ -215,6 +215,15 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 		return $images;
 	}
 
+	public function test_created_pods() {
+
+		foreach( self::$pod_names as $type => $name ) {
+			$pod = pods( $name );
+			$this->assertNotFalse( $pod->valid() );
+			$this->assertNotEmpty( self::$obj_ids[ $type ] );
+		}
+	}
+
 	public function test_get_metadata() {
 
 		foreach ( self::$obj_ids as $type => $ids ) {

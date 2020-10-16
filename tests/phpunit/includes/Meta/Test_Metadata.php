@@ -163,7 +163,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			self::$obj_ids[ $type ] = $objects;
 
-			$update_meta = 'update_' . $name;
 			foreach ( $objects as $key => $id ) {
 				$data = array();
 
@@ -192,11 +191,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						);
 						break;
 				}
-
-				// Pods doesn't fully handle update_metadata requests.
-				/*foreach ( $data as $meta_key => $meta_value ) {
-					call_user_func( $update_meta, $id, $meta_key, $meta_value );
-				}*/
 
 				$pod = pods( $name, $id );
 				$pod->save( $data );

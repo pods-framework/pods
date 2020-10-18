@@ -1538,17 +1538,30 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
  * @since 2.7.23
  *
  * @param string|array|object $tags String to be evaluated.
+ * @param array               $args {
+ *     Function arguments.
+ *     @type bool       $sanitize        Whether to sanitize.
+ *     @type null|mixed $fallback        The fallback value to use if not set, should already be sanitized.
+ *     @type Pods       $pod             Pod to parse the tags through.
+ *     @type bool       $use_current_pod Whether to auto-detect the current Pod.
+ * }
  *
  * @return string Evaluated string.
  *
  * @see pods_evaluate_tag
  */
-function pods_evaluate_tags_sql( $tags ) {
+function pods_evaluate_tags_sql( $tags, $args = array() ) {
 	// The temporary placeholder we will use.
 	$placeholder = '__PODS__TMP__EMPTY_VALUE__';
+	
+	// Set default arguments to use.
+	$args = array_merge( array(
+		'sanitize' => true,
+		'fallback' => $placeholder,
+	), $args );
 
 	// Evaluate the magic tags.
-	$evaluated = pods_evaluate_tags( $tags, true, $placeholder );
+	$evaluated = pods_evaluate_tags( $tags, $args );
 
 	$find = array(
 		'= ' . placeholder,

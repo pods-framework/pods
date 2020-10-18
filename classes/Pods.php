@@ -4184,6 +4184,17 @@ class Pods implements Iterator {
 			$value = $this->display( $field_name );
 		}
 
+		// Process special magic tags but allow "empty" values for numbers.
+		if (
+			! $value
+			&& ! is_numeric( $value )
+			&& pods_shortcode_allow_evaluate_tags()
+			&& ! $this->fields( $field_name )
+		) {
+			// Do not pass before and after tags (key 2 and 3) or these get processed twice.
+			$value = pods_evaluate_tag( implode( ',', array_slice( $tag, 0, 2 ) ) );
+		}
+
 		if ( ! empty( $tag[2] ) ) {
 			$before = $tag[2];
 		}

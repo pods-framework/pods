@@ -1637,13 +1637,10 @@ function pods_evaluate_tag( $tag, $args = array() ) {
 
 	// Back compat.
 	if ( ! is_array( $args ) ) {
-		$args = func_get_args();
-
-		$defaults['sanitize'] = $args[1];
-		if ( isset( $args[2] ) ) {
-			$defaults['fallback'] = $args[2];
-		}
-		$args = array();
+		$prev_args = array( 'tag', 'sanitize', 'fallback' );
+		$args      = func_get_args();
+		$args      = array_combine( array_slice( $prev_args, 0, count( $args ) ), $args );
+		unset( $args['tag'] );
 	}
 
 	$args     = wp_parse_args( $args, $defaults );

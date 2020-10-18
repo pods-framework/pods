@@ -44,7 +44,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 	public static function wpTearDownAfterClass() {
 		foreach ( self::$pod_names as $type => $name ) {
-			if ( in_array( $name, array( 'comment', 'user' ) ) ){
+			if ( in_array( $name, array( 'comment', 'user' ), true ) ){
 				continue;
 			}
 			// Delete all pod objects as well.

@@ -155,7 +155,7 @@ class PodsAPI {
 			$object_type = 'term';
 		}
 
-		$is_meta_object = in_array( $object_type, array( 'post', 'term', 'user', 'comment' ) );
+		$is_meta_object = in_array( $object_type, array( 'post', 'term', 'user', 'comment' ), true );
 
 		if ( $sanitized ) {
 			$data = pods_unsanitize( $data );

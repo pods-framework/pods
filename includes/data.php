@@ -1564,8 +1564,8 @@ function pods_evaluate_tags_sql( $tags, $args = array() ) {
 	$evaluated = pods_evaluate_tags( $tags, $args );
 
 	$find = array(
-		'= ' . placeholder,
-		'=' . placeholder,
+		'= ' . $placeholder,
+		'=' . $placeholder,
 		$placeholder,
 	);
 

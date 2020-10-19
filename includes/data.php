@@ -1533,6 +1533,74 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
 }
 
 /**
+ * Evaluate tags like magic tags but through pods_v and sanitize for SQL with an empty double quote if needed.
+ *
+ * @since 2.7.23
+ *
+ * @param string|array|object $tags String to be evaluated.
+ * @param array               $args {
+ *     Function arguments.
+ *     @type bool       $sanitize        Whether to sanitize.
+ *     @type null|mixed $fallback        The fallback value to use if not set, should already be sanitized.
+ *     @type Pods       $pod             Pod to parse the tags through.
+ *     @type bool       $use_current_pod Whether to auto-detect the current Pod.
+ * }
+ *
+ * @return string Evaluated string.
+ *
+ * @see pods_evaluate_tag
+ */
+function pods_evaluate_tags_sql( $tags, $args = array() ) {
+	// The temporary placeholder we will use.
+	$placeholder = '__PODS__TMP__EMPTY_VALUE__';
+
+	// Store and overwrite fallback argument.
+	$fallback = '""';
+	if ( isset( $args['fallback'] ) ) {
+		$fallback         = $args['fallback'];
+		$args['fallback'] = $placeholder;
+	}
+
+	$defaults = array(
+		'sanitize' => true,
+		'fallback' => $placeholder,
+	);
+
+	// Set default arguments to use.
+	$args = array_merge( $defaults, $args );
+
+	// Evaluate the magic tags.
+	$evaluated = pods_evaluate_tags( $tags, $args );
+
+	$find = array(
+		'= ' . $placeholder,
+		'=' . $placeholder,
+		$placeholder,
+	);
+
+	$replace = array(
+		'= ' . $fallback,
+		'=' . $fallback,
+		'',
+	);
+
+	// Finish sanitizing the string so it is SQL-safe.
+	$sanitized = str_replace( $find, $replace, $evaluated );
+
+	/**
+	 * Allow filtering the result of how we evaluate and sanitize the SQL.
+	 *
+	 * @since 2.7.23
+	 *
+	 * @param string              $sanitized The evaluated and sanitized string.
+	 * @param string              $evaluated The evaluated string.
+	 * @param string|array|object $tags      Original string to be evaluated.
+	 * @param array               $args      Additional function arguments.
+	 */
+	return apply_filters( 'pods_evaluate_tags_sql', $sanitized, $evaluated, $tags, $args );
+}
+
+/**
  * Evaluate tags like magic tags but through pods_v.
  *
  * @param string|array|object $tags String to be evaluated.

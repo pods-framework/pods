@@ -1124,6 +1124,7 @@ class Pods implements Iterator {
 					}
 
 					if ( $attachment_id ) {
+						$is_image = wp_attachment_is_image( $attachment_id );
 
 						$size = 'thumbnail';
 						if ( isset( $traverse_params[0] ) ) {
@@ -1135,11 +1136,18 @@ class Pods implements Iterator {
 							if ( ! in_array( $size, $sizes, true ) ) {
 								// No valid image size found.
 								$size = false;
+							} else {
+								// Force image request since a valid size parameter is passed.
+								$is_image = true;
 							}
 						}
 
 						if ( $url ) {
-							$value = pods_image_url( $attachment_id, $size, 0, true );
+							if ( $is_image ) {
+								$value = pods_image_url( $attachment_id, $size, 0, true );
+							} else {
+								$value = wp_get_attachment_url( $attachment_id );
+							}
 						} elseif ( $size ) {
 							// Pods will auto-get the thumbnail ID if this isn't an attachment.
 							$value = pods_image( $attachment_id, $size, 0, null, true );

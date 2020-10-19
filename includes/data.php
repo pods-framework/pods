@@ -1554,17 +1554,20 @@ function pods_evaluate_tags_sql( $tags, $args = array() ) {
 	// The temporary placeholder we will use.
 	$placeholder = '__PODS__TMP__EMPTY_VALUE__';
 
+	// Store and overwrite fallback argument.
 	$fallback = '""';
 	if ( isset( $args['fallback'] ) ) {
 		$fallback         = $args['fallback'];
 		$args['fallback'] = $placeholder;
 	}
 
-	// Set default arguments to use.
-	$args = array_merge( array(
+	$defaults = array(
 		'sanitize' => true,
 		'fallback' => $placeholder,
-	), $args );
+	);
+
+	// Set default arguments to use.
+	$args = array_merge( $defaults, $args );
 
 	// Evaluate the magic tags.
 	$evaluated = pods_evaluate_tags( $tags, $args );

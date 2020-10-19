@@ -1595,8 +1595,9 @@ function pods_evaluate_tags_sql( $tags, $args = array() ) {
 	 * @param string              $sanitized The evaluated and sanitized string.
 	 * @param string              $evaluated The evaluated string.
 	 * @param string|array|object $tags      Original string to be evaluated.
+	 * @param array               $args      Additional function arguments.
 	 */
-	return apply_filters( 'pods_evaluate_tags_sql', $sanitized, $evaluated, $tags );
+	return apply_filters( 'pods_evaluate_tags_sql', $sanitized, $evaluated, $tags, $args );
 }
 
 /**

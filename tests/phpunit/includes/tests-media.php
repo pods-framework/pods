@@ -28,7 +28,7 @@ class Test_Media extends Pods_UnitTestCase {
 		// Default.
 		$this->assertNotEmpty( pods_image( null, 'thumbnail', self::$images[0] ) );
 
-		// Default (make sure it does not loop.
+		// Default (make sure it does not loop).
 		$this->assertEmpty( pods_image( null, 'thumbnail', 123456789 ) );
 	}
 
@@ -39,7 +39,7 @@ class Test_Media extends Pods_UnitTestCase {
 		// Default.
 		$this->assertNotEmpty( pods_image_url( null, 'thumbnail', self::$images[0] ) );
 
-		// Default (make sure it does not loop.
+		// Default (make sure it does not loop).
 		$this->assertEmpty( pods_image_url( null, 'thumbnail', 123456789 ) );
 	}
 

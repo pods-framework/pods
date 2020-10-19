@@ -940,7 +940,7 @@ class PodsField_Pick extends PodsField {
 		if ( is_user_logged_in() ) {
 			$uid = 'user_' . get_current_user_id();
 		} else {
-			$uid = @session_id();
+			$uid = pods_session_id();
 		}
 
 		$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
@@ -2334,6 +2334,10 @@ class PodsField_Pick extends PodsField {
 							$ids = wp_list_pluck( $ids, $search_data->field_id );
 						}
 
+						if ( $params['limit'] < count( $ids ) ) {
+							$params['limit'] = count( $ids );
+						}
+
 						if ( is_array( $ids ) ) {
 							$ids = implode( ', ', $ids );
 						}
@@ -2342,7 +2346,7 @@ class PodsField_Pick extends PodsField {
 							$params['where'] = implode( ' AND ', $params['where'] );
 						}
 						if ( ! empty( $params['where'] ) ) {
-							$params['where'] .= ' AND ';
+							$params['where'] = '(' . $params['where'] . ') AND ';
 						}
 
 						$params['where'] .= "`t`.`{$search_data->field_id}` IN ( {$ids} )";
@@ -2542,7 +2546,7 @@ class PodsField_Pick extends PodsField {
 
 		$params = (object) $params;
 
-		$uid = @session_id();
+		$uid = pods_session_id();
 
 		if ( is_user_logged_in() ) {
 			$uid = 'user_' . get_current_user_id();

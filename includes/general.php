@@ -1064,7 +1064,15 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 		return $pod->form( $tags['fields'], $tags['label'], $tags['thank_you'] );
 	} elseif ( ! empty( $tags['field'] ) ) {
-		if ( empty( $tags['helper'] ) ) {
+		if ( $tags['template'] || $content ) {
+			$return  = '';
+			$related = $pod->field( $tags['field'], array( 'output' => 'find' ) );
+
+			if ( $related instanceof Pods && $related->valid() ) {
+				// Content is null by default.
+				$return .= $related->template( $tags['template'], $content );
+			}
+		} elseif ( empty( $tags['helper'] ) ) {
 			$return = $pod->display( $tags['field'] );
 		} else {
 			$return = $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );

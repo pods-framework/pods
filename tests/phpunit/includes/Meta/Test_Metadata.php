@@ -57,7 +57,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 		foreach ( self::$pod_names as $type => $name ) {
 
-			pods_api()->save_pod(
+			$pod_id = pods_api()->save_pod(
 				array(
 					'storage' => 'meta',
 					'type'    => $type,
@@ -66,14 +66,16 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 			);
 
 			$params = array(
-				'pod'              => $name,
-				'name'             => 'text',
-				'type'             => 'text',
+				'pod'    => $name,
+				'pod_id' => $pod_id,
+				'name'   => 'text',
+				'type'   => 'text',
 			);
 			pods_api()->save_field( $params );
 
 			$params = array(
 				'pod'              => $name,
+				'pod_id'           => $pod_id,
 				'name'             => 'images',
 				'type'             => 'file',
 				'file_format_type' => 'multi',
@@ -82,6 +84,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			$params = array(
 				'pod'              => $name,
+				'pod_id'           => $pod_id,
 				'name'             => 'related_single',
 				'type'             => 'pick',
 				'pick_object'      => $type,
@@ -92,6 +95,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			$params = array(
 				'pod'              => $name,
+				'pod_id'           => $pod_id,
 				'name'             => 'related_multi',
 				'type'             => 'pick',
 				'pick_object'      => $type,
@@ -102,9 +106,10 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			// PR #5665
 			$params = array(
-				'pod'              => $name,
-				'name'             => 'slash',
-				'type'             => 'test',
+				'pod'    => $name,
+				'pod_id' => $pod_id,
+				'name'   => 'slash',
+				'type'   => 'test',
 			);
 			pods_api()->save_field( $params );
 		}

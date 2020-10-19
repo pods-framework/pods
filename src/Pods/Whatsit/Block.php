@@ -129,10 +129,62 @@ class Block extends Pod {
 		if ( 'js' === $block_args['renderType'] ) {
 			$block_args['renderTemplate'] = $this->get_arg( 'render_template', $this->get_arg( 'renderTemplate', __( 'No block preview is available', 'pods' ) ) );
 		} elseif ( 'php' === $block_args['renderType'] ) {
-			$block_args['render_callback'] = $this->get_arg( 'render_callback' );
+			$block_args['render_callback']      = $this->get_arg( 'render_callback', [ $this, 'render_template' ] );
+			$block_args['render_template_path'] = $this->get_arg( 'render_template', $this->get_arg( 'render_template_path' ) );
 		}
 
 		return $block_args;
+	}
+
+	/**
+	 * Render the template for the block.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array     $block     The block instance argument values.
+	 * @param string    $content   The block inner content.
+	 * @param \WP_Block $block_obj The block object.
+	 *
+	 * @return  string   The HTML render for the block.
+	 */
+	public function render_template( $block, $content, $block_obj ) {
+		$render_template_path = $block_obj->block_type->render_template_path;
+
+		/**
+		 * Allow filtering of the block render template path.
+		 *
+		 * @since 2.8
+		 *
+		 * @param string    $render_template_path The block render template path.
+		 * @param array     $block                The block instance argument values.
+		 * @param string    $content              The block inner content.
+		 * @param \WP_Block $block_obj            The block object.
+		 */
+		$render_template_path = apply_filters( 'pods_block_render_template_path', $render_template_path, $block, $content, $block_obj );
+
+		if ( empty( $render_template_path ) ) {
+			return '';
+		}
+
+		$render = pods_view( $render_template_path, compact( 'block', 'content', 'block_obj' ), false, 'cache', true );
+
+		// Avoid regex issues with $ capture groups.
+		$content = str_replace( '$', '\$', $content );
+
+		// Replace the <InnerBlocks /> placeholder with the real deal.
+		$render = preg_replace( '/<InnerBlocks([\S\s]*?)\/>/', $content, $render );
+
+		/**
+		 * Allow filtering of the block render HTML.
+		 *
+		 * @since 2.8
+		 *
+		 * @param string    $render    The HTML render for the block.
+		 * @param array     $block     The block instance argument values.
+		 * @param string    $content   The block inner content.
+		 * @param \WP_Block $block_obj The block object.
+		 */
+		return apply_filters( 'pods_block_render_html', $render, $block, $content, $block_obj );
 	}
 
 	/**

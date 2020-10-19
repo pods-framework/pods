@@ -9390,9 +9390,7 @@ class PodsAPI {
 			$info['meta_field_index'] = 'meta_key';
 			$info['meta_field_value'] = 'meta_value';
 
-			$info['where'] = array(
-				'user_status' => '`t`.`user_status` = 0'
-			);
+			$info['where'] = [];
 
 			$info['object_fields'] = $this->get_wp_object_fields( $object_type, $info['pod'] );
 		} elseif ( 'comment' === $object_type || 'comment' === pods_v( 'type', $info['pod'] ) ) {

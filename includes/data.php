@@ -1553,7 +1553,13 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
 function pods_evaluate_tags_sql( $tags, $args = array() ) {
 	// The temporary placeholder we will use.
 	$placeholder = '__PODS__TMP__EMPTY_VALUE__';
-	
+
+	$fallback = '""';
+	if ( isset( $args['fallback'] ) ) {
+		$fallback         = $args['fallback'];
+		$args['fallback'] = $placeholder;
+	}
+
 	// Set default arguments to use.
 	$args = array_merge( array(
 		'sanitize' => true,
@@ -1570,8 +1576,8 @@ function pods_evaluate_tags_sql( $tags, $args = array() ) {
 	);
 
 	$replace = array(
-		'= ""',
-		'=""',
+		'= ' . $fallback,
+		'=' . $fallback,
 		'',
 	);
 

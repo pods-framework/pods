@@ -485,13 +485,17 @@ class PodsInit {
 		}
 
 		wp_register_script(
-			'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
+			'pods',
+			PODS_URL . 'ui/js/jquery.pods.js',
+			array(
 				'jquery',
 				'pods-dfv',
 				'pods-i18n',
 				'pods-json',
 				'jquery-qtip2',
-			), PODS_VERSION, true
+			),
+			PODS_VERSION,
+			true
 		);
 
 		wp_register_script( 'pods-cleditor', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
@@ -511,13 +515,16 @@ class PodsInit {
 
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
 			wp_register_script(
-				'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js', array(
+				'jquery-ui-timepicker',
+				PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js', array(
 					'jquery',
 					'jquery-ui-core',
 					'jquery-ui-datepicker',
 					'jquery-ui-slider',
 					'jquery-ui-slideraccess',
-				), '1.6.3'
+				),
+				'1.6.3',
+				true
 			);
 		}
 		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
@@ -540,22 +547,26 @@ class PodsInit {
 		}
 		if ( $select2_i18n ) {
 			wp_register_script(
-				'pods-select2-core', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js",
+				'pods-select2-core',
+				PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js",
 				array(
 					'jquery',
 					'pods-i18n',
 				),
-				'1.0.1'
+				'1.0.1',
+				true
 			);
-			wp_register_script( 'pods-select2', $select2_i18n, array( 'pods-select2-core' ), '1.0.1' );
+			wp_register_script( 'pods-select2', $select2_i18n, array( 'pods-select2-core' ), '1.0.1', true );
 		} else {
 			wp_register_script(
-				'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js",
+				'pods-select2',
+				PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js",
 				array(
 					'jquery',
 					'pods-i18n',
 				),
-				'1.0.1'
+				'1.0.1',
+				true
 			);
 		}
 

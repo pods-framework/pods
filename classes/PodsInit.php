@@ -516,7 +516,8 @@ class PodsInit {
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
 			wp_register_script(
 				'jquery-ui-timepicker',
-				PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js', array(
+				PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js',
+				array(
 					'jquery',
 					'jquery-ui-core',
 					'jquery-ui-datepicker',
@@ -587,7 +588,8 @@ class PodsInit {
 
 		// MV stuff
 		wp_register_script(
-			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js', array(
+			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js',
+			array(
 				'jquery',
 				'jquery-ui-core',
 				'jquery-ui-sortable',
@@ -595,7 +597,9 @@ class PodsInit {
 				'marionette',
 				'media-views',
 				'media-models',
-			), PODS_VERSION, true
+			),
+			PODS_VERSION,
+			true
 		);
 
 		// Check if Pod is a Modal Window

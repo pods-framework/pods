@@ -329,9 +329,9 @@ export const SelectView = PodsMn.CollectionView.extend( {
 		// for regular autocomplete.  This function should be generic and not have to poke around with
 		// special properties like this for exception cases.
 		if ( fieldConfig.limitDisable ) {
-			placeholder = `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}`;
+			placeholder = `${sprintf( PodsI18n._n( 'You can only select %s item', 'You can only select %s items', limit ), limit )}`;
 		} else {
-			placeholder = `${PodsI18n.__( 'Search' )} ${fieldConfig.label}...`;
+			placeholder = `${sprintf( PodsI18n.__( 'Search %s' ), fieldConfig.label )}...`;
 		}
 
 		select2Options = {

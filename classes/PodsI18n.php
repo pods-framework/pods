@@ -146,6 +146,7 @@ final class PodsI18n {
 
 		return array(
 
+			// Translators: %s stands for a name/identifier.
 			'%s is required.'                              => __( '%s is required.', 'pods' ),
 
 			'This field is required.'                      => __( 'This field is required.', 'pods' ),
@@ -176,6 +177,7 @@ final class PodsI18n {
 
 			'Search'                                       => __( 'Search', 'pods' ),
 
+			// Translators: %s stands for a name/identifier.
 			'Search %s'                                    => __( 'Search %s', 'pods' ),
 
 			'Navigating away from this page will discard any changes you have made.' => __( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
@@ -194,12 +196,16 @@ final class PodsI18n {
 
 			'You can only select'                          => __( 'You can only select', 'pods' ),
 
+			// Translators: %s stands for a number.
 			'%s item'                                      => __( '%s item', 'pods' ),
 
+			// Translators: %s stands for a number.
 			'%s items'                                     => __( '%s items', 'pods' ),
 
+			// Translators: %s stands for a number.
 			'You can only select %s item'                  => __( 'You can only select %s item', 'pods' ),
 
+			// Translators: %s stands for a number.
 			'You can only select %s items'                 => __( 'You can only select %s items', 'pods' ),
 
 			'Icon'                                         => __( 'Icon', 'pods' ),

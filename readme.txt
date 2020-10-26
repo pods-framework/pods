@@ -198,9 +198,11 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Added/Fixed: Support special magic tags in Pods Templates. #5697 (@JoryHogeveen)
 * Added/Fixed: Support Pod related magic tags in shortcode query parameters. #5734 (@JoryHogeveen)
 * Added: Allow function calls in all tags, not just template tags. #4887 (@JoryHogeveen)
+* Enhancement: If the media Pod exists, use it's context to run media loops to support other fields and traversal. #5855 (@JoryHogeveen)
 
 **Bug Fixes**
 
+* Fixed: Support lowercase ID's for magic tags in media loops #5852 (@JoryHogeveen)
 * Fixed: PHP warning in file field gallery view. #5809 (@JoryHogeveen)
 
 = 2.7.22 - August 13th 2020 =

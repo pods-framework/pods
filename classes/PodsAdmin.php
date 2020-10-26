@@ -1311,6 +1311,7 @@ class PodsAdmin {
 				'meta'    => _x( 'Meta', 'storage type label', 'pods' ),
 				'table'   => _x( 'Table', 'storage type label', 'pods' ),
 			],
+			'wp_locale'      => $GLOBALS['wp_locale'],
 		];
 
 		$config['currentPod']['podType'] = [

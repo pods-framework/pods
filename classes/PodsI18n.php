@@ -36,9 +36,7 @@ final class PodsI18n {
 		self::$instance = $this;
 
 		// Hook all enqueue scripts actions
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'pods_before_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		// Polylang
 		add_filter( 'pll_get_post_types', array( $this, 'pll_get_post_types' ), 10, 2 );

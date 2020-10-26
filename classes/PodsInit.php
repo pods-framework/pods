@@ -476,7 +476,16 @@ class PodsInit {
 	 */
 	public function register_assets() {
 
-		$maybe_min = SCRIPT_DEBUG ? '' : '.min';
+		$suffix_min = SCRIPT_DEBUG ? '' : '.min';
+
+		/**
+		 * Fires before Pods assets are registered.
+		 *
+		 * @since 2.7.23
+		 *
+		 * @param bool $suffix_min Minimized script suffix.
+		 */
+		do_action( 'pods_before_enqueue_scripts', $suffix_min );
 
 		wp_register_script( 'pods-json', PODS_URL . 'ui/js/jquery.json.js', array( 'jquery' ), '2.3' );
 
@@ -508,15 +517,15 @@ class PodsInit {
 		wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
 		wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', array( 'pods-codemirror' ), '4.8', true );
 
+		// jQuery Timepicker.
 		if ( ! wp_script_is( 'jquery-ui-slideraccess', 'registered' ) ) {
 			// No need to add dependencies. All managed by jquery-ui-timepicker.
 			wp_register_script( 'jquery-ui-slideraccess', PODS_URL . 'ui/js/timepicker/jquery-ui-sliderAccess.js', array(), '0.3' );
 		}
-
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
 			wp_register_script(
 				'jquery-ui-timepicker',
-				PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js',
+				PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.js",
 				array(
 					'jquery',
 					'jquery-ui-core',
@@ -529,10 +538,21 @@ class PodsInit {
 			);
 		}
 		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
-			wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.css', array(), '1.6.3' );
+			wp_register_style(
+				'jquery-ui-timepicker',
+				PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.css",
+				array(),
+				'1.6.3'
+			);
 		}
 
-		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.css", array(), '1.0.2' );
+    // Select2/SelectWoo.
+		wp_register_style(
+			'pods-select2',
+			PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.css",
+			array(),
+			'1.0.2'
+		);
 
 		$select2_locale = function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
 		$select2_i18n   = false;
@@ -571,22 +591,30 @@ class PodsInit {
 			);
 		}
 
-		// Marionette dependencies for MV fields
-		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '2.0.0', true );
+		// Marionette dependencies for DFV/MV fields.
 		wp_register_script(
-			'marionette',
-			PODS_URL . 'ui/js/marionette/backbone.marionette.min.js',
+			'backbone.radio',
+			PODS_URL . "ui/js/marionette/backbone.radio{$suffix_min}.js",
+			array( 'backbone' ),
+			'2.0.0',
+			true
+		);
+		wp_register_script(
+			'pods-marionette',
+			PODS_URL . "ui/js/marionette/backbone.marionette{$suffix_min}.js",
 			array(
 				'backbone',
 				'backbone.radio',
-			), '3.3.1', true
+			),
+			'3.3.1',
+			true
 		);
 		wp_add_inline_script(
-			'marionette',
+			'pods-marionette',
 			'PodsMn = Backbone.Marionette.noConflict();'
 		);
 
-		// MV stuff
+		// DFV/MV.
 		wp_register_script(
 			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js',
 			array(
@@ -594,7 +622,7 @@ class PodsInit {
 				'jquery-ui-core',
 				'jquery-ui-sortable',
 				'pods-i18n',
-				'marionette',
+				'pods-marionette',
 				'media-views',
 				'media-models',
 			),
@@ -602,13 +630,23 @@ class PodsInit {
 			true
 		);
 
-		// Check if Pod is a Modal Window
+		// Page builders.
+		if (
+			// @todo Finish Elementor & Divi support.
+			// doing_action( 'elementor/editor/before_enqueue_scripts' ) || // Elementor.
+			// null !== pods_v( 'et_fb', 'get' ) // Divi.
+			null !== pods_v( 'fl_builder', 'get' ) // Beaver Builder.
+		) {
+			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
+		}
+
+		// Check if Pod is a Modal Window.
 		if ( pods_is_modal_window() ) {
 			add_filter( 'body_class', array( $this, 'add_classes_to_modal_body' ) );
 			add_filter( 'admin_body_class', array( $this, 'add_classes_to_modal_body' ) );
 		}
 
-		// Deal with specifics on admin pages
+		// Deal with specifics on admin pages.
 		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 
@@ -640,6 +678,15 @@ class PodsInit {
 			wp_enqueue_script( 'pods-dfv' );
 			wp_enqueue_style( 'pods-form' );
 		}
+
+		/**
+		 * Fires after Pods assets are registered.
+		 *
+		 * @since 2.7.23
+		 *
+		 * @param bool $suffix_min Minimized script suffix.
+		 */
+		do_action( 'pods_after_enqueue_scripts', $suffix_min );
 	}
 
 	/**
@@ -1917,6 +1964,8 @@ class PodsInit {
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 		add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+		// @todo Elementor Page Builder.
+		//add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 
 		add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 		add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );

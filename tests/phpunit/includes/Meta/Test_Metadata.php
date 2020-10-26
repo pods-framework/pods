@@ -109,7 +109,14 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				'pod'    => $name,
 				'pod_id' => $pod_id,
 				'name'   => 'slash',
-				'type'   => 'test',
+				'type'   => 'text',
+			);
+			pods_api()->save_field( $params );
+			$params = array(
+				'pod'    => $name,
+				'pod_id' => $pod_id,
+				'name'   => 'quotes',
+				'type'   => 'text',
 			);
 			pods_api()->save_field( $params );
 		}
@@ -180,6 +187,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 							// PR #5665
 							'slash'  => 'Test \backslash',
+							'quotes' => 'Test \'quotes\' "doublequotes"',
 						);
 						break;
 					case 1:
@@ -277,6 +285,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						// PR #5665
 						$value = call_user_func( $get_meta, $id, 'slash', true );
 						$this->assertEquals( 'Test \backslash', $value, $message );
+						$value = call_user_func( $get_meta, $id, 'quotes', true );
+						$this->assertEquals( 'Test \'quotes\' "doublequotes"', $value, $message );
 
 						break;
 					case 1:

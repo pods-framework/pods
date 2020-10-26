@@ -192,6 +192,12 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 = 2.7.23 - DATE =
 
+**New Features & Enhancements**
+
+* Added/Fixed: Support special magic tags in Pods Templates. #5697 (@JoryHogeveen)
+* Added/Fixed: Support Pod related magic tags in shortcode query parameters. #5734 (@JoryHogeveen)
+* Added: Allow function calls in all tags, not just template tags. #4887 (@JoryHogeveen)
+
 **Bug Fixes**
 
 * Fixed: PHP warning in file field gallery view. #5809 (@JoryHogeveen)

@@ -194,6 +194,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 **New Features & Enhancements**
 
+* Added: Support auto-templates for taxonomies, users and comments. #3962 & #5832 (@JoryHogeveen, @sc0ttkclark, @gwhitney)
 * Added/Fixed: Support special magic tags in Pods Templates. #5697 (@JoryHogeveen)
 * Added/Fixed: Support Pod related magic tags in shortcode query parameters. #5734 (@JoryHogeveen)
 * Added: Allow function calls in all tags, not just template tags. #4887 (@JoryHogeveen)

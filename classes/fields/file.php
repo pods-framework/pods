@@ -459,8 +459,7 @@ class PodsField_File extends PodsField {
 			if ( $is_user_logged_in ) {
 				$uid = 'user_' . get_current_user_id();
 			} else {
-				// @codingStandardsIgnoreLine
-				$uid = @session_id();
+				$uid = pods_session_id();
 			}
 
 			$pod_id = '0';
@@ -729,6 +728,10 @@ class PodsField_File extends PodsField {
 	 */
 	public function do_wp_gallery( $value, $options ) {
 
+		if ( ! $value ) {
+			return '';
+		}
+
 		$shortcode_args = array();
 
 		if ( ! empty( $options[ static::$type . '_wp_gallery_columns' ] ) ) {
@@ -752,7 +755,7 @@ class PodsField_File extends PodsField {
 		} else {
 			$images = array();
 
-			foreach ( $value as $v ) {
+			foreach ( (array) $value as $v ) {
 				if ( ! is_array( $v ) ) {
 					$images[] = (int) $v;
 				} elseif ( isset( $v['ID'] ) ) {
@@ -944,7 +947,7 @@ class PodsField_File extends PodsField {
 			}
 		}
 
-		$uid = @session_id();
+		$uid = pods_session_id();
 
 		if ( $is_user_logged_in ) {
 			$uid = 'user_' . get_current_user_id();

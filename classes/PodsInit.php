@@ -569,7 +569,7 @@ class PodsInit {
 		if ( $select2_i18n ) {
 			wp_register_script(
 				'pods-select2-core',
-				PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js",
+				PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.js",
 				array(
 					'jquery',
 					'pods-i18n',
@@ -581,7 +581,7 @@ class PodsInit {
 		} else {
 			wp_register_script(
 				'pods-select2',
-				PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js",
+				PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.js",
 				array(
 					'jquery',
 					'pods-i18n',

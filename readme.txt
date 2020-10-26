@@ -190,6 +190,12 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.23 - DATE =
+
+**Bug Fixes**
+
+* Fixed: PHP warning in file field gallery view. #5809 (@JoryHogeveen)
+
 = 2.7.22 - August 13th 2020 =
 
 **Bug Fixes**

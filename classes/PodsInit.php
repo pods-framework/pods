@@ -533,7 +533,8 @@ class PodsInit {
 					'jquery-ui-slider',
 					'jquery-ui-slideraccess',
 				),
-				'1.6.3'
+				'1.6.3',
+				true
 			);
 		}
 		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
@@ -545,22 +546,50 @@ class PodsInit {
 			);
 		}
 
-		// Select 2.
-		wp_register_script(
-			'pods-select2',
-			PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.js",
-			array(
-				'jquery',
-				'pods-i18n',
-			),
-			'1.0.1'
-		);
+    // Select2/SelectWoo.
 		wp_register_style(
 			'pods-select2',
 			PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.css",
 			array(),
 			'1.0.2'
 		);
+
+		$select2_locale = function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
+		$select2_i18n   = false;
+		if ( file_exists( PODS_DIR . "ui/js/selectWoo/i18n/{$select2_locale}.js" ) ) {
+			// `en_EN` format.
+			$select2_i18n = PODS_URL . "ui/js/selectWoo/i18n/{$select2_locale}.js";
+		} else {
+			// `en` format.
+			$select2_locale = substr( $select2_locale, 0, 2 );
+			if ( file_exists( PODS_DIR . "ui/js/selectWoo/i18n/{$select2_locale}.js" ) ) {
+				$select2_i18n = PODS_URL . "ui/js/selectWoo/i18n/{$select2_locale}.js";
+			}
+		}
+		if ( $select2_i18n ) {
+			wp_register_script(
+				'pods-select2-core',
+				PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js",
+				array(
+					'jquery',
+					'pods-i18n',
+				),
+				'1.0.1',
+				true
+			);
+			wp_register_script( 'pods-select2', $select2_i18n, array( 'pods-select2-core' ), '1.0.1', true );
+		} else {
+			wp_register_script(
+				'pods-select2',
+				PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js",
+				array(
+					'jquery',
+					'pods-i18n',
+				),
+				'1.0.1',
+				true
+			);
+		}
 
 		// Marionette dependencies for DFV/MV fields.
 		wp_register_script(
@@ -587,7 +616,8 @@ class PodsInit {
 
 		// DFV/MV.
 		wp_register_script(
-			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js', array(
+			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js',
+			array(
 				'jquery',
 				'jquery-ui-core',
 				'jquery-ui-sortable',
@@ -595,7 +625,9 @@ class PodsInit {
 				'pods-marionette',
 				'media-views',
 				'media-models',
-			), PODS_VERSION, true
+			),
+			PODS_VERSION,
+			true
 		);
 
 		// Page builders.

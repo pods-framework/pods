@@ -13,11 +13,12 @@ const Slug = ( props ) => {
 
 	const {
 		slug_placeholder: placeholder,
+		slug_fallback: fallback,
 	} = fieldConfig;
 
 	// Intercept the setValue call to force the slug formatting.
 	const forceSlugFormatting = ( newValue ) => {
-		setValue( sanitizeSlug( newValue ) );
+		setValue( sanitizeSlug( newValue, fallback ) );
 	};
 
 	return (

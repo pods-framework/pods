@@ -80,8 +80,8 @@ class Pod extends Base {
 		 * Filter the Pod option tabs for a specific pod type and name. Core tabs are added after this filter.
 		 *
 		 * @param array             $core_tabs Tabs to set.
-		 * @param \Pods\Whatsit\Pod $pod  Current Pods object.
-		 * @param array             $args Additional args.
+		 * @param \Pods\Whatsit\Pod $pod       Current Pods object.
+		 * @param array             $args      Additional args.
 		 */
 		$tabs = apply_filters( "pods_admin_setup_edit_tabs_{$pod_type}_{$pod_name}", $tabs, $pod, $args );
 
@@ -712,11 +712,12 @@ class Pod extends Base {
 					'boolean_yes_label' => '',
 				],
 				'has_archive_slug'       => [
-					'label'      => __( 'Archive Page Slug Override', 'pods' ),
-					'help'       => __( 'If archive page is enabled, you can override the slug used by WordPress, which defaults to the name of the post type.', 'pods' ),
-					'type'       => 'text',
-					'default'    => '',
-					'depends-on' => [ 'has_archive' => true ],
+					'label'         => __( 'Archive Page Slug Override', 'pods' ),
+					'help'          => __( 'If archive page is enabled, you can override the slug used by WordPress, which defaults to the name of the post type.', 'pods' ),
+					'type'          => 'slug',
+					'slug_fallback' => '-',
+					'default'       => '',
+					'depends-on'    => [ 'has_archive' => true ],
 				],
 				'hierarchical'           => [
 					'label'             => __( 'Hierarchical', 'pods' ),
@@ -735,11 +736,12 @@ class Pod extends Base {
 					'boolean_yes_label' => '',
 				],
 				'rewrite_custom_slug'    => [
-					'label'      => __( 'Custom Rewrite Slug', 'pods' ),
-					'help'       => __( 'Changes the first segment of the URL, which by default is the name of the Pod. For example, if your Pod is called "foo", if this field is left blank, your link will be "example.com/foo/post_slug", but if you were to enter "bar" your link will be "example.com/bar/post_slug".', 'pods' ),
-					'type'       => 'text',
-					'default'    => '',
-					'depends-on' => [ 'rewrite' => true ],
+					'label'         => __( 'Custom Rewrite Slug', 'pods' ),
+					'help'          => __( 'Changes the first segment of the URL, which by default is the name of the Pod. For example, if your Pod is called "foo", if this field is left blank, your link will be "example.com/foo/post_slug", but if you were to enter "bar" your link will be "example.com/bar/post_slug".', 'pods' ),
+					'type'          => 'slug',
+					'slug_fallback' => '-',
+					'default'       => '',
+					'depends-on'    => [ 'rewrite' => true ],
 				],
 				'rewrite_with_front'     => [
 					'label'             => __( 'Rewrite with Front', 'pods' ),
@@ -941,11 +943,12 @@ class Pod extends Base {
 					'boolean_yes_label' => '',
 				],
 				'rewrite_custom_slug'    => [
-					'label'      => __( 'Custom Rewrite Slug', 'pods' ),
-					'help'       => __( 'help', 'pods' ),
-					'type'       => 'text',
-					'default'    => '',
-					'depends-on' => [ 'rewrite' => true ],
+					'label'         => __( 'Custom Rewrite Slug', 'pods' ),
+					'help'          => __( 'help', 'pods' ),
+					'type'          => 'slug',
+					'slug_fallback' => '-',
+					'default'       => '',
+					'depends-on'    => [ 'rewrite' => true ],
 				],
 				'rewrite_with_front'     => [
 					'label'             => __( 'Rewrite with Front', 'pods' ),

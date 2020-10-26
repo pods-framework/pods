@@ -600,10 +600,10 @@ class PodsInit {
 
 		// Page builders.
 		if (
-			// @todo Finish Elementor support.
-			//doing_action( 'elementor/editor/before_enqueue_scripts' ) || // Elementor.
-			null !== pods_v( 'fl_builder', 'get' ) || // Beaver Builder.
-			null !== pods_v( 'et_fb', 'get' ) // Divi.
+			// @todo Finish Elementor & Divi support.
+			// doing_action( 'elementor/editor/before_enqueue_scripts' ) || // Elementor.
+			// null !== pods_v( 'et_fb', 'get' ) // Divi.
+			null !== pods_v( 'fl_builder', 'get' ) // Beaver Builder.
 		) {
 			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
 		}

@@ -1,7 +1,7 @@
 import sanitizeHtml from 'sanitize-html';
 import { deburr, trim } from 'lodash';
 
-const sanitizeSlug = ( value, fallback = '_' ) => {
+const sanitizeSlug = ( value, separator = '_' ) => {
 	const withoutTags = sanitizeHtml(
 		value.replace( /\&/g, '' ),
 		{
@@ -10,10 +10,8 @@ const sanitizeSlug = ( value, fallback = '_' ) => {
 		}
 	);
 
-	const fallbackSeparator = fallback.toString();
-
 	return deburr( withoutTags )
-		.replace( /[\s\./\\+=]+/g, fallback )
+		.replace( /[\s\./\\+=]+/g, separator )
 		.replace( /[^\w\-_]+/g, '' )
 		.toLowerCase();
 };

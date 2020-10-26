@@ -71,7 +71,7 @@ describe( 'Slug field component', () => {
 			setValue: jest.fn(),
 			fieldConfig: {
 				...BASE_PROPS.fieldConfig,
-				slug_fallback: '-',
+				slug_separator: '-',
 			},
 		};
 

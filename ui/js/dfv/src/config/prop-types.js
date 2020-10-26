@@ -65,7 +65,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	] ),
 	sister_id: NUMBER_OR_NUMBER_AS_STRING,
 	slug_placeholder: PropTypes.string,
-	slug_fallback: PropTypes.string,
+	slug_separator: PropTypes.string,
 	storage_type: PropTypes.string,
 	type: PropTypes.string.isRequired,
 	unique: PropTypes.string,

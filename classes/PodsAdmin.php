@@ -1312,6 +1312,11 @@ class PodsAdmin {
 				'table'   => _x( 'Table', 'storage type label', 'pods' ),
 			],
 			'wp_locale'      => $GLOBALS['wp_locale'],
+			'currencies'     => PodsField_Currency::$currencies,
+			'datetime'       => [
+				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
+				'gmt_offset'    => (int) get_option( 'gmt_offset', 0 ),
+			],
 		];
 
 		$config['currentPod']['podType'] = [

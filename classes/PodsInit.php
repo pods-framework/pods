@@ -600,7 +600,8 @@ class PodsInit {
 
 		// Page builders.
 		if (
-			doing_action( 'elementor/editor/before_enqueue_scripts' ) || // Elementor.
+			// @todo Finish Elementor support.
+			//doing_action( 'elementor/editor/before_enqueue_scripts' ) || // Elementor.
 			null !== pods_v( 'fl_builder', 'get' ) || // Beaver Builder.
 			null !== pods_v( 'et_fb', 'get' ) // Divi.
 		) {
@@ -1931,8 +1932,8 @@ class PodsInit {
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 		add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-		// Elementor Page Builder.
-		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+		// @todo Elementor Page Builder.
+		//add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 
 		add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 		add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );

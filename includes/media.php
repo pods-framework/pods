@@ -55,16 +55,16 @@ function pods_image_id_from_field( $image ) {
 }
 
 /**
- * Get the <img> HTML for a specific image field
+ * Get the <img> HTML for a specific image field.
  *
- * @param array|int|string $image      The image field array, ID, or guid
- * @param string|array     $size       Image size to use
- * @param int              $default    Default image to show if image not found, can be field array, ID, or guid
+ * @param array|int|string $image      The image field array, ID, or guid.
+ * @param string|array     $size       Image size to use.
+ * @param int              $default    Default image to show if image not found, can be field array, ID, or guid.
  *                                     Passing `-1` prevents default filter.
- * @param string|array     $attributes <img> Attributes array or string (passed to wp_get_attachment_image
- * @param boolean          $force      Force generation of image (if custom size array provided)
+ * @param string|array     $attributes <img> Attributes array or string (passed to wp_get_attachment_image).
+ * @param boolean          $force      Force generation of image (if custom size array provided).
  *
- * @return string <img> HTML or empty if image not found
+ * @return string <img> HTML or empty if image not found.
  *
  * @since 2.0.5
  */
@@ -72,13 +72,13 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 
 	if ( ! $default && -1 !== $default ) {
 		/**
-		 * Filter for default value
+		 * Filter for default value.
 		 *
 		 * Use to set a fallback image to be used when the image passed to pods_image can not be found. Will only take effect if $default is not set.
 		 *
 		 * @since 2.3.19
 		 *
-		 * @param array|int|string $default Default image to show if image not found, can be field array, ID, or guid
+		 * @param array|int|string $default Default image to show if image not found, can be field array, ID, or guid.
 		 */
 		$default = apply_filters( 'pods_image_default', $default );
 	}
@@ -103,15 +103,15 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 }
 
 /**
- * Get the Image URL for a specific image field
+ * Get the Image URL for a specific image field.
  *
- * @param array|int|string $image   The image field array, ID, or guid
- * @param string|array     $size    Image size to use
+ * @param array|int|string $image   The image field array, ID, or guid.
+ * @param string|array     $size    Image size to use.
  * @param int              $default Default image to show if image not found, can be field array, ID, or guid.
  *                                  Passing `-1` prevents default filter.
- * @param boolean          $force   Force generation of image (if custom size array provided)
+ * @param boolean          $force   Force generation of image (if custom size array provided).
  *
- * @return string Image URL or empty if image not found
+ * @return string Image URL or empty if image not found.
  *
  * @since 2.0.5
  */
@@ -119,13 +119,13 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 
 	if ( ! $default && -1 !== $default ) {
 		/**
-		 * Filter for default value
+		 * Filter for default value.
 		 *
 		 * Use to set a fallback image to be used when the image passed to pods_image can not be found. Will only take effect if $default is not set.
 		 *
 		 * @since 2.7.23
 		 *
-		 * @param array|int|string $default Default image to show if image not found, can be field array, ID, or guid
+		 * @param array|int|string $default Default image to show if image not found, can be field array, ID, or guid.
 		 */
 		$default = apply_filters( 'pods_image_url_default', $default );
 	}
@@ -161,13 +161,13 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 }
 
 /**
- * Import media from a specific URL, saving as an attachment
+ * Import media from a specific URL, saving as an attachment.
  *
- * @param string  $url         URL to media for import
- * @param int     $post_parent ID of post parent, default none
- * @param boolean $featured    Whether to set it as the featured (post thumbnail) of the post parent
+ * @param string  $url         URL to media for import.
+ * @param int     $post_parent ID of post parent, default none.
+ * @param boolean $featured    Whether to set it as the featured (post thumbnail) of the post parent.
  *
- * @return int Attachment ID
+ * @return int Attachment ID.
  *
  * @since 2.3.0
  */
@@ -239,10 +239,10 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 /**
  * Resize an image on if it doesn't exist.
  *
- * @param int          $attachment_id Attachment ID
- * @param string|array $size          Size to be generated
+ * @param int          $attachment_id Attachment ID.
+ * @param string|array $size          Size to be generated.
  *
- * @return boolean Image generation result
+ * @return boolean Image generation result.
  *
  * @since 2.7.23
  */
@@ -251,7 +251,7 @@ function pods_maybe_image_resize( $attachment_id, $size ) {
 	if ( 'full' !== $size ) {
 		$full = wp_get_attachment_image_src( $attachment_id, 'full' );
 		if ( ! empty( $full[0] ) ) {
-			$src  = wp_get_attachment_image_src( $attachment_id, $size );
+			$src = wp_get_attachment_image_src( $attachment_id, $size );
 
 			if ( empty( $src[0] ) || $full[0] == $src[0] ) {
 				return pods_image_resize( $attachment_id, $size );
@@ -263,12 +263,12 @@ function pods_maybe_image_resize( $attachment_id, $size ) {
 }
 
 /**
- * Resize an image on demand
+ * Resize an image on demand.
  *
- * @param int          $attachment_id Attachment ID
- * @param string|array $size          Size to be generated
+ * @param int          $attachment_id Attachment ID.
+ * @param string|array $size          Size to be generated.
  *
- * @return boolean Image generation result
+ * @return boolean Image generation result.
  *
  * @since 2.3.0
  */
@@ -346,7 +346,7 @@ function pods_image_resize( $attachment_id, $size ) {
  * @since 2.5.0
  *
  * @param string|array $url  Can be a URL of the source file, or a Pods audio field.
- * @param bool|array   $args Optional. Additional arguments to pass to wp_audio_shortcode
+ * @param bool|array   $args Optional. Additional arguments to pass to wp_audio_shortcode().
  *
  * @return string
  */
@@ -379,7 +379,7 @@ function pods_audio( $url, $args = false ) {
  * @since 2.5.0
  *
  * @param string|array $url  Can be a URL of the source file, or a Pods video field.
- * @param bool|array   $args Optional. Additional arguments to pass to wp_video_shortcode()
+ * @param bool|array   $args Optional. Additional arguments to pass to wp_video_shortcode().
  *
  * @return string
  */

@@ -88,15 +88,8 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 	$default = pods_image_id_from_field( $default );
 
 	if ( 0 < $id ) {
-		if ( $force && 'full' !== $size ) {
-			$full = wp_get_attachment_image_src( $id, 'full' );
-			if ( ! empty( $full[0] ) ) {
-				$src  = wp_get_attachment_image_src( $id, $size );
-
-				if ( empty( $src[0] ) || $full[0] == $src[0] ) {
-					pods_image_resize( $id, $size );
-				}
-			}
+		if ( $force ) {
+			pods_maybe_image_resize( $id, $size );
 		}
 
 		$html = wp_get_attachment_image( $id, $size, true, $attributes );
@@ -142,15 +135,8 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 	$default = pods_image_id_from_field( $default );
 
 	if ( 0 < $id ) {
-		if ( $force && 'full' !== $size ) {
-			$full = wp_get_attachment_image_src( $id, 'full' );
-			if ( ! empty( $full[0] ) ) {
-				$src  = wp_get_attachment_image_src( $id, $size );
-
-				if ( empty( $src[0] ) || $full[0] == $src[0] ) {
-					pods_image_resize( $id, $size );
-				}
-			}
+		if ( $force ) {
+			pods_maybe_image_resize( $id, $size );
 		}
 
 		$src = wp_get_attachment_image_src( $id, $size );
@@ -248,6 +234,32 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 	}
 
 	return $attachment_id;
+}
+
+/**
+ * Resize an image on if it doesn't exist.
+ *
+ * @param int          $attachment_id Attachment ID
+ * @param string|array $size          Size to be generated
+ *
+ * @return boolean Image generation result
+ *
+ * @since 2.7.23
+ */
+function pods_maybe_image_resize( $attachment_id, $size ) {
+
+	if ( 'full' !== $size ) {
+		$full = wp_get_attachment_image_src( $attachment_id, 'full' );
+		if ( ! empty( $full[0] ) ) {
+			$src  = wp_get_attachment_image_src( $attachment_id, $size );
+
+			if ( empty( $src[0] ) || $full[0] == $src[0] ) {
+				return pods_image_resize( $attachment_id, $size );
+			}
+		}
+	}
+	// No resize needed.
+	return true;
 }
 
 /**

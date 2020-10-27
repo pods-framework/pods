@@ -88,12 +88,14 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 	$default = pods_image_id_from_field( $default );
 
 	if ( 0 < $id ) {
-		if ( $force ) {
+		if ( $force && 'full' !== $size ) {
 			$full = wp_get_attachment_image_src( $id, 'full' );
-			$src  = wp_get_attachment_image_src( $id, $size );
+			if ( ! empty( $full[0] ) ) {
+				$src  = wp_get_attachment_image_src( $id, $size );
 
-			if ( 'full' !== $size && $full[0] == $src[0] ) {
-				pods_image_resize( $id, $size );
+				if ( empty( $src[0] ) || $full[0] == $src[0] ) {
+					pods_image_resize( $id, $size );
+				}
 			}
 		}
 
@@ -140,12 +142,14 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 	$default = pods_image_id_from_field( $default );
 
 	if ( 0 < $id ) {
-		if ( $force ) {
+		if ( $force && 'full' !== $size ) {
 			$full = wp_get_attachment_image_src( $id, 'full' );
-			$src  = wp_get_attachment_image_src( $id, $size );
+			if ( ! empty( $full[0] ) ) {
+				$src  = wp_get_attachment_image_src( $id, $size );
 
-			if ( 'full' !== $size && $full[0] == $src[0] ) {
-				pods_image_resize( $id, $size );
+				if ( empty( $src[0] ) || $full[0] == $src[0] ) {
+					pods_image_resize( $id, $size );
+				}
 			}
 		}
 

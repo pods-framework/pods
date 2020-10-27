@@ -57,7 +57,7 @@
     "bvanhoekelen/performance": "^2.5.1",
     "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
     "wp-coding-standards/wpcs": "^2.1",
-    "moderntribe/TribalScents": "dev-master",
+    "moderntribe/tribalscents": "dev-master",
     "wp-cli/wp-cli": "2.*",
     "phpunit/phpunit": "4.*",
     "mockery/mockery": "1.3.*",

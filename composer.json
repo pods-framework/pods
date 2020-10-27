@@ -55,7 +55,7 @@
   "require-dev": {
     "automattic/vipwpcs": "^2.0",
     "bvanhoekelen/performance": "^2.5.1",
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
     "wp-coding-standards/wpcs": "^2.1",
     "moderntribe/tribalscents": "dev-master",
     "wp-cli/wp-cli": "2.*",

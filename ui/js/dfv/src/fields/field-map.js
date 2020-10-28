@@ -1,9 +1,9 @@
-import mnRenderer from 'dfv/src/core/renderers/mn-renderer';
 import reactRenderer from 'dfv/src/core/renderers/react-renderer';
 import reactDirectRenderer from 'dfv/src/core/renderers/react-direct-renderer';
 
 import Boolean from 'dfv/src/fields/boolean';
 import Color from 'dfv/src/fields/color';
+import Currency from 'dfv/src/fields/currency';
 import EditPod from 'dfv/src/admin/edit-pod/edit-pod';
 import Email from 'dfv/src/fields/email';
 import File from 'dfv/src/fields/file';
@@ -29,6 +29,10 @@ const FIELD_MAP = {
 	},
 	color: {
 		fieldComponent: Color,
+		renderer: reactRenderer,
+	},
+	currency: {
+		fieldComponent: Currency,
 		renderer: reactRenderer,
 	},
 	'edit-pod': {

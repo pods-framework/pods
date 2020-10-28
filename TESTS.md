@@ -42,5 +42,5 @@ npm install
 Now you can run the tests:
 
 ```
-npm run jest-tests
+npm run jest
 ```

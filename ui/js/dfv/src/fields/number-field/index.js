@@ -1,4 +1,5 @@
 import React from 'react';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 
 import numberFormat from 'dfv/src/helpers/numberFormat';
@@ -77,9 +78,11 @@ const NumberField = ( {
 
 	const correctedDecimals = toBool( softFormat ) ? 0 : decimals;
 
-	const handleChange = ( event ) => setValue(
-		formatValue( event.target.value, correctedDecimals, format )
-	);
+	const handleChange = ( event ) => debounce( () => {
+		setValue(
+			formatValue( event.target.value, correctedDecimals, format )
+		);
+	}, 1000 );
 
 	if ( 'number' === type ) {
 		return (

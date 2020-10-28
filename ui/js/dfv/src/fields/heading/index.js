@@ -3,8 +3,6 @@ import HelpTooltip from 'dfv/src/components/help-tooltip';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-// @todo this may be an incomplete field component
-// @todo add tests
 const Heading = ( props ) => {
 	const {
 		fieldConfig: {

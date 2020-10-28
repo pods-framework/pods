@@ -48,7 +48,7 @@
     }
   ],
   "require": {
-    "composer/installers": "1.8.*",
+    "composer/installers": "1.9.*",
     "php": ">=5.3",
     "freemius/wordpress-sdk": "2.3.2"
   },

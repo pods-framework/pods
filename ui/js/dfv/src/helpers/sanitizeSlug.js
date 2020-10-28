@@ -1,7 +1,7 @@
 import sanitizeHtml from 'sanitize-html';
 import { deburr, trim } from 'lodash';
 
-const sanitizeSlug = ( value ) => {
+const sanitizeSlug = ( value, separator = '_' ) => {
 	const withoutTags = sanitizeHtml(
 		value.replace( /\&/g, '' ),
 		{
@@ -10,13 +10,10 @@ const sanitizeSlug = ( value ) => {
 		}
 	);
 
-	return trim(
-		deburr( withoutTags )
-			.replace( /[\s\./]+/g, '_' )
-			.replace( /[^\w-]+/g, '' )
-			.toLowerCase(),
-		'-'
-	);
+	return deburr( withoutTags )
+		.replace( /[\s\./\\+=]+/g, separator )
+		.replace( /[^\w\-_]+/g, '' )
+		.toLowerCase();
 };
 
 export default sanitizeSlug;

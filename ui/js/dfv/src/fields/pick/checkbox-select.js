@@ -43,7 +43,7 @@ const CheckboxSelect = ( {
 							>
 								<input
 									name={ `pods_${ name }[${ optionIndex }]` }
-									id={ `pods_${ name }` }
+									id={ `pods-${ name }-${ optionLabel }` }
 									checked={ isMulti ? value.includes( optionValue ) : value === optionValue }
 									className="pods-form-ui-field-type-pick"
 									type="checkbox"

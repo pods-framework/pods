@@ -152,6 +152,9 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	file_wp_gallery_random_sort: PropTypes.string,
 	file_wp_gallery_size: PropTypes.string,
 
+	// HTML field
+	html_content: PropTypes.string,
+
 	// Number field
 	number_decimals: NUMBER_OR_NUMBER_AS_STRING,
 	number_format: PropTypes.oneOf( [

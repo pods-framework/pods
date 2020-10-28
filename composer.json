@@ -48,14 +48,14 @@
     }
   ],
   "require": {
-    "composer/installers": "1.8.*",
+    "composer/installers": "1.9.*",
     "php": ">=5.3",
     "freemius/wordpress-sdk": "2.3.2"
   },
   "require-dev": {
     "automattic/vipwpcs": "^2.0",
     "bvanhoekelen/performance": "^2.5.1",
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
     "wp-coding-standards/wpcs": "^2.1",
     "moderntribe/tribalscents": "dev-master",
     "wp-cli/wp-cli": "2.*",

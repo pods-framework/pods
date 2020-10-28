@@ -247,9 +247,9 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
  * @since 2.7.23
  */
 function pods_maybe_image_resize( $attachment_id, $size ) {
-
 	if ( 'full' !== $size ) {
 		$full = wp_get_attachment_image_src( $attachment_id, 'full' );
+
 		if ( ! empty( $full[0] ) ) {
 			$src = wp_get_attachment_image_src( $attachment_id, $size );
 
@@ -258,6 +258,7 @@ function pods_maybe_image_resize( $attachment_id, $size ) {
 			}
 		}
 	}
+
 	// No resize needed.
 	return true;
 }

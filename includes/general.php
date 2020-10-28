@@ -922,11 +922,17 @@ function pods_shortcode_run( $tags, $content = null ) {
 		// id > slug (if both exist)
 		$id = null;
 
+		$evaluate_tags_args = array(
+			'sanitize'        => true,
+			'fallback'        => null,
+			'use_current_pod' => true,
+		);
+
 		if ( ! empty( $tags['slug'] ) ) {
 			$id = $tags['slug'];
 
 			if ( pods_shortcode_allow_evaluate_tags() ) {
-				$id = pods_evaluate_tags( $id, true );
+				$id = pods_evaluate_tags( $id, $evaluate_tags_args );
 			}
 		}
 
@@ -934,7 +940,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			$id = $tags['id'];
 
 			if ( pods_shortcode_allow_evaluate_tags() ) {
-				$id = pods_evaluate_tags( $id, true );
+				$id = pods_evaluate_tags( $id, $evaluate_tags_args );
 			}
 
 			if ( is_numeric( $id ) ) {
@@ -964,6 +970,12 @@ function pods_shortcode_run( $tags, $content = null ) {
 		$params = array();
 
 		if ( ! defined( 'PODS_DISABLE_SHORTCODE_SQL' ) || ! PODS_DISABLE_SHORTCODE_SQL ) {
+			$evaluate_tags_args = array(
+				'sanitize'        => true,
+				'fallback'        => '""',
+				'use_current_pod' => true,
+			);
+
 			if ( 0 < strlen( $tags['orderby'] ) ) {
 				$params['orderby'] = $tags['orderby'];
 			}
@@ -972,7 +984,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 				$params['where'] = $tags['where'];
 
 				if ( pods_shortcode_allow_evaluate_tags() ) {
-					$params['where'] = pods_evaluate_tags( html_entity_decode( $params['where'] ), true, '""' );
+					$params['where'] = pods_evaluate_tags_sql( html_entity_decode( $params['where'] ), $evaluate_tags_args );
 				}
 			}
 
@@ -980,7 +992,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 				$params['having'] = $tags['having'];
 
 				if ( pods_shortcode_allow_evaluate_tags() ) {
-					$params['having'] = pods_evaluate_tags( html_entity_decode( $params['having'] ), true, '""' );
+					$params['having'] = pods_evaluate_tags_sql( html_entity_decode( $params['having'] ), $evaluate_tags_args );
 				}
 			}
 
@@ -1052,7 +1064,15 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 		return $pod->form( $tags['fields'], $tags['label'], $tags['thank_you'] );
 	} elseif ( ! empty( $tags['field'] ) ) {
-		if ( empty( $tags['helper'] ) ) {
+		if ( $tags['template'] || $content ) {
+			$return  = '';
+			$related = $pod->field( $tags['field'], array( 'output' => 'find' ) );
+
+			if ( $related instanceof Pods && $related->valid() ) {
+				// Content is null by default.
+				$return .= $related->template( $tags['template'], $content );
+			}
+		} elseif ( empty( $tags['helper'] ) ) {
 			$return = $pod->display( $tags['field'] );
 		} else {
 			$return = $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );
@@ -2572,6 +2592,9 @@ function pods_session_start() {
 	} elseif ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
 		// Allow for bypassing Pods session autostarting.
 		return false;
+	} elseif ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
+		// Sessions are disabled.
+		return false;
 	} elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
 		// Allow for non-file based sessions, like Memcache.
 		// This is OK, but we don't want to check if file_exists on next statement.
@@ -2580,10 +2603,16 @@ function pods_session_start() {
 		return false;
 	}
 
-	if ( '' !== session_id() ) {
-		// Check if session ID is already set.
-		// In separate if clause, to also check for non-file based sessions.
-		return false;
+	// Check if session is already set.
+	// In separate if clause, to also check for non-file based sessions.
+	if ( function_exists( 'session_status' ) ) { // PHP >=5.4.
+		if ( PHP_SESSION_ACTIVE === session_status() ) {
+			return false;
+		}
+	} else { // PHP <5.4.
+		if ( pods_session_id() ) {
+			return false;
+		}
 	}
 
 	// Start session
@@ -2591,6 +2620,26 @@ function pods_session_start() {
 
 	return true;
 
+}
+
+/**
+ * Get current session ID.
+ *
+ * @since 2.7.23
+ *
+ * @return string
+ */
+function pods_session_id() {
+	if ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
+		return '';
+	}
+
+	if ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
+		// Sessions are disabled.
+		return '';
+	}
+
+	return @session_id();
 }
 
 /**

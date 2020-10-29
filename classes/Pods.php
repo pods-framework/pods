@@ -1062,6 +1062,25 @@ class Pods implements Iterator {
 				} else {
 					return null;
 				}
+			} elseif ( 'avatar' === $first_field && 'user' === $pod_type ) {
+				$object_field_found = true;
+				// User avatar.
+				$size = null;
+
+				if ( 0 === strpos( $params->name, 'avatar.' ) ) {
+					$field_names = explode( '.', $params->name );
+
+					if ( isset( $field_names[1] ) ) {
+						$size = (int) $field_names[1];
+					}
+				}
+
+				if ( 0 < $size ) {
+					$value = get_avatar( $this->id(), $size );
+				} else {
+					$value = get_avatar( $this->id() );
+				}
+
 			} elseif ( ! $is_field_set ) {
 
 				$image_fields = array(
@@ -1158,25 +1177,6 @@ class Pods implements Iterator {
 						}
 					}
 				}
-			} elseif ( 'avatar' === $first_field && 'user' === $pod_type ) {
-				$object_field_found = true;
-				// User avatar.
-				$size = null;
-
-				if ( 0 === strpos( $params->name, 'avatar.' ) ) {
-					$field_names = explode( '.', $params->name );
-
-					if ( isset( $field_names[1] ) ) {
-						$size = (int) $field_names[1];
-					}
-				}
-
-				if ( 0 < $size ) {
-					$value = get_avatar( $this->id(), $size );
-				} else {
-					$value = get_avatar( $this->id() );
-				}
-
 			}
 
 			// Continue regular field parsing.

@@ -1075,26 +1075,7 @@ class Pods implements Iterator {
 				}
 
 				// Handle special field tags.
-				if ( 'avatar' === $first_field && 'user' === $pod_type ) {
-					$object_field_found = true;
-					// User avatar.
-					$size = null;
-
-					if ( 0 === strpos( $params->name, 'avatar.' ) ) {
-						$field_names = explode( '.', $params->name );
-
-						if ( isset( $field_names[1] ) ) {
-							$size = (int) $field_names[1];
-						}
-					}
-
-					if ( 0 < $size ) {
-						$value = get_avatar( $this->id(), $size );
-					} else {
-						$value = get_avatar( $this->id() );
-					}
-
-				} elseif ( in_array( $first_field, $image_fields, true ) ) {
+				if ( in_array( $first_field, $image_fields, true ) ) {
 					// Default image field handlers.
 					$object_field_found = true;
 
@@ -1177,6 +1158,25 @@ class Pods implements Iterator {
 						}
 					}
 				}
+			} elseif ( 'avatar' === $first_field && 'user' === $pod_type ) {
+				$object_field_found = true;
+				// User avatar.
+				$size = null;
+
+				if ( 0 === strpos( $params->name, 'avatar.' ) ) {
+					$field_names = explode( '.', $params->name );
+
+					if ( isset( $field_names[1] ) ) {
+						$size = (int) $field_names[1];
+					}
+				}
+
+				if ( 0 < $size ) {
+					$value = get_avatar( $this->id(), $size );
+				} else {
+					$value = get_avatar( $this->id() );
+				}
+
 			}
 
 			// Continue regular field parsing.

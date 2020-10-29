@@ -1062,23 +1062,35 @@ class Pods implements Iterator {
 				} else {
 					return null;
 				}
+
 			} elseif ( 'avatar' === $first_field && 'user' === $pod_type ) {
-				$object_field_found = true;
 				// User avatar.
-				$size = null;
+				$size       = null;
+				$get_avatar = true;
 
-				if ( 0 === strpos( $params->name, 'avatar.' ) ) {
-					$field_names = explode( '.', $params->name );
-
-					if ( isset( $field_names[1] ) ) {
-						$size = (int) $field_names[1];
+				if ( $is_traversal ) {
+					if ( $is_field_set ) {
+						// This is a registered field.
+						if ( isset( $traverse_fields[1] ) && is_numeric( $traverse_fields[1] ) ) {
+							$size = (int) $traverse_fields[1];
+						} else {
+							// Traverse through attachment post.
+							$get_avatar = false;
+						}
+					} else {
+						if ( isset( $traverse_fields[1] ) ) {
+							$size = (int) $traverse_fields[1];
+						}
 					}
 				}
 
-				if ( 0 < $size ) {
-					$value = get_avatar( $this->id(), $size );
-				} else {
-					$value = get_avatar( $this->id() );
+				if ( $get_avatar ) {
+					$object_field_found = true;
+					if ( 0 < $size ) {
+						$value = get_avatar( $this->id(), $size );
+					} else {
+						$value = get_avatar( $this->id() );
+					}
 				}
 
 			} elseif ( ! $is_field_set ) {

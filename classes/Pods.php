@@ -1140,17 +1140,13 @@ class Pods implements Iterator {
 
 						$size = 'thumbnail';
 						if ( isset( $traverse_params[0] ) ) {
-							$size  = $traverse_params[0];
-							$sizes = get_intermediate_image_sizes();
-							// Not shown by default.
-							$sizes[] = 'full';
-							$sizes[] = 'original';
-							if ( ! in_array( $size, $sizes, true ) ) {
-								// No valid image size found.
-								$size = false;
-							} else {
+							$size = $traverse_params[0];
+							if ( pods_is_image_size( $size ) ) {
 								// Force image request since a valid size parameter is passed.
 								$is_image = true;
+							} else {
+								// No valid image size found.
+								$size = false;
 							}
 						}
 

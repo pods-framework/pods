@@ -13,11 +13,12 @@ const Slug = ( props ) => {
 
 	const {
 		slug_placeholder: placeholder,
+		slug_separator: separator,
 	} = fieldConfig;
 
 	// Intercept the setValue call to force the slug formatting.
 	const forceSlugFormatting = ( newValue ) => {
-		setValue( sanitizeSlug( newValue ) );
+		setValue( sanitizeSlug( newValue, separator ) );
 	};
 
 	return (
@@ -33,7 +34,7 @@ const Slug = ( props ) => {
 Slug.propTypes = {
 	fieldConfig: FIELD_PROP_TYPE_SHAPE,
 	setValue: PropTypes.func.isRequired,
-	value: PropTypes.string.isRequired,
+	value: PropTypes.string,
 };
 
 export default Slug;

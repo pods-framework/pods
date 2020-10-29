@@ -127,26 +127,6 @@ input.pods-form-ui-field-type-color {
 	margin: 0;
 }
 
-/* Currency */
-.pods-currency-container {
-	position: relative;
-
-	code {
-		position: absolute;
-		transform: translate(0, -50%);
-		top: 50%;
-		pointer-events: none;
-		min-width: 10px;
-		text-align: center;
-		padding: 1px 5px;
-		line-height: 25px;
-	}
-
-	input {
-		padding-left: 25px;
-	}
-}
-
 /**
 	Form fields - boolean/pick/select values.
  */
@@ -267,9 +247,6 @@ select.pods-pick-multi {
 	display: block;
 }
 
-.pods-pick-values .pods-radio {
-	border: 1px solid #dfdfdf;
-}
 
 p.pods-add-file {
 	padding: 5px 0 10px;
@@ -341,11 +318,6 @@ p.pods-add-file {
 .pods-form-front .pods-field-input input,
 .pods-form .pods-field table.pods-metabox {
 	width: 95%;
-}
-
-.pods-form .pods-field-input textarea {
-	width: 95%;
-	min-height: 200px;
 }
 
 .pods-form-front .pods-field-input .quicktags-toolbar input {

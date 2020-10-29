@@ -1,33 +1,83 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
-import BaseInput from 'dfv/src/fields/base-input';
-// import * as validationRules from 'dfv/src/validation/validation-rules';
+import { debounce } from 'lodash';
+import PropTypes from 'prop-types';
 
-// @todo this is an incomplete field component
-// @todo add tests?
-const NumberField = ( props ) => {
-	// noinspection JSUnresolvedVariable
-	/* Enable this only for slider
-	props.validation.addRules( [
-		{
-			rule: validationRules.max( props.value, props.fieldConfig.number_max ),
-			condition: true,
-		},
-		{
-			rule: validationRules.min( props.value, props.fieldConfig.number_min ),
-			condition: true,
-		},
-	] );*/
+import numberFormatValue from 'dfv/src/helpers/numberFormatValue';
+import { toBool } from 'dfv/src/helpers/booleans';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-	// noinspection JSUnresolvedVariable
+import './number-field.scss';
+
+const NumberField = ( {
+	fieldConfig,
+	value,
+	setValue,
+} ) => {
+	const {
+		htmlAttr: htmlAttributes = {},
+		readonly: readOnly,
+		number_decimals: decimals,
+		number_format: format,
+		number_format_soft: softFormat,
+		number_format_type: type,
+		number_html5: html5,
+		number_max: max,
+		number_max_length: maxLength,
+		number_min: min,
+		number_placeholder: placeholder,
+		number_step: step,
+	} = fieldConfig;
+
+	const correctedDecimals = toBool( softFormat ) ? 0 : decimals;
+
+	const handleChange = ( event ) => debounce( () => {
+		setValue(
+			numberFormatValue( event.target.value, correctedDecimals, format )
+		);
+	}, 1000 );
+
+	if ( 'slider' === type ) {
+		return (
+			<div>
+				<input
+					type="range"
+					className="pods-number-field-slider-input"
+					name={ htmlAttributes.name }
+					id={ htmlAttributes.id }
+					placeholder={ placeholder }
+					value={ parseFloat( value ) || min || 0 }
+					readOnly={ !! readOnly }
+					onChange={ handleChange }
+					min={ min }
+					max={ max }
+					step={ step }
+				/>
+
+				<div className="pods-slider-field-display">
+					{ numberFormatValue( value, correctedDecimals, format ) }
+				</div>
+			</div>
+		);
+	}
+
 	return (
-		<BaseInput
-			type={ '1' === props.fieldConfig.number_html5 ? 'number' : 'text' }
-			//min={props.fieldConfig.number_min} Enable this only for slider
-			//max={props.fieldConfig.number_max} Enable this only for slider
-			{ ...props }
+		<input
+			type={ '1' === html5 ? 'number' : 'text' }
+			name={ htmlAttributes.name }
+			id={ htmlAttributes.id }
+			placeholder={ placeholder }
+			maxLength={ -1 !== parseInt( maxLength, 10 ) ? maxLength : undefined }
+			value={ value }
+			readOnly={ !! readOnly }
+			onChange={ handleChange }
 		/>
 	);
+};
+
+NumberField.propTypes = {
+	fieldConfig: FIELD_PROP_TYPE_SHAPE,
+	setValue: PropTypes.func.isRequired,
+	value: PropTypes.string,
 };
 
 export default NumberField;

@@ -64,4 +64,34 @@ describe( 'Slug field component', () => {
 		expect( props.setValue ).toHaveBeenNthCalledWith( 2, 'something_that_needs_to_be_formatted' );
 		expect( props.setValue ).toHaveBeenNthCalledWith( 3, 'test_and_test' );
 	} );
+
+	it( 'calls the setValue callback once updated with dash fallback', () => {
+		const props = {
+			...BASE_PROPS,
+			setValue: jest.fn(),
+			fieldConfig: {
+				...BASE_PROPS.fieldConfig,
+				slug_separator: '-',
+			},
+		};
+
+		const wrapper = mount( <Slug { ...props } /> );
+		const input = wrapper.find( 'input' ).first();
+
+		input.simulate( 'change', {
+			target: { value: 'test-123' },
+		} );
+
+		input.simulate( 'change', {
+			target: { value: 'Something that needs to be_formatted' },
+		} );
+
+		input.simulate( 'change', {
+			target: { value: 'Test )*&^*😬and*()*)**&^*^# Test' },
+		} );
+
+		expect( props.setValue ).toHaveBeenNthCalledWith( 1, 'test-123' );
+		expect( props.setValue ).toHaveBeenNthCalledWith( 2, 'something-that-needs-to-be_formatted' );
+		expect( props.setValue ).toHaveBeenNthCalledWith( 3, 'test-and-test' );
+	} );
 } );

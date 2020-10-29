@@ -1,4 +1,5 @@
-/*global jQuery, _, Backbone, PodsMn, wp */
+/* global _, Backbone, PodsMn */
+
 import template from 'dfv/src/fields/file/views/file-upload-queue.html';
 
 export const FileUploadQueueModel = Backbone.Model.extend( {
@@ -6,13 +7,10 @@ export const FileUploadQueueModel = Backbone.Model.extend( {
 		id: 0,
 		filename: '',
 		progress: 0,
-		errorMsg: ''
-	}
+		errorMsg: '',
+	},
 } );
 
-/**
- *
- */
 export const FileUploadQueueItem = PodsMn.View.extend( {
 	model: FileUploadQueueModel,
 
@@ -20,30 +18,26 @@ export const FileUploadQueueItem = PodsMn.View.extend( {
 
 	template: _.template( template ),
 
-	attributes: function () {
+	attributes() {
 		return {
 			class: 'pods-dfv-list-item',
-			id: this.model.get( 'id' )
+			id: this.model.get( 'id' ),
 		};
 	},
 
 	modelEvents: {
-		'change': 'onModelChanged'
+		change: 'onModelChanged',
 	},
 
-	onModelChanged: function () {
+	onModelChanged() {
 		this.render();
-	}
-
+	},
 } );
 
-/**
- *
- */
 export const FileUploadQueue = PodsMn.CollectionView.extend( {
 	tagName: 'ul',
 
 	className: 'pods-dfv-list pods-dfv-list-queue',
 
-	childView: FileUploadQueueItem
+	childView: FileUploadQueueItem,
 } );

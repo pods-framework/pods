@@ -4,5 +4,5 @@ export const toBool = ( stringOrNumber ) => {
 };
 
 export const toNumericBool = ( boolValue ) => {
-	return !! boolValue ? '1' : '0';
+	return ( !! boolValue && '0' !== boolValue ) ? '1' : '0';
 };

@@ -12,7 +12,7 @@ import { richTextNoLinks } from '../../../blocks/src/config/html';
 import FIELD_MAP from 'dfv/src/fields/field-map';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-const PodsFieldOption = ( props ) => {
+const FieldOption = ( props ) => {
 	const {
 		field = {},
 		value,
@@ -81,7 +81,7 @@ const PodsFieldOption = ( props ) => {
 
 					// Show an error if the field isn't in the React format yet.
 					// @todo this can probably be removed later.
-					if ( FIELD_MAP[ fieldType ]?.renderer?.name !== 'reactRenderer' ) {
+					if ( FIELD_MAP[ fieldType ]?.renderer?.name === 'mnRenderer' ) {
 						return (
 							<span className="pods-field-option__invalid-field">
 								{ sprintf(
@@ -118,18 +118,15 @@ const PodsFieldOption = ( props ) => {
 	);
 };
 
-PodsFieldOption.defaultProps = {
-	value: '',
-};
-
-PodsFieldOption.propTypes = {
+FieldOption.propTypes = {
 	field: FIELD_PROP_TYPE_SHAPE,
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,
 		PropTypes.number,
+		PropTypes.array,
 	] ),
 	setValue: PropTypes.func.isRequired,
 };
 
-export default PodsFieldOption;
+export default FieldOption;

@@ -1,139 +1,86 @@
-/*global jQuery, _, Backbone, PodsMn */
-import template from 'dfv/src/fields/file/file-upload-layout.html';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
-import { PodsDFVFieldLayout } from 'dfv/src/core/pods-field-views';
+import apiFetch from '@wordpress/api-fetch';
 
-import { FileUploadCollection } from 'dfv/src/fields/file/file-upload-model';
+import MarionetteAdapter from 'dfv/src/fields/marionette-adapter';
+import { File as FileView } from './file-upload';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-import { FileUploadList } from 'dfv/src/fields/file/views/file-upload-list';
-import { FileUploadForm } from 'dfv/src/fields/file/views/file-upload-form';
+// @todo add tests
+const File = ( props ) => {
+	const {
+		fieldConfig = {},
+		htmlAttr = {},
+		value,
+		setValue,
+	} = props;
 
-import { Plupload } from 'dfv/src/fields/file/uploaders/plupload';
-import { MediaModal } from 'dfv/src/fields/file/uploaders/media-modal';
+	const [ collectionData, setCollectionData ] = useState( [] );
 
-const Uploaders = [
-	Plupload,
-	MediaModal
-];
-
-const UNLIMITED_FILES = 0;
-
-/**
- * @extends Backbone.View
- */
-export const File = PodsDFVFieldLayout.extend( {
-	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
-
-	template: _.template( template ),
-
-	regions: {
-		list: '.pods-ui-file-list',
-		uiRegion: '.pods-ui-region', // "Utility" container for uploaders to use
-		form: '.pods-ui-form'
-	},
-
-	childViewEvents: {
-		'childview:remove:file:click': 'onChildviewRemoveFileClick',
-		'childview:add:file:click': 'onChildviewAddFileClick'
-	},
-
-	uploader: {},
-
-	/**
-	 *
-	 */
-	onBeforeRender: function () {
-		if ( this.collection === undefined ) {
-			this.collection = new FileUploadCollection( this.fieldItemData );
-		}
-	},
-
-	onRender: function () {
-		const listView = new FileUploadList( { collection: this.collection, fieldModel: this.model } );
-		const formView = new FileUploadForm( { fieldModel: this.model } );
-
-		this.showChildView( 'list', listView );
-		this.showChildView( 'form', formView );
-
-		// Setup the uploader and listen for a response event
-		this.uploader = this.createUploader();
-		this.listenTo( this.uploader, 'added:files', this.onAddedFiles );
-	},
-
-	/**
-	 * Fired by a remove:file:click trigger in any child view
-	 *
-	 * @param childView View that was the source of the event
-	 */
-	onChildviewRemoveFileClick: function ( childView ) {
-		this.collection.remove( childView.model );
-	},
-
-	/**
-	 * Fired by a add:file:click trigger in any child view
-	 *
-	 * plupload fields should never generate this event, it places a shim over our button and handles the
-	 * event internally.  But this event does still come through with plupload fields in some browser
-	 * environments for reasons we've been unable to determine.
-	 */
-	onChildviewAddFileClick: function () {
-
-		// Invoke the uploader
-		if ( 'function' === typeof this.uploader.invoke ) {
-			this.uploader.invoke();
-		}
-	},
-
-	/**
-	 * Concrete uploader implementations simply need to: this.trigger( 'added:files', newFiles )
-	 *
-	 * @param {Object[]} data An array of model objects to be added
-	 */
-	onAddedFiles: function ( data ) {
-		const fieldConfig = this.model.get( 'fieldConfig' );
-		const fileLimit = +fieldConfig[ 'file_limit' ]; // Unary plus to force to number
-		let newCollection, filteredModels;
-
-		// Get a copy of the existing collection with the new files added
-		newCollection = this.collection.clone();
-		newCollection.add( data );
-
-		// Enforce the file limit option if one is set
-		if ( UNLIMITED_FILES === fileLimit ) {
-			filteredModels = newCollection.models;
+	const setValueFromModels = ( models ) => {
+		if ( Array.isArray( models ) ) {
+			setValue( models.map( ( model ) => model.id ).join( ',' ) );
 		} else {
-			// Number of uploads is limited: keep the last N models, FIFO/queue style
-			filteredModels = newCollection.filter( function ( model ) {
-				return ( newCollection.indexOf( model ) >= newCollection.length - fileLimit );
-			} );
+			setValue( models.get( 'id' ) );
+		}
+	};
+
+	// The `value` prop will be a comma-separated string of media post IDs,
+	// but we need to pass an array of objects with data about the media
+	// to the Backbone view/model.
+	useEffect( () => {
+		if ( ! value || ! value.length ) {
+			setCollectionData( [] );
+			return;
 		}
 
-		this.collection.reset( filteredModels );
-	},
+		const allMediaIDs = value.split( ',' );
 
-	createUploader: function () {
-		const fieldConfig = this.model.get( 'fieldConfig' );
-		const targetUploader = fieldConfig[ 'file_uploader' ];
-		let Uploader;
+		const getMediaItemData = async ( mediaID ) => {
+			try {
+				const result = await apiFetch( { path: `/wp/v2/media/${ mediaID }` } );
 
-		jQuery.each( Uploaders, function ( index, thisUploader ) {
-			if ( targetUploader === thisUploader.prototype.fileUploader ) {
-				Uploader = thisUploader;
-				return false;
+				return {
+					id: mediaID,
+					// eslint-disable-next-line camelcase
+					icon: result?.media_details?.sizes?.thumbnail?.source_url,
+					name: result.title.rendered,
+					edit_link: `/wp-admin/post.php?post=${ mediaID }&action=edit`,
+					link: result.link,
+					download: result.source_url,
+				};
+			} catch ( e ) {
+				return {
+					id: mediaID,
+				};
 			}
-		} );
+		};
 
-		if ( Uploader !== undefined ) {
-			this.uploader = new Uploader( {
-				// We provide regular DOM element for the button
-				browseButton: this.getRegion( 'form' ).getEl( '.pods-dfv-list-add' ).get(),
-				uiRegion: this.getRegion( 'uiRegion' ),
-				fieldConfig: fieldConfig
-			} );
-			return this.uploader;
-		} else {
-			// @todo sprintf type with PodsI18n.__()
-			throw `Could not locate file uploader '${targetUploader}'`;
-		}
-	}
-} );
+		const getAndSetMediaData = async ( mediaIDs ) => {
+			const results = await Promise.all( mediaIDs.map( getMediaItemData ) );
+			setCollectionData( results );
+		};
+
+		getAndSetMediaData( allMediaIDs );
+	}, [ value ] );
+
+	return (
+		<MarionetteAdapter
+			{ ...props }
+			htmlAttr={ htmlAttr }
+			fieldConfig={ fieldConfig }
+			View={ FileView }
+			value={ collectionData }
+			setValue={ setValueFromModels }
+		/>
+	);
+};
+
+File.propTypes = {
+	fieldConfig: FIELD_PROP_TYPE_SHAPE.isRequired,
+	setValue: PropTypes.func.isRequired,
+	value: PropTypes.string,
+};
+
+export default File;

@@ -1,0 +1,44 @@
+.pods-radio-pick,
+.pods-checkbox-pick {
+	background: #fff;
+    margin: 0 0 5px 0;
+    padding: 0;
+    border-radius: 0;
+    border: 1px solid #dfdfdf;
+    overflow: hidden;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.pods-radio-pick__option,
+.pods-checkbox-pick__option {
+	background-color: #fff;
+    border-bottom: 1px solid #f4f4f4;
+    margin: 0;
+	padding: 0.5em;
+
+	&:nth-child(even) {
+		background: #fcfcfc;
+	}
+}
+
+.pods-checkbox-pick__option__label {
+	width: auto;
+	max-width: 100%;
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+
+
+.pods-checkbox-pick--single {
+	border: none;
+}
+
+.pods-checkbox-pick__option--single {
+	border-bottom: none;
+}
+
+.pods-checkbox-pick__option--single .pods-checkbox-pick__option__label {
+	margin-left: 0;
+}

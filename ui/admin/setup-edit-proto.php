@@ -1,4 +1,5 @@
 <?php
+wp_enqueue_media();
 wp_enqueue_style( 'wp-edit-post' );
 
 // Formatted data

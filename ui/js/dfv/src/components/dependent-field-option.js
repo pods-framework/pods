@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { isEqual } from 'lodash';
 import * as PropTypes from 'prop-types';
 
 // WordPress dependencies
@@ -18,7 +19,7 @@ const DependentFieldOption = ( {
 	podName,
 	field,
 	value,
-	allOptionValues,
+	dependencyValues,
 	setOptionValue,
 } ) => {
 	const {
@@ -40,15 +41,15 @@ const DependentFieldOption = ( {
 	// after a UI update, but will be wrong after the update from saving to the API,
 	// so we'll check that the values haven't already been merged.
 	let processedValue = value;
-	const processedAllOptionValues = allOptionValues;
+	const processedAllOptionValues = dependencyValues;
 
 	if (
 		'pick_object' === name &&
-		allOptionValues.pick_val &&
-		! value.includes( `-${ allOptionValues.pick_val }`, `-${ allOptionValues.pick_val }`.length )
+		dependencyValues.pick_val &&
+		! value.includes( `-${ dependencyValues.pick_val }`, `-${ dependencyValues.pick_val }`.length )
 	) {
-		processedValue = `${ value }-${ allOptionValues.pick_val }`;
-		processedAllOptionValues.pick_object = `${ value }-${ allOptionValues.pick_val }`;
+		processedValue = `${ value }-${ dependencyValues.pick_val }`;
+		processedAllOptionValues.pick_object = `${ value }-${ dependencyValues.pick_val }`;
 	}
 
 	const handleInputChange = ( newValue ) => {
@@ -68,9 +69,9 @@ const DependentFieldOption = ( {
 	// from all other fields - the data isn't loaded along with the others.
 	// We need to watch the "Field Type" and "Related Type" fields for changes
 	// to load the appropriate options here.
-	const fieldTypeOption = allOptionValues.type;
+	const fieldTypeOption = dependencyValues.type;
 
-	const relatedTypeOption = allOptionValues.pick_object;
+	const relatedTypeOption = dependencyValues.pick_object;
 
 	useEffect( () => {
 		// We only need to fetch data if we're creating a "Relationship"/"pick" field
@@ -98,7 +99,12 @@ const DependentFieldOption = ( {
 
 		const loadBidirectionalFieldData = async () => {
 			// Initialize the field with loading text.
-			setDataOptions( { '': __( 'Loading available fields…', 'pods' ) } );
+			setDataOptions( [
+				{
+					value: '',
+					label: __( 'Loading available fields…', 'pods' ),
+				},
+			] );
 
 			const args = {
 				pick_object: podType,
@@ -123,24 +129,34 @@ const DependentFieldOption = ( {
 				const results = await apiFetch( { path: requestPath } );
 
 				if ( ! results.fields || ! results.fields.length ) {
-					setDataOptions( { '': __( 'No Related Fields Found', 'pods' ) } );
+					setDataOptions( [
+						{
+							value: '',
+							label: __( 'No Related Fields Found', 'pods' ),
+						},
+					] );
 					return;
 				}
 
 				// Reduce the API results to an ID for the value and a label.
-				const processedFields = results.fields.reduce(
-					( accumulator, currentField ) => ( {
-						...accumulator,
-						[ currentField.id ]: `${ currentField.label } (${ currentField.name }) [Pod: ${ currentField.parent_data?.name }]`,
-					} ),
-					{
-						'': __( '-- Select Related Field --', 'pods' ),
-					}
-				);
+				const processedFields = results.fields.map( ( currentField ) => {
+					return {
+						value: currentField.id,
+						label: `${ currentField.label } (${ currentField.name }) [Pod: ${ currentField.parent_data?.name }]`,
+					};
+				} );
+
+				processedFields.unshift( {
+					value: '',
+					label: __( '-- Select Related Field --', 'pods' ),
+				} );
 
 				setDataOptions( processedFields );
 			} catch ( error ) {
-				setDataOptions( { '': __( 'No Related Fields Found', 'pods' ) } );
+				setDataOptions( {
+					value: '',
+					label: __( 'No Related Fields Found', 'pods' ),
+				} );
 			}
 		};
 
@@ -165,20 +181,38 @@ const DependentFieldOption = ( {
 DependentFieldOption.propTypes = {
 	podType: PropTypes.string.isRequired,
 	podName: PropTypes.string.isRequired,
+	dependencyValues: PropTypes.object.isRequired,
 	field: FIELD_PROP_TYPE_SHAPE,
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,
 		PropTypes.number,
+		PropTypes.array,
 	] ),
 	setOptionValue: PropTypes.func.isRequired,
 };
 
-export default withSelect( ( select ) => {
+const MemoizedDependentFieldOption = React.memo(
+	DependentFieldOption,
+	( prevProps, nextProps ) => isEqual( prevProps, nextProps )
+);
+
+export default withSelect( ( select, ownProps ) => {
 	const storeSelect = select( STORE_KEY_EDIT_POD );
+
+	// Get the values of the fields that this one depends on.
+	const dependencyFieldNames = Object.keys( ownProps.field[ 'depends-on' ] || {} );
+
+	const allOptions = storeSelect.getPodOptions();
+
+	const dependencyValueEntries = dependencyFieldNames.map( ( fieldName ) => ( [
+		fieldName,
+		allOptions[ fieldName ],
+	] ) );
 
 	return {
 		podType: storeSelect.getPodOption( 'type' ),
 		podName: storeSelect.getPodOption( 'name' ),
+		dependencyValues: Object.fromEntries( dependencyValueEntries ),
 	};
-} )( DependentFieldOption );
+} )( MemoizedDependentFieldOption );

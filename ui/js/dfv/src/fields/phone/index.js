@@ -17,11 +17,11 @@ const Phone = ( props ) => {
 
 	return (
 		<BaseInput
+			{ ...props }
 			fieldConfig={ fieldConfig }
 			type={ true === toBool( html5 ) ? 'tel' : 'text' }
-			maxLength={ maxLength }
+			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
 			placeholder={ placeholder }
-			{ ...props }
 		/>
 	);
 };
@@ -29,7 +29,7 @@ const Phone = ( props ) => {
 Phone.propTypes = {
 	fieldConfig: FIELD_PROP_TYPE_SHAPE,
 	setValue: PropTypes.func.isRequired,
-	value: PropTypes.string.isRequired,
+	value: PropTypes.string,
 };
 
 export default Phone;

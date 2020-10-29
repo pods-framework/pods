@@ -77,6 +77,7 @@ describe( 'Number field component', () => {
 		expect( input.props().type ).toEqual( 'number' );
 		expect( input.props().placeholder ).toEqual( 'Number Field' );
 		expect( input.props().maxLength ).toEqual( 5 );
+		expect( input.props().step ).toEqual( 'any' );
 	} );
 
 	it( 'applies the relevant attributes to the slider input field', () => {

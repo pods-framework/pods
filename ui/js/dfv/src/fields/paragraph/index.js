@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { toBool } from 'dfv/src/helpers/booleans';
+
 import './paragraph.scss';
 
 const Paragraph = ( props ) => {
@@ -31,7 +33,7 @@ const Paragraph = ( props ) => {
 			placeholder={ placeholder }
 			onChange={ onChange || handleChange }
 			onBlur={ onBlur }
-			readOnly={ readOnly }
+			readOnly={ toBool( readOnly ) }
 		>
 			{ value }
 		</textarea>

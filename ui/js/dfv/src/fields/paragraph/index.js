@@ -15,7 +15,7 @@ const Paragraph = ( props ) => {
 		htmlAttr = {},
 		paragraph_max_length: maxLength,
 		paragraph_placeholder: placeholder,
-		read_only: readOnly = false,
+		readonly: readOnly,
 	} = fieldConfig;
 
 	// Default implementation if onChange is omitted from props
@@ -31,7 +31,7 @@ const Paragraph = ( props ) => {
 			placeholder={ placeholder }
 			onChange={ onChange || handleChange }
 			onBlur={ onBlur }
-			readOnly={ readOnly }
+			readOnly={ !! readOnly }
 		>
 			{ value }
 		</textarea>

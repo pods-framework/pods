@@ -88,6 +88,7 @@ function pods_image_size( $size ) {
  */
 function pods_is_image_size( $size ) {
 	$valid = false;
+	$size  = pods_image_size( $size );
 	if ( is_array( $size ) ) {
 		// Custom array size format.
 		$valid = ( 2 <= count( $size ) && is_numeric( $size[0] ) && is_numeric( $size[1] ) );

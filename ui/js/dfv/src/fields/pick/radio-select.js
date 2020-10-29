@@ -19,7 +19,7 @@ const RadioSelect = ( {
 					<li key={ optionValue } className="pods-radio-pick__option">
 						<div className="pods-field pods-boolean">
 							<label
-								className="pods-form-ui-label"
+								className="pods-form-ui-label pods-radio-pick__option__label"
 								htmlFor={ `pods-${ name }-${ optionLabel }` }
 							>
 								<input

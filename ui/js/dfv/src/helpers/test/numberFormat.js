@@ -4,7 +4,9 @@ describe( 'numberFormat', () => {
 	it( 'formats numbers correctly', () => {
 		expect( numberFormat( 132323232320.321, 2, ',', '.' ) ).toEqual( '132.323.232.320,32' );
 
-		expect( numberFormat( 10.22 ) ).toEqual( '10.22' );
+		expect( numberFormat( 132323232320.321, 0, ',', '.' ) ).toEqual( '132.323.232.320' );
+
+		expect( numberFormat( 10.22, 2 ) ).toEqual( '10.22' );
 
 		expect( numberFormat( 100 ) ).toEqual( '100' );
 
@@ -16,7 +18,7 @@ describe( 'numberFormat', () => {
 
 		expect( numberFormat( 123e5 ) ).toEqual( '12,300,000' );
 
-		expect( numberFormat( 123e-5 ) ).toEqual( '0.00' );
+		expect( numberFormat( 123e-5 ) ).toEqual( '0' );
 
 		expect( numberFormat( 123e-15 ) ).toEqual( '0' );
 

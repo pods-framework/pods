@@ -36,11 +36,6 @@ function handleFiniteNumbers( number, decimals, decimalPoint, thousandsPoint ) {
 		throw new TypeError( 'number is not finite number' );
 	}
 
-	if ( ! decimals ) {
-		const len = number.toString().split( '.' ).length;
-		decimals = len > 1 ? len : 0;
-	}
-
 	return splitThousands(
 		parseFloat( number ).toFixed( decimals ).replace( '.', decimalPoint )
 	)( decimalPoint, thousandsPoint );

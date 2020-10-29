@@ -55,6 +55,28 @@ function pods_image_id_from_field( $image ) {
 }
 
 /**
+ * Parse image size parameter to support custom image sizes.
+ *
+ * @param string|int[] $size
+ *
+ * @return string|int[]
+ *
+ * @since 2.7.23
+ */
+function pods_image_size( $size ) {
+
+	if ( ! is_array( $size ) ) {
+		if ( is_numeric( $size ) && ! has_image_size( $size ) ) {
+			// Square sizes.
+			$size = $size . 'x' . $size;
+		}
+		// Fix HTML entity for custom sizes.
+		$size = str_replace( '&#215;', 'x', $size );
+	}
+	return $size;
+}
+
+/**
  * Get the <img> HTML for a specific image field.
  *
  * @param array|int|string $image      The image field array, ID, or guid.
@@ -86,6 +108,7 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 	$html    = '';
 	$id      = pods_image_id_from_field( $image );
 	$default = pods_image_id_from_field( $default );
+	$size    = pods_image_size( $size );
 
 	if ( 0 < $id ) {
 		if ( $force ) {
@@ -133,6 +156,7 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 	$url     = '';
 	$id      = pods_image_id_from_field( $image );
 	$default = pods_image_id_from_field( $default );
+	$size    = pods_image_size( $size );
 
 	if ( 0 < $id ) {
 		if ( $force ) {
@@ -251,6 +275,8 @@ function pods_maybe_image_resize( $attachment_id, $size ) {
 		$full = wp_get_attachment_image_src( $attachment_id, 'full' );
 
 		if ( ! empty( $full[0] ) ) {
+			$size = pods_image_size( $size );
+
 			$src = wp_get_attachment_image_src( $attachment_id, $size );
 
 			if ( empty( $src[0] ) || $full[0] == $src[0] ) {

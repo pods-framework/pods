@@ -78,6 +78,38 @@ function pods_image_size( $size ) {
 }
 
 /**
+ * Check if an image size exists or is a valid custom format for a size.
+ *
+ * @param string|int[] $size
+ *
+ * @return bool
+ *
+ * @since 2.7.23
+ */
+function pods_is_image_size( $size ) {
+	$valid = false;
+	if ( is_array( $size ) ) {
+		// Custom array size format.
+		$valid = ( 2 <= count( $size ) && is_numeric( $size[0] ) && is_numeric( $size[1] ) );
+	} elseif ( is_numeric( $size ) ) {
+		// Numeric (square) size format.
+		$valid = true;
+	} elseif ( preg_match( '/[0-9]+x[0-9]+/', $size ) || preg_match( '/[0-9]+x[0-9]+x[0-1]/', $size ) ) {
+		// Custom size format.
+		$valid = true;
+	} else {
+		$sizes = get_intermediate_image_sizes();
+		// Not shown by default.
+		$sizes[] = 'full';
+		$sizes[] = 'original';
+		if ( in_array( $size, $sizes, true ) ) {
+			$valid = true;
+		}
+	}
+	return $valid;
+}
+
+/**
  * Get the <img> HTML for a specific image field.
  *
  * @param array|int|string $image      The image field array, ID, or guid.

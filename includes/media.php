@@ -2,12 +2,13 @@
 /**
  * @package Pods\Global\Functions\Media
  */
+
 /**
- * Get the Attachment ID for a specific image field
+ * Get the Attachment ID for a specific image field.
  *
- * @param array|int|string $image The image field array, ID, or guid
+ * @param array|int|string $image The image field array, ID, or guid.
  *
- * @return int Attachment ID
+ * @return int Attachment ID.
  *
  * @since 2.0.5
  */

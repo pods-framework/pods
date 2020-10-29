@@ -25,6 +25,7 @@ const FieldOption = ( props ) => {
 		label,
 		required,
 		type: fieldType,
+		html_no_label: htmlNoLabel = false,
 	} = field;
 
 	const shouldShowHelpText = helpText && ( 'help' !== helpText );
@@ -38,7 +39,7 @@ const FieldOption = ( props ) => {
 
 	return (
 		<div className="pods-field-option">
-			{ 'heading' !== fieldType && (
+			{ 'heading' !== fieldType && ( 'html' !== fieldType || ! htmlNoLabel ) && (
 				<div className={ `pods-form-ui-label pods-form-ui-label-${ name }` }>
 					<label
 						className="pods-form-ui-label__label"

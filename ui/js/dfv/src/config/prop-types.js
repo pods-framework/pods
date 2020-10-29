@@ -167,10 +167,8 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		'9999,99',
 	] ),
 	number_format_soft: PropTypes.oneOf( BOOLEAN_ALL_TYPES ),
-	number_format_type: PropTypes.oneOf( [
-		'number',
-		'slider',
-	] ),
+	number_format_type: PropTypes.string,
+	number_html5: PropTypes.oneOf( BOOLEAN_ALL_TYPES ),
 	number_max: PropTypes.string,
 	number_max_length: NUMBER_OR_NUMBER_AS_STRING,
 	number_min: PropTypes.string,

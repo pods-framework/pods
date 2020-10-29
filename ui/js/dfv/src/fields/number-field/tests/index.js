@@ -56,6 +56,29 @@ describe( 'Number field component', () => {
 		expect( input.props().maxLength ).toEqual( 5 );
 	} );
 
+	it( 'applies the relevant attributes to the number input field', () => {
+		const props = {
+			...BASE_PROPS,
+			fieldConfig: {
+				...BASE_PROPS.fieldConfig,
+				number_decimals: '2',
+				number_format: '9.999,99',
+				number_format_soft: '0',
+				number_format_type: 'number',
+				number_html5: '1',
+				number_max_length: 5,
+				number_placeholder: 'Number Field',
+			},
+		};
+
+		const wrapper = mount( <NumberField { ...props } /> );
+		const input = wrapper.find( 'input' );
+
+		expect( input.props().type ).toEqual( 'number' );
+		expect( input.props().placeholder ).toEqual( 'Number Field' );
+		expect( input.props().maxLength ).toEqual( 5 );
+	} );
+
 	it( 'applies the relevant attributes to the slider input field', () => {
 		const props = {
 			...BASE_PROPS,

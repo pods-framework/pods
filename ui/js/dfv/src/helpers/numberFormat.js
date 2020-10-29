@@ -46,7 +46,7 @@ function handleFiniteNumbers( number, decimals, decimalPoint, thousandsPoint ) {
 	)( decimalPoint, thousandsPoint );
 }
 
-// Equivalant to php's number_format, borrowed from
+// Equivalent to php's number_format, borrowed from
 // https://gist.github.com/VassilisPallas/d73632e9de4794b7dd10b7408f7948e8
 const numberFormat = (
 	number,

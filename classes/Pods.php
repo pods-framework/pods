@@ -1754,7 +1754,7 @@ class Pods implements Iterator {
 											}
 
 											if ( $size ) {
-												$value_url = pods_image_url( $item_id, $size );
+												$value_url = pods_image_url( $item_id, $size, 0, true );
 											} else {
 												$value_url = wp_get_attachment_url( $item_id );
 											}
@@ -1786,7 +1786,7 @@ class Pods implements Iterator {
 												$size = substr( $full_field, 5 );
 											}
 
-											$value[] = pods_image( $item_id, $size );
+											$value[] = pods_image( $item_id, $size, 0, array(), true );
 
 											$params->raw_display = true;
 										} elseif ( in_array( $field, array(

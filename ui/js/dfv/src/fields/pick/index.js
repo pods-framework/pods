@@ -243,7 +243,7 @@ const Pick = ( props ) => {
 				options={ dataOptions }
 				value={ formattedValue }
 				// translators: Placeholder with the field label.
-				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+				placeholder={ sprintf( __( 'Search %s...', 'pods' ), label ) }
 				isMulti={ isMulti }
 				onChange={ ( newOption ) => {
 					if ( isMulti ) {

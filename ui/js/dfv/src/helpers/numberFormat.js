@@ -36,6 +36,11 @@ function handleFiniteNumbers( number, decimals, decimalPoint, thousandsPoint ) {
 		throw new TypeError( 'number is not finite number' );
 	}
 
+	if ( 'auto' === decimals ) {
+		const len = number.toString().split( '.' ).length;
+		decimals = len > 1 ? len : 0;
+	}
+
 	return splitThousands(
 		parseFloat( number ).toFixed( decimals ).replace( '.', decimalPoint )
 	)( decimalPoint, thousandsPoint );
@@ -45,7 +50,7 @@ function handleFiniteNumbers( number, decimals, decimalPoint, thousandsPoint ) {
 // https://gist.github.com/VassilisPallas/d73632e9de4794b7dd10b7408f7948e8
 const numberFormat = (
 	number,
-	decimals,
+	decimals = 0,
 	decimalPoint = '.',
 	thousandsPoint = ','
 ) => {

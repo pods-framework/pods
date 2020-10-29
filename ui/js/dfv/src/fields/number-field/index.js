@@ -28,7 +28,7 @@ const NumberField = ( {
 		number_step: step,
 	} = fieldConfig;
 
-	const correctedDecimals = toBool( softFormat ) ? 0 : decimals;
+	const correctedDecimals = toBool( softFormat ) ? 'auto' : decimals;
 
 	const handleChange = ( event ) => debounce( () => {
 		setValue(

@@ -8,6 +8,10 @@ describe( 'numberFormat', () => {
 
 		expect( numberFormat( 10.22, 2 ) ).toEqual( '10.22' );
 
+		expect( numberFormat( 10.22, 0 ) ).toEqual( '10' );
+
+		expect( numberFormat( 10.22, 'auto' ) ).toEqual( '10.22' );
+
 		expect( numberFormat( 100 ) ).toEqual( '100' );
 
 		expect( numberFormat( 1000, 2, ',', '.' ) ).toEqual( '1.000,00' );

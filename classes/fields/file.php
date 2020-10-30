@@ -561,7 +561,7 @@ class PodsField_File extends PodsField {
 			$data[] = array(
 				'id'        => esc_html( $id ),
 				'icon'      => esc_attr( $icon ),
-				'name'      => html_entity_decode( esc_html( wp_kses_post( $title ) ) ),
+				'name'      => wp_strip_all_tags( html_entity_decode( $title ) ),
 				'edit_link' => html_entity_decode( esc_url( $edit_link ) ),
 				'link'      => html_entity_decode( esc_url( $link ) ),
 				'download'  => html_entity_decode( esc_url( $download ) ),

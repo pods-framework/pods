@@ -145,7 +145,7 @@ class PodsField_Avatar extends PodsField_File {
 							$attributes['alt'] = $alt;
 						}
 
-						$user_avatar = pods_image( $user_avatar, array( $size, $size ), 0, $attributes, true );
+						$user_avatar = pods_image( $user_avatar, array( $size, $size, 1 ), 0, $attributes, true );
 
 						if ( ! empty( $user_avatar ) ) {
 							$avatar = $user_avatar;

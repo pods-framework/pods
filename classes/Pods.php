@@ -1141,6 +1141,7 @@ class Pods implements Iterator {
 						$size = 'thumbnail';
 						if ( isset( $traverse_params[0] ) ) {
 							$size = $traverse_params[0];
+
 							if ( pods_is_image_size( $size ) ) {
 								// Force image request since a valid size parameter is passed.
 								$is_image = true;
@@ -1735,7 +1736,7 @@ class Pods implements Iterator {
 											// @todo Refactor the above condition statement.
 											$size = 'full';
 
-											if ( wp_attachment_is_image( $item_id ) ) {
+											if ( ! wp_attachment_is_image( $item_id ) ) {
 												// No default sizes for non-images.
 												// When a size is defined this will be overwritten.
 												$size = null;

@@ -303,6 +303,10 @@ class Pods implements Iterator {
 				// Post Type Archive.
 				$pod       = $pod->name;
 				$id_lookup = false;
+			} else {
+				// Unsupported pod object.
+				$pod       = null;
+				$id_lookup = false;
 			}
 
 			if ( null === $id && $id_lookup ) {

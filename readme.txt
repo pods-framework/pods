@@ -203,6 +203,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Enhancement: Allow traversing in avatar attachment. #5870 (@JoryHogeveen)
 * Enhancement: If the media Pod exists, use it's context to run media loops to support other fields and traversal. #5855 (@JoryHogeveen)
 * Enhancement: Implement PHP 5.4 `session_status()` function. #5840 (@JoryHogeveen)
+* Enhancement: Allow WP objects to be passed in `pods()`. #5845 (@JoryHogeveen)
 * Compatibility: Enqueue DFV scripts when editing the page with Beaver Builder to fully support the media window. #5799 (@JoryHogeveen)
 * Updated: Primary Branch header for GitHub Updater. #5847 (@afragen)
 

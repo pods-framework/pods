@@ -207,6 +207,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 **Bug Fixes**
 
 * Fixed: `.src` tags for PDF's now render the PDF file link instead of the thumbnail in templates `[each]` loops. #4040 (@JoryHogeveen)
+* Fixed. HTML entities for relationship fields UI. #5843, #5835 & #5796 (@JoryHogeveen)
 * Fixed: Select2/SelectWoo now also enqueue the locale files when available. #5860 (@JoryHogeveen)
 * Fixed: Support lowercase ID's for magic tags in media loops #5852 (@JoryHogeveen)
 * Fixed: Selected items query for autocomplete relationships. #5542 & #5831 (@JoryHogeveen)

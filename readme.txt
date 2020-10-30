@@ -190,7 +190,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
-= 2.7.23 - DATE =
+= 2.7.23 - October 30th 2020 =
 
 **New Features & Enhancements**
 

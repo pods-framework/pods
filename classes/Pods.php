@@ -283,31 +283,35 @@ class Pods implements Iterator {
 	public function __construct( $pod = null, $id = null ) {
 
 		if ( null === $pod ) {
-			$queried_object = get_queried_object();
+			$pod = get_queried_object();
+		}
 
-			if ( $queried_object ) {
+		if ( $pod && ! is_string( $pod ) ) {
+			if ( $pod instanceof WP_Post ) {
+				// Post Type Singular.
+				$pod       = $pod->post_type;
 				$id_lookup = true;
+			} elseif ( $pod instanceof WP_Term ) {
+				// Term Archive.
+				$pod       = $pod->taxonomy;
+				$id_lookup = true;
+			} elseif ( $pod instanceof WP_User ) {
+				// Author Archive.
+				$pod       = 'user';
+				$id_lookup = true;
+			} elseif ( $pod instanceof WP_Post_Type ) {
+				// Post Type Archive.
+				$pod       = $pod->name;
+				$id_lookup = false;
+			} else {
+				// Unsupported pod object.
+				$pod       = null;
+				$id_lookup = false;
+			}
 
-				if ( $queried_object instanceof WP_Post ) {
-					// Post Type Singular.
-					$pod = $queried_object->post_type;
-				} elseif ( $queried_object instanceof WP_Term ) {
-					// Term Archive.
-					$pod = $queried_object->taxonomy;
-				} elseif ( $queried_object instanceof WP_User ) {
-					// Author Archive.
-					$pod = 'user';
-				} elseif ( $queried_object instanceof WP_Post_Type ) {
-					// Post Type Archive.
-					$pod = $queried_object->name;
-
-					$id_lookup = false;
-				}
-
-				if ( null === $id && $id_lookup ) {
-					$id = get_queried_object_id();
-				}
-			}//end if
+			if ( null === $id && $id_lookup ) {
+				$id = get_queried_object_id();
+			}
 		}//end if
 
 		$this->api                 = pods_api( $pod );

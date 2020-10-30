@@ -213,6 +213,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Fixed: Prevent SQL errors on magic tags in some cases. #5797 (@JoryHogeveen)
 * Fixed: Error if there is no DB prefix available. #5803 (@JoryHogeveen)
 * Fixed: Fix edge case "No Access" error when all Pods were deleted. Redirect to next Pod admin page if needed. #4842 (@JoryHogeveen)
+* Fixed: Removed empty filter in `ui/admin/setup-edit-field.php`. #5686 (@sc0ttkclark, @JoryHogeveen)
 * Fixed: Prevent possible notice if image doesn't exist. #5866 (@JoryHogeveen)
 * Fixed: Remove source maps from production builds. #5822 (@sc0ttkclark)
 * Fixed: PHP warning in file field gallery view. #5809 (@JoryHogeveen)

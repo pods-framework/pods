@@ -132,7 +132,8 @@ class PodsField_Avatar extends PodsField_File {
 				}
 
 				if ( ! empty( $avatar_field ) ) {
-					$user_avatar = get_user_meta( $user_id, $avatar_field . '.ID', true );
+					$user_meta   = get_user_meta( $user_id );
+					$user_avatar = ! empty( $user_meta[ $avatar_field ][0] ) ? $user_meta[ $avatar_field ][0] : false;
 
 					if ( ! empty( $user_avatar ) ) {
 						$attributes = array(
@@ -144,7 +145,7 @@ class PodsField_Avatar extends PodsField_File {
 							$attributes['alt'] = $alt;
 						}
 
-						$user_avatar = pods_image( $user_avatar, array( $size, $size ), 0, $attributes );
+						$user_avatar = pods_image( $user_avatar, array( $size, $size, 1 ), 0, $attributes, true );
 
 						if ( ! empty( $user_avatar ) ) {
 							$avatar = $user_avatar;

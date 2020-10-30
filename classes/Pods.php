@@ -1062,6 +1062,37 @@ class Pods implements Iterator {
 				} else {
 					return null;
 				}
+
+			} elseif ( 'avatar' === $first_field && 'user' === $pod_type ) {
+				// User avatar.
+				$size       = null;
+				$get_avatar = true;
+
+				if ( $is_traversal ) {
+					if ( $is_field_set ) {
+						// This is a registered field.
+						if ( isset( $traverse_fields[1] ) && is_numeric( $traverse_fields[1] ) ) {
+							$size = (int) $traverse_fields[1];
+						} else {
+							// Traverse through attachment post.
+							$get_avatar = false;
+						}
+					} else {
+						if ( isset( $traverse_fields[1] ) ) {
+							$size = (int) $traverse_fields[1];
+						}
+					}
+				}
+
+				if ( $get_avatar ) {
+					$object_field_found = true;
+					if ( 0 < $size ) {
+						$value = get_avatar( $this->id(), $size );
+					} else {
+						$value = get_avatar( $this->id() );
+					}
+				}
+
 			} elseif ( ! $is_field_set ) {
 
 				$image_fields = array(
@@ -1075,26 +1106,7 @@ class Pods implements Iterator {
 				}
 
 				// Handle special field tags.
-				if ( 'avatar' === $first_field && 'user' === $pod_type ) {
-					$object_field_found = true;
-					// User avatar.
-					$size = null;
-
-					if ( 0 === strpos( $params->name, 'avatar.' ) ) {
-						$field_names = explode( '.', $params->name );
-
-						if ( isset( $field_names[1] ) ) {
-							$size = (int) $field_names[1];
-						}
-					}
-
-					if ( 0 < $size ) {
-						$value = get_avatar( $this->id(), $size );
-					} else {
-						$value = get_avatar( $this->id() );
-					}
-
-				} elseif ( in_array( $first_field, $image_fields, true ) ) {
+				if ( in_array( $first_field, $image_fields, true ) ) {
 					// Default image field handlers.
 					$object_field_found = true;
 
@@ -1128,17 +1140,14 @@ class Pods implements Iterator {
 
 						$size = 'thumbnail';
 						if ( isset( $traverse_params[0] ) ) {
-							$size  = $traverse_params[0];
-							$sizes = get_intermediate_image_sizes();
-							// Not shown by default.
-							$sizes[] = 'full';
-							$sizes[] = 'original';
-							if ( ! in_array( $size, $sizes, true ) ) {
-								// No valid image size found.
-								$size = false;
-							} else {
+							$size = $traverse_params[0];
+
+							if ( pods_is_image_size( $size ) ) {
 								// Force image request since a valid size parameter is passed.
 								$is_image = true;
+							} else {
+								// No valid image size found.
+								$size = false;
 							}
 						}
 
@@ -1727,7 +1736,7 @@ class Pods implements Iterator {
 											// @todo Refactor the above condition statement.
 											$size = 'full';
 
-											if ( false === strpos( 'image', get_post_mime_type( $item_id ) ) ) {
+											if ( ! wp_attachment_is_image( $item_id ) ) {
 												// No default sizes for non-images.
 												// When a size is defined this will be overwritten.
 												$size = null;
@@ -1742,7 +1751,7 @@ class Pods implements Iterator {
 											}
 
 											if ( $size ) {
-												$value_url = pods_image_url( $item_id, $size );
+												$value_url = pods_image_url( $item_id, $size, 0, true );
 											} else {
 												$value_url = wp_get_attachment_url( $item_id );
 											}
@@ -1774,7 +1783,7 @@ class Pods implements Iterator {
 												$size = substr( $full_field, 5 );
 											}
 
-											$value[] = pods_image( $item_id, $size );
+											$value[] = pods_image( $item_id, $size, 0, array(), true );
 
 											$params->raw_display = true;
 										} elseif ( in_array( $field, array(

@@ -2,12 +2,13 @@
 /**
  * @package Pods\Global\Functions\Media
  */
+
 /**
- * Get the Attachment ID for a specific image field
+ * Get the Attachment ID for a specific image field.
  *
- * @param array|int|string $image The image field array, ID, or guid
+ * @param array|int|string $image The image field array, ID, or guid.
  *
- * @return int Attachment ID
+ * @return int Attachment ID.
  *
  * @since 2.0.5
  */
@@ -55,6 +56,65 @@ function pods_image_id_from_field( $image ) {
 }
 
 /**
+ * Parse image size parameter to support custom image sizes.
+ *
+ * @param string|int[] $size
+ *
+ * @return string|int[]
+ *
+ * @since 2.7.23
+ */
+function pods_parse_image_size( $size ) {
+
+	if ( ! is_array( $size ) ) {
+		if ( is_numeric( $size ) && ! has_image_size( $size ) ) {
+			// Square sizes.
+			$size = $size . 'x' . $size;
+		}
+		// Fix HTML entity for custom sizes.
+		$size = str_replace( '&#215;', 'x', $size );
+	}
+
+	return $size;
+}
+
+/**
+ * Check if an image size exists or is a valid custom format for a size.
+ *
+ * @param string|int[] $size
+ *
+ * @return bool
+ *
+ * @since 2.7.23
+ */
+function pods_is_image_size( $size ) {
+
+	$valid = false;
+	$size  = pods_parse_image_size( $size );
+
+	if ( is_array( $size ) ) {
+		// Custom array size format.
+		$valid = ( 2 <= count( $size ) && is_numeric( $size[0] ) && is_numeric( $size[1] ) );
+	} elseif ( is_numeric( $size ) ) {
+		// Numeric (square) size format.
+		$valid = true;
+	} elseif ( preg_match( '/[0-9]+x[0-9]+/', $size ) || preg_match( '/[0-9]+x[0-9]+x[0-1]/', $size ) ) {
+		// Custom size format.
+		$valid = true;
+	} else {
+		$sizes = get_intermediate_image_sizes();
+		// Not shown by default.
+		$sizes[] = 'full';
+		$sizes[] = 'original';
+		if ( in_array( $size, $sizes, true ) ) {
+			$valid = true;
+		}
+	}
+
+	return $valid;
+}
+
+/**
  * Get the <img> HTML for a specific image field.
  *
  * @param array|int|string $image      The image field array, ID, or guid.
@@ -86,6 +146,7 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 	$html    = '';
 	$id      = pods_image_id_from_field( $image );
 	$default = pods_image_id_from_field( $default );
+	$size    = pods_parse_image_size( $size );
 
 	if ( 0 < $id ) {
 		if ( $force ) {
@@ -133,6 +194,7 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 	$url     = '';
 	$id      = pods_image_id_from_field( $image );
 	$default = pods_image_id_from_field( $default );
+	$size    = pods_parse_image_size( $size );
 
 	if ( 0 < $id ) {
 		if ( $force ) {
@@ -251,6 +313,8 @@ function pods_maybe_image_resize( $attachment_id, $size ) {
 		$full = wp_get_attachment_image_src( $attachment_id, 'full' );
 
 		if ( ! empty( $full[0] ) ) {
+			$size = pods_parse_image_size( $size );
+
 			$src = wp_get_attachment_image_src( $attachment_id, $size );
 
 			if ( empty( $src[0] ) || $full[0] == $src[0] ) {

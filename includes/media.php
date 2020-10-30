@@ -64,7 +64,7 @@ function pods_image_id_from_field( $image ) {
  *
  * @since 2.7.23
  */
-function pods_image_size( $size ) {
+function pods_parse_image_size( $size ) {
 
 	if ( ! is_array( $size ) ) {
 		if ( is_numeric( $size ) && ! has_image_size( $size ) ) {
@@ -88,7 +88,7 @@ function pods_image_size( $size ) {
  */
 function pods_is_image_size( $size ) {
 	$valid = false;
-	$size  = pods_image_size( $size );
+	$size  = pods_parse_image_size( $size );
 	if ( is_array( $size ) ) {
 		// Custom array size format.
 		$valid = ( 2 <= count( $size ) && is_numeric( $size[0] ) && is_numeric( $size[1] ) );
@@ -142,7 +142,7 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 	$html    = '';
 	$id      = pods_image_id_from_field( $image );
 	$default = pods_image_id_from_field( $default );
-	$size    = pods_image_size( $size );
+	$size    = pods_parse_image_size( $size );
 
 	if ( 0 < $id ) {
 		if ( $force ) {
@@ -190,7 +190,7 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 	$url     = '';
 	$id      = pods_image_id_from_field( $image );
 	$default = pods_image_id_from_field( $default );
-	$size    = pods_image_size( $size );
+	$size    = pods_parse_image_size( $size );
 
 	if ( 0 < $id ) {
 		if ( $force ) {
@@ -309,7 +309,7 @@ function pods_maybe_image_resize( $attachment_id, $size ) {
 		$full = wp_get_attachment_image_src( $attachment_id, 'full' );
 
 		if ( ! empty( $full[0] ) ) {
-			$size = pods_image_size( $size );
+			$size = pods_parse_image_size( $size );
 
 			$src = wp_get_attachment_image_src( $attachment_id, $size );
 

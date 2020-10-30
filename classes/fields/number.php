@@ -233,7 +233,7 @@ class PodsField_Number extends PodsField {
 			$value = $this->format( $value, $name, $options, $pod, $id );
 		}
 
-		return pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );
+		//return pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );
 
 		wp_enqueue_script( 'pods-dfv' );
 

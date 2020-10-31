@@ -1399,9 +1399,9 @@ class PodsField_Pick extends PodsField {
 		$item = array(
 			'id'        => esc_html( $item_id ),
 			'icon'      => esc_attr( $icon ),
-			'name'      => esc_html( wp_kses_post( html_entity_decode( $item_title ) ) ),
-			'edit_link' => esc_url( $edit_link ),
-			'link'      => esc_url( $link ),
+			'name'      => wp_strip_all_tags( html_entity_decode( $item_title ) ),
+			'edit_link' => html_entity_decode( esc_url( $edit_link ) ),
+			'link'      => html_entity_decode( esc_url( $link ) ),
 			'selected'  => $selected,
 		);
 
@@ -2331,6 +2331,10 @@ class PodsField_Pick extends PodsField {
 							$ids = wp_list_pluck( $ids, $search_data->field_id );
 						}
 
+						if ( $params['limit'] < count( $ids ) ) {
+							$params['limit'] = count( $ids );
+						}
+
 						if ( is_array( $ids ) ) {
 							$ids = implode( ', ', $ids );
 						}
@@ -2339,7 +2343,7 @@ class PodsField_Pick extends PodsField {
 							$params['where'] = implode( ' AND ', $params['where'] );
 						}
 						if ( ! empty( $params['where'] ) ) {
-							$params['where'] .= ' AND ';
+							$params['where'] = '(' . $params['where'] . ') AND ';
 						}
 
 						$params['where'] .= "`t`.`{$search_data->field_id}` IN ( {$ids} )";

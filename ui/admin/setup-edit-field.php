@@ -19,7 +19,7 @@ if ( 'pod' == pods_v( 'pick_object', $field ) ) {
 	}
 }
 
-$ignored_pick_objects = apply_filters( '', array( 'table' ) );
+$ignored_pick_objects = array( 'table' );
 
 if ( ! in_array( pods_v( 'pick_object', $field ), $ignored_pick_objects, true ) ) {
 	// Set pick object

@@ -119,4 +119,12 @@ describe( 'formatNumericString', () => {
 
 		expect( formatNumericString( 'abc', 0, 'i18n' ) ).toEqual( undefined );
 	} );
+
+	it( 'strips unneeded zero decimal values', () => {
+		expect( formatNumericString( '1000', 2, '9,999.99', false ) ).toEqual( '1,000.00' );
+		expect( formatNumericString( '1000', 2, '9,999.99', true ) ).toEqual( '1,000' );
+
+		expect( formatNumericString( '1000', 2, '9 999,99', false ) ).toEqual( '1 000,00' );
+		expect( formatNumericString( '1000', 2, '9 999,99', true ) ).toEqual( '1 000' );
+	} );
 } );

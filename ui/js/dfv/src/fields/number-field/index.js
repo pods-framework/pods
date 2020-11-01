@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import formatNumericString from 'dfv/src/helpers/formatNumericString';
-import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './number-field.scss';
@@ -27,12 +26,15 @@ const NumberField = ( {
 		number_step: step,
 	} = fieldConfig;
 
-	const correctedDecimals = toBool( softFormat ) ? 0 : decimals;
-
 	const handleBlur = ( event ) => {
-		setValue(
-			formatNumericString( event.target.value, correctedDecimals, format )
+		const formattedValue = formatNumericString(
+			event.target.value,
+			decimals,
+			format,
+			softFormat
 		);
+
+		setValue( formattedValue || '' );
 	};
 
 	const handleChange = ( event ) => setValue( event.target.value );
@@ -55,7 +57,7 @@ const NumberField = ( {
 				/>
 
 				<div className="pods-slider-field-display">
-					{ formatNumericString( value, correctedDecimals, format ) }
+					{ formatNumericString( value, decimals, format, softFormat ) }
 				</div>
 			</div>
 		);

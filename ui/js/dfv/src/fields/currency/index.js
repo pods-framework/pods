@@ -14,28 +14,57 @@ const Currency = ( {
 	const {
 		htmlAttr: htmlAttributes = {},
 		readonly: readOnly,
-		// currency_decimal_handling: decimalHandling,
-		// currency_decimals: decimals,
-		// currency_format: format,
-		// currency_format_placement: formatPlacement,
+		currency_decimal_handling: decimalHandling = 'none',
+		currency_decimals: decimals,
+		currency_format: format,
 		currency_format_sign: formatSign,
-		// currency_format_type: formatType,
-		// currency_max: max,
+		currency_format_type: type = 'number',
+		currency_max: max,
 		currency_max_length: maxLength,
-		// currency_min: min,
+		currency_min: min,
 		currency_placeholder: placeholder,
-		// currency_step: step,
+		currency_step: step,
 	} = fieldConfig;
 
 	const handleBlur = ( event ) => {
-		setValue(
-			formatNumericString( event.target.value )
+		const formattedValue = formatNumericString(
+			event.target.value,
+			decimals,
+			format,
+			decimalHandling === 'remove'
 		);
+
+		setValue( formattedValue || '' );
 	};
 
 	const handleChange = ( event ) => setValue( event.target.value );
 
 	const formatSignSymbol = window?.podsAdminConfig?.currencies[ formatSign ]?.sign || '$';
+
+	if ( 'slider' === type ) {
+		return (
+			<div>
+				<input
+					type="range"
+					className="pods-number-field-slider-input"
+					name={ htmlAttributes.name }
+					id={ htmlAttributes.id }
+					placeholder={ placeholder }
+					value={ parseFloat( value ) || min || 0 }
+					readOnly={ !! readOnly }
+					onChange={ handleChange }
+					min={ min }
+					max={ max }
+					step={ step }
+				/>
+
+				<div className="pods-slider-field-display">
+					{ formatSignSymbol }
+					{ formatNumericString( value, decimals, format, decimalHandling ) }
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="pods-currency-container">

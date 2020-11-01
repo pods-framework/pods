@@ -3,7 +3,8 @@ import formatNumber from 'dfv/src/helpers/formatNumber';
 const formatNumericString = (
 	newValue,
 	decimals,
-	format
+	format,
+	trimZeroDecimals = false,
 ) => {
 	// Only handle string values.
 	if ( 'string' !== typeof newValue || '' === newValue ) {
@@ -55,9 +56,20 @@ const formatNumericString = (
 		newValue.replace( thousands, '' ).replace( dot, '.' )
 	);
 
-	return isNaN( floatNewValue )
+	const formattedNumber = isNaN( floatNewValue )
 		? undefined
 		: formatNumber( floatNewValue, decimals, dot, thousands );
+
+	// We may need to trim decimals
+	if ( ! trimZeroDecimals || 0 === decimals || undefined === formattedNumber ) {
+		return formattedNumber;
+	}
+
+	const decimalValue = parseInt( formattedNumber.split( ',' ).pop(), 10 );
+
+	return 0 !== decimalValue
+		? formattedNumber
+		: formattedNumber.slice( 0, -1 * ( decimals + 1 ) );
 };
 
 export default formatNumericString;

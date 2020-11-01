@@ -2705,41 +2705,6 @@ function pods_session_start() {
 }
 
 /**
- * Safely get a session ID or not.
- *
- * @since TBD
- *
- * @return string The session ID.
- */
-function pods_session_id() {
-	/**
-	 * Allow filtering the session ID that Pods will use.
-	 *
-	 * @since TBD
-	 *
-	 * @param null|string $session_id The session ID (default null), return a string to bypass PHP session usage.
-	 */
-	$session_id = apply_filters( 'pods_session_id', null );
-
-	if ( null !== $session_id ) {
-		return $session_id;
-	}
-
-	if ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
-		// Allow for bypassing Pods sessions.
-		return '';
-	}
-
-	$session_id = @session_id();
-
-	if ( empty( $session_id ) ) {
-		return '';
-	}
-
-	return $session_id;
-}
-
-/**
  * Get current session ID.
  *
  * @since 2.7.23

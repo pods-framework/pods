@@ -73,6 +73,27 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	'wildcard-on': OBJECT_OR_ARRAY,
 	_locale: PropTypes.string,
 
+	// Avatar fields
+	avatar_add_button: PropTypes.string,
+	avatar_allowed_extensions: PropTypes.string,
+	avatar_attachment_tab: PropTypes.string,
+	avatar_edit_title: PropTypes.string,
+	avatar_field_template: PropTypes.string,
+	avatar_format_type: PropTypes.string,
+	avatar_limit: PropTypes.string,
+	avatar_linked: PropTypes.string,
+	avatar_modal_add_button: PropTypes.string,
+	avatar_modal_title: PropTypes.string,
+	avatar_restrict_filesize: PropTypes.string,
+	avatar_show_edit_link: PropTypes.string,
+	avatar_type: PropTypes.string,
+	avatar_uploader: PropTypes.string,
+	avatar_wp_gallery_columns: PropTypes.string,
+	avatar_wp_gallery_link: PropTypes.string,
+	avatar_wp_gallery_output: PropTypes.string,
+	avatar_wp_gallery_random_sort: PropTypes.string,
+	avatar_wp_gallery_size: PropTypes.string,
+
 	// Boolean fields
 	boolean_format_type: PropTypes.string,
 	boolean_no_label: PropTypes.string,

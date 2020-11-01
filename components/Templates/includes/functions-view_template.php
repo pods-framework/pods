@@ -327,15 +327,27 @@ function frontier_do_subtemplate( $atts, $content ) {
 
 			}//end foreach
 		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] ) {
-			$template = frontier_decode_template( $content, $atts );
+			$template  = frontier_decode_template( $content, $atts );
+			$entry_pod = pods( 'media' );
+
 			foreach ( $entries as $key => $entry ) {
 				$content = str_replace( '{_index}', $key, $template );
 				$content = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $content );
 				$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $content );
 				$content = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $content );
-				$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
 
-				$out .= pods_do_shortcode( $pod->do_magic_tags( $content ), frontier_get_shortcodes() );
+				if ( $entry_pod && $entry_pod->valid() && $entry_pod->fetch( $entry['ID'] ) ) {
+					$content = str_replace( '{@' . $field_name . '.', '{@', $content );
+				} else {
+					// Fix for lowercase ID's.
+					$entry['id'] = $entry['ID'];
+					// Allow array-like tags.
+					$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
+					// Fallback to parent Pod so above tags still work.
+					$entry_pod = $pod;
+				}
+
+				$out .= pods_do_shortcode( $entry_pod->do_magic_tags( $content ), frontier_get_shortcodes() );
 			}
 		} elseif ( isset( $field['table_info'], $field['table_info']['pod'] ) ) {
 			// Relationship to something that is extended by Pods
@@ -372,7 +384,6 @@ function frontier_do_subtemplate( $atts, $content ) {
 }
 
 /**
- *
  * Search and replace like Pods magic tags but with an array of data instead of a Pod
  *
  * @param Pod     $pod

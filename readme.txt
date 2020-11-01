@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, pglewis, jimtrue, keraweb, quasel, jamesgol, ramoonus
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.9
-Tested up to: 5.5
+Tested up to: 5.5.3
 Requires PHP: 5.6
 Stable tag: 2.8.0-a-3
 License: GPLv2 or later
@@ -190,6 +190,39 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.23 - October 30th 2020 =
+
+**New Features & Enhancements**
+
+* Added: Support auto-templates for taxonomies, users and comments. #3962 & #5832 (@JoryHogeveen, @sc0ttkclark, @gwhitney)
+* Added: Support template parameter and nested shortcode content for field shortcodes. #5801 (@JoryHogeveen)
+* Added: Allow function calls in all tags, not just template tags. #4887 (@JoryHogeveen)
+* Added: Support custom image sizes for all image field types in magic tags. #5870 (@JoryHogeveen)
+* Added/Fixed: Support special magic tags in Pods Templates. #5697 (@JoryHogeveen)
+* Added/Fixed: Support Pod related magic tags in shortcode query parameters. #5734 (@JoryHogeveen)
+* Enhancement: Allow traversing in avatar attachment. #5870 (@JoryHogeveen)
+* Enhancement: If the media Pod exists, use it's context to run media loops to support other fields and traversal. #5855 (@JoryHogeveen)
+* Enhancement: Implement PHP 5.4 `session_status()` function. #5840 (@JoryHogeveen)
+* Enhancement: Allow WP objects to be passed in `pods()`. #5845 (@JoryHogeveen)
+* Compatibility: Enqueue DFV scripts when editing the page with Beaver Builder to fully support the media window. #5799 (@JoryHogeveen)
+* Updated: Primary Branch header for GitHub Updater. #5847 (@afragen)
+
+**Bug Fixes**
+
+* Fixed: `.src` tags for PDF's now render the PDF file link instead of the thumbnail in templates `[each]` loops. #4040 (@JoryHogeveen)
+* Fixed. HTML entities for relationship fields UI. #5843, #5835 & #5796 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Select2/SelectWoo now also enqueue the locale files when available. #5860 (@JoryHogeveen)
+* Fixed: Support lowercase ID's for magic tags in media loops #5852 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Avatar should always return a square image. #2738 (@JoryHogeveen)
+* Fixed: Selected items query for autocomplete relationships. #5542 & #5831 (@JoryHogeveen)
+* Fixed: Prevent SQL errors on magic tags in some cases. #5797 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Error if there is no DB prefix available. #5803 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Fix edge case "No Access" error when all Pods were deleted. Redirect to next Pod admin page if needed. #4842 (@JoryHogeveen)
+* Fixed: Removed empty filter in `ui/admin/setup-edit-field.php`. #5686 (@sc0ttkclark, @JoryHogeveen)
+* Fixed: Prevent possible notice if image doesn't exist. #5866 (@JoryHogeveen)
+* Fixed: Remove source maps from production builds. #5822 (@sc0ttkclark)
+* Fixed: PHP warning in file field gallery view. #5809 (@JoryHogeveen)
 
 = 2.7.22 - August 13th 2020 =
 

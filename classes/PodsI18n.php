@@ -36,9 +36,7 @@ final class PodsI18n {
 		self::$instance = $this;
 
 		// Hook all enqueue scripts actions
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'pods_before_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		// Polylang
 		add_filter( 'pll_get_post_types', array( $this, 'pll_get_post_types' ), 10, 2 );
@@ -102,7 +100,7 @@ final class PodsI18n {
 			self::register( $key, $str );
 		}
 
-		// Some other stuff we need to pass through
+		// Some other stuff we need to pass through.
 		$i18n_base = array(
 			'debug' => ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG == true ) ? true : false,
 		);
@@ -146,6 +144,7 @@ final class PodsI18n {
 
 		return array(
 
+			// Translators: %s stands for a name/identifier.
 			'%s is required.'                              => __( '%s is required.', 'pods' ),
 
 			'This field is required.'                      => __( 'This field is required.', 'pods' ),
@@ -176,6 +175,9 @@ final class PodsI18n {
 
 			'Search'                                       => __( 'Search', 'pods' ),
 
+			// Translators: %s stands for a name/identifier.
+			'Search %s'                                    => __( 'Search %s', 'pods' ),
+
 			'Navigating away from this page will discard any changes you have made.' => __( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
 
 			'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.' => __( 'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.', 'pods' ),
@@ -192,9 +194,17 @@ final class PodsI18n {
 
 			'You can only select'                          => __( 'You can only select', 'pods' ),
 
+			// Translators: %s stands for a number.
 			'%s item'                                      => __( '%s item', 'pods' ),
 
+			// Translators: %s stands for a number.
 			'%s items'                                     => __( '%s items', 'pods' ),
+
+			// Translators: %s stands for a number.
+			'You can only select %s item'                  => __( 'You can only select %s item', 'pods' ),
+
+			// Translators: %s stands for a number.
+			'You can only select %s items'                 => __( 'You can only select %s items', 'pods' ),
 
 			'Icon'                                         => __( 'Icon', 'pods' ),
 

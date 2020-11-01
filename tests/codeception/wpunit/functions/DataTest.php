@@ -394,6 +394,41 @@ class DataTest extends Pods_UnitTestCase {
 		$this->assertEquals( get_current_user_id(), pods_evaluate_tag( '{@user.id}' ) );
 	}
 
+	/**
+	 * @covers ::pods_evaluate_tag_sql
+	 */
+	public function test_pods_evaluate_tag_sql() {
+
+		$params = array(
+			'sanitize' => true,
+			'fallback' => '""',
+		);
+
+		// EQUALS
+
+		$sql     = "value = {@get.test_sql_tag}";
+		$compare = 'value = ""';
+
+		$this->assertEquals( pods_evaluate_tags_sql( $sql, $params ), $compare );
+
+		$_GET['test_sql_tag'] = '5797';
+		$compare              = 'value = 5797';
+
+		$this->assertEquals( pods_evaluate_tags_sql( $sql, $params ), $compare );
+
+		// LIKE
+
+		$sql     = "value LIKE '{@get.test_sql_tag_like}%'";
+		$compare = "value LIKE '%'";
+
+		$this->assertEquals( pods_evaluate_tags_sql( $sql, $params ), $compare );
+
+		$_GET['test_sql_tag_like'] = '5797';
+		$compare                   = "value LIKE '5797%'";
+
+		$this->assertEquals( pods_evaluate_tags_sql( $sql, $params ), $compare );
+	}
+
 	public function test_pods_evaluate_tag_sanitized() {
 		$this->markTestSkipped( 'not yet implemented' );
 	}

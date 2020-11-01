@@ -154,6 +154,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 
 	// HTML field
 	html_content: PropTypes.string,
+	html_no_label: PropTypes.oneOf( BOOLEAN_ALL_TYPES ),
 
 	// Number field
 	number_decimals: NUMBER_OR_NUMBER_AS_STRING,

@@ -42,6 +42,12 @@ class PodsField_HTML extends PodsField {
 				'label' => __( 'HTML Content', 'pods' ),
 				'type'  => 'code',
 			],
+			static::$type . '_no_label' => [
+				'label'   => __( 'Disable the form label?', 'pods' ),
+				'default' => 1,
+				'type'    => 'boolean',
+				'help'    => __( 'By disabling the form label, the HTML will show as full width without the label text. Only the HTML content will be displayed in the form.', 'pods' ),
+			],
 			'output_options'           => [
 				'label' => __( 'Output Options', 'pods' ),
 				'group' => [

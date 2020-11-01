@@ -65,12 +65,13 @@ const NumberField = ( {
 
 	return (
 		<input
-			type={ '1' === html5 ? 'number' : 'text' }
+			type={ html5 ? 'number' : 'text' }
 			name={ htmlAttributes.name }
 			id={ htmlAttributes.id }
 			placeholder={ placeholder }
 			maxLength={ -1 !== parseInt( maxLength, 10 ) ? maxLength : undefined }
 			value={ value || '' }
+			step={ html5 ? 'any' : undefined }
 			readOnly={ !! readOnly }
 			onChange={ handleChange }
 			onBlur={ handleBlur }

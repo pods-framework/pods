@@ -462,6 +462,8 @@ class Post_Type extends Collection {
 				continue;
 			}
 
+			$meta_value = array_map( 'maybe_unserialize', $meta_value );
+
 			if ( 1 === count( $meta_value ) ) {
 				$meta_value = reset( $meta_value );
 			}

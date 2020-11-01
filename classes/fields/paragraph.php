@@ -223,7 +223,7 @@ class PodsField_Paragraph extends PodsField {
 			$options['readonly'] = true;
 		}
 
-		return pods_view( PODS_DIR . 'ui/fields/textarea.php', compact( array_keys( get_defined_vars() ) ) );
+		//return pods_view( PODS_DIR . 'ui/fields/textarea.php', compact( array_keys( get_defined_vars() ) ) );
 
 		wp_enqueue_script( 'pods-dfv' );
 

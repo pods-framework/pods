@@ -37,7 +37,7 @@ const Boolean = ( {
 				pick_format_type: 'single',
 				pick_format_single: formatType,
 			} }
-			value={ '1' === numericBooleanValue ? '1' : undefined }
+			value={ '1' === numericBooleanValue ? '1' : '0' }
 			setValue={ setBooleanValue }
 			data={ options }
 		/>

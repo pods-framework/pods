@@ -81,7 +81,7 @@ const Currency = ( {
 				placeholder={ placeholder }
 				maxLength={ -1 !== parseInt( maxLength, 10 ) ? maxLength : undefined }
 				step={ html5 ? 'any' : undefined }
-				value={ value }
+				value={ value || '' }
 				readOnly={ !! readOnly }
 				onChange={ handleChange }
 				onBlur={ handleBlur }

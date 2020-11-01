@@ -1,8 +1,7 @@
 import React from 'react';
-import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 
-import numberFormatValue from 'dfv/src/helpers/numberFormatValue';
+import formatNumericString from 'dfv/src/helpers/formatNumericString';
 import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
@@ -30,11 +29,13 @@ const NumberField = ( {
 
 	const correctedDecimals = toBool( softFormat ) ? 0 : decimals;
 
-	const handleChange = ( event ) => debounce( () => {
+	const handleBlur = ( event ) => {
 		setValue(
-			numberFormatValue( event.target.value, correctedDecimals, format )
+			formatNumericString( event.target.value, correctedDecimals, format )
 		);
-	}, 1000 );
+	};
+
+	const handleChange = ( event ) => setValue( event.target.value );
 
 	if ( 'slider' === type ) {
 		return (
@@ -54,7 +55,7 @@ const NumberField = ( {
 				/>
 
 				<div className="pods-slider-field-display">
-					{ numberFormatValue( value, correctedDecimals, format ) }
+					{ formatNumericString( value, correctedDecimals, format ) }
 				</div>
 			</div>
 		);
@@ -67,9 +68,10 @@ const NumberField = ( {
 			id={ htmlAttributes.id }
 			placeholder={ placeholder }
 			maxLength={ -1 !== parseInt( maxLength, 10 ) ? maxLength : undefined }
-			value={ value }
+			value={ value || '' }
 			readOnly={ !! readOnly }
 			onChange={ handleChange }
+			onBlur={ handleBlur }
 		/>
 	);
 };

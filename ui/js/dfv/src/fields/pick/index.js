@@ -19,22 +19,9 @@ import {
 
 import './pick.scss';
 
-// We may receive data in the form of a Object hash map, but
-// we need to convert those to an array of objects with values/labels.
-const formatOptionsToArray = ( options = {} ) => {
-	return Object
-		.keys( options )
-		.map( ( option ) => {
-			return {
-				value: option,
-				label: options[ option ],
-			};
-		} );
-};
-
 const formatValuesForReactSelectComponent = (
 	value,
-	options = {},
+	options = [],
 	isMulti = false
 ) => {
 	if ( ! value ) {
@@ -42,20 +29,16 @@ const formatValuesForReactSelectComponent = (
 	}
 
 	if ( ! isMulti ) {
-		return {
-			value,
-			label: options[ value ],
-		};
+		return options.find( ( option ) => option.value === value );
 	}
 
 	const splitValue = Array.isArray( value ) ? value : value.split( ',' );
 
-	return splitValue.map( ( currentValue ) => {
-		return {
-			value: currentValue,
-			label: options[ currentValue ],
-		};
-	} );
+	return splitValue.map(
+		( currentValue ) => options.find(
+			( option ) => option.value === currentValue
+		)
+	);
 };
 
 const formatValuesForHTMLSelectElement = ( value, isMulti ) => {
@@ -75,7 +58,7 @@ const Pick = ( props ) => {
 		fieldConfig: {
 			label,
 			name,
-			pick_allow_add_new: allowAddNew,
+			// pick_allow_add_new: allowAddNew,
 			pick_custom: pickCustomOptions,
 			// pick_display,
 			// pick_display_format_multi,
@@ -86,8 +69,8 @@ const Pick = ( props ) => {
 			// pick_groupby,
 			pick_limit: limit,
 			pick_object: pickObject,
-			pick_orderby: orderBy,
-			pick_post_status: postStatus,
+			// pick_orderby: orderBy,
+			// pick_post_status: postStatus,
 			pick_select_text: selectText,
 			pick_show_edit_link: showEditLink,
 			pick_show_icon: showIcon,
@@ -97,9 +80,9 @@ const Pick = ( props ) => {
 			// pick_table_index,
 			// pick_taggable,
 			// pick_user_role,
-			pick_val: pickValue,
-			rest_pick_depth: pickDepth,
-			rest_pick_response: pickResponse,
+			// pick_val: pickValue,
+			// rest_pick_depth: pickDepth,
+			// rest_pick_response: pickResponse,
 			// pick_where,
 		},
 		data = [],
@@ -113,6 +96,32 @@ const Pick = ( props ) => {
 	// The options could be derived from the `data` prop (as a default),
 	// or we may need to do more work to break them apart or load them by the API.
 	const [ dataOptions, setDataOptions ] = useState( data );
+
+	const setValueWithLimit = ( newValue ) => {
+		// We don't need to worry about limits if this isn't a multi-select field.
+		if ( isSingle ) {
+			setValue( newValue );
+			return;
+		}
+
+		// Filter out empty values that could have gotten passed in.
+		const filteredNewValues = newValue.filter( ( item ) => !! item );
+
+		// If no limit is set, set the value.
+		const numericLimit = parseInt( limit, 10 ) || 0;
+
+		if ( isNaN( numericLimit ) || 0 === numericLimit || -1 === numericLimit ) {
+			setValue( filteredNewValues );
+			return;
+		}
+
+		// If we're trying to set more items than the limit allows, just return.
+		if ( filteredNewValues.length > numericLimit ) {
+			return;
+		}
+
+		setValue( filteredNewValues );
+	};
 
 	useEffect( () => {
 		// const loadAjaxOptions = async () => {
@@ -143,12 +152,22 @@ const Pick = ( props ) => {
 
 		switch ( pickObject ) {
 			case 'custom-simple':
-				// @todo better error handling
 				const unsplitOptions = pickCustomOptions.split( '\n' );
+
+				// Set an empty array if no entries or malformed.
+				if ( ! unsplitOptions.length ) {
+					setDataOptions( [] );
+					return;
+				}
 
 				const optionEntries = unsplitOptions.map(
 					( unsplitOption ) => {
 						const splitOption = unsplitOption.split( '|' );
+
+						// Return if malformed entry.
+						if ( splitOption.length !== 2 ) {
+							return null;
+						}
 
 						return {
 							value: splitOption[ 0 ],
@@ -157,7 +176,12 @@ const Pick = ( props ) => {
 					}
 				);
 
-				setDataOptions( optionEntries );
+				// Filter out any options missing the value or label.
+				const filteredOptionEntries = optionEntries.filter(
+					( entry ) => entry.value && entry.label
+				);
+
+				setDataOptions( filteredOptionEntries );
 				break;
 			// @todo add cases for taxonomies, etc and fall through?
 			case 'post-type':
@@ -176,7 +200,7 @@ const Pick = ( props ) => {
 			<RadioSelect
 				name={ name }
 				value={ value }
-				setValue={ setValue }
+				setValue={ setValueWithLimit }
 				options={ dataOptions }
 			/>
 		);
@@ -186,7 +210,6 @@ const Pick = ( props ) => {
 		( isSingle && 'checkbox' === formatSingle ) ||
 		( isMulti && 'checkbox' === formatMulti )
 	) {
-		// @todo is the API returning the correct format?
 		let formattedValue = value;
 
 		if ( isMulti ) {
@@ -200,7 +223,7 @@ const Pick = ( props ) => {
 				name={ name }
 				value={ formattedValue }
 				isMulti={ isMulti }
-				setValue={ setValue }
+				setValue={ setValueWithLimit }
 				options={ dataOptions }
 			/>
 		);
@@ -218,7 +241,7 @@ const Pick = ( props ) => {
 			<ListSelect
 				name={ name }
 				value={ formattedValue }
-				setValue={ setValue }
+				setValue={ setValueWithLimit }
 				options={ dataOptions }
 				// translators: Placeholder with the field label.
 				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
@@ -243,13 +266,13 @@ const Pick = ( props ) => {
 				options={ dataOptions }
 				value={ formattedValue }
 				// translators: Placeholder with the field label.
-				placeholder={ sprintf( __( 'Search %s...', 'pods' ), label ) }
+				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
 				isMulti={ isMulti }
 				onChange={ ( newOption ) => {
 					if ( isMulti ) {
-						setValue( newOption.map( ( selection ) => selection.value ) );
+						setValueWithLimit( newOption.map( ( selection ) => selection.value ) );
 					} else {
-						setValue( newOption.value );
+						setValueWithLimit( newOption.value );
 					}
 				} }
 			/>
@@ -260,7 +283,7 @@ const Pick = ( props ) => {
 		<SimpleSelect
 			name={ name }
 			value={ formatValuesForHTMLSelectElement( value, isMulti ) }
-			setValue={ ( newValue ) => setValue( newValue ) }
+			setValue={ ( newValue ) => setValueWithLimit( newValue ) }
 			options={ dataOptions }
 			placeholder={ selectText }
 			isMulti={ isMulti }

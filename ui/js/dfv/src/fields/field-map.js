@@ -2,6 +2,7 @@ import reactRenderer from 'dfv/src/core/renderers/react-renderer';
 import reactDirectRenderer from 'dfv/src/core/renderers/react-direct-renderer';
 
 import Boolean from 'dfv/src/fields/boolean';
+import Code from 'dfv/src/fields/code';
 import Color from 'dfv/src/fields/color';
 import Currency from 'dfv/src/fields/currency';
 import EditPod from 'dfv/src/admin/edit-pod/edit-pod';
@@ -26,6 +27,10 @@ const FIELD_MAP = {
 	},
 	boolean: {
 		fieldComponent: Boolean,
+		renderer: reactRenderer,
+	},
+	code: {
+		fieldComponent: Code,
 		renderer: reactRenderer,
 	},
 	color: {

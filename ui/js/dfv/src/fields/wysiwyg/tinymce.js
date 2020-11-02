@@ -121,9 +121,8 @@ const TinyMCE = ( {
 				name={ name }
 				id={ fieldId }
 				onChange={ ( event ) => setValue( event.target.value ) }
-			>
-				{ value }
-			</textarea>
+				value={ value || '' }
+			/>
 		</div>
 	);
 };

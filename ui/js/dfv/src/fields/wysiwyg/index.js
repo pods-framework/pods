@@ -1,48 +1,52 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
+import TinyMCE from './tinymce';
+import { toBool } from 'dfv/src/helpers/booleans';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './wysiwyg.scss';
 
 const Wysiwyg = ( props ) => {
 	const {
 		fieldConfig = {},
-		onBlur,
-		onChange,
 		setValue,
 		value,
 	} = props;
 
 	const {
-		htmlAttr = {},
-		wysiwyg_allow_shortcode: allowShortcode,
-		wysiwyg_allowed_html_tags: allowedHtmlTags,
-		wysiwyg_convert_chars: convertChars,
-		wysiwyg_editor: editor,
-		wysiwyg_editor_height: editorHeight,
+		name,
+		wysiwyg_editor: editor = 'tinymce',
+		wysiwyg_editor_height: editorHeight = 400,
 		wysiwyg_media_buttons: mediaButtons,
-		wysiwyg_oembed: oembed,
-		wysiwyg_wpautop: autoP,
-		wysiwyg_wptexturize: texturize,
-		read_only: readOnly = false,
+		// wysiwyg_allow_shortcode: allowShortcode,
+		// wysiwyg_allowed_html_tags: allowedHtmlTags,
+		// wysiwyg_convert_chars: convertChars,
+		// wysiwyg_oembed: oembed,
+		// wysiwyg_wpautop: autoP,
+		// wysiwyg_wptexturize: texturize,
 	} = fieldConfig;
 
-	// Default implementation if onChange is omitted from props
-	const handleChange = ( event ) => setValue( event.target.value );
+	// @todo support the "cleditor"
+	if ( 'cleditor' === editor ) {
+		return <textarea />;
+	}
 
 	return (
-		<textarea
+		<TinyMCE
+			name={ name }
 			value={ value }
-			name={ htmlAttr.name }
-			id={ htmlAttr.id }
-			className="pods-form-ui-field pods-form-ui-field-type-paragraph"
-			maxLength={ -1 !== parseInt( maxLength, 10 ) ? maxLength : undefined }
-			placeholder={ placeholder }
-			onChange={ onChange || handleChange }
-			onBlur={ onBlur }
-			readOnly={ readOnly }
-		>
-			{ value }
-		</textarea>
+			setValue={ setValue }
+			editorHeight={ editorHeight }
+			mediaButtons={ toBool( mediaButtons ) }
+		/>
 	);
+};
+
+Wysiwyg.propTypes = {
+	fieldConfig: FIELD_PROP_TYPE_SHAPE,
+	setValue: PropTypes.func.isRequired,
+	value: PropTypes.string,
 };
 
 export default Wysiwyg;

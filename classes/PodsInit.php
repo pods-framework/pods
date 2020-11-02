@@ -814,6 +814,8 @@ class PodsInit {
 					'media-views',
 					'media-models',
 					'wp-components',
+					'wp-block-library',
+					'wp-tinymce',
 				]
 			),
 			$pods_dfv_options['version'],

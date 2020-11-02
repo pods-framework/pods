@@ -17,6 +17,7 @@ import Pick from 'dfv/src/fields/pick';
 import Slug from 'dfv/src/fields/slug';
 import Text from 'dfv/src/fields/text';
 import Website from 'dfv/src/fields/website';
+import Wysiwyg from 'dfv/src/fields/wysiwyg';
 
 const FIELD_MAP = {
 	avatar: {
@@ -85,6 +86,10 @@ const FIELD_MAP = {
 	},
 	website: {
 		fieldComponent: Website,
+		renderer: reactRenderer,
+	},
+	wysiwyg: {
+		fieldComponent: Wysiwyg,
 		renderer: reactRenderer,
 	},
 };

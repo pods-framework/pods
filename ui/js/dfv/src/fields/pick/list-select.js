@@ -144,10 +144,12 @@ ListSelect.propTypes = {
 			label: PropTypes.string.isRequired,
 			value: PropTypes.string.isRequired,
 		} ),
-		PropTypes.arrayOf( PropTypes.shape( {
-			label: PropTypes.string.isRequired,
-			value: PropTypes.string.isRequired,
-		} ) ),
+		PropTypes.arrayOf(
+			PropTypes.shape( {
+				label: PropTypes.string.isRequired,
+				value: PropTypes.string.isRequired,
+			} )
+		),
 	] ),
 	setValue: PropTypes.func.isRequired,
 	options: PICK_OPTIONS.isRequired,

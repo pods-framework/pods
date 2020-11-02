@@ -1,6 +1,7 @@
 import reactRenderer from 'dfv/src/core/renderers/react-renderer';
 import reactDirectRenderer from 'dfv/src/core/renderers/react-direct-renderer';
 
+import Avatar from 'dfv/src/fields/avatar';
 import Boolean from 'dfv/src/fields/boolean';
 import Code from 'dfv/src/fields/code';
 import Color from 'dfv/src/fields/color';
@@ -22,7 +23,7 @@ import Wysiwyg from 'dfv/src/fields/wysiwyg';
 
 const FIELD_MAP = {
 	avatar: {
-		fieldComponent: File,
+		fieldComponent: Avatar,
 		renderer: reactRenderer,
 	},
 	boolean: {

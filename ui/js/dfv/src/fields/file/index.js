@@ -1,3 +1,4 @@
+// @todo add tests
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
@@ -7,7 +8,26 @@ import MarionetteAdapter from 'dfv/src/fields/marionette-adapter';
 import { File as FileView } from './file-upload';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-// @todo add tests
+const getMediaItemData = async ( mediaID ) => {
+	try {
+		const result = await apiFetch( { path: `/wp/v2/media/${ mediaID }` } );
+
+		return {
+			id: mediaID,
+			// eslint-disable-next-line camelcase
+			icon: result?.media_details?.sizes?.thumbnail?.source_url,
+			name: result.title.rendered,
+			edit_link: `/wp-admin/post.php?post=${ mediaID }&action=edit`,
+			link: result.link,
+			download: result.source_url,
+		};
+	} catch ( e ) {
+		return {
+			id: mediaID,
+		};
+	}
+};
+
 const File = ( props ) => {
 	const {
 		fieldConfig = {},
@@ -21,52 +41,37 @@ const File = ( props ) => {
 	const setValueFromModels = ( models ) => {
 		if ( Array.isArray( models ) ) {
 			setValue( models.map( ( model ) => model.id ).join( ',' ) );
+
+			setCollectionData( models.map( ( model ) => model.attributes ) );
 		} else {
 			setValue( models.get( 'id' ) );
+
+			setCollectionData( models.get( 'attributes' ) );
 		}
 	};
 
 	// Force the limit to 1 if this the field only allows a single upload.
-	const correctedLimit = fieldConfig.file_format_type === 'single' ? 1 : fieldConfig.file_limit;
+	const correctedLimit = fieldConfig.file_format_type === 'single'
+		? '1'
+		: fieldConfig.file_limit;
 
 	// The `value` prop will be a comma-separated string of media post IDs,
 	// but we need to pass an array of objects with data about the media
-	// to the Backbone view/model.
+	// to the Backbone view/model. Only make the expensive API requests if
+	// we don't have data about a media post on initial page load.
 	useEffect( () => {
 		if ( ! value || ! value.length ) {
 			setCollectionData( [] );
 			return;
 		}
 
-		const allMediaIDs = value.split( ',' );
-
-		const getMediaItemData = async ( mediaID ) => {
-			try {
-				const result = await apiFetch( { path: `/wp/v2/media/${ mediaID }` } );
-
-				return {
-					id: mediaID,
-					// eslint-disable-next-line camelcase
-					icon: result?.media_details?.sizes?.thumbnail?.source_url,
-					name: result.title.rendered,
-					edit_link: `/wp-admin/post.php?post=${ mediaID }&action=edit`,
-					link: result.link,
-					download: result.source_url,
-				};
-			} catch ( e ) {
-				return {
-					id: mediaID,
-				};
-			}
-		};
-
 		const getAndSetMediaData = async ( mediaIDs ) => {
 			const results = await Promise.all( mediaIDs.map( getMediaItemData ) );
 			setCollectionData( results );
 		};
 
-		getAndSetMediaData( allMediaIDs );
-	}, [ value ] );
+		getAndSetMediaData( value.split( ',' ) );
+	}, [] );
 
 	return (
 		<MarionetteAdapter

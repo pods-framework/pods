@@ -39,12 +39,6 @@ const Wysiwyg = ( props ) => {
 		wysiwyg_editor: editor = 'tinymce',
 		wysiwyg_editor_height: editorHeight = 400,
 		wysiwyg_media_buttons: mediaButtons,
-		// wysiwyg_allow_shortcode: allowShortcode,
-		// wysiwyg_allowed_html_tags: allowedHtmlTags,
-		// wysiwyg_convert_chars: convertChars,
-		// wysiwyg_oembed: oembed,
-		// wysiwyg_wpautop: autoP,
-		// wysiwyg_wptexturize: texturize,
 	} = fieldConfig;
 
 	if ( 'quill' === editor || 'cleditor' === editor ) {

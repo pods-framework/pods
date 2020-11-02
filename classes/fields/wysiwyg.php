@@ -56,7 +56,8 @@ class PodsField_WYSIWYG extends PodsField {
 				'data'       => apply_filters(
 					'pods_form_ui_field_wysiwyg_editors', array(
 						'tinymce'  => __( 'TinyMCE (WP Default)', 'pods' ),
-						'cleditor' => __( 'CLEditor', 'pods' ),
+						'quill'    => __( 'Quill Editor', 'pods' ),
+						'cleditor' => __( 'CLEditor (No longer available, now using Quill Editor)', 'pods' ),
 					)
 				),
 				'dependency' => true,
@@ -245,8 +246,10 @@ class PodsField_WYSIWYG extends PodsField {
 			$field_type = 'textarea';
 		} elseif ( 'tinymce' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'tinymce';
+		} elseif ( 'quill' === pods_v( static::$type . '_editor', $options ) ) {
+			$field_type = 'quill';
 		} elseif ( 'cleditor' === pods_v( static::$type . '_editor', $options ) ) {
-			$field_type = 'cleditor';
+			$field_type = 'quill';
 		} else {
 			// Support custom WYSIWYG integration
 			$editor_type = pods_v( static::$type . '_editor', $options );

@@ -130,6 +130,10 @@ const TinyMCE = ( {
 
 TinyMCE.propTypes = {
 	name: PropTypes.string.isRequired,
+	value: PropTypes.string,
+	setValue: PropTypes.func.isRequired,
+	editorHeight: PropTypes.number,
+	mediaButtons: PropTypes.bool,
 };
 
 export default TinyMCE;

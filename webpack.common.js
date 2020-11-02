@@ -46,10 +46,19 @@ module.exports = {
 					// translates CSS into CommonJS
 					{ loader: 'css-loader' },
 					// compiles Sass to CSS
-					{ loader: 'sass-loader' }
-				]
-			}
-		]
+					{ loader: 'sass-loader' },
+				],
+			},
+			{
+				test: /\.css$/,
+				use: [
+					// creates style nodes from JS strings
+					{ loader: 'style-loader' },
+					// translates CSS into CommonJS
+					{ loader: 'css-loader' },
+				],
+			},
+		],
 	},
 
 	plugins: [

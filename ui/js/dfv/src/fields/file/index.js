@@ -26,6 +26,9 @@ const File = ( props ) => {
 		}
 	};
 
+	// Force the limit to 1 if this the field only allows a single upload.
+	const correctedLimit = fieldConfig.file_format_type === 'single' ? 1 : fieldConfig.file_limit;
+
 	// The `value` prop will be a comma-separated string of media post IDs,
 	// but we need to pass an array of objects with data about the media
 	// to the Backbone view/model.
@@ -69,7 +72,10 @@ const File = ( props ) => {
 		<MarionetteAdapter
 			{ ...props }
 			htmlAttr={ htmlAttr }
-			fieldConfig={ fieldConfig }
+			fieldConfig={ {
+				...fieldConfig,
+				file_limit: correctedLimit,
+			} }
 			View={ FileView }
 			value={ collectionData }
 			setValue={ setValueFromModels }

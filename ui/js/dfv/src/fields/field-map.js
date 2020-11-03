@@ -12,6 +12,7 @@ import File from 'dfv/src/fields/file';
 import Heading from 'dfv/src/fields/heading';
 import HTMLField from 'dfv/src/fields/html-field';
 import NumberField from 'dfv/src/fields/number-field';
+import Oembed from 'dfv/src/fields/oembed';
 import Password from 'dfv/src/fields/password';
 import Paragraph from 'dfv/src/fields/paragraph';
 import Phone from 'dfv/src/fields/phone';
@@ -64,6 +65,10 @@ const FIELD_MAP = {
 	},
 	number: {
 		fieldComponent: NumberField,
+		renderer: reactRenderer,
+	},
+	oembed: {
+		fieldComponent: Oembed,
 		renderer: reactRenderer,
 	},
 	paragraph: {

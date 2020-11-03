@@ -4012,7 +4012,7 @@
     "required": "0",
     "oembed_width": "100",
     "oembed_height": "100",
-    "oembed_show_preview": "0",
+    "oembed_show_preview": "1",
     "oembed_restrict_providers": "0",
     "oembed_enabled_providers_amazoncn": "0",
     "oembed_enabled_providers_amazoncouk": "0",

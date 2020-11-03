@@ -404,7 +404,7 @@ class Pods_Templates extends PodsComponent {
 			),
 			array(
 				'name'                  => 'restrict_message',
-				'label'                 => __( 'No access message' ),
+				'label'                 => __( 'No access message', 'pods' ),
 				'type'                  => 'wysiwyg',
 				'default'               => __( 'You do not have access to view this content.', 'pods' ),
 				'wysiwyg_editor_height' => 200,

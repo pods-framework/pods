@@ -1106,17 +1106,18 @@ class PodsField_File extends PodsField {
 			$limit_types = array_filter( array_unique( $limit_types ) );
 
 			if ( ! empty( $limit_types ) ) {
-				$ok = false;
+				$file_info = pathinfo( $file['name'] );
+				$ok        = false;
 
-				foreach ( $limit_types as $limit_type ) {
-					$limit_type = '.' . trim( $limit_type, ' .' );
+				if ( isset( $file_info['extension'] ) ) {
+					foreach ( $limit_types as $limit_type ) {
+						$limit_type = '.' . trim( $limit_type, ' .' );
 
-					$pos = ( strlen( $file['name'] ) - strlen( $limit_type ) );
+						if ( $limit_type === $file_info['extension'] ) {
+							$ok = true;
 
-					if ( stripos( $file['name'], $limit_type ) === $pos ) {
-						$ok = true;
-
-						break;
+							break;
+						}
 					}
 				}
 

@@ -411,7 +411,7 @@ class Pods_Templates extends PodsComponent {
 				'depends-on'            => array(
 					'show_restrict_message' => true,
 				),
-			)
+			),
 		);
 
 		pods_group_add( $pod, __( 'Restrict Access', 'pods' ), $fields, 'normal', 'high' );

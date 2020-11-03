@@ -1111,7 +1111,7 @@ class PodsField_File extends PodsField {
 
 				if ( isset( $file_info['extension'] ) ) {
 					foreach ( $limit_types as $limit_type ) {
-						$limit_type = '.' . trim( $limit_type, ' .' );
+						$limit_type = trim( $limit_type, ' .' );
 
 						if ( $limit_type === $file_info['extension'] ) {
 							$ok = true;

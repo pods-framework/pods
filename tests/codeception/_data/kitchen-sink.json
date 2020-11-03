@@ -2804,6 +2804,47 @@
     "currency_repeatable": "0",
     "currency_placeholder": ""
   },
+  "demo_currency_slider_default": {
+    "name": "demo_currency_slider_default",
+    "label": "Demo Currency Slider Default",
+    "description": "2 decimals, max length 12 , step 10, min 0, max 1000",
+    "help": "",
+    "class": "",
+    "type": "number",
+    "weight": 62,
+    "pick_object": "",
+    "pick_val": "",
+    "sister_id": "",
+    "required": "0",
+    "currency_format_type": "slider",
+    "currency_format_sign": "usd",
+    "currency_format_placement": "before",
+    "currency_format": "i18n",
+    "currency_decimals": "2",
+    "currency_decimal_handling": "none",
+    "currency_step": "10",
+    "currency_min": "0",
+    "currency_max": "1000",
+    "currency_max_length": "12",
+    "pick_post_status": [
+      "publish"
+    ],
+    "admin_only": "0",
+    "restrict_role": "0",
+    "restrict_capability": "0",
+    "hidden": "0",
+    "read_only": "0",
+    "roles_allowed": [
+      "administrator"
+    ],
+    "rest_read": "0",
+    "rest_write": "0",
+    "rest_pick_response": "array",
+    "rest_pick_depth": "2",
+    "unique": "0",
+    "currency_repeatable": "0",
+    "currency_placeholder": ""
+  },
   "demo_single_file_default_media_library_upload_tab": {
     "name": "demo_single_file_default_media_library_upload_tab",
     "label": "Demo Single File Default Media Library Upload Tab",

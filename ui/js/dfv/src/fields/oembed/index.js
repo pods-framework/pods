@@ -17,6 +17,7 @@ const Oembed = ( props ) => {
 	} = props;
 
 	const {
+		name,
 		oembed_height: height,
 		oembed_show_preview: showPreview,
 		oembed_width: width,
@@ -82,8 +83,16 @@ const Oembed = ( props ) => {
 					</p>
 
 					{ !! previewFailure
-						? <p>{ previewFailure }</p>
-						: <div dangerouslySetInnerHTML={ { __html: preview } } />
+						? (
+							<p className="pods-oembed-preview-failure">
+								{ previewFailure }
+							</p>
+						) : (
+							<div
+								className="pods-oembed-preview"
+								dangerouslySetInnerHTML={ { __html: preview } }
+							/>
+						)
 					}
 				</>
 			) }

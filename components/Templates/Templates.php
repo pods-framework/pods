@@ -396,11 +396,21 @@ class Pods_Templates extends PodsComponent {
 				),
 			),
 			array(
+				'name'       => 'show_restrict_message',
+				'label'      => __( 'Show no access message?', 'pods' ),
+				'default'    => 1,
+				'type'       => 'boolean',
+				'dependency' => true,
+			),
+			array(
 				'name'                  => 'restrict_message',
 				'label'                 => __( 'No access message' ),
 				'type'                  => 'wysiwyg',
 				'default'               => __( 'You do not have access to view this content.', 'pods' ),
 				'wysiwyg_editor_height' => 200,
+				'depends-on'            => array(
+					'show_restrict_message' => true,
+				),
 			)
 		);
 
@@ -522,7 +532,7 @@ class Pods_Templates extends PodsComponent {
 
 				$permission = (boolean) apply_filters( 'pods_templates_permission', $permission, $code, $template, $obj );
 
-				if ( ! $permission ) {
+				if ( ! $permission && pods_v( 'show_restrict_message', $options, true ) ) {
 					$message = pods_v( 'restrict_message', $options, __( 'You do not have access to view this content.', 'pods' ) );
 					return apply_filters( 'pods_templates_permission_denied', $message, $code, $template, $obj );
 				}

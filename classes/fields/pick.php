@@ -2171,7 +2171,7 @@ class PodsField_Pick extends PodsField {
 						if ( isset( $options['table_info']['pod']['object_fields'] ) && isset( $options['table_info']['pod']['object_fields'][ $display ] ) ) {
 							$search_data->field_index = $display;
 
-							$params['select'] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
+							$params['select'] .= ", `t`.`{$search_data->field_index}`";
 						} else {
 							$search_data->field_index = sanitize_key( $display );
 
@@ -2182,17 +2182,17 @@ class PodsField_Pick extends PodsField {
 								), true
 							)
 							) {
-								$params['select'] = "`t`.`{$search_data->field_id}`, `d`.`{$search_data->field_index}`";
+								$params['select'] .= ", `d`.`{$search_data->field_index}`";
 							} elseif ( 'meta' === $options['table_info']['pod']['storage'] ) {
-								$params['select'] = "`t`.`{$search_data->field_id}`, `{$search_data->field_index}`.`meta_value` AS {$search_data->field_index}";
+								$params['select'] .= ", `{$search_data->field_index}`.`meta_value` AS {$search_data->field_index}";
 							} else {
-								$params['select'] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
+								$params['select'] .= ", `t`.`{$search_data->field_index}`";
 							}
 						}//end if
 					} elseif ( isset( $options['table_info']['object_fields'] ) && isset( $options['table_info']['object_fields'][ $display ] ) ) {
 						$search_data->field_index = $display;
 
-						$params['select'] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
+						$params['select'] .= ", `t`.`{$search_data->field_index}`";
 					}//end if
 				}//end if
 

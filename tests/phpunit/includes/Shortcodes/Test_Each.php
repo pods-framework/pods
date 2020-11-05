@@ -54,6 +54,17 @@ class Test_Each extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$params = array(
 			'pod'              => self::$pod_name,
 			'pod_id'           => self::$pod_id,
+			'name'             => 'images',
+			'type'             => 'file',
+			'file_format_type' => 'multi',
+			'file_type'        => 'images',
+		);
+
+		pods_api()->save_field( $params );
+
+		$params = array(
+			'pod'              => self::$pod_name,
+			'pod_id'           => self::$pod_id,
 			'name'             => 'related_field',
 			'type'             => 'pick',
 			'pick_object'      => 'post_type',
@@ -106,6 +117,45 @@ class Test_Each extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		);
 		$content = base64_encode( '{@number1}_{@number2}' );
 		$this->assertEquals( '1_12_43_94_165_25', do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_sub_template]" ) );
+
+		/**
+		 * Image tests.
+		 */
+
+		$image_ids = array();
+		$image_ids[] = $this->factory()->attachment->create();
+		$image_ids[] = $this->factory()->attachment->create();
+		$image_ids[] = $this->factory()->attachment->create();
+
+		$main_id = $pod->save(
+			array(
+				'ID'     => $main_id,
+				'images' => $image_ids,
+			)
+		);
+
+		$content = base64_encode( '{@_src}' );
+		$compare = '';
+		foreach ( $image_ids as $img ) {
+			$compare .= pods_image_url( $img, 'medium' );
+		}
+
+		// Make sure the media Pod exists.
+		// @todo Validate when there is not media Pod active. Requires refactor of caching.
+		$this->assertTrue( pods( 'media' )->valid() );
+
+		// Should return all image links.
+		$this->assertEquals( $compare, do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='images']{$content}[/pod_sub_template]" ) );
+
+		// Use media object for Pod related fields.
+		$content = base64_encode( '{@title}' );
+		$compare = '';
+		foreach ( $image_ids as $img ) {
+			$compare .= get_the_title( $img );
+		}
+
+		// Should still return all image links.
+		$this->assertEquals( $compare, do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='images']{$content}[/pod_sub_template]" ) );
 	}
 
 	public function test_each_with_nested_if() {

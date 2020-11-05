@@ -6,6 +6,7 @@ import Boolean from 'dfv/src/fields/boolean';
 import Code from 'dfv/src/fields/code';
 import Color from 'dfv/src/fields/color';
 import Currency from 'dfv/src/fields/currency';
+import DateTime from 'dfv/src/fields/datetime';
 import EditPod from 'dfv/src/admin/edit-pod/edit-pod';
 import Email from 'dfv/src/fields/email';
 import File from 'dfv/src/fields/file';
@@ -41,6 +42,14 @@ const FIELD_MAP = {
 	},
 	currency: {
 		fieldComponent: Currency,
+		renderer: reactRenderer,
+	},
+	date: {
+		fieldComponent: DateTime,
+		renderer: reactRenderer,
+	},
+	datetime: {
+		fieldComponent: DateTime,
 		renderer: reactRenderer,
 	},
 	'edit-pod': {
@@ -93,6 +102,10 @@ const FIELD_MAP = {
 	},
 	text: {
 		fieldComponent: Text,
+		renderer: reactRenderer,
+	},
+	time: {
+		fieldComponent: DateTime,
 		renderer: reactRenderer,
 	},
 	website: {

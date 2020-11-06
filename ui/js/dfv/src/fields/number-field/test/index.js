@@ -43,7 +43,7 @@ describe( 'Number field component', () => {
 				number_format: '9.999,99',
 				number_format_soft: '0',
 				number_format_type: 'number',
-				number_max_length: 5,
+				number_max_length: '5',
 				number_placeholder: 'Number Field',
 			},
 		};
@@ -66,7 +66,7 @@ describe( 'Number field component', () => {
 				number_format_soft: '0',
 				number_format_type: 'number',
 				number_html5: '1',
-				number_max_length: 5,
+				number_max_length: '5',
 				number_placeholder: 'Number Field',
 			},
 		};
@@ -90,9 +90,9 @@ describe( 'Number field component', () => {
 				number_format_soft: '0',
 				number_format_type: 'slider',
 				number_placeholder: 'Number Field',
-				number_max: 1000,
-				number_min: -1000,
-				number_step: 100,
+				number_max: '1000',
+				number_min: '-1000',
+				number_step: '100',
 			},
 		};
 

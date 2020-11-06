@@ -61,7 +61,7 @@ describe( 'convertjQueryUIDateFormatToMomentFormat', () => {
 
 describe( 'convertjQueryUITimeFormatToMomentFormat', () => {
 	it( 'converts date and time formats', () => {
-		expect( convertjQueryUITimeFormatToMomentFormat( 'hh:mm tt' ) ).toEqual( 'hh:MM tt' );
+		expect( convertjQueryUITimeFormatToMomentFormat( 'hh:mm tt' ) ).toEqual( 'hh:mm aa' );
 	} );
 
 	it( 'handles invalid formats', () => {

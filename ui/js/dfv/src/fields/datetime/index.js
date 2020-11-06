@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Datetime from 'react-datetime';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 
 import { toBool } from 'dfv/src/helpers/booleans';
@@ -8,6 +9,7 @@ import {
 	convertjQueryUIDateFormatToMomentFormat,
 	convertjQueryUITimeFormatToMomentFormat,
 	convertPodsDateFormatToMomentFormat,
+	getArrayOfYearsFromJqueryUIYearRange,
 } from 'dfv/src/helpers/dateFormats';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
@@ -22,6 +24,52 @@ const checkForHTML5BrowserSupport = ( fieldType ) => {
 	return ( input.value !== 'not-a-date' );
 };
 
+// Determine date and time formats based on the field's config values.
+const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCustom ) => {
+	// @todo Replace default with window.podsAdminConfig.datetime.date_format
+	let format = convertPHPDateFormatToMomentFormat( 'F j, Y' );
+
+	switch ( formatType ) {
+		case 'format':
+			format = convertPodsDateFormatToMomentFormat( podsFormat );
+			break;
+		case 'custom':
+			format = ( !! formatCustomJS )
+				? convertjQueryUIDateFormatToMomentFormat( formatCustomJS )
+				: convertPHPDateFormatToMomentFormat( formatCustom );
+			break;
+		case 'wp':
+		default:
+			break;
+	}
+
+	return format;
+};
+
+const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ) => {
+	// @todo Replace default with window.podsAdminConfig.datetime.time_format
+	let format = convertPHPDateFormatToMomentFormat( 'g:i a' );
+
+	switch ( timeFormatType ) {
+		case '12':
+			format = convertPodsDateFormatToMomentFormat( podsTimeFormat );
+			break;
+		case '24':
+			format = convertPodsDateFormatToMomentFormat( podsTimeFormat24 );
+			break;
+		case 'custom':
+			format = ( !! timeFormatCustomJS )
+				? convertjQueryUITimeFormatToMomentFormat( timeFormatCustomJS )
+				: convertPHPDateFormatToMomentFormat( timeFormatCustom );
+			break;
+		case 'wp':
+		default:
+			break;
+	}
+
+	return format;
+};
+
 const DateTime = ( props ) => {
 	const {
 		value,
@@ -32,7 +80,6 @@ const DateTime = ( props ) => {
 	const {
 		name,
 		type = 'datetime', // 'datetime', 'time', or 'date'
-		// datetime_allow_empty: allowEmpty,
 		datetime_format: podsFormat,
 		datetime_format_custom: formatCustom,
 		datetime_format_custom_js: formatCustomJS,
@@ -43,7 +90,7 @@ const DateTime = ( props ) => {
 		datetime_time_format_custom_js: timeFormatCustomJS,
 		datetime_time_type: timeFormatType = 'wp', // 'wp, '12', '24', or 'custom'
 		datetime_type: dateFormatType = 'wp', // 'wp', 'format', or 'custom'
-		// datetime_year_range_custom: yearRangeCustom,
+		datetime_year_range_custom: yearRangeCustom,
 	} = fieldConfig;
 
 	const handleInputFieldChange = ( event ) => setValue( event.target.value );
@@ -64,43 +111,44 @@ const DateTime = ( props ) => {
 
 	const useHTML5Field = toBool( html5 ) && checkForHTML5BrowserSupport( 'datetime-local' );
 
-	// Determine date and time formats.
-	// @todo Replace default with window.podsAdminConfig.datetime.date_format
-	let momentDateFormat = convertPHPDateFormatToMomentFormat( 'F j, Y' );
+	const yearRange = useMemo(
+		() => getArrayOfYearsFromJqueryUIYearRange(
+			yearRangeCustom,
+			new Date().getFullYear(),
+			new Date( value ).getFullYear()
+		),
+		[ yearRangeCustom, value ]
+	);
 
-	switch ( dateFormatType ) {
-		case 'format':
-			momentDateFormat = convertPodsDateFormatToMomentFormat( podsFormat );
-			break;
-		case 'custom':
-			momentDateFormat = ( !! formatCustomJS )
-				? convertjQueryUIDateFormatToMomentFormat( formatCustomJS )
-				: convertPHPDateFormatToMomentFormat( formatCustom );
-			break;
-		case 'wp':
-		default:
-			break;
-	}
+	// Set the inital view date to the current date, unless the range of years is before
+	// the current time.
+	const initialViewDate = ( yearRange && yearRange[ yearRange.length - 1 ] < new Date().getFullYear() )
+		? new Date( yearRange[ 0 ], 0, 1 )
+		: new Date();
 
-	// @todo Replace default with window.podsAdminConfig.datetime.time_format
-	let momentTimeFormat = convertPHPDateFormatToMomentFormat( 'g:i a' );
+	const isValidDate = ( current ) => {
+		if ( 'undefined' === typeof yearRange || ! yearRange.length ) {
+			return true;
+		}
 
-	switch ( timeFormatType ) {
-		case '12':
-			momentTimeFormat = convertPodsDateFormatToMomentFormat( podsTimeFormat );
-			break;
-		case '24':
-			momentTimeFormat = convertPodsDateFormatToMomentFormat( podsTimeFormat24 );
-			break;
-		case 'custom':
-			momentTimeFormat = ( !! timeFormatCustomJS )
-				? convertjQueryUITimeFormatToMomentFormat( timeFormatCustomJS )
-				: convertPHPDateFormatToMomentFormat( timeFormatCustom );
-			break;
-		case 'wp':
-		default:
-			break;
-	}
+		const beginningOfFirstYearInRange = moment( `${ yearRange[ 0 ] }-01-01` );
+		const endOfLastYearInRange = moment( `${ yearRange[ yearRange.length - 1 ] }-12-31` );
+
+		const isAfterStartYear = current.isSameOrAfter( beginningOfFirstYearInRange );
+		const isBeforeEndYear = current.isSameOrBefore( endOfLastYearInRange );
+
+		return isAfterStartYear && isBeforeEndYear;
+	};
+
+	const momentDateFormat = useMemo(
+		() => getMomentDateFormat( dateFormatType, podsFormat, formatCustomJS, formatCustom ),
+		[ dateFormatType, podsFormat, formatCustomJS, formatCustom ]
+	);
+
+	const momentTimeFormat = useMemo(
+		() => getMomentTimeFormat( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ),
+		[ timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ]
+	);
 
 	// If we can use an HTML5 input field, we can just return an input field.
 	if ( useHTML5Field ) {
@@ -109,7 +157,7 @@ const DateTime = ( props ) => {
 				name={ name }
 				id={ `pods-form-ui-${ name }` }
 				className="pods-form-ui-field pods-form-ui-field-type-datetime"
-				type="datetime-local"
+				type={ 'datetime' === type ? 'datetime-local' : type }
 				value={ value }
 				onChange={ handleInputFieldChange }
 			/>
@@ -117,17 +165,14 @@ const DateTime = ( props ) => {
 	}
 
 	return (
-		<>
-			<Datetime
-				value={ value }
-				onChange={ handleChange }
-				dateFormat={ includeDateField && momentDateFormat }
-				timeFormat={ includeTimeField && momentTimeFormat }
-			/>
-			{ `TESTING:\n date format: ${ momentDateFormat }` }
-			<br />
-			{ `TESTING:\n time format: ${ momentTimeFormat }` }
-		</>
+		<Datetime
+			value={ value }
+			onChange={ handleChange }
+			dateFormat={ includeDateField && momentDateFormat }
+			timeFormat={ includeTimeField && momentTimeFormat }
+			isValidDate={ isValidDate }
+			initialViewDate={ initialViewDate }
+		/>
 	);
 };
 

@@ -1,3 +1,5 @@
+import { range } from 'lodash';
+
 // For PHP symbols, see https://www.php.net/manual/en/datetime.format.php
 // For Moment.js symbols, see https://momentjs.com/docs/#/displaying/format/
 const PHP_DATE_FORMAT_REPLACEMENTS = new Map( [
@@ -164,4 +166,37 @@ export const convertPodsDateFormatToMomentFormat = ( podsFormat, is24Hour = fals
 		default:
 			return '';
 	}
+};
+
+// Parse range of years, either relative to today's year (-nn:+nn),
+// relative to currently displayed year (c-nn:c+nn), absolute (nnnn:nnnn),
+// or a combination of the above (nnnn:-n).
+export const getArrayOfYearsFromJqueryUIYearRange = ( yearRange, thisYear, displayedYear ) => {
+	if ( ! yearRange ) {
+		return undefined;
+	}
+
+	const years = yearRange.split( ':' );
+
+	const determineYear = ( value ) => {
+		let result = thisYear;
+
+		if ( value.match( /c[+\-].*/ ) ) {
+			// Relative to the displayed year.
+			result = displayedYear + parseInt( value.substring( 1 ), 10 );
+		} else if ( value.match( /[+\-].*/ ) ) {
+			// Relative to the current year.
+			result = thisYear + parseInt( value, 10 );
+		} else {
+			// Absolute year.
+			result = parseInt( value );
+		}
+
+		return isNaN( result ) ? thisYear : result;
+	};
+
+	const startYear = determineYear( years[ 0 ] );
+	const endYear = Math.max( startYear, determineYear( years[ 1 ] || '' ) );
+
+	return range( startYear, endYear + 1 );
 };

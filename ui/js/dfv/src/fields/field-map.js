@@ -6,6 +6,7 @@ import Boolean from 'dfv/src/fields/boolean';
 import Code from 'dfv/src/fields/code';
 import Color from 'dfv/src/fields/color';
 import Currency from 'dfv/src/fields/currency';
+import DateField from 'dfv/src/fields/date-field';
 import DateTime from 'dfv/src/fields/datetime';
 import EditPod from 'dfv/src/admin/edit-pod/edit-pod';
 import Email from 'dfv/src/fields/email';
@@ -20,6 +21,7 @@ import Phone from 'dfv/src/fields/phone';
 import Pick from 'dfv/src/fields/pick';
 import Slug from 'dfv/src/fields/slug';
 import Text from 'dfv/src/fields/text';
+import Time from 'dfv/src/fields/time';
 import Website from 'dfv/src/fields/website';
 import Wysiwyg from 'dfv/src/fields/wysiwyg';
 
@@ -45,7 +47,7 @@ const FIELD_MAP = {
 		renderer: reactRenderer,
 	},
 	date: {
-		fieldComponent: DateTime,
+		fieldComponent: DateField,
 		renderer: reactRenderer,
 	},
 	datetime: {
@@ -105,7 +107,7 @@ const FIELD_MAP = {
 		renderer: reactRenderer,
 	},
 	time: {
-		fieldComponent: DateTime,
+		fieldComponent: Time,
 		renderer: reactRenderer,
 	},
 	website: {

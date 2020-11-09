@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import formatNumericString from 'dfv/src/helpers/formatNumericString';
-import { toBool } from 'dfv/src/helpers/booleans';
+import { formatNumberWithPodsFormat } from 'dfv/src/helpers/formatNumberWithPodsFormat';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
@@ -30,7 +29,7 @@ const Currency = ( {
 	} = fieldConfig;
 
 	const handleBlur = ( event ) => {
-		const formattedValue = formatNumericString(
+		const formattedValue = formatNumberWithPodsFormat(
 			event.target.value,
 			decimals,
 			format,
@@ -62,7 +61,7 @@ const Currency = ( {
 				/>
 
 				<div className="pods-slider-field-display">
-					{ formatNumericString( value, decimals, format, decimalHandling === 'remove' ) }
+					{ formatNumberWithPodsFormat( value, decimals, format, decimalHandling === 'remove' ) }
 				</div>
 			</div>
 		);

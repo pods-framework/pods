@@ -48,7 +48,7 @@ function handleFiniteNumbers( number, decimals, decimalPoint, thousandsPoint ) {
 
 // Equivalent to php's number_format, borrowed from
 // https://gist.github.com/VassilisPallas/d73632e9de4794b7dd10b7408f7948e8
-const numberFormat = (
+const formatNumber = (
 	number,
 	decimals = 0,
 	decimalPoint = '.',
@@ -65,4 +65,4 @@ const numberFormat = (
 	return handleFiniteNumbers( number, decimals, decimalPoint, thousandsPoint );
 };
 
-export default numberFormat;
+export default formatNumber;

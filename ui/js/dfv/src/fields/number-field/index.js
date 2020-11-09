@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import formatNumericString from 'dfv/src/helpers/formatNumericString';
+import {
+	parseFloatWithPodsFormat,
+	formatNumberWithPodsFormat,
+} from 'dfv/src/helpers/formatNumberWithPodsFormat';
+
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './number-field.scss';
@@ -26,20 +30,28 @@ const NumberField = ( {
 		number_step: step,
 	} = fieldConfig;
 
-	const [ currentValue, setCurrentValue ] = useState( value );
+	// The actual value from the store could be either a float or
+	// a formatted string, so be able to handle either one, but keep
+	// a formatted version available locally.
+	const [ formattedValue, setFormattedValue ] = useState(
+		formatNumberWithPodsFormat( value, decimals, format, softFormat )
+	);
 
-	const handleBlur = ( event ) => {
-		const formattedValue = formatNumericString(
-			event.target.value,
+	const handleChange = ( event ) => {
+		setValue( parseFloatWithPodsFormat( event.target.value, format ) );
+		setFormattedValue( event.target.value );
+	};
+
+	const reformatFormattedValue = () => {
+		const newFormattedValue = formatNumberWithPodsFormat(
+			value,
 			decimals,
 			format,
 			softFormat
 		);
 
-		setValue( formattedValue || '' );
+		setFormattedValue( newFormattedValue );
 	};
-
-	const handleChange = ( event ) => setCurrentValue( event.target.value );
 
 	if ( 'slider' === type ) {
 		return (
@@ -50,16 +62,17 @@ const NumberField = ( {
 					name={ htmlAttributes.name }
 					id={ htmlAttributes.id }
 					placeholder={ placeholder }
-					value={ parseFloat( value ) || min || 0 }
+					value={ value || min || 0 }
 					readOnly={ !! readOnly }
 					onChange={ handleChange }
+					onBlur={ reformatFormattedValue }
 					min={ parseInt( min, 10 ) || undefined }
 					max={ parseInt( max, 10 ) || undefined }
 					step={ parseFloat( step ) || undefined }
 				/>
 
 				<div className="pods-slider-field-display">
-					{ formatNumericString( value, decimals, format, softFormat ) }
+					{ formattedValue }
 				</div>
 			</div>
 		);
@@ -77,11 +90,11 @@ const NumberField = ( {
 			id={ htmlAttributes.id }
 			placeholder={ placeholder }
 			maxLength={ processedMaxLength }
-			value={ currentValue }
+			value={ formattedValue }
 			step={ html5 ? 'any' : undefined }
 			readOnly={ !! readOnly }
 			onChange={ handleChange }
-			onBlur={ handleBlur }
+			onBlur={ reformatFormattedValue }
 		/>
 	);
 };
@@ -93,7 +106,10 @@ NumberField.defaultProps = {
 NumberField.propTypes = {
 	fieldConfig: FIELD_PROP_TYPE_SHAPE,
 	setValue: PropTypes.func.isRequired,
-	value: PropTypes.string,
+	value: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.number,
+	] ),
 };
 
 export default NumberField;

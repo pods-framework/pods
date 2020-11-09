@@ -126,6 +126,6 @@ describe( 'Number field component', () => {
 
 		input.simulate( 'blur' );
 
-		expect( props.setValue ).toHaveBeenCalledWith( '1.000,00' );
+		expect( props.setValue ).toHaveBeenCalledWith( 1000 );
 	} );
 } );

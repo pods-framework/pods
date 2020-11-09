@@ -119,10 +119,13 @@ describe( 'Number field component', () => {
 
 		const wrapper = mount( <NumberField { ...props } /> );
 		const input = wrapper.find( 'input' ).first();
+
 		input.simulate( 'change', {
 			target: { value: '1000' },
 		} );
 
-		expect( props.setValue ).toHaveBeenCalledWith( '1.000.00' );
+		input.simulate( 'blur' );
+
+		expect( props.setValue ).toHaveBeenCalledWith( '1.000,00' );
 	} );
 } );

@@ -2,10 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Pick from '../pick';
-import {
-	toBool,
-	toNumericBool,
-} from 'dfv/src/helpers/booleans';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
@@ -20,10 +16,6 @@ const Boolean = ( {
 		boolean_yes_label: yesLabel = 'Yes',
 	} = fieldConfig;
 
-	// Typecast values.
-	const numericBooleanValue = toNumericBool( value );
-	const setBooleanValue = ( newValue ) => setValue( toBool( newValue ) );
-
 	const options = [ { value: '1', label: yesLabel } ];
 
 	if ( 'checkbox' !== formatType ) {
@@ -37,8 +29,8 @@ const Boolean = ( {
 				pick_format_type: 'single',
 				pick_format_single: formatType,
 			} }
-			value={ '1' === numericBooleanValue ? '1' : '0' }
-			setValue={ setBooleanValue }
+			value={ value }
+			setValue={ setValue }
 			data={ options }
 		/>
 	);

@@ -60,8 +60,8 @@ describe( 'Boolean field component', () => {
 		expect( labels.at( 0 ).text() ).toEqual( 'True' );
 		expect( labels.at( 1 ).text() ).toEqual( 'False' );
 
-		expect( props.setValue ).toHaveBeenNthCalledWith( 1, true );
-		expect( props.setValue ).toHaveBeenNthCalledWith( 2, false );
+		expect( props.setValue ).toHaveBeenNthCalledWith( 1, '1' );
+		expect( props.setValue ).toHaveBeenNthCalledWith( 2, '0' );
 	} );
 
 	it( 'renders a dropdown menu with custom labels and handles changes', () => {
@@ -87,6 +87,6 @@ describe( 'Boolean field component', () => {
 		expect( wrapper.find( 'option' ).at( 1 ).text() ).toEqual( 'True' );
 		expect( wrapper.find( 'option' ).at( 2 ).text() ).toEqual( 'False' );
 
-		expect( props.setValue ).toHaveBeenNthCalledWith( 1, true );
+		expect( props.setValue ).toHaveBeenNthCalledWith( 1, '1' );
 	} );
 } );

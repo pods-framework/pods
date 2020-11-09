@@ -2852,7 +2852,7 @@
     "description": "2 decimals, max length 12 , step 10, min 0, max 1000",
     "help": "",
     "class": "",
-    "type": "number",
+    "type": "currency",
     "weight": 62,
     "pick_object": "",
     "pick_val": "",

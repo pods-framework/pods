@@ -67,7 +67,7 @@ export const formatNumberWithPodsFormat = (
 	trimZeroDecimals = false,
 ) => {
 	// Skip empty strings or undefined.
-	if ( '' === newValue || undefined === newValue ) {
+	if ( '' === newValue || undefined === newValue || null === newValue ) {
 		return '0';
 	}
 

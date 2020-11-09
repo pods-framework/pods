@@ -111,13 +111,13 @@ describe( 'formatNumberWithPodsFormat.js', () => {
 	} );
 
 	it( 'handles non-string and non-numeric values', () => {
-		expect( formatNumberWithPodsFormat( undefined, 0, 'i18n' ) ).toEqual( undefined );
+		expect( formatNumberWithPodsFormat( undefined, 0, 'i18n' ) ).toEqual( '0' );
 
-		expect( formatNumberWithPodsFormat( null, 2, 'i18n' ) ).toEqual( undefined );
+		expect( formatNumberWithPodsFormat( null, 2, 'i18n' ) ).toEqual( '0' );
 
-		expect( formatNumberWithPodsFormat( 123, 2, 'i18n' ) ).toEqual( 123 );
+		expect( formatNumberWithPodsFormat( 123, 2, 'i18n' ) ).toEqual( '123.00' );
 
-		expect( formatNumberWithPodsFormat( '', 0, 'i18n' ) ).toEqual( 0 );
+		expect( formatNumberWithPodsFormat( '', 0, 'i18n' ) ).toEqual( '0' );
 
 		expect( formatNumberWithPodsFormat( 'abc', 0, 'i18n' ) ).toEqual( undefined );
 	} );

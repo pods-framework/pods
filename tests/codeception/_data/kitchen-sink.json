@@ -2144,7 +2144,7 @@
     "required": "0",
     "time_type": "custom",
     "time_format_custom": "h:i:s A",
-    "time_format_custom_js": "h:i:s A",
+    "time_format_custom_js": "",
     "time_format": "h_mm_A",
     "time_format_24": "hh_mm",
     "time_allow_empty": "0",

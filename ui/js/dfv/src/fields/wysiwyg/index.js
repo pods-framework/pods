@@ -42,6 +42,7 @@ const Wysiwyg = ( props ) => {
 	} = fieldConfig;
 
 	if ( 'quill' === editor || 'cleditor' === editor ) {
+		// The "theme" option supports: snow (CLEditor-like) | bubble (simple barebones WYSIWYG).
 		return (
 			<ReactQuill
 				value={ value || '' }

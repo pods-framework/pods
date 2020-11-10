@@ -93,19 +93,6 @@ const DateTime = ( props ) => {
 		datetime_year_range_custom: yearRangeCustom,
 	} = fieldConfig;
 
-	const handleInputFieldChange = ( event ) => setValue( event.target.value );
-
-	const handleChange = ( newValue ) => {
-		// Receives the selected moment object, if the date in the input is valid.
-		// If the date in the input is not valid, the callback receives the value of
-		// the input a string.
-		setValue(
-			'string' === typeof momentValue
-				? newValue
-				: newValue.format( 'dddd, MMMM Do YYYY, h:mm:ss a' )
-		);
-	};
-
 	const includeTimeField = 'datetime' === type || 'time' === type;
 	const includeDateField = 'datetime' === type || 'date' === type;
 
@@ -119,6 +106,39 @@ const DateTime = ( props ) => {
 		),
 		[ yearRangeCustom, value ]
 	);
+
+	const momentDateFormat = useMemo(
+		() => getMomentDateFormat( dateFormatType, podsFormat, formatCustomJS, formatCustom ),
+		[ dateFormatType, podsFormat, formatCustomJS, formatCustom ]
+	);
+
+	const momentTimeFormat = useMemo(
+		() => getMomentTimeFormat( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ),
+		[ timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ]
+	);
+
+	const handleInputFieldChange = ( event ) => setValue( event.target.value );
+
+	const handleChange = ( newValue ) => {
+		// Use a full date and time format for our value string by default.
+		let valueFormat = `${ momentDateFormat }, ${ momentTimeFormat }`;
+
+		// Unless we're only showing the date OR the time picker.
+		if ( ! includeTimeField ) {
+			valueFormat = momentDateFormat;
+		} else if ( ! includeDateField ) {
+			valueFormat = momentTimeFormat;
+		}
+
+		// Receives the selected moment object, if the date in the input is valid.
+		// If the date in the input is not valid, the callback receives the value of
+		// the input a string.
+		setValue(
+			moment.isMoment( newValue )
+				? newValue.format( valueFormat )
+				: newValue
+		);
+	};
 
 	// Set the inital view date to the current date, unless the range of years is before
 	// the current time.
@@ -140,16 +160,6 @@ const DateTime = ( props ) => {
 		return isAfterStartYear && isBeforeEndYear;
 	};
 
-	const momentDateFormat = useMemo(
-		() => getMomentDateFormat( dateFormatType, podsFormat, formatCustomJS, formatCustom ),
-		[ dateFormatType, podsFormat, formatCustomJS, formatCustom ]
-	);
-
-	const momentTimeFormat = useMemo(
-		() => getMomentTimeFormat( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ),
-		[ timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ]
-	);
-
 	// If we can use an HTML5 input field, we can just return an input field.
 	if ( useHTML5Field ) {
 		return (
@@ -166,12 +176,15 @@ const DateTime = ( props ) => {
 
 	return (
 		<Datetime
-			value={ value }
-			onChange={ handleChange }
+			initialValue={ value }
+			onClose={ handleChange }
 			dateFormat={ includeDateField && momentDateFormat }
 			timeFormat={ includeTimeField && momentTimeFormat }
 			isValidDate={ isValidDate }
 			initialViewDate={ initialViewDate }
+			inputProps={ {
+				onBlur: ( event ) => handleChange( event.target.value ),
+			} }
 		/>
 	);
 };

@@ -52,18 +52,7 @@ const DependentFieldOption = ( {
 		processedAllOptionValues.pick_object = `${ value }-${ dependencyValues.pick_val }`;
 	}
 
-	const handleInputChange = ( newValue ) => {
-		// If there's a default, then don't allow an empty value.
-		const newValueWithDefault = newValue || defaultValue;
-
-		if ( 'boolean' === field.type ) {
-			const binaryStringFromBoolean = newValueWithDefault ? '1' : '0';
-
-			setOptionValue( name, binaryStringFromBoolean );
-		} else {
-			setOptionValue( name, newValue );
-		}
-	};
+	const handleInputChange = ( newValue ) => setOptionValue( name, newValue );
 
 	// The data for the "Bidirection Field" (or "sister_id") works differently
 	// from all other fields - the data isn't loaded along with the others.

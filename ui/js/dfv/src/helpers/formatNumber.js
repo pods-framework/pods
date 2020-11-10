@@ -36,14 +36,11 @@ function handleFiniteNumbers( number, decimals, decimalPoint, thousandsPoint ) {
 		throw new TypeError( 'number is not finite number' );
 	}
 
-	if ( 'auto' === decimals ) {
-		const len = number.toString().split( '.' ).length;
-		decimals = len > 1 ? len : 0;
-	}
+	const unsplitValue = ( 'auto' === decimals )
+		? ( '' + parseFloat( number ) ).replace( '.', decimalPoint )
+		: parseFloat( number ).toFixed( decimals ).replace( '.', decimalPoint );
 
-	return splitThousands(
-		parseFloat( number ).toFixed( decimals ).replace( '.', decimalPoint )
-	)( decimalPoint, thousandsPoint );
+	return splitThousands( unsplitValue )( decimalPoint, thousandsPoint );
 }
 
 // Equivalent to php's number_format, borrowed from

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -6,11 +6,14 @@ import {
 	formatNumberWithPodsFormat,
 } from 'dfv/src/helpers/formatNumberWithPodsFormat';
 
+import { numberValidator } from 'dfv/src/helpers/validators';
+
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './currency.scss';
 
 const Currency = ( {
+	addValidationRules,
 	fieldConfig,
 	value,
 	setValue,
@@ -19,13 +22,13 @@ const Currency = ( {
 		htmlAttr: htmlAttributes = {},
 		readonly: readOnly,
 		currency_decimal_handling: decimalHandling = 'none',
-		currency_decimals: decimals,
+		currency_decimals: decimalMaxLength,
 		currency_format: format,
 		currency_format_sign: formatSign,
 		currency_format_type: type = 'number',
 		currency_html5: html5,
 		currency_max: max,
-		currency_max_length: maxLength,
+		currency_max_length: digitMaxLength,
 		currency_min: min,
 		currency_placeholder: placeholder,
 		currency_step: step,
@@ -35,8 +38,17 @@ const Currency = ( {
 	// a formatted string, so be able to handle either one, but keep
 	// a formatted version available locally.
 	const [ formattedValue, setFormattedValue ] = useState(
-		formatNumberWithPodsFormat( value, decimals, format, decimalHandling === 'remove' )
+		formatNumberWithPodsFormat( value, format, decimalHandling === 'remove' )
 	);
+
+	useEffect( () => {
+		const numberValidationRule = {
+			rule: numberValidator( digitMaxLength, decimalMaxLength, format ),
+			condition: () => true,
+		};
+
+		addValidationRules( [ numberValidationRule ] );
+	}, [] );
 
 	const handleChange = ( event ) => {
 		setValue( parseFloatWithPodsFormat( event.target.value, format ) );
@@ -46,7 +58,6 @@ const Currency = ( {
 	const reformatFormattedValue = () => {
 		const newFormattedValue = formatNumberWithPodsFormat(
 			value,
-			decimals,
 			format,
 			decimalHandling === 'remove'
 		);
@@ -92,7 +103,6 @@ const Currency = ( {
 				name={ htmlAttributes.name }
 				id={ htmlAttributes.id }
 				placeholder={ placeholder }
-				maxLength={ -1 !== parseInt( maxLength, 10 ) ? maxLength : undefined }
 				step={ html5 ? 'any' : undefined }
 				value={ formattedValue }
 				readOnly={ !! readOnly }
@@ -108,6 +118,7 @@ Currency.defaultProps = {
 };
 
 Currency.propTypes = {
+	addValidationRules: PropTypes.func.isRequired,
 	fieldConfig: FIELD_PROP_TYPE_SHAPE,
 	setValue: PropTypes.func.isRequired,
 	value: PropTypes.oneOfType( [

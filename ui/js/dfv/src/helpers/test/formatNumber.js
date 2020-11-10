@@ -2,6 +2,9 @@ import formatNumber from '../formatNumber';
 
 describe( 'formatNumber', () => {
 	it( 'formats numbers correctly', () => {
+		expect( formatNumber( 132323232320.1234, 'auto', ',', '.' ) ).toEqual( '132.323.232.320,1234' );
+		expect( formatNumber( 132323232320.321, 'auto', ',', '.' ) ).toEqual( '132.323.232.320,321' );
+
 		expect( formatNumber( 132323232320.321, 2, ',', '.' ) ).toEqual( '132.323.232.320,32' );
 
 		expect( formatNumber( 132323232320.321, 0, ',', '.' ) ).toEqual( '132.323.232.320' );

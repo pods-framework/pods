@@ -53,7 +53,6 @@ describe( 'Number field component', () => {
 
 		expect( input.props().type ).toEqual( 'text' );
 		expect( input.props().placeholder ).toEqual( 'Number Field' );
-		expect( input.props().maxLength ).toEqual( 5 );
 	} );
 
 	it( 'applies the relevant attributes to the number input field', () => {
@@ -76,7 +75,6 @@ describe( 'Number field component', () => {
 
 		expect( input.props().type ).toEqual( 'number' );
 		expect( input.props().placeholder ).toEqual( 'Number Field' );
-		expect( input.props().maxLength ).toEqual( 5 );
 		expect( input.props().step ).toEqual( 'any' );
 	} );
 

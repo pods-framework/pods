@@ -1,5 +1,12 @@
 import { __, sprintf } from '@wordpress/i18n';
 
+import {
+	parseFloatWithPodsFormat,
+	formatNumberWithPodsFormat,
+	getThousandsSeparatorFromPodsFormat,
+	getDecimalSeparatorFromPodsFormat,
+} from 'dfv/src/helpers/formatNumberWithPodsFormat';
+
 export const requiredValidator = ( fieldLabel ) => ( value ) => {
 	if ( ! value ) {
 		// translators: %s is the Field label of the required field.
@@ -32,6 +39,52 @@ export const emailValidator = () => ( value ) => {
 
 	if ( ! value || ! value.match( EMAIL_REGEX ) ) {
 		throw __( 'Invalid email address format.', 'pods' );
+	}
+
+	return true;
+};
+
+export const numberValidator = (
+	digitMaxLength,
+	decimalMaxLength,
+	format,
+) => ( value ) => {
+	const formattedNumber = formatNumberWithPodsFormat( value, format, false );
+
+	if ( ! formattedNumber ) {
+		return true;
+	}
+
+	// Split apart the formatted string.
+	const thousandsSeparator = getThousandsSeparatorFromPodsFormat( format );
+	const dotSeparator = getDecimalSeparatorFromPodsFormat( format );
+
+	const parts = formattedNumber.split( dotSeparator );
+
+	// Check the number of digits
+	const digits = parts[ 0 ].replace( new RegExp( thousandsSeparator, 'g' ), '' );
+
+	const integerMaxDigits = parseInt( digitMaxLength, 10 ) || -1;
+
+	if (
+		-1 !== integerMaxDigits &&
+		digits.length > integerMaxDigits
+	) {
+		throw __( 'Exceeded maximum digit length.', 'pods' );
+	}
+
+	// Check number of decimals
+	const decimals = parts[ 1 ] || '';
+
+	const integerMaxDecimals = parseInt( decimalMaxLength, 10 ) || -1;
+
+	console.log( parts, parts[ 1 ], decimals, decimals.length, integerMaxDecimals );
+
+	if (
+		-1 !== integerMaxDecimals &&
+		decimals.length > integerMaxDecimals
+	) {
+		throw __( 'Exceeded maximum decimal length.', 'pods' );
 	}
 
 	return true;

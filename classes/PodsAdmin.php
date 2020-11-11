@@ -1383,6 +1383,8 @@ class PodsAdmin {
 			'datetime'       => [
 				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
 				'gmt_offset'    => (int) get_option( 'gmt_offset', 0 ),
+				'date_format'   => get_option( 'date_format' ),
+				'time_format'   => get_option( 'time_format' ),
 			],
 		];
 

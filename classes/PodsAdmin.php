@@ -1366,38 +1366,7 @@ class PodsAdmin {
 
 		wp_localize_script( 'pods-dfv', 'podsAdminConfig', $config );
 
-		$this->admin_js_dfv_config();
-
 		pods_view( PODS_DIR . 'ui/admin/setup-edit-proto.php', compact( array_keys( get_defined_vars() ) ) );
-	}
-
-	/**
-	 * Handle setting up the JS DFV config.
-	 *
-	 * @since 2.8.0
-	 */
-	protected function admin_js_dfv_config() {
-		$config = [
-			'wp_locale'      => $GLOBALS['wp_locale'],
-			'currencies'     => PodsField_Currency::$currencies,
-			'datetime'       => [
-				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
-				'gmt_offset'    => (int) get_option( 'gmt_offset', 0 ),
-				'date_format'   => get_option( 'date_format' ),
-				'time_format'   => get_option( 'time_format' ),
-			],
-		];
-
-		/**
-		 * Allow filtering hte admin config data.
-		 *
-		 * @since TBD
-		 *
-		 * @param array $config The admin config data.
-		 */
-		$config = apply_filters( 'pods_admin_dfv_config', $config );
-
-		wp_localize_script( 'pods-dfv', 'podsDFVConfig', $config );
 	}
 
 	/**

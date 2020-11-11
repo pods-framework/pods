@@ -26,8 +26,10 @@ const checkForHTML5BrowserSupport = ( fieldType ) => {
 
 // Determine date and time formats based on the field's config values.
 const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCustom ) => {
-	// @todo Replace default with window.podsAdminConfig.datetime.date_format
-	let format = convertPHPDateFormatToMomentFormat( 'F j, Y' );
+	// eslint-disable-next-line camelcase
+	const wpDefaultFormat = window?.podsDFVConfig?.datetime?.date_format || 'F j, Y';
+
+	let format = convertPHPDateFormatToMomentFormat( wpDefaultFormat );
 
 	switch ( formatType ) {
 		case 'format':
@@ -47,8 +49,10 @@ const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCust
 };
 
 const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ) => {
-	// @todo Replace default with window.podsAdminConfig.datetime.time_format
-	let format = convertPHPDateFormatToMomentFormat( 'g:i a' );
+	// eslint-disable-next-line camelcase
+	const wpDefaultFormat = window?.podsDFVConfig?.datetime?.time_format || 'g:i a';
+
+	let format = convertPHPDateFormatToMomentFormat( wpDefaultFormat );
 
 	switch ( timeFormatType ) {
 		case '12':

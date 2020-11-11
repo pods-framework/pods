@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.5.2
 Requires PHP: 5.3
-Stable tag: 2.7.24-a-1
+Stable tag: 2.7.24
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,14 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.24 - November 5th 2020 =
+
+**Bug Fixes**
+
+* Fixed: Fix media `[each]` loop if no `media` Pod exists. #5882 (@JoryHogeveen)
+* Fixed: Fallback to default display field if custom option is invalid for relationship fields. #5839 & #5859 (@JoryHogeveen)
+* Fixed: Use `pathinfo` to properly validate file extension. #5876 (@JoryHogeveen)
 
 = 2.7.23 - October 30th 2020 =
 

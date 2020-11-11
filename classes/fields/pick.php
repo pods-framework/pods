@@ -2131,6 +2131,8 @@ class PodsField_Pick extends PodsField {
 				$search_data = pods_data();
 				$search_data->table( $options['table_info'] );
 
+				$default_field_index = $search_data->field_index;
+
 				if ( isset( $options['table_info']['pod'] ) && ! empty( $options['table_info']['pod'] ) && isset( $options['table_info']['pod']['name'] ) ) {
 					$search_data->pod    = $options['table_info']['pod']['name'];
 					$search_data->fields = $options['table_info']['pod']['fields'];
@@ -2171,7 +2173,7 @@ class PodsField_Pick extends PodsField {
 						if ( isset( $options['table_info']['pod']['object_fields'] ) && isset( $options['table_info']['pod']['object_fields'][ $display ] ) ) {
 							$search_data->field_index = $display;
 
-							$params['select'] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
+							$params['select'] .= ", `t`.`{$search_data->field_index}`";
 						} else {
 							$search_data->field_index = sanitize_key( $display );
 
@@ -2182,17 +2184,17 @@ class PodsField_Pick extends PodsField {
 								), true
 							)
 							) {
-								$params['select'] = "`t`.`{$search_data->field_id}`, `d`.`{$search_data->field_index}`";
+								$params['select'] .= ", `d`.`{$search_data->field_index}`";
 							} elseif ( 'meta' === $options['table_info']['pod']['storage'] ) {
-								$params['select'] = "`t`.`{$search_data->field_id}`, `{$search_data->field_index}`.`meta_value` AS {$search_data->field_index}";
+								$params['select'] .= ", `{$search_data->field_index}`.`meta_value` AS {$search_data->field_index}";
 							} else {
-								$params['select'] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
+								$params['select'] .= ", `t`.`{$search_data->field_index}`";
 							}
 						}//end if
 					} elseif ( isset( $options['table_info']['object_fields'] ) && isset( $options['table_info']['object_fields'][ $display ] ) ) {
 						$search_data->field_index = $display;
 
-						$params['select'] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
+						$params['select'] .= ", `t`.`{$search_data->field_index}`";
 					}//end if
 				}//end if
 
@@ -2381,13 +2383,18 @@ class PodsField_Pick extends PodsField {
 					$display_filter = pods_v( 'display_filter', pods_v( 'options', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) ) );
 
 					foreach ( $results as $result ) {
-						$result = get_object_vars( $result );
+						$result      = get_object_vars( $result );
+						$field_id    = $search_data->field_id;
+						$field_index = $search_data->field_index;
 
-						if ( ! isset( $result[ $search_data->field_id ], $result[ $search_data->field_index ] ) ) {
+						if ( ! isset( $result[ $field_index ] ) ) {
+							$field_index = $default_field_index;
+						}
+						if ( ! isset( $result[ $field_id ], $result[ $field_index ] ) ) {
 							continue;
 						}
 
-						$result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
+						$result[ $field_index ] = trim( $result[ $field_index ] );
 
 						$object      = '';
 						$object_type = '';
@@ -2401,11 +2408,11 @@ class PodsField_Pick extends PodsField {
 						}
 
 						if ( 0 < strlen( $display_filter ) ) {
-							$display_filter_args = pods_v( 'display_filter_args', pods_v( 'options', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) ) );
+							$display_filter_args = pods_v( 'display_filter_args', pods_v( 'options', pods_v( $field_index, $search_data->pod_data['object_fields'] ) ) );
 
 							$filter_args = array(
 								$display_filter,
-								$result[ $search_data->field_index ],
+								$result[ $field_index ],
 							);
 
 							if ( ! empty( $display_filter_args ) ) {
@@ -2416,22 +2423,22 @@ class PodsField_Pick extends PodsField {
 								}
 							}
 
-							$result[ $search_data->field_index ] = call_user_func_array( 'apply_filters', $filter_args );
+							$result[ $field_index ] = call_user_func_array( 'apply_filters', $filter_args );
 						}
 
 						if ( in_array( $options[ static::$type . '_object' ], array( 'site', 'network' ), true ) ) {
-							$result[ $search_data->field_index ] = $result[ $search_data->field_index ] . $result['path'];
-						} elseif ( '' === $result[ $search_data->field_index ] ) {
-							$result[ $search_data->field_index ] = '(No Title)';
+							$result[ $field_index ] = $result[ $field_index ] . $result['path'];
+						} elseif ( '' === $result[ $field_index ] ) {
+							$result[ $field_index ] = '(No Title)';
 						}
 
 						if ( 'admin_ajax_relationship' === $context ) {
-							$items[] = $this->build_dfv_field_item_data_recurse_item( $result[ $search_data->field_id ], $result[ $search_data->field_index ], (object) $object_params );
+							$items[] = $this->build_dfv_field_item_data_recurse_item( $result[ $field_id ], $result[ $field_index ], (object) $object_params );
 						} else {
-							$data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
+							$data[ $result[ $field_id ] ] = $result[ $field_index ];
 						}
 
-						$ids[] = $result[ $search_data->field_id ];
+						$ids[] = $result[ $field_id ];
 					}//end foreach
 				}//end if
 			}//end if

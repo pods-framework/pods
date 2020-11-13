@@ -1,19 +1,24 @@
 import React from 'react';
+import { omit } from 'lodash';
 import ReactDOM from 'react-dom';
-import FieldContainer from 'dfv/src/components/field-container';
 
 function reactRenderer( component, element, props ) {
 	const FieldComponent = component;
 
-	const Field = React.createFactory( FieldComponent );
-
 	// eslint-disable-next-line no-console
-	console.log( 'reactRenderer', FieldComponent, element, props );
+	console.log( element, props );
+
+	const fieldProps = {
+		...props.data,
+		fieldConfig: omit(
+			props.data?.fieldConfig || {},
+			[ '_field_object', 'output_options', 'item_id' ]
+		),
+	};
 
 	ReactDOM.render(
-		<FieldContainer
-			fieldComponent={ Field }
-			{ ...props.data }
+		<FieldComponent
+			{ ...fieldProps }
 		/>,
 		element
 	);

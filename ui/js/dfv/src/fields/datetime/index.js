@@ -56,10 +56,10 @@ const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, 
 
 	switch ( timeFormatType ) {
 		case '12':
-			format = convertPodsDateFormatToMomentFormat( podsTimeFormat );
+			format = convertPodsDateFormatToMomentFormat( podsTimeFormat, false );
 			break;
 		case '24':
-			format = convertPodsDateFormatToMomentFormat( podsTimeFormat24 );
+			format = convertPodsDateFormatToMomentFormat( podsTimeFormat24, true );
 			break;
 		case 'custom':
 			format = ( !! timeFormatCustomJS )

@@ -159,8 +159,10 @@ const DependentFieldOption = ( {
 
 	return (
 		<PodsFieldOption
-			field={ field }
-			data={ dataOptions }
+			field={ {
+				...field,
+				data: dataOptions || field.data,
+			} }
 			value={ processedValue || defaultValue }
 			setValue={ handleInputChange }
 		/>

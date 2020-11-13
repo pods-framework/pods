@@ -13,16 +13,6 @@ const SimpleSelect = ( {
 	placeholder = __( '-- Select One --', 'pods' ),
 	isMulti = false,
 } ) => {
-	// This custom sorting function is necessary because
-	// JS will change the ordering of the keys in the object
-	// if one of them is an empty string (which we may want as
-	// the placeholder value), and will send the empty string
-	// to the end of the object when it is enumerated.
-	//
-	const optionKeys = options.map( ( option ) => option.value )
-		// eslint-disable-next-line no-unused-vars
-		.sort( ( a, b ) => a[ 0 ] === '' ? -1 : 0 );
-
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-onchange */
 		<select
@@ -50,16 +40,24 @@ const SimpleSelect = ( {
 					</option>
 				) }
 
-				{ options.map( (
-					{
-						label: optionLabel,
-						value: optionValue,
-					} ) => {
+				{ options.map( ( { label: optionLabel, value: optionValue } ) => {
 					if ( 'string' === typeof optionValue ) {
 						return (
 							<option key={ optionValue } value={ optionValue }>
 								{ optionLabel }
 							</option>
+						);
+					} else if ( Array.isArray( optionValue ) ) {
+						return (
+							<optgroup label={ optionLabel } key={ optionLabel }>
+								{ optionValue.map( ( { value: suboptionValue, label: suboptionLabel } ) => {
+									return (
+										<option key={ suboptionValue } value={ suboptionValue }>
+											{ suboptionLabel }
+										</option>
+									);
+								} ) }
+							</optgroup>
 						);
 					} else if ( 'object' === typeof optionValue ) {
 						const optgroupOptions = Object.entries( optionValue );

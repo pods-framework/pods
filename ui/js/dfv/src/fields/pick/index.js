@@ -13,11 +13,44 @@ import ListSelect from './list-select';
 
 import { toBool } from 'dfv/src/helpers/booleans';
 import {
-	PICK_OPTIONS,
+	// PICK_OPTIONS,
 	FIELD_PROP_TYPE_SHAPE,
 } from 'dfv/src/config/prop-types';
 
 import './pick.scss';
+
+// We may get the data value as an array or an object.
+const formatDataFromProp = ( data ) => {
+	// Skip unless we're handling an object of values.
+	if ( 'object' !== typeof data || Array.isArray( data ) ) {
+		return data;
+	}
+
+	const entries = Object.entries( data );
+
+	return entries.reduce( ( accumulator, entry ) => {
+		if ( 'string' === typeof entry[ 1 ] ) {
+			return [
+				...accumulator,
+				{
+					label: entry[ 1 ],
+					value: entry[ 0 ],
+				},
+			];
+		}
+
+		const subOptions = Object.entries( entry[ 1 ] )
+			.map( ( subEntry ) => ( { label: subEntry[ 1 ], value: subEntry[ 0 ] } ) );
+
+		return [
+			...accumulator,
+			{
+				label: entry[ 0 ],
+				value: subOptions,
+			},
+		];
+	}, [] );
+};
 
 const formatValuesForReactSelectComponent = (
 	value,
@@ -56,6 +89,7 @@ const formatValuesForHTMLSelectElement = ( value, isMulti ) => {
 const Pick = ( props ) => {
 	const {
 		fieldConfig: {
+			data = [],
 			label,
 			name,
 			// pick_allow_add_new: allowAddNew,
@@ -85,7 +119,6 @@ const Pick = ( props ) => {
 			// rest_pick_response: pickResponse,
 			// pick_where,
 		},
-		data = [],
 		setValue,
 		value,
 	} = props;
@@ -95,7 +128,7 @@ const Pick = ( props ) => {
 
 	// The options could be derived from the `data` prop (as a default),
 	// or we may need to do more work to break them apart or load them by the API.
-	const [ dataOptions, setDataOptions ] = useState( data );
+	const [ dataOptions, setDataOptions ] = useState( formatDataFromProp( data ) );
 
 	const setValueWithLimit = ( newValue ) => {
 		// We don't need to worry about limits if this isn't a multi-select field.
@@ -298,7 +331,6 @@ Pick.propTypes = {
 		PropTypes.arrayOf( PropTypes.string ),
 		PropTypes.string,
 	] ),
-	data: PICK_OPTIONS,
 };
 
 export default Pick;

@@ -16,12 +16,30 @@ const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
 	PropTypes.number,
 ] );
 
+export const PICK_OPTIONS = PropTypes.arrayOf(
+	PropTypes.shape( {
+		label: PropTypes.string.isRequired,
+		value: PropTypes.oneOfType( [
+			PropTypes.string.isRequired,
+			PropTypes.arrayOf(
+				PropTypes.shape( {
+					label: PropTypes.string.isRequired,
+					value: PropTypes.string.isRequired,
+				} )
+			),
+		] ),
+	} )
+);
+
 export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	// Used in multiple fields
 	admin_only: PropTypes.oneOf( BOOLEAN_STRINGS ),
 	attributes: OBJECT_OR_ARRAY,
 	class: PropTypes.string,
-	data: OBJECT_OR_ARRAY,
+	data: PropTypes.oneOfType( [
+		PICK_OPTIONS,
+		PropTypes.object,
+	] ),
 	default: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,
@@ -360,18 +378,3 @@ export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {
 	weight: PropTypes.number,
 	_locale: PropTypes.string,
 } );
-
-export const PICK_OPTIONS = PropTypes.arrayOf(
-	PropTypes.shape( {
-		label: PropTypes.string.isRequired,
-		value: PropTypes.oneOfType( [
-			PropTypes.string.isRequired,
-			PropTypes.arrayOf(
-				PropTypes.shape( {
-					label: PropTypes.string.isRequired,
-					value: PropTypes.string.isRequired,
-				} )
-			),
-		] ),
-	} )
-);

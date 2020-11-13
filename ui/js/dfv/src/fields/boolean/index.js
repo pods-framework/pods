@@ -28,10 +28,10 @@ const Boolean = ( {
 				...fieldConfig,
 				pick_format_type: 'single',
 				pick_format_single: formatType,
+				data: options,
 			} }
 			value={ value }
 			setValue={ setValue }
-			data={ options }
 		/>
 	);
 };

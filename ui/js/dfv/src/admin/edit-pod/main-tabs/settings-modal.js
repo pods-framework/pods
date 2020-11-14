@@ -8,6 +8,7 @@ import { Modal, Button } from '@wordpress/components';
 import DynamicTabContent from './dynamic-tab-content';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
+import { toBool } from 'dfv/src/helpers/booleans';
 
 import './settings-modal.scss';
 
@@ -50,7 +51,7 @@ const checkFormValidity = ( sections, options ) => {
 					} = field;
 
 					// Fields that aren't required are automatically valid.
-					if ( undefined === typeof fieldRequired || ! fieldRequired ) {
+					if ( undefined === typeof fieldRequired || ! toBool( fieldRequired ) ) {
 						return true;
 					}
 

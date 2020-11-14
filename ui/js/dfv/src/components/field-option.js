@@ -8,6 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import FieldContainer from 'dfv/src/components/field-container';
 import HelpTooltip from 'dfv/src/components/help-tooltip';
 import { richTextNoLinks } from '../../../blocks/src/config/html';
+import { toBool } from 'dfv/src/helpers/booleans';
 
 import FIELD_MAP from 'dfv/src/fields/field-map';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
@@ -50,7 +51,7 @@ const FieldOption = ( props ) => {
 								__html: removep( sanitizeHtml( label, richTextNoLinks ) ),
 							} }
 						/>
-						{ required && ( <span className="pods-form-ui-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
+						{ toBool( required ) && ( <span className="pods-form-ui-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
 					</label>
 
 					{ shouldShowHelpText && (

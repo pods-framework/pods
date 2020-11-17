@@ -13,6 +13,8 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 // Display the content for the active tab, manage-fields is treated special
 const ActiveTabContent = ( {
+	podType,
+	podName,
 	activeTab,
 	activeTabOptions,
 	activeTabOptionValues,
@@ -32,6 +34,8 @@ const ActiveTabContent = ( {
 					tabOptions={ activeTabOptions }
 					optionValues={ activeTabOptionValues }
 					setOptionValue={ setOptionValue }
+					podType={ podType }
+					podName={ podName }
 				/>
 			) }
 		</div>
@@ -51,6 +55,8 @@ export default compose( [
 		const activeTab = storeSelect.getActiveTab();
 
 		return {
+			podType: storeSelect.getPodOption( 'type' ),
+			podName: storeSelect.getPodOption( 'name' ),
 			activeTab,
 			activeTabOptions: storeSelect.getGlobalPodGroupFields( activeTab ),
 			activeTabOptionValues: storeSelect.getPodOptions(),

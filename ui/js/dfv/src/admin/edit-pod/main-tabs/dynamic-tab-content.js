@@ -32,6 +32,13 @@ const DynamicTabContent = ( {
 			name,
 		} = field;
 
+		const dependencyValueEntries = Object
+			.keys( field[ 'depends-on' ] || {} )
+			.map( ( fieldName ) => ( [
+				fieldName,
+				optionValues[ fieldName ],
+			] ) );
+
 		return (
 			<DependentFieldOption
 				key={ name }
@@ -41,12 +48,15 @@ const DynamicTabContent = ( {
 				} }
 				value={ optionValues[ name ] }
 				setOptionValue={ setOptionValue }
+				dependencyValues={ Object.fromEntries( dependencyValueEntries ) }
 			/>
 		);
 	} );
 };
 
 DynamicTabContent.propTypes = {
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	tabOptions: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
 	optionValues: PropTypes.object.isRequired,
 	setOptionValue: PropTypes.func.isRequired,

@@ -1,4 +1,5 @@
 export const STORE_KEY_EDIT_POD = 'pods/edit-pod';
+export const STORE_KEY_DFV = 'pods/dfv';
 
 export const DELETE_STATUSES = {
 	NONE: '',

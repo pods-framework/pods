@@ -26,6 +26,8 @@ const ENTER_KEY = 13;
 
 export const FieldListItem = ( props ) => {
 	const {
+		podType,
+		podName,
 		podID,
 		podLabel,
 		field,
@@ -198,6 +200,8 @@ export const FieldListItem = ( props ) => {
 			>
 				{ showEditFieldSettings && (
 					<SettingsModal
+						podType={ podType }
+						podName={ podName }
 						optionsPod={ editFieldPod }
 						selectedOptions={ field }
 						title={ sprintf(
@@ -291,6 +295,8 @@ export const FieldListItem = ( props ) => {
 };
 
 FieldListItem.propTypes = {
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	field: FIELD_PROP_TYPE_SHAPE,

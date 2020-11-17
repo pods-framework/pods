@@ -4,22 +4,17 @@ import { omit } from 'lodash';
 import { registerGenericStore } from '@wordpress/data';
 
 import * as paths from './state-paths';
-import { STORE_KEY_EDIT_POD, INITIAL_UI_STATE } from './constants';
+import {
+	STORE_KEY_EDIT_POD,
+	STORE_KEY_DFV,
+	INITIAL_UI_STATE,
+} from './constants';
 import reducer from './reducer';
 import * as selectors from './selectors';
 import * as actions from './actions';
 import apiMiddleware from './api-middleware';
 
-export const initStore = ( props = {} ) => {
-	const initialState = {
-		...paths.UI.createTree( INITIAL_UI_STATE ),
-		data: {
-			fieldTypes: { ...props.config?.fieldTypes || {} },
-			relatedObjects: { ...props.config?.relatedObjects || {} },
-		},
-		...omit( props?.config || {}, [ 'fieldTypes', 'relatedObjects' ] ),
-	};
-
+const initStore = ( initialState, storeKey ) => {
 	const reduxStore = configureStore( {
 		reducer,
 		middleware: [ apiMiddleware ],
@@ -47,5 +42,32 @@ export const initStore = ( props = {} ) => {
 		subscribe: reduxStore.subscribe,
 	};
 
-	registerGenericStore( STORE_KEY_EDIT_POD, genericStore );
+	registerGenericStore( storeKey, genericStore );
+};
+
+export const initEditPodStore = ( config ) => {
+	const initialState = {
+		...paths.UI.createTree( INITIAL_UI_STATE ),
+		data: {
+			fieldTypes: { ...config.fieldTypes || {} },
+			relatedObjects: { ...config.relatedObjects || {} },
+		},
+		...omit( config, [ 'fieldTypes', 'relatedObjects' ] ),
+	};
+
+	return initStore( initialState, STORE_KEY_EDIT_POD );
+};
+
+export const initPodStore = ( config = {} ) => {
+	console.log( 'initPodStore', config );
+
+	const initialState = {
+		data: {
+			fieldTypes: { ...config.fieldTypes || {} },
+			relatedObjects: { ...config.relatedObjects || {} },
+		},
+		...omit( config, [ 'fieldTypes', 'relatedObjects' ] ),
+	};
+
+	return initStore( initialState, STORE_KEY_DFV );
 };

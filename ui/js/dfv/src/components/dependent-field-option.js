@@ -5,16 +5,14 @@ import * as PropTypes from 'prop-types';
 // WordPress dependencies
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
-import { withSelect } from '@wordpress/data';
 
 // Pod dependencies
 import PodsFieldOption from 'dfv/src/components/field-option';
 import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
-import { STORE_KEY_EDIT_POD } from 'dfv/src/admin/edit-pod/store/constants';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 // Conditionally display a FieldOption (depends-on support)
-const DependentFieldOption = ( {
+export const DependentFieldOption = ( {
 	podType,
 	podName,
 	field,
@@ -163,15 +161,20 @@ const DependentFieldOption = ( {
 				...field,
 				data: dataOptions || field.data,
 			} }
-			value={ processedValue || defaultValue }
+			value={ processedValue || defaultValue || '' }
 			setValue={ handleInputChange }
 		/>
 	);
 };
 
+DependentFieldOption.defaultProps = {
+	podType: null,
+	podName: null,
+};
+
 DependentFieldOption.propTypes = {
-	podType: PropTypes.string.isRequired,
-	podName: PropTypes.string.isRequired,
+	podType: PropTypes.string,
+	podName: PropTypes.string,
 	dependencyValues: PropTypes.object.isRequired,
 	field: FIELD_PROP_TYPE_SHAPE,
 	value: PropTypes.oneOfType( [
@@ -183,27 +186,11 @@ DependentFieldOption.propTypes = {
 	setOptionValue: PropTypes.func.isRequired,
 };
 
+// Memoize to prevent unnecessary re-renders when the
+// dependencyValues prop changes.
 const MemoizedDependentFieldOption = React.memo(
 	DependentFieldOption,
 	( prevProps, nextProps ) => isEqual( prevProps, nextProps )
 );
 
-export default withSelect( ( select, ownProps ) => {
-	const storeSelect = select( STORE_KEY_EDIT_POD );
-
-	// Get the values of the fields that this one depends on.
-	const dependencyFieldNames = Object.keys( ownProps.field[ 'depends-on' ] || {} );
-
-	const allOptions = storeSelect.getPodOptions();
-
-	const dependencyValueEntries = dependencyFieldNames.map( ( fieldName ) => ( [
-		fieldName,
-		allOptions[ fieldName ],
-	] ) );
-
-	return {
-		podType: storeSelect.getPodOption( 'type' ),
-		podName: storeSelect.getPodOption( 'name' ),
-		dependencyValues: Object.fromEntries( dependencyValueEntries ),
-	};
-} )( MemoizedDependentFieldOption );
+export default MemoizedDependentFieldOption;

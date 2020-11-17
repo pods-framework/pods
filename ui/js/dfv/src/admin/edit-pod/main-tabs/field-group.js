@@ -29,6 +29,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 	} = props;
 
 	const {
+		podType,
+		podName,
 		podID,
 		podLabel,
 		group,
@@ -202,6 +204,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 				{ showSettings && (
 					<SettingsModal
+						podType={ podType }
+						podName={ podName }
 						optionsPod={ editGroupPod }
 						selectedOptions={ omit( group, [ 'fields' ] ) }
 						title={ sprintf(
@@ -224,6 +228,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 			{ isExpanded && ! isDragging && (
 				<FieldList
+					podType={ podType }
+					podName={ podName }
 					fields={ fields || [] }
 					podID={ podID }
 					podLabel={ podLabel }
@@ -237,6 +243,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 } );
 
 FieldGroup.propTypes = {
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	group: GROUP_PROP_TYPE_SHAPE,

@@ -2,6 +2,8 @@ import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
 import * as models from 'dfv/src/config/model-manifest';
 import FIELD_MAP from 'dfv/src/fields/field-map';
 
+import { select } from '@wordpress/data';
+
 // Loads data from an object in this script tag.
 const SCRIPT_TARGET = 'script.pods-dfv-field-data';
 
@@ -57,7 +59,7 @@ window.PodsDFV = {
 	},
 
 	isGutenbergEditorLoaded() {
-		return ( wp.data !== undefined && wp.data.select( 'core/editor' ) !== undefined );
+		return ( select( 'core/editor' ) !== undefined );
 	},
 };
 

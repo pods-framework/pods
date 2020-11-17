@@ -22,6 +22,8 @@ import './manage-fields.scss';
 import './field-list.scss';
 
 const FieldList = ( {
+	podType,
+	podName,
 	podID,
 	podLabel,
 	groupName,
@@ -123,6 +125,8 @@ const FieldList = ( {
 		<div className={ classes }>
 			{ showAddFieldModal && (
 				<SettingsModal
+					podType={ podType }
+					podName={ podName }
 					optionsPod={ editFieldPod }
 					selectedOptions={ newFieldOptions }
 					title={ sprintf(
@@ -179,6 +183,8 @@ const FieldList = ( {
 						{ fields.map( ( field, index ) => {
 							return (
 								<FieldListItem
+									podType={ podType }
+									podName={ podName }
 									key={ field.id }
 									podID={ podID }
 									podLabel={ podLabel }
@@ -208,6 +214,8 @@ const FieldList = ( {
 };
 
 FieldList.propTypes = {
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
 	groupName: PropTypes.string.isRequired,

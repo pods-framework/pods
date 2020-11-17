@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { initStore } from 'dfv/src/admin/edit-pod/store/store';
+import { initEditPodStore } from 'dfv/src/admin/edit-pod/store/store';
 
 function reactDirectRenderer( component, element, props ) {
-	initStore( props );
+	initEditPodStore( props.config || {} );
 
 	const FieldComponent = component;
 

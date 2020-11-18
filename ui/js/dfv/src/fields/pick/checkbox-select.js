@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 const CheckboxSelect = ( {
+	htmlAttributes,
 	name,
 	value,
 	options = [],
@@ -32,6 +33,16 @@ const CheckboxSelect = ( {
 				optionIndex,
 				allOptions
 			) => {
+				const nameBase = htmlAttributes.name || name;
+
+				const nameAttribute = allOptions.length > 1
+					? `${ nameBase }[${ optionIndex }]`
+					: nameBase;
+
+				const idAttribute = !! htmlAttributes.id
+					? `${ htmlAttributes.id }-${ optionLabel }`
+					: `pods-form-ui-${ name }-${ optionLabel }`;
+
 				return (
 					<li
 						key={ optionValue }
@@ -43,8 +54,8 @@ const CheckboxSelect = ( {
 								htmlFor={ `pods-${ name }-${ optionLabel }` }
 							>
 								<input
-									name={ allOptions.length > 1 ? `pods_${ name }[${ optionIndex }]` : `pods_${ name }` }
-									id={ `pods-${ name }-${ optionLabel }` }
+									name={ nameAttribute }
+									id={ idAttribute }
 									checked={ isMulti ? value.includes( optionValue ) : value === optionValue }
 									className="pods-form-ui-field-type-pick"
 									type="checkbox"
@@ -68,6 +79,11 @@ const CheckboxSelect = ( {
 };
 
 CheckboxSelect.propTypes = {
+	htmlAttributes: PropTypes.shape( {
+		id: PropTypes.string,
+		class: PropTypes.string,
+		name: PropTypes.string,
+	} ),
 	name: PropTypes.string.isRequired,
 	value: PropTypes.oneOfType( [
 		PropTypes.arrayOf( PropTypes.string ),

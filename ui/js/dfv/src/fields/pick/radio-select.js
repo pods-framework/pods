@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 const RadioSelect = ( {
+	htmlAttributes,
 	name,
 	value,
 	options,
@@ -23,8 +24,8 @@ const RadioSelect = ( {
 								htmlFor={ `pods-${ name }-${ optionLabel }` }
 							>
 								<input
-									name={ `pods_${ name }` }
-									id={ `pods-${ name }-${ optionLabel }` }
+									name={ htmlAttributes.name || name }
+									id={ htmlAttributes.id || `pods-form-ui-${ name }-${ optionLabel }` }
 									checked={ value === optionValue }
 									className="pods-form-ui-field-type-pick"
 									type="radio"
@@ -46,6 +47,11 @@ const RadioSelect = ( {
 };
 
 RadioSelect.propTypes = {
+	htmlAttributes: PropTypes.shape( {
+		id: PropTypes.string,
+		class: PropTypes.string,
+		name: PropTypes.string,
+	} ),
 	name: PropTypes.string.isRequired,
 	value: PropTypes.string,
 	setValue: PropTypes.func.isRequired,

@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 const ListSelect = ( {
+	htmlAttributes,
 	name,
 	value,
 	options,
@@ -30,7 +31,7 @@ const ListSelect = ( {
 		<>
 			<div className="pods-ui-list-autocomplete">
 				<Select
-					name={ name }
+					name={ htmlAttributes.name || name }
 					options={ options }
 					value={ value }
 					placeholder={ placeholder }
@@ -138,6 +139,11 @@ const ListSelect = ( {
 };
 
 ListSelect.propTypes = {
+	htmlAttributes: PropTypes.shape( {
+		id: PropTypes.string,
+		class: PropTypes.string,
+		name: PropTypes.string,
+	} ),
 	name: PropTypes.string.isRequired,
 	value: PropTypes.oneOfType( [
 		PropTypes.shape( {

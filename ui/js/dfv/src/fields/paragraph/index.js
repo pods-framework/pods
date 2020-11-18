@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 
 import { toBool } from 'dfv/src/helpers/booleans';
 
@@ -14,7 +15,8 @@ const Paragraph = ( props ) => {
 	} = props;
 
 	const {
-		htmlAttr = {},
+		htmlAttr: htmlAttributes = {},
+		name,
 		paragraph_max_length: maxLength,
 		paragraph_placeholder: placeholder,
 		readonly: readOnly,
@@ -26,9 +28,9 @@ const Paragraph = ( props ) => {
 	return (
 		<textarea
 			value={ value }
-			name={ htmlAttr.name }
-			id={ htmlAttr.id }
-			className="pods-form-ui-field pods-form-ui-field-type-paragraph"
+			id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+			name={ htmlAttributes.name || name }
+			className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-paragraph', htmlAttributes.class ) }
 			maxLength={ -1 !== parseInt( maxLength, 10 ) ? maxLength : undefined }
 			placeholder={ placeholder }
 			onChange={ onChange || handleChange }

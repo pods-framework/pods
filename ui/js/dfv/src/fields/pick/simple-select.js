@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 const SimpleSelect = ( {
+	htmlAttributes,
 	name,
 	value,
 	options,
@@ -16,8 +17,9 @@ const SimpleSelect = ( {
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-onchange */
 		<select
-			id={ name }
-			name={ name }
+			id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+			name={ htmlAttributes.name || name }
+			className={ htmlAttributes.class }
 			value={ value }
 			onChange={ ( event ) => {
 				if ( ! isMulti ) {
@@ -82,6 +84,11 @@ const SimpleSelect = ( {
 };
 
 SimpleSelect.propTypes = {
+	htmlAttributes: PropTypes.shape( {
+		id: PropTypes.string,
+		class: PropTypes.string,
+		name: PropTypes.string,
+	} ),
 	name: PropTypes.string.isRequired,
 	value: PropTypes.oneOfType( [
 		PropTypes.string,

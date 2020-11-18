@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 import { addQueryArgs } from '@wordpress/url';
@@ -17,6 +18,7 @@ const Oembed = ( props ) => {
 	} = props;
 
 	const {
+		htmlAttr: htmlAttributes = {},
 		name,
 		oembed_height: height,
 		oembed_show_preview: showPreview,
@@ -67,9 +69,9 @@ const Oembed = ( props ) => {
 	return (
 		<>
 			<input
-				name={ name }
-				id={ `pods-form-ui-${ name }` }
-				className="pods-form-ui-field pods-form-ui-field-type-oembed"
+				id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+				name={ htmlAttributes.name || name }
+				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-oembed', htmlAttributes.class ) }
 				type="text"
 				value={ value }
 				onChange={ handleChange }

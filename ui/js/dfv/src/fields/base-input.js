@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 import { toBool } from 'dfv/src/helpers/booleans';
@@ -16,26 +17,30 @@ const BaseInput = ( props ) => {
 		value,
 	} = props;
 
+	const {
+		htmlAttr: htmlAttributes = {},
+		readonly: readOnly,
+		name,
+	} = fieldConfig;
+
 	// Default implementation if onChange is omitted from props
 	const handleChange = ( event ) => setValue( event.target.value );
 
 	return (
 		<input
-			className={ props.className }
 			type={ type }
-			name={ fieldConfig.htmlAttr?.name }
-			id={ fieldConfig.htmlAttr?.id }
+			id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+			name={ htmlAttributes.name || name }
 			// eslint-disable-next-line camelcase
-			data-name-clean={ fieldConfig.htmlAttr?.name_clean }
+			data-name-clean={ htmlAttributes.name_clean }
+			className={ classnames( props.className, htmlAttributes.class ) }
 			placeholder={ placeholder }
 			maxLength={ -1 !== maxLength ? maxLength : undefined }
 			value={ type !== 'checkbox' ? value : undefined }
 			checked={ type === 'checkbox' ? toBool( value ) : undefined }
-			readOnly={ !! fieldConfig.readonly }
+			readOnly={ !! readOnly }
 			onChange={ onChange || handleChange }
 			onBlur={ onBlur }
-			min={ fieldConfig.min }
-			max={ fieldConfig.max }
 		/>
 	);
 };

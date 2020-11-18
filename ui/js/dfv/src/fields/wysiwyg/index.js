@@ -35,6 +35,7 @@ const Wysiwyg = ( props ) => {
 	} = props;
 
 	const {
+		htmlAttr: htmlAttributes = {},
 		name,
 		wysiwyg_editor: editor = 'tinymce',
 		wysiwyg_editor_height: editorHeight = 400,
@@ -44,20 +45,28 @@ const Wysiwyg = ( props ) => {
 	if ( 'quill' === editor || 'cleditor' === editor ) {
 		// The "theme" option supports: snow (CLEditor-like) | bubble (simple barebones WYSIWYG).
 		return (
-			<ReactQuill
-				value={ value || '' }
-				onChange={ setValue }
-				theme="snow"
-				modules={ {
-					toolbar: QUILL_TOOLBAR_OPTIONS,
-				} }
-			/>
+			<>
+				<ReactQuill
+					value={ value || '' }
+					onChange={ setValue }
+					theme="snow"
+					modules={ {
+						toolbar: QUILL_TOOLBAR_OPTIONS,
+					} }
+				/>
+
+				<input
+					type="hidden"
+					value={ value || '' }
+					name={ htmlAttributes.name || name }
+				/>
+			</>
 		);
 	}
 
 	return (
 		<TinyMCE
-			name={ name }
+			name={ htmlAttributes.name || name }
 			value={ value }
 			setValue={ setValue }
 			editorHeight={ parseInt( editorHeight, 10 ) }

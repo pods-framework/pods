@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import Datetime from 'react-datetime';
 import moment from 'moment';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 import { toBool } from 'dfv/src/helpers/booleans';
@@ -82,6 +83,7 @@ const DateTime = ( props ) => {
 	} = props;
 
 	const {
+		htmlAttr: htmlAttributes = {},
 		name,
 		type = 'datetime', // 'datetime', 'time', or 'date'
 		datetime_format: podsFormat,
@@ -168,9 +170,9 @@ const DateTime = ( props ) => {
 	if ( useHTML5Field ) {
 		return (
 			<input
-				name={ name }
-				id={ `pods-form-ui-${ name }` }
-				className="pods-form-ui-field pods-form-ui-field-type-datetime"
+				id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+				name={ htmlAttributes.name || name }
+				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ) }
 				type={ 'datetime' === type ? 'datetime-local' : type }
 				value={ value }
 				onChange={ handleInputFieldChange }
@@ -188,6 +190,10 @@ const DateTime = ( props ) => {
 			initialViewDate={ initialViewDate }
 			inputProps={ {
 				onBlur: ( event ) => handleChange( event.target.value ),
+				id: htmlAttributes.id || `pods-form-ui-${ name }`,
+				name: htmlAttributes.name || name,
+				'data-name-clean': htmlAttributes.name_clean,
+				className: classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ),
 			} }
 		/>
 	);

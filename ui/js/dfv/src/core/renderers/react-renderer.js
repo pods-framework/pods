@@ -59,7 +59,10 @@ function reactRenderer( component, element, props ) {
 
 	ReactDOM.render(
 		<ConnectedDependentFieldOption
-			field={ fieldConfig }
+			field={ {
+				...fieldConfig,
+				htmlAttr: props.data?.htmlAttr || {},
+			} }
 		/>,
 		element
 	);

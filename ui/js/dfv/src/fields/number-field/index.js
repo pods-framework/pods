@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 import {
@@ -20,6 +21,7 @@ const NumberField = ( {
 } ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
+		name,
 		readonly: readOnly,
 		number_decimals: decimalMaxLength = 'auto',
 		number_format: format,
@@ -69,9 +71,9 @@ const NumberField = ( {
 			<div>
 				<input
 					type="range"
-					className="pods-number-field-slider-input"
-					name={ htmlAttributes.name }
-					id={ htmlAttributes.id }
+					id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+					name={ htmlAttributes.name || name }
+					className={ classnames( 'pods-form-ui-number-range', htmlAttributes.class ) }
 					placeholder={ placeholder }
 					value={ value || min || 0 }
 					readOnly={ !! readOnly }
@@ -93,7 +95,9 @@ const NumberField = ( {
 		<input
 			type={ html5 ? 'number' : 'text' }
 			name={ htmlAttributes.name }
-			id={ htmlAttributes.id }
+			id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+			data-name-clean={ htmlAttributes.name_clean }
+			className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-number', htmlAttributes.class ) }
 			placeholder={ placeholder }
 			value={ formattedValue }
 			step={ html5 ? 'any' : undefined }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 import {
@@ -72,9 +73,9 @@ const Currency = ( {
 			<div>
 				<input
 					type="range"
-					className="pods-currency-field-slider-input"
-					name={ htmlAttributes.name }
 					id={ htmlAttributes.id }
+					name={ htmlAttributes.name }
+					className={ classnames( 'pods-currency-field-slider-input', htmlAttributes.class ) }
 					placeholder={ placeholder }
 					value={ value || min || 0 }
 					readOnly={ !! readOnly }
@@ -99,9 +100,10 @@ const Currency = ( {
 			</code>
 			<input
 				type={ html5 ? 'number' : 'text' }
-				className="pods-currency-input"
-				name={ htmlAttributes.name }
 				id={ htmlAttributes.id }
+				name={ htmlAttributes.name }
+				data-name-clean={ htmlAttributes.name_clean }
+				className={ classnames( 'pods-currency-input', htmlAttributes.class ) }
 				placeholder={ placeholder }
 				step={ html5 ? 'any' : undefined }
 				value={ formattedValue }

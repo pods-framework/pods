@@ -59,6 +59,12 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
 	hidden: PropTypes.oneOf( BOOLEAN_STRINGS ),
+	htmlAttr: PropTypes.shape( {
+		id: PropTypes.string,
+		class: PropTypes.string,
+		name: PropTypes.string,
+		name_clean: PropTypes.string,
+	} ),
 	id: NUMBER_OR_NUMBER_AS_STRING.isRequired,
 	label: PropTypes.string.isRequired,
 	label_param: PropTypes.string,

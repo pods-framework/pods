@@ -89,6 +89,7 @@ const formatValuesForHTMLSelectElement = ( value, isMulti ) => {
 const Pick = ( props ) => {
 	const {
 		fieldConfig: {
+			htmlAttr: htmlAttributes = {},
 			data = [],
 			label,
 			name,
@@ -231,6 +232,7 @@ const Pick = ( props ) => {
 	if ( ! isMulti && 'radio' === formatSingle ) {
 		return (
 			<RadioSelect
+				htmlAttributes={ htmlAttributes }
 				name={ name }
 				value={ value }
 				setValue={ setValueWithLimit }
@@ -253,6 +255,7 @@ const Pick = ( props ) => {
 
 		return (
 			<CheckboxSelect
+				htmlAttributes={ htmlAttributes }
 				name={ name }
 				value={ formattedValue }
 				isMulti={ isMulti }
@@ -272,6 +275,7 @@ const Pick = ( props ) => {
 
 		return (
 			<ListSelect
+				htmlAttributes={ htmlAttributes }
 				name={ name }
 				value={ formattedValue }
 				setValue={ setValueWithLimit }
@@ -295,6 +299,7 @@ const Pick = ( props ) => {
 
 		return (
 			<Select
+				htmlAttributes={ htmlAttributes }
 				name={ name }
 				options={ dataOptions }
 				value={ formattedValue }
@@ -314,6 +319,7 @@ const Pick = ( props ) => {
 
 	return (
 		<SimpleSelect
+			htmlAttributes={ htmlAttributes }
 			name={ name }
 			value={ formatValuesForHTMLSelectElement( value, isMulti ) }
 			setValue={ ( newValue ) => setValueWithLimit( newValue ) }

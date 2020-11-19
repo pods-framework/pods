@@ -40,7 +40,7 @@ window.PodsDFV = {
 			// properties, so discard the others for now, until they're
 			// removed from the API.
 			const actualData = {
-				config: window.podsAdminConfig,
+				config: window.podsAdminConfig || window.podsDFVConfig,
 				fieldType: data.fieldType,
 				data,
 			};
@@ -59,7 +59,7 @@ window.PodsDFV = {
 	},
 
 	isGutenbergEditorLoaded() {
-		return ( select( 'core/editor' ) !== undefined );
+		return ! select( 'core/editor' );
 	},
 };
 

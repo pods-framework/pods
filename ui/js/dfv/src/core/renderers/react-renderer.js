@@ -7,6 +7,7 @@ import {
 	withSelect,
 	withDispatch,
 	select,
+	dispatch,
 } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
@@ -35,27 +36,54 @@ const ConnectedDependentFieldOption = compose( [
 			value: allPodValues[ name ] || ownProps.field?.default || '',
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
+	withDispatch( ( storeDispatch ) => {
 		return {
-			setOptionValue: dispatch( STORE_KEY_DFV ).setOptionValue,
+			setOptionValue: storeDispatch( STORE_KEY_DFV ).setOptionValue,
 		};
 	} ),
 ] )( DependentFieldOption );
 
 function reactRenderer( component, element, props ) {
 	// Create the store if it hasn't been done already.
-	if ( undefined !== select( STORE_KEY_DFV ) ) {
-		console.log( 'store has not been set up, about to initialize' );
+	if ( ! select( STORE_KEY_DFV ) ) {
 		initPodStore( props.config || {} );
 	}
 
-	// eslint-disable-next-line no-console
-	console.log( 'REACT RENDERER: ', element, props );
+	console.log( 'react renderer: ', element, props );
 
 	const fieldConfig = omit(
 		props.data?.fieldConfig || {},
 		[ '_field_object', 'output_options', 'item_id' ]
 	);
+
+	// Fields have values provided as arrays, even if the field
+	// type should just have a singular value. This may change
+	// in the future once repeatable fields are supported.
+	const value = [ 'avatar', 'file', 'pick' ].includes( fieldConfig.type )
+		? ( props.data?.fieldItemData || fieldConfig.default || [] )
+		: ( props.data?.fieldItemData?.[ 0 ] || fieldConfig.default || '' );
+
+	// Some field types need the value to be adjusted because it's in a different
+	// shape than expected.
+	// @todo there are probably others?
+	let formattedValue = value;
+
+	switch ( fieldConfig.type ) {
+		case 'pick':
+			if ( 'multi' === fieldConfig.format_type ) {
+				formattedValue = value
+					.map( ( option ) => option.selected ? option.id : null )
+					.filter( ( option ) => null !== option );
+			} else {
+				formattedValue = value.find( ( option ) => true === option.selected )?.id;
+			}
+			break;
+		default:
+			break;
+	}
+
+	// Set the initial value.
+	dispatch( STORE_KEY_DFV ).setOptionValue( fieldConfig.name, formattedValue );
 
 	ReactDOM.render(
 		<ConnectedDependentFieldOption

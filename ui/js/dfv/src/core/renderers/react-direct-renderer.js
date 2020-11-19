@@ -7,7 +7,7 @@ function reactDirectRenderer( component, element, props ) {
 
 	const FieldComponent = component;
 
-	console.log( element, props );
+	console.log( 'react direct renderer: ', element, props );
 
 	ReactDOM.render(
 		<FieldComponent { ...props } />,

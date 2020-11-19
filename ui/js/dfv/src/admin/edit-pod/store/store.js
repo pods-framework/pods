@@ -55,12 +55,10 @@ export const initEditPodStore = ( config ) => {
 		...omit( config, [ 'fieldTypes', 'relatedObjects' ] ),
 	};
 
-	return initStore( initialState, STORE_KEY_EDIT_POD );
+	initStore( initialState, STORE_KEY_EDIT_POD );
 };
 
 export const initPodStore = ( config = {} ) => {
-	console.log( 'initPodStore', config );
-
 	const initialState = {
 		data: {
 			fieldTypes: { ...config.fieldTypes || {} },
@@ -69,5 +67,5 @@ export const initPodStore = ( config = {} ) => {
 		...omit( config, [ 'fieldTypes', 'relatedObjects' ] ),
 	};
 
-	return initStore( initialState, STORE_KEY_DFV );
+	initStore( initialState, STORE_KEY_DFV );
 };

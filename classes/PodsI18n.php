@@ -379,12 +379,20 @@ final class PodsI18n {
 			 */
 			elseif ( 'term.php' === $page || 'edit-tags.php' === $page ) {
 
-				$current_taxonomy = ( ! empty( $_GET['taxonomy'] ) ) ? sanitize_text_field( $_GET['taxonomy'] ) : '';
+				$current_term_id = 0;
+				if ( $pods_ajax ) {
+					$current_term_id = (int) pods_v( 'id', 'request', $current_term_id );
+				} else {
+					$current_term_id = pods_v( 'tag_ID', 'request', $current_term_id );
+				}
+
+				$current_taxonomy = pods_v( 'taxonomy', 'request', '' );
+				if ( ! $current_taxonomy && $current_term_id ) {
+					$current_taxonomy = pods_v( 'taxonomy', get_term( $current_term_id ), null );
+				}
 
 				// @todo MAYBE: Similar function like get_post_type for taxonomies so we don't need to check for $_GET['taxonomy']
 				if ( $current_taxonomy ) {
-
-					$current_tag_id = ( ! empty( $_GET['tag_ID'] ) ) ? (int) $_GET['tag_ID'] : 0;
 
 					/*
 					 * @todo wpml-comp API call for taxonomy needed!
@@ -411,9 +419,9 @@ final class PodsI18n {
 						 * Polylang (1.5.4+).
 						 * We only want the related objects if they are not translatable OR the same language as the current object.
 						 */
-						if ( $current_tag_id && function_exists( 'pll_get_term_language' ) ) {
+						if ( $current_term_id && function_exists( 'pll_get_term_language' ) ) {
 							// Overwrite the current language if this is a translatable taxonomy
-							$current_language = pll_get_term_language( $current_tag_id );
+							$current_language = pll_get_term_language( $current_term_id );
 						}
 
 						/**

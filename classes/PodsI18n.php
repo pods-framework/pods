@@ -367,8 +367,8 @@ final class PodsI18n {
 						 * Polylang (1.0.1+).
 						 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language.
 						 */
-						if ( ! empty( $_GET['new_lang'] ) ) {
-							$current_language = $_GET['new_lang'];
+						if ( pods_v( 'new_lang', 'request', null ) ) {
+							$current_language = pods_v( 'new_lang', 'request' );
 						}
 					}
 				}
@@ -428,8 +428,8 @@ final class PodsI18n {
 						 * Polylang (1.0.1+).
 						 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language.
 						 */
-						if ( ! empty( $_GET['new_lang'] ) ) {
-							$current_language = $_GET['new_lang'];
+						if ( pods_v( 'new_lang', 'request', null ) ) {
+							$current_language = pods_v( 'new_lang', 'request' );
 						}
 					}
 				}//end if

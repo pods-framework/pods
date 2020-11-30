@@ -329,7 +329,10 @@ final class PodsI18n {
 			 */
 			if ( 'post.php' === $page || 'edit.php' === $page ) {
 
-				$current_post = ( ! empty( $_GET['post'] ) ) ? (int) $_GET['post'] : 0;
+				$current_post = (int) pods_v( 'post', 'request', 0 );
+				if ( ! $current_post && $pods_ajax ) {
+					$current_post = (int) pods_v( 'id', 'request', 0 );
+				}
 
 				if ( $current_post ) {
 

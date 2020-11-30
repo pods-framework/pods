@@ -316,10 +316,12 @@ final class PodsI18n {
 			$pods_ajax = pods_v( 'pods_ajax', 'request', false );
 
 			// Get current language based on the object language if available.
-			$page = basename( $_SERVER['SCRIPT_NAME'] );
+			$page = basename( pods_v( 'SCRIPT_NAME', $_SERVER ) );
+
+			pods_v();
 
 			if ( $pods_ajax && 'admin-ajax.php' === $page ) {
-				$page = basename( $_SERVER['HTTP_REFERER'] );
+				$page = basename( pods_v( 'HTTP_REFERER', $_SERVER ) );
 				$page = explode( '?', $page );
 				$page = reset( $page );
 			}

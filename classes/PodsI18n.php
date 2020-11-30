@@ -313,8 +313,16 @@ final class PodsI18n {
 				$current_language = get_user_meta( get_current_user_id(), 'pll_filter_content', true );
 			}
 
+			$pods_ajax = pods_v( 'pods_ajax', 'request', false );
+
 			// Get current language based on the object language if available.
 			$page = basename( $_SERVER['SCRIPT_NAME'] );
+
+			if ( $pods_ajax && 'admin-ajax.php' === $page ) {
+				$page = basename( $_SERVER['HTTP_REFERER'] );
+				$page = explode( '?', $page );
+				$page = reset( $page );
+			}
 
 			/**
 			 * Overwrite the current language if needed for post types.

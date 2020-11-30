@@ -379,11 +379,9 @@ final class PodsI18n {
 			 */
 			elseif ( 'term.php' === $page || 'edit-tags.php' === $page ) {
 
-				$current_term_id = 0;
+				$current_term_id = pods_v( 'tag_ID', 'request', 0 );
 				if ( $pods_ajax ) {
 					$current_term_id = (int) pods_v( 'id', 'request', $current_term_id );
-				} else {
-					$current_term_id = pods_v( 'tag_ID', 'request', $current_term_id );
 				}
 
 				$current_taxonomy = pods_v( 'taxonomy', 'request', '' );

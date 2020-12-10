@@ -422,16 +422,19 @@
 	};
 
 	jQuery( function ( $ ) {
-		$( document ).Pods( 'validate' );
-		$( document ).Pods( 'submit' );
-		$( document ).Pods( 'wizard' );
-		$( document ).Pods( 'dependency' );
-		$( document ).Pods( 'advanced' );
-		$( document ).Pods( 'confirm' );
-		$( document ).Pods( 'sluggable' );
+		var $document = $( document );
 
+		$document.Pods( 'validate' );
+		$document.Pods( 'submit' );
+		$document.Pods( 'wizard' );
+		$document.Pods( 'dependency' );
+		$document.Pods( 'advanced' );
+		$document.Pods( 'confirm' );
+		$document.Pods( 'sluggable' );
+
+		$document.find( '.pods-dependent-toggle[data-name-clean]' ).trigger( 'change' );
 		$( '.pods-admin' ).on( 'render', '.pods-form-ui-field', function ( e ) {
-			$( this ).find( '.pods-dependent-toggle[data-name-clean]' ).trigger( 'change' );
+			$( '.pods-admin' ).find( '.pods-dependent-toggle[data-name-clean]' ).trigger( 'change' );
 		} );
 	} );
 </script>

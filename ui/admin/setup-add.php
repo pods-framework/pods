@@ -412,8 +412,7 @@
 
 		if ( !isNaN( id ) ) {
 			document.location = 'admin.php?page=pods&action=edit&id=' + id + '&do=create';
-		}
-		else {
+		} else {
 			document.location = 'admin.php?page=pods&do=create';
 		}
 	};

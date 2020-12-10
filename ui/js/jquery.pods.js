@@ -851,8 +851,7 @@
                                     .removeClass( 'pods-wizard-menu-complete' )
                                     .addClass( 'pods-wizard-menu-current' )
                             }
-                        }
-                        else {
+                        } else {
                             // Allow for override
                             if ( 'undefined' != typeof pods_admin_wizard_callback ) {
 	                            check = pods_admin_wizard_callback( step, true );
@@ -980,6 +979,7 @@
                  *
                  * @todo Validate & improve this
                  */
+
                 // Are we in the "Fields" tab?
                 if ( $current.parents('#pods-manage-fields').length ) {
                     // And are we also in the "Additional Field Options" tab?

@@ -112,7 +112,7 @@
                                 $el.trigger( 'change' );
 
                                 if ( false !== valid_form )
-                                    $el.focus();
+                                    $el.trigger( 'focus' );
 
                                 valid_form = false;
                             }
@@ -199,7 +199,7 @@
                                 $el.trigger( 'change' );
 
                                 if ( false !== valid_form )
-                                    $el.focus();
+                                    $el.trigger( 'focus' );
 
                                 valid_form = false;
                             }
@@ -468,7 +468,7 @@
                         $( this ).prop( 'disabled', true );
 
                         $( this ).closest( '.pods-sluggable' ).find( '.pods-slug, .pods-slug-edit' ).toggle();
-                        $( this ).closest( '.pods-sluggable' ).find( '.pods-slug-edit input[type=text]' ).focus();
+                        $( this ).closest( '.pods-sluggable' ).find( '.pods-slug-edit input[type=text]' ).trigger( 'focus' );
 
                         $( this ).css( 'cursor', 'pointer' );
                         $( this ).prop( 'disabled', false );
@@ -1443,7 +1443,7 @@
                 } );
 
                 $( '.pods-dependency-tabs .pods-dependent-tab.pods-dependent-tab-active' ).each( function () {
-                    $( this ).click();
+                    $( this ).trigger( 'click' );
                 } );
             },
             sortable : function () {
@@ -1707,7 +1707,7 @@
                                 $el.trigger( 'change' );
 
                                 if ( false !== valid_form )
-                                    $el.focus();
+                                    $el.trigger( 'focus' );
 
                                 valid_form = false;
                             }
@@ -1809,7 +1809,7 @@
                 } )
                 // Handle 'Cancel' action
                 .on( 'click', '.pods-manage-row-actions a.pods-manage-row-cancel', function ( e ) {
-                    $( this ).closest( 'tr.pods-manage-row' ).find( 'a.pods-manage-row-edit' ).click();
+                    $( this ).closest( 'tr.pods-manage-row' ).find( 'a.pods-manage-row-edit' ).trigger( 'click' );
 
                     e.preventDefault();
                 } );
@@ -1861,7 +1861,7 @@
                         $new_row.find( '.pods-dependency .pods-excludes-on' ).hide();
 
                         $new_row.find( '.pods-manage-row-wrapper' ).hide( 0, function () {
-                            $new_row.find( 'a.row-label.pods-manage-row-edit' ).click();
+                            $new_row.find( 'a.row-label.pods-manage-row-edit' ).trigger( 'click' );
                         } );
 
                         $( '.pods-tabs .pods-tab:first a', $new_row ).addClass( 'selected' );
@@ -1931,7 +1931,7 @@
                         } );
 
                         $new_row.find( '.pods-manage-row-wrapper' ).hide( 0, function () {
-                            $new_row.find( 'a.pods-manage-row-edit' ).click();
+                            $new_row.find( 'a.pods-manage-row-edit' ).trigger( 'click' );
                         } );
 
                         $( '.pods-tabs .pods-tab:first a', $new_row ).addClass( 'selected' );

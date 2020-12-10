@@ -49,7 +49,7 @@ function pods_attachments ( src, file_limit ) {
         }
     }
 
-    pods_thickbox.find( 'td.savesend input' ).unbind( 'click' ).click( function ( e ) {
+    pods_thickbox.find( 'td.savesend input' ).off( 'click' ).on( 'click', function ( e ) {
         var wp_media_meta = jQuery( this ).parent().parent().parent();
 
         pods_thickbox_send( wp_media_meta, e );

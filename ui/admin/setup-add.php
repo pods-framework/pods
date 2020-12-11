@@ -433,8 +433,12 @@
 		$document.Pods( 'sluggable' );
 
 		$document.find( '.pods-dependent-toggle[data-name-clean]' ).trigger( 'change' );
-		$( '.pods-admin' ).on( 'render', '.pods-form-ui-field', function ( e ) {
-			$( '.pods-admin' ).find( '.pods-dependent-toggle[data-name-clean]' ).trigger( 'change' );
+
+		var $admin = $( '.pods-admin' ),
+			$toggles = $admin.find( '.pods-dependent-toggle[data-name-clean]' );
+
+		$admin.on( 'render', '.pods-form-ui-field', function ( e ) {
+			$toggles.trigger( 'change' );
 		} );
 	} );
 </script>

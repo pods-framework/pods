@@ -546,12 +546,12 @@ class PodsInit {
 			);
 		}
 
-    // Select2/SelectWoo.
+		// Select2/SelectWoo.
 		wp_register_style(
 			'pods-select2',
 			PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.css",
 			array(),
-			'1.0.2'
+			'1.0.8'
 		);
 
 		$select2_locale = function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
@@ -574,10 +574,10 @@ class PodsInit {
 					'jquery',
 					'pods-i18n',
 				),
-				'1.0.1',
+				'1.0.8',
 				true
 			);
-			wp_register_script( 'pods-select2', $select2_i18n, array( 'pods-select2-core' ), '1.0.1', true );
+			wp_register_script( 'pods-select2', $select2_i18n, array( 'pods-select2-core' ), '1.0.8', true );
 		} else {
 			wp_register_script(
 				'pods-select2',
@@ -586,7 +586,7 @@ class PodsInit {
 					'jquery',
 					'pods-i18n',
 				),
-				'1.0.1',
+				'1.0.8',
 				true
 			);
 		}

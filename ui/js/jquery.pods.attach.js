@@ -17,7 +17,7 @@ function pods_attachments ( src, file_limit ) {
             // Create 'Add' link
             var pods_file_quick_add = jQuery( '<a href="#">' + PodsI18n.__( 'Add' ) + '</a>' ).addClass( 'pods-quick-add' );
 
-            pods_file_quick_add.bind( 'click', function( e ) {
+            pods_file_quick_add.on( 'click', function( e ) {
                 var item = jQuery( this );
                 var item_parent = item.parent();
 

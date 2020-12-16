@@ -1735,7 +1735,7 @@
                     } );
 
                     if ( valid_form ) {
-                        $row_content.find( 'input.field_data' ).val( $.toJSON( field_data ) );
+                        $row_content.find( 'input.field_data' ).val( JSON.stringify( field_data ) );
 
                         $row.css( 'backgroundColor', '#FFFF33' ).animate(
                             { backgroundColor : color },
@@ -1917,7 +1917,7 @@
 
                         $new_row_label.find( 'a.pods-manage-row-edit.row-label' ).html( field_data[ 'label' ] );
 
-                        $new_row_content.find( 'input.field_data' ).val( $.toJSON( field_data ) );
+                        $new_row_content.find( 'input.field_data' ).val( JSON.stringify( field_data ) );
 
                         $new_row.data( 'row', row_counter );
                         $new_row.find( '.pods-dependency .pods-depends-on' ).hide();

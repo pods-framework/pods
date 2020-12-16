@@ -487,8 +487,6 @@ class PodsInit {
 		 */
 		do_action( 'pods_before_enqueue_scripts', $suffix_min );
 
-		wp_register_script( 'pods-json', PODS_URL . 'ui/js/jquery.json.js', array( 'jquery' ), '2.3', true );
-
 		if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
 			wp_register_script( 'jquery-qtip2', PODS_URL . "ui/js/qtip/jquery.qtip{$suffix_min}.js", array( 'jquery' ), '3.0.3', true );
 		}
@@ -500,7 +498,6 @@ class PodsInit {
 				'jquery',
 				'pods-dfv',
 				'pods-i18n',
-				'pods-json',
 				'jquery-qtip2',
 			),
 			PODS_VERSION,

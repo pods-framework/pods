@@ -12,7 +12,7 @@ jQuery(document).ready(function () {
        }
     } );
 
-    jQuery('#filter-right-tables').keyup(function() {
+    jQuery('#filter-right-tables').on( 'keyup', function() {
         var query = jQuery(this).val();
 
         if (query === '') {
@@ -25,7 +25,7 @@ jQuery(document).ready(function () {
         }
     });
 
-    jQuery('#filter-left-tables').keyup(function() {
+    jQuery('#filter-left-tables').on( 'keyup', function() {
         var query = jQuery(this).val();
 
         if (query === '') {

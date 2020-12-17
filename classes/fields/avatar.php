@@ -109,7 +109,7 @@ class PodsField_Avatar extends PodsField_File {
 					if ( ! empty( $user_avatar ) ) {
 						$avatar = $user_avatar;
 
-						pods_cache_set( $user_id . '-' . $size, $avatar, 'pods_avatars', 604800 );
+						pods_cache_set( $user_id . '-' . $size, $avatar, 'pods_avatars', WEEK_IN_SECONDS );
 					}
 				}
 			}
@@ -198,7 +198,7 @@ class PodsField_Avatar extends PodsField_File {
 					$user_avatar_url = pods_image_url( $user_avatar_id, array( $args['width'], $args['height'] ), 0 );
 
 					if ( ! empty( $user_avatar_url ) ) {
-						pods_cache_set( $user_id . '-' . $size . '-url', $user_avatar_url, 'pods_avatars', 604800 );
+						pods_cache_set( $user_id . '-' . $size . '-url', $user_avatar_url, 'pods_avatars', WEEK_IN_SECONDS );
 					}
 				}
 			}
@@ -256,7 +256,7 @@ class PodsField_Avatar extends PodsField_File {
 				if ( ! empty( $avatar_field ) ) {
 					$avatar_id = get_user_meta( $user_id, $avatar_field . '.ID', true );
 
-					pods_cache_set( $user_id . '-id', $avatar_id, 'pods_avatars', 604800 );
+					pods_cache_set( $user_id . '-id', $avatar_id, 'pods_avatars', WEEK_IN_SECONDS );
 				}//end if
 			}//end if
 		}//end if

@@ -579,7 +579,7 @@ class PodsField_File extends PodsField {
 
 		// @todo Check file size
 		// @todo Check file extensions
-		return true;
+		return parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 	}
 

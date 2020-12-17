@@ -246,11 +246,12 @@ class PodsField_Number extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-		$return = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
-		if ( is_array( $return ) ) {
-			$errors = $return;
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
 		}
 
 		$format_args = $this->get_number_format_args( $options );
@@ -277,7 +278,7 @@ class PodsField_Number extends PodsField {
 			return $errors;
 		}
 
-		return $return;
+		return $validate;
 	}
 
 	/**

@@ -190,6 +190,18 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.25 - November 5th 2020 =
+
+**New Features & Enhancements**
+* Added: Custom no access message for templates. #5875 (@JoryHogeveen)
+
+**Bug Fixes**
+
+* Fixed: Patch jQuery update fixes since WP 5.6. #5892, #5896 & #5897 (@JoryHogeveen)
+* Fixed: Prevent WP unslash removing already sanitized input. #5040 & #4424 (@JoryHogeveen)
+* Fixed: HTML entities in custom relationship values. #5894 (@JoryHogeveen)
+* Fixed: Relationship AJAX search when using multiple languages. #5888 (@JoryHogeveen)
+
 = 2.7.24 - November 5th 2020 =
 
 **Bug Fixes**

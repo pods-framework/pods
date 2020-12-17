@@ -264,7 +264,6 @@ class PodsField_Avatar extends PodsField_File {
 		return (int) $avatar_id;
 	}
 
-
 	/**
 	 * Get the avatar user ID based on parameter provided.
 	 *

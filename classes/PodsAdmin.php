@@ -573,6 +573,15 @@ class PodsAdmin {
 
 			if ( empty( $all_pods ) ) {
 				unset( $admin_menus['pods'] );
+
+				if ( 'pods' === pods_v( 'page', 'get' ) ) {
+					// Replace `pods` page param with first existing pod page and redirect.
+					$url = add_query_arg( 'page', key( $admin_menus ) );
+					$url = get_site_url( null, $url );
+
+					wp_safe_redirect( $url );
+					die();
+				}
 			}
 
 			add_filter( 'parent_file', array( $this, 'parent_file' ) );

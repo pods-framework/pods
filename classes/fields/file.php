@@ -459,8 +459,7 @@ class PodsField_File extends PodsField {
 			if ( $is_user_logged_in ) {
 				$uid = 'user_' . get_current_user_id();
 			} else {
-				// @codingStandardsIgnoreLine
-				$uid = @session_id();
+				$uid = pods_session_id();
 			}
 
 			$pod_id = '0';
@@ -562,10 +561,10 @@ class PodsField_File extends PodsField {
 			$data[] = array(
 				'id'        => esc_html( $id ),
 				'icon'      => esc_attr( $icon ),
-				'name'      => esc_html( wp_kses_post( html_entity_decode( $title ) ) ),
-				'edit_link' => esc_url( $edit_link ),
-				'link'      => esc_url( $link ),
-				'download'  => esc_url( $download ),
+				'name'      => wp_strip_all_tags( html_entity_decode( $title ) ),
+				'edit_link' => html_entity_decode( esc_url( $edit_link ) ),
+				'link'      => html_entity_decode( esc_url( $link ) ),
+				'download'  => html_entity_decode( esc_url( $download ) ),
 			);
 		}//end foreach
 
@@ -729,6 +728,10 @@ class PodsField_File extends PodsField {
 	 */
 	public function do_wp_gallery( $value, $options ) {
 
+		if ( ! $value ) {
+			return '';
+		}
+
 		$shortcode_args = array();
 
 		if ( ! empty( $options[ static::$type . '_wp_gallery_columns' ] ) ) {
@@ -752,7 +755,7 @@ class PodsField_File extends PodsField {
 		} else {
 			$images = array();
 
-			foreach ( $value as $v ) {
+			foreach ( (array) $value as $v ) {
 				if ( ! is_array( $v ) ) {
 					$images[] = (int) $v;
 				} elseif ( isset( $v['ID'] ) ) {
@@ -944,7 +947,7 @@ class PodsField_File extends PodsField {
 			}
 		}
 
-		$uid = @session_id();
+		$uid = pods_session_id();
 
 		if ( $is_user_logged_in ) {
 			$uid = 'user_' . get_current_user_id();
@@ -1103,17 +1106,18 @@ class PodsField_File extends PodsField {
 			$limit_types = array_filter( array_unique( $limit_types ) );
 
 			if ( ! empty( $limit_types ) ) {
-				$ok = false;
+				$file_info = pathinfo( $file['name'] );
+				$ok        = false;
 
-				foreach ( $limit_types as $limit_type ) {
-					$limit_type = '.' . trim( $limit_type, ' .' );
+				if ( isset( $file_info['extension'] ) ) {
+					foreach ( $limit_types as $limit_type ) {
+						$limit_type = trim( $limit_type, ' .' );
 
-					$pos = ( strlen( $file['name'] ) - strlen( $limit_type ) );
+						if ( $limit_type === $file_info['extension'] ) {
+							$ok = true;
 
-					if ( stripos( $file['name'], $limit_type ) === $pos ) {
-						$ok = true;
-
-						break;
+							break;
+						}
 					}
 				}
 

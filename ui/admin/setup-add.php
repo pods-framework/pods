@@ -412,8 +412,7 @@
 
 		if ( !isNaN( id ) ) {
 			document.location = 'admin.php?page=pods&action=edit&id=' + id + '&do=create';
-		}
-		else {
+		} else {
 			document.location = 'admin.php?page=pods&do=create';
 		}
 	};
@@ -423,16 +422,22 @@
 	};
 
 	jQuery( function ( $ ) {
-		$( document ).Pods( 'validate' );
-		$( document ).Pods( 'submit' );
-		$( document ).Pods( 'wizard' );
-		$( document ).Pods( 'dependency' );
-		$( document ).Pods( 'advanced' );
-		$( document ).Pods( 'confirm' );
-		$( document ).Pods( 'sluggable' );
+		var $document = $( document );
 
-		$( '.pods-admin' ).on( 'render', '.pods-form-ui-field', function ( e ) {
-			$( this ).find( '.pods-dependent-toggle[data-name-clean]' ).trigger( 'change' );
+		$document.Pods( 'validate' );
+		$document.Pods( 'submit' );
+		$document.Pods( 'wizard' );
+		$document.Pods( 'dependency' );
+		$document.Pods( 'advanced' );
+		$document.Pods( 'confirm' );
+		$document.Pods( 'sluggable' );
+
+		var $admin = $( '.pods-admin' ),
+			$toggles = $admin.find( '.pods-dependent-toggle[data-name-clean]' );
+
+		$toggles.trigger( 'change' );
+		$admin.on( 'render', '.pods-form-ui-field', function ( e ) {
+			$toggles.trigger( 'change' );
 		} );
 	} );
 </script>

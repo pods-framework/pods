@@ -449,37 +449,37 @@ jQuery(document).ready(function($) {
 	/**
 	 * Event Handlers
 	 */
-	$('#pods-parts-pages-edit').click(function(e){
+	$('#pods-parts-pages-edit').on( 'click', function(e){
 		e.preventDefault();
 		populateEditPages();
 		$('#pods-parts-popup').dialog({title: 'Select Pods Page to Edit', width: $bigWidth}).dialog('open');
 	});
 
-	$('#pods-parts-pages-add').click(function(e){
+	$('#pods-parts-pages-add').on( 'click', function(e){
 		e.preventDefault();
 		populateAddPage();
 		$('#pods-parts-popup').dialog({title: 'Create New Pods Page', width: $smallWidth}).dialog('open');
 	});
 
-	$('#pods-parts-templates-edit').click(function(e){
+	$('#pods-parts-templates-edit').on( 'click', function(e){
 		e.preventDefault();
 		populateEditTemplates();
 		$('#pods-parts-popup').dialog({title: 'Select Pods Template to Edit', width: $bigWidth}).dialog('open');
 	});
 
-	$('#pods-parts-templates-add').click(function(e){
+	$('#pods-parts-templates-add').on( 'click', function(e){
 		e.preventDefault();
 		populateAddTemplate();
 		$('#pods-parts-popup').dialog({title: 'Create New Pods Template', width: $smallWidth}).dialog('open');
 	});
 
-	$('#pods-parts-helpers-edit').click(function(e){
+	$('#pods-parts-helpers-edit').on( 'click', function(e){
 		e.preventDefault();
 		populateEditHelpers();
 		$('#pods-parts-popup').dialog({title: 'Select Pods Helper to Edit', width: $bigWidth}).dialog('open');
 	});
 
-	$('#pods-parts-helpers-add').click(function(e){
+	$('#pods-parts-helpers-add').on( 'click', function(e){
 		e.preventDefault();
 		populateAddHelper();
 		$('#pods-parts-popup').dialog({title: 'Create New Pods Helper', width: $smallWidth}).dialog('open');

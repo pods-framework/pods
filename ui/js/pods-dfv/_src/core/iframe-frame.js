@@ -10,7 +10,7 @@ import { PodsDFVModal } from 'pods-dfv/_src/core/dfv-modal';
 export const IframeFrame = wp.media.view.Frame.extend( {
 	className: 'pods-modal-frame',
 
-	template: _.template( '<div class="media-frame-title" /><div class="media-frame-iframe" />' ),
+	template: _.template( '<div class="media-frame-title"></div><div class="media-frame-iframe"></div>' ),
 
 	regions: [ 'title', 'iframe' ],
 

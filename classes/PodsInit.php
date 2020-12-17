@@ -487,10 +487,8 @@ class PodsInit {
 		 */
 		do_action( 'pods_before_enqueue_scripts', $suffix_min );
 
-		wp_register_script( 'pods-json', PODS_URL . 'ui/js/jquery.json.js', array( 'jquery' ), '2.3' );
-
 		if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
-			wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.2' );
+			wp_register_script( 'jquery-qtip2', PODS_URL . "ui/js/qtip/jquery.qtip{$suffix_min}.js", array( 'jquery' ), '3.0.3', true );
 		}
 
 		wp_register_script(
@@ -500,14 +498,13 @@ class PodsInit {
 				'jquery',
 				'pods-dfv',
 				'pods-i18n',
-				'pods-json',
 				'jquery-qtip2',
 			),
 			PODS_VERSION,
 			true
 		);
 
-		wp_register_script( 'pods-cleditor', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
+		wp_register_script( 'pods-cleditor', PODS_URL . "ui/js/cleditor/jquery.cleditor{$suffix_min}.js", array( 'jquery' ), '1.4.5', true );
 
 		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror.js', array(), '4.8', true );
 		wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', array( 'pods-codemirror' ), '4.8', true );
@@ -546,12 +543,12 @@ class PodsInit {
 			);
 		}
 
-    // Select2/SelectWoo.
+		// Select2/SelectWoo.
 		wp_register_style(
 			'pods-select2',
 			PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.css",
 			array(),
-			'1.0.2'
+			'1.0.8'
 		);
 
 		$select2_locale = function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
@@ -574,10 +571,10 @@ class PodsInit {
 					'jquery',
 					'pods-i18n',
 				),
-				'1.0.1',
+				'1.0.8',
 				true
 			);
-			wp_register_script( 'pods-select2', $select2_i18n, array( 'pods-select2-core' ), '1.0.1', true );
+			wp_register_script( 'pods-select2', $select2_i18n, array( 'pods-select2-core' ), '1.0.8', true );
 		} else {
 			wp_register_script(
 				'pods-select2',
@@ -586,7 +583,7 @@ class PodsInit {
 					'jquery',
 					'pods-i18n',
 				),
-				'1.0.1',
+				'1.0.8',
 				true
 			);
 		}

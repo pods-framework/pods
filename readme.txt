@@ -194,6 +194,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 **New Features & Enhancements**
 * Added: Custom no access message for templates. #5875 (@JoryHogeveen)
+* Added: New filter `pods_field_validate_{$type}`. #1106 (@JoryHogeveen)
 
 **Bug Fixes**
 

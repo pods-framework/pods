@@ -534,7 +534,7 @@ class Pods_Templates extends PodsComponent {
 
 				if ( ! $permission ) {
 					if ( 1 === (int) pods_v( 'show_restrict_message', $options, 1 ) ) {
-						$message = pods_v( 'restrict_message', $options, __( 'You do not have access to view this content.', 'pods' ) );
+						$message = pods_v( 'restrict_message', $options, __( 'You do not have access to view this content.', 'pods' ), true );
 						$message = PodsForm::field_method( 'wysiwyg', 'display', $message, 'restrict_message', $options );
 						return apply_filters( 'pods_templates_permission_denied', $message, $code, $template, $obj );
 					}

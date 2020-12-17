@@ -17,11 +17,6 @@
       "role": "Lead Developer"
     },
     {
-      "name": "Phil Lewis",
-      "homepage": "https://github.com/pglewis",
-      "role": "Developer"
-    },
-    {
       "name": "Jim True",
       "homepage": "https://jimtrue.com/",
       "role": "Developer and Support"
@@ -30,6 +25,11 @@
       "name": "Matt Gibbs",
       "homepage": "https://facetwp.com/",
       "role": "Founding Developer"
+    },
+    {
+      "name": "Phil Lewis",
+      "homepage": "https://github.com/pglewis",
+      "role": "Contributing Developer"
     }
   ],
   "support": {
@@ -41,22 +41,23 @@
   },
   "repositories": [
     {
-      "name": "moderntribe/TribalScents",
+      "name": "moderntribe/tribalscents",
       "type": "github",
-      "url": "https://github.com/moderntribe/TribalScents",
+      "url": "https://github.com/moderntribe/tribalscents",
       "no-api": true
     }
   ],
   "require": {
-    "composer/installers": "1.8.*",
+    "composer/installers": "1.9.*",
     "php": ">=5.3",
     "freemius/wordpress-sdk": "2.3.2"
   },
   "require-dev": {
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
-    "wp-coding-standards/wpcs": "^2.1",
     "automattic/vipwpcs": "^2.0",
-    "moderntribe/TribalScents": "dev-master",
+    "bvanhoekelen/performance": "^2.5.1",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+    "wp-coding-standards/wpcs": "^2.1",
+    "moderntribe/tribalscents": "dev-master",
     "wp-cli/wp-cli": "2.*",
     "phpunit/phpunit": "4.*",
     "mockery/mockery": "1.3.*",

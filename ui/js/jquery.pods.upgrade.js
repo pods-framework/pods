@@ -157,7 +157,7 @@
                 } );
             }
             else {
-                $( '#pods-wizard-next' ).click().text( 'Start using Pods' ).addClass( 'finished' );
+                $( '#pods-wizard-next' ).trigger( 'click' ).text( 'Start using Pods' ).addClass( 'finished' );
                 $( '#pods-wizard-next' ).off( 'click' );
                 $( '#pods-wizard-next' ).prop( 'href', 'admin.php?page=pods' );
                 $( '#pods-wizard-next' ).show();

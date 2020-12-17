@@ -283,31 +283,35 @@ class Pods implements Iterator {
 	public function __construct( $pod = null, $id = null ) {
 
 		if ( null === $pod ) {
-			$queried_object = get_queried_object();
+			$pod = get_queried_object();
+		}
 
-			if ( $queried_object ) {
+		if ( $pod && ! is_string( $pod ) ) {
+			if ( $pod instanceof WP_Post ) {
+				// Post Type Singular.
+				$pod       = $pod->post_type;
 				$id_lookup = true;
+			} elseif ( $pod instanceof WP_Term ) {
+				// Term Archive.
+				$pod       = $pod->taxonomy;
+				$id_lookup = true;
+			} elseif ( $pod instanceof WP_User ) {
+				// Author Archive.
+				$pod       = 'user';
+				$id_lookup = true;
+			} elseif ( $pod instanceof WP_Post_Type ) {
+				// Post Type Archive.
+				$pod       = $pod->name;
+				$id_lookup = false;
+			} else {
+				// Unsupported pod object.
+				$pod       = null;
+				$id_lookup = false;
+			}
 
-				if ( $queried_object instanceof WP_Post ) {
-					// Post Type Singular.
-					$pod = $queried_object->post_type;
-				} elseif ( $queried_object instanceof WP_Term ) {
-					// Term Archive.
-					$pod = $queried_object->taxonomy;
-				} elseif ( $queried_object instanceof WP_User ) {
-					// Author Archive.
-					$pod = 'user';
-				} elseif ( $queried_object instanceof WP_Post_Type ) {
-					// Post Type Archive.
-					$pod = $queried_object->name;
-
-					$id_lookup = false;
-				}
-
-				if ( null === $id && $id_lookup ) {
-					$id = get_queried_object_id();
-				}
-			}//end if
+			if ( null === $id && $id_lookup ) {
+				$id = get_queried_object_id();
+			}
 		}//end if
 
 		$this->api                 = pods_api( $pod );
@@ -910,8 +914,9 @@ class Pods implements Iterator {
 
 		$is_wp_object = in_array( $pod_type, $wp_object_types, true );
 
-		if ( $is_wp_object && in_array( $params->name, $permalink_fields, true ) ) {
-			if ( 0 < strlen( $this->detail_page ) ) {
+		if ( in_array( $params->name, $permalink_fields, true ) ) {
+			if ( 0 < strlen( $this->detail_page ) && false === strpos( $params->name, 'permalink' ) ) {
+				// ACT Pods. Prevent tag loop by not parsing `permalink`.
 				$value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
 			} else {
 				switch ( $pod_type ) {
@@ -1061,6 +1066,37 @@ class Pods implements Iterator {
 				} else {
 					return null;
 				}
+
+			} elseif ( 'avatar' === $first_field && 'user' === $pod_type ) {
+				// User avatar.
+				$size       = null;
+				$get_avatar = true;
+
+				if ( $is_traversal ) {
+					if ( $is_field_set ) {
+						// This is a registered field.
+						if ( isset( $traverse_fields[1] ) && is_numeric( $traverse_fields[1] ) ) {
+							$size = (int) $traverse_fields[1];
+						} else {
+							// Traverse through attachment post.
+							$get_avatar = false;
+						}
+					} else {
+						if ( isset( $traverse_fields[1] ) ) {
+							$size = (int) $traverse_fields[1];
+						}
+					}
+				}
+
+				if ( $get_avatar ) {
+					$object_field_found = true;
+					if ( 0 < $size ) {
+						$value = get_avatar( $this->id(), $size );
+					} else {
+						$value = get_avatar( $this->id() );
+					}
+				}
+
 			} elseif ( ! $is_field_set ) {
 
 				$image_fields = array(
@@ -1074,28 +1110,9 @@ class Pods implements Iterator {
 				}
 
 				// Handle special field tags.
-				if ( 'avatar' === $first_field && 'user' === $pod_type ) {
-					// User avatar.
-					$size = null;
-
-					if ( 0 === strpos( $params->name, 'avatar.' ) ) {
-						$field_names = explode( '.', $params->name );
-
-						if ( isset( $field_names[1] ) ) {
-							$size = (int) $field_names[1];
-						}
-					}
-
-					if ( 0 < $size ) {
-						$value = get_avatar( $this->id(), $size );
-					} else {
-						$value = get_avatar( $this->id() );
-					}
-
-					$object_field_found = true;
-
-				} elseif ( in_array( $first_field, $image_fields, true ) ) {
+				if ( in_array( $first_field, $image_fields, true ) ) {
 					// Default image field handlers.
+					$object_field_found = true;
 
 					$image_field = $first_field;
 					// Is it a URL request?
@@ -1123,22 +1140,27 @@ class Pods implements Iterator {
 					}
 
 					if ( $attachment_id ) {
+						$is_image = wp_attachment_is_image( $attachment_id );
 
 						$size = 'thumbnail';
 						if ( isset( $traverse_params[0] ) ) {
-							$size  = $traverse_params[0];
-							$sizes = get_intermediate_image_sizes();
-							// Not shown by default.
-							$sizes[] = 'full';
-							$sizes[] = 'original';
-							if ( ! in_array( $size, $sizes, true ) ) {
+							$size = $traverse_params[0];
+
+							if ( pods_is_image_size( $size ) ) {
+								// Force image request since a valid size parameter is passed.
+								$is_image = true;
+							} else {
 								// No valid image size found.
 								$size = false;
 							}
 						}
 
 						if ( $url ) {
-							$value = pods_image_url( $attachment_id, $size, 0, true );
+							if ( $is_image ) {
+								$value = pods_image_url( $attachment_id, $size, 0, true );
+							} else {
+								$value = wp_get_attachment_url( $attachment_id );
+							}
 						} elseif ( $size ) {
 							// Pods will auto-get the thumbnail ID if this isn't an attachment.
 							$value = pods_image( $attachment_id, $size, 0, null, true );
@@ -1165,10 +1187,6 @@ class Pods implements Iterator {
 									$value = pods_traverse( $traverse_params, $value );
 								}
 							}
-						}
-
-						if ( null !== $value ) {
-							$object_field_found = true;
 						}
 					}
 				}
@@ -1722,7 +1740,7 @@ class Pods implements Iterator {
 											// @todo Refactor the above condition statement.
 											$size = 'full';
 
-											if ( false === strpos( 'image', get_post_mime_type( $item_id ) ) ) {
+											if ( ! wp_attachment_is_image( $item_id ) ) {
 												// No default sizes for non-images.
 												// When a size is defined this will be overwritten.
 												$size = null;
@@ -1737,7 +1755,7 @@ class Pods implements Iterator {
 											}
 
 											if ( $size ) {
-												$value_url = pods_image_url( $item_id, $size );
+												$value_url = pods_image_url( $item_id, $size, 0, true );
 											} else {
 												$value_url = wp_get_attachment_url( $item_id );
 											}
@@ -1769,7 +1787,7 @@ class Pods implements Iterator {
 												$size = substr( $full_field, 5 );
 											}
 
-											$value[] = pods_image( $item_id, $size );
+											$value[] = pods_image( $item_id, $size, 0, array(), true );
 
 											$params->raw_display = true;
 										} elseif ( in_array( $field, array(
@@ -4185,6 +4203,17 @@ class Pods implements Iterator {
 			$value = $this->helper( $helper_name, $value, $field_name );
 		} else {
 			$value = $this->display( $field_name );
+		}
+
+		// Process special magic tags but allow "empty" values for numbers.
+		if (
+			! $value
+			&& ! is_numeric( $value )
+			&& pods_shortcode_allow_evaluate_tags()
+			&& ! $this->fields( $field_name )
+		) {
+			// Do not pass before and after tags (key 2 and 3) or these get processed twice.
+			$value = pods_evaluate_tag( implode( ',', array_slice( $tag, 0, 2 ) ) );
 		}
 
 		if ( ! empty( $tag[2] ) ) {

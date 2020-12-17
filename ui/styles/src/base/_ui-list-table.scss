@@ -292,3 +292,13 @@ body.branch-3-5 .pods-ui-posts-filter-popup p.submit input.button {
 	clear: both;
 	visibility: hidden;
 }
+
+.pods-ui {
+	.wp-list-table .toggle-row {
+    	display: none;
+	}
+
+	p div.pods-pick-values {
+	    display: inline;
+	}
+}

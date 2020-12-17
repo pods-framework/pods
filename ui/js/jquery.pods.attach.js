@@ -17,7 +17,7 @@ function pods_attachments ( src, file_limit ) {
             // Create 'Add' link
             var pods_file_quick_add = jQuery( '<a href="#">' + PodsI18n.__( 'Add' ) + '</a>' ).addClass( 'pods-quick-add' );
 
-            pods_file_quick_add.bind( 'click', function( e ) {
+            pods_file_quick_add.on( 'click', function( e ) {
                 var item = jQuery( this );
                 var item_parent = item.parent();
 
@@ -49,7 +49,7 @@ function pods_attachments ( src, file_limit ) {
         }
     }
 
-    pods_thickbox.find( 'td.savesend input' ).unbind( 'click' ).click( function ( e ) {
+    pods_thickbox.find( 'td.savesend input' ).off( 'click' ).on( 'click', function ( e ) {
         var wp_media_meta = jQuery( this ).parent().parent().parent();
 
         pods_thickbox_send( wp_media_meta, e );

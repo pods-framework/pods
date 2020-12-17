@@ -35,8 +35,6 @@ TESTS.md export-ignore
 codeception.dist.yml export-ignore
 codeception.example.yml export-ignore
 composer.json export-ignore
-git-workflow.md export-ignore
-grunt-workflow.md export-ignore
 jest-setup-wordpress-globals.js export-ignore
 jest.config.json export-ignore
 package.json export-ignore

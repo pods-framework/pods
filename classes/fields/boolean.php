@@ -182,6 +182,7 @@ class PodsField_Boolean extends PodsField {
 		}
 
 		$errors = array();
+
 		if ( is_array( $validate ) ) {
 			$errors = $validate;
 		}

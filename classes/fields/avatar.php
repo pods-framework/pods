@@ -185,7 +185,7 @@ class PodsField_Avatar extends PodsField_File {
 
 		if ( 0 < $user_id && ! empty( PodsMeta::$user ) ) {
 			$user_avatar_url = null;
-			$avatar_cached   = pods_cache_get( $user_id . '-' . $size . '-url', 'pods_avatars' );
+			$avatar_cached   = pods_cache_get( $user_id . '-' . $size, 'pods_avatar_urls' );
 
 			if ( ! empty( $avatar_cached ) ) {
 				$user_avatar_url = $avatar_cached;
@@ -198,7 +198,7 @@ class PodsField_Avatar extends PodsField_File {
 					$user_avatar_url = pods_image_url( $user_avatar_id, array( $args['width'], $args['height'] ), 0 );
 
 					if ( ! empty( $user_avatar_url ) ) {
-						pods_cache_set( $user_id . '-' . $size . '-url', $user_avatar_url, 'pods_avatars', WEEK_IN_SECONDS );
+						pods_cache_set( $user_id . '-' . $size, $user_avatar_url, 'pods_avatar_urls', WEEK_IN_SECONDS );
 					}
 				}
 			}
@@ -230,7 +230,7 @@ class PodsField_Avatar extends PodsField_File {
 		$avatar_id = 0;
 
 		if ( 0 < $user_id && ! empty( PodsMeta::$user ) ) {
-			$avatar_cached = pods_cache_get( $user_id . '-id', 'pods_avatars' );
+			$avatar_cached = pods_cache_get( $user_id, 'pods_avatar_ids' );
 
 			if ( ! empty( $avatar_cached ) ) {
 				$avatar_id = $avatar_cached;
@@ -256,7 +256,7 @@ class PodsField_Avatar extends PodsField_File {
 				if ( ! empty( $avatar_field ) ) {
 					$avatar_id = get_user_meta( $user_id, $avatar_field . '.ID', true );
 
-					pods_cache_set( $user_id . '-id', $avatar_id, 'pods_avatars', WEEK_IN_SECONDS );
+					pods_cache_set( $user_id, $avatar_id, 'pods_avatar_ids', WEEK_IN_SECONDS );
 				}//end if
 			}//end if
 		}//end if

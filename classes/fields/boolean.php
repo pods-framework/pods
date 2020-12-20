@@ -183,14 +183,20 @@ class PodsField_Boolean extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		if ( ! $this->is_required( $options ) ) {
 			// Any value can be parsed to boolean.
-			return true;
+			return $validate;
 		}
 
 		$errors = array();
-		$check  = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
+
+		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
 		$yes_required = ( 'checkbox' === pods_v( static::$type . '_format_type', $options ) );
 
@@ -202,7 +208,7 @@ class PodsField_Boolean extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**

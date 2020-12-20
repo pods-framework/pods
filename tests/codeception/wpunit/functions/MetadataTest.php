@@ -5,6 +5,8 @@ namespace Pods_Unit_Tests\Functions;
 use Pods_Unit_Tests\Pods_UnitTestCase;
 
 /**
+ * Class Metadata
+ *
  * @group pods
  * @group pods-functions
  * @group pods-functions-metadata
@@ -19,8 +21,9 @@ class MetadataTest extends Pods_UnitTestCase {
 	protected static $pod_names = [
 		'post_type' => 'post_meta',
 		'taxonomy'  => 'term_meta',
-		'comment'   => 'comment_meta',
-		'user'      => 'user_meta',
+		// Name should be equal as WP object name.
+		'comment'   => 'comment',
+		'user'      => 'user',
 	];
 
 	protected static $pod_ids = [];
@@ -41,6 +44,10 @@ class MetadataTest extends Pods_UnitTestCase {
 		$api = pods_api();
 
 		foreach ( self::$pod_names as $name ) {
+			if ( in_array( $name, [ 'comment', 'user' ], true ) ) {
+				continue;
+			}
+
 			// Delete all pod items.
 			$api->delete_pod( $name, false, true );
 		}
@@ -100,6 +107,25 @@ class MetadataTest extends Pods_UnitTestCase {
 			];
 
 			$api->save_field( $params );
+
+			// PR #5665
+			$params = [
+				'pod'    => $name,
+				'pod_id' => $pod_id,
+				'name'   => 'slash',
+				'type'   => 'text',
+			];
+
+			$api->save_field( $params );
+
+			$params = [
+				'pod'    => $name,
+				'pod_id' => $pod_id,
+				'name'   => 'quotes',
+				'type'   => 'text',
+			];
+
+			$api->save_field( $params );
 		}
 	}
 
@@ -155,13 +181,21 @@ class MetadataTest extends Pods_UnitTestCase {
 			self::$obj_ids[ $type ] = $objects;
 
 			$update_meta = 'update_' . $name;
+
 			foreach ( $objects as $key => $id ) {
+				$data = [];
+
 				switch ( $key ) {
 					case 0:
 						$data = [
 							'text'   => 'text',
 							'images' => self::get_images(),
 							// No relationship fields.
+							// No relationship fields.
+
+							// PR #5665
+							'slash'  => 'Test \backslash',
+							'quotes' => 'Test \'quotes\' "doublequotes"',
 						];
 						break;
 					case 1:
@@ -202,13 +236,22 @@ class MetadataTest extends Pods_UnitTestCase {
 		return $images;
 	}
 
+	public function test_created_pods() {
+
+		foreach( self::$pod_names as $type => $name ) {
+			$pod = pods( $name );
+			$this->assertNotFalse( $pod->valid() );
+			$this->assertNotEmpty( self::$obj_ids[ $type ] );
+		}
+	}
+
 	public function test_get_metadata() {
 		$this->markTestSkipped( 'This test class needs to be revamped for Codeception' );
 
 		foreach ( self::$obj_ids as $type => $ids ) {
 			$id_key   = self::get_id_key( $type );
 			$name     = self::$pod_names[ $type ];
-			$get_meta = 'get_' . $name;
+			$get_meta = self::get_meta_function( 'get', $type );
 
 			foreach ( $ids as $key => $id ) {
 				$single        = call_user_func( $get_meta, $id, 'related_single', false );
@@ -252,13 +295,19 @@ class MetadataTest extends Pods_UnitTestCase {
 						$this->assertEquals( '', $single_single, $message );
 						$this->assertEquals( '', $multi_single, $message );
 
+						// PR #5665
+						$value = call_user_func( $get_meta, $id, 'slash', true );
+						$this->assertEquals( 'Test \backslash', $value, $message );
+						$value = call_user_func( $get_meta, $id, 'quotes', true );
+						$this->assertEquals( 'Test \'quotes\' "doublequotes"', $value, $message );
+
 						break;
 					case 1:
 						// Single related to: 2
 						// Multi related to: 2
 
-						$single_rel = self::$obj_ids[ $type ][2];
-						$multi_rel  = self::$obj_ids[ $type ][2];
+						$single_rel = $ids[2];
+						$multi_rel  = $ids[2];
 
 						// Single param false
 						$this->assertEquals( [ $single_rel ], $single, $message );
@@ -273,10 +322,10 @@ class MetadataTest extends Pods_UnitTestCase {
 						// Single related to: 1
 						// Multi related to: 0 and 1
 
-						$single_rel = self::$obj_ids[ $type ][1];
+						$single_rel = $ids[1];
 						$multi_rel  = [
-							self::$obj_ids[ $type ][0],
-							self::$obj_ids[ $type ][1],
+							$ids[0],
+							$ids[1],
 						];
 
 						// Single param false
@@ -303,7 +352,7 @@ class MetadataTest extends Pods_UnitTestCase {
 
 		foreach ( self::$obj_ids as $type => $ids ) {
 			$name     = self::$pod_names[ $type ];
-			$get_meta = 'get_' . $name;
+			$get_meta = self::get_meta_function( 'get', $type );
 
 			foreach ( $ids as $key => $id ) {
 				$single        = call_user_func( $get_meta, $id, 'related_single', false );
@@ -344,8 +393,8 @@ class MetadataTest extends Pods_UnitTestCase {
 						// Single related to: 2
 						// Multi related to: 2
 
-						$single_rel = self::$obj_ids[ $type ][2];
-						$multi_rel  = self::$obj_ids[ $type ][2];
+						$single_rel = $ids[2];
+						$multi_rel  = $ids[2];
 
 						// Single param false
 						$this->assertEquals( [ $single_rel ], $single, $message );
@@ -360,10 +409,10 @@ class MetadataTest extends Pods_UnitTestCase {
 						// Single related to: 1
 						// Multi related to: 0 and 1
 
-						$single_rel = self::$obj_ids[ $type ][1];
+						$single_rel = $ids[1];
 						$multi_rel  = [
-							self::$obj_ids[ $type ][0],
-							self::$obj_ids[ $type ][1],
+							$ids[0],
+							$ids[1],
 						];
 
 						// Single param false
@@ -381,6 +430,18 @@ class MetadataTest extends Pods_UnitTestCase {
 		}
 
 		remove_filter( 'pods_pods_field_related_output_type', [ $this, 'filter_output_type_ids' ] );
+	}
+
+	public static function get_meta_function( $action, $type ) {
+		switch ( $type ) {
+			case 'post_type':
+				$type = 'post';
+				break;
+			case 'taxonomy':
+				$type = 'term';
+				break;
+		}
+		return $action . '_' . $type . '_meta';
 	}
 
 	public static function get_id_key( $type ) {

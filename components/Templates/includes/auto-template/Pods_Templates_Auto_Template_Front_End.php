@@ -434,13 +434,6 @@ class Pods_Templates_Auto_Template_Front_End {
 
 					return $content;
 				}
-
-				if ( 'the_excerpt' === $current_filter && ( is_single() || is_singular() ) ) {
-					// Do not run excerpts on single.
-					$running = false;
-
-					return $content;
-				}
 			}
 
 			$pod = pods( $pod_name, $pod_id );

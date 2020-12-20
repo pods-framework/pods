@@ -2,8 +2,8 @@
 
 namespace Pods_Unit_Tests\Pods\Shortcode;
 
-use Pods_Unit_Tests\Pods_UnitTestCase;
 use Pods;
+use Pods_Unit_Tests\Pods_UnitTestCase;
 
 /**
  * Class EachTest
@@ -31,7 +31,7 @@ class EachTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function setUp(): void {
+	public function setUp() : void {
 		parent::setUp();
 
 		add_shortcode( 'test_each_recurse', function ( $args, $content ) {
@@ -40,35 +40,35 @@ class EachTest extends Pods_UnitTestCase {
 
 		$api = pods_api();
 
-		$this->pod_id = $api->save_pod( array(
+		$this->pod_id = $api->save_pod( [
 			'type' => 'post_type',
 			'name' => $this->pod_name,
-		) );
+		] );
 
-		$params = array(
+		$params = [
 			'pod_id' => $this->pod_id,
 			'name'   => 'number1',
 			'type'   => 'number',
-		);
+		];
 
 		$api->save_field( $params );
 
-		$params = array(
+		$params = [
 			'pod_id' => $this->pod_id,
 			'name'   => 'number2',
 			'type'   => 'number',
-		);
+		];
 
 		$api->save_field( $params );
 
-		$params = array(
+		$params = [
 			'pod_id'           => $this->pod_id,
 			'name'             => 'related_field',
 			'type'             => 'pick',
 			'pick_object'      => 'post_type',
 			'pick_val'         => $this->pod_name,
 			'pick_format_type' => 'multi',
-		);
+		];
 
 		$api->save_field( $params );
 
@@ -78,7 +78,7 @@ class EachTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function tearDown(): void {
+	public function tearDown() : void {
 		if ( shortcode_exists( 'test_each_recurse' ) ) {
 			remove_shortcode( 'test_each_recurse' );
 		}
@@ -105,28 +105,65 @@ class EachTest extends Pods_UnitTestCase {
 
 		$pod_name = $this->pod_name;
 
-		$sub_ids = array();
+		$sub_ids = [];
 
 		for ( $x = 1; $x <= 5; $x ++ ) {
-			$sub_ids[] = $this->pod->add( array(
+			$sub_ids[] = $this->pod->add( [
 				'post_status' => 'publish',
 				'post_title'  => __FUNCTION__ . ': sub post ' . $x,
 				'number1'     => $x,
 				'number2'     => $x * $x,
-			) );
+			] );
 		}
 
-		$main_id = $this->pod->add( array(
+		$main_id = $this->pod->add( [
 			'post_status'   => 'publish',
 			'post_title'    => __FUNCTION__ . ': main post',
 			'number1'       => 123,
 			'number2'       => 456,
 			'related_field' => $sub_ids,
-		) );
+		] );
 
 		$content = base64_encode( '/{@number1}_{@number2}/' );
 
 		$this->assertEquals( '/1_1//2_4//3_9//4_16//5_25/', do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_sub_template]" ) );
+
+		/**
+		 * Image tests.
+		 */
+
+		$image_ids   = [];
+		$image_ids[] = $this->factory()->attachment->create();
+		$image_ids[] = $this->factory()->attachment->create();
+		$image_ids[] = $this->factory()->attachment->create();
+
+		$main_id = $this->pod->save( [
+				'ID'     => $main_id,
+				'images' => $image_ids,
+			] );
+
+		$content = base64_encode( '{@_src}' );
+		$compare = '';
+		foreach ( $image_ids as $img ) {
+			$compare .= pods_image_url( $img, 'medium' );
+		}
+
+		// Make sure the media Pod exists.
+		// @todo Validate when there is not media Pod active. Requires refactor of caching.
+		$this->assertTrue( pods( 'media' )->valid() );
+
+		// Should return all image links.
+		$this->assertEquals( $compare, do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='images']{$content}[/pod_sub_template]" ) );
+
+		// Use media object for Pod related fields.
+		$content = base64_encode( '{@title}' );
+		$compare = '';
+		foreach ( $image_ids as $img ) {
+			$compare .= get_the_title( $img );
+		}
+
+		// Should still return all image links.
+		$this->assertEquals( $compare, do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='images']{$content}[/pod_sub_template]" ) );
 	}
 
 	/**
@@ -137,24 +174,24 @@ class EachTest extends Pods_UnitTestCase {
 
 		$pod_name = $this->pod_name;
 
-		$sub_ids = array();
+		$sub_ids = [];
 
 		for ( $x = 1; $x <= 5; $x ++ ) {
-			$sub_ids[] = $this->pod->add( array(
+			$sub_ids[] = $this->pod->add( [
 				'post_status' => 'publish',
 				'name'        => $x,
 				'number1'     => $x,
 				'number2'     => $x * $x,
-			) );
+			] );
 		}
 
-		$main_id = $this->pod->add( array(
+		$main_id = $this->pod->add( [
 			'post_status'   => 'publish',
 			'name'          => 'main post',
 			'number1'       => 123,
 			'number2'       => 456,
 			'related_field' => $sub_ids,
-		) );
+		] );
 
 		$content = base64_encode( '[if number1]/{@number1}_{@number2}/[/if]' );
 
@@ -173,12 +210,12 @@ class EachTest extends Pods_UnitTestCase {
 		$this->assertEquals( '/1_1//2_4//3_9//4_16//5_25/', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_if_field]" ) );
 
 		// Testing [each] inside [if] with [else] and no relationships
-		$main_id = $this->pod->add( array(
+		$main_id = $this->pod->add( [
 			'post_status' => 'publish',
 			'name'        => 'post with no related fields',
 			'number1'     => 123,
 			'number2'     => 456,
-		) );
+		] );
 
 		$inner_content = base64_encode( '[if number1]/{@number1}_{@number2}/[/if]' );
 		$content       = base64_encode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$inner_content}[/pod_sub_template][else]No related field" );
@@ -194,24 +231,24 @@ class EachTest extends Pods_UnitTestCase {
 
 		$pod_name = $this->pod_name;
 
-		$sub_ids = array();
+		$sub_ids = [];
 
 		for ( $x = 1; $x <= 5; $x ++ ) {
-			$sub_ids[] = $this->pod->add( array(
+			$sub_ids[] = $this->pod->add( [
 				'post_status' => 'publish',
 				'name'        => $x,
 				'number1'     => $x,
 				'number2'     => $x * $x,
-			) );
+			] );
 		}
 
-		$main_id = $this->pod->add( array(
+		$main_id = $this->pod->add( [
 			'post_status'   => 'publish',
 			'name'          => 'main post',
 			'number1'       => 123,
 			'number2'       => 456,
 			'related_field' => $sub_ids,
-		) );
+		] );
 
 		$content = base64_encode( '/{@number1}_{@number2}/' );
 

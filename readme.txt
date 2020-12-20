@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, pglewis, jimtrue, keraweb, quasel, jamesgol, ramoonus
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.9
-Tested up to: 5.5.3
+Tested up to: 5.6
 Requires PHP: 5.6
 Stable tag: 2.8.0-a-3
 License: GPLv2 or later
@@ -190,6 +190,14 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.24 - November 5th 2020 =
+
+**Bug Fixes**
+
+* Fixed: Fix media `[each]` loop if no `media` Pod exists. #5882 (@JoryHogeveen)
+* Fixed: Fallback to default display field if custom option is invalid for relationship fields. #5839 & #5859 (@JoryHogeveen)
+* Fixed: Use `pathinfo` to properly validate file extension. #5876 (@JoryHogeveen)
 
 = 2.7.23 - October 30th 2020 =
 

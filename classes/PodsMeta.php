@@ -1373,7 +1373,7 @@ class PodsMeta {
 			pods_no_conflict_on( 'post' );
 
 			if ( ! empty( $pod ) ) {
-				// Fix for Pods doing it's own sanitizing
+				// Fix for Pods doing it's own sanitizing.
 				$data = pods_unslash( (array) $data );
 
 				$pod->save( $data, null, null, array(

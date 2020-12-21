@@ -202,6 +202,10 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Fixed: Prevent WP unslash removing already sanitized input. #5040 & #4424 (@JoryHogeveen)
 * Fixed: HTML entities in custom relationship values. #5894 (@JoryHogeveen)
 * Fixed: Relationship AJAX search when using multiple languages. #5888 (@JoryHogeveen)
+* Fixed: Include the post type in attachment save. #5748 (@JoryHogeveen)
+* Fixed: Allow the_excerpt to be used as custom filter on singular pages. #5899 (@JoryHogeveen)
+* Fixed: Enhance getting avatar images and add `get_avatar_data` filter. #5771 (@JoryHogeveen)
+
 
 = 2.7.24 - November 5th 2020 =
 

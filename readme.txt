@@ -190,7 +190,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
-= 2.7.25 - December ## 2020 =
+= 2.7.25 - December 28th 2020 =
 
 **New Features & Enhancements**
 * Added: Custom no access message for templates. #5875 (@JoryHogeveen)

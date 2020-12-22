@@ -603,7 +603,27 @@ class PodsField {
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
-		return true;
+		/**
+		 * Filter field validation return.
+		 *
+		 * @since 2.7.24
+		 *
+		 * @param true            $true    Default validation return.
+		 * @param mixed|null      $value   Current value.
+		 * @param string|null     $name    Field name.
+		 * @param array|null      $options Field options.
+		 * @param array|null      $fields  Pod fields.
+		 * @param array|null      $pod     Pod information.
+		 * @param int|string|null $id      Current item ID.
+		 * @param array|null      $params  Additional parameters.
+		 */
+		$validate = apply_filters( 'pods_field_validate_' . static::$type, true, $value, $name, $options, $fields, $pod, $id, $params );
+
+		if ( ! is_bool( $validate ) ) {
+			$validate = (array) $validate;
+		}
+
+		return $validate;
 
 	}
 

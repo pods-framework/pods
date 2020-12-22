@@ -579,7 +579,7 @@ class PodsField_File extends PodsField {
 
 		// @todo Check file size
 		// @todo Check file extensions
-		return true;
+		return parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 	}
 
@@ -612,6 +612,7 @@ class PodsField_File extends PodsField {
 				continue;
 			}
 
+			$attachment      = null;
 			$attachment_data = array();
 
 			// Update the title if set.
@@ -631,6 +632,11 @@ class PodsField_File extends PodsField {
 			// Update the attachment if it the data array is not still empty.
 			if ( ! empty( $attachment_data ) ) {
 				$attachment_data['ID'] = $id;
+
+				if ( $attachment ) {
+					// Add post type to trigger attachment update filters from other plugins.
+					$attachment_data['post_type'] = $attachment->post_type;
+				}
 
 				self::$api->save_wp_object( 'media', $attachment_data );
 			}

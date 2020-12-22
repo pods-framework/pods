@@ -226,11 +226,11 @@ final class PodsI18n {
 	 */
 	public function get_current_language( $args = array() ) {
 
-		$args = wp_parse_args(
-			$args, array(
-				'refresh' => false,
-			)
+		$defaults = array(
+			'refresh' => false,
 		);
+
+		$args = wp_parse_args( $args, $defaults );
 
 		if ( ! $args['refresh'] && ! empty( self::$current_language ) ) {
 			return self::$current_language;
@@ -256,11 +256,11 @@ final class PodsI18n {
 	 */
 	public function get_current_language_data( $args = array() ) {
 
-		$args = wp_parse_args(
-			$args, array(
-				'refresh' => false,
-			)
+		$defaults = array(
+			'refresh' => false,
 		);
+
+		$args = wp_parse_args( $args, $defaults );
 
 		if ( ! $args['refresh'] && ! empty( self::$current_language_data ) ) {
 			return self::$current_language_data;
@@ -313,15 +313,25 @@ final class PodsI18n {
 				$current_language = get_user_meta( get_current_user_id(), 'pll_filter_content', true );
 			}
 
+			$pods_ajax = pods_v( 'pods_ajax', 'request', false );
+
 			// Get current language based on the object language if available.
-			$page = basename( $_SERVER['SCRIPT_NAME'] );
+			$page = basename( pods_v( 'SCRIPT_NAME', $_SERVER, '' ) );
+			if ( $pods_ajax && 'admin-ajax.php' === $page ) {
+				$page = basename( pods_v( 'HTTP_REFERER', $_SERVER, '' ) );
+			}
+			$page = explode( '?', $page );
+			$page = reset( $page );
 
 			/**
 			 * Overwrite the current language if needed for post types.
 			 */
 			if ( 'post.php' === $page || 'edit.php' === $page ) {
 
-				$current_post = ( ! empty( $_GET['post'] ) ) ? (int) $_GET['post'] : 0;
+				$current_post = (int) pods_v( 'post', 'request', 0 );
+				if ( $pods_ajax ) {
+					$current_post = (int) pods_v( 'id', 'request', $current_post );
+				}
 
 				if ( $current_post ) {
 
@@ -356,9 +366,7 @@ final class PodsI18n {
 						 * Polylang (1.0.1+).
 						 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language.
 						 */
-						if ( ! empty( $_GET['new_lang'] ) ) {
-							$current_language = $_GET['new_lang'];
-						}
+						$current_language = pods_v( 'new_lang', 'request', $current_language );
 					}
 				}
 			} //end if
@@ -368,12 +376,18 @@ final class PodsI18n {
 			 */
 			elseif ( 'term.php' === $page || 'edit-tags.php' === $page ) {
 
-				$current_taxonomy = ( ! empty( $_GET['taxonomy'] ) ) ? sanitize_text_field( $_GET['taxonomy'] ) : '';
+				$current_term_id = pods_v( 'tag_ID', 'request', 0 );
+				if ( $pods_ajax ) {
+					$current_term_id = (int) pods_v( 'id', 'request', $current_term_id );
+				}
+
+				$current_taxonomy = pods_v( 'taxonomy', 'request', '' );
+				if ( ! $current_taxonomy && $current_term_id ) {
+					$current_taxonomy = pods_v( 'taxonomy', get_term( $current_term_id ), null );
+				}
 
 				// @todo MAYBE: Similar function like get_post_type for taxonomies so we don't need to check for $_GET['taxonomy']
 				if ( $current_taxonomy ) {
-
-					$current_tag_id = ( ! empty( $_GET['tag_ID'] ) ) ? (int) $_GET['tag_ID'] : 0;
 
 					/*
 					 * @todo wpml-comp API call for taxonomy needed!
@@ -400,18 +414,16 @@ final class PodsI18n {
 						 * Polylang (1.5.4+).
 						 * We only want the related objects if they are not translatable OR the same language as the current object.
 						 */
-						if ( $current_tag_id && function_exists( 'pll_get_term_language' ) ) {
+						if ( $current_term_id && function_exists( 'pll_get_term_language' ) ) {
 							// Overwrite the current language if this is a translatable taxonomy
-							$current_language = pll_get_term_language( $current_tag_id );
+							$current_language = pll_get_term_language( $current_term_id );
 						}
 
 						/**
 						 * Polylang (1.0.1+).
 						 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language.
 						 */
-						if ( ! empty( $_GET['new_lang'] ) ) {
-							$current_language = $_GET['new_lang'];
-						}
+						$current_language = pods_v( 'new_lang', 'request', $current_language );
 					}
 				}//end if
 			}//end if

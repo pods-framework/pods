@@ -246,6 +246,13 @@ class PodsField_Number extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
+
+		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$format_args = $this->get_number_format_args( $options );
 		$thousands   = $format_args['thousands'];
@@ -263,10 +270,15 @@ class PodsField_Number extends PodsField {
 		$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
 		if ( 0 < strlen( $check ) ) {
-			return sprintf( __( '%s is not numeric', 'pods' ), $label );
+			// Translators: %s stands for the input value.
+			$errors[] = sprintf( esc_html__( '%s is not numeric', 'pods' ), $label );
 		}
 
-		return true;
+		if ( ! empty( $errors ) ) {
+			return $errors;
+		}
+
+		return $validate;
 	}
 
 	/**

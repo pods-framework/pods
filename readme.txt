@@ -193,6 +193,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 = 2.7.25 - December 28th 2020 =
 
 **New Features & Enhancements**
+
 * Added: Custom no access message for templates. #5875 (@JoryHogeveen)
 * Added: New filter `pods_field_validate_{$type}`. #1106 (@JoryHogeveen)
 

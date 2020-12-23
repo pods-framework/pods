@@ -191,6 +191,24 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.25 - December 28th 2020 =
+
+**New Features & Enhancements**
+
+* Added: Custom no access message for templates. #5875 (@JoryHogeveen)
+* Added: New filter `pods_field_validate_{$type}`. #1106 (@JoryHogeveen)
+
+**Bug Fixes**
+
+* Fixed: Ensure compatibility with the WordPress 5.6 jQuery update. #5892, #5896 & #5897 (@JoryHogeveen)
+* Fixed: Prevent `wp_unslash()` from unnecessarily over sanitizing input. #5040 & #4424 (@JoryHogeveen)
+* Fixed: Prevent issues with HTML entities in custom relationship values when it gets to JavaScript. #5894 (@JoryHogeveen)
+* Fixed: Better support multiple languages in the Relationship AJAX search. #5888 (@JoryHogeveen)
+* Fixed: Include the `post_type` value in attachment saves so that the more WordPress core actions trigger. #5748 (@JoryHogeveen)
+* Fixed: Allow `the_excerpt` to be used as custom filter on singular pages. #5899 (@JoryHogeveen)
+* Fixed: Better support caching of the avatar images/data and integrate with the `get_avatar_data` filter. #5771 (@JoryHogeveen)
+
+
 = 2.7.24 - November 5th 2020 =
 
 **Bug Fixes**

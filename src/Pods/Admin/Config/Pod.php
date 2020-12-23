@@ -67,7 +67,10 @@ class Pod extends Base {
 			$core_tabs['extra-fields'] = __( 'Extra Fields', 'pods' );
 		}
 
-		$core_tabs['kitchen-sink'] = __( 'Kitchen Sink (temp)', 'pods' );
+		// Only include kitchen sink if dev mode on and not running Codecept tests.
+		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
+			$core_tabs['kitchen-sink'] = __( 'Kitchen Sink (temp)', 'pods' );
+		}
 
 		$args = compact( [ 'fields', 'labels', 'admin_ui', 'advanced' ] );
 
@@ -1221,7 +1224,10 @@ class Pod extends Base {
 			];
 		}//end if
 
-		$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink.json' ), true );
+		// Only include kitchen sink if dev mode on and not running Codecept tests.
+		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
+			$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink.json' ), true );
+		}
 
 		$pod_type = $pod['type'];
 		$pod_name = $pod['name'];

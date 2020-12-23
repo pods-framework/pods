@@ -158,14 +158,6 @@ class EachTest extends Pods_UnitTestCase {
 			$compare .= '/' . pods_image_url( $img, 'medium' ) . '/';
 		}
 
-		// Make sure the media Pod exists.
-		$media = pods( 'media' );
-
-		$this->assertInstanceOf( Pods::class, $media );
-
-		// @todo Validate when there is not media Pod active. Requires refactor of caching.
-		$this->assertTrue( $media->valid() );
-
 		// Should return all image links.
 		$this->assertEquals( $compare, do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='images']{$content}[/pod_sub_template]" ) );
 

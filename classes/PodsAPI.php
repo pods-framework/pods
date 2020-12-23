@@ -6574,11 +6574,16 @@ class PodsAPI {
 		$params->id   = $field['id'];
 		$params->name = $field['name'];
 
+		// Get the pod from the field if pod information not provided.
+		if ( false === $pod ) {
+			$pod = $field->get_parent_object();
+		}
+
 		$simple = ( 'pick' === $field['type'] && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
 		$simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
 		// @todo Push this logic into pods_object_storage_delete_pod action.
-		if ( $table_operation && 'table' === $pod['storage'] && ( ! in_array( $field['type'], $tableless_field_types, true ) || $simple ) ) {
+		if ( $table_operation && $pod && 'table' === $pod['storage'] && ( ! in_array( $field['type'], $tableless_field_types, true ) || $simple ) ) {
 			pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$params->name}`", false );
 		}
 

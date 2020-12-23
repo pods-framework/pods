@@ -24,7 +24,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @var array
 	 *
-	 * @since TBD
+	 * @since 2.7.25
 	 */
 	private $auto_pods = [];
 
@@ -474,7 +474,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	/**
 	 * Get list of pod information based on an object or the detected current context.
 	 *
-	 * @since TBD
+	 * @since 2.7.25
 	 *
 	 * @param null|object $obj The object to get pod information from or null to detect from current context.
 	 *

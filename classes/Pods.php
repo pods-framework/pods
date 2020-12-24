@@ -731,6 +731,15 @@ class Pods implements Iterator {
 		// Get the first field name data.
 		$field_data = $this->fields( $first_field );
 
+		// Ensure the field name is using the correct name and not the alias.
+		if ( $field_data ) {
+			$first_field = $field_data['name'];
+
+			if ( ! $is_traversal ) {
+				$params->name = $first_field;
+			}
+		}
+
 		if ( ! $field_data ) {
 			// Get the full field name data.
 			$field_data = $this->fields( $params->name );

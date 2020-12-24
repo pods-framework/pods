@@ -746,7 +746,7 @@ class Pods implements Iterator {
 
 		// Store field info.
 		$field_type         = pods_v( 'type', $field_data, '' );
-		$field_options      = pods_v( 'options', $field_data, array() );
+		$field_options      = $field_data;
 		$is_tableless_field = in_array( $field_type, $tableless_field_types, true );
 
 		// Simple fields have no other output options.

@@ -3005,6 +3005,12 @@ class Pods implements Iterator {
 			$default = $params;
 		}
 
+		if ( isset( $data[ $this->pod_data['field_id'] ] ) ) {
+			$id = $data[ $this->pod_data['field_id'] ];
+
+			unset( $data[ $this->pod_data['field_id'] ] );
+		}
+
 		$params = array(
 			'pod'                 => $this->pod,
 			'id'                  => $id,

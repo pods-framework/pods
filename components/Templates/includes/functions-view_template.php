@@ -271,10 +271,11 @@ function frontier_do_subtemplate( $atts, $content ) {
 	if ( ! empty( $entries ) && isset( $pod->fields[ $field_name ] ) ) {
 		$entries = (array) $entries;
 
+		/** @var \Pods\Whatsit\Field $field */
 		$field = $pod->fields[ $field_name ];
 
 		// Force array even for single items since the logic below is using loops.
-		if ( 'single' === pods_v( $field['type'] . '_format_type', $field['options'], 'single' ) && ! isset( $entries[0] ) ) {
+		if ( 'single' === pods_v( $field['type'] . '_format_type', $field, 'single' ) && ! isset( $entries[0] ) ) {
 			$entries = array( $entries );
 		}
 
@@ -326,7 +327,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 			}//end foreach
-		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] ) {
+		} elseif ( 'file' === $field['type'] && 'attachment' === pods_v( 'file_uploader', $field, 'attachment' ) ) {
 			$template  = frontier_decode_template( $content, $atts );
 			$media_pod = pods( 'media' );
 

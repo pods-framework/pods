@@ -3273,27 +3273,24 @@ class PodsMeta {
 			return $_null;
 		}
 
-		if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
+		if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod !== $object['name'] ) {
 			self::$current_field_pod = pods( $object['name'] );
 		}
 
 		$pod = self::$current_field_pod;
 
-		if ( ( isset( $pod->fields[ $meta_key ] ) || false !== strpos( $meta_key, '.' ) ) && $pod->row !== null ) {
-
+		if ( null !== $pod->data->row && ( isset( $pod->fields[ $meta_key ] ) || false !== strpos( $meta_key, '.' ) ) ) {
 			$key = $meta_key;
+
 			if ( false !== strpos( $meta_key, '.' ) ) {
 				$key = current( explode( '.', $meta_key ) );
 			}
 
-			$pod->row[ $meta_key ] = $meta_value;
+			$pod->data->row[ $meta_key ] = $meta_value;
 
-			if ( isset( $pod->fields[ $key ] ) ) {
-				if ( in_array( $pod->fields[ $key ]['type'], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $key ] ) ) {
-					unset( $meta_cache[ '_pods_' . $key ] );
-				}
+			if ( isset( $meta_cache[ '_pods_' . $key ], $pod->fields[ $key ] ) && in_array( $pod->fields[ $key ]['type'], PodsForm::tableless_field_types(), true ) ) {
+				unset( $meta_cache[ '_pods_' . $key ] );
 			}
-
 		}
 
 		$pod->save( $meta_key, $meta_value, $object_id, array( 'podsmeta_direct' => true, 'error_mode' => 'false' ) );

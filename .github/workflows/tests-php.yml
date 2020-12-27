@@ -18,7 +18,8 @@ jobs:
     strategy:
       matrix:
         suite:
-          - 'wpunit'
+          - 'wpunit --skip-group=pods-shortcode'
+          - 'wpunit --group=pods-shortcode'
           - 'wpunit-traversal'
           - 'restv1'
     runs-on: ubuntu-latest

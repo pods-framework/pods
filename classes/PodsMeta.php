@@ -2890,7 +2890,7 @@ class PodsMeta {
 			return $_null;
 		}
 
-		return call_user_func_array( array( $this, 'update_meta_by_id' ), $args );
+		return call_user_func_array( [ $this, 'update_meta_by_id' ], $args );
 	}
 
 	/**
@@ -2920,7 +2920,7 @@ class PodsMeta {
 			return $_null;
 		}
 
-		return call_user_func_array( array( $this, 'update_meta_by_id' ), $args );
+		return call_user_func_array( [ $this, 'update_meta_by_id' ], $args );
 	}
 
 	/**
@@ -2950,7 +2950,7 @@ class PodsMeta {
 			return $_null;
 		}
 
-		return call_user_func_array( array( $this, 'update_meta_by_id' ), $args );
+		return call_user_func_array( [ $this, 'update_meta_by_id' ], $args );
 	}
 
 	/**
@@ -2980,7 +2980,7 @@ class PodsMeta {
 			return $_null;
 		}
 
-		return call_user_func_array( array( $this, 'update_meta_by_id' ), $args );
+		return call_user_func_array( [ $this, 'update_meta_by_id' ], $args );
 	}
 
 	/**

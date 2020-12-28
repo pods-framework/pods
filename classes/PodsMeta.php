@@ -151,6 +151,7 @@ class PodsMeta {
 			if ( ! pods_tableless() ) {
 				add_filter( 'add_post_metadata', array( $this, 'add_post_meta' ), 10, 5 );
 				add_filter( 'update_post_metadata', array( $this, 'update_post_meta' ), 10, 5 );
+				add_filter( 'update_post_metadata_by_id', array( $this, 'update_post_meta_by_id' ), 10, 4 );
 				add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
 			}
 		}
@@ -193,6 +194,7 @@ class PodsMeta {
 					if ( ! pods_tableless() ) {
 						add_filter( 'add_term_metadata', array( $this, 'add_term_meta' ), 10, 5 );
 						add_filter( 'update_term_metadata', array( $this, 'update_term_meta' ), 10, 5 );
+						add_filter( 'update_term_metadata_by_id', array( $this, 'update_term_meta_by_id' ), 10, 4 );
 						add_filter( 'delete_term_metadata', array( $this, 'delete_term_meta' ), 10, 5 );
 					}
 				}
@@ -234,6 +236,7 @@ class PodsMeta {
 					if ( ! pods_tableless() ) {
 						add_filter( 'add_post_metadata', array( $this, 'add_post_meta' ), 10, 5 );
 						add_filter( 'update_post_metadata', array( $this, 'update_post_meta' ), 10, 5 );
+						add_filter( 'update_post_metadata_by_id', array( $this, 'update_post_meta_by_id' ), 10, 4 );
 						add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
 					}
 				}
@@ -260,6 +263,7 @@ class PodsMeta {
 				if ( ! pods_tableless() ) {
 					add_filter( 'add_user_metadata', array( $this, 'add_user_meta' ), 10, 5 );
 					add_filter( 'update_user_metadata', array( $this, 'update_user_meta' ), 10, 5 );
+					add_filter( 'update_user_metadata_by_id', array( $this, 'update_user_meta_by_id' ), 10, 4 );
 					add_filter( 'delete_user_metadata', array( $this, 'delete_user_meta' ), 10, 5 );
 				}
 			}
@@ -285,6 +289,7 @@ class PodsMeta {
 				if ( ! pods_tableless() ) {
 					add_filter( 'add_comment_metadata', array( $this, 'add_comment_meta' ), 10, 5 );
 					add_filter( 'update_comment_metadata', array( $this, 'update_comment_meta' ), 10, 5 );
+					add_filter( 'update_comment_metadata_by_id', array( $this, 'update_comment_meta_by_id' ), 10, 4 );
 					add_filter( 'delete_comment_metadata', array( $this, 'delete_comment_meta' ), 10, 5 );
 				}
 			}
@@ -2859,6 +2864,126 @@ class PodsMeta {
 	}
 
 	/**
+	 * Handle updating post meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function update_post_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'post_type' );
+
+		/**
+		 * Allow circumventing the update meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_update_post_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( array( $this, 'update_meta_by_id' ), $args );
+	}
+
+	/**
+	 * Handle updating user meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function update_user_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'user' );
+
+		/**
+		 * Allow circumventing the update meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_update_user_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( array( $this, 'update_meta_by_id' ), $args );
+	}
+
+	/**
+	 * Handle updating comment meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function update_comment_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'comment' );
+
+		/**
+		 * Allow circumventing the update meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_update_comment_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( array( $this, 'update_meta_by_id' ), $args );
+	}
+
+	/**
+	 * Handle updating term meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function update_term_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'term' );
+
+		/**
+		 * Allow circumventing the update meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_update_term_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( array( $this, 'update_meta_by_id' ), $args );
+	}
+
+	/**
 	 * @return mixed
 	 */
 	public function delete_post_meta() {
@@ -3249,6 +3374,38 @@ class PodsMeta {
 		}
 
 		return $object_id;
+	}
+
+	/**
+	 * Handle updating the meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $object_type The object type.
+	 * @param null   $_null       The default value for the filter.
+	 * @param int    $meta_id     The meta ID.
+	 * @param string $meta_key    The meta key.
+	 * @param string $meta_value  The meta value.
+	 *
+	 * @return bool|int|null
+	 */
+	public function update_meta_by_id( $object_type, $_null = null, $meta_id = 0, $meta_key = '', $meta_value = '' ) {
+		$meta_type = 'post_type' === $object_type ? 'post' : $object_type;
+
+		// Get the original meta record.
+		$meta = get_metadata_by_mid( $meta_type, $meta_id );
+
+		// Stop overriding the saving process if the original meta record was not found.
+		if ( ! $meta ) {
+			return $_null;
+		}
+
+		$column = sanitize_key( $meta_type . '_id' );
+
+		// Get the object ID from the original meta record.
+		$object_id = $meta->{$column};
+
+		return $this->update_meta( $object_type, $_null, $object_id, $meta_key, $meta_value );
 	}
 
 	/**

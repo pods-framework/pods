@@ -2346,6 +2346,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
 					array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
 					array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
+					array( 'update_post_metadata_by_id', array( PodsInit::$meta, 'update_post_meta_by_id' ), 10, 4 ),
 					array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 ),
 				) );
 			}
@@ -2371,6 +2372,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
 					array( 'add_term_metadata', array( PodsInit::$meta, 'add_term_meta' ), 10, 5 ),
 					array( 'update_term_metadata', array( PodsInit::$meta, 'update_term_meta' ), 10, 5 ),
+					array( 'update_term_metadata_by_id', array( PodsInit::$meta, 'update_term_meta_by_id' ), 10, 4 ),
 					array( 'delete_term_metadata', array( PodsInit::$meta, 'delete_term_meta' ), 10, 5 ),
 				) );
 			}
@@ -2402,6 +2404,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
 					array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
 					array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
+					array( 'update_post_metadata_by_id', array( PodsInit::$meta, 'update_post_meta_by_id' ), 10, 4 ),
 					array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 ),
 				) );
 			}
@@ -2423,6 +2426,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
 					array( 'add_user_metadata', array( PodsInit::$meta, 'add_user_meta' ), 10, 5 ),
 					array( 'update_user_metadata', array( PodsInit::$meta, 'update_user_meta' ), 10, 5 ),
+					array( 'update_user_metadata_by_id', array( PodsInit::$meta, 'update_user_meta_by_id' ), 10, 4 ),
 					array( 'delete_user_metadata', array( PodsInit::$meta, 'delete_user_meta' ), 10, 5 ),
 				) );
 			}
@@ -2448,6 +2452,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
 					array( 'add_comment_metadata', array( PodsInit::$meta, 'add_comment_meta' ), 10, 5 ),
 					array( 'update_comment_metadata', array( PodsInit::$meta, 'update_comment_meta' ), 10, 5 ),
+					array( 'update_comment_metadata_by_id', array( PodsInit::$meta, 'update_comment_meta_by_id' ), 10, 4 ),
 					array( 'delete_comment_metadata', array( PodsInit::$meta, 'delete_comment_meta' ), 10, 5 ),
 				) );
 			}

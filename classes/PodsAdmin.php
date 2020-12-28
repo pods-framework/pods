@@ -1311,6 +1311,7 @@ class PodsAdmin {
 				'meta'    => _x( 'Meta', 'storage type label', 'pods' ),
 				'table'   => _x( 'Table', 'storage type label', 'pods' ),
 			],
+			// @todo SKC: Remove these below and replace any references to podsDFVConfig
 			'wp_locale'      => $GLOBALS['wp_locale'],
 			'currencies'     => PodsField_Currency::$currencies,
 			'datetime'       => [

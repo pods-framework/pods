@@ -3014,6 +3014,7 @@ class Pods implements Iterator {
 			$default = $params;
 		}
 
+		// If ID is sent as part of data, use it and then unset it from the data.
 		if ( isset( $data[ $this->pod_data['field_id'] ] ) ) {
 			$id = $data[ $this->pod_data['field_id'] ];
 

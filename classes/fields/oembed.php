@@ -191,7 +191,7 @@ class PodsField_OEmbed extends PodsField {
 			$options['readonly'] = true;
 		}
 
-		return pods_view( PODS_DIR . 'ui/fields/oembed.php', compact( array_keys( get_defined_vars() ) ) );
+		//return pods_view( PODS_DIR . 'ui/fields/oembed.php', compact( array_keys( get_defined_vars() ) ) );
 
 		wp_enqueue_script( 'pods-dfv' );
 

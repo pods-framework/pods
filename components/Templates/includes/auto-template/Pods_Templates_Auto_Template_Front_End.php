@@ -49,25 +49,12 @@ class Pods_Templates_Auto_Template_Front_End {
 	 * @since 2.6.6
 	 */
 	public function hook_content() {
-		/**
-		 * Allows plugin to append/replace the_excerpt.
-		 *
-		 * Default is false, set to true to enable.
-		 */
-		if ( ! defined( 'PFAT_USE_ON_EXCERPT' ) ) {
-			define( 'PFAT_USE_ON_EXCERPT', false );
-		}
-
 		$possible_pods = $this->auto_pods();
 
 		foreach ( $possible_pods as $pod_name => $pod ) {
 			$filter = $this->get_pod_filter( $pod_name );
 
 			$this->filtered_content[ $filter ] = 10.5;
-
-			if ( PFAT_USE_ON_EXCERPT && ! empty( $possible_pods[ $pod_name ]['type'] ) && 'post_type' === $possible_pods[ $pod_name ]['type'] ) {
-				$this->filtered_content['the_excerpt'] = 10;
-			}
 		}
 
 		$this->install_hooks();
@@ -301,9 +288,9 @@ class Pods_Templates_Auto_Template_Front_End {
 		if ( isset( $possible_pods[ $pod_name ] ) ) {
 			$this_pod = $possible_pods[ $pod_name ];
 
-			if ( in_the_loop() && ! is_singular() ) {
+			if ( is_archive() || is_post_type_archive() || is_tax() ) {
 				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
-			} else {
+			} elseif ( is_singular() || is_single() ) {
 				$filter = pods_v( 'single_filter', $this_pod, $filter, true );
 			}
 		}
@@ -453,7 +440,7 @@ class Pods_Templates_Auto_Template_Front_End {
 				}
 			}
 
-			if ( $is_single && ( ! $in_the_loop || is_singular() ) ) {
+			if ( $is_single && ( ! $in_the_loop || is_singular() || is_single() ) ) {
 				$type        = 'single';
 				$type_filter = 'single_filter';
 				$type_append = 'single_append';

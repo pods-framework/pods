@@ -837,25 +837,35 @@ class PodsData {
 			$params->pod_table_prefix = 't';
 		}
 
-		if ( $pod && ! in_array(
-			$pod->get_arg( 'type' ), array(
+		if (
+			$pod
+			&& ! in_array( $pod->get_arg( 'type' ), [
 				'pod',
 				'table',
-			), true
-		) && 'table' === $pod->get_arg( 'storage' ) ) {
+			], true )
+			&& 'table' === $pod->get_arg( 'storage' )
+		) {
 			$params->pod_table_prefix = 'd';
 		}
 
 		$params->meta_fields = false;
 
-		$is_pod_meta_storage = 'meta' === $pod['storage'];
+		$is_pod_meta_storage = $pod && 'meta' === $pod->get_arg( 'storage' );
 
-		if ( $pod && ! in_array(
-			$pod['type'], array(
+		if (
+			$pod
+			&& ! in_array( $pod->get_type(), [
 				'pod',
 				'table',
-			), true
-		) && ( $is_pod_meta_storage || ( 'none' === $pod['storage'] && function_exists( 'get_term_meta' ) ) ) ) {
+			], true )
+			&& (
+				$is_pod_meta_storage
+				|| (
+					'none' === $pod->get_arg( 'storage' )
+					&& function_exists( 'get_term_meta' )
+				)
+			)
+		) {
 			$params->meta_fields = true;
 		}
 

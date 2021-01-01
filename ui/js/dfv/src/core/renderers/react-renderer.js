@@ -90,6 +90,7 @@ function reactRenderer( component, element, props ) {
 			field={ {
 				...fieldConfig,
 				htmlAttr: props.data?.htmlAttr || {},
+				fieldEmbed: props.data?.fieldEmbed || false,
 			} }
 		/>,
 		element

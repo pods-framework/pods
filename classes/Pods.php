@@ -1648,9 +1648,9 @@ class Pods implements Iterator {
 			$field_names = implode( '.', $params->traverse );
 
 			$this->data->row[ $field_names ] = $value;
-		} elseif ( 'arrays' !== $params->output && in_array( $field_data['type'], $tableless_field_types, true ) ) {
+		} elseif ( 'arrays' !== $params->output && $field_data && in_array( $field_data['type'], $tableless_field_types, true ) ) {
 			$this->data->row[ '_' . $params->output . '_' . $params->full_name ] = $value;
-		} elseif ( 'arrays' === $params->output || ! in_array( $field_data['type'], $tableless_field_types, true ) ) {
+		} elseif ( 'arrays' === $params->output || ! $field_data || ! in_array( $field_data['type'], $tableless_field_types, true ) ) {
 			$this->data->row[ $params->full_name ] = $value;
 		}
 

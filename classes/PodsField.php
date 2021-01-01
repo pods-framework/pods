@@ -411,6 +411,7 @@ class PodsField {
 			'fieldType'     => $args->type,
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
+			'fieldEmbed'    => true,
 		);
 
 		/**

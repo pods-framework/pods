@@ -8,6 +8,7 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 const BaseInput = ( props ) => {
 	const {
 		fieldConfig = {},
+		autoComplete = 'on',
 		maxLength,
 		placeholder,
 		onBlur,
@@ -26,6 +27,8 @@ const BaseInput = ( props ) => {
 	// Default implementation if onChange is omitted from props
 	const handleChange = ( event ) => setValue( event.target.value );
 
+	const autoCompleteValue = htmlAttributes.autocomplete || autoComplete;
+
 	return (
 		<input
 			type={ type }
@@ -41,6 +44,7 @@ const BaseInput = ( props ) => {
 			readOnly={ !! readOnly }
 			onChange={ onChange || handleChange }
 			onBlur={ onBlur }
+			autocomplete={ autoCompleteValue }
 		/>
 	);
 };
@@ -59,6 +63,7 @@ BaseInput.propTypes = {
 	type: PropTypes.string.isRequired,
 	maxLength: PropTypes.number,
 	placeholder: PropTypes.string,
+	autoComplete: PropTypes.string,
 };
 
 export default BaseInput;

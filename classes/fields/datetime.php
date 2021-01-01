@@ -287,21 +287,32 @@ class PodsField_DateTime extends PodsField {
 
 		$field_type = static::$type;
 
+		$is_read_only = (boolean) pods_v( 'read_only', $options, false );
+
 		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
-			if ( pods_v( 'read_only', $options, false ) ) {
+			if ( $is_read_only ) {
 				$options['readonly'] = true;
 
 				$field_type = 'text';
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
+		} elseif ( ! pods_has_permissions( $options ) && $is_read_only ) {
 			$options['readonly'] = true;
 
 			$field_type = 'text';
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		//pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**

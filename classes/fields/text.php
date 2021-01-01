@@ -156,7 +156,6 @@ class PodsField_Text extends PodsField {
 		$args = (object) $args;
 
 		$this->render_input_script( $args );
-
 	}
 
 	/**

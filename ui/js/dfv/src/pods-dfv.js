@@ -42,6 +42,7 @@ window.PodsDFV = {
 			const actualData = {
 				config: window.podsAdminConfig || window.podsDFVConfig,
 				fieldType: data.fieldType,
+				fieldEmbed: data.fieldEmbed || false,
 				data,
 			};
 

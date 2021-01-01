@@ -69,6 +69,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		name: PropTypes.string,
 		name_clean: PropTypes.string,
 	} ),
+	fieldEmbed: PropTypes.bool,
 	id: NUMBER_OR_NUMBER_AS_STRING.isRequired,
 	iframe_src: PropTypes.string,
 	iframe_title_add: PropTypes.string,

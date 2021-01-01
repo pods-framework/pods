@@ -246,6 +246,9 @@ class PodsField_WYSIWYG extends PodsField {
 			$field_type = 'textarea';
 		} elseif ( 'tinymce' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'tinymce';
+
+			wp_tinymce_inline_scripts();
+			wp_enqueue_editor();
 		} elseif ( 'quill' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'quill';
 		} elseif ( 'cleditor' === pods_v( static::$type . '_editor', $options ) ) {

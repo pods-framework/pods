@@ -364,7 +364,7 @@ class PodsInit {
 					'affiliation' => false,
 					'account'     => true,
 					'pricing'     => false,
-					'addons'      => true,
+					'addons'      => false,
 					'parent'      => array(
 						'slug' => 'pods',
 					),

@@ -4721,7 +4721,7 @@ class PodsAPI {
 		$field['name']  = $check_name;
 		$field['label'] = $new_label;
 
-		return $this->save_field( $field );
+		return $this->save_field( $field, true, true );
 
 	}
 

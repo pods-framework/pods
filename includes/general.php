@@ -882,9 +882,18 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 		// Only allow revert to current object if there are no query tags.
 		if ( ! $has_query_tags ) {
+			/**
+			 * Allow filtering whether to detect the pod name / item ID from the current post object.
+			 *
+			 * @since 2.7.26
+			 *
+			 * @param bool  $detect_from_current  Whether to detect the pod name / item ID from the current post object.
+			 * @param array $shortcode_attributes The list of attributes used for the shortcode.
+			 */
+			$detect_from_current = apply_filters( 'pods_shortcode_detect_from_current_post', in_the_loop(), $tags );
 
 			// Archives, Post type archives, singular posts.
-			if ( in_the_loop() ) {
+			if ( $detect_from_current ) {
 				$pod = pods( get_post_type(), get_the_ID(), false );
 
 				if ( ! empty( $pod ) ) {

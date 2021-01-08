@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.6
 Requires PHP: 5.3
-Stable tag: 2.7.25
+Stable tag: 2.7.26
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,11 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.26 - January 8th, 2021 =
+
+* Fixed: Prevent PHP warnings in the `components/Templates/includes/element-pod_reference.php` file. #5914 (@JoryHogeveen)
+* Added: New filter `pods_shortcode_detect_from_current_post` allows you to override whether a shortcode should detect the post object outside of the loop (default is only when `in_the_loop()`). This helps to fix problems that are part of the integration which the free Pods Beaver Themer Add-On uses. (@sc0ttkclark)
 
 = 2.7.25 - December 28th 2020 =
 

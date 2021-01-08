@@ -292,7 +292,7 @@ class Pods_Templates_Auto_Template_Front_End {
 		if ( isset( $possible_pods[ $pod_name ] ) ) {
 			$this_pod = $possible_pods[ $pod_name ];
 
-			if ( is_singular() || is_single() || ( 'taxonomy' === $this_pod['type'] && is_tax() ) ) ) {
+			if ( is_singular() || is_single() || ( 'taxonomy' === $this_pod['type'] && is_tax() ) ) {
 				$filter = pods_v( 'single_filter', $this_pod, $filter, true );
 			} elseif ( $this_pod['has_archive'] && ( is_archive() || is_post_type_archive() || is_tax() || in_the_loop() ) ) {
 				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );

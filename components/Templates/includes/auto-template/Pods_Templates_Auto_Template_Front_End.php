@@ -54,6 +54,10 @@ class Pods_Templates_Auto_Template_Front_End {
 		foreach ( $possible_pods as $pod_name => $pod ) {
 			$filter = $this->get_pod_filter( $pod_name );
 
+			if ( empty( $filter ) ) {
+				continue;
+			}
+
 			$this->filtered_content[ $filter ] = 10.5;
 		}
 

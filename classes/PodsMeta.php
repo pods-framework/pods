@@ -1113,7 +1113,7 @@ class PodsMeta {
 
 		$id = null;
 
-		if ( is_object( $post ) && false === strpos( $_SERVER['REQUEST_URI'], '/post-new.php' ) ) {
+		if ( is_object( $post ) ) {
 			$id = $post->ID;
 		}
 

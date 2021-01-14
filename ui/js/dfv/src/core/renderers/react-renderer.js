@@ -49,8 +49,6 @@ function reactRenderer( component, element, props ) {
 		initPodStore( props.config || {} );
 	}
 
-	console.log( 'react renderer: ', element, props );
-
 	const fieldConfig = omit(
 		props.data?.fieldConfig || {},
 		[ '_field_object', 'output_options', 'item_id' ]

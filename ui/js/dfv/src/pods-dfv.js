@@ -19,7 +19,7 @@ window.PodsDFV = {
 		// Find all in-line data scripts
 		const dataTags = [ ...document.querySelectorAll( SCRIPT_TARGET ) ];
 
-		dataTags.forEach( ( tag ) => {
+		dataTags.forEach( async ( tag ) => {
 			const data = JSON.parse( tag.innerHTML );
 
 			// Kludge to disable the "Add New" button if we're inside a media modal.  This should
@@ -35,6 +35,10 @@ window.PodsDFV = {
 
 			const field = FIELD_MAP[ data.fieldType ];
 
+			if ( ! field ) {
+				return;
+			}
+
 			// @todo remove this later
 			// We need to only depend on the `config` and `fieldType`
 			// properties, so discard the others for now, until they're
@@ -49,9 +53,7 @@ window.PodsDFV = {
 			// eslint-disable-next-line no-console
 			console.log( 'config data:', actualData );
 
-			if ( field !== undefined ) {
-				field.renderer( field.fieldComponent, tag.parentNode, actualData );
-			}
+			field.renderer( field.fieldComponent, tag.parentNode, actualData );
 		} );
 	},
 

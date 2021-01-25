@@ -311,7 +311,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 
 	// Pick field
 	pick_ajax: BOOLEAN_ALL_TYPES,
-	pick_allow_add_new: PropTypes.string,
+	pick_allow_add_new: BOOLEAN_ALL_TYPES,
 	pick_custom: PropTypes.string,
 	pick_display: PropTypes.string,
 	pick_display_format_multi: PropTypes.string,

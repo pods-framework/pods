@@ -40,14 +40,13 @@ const FieldOption = ( props ) => {
 		: undefined;
 
 	const showLabel = (
-		'heading' !== fieldType
-		&& ( 'html' !== fieldType || ! htmlNoLabel )
-		&& ! fieldEmbed
+		'heading' !== fieldType &&
+		( 'html' !== fieldType || ! htmlNoLabel ) &&
+		! fieldEmbed
 	);
 
 	const showDescription = (
-		!! description
-		&& ! fieldEmbed
+		!! description && ! fieldEmbed
 	);
 
 	return (
@@ -87,20 +86,6 @@ const FieldOption = ( props ) => {
 								{ sprintf(
 									// translators: Message showing that the field type doesn't exist.
 									__( 'The field type \'%s\' was invalid.', 'pods' ),
-									fieldType
-								) }
-							</span>
-						);
-					}
-
-					// Show an error if the field isn't in the React format yet.
-					// @todo this can probably be removed later.
-					if ( FIELD_MAP[ fieldType ]?.renderer?.name === 'mnRenderer' ) {
-						return (
-							<span className="pods-field-option__invalid-field">
-								{ sprintf(
-									// translators: Message showing that the field type doesn't exist.
-									__( 'The field \'%s\' does not have a React renderer yet.', 'pods' ),
 									fieldType
 								) }
 							</span>

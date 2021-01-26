@@ -10,7 +10,7 @@ import {
 	STORE_KEY_EDIT_POD,
 	SAVE_STATUSES,
 	DELETE_STATUSES,
-} from 'dfv/src/admin/edit-pod/store/constants';
+} from 'dfv/src/store/constants';
 
 // Helper components
 const Spinner = () => (

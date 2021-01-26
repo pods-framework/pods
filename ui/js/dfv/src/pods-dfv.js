@@ -16,7 +16,7 @@ import { select } from '@wordpress/data';
 import {
 	initPodStore,
 	initEditPodStore,
-} from 'dfv/src/admin/edit-pod/store/store';
+} from 'dfv/src/store/store';
 import PodsDFVApp from 'dfv/src/core/pods-dfv-app';
 import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
 import * as models from 'dfv/src/config/model-manifest';
@@ -24,7 +24,7 @@ import * as models from 'dfv/src/config/model-manifest';
 import {
 	STORE_KEY_DFV,
 	STORE_KEY_EDIT_POD,
-} from 'dfv/src/admin/edit-pod/store/constants';
+} from 'dfv/src/store/constants';
 
 import FIELD_MAP from 'dfv/src/fields/field-map';
 

@@ -1,6 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 
-import { CURRENT_POD_ACTIONS } from 'dfv/src/admin/edit-pod/store/constants';
+import { CURRENT_POD_ACTIONS } from 'dfv/src/store/constants';
 
 const {
 	API_REQUEST,

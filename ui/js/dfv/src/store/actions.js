@@ -5,7 +5,7 @@ import {
 	DELETE_STATUSES,
 	UI_ACTIONS,
 	CURRENT_POD_ACTIONS,
-} from 'dfv/src/admin/edit-pod/store/constants';
+} from 'dfv/src/store/constants';
 
 // UI
 export const setActiveTab = ( activeTab ) => {

@@ -58,13 +58,14 @@ export const initEditPodStore = ( config ) => {
 	initStore( initialState, STORE_KEY_EDIT_POD );
 };
 
-export const initPodStore = ( config = {} ) => {
+export const initPodStore = ( config = {}, initialValues = {} ) => {
 	const initialState = {
 		data: {
 			fieldTypes: { ...config.fieldTypes || {} },
 			relatedObjects: { ...config.relatedObjects || {} },
 		},
 		...omit( config, [ 'fieldTypes', 'relatedObjects' ] ),
+		currentPod: initialValues,
 	};
 
 	initStore( initialState, STORE_KEY_DFV );

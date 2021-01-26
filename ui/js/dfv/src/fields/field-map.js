@@ -1,5 +1,5 @@
-import reactRenderer from 'dfv/src/core/renderers/react-renderer';
-import reactDirectRenderer from 'dfv/src/core/renderers/react-direct-renderer';
+// import reactRenderer from 'dfv/src/core/renderers/react-renderer';
+// import reactDirectRenderer from 'dfv/src/core/renderers/react-direct-renderer';
 
 import Avatar from 'dfv/src/fields/avatar';
 import Boolean from 'dfv/src/fields/boolean';
@@ -28,95 +28,95 @@ import Wysiwyg from 'dfv/src/fields/wysiwyg';
 const FIELD_MAP = {
 	avatar: {
 		fieldComponent: Avatar,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	boolean: {
 		fieldComponent: Boolean,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	code: {
 		fieldComponent: Code,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	color: {
 		fieldComponent: Color,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	currency: {
 		fieldComponent: Currency,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	date: {
 		fieldComponent: DateField,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	datetime: {
 		fieldComponent: DateTime,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	'edit-pod': {
 		fieldComponent: EditPod,
-		renderer: reactDirectRenderer,
+		// renderer: reactDirectRenderer,
 	},
 	email: {
 		fieldComponent: Email,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	file: {
 		fieldComponent: File,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	heading: {
 		fieldComponent: Heading,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	html: {
 		fieldComponent: HTMLField,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	number: {
 		fieldComponent: NumberField,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	oembed: {
 		fieldComponent: Oembed,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	paragraph: {
 		fieldComponent: Paragraph,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	password: {
 		fieldComponent: Password,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	phone: {
 		fieldComponent: Phone,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	pick: {
 		fieldComponent: Pick,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	slug: {
 		fieldComponent: Slug,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	text: {
 		fieldComponent: Text,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	time: {
 		fieldComponent: Time,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	website: {
 		fieldComponent: Website,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 	wysiwyg: {
 		fieldComponent: Wysiwyg,
-		renderer: reactRenderer,
+		// renderer: reactRenderer,
 	},
 };
 

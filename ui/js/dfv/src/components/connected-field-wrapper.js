@@ -17,9 +17,9 @@ import { STORE_KEY_DFV } from 'dfv/src/admin/edit-pod/store/constants';
 const ConnectedFieldWrapper = compose( [
 	withSelect( ( storeSelect, ownProps ) => {
 		const name = ownProps.field.name || '';
+
 		const dependsOn = ownProps.field?.[ 'depends-on' ] || {};
 
-		// @todo does this work?
 		const allPodValues = storeSelect( STORE_KEY_DFV ).getPodOptions();
 
 		const dependencyValueEntries = Object

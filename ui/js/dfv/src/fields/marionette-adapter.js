@@ -89,36 +89,5 @@ MarionetteAdapter.propTypes = {
 	View: PropTypes.func.isRequired,
 };
 
-// Add an error boundary, because this may not be completely
-// reliable and we don't want the whole page to crash.
-class MarionetteAdapterWithErrorBoundary extends React.Component {
-	constructor( props ) {
-		super( props );
 
-		this.state = {
-			hasError: false,
-			error: null,
-		};
-	}
-
-	static getDerivedStateFromError( error ) {
-		return {
-			hasError: true,
-			error,
-		};
-	}
-
-	render() {
-		if ( this.state.hasError ) {
-			return (
-				<div>There was an error rendering the field.</div>
-			);
-		}
-
-		return (
-			<MarionetteAdapter { ...this.props } />
-		);
-	}
-}
-
-export default MarionetteAdapterWithErrorBoundary;
+export default MarionetteAdapter;

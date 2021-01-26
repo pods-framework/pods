@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { omit } from 'lodash';
 import classnames from 'classnames';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 // WordPress dependencies
 import { Dashicon } from '@wordpress/components';

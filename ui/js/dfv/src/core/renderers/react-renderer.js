@@ -13,10 +13,10 @@ import { compose } from '@wordpress/compose';
 
 // Pods dependencies
 import { initPodStore } from 'dfv/src/admin/edit-pod/store/store';
-import { DependentFieldOption } from 'dfv/src/components/dependent-field-option';
+import FieldOption from 'dfv/src/components/field-wrapper';
 import { STORE_KEY_DFV } from 'dfv/src/admin/edit-pod/store/constants';
 
-const ConnectedDependentFieldOption = compose( [
+const ConnectedFieldOption = compose( [
 	withSelect( ( storeSelect, ownProps ) => {
 		const name = ownProps.field.name || '';
 		const dependsOn = ownProps.field?.[ 'depends-on' ] || {};
@@ -41,7 +41,7 @@ const ConnectedDependentFieldOption = compose( [
 			setOptionValue: storeDispatch( STORE_KEY_DFV ).setOptionValue,
 		};
 	} ),
-] )( DependentFieldOption );
+] )( FieldOption );
 
 function reactRenderer( component, element, props ) {
 	// Create the store if it hasn't been done already.
@@ -84,7 +84,7 @@ function reactRenderer( component, element, props ) {
 	dispatch( STORE_KEY_DFV ).setOptionValue( fieldConfig.name, formattedValue );
 
 	ReactDOM.render(
-		<ConnectedDependentFieldOption
+		<ConnectedFieldOption
 			field={ {
 				...fieldConfig,
 				htmlAttr: props.data?.htmlAttr || {},

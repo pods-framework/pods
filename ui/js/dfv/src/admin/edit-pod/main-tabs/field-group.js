@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { flow, omit } from 'lodash';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import classnames from 'classnames';

@@ -1,4 +1,4 @@
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 // @todo can these be changed to real Booleans on the PHP side?
 const BOOLEAN_STRINGS = PropTypes.oneOf(

@@ -1,11 +1,11 @@
 import React from 'react';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 // WordPress Dependencies
 import { __, sprintf } from '@wordpress/i18n';
 
-// Pod dependencies
-import DependentFieldOption from 'dfv/src/components/dependent-field-option';
+// Pods dependencies
+import FieldOption from 'dfv/src/components/field-wrapper';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 const MISSING = __( '[MISSING DEFAULT]', 'pods' );
@@ -40,7 +40,7 @@ const DynamicTabContent = ( {
 			] ) );
 
 		return (
-			<DependentFieldOption
+			<FieldOption
 				key={ name }
 				field={ {
 					...field,

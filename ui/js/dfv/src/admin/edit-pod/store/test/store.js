@@ -2,7 +2,7 @@ import deepFreeze from 'deep-freeze';
 
 import { select, dispatch } from '@wordpress/data';
 
-import { initStore } from '../store';
+import { initEditPodStore } from '../store';
 import * as paths from '../state-paths';
 import {
 	STORE_KEY_EDIT_POD,
@@ -16,14 +16,14 @@ const testStore = {
 	dispatch: null,
 
 	initStore: ( initialState ) => {
-		initStore( { config: initialState } );
+		initEditPodStore( initialState );
 		testStore.select = select( STORE_KEY_EDIT_POD );
 		testStore.dispatch = dispatch( STORE_KEY_EDIT_POD );
 	},
 };
 
 describe( 'store', () => {
-	test( 'initStore() with initialState initializes properly', () => {
+	test( 'initEditPodStore() with initialState initializes properly', () => {
 		const initialState = {
 			...paths.UI.createTree( INITIAL_UI_STATE ),
 			...TEST_CONFIG_DATA,
@@ -35,7 +35,7 @@ describe( 'store', () => {
 		expect( result ).toEqual( initialState );
 	} );
 
-	test( 'initStore() empty initializes properly', () => {
+	test( 'initEditPodStore() empty initializes properly', () => {
 		const expected = {
 			...paths.UI.createTree( INITIAL_UI_STATE ),
 			currentPod: {},

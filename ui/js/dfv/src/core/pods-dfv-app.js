@@ -1,67 +1,34 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 /**
- * WordPress dependencies
- */
-import {
-	withSelect,
-	withDispatch,
-} from '@wordpress/data';
-import { compose } from '@wordpress/compose';
-
-/**
  * Pods dependencies
  */
-import FieldWrapper from 'dfv/src/components/field-wrapper';
+import ConnectedFieldWrapper from 'dfv/src/components/connected-field-wrapper';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
-import { STORE_KEY_DFV } from 'dfv/src/admin/edit-pod/store/constants';
-
-const ConnectedFieldWrapper = compose( [
-	withSelect( ( storeSelect, ownProps ) => {
-		const name = ownProps.field.name || '';
-		const dependsOn = ownProps.field?.[ 'depends-on' ] || {};
-
-		// @todo does this work?
-		const allPodValues = storeSelect( STORE_KEY_DFV ).getPodOptions();
-
-		const dependencyValueEntries = Object
-			.keys( dependsOn )
-			.map( ( fieldName ) => ( [
-				fieldName,
-				allPodValues[ fieldName ],
-			] ) );
-
-		return {
-			dependencyValues: Object.fromEntries( dependencyValueEntries ),
-			value: allPodValues[ name ] || ownProps.field?.default || '',
-		};
-	} ),
-	withDispatch( ( storeDispatch ) => {
-		return {
-			setOptionValue: storeDispatch( STORE_KEY_DFV ).setOptionValue,
-		};
-	} ),
-] )( FieldWrapper );
 
 const PodsDFVApp = ( { fieldsData } ) => {
 	const fieldComponents = fieldsData.map( ( fieldData = {} ) => {
-		console.log( 'fieldConfig about to create Portal', fieldData );
-
 		const {
-			fieldComponent, // used if we replace the "direct renderer"
+			directRender = false,
+			fieldComponent: FieldComponent = null,
 			parentNode,
 			fieldConfig,
-			fieldItemData, // shouldn't be used here
 		} = fieldData;
 
+		// Some components will have a React component passed in (eg. the Edit Pod field
+		// for the Edit Pod screen), but most won't.
+		const renderedFieldComponent = directRender
+			? <FieldComponent />
+			: <ConnectedFieldWrapper field={ fieldConfig } />;
+
 		return ReactDOM.createPortal(
-			<ConnectedFieldWrapper field={ fieldConfig } />,
+			renderedFieldComponent,
 			parentNode
 		);
 	} );
@@ -78,13 +45,10 @@ const PodsDFVApp = ( { fieldsData } ) => {
 PodsDFVApp.propTypes = {
 	fieldsData: PropTypes.arrayOf(
 		PropTypes.shape( {
+			directRender: PropTypes.bool.isRequired,
 			fieldComponent: PropTypes.function,
 			parentNode: PropTypes.any,
 			fieldConfig: FIELD_PROP_TYPE_SHAPE,
-			fieldItemData: PropTypes.arrayOf( PropTypes.any ).isRequired,
-			fieldHtmlAttr: PropTypes.object,
-			fieldType: PropTypes.string.isRequired,
-			fieldEmbed: PropTypes.bool.isRequired,
 		} ),
 	),
 };

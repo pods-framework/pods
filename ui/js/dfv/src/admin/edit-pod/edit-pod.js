@@ -7,7 +7,7 @@ import { compose } from '@wordpress/compose';
 
 // Pods dependencies
 import withDragDropContext from './with-drag-drop-context';
-import { STORE_KEY_EDIT_POD } from './store/constants';
+import { STORE_KEY_EDIT_POD } from '../../store/constants';
 import SaveStatusMessage from './save-status-message';
 import EditPodName from './edit-pod-name';
 import PodsNavTab from 'dfv/src/components/pods-nav-tab';

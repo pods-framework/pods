@@ -8,20 +8,24 @@ import { omit } from 'lodash';
 /**
  * WordPress dependencies
  */
-import {
-	select,
-	dispatch,
-} from '@wordpress/data';
+import { select } from '@wordpress/data';
 
 /**
  * Pods dependencies
  */
-import { initPodStore } from 'dfv/src/admin/edit-pod/store/store';
+import {
+	initPodStore,
+	initEditPodStore,
+} from 'dfv/src/admin/edit-pod/store/store';
 import PodsDFVApp from 'dfv/src/core/pods-dfv-app';
 import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
 import * as models from 'dfv/src/config/model-manifest';
 
-import { STORE_KEY_DFV } from 'dfv/src/admin/edit-pod/store/constants';
+import {
+	STORE_KEY_DFV,
+	STORE_KEY_EDIT_POD,
+} from 'dfv/src/admin/edit-pod/store/constants';
+
 import FIELD_MAP from 'dfv/src/fields/field-map';
 
 // Loads data from an object in this script tag.
@@ -41,16 +45,13 @@ window.PodsDFV = {
 		const fieldsData = dataTags.map( ( tag ) => {
 			const data = JSON.parse( tag.innerHTML );
 
-			// eslint-disable-next-line no-console
-			console.log( 'parsed JSON field data:', data );
-
-			// Ignore anything that doesn't have the field type set
-			if ( ! data.fieldType ) {
+			// Ignore anything malformed or that doesn't have the field type set
+			if ( ! data?.fieldType ) {
 				return undefined;
 			}
 
-			// @todo does this need to be included?
-			// const globalConfig: window.podsAdminConfig || window.podsDFVConfig;
+			// Some fields are rendered directly, most are not.
+			const directRender = FIELD_MAP[ data.fieldType ]?.directRender || false;
 
 			// Clean up the field config.
 			// Includes a kludge to disable the "Add New" button if we're inside a media modal.  This should
@@ -68,10 +69,11 @@ window.PodsDFV = {
 			cleanedFieldConfig.fieldEmbed = data.fieldEmbed || false;
 
 			return {
+				directRender,
 				fieldComponent: FIELD_MAP[ data.fieldType ]?.fieldComponent || null,
 				parentNode: tag.parentNode,
-				fieldConfig: cleanedFieldConfig,
-				fieldItemData: data.fieldItemData,
+				fieldConfig: directRender ? undefined : cleanedFieldConfig,
+				fieldItemData: data.fieldItemData || null,
 			};
 		} );
 
@@ -116,11 +118,15 @@ window.PodsDFV = {
 			{}
 		);
 
-		if ( ! select( STORE_KEY_DFV ) ) {
-			initPodStore(
-				window.podsAdminConfig || window.podsDFVConfig || {},
-				initialValues,
-			);
+		// The Edit Pod screen gets a different store set up than
+		// other contexts.
+		if ( window.podsAdminConfig ) {
+			initEditPodStore( window.podsAdminConfig );
+		} else if ( window.podsDFVConfig ) {
+			initPodStore( window.podsDFVConfig, initialValues );
+		} else {
+			// Something is wrong if neither set of globals is set.
+			return;
 		}
 
 		// Creates a container for the React app to "render",

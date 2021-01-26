@@ -31,7 +31,6 @@ import useBidirectionalFieldData from 'dfv/src/hooks/useBidirectionalFieldData';
 import FIELD_MAP from 'dfv/src/fields/field-map';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-// @todo include an error boundary in this file
 export const FieldWrapper = ( props ) => {
 	const {
 		field = {},

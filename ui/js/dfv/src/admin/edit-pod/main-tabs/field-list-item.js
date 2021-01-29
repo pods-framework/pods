@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { omit } from 'lodash';
 import classnames from 'classnames';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 // WordPress dependencies
 import { Dashicon } from '@wordpress/components';
@@ -16,7 +16,7 @@ import SettingsModal from './settings-modal';
 import {
 	STORE_KEY_EDIT_POD,
 	SAVE_STATUSES,
-} from 'dfv/src/admin/edit-pod/store/constants';
+} from 'dfv/src/store/constants';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 

@@ -44,7 +44,7 @@ const BaseInput = ( props ) => {
 			readOnly={ !! readOnly }
 			onChange={ onChange || handleChange }
 			onBlur={ onBlur }
-			autocomplete={ autoCompleteValue }
+			autoComplete={ autoCompleteValue }
 		/>
 	);
 };

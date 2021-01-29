@@ -1,4 +1,4 @@
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 // @todo can these be changed to real Booleans on the PHP side?
 const BOOLEAN_STRINGS = PropTypes.oneOf(
@@ -49,10 +49,12 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.bool,
 		PropTypes.number,
 	] ),
+	default_icon: PropTypes.string,
 	'depends-on': OBJECT_OR_ARRAY,
 	dependency: PropTypes.bool,
 	description: PropTypes.string,
 	developer_mode: PropTypes.bool,
+	editor_options: PropTypes.object,
 	'excludes-on': OBJECT_OR_ARRAY,
 	field_type: PropTypes.string,
 	group: PropTypes.string.isRequired,
@@ -146,6 +148,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	currency_format_placement: PropTypes.string,
 	currency_format_sign: PropTypes.string,
 	currency_format_type: PropTypes.string,
+	currency_html5: BOOLEAN_ALL_TYPES,
 	currency_max: PropTypes.string,
 	currency_max_length: NUMBER_OR_NUMBER_AS_STRING,
 	currency_min: PropTypes.string,
@@ -191,7 +194,12 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	file_edit_title: PropTypes.string,
 	file_field_template: PropTypes.string,
 	file_format_type: PropTypes.string,
-	file_limit: PropTypes.string,
+	file_limit: PropTypes.oneOfType(
+		[
+			PropTypes.string,
+			PropTypes.number,
+		]
+	),
 	file_linked: PropTypes.string,
 	file_modal_add_button: PropTypes.string,
 	file_modal_title: PropTypes.string,
@@ -204,6 +212,9 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	file_wp_gallery_output: PropTypes.string,
 	file_wp_gallery_random_sort: PropTypes.string,
 	file_wp_gallery_size: PropTypes.string,
+	plupload_init: PropTypes.object,
+	limit_extensions: PropTypes.string,
+	limit_types: PropTypes.string,
 
 	// HTML field
 	html_content: PropTypes.string,
@@ -231,6 +242,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	number_step: PropTypes.string,
 
 	// Oembed field
+	oembed_enable_providers: PropTypes.object,
 	oembed_enabled_providers_amazoncn: PropTypes.string,
 	oembed_enabled_providers_amazoncom: PropTypes.string,
 	oembed_enabled_providers_amazoncomau: PropTypes.string,
@@ -293,12 +305,13 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	phone_format: PropTypes.string,
 	phone_html5: BOOLEAN_ALL_TYPES,
 	phone_max_length: NUMBER_OR_NUMBER_AS_STRING,
+	phone_options: PropTypes.object,
 	phone_placeholder: PropTypes.string,
 	phone_repeatable: BOOLEAN_ALL_TYPES,
 
 	// Pick field
 	pick_ajax: BOOLEAN_ALL_TYPES,
-	pick_allow_add_new: PropTypes.string,
+	pick_allow_add_new: BOOLEAN_ALL_TYPES,
 	pick_custom: PropTypes.string,
 	pick_display: PropTypes.string,
 	pick_display_format_multi: PropTypes.string,

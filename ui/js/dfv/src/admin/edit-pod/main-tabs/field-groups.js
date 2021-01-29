@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { omit } from 'lodash';
 
 // WordPress dependencies
@@ -11,7 +11,7 @@ import SettingsModal from './settings-modal';
 import {
 	STORE_KEY_EDIT_POD,
 	SAVE_STATUSES,
-} from 'dfv/src/admin/edit-pod/store/constants';
+} from 'dfv/src/store/constants';
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 

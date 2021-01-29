@@ -17,7 +17,10 @@ const Color = ( {
 	return (
 		<div>
 			<button
-				onClick={ () => setIsOpen( ( prevValue ) => ! prevValue ) }
+				onClick={ ( event ) => {
+					event.preventDefault();
+					setIsOpen( ( prevValue ) => ! prevValue );
+				} }
 				className="button pods-color-select-button"
 			>
 				<ColorIndicator colorValue={ value } />

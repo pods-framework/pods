@@ -7,7 +7,7 @@ import { compose } from '@wordpress/compose';
 import {
 	STORE_KEY_EDIT_POD,
 	SAVE_STATUSES,
-} from 'dfv/src/admin/edit-pod/store/constants';
+} from 'dfv/src/store/constants';
 
 export const SaveStatusMessage = ( { saveStatus, saveMessage } ) => {
 	switch ( saveStatus ) {

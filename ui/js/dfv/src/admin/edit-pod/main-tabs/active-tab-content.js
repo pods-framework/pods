@@ -1,12 +1,12 @@
 import React from 'react';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 // WordPress dependencies
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
 // Pods dependencies
-import { STORE_KEY_EDIT_POD } from 'dfv/src/admin/edit-pod/store/constants';
+import { STORE_KEY_EDIT_POD } from 'dfv/src/store/constants';
 import DynamicTabContent from './dynamic-tab-content';
 import FieldGroups from './field-groups';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';

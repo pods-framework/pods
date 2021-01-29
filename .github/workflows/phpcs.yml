@@ -1,4 +1,4 @@
-name: MT Code Review
+name: 'PHP CodeSniffer'
 on:
   pull_request:
     paths:
@@ -26,6 +26,6 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-      - uses: moderntribe/action-tribe-phpcs@master
+      - uses: the-events-calendar/action-tribe-phpcs@master
         with:
           github-bot-token: ${{ secrets.GH_BOT_TOKEN }}

@@ -45,7 +45,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	// This should always be -2 versions behind the latest WP release
 	// To be updated each Major x.x Pods release
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_WP_VERSION_MINIMUM', '4.9' );
+		define( 'PODS_WP_VERSION_MINIMUM', '5.4' );
 	}
 
 	// This should match minimum WP requirements or usage (90%+)

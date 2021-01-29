@@ -2,7 +2,7 @@
 Contributors: sc0ttkclark, pglewis, jimtrue, keraweb, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
-Requires at least: 4.9
+Requires at least: 5.4
 Tested up to: 5.6
 Requires PHP: 5.6
 Stable tag: 2.8.0-a-4
@@ -190,6 +190,11 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.26 - January 8th, 2021 =
+
+* Fixed: Prevent PHP warnings in the `components/Templates/includes/element-pod_reference.php` file. #5914 (@JoryHogeveen)
+* Added: New filter `pods_shortcode_detect_from_current_post` allows you to override whether a shortcode should detect the post object outside of the loop (default is only when `in_the_loop()`). This helps to fix problems that are part of the integration which the free Pods Beaver Themer Add-On uses. (@sc0ttkclark)
 
 = 2.7.25 - December 28th 2020 =
 

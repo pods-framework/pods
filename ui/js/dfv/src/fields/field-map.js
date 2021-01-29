@@ -1,6 +1,3 @@
-import reactRenderer from 'dfv/src/core/renderers/react-renderer';
-import reactDirectRenderer from 'dfv/src/core/renderers/react-direct-renderer';
-
 import Avatar from 'dfv/src/fields/avatar';
 import Boolean from 'dfv/src/fields/boolean';
 import Code from 'dfv/src/fields/code';
@@ -28,95 +25,95 @@ import Wysiwyg from 'dfv/src/fields/wysiwyg';
 const FIELD_MAP = {
 	avatar: {
 		fieldComponent: Avatar,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	boolean: {
 		fieldComponent: Boolean,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	code: {
 		fieldComponent: Code,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	color: {
 		fieldComponent: Color,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	currency: {
 		fieldComponent: Currency,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	date: {
 		fieldComponent: DateField,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	datetime: {
 		fieldComponent: DateTime,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	'edit-pod': {
 		fieldComponent: EditPod,
-		renderer: reactDirectRenderer,
+		directRender: true,
 	},
 	email: {
 		fieldComponent: Email,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	file: {
 		fieldComponent: File,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	heading: {
 		fieldComponent: Heading,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	html: {
 		fieldComponent: HTMLField,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	number: {
 		fieldComponent: NumberField,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	oembed: {
 		fieldComponent: Oembed,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	paragraph: {
 		fieldComponent: Paragraph,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	password: {
 		fieldComponent: Password,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	phone: {
 		fieldComponent: Phone,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	pick: {
 		fieldComponent: Pick,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	slug: {
 		fieldComponent: Slug,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	text: {
 		fieldComponent: Text,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	time: {
 		fieldComponent: Time,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	website: {
 		fieldComponent: Website,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 	wysiwyg: {
 		fieldComponent: Wysiwyg,
-		renderer: reactRenderer,
+		directRender: false,
 	},
 };
 

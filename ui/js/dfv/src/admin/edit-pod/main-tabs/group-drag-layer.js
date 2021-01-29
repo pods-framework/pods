@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { DragLayer } from 'react-dnd';
 
 import { Dashicon } from '@wordpress/components';
-import { DRAG_ITEM_TYPES } from 'dfv/src/admin/edit-pod/store/constants';
+import { DRAG_ITEM_TYPES } from 'dfv/src/store/constants';
 
 const getLayerStyles = ( { item } ) => {
 	return {

@@ -1,5 +1,5 @@
 import { DropTarget } from 'react-dnd';
-import { DRAG_ITEM_TYPES } from 'dfv/src/admin/edit-pod/store/constants';
+import { DRAG_ITEM_TYPES } from 'dfv/src/store/constants';
 
 const dropSpec = {
 	hover( props, monitor, component ) {

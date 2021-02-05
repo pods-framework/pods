@@ -6,7 +6,6 @@
 
 .pods-dfv-field__loading-indicator {
 	background: #f1f1f1;
-	border-radius: 4px;
 	border: 1px solid #ccd0d4;
 	display: block;
 	height: 25px;
@@ -15,14 +14,14 @@
 	width: 100%;
 
 	&::before {
-		animation: loading 2s infinite;
-		background: linear-gradient(to right, transparent, rgba(#ccd0d4, 0.9), transparent);
+		animation: loading 1.5s infinite;
+		background: linear-gradient(to right, transparent, rgba(#444444, 0.6), transparent);
 		content: '';
 		display: block;
 		height: 100%;
 		position: absolute;
 		transform: translateX(-100%);
-width: 100%;
+		width: 100%;
 	}
 }
 

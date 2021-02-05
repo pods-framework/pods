@@ -4,6 +4,12 @@
 	}
 }
 
+.pods-dfv-field--unloaded {
+	+ .description {
+		display: none;
+	}
+}
+
 .pods-dfv-field__loading-indicator {
 	background: #f1f1f1;
 	border: 1px solid #ccd0d4;

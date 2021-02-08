@@ -308,7 +308,6 @@ div.pods-manage-field {
 div.pods-manage-field .pods-field-option,
 div.pods-manage-field .pods-field-option-group {
 	background: #fcfcfc;
-	border-bottom: 1px solid #CCD0D4;
 	box-sizing: border-box;
 	display: flex;
 	flex-flow: row nowrap;
@@ -339,12 +338,6 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 	flex: 0 0 30%;
 	padding-right: 2%;
 	padding-top: 4px;
-}
-
-div.pods-manage-field .pods-field-option .pods-field-option__field,
-div.pods-manage-field .pods-field-option-group .pods-field-option__field {
-	width: 70%;
-	flex: 0 0 70%;
 }
 
 .pods-manage-field .pods-field-option .pods-pick-values .pods-field.pods-boolean {

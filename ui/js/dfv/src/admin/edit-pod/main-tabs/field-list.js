@@ -18,7 +18,6 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 import SettingsModal from './settings-modal';
 import FieldListItem from './field-list-item';
 
-import './manage-fields.scss';
 import './field-list.scss';
 
 const FieldList = ( {
@@ -117,8 +116,8 @@ const FieldList = ( {
 	const isEmpty = 0 === fields.length;
 
 	const classes = classnames(
-		'pods-manage-fields',
-		{ 'no-fields': isEmpty }
+		'pods-field-list',
+		isEmpty && 'pods-field-list--no-fields'
 	);
 
 	return (

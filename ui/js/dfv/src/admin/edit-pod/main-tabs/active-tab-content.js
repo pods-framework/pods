@@ -11,6 +11,8 @@ import DynamicTabContent from './dynamic-tab-content';
 import FieldGroups from './field-groups';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
+import './active-tab-content.scss';
+
 // Display the content for the active tab, manage-fields is treated special
 const ActiveTabContent = ( {
 	podType,
@@ -25,7 +27,7 @@ const ActiveTabContent = ( {
 	return (
 		<div
 			id="post-body-content"
-			className="pods-nav-tab-group pods-manage-field"
+			className="pods-nav-tab-group pods-edit-pod-manage-field"
 		>
 			{ isManageFieldsTabActive ? (
 				<FieldGroups />

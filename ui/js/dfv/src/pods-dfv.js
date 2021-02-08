@@ -20,7 +20,6 @@ import {
 import PodsDFVApp from 'dfv/src/core/pods-dfv-app';
 import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
 import * as models from 'dfv/src/config/model-manifest';
-import { toBool } from 'dfv/src/helpers/booleans';
 
 import FIELD_MAP from 'dfv/src/fields/field-map';
 
@@ -43,13 +42,6 @@ window.PodsDFV = {
 
 			// Ignore anything malformed or that doesn't have the field type set
 			if ( ! data?.fieldType ) {
-				return undefined;
-			}
-
-			// Skip tags with the `disable_dfv` attribute set.
-			// eslint-disable-next-line camelcase
-			if ( toBool( data?.fieldConfig?.disable_dfv ) ) {
-				console.log( 'skipping this tag', data.fieldConfig.name );
 				return undefined;
 			}
 

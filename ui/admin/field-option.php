@@ -10,6 +10,8 @@ foreach ( $field_options as $field_name => $field_option ) {
 
 	$field_option = (array) $field_option;
 
+	$field_option['disable_dfv'] = true;
+
 	$dep_options = PodsForm::dependencies( $field_option, ( ! isset( $pods_tab_form ) ? 'field-data-' : '' ) );
 	$dep_classes = $dep_options['classes'];
 	$dep_data    = $dep_options['data'];

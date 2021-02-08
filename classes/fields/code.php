@@ -118,7 +118,9 @@ class PodsField_Code extends PodsField {
 		do_action( "pods_form_ui_field_code_{$field_type}", $name, $value, $options, $pod, $id );
 		do_action( 'pods_form_ui_field_code', $field_type, $name, $value, $options, $pod, $id );
 
-		//return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
 
 		wp_enqueue_script( 'pods-dfv' );
 

@@ -110,10 +110,15 @@
 
 											$data = apply_filters( 'pods_admin_setup_add_create_pod_type', $data );
 
-											if ( empty( $data[ 'pod' ] ) )
-												unset( $data[ 'pod' ] );
+											if ( empty( $data['pod'] ) ) {
+												unset( $data['pod'] );
+											}
 
-											echo PodsForm::field( 'create_pod_type', pods_v( 'create_pod_type', 'post' ), 'pick', array( 'data' => $data, 'class' => 'pods-dependent-toggle' ) );
+											echo PodsForm::field( 'create_pod_type', pods_v( 'create_pod_type', 'post', 'post_type' ), 'pick', [
+												'data'        => $data,
+												'class'       => 'pods-dependent-toggle',
+												'disable_dfv' => true,
+											] );
 										?>
 									</div>
 

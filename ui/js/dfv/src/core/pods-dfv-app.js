@@ -27,6 +27,17 @@ const PodsDFVApp = ( { fieldsData } ) => {
 			? <FieldComponent />
 			: <ConnectedFieldWrapper field={ fieldConfig } />;
 
+		// Remove the loading indicator.
+		parentNode.classList.remove( 'pods-dfv-field--unloaded' );
+		parentNode.classList.add( 'pods-dfv-field--loaded' );
+
+		const loadingIndicator = parentNode.querySelector( '.pods-dfv-field__loading-indicator' );
+
+		if ( loadingIndicator ) {
+			parentNode.removeChild( loadingIndicator );
+		}
+
+		// Create the Portal to render the field.
 		return ReactDOM.createPortal(
 			renderedFieldComponent,
 			parentNode

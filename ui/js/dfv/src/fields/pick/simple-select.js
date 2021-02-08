@@ -14,6 +14,7 @@ const SimpleSelect = ( {
 	placeholder = __( '-- Select One --', 'pods' ),
 	isMulti = false,
 } ) => {
+	console.log( { options, placeholder } );
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-onchange */
 		<select
@@ -36,7 +37,7 @@ const SimpleSelect = ( {
 			multiple={ isMulti }
 		>
 			<>
-				{ ! isMulti && (
+				{ ! isMulti && placeholder && (
 					<option key="placeholder" value="">
 						{ placeholder }
 					</option>

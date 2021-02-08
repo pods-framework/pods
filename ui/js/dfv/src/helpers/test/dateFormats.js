@@ -26,6 +26,8 @@ describe( 'convertPHPDateFormatToMomentFormat', () => {
 		expect( convertPHPDateFormatToMomentFormat( 'c' ) ).toEqual( 'YYYY-MM-DD[T]HH:mm:ssZ' );
 
 		expect( convertPHPDateFormatToMomentFormat( 'd-m-Y' ) ).toEqual( 'DD-MM-YYYY' );
+
+		expect( convertPHPDateFormatToMomentFormat( 'h:i:s A' ) ).toEqual( 'hh:mm:ss A' );
 	} );
 
 	it( 'handles invalid formats', () => {

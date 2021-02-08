@@ -972,6 +972,12 @@ class PodsField_Pick extends PodsField {
 
 		$config = parent::build_dfv_field_config( $args );
 
+		// Ensure data is passed in for relationship fields.
+		if ( ! isset( $config['data'] ) && ! empty( $args->options['data'] ) ) {
+			$config['data'] = $args->options['data'];
+		}
+
+		// Default optgroup handling to off.
 		if ( ! isset( $config['optgroup'] ) ) {
 			$config['optgroup'] = false;
 		}
@@ -1132,10 +1138,17 @@ class PodsField_Pick extends PodsField {
 
 		$args->options['supports_thumbnails'] = null;
 
-		$item_data = array();
+		$item_data = [];
+		$data      = [];
 
 		if ( ! empty( $args->options['data'] ) ) {
-			$item_data = $this->build_dfv_field_item_data_recurse( $args->options['data'], $args );
+			$data = $args->options['data'];
+		} elseif ( ! empty( $args->data ) ) {
+			$data = $args->data;
+		}
+
+		if ( [] !== $data ) {
+			$item_data = $this->build_dfv_field_item_data_recurse( $data, $args );
 		}
 
 		return $item_data;

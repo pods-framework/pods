@@ -945,11 +945,11 @@ class PodsUI {
 		$options->validate( 'limit', pods_var( 'limit' . $options->num, 'get', $this->limit ), 'int' );
 
 		if ( isset( $this->pods_data ) && is_object( $this->pods_data ) ) {
-			$this->sql = array(
+			$this->sql = array_merge( $this->sql, array_filter( [
 				'table'       => $this->pods_data->table,
 				'field_id'    => $this->pods_data->field_id,
 				'field_index' => $this->pods_data->field_index,
-			);
+			] ) );
 		}
 
 		$options->validate( 'sql', $this->sql, 'array_merge' );
@@ -1401,6 +1401,7 @@ class PodsUI {
 					continue;
 				}
 
+				$attributes = array_merge( $attributes['options'], $attributes );
 				$attributes = PodsForm::field_setup( $attributes, null, $attributes['type'] );
 
 				$new_fields[ $field ] = $attributes;

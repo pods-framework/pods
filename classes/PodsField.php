@@ -365,7 +365,8 @@ class PodsField {
 
 		$script_content = wp_json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
 		?>
-		<div class="pods-form-ui-field pods-dfv-field">
+		<div class="pods-form-ui-field pods-dfv-field pods-dfv-field--unloaded">
+			<span class="pods-dfv-field__loading-indicator" role="progressbar"></span>
 			<?php // @codingStandardsIgnoreLine ?>
 			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content; ?></script>
 		</div>
@@ -509,11 +510,25 @@ class PodsField {
 	 */
 	public function build_dfv_field_config( $args ) {
 
-		$config = $args->options;
+		$config = (array) $args->options;
 
 		unset( $config['data'] );
 
 		$config['item_id'] = (int) $args->id;
+
+		// Support passing missing options.
+		$check_missing = [
+			'type',
+			'name',
+			'label',
+			'id',
+		];
+
+		foreach ( $check_missing as $missing_name ) {
+			if ( ! empty( $args->{$missing_name} ) ) {
+				$config[ $missing_name ] = $args->{$missing_name};
+			}
+		}
 
 		return $config;
 

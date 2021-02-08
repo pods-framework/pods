@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
  * Pods dependencies
  */
 import ConnectedFieldWrapper from 'dfv/src/components/connected-field-wrapper';
+import { toBool } from 'dfv/src/helpers/booleans';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
@@ -20,6 +21,12 @@ const PodsDFVApp = ( { fieldsData } ) => {
 			parentNode,
 			fieldConfig,
 		} = fieldData;
+
+		// Skip tags with the `disable_dfv` attribute set.
+		if ( toBool( fieldConfig.disable_dfv ) ) {
+			console.log( 'skipping this tag', fieldConfig.name );
+			return null;
+		}
 
 		// Some components will have a React component passed in (eg. the Edit Pod field
 		// for the Edit Pod screen), but most won't.

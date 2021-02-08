@@ -54,10 +54,17 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	dependency: PropTypes.bool,
 	description: PropTypes.string,
 	developer_mode: PropTypes.bool,
-	editor_options: PropTypes.object,
+	disable_dfv: BOOLEAN_ALL_TYPES,
+	editor_options: PropTypes.oneOfType( [
+		PropTypes.string, // @todo is this an error message, or a back-end bug?
+		PropTypes.object,
+	] ),
 	'excludes-on': OBJECT_OR_ARRAY,
 	field_type: PropTypes.string,
-	group: PropTypes.string.isRequired,
+	group: PropTypes.oneOfType( [
+		PropTypes.number, // Could be passed in as 0 if not relevant.
+		PropTypes.string,
+	] ),
 	group_id: NUMBER_OR_NUMBER_AS_STRING,
 	grouped: PropTypes.number,
 	help: PropTypes.oneOfType( [
@@ -79,10 +86,14 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	label: PropTypes.string.isRequired,
 	label_param: PropTypes.string,
 	name: PropTypes.string.isRequired,
-	object_type: PropTypes.string.isRequired,
+	object_type: PropTypes.string,
 	old_name: PropTypes.string,
+	options: PropTypes.oneOfType( [
+		PICK_OPTIONS,
+		PropTypes.object,
+	] ),
 	param_default: PropTypes.string,
-	parent: NUMBER_OR_NUMBER_AS_STRING.isRequired,
+	parent: NUMBER_OR_NUMBER_AS_STRING,
 	placeholder: PropTypes.string,
 	post_status: PropTypes.string,
 	read_only: BOOLEAN_STRINGS,
@@ -342,13 +353,25 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
 	pick_select_text: PropTypes.string,
-	pick_show_edit_link: PropTypes.string,
-	pick_show_icon: PropTypes.string,
-	pick_show_view_link: PropTypes.string,
+	pick_show_edit_link: PropTypes.oneOfType( [
+		PropTypes.number, // Could be 0 if not set.
+		PropTypes.string,
+	] ),
+	pick_show_icon: PropTypes.oneOfType( [
+		PropTypes.number, // Could be 0 if not set.
+		PropTypes.string,
+	] ),
+	pick_show_view_link: PropTypes.oneOfType( [
+		PropTypes.number, // Could be 0 if not set.
+		PropTypes.string,
+	] ),
 	pick_table: PropTypes.string,
 	pick_table_id: PropTypes.string,
 	pick_table_index: PropTypes.string,
-	pick_taggable: PropTypes.string,
+	pick_taggable: PropTypes.oneOfType( [
+		PropTypes.number, // Could be 0 if not set.
+		PropTypes.string,
+	] ),
 	pick_user_role: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.arrayOf( PropTypes.string ),
@@ -407,7 +430,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	wysiwyg_allowed_html_tags: PropTypes.string,
 	wysiwyg_convert_chars: PropTypes.string,
 	wysiwyg_editor: PropTypes.string,
-	wysiwyg_editor_height: PropTypes.string,
+	wysiwyg_editor_height: NUMBER_OR_NUMBER_AS_STRING,
 	wysiwyg_media_buttons: PropTypes.string,
 	wysiwyg_oembed: PropTypes.string,
 	wysiwyg_repeatable: BOOLEAN_ALL_TYPES,

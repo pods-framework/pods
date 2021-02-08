@@ -88,6 +88,7 @@ CheckboxSelect.propTypes = {
 	value: PropTypes.oneOfType( [
 		PropTypes.arrayOf( PropTypes.string ),
 		PropTypes.string,
+		PropTypes.number,
 	] ),
 	setValue: PropTypes.func.isRequired,
 	options: PICK_OPTIONS.isRequired,

@@ -978,7 +978,7 @@ class PodsMeta {
 			}
 		}
 
-		if ( $pod['type'] !== $type ) {
+		if ( $pod && $pod['type'] !== $type ) {
 			$groups_cache[ $type . '/' . $name ] = [];
 
 			return $groups_cache[ $type . '/' . $name ];

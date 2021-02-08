@@ -363,13 +363,6 @@ div.pods-manage-field .pods-field-option-group .pods-field-option__field {
 	max-width: 100%;
 }
 
-.pods-manage-field .pods-field-option div select {
-	float: none;
-	width: 100%;
-	margin: 0;
-	max-width: 100%;
-}
-
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file {
 	padding-bottom: 8px;
 }
@@ -520,7 +513,6 @@ table.pods-admin {
  */
 body[class*="settings_page_pods-"] {
 	.pods-manage-field .pods-field-option input[type="text"],
-	.pods-manage-field .pods-field-option select,
 	.pods-manage-field .pods-field-option textarea,
 	.pods-manage-field .pods-field-option .pods-field.pods-boolean,
 	.pods-manage-field .pods-pick-values,
@@ -573,7 +565,6 @@ body[class*="settings_page_pods-"] {
 	}
 
 	.pods-manage-field .pods-field-option input[type="text"],
-	.pods-manage-field .pods-field-option select,
 	.pods-manage-field .pods-field-option textarea,
 	.pods-manage-field .pods-field-option .pods-field.pods-boolean,
 	.pods-manage-field .pods-pick-values,

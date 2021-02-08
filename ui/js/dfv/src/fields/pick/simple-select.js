@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 import { __ } from '@wordpress/i18n';
@@ -14,13 +15,17 @@ const SimpleSelect = ( {
 	placeholder = __( '-- Select One --', 'pods' ),
 	isMulti = false,
 } ) => {
-	console.log( { options, placeholder } );
+	const classes = classnames(
+		'pods-form-ui-field pods-form-ui-field-type-pick pods-form-ui-field-select',
+		htmlAttributes.class
+	);
+
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-onchange */
 		<select
 			id={ htmlAttributes.id || `pods-form-ui-${ name }` }
 			name={ htmlAttributes.name || name }
-			className={ htmlAttributes.class }
+			className={ classes }
 			value={ value }
 			onChange={ ( event ) => {
 				if ( ! isMulti ) {

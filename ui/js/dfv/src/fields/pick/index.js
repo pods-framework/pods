@@ -336,6 +336,7 @@ Pick.propTypes = {
 	value: PropTypes.oneOfType( [
 		PropTypes.arrayOf( PropTypes.string ),
 		PropTypes.string,
+		PropTypes.number,
 	] ),
 };
 

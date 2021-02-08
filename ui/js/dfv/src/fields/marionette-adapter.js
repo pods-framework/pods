@@ -5,6 +5,14 @@ import { PodsDFVFieldModel } from 'dfv/src/core/pods-field-model';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 class MarionetteAdapter extends React.Component {
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			isMarionetteGlobalLoaded: false,
+		};
+	}
+
 	componentDidMount() {
 		const {
 			htmlAttr = {},
@@ -16,10 +24,25 @@ class MarionetteAdapter extends React.Component {
 			fieldConfig,
 		} );
 
+		// The Marionette global needs to be set once.
+		if ( ! window.PodsMn ) {
+			window.PodsMn = window.Backbone.Marionette.noConflict();
+		}
+
+		this.setState( {
+			isMarionetteGlobalLoaded: true,
+		} );
+
+		// Initial render of the Marionette component. (is this needed?)
 		this.renderMarionetteComponent();
 	}
 
 	componentDidUpdate() {
+		// Don't do anything if Marionette is not setup yet.
+		if ( ! this.state.isMarionetteGlobalLoaded ) {
+			return;
+		}
+
 		if ( this.marionetteComponent ) {
 			this.marionetteComponent.destroy();
 		}
@@ -88,6 +111,5 @@ MarionetteAdapter.propTypes = {
 	] ),
 	View: PropTypes.func.isRequired,
 };
-
 
 export default MarionetteAdapter;

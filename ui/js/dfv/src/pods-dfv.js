@@ -20,11 +20,7 @@ import {
 import PodsDFVApp from 'dfv/src/core/pods-dfv-app';
 import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
 import * as models from 'dfv/src/config/model-manifest';
-
-import {
-	STORE_KEY_DFV,
-	STORE_KEY_EDIT_POD,
-} from 'dfv/src/store/constants';
+import { toBool } from 'dfv/src/helpers/booleans';
 
 import FIELD_MAP from 'dfv/src/fields/field-map';
 
@@ -47,6 +43,13 @@ window.PodsDFV = {
 
 			// Ignore anything malformed or that doesn't have the field type set
 			if ( ! data?.fieldType ) {
+				return undefined;
+			}
+
+			// Skip tags with the `disable_dfv` attribute set.
+			// eslint-disable-next-line camelcase
+			if ( toBool( data?.fieldConfig?.disable_dfv ) ) {
+				console.log( 'skipping this tag', data.fieldConfig.name );
 				return undefined;
 			}
 
@@ -77,11 +80,14 @@ window.PodsDFV = {
 			};
 		} );
 
+		// Filter out any that we skipped.
+		const validFieldsData = fieldsData.filter( ( fieldData ) => !! fieldData );
+
 		// Create the store if it hasn't been done already.
 		// The initial values for the data store require some massaging:
 		// Some are arrays when we need single values (this may change once
 		// repeatable fields are implemented), others have special requirements.
-		const initialValues = fieldsData.reduce(
+		const initialValues = validFieldsData.reduce(
 			( accumulator, currentValue ) => {
 				const fieldConfig = currentValue.fieldConfig || {};
 
@@ -138,7 +144,7 @@ window.PodsDFV = {
 
 		// Set up the DFV app.
 		ReactDOM.render(
-			<PodsDFVApp fieldsData={ fieldsData } />,
+			<PodsDFVApp fieldsData={ validFieldsData } />,
 			dfvRootContainer
 		);
 	},

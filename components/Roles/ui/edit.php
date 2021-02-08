@@ -101,7 +101,12 @@
 														$zebra = ( ! $zebra );
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
-															<?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
+															<?php
+															echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
+																'boolean_yes_label' => $capability,
+																'disable_dfv'       => true,
+															] );
+															?>
 														</li>
 														<?php
 													}
@@ -120,10 +125,18 @@
 											<div class="pods-pick-values pods-pick-checkbox">
 												<ul id="custom-capabilities">
 													<li class="pods-repeater hidden">
-														<?php echo PodsForm::field( 'custom_capabilities[--1]', '', 'text' ); ?>
+														<?php
+														echo PodsForm::field( 'custom_capabilities[--1]', '', 'text', [
+															'disable_dfv' => true,
+														] );
+														?>
 													</li>
 													<li>
-														<?php echo PodsForm::field( 'custom_capabilities[0]', '', 'text' ); ?>
+														<?php
+														echo PodsForm::field( 'custom_capabilities[0]', '', 'text', [
+															'disable_dfv' => true,
+														] );
+														?>
 													</li>
 												</ul>
 

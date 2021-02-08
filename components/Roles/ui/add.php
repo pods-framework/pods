@@ -41,19 +41,21 @@
 								<div class="pods-field-option">
 									<?php
 									echo PodsForm::label( 'role_label', __( 'Label', 'pods' ), __( 'Users will see this as the name of their role', 'pods' ) );
-									echo PodsForm::field( 'role_label', pods_var_raw( 'role_label', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );
+									echo PodsForm::field( 'role_label', pods_var_raw( 'role_label', 'post' ), 'text', [
+										'class'       => 'pods-validate pods-validate-required',
+										'disable_dfv' => true,
+									] );
 									?>
 								</div>
 
 								<div class="pods-field-option">
 									<?php
 									echo PodsForm::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
-									echo PodsForm::field(
-										'role_name', pods_var_raw( 'role_name', 'post' ), 'db', array(
-											'attributes' => array( 'data-sluggable' => 'role_label' ),
-											'class'      => 'pods-validate pods-validate-required pods-slugged-lower',
-										)
-									);
+									echo PodsForm::field( 'role_name', pods_var_raw( 'role_name', 'post' ), 'db', [
+										'attributes'  => [ 'data-sluggable' => 'role_label' ],
+										'class'       => 'pods-validate pods-validate-required pods-slugged-lower',
+										'disable_dfv' => true,
+									] );
 									?>
 								</div>
 							</div>
@@ -91,7 +93,10 @@
 												$zebra = ( ! $zebra );
 												?>
 												<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
-													<?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
+													<?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
+														'boolean_yes_label' => $capability,
+														'disable_dfv'       => true,
+													] ); ?>
 												</li>
 												<?php
 											}
@@ -110,10 +115,18 @@
 									<div class="pods-pick-values pods-pick-checkbox">
 										<ul id="custom-capabilities">
 											<li class="pods-repeater hidden">
-												<?php echo PodsForm::field( 'custom_capabilities[--1]', '', 'text' ); ?>
+												<?php
+												echo PodsForm::field( 'custom_capabilities[--1]', '', 'text', [
+													'disable_dfv' => true,
+												] );
+												?>
 											</li>
 											<li>
-												<?php echo PodsForm::field( 'custom_capabilities[0]', '', 'text' ); ?>
+												<?php
+												echo PodsForm::field( 'custom_capabilities[0]', '', 'text', [
+													'disable_dfv' => true,
+												] );
+												?>
 											</li>
 										</ul>
 

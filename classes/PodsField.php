@@ -510,11 +510,25 @@ class PodsField {
 	 */
 	public function build_dfv_field_config( $args ) {
 
-		$config = $args->options;
+		$config = (array) $args->options;
 
 		unset( $config['data'] );
 
 		$config['item_id'] = (int) $args->id;
+
+		// Support passing missing options.
+		$check_missing = [
+			'type',
+			'name',
+			'label',
+			'id',
+		];
+
+		foreach ( $check_missing as $missing_name ) {
+			if ( ! empty( $args->{$missing_name} ) ) {
+				$config[ $missing_name ] = $args->{$missing_name};
+			}
+		}
 
 		return $config;
 

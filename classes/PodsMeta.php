@@ -1211,7 +1211,6 @@ class PodsMeta {
 		<script type="text/javascript">
 			jQuery( function ( $ ) {
 				$( document ).Pods( 'submit_meta' );
-				$( document ).Pods( 'dependency', true );
 			} );
 		</script>
 		<?php

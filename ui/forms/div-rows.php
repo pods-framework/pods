@@ -43,24 +43,6 @@ foreach ( $fields as $field ) {
 		$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
 	}
 
-	$dep_options = PodsForm::dependencies( $field );
-	$dep_classes = $dep_options['classes'];
-	$dep_data    = $dep_options['data'];
-
-	if ( ( ! empty( $depends_on ) || ! empty( $dep_classes ) ) && $depends_on !== $dep_classes ) {
-		if ( ! empty( $depends_on ) ) {
-			?>
-			</div>
-			<?php
-		}
-
-		if ( ! empty( $dep_classes ) ) {
-			?>
-			<div class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
-			<?php
-		}
-	}
-
 	$row_classes = $field_row_classes . ' pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true );
 	$row_classes = trim( $row_classes );
 

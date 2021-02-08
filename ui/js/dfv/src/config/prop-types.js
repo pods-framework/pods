@@ -61,10 +61,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	] ),
 	'excludes-on': OBJECT_OR_ARRAY,
 	field_type: PropTypes.string,
-	group: PropTypes.oneOfType( [
-		PropTypes.number, // Could be passed in as 0 if not relevant.
-		PropTypes.string,
-	] ),
+	group: NUMBER_OR_NUMBER_AS_STRING,
 	group_id: NUMBER_OR_NUMBER_AS_STRING,
 	grouped: PropTypes.number,
 	help: PropTypes.oneOfType( [
@@ -353,25 +350,13 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
 	pick_select_text: PropTypes.string,
-	pick_show_edit_link: PropTypes.oneOfType( [
-		PropTypes.number, // Could be 0 if not set.
-		PropTypes.string,
-	] ),
-	pick_show_icon: PropTypes.oneOfType( [
-		PropTypes.number, // Could be 0 if not set.
-		PropTypes.string,
-	] ),
-	pick_show_view_link: PropTypes.oneOfType( [
-		PropTypes.number, // Could be 0 if not set.
-		PropTypes.string,
-	] ),
+	pick_show_edit_link: NUMBER_OR_NUMBER_AS_STRING,
+	pick_show_icon: NUMBER_OR_NUMBER_AS_STRING,
+	pick_show_view_link: NUMBER_OR_NUMBER_AS_STRING,
 	pick_table: PropTypes.string,
 	pick_table_id: PropTypes.string,
 	pick_table_index: PropTypes.string,
-	pick_taggable: PropTypes.oneOfType( [
-		PropTypes.number, // Could be 0 if not set.
-		PropTypes.string,
-	] ),
+	pick_taggable: NUMBER_OR_NUMBER_AS_STRING,
 	pick_user_role: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.arrayOf( PropTypes.string ),

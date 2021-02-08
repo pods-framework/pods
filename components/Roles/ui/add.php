@@ -72,11 +72,11 @@
 
 							<div class="inside pods-manage-field pods-dependency">
 								<div class="pods-field-option-group">
-									<p>
-										<a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
-									</p>
-
 									<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+										<p>
+											<a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
+										</p>
+
 										<ul>
 											<?php
 											$zebra = false;

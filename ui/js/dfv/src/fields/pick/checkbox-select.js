@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
-import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
+import {PICK_OPTIONS} from 'dfv/src/config/prop-types';
 
 const CheckboxSelect = ( {
 	htmlAttributes,
@@ -19,6 +19,8 @@ const CheckboxSelect = ( {
 			setValue( [ ...value, option ] );
 		}
 	};
+
+	const totalOptions = options.length;
 
 	return (
 		<ul
@@ -39,9 +41,11 @@ const CheckboxSelect = ( {
 					? `${ nameBase }[${ optionIndex }]`
 					: nameBase;
 
-				const idAttribute = !! htmlAttributes.id
-					? `${ htmlAttributes.id }-${ optionLabel }`
-					: `pods-form-ui-${ name }-${ optionLabel }`;
+				let idAttribute = !!htmlAttributes.id ? htmlAttributes.id : name;
+
+				if ( 1 < totalOptions ) {
+					idAttribute += `-${ optionValue }`;
+				}
 
 				return (
 					<li
@@ -51,7 +55,7 @@ const CheckboxSelect = ( {
 						<div className="pods-field pods-boolean">
 							<label
 								className="pods-form-ui-label pods-checkbox-pick__option__label"
-								htmlFor={ `pods-${ name }-${ optionLabel }` }
+								htmlFor={ idAttribute }
 							>
 								<input
 									name={ nameAttribute }

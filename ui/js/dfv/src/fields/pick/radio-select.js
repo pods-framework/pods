@@ -16,16 +16,20 @@ const RadioSelect = ( {
 				value: optionValue,
 				label: optionLabel,
 			} ) => {
+				const idAttribute = !! htmlAttributes.id
+					? `${ htmlAttributes.id }-${ optionValue }`
+					: `${ name }-${ optionValue }`;
+
 				return (
 					<li key={ optionValue } className="pods-radio-pick__option">
 						<div className="pods-field pods-boolean">
 							<label
 								className="pods-form-ui-label pods-radio-pick__option__label"
-								htmlFor={ `pods-${ name }-${ optionLabel }` }
+								htmlFor={ idAttribute }
 							>
 								<input
 									name={ htmlAttributes.name || name }
-									id={ htmlAttributes.id || `pods-form-ui-${ name }-${ optionLabel }` }
+									id={ idAttribute }
 									checked={ value === optionValue }
 									className="pods-form-ui-field-type-pick"
 									type="radio"

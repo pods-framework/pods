@@ -1671,38 +1671,108 @@ class PodsAdmin {
 
 				// Add fields for section.
 				foreach ( $section_fields as $field_name => $field_options ) {
-					$field_args = $field_options;
+					$boolean_group = [];
 
-					if ( ! isset( $field_args['name'] ) ) {
-						$field_args['name'] = $field_name;
+					if ( ! empty( $field_options['boolean_group'] ) ) {
+						$boolean_group = $field_options['boolean_group'];
+
+						unset( $field_options['boolean_group'] );
 					}
 
-					$field_args['parent'] = $parent;
-					$field_args['group']  = 'group/' . $parent . '/' . $group_name;
+					if (
+						// Field type must be set.
+						! empty( $field_options['type'] )
+						&& (
+							// Must not have a boolean group.
+							empty( $boolean_group )
+							// Or it must be the proper heading field type.
+							|| 'heading' === $field_options['type']
+						)
+					) {
+						// Set a unique field name for boolean group headings.
+						if ( ! empty( $boolean_group ) ) {
+							$field_options['name'] = $parent . '_' . $group_name . '_' . $field_name . '_' . md5( json_encode( $boolean_group ) );
+						}
 
-					$dfv_args = (object) [
-						'id'      => 0,
-						'name'    => $field_args['name'],
-						'value'   => '',
-						'pod'     => null,
-						'type'    => pods_v( 'type', $field_args ),
-						'options' => array_merge( [
-							'id' => 0,
-						], $field_args )
-					];
+						$field = $this->backcompat_convert_tabs_to_groups_setup_field( [
+							'field_name'    => $field_name,
+							'field_options' => $field_options,
+							'parent'        => $parent,
+							'group_name'    => $group_name,
+						] );
 
-					if ( ! empty( $dfv_args->type ) ) {
-						$field_args = PodsForm::field_method( $dfv_args->type, 'build_dfv_field_options', $field_args, $dfv_args ) ;
+						$fields[] = $storage->add( $field );
 					}
 
-					$field = new \Pods\Whatsit\Field( $field_args );
+					// Add any boolean group fields.
+					foreach ( $boolean_group as $boolean_field_name => $boolean_field_options ) {
+						if ( ! isset( $boolean_field_options['boolean_yes_label'] ) ) {
+							$boolean_field_options['boolean_yes_label'] = '';
+						}
 
-					$fields[] = $storage->add( $field );
+						$field = $this->backcompat_convert_tabs_to_groups_setup_field( [
+							'field_name'    => $boolean_field_name,
+							'field_options' => $boolean_field_options,
+							'parent'        => $parent,
+							'group_name'    => $group_name,
+						] );
+
+						$fields[] = $storage->add( $field );
+					}
 				}
 			}
 		}
 
 		return compact( 'groups', 'fields' );
+	}
+
+	/**
+	 * Setup field for backwards compatibility tabs to groups layer.
+	 *
+	 * @since TBD
+	 *
+	 * @param array $args {
+	 * 		The field arguments.
+	 *
+	 *		@type string     $field_name    The field name.
+	 *		@type array      $field_options The field options.
+	 *		@type string|int $parent        The parent group.
+	 *		@type string     $group_name    The group name.
+	 * }
+	 *
+	 * @return \Pods\Whatsit\Field The field object.
+	 */
+	public function backcompat_convert_tabs_to_groups_setup_field( $args ) {
+		$field_name    = $args['field_name'];
+		$field_options = $args['field_options'];
+		$parent        = $args['parent'];
+		$group_name    = $args['group_name'];
+
+		$field_args = $field_options;
+
+		if ( ! isset( $field_args['name'] ) ) {
+			$field_args['name'] = $field_name;
+		}
+
+		$field_args['parent'] = $parent;
+		$field_args['group']  = 'group/' . $parent . '/' . $group_name;
+
+		$dfv_args = (object) [
+			'id'      => 0,
+			'name'    => $field_args['name'],
+			'value'   => '',
+			'pod'     => null,
+			'type'    => pods_v( 'type', $field_args ),
+			'options' => array_merge( [
+				'id' => 0,
+			], $field_args )
+		];
+
+		if ( ! empty( $dfv_args->type ) ) {
+			$field_args = PodsForm::field_method( $dfv_args->type, 'build_dfv_field_options', $field_args, $dfv_args );
+		}
+
+		return new \Pods\Whatsit\Field( $field_args );
 	}
 
 	/**

@@ -340,11 +340,20 @@ class PodsField_File extends PodsField {
 			}
 		}
 
+		// Enforce defaults.
+		$default_options  = wp_list_pluck( static::options(), 'default' );
+
+		foreach ( $default_options as $option => $default ) {
+			$options[ $option ] = pods_v( $option, $options, $default, true );
+		}
+
 		// Handle default template setting.
-		$file_field_template = pods_v( $args->type . '_field_template', $options, 'rows', true );
+		$file_field_template = pods_v( $args->type . '_field_template', $options );
 
 		// Get which file types the field is limited to.
-		$limit_file_type = pods_v( $args->type . '_type', $options, 'images' );
+		$limit_file_type = pods_v( $args->type . '_type', $options );
+
+		$options[ $args->type . '_type' ] = $limit_file_type;
 
 		// Non-image file types are forced to rows template right now.
 		if ( 'images' !== $limit_file_type ) {

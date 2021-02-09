@@ -109,7 +109,7 @@ export const File = PodsDFVFieldLayout.extend( {
 
 	createUploader() {
 		const fieldConfig = this.model.get( 'fieldConfig' );
-		const targetUploader = fieldConfig.file_uploader;
+		const targetUploader = fieldConfig.file_uploader || 'attachment';
 		let Uploader;
 
 		jQuery.each( Uploaders, function( index, thisUploader ) {

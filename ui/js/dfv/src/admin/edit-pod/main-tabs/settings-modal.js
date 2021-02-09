@@ -229,12 +229,12 @@ const SettingsModal = ( {
 						}
 
 						// Check that dependencies are met.
-						if ( dependsOn && ! validateFieldDependencies( changedOptions, dependsOn ) ) {
+						if ( Object.keys( dependsOn ).length && ! validateFieldDependencies( changedOptions, dependsOn ) ) {
 							return null;
 						}
 
 						// Check that exclusions are met, true here means it has failed.
-						if ( excludesOn && validateFieldDependencies( changedOptions, excludesOn ) ) {
+						if ( Object.keys( excludesOn ).length && validateFieldDependencies( changedOptions, excludesOn ) ) {
 							return null;
 						}
 

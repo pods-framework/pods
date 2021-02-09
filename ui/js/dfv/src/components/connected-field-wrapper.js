@@ -66,10 +66,42 @@ const ConnectedFieldWrapper = compose( [
 				];
 			} );
 
+		const dependencyValues = Object.fromEntries( dependencyValueEntries );
+		const exclusionValues = Object.fromEntries( exclusionValueEntries );
+
+		// Workaround for the pick_object value: this value should be changed
+		// to a combination of the `pick_object` sent by the API and the
+		// `pick_val`. This was originally done to make the form easier to select.
+		//
+		// But this processing may not need to happen - it'll get set correctly
+		// after a UI update, but will be wrong after the update from saving to the API,
+		// so we'll check that the values haven't already been merged.
+		let value = allPodValues[ name ] || ownProps.field?.default || '';
+
+		const processedDependencyValues = dependencyValues;
+		const processedExclusionValues = exclusionValues;
+
+		if (
+			'pick_object' === name &&
+			dependencyValues.pick_val &&
+			! value.includes( `-${ dependencyValues.pick_val }`, `-${ dependencyValues.pick_val }`.length )
+		) {
+			value = `${ value }-${ dependencyValues.pick_val }`;
+			processedDependencyValues.pick_object = `${ value }-${ dependencyValues.pick_val }`;
+		}
+
+		if (
+			'pick_object' === name &&
+			exclusionValues.pick_val &&
+			! value.includes( `-${ exclusionValues.pick_val }`, `-${ exclusionValues.pick_val }`.length )
+		) {
+			processedExclusionValues.pick_object = `${ value }-${ exclusionValues.pick_val }`;
+		}
+
 		return {
-			dependencyValues: Object.fromEntries( dependencyValueEntries ),
-			exclusionValues: Object.fromEntries( exclusionValueEntries ),
-			value: allPodValues[ name ] || ownProps.field?.default || '',
+			dependencyValues: processedDependencyValues,
+			exclusionValues: processedExclusionValues,
+			value,
 		};
 	} ),
 	withDispatch( ( storeDispatch ) => {

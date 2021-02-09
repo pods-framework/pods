@@ -18,9 +18,6 @@ $value_callback    = isset( $value_callback ) ? $value_callback : null;
 $pre_callback      = isset( $pre_callback ) ? $pre_callback : null;
 $post_callback     = isset( $post_callback ) ? $post_callback : null;
 
-
-$depends_on = false;
-
 foreach ( $fields as $field ) {
 	$hidden_field = (boolean) pods_v( 'hidden', $field['options'], false );
 
@@ -55,14 +52,4 @@ foreach ( $fields as $field ) {
 	if ( ! empty( $post_callback ) && is_callable( $post_callback ) ) {
 		$post_callback( $field['name'], $id, $field, $pod );
 	}
-
-	if ( false !== $depends_on || ! empty( $dep_classes ) ) {
-		$depends_on = $dep_classes;
-	}
-}
-
-if ( ! empty( $depends_on ) ) {
-	?>
-	</div>
-	<?php
 }

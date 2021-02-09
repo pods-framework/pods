@@ -1167,11 +1167,11 @@ class PodsMeta {
 
 			return;
 		}
+
+		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' );
 		?>
 		<table class="form-table pods-metabox pods-admin pods-dependency">
 			<?php
-			echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' );
-
 			$field_prefix      = 'pods_meta_';
 			$field_row_classes = 'form-field pods-field-input';
 			$th_scope          = 'row';

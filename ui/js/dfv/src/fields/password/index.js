@@ -19,7 +19,7 @@ const Password = ( props ) => {
 			type={ 'password' }
 			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
 			placeholder={ placeholder }
-			autoComplete={ 'off' }
+			autoComplete={ 'new-password' }
 			{ ...props }
 		/>
 	);

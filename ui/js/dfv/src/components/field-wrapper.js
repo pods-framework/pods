@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -56,38 +56,48 @@ export const FieldWrapper = ( props ) => {
 		'excludes-on': excludesOn,
 	} = field;
 
+	const [ meetsDependencies, setMeetsDependencies ] = useState( false );
+
+	const fieldRef = useRef( null );
+
 	const dataOptions = useBidirectionalFieldData( data );
 
 	// Find the component for the field type
 	const FieldComponent = FIELD_MAP[ fieldType ]?.fieldComponent;
 
-	// Workaround for the pick_object value: this value should be changed
-	// to a combination of the `pick_object` sent by the API and the
-	// `pick_val`. This was originally done to make the form easier to select.
-	//
-	// But this processing may not need to happen - it'll get set correctly
-	// after a UI update, but will be wrong after the update from saving to the API,
-	// so we'll check that the values haven't already been merged.
-	let processedValue = value;
-	const processedDependencyAllOptionValues = dependencyValues;
-	const processedExclusionAllOptionValues = exclusionValues;
+	useEffect( () => {
+		const dependsOnLength = Object.keys( dependsOn || {} ).length;
+		const excludesOnLength = Object.keys( excludesOn || {} ).length;
 
-	if (
-		'pick_object' === name &&
-		dependencyValues.pick_val &&
-		! value.includes( `-${ dependencyValues.pick_val }`, `-${ dependencyValues.pick_val }`.length )
-	) {
-		processedValue = `${ value }-${ dependencyValues.pick_val }`;
-		processedDependencyAllOptionValues.pick_object = `${ value }-${ dependencyValues.pick_val }`;
-	}
+		if (
+			( dependsOnLength && ! validateFieldDependencies( dependencyValues, dependsOn ) ) ||
+			( excludesOnLength && validateFieldDependencies( exclusionValues, excludesOn ) )
+		) {
+			setMeetsDependencies( false );
+		} else {
+			setMeetsDependencies( true );
+		}
+	}, [ dependencyValues, exclusionValues, dependsOn, excludesOn, setMeetsDependencies ] );
 
-	if (
-		'pick_object' === name &&
-		exclusionValues.pick_val &&
-		! value.includes( `-${ exclusionValues.pick_val }`, `-${ exclusionValues.pick_val }`.length )
-	) {
-		processedExclusionAllOptionValues.pick_object = `${ value }-${ exclusionValues.pick_val }`;
-	}
+	// Hacky thing to hide the container. This isn't needed on every screen.
+	// @todo rework how some fields render so that we don't need to do this.
+	useEffect( () => {
+		if ( ! fieldRef?.current ) {
+			return;
+		}
+
+		const outsideOfReactFieldContainer = fieldRef.current.closest( '.pods-field' );
+
+		if ( ! outsideOfReactFieldContainer ) {
+			return;
+		}
+
+		if ( meetsDependencies ) {
+			outsideOfReactFieldContainer.style.display = 'block';
+		} else {
+			outsideOfReactFieldContainer.style.display = 'none';
+		}
+	}, [ name, fieldRef, meetsDependencies ] );
 
 	// Sort out different shapes that we could get the help text in.
 	// It's possible to get an array of strings for the help text, but it
@@ -137,7 +147,7 @@ export const FieldWrapper = ( props ) => {
 	const inputComponent = !! FieldComponent ? (
 		<FieldErrorBoundary>
 			<FieldComponent
-				value={ processedValue || defaultValue || '' }
+				value={ value || defaultValue || '' }
 				setValue={ ( newValue ) => setOptionValue( name, newValue ) }
 				isValid={ !! validationMessages.length }
 				addValidationRules={ addValidationRules }
@@ -165,30 +175,22 @@ export const FieldWrapper = ( props ) => {
 	) : undefined;
 
 	// Don't render a field that hasn't had its dependencies met.
-	if (
-		Object.keys( dependsOn ).length &&
-		! validateFieldDependencies( processedDependencyAllOptionValues, dependsOn )
-	) {
-		return null;
-	}
-
-	// Don't render a field that hasn't had its exclusions met, true here means it has failed.
-	if (
-		Object.keys( excludesOn ).length &&
-		validateFieldDependencies( processedExclusionAllOptionValues, excludesOn )
-	) {
-		return null;
+	if ( ! meetsDependencies ) {
+		return <span ref={ fieldRef } />;
 	}
 
 	// @todo include other layouts, how to know which one to use?
 	return (
-		<DivFieldLayout
-			labelComponent={ layoutComponent }
-			descriptionComponent={ descriptionComponent }
-			inputComponent={ inputComponent }
-			validationMessagesComponent={ validationMessagesComponent }
-			fieldType={ fieldType }
-		/>
+		<>
+			<span ref={ fieldRef } />
+			<DivFieldLayout
+				labelComponent={ layoutComponent }
+				descriptionComponent={ descriptionComponent }
+				inputComponent={ inputComponent }
+				validationMessagesComponent={ validationMessagesComponent }
+				fieldType={ fieldType }
+			/>
+		</>
 	);
 };
 

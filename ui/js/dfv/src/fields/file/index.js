@@ -17,6 +17,7 @@ const getMediaItemData = async ( mediaID ) => {
 			// eslint-disable-next-line camelcase
 			icon: result?.media_details?.sizes?.thumbnail?.source_url,
 			name: result.title.rendered,
+			// @todo This should be based on the adminurl instead of hardcoded to /wp-admin/ -- fix this later.
 			edit_link: `/wp-admin/post.php?post=${ mediaID }&action=edit`,
 			link: result.link,
 			download: result.source_url,

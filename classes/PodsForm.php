@@ -900,7 +900,7 @@ class PodsForm {
 	 * @static
 	 * @since 2.0.0
 	 */
-	public static function dependencies( $options, $prefix = '' ) {
+	public static function dependencies( $options, $prefix = 'pods-form-ui-' ) {
 
 		$options     = (array) $options;
 		$classes     = array();

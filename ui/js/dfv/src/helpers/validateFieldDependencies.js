@@ -9,7 +9,7 @@ import { toNumericBool } from './booleans';
  *
  * @return {boolean} True if dependencies are met to show the item.
  */
-const validateDependencies = ( options, dependsOn ) => {
+const validateFieldDependencies = ( options, dependsOn ) => {
 	if ( ! dependsOn ) {
 		return true;
 	}
@@ -42,4 +42,4 @@ const validateDependencies = ( options, dependsOn ) => {
 	);
 };
 
-export default validateDependencies;
+export default validateFieldDependencies;

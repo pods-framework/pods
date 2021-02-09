@@ -28,6 +28,7 @@ const checkFormValidity = ( sections, options ) => {
 			const {
 				fields,
 				'depends-on': dependsOn,
+				'excludes-on': excludesOn,
 			} = section;
 
 			// Skip the section if it doesn't have any fields.
@@ -35,8 +36,13 @@ const checkFormValidity = ( sections, options ) => {
 				return true;
 			}
 
-			// Skip the section if it isn't being shown because it's deps aren't met.
+			// Skip the section if it isn't being shown because it's dependencies aren't met.
 			if ( dependsOn && ! validateFieldDependencies( options, dependsOn ) ) {
+				return true;
+			}
+
+			// Skip the section if it isn't being shown because it's exclusions aren't met, true here means it has failed.
+			if ( excludesOn && validateFieldDependencies( options, excludesOn ) ) {
 				return true;
 			}
 
@@ -46,6 +52,7 @@ const checkFormValidity = ( sections, options ) => {
 					const {
 						required: fieldRequired,
 						'depends-on': fieldDependsOn,
+						'excludes-on': fieldExcludesOn,
 						type: fieldType,
 						name: fieldName,
 					} = field;
@@ -55,8 +62,13 @@ const checkFormValidity = ( sections, options ) => {
 						return true;
 					}
 
-					// Skip fields won't be shown because their dependency isn't met.
+					// Skip the fields if it isn't being shown because it's dependencies aren't met.
 					if ( fieldDependsOn && ! validateFieldDependencies( options, fieldDependsOn ) ) {
+						return true;
+					}
+
+					// Skip the fields if it isn't being shown because it's exclusions aren't met, true here means it has failed.
+					if ( fieldExcludesOn && validateFieldDependencies( options, fieldExcludesOn ) ) {
 						return true;
 					}
 
@@ -208,6 +220,7 @@ const SettingsModal = ( {
 						name: sectionName,
 						label: sectionLabel,
 						'depends-on': dependsOn = {},
+						'excludes-on': excludesOn = {},
 						fields,
 					} ) => {
 						// Hide any sections that are missing fields.
@@ -216,7 +229,12 @@ const SettingsModal = ( {
 						}
 
 						// Check that dependencies are met.
-						if ( ! validateFieldDependencies( changedOptions, dependsOn ) ) {
+						if ( dependsOn && ! validateFieldDependencies( changedOptions, dependsOn ) ) {
+							return null;
+						}
+
+						// Check that exclusions are met, true here means it has failed.
+						if ( excludesOn && validateFieldDependencies( changedOptions, excludesOn ) ) {
 							return null;
 						}
 

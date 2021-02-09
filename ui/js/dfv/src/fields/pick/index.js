@@ -280,7 +280,7 @@ const Pick = ( props ) => {
 				value={ formattedValue }
 				setValue={ setValueWithLimit }
 				options={ dataOptions }
-				// translators: Placeholder with the field label.
+				// translators: %s is the field label.
 				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
 				isMulti={ isMulti }
 				limit={ parseInt( limit, 10 ) || 0 }
@@ -303,7 +303,7 @@ const Pick = ( props ) => {
 				name={ name }
 				options={ dataOptions }
 				value={ formattedValue }
-				// translators: Placeholder with the field label.
+				// translators: %s is the field label.
 				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
 				isMulti={ isMulti }
 				onChange={ ( newOption ) => {

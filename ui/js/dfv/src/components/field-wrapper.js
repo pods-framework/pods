@@ -89,8 +89,6 @@ export const FieldWrapper = ( props ) => {
 		processedExclusionAllOptionValues.pick_object = `${ value }-${ exclusionValues.pick_val }`;
 	}
 
-	console.log( 'processedAllOptionValues', processedAllOptionValues );
-
 	// Sort out different shapes that we could get the help text in.
 	// It's possible to get an array of strings for the help text, but it
 	// will usually be a string.
@@ -167,12 +165,18 @@ export const FieldWrapper = ( props ) => {
 	) : undefined;
 
 	// Don't render a field that hasn't had its dependencies met.
-	if ( dependsOn && ! validateFieldDependencies( processedDependencyAllOptionValues, dependsOn ) ) {
+	if (
+		Object.keys( dependsOn ).length &&
+		! validateFieldDependencies( processedDependencyAllOptionValues, dependsOn )
+	) {
 		return null;
 	}
 
 	// Don't render a field that hasn't had its exclusions met, true here means it has failed.
-	if ( excludesOn && validateFieldDependencies( processedExclusionAllOptionValues, excludesOn ) ) {
+	if (
+		Object.keys( excludesOn ).length &&
+		validateFieldDependencies( processedExclusionAllOptionValues, excludesOn )
+	) {
 		return null;
 	}
 

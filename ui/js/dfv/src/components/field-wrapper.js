@@ -90,7 +90,7 @@ export const FieldWrapper = ( props ) => {
 			return;
 		}
 
-		const outsideOfReactFieldContainer = fieldRef.current.closest( '.pods-field' );
+		const outsideOfReactFieldContainer = fieldRef.current.closest( '.pods-field__container' );
 
 		if ( ! outsideOfReactFieldContainer ) {
 			return;

@@ -9,7 +9,7 @@
  * @var string|null         $heading_tag
  */
 ?>
-<div class="pods-field pods-field-option" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
+<div class="pods-field__container pods-field-option" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
 	<?php if ( 'heading' === $field['type'] ) : ?>
 		<?php $heading_tag = pods_v( $field['type'] . '_tag', $field, isset( $heading_tag ) ? $heading_tag : 'h2', true ); ?>
 		<<?php echo esc_html( $heading_tag ); ?>

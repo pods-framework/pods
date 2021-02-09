@@ -341,10 +341,10 @@ class PodsField_File extends PodsField {
 		}
 
 		// Enforce defaults.
-		$default_options  = wp_list_pluck( static::options(), 'default' );
+		$all_options = static::options();
 
-		foreach ( $default_options as $option => $default ) {
-			$options[ $option ] = pods_v( $option, $options, $default, true );
+		foreach ( $all_options as $option_name => $option ) {
+			$options[ $option_name ] = pods_v( $option_name, $options, pods_v( 'default', $option, '' ), true );
 		}
 
 		// Handle default template setting.

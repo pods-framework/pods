@@ -184,7 +184,7 @@ if ( 0 === $link_manager_enabled ) {
 										echo PodsForm::field( 'create_label_title', pods_v( 'create_label_title', 'post' ), 'text', [
 											'class'           => 'pods-validate pods-validate-required',
 											'text_max_length' => 30,
-											'excludes-on'     => [
+											'depends-on'      => [
 												'create_pod_type' => 'settings',
 											],
 										] );
@@ -195,6 +195,9 @@ if ( 0 === $link_manager_enabled ) {
 										echo PodsForm::label( 'create_label_menu', __( 'Menu Label', 'pods' ), __( '<h6>Menu Label</h6> This is the label that will appear throughout the WordPress admin area for your settings.', 'pods' ) );
 										echo PodsForm::field( 'create_label_menu', pods_v( 'create_label_menu', 'post' ), 'text', [
 											'text_max_length' => 30,
+											'depends-on'      => [
+												'create_pod_type' => 'settings',
+											],
 										] );
 										?>
 									</div>
@@ -210,6 +213,9 @@ if ( 0 === $link_manager_enabled ) {
 
 										echo PodsForm::field( 'create_menu_location', pods_v( 'create_menu_location', 'post' ), 'pick', [
 											'data' => $data,
+											'depends-on'      => [
+												'create_pod_type' => 'settings',
+											],
 										] );
 										?>
 									</div>
@@ -227,7 +233,7 @@ if ( 0 === $link_manager_enabled ) {
 											$max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
 											echo PodsForm::label( 'create_name', __( 'Pod Name', 'pods' ), __( '<h6>Pod Identifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
-											echo PodsForm::field( 'create_name', pods_v( 'create_name', 'post' ), 'db', [
+											echo PodsForm::field( 'create_name', pods_v( 'create_name', 'post' ), 'slug', [
 												'attributes'  => [
 													'maxlength' => $max_length_name,
 													'size'      => 25,
@@ -246,7 +252,7 @@ if ( 0 === $link_manager_enabled ) {
 											$max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
 											echo PodsForm::label( 'create_setting_name', __( 'Pod Name', 'pods' ), __( '<h6>Pod Identifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
-											echo PodsForm::field( 'create_setting_name', pods_v( 'create_setting_name', 'post' ), 'db', [
+											echo PodsForm::field( 'create_setting_name', pods_v( 'create_setting_name', 'post' ), 'slug', [
 												'attributes' => [
 													'maxlength' => $max_length_name,
 													'size'      => 25,
@@ -369,7 +375,7 @@ if ( 0 === $link_manager_enabled ) {
 											__( '<h6>Post Types</h6> WordPress can hold and display many different types of content. Internally, these are all stored in the same place, in the wp_posts table. These are differentiated by a column called post_type.', 'pods' ),
 											'http://codex.wordpress.org/Post_Types',
 										] );
-										echo PodsForm::field( 'extend_post_type', pods_v( 'extend_post_type', 'post', 'table', null, true ), 'pick', [
+										echo PodsForm::field( 'extend_post_type', pods_v( 'extend_post_type', 'post' ), 'pick', [
 											'data'       => $post_types,
 											'depends-on' => [
 												'extend_pod_type' => 'post_type',

@@ -71,7 +71,11 @@ const File = ( props ) => {
 			setCollectionData( results );
 		};
 
-		getAndSetMediaData( value.split( ',' ) );
+		if ( 'object' === typeof value ) {
+			setCollectionData( value );
+		} else if ( 'string' === typeof value ) {
+			getAndSetMediaData( value.split( ',' ) );
+		}
 	}, [] );
 
 	return (

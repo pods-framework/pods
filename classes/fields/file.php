@@ -344,7 +344,13 @@ class PodsField_File extends PodsField {
 		$all_options = static::options();
 
 		foreach ( $all_options as $option_name => $option ) {
-			$options[ $option_name ] = pods_v( $option_name, $options, pods_v( 'default', $option, '' ), true );
+			$default = pods_v( 'default', $option, '' );
+
+			$options[ $option_name ] = pods_v( $option_name, $options, $default );
+
+			if ( '' === $options[ $option_name ] ) {
+				$options[ $option_name ] = $default;
+			}
 		}
 
 		// Handle default template setting.

@@ -21,11 +21,11 @@ $post_callback     = isset( $post_callback ) ? $post_callback : null;
 $th_scope          = isset( $th_scope ) ? $th_scope : '';
 
 foreach ( $fields as $field ) {
-	$hidden_field = (boolean) pods_v( 'hidden', $field['options'], false );
+	$hidden_field = (boolean) pods_v( 'hidden', $field, false );
 
 	if (
 		! PodsForm::permission( $field['type'], $field['name'], $field, $fields, $pod, $id )
-		|| ( ! pods_has_permissions( $field['options'] ) && $hidden_field )
+		|| ( ! pods_has_permissions( $field ) && $hidden_field )
 	) {
 		if ( ! $hidden_field ) {
 			continue;

@@ -17,14 +17,14 @@
 			class="pods-form-ui-heading pods-form-ui-heading-<?php echo esc_attr( $field['name'] ); ?>">
 			<?php echo esc_html( $field['label'] ); ?>
 		</<?php echo esc_html( $heading_tag ); ?>>
-		<?php echo PodsForm::comment( $field_prefix . $field['name'], $field['description'], $field ); ?>
+		<?php echo PodsForm::comment( $field_prefix . $field['name'], pods_v( 'description', $field ), $field ); ?>
 	<?php elseif ( 'html' === $field['type'] ) : ?>
 		<?php echo PodsForm::field( $field_prefix . $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
 	<?php else : ?>
 		<?php
 		echo PodsForm::label( $field_prefix . $field['name'], $field['label'], $field['help'], $field );
 		echo PodsForm::field( $field_prefix . $field['name'], $value, $field['type'], $field, $pod, $id );
-		echo PodsForm::comment( $field_prefix . $field['name'], $field['description'], $field );
+		echo PodsForm::comment( $field_prefix . $field['name'], pods_v( 'description', $field ), $field );
 		?>
 	<?php endif; ?>
 </div>

@@ -319,7 +319,6 @@ class Pod extends Base {
 					'default'             => '',
 					'object_type'         => [ 'taxonomy' ],
 				],
-				// @todo Why was label_parent added previously? Can't find it in WP
 				'label_parent'                     => [
 					'label'               => __( 'Parent %s', 'pods' ),
 					'label_param'         => 'label_singular',
@@ -667,7 +666,6 @@ class Pod extends Base {
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
-					'description'       => 'Some text here',
 					'boolean_yes_label' => '',
 				],
 				'publicly_queryable'     => [

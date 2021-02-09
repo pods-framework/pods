@@ -57,7 +57,11 @@ window.PodsDFV = {
 			);
 
 			if ( tag.closest( '.media-modal-content' ) ) {
-				cleanedFieldConfig.fieldConfig.pick_allow_add_new = '0';
+				if ( cleanedFieldConfig.fieldConfig ) {
+					cleanedFieldConfig.fieldConfig.pick_allow_add_new = '0';
+				} else {
+					cleanedFieldConfig.pick_allow_add_new = '0';
+				}
 			}
 
 			cleanedFieldConfig.htmlAttr = data.htmlAttr || {};

@@ -366,14 +366,14 @@ class Pods_Templates extends PodsComponent {
 		$fields = array(
 			array(
 				'name'       => 'admin_only',
-				'label'      => __( 'Show to Admins Only?', 'pods' ),
+				'label'      => __( 'Show to Admins Only', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			array(
 				'name'       => 'restrict_capability',
-				'label'      => __( 'Restrict access by Capability?', 'pods' ),
+				'label'      => __( 'Restrict access by Capability', 'pods' ),
 				'help'       => array(
 					__( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
 					'http://codex.wordpress.org/Roles_and_Capabilities',
@@ -397,7 +397,7 @@ class Pods_Templates extends PodsComponent {
 			),
 			array(
 				'name'       => 'show_restrict_message',
-				'label'      => __( 'Show no access message?', 'pods' ),
+				'label'      => __( 'Show no access message', 'pods' ),
 				'default'    => 1,
 				'type'       => 'boolean',
 				'dependency' => true,

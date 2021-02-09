@@ -19,6 +19,7 @@ const ConnectedFieldWrapper = compose( [
 		const name = ownProps.field.name || '';
 
 		const dependsOn = ownProps.field?.[ 'depends-on' ] || {};
+		const excludesOn = ownProps.field?.[ 'excludes-on' ] || {};
 
 		const allPodValues = storeSelect( STORE_KEY_DFV ).getPodOptions();
 
@@ -28,9 +29,16 @@ const ConnectedFieldWrapper = compose( [
 				fieldName,
 				allPodValues[ fieldName ],
 			] ) );
+		const exclusionValueEntries = Object
+			.keys( excludesOn )
+			.map( ( fieldName ) => ( [
+				fieldName,
+				allPodValues[ fieldName ],
+			] ) );
 
 		return {
 			dependencyValues: Object.fromEntries( dependencyValueEntries ),
+			exclusionValues: Object.fromEntries( exclusionValueEntries ),
 			value: allPodValues[ name ] || ownProps.field?.default || '',
 		};
 	} ),

@@ -22,6 +22,13 @@ const FieldSet = ( {
 				optionValues[ fieldName ],
 			] ) );
 
+		const exclusionValueEntries = Object
+			.keys( field[ 'excludes-on' ] || {} )
+			.map( ( fieldName ) => ( [
+				fieldName,
+				optionValues[ fieldName ],
+			] ) );
+
 		return (
 			<FieldWrapper
 				key={ name }
@@ -29,6 +36,7 @@ const FieldSet = ( {
 				value={ optionValues[ name ] }
 				setOptionValue={ setOptionValue }
 				dependencyValues={ Object.fromEntries( dependencyValueEntries ) }
+				exclusionValues={ Object.fromEntries( exclusionValueEntries ) }
 			/>
 		);
 	} );

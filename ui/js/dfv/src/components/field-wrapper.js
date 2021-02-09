@@ -37,6 +37,7 @@ export const FieldWrapper = ( props ) => {
 		value,
 		setOptionValue,
 		dependencyValues,
+		exclusionValues,
 	} = props;
 
 	const {
@@ -52,6 +53,7 @@ export const FieldWrapper = ( props ) => {
 		html_no_label: htmlNoLabel = false,
 		htmlAttr,
 		'depends-on': dependsOn,
+		'excludes-on': excludesOn,
 	} = field;
 
 	const dataOptions = useBidirectionalFieldData( data );
@@ -67,7 +69,8 @@ export const FieldWrapper = ( props ) => {
 	// after a UI update, but will be wrong after the update from saving to the API,
 	// so we'll check that the values haven't already been merged.
 	let processedValue = value;
-	const processedAllOptionValues = dependencyValues;
+	const processedDependencyAllOptionValues = dependencyValues;
+	const processedExclusionAllOptionValues = exclusionValues;
 
 	if (
 		'pick_object' === name &&
@@ -75,7 +78,15 @@ export const FieldWrapper = ( props ) => {
 		! value.includes( `-${ dependencyValues.pick_val }`, `-${ dependencyValues.pick_val }`.length )
 	) {
 		processedValue = `${ value }-${ dependencyValues.pick_val }`;
-		processedAllOptionValues.pick_object = `${ value }-${ dependencyValues.pick_val }`;
+		processedDependencyAllOptionValues.pick_object = `${ value }-${ dependencyValues.pick_val }`;
+	}
+
+	if (
+		'pick_object' === name &&
+		exclusionValues.pick_val &&
+		! value.includes( `-${ exclusionValues.pick_val }`, `-${ exclusionValues.pick_val }`.length )
+	) {
+		processedExclusionAllOptionValues.pick_object = `${ value }-${ exclusionValues.pick_val }`;
 	}
 
 	// Sort out different shapes that we could get the help text in.
@@ -154,7 +165,12 @@ export const FieldWrapper = ( props ) => {
 	) : undefined;
 
 	// Don't render a field that hasn't had its dependencies met.
-	if ( ! validateFieldDependencies( processedAllOptionValues, dependsOn ) ) {
+	if ( ! validateFieldDependencies( processedDependencyAllOptionValues, dependsOn ) ) {
+		return null;
+	}
+
+	// Don't render a field that hasn't had its exclusions met, true here means it has failed.
+	if ( validateFieldDependencies( processedExclusionAllOptionValues, excludesOn ) ) {
 		return null;
 	}
 
@@ -187,10 +203,11 @@ FieldWrapper.propTypes = {
 	] ),
 	setOptionValue: PropTypes.func.isRequired,
 	dependencyValues: PropTypes.object.isRequired,
+	exclusionValues: PropTypes.object.isRequired,
 };
 
 // Memoize to prevent unnecessary re-renders when the
-// dependencyValues prop changes.
+// dependencyValues/exclusionValues prop changes.
 const MemoizedFieldWrapper = React.memo(
 	FieldWrapper,
 	( prevProps, nextProps ) => isEqual( prevProps, nextProps )

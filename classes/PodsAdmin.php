@@ -993,6 +993,10 @@ class PodsAdmin {
 					} else {
 						$pod_type = 'ct';
 					}
+
+					if ( isset( $types[ $pod_type ] ) ) {
+						$pod_type_label = $types[ $pod_type ];
+					}
 				}
 
 				if ( ! isset( $pod_types_found[ $pod_type ] ) ) {
@@ -1675,6 +1679,21 @@ class PodsAdmin {
 
 					$field_args['parent'] = $parent;
 					$field_args['group']  = 'group/' . $parent . '/' . $group_name;
+
+					$dfv_args = (object) [
+						'id'      => 0,
+						'name'    => $field_args['name'],
+						'value'   => '',
+						'pod'     => null,
+						'type'    => pods_v( 'type', $field_args ),
+						'options' => array_merge( [
+							'id' => 0,
+						], $field_args )
+					];
+
+					if ( ! empty( $dfv_args->type ) ) {
+						$field_args = PodsForm::field_method( $dfv_args->type, 'build_dfv_field_options', $field_args, $dfv_args ) ;
+					}
 
 					$field = new \Pods\Whatsit\Field( $field_args );
 

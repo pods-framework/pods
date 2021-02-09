@@ -937,7 +937,7 @@ class PodsField_Pick extends PodsField {
 			$pod_id = 0;
 		}
 
-		$field_id = (int) $options['id'];
+		$field_id = (int) pods_v( 'id', $options );
 
 		$id = (int) $args->id;
 

@@ -840,6 +840,19 @@ class PodsField_Pick extends PodsField {
 			unset( $options['_field_object'] );
 		}
 
+		// Enforce defaults.
+		$all_options = static::options();
+
+		foreach ( $all_options as $option_name => $option ) {
+			$default = pods_v( 'default', $option, '' );
+
+			$options[ $option_name ] = pods_v( $option_name, $options, $default );
+
+			if ( '' === $options[ $option_name ] ) {
+				$options[ $option_name ] = $default;
+			}
+		}
+
 		$options['grouped'] = 1;
 
 		if ( empty( $options[ $args->type . '_object' ] ) ) {

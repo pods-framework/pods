@@ -97,7 +97,7 @@ export const FieldWrapper = ( props ) => {
 		}
 
 		if ( meetsDependencies ) {
-			outsideOfReactFieldContainer.style.display = 'block';
+			outsideOfReactFieldContainer.style.display = '';
 		} else {
 			outsideOfReactFieldContainer.style.display = 'none';
 		}

@@ -37,12 +37,12 @@ const checkFormValidity = ( sections, options ) => {
 			}
 
 			// Skip the section if it isn't being shown because it's dependencies aren't met.
-			if ( Object.keys( dependsOn ).length && ! validateFieldDependencies( options, dependsOn ) ) {
+			if ( dependsOn && Object.keys( dependsOn ).length && ! validateFieldDependencies( options, dependsOn ) ) {
 				return true;
 			}
 
 			// Skip the section if it isn't being shown because it's exclusions aren't met, true here means it has failed.
-			if ( Object.keys( excludesOn ).length && validateFieldDependencies( options, excludesOn ) ) {
+			if ( excludesOn && Object.keys( excludesOn ).length && validateFieldDependencies( options, excludesOn ) ) {
 				return true;
 			}
 
@@ -63,12 +63,12 @@ const checkFormValidity = ( sections, options ) => {
 					}
 
 					// Skip the fields if it isn't being shown because it's dependencies aren't met.
-					if ( Object.keys( fieldDependsOn ).length && ! validateFieldDependencies( options, fieldDependsOn ) ) {
+					if ( fieldDependsOn && Object.keys( fieldDependsOn ).length && ! validateFieldDependencies( options, fieldDependsOn ) ) {
 						return true;
 					}
 
 					// Skip the fields if it isn't being shown because it's exclusions aren't met, true here means it has failed.
-					if ( Object.keys( fieldExcludesOn ).length && validateFieldDependencies( options, fieldExcludesOn ) ) {
+					if ( fieldExcludesOn && Object.keys( fieldExcludesOn ).length && validateFieldDependencies( options, fieldExcludesOn ) ) {
 						return true;
 					}
 
@@ -229,12 +229,12 @@ const SettingsModal = ( {
 						}
 
 						// Check that dependencies are met.
-						if ( Object.keys( dependsOn ).length && ! validateFieldDependencies( changedOptions, dependsOn ) ) {
+						if ( dependsOn && Object.keys( dependsOn ).length && ! validateFieldDependencies( changedOptions, dependsOn ) ) {
 							return null;
 						}
 
 						// Check that exclusions are met, true here means it has failed.
-						if ( Object.keys( excludesOn ).length && validateFieldDependencies( changedOptions, excludesOn ) ) {
+						if ( excludesOn && Object.keys( excludesOn ).length && validateFieldDependencies( changedOptions, excludesOn ) ) {
 							return null;
 						}
 

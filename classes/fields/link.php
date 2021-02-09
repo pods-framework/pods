@@ -55,28 +55,28 @@ class PodsField_Link extends PodsField_Website {
 				),
 			),
 			static::$type . '_select_existing'   => array(
-				'label'      => __( 'Enable Selecting from Existing Links?', 'pods' ),
+				'label'      => __( 'Enable Selecting from Existing Links', 'pods' ),
 				'default'    => 1,
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			static::$type . '_new_window'        => array(
-				'label'      => __( 'Open link in new window by default?', 'pods' ),
+				'label'      => __( 'Open link in new window by default', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_link_new_window', 0, static::$type ),
 				'type'       => 'boolean',
 				'dependency' => false,
 			),
 			'output_options'                     => array(
 				'label' => __( 'Link Text Output Options', 'pods' ),
-				'group' => array(
+				'boolean_group' => array(
 					static::$type . '_allow_shortcode' => array(
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
 					),
 					static::$type . '_allow_html'      => array(
-						'label'      => __( 'Allow HTML?', 'pods' ),
+						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
@@ -90,7 +90,7 @@ class PodsField_Link extends PodsField_Website {
 				'type'       => 'text',
 			),
 			static::$type . '_html5'             => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),

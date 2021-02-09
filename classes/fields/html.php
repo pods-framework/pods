@@ -43,22 +43,22 @@ class PodsField_HTML extends PodsField {
 				'type'  => 'code',
 			],
 			static::$type . '_no_label' => [
-				'label'   => __( 'Disable the form label?', 'pods' ),
+				'label'   => __( 'Disable the form label', 'pods' ),
 				'default' => 1,
 				'type'    => 'boolean',
 				'help'    => __( 'By disabling the form label, the HTML will show as full width without the label text. Only the HTML content will be displayed in the form.', 'pods' ),
 			],
 			'output_options'           => [
 				'label' => __( 'Output Options', 'pods' ),
-				'group' => [
+				'boolean_group' => [
 					static::$type . '_allow_html'      => [
-						'label'      => __( 'Allow HTML?', 'pods' ),
+						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
 					],
 					static::$type . '_oembed'          => [
-						'label'   => __( 'Enable oEmbed?', 'pods' ),
+						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
 						'help'    => [
@@ -67,7 +67,7 @@ class PodsField_HTML extends PodsField {
 						],
 					],
 					static::$type . '_wptexturize'     => [
-						'label'   => __( 'Enable wptexturize?', 'pods' ),
+						'label'   => __( 'Enable wptexturize', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => [
@@ -76,7 +76,7 @@ class PodsField_HTML extends PodsField {
 						],
 					],
 					static::$type . '_convert_chars'   => [
-						'label'   => __( 'Enable convert_chars?', 'pods' ),
+						'label'   => __( 'Enable convert_chars', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => [
@@ -85,7 +85,7 @@ class PodsField_HTML extends PodsField {
 						],
 					],
 					static::$type . '_wpautop'         => [
-						'label'   => __( 'Enable wpautop?', 'pods' ),
+						'label'   => __( 'Enable wpautop', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => [
@@ -94,7 +94,7 @@ class PodsField_HTML extends PodsField {
 						],
 					],
 					static::$type . '_allow_shortcode' => [
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,

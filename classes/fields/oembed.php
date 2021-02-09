@@ -122,11 +122,11 @@ class PodsField_OEmbed extends PodsField {
 			$options[ static::$type . '_enable_providers' ]   = array(
 				'label'      => __( 'Select enabled providers', 'pods' ),
 				'depends-on' => array( static::$type . '_restrict_providers' => true ),
-				'group'      => array(),
+				'boolean_group'      => array(),
 			);
 			// Add all the oEmbed providers
 			foreach ( $unique_providers as $provider ) {
-				$options[ static::$type . '_enable_providers' ]['group'][ static::$type . '_enabled_providers_' . tag_escape( $provider ) ] = array(
+				$options[ static::$type . '_enable_providers' ]['boolean_group'][ static::$type . '_enabled_providers_' . tag_escape( $provider ) ] = array(
 					'label'   => $provider,
 					'type'    => 'boolean',
 					'default' => 0,

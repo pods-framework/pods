@@ -56,7 +56,7 @@ class PodsField_Email extends PodsField {
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
 			static::$type . '_html5'       => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),

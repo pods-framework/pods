@@ -66,9 +66,9 @@ class PodsField_Phone extends PodsField {
 			),
 			static::$type . '_options'     => array(
 				'label' => __( 'Phone Options', 'pods' ),
-				'group' => array(
+				'boolean_group' => array(
 					static::$type . '_enable_phone_extension' => array(
-						'label'   => __( 'Enable Phone Extension?', 'pods' ),
+						'label'   => __( 'Enable Phone Extension', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 					),
@@ -81,7 +81,7 @@ class PodsField_Phone extends PodsField {
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
 			static::$type . '_html5'       => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),

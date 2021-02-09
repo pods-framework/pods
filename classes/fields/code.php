@@ -53,9 +53,9 @@ class PodsField_Code extends PodsField {
 			),
 			'output_options'              => array(
 				'label' => __( 'Output Options', 'pods' ),
-				'group' => array(
+				'boolean_group' => array(
 					static::$type . '_allow_shortcode' => array(
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,

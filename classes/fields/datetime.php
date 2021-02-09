@@ -197,12 +197,12 @@ class PodsField_DateTime extends PodsField {
 				),
 			),
 			static::$type . '_allow_empty'           => array(
-				'label'   => __( 'Allow empty value?', 'pods' ),
+				'label'   => __( 'Allow empty value', 'pods' ),
 				'default' => 1,
 				'type'    => 'boolean',
 			),
 			static::$type . '_html5'                 => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),

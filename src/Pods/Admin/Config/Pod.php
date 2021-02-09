@@ -148,7 +148,7 @@ class Pod extends Base {
 				'label_add_new_item'               => [
 					'label'         => __( 'Add new %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -156,7 +156,7 @@ class Pod extends Base {
 				'label_new_item'                   => [
 					'label'         => __( 'New %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -165,7 +165,7 @@ class Pod extends Base {
 				'label_new_item_name'              => [
 					'label'         => __( 'New %s Name', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -181,7 +181,7 @@ class Pod extends Base {
 				'label_edit_item'                  => [
 					'label'         => __( 'Edit %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -189,7 +189,7 @@ class Pod extends Base {
 				'label_update_item'                => [
 					'label'         => __( 'Update %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -205,7 +205,7 @@ class Pod extends Base {
 				'label_duplicate_item'             => [
 					'label'         => __( 'Duplicate %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -214,7 +214,7 @@ class Pod extends Base {
 				'label_delete_item'                => [
 					'label'         => __( 'Delete %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -230,7 +230,7 @@ class Pod extends Base {
 				'label_view_item'                  => [
 					'label'         => __( 'View %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -238,7 +238,7 @@ class Pod extends Base {
 				'label_view_items'                 => [
 					'label'         => __( 'View %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'Items', 'pods' ),
+					'label_param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -261,7 +261,7 @@ class Pod extends Base {
 				'label_manage_items'               => [
 					'label'         => __( 'Manage %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'Items', 'pods' ),
+					'label_param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -277,7 +277,7 @@ class Pod extends Base {
 				'label_reorder_items'              => [
 					'label'         => __( 'Reorder %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'Items', 'pods' ),
+					'label_param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -286,7 +286,7 @@ class Pod extends Base {
 				'label_all_items'                  => [
 					'label'         => __( 'All %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'Items', 'pods' ),
+					'label_param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -301,7 +301,7 @@ class Pod extends Base {
 				'label_search_items'               => [
 					'label'         => __( 'Search %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'items', 'pods' ),
+					'label_param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -309,7 +309,7 @@ class Pod extends Base {
 				'label_popular_items'              => [
 					'label'         => __( 'Popular %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'Items', 'pods' ),
+					'label_param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -319,7 +319,7 @@ class Pod extends Base {
 				'label_parent'                     => [
 					'label'         => __( 'Parent %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -328,7 +328,7 @@ class Pod extends Base {
 				'label_parent_item'                => [
 					'label'         => __( 'Parent %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -337,7 +337,7 @@ class Pod extends Base {
 				'label_parent_item_colon'          => [
 					'label'         => __( 'Parent %s:', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -351,7 +351,7 @@ class Pod extends Base {
 				'label_no_items_found'             => [
 					'label'         => __( 'No %s Found', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -367,7 +367,7 @@ class Pod extends Base {
 				'label_archives'                   => [
 					'label'         => __( '%s Archives', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -376,7 +376,7 @@ class Pod extends Base {
 				'label_attributes'                 => [
 					'label'         => __( '%s Attributes', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -385,7 +385,7 @@ class Pod extends Base {
 				'label_insert_into_item'           => [
 					'label'         => __( 'Insert into %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -394,7 +394,7 @@ class Pod extends Base {
 				'label_uploaded_to_this_item'      => [
 					'label'         => __( 'Uploaded to this %s', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -435,7 +435,7 @@ class Pod extends Base {
 				'label_filter_items_list'          => [
 					'label'         => __( 'Filter %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'Items', 'pods' ),
+					'label_param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -444,7 +444,7 @@ class Pod extends Base {
 				'label_items_list_navigation'      => [
 					'label'         => __( '%s list navigation', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'Items', 'pods' ),
+					'label_param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -453,7 +453,7 @@ class Pod extends Base {
 				'label_items_list'                 => [
 					'label'         => __( '%s list', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'Items', 'pods' ),
+					'label_param_default' => __( 'Items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -462,7 +462,7 @@ class Pod extends Base {
 				'label_separate_items_with_commas' => [
 					'label'         => __( 'Separate %s with commas', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'items', 'pods' ),
+					'label_param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -471,7 +471,7 @@ class Pod extends Base {
 				'label_add_or_remove_items'        => [
 					'label'         => __( 'Add or remove %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'items', 'pods' ),
+					'label_param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -480,7 +480,7 @@ class Pod extends Base {
 				'label_choose_from_the_most_used'  => [
 					'label'         => __( 'Choose from the most used %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'items', 'pods' ),
+					'label_param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -489,7 +489,7 @@ class Pod extends Base {
 				'label_no_terms'                   => [
 					'label'         => __( 'No %s', 'pods' ),
 					'label_param'   => 'label',
-					'param_default' => __( 'items', 'pods' ),
+					'label_param_default' => __( 'items', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -498,7 +498,7 @@ class Pod extends Base {
 				'label_item_published'             => [
 					'label'         => __( '%s Published.', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -507,7 +507,7 @@ class Pod extends Base {
 				'label_item_published_privately'   => [
 					'label'         => __( '%s published privately.', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -516,7 +516,7 @@ class Pod extends Base {
 				'label_item_reverted_to_draft'     => [
 					'label'         => __( '%s reverted to draft.', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -525,7 +525,7 @@ class Pod extends Base {
 				'label_item_scheduled'             => [
 					'label'         => __( '%s scheduled.', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',
@@ -534,7 +534,7 @@ class Pod extends Base {
 				'label_item_updated'               => [
 					'label'         => __( '%s updated.', 'pods' ),
 					'label_param'   => 'label_singular',
-					'param_default' => __( 'Item', 'pods' ),
+					'label_param_default' => __( 'Item', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'text',
 					'default'       => '',

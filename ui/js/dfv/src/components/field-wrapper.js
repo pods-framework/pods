@@ -151,7 +151,7 @@ export const FieldWrapper = ( props ) => {
 	) : (
 		<span className="pods-field-option__invalid-field">
 			{ sprintf(
-				// translators: Message showing that the field type doesn't exist.
+				// translators: %s is the field type.
 				__( 'The field type \'%s\' was invalid.', 'pods' ),
 				fieldType
 			) }

@@ -1472,6 +1472,16 @@ class PodsMeta {
 					}
 				}
 
+				// Skip heavy fields.
+				if ( in_array( $field['type'], [ 'wysiwyg', 'code', 'file', 'oembed' ], true ) ) {
+					continue;
+				}
+
+				// Force DFV off for non-pick.
+				if ( 'pick' !== $field['type'] ) {
+					$field['disable_dfv'] = true;
+				}
+
 				$value = '';
 
 				pods_no_conflict_on( 'post' );

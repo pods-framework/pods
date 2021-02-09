@@ -1237,6 +1237,7 @@ class Pod extends Base {
 				}
 			}
 
+			// Set empty message if none found.
 			if ( empty( $hierarchical_fields ) ) {
 				$hierarchical_fields = [
 					'' => __( 'No Hierarchical Fields found', 'pods' ),

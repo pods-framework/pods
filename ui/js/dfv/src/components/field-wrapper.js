@@ -165,12 +165,12 @@ export const FieldWrapper = ( props ) => {
 	) : undefined;
 
 	// Don't render a field that hasn't had its dependencies met.
-	if ( ! validateFieldDependencies( processedDependencyAllOptionValues, dependsOn ) ) {
+	if ( dependsOn && ! validateFieldDependencies( processedDependencyAllOptionValues, dependsOn ) ) {
 		return null;
 	}
 
 	// Don't render a field that hasn't had its exclusions met, true here means it has failed.
-	if ( validateFieldDependencies( processedExclusionAllOptionValues, excludesOn ) ) {
+	if ( excludesOn && validateFieldDependencies( processedExclusionAllOptionValues, excludesOn ) ) {
 		return null;
 	}
 

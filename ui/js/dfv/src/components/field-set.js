@@ -29,6 +29,13 @@ const FieldSet = ( {
 				optionValues[ fieldName ],
 			] ) );
 
+		const wildcardValueEntries = Object
+			.keys( field[ 'wildcard-on' ] || {} )
+			.map( ( fieldName ) => ( [
+				fieldName,
+				optionValues[ fieldName ],
+			] ) );
+
 		return (
 			<FieldWrapper
 				key={ name }
@@ -37,6 +44,7 @@ const FieldSet = ( {
 				setOptionValue={ setOptionValue }
 				dependencyValues={ Object.fromEntries( dependencyValueEntries ) }
 				exclusionValues={ Object.fromEntries( exclusionValueEntries ) }
+				wildcardValues={ Object.fromEntries( wildcardValueEntries ) }
 			/>
 		);
 	} );

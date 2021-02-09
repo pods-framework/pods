@@ -20,6 +20,7 @@ const ConnectedFieldWrapper = compose( [
 
 		const dependsOn = ownProps.field?.[ 'depends-on' ] || {};
 		const excludesOn = ownProps.field?.[ 'excludes-on' ] || {};
+		const wildcardOn = ownProps.field?.[ 'wildcard-on' ] || {};
 
 		const allPodValues = storeSelect( STORE_KEY_DFV ).getPodOptions();
 
@@ -66,8 +67,30 @@ const ConnectedFieldWrapper = compose( [
 				];
 			} );
 
+		const wildcardValueEntries = Object
+			.keys( wildcardOn )
+			.map( ( fieldName ) => {
+				let storeKeyName = fieldName;
+
+				// Some Pods fields have prefixes of pods_meta_, pods_setting_, or pods_field_,
+				// so adjust the keys that we look for if the field name has one of those.
+				if ( name.startsWith( 'pods_meta_' ) ) {
+					storeKeyName = `pods_meta_${ fieldName }`;
+				} else if ( name.startsWith( 'pods_setting_' ) ) {
+					storeKeyName = `pods_setting_${ fieldName }`;
+				} else if ( name.startsWith( 'pods_field_' ) ) {
+					storeKeyName = `pods_field_${ fieldName }`;
+				}
+
+				return [
+					fieldName,
+					allPodValues[ storeKeyName ],
+				];
+			} );
+
 		const dependencyValues = Object.fromEntries( dependencyValueEntries );
 		const exclusionValues = Object.fromEntries( exclusionValueEntries );
+		const wildcardValues = Object.fromEntries( wildcardValueEntries );
 
 		// Workaround for the pick_object value: this value should be changed
 		// to a combination of the `pick_object` sent by the API and the
@@ -80,6 +103,7 @@ const ConnectedFieldWrapper = compose( [
 
 		const processedDependencyValues = dependencyValues;
 		const processedExclusionValues = exclusionValues;
+		const processedWildcardValues = wildcardValues;
 
 		if (
 			'pick_object' === name &&
@@ -98,9 +122,18 @@ const ConnectedFieldWrapper = compose( [
 			processedExclusionValues.pick_object = `${ value }-${ exclusionValues.pick_val }`;
 		}
 
+		if (
+			'pick_object' === name &&
+			wildcardValues.pick_val &&
+			! value.includes( `-${ wildcardValues.pick_val }`, `-${ wildcardValues.pick_val }`.length )
+		) {
+			processedWildcardValues.pick_object = `${ value }-${ wildcardValues.pick_val }`;
+		}
+
 		return {
 			dependencyValues: processedDependencyValues,
 			exclusionValues: processedExclusionValues,
+			wildcardValues: processedWildcardValues,
 			value,
 		};
 	} ),

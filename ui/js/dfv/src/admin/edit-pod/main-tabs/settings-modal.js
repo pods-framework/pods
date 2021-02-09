@@ -29,6 +29,7 @@ const checkFormValidity = ( sections, options ) => {
 				fields,
 				'depends-on': dependsOn,
 				'excludes-on': excludesOn,
+				'wildcard-on': wildcardOn,
 			} = section;
 
 			// Skip the section if it doesn't have any fields.
@@ -37,12 +38,17 @@ const checkFormValidity = ( sections, options ) => {
 			}
 
 			// Skip the section if it isn't being shown because it's dependencies aren't met.
-			if ( dependsOn && Object.keys( dependsOn ).length && ! validateFieldDependencies( options, dependsOn ) ) {
+			if ( Object.keys( dependsOn || {} ).length && ! validateFieldDependencies( options, dependsOn ) ) {
 				return true;
 			}
 
-			// Skip the section if it isn't being shown because it's exclusions aren't met, true here means it has failed.
-			if ( excludesOn && Object.keys( excludesOn ).length && validateFieldDependencies( options, excludesOn ) ) {
+			// Skip the section if it isn't being shown because it's exclusions aren't met.
+			if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( options, excludesOn, 'excludes' ) ) {
+				return true;
+			}
+
+			// Skip the section if it isn't being shown because it's wildcard dependencies aren't met.
+			if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( options, wildcardOn, 'wildcard' ) ) {
 				return true;
 			}
 
@@ -53,6 +59,7 @@ const checkFormValidity = ( sections, options ) => {
 						required: fieldRequired,
 						'depends-on': fieldDependsOn,
 						'excludes-on': fieldExcludesOn,
+						'wildcard-on': fieldWildcardOn,
 						type: fieldType,
 						name: fieldName,
 					} = field;
@@ -63,12 +70,17 @@ const checkFormValidity = ( sections, options ) => {
 					}
 
 					// Skip the fields if it isn't being shown because it's dependencies aren't met.
-					if ( fieldDependsOn && Object.keys( fieldDependsOn ).length && ! validateFieldDependencies( options, fieldDependsOn ) ) {
+					if ( Object.keys( fieldDependsOn || {} ).length && ! validateFieldDependencies( options, fieldDependsOn ) ) {
 						return true;
 					}
 
-					// Skip the fields if it isn't being shown because it's exclusions aren't met, true here means it has failed.
-					if ( fieldExcludesOn && Object.keys( fieldExcludesOn ).length && validateFieldDependencies( options, fieldExcludesOn ) ) {
+					// Skip the fields if it isn't being shown because it's exclusions aren't met.
+					if ( Object.keys( fieldExcludesOn || {} ).length && ! validateFieldDependencies( options, fieldExcludesOn, 'excludes' ) ) {
+						return true;
+					}
+
+					// Skip the fields if it isn't being shown because it's wildcard dependencies aren't met.
+					if ( Object.keys( fieldWildcardOn || {} ).length && ! validateFieldDependencies( options, fieldWildcardOn, 'wildcard' ) ) {
 						return true;
 					}
 
@@ -221,6 +233,7 @@ const SettingsModal = ( {
 						label: sectionLabel,
 						'depends-on': dependsOn = {},
 						'excludes-on': excludesOn = {},
+						'wildcard-on': wildcardOn = {},
 						fields,
 					} ) => {
 						// Hide any sections that are missing fields.
@@ -229,12 +242,17 @@ const SettingsModal = ( {
 						}
 
 						// Check that dependencies are met.
-						if ( dependsOn && Object.keys( dependsOn ).length && ! validateFieldDependencies( changedOptions, dependsOn ) ) {
+						if ( Object.keys( dependsOn || {} ).length && ! validateFieldDependencies( changedOptions, dependsOn ) ) {
 							return null;
 						}
 
-						// Check that exclusions are met, true here means it has failed.
-						if ( excludesOn && Object.keys( excludesOn ).length && validateFieldDependencies( changedOptions, excludesOn ) ) {
+						// Check that exclusions are met.
+						if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( changedOptions, excludesOn, 'excludes' ) ) {
+							return null;
+						}
+
+						// Check that wildcard dependencies are met.
+						if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( changedOptions, wildcardOn, 'wildcard' ) ) {
 							return null;
 						}
 

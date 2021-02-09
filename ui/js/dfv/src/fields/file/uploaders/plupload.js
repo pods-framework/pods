@@ -70,7 +70,7 @@ export const Plupload = PodsFileUploader.extend( {
 			response = response.substr( 7 );
 			if ( window.console ) {
 				// eslint-disable-next-line no-console
-				console.log( response );
+				console.debug( response );
 			}
 
 			model.set( {
@@ -83,7 +83,7 @@ export const Plupload = PodsFileUploader.extend( {
 			response = jQuery( response ).text(); // Strip tags, text only
 			if ( window.console ) {
 				// eslint-disable-next-line no-console
-				console.log( response );
+				console.debug( response );
 			}
 
 			model.set( {
@@ -102,9 +102,9 @@ export const Plupload = PodsFileUploader.extend( {
 			if ( 'object' !== typeof json || jQuery.isEmptyObject( json ) ) {
 				if ( window.console ) {
 					// eslint-disable-next-line no-console
-					console.log( response );
+					console.debug( response );
 					// eslint-disable-next-line no-console
-					console.log( json );
+					console.debug( json );
 				}
 
 				model.set( {

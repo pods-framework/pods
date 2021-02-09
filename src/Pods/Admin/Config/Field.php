@@ -367,8 +367,6 @@ class Field extends Base {
 				$field_settings['field_types_select'][ __( 'Other', 'pods' ) ][ $type ] = $field_type_data['label'];
 			}
 
-			// @todo Store additional fields in additional-field list as normal fields.
-			// @todo Figure out how to handle conditional logic for UI to separate field options by type.
 			$type_options = PodsForm::ui_options( $type );
 
 			$dev_mode = pods_developer();
@@ -419,7 +417,7 @@ class Field extends Base {
 		$options['basic']['pick_object']['data'] = $field_settings['pick_object'];
 		$options['basic']['pick_table']['data']  = $field_settings['pick_table'];
 
-		// @todo Follow up on this.
+		// @todo Look into supporting these in the future.
 		/*Tribe__Main::array_insert_after_key( 'visibility', $options['advanced'], [
 			'search' => [
 				'label'   => __( 'Include in searches', 'pods' ),

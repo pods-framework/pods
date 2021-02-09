@@ -78,8 +78,6 @@ export const numberValidator = (
 
 	const integerMaxDecimals = parseInt( decimalMaxLength, 10 ) || -1;
 
-	console.log( parts, parts[ 1 ], decimals, decimals.length, integerMaxDecimals );
-
 	if (
 		-1 !== integerMaxDecimals &&
 		decimals.length > integerMaxDecimals

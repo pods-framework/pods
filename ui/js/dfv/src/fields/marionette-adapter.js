@@ -75,7 +75,10 @@ class MarionetteAdapter extends React.Component {
 				return;
 			}
 
-			console.log( 'collection changed', eventName, collection, collection.models );
+			if ( window.console ) {
+				// eslint-disable-next-line no-console
+				console.debug( 'collection changed', eventName, collection, collection.models );
+			}
 
 			this.props.setValue( collection.models || [] );
 		} );

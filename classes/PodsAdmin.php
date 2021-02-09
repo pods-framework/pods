@@ -1672,11 +1672,24 @@ class PodsAdmin {
 				// Add fields for section.
 				foreach ( $section_fields as $field_name => $field_options ) {
 					$boolean_group = [];
+					$boolean_extra = [];
 
 					if ( ! empty( $field_options['boolean_group'] ) ) {
 						$boolean_group = $field_options['boolean_group'];
 
 						unset( $field_options['boolean_group'] );
+
+						if ( ! empty( $field_options['depends-on'] ) ) {
+							$boolean_extra['depends-on']  = $field_options['depends-on'];
+						}
+
+						if ( ! empty( $field_options['excludes-on'] ) ) {
+							$boolean_extra['excludes-on'] = $field_options['excludes-on'];
+						}
+
+						if ( ! empty( $field_options['wildcard-on'] ) ) {
+							$boolean_extra['wildcard-on'] = $field_options['wildcard-on'];
+						}
 					}
 
 					if (
@@ -1709,6 +1722,9 @@ class PodsAdmin {
 						if ( ! isset( $boolean_field_options['boolean_yes_label'] ) ) {
 							$boolean_field_options['boolean_yes_label'] = '';
 						}
+
+						// Maybe add extra options.
+						$boolean_field_options = array_merge( $boolean_extra, $boolean_field_options );
 
 						$field = $this->backcompat_convert_tabs_to_groups_setup_field( [
 							'field_name'    => $boolean_field_name,

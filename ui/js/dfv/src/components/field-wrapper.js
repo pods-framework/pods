@@ -38,6 +38,7 @@ export const FieldWrapper = ( props ) => {
 		setOptionValue,
 		dependencyValues,
 		exclusionValues,
+		wildcardValues,
 	} = props;
 
 	const {
@@ -54,6 +55,7 @@ export const FieldWrapper = ( props ) => {
 		htmlAttr,
 		'depends-on': dependsOn,
 		'excludes-on': excludesOn,
+		'wildcard-on': wildcardOn,
 	} = field;
 
 	const [ meetsDependencies, setMeetsDependencies ] = useState( false );
@@ -68,16 +70,18 @@ export const FieldWrapper = ( props ) => {
 	useEffect( () => {
 		const dependsOnLength = Object.keys( dependsOn || {} ).length;
 		const excludesOnLength = Object.keys( excludesOn || {} ).length;
+		const wildcardOnLength = Object.keys( wildcardOn || {} ).length;
 
 		if (
 			( dependsOnLength && ! validateFieldDependencies( dependencyValues, dependsOn ) ) ||
-			( excludesOnLength && validateFieldDependencies( exclusionValues, excludesOn ) )
+			( excludesOnLength && ! validateFieldDependencies( exclusionValues, excludesOn, 'excludes' ) ) ||
+			( wildcardOnLength && ! validateFieldDependencies( wildcardValues, wildcardOn, 'wildcard' ) )
 		) {
 			setMeetsDependencies( false );
 		} else {
 			setMeetsDependencies( true );
 		}
-	}, [ dependencyValues, exclusionValues, dependsOn, excludesOn, setMeetsDependencies ] );
+	}, [ dependencyValues, exclusionValues, wildcardValues, dependsOn, excludesOn, wildcardOn, setMeetsDependencies ] );
 
 	// Hacky thing to hide the container. This isn't needed on every screen.
 	// @todo rework how some fields render so that we don't need to do this.
@@ -212,6 +216,7 @@ FieldWrapper.propTypes = {
 	setOptionValue: PropTypes.func.isRequired,
 	dependencyValues: PropTypes.object.isRequired,
 	exclusionValues: PropTypes.object.isRequired,
+	wildcardValues: PropTypes.object.isRequired,
 };
 
 // Memoize to prevent unnecessary re-renders when the

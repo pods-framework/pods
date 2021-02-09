@@ -882,7 +882,6 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'col'        => null,
 		'template'   => null,
 		'pods_page'  => null,
-		'helper'     => null,
 		'form'       => null,
 		'fields'     => null,
 		'label'      => null,
@@ -1131,10 +1130,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 				// Content is null by default.
 				$return .= $related->template( $tags['template'], $content );
 			}
-		} elseif ( empty( $tags['helper'] ) ) {
-			$return = $pod->display( $tags['field'] );
 		} else {
-			$return = $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );
+			$return = $pod->display( $tags['field'] );
 		}
 
 		if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {

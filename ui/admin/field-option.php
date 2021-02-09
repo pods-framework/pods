@@ -2,9 +2,7 @@
 $depends_on = false;
 
 foreach ( $field_options as $field_name => $field_option ) {
-	if ( false !== strpos( $field_name, 'helper' ) && ! class_exists( 'Pods_Helpers' ) ) {
-		continue;
-	} elseif ( $field_option['developer_mode'] && ! pods_developer() ) {
+	if ( $field_option['developer_mode'] && ! pods_developer() ) {
 		continue;
 	}
 

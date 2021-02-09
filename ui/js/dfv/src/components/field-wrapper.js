@@ -78,6 +78,8 @@ export const FieldWrapper = ( props ) => {
 		processedAllOptionValues.pick_object = `${ value }-${ dependencyValues.pick_val }`;
 	}
 
+	console.log( 'processedAllOptionValues', processedAllOptionValues );
+
 	// Sort out different shapes that we could get the help text in.
 	// It's possible to get an array of strings for the help text, but it
 	// will usually be a string.

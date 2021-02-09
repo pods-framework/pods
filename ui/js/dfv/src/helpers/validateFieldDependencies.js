@@ -14,6 +14,8 @@ const validateDependencies = ( options, dependsOn ) => {
 		return true;
 	}
 
+	console.log( 'validateDependencies', options, dependsOn );
+
 	const dependsOnKeys = Object.keys( dependsOn );
 
 	if ( ! dependsOnKeys.length ) {
@@ -32,6 +34,8 @@ const validateDependencies = ( options, dependsOn ) => {
 			const processedDependsOnValue = typeof dependsOn[ key ] === 'boolean'
 				? toNumericBool( dependsOn[ key ] )
 				: dependsOn[ key ];
+
+			console.log( 'option and processedDependsOnValue', options[ key ], processedDependsOnValue );
 
 			return options[ key ] === processedDependsOnValue;
 		}

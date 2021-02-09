@@ -1258,6 +1258,8 @@ class PodsUI {
 					if ( is_int( $field ) ) {
 						$field      = $attributes;
 						$attributes = array();
+					} elseif ( is_a( $attributes, \Pods\Whatsit\Field::class ) ) {
+						$attributes = $attributes->get_args();
 					} else {
 						$attributes = array( 'label' => $attributes );
 					}

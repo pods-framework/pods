@@ -22,10 +22,8 @@ const ConnectedFieldWrapper = compose( [
 
 		const allPodValues = storeSelect( STORE_KEY_DFV ).getPodOptions();
 
-		const dependsOnKeys = Object.keys( dependsOn );
-
 		// Find all of the dependency values.
-		const dependencyValueEntries = dependsOnKeys
+		const dependencyValueEntries = Object.keys( dependsOn )
 			.map( ( fieldName ) => {
 				let storeKeyName = fieldName;
 
@@ -33,13 +31,9 @@ const ConnectedFieldWrapper = compose( [
 				// so adjust the keys that we look for if the field name has one of those.
 				if ( name.startsWith( 'pods_meta_' ) ) {
 					storeKeyName = `pods_meta_${ fieldName }`;
-				}
-
-				if ( name.startsWith( 'pods_setting_' ) ) {
+				} else if ( name.startsWith( 'pods_setting_' ) ) {
 					storeKeyName = `pods_setting_${ fieldName }`;
-				}
-
-				if ( name.startsWith( 'pods_field_' ) ) {
+				} else if ( name.startsWith( 'pods_field_' ) ) {
 					storeKeyName = `pods_field_${ fieldName }`;
 				}
 

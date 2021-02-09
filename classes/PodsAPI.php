@@ -4047,7 +4047,6 @@ class PodsAPI {
 		$exclude = array(
 			'id',
 			'name',
-			'helper_type',
 			'code',
 			'options',
 			'status',
@@ -4068,10 +4067,6 @@ class PodsAPI {
 					unset( $options[ $alias ] );
 				}
 			}
-		}
-
-		if ( 'helper' === $object['type'] ) {
-			$object['helper_type'] = $object['helper_type'];
 		}
 
 		if ( isset( $object['code'] ) ) {
@@ -4190,24 +4185,11 @@ class PodsAPI {
 	 *
 	 * @return int The helper ID
 	 * @since 1.7.9
+	 *
+	 * @deprecated since 2.8.0
 	 */
 	public function save_helper( $params, $sanitized = false ) {
-
-		$params = (object) $params;
-
-		if ( isset( $params->phpcode ) ) {
-			$params->code = $params->phpcode;
-			unset( $params->phpcode );
-		}
-
-		if ( isset( $params->type ) ) {
-			$params->helper_type = $params->type;
-			unset( $params->type );
-		}
-
-		$params->type = 'helper';
-
-		return $this->save_object( $params, $sanitized );
+		return 0;
 	}
 
 	/**
@@ -6847,12 +6829,11 @@ class PodsAPI {
 	 *
 	 * @return bool
 	 * @since 1.7.9
+	 *
+	 * @deprecated since 2.8.0
 	 */
 	public function delete_helper( $params ) {
-		$params       = (object) $params;
-		$params->type = 'helper';
-
-		return $this->delete_object( $params );
+		return false;
 	}
 
 	/**
@@ -8239,16 +8220,11 @@ class PodsAPI {
 	 * @return array|bool
 	 *
 	 * @since 1.7.9
+	 *
+	 * @deprecated since 2.8.0
 	 */
 	public function load_helper( $params ) {
-		if ( ! class_exists( 'Pods_Helpers' ) ) {
-			return false;
-		}
-
-		$params       = (object) $params;
-		$params->type = 'helper';
-
-		return $this->load_object( $params );
+		return false;
 	}
 
 	/**
@@ -8266,16 +8242,11 @@ class PodsAPI {
 	 * @return array
 	 *
 	 * @since 2.0.0
+	 *
+	 * @deprecated since 2.8.0
 	 */
 	public function load_helpers( $params = null ) {
-		if ( ! class_exists( 'Pods_Helpers' ) ) {
-			return array();
-		}
-
-		$params       = (object) $params;
-		$params->type = 'helper';
-
-		return $this->load_objects( $params );
+		return [];
 	}
 
 	/**

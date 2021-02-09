@@ -304,7 +304,7 @@ class PodsField_DateTime extends PodsField {
 		}
 
 		if ( ! empty( $options['disable_dfv'] ) ) {
-			pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 
 		wp_enqueue_script( 'pods-dfv' );

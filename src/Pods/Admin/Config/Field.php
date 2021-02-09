@@ -72,7 +72,8 @@ class Field extends Base {
 	 * @return array List of fields for the Field object.
 	 */
 	public function get_fields( \Pods\Whatsit\Pod $pod, array $tabs ) {
-		$field_types = PodsForm::field_types();
+		$field_types           = PodsForm::field_types();
+		$tableless_field_types = PodsForm::tableless_field_types();
 
 		$options = [
 			'basic'            => [
@@ -166,8 +167,8 @@ class Field extends Base {
 					'label'             => __( 'Required', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => 0,
-					'boolean_yes_label' => __( 'Require this field to not be empty in forms', 'pods' ),
-					'help'              => 'help',
+					'boolean_yes_label' => '',
+					'help'              => __( 'This will require a non-empty value to be entered.', 'pods' ),
 				],
 			],
 			'advanced'         => [
@@ -213,10 +214,10 @@ class Field extends Base {
 				'restrict_access'         => [
 					'name'  => 'restrict_access',
 					'label' => __( 'Restrict Access', 'pods' ),
-					'group' => [
+					'boolean_group' => [
 						'admin_only'          => [
 							'name'       => 'admin_only',
-							'label'      => __( 'Restrict access to Admins?', 'pods' ),
+							'label'      => __( 'Restrict access to Admins', 'pods' ),
 							'default'    => 0,
 							'type'       => 'boolean',
 							'dependency' => true,
@@ -224,14 +225,14 @@ class Field extends Base {
 						],
 						'restrict_role'       => [
 							'name'       => 'restrict_role',
-							'label'      => __( 'Restrict access by Role?', 'pods' ),
+							'label'      => __( 'Restrict access by Role', 'pods' ),
 							'default'    => 0,
 							'type'       => 'boolean',
 							'dependency' => true,
 						],
 						'restrict_capability' => [
 							'name'       => 'restrict_capability',
-							'label'      => __( 'Restrict access by Capability?', 'pods' ),
+							'label'      => __( 'Restrict access by Capability', 'pods' ),
 							'default'    => 0,
 							'type'       => 'boolean',
 							'dependency' => true,
@@ -418,6 +419,7 @@ class Field extends Base {
 		$options['basic']['pick_object']['data'] = $field_settings['pick_object'];
 		$options['basic']['pick_table']['data']  = $field_settings['pick_table'];
 
+		// @todo Follow up on this.
 		/*Tribe__Main::array_insert_after_key( 'visibility', $options['advanced'], [
 			'search' => [
 				'label'   => __( 'Include in searches', 'pods' ),
@@ -456,17 +458,18 @@ class Field extends Base {
 			],
 		] );*/
 
-		if ( 'table' === $pod['storage'] ) {
-			Tribe__Main::array_insert_after_key( 'required', $options['basic'], [
-				'unique' => [
-					'name'              => 'unique',
-					'label'             => __( 'Unique', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => 0,
-					'boolean_yes_label' => __( 'Require this field to be a unique value when adding a new item', 'pods' ),
-					'help'              => 'help',
+		if ( 'table' === $pod['storage'] || 'pod' === $pod['type'] ) {
+			$options['basic']['unique'] = [
+				'name'              => 'unique',
+				'label'             => __( 'Unique', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => 0,
+				'boolean_yes_label' => '',
+				'help'              => __( 'This will require that the field value entered is unique and has not been saved before.', 'pods' ),
+				'excludes-on' => [
+					'type' => $tableless_field_types,
 				],
-			] );
+			];
 		}
 
 		// Only include kitchen sink if dev mode on and not running Codecept tests.

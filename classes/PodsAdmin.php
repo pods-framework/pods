@@ -993,6 +993,10 @@ class PodsAdmin {
 					} else {
 						$pod_type = 'ct';
 					}
+
+					if ( isset( $types[ $pod_type ] ) ) {
+						$pod_type_label = $types[ $pod_type ];
+					}
 				}
 
 				if ( ! isset( $pod_types_found[ $pod_type ] ) ) {

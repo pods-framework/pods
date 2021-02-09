@@ -4208,8 +4208,6 @@ class PodsUI {
 												$attributes,
 											)
 										);
-									} elseif ( is_object( $this->pod ) && class_exists( 'Pods_Helpers' ) ) {
-										$row_value = $this->pod->helper( $attributes['custom_display'], $row_value, $field );
 									}
 								} else {
 									ob_start();

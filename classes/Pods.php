@@ -3449,9 +3449,7 @@ class Pods implements Iterator {
 	}
 
 	/**
-	 * Run a helper within a Pod Page or WP Template
-	 *
-	 * @see   Pods_Helpers::helper
+	 * Run a helper within a Pod Page or WP Template.
 	 *
 	 * @param string|array $helper Helper name.
 	 * @param string       $value  Value to run the helper on.
@@ -3459,6 +3457,8 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed Anything returned by the helper
 	 * @since 2.0.0
+	 *
+	 * @deprecated since 2.8.0
 	 */
 	public function helper( $helper, $value = null, $name = null ) {
 
@@ -3477,9 +3477,7 @@ class Pods implements Iterator {
 			$params = array_merge( $params, $helper );
 		}
 
-		if ( class_exists( 'Pods_Helpers' ) ) {
-			$value = Pods_Helpers::helper( $params, $this );
-		} elseif ( is_callable( $params['helper'] ) ) {
+		if ( is_callable( $params['helper'] ) ) {
 			$disallowed = array(
 				'system',
 				'exec',

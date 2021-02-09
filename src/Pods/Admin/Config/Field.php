@@ -469,31 +469,6 @@ class Field extends Base {
 			] );
 		}
 
-		if ( class_exists( 'Pods_Helpers' ) ) {
-			$input_helpers = [
-				'' => '-- Select --',
-			];
-
-			if ( class_exists( 'Pods_Helpers' ) ) {
-				$helpers = pods_api()->load_helpers( [ 'options' => [ 'helper_type' => 'input' ] ] );
-
-				foreach ( $helpers as $helper ) {
-					$input_helpers[ $helper['name'] ] = $helper['name'];
-				}
-			}
-
-			Tribe__Main::array_insert_after_key( 'class', $options['advanced'], [
-				'input_helper' => [
-					'name'    => 'input_helper',
-					'label'   => __( 'Input Helper', 'pods' ),
-					'help'    => __( 'help', 'pods' ),
-					'type'    => 'pick',
-					'default' => '',
-					'data'    => $input_helpers,
-				],
-			] );
-		}
-
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
 		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
 			$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink.json' ), true );

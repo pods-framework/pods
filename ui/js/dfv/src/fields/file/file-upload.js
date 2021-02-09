@@ -49,8 +49,6 @@ export const File = PodsDFVFieldLayout.extend( {
 		const listView = new FileUploadList( { collection: this.collection, fieldModel: this.model } );
 		const formView = new FileUploadForm( { fieldModel: this.model } );
 
-		console.log( this.model.get( 'fieldConfig' ) );
-
 		this.showChildView( 'list', listView );
 		this.showChildView( 'form', formView );
 

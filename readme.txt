@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.4
 Tested up to: 5.6
 Requires PHP: 5.6
-Stable tag: 2.8.0-a-4
+Stable tag: 2.8.0-b-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

@@ -6,7 +6,11 @@
 
 	<form action="" method="post" class="pods-submittable">
 		<div class="pods-submittable-fields">
-			<?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?> <?php echo PodsForm::field( 'component', $component, 'hidden' ); ?> <?php echo PodsForm::field( 'method', $method, 'hidden' ); ?> <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?> <?php echo PodsForm::field( 'import_export', 'export', 'hidden' ); ?>
+			<?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
+			<?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
+			<?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
+			<?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
+			<?php echo PodsForm::field( 'import_export', 'export', 'hidden' ); ?>
 
 			<h2 class="italicized"><?php _e( 'Migrate: Packages', 'pods' ); ?></h2>
 
@@ -86,7 +90,12 @@
 								<div class="inside pods-manage-field pods-dependency">
 									<div class="pods-field-option">
 										<?php
-										echo PodsForm::field( 'import_package', pods_var_raw( 'import_package', 'post' ), 'paragraph', array( 'attributes' => array( 'style' => 'width: 100%; max-width: 100%; height: 300px;' ) ) );
+										echo PodsForm::field( 'import_package', pods_var_raw( 'import_package', 'post' ), 'paragraph', [
+											'attributes'  => [
+												'style' => 'width: 100%; max-width: 100%; height: 300px;',
+											],
+											'disable_dfv' => true,
+										] );
 										?>
 									</div>
 								</div>
@@ -110,11 +119,11 @@
 
 									<div class="inside pods-manage-field pods-dependency">
 										<div class="pods-field-option-group">
-											<p>
-												<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
-											</p>
-
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+												<p>
+													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+												</p>
+
 												<ul>
 													<?php
 													$zebra = false;
@@ -127,7 +136,12 @@
 														$zebra = ( ! $zebra );
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
-															<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+															<?php
+															echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
+																'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ),
+																'disable_dfv'       => true,
+															] );
+															?>
 														</li>
 														<?php
 													}
@@ -151,11 +165,11 @@
 
 									<div class="inside pods-manage-field pods-dependency">
 										<div class="pods-field-option-group">
-											<p>
-												<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
-											</p>
-
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+												<p>
+													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+												</p>
+
 												<ul>
 													<?php
 													$zebra = false;
@@ -168,7 +182,12 @@
 														$zebra = ( ! $zebra );
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
-															<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+															<?php
+															echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
+																'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ),
+																'disable_dfv'       => true,
+															] );
+															?>
 														</li>
 														<?php
 													}
@@ -192,11 +211,11 @@
 
 									<div class="inside pods-manage-field pods-dependency">
 										<div class="pods-field-option-group">
-											<p>
-												<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
-											</p>
-
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+												<p>
+													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+												</p>
+
 												<ul>
 													<?php
 													$zebra = false;
@@ -209,7 +228,12 @@
 														$zebra = ( ! $zebra );
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
-															<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+															<?php
+															echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
+																'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ),
+																'disable_dfv'       => true,
+															] );
+															?>
 														</li>
 														<?php
 													}
@@ -233,11 +257,11 @@
 
 									<div class="inside pods-manage-field pods-dependency">
 										<div class="pods-field-option-group">
-											<p>
-												<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
-											</p>
-
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+												<p>
+													<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+												</p>
+
 												<ul>
 													<?php
 													$zebra = false;
@@ -250,7 +274,12 @@
 														$zebra = ( ! $zebra );
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
-															<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+															<?php
+															echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', [
+																'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ),
+																'disable_dfv'       => true,
+															] );
+															?>
 														</li>
 														<?php
 													}

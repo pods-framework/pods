@@ -20,14 +20,12 @@ $pre_callback      = isset( $pre_callback ) ? $pre_callback : null;
 $post_callback     = isset( $post_callback ) ? $post_callback : null;
 $th_scope          = isset( $th_scope ) ? $th_scope : '';
 
-$depends_on = false;
-
 foreach ( $fields as $field ) {
-	$hidden_field = (boolean) pods_v( 'hidden', $field['options'], false );
+	$hidden_field = (boolean) pods_v( 'hidden', $field, false );
 
 	if (
 		! PodsForm::permission( $field['type'], $field['name'], $field, $fields, $pod, $id )
-		|| ( ! pods_has_permissions( $field['options'] ) && $hidden_field )
+		|| ( ! pods_has_permissions( $field ) && $hidden_field )
 	) {
 		if ( ! $hidden_field ) {
 			continue;
@@ -44,24 +42,6 @@ foreach ( $fields as $field ) {
 		$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
 	}
 
-	$dep_options = PodsForm::dependencies( $field );
-	$dep_classes = $dep_options['classes'];
-	$dep_data    = $dep_options['data'];
-
-	if ( ( ! empty( $depends_on ) || ! empty( $dep_classes ) ) && $depends_on !== $dep_classes ) {
-		if ( ! empty( $depends_on ) ) {
-			?>
-			</tbody>
-			<?php
-		}
-
-		if ( ! empty( $dep_classes ) ) {
-			?>
-			<tbody class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
-			<?php
-		}
-	}
-
 	$row_classes = $field_row_classes . ' pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true );
 	$row_classes = trim( $row_classes );
 
@@ -74,14 +54,4 @@ foreach ( $fields as $field ) {
 	if ( ! empty( $post_callback ) && is_callable( $post_callback ) ) {
 		$post_callback( $field['name'], $id, $field, $pod );
 	}
-
-	if ( false !== $depends_on || ! empty( $dep_classes ) ) {
-		$depends_on = $dep_classes;
-	}
-}
-
-if ( ! empty( $depends_on ) ) {
-	?>
-	</tbody>
-	<?php
 }

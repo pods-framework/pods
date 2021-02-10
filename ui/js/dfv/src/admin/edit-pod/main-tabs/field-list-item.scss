@@ -94,8 +94,6 @@
 
 .pods-field_name {
 	cursor: pointer;
-	padding-right: 1em;
-	text-overflow: ellipsis;
 	user-select: none;
 }
 
@@ -116,21 +114,23 @@
 
 .pods-field_wrapper-label,
 .pods-field_label {
-	width: calc(50% - 30px);
-	flex: 0 0 calc(50% - 30px);
+	width: calc(50% - 50px);
+	flex: 0 0 calc(50% - 50px);
 }
 
 .pods-field_wrapper-label:first-child {
-	margin-left: 40px;
+	margin-left: 50px;
 }
 
 .pods-field_name,
 .pods-field_type,
 .pods-field_wrapper-label_name,
 .pods-field_wrapper-label_type {
-	width: 25%;
-	flex: 0 0 25%;
+	flex: 0 0 calc(25% - 1em);
 	padding-bottom: 1em;
+	padding-right: 1em;
+	overflow-wrap: break-word;
+	width: calc(25% - 1em);
 }
 
 .pods-field_wrapper-label-items {

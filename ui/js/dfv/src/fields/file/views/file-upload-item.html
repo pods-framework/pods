@@ -11,7 +11,7 @@
 	<% } %>
 	<li class="pods-dfv-list-col pods-dfv-list-icon"><img class="pinkynail" src="<%- icon %>" alt="<%- PodsI18n.__( 'Icon' ) %>"></li>
 	<li class="pods-dfv-list-col pods-dfv-list-name">
-		<% if ( 0 != fieldConfig.file_edit_title ) { %>
+		<% if ( 1 == fieldConfig.file_edit_title ) { %>
 			<input
 				name="<%- htmlAttr.name %>[<%- id %>][title]"
 				data-name-clean="<%- htmlAttr.name_clean %>-title"

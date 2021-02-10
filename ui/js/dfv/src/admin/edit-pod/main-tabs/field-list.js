@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 
@@ -11,17 +11,18 @@ import { compose } from '@wordpress/compose';
 import {
 	STORE_KEY_EDIT_POD,
 	SAVE_STATUSES,
-} from 'dfv/src/admin/edit-pod/store/constants';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+} from 'dfv/src/store/constants';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 // Internal dependencies
 import SettingsModal from './settings-modal';
 import FieldListItem from './field-list-item';
 
-import './manage-fields.scss';
 import './field-list.scss';
 
 const FieldList = ( {
+	podType,
+	podName,
 	podID,
 	podLabel,
 	groupName,
@@ -115,14 +116,16 @@ const FieldList = ( {
 	const isEmpty = 0 === fields.length;
 
 	const classes = classnames(
-		'pods-manage-fields',
-		{ 'no-fields': isEmpty }
+		'pods-field-list',
+		isEmpty && 'pods-field-list--no-fields'
 	);
 
 	return (
 		<div className={ classes }>
 			{ showAddFieldModal && (
 				<SettingsModal
+					podType={ podType }
+					podName={ podName }
 					optionsPod={ editFieldPod }
 					selectedOptions={ newFieldOptions }
 					title={ sprintf(
@@ -179,6 +182,8 @@ const FieldList = ( {
 						{ fields.map( ( field, index ) => {
 							return (
 								<FieldListItem
+									podType={ podType }
+									podName={ podName }
 									key={ field.id }
 									podID={ podID }
 									podLabel={ podLabel }
@@ -208,6 +213,8 @@ const FieldList = ( {
 };
 
 FieldList.propTypes = {
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
 	groupName: PropTypes.string.isRequired,

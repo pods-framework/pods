@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { flow, omit } from 'lodash';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import classnames from 'classnames';
@@ -12,9 +12,9 @@ import dropTarget from './group-drop-target';
 
 import SettingsModal from './settings-modal';
 import FieldList from 'dfv/src/admin/edit-pod/main-tabs/field-list';
-import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-import { SAVE_STATUSES } from 'dfv/src/admin/edit-pod/store/constants';
+import { SAVE_STATUSES } from 'dfv/src/store/constants';
 
 import './field-group.scss';
 
@@ -29,6 +29,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 	} = props;
 
 	const {
+		podType,
+		podName,
 		podID,
 		podLabel,
 		group,
@@ -202,6 +204,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 				{ showSettings && (
 					<SettingsModal
+						podType={ podType }
+						podName={ podName }
 						optionsPod={ editGroupPod }
 						selectedOptions={ omit( group, [ 'fields' ] ) }
 						title={ sprintf(
@@ -224,6 +228,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 			{ isExpanded && ! isDragging && (
 				<FieldList
+					podType={ podType }
+					podName={ podName }
 					fields={ fields || [] }
 					podID={ podID }
 					podLabel={ podLabel }
@@ -237,6 +243,8 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 } );
 
 FieldGroup.propTypes = {
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	group: GROUP_PROP_TYPE_SHAPE,

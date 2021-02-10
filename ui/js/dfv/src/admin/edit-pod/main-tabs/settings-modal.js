@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import { __ } from '@wordpress/i18n';
@@ -8,6 +8,7 @@ import { Modal, Button } from '@wordpress/components';
 import DynamicTabContent from './dynamic-tab-content';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
+import { toBool } from 'dfv/src/helpers/booleans';
 
 import './settings-modal.scss';
 
@@ -27,6 +28,8 @@ const checkFormValidity = ( sections, options ) => {
 			const {
 				fields,
 				'depends-on': dependsOn,
+				'excludes-on': excludesOn,
+				'wildcard-on': wildcardOn,
 			} = section;
 
 			// Skip the section if it doesn't have any fields.
@@ -34,8 +37,18 @@ const checkFormValidity = ( sections, options ) => {
 				return true;
 			}
 
-			// Skip the section if it isn't being shown because it's deps aren't met.
-			if ( dependsOn && ! validateFieldDependencies( options, dependsOn ) ) {
+			// Skip the section if it isn't being shown because it's dependencies aren't met.
+			if ( Object.keys( dependsOn || {} ).length && ! validateFieldDependencies( options, dependsOn ) ) {
+				return true;
+			}
+
+			// Skip the section if it isn't being shown because it's exclusions aren't met.
+			if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( options, excludesOn, 'excludes' ) ) {
+				return true;
+			}
+
+			// Skip the section if it isn't being shown because it's wildcard dependencies aren't met.
+			if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( options, wildcardOn, 'wildcard' ) ) {
 				return true;
 			}
 
@@ -45,17 +58,29 @@ const checkFormValidity = ( sections, options ) => {
 					const {
 						required: fieldRequired,
 						'depends-on': fieldDependsOn,
+						'excludes-on': fieldExcludesOn,
+						'wildcard-on': fieldWildcardOn,
 						type: fieldType,
 						name: fieldName,
 					} = field;
 
 					// Fields that aren't required are automatically valid.
-					if ( undefined === typeof fieldRequired || ! fieldRequired ) {
+					if ( undefined === typeof fieldRequired || ! toBool( fieldRequired ) ) {
 						return true;
 					}
 
-					// Skip fields won't be shown because their dependency isn't met.
-					if ( fieldDependsOn && ! validateFieldDependencies( options, fieldDependsOn ) ) {
+					// Skip the fields if it isn't being shown because it's dependencies aren't met.
+					if ( Object.keys( fieldDependsOn || {} ).length && ! validateFieldDependencies( options, fieldDependsOn ) ) {
+						return true;
+					}
+
+					// Skip the fields if it isn't being shown because it's exclusions aren't met.
+					if ( Object.keys( fieldExcludesOn || {} ).length && ! validateFieldDependencies( options, fieldExcludesOn, 'excludes' ) ) {
+						return true;
+					}
+
+					// Skip the fields if it isn't being shown because it's wildcard dependencies aren't met.
+					if ( Object.keys( fieldWildcardOn || {} ).length && ! validateFieldDependencies( options, fieldWildcardOn, 'wildcard' ) ) {
 						return true;
 					}
 
@@ -84,6 +109,8 @@ const checkFormValidity = ( sections, options ) => {
 };
 
 const SettingsModal = ( {
+	podType,
+	podName,
 	title,
 	optionsPod: {
 		groups: optionsSections = [],
@@ -205,6 +232,8 @@ const SettingsModal = ( {
 						name: sectionName,
 						label: sectionLabel,
 						'depends-on': dependsOn = {},
+						'excludes-on': excludesOn = {},
+						'wildcard-on': wildcardOn = {},
 						fields,
 					} ) => {
 						// Hide any sections that are missing fields.
@@ -213,7 +242,17 @@ const SettingsModal = ( {
 						}
 
 						// Check that dependencies are met.
-						if ( ! validateFieldDependencies( changedOptions, dependsOn ) ) {
+						if ( Object.keys( dependsOn || {} ).length && ! validateFieldDependencies( changedOptions, dependsOn ) ) {
+							return null;
+						}
+
+						// Check that exclusions are met.
+						if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( changedOptions, excludesOn, 'excludes' ) ) {
+							return null;
+						}
+
+						// Check that wildcard dependencies are met.
+						if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( changedOptions, wildcardOn, 'wildcard' ) ) {
 							return null;
 						}
 
@@ -250,6 +289,8 @@ const SettingsModal = ( {
 				>
 					{
 						<DynamicTabContent
+							podType={ podType }
+							podName={ podName }
 							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab ).fields }
 							optionValues={ changedOptions }
 							setOptionValue={ setOptionValue }
@@ -279,6 +320,8 @@ const SettingsModal = ( {
 };
 
 SettingsModal.propTypes = {
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	optionsPod: PropTypes.object.isRequired,
 	selectedOptions: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,

@@ -978,7 +978,7 @@ class PodsMeta {
 			}
 		}
 
-		if ( $pod['type'] !== $type ) {
+		if ( $pod && $pod['type'] !== $type ) {
 			$groups_cache[ $type . '/' . $name ] = [];
 
 			return $groups_cache[ $type . '/' . $name ];
@@ -1077,7 +1077,7 @@ class PodsMeta {
 				if ( false !== PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'] ) ) {
 					$field_found = true;
 				}
-				if ( ! isset( $field['options']['hidden'] ) || 1 != (int) $field['options']['hidden'] ) {
+				if ( ! isset( $field['hidden'] ) || 1 != (int) $field['hidden'] ) {
 					$group_hidden = false;
 				}
 			}
@@ -1167,11 +1167,11 @@ class PodsMeta {
 
 			return;
 		}
+
+		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' );
 		?>
 		<table class="form-table pods-metabox pods-admin pods-dependency">
 			<?php
-			echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' );
-
 			$field_prefix      = 'pods_meta_';
 			$field_row_classes = 'form-field pods-field-input';
 			$th_scope          = 'row';
@@ -1211,7 +1211,6 @@ class PodsMeta {
 		<script type="text/javascript">
 			jQuery( function ( $ ) {
 				$( document ).Pods( 'submit_meta' );
-				$( document ).Pods( 'dependency', true );
 			} );
 		</script>
 		<?php
@@ -1324,7 +1323,7 @@ class PodsMeta {
 		$data = array();
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -1347,7 +1346,7 @@ class PodsMeta {
 					}
 
 					if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-						if ( ! pods_v( 'hidden', $field['options'], false ) ) {
+						if ( ! pods_v( 'hidden', $field, false ) ) {
 							continue;
 						}
 					}
@@ -1468,9 +1467,19 @@ class PodsMeta {
 
 			foreach ( $group['fields'] as $field ) {
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( ! pods_var( 'hidden', $field['options'], false ) ) {
+					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
 					}
+				}
+
+				// Skip heavy fields.
+				if ( in_array( $field['type'], [ 'wysiwyg', 'code', 'file', 'oembed' ], true ) ) {
+					continue;
+				}
+
+				// Force DFV off for non-pick.
+				if ( 'pick' !== $field['type'] ) {
+					$field['disable_dfv'] = true;
 				}
 
 				$value = '';
@@ -1567,7 +1576,7 @@ class PodsMeta {
 				}
 
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( ! pods_var( 'hidden', $field['options'], false ) ) {
+					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
 					}
 				}
@@ -1581,7 +1590,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -1811,7 +1820,7 @@ class PodsMeta {
 				}
 
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( ! pods_var( 'hidden', $field['options'], false ) ) {
+					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
 					}
 				}
@@ -1825,7 +1834,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -2006,7 +2015,7 @@ class PodsMeta {
 		$data = array();
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -2028,7 +2037,7 @@ class PodsMeta {
 					}
 
 					if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-						if ( ! pods_v( 'hidden', $field['options'], false ) ) {
+						if ( ! pods_v( 'hidden', $field, false ) ) {
 							continue;
 						}
 					}
@@ -2161,12 +2170,15 @@ class PodsMeta {
 				return $value;
 			};
 
-			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
-				do_action( "pods_meta_meta_comment_pre_row_{$field_name}", $post, $field, $pod );
+			// There is no comment yet.
+			$comment = null;
+
+			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_pre_row_{$field_name}", $comment, $field, $pod );
 			};
 
-			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
-				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $post, $field, $pod );
+			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $comment, $field, $pod );
 			};
 
 			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
@@ -2234,20 +2246,23 @@ class PodsMeta {
 				return $value;
 			};
 
-			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
-				do_action( "pods_meta_meta_comment_pre_row_{$field_name}", $post, $field, $pod );
+			// There is no comment yet.
+			$comment = null;
+
+			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_pre_row_{$field_name}", $comment, $field, $pod );
 			};
 
-			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
-				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $post, $field, $pod );
+			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $comment, $field, $pod );
 			};
 
 			foreach ( $fields as $field ) {
-				$hidden_field = (boolean) pods_v( 'hidden', $field['options'], false );
+				$hidden_field = (boolean) pods_v( 'hidden', $field, false );
 
 				if (
 					! PodsForm::permission( $field['type'], $field['name'], $field, $fields, $pod, $id )
-					|| ( ! pods_has_permissions( $field['options'] ) && $hidden_field )
+					|| ( ! pods_has_permissions( $field ) && $hidden_field )
 				) {
 					if ( ! $hidden_field ) {
 						continue;
@@ -2320,7 +2335,7 @@ class PodsMeta {
 
 			foreach ( $group['fields'] as $field ) {
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], null, null ) ) {
-					if ( pods_var( 'hidden', $field['options'], false ) ) {
+					if ( pods_var( 'hidden', $field, false ) ) {
 						$field_found = true;
 						break;
 					} else {
@@ -2392,12 +2407,12 @@ class PodsMeta {
 				return $value;
 			};
 
-			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
-				do_action( "pods_meta_meta_comment_pre_row_{$field_name}", $post, $field, $pod );
+			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_pre_row_{$field_name}", $comment, $field, $pod );
 			};
 
-			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
-				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $post, $field, $pod );
+			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $comment, $field, $pod );
 			};
 
 			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
@@ -2447,7 +2462,7 @@ class PodsMeta {
 				}
 
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( ! pods_var( 'hidden', $field['options'], false ) ) {
+					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
 					}
 				}
@@ -2516,7 +2531,7 @@ class PodsMeta {
 				}
 
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( ! pods_var( 'hidden', $field['options'], false ) ) {
+					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
 					}
 				}
@@ -2530,7 +2545,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -3273,27 +3288,24 @@ class PodsMeta {
 			return $_null;
 		}
 
-		if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
+		if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod !== $object['name'] ) {
 			self::$current_field_pod = pods( $object['name'] );
 		}
 
 		$pod = self::$current_field_pod;
 
-		if ( ( isset( $pod->fields[ $meta_key ] ) || false !== strpos( $meta_key, '.' ) ) && $pod->row !== null ) {
-
+		if ( null !== $pod->data->row && ( isset( $pod->fields[ $meta_key ] ) || false !== strpos( $meta_key, '.' ) ) ) {
 			$key = $meta_key;
+
 			if ( false !== strpos( $meta_key, '.' ) ) {
 				$key = current( explode( '.', $meta_key ) );
 			}
 
-			$pod->row[ $meta_key ] = $meta_value;
+			$pod->data->row[ $meta_key ] = $meta_value;
 
-			if ( isset( $pod->fields[ $key ] ) ) {
-				if ( in_array( $pod->fields[ $key ]['type'], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $key ] ) ) {
-					unset( $meta_cache[ '_pods_' . $key ] );
-				}
+			if ( isset( $meta_cache[ '_pods_' . $key ], $pod->fields[ $key ] ) && in_array( $pod->fields[ $key ]['type'], PodsForm::tableless_field_types(), true ) ) {
+				unset( $meta_cache[ '_pods_' . $key ] );
 			}
-
 		}
 
 		$pod->save( $meta_key, $meta_value, $object_id, array( 'podsmeta_direct' => true, 'error_mode' => 'false' ) );

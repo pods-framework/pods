@@ -158,6 +158,40 @@
 			}
 			.inside {
 				padding: 0;
+
+				.pods-field__container {
+					background: #fcfcfc;
+					border-bottom: 1px solid #CCD0D4;
+					padding: 15px 0;
+
+					label {
+						padding-top: 4px;
+						float: left;
+						width: 30%;
+						max-width: 150px;
+						margin: 0 2%;
+					}
+
+					.pods-field-option {
+						padding: 0;
+					}
+
+					.pods-field-option__field {
+						width: 100%;
+						max-width: 25rem;
+					}
+
+					input[type="text"],
+					select,
+					textarea,
+					.pods-field.pods-boolean,
+					.pods-pick-values,
+					.pods-form-ui-field-type-file,
+					.pods-slider-field {
+						width: 100%;
+					}
+				}
+
 				div.pods-wizard-content {
 					h3 {
 						margin: 1.33em 20px;

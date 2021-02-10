@@ -363,9 +363,20 @@ class PodsField {
 			$args = (object) $args;
 		}
 
+		$disable_dfv = ! empty( $args->options['disable_dfv'] );
+
+		$field_class = "pods-form-ui-field pods-dfv-field";
+
+		if ( ! $disable_dfv ) {
+			$field_class .= ' pods-dfv-field--unloaded';
+		}
+
 		$script_content = wp_json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
 		?>
-		<div class="pods-form-ui-field pods-dfv-field">
+		<div class="<?php echo esc_attr( $field_class ); ?>">
+			<?php if ( ! $disable_dfv ) : ?>
+				<span class="pods-dfv-field__loading-indicator" role="progressbar"></span>
+			<?php endif; ?>
 			<?php // @codingStandardsIgnoreLine ?>
 			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content; ?></script>
 		</div>
@@ -411,6 +422,7 @@ class PodsField {
 			'fieldType'     => $args->type,
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
+			'fieldEmbed'    => true,
 		);
 
 		/**
@@ -508,11 +520,25 @@ class PodsField {
 	 */
 	public function build_dfv_field_config( $args ) {
 
-		$config = $args->options;
+		$config = (array) $args->options;
 
 		unset( $config['data'] );
 
 		$config['item_id'] = (int) $args->id;
+
+		// Support passing missing options.
+		$check_missing = [
+			'type',
+			'name',
+			'label',
+			'id',
+		];
+
+		foreach ( $check_missing as $missing_name ) {
+			if ( ! empty( $args->{$missing_name} ) ) {
+				$config[ $missing_name ] = $args->{$missing_name};
+			}
+		}
 
 		return $config;
 

@@ -1,4 +1,3 @@
-/*global jQuery, _, Backbone, PodsMn, wp */
 import template from 'dfv/src/fields/file/views/file-upload-form.html';
 
 import { PodsFieldView } from 'dfv/src/core/pods-field-views';
@@ -11,10 +10,10 @@ export const FileUploadForm = PodsFieldView.extend( {
 	template: _.template( template ),
 
 	ui: {
-		addButton: '.pods-dfv-list-add'
+		addButton: '.pods-dfv-list-add',
 	},
 
 	triggers: {
-		'click @ui.addButton': 'childview:add:file:click'
-	}
+		'click @ui.addButton': 'childview:add:file:click',
+	},
 } );

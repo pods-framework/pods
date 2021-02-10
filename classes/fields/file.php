@@ -190,7 +190,7 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_wp_gallery_link'        => array(
 				'label'      => __( 'Gallery image links', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => array(
 					'post' => __( 'Attachment Page', 'pods' ),
@@ -200,28 +200,28 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_wp_gallery_columns'     => array(
 				'label'      => __( 'Gallery image columns', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => array(
-					'1' => 1,
-					'2' => 2,
-					'3' => 3,
-					'4' => 4,
-					'5' => 5,
-					'6' => 6,
-					'7' => 7,
-					'8' => 8,
-					'9' => 9,
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
 				),
 			),
 			static::$type . '_wp_gallery_random_sort' => array(
 				'label'      => __( 'Gallery randomized order', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'boolean',
 			),
 			static::$type . '_wp_gallery_size'        => array(
 				'label'      => __( 'Gallery image size', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => $this->data_image_sizes(),
 			),
@@ -340,11 +340,26 @@ class PodsField_File extends PodsField {
 			}
 		}
 
+		// Enforce defaults.
+		$all_options = static::options();
+
+		foreach ( $all_options as $option_name => $option ) {
+			$default = pods_v( 'default', $option, '' );
+
+			$options[ $option_name ] = pods_v( $option_name, $options, $default );
+
+			if ( '' === $options[ $option_name ] ) {
+				$options[ $option_name ] = $default;
+			}
+		}
+
 		// Handle default template setting.
-		$file_field_template = pods_v( $args->type . '_field_template', $options, 'rows', true );
+		$file_field_template = pods_v( $args->type . '_field_template', $options );
 
 		// Get which file types the field is limited to.
-		$limit_file_type = pods_v( $args->type . '_type', $options, 'images' );
+		$limit_file_type = pods_v( $args->type . '_type', $options );
+
+		$options[ $args->type . '_type' ] = $limit_file_type;
 
 		// Non-image file types are forced to rows template right now.
 		if ( 'images' !== $limit_file_type ) {

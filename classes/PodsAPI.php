@@ -4047,7 +4047,6 @@ class PodsAPI {
 		$exclude = array(
 			'id',
 			'name',
-			'helper_type',
 			'code',
 			'options',
 			'status',
@@ -4068,10 +4067,6 @@ class PodsAPI {
 					unset( $options[ $alias ] );
 				}
 			}
-		}
-
-		if ( 'helper' === $object['type'] ) {
-			$object['helper_type'] = $object['helper_type'];
 		}
 
 		if ( isset( $object['code'] ) ) {
@@ -4190,24 +4185,11 @@ class PodsAPI {
 	 *
 	 * @return int The helper ID
 	 * @since 1.7.9
+	 *
+	 * @deprecated since 2.8.0
 	 */
 	public function save_helper( $params, $sanitized = false ) {
-
-		$params = (object) $params;
-
-		if ( isset( $params->phpcode ) ) {
-			$params->code = $params->phpcode;
-			unset( $params->phpcode );
-		}
-
-		if ( isset( $params->type ) ) {
-			$params->helper_type = $params->type;
-			unset( $params->type );
-		}
-
-		$params->type = 'helper';
-
-		return $this->save_object( $params, $sanitized );
+		return 0;
 	}
 
 	/**
@@ -6232,9 +6214,6 @@ class PodsAPI {
 	 * @since 1.9.0
 	 */
 	public function reset_pod( $params, $pod = false ) {
-
-		$params = (object) pods_sanitize( $params );
-
 		if ( empty( $pod ) ) {
 			$pod = $this->load_pod( $params, false );
 		}
@@ -6243,7 +6222,13 @@ class PodsAPI {
 			return pods_error( __( 'Pod not found', 'pods' ), $this );
 		}
 
-		$params->id   = $pod['id'];
+		if ( is_array( $params ) || is_object( $params ) ) {
+			$params = (object) pods_sanitize( $params );
+		} else {
+			$params = new stdClass();
+		}
+
+		$params->id   = (int) $pod['id'];
 		$params->name = $pod['name'];
 
 		if ( ! pods_tableless() ) {
@@ -6258,16 +6243,23 @@ class PodsAPI {
 				}
 			}
 
-			if ( pods_podsrel_enabled() ) {
-				pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
-			}
+		}
+
+		if ( pods_podsrel_enabled() ) {
+			pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
 		}
 
 		// @todo Delete relationships from tableless relationships
 
-		// Delete all posts/revisions from this post type
-		if ( in_array( $pod['type'], array( 'post_type', 'media' ) ) ) {
-			$type = pods_v_sanitized( 'object', $pod, $pod['name'], true );
+		if ( in_array( $pod['type'], [ 'post_type', 'media' ], true ) ) {
+			// Delete all posts/revisions from this post type.
+			$type = $pod['name'];
+
+			if ( ! empty( $pod['object'] ) ) {
+				$type = $pod['object'];
+			}
+
+			$type = pods_sanitize( $type );
 
 			$sql = "
 				DELETE `t`, `r`, `m`
@@ -6281,7 +6273,7 @@ class PodsAPI {
 
 			pods_query( $sql, false );
 		} elseif ( 'taxonomy' === $pod['type'] ) {
-			// Delete all terms from this taxonomy
+			// Delete all terms from this taxonomy.
 			if ( function_exists( 'get_term_meta' ) ) {
 				$sql = "
 					DELETE `t`, `m`, `tt`, `tr`
@@ -6316,7 +6308,13 @@ class PodsAPI {
 			pods_query( $sql, false );
 		} elseif ( 'comment' === $pod['type'] ) {
 			// Delete all comments
-			$type = pods_v_sanitize( 'object', $pod, $pod['name'], true );
+			$type = $pod['name'];
+
+			if ( ! empty( $pod['object'] ) ) {
+				$type = $pod['object'];
+			}
+
+			$type = pods_sanitize( $type );
 
 			$sql = "
 				DELETE `t`, `m`
@@ -6352,31 +6350,7 @@ class PodsAPI {
 	 * @since 1.7.9
 	 */
 	public function delete_pod( $params, $strict = false, $delete_all = false ) {
-
-		/**
-		 * @var $wpdb wpdb
-		 */
-		global $wpdb;
-
-		if ( ! is_object( $params ) && ! is_array( $params ) ) {
-			if ( is_numeric( $params ) ) {
-				$params = array( 'id' => $params );
-			} else {
-				$params = array( 'name' => $params );
-			}
-
-			$params = (object) pods_sanitize( $params );
-		} else {
-			$params = (object) pods_sanitize( $params );
-		}
-
 		$pod = $this->load_pod( $params, false );
-
-		if ( ! isset( $params->delete_all ) ) {
-			$params->delete_all = $delete_all;
-		}
-
-		$params->delete_all = (boolean) $params->delete_all;
 
 		if ( empty( $pod ) ) {
 			if ( false !== $strict ) {
@@ -6386,8 +6360,31 @@ class PodsAPI {
 			return false;
 		}
 
+		/**
+		 * @var $wpdb wpdb
+		 */
+		global $wpdb;
+
+		if ( is_array( $params ) || is_object( $params ) ) {
+			$params = (object) pods_sanitize( $params );
+		} else {
+			$params = new stdClass();
+		}
+
 		$params->id   = (int) $pod['id'];
 		$params->name = $pod['name'];
+
+		$type = $pod['name'];
+
+		if ( ! empty( $pod['object'] ) ) {
+			$type = $pod['object'];
+		}
+
+		if ( ! isset( $params->delete_all ) ) {
+			$params->delete_all = $delete_all;
+		}
+
+		$params->delete_all = (boolean) $params->delete_all;
 
 		// Reset content
 		if ( true === $params->delete_all ) {
@@ -6460,7 +6457,7 @@ class PodsAPI {
 				`p`.`ID` IS NOT NULL
 				AND `pm2`.`meta_id` IS NOT NULL
 				AND `pm`.`meta_key` = 'pick_val'
-				AND `pm`.`meta_value` = '{$params->name}'
+				AND `pm`.`meta_value` = '{$type}'
 		";
 
 		pods_query( $sql );
@@ -6478,8 +6475,8 @@ class PodsAPI {
 	 * $params['pod'] string The Pod name
 	 * $params['pod_id'] string The Pod name
 	 *
-	 * @param array $params          An associative array of parameters
-	 * @param bool  $table_operation Whether or not to handle table operations
+	 * @param array|object|\Pods\Whatsit\Field $params An associative array or object of parameters, or the Field object itself.
+	 * @param bool  $table_operation                   Whether or not to handle table operations.
 	 *
 	 * @uses  PodsAPI::load_field
 	 * @uses  wp_delete_post
@@ -6497,6 +6494,21 @@ class PodsAPI {
 
 		$tableless_field_types    = PodsForm::tableless_field_types();
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
+		$field                    = null;
+		$pod                      = null;
+
+		// Check if the params is a field.
+		if ( $params instanceof \Pods\Whatsit\Field ) {
+			$field = $params;
+			$pod   = $field->get_parent_object();
+
+			$params = [
+				'name'   => $field->get_name(),
+				'id'     => $field->get_id(),
+				'pod'    => $field->get_parent(),
+				'pod_id' => $field->get_parent_id(),
+			];
+		}
 
 		$params = (object) $params;
 
@@ -6508,7 +6520,9 @@ class PodsAPI {
 			$params->pod_id = 0;
 		}
 
-		$pod = $params->pod;
+		if ( ! $pod ) {
+			$pod = $params->pod;
+		}
 
 		$save_pod = false;
 
@@ -6553,32 +6567,39 @@ class PodsAPI {
 			$params->id = 0;
 		}
 
-		$load_params = [];
+		if ( ! $field ) {
+			$load_params = [];
 
-		if ( $params->pod_id ) {
-			$load_params['parent'] = $params->pod_id;
-		}
+			if ( $params->pod_id ) {
+				$load_params['parent'] = $params->pod_id;
+			}
 
-		if ( ! empty( $params->id ) ) {
-			$load_params['id'] = $params->id;
-		} elseif ( ! empty( $params->name ) ) {
-			$load_params['name'] = $params->name;
-		}
+			if ( ! empty( $params->id ) ) {
+				$load_params['id'] = $params->id;
+			} elseif ( ! empty( $params->name ) ) {
+				$load_params['name'] = $params->name;
+			}
 
-		$field = $this->load_field( $load_params );
+			$field = $this->load_field( $load_params );
 
-		if ( false === $field ) {
-			return pods_error( __( 'Field not found', 'pods' ), $this );
+			if ( false === $field ) {
+				return pods_error( __( 'Field not found', 'pods' ), $this );
+			}
 		}
 
 		$params->id   = $field['id'];
 		$params->name = $field['name'];
 
+		// Get the pod from the field if pod information not provided.
+		if ( false === $pod ) {
+			$pod = $field->get_parent_object();
+		}
+
 		$simple = ( 'pick' === $field['type'] && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
 		$simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
 		// @todo Push this logic into pods_object_storage_delete_pod action.
-		if ( $table_operation && 'table' === $pod['storage'] && ( ! in_array( $field['type'], $tableless_field_types, true ) || $simple ) ) {
+		if ( $table_operation && $pod && 'table' === $pod['storage'] && ( ! in_array( $field['type'], $tableless_field_types, true ) || $simple ) ) {
 			pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$params->name}`", false );
 		}
 
@@ -6808,12 +6829,11 @@ class PodsAPI {
 	 *
 	 * @return bool
 	 * @since 1.7.9
+	 *
+	 * @deprecated since 2.8.0
 	 */
 	public function delete_helper( $params ) {
-		$params       = (object) $params;
-		$params->type = 'helper';
-
-		return $this->delete_object( $params );
+		return false;
 	}
 
 	/**
@@ -7356,12 +7376,6 @@ class PodsAPI {
 
 		if ( empty( $params ) ) {
 			return false;
-		}
-
-		if ( is_string( $params ) ) {
-			$params = array(
-				'name' => $params,
-			);
 		}
 
 		// Check if we need to bypass cache automatically.
@@ -8206,16 +8220,11 @@ class PodsAPI {
 	 * @return array|bool
 	 *
 	 * @since 1.7.9
+	 *
+	 * @deprecated since 2.8.0
 	 */
 	public function load_helper( $params ) {
-		if ( ! class_exists( 'Pods_Helpers' ) ) {
-			return false;
-		}
-
-		$params       = (object) $params;
-		$params->type = 'helper';
-
-		return $this->load_object( $params );
+		return false;
 	}
 
 	/**
@@ -8233,16 +8242,11 @@ class PodsAPI {
 	 * @return array
 	 *
 	 * @since 2.0.0
+	 *
+	 * @deprecated since 2.8.0
 	 */
 	public function load_helpers( $params = null ) {
-		if ( ! class_exists( 'Pods_Helpers' ) ) {
-			return array();
-		}
-
-		$params       = (object) $params;
-		$params->type = 'helper';
-
-		return $this->load_objects( $params );
+		return [];
 	}
 
 	/**

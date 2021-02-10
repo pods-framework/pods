@@ -204,7 +204,12 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Allow Add New', 'pods' ),
 				'help'        => __( 'Allow new related records to be created in a modal window', 'pods' ),
 				'wildcard-on' => array(
-					static::$type . '_object' => array( '^post-type-(?!(custom-css|customize-changeset)).*$', '^taxonomy-.*$', '^user$', '^pod-.*$' ),
+					static::$type . '_object' => array(
+						'^post_type-(?!(custom_css|customize_changeset)).*$',
+						'^taxonomy-.*$',
+						'^user$',
+						'^pod-.*$'
+					),
 				),
 				'type'        => 'boolean',
 				'default'     => 1,
@@ -212,19 +217,31 @@ class PodsField_Pick extends PodsField {
 			static::$type . '_taggable'       => array(
 				'label'       => __( 'Taggable', 'pods' ),
 				'help'        => __( 'Allow new values to be inserted when using an Autocomplete field', 'pods' ),
+				// @todo Make depends on aware of requirements that themselves are hidden/off.
+				// @todo Support depends-on-any.
+				'depends-on'  => array(
+					static::$type . '_format_single' => 'autocomplete',
+					static::$type . '_format_multi'  => 'autocomplete',
+				),
 				'excludes-on' => array(
-					static::$type . '_format_single' => array( 'dropdown', 'radio', 'list' ),
-					static::$type . '_format_multi'  => array( 'checkbox', 'multiselect', 'list' ),
-					static::$type . '_object'        => array_merge( array( 'site', 'network' ), self::simple_objects() ),
+					static::$type . '_object' => array_merge( array(
+						'site',
+						'network',
+					), self::simple_objects() ),
+					static::$type . '_allow_add_new' => false,
 				),
 				'type'        => 'boolean',
 				'default'     => 0,
 			),
 			static::$type . '_show_icon'      => array(
 				'label'       => __( 'Show Icons', 'pods' ),
+				// @todo Make depends on aware of requirements that themselves are hidden/off.
+				// @todo Support depends-on-any.
+				'depends-on'  => array(
+					static::$type . '_format_single' => 'list',
+					static::$type . '_format_multi'  => 'list',
+				),
 				'excludes-on' => array(
-					static::$type . '_format_single' => array( 'dropdown', 'radio', 'autocomplete' ),
-					static::$type . '_format_multi'  => array( 'checkbox', 'multiselect', 'autocomplete' ),
 					static::$type . '_object'        => array_merge( array( 'site', 'network' ), self::simple_objects() ),
 				),
 				'type'        => 'boolean',
@@ -232,9 +249,13 @@ class PodsField_Pick extends PodsField {
 			),
 			static::$type . '_show_edit_link' => array(
 				'label'       => __( 'Show Edit Links', 'pods' ),
+				// @todo Make depends on aware of requirements that themselves are hidden/off.
+				// @todo Support depends-on-any.
+				'depends-on'  => array(
+					static::$type . '_format_single' => 'list',
+					static::$type . '_format_multi'  => 'list',
+				),
 				'excludes-on' => array(
-					static::$type . '_format_single' => array( 'dropdown', 'radio', 'autocomplete' ),
-					static::$type . '_format_multi'  => array( 'checkbox', 'multiselect', 'autocomplete' ),
 					static::$type . '_object'        => array_merge( array( 'site', 'network' ), self::simple_objects() ),
 				),
 				'type'        => 'boolean',
@@ -242,9 +263,13 @@ class PodsField_Pick extends PodsField {
 			),
 			static::$type . '_show_view_link' => array(
 				'label'       => __( 'Show View Links', 'pods' ),
+				// @todo Make depends on aware of requirements that themselves are hidden/off.
+				// @todo Support depends-on-any.
+				'depends-on'  => array(
+					static::$type . '_format_single' => 'list',
+					static::$type . '_format_multi'  => 'list',
+				),
 				'excludes-on' => array(
-					static::$type . '_format_single' => array( 'dropdown', 'radio', 'autocomplete' ),
-					static::$type . '_format_multi'  => array( 'checkbox', 'multiselect', 'autocomplete' ),
 					static::$type . '_object'        => array_merge( array( 'site', 'network' ), self::simple_objects() ),
 				),
 				'type'        => 'boolean',
@@ -333,7 +358,7 @@ class PodsField_Pick extends PodsField {
 		$post_type_pick_objects = array();
 
 		foreach ( get_post_types( '', 'names' ) as $post_type ) {
-			$post_type_pick_objects[] = 'post-type_' . $post_type;
+			$post_type_pick_objects[] = 'post_type-' . $post_type;
 		}
 
 		$options[ static::$type . '_post_status' ] = array(
@@ -815,6 +840,19 @@ class PodsField_Pick extends PodsField {
 			unset( $options['_field_object'] );
 		}
 
+		// Enforce defaults.
+		$all_options = static::options();
+
+		foreach ( $all_options as $option_name => $option ) {
+			$default = pods_v( 'default', $option, '' );
+
+			$options[ $option_name ] = pods_v( $option_name, $options, $default );
+
+			if ( '' === $options[ $option_name ] ) {
+				$options[ $option_name ] = $default;
+			}
+		}
+
 		$options['grouped'] = 1;
 
 		if ( empty( $options[ $args->type . '_object' ] ) ) {
@@ -937,7 +975,7 @@ class PodsField_Pick extends PodsField {
 			$pod_id = 0;
 		}
 
-		$field_id = (int) $options['id'];
+		$field_id = (int) pods_v( 'id', $options );
 
 		$id = (int) $args->id;
 
@@ -972,6 +1010,12 @@ class PodsField_Pick extends PodsField {
 
 		$config = parent::build_dfv_field_config( $args );
 
+		// Ensure data is passed in for relationship fields.
+		if ( ! isset( $config['data'] ) && ! empty( $args->options['data'] ) ) {
+			$config['data'] = $args->options['data'];
+		}
+
+		// Default optgroup handling to off.
 		if ( ! isset( $config['optgroup'] ) ) {
 			$config['optgroup'] = false;
 		}
@@ -1132,10 +1176,17 @@ class PodsField_Pick extends PodsField {
 
 		$args->options['supports_thumbnails'] = null;
 
-		$item_data = array();
+		$item_data = [];
+		$data      = [];
 
 		if ( ! empty( $args->options['data'] ) ) {
-			$item_data = $this->build_dfv_field_item_data_recurse( $args->options['data'], $args );
+			$data = $args->options['data'];
+		} elseif ( ! empty( $args->data ) ) {
+			$data = $args->data;
+		}
+
+		if ( [] !== $data ) {
+			$item_data = $this->build_dfv_field_item_data_recurse( $data, $args );
 		}
 
 		return $item_data;

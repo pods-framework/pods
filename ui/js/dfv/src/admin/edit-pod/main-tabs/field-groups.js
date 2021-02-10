@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { omit } from 'lodash';
 
 // WordPress dependencies
@@ -11,15 +11,17 @@ import SettingsModal from './settings-modal';
 import {
 	STORE_KEY_EDIT_POD,
 	SAVE_STATUSES,
-} from 'dfv/src/admin/edit-pod/store/constants';
+} from 'dfv/src/store/constants';
 import GroupDragLayer from './group-drag-layer';
 import FieldGroup from './field-group';
 
-import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './field-groups.scss';
 
 const FieldGroups = ( {
+	podType,
+	podName,
 	podID,
 	podLabel,
 	podSaveStatus,
@@ -104,6 +106,8 @@ const FieldGroups = ( {
 		<div className="field-groups">
 			{ showAddGroupModal && (
 				<SettingsModal
+					podType={ podType }
+					podName={ podName }
 					optionsPod={ editGroupPod }
 					selectedOptions={ {} }
 					title={ sprintf(
@@ -144,6 +148,8 @@ const FieldGroups = ( {
 				return (
 					<FieldGroup
 						key={ group.name }
+						podType={ podType }
+						podName={ podName }
 						podID={ podID }
 						podLabel={ podLabel }
 						group={ group }
@@ -178,6 +184,8 @@ const FieldGroups = ( {
 };
 
 FieldGroups.propTypes = {
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	podSaveStatus: PropTypes.string.isRequired,
@@ -195,6 +203,8 @@ export default compose( [
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 
 		return {
+			podType: storeSelect.getPodOption( 'type' ),
+			podName: storeSelect.getPodOption( 'name' ),
 			podID: storeSelect.getPodID(),
 			podLabel: storeSelect.getPodOption( 'label' ),
 			podSaveStatus: storeSelect.getSaveStatus(),

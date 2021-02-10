@@ -1,12 +1,19 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
-// WordPress Dependencies
+/**
+ * WordPress Dependencies
+ */
 import { __, sprintf } from '@wordpress/i18n';
 
-// Pod dependencies
-import DependentFieldOption from 'dfv/src/components/dependent-field-option';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+/**
+ * Pods dependencies
+ */
+import FieldSet from 'dfv/src/components/field-set';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 const MISSING = __( '[MISSING DEFAULT]', 'pods' );
 
@@ -24,34 +31,20 @@ const DynamicTabContent = ( {
 		return sprintf( labelFormat, param );
 	};
 
-	return tabOptions.map( ( {
-		name,
-		required = false,
-		default: defaultValue,
-		description,
-		data,
-		type,
-		label,
-		label_param: labelParam,
-		help,
-		'depends-on': dependsOn,
-	} ) => (
-		<DependentFieldOption
-			key={ name }
-			fieldType={ type }
-			name={ name }
-			required={ required }
-			description={ description }
-			label={ getLabelValue( label, labelParam, defaultValue ) }
-			data={ data }
-			allOptionValues={ optionValues }
-			value={ optionValues[ name ] }
-			default={ defaultValue }
-			dependents={ dependsOn }
-			helpText={ help }
+	const fields = tabOptions.map( ( tabOption ) => {
+		return {
+			...tabOption,
+			label: getLabelValue( tabOption.label, tabOption.labelParam, tabOption.defaultValue ),
+		};
+	} );
+
+	return (
+		<FieldSet
+			fields={ fields }
+			optionValues={ optionValues }
 			setOptionValue={ setOptionValue }
 		/>
-	) );
+	);
 };
 
 DynamicTabContent.propTypes = {

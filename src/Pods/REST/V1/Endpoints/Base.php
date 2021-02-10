@@ -440,8 +440,27 @@ abstract class Base {
 			return new WP_Error( 'rest-object-not-found', sprintf( __( '%s not found.', 'pods' ), ucwords( $this->object ) ), $args );
 		}
 
+		$include_parent       = false;
+		$include_groups       = false;
+		$include_group_fields = false;
+		$include_fields       = false;
+
+		// Set up flags based on request.
+		if ( $request ) {
+			$include_parent = in_array( $this->object, [ 'group', 'field' ], true ) && 1 === (int) $request['include_parent'];
+
+			if ( 'pod' === $this->object ) {
+				$include_groups       = 1 === (int) $request['include_groups'];
+				$include_group_fields = 1 === (int) $request['include_group_fields'];
+			}
+
+			if ( in_array( $this->object, [ 'pod', 'group' ], true ) ) {
+				$include_fields = 1 === (int) $request['include_fields'];
+			}
+		}
+
 		// Handle parent details.
-		if ( in_array( $this->object, [ 'group', 'field' ], true ) && 1 === (int) $request['include_parent'] ) {
+		if ( $include_parent ) {
 			// Set temporary data so parent data gets exported.
 			$object->set_arg( 'parent_data', $object->get_parent_data() );
 		}
@@ -449,9 +468,9 @@ abstract class Base {
 		/** @var Whatsit $object */
 		return [
 			$this->object => $object->export( [
-				'include_groups'       => 'pod' === $this->object && 1 === (int) $request['include_groups'],
-				'include_group_fields' => 'pod' === $this->object && 1 === (int) $request['include_group_fields'],
-				'include_fields'       => in_array( $this->object, [ 'pod', 'group' ], true ) && 1 === (int) $request['include_fields'],
+				'include_groups'       => $include_groups,
+				'include_group_fields' => $include_group_fields,
+				'include_fields'       => $include_fields,
 			] ),
 		];
 	}

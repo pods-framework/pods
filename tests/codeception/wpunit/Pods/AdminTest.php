@@ -69,6 +69,8 @@ class AdminTest extends Pods_WhatsitTestCase {
 			'additional-field-oembed',
 			'additional-field-pick',
 			'additional-field-boolean',
+			'additional-field-heading',
+			'additional-field-html',
 			'advanced',
 		];
 
@@ -336,6 +338,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'pods-pfat',
 						],
 					],
 					'group' => [
@@ -358,6 +361,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'pods-pfat',
 						],
 					],
 					'group' => [
@@ -380,6 +384,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'pods-pfat',
 							'rest-api',
 						],
 					],
@@ -407,6 +412,8 @@ class AdminTest extends Pods_WhatsitTestCase {
 							'additional-field-oembed',
 							'additional-field-pick',
 							'additional-field-boolean',
+							'additional-field-heading',
+							'additional-field-html',
 							'advanced',
 							'rest',
 						],
@@ -425,6 +432,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'pods-pfat',
 							'rest-api',
 						],
 					],
@@ -452,6 +460,8 @@ class AdminTest extends Pods_WhatsitTestCase {
 							'additional-field-oembed',
 							'additional-field-pick',
 							'additional-field-boolean',
+							'additional-field-heading',
+							'additional-field-html',
 							'advanced',
 							'rest',
 						],
@@ -521,6 +531,8 @@ class AdminTest extends Pods_WhatsitTestCase {
 							'additional-field-pick',
 							'additional-field-boolean',
 							'additional-field-slug',
+							'additional-field-heading',
+							'additional-field-html',
 							'advanced',
 						],
 					],

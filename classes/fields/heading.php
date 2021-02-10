@@ -47,15 +47,15 @@ class PodsField_Heading extends PodsField {
 			],
 			'output_options' => [
 				'label' => __( 'Output Options', 'pods' ),
-				'group' => [
+				'boolean_group' => [
 					static::$type . '_allow_html'      => [
-						'label'      => __( 'Allow HTML?', 'pods' ),
+						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
 					],
 					static::$type . '_wptexturize'     => [
-						'label'   => __( 'Enable wptexturize?', 'pods' ),
+						'label'   => __( 'Enable wptexturize', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => [
@@ -64,7 +64,7 @@ class PodsField_Heading extends PodsField {
 						],
 					],
 					static::$type . '_allow_shortcode' => [
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,

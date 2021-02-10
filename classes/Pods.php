@@ -731,6 +731,15 @@ class Pods implements Iterator {
 		// Get the first field name data.
 		$field_data = $this->fields( $first_field );
 
+		// Ensure the field name is using the correct name and not the alias.
+		if ( $field_data ) {
+			$first_field = $field_data['name'];
+
+			if ( ! $is_traversal ) {
+				$params->name = $first_field;
+			}
+		}
+
 		if ( ! $field_data ) {
 			// Get the full field name data.
 			$field_data = $this->fields( $params->name );
@@ -746,7 +755,7 @@ class Pods implements Iterator {
 
 		// Store field info.
 		$field_type         = pods_v( 'type', $field_data, '' );
-		$field_options      = pods_v( 'options', $field_data, array() );
+		$field_options      = $field_data;
 		$is_tableless_field = in_array( $field_type, $tableless_field_types, true );
 
 		// Simple fields have no other output options.
@@ -1639,9 +1648,9 @@ class Pods implements Iterator {
 			$field_names = implode( '.', $params->traverse );
 
 			$this->data->row[ $field_names ] = $value;
-		} elseif ( 'arrays' !== $params->output && in_array( $field_data['type'], $tableless_field_types, true ) ) {
+		} elseif ( 'arrays' !== $params->output && $field_data && in_array( $field_data['type'], $tableless_field_types, true ) ) {
 			$this->data->row[ '_' . $params->output . '_' . $params->full_name ] = $value;
-		} elseif ( 'arrays' === $params->output || ! in_array( $field_data['type'], $tableless_field_types, true ) ) {
+		} elseif ( 'arrays' === $params->output || ! $field_data || ! in_array( $field_data['type'], $tableless_field_types, true ) ) {
 			$this->data->row[ $params->full_name ] = $value;
 		}
 
@@ -3005,6 +3014,13 @@ class Pods implements Iterator {
 			$default = $params;
 		}
 
+		// If ID is sent as part of data, use it and then unset it from the data.
+		if ( isset( $data[ $this->pod_data['field_id'] ] ) ) {
+			$id = $data[ $this->pod_data['field_id'] ];
+
+			unset( $data[ $this->pod_data['field_id'] ] );
+		}
+
 		$params = array(
 			'pod'                 => $this->pod,
 			'id'                  => $id,
@@ -3433,9 +3449,7 @@ class Pods implements Iterator {
 	}
 
 	/**
-	 * Run a helper within a Pod Page or WP Template
-	 *
-	 * @see   Pods_Helpers::helper
+	 * Run a helper within a Pod Page or WP Template.
 	 *
 	 * @param string|array $helper Helper name.
 	 * @param string       $value  Value to run the helper on.
@@ -3443,6 +3457,8 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed Anything returned by the helper
 	 * @since 2.0.0
+	 *
+	 * @deprecated since 2.8.0
 	 */
 	public function helper( $helper, $value = null, $name = null ) {
 
@@ -3461,9 +3477,7 @@ class Pods implements Iterator {
 			$params = array_merge( $params, $helper );
 		}
 
-		if ( class_exists( 'Pods_Helpers' ) ) {
-			$value = Pods_Helpers::helper( $params, $this );
-		} elseif ( is_callable( $params['helper'] ) ) {
+		if ( is_callable( $params['helper'] ) ) {
 			$disallowed = array(
 				'system',
 				'exec',

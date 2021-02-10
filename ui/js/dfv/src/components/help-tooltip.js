@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import sanitizeHtml from 'sanitize-html';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 import { Dashicon } from '@wordpress/components';
 

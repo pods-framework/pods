@@ -64,12 +64,13 @@ class PodsField_Number extends PodsField {
 				'default' => apply_filters( 'pods_form_ui_field_number_format_default', 'i18n' ),
 				'type'    => 'pick',
 				'data'    => array(
-					'i18n'     => __( 'Localized Default', 'pods' ),
-					'9,999.99' => '1,234.00',
-					'9.999,99' => '1.234,00',
-					'9 999,99' => '1 234,00',
-					'9999.99'  => '1234.00',
-					'9999,99'  => '1234,00',
+					'i18n'      => __( 'Localized Default', 'pods' ),
+					'9,999.99'  => '1,234.00',
+					'9999.99'   => '1234.00',
+					'9.999,99'  => '1.234,00',
+					'9999,99'   => '1234,00',
+					'9 999,99'  => '1 234,00',
+					'9\'999.99' => '1\'234.00',
 				),
 			),
 			static::$type . '_decimals'    => array(
@@ -79,7 +80,7 @@ class PodsField_Number extends PodsField {
 				'dependency' => true,
 			),
 			static::$type . '_format_soft' => array(
-				'label'       => __( 'Soft format?', 'pods' ),
+				'label'       => __( 'Soft format', 'pods' ),
 				'help'        => __( 'Remove trailing decimals (0)', 'pods' ),
 				'default'     => 0,
 				'type'        => 'boolean',
@@ -108,6 +109,11 @@ class PodsField_Number extends PodsField {
 				'default' => 12,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
+			),
+			static::$type . '_html5'       => array(
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
+				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
+				'type'    => 'boolean',
 			),
 			static::$type . '_placeholder' => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
@@ -227,7 +233,9 @@ class PodsField_Number extends PodsField {
 			$value = $this->format( $value, $name, $options, $pod, $id );
 		}
 
-		return pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );
+		}
 
 		wp_enqueue_script( 'pods-dfv' );
 

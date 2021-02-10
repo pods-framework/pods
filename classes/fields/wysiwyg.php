@@ -56,7 +56,8 @@ class PodsField_WYSIWYG extends PodsField {
 				'data'       => apply_filters(
 					'pods_form_ui_field_wysiwyg_editors', array(
 						'tinymce'  => __( 'TinyMCE (WP Default)', 'pods' ),
-						'cleditor' => __( 'CLEditor', 'pods' ),
+						'quill'    => __( 'Quill Editor', 'pods' ),
+						'cleditor' => __( 'CLEditor (No longer available, now using Quill Editor)', 'pods' ),
 					)
 				),
 				'dependency' => true,
@@ -64,9 +65,9 @@ class PodsField_WYSIWYG extends PodsField {
 			'editor_options'                     => array(
 				'label'      => __( 'Editor Options', 'pods' ),
 				'depends-on' => array( static::$type . '_editor' => 'tinymce' ),
-				'group'      => array(
+				'boolean_group'      => array(
 					static::$type . '_media_buttons' => array(
-						'label'   => __( 'Enable Media Buttons?', 'pods' ),
+						'label'   => __( 'Enable Media Buttons', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 					),
@@ -82,9 +83,9 @@ class PodsField_WYSIWYG extends PodsField {
 			),
 			'output_options'                     => array(
 				'label' => __( 'Output Options', 'pods' ),
-				'group' => array(
+				'boolean_group' => array(
 					static::$type . '_oembed'          => array(
-						'label'   => __( 'Enable oEmbed?', 'pods' ),
+						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
 						'help'    => array(
@@ -93,7 +94,7 @@ class PodsField_WYSIWYG extends PodsField {
 						),
 					),
 					static::$type . '_wptexturize'     => array(
-						'label'   => __( 'Enable wptexturize?', 'pods' ),
+						'label'   => __( 'Enable wptexturize', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => array(
@@ -102,7 +103,7 @@ class PodsField_WYSIWYG extends PodsField {
 						),
 					),
 					static::$type . '_convert_chars'   => array(
-						'label'   => __( 'Enable convert_chars?', 'pods' ),
+						'label'   => __( 'Enable convert_chars', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => array(
@@ -111,7 +112,7 @@ class PodsField_WYSIWYG extends PodsField {
 						),
 					),
 					static::$type . '_wpautop'         => array(
-						'label'   => __( 'Enable wpautop?', 'pods' ),
+						'label'   => __( 'Enable wpautop', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => array(
@@ -120,7 +121,7 @@ class PodsField_WYSIWYG extends PodsField {
 						),
 					),
 					static::$type . '_allow_shortcode' => array(
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
@@ -140,8 +141,8 @@ class PodsField_WYSIWYG extends PodsField {
 		);
 
 		if ( function_exists( 'Markdown' ) ) {
-			$options['output_options']['group'][ static::$type . '_allow_markdown' ] = array(
-				'label'   => __( 'Allow Markdown Syntax?', 'pods' ),
+			$options['output_options']['boolean_group'][ static::$type . '_allow_markdown' ] = array(
+				'label'   => __( 'Allow Markdown Syntax', 'pods' ),
 				'default' => 0,
 				'type'    => 'boolean',
 			);
@@ -245,8 +246,13 @@ class PodsField_WYSIWYG extends PodsField {
 			$field_type = 'textarea';
 		} elseif ( 'tinymce' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'tinymce';
+
+			wp_tinymce_inline_scripts();
+			wp_enqueue_editor();
+		} elseif ( 'quill' === pods_v( static::$type . '_editor', $options ) ) {
+			$field_type = 'quill';
 		} elseif ( 'cleditor' === pods_v( static::$type . '_editor', $options ) ) {
-			$field_type = 'cleditor';
+			$field_type = 'quill';
 		} else {
 			// Support custom WYSIWYG integration
 			$editor_type = pods_v( static::$type . '_editor', $options );
@@ -256,7 +262,18 @@ class PodsField_WYSIWYG extends PodsField {
 			return;
 		}//end if
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**

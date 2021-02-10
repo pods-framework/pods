@@ -64,19 +64,19 @@ class PodsField_Website extends PodsField {
 				'dependency' => true,
 			),
 			static::$type . '_allow_port'  => array(
-				'label'      => __( 'Allow port in URL?', 'pods' ),
+				'label'      => __( 'Allow port in URL', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_website_port', 0, static::$type ),
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			static::$type . '_clickable'   => array(
-				'label'      => __( 'Output as a link?', 'pods' ),
+				'label'      => __( 'Output as a link', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_website_clickable', 0, static::$type ),
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			static::$type . '_new_window'  => array(
-				'label'      => __( 'Open link in new window?', 'pods' ),
+				'label'      => __( 'Open link in new window', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_website_new_window', 0, static::$type ),
 				'type'       => 'boolean',
 				'depends-on' => array( static::$type . '_clickable' => true ),
@@ -88,7 +88,7 @@ class PodsField_Website extends PodsField {
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
 			static::$type . '_html5'       => array(
-				'label'       => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'       => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default'     => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'        => 'boolean',
 				'excludes-on' => array( static::$type . '_format' => array( 'no-http', 'no-http-no-www', 'no-http-force-www' ) ),
@@ -169,7 +169,18 @@ class PodsField_Website extends PodsField {
 			$field_type = 'text';
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**

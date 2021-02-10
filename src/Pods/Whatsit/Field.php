@@ -91,6 +91,11 @@ class Field extends Whatsit {
 
 		$simple_tableless_objects = \PodsForm::simple_tableless_objects();
 
+		// File field types are always related to the media object type.
+		if ( 'file' === $type ) {
+			return 'media';
+		}
+
 		$related_type = $this->get_arg( $type . '_object', $this->get_arg( 'pick_object' ) );
 
 		if ( '__current__' === $related_type ) {
@@ -120,6 +125,11 @@ class Field extends Whatsit {
 
 		if ( null === $related_type ) {
 			return null;
+		}
+
+		// File field types are always related to the attachment post type.
+		if ( 'media' === $related_type ) {
+			return 'attachment';
 		}
 
 		$related_name = $this->get_arg( $type . '_val', $this->get_arg( 'pick_val', $related_type ) );

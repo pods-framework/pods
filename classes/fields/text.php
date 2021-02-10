@@ -51,15 +51,15 @@ class PodsField_Text extends PodsField {
 			),
 			'output_options'                     => array(
 				'label' => __( 'Output Options', 'pods' ),
-				'group' => array(
+				'boolean_group' => array(
 					static::$type . '_allow_shortcode' => array(
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
 					),
 					static::$type . '_allow_html'      => array(
-						'label'      => __( 'Allow HTML?', 'pods' ),
+						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
@@ -146,7 +146,9 @@ class PodsField_Text extends PodsField {
 			$options['readonly'] = true;
 		}
 
-		return pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
+		}
 
 		wp_enqueue_script( 'pods-dfv' );
 
@@ -156,7 +158,6 @@ class PodsField_Text extends PodsField {
 		$args = (object) $args;
 
 		$this->render_input_script( $args );
-
 	}
 
 	/**

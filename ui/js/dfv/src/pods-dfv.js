@@ -1,65 +1,34 @@
-import mnRenderer from 'dfv/src/core/renderers/mn-renderer';
-import reactRenderer from 'dfv/src/core/renderers/react-renderer';
-import reactDirectRenderer from 'dfv/src/core/renderers/react-direct-renderer';
-import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
+/**
+ * External dependencies
+ */
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { omit } from 'lodash';
 
-import * as fields from 'dfv/src/field-manifest';
-import * as models from 'dfv/src/model-manifest';
+/**
+ * WordPress dependencies
+ */
+import { select } from '@wordpress/data';
+
+/**
+ * Pods dependencies
+ */
+import {
+	initPodStore,
+	initEditPodStore,
+} from 'dfv/src/store/store';
+import PodsDFVApp from 'dfv/src/core/pods-dfv-app';
+import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
+import * as models from 'dfv/src/config/model-manifest';
+
+import FIELD_MAP from 'dfv/src/fields/field-map';
 
 // Loads data from an object in this script tag.
 const SCRIPT_TARGET = 'script.pods-dfv-field-data';
 
-const fieldClasses = {
-	heading: {
-		FieldClass: fields.PodsDFVHeading,
-		renderer: reactRenderer,
-	},
-	html: {
-		FieldClass: fields.PodsDFVHTML,
-		renderer: reactRenderer,
-	},
-	file: {
-		FieldClass: fields.File,
-		renderer: mnRenderer,
-	},
-	avatar: {
-		FieldClass: fields.File,
-		renderer: mnRenderer,
-	},
-	pick: {
-		FieldClass: fields.Pick,
-		renderer: mnRenderer,
-	},
-	text: {
-		FieldClass: fields.PodsDFVText,
-		renderer: reactRenderer,
-	},
-	password: {
-		FieldClass: fields.PodsDFVPassword,
-		renderer: reactRenderer,
-	},
-	number: {
-		FieldClass: fields.PodsDFVNumber,
-		renderer: reactRenderer,
-	},
-	email: {
-		FieldClass: fields.PodsDFVEmail,
-		renderer: reactRenderer,
-	},
-	paragraph: {
-		FieldClass: fields.PodsDFVParagraph,
-		renderer: reactRenderer,
-	},
-	'edit-pod': {
-		FieldClass: fields.PodsDFVEditPod,
-		renderer: reactDirectRenderer,
-	},
-};
-
 window.PodsDFV = {
-	fields: fieldClasses,
+	fields: FIELD_MAP,
 	models,
-	fieldInstances: {},
 
 	/**
 	 * Initialize Pod data.
@@ -68,39 +37,112 @@ window.PodsDFV = {
 		// Find all in-line data scripts
 		const dataTags = [ ...document.querySelectorAll( SCRIPT_TARGET ) ];
 
-		dataTags.forEach( ( tag ) => {
+		const fieldsData = dataTags.map( ( tag ) => {
 			const data = JSON.parse( tag.innerHTML );
 
-			// Kludge to disable the "Add New" button if we're inside a media modal.  This should
+			// Ignore anything malformed or that doesn't have the field type set
+			if ( ! data?.fieldType ) {
+				return undefined;
+			}
+
+			// Some fields are rendered directly, most are not.
+			const directRender = FIELD_MAP[ data.fieldType ]?.directRender || false;
+
+			// Clean up the field config.
+			// Includes a kludge to disable the "Add New" button if we're inside a media modal.  This should
 			// eventually be ironed out so we can use Add New from this context (see #4864)
+			const cleanedFieldConfig = omit(
+				( data.fieldConfig || {} ),
+				[ '_field_object', 'output_options', 'item_id' ]
+			);
+
 			if ( tag.closest( '.media-modal-content' ) ) {
-				data.fieldConfig.pick_allow_add_new = 0;
+				if ( cleanedFieldConfig.fieldConfig ) {
+					cleanedFieldConfig.fieldConfig.pick_allow_add_new = '0';
+				} else {
+					cleanedFieldConfig.pick_allow_add_new = '0';
+				}
 			}
 
-			// Ignore anything that doesn't have the field type set
-			if ( data.fieldType === undefined ) {
-				return;
-			}
+			cleanedFieldConfig.htmlAttr = data.htmlAttr || {};
+			cleanedFieldConfig.fieldEmbed = data.fieldEmbed || false;
 
-			const field = fieldClasses[ data.fieldType ];
-
-			// @todo remove this later
-			// We need to only depend on the `config` and `fieldType`
-			// properties, so discard the others for now, until they're
-			// removed from the API.
-			const actualData = {
-				config: window.podsAdminConfig,
-				fieldType: data.fieldType,
-				data,
+			return {
+				directRender,
+				fieldComponent: FIELD_MAP[ data.fieldType ]?.fieldComponent || null,
+				parentNode: tag.parentNode,
+				fieldConfig: directRender ? undefined : cleanedFieldConfig,
+				fieldItemData: data.fieldItemData || null,
 			};
-
-			// eslint-disable-next-line no-console
-			console.log( 'config data:', actualData );
-
-			if ( field !== undefined ) {
-				field.renderer( field.FieldClass, tag.parentNode, actualData );
-			}
 		} );
+
+		// Filter out any that we skipped.
+		const validFieldsData = fieldsData.filter( ( fieldData ) => !! fieldData );
+
+		// Create the store if it hasn't been done already.
+		// The initial values for the data store require some massaging:
+		// Some are arrays when we need single values (this may change once
+		// repeatable fields are implemented), others have special requirements.
+		const initialValues = validFieldsData.reduce(
+			( accumulator, currentValue ) => {
+				const fieldConfig = currentValue.fieldConfig || {};
+
+				// Fields have values provided as arrays, even if the field
+				// type should just have a singular value.
+				const value = [ 'avatar', 'file', 'pick' ].includes( fieldConfig.type )
+					? ( currentValue.fieldItemData || fieldConfig.default || [] )
+					: ( currentValue.fieldItemData?.[ 0 ] || fieldConfig.default || '' );
+
+				// Some field types need the value to be adjusted because it's in a different
+				// shape than expected.
+				// @todo there are probably others?
+				let formattedValue = value;
+
+				switch ( fieldConfig.type ) {
+					case 'pick':
+						if ( 'multi' === fieldConfig.format_type ) {
+							formattedValue = value
+								.map( ( option ) => option.selected ? option.id : null )
+								.filter( ( option ) => null !== option );
+						} else {
+							formattedValue = value.find( ( option ) => true === option.selected )?.id;
+						}
+						break;
+					default:
+						break;
+				}
+
+				return {
+					...accumulator,
+					[ fieldConfig.name ]: formattedValue,
+				};
+			},
+			{}
+		);
+
+		// The Edit Pod screen gets a different store set up than
+		// other contexts.
+		if ( window.podsAdminConfig ) {
+			initEditPodStore( window.podsAdminConfig );
+		} else if ( window.podsDFVConfig ) {
+			initPodStore( window.podsDFVConfig, initialValues );
+		} else {
+			// Something is wrong if neither set of globals is set.
+			return;
+		}
+
+		// Creates a container for the React app to "render",
+		// although it doesn't actually render anything in the container,
+		// but places the fields in the correct places with Portals.
+		const dfvRootContainer = document.createElement( 'div' );
+		dfvRootContainer.id = 'pods-dfv-container';
+		document.body.appendChild( dfvRootContainer );
+
+		// Set up the DFV app.
+		ReactDOM.render(
+			<PodsDFVApp fieldsData={ validFieldsData } />,
+			dfvRootContainer
+		);
 	},
 
 	isModalWindow() {
@@ -108,7 +150,7 @@ window.PodsDFV = {
 	},
 
 	isGutenbergEditorLoaded() {
-		return ( wp.data !== undefined && wp.data.select( 'core/editor' ) !== undefined );
+		return ! select( 'core/editor' );
 	},
 };
 

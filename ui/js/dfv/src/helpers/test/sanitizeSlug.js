@@ -17,6 +17,14 @@ describe( 'sanitizeSlug', () => {
 		expect( sanitizedValue ).toBe( 'capitalized_words_and_an_allcaps_word' );
 	} );
 
+	it( 'forces lowercase and replaces spaces with dashes and keeps underscores', () => {
+		const value = 'Capitalized Words and an ALLCAPS_word';
+
+		const sanitizedValue = sanitizeSlug( value, '-' );
+
+		expect( sanitizedValue ).toBe( 'capitalized-words-and-an-allcaps_word' );
+	} );
+
 	it( 'removes invalid characters', () => {
 		const value = 'Test )*&^*😬and*()*)**&^*^# Test';
 

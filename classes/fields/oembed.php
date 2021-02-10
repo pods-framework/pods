@@ -122,11 +122,11 @@ class PodsField_OEmbed extends PodsField {
 			$options[ static::$type . '_enable_providers' ]   = array(
 				'label'      => __( 'Select enabled providers', 'pods' ),
 				'depends-on' => array( static::$type . '_restrict_providers' => true ),
-				'group'      => array(),
+				'boolean_group'      => array(),
 			);
 			// Add all the oEmbed providers
 			foreach ( $unique_providers as $provider ) {
-				$options[ static::$type . '_enable_providers' ]['group'][ static::$type . '_enabled_providers_' . tag_escape( $provider ) ] = array(
+				$options[ static::$type . '_enable_providers' ]['boolean_group'][ static::$type . '_enabled_providers_' . tag_escape( $provider ) ] = array(
 					'label'   => $provider,
 					'type'    => 'boolean',
 					'default' => 0,
@@ -191,7 +191,18 @@ class PodsField_OEmbed extends PodsField {
 			$options['readonly'] = true;
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/oembed.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/oembed.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**

@@ -23,7 +23,10 @@ class Group extends Base {
 			'basic' => __( 'Group Details', 'pods' ),
 		];
 
-		$core_tabs['kitchen-sink'] = __( 'Kitchen Sink (temp)', 'pods' );
+		// Only include kitchen sink if dev mode on and not running Codecept tests.
+		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
+			$core_tabs['kitchen-sink'] = __( 'Kitchen Sink (temp)', 'pods' );
+		}
 
 		/**
 		 * Filter the Group option tabs. Core tabs are added after this filter.
@@ -130,7 +133,10 @@ class Group extends Base {
 			];
 		}
 
-		$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink.json' ), true );
+		// Only include kitchen sink if dev mode on and not running Codecept tests.
+		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
+			$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink.json' ), true );
+		}
 
 		/**
 		 * Filter the Group options.

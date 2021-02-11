@@ -46,11 +46,13 @@ Copy and paste your Tools > Site Health > Info. Use the 'Copy Site Info to Clipb
 
 </details>
 
+<!-- This would be helpful for us if you provide it. You may need to enable the component at Pods Admin > Components > Migrate: Packages > Enable. -->
+
 <details>
 <summary>Pods Package Export</summary>
 
 ```json
-Copy and paste your Pods Admin > Migrate: Packages > Export and paste the code over this line.. You may need to enable the component at Pods Admin > Components > Migrate: Packages > Enable
+Copy and paste your Pods Admin > Migrate: Packages > Export and paste the code over this line.
 ```
 
 </details>

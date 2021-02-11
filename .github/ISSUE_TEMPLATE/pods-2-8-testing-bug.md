@@ -1,11 +1,15 @@
 ---
-name: Bug report
+name: Pods 2.8 Testing Bug Report
 about: Let us know if something isn't working quite right
-title: ''
-labels: 'Type: Bug'
-assignees: ''
+title: "[Pods 2.8 Bug] Summary of your problem here"
+labels: 'Focus: Back Compat, Keywords: Regression, Type: Bug'
+assignees: sc0ttkclark
 
 ---
+
+## Pods 2.8 version
+
+<!-- Please enter the version of Pods 2.8 you are running, like "2.8.0-b-1" -->
 
 ## Description
 
@@ -31,10 +35,6 @@ assignees: ''
 ## Possible workaround
 
 <!-- If you have discovered a workaround, let us know so other people can be aware too. -->
-
-## Pods version
-
-<!-- Please enter the version of Pods you are running. -->
 
 ## Other super helpful information
 

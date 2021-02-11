@@ -4,7 +4,7 @@ about: Let us know if something isn't working quite right
 
 ---
 
-## Pods Version
+## Pods 2.8 version
 
 <!-- Please enter the version of Pods 2.8 you are running, like "2.8.0-b-1" -->
 
@@ -25,7 +25,7 @@ about: Let us know if something isn't working quite right
 
 <!-- What you expected to be able to see or do if the problem did not happen. -->
 
-## Screenshots / Screencast
+## Screenshots / screencast
 
 <!-- If you have any screenshot(s) or screencast(s) to show your problem, these can help us solve things more quickly. -->
 
@@ -33,24 +33,26 @@ about: Let us know if something isn't working quite right
 
 <!-- If you have discovered a workaround, let us know so other people can be aware too. -->
 
-## WordPress Environment
+## Other super helpful information
 
 <!-- Please provide this, we need to be able to review other plugins and versions to check for incompatibility problems. -->
 
 <details>
-
+<summary>WordPress Environment</summary>
+  
 ```
 Copy and paste your Tools > Site Health > Info. Use the 'Copy Site Info to Clipboard' and paste the results over this line.
 ```
 
 </details>
 
-## Pods Package Export (helpful!)
+<!-- This would be helpful for us if you provide it. You may need to enable the component at Pods Admin > Components > Migrate: Packages > Enable. -->
 
 <details>
+<summary>Pods Package Export</summary>
 
 ```json
-Copy and paste your Pods Admin > Migrate: Packages > Export and paste the code over this line.. You may need to enable the component at Pods Admin > Components > Migrate: Packages > Enable
+Copy and paste your Pods Admin > Migrate: Packages > Export and paste the code over this line.
 ```
 
 </details>

@@ -24,43 +24,73 @@ jobs:
           - 'restv1'
     runs-on: ubuntu-latest
     steps:
+      # ------------------------------------------------------------------------------
+      # Checkout the repo and tric
+      # ------------------------------------------------------------------------------
       - name: Checkout the repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           fetch-depth: 1
-      - name: Checkout automation tools
-        uses: actions/checkout@v1
+          token: ${{ secrets.GH_BOT_TOKEN }}
+          submodules: recursive
+      - name: Checkout tric
+        uses: actions/checkout@v2
         with:
-          repository: moderntribe/tric
+          repository: the-events-calendar/tric
           ref: main
           path: tric
           fetch-depth: 1
-      - name: Add tric to the PATH
-        run: echo "::set-env name=PATH::${GITHUB_WORKSPACE}/../tric:$PATH"
-      - name: Set tric run_context() for tric
-        run: echo "::set-env name=TRIC::1"
+      # ------------------------------------------------------------------------------
+      # Prepare our composer cache directory
+      # ------------------------------------------------------------------------------
+      - name: Get Composer Cache Directory
+        id: get-composer-cache-dir
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v2
+        id: composer-cache
+        with:
+          path: ${{ steps.get-composer-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      # ------------------------------------------------------------------------------
+      # Initialize tric
+      # ------------------------------------------------------------------------------
+      - name: Set up tric env vars
+        run: |
+          echo "TRIC_BIN=${GITHUB_WORKSPACE}/tric/tric" >> $GITHUB_ENV
+          echo "TRIC_WP_DIR=${GITHUB_WORKSPACE}/tric/_wordpress" >> $GITHUB_ENV
+          echo "TRIC_WORDPRESS_DOCKERFILE=Dockerfile.base" >> $GITHUB_ENV
+      - name: Set run context for tric
+        run: echo "TRIC=1" >> $GITHUB_ENV && echo "CI=1" >> $GITHUB_ENV
       - name: Start ssh-agent
         run: |
           mkdir -p "${HOME}/.ssh";
           ssh-agent -a /tmp/ssh_agent.sock;
       - name: Export SSH_AUTH_SOCK env var
-        run: echo "::set-env name=SSH_AUTH_SOCK::/tmp/ssh_agent.sock"
+        run: echo "SSH_AUTH_SOCK=/tmp/ssh_agent.sock" >> $GITHUB_ENV
       - name: Set up tric for CI
         run: |
           cd ${GITHUB_WORKSPACE}/..
-          tric here
-          tric interactive off
-          tric build-prompt off
-          tric xdebug off
-          tric debug on
-          tric info
-      - name: Print the current tric configuration
-        run: tric config
+          ${TRIC_BIN} here
+          ${TRIC_BIN} interactive off
+          ${TRIC_BIN} build-prompt off
+          ${TRIC_BIN} build-subdir off
+          ${TRIC_BIN} xdebug off
+          ${TRIC_BIN} composer-cache set /home/runner/.cache/composer
+          ${TRIC_BIN} debug on
+          ${TRIC_BIN} info
+          ${TRIC_BIN} config
+      # ------------------------------------------------------------------------------
+      # Setup Pods and run tests
+      # ------------------------------------------------------------------------------
       - name: Set up pods
         run: |
-          tric use pods
-          tric composer install
+          docker network prune -f
+          ${TRIC_BIN} use pods
+          ${TRIC_BIN} composer install
       - name: Init the WordPress container
-        run: tric up wordpress
+        run: ${TRIC_BIN} up wordpress
       - name: Run suite tests
-        run: tric run ${{ matrix.suite }}
+        run: ${TRIC_BIN} run ${{ matrix.suite }} --ext DotReporter

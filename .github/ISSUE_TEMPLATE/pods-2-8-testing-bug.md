@@ -1,6 +1,9 @@
 ---
 name: Pods 2.8 Testing Bug Report
 about: Let us know if something isn't working quite right
+title: "[Pods 2.8 Bug] Summary of your problem here"
+labels: 'Focus: Back Compat, Keywords: Regression, Type: Bug'
+assignees: sc0ttkclark
 
 ---
 

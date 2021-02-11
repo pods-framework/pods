@@ -1,6 +1,9 @@
 ---
 name: Bug report
 about: Let us know if something isn't working quite right
+title: ''
+labels: 'Type: Bug'
+assignees: ''
 
 ---
 

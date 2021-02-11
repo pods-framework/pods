@@ -877,21 +877,22 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'pagination_location' => 'after',
 	);
 
-	$default_other_tags = array(
-		'field'      => null,
-		'col'        => null,
-		'template'   => null,
-		'pods_page'  => null,
-		'form'       => null,
-		'fields'     => null,
-		'label'      => null,
-		'thank_you'  => null,
-		'not_found'  => null,
-		'view'       => null,
-		'cache_mode' => 'none',
-		'expires'    => 0,
-		'shortcodes' => false,
-	);
+	$default_other_tags = [
+		'field'            => null,
+		'col'              => null,
+		'template'         => null,
+		'pods_page'        => null,
+		'form'             => null,
+		'form_output_type' => null,
+		'fields'           => null,
+		'label'            => null,
+		'thank_you'        => null,
+		'not_found'        => null,
+		'view'             => null,
+		'cache_mode'       => 'none',
+		'expires'          => 0,
+		'shortcodes'       => false,
+	];
 
 	$defaults = array_merge( $default_other_tags, $default_query_tags );
 
@@ -1120,7 +1121,14 @@ function pods_shortcode_run( $tags, $content = null ) {
 			}
 		}
 
-		return $pod->form( $tags['fields'], $tags['label'], $tags['thank_you'] );
+		$form_params = [
+			'fields'      => $tags['fields'],
+			'label'       => $tags['label'],
+			'thank_you'   => $tags['thank_you'],
+			'output_type' => $tags['form_output_type'],
+		];
+
+		return $pod->form( $form_params );
 	} elseif ( ! empty( $tags['field'] ) ) {
 		if ( $tags['template'] || $content ) {
 			$return  = '';

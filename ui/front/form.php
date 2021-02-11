@@ -6,6 +6,7 @@
  * @var array   $params
  * @var string  $label
  * @var string  $thank_you
+ * @var string  $output_type
  */
 wp_enqueue_style( 'pods-form' );
 wp_enqueue_script( 'pods' );
@@ -136,7 +137,25 @@ $field_prefix = '';
 			do_action( 'pods_form_after_field', $field, $fields, $pod, $params );
 		};
 
-		pods_view( PODS_DIR . 'ui/forms/list-rows.php', compact( array_keys( get_defined_vars() ) ) );
+		$template        = 'ui/forms/list-rows.php';
+		$template_before = '';
+		$template_after  = '';
+
+		if ( 'div' === $output_type ) {
+			$template = 'ui/forms/div-rows.php';
+		} elseif ( 'p' === $output_type ) {
+			$template = 'ui/forms/p-rows.php';
+		} elseif ( 'table' === $output_type ) {
+			$template        = 'ui/forms/table-rows.php';
+			$template_before = '<table>';
+			$template_after  = '</table>';
+		}
+
+		echo $template_before;
+
+		pods_view( PODS_DIR . $template, compact( array_keys( get_defined_vars() ) ) );
+
+		echo $template_after;
 
 		/**
 		 * Runs after all fields are outputted.

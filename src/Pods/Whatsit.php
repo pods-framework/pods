@@ -500,6 +500,42 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
+	 * Set the arguments for the object.
+	 *
+	 * @param array|Whatsit $args    List of object arguments to set.
+	 * @param bool          $replace Whether to replace the argument if it was already set.
+	 *
+	 * @return self The object.
+	 */
+	public function set_args( $args, $replace = true ) {
+		if ( $args instanceof self ) {
+			$args = $args->get_args();
+		}
+
+		// Set up the options if they were provided.
+		if ( isset( $args['options'] ) ) {
+			$args = array_merge( $args['options'], $args );
+
+			unset( $args['options'] );
+		}
+
+		foreach ( $args as $arg => $value ) {
+			// Skip arguments if we are not replacing them but they are already set.
+			if (
+				! $replace
+				&& ! empty( $this->args[ $arg ] )
+				&& '' !== $this->args[ $arg ]
+			) {
+				continue;
+			}
+
+			$this->set_arg( $arg, $value );
+		}
+
+		return $this;
+	}
+
+	/**
 	 * Get object argument value.
 	 *
 	 * @param string     $arg     Argument name.

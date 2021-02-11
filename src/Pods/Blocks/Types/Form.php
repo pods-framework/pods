@@ -89,6 +89,18 @@ class Form extends Base {
 				'label' => __( 'Redirect URL (optional)', 'pods' ),
 				'type'  => 'text',
 			],
+			[
+				'name'    => 'form_output_type',
+				'label'   => __( 'Output Type', 'pods' ),
+				'type'    => 'pick',
+				'data'    => [
+					'div'   => 'Div containers (<div>)',
+					'ul'    => 'Unordered list (<ul>)',
+					'p'     => 'Paragraph elements (<p>)',
+					'table' => 'Table rows (<table>)',
+				],
+				'default' => 'div',
+			],
 		];
 	}
 

@@ -3689,6 +3689,7 @@ class Pods implements Iterator {
 			'label'       => $label,
 			'thank_you'   => $thank_you,
 			'fields_only' => false,
+			'output_type' => 'div',
 		);
 
 		if ( is_array( $params ) ) {
@@ -3734,8 +3735,13 @@ class Pods implements Iterator {
 				);
 			}
 
-			// @codingStandardsIgnoreLine.
-			$field = array_merge( $defaults, $field );
+			if ( $field instanceof \Pods\Whatsit\Field ) {
+				// Merge the $field into $to_merge.
+				$field->set_args( $defaults );
+			} elseif ( is_array( $field ) ) {
+				// @codingStandardsIgnoreLine.
+				$field = array_merge( $defaults, $field );
+			}
 
 			$field['name'] = trim( $field['name'] );
 
@@ -3746,12 +3752,25 @@ class Pods implements Iterator {
 				$field['name'] = trim( $name );
 			}
 
+			$to_merge = null;
+
 			if ( isset( $object_fields[ $field['name'] ] ) ) {
-				// @codingStandardsIgnoreLine.
-				$field = array_merge( $object_fields[ $field['name'] ], $field );
+				$to_merge = $object_fields[ $field['name'] ];
 			} elseif ( isset( $this->fields[ $field['name'] ] ) ) {
-				// @codingStandardsIgnoreLine.
-				$field = array_merge( $this->fields[ $field['name'] ], $field );
+				$to_merge = $this->fields[ $field['name'] ];
+			}
+
+			if ( $to_merge instanceof \Pods\Whatsit\Field ) {
+				// Merge the $field into $to_merge.
+				$field = $to_merge->set_args( $field );
+			} elseif ( is_array( $to_merge ) ) {
+				// Merge the $to_merge into $field.
+				if ( $field instanceof \Pods\Whatsit\Field ) {
+					$field->set_args( $to_merge, false );
+				} else {
+					// @codingStandardsIgnoreLine.
+					$field = array_merge( $to_merge, $field );
+				}
 			}
 
 			if ( pods_v( 'hidden', $field, false, true ) ) {
@@ -3780,6 +3799,7 @@ class Pods implements Iterator {
 
 		$thank_you   = $params['thank_you'];
 		$fields_only = $params['fields_only'];
+		$output_type = $params['output_type'];
 
 		PodsForm::$form_counter ++;
 

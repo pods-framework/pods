@@ -7,7 +7,8 @@ Pods contributors can have limited time and availability to address support inqu
 When looking for support, please first search for your question in these venues:
 
 * [Pods Docs](https://docs.pods.io/)
-* [Open or closed issues](https://github.com/pods-framework/issues?utf8=%E2%9C%93&q=sort%3Aupdated-desc+is%3Aissue)
+* [WordPress.org Support Forums](https://wordpress.org/support/plugin/pods/)
+* [Open or closed GitHub issues](https://github.com/pods-framework/issues?utf8=%E2%9C%93&q=sort%3Aupdated-desc+is%3Aissue)
 * [Pods Slack Chat](https://support.pods.io/chat/)
 
 GitHub issues are for tracking enhancements and bugs, not general support.

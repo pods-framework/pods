@@ -41,9 +41,9 @@
   },
   "repositories": [
     {
-      "name": "moderntribe/tribalscents",
+      "name": "the-events-calendar/tribalscents",
       "type": "github",
-      "url": "https://github.com/moderntribe/tribalscents",
+      "url": "https://github.com/the-events-calendar/tribalscents",
       "no-api": true
     }
   ],
@@ -62,7 +62,7 @@
     "lucatume/function-mocker-le": "^1.0.1",
     "lucatume/wp-browser": "2.2.15",
     "lucatume/wp-snaphot-assertions": "^1.0",
-    "moderntribe/tribalscents": "dev-master",
+    "the-events-calendar/tribalscents": "dev-master",
     "phpunit/phpunit": "^6.5.14",
     "spatie/phpunit-snapshot-assertions": "^1.4.2",
     "wp-cli/wp-cli": "2.*",

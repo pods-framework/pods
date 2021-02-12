@@ -472,6 +472,8 @@ class PodsField_File extends PodsField {
 		if ( 'plupload' === $options[ static::$type . '_uploader' ] ) {
 			wp_enqueue_script( 'plupload-all' );
 
+			$field_id = pods_v( 'id', $options, 0 );
+
 			if ( $is_user_logged_in ) {
 				$uid = 'user_' . get_current_user_id();
 			} else {
@@ -485,7 +487,7 @@ class PodsField_File extends PodsField {
 			}
 
 			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
-			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $options['id'] );
+			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
 
 			$options['plupload_init'] = array(
 				'runtimes'            => 'html5,silverlight,flash,html4',
@@ -508,7 +510,7 @@ class PodsField_File extends PodsField {
 					'action'   => 'pods_upload',
 					'method'   => 'upload',
 					'pod'      => $pod_id,
-					'field'    => $options['id'],
+					'field'    => $field_id,
 					'uri'      => $uri_hash,
 				),
 			);

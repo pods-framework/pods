@@ -64,7 +64,7 @@ export const Postbox = ( {
 										</div>
 										<div className="misc-pub-section pods-storage-type">
 											<span>
-												<Dashicon icon="admin-tools" size="16" />
+												<Dashicon icon="database" size="16" />
 												{ __( 'Storage', 'pods' ) }: <strong>{ window.podsAdminConfig.currentPod.storageType.label }</strong>
 											</span>
 										</div>

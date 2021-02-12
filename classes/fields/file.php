@@ -469,7 +469,7 @@ class PodsField_File extends PodsField {
 		$is_user_logged_in = is_user_logged_in();
 
 		// @todo: plupload specific options need accommodation
-		if ( 'plupload' === $options[ static::$type . '_uploader' ] ) {
+		if ( 'plupload' === pods_v( static::$type . '_uploader', $options ) ) {
 			wp_enqueue_script( 'plupload-all' );
 
 			$field_id = pods_v( 'id', $options, 0 );

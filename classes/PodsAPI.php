@@ -9193,10 +9193,15 @@ class PodsAPI {
 			$info = array_merge( $info, $_info );
 		}
 
-		if ( 0 === strpos( $object_type, 'post_type' ) || 'media' === $object_type || in_array( pods_v( 'type', $info['pod'] ), array(
+		if (
+			0 === strpos( $object_type, 'post_type' )
+			|| 'media' === $object_type
+			|| in_array( pods_v( 'type', $info['pod'] ), [
 				'post_type',
-				'media'
-			), true ) ) {
+				'media',
+			], true )
+		) {
+			// Post type.
 			$info['table']      = $wpdb->posts;
 			$info['meta_table'] = $wpdb->postmeta;
 
@@ -9205,7 +9210,7 @@ class PodsAPI {
 			$info['field_slug']          = 'post_name';
 			$info['field_type']          = 'post_type';
 			$info['field_parent']        = 'post_parent';
-			$info['field_parent_select'] = '`t`.`' . $info['field_parent'] . '`';
+			$info['field_parent_select'] = "`t`.`{$info['field_parent']}`";
 
 			$info['meta_field_id']    = 'post_id';
 			$info['meta_field_index'] = 'meta_key';
@@ -9231,9 +9236,9 @@ class PodsAPI {
 			$post_type = pods_sanitize( ( empty( $object ) ? $name : $object ) );
 
 			if ( 'attachment' === $post_type || 'media' === $object_type ) {
-				$info['pod_table'] = $wpdb->prefix . 'pods_media';
+				$info['pod_table'] = "{$wpdb->prefix}pods_media";
 			} else {
-				$info['pod_table'] = $wpdb->prefix . 'pods_' . pods_clean_name( $post_type, true, false );
+				$info['pod_table'] = "{$wpdb->prefix}pods_" . pods_clean_name( $post_type, true, false );
 			}
 
 			$post_type_object = get_post_type_object( $post_type );
@@ -9267,16 +9272,16 @@ class PodsAPI {
 			 */
 			$post_status = apply_filters( 'pods_api_get_table_info_default_post_status', $post_status, $post_type, $info, $object_type, $object, $name, $pod, $field );
 
-			$info['where'] = array(
-				//'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )', // @todo Figure out what statuses Attachments can be
-				'post_type' => '`t`.`' . $info['field_type'] . '` = "' . $post_type . '"'
-			);
+			$info['where'] = [
+				//'post_status' => "`t`.`post_status` IN ( 'inherit', 'publish' )", // @todo Figure out what statuses Attachments can be
+				'post_type' => "`t`.`{$info['field_type']}` = '" . pods_sanitize( $post_type ) . "'",
+			];
 
 			if ( 'post_type' === $object_type ) {
-				$info['where_default'] = '`t`.`post_status` IN ( "' . implode( '", "', $post_status ) . '" )';
+				$info['where_default'] = "`t`.`post_status` IN ( '" . implode( "', '", pods_sanitize( $post_status ) ) . "' )";
 			}
 
-			$info['orderby'] = '`t`.`menu_order`, `t`.`' . $info['field_index'] . '`, `t`.`post_date`';
+			$info['orderby'] = "`t`.`menu_order`, `t`.`{$info['field_index']}`, `t`.`post_date`";
 
 			/*
 			 * @todo wpml-comp Check if WPML filters can be applied afterwards
@@ -9286,8 +9291,8 @@ class PodsAPI {
 				$info['join']['wpml_translations'] = "
 						LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
 							ON `wpml_translations`.`element_id` = `t`.`ID`
-								AND `wpml_translations`.`element_type` = 'post_{$post_type}'
-								AND `wpml_translations`.`language_code` = '{$current_language}'
+								AND `wpml_translations`.`element_type` = 'post_" . pods_sanitize( $post_type ) . "'
+								AND `wpml_translations`.`language_code` = '" . pods_sanitize( $current_language ) . "'
 					";
 
 				$info['join']['wpml_languages'] = "
@@ -9308,10 +9313,14 @@ class PodsAPI {
 			}
 
 			$info['object_fields'] = $this->get_wp_object_fields( $object_type, $info['pod'] );
-		} elseif ( 0 === strpos( $object_type, 'taxonomy' ) || in_array( $object_type, array(
+		} elseif (
+			0 === strpos( $object_type, 'taxonomy' ) || in_array( $object_type, [
 				'nav_menu',
-				'post_format'
-			), true ) || 'taxonomy' === pods_v( 'type', $info['pod'] ) ) {
+				'post_format',
+			], true )
+			|| 'taxonomy' === pods_v( 'type', $info['pod'] )
+		) {
+			// Taxonomy.
 			$info['table']      = $wpdb->terms;
 			$info['meta_table'] = $wpdb->terms;
 
@@ -9325,7 +9334,7 @@ class PodsAPI {
 			$info['field_slug']          = 'slug';
 			$info['field_type']          = 'taxonomy';
 			$info['field_parent']        = 'parent';
-			$info['field_parent_select'] = '`tt`.`' . $info['field_parent'] . '`';
+			$info['field_parent_select'] = "`tt`.`{$info['field_parent']}`";
 
 			if ( ! empty( $wpdb->termmeta ) ) {
 				$info['meta_table'] = $wpdb->termmeta;
@@ -9356,7 +9365,7 @@ class PodsAPI {
 
 			$taxonomy = pods_sanitize( ( empty( $object ) ? $name : $object ) );
 
-			$info['pod_table'] = $wpdb->prefix . 'pods_' . pods_clean_name( $taxonomy, true, false );
+			$info['pod_table'] = "{$wpdb->prefix}pods_" . pods_clean_name( $taxonomy, true, false );
 
 			$taxonomy_object = get_taxonomy( $taxonomy );
 
@@ -9364,9 +9373,9 @@ class PodsAPI {
 				$info['object_hierarchical'] = true;
 			}
 
-			$info['where'] = array(
-				'tt.taxonomy' => '`tt`.`' . $info['field_type'] . '` = "' . $taxonomy . '"'
-			);
+			$info['where'] = [
+				'tt.taxonomy' => "`tt`.`{$info['field_type']}` = '" . pods_sanitize( $taxonomy ) . "'",
+			];
 
 			/*
 			 * @todo wpml-comp WPML API call for is_translated_taxononomy
@@ -9377,8 +9386,8 @@ class PodsAPI {
 				$info['join']['wpml_translations'] = "
 						LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
 							ON `wpml_translations`.`element_id` = `tt`.`term_taxonomy_id`
-								AND `wpml_translations`.`element_type` = 'tax_{$taxonomy}'
-								AND `wpml_translations`.`language_code` = '{$current_language}'
+								AND `wpml_translations`.`element_type` = 'tax_" . pods_sanitize( $taxonomy ) . "'
+								AND `wpml_translations`.`language_code` = '" . pods_sanitize( $current_language ) . "'
 					";
 
 				$info['join']['wpml_languages'] = "
@@ -9400,6 +9409,7 @@ class PodsAPI {
 
 			$info['object_fields'] = $this->get_wp_object_fields( $object_type, $info['pod'] );
 		} elseif ( 'user' === $object_type || 'user' === pods_v( 'type', $info['pod'] ) ) {
+			// User.
 			$info['table']      = $wpdb->users;
 			$info['meta_table'] = $wpdb->usermeta;
 			$info['pod_table']  = $wpdb->prefix . 'pods_user';
@@ -9416,8 +9426,7 @@ class PodsAPI {
 
 			$info['object_fields'] = $this->get_wp_object_fields( $object_type, $info['pod'] );
 		} elseif ( 'comment' === $object_type || 'comment' === pods_v( 'type', $info['pod'] ) ) {
-			//$info[ 'object_hierarchical' ] = true;
-
+			// Comment type.
 			$info['table']      = $wpdb->comments;
 			$info['meta_table'] = $wpdb->commentmeta;
 			$info['pod_table']  = $wpdb->prefix . 'pods_comment';
@@ -9434,26 +9443,30 @@ class PodsAPI {
 
 			$object = 'comment';
 
-			$comment_type = ( empty( $object ) ? $name : $object );
+			$comment_type = empty( $object ) ? $name : $object;
 
-			$comment_type_clause = '`t`.`' . $info['field_type'] . '` = "' . $comment_type . '"';
+			$comment_type_clause = "`t`.`{$info['field_type']}` = '" . pods_sanitize( $comment_type ) . "'";
 
 			if ( 'comment' === $comment_type ) {
-				$comment_type_clause = '( ' . $comment_type_clause . ' OR `t`.`' . $info['field_type'] . '` = "" )';
+				$comment_type_clause = "( {$comment_type_clause} OR `t`.`{$info['field_type']}` = '' )";
 			}
 
-			$info['where'] = array(
+			$info['where'] = [
 				'comment_approved' => '`t`.`comment_approved` = 1',
-				'comment_type'     => $comment_type_clause
-			);
+				'comment_type'     => $comment_type_clause,
+			];
 
-			$info['orderby'] = '`t`.`' . $info['field_index'] . '` DESC, `t`.`' . $info['field_id'] . '`';
+			$info['orderby'] = "`t`.`{$info['field_index']}` DESC, `t`.`{$info['field_id']}`";
 
 			$info['object_fields'] = $this->get_wp_object_fields( $object_type, $info['pod'] );
-		} elseif ( in_array( $object_type, array(
+		} elseif (
+			in_array( $object_type, [
 				'option',
-				'settings'
-			), true ) || 'settings' === pods_v( 'type', $info['pod'] ) ) {
+				'settings',
+			], true )
+			|| 'settings' === pods_v( 'type', $info['pod'] )
+		) {
+			// Setting.
 			$info['table']      = $wpdb->options;
 			$info['meta_table'] = $wpdb->options;
 
@@ -9464,11 +9477,18 @@ class PodsAPI {
 			$info['meta_field_index'] = 'option_name';
 			$info['meta_field_value'] = 'option_value';
 
-			$info['orderby'] = '`t`.`' . $info['field_index'] . '` ASC';
-		} elseif ( is_multisite() && ( in_array( $object_type, array(
+			$info['orderby'] = "`t`.`{$info['field_index']}` ASC";
+		} elseif (
+			is_multisite()
+			&& (
+				in_array( $object_type, [
 					'site_option',
-					'site_settings'
-				), true ) || 'site_settings' === pods_v( 'type', $info['pod'] ) ) ) {
+					'site_settings',
+				], true )
+				|| 'site_settings' === pods_v( 'type', $info['pod'] )
+			)
+		) {
+			// Site meta.
 			$info['table']      = $wpdb->sitemeta;
 			$info['meta_table'] = $wpdb->sitemeta;
 
@@ -9479,8 +9499,9 @@ class PodsAPI {
 			$info['meta_field_index'] = 'meta_key';
 			$info['meta_field_value'] = 'meta_value';
 
-			$info['orderby'] = '`t`.`' . $info['field_index'] . '` ASC';
-		} elseif ( is_multisite() && 'network' === $object_type ) { // Network = Site
+			$info['orderby'] = "`t`.`{$info['field_index']}` ASC";
+		} elseif ( is_multisite() && 'network' === $object_type ) {
+			// Network = Site.
 			$info['table']      = $wpdb->site;
 			$info['meta_table'] = $wpdb->sitemeta;
 
@@ -9491,25 +9512,27 @@ class PodsAPI {
 			$info['meta_field_index'] = 'meta_key';
 			$info['meta_field_value'] = 'meta_value';
 
-			$info['orderby'] = '`t`.`' . $info['field_index'] . '` ASC, `t`.`path` ASC, `t`.`' . $info['field_id'] . '`';
-		} elseif ( is_multisite() && 'site' === $object_type ) { // Site = Blog
+			$info['orderby'] = "`t`.`{$info['field_index']}` ASC, `t`.`path` ASC, `t`.`{$info['field_id']}`";
+		} elseif ( is_multisite() && 'site' === $object_type ) {
+			// Site = Blog.
 			$info['table'] = $wpdb->blogs;
 
 			$info['field_id']    = 'blog_id';
 			$info['field_index'] = 'domain';
 			$info['field_type']  = 'site_id';
 
-			$info['where'] = array(
+			$info['where'] = [
 				'archived' => '`t`.`archived` = 0',
 				'spam'     => '`t`.`spam` = 0',
 				'deleted'  => '`t`.`deleted` = 0',
-				'site_id'  => '`t`.`' . $info['field_type'] . '` = ' . (int) get_current_site()->id
-			);
+				'site_id'  => "`t`.`{$info['field_type']}` = " . (int) get_current_site()->id,
+			];
 
-			$info['orderby'] = '`t`.`' . $info['field_index'] . '` ASC, `t`.`path` ASC, `t`.`' . $info['field_id'] . '`';
+			$info['orderby'] = "`t`.`{$info['field_index']}` ASC, `t`.`path` ASC, `t`.`{$info['field_id']}`";
 		} elseif ( 'table' === $object_type || 'table' === pods_v( 'type', $info['pod'] ) ) {
+			// Custom tables.
 			$info['table']     = ( empty( $object ) ? $name : $object );
-			$info['pod_table'] = $wpdb->prefix . 'pods_' . $info['table'];
+			$info['pod_table'] = "{$wpdb->prefix}pods_" . $info['table'];
 
 			if ( ! empty( $field ) ) {
 				if ( ! is_array( $field ) && ! $field instanceof Pods\Whatsit ) {
@@ -9545,15 +9568,17 @@ class PodsAPI {
 		$info['meta_field_value'] = pods_clean_name( $info['meta_field_value'], false, false );
 
 		if ( empty( $info['orderby'] ) ) {
-			$info['orderby'] = '`t`.`' . $info['field_index'] . '`, `t`.`' . $info['field_id'] . '`';
+			$info['orderby'] = "`t`.`{$info['field_index']}`, `t`.`{$info['field_id']}`";
 		}
 
-		if ( 'table' === pods_v( 'storage', $info['pod'] ) && ! in_array( $object_type, array(
+		if (
+			'table' === pods_v( 'storage', $info['pod'] )
+			&& ! in_array( $object_type, [
 				'pod',
-				'table'
-			), true ) ) {
-			$info['join']['d'] = 'LEFT JOIN `' . $info['pod_table'] . '` AS `d` ON `d`.`id` = `t`.`' . $info['field_id'] . '`';
-			//$info[ 'select' ] .= ', `d`.*';
+				'table',
+			], true )
+		) {
+			$info['join']['d'] = "LEFT JOIN `{$info['pod_table']}` AS `d` ON `d`.`id` = `t`.`{$info['field_id']}`";
 		}
 
 		if ( ! empty( $info['pod'] ) && ( is_array( $info['pod'] ) || $info['pod'] instanceof Pods\Whatsit ) ) {

@@ -2275,7 +2275,8 @@ class PodsInit {
                 WHERE
                     `p`.`ID` IS NOT NULL
                     AND `pm`.`meta_id` IS NOT NULL
-                    AND `rel`.`item_id` = {$_ID}";
+                    AND `rel`.`item_id` = {$_ID}
+			";
 
 			pods_query( $sql, false );
 		}

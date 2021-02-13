@@ -258,8 +258,8 @@ class TraversalTest extends Pods_TraversalTestCase {
 				'value' => $check_index,
 			);
 		} else {
-			$where[] = $prefix . '`' . $data['_field_id'] . '`' . ' = ' . (int) $check_value;
-			$where[] = $prefix . '`' . $data['_field_index'] . '` = "' . pods_sanitize( $check_index ) . '"';
+			$where[] = $prefix . "`{$data['_field_id']}` = " . (int) $check_value;
+			$where[] = $prefix . "`{$data['_field_index']}` = '" . pods_sanitize( $check_index ) . "'";
 
 			$where = implode( ' AND ', $where );
 		}
@@ -450,7 +450,10 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 					$related_where['relation'] = 'OR';
 				} else {
-					$related_where[] = $prefix . '`' . $related_data['_field_id'] . '` = ' . (int) $check_value . ' AND ' . $prefix . '`' . $related_data['_field_index'] . '` = "' . pods_sanitize( $check_index ) . '"';
+					$related_where[] = "
+						{$prefix}`{$related_data['_field_id']}` = " . (int) $check_value . "
+						AND {$prefix}`{$related_data['_field_index']}` = '" . pods_sanitize( $check_index ) . "'
+					";
 
 					$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 				}//end if
@@ -551,7 +554,10 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 						$related_where['relation'] = 'OR';
 					} else {
-						$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data['_field_id'] . '` = ' . (int) $check_value . ' AND ' . $prefix . $related_prefix . '`' . $related_pod_data['_field_index'] . '` = "' . pods_sanitize( $check_index ) . '"';
+						$related_where[] = "
+							{$prefix}{$related_prefix}`{$related_pod_data['_field_id']}` = " . (int) $check_value . "
+							AND {$prefix}{$related_prefix}`{$related_pod_data['_field_index']}` = '" . pods_sanitize( $check_index ) . "'
+						";
 
 						$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 					}
@@ -591,7 +597,9 @@ class TraversalTest extends Pods_TraversalTestCase {
 
 						$related_where['relation'] = 'OR';
 					} else {
-						$related_where[] = $prefix . $related_prefix . '`' . $related_pod_field['name'] . '`' . $related_suffix . ' = "' . pods_sanitize( $check_related_value ) . '"';
+						$related_where[] = "
+							{$prefix}{$related_prefix}`{$related_pod_field['name']}`{$related_suffix} = '" . pods_sanitize( $check_related_value ) . "'
+						";
 
 						$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 					}
@@ -620,7 +628,9 @@ class TraversalTest extends Pods_TraversalTestCase {
 					'value' => $check_value,
 				);
 			} else {
-				$where[] = $prefix . '`' . $field_name . '`' . $suffix . ' = "' . pods_sanitize( $check_value ) . '"';
+				$where[] = "
+					{$prefix}`{$field_name}`{$suffix} = '" . pods_sanitize( $check_value ) . "'
+				";
 			}
 		}//end if
 

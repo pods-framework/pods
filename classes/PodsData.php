@@ -1218,9 +1218,9 @@ class PodsData {
 							$filterfield = '`' . $field . '`.`' . $attributes['table_info']['field_id'] . '`';
 
 							if ( isset( $attributes['group_related'] ) && false !== $attributes['group_related'] ) {
-								$having[] = "{$filterfield} = " . $filter_v;
+								$having[] = "{$filterfield} = {$filter_v}";
 							} else {
-								$where[] = "{$filterfield} = " . $filter_v;
+								$where[] = "{$filterfield} = {$filter_v}";
 							}
 						}//end if
 					}//end foreach
@@ -2805,74 +2805,78 @@ class PodsData {
 		);
 
 		// Make the query.
-		if ( in_array(
-			$field_compare, array(
-				'=',
-				'!=',
-				'>',
-				'>=',
-				'<',
-				'<=',
-				'REGEXP',
-				'NOT REGEXP',
-				'RLIKE',
-			), true
-		) ) {
+		if ( in_array( $field_compare, [
+			'=',
+			'!=',
+			'>',
+			'>=',
+			'<',
+			'<=',
+			'REGEXP',
+			'NOT REGEXP',
+			'RLIKE',
+		], true ) ) {
 			if ( $field_sanitize ) {
-				$field_query = $wpdb->prepare( $field_cast . ' ' . $field_compare . ' ' . $field_sanitize_format, $field_value );
+				$field_query = "{$field_cast} {$field_compare} {$field_sanitize_format}";
+				$field_query = $wpdb->prepare( $field_query, $field_value );
 			} else {
-				$field_query = $field_cast . ' ' . $field_compare . ' "' . $field_value . '"';
+				$field_query = "{$field_cast} {$field_compare} '{$field_value}'";
 			}
-		} elseif ( in_array(
-			$field_compare, array(
-				'LIKE',
-				'NOT LIKE',
-			), true
-		) ) {
+		} elseif ( in_array( $field_compare, [
+			'LIKE',
+			'NOT LIKE',
+		], true ) ) {
 			if ( $field_sanitize ) {
-				$field_query = $field_cast . ' ' . $field_compare . ' "%' . pods_sanitize_like( $field_value ) . '%"';
+				$field_query = "{$field_cast} {$field_compare} '%" . pods_sanitize_like( $field_value ) . "%'";
+				$field_query = $wpdb->prepare( $field_query, $field_value );
 			} else {
-				$field_query = $field_cast . ' ' . $field_compare . ' "' . $field_value . '"';
+				$field_query = "{$field_cast} {$field_compare} '{$field_value}'";
 			}
-		} elseif ( in_array(
-			$field_compare, array(
-				'IN',
-				'NOT IN',
-				'ALL',
-			), true
-		) ) {
+		} elseif ( in_array( $field_compare, [
+			'IN',
+			'NOT IN',
+			'ALL',
+		], true ) ) {
+			$field_value = (array) $field_value;
+
 			if ( 'ALL' === $field_compare ) {
 				$field_compare = 'IN';
 
 				if ( $pod ) {
 					$params->having[] = 'COUNT( DISTINCT ' . $field_cast . ' ) = ' . count( $field_value );
 
-					if ( empty( $params->groupby ) || ( ! in_array( '`t`.`' . $pod['field_id'] . '`', $params->groupby, true ) && ! in_array( 't.' . $pod['field_id'] . '', $params->groupby, true ) ) ) {
+					if (
+						empty( $params->groupby )
+						|| (
+							! in_array( '`t`.`' . $pod['field_id'] . '`', $params->groupby, true )
+							&& ! in_array( 't.' . $pod['field_id'] . '', $params->groupby, true )
+						)
+					) {
 						$params->groupby[] = '`t`.`' . $pod['field_id'] . '`';
 					}
 				}
 			}
 
 			if ( $field_sanitize ) {
-				$field_query = $wpdb->prepare( $field_cast . ' ' . $field_compare . ' ( ' . substr( str_repeat( ', ' . $field_sanitize_format, count( $field_value ) ), 1 ) . ' )', $field_value );
+				$field_query = "{$field_cast} {$field_compare} ( '" . substr( str_repeat( ', ' . $field_sanitize_format, count( $field_value ) ), 1 ) . "' )";
+				$field_query = $wpdb->prepare( $field_query, $field_value );
 			} else {
-				$field_query = $field_cast . ' ' . $field_compare . ' ( "' . implode( '", "', $field_value ) . '" )';
+				$field_query = "{$field_cast} {$field_compare} ( '" . implode( "', '", $field_value ) . "' )";
 			}
-		} elseif ( in_array(
-			$field_compare, array(
-				'BETWEEN',
-				'NOT BETWEEN',
-			), true
-		) ) {
+		} elseif ( in_array( $field_compare, [
+			'BETWEEN',
+			'NOT BETWEEN',
+		], true ) ) {
 			if ( $field_sanitize ) {
-				$field_query = $wpdb->prepare( $field_cast . ' ' . $field_compare . ' ' . $field_sanitize_format . ' AND ' . $field_sanitize_format, $field_value );
+				$field_query = "{$field_cast} {$field_compare} {$field_sanitize_format} AND {$field_sanitize_format}";
+				$field_query = $wpdb->prepare( $field_query, $field_value );
 			} else {
-				$field_query = $field_cast . ' ' . $field_compare . ' "' . $field_value[0] . '" AND "' . $field_value[1] . '"';
+				$field_query = "{$field_cast} {$field_compare} '{$field_value[0]}' AND '{$field_value[1]}'";
 			}
 		} elseif ( 'EXISTS' === $field_compare ) {
-			$field_query = $field_cast . ' IS NOT NULL';
+			$field_query = "{$field_cast} IS NOT NULL";
 		} elseif ( 'NOT EXISTS' === $field_compare ) {
-			$field_query = $field_cast . ' IS NULL';
+			$field_query = "{$field_cast} IS NULL";
 		}//end if
 
 		$field_query = apply_filters( 'pods_data_field_query', $field_query, $q );

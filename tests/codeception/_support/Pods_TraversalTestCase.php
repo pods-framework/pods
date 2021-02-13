@@ -223,6 +223,10 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 			$pod_name = self::$related_fields[ $field_name ]['object'];
 
+			if ( 'attachment' === $pod_name ) {
+				$pod_name = 'media';
+			}
+
 			// This is not a pod, use wp_insert_term instead.
 			if ( 'test_non_pod_ct' === $pod_name ) {
 				if ( 0 < $depth ) {
@@ -256,7 +260,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 				continue;
 			}
 
-			if ( ( 'test_rel_media' === $pod_name || 'media' === $pod_name ) && empty( self::$related_fields[ $field_name ]['id'] ) ) {
+			if ( ( 'test_rel_media' === $field_name || 'media' === $pod_name ) && empty( self::$related_fields[ $field_name ]['id'] ) ) {
 				// Get and store sample image for use later
 				$attachment = [
 					'post_mime_type' => 'image/png',

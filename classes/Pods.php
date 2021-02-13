@@ -3457,8 +3457,6 @@ class Pods implements Iterator {
 	 *
 	 * @return mixed Anything returned by the helper
 	 * @since 2.0.0
-	 *
-	 * @deprecated since 2.8.0
 	 */
 	public function helper( $helper, $value = null, $name = null ) {
 

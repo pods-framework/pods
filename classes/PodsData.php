@@ -2828,7 +2828,6 @@ class PodsData {
 		], true ) ) {
 			if ( $field_sanitize ) {
 				$field_query = "{$field_cast} {$field_compare} '%" . pods_sanitize_like( $field_value ) . "%'";
-				$field_query = $wpdb->prepare( $field_query, $field_value );
 			} else {
 				$field_query = "{$field_cast} {$field_compare} '{$field_value}'";
 			}
@@ -2848,17 +2847,17 @@ class PodsData {
 					if (
 						empty( $params->groupby )
 						|| (
-							! in_array( '`t`.`' . $pod['field_id'] . '`', $params->groupby, true )
-							&& ! in_array( 't.' . $pod['field_id'] . '', $params->groupby, true )
+							! in_array( "`t`.`{$pod['field_id']}`", $params->groupby, true )
+							&& ! in_array( "t.{$pod['field_id']}", $params->groupby, true )
 						)
 					) {
-						$params->groupby[] = '`t`.`' . $pod['field_id'] . '`';
+						$params->groupby[] = "`t`.`{$pod['field_id']}`";
 					}
 				}
 			}
 
 			if ( $field_sanitize ) {
-				$field_query = "{$field_cast} {$field_compare} ( '" . substr( str_repeat( ', ' . $field_sanitize_format, count( $field_value ) ), 1 ) . "' )";
+				$field_query = "{$field_cast} {$field_compare} ( " . substr( str_repeat( ', ' . $field_sanitize_format, count( $field_value ) ), 1 ) . " )";
 				$field_query = $wpdb->prepare( $field_query, $field_value );
 			} else {
 				$field_query = "{$field_cast} {$field_compare} ( '" . implode( "', '", $field_value ) . "' )";

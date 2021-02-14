@@ -12,22 +12,22 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	/**
 	 * @var array
 	 */
-	public static $config = array();
+	public static $config = [];
 
 	/**
 	 * @var array
 	 */
-	public static $related_fields = array();
+	public static $related_fields = [];
 
 	/**
 	 * @var array
 	 */
-	public static $related_data = array();
+	public static $related_data = [];
 
 	/**
 	 * @var array
 	 */
-	public static $data = array();
+	public static $data = [];
 
 	/**
 	 * Demo image used for attachments.
@@ -45,7 +45,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	 * @var    array
 	 * @static
 	 */
-	public static $builds = array(/*
+	public static $builds = [/*
 		 * 'pod_type' => array(
 		 *      'object_name' => array(
 		 *          'meta' => array(
@@ -60,12 +60,12 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 		 *      )
 		 * )
 		 */
-	);
+	];
 
 	/**
 	 *
 	 */
-	public function setUp(): void {
+	public function setUp() : void {
 		static $counter = 0;
 
 		if ( static::$db_reset_teardown ) {
@@ -103,29 +103,29 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	 */
 	public static function _initialize_pods_config() {
 		// Setup non-Pod taxonomy
-		$args = array(
+		$args = [
 			'hierarchical' => true,
 			'show_ui'      => true,
 			'query_var'    => true,
-			'labels'       => array(
+			'labels'       => [
 				'name'          => 'Non-Pod Taxonomy',
 				'singular_name' => 'Non-Pod Taxonomy',
-			),
-		);
+			],
+		];
 
-		register_taxonomy( 'test_non_pod_ct', array( 'post', 'page', 'nav_menu_item' ), $args );
+		register_taxonomy( 'test_non_pod_ct', [ 'post', 'page', 'nav_menu_item' ], $args );
 
 		$config = file_get_contents( dirname( __DIR__ ) . '/_data/traversal-config.json' );
 		$config = json_decode( $config, true );
 
 		$pods_api = pods_api();
 
-		$related_fields = array(
-			'test_non_pod_ct' => array(
+		$related_fields = [
+			'test_non_pod_ct' => [
 				'object_type' => 'taxonomy',
 				'object'      => 'test_non_pod_ct',
-			),
-		);
+			],
+		];
 
 		foreach ( $config as $k => $pod ) {
 			if ( in_array( $pod['name'], pods_reserved_keywords(), true ) ) {
@@ -141,6 +141,11 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 			$pod = $pods_api->load_pod( $pod['name'] );
 
+			if ( 'media' === $pod['name'] ) {
+				codecept_debug( 'Media orig: ' . var_export( $config[ $k ], true ) );
+				codecept_debug( 'Media debug: ' . var_export( $pod->export(), true ) );
+			}
+
 			if ( ! empty( $pod['fields'] ) ) {
 				foreach ( $pod['fields'] as $field ) {
 					if ( isset( $related_fields[ $field['name'] ] ) ) {
@@ -149,23 +154,23 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 					/** @var Pods\Whatsit\Field $field */
 					if ( 'pick' === $field['type'] ) {
-						$related_info = array(
+						$related_info = [
 							'id'          => 0,
 							'_index'      => '',
-							'_items'      => array(),
+							'_items'      => [],
 							'object_type' => $field->get_related_object_type(),
 							'object'      => $field->get_related_object_name(),
-						);
+						];
 
 						$related_fields[ $field['name'] ] = $related_info;
-					} elseif ( in_array( $field['type'], array( 'file', 'avatar' ), true ) ) {
-						$related_info = array(
+					} elseif ( in_array( $field['type'], [ 'file', 'avatar' ], true ) ) {
+						$related_info = [
 							'id'          => 0,
 							'_index'      => '',
-							'_items'      => array(),
+							'_items'      => [],
 							'object_type' => 'media',
 							'object'      => 'media',
-						);
+						];
 
 						$related_fields[ $field['name'] ] = $related_info;
 					}
@@ -203,7 +208,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 			$data = $import_data;
 		}
 
-		$save_data = array();
+		$save_data = [];
 
 		foreach ( $data as $field_name => $item ) {
 			$is_multi = 0;
@@ -236,7 +241,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 					continue;
 				}
 
-				$term = wp_insert_term( $item['name'], 'test_non_pod_ct', array( 'description' => $item['description'] ) );
+				$term = wp_insert_term( $item['name'], 'test_non_pod_ct', [ 'description' => $item['description'] ] );
 
 				if ( is_wp_error( $term ) ) {
 					throw new \Exception( sprintf( 'The term could not be inserted: %s', $term->get_error_message() ) );
@@ -245,7 +250,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 				$item['id']           = $term['term_id'];
 				$item['term_id']      = $item['id'];
 				$item['_index']       = $item['name'];
-				$item['_items']       = array( $item );
+				$item['_items']       = [ $item ];
 				$item['_field_id']    = 'term_id';
 				$item['_field_index'] = 'name';
 
@@ -322,14 +327,14 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 					if ( ! is_array( self::$related_fields[ $field_name ]['id'] ) ) {
 						if ( ! is_array( self::$related_fields[ $field_name ]['_index'] ) ) {
-							self::$related_fields[ $field_name ]['_index'] = array(
+							self::$related_fields[ $field_name ]['_index'] = [
 								self::$related_fields[ $field_name ]['id'] => self::$related_fields[ $field_name ]['_index'],
-							);
+							];
 						}
 
-						self::$related_fields[ $field_name ]['id'] = array(
+						self::$related_fields[ $field_name ]['id'] = [
 							self::$related_fields[ $field_name ]['id'] => self::$related_fields[ $field_name ]['id'],
-						);
+						];
 					}
 
 					self::$related_fields[ $field_name ]['id'][ $id ]     = $id;
@@ -379,14 +384,14 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 					if ( ! is_array( $item['id'] ) ) {
 						if ( ! is_array( $item['_index'] ) ) {
-							$item['_index'] = array(
+							$item['_index'] = [
 								$item['id'] => $item['_index'],
-							);
+							];
 						}
 
-						$item['id'] = array(
+						$item['id'] = [
 							$item['id'] => $item['id'],
-						);
+						];
 					}
 
 					$item['id'][ $id ]     = $id;
@@ -431,7 +436,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 			$data = $import_data;
 		}
 
-		$save_data = array();
+		$save_data = [];
 
 		foreach ( $data as $pod_name => $item ) {
 			$pod = pods( $pod_name, null, false );
@@ -496,11 +501,11 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 		$storage_type = $pod['storage_type'];
 
 		if ( ! isset( self::$builds[ $pod_type ] ) ) {
-			self::$builds[ $pod_type ] = array();
+			self::$builds[ $pod_type ] = [];
 		}
 
 		if ( ! isset( self::$builds[ $pod_type ][ $object ] ) ) {
-			self::$builds[ $pod_type ][ $object ] = array();
+			self::$builds[ $pod_type ][ $object ] = [];
 		}
 
 		self::$builds[ $pod_type ][ $object ][ $storage_type ] = $pod;
@@ -515,24 +520,24 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 		// Bail but don't throw skip notices.
 		if ( ! $load_config ) {
-			return array( array( 1, 2, 3 ) );
+			return [ [ 1, 2, 3 ] ];
 		}
 
-		$data_base = array();
+		$data_base = [];
 
 		foreach ( self::$builds as $pod_type => $objects ) {
 			foreach ( $objects as $object => $storage_types ) {
 				foreach ( $storage_types as $storage_type => $pod ) {
 					$pod_name = $pod['name'];
 
-					$data_base[] = array(
-						build_query( compact( array( 'pod_type', 'storage_type', 'pod_name' ) ) ),
-						array(
+					$data_base[] = [
+						build_query( compact( [ 'pod_type', 'storage_type', 'pod_name' ] ) ),
+						[
 							'pod_type'     => $pod_type,
 							'storage_type' => $storage_type,
 							'pod'          => $pod,
-						),
-					);
+						],
+					];
 				}
 			}
 		}
@@ -545,18 +550,18 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	 * for all variations and combinations to be covered.
 	 */
 	public function data_provider() {
-		$data = array();
+		$data = [];
 
 		foreach ( self::$builds as $pod_type => $objects ) {
 			foreach ( $objects as $object => $storage_types ) {
 				foreach ( $storage_types as $storage_type => $pod ) {
 					foreach ( $pod['fields'] as $field_name => $field ) {
-						if ( ( empty( $field['pick_val'] ) && empty( $field['pick_object'] ) ) || ! in_array( $field['type'], array(
+						if ( ( empty( $field['pick_val'] ) && empty( $field['pick_object'] ) ) || ! in_array( $field['type'], [
 								'pick',
 								'taxonomy',
 								'avatar',
 								'author',
-							), true ) ) {
+							], true ) ) {
 							continue;
 						}
 
@@ -567,15 +572,15 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 						$pod_name   = $pod['name'];
 						$field_name = $field['name'];
 
-						$data[] = array(
-							build_query( compact( array( 'pod_type', 'storage_type', 'pod_name', 'field_name' ) ) ),
-							array(
+						$data[] = [
+							build_query( compact( [ 'pod_type', 'storage_type', 'pod_name', 'field_name' ] ) ),
+							[
 								'pod_type'     => $pod_type,
 								'storage_type' => $storage_type,
 								'pod'          => $pod,
 								'field'        => $field,
-							),
-						);
+							],
+						];
 					}//end foreach
 
 					// Non-Pod Taxonomy field
@@ -585,15 +590,15 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 						$pod_name   = $pod['name'];
 						$field_name = $field['name'];
 
-						$data[] = array(
-							build_query( compact( array( 'pod_type', 'storage_type', 'pod_name', 'field_name' ) ) ),
-							array(
+						$data[] = [
+							build_query( compact( [ 'pod_type', 'storage_type', 'pod_name', 'field_name' ] ) ),
+							[
 								'pod_type'     => $pod_type,
 								'storage_type' => $storage_type,
 								'pod'          => $pod,
 								'field'        => $field,
-							),
-						);
+							],
+						];
 					}
 				}//end foreach
 			}//end foreach
@@ -607,18 +612,18 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	 * for all variations and combinations to be covered.
 	 */
 	public function data_provider_deep() {
-		$data_deep = array();
+		$data_deep = [];
 
 		foreach ( self::$builds as $pod_type => $objects ) {
 			foreach ( $objects as $object => $storage_types ) {
 				foreach ( $storage_types as $storage_type => $pod ) {
 					foreach ( $pod['fields'] as $field_name => $field ) {
-						if ( ( empty( $field['pick_val'] ) && empty( $field['pick_object'] ) ) || ! in_array( $field['type'], array(
+						if ( ( empty( $field['pick_val'] ) && empty( $field['pick_object'] ) ) || ! in_array( $field['type'], [
 								'pick',
 								'taxonomy',
 								'avatar',
 								'author',
-							), true ) ) {
+							], true ) ) {
 							continue;
 						}
 
@@ -643,34 +648,34 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 							$related_pod_name       = $related_pod['name'];
 							$related_pod_field_name = $related_pod_field['name'];
 
-							$data_deep[] = array(
-								build_query( compact( array(
+							$data_deep[] = [
+								build_query( compact( [
 									'pod_type',
 									'storage_type',
 									'pod_name',
 									'field_name',
 									'related_pod_name',
 									'related_pod_field_name',
-								) ) ),
-								array(
+								] ) ),
+								[
 									'pod_type'          => $pod_type,
 									'storage_type'      => $storage_type,
 									'pod'               => $pod,
 									'field'             => $field,
 									'related_pod'       => $related_pod,
 									'related_pod_field' => $related_pod_field,
-								),
-							);
+								],
+							];
 
 							continue;
 							// To be continued..
 							// @todo Handle one more level deeper
-							if ( ! in_array( $related_pod_field['type'], array(
+							if ( ! in_array( $related_pod_field['type'], [
 								'pick',
 								'taxonomy',
 								'avatar',
 								'author',
-							), true ) ) {
+							], true ) ) {
 								continue;
 							}
 
@@ -701,8 +706,8 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 								$sub_related_pod_name       = $sub_related_pod['name'];
 								$sub_related_pod_field_name = $sub_related_pod_field['name'];
 
-								$data_deep[] = array(
-									build_query( compact( array(
+								$data_deep[] = [
+									build_query( compact( [
 										'pod_type',
 										'storage_type',
 										'pod_name',
@@ -711,8 +716,8 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 										'related_pod_field_name',
 										'sub_related_pod_name',
 										'sub_related_pod_field_name',
-									) ) ),
-									array(
+									] ) ),
+									[
 										'pod_type'              => $pod_type,
 										'storage_type'          => $storage_type,
 										'pod'                   => $pod,
@@ -721,8 +726,8 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 										'related_pod_field'     => $related_pod_field,
 										'sub_related_pod'       => $sub_related_pod,
 										'sub_related_pod_field' => $sub_related_pod_field,
-									),
-								);
+									],
+								];
 							}//end foreach
 						}//end foreach
 					}//end foreach

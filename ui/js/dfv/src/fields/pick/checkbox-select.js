@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
-import {PICK_OPTIONS} from 'dfv/src/config/prop-types';
+import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 const CheckboxSelect = ( {
 	htmlAttributes,
@@ -41,7 +41,7 @@ const CheckboxSelect = ( {
 					? `${ nameBase }[${ optionIndex }]`
 					: nameBase;
 
-				let idAttribute = !!htmlAttributes.id ? htmlAttributes.id : name;
+				let idAttribute = !! htmlAttributes.id ? htmlAttributes.id : name;
 
 				if ( 1 < totalOptions ) {
 					idAttribute += `-${ optionValue }`;
@@ -68,7 +68,12 @@ const CheckboxSelect = ( {
 										if ( isMulti ) {
 											toggleValueOption( optionValue );
 										} else {
-											setValue( value === optionValue ? undefined : optionValue );
+											// Workaround for boolean fields:
+											const unsetValue = ( 1 === options.length && optionValue === '1' )
+												? '0'
+												: undefined;
+
+											setValue( value === optionValue ? unsetValue : optionValue );
 										}
 									} }
 								/>

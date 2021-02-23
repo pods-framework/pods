@@ -30,7 +30,7 @@ const FieldLabel = ( {
 			{ required && ( <span className="pods-field-label__required">{ '\u00A0' /* &nbsp; */ }*</span> ) }
 		</label>
 
-		{ ( helpTextString && helpLink ) && (
+		{ helpTextString && (
 			<span className="pods-field-label__tooltip-wrapper">
 				{ '\u00A0' /* &nbsp; */ }
 				<HelpTooltip

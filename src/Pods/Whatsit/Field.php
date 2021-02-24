@@ -148,6 +148,22 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Get field value limit from field.
+	 *
+	 * @return int The field value limit.
+	 */
+	public function get_limit() {
+		$type   = $this->get_type();
+		$format = $this->get_arg( $type .'_format_type', 'single' );
+
+		if ( 'multi' === $format ) {
+			return (int) $this->get_arg( $type . '_limit', 0 );
+		}
+
+		return 1;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function get_fields( array $args = [] ) {

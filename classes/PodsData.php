@@ -3127,7 +3127,13 @@ class PodsData {
 
 		if ( $the_field instanceof \Pods\Whatsit\Field && $the_field->get_table_info() ) {
 			$table_info = $the_field->get_table_info();
-		} elseif ( in_array( $traverse['type'], $file_field_types, true ) ) {
+		} elseif (
+			in_array( $traverse['type'], $file_field_types, true )
+			|| (
+				'pick' === $traverse['type']
+				&& in_array( $traverse['pick_object'], [ 'media', 'attachment' ], true )
+			)
+		) {
 			$table_info = $this->api->get_table_info( 'post_type', 'attachment' );
 		} elseif ( ! in_array( $traverse['type'], $tableless_field_types, true ) ) {
 			if ( $pod_data instanceof \Pods\Whatsit\Pod ) {

@@ -9,49 +9,45 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 const FieldSet = ( {
 	fields,
-	optionValues,
+	allPodFields,
+	allPodValues,
 	setOptionValue,
 } ) => {
 	return fields.map( ( field ) => {
 		const { name } = field;
 
-		const dependencyValueEntries = Object
-			.keys( field[ 'depends-on' ] || {} )
-			.map( ( fieldName ) => ( [
-				fieldName,
-				optionValues[ fieldName ],
-			] ) );
-
-		const exclusionValueEntries = Object
-			.keys( field[ 'excludes-on' ] || {} )
-			.map( ( fieldName ) => ( [
-				fieldName,
-				optionValues[ fieldName ],
-			] ) );
-
-		const wildcardValueEntries = Object
-			.keys( field[ 'wildcard-on' ] || {} )
-			.map( ( fieldName ) => ( [
-				fieldName,
-				optionValues[ fieldName ],
-			] ) );
-
 		return (
 			<FieldWrapper
 				key={ name }
 				field={ field }
-				value={ optionValues[ name ] }
+				value={ allPodValues[ name ] }
 				setOptionValue={ setOptionValue }
-				dependencyValues={ Object.fromEntries( dependencyValueEntries ) }
-				exclusionValues={ Object.fromEntries( exclusionValueEntries ) }
-				wildcardValues={ Object.fromEntries( wildcardValueEntries ) }
+				allPodFields={ allPodFields }
+				allPodValues={ allPodValues }
 			/>
 		);
 	} );
 };
 
 FieldSet.propTypes = {
+	/**
+	 * Array of fields that should be rendered in the set.
+	 */
 	fields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
+
+	/**
+	 * All fields from the Pod, including ones that belong to other groups.
+	 */
+	allPodFields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
+
+	/**
+	 * A map object with all of the Pod's current values.
+	 */
+	allPodValues: PropTypes.object.isRequired,
+
+	/**
+	 * Function to update the field's value on change.
+	 */
 	setOptionValue: PropTypes.func.isRequired,
 };
 

@@ -19,7 +19,8 @@ const MISSING = __( '[MISSING DEFAULT]', 'pods' );
 
 const DynamicTabContent = ( {
 	tabOptions,
-	optionValues,
+	allPodFields,
+	allPodValues,
 	setOptionValue,
 } ) => {
 	const getLabelValue = ( labelFormat, paramOption, paramDefault ) => {
@@ -27,7 +28,7 @@ const DynamicTabContent = ( {
 			return labelFormat;
 		}
 
-		const param = optionValues[ paramOption ] || paramDefault || MISSING;
+		const param = allPodValues[ paramOption ] || paramDefault || MISSING;
 		return sprintf( labelFormat, param );
 	};
 
@@ -47,15 +48,32 @@ const DynamicTabContent = ( {
 	return (
 		<FieldSet
 			fields={ fields }
-			optionValues={ optionValues }
+			allPodFields={ allPodFields }
+			allPodValues={ allPodValues }
 			setOptionValue={ setOptionValue }
 		/>
 	);
 };
 
 DynamicTabContent.propTypes = {
+	/**
+	 * Array of fields that should be rendered.
+	 */
 	tabOptions: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
-	optionValues: PropTypes.object.isRequired,
+
+	/**
+	 * All fields from the Pod, including ones that belong to other groups.
+	 */
+	allPodFields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
+
+	/**
+	 * A map object with all of the Pod's current values.
+	 */
+	allPodValues: PropTypes.object.isRequired,
+
+	/**
+	 * Function to update the field's value on change.
+	 */
 	setOptionValue: PropTypes.func.isRequired,
 };
 

@@ -109,8 +109,6 @@ const checkFormValidity = ( sections, options ) => {
 };
 
 const SettingsModal = ( {
-	podType,
-	podName,
 	title,
 	optionsPod: {
 		groups: optionsSections = [],
@@ -289,10 +287,19 @@ const SettingsModal = ( {
 				>
 					{
 						<DynamicTabContent
-							podType={ podType }
-							podName={ podName }
-							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab ).fields }
-							optionValues={ changedOptions }
+							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab )?.fields }
+							allPodFields={
+								optionsSections.reduce(
+									( accumulator, group ) => {
+										return [
+											...accumulator,
+											...( group?.fields || [] ),
+										];
+									},
+									[]
+								)
+							}
+							allPodValues={ changedOptions }
 							setOptionValue={ setOptionValue }
 						/>
 					}
@@ -320,8 +327,6 @@ const SettingsModal = ( {
 };
 
 SettingsModal.propTypes = {
-	podType: PropTypes.string.isRequired,
-	podName: PropTypes.string.isRequired,
 	optionsPod: PropTypes.object.isRequired,
 	selectedOptions: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,

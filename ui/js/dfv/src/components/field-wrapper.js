@@ -36,9 +36,7 @@ export const FieldWrapper = ( props ) => {
 		field = {},
 		value,
 		setOptionValue,
-		dependencyValues,
-		exclusionValues,
-		wildcardValues,
+		allPodValues,
 	} = props;
 
 	const {
@@ -73,15 +71,15 @@ export const FieldWrapper = ( props ) => {
 		const wildcardOnLength = Object.keys( wildcardOn || {} ).length;
 
 		if (
-			( dependsOnLength && ! validateFieldDependencies( dependencyValues, dependsOn ) ) ||
-			( excludesOnLength && ! validateFieldDependencies( exclusionValues, excludesOn, 'excludes' ) ) ||
-			( wildcardOnLength && ! validateFieldDependencies( wildcardValues, wildcardOn, 'wildcard' ) )
+			( dependsOnLength && ! validateFieldDependencies( allPodValues, dependsOn ) ) ||
+			( excludesOnLength && ! validateFieldDependencies( allPodValues, excludesOn, 'excludes' ) ) ||
+			( wildcardOnLength && ! validateFieldDependencies( allPodValues, wildcardOn, 'wildcard' ) )
 		) {
 			setMeetsDependencies( false );
 		} else {
 			setMeetsDependencies( true );
 		}
-	}, [ dependencyValues, exclusionValues, wildcardValues, dependsOn, excludesOn, wildcardOn, setMeetsDependencies ] );
+	}, [ allPodValues, dependsOn, excludesOn, wildcardOn, setMeetsDependencies ] );
 
 	// Hacky thing to hide the container. This isn't needed on every screen.
 	// @todo rework how some fields render so that we don't need to do this.
@@ -198,29 +196,36 @@ export const FieldWrapper = ( props ) => {
 	);
 };
 
-FieldWrapper.defaultProps = {
-	podType: null,
-	podName: null,
-};
-
 FieldWrapper.propTypes = {
-	podType: PropTypes.string,
-	podName: PropTypes.string,
+	/**
+	 * Field config.
+	 */
 	field: FIELD_PROP_TYPE_SHAPE,
+
+	/**
+	 * Field value.
+	 */
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,
 		PropTypes.number,
 		PropTypes.array,
 	] ),
+
+	/**
+	 * Function to update the field's value on change.
+	 */
 	setOptionValue: PropTypes.func.isRequired,
-	dependencyValues: PropTypes.object.isRequired,
-	exclusionValues: PropTypes.object.isRequired,
-	wildcardValues: PropTypes.object.isRequired,
+
+	/**
+	 * All field values for the Pod to use for
+	 * validating dependencies.
+	 */
+	allPodValues: PropTypes.object.isRequired,
 };
 
 // Memoize to prevent unnecessary re-renders when the
-// dependencyValues/exclusionValues prop changes.
+// otherFieldValues prop changes.
 const MemoizedFieldWrapper = React.memo(
 	FieldWrapper,
 	( prevProps, nextProps ) => isEqual( prevProps, nextProps )

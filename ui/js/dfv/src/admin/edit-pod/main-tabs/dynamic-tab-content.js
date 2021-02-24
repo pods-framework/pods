@@ -32,9 +32,15 @@ const DynamicTabContent = ( {
 	};
 
 	const fields = tabOptions.map( ( tabOption ) => {
+		const {
+			label: optionLabel,
+			label_param: optionLabelParam,
+			label_param_default: optionLabelParamDefault,
+		} = tabOption;
+
 		return {
 			...tabOption,
-			label: getLabelValue( tabOption.label, tabOption.labelParam, tabOption.defaultValue ),
+			label: getLabelValue( optionLabel, optionLabelParam, optionLabelParamDefault ),
 		};
 	} );
 

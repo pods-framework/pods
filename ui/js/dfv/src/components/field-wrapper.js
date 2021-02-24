@@ -45,7 +45,7 @@ export const FieldWrapper = ( props ) => {
 		data,
 		default: defaultValue,
 		description,
-		helpText,
+		help: helpText,
 		label,
 		required,
 		fieldEmbed = false,
@@ -134,7 +134,7 @@ export const FieldWrapper = ( props ) => {
 		value
 	);
 
-	const layoutComponent = showLabel ? (
+	const labelComponent = showLabel ? (
 		<FieldLabel
 			label={ label }
 			required={ toBool( required ) }
@@ -188,7 +188,7 @@ export const FieldWrapper = ( props ) => {
 		<>
 			<span ref={ fieldRef } />
 			<DivFieldLayout
-				labelComponent={ layoutComponent }
+				labelComponent={ labelComponent }
 				descriptionComponent={ descriptionComponent }
 				inputComponent={ inputComponent }
 				validationMessagesComponent={ validationMessagesComponent }

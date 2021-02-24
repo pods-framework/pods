@@ -9754,7 +9754,7 @@ class PodsAPI {
 						$pick_values  = array();
 
 						foreach ( $field_values as $pick_value ) {
-							if ( in_array( $type, PodsForm::file_field_types() ) || 'media' === $pick_object ) {
+							if ( in_array( $type, PodsForm::file_field_types(), true ) || in_array( $pick_object, [ 'media', 'attachment' ], true ) ) {
 								$where = "`guid` = '" . pods_sanitize( $pick_value ) . "'";
 
 								if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode ) {

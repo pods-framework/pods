@@ -82,31 +82,36 @@ class Pod extends Base {
 		$tabs = $core_tabs;
 
 		/**
-		 * Filter the Pod option tabs for a specific pod type and name. Core tabs are added after this filter.
+		 * Filter the Pod option tabs for a specific pod type and name.
 		 *
 		 * @param array             $core_tabs Tabs to set.
 		 * @param \Pods\Whatsit\Pod $pod       Current Pods object.
 		 * @param array             $args      Additional args.
 		 */
-		$tabs = apply_filters( "pods_admin_setup_edit_tabs_{$pod_type}_{$pod_name}", $tabs, $pod, $args );
+		$tabs = (array) apply_filters( "pods_admin_setup_edit_tabs_{$pod_type}_{$pod_name}", $tabs, $pod, $args );
 
 		/**
-		 * Filter the Pod option tabs for a specific pod type. Core tabs are added after this filter.
+		 * Filter the Pod option tabs for a specific pod type.
 		 *
 		 * @param array             $tabs Tabs to set.
 		 * @param \Pods\Whatsit\Pod $pod  Current Pods object.
 		 * @param array             $args Additional args.
 		 */
-		$tabs = apply_filters( "pods_admin_setup_edit_tabs_{$pod_type}", $tabs, $pod, $args );
+		$tabs = (array) apply_filters( "pods_admin_setup_edit_tabs_{$pod_type}", $tabs, $pod, $args );
 
 		/**
-		 * Filter the Pod option tabs. Core tabs are added after this filter.
+		 * Filter the Pod option tabs.
 		 *
 		 * @param array             $tabs Tabs to set.
 		 * @param \Pods\Whatsit\Pod $pod  Current Pods object.
 		 * @param array             $args Additional args.
 		 */
-		$tabs = apply_filters( 'pods_admin_setup_edit_tabs', $tabs, $pod, $args );
+		$tabs = (array) apply_filters( 'pods_admin_setup_edit_tabs', $tabs, $pod, $args );
+
+		// Sort and then enforce the core tabs to be in front.
+		uksort( $tabs, 'strnatcmp' );
+
+		$tabs = array_merge( $core_tabs, $tabs );
 
 		return $tabs;
 	}

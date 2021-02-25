@@ -471,6 +471,7 @@ class Pods_Component_I18n extends PodsComponent {
 			'item_reverted_to_draft'     => 'label_item_reverted_to_draft',
 			'item_scheduled'             => 'label_item_scheduled',
 			'item_updated'               => 'label_item_updated',
+			'filter_by_date'             => 'label_filter_by_date', // WP 5.7
 
 			// Taxonomies
 			'update_item'                => 'label_update_item',

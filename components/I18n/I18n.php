@@ -482,6 +482,7 @@ class Pods_Component_I18n extends PodsComponent {
 			'add_or_remove_items'        => 'label_add_or_remove_items',
 			'choose_from_most_used'      => 'label_choose_from_the_most_used', // Different.
 			'no_terms'                   => 'label_no_terms',
+			'filter_by_item'             => 'label_filter_by_item', // WP 5.7
 		);
 
 		if ( ! isset( $options['labels'] ) || ! is_array( $options['labels'] ) ) {

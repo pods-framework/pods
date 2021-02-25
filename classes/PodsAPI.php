@@ -5007,10 +5007,16 @@ class PodsAPI {
 		$data = array();
 
 		foreach ( $export_fields as $field ) {
-			// Return IDs (or guid for files) if only one level deep
+			$field_type = pods_v( 'type', $field );
+
 			if ( 1 == $depth ) {
-				$data[ $field['name'] ] = $pod->field( array( 'name' => $field['lookup_name'], 'output' => 'arrays' ) );
-			} elseif ( ( - 1 == $depth || $current_depth < $depth ) && 'pick' === $field['type'] && ! in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) {
+				// Return IDs (or guid for files) if only one level deep.
+				$output = 'arrays';
+				if ( 'pick' === $field_type ) {
+					$output = 'ids';
+				}
+				$data[ $field['name'] ] = $pod->field( array( 'name' => $field['lookup_name'], 'output' => $output ) );
+			} elseif ( ( - 1 == $depth || $current_depth < $depth ) && 'pick' === $field_type && ! in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects ) ) {
 				// Recurse depth levels for pick fields if $depth allows
 				$related_data = array();
 

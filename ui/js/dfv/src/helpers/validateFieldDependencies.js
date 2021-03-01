@@ -26,7 +26,7 @@ const validateFieldDependencies = ( options, dependsOn, mode = 'depends-on' ) =>
 	}
 
 	const testingFunctionToCall = 'depends-on-any' === 'mode'
-		? dependsOnKeys.any
+		? dependsOnKeys.some
 		: dependsOnKeys.every;
 
 	return testingFunctionToCall( ( key ) => {

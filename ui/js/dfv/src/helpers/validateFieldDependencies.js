@@ -25,11 +25,13 @@ const validateFieldDependencies = ( options, dependsOn, mode = 'depends-on' ) =>
 		} );
 	}
 
-	const testingFunctionToCall = 'depends-on-any' === 'mode'
-		? dependsOnKeys.some
-		: dependsOnKeys.every;
+	if ( 'depends-on-any' === mode ) {
+		return dependsOnKeys.some( ( key ) => {
+			return validateFieldDependenciesForKey( options, dependsOn, mode, key );
+		} );
+	}
 
-	return testingFunctionToCall( ( key ) => {
+	return dependsOnKeys.every( ( key ) => {
 		return validateFieldDependenciesForKey( options, dependsOn, mode, key );
 	} );
 };

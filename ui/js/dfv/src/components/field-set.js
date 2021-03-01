@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -13,6 +13,14 @@ const FieldSet = ( {
 	allPodValues,
 	setOptionValue,
 } ) => {
+	// Only calculate this once - this assumes that the array of all fields
+	// for the Pod does not change, to save render time.
+	const allPodFieldsMap = useMemo( () => {
+		return new Map(
+			allPodFields.map( ( fieldData ) => [ fieldData.name, fieldData ] )
+		);
+	}, [] );
+
 	return fields.map( ( field ) => {
 		const { name } = field;
 
@@ -22,7 +30,7 @@ const FieldSet = ( {
 				field={ field }
 				value={ allPodValues[ name ] }
 				setOptionValue={ setOptionValue }
-				allPodFields={ allPodFields }
+				allPodFieldsMap={ allPodFieldsMap }
 				allPodValues={ allPodValues }
 			/>
 		);

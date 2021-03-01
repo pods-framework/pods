@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect, useRef } from 'react';
-import { isEqual } from 'lodash';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -31,9 +30,50 @@ import useBidirectionalFieldData from 'dfv/src/hooks/useBidirectionalFieldData';
 import FIELD_MAP from 'dfv/src/fields/field-map';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
+// The dependencies could be stacked, so if Field B is not shown because
+// Field A is not set correctly, then Field C which depends on a specific
+// Field B value should fail, even if Field B had the correct matching value.
+// To find these, look up each key in the dependsOn (and similar) maps, find
+// the relevant field, and add its dependsOn (or similar) values to the full map.
+const unstackDependencies = ( dependencyMap = {}, allFieldsMap = new Map(), dependencyKey = 'depends-on' ) => {
+	if ( ! dependencyMap || 0 === Object.keys( dependencyMap ).length ) {
+		return {};
+	}
+
+	return Object.entries( dependencyMap ).reduce(
+		( accumulator, dependencyEntry ) => {
+			const fieldName = dependencyEntry[ 0 ];
+
+			// Look up the field config by that key, and add its dependencies
+			// recursively, unless they've already been added.
+			const dependencyField = allFieldsMap.get( fieldName );
+
+			if ( ! dependencyField?.[ dependencyKey ] ) {
+				return accumulator;
+			}
+
+			// Call recursively to continue looking for dependencies.
+			const nextLevelDependencies = unstackDependencies(
+				dependencyField[ dependencyKey ],
+				allFieldsMap,
+				dependencyKey
+			);
+
+			return {
+				...accumulator,
+				...nextLevelDependencies,
+			};
+		},
+		{
+			...dependencyMap,
+		}
+	);
+};
+
 export const FieldWrapper = ( props ) => {
 	const {
 		field = {},
+		allPodFieldsMap,
 		value,
 		setOptionValue,
 		allPodValues,
@@ -56,8 +96,6 @@ export const FieldWrapper = ( props ) => {
 		'wildcard-on': wildcardOn,
 	} = field;
 
-	const [ meetsDependencies, setMeetsDependencies ] = useState( false );
-
 	const fieldRef = useRef( null );
 
 	const dataOptions = useBidirectionalFieldData( data );
@@ -65,21 +103,29 @@ export const FieldWrapper = ( props ) => {
 	// Find the component for the field type
 	const FieldComponent = FIELD_MAP[ fieldType ]?.fieldComponent;
 
-	useEffect( () => {
-		const dependsOnLength = Object.keys( dependsOn || {} ).length;
-		const excludesOnLength = Object.keys( excludesOn || {} ).length;
-		const wildcardOnLength = Object.keys( wildcardOn || {} ).length;
+	// Calculate dependencies, trying to skip as many of these checks as
+	// we can because they're expensive.
+	let meetsDependencies = true;
 
-		if (
-			( dependsOnLength && ! validateFieldDependencies( allPodValues, dependsOn ) ) ||
-			( excludesOnLength && ! validateFieldDependencies( allPodValues, excludesOn, 'excludes' ) ) ||
-			( wildcardOnLength && ! validateFieldDependencies( allPodValues, wildcardOn, 'wildcard' ) )
-		) {
-			setMeetsDependencies( false );
-		} else {
-			setMeetsDependencies( true );
+	if ( dependsOn && Object.keys( dependsOn ).length ) {
+		const unstackedDependsOn = unstackDependencies( dependsOn, allPodFieldsMap, 'depends-on' );
+
+		if ( ! validateFieldDependencies( allPodValues, unstackedDependsOn ) ) {
+			meetsDependencies = false;
 		}
-	}, [ allPodValues, dependsOn, excludesOn, wildcardOn, setMeetsDependencies ] );
+	} else if ( excludesOn && Object.keys( excludesOn ).length ) {
+		const unstackedExcludesOn = unstackDependencies( excludesOn, allPodFieldsMap, 'excludes-on' );
+
+		if ( ! validateFieldDependencies( allPodValues, unstackedExcludesOn, 'excludes' ) ) {
+			meetsDependencies = false;
+		}
+	} else if ( wildcardOn ) {
+		const unstackedWildcardOn = unstackDependencies( wildcardOn, allPodFieldsMap, 'wildcard-on' );
+
+		if ( ! validateFieldDependencies( allPodValues, unstackedWildcardOn, 'wildcard' ) ) {
+			meetsDependencies = false;
+		}
+	}
 
 	// Hacky thing to hide the container. This isn't needed on every screen.
 	// @todo rework how some fields render so that we don't need to do this.
@@ -203,6 +249,12 @@ FieldWrapper.propTypes = {
 	field: FIELD_PROP_TYPE_SHAPE,
 
 	/**
+	 * All fields from the Pod, including ones that belong to other groups. This
+	 * should be a Map object, keyed by the field name, to make lookup easier.
+	 */
+	allPodFieldsMap: PropTypes.object,
+
+	/**
 	 * Field value.
 	 */
 	value: PropTypes.oneOfType( [
@@ -224,11 +276,60 @@ FieldWrapper.propTypes = {
 	allPodValues: PropTypes.object.isRequired,
 };
 
-// Memoize to prevent unnecessary re-renders when the
-// otherFieldValues prop changes.
+// Memoize to prevent unnecessary re-renders
 const MemoizedFieldWrapper = React.memo(
 	FieldWrapper,
-	( prevProps, nextProps ) => isEqual( prevProps, nextProps )
+	( prevProps, nextProps ) => {
+		// If the value has changed, rerender.
+		if ( prevProps.value !== nextProps.value ) {
+			return false;
+		}
+
+		// If there are no dependencies, skip the expensive dependency checks.
+		const dependsOn = nextProps.field[ 'depends-on' ];
+		const excludesOn = nextProps.field[ 'excludes-on' ];
+		const wildcardOn = nextProps.field[ 'wildcard-on' ];
+
+		if (
+			( ! dependsOn || 0 === Object.keys( dependsOn ).length ) &&
+			( ! excludesOn || 0 === Object.keys( excludesOn ).length ) &&
+			( ! wildcardOn || 0 === Object.keys( wildcardOn ).length )
+		) {
+			return true;
+		}
+
+		// If any of the field values that we have dependencies on have changed, re-render.
+		// If not, try to avoid it.
+		const unstackedDependsOn = unstackDependencies(
+			dependsOn,
+			nextProps.allPodFieldsMap,
+			'depends-on'
+		);
+
+		const unstackedExcludesOn = unstackDependencies(
+			excludesOn,
+			nextProps.allPodFieldsMap,
+			'excludes-on'
+		);
+
+		const unstackedWildcardOn = unstackDependencies(
+			wildcardOn,
+			nextProps.allPodFieldsMap,
+			'wildcard-on'
+		);
+
+		const allFieldSlugsWithDependencies = [
+			...Object.keys( unstackedDependsOn ),
+			...Object.keys( unstackedExcludesOn ),
+			...Object.keys( unstackedWildcardOn ),
+		];
+
+		const haveAnyDependenciesChanged = allFieldSlugsWithDependencies.some( ( slug ) => {
+			return prevProps.allPodValues[ slug ] !== nextProps.allPodValues[ slug ];
+		} );
+
+		return ! haveAnyDependenciesChanged;
+	}
 );
 
 export default MemoizedFieldWrapper;

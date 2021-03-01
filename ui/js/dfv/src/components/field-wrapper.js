@@ -23,6 +23,7 @@ import ValidationMessages from 'dfv/src/components/validation-messages';
  */
 import { requiredValidator } from 'dfv/src/helpers/validators';
 import { toBool } from 'dfv/src/helpers/booleans';
+import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
 import useValidation from 'dfv/src/hooks/useValidation';
 import useBidirectionalFieldData from 'dfv/src/hooks/useBidirectionalFieldData';
@@ -158,6 +159,13 @@ export const FieldWrapper = ( props ) => {
 		}
 	}, [ name, fieldRef, meetsDependencies ] );
 
+	// Custom placeholder on the "Add Pod" screen.
+	const processedHtmlAttr = htmlAttr;
+
+	if ( 'create_name' === name ) {
+		processedHtmlAttr.placeholder = sanitizeSlug( allPodValues.create_label_singular );
+	}
+
 	// Sort out different shapes that we could get the help text in.
 	// It's possible to get an array of strings for the help text, but it
 	// will usually be a string.
@@ -210,7 +218,7 @@ export const FieldWrapper = ( props ) => {
 				setValue={ ( newValue ) => setOptionValue( name, newValue ) }
 				isValid={ !! validationMessages.length }
 				addValidationRules={ addValidationRules }
-				htmlAttr={ htmlAttr }
+				htmlAttr={ processedHtmlAttr }
 				fieldConfig={ {
 					...field,
 					data: dataOptions || field.data,

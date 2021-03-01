@@ -51,6 +51,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	] ),
 	default_icon: PropTypes.string,
 	'depends-on': OBJECT_OR_ARRAY,
+	'depends-on-any': OBJECT_OR_ARRAY,
 	dependency: PropTypes.bool,
 	description: PropTypes.string,
 	developer_mode: PropTypes.bool,

@@ -35,7 +35,11 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 // Field B value should fail, even if Field B had the correct matching value.
 // To find these, look up each key in the dependsOn (and similar) maps, find
 // the relevant field, and add its dependsOn (or similar) values to the full map.
-const unstackDependencies = ( dependencyMap = {}, allFieldsMap = new Map(), dependencyKey = 'depends-on' ) => {
+const unstackDependencies = (
+	dependencyMap = {},
+	allFieldsMap = new Map(),
+	dependencyKey = 'depends-on'
+) => {
 	if ( ! dependencyMap || 0 === Object.keys( dependencyMap ).length ) {
 		return {};
 	}
@@ -92,6 +96,7 @@ export const FieldWrapper = ( props ) => {
 		html_no_label: htmlNoLabel = false,
 		htmlAttr,
 		'depends-on': dependsOn,
+		'depends-on-any': dependsOnAny,
 		'excludes-on': excludesOn,
 		'wildcard-on': wildcardOn,
 	} = field;
@@ -110,7 +115,13 @@ export const FieldWrapper = ( props ) => {
 	if ( dependsOn && Object.keys( dependsOn ).length ) {
 		const unstackedDependsOn = unstackDependencies( dependsOn, allPodFieldsMap, 'depends-on' );
 
-		if ( ! validateFieldDependencies( allPodValues, unstackedDependsOn ) ) {
+		if ( ! validateFieldDependencies( allPodValues, unstackedDependsOn, 'depends-on' ) ) {
+			meetsDependencies = false;
+		}
+	} else if ( dependsOnAny && Object.keys( dependsOnAny ).length ) {
+		const unstackedDependsOnAny = unstackDependencies( dependsOn, allPodFieldsMap, 'depends-on-any' );
+
+		if ( ! validateFieldDependencies( allPodValues, unstackedDependsOnAny, 'depends-on-any' ) ) {
 			meetsDependencies = false;
 		}
 	} else if ( excludesOn && Object.keys( excludesOn ).length ) {
@@ -287,11 +298,13 @@ const MemoizedFieldWrapper = React.memo(
 
 		// If there are no dependencies, skip the expensive dependency checks.
 		const dependsOn = nextProps.field[ 'depends-on' ];
+		const dependsOnAny = nextProps.field[ 'depends-on-any' ];
 		const excludesOn = nextProps.field[ 'excludes-on' ];
 		const wildcardOn = nextProps.field[ 'wildcard-on' ];
 
 		if (
 			( ! dependsOn || 0 === Object.keys( dependsOn ).length ) &&
+			( ! dependsOnAny || 0 === Object.keys( dependsOnAny ).length ) &&
 			( ! excludesOn || 0 === Object.keys( excludesOn ).length ) &&
 			( ! wildcardOn || 0 === Object.keys( wildcardOn ).length )
 		) {
@@ -304,6 +317,12 @@ const MemoizedFieldWrapper = React.memo(
 			dependsOn,
 			nextProps.allPodFieldsMap,
 			'depends-on'
+		);
+
+		const unstackedDependsOnAny = unstackDependencies(
+			dependsOnAny,
+			nextProps.allPodFieldsMap,
+			'depends-on-any'
 		);
 
 		const unstackedExcludesOn = unstackDependencies(
@@ -320,6 +339,7 @@ const MemoizedFieldWrapper = React.memo(
 
 		const allFieldSlugsWithDependencies = [
 			...Object.keys( unstackedDependsOn ),
+			...Object.keys( unstackedDependsOnAny ),
 			...Object.keys( unstackedExcludesOn ),
 			...Object.keys( unstackedWildcardOn ),
 		];

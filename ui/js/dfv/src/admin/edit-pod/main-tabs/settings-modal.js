@@ -28,12 +28,13 @@ const checkFormValidity = ( sections, options ) => {
 			const {
 				fields,
 				'depends-on': dependsOn,
+				'depends-on-any': dependsOnAny,
 				'excludes-on': excludesOn,
 				'wildcard-on': wildcardOn,
 			} = section;
 
 			// Skip the section if it doesn't have any fields.
-			if ( ! fields ) {
+			if ( ! fields || 0 === fields.length ) {
 				return true;
 			}
 
@@ -42,12 +43,14 @@ const checkFormValidity = ( sections, options ) => {
 				return true;
 			}
 
-			// Skip the section if it isn't being shown because it's exclusions aren't met.
+			if ( Object.keys( dependsOnAny || {} ).length && ! validateFieldDependencies( options, dependsOnAny, 'depends-on-any' ) ) {
+				return true;
+			}
+
 			if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( options, excludesOn, 'excludes' ) ) {
 				return true;
 			}
 
-			// Skip the section if it isn't being shown because it's wildcard dependencies aren't met.
 			if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( options, wildcardOn, 'wildcard' ) ) {
 				return true;
 			}
@@ -58,6 +61,7 @@ const checkFormValidity = ( sections, options ) => {
 					const {
 						required: fieldRequired,
 						'depends-on': fieldDependsOn,
+						'depends-on-any': fieldDependsOnAny,
 						'excludes-on': fieldExcludesOn,
 						'wildcard-on': fieldWildcardOn,
 						type: fieldType,
@@ -74,12 +78,14 @@ const checkFormValidity = ( sections, options ) => {
 						return true;
 					}
 
-					// Skip the fields if it isn't being shown because it's exclusions aren't met.
+					if ( Object.keys( fieldDependsOnAny || {} ).length && ! validateFieldDependencies( options, fieldDependsOn, 'depends-on-any' ) ) {
+						return true;
+					}
+
 					if ( Object.keys( fieldExcludesOn || {} ).length && ! validateFieldDependencies( options, fieldExcludesOn, 'excludes' ) ) {
 						return true;
 					}
 
-					// Skip the fields if it isn't being shown because it's wildcard dependencies aren't met.
 					if ( Object.keys( fieldWildcardOn || {} ).length && ! validateFieldDependencies( options, fieldWildcardOn, 'wildcard' ) ) {
 						return true;
 					}

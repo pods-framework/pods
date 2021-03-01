@@ -6,11 +6,12 @@ import { toNumericBool } from './booleans';
  *
  * @param {Object} options   Key/value object with the selected options to compare to.
  * @param {Object} dependsOn Key/value field slug and option to check for.
- * @param {string} mode      The dependency mode, either 'wildcard', 'depends', or 'excludes'.
+ * @param {string} mode      The dependency mode, either 'wildcard', 'depends-on',
+ *                           'depends-on-any', or 'excludes'.
  *
  * @return {boolean} True if dependencies are met to show the item.
  */
-const validateFieldDependencies = ( options, dependsOn, mode = 'depends' ) => {
+const validateFieldDependencies = ( options, dependsOn, mode = 'depends-on' ) => {
 	const dependsOnKeys = Object.keys( dependsOn || {} );
 
 	if ( ! dependsOnKeys.length ) {
@@ -24,7 +25,11 @@ const validateFieldDependencies = ( options, dependsOn, mode = 'depends' ) => {
 		} );
 	}
 
-	return dependsOnKeys.every( ( key ) => {
+	const testingFunctionToCall = 'depends-on-any' === 'mode'
+		? dependsOnKeys.any
+		: dependsOnKeys.every;
+
+	return testingFunctionToCall( ( key ) => {
 		return validateFieldDependenciesForKey( options, dependsOn, mode, key );
 	} );
 };
@@ -35,7 +40,8 @@ const validateFieldDependencies = ( options, dependsOn, mode = 'depends' ) => {
  *
  * @param {Object} options   Key/value object with the selected options to compare to.
  * @param {Object} dependsOn Key/value field slug and option to check for.
- * @param {string} mode      The dependency mode, either 'wildcard', 'depends', or 'excludes'.
+ * @param {string} mode      The dependency mode, either 'wildcard', 'depends-on',
+ *                           'depends-on-any', or 'excludes'.
  * @param {string} key       The dependency key being checked.
  *
  * @return {boolean} True if dependencies are met to show the item.

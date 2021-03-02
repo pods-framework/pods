@@ -546,23 +546,23 @@ class Pods implements Iterator {
 	 * @link  https://pods.io/docs/field/
 	 */
 	public function field( $name, $single = null, $raw = false ) {
-
-		$defaults = array(
-			'name'        => $name,
-			'orderby'     => null,
-			'single'      => $single,
-			'params'      => null,
-			'in_form'     => false,
-			'raw'         => $raw,
-			'raw_display' => false,
-			'display'     => false,
-			'get_meta'    => false,
-			'output'      => null,
-			'deprecated'  => false,
-			'keyed'       => false,
+		$defaults = [
+			'name'                         => $name,
+			'orderby'                      => null,
+			'single'                       => $single,
+			'params'                       => null,
+			'in_form'                      => false,
+			'raw'                          => $raw,
+			'raw_display'                  => false,
+			'display'                      => false,
+			'display_process_individually' => false,
+			'get_meta'                     => false,
+			'output'                       => null,
+			'deprecated'                   => false,
+			'keyed'                        => false,
 			// extra data to send to field handlers.
-			'args'        => array(),
-		);
+			'args'                         => [],
+		];
 
 		if ( is_object( $name ) ) {
 			$name = get_object_vars( $name );
@@ -1701,7 +1701,15 @@ class Pods implements Iterator {
 
 					$value = call_user_func_array( 'apply_filters', $args );
 				} elseif ( 1 === (int) pods_v( 'display_process', $field_data['options'], 1 ) ) {
-					$value = PodsForm::display( $field_data['type'], $value, $params->name, $field_data, $this->pod_data, $this->id() );
+					if ( ! is_array( $value ) || ! $params->display_process_individually ) {
+						// Do the normal display handling.
+						$value = PodsForm::display( $field_data['type'], $value, $params->name, $field_data, $this->pod_data, $this->id() );
+					} else {
+						// Attempt to process each value independently.
+						foreach ( $value as $k => $val ) {
+							$value[ $k ] = PodsForm::display( $field_data['type'], $val, $params->name, $field_data, $this->pod_data, $this->id() );
+						}
+					}
 				}
 
 				if ( $post_temp ) {

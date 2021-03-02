@@ -1286,7 +1286,7 @@ class Pod extends Base {
 
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
 		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
-			$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink.json' ), true );
+			$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink-config.json' ), true );
 		}
 
 		$pod_type = $pod['type'];

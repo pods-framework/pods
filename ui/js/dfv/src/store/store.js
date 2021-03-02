@@ -55,11 +55,6 @@ const initStore = ( initialState, storeKey ) => {
 };
 
 export const initEditPodStore = ( config ) => {
-	// Don't create multiple stores.
-	if ( select( STORE_KEY_EDIT_POD ) ) {
-		return;
-	}
-
 	const initialState = {
 		...paths.UI.createTree( INITIAL_UI_STATE ),
 		data: {
@@ -73,11 +68,6 @@ export const initEditPodStore = ( config ) => {
 };
 
 export const initPodStore = ( config = {}, initialValues = {} ) => {
-	// Don't create multiple stores.
-	if ( select( STORE_KEY_DFV ) ) {
-		return;
-	}
-
 	const initialState = {
 		data: {
 			fieldTypes: { ...config.fieldTypes || {} },

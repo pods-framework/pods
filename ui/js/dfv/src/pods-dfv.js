@@ -27,8 +27,8 @@ import FIELD_MAP from 'dfv/src/fields/field-map';
 const SCRIPT_TARGET = 'script.pods-dfv-field-data';
 
 window.PodsDFV = {
-	fields: FIELD_MAP,
 	models,
+	dfvRootContainer: null,
 
 	/**
 	 * Initialize Pod data.
@@ -122,6 +122,8 @@ window.PodsDFV = {
 
 		// The Edit Pod screen gets a different store set up than
 		// other contexts.
+		console.log( 'initialValues for init call', initialValues );
+
 		if ( window.podsAdminConfig ) {
 			initEditPodStore( window.podsAdminConfig );
 		} else if ( window.podsDFVConfig ) {
@@ -134,15 +136,21 @@ window.PodsDFV = {
 		// Creates a container for the React app to "render",
 		// although it doesn't actually render anything in the container,
 		// but places the fields in the correct places with Portals.
-		const dfvRootContainer = document.createElement( 'div' );
-		dfvRootContainer.id = 'pods-dfv-container';
-		document.body.appendChild( dfvRootContainer );
+		if ( ! this.dfvRootContainer ) {
+			this.dfvRootContainer = document.createElement( 'div' );
+			this.dfvRootContainer.id = 'pods-dfv-container';
+			document.body.appendChild( this.dfvRootContainer );
+		}
 
 		// Set up the DFV app.
 		ReactDOM.render(
 			<PodsDFVApp fieldsData={ validFieldsData } />,
-			dfvRootContainer
+			this.dfvRootContainer
 		);
+	},
+
+	isMediaModal() {
+		return window.location.pathname === '/wp-admin/upload.php';
 	},
 
 	isModalWindow() {
@@ -158,6 +166,11 @@ window.PodsDFV = {
  * Kick everything off on DOMContentLoaded
  */
 document.addEventListener( 'DOMContentLoaded', () => {
+	// For the Media context, init gets called later.
+	if ( window.PodsDFV.isMediaModal() ) {
+		return;
+	}
+
 	window.PodsDFV.init();
 
 	// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active

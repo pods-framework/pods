@@ -3494,8 +3494,6 @@ class PodsData {
 		);
 
 		if ( isset( $mapped[ $name ] ) ) {
-			pods_deprecated( "PodsData->{$name}", '2.8', "PodsData->{$mapped[$name]}" );
-
 			return $this->{$mapped[$name]};
 		}
 

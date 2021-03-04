@@ -2715,7 +2715,7 @@ class PodsUI {
 			$this->pods_data->select( $find_params );
 
 			if ( ! $params->full ) {
-				$this->data = $this->pods_data->data;
+				$this->data = $this->pods_data->rows;
 
 				if ( ! empty( $this->data ) ) {
 					$this->data_keys = array_keys( $this->data );
@@ -2724,7 +2724,7 @@ class PodsUI {
 				$this->total       = $this->pods_data->total();
 				$this->total_found = $this->pods_data->total_found();
 			} else {
-				$this->data_full = $this->pods_data->data;
+				$this->data_full = $this->pods_data->rows;
 
 				if ( ! empty( $this->data_full ) ) {
 					$this->data_keys = array_keys( $this->data_full );

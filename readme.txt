@@ -190,6 +190,10 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.27 - March 4th, 2021 =
+
+* Fixed: Resolved PHP notice when using `?pods_debug_sql=1` on Pods Admin UI screens. (@sc0ttkclark)
+
 = 2.7.26 - January 8th, 2021 =
 
 * Fixed: Prevent PHP warnings in the `components/Templates/includes/element-pod_reference.php` file. #5914 (@JoryHogeveen)

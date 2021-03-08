@@ -30,23 +30,25 @@ const ListSelect = ( {
 
 	return (
 		<>
-			<div className="pods-ui-list-autocomplete">
-				<Select
-					name={ htmlAttributes.name || name }
-					options={ options }
-					value={ value }
-					placeholder={ placeholder }
-					isMulti={ isMulti }
-					controlShouldRenderValue={ false }
-					onChange={ ( newOption ) => {
-						if ( isMulti ) {
-							setValue( newOption.map( ( selection ) => selection.value ) );
-						} else {
-							setValue( newOption.value );
-						}
-					} }
-				/>
-			</div>
+			{ ! readOnly && (
+				<div className="pods-ui-list-autocomplete">
+					<Select
+						name={ htmlAttributes.name || name }
+						options={ options }
+						value={ value }
+						placeholder={ placeholder }
+						isMulti={ isMulti }
+						controlShouldRenderValue={ false }
+						onChange={ ( newOption ) => {
+							if ( isMulti ) {
+								setValue( newOption.map( ( selection ) => selection.value ) );
+							} else {
+								setValue( newOption.value );
+							}
+						} }
+					/>
+				</div>
+			) }
 
 			<div className="pods-pick-values">
 				{ !! arrayOfValues.length && (
@@ -68,7 +70,7 @@ const ListSelect = ( {
 									/>
 
 									<ul className="pods-dfv-list-meta relationship-item">
-										{ ( 1 !== limit ) && (
+										{ ! readOnly && ( 1 !== limit ) && (
 											<li className="pods-dfv-list-col pods-dfv-list-handle">
 												<span>{ __( 'Reorder', 'pods' ) }</span>
 											</li>
@@ -83,25 +85,27 @@ const ListSelect = ( {
 											{ valueItem.label }
 										</li>
 
-										<li className="pods-dfv-list-col pods-dfv-list-remove">
-											<a
-												href="#remove"
-												title={ __( 'Deselect', 'pods' ) }
-												onClick={ () => {
-													if ( isMulti ) {
-														setValue(
-															value
-																.filter( ( item ) => item.value !== valueItem.value )
-																.map( ( item ) => item.value )
-														);
-													} else {
-														setValue( undefined );
-													}
-												} }
-											>
-												{ __( 'Deselect', 'pods' ) }
-											</a>
-										</li>
+										{ ! readOnly && (
+											<li className="pods-dfv-list-col pods-dfv-list-remove">
+												<a
+													href="#remove"
+													title={ __( 'Deselect', 'pods' ) }
+													onClick={ () => {
+														if ( isMulti ) {
+															setValue(
+																value
+																	.filter( ( item ) => item.value !== valueItem.value )
+																	.map( ( item ) => item.value )
+															);
+														} else {
+															setValue( undefined );
+														}
+													} }
+												>
+													{ __( 'Deselect', 'pods' ) }
+												</a>
+											</li>
+										) }
 
 										{ showViewLink && (
 											<li className="pods-dfv-list-col pods-dfv-list-link">
@@ -116,7 +120,7 @@ const ListSelect = ( {
 											</li>
 										) }
 
-										{ showEditLink && (
+										{ ! readOnly && showEditLink && (
 											<li className="pods-dfv-list-col pods-dfv-list-edit">
 												{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 												<a

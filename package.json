@@ -104,7 +104,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^1.4.0",
+    "@reduxjs/toolkit": "^1.5.0",
     "classnames": "^2.2.6",
     "codemirror": "^5.58.2",
     "html-react-parser": "^0.13.0",

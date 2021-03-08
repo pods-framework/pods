@@ -1,5 +1,5 @@
 {
-  "name": "moderntribe/tribe-common",
+  "name": "the-events-calendar/tribe-common",
   "description": "Common classes and functions used in our plugins",
   "type": "wordpress-plugin",
   "keywords": [
@@ -14,8 +14,8 @@
     "dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",
     "lucatume/function-mocker-le": "^1.0",
     "lucatume/wp-browser": "^2.2.4",
-    "moderntribe/tribalscents": "dev-master",
-    "moderntribe/tribe-testing-facilities": "dev-master",
+    "the-events-calendar/tribalscents": "dev-master",
+    "the-events-calendar/tec-testing-facilities": "dev-master",
     "phpunit/phpunit": "~6.0",
     "wp-cli/checksum-command": "1.0.5",
     "wp-coding-standards/wpcs": "^2.1"
@@ -36,15 +36,15 @@
   },
   "repositories": [
     {
-      "name": "moderntribe/tribe-testing-facilities",
+      "name": "the-events-calendar/tec-testing-facilities",
       "type": "github",
-      "url": "https://github.com/moderntribe/tribe-testing-facilities",
+      "url": "https://github.com/the-events-calendar/tec-testing-facilities",
       "no-api": true
     },
     {
-      "name": "moderntribe/TribalScents",
+      "name": "the-events-calendar/TribalScents",
       "type": "github",
-      "url": "https://github.com/moderntribe/TribalScents",
+      "url": "https://github.com/the-events-calendar/TribalScents",
       "no-api": true
     },
     {

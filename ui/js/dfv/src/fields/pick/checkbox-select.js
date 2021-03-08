@@ -11,6 +11,7 @@ const CheckboxSelect = ( {
 	options = [],
 	setValue,
 	isMulti,
+	readOnly = false,
 } ) => {
 	const toggleValueOption = ( option ) => {
 		if ( value.includes( option ) ) {
@@ -65,6 +66,10 @@ const CheckboxSelect = ( {
 									type="checkbox"
 									value={ optionValue }
 									onChange={ () => {
+										if ( readOnly ) {
+											return;
+										}
+
 										if ( isMulti ) {
 											toggleValueOption( optionValue );
 										} else {
@@ -76,6 +81,7 @@ const CheckboxSelect = ( {
 											setValue( value === optionValue ? unsetValue : optionValue );
 										}
 									} }
+									readOnly={ !! readOnly }
 								/>
 								{ optionLabel }
 							</label>
@@ -102,6 +108,7 @@ CheckboxSelect.propTypes = {
 	setValue: PropTypes.func.isRequired,
 	options: PICK_OPTIONS.isRequired,
 	isMulti: PropTypes.bool.isRequired,
+	readOnly: PropTypes.bool,
 };
 
 export default CheckboxSelect;

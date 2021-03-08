@@ -14,6 +14,7 @@ const SimpleSelect = ( {
 	setValue,
 	placeholder = __( '-- Select One --', 'pods' ),
 	isMulti = false,
+	readOnly = false,
 } ) => {
 	const classes = classnames(
 		'pods-form-ui-field pods-form-ui-field-type-pick pods-form-ui-field-select',
@@ -28,6 +29,10 @@ const SimpleSelect = ( {
 			className={ classes }
 			value={ value }
 			onChange={ ( event ) => {
+				if ( readOnly ) {
+					return;
+				}
+
 				if ( ! isMulti ) {
 					setValue( event.target.value );
 					return;
@@ -40,6 +45,7 @@ const SimpleSelect = ( {
 				);
 			} }
 			multiple={ isMulti }
+			readOnly={ !! readOnly }
 		>
 			<>
 				{ ! isMulti && placeholder && (
@@ -104,6 +110,7 @@ SimpleSelect.propTypes = {
 	options: PICK_OPTIONS.isRequired,
 	placeholder: PropTypes.string,
 	isMulti: PropTypes.bool,
+	readOnly: PropTypes.bool,
 };
 
 export default SimpleSelect;

@@ -18,6 +18,7 @@ const ListSelect = ( {
 	// showIcon,
 	showViewLink,
 	showEditLink,
+	readOnly = false,
 } ) => {
 	// Always have an array of values for the list, even if
 	// we were just passed a single object.
@@ -165,6 +166,7 @@ ListSelect.propTypes = {
 	showIcon: PropTypes.bool.isRequired,
 	showViewLink: PropTypes.bool.isRequired,
 	showEditLink: PropTypes.bool.isRequired,
+	readOnly: PropTypes.bool,
 };
 
 export default ListSelect;

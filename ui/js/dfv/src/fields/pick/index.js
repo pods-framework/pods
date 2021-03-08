@@ -90,6 +90,7 @@ const Pick = ( props ) => {
 	const {
 		fieldConfig: {
 			htmlAttr: htmlAttributes = {},
+			readonly: readOnly,
 			data = [],
 			label,
 			name,
@@ -237,6 +238,7 @@ const Pick = ( props ) => {
 				value={ value }
 				setValue={ setValueWithLimit }
 				options={ dataOptions }
+				readOnly={ !! readOnly }
 			/>
 		);
 	}
@@ -261,6 +263,7 @@ const Pick = ( props ) => {
 				isMulti={ isMulti }
 				setValue={ setValueWithLimit }
 				options={ dataOptions }
+				readOnly={ !! readOnly }
 			/>
 		);
 	}
@@ -287,6 +290,7 @@ const Pick = ( props ) => {
 				showIcon={ toBool( showIcon ) }
 				showViewLink={ toBool( showViewLink ) }
 				showEditLink={ toBool( showEditLink ) }
+				readOnly={ !! readOnly }
 			/>
 		);
 	}
@@ -313,6 +317,7 @@ const Pick = ( props ) => {
 						setValueWithLimit( newOption.value );
 					}
 				} }
+				readOnly={ !! readOnly }
 			/>
 		);
 	}
@@ -326,6 +331,7 @@ const Pick = ( props ) => {
 			options={ dataOptions }
 			placeholder={ selectText }
 			isMulti={ isMulti }
+			readOnly={ !! readOnly }
 		/>
 	);
 };

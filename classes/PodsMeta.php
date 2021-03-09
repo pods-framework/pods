@@ -1450,7 +1450,7 @@ class PodsMeta {
 
 		$meta_nonce = PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_media' ), 'hidden' );
 
-		foreach ( $groups as $group_index => $group ) {
+		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
 			}

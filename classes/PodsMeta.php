@@ -1450,7 +1450,7 @@ class PodsMeta {
 
 		$meta_nonce = PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_media' ), 'hidden' );
 
-		foreach ( $groups as $group_index => $group ) {
+		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
 			}
@@ -1465,7 +1465,9 @@ class PodsMeta {
 				$pod = self::$current_pod;
 			}
 
-			foreach ( array_values( $group['fields'] ) as $field_index => $field ) {
+			$did_init = false;
+
+			foreach ( $group['fields'] as $field ) {
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
 					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
@@ -1498,13 +1500,14 @@ class PodsMeta {
 
 				// Manually force DFV initialization.  This is needed for attachments in "grid mode" in the
 				// media library.  Note that this should only occur for attachment_fields_to_edit (see #4785)
-				$dfv_init_script = "<script>window.PodsDFV.init();</script>";
+				$dfv_init_script = '<script>window.PodsDFV.init();</script>';
 
-				// @todo is there a cleaner way to make sure these aren't repeated for
-				// each field on the page?
-				if ( 0 === $group_index && 0 === $field_index ) {
+				// Only output nonce/init script on the very first field of the first group we have.
+				if ( ! $did_init ) {
 					$form_fields[ 'pods_meta_' . $field['name'] ]['html'] .= $meta_nonce;
 					$form_fields[ 'pods_meta_' . $field['name'] ]['html'] .= $dfv_init_script;
+
+					$did_init = true;
 				}
 
 				if ( 'heading' === $field['type'] ) {

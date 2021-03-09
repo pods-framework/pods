@@ -1465,7 +1465,9 @@ class PodsMeta {
 				$pod = self::$current_pod;
 			}
 
-			foreach ( array_values( $group['fields'] ) as $field_index => $field ) {
+			$did_init = false;
+
+			foreach ( $group['fields'] as $field ) {
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
 					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
@@ -1501,9 +1503,11 @@ class PodsMeta {
 				$dfv_init_script = "<script>window.PodsDFV.init();</script>";
 
 				// Only output nonce/init script on the very first field of the first group we have.
-				if ( 0 === $group_index && 0 === $field_index ) {
+				if ( ! $did_init ) {
 					$form_fields[ 'pods_meta_' . $field['name'] ]['html'] .= $meta_nonce;
 					$form_fields[ 'pods_meta_' . $field['name'] ]['html'] .= $dfv_init_script;
+
+					$did_init = true;
 				}
 
 				if ( 'heading' === $field['type'] ) {

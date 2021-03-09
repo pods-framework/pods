@@ -294,69 +294,6 @@ class Pods_Templates_Auto_Template_Front_End {
 		$this->auto_pods = apply_filters( 'pods_pfat_auto_pods', $auto_pods );
 
 		return $this->auto_pods;
-
-	}
-
-	/**
-	 * Get the filter used for a Pod.
-	 *
-	 * @param string $pod_name The pod name.
-	 *
-	 * @return string
-	 * @since  1.7.2
-	 */
-	public function get_pod_filter( $pod_name = '' ) {
-		$filter = 'the_content';
-
-		if ( ! $pod_name ) {
-			// Get the current post type.
-			$pod_name = $this->get_pod_name();
-		}
-
-		// Now use other methods in class to build array to search in/ use.
-		$possible_pods = $this->auto_pods();
-
-		if ( isset( $possible_pods[ $pod_name ] ) ) {
-			$this_pod = $possible_pods[ $pod_name ];
-
-			switch ( $this_pod['type'] ) {
-				case 'post_type':
-				case 'post':
-					if ( is_singular( $pod_name ) ) {
-						$filter = pods_v( 'single_filter', $this_pod, $filter, true );
-					} else {
-						$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
-					}
-					break;
-				case 'taxonomy':
-				case 'term':
-					$is_tax = is_tax( $pod_name );
-					if ( 'category' === $pod_name ) {
-						$is_tax = is_category();
-					} elseif ( 'post_tag' === $pod_name ) {
-						$is_tax = is_tag();
-					}
-					if ( $is_tax ) {
-						$filter = pods_v( 'single_filter', $this_pod, $filter, true );
-					} else {
-						$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
-					}
-					break;
-				case 'user':
-					if ( is_author() ) {
-						$filter = pods_v( 'single_filter', $this_pod, $filter, true );
-					} else {
-						$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
-					}
-					break;
-				case 'comment':
-				default:
-					$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
-					break;
-			}
-		}
-
-		return $filter;
 	}
 
 	/**

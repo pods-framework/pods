@@ -25,7 +25,12 @@ const PodsDFVApp = ( { fieldsData } ) => {
 		// for the Edit Pod screen), but most won't.
 		const renderedFieldComponent = directRender
 			? <FieldComponent />
-			: <ConnectedFieldWrapper field={ fieldConfig } />;
+			: (
+				<ConnectedFieldWrapper
+					field={ fieldConfig }
+					allPodFieldsMap={ new Map( fieldsData.map( ( field ) => [ field.name, field ] ) ) }
+				/>
+			);
 
 		// Remove the loading indicator.
 		parentNode.classList.remove( 'pods-dfv-field--unloaded' );

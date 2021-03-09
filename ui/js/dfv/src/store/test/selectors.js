@@ -16,10 +16,6 @@ import {
 	getGroups,
 	getGroup,
 
-	// @todo add these when working on Manage Fields work
-	// getGroupFields,
-	// groupFieldList,
-
 	// Global Pod config
 	getGlobalPodOptions,
 	getGlobalPodOption,
@@ -29,10 +25,6 @@ import {
 
 	// -- Global Groups config
 	getGlobalGroupOptions,
-
-	// @todo enable this when working on the Manage Fields work
-	// -- Global Field config
-	// getGlobalFieldOptions
 
 	// UI
 	getActiveTab,

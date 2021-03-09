@@ -1,5 +1,5 @@
 import sanitizeHtml from 'sanitize-html';
-import { deburr, trim } from 'lodash';
+import { deburr } from 'lodash';
 
 const sanitizeSlug = ( value, separator = '_' ) => {
 	const withoutTags = sanitizeHtml(

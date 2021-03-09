@@ -1465,6 +1465,8 @@ class PodsMeta {
 				$pod = self::$current_pod;
 			}
 
+			$did_init = false;
+
 			foreach ( $group['fields'] as $field ) {
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
 					if ( ! pods_var( 'hidden', $field, false ) ) {
@@ -1475,11 +1477,6 @@ class PodsMeta {
 				// Skip heavy fields.
 				if ( in_array( $field['type'], [ 'wysiwyg', 'code', 'file', 'oembed' ], true ) ) {
 					continue;
-				}
-
-				// Force DFV off for non-pick.
-				if ( 'pick' !== $field['type'] ) {
-					$field['disable_dfv'] = true;
 				}
 
 				$value = '';
@@ -1494,16 +1491,24 @@ class PodsMeta {
 
 				pods_no_conflict_off( 'post' );
 
-				// Manually force DFV initialization.  This is needed for attachments in "grid mode" in the
-				// media library.  Note that this should only occur for attachment_fields_to_edit (see #4785)
-				$dfv_init_script = "<script>window.PodsDFV.init();</script>";
-
 				$form_fields[ 'pods_meta_' . $field['name'] ] = array(
 					'label' => $field['label'],
 					'input' => 'html',
-					'html'  => PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id ) . $meta_nonce . $dfv_init_script,
+					'html'  => PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id ),
 					'helps' => PodsForm::comment( 'pods_meta_' . $field['name'], $field['description'], $field )
 				);
+
+				// Manually force DFV initialization.  This is needed for attachments in "grid mode" in the
+				// media library.  Note that this should only occur for attachment_fields_to_edit (see #4785)
+				$dfv_init_script = '<script>window.PodsDFV.init();</script>';
+
+				// Only output nonce/init script on the very first field of the first group we have.
+				if ( ! $did_init ) {
+					$form_fields[ 'pods_meta_' . $field['name'] ]['html'] .= $meta_nonce;
+					$form_fields[ 'pods_meta_' . $field['name'] ]['html'] .= $dfv_init_script;
+
+					$did_init = true;
+				}
 
 				if ( 'heading' === $field['type'] ) {
 					$form_fields[ 'pods_meta_' . $field['name'] ]['html']  = $form_fields[ 'pods_meta_' . $field['name'] ]['label'];

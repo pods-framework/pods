@@ -52,17 +52,14 @@ export const getGroupFields = ( state, groupName ) => {
 	return getGroup( state, groupName )?.fields ?? [];
 };
 
-export const groupFieldList = ( state ) => getGroups( state ).reduce(
+export const getFieldsFromAllGroups = ( state ) => getGroups( state ).reduce(
 	( accumulator, group ) => {
-		const groupName = group.name;
-		const groupFieldIDs = ( group?.fields || [] ).map( ( field ) => field.id );
-
-		return {
+		return [
 			...accumulator,
-			[ groupName ]: groupFieldIDs,
-		};
+			...( group?.fields || [] ),
+		];
 	},
-	{}
+	[]
 );
 
 // Global Pod config
@@ -77,6 +74,16 @@ export const getGlobalPodGroup = ( state, groupName ) => getGlobalPodGroups( sta
 );
 
 export const getGlobalPodGroupFields = ( state, groupName ) => getGlobalPodGroup( state, groupName )?.fields || [];
+
+export const getGlobalPodFieldsFromAllGroups = ( state ) => getGlobalPodGroups( state ).reduce(
+	( accumulator, group ) => {
+		return [
+			...accumulator,
+			...( group?.fields || [] ),
+		];
+	},
+	[]
+);
 
 // -- Global Groups config
 export const getGlobalGroupOptions = ( state ) => GLOBAL_GROUP.getFrom( state );

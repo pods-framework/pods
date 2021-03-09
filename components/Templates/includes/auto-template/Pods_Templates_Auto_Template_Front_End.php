@@ -51,14 +51,41 @@ class Pods_Templates_Auto_Template_Front_End {
 	public function hook_content() {
 		$possible_pods = $this->auto_pods();
 
+		// Always register archive hooks.
 		foreach ( $possible_pods as $pod_name => $pod ) {
-			$filter = $this->get_pod_filter( $pod_name );
-
-			if ( empty( $filter ) ) {
-				continue;
+			$filter = pods_v( 'archive_filter', $pod, '', true );
+			if ( $filter ) {
+				$this->filtered_content[ $filter ] = 10.5;
 			}
+		}
 
-			$this->filtered_content[ $filter ] = 10.5;
+		// Optionally register single hook for current object.
+		$obj = get_queried_object();
+		$pod = null;
+		switch ( true ) {
+			case $obj instanceof WP_Post:
+				if ( isset( $possible_pods[ $obj->post_type ] ) ) {
+					$pod = $possible_pods[ $obj->post_type ];
+				}
+				break;
+			case $obj instanceof WP_Term:
+				if ( isset( $possible_pods[ $obj->name ] ) ) {
+					$pod = $possible_pods[ $obj->name ];
+				}
+				break;
+			case $obj instanceof WP_User:
+				if ( isset( $possible_pods['user'] ) ) {
+					$pod = $possible_pods['user'];
+				}
+				break;
+		}
+
+		if ( $pod ) {
+			// No need to check for default hooks, this is already done in auto_pods().
+			$filter = pods_v( 'single_filter', $pod, '', true );
+			if ( $filter ) {
+				$this->filtered_content[ $filter ] = 10.5;
+			}
 		}
 
 		$this->install_hooks();

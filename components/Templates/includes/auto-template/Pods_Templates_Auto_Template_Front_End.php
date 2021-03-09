@@ -292,10 +292,40 @@ class Pods_Templates_Auto_Template_Front_End {
 		if ( isset( $possible_pods[ $pod_name ] ) ) {
 			$this_pod = $possible_pods[ $pod_name ];
 
-			if ( is_singular() || is_single() || ( 'taxonomy' === $this_pod['type'] && is_tax() ) ) {
-				$filter = pods_v( 'single_filter', $this_pod, $filter, true );
-			} elseif ( $this_pod['has_archive'] && ( is_archive() || is_post_type_archive() || is_tax() || in_the_loop() ) ) {
-				$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+			switch ( $this_pod['type'] ) {
+				case 'post_type':
+				case 'post':
+					if ( is_singular( $pod_name ) ) {
+						$filter = pods_v( 'single_filter', $this_pod, $filter, true );
+					} else {
+						$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+					}
+					break;
+				case 'taxonomy':
+				case 'term':
+					$is_tax = is_tax( $pod_name );
+					if ( 'category' === $pod_name ) {
+						$is_tax = is_category();
+					} elseif ( 'post_tag' === $pod_name ) {
+						$is_tax = is_tag();
+					}
+					if ( $is_tax ) {
+						$filter = pods_v( 'single_filter', $this_pod, $filter, true );
+					} else {
+						$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+					}
+					break;
+				case 'user':
+					if ( is_author() ) {
+						$filter = pods_v( 'single_filter', $this_pod, $filter, true );
+					} else {
+						$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+					}
+					break;
+				case 'comment':
+				default:
+					$filter = pods_v( 'archive_filter', $this_pod, $filter, true );
+					break;
 			}
 		}
 

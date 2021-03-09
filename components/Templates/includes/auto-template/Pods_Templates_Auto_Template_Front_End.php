@@ -474,7 +474,7 @@ class Pods_Templates_Auto_Template_Front_End {
 				}
 			}
 
-			if ( $is_single && ( ! $in_the_loop || is_singular() || is_single() ) ) {
+			if ( $is_single && ( ! $in_the_loop || is_singular( $pod_name ) ) ) {
 				$type        = 'single';
 				$type_filter = 'single_filter';
 				$type_append = 'single_append';

@@ -3450,7 +3450,7 @@ class PodsData {
 	 *
 	 * @since 2.0.5
 	 */
-	public function get_sql( $sql ) {
+	public function get_sql( $sql = '' ) {
 
 		global $wpdb;
 
@@ -3494,8 +3494,6 @@ class PodsData {
 		);
 
 		if ( isset( $mapped[ $name ] ) ) {
-			pods_deprecated( "PodsData->{$name}", '2.8', "PodsData->{$mapped[$name]}" );
-
 			return $this->{$mapped[$name]};
 		}
 

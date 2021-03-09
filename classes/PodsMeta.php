@@ -1500,8 +1500,7 @@ class PodsMeta {
 				// media library.  Note that this should only occur for attachment_fields_to_edit (see #4785)
 				$dfv_init_script = "<script>window.PodsDFV.init();</script>";
 
-				// @todo is there a cleaner way to make sure these aren't repeated for
-				// each field on the page?
+				// Only output nonce/init script on the very first field of the first group we have.
 				if ( 0 === $group_index && 0 === $field_index ) {
 					$form_fields[ 'pods_meta_' . $field['name'] ]['html'] .= $meta_nonce;
 					$form_fields[ 'pods_meta_' . $field['name'] ]['html'] .= $dfv_init_script;

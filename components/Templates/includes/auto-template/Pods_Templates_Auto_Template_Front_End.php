@@ -26,7 +26,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @since 2.7.25
 	 */
-	private $auto_pods = [];
+	private $auto_pods = array();
 
 	/**
 	 * Pods_Templates_Auto_Template_Front_End constructor.

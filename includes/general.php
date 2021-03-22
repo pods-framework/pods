@@ -1108,19 +1108,25 @@ function pods_shortcode_run( $tags, $content = null ) {
 		return $return;
 	}//end if
 
+	$pagination = false;
+	if ( ! $is_singular && 0 < $found && $tags['pagination'] ) {
+		$pagination = $tags['pagination_label'];
+		if ( is_string( $tags['pagination'] ) ) {
+			$pagination = array(
+					'label' => $pagination,
+					'type'  => $tags['pagination'],
+			);
+		}
+	}
+
 	ob_start();
 
 	if ( ! $is_singular && false !== $tags['filters'] && 'before' === $tags['filters_location'] ) {
 		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
 	}
 
-	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array(
-		$tags['pagination_location'], array(
-			'before',
-			'both',
-		), true
-	) ) {
-		echo $pod->pagination( $tags['pagination_label'] );
+	if ( $pagination && in_array( $tags['pagination_location'], array( 'before', 'both', ), true ) ) {
+		echo $pod->pagination( $pagination );
 	}
 
 	$content = $pod->template( $tags['template'], $content );
@@ -1132,13 +1138,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 	// phpcs:ignore
 	echo $content;
 
-	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array(
-		$tags['pagination_location'], array(
-			'after',
-			'both',
-		), true
-	) ) {
-		echo $pod->pagination( $tags['pagination_label'] );
+	if ( $pagination && in_array( $tags['pagination_location'], array( 'after', 'both', ), true ) ) {
+		echo $pod->pagination( $pagination );
 	}
 
 	if ( ! $is_singular && false !== $tags['filters'] && 'after' === $tags['filters_location'] ) {

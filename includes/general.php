@@ -824,6 +824,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'filters_label'       => null,
 		'filters_location'    => 'before',
 		'pagination_label'    => null,
+		'pagination_type'     => null,
 		'pagination_location' => 'after',
 	);
 
@@ -1110,13 +1111,12 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 	$pagination = false;
 	if ( ! $is_singular && 0 < $found && $tags['pagination'] ) {
-		$pagination = $tags['pagination_label'];
-		if ( is_string( $tags['pagination'] ) ) {
-			$pagination = array(
-					'label' => $pagination,
-					'type'  => $tags['pagination'],
-			);
-		}
+		$pagination = array(
+			'label' => pods_v( 'pagination_label', $tags, null ),
+			'type'  => pods_v( 'pagination_type', $tags, null ),
+		);
+		// Remove empty params.
+		$pagination = array_filter( $pagination );
 	}
 
 	ob_start();
@@ -1125,7 +1125,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
 	}
 
-	if ( $pagination && in_array( $tags['pagination_location'], array( 'before', 'both', ), true ) ) {
+	if ( $tags['pagination'] && in_array( $tags['pagination_location'], array( 'before', 'both', ), true ) ) {
 		echo $pod->pagination( $pagination );
 	}
 
@@ -1138,7 +1138,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	// phpcs:ignore
 	echo $content;
 
-	if ( $pagination && in_array( $tags['pagination_location'], array( 'after', 'both', ), true ) ) {
+	if ( $tags['pagination'] && in_array( $tags['pagination_location'], array( 'after', 'both', ), true ) ) {
 		echo $pod->pagination( $pagination );
 	}
 

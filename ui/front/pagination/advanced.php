@@ -13,7 +13,7 @@ if ( 1 < $params->page ) {
 			<a href="<?php echo esc_url( pods_query_arg( array( $params->page_var => ( $params->page - 1 ) ) ) ); ?>" class="pods-pagination-number pods-pagination-prev <?php echo esc_attr( $params->link_class ); ?>"><?php echo $params->prev_text; ?></a>
 		<?php } ?>
 
-			<a href="<?php echo esc_url( pods_query_arg( array( $params->page_var => 1 ) ) ); ?>" class="pods-pagination-number pods-pagination-first <?php echo esc_attr( $params->link_class ); ?>">1</a>
+			<a href="<?php echo esc_url( pods_query_arg( array( $params->page_var => 1 ) ) ); ?>" class="pods-pagination-number pods-pagination-first pods-pagination-1 <?php echo esc_attr( $params->link_class ); ?>">1</a>
 	<?php
 }
 
@@ -63,7 +63,7 @@ for ( $i = $params->mid_size; $i > 0; $i -- ) {
 
 	if ( $params->page < $params->total ) {
 		?>
-		<a href="<?php echo esc_url( pods_query_arg( array( $params->page_var => $params->total ) ) ); ?>" class="pods-pagination-number pods-pagination-last <?php echo esc_attr( $params->link_class ); ?>"><?php echo $params->total; ?></a>
+		<a href="<?php echo esc_url( pods_query_arg( array( $params->page_var => $params->total ) ) ); ?>" class="pods-pagination-number pods-pagination-last pods-pagination-<?php echo esc_attr( $params->total ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo $params->total; ?></a>
 		<?php
 		if ( $params->prev_next ) {
 			?>

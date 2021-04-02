@@ -35,37 +35,39 @@ const processAllPodValues = ( fields, allPodValues ) => {
 	// But this processing may not need to happen - it'll get set correctly
 	// after a UI update, but will be wrong after the update from saving to the API,
 	// so we'll check that the values haven't already been merged.
-	if ( allPodValues.pick_object && allPodValues.pick_val ) {
-		const pickObjectField = fields.find( ( field ) => 'pick_object' === field.name );
+	if ( ! allPodValues.pick_object || ! allPodValues.pick_val ) {
+		return allPodValues;
+	}
 
-		// Each of the options are under a header to distinguish the types.
-		const pickObjectFieldPossibleOptions = Object.keys( pickObjectField.data || {} ).reduce(
-			( accumulator, currentKey ) => {
-				if ( 'string' === typeof pickObjectField.data?.[ currentKey ] ) {
-					return [
-						...accumulator,
-						pickObjectField.data[ currentKey ],
-					];
-				} else if ( 'object' === typeof pickObjectField.data?.[ currentKey ] ) {
-					return [
-						...accumulator,
-						...( Object.keys( pickObjectField.data[ currentKey ] ) ),
-					];
-				}
-				return accumulator;
-			},
-			[]
-		);
+	const pickObjectField = fields.find( ( field ) => 'pick_object' === field.name );
 
-		const pickObject = allPodValues.pick_object;
-		const pickVal = allPodValues.pick_val;
+	// Each of the options are under a header to distinguish the types.
+	const pickObjectFieldPossibleOptions = Object.keys( pickObjectField.data || {} ).reduce(
+		( accumulator, currentKey ) => {
+			if ( 'string' === typeof pickObjectField.data?.[ currentKey ] ) {
+				return [
+					...accumulator,
+					pickObjectField.data[ currentKey ],
+				];
+			} else if ( 'object' === typeof pickObjectField.data?.[ currentKey ] ) {
+				return [
+					...accumulator,
+					...( Object.keys( pickObjectField.data[ currentKey ] ) ),
+				];
+			}
+			return accumulator;
+		},
+		[]
+	);
 
-		if (
-			! pickObjectFieldPossibleOptions.includes( pickObject ) &&
-			! pickObject.endsWith( `-${ pickVal }` )
-		) {
-			allPodValues.pick_object = `${ pickObject }-${ pickVal }`;
-		}
+	const pickObject = allPodValues.pick_object;
+	const pickVal = allPodValues.pick_val;
+
+	if (
+		! pickObjectFieldPossibleOptions.includes( pickObject ) &&
+		! pickObject.endsWith( `-${ pickVal }` )
+	) {
+		allPodValues.pick_object = `${ pickObject }-${ pickVal }`;
 	}
 
 	return allPodValues;

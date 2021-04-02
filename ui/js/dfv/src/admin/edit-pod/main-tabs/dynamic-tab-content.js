@@ -41,6 +41,10 @@ const processAllPodValues = ( fields, allPodValues ) => {
 
 	const pickObjectField = fields.find( ( field ) => 'pick_object' === field.name );
 
+	if ( ! pickObjectField ) {
+		return allPodValues;
+	}
+
 	// Each of the options are under a header to distinguish the types.
 	const pickObjectFieldPossibleOptions = Object.keys( pickObjectField.data || {} ).reduce(
 		( accumulator, currentKey ) => {
@@ -105,7 +109,7 @@ const DynamicTabContent = ( {
 		<FieldSet
 			fields={ fields }
 			allPodFields={ allPodFields }
-			allPodValues={ processAllPodValues( fields, allPodValues ) }
+			allPodValues={ processAllPodValues( allPodFields, allPodValues ) }
 			setOptionValue={ setOptionValue }
 		/>
 	);

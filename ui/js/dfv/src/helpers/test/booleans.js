@@ -40,4 +40,14 @@ describe( 'toNumericBool', () => {
 		expect( falseValue ).toBe( '0' );
 		expect( trueValue ).toBe( '1' );
 	} );
+
+	it( 'handles empty strings and null/undefined values', () => {
+		const falseEmptyStringValue = toNumericBool( '' );
+		const falseNullValue = toNumericBool( null );
+		const falseUndefinedValue = toNumericBool( undefined );
+
+		expect( falseEmptyStringValue ).toBe( '0' );
+		expect( falseNullValue ).toBe( '0' );
+		expect( falseUndefinedValue ).toBe( '0' );
+	} );
 } );

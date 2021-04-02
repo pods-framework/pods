@@ -1,20 +1,24 @@
 import PropTypes from 'prop-types';
 
 // @todo can these be changed to real Booleans on the PHP side?
-const BOOLEAN_STRINGS = PropTypes.oneOf(
+export const BOOLEAN_STRINGS = PropTypes.oneOf(
 	[ '0', '1', 0, 1 ]
 );
-const BOOLEAN_ALL_TYPES = PropTypes.oneOf(
+export const BOOLEAN_ALL_TYPES = PropTypes.oneOf(
 	[ '0', '1', 0, 1, true, false ]
 );
 
+export const BOOLEAN_ALL_TYPES_OR_EMPTY = PropTypes.oneOf(
+	[ '0', '1', 0, 1, true, false, '', null, undefined ]
+);
+
 // Handles issue where objects get passed as arrays when empty from PHP.
-const OBJECT_OR_ARRAY = PropTypes.oneOfType( [
+export const OBJECT_OR_ARRAY = PropTypes.oneOfType( [
 	PropTypes.object,
 	PropTypes.array,
 ] );
 
-const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
+export const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
 	// @todo custom validator to ensure that the string is a number
 	PropTypes.string,
 	PropTypes.number,

@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 
 import Pick from '../pick';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { toNumericBool } from 'dfv/src/helpers/booleans';
+import {
+	FIELD_PROP_TYPE_SHAPE,
+	BOOLEAN_ALL_TYPES_OR_EMPTY,
+} from 'dfv/src/config/prop-types';
 
 const Boolean = ( {
 	fieldConfig = {},
@@ -30,7 +34,7 @@ const Boolean = ( {
 				pick_format_single: formatType,
 				data: options,
 			} }
-			value={ value }
+			value={ toNumericBool( value ) }
 			setValue={ setValue }
 		/>
 	);
@@ -39,10 +43,7 @@ const Boolean = ( {
 Boolean.propTypes = {
 	fieldConfig: FIELD_PROP_TYPE_SHAPE,
 	setValue: PropTypes.func.isRequired,
-	value: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.number,
-	] ),
+	value: BOOLEAN_ALL_TYPES_OR_EMPTY,
 };
 
 export default Boolean;

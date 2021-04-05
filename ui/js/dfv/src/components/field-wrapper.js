@@ -80,6 +80,7 @@ export const FieldWrapper = ( props ) => {
 		field = {},
 		allPodFieldsMap,
 		value,
+		values,
 		setOptionValue,
 		allPodValues,
 	} = props;
@@ -101,6 +102,8 @@ export const FieldWrapper = ( props ) => {
 		'excludes-on': excludesOn,
 		'wildcard-on': wildcardOn,
 	} = field;
+
+	const isBooleanGroupField = 'boolean_group' === fieldType;
 
 	const fieldRef = useRef( null );
 
@@ -215,7 +218,9 @@ export const FieldWrapper = ( props ) => {
 		<FieldErrorBoundary>
 			<FieldComponent
 				value={ value || defaultValue || '' }
-				setValue={ ( newValue ) => setOptionValue( name, newValue ) }
+				values={ isBooleanGroupField ? values : undefined }
+				setOptionValue={ isBooleanGroupField ? setOptionValue : undefined }
+				setValue={ isBooleanGroupField ? undefined : ( newValue ) => setOptionValue( name, newValue ) }
 				isValid={ !! validationMessages.length }
 				addValidationRules={ addValidationRules }
 				htmlAttr={ processedHtmlAttr }
@@ -274,7 +279,7 @@ FieldWrapper.propTypes = {
 	allPodFieldsMap: PropTypes.object,
 
 	/**
-	 * Field value.
+	 * Field value (for all fields except boolean_group).
 	 */
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
@@ -282,6 +287,11 @@ FieldWrapper.propTypes = {
 		PropTypes.number,
 		PropTypes.array,
 	] ),
+
+	/**
+	 * Field values (for boolean_group).
+	 */
+	values: PropTypes.object,
 
 	/**
 	 * Function to update the field's value on change.
@@ -300,7 +310,11 @@ const MemoizedFieldWrapper = React.memo(
 	FieldWrapper,
 	( prevProps, nextProps ) => {
 		// If the value has changed, rerender.
-		if ( prevProps.value !== nextProps.value ) {
+		if (
+			prevProps.value !== nextProps.value ||
+			// This is a shallow compare - we may want to use _.isEqual eventually.
+			prevProps.values !== nextProps.values
+		) {
 			return false;
 		}
 

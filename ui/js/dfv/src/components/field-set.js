@@ -22,13 +22,31 @@ const FieldSet = ( {
 	}, [] );
 
 	return fields.map( ( field ) => {
-		const { name } = field;
+		const {
+			type,
+			name,
+			boolean_group: booleanGroup,
+		} = field;
+
+		// Boolean Group fields get a map of values instead of a single value.
+		const isGroupField = 'boolean_group' === type;
+
+		const values = {};
+
+		if ( isGroupField ) {
+			( booleanGroup || [] ).forEach( ( subField ) => {
+				values[ subField.name ] = subField.name
+					? allPodValues[ subField.name ]
+					: undefined;
+			} );
+		}
 
 		return (
 			<FieldWrapper
 				key={ name }
 				field={ field }
-				value={ allPodValues[ name ] }
+				value={ isGroupField ? undefined : allPodValues[ name ] }
+				values={ isGroupField ? values : undefined }
 				setOptionValue={ setOptionValue }
 				allPodFieldsMap={ allPodFieldsMap }
 				allPodValues={ allPodValues }

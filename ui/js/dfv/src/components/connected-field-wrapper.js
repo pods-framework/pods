@@ -16,11 +16,32 @@ import { STORE_KEY_DFV } from 'dfv/src/store/constants';
 
 const ConnectedFieldWrapper = compose( [
 	withSelect( ( storeSelect, ownProps ) => {
-		const name = ownProps.field?.name;
+		const allPodValues = storeSelect( STORE_KEY_DFV ).getPodOptions();
+
+		const valueData = {};
+
+		// Boolean Group fields get a map of values, instead of a singular value.
+		if ( 'boolean_group' === ownProps.field?.type ) {
+			valueData.values = {};
+
+			const subFields = ownProps.field?.['boolean_group'] || [];
+
+			subFields.forEach( ( subField ) => {
+				if ( ! subField.name ) {
+					return;
+				}
+
+				valueData.values[ subField.name ] = allPodValues[ subField.name ];
+			} );
+		} else {
+			const name = ownProps.field?.name;
+
+			valueData.value = name ? allPodValues[ name ] : undefined;
+		}
 
 		return {
-			value: name ? storeSelect( STORE_KEY_DFV ).getPodOption( name ) : undefined,
-			allPodValues: storeSelect( STORE_KEY_DFV ).getPodOptions(),
+			...valueData,
+			allPodValues,
 		};
 	} ),
 	withDispatch( ( storeDispatch ) => {

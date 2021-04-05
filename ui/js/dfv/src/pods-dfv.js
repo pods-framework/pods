@@ -91,7 +91,6 @@ window.PodsDFV = {
 				// named values, so instead of just one key/value, they'll have multiple ones.
 				// These are handled very differently, so process them and return early.
 				if ( 'boolean_group' === fieldConfig.type ) {
-					console.log( 'finding default values for boolean_group', fieldConfig );
 					const values = {};
 
 					fieldConfig.boolean_group.forEach( ( groupItem ) => {
@@ -103,8 +102,6 @@ window.PodsDFV = {
 							groupItem.default ||
 							'';
 					} );
-
-					console.log('values', values);
 
 					return {
 						...accumulator,
@@ -147,8 +144,6 @@ window.PodsDFV = {
 
 		// The Edit Pod screen gets a different store set up than
 		// other contexts.
-		console.log( 'initialValues for init call', initialValues );
-
 		if ( window.podsAdminConfig ) {
 			initEditPodStore( window.podsAdminConfig );
 		} else if ( window.podsDFVConfig ) {

@@ -1674,33 +1674,33 @@ class PodsAdmin {
 					$boolean_group = [];
 					$boolean_extra = [];
 
-					if ( ! empty( $field_options['boolean_group'] ) ) {
-						$boolean_group = $field_options['boolean_group'];
+					// if ( ! empty( $field_options['boolean_group'] ) ) {
+					// 	$boolean_group = $field_options['boolean_group'];
 
-						unset( $field_options['boolean_group'] );
+					// 	unset( $field_options['boolean_group'] );
 
-						if ( ! empty( $field_options['depends-on'] ) ) {
-							$boolean_extra['depends-on']  = $field_options['depends-on'];
-						}
+					// 	if ( ! empty( $field_options['depends-on'] ) ) {
+					// 		$boolean_extra['depends-on']  = $field_options['depends-on'];
+					// 	}
 
-						if ( ! empty( $field_options['excludes-on'] ) ) {
-							$boolean_extra['excludes-on'] = $field_options['excludes-on'];
-						}
+					// 	if ( ! empty( $field_options['excludes-on'] ) ) {
+					// 		$boolean_extra['excludes-on'] = $field_options['excludes-on'];
+					// 	}
 
-						if ( ! empty( $field_options['wildcard-on'] ) ) {
-							$boolean_extra['wildcard-on'] = $field_options['wildcard-on'];
-						}
-					}
+					// 	if ( ! empty( $field_options['wildcard-on'] ) ) {
+					// 		$boolean_extra['wildcard-on'] = $field_options['wildcard-on'];
+					// 	}
+					// }
 
 					if (
 						// Field type must be set.
 						! empty( $field_options['type'] )
-						&& (
-							// Must not have a boolean group.
-							empty( $boolean_group )
-							// Or it must be the proper heading field type.
-							|| 'heading' === $field_options['type']
-						)
+						// && (
+						// 	// Must not have a boolean group.
+						// 	empty( $boolean_group )
+						// 	// Or it must be the proper heading field type.
+						// 	|| 'heading' === $field_options['type']
+						// )
 					) {
 						// Set a unique field name for boolean group headings.
 						if ( ! empty( $boolean_group ) ) {

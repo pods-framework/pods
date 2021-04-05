@@ -1,4 +1,65 @@
 {
+  "demo_boolean_group": {
+    "name"  : "boolean_group",
+    "label" : "Boolean Group",
+    "type": "boolean_group",
+    "boolean_group": [
+      {
+        "name": "admin_only",
+        "label": "Restrict access to Admins",
+        "default": 0,
+        "type": "boolean",
+        "dependency": true,
+        "help": "This field will only be able to be edited by users with the ability to manage_options or delete_users, or super admins of a WordPress Multisite network"
+      },
+      {
+        "name": "restrict_role",
+        "label": "Restrict access by Role",
+        "default": 0,
+        "type": "boolean",
+        "dependency": true
+      },
+      {
+        "name": "restrict_capability",
+        "label": "Restrict access by Capability",
+        "default": 0,
+        "type": "boolean",
+        "dependency": true
+      },
+      {
+        "name": "hidden",
+        "label": "Hide field from UI",
+        "default": 0,
+        "type": "boolean",
+        "help": "This option is overridden by access restrictions. If the user does not have access to edit this field, it will be \"hidden\" If no access restrictions are set, this field will always be \"hidden\""
+      },
+      {
+        "name": "read_only",
+        "label": "Make field \"Read Only\" in UI",
+        "default": 0,
+        "type": "boolean",
+        "help": "This option is overridden by access restrictions. If the user does not have access to edit this field, it will be read only. If no access restrictions are set, this field will always be read only.",
+        "depends-on": {
+          "type" : [
+            "boolean",
+            "color",
+            "currency",
+            "date",
+            "datetime",
+            "email",
+            "number",
+            "paragraph",
+            "password",
+            "phone",
+            "slug",
+            "text",
+            "time",
+            "website"
+          ]
+        }
+      }
+    ]
+  },
   "demo_plain_text": {
     "name": "demo_plain_text",
     "label": "Demo Plain Text",

@@ -172,6 +172,24 @@ class PodsInit {
 	 * @return \Freemius
 	 */
 	public function freemius() {
+		// Admin only.
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		global $pagenow;
+
+		// Pods admin pages or plugins/update page only.
+		if (
+			'plugins.php' !== $pagenow
+			&& 'update-core.php' !== $pagenow
+			&& 'update.php' !== $pagenow
+			&& ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
+			&& ( ! isset( $_GET['page'] ) || 0 !== strpos( $_GET['page'], 'pods' ) )
+		) {
+			return;
+		}
+
 		if ( $this->freemius ) {
 			return $this->freemius;
 		}
@@ -224,9 +242,10 @@ class PodsInit {
 	 */
 	public function override_freemius_strings() {
 		$override_text = array(
-			'free'                     => 'Free (WordPress.org)',
-			'install-free-version-now' => 'Install Now',
-			'download-latest'          => 'Donate',
+			'free'                     => __( 'Free (WordPress.org)', 'pods' ),
+			'install-free-version-now' => __( 'Install Now', 'pods' ),
+			'download-latest'          => __( 'Donate', 'pods' ),
+			'complete-the-install'     => __( 'complete the process', 'pods' ),
 		);
 
 		$freemius_addons = $this->get_freemius_addons();
@@ -241,7 +260,7 @@ class PodsInit {
 	/**
 	 * Filter the Freemius plugins API data.
 	 *
-	 * @since TBD
+	 * @since 2.7.17
 	 *
 	 * @param object $data Freemius plugins API data.
 	 *
@@ -260,7 +279,7 @@ class PodsInit {
 	/**
 	 * Filter the Freemius add-ons HTML.
 	 *
-	 * @since TBD
+	 * @since 2.7.17
 	 *
 	 * @param string $html Freemius add-ons HTML.
 	 *
@@ -276,7 +295,7 @@ class PodsInit {
 		$html = preg_replace( '/<div\s+class="button button-primary fs-dropdown-arrow-button">/Uim', '<div class="hidden">', $html );
 
 		// Use landing page for Become a Friend link.
-		$replace = '$1<a target="_blank" href="' . esc_url( $this->get_freemius_action_link() ) . '"$2class="$3">';
+		$replace = '$1<a target="_blank" rel="noopener noreferrer" href="' . esc_url( $this->get_freemius_action_link() ) . '"$2class="$3">';
 
 		// Replace all Friends-only add-on links.
 		foreach ( $freemius_friends_addons as $addon_slug => $addon ) {
@@ -291,7 +310,7 @@ class PodsInit {
 	/**
 	 * Get action link URL.
 	 *
-	 * @since TBD
+	 * @since 2.7.17
 	 *
 	 * @param string $url Action link URL.
 	 *
@@ -304,7 +323,7 @@ class PodsInit {
 	/**
 	 * Get list of add-ons for Freemius.
 	 *
-	 * @since TBD
+	 * @since 2.7.17
 	 *
 	 * @return array List of add-ons for Freemius.
 	 */
@@ -322,7 +341,7 @@ class PodsInit {
 	/**
 	 * Get list of Friends-only add-ons for Freemius.
 	 *
-	 * @since TBD
+	 * @since TB2.7.17D
 	 *
 	 * @return array List of Friends-only add-ons for Freemius.
 	 */
@@ -343,7 +362,7 @@ class PodsInit {
 			define( 'PODS_COMPATIBILITY', true );
 		}
 
-		if ( ! PODS_COMPATIBILITY ) {
+		if ( ! PODS_COMPATIBILITY || is_admin() ) {
 			return;
 		}
 
@@ -450,6 +469,10 @@ class PodsInit {
 		if ( method_exists( $avatar, 'get_avatar' ) ) {
 			add_filter( 'get_avatar', array( $avatar, 'get_avatar' ), 10, 4 );
 		}
+
+		if ( method_exists( $avatar, 'get_avatar_data' ) ) {
+			add_filter( 'get_avatar_data', array( $avatar, 'get_avatar_data' ), 10, 2 );
+		}
 	}
 
 	/**
@@ -457,25 +480,35 @@ class PodsInit {
 	 */
 	public function register_assets() {
 
-		$maybe_min = SCRIPT_DEBUG ? '' : '.min';
+		$suffix_min = SCRIPT_DEBUG ? '' : '.min';
 
-		wp_register_script( 'pods-json', PODS_URL . 'ui/js/jquery.json.js', array( 'jquery' ), '2.3' );
+		/**
+		 * Fires before Pods assets are registered.
+		 *
+		 * @since 2.7.23
+		 *
+		 * @param bool $suffix_min Minimized script suffix.
+		 */
+		do_action( 'pods_before_enqueue_scripts', $suffix_min );
 
 		if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
-			wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.2' );
+			wp_register_script( 'jquery-qtip2', PODS_URL . "ui/js/qtip/jquery.qtip{$suffix_min}.js", array( 'jquery' ), '3.0.3', true );
 		}
 
 		wp_register_script(
-			'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
+			'pods',
+			PODS_URL . 'ui/js/jquery.pods.js',
+			array(
 				'jquery',
 				'pods-dfv',
 				'pods-i18n',
-				'pods-json',
 				'jquery-qtip2',
-			), PODS_VERSION, true
+			),
+			PODS_VERSION,
+			true
 		);
 
-		wp_register_script( 'pods-cleditor', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
+		wp_register_script( 'pods-cleditor', PODS_URL . "ui/js/cleditor/jquery.cleditor{$suffix_min}.js", array( 'jquery' ), '1.4.5', true );
 
 		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror.js', array(), '4.8', true );
 		wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', array( 'pods-codemirror' ), '4.8', true );
@@ -485,69 +518,136 @@ class PodsInit {
 		wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
 		wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', array( 'pods-codemirror' ), '4.8', true );
 
+		// jQuery Timepicker.
 		if ( ! wp_script_is( 'jquery-ui-slideraccess', 'registered' ) ) {
 			// No need to add dependencies. All managed by jquery-ui-timepicker.
 			wp_register_script( 'jquery-ui-slideraccess', PODS_URL . 'ui/js/timepicker/jquery-ui-sliderAccess.js', array(), '0.3' );
 		}
-
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
 			wp_register_script(
-				'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js', array(
+				'jquery-ui-timepicker',
+				PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.js",
+				array(
 					'jquery',
 					'jquery-ui-core',
 					'jquery-ui-datepicker',
 					'jquery-ui-slider',
 					'jquery-ui-slideraccess',
-				), '1.6.3'
+				),
+				'1.6.3',
+				true
 			);
 		}
 		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
-			wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.css', array(), '1.6.3' );
+			wp_register_style(
+				'jquery-ui-timepicker',
+				PODS_URL . "ui/js/timepicker/jquery-ui-timepicker-addon{$suffix_min}.css",
+				array(),
+				'1.6.3'
+			);
 		}
 
-		wp_register_script(
-			'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js", array(
-				'jquery',
-				'pods-i18n',
-			), '1.0.1'
+		// Select2/SelectWoo.
+		wp_register_style(
+			'pods-select2',
+			PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.css",
+			array(),
+			'1.0.8'
 		);
-		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.css", array(), '1.0.2' );
 
-		// Marionette dependencies for MV fields
-		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '2.0.0', true );
+		$select2_locale = function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
+		$select2_i18n   = false;
+		if ( file_exists( PODS_DIR . "ui/js/selectWoo/i18n/{$select2_locale}.js" ) ) {
+			// `en_EN` format.
+			$select2_i18n = PODS_URL . "ui/js/selectWoo/i18n/{$select2_locale}.js";
+		} else {
+			// `en` format.
+			$select2_locale = substr( $select2_locale, 0, 2 );
+			if ( file_exists( PODS_DIR . "ui/js/selectWoo/i18n/{$select2_locale}.js" ) ) {
+				$select2_i18n = PODS_URL . "ui/js/selectWoo/i18n/{$select2_locale}.js";
+			}
+		}
+		if ( $select2_i18n ) {
+			wp_register_script(
+				'pods-select2-core',
+				PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.js",
+				array(
+					'jquery',
+					'pods-i18n',
+				),
+				'1.0.8',
+				true
+			);
+			wp_register_script( 'pods-select2', $select2_i18n, array( 'pods-select2-core' ), '1.0.8', true );
+		} else {
+			wp_register_script(
+				'pods-select2',
+				PODS_URL . "ui/js/selectWoo/selectWoo{$suffix_min}.js",
+				array(
+					'jquery',
+					'pods-i18n',
+				),
+				'1.0.8',
+				true
+			);
+		}
+
+		// Marionette dependencies for DFV/MV fields.
 		wp_register_script(
-			'marionette',
-			PODS_URL . 'ui/js/marionette/backbone.marionette.min.js',
+			'backbone.radio',
+			PODS_URL . "ui/js/marionette/backbone.radio{$suffix_min}.js",
+			array( 'backbone' ),
+			'2.0.0',
+			true
+		);
+		wp_register_script(
+			'pods-marionette',
+			PODS_URL . "ui/js/marionette/backbone.marionette{$suffix_min}.js",
 			array(
 				'backbone',
 				'backbone.radio',
-			), '3.3.1', true
+			),
+			'3.3.1',
+			true
 		);
 		wp_add_inline_script(
-			'marionette',
+			'pods-marionette',
 			'PodsMn = Backbone.Marionette.noConflict();'
 		);
 
-		// MV stuff
+		// DFV/MV.
 		wp_register_script(
-			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js', array(
+			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js',
+			array(
 				'jquery',
 				'jquery-ui-core',
 				'jquery-ui-sortable',
 				'pods-i18n',
-				'marionette',
+				'pods-marionette',
 				'media-views',
 				'media-models',
-			), PODS_VERSION, true
+			),
+			PODS_VERSION,
+			true
 		);
 
-		// Check if Pod is a Modal Window
+		// Page builders.
+		if (
+			// @todo Finish Elementor & Divi support.
+			// doing_action( 'elementor/editor/before_enqueue_scripts' ) || // Elementor.
+			// null !== pods_v( 'et_fb', 'get' ) // Divi.
+			null !== pods_v( 'fl_builder', 'get' ) // Beaver Builder.
+		) {
+			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
+		}
+
+		// Check if Pod is a Modal Window.
 		if ( pods_is_modal_window() ) {
 			add_filter( 'body_class', array( $this, 'add_classes_to_modal_body' ) );
 			add_filter( 'admin_body_class', array( $this, 'add_classes_to_modal_body' ) );
 		}
 
-		// Deal with specifics on admin pages
+		// Deal with specifics on admin pages.
 		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 
@@ -579,6 +679,15 @@ class PodsInit {
 			wp_enqueue_script( 'pods-dfv' );
 			wp_enqueue_style( 'pods-form' );
 		}
+
+		/**
+		 * Fires after Pods assets are registered.
+		 *
+		 * @since 2.7.23
+		 *
+		 * @param bool $suffix_min Minimized script suffix.
+		 */
+		do_action( 'pods_after_enqueue_scripts', $suffix_min );
 	}
 
 	/**
@@ -1426,13 +1535,13 @@ class PodsInit {
 				5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels['singular_name'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 				6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
 				7  => sprintf( __( '%s saved.', 'pods' ), $labels['singular_name'] ),
-				8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
+				8  => sprintf( __( '%1$s submitted. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
 				9  => sprintf(
-					__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %4$s</a>', 'pods' ), $labels['singular_name'],
+					__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" rel="noopener noreferrer" href="%3$s">Preview %4$s</a>', 'pods' ), $labels['singular_name'],
 					// translators: Publish box date format, see http://php.net/date
 					date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels['singular_name']
 				),
-				10 => sprintf( __( '%1$s draft updated. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
+				10 => sprintf( __( '%1$s draft updated. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
 			);
 
 			if ( false === (boolean) $pods_cpt_ct['post_types'][ $post_type['name'] ]['public'] ) {
@@ -1856,6 +1965,8 @@ class PodsInit {
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 		add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+		// @todo Elementor Page Builder.
+		//add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 
 		add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 		add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );

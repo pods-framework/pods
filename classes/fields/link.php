@@ -146,7 +146,7 @@ class PodsField_Link extends PodsField_Website {
 
 			if ( ! empty( $value['target'] ) || ( ! isset( $value['target'] ) && 1 === (int) pods_v( static::$type . '_new_window', $options ) ) ) {
 				// Possible support for other targets in future
-				$atts .= ' target="' . esc_attr( $value['target'] ) . '"';
+				$atts .= ' target="' . esc_attr( $value['target'] ) . '" rel="noopener noreferrer"';
 			}
 
 			// Do shortcodes if this is enabled
@@ -206,8 +206,12 @@ class PodsField_Link extends PodsField_Website {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
@@ -219,7 +223,7 @@ class PodsField_Link extends PodsField_Website {
 			$errors = $check;
 		} else {
 			if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid link provided for the field %s.', 'pods' ), $label );
@@ -231,7 +235,7 @@ class PodsField_Link extends PodsField_Website {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 
 	}
 

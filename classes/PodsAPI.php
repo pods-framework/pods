@@ -155,12 +155,14 @@ class PodsAPI {
 			$object_type = 'term';
 		}
 
+		$is_meta_object = in_array( $object_type, array( 'post', 'term', 'user', 'comment' ), true );
+
 		if ( $sanitized ) {
 			$data = pods_unsanitize( $data );
-			$meta = pods_unsanitize( $meta );
+			// Do not unsanitize $meta. This is already done by WP.
 		}
 
-		if ( in_array( $object_type, array( 'post', 'term', 'user', 'comment' ) ) ) {
+		if ( $is_meta_object ) {
 			return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict, false, $fields );
 		} elseif ( 'settings' === $object_type ) {
 			// Nothing to save
@@ -310,6 +312,10 @@ class PodsAPI {
 		}
 
 		foreach ( $post_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value || ( $strict && '' === $post_meta[ $meta_key ] ) ) {
 				$old_meta_value = '';
 
@@ -462,6 +468,10 @@ class PodsAPI {
 		$meta = get_user_meta( $id );
 
 		foreach ( $user_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value ) {
 				$old_meta_value = '';
 
@@ -605,6 +615,10 @@ class PodsAPI {
 		$meta = get_comment_meta( $id );
 
 		foreach ( $comment_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value ) {
 				$old_meta_value = '';
 
@@ -771,6 +785,10 @@ class PodsAPI {
 		}
 
 		foreach ( $term_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value || ( $strict && '' === $term_meta[ $meta_key ] ) ) {
 				$old_meta_value = '';
 
@@ -2930,13 +2948,13 @@ class PodsAPI {
 				 *      @type null|array  $old_options The old field options (if preexisting).
 				 * }
 				 */
-				do_action( 'pods_api_save_field_table_pre_alter', $definition_mode, $pod, $field['type'], $field, [
+				do_action( 'pods_api_save_field_table_pre_alter', $definition_mode, $pod, $field['type'], $field, array(
 					'simple'         => $simple,
 					'definition'     => $definition,
 					'old_name'       => $old_name,
 					'old_definition' => $old_definition,
 					'old_options'    => $old_options,
-				] );
+				) );
 
 				if ( 'drop' === $definition_mode ) {
 					// Drop field column.
@@ -2978,13 +2996,13 @@ class PodsAPI {
 				 *      @type null|array  $old_options The old field options (if preexisting).
 				 * }
 				 */
-				do_action( 'pods_api_save_field_table_altered', $definition_mode, $pod, $field['type'], $field, [
+				do_action( 'pods_api_save_field_table_altered', $definition_mode, $pod, $field['type'], $field, array(
 					'simple'         => $simple,
 					'definition'     => $definition,
 					'old_name'       => $old_name,
 					'old_definition' => $old_definition,
 					'old_options'    => $old_options,
-				] );
+				) );
 			}
 		}
 
@@ -5025,7 +5043,14 @@ class PodsAPI {
 
 								$related_item = $this->export_pod_item_level( $related_pod, $related_params );
 
-								$related_data[ $related_id ] = $this->do_hook( 'export_pod_item_level', $related_item, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ), $params );
+								$related_item_data = $this->do_hook( 'export_pod_item_level', $related_item, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ), $params );
+
+								if ( function_exists( 'wp_is_json_request' ) && wp_is_json_request() ) {
+									// Don't pass IDs as keys for REST API context to ensure arrays of data are returned.
+									$related_data[] = $related_item_data;
+								} else {
+									$related_data[ $related_id ] = $related_item_data;
+								}
 							}
 						}
 
@@ -9247,7 +9272,7 @@ class PodsAPI {
 			return pods_error( __( 'Invalid submission', 'pods' ), $this );
 		}
 
-		$uid = @session_id();
+		$uid = pods_session_id();
 
 		if ( is_user_logged_in() ) {
 			$uid = 'user_' . get_current_user_id();

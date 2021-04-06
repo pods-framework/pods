@@ -2,7 +2,7 @@
 
 <div id="pods-wizard-options">
 	<div class="pods-wizard-option">
-		<a href="http://ithemes.com/member/go.php?r=31250&i=l44" target="_blank">
+		<a href="http://ithemes.com/member/go.php?r=31250&i=l44" target="_blank" rel="noopener noreferrer">
 			<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/logo_backupbuddy.png" alt="Backup Buddy" />
 
 			<p><?php _e( 'Receive 25% off', 'pods' ); ?></p>
@@ -15,7 +15,7 @@
 		</p>
 	</div>
 	<div class="pods-wizard-option">
-		<a href="http://vaultpress.com/podsframework/" target="_blank">
+		<a href="http://vaultpress.com/podsframework/" target="_blank" rel="noopener noreferrer">
 			<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/logo_vaultpress.png" alt="Vaultpress" />
 
 			<p><?php _e( '1 free month', 'pods' ); ?></p>

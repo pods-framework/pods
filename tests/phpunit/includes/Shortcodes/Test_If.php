@@ -229,8 +229,8 @@ class Test_If extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$content = base64_encode( '{@related_field.post_title}' );
 		$this->assertEquals( 'first post title', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id2}' field='related_field']{$content}[/pod_if_field]" ) );
 
-		$content = base64_encode( '<a href="{@related_field.permalink}">{@related_field.post_title}{/a>' );
-		$this->assertEquals( '<a href="http://example.org/?test_if=first-post-title">first post title{/a>', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id2}' field='related_field']{$content}[/pod_if_field]" ) );
+		$content = base64_encode( '<a href="{@related_field.permalink}">{@related_field.post_title}</a>' );
+		$this->assertEquals( '<a href="http://example.org/?test_if=first-post-title">first post title</a>', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id2}' field='related_field']{$content}[/pod_if_field]" ) );
 
 		$this->assertEquals( 'first post title', do_shortcode( "[pods name='{$pod_name}' id='{$id2}'][if related_field]{@related_field.post_title}[/if][/pods]" ) );
 

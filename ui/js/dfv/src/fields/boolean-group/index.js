@@ -24,7 +24,7 @@ const BooleanGroup = ( {
 	console.log('boolean group all values', values);
 
 	return (
-		<div className="pods-boolean-group">
+		<ul className="pods-checkbox-pick pods-boolean-group">
 			{ booleanGroup.map( ( subField ) => {
 				const {
 					help,
@@ -35,26 +35,28 @@ const BooleanGroup = ( {
 				const idAttribute = !! htmlAttributes.id ? htmlAttributes.id : name;
 
 				return (
-					<div className="pods-field pods-boolean" key={ subField.name }>
-						<label
-							className="pods-form-ui-label pods-checkbox-pick__option__label"
-							htmlFor={ idAttribute }
-						>
-							<input
-								name={ name }
-								id={ idAttribute }
-								className="pods-form-ui-field-type-pick"
-								type="checkbox"
-								value={ 1 }
-								checked={ toBool( values[ name ] ) }
-								onChange={ toggleChange( name ) }
-							/>
-							{ label }
-						</label>
-					</div>
+					<li className="pods-checkbox-pick__option" key={ subField.name }>
+						<div className="pods-field pods-boolean">
+							<label
+								className="pods-form-ui-label pods-checkbox-pick__option__label"
+								htmlFor={ idAttribute }
+							>
+								<input
+									name={ name }
+									id={ idAttribute }
+									className="pods-form-ui-field-type-pick"
+									type="checkbox"
+									value={ 1 }
+									checked={ toBool( values[ name ] ) }
+									onChange={ toggleChange( name ) }
+								/>
+								{ label }
+							</label>
+						</div>
+					</li>
 				);
 			} ) }
-		</div>
+		</ul>
 	);
 };
 

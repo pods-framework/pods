@@ -1110,6 +1110,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}//end if
 
 	$pagination = false;
+
+	// Only handle pagination on non-singular shortcodes where items were found.
 	if ( ! $is_singular && 0 < $found && $tags['pagination'] ) {
 		$pagination = array(
 			'label' => pods_v( 'pagination_label', $tags, null ),

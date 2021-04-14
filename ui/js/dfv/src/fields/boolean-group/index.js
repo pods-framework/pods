@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Boolean from '../boolean';
+import HelpTooltip from 'dfv/src/components/help-tooltip';
 import { toBool } from 'dfv/src/helpers/booleans';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+
+import './boolean-group.scss';
 
 const BooleanGroup = ( {
 	fieldConfig = {},
@@ -24,7 +26,7 @@ const BooleanGroup = ( {
 	console.log('boolean group all values', values);
 
 	return (
-		<ul className="pods-checkbox-pick pods-boolean-group">
+		<ul className="pods-boolean-group">
 			{ booleanGroup.map( ( subField ) => {
 				const {
 					help,
@@ -35,7 +37,7 @@ const BooleanGroup = ( {
 				const idAttribute = !! htmlAttributes.id ? htmlAttributes.id : name;
 
 				return (
-					<li className="pods-checkbox-pick__option" key={ subField.name }>
+					<li className="pods-boolean-group__option" key={ subField.name }>
 						<div className="pods-field pods-boolean">
 							<label
 								className="pods-form-ui-label pods-checkbox-pick__option__label"
@@ -52,6 +54,8 @@ const BooleanGroup = ( {
 								/>
 								{ label }
 							</label>
+
+							{help && <HelpTooltip helpText={ help } />}
 						</div>
 					</li>
 				);

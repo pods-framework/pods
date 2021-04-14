@@ -40,21 +40,9 @@
         "type": "boolean",
         "help": "This option is overridden by access restrictions. If the user does not have access to edit this field, it will be read only. If no access restrictions are set, this field will always be read only.",
         "depends-on": {
-          "type" : [
-            "boolean",
-            "color",
-            "currency",
-            "date",
-            "datetime",
-            "email",
-            "number",
-            "paragraph",
-            "password",
-            "phone",
-            "slug",
-            "text",
-            "time",
-            "website"
+          "demo_plain_text" : [
+            "Test 1",
+            "Test 2"
           ]
         }
       }

@@ -50,7 +50,7 @@
   "require": {
     "composer/installers": "1.9.*",
     "php": ">=5.3",
-    "freemius/wordpress-sdk": "2.3.2"
+    "freemius/wordpress-sdk": "2.4.1"
   },
   "require-dev": {
     "automattic/vipwpcs": "^2.0",

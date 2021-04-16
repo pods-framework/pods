@@ -28,10 +28,7 @@ const BooleanGroup = ( {
 		boolean_group: booleanGroup = [],
 	} = fieldConfig;
 
-	const toggleChange = ( name ) => ( event ) => {
-		setOptionValue( name, ! values[ name ] );
-		event.preventDefault();
-	};
+	const toggleChange = ( name ) => () => setOptionValue( name, ! values[ name ] );
 
 	return (
 		<ul className="pods-boolean-group">

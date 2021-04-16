@@ -61,7 +61,6 @@ const BooleanGroupSubfield = ( {
 						id={ idAttribute }
 						className="pods-form-ui-field-type-pick"
 						type="checkbox"
-						value={ 1 }
 						checked={ checked }
 						onChange={ toggleChange }
 					/>

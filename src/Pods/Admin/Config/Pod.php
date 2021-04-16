@@ -548,6 +548,22 @@ class Pod extends Base {
 					'default'             => '',
 					'object_type'         => [ 'post_type' ],
 				],
+				'filter_by_date'                   => [
+					'label'       => __( 'Filter by date', 'pods' ),
+					'help'        => __( 'help', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'object_type' => [ 'post_type' ],
+				],
+				'filter_by_item'                   => [
+					'label'               => __( 'Filter by %s', 'pods' ),
+					'label_param'         => 'label_singular',
+					'label_param_default' => __( 'Item', 'pods' ),
+					'help'                => __( 'help', 'pods' ),
+					'type'                => 'text',
+					'default'             => '',
+					'object_type'         => [ 'taxonomy' ],
+				],
 			];
 
 			$options['labels'] = [];
@@ -929,14 +945,14 @@ class Pod extends Base {
 			}
 
 			$options['advanced'] = [
-				'public'                 => [
+				'public'                   => [
 					'label'             => __( 'Public', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
 				],
-				'hierarchical'           => [
+				'hierarchical'             => [
 					'label'             => __( 'Hierarchical', 'pods' ),
 					'help'              => __( 'Hierarchical taxonomies will have a list with checkboxes to select an existing category in the taxonomy admin box on the post edit page (like default post categories). Non-hierarchical taxonomies will just have an empty text field to type-in taxonomy terms to associate with the post (like default post tags).', 'pods' ),
 					'type'              => 'boolean',
@@ -944,7 +960,7 @@ class Pod extends Base {
 					'dependency'        => true,
 					'boolean_yes_label' => '',
 				],
-				'rewrite'                => [
+				'rewrite'                  => [
 					'label'             => __( 'Rewrite', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
@@ -952,7 +968,7 @@ class Pod extends Base {
 					'dependency'        => true,
 					'boolean_yes_label' => '',
 				],
-				'rewrite_custom_slug'    => [
+				'rewrite_custom_slug'      => [
 					'label'         => __( 'Custom Rewrite Slug', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
 					'type'          => 'slug',
@@ -960,7 +976,7 @@ class Pod extends Base {
 					'default'       => '',
 					'depends-on'    => [ 'rewrite' => true ],
 				],
-				'rewrite_with_front'     => [
+				'rewrite_with_front'       => [
 					'label'             => __( 'Rewrite with Front', 'pods' ),
 					'help'              => __( 'Allows permalinks to be prepended with your front base (example: if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/)', 'pods' ),
 					'type'              => 'boolean',
@@ -968,7 +984,7 @@ class Pod extends Base {
 					'boolean_yes_label' => '',
 					'depends-on'        => [ 'rewrite' => true ],
 				],
-				'rewrite_hierarchical'   => [
+				'rewrite_hierarchical'     => [
 					'label'             => __( 'Hierarchical Permalinks', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
@@ -976,7 +992,7 @@ class Pod extends Base {
 					'boolean_yes_label' => '',
 					'depends-on'        => [ 'rewrite' => true ],
 				],
-				'capability_type'        => [
+				'capability_type'          => [
 					'label'      => __( 'User Capability', 'pods' ),
 					'help'       => __( 'Uses WordPress term capabilities by default', 'pods' ),
 					'type'       => 'pick',
@@ -987,21 +1003,21 @@ class Pod extends Base {
 					],
 					'dependency' => true,
 				],
-				'capability_type_custom' => [
+				'capability_type_custom'   => [
 					'label'      => __( 'Custom User Capability', 'pods' ),
 					'help'       => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
 					'type'       => 'text',
 					'default'    => pods_v( 'name', $pod ),
 					'depends-on' => [ 'capability_type' => 'custom' ],
 				],
-				'query_var'              => [
+				'query_var'                => [
 					'label'             => __( 'Query Var', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'boolean_yes_label' => '',
 				],
-				'query_var'              => [
+				'query_var'                => [
 					'label'             => __( 'Query Var', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
@@ -1009,25 +1025,43 @@ class Pod extends Base {
 					'dependency'        => true,
 					'boolean_yes_label' => '',
 				],
-				'query_var_string'       => [
+				'query_var_string'         => [
 					'label'      => __( 'Custom Query Var Name', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => [ 'query_var' => true ],
 				],
-				'sort'                   => [
+				'sort'                     => [
 					'label'             => __( 'Remember order saved on Post Types', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'boolean_yes_label' => '',
 				],
-				'update_count_callback'  => [
+				'update_count_callback'    => [
 					'label'   => __( 'Function to call when updating counts', 'pods' ),
 					'help'    => __( 'help', 'pods' ),
 					'type'    => 'text',
 					'default' => '',
+				],
+				'default_term_name'        => [
+					'label'      => __( 'Default term name', 'pods' ),
+					'type'       => 'text',
+					'default'    => '',
+					'dependency' => true,
+				],
+				'default_term_slug'        => [
+					'label'      => __( 'Default term slug', 'pods' ),
+					'type'       => 'text',
+					'default'    => '',
+					'depends-on' => [ 'default_term_name' => true ],
+				],
+				'default_term_description' => [
+					'label'      => __( 'Default term description', 'pods' ),
+					'type'       => 'wysiwyg',
+					'default'    => '',
+					'depends-on' => [ 'default_term_name' => true ],
 				],
 			];
 			// @todo Handle extra-fields content here.

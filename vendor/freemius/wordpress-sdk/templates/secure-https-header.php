@@ -30,7 +30,7 @@
 				     ) ) .
 				     ' - ' .
 				     sprintf(
-					     '<a class="fs-security-proof" href="%s" target="_blank">%s</a>',
+					     '<a class="fs-security-proof" href="%s" target="_blank" rel="noopener">%s</a>',
 					     'https://www.mcafeesecure.com/verify?host=' . WP_FS__ROOT_DOMAIN_PRODUCTION,
 					     'Freemius Inc. [US]'
 				     );

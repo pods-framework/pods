@@ -1688,18 +1688,34 @@ class Pods implements Iterator {
 				$filter = pods_v( 'display_filter', $field_data['options'] );
 
 				if ( 0 < strlen( $filter ) ) {
-					$args = array(
-						$filter,
-						$value,
-					);
 
-					$filter_args = pods_v( 'display_filter_args', $field_data['options'] );
-
-					if ( ! empty( $filter_args ) ) {
-						$args = array_merge( $args, compact( $filter_args ) );
+					if ( $params->single ) {
+						$value = array( $value );
 					}
 
-					$value = call_user_func_array( 'apply_filters', $args );
+					foreach ( $value as $key => $val ) {
+
+						$args = array(
+							$filter,
+							$val,
+						);
+
+						$filter_args = pods_v( 'display_filter_args', $field_data['options'] );
+
+						if ( ! empty( $filter_args ) ) {
+							$args = array_merge( $args, compact( $filter_args ) );
+						}
+
+						$val = call_user_func_array( 'apply_filters', $args );
+
+						$value[ $key ] = $val;
+
+					}
+
+					if ( $params->single ) {
+						$value = reset( $value );
+					}
+
 				} elseif ( 1 === (int) pods_v( 'display_process', $field_data['options'], 1 ) ) {
 					if ( ! is_array( $value ) || ! $params->display_process_individually ) {
 						// Do the normal display handling.

@@ -260,14 +260,20 @@
                     if ( $has_valid_blog_id ) {
                         restore_current_blog();
                     }
+                }
 
-                    if ( is_object( $fs_addon ) ) {
-                        $data->has_purchased_license = $fs_addon->has_active_valid_license();
-                    } else {
-                        $account_addons = $this->_fs->get_account_addons();
-                        if ( ! empty( $account_addons ) && in_array( $selected_addon->id, $account_addons ) ) {
-                            $data->has_purchased_license = true;
-                        }
+                /**
+                 * Check if there's a purchased license in case the add-on can only be installed/downloaded as part of a purchased bundle.
+                 *
+                 * @author Leo Fajardo (@leorw)
+                 * @since 2.4.1
+                 */
+                if ( is_object( $fs_addon ) ) {
+                    $data->has_purchased_license = $fs_addon->has_active_valid_license();
+                } else {
+                    $account_addons = $this->_fs->get_account_addons();
+                    if ( ! empty( $account_addons ) && in_array( $selected_addon->id, $account_addons ) ) {
+                        $data->has_purchased_license = true;
                     }
                 }
 
@@ -328,14 +334,7 @@
                 }
             }
 
-            $description = fs_get_template( '/plugin-info/description.php', $view_vars );
-            $description = trim( $description );
-
-            $description = $this->_fs->apply_filters( 'plugin_section_description', $description, $data );
-
-            if ( '' !== $description ) {
-            	$data->sections['description'] = $description;
-			}
+            $data->sections['description'] = fs_get_template( '/plugin-info/description.php', $view_vars );
 
             if ( $has_pricing ) {
                 // Add plans to data.
@@ -584,7 +583,7 @@
 
             $has_installed_version = ( 'install' !== $this->status['status'] );
 
-            if ( ! $api->has_paid_plan ) {
+            if ( ! $api->has_paid_plan && ! $api->has_purchased_license ) {
                 /**
                  * Free-only add-on.
                  *
@@ -887,9 +886,11 @@
                 $classes[] = 'disabled';
             }
 
+            $rel = ( '_blank' === $target ) ? ' rel="noopener noreferrer"' : '';
+
             return sprintf(
                 '<a %s class="button %s">%s</a>',
-                empty( $href ) ? '' : 'href="' . $href . '" target="' . $target . '"',
+                empty( $href ) ? '' : 'href="' . $href . '" target="' . $target . '"' . $rel,
                 implode( ' ', $classes ),
                 $label
             );
@@ -1374,6 +1375,7 @@
                             if ( ! empty( $api->slug ) && true == $api->is_wp_org_compliant ) {
                                 ?>
                                 <li><a target="_blank"
+                                       rel="noopener noreferrer"
                                        href="https://wordpress.org/plugins/<?php echo $api->slug; ?>/"><?php fs_esc_html_echo_inline( 'WordPress.org Plugin Page', 'wp-org-plugin-page', $api->slug ) ?>
                                         &#187;</a>
                                 </li>
@@ -1382,6 +1384,7 @@
                             if ( ! empty( $api->homepage ) ) {
                                 ?>
                                 <li><a target="_blank"
+                                       rel="noopener noreferrer"
                                        href="<?php echo esc_url( $api->homepage ); ?>"><?php fs_esc_html_echo_inline( 'Plugin Homepage', 'plugin-homepage', $api->slug ) ?>
                                         &#187;</a>
                                 </li>
@@ -1390,6 +1393,7 @@
                             if ( ! empty( $api->donate_link ) && empty( $api->contributors ) ) {
                                 ?>
                                 <li><a target="_blank"
+                                       rel="noopener noreferrer"
                                        href="<?php echo esc_url( $api->donate_link ); ?>"><?php fs_esc_html_echo_inline( 'Donate to this plugin', 'donate-to-plugin', $api->slug ) ?>
                                         &#187;</a>
                                 </li>
@@ -1433,18 +1437,19 @@
                             );
                             ?>
                             <div class="counter-container">
-					<span class="counter-label"><a
-                            href="https://wordpress.org/support/view/plugin-reviews/<?php echo $api->slug; ?>?filter=<?php echo $key; ?>"
-                            target="_blank"
-                            title="<?php echo esc_attr( sprintf(
-                            /* translators: %s: # of stars (e.g. 5 stars) */
-                                fs_text_inline( 'Click to see reviews that provided a rating of %s', 'click-to-reviews', $api->slug ),
-                                $stars_label
-                            ) ) ?>"><?php echo $stars_label ?></a></span>
+                              <span class="counter-label"><a
+                                href="https://wordpress.org/support/view/plugin-reviews/<?php echo $api->slug; ?>?filter=<?php echo $key; ?>"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="<?php echo esc_attr( sprintf(
+                                  /* translators: %s: # of stars (e.g. 5 stars) */
+                                  fs_text_inline( 'Click to see reviews that provided a rating of %s', 'click-to-reviews', $api->slug ),
+                                  $stars_label
+                                ) ) ?>"><?php echo $stars_label ?></a></span>
                                 <span class="counter-back">
-						<span class="counter-bar" style="width: <?php echo absint(92 * $_rating); ?>px;"></span>
-					</span>
-                                <span class="counter-count"><?php echo number_format_i18n( $ratecount ); ?></span>
+                                <span class="counter-bar" style="width: <?php echo absint(92 * $_rating); ?>px;"></span>
+                              </span>
+                              <span class="counter-count"><?php echo number_format_i18n( $ratecount ); ?></span>
                             </div>
                             <?php
                         }
@@ -1465,13 +1470,14 @@
                                     if ( empty( $contrib_profile ) ) {
                                         echo "<li><img src='https://wordpress.org/grav-redirect.php?user={$contrib_username}&amp;s=36' width='18' height='18' />{$contrib_username}</li>";
                                     } else {
-                                        echo "<li><a href='{$contrib_profile}' target='_blank'><img src='https://wordpress.org/grav-redirect.php?user={$contrib_username}&amp;s=36' width='18' height='18' />{$contrib_username}</a></li>";
+                                        echo "<li><a href='{$contrib_profile}' target='_blank' rel='noopener noreferrer'><img src='https://wordpress.org/grav-redirect.php?user={$contrib_username}&amp;s=36' width='18' height='18' />{$contrib_username}</a></li>";
                                     }
                                 }
                             ?>
                         </ul>
                         <?php if ( ! empty( $api->donate_link ) ) { ?>
                             <a target="_blank"
+                               rel="noopener noreferrer"
                                href="<?php echo esc_url( $api->donate_link ); ?>"><?php fs_echo_inline( 'Donate to this plugin', 'donate-to-plugin', $api->slug ) ?>
                                 &#187;</a>
                         <?php } ?>

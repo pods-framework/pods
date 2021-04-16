@@ -287,7 +287,7 @@
 							$this->_logger->warn( 'Fallback to cached API result: ' . var_export( $cached_result, true ) );
 						}
 					} else {
-					    if ( is_object( $result ) && 404 == $result->error->http ) {
+					    if ( is_object( $result ) && isset( $result->error->http ) && 404 == $result->error->http ) {
                             /**
                              * If the response code is 404, cache the result for half of the `$expiration`.
                              *

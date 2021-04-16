@@ -59,6 +59,10 @@
 		}
 	}
 
+    if ( ! defined( 'FS_SDK__SSLVERIFY' ) ) {
+        define( 'FS_SDK__SSLVERIFY', false );
+    }
+
 	$curl_version = FS_SDK__HAS_CURL ?
 		curl_version() :
 		array( 'version' => '7.37' );
@@ -228,10 +232,13 @@
 			$now          = ( time() - self::$_clock_diff );
 			$date         = date( 'r', $now );
 
-			if ( in_array( $pMethod, array( 'POST', 'PUT' ) ) && ! empty( $pPostParams ) ) {
-				$content_md5  = md5( $pPostParams );
-				$content_type = 'application/json';
-			}
+			if ( in_array( $pMethod, array( 'POST', 'PUT' ) ) ) {
+                $content_type = 'application/json';
+
+                if ( ! empty( $pPostParams ) ) {
+                    $content_md5 = md5( $pPostParams );
+                }
+            }
 
 			$string_to_sign = implode( $eol, array(
 				$pMethod,
@@ -380,10 +387,11 @@
 			}
 
 			if ( in_array( $pMethod, array( 'POST', 'PUT' ) ) ) {
-				if ( is_array( $pParams ) && 0 < count( $pParams ) ) {
-					$pWPRemoteArgs['headers']['Content-type'] = 'application/json';
-					$pWPRemoteArgs['body']                    = json_encode( $pParams );
-				}
+                $pWPRemoteArgs['headers']['Content-type'] = 'application/json';
+
+                if ( is_array( $pParams ) && 0 < count( $pParams ) ) {
+                    $pWPRemoteArgs['body'] = json_encode( $pParams );
+                }
 			}
 
 			$request_url = self::GetUrl( $pCanonizedPath, $pIsSandbox );
@@ -397,7 +405,7 @@
             }
 
 			if ( 'https' === substr( strtolower( $request_url ), 0, 5 ) ) {
-				$pWPRemoteArgs['sslverify'] = false;
+				$pWPRemoteArgs['sslverify'] = FS_SDK__SSLVERIFY;
 			}
 
 			if ( false !== $pBeforeExecutionFunction &&
@@ -570,7 +578,7 @@
 			} catch ( Exception $e ) {
 				// Map to error object.
 				$result = (object) array(
-					'error' => array(
+					'error' => (object) array(
 						'type'    => 'Unknown',
 						'message' => $e->getMessage() . ' (' . $e->getFile() . ': ' . $e->getLine() . ')',
 						'code'    => 'unknown',
@@ -649,7 +657,7 @@
 				$message = ( 1 < count( $parts ) ) ? $parts[1] : $message;
 
 				$e = new Freemius_Exception( array(
-					'error' => array(
+					'error' => (object) array(
 						'code'    => $code,
 						'message' => $message,
 						'type'    => 'CurlException',
@@ -657,7 +665,7 @@
 				) );
 			} else {
 				$e = new Freemius_Exception( array(
-					'error' => array(
+					'error' => (object) array(
 						'code'    => $pError->get_error_code(),
 						'message' => $pError->get_error_message(),
 						'type'    => 'WPRemoteException',

@@ -380,45 +380,62 @@
         global $fs_active_plugins;
 
         /**
-         * @todo Multi-site network activated plugin are always loaded prior to site plugins so if there's a a plugin activated in the network mode that has an older version of the SDK of another plugin which is site activated that has new SDK version, the fs-essential-functions.php will be loaded from the older SDK. Same thing about MU plugins (loaded even before network activated plugins).
+         * @todo Multi-site network activated plugin are always loaded prior to site plugins so if there's a plugin activated in the network mode that has an older version of the SDK of another plugin which is site activated that has new SDK version, the fs-essential-functions.php will be loaded from the older SDK. Same thing about MU plugins (loaded even before network activated plugins).
          *
          * @link https://github.com/Freemius/wordpress-sdk/issues/26
          */
 
         $newest_sdk_plugin_path = $fs_active_plugins->newest->plugin_path;
 
-        $active_plugins        = get_option( 'active_plugins', array() );
-        $newest_sdk_plugin_key = array_search( $newest_sdk_plugin_path, $active_plugins );
-        if ( 0 === $newest_sdk_plugin_key ) {
-            // if it's 0 it's the first plugin already, no need to continue
-            return false;
-        } else if ( is_numeric( $newest_sdk_plugin_key ) ) {
-            // Remove plugin from its current position.
-            array_splice( $active_plugins, $newest_sdk_plugin_key, 1 );
+        $active_plugins         = get_option( 'active_plugins', array() );
+        $updated_active_plugins = array( $newest_sdk_plugin_path );
 
-            // Set it to be included first.
-            array_unshift( $active_plugins, $newest_sdk_plugin_path );
+        $plugin_found  = false;
+        $is_first_path = true;
 
-            update_option( 'active_plugins', $active_plugins );
+        foreach ( $active_plugins as $key => $plugin_path ) {
+            if ( $plugin_path === $newest_sdk_plugin_path ) {
+                if ( $is_first_path ) {
+                    // if it's the first plugin already, no need to continue
+                    return false;
+                }
+
+                $plugin_found = true;
+
+                // Skip the plugin (it is already added as the 1st item of $updated_active_plugins).
+                continue;
+            }
+
+            $updated_active_plugins[] = $plugin_path;
+
+            if ( $is_first_path ) {
+                $is_first_path = false;
+            }
+        }
+
+        if ( $plugin_found ) {
+            update_option( 'active_plugins', $updated_active_plugins );
 
             return true;
-        } else if ( is_multisite() && false === $newest_sdk_plugin_key ) {
+        }
+
+        if ( is_multisite() ) {
             // Plugin is network active.
             $network_active_plugins = get_site_option( 'active_sitewide_plugins', array() );
 
-            if (isset($network_active_plugins[$newest_sdk_plugin_path])) {
-                reset($network_active_plugins);
-                if ( $newest_sdk_plugin_path === key($network_active_plugins) ) {
+            if ( isset( $network_active_plugins[ $newest_sdk_plugin_path ] ) ) {
+                reset( $network_active_plugins );
+                if ( $newest_sdk_plugin_path === key( $network_active_plugins ) ) {
                     // Plugin is already activated first on the network level.
                     return false;
-                } else if ( is_numeric( $newest_sdk_plugin_key ) ) {
-                    $time = $network_active_plugins[$newest_sdk_plugin_path];
+                } else {
+                    $time = $network_active_plugins[ $newest_sdk_plugin_path ];
 
                     // Remove plugin from its current position.
-                    unset($network_active_plugins[$newest_sdk_plugin_path]);
+                    unset( $network_active_plugins[ $newest_sdk_plugin_path ] );
 
                     // Set it to be included first.
-                    $network_active_plugins = array($newest_sdk_plugin_path => $time) + $network_active_plugins;
+                    $network_active_plugins = array( $newest_sdk_plugin_path => $time ) + $network_active_plugins;
 
                     update_site_option( 'active_sitewide_plugins', $network_active_plugins );
 

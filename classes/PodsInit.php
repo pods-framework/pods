@@ -355,7 +355,7 @@ class PodsInit {
 				'type'           => 'plugin',
 				'public_key'     => 'pk_737105490825babae220297e18920',
 				'is_premium'     => false,
-				'has_addons'     => true,
+				'has_addons'     => false,
 				'has_paid_plans' => false,
 				'menu'           => array(
 					'slug'        => 'pods-settings',
@@ -380,8 +380,10 @@ class PodsInit {
 
 			/**
 			 * Allow hooking into the Freemius registration after Pods has registered it's own Freemius.
+			 *
+			 * @since 2.7.27
 			 */
-			do_action( 'pods_freemius_init' );
+			do_action( 'pods_freemius_after_init' );
 		} catch ( \Exception $exception ) {
 			return null;
 		}
@@ -1405,6 +1407,16 @@ class PodsInit {
 					'show_admin_column'     => (boolean) pods_v( 'show_admin_column', $taxonomy, false ),
 					'sort'                  => (boolean) pods_v( 'sort', $taxonomy, false ),
 				);
+
+				// @since WP 5.5: Default terms.
+				$default_term_name = pods_v( 'default_term_name', $taxonomy, null, true );
+				if ( $default_term_name ) {
+					$pods_taxonomies[ $taxonomy_name ][ 'default_term' ] = array(
+						'name'        => $default_term_name,
+						'slug'        => pods_v( 'default_term_slug', $taxonomy, null, true ),
+						'description' => pods_v( 'default_term_description', $taxonomy, null, true ),
+					);
+				}
 
 				if ( is_array( $ct_rewrite ) && ! $pods_taxonomies[ $taxonomy_name ]['query_var'] ) {
 					$pods_taxonomies[ $taxonomy_name ]['query_var'] = pods_v( 'query_var_string', $taxonomy, $taxonomy_name, true );

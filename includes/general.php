@@ -874,6 +874,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'filters_label'       => null,
 		'filters_location'    => 'before',
 		'pagination_label'    => null,
+		'pagination_type'     => null,
 		'pagination_location' => 'after',
 	);
 
@@ -1166,12 +1167,9 @@ function pods_shortcode_run( $tags, $content = null ) {
 		return $return;
 	}//end if
 
-	ob_start();
+	$pagination = false;
 
-	if ( ! $is_singular && false !== $tags['filters'] && 'before' === $tags['filters_location'] ) {
-		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
-	}
-
+	// Only handle pagination on non-singular shortcodes where items were found.
 	if (
 		! $is_singular
 		&& 0 < $found
@@ -1183,12 +1181,24 @@ function pods_shortcode_run( $tags, $content = null ) {
 			)
 		)
 		&& true === $tags['pagination']
-		&& in_array( $tags['pagination_location'], [
-			'before',
-			'both',
-		], true )
 	) {
-		echo $pod->pagination( $tags['pagination_label'] );
+		$pagination = array(
+			'label' => pods_v( 'pagination_label', $tags, null ),
+			'type'  => pods_v( 'pagination_type', $tags, null ),
+		);
+
+		// Remove empty params.
+		$pagination = array_filter( $pagination );
+	}
+
+	ob_start();
+
+	if ( ! $is_singular && false !== $tags['filters'] && 'before' === $tags['filters_location'] ) {
+		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
+	}
+
+	if ( false !== $pagination && in_array( $tags['pagination_location'], [ 'before', 'both' ], true ) ) {
+		echo $pod->pagination( $pagination );
 	}
 
 	$content = $pod->template( $tags['template'], $content );
@@ -1200,23 +1210,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 	// phpcs:ignore
 	echo $content;
 
-	if (
-		! $is_singular
-		&& 0 < $found
-		&& (
-			empty( $params['limit'] )
-			|| (
-				0 < $params['limit']
-				&& $params['limit'] < $found
-			)
-		)
-		&& true === $tags['pagination']
-		&& in_array( $tags['pagination_location'], [
-			'after',
-			'both',
-		], true )
-	) {
-		echo $pod->pagination( $tags['pagination_label'] );
+	if ( false !== $pagination && in_array( $tags['pagination_location'], [ 'after', 'both' ], true ) ) {
+		echo $pod->pagination( $pagination );
 	}
 
 	if ( ! $is_singular && false !== $tags['filters'] && 'after' === $tags['filters_location'] ) {

@@ -366,7 +366,7 @@
                     );
                 } else {
                     $buttons[] = sprintf(
-                        '<a target="_blank" class="button button-primary edit" href="%s">%s</a>',
+                        '<a target="_blank" rel="noopener" class="button button-primary edit" href="%s">%s</a>',
                         $fs->_get_latest_download_local_url( $addon_id ),
                         esc_html( $download_latest_text )
                     );
@@ -417,7 +417,7 @@
                     <a class="button button-primary"
                        href="<?php echo wp_nonce_url( self_admin_url( 'update.php?' . ( ( isset( $addon_info['has_paid_plan'] ) && $addon_info['has_paid_plan'] ) ? 'fs_allow_updater_and_dialog=true&' : '' ) . 'action=install-plugin&plugin=' . $addon_info['slug'] ), 'install-plugin_' . $addon_info['slug'] ) ?>"><?php fs_esc_html_echo_inline( 'Install Now', 'install-now', $slug ) ?></a>
                 <?php else : ?>
-                    <a target="_blank" class="button button-primary"
+                    <a target="_blank" rel="noopener" class="button button-primary"
                        href="<?php echo $fs->_get_latest_download_local_url( $addon_id ) ?>"><?php echo esc_html( $download_latest_text ) ?></a>
                 <?php endif ?>
             <?php endif ?>

@@ -98,6 +98,8 @@
 		'error'                         => _fs_text( 'Error' ),
 		'failed-finding-main-path'      => _fs_text( 'Freemius SDK couldn\'t find the plugin\'s main file. Please contact sdk@freemius.com with the current error.' ),
         'learn-more'                    => _fs_text( 'Learn more' ),
+        'license_not_whitelabeled'      => _fs_text( "Is this your client's site? %s if you wish to hide sensitive info like your billing address and invoices from the WP Admin."),
+        'license_whitelabeled'          => _fs_text( 'Your %s license was flagged as white-labeled to hide sensitive information from the WP Admin (e.g. your billing address and invoices). If you ever wish to revert it back, you can easily do it through your %s. If this was a mistake you can also %s.'),
 
 		#region Affiliation
         'affiliation'                        => _fs_text( 'Affiliation' ),

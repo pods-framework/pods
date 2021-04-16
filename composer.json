@@ -41,23 +41,23 @@
   },
   "repositories": [
     {
-      "name": "moderntribe/tribalscents",
+      "name": "the-events-calendar/tribalscents",
       "type": "github",
-      "url": "https://github.com/moderntribe/tribalscents",
+      "url": "https://github.com/the-events-calendar/tribalscents",
       "no-api": true
     }
   ],
   "require": {
     "composer/installers": "1.9.*",
     "php": ">=5.3",
-    "freemius/wordpress-sdk": "2.4.1"
+    "freemius/wordpress-sdk": "2.4.2"
   },
   "require-dev": {
     "automattic/vipwpcs": "^2.0",
     "bvanhoekelen/performance": "^2.5.1",
     "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
     "wp-coding-standards/wpcs": "^2.1",
-    "moderntribe/tribalscents": "dev-master",
+    "the-events-calendar/tribalscents": "dev-master",
     "wp-cli/wp-cli": "2.*",
     "phpunit/phpunit": "4.*",
     "mockery/mockery": "1.3.*",

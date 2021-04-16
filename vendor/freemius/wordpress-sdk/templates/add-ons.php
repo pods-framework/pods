@@ -332,11 +332,11 @@
                                                 }
                                             ?>
                                             <?php else : ?>
-                                            <a target="_blank" class="button button-primary" href="<?php echo $latest_download_local_url ?>"><?php echo esc_html( $download_latest_text ) ?></a>
+                                            <a target="_blank" rel="noopener" class="button button-primary" href="<?php echo $latest_download_local_url ?>"><?php echo esc_html( $download_latest_text ) ?></a>
                                             <?php endif ?>
                                             <div class="button button-primary fs-dropdown-arrow-button"><span class="fs-dropdown-arrow"></span><ul class="fs-dropdown-list" style="display: none">
 		                                            <?php if ( $is_allowed_to_install && ! empty( $latest_download_local_url ) ) : ?>
-			                                            <li><a target="_blank" href="<?php echo $latest_download_local_url ?>"><?php echo esc_html( $download_latest_text ) ?></a></li>
+			                                            <li><a target="_blank" rel="noopener" href="<?php echo $latest_download_local_url ?>"><?php echo esc_html( $download_latest_text ) ?></a></li>
 		                                            <?php endif ?>
 		                                            <li><?php
 				                                            echo sprintf(

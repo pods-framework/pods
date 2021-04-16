@@ -203,7 +203,7 @@ class PodsInit {
 				'type'           => 'plugin',
 				'public_key'     => 'pk_737105490825babae220297e18920',
 				'is_premium'     => false,
-				'has_addons'     => true,
+				'has_addons'     => false,
 				'has_paid_plans' => false,
 				'menu'           => array(
 					'slug'        => 'pods-settings',
@@ -212,7 +212,7 @@ class PodsInit {
 					'affiliation' => false,
 					'account'     => true,
 					'pricing'     => false,
-					'addons'      => true,
+					'addons'      => false,
 					'parent'      => array(
 						'slug' => 'pods',
 					),
@@ -228,8 +228,10 @@ class PodsInit {
 
 			/**
 			 * Allow hooking into the Freemius registration after Pods has registered it's own Freemius.
+			 *
+			 * @since 2.7.27
 			 */
-			do_action( 'pods_freemius_init' );
+			do_action( 'pods_freemius_after_init' );
 		} catch ( \Exception $exception ) {
 			return null;
 		}

@@ -5024,7 +5024,7 @@ class PodsAPI {
 					$related_pod = pods( pods_var_raw( 'pick_val', $field ), null, false );
 
 					// If this isn't a Pod, return data exactly as Pods does normally
-					if ( empty( $related_pod ) || ( 'pod' !== $pick_object && $pick_object !== pods_v( 'type', $related_pod->pod_data, null ) ) || $related_pod->pod == $pod->pod ) {
+					if ( empty( $related_pod ) || empty( $related_pod->pod_data ) || ( 'pod' !== $pick_object && $pick_object !== pods_v( 'type', $related_pod->pod_data, null ) ) || $related_pod->pod == $pod->pod ) {
 						$related_data = $pod->field( array( 'name' => $field['name'], 'output' => 'arrays' ) );
 					} else {
 						$related_object_fields = (array) pods_var_raw( 'object_fields', $related_pod->pod_data, array(), null, true );

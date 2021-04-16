@@ -2194,24 +2194,6 @@ class PodsAdmin {
 					'type'    => 'text',
 					'default' => '',
 				),
-				'default_term_name'        => array(
-					'label'      => __( 'Default term name', 'pods' ),
-					'type'       => 'text',
-					'default'    => '',
-					'dependency' => true,
-				),
-				'default_term_slug'        => array(
-					'label'      => __( 'Default term slug', 'pods' ),
-					'type'       => 'text',
-					'default'    => '',
-					'depends-on' => array( 'default_term_name' => true ),
-				),
-				'default_term_description' => array(
-					'label'      => __( 'Default term description', 'pods' ),
-					'type'       => 'wysiwyg',
-					'default'    => '',
-					'depends-on' => array( 'default_term_name' => true ),
-				),
 			);
 		} elseif ( 'settings' === $pod['type'] ) {
 			$options['admin-ui'] = array(

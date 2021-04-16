@@ -44,4 +44,7 @@ const unstackDependencies = (
 	);
 };
 
-export default memoize( unstackDependencies );
+export default memoize(
+	unstackDependencies,
+	( ...args ) => JSON.stringify( args )
+);

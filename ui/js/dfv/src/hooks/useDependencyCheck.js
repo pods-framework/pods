@@ -1,5 +1,3 @@
-import { memoize } from 'lodash';
-
 /**
  * Other Pods dependencies
  */
@@ -8,7 +6,7 @@ import unstackDependencies from 'dfv/src/helpers/unstackDependencies';
 
 const useDependencyCheck = (
 	allPodValues = {},
-	allPodFieldsMap = {},
+	allPodFieldsMap = new Map(),
 	dependsOn = {},
 	dependsOnAny = {},
 	excludesOn = {},
@@ -48,4 +46,4 @@ const useDependencyCheck = (
 	return meetsDependencies;
 };
 
-export default memoize( useDependencyCheck );
+export default useDependencyCheck;

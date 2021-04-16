@@ -1236,7 +1236,10 @@ class PodsData {
 				$where  = array();
 				$having = array();
 
+				// Check if we have a matching field.
 				$attributes = pods_v( $filter, $params->fields, null );
+
+				// If we do not have a matching field, check for a matching object field.
 				if ( ! $attributes ) {
 					$attributes = pods_v( $filter, $params->object_fields, null );
 				}

@@ -67,7 +67,12 @@ const BooleanGroupSubfield = ( {
 					{ label }
 				</label>
 
-				{ help && <HelpTooltip helpText={ help } /> }
+				{ help && (
+					<>
+						{ '\u00A0' /* &nbsp; */ }
+						<HelpTooltip helpText={ help } />
+					</>
+				) }
 			</div>
 		</li>
 	);

@@ -159,7 +159,7 @@ class PodsAPI {
 
 		if ( $sanitized ) {
 			$data = pods_unsanitize( $data );
-			// Do not unsanitize $meta. This is already done by WP.
+			$meta = pods_unsanitize( $meta );
 		}
 
 		if ( $is_meta_object ) {
@@ -3994,6 +3994,8 @@ class PodsAPI {
 				$fields_to_send[ $field ] = $field_data;
 			}
 
+			$meta_fields = pods_sanitize( $meta_fields );
+
 			$params->id = $this->save_wp_object( $object_type, $object_data, $meta_fields, false, true, $fields_to_send );
 
 			if ( ! empty( $params->id ) && 'settings' === $pod['type'] ) {
@@ -4719,7 +4721,7 @@ class PodsAPI {
 		$field['name']  = $check_name;
 		$field['label'] = $new_label;
 
-		return $this->save_field( $field );
+		return $this->save_field( $field, true, true );
 
 	}
 

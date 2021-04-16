@@ -39,6 +39,13 @@ export const PICK_OPTIONS = PropTypes.arrayOf(
 	} )
 );
 
+export const HTML_ATTR = PropTypes.shape( {
+	id: PropTypes.string,
+	class: PropTypes.string,
+	name: PropTypes.string,
+	name_clean: PropTypes.string,
+} );
+
 export const FIELD_PROP_TYPE = {
 	// Used in multiple fields
 	admin_only: BOOLEAN_STRINGS,
@@ -74,12 +81,7 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
 	hidden: BOOLEAN_STRINGS,
-	htmlAttr: PropTypes.shape( {
-		id: PropTypes.string,
-		class: PropTypes.string,
-		name: PropTypes.string,
-		name_clean: PropTypes.string,
-	} ),
+	htmlAttr: HTML_ATTR,
 	fieldEmbed: PropTypes.bool,
 	id: NUMBER_OR_NUMBER_AS_STRING.isRequired,
 	iframe_src: PropTypes.string,

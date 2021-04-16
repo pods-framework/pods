@@ -548,6 +548,22 @@ class Pod extends Base {
 					'default'             => '',
 					'object_type'         => [ 'post_type' ],
 				],
+				'filter_by_date'                   => [
+					'label'       => __( 'Filter by date', 'pods' ),
+					'help'        => __( 'help', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'object_type' => [ 'post_type' ],
+				],
+				'filter_by_item'                   => [
+					'label'               => __( 'Filter by %s', 'pods' ),
+					'label_param'         => 'label_singular',
+					'label_param_default' => __( 'Item', 'pods' ),
+					'help'                => __( 'help', 'pods' ),
+					'type'                => 'text',
+					'default'             => '',
+					'object_type'         => [ 'taxonomy' ],
+				],
 			];
 
 			$options['labels'] = [];

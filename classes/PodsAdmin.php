@@ -241,6 +241,7 @@ class PodsAdmin {
 						$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 						$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
+						$menu_label = strip_tags( $menu_label );
 						$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 						$singular_label = pods_v( 'label_singular', $pod['options'], pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
@@ -444,6 +445,7 @@ class PodsAdmin {
 					$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 					$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
+					$menu_label = strip_tags( $menu_label );
 					$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 					$menu_icon            = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );
@@ -500,6 +502,7 @@ class PodsAdmin {
 					$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 					$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
+					$menu_label = strip_tags( $menu_label );
 					$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 					$menu_icon = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );

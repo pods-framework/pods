@@ -1117,6 +1117,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			'label' => pods_v( 'pagination_label', $tags, null ),
 			'type'  => pods_v( 'pagination_type', $tags, null ),
 		);
+
 		// Remove empty params.
 		$pagination = array_filter( $pagination );
 	}

@@ -1,12 +1,14 @@
 name: 'PHP CodeSniffer'
 on:
   pull_request:
-    paths-ignore:
-      - 'lang/**'
-      - '**.txt'
-      - '**.md'
-      - '.editorconfig'
-      - 'CODEOWNERS'
+    paths:
+      - 'classes/**.php'
+      - 'components/**.php'
+      - 'includes/**.php'
+      - 'src/**.php'
+      - 'sql/**.php'
+      - 'ui/**.php'
+      - '*.php'
 jobs:
   phpcs:
     runs-on: ubuntu-latest

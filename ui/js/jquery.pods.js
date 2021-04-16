@@ -486,7 +486,7 @@
 
                         last_slug = $this.parent().find( 'input[type=text]' ).val();
 
-                        last_slug = last_slug.replace( /<( ?:. )*?>/g, '' ).replace( /([^0-9a-zA-Z\_\- ])/g, '' );
+                        last_slug = last_slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z\_\- ])/g, '' );
 
                         $this.closest( '.pods-sluggable' ).find( '.pods-slug em' ).html( last_slug );
                         $( '.pods-slugged-lower:not(.pods-slugged[data-sluggable])' ).html( last_slug.toLowerCase() );
@@ -1008,11 +1008,7 @@
                     if ( $dependent.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) ) {
                             if ( $field.is( ':checked' ) && ( 1 == $field.val() || $dependent.is( dependent_specific ) ) ) {
-                                if ( $dependent.is( 'tr' ) ) {
-	                                $dependent.show().addClass( 'pods-dependent-visible' );
-                                } else {
-	                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                                }
+                                $dependent.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent.find( '.pods-dependency .pods-depends-on' ).hide();
                                 $dependent.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1034,11 +1030,7 @@
                                 }
                             }
                         } else if ( $dependent.is( dependent_specific ) ) {
-                            if ( $dependent.is( 'tr' ) ) {
-	                            $dependent.show().addClass( 'pods-dependent-visible' );
-                            } else {
-	                            $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                            }
+                            $dependent.show().addClass( 'pods-dependent-visible' );
 
                             $dependent.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1114,11 +1106,7 @@
                                 }
                             }
                             else if ( !$field.is( ':checked' ) && ( !$field.is( '.pods-dependent-multi' ) || $dependent.is( exclude_specific ) ) ) {
-                                if ( $dependent.is( 'tr' ) ) {
-	                                $dependent.show().addClass( 'pods-dependent-visible' );
-                                } else {
-	                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                                }
+                                $dependent.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent.find( '.pods-dependency .pods-depends-on' ).hide();
                                 $dependent.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1141,11 +1129,7 @@
                             }
                         }
                         else {
-                            if ( $dependent.is( 'tr' ) ) {
-	                            $dependent.show().addClass( 'pods-dependent-visible' );
-                            } else {
-	                            $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                            }
+                            $dependent.show().addClass( 'pods-dependent-visible' );
 
                             $dependent.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1225,11 +1209,7 @@
                     // Set the state of the dependent element
                     if ( $dependent.parent().is( ':visible' ) ) {
                         if ( match_found ) {
-                            if ( $dependent.is( 'tr' ) ) {
-                                $dependent.show().addClass( 'pods-dependent-visible' );
-                            } else {
-                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                            }
+                            $dependent.show().addClass( 'pods-dependent-visible' );
 
                             $dependent.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1280,7 +1260,7 @@
                 $( '.pods-dependency .pods-depends-on, .pods-dependency .pods-excludes-on, .pods-dependency .pods-wildcard-on' ).hide();
 
                 // Handle dependent toggle
-                $( '.pods-admin, .pods-form-front' ).on( 'change', '.pods-dependent-toggle[data-name-clean]', function ( e ) {
+                $( '.pods-admin, .pods-form-front, .pods-form-settings' ).on( 'change', '.pods-dependent-toggle[data-name-clean]', function ( e ) {
                     var selectionTypeRegex = /pick-format-type$/g,
 	                    elementId = $( this ).attr( 'id' ),
 	                    selectionType, selectionFormatId;
@@ -1322,11 +1302,7 @@
 
                         if ( $dependent.parent().is( ':visible' ) ) {
                             if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) && 1 == $field.val() ) {
-                                if ( $dependent.is( 'tr' ) ) {
-	                                $dependent.show().addClass( 'pods-dependent-visible' );
-                                } else {
-	                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                                }
+                                $dependent.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
                                 $dependent.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
@@ -1336,11 +1312,7 @@
                                 } );
                             }
                             else if ( $dependent.is( dependent_specific ) ) {
-                                if ( $dependent.is( 'tr' ) ) {
-	                                $dependent.show().addClass( 'pods-dependent-visible' );
-                                } else {
-	                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                                }
+                                $dependent.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
                                 $dependent.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
@@ -1402,11 +1374,7 @@
                                 }
                             }
                             else {
-                                if ( $dependent.is( 'tr' ) ) {
-	                                $dependent.show().addClass( 'pods-dependent-visible' );
-                                } else {
-	                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                                }
+                                $dependent.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
                                 $dependent.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
@@ -1543,7 +1511,7 @@
                                 $field_wrapper.append( edit_row );
 
                                 // Duct tape to handle fields added dynamically
-                                PodsDFV.init();
+                                window.PodsDFV.init();
                             }
 
                             $field_wrapper.find( '.pods-depends-on' ).hide();
@@ -1849,7 +1817,7 @@
                         $new_row = $tbody.find( 'tr#row-' + row_counter );
 
                         // Duct tape to handle fields added dynamically
-                        PodsDFV.init();
+                        window.PodsDFV.init();
 
                         $new_row.data( 'row', row_counter );
                         $new_row.find( '.pods-dependency .pods-depends-on' ).hide();
@@ -1909,7 +1877,7 @@
                         $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
 
                         // Duct tape to handle fields added dynamically
-                        PodsDFV.init();
+                        window.PodsDFV.init();
 
                         field_data[ 'name' ] += '_copy';
                         field_data[ 'label' ] += ' (' + PodsI18n.__( 'Copy' ) + ')';

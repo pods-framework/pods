@@ -12,13 +12,13 @@ module.exports = function ( grunt ) {
 			version_readme_txt  : {
 				src : ['readme.txt'], overwrite : true, replacements : [
 					{
-						from : /Stable tag: (.*)/, to : "Stable tag: <%= pkg.version %>"
+						from : /Stable tag: ([\.\d\w\-]*)/, to : "Stable tag: <%= pkg.version %>"
 					}
 				]
 			}, version_init_php : {
 				src : ['init.php'], overwrite : true, replacements : [
 					{
-						from : /Version: (.*)/, to : "Version: <%= pkg.version %>"
+						from : /Version: ([\.\d\w\-]*)/, to : "Version: <%= pkg.version %>"
 					},
 					{
 						from : /define\( 'PODS_VERSION', '([\.\d\w\-]*)' \);/,

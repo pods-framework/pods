@@ -30,7 +30,8 @@ class PodsField_Phone extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Phone', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Phone', 'pods' );
 	}
 
 	/**
@@ -65,9 +66,9 @@ class PodsField_Phone extends PodsField {
 			),
 			static::$type . '_options'     => array(
 				'label' => __( 'Phone Options', 'pods' ),
-				'group' => array(
+				'boolean_group' => array(
 					static::$type . '_enable_phone_extension' => array(
-						'label'   => __( 'Enable Phone Extension?', 'pods' ),
+						'label'   => __( 'Enable Phone Extension', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 					),
@@ -80,7 +81,7 @@ class PodsField_Phone extends PodsField {
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
 			static::$type . '_html5'       => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),
@@ -142,7 +143,18 @@ class PodsField_Phone extends PodsField {
 			$field_type = 'text';
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/phone.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**

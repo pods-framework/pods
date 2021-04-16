@@ -2,10 +2,10 @@
 Contributors: sc0ttkclark, pglewis, jimtrue, keraweb, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
-Requires at least: 4.5
+Requires at least: 5.4
 Tested up to: 5.6
-Requires PHP: 5.3
-Stable tag: 2.7.26
+Requires PHP: 5.6
+Stable tag: 2.8.0-b-2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,8 @@ Manage all your custom content needs in one location with the Pods Framework.
 * **Extend and customize content types** including posts, pages, categories, tags, users, and media
 * **Create custom settings pages** easily within seconds
 * **Add custom fields** to *any* content type or settings page
-* **Show your fields** anywhere using our [shortcodes](https://docs.pods.io/displaying-pods/pods-shortcode/), [widgets](https://pods.io/2015/05/03/podscast-005-templates-shortcodes-widgets-displaying-data-in-pods-pt-3/), the code-free [Pods Template](https://pods.io/2015/05/03/podscast-005-templates-shortcodes-widgets-displaying-data-in-pods-pt-3/) approach, or our [automatic theme integration](https://docs.pods.io/displaying-pods/wordpress-theme-templates/)
+* **Group your fields** however you'd like into their own sections
+* **Show your fields** anywhere using our [shortcodes](https://docs.pods.io/displaying-pods/pods-shortcode/), [widgets](https://docs.pods.io/displaying-pods/widgets/), the code-free [Pods Template](https://docs.pods.io/displaying-pods/pods-templates/) approach, or our [automatic theme integration](https://docs.pods.io/displaying-pods/wordpress-theme-templates/)
 * **Create connections** between any of your content with [relationship fields](https://docs.pods.io/fields/relationship-fields/) to keep your content organized
 
 Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out our [Documentation](https://docs.pods.io/), [Support Forums](https://wordpress.org/support/plugin/pods/), and our [Live Slack Chat](https://pods.io/chat/) to help you build your dream project with Pods.
@@ -30,7 +31,7 @@ Let Pods help you grow your development skills and manage content beyond the sta
 
 = Content types that evolve with your needs =
 
-Create any type of content that you want -- small or large -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage custom fields and how your content type will look or function.
+Create any type of content that you want -- small or large -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage field groups, custom fields, and how your content type will look or function.
 
 = Create new content types =
 
@@ -189,6 +190,11 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.27 - March 4th, 2021 =
+
+* Fixed: Resolved PHP notice in the PodsAPI. #5952 (@sc0ttkclark)
+* Fixed: Resolved PHP notice when using `?pods_debug_sql=1` on Pods Admin UI screens. (@sc0ttkclark)
 
 = 2.7.26 - January 8th, 2021 =
 

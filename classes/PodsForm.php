@@ -234,7 +234,7 @@ class PodsForm {
 			$helper = pods_api()->load_helper( array( 'name' => $options['input_helper'] ) );
 		}
 
-		// @todo Move into DFV field method or PodsObject later
+		// @todo Move into DFV field method or Pods\Whatsit later
 		if ( ( ! isset( $options['data'] ) || empty( $options['data'] ) ) && is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'data' ) ) {
 			$options['data'] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id, true );
 			$data            = $options['data'];
@@ -610,39 +610,26 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function options( $type, $options ) {
-
-		$options = (array) $options;
-
-		if ( ! is_object( $options ) && isset( $options['options'] ) ) {
-			$options_temp = $options['options'];
-
-			unset( $options['options'] );
-
-			$options = array_merge( $options_temp, $options );
-
-			$override = array(
-				'class',
-			);
-
-			foreach ( $override as $check ) {
-				if ( isset( $options_temp[ $check ] ) ) {
-					$options[ $check ] = $options_temp[ $check ];
-				}
-			}
+		if ( is_object( $options ) ) {
+			$options_array                  = $options->get_args();
+			$options_array['_field_object'] = $options;
+		} else {
+			$options_array                  = (array) $options;
+			$options_array['_field_object'] = null;
 		}
 
-		$defaults = self::options_setup( $type, $options );
+		$defaults = self::options_setup( $type, $options_array );
 
-		$core_defaults = array(
+		$core_defaults = [
 			'id'          => 0,
 			'label'       => '',
 			'description' => '',
 			'help'        => '',
 			'default'     => null,
-			'attributes'  => array(),
+			'attributes'  => [],
 			'class'       => '',
 			'grouped'     => 0,
-		);
+		];
 
 		$defaults = array_merge( $core_defaults, $defaults );
 
@@ -653,12 +640,12 @@ class PodsForm {
 				$default = $settings['default'];
 			}
 
-			if ( ! isset( $options[ $option ] ) ) {
-				$options[ $option ] = $default;
+			if ( ! isset( $options_array[ $option ] ) ) {
+				$options_array[ $option ] = $default;
 			}
 		}
 
-		return $options;
+		return $options_array;
 	}
 
 	/**
@@ -913,7 +900,7 @@ class PodsForm {
 	 * @static
 	 * @since 2.0.0
 	 */
-	public static function dependencies( $options, $prefix = '' ) {
+	public static function dependencies( $options, $prefix = 'pods-form-ui-' ) {
 
 		$options     = (array) $options;
 		$classes     = array();
@@ -1434,8 +1421,6 @@ class PodsForm {
 			}
 		}
 
-		include_once PODS_DIR . 'classes/PodsField.php';
-
 		$field_type = self::clean( $field_type, true, true );
 
 		$class_name = ucfirst( $field_type );
@@ -1455,11 +1440,14 @@ class PodsForm {
 			if ( ! empty( $file ) && 0 === strpos( $file, $abspath_dir ) && file_exists( $file ) ) {
 				include_once $file;
 			} else {
-				$file = str_replace( '../', '', apply_filters( 'pods_form_field_include', PODS_DIR . 'classes/fields/' . basename( $field_type ) . '.php', $field_type ) );
-				$file = realpath( $file );
+				$file = str_replace( '../', '', apply_filters( 'pods_form_field_include', '', $field_type ) );
 
-				if ( file_exists( $file ) && ( 0 === strpos( $file, $pods_dir ) || 0 === strpos( $file, $content_dir ) || 0 === strpos( $file, $plugins_dir ) || 0 === strpos( $file, $muplugins_dir ) || 0 === strpos( $file, $abspath_dir ) ) ) {
-					include_once $file;
+				if ( ! empty( $file ) ) {
+					$file = realpath( $file );
+
+					if ( file_exists( $file ) && ( 0 === strpos( $file, $pods_dir ) || 0 === strpos( $file, $content_dir ) || 0 === strpos( $file, $plugins_dir ) || 0 === strpos( $file, $muplugins_dir ) || 0 === strpos( $file, $abspath_dir ) ) ) {
+						include_once $file;
+					}
 				}
 			}
 		}
@@ -1472,6 +1460,7 @@ class PodsForm {
 		}
 
 		$class_vars = get_class_vars( $class_name );
+
 		// PHP 5.2.x workaround
 		self::$field_group = ( isset( $class_vars['group'] ) ? $class_vars['group'] : '' );
 		self::$field_type  = $class_vars['type'];
@@ -1544,15 +1533,43 @@ class PodsForm {
 	}
 
 	/**
-	 * Get a list of all available field types and include
+	 * Get a list of all available Pod types.
 	 *
-	 * @return array Registered Field Types data
+	 * @return string[] List of Pod types.
 	 *
-	 * @since 2.3.0
+	 * @since 2.8.0
 	 */
-	public static function field_types() {
+	public static function pod_types_list() {
+		$pod_types = [
+			'post_type',
+			'taxonomy',
+			'user',
+			'media',
+			'comment',
+			'settings',
+			'pod',
+			'table',
+		];
 
-		$field_types = array(
+		/**
+		 * Allow filtering of the supported Pod types.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array $pod_types List of Pod types supported.
+		 */
+		return apply_filters( 'pods_api_pod_types', $pod_types );
+	}
+
+	/**
+	 * Get a list of all available Field types.
+	 *
+	 * @return string[] List of Field types.
+	 *
+	 * @since 2.8.0
+	 */
+	public static function field_types_list() {
+		$field_types = [
 			'text',
 			'website',
 			// 'link',
@@ -1574,13 +1591,27 @@ class PodsForm {
 			'boolean',
 			'color',
 			'slug',
-		);
+			'heading',
+			'html',
+		];
 
 		$field_types = array_merge( $field_types, array_keys( self::$field_types ) );
 
 		$field_types = array_filter( array_unique( $field_types ) );
 
-		$types = apply_filters( 'pods_api_field_types', $field_types );
+		return apply_filters( 'pods_api_field_types', $field_types );
+	}
+
+	/**
+	 * Get a list of all available field types and include
+	 *
+	 * @return array Registered Field Types data
+	 *
+	 * @since 2.3.0
+	 */
+	public static function field_types() {
+
+		$types = self::field_types_list();
 
 		$field_types = pods_transient_get( 'pods_field_types' );
 
@@ -1634,6 +1665,7 @@ class PodsForm {
 				'avatar',
 				'taxonomy',
 				'comment',
+				'author',
 			);
 
 			$field_types = apply_filters( 'pods_tableless_field_types', $field_types );
@@ -1757,28 +1789,30 @@ class PodsForm {
 	}
 
 	/**
-	 * Get list of available text field types
+	 * Get list of available Layout field types
 	 *
 	 * @return array Text field types
 	 *
 	 * @since 2.3.0
 	 */
-	public static function block_field_types() {
+	public static function layout_field_types() {
 
 		static $field_types = null;
 
 		if ( null === $field_types ) {
-			$field_types = array( 'heading', 'html' );
+			$field_types = [
+				'heading',
+				'html',
+			];
 
 			/**
-			 * Returns the available text field types
+			 * Allow filtering of the list of Layout field types.
 			 *
-			 * @since unknown
+			 * @since 2.8
 			 *
-			 * @param object $field_types Outputs the field types
+			 * @param array $field_types The list of Layout field types.
 			 */
-
-			$field_types = apply_filters( 'pods_block_field_types', $field_types );
+			$field_types = apply_filters( 'pods_layout_field_types', $field_types );
 		}
 
 		return $field_types;

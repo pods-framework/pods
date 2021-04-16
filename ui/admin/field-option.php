@@ -2,13 +2,13 @@
 $depends_on = false;
 
 foreach ( $field_options as $field_name => $field_option ) {
-	if ( false !== strpos( $field_name, 'helper' ) && ! class_exists( 'Pods_Helpers' ) ) {
-		continue;
-	} elseif ( $field_option['developer_mode'] && ! pods_developer() ) {
+	if ( $field_option['developer_mode'] && ! pods_developer() ) {
 		continue;
 	}
 
 	$field_option = (array) $field_option;
+
+	$field_option['disable_dfv'] = true;
 
 	$dep_options = PodsForm::dependencies( $field_option, ( ! isset( $pods_tab_form ) ? 'field-data-' : '' ) );
 	$dep_classes = $dep_options['classes'];
@@ -51,12 +51,37 @@ foreach ( $field_options as $field_name => $field_option ) {
 				}
 			}
 		}
+
+		if ( 'heading' === $field_option['type'] ) {
+			?>
+			<h4>
+				<?php echo $field_option['label']; ?>
+			</h4>
+			<?php
+			continue;
+		} elseif ( 'html' === $field_option['type'] ) {
+			echo PodsForm::field( $field_option['name'], null, $field_option['type'], $field_option );
+
+			continue;
+		}
 		?>
 		<div class="pods-field-option">
 			<?php echo PodsForm::row( $row_name, $value, $field_option['type'], $field_option ); ?>
 		</div>
 		<?php
 	} else {
+		if ( 'heading' === $field_option['type'] ) {
+			?>
+				<h4>
+					<?php echo $field_option['label']; ?>
+				</h4>
+			<?php
+			continue;
+		} elseif ( 'html' === $field_option['type'] ) {
+			echo PodsForm::field( $field_option['name'], null, $field_option['type'], $field_option );
+
+			continue;
+		}
 		?>
 		<div class="pods-field-option-group">
 			<p class="pods-field-option-group-label">

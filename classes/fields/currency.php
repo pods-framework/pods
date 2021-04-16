@@ -1,5 +1,4 @@
 <?php
-require_once PODS_DIR . 'classes/fields/number.php';
 
 /**
  * @package Pods\Fields
@@ -39,7 +38,9 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Currency', 'pods' );
+		static::$group = __( 'Number', 'pods' );
+		static::$label = __( 'Currency', 'pods' );
+
 		static::data_currencies();
 	}
 
@@ -105,11 +106,11 @@ class PodsField_Currency extends PodsField_Number {
 				'data'    => array(
 					'i18n'      => __( 'Localized Default', 'pods' ),
 					'9,999.99'  => '1,234.00',
-					'9\'999.99' => '1\'234.00',
-					'9.999,99'  => '1.234,00',
-					'9 999,99'  => '1 234,00',
 					'9999.99'   => '1234.00',
+					'9.999,99'  => '1.234,00',
 					'9999,99'   => '1234,00',
+					'9 999,99'  => '1 234,00',
+					'9\'999.99' => '1\'234.00',
 				),
 			),
 			static::$type . '_decimals'         => array(
@@ -150,6 +151,11 @@ class PodsField_Currency extends PodsField_Number {
 				'default' => 12,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
+			),
+			static::$type . '_html5'            => array(
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
+				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
+				'type'    => 'boolean',
 			),
 			static::$type . '_placeholder'      => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),

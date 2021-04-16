@@ -30,7 +30,8 @@ class PodsField_File extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'File / Image / Video', 'pods' );
+		static::$group = __( 'Relationships / Media', 'pods' );
+		static::$label = __( 'File / Image / Video', 'pods' );
 
 	}
 
@@ -189,7 +190,7 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_wp_gallery_link'        => array(
 				'label'      => __( 'Gallery image links', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => array(
 					'post' => __( 'Attachment Page', 'pods' ),
@@ -199,28 +200,28 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_wp_gallery_columns'     => array(
 				'label'      => __( 'Gallery image columns', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => array(
-					'1' => 1,
-					'2' => 2,
-					'3' => 3,
-					'4' => 4,
-					'5' => 5,
-					'6' => 6,
-					'7' => 7,
-					'8' => 8,
-					'9' => 9,
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
 				),
 			),
 			static::$type . '_wp_gallery_random_sort' => array(
 				'label'      => __( 'Gallery randomized order', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'boolean',
 			),
 			static::$type . '_wp_gallery_size'        => array(
 				'label'      => __( 'Gallery image size', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => $this->data_image_sizes(),
 			),
@@ -339,11 +340,26 @@ class PodsField_File extends PodsField {
 			}
 		}
 
+		// Enforce defaults.
+		$all_options = static::options();
+
+		foreach ( $all_options as $option_name => $option ) {
+			$default = pods_v( 'default', $option, '' );
+
+			$options[ $option_name ] = pods_v( $option_name, $options, $default );
+
+			if ( '' === $options[ $option_name ] ) {
+				$options[ $option_name ] = $default;
+			}
+		}
+
 		// Handle default template setting.
-		$file_field_template = pods_v( $args->type . '_field_template', $options, 'rows', true );
+		$file_field_template = pods_v( $args->type . '_field_template', $options );
 
 		// Get which file types the field is limited to.
-		$limit_file_type = pods_v( $args->type . '_type', $options, 'images' );
+		$limit_file_type = pods_v( $args->type . '_type', $options );
+
+		$options[ $args->type . '_type' ] = $limit_file_type;
 
 		// Non-image file types are forced to rows template right now.
 		if ( 'images' !== $limit_file_type ) {
@@ -453,8 +469,10 @@ class PodsField_File extends PodsField {
 		$is_user_logged_in = is_user_logged_in();
 
 		// @todo: plupload specific options need accommodation
-		if ( 'plupload' === $options[ static::$type . '_uploader' ] ) {
+		if ( 'plupload' === pods_v( static::$type . '_uploader', $options ) ) {
 			wp_enqueue_script( 'plupload-all' );
+
+			$field_id = pods_v( 'id', $options, 0 );
 
 			if ( $is_user_logged_in ) {
 				$uid = 'user_' . get_current_user_id();
@@ -469,7 +487,7 @@ class PodsField_File extends PodsField {
 			}
 
 			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
-			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $options['id'] );
+			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
 
 			$options['plupload_init'] = array(
 				'runtimes'            => 'html5,silverlight,flash,html4',
@@ -492,7 +510,7 @@ class PodsField_File extends PodsField {
 					'action'   => 'pods_upload',
 					'method'   => 'upload',
 					'pod'      => $pod_id,
-					'field'    => $options['id'],
+					'field'    => $field_id,
 					'uri'      => $uri_hash,
 				),
 			);

@@ -152,21 +152,6 @@ if ( 0 < $pod->id() ) {
 		echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' );
 		echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' );
 
-		foreach ( $group_fields as $field ) {
-			if ( 'hidden' !== $field['type'] ) {
-				continue;
-			}
-
-			echo PodsForm::field(
-				'pods_field_' . $field['name'], $pod->field(
-					array(
-						'name'    => $field['name'],
-						'in_form' => true,
-					)
-				), 'hidden'
-			);
-		}
-
 		/**
 		 * Action that runs before the meta boxes for an Advanced Content Type
 		 *
@@ -552,14 +537,14 @@ if ( 0 < $pod->id() ) {
 									 */
 									do_action( 'pods_act_editor_before_metabox', $pod );
 
-									if ( ! $more && 1 == count( $groups ) ) {
+									if ( ! $more && 1 === count( $groups ) ) {
 										$title = __( 'Fields', 'pods' );
 									} else {
 										$title = $group['label'];
 									}
 
 									/** This filter is documented in classes/PodsMeta.php */
-									$title = apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->api->pod_data['type'], $pod->pod );
+									$title = apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->pod_data['type'], $pod->pod );
 									?>
 									<div id="pods-meta-box-<?php echo esc_attr( sanitize_title( $group['label'] ) ); ?>" class="postbox">
 										<?php PodsForm::render_postbox_header( $title ); ?>
@@ -570,29 +555,20 @@ if ( 0 < $pod->id() ) {
 												?>
 												<table class="form-table pods-metabox">
 													<?php
+													$fields            = [];
+													$field_prefix      = 'pods_field_';
+													$field_row_classes = 'form-field pods-field-input';
+													$id                = $pod->id();
+
 													foreach ( $group['fields'] as $field ) {
-														if ( 'hidden' === $field['type'] || $more === $field['name'] || ! isset( $group_fields[ $field['name'] ] ) ) {
+														if ( ! isset( $group_fields[ $field['name'] ] ) ) {
 															continue;
 														}
-														?>
-														<tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
-															<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
-															<td>
-																<?php
-																echo PodsForm::field(
-																	'pods_field_' . $field['name'], $pod->field(
-																		array(
-																			'name'    => $field['name'],
-																			'in_form' => true,
-																		)
-																	), $field['type'], $field, $pod, $pod->id()
-																);
-																?>
-																<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
-															</td>
-														</tr>
-														<?php
-													}//end foreach
+
+														$fields[ $field['name'] ] = $field;
+													}
+
+													pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 													?>
 												</table>
 												<?php

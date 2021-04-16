@@ -1,5 +1,4 @@
 <?php
-require_once PODS_DIR . 'classes/fields/datetime.php';
 
 /**
  * @package Pods\Fields
@@ -47,6 +46,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 */
 	public function setup() {
 
+		static::$group = __( 'Date / Time', 'pods' );
 		static::$label = __( 'Time', 'pods' );
 	}
 
@@ -130,12 +130,12 @@ class PodsField_Time extends PodsField_DateTime {
 				),
 			),
 			static::$type . '_allow_empty'      => array(
-				'label'   => __( 'Allow empty value?', 'pods' ),
+				'label'   => __( 'Allow empty value', 'pods' ),
 				'default' => 1,
 				'type'    => 'boolean',
 			),
 			static::$type . '_html5'            => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),

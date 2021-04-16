@@ -897,6 +897,7 @@ class PodsInit {
 				$cpt_labels['item_reverted_to_draft']   = pods_v( 'label_item_reverted_to_draft', $post_type, '', true );
 				$cpt_labels['item_scheduled']           = pods_v( 'label_item_scheduled', $post_type, '', true );
 				$cpt_labels['item_updated']             = pods_v( 'label_item_updated', $post_type, '', true );
+				$cpt_labels['filter_by_date']           = pods_v( 'label_filter_by_date', $post_type, '', true );
 
 				// Supported
 				$cpt_supported = array(
@@ -1120,6 +1121,7 @@ class PodsInit {
 				$ct_labels['no_terms']                   = pods_v( 'label_no_terms', $taxonomy, '', true );
 				$ct_labels['items_list']                 = pods_v( 'label_items_list', $taxonomy, '', true );
 				$ct_labels['items_list_navigation']      = pods_v( 'label_items_list_navigation', $taxonomy, '', true );
+				$ct_labels['filter_by_item']             = pods_v( 'label_filter_by_item', $taxonomy, '', true );
 
 				// Rewrite
 				$ct_rewrite       = (boolean) pods_v( 'rewrite', $taxonomy, true );
@@ -1629,6 +1631,7 @@ class PodsInit {
 			$labels['item_reverted_to_draft']   = pods_v( 'item_reverted_to_draft', $labels, sprintf( __( '%s reverted to draft', 'pods'), $singular_label ), true );
 			$labels['item_scheduled']           = pods_v( 'item_scheduled', $labels, sprintf( __( '%s scheduled', 'pods' ), $singular_label ), true );
 			$labels['item_updated']             = pods_v( 'item_updated', $labels, sprintf( __( '%s updated', 'pods' ), $singular_label ), true );
+			$labels['filter_by_date']           = pods_v( 'filter_by_date', $labels, sprintf( __( 'Filter by date', 'pods' ), $label ), true );
 		} elseif ( 'taxonomy' === $type ) {
 			$labels['menu_name']                  = pods_v( 'menu_name', $labels, $label, true );
 			$labels['search_items']               = pods_v( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ), $label ), true );
@@ -1648,6 +1651,7 @@ class PodsInit {
 			$labels['no_terms']                   = pods_v( 'no_terms', $labels, sprintf( __( 'No %s', 'pods' ), $label ), true );
 			$labels['items_list_navigation']      = pods_v( 'items_list_navigation', $labels, sprintf( __( '%s navigation', 'pods' ), $label ), true );
 			$labels['items_list']                 = pods_v( 'items_list', $labels, sprintf( __( '%s list', 'pods' ), $label ), true );
+			$labels['filter_by_item']             = pods_v( 'filter_by_item', $labels, sprintf( __( 'Filter by %s', 'pods' ), $label ), true );
 		}//end if
 
 		$args['labels'] = $labels;

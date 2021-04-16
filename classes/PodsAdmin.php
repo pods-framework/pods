@@ -1671,6 +1671,20 @@ class PodsAdmin {
 					'default'     => '',
 					'object_type' => array( 'post_type' ),
 				),
+				'filter_by_date'                   => array(
+					'label'       => __( 'Filter by date', 'pods' ),
+					'help'        => __( 'help', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'object_type' => array( 'post_type' ),
+				),
+				'filter_by_item'                   => array(
+					'label'       => __( 'Filter by <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+					'help'        => __( 'help', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'object_type' => array( 'taxonomy' ),
+				),
 			);
 
 			$options['labels'] = array();

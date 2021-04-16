@@ -1128,7 +1128,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
 	}
 
-	if ( $tags['pagination'] && in_array( $tags['pagination_location'], array( 'before', 'both', ), true ) ) {
+	if ( false !== $pagination && in_array( $tags['pagination_location'], array( 'before', 'both', ), true ) ) {
 		echo $pod->pagination( $pagination );
 	}
 
@@ -1141,7 +1141,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	// phpcs:ignore
 	echo $content;
 
-	if ( $tags['pagination'] && in_array( $tags['pagination_location'], array( 'after', 'both', ), true ) ) {
+	if ( false !== $pagination && in_array( $tags['pagination_location'], array( 'after', 'both', ), true ) ) {
 		echo $pod->pagination( $pagination );
 	}
 

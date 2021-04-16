@@ -1236,14 +1236,16 @@ class PodsData {
 				$where  = array();
 				$having = array();
 
-				if ( ! isset( $params->fields[ $filter ] ) && ! isset( $params->object_fields[ $filter ] ) ) {
-					continue;
-				}
-
 				$attributes = pods_v( $filter, $params->fields, null );
 				if ( ! $attributes ) {
 					$attributes = pods_v( $filter, $params->object_fields, null );
 				}
+
+				if ( null === $attributes ) {
+					// Field not found.
+					continue;
+				}
+
 				$field = pods_v( 'name', $attributes, $filter, true );
 
 				$filterfield = '`' . $field . '`';

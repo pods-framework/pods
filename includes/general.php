@@ -1024,6 +1024,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	$found = 0;
+	$filters = false;
 
 	$is_singular = ( ! empty( $id ) || $tags['use_current'] );
 
@@ -1068,6 +1069,11 @@ function pods_shortcode_run( $tags, $content = null ) {
 				$params['join'] = $tags['join'];
 			}
 		}//end if
+
+		// Load filters and return HTML for later use.
+		if ( false !== $tags['filters'] ) {
+			$filters = $pod->filters( $tags['filters'], $tags['filters_label'] );
+		}
 
 		// Forms require params set
 		if ( ! empty( $params ) || empty( $tags['form'] ) ) {
@@ -1193,8 +1199,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 	ob_start();
 
-	if ( ! $is_singular && false !== $tags['filters'] && 'before' === $tags['filters_location'] ) {
-		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
+	if ( $filters && 'before' === $tags['filters_location'] ) {
+		echo $filters;
 	}
 
 	if ( false !== $pagination && in_array( $tags['pagination_location'], [ 'before', 'both' ], true ) ) {
@@ -1214,8 +1220,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 		echo $pod->pagination( $pagination );
 	}
 
-	if ( ! $is_singular && false !== $tags['filters'] && 'after' === $tags['filters_location'] ) {
-		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
+	if ( $filters && 'after' === $tags['filters_location'] ) {
+		echo $filters;
 	}
 
 	$return = ob_get_clean();

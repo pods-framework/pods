@@ -240,6 +240,7 @@ class Field extends Base {
 					'type'  => 'heading',
 				],
 				'restrict_access'         => [
+					'type'  => 'boolean_group',
 					'name'  => 'restrict_access',
 					'label' => __( 'Restrict Access', 'pods' ),
 					'boolean_group' => [

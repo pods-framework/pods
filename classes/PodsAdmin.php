@@ -1675,69 +1675,42 @@ class PodsAdmin {
 				// Add fields for section.
 				foreach ( $section_fields as $field_name => $field_options ) {
 					$boolean_group = [];
-					$boolean_extra = [];
 
-					// if ( ! empty( $field_options['boolean_group'] ) ) {
-					// 	$boolean_group = $field_options['boolean_group'];
+					// Handle auto-formatting from shorthand.
+					if ( ! empty( $field_options['boolean_group'] ) ) {
+						$boolean_group = $field_options['boolean_group'];
 
-					// 	unset( $field_options['boolean_group'] );
-
-					// 	if ( ! empty( $field_options['depends-on'] ) ) {
-					// 		$boolean_extra['depends-on']  = $field_options['depends-on'];
-					// 	}
-
-					// 	if ( ! empty( $field_options['excludes-on'] ) ) {
-					// 		$boolean_extra['excludes-on'] = $field_options['excludes-on'];
-					// 	}
-
-					// 	if ( ! empty( $field_options['wildcard-on'] ) ) {
-					// 		$boolean_extra['wildcard-on'] = $field_options['wildcard-on'];
-					// 	}
-					// }
-
-					if (
-						// Field type must be set.
-						! empty( $field_options['type'] )
-						// && (
-						// 	// Must not have a boolean group.
-						// 	empty( $boolean_group )
-						// 	// Or it must be the proper heading field type.
-						// 	|| 'heading' === $field_options['type']
-						// )
-					) {
-						// Set a unique field name for boolean group headings.
-						if ( ! empty( $boolean_group ) ) {
-							$field_options['name'] = $parent . '_' . $group_name . '_' . $field_name . '_' . md5( json_encode( $boolean_group ) );
+						foreach ( $boolean_group as $bgf_key => $boolean_group_field ) {
+							// Make sure each field has a field name.
+							if ( is_string( $bgf_key ) ) {
+								$boolean_group[ $bgf_key ]['name'] = $bgf_key;
+							}
 						}
 
-						$field = $this->backcompat_convert_tabs_to_groups_setup_field( [
-							'field_name'    => $field_name,
-							'field_options' => $field_options,
-							'parent'        => $parent,
-							'group_name'    => $group_name,
-						] );
+						$boolean_group = array_values( $boolean_group );
 
-						$fields[] = $storage->add( $field );
+						$field_options['boolean_group'] = $boolean_group;
 					}
 
-					// Add any boolean group fields.
-					foreach ( $boolean_group as $boolean_field_name => $boolean_field_options ) {
-						if ( ! isset( $boolean_field_options['boolean_yes_label'] ) ) {
-							$boolean_field_options['boolean_yes_label'] = '';
-						}
-
-						// Maybe add extra options.
-						$boolean_field_options = array_merge( $boolean_extra, $boolean_field_options );
-
-						$field = $this->backcompat_convert_tabs_to_groups_setup_field( [
-							'field_name'    => $boolean_field_name,
-							'field_options' => $boolean_field_options,
-							'parent'        => $parent,
-							'group_name'    => $group_name,
-						] );
-
-						$fields[] = $storage->add( $field );
+					if ( empty( $field_options['type'] ) ) {
+						continue;
 					}
+
+					// Set a unique field name for boolean group headings.
+					if ( ! empty( $boolean_group ) ) {
+						$field_options['name'] = $field_name . '_' . md5( json_encode( $boolean_group ) );
+
+						var_dump( compact( 'field_name', 'field_options', 'group_name' ), $field_options['boolean_group'] );
+					}
+
+					$field = $this->backcompat_convert_tabs_to_groups_setup_field( [
+						'field_name'    => $field_name,
+						'field_options' => $field_options,
+						'parent'        => $parent,
+						'group_name'    => $group_name,
+					] );
+
+					$fields[] = $storage->add( $field );
 				}
 			}
 		}

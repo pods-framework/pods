@@ -55,6 +55,7 @@ class PodsField_Paragraph extends PodsField {
 			),
 			'output_options'                     => array(
 				'label' => __( 'Output Options', 'pods' ),
+				'type'  => 'boolean_group',
 				'boolean_group' => array(
 					static::$type . '_allow_html'      => array(
 						'label'      => __( 'Allow HTML', 'pods' ),

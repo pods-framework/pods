@@ -50,6 +50,7 @@ class PodsField_HTML extends PodsField {
 			],
 			'output_options'           => [
 				'label' => __( 'Output Options', 'pods' ),
+				'type'  => 'boolean_group',
 				'boolean_group' => [
 					static::$type . '_allow_html'      => [
 						'label'      => __( 'Allow HTML', 'pods' ),

@@ -51,6 +51,7 @@ class PodsField_Text extends PodsField {
 			),
 			'output_options'                     => array(
 				'label' => __( 'Output Options', 'pods' ),
+				'type'  => 'boolean_group',
 				'boolean_group' => array(
 					static::$type . '_allow_shortcode' => array(
 						'label'      => __( 'Allow Shortcodes', 'pods' ),

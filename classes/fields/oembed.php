@@ -121,6 +121,7 @@ class PodsField_OEmbed extends PodsField {
 			);
 			$options[ static::$type . '_enable_providers' ]   = array(
 				'label'      => __( 'Select enabled providers', 'pods' ),
+				'type'  => 'boolean_group',
 				'depends-on' => array( static::$type . '_restrict_providers' => true ),
 				'boolean_group'      => array(),
 			);

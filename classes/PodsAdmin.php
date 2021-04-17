@@ -1699,8 +1699,6 @@ class PodsAdmin {
 					// Set a unique field name for boolean group headings.
 					if ( ! empty( $boolean_group ) ) {
 						$field_options['name'] = $field_name . '_' . md5( json_encode( $boolean_group ) );
-
-						var_dump( compact( 'field_name', 'field_options', 'group_name' ), $field_options['boolean_group'] );
 					}
 
 					$field = $this->backcompat_convert_tabs_to_groups_setup_field( [

@@ -1,20 +1,24 @@
 import PropTypes from 'prop-types';
 
 // @todo can these be changed to real Booleans on the PHP side?
-const BOOLEAN_STRINGS = PropTypes.oneOf(
+export const BOOLEAN_STRINGS = PropTypes.oneOf(
 	[ '0', '1', 0, 1 ]
 );
-const BOOLEAN_ALL_TYPES = PropTypes.oneOf(
+export const BOOLEAN_ALL_TYPES = PropTypes.oneOf(
 	[ '0', '1', 0, 1, true, false ]
 );
 
+export const BOOLEAN_ALL_TYPES_OR_EMPTY = PropTypes.oneOf(
+	[ '0', '1', 0, 1, true, false, '', null, undefined ]
+);
+
 // Handles issue where objects get passed as arrays when empty from PHP.
-const OBJECT_OR_ARRAY = PropTypes.oneOfType( [
+export const OBJECT_OR_ARRAY = PropTypes.oneOfType( [
 	PropTypes.object,
 	PropTypes.array,
 ] );
 
-const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
+export const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
 	// @todo custom validator to ensure that the string is a number
 	PropTypes.string,
 	PropTypes.number,
@@ -35,7 +39,14 @@ export const PICK_OPTIONS = PropTypes.arrayOf(
 	} )
 );
 
-export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
+export const HTML_ATTR = PropTypes.shape( {
+	id: PropTypes.string,
+	class: PropTypes.string,
+	name: PropTypes.string,
+	name_clean: PropTypes.string,
+} );
+
+export const FIELD_PROP_TYPE = {
 	// Used in multiple fields
 	admin_only: BOOLEAN_STRINGS,
 	attributes: OBJECT_OR_ARRAY,
@@ -70,12 +81,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
 	hidden: BOOLEAN_STRINGS,
-	htmlAttr: PropTypes.shape( {
-		id: PropTypes.string,
-		class: PropTypes.string,
-		name: PropTypes.string,
-		name_clean: PropTypes.string,
-	} ),
+	htmlAttr: HTML_ATTR,
 	fieldEmbed: PropTypes.bool,
 	id: NUMBER_OR_NUMBER_AS_STRING.isRequired,
 	iframe_src: PropTypes.string,
@@ -142,6 +148,18 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	boolean_format_type: PropTypes.string,
 	boolean_no_label: PropTypes.string,
 	boolean_yes_label: PropTypes.string,
+
+	// Boolean Group fields
+	boolean_group: PropTypes.arrayOf(
+		PropTypes.shape( {
+			default: BOOLEAN_ALL_TYPES,
+			dependency: PropTypes.bool,
+			help: PropTypes.string,
+			label: PropTypes.string,
+			name: PropTypes.string,
+			type: PropTypes.string,
+		} ),
+	),
 
 	// Code fields
 	code_allow_shortcode: PropTypes.string,
@@ -423,7 +441,9 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	wysiwyg_repeatable: BOOLEAN_ALL_TYPES,
 	wysiwyg_wpautop: PropTypes.string,
 	wysiwyg_wptexturize: BOOLEAN_ALL_TYPES,
-} );
+};
+
+export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( FIELD_PROP_TYPE );
 
 export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {
 	description: PropTypes.string,

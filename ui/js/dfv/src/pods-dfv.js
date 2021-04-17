@@ -87,6 +87,28 @@ window.PodsDFV = {
 			( accumulator, currentValue ) => {
 				const fieldConfig = currentValue.fieldConfig || {};
 
+				// "Boolean Group" fields are actually comprised of other fields with their own
+				// named values, so instead of just one key/value, they'll have multiple ones.
+				// These are handled very differently, so process them and return early.
+				if ( 'boolean_group' === fieldConfig.type ) {
+					const values = {};
+
+					fieldConfig.boolean_group.forEach( ( groupItem ) => {
+						if ( ! groupItem.name || 'undefined' === typeof groupItem.default ) {
+							return;
+						}
+
+						values[ groupItem.name ] = currentValue.fieldItemData?.[ groupItem.name ] ||
+							groupItem.default ||
+							'';
+					} );
+
+					return {
+						...accumulator,
+						...values,
+					};
+				}
+
 				// Fields have values provided as arrays, even if the field
 				// type should just have a singular value.
 				const value = [ 'avatar', 'file', 'pick' ].includes( fieldConfig.type )
@@ -122,8 +144,6 @@ window.PodsDFV = {
 
 		// The Edit Pod screen gets a different store set up than
 		// other contexts.
-		console.log( 'initialValues for init call', initialValues );
-
 		if ( window.podsAdminConfig ) {
 			initEditPodStore( window.podsAdminConfig );
 		} else if ( window.podsDFVConfig ) {

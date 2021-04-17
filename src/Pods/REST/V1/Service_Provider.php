@@ -95,8 +95,9 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 		$endpoint = tribe( 'pods.rest-v1.endpoints.documentation' );
 
 		register_rest_route( $this->namespace, '/doc', [
-			'methods'  => WP_REST_Server::READABLE,
-			'callback' => [ $endpoint, 'get' ],
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => [ $endpoint, 'get' ],
+			'permission_callback' => '__return_true',
 		] );
 
 		//$endpoint->register_definition_provider( 'Attendee', new Tribe__Tickets__REST__V1__Documentation__Attendee_Definition_Provider() );

@@ -1055,13 +1055,13 @@ class Pod extends Base {
 					'label'      => __( 'Default term slug', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
-					'depends-on' => [ 'default_term_name' => true ],
+					'excludes-on' => [ 'default_term_name' => '' ],
 				],
 				'default_term_description' => [
 					'label'      => __( 'Default term description', 'pods' ),
 					'type'       => 'wysiwyg',
 					'default'    => '',
-					'depends-on' => [ 'default_term_name' => true ],
+					'excludes-on' => [ 'default_term_name' => '' ],
 				],
 			];
 			// @todo Handle extra-fields content here.

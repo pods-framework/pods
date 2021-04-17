@@ -61,7 +61,6 @@ describe( 'Boolean field component', () => {
 		expect( labels.at( 1 ).text() ).toEqual( 'False' );
 
 		expect( props.setValue ).toHaveBeenNthCalledWith( 1, '1' );
-		expect( props.setValue ).toHaveBeenNthCalledWith( 2, '0' );
 	} );
 
 	it( 'renders a dropdown menu with custom labels and handles changes', () => {

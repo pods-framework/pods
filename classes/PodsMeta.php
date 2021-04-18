@@ -765,12 +765,12 @@ class PodsMeta {
 				);
 			}
 
-			$field = array_merge( $defaults, $field );
+			$field = pods_config_merge_data( $defaults, $field );
 
 			$field['name'] = trim( $field['name'] );
 
 			if ( isset( $pod['fields'] ) && isset( $pod['fields'][ $field['name'] ] ) ) {
-				$field = array_merge( $field, $pod['fields'][ $field['name'] ] );
+				$field = pods_config_merge_data( $field, $pod['fields'][ $field['name'] ] );
 			}
 
 			$_fields[ $k ] = $field;
@@ -886,7 +886,7 @@ class PodsMeta {
 			'type'   => 'post_type'
 		);
 
-		$pod = array_merge( $defaults, (array) $pod );
+		$pod = pods_config_merge_data( $defaults, $pod );
 
 		if ( empty( $pod['name'] ) ) {
 			$pod['name'] = $pod['object'];

@@ -373,19 +373,9 @@ class Pods implements Iterator {
 
 		if ( empty( $field_name ) ) {
 			// Return all fields.
-			if ( is_object( $this->pod_data ) ) {
-				$field_data = (array) $this->pod_data->get_all_fields();
-			} else {
-				$field_data = array_merge( pods_v( 'fields', $this->pod_data, [] ), pods_v( 'object_fields', $this->pod_data, [] ) );
-			}
+			$field_data = pods_config_get_all_fields( $this->pod_data );
 		} else {
-			if ( is_object( $this->pod_data ) ) {
-				$field = $this->pod_data->get_field( $field_name );
-			} else {
-				$field_data = array_merge( pods_v( 'fields', $this->pod_data, [] ), pods_v( 'object_fields', $this->pod_data, [] ) );
-
-				$field = pods_v( $field_name, $field_data );
-			}
+			$field = pods_config_get_field_from_all_fields( $field_name, $this->pod_data );
 
 			if ( empty( $option ) ) {
 				$field_data = $field;
@@ -470,11 +460,7 @@ class Pods implements Iterator {
 		$value = $this->field( $params );
 
 		if ( is_array( $value ) ) {
-			$fields = $this->fields;
-
-			if ( isset( $this->pod_data['object_fields'] ) ) {
-				$fields = array_merge( $fields, $this->pod_data['object_fields'] );
-			}
+			$fields = pods_config_get_all_fields( $this->pod_data );
 
 			$serial_params = array(
 				'field'  => $params->name,
@@ -3417,7 +3403,7 @@ class Pods implements Iterator {
 				}
 
 				// @codingStandardsIgnoreLine.
-				$field = array_merge( $defaults, $field );
+				$field = pods_config_merge_data( $defaults, $field );
 
 				$field['name'] = trim( $field['name'] );
 
@@ -3427,14 +3413,14 @@ class Pods implements Iterator {
 
 				if ( isset( $object_fields[ $field['name'] ] ) ) {
 					// @codingStandardsIgnoreLine.
-					$fields[ $field['name'] ] = array_merge( $object_fields[ $field['name'] ], $field );
+					$fields[ $field['name'] ] = pods_config_merge_data( $object_fields[ $field['name'] ], $field );
 				} elseif ( isset( $this->fields[ $field['name'] ] ) ) {
 					// @codingStandardsIgnoreLine.
-					$fields[ $field['name'] ] = array_merge( $this->fields[ $field['name'] ], $field );
+					$fields[ $field['name'] ] = pods_config_merge_data( $this->fields[ $field['name'] ], $field );
 				}
 			}//end foreach
 
-			// Cleanup.
+			// Cleanup before get_defined_vars().
 			unset( $filter_fields );
 		}//end if
 
@@ -3724,46 +3710,37 @@ class Pods implements Iterator {
 
 		$params = $this->do_hook( 'form_params', $params );
 
-		$fields = $params['fields'];
+		$form_fields = $params['fields'];
 
-		if ( null !== $fields && ! is_array( $fields ) && 0 < strlen( $fields ) ) {
-			$fields = explode( ',', $fields );
+		if ( null !== $form_fields && ! is_array( $form_fields ) && 0 < strlen( $form_fields ) ) {
+			$form_fields = explode( ',', $form_fields );
 		}
 
-		$object_fields = (array) pods_v( 'object_fields', $this->pod_data, array(), true );
+		$all_fields = pods_config_get_all_fields( $this->pod_data );
 
-		if ( empty( $fields ) ) {
-			// Add core object fields if $fields is empty.
-			$fields = array_merge( $object_fields, $this->fields );
+		// Get all fields if form fields are empty.
+		if ( empty( $form_fields ) ) {
+			$form_fields = $all_fields;
 		}
 
-		// Temporary.
-		$form_fields = $fields;
-
-		$fields = array();
+		$fields = [];
 
 		foreach ( $form_fields as $k => $field ) {
 			$name = $k;
 
-			$defaults = array(
+			$defaults = [
 				'name' => $name,
-			);
+			];
 
 			if ( ! is_array( $field ) ) {
 				$name = $field;
 
-				$field = array(
+				$field = [
 					'name' => $name,
-				);
+				];
 			}
 
-			if ( $field instanceof \Pods\Whatsit\Field ) {
-				// Merge the $field into $to_merge.
-				$field->set_args( $defaults );
-			} elseif ( is_array( $field ) ) {
-				// @codingStandardsIgnoreLine.
-				$field = array_merge( $defaults, $field );
-			}
+			$field = pods_config_merge_data( $defaults, $field );
 
 			$field['name'] = trim( $field['name'] );
 
@@ -3774,25 +3751,10 @@ class Pods implements Iterator {
 				$field['name'] = trim( $name );
 			}
 
-			$to_merge = null;
+			$to_merge = pods_v( $field['name'], $all_fields );
 
-			if ( isset( $object_fields[ $field['name'] ] ) ) {
-				$to_merge = $object_fields[ $field['name'] ];
-			} elseif ( isset( $this->fields[ $field['name'] ] ) ) {
-				$to_merge = $this->fields[ $field['name'] ];
-			}
-
-			if ( $to_merge instanceof \Pods\Whatsit\Field ) {
-				// Merge the $field into $to_merge.
-				$field = $to_merge->set_args( $field );
-			} elseif ( is_array( $to_merge ) ) {
-				// Merge the $to_merge into $field.
-				if ( $field instanceof \Pods\Whatsit\Field ) {
-					$field->set_args( $to_merge, false );
-				} else {
-					// @codingStandardsIgnoreLine.
-					$field = array_merge( $to_merge, $field );
-				}
+			if ( $to_merge ) {
+				$field = pods_config_merge_data( $to_merge, $field );
 			}
 
 			if ( pods_v( 'hidden', $field, false, true ) ) {
@@ -3808,7 +3770,7 @@ class Pods implements Iterator {
 			}
 		}//end foreach
 
-		// Cleanup.
+		// Cleanup before get_defined_vars().
 		unset( $form_fields );
 
 		$fields = $this->do_hook( 'form_fields', $fields, $params );
@@ -3869,47 +3831,43 @@ class Pods implements Iterator {
 	/**
 	 * Render a singular view for the Pod item content.
 	 *
-	 * @param array|string|null $fields (optional) Fields to show in the view, defaults to all fields.
+	 * @param array|string|null $view_fields (optional) Fields to show in the view, defaults to all fields.
 	 *
 	 * @return mixed
 	 * @since 2.3.10
 	 */
-	public function view( $fields = null ) {
+	public function view( $view_fields = null ) {
 
 		$pod =& $this;
 
 		// Convert comma separated list of fields to an array.
-		if ( null !== $fields && ! is_array( $fields ) && 0 < strlen( $fields ) ) {
-			$fields = explode( ',', $fields );
+		if ( null !== $view_fields && ! is_array( $view_fields ) && 0 < strlen( $view_fields ) ) {
+			$view_fields = explode( ',', $view_fields );
 		}
 
-		$object_fields = (array) pods_v( 'object_fields', $this->pod_data, array(), true );
+		$all_fields = pods_config_get_all_fields( $this->pod_data );
 
-		if ( empty( $fields ) ) {
-			// Add core object fields if $fields is empty.
-			$fields = array_merge( $object_fields, $this->fields );
+		// Get all fields if fields are empty.
+		if ( empty( $view_fields ) ) {
+			$view_fields = $all_fields;
 		}
 
-		// Temporary.
-		$view_fields = $fields;
-
-		$fields = array();
+		$fields = [];
 
 		foreach ( $view_fields as $name => $field ) {
-			$defaults = array(
+			$defaults = [
 				'name' => $name,
-			);
+			];
 
 			if ( ! is_array( $field ) ) {
 				$name = $field;
 
-				$field = array(
+				$field = [
 					'name' => $name,
-				);
+				];
 			}
 
-			// @codingStandardsIgnoreLine.
-			$field = array_merge( $defaults, $field );
+			$field = pods_config_merge_data( $defaults, $fields );
 
 			$field['name'] = trim( $field['name'] );
 
@@ -3917,12 +3875,10 @@ class Pods implements Iterator {
 				$field['name'] = trim( $name );
 			}
 
-			if ( isset( $object_fields[ $field['name'] ] ) ) {
-				// @codingStandardsIgnoreLine.
-				$field = array_merge( $field, $object_fields[ $field['name'] ] );
-			} elseif ( isset( $this->fields[ $field['name'] ] ) ) {
-				// @codingStandardsIgnoreLine.
-				$field = array_merge( $this->fields[ $field['name'] ], $field );
+			$to_merge = pods_v( $field['name'], $all_fields );
+
+			if ( $to_merge ) {
+				$field = pods_config_merge_data( $to_merge, $field );
 			}
 
 			if ( pods_v( 'hidden', $field, false, true ) || 'hidden' === $field['type'] ) {
@@ -3934,7 +3890,7 @@ class Pods implements Iterator {
 			$fields[ $field['name'] ] = $field;
 		}//end foreach
 
-		// Cleanup.
+		// Cleanup before get_defined_vars().
 		unset( $view_fields );
 
 		$output = pods_view( PODS_DIR . 'ui/front/view.php', compact( array_keys( get_defined_vars() ) ), false, 'cache', true );

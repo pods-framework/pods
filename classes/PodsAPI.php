@@ -1,9 +1,10 @@
 <?php
 
-use Pods\API\Whatsit\Field;
-use Pods\API\Whatsit\Group;
-use Pods\API\Whatsit\Pod;
 use Pods\API\Whatsit\Value_Field;
+use Pods\Whatsit\Field;
+use Pods\Whatsit\Group;
+use Pods\Whatsit\Object_Field;
+use Pods\Whatsit\Pod;
 
 /**
  * @package Pods
@@ -1708,7 +1709,7 @@ class PodsAPI {
 			unset( $params->create_extend );
 		}
 
-		if ( isset( $params->pod ) && $params->pod instanceof \Pods\Whatsit\Pod ) {
+		if ( isset( $params->pod ) && $params->pod instanceof Pod ) {
 			$pod = $params->pod;
 
 			unset( $params->pod );
@@ -1726,7 +1727,7 @@ class PodsAPI {
 			$pod = $this->load_pod( $load_params, false );
 		}
 
-		if ( $pod instanceof \Pods\Whatsit\Pod ) {
+		if ( $pod instanceof Pod ) {
 			$fields = $pod->get_fields();
 
 			$pod = $pod->get_args();
@@ -1862,9 +1863,9 @@ class PodsAPI {
 			unset( $options['overwrite'] );
 		}
 
-		$pod = array_merge( $pod, $options );
+		$pod = pods_config_merge_data( $pod, $options );
 
-		if ( isset( $pod['options'] ) ) {
+		if ( is_array( $pod['options'] ) && isset( $pod['options'] ) ) {
 			$pod = array_merge( $pod, $pod['options'] );
 
 			unset( $pod['options'] );
@@ -2426,12 +2427,8 @@ class PodsAPI {
 				if ( ! empty( $old_id ) ) {
 					$field_data = $fields[ $field['name'] ];
 
-					if ( $field_data instanceof Pods\Whatsit ) {
-						$field_data = $field_data->get_args();
-					}
-
 					/** @noinspection SlowArrayOperationsInLoopInspection */
-					$field = array_merge( $field, $field_data );
+					$field = pods_config_merge_data( $field, $field_data );
 				}
 
 				$field['pod_data'] = $object;
@@ -2642,7 +2639,7 @@ class PodsAPI {
 
 		$field = false;
 
-		if ( isset( $params->field ) && $params->field instanceof \Pods\Whatsit\Field ) {
+		if ( isset( $params->field ) && $params->field instanceof Field ) {
 			$field = $params->field;
 
 			$params->id = $field->get_id();
@@ -2665,7 +2662,7 @@ class PodsAPI {
 		$pod      = null;
 		$save_pod = false;
 
-		if ( isset( $params->pod ) && $params->pod instanceof \Pods\Whatsit\Pod ) {
+		if ( isset( $params->pod ) && $params->pod instanceof Pod ) {
 			$pod = $params->pod;
 
 			$params->pod_id = $pod['id'];
@@ -2698,7 +2695,7 @@ class PodsAPI {
 				'pod' => $pod,
 			] );
 		} elseif ( ! empty( $params->group ) ) {
-			if ( $params->group instanceof \Pods\Whatsit\Group ) {
+			if ( $params->group instanceof Group ) {
 				$group = $params->group;
 			} else {
 				$group_identifier = 'Slug: ' . $params->group;
@@ -2721,7 +2718,7 @@ class PodsAPI {
 
 			unset( $params->new_group_id );
 		} elseif ( ! empty( $params->new_group ) ) {
-			if ( $params->new_group instanceof \Pods\Whatsit\Group ) {
+			if ( $params->new_group instanceof Group ) {
 				$new_group = $params->new_group;
 			} else {
 				$new_group_identifier = 'Slug: ' . $params->new_group;
@@ -2735,7 +2732,7 @@ class PodsAPI {
 			unset( $params->new_group );
 		}
 
-		if ( $group instanceof \Pods\Whatsit\Group ) {
+		if ( $group instanceof Group ) {
 			$params->group_id = $group['id'];
 			$params->group    = $group['name'];
 		} elseif ( false === $group ) {
@@ -3618,7 +3615,7 @@ class PodsAPI {
 		$group = null;
 
 		// Setup Pod if passed.
-		if ( isset( $params->pod ) && $params->pod instanceof \Pods\Whatsit\Pod ) {
+		if ( isset( $params->pod ) && $params->pod instanceof Pod ) {
 			$pod = $params->pod;
 
 			$params->pod    = $pod->get_name();
@@ -3633,7 +3630,7 @@ class PodsAPI {
 		}
 
 		// Setup Group if passed.
-		if ( isset( $params->group ) && $params->group instanceof \Pods\Whatsit\Group ) {
+		if ( isset( $params->group ) && $params->group instanceof Group ) {
 			$group = $params->group;
 
 			unset( $params->group );
@@ -3683,7 +3680,7 @@ class PodsAPI {
 
 		$reserved_keywords = pods_reserved_keywords();
 
-		/** @var \Pods\Whatsit\Pod $pod */
+		/** @var Pod $pod */
 		$params->pod_id = $pod->get_id();
 		$params->pod    = $pod->get_name();
 
@@ -3713,7 +3710,7 @@ class PodsAPI {
 
 		$group = $this->load_group( $load_params );
 
-		if ( $group instanceof \Pods\Whatsit\Group ) {
+		if ( $group instanceof Group ) {
 			$group = $group->get_args();
 		}
 
@@ -5308,8 +5305,8 @@ class PodsAPI {
 	 *
 	 * @param int                       $id          ID of item.
 	 * @param int|array                 $related_ids ID(s) for items to save.
-	 * @param array|\Pods\Whatsit\Pod   $pod         The Pod object.
-	 * @param array|\Pods\Whatsit\Field $field       The Field object.
+	 * @param array|Pod   $pod         The Pod object.
+	 * @param array|Field $field       The Field object.
 	 *
 	 * @return array List of ID(s) that were setup for saving.
 	 */
@@ -5467,8 +5464,8 @@ class PodsAPI {
 		 *
 		 * @param int                       $id          ID of item.
 		 * @param array                     $related_ids ID(s) for items to save.
-		 * @param array|\Pods\Whatsit\Pod   $pod         The Pod object.
-		 * @param array|\Pods\Whatsit\Field $field       The Field object.
+		 * @param array|Pod   $pod         The Pod object.
+		 * @param array|Field $field       The Field object.
 		 */
 		do_action( 'pods_api_save_relationships', $id, $related_ids, $field, $pod );
 
@@ -5521,7 +5518,7 @@ class PodsAPI {
 			$pod['object'] = '';
 		}
 
-		if ( $pod instanceof \Pods\Whatsit\Pod ) {
+		if ( $pod instanceof Pod ) {
 			$pod = $pod->export(
 				[
 					'include_groups' => true,
@@ -5633,7 +5630,7 @@ class PodsAPI {
 			return false;
 		}
 
-		if ( $group instanceof \Pods\Whatsit\Group ) {
+		if ( $group instanceof Group ) {
 			$group = $group->export(
 				[
 					'include_fields' => true,
@@ -5743,7 +5740,7 @@ class PodsAPI {
 			return false;
 		}
 
-		if ( $field instanceof \Pods\Whatsit\Field ) {
+		if ( $field instanceof Field ) {
 			$field = $field->export();
 		}
 
@@ -6477,7 +6474,7 @@ class PodsAPI {
 	 * $params['pod'] string The Pod name
 	 * $params['pod_id'] string The Pod name
 	 *
-	 * @param array|object|\Pods\Whatsit\Field $params An associative array or object of parameters, or the Field object itself.
+	 * @param array|object|Field $params An associative array or object of parameters, or the Field object itself.
 	 * @param bool  $table_operation                   Whether or not to handle table operations.
 	 *
 	 * @uses  PodsAPI::load_field
@@ -6500,7 +6497,7 @@ class PodsAPI {
 		$pod                      = null;
 
 		// Check if the params is a field.
-		if ( $params instanceof \Pods\Whatsit\Field ) {
+		if ( $params instanceof Field ) {
 			$field = $params;
 			$pod   = $field->get_parent_object();
 
@@ -7107,7 +7104,7 @@ class PodsAPI {
 			 * @since TBD
 			 *
 			 * @param int                     $id  ID to remove.
-			 * @param array|\Pods\Whatsit\Pod $pod The Pod object.
+			 * @param array|Pod $pod The Pod object.
 			 */
 			do_action( 'pods_api_delete_object_from_relationships', $id, $pod );
 		}
@@ -7122,8 +7119,8 @@ class PodsAPI {
 	 *
 	 * @param int|array                 $related_id    ID(s) for items to save.
 	 * @param int|array                 $id            ID(s) to remove.
-	 * @param array|\Pods\Whatsit\Pod   $related_pod   The related Pod object.
-	 * @param array|\Pods\Whatsit\Field $related_field The related Field object.
+	 * @param array|Pod   $related_pod   The related Pod object.
+	 * @param array|Field $related_field The related Field object.
 	 */
 	public function delete_relationships( $related_id, $id, $related_pod, $related_field ) {
 
@@ -7250,8 +7247,8 @@ class PodsAPI {
 		 *
 		 * @param int|array                 $related_id    ID(s) for items to save.
 		 * @param int|array                 $id            ID(s) to remove.
-		 * @param array|\Pods\Whatsit\Pod   $related_pod   The related Pod object.
-		 * @param array|\Pods\Whatsit\Field $related_field The related Field object.
+		 * @param array|Pod   $related_pod   The related Pod object.
+		 * @param array|Field $related_field The related Field object.
 		 */
 		do_action( 'pods_api_delete_relationships', $related_id, $id, $related_field, $related_pod );
 
@@ -7353,7 +7350,7 @@ class PodsAPI {
 	 * @since 1.7.9
 	 */
 	public function load_pod( $params, $strict = false ) {
-		if ( $params instanceof \Pods\Whatsit\Pod ) {
+		if ( $params instanceof Pod ) {
 			return $params;
 		}
 
@@ -7558,7 +7555,7 @@ class PodsAPI {
 	 * @since 1.7.9
 	 */
 	public function load_field( $params, $strict = false ) {
-		if ( $params instanceof \Pods\Whatsit\Field ) {
+		if ( $params instanceof Field ) {
 			return $params;
 		}
 
@@ -7692,17 +7689,17 @@ class PodsAPI {
 
 				$field = $this->load_field( $args );
 
-				if ( ! $field instanceof \Pods\Whatsit\Field ) {
+				if ( ! $field instanceof Field ) {
 					// Check if this is an object field.
 					$pod_data = $this->load_pod( $pod );
 
-					if ( ! $pod_data instanceof \Pods\Whatsit\Pod ) {
+					if ( ! $pod_data instanceof Pod ) {
 						break;
 					}
 
 					$field = $pod_data->get_field( $field_name );
 
-					if ( ! $field instanceof \Pods\Whatsit\Object_Field || ! in_array( $field['type'], $types, true ) ) {
+					if ( ! $field instanceof Object_Field || ! in_array( $field['type'], $types, true ) ) {
 						break;
 					}
 				}
@@ -7869,7 +7866,7 @@ class PodsAPI {
 	 * @since 2.8
 	 */
 	public function load_group( $params, $strict = false ) {
-		if ( $params instanceof \Pods\Whatsit\Group ) {
+		if ( $params instanceof Group ) {
 			return $params;
 		}
 

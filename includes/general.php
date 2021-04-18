@@ -3,6 +3,9 @@
  * @package Pods\Global\Functions\General
  */
 
+use Pods\Whatsit;
+use Pods\Whatsit\Field;
+use Pods\Whatsit\Pod;
 use Pods\Whatsit\Store;
 
 /**
@@ -19,7 +22,11 @@ use Pods\Whatsit\Store;
  * @since 2.0.0
  */
 function pods_query( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
-	$podsdata = pods_data( null, null, true, false );
+	try {
+		$podsdata = pods_data( null, null, true, false );
+	} catch ( Exception $exception ) {
+		return null;
+	}
 
 	$sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
 	$sql = $podsdata->get_sql( $sql );
@@ -46,7 +53,7 @@ function pods_query( $sql, $error = 'Database Error', $results_error = null, $no
 		echo '</textarea>';
 	}
 
-	return $podsdata->query( $sql, $error, $results_error, $no_results_error );
+	return PodsData::query( $sql, $error, $results_error, $no_results_error );
 }
 
 /**
@@ -411,8 +418,8 @@ function pods_podsrel_enabled() {
  *
  * @since TBD
  *
- * @param null|array|\Pods\Whatsit\Field $field The field object.
- * @param null|array|\Pods\Whatsit\Pod   $pod   The pod object.
+ * @param null|array|Field $field The field object.
+ * @param null|array|Pod   $pod   The pod object.
  *
  * @return bool Whether relationship meta storage is enabled.
  */
@@ -422,9 +429,9 @@ function pods_relationship_meta_storage_enabled( $field = null, $pod = null ) {
 	 *
 	 * @since TBD
 	 *
-	 * @param bool                           $enabled Whether relationship meta storage table is enabled.
-	 * @param null|array|\Pods\Whatsit\Field $field   The field object.
-	 * @param null|array|\Pods\Whatsit\Pod   $pod     The pod object.
+	 * @param bool             $enabled Whether relationship meta storage table is enabled.
+	 * @param null|array|Field $field   The field object.
+	 * @param null|array|Pod   $pod     The pod object.
 	 */
 	return apply_filters( 'pods_relationship_meta_storage_enabled', true, $field, $pod );
 }
@@ -2771,7 +2778,7 @@ function pods_is_modal_window() {
 function pod_is_valid( $pod ) {
 	$is_valid = false;
 
-	if ( $pod && is_a( $pod, 'Pods' ) && $pod->valid() ) {
+	if ( $pod && $pod instanceof Pods && $pod->valid() ) {
 		$is_valid = true;
 	}
 
@@ -2795,4 +2802,108 @@ function pod_has_items( $pod ) {
 	}
 
 	return $has_items;
+}
+
+/**
+ * Merge one config into another for purposes of overriding certain arguments.
+ *
+ * @since TBD
+ *
+ * @param array|Whatsit $config_to_merge_into The config to merge into.
+ * @param array|Field   $config_to_merge_from The config to merge from.
+ *
+ * @return array|Field The final config result.
+ */
+function pods_config_merge_data( $config_to_merge_into, $config_to_merge_from ) {
+	// The configs already match.
+	if ( $config_to_merge_into === $config_to_merge_from ) {
+		return $config_to_merge_into;
+	}
+
+	// Merge the config into the destination config.
+	if ( $config_to_merge_into instanceof Whatsit ) {
+		return $config_to_merge_into->set_args( $config_to_merge_from );
+	}
+
+	// Merge the destination config into the config but don't replace data.
+	if ( $config_to_merge_from instanceof Whatsit ) {
+		return $config_to_merge_from->set_args( $config_to_merge_into, false );
+	}
+
+	// The config was not an array.
+	if ( ! is_array( $config_to_merge_from ) ) {
+		return $config_to_merge_into;
+	}
+
+	// The config was not an array.
+	if ( ! is_array( $config_to_merge_into ) ) {
+		return $config_to_merge_from;
+	}
+
+	// Merge the config arrays together.
+	return array_merge( $config_to_merge_into, $config_to_merge_from );
+}
+
+/**
+ * Get the list of all fields, including object fields, from a Pod configuration.
+ *
+ * @since TBD
+ *
+ * @param array|Pod|Pods $pod The Pod configuration array or object.
+ *
+ * @return array[]|Field[] The list of all fields, including object fields.
+ */
+function pods_config_get_all_fields( $pod ) {
+	if ( $pod instanceof Pod ) {
+		return $pod->get_all_fields();
+	}
+
+	$fields        = (array) pods_v( 'fields', $pod, [] );
+	$object_fields = (array) pods_v( 'object_fields', $pod, [] );
+
+	return array_merge( $fields, $object_fields );
+}
+
+/**
+ * Get the field data for a specific field matching from all fields, including object fields, from a Pod configuration.
+ *
+ * @since TBD
+ *
+ * @param string         $field The field name to get.
+ * @param array|Pod|Pods $pod   The Pod configuration array or object.
+ * @param null|string    $arg   The field argument to use when getting the field.
+ *
+ * @return array|Field|null The field data or null if not found.
+ */
+function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
+	// Get the pod data from the Pods object if it's there.
+	if ( $pod instanceof Pods ) {
+		$pod = $pod->pod_data;
+	}
+
+	// Get the field directly from the Pod.
+	if ( $pod instanceof Pod ) {
+		return $pod->get_field( $field, $arg );
+	}
+
+	// The pod isn't there or valid.
+	if ( empty( $pod ) ) {
+		return null;
+	}
+
+	$fields        = (array) pods_v( 'fields', $pod, [] );
+	$object_fields = (array) pods_v( 'object_fields', $pod, [] );
+
+	// Return the object field.
+	if ( isset( $object_fields[ $field ] ) ) {
+		return $object_fields[ $field ];
+	}
+
+	// Return the pod field.
+	if ( isset( $fields[ $field ] ) ) {
+		return $fields[ $field ];
+	}
+
+	// No field found.
+	return null;
 }

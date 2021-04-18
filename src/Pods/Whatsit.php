@@ -512,6 +512,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$args = $args->get_args();
 		}
 
+		// Invalid arguments received.
+		if ( ! is_array( $args ) ) {
+			return $this;
+		}
+
 		// Set up the options if they were provided.
 		if ( isset( $args['options'] ) ) {
 			$args = array_merge( $args['options'], $args );

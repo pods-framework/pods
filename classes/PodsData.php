@@ -3019,7 +3019,7 @@ class PodsData {
 
 					$pod_data['object_fields'] = $pod_data['fields'];
 
-					$pod_data = array_merge( $this->api->get_table_info( $traverse_recurse['pod'], '' ), $pod_data );
+					$pod_data = pods_config_merge_data( $this->api->get_table_info( $traverse_recurse['pod'], '' ), $pod_data );
 				} elseif ( 'taxonomy' === $pod_data['type'] && 'none' === $pod_data['storage'] && function_exists( 'get_term_meta' ) ) {
 					$pod_data['storage'] = 'meta';
 				}

@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit\Field;
+
 /**
  * @package Pods
  */
@@ -1258,7 +1260,7 @@ class PodsUI {
 					if ( is_int( $field ) ) {
 						$field      = $attributes;
 						$attributes = array();
-					} elseif ( is_a( $attributes, \Pods\Whatsit\Field::class ) ) {
+					} elseif ( $attributes instanceof Field ) {
 						$attributes = $attributes->get_args();
 					} else {
 						$attributes = array( 'label' => $attributes );
@@ -1272,11 +1274,7 @@ class PodsUI {
 				if ( is_object( $this->pod ) && isset( $this->pod->fields ) && isset( $this->pod->fields[ $attributes['real_name'] ] ) ) {
 					$field_attributes = $this->pod->fields[ $attributes['real_name'] ];
 
-					if ( is_a( $field_attributes, \Pods\Whatsit\Field::class ) ) {
-						$field_attributes = $field_attributes->get_args();
-					}
-
-					$attributes = array_merge( $field_attributes, $attributes );
+					$attributes = pods_config_merge_data( $field_attributes, $attributes );
 				}
 
 				if ( ! isset( $attributes['options'] ) ) {
@@ -1403,7 +1401,7 @@ class PodsUI {
 					continue;
 				}
 
-				$attributes = array_merge( $attributes['options'], $attributes );
+				$attributes = pods_config_merge_data( $attributes['options'], $attributes );
 				$attributes = PodsForm::field_setup( $attributes, null, $attributes['type'] );
 
 				$new_fields[ $field ] = $attributes;
@@ -1859,7 +1857,7 @@ class PodsUI {
 				);
 			}
 
-			$field = array_merge( $defaults, $field );
+			$field = pods_config_merge_data( $defaults, $field );
 
 			$field['name'] = trim( $field['name'] );
 
@@ -1873,19 +1871,11 @@ class PodsUI {
 			if ( isset( $object_fields[ $field['name'] ] ) ) {
 				$field_attributes = $object_fields[ $field['name'] ];
 
-				if ( is_a( $field_attributes, \Pods\Whatsit\Field::class ) ) {
-					$field_attributes = $field_attributes->get_args();
-				}
-
-				$field = array_merge( $field, $field_attributes );
+				$field = pods_config_merge_data( $field, $field_attributes );
 			} elseif ( isset( $this->pod->fields[ $field['name'] ] ) ) {
 				$field_attributes = $this->pod->fields[ $field['name'] ];
 
-				if ( is_a( $field_attributes, \Pods\Whatsit\Field::class ) ) {
-					$field_attributes = $field_attributes->get_args();
-				}
-
-				$field = array_merge( $field_attributes, $field );
+				$field = pods_config_merge_data( $field_attributes, $field );
 			}
 
 			if ( pods_v( 'hidden', $field, false ) ) {
@@ -1988,7 +1978,7 @@ class PodsUI {
 				);
 			}
 
-			$field = array_merge( $defaults, $field );
+			$field = pods_config_merge_data( $defaults, $field );
 
 			$field['name'] = trim( $field['name'] );
 
@@ -1998,10 +1988,10 @@ class PodsUI {
 				$field['name'] = trim( $name );
 			}
 
-			if ( isset( $object_fields[ $field['name'] ] ) ) {
-				$field = array_merge( $field, $object_fields[ $field['name'] ] );
-			} elseif ( isset( $this->pod->fields[ $field['name'] ] ) ) {
-				$field = array_merge( $this->pod->fields[ $field['name'] ], $field );
+			$found_field = pods_config_get_field_from_all_fields( $field['name'], $this->pod );
+
+			if ( $found_field ) ) {
+				$field = pods_config_merge_data( $field, $found_field );
 			}
 
 			if ( pods_v( 'hidden', $field, false, null, true ) || 'hidden' === $field['type'] ) {
@@ -2936,7 +2926,7 @@ class PodsUI {
 						$filter_field = $this->pod->fields[ $filter ];
 
 						if ( isset( $this->fields['manage'][ $filter ] ) && is_array( $this->fields['manage'][ $filter ] ) ) {
-							$filter_field = array_merge( $filter_field, $this->fields['manage'][ $filter ] );
+							$filter_field = pods_config_merge_data( $filter_field, $this->fields['manage'][ $filter ] );
 						}
 					} elseif ( isset( $this->fields['manage'][ $filter ] ) ) {
 						$filter_field = $this->fields['manage'][ $filter ];
@@ -3008,8 +2998,8 @@ class PodsUI {
 								if ( isset( $this->pod->fields[ $filter ] ) ) {
 									$filter_field = $this->pod->fields[ $filter ];
 
-									if ( isset( $this->fields['manage'][ $filter ] ) && is_array( $this->fields['manage'][ $filter ] ) ) {
-										$filter_field = array_merge( $filter_field, $this->fields['manage'][ $filter ] );
+									if ( isset( $this->fields['manage'][ $filter ] ) ) {
+										$filter_field = pods_config_merge_data( $filter_field, $this->fields['manage'][ $filter ] );
 									}
 								} elseif ( isset( $this->fields['manage'][ $filter ] ) ) {
 									$filter_field = $this->fields['manage'][ $filter ];
@@ -3354,8 +3344,8 @@ class PodsUI {
 			if ( isset( $this->pod->fields[ $filter ] ) ) {
 				$filter_field = $this->pod->fields[ $filter ];
 
-				if ( isset( $this->fields['manage'][ $filter ] ) && is_array( $this->fields['manage'][ $filter ] ) ) {
-					$filter_field = array_merge( $filter_field, $this->fields['manage'][ $filter ] );
+				if ( isset( $this->fields['manage'][ $filter ] ) ) {
+					$filter_field = pods_config_merge_data( $filter_field, $this->fields['manage'][ $filter ] );
 				}
 			} elseif ( isset( $this->fields['manage'][ $filter ] ) ) {
 				$filter_field = $this->fields['manage'][ $filter ];
@@ -3500,8 +3490,8 @@ class PodsUI {
 							if ( isset( $this->pod->fields[ $filter ] ) ) {
 								$filter_field = $this->pod->fields[ $filter ];
 
-								if ( isset( $this->fields['manage'][ $filter ] ) && is_array( $this->fields['manage'][ $filter ] ) ) {
-									$filter_field = array_merge( $filter_field, $this->fields['manage'][ $filter ] );
+								if ( isset( $this->fields['manage'][ $filter ] ) ) {
+									$filter_field = pods_config_merge_data( $filter_field, $this->fields['manage'][ $filter ] );
 								}
 							} elseif ( isset( $this->fields['manage'][ $filter ] ) ) {
 								$filter_field = $this->fields['manage'][ $filter ];
@@ -3657,8 +3647,8 @@ class PodsUI {
 						if ( isset( $this->pod->fields[ $filter ] ) ) {
 							$filter_field = $this->pod->fields[ $filter ];
 
-							if ( isset( $this->fields['manage'][ $filter ] ) && is_array( $this->fields['manage'][ $filter ] ) ) {
-								$filter_field = array_merge( $filter_field, $this->fields['manage'][ $filter ] );
+							if ( isset( $this->fields['manage'][ $filter ] ) ) {
+								$filter_field = pods_config_merge_data( $filter_field, $this->fields['manage'][ $filter ] );
 							}
 						} elseif ( isset( $this->fields['manage'][ $filter ] ) ) {
 							$filter_field = $this->fields['manage'][ $filter ];

@@ -111,7 +111,7 @@ class PodsMigrate {
 
 		$this->data = array_merge( $defaults, (array) $data );
 	}
-	
+
 	/**
 	 * Get items.
 	 *
@@ -120,9 +120,9 @@ class PodsMigrate {
 	 * @return array List of data items.
 	 */
 	private function get_items() {
-		
-		return empty( $this->data['single'] ) ? 
-			$this->data['items'] : 
+
+		return empty( $this->data['single'] ) ?
+			$this->data['items'] :
 			array( $this->data['items'] );
 
 	}
@@ -1101,7 +1101,7 @@ class PodsMigrate {
 						$field_data = array();
 					}
 
-					$field_data = array_merge( $default_field_data, $field_data );
+					$field_data = pods_config_merge_data( $default_field_data, $field_data );
 
 					if ( null === $field_data['field'] ) {
 						$field_data['field'] = $field;

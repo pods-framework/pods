@@ -1,5 +1,5 @@
 <?php
-$field = array_merge( $field_settings['field_defaults'], $field->get_args() );
+$field = pods_config_merge_data( $field_settings['field_defaults'], $field );
 
 // Migrate pick object when saving
 if ( 'pod' == pods_v( 'pick_object', $field ) ) {

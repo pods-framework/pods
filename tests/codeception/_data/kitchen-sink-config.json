@@ -1,6 +1,6 @@
 {
   "demo_boolean_group": {
-    "name"  : "boolean_group",
+    "name"  : "demo_boolean_group",
     "label" : "Boolean Group",
     "type": "boolean_group",
     "boolean_group": [
@@ -4996,7 +4996,6 @@
     "sister_id": "",
     "required": "0",
     "unique": "0",
-    "pick_custom": "one|Option one\ntwo|Option two\nthree|Option three",
     "pick_format_type": "multi",
     "pick_format_single": "dropdown",
     "pick_format_multi": "list",
@@ -5008,6 +5007,48 @@
     "pick_show_edit_link": "1",
     "pick_show_view_link": "1",
     "pick_limit": "5",
+    "pick_user_role": [],
+    "pick_post_status": [
+      "publish"
+    ],
+    "admin_only": "0",
+    "restrict_role": "0",
+    "restrict_capability": "0",
+    "hidden": "0",
+    "read_only": "0",
+    "roles_allowed": [
+      "administrator"
+    ],
+    "rest_read": "0",
+    "rest_write": "0",
+    "rest_pick_response": "array",
+    "rest_pick_depth": "2",
+    "pick_select_text": "",
+    "pick_table_id": "",
+    "pick_table_index": "",
+    "pick_display": "",
+    "pick_where": "",
+    "pick_orderby": "",
+    "pick_groupby": ""
+  },
+  "demo_relationship_post_statuses": {
+    "name": "demo_relationship_post_statuses",
+    "label": "Demo Relationship Post Statuses",
+    "description": "single",
+    "help": "",
+    "class": "",
+    "type": "pick",
+    "weight": 107,
+    "pick_object": "post-status",
+    "sister_id": "",
+    "required": "0",
+    "unique": "0",
+    "pick_format_type": "single",
+    "pick_format_single": "dropdown",
+    "pick_display_format_multi": "default",
+    "pick_display_format_separator": ", ",
+    "pick_allow_add_new": "0",
+    "pick_taggable": "0",
     "pick_user_role": [],
     "pick_post_status": [
       "publish"

@@ -681,29 +681,37 @@ class Pod extends Base {
 
 			$post_type_name = pods_v( 'name', $pod, 'post_type', true );
 
+			/**
+			 * Allow filtering the default post status.
+			 *
+			 * @param string            $default_post_status The default post status.
+			 * @param \Pods\Whatsit\Pod $pod                 Current Pods object.
+			 */
+			$default_post_status = apply_filters( "pods_api_default_status_{$post_type_name}", 'draft', $pod );
+
 			$options['advanced'] = [
-				'public'                 => [
+				'public'                        => [
 					'label'             => __( 'Public', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
 				],
-				'publicly_queryable'     => [
+				'publicly_queryable'            => [
 					'label'             => __( 'Publicly Queryable', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => pods_v( 'public', $pod, true ),
 					'boolean_yes_label' => '',
 				],
-				'exclude_from_search'    => [
+				'exclude_from_search'           => [
 					'label'             => __( 'Exclude from Search', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => ! pods_v( 'public', $pod, true ),
 					'boolean_yes_label' => '',
 				],
-				'capability_type'        => [
+				'capability_type'               => [
 					'label'      => __( 'User Capability', 'pods' ),
 					'help'       => __( 'Uses these capabilities for access to this post type: edit_{capability}, read_{capability}, and delete_{capability}', 'pods' ),
 					'type'       => 'pick',
@@ -715,21 +723,21 @@ class Pod extends Base {
 					],
 					'dependency' => true,
 				],
-				'capability_type_custom' => [
+				'capability_type_custom'        => [
 					'label'      => __( 'Custom User Capability', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => pods_v( 'name', $pod ),
 					'depends-on' => [ 'capability_type' => 'custom' ],
 				],
-				'capability_type_extra'  => [
+				'capability_type_extra'         => [
 					'label'             => __( 'Additional User Capabilities', 'pods' ),
 					'help'              => __( 'Enables additional capabilities for this Post Type including: delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, and edit_published_{capability}s', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
 				],
-				'has_archive'            => [
+				'has_archive'                   => [
 					'label'             => __( 'Enable Archive Page', 'pods' ),
 					'help'              => __( 'If enabled, creates an archive page with list of of items in this custom post type. Functions like a category page for posts. Can be controlled with a template in your theme called "archive-{$post-type}.php".', 'pods' ),
 					'type'              => 'boolean',
@@ -737,7 +745,7 @@ class Pod extends Base {
 					'dependency'        => true,
 					'boolean_yes_label' => '',
 				],
-				'has_archive_slug'       => [
+				'has_archive_slug'              => [
 					'label'         => __( 'Archive Page Slug Override', 'pods' ),
 					'help'          => __( 'If archive page is enabled, you can override the slug used by WordPress, which defaults to the name of the post type.', 'pods' ),
 					'type'          => 'slug',
@@ -745,7 +753,7 @@ class Pod extends Base {
 					'default'       => '',
 					'depends-on'    => [ 'has_archive' => true ],
 				],
-				'hierarchical'           => [
+				'hierarchical'                  => [
 					'label'             => __( 'Hierarchical', 'pods' ),
 					'help'              => __( 'Allows for parent/ child relationships between items, just like with Pages. Note: To edit relationships in the post editor, you must enable "Page Attributes" in the "Supports" section below.', 'pods' ),
 					'type'              => 'boolean',
@@ -753,7 +761,7 @@ class Pod extends Base {
 					'dependency'        => true,
 					'boolean_yes_label' => '',
 				],
-				'rewrite'                => [
+				'rewrite'                       => [
 					'label'             => __( 'Rewrite', 'pods' ),
 					'help'              => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Permalinks. If not enabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
 					'type'              => 'boolean',
@@ -761,7 +769,7 @@ class Pod extends Base {
 					'dependency'        => true,
 					'boolean_yes_label' => '',
 				],
-				'rewrite_custom_slug'    => [
+				'rewrite_custom_slug'           => [
 					'label'         => __( 'Custom Rewrite Slug', 'pods' ),
 					'help'          => __( 'Changes the first segment of the URL, which by default is the name of the Pod. For example, if your Pod is called "foo", if this field is left blank, your link will be "example.com/foo/post_slug", but if you were to enter "bar" your link will be "example.com/bar/post_slug".', 'pods' ),
 					'type'          => 'slug',
@@ -769,7 +777,7 @@ class Pod extends Base {
 					'default'       => '',
 					'depends-on'    => [ 'rewrite' => true ],
 				],
-				'rewrite_with_front'     => [
+				'rewrite_with_front'            => [
 					'label'             => __( 'Rewrite with Front', 'pods' ),
 					'help'              => __( 'Allows permalinks to be prepended with your front base (example: if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/)', 'pods' ),
 					'type'              => 'boolean',
@@ -777,7 +785,7 @@ class Pod extends Base {
 					'depends-on'        => [ 'rewrite' => true ],
 					'boolean_yes_label' => '',
 				],
-				'rewrite_feeds'          => [
+				'rewrite_feeds'                 => [
 					'label'             => __( 'Rewrite Feeds', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
@@ -785,7 +793,7 @@ class Pod extends Base {
 					'depends-on'        => [ 'rewrite' => true ],
 					'boolean_yes_label' => '',
 				],
-				'rewrite_pages'          => [
+				'rewrite_pages'                 => [
 					'label'             => __( 'Rewrite Pages', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
@@ -793,28 +801,135 @@ class Pod extends Base {
 					'depends-on'        => [ 'rewrite' => true ],
 					'boolean_yes_label' => '',
 				],
-				'query_var'              => [
+				'query_var'                     => [
 					'label'             => __( 'Query Var', 'pods' ),
 					'help'              => __( 'The Query Var is used in the URL and underneath the WordPress Rewrite API to tell WordPress what page or post type you are on. For a list of reserved Query Vars, read <a href="http://codex.wordpress.org/WordPress_Query_Vars">WordPress Query Vars</a> from the WordPress Codex.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
 				],
-				'can_export'             => [
+				'can_export'                    => [
 					'label'             => __( 'Exportable', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
 				],
-				'default_status'         => [
+				'default_status'                => [
 					'label'       => __( 'Default Status', 'pods' ),
 					'help'        => __( 'help', 'pods' ),
 					'type'        => 'pick',
 					'pick_object' => 'post-status',
-					'default'     => apply_filters( "pods_api_default_status_{$post_type_name}", 'draft', $pod ),
+					'default'     => $default_post_status,
+				],
+				'post_type_supports'            => [
+					'name'          => 'post_type_supports',
+					'type'          => 'boolean_group',
+					'label'         => __( 'Supports', 'pods' ),
+					'boolean_group' => [
+						'supports_title'           => [
+							'name'  => 'supports_title',
+							'label' => __( 'Title', 'pods' ),
+							'type'  => 'boolean',
+						],
+						'supports_editor'          => [
+							'name'  => 'supports_editor',
+							'label' => __( 'Editor', 'pods' ),
+							'type'  => 'boolean',
+						],
+						'supports_author'          => [
+							'name'  => 'supports_author',
+							'label' => __( 'Author', 'pods' ),
+							'type'  => 'boolean',
+						],
+						'supports_thumbnail'       => [
+							'name'       => 'supports_thumbnail',
+							'label'      => __( 'Featured Image', 'pods' ),
+							'type'       => 'boolean',
+							'dependency' => true,
+						],
+						'supports_excerpt'         => [
+							'name'  => 'supports_excerpt',
+							'label' => __( 'Excerpt', 'pods' ),
+							'type'  => 'boolean',
+						],
+						'supports_trackbacks'      => [
+							'name'  => 'supports_trackbacks',
+							'label' => __( 'Trackbacks', 'pods' ),
+							'type'  => 'boolean',
+						],
+						'supports_custom_fields'   => [
+							'name'  => 'supports_custom_fields',
+							'label' => __( 'Custom Fields', 'pods' ),
+							'type'  => 'boolean',
+						],
+						'supports_comments'        => [
+							'name'  => 'supports_comments',
+							'label' => __( 'Comments', 'pods' ),
+							'type'  => 'boolean',
+						],
+						'supports_revisions'       => [
+							'name'  => 'supports_revisions',
+							'label' => __( 'Revisions', 'pods' ),
+							'type'  => 'boolean',
+						],
+						'supports_page_attributes' => [
+							'name'  => 'supports_page_attributes',
+							'label' => __( 'Page Attributes', 'pods' ),
+							'type'  => 'boolean',
+						],
+						'supports_post_formats'    => [
+							'name'  => 'supports_post_formats',
+							'label' => __( 'Post Formats', 'pods' ),
+							'type'  => 'boolean',
+						],
+					],
+				],
+				'supports_custom'               => [
+					'name'  => 'supports_custom',
+					'type'  => 'text',
+					'label' => __( 'Advanced Supports', 'pods' ),
+					'help'  => __( 'Comma-separated list of custom "supports" values to pass to register_post_type.', 'pods' ),
+				],
+				'post_type_built_in_taxonomies' => [
+					'name'          => 'post_type_built_in_taxonomies',
+					'label'         => __( 'Built-in Taxonomies', 'pods' ),
+					'type'          => 'boolean_group',
+					'boolean_group' => [],
 				],
 			];
+
+			/**
+			 * Allow filtering the list of supported features for the post type
+			 *
+			 * @since TBD
+			 *
+			 * @param array             $supports The list of supported features for the post type.
+			 * @param array             $options The Options fields.
+			 * @param \Pods\Whatsit\Pod $pod     Current Pods object.
+			 * @param array             $tabs    List of registered tabs.
+			 */
+			$options['advanced']['post_type_supports']['boolean_group'] = apply_filters( 'pods_admin_config_pod_fields_post_type_supported_features', $options['advanced']['post_type_supports']['boolean_group'], $options, $pod, $tabs );
+
+			$related_objects = PodsForm::field_method( 'pick', 'related_objects', true );
+
+			$available_taxonomies = [];
+
+			if ( ! empty( $related_objects[ __( 'Taxonomies', 'pods' ) ] ) ) {
+				$available_taxonomies = (array) $related_objects[ __( 'Taxonomies', 'pods' ) ];
+			}
+
+			foreach ( $available_taxonomies as $taxonomy => $label ) {
+				$taxonomy = pods_str_replace( 'taxonomy-', '', $taxonomy, 1 );
+
+				$field_name = 'built_in_taxonomies_' . $taxonomy;
+
+				$options['advanced']['post_type_built_in_taxonomies']['boolean_group'][ $field_name ] = [
+					'name'  => $field_name,
+					'label' => $label,
+					'type'  => 'boolean',
+				];
+			}
 		} elseif ( 'taxonomy' === $pod['type'] ) {
 			$options['admin-ui'] = [
 				'description'           => [

@@ -1990,7 +1990,7 @@ class PodsUI {
 
 			$found_field = pods_config_get_field_from_all_fields( $field['name'], $this->pod );
 
-			if ( $found_field ) ) {
+			if ( $found_field ) {
 				$field = pods_config_merge_data( $field, $found_field );
 			}
 

@@ -43,10 +43,6 @@ class Pod extends Base {
 			$admin_ui = true;
 		}
 
-		if ( ! function_exists( 'get_term_meta' ) && 'none' === pods_v( 'storage', $pod, 'none', true ) && 'taxonomy' === pods_v( 'type', $pod ) ) {
-			$fields = false;
-		}
-
 		$core_tabs = [];
 
 		if ( $fields ) {
@@ -63,10 +59,6 @@ class Pod extends Base {
 
 		if ( $advanced ) {
 			$core_tabs['advanced'] = __( 'Advanced Options', 'pods' );
-		}
-
-		if ( ! $fields && 'taxonomy' === pods_v( 'type', $pod ) ) {
-			$core_tabs['extra-fields'] = __( 'Extra Fields', 'pods' );
 		}
 
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
@@ -1178,8 +1170,39 @@ class Pod extends Base {
 					'default'    => '',
 					'excludes-on' => [ 'default_term_name' => '' ],
 				],
+				'taxonomy_associated_post_types' => [
+					'name'          => 'taxonomy_associated_post_types',
+					'label'         => __( 'Associated Post Types', 'pods' ),
+					'type'          => 'boolean_group',
+					'boolean_group' => [],
+				],
 			];
-			// @todo Handle extra-fields content here.
+
+			$related_objects = PodsForm::field_method( 'pick', 'related_objects', true );
+
+			$available_post_types = [];
+
+			if ( ! empty( $related_objects[ __( 'Post Types', 'pods' ) ] ) ) {
+				$available_post_types = (array) $related_objects[ __( 'Post Types', 'pods' ) ];
+			}
+
+			foreach ( $available_post_types as $post_type => $label ) {
+				$post_type = pods_str_replace( 'post_type-', '', $post_type, 1 );
+
+				$field_name = 'built_in_post_types_' . $post_type;
+
+				$options['advanced']['taxonomy_associated_post_types']['boolean_group'][ $field_name ] = [
+					'name'  => $field_name,
+					'label' => $label,
+					'type'  => 'boolean',
+				];
+			}
+
+			$options['advanced']['taxonomy_associated_post_types']['boolean_group']['built_in_post_types_attachment'] = [
+				'name'  => 'built_in_post_types_attachment',
+				'label' => __( 'Media', 'pods' ) . ' (attachment)',
+				'type'  => 'boolean',
+			];
 		} elseif ( 'settings' === $pod['type'] ) {
 			$options['admin-ui'] = [
 				'ui_style'             => [

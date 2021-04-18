@@ -16,12 +16,13 @@ on:
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
         suite:
-          - 'wpunit --skip-group=pods-shortcode'
-          - 'wpunit --group=pods-shortcode'
-          - 'wpunit-traversal'
-          - 'restv1'
+          - wpunit --skip-group=pods-shortcode
+          - wpunit --group=pods-shortcode
+          - wpunit-traversal
+          - restv1
     runs-on: ubuntu-latest
     steps:
       # ------------------------------------------------------------------------------
@@ -83,14 +84,46 @@ jobs:
           ${TRIC_BIN} info
           ${TRIC_BIN} config
       # ------------------------------------------------------------------------------
-      # Setup Pods and run tests
+      # Set up Pods
       # ------------------------------------------------------------------------------
       - name: Set up pods
         run: |
           docker network prune -f
           ${TRIC_BIN} use pods
           ${TRIC_BIN} composer install
+      # ------------------------------------------------------------------------------
+      # Set up ET (npm install and build)
+      # ------------------------------------------------------------------------------
+      - name: Set up Pods (npm)
+        if: ${{ matrix.suite == 'acceptance' }}
+        run: |
+          ${TRIC_BIN} npm install
+          ${TRIC_BIN} npm run build
+      # ------------------------------------------------------------------------------
+      # Init WordPress container
+      # ------------------------------------------------------------------------------
       - name: Init the WordPress container
-        run: ${TRIC_BIN} up wordpress
+        run: |
+          ${TRIC_BIN} up wordpress
+          ${TRIC_BIN} site-cli core version
+      # ------------------------------------------------------------------------------
+      # Install and activate TwentyTwenty
+      # ------------------------------------------------------------------------------
+      - name: Install and activate TwentyTwenty
+        if: ${{ matrix.suite == 'acceptance' }}
+        run:  ${TRIC_BIN} site-cli theme install twentytwenty --activate
+      # ------------------------------------------------------------------------------
+      # Run tests
+      # ------------------------------------------------------------------------------
       - name: Run suite tests
         run: ${TRIC_BIN} run ${{ matrix.suite }} --ext DotReporter
+      # ------------------------------------------------------------------------------
+      # Upload artifacts (On failure)
+      # ------------------------------------------------------------------------------
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: output ${{ matrix.suite }}
+          path: tests/_output/
+          retention-days: 7

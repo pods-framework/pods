@@ -1865,7 +1865,7 @@ class PodsAPI {
 
 		$pod = pods_config_merge_data( $pod, $options );
 
-		if ( is_array( $pod['options'] ) && isset( $pod['options'] ) ) {
+		if ( is_array( $pod ) && isset( $pod['options'] ) ) {
 			$pod = array_merge( $pod, $pod['options'] );
 
 			unset( $pod['options'] );

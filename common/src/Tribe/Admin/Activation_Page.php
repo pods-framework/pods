@@ -3,7 +3,7 @@
  * Shows a welcome or update message after the plugin is installed/updated.
  */
 class Tribe__Admin__Activation_Page {
-	protected $args = array();
+	protected $args = [];
 	public $update_slug = 'update-message-';
 	public $welcome_slug = 'welcome-message-';
 	protected $current_context = '';
@@ -24,8 +24,8 @@ class Tribe__Admin__Activation_Page {
 	 *     @type string $welcome_page_template
 	 * }
 	 */
-	public function __construct( array $args = array() ) {
-		$this->args = wp_parse_args( $args, array(
+	public function __construct( array $args = [] ) {
+		$this->args = wp_parse_args( $args, [
 			'slug'                  => '',
 			'activation_transient'  => '',
 			'version'               => '',
@@ -35,12 +35,34 @@ class Tribe__Admin__Activation_Page {
 			'update_page_template'  => '',
 			'welcome_page_title'    => '',
 			'welcome_page_template' => '',
-		) );
+		] );
 
-		$this->update_slug .= $this->args['slug'];
+		$this->update_slug  .= $this->args['slug'];
 		$this->welcome_slug .= $this->args['slug'];
 
 		$this->hooks();
+	}
+
+	/**
+	 * Determines if we are currently on the Welcome page.
+	 *
+	 * @since 4.12.11
+	 *
+	 * @return bool
+	 */
+	public function is_welcome_page() {
+		return isset( $_GET[ $this->welcome_slug ] );
+	}
+
+	/**
+	 * Determines if we are currently on the update page.
+	 *
+	 * @since 4.12.11
+	 *
+	 * @return bool
+	 */
+	public function is_update_page() {
+		return isset( $_GET[ $this->update_slug ] );
 	}
 
 	/**
@@ -54,11 +76,11 @@ class Tribe__Admin__Activation_Page {
 			return;
 		}
 
-		add_action( 'admin_init', array( $this, 'maybe_redirect' ), 10, 0 );
-		add_action( 'admin_menu', array( $this, 'register_page' ), 100, 0 ); // come in after the default page is registered
+		add_action( 'admin_init', [ $this, 'maybe_redirect' ], 10, 0 );
+		add_action( 'admin_menu', [ $this, 'register_page' ], 100, 0 ); // come in after the default page is registered
 
-		add_action( 'update_plugin_complete_actions', array( $this, 'update_complete_actions' ), 15, 2 );
-		add_action( 'update_bulk_plugins_complete_actions', array( $this, 'update_complete_actions' ), 15, 2 );
+		add_action( 'update_plugin_complete_actions', [ $this, 'update_complete_actions' ], 15, 2 );
+		add_action( 'update_bulk_plugins_complete_actions', [ $this, 'update_complete_actions' ], 15, 2 );
 	}
 
 	/**
@@ -70,7 +92,7 @@ class Tribe__Admin__Activation_Page {
 	 * @return array          The filtered Links
 	 */
 	public function update_complete_actions( $actions, $plugin ) {
-		$plugins = array();
+		$plugins = [];
 
 		if ( ! empty( $_GET['plugins'] ) ) {
 			$plugins = explode( ',', esc_attr( $_GET['plugins'] ) );
@@ -199,7 +221,7 @@ class Tribe__Admin__Activation_Page {
 	 * Disused since TEC PR 88 (targeting Tribe__Events__Activation_Page,
 	 * which this class was derived from).
 	 *
-	 * @see https://github.com/moderntribe/the-events-calendar/pull/88
+	 * @see https://github.com/the-events-calendar/the-events-calendar/pull/88
 	 *
 	 * @todo decide whether to reinstate or remove
 	 */
@@ -235,12 +257,25 @@ class Tribe__Admin__Activation_Page {
 			$this->current_context = 'welcome';
 		} elseif ( isset( $_GET[ $this->update_slug ] ) ) {
 			$this->current_context = 'update';
+		} else {
+			return;
 		}
 
-		if ( ! empty( $this->current_context ) ) {
-			$this->disable_default_settings_page();
-			add_action( Tribe__Settings::instance()->admin_page, array( $this, 'display_page' ) );
-		}
+		$this->disable_default_settings_page();
+		add_filter( 'admin_body_class', [ $this, 'admin_body_class' ] );
+		add_action( Tribe__Settings::instance()->admin_page, [ $this, 'display_page' ] );
+	}
+
+	/**
+	 * Hooked to admin_body_class to add a class for the update or welcome page
+	 *
+	 * @param string $classes a space separated string of classes to be added to body
+	 *
+	 * @return string
+	 */
+	public function admin_body_class( $classes ) {
+		$classes .= ' tribe-' . $this->current_context;
+		return $classes;
 	}
 
 	/**
@@ -248,7 +283,7 @@ class Tribe__Admin__Activation_Page {
 	 * in the Events > Settings slot instead, for this request only).
 	 */
 	protected function disable_default_settings_page() {
-		remove_action( Tribe__Settings::instance()->admin_page, array( Tribe__Settings::instance(), 'generatePage' ) );
+		remove_action( Tribe__Settings::instance()->admin_page, [ Tribe__Settings::instance(), 'generatePage' ] );
 	}
 
 	/**

@@ -27,10 +27,10 @@ class Tribe__Deprecation {
 	 *
 	 * @var array
 	 */
-	protected $deprecated_filters = array(
-		'tribe_cost_regex'            => array( '4.3', 'tribe_events_cost_regex' ),
-		'tribe_rewrite_prepared_slug' => array( '4.3', 'tribe_events_rewrite_prepared_slug' ),
-	);
+	protected $deprecated_filters = [
+		'tribe_cost_regex'            => [ '4.3', 'tribe_events_cost_regex' ],
+		'tribe_rewrite_prepared_slug' => [ '4.3', 'tribe_events_rewrite_prepared_slug' ],
+	];
 
 	/**
 	 * An array specifying the tag, version and optional replacements
@@ -44,9 +44,9 @@ class Tribe__Deprecation {
 	 *
 	 * @var array
 	 */
-	protected $deprecated_actions = array(
-		'tribe_pre_rewrite' => array( '4.3', 'tribe_events_pre_rewrite' ),
-	);
+	protected $deprecated_actions = [
+		'tribe_pre_rewrite' => [ '4.3', 'tribe_events_pre_rewrite' ],
+	];
 
 	/**
 	 * @return Tribe__Deprecation
@@ -71,9 +71,9 @@ class Tribe__Deprecation {
 	 */
 	public function deprecate_actions() {
 		foreach ( array_keys( $this->deprecated_actions ) as $new_action_tag ) {
-			add_action( $new_action_tag, array( $this, 'deprecated_action_message' ) );
+			add_action( $new_action_tag, [ $this, 'deprecated_action_message' ] );
 			add_filter(
-				$this->deprecated_actions[ $new_action_tag ][1], array( $this, 'deprecated_action_message' )
+				$this->deprecated_actions[ $new_action_tag ][1], [ $this, 'deprecated_action_message' ]
 			);
 		}
 	}
@@ -85,9 +85,9 @@ class Tribe__Deprecation {
 	 */
 	public function deprecate_filters() {
 		foreach ( array_keys( $this->deprecated_filters ) as $new_filter_tag ) {
-			add_filter( $new_filter_tag, array( $this, 'deprecated_filter_message' ) );
+			add_filter( $new_filter_tag, [ $this, 'deprecated_filter_message' ] );
 			add_filter(
-				$this->deprecated_filters[ $new_filter_tag ][1], array( $this, 'deprecated_filter_message' )
+				$this->deprecated_filters[ $new_filter_tag ][1], [ $this, 'deprecated_filter_message' ]
 			);
 		}
 	}
@@ -104,7 +104,7 @@ class Tribe__Deprecation {
 			$action         = $this->get_action_for_deprecated_tag( $action );
 		}
 
-		remove_action( $deprecated_tag, array( $this, 'deprecated_action_message' ) );
+		remove_action( $deprecated_tag, [ $this, 'deprecated_action_message' ] );
 
 		if ( doing_action( $deprecated_tag ) || has_filter( $deprecated_tag ) ) {
 			_deprecated_function(
@@ -112,7 +112,7 @@ class Tribe__Deprecation {
 			);
 		}
 
-		add_action( $deprecated_tag, array( $this, 'deprecated_action_message' ) );
+		add_action( $deprecated_tag, [ $this, 'deprecated_action_message' ] );
 	}
 
 	/**
@@ -133,17 +133,17 @@ class Tribe__Deprecation {
 			$filter         = $this->get_filter_for_deprecated_tag( $filter );
 		}
 
-		remove_filter( $deprecated_tag, array( $this, 'deprecated_filter_message' ) );
+		remove_filter( $deprecated_tag, [ $this, 'deprecated_filter_message' ] );
 
 		if ( has_filter( $deprecated_tag ) || doing_filter( $deprecated_tag ) ) {
-			$version = Tribe__Utils__Array::get( $this->deprecated_filters, array( $filter, 0 ), null );
+			$version = Tribe__Utils__Array::get( $this->deprecated_filters, [ $filter, 0 ], null );
 
 			_deprecated_function(
 				'The ' . $deprecated_tag . ' filter', $version, $filter
 			);
 		}
 
-		add_filter( $deprecated_tag, array( $this, 'deprecated_filter_message' ) );
+		add_filter( $deprecated_tag, [ $this, 'deprecated_filter_message' ] );
 
 		return $value;
 	}

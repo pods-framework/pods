@@ -3,7 +3,7 @@
 
 /**
  * Class Null_Logger
- * 
+ *
  * Logs nothing, reads nothing.
  */
 class Tribe__Log__Null_Logger implements Tribe__Log__Logger {
@@ -54,8 +54,8 @@ class Tribe__Log__Null_Logger implements Tribe__Log__Logger {
 	 *
 	 * @return array
 	 */
-	public function retrieve( $limit = 0, array $args = array() ) {
-		return array();
+	public function retrieve( $limit = 0, array $args = [] ) {
+		return [];
 	}
 
 	/**
@@ -78,7 +78,7 @@ class Tribe__Log__Null_Logger implements Tribe__Log__Logger {
 	 * @return array
 	 */
 	public function list_available_logs() {
-		return array();
+		return [];
 	}
 
 	/**

@@ -28,7 +28,7 @@ if ( ! class_exists( 'Tribe__PUE__Utility' ) ) {
 		public $version;
 		public $homepage;
 		public $download_url;
-		public $sections = array();
+		public $sections = [];
 		public $upgrade_notice;
 		public $custom_update;
 
@@ -61,7 +61,7 @@ if ( ! class_exists( 'Tribe__PUE__Utility' ) ) {
 		 */
 		public static function from_plugin_info( $info ) {
 			$update     = new Tribe__PUE__Utility();
-			$copyFields = array(
+			$copyFields = [
 				'id',
 				'slug',
 				'version',
@@ -76,7 +76,7 @@ if ( ! class_exists( 'Tribe__PUE__Utility' ) ) {
 				'api_invalid_message',
 				'api_inline_invalid_message',
 				'custom_update',
-			);
+			];
 
 			foreach ( $copyFields as $field ) {
 				if ( ! isset( $info->$field ) ) {

@@ -12,7 +12,7 @@ class Tribe__Assets_Pipeline {
 	 * @since 4.7.7
 	 */
 	public function hook() {
-		add_filter( 'script_loader_tag', array( $this, 'prevent_underscore_conflict' ), 10, 2 );
+		add_filter( 'script_loader_tag', [ $this, 'prevent_underscore_conflict' ], 10, 2 );
 	}
 
 	/**

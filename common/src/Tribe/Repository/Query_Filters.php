@@ -17,16 +17,16 @@ class Tribe__Repository__Query_Filters {
 	/**
 	 * @var array
 	 */
-	protected static $initial_query_vars = array(
-		'like'   => array(
-			'post_title'   => array(),
-			'post_content' => array(),
-			'post_excerpt' => array(),
-		),
-		'status' => array(),
-		'join'   => array(),
-		'where'  => array(),
-	);
+	protected static $initial_query_vars = [
+		'like'   => [
+			'post_title'   => [],
+			'post_content' => [],
+			'post_excerpt' => [],
+		],
+		'status' => [],
+		'join'   => [],
+		'where'  => [],
+	];
 
 	/**
 	 * An array of the filters that can be set and unset by id.
@@ -55,7 +55,7 @@ class Tribe__Repository__Query_Filters {
 	/**
 	 * @var array A list of the filters this class has added.
 	 */
-	protected $active_filters = array();
+	protected $active_filters = [];
 
 	/**
 	 * @var bool
@@ -65,7 +65,7 @@ class Tribe__Repository__Query_Filters {
 	/**
 	 * @var array
 	 */
-	protected $buffered_where_clauses = array();
+	protected $buffered_where_clauses = [];
 
 	/**
 	 * Stores the last request run by the current query.
@@ -99,38 +99,38 @@ class Tribe__Repository__Query_Filters {
 		$values    = Tribe__Utils__Array::list_to_array( $values );
 
 		if ( empty( $meta_keys ) || count( $values ) === 0 ) {
-			return array();
+			return [];
 		}
 
-		$args = array(
-			'meta_query' => array(
-				$query_slug => array(
+		$args = [
+			'meta_query' => [
+				$query_slug => [
 					'relation' => 'AND',
-				),
-			),
-		);
+				],
+			],
+		];
 
 		foreach ( $meta_keys as $key ) {
-			$args['meta_query'][ $query_slug ][ $key ] = array(
-				'not-exists' => array(
+			$args['meta_query'][ $query_slug ][ $key ] = [
+				'not-exists' => [
 					'key'     => $key,
 					'compare' => 'NOT EXISTS',
-				),
+				],
 				'relation'   => 'OR',
-			);
+			];
 
 			if ( count( $values ) > 1 ) {
-				$args['meta_query'][ $query_slug ][ $key ]['not-in'] = array(
+				$args['meta_query'][ $query_slug ][ $key ]['not-in'] = [
 					'key'     => $key,
 					'compare' => 'NOT IN',
 					'value'   => $values,
-				);
+				];
 			} else {
-				$args['meta_query'][ $query_slug ][ $key ]['not-equals'] = array(
+				$args['meta_query'][ $query_slug ][ $key ]['not-equals'] = [
 					'key'     => $key,
 					'value'   => $values[0],
 					'compare' => '!=',
-				);
+				];
 			}
 		}
 
@@ -153,30 +153,30 @@ class Tribe__Repository__Query_Filters {
 		$values    = Tribe__Utils__Array::list_to_array( $values );
 
 		if ( empty( $meta_keys ) || count( $values ) === 0 ) {
-			return array();
+			return [];
 		}
 
-		$args = array(
-			'meta_query' => array(
-				$query_slug => array(
+		$args = [
+			'meta_query' => [
+				$query_slug => [
 					'relation' => 'OR',
-				),
-			),
-		);
+				],
+			],
+		];
 
 		foreach ( $meta_keys as $meta_key ) {
 			if ( count( $values ) > 1 ) {
-				$args['meta_query'][ $query_slug ][ $meta_key ] = array(
+				$args['meta_query'][ $query_slug ][ $meta_key ] = [
 					'key'     => $meta_key,
 					'compare' => 'IN',
 					'value'   => $values,
-				);
+				];
 			} else {
-				$args['meta_query'][ $query_slug ][ $meta_key ] = array(
+				$args['meta_query'][ $query_slug ][ $meta_key ] = [
 					'key'     => $meta_key,
 					'compare' => '=',
 					'value'   => $values[0],
-				);
+				];
 			}
 		}
 
@@ -197,22 +197,22 @@ class Tribe__Repository__Query_Filters {
 		$meta_keys = Tribe__Utils__Array::list_to_array( $meta_keys );
 
 		if ( empty( $meta_keys ) ) {
-			return array();
+			return [];
 		}
 
-		$args = array(
-			'meta_query' => array(
-				$query_slug => array(
+		$args = [
+			'meta_query' => [
+				$query_slug => [
 					'relation' => 'OR',
-				),
-			),
-		);
+				],
+			],
+		];
 
 		foreach ( $meta_keys as $meta_key ) {
-			$args['meta_query'][ $query_slug ][ $meta_key ] = array(
+			$args['meta_query'][ $query_slug ][ $meta_key ] = [
 				'key'     => $meta_key,
 				'compare' => 'EXISTS',
-			);
+			];
 		}
 
 		return $args;
@@ -235,35 +235,35 @@ class Tribe__Repository__Query_Filters {
 		$values    = Tribe__Utils__Array::list_to_array( $values );
 
 		if ( empty( $meta_keys ) || count( $values ) === 0 ) {
-			return array();
+			return [];
 		}
 
-		$args = array(
-			'meta_query' => array(
-				$query_slug => array(
+		$args = [
+			'meta_query' => [
+				$query_slug => [
 					'relation' => 'AND',
-				),
-			),
-		);
+				],
+			],
+		];
 
 		foreach ( $meta_keys as $meta_key ) {
-			$args['meta_query'][ $query_slug ][ $meta_key ]['does-not-exist'] = array(
+			$args['meta_query'][ $query_slug ][ $meta_key ]['does-not-exist'] = [
 				'key'     => $meta_key,
 				'compare' => 'NOT EXISTS',
-			);
+			];
 			$args['meta_query'][ $query_slug ][ $meta_key ]['relation']       = 'OR';
 			if ( count( $values ) > 1 ) {
-				$args['meta_query'][ $query_slug ][ $meta_key ]['in'] = array(
+				$args['meta_query'][ $query_slug ][ $meta_key ]['in'] = [
 					'key'     => $meta_key,
 					'compare' => 'IN',
 					'value'   => $values,
-				);
+				];
 			} else {
-				$args['meta_query'][ $query_slug ][ $meta_key ]['equals'] = array(
+				$args['meta_query'][ $query_slug ][ $meta_key ]['equals'] = [
 					'key'     => $meta_key,
 					'compare' => '=',
 					'value'   => $values[0],
-				);
+				];
 			}
 		}
 
@@ -287,36 +287,36 @@ class Tribe__Repository__Query_Filters {
 		$values    = Tribe__Utils__Array::list_to_array( $values );
 
 		if ( empty( $meta_keys ) || count( $values ) === 0 ) {
-			return array();
+			return [];
 		}
 
-		$args = array(
-			'meta_query' => array(
-				$query_slug => array(
+		$args = [
+			'meta_query' => [
+				$query_slug => [
 					'relation' => 'AND',
-				),
-			),
-		);
+				],
+			],
+		];
 
 		foreach ( $meta_keys as $meta_key ) {
-			$args['meta_query'][ $query_slug ][ $meta_key ]['does-not-exist'] = array(
+			$args['meta_query'][ $query_slug ][ $meta_key ]['does-not-exist'] = [
 				'key'     => $meta_key,
 				'compare' => 'NOT EXISTS',
-			);
+			];
 			$args['meta_query'][ $query_slug ][ $meta_key ]['relation']       = 'OR';
 
 			if ( count( $values ) > 1 ) {
-				$args['meta_query'][ $query_slug ][ $meta_key ]['not-in'] = array(
+				$args['meta_query'][ $query_slug ][ $meta_key ]['not-in'] = [
 					'key'     => $meta_key,
 					'compare' => 'NOT IN',
 					'value'   => $values,
-				);
+				];
 			} else {
-				$args['meta_query'][ $query_slug ][ $meta_key ]['not-equals'] = array(
+				$args['meta_query'][ $query_slug ][ $meta_key ]['not-equals'] = [
 					'key'     => $meta_key,
 					'compare' => '!=',
 					'value'   => $values[0],
-				);
+				];
 			}
 		}
 
@@ -366,11 +366,11 @@ class Tribe__Repository__Query_Filters {
 		global $wpdb;
 
 		$like       = $wpdb->esc_like( $entry );
-		$variations = array(
+		$variations = [
 			$wpdb->prepare( "{$wpdb->posts}.{$field} LIKE %s ", "{$like}%" ),
 			$wpdb->prepare( "{$wpdb->posts}.{$field} LIKE %s ", "%{$like}%" ),
 			$wpdb->prepare( "{$wpdb->posts}.{$field} LIKE %s ", "%{$like}" ),
-		);
+		];
 
 		return ' AND (' . implode( ' OR ', $variations ) . ')';
 	}
@@ -430,7 +430,7 @@ class Tribe__Repository__Query_Filters {
 			$matching_ids = $wpdb->get_col( $relation_query );
 
 			if ( empty( $matching_ids ) ) {
-				$query->posts         = array();
+				$query->posts         = [];
 				$filtered_found_posts = 0;
 				break;
 			}
@@ -438,7 +438,7 @@ class Tribe__Repository__Query_Filters {
 			if ( $ids_only ) {
 				$query->posts = array_intersect( $query->posts, $matching_ids );
 			} else {
-				$updated_query_posts = array();
+				$updated_query_posts = [];
 				foreach ( $query->posts as $this_post ) {
 					if ( in_array( $this_post->ID, $matching_ids ) ) {
 						$updated_query_posts[] = $this_post;
@@ -475,8 +475,8 @@ class Tribe__Repository__Query_Filters {
 	public function to_get_posts_with_title_like( $value ) {
 		$this->query_vars['like']['post_title'][] = $value;
 
-		if ( ! has_filter( 'posts_where', array( $this, 'filter_by_like' ) ) ) {
-			$this->add_filter( 'posts_where', array( $this, 'filter_by_like' ), 10, 2 );
+		if ( ! has_filter( 'posts_where', [ $this, 'filter_by_like' ] ) ) {
+			$this->add_filter( 'posts_where', [ $this, 'filter_by_like' ], 10, 2 );
 		}
 	}
 
@@ -492,7 +492,7 @@ class Tribe__Repository__Query_Filters {
 	 * @param int      $accepted_args
 	 */
 	protected function add_filter( $tag, $function_to_add, $priority = 10, $accepted_args = 1 ) {
-		$this->active_filters[] = array( $tag, $function_to_add, $priority );
+		$this->active_filters[] = [ $tag, $function_to_add, $priority ];
 		add_filter( $tag, $function_to_add, $priority, $accepted_args );
 	}
 
@@ -506,8 +506,8 @@ class Tribe__Repository__Query_Filters {
 	public function to_get_posts_with_content_like( $value ) {
 		$this->query_vars['like']['post_content'][] = $value;
 
-		if ( ! has_filter( 'posts_where', array( $this, 'filter_by_like' ) ) ) {
-			$this->add_filter( 'posts_where', array( $this, 'filter_by_like' ), 10, 2 );
+		if ( ! has_filter( 'posts_where', [ $this, 'filter_by_like' ] ) ) {
+			$this->add_filter( 'posts_where', [ $this, 'filter_by_like' ], 10, 2 );
 		}
 	}
 
@@ -521,8 +521,8 @@ class Tribe__Repository__Query_Filters {
 	public function to_get_posts_with_excerpt_like( $value ) {
 		$this->query_vars['like']['post_excerpt'] = $value;
 
-		if ( ! has_filter( 'posts_where', array( $this, 'filter_by_like' ) ) ) {
-			add_filter( 'posts_where', array( $this, 'filter_by_like' ), 10, 2 );
+		if ( ! has_filter( 'posts_where', [ $this, 'filter_by_like' ] ) ) {
+			add_filter( 'posts_where', [ $this, 'filter_by_like' ], 10, 2 );
 		}
 	}
 
@@ -536,8 +536,8 @@ class Tribe__Repository__Query_Filters {
 	public function to_get_posts_with_filtered_content_like( $value ) {
 		$this->query_vars['like']['post_content_filtered'][] = $value;
 
-		if ( ! has_filter( 'posts_where', array( $this, 'filter_by_like' ) ) ) {
-			add_filter( 'posts_where', array( $this, 'filter_by_like' ), 10, 2 );
+		if ( ! has_filter( 'posts_where', [ $this, 'filter_by_like' ] ) ) {
+			add_filter( 'posts_where', [ $this, 'filter_by_like' ], 10, 2 );
 		}
 	}
 
@@ -551,8 +551,8 @@ class Tribe__Repository__Query_Filters {
 	public function to_get_posts_with_guid_like( $value ) {
 		$this->query_vars['like']['guid'][] = $value;
 
-		if ( ! has_filter( 'posts_where', array( $this, 'filter_by_like' ) ) ) {
-			add_filter( 'posts_where', array( $this, 'filter_by_like' ), 10, 2 );
+		if ( ! has_filter( 'posts_where', [ $this, 'filter_by_like' ] ) ) {
+			add_filter( 'posts_where', [ $this, 'filter_by_like' ], 10, 2 );
 		}
 	}
 
@@ -566,8 +566,8 @@ class Tribe__Repository__Query_Filters {
 	public function to_get_posts_to_ping( $value ) {
 		$this->query_vars['to_ping'] = $value;
 
-		if ( ! has_filter( 'posts_where', array( $this, 'filter_by_to_ping' ) ) ) {
-			add_filter( 'posts_where', array( $this, 'filter_by_to_ping' ), 10, 2 );
+		if ( ! has_filter( 'posts_where', [ $this, 'filter_by_to_ping' ] ) ) {
+			add_filter( 'posts_where', [ $this, 'filter_by_to_ping' ], 10, 2 );
 		}
 	}
 
@@ -666,8 +666,8 @@ class Tribe__Repository__Query_Filters {
 				$this->query_vars['where'][] = '(' . $where_clause . ')';
 			}
 
-			if ( ! has_filter( 'posts_where', array( $this, 'filter_posts_where' ) ) ) {
-				add_filter( 'posts_where', array( $this, 'filter_posts_where' ), 10, 2 );
+			if ( ! has_filter( 'posts_where', [ $this, 'filter_posts_where' ] ) ) {
+				add_filter( 'posts_where', [ $this, 'filter_posts_where' ], 10, 2 );
 			}
 		}
 	}
@@ -690,8 +690,8 @@ class Tribe__Repository__Query_Filters {
 			$this->query_vars['join'][] = $join_clause;
 		}
 
-		if ( ! has_filter( 'posts_join', array( $this, 'filter_posts_join' ) ) ) {
-			add_filter( 'posts_join', array( $this, 'filter_posts_join' ), 10, 2 );
+		if ( ! has_filter( 'posts_join', [ $this, 'filter_posts_join' ] ) ) {
+			add_filter( 'posts_join', [ $this, 'filter_posts_join' ], 10, 2 );
 		}
 	}
 
@@ -738,8 +738,8 @@ class Tribe__Repository__Query_Filters {
 			$this->query_vars[ $orderby_key ][ $id ] = array_merge( $this->query_vars[ $orderby_key ][ $id ], $entries );
 		}
 
-		if ( ! has_filter( 'posts_orderby', array( $this, 'filter_posts_orderby' ) ) ) {
-			add_filter( 'posts_orderby', array( $this, 'filter_posts_orderby' ), 10, 2 );
+		if ( ! has_filter( 'posts_orderby', [ $this, 'filter_posts_orderby' ] ) ) {
+			add_filter( 'posts_orderby', [ $this, 'filter_posts_orderby' ], 10, 2 );
 		}
 	}
 
@@ -762,8 +762,8 @@ class Tribe__Repository__Query_Filters {
 			$this->query_vars['fields'][] = $field;
 		}
 
-		if ( ! has_filter( 'posts_fields', array( $this, 'filter_posts_fields' ) ) ) {
-			add_filter( 'posts_fields', array( $this, 'filter_posts_fields' ), 10, 2 );
+		if ( ! has_filter( 'posts_fields', [ $this, 'filter_posts_fields' ] ) ) {
+			add_filter( 'posts_fields', [ $this, 'filter_posts_fields' ], 10, 2 );
 		}
 	}
 
@@ -795,7 +795,7 @@ class Tribe__Repository__Query_Filters {
 
 		if ( $get_clean ) {
 			$this->buffer_where_clauses   = false;
-			$this->buffered_where_clauses = array();
+			$this->buffered_where_clauses = [];
 		}
 
 		return $clauses;
@@ -846,7 +846,7 @@ class Tribe__Repository__Query_Filters {
 		global $wpdb;
 
 		foreach ( $input as $string ) {
-			$buffer[] = is_array( $string ) ? $string : array( $string );
+			$buffer[] = is_array( $string ) ? $string : [ $string ];
 		}
 
 		$buffer = array_unique( call_user_func_array( 'array_merge', $buffer ) );
@@ -973,10 +973,10 @@ class Tribe__Repository__Query_Filters {
 	 *
 	 * @since 4.9.5
 	 *
-	 * @param string   $orderby
-	 * @param WP_Query $query
+	 * @param string   $orderby The `ORDER BY` clause of the query being filtered.
+	 * @param WP_Query $query   The query object currently being filtered.
 	 *
-	 * @return string
+	 * @return string The filtered `ORDER BY` clause.
 	 */
 	public function filter_posts_orderby( $orderby, WP_Query $query ) {
 		if ( $query !== $this->current_query ) {
@@ -1055,7 +1055,7 @@ class Tribe__Repository__Query_Filters {
 	 *                    value, if the query is not the one attached to this filter or the method
 	 *                    is called not in the context of the `posts_pre_query` filter;
 	 */
-	public function capture_request( $posts = null, WP_Query $query ) {
+	public function capture_request( $posts = null, WP_Query $query = null ) {
 		if ( ! doing_filter( 'posts_pre_query' ) ) {
 			// Let's make sure nothing bad happens if this runs outside of its natural context.
 			return null;

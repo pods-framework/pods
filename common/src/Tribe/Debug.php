@@ -5,7 +5,7 @@ class Tribe__Debug {
 	 * constructor
 	 */
 	public function __construct() {
-		add_action( 'tribe_debug', array( __CLASS__, 'render' ), 10, 2 );
+		add_action( 'tribe_debug', [ __CLASS__, 'render' ], 10, 2 );
 	}
 
 	/**

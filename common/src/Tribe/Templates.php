@@ -37,7 +37,7 @@ class Tribe__Templates {
 	 */
 	public static function locate_stylesheet( $stylesheets, $fallback = false ) {
 		if ( ! is_array( $stylesheets ) ) {
-			$stylesheets = array( $stylesheets );
+			$stylesheets = [ $stylesheets ];
 		}
 		if ( empty( $stylesheets ) ) {
 			return $fallback;

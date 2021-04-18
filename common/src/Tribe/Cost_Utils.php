@@ -86,7 +86,7 @@ class Tribe__Cost_Utils {
 	 * @return array
 	 */
 	public function get_separators() {
-		$separators = array( ',', '.' );
+		$separators = [ ',', '.' ];
 
 		/**
 		 * Filters the cost string possible separators, those must be only 1 char.
@@ -161,29 +161,33 @@ class Tribe__Cost_Utils {
 	 *
 	 * @return string|array The merged cost range.
 	 */
-	public function merge_cost_ranges( $original_string_cost, $merging_cost, $with_currency_symbol, $sorted_mins = array(), $sorted_maxs = array() ) {
+	public function merge_cost_ranges( $original_string_cost, $merging_cost, $with_currency_symbol, $sorted_mins = [], $sorted_maxs = [] ) {
 		if ( empty( $merging_cost ) || $original_string_cost === $merging_cost ) {
 			return $original_string_cost;
 		}
 
 		$_merging_cost              = array_map(
-			array( $this, 'convert_decimal_separator' ), (array) $merging_cost
+			[ $this, 'convert_decimal_separator' ], (array) $merging_cost
 		);
-		$_merging_cost              = array_map( array( $this, 'numerize_numbers' ), $_merging_cost );
+		$_merging_cost              = array_map( [ $this, 'numerize_numbers' ], $_merging_cost );
 		$numeric_merging_cost_costs = array_filter( $_merging_cost, 'is_numeric' );
 
-		$matches = array();
+		$matches = [];
 		preg_match_all(
 			'!\d+(?:([' . preg_quote( $this->_supported_decimal_separators ) . '])\d+)?!', $original_string_cost,
 			$matches
 		);
 		$this->_current_original_cost_separator = empty( $matches[1][0] ) ? '.' : $matches[1][0];
-		$matches[0]                             = empty( $matches[0] ) ? $matches[0] : array_map(
-			array(
-				$this,
-				'convert_decimal_separator',
-			), $matches[0]
-		);
+		$matches[0]                             = empty( $matches[0] )
+			? $matches[0]
+			: array_map(
+				[
+					$this,
+					'convert_decimal_separator',
+				],
+				$matches[0]
+			);
+
 		$numeric_orignal_costs                  = empty( $matches[0] ) ? $matches[0] : array_map(
 			'floatval', $matches[0]
 		);
@@ -215,10 +219,10 @@ class Tribe__Cost_Utils {
 			$cost_max = empty( $all_numeric_costs ) ? '' : max( $all_numeric_costs );
 		}
 
-		$cost = array_filter( array( $cost_min, $cost_max ) );
+		$cost = array_filter( [ $cost_min, $cost_max ] );
 
 		if ( $with_currency_symbol ) {
-			$formatted_cost = array();
+			$formatted_cost = [];
 			foreach ( $cost as $c ) {
 				$formatted_cost[] = is_numeric( $c ) ? tribe_format_currency( $c ) : $c;
 			}
@@ -226,7 +230,8 @@ class Tribe__Cost_Utils {
 		}
 
 		return empty( $cost ) ? $original_string_cost : array_map(
-			array( $this, 'restore_original_decimal_separator' ), $cost
+			[ $this, 'restore_original_decimal_separator' ],
+			$cost
 		);
 	}
 
@@ -304,7 +309,7 @@ class Tribe__Cost_Utils {
 	 */
 	public function parse_cost_range( $costs, $max_decimals = null, $sort = true ) {
 		if ( ! is_array( $costs ) && ! is_string( $costs ) ) {
-			return array();
+			return [];
 		}
 
 		// make sure costs is an array
@@ -312,7 +317,7 @@ class Tribe__Cost_Utils {
 
 		// If there aren't any costs, return a blank array
 		if ( 0 === count( $costs ) ) {
-			return array();
+			return [];
 		}
 
 		// Build the regular expression
@@ -324,7 +329,7 @@ class Tribe__Cost_Utils {
 			if ( preg_match_all( '/' . $price_regex . '/', $cost, $matches ) ) {
 				$cost = reset( $matches );
 			} else {
-				$cost = array( $cost );
+				$cost = [ $cost ];
 				continue;
 			}
 
@@ -340,7 +345,7 @@ class Tribe__Cost_Utils {
 			$max = max( $max_decimals, $max );
 		}
 
-		$output_costs = array();
+		$output_costs = [];
 		$costs        = call_user_func_array( 'array_merge', $costs );
 
 		foreach ( $costs as $cost ) {
@@ -348,7 +353,7 @@ class Tribe__Cost_Utils {
 
 			if ( is_numeric( $numeric_cost ) ) {
 				// Creates a Well Balanced Index that will perform good on a Key Sorting method
-				$index = str_replace( array( '.', ',' ), '', number_format( $numeric_cost, $max ) );
+				$index = str_replace( [ '.', ',' ], '', number_format( $numeric_cost, $max ) );
 			} else {
 				// Makes sure that we have "index-safe" string
 				$index = sanitize_title( $numeric_cost );
@@ -410,7 +415,7 @@ class Tribe__Cost_Utils {
 	 * @return int|float
 	 */
 	protected function numerize_numbers( $value ) {
-		$matches = array();
+		$matches = [];
 
 		$pattern = '/(\\d{1,}([' . $this->_supported_decimal_separators . ']\\d{1,}))/';
 
@@ -436,7 +441,7 @@ class Tribe__Cost_Utils {
 			return false;
 		}
 
-		$currency_symbols = array();
+		$currency_symbols = [];
 		$i = 0;
 		foreach ( $costs as $string => $value ) {
 			if ( is_numeric( $string ) ) {
@@ -471,7 +476,7 @@ class Tribe__Cost_Utils {
 			return false;
 		}
 
-		$currency_positions = array();
+		$currency_positions = [];
 		foreach ( $original_costs as $original_cost ) {
 			$currency_symbol_position = strpos( trim( $original_cost ), $currency_symbol );
 			if ( false === $currency_symbol_position ) {

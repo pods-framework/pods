@@ -56,13 +56,13 @@ class Tribe__Template_Part_Cache {
 	public function add_hooks() {
 
 		// set the cached html in transients after the template part is included
-		add_filter( 'tribe_get_template_part_content', array( $this, 'set' ), 10, 2 );
+		add_filter( 'tribe_get_template_part_content', [ $this, 'set' ], 10, 2 );
 
 		// get the cached html right before the setup_view runs so it's available for bypassing any view logic
-		add_action( 'tribe_events_before_view', array( $this, 'get' ), 9, 1 );
+		add_action( 'tribe_events_before_view', [ $this, 'get' ], 9, 1 );
 
 		// when the specified template part is included, show the cached html instead
-		add_filter( 'tribe_get_template_part_path_' . $this->template, array( $this, 'display' ) );
+		add_filter( 'tribe_get_template_part_path_' . $this->template, [ $this, 'display' ] );
 	}
 
 	/**

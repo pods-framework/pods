@@ -19,6 +19,6 @@ abstract class Tribe__Duplicate__Strategy__Base {
 	 * @since 4.6
 	 */
 	protected function is_a_numeric_post_field( $key ) {
-		return in_array( $key, array( 'ID', 'post_author', 'post_parent', 'menu_order', 'comment_count' ) );
+		return in_array( $key, [ 'ID', 'post_author', 'post_parent', 'menu_order', 'comment_count' ] );
 	}
 }

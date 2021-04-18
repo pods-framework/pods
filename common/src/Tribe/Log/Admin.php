@@ -1,9 +1,9 @@
 <?php
 class Tribe__Log__Admin {
 	public function __construct() {
-		add_action( 'wp_ajax_tribe_logging_controls', array( $this, 'listen' ) );
-		add_action( 'init', array( $this, 'serve_log_downloads' ) );
-		add_action( 'plugins_loaded', array( $this, 'register_script' ) );
+		add_action( 'wp_ajax_tribe_logging_controls', [ $this, 'listen' ] );
+		add_action( 'init', [ $this, 'serve_log_downloads' ] );
+		add_action( 'plugins_loaded', [ $this, 'register_script' ] );
 	}
 
 	/**
@@ -29,11 +29,11 @@ class Tribe__Log__Admin {
 	 * an appropriate response.
 	 */
 	public function listen() {
-		$fields = wp_parse_args( $_POST, array(
+		$fields = wp_parse_args( $_POST, [
 			'check'      => '',
 			'log-level'  => '',
 			'log-engine' => '',
-		) );
+		] );
 
 		foreach ( $fields as &$single_field ) {
 			$single_field = sanitize_text_field( $single_field );
@@ -58,9 +58,9 @@ class Tribe__Log__Admin {
 		 */
 		do_action( 'tribe_common_updated_log_settings' );
 
-		$data = array(
+		$data = [
 			'logs' => $this->get_available_logs(),
-		);
+		];
 
 		if ( ! empty( $fields['log-view'] ) ) {
 			$data['entries'] = $this->get_log_entries( $fields['log-view'] );
@@ -103,17 +103,17 @@ class Tribe__Log__Admin {
 			Tribe__Main::instance(),
 			'tribe-common-logging-controls',
 			'admin-log-controls.js',
-			array( 'jquery' ),
+			[ 'jquery' ],
 			'admin_enqueue_scripts',
-			array(
-				'conditionals' => array( Tribe__Admin__Help_Page::instance(), 'is_current_page' ),
-				'localize' => (object) array(
+			[
+				'conditionals' => [ Tribe__Admin__Help_Page::instance(), 'is_current_page' ],
+				'localize'     => (object) [
 					'name' => 'tribe_logger_data',
-					'data' => array(
+					'data' => [
 						'check' => wp_create_nonce( 'logging-controls' ),
-					),
-				),
-			)
+					],
+				],
+			]
 		);
 	}
 
@@ -130,7 +130,7 @@ class Tribe__Log__Admin {
 		}
 
 		if ( empty( $available_logs ) ) {
-			return array( '' => _x( 'None currently available', 'log selector', 'tribe-common' ) );
+			return [ '' => _x( 'None currently available', 'log selector', 'tribe-common' ) ];
 		}
 
 		return $available_logs;
@@ -145,10 +145,10 @@ class Tribe__Log__Admin {
 		$available_engines = $this->log_manager()->get_logging_engines();
 
 		if ( empty( $available_engines ) ) {
-			return array( '' => _x( 'None currently available', 'log engines', 'tribe-common' ) );
+			return [ '' => _x( 'None currently available', 'log engines', 'tribe-common' ) ];
 		}
 
-		$engine_list = array();
+		$engine_list = [];
 
 		foreach ( $available_engines as $class_name => $engine ) {
 			/**
@@ -171,7 +171,7 @@ class Tribe__Log__Admin {
 			return (array) $logger->retrieve();
 		}
 
-		return array();
+		return [];
 	}
 
 	/**
@@ -182,7 +182,7 @@ class Tribe__Log__Admin {
 	 * @return array
 	 */
 	protected function get_logging_levels() {
-		$levels = array();
+		$levels           = [];
 		$available_levels = $this->log_manager()->get_logging_levels();
 
 		foreach ( $available_levels as $logging_level ) {
@@ -201,10 +201,10 @@ class Tribe__Log__Admin {
 	 * @return string
 	 */
 	protected function get_log_url( $log = null ) {
-		$query = array(
+		$query = [
 			'tribe-common-log' => 'download',
-			'check' => wp_create_nonce( 'download_log' ),
-		);
+			'check'            => wp_create_nonce( 'download_log' ),
+		];
 
 		$log_download_url = add_query_arg( $query, get_admin_url( null, 'edit.php' ) );
 

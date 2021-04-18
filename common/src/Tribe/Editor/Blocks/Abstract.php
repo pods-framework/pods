@@ -38,7 +38,7 @@ implements Tribe__Editor__Blocks__Interface {
 		return $this->namespace;
 	}
 
-	/*
+	/**
 	 * Return the block attributes
 	 *
 	 * @since 4.8
@@ -47,7 +47,7 @@ implements Tribe__Editor__Blocks__Interface {
 	 *
 	 * @return array
 	*/
-	public function attributes( $params = array() ) {
+	public function attributes( $params = [] ) {
 
 		// get the default attributes
 		$default_attributes = $this->default_attributes();
@@ -69,7 +69,7 @@ implements Tribe__Editor__Blocks__Interface {
 		return $attributes;
 	}
 
-	/*
+	/**
 	 * Return the block default attributes
 	 *
 	 * @since 4.8
@@ -80,7 +80,7 @@ implements Tribe__Editor__Blocks__Interface {
 	*/
 	public function default_attributes() {
 
-		$attributes = array();
+		$attributes = [];
 
 		/**
 		 * Filters the default attributes
@@ -102,12 +102,8 @@ implements Tribe__Editor__Blocks__Interface {
 	 *
 	 * @return string
 	 */
-	public function render( $attributes = array() ) {
-		if ( version_compare( phpversion(), '5.4', '>=' ) ) {
-			$json_string = json_encode( $attributes, JSON_PRETTY_PRINT );
-		} else {
-			$json_string = json_encode( $attributes );
-		}
+	public function render( $attributes = [] ) {
+		$json_string = json_encode( $attributes, JSON_PRETTY_PRINT );
 
 		return
 		'<pre class="tribe-placeholder-text-' . $this->name() . '">' .
@@ -136,13 +132,13 @@ implements Tribe__Editor__Blocks__Interface {
 	 * @return void
 	 */
 	public function register() {
-		$block_args = array(
-			'render_callback' => array( $this, 'render' ),
-		);
+		$block_args = [
+			'render_callback' => [ $this, 'render' ],
+		];
 
 		register_block_type( $this->name(), $block_args );
 
-		add_action( 'wp_ajax_' . $this->get_ajax_action(), array( $this, 'ajax' ) );
+		add_action( 'wp_ajax_' . $this->get_ajax_action(), [ $this, 'ajax' ] );
 
 		$this->assets();
 		$this->hook();
@@ -203,5 +199,39 @@ implements Tribe__Editor__Blocks__Interface {
 	 */
 	public function hook() {
 	}
-}
 
+	/**
+	 * Returns the block data for the block editor.
+	 *
+	 * @since 4.12.0
+	 *
+	 * @return array<string,mixed> The block editor data.
+	 */
+	public function block_data() {
+		$block_data = [
+			'id' => $this->slug(),
+		];
+
+		/**
+		 * Filters the block data.
+		 *
+		 * @since 4.12.0
+		 *
+		 * @param array  $block_data The block data.
+		 * @param object $this       The current object.
+		 */
+		$block_data = apply_filters( 'tribe_block_block_data', $block_data, $this );
+
+		/**
+		 * Filters the block data for the block.
+		 *
+		 * @since 4.12.0
+		 *
+		 * @param array  $block_data The block data.
+		 * @param object $this       The current object.
+		 */
+		$block_data = apply_filters( 'tribe_block_block_data_' . $this->slug(), $block_data, $this );
+
+		return $block_data;
+	}
+}

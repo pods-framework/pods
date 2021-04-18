@@ -23,7 +23,7 @@ class Tribe__Template_Factory {
 	 *
 	 * @var array
 	 **/
-	protected $asset_packages = array();
+	protected $asset_packages = [];
 
 	/**
 	 * Static variable that holds array of vendor script handles, for adding to later deps.
@@ -33,7 +33,7 @@ class Tribe__Template_Factory {
 	 * @static
 	 * @var array
 	 */
-	protected static $vendor_scripts = array();
+	protected static $vendor_scripts = [];
 
 	/**
 	 * Constant that holds the ajax hook suffix for the view
@@ -154,7 +154,7 @@ class Tribe__Template_Factory {
 	 * @param string $name
 	 * @param array  $deps Dependents
 	 */
-	public static function asset_package( $name, $deps = array() ) {
+	public static function asset_package( $name, $deps = [] ) {
 
 		$common = Tribe__Main::instance();
 		$prefix = 'tribe-events';

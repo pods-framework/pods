@@ -66,7 +66,7 @@ class Tribe__Promoter__View extends Tribe__Template {
 			return;
 		}
 
-		$is_admin   = is_user_logged_in() && current_user_can( 'manage_options' );
+		$is_admin = is_user_logged_in() && current_user_can( 'manage_options' ) && current_user_can( 'read_private_posts' );
 		$authorized = false;
 		$auth_error = false;
 

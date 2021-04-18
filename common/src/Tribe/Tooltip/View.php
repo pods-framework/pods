@@ -1,19 +1,30 @@
 <?php
 
+namespace Tribe\Tooltip;
+
 /**
- * Class Tribe__Tooltip__View
+ * Class View
  *
  * @since 4.9.8
  */
-class Tribe__Tooltip__View extends Tribe__Template {
+class View extends \Tribe__Template {
 
 	/**
-	 * Tribe__Tooltip__View constructor.
+	 * Where in the themes we will look for templates
+	 *
+	 * @since 4.10.2
+	 *
+	 * @var string
+	 */
+	public $template_namespace = 'tooltips';
+
+	/**
+	 * View constructor.
 	 *
 	 * @since 4.9.8
 	 */
 	public function __construct() {
-		$this->set_template_origin( Tribe__Main::instance() );
+		$this->set_template_origin( \Tribe__Main::instance() );
 		$this->set_template_folder( 'src/views/tooltip' );
 
 		// Configures this templating class to extract variables
@@ -29,13 +40,25 @@ class Tribe__Tooltip__View extends Tribe__Template {
 	 * @since 4.9.8
 	 *
 	 * @param array|string $message Array of messages or single message as string.
-	 * @param array $args Extra arguments.
+	 * @param array $args {
+	 *     List of arguments to override tooltip template.
+	 *
+	 *     @var array  $context      Any additional context data you need to expose to this file (optional).
+	 *     @var string $classes      Additional classes for the icon span (optional).
+	 *     @var string $direction    Direction the tooltip should be from the trigger (down).
+	 *     @var string $icon         dashicon classname to use, without the `dashicon-` (info).
+	 *     @var string $wrap_classes Classes for the tooltip wrapper (optional).
+	 * }
 	 * @return string A string of html for the tooltip.
 	 */
 	public function render_tooltip( $message, $args = [] ) {
 		if ( empty( $message ) ) {
 			return;
 		}
+
+		/** @var \Tribe__Assets $assets */
+		$assets = tribe( 'assets' );
+		$assets->enqueue_group( 'tribe-tooltip' );
 
 		$html = $this->build_tooltip( $message, $args );
 
@@ -48,15 +71,23 @@ class Tribe__Tooltip__View extends Tribe__Template {
 	 * @since 4.9.8
 	 *
 	 * @param array|string $message array of messages or single message as string.
-	 * @param array $args Extra arguments, defaults include icon, classes, direction, and context (for the filters).
+	 * @param array $args {
+	 *     List of arguments to override tooltip template.
+	 *
+	 *     @var array  $context      Any additional context data you need to expose to this file (optional).
+	 *     @var string $classes      Additional classes for the icon span (optional).
+	 *     @var string $direction    Direction the tooltip should be from the trigger (down).
+	 *     @var string $icon         dashicon classname to use, without the `dashicon-` (info).
+	 *     @var string $wrap_classes Classes for the tooltip wrapper (optional).
+	 * }
 	 * @return string A string of html for the tooltip.
 	 */
 	private function build_tooltip( $message, $original_args ) {
 		$default_args = [
 			'classes'      => '',
-			'icon'         => 'info',
-			'direction'    => 'down',
 			'context'      => '',
+			'direction'    => 'down',
+			'icon'         => 'info',
 			'wrap_classes' => '',
 		];
 

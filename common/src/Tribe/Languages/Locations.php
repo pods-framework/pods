@@ -16,14 +16,38 @@ class Tribe__Languages__Locations {
 	 *
 	 * Adds array to object cache to speed up subsequent retrievals.
 	 *
+	 * @since 4.13.0 add $escape param.
+	 *
+	 * @param bool $escape Weather to escape for translations or not.
+	 *
 	 * @return array {
 	 *      List of countries
 	 *
 	 *      @type string $country_code Country name.
 	 * }
 	 */
-	public function get_countries() {
-		return tribe( 'cache' )->get( 'tribe_country_list', '', array( $this, 'build_country_array' ) );
+	public function get_countries( $escape = false ) {
+		/**
+		 * @var Tribe__Cache $cache
+		 */
+		$cache     = tribe( 'cache' );
+		$cache_key = 'tribe_country_list' . ( $escape ? '-escaped' : '' );
+		$countries = $cache->get( $cache_key , '', null );
+
+		if ( null === $countries ) {
+			$countries = $this->build_country_array();
+
+			if ( $escape ) {
+				$countries = array_map( static function( $country ) {
+					return html_entity_decode( $country, ENT_QUOTES );
+				}, $countries );
+			}
+
+			// Actually set the cache in case it's not in place.
+			$cache->set( $cache_key, $countries );
+		}
+
+		return $countries;
 	}
 
 	/**
@@ -38,7 +62,7 @@ class Tribe__Languages__Locations {
 	 * }
 	 */
 	public function get_us_states() {
-		return tribe( 'cache' )->get( 'tribe_us_states_list', '', array( $this, 'build_us_states_array' ) );
+		return tribe( 'cache' )->get( 'tribe_us_states_list', '', [ $this, 'build_us_states_array' ] );
 	}
 
 	/**
@@ -51,7 +75,7 @@ class Tribe__Languages__Locations {
 	 * }
 	 */
 	public function build_country_array() {
-		$countries = array(
+		$countries = [
 			'US' => esc_html__( 'United States', 'tribe-common' ),
 			'AF' => esc_html__( 'Afghanistan', 'tribe-common' ),
 			'AX' => esc_html__( '&Aring;land Islands', 'tribe-common' ),
@@ -135,7 +159,7 @@ class Tribe__Languages__Locations {
 			'TF' => esc_html__( 'French Southern Territories', 'tribe-common' ),
 			'GA' => esc_html__( 'Gabon', 'tribe-common' ),
 			'GM' => esc_html__( 'Gambia', 'tribe-common' ),
-			'GE' => esc_html__( 'Georgia', 'tribe-common' ),
+			'GE' => esc_html_x( 'Georgia', 'The country', 'tribe-common' ),
 			'DE' => esc_html__( 'Germany', 'tribe-common' ),
 			'GH' => esc_html__( 'Ghana', 'tribe-common' ),
 			'GI' => esc_html__( 'Gibraltar', 'tribe-common' ),
@@ -295,7 +319,7 @@ class Tribe__Languages__Locations {
 			'YE' => esc_html__( 'Yemen', 'tribe-common' ),
 			'ZM' => esc_html__( 'Zambia', 'tribe-common' ),
 			'ZW' => esc_html__( 'Zimbabwe', 'tribe-common' ),
-		);
+		];
 
 		// Perform a natural sort, ensures the countries are in the expected order even once translated.
 		natsort( $countries );
@@ -320,7 +344,7 @@ class Tribe__Languages__Locations {
 	 * }
 	 */
 	public function build_us_states_array() {
-		$states = array(
+		$states = [
 			'AL' => esc_html__( 'Alabama', 'tribe-common' ),
 			'AK' => esc_html__( 'Alaska', 'tribe-common' ),
 			'AZ' => esc_html__( 'Arizona', 'tribe-common' ),
@@ -331,7 +355,7 @@ class Tribe__Languages__Locations {
 			'DE' => esc_html__( 'Delaware', 'tribe-common' ),
 			'DC' => esc_html__( 'District of Columbia', 'tribe-common' ),
 			'FL' => esc_html__( 'Florida', 'tribe-common' ),
-			'GA' => esc_html__( 'Georgia', 'tribe-common' ),
+			'GA' => esc_html_x( 'Georgia', 'The US state Georgia', 'tribe-common' ),
 			'HI' => esc_html__( 'Hawaii', 'tribe-common' ),
 			'ID' => esc_html__( 'Idaho', 'tribe-common' ),
 			'IL' => esc_html__( 'Illinois', 'tribe-common' ),
@@ -372,7 +396,7 @@ class Tribe__Languages__Locations {
 			'WV' => esc_html__( 'West Virginia', 'tribe-common' ),
 			'WI' => esc_html__( 'Wisconsin', 'tribe-common' ),
 			'WY' => esc_html__( 'Wyoming', 'tribe-common' ),
-		);
+		];
 
 		// Perform a natural sort, ensures the states are in the expected order even once translated.
 		natsort( $states );

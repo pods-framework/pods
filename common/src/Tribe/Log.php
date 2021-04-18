@@ -36,7 +36,7 @@ class Tribe__Log {
 	 *
 	 * @var array
 	 */
-	protected $levels = array();
+	protected $levels = [];
 
 	/**
 	 * Alternative representation of the $levels property allowing quick look
@@ -44,15 +44,14 @@ class Tribe__Log {
 	 *
 	 * @var array
 	 */
-	protected $prioritized_levels = array();
+	protected $prioritized_levels = [];
 
 	/**
 	 * Instantiated loggers, stored for re-use.
 	 *
 	 * @var array
 	 */
-	protected $loggers = array();
-
+	protected $loggers = [];
 
 	public function __construct() {
 		if ( is_admin() ) {
@@ -75,7 +74,7 @@ class Tribe__Log {
 	 */
 	protected function log_cleanup() {
 		$this->register_cleanup_task();
-		do_action( self::CLEANUP, array( $this, 'do_cleanup' ) );
+		do_action( self::CLEANUP, [ $this, 'do_cleanup' ] );
 	}
 
 	/**
@@ -163,7 +162,7 @@ class Tribe__Log {
 		$original_type = $type;
 
 		// some levels are really just debug information
-		$debug_types = array( self::SUCCESS, self::COLORIZE );
+		$debug_types = [ self::SUCCESS, self::COLORIZE ];
 
 		if ( in_array( $type, $debug_types ) ) {
 			$type = self::DEBUG;
@@ -219,10 +218,10 @@ class Tribe__Log {
 	 * @return array
 	 */
 	public function get_logging_engines() {
-		$available_engines = array();
-		$bundled_engines   = array(
+		$available_engines = [];
+		$bundled_engines = [
 			'Tribe__Log__File_Logger',
-		);
+		];
 
 		foreach ( $bundled_engines as $engine_class ) {
 			$engine = $this->get_engine( $engine_class );
@@ -384,12 +383,12 @@ class Tribe__Log {
 			 *
 			 * @param array $logging_levels
 			 */
-			$this->levels = (array) apply_filters( 'tribe_common_logging_levels', array(
-				array( self::DISABLE, __( 'Disabled', 'tribe-common' ) ),
-				array( self::ERROR,   __( 'Only errors', 'tribe-common' ) ),
-				array( self::WARNING, __( 'Warnings and errors', 'tribe-common' ) ),
-				array( self::DEBUG,   __( 'Full debug (all events)', 'tribe-common' ) ),
-			) );
+			$this->levels = (array) apply_filters( 'tribe_common_logging_levels', [
+				[ self::DISABLE, __( 'Disabled', 'tribe-common' ) ],
+				[ self::ERROR, __( 'Only errors', 'tribe-common' ) ],
+				[ self::WARNING, __( 'Warnings and errors', 'tribe-common' ) ],
+				[ self::DEBUG, __( 'Full debug (all events)', 'tribe-common' ) ],
+			] );
 		}
 
 		return $this->levels;

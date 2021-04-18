@@ -296,6 +296,8 @@ class tad_DI52_Container implements ArrayAccess {
 	 *
 	 * @param string $classOrInterface
 	 *
+	 * @throws RuntimeException|ReflectionException
+	 *
 	 * @return array|mixed
 	 */
 	protected function resolve($classOrInterface) {
@@ -314,6 +316,8 @@ class tad_DI52_Container implements ArrayAccess {
 					$instance = $this->build($classOrInterface);
 				} catch (Exception $e) {
 					if ( $e instanceof ReflectionException ) {
+						throw $e;
+					} elseif ( $e instanceof RuntimeException ) {
 						throw $e;
 					}
 
@@ -340,14 +344,14 @@ class tad_DI52_Container implements ArrayAccess {
 			preg_match('/Error while making/', $e->getMessage(), $matches);
 			if (count($matches)) {
 				// @codeCoverageIgnoreStart
-				$divider = "\n\t => ";
-				$prefix = ' ';
+				$separator = "\n\t =>";
+				$prefix    = '';
 				// @codeCoverageIgnoreEnd
 			} else {
-				$divider = ':';
-				$prefix = 'Error while making ';
+				$separator = ':';
+				$prefix    = 'Error while making ';
 			}
-			$message = "{$prefix} '{$classOrInterface}'{$divider} " . $e->getMessage();
+			$message = "{$prefix}'{$classOrInterface}'{$separator} " . $e->getMessage();
 
 			throw new RuntimeException($message);
 		}
@@ -697,8 +701,19 @@ class tad_DI52_Container implements ArrayAccess {
 	 *                                  an object or a closure.
 	 * @param array $afterBuildMethods An array of methods that should be called on the built implementation after
 	 *                                  resolving it.
+	 *
+	 * @throws ReflectionException      When binding a class that does not exist without defining an implementation.
+	 * @throws InvalidArgumentException When binding a class that cannot be instantiated without defining an implementation.
 	 */
-	public function bind($classOrInterface, $implementation, array $afterBuildMethods = null) {
+	public function bind($classOrInterface, $implementation = null, array $afterBuildMethods = null) {
+		if (is_null($implementation)) {
+			$reflection = new ReflectionClass($classOrInterface);
+			if (!$reflection->isInstantiable()) {
+				throw new InvalidArgumentException( sprintf('To bind a class in the Container without defining an implementation, the class must be instantiable. %s is not instantiable.', $classOrInterface) );
+			}
+			$implementation = $classOrInterface;
+		}
+
 		$this->offsetUnset($classOrInterface);
 
 		$this->bindings[$classOrInterface] = $classOrInterface;
@@ -729,7 +744,7 @@ class tad_DI52_Container implements ArrayAccess {
 	 * @param array $afterBuildMethods An array of methods that should be called on the built implementation after
 	 *                                  resolving it.
 	 */
-	public function singleton($classOrInterface, $implementation, array $afterBuildMethods = null) {
+	public function singleton($classOrInterface, $implementation = null, array $afterBuildMethods = null) {
 		$this->bind($classOrInterface, $implementation, $afterBuildMethods);
 
 		$this->singletons[$classOrInterface] = $classOrInterface;
@@ -739,9 +754,9 @@ class tad_DI52_Container implements ArrayAccess {
 	 * Returns a lambda function suitable to use as a callback; when called the function will build the implementation
 	 * bound to `$classOrInterface` and return the value of a call to `$method` method with the call arguments.
 	 *
-	 * @param string $classOrInterface A class or interface fully qualified name or a string slug.
-	 * @param string $method The method that should be called on the resolved implementation with the
-	 *                                       specified array arguments.
+	 * @param string|object $classOrInterface A class or interface fully qualified name or a string slug.
+	 * @param string        $method           The method that should be called on the resolved implementation with the
+	 *                                        specified array arguments.
 	 *
 	 * @return mixed The called method return value.
 	 */
@@ -750,6 +765,14 @@ class tad_DI52_Container implements ArrayAccess {
 
 		if (!is_string($method)) {
 			throw new RuntimeException('Callback method must be a string');
+		}
+
+		$classOrInterfaceName = is_object($classOrInterface) ? spl_object_hash($classOrInterface) : $classOrInterface;
+		$cacheKey = $classOrInterfaceName . '::' . $method;
+
+		if ( isset( $this->callbacks[ $cacheKey ] ) ) {
+			// Only return the existing callback if $classOrInterface was not an object (so it remains unique).
+			return $this->callbacks[ $cacheKey ];
 		}
 
 		if ($this->useClosures) {
@@ -776,17 +799,17 @@ class tad_DI52_Container implements ArrayAccess {
 			// @codeCoverageIgnoreEnd
 		}
 
-		if (is_object($classOrInterface)) {
-			$classOrInterface = get_class($classOrInterface);
-		}
-
-		$this->callbacks[$classOrInterface . '::' . $method] = $f;
+		$this->callbacks[ $cacheKey ] = $f;
 
 		return $f;
 	}
 
 	public function _getParameter(ReflectionParameter $parameter) {
-		$class = $parameter->getClass();
+		if (defined( 'PHP_VERSION_ID' ) && PHP_VERSION_ID >= 80000) {
+			$class = $parameter->getType() && ! $parameter->getType()->isBuiltin() ? new ReflectionClass( $parameter->getType()->getName() ) : null;
+		} else {
+			$class = $parameter->getClass();
+		}
 
 		if (null === $class) {
 			if (!$parameter->isDefaultValueAvailable()) {
@@ -795,9 +818,13 @@ class tad_DI52_Container implements ArrayAccess {
 			return $parameter->getDefaultValue();
 		}
 
-		$parameterClass = $parameter->getClass()->getName();
+		if (defined( 'PHP_VERSION_ID' ) && PHP_VERSION_ID >= 80000) {
+			$parameterClass = $parameter->getType() && ! $parameter->getType()->isBuiltin() ? $parameter->getType()->getName() : null;
+		} else {
+			$parameterClass = $parameter->getClass()->getName();
+		}
 
-		if (!$this->isBound($parameterClass) && !$parameter->getClass()->isInstantiable()) {
+		if (!$this->isBound($parameterClass) && !$class->isInstantiable()) {
 			if (!$parameter->isDefaultValueAvailable()) {
 				throw new ReflectionException("parameter '{$parameter->name}' of '{$this->resolving}::__construct' does not have a default value.");
 			}

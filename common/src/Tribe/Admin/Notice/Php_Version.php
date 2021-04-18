@@ -9,13 +9,13 @@ class Tribe__Admin__Notice__Php_Version {
 		// display the PHP version notice
 		tribe_notice(
 			'php-deprecated',
-			array( $this, 'display_notice' ),
-			array(
+			[ $this, 'display_notice' ],
+			[
 				'type'    => 'warning',
 				'dismiss' => 1,
 				'wrap'    => 'p',
-			),
-			array( $this, 'should_display' )
+			],
+			[ $this, 'should_display' ]
 		);
 
 	}

@@ -147,6 +147,8 @@ class Post_Thumbnail implements \ArrayAccess, \Serializable {
 	 * @return array An array of objects containing the post thumbnail data.
 	 */
 	public function fetch_data() {
+		static $cache_thumbnail = [];
+
 		if ( ! $this->exists() ) {
 			return [];
 		}
@@ -155,44 +157,58 @@ class Post_Thumbnail implements \ArrayAccess, \Serializable {
 			return $this->data;
 		}
 
-		$post_id      = $this->post_id;
 		$image_sizes  = $this->get_image_sizes();
 		$thumbnail_id = $this->thumbnail_id;
 
-		$thumbnail_data = array_combine(
-			$image_sizes,
-			array_map(
-				static function ( $size ) use ( $thumbnail_id ) {
-					$size_data = wp_get_attachment_image_src( $thumbnail_id, $size );
+		$cache_key = empty( $thumbnail_id ) ? -1 : $thumbnail_id;
 
-					if ( false === $size_data ) {
+		if ( empty( $cache_thumbnail[ $cache_key ] ) ) {
+			$thumbnail_data = array_combine(
+				$image_sizes,
+				array_map(
+					static function( $size ) use ( $thumbnail_id ) {
+						static $cache_size_data = [];
+
+						$size_data_cache_key = empty( $thumbnail_id ) ? -1 : $thumbnail_id;
+						$size_data_cache_key = "{$size_data_cache_key}:{$size}";
+
+						if ( ! isset( $cache_size_data[ $size_data_cache_key ] ) ) {
+							$cache_size_data[ $size_data_cache_key ] = wp_get_attachment_image_src( $thumbnail_id, $size );
+						}
+
+						$size_data = $cache_size_data[ $size_data_cache_key ];
+
+						if ( false === $size_data ) {
+							return (object) [
+								'url'             => '',
+								'width'           => '',
+								'height'          => '',
+								'is_intermediate' => false,
+							];
+						}
+
 						return (object) [
-							'url'             => '',
-							'width'           => '',
-							'height'          => '',
-							'is_intermediate' => false,
+							'url'             => Arr::get( $size_data, 0, '' ),
+							'width'           => Arr::get( $size_data, 1, '' ),
+							'height'          => Arr::get( $size_data, 2, '' ),
+							'is_intermediate' => (bool) Arr::get( $size_data, 3, false ),
 						];
-					}
+					},
+					$image_sizes
+				)
+			);
 
-					return (object) [
-						'url'             => Arr::get( $size_data, 0, '' ),
-						'width'           => Arr::get( $size_data, 1, '' ),
-						'heigth'          => Arr::get( $size_data, 2, '' ),
-						'is_intermediate' => (bool) Arr::get( $size_data, 3, false ),
-					];
-				},
-				$image_sizes
-			)
-		);
+			$srcset                   = wp_get_attachment_image_srcset( $thumbnail_id );
+			$thumbnail_data['srcset'] = ! empty( $srcset ) ? $srcset : false;
 
-		$srcset                   = wp_get_attachment_image_srcset( $thumbnail_id );
-		$thumbnail_data['srcset'] = ! empty( $srcset ) ? $srcset : false;
+			$title                   = get_the_title( $thumbnail_id );
+			$thumbnail_data['title'] = ! empty( $title ) ? $title : false;
 
-		$title                   = get_the_title( $thumbnail_id );
-		$thumbnail_data['title'] = ! empty( $title ) ? $title : false;
+			$alt                   = trim( strip_tags( get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true ) ) );
+			$thumbnail_data['alt'] = ! empty( $alt ) ? $alt : false;
 
-		$alt                   = trim( strip_tags( get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true ) ) );
-		$thumbnail_data['alt'] = ! empty( $alt ) ? $alt : false;
+			$cache_thumbnail[ $cache_key ] = $thumbnail_data;
+		}
 
 		/**
 		 * Filters the post thumbnail data and information that will be returned for a specific post.
@@ -204,7 +220,7 @@ class Post_Thumbnail implements \ArrayAccess, \Serializable {
 		 * @param array $thumbnail_data The thumbnail data for the post.
 		 * @param int   $post_id        The ID of the post the data is for.
 		 */
-		$thumbnail_data = apply_filters( 'tribe_post_thumbnail_data', $thumbnail_data, $post_id );
+		$thumbnail_data = apply_filters( 'tribe_post_thumbnail_data', $cache_thumbnail[ $cache_key ], $this->post_id );
 
 		$this->resolved();
 
@@ -270,17 +286,22 @@ class Post_Thumbnail implements \ArrayAccess, \Serializable {
 		$data            = $this->fetch_data();
 		$data['post_id'] = $this->post_id;
 
-		return serialize( $data );
+		return wp_json_encode( $data );
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function unserialize( $serialized ) {
-		$data          = unserialize( $serialized );
+		$data = json_decode( $serialized, true );
+		array_walk( $data, static function ( &$data_entry ) {
+			if ( is_array( $data_entry ) ) {
+				$data_entry = (object) $data_entry;
+			}
+		} );
 		$this->post_id = $data['post_id'];
 		unset( $data['post_id'] );
-		$this->data = $data;
+		$this->data = ! empty( $data ) ? $data : null;
 	}
 
 	/**

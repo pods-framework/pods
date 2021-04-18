@@ -4,6 +4,9 @@
  *
  * @since 4.7.23
  */
+
+use Tribe__Date_Utils as Dates;
+
 class Tribe__Admin__Notice__Marketing {
 
 	/**
@@ -36,179 +39,147 @@ class Tribe__Admin__Notice__Marketing {
 	 * @since 4.7.23
 	 */
 	public function hook() {
-		$this->bf_2018_hook_notice();
-		$this->gutenberg_release_notice();
+		$this->black_friday_hook_notice();
 	}
 
 	/**
-	 * Register the Black Friday 2018 notice.
+	 * Register the Black Friday notice.
 	 *
-	 * @since 4.7.23
+	 * @since 4.12.14
 	 */
-	public function bf_2018_hook_notice() {
+	public function black_friday_hook_notice() {
 
 		tribe_notice(
-			'black-friday-2018',
-			array( $this, 'bf_2018_display_notice' ),
-			array(
-				'type'    => 'warning',
-				'dismiss' => 1,
-				'wrap'    => false,
-			),
-			array( $this, 'bf_2018_should_display' )
+			'black-friday',
+			[ $this, 'black_friday_display_notice' ],
+			[
+				'type'     => 'tribe-banner',
+				'dismiss'  => 1,
+				'priority' => -1,
+				'wrap'     => false,
+			],
+			[ $this, 'black_friday_should_display' ]
 		);
 	}
 
 	/**
-	 * Unix time for Nov 20 2018 @ 6am UTC. (6am UTC is midnight for TheEventsCalendar.com, which uses the America/Los_Angeles time zone).
+	 * Unix time for Monday of Thanksgiving week @ 11am UTC. (11am UTC is 6am EST).
 	 *
-	 * @since 4.7.23
+	 * @since 4.12.14
 	 *
 	 * @return int
 	 */
-	public function get_bf_2018_start_time() {
+	public function get_black_friday_start_time() {
+		$date = Dates::build_date_object( 'fourth Thursday of November ' . date( 'Y' ), 'UTC' );
+		$date = $date->modify( '-3 days' );
+		$date = $date->setTime( 11, 0 );
+
+		$start_time = $date->format( 'U' );
+
 		/**
 		 * Allow filtering of the Black Friday sale start date, mainly for testing purposes.
 		 *
-		 * @since 4.7.23
+		 * @since 4.12.14
 		 *
-		 * @param int $bf_start_date Unix time for Nov 20 2018 @ 6am UTC.
+		 * @param int $bf_start_date Unix time for the Monday of Thanksgiving week @ 6am UTC.
 		 */
-		return apply_filters( 'tribe_bf_2018_start_time', 1542693600 );
+		return apply_filters( 'tribe_black_friday_start_time', $start_time );
 	}
 
 	/**
-	 * Unix time for Nov 26 2018 @ 6am UTC. (6am UTC is midnight for TheEventsCalendar.com, which uses the America/Los_Angeles time zone).
+	 * Unix time for Dec 1 @ 5am UTC. (5am UTC is 12am EST).
 	 *
-	 * @since 4.7.23
+	 * @since 4.12.14
 	 *
 	 * @return int
 	 */
-	public function get_bf_2018_end_time() {
+	public function get_black_friday_end_time() {
+		$date = Dates::build_date_object( 'December 1st', 'UTC' );
+		$date = $date->setTime( 5, 0 );
+
+		$end_time = $date->format( 'U' );
+
 		/**
 		 * Allow filtering of the Black Friday sale end date, mainly for testing purposes.
 		 *
-		 * @since 4.7.23
+		 * @since 4.12.14
 		 *
-		 * @param int $bf_end_date Unix time for Nov 20 2018 @ 6am UTC.
+		 * @param int $bf_end_date Unix time for Dec 1 @ 6am UTC.
 		 */
-		return apply_filters( 'tribe_bf_2018_end_time', 1543212000 );
+		return apply_filters( 'tribe_black_friday_end_time', $end_time );
 	}
 	/**
-	 * Whether the Black Friday 2018 notice should display.
+	 * Whether the Black Friday notice should display.
 	 *
-	 * Unix times for Nov 20 2018 @ 6am UTC and Nov 26 2018 @ 6am UTC.
+	 * Unix times for Monday of Thanksgiving week @ 6am UTC and Dec 1 2020 @ 6am UTC.
 	 * 6am UTC is midnight for TheEventsCalendar.com, which uses the America/Los_Angeles time zone.
 	 *
-	 * @since 4.7.23
+	 * @since 4.12.14
 	 *
 	 * @return boolean
 	 */
-	public function bf_2018_should_display() {
-		$bf_sale_start = $this->get_bf_2018_start_time();
-		$bf_sale_end   = $this->get_bf_2018_end_time();
-
-		return $bf_sale_start <= time() && time() < $bf_sale_end;
-	}
-
-	/**
-	 * HTML for the Black Friday 2018 notice.
-	 *
-	 * @since 4.7.23
-	 *
-	 * @return string
-	 */
-	public function bf_2018_display_notice() {
-
-		Tribe__Assets::instance()->enqueue( array( 'tribe-common-admin' ) );
-
-		$mascot_url = Tribe__Main::instance()->plugin_url . 'src/resources/images/mascot.png';
-		$end_time   = $this->get_bf_2018_end_time();
-
-		ob_start();
-
-		if ( $this->tec_is_active && ! $this->et_is_active ) {
-			include Tribe__Main::instance()->plugin_path . 'src/admin-views/notices/tribe-bf-2018-tec.php';
-		} elseif ( $this->et_is_active && ! $this->tec_is_active ) {
-			include Tribe__Main::instance()->plugin_path . 'src/admin-views/notices/tribe-bf-2018-et.php';
-		} else {
-			include Tribe__Main::instance()->plugin_path . 'src/admin-views/notices/tribe-bf-2018-general.php';
+	public function black_friday_should_display() {
+		// If upsells have been manually hidden, respect that.
+		if ( defined( 'TRIBE_HIDE_UPSELL' ) && TRIBE_HIDE_UPSELL ) {
+			return false;
 		}
 
-		return ob_get_clean();
+		$now           = Dates::build_date_object( 'now', 'UTC' )->format( 'U' );
+		$bf_sale_start = $this->get_black_friday_start_time();
+		$bf_sale_end   = $this->get_black_friday_end_time();
+
+		$current_screen = get_current_screen();
+
+		$screens = [
+			'tribe_events_page_tribe-app-shop', // App shop.
+			'events_page_tribe-app-shop', // App shop.
+			'tribe_events_page_tribe-common', // Settings & Welcome.
+			'events_page_tribe-common', // Settings & Welcome.
+			'toplevel_page_tribe-common', // Settings & Welcome.
+		];
+
+		// If not a valid screen, don't display.
+		if ( empty( $current_screen->id ) || ! in_array( $current_screen->id, $screens, true ) ) {
+			return false;
+		}
+
+		return $bf_sale_start <= $now && $now < $bf_sale_end;
 	}
 
 	/**
-	 * Register the Gutenberg Release notice (November 2018).
+	 * HTML for the Black Friday notice.
 	 *
-	 * @since 4.7.23
-	 */
-	public function gutenberg_release_notice() {
-
-		tribe_notice(
-			'gutenberg-release-2018',
-			array( $this, 'gutenberg_release_display_notice' ),
-			array(
-				'type'    => 'warning',
-				'dismiss' => 1,
-				'wrap'    => false,
-			),
-			array( $this, 'gutenberg_release_should_display' )
-		);
-	}
-
-	/**
-	 * Gets the end time for the Gutenberg release notice.
-	 *
-	 * @since 4.7.23
-	 *
-	 * @return int
-	 */
-	public function get_gutenberg_release_end_time() {
-
-		/**
-		 * Allows filtering of the default Gutenberg Release Notice's end time, mainly for testing purposes.
-		 *
-		 * @since 4.7.23
-		 *
-		 * @param int $gutenberg_release_end_time Defaults to Nov 17 2018 @ midnight, California time.
-		 */
-		return apply_filters( 'tribe_gutenberg_release_notice_end_time', 1542434400 );
-	}
-
-	/**
-	 * Whether the Gutenberg Release notice should display.
-	 *
-	 * @since 4.7.23
-	 *
-	 * @return boolean
-	 */
-	public function gutenberg_release_should_display() {
-		return time() < $this->get_gutenberg_release_end_time();
-	}
-
-	/**
-	 * HTML for the Gutenberg Release notice (November 2018).
-	 *
-	 * @since 4.7.23
+	 * @since 4.12.14
 	 *
 	 * @return string
 	 */
-	public function gutenberg_release_display_notice() {
+	public function black_friday_display_notice() {
+		Tribe__Assets::instance()->enqueue( [ 'tribe-common-admin' ] );
 
-		Tribe__Assets::instance()->enqueue( array( 'tribe-common-admin' ) );
+		$current_screen = get_current_screen();
 
-		$end_time = $this->get_gutenberg_release_end_time();
+		$icon_url = Tribe__Main::instance()->plugin_url . 'src/resources/images/icons/sale-burst.svg';
+		$cta_url  = 'https://evnt.is/bf' . date( 'Y' );
 
-		if ( $this->et_is_active && ! $this->tec_is_active ) {
-			$icon_url = Tribe__Main::instance()->plugin_url . 'src/resources/images/gutenberg-admin-notice-tickets.png';
-		} else {
-			$icon_url = Tribe__Main::instance()->plugin_url . 'src/resources/images/gutenberg-admin-notice-TEC.png';
+		// If we are on the settings page or a welcome page, change the Black Friday URL.
+		if (
+			! empty( $current_screen->id )
+			&& (
+				'tribe_events_page_tribe-common' === $current_screen->id
+				|| 'events_page_tribe-common' === $current_screen->id
+				|| 'toplevel_page_tribe-common' === $current_screen->id
+			)
+		) {
+			if ( isset( $_GET['welcome-message-the-events-calendar'] ) || isset( $_GET['welcome-message-event-tickets' ] ) ) {
+				$cta_url .= 'welcome';
+			} else {
+				$cta_url .= 'settings';
+			}
 		}
 
 		ob_start();
 
-		include Tribe__Main::instance()->plugin_path . 'src/admin-views/notices/tribe-gutenberg-release.php';
+		include Tribe__Main::instance()->plugin_path . 'src/admin-views/notices/tribe-bf-general.php';
 
 		return ob_get_clean();
 	}

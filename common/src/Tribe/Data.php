@@ -49,7 +49,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @param array|object $data    An array or object of data.
 	 * @param mixed        $default The default value that should be returned if a key is not set
 	 */
-	public function __construct( $data = array(), $default = false ) {
+	public function __construct( $data = [], $default = false ) {
 		$this->data = (array) $data;
 		$this->default = $default;
 	}
@@ -65,7 +65,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 *                      </p>
 	 *                      <p>
 	 *                      The return value will be casted to boolean if non-boolean was returned.
-	 * @since 5.0.0
+	 * @since 4.11.0
 	 */
 	public function offsetExists( $offset ) {
 		return isset( $this->data[ $offset ] );
@@ -79,7 +79,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 *                      The offset to retrieve.
 	 *                      </p>
 	 * @return mixed Can return all value types.
-	 * @since 5.0.0
+	 * @since 4.11.0
 	 */
 	public function offsetGet( $offset ) {
 		return isset( $this->data[ $offset ] )
@@ -98,7 +98,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 *                      The value to set.
 	 *                      </p>
 	 * @return void
-	 * @since 5.0.0
+	 * @since 4.11.0
 	 */
 	public function offsetSet( $offset, $value ) {
 		$this->data[ $offset ] = $value;
@@ -112,7 +112,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 *                      The offset to unset.
 	 *                      </p>
 	 * @return void
-	 * @since 5.0.0
+	 * @since 4.11.0
 	 */
 	public function offsetUnset( $offset ) {
 		unset( $this->data[ $offset ] );
@@ -159,7 +159,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 *
 	 * @link  http://php.net/manual/en/iterator.current.php
 	 * @return mixed Can return any type.
-	 * @since 5.0.0
+	 * @since 4.11.0
 	 */
 	public function current() {
 		$keys = array_keys( $this->data );
@@ -172,7 +172,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 *
 	 * @link  http://php.net/manual/en/iterator.next.php
 	 * @return void Any returned value is ignored.
-	 * @since 5.0.0
+	 * @since 4.11.0
 	 */
 	public function next() {
 		$keys = array_keys( $this->data );
@@ -189,7 +189,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 *
 	 * @link  http://php.net/manual/en/iterator.key.php
 	 * @return mixed scalar on success, or null on failure.
-	 * @since 5.0.0
+	 * @since 4.11.0
 	 */
 	public function key() {
 		$keys = array_keys( $this->data );
@@ -203,7 +203,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 * @link  http://php.net/manual/en/iterator.valid.php
 	 * @return boolean The return value will be casted to boolean and then evaluated.
 	 * Returns true on success or false on failure.
-	 * @since 5.0.0
+	 * @since 4.11.0
 	 */
 	public function valid() {
 		$keys = array_keys( $this->data );
@@ -216,7 +216,7 @@ class Tribe__Data implements ArrayAccess, Iterator {
 	 *
 	 * @link  http://php.net/manual/en/iterator.rewind.php
 	 * @return void Any returned value is ignored.
-	 * @since 5.0.0
+	 * @since 4.11.0
 	 */
 	public function rewind() {
 		$this->index = 0;

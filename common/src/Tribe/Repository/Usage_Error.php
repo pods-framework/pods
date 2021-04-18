@@ -75,7 +75,23 @@ class Tribe__Repository__Usage_Error extends Exception {
 	public static function because_this_field_cannot_be_updated( $key, $object ) {
 		$class = get_class( $object );
 
-		return new self( "The {$class} class does not allow udpating the {$key} field; allow it by decorating or extending this class." );
+		return new self( "The {$class} class does not allow updating the {$key} field; allow it by decorating or extending this class." );
+	}
+
+	/**
+	 * "Sugar" method to correct a typo in a public method name.
+	 * Indicates that the `set` method of the Update repository is being used incorrectly.
+	 *
+	 * @since 4.12.6
+	 *
+	 * @TODO: perhaps we should deprecate this at some point?
+	 *
+	 * @param Tribe__Repository__Update_Interface $object
+	 *
+	 * @return Tribe__Repository__Usage_Error A ready to throw instance of the class.
+	 */
+	public static function because_udpate_key_should_be_a_string( $object ) {
+		return self::because_update_key_should_be_a_string( $object );
 	}
 
 	/**
@@ -87,7 +103,7 @@ class Tribe__Repository__Usage_Error extends Exception {
 	 *
 	 * @return Tribe__Repository__Usage_Error A ready to throw instance of the class.
 	 */
-	public static function because_udpate_key_should_be_a_string( $object ) {
+	public static function because_update_key_should_be_a_string( $object ) {
 		$class = get_class( $object );
 
 		return new self( 'The key used in the `set` method should be a string; if you want to set multiple fields at once use the `set_args` method.' );
@@ -205,7 +221,7 @@ class Tribe__Repository__Usage_Error extends Exception {
 	 * @return Tribe__Repository__Usage_Error A ready to throw instance of the class.
 	 */
 	public static function because_this_comparison_operator_requires_an_value_of_type( $operator, $filter, $type ) {
-		return new self( "You are trying to use a comparison opearator ({$operator}) in the filter {$filter} that requires a value of type {$type}." );
+		return new self( "You are trying to use a comparison operator ({$operator}) in the filter {$filter} that requires a value of type {$type}." );
 	}
 
 	/**
@@ -243,5 +259,46 @@ class Tribe__Repository__Usage_Error extends Exception {
 	 */
 	public static function because_query_cannot_be_set_after_it_ran() {
 		return new self( "You are trying to set the repository query after it ran!" );
+	}
+
+	/**
+	 * Indicates the client code is trying to call a filter without the correct number of req. parameters.
+	 *
+	 * @since 4.10.2
+	 *
+	 * @param string $filter        The called filter.
+	 * @param array  $required_args The human-readable name of the required arguments.
+	 *
+	 * @return static A ready to throw instance of the class.
+	 */
+	public static function because_filter_requires_args( $filter, array $required_args ) {
+		return new static(
+			sprintf(
+				'The "%s" filter requires %d arguments: %s',
+				$filter,
+				count( $required_args ),
+				implode( ', ', $required_args )
+			)
+		);
+	}
+
+	/**
+	 * Indicates the client code is trying to call a filter with an invalid parameter.
+	 *
+	 * @since 4.10.2
+	 *
+	 * @param string $filter   The called filter.
+	 * @param string $arg_name The human-readable name of the parameter.
+	 *
+	 * @return static A ready to throw instance of the class.
+	 */
+	public static function because_filter_arg_is_not_valid( $filter, $arg_name ) {
+		return new static(
+			sprintf(
+				'The "%s" filter "%s" argument is not valid.',
+				$filter,
+				$arg_name
+			)
+		);
 	}
 }

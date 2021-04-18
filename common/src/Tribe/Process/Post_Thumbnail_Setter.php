@@ -2,7 +2,6 @@
 
 /**
  * Class Tribe__Process__Post_Thumbnail_Setter
-
  *
  * Handles upload and setting of a post thumbnail in an async process.
  * Example usage:
@@ -49,7 +48,7 @@ class Tribe__Process__Post_Thumbnail_Setter extends Tribe__Process__Handler {
 
 		$this->data( $data );
 
-		do_action( 'tribe_log', 'debug', __CLASS__, $data );
+		do_action( 'tribe_log', 'debug', $this->identifier, $data );
 
 		return parent::dispatch();
 	}
@@ -86,10 +85,11 @@ class Tribe__Process__Post_Thumbnail_Setter extends Tribe__Process__Handler {
 	 *
 	 * @since 4.7.12
 	 *
-	 * @see   tribe_upload_image()
+	 * @param array|null $data_source An optional source of data.
+	 *
 	 * @see   Tribe__Process__Post_Thumbnail_Setter::sync_handle()
 	 *
-	 * @param array|null $data_source An optional source of data.
+	 * @see   tribe_upload_image()
 	 */
 	protected function handle( array $data_source = null ) {
 		$this->sync_handle( $data_source );
@@ -99,11 +99,7 @@ class Tribe__Process__Post_Thumbnail_Setter extends Tribe__Process__Handler {
 	 * {@inheritdoc}
 	 */
 	public function sync_handle( array $data_source = null ) {
-		/** @var Tribe__Log $logger */
-		$logger  = tribe( 'logger' );
-		$log_src = 'Featured image setter';
-
-		$logger->log_debug( "(ID: {$this->identifier}) - handling request.", $log_src );
+		do_action( 'tribe_log', 'debug', $this->identifier, [ 'status' => 'handling request' ] );
 
 		$data_source = isset( $data_source ) ? $data_source : $_POST;
 
@@ -116,7 +112,11 @@ class Tribe__Process__Post_Thumbnail_Setter extends Tribe__Process__Handler {
 		$id             = filter_var( $data_source['post_id'], FILTER_SANITIZE_NUMBER_INT );
 		$post_thumbnail = filter_var( $data_source['post_thumbnail'], FILTER_SANITIZE_STRING );
 
-		$logger->log_debug( "(ID: {$this->identifier}) - fetching {$post_thumbnail} for post {$id}", $log_src );
+		do_action( 'tribe_log', 'debug', $this->identifier, [
+			'status'         => 'fetching thumbnail',
+			'post_thumbnail' => $post_thumbnail,
+			'post_id'        => $id,
+		] );
 
 		$thumbnail_id = tribe_upload_image( $post_thumbnail );
 
@@ -129,9 +129,9 @@ class Tribe__Process__Post_Thumbnail_Setter extends Tribe__Process__Handler {
 					'action'         => 'fetch',
 					'post_thumbnail' => $post_thumbnail,
 					'post_id'        => $id,
+					'status'         => 'could not fetch',
 				]
 			);
-			$logger->log_debug( "(ID: {$this->identifier}) - could not fetch {$post_thumbnail} for post {$id}, done.", $log_src );
 
 			return 0;
 		}
@@ -151,10 +151,9 @@ class Tribe__Process__Post_Thumbnail_Setter extends Tribe__Process__Handler {
 					'post_thumbnail' => $post_thumbnail,
 					'attachment_id'  => $thumbnail_id,
 					'post_id'        => $id,
+					'status'         => 'unable to set thumbnail',
 				]
 			);
-
-			$logger->log_debug( "(ID: {$this->identifier}) - fetched {$post_thumbnail}, created attachment with ID {$thumbnail_id}, unable to set thumbnail for post {$id}, done.", $log_src );
 
 			return $thumbnail_id;
 		}
@@ -168,10 +167,9 @@ class Tribe__Process__Post_Thumbnail_Setter extends Tribe__Process__Handler {
 				'post_thumbnail' => $post_thumbnail,
 				'attachment_id'  => $thumbnail_id,
 				'post_id'        => $id,
+				'status'         => 'completed - attachment created and linked to the post',
 			]
 		);
-
-		$logger->log_debug( "(ID: {$this->identifier}) - fetched {$post_thumbnail}, created attachment with ID {$thumbnail_id}, set thumbnail for post {$id}, done.", $log_src );
 
 		return $thumbnail_id;
 	}

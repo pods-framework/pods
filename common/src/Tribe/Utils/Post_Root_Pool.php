@@ -132,8 +132,8 @@ class Tribe__Utils__Post_Root_Pool {
 	protected function maybe_init_pool() {
 		self::$prefix_pool = get_transient( $this->pool_transient_name );
 		if ( self::$prefix_pool === false ) {
-			self::$prefix_pool = array();
-			set_transient( $this->pool_transient_name, array() );
+			self::$prefix_pool = [];
+			set_transient( $this->pool_transient_name, [] );
 		}
 	}
 

@@ -14,7 +14,7 @@ class Tribe__Support__Template_Checker_Report {
 	 *
 	 * @var array
 	 */
-	protected static $plugin_reports = array();
+	protected static $plugin_reports = [];
 
 	/**
 	 * Container for finished report.
@@ -53,7 +53,7 @@ class Tribe__Support__Template_Checker_Report {
 		 *
 		 * @var array $registered_template_systems
 		 */
-		return apply_filters( 'tribe_support_registered_template_systems', array() );
+		return apply_filters( 'tribe_support_registered_template_systems', [] );
 	}
 
 	/**

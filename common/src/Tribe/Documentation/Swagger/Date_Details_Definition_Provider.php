@@ -16,35 +16,35 @@ class Tribe__Documentation__Swagger__Date_Details_Definition_Provider
 	 * @return array An array description of a Swagger supported component.
 	 */
 	public function get_documentation() {
-		$documentation = array(
+		$documentation = [
 			'type'       => 'object',
-			'properties' => array(
-				'year'    => array(
-					'type' => 'integer',
+			'properties' => [
+				'year'    => [
+					'type'        => 'integer',
 					'description' => __( 'The date year', 'tribe-common' ),
-				),
-				'month' => array(
-					'type' => 'integer',
+				],
+				'month'   => [
+					'type'        => 'integer',
 					'description' => __( 'The date month', 'tribe-common' ),
-				),
-				'day' => array(
-					'type' => 'integer',
+				],
+				'day'     => [
+					'type'        => 'integer',
 					'description' => __( 'The date day', 'tribe-common' ),
-				),
-				'hour' => array(
-					'type' => 'integer',
+				],
+				'hour'    => [
+					'type'        => 'integer',
 					'description' => __( 'The date hour', 'tribe-common' ),
-				),
-				'minutes' => array(
-					'type' => 'integer',
+				],
+				'minutes' => [
+					'type'        => 'integer',
 					'description' => __( 'The date minutes', 'tribe-common' ),
-				),
-				'seconds' => array(
-					'type' => 'integer',
+				],
+				'seconds' => [
+					'type'        => 'integer',
 					'description' => __( 'The date seconds', 'tribe-common' ),
-				),
-			),
-		);
+				],
+			],
+		];
 
 		/**
 		 * Filters the Swagger documentation generated for an date details in the TEC REST API.

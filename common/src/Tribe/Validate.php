@@ -57,7 +57,7 @@ if ( ! class_exists( 'Tribe__Validate' ) ) {
 		 * @param array  $field    The field object to validate
 		 * @param mixed  $value    The value to validate
 		 */
-		public function __construct( $field_id, $field, $value, $additional_args = array() ) {
+		public function __construct( $field_id, $field, $value, $additional_args = [] ) {
 
 			// prepare object properties
 			$this->result          = new stdClass;
@@ -96,7 +96,7 @@ if ( ! class_exists( 'Tribe__Validate' ) ) {
 					if ( ( ! isset( $_POST[ $field_id ] ) || ! $_POST[ $field_id ] || $_POST[ $field_id ] == '' ) && isset( $this->field['can_be_empty'] ) && $this->field['can_be_empty'] ) {
 						$this->result->valid = true;
 					} else {
-						call_user_func( array( $this, $this->type ) ); // run the validation
+						call_user_func( [ $this, $this->type ] ); // run the validation
 					}
 				} else {
 					// invalid validation type set, validation fails
@@ -239,7 +239,10 @@ if ( ! class_exists( 'Tribe__Validate' ) ) {
 
 			// esc_url_raw does the work of validating chars, but returns the checked string with a
 			// prepended URL protocol; so let's use strpos to match the values.
-			if ( false !== strpos( $maybe_valid_value, $this->value ) ) {
+			if (
+				! empty( $maybe_valid_value )
+				&& false !== strpos( $maybe_valid_value, $this->value )
+			) {
 				$this->result->valid = true;
 				$this->value         = sanitize_title( $this->value );
 			} else {
@@ -288,7 +291,7 @@ if ( ! class_exists( 'Tribe__Validate' ) ) {
 				return;
 			}
 
-			$this->value = is_array( $this->value ) ? $this->value : array( $this->value );
+			$this->value = is_array( $this->value ) ? $this->value : [ $this->value ];
 
 			foreach ( $this->value as $val ) {
 				if ( array_key_exists( $val, $this->field['options'] ) ) {
@@ -309,10 +312,10 @@ if ( ! class_exists( 'Tribe__Validate' ) ) {
 		 */
 		public function options_with_label() {
 			if ( array_key_exists( $this->value, $this->field['options'] ) ) {
-				$this->value         = ( $this->value === 0 ) ? false : array(
+				$this->value         = ( $this->value === 0 ) ? false : [
 					$this->value,
 					$this->field['options'][ $this->value ],
-				);
+				];
 				$this->result->valid = true;
 			} else {
 				$this->result->valid = false;
@@ -462,7 +465,7 @@ if ( ! class_exists( 'Tribe__Validate' ) ) {
 					if ( ! isset( $country[0] ) || ! isset( $country[1] ) ) {
 						$this->result->valid = false;
 						$this->result->error = sprintf( esc_html__( 'Country List must be formatted as one country per line in the following format: <br>US, United States <br> UK, United Kingdom.', 'tribe-common' ), $this->label );
-						$this->value         = wp_kses( $this->value, array() );
+						$this->value         = wp_kses( $this->value, [] );
 
 						return;
 					}

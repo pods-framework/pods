@@ -13,7 +13,7 @@ class Tribe__Tabbed_View {
 	 *
 	 * @var array An associative array in the [<slug> => <instance>] format.
 	 */
-	protected $items = array();
+	protected $items = [];
 
 	/**
 	 * The slug of the default tab
@@ -32,7 +32,7 @@ class Tribe__Tabbed_View {
 	 *
 	 * @var array|object
 	 */
-	protected $data = array();
+	protected $data = [];
 
 	/**
 	 * @var string
@@ -99,7 +99,7 @@ class Tribe__Tabbed_View {
 	 * @return Tribe__Tabbed_View__Tab[] An array of all the active and visible tabs.
 	 */
 	public function get_visibles() {
-		return array_filter( $this->get(), array( $this, 'is_tab_visible' ) );
+		return array_filter( $this->get(), [ $this, 'is_tab_visible' ] );
 	}
 
 	/**
@@ -175,7 +175,7 @@ class Tribe__Tabbed_View {
 	 * @return null|array|object        If we couldn't find the tab it will be null, if the slug is null will return all tabs
 	 */
 	public function get( $slug = null ) {
-		uasort( $this->items, array( $this, 'sort_by_priority' ) );
+		uasort( $this->items, [ $this, 'sort_by_priority' ] );
 
 		if ( is_null( $slug ) ) {
 			return $this->items;
@@ -295,7 +295,7 @@ class Tribe__Tabbed_View {
 	 * @return Tribe__Tabbed_View__Tab[]
 	 */
 	public function get_tabs() {
-		uasort( $this->items, array( $this, 'sort_by_priority' ) );
+		uasort( $this->items, [ $this, 'sort_by_priority' ] );
 
 		return array_values( $this->items );
 	}
@@ -332,9 +332,9 @@ class Tribe__Tabbed_View {
 			return '';
 		}
 
-		$default_data = array(
+		$default_data = [
 			'view' => $this,
-		);
+		];
 
 		$data = array_merge( $default_data, (array) $this->data );
 

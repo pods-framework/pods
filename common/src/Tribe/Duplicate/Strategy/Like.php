@@ -31,7 +31,7 @@ class Tribe__Duplicate__Strategy__Like
 
 		$frags = $this->get_where_frags( $value );
 
-		$where_frags = array();
+		$where_frags = [];
 		foreach ( $frags as $frag ) {
 			$formatted_frag = '%' . $wpdb->esc_like( strtolower( trim( $frag ) ) ) . '%';
 			$where_frags[]  = $wpdb->prepare( "{$key} LIKE %s", $formatted_frag );
@@ -73,7 +73,7 @@ class Tribe__Duplicate__Strategy__Like
 
 		$frags = $this->get_where_frags( $value );
 
-		$where_frags = array( $wpdb->prepare( "{$table_alias}.meta_key = %s", $key ) );
+		$where_frags = [ $wpdb->prepare( "{$table_alias}.meta_key = %s", $key ) ];
 		foreach ( $frags as $frag ) {
 			$formatted_frag = '%' . $wpdb->esc_like( strtolower( trim( $frag ) ) ) . '%';
 			$query          = "{$table_alias}.meta_value LIKE %s";

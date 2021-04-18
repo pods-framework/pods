@@ -4,24 +4,31 @@
  * method value.
  *
  * @param tad_DI52_Container $container
- * @param string $classOrInterface
- * @param string $method
+ * @param string|object      $classOrInterface
+ * @param string             $method
  *
  * @return Closure
  */
 function di52_callbackClosure(tad_DI52_Container $container, $classOrInterface, $method) {
-	$classOrInterfaceName = is_object($classOrInterface) ? get_class($classOrInterface) : $classOrInterface;
-	if (is_object($classOrInterface)) {
-		$objectId = uniqid(rand(1, 9999) . md5($classOrInterfaceName));
-		$container->bind($objectId, $classOrInterface);
+	if ( is_object( $classOrInterface ) ) {
+		$objectId = uniqid( spl_object_hash( $classOrInterface ), true );
+		$container->bind( $objectId, $classOrInterface );
 	} else {
 		$objectId = $classOrInterface;
 	}
 
-	return function () use ($container, $objectId, $method) {
-		$a = func_get_args();
-		$i = $container->make($objectId);
-		return call_user_func_array(array($i, $method), $a);
+	$isStatic = false;
+	try {
+		$reflectionMethod = new ReflectionMethod($classOrInterface, $method);
+		$isStatic = $reflectionMethod->isStatic();
+	} catch ( ReflectionException $e ) {
+		// no-op
+	}
+
+	return function () use ( $isStatic, $container, $objectId, $method ) {
+		return $isStatic ?
+			call_user_func_array( array( $objectId, $method ), func_get_args() )
+			: call_user_func_array( array( $container->make( $objectId ), $method ), func_get_args() );
 	};
 }
 

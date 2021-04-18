@@ -51,7 +51,7 @@ abstract class Tribe__Repository__Decorator implements Tribe__Repository__Interf
 	 */
 	public function by( $key, $value = null ) {
 		$call_args = func_get_args();
-		call_user_func_array( array( $this->decorated, 'by' ), $call_args );
+		call_user_func_array( [ $this->decorated, 'by' ], $call_args );
 
 		return $this;
 	}
@@ -61,7 +61,7 @@ abstract class Tribe__Repository__Decorator implements Tribe__Repository__Interf
 	 */
 	public function where( $key, $value = null ) {
 		$call_args = func_get_args();
-		call_user_func_array( array( $this->decorated, 'where' ), $call_args );
+		call_user_func_array( [ $this->decorated, 'where' ], $call_args );
 
 		return $this;
 	}
@@ -322,7 +322,7 @@ abstract class Tribe__Repository__Decorator implements Tribe__Repository__Interf
 	 */
 	public function where_or( $callbacks ) {
 		$call_args = func_get_args();
-		call_user_func_array( array( $this->decorated, 'where_or' ), $call_args );
+		call_user_func_array( [ $this->decorated, 'where_or' ], $call_args );
 
 		return $this;
 	}
@@ -545,14 +545,14 @@ abstract class Tribe__Repository__Decorator implements Tribe__Repository__Interf
 	/**
 	 * {@inheritdoc}
 	 */
-	public function filter( $orderby = array(), $order = 'ASC', $preserve_keys = false ) {
+	public function filter( $orderby = [], $order = 'ASC', $preserve_keys = false ) {
 		return $this->decorated->filter( $orderby, $order, $preserve_keys );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function sort( $orderby = array(), $order = 'ASC', $preserve_keys = false ) {
+	public function sort( $orderby = [], $order = 'ASC', $preserve_keys = false ) {
 		return $this->decorated->sort( $orderby, $order, $preserve_keys );
 	}
 

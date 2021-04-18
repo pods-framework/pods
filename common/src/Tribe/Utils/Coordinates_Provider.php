@@ -76,7 +76,7 @@ class Tribe__Utils__Coordinates_Provider {
 		}
 
 		$base_request_url = trailingslashit( $this->get_google_api_base() ) . $this->get_google_api_json_format();
-		$url              = esc_url( add_query_arg( array( 'address' => $address ), $base_request_url ) );
+		$url              = esc_url( add_query_arg( [ 'address' => $address ], $base_request_url ) );
 		$response         = $this->http->get( $url );
 
 		if ( is_wp_error( $response ) ) {
@@ -95,7 +95,7 @@ class Tribe__Utils__Coordinates_Provider {
 
 		$location = $decoded['results'][0]['geometry']['location'];
 
-		$updated_transient = array_merge( $this->get_transient(), array( $address => $location ) );
+		$updated_transient = array_merge( $this->get_transient(), [ $address => $location ] );
 		set_transient( self::$transient_name, $updated_transient );
 		$this->transient = $updated_transient;
 
@@ -120,7 +120,7 @@ class Tribe__Utils__Coordinates_Provider {
 	protected function get_transient() {
 		if ( ! is_array( $this->transient ) ) {
 			$transient       = get_transient( self::$transient_name );
-			$this->transient = is_array( $transient ) ? $transient : array();
+			$this->transient = is_array( $transient ) ? $transient : [];
 		}
 
 		return $this->transient;

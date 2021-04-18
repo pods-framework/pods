@@ -15,6 +15,11 @@
 		const TRIGGER_SAVE_POST = 'save_post';
 
 		/**
+		 * The name of the trigger that will be fired when an option is updated
+		 */
+		const TRIGGER_UPDATED_OPTION = 'updated_option';
+
+		/**
 		 * The singleton instance of the class.
 		 *
 		 * @var Tribe__Cache_Listener|null
@@ -53,6 +58,7 @@
 		 */
 		private function add_hooks() {
 			add_action( 'save_post', [ $this, 'save_post' ], 0, 2 );
+			add_action( 'updated_option', [ $this, 'update_last_updated_option' ], 10, 3 );
 			add_action( 'updated_option', [ $this, 'update_last_save_post' ], 10, 3 );
 			add_action( 'generate_rewrite_rules', [ $this, 'generate_rewrite_rules' ] );
 		}
@@ -79,14 +85,43 @@
 	     * @param mixed  $value     The new option value.
 		 */
 		public function update_last_save_post( $option_name, $old_value, $value ) {
-			$triggers = array(
-				'tribe_events_calendar_options',
-				'permalink_structure',
-				'rewrite_rules',
-				'start_of_week',
-			);
-			if ( in_array( $option_name, $triggers, true ) ) {
+			$triggers = [
+				'tribe_events_calendar_options' => true,
+				'permalink_structure'           => true,
+				'rewrite_rules'                 => true,
+				'start_of_week'                 => true,
+			];
+			if ( ! empty( $triggers[ $option_name ] ) ) {
 				$this->cache->set_last_occurrence( self::TRIGGER_SAVE_POST );
+			}
+		}
+
+		/**
+		 * Run the caching functionality that is executed on saving tribe calendar options.
+		 *
+		 * @see 'updated_option'
+		 *
+		 * @since 4.11.0
+		 *
+		 * @param string $option_name    Name of the updated option.
+		 * @param mixed  $old_value The old option value.
+		 * @param mixed  $value     The new option value.
+		 */
+		public function update_last_updated_option( $option_name, $old_value, $value ) {
+			$triggers = [
+				'active_plugins'                => true,
+				'tribe_events_calendar_options' => true,
+				'permalink_structure'           => true,
+				'rewrite_rules'                 => true,
+				'start_of_week'                 => true,
+				'sidebars_widgets'              => true,
+				'stylesheet'                    => true,
+				'template'                      => true,
+				'WPLANG'                        => true,
+			];
+
+			if ( ! empty( $triggers[ $option_name ] ) ) {
+				$this->cache->set_last_occurrence( self::TRIGGER_UPDATED_OPTION );
 			}
 		}
 

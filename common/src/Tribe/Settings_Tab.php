@@ -45,16 +45,16 @@ if ( ! class_exists( 'Tribe__Settings_Tab' ) ) {
 		 * @param string $name the tab's visible name
 		 * @param array  $args additional arguments for the tab
 		 */
-		public function __construct( $id, $name, $args = array() ) {
+		public function __construct( $id, $name, $args = [] ) {
 
 			// setup the defaults
-			$this->defaults = array(
-				'fields'           => array(),
+			$this->defaults = [
+				'fields'           => [],
 				'priority'         => 50,
 				'show_save'        => true,
 				'display_callback' => false,
 				'network_admin'    => false,
-			);
+			];
 
 			// parse args with defaults
 			$this->args = wp_parse_args( $args, $this->defaults );
@@ -68,9 +68,9 @@ if ( ! class_exists( 'Tribe__Settings_Tab' ) ) {
 
 			// run actions & filters
 			if ( ! $this->network_admin ) {
-				add_filter( 'tribe_settings_all_tabs', array( $this, 'addAllTabs' ) );
+				add_filter( 'tribe_settings_all_tabs', [ $this, 'addAllTabs' ] );
 			}
-			add_filter( 'tribe_settings_tabs', array( $this, 'addTab' ), $this->priority );
+			add_filter( 'tribe_settings_tabs', [ $this, 'addTab' ], $this->priority );
 		}
 
 		/**
@@ -83,13 +83,13 @@ if ( ! class_exists( 'Tribe__Settings_Tab' ) ) {
 		 * @return array $tabs the filtered tabs
 		 */
 		public function addTab( $tabs ) {
-			$hideSettingsTabs = Tribe__Settings_Manager::get_network_option( 'hideSettingsTabs', array() );
+			$hideSettingsTabs = Tribe__Settings_Manager::get_network_option( 'hideSettingsTabs', [] );
 			if ( ( isset( $this->fields ) || has_action( 'tribe_settings_content_tab_' . $this->id ) ) && ( empty( $hideSettingsTabs ) || ! in_array( $this->id, $hideSettingsTabs ) ) ) {
 				if ( ( is_network_admin() && $this->args['network_admin'] ) || ( ! is_network_admin() && ! $this->args['network_admin'] ) ) {
 					$tabs[ $this->id ] = $this->name;
-					add_filter( 'tribe_settings_fields', array( $this, 'addFields' ) );
-					add_filter( 'tribe_settings_no_save_tabs', array( $this, 'showSaveTab' ) );
-					add_filter( 'tribe_settings_content_tab_' . $this->id, array( $this, 'doContent' ) );
+					add_filter( 'tribe_settings_fields', [ $this, 'addFields' ] );
+					add_filter( 'tribe_settings_no_save_tabs', [ $this, 'showSaveTab' ] );
+					add_filter( 'tribe_settings_content_tab_' . $this->id, [ $this, 'doContent' ] );
 				}
 			}
 
@@ -122,7 +122,7 @@ if ( ! class_exists( 'Tribe__Settings_Tab' ) ) {
 			if ( ! empty ( $this->fields ) ) {
 				$fields[ $this->id ] = $this->fields;
 			} elseif ( has_action( 'tribe_settings_content_tab_' . $this->id ) ) {
-				$fields[ $this->id ] = $this->fields = array( 0 => null ); // just to trick it
+				$fields[ $this->id ] = $this->fields = [ 0 => null ]; // just to trick it
 			}
 
 			return $fields;
@@ -156,12 +156,12 @@ if ( ! class_exists( 'Tribe__Settings_Tab' ) ) {
 				return;
 			}
 
-			$sent_data = get_option( 'tribe_settings_sent_data', array() );
+			$sent_data = get_option( 'tribe_settings_sent_data', [] );
 
 			if ( is_array( $this->fields ) && ! empty( $this->fields ) ) {
 				foreach ( $this->fields as $key => $field ) {
 					if ( isset( $sent_data[ $key ] ) ) {
-						// if we just saved [or attempted to], get the value that was inputed
+						// If we just saved [or attempted to], get the value that was input.
 						$value = $sent_data[ $key ];
 					} else {
 						// Some options should always be stored at network level

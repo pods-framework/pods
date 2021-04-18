@@ -47,16 +47,16 @@ class Tribe__Post_History {
 	 * @param string $message
 	 * @param array $data
 	 */
-	public function add_entry( $message, array $data = array() ) {
+	public function add_entry( $message, array $data = [] ) {
 		$datetime = current_time( 'mysql' );
 		$checksum = uniqid( substr( hash( 'md5', $datetime . $message . serialize( $data ) ), 0, 8 ) . '_' );
 
-		$log_entry = wp_slash( json_encode( array(
+		$log_entry = wp_slash( json_encode( [
 			'datetime' => $datetime,
 			'message'  => $message,
 			'data'     => $data,
 			'checksum' => $checksum,
-		) ) );
+		] ) );
 
 		add_post_meta( $this->post_id, self::HISTORY_KEY, $log_entry );
 	}
@@ -84,7 +84,7 @@ class Tribe__Post_History {
 	 * @return array
 	 */
 	public function get_entries() {
-		$entries = array();
+		$entries = [];
 
 		foreach ( get_post_meta( $this->post_id, self::HISTORY_KEY ) as $log_entry ) {
 			$log_entry = json_decode( $log_entry );

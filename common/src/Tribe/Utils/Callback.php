@@ -9,7 +9,7 @@ class Tribe__Utils__Callback {
 	 *
 	 * @var array
 	 */
-	public $items = array();
+	public $items = [];
 
 	/**
 	 * The Prefix we use for the Overloading replacement
@@ -58,12 +58,12 @@ class Tribe__Utils__Callback {
 		array_shift( $arguments );
 		array_shift( $arguments );
 
-		$item = (object) array(
-			'slug' => $slug,
-			'method' => $method,
+		$item = (object) [
+			'slug'      => $slug,
+			'method'    => $method,
 			'arguments' => $arguments,
-			'is_empty' => $is_empty,
-		);
+			'is_empty'  => $is_empty,
+		];
 
 		$key = md5( json_encode( $item ) );
 
@@ -76,7 +76,7 @@ class Tribe__Utils__Callback {
 
 		$this->items[ $key ] = $item;
 
-		return array( $this, $this->prefix . $key );
+		return [ $this, $this->prefix . $key ];
 	}
 
 	/**
@@ -145,7 +145,7 @@ class Tribe__Utils__Callback {
 	 * @return array An array of properties that should be serialized.
 	 */
 	public function __sleep() {
-		return array( 'slug', 'method' );
+		return [ 'slug', 'method' ];
 	}
 
 	/**

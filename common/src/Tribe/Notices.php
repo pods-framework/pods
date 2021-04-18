@@ -5,7 +5,7 @@ class Tribe__Notices {
 	 * Notices to be displayed in the admin
 	 * @var array
 	 */
-	protected $notices = array();
+	protected $notices = [];
 
 	/**
 	 * Define an admin notice

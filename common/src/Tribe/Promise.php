@@ -60,13 +60,13 @@ class Tribe__Promise extends Tribe__Process__Queue {
 	 * @param array                               $extra_args An array of extra arguments that will be passed to the
 	 *                                                        callback function.
 	 */
-	public function __construct( $callback = null, array $items = null, array $extra_args = array() ) {
+	public function __construct( $callback = null, array $items = null, array $extra_args = [] ) {
 		parent::__construct();
 
 		if ( ! empty( $callback ) && ! empty( $items ) ) {
 			foreach ( $items as $target ) {
 				$item['callback'] = $callback;
-				$item['args']     = array_merge( array( $target ), $extra_args );
+				$item['args']     = array_merge( [ $target ], $extra_args );
 				$this->push_to_queue( $item );
 			}
 		}
@@ -272,7 +272,7 @@ class Tribe__Promise extends Tribe__Process__Queue {
 	 */
 	protected function unpack_callback( $callback ) {
 		if ( $callback instanceof Tribe__Utils__Callback ) {
-			$callback = array( tribe( $callback->get_slug() ), $callback->get_method() );
+			$callback = [ tribe( $callback->get_slug() ), $callback->get_method() ];
 		}
 
 		return $callback;

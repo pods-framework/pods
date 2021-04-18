@@ -16,7 +16,7 @@ class Tribe__Languages__Recaptcha_Map implements Tribe__Languages__Map_Interface
 	 *               e.g. [ 'pt-BR' => 'Portuguese (Brazil)' ]
 	 */
 	public function get_supported_languages() {
-		return array(
+		return [
 			'ar'     => 'Arabic',
 			'af'     => 'Afrikaans',
 			'am'     => 'Amharic',
@@ -87,7 +87,7 @@ class Tribe__Languages__Recaptcha_Map implements Tribe__Languages__Map_Interface
 			'ur'     => 'Urdu',
 			'vi'     => 'Vietnamese',
 			'zu'     => 'Zulu',
-		);
+		];
 	}
 
 	/**

@@ -29,6 +29,7 @@ class Tribe__Post_Transient {
 	 * @param int    $post_id   The Post ID, can also be a WP_Post
 	 * @param string $transient Post Meta to Fetch
 	 *
+	 * @return mixed            Value stored on the Post Transient.
 	 */
 	public function get( $post_id, $transient ) {
 		global $_wp_using_ext_object_cache;
@@ -97,10 +98,11 @@ class Tribe__Post_Transient {
 	 *
 	 * @since  4.1
 	 *
-	 * @param int    $post_id   The Post ID, can also be a WP_Post
-	 * @param string $transient Post Meta to Delete
-	 * @param string $value     Only delete if the value Matches
+	 * @param int    $post_id   The Post ID, can also be a WP_Post.
+	 * @param string $transient Post Meta to Delete.
+	 * @param string $value     Only delete if the value Matches.
 	 *
+	 * @return boolean          If we were able to delete the transient.
 	 */
 	public function delete( $post_id, $transient, $value = null ) {
 		global $_wp_using_ext_object_cache;
@@ -149,15 +151,16 @@ class Tribe__Post_Transient {
 	}
 
 	/**
-	 * Sets a new value for the Transient
+	 * Sets a new value for the Transient.
 	 *
 	 * @since  4.1
 	 *
-	 * @param int    $post_id    The Post ID, can also be a WP_Post
-	 * @param string $transient  Post Meta to set
-	 * @param string $value      Only delete if the value Matches
-	 * @param int    $expiration How long this transient will be valid, in seconds
+	 * @param int    $post_id    The Post ID, can also be a WP_Post.
+	 * @param string $transient  Post Meta to set.
+	 * @param string $value      Only delete if the value Matches.
+	 * @param int    $expiration How long this transient will be valid, in seconds.
 	 *
+	 * @return int|false         Meta ID on success, false on failure.
 	 */
 	public function set( $post_id, $transient, $value, $expiration = 0 ) {
 		global $_wp_using_ext_object_cache;
@@ -208,6 +211,4 @@ class Tribe__Post_Transient {
 
 		return $result;
 	}
-
-
 }

@@ -215,7 +215,15 @@ if ( ! function_exists( 'tribe_get_time_format' ) ) {
 	 * @return mixed|void
 	 */
 	function tribe_get_time_format( ) {
-		$format = get_option( 'time_format' );
+		static $cache_var_name = __FUNCTION__;
+
+		$format = tribe_get_var( $cache_var_name, null );
+
+		if ( ! $format ) {
+			$format = get_option( 'time_format' );
+			tribe_set_var( $cache_var_name, $format );
+		}
+
 		return apply_filters( 'tribe_time_format', $format );
 	}
 }//end if
@@ -256,7 +264,7 @@ if ( ! function_exists( 'tribe_get_days_between' ) ) {
 if ( ! function_exists( 'tribe_prepare_for_json' ) ) {
 	/**
 	 * Function to prepare content for use as a value in a json encoded string destined for storage on a html data attribute.
-	 * Hence the double quote fun, especially in case they pass html encoded &quot; along. Any of those getting through to the data att will break jquery's parseJSON method.
+	 * Hence the double quote fun, especially in case they pass html encoded &quot; along. Any of those getting through to the data att will break jQuery's parseJSON method.
 	 * Themers can use this function to prepare data they may want to send to tribe_events_template_data() in the templates, and we use it in that function ourselves.
 	 *
 	 * @category Events
@@ -269,7 +277,7 @@ if ( ! function_exists( 'tribe_prepare_for_json' ) ) {
 		$value = trim( htmlspecialchars( $string, ENT_QUOTES, 'UTF-8' ) );
 		$value = str_replace( '&quot;', '"', $value );
 		// &amp;#013; is same as \r and JSON strings should be a single line not multiple lines.
-		$removable_values = array( '\r', '\n', '\t', '&amp;#013;' );
+		$removable_values = [ '\r', '\n', '\t', '&amp;#013;' ];
 		$value = str_replace( $removable_values, '', $value );
 
 		return $value;
@@ -354,13 +362,13 @@ if ( ! function_exists( 'tribe_is_bot' ) ) {
 
 		// declare known bot user agents (lowercase)
 		$user_agent_bots = (array) apply_filters(
-			'tribe_is_bot_list', array(
+			'tribe_is_bot_list', [
 				'bot',
 				'slurp',
 				'spider',
 				'crawler',
 				'yandex',
-			)
+			]
 		);
 
 		foreach ( $user_agent_bots as $bot ) {
@@ -517,14 +525,14 @@ if ( ! function_exists( 'tribe_get_date_option' ) ) {
  * Shortcut for Tribe__Admin__Notices::register(), create a Admin Notice easily
  *
  * @param  string          $slug      Slug to save the notice
- * @param  callable|string $callback  A callable Method/Fuction to actually display the notice
+ * @param  callable|string $callback  A callable Method/Function to actually display the notice
  * @param  array           $arguments Arguments to Setup a notice
  * @param callable|null    $active_callback An optional callback that should return bool values
  *                                          to indicate whether the notice should display or not.
  *
  * @return stdClass Which notice was registered
  */
-function tribe_notice( $slug, $callback, $arguments = array(), $active_callback = null ) {
+function tribe_notice( $slug, $callback, $arguments = [], $active_callback = null ) {
 	return Tribe__Admin__Notices::instance()->register( $slug, $callback, $arguments, $active_callback );
 }
 
@@ -541,7 +549,7 @@ function tribe_notice( $slug, $callback, $arguments = array(), $active_callback 
  *
  * @return stdClass Which notice was registered
  */
-function tribe_transient_notice( $slug, $html, $arguments = array(), $expire = null ) {
+function tribe_transient_notice( $slug, $html, $arguments = [], $expire = null ) {
 	$expire = null !== $expire ? (int) $expire : WEEK_IN_SECONDS;
 
 	return Tribe__Admin__Notices::instance()->register_transient( $slug, $html, $arguments, $expire );
@@ -567,7 +575,7 @@ function tribe_transient_notice_remove( $slug ) {
  *
  * @return WP_Error
  */
-function tribe_error( $indexes, $context = array(), $sprintf = array() ) {
+function tribe_error( $indexes, $context = [], $sprintf = [] ) {
 	return Tribe__Error::instance()->send( $indexes, $context, $sprintf );
 }
 
@@ -637,11 +645,12 @@ function tribe_asset_enqueue_group( $group ) {
  * Function to include more the one asset, based on `tribe_asset`
  *
  * @since 4.3
+ * @since 4.12.10 Added support for overriding arguments for individual assets.
  *
  * @param  object   $origin     The main Object for the plugin you are enqueueing the script/style for
  * @param  array    $assets     {
  *    Indexed array, don't use any associative key.
- *    E.g.: array( 'slug-my-script', 'my/own/path.js', array( 'jquery' ) )
+ *    E.g.: [ 'slug-my-script', 'my/own/path.js', [ 'jquery' ] ]
  *
  *    @type  string   $slug       Slug to save the asset
  *    @type  string   $file       Which file will be loaded, either CSS or JS
@@ -652,8 +661,8 @@ function tribe_asset_enqueue_group( $group ) {
  *
  * @return array             Which Assets were registered
  */
-function tribe_assets( $origin, $assets, $action = null, $arguments = array() ) {
-	$registered = array();
+function tribe_assets( $origin, $assets, $action = null, $arguments = [] ) {
+	$registered = [];
 
 	foreach ( $assets as $asset ) {
 		if ( ! is_array( $asset ) ) {
@@ -666,9 +675,16 @@ function tribe_assets( $origin, $assets, $action = null, $arguments = array() ) 
 		}
 
 		$file = $asset[1];
-		$deps = ! empty( $asset[2] ) ? $asset[2] : array();
+		$deps = ! empty( $asset[2] ) ? $asset[2] : [];
 
-		$registered[] = tribe_asset( $origin, $slug, $file, $deps, $action, $arguments );
+		// Support the asset having a custom action.
+		$asset_action = ! empty( $asset[3] ) ? $asset[3] : $action;
+
+		// Support the asset having custom arguments and merge them with the original ones.
+		$asset_arguments = ! empty( $asset[4] ) ? array_merge( $arguments, $asset[4] ) : $arguments;
+
+		$registered[] = tribe_asset( $origin, $slug, $file, $deps, $asset_action, $asset_arguments );
+
 	}
 
 	return $registered;
@@ -756,5 +772,55 @@ if ( ! function_exists( 'tribe_context' ) ) {
 		$context = apply_filters( 'tribe_global_context', $context );
 
 		return $context;
+	}
+}
+
+if ( ! function_exists( 'tribe_cache' ) ) {
+	/**
+	 * Returns the current Tribe Cache instance.
+	 *
+	 * @since 4.11.2
+	 *
+	 * @return Tribe__Cache The current cache instance.
+	 */
+	function tribe_cache() {
+		return tribe( 'cache' );
+	}
+}
+
+if ( ! function_exists( 'tribe_asset_print_group' ) ) {
+	/**
+	 * Prints the `script` (JS) and `link` (CSS) HTML tags associated with one or more assets groups.
+	 *
+	 * @since 4.12.6
+	 *
+	 * @param string|array $group Which group(s) should be enqueued.
+	 * @param bool         $echo  Whether to print the group(s) tag(s) to the page or not; default to `true` to
+	 *                            print the HTML `script` (JS) and `link` (CSS) tags to the page.
+	 *
+	 * @return string The `script` and `link` HTML tags produced for the group(s).
+	 */
+	function tribe_asset_print_group( $group, $echo = true ) {
+		/** @var \Tribe__Assets $assets */
+		$assets     = tribe( 'assets' );
+
+		return $assets->print_group($group, $echo);
+	}
+}
+
+if ( ! function_exists( 'tribe_doing_shortcode' ) ) {
+	/**
+	 * Check whether a specific shortcode is being run.
+	 *
+	 * This is limited to only shortcodes registered with Tribe\Shortcode\Manager.
+	 *
+	 * @since 4.12.10
+	 *
+	 * @param null|string $tag The shortcode tag name, or null to check if doing any shortcode.
+	 *
+	 * @return bool Whether the shortcode is currently being run.
+	 */
+	function tribe_doing_shortcode( $tag = null ) {
+		return tribe( 'shortcode.manager' )->is_doing_shortcode( $tag );
 	}
 }

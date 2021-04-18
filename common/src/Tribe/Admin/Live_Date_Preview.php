@@ -3,12 +3,12 @@
  * Facilitiates live date previews in the Events > Settings > Display admin screen.
  */
 class Tribe__Admin__Live_Date_Preview {
-	protected $target_fields = array(
+	protected $target_fields = [
 		'dateWithYearFormat',
 		'dateWithoutYearFormat',
 		'monthAndYearFormat',
 		'weekDayFormat',
-	);
+	];
 
 	/**
  	 * Static Singleton Holder
@@ -31,7 +31,7 @@ class Tribe__Admin__Live_Date_Preview {
 	 * the user is actually on that tab).
 	 */
 	public function __construct() {
-		add_action( 'tribe_settings_after_do_tabs', array( $this, 'listen' ) );
+		add_action( 'tribe_settings_after_do_tabs', [ $this, 'listen' ] );
 	}
 
 	/**
@@ -50,10 +50,10 @@ class Tribe__Admin__Live_Date_Preview {
 		 */
 		$this->target_fields = (array) apply_filters( 'tribe_settings_date_preview_fields', $this->target_fields );
 
-		add_filter( 'tribe_field_div_end', array( $this, 'setup_date_previews' ), 10, 2 );
+		add_filter( 'tribe_field_div_end', [ $this, 'setup_date_previews' ], 10, 2 );
 
 		// We are still before `admin_enqueue_scripts` making it safe to use `tribe_asset`
-		tribe_asset( Tribe__Main::instance(), 'tribe-date-live-refresh', 'admin-date-preview.js', array( 'jquery' ), 'admin_enqueue_scripts' );
+		tribe_asset( Tribe__Main::instance(), 'tribe-date-live-refresh', 'admin-date-preview.js', [ 'jquery' ], 'admin_enqueue_scripts' );
 	}
 
 	public function setup_date_previews( $html, $field ) {

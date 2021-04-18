@@ -42,7 +42,7 @@ abstract class Tribe__Extension {
 	 *                               resulting data is stored in this.
 	 * }
 	 */
-	protected $args = array();
+	protected $args = [];
 
 	/**
 	 * The various extension instances
@@ -53,7 +53,7 @@ abstract class Tribe__Extension {
 	 *      @type object $child_class_name instance
 	 * }
 	 */
-	private static $instances = array();
+	private static $instances = [];
 
 	/**
 	 * Get singleton instance of child class
@@ -101,7 +101,7 @@ abstract class Tribe__Extension {
 		if ( did_action( $init_hook ) > 0 ) {
 			$this->register();
 		} else {
-			add_action( $init_hook, array( $this, 'register' ) );
+			add_action( $init_hook, [ $this, 'register' ] );
 		}
 	}
 
@@ -127,7 +127,7 @@ abstract class Tribe__Extension {
 	 * @param string|null $minimum_version Minimum acceptable version of plugin.
 	 */
 	final protected function add_required_plugin( $main_class, $minimum_version = null ) {
-		$this->set( array( 'requires', $main_class ), $minimum_version );
+		$this->set( [ 'requires', $main_class ], $minimum_version );
 	}
 
 	/**
@@ -143,7 +143,7 @@ abstract class Tribe__Extension {
 			$this->get_plugin_file(),
 			__( 'Tutorial', 'tribe-common' ),
 			$url,
-			array( 'class' => 'tribe-meta-link-extension' )
+			[ 'class' => 'tribe-meta-link-extension' ]
 		);
 	}
 
@@ -160,25 +160,54 @@ abstract class Tribe__Extension {
 	 * Checks if the extension has permission to run, if so runs init() in child class
 	 */
 	final public function register() {
+		$extension_file       = $this->get_plugin_file();
+		$extension_class_name = $this->get( 'class' );
+		$extension_version    = $this->get_version();
+		$plugins_required     = $this->get( 'requires', [] );
+
 		tribe_register_plugin(
-			$this->get_plugin_file(),
-			$this->get( 'class' ),
-			$this->get_version(),
-			$this->get( 'requires', array() )
+			$extension_file,
+			$extension_class_name,
+			$extension_version,
+			$plugins_required
 		);
 
 		$dependency = Tribe__Dependency::instance();
 
 		// check requisite plugins are active for this extension
-		$is_plugin_authorized = $dependency->has_requisite_plugins( $this->get( 'requires', array() ) );
+		$is_plugin_authorized = $dependency->has_requisite_plugins( $plugins_required );
+
+		/**
+		 * Explicitly disallow an extension, such as a core plugin having absorbed/replaced its functionality.
+		 *
+		 * @since 4.12.2
+		 *
+		 * @param bool             $is_disallowed        False by default.
+		 * @param string           $extension_class_name This extension's class name string
+		 *                                               (without initial forward slash for namespaced classes).
+		 * @param Tribe__Extension $this_instance        This extension class' instance.
+		 */
+		$is_disallowed = (bool) apply_filters( 'tribe_extension_is_disallowed', false, $extension_class_name, $this );
+
+		if ( $is_disallowed ) {
+			if (
+				is_admin()
+				&& current_user_can( 'activate_plugins' )
+			) {
+				tribe_notice( 'tribe_extension_is_disallowed', [ $this, 'notice_disallowed' ], [ 'type' => 'error' ] );
+			}
+
+			deactivate_plugins( $extension_file, true );
+
+			return;
+		}
 
 		if ( $is_plugin_authorized ) {
 			$this->init();
 
-			//add extension as active to dependency checker
-			$dependency->add_active_plugin( $this->get( 'class' ), $this->get_version(), $this->get_plugin_file() );
+			// Add extension as active to dependency checker.
+			$dependency->add_active_plugin( $extension_class_name, $extension_version, $extension_file );
 		}
-
 	}
 
 	/**
@@ -229,7 +258,7 @@ abstract class Tribe__Extension {
 	}
 
 	/**
-	 * Get's the action/hook for the extensions init()
+	 * Gets the action/hook for the extensions' init().
 	 *
 	 * @return string Action/hook
 	 */
@@ -362,7 +391,7 @@ abstract class Tribe__Extension {
 
 		// Class name was not set by debug_backtrace() hackery.
 		if ( null === $class_name ) {
-			tribe_notice( 'tribe_debug_backtrace_disabled', array( __CLASS__, 'notice_debug_backtrace' ) );
+			tribe_notice( 'tribe_debug_backtrace_disabled', [ __CLASS__, 'notice_debug_backtrace' ] );
 		}
 
 		return $class_name;
@@ -379,11 +408,30 @@ abstract class Tribe__Extension {
 	}
 
 	/**
+	 * Gets the error message about being explicitly disallowed.
+	 *
+	 * @since 4.12.2
+	 *
+	 * @return string Notice text.
+	 */
+	public function notice_disallowed() {
+		return sprintf(
+			'<p><strong>%1$s:</strong> %2$s</p>',
+			$this->get_name(),
+			esc_html_x(
+				"This extension has been programmatically disallowed. The most common reason is due to another The Events Calendar plugin having absorbed or replaced this extension's functionality. This extension plugin has been deactivated, and you should likely delete it.",
+				'extension disallowed',
+				'tribe-common'
+			)
+		);
+	}
+
+	/**
 	 * Prevent cloning the singleton with 'clone' operator
 	 *
 	 * @return void
 	 */
-	final private function __clone() {
+	final public function __clone() {
 		_doing_it_wrong(
 			__FUNCTION__,
 			'Can not use this method on singletons.',
@@ -396,7 +444,7 @@ abstract class Tribe__Extension {
 	 *
 	 * @return void
 	 */
-	final private function __wakeup() {
+	final public function __wakeup() {
 		_doing_it_wrong(
 			__FUNCTION__,
 			'Can not use this method on singletons.',

@@ -131,5 +131,37 @@ if ( ! class_exists( 'Tribe__Plugins' ) ) {
 			return apply_filters( 'tribe_plugins_get_list', $this->tribe_plugins );
 		}
 
+		/**
+		 * Checks if given plugin is active. Usually a The Events Calendar plugin.
+		 *
+		 * @param string $plugin_name The name of the plugin. Each plugin defines their name upon hooking on the filter.
+		 *
+		 * @since 4.12.1
+		 *
+		 * @return bool True if plugin is active. False if plugin is not active.
+		 */
+		public static function is_active( $plugin_name ) {
+			if ( ! did_action( "plugins_loaded" ) ) {
+				_doing_it_wrong(
+					__METHOD__,
+					__( 'Using this function before "plugins_loaded" action has fired can return unreliable results.', 'tribe-common' ),
+					'4.12.6'
+				);
+			}
+
+			/**
+			 * Filters the array that each Tribe plugin overrides to
+			 * set itself as active when this function is called.
+			 *
+			 * @example [ 'the-events-calendar' => true, 'event-tickets' => true ]
+			 *
+			 * @since   4.12.1
+			 *
+			 * @return array Plugin slugs as keys and bool as value for whether it's active or not.
+			 */
+			$plugins = apply_filters( 'tribe_active_plugins', [] );
+
+			return isset( $plugins[ $plugin_name ] ) && tribe_is_truthy( $plugins[ $plugin_name ] );
+		}
 	}
 }

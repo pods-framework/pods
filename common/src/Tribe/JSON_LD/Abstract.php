@@ -19,14 +19,14 @@ abstract class Tribe__JSON_LD__Abstract {
 	 *
 	 * @var array
 	 */
-	private static $instances = array();
+	private static $instances = [];
 
 	/**
 	 * Holder for the Already fetched Posts
 	 *
 	 * @var array
 	 */
-	protected static $posts = array();
+	protected static $posts = [];
 
 	/**
 	 * Holder for a post when it has multiple types
@@ -35,7 +35,7 @@ abstract class Tribe__JSON_LD__Abstract {
 	 *
 	 * @var array
 	 */
-	protected static $types = array();
+	protected static $types = [];
 
 	/**
 	 * The class singleton constructor.
@@ -72,24 +72,24 @@ abstract class Tribe__JSON_LD__Abstract {
 	 *               be generated, the `$post` parameter is not a valid post ID or object or the data
 	 *               for the post has been fetched already.
 	 */
-	public function get_data( $post = null, $args = array() ) {
+	public function get_data( $post = null, $args = [] ) {
 		$post_id = Tribe__Main::post_id_helper( $post );
 		if ( ! $post_id ) {
-			return array();
+			return [];
 		}
 
 		// This prevents a JSON_LD from existing twice one the same page
 		if ( $this->exists( $post_id ) && $this->type_exists( $post_id, $this->type ) ) {
-			return array();
+			return [];
 		}
 
 		$post = get_post( $post_id );
 
 		if ( empty( $post->ID ) ) {
-			return array();
+			return [];
 		}
 
-		$data = (object) array();
+		$data = (object) [];
 
 		// We may need to prevent the context to be triggered
 		if ( ! isset( $args['context'] ) || false !== $args['context'] ) {
@@ -112,7 +112,7 @@ abstract class Tribe__JSON_LD__Abstract {
 
 		// Index by ID: this will allow filter code to identify the actual event being referred to
 		// without injecting an additional property
-		return array( $post->ID => $data );
+		return [ $post->ID => $data ];
 	}
 
 	/**
@@ -149,7 +149,7 @@ abstract class Tribe__JSON_LD__Abstract {
 	 *
 	 * @return string
 	 */
-	public function get_markup( $post = null, $args = array() ) {
+	public function get_markup( $post = null, $args = [] ) {
 		$data = $this->get_data( $post, $args );
 		$type = strtolower( esc_attr( $this->type ) );
 		$this->set_type( $post, $type );
@@ -182,7 +182,7 @@ abstract class Tribe__JSON_LD__Abstract {
 		return ! empty( $html ) ? implode( "\r\n", $html ) : '';
 	}
 
-	public function markup( $post = null, $args = array() ) {
+	public function markup( $post = null, $args = [] ) {
 		$html = $this->get_markup( $post, $args );
 
 		/**
@@ -296,7 +296,7 @@ abstract class Tribe__JSON_LD__Abstract {
 		}
 
 		if ( empty( self::$types[ $id ] ) ) {
-			self::$types[ $id ] = array( $this->type );
+			self::$types[ $id ] = [ $this->type ];
 		} else {
 			self::$types[ $id ][] = $this->type;
 		}
@@ -343,8 +343,8 @@ abstract class Tribe__JSON_LD__Abstract {
 	 * Added for testing purposes.
 	 */
 	public static function unregister_all() {
-		self::$posts = array();
-		self::$types = array();
+		self::$posts = [];
+		self::$types = [];
 	}
 
 	/**

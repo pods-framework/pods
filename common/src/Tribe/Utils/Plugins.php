@@ -16,7 +16,7 @@ class Tribe__Utils__Plugins {
 	 * @return array Plugin data; keys match capitalized file header declarations.
 	 */
 	public static function get_plugin_data( $plugin_file ) {
-		$headers = array(
+		$headers = [
 			'Name'           => 'Plugin Name',
 			'PluginURI'      => 'Plugin URI',
 			'Version'        => 'Version',
@@ -28,7 +28,7 @@ class Tribe__Utils__Plugins {
 			'TextDomain'     => 'Text Domain',
 			'DomainPath'     => 'Domain Path',
 			'Network'        => 'Network',
-		);
+		];
 
 		/**
 		 * Filter which header keys passed to get_file_data().
@@ -65,7 +65,7 @@ class Tribe__Utils__Plugins {
 			$full_list = array_merge( $full_list, wp_get_active_network_plugins() );
 		}
 
-		$filtered_list = array();
+		$filtered_list = [];
 
 		foreach ( $full_list as $plugin ) {
 			$base = plugin_basename( $plugin );

@@ -190,13 +190,13 @@ class Tribe__Context {
 	 *
 	 * @var array
 	 */
-	protected static $associative_locations = array(
+	protected static $associative_locations = [
 		self::TRANSIENT,
 		self::METHOD,
 		self::STATIC_METHOD,
 		self::PROP,
 		self::STATIC_PROP,
-	);
+	];
 
 	/**
 	 * Whether the static dynamic locations were set or not.
@@ -213,7 +213,7 @@ class Tribe__Context {
 	 *
 	 * @var array
 	 */
-	protected $override_locations = array();
+	protected $override_locations = [];
 
 	/**
 	 * Whether the context of the current HTTP request is an AJAX one or not.
@@ -234,7 +234,8 @@ class Tribe__Context {
 	 *
 	 * @var array
 	 */
-	protected $request_cache = array();
+	protected $request_cache = [];
+
 	/**
 	 * Whether this context should use the default locations or not.
 	 * This flag property is set to `false` when a context is obtained using
@@ -280,8 +281,8 @@ class Tribe__Context {
 			return false;
 		}
 
-		if ( null !== $post_or_type ) {
-			$lookup = array( $_GET, $_POST, $_REQUEST );
+		if ( ! empty( $post_or_type ) ) {
+			$lookup = [ $_GET, $_POST, $_REQUEST ];
 
 			$current_post = Tribe__Utils__Array::get_in_any( $lookup, 'post', get_post() );
 
@@ -292,9 +293,9 @@ class Tribe__Context {
 				return ! empty( $post ) && $post == $current_post;
 			}
 
-			$post_types = is_array( $post_or_type ) ? $post_or_type : array( $post_or_type );
+			$post_types = is_array( $post_or_type ) ? $post_or_type : [ $post_or_type ];
 
-			$post = $is_post ? $current_post : null;
+			$post = $is_post ? get_post( $current_post ) : null;
 
 			if ( count( array_filter( $post_types, 'is_numeric' ) ) === count( $post_types ) ) {
 				return ! empty( $post ) && in_array( $post->ID, $post_types );
@@ -306,7 +307,7 @@ class Tribe__Context {
 				$post_type = Tribe__Utils__Array::get_in_any( $lookup, 'post_type', 'post' );
 			}
 
-			return (bool) count( array_intersect( $post_types, array( $post_type ) ) );
+			return (bool) count( array_intersect( $post_types, [ $post_type ] ) );
 		}
 
 		return $is_new || $is_post;
@@ -376,6 +377,7 @@ class Tribe__Context {
 
 		$value     = $default;
 		$locations = $this->get_locations();
+		$found     = false;
 
 		if ( ! $force && isset( $this->request_cache[ $key ] ) ) {
 			$value = $this->request_cache[ $key ];
@@ -384,6 +386,7 @@ class Tribe__Context {
 				$the_value = $this->$location( (array) $keys, $default );
 
 				if ( $default !== $the_value && static::NOT_FOUND !== $the_value ) {
+					$found = true;
 					$value = $the_value;
 					break;
 				}
@@ -400,6 +403,11 @@ class Tribe__Context {
 		 * @param  mixed  $value  The value as fetched from the context.
 		 */
 		$value = apply_filters( "tribe_context_{$key}", $value );
+
+		// Only cache if the value was found.
+		if ( $found ) {
+			$this->request_cache[ $key ] = $value;
+		}
 
 		return $value;
 	}
@@ -439,7 +447,7 @@ class Tribe__Context {
 		if ( null !== $key ) {
 			unset( $this->request_cache[ $key ] );
 		} else {
-			$this->request_cache = array();
+			$this->request_cache = [];
 		}
 	}
 
@@ -454,9 +462,24 @@ class Tribe__Context {
 	public function get_locations() {
 		$this->populate_locations();
 
-		return $this->use_default_locations
+		$locations = $this->use_default_locations
 			? array_merge( self::$locations, $this->override_locations )
 			: $this->override_locations;
+
+		if ( $this->use_default_locations ) {
+			/**
+			 * Filters the locations registered in the Context.
+			 *
+			 * @since 4.10.2
+			 *
+			 * @param $locations array           An array of read and write location in the shape of the `Tribe__Context::$locations` one,
+			 *                                   `[ <location> => [ 'read' => <read_locations>, 'write' => <write_locations> ] ]`.
+			 * @param $context   Tribe__Context  Current instance of the context.
+			 */
+			$locations = apply_filters( 'tribe_context_locations', $locations, $this );
+		}
+
+		return $locations;
 	}
 
 	/**
@@ -497,6 +520,11 @@ class Tribe__Context {
 		$value = $default;
 
 		global $wp_query;
+
+		if ( ! $wp_query instanceof \WP_Query ) {
+			return $value;
+		}
+
 		foreach ( $query_vars as $query_var ) {
 			$the_value = $wp_query->get( $query_var, self::NOT_FOUND );
 			if ( $the_value !== self::NOT_FOUND ) {
@@ -728,7 +756,7 @@ class Tribe__Context {
 
 		foreach ( $classes_and_methods as $class => $method ) {
 			$the_value = class_exists( $class ) && method_exists( $class, $method )
-				? call_user_func( array( $class, $method ) )
+				? call_user_func( [ $class, $method ] )
 				: self::NOT_FOUND;
 
 			if ( $the_value !== self::NOT_FOUND ) {
@@ -842,16 +870,16 @@ class Tribe__Context {
 				foreach ( $targets as $arg_1 => $arg_2 ) {
 					if ( self::FUNC === $location && is_array( $arg_2 ) && is_callable( $arg_2 ) ) {
 						// Handles write functions specified as an array.
-						$location_args = array( $arg_2 );
+						$location_args = [ $arg_2 ];
 					} else {
 						$location_args = in_array( $location, self::$associative_locations, true )
-							? array( $arg_1, $arg_2 )
+							? [ $arg_1, $arg_2 ]
 							: (array) $arg_2;
 					}
 
-					$args = array_merge( $location_args, array( $value ) );
+					$args = array_merge( $location_args, [ $value ] );
 
-					call_user_func_array( array( $this, $write_func ), $args );
+					call_user_func_array( [ $this, $write_func ], $args );
 				}
 			}
 		}
@@ -1030,7 +1058,7 @@ class Tribe__Context {
 		if ( ! class_exists( $class ) ) {
 			return;
 		}
-		call_user_func( array( $class, $method ), $value );
+		call_user_func( [ $class, $method ], $value );
 	}
 
 	/**
@@ -1046,7 +1074,7 @@ class Tribe__Context {
 		if ( ! tribe()->offsetExists( $binding ) ) {
 			return;
 		}
-		call_user_func( array( tribe( $binding ), $method ), $value );
+		call_user_func( [ tribe( $binding ), $method ], $value );
 	}
 
 	/**
@@ -1117,7 +1145,7 @@ class Tribe__Context {
 	 */
 	public function to_array(  ) {
 		$locations = array_keys( array_merge( $this->get_locations(), $this->request_cache ) );
-		$dump      = array();
+		$dump      = [];
 
 		foreach ( $locations as $location ) {
 			$the_value = $this->get( $location, self::NOT_FOUND );
@@ -1207,7 +1235,7 @@ class Tribe__Context {
 	public function get_orm_args( array $fields = null, $whitelist = true ) {
 		$locations         = $this->get_locations();
 		$dump              = $this->to_array();
-		$orm_args          = array();
+		$orm_args          = [];
 		$is_global_context = tribe_context() === $this;
 
 		foreach ( $dump as $key => $value ) {
@@ -1292,6 +1320,22 @@ class Tribe__Context {
 		static::$locations = apply_filters( 'tribe_context_locations', static::$locations, $this );
 
 		static::$did_populate_locations = true;
+	}
+
+	/**
+	 * Just dont...
+	 * Unless you very specifically know what you are doing **DO NOT USE THIS METHOD**!
+	 *
+	 * Please keep in mind this will set force the context to repopulate all locations for the whole request, expensive
+	 * and very dangerous overall since it could affect all this things we hold dear in the request.
+	 *
+	 * With great power comes great responsibility: think a lot before using this.
+	 *
+	 * @since 4.13.0
+	 */
+	public function dangerously_repopulate_locations() {
+		static::$did_populate_locations = false;
+		$this->populate_locations();
 	}
 
 	/**
@@ -1563,12 +1607,37 @@ class Tribe__Context {
 	 */
 	public function get_read_key_for( $location, $type = null ) {
 		$type = $type ?: static::REQUEST_VAR;
-		if ( isset( static::$locations[ $location ]['read'][ $type ] ) ) {
-			$keys = (array) static::$locations[ $location ]['read'][ $type ];
-
+		$locations = $this->get_locations();
+		if ( isset( $locations[ $location ]['read'][ $type ] ) ) {
+			$keys = (array) $locations[ $location ]['read'][ $type ];
 			return reset( $keys );
 		}
 
 		return $location;
+	}
+
+	/**
+	 * Safely set the value of a group of locations.
+	 *
+	 * This method can only augment the context, without altering it; it can only add new values.
+	 *
+	 * @since 4.10.2
+	 *
+	 * @param array|string $values The values to set, if not already set or the key of the value to set, requires
+	 *                             the `$value` to be passed.
+	 * @param mixed|null $value    The value to set for the key, this parameter will be ignored if the `$values_or_key`
+	 *                             parameter is not a string.
+	 */
+	public function safe_set( $values_or_key, $value = null ) {
+		$values = func_num_args() === 2
+			? [ $values_or_key => $value ]
+			: $values_or_key;
+
+		foreach ( $values as $key => $val ) {
+			if ( static::NOT_FOUND !== $this->get( $key, static::NOT_FOUND ) ) {
+				continue;
+			}
+			$this->request_cache[ $key ] = $val;
+		}
 	}
 }

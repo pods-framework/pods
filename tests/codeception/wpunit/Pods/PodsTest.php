@@ -2,6 +2,7 @@
 
 namespace Pods_Unit_Tests\Pods;
 
+use Pods;
 use Pods_Unit_Tests\Pods_UnitTestCase;
 
 /**
@@ -310,5 +311,31 @@ class PodsTest extends Pods_UnitTestCase {
 		$this->assertNull( $this->pod->__call( 'foo', array() ) );
 
 		$this->expectDeprecated();
+	}
+
+	/**
+	 * Test we can call a non-Pod post type.
+	 */
+	public function test_we_can_call_a_non_pod_post_type() {
+		register_post_type( 'my_test_cpt' );
+
+		$pod = pods( 'my_test_cpt' );
+
+		$this->assertInstanceOf( Pods::class, $pod );
+		$this->assertTrue( $pod->valid() );
+		$this->assertEquals( 'post_type', $pod->pod_data['type'] );
+	}
+
+	/**
+	 * Test we can call a non-Pod post type.
+	 */
+	public function test_we_can_call_a_non_pod_taxonomy() {
+		register_taxonomy( 'my_test_tax', 'post' );
+
+		$pod = pods( 'my_test_tax' );
+
+		$this->assertInstanceOf( Pods::class, $pod );
+		$this->assertTrue( $pod->valid() );
+		$this->assertEquals( 'taxonomy', $pod->pod_data['type'] );
 	}
 }

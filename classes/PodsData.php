@@ -240,7 +240,10 @@ class PodsData {
 		if ( $pod instanceof \Pods\Whatsit\Pod ) {
 			$this->pod_data = $pod;
 		} else {
-			$this->pod_data = $this->api->load_pod( [ 'name' => $pod ], false );
+			$this->pod_data = $this->api->load_pod( [
+				'name'       => $pod,
+				'auto_setup' => true,
+			], false );
 		}
 
 		if ( empty( $this->pod_data ) ) {

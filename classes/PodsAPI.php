@@ -10342,12 +10342,100 @@ class PodsAPI {
 			}
 		}
 
+		$storage_type = ! empty( $params['storage_type'] ) ? $params['storage_type'] : $this->get_default_object_storage_type();
+
 		$object_collection = Pods\Whatsit\Store::get_instance();
 
 		/** @var Pods\Whatsit\Storage\Post_Type $post_type_storage */
-		$post_type_storage = $object_collection->get_storage_object( $this->get_default_object_storage_type() );
+		$post_type_storage = $object_collection->get_storage_object( $storage_type );
 
 		$objects = $post_type_storage->find( $params );
+
+		if ( ! empty( $params['auto_setup'] ) && ! $objects ) {
+			$type = pods_v( 'type', $params, null );
+
+			$whatsit_args = null;
+
+			if ( 'user' === $params['name'] ) {
+				// Detect user.
+				$type = 'user';
+
+				// Setup the pod and return the request again.
+				$whatsit_args = [
+					'object_type' => 'pod',
+					'type'        => $type,
+					'name'        => $type,
+					'label'       => __( 'User', 'pods' ),
+				];
+			} elseif ( 'comment' === $params['name'] ) {
+				// Detect comment.
+				$type = 'comment';
+
+				$whatsit_args = [
+					'object_type' => 'pod',
+					'type'        => $type,
+					'name'        => $type,
+					'label'       => __( 'Comment', 'pods' ),
+				];
+			} elseif ( 'media' === $params['name'] || 'attachment' === $params['name'] ) {
+				// Detect media.
+				$type = 'media';
+
+				$whatsit_args = [
+					'object_type' => 'pod',
+					'type'        => $type,
+					'name'        => $type,
+					'label'       => __( 'Media', 'pods' ),
+				];
+			}
+
+			// Detect a post type.
+			if ( 'post_type' === $type || null === $type ) {
+				$post_type = get_post_type_object( $params['name'] );
+
+				if ( $post_type ) {
+					$type = 'post_type';
+
+					$whatsit_args = [
+						'object_type' => 'pod',
+						'type'        => $type,
+						'name'        => $post_type->name,
+						'label'       => $post_type->label,
+						'description' => $post_type->description,
+					];
+				}
+			}
+
+			// Detect a taxonomy.
+			if ( 'taxonomy' === $type || null === $type ) {
+				$taxonomy = get_taxonomy( $params['name'] );
+
+				if ( $taxonomy ) {
+					$type = 'taxonomy';
+
+					$whatsit_args = [
+						'object_type' => 'pod',
+						'type'        => $type,
+						'name'        => $taxonomy->name,
+						'label'       => $taxonomy->label,
+						'description' => $taxonomy->description,
+					];
+				}
+			}
+
+			// Setup the pod and return the request again.
+			if ( null !== $whatsit_args ) {
+				// Set up the params for the next call.
+				$params['auto_setup']   = false;
+				$params['storage_type'] = 'collection';
+
+				$pod = new Pod( $whatsit_args );
+
+				$object_collection->register_object( $pod );
+
+				return $this->_load_objects( $params );
+			}
+		}
 
 		if ( ! empty( $params['return_type'] ) ) {
 			$return_type = $params['return_type'];

@@ -170,7 +170,7 @@ class Pods implements Iterator {
 	 * @since 2.0.0
 	 */
 	public function valid() {
-		if ( empty( $this->pod_id ) ) {
+		if ( empty( $this->pod_data ) ) {
 			return false;
 		}
 
@@ -3109,12 +3109,14 @@ class Pods implements Iterator {
 	 * @since 2.1.1
 	 */
 	public function reset_pod() {
-
-		$params = array( 'id' => $this->pod_id );
+		$params = [
+			'id'   => $this->pod_id,
+			'name' => $this->pod,
+		];
 
 		$this->data->id   = null;
-		$this->data->row  = array();
-		$this->data->data = array();
+		$this->data->row  = [];
+		$this->data->data = [];
 
 		$this->data->total       = 0;
 		$this->data->total_found = 0;

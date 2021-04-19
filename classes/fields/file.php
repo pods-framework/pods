@@ -1116,8 +1116,11 @@ class PodsField_File extends PodsField {
 				$ok        = false;
 
 				if ( isset( $file_info['extension'] ) ) {
+					// Enforce lowercase for the extension checking.
+					$file_info['extension'] = strtolower( $file_info['extension'] );
+
 					foreach ( $limit_types as $limit_type ) {
-						$limit_type = trim( $limit_type, ' .' );
+						$limit_type = strtolower( trim( $limit_type, ' .' ) );
 
 						if ( $limit_type === $file_info['extension'] ) {
 							$ok = true;

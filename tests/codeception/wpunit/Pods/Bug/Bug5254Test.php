@@ -1,13 +1,13 @@
 <?php
 
-namespace Pods_Unit_tests\Bugs;
+namespace Pods_Unit_Tests\Bugs;
 
 /**
  * @package Pods_Unit_Tests
  * @group   pods_acceptance_tests
  * @group   pods-issue-5254
  */
-class Bug_5254 extends \Pods_Unit_Tests\Pods_UnitTestCase {
+class Bug_5254Test extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	/*
 	 * This should probably get rolled into extensive includes/data.php coverage

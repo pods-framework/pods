@@ -1,13 +1,13 @@
 <?php
 
-namespace Pods_Unit_tests\Bugs;
+namespace Pods_Unit_Tests\Bugs;
 
 /**
  * @package Pods_Unit_Tests
  * @group   pods_acceptance_tests
  * @group   pods-issue-5254
  */
-class Bug_5909 extends \Pods_Unit_Tests\Pods_UnitTestCase {
+class Bug_5909Test extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	/*
 	 * Tests for Pod options and Pod fiels options to be stored properly.

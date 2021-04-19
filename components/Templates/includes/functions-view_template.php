@@ -527,7 +527,7 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 }
 
 /**
- * processes template code within an each command from the base template
+ * Processes template code within an each command from the base template.
  *
  * @param array attributes from template
  * @param string template to be processed
@@ -587,15 +587,6 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 							$value = $match[0][2];
 						} else {
 							$field = trim( $matches[2][ $key ] );
-						}
-						if ( false !== strpos( $field, '.' ) ) {
-							if ( 'if' === $command ) {
-								$ID = '{@' . $pod->api->pod_data['field_id'] . '}';
-							} else {
-								$path  = explode( '.', $field );
-								$field = array_pop( $path );
-								$ID    = '{@' . implode( '.', $path ) . '.' . $pod->api->pod_data['field_id'] . '}';
-							}
 						}
 						$atts = ' id="' . $ID . '" pod="@pod" field="' . $field . '"';
 						if ( ! empty( $value ) ) {

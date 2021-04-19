@@ -126,7 +126,7 @@ function frontier_if_block( $atts, $code ) {
 	} else {
 
 		/**
-		 * @since 2.7.16 Iterate recursively over magic tag fields (relationships).
+		 * @since 2.7.27 Iterate recursively over magic tag fields (relationships).
 		 * @todo Refactor to only use the Pods::field() method.
 		 */
 		$fields    = explode( '.', $atts['field'] );

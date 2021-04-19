@@ -190,7 +190,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
-= 2.7.27 - March 4th, 2021 =
+= 2.7.27 - April 19th, 2021 =
 
 * Added: Support taxonomy and other object field filters in Pods::find(). #5994 (@JoryHogeveen)
 * Added: WP 5.7 `filter_by_item` and `filter_by_date` labels. #5959 (@JoryHogeveen)

@@ -127,6 +127,7 @@ function frontier_if_block( $atts, $code ) {
 
 		/**
 		 * @since 2.7.16 Iterate recursively over magic tag fields (relationships).
+		 * @todo Refactor to only use the Pods::field() method.
 		 */
 		$fields    = explode( '.', $atts['field'] );
 		$field_pod = $pod;
@@ -137,7 +138,8 @@ function frontier_if_block( $atts, $code ) {
 			$field = $field_name;
 			if ( ++$counter < $total ) {
 
-				if ( 'pick' !== $field_pod->fields( $field, 'type' ) ) {
+				$field_type = $field_pod->fields( $field, 'type' );
+				if ( ! in_array( $field_type, array( 'pick', 'taxonomy' ), true ) ) {
 					// Relationship type required.
 					break;
 				}

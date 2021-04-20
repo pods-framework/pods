@@ -410,23 +410,30 @@ function pods_image_resize( $attachment_id, $size ) {
  *
  * @since 2.5.0
  *
- * @param string|array $url  Can be a URL of the source file, or a Pods audio field.
- * @param bool|array   $args Optional. Additional arguments to pass to wp_audio_shortcode().
+ * @param string|array|int $url  The URL string, an array of post information, or an attachment ID.
+ * @param bool|array       $args Optional. Additional arguments to pass to wp_audio_shortcode().
  *
  * @return string
  */
 function pods_audio( $url, $args = false ) {
 
+	// Support arrays.
 	if ( is_array( $url ) ) {
-		if ( ! is_null( pods_v( 'ID', $url ) ) ) {
-			$id  = pods_v( 'ID', $url );
-			$url = wp_get_attachment_url( $id );
-		} else {
-			return;
-		}
+		$url = pods_v( 'ID', $url );
 	}
 
-	$audio_args = array( 'src' => $url );
+	// Support IDs.
+	if ( is_numeric( $url ) ) {
+		$url = wp_get_attachment_url( (int) $url );
+	}
+
+	if ( empty( $url ) || ! is_string( $url ) ) {
+		return '';
+	}
+
+	$audio_args = array(
+		'src' => $url,
+	);
 
 	if ( is_array( $args ) ) {
 		$audio_args = array_merge( $audio_args, $args );
@@ -443,23 +450,30 @@ function pods_audio( $url, $args = false ) {
  *
  * @since 2.5.0
  *
- * @param string|array $url  Can be a URL of the source file, or a Pods video field.
- * @param bool|array   $args Optional. Additional arguments to pass to wp_video_shortcode().
+ * @param string|array|int $url  The URL string, an array of post information, or an attachment ID.
+ * @param bool|array       $args Optional. Additional arguments to pass to wp_video_shortcode().
  *
  * @return string
  */
 function pods_video( $url, $args = false ) {
 
+	// Support arrays.
 	if ( is_array( $url ) ) {
-		if ( ! is_null( pods_v( 'ID', $url ) ) ) {
-			$id  = pods_v( 'ID', $url );
-			$url = wp_get_attachment_url( $id );
-		} else {
-			return;
-		}
+		$url = pods_v( 'ID', $url );
 	}
 
-	$video_args = array( 'src' => $url );
+	// Support IDs.
+	if ( is_numeric( $url ) ) {
+		$url = wp_get_attachment_url( (int) $url );
+	}
+
+	if ( empty( $url ) || ! is_string( $url ) ) {
+		return '';
+	}
+
+	$video_args = array(
+		'src' => $url,
+	);
 
 	if ( is_array( $args ) ) {
 		$video_args = array_merge( $video_args, $args );

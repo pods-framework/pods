@@ -422,9 +422,7 @@ function pods_audio( $url, $args = false ) {
 		if ( is_array( $id ) ) {
 			$id = pods_v( 'ID', $url );
 		}
-		if ( is_numeric( $id ) ) {
-			$url = wp_get_attachment_url( $id );
-		}
+		$url = wp_get_attachment_url( $id );
 	}
 
 	if ( ! $url ) {
@@ -460,9 +458,7 @@ function pods_video( $url, $args = false ) {
 		if ( is_array( $id ) ) {
 			$id = pods_v( 'ID', $url );
 		}
-		if ( is_numeric( $id ) ) {
-			$url = wp_get_attachment_url( $id );
-		}
+		$url = wp_get_attachment_url( $id );
 	}
 
 	if ( ! $url ) {

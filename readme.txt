@@ -199,6 +199,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Enhancement: Use correct pagination item classes. #5179 (@JoryHogeveen)
 * Fixed: Prevent incorrect sanitizing of option fields since 2.7.25. #5909 (@JoryHogeveen)
 * Fixed: Traversal display filters for single and multiple relationships. #5985 (@JoryHogeveen)
+* Fixed: Support capitalized file extensions. #5975 (@sc0ttkclark, @JoryHogeveen)
 * Fixed: Resolved PHP notice in the PodsAPI. #5952 (@JoryHogeveen, @sc0ttkclark)
 * Fixed: Resolved PHP notice when using `?pods_debug_sql=1` on Pods Admin UI screens. (@sc0ttkclark)
 * Fixed: Stop tracking Freemius add-ons and rely on just Pods itself. #5981 (@sc0ttkclark)

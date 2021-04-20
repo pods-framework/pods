@@ -423,8 +423,8 @@ function pods_audio( $url, $args = false ) {
 	}
 
 	// Support IDs.
-	if ( false !== strpos( $url, '://' ) && is_numeric( $url ) ) {
-		$url = wp_get_attachment_url( $url );
+	if ( is_numeric( $url ) ) {
+		$url = wp_get_attachment_url( (int) $url );
 	}
 
 	if ( empty( $url ) || ! is_string( $url ) ) {
@@ -463,8 +463,8 @@ function pods_video( $url, $args = false ) {
 	}
 
 	// Support IDs.
-	if ( false !== strpos( $url, '://' ) && is_numeric( $url ) ) {
-		$url = wp_get_attachment_url( $url );
+	if ( is_numeric( $url ) ) {
+		$url = wp_get_attachment_url( (int) $url );
 	}
 
 	if ( empty( $url ) || ! is_string( $url ) ) {

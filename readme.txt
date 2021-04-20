@@ -204,7 +204,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Fixed: Resolved PHP notice in the PodsAPI. #5952 (@JoryHogeveen, @sc0ttkclark)
 * Fixed: Resolved PHP notice when using `?pods_debug_sql=1` on Pods Admin UI screens. (@sc0ttkclark)
 * Fixed: Stop tracking Freemius add-ons and rely on just Pods itself. #5981 (@sc0ttkclark)
-* Fixed: Prevent potentially unsafe HTML tags from being used in admin menu text. (@sc0ttkclark)
+* Fixed: Prevent potentially unsafe HTML tags from being used in admin menu text. (@sc0ttkclark, props to Hagai Wechsler and Daniel Elkabes from WhiteSource Software)
 
 = 2.7.26 - January 8th, 2021 =
 

@@ -197,6 +197,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Added: `pagination_type` shortcode param. #5977 (@JoryHogeveen)
 * Enhancement: Allow ID as parameter for `pods_audio()` and `pods_video()`. #5999 (@JoryHogeveen, @sc0ttkclark)
 * Enhancement: Use correct pagination item classes. #5179 (@JoryHogeveen)
+* Fixed: Polylang compatibility for populating default field values. #5879 (@Chouby, @JoryHogeveen)
 * Fixed: Prevent incorrect sanitizing of option fields since 2.7.25. #5909 (@JoryHogeveen)
 * Fixed: Traversal display filters for single and multiple relationships. #5985 (@JoryHogeveen)
 * Fixed: Support capitalized file extensions. #5975 (@sc0ttkclark, @JoryHogeveen)

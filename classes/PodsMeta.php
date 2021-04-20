@@ -1113,7 +1113,7 @@ class PodsMeta {
 
 		$id = null;
 
-		if ( is_object( $post ) && false === strpos( $_SERVER['REQUEST_URI'], '/post-new.php' ) ) {
+		if ( is_object( $post ) ) {
 			$id = $post->ID;
 		}
 
@@ -1161,7 +1161,7 @@ class PodsMeta {
 					$field['type'] = 'hidden';
 				}
 
-				$value = '';
+				$value = null;
 
 				if ( ! empty( $pod ) ) {
 					pods_no_conflict_on( 'post' );
@@ -1171,6 +1171,11 @@ class PodsMeta {
 					pods_no_conflict_off( 'post' );
 				} elseif ( ! empty( $id ) ) {
 					$value = get_post_meta( $id, $field['name'], true );
+				}
+
+				if ( ! $value && ! is_numeric( $value ) && 'add' === get_current_screen()->action ) {
+					// Revert to default.
+					$value = null;
 				}
 
 				if ( 'hidden' == $field['type'] ) {

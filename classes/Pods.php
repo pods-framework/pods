@@ -1777,10 +1777,13 @@ class Pods implements Iterator {
 											}
 
 											$params->raw_display = true;
-										} elseif ( false !== strpos( $full_field, '_img' ) && ( in_array( $table['type'], array(
-											'attachment',
-											'media',
-										), true ) || in_array( $last_type, PodsForm::file_field_types(), true ) ) ) {
+										} elseif (
+											false !== strpos( $full_field, '_img' ) &&
+											(
+												in_array( $table['type'], array( 'attachment', 'media', ), true ) ||
+												in_array( $last_type, PodsForm::file_field_types(), true )
+											)
+										) {
 											$size = 'full';
 
 											if ( false !== strpos( $full_field, '_img.' ) && 5 < strlen( $full_field ) ) {
@@ -1790,10 +1793,7 @@ class Pods implements Iterator {
 											$value[] = pods_image( $item_id, $size, 0, array(), true );
 
 											$params->raw_display = true;
-										} elseif ( in_array( $field, array(
-											'_link',
-											'detail_url',
-										), true ) || in_array( $field, array( 'permalink', 'the_permalink' ), true ) ) {
+										} elseif ( in_array( $field, $permalink_fields, true ) ) {
 											if ( 'pod' === $object_type ) {
 												if ( is_object( $related_obj ) ) {
 													$related_obj->fetch( $item_id );
@@ -1927,18 +1927,34 @@ class Pods implements Iterator {
 				$filter = pods_v( 'display_filter', $field_data['options'] );
 
 				if ( 0 < strlen( $filter ) ) {
-					$args = array(
-						$filter,
-						$value,
-					);
 
-					$filter_args = pods_v( 'display_filter_args', $field_data['options'] );
-
-					if ( ! empty( $filter_args ) ) {
-						$args = array_merge( $args, compact( $filter_args ) );
+					if ( $params->single ) {
+						$value = array( $value );
 					}
 
-					$value = call_user_func_array( 'apply_filters', $args );
+					foreach ( $value as $key => $val ) {
+
+						$args = array(
+							$filter,
+							$val,
+						);
+
+						$filter_args = pods_v( 'display_filter_args', $field_data['options'] );
+
+						if ( ! empty( $filter_args ) ) {
+							$args = array_merge( $args, compact( $filter_args ) );
+						}
+
+						$val = call_user_func_array( 'apply_filters', $args );
+
+						$value[ $key ] = $val;
+
+					}
+
+					if ( $params->single ) {
+						$value = reset( $value );
+					}
+
 				} elseif ( 1 === (int) pods_v( 'display_process', $field_data['options'], 1 ) ) {
 					$value = PodsForm::display( $field_data['type'], $value, $params->name, array_merge( $field_data, $field_data['options'] ), $this->pod_data, $this->id() );
 				}

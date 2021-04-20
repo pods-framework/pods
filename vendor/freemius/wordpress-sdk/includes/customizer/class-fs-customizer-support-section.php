@@ -87,10 +87,10 @@
 					<div class="button-group">
 					<# } #>
 						<# if ( data.contact ) { #>
-							<a class="button" href="{{ data.contact.url }}" target="_blank">{{ data.contact.label }} </a>
+							<a class="button" href="{{ data.contact.url }}" target="_blank" rel="noopener noreferrer">{{ data.contact.label }} </a>
 							<# } #>
 						<# if ( data.support ) { #>
-							<a class="button" href="{{ data.support.url }}" target="_blank">{{ data.support.label }} </a>
+							<a class="button" href="{{ data.support.url }}" target="_blank" rel="noopener noreferrer">{{ data.support.label }} </a>
 							<# } #>
 					<# if ( data.contact && data.support ) { #>
 					</div>

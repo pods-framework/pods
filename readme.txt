@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.6
 Requires PHP: 5.3
-Stable tag: 2.7.27-a-1
+Stable tag: 2.7.27
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -190,7 +190,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
-= 2.7.27 - April 19th, 2021 =
+= 2.7.27 - April 20th, 2021 =
 
 * Added: Support taxonomy and other object field filters in Pods::find(). #5994 (@JoryHogeveen)
 * Added: WP 5.7 `filter_by_item` and `filter_by_date` labels. #5959 (@JoryHogeveen)
@@ -204,6 +204,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Fixed: Resolved PHP notice in the PodsAPI. #5952 (@JoryHogeveen, @sc0ttkclark)
 * Fixed: Resolved PHP notice when using `?pods_debug_sql=1` on Pods Admin UI screens. (@sc0ttkclark)
 * Fixed: Stop tracking Freemius add-ons and rely on just Pods itself. #5981 (@sc0ttkclark)
+* Fixed: Prevent potentially unsafe HTML tags from being used in admin menu text. (@sc0ttkclark)
 
 = 2.7.26 - January 8th, 2021 =
 

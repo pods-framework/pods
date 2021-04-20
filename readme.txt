@@ -195,6 +195,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Added: Support taxonomy and other object field filters in Pods::find(). #5994 (@JoryHogeveen)
 * Added: WP 5.7 `filter_by_item` and `filter_by_date` labels. #5959 (@JoryHogeveen)
 * Added: `pagination_type` shortcode param. #5977 (@JoryHogeveen)
+* Enhancement: Allow ID as parameter for `pods_audio()` and `pods_video()`. #5999 (@JoryHogeveen, @sc0ttkclark)
 * Enhancement: Use correct pagination item classes. #5179 (@JoryHogeveen)
 * Fixed: Prevent incorrect sanitizing of option fields since 2.7.25. #5909 (@JoryHogeveen)
 * Fixed: Traversal display filters for single and multiple relationships. #5985 (@JoryHogeveen)

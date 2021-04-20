@@ -410,20 +410,25 @@ function pods_image_resize( $attachment_id, $size ) {
  *
  * @since 2.5.0
  *
- * @param string|array $url  Can be a URL of the source file, or a Pods audio field.
- * @param bool|array   $args Optional. Additional arguments to pass to wp_audio_shortcode().
+ * @param string|array|int $url  Can be a URL of the source file, or a Pods audio field.
+ * @param bool|array       $args Optional. Additional arguments to pass to wp_audio_shortcode().
  *
  * @return string
  */
 function pods_audio( $url, $args = false ) {
 
-	if ( is_array( $url ) ) {
-		if ( ! is_null( pods_v( 'ID', $url ) ) ) {
-			$id  = pods_v( 'ID', $url );
-			$url = wp_get_attachment_url( $id );
-		} else {
-			return;
+	if ( ! is_string( $url ) ) {
+		$id = $url;
+		if ( is_array( $id ) ) {
+			$id = pods_v( 'ID', $url );
 		}
+		if ( is_numeric( $id ) ) {
+			$url = wp_get_attachment_url( $id );
+		}
+	}
+
+	if ( ! $url ) {
+		return '';
 	}
 
 	$audio_args = array( 'src' => $url );
@@ -443,20 +448,25 @@ function pods_audio( $url, $args = false ) {
  *
  * @since 2.5.0
  *
- * @param string|array $url  Can be a URL of the source file, or a Pods video field.
- * @param bool|array   $args Optional. Additional arguments to pass to wp_video_shortcode().
+ * @param string|array|int $url  Can be a URL of the source file, or a Pods video field.
+ * @param bool|array       $args Optional. Additional arguments to pass to wp_video_shortcode().
  *
  * @return string
  */
 function pods_video( $url, $args = false ) {
 
-	if ( is_array( $url ) ) {
-		if ( ! is_null( pods_v( 'ID', $url ) ) ) {
-			$id  = pods_v( 'ID', $url );
-			$url = wp_get_attachment_url( $id );
-		} else {
-			return;
+	if ( ! is_string( $url ) ) {
+		$id = $url;
+		if ( is_array( $id ) ) {
+			$id = pods_v( 'ID', $url );
 		}
+		if ( is_numeric( $id ) ) {
+			$url = wp_get_attachment_url( $id );
+		}
+	}
+
+	if ( ! $url ) {
+		return '';
 	}
 
 	$video_args = array( 'src' => $url );

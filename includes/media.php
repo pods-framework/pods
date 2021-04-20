@@ -419,7 +419,7 @@ function pods_audio( $url, $args = false ) {
 
 	if ( ! is_string( $url ) ) {
 		$id = $url;
-		if ( is_array( $id ) ) {
+		if ( ! is_numeric( $id ) ) {
 			$id = pods_v( 'ID', $url );
 		}
 		$url = wp_get_attachment_url( $id );
@@ -455,7 +455,7 @@ function pods_video( $url, $args = false ) {
 
 	if ( ! is_string( $url ) ) {
 		$id = $url;
-		if ( is_array( $id ) ) {
+		if ( ! is_numeric( $id ) ) {
 			$id = pods_v( 'ID', $url );
 		}
 		$url = wp_get_attachment_url( $id );

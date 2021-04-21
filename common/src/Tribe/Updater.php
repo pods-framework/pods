@@ -90,7 +90,7 @@ class Tribe__Updater {
 	 * @return array
 	 */
 	public function get_update_callbacks() {
-		return array();
+		return [];
 	}
 
 	/**
@@ -102,9 +102,9 @@ class Tribe__Updater {
 	 * @return array
 	 */
 	public function get_constant_update_callbacks() {
-		return array(
-			array( $this, 'flush_rewrites' ),
-		);
+		return [
+			[ $this, 'flush_rewrites' ],
+		];
 	}
 
 	/**

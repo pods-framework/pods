@@ -15,8 +15,9 @@ class Tribe__Freemius {
 	private $instances = [];
 
 	/**
-	 * Loading of the vendor files for Freemius vendor
-	 * Freemius class should only be loaded once since it will be registred as a Singleton
+	 * Load the vendor files for Freemius vendor.
+	 *
+	 * Freemius class should only be loaded once since it will be registered as a Singleton.
 	 *
 	 * @since  4.9.5
 	 */

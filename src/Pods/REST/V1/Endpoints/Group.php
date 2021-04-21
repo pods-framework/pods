@@ -6,15 +6,9 @@ use Tribe__Documentation__Swagger__Provider_Interface as Swagger_Interface;
 use Tribe__REST__Endpoints__DELETE_Endpoint_Interface as DELETE_Interface;
 use Tribe__REST__Endpoints__READ_Endpoint_Interface as READ_Interface;
 use Tribe__REST__Endpoints__UPDATE_Endpoint_Interface as UPDATE_Interface;
-use WP_Error;
 use WP_REST_Request;
 
-class Group
-	extends Base
-	implements READ_Interface,
-	UPDATE_Interface,
-	DELETE_Interface,
-	Swagger_Interface {
+class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Interface, Swagger_Interface {
 
 	/**
 	 * {@inheritdoc}
@@ -22,6 +16,13 @@ class Group
 	 * @since 2.8
 	 */
 	public $route = '/groups/%1$d';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since 2.8
+	 */
+	public $object = 'group';
 
 	/**
 	 * {@inheritdoc}
@@ -39,11 +40,11 @@ class Group
 
 		return [
 			'get' => [
-				'summary'    => __( 'Returns a single ticket data', 'pods' ),
+				'summary'    => __( 'Returns a single ticket data.', 'pods' ),
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => __( 'Returns the data of the ticket with the specified post ID', 'pods' ),
+						'description' => __( 'Returns the data of the ticket with the specified post ID.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -97,14 +98,19 @@ class Group
 			'id'             => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID', 'pods' ),
+				'description'       => __( 'The Group ID.', 'pods' ),
 				'required'          => true,
-				'validate_callback' => [ $this->validator, 'is_positive_int' ],
+				'validate_callback' => [ $this->validator, 'is_group_id' ],
 			],
 			'include_fields' => [
 				'type'        => 'integer',
-				'description' => __( 'Whether to include fields (default: off)', 'pods' ),
-				'default'     => 0,
+				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
+				'default'     => '0',
+				'enum'        => [
+					'0',
+					'1',
+				],
+				'cli_boolean' => true,
 			],
 		];
 	}
@@ -115,11 +121,18 @@ class Group
 	 * @since 2.8
 	 */
 	public function get( WP_REST_Request $request ) {
-		$id = $request['id'];
+		return $this->get_by_args( 'id', 'id', $request );
+	}
 
-		return $this->get_by_args( [
-			'id' => $id,
-		], $request );
+	/**
+	 * Determine whether access to READ is available.
+	 *
+	 * @since 2.8
+	 *
+	 * @return bool Whether access to READ is available.
+	 */
+	public function can_read() {
+		return pods_is_admin( 'pods' );
 	}
 
 	/**
@@ -129,12 +142,29 @@ class Group
 	 */
 	public function EDIT_args() {
 		return [
-			'id' => [
+			'id'    => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID', 'pods' ),
+				'description'       => __( 'The Group ID.', 'pods' ),
 				'required'          => true,
-				'validate_callback' => [ $this->validator, 'is_positive_int' ],
+				'validate_callback' => [ $this->validator, 'is_group_id' ],
+			],
+			'name'  => [
+				'type'        => 'string',
+				'description' => __( 'The new name of the Group.', 'pods' ),
+			],
+			'label' => [
+				'type'        => 'string',
+				'description' => __( 'The singular label of the Group.', 'pods' ),
+			],
+			'type'  => [
+				'type'        => 'string',
+				'description' => __( 'The type of the Group.', 'pods' ),
+			],
+			'args'  => [
+				'required'     => false,
+				'description'  => __( 'A list of additional options to save to the Group.', 'pods' ),
+				'swagger_type' => 'array',
 			],
 		];
 	}
@@ -145,11 +175,11 @@ class Group
 	 * @since 2.8
 	 */
 	public function update( WP_REST_Request $request ) {
-		$id = $request['id'];
+		if ( ! empty( $request['fields'] ) ) {
+			$request->set_param( 'fields', null );
+		}
 
-		return $this->get_by_args( [
-			'id' => $id,
-		], $request );
+		return $this->update_by_args( 'id', 'id', $request );
 	}
 
 	/**
@@ -158,8 +188,7 @@ class Group
 	 * @since 2.8
 	 */
 	public function can_edit() {
-		// @todo Check Pods permissions
-		return true;
+		return pods_is_admin( 'pods' );
 	}
 
 	/**
@@ -169,12 +198,12 @@ class Group
 	 */
 	public function DELETE_args() {
 		return [
-			'id' => [
+			'id'         => [
 				'type'              => 'integer',
 				'in'                => 'path',
-				'description'       => __( 'The ID', 'pods' ),
+				'description'       => __( 'The Group ID.', 'pods' ),
 				'required'          => true,
-				'validate_callback' => [ $this->validator, 'is_positive_int' ],
+				'validate_callback' => [ $this->validator, 'is_group_id' ],
 			],
 		];
 	}
@@ -185,11 +214,7 @@ class Group
 	 * @since 2.8
 	 */
 	public function delete( WP_REST_Request $request ) {
-		$id = $request['id'];
-
-		return $this->get_by_args( [
-			'id' => $id,
-		], $request );
+		return $this->delete_by_args( 'id', 'id', $request );
 	}
 
 	/**
@@ -198,38 +223,6 @@ class Group
 	 * @since 2.8
 	 */
 	public function can_delete() {
-		// @todo Check Pods permissions
-		return true;
-	}
-
-	/**
-	 * Get the response using PodsAPI::load_group() arguments.
-	 *
-	 * @since 2.8
-	 *
-	 * @param array           $args    List of PodsAPI::load_group() arguments.
-	 * @param WP_REST_Request $request The request object.
-	 *
-	 * @return array|WP_Error The response or an error.
-	 * @throws \Exception
-	 */
-	public function get_by_args( array $args, WP_REST_Request $request ) {
-		$group = pods_api()->load_group( $args );
-
-		if ( empty( $group ) ) {
-			// @todo Fix error messaging.
-			return new WP_Error( 'no', 'Group not found' );
-		}
-
-		$data = [
-			'group' => $group,
-		];
-
-		if ( 1 === $request['include_fields'] ) {
-			// Setup fields.
-			$data['fields'] = $group->get_fields();
-		}
-
-		return $data;
+		return pods_is_admin( 'pods' );
 	}
 }

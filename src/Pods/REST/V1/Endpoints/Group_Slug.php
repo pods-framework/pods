@@ -4,15 +4,14 @@ namespace Pods\REST\V1\Endpoints;
 
 use WP_REST_Request;
 
-class Group_Slug
-	extends Group {
+class Group_Slug extends Group {
 
 	/**
 	 * {@inheritdoc}
 	 *
 	 * @since 2.8
 	 */
-	public $route = '/groups/%1$s';
+	public $route = '/pods/%1$s/groups/%2$s';
 
 	/**
 	 * {@inheritdoc}
@@ -21,16 +20,28 @@ class Group_Slug
 	 */
 	public function READ_args() {
 		return [
+			'pod'            => [
+				'type'              => 'string',
+				'in'                => 'path',
+				'description'       => __( 'The Pod slug.', 'pods' ),
+				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
 			'slug'           => [
 				'type'        => 'string',
 				'in'          => 'path',
-				'description' => __( 'The slug', 'pods' ),
+				'description' => __( 'The Group slug.', 'pods' ),
 				'required'    => true,
 			],
 			'include_fields' => [
 				'type'        => 'integer',
-				'description' => __( 'Whether to include fields (default: off)', 'pods' ),
-				'default'     => 0,
+				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
+				'default'     => '0',
+				'enum'        => [
+					'0',
+					'1',
+				],
+				'cli_boolean' => true,
 			],
 		];
 	}
@@ -41,11 +52,7 @@ class Group_Slug
 	 * @since 2.8
 	 */
 	public function get( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_by_args( [
-			'name' => $slug,
-		], $request );
+		return $this->get_by_args( 'slug', 'name', $request );
 	}
 
 	/**
@@ -55,11 +62,35 @@ class Group_Slug
 	 */
 	public function EDIT_args() {
 		return [
-			'slug' => [
-				'type'        => 'string',
+			'pod'      => [
+				'type'              => 'string',
 				'in'                => 'path',
-				'description' => __( 'The slug', 'pods' ),
+				'description'       => __( 'The Pod slug.', 'pods' ),
 				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
+			'slug'     => [
+				'type'        => 'string',
+				'in'          => 'path',
+				'description' => __( 'The Field slug.', 'pods' ),
+				'required'    => true,
+			],
+			'new_name' => [
+				'type'        => 'string',
+				'description' => __( 'The new name of the Group.', 'pods' ),
+			],
+			'label'    => [
+				'type'        => 'string',
+				'description' => __( 'The singular label of the Group.', 'pods' ),
+			],
+			'type'     => [
+				'type'        => 'string',
+				'description' => __( 'The type of the Group.', 'pods' ),
+			],
+			'args'     => [
+				'required'     => false,
+				'description'  => __( 'A list of additional options to save to the Group.', 'pods' ),
+				'swagger_type' => 'array',
 			],
 		];
 	}
@@ -70,21 +101,7 @@ class Group_Slug
 	 * @since 2.8
 	 */
 	public function update( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_by_args( [
-			'name' => $slug,
-		], $request );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since 2.8
-	 */
-	public function can_edit() {
-		// @todo Check Pods permissions
-		return true;
+		return $this->update_by_args( 'slug', 'name', $request );
 	}
 
 	/**
@@ -94,11 +111,18 @@ class Group_Slug
 	 */
 	public function DELETE_args() {
 		return [
+			'pod'  => [
+				'type'              => 'string',
+				'in'                => 'path',
+				'description'       => __( 'The Pod slug.', 'pods' ),
+				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
 			'slug' => [
 				'type'        => 'string',
-				'in'                => 'path',
-				'description' => __( 'The slug', 'pods' ),
-				'required'          => true,
+				'in'          => 'path',
+				'description' => __( 'The Group slug.', 'pods' ),
+				'required'    => true,
 			],
 		];
 	}
@@ -109,20 +133,6 @@ class Group_Slug
 	 * @since 2.8
 	 */
 	public function delete( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_by_args( [
-			'name' => $slug,
-		], $request );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since 2.8
-	 */
-	public function can_delete() {
-		// @todo Check Pods permissions
-		return true;
+		return $this->delete_by_args( 'slug', 'name', $request );
 	}
 }

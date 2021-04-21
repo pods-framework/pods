@@ -54,7 +54,8 @@ class PodsField_OEmbed extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'oEmbed', 'pods' );
+		static::$group = __( 'Relationships / Media', 'pods' );
+		static::$label = __( 'oEmbed', 'pods' );
 	}
 
 	/**
@@ -120,12 +121,13 @@ class PodsField_OEmbed extends PodsField {
 			);
 			$options[ static::$type . '_enable_providers' ]   = array(
 				'label'      => __( 'Select enabled providers', 'pods' ),
+				'type'  => 'boolean_group',
 				'depends-on' => array( static::$type . '_restrict_providers' => true ),
-				'group'      => array(),
+				'boolean_group'      => array(),
 			);
 			// Add all the oEmbed providers
 			foreach ( $unique_providers as $provider ) {
-				$options[ static::$type . '_enable_providers' ]['group'][ static::$type . '_enabled_providers_' . tag_escape( $provider ) ] = array(
+				$options[ static::$type . '_enable_providers' ]['boolean_group'][ static::$type . '_enabled_providers_' . tag_escape( $provider ) ] = array(
 					'label'   => $provider,
 					'type'    => 'boolean',
 					'default' => 0,
@@ -190,15 +192,31 @@ class PodsField_OEmbed extends PodsField {
 			$options['readonly'] = true;
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/oembed.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/oembed.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
@@ -206,7 +224,7 @@ class PodsField_OEmbed extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}
 			}
@@ -216,7 +234,7 @@ class PodsField_OEmbed extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**

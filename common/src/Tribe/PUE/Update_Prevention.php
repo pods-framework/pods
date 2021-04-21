@@ -20,7 +20,7 @@ class Update_Prevention {
 	 *
 	 * @param  string $content Contents of the file in question.
 	 *
-	 * @return array  Named array with [ class_name => version ] or empty if it didnt find it.
+	 * @return array  Named array with [ class_name => version ] or empty if it didn't find it.
 	 */
 	public function get_dependencies( $content ) {
 		$regex = "/'(?<plugin>[^']*)'(?:[^']*)'(?<version>[^']*)',/";
@@ -36,7 +36,7 @@ class Update_Prevention {
 
 	/**
 	 * Checks for the list of constants associate with plugin to make sure we are dealing
-	 * with a plugin owned by Modern Tribe.
+	 * with a plugin owned by The Events Calendar.
 	 *
 	 * @since  4.9.12
 	 *
@@ -98,7 +98,7 @@ class Update_Prevention {
 
 		$register_path = $source . '/src/Tribe/Plugin_Register.php';
 
-		// Bail when the Plugin Register file doesnt exist.
+		// Bail when the Plugin Register file doesn't exist.
 		if ( ! file_exists( $register_path ) ) {
 			return $source;
 		}
@@ -116,7 +116,7 @@ class Update_Prevention {
 
 			$constant_name = $class_name . '::VERSION';
 
-			// Skip if we cant find the version constant.
+			// Skip if we can't find the version constant.
 			if ( ! defined( $constant_name ) ) {
 				continue;
 			}
@@ -178,7 +178,7 @@ class Update_Prevention {
 		$plugins_classes = array_keys( $incompatible_plugins );
 		$plugins_list_html = tribe( 'pue.notices' )->get_formatted_plugin_names_from_classes( $plugins_classes );
 
-		$link_read_more = '<a href="http://m.tri.be/1aev" target="_blank">' . esc_html__( 'Read More.', 'tribe-common' ) . '</a>';
+		$link_read_more = '<a href="http://evnt.is/1aev" target="_blank">' . esc_html__( 'Read more', 'tribe-common' ) . '.</a>';
 
 		$message = sprintf(
 			esc_html__( 'Your update failed due to an incompatibility between the version (%1$s) of the %2$s you tried to update to and the version of %3$s that you are using. %4$s', 'tribe-common' ),

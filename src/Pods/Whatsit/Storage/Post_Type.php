@@ -4,8 +4,6 @@ namespace Pods\Whatsit\Storage;
 
 use Pods\Whatsit;
 use Pods\Whatsit\Store;
-use Pods\Whatsit\Storage;
-use Pods\Whatsit\Storage\Collection;
 
 /**
  * Post_Type class.
@@ -22,28 +20,27 @@ class Post_Type extends Collection {
 	/**
 	 * @var array
 	 */
-	protected $primary_args = array(
+	protected $primary_args = [
 		'ID'           => 'id',
 		'post_name'    => 'name',
 		'post_title'   => 'label',
 		'post_content' => 'description',
 		'post_parent'  => 'parent',
 		'menu_order'   => 'weight',
-	);
+	];
 
 	/**
 	 * @var array
 	 */
-	protected $secondary_args = array(
+	protected $secondary_args = [
 		'type',
 		'object',
-		'group',
-	);
+	];
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get( array $args = array() ) {
+	public function get( array $args = [] ) {
 		// Object type is required.
 		if ( empty( $args['object_type'] ) ) {
 			return null;
@@ -58,11 +55,11 @@ class Post_Type extends Collection {
 		}
 
 		if ( ! empty( $args['name'] ) ) {
-			$find_args = array(
+			$find_args = [
 				'object_type' => $args['object_type'],
 				'name'        => $args['name'],
 				'limit'       => 1,
-			);
+			];
 
 			$objects = $this->find( $find_args );
 
@@ -77,10 +74,10 @@ class Post_Type extends Collection {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function find( array $args = array() ) {
+	public function find( array $args = [] ) {
 		// Object type OR parent is required.
 		if ( empty( $args['object_type'] ) && empty( $args['parent'] ) ) {
-			return array();
+			return [];
 		}
 
 		if ( ! isset( $args['bypass_cache'] ) ) {
@@ -91,45 +88,78 @@ class Post_Type extends Collection {
 			}
 		}
 
+		if ( ! isset( $args['bypass_post_type_find'] ) ) {
+			$args['bypass_post_type_find'] = false;
+		}
+
+		$fallback_mode = $this->fallback_mode;
+
+		if ( isset( $args['fallback_mode'] ) ) {
+			$fallback_mode = (boolean) $args['fallback_mode'];
+		}
+
 		/**
 		 * Filter the maximum number of posts to get for post type storage.
 		 *
+		 * @since 2.8
+		 *
 		 * @param int $limit
 		 *
-		 * @since 2.8
 		 */
 		$limit = apply_filters( 'pods_whatsit_storage_post_type_find_limit', 300 );
 
-		$post_args = array(
-			'order'          => 'ASC',
-			'orderby'        => 'title',
-			'posts_per_page' => $limit,
-			'meta_query'     => array(),
-			'post_type'      => 'any',
-			'post_status'    => array(
+		$post_args = [
+			'order'            => 'ASC',
+			'orderby'          => 'title',
+			'posts_per_page'   => $limit,
+			'meta_query'       => [],
+			'post_type'        => 'any',
+			'post_status'      => [
 				'publish',
 				'draft',
-			),
-		);
+			],
+			'suppress_filters' => false,
+		];
 
 		if ( ! empty( $args['object_type'] ) ) {
-			$post_args['post_type'] = array();
+			$post_args['post_type'] = [];
 
 			$object_types = (array) $args['object_type'];
 
 			foreach ( $object_types as $object_type ) {
 				$post_args['post_type'][] = '_pods_' . $object_type;
 			}
+
+			// There is some sort of bug when you pass a single value array for post_type that causes no results.
+			if ( 1 === count( $post_args['post_type'] ) ) {
+				$post_args['post_type'] = current( $post_args['post_type'] );
+			}
 		}
 
 		if ( ! isset( $args['args'] ) ) {
-			$args['args'] = array();
+			$args['args'] = [];
 		}
 
 		$args['args'] = (array) $args['args'];
 
+		$secondary_object_args = [
+			'parent',
+			'group',
+		];
+
+		foreach ( $secondary_object_args as $arg ) {
+			$args      = $this->setup_arg( $args, $arg );
+			$arg_value = $this->get_arg_value( $args, $arg );
+
+			if ( '_null' === $arg_value ) {
+				continue;
+			}
+
+			$args['args'][ $arg ] = $arg_value;
+		}
+
 		foreach ( $this->secondary_args as $arg ) {
-			if ( ! isset( $args[ $arg ] ) ) {
+			if ( ! array_key_exists( $arg, $args ) ) {
 				continue;
 			}
 
@@ -137,11 +167,15 @@ class Post_Type extends Collection {
 		}
 
 		foreach ( $args['args'] as $arg => $value ) {
+			if ( 'parent' === $arg ) {
+				continue;
+			}
+
 			if ( null === $value ) {
-				$post_args['meta_query'][] = array(
+				$post_args['meta_query'][] = [
 					'key'     => $arg,
 					'compare' => 'NOT EXISTS',
-				);
+				];
 
 				continue;
 			}
@@ -149,10 +183,10 @@ class Post_Type extends Collection {
 			if ( ! is_array( $value ) ) {
 				$value = trim( $value );
 
-				$post_args['meta_query'][] = array(
+				$post_args['meta_query'][] = [
 					'key'   => $arg,
 					'value' => $value,
-				);
+				];
 
 				continue;
 			}
@@ -160,16 +194,18 @@ class Post_Type extends Collection {
 			$value = (array) $value;
 			$value = array_map( 'trim', $value );
 			$value = array_unique( $value );
-			$value = array_filter( $value );
+			$value = array_filter( $value, static function( $v ) {
+				return null !== $v;
+			} );
 
 			if ( $value ) {
 				sort( $value );
 
-				$post_args['meta_query'][] = array(
+				$post_args['meta_query'][] = [
 					'key'     => $arg,
 					'value'   => $value,
 					'compare' => 'IN',
-				);
+				];
 			}
 		}//end foreach
 
@@ -181,6 +217,9 @@ class Post_Type extends Collection {
 
 			if ( $args['id'] ) {
 				$post_args['post__in'] = $args['id'];
+			} else {
+				// Bypass WP_Query if we know there are things that won't match.
+				$args['bypass_post_type_find'] = true;
 			}
 		}
 
@@ -190,19 +229,25 @@ class Post_Type extends Collection {
 			$args['name'] = array_unique( $args['name'] );
 			$args['name'] = array_filter( $args['name'] );
 
-			if ( $args['name'] ) {
+			if (  $args['name'] ) {
 				$post_args['post_name__in'] = $args['name'];
+			} else {
+				// Bypass WP_Query if we know there are things that won't match.
+				$args['bypass_post_type_find'] = true;
 			}
 		}
 
-		if ( ! empty( $args['parent'] ) ) {
-			$args['parent'] = (array) $args['parent'];
-			$args['parent'] = array_map( 'absint', $args['parent'] );
-			$args['parent'] = array_unique( $args['parent'] );
-			$args['parent'] = array_filter( $args['parent'] );
+		if ( ! empty( $args['args']['parent'] ) ) {
+			$post_args['post_parent__in'] = (array) $args['args']['parent'];
+			$post_args['post_parent__in'] = array_map( 'absint', $post_args['post_parent__in'] );
+			$post_args['post_parent__in'] = array_unique( $post_args['post_parent__in'] );
+			$post_args['post_parent__in'] = array_filter( $post_args['post_parent__in'] );
 
-			if ( $args['parent'] ) {
-				$post_args['post_parent__in'] = $args['parent'];
+			if ( ! $post_args['post_parent__in'] ) {
+				unset( $post_args['post_parent__in'] );
+
+				// Bypass WP_Query if we know there are things that won't match.
+				$args['bypass_post_type_find'] = true;
 			}
 		}
 
@@ -215,7 +260,14 @@ class Post_Type extends Collection {
 			if ( $args['status'] ) {
 				sort( $args['status'] );
 
+				if ( 1 === count( $args['status'] ) ) {
+					$args['status'] = current( $args['status'] );
+				}
+
 				$post_args['post_status'] = $args['status'];
+			} else {
+				// Bypass WP_Query if we know there are things that won't match.
+				$args['bypass_post_type_find'] = true;
 			}
 		}
 
@@ -234,10 +286,11 @@ class Post_Type extends Collection {
 		/**
 		 * Filter the get_posts() arguments used for finding the objects for post type storage.
 		 *
-		 * @param array $post_args Post arguments to use in get_posts() call.
+		 * @since 2.8
+		 *
 		 * @param array $args      Arguments to use.
 		 *
-		 * @since 2.8
+		 * @param array $post_args Post arguments to use in get_posts() call.
 		 */
 		$post_args = apply_filters( 'pods_whatsit_storage_post_type_find_args', $post_args, $args );
 
@@ -252,7 +305,7 @@ class Post_Type extends Collection {
 		$current_language = false;
 
 		// Get current language data
-		$lang_data = \PodsInit::$i18n->get_current_language_data();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 		if ( $lang_data && ! empty( $lang_data['language'] ) ) {
 			$current_language = $lang_data['language'];
@@ -261,21 +314,22 @@ class Post_Type extends Collection {
 		$cache_key = null;
 		$posts     = false;
 
-		if ( empty( $args['bypass_cache'] ) ) {
-			$cache_key_parts = array(
+		if ( empty( $args['bypass_cache'] ) && empty( $args['bypass_post_type_find'] ) ) {
+			$cache_key_parts = [
 				'pods_whatsit_storage_post_type_find',
 				$current_language,
 				wp_json_encode( $post_args ),
-			);
+			];
 
 			/**
 			 * Filter cache key parts used for generating the cache key.
 			 *
-			 * @param array $cache_key_parts Cache key parts used to build cache key.
+			 * @since 2.8
+			 *
 			 * @param array $post_args       Post arguments to use in get_posts() call.
 			 * @param array $args            Arguments to use.
 			 *
-			 * @since 2.8
+			 * @param array $cache_key_parts Cache key parts used to build cache key.
 			 */
 			$cache_key_parts = apply_filters( 'pods_whatsit_storage_post_type_cache_key_parts', $cache_key_parts, $post_args, $args );
 
@@ -289,21 +343,25 @@ class Post_Type extends Collection {
 		}//end if
 
 		if ( ! is_array( $posts ) ) {
-			$posts = get_posts( $post_args );
+			$posts = [];
 
-			if ( empty( $args['bypass_cache'] ) ) {
-				pods_transient_set( $cache_key, $posts );
+			if ( empty( $args['bypass_post_type_find'] ) ) {
+				$posts = get_posts( $post_args );
+
+				if ( empty( $args['bypass_cache'] ) ) {
+					pods_transient_set( $cache_key, $posts );
+				}
 			}
 		}
 
-		$posts = array_map( array( $this, 'to_object' ), $posts );
+		$posts = array_map( [ $this, 'to_object' ], $posts );
 		$posts = array_filter( $posts );
 
 		$names = wp_list_pluck( $posts, 'name' );
 
 		$posts = array_combine( $names, $posts );
 
-		if ( empty( $args['status'] ) || \in_array( 'publish', $args['status'], true ) ) {
+		if ( $fallback_mode && ( empty( $args['status'] ) || \in_array( 'publish', (array) $args['status'], true ) ) ) {
 			$posts = array_merge( $posts, parent::find( $args ) );
 		}
 
@@ -317,15 +375,15 @@ class Post_Type extends Collection {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function add_object( Whatsit $object ) {
-		$post_data = array(
+	protected function add_object( Whatsit $object ) {
+		$post_data = [
 			'post_title'   => $object->get_label(),
 			'post_name'    => $object->get_name(),
 			'post_content' => $object->get_description(),
 			'post_parent'  => $object->get_parent_id(),
 			'post_type'    => '_pods_' . $object->get_object_type(),
 			'post_status'  => 'publish',
-		);
+		];
 
 		if ( '' === $post_data['post_title'] ) {
 			$post_data['post_title'] = $post_data['post_name'];
@@ -351,14 +409,14 @@ class Post_Type extends Collection {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function save_object( Whatsit $object ) {
+	protected function save_object( Whatsit $object ) {
 		$id = $object->get_id();
 
 		if ( empty( $id ) ) {
 			return parent::save_object( $object );
 		}
 
-		$post_data = array(
+		$post_data = [
 			'ID'           => $id,
 			'post_title'   => $object->get_label(),
 			'post_name'    => $object->get_name(),
@@ -366,7 +424,7 @@ class Post_Type extends Collection {
 			'post_parent'  => $object->get_parent_id(),
 			'post_type'    => '_pods_' . $object->get_object_type(),
 			'post_status'  => 'publish',
-		);
+		];
 
 		$saved = wp_update_post( $post_data );
 
@@ -397,19 +455,21 @@ class Post_Type extends Collection {
 
 		$meta = get_post_meta( $id );
 
-		$args = array();
+		$args = [];
 
 		foreach ( $meta as $meta_key => $meta_value ) {
 			if ( in_array( $meta_key, $this->primary_args, true ) ) {
 				continue;
 			}
 
+			$meta_value = array_map( 'maybe_unserialize', $meta_value );
+
 			if ( 1 === count( $meta_value ) ) {
 				$meta_value = reset( $meta_value );
 			}
 
 			// Skip empties.
-			if ( in_array( $meta_value, array( '', array() ), true ) ) {
+			if ( in_array( $meta_value, [ '', [] ], true ) ) {
 				continue;
 			}
 
@@ -433,7 +493,7 @@ class Post_Type extends Collection {
 
 		$args = $object->get_args();
 
-		$excluded = array(
+		$excluded = [
 			'object_type',
 			'storage_type',
 			'id',
@@ -441,7 +501,7 @@ class Post_Type extends Collection {
 			'label',
 			'description',
 			'parent',
-		);
+		];
 
 		$excluded = array_merge( $excluded, array_values( $this->primary_args ) );
 
@@ -465,7 +525,7 @@ class Post_Type extends Collection {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function delete_object( Whatsit $object ) {
+	protected function delete_object( Whatsit $object ) {
 		$id = $object->get_id();
 
 		if ( empty( $id ) ) {
@@ -484,11 +544,12 @@ class Post_Type extends Collection {
 	/**
 	 * Setup object from a Post ID or Post object.
 	 *
-	 * @param \WP_Post|array|int $post Post object or ID of the object.
+	 * @param \WP_Post|array|int $post          Post object or ID of the object.
+	 * @param bool               $force_refresh Whether to force the refresh of the object.
 	 *
 	 * @return Whatsit|null
 	 */
-	public function to_object( $post ) {
+	public function to_object( $post, $force_refresh = false ) {
 		if ( null !== $post && ! $post instanceof \WP_Post ) {
 			$post = get_post( $post );
 		}
@@ -507,10 +568,14 @@ class Post_Type extends Collection {
 		$object = $object_collection->get_object( $post->ID );
 
 		if ( $object instanceof Whatsit && $post->post_type === '_pods_' . $object->get_object_type() ) {
-			return $object;
+			if ( ! $force_refresh ) {
+				return $object;
+			}
+
+			$object_collection->unregister_object( $object );
 		}
 
-		$args = array();
+		$args = [];
 
 		foreach ( $this->primary_args as $object_arg => $arg ) {
 			$args[ $arg ] = '';

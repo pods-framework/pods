@@ -15,25 +15,25 @@ class Tribe__Utils__Global_ID {
 
 
 	/**
-	 * Dont allow creation of Global IDs for other types of source
+	 * Don't allow creation of Global IDs for other types of source
 	 * @var array
 	 */
-	protected $valid_types = array(
+	protected $valid_types = [
 		'url',
 		'meetup',
 		'facebook',
 		'eventbrite',
-	);
+	];
 
 	/**
 	 * For some types of ID we have a predefined Origin
 	 * @var array
 	 */
-	protected $type_origins = array(
-		'meetup' => 'meetup.com',
-		'facebook' => 'facebook.com',
+	protected $type_origins = [
+		'meetup'     => 'meetup.com',
+		'facebook'   => 'facebook.com',
 		'eventbrite' => 'eventbrite.com',
-	);
+	];
 
 	/**
 	 * Tribe__Utils__Global_ID constructor.
@@ -123,7 +123,7 @@ class Tribe__Utils__Global_ID {
 	 *
 	 * @return string
 	 */
-	public function generate( array $args = array() ) {
+	public function generate( array $args = [] ) {
 		// We can't do this without type or origin
 		if ( ! $this->type() || ! $this->origin() ) {
 			return false;
@@ -150,7 +150,7 @@ class Tribe__Utils__Global_ID {
 			$parsed = wp_parse_url( 'http://' . $global_id );
 
 			if ( ! empty( $parsed['query'] ) ) {
-				$parsed_query = array();
+				$parsed_query = [];
 
 				wp_parse_str( $parsed['query'], $parsed_query );
 

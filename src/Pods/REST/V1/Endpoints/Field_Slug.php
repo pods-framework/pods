@@ -4,15 +4,14 @@ namespace Pods\REST\V1\Endpoints;
 
 use WP_REST_Request;
 
-class Field_Slug
-	extends Field {
+class Field_Slug extends Field {
 
 	/**
 	 * {@inheritdoc}
 	 *
 	 * @since 2.8
 	 */
-	public $route = '/fields/%1$s';
+	public $route = '/pods/%1$s/fields/%2$s';
 
 	/**
 	 * {@inheritdoc}
@@ -21,11 +20,18 @@ class Field_Slug
 	 */
 	public function READ_args() {
 		return [
+			'pod'  => [
+				'type'              => 'string',
+				'in'                => 'path',
+				'description'       => __( 'The Pod slug.', 'pods' ),
+				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
 			'slug' => [
 				'type'        => 'string',
-				'in'                => 'path',
-				'description' => __( 'The slug', 'pods' ),
-				'required'          => true,
+				'in'          => 'path',
+				'description' => __( 'The Field slug.', 'pods' ),
+				'required'    => true,
 			],
 		];
 	}
@@ -36,11 +42,7 @@ class Field_Slug
 	 * @since 2.8
 	 */
 	public function get( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_by_args( [
-			'name' => $slug,
-		], $request );
+		return $this->get_by_args( 'slug', 'name', $request );
 	}
 
 	/**
@@ -50,11 +52,43 @@ class Field_Slug
 	 */
 	public function EDIT_args() {
 		return [
-			'slug' => [
-				'type'        => 'string',
+			'pod'          => [
+				'type'              => 'string',
 				'in'                => 'path',
-				'description' => __( 'The slug', 'pods' ),
+				'description'       => __( 'The Pod slug.', 'pods' ),
 				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
+			'slug'         => [
+				'type'        => 'string',
+				'in'          => 'path',
+				'description' => __( 'The Field slug.', 'pods' ),
+				'required'    => true,
+			],
+			'new_name'     => [
+				'type'        => 'string',
+				'description' => __( 'The new name of the Field.', 'pods' ),
+			],
+			'new_group'    => [
+				'type'        => 'string',
+				'description' => __( 'The new Group to use for the Field.', 'pods' ),
+			],
+			'new_group_id' => [
+				'type'        => 'string',
+				'description' => __( 'The new Group ID to use for the Field.', 'pods' ),
+			],
+			'label'        => [
+				'type'        => 'string',
+				'description' => __( 'The singular label of the Field.', 'pods' ),
+			],
+			'type'         => [
+				'type'        => 'string',
+				'description' => __( 'The type of the Field.', 'pods' ),
+			],
+			'args'         => [
+				'required'     => false,
+				'description'  => __( 'A list of additional options to save to the Field.', 'pods' ),
+				'swagger_type' => 'array',
 			],
 		];
 	}
@@ -65,21 +99,7 @@ class Field_Slug
 	 * @since 2.8
 	 */
 	public function update( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_by_args( [
-			'name' => $slug,
-		], $request );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since 2.8
-	 */
-	public function can_edit() {
-		// @todo Check Pods permissions
-		return true;
+		return $this->update_by_args( 'slug', 'name', $request );
 	}
 
 	/**
@@ -89,11 +109,18 @@ class Field_Slug
 	 */
 	public function DELETE_args() {
 		return [
+			'pod'  => [
+				'type'              => 'string',
+				'in'                => 'path',
+				'description'       => __( 'The Pod slug.', 'pods' ),
+				'required'          => true,
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
 			'slug' => [
 				'type'        => 'string',
-				'in'                => 'path',
-				'description' => __( 'The slug', 'pods' ),
-				'required'          => true,
+				'in'          => 'path',
+				'description' => __( 'The Field slug.', 'pods' ),
+				'required'    => true,
 			],
 		];
 	}
@@ -104,20 +131,6 @@ class Field_Slug
 	 * @since 2.8
 	 */
 	public function delete( WP_REST_Request $request ) {
-		$slug = $request['slug'];
-
-		return $this->get_by_args( [
-			'name' => $slug,
-		], $request );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @since 2.8
-	 */
-	public function can_delete() {
-		// @todo Check Pods permissions
-		return true;
+		return $this->delete_by_args( 'slug', 'name', $request );
 	}
 }

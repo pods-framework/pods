@@ -152,14 +152,27 @@ trait Collection_Trait {
 	 * {@inheritDoc}
 	 */
 	public function serialize() {
-		return serialize( $this->all() );
+		$to_serialize = $this->all();
+
+		if ( method_exists( $this, 'before_serialize' ) ) {
+			$to_serialize = $this->before_serialize( $this->all() );
+		}
+
+		return serialize( $to_serialize );
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function unserialize( $serialized ) {
-		$this->items = unserialize( $serialized );
+		$to_unserialize = $serialized;
+
+		if ( method_exists( $this, 'custom_unserialize' ) ) {
+			$this->items = $this->custom_unserialize( $to_unserialize );
+			return;
+		}
+
+		$this->items = unserialize( $to_unserialize );
 	}
 
 	/**
@@ -167,5 +180,28 @@ trait Collection_Trait {
 	 */
 	public function seek( $position ) {
 		$this->items_index = $position;
+	}
+
+	/**
+	 * Applies a filter callback to each element of this collection changing the collection elements to only those
+	 * passing the filter.
+	 *
+	 * @since 4.10.2
+	 *
+	 * @param callable $filter_callback The filter callback that will be applied to each element of the collection; the
+	 *                                  callback will receive the element as parameter.
+	 *
+	 * @return Collection_Trait A new collection instance, that contains only the elements that passed the filter.
+	 */
+	public function filter( $filter_callback ) {
+		if ( $this->count() === 0 ) {
+			// If there is nothing to filter to begin with, just return this.
+			return $this;
+		}
+
+		$filtered        = new static();
+		$filtered->items = array_filter( $this->all(), $filter_callback );
+
+		return $filtered;
 	}
 }

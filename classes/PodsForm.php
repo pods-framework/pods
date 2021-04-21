@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit\Field;
+
 /**
  * @package Pods
  */
@@ -610,21 +612,26 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function options( $type, $options ) {
+		if ( is_object( $options ) ) {
+			$options_array                  = $options->get_args();
+			$options_array['_field_object'] = $options;
+		} else {
+			$options_array                  = (array) $options;
+			$options_array['_field_object'] = null;
+		}
 
-		$options = (array) $options;
+		$defaults = self::options_setup( $type, $options_array );
 
-		$defaults = self::options_setup( $type, $options );
-
-		$core_defaults = array(
+		$core_defaults = [
 			'id'          => 0,
 			'label'       => '',
 			'description' => '',
 			'help'        => '',
 			'default'     => null,
-			'attributes'  => array(),
+			'attributes'  => [],
 			'class'       => '',
 			'grouped'     => 0,
-		);
+		];
 
 		$defaults = array_merge( $core_defaults, $defaults );
 
@@ -635,12 +642,12 @@ class PodsForm {
 				$default = $settings['default'];
 			}
 
-			if ( ! isset( $options[ $option ] ) ) {
-				$options[ $option ] = $default;
+			if ( ! isset( $options_array[ $option ] ) ) {
+				$options_array[ $option ] = $default;
 			}
 		}
 
-		return $options;
+		return $options_array;
 	}
 
 	/**
@@ -813,9 +820,9 @@ class PodsForm {
 	 *
 	 * @static
 	 *
-	 * @param null $field
-	 * @param null $core_defaults
-	 * @param null $type
+	 * @param null|array|string|Field $field
+	 * @param null|array $core_defaults
+	 * @param null|string $type
 	 *
 	 * @return array|null
 	 *
@@ -854,21 +861,28 @@ class PodsForm {
 			}
 		}//end if
 
-		if ( ! is_array( $field ) ) {
+		$is_field_object = $field instanceof Field;
+
+		if ( ! is_array( $field ) && ! $is_field_object ) {
 			$field = array( 'default' => $field );
 		}
 
+		// @todo Revisit this.
 		if ( isset( $field['group'] ) && is_array( $field['group'] ) ) {
-			foreach ( $field['group'] as $g => $group_option ) {
-				$field['group'][ $g ] = array_merge( $core_defaults, $group_option );
+			$group = $field['group'];
 
-				if ( strlen( $field['group'][ $g ]['name'] ) < 1 ) {
-					$field['group'][ $g ]['name'] = $g;
+			foreach ( $group as $g => $group_option ) {
+				$group[ $g ] = array_merge( $core_defaults, $group_option );
+
+				if ( ! isset( $group[ $g ] ) || '' === $group[ $g ]['name'] ) {
+					$group[ $g ]['name'] = $g;
 				}
 			}
+
+			$field['group'] = $group;
 		}
 
-		$field = array_merge( $core_defaults, $field );
+		$field = pods_config_merge_data( $core_defaults, $field );
 
 		foreach ( $options as $option => $settings ) {
 			$v = null;
@@ -877,7 +891,13 @@ class PodsForm {
 				$v = $settings['default'];
 			}
 
-			if ( ! isset( $field['options'][ $option ] ) ) {
+			if ( $is_field_object ) {
+				$option_value = $field->get_arg( $option );
+
+				if ( null === $option_value ) {
+					$field->set_arg( $option, $v );
+				}
+			} elseif ( ! isset( $field['options'][ $option ] ) ) {
 				$field['options'][ $option ] = $v;
 			}
 		}
@@ -895,7 +915,7 @@ class PodsForm {
 	 * @static
 	 * @since 2.0.0
 	 */
-	public static function dependencies( $options, $prefix = '' ) {
+	public static function dependencies( $options, $prefix = 'pods-form-ui-' ) {
 
 		$options     = (array) $options;
 		$classes     = array();
@@ -1528,15 +1548,43 @@ class PodsForm {
 	}
 
 	/**
-	 * Get a list of all available field types and include
+	 * Get a list of all available Pod types.
 	 *
-	 * @return array Registered Field Types data
+	 * @return string[] List of Pod types.
 	 *
-	 * @since 2.3.0
+	 * @since 2.8.0
 	 */
-	public static function field_types() {
+	public static function pod_types_list() {
+		$pod_types = [
+			'post_type',
+			'taxonomy',
+			'user',
+			'media',
+			'comment',
+			'settings',
+			'pod',
+			'table',
+		];
 
-		$field_types = array(
+		/**
+		 * Allow filtering of the supported Pod types.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array $pod_types List of Pod types supported.
+		 */
+		return apply_filters( 'pods_api_pod_types', $pod_types );
+	}
+
+	/**
+	 * Get a list of all available Field types.
+	 *
+	 * @return string[] List of Field types.
+	 *
+	 * @since 2.8.0
+	 */
+	public static function field_types_list() {
+		$field_types = [
 			'text',
 			'website',
 			// 'link',
@@ -1558,13 +1606,27 @@ class PodsForm {
 			'boolean',
 			'color',
 			'slug',
-		);
+			'heading',
+			'html',
+		];
 
 		$field_types = array_merge( $field_types, array_keys( self::$field_types ) );
 
 		$field_types = array_filter( array_unique( $field_types ) );
 
-		$types = apply_filters( 'pods_api_field_types', $field_types );
+		return apply_filters( 'pods_api_field_types', $field_types );
+	}
+
+	/**
+	 * Get a list of all available field types and include
+	 *
+	 * @return array Registered Field Types data
+	 *
+	 * @since 2.3.0
+	 */
+	public static function field_types() {
+
+		$types = self::field_types_list();
 
 		$field_types = pods_transient_get( 'pods_field_types' );
 
@@ -1742,28 +1804,30 @@ class PodsForm {
 	}
 
 	/**
-	 * Get list of available text field types
+	 * Get list of available Layout field types
 	 *
 	 * @return array Text field types
 	 *
 	 * @since 2.3.0
 	 */
-	public static function block_field_types() {
+	public static function layout_field_types() {
 
 		static $field_types = null;
 
 		if ( null === $field_types ) {
-			$field_types = array( 'heading', 'html' );
+			$field_types = [
+				'heading',
+				'html',
+			];
 
 			/**
-			 * Returns the available text field types
+			 * Allow filtering of the list of Layout field types.
 			 *
-			 * @since unknown
+			 * @since 2.8
 			 *
-			 * @param object $field_types Outputs the field types
+			 * @param array $field_types The list of Layout field types.
 			 */
-
-			$field_types = apply_filters( 'pods_block_field_types', $field_types );
+			$field_types = apply_filters( 'pods_layout_field_types', $field_types );
 		}
 
 		return $field_types;
@@ -1787,4 +1851,14 @@ class PodsForm {
 		return $object_types;
 	}
 
+	/**
+	 * Render the postbox header in a compatible way.
+	 *
+	 * @since 2.7.22
+	 *
+	 * @param string $title Header title.
+	 */
+	public static function render_postbox_header( $title ) {
+		pods_view( PODS_DIR . 'ui/admin/postbox-header.php', compact( array_keys( get_defined_vars() ) ) );
+	}
 }

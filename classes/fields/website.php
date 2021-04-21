@@ -29,7 +29,8 @@ class PodsField_Website extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Website', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Website', 'pods' );
 
 	}
 
@@ -63,19 +64,19 @@ class PodsField_Website extends PodsField {
 				'dependency' => true,
 			),
 			static::$type . '_allow_port'  => array(
-				'label'      => __( 'Allow port in URL?', 'pods' ),
+				'label'      => __( 'Allow port in URL', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_website_port', 0, static::$type ),
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			static::$type . '_clickable'   => array(
-				'label'      => __( 'Output as a link?', 'pods' ),
+				'label'      => __( 'Output as a link', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_website_clickable', 0, static::$type ),
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			static::$type . '_new_window'  => array(
-				'label'      => __( 'Open link in new window?', 'pods' ),
+				'label'      => __( 'Open link in new window', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_website_new_window', 0, static::$type ),
 				'type'       => 'boolean',
 				'depends-on' => array( static::$type . '_clickable' => true ),
@@ -87,7 +88,7 @@ class PodsField_Website extends PodsField {
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
 			static::$type . '_html5'       => array(
-				'label'       => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'       => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default'     => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'        => 'boolean',
 				'excludes-on' => array( static::$type . '_format' => array( 'no-http', 'no-http-no-www', 'no-http-force-www' ) ),
@@ -133,7 +134,7 @@ class PodsField_Website extends PodsField {
 			$atts = '';
 
 			if ( 1 === (int) pods_v( static::$type . '_new_window', $options ) ) {
-				$atts .= ' target="_blank"';
+				$atts .= ' target="_blank" rel="noopener noreferrer"';
 			}
 
 			$value = sprintf( $link, esc_url( $value ), $atts, esc_html( $value ) );
@@ -168,14 +169,31 @@ class PodsField_Website extends PodsField {
 			$field_type = 'text';
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
+
 		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
@@ -185,7 +203,7 @@ class PodsField_Website extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid website provided for the field %s.', 'pods' ), $label );
@@ -197,7 +215,7 @@ class PodsField_Website extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**

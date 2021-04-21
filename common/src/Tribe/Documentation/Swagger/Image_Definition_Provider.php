@@ -16,39 +16,39 @@ class Tribe__Documentation__Swagger__Image_Definition_Provider
 	 * @return array An array description of a Swagger supported component.
 	 */
 	public function get_documentation() {
-		$documentation = array(
+		$documentation = [
 			'type'       => 'object',
-			'properties' => array(
-				'url'       => array(
+			'properties' => [
+				'url'       => [
 					'type'        => 'string',
 					'format'      => 'uri',
 					'description' => __( 'The URL to the full size version of the image', 'tribe-common' ),
-				),
-				'id'        => array(
+				],
+				'id'        => [
 					'type'        => 'integer',
 					'description' => __( 'The image WordPress post ID', 'tribe-common' ),
-				),
-				'extension' => array(
+				],
+				'extension' => [
 					'type'        => 'string',
 					'description' => __( 'The image file extension', 'tribe-common' ),
-				),
-				'width'     => array(
+				],
+				'width'     => [
 					'type'        => 'integer',
 					'description' => __( 'The image natural width in pixels', 'tribe-common' ),
-				),
-				'height'    => array(
+				],
+				'height'    => [
 					'type'        => 'integer',
 					'description' => __( 'The image natural height in pixels', 'tribe-common' ),
-				),
-				'sizes'     => array(
+				],
+				'sizes'     => [
 					'type'        => 'array',
 					'description' => __( 'The details about each size available for the image', 'tribe-common' ),
-					'items'       => array(
+					'items'       => [
 						'$ref' => '#/components/schemas/ImageSize',
-					),
-				),
-			),
-		);
+					],
+				],
+			],
+		];
 
 		/**
 		 * Filters the Swagger documentation generated for an image deatails in the TEC REST API.

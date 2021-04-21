@@ -30,7 +30,8 @@ class PodsField_File extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'File / Image / Video', 'pods' );
+		static::$group = __( 'Relationships / Media', 'pods' );
+		static::$label = __( 'File / Image / Video', 'pods' );
 
 	}
 
@@ -182,14 +183,14 @@ class PodsField_File extends PodsField {
 			/* WP GALLERY OUTPUT */
 			static::$type . '_wp_gallery_output'      => array(
 				'label'      => __( 'Output as a WP Gallery', 'pods' ),
-				'help'       => sprintf( __( '<a href="%s" target="_blank">Click here for more info</a>', 'pods' ), 'https://codex.wordpress.org/The_WordPress_Gallery' ),
+				'help'       => sprintf( __( '<a href="%s" target="_blank" rel="noopener noreferrer">Click here for more info</a>', 'pods' ), 'https://wordpress.org/support/article/inserting-images-into-posts-and-pages/' ),
 				'depends-on' => array( static::$type . '_type' => 'images' ),
 				'dependency' => true,
 				'type'       => 'boolean',
 			),
 			static::$type . '_wp_gallery_link'        => array(
 				'label'      => __( 'Gallery image links', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => array(
 					'post' => __( 'Attachment Page', 'pods' ),
@@ -199,28 +200,28 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_wp_gallery_columns'     => array(
 				'label'      => __( 'Gallery image columns', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => array(
-					'1' => 1,
-					'2' => 2,
-					'3' => 3,
-					'4' => 4,
-					'5' => 5,
-					'6' => 6,
-					'7' => 7,
-					'8' => 8,
-					'9' => 9,
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
 				),
 			),
 			static::$type . '_wp_gallery_random_sort' => array(
 				'label'      => __( 'Gallery randomized order', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'boolean',
 			),
 			static::$type . '_wp_gallery_size'        => array(
 				'label'      => __( 'Gallery image size', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => $this->data_image_sizes(),
 			),
@@ -339,11 +340,26 @@ class PodsField_File extends PodsField {
 			}
 		}
 
+		// Enforce defaults.
+		$all_options = static::options();
+
+		foreach ( $all_options as $option_name => $option ) {
+			$default = pods_v( 'default', $option, '' );
+
+			$options[ $option_name ] = pods_v( $option_name, $options, $default );
+
+			if ( '' === $options[ $option_name ] ) {
+				$options[ $option_name ] = $default;
+			}
+		}
+
 		// Handle default template setting.
-		$file_field_template = pods_v( $args->type . '_field_template', $options, 'rows', true );
+		$file_field_template = pods_v( $args->type . '_field_template', $options );
 
 		// Get which file types the field is limited to.
-		$limit_file_type = pods_v( $args->type . '_type', $options, 'images' );
+		$limit_file_type = pods_v( $args->type . '_type', $options );
+
+		$options[ $args->type . '_type' ] = $limit_file_type;
 
 		// Non-image file types are forced to rows template right now.
 		if ( 'images' !== $limit_file_type ) {
@@ -453,14 +469,15 @@ class PodsField_File extends PodsField {
 		$is_user_logged_in = is_user_logged_in();
 
 		// @todo: plupload specific options need accommodation
-		if ( 'plupload' === $options[ static::$type . '_uploader' ] ) {
+		if ( 'plupload' === pods_v( static::$type . '_uploader', $options ) ) {
 			wp_enqueue_script( 'plupload-all' );
+
+			$field_id = pods_v( 'id', $options, 0 );
 
 			if ( $is_user_logged_in ) {
 				$uid = 'user_' . get_current_user_id();
 			} else {
-				// @codingStandardsIgnoreLine
-				$uid = @session_id();
+				$uid = pods_session_id();
 			}
 
 			$pod_id = '0';
@@ -470,7 +487,7 @@ class PodsField_File extends PodsField {
 			}
 
 			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
-			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $options['id'] );
+			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
 
 			$options['plupload_init'] = array(
 				'runtimes'            => 'html5,silverlight,flash,html4',
@@ -493,7 +510,7 @@ class PodsField_File extends PodsField {
 					'action'   => 'pods_upload',
 					'method'   => 'upload',
 					'pod'      => $pod_id,
-					'field'    => $options['id'],
+					'field'    => $field_id,
 					'uri'      => $uri_hash,
 				),
 			);
@@ -560,12 +577,12 @@ class PodsField_File extends PodsField {
 			}
 
 			$data[] = array(
-				'id'        => $id,
-				'icon'      => $icon,
-				'name'      => $title,
-				'edit_link' => $edit_link,
-				'link'      => $link,
-				'download'  => $download,
+				'id'        => esc_html( $id ),
+				'icon'      => esc_attr( $icon ),
+				'name'      => wp_strip_all_tags( html_entity_decode( $title ) ),
+				'edit_link' => html_entity_decode( esc_url( $edit_link ) ),
+				'link'      => html_entity_decode( esc_url( $link ) ),
+				'download'  => html_entity_decode( esc_url( $download ) ),
 			);
 		}//end foreach
 
@@ -580,7 +597,7 @@ class PodsField_File extends PodsField {
 
 		// @todo Check file size
 		// @todo Check file extensions
-		return true;
+		return parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 	}
 
@@ -613,6 +630,7 @@ class PodsField_File extends PodsField {
 				continue;
 			}
 
+			$attachment      = null;
 			$attachment_data = array();
 
 			// Update the title if set.
@@ -632,6 +650,11 @@ class PodsField_File extends PodsField {
 			// Update the attachment if it the data array is not still empty.
 			if ( ! empty( $attachment_data ) ) {
 				$attachment_data['ID'] = $id;
+
+				if ( $attachment ) {
+					// Add post type to trigger attachment update filters from other plugins.
+					$attachment_data['post_type'] = $attachment->post_type;
+				}
 
 				self::$api->save_wp_object( 'media', $attachment_data );
 			}
@@ -729,6 +752,10 @@ class PodsField_File extends PodsField {
 	 */
 	public function do_wp_gallery( $value, $options ) {
 
+		if ( ! $value ) {
+			return '';
+		}
+
 		$shortcode_args = array();
 
 		if ( ! empty( $options[ static::$type . '_wp_gallery_columns' ] ) ) {
@@ -752,7 +779,7 @@ class PodsField_File extends PodsField {
 		} else {
 			$images = array();
 
-			foreach ( $value as $v ) {
+			foreach ( (array) $value as $v ) {
 				if ( ! is_array( $v ) ) {
 					$images[] = (int) $v;
 				} elseif ( isset( $v['ID'] ) ) {
@@ -857,7 +884,7 @@ class PodsField_File extends PodsField {
 						if ( $linked ) {
 							?>
 							<li class="pods-file-col pods-file-download">
-								<a href="<?php echo esc_url( $link ); ?>" target="_blank">Download</a></li>
+								<a href="<?php echo esc_url( $link ); ?>" target="_blank" rel="noopener noreferrer">Download</a></li>
 							<?php
 						}
 						?>
@@ -944,7 +971,7 @@ class PodsField_File extends PodsField {
 			}
 		}
 
-		$uid = @session_id();
+		$uid = pods_session_id();
 
 		if ( $is_user_logged_in ) {
 			$uid = 'user_' . get_current_user_id();
@@ -1103,17 +1130,18 @@ class PodsField_File extends PodsField {
 			$limit_types = array_filter( array_unique( $limit_types ) );
 
 			if ( ! empty( $limit_types ) ) {
-				$ok = false;
+				$file_info = pathinfo( $file['name'] );
+				$ok        = false;
 
-				foreach ( $limit_types as $limit_type ) {
-					$limit_type = '.' . trim( $limit_type, ' .' );
+				if ( isset( $file_info['extension'] ) ) {
+					foreach ( $limit_types as $limit_type ) {
+						$limit_type = trim( $limit_type, ' .' );
 
-					$pos = ( strlen( $file['name'] ) - strlen( $limit_type ) );
+						if ( $limit_type === $file_info['extension'] ) {
+							$ok = true;
 
-					if ( stripos( $file['name'], $limit_type ) === $pos ) {
-						$ok = true;
-
-						break;
+							break;
+						}
 					}
 				}
 

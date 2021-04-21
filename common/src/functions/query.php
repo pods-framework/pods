@@ -28,7 +28,7 @@ if ( ! function_exists( 'tribe_filter_meta_query' ) ) {
 	 * @return array The filtered meta query array.
 	 */
 	function tribe_filter_meta_query( array $meta_query, array $where ) {
-		$filtered = array();
+		$filtered = [];
 
 		foreach ( $meta_query as $key => $entry ) {
 			if ( ! is_array( $entry ) ) {
@@ -52,5 +52,46 @@ if ( ! function_exists( 'tribe_filter_meta_query' ) ) {
 		}
 
 		return $filtered;
+	}
+}
+
+if ( ! function_exists( 'tribe_normalize_orderby' ) ) {
+
+	/**
+	 * Normalizes an `orderby` string or array to an map of keys and orders.
+	 *
+	 * Note the function and the variables use the "orderby" (no spaces) name to stick
+	 * with the WordPress query standard.
+	 *
+	 * @since 4.12.6
+	 *
+	 * @param string|array<string,string> $orderby Either an `orderby` key, a list of `orderby`
+	 *                                             keys or a map of `orderby` clauses.
+	 * @param string                      $order   The default order that should be applied to `orderby` entries that
+	 *                                             lack one.
+	 *
+	 * @return array The normalized `orderby` array, in the format supported by WordPress queries:
+	 *               `[ <key_1> => <order>, <key_2> => <order>, ... ]`.
+	 */
+	function tribe_normalize_orderby( $orderby, $order = 'ASC' ) {
+		// Make the `orderby` part an array.
+		$orderby_arr = (array) $orderby;
+		$normalized  = [];
+
+		foreach ( $orderby_arr as $by_key => $direction ) {
+			if ( empty( $direction ) ) {
+				continue;
+			}
+
+			if ( is_numeric( $by_key ) ) {
+				// It's an entry where the key is just listed, relying on the default order.
+				$by_key    = $direction;
+				$direction = $order;
+			}
+
+			$normalized[ $by_key ] = $direction;
+		}
+
+		return $normalized;
 	}
 }

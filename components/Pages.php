@@ -2,6 +2,8 @@
 /**
  * Name: Pages
  *
+ * Menu Name: Pod Pages
+ *
  * Description: Creates advanced URL structures using wildcards in order to enable the front-end display of Pods Advanced Content Types. Not recommended for use with other content types.
  *
  * Version: 2.3
@@ -105,7 +107,7 @@ class Pods_Pages extends PodsComponent {
 		} else {
 			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 
-			add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ) );
+			add_action( 'add_meta_boxes_' . $this->object_type, array( $this, 'edit_page_form' ) );
 
 			add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
 			add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
@@ -209,13 +211,13 @@ class Pods_Pages extends PodsComponent {
 			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
-			8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
+			8  => sprintf( __( '%1$s submitted. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 			9  => sprintf(
-				__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %4$s</a>', 'pods' ), $labels->singular_name,
+				__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" rel="noopener noreferrer" href="%3$s">Preview %4$s</a>', 'pods' ), $labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
 				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name
 			),
-			10 => sprintf( __( '%1$s draft updated. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
+			10 => sprintf( __( '%1$s draft updated. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 		);
 
 		if ( false === (boolean) $post_type->public ) {
@@ -373,13 +375,6 @@ class Pods_Pages extends PodsComponent {
 	 * @since 2.0.0
 	 */
 	public function edit_page_form() {
-
-		global $post_type;
-
-		if ( $this->object_type != $post_type ) {
-			return;
-		}
-
 		add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
 	}
 
@@ -520,14 +515,14 @@ class Pods_Pages extends PodsComponent {
 		$fields = array(
 			array(
 				'name'       => 'admin_only',
-				'label'      => __( 'Restrict access to Admins?', 'pods' ),
+				'label'      => __( 'Restrict access to Admins', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			array(
 				'name'       => 'restrict_role',
-				'label'      => __( 'Restrict access by Role?', 'pods' ),
+				'label'      => __( 'Restrict access by Role', 'pods' ),
 				'help'       => array(
 					__( '<h6>Roles</h6> Roles are assigned to users to provide them access to specific functionality in WordPress. Please see the Roles and Capabilities component in Pods for an easy tool to add your own roles and edit existing ones.', 'pods' ),
 					'http://codex.wordpress.org/Roles_and_Capabilities',
@@ -551,7 +546,7 @@ class Pods_Pages extends PodsComponent {
 			),
 			array(
 				'name'       => 'restrict_capability',
-				'label'      => __( 'Restrict access by Capability?', 'pods' ),
+				'label'      => __( 'Restrict access by Capability', 'pods' ),
 				'help'       => array(
 					__( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
 					'http://codex.wordpress.org/Roles_and_Capabilities',
@@ -575,7 +570,7 @@ class Pods_Pages extends PodsComponent {
 			),
 			array(
 				'name'       => 'restrict_redirect',
-				'label'      => __( 'Redirect if Restricted?', 'pods' ),
+				'label'      => __( 'Redirect if Restricted', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,

@@ -83,8 +83,16 @@ function pods_api( $pod = null, $format = null ) {
  * @throws Exception
  */
 function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
-	if ( $unique && ! in_array( $pod, array( null, false ), true ) ) {
-		return new PodsData( $pod, $id, $strict );
+	if ( $unique ) {
+		if ( $pod instanceof Pods ) {
+			return $pod->data;
+		}
+
+		if ( ! in_array( $pod, array( null, false ), true ) ) {
+			return new PodsData( $pod, $id, $strict );
+		}
+
+		return new PodsData;
 	}
 
 	return PodsData::init( $pod, $id, $strict );

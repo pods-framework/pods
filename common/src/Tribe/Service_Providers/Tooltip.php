@@ -1,4 +1,5 @@
 <?php
+namespace Tribe\Service_Providers;
 
 /**
  * Class Tribe__Service_Providers__Tooltip
@@ -7,7 +8,7 @@
  *
  * Handles the registration and creation of our async process handlers.
  */
-class Tribe__Service_Providers__Tooltip extends tad_DI52_ServiceProvider {
+class Tooltip extends \tad_DI52_ServiceProvider {
 
 	/**
 	 * Binds and sets up implementations.
@@ -15,7 +16,7 @@ class Tribe__Service_Providers__Tooltip extends tad_DI52_ServiceProvider {
 	 * @since 4.9.8
 	 */
 	public function register() {
-		tribe_singleton( 'tooltip.view', 'Tribe__Tooltip__View' );
+		tribe_singleton( 'tooltip.view', '\Tribe\Tooltip\View' );
 
 		$this->hook();
 	}
@@ -35,20 +36,24 @@ class Tribe__Service_Providers__Tooltip extends tad_DI52_ServiceProvider {
 	 * @since 4.9.8
 	 */
 	public function add_tooltip_assets() {
+		$main = \Tribe__Main::instance();
+
 		tribe_asset(
-			Tribe__Main::instance(),
-			'tribe-tooltip-css',
+			$main,
+			'tribe-tooltip',
 			'tooltip.css',
 			[ 'tribe-common-skeleton-style' ],
-			[ 'wp_enqueue_scripts', 'admin_enqueue_scripts' ]
+			[ 'wp_enqueue_scripts', 'admin_enqueue_scripts' ],
+			[ 'groups' => 'tribe-tooltip' ]
 		);
 
 		tribe_asset(
-			Tribe__Main::instance(),
+			$main,
 			'tribe-tooltip-js',
 			'tooltip.js',
 			[ 'jquery', 'tribe-common' ],
-			[ 'wp_enqueue_scripts', 'admin_enqueue_scripts' ]
+			[],
+			[ 'groups' => 'tribe-tooltip' ]
 		);
 	}
 }

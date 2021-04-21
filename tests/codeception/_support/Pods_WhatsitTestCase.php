@@ -12,7 +12,7 @@ use Pods\Whatsit;
 class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 
 	/**
-	 * @var Storage
+	 * @var Storage\Post_Type
 	 */
 	protected $pods_object_storage;
 
@@ -32,17 +32,17 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 	protected $field_args;
 
 	/**
-	 * @var Whatsit
+	 * @var Whatsit\Pod
 	 */
 	protected $pods_object_pod;
 
 	/**
-	 * @var Whatsit
+	 * @var Whatsit\Group
 	 */
 	protected $pods_object_group;
 
 	/**
-	 * @var Whatsit
+	 * @var Whatsit\Field
 	 */
 	protected $pods_object_field;
 
@@ -56,7 +56,7 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 	 */
 	protected $storage_type = 'post_type';
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$object_collection = Store::get_instance();
@@ -95,14 +95,14 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 			'label'       => 'Test field',
 			'description' => 'Testing field',
 			'parent'      => $this->pods_object_pod->get_id(),
-			'group'       => $this->pods_object_group->get_identifier(),
+			'group'       => $this->pods_object_group->get_id(),
 			'type'        => 'text',
 		);
 
 		$this->pods_object_field = $this->setup_pods_object( $field_args, 'field' );
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $this->pods_object_pod, $this->pods_object_group, $this->pods_object_field );
 
 		$this->setup_objects = array();

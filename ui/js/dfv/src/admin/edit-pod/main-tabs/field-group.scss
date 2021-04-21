@@ -1,0 +1,58 @@
+@import '../edit-pod-variables';
+
+.pods-field-group_name__id {
+	font-size: 13px;
+	color: #999;
+	display: inline;
+	opacity: 0;
+	transition: 200ms ease opacity;
+
+	.pods-field-group-wrapper:hover & {
+		opacity: 1;
+	}
+}
+
+.pods-field-group_buttons {
+	color: $color--light-grey;
+	opacity: 0;
+
+	.pods-field-group-wrapper:hover & {
+		opacity: 1;
+	}
+}
+
+.pods-field-group_button {
+	background: transparent;
+	border: none;
+	color: $color--wp-blue;
+	cursor: pointer;
+	height: auto;
+	margin: 0.25em 0;
+	overflow: visible;
+	padding: 0 0.5em;
+	position: relative;
+
+	&:hover,
+	&:focus {
+		color: $color--wp-blue-light;
+	}
+}
+
+.pods-field-group_manage,
+.pods-field-group_delete {
+	border-right: none;
+	margin-right: 0;
+}
+
+.pods-field-group_manage {
+	color: #e1e1e1;
+}
+
+.pods-field-group_delete {
+    color: $color--red;
+
+    &:hover,
+    &:hover:not(:disabled) {
+        color: $color--red-dark;
+    }
+}

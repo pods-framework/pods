@@ -94,7 +94,7 @@ class Tribe__Validator__Base implements Tribe__Validator__Interface {
 		$sep  = is_string( $sep ) ? $sep : ',';
 		$list = Tribe__Utils__Array::list_to_array( $list, $sep );
 
-		$valid = array_filter( $list, array( $this, 'is_positive_int' ) );
+		$valid = array_filter( $list, [ $this, 'is_positive_int' ] );
 
 		return ! empty( $valid ) && count( $valid ) === count( $list );
 	}
@@ -158,7 +158,9 @@ class Tribe__Validator__Base implements Tribe__Validator__Interface {
 	public function is_image( $image ) {
 		if ( $this->is_numeric( $image ) ) {
 			return wp_attachment_is_image( $image );
-		} elseif ( is_string( $image ) ) {
+		}
+
+		if ( is_string( $image ) ) {
 			$response = wp_remote_head( $image );
 
 			if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {

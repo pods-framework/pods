@@ -3,7 +3,6 @@
 namespace Pods\Whatsit;
 
 use Pods\Whatsit;
-use PodsForm;
 
 /**
  * Field class.
@@ -49,8 +48,34 @@ class Field extends Whatsit {
 	 * {@inheritdoc}
 	 */
 	public function get_arg( $arg, $default = null ) {
-		if ( 'pod' === $arg ) {
-			return $this->get_parent_name();
+		$arg = (string) $arg;
+
+		$special_args = [
+			// Pod args.
+			'pod_id'             => 'get_parent_id',
+			'pod'                => 'get_parent_name',
+			'pod_name'           => 'get_parent_name',
+			'pod_identifier'     => 'get_parent_identifier',
+			'pod_label'          => 'get_parent_label',
+			'pod_description'    => 'get_parent_description',
+			'pod_object'         => 'get_parent_object',
+			'pod_object_type'    => 'get_parent_object_type',
+			'pod_storage_type'   => 'get_parent_storage_type',
+			'pod_type'           => 'get_parent_type',
+			// Group args.
+			'group_id'           => 'get_group_id',
+			'group_name'         => 'get_group_name',
+			'group_identifier'   => 'get_group_identifier',
+			'group_label'        => 'get_group_label',
+			'group_description'  => 'get_group_description',
+			'group_object'       => 'get_group_object',
+			'group_object_type'  => 'get_group_object_type',
+			'group_storage_type' => 'get_group_storage_type',
+			'group_type'         => 'get_group_type',
+		];
+
+		if ( isset( $special_args[ $arg ] ) ) {
+			return $this->{$special_args[ $arg ]}();
 		}
 
 		return parent::get_arg( $arg, $default );
@@ -65,6 +90,11 @@ class Field extends Whatsit {
 		$type = $this->get_type();
 
 		$simple_tableless_objects = \PodsForm::simple_tableless_objects();
+
+		// File field types are always related to the media object type.
+		if ( 'file' === $type ) {
+			return 'media';
+		}
 
 		$related_type = $this->get_arg( $type . '_object', $this->get_arg( 'pick_object' ) );
 
@@ -97,6 +127,11 @@ class Field extends Whatsit {
 			return null;
 		}
 
+		// File field types are always related to the attachment post type.
+		if ( 'media' === $related_type ) {
+			return 'attachment';
+		}
+
 		$related_name = $this->get_arg( $type . '_val', $this->get_arg( 'pick_val', $related_type ) );
 
 		if ( '__current__' === $related_name ) {
@@ -110,6 +145,36 @@ class Field extends Whatsit {
 		}
 
 		return $related_name;
+	}
+
+	/**
+	 * Get field value limit from field.
+	 *
+	 * @return int The field value limit.
+	 */
+	public function get_limit() {
+		$type   = $this->get_type();
+		$format = $this->get_arg( $type .'_format_type', 'single' );
+
+		if ( 'multi' === $format ) {
+			return (int) $this->get_arg( $type . '_limit', 0 );
+		}
+
+		return 1;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_fields( array $args = [] ) {
+		return [];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_groups( array $args = [] ) {
+		return [];
 	}
 
 }

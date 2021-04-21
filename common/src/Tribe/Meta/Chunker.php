@@ -63,7 +63,7 @@ class Tribe__Meta__Chunker {
 	/**
 	 * @var array The post types supported by the Chunker.
 	 */
-	protected $post_types = array();
+	protected $post_types = [];
 
 	/**
 	 * @var int The filter priority at which Chunker will operate on meta CRUD operations.
@@ -95,11 +95,11 @@ class Tribe__Meta__Chunker {
 			return;
 		}
 
-		add_filter( 'update_post_metadata', array( $this, 'filter_update_metadata' ), $this->filter_priority, 4 );
-		add_filter( 'delete_post_metadata', array( $this, 'filter_delete_metadata' ), $this->filter_priority, 3 );
-		add_filter( 'add_post_metadata', array( $this, 'filter_add_metadata' ), $this->filter_priority, 4 );
-		add_filter( 'get_post_metadata', array( $this, 'filter_get_metadata' ), $this->filter_priority, 4 );
-		add_action( 'deleted_post', array( $this, 'remove_post_entry' ) );
+		add_filter( 'update_post_metadata', [ $this, 'filter_update_metadata' ], $this->filter_priority, 4 );
+		add_filter( 'delete_post_metadata', [ $this, 'filter_delete_metadata' ], $this->filter_priority, 3 );
+		add_filter( 'add_post_metadata', [ $this, 'filter_add_metadata' ], $this->filter_priority, 4 );
+		add_filter( 'get_post_metadata', [ $this, 'filter_get_metadata' ], $this->filter_priority, 4 );
+		add_action( 'deleted_post', [ $this, 'remove_post_entry' ] );
 	}
 
 	/**
@@ -114,8 +114,8 @@ class Tribe__Meta__Chunker {
 			return;
 		}
 
-		$this->chunks_cache   = array();
-		$this->post_ids_cache = array();
+		$this->chunks_cache   = [];
+		$this->post_ids_cache = [];
 
 		$chunked_keys = get_option( $this->chunked_keys_option_name );
 
@@ -199,7 +199,7 @@ class Tribe__Meta__Chunker {
 		$option = (array) get_option( $this->chunked_keys_option_name );
 
 		if ( ! isset( $option[ $post_id ] ) ) {
-			$option[ $post_id ] = array( $meta_key );
+			$option[ $post_id ] = [ $meta_key ];
 		} else {
 			$option[ $post_id ][] = $meta_key;
 		}
@@ -383,10 +383,10 @@ class Tribe__Meta__Chunker {
 	protected function remove_checksum_for( $object_id, $meta_key ) {
 		/** @var wpdb $wpdb */
 		global $wpdb;
-		$data = array(
+		$data = [
 			'post_id'  => $object_id,
 			'meta_key' => $this->get_checksum_key( $meta_key ),
-		);
+		];
 		$wpdb->delete( $wpdb->postmeta, $data );
 	}
 
@@ -481,7 +481,7 @@ class Tribe__Meta__Chunker {
 	 */
 	protected function prefix_chunks( array $chunks ) {
 		$count = count( $chunks );
-		$prefixed = array();
+		$prefixed = [];
 		for ( $i = 0; $i < $count; $i ++ ) {
 			$prefixed[] = "{$i}{$this->chunk_separator}{$chunks[$i]}";
 		}
@@ -525,21 +525,21 @@ class Tribe__Meta__Chunker {
 		$chunk_meta_key = $this->get_chunk_meta_key( $meta_key );
 		$this->insert_meta( $object_id, $meta_key, $chunks[0] );
 		foreach ( $chunks as $chunk ) {
-			$wpdb->insert( $wpdb->postmeta, array(
+			$wpdb->insert( $wpdb->postmeta, [
 				'post_id'    => $object_id,
 				'meta_key'   => $chunk_meta_key,
 				'meta_value' => $chunk,
-			) );
+			] );
 		}
 
 		$glued = $this->glue_chunks( $this->get_chunks_for( $object_id, $meta_key ) );
 		$checksum_key = $this->get_checksum_key( $meta_key );
-		$wpdb->delete( $wpdb->postmeta, array( 'post_id' => $object_id, 'meta_key' => $checksum_key ) );
-		$wpdb->insert( $wpdb->postmeta, array(
+		$wpdb->delete( $wpdb->postmeta, [ 'post_id' => $object_id, 'meta_key' => $checksum_key ] );
+		$wpdb->insert( $wpdb->postmeta, [
 			'post_id'    => $object_id,
 			'meta_key'   => $checksum_key,
 			'meta_value' => md5( $glued ),
-		) );
+		] );
 	}
 
 	/**
@@ -554,11 +554,11 @@ class Tribe__Meta__Chunker {
 	protected function insert_meta( $object_id, $meta_key, $meta_value ) {
 		/** @var wpdb $wpdb */
 		global $wpdb;
-		$data = array(
+		$data = [
 			'post_id'    => $object_id,
 			'meta_key'   => $meta_key,
 			'meta_value' => maybe_serialize( $meta_value ),
-		);
+		];
 		$wpdb->insert( $wpdb->postmeta, $data );
 	}
 
@@ -574,7 +574,7 @@ class Tribe__Meta__Chunker {
 	 * @see Tribe__Meta__Chunker::get_chunks_for()
 	 */
 	public function glue_chunks( array $chunks ) {
-		$ordered_chunks = array();
+		$ordered_chunks = [];
 		foreach ( $chunks as $chunk ) {
 			preg_match( '/(\\d+)' . preg_quote( $this->chunk_separator ) . '(.*)/', $chunk, $matches );
 			$ordered_chunks[ $matches[1] ] = $matches[2];
@@ -614,7 +614,7 @@ class Tribe__Meta__Chunker {
 			$object_id, $chunk_meta_key
 		) );
 
-		$meta_values = array();
+		$meta_values = [];
 		foreach ( $meta_ids as $meta_id ) {
 			$query = $wpdb->prepare( "SELECT meta_value FROM {$wpdb->postmeta} WHERE meta_id = %d", $meta_id );
 			$meta_values[] = $wpdb->get_var( $query );
@@ -736,11 +736,11 @@ class Tribe__Meta__Chunker {
 	 * Unhooks the Chunker from the metadata operations.
 	 */
 	public function unhook() {
-		remove_filter( 'update_post_metadata', array( $this, 'filter_update_metadata' ), $this->filter_priority );
-		remove_filter( 'delete_post_metadata', array( $this, 'filter_delete_metadata' ), $this->filter_priority );
-		remove_filter( 'add_post_metadata', array( $this, 'filter_add_metadata' ), $this->filter_priority );
-		remove_filter( 'get_post_metadata', array( $this, 'filter_get_metadata' ), $this->filter_priority );
-		remove_action( 'deleted_post', array( $this, 'remove_post_entry' ) );
+		remove_filter( 'update_post_metadata', [ $this, 'filter_update_metadata' ], $this->filter_priority );
+		remove_filter( 'delete_post_metadata', [ $this, 'filter_delete_metadata' ], $this->filter_priority );
+		remove_filter( 'add_post_metadata', [ $this, 'filter_add_metadata' ], $this->filter_priority );
+		remove_filter( 'get_post_metadata', [ $this, 'filter_get_metadata' ], $this->filter_priority );
+		remove_action( 'deleted_post', [ $this, 'remove_post_entry' ] );
 	}
 
 	/**
@@ -813,25 +813,25 @@ class Tribe__Meta__Chunker {
 		$all_meta = $this->get_all_meta( $object_id );
 
 		if ( empty( $all_meta ) ) {
-			return array();
+			return [];
 		}
 
-		$grouped = array();
+		$grouped = [];
 		foreach ( $all_meta as $entry ) {
 			if ( ! isset( $grouped[ $entry['meta_key'] ] ) ) {
-				$grouped[ $entry['meta_key'] ] = array( $entry['meta_value'] );
+				$grouped[ $entry['meta_key'] ] = [ $entry['meta_value'] ];
 			} else {
 				$grouped[ $entry['meta_key'] ][] = $entry['meta_value'];
 			}
 		}
 
-		$chunker_meta_keys = array_filter( array_keys( $grouped ), array( $this, 'is_chunker_logic_meta_key' ) );
+		$chunker_meta_keys = array_filter( array_keys( $grouped ), [ $this, 'is_chunker_logic_meta_key' ] );
 
 		if ( empty( $chunker_meta_keys ) ) {
 			return $grouped;
 		}
 
-		$checksum_keys = array_filter( $chunker_meta_keys, array( $this, 'is_chunker_checksum_key' ) );
+		$checksum_keys = array_filter( $chunker_meta_keys, [ $this, 'is_chunker_checksum_key' ] );
 
 		if ( empty( $checksum_keys ) ) {
 			return $grouped;
@@ -840,14 +840,14 @@ class Tribe__Meta__Chunker {
 		$chunker_meta = array_intersect_key( $grouped, array_combine( $chunker_meta_keys, $chunker_meta_keys ) );
 		$normal_meta = array_diff_key( $grouped, array_combine( $chunker_meta_keys, $chunker_meta_keys ) );
 		foreach ( $checksum_keys as $checksum_key ) {
-			$normal_meta_key = str_replace( array( $this->meta_key_prefix, '_checksum' ), '', $checksum_key );
+			$normal_meta_key = str_replace( [ $this->meta_key_prefix, '_checksum' ], '', $checksum_key );
 			$chunk_meta_key = $this->get_chunk_meta_key( $normal_meta_key );
 
 			if ( empty( $chunker_meta[ $chunk_meta_key ] ) ) {
 				continue;
 			}
 
-			$normal_meta[ $normal_meta_key ] = array( $this->glue_chunks( $chunker_meta[ $chunk_meta_key ] ) );
+			$normal_meta[ $normal_meta_key ] = [ $this->glue_chunks( $chunker_meta[ $chunk_meta_key ] ) ];
 		}
 
 		return $normal_meta;
@@ -881,7 +881,7 @@ class Tribe__Meta__Chunker {
 		$query = $wpdb->prepare( "SELECT meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id = %d", $object_id );
 		$results = $wpdb->get_results( $query, ARRAY_A );
 
-		return ! empty( $results ) && is_array( $results ) ? $results : array();
+		return ! empty( $results ) && is_array( $results ) ? $results : [];
 	}
 
 	/**

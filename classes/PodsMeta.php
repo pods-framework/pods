@@ -612,7 +612,7 @@ class PodsMeta {
 			}
 		}
 
-		$field      = ( "cpachidden" === substr( $obj->get_option( 'field' ), 0, 10 ) ) ? str_replace( 'cpachidden', '', $obj->get_option( 'field' ) ) : $obj->get_option( 'field' );
+		$field      = ( 'cpachidden' === substr( $obj->get_option( 'field' ), 0, 10 ) ) ? str_replace( 'cpachidden', '', $obj->get_option( 'field' ) ) : $obj->get_option( 'field' );
 		$field_type = $obj->get_option( 'field_type' );
 
 		if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] !== $object ) {
@@ -675,7 +675,6 @@ class PodsMeta {
 	 * @return mixed|void
 	 */
 	public function group_add( $pod, $label, $fields, $context = 'normal', $priority = 'default' ) {
-
 		if ( is_array( $pod ) && ! empty( $pod ) && ! isset( $pod['name'] ) ) {
 			foreach ( $pod as $p ) {
 				$this->group_add( $p, $label, $fields, $context, $priority );
@@ -766,12 +765,12 @@ class PodsMeta {
 				);
 			}
 
-			$field = array_merge( $defaults, $field );
+			$field = pods_config_merge_data( $defaults, $field );
 
 			$field['name'] = trim( $field['name'] );
 
 			if ( isset( $pod['fields'] ) && isset( $pod['fields'][ $field['name'] ] ) ) {
-				$field = array_merge( $field, $pod['fields'][ $field['name'] ] );
+				$field = pods_config_merge_data( $field, $pod['fields'][ $field['name'] ] );
 			}
 
 			$_fields[ $k ] = $field;
@@ -887,7 +886,7 @@ class PodsMeta {
 			'type'   => 'post_type'
 		);
 
-		$pod = array_merge( $defaults, (array) $pod );
+		$pod = pods_config_merge_data( $defaults, $pod );
 
 		if ( empty( $pod['name'] ) ) {
 			$pod['name'] = $pod['object'];
@@ -903,15 +902,16 @@ class PodsMeta {
 	}
 
 	/**
-	 * @param $type
-	 * @param $name
-	 * @param $default_fields
+	 * Get groups of fields for the content type.
 	 *
-	 * @return array
+	 * @param $type           Content type.
+	 * @param $name           Content name.
+	 * @param $default_fields List of default fields to include.
+	 *
+	 * @return array List of groups and their fields.
 	 */
 	public function groups_get( $type, $name, $default_fields = null ) {
-
-		static $groups_cache = array();
+		static $groups_cache = [];
 
 		if ( isset( $groups_cache[ $type . '/' . $name ] ) ) {
 			return $groups_cache[ $type . '/' . $name ];
@@ -926,8 +926,8 @@ class PodsMeta {
 
 		do_action( 'pods_meta_groups', $type, $name );
 
-		$pod    = array();
-		$fields = array();
+		$pod    = [];
+		$fields = [];
 
 		$object = self::$post_types;
 
@@ -943,19 +943,18 @@ class PodsMeta {
 			$object = self::$advanced_content_types;
 		}
 
-		// @todo Convert to Group
-
 		if ( ! empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) ) {
-			$fields = $object[ $name ]['fields'];
+			$pod    = $object[ $name ];
+			$fields = $pod['fields'];
 		} else {
-			if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] != $name ) {
-				self::$current_pod_data = pods_api()->load_pod( array( 'name' => $name ), false );
+			if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] !== $name ) {
+				self::$current_pod_data = pods_api()->load_pod( [ 'name' => $name ], false );
 			}
 
 			$pod = self::$current_pod_data;
 
-			if ( ! empty( $pod ) ) {
-				$fields = array();//$pod['fields'];
+			if ( ! empty( $pod ) && empty( $pod['groups'] ) ) {
+				$fields = $pod['fields'];
 			}
 		}
 
@@ -963,61 +962,84 @@ class PodsMeta {
 			$fields = $default_fields;
 		}
 
-		$defaults = array(
-			'name'   => 'post',
+		$defaults = [
+			'name'   => $name,
 			'object' => 'post',
-			'type'   => 'post_type'
-		);
+			'type'   => 'post_type',
+		];
 
-		$pod = array_merge( $defaults, (array) $pod );
+		if ( is_array( $pod ) ) {
+			$pod = array_merge( $defaults, $pod );
 
-		if ( empty( $pod['name'] ) ) {
-			$pod['name'] = $pod['object'];
-		} elseif ( empty( $pod['object'] ) ) {
-			$pod['object'] = $pod['name'];
+			if ( empty( $pod['name'] ) ) {
+				$pod['name'] = $pod['object'];
+			} elseif ( empty( $pod['object'] ) ) {
+				$pod['object'] = $pod['name'];
+			}
 		}
 
-		if ( $pod['type'] != $type ) {
-			$groups_cache[ $type . '/' . $name ] = array();
+		if ( $pod && $pod['type'] !== $type ) {
+			$groups_cache[ $type . '/' . $name ] = [];
 
 			return $groups_cache[ $type . '/' . $name ];
 		}
 
-		$groups = array(
-			array(
+		/**
+		 * Filter the title of the Pods Metabox used in the post editor.
+		 *
+		 * @since unknown
+		 *
+		 * @param string  $title  The title to use, default is 'More Fields'.
+		 * @param obj|Pod $pod    Current Pods Object.
+		 * @param array   $fields Array of fields that will go in the metabox.
+		 * @param string  $type   The type of Pod.
+		 * @param string  $name   Name of the Pod.
+		 */
+		$title = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name );
+
+		$groups = [];
+
+		$has_custom_groups = ! empty( self::$groups[ $type ][ $name ] );
+
+		if ( ! empty( $pod['groups'] ) ) {
+			foreach ( $pod['groups'] as $group ) {
+				if ( empty( $group['fields'] ) ) {
+					continue;
+				}
+
+				$groups[] = [
+					'pod'      => $pod,
+					'label'    => $group['label'],
+					'fields'   => $group['fields'],
+					'context'  => pods_v( 'meta_box_context', $group, 'normal', true ),
+					'priority' => pods_v( 'meta_box_priority', $group, 'default', true ),
+				];
+			}
+
+			if ( $has_custom_groups ) {
+				$groups = array_merge( $groups, self::$groups[ $type ][ $name ] );
+			}
+		} elseif ( ! empty( self::$groups[ $type ][ $name ] ) ) {
+			$groups = self::$groups[ $type ][ $name ];
+		} else {
+			$groups[] = [
 				'pod'      => $pod,
-				/**
-				 * Filter the title of the Pods Metabox In The Post Editor
-				 *
-				 * @param string  $title  The title to use, default is 'More Fields'
-				 * @param obj|Pod $pod    Current Pods Object
-				 * @param array   $fields Array of fields that will go in the metabox
-				 * @param string  $type   The type of Pod
-				 * @param string  $name   Name of the Pod
-				 *
-				 * @return string The title for the metabox.
-				 *
-				 * @since unknown
-				 */
-				'label'    => apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name ),
+				'label'    => $title,
 				'fields'   => $fields,
 				'context'  => 'normal',
-				'priority' => 'default'
-			)
-		);
-
-		if ( isset( self::$groups[ $type ] ) && isset( self::$groups[ $type ][ $name ] ) ) {
-			$groups = self::$groups[ $type ][ $name ];
+				'priority' => 'default',
+			];
 		}
 
 		/**
 		 * Filter the array of field groups
 		 *
-		 * @param array  $groups Array of groups
+		 * @since 2.6.6
+		 *
 		 * @param string $type   The type of Pod
 		 * @param string $name   Name of the Pod
 		 *
-		 * @since 2.6.6
+		 * @param array  $groups Array of groups
 		 */
 		$groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
 
@@ -1055,7 +1077,7 @@ class PodsMeta {
 				if ( false !== PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'] ) ) {
 					$field_found = true;
 				}
-				if ( ! isset( $field['options']['hidden'] ) || 1 != (int) $field['options']['hidden'] ) {
+				if ( ! isset( $field['hidden'] ) || 1 != (int) $field['hidden'] ) {
 					$group_hidden = false;
 				}
 			}
@@ -1111,15 +1133,13 @@ class PodsMeta {
 
 		do_action( 'pods_meta_meta_post', $post );
 
-		$hidden_fields = array();
-
 		$id = null;
 
 		if ( is_object( $post ) && false === strpos( $_SERVER['REQUEST_URI'], '/post-new.php' ) ) {
 			$id = $post->ID;
 		}
 
-		if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod ) || self::$current_pod->pod != $metabox['args']['group']['pod']['name'] ) {
+		if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod ) || self::$current_pod->pod !== $metabox['args']['group']['pod']['name'] ) {
 			self::$current_pod = pods( $metabox['args']['group']['pod']['name'], $id, true );
 		} elseif ( self::$current_pod->id() != $id ) {
 			self::$current_pod->fetch( $id );
@@ -1143,87 +1163,54 @@ class PodsMeta {
 		$fields = apply_filters( 'pods_meta_post_fields', $fields, $id, $post, $metabox, $pod );
 
 		if ( empty( $fields ) ) {
-			_e( 'There are no fields to display', 'pods' );
+			esc_html_e( 'There are no fields to display', 'pods' );
 
 			return;
 		}
+
+		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' );
 		?>
 		<table class="form-table pods-metabox pods-admin pods-dependency">
 			<?php
-			echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' );
+			$field_prefix      = 'pods_meta_';
+			$field_row_classes = 'form-field pods-field-input';
+			$th_scope          = 'row';
 
-			foreach ( $fields as $field ) {
-				if ( false === PodsForm::permission( $field['type'], $field['name'], $field['options'], $fields, $pod, $id ) ) {
-					if ( pods_var( 'hidden', $field['options'], false ) ) {
-						$field['type'] = 'hidden';
-					} else {
-						continue;
-					}
-				} elseif ( ! pods_has_permissions( $field['options'] ) && pods_var( 'hidden', $field['options'], false ) ) {
-					$field['type'] = 'hidden';
-				}
-
+			$value_callback = static function( $field_name, $id, $field, $pod ) {
 				$value = '';
 
+				pods_no_conflict_on( 'post' );
+
 				if ( ! empty( $pod ) ) {
-					pods_no_conflict_on( 'post' );
-
-					$value = $pod->field( array( 'name' => $field['name'], 'in_form' => true ) );
-
-					pods_no_conflict_off( 'post' );
+					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
 				} elseif ( ! empty( $id ) ) {
 					$value = get_post_meta( $id, $field['name'], true );
 				}
 
-				if ( 'hidden' == $field['type'] ) {
-					$hidden_fields[] = array(
-						'field' => $field,
-						'value' => $value
-					);
-				} else {
-					$dep_options = PodsForm::dependencies( $field, 'pods-meta-' );
-					$dep_classes = $dep_options['classes'];
-					$dep_data    = $dep_options['data'];
+				pods_no_conflict_off( 'post' );
 
-					$field_name = $field['name'];
-					do_action( "pods_meta_meta_post_{$field_name}", $post, $field, $pod );
-					?>
-					<tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?> <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>">
-					<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
-					<td>
-						<?php
-						// Remove any extra ? help icons
-						if ( isset( $field['help'] ) ) {
-							unset( $field['help'] );
-						}
-						?>
-						<div class="pods-submittable-fields">
-							<?php echo PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
-							<?php echo PodsForm::comment( 'pods_meta_' . $field['name'], $field['description'], $field ); ?>
-						</div>
-					</td>
-					</tr>
-					<?php
-					do_action( "pods_meta_meta_post_{$field_name}_post", $post, $field, $pod );
-				}
-			}
+				return $value;
+			};
+
+			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
+				do_action( "pods_meta_meta_post_{$field_name}", $post, $field, $pod );
+				do_action( "pods_meta_meta_post_pre_row_{$field_name}", $post, $field, $pod );
+			};
+
+			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
+				do_action( "pods_meta_meta_post_{$field_name}_post", $post, $field, $pod );
+				do_action( "pods_meta_meta_post_post_row_{$field_name}", $post, $field, $pod );
+			};
+
+			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 			?>
 		</table>
 
-		<?php
-		do_action( 'pods_meta_meta_post_post', $post );
-
-		foreach ( $hidden_fields as $hidden_field ) {
-			$field_data = $hidden_field['field'];
-
-			echo PodsForm::field( 'pods_meta_' . $field_data['name'], $hidden_field['value'], 'hidden', $field_data );
-		}
-		?>
+		<?php do_action( 'pods_meta_meta_post_post', $post ); ?>
 
 		<script type="text/javascript">
 			jQuery( function ( $ ) {
 				$( document ).Pods( 'submit_meta' );
-				$( document ).Pods( 'dependency', true );
 			} );
 		</script>
 		<?php
@@ -1336,7 +1323,7 @@ class PodsMeta {
 		$data = array();
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -1346,14 +1333,20 @@ class PodsMeta {
 		// The following code will run for all post_types (not just Pods)
 
 		if ( false !== $nonced && ! empty( $groups ) ) {
+			$layout_field_types = PodsForm::layout_field_types();
+
 			foreach ( $groups as $group ) {
 				if ( empty( $group['fields'] ) ) {
 					continue;
 				}
 
 				foreach ( $group['fields'] as $field ) {
+					if ( in_array( $field['type'], $layout_field_types, true ) ) {
+						continue;
+					}
+
 					if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-						if ( ! pods_v( 'hidden', $field['options'], false ) ) {
+						if ( ! pods_v( 'hidden', $field, false ) ) {
 							continue;
 						}
 					}
@@ -1379,7 +1372,7 @@ class PodsMeta {
 			pods_no_conflict_on( 'post' );
 
 			if ( ! empty( $pod ) ) {
-				// Fix for Pods doing it's own sanitizing
+				// Fix for Pods doing it's own sanitizing.
 				$data = pods_unslash( (array) $data );
 
 				$pod->save( $data, null, null, array(
@@ -1472,35 +1465,58 @@ class PodsMeta {
 				$pod = self::$current_pod;
 			}
 
+			$did_init = false;
+
 			foreach ( $group['fields'] as $field ) {
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( ! pods_var( 'hidden', $field['options'], false ) ) {
+					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
 					}
 				}
 
-				$value = '';
-
-				if ( ! empty( $pod ) ) {
-					$value = $pod->field( array( 'name' => $field['name'], 'in_form' => true ) );
-				} elseif ( ! empty( $id ) ) {
-					pods_no_conflict_on( 'post' );
-
-					$value = get_post_meta( $id, $field['name'], true );
-
-					pods_no_conflict_off( 'post' );
+				// Skip heavy fields.
+				if ( in_array( $field['type'], [ 'wysiwyg', 'code', 'file', 'oembed' ], true ) ) {
+					continue;
 				}
 
-				// Manually force DFV initialization.  This is needed for attachments in "grid mode" in the
-				// media library.  Note that this should only occur for attachment_fields_to_edit (see #4785)
-				$dfv_init_script = "<script>window.PodsDFV.init();</script>";
+				$value = '';
+
+				pods_no_conflict_on( 'post' );
+
+				if ( ! empty( $pod ) ) {
+					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
+				} elseif ( ! empty( $id ) ) {
+					$value = get_post_meta( $id, $field['name'], true );
+				}
+
+				pods_no_conflict_off( 'post' );
 
 				$form_fields[ 'pods_meta_' . $field['name'] ] = array(
 					'label' => $field['label'],
 					'input' => 'html',
-					'html'  => PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id ) . $meta_nonce . $dfv_init_script,
+					'html'  => PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id ),
 					'helps' => PodsForm::comment( 'pods_meta_' . $field['name'], $field['description'], $field )
 				);
+
+				// Manually force DFV initialization.  This is needed for attachments in "grid mode" in the
+				// media library.  Note that this should only occur for attachment_fields_to_edit (see #4785)
+				$dfv_init_script = '<script>window.PodsDFV.init();</script>';
+
+				// Only output nonce/init script on the very first field of the first group we have.
+				if ( ! $did_init ) {
+					$form_fields[ 'pods_meta_' . $field['name'] ]['html'] .= $meta_nonce;
+					$form_fields[ 'pods_meta_' . $field['name'] ]['html'] .= $dfv_init_script;
+
+					$did_init = true;
+				}
+
+				if ( 'heading' === $field['type'] ) {
+					$form_fields[ 'pods_meta_' . $field['name'] ]['html']  = $form_fields[ 'pods_meta_' . $field['name'] ]['label'];
+					$form_fields[ 'pods_meta_' . $field['name'] ]['label'] = '';
+				} elseif ( 'html' === $field['type'] ) {
+					$form_fields[ 'pods_meta_' . $field['name'] ]['label'] = '';
+					$form_fields[ 'pods_meta_' . $field['name'] ]['helps'] = '';
+				}
 			}
 		}
 
@@ -1542,6 +1558,8 @@ class PodsMeta {
 		$id  = $post_id;
 		$pod = null;
 
+		$layout_field_types = PodsForm::layout_field_types();
+
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
@@ -1558,9 +1576,12 @@ class PodsMeta {
 			}
 
 			foreach ( $group['fields'] as $field ) {
+				if ( in_array( $field['type'], $layout_field_types, true ) ) {
+					continue;
+				}
 
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( ! pods_var( 'hidden', $field['options'], false ) ) {
+					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
 					}
 				}
@@ -1574,7 +1595,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -1681,55 +1702,55 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
 					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				} elseif ( self::$current_pod->id() !== $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
 				$pod = self::$current_pod;
 			}
 
-			foreach ( $group['fields'] as $field ) {
-				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( pods_var( 'hidden', $field['options'], false ) ) {
-						$field['type'] = 'hidden';
-					} else {
-						continue;
-					}
-				} elseif ( ! pods_has_permissions( $field['options'] ) && pods_var( 'hidden', $field['options'], false ) ) {
-					$field['type'] = 'hidden';
-				}
+			$fields            = array_merge( [
+				'_group_title' => [
+					'name'        => '_group_title',
+					'label'       => $group['label'],
+					'type'        => 'heading',
+					'heading_tag' => 'h2',
+				],
+			], $group['fields'] );
+			$field_prefix      = 'pods_meta_';
+			$field_row_classes = 'form-field';
+			$th_scope          = 'row';
 
+			$value_callback = static function( $field_name, $id, $field, $pod ) {
 				$value = '';
 
+				pods_no_conflict_on( 'taxonomy' );
+
 				if ( ! empty( $pod ) ) {
-					$value = $pod->field( array( 'name' => $field['name'], 'in_form' => true ) );
+					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
+				} elseif ( ! empty( $id ) ) {
+					$value = get_term_meta( $id, $field['name'], true );
 				}
 
-				if ( ! is_object( $tag ) ) {
-					?>
-					<div class="form-field pods-field" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
-						<?php
-						echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field );
-						echo PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id );
-						echo PodsForm::comment( 'pods_meta_' . $field['name'], $field['description'], $field );
-						?>
-					</div>
-					<?php
-				} else {
-					?>
-					<tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
-						<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
-						<td>
-							<?php
-							echo PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id );
-							echo PodsForm::comment( 'pods_meta_' . $field['name'], $field['description'], $field );
-							?>
-						</td>
-					</tr>
-					<?php
-				}
+				pods_no_conflict_off( 'taxonomy' );
+
+				return $value;
+			};
+
+			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $tag ) {
+				do_action( "pods_meta_meta_taxonomy_pre_row_{$field_name}", $tag, $field, $pod );
+			};
+
+			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $tag ) {
+				do_action( "pods_meta_meta_taxonomy_post_row_{$field_name}", $tag, $field, $pod );
+			};
+
+			if ( null === $id ) {
+				pods_view( PODS_DIR . 'ui/forms/div-rows.php', compact( array_keys( get_defined_vars() ) ) );
+			} else {
+				pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 			}
 		}
 
@@ -1771,6 +1792,8 @@ class PodsMeta {
 
 		$has_fields = false;
 
+		$layout_field_types = PodsForm::layout_field_types();
+
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
@@ -1797,8 +1820,12 @@ class PodsMeta {
 			}
 
 			foreach ( $group['fields'] as $field ) {
+				if ( in_array( $field['type'], $layout_field_types, true ) ) {
+					continue;
+				}
+
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( ! pods_var( 'hidden', $field['options'], false ) ) {
+					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
 					}
 				}
@@ -1812,7 +1839,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -1906,8 +1933,6 @@ class PodsMeta {
 
 				$pod = self::$current_pod;
 			}
-
-			$hidden_fields = array();
 			?>
 			<h3><?php echo $group['label']; ?></h3>
 
@@ -1916,56 +1941,40 @@ class PodsMeta {
 			<table class="form-table pods-meta">
 				<tbody>
 				<?php
-				foreach ( $group['fields'] as $field ) {
+				$fields            = $group['fields'];
+				$field_prefix      = 'pods_meta_';
+				$field_row_classes = 'form-field pods-field-input';
+				$th_scope          = 'row';
 
-					if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-						if ( pods_var( 'hidden', $field['options'], false ) ) {
-							$field['type'] = 'hidden';
-						} else {
-							continue;
-						}
-					} elseif ( ! pods_has_permissions( $field['options'] ) && pods_var( 'hidden', $field['options'], false ) ) {
-						$field['type'] = 'hidden';
-					}
-
+				$value_callback = static function( $field_name, $id, $field, $pod ) {
 					$value = '';
 
+					pods_no_conflict_on( 'user' );
+
 					if ( ! empty( $pod ) ) {
-						$value = $pod->field( array( 'name' => $field['name'], 'in_form' => true ) );
+						$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
 					} elseif ( ! empty( $id ) ) {
-						pods_no_conflict_on( 'user' );
-
 						$value = get_user_meta( $id, $field['name'], true );
-
-						pods_no_conflict_off( 'user' );
 					}
 
-					if ( 'hidden' == $field['type'] ) {
-						$hidden_fields[] = array(
-							'field' => $field,
-							'value' => $value
-						);
-					} else {
-						?>
-						<tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
-							<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
-							<td>
-								<?php echo PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
-								<?php echo PodsForm::comment( 'pods_meta_' . $field['name'], $field['description'], $field ); ?>
-							</td>
-						</tr>
-						<?php
-					}
-				}
+					pods_no_conflict_off( 'user' );
+
+					return $value;
+				};
+
+				$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
+					do_action( "pods_meta_meta_user_pre_row_{$field_name}", $post, $field, $pod );
+				};
+
+				$post_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
+					do_action( "pods_meta_meta_user_post_row_{$field_name}", $post, $field, $pod );
+				};
+
+				pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 				?>
 				</tbody>
 			</table>
 			<?php
-			foreach ( $hidden_fields as $hidden_field ) {
-				$field_data = $hidden_field['field'];
-
-				echo PodsForm::field( 'pods_meta_' . $field_data['name'], $hidden_field['value'], 'hidden', $field_data );
-			}
 		}
 
 		do_action( 'pods_meta_meta_user_post', $user_id );
@@ -2011,7 +2020,7 @@ class PodsMeta {
 		$data = array();
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -2020,14 +2029,20 @@ class PodsMeta {
 		}
 
 		if ( false !== $nonced && ! empty( $groups ) ) {
+			$layout_field_types = PodsForm::layout_field_types();
+
 			foreach ( $groups as $group ) {
 				if ( empty( $group['fields'] ) ) {
 					continue;
 				}
 
 				foreach ( $group['fields'] as $field ) {
+					if ( in_array( $field['type'], $layout_field_types, true ) ) {
+						continue;
+					}
+
 					if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-						if ( ! pods_v( 'hidden', $field['options'], false ) ) {
+						if ( ! pods_v( 'hidden', $field, false ) ) {
 							continue;
 						}
 					}
@@ -2133,38 +2148,45 @@ class PodsMeta {
 				$pod = self::$current_pod;
 			}
 
-			foreach ( $group['fields'] as $field ) {
-				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( pods_var( 'hidden', $field['options'], false ) ) {
-						$field['type'] = 'hidden';
-					} else {
-						continue;
-					}
-				} elseif ( ! pods_has_permissions( $field['options'] ) && pods_var( 'hidden', $field['options'], false ) ) {
-					$field['type'] = 'hidden';
-				}
+			$fields            = array_merge( [
+				'_group_title' => [
+					'name'        => '_group_title',
+					'label'       => $group['label'],
+					'type'        => 'heading',
+					'heading_tag' => 'h2',
+				],
+			], $group['fields'] );
+			$field_prefix      = 'pods_meta_';
+			$field_row_classes = 'comment-form-author comment-form-pods-meta';
 
+			$value_callback = static function( $field_name, $id, $field, $pod ) {
 				$value = '';
 
+				pods_no_conflict_on( 'comment' );
+
 				if ( ! empty( $pod ) ) {
-					$value = $pod->field( array( 'name' => $field['name'], 'in_form' => true ) );
+					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
 				} elseif ( ! empty( $id ) ) {
-					pods_no_conflict_on( 'comment' );
-
 					$value = get_comment_meta( $id, $field['name'], true );
-
-					pods_no_conflict_off( 'comment' );
 				}
-				?>
-				<p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field['name'] ); ?>  pods-field" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
-					<?php
-					echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field );
-					echo PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id );
-					echo PodsForm::comment( 'pods_meta_' . $field['name'], $field['description'], $field );
-					?>
-				</p>
-				<?php
-			}
+
+				pods_no_conflict_off( 'comment' );
+
+				return $value;
+			};
+
+			// There is no comment yet.
+			$comment = null;
+
+			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_pre_row_{$field_name}", $comment, $field, $pod );
+			};
+
+			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $comment, $field, $pod );
+			};
+
+			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 
 		do_action( 'pods_meta_meta_comment_new_logged_in_post', $commenter, $user_identity );
@@ -2202,40 +2224,81 @@ class PodsMeta {
 				$pod = self::$current_pod;
 			}
 
-			foreach ( $group['fields'] as $field ) {
+			$fields            = array_merge( [
+				'_group_title' => [
+					'name'        => '_group_title',
+					'label'       => $group['label'],
+					'type'        => 'heading',
+					'heading_tag' => 'h2',
+				],
+			], $group['fields'] );
+			$field_prefix      = 'pods_meta_';
+			$field_row_classes = 'comment-form-author comment-form-pods-meta';
 
-				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( pods_var( 'hidden', $field['options'], false ) ) {
-						$field['type'] = 'hidden';
-					} else {
+			$value_callback = static function( $field_name, $id, $field, $pod ) {
+				$value = '';
+
+				pods_no_conflict_on( 'comment' );
+
+				if ( ! empty( $pod ) ) {
+					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
+				} elseif ( ! empty( $id ) ) {
+					$value = get_comment_meta( $id, $field['name'], true );
+				}
+
+				pods_no_conflict_off( 'comment' );
+
+				return $value;
+			};
+
+			// There is no comment yet.
+			$comment = null;
+
+			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_pre_row_{$field_name}", $comment, $field, $pod );
+			};
+
+			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $comment, $field, $pod );
+			};
+
+			foreach ( $fields as $field ) {
+				$hidden_field = (boolean) pods_v( 'hidden', $field, false );
+
+				if (
+					! PodsForm::permission( $field['type'], $field['name'], $field, $fields, $pod, $id )
+					|| ( ! pods_has_permissions( $field ) && $hidden_field )
+				) {
+					if ( ! $hidden_field ) {
 						continue;
 					}
-				} elseif ( ! pods_has_permissions( $field['options'] ) && pods_var( 'hidden', $field['options'], false ) ) {
+
 					$field['type'] = 'hidden';
 				}
 
 				$value = '';
 
-				if ( ! empty( $pod ) ) {
-					$value = $pod->field( array( 'name' => $field['name'], 'in_form' => true ) );
-				} elseif ( ! empty( $id ) ) {
-					pods_no_conflict_on( 'comment' );
-
-					$value = get_comment_meta( $id, $field['name'], true );
-
-					pods_no_conflict_off( 'comment' );
+				if ( ! empty( $value_callback ) && is_callable( $value_callback ) ) {
+					$value = $value_callback( $field['name'], $id, $field, $pod );
+				} elseif ( ! empty( $pod ) ) {
+					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
 				}
 
+				$row_classes = $field_row_classes . ' pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true );
+				$row_classes = trim( $row_classes );
+
 				ob_start();
-				?>
-				<p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field['name'] ); ?> pods-field" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
-					<?php
-					echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field );
-					echo PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id );
-					echo PodsForm::comment( 'pods_meta_' . $field['name'], $field['description'], $field );
-					?>
-				</p>
-				<?php
+
+				if ( ! empty( $pre_callback ) && is_callable( $pre_callback ) ) {
+					$pre_callback( $field['name'], $id, $field, $pod );
+				}
+
+				pods_view( PODS_DIR . 'ui/forms/p-row.php', compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
+
+				if ( ! empty( $post_callback ) && is_callable( $post_callback ) ) {
+					$post_callback( $field['name'], $id, $field, $pod );
+				}
+
 				$form_fields[ 'pods_meta_' . $field['name'] ] = ob_get_clean();
 			}
 		}
@@ -2277,7 +2340,7 @@ class PodsMeta {
 
 			foreach ( $group['fields'] as $field ) {
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], null, null ) ) {
-					if ( pods_var( 'hidden', $field['options'], false ) ) {
+					if ( pods_var( 'hidden', $field, false ) ) {
 						$field_found = true;
 						break;
 					} else {
@@ -2329,49 +2392,38 @@ class PodsMeta {
 
 			$pod = self::$current_pod;
 
-			foreach ( $metabox['args']['group']['fields'] as $field ) {
-				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $metabox['args']['group']['fields'], $pod, $id ) ) {
-					if ( pods_var( 'hidden', $field['options'], false ) ) {
-						$field['type'] = 'hidden';
-					} else {
-						continue;
-					}
-				} elseif ( ! pods_has_permissions( $field['options'] ) && pods_var( 'hidden', $field['options'], false ) ) {
-					$field['type'] = 'hidden';
-				}
+			$fields            = $metabox['args']['group']['fields'];
+			$field_prefix      = 'pods_meta_';
+			$field_row_classes = 'comment-form-author comment-form-pods-meta';
 
+			$value_callback = static function( $field_name, $id, $field, $pod ) {
 				$value = '';
 
+				pods_no_conflict_on( 'comment' );
+
 				if ( ! empty( $pod ) ) {
-					$value = $pod->field( array( 'name' => $field['name'], 'in_form' => true ) );
+					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
+				} elseif ( ! empty( $id ) ) {
+					$value = get_comment_meta( $id, $field['name'], true );
 				}
 
-				if ( 'hidden' == $field['type'] ) {
-					$hidden_fields[] = array(
-						'field' => $field,
-						'value' => $value
-					);
-				} else {
-					?>
-					<tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
-						<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
-						<td>
-							<?php echo PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
-							<?php echo PodsForm::comment( 'pods_meta_' . $field['name'], $field['description'], $field ); ?>
-						</td>
-					</tr>
-					<?php
-				}
-			}
+				pods_no_conflict_off( 'comment' );
+
+				return $value;
+			};
+
+			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_pre_row_{$field_name}", $comment, $field, $pod );
+			};
+
+			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
+				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $comment, $field, $pod );
+			};
+
+			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 			?>
 		</table>
 		<?php
-		foreach ( $hidden_fields as $hidden_field ) {
-			$field_data = $hidden_field['field'];
-
-			echo PodsForm::field( 'pods_meta_' . $field_data['name'], $hidden_field['value'], 'hidden', $field_data );
-		}
-
 		do_action( 'pods_meta_meta_comment_post', $comment, $metabox );
 	}
 
@@ -2392,6 +2444,8 @@ class PodsMeta {
 		$pod = null;
 		$id  = null;
 
+		$layout_field_types = PodsForm::layout_field_types();
+
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
@@ -2408,9 +2462,12 @@ class PodsMeta {
 			}
 
 			foreach ( $group['fields'] as $field ) {
+				if ( in_array( $field['type'], $layout_field_types, true ) ) {
+					continue;
+				}
 
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( ! pods_var( 'hidden', $field['options'], false ) ) {
+					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
 					}
 				}
@@ -2456,6 +2513,8 @@ class PodsMeta {
 		$id  = $comment_id;
 		$pod = null;
 
+		$layout_field_types = PodsForm::layout_field_types();
+
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
@@ -2472,8 +2531,12 @@ class PodsMeta {
 			}
 
 			foreach ( $group['fields'] as $field ) {
+				if ( in_array( $field['type'], $layout_field_types, true ) ) {
+					continue;
+				}
+
 				if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
-					if ( ! pods_var( 'hidden', $field['options'], false ) ) {
+					if ( ! pods_var( 'hidden', $field, false ) ) {
 						continue;
 					}
 				}
@@ -2487,7 +2550,7 @@ class PodsMeta {
 		}
 
 		if ( $pod ) {
-			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
 
 			// Block REST API saves, we handle those separately in PodsRESTHandlers
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
@@ -3094,49 +3157,31 @@ class PodsMeta {
 
 		foreach ( $meta_keys as $meta_k ) {
 			if ( ! empty( $pod ) ) {
-				if ( isset( $pod->fields[ $meta_k ] ) ) {
+				$first_meta_key = $meta_k;
+				if ( false !== strpos( $first_meta_key, '.' ) ) {
+					// Get the first meta key.
+					$first_meta_key = current( explode( '.', $first_meta_key ) );
+				}
+
+				if ( isset( $pod->fields[ $first_meta_key ] ) ) {
 					$key_found = true;
 
 					$meta_cache[ $meta_k ] = $pod->field( array(
 						'name'     => $meta_k,
 						'single'   => $single,
-						'get_meta' => true
+						'get_meta' => true,
 					) );
 
-					if ( ( ! is_array( $meta_cache[ $meta_k ] ) || ! isset( $meta_cache[ $meta_k ][0] ) ) ) {
-						if ( empty( $meta_cache[ $meta_k ] ) && ! is_array( $meta_cache[ $meta_k ] ) && $single ) {
+					if ( ! is_array( $meta_cache[ $meta_k ] ) || ! isset( $meta_cache[ $meta_k ][0] ) ) {
+						if ( empty( $meta_cache[ $meta_k ] ) ) {
 							$meta_cache[ $meta_k ] = array();
 						} else {
 							$meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
 						}
 					}
 
-					if ( in_array( $pod->fields[ $meta_k ]['type'], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $meta_k ] ) ) {
-						unset( $meta_cache[ '_pods_' . $meta_k ] );
-					}
-				} elseif ( false !== strpos( $meta_k, '.' ) ) {
-					$key_found = true;
-
-					$first = current( explode( '.', $meta_k ) );
-
-					if ( isset( $pod->fields[ $first ] ) ) {
-						$meta_cache[ $meta_k ] = $pod->field( array(
-							'name'     => $meta_k,
-							'single'   => $single,
-							'get_meta' => true
-						) );
-
-						if ( ( ! is_array( $meta_cache[ $meta_k ] ) || ! isset( $meta_cache[ $meta_k ][0] ) ) && $single ) {
-							if ( empty( $meta_cache[ $meta_k ] ) && ! is_array( $meta_cache[ $meta_k ] ) && $single ) {
-								$meta_cache[ $meta_k ] = array();
-							} else {
-								$meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
-							}
-						}
-
-						if ( in_array( $pod->fields[ $first ]['type'], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $first ] ) ) {
-							unset( $meta_cache[ '_pods_' . $first ] );
-						}
+					if ( in_array( $pod->fields[ $first_meta_key ]['type'], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $first_meta_key ] ) ) {
+						unset( $meta_cache[ '_pods_' . $first_meta_key ] );
 					}
 				}
 			}
@@ -3248,27 +3293,24 @@ class PodsMeta {
 			return $_null;
 		}
 
-		if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
+		if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod !== $object['name'] ) {
 			self::$current_field_pod = pods( $object['name'] );
 		}
 
 		$pod = self::$current_field_pod;
 
-		if ( ( isset( $pod->fields[ $meta_key ] ) || false !== strpos( $meta_key, '.' ) ) && $pod->row !== null ) {
-
+		if ( null !== $pod->data->row && ( isset( $pod->fields[ $meta_key ] ) || false !== strpos( $meta_key, '.' ) ) ) {
 			$key = $meta_key;
+
 			if ( false !== strpos( $meta_key, '.' ) ) {
 				$key = current( explode( '.', $meta_key ) );
 			}
 
-			$pod->row[ $meta_key ] = $meta_value;
+			$pod->data->row[ $meta_key ] = $meta_value;
 
-			if ( isset( $pod->fields[ $key ] ) ) {
-				if ( in_array( $pod->fields[ $key ]['type'], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $key ] ) ) {
-					unset( $meta_cache[ '_pods_' . $key ] );
-				}
+			if ( isset( $meta_cache[ '_pods_' . $key ], $pod->fields[ $key ] ) && in_array( $pod->fields[ $key ]['type'], PodsForm::tableless_field_types(), true ) ) {
+				unset( $meta_cache[ '_pods_' . $key ] );
 			}
-
 		}
 
 		$pod->save( $meta_key, $meta_value, $object_id, array( 'podsmeta_direct' => true, 'error_mode' => 'false' ) );

@@ -95,10 +95,10 @@ class Tribe__Editor__Utils {
 			return false;
 		}
 
-		return wp_update_post( array(
+		return wp_update_post( [
 			'ID'           => $post_id,
 			'post_content' => $next_content,
-		) );
+		] );
 	}
 
 	/**

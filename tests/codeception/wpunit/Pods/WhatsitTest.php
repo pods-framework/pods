@@ -863,8 +863,10 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$this->assertCount( 24, $this->pods_object_pod['object_fields'] );
 		$this->assertCount( 27, $this->pods_object_pod['table_info'] );
 
+		$this->assertArrayHasKey( 'test-field', $this->pods_object_pod['fields'] );
 		$this->assertEquals( 'Test field', $this->pods_object_pod['fields']['test-field']['label'] );
 		$this->assertEquals( 'Test field', $this->pods_object_pod['fields']['test-field']['options']['label'] );
+		$this->assertArrayHasKey( 'test-group', $this->pods_object_pod['groups'] );
 		$this->assertEquals( 'Test group', $this->pods_object_pod['groups']['test-group']['label'] );
 		$this->assertEquals( 'Test group', $this->pods_object_pod['groups']['test-group']['options']['label'] );
 

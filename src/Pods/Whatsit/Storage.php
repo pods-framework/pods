@@ -27,6 +27,11 @@ abstract class Storage {
 	protected $secondary_args = array();
 
 	/**
+	 * @var bool
+	 */
+	protected $fallback_mode = true;
+
+	/**
 	 * Storage constructor.
 	 */
 	public function __construct() {
@@ -63,13 +68,75 @@ abstract class Storage {
 	}
 
 	/**
+	 * Setup arg with any potential variations.
+	 *
+	 * @param array  $args List of arguments.
+	 * @param string $arg  Argument to setup.
+	 *
+	 * @return array List of arguments with arg values setup.
+	 */
+	public function setup_arg( array $args, $arg ) {
+		if ( isset( $args[ $arg ] ) && $args[ $arg ] instanceof Whatsit ) {
+			$args[ $arg . '_identifier' ] = (array) $args[ $arg ]->get_identifier();
+			$args[ $arg . '_id' ]         = (array) $args[ $arg ]->get_id();
+			$args[ $arg . '_name' ]       = (array) $args[ $arg ]->get_name();
+			$args[ $arg ]                 = (array) $args[ $arg ]->get_name();
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Get arg value.
+	 *
+	 * @param array  $args List of arguments.
+	 * @param string $arg  Argument to get values for.
+	 *
+	 * @return array|string|int|null Arg value(s).
+	 */
+	public function get_arg_value( $args, $arg ) {
+		$arg_value = [];
+
+		if ( array_key_exists( $arg, $args ) ) {
+			$arg_value[] = is_array( $args[ $arg ] ) ? $args[ $arg ] : array( $args[ $arg ] );
+		}
+
+		$secondary_variations = [
+			'identifier',
+			'id',
+			'name',
+		];
+
+		foreach ( $secondary_variations as $variation ) {
+			if ( ! array_key_exists( $arg . '_' . $variation, $args ) ) {
+				continue;
+			}
+
+			$arg_value[] = is_array( $args[ $arg . '_' . $variation ] ) ? $args[ $arg . '_' . $variation ] : array( $args[ $arg . '_' . $variation ] );
+		}
+
+		if ( empty( $arg_value ) ) {
+			return '_null';
+		}
+
+		$arg_value = array_merge( ...$arg_value );
+		$arg_value = array_unique( $arg_value );
+
+		if ( 1 === count( $arg_value ) ) {
+			$arg_value = current( $arg_value );
+		}
+
+		return $arg_value;
+	}
+
+	/**
 	 * Add an object.
 	 *
 	 * @param Whatsit $object Object to add.
 	 *
 	 * @return string|int|false Object name, object ID, or false if not added.
 	 */
-	public function add_object( Whatsit $object ) {
+	protected function add_object( Whatsit $object ) {
 		return $this->save_object( $object );
 	}
 
@@ -143,7 +210,7 @@ abstract class Storage {
 	 *
 	 * @return string|int|false Object name, object ID, or false if not saved.
 	 */
-	public function save_object( Whatsit $object ) {
+	protected function save_object( Whatsit $object ) {
 		return false;
 	}
 
@@ -257,7 +324,7 @@ abstract class Storage {
 	 *
 	 * @return bool
 	 */
-	public function delete_object( Whatsit $object ) {
+	protected function delete_object( Whatsit $object ) {
 		return false;
 	}
 
@@ -347,6 +414,15 @@ abstract class Storage {
 	 */
 	public function save_args( Whatsit $object ) {
 		return false;
+	}
+
+	/**
+	 * Whether to enable fallback mode for falling back to parent storage options.
+	 *
+	 * @param bool $enabled Whether to enable fallback mode.
+	 */
+	public function fallback_mode( $enabled = true ) {
+		$this->fallback_mode = (boolean) $enabled;
 	}
 
 }

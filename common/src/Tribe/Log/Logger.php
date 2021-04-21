@@ -43,7 +43,7 @@ interface Tribe__Log__Logger {
 	 *
 	 * @return array
 	 */
-	public function retrieve( $limit = 0, array $args = array() );
+	public function retrieve( $limit = 0, array $args = [] );
 
 	/**
 	 * Returns a list of currently accessible logs (current first, oldest last).

@@ -30,7 +30,7 @@ class Tribe__Plugin_Meta_Links {
 	 *      }
 	 * }
 	 */
-	private $meta_links = array();
+	private $meta_links = [];
 
 	/**
 	 * Returns the singleton instance of this class.
@@ -42,7 +42,7 @@ class Tribe__Plugin_Meta_Links {
 	}
 
 	private function __construct() {
-		add_action( 'plugin_row_meta', array( $this, 'filter_meta_links' ), 10, 2 );
+		add_action( 'plugin_row_meta', [ $this, 'filter_meta_links' ], 10, 2 );
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Tribe__Plugin_Meta_Links {
 	 * @param string $href       URL for the link.
 	 * @param array  $attributes Key => value attributes for element.
 	 */
-	public function add_link( $plugin, $title, $href, $attributes = array() ) {
+	public function add_link( $plugin, $title, $href, $attributes = [] ) {
 		$attributes['href'] = $href;
 
 		// Build the <a> element.
@@ -79,12 +79,12 @@ class Tribe__Plugin_Meta_Links {
 		$basename = plugin_basename( $plugin );
 
 		// Get any current links for this plugin.
-		$cur_links = Tribe__Utils__Array::get( $this->meta_links, $basename, array() );
+		$cur_links = Tribe__Utils__Array::get( $this->meta_links, $basename, [] );
 
-		$cur_links[] = array(
-			'html' => $html,
+		$cur_links[] = [
+			'html'   => $html,
 			'remove' => $remove,
-		);
+		];
 
 		$this->meta_links = Tribe__Utils__Array::set( $this->meta_links, $basename, $cur_links );
 	}
@@ -99,7 +99,7 @@ class Tribe__Plugin_Meta_Links {
 	 */
 	public function filter_meta_links( $links, $basename ) {
 		// Gets any links that are set for this plugin, defaults to an empty array.
-		$set_links = Tribe__Utils__Array::get( $this->meta_links, $basename, array() );
+		$set_links = Tribe__Utils__Array::get( $this->meta_links, $basename, [] );
 
 		foreach ( $set_links as $link ) {
 

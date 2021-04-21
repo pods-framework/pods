@@ -16,13 +16,13 @@ abstract class Tribe__Editor__Meta
 	 * @return array
 	 */
 	protected function text() {
-		return array(
-			'auth_callback'     => array( $this, 'auth_callback' ),
+		return [
+			'auth_callback'     => [ $this, 'auth_callback' ],
 			'sanitize_callback' => 'sanitize_text_field',
 			'type'              => 'string',
 			'single'            => true,
 			'show_in_rest'      => true,
-		);
+		];
 	}
 
 	/**
@@ -33,13 +33,13 @@ abstract class Tribe__Editor__Meta
 	 * @return array
 	 */
 	protected function textarea() {
-		return array(
-			'auth_callback'     => array( $this, 'auth_callback' ),
+		return [
+			'auth_callback'     => [ $this, 'auth_callback' ],
 			'sanitize_callback' => 'sanitize_textarea_field',
 			'type'              => 'string',
 			'single'            => true,
 			'show_in_rest'      => true,
-		);
+		];
 	}
 
 	/**
@@ -50,13 +50,13 @@ abstract class Tribe__Editor__Meta
 	 * @return array
 	 */
 	protected function url() {
-		return array(
-			'auth_callback'     => array( $this, 'auth_callback' ),
+		return [
+			'auth_callback'     => [ $this, 'auth_callback' ],
 			'sanitize_callback' => 'esc_url_raw',
 			'type'              => 'string',
 			'single'            => true,
 			'show_in_rest'      => true,
-		);
+		];
 	}
 
 	/**
@@ -67,13 +67,13 @@ abstract class Tribe__Editor__Meta
 	 * @return array
 	 */
 	protected function numeric() {
-		return array(
-			'auth_callback'     => array( $this, 'auth_callback' ),
+		return [
+			'auth_callback'     => [ $this, 'auth_callback' ],
 			'sanitize_callback' => 'absint',
 			'type'              => 'number',
 			'single'            => true,
 			'show_in_rest'      => true,
-		);
+		];
 	}
 
 	/***
@@ -84,13 +84,13 @@ abstract class Tribe__Editor__Meta
 	 * @return array
 	 */
 	protected function boolean() {
-		return array(
-			'auth_callback'     => array( $this, 'auth_callback' ),
-			'sanitize_callback' => array( $this, 'sanitize_boolean' ),
+		return [
+			'auth_callback'     => [ $this, 'auth_callback' ],
+			'sanitize_callback' => [ $this, 'sanitize_boolean' ],
 			'type'              => 'boolean',
 			'single'            => true,
 			'show_in_rest'      => true,
-		);
+		];
 	}
 
 	/**
@@ -101,14 +101,14 @@ abstract class Tribe__Editor__Meta
 	 * @return array
 	 */
 	protected function numeric_array() {
-		return array(
+		return [
 			'description'       => __( 'Numeric Array', 'tribe-common' ),
-			'auth_callback'     => array( $this, 'auth_callback' ),
-			'sanitize_callback' => array( $this, 'sanitize_numeric_array' ),
+			'auth_callback'     => [ $this, 'auth_callback' ],
+			'sanitize_callback' => [ $this, 'sanitize_numeric_array' ],
 			'type'              => 'number',
 			'single'            => false,
 			'show_in_rest'      => true,
-		);
+		];
 	}
 
 	/**
@@ -119,14 +119,14 @@ abstract class Tribe__Editor__Meta
 	 * @return array
 	 */
 	protected function text_array() {
-		return array(
+		return [
 			'description'       => __( 'Text Array', 'tribe-common' ),
-			'auth_callback'     => array( $this, 'auth_callback' ),
-			'sanitize_callback' => array( $this, 'sanitize_text_array' ),
+			'auth_callback'     => [ $this, 'auth_callback' ],
+			'sanitize_callback' => [ $this, 'sanitize_text_array' ],
 			'type'              => 'string',
 			'single'            => false,
 			'show_in_rest'      => true,
-		);
+		];
 	}
 
 	/**

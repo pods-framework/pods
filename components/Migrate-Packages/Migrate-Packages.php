@@ -99,7 +99,12 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 			echo '<div class="pods-field-option">';
 
-			echo PodsForm::field( 'export_package', $package, 'paragraph', array( 'attributes' => array( 'style' => 'width: 94%; max-width: 94%; height: 300px;' ) ) );
+			echo PodsForm::field( 'export_package', $package, 'paragraph', [
+				'attributes'  => [
+					'style' => 'width: 94%; max-width: 94%; height: 300px;',
+				],
+				'disable_dfv' => true,
+			] );
 
 			echo '</div>';
 		}//end if
@@ -300,14 +305,14 @@ class Pods_Migrate_Packages extends PodsComponent {
 							}//end if
 
 							if ( isset( $pod['fields'][ $new_field['name'] ] ) ) {
-								$new_field = array_merge( $pod['fields'][ $new_field['name'] ], $new_field );
+								$new_field = pods_config_merge_data( $pod['fields'][ $new_field['name'] ], $new_field );
 							}
 
 							$pod_data['fields'][ $k ] = $new_field;
 						}//end foreach
 					}//end if
 
-					if ( pods_var( 'id', $pod, 0 ) < 1 ) {
+					if ( (int) pods_v( 'id', $pod, 0 ) < 1 ) {
 						$pod_data['fields'] = array_merge( $core_fields, $pod_data['fields'] );
 					}
 
@@ -371,7 +376,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 					);
 				}//end if
 
-				$pod = array_merge( $pod, $pod_data );
+				$pod = pods_config_merge_data( $pod, $pod_data );
 
 				if ( in_array( $pod['name'], pods_reserved_keywords(), true ) ) {
 					// Extending objects when using reserved keywords.
@@ -435,7 +440,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 					$template = array();
 				}
 
-				$template = array_merge( $template, $template_data );
+				$template = pods_config_merge_data( $template, $template_data );
 
 				$api->save_template( $template );
 
@@ -486,7 +491,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 					unset( $page_data['phpcode'] );
 				}
 
-				$page = array_merge( $page, $page_data );
+				$page = pods_config_merge_data( $page, $page_data );
 
 				$page['name'] = trim( $page['name'], '/' );
 
@@ -534,7 +539,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 					}
 				}
 
-				$helper = array_merge( $helper, $helper_data );
+				$helper = pods_config_merge_data( $helper, $helper_data );
 
 				if ( isset( $helper['type'] ) ) {
 					$helper['helper_type'] = $helper['type'];
@@ -651,12 +656,6 @@ class Pods_Migrate_Packages extends PodsComponent {
 			}
 
 			foreach ( $export['pods'] as &$pod ) {
-				if ( isset( $pod['options'] ) ) {
-					$pod = $pod;
-
-					unset( $pod['options'] );
-				}
-
 				foreach ( $pod as $option => $option_value ) {
 					if ( in_array( $option, $options_ignore, true ) || null === $option_value ) {
 						unset( $pod[ $option ] );
@@ -665,12 +664,6 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 				if ( ! empty( $pod['fields'] ) ) {
 					foreach ( $pod['fields'] as &$field ) {
-						if ( isset( $field['options'] ) ) {
-							$field = $field;
-
-							unset( $field['options'] );
-						}
-
 						foreach ( $field as $option => $option_value ) {
 							if ( in_array( $option, $options_ignore, true ) || null === $option_value ) {
 								unset( $field[ $option ] );

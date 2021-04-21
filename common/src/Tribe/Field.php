@@ -68,11 +68,11 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 		public function __construct( $id, $field, $value = null ) {
 
 			// setup the defaults
-			$this->defaults = array(
+			$this->defaults = [
 				'type'                => 'html',
 				'name'                => $id,
-				'fieldset_attributes' => array(),
-				'attributes'          => array(),
+				'fieldset_attributes' => [],
+				'attributes'          => [],
 				'class'               => null,
 				'label'               => null,
 				'label_attributes'    => null,
@@ -89,10 +89,11 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 				'can_be_empty'        => false,
 				'clear_after'         => true,
 				'tooltip_first'       => false,
-			);
+				'allow_clear'         => false,
+			];
 
 			// a list of valid field types, to prevent screwy behavior
-			$this->valid_field_types = array(
+			$this->valid_field_types = [
 				'heading',
 				'html',
 				'text',
@@ -106,9 +107,10 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 				'dropdown_select2', // Deprecated use `dropdown`
 				'dropdown_chosen', // Deprecated use `dropdown`
 				'license_key',
+				'number',
 				'wrapped_html',
 				'email',
-			);
+			];
 
 			$this->valid_field_types = apply_filters( 'tribe_valid_field_types', $this->valid_field_types );
 
@@ -122,55 +124,55 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 			$placeholder = esc_attr( $args['placeholder'] );
 			$class = $this->sanitize_class_attribute( $args['class'] );
 			$label      = wp_kses(
-				$args['label'], array(
-					'a'      => array( 'href' => array(), 'title' => array() ),
-					'br'     => array(),
-					'em'     => array(),
-					'strong' => array(),
-					'b'      => array(),
-					'i'      => array(),
-					'u'      => array(),
-					'img'    => array(
-						'title' => array(),
-						'src'   => array(),
-						'alt'   => array(),
-					),
-					'span'      => array( 'class' => array() ),
-				)
+				$args['label'], [
+					'a'      => [ 'href' => [], 'title' => [] ],
+					'br'     => [],
+					'em'     => [],
+					'strong' => [],
+					'b'      => [],
+					'i'      => [],
+					'u'      => [],
+					'img'    => [
+						'title' => [],
+						'src'   => [],
+						'alt'   => [],
+					],
+					'span'      => [ 'class' => [] ],
+				]
 			);
 			$label_attributes = $args['label_attributes'];
 			$tooltip    = wp_kses(
-				$args['tooltip'], array(
-					'a'      => array( 'href' => array(), 'title' => array(), 'target' => array() ),
-					'br'     => array(),
-					'em'     => array(),
-					'strong' => array(),
-					'b'      => array(),
-					'i'      => array(),
-					'u'      => array(),
-					'img'    => array(
-						'title' => array(),
-						'src'   => array(),
-						'alt'   => array(),
-					),
-					'code'   => array( 'span' => array() ),
-					'span'   => array(),
-				)
+				$args['tooltip'], [
+					'a'      => [ 'href' => [], 'title' => [], 'target' => [] ],
+					'br'     => [],
+					'em'     => [],
+					'strong' => [],
+					'b'      => [],
+					'i'      => [],
+					'u'      => [],
+					'img'    => [
+						'title' => [],
+						'src'   => [],
+						'alt'   => [],
+					],
+					'code'   => [ 'span' => [] ],
+					'span'   => [],
+				]
 			);
-			$fieldset_attributes = array();
+			$fieldset_attributes = [];
 			if ( is_array( $args['fieldset_attributes'] ) ) {
 				foreach ( $args['fieldset_attributes'] as $key => $val ) {
 					$fieldset_attributes[ $key ] = esc_attr( $val );
 				}
 			}
-			$attributes = array();
+			$attributes = [];
 			if ( is_array( $args['attributes'] ) ) {
 				foreach ( $args['attributes'] as $key => $val ) {
 					$attributes[ $key ] = esc_attr( $val );
 				}
 			}
 			if ( is_array( $args['options'] ) ) {
-				$options = array();
+				$options = [];
 				foreach ( $args['options'] as $key => $val ) {
 					$options[ $key ] = $val;
 				}
@@ -187,6 +189,7 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 			$can_be_empty     = (bool) $args['can_be_empty'];
 			$clear_after      = (bool) $args['clear_after'];
 			$tooltip_first    = (bool) $args['tooltip_first'];
+			$allow_clear      = (bool) $args['allow_clear'];
 
 			// set the ID
 			$this->id = apply_filters( 'tribe_field_id', $id );
@@ -219,7 +222,7 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 				} elseif ( in_array( $this->type, $this->valid_field_types ) ) {
 
 					// the specified type exists, run the appropriate method
-					$field = call_user_func( array( $this, $this->type ) );
+					$field = call_user_func( [ $this, $this->type ] );
 
 					// filter the output
 					$field = apply_filters( 'tribe_field_output_' . $this->type, $field, $this->id, $this );
@@ -273,8 +276,8 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 			if ( $this->label ) {
 				if ( isset( $this->label_attributes ) ) {
 					$this->label_attributes['class'] = isset( $this->label_attributes['class'] ) ?
-						implode( ' ', array_merge( array( 'tribe-field-label' ), $this->label_attributes['class'] ) ) :
-						array( 'tribe-field-label' );
+						implode( ' ', array_merge( [ 'tribe-field-label' ], $this->label_attributes['class'] ) ) :
+						[ 'tribe-field-label' ];
 					$this->label_attributes = $this->concat_attributes( $this->label_attributes );
 				}
 				$return = sprintf( '<legend class="tribe-field-label" %s>%s</legend>', $this->label_attributes, $this->label );
@@ -457,6 +460,7 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 			$field .= $this->do_field_name();
 			$field .= $this->do_field_value();
 			$field .= $this->do_field_placeholder();
+			$field .= $this->do_field_attributes();
 			$field .= '/>';
 			$field .= $this->do_screen_reader_label();
 			$field .= $this->do_field_div_end();
@@ -476,6 +480,7 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 			$field .= $this->do_field_div_start();
 			$field .= '<textarea';
 			$field .= $this->do_field_name();
+			$field .= $this->do_field_attributes();
 			$field .= '>';
 			$field .= esc_html( stripslashes( $this->value ) );
 			$field .= '</textarea>';
@@ -492,10 +497,10 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 		 * @return string the field
 		 */
 		public function wysiwyg() {
-			$settings = array(
+			$settings = [
 				'teeny'   => true,
 				'wpautop' => true,
-			);
+			];
 			ob_start();
 			wp_editor( html_entity_decode( ( $this->value ) ), $this->name, $settings );
 			$editor = ob_get_clean();
@@ -556,9 +561,9 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 
 			if ( ! is_array( $this->value ) ) {
 				if ( ! empty( $this->value ) ) {
-					$this->value = array( $this->value );
+					$this->value = [ $this->value ];
 				} else {
-					$this->value = array();
+					$this->value = [];
 				}
 			}
 
@@ -615,6 +620,10 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 				$field .= $this->do_field_name();
 				$field .= " id='{$this->id}-select'";
 				$field .= " class='tribe-dropdown'";
+				if ( empty( $this->allow_clear ) ) {
+					$field .= " data-prevent-clear='true'";
+				}
+				$field .= $this->do_field_attributes();
 				$field .= '>';
 				foreach ( $this->options as $option_id => $title ) {
 					$field .= '<option value="' . esc_attr( $option_id ) . '"';
@@ -767,11 +776,11 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 		}
 
 		/**
-		 * Concatenatates an array of attributes to use in HTML tags.
+		 * Concatenates an array of attributes to use in HTML tags.
 		 *
 		 * Example usage:
 		 *
-		 *      $attrs = array( 'class' => array('one', 'two'), 'style' => 'color:red;' );
+		 *      $attrs = [ 'class' => ['one', 'two'], 'style' => 'color:red;' ];
 		 *      printf ( '<p %s>%s</p>', tribe_concat_attributes( $attrs ), 'bar' );
 		 *
 		 *      // <p> class="one two" style="color:red;">bar</p>
@@ -782,12 +791,12 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 		 *
 		 * @return string The concatenated attributes.
 		 */
-		protected function concat_attributes( array $attributes = array() ) {
+		protected function concat_attributes( array $attributes = [] ) {
 			if ( empty( $attributes ) ) {
 				return '';
 			}
 
-			$concat = array();
+			$concat = [];
 			foreach ( $attributes as $attribute => $value ) {
 				if ( is_array( $value ) ) {
 					$value = implode( ' ', $value );
@@ -812,7 +821,7 @@ if ( ! class_exists( 'Tribe__Field' ) ) {
 		}
 
 		/**
-		 * Sanitizes a space-separated or arrray of classes.
+		 * Sanitizes a space-separated or array of classes.
 		 *
 		 * @since 4.7.7
 		 *

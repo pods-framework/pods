@@ -46,6 +46,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 */
 	public function setup() {
 
+		static::$group = __( 'Date / Time', 'pods' );
 		static::$label = __( 'Time', 'pods' );
 	}
 
@@ -84,7 +85,7 @@ class PodsField_Time extends PodsField_DateTime {
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="http://php.net/manual/function.date.php" target="_blank">%s</a>',
+					'<a href="http://php.net/manual/function.date.php" target="_blank" rel="noopener noreferrer">%s</a>',
 					esc_html__( 'PHP date documentation', 'pods' )
 				),
 			),
@@ -94,7 +95,7 @@ class PodsField_Time extends PodsField_DateTime {
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank">%1$s</a><br />%2$s',
+					'<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
 					esc_html__( 'jQuery UI timepicker documentation', 'pods' ),
 					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
 				),
@@ -129,12 +130,12 @@ class PodsField_Time extends PodsField_DateTime {
 				),
 			),
 			static::$type . '_allow_empty'      => array(
-				'label'   => __( 'Allow empty value?', 'pods' ),
+				'label'   => __( 'Allow empty value', 'pods' ),
 				'default' => 1,
 				'type'    => 'boolean',
 			),
 			static::$type . '_html5'            => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),

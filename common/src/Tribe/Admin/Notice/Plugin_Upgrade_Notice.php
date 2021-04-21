@@ -46,7 +46,7 @@ class Tribe__Admin__Notice__Plugin_Upgrade_Notice {
 		$this->current_version = $current_version;
 		$this->plugin_path     = $plugin_path;
 
-		add_action( "in_plugin_update_message-$plugin_path", array( $this, 'maybe_run' ) );
+		add_action( "in_plugin_update_message-$plugin_path", [ $this, 'maybe_run' ] );
 	}
 
 	/**

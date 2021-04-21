@@ -31,7 +31,7 @@ class IfTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		add_shortcode( 'test_if_text', function ( $args, $content ) {
@@ -81,7 +81,7 @@ class IfTest extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		if ( shortcode_exists( 'test_if_text' ) ) {
 			remove_shortcode( 'test_if_text' );
 		}
@@ -281,6 +281,7 @@ class IfTest extends Pods_UnitTestCase {
 		$site_url = site_url();
 
 		$valid = array(
+			'<a href="' . $site_url . '/first-post-title">first post title</a>',
 			'<a href="' . $site_url . '/?test_if=first-post-title">first post title</a>',
 			'<a href="' . $site_url . '/?p=' . $id1. '">first post title</a>',
 		);

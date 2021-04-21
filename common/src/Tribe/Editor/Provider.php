@@ -18,7 +18,7 @@ class Tribe__Editor__Provider extends tad_DI52_ServiceProvider {
 			return;
 		}
 
-		$this->container->singleton( 'editor.assets', 'Tribe__Editor__Assets', array( 'hook' ) );
+		$this->container->singleton( 'editor.assets', 'Tribe__Editor__Assets', [ 'hook' ] );
 
 		$this->hook();
 
@@ -36,7 +36,7 @@ class Tribe__Editor__Provider extends tad_DI52_ServiceProvider {
 	 */
 	protected function hook() {
 		// Setup the registration of Blocks
-		add_action( 'init', array( $this, 'register_blocks' ), 20 );
+		add_action( 'init', [ $this, 'register_blocks' ], 20 );
 	}
 
 	/**

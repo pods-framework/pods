@@ -3,7 +3,7 @@
 /**
  * Class Tribe__Process__Handler
  *
- * The base class for all Modern Tribe async process handlers.
+ * The base class for all The Events Calendar async process handlers.
  *
  * @since 4.7.12
  * @since 4.9.5 Removed dependency on `WP_Async_Request` class.

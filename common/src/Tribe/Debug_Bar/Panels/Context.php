@@ -19,7 +19,7 @@ class Tribe__Debug_Bar__Panels__Context extends Debug_Bar_Panel {
 	 * @return string The panel title
 	 */
 	public function title( $title = null ) {
-		return __( 'Modern Tribe Context', 'tribe-common' );
+		return __( 'The Events Calendar Context', 'tribe-common' );
 	}
 
 	/**
@@ -47,7 +47,7 @@ class Tribe__Debug_Bar__Panels__Context extends Debug_Bar_Panel {
 			</style>';
 		$html .= '<div id="mt-debug-bar" class="mt-debug-bar-context">';
 
-		$html .= '<header class="mt-debug-bar-title"><h2>' . esc_html__( 'Modern Tribe Context', 'tribe-common' ) . '</h2></header>';
+		$html .= '<header class="mt-debug-bar-title"><h2>' . esc_html__( 'The Events Calendar Context', 'tribe-common' ) . '</h2></header>';
 
 		$html .= '<section>';
 		$html .= '<header class="mt-debug-bar-section-header"><h3>' . esc_html__( 'PHP Render Context', 'tribe-common' ) . '</h3></header>';
@@ -76,8 +76,8 @@ class Tribe__Debug_Bar__Panels__Context extends Debug_Bar_Panel {
 
 			$html .= '<tr>';
 			$html .= '<td><code>' . $key . '</code></td>';
-			$html .= '<td><code>' . ( isset( $context[ $key ] ) ? $context[ $key ] : 'undefined' ) . '</code></td>';
-			$html .= '<td>' . ( false !== $orm_arg_key ? '<code>' . $orm_arg_key . ' => ' . $orm_arg_value . '</code>' : '' ) . '</td>';
+			$html .= '<td><code>' . ( isset( $context[ $key ] ) ? print_r( $context[ $key ], true ) : 'undefined' ) . '</code></td>';
+			$html .= '<td>' . ( false !== $orm_arg_key ? '<code>' . print_r( $orm_arg_key, true )  . ' => ' . print_r( $orm_arg_value, true ) . '</code>' : '' ) . '</td>';
 			$html .= '<td><code>' . ( isset( $locations[ $key ]['read'] ) ? 'yes' : 'no' ) . '</code></td>';
 			$html .= '<td><code>' . ( isset( $locations[ $key ]['write'] ) ? 'yes' : 'no' ) . '</code></td>';
 			$html .= '</tr>';

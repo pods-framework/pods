@@ -42,7 +42,7 @@ if ( ! isset( $thank_you_alt ) ) {
 $uri_hash   = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
 $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
 
-$uid = @session_id();
+$uid = pods_session_id();
 
 if ( is_user_logged_in() ) {
 	$uid = 'user_' . get_current_user_id();
@@ -100,86 +100,15 @@ $do = 'save';
 		echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' );
 		echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' );
 		echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' );
-
-		foreach ( $fields as $field ) {
-			if ( 'hidden' !== $field['type'] ) {
-				continue;
-			}
-
-			echo PodsForm::field(
-				'pods_field_' . $field['name'], $pod->field(
-					array(
-						'name'    => $field['name'],
-						'in_form' => true,
-					)
-				), 'hidden'
-			);
-		}
 		?>
 		<table class="form-table pods-manage-field">
 			<?php
-			$depends_on = false;
+			$field_prefix      = 'pods_field_';
+			$field_row_classes = '';
+			$id                = $pod->id();
 
-			foreach ( $fields as $field ) {
-				if ( 'hidden' === $field['type'] ) {
-					continue;
-				}
-
-				$dep_options = PodsForm::dependencies( $field );
-				$dep_classes = $dep_options['classes'];
-				$dep_data    = $dep_options['data'];
-
-				if ( ( ! empty( $depends_on ) || ! empty( $dep_classes ) ) && $depends_on !== $dep_classes ) {
-					if ( ! empty( $depends_on ) ) {
-						?>
-						</tbody>
-						<?php
-					}
-
-					if ( ! empty( $dep_classes ) ) {
-						?>
-						<tbody class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
-				<?php
-					}
-				}
+			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 			?>
-			<tr valign="top" class="pods-field-option pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
-				<?php if ( 'heading' === $field['type'] ) : ?>
-					<td colspan="2">
-						<h2><?php echo esc_html( $field['label'] ); ?></h2>
-						<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
-					</td>
-				<?php else : ?>
-					<th>
-						<?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?>
-					</th>
-					<td>
-						<?php
-						echo PodsForm::field(
-							'pods_field_' . $field['name'], $pod->field(
-								array(
-									'name'    => $field['name'],
-									'in_form' => true,
-								)
-							), $field['type'], $field, $pod, $pod->id()
-						);
-						?>
-						<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
-					</td>
-				<?php endif; ?>
-			</tr>
-			<?php
-			if ( false !== $depends_on || ! empty( $dep_classes ) ) {
-				$depends_on = $dep_classes;
-			}
-			}//end foreach
-
-			if ( ! empty( $depends_on ) ) {
-			?>
-			</tbody>
-		<?php
-			}
-		?>
 		</table>
 
 		<p class="submit">

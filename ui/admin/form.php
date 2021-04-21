@@ -63,7 +63,7 @@ if ( ! isset( $thank_you_alt ) ) {
 $uri_hash   = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
 $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
 
-$uid = @session_id();
+$uid = pods_session_id();
 
 if ( is_user_logged_in() ) {
 	$uid = 'user_' . get_current_user_id();
@@ -87,7 +87,7 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 		$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 		if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) {
-			$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
+			$message .= ' <a target="_blank" rel="noopener noreferrer" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 		}
 
 		$error = sprintf( __( '<strong>Error:</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
@@ -112,7 +112,7 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 	$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 	if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) {
-		$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
+		$message .= ' <a target="_blank" rel="noopener noreferrer" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 	}
 
 	$error = sprintf( __( '<strong>Error:</strong> %1$s not %2$s.', 'pods' ), $obj->item, $action );
@@ -152,21 +152,6 @@ if ( 0 < $pod->id() ) {
 		echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' );
 		echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' );
 
-		foreach ( $group_fields as $field ) {
-			if ( 'hidden' !== $field['type'] ) {
-				continue;
-			}
-
-			echo PodsForm::field(
-				'pods_field_' . $field['name'], $pod->field(
-					array(
-						'name'    => $field['name'],
-						'in_form' => true,
-					)
-				), 'hidden'
-			);
-		}
-
 		/**
 		 * Action that runs before the meta boxes for an Advanced Content Type
 		 *
@@ -197,10 +182,7 @@ if ( 0 < $pod->id() ) {
 				<div id="side-sortables" class="meta-box-sortables ui-sortable">
 					<!-- BEGIN PUBLISH DIV -->
 					<div id="submitdiv" class="postbox">
-						<div class="handlediv" title="Click to toggle"><br /></div>
-						<h3 class="hndle">
-							<span><?php echo pods_v( 'label_manage', $pod_options, __( 'Manage', 'pods' ) ); ?></span>
-						</h3>
+						<?php PodsForm::render_postbox_header( pods_v( 'label_manage', $pod_options, __( 'Manage', 'pods' ) ) ); ?>
 
 						<div class="inside">
 							<div class="submitbox" id="submitpost">
@@ -213,7 +195,7 @@ if ( 0 < $pod->id() ) {
 											?>
 											<div id="minor-publishing-actions">
 												<div id="preview-action">
-													<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
+													<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank" rel="noopener noreferrer"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
 												</div>
 												<div class="clear"></div>
 											</div>
@@ -369,10 +351,9 @@ if ( 0 < $pod->id() ) {
 								 * @since 2.4.1
 								 */
 								do_action( 'pods_act_editor_before_navigation', $pod, $obj );
-								?>
-								<div class="handlediv" title="Click to toggle"><br /></div>
-								<h3 class="hndle"><span><?php _e( 'Navigate', 'pods' ); ?></span></h3>
 
+								PodsForm::render_postbox_header( __( 'Navigate', 'pods' ) );
+								?>
 								<div class="inside">
 									<div class="pods-admin" id="navigatebox">
 										<div id="navigation-actions">
@@ -555,23 +536,18 @@ if ( 0 < $pod->id() ) {
 									 * @since 2.4.1
 									 */
 									do_action( 'pods_act_editor_before_metabox', $pod );
-									?>
-									<div id="pods-meta-box-<?php echo esc_attr( sanitize_title( $group['label'] ) ); ?>" class="postbox">
-										<div class="handlediv" title="Click to toggle"><br /></div>
-										<h3 class="hndle">
-								<span>
-									<?php
-									if ( ! $more && 1 == count( $groups ) ) {
+
+									if ( ! $more && 1 === count( $groups ) ) {
 										$title = __( 'Fields', 'pods' );
 									} else {
 										$title = $group['label'];
 									}
 
 									/** This filter is documented in classes/PodsMeta.php */
-									echo apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->api->pod_data['type'], $pod->pod );
+									$title = apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->pod_data['type'], $pod->pod );
 									?>
-								</span>
-										</h3>
+									<div id="pods-meta-box-<?php echo esc_attr( sanitize_title( $group['label'] ) ); ?>" class="postbox">
+										<?php PodsForm::render_postbox_header( $title ); ?>
 
 										<div class="inside">
 											<?php
@@ -579,36 +555,20 @@ if ( 0 < $pod->id() ) {
 												?>
 												<table class="form-table pods-metabox">
 													<?php
+													$fields            = [];
+													$field_prefix      = 'pods_field_';
+													$field_row_classes = 'form-field pods-field-input';
+													$id                = $pod->id();
+
 													foreach ( $group['fields'] as $field ) {
-														if ( 'hidden' === $field['type'] || $more === $field['name'] || ! isset( $group_fields[ $field['name'] ] ) ) {
+														if ( ! isset( $group_fields[ $field['name'] ] ) ) {
 															continue;
 														}
-														?>
-														<tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
-															<?php if ( 'heading' === $field['type'] ) : ?>
-																<td colspan="2">
-																	<h2><?php echo esc_html( $field['label'] ); ?></h2>
-																	<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
-																</td>
-															<?php else : ?>
-																<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
-																<td>
-																	<?php
-																	echo PodsForm::field(
-																		'pods_field_' . $field['name'], $pod->field(
-																			array(
-																				'name'    => $field['name'],
-																				'in_form' => true,
-																			)
-																		), $field['type'], $field, $pod, $pod->id()
-																	);
-																	?>
-																	<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
-																</td>
-															<?php endif; ?>
-														</tr>
-														<?php
-													}//end foreach
+
+														$fields[ $field['name'] ] = $field;
+													}
+
+													pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
 													?>
 												</table>
 												<?php

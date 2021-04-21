@@ -1,5 +1,5 @@
 <?php
-$field = array_merge( $field_settings['field_defaults'], $field->get_args() );
+$field = pods_config_merge_data( $field_settings['field_defaults'], $field );
 
 // Migrate pick object when saving
 if ( 'pod' == pods_v( 'pick_object', $field ) ) {
@@ -19,7 +19,7 @@ if ( 'pod' == pods_v( 'pick_object', $field ) ) {
 	}
 }
 
-$ignored_pick_objects = apply_filters( '', array( 'table' ) );
+$ignored_pick_objects = array( 'table' );
 
 if ( ! in_array( pods_v( 'pick_object', $field ), $ignored_pick_objects, true ) ) {
 	// Set pick object

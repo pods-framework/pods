@@ -8,13 +8,20 @@
 			"babel-plugin-module-resolver",
 			{
 				"alias": {
-					"pods-dfv": "./ui/js/pods-dfv"
+					"dfv": "./ui/js/dfv"
 				}
 			}
 		],
-		"babel-plugin-transform-html-import-to-string"
+		"babel-plugin-transform-html-import-to-string",
+		"@babel/plugin-transform-strict-mode",
+		"@babel/plugin-proposal-optional-chaining"
 	],
 	"env": {
+		"development": {
+			"presets": [
+				[ "@babel/preset-react", { "development": true } ]
+			]
+		},
 		"production": {
 			"plugins": [
 				"transform-react-remove-prop-types"

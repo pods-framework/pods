@@ -72,50 +72,59 @@ class Tribe__Admin__Help_Page {
 	 * @return array
 	 */
 	public function get_plugins( $plugin_name = null, $is_active = true ) {
-		$plugins = array();
+		$plugins = [];
 
-		$plugins['the-events-calendar'] = array(
+		$plugins['the-events-calendar'] = [
 			'name'        => 'the-events-calendar',
 			'title'       => esc_html__( 'The Events Calendar', 'tribe-common' ),
 			'repo'        => 'https://wordpress.org/plugins/the-events-calendar/',
 			'forum'       => 'https://wordpress.org/support/plugin/the-events-calendar/',
 			'stars_url'   => 'https://wordpress.org/support/plugin/the-events-calendar/reviews/?filter=5',
-			'description' => esc_html__( 'The Events Calendar is a carefully crafted, extensible plugin that lets you easily share your events.', 'tribe-common' ),
+			'description' => esc_html__(
+				'The Events Calendar is a carefully crafted, extensible plugin that lets you easily share your events.',
+				'tribe-common'
+			),
 			'is_active'   => false,
 			'version'     => null,
-		);
+		];
 
 		if ( class_exists( 'Tribe__Events__Main' ) ) {
 			$plugins['the-events-calendar']['version'] = Tribe__Events__Main::VERSION;
 			$plugins['the-events-calendar']['is_active'] = true;
 		}
 
-		$plugins['event-tickets'] = array(
+		$plugins['event-tickets'] = [
 			'name'        => 'event-tickets',
 			'title'       => esc_html__( 'Event Tickets', 'tribe-common' ),
 			'repo'        => 'https://wordpress.org/plugins/event-tickets/',
 			'forum'       => 'https://wordpress.org/support/plugin/event-tickets',
 			'stars_url'   => 'https://wordpress.org/support/plugin/event-tickets/reviews/?filter=5',
-			'description' => esc_html__( 'Events Tickets is a carefully crafted, extensible plugin that lets you easily sell tickets for your events.', 'tribe-common' ),
+			'description' => esc_html__(
+				'Events Tickets is a carefully crafted, extensible plugin that lets you easily sell tickets for your events.',
+				'tribe-common'
+			),
 			'is_active'   => false,
 			'version'     => null,
-		);
+		];
 
 		if ( class_exists( 'Tribe__Tickets__Main' ) ) {
 			$plugins['event-tickets']['version'] = Tribe__Tickets__Main::VERSION;
 			$plugins['event-tickets']['is_active'] = true;
 		}
 
-		$plugins['advanced-post-manager'] = array(
+		$plugins['advanced-post-manager'] = [
 			'name'        => 'advanced-post-manager',
 			'title'       => esc_html__( 'Advanced Post Manager', 'tribe-common' ),
 			'repo'        => 'https://wordpress.org/plugins/advanced-post-manager/',
 			'forum'       => 'https://wordpress.org/support/plugin/advanced-post-manager/',
 			'stars_url'   => 'https://wordpress.org/support/plugin/advanced-post-manager/reviews/?filter=5',
-			'description' => esc_html__( 'Turbo charge your posts admin for any custom post type with sortable filters and columns, and auto-registration of metaboxes.', 'tribe-common' ),
+			'description' => esc_html__(
+				'Turbo charge your posts admin for any custom post type with sortable filters and columns, and auto-registration of metaboxes.',
+				'tribe-common'
+			),
 			'is_active'   => false,
 			'version'     => null,
-		);
+		];
 
 		if ( class_exists( 'Tribe_APM' ) ) {
 			$plugins['advanced-post-manager']['version'] = 1;
@@ -156,7 +165,7 @@ class Tribe__Admin__Help_Page {
 	public function get_plugin_forum_links( $is_active = true ) {
 		$plugins = $this->get_plugins( null, $is_active );
 
-		$list = array();
+		$list = [];
 		foreach ( $plugins as $plugin ) {
 			$list[] = '<a href="' . esc_url( $plugin['forum'] ) . '" target="_blank">' . $plugin['title'] . '</a>';
 		}
@@ -207,65 +216,75 @@ class Tribe__Admin__Help_Page {
 	 * @return array
 	 */
 	public function get_addons( $plugin = null, $is_active = null, $is_important = null ) {
-		$addons = array();
+		$addons = [];
 
-		$addons['events-calendar-pro'] = array(
-			'id'        => 'events-calendar-pro',
-			'title'     => esc_html__( 'Events Calendar PRO', 'tribe-common' ),
-			'link'      => 'http://m.tri.be/dr',
-			'plugin'    => array( 'the-events-calendar' ),
-			'is_active' => class_exists( 'Tribe__Events__Pro__Main' ),
+		$addons['events-calendar-pro'] = [
+			'id'           => 'events-calendar-pro',
+			'title'        => esc_html__( 'Events Calendar PRO', 'tribe-common' ),
+			'link'         => 'http://evnt.is/dr',
+			'plugin'       => [ 'the-events-calendar' ],
+			'is_active'    => class_exists( 'Tribe__Events__Pro__Main' ),
 			'is_important' => true,
-		);
+		];
 
-		$addons['eventbrite-tickets'] = array(
+		$addons['eventbrite-tickets'] = [
 			'id'        => 'eventbrite-tickets',
 			'title'     => esc_html__( 'Eventbrite Tickets', 'tribe-common' ),
-			'link'      => 'http://m.tri.be/ds',
-			'plugin'    => array( 'the-events-calendar' ),
+			'link'      => 'http://evnt.is/ds',
+			'plugin'    => [ 'the-events-calendar' ],
 			'is_active' => class_exists( 'Tribe__Events__Tickets__Eventbrite__Main' ),
-		);
+		];
 
-		$addons['community-events'] = array(
+		$addons['community-events'] = [
 			'id'        => 'community-events',
 			'title'     => esc_html__( 'Community Events', 'tribe-common' ),
-			'link'      => 'http://m.tri.be/dt',
-			'plugin'    => array( 'the-events-calendar' ),
+			'link'      => 'http://evnt.is/dt',
+			'plugin'    => [ 'the-events-calendar' ],
 			'is_active' => class_exists( 'Tribe__Events__Community__Main' ),
-		);
+		];
 
-		$addons['event-aggregator'] = array(
+		$addons['event-aggregator'] = [
 			'id'        => 'event-aggregator',
 			'title'     => esc_html__( 'Event Aggregator', 'tribe-common' ),
-			'link'      => 'http://m.tri.be/19mk',
-			'plugin'    => array( 'the-events-calendar' ),
-			'is_active' => class_exists( 'Tribe__Events__Aggregator' ) && tribe( 'events-aggregator.main' )->is_service_active(),
-		);
+			'link'      => 'http://evnt.is/19mk',
+			'plugin'    => [ 'the-events-calendar' ],
+			'is_active' => class_exists( 'Tribe__Events__Aggregator' ) && tribe(
+					'events-aggregator.main'
+				)->is_service_active(),
+		];
 
-		$addons['events-filter-bar'] = array(
+		$addons['events-filter-bar'] = [
 			'id'        => 'events-filter-bar',
 			'title'     => esc_html__( 'Filter Bar', 'tribe-common' ),
-			'link'      => 'http://m.tri.be/hu',
-			'plugin'    => array( 'the-events-calendar' ),
+			'link'      => 'http://evnt.is/hu',
+			'plugin'    => [ 'the-events-calendar' ],
 			'is_active' => class_exists( 'Tribe__Events__Filterbar__View' ),
-		);
+		];
 
-		$addons['event-tickets-plus'] = array(
-			'id'        => 'event-tickets-plus',
-			'title'     => esc_html__( 'Event Tickets Plus', 'tribe-common' ),
-			'link'      => 'http://m.tri.be/18wa',
-			'plugin'    => array( 'event-tickets' ),
-			'is_active' => class_exists( 'Tribe__Tickets_Plus__Main' ),
+		$addons['events-virtual'] = [
+			'id'        => 'events-virtual',
+			'title'     => esc_html__( 'Virtual Events', 'tribe-common' ),
+			'link'      => 'http://evnt.is/1alb',
+			'plugin'    => [ 'the-events-calendar' ],
+			'is_active' => class_exists( '\Tribe\Events\Virtual\Plugin' ),
+		];
+
+		$addons['event-tickets-plus'] = [
+			'id'           => 'event-tickets-plus',
+			'title'        => esc_html__( 'Event Tickets Plus', 'tribe-common' ),
+			'link'         => 'http://evnt.is/18wa',
+			'plugin'       => [ 'event-tickets' ],
+			'is_active'    => class_exists( 'Tribe__Tickets_Plus__Main' ),
 			'is_important' => true,
-		);
+		];
 
-		$addons['event-community-tickets'] = array(
+		$addons['event-community-tickets'] = [
 			'id'        => 'event-community-tickets',
 			'title'     => esc_html__( 'Community Tickets', 'tribe-common' ),
-			'link'      => 'http://m.tri.be/18m2',
-			'plugin'    => array( 'event-tickets' ),
+			'link'      => 'http://evnt.is/18m2',
+			'plugin'    => [ 'event-tickets' ],
 			'is_active' => class_exists( 'Tribe__Events__Community__Tickets__Main' ),
-		);
+		];
 
 		/**
 		 * Filter the array of premium addons upsold on the sidebar of the Settings > Help tab
@@ -280,7 +299,7 @@ class Tribe__Admin__Help_Page {
 		}
 
 		// Allow for easily grab the addons for a plugin
-		$filtered = array();
+		$filtered = [];
 		foreach ( $addons as $id => $addon ) {
 			if ( ! is_null( $plugin ) && ! in_array( $plugin, (array) $addon['plugin'] ) ) {
 				continue;
@@ -310,10 +329,10 @@ class Tribe__Admin__Help_Page {
 
 	public function is_active( $should_be_active ) {
 		$plugins = $this->get_plugins( null, true );
-		$addons = $this->get_addons( null, true );
+		$addons  = $this->get_addons( null, true );
 
-		$actives = array_merge( $plugins, $addons );
-		$is_active = array();
+		$actives   = array_merge( $plugins, $addons );
+		$is_active = [];
 
 		foreach ( $actives as $id => $active ) {
 			if ( in_array( $id, (array) $should_be_active ) ) {
@@ -334,11 +353,11 @@ class Tribe__Admin__Help_Page {
 	 * @return string            Link with the GA arguments
 	 */
 	public function get_ga_link( $link = null, $relative = true ) {
-		$query_args = array(
+		$query_args = [
 			'utm_source'   => 'helptab',
 			'utm_medium'   => 'plugin-tec',
 			'utm_campaign' => 'in-app',
-		);
+		];
 
 		if ( true === $relative ) {
 			$link = trailingslashit( Tribe__Main::$tec_url . $link );
@@ -348,15 +367,15 @@ class Tribe__Admin__Help_Page {
 	}
 
 	/**
-	 * Gets the Feed items from the The Events Calendar Blog
+	 * Gets the Feed items from The Events Calendar's Blog
 	 *
 	 * @since  4.0
 	 *
 	 * @return array Feed Title and Link
 	 */
 	public function get_feed_items() {
-		$news_rss = fetch_feed( Tribe__Main::FEED_URL );
-		$news_feed = array();
+		$news_rss  = fetch_feed( Tribe__Main::FEED_URL );
+		$news_feed = [];
 
 		if ( ! is_wp_error( $news_rss ) ) {
 			/**
@@ -368,10 +387,10 @@ class Tribe__Admin__Help_Page {
 			$rss_items = $news_rss->get_items( 0, $maxitems );
 			if ( $maxitems > 0 ) {
 				foreach ( $rss_items as $item ) {
-					$item        = array(
+					$item = [
 						'title' => esc_html( $item->get_title() ),
 						'link'  => esc_url( $item->get_permalink() ),
-					);
+					];
 					$news_feed[] = $item;
 				}
 			}
@@ -409,16 +428,16 @@ class Tribe__Admin__Help_Page {
 			}
 
 			// Fetch the data
-			$data = plugins_api( 'plugin_information', array(
-				'slug'   => $plugin->name,
-				'is_ssl' => is_ssl(),
-				'fields' => array(
-					'banners'         => true,
-					'reviews'         => true,
-					'downloaded'      => true,
-					'active_installs' => true,
-				),
-			) );
+			$data = plugins_api( 'plugin_information', [
+					'slug'   => $plugin->name,
+					'is_ssl' => is_ssl(),
+					'fields' => [
+							'banners'         => true,
+							'reviews'         => true,
+							'downloaded'      => true,
+							'active_installs' => true,
+					],
+			] );
 
 			if ( ! is_wp_error( $data ) ) {
 				// Format Downloaded Infomation
@@ -479,13 +498,13 @@ class Tribe__Admin__Help_Page {
 					}
 
 					// Only add List Item if is a UL or OL
-					if ( in_array( $line['type'], array( 'ul', 'ol' ) ) ) {
+					if ( in_array( $line['type'], [ 'ul', 'ol' ] ) ) {
 						$text .= '<li>' . "\n";
 					}
 
 					$text .= $this->get_content_html( $item );
 
-					if ( in_array( $line['type'], array( 'ul', 'ol' ) ) ) {
+					if ( in_array( $line['type'], [ 'ul', 'ol' ] ) ) {
 						$text .= '</li>' . "\n";
 					}
 				}
@@ -507,7 +526,7 @@ class Tribe__Admin__Help_Page {
 	 * @access private
 	 * @var array
 	 */
-	private $sections = array();
+	private $sections = [];
 
 	/**
 	 * Incremented with each method call, then stored in $section->uid.
@@ -565,7 +584,7 @@ class Tribe__Admin__Help_Page {
 		// Everytime you call this we will add this up
 		self::$section_count++;
 
-		$possible_types = (array) apply_filters( 'tribe_help_available_section_types', array( 'default', 'box' ) );
+		$possible_types = (array) apply_filters( 'tribe_help_available_section_types', [ 'default', 'box' ] );
 
 		// Set a Default type
 		if ( empty( $type ) || ! in_array( $type, $possible_types ) ) {
@@ -573,21 +592,21 @@ class Tribe__Admin__Help_Page {
 		}
 
 		// Create the section and Sanitize the values to avoid having to do it later
-		$section = (object) array(
-			'id'       => sanitize_html_class( $id ),
-			'title'    => esc_html( $title ),
-			'priority' => absint( $priority ),
-			'type'     => sanitize_html_class( $type ),
+		$section = (object) [
+				'id'                => sanitize_html_class( $id ),
+				'title'             => esc_html( $title ),
+				'priority'          => absint( $priority ),
+				'type'              => sanitize_html_class( $type ),
 
-			// This Method Unique count integer used for ordering with priority
-			'unique_call_order' => self::$section_count,
+				// This Method Unique count integer used for ordering with priority
+				'unique_call_order' => self::$section_count,
 
-			// Counter for ordering Content
-			'content_count' => 0,
+				// Counter for ordering Content
+				'content_count'     => 0,
 
-			// Setup the Base for the content to come
-			'content' => array(),
-		);
+				// Setup the Base for the content to come
+				'content'           => [],
+		];
 
 		$this->sections[ $section->id ] = $section;
 
@@ -606,7 +625,7 @@ class Tribe__Admin__Help_Page {
 	 *
 	 * @return object The content item added
 	 */
-	public function add_section_content( $section_id, $content, $priority = 10, $arguments = array() ) {
+	public function add_section_content( $section_id, $content, $priority = 10, $arguments = [] ) {
 		$section_id = sanitize_html_class( $section_id );
 
 		// Check if the section exists
@@ -651,13 +670,13 @@ class Tribe__Admin__Help_Page {
 	public function remove_section( $section_id ) {
 		if (
 			! isset( $this->sections[ $section_id ] ) &&
-			! in_array( (object) array( 'id' => $section_id ), $this->sections, true )
+			! in_array( (object) [ 'id' => $section_id ], $this->sections, true )
 		) {
 			// There are no sections to remove, so false
 			return false;
 		}
 
-		$removed = array();
+		$removed = [];
 		foreach ( $this->sections as $id => $section ) {
 			if ( ! is_numeric( $id ) && ! is_numeric( $section_id ) && ! empty( $section->id ) ) {
 				if ( $section->id === $section_id ) {
@@ -711,9 +730,9 @@ class Tribe__Admin__Help_Page {
 		}
 
 		// Sort by Priority
-		uasort( $sections, array( $this, 'by_priority' ) );
+		uasort( $sections, [ $this, 'by_priority' ] );
 
-		$html = array();
+		$html = [];
 
 		foreach ( $sections as $index => $section ) {
 			$section = (object) $section;
@@ -736,7 +755,7 @@ class Tribe__Admin__Help_Page {
 			$section = apply_filters( 'tribe_help_section_' . $section->id, $section, $this );
 
 			// Sort by Priority
-			uasort( $section->content, array( $this, 'by_priority' ) );
+			uasort( $section->content, [ $this, 'by_priority' ] );
 
 			$html[ $section->id . '-start' ] = '<div id="tribe-' . sanitize_html_class( $section->id ) . '" class="tribe-help-section clearfix tribe-section-type-' . sanitize_html_class( $section->type ) . '">';
 
@@ -787,20 +806,20 @@ class Tribe__Admin__Help_Page {
 			$plugin_exists = isset( $plugins[ $status['file'] ] );
 
 			if ( 'install' !== $status['status'] && ! $plugin_active ) {
-				$args = array(
-					'action' => 'activate',
-					'plugin' => $status['file'],
+				$args = [
+					'action'        => 'activate',
+					'plugin'        => $status['file'],
 					'plugin_status' => 'all',
-					'paged' => 1,
-					's' => '',
-				);
+					'paged'         => 1,
+					's'             => '',
+				];
 				$activate_url = wp_nonce_url( add_query_arg( $args, 'plugins.php' ), 'activate-plugin_' . $status['file'] );
 				$link = '<a class="button" href="' . $activate_url . '" aria-label="' . esc_attr( sprintf( esc_attr__( 'Activate %s', 'tribe-common' ), $plugin->name ) ) . '">' . esc_html__( 'Activate Plugin', 'tribe-common' ) . '</a>';
 			} elseif ( 'update_available' === $status['status'] ) {
-				$args = array(
+				$args = [
 					'action' => 'upgrade-plugin',
 					'plugin' => $status['file'],
-				);
+				];
 				$update_url = wp_nonce_url( add_query_arg( $args, 'update.php' ), 'upgrade-plugin_' . $status['file'] );
 
 				$link = '<a class="button" href="' . $update_url . '">' . esc_html__( 'Upgrade Plugin', 'tribe-common' ) . '</a>';
@@ -811,13 +830,13 @@ class Tribe__Admin__Help_Page {
 
 		if ( ! isset( $link ) ) {
 			if ( $api_data ) {
-				$args = array(
+				$args = [
 					'tab'       => 'plugin-information',
 					'plugin'    => $plugin->name,
 					'TB_iframe' => true,
 					'width'     => 772,
 					'height'    => 600,
-				);
+				];
 				$iframe_url = add_query_arg( $args, admin_url( '/plugin-install.php' ) );
 				$link = '<a class="button thickbox" href="' . $iframe_url . '" aria-label="' . esc_attr( sprintf( esc_attr__( 'Install %s', 'tribe-common' ), $plugin->name ) ) . '">' . esc_html__( 'Install Plugin', 'tribe-common' ) . '</a>';
 			} else {
@@ -846,13 +865,17 @@ class Tribe__Admin__Help_Page {
 					<dd><?php echo esc_html( number_format( $api_data->active_installs ) ); ?>+</dd>
 
 					<dt><?php esc_html_e( 'Rating:', 'tribe-common' ); ?></dt>
-					<dd><a href="<?php echo esc_url( $plugin->stars_url ); ?>" target="_blank">
-						<?php wp_star_rating( array(
-							'rating' => $api_data->rating,
-							'type'   => 'percent',
-							'number' => $api_data->num_ratings,
-						) );?>
-					</a></dd>
+					<dd>
+						<a href="<?php echo esc_url( $plugin->stars_url ); ?>" target="_blank">
+							<?php
+							wp_star_rating( [
+									'rating' => $api_data->rating,
+									'type'   => 'percent',
+									'number' => $api_data->num_ratings,
+							] );
+							?>
+						</a>
+					</dd>
 				</dl>
 			<?php } ?>
 

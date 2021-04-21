@@ -12,7 +12,7 @@ module.exports = merge( common, {
 			new Terser( {
 				cache: true,
 				parallel: true,
-				sourceMap: true, // Must be set to true if using source-maps in production
+				sourceMap: false, // Must be set to true if using source-maps in production
 				terserOptions: {
 					output: {
 						comments: false,

@@ -17,7 +17,7 @@ class Tribe__Changelog_Reader {
 		$contents = $this->extract_changelog_section();
 		$lines = explode( "\n", $contents );
 
-		$sections = array();
+		$sections        = [];
 		$current_section = '';
 		foreach ( $lines as $line ) {
 			$line = trim( $line );
@@ -27,7 +27,7 @@ class Tribe__Changelog_Reader {
 				}
 				$header = trim( $line, '= ' );
 				$current_section = esc_html( $header );
-				$sections[ $current_section ] = array();
+				$sections[ $current_section ] = [];
 			} elseif ( strlen( $line ) > 0 ) {
 				$message = trim( $line, '* ' );
 				$sections[ $current_section ][] = esc_html( $message );

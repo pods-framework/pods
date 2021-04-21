@@ -178,4 +178,16 @@ class Value_Field implements \ArrayAccess {
 		$this->_field->__unset( $offset );
 	}
 
+	/**
+	 * Call a method on the field.
+	 *
+	 * @param string $method    The method name.
+	 * @param array  $arguments List of arguments.
+	 *
+	 * @return mixed The method response.
+	 */
+	public function __call( $method, $arguments ) {
+		return call_user_func_array( [ $this->_field, $method ], $arguments );
+	}
+
 }

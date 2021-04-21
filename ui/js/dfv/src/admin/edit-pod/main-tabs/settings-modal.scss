@@ -1,0 +1,135 @@
+@import '../edit-pod-variables';
+
+.pod-field-group_settings-error-message {
+	border: 1px solid $color--light-grey;
+	border-left: 4px solid $color--red;
+    margin: -12px 0 12px;
+	padding: 12px;
+	position: relative;
+
+	@media screen and (min-width: 851px) {
+		margin-bottom: 36px;
+	}
+}
+
+.pods-settings-modal__container {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+// Tabs
+.pods-settings-modal__tabs {
+    display: flex;
+    margin-bottom: 1em;
+}
+
+.pods-settings-modal__tab-item {
+    font-size: 14px;
+    font-weight: 700;
+    padding: 1em .2em;
+    margin: 0 .8em;
+
+    &:hover {
+        cursor: pointer;
+	}
+
+	&:focus {
+		outline: 1px solid $color--wp-blue;
+		outline-offset: 1px;
+	}
+
+    &.pods-settings-modal__tab-item--active {
+        color: $color--wp-blue;
+        border-bottom: 5px solid $color--wp-blue;
+    }
+}
+
+// Panel
+.pods-settings-modal__panel {
+	margin: 1em;
+
+    .pods-field-option {
+        margin-bottom: 1em;
+    }
+}
+
+.pods-field-option label {
+    margin-bottom: .2em;
+}
+
+.pods-field-option input[type="text"] {
+    width: 100%;
+}
+
+.components-modal__frame .pods-field-option input[type="checkbox"]:checked {
+	// Fixes conflicting different WP checkbox styles
+    background: white;
+}
+
+// Footer
+.pods-setting-modal__button-group {
+    display: flex;
+    width: 100%;
+    padding: 0 1em;
+    justify-content: flex-end;
+}
+
+.pods-setting-modal__button-group button {
+    margin-right: 5px;
+
+    &:last-child {
+        margin-right: 0;
+    }
+}
+
+// Breakpoints
+@media screen and (min-width: 600px) {
+    .components-modal__frame.pods-settings-modal {
+        min-width: 525px;
+    }
+}
+
+@media screen and (min-width: 851px) {
+    .components-modal__frame.pods-settings-modal {
+        min-width: 800px;
+    }
+
+    .pods-settings-modal__container {
+        flex-flow: row nowrap;
+    }
+
+    .pods-settings-modal__tabs {
+        flex-flow: column nowrap;
+        margin-bottom: 0;
+        margin-right: 2em;
+        margin-top: -24px;
+        padding-top: 24px;
+        border-right: 1px solid $color--super-light-grey;
+    }
+
+    .pods-settings-modal__tab-item {
+        width: 200px;
+        margin: 0 10px 0 0;
+    }
+
+    .pods-settings-modal__tab-item.pods-settings-modal__tab-item--active {
+        border-bottom: none;
+        border-right: 5px solid $color--wp-blue;
+    }
+
+    .pods-settings-modal__panel {
+        flex: 1 1 auto;
+        margin: 0 0 1em 0;
+    }
+
+    .pods-setting-modal__button-group {
+        border-top: 1px solid $color--super-light-grey;
+        padding-top: 12px;
+        margin-left: -24px;
+        margin-right: -24px;
+        width: calc(100% + 48px);
+        padding-right: 24px;
+        padding-left: 24px;
+        margin-bottom: -12px;
+    }
+}

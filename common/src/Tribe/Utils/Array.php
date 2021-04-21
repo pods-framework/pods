@@ -442,5 +442,230 @@ if ( ! class_exists( 'Tribe__Utils__Array' ) ) {
 
 			return $default;
 		}
+
+		/**
+		 * Discards everything other than array values having string keys and scalar values, ensuring a
+		 * one-dimensional, associative array result.
+		 *
+		 * @link  https://www.php.net/manual/language.types.array.php Keys cast to non-strings will be discarded.
+		 *
+		 * @since 4.12.2
+		 *
+		 * @param array $array
+		 *
+		 * @return array Associative or empty array.
+		 */
+		public static function filter_to_flat_scalar_associative_array( array $array ) {
+			$result = [];
+
+			if ( ! is_array( $array ) ) {
+				return $result;
+			}
+
+			foreach ( $array as $k => $v ) {
+				if ( ! is_string( $k ) ) {
+					continue;
+				}
+
+				if ( ! is_scalar( $v ) ) {
+					continue;
+				}
+
+				$result[ $k ] = $v;
+			}
+
+			return $result;
+		}
+
+		/**
+		 * Build an array from migrating aliased key values to their canonical key values, removing all alias keys.
+		 *
+		 * If the original array has values for both the alias and its canonical, keep the canonical's value and
+		 * discard the alias' value.
+		 *
+		 * @since 4.12.2
+		 *
+		 * @param array $original  An associative array of values, such as passed shortcode arguments.
+		 * @param array $alias_map An associative array of aliases: key as alias, value as mapped canonical.
+		 *                         Example: [ 'alias' => 'canonical', 'from' => 'to', 'that' => 'becomes_this' ]
+		 *
+		 * @return array
+		 */
+		public static function parse_associative_array_alias( array $original, array $alias_map ) {
+			// Ensure array values.
+			$original  = (array) $original;
+			$alias_map = static::filter_to_flat_scalar_associative_array( (array) $alias_map );
+
+			// Fail gracefully if alias array wasn't setup as [ 'from' => 'to' ].
+			if ( empty( $alias_map ) ) {
+				return $original;
+			}
+
+			$result = $original;
+
+			// Parse aliases.
+			foreach ( $alias_map as $from => $to ) {
+				// If this alias isn't in use, go onto the next.
+				if ( ! isset( $result[ $from ] ) ) {
+					continue;
+				}
+
+				// Only allow setting alias value if canonical value is not already present.
+				if ( ! isset( $result[ $to ] ) ) {
+					$result[ $to ] = $result[ $from ];
+				}
+
+				// Always remove the alias key.
+				unset( $result[ $from ] );
+			}
+
+			return $result;
+		}
+
+		/**
+		 * Stringifies the numeric keys of an array.
+		 *
+		 * @since 4.12.14
+		 *
+		 * @param array<int|string,mixed> $input  The input array whose keys should be stringified.
+		 * @param string|null             $prefix The prefix that should be use to stringify the keys, if not provided
+		 *                                        then it will be generated.
+		 *
+		 * @return array<string,mixed> The input array with each numeric key stringified.
+		 */
+		public static function stringify_keys( array $input, $prefix = null ) {
+			$prefix  = null === $prefix ? uniqid( 'sk_', true ) : $prefix;
+			$visitor = static function ( $key, $value ) use ( $prefix ) {
+				$string_key = is_numeric( $key ) ? $prefix . $key : $key;
+
+				return [ $string_key, $value ];
+			};
+
+			return static::array_visit_recursive( $input, $visitor );
+		}
+
+		/**
+		 * The inverse of the `stringify_keys` method, it will restore numeric keys for previously
+		 * stringified keys.
+		 *
+		 * @since 4.12.14
+		 *
+		 * @param array<int|string,mixed> $input  The input array whose stringified keys should be
+		 *                                        destringified.
+		 * @param string                  $prefix The prefix that should be used to target only specific string keys.
+		 *
+		 * @return array<int|string,mixed> The input array, its stringified keys destringified.
+		 */
+		public static function destringify_keys( array $input, $prefix = 'sk_' ) {
+			$visitor = static function ( $key, $value ) use ( $prefix ) {
+				$destringified_key = 0 === self::strpos( $key, $prefix ) ? null : $key;
+
+				return [ $destringified_key, $value ];
+			};
+
+			return static::array_visit_recursive( $input, $visitor );
+		}
+
+		/**
+		 * Recursively visits all elements of an array applying the specified callback to each element
+		 * key and value.
+		 *
+		 * @since 4.12.14
+		 *
+		 * @param         array $input The input array whose nodes should be visited.
+		 * @param callable $visitor A callback function that will be called on each array item; the callback will
+		 *                          receive the item key and value as input and should return an array that contains
+		 *                          the update key and value in the shape `[ <key>, <value> ]`. Returning a `null`
+		 *                          key will cause the element to be removed from the array.
+		 */
+		public static function array_visit_recursive( $input, callable $visitor ) {
+			if ( ! is_array( $input ) ) {
+				return $input;
+			}
+
+			$return = [];
+
+			foreach ( $input as $key => &$value ) {
+				if ( is_array( $value ) ) {
+					$value = static::array_visit_recursive( $value, $visitor );
+				}
+				// Ensure visitors can quickly return `null` to remove an element.
+				list( $updated_key, $update_value ) = array_replace( [ $key, $value ], (array) $visitor( $key, $value ) );
+				if ( false === $updated_key ) {
+					// Visitor will be able to remove an element by returning a `false` key for it.
+					continue;
+				}
+				if ( null === $updated_key ) {
+					// Automatically assign the first available numeric index to the element.
+					$return[] = $update_value;
+				} else {
+					$return[ $updated_key ] = $update_value;
+				}
+			}
+
+			return $return;
+		}
+
+		/**
+		 * Recursively remove associative, non numeric, keys from an array.
+		 *
+		 * @since 4.12.14
+		 *
+		 * @param array<string|int,mixed> $input The input array.
+		 *
+		 * @return array<int|mixed> An array that only contains integer keys at any of its levels.
+		 */
+		public static function remove_numeric_keys_recursive( array $input ) {
+			return self::array_visit_recursive(
+				$input,
+				static function ( $key ) {
+					return is_numeric( $key ) ? false : $key;
+				}
+			);
+		}
+
+		/**
+		 * Recursively remove numeric keys from an array.
+		 *
+		 * @since 4.12.14
+		 *
+		 * @param array<string|int,mixed> $input The input array.
+		 *
+		 * @return array<string,mixed> An array that only contains non numeric keys at any of its levels.
+		 */
+		public static function remove_string_keys_recursive( array $input ) {
+			return self::array_visit_recursive(
+				$input,
+				static function ( $key ) {
+					return !is_numeric( $key ) ? false : $key;
+				}
+			);
+		}
+
+		/**
+		 * Merges two or more arrays in the nested format used by WP_Query arguments preserving and merging them correctly.
+		 *
+		 * The method will recursively replace named keys and merge numeric keys. The method takes its name from its intended
+		 * primary use, but it's not limited to query arguments only.
+		 *
+		 * @since 4.12.14
+		 *
+		 * @param array<string|int,mixed> ...$arrays A set of arrays to merge.
+		 *
+		 * @return array<string|int,mixed> The recursively merged array.
+		 */
+		public static function merge_recursive_query_vars( array ...$arrays ) {
+			if ( ! count( $arrays ) ) {
+				return [];
+			}
+
+			// Temporarily transform numeric keys to string keys generated with time-related randomness.
+			$stringified = array_map( [ static::class, 'stringify_keys' ], $arrays );
+			// Replace recursive will recursively replace any entry that has the same string key, stringified keys will never match due to randomness.
+			$merged = array_replace_recursive( ...$stringified );
+
+			// Finally destringify the keys to return something that will resemble, in shape, the original arrays.
+			return static::destringify_keys( $merged );
+		}
 	}
 }

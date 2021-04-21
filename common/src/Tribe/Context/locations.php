@@ -9,13 +9,27 @@
  *
  * @since 4.9.11
  */
-
 return [
 	'post_id' => [
 		'read' => [
 			Tribe__Context::FUNC => static function () {
 				return get_the_ID();
 			}
+		],
+	],
+	'permalink_structure' => [
+		'read' => [
+			Tribe__Context::OPTION => [ 'permalink_structure' ],
+		],
+	],
+	'plain_permalink' => [
+		'read' => [
+			Tribe__Context::LOCATION_FUNC => [
+				'permalink_structure',
+				static function( $struct ){
+					return empty( $struct );
+				},
+			],
 		],
 	],
 	'posts_per_page' => [
@@ -76,6 +90,30 @@ return [
 	],
 	'post_type' => [
 		'read' => [
+			Tribe__Context::FUNC        => static function() {
+				$post_type_objs = get_post_types(
+					[
+						'public' => true,
+						'_builtin' => false,
+					],
+					'objects'
+				);
+
+				foreach( $post_type_objs as $post_type ) {
+					if ( empty( $post_type->query_var ) ) {
+						continue;
+					}
+
+					$url_value = tribe_get_request_var( $post_type->query_var, false );
+					if ( empty( $url_value ) ) {
+						continue;
+					}
+
+					return $post_type->name;
+				}
+
+				return Tribe__Context::NOT_FOUND;
+			},
 			Tribe__Context::QUERY_PROP  => 'post_type',
 			Tribe__Context::QUERY_VAR   => 'post_type',
 			Tribe__Context::REQUEST_VAR => 'post_type',
@@ -90,5 +128,28 @@ return [
 			Tribe__Context::QUERY_VAR   => [ 'taxonomy' ],
 			Tribe__Context::REQUEST_VAR => [ 'taxonomy' ],
 		],
-	]
+	],
+	'post_tag' => [
+		'read' => [
+			Tribe__Context::QUERY_PROP  => [ 'post_tag', 'tag' ],
+			Tribe__Context::QUERY_VAR   => [ 'post_tag', 'tag' ],
+			Tribe__Context::REQUEST_VAR => [ 'post_tag', 'tag' ],
+		],
+	],
+	'bulk_edit' => [
+		'read' => [
+			Tribe__Context::REQUEST_VAR => [ 'bulk_edit' ],
+		],
+	],
+	'inline_save' => [
+		'read' => [
+			Tribe__Context::FUNC => [
+				static function () {
+					return tribe_get_request_var( 'action', false ) === 'inline-save'
+						? true
+						: Tribe__Context::NOT_FOUND;
+				}
+			],
+		],
+	],
 ];

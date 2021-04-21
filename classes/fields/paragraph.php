@@ -34,7 +34,8 @@ class PodsField_Paragraph extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Plain Paragraph Text', 'pods' );
+		static::$group = __( 'Paragraph', 'pods' );
+		static::$label = __( 'Plain Paragraph Text', 'pods' );
 	}
 
 	/**
@@ -54,15 +55,16 @@ class PodsField_Paragraph extends PodsField {
 			),
 			'output_options'                     => array(
 				'label' => __( 'Output Options', 'pods' ),
-				'group' => array(
+				'type'  => 'boolean_group',
+				'boolean_group' => array(
 					static::$type . '_allow_html'      => array(
-						'label'      => __( 'Allow HTML?', 'pods' ),
+						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
 					),
 					static::$type . '_oembed'          => array(
-						'label'   => __( 'Enable oEmbed?', 'pods' ),
+						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
 						'help'    => array(
@@ -71,16 +73,16 @@ class PodsField_Paragraph extends PodsField {
 						),
 					),
 					static::$type . '_wptexturize'     => array(
-						'label'   => __( 'Enable wptexturize?', 'pods' ),
+						'label'   => __( 'Enable wptexturize', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => array(
-							__( 'Transforms less-beautfiul text characters into stylized equivalents.', 'pods' ),
+							__( 'Transforms less-beautiful text characters into stylized equivalents.', 'pods' ),
 							'http://codex.wordpress.org/Function_Reference/wptexturize',
 						),
 					),
 					static::$type . '_convert_chars'   => array(
-						'label'   => __( 'Enable convert_chars?', 'pods' ),
+						'label'   => __( 'Enable convert_chars', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => array(
@@ -89,7 +91,7 @@ class PodsField_Paragraph extends PodsField {
 						),
 					),
 					static::$type . '_wpautop'         => array(
-						'label'   => __( 'Enable wpautop?', 'pods' ),
+						'label'   => __( 'Enable wpautop', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => array(
@@ -98,7 +100,7 @@ class PodsField_Paragraph extends PodsField {
 						),
 					),
 					static::$type . '_allow_shortcode' => array(
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
@@ -134,8 +136,8 @@ class PodsField_Paragraph extends PodsField {
 		);
 
 		if ( function_exists( 'Markdown' ) ) {
-			$options['output_options']['group'][ static::$type . '_allow_markdown' ] = array(
-				'label'   => __( 'Allow Markdown Syntax?', 'pods' ),
+			$options['output_options']['boolean_group'][ static::$type . '_allow_markdown' ] = array(
+				'label'   => __( 'Allow Markdown Syntax', 'pods' ),
 				'default' => 0,
 				'type'    => 'boolean',
 			);
@@ -222,7 +224,9 @@ class PodsField_Paragraph extends PodsField {
 			$options['readonly'] = true;
 		}
 
-		return pods_view( PODS_DIR . 'ui/fields/textarea.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/textarea.php', compact( array_keys( get_defined_vars() ) ) );
+		}
 
 		wp_enqueue_script( 'pods-dfv' );
 

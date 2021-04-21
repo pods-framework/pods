@@ -187,13 +187,6 @@ interface Tribe__Repository__Interface
 	public function by_related_to_between( $by_meta_keys, $min, $max, $keys = null, $values = null );
 
 	/**
-	 * Gets the ids of the posts matching the query.
-	 *
-	 * @return array An array containing the post IDs to update.
-	 */
-	public function get_ids();
-
-	/**
 	 * Adds an entry to the repository filter schema.
 	 *
 	 * @since 4.9.5

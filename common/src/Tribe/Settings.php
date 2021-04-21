@@ -140,22 +140,22 @@ if ( ! class_exists( 'Tribe__Settings' ) ) {
 		 * An array defining the suite root plugins.
 		 * @var array
 		 */
-		protected $root_plugins = array(
+		protected $root_plugins = [
 			'the-events-calendar/the-events-calendar.php',
 			'event-tickets/event-ticket.php',
-		);
+		];
 
 		/**
 		 * An associative array in the form [ <tab-slug> => array(...<fields>) ]
 		 * @var array
 		 */
-		protected $fields_for_save = array();
+		protected $fields_for_save = [];
 
 		/**
 		 * An array that contains the fields that are currently being validated.
 		 * @var array
 		 */
-		protected $current_fields = array();
+		protected $current_fields = [];
 
 		/**
 		 * Static Singleton Factory Method
@@ -178,10 +178,10 @@ if ( ! class_exists( 'Tribe__Settings' ) ) {
 			$this->requiredCap = apply_filters( 'tribe_settings_req_cap', 'manage_options' );
 			$this->adminSlug   = apply_filters( 'tribe_settings_admin_slug', 'tribe-common' );
 			$this->help_slug   = apply_filters( 'tribe_settings_help_slug', 'tribe-common-help' );
-			$this->errors      = get_option( 'tribe_settings_errors', array() );
+			$this->errors      = get_option( 'tribe_settings_errors', [] );
 			$this->major_error = get_option( 'tribe_settings_major_error', false );
-			$this->sent_data   = get_option( 'tribe_settings_sent_data', array() );
-			$this->validated   = array();
+			$this->sent_data   = get_option( 'tribe_settings_sent_data', [] );
+			$this->validated   = [];
 			$this->defaultTab  = null;
 			$this->currentTab  = null;
 
@@ -193,11 +193,11 @@ if ( ! class_exists( 'Tribe__Settings' ) ) {
 		 */
 		public function hook() {
 			// run actions & filters
-			add_action( 'admin_menu', array( $this, 'addPage' ) );
-			add_action( 'network_admin_menu', array( $this, 'addNetworkPage' ) );
-			add_action( 'admin_init', array( $this, 'initTabs' ) );
-			add_action( 'tribe_settings_below_tabs', array( $this, 'displayErrors' ) );
-			add_action( 'tribe_settings_below_tabs', array( $this, 'displaySuccess' ) );
+			add_action( 'admin_menu', [ $this, 'addPage' ] );
+			add_action( 'network_admin_menu', [ $this, 'addNetworkPage' ] );
+			add_action( 'admin_init', [ $this, 'initTabs' ] );
+			add_action( 'tribe_settings_below_tabs', [ $this, 'displayErrors' ] );
+			add_action( 'tribe_settings_below_tabs', [ $this, 'displaySuccess' ] );
 		}
 
 		/**
@@ -254,7 +254,7 @@ if ( ! class_exists( 'Tribe__Settings' ) ) {
 					esc_html__( 'Settings', 'tribe-common' ),
 					$this->requiredCap,
 					self::$parent_slug,
-					array( $this, 'generatePage' )
+					[ $this, 'generatePage' ]
 				);
 			}
 		}
@@ -270,10 +270,10 @@ if ( ! class_exists( 'Tribe__Settings' ) ) {
 			}
 
 			$this->admin_page = add_submenu_page(
-				'settings.php', esc_html__( 'Events Settings', 'tribe-common' ), esc_html__( 'Events Settings', 'tribe-common' ), $this->requiredCap, $this->adminSlug, array(
+				'settings.php', esc_html__( 'Events Settings', 'tribe-common' ), esc_html__( 'Events Settings', 'tribe-common' ), $this->requiredCap, $this->adminSlug, [
 					$this,
 					'generatePage',
-				)
+				]
 			);
 
 			$this->admin_page = add_submenu_page(
@@ -282,10 +282,10 @@ if ( ! class_exists( 'Tribe__Settings' ) ) {
 				esc_html__( 'Events Help', 'tribe-common' ),
 				$this->requiredCap,
 				$this->help_slug,
-				array(
+				[
 					tribe( 'settings.manager' ),
 					'do_help_tab',
-				)
+				]
 			);
 		}
 
@@ -440,7 +440,7 @@ if ( ! class_exists( 'Tribe__Settings' ) ) {
 
 				// bail if we have errors
 				if ( count( $this->errors ) ) {
-					remove_action( 'shutdown', array( $this, 'deleteOptions' ) );
+					remove_action( 'shutdown', [ $this, 'deleteOptions' ] );
 					add_option( 'tribe_settings_errors', $this->errors );
 					add_option( 'tribe_settings_major_error', $this->major_error );
 					wp_redirect( $this->url );
@@ -488,8 +488,8 @@ if ( ! class_exists( 'Tribe__Settings' ) ) {
 
 					// do not generate errors for dependent fields that should not show
 					if ( ! empty( $this->errors ) ) {
-						$keep         = array_filter( array_keys( $this->errors ), array( $this, 'dependency_checks' ) );
-						$compare = empty( $keep ) ? array() : array_combine( $keep, $keep );
+						$keep = array_filter( array_keys( $this->errors ), [ $this, 'dependency_checks' ] );
+						$compare = empty( $keep ) ? [] : array_combine( $keep, $keep );
 						$this->errors = array_intersect_key( $this->errors, $compare );
 					}
 
@@ -512,7 +512,7 @@ if ( ! class_exists( 'Tribe__Settings' ) ) {
 			do_action( 'tribe_settings_save_tab_' . $this->currentTab );
 
 			// we'll need this later
-			$parent_options = array();
+			$parent_options = [];
 
 			/**
 			 * loop through each validated option and either
@@ -588,11 +588,11 @@ if ( ! class_exists( 'Tribe__Settings' ) ) {
 
 			do_action( 'tribe_settings_after_save' );
 			do_action( 'tribe_settings_after_save_' . $this->currentTab );
-			remove_action( 'shutdown', array( $this, 'deleteOptions' ) );
+			remove_action( 'shutdown', [ $this, 'deleteOptions' ] );
 			add_option( 'tribe_settings_sent_data', $_POST );
 			add_option( 'tribe_settings_errors', $this->errors );
 			add_option( 'tribe_settings_major_error', $this->major_error );
-			wp_redirect( esc_url_raw( add_query_arg( array( 'saved' => true ), $this->url ) ) );
+			wp_redirect( esc_url_raw( add_query_arg( [ 'saved' => true ], $this->url ) ) );
 			exit;
 		}
 
@@ -669,11 +669,11 @@ if ( ! class_exists( 'Tribe__Settings' ) ) {
 		 *
 		 * @return string
 		 */
-		public function get_url( array $args = array() ) {
-			$defaults = array(
-				'page' => $this->adminSlug,
+		public function get_url( array $args = [] ) {
+			$defaults = [
+				'page'   => $this->adminSlug,
 				'parent' => self::$parent_page,
-			);
+			];
 
 			// Allow the link to be "changed" on the fly
 			$args = wp_parse_args( $args, $defaults );

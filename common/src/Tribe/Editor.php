@@ -27,10 +27,22 @@ class Tribe__Editor {
 	 * @return bool
 	 */
 	public function should_load_blocks() {
-		return (
-			$this->is_gutenberg_active() || $this->is_wp_version()
-		)
-		&& $this->is_blocks_editor_active();
+		$gutenberg = $this->is_gutenberg_active() || $this->is_wp_version();
+		$blocks    = $this->is_blocks_editor_active();
+		$classic   = $this->is_classic_plugin_active() || $this->is_classic_option_active();
+
+		$should_load_blocks = $gutenberg && $blocks && ! $classic;
+
+		/**
+		 * Filters whether the Blocks Editor should be activated or not.
+		 *
+		 * @since 4.12.0
+		 *
+		 * @param bool $should_load_blocks Whether the blocks editor should be activated or not.
+		 */
+		$should_load_blocks = (bool) apply_filters( 'tribe_editor_should_load_blocks', $should_load_blocks );
+
+		return $should_load_blocks;
 	}
 
 	/**
@@ -79,10 +91,10 @@ class Tribe__Editor {
 	 *
 	 * @return array
 	 */
-	public function add_support( $args = array() ) {
+	public function add_support( $args = [] ) {
 		// Make sure we have the Support argument and it's an array
 		if ( ! isset( $args['supports'] ) || ! is_array( $args['supports'] ) ) {
-			$args['supports'] = array();
+			$args['supports'] = [];
 		}
 
 		// Add Editor Support
@@ -102,13 +114,13 @@ class Tribe__Editor {
 	 *
 	 * @return array
 	 */
-	public function add_rest_support( $args = array() ) {
+	public function add_rest_support( $args = [] ) {
 		// Blocks Editor requires REST support
 		$args['show_in_rest'] = true;
 
 		// Make sure we have the Support argument and it's an array
 		if ( ! isset( $args['supports'] ) || ! is_array( $args['supports'] ) ) {
-			$args['supports'] = array();
+			$args['supports'] = [];
 		}
 
 		if ( ! in_array( 'revisions', $args['supports'] ) ) {
@@ -184,30 +196,63 @@ class Tribe__Editor {
 	 * @return bool
 	 */
 	public function is_classic_option_active() {
-		$valid_values = array( 'replace', 'classic' );
+		$valid_values = [ 'replace', 'classic' ];
 
 		return in_array( (string) get_option( 'classic-editor-replace' ), $valid_values, true );
 	}
 
 	/**
-	 * Detect if is the classic editor is forced activated via plugin or if it comes from a request
+	 * Detect if the classic editor is force-activated via plugin or if it comes from a request.
 	 *
 	 * @since 4.8
 	 *
 	 * @return bool
 	 */
 	public function is_classic_editor() {
-		$disabled_by_plugin        = $this->is_classic_plugin_active() && $this->is_classic_option_active();
+		$disabled_by_plugin = $this->is_classic_plugin_active() && $this->is_classic_option_active();
+
 		/**
-		 * Allow other addons to disabled classic editor based on options
+		 * Allow other addons to disable classic editor based on options.
 		 *
 		 * @since  4.8.5
 		 *
 		 * @param bool $classic_is_active Whether the classic editor should be used.
 		 */
-		$disabled_by_filter        = apply_filters( 'tribe_editor_classic_is_active', false );
+		$disabled_by_filter = apply_filters( 'tribe_editor_classic_is_active', false );
+
 		$is_classic_editor_request = tribe_get_request_var( 'classic-editor', null );
 
 		return $is_classic_editor_request || $disabled_by_plugin || $disabled_by_filter;
+	}
+
+	/**
+	 * Whether the events are being served using Blocks or the Classical Editor.
+	 *
+	 * @since 4.12.0
+	 *
+	 * @return bool True if using Blocks. False if using the Classical Editor.
+	 */
+	public function is_events_using_blocks() {
+		/**
+		 * Whether the event is being served through blocks
+		 * or the classical editor.
+		 *
+		 * @since 4.12.0
+		 *
+		 * @param bool $is_using_blocks True if using blocks. False if using the classical editor.
+		 */
+		$is_using_blocks = apply_filters( 'tribe_is_using_blocks', null );
+
+		// Early bail: The filter was overridden to return either true or false.
+		if ( null !== $is_using_blocks ) {
+			return $is_using_blocks;
+		}
+
+		// Early bail: The site itself is not using blocks.
+		if ( ! $this->should_load_blocks() ) {
+			return false;
+		}
+
+		return tribe_is_truthy( tribe_get_option( 'toggle_blocks_editor' ) );
 	}
 }

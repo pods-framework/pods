@@ -38,7 +38,7 @@ interface Tribe__Editor__Blocks__Interface {
 	 *
 	 * @return string
 	 */
-	public function render( $attributes = array() );
+	public function render( $attributes = [] );
 
 	/**
 	 * Does the registration for PHP rendering for the Block, important due to been

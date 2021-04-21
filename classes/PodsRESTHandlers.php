@@ -72,11 +72,12 @@ class PodsRESTHandlers {
 		 */
 
 		if ( empty( $pod_name ) ) {
-			if ( 'attachment' === $object_type ) {
-				$pod_name = 'media';
-			} else {
-				$pod_name = $object_type;
-			}
+			$pod_name = $object_type;
+		}
+
+		// Fix media pod name.
+		if ( 'attachment' === $pod_name ) {
+			$pod_name = 'media';
 		}
 
 		/**
@@ -140,19 +141,15 @@ class PodsRESTHandlers {
 						 * @var $related_pod Pods
 						 */
 						foreach ( $related_pod_items as $related_pod ) {
-							if ( ! is_object( $related_pod ) || ! is_a( $related_pod, 'Pods' ) ) {
+							if ( ! is_object( $related_pod ) || ! $related_pod instanceof Pods ) {
 								$items = $related_pod_items;
 
 								break;
 							}
 
 							if ( false === $fields ) {
-								$fields = $related_pod->fields();
+								$fields = pods_config_get_all_fields( $related_pod );
 								$fields = array_keys( $fields );
-
-								if ( isset( $related_pod->pod_data['object_fields'] ) && ! empty( $related_pod->pod_data['object_fields'] ) ) {
-									$fields = array_merge( $fields, array_keys( $related_pod->pod_data['object_fields'] ) );
-								}
 
 								/**
 								 * What fields to show in a related field REST response.
@@ -220,7 +217,7 @@ class PodsRESTHandlers {
 	 */
 	public static function save_handler( $object, $request, $creating ) {
 
-		if ( is_a( $object, 'WP_Post' ) ) {
+		if ( $object instanceof WP_Post ) {
 			$pod_name = $object->post_type;
 
 			if ( 'attachment' === $pod_name ) {
@@ -228,15 +225,15 @@ class PodsRESTHandlers {
 			}
 
 			$id = $object->ID;
-		} elseif ( is_a( $object, 'WP_Term' ) ) {
+		} elseif ( $object instanceof WP_Term ) {
 			$pod_name = $object->taxonomy;
 
 			$id = $object->term_id;
-		} elseif ( is_a( $object, 'WP_User' ) ) {
+		} elseif ( $object instanceof WP_User ) {
 			$pod_name = 'user';
 
 			$id = $object->ID;
-		} elseif ( is_a( $object, 'WP_Comment' ) ) {
+		} elseif ( $object instanceof WP_Comment ) {
 			$pod_name = 'comment';
 
 			$id = $object->comment_ID;

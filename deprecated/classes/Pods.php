@@ -112,7 +112,7 @@ class Pods_Deprecated {
 
 			// Replace field attributes with public form attributes
 			if ( ! empty( $attributes ) && is_array( $attributes[ $key ] ) ) {
-				$field = array_merge( $field, $attributes[ $key ] );
+				$field = pods_config_merge_data( $field, $attributes[ $key ] );
 			}
 
 			// Replace the input helper name with the helper code

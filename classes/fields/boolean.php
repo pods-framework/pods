@@ -27,7 +27,7 @@ class PodsField_Boolean extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Yes / No', 'pods' );
+		static::$label = __( 'Yes / No', 'pods' );
 	}
 
 	/**
@@ -79,9 +79,11 @@ class PodsField_Boolean extends PodsField {
 
 		$is_empty = false;
 
-		// Boolean false and integer 0 are non-empty values.
-		if ( ! is_bool( $value ) && ! is_int( $value ) && '0' !== $value ) {
-			$is_empty = empty( $value );
+		// is_empty() is used for if/else statements. Value should be true to pass.
+		$value = $this->pre_save( $value );
+
+		if ( ! $value ) {
+			$is_empty = true;
 		}
 
 		return $is_empty;
@@ -146,7 +148,18 @@ class PodsField_Boolean extends PodsField {
 			$value = 0;
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**
@@ -172,32 +185,37 @@ class PodsField_Boolean extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
+
+		if ( ! $this->is_required( $options ) ) {
+			// Any value can be parsed to boolean.
+			return $validate;
+		}
 
 		$errors = array();
-		$check  = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
+
+		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
 		$yes_required = ( 'checkbox' === pods_v( static::$type . '_format_type', $options ) );
 
-		$required = (int) pods_v( 'required', $options );
-
-		if ( 1 === $required ) {
-			if ( $yes_required ) {
-				if ( 0 === $check ) {
-					$errors[] = __( 'This field is required.', 'pods' );
-				}
-			} elseif ( $this->is_empty( $value ) ) {
-				$errors[] = __( 'This field is required.', 'pods' );
-			}
+		if ( $yes_required && ! $check ) {
+			$errors[] = __( 'This field is required.', 'pods' );
 		}
 
 		if ( ! empty( $errors ) ) {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**
+	 * Replicates filter_var() with `FILTER_VALIDATE_BOOLEAN` and adds custom input for yes/no values.
+	 *
 	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
@@ -205,19 +223,15 @@ class PodsField_Boolean extends PodsField {
 		$yes = strtolower( pods_v( static::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ) );
 		$no  = strtolower( pods_v( static::$type . '_no_label', $options, __( 'No', 'pods' ), true ) );
 
-		// Only allow 0 / 1
-		if ( 'yes' === strtolower( $value ) || '1' === (string) $value ) {
-			$value = 1;
-		} elseif ( 'no' === strtolower( $value ) || '0' === (string) $value ) {
-			$value = 0;
-		} elseif ( strtolower( $value ) === $yes ) {
-			$value = 1;
-		} elseif ( strtolower( $value ) === $no ) {
-			$value = 0;
-		} elseif ( 0 !== (int) $value ) {
+		if ( is_string( $value ) ) {
+			$value = strtolower( $value );
+		}
+
+		if ( $yes === $value ) {
 			$value = 1;
 		} else {
-			$value = 0;
+			// Validate: 1, "1", true, "true", "on", and "yes" as 1, all others are 0.
+			$value = (int) filter_var( $value, FILTER_VALIDATE_BOOLEAN );
 		}
 
 		return $value;

@@ -20,10 +20,18 @@ if ( ! class_exists( 'Tribe__View_Helpers' ) ) {
 		 * @return array The countries array.
 		 */
 		public static function constructCountries( $postId = '', $useDefault = true ) {
+			static $cache_var_name = __METHOD__;
+
+			$countries = tribe_get_var( $cache_var_name, null );
+
+			if ( $countries ) {
+				return $countries;
+			}
+
 			$eventCountries = tribe_get_option( 'tribeEventsCountries' );
 
 			if ( $eventCountries != '' ) {
-				$countries = array();
+				$countries = [];
 
 				$country_rows = explode( "\n", $eventCountries );
 				foreach ( $country_rows as $crow ) {
@@ -48,28 +56,28 @@ if ( ! class_exists( 'Tribe__View_Helpers' ) ) {
 			natsort( $countries );
 
 			// Placeholder option ('Select a Country') first by default
-			$select_country = array( '' => esc_html__( 'Select a Country:', 'tribe-common' ) );
+			$select_country = [ '' => esc_html__( 'Select a Country:', 'tribe-common' ) ];
 			$countries = $select_country + $countries;
 
 			if ( ( $postId || $useDefault ) ) {
 				$countryValue = get_post_meta( $postId, '_EventCountry', true );
 				if ( $countryValue ) {
-					$defaultCountry = array( array_search( $countryValue, $countries ), $countryValue );
+					$defaultCountry = [ array_search( $countryValue, $countries ), $countryValue ];
 				} else {
 					$defaultCountry = tribe_get_default_value( 'country' );
 				}
 				if ( $defaultCountry && $defaultCountry[0] != '' ) {
 					$selectCountry = array_shift( $countries );
 					asort( $countries );
-					$countries = array( $defaultCountry[0] => $defaultCountry[1] ) + $countries;
-					$countries = array( '' => $selectCountry ) + $countries;
+					$countries = [ $defaultCountry[0] => $defaultCountry[1] ] + $countries;
+					$countries = [ '' => $selectCountry ] + $countries;
 					array_unique( $countries );
 				}
-
-				return $countries;
-			} else {
-				return $countries;
 			}
+
+			tribe_set_var( $cache_var_name, $countries );
+
+			return $countries;
 		}
 
 		/**
@@ -174,7 +182,7 @@ if ( ! class_exists( 'Tribe__View_Helpers' ) ) {
 		 * @return array The hours array.
 		 */
 		private static function hours() {
-			$hours      = array();
+			$hours      = [];
 			$rangeMax   = self::is_24hr_format() ? 23 : 12;
 			$rangeStart = $rangeMax > 12 ? 0 : 1;
 			foreach ( range( $rangeStart, $rangeMax ) as $hour ) {
@@ -229,7 +237,7 @@ if ( ! class_exists( 'Tribe__View_Helpers' ) ) {
 		 * @return array The minutes array.
 		 */
 		private static function minutes( $exact_minute = 0 ) {
-			$minutes = array();
+			$minutes = [];
 
 			// The exact minute should be an absint between 0 and 59
 			$exact_minute = absint( $exact_minute );
@@ -274,10 +282,10 @@ if ( ! class_exists( 'Tribe__View_Helpers' ) ) {
 		public static function getMeridianOptions( $date = '', $isStart = false ) {
 			if ( strstr( get_option( 'time_format', Tribe__Date_Utils::TIMEFORMAT ), 'A' ) ) {
 				$a         = 'A';
-				$meridians = array( 'AM', 'PM' );
+				$meridians = [ 'AM', 'PM' ];
 			} else {
 				$a         = 'a';
-				$meridians = array( 'am', 'pm' );
+				$meridians = [ 'am', 'pm' ];
 			}
 			if ( empty( $date ) ) {
 				$meridian = ( $isStart ) ? $meridians[0] : $meridians[1];
@@ -309,7 +317,7 @@ if ( ! class_exists( 'Tribe__View_Helpers' ) ) {
 			$current_year  = (int) date_i18n( 'Y' );
 			$years_back    = (int) apply_filters( 'tribe_years_to_go_back', 5, $current_year );
 			$years_forward = (int) apply_filters( 'tribe_years_to_go_forward', 5, $current_year );
-			$years         = array();
+			$years         = [];
 			for ( $i = $years_back; $i > 0; $i -- ) {
 				$year    = $current_year - $i;
 				$years[] = $year;
@@ -329,7 +337,7 @@ if ( ! class_exists( 'Tribe__View_Helpers' ) ) {
 		 * @return array The days array.
 		 */
 		public static function days( $totalDays ) {
-			$days = array();
+			$days = [];
 			foreach ( range( 1, $totalDays ) as $day ) {
 				$days[ $day ] = $day;
 			}

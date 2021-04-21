@@ -19,34 +19,34 @@ class Tribe__Tracker {
 	/**
 	 * @var array An array of the tracked post types.
 	 */
-	protected $tracked_post_types = array();
+	protected $tracked_post_types = [];
 
 	/**
 	 * @var array An array of the tracked taxonomies.
 	 */
-	protected $tracked_taxonomies = array();
+	protected $tracked_taxonomies = [];
 
 	/**
 	 * Hooks up the methods that will actually track the fields we are looking for.
 	 */
 	public function hook() {
 		// Track the Meta Updates for Meta That came from the correct Post Types
-		add_filter( 'update_post_metadata', array( $this, 'filter_watch_updated_meta' ), PHP_INT_MAX - 1, 5 );
+		add_filter( 'update_post_metadata', [ $this, 'filter_watch_updated_meta' ], PHP_INT_MAX - 1, 5 );
 
 		// After a meta is added we mark that is has been modified
-		add_action( 'added_post_meta', array( $this, 'register_added_deleted_meta' ), PHP_INT_MAX - 1, 3 );
+		add_action( 'added_post_meta', [ $this, 'register_added_deleted_meta' ], PHP_INT_MAX - 1, 3 );
 
 		// Before a meta is removed we mark that is has been modified
-		add_action( 'delete_post_meta', array( $this, 'register_added_deleted_meta' ), PHP_INT_MAX - 1, 3 );
+		add_action( 'delete_post_meta', [ $this, 'register_added_deleted_meta' ], PHP_INT_MAX - 1, 3 );
 
 		// Track the Post Fields Updates for Meta in the correct Post Types
-		add_action( 'post_updated', array( $this, 'filter_watch_post_fields' ), 10, 3 );
+		add_action( 'post_updated', [ $this, 'filter_watch_post_fields' ], 10, 3 );
 
 		// Track the Post term updates
-		add_action( 'set_object_terms', array( $this, 'track_taxonomy_term_changes' ), 10, 6 );
+		add_action( 'set_object_terms', [ $this, 'track_taxonomy_term_changes' ], 10, 6 );
 
 		// Clean up modified fields if the post is removed.
-		add_action( 'delete_post', array( $this, 'cleanup_meta_fields' ) );
+		add_action( 'delete_post', [ $this, 'cleanup_meta_fields' ] );
 	}
 
 	/**
@@ -83,13 +83,30 @@ class Tribe__Tracker {
 	}
 
 	/**
-	 * Easy way to see currently which post types are been tracked by our code.
+	 * Get the date(timestamp) of last modification for a tracked field.
+	 *
+	 * @since 4.12.3
+	 *
+	 * @param string $meta_key The key for the meta field we're interested in.
+	 * @param int $post_id The ID of the post to check.
+	 *
+	 * @return boolean|string The change timestamp or false if the field is not found/empty.
+	 */
+	public function get_modified_date( $meta_key, $post_id ) {
+		$modified = get_post_meta( $post_id, self::$field_key, true );
+
+		// If the key is missing or empty/null return false - no recorded change.
+		return Tribe__Utils__Array::get( $modified, $meta_key, false );
+	}
+
+	/**
+	 * Easy way to see currently which post types are being tracked by our code.
 	 *
 	 * @return array
 	 */
 	public function get_post_types() {
 		// By default we are not tracking anything
-		$tracked_post_types = array();
+		$tracked_post_types = [];
 
 		/**
 		 * Adds a way for Developers to add and remove which post types will be tracked
@@ -111,10 +128,10 @@ class Tribe__Tracker {
 	 */
 	public function get_excluded_meta_keys() {
 		// By default we are not tracking anything
-		$excluded_keys = array(
+		$excluded_keys = [
 			'_edit_lock',
 			self::$field_key,
-		);
+		];
 
 		/**
 		 * Adds a way for Developers remove Meta Keys that shouldn't be tracked
@@ -180,7 +197,7 @@ class Tribe__Tracker {
 		// Fetch the current data from the modified fields
 		$modified = get_post_meta( $post->ID, self::$field_key, true );
 		if ( ! is_array( $modified ) ) {
-			$modified = array();
+			$modified = [];
 		}
 
 		// If we got here we will update the Modified Meta
@@ -259,7 +276,7 @@ class Tribe__Tracker {
 		// Fetch the current data from the modified fields
 		$modified = get_post_meta( $post->ID, self::$field_key, true );
 		if ( ! is_array( $modified ) ) {
-			$modified = array();
+			$modified = [];
 		}
 
 		// If we got here we will update the Modified Meta
@@ -303,17 +320,17 @@ class Tribe__Tracker {
 		$now = current_time( 'timestamp' );
 
 		if ( ! $modified = get_post_meta( $post_id, self::$field_key, true ) ) {
-			$modified = array();
+			$modified = [];
 		}
 
-		$fields_to_check_for_changes = array(
+		$fields_to_check_for_changes = [
 			'post_title',
 			'post_content',
 			'post_excerpt',
 			'post_status',
 			'post_type',
 			'post_parent',
-		);
+		];
 
 		foreach ( $fields_to_check_for_changes as $field ) {
 			if ( ! $this->has_field_changed( $field, $post_after, $post_before ) ) {
@@ -375,7 +392,7 @@ class Tribe__Tracker {
 		}
 
 		if ( ! $modified = get_post_meta( $post->ID, self::$field_key, true ) ) {
-			$modified = array();
+			$modified = [];
 		}
 
 		if ( $tt_ids == $old_tt_ids ) {

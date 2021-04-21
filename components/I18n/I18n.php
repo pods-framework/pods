@@ -272,10 +272,6 @@ class Pods_Component_I18n extends PodsComponent {
 		$locale = $this->locale;
 		// Validate locale and pod
 		if ( is_array( $data ) && array_key_exists( $locale, $this->languages ) && $this->obj_is_language_enabled( $locale, $data ) ) {
-			// Add option keys to $data array
-			if ( ! empty( $data['options'] ) ) {
-				$data = $data;
-			}
 			// Check if the i18n option exists and isn't empty
 			if ( ! empty( $data[ $key . '_' . $locale ] ) ) {
 				return (string) $data[ $key . '_' . $locale ];
@@ -471,6 +467,7 @@ class Pods_Component_I18n extends PodsComponent {
 			'item_reverted_to_draft'     => 'label_item_reverted_to_draft',
 			'item_scheduled'             => 'label_item_scheduled',
 			'item_updated'               => 'label_item_updated',
+			'filter_by_date'             => 'label_filter_by_date', // WP 5.7
 
 			// Taxonomies
 			'update_item'                => 'label_update_item',
@@ -481,6 +478,7 @@ class Pods_Component_I18n extends PodsComponent {
 			'add_or_remove_items'        => 'label_add_or_remove_items',
 			'choose_from_most_used'      => 'label_choose_from_the_most_used', // Different.
 			'no_terms'                   => 'label_no_terms',
+			'filter_by_item'             => 'label_filter_by_item', // WP 5.7
 		);
 
 		if ( ! isset( $options['labels'] ) || ! is_array( $options['labels'] ) ) {
@@ -826,15 +824,11 @@ class Pods_Component_I18n extends PodsComponent {
 					?>
 					<div class="pods-field-option pods-enable-disable-language" data-locale="<?php echo esc_attr( $locale ); ?>">
 						<?php
-						echo PodsForm::field(
-							'enable_i18n[' . $locale . ']',
-							$pod['options']['enable_i18n'][ $locale ],
-							'boolean',
-							array(
-								'boolean_yes_label' => '<code>' . $locale . '</code> ' . $this->create_lang_label( $lang_data ),
-								'boolean_no_label'  => '',
-							)
-						);
+						echo PodsForm::field( 'enable_i18n[' . $locale . ']', $pod['options']['enable_i18n'][ $locale ], 'boolean', [
+							'boolean_yes_label' => '<code>' . $locale . '</code> ' . $this->create_lang_label( $lang_data ),
+							'boolean_no_label'  => '',
+							'disable_dfv'       => true,
+						] );
 						?>
 					</div>
 					<?php
@@ -915,7 +909,9 @@ class Pods_Component_I18n extends PodsComponent {
 			// Add the translation fields
 			$output .= '<div class="pods-i18n-input pods-i18n-input-' . $locale . '" data-locale="' . $locale . '" ' . $style . '>';
 			$output .= PodsForm::label( $field_name, $lang_label );
-			$output .= PodsForm::field( $field_name, pods_v( $field_name, $pod ), 'text', null, $pod );
+			$output .= PodsForm::field( $field_name, pods_v( $field_name, $pod ), 'text', [
+				'disable_dfv' => true,
+			], $pod );
 			$output .= '</div>';
 		}//end foreach
 		$output .= '</div>';

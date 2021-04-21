@@ -2,16 +2,12 @@
 
 namespace Pods\REST\V1\Endpoints;
 
+use Tribe__Documentation__Swagger__Provider_Interface as Swagger_Interface;
 use Tribe__REST__Endpoints__CREATE_Endpoint_Interface as CREATE_Interface;
 use Tribe__REST__Endpoints__READ_Endpoint_Interface as READ_Interface;
-use Tribe__Documentation__Swagger__Provider_Interface as Swagger_Interface;
 use WP_REST_Request;
 
-class Groups
-	extends Base
-	implements READ_Interface,
-	CREATE_Interface,
-	Swagger_Interface {
+class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_Interface {
 
 	/**
 	 * {@inheritdoc}
@@ -19,6 +15,13 @@ class Groups
 	 * @since 2.8
 	 */
 	public $route = '/groups';
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @since 2.8
+	 */
+	public $object = 'group';
 
 	/**
 	 * {@inheritdoc}
@@ -38,7 +41,7 @@ class Groups
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => __( 'Returns all the tickets matching the search criteria', 'pods' ),
+						'description' => __( 'Returns all the tickets matching the search criteria.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -47,15 +50,15 @@ class Groups
 										'rest_url'    => [
 											'type'        => 'string',
 											'format'      => 'uri',
-											'description' => __( 'This results page REST URL', 'pods' ),
+											'description' => __( 'This results page REST URL.', 'pods' ),
 										],
 										'total'       => [
 											'type'        => 'integer',
-											'description' => __( 'The total number of results across all pages', 'pods' ),
+											'description' => __( 'The total number of results across all pages.', 'pods' ),
 										],
 										'total_pages' => [
 											'type'        => 'integer',
-											'description' => __( 'The total number of result pages matching the search criteria', 'pods' ),
+											'description' => __( 'The total number of result pages matching the search criteria.', 'pods' ),
 										],
 										'tickets'     => [
 											'type'  => 'array',
@@ -67,7 +70,7 @@ class Groups
 						],
 					],
 					'400' => [
-						'description' => __( 'One or more of the specified query variables has a bad format', 'pods' ),
+						'description' => __( 'One or more of the specified query variables has a bad format.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -98,52 +101,42 @@ class Groups
 	 */
 	public function READ_args() {
 		return [
-			'page'     => [
-				'description'       => __( 'The page of results to return; defaults to 1', 'pods' ),
-				'type'              => 'integer',
-				'default'           => 1,
-				'sanitize_callback' => 'absint',
-				'minimum'           => 1,
-			],
-			'per_page' => [
-				'description'       => __( 'How many tickets to return per results page; defaults to posts_per_page.', 'pods' ),
-				'type'              => 'integer',
-				'default'           => get_option( 'posts_per_page' ),
-				'minimum'           => 1,
-				'maximum'           => 100,
-				'sanitize_callback' => 'absint',
-			],
-			'search'   => [
-				'description'       => __( 'Limit results to tickets containing the specified string in the title or description.', 'pods' ),
-				'type'              => 'string',
-				'required'          => false,
-				'validate_callback' => [ $this->validator, 'is_string' ],
-			],
-			'offset'   => [
-				'description' => __( 'Offset the results by a specific number of items.', 'pods' ),
-				'type'        => 'integer',
-				'required'    => false,
-				'min'         => 0,
-			],
-			'order'    => [
-				'description' => __( 'Sort results in ASC or DESC order. Defaults to ASC.', 'pods' ),
+			'return_type' => [
+				'description' => __( 'The type of data to return.', 'pods' ),
 				'type'        => 'string',
+				'default'     => 'full',
 				'required'    => false,
 				'enum'        => [
-					'ASC',
-					'DESC',
+					'full',
+					'names',
+					'names_ids',
+					'ids',
+					'key_names',
+					'count',
 				],
 			],
-			'orderby'  => [
-				'description' => __( 'Order the results by one of date, relevance, id, include, title, or slug; defaults to title.', 'pods' ),
-				'type'        => 'string',
-				'required'    => false,
-				'enum'        => [
-					'id',
-					'include',
-					'title',
-					'slug',
+			'types'       => [
+				'required'         => false,
+				'description'      => __( 'A list of types to filter by.', 'pods' ),
+				'swagger_type'     => 'array',
+				'items'            => [
+					'type' => 'string',
 				],
+				'collectionFormat' => 'csv',
+			],
+			'ids'         => [
+				'required'         => false,
+				'description'      => __( 'A list of IDs to filter by.', 'pods' ),
+				'swagger_type'     => 'array',
+				'items'            => [
+					'type' => 'integer',
+				],
+				'collectionFormat' => 'csv',
+			],
+			'args'        => [
+				'required'     => false,
+				'description'  => __( 'A list of arguments to filter by.', 'pods' ),
+				'swagger_type' => 'array',
 			],
 		];
 	}
@@ -154,9 +147,18 @@ class Groups
 	 * @since 2.8
 	 */
 	public function get( WP_REST_Request $request ) {
-		$data = [];
+		return $this->archive_by_args( $request );
+	}
 
-		return $data;
+	/**
+	 * Determine whether access to READ is available.
+	 *
+	 * @since 2.8
+	 *
+	 * @return bool Whether access to READ is available.
+	 */
+	public function can_read() {
+		return pods_is_admin( 'pods' );
 	}
 
 	/**
@@ -166,12 +168,29 @@ class Groups
 	 */
 	public function CREATE_args() {
 		return [
-			'provider' => [
+			'pod_id' => [
 				'type'              => 'string',
-				'in'                => 'body',
-				'required'          => true,
-				'validate_callback' => [ $this->validator, 'is_string' ],
-				'sanitize_callback' => 'sanitize_text_field',
+				'description'       => __( 'The Pod ID.', 'pods' ),
+				'validate_callback' => [ $this->validator, 'is_pod_id' ],
+			],
+			'pod'    => [
+				'type'              => 'string',
+				'description'       => __( 'The Pod name.', 'pods' ),
+				'validate_callback' => [ $this->validator, 'is_pod_slug' ],
+			],
+			'name'   => [
+				'type'        => 'string',
+				'description' => __( 'The name of the Group.', 'pods' ),
+			],
+			'label'  => [
+				'type'        => 'string',
+				'description' => __( 'The singular label of the Group.', 'pods' ),
+				'required'    => true,
+			],
+			'args'   => [
+				'required'     => false,
+				'description'  => __( 'A list of additional options to save to the Group.', 'pods' ),
+				'swagger_type' => 'array',
 			],
 		];
 	}
@@ -182,9 +201,7 @@ class Groups
 	 * @since 2.8
 	 */
 	public function create( WP_REST_REQUEST $request, $return_id = false ) {
-		$data = [];
-
-		return $data;
+		return $this->create_by_args( $request, $return_id );
 	}
 
 	/**
@@ -193,7 +210,6 @@ class Groups
 	 * @since 2.8
 	 */
 	public function can_create() {
-		// @todo Check Pods permissions
-		return true;
+		return pods_is_admin( 'pods' );
 	}
 }

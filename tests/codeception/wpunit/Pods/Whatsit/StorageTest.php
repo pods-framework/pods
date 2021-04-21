@@ -18,11 +18,11 @@ class StorageTest extends Pods_UnitTestCase {
 	 */
 	private $pods_object_storage;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->pods_object_storage = $this->getMockBuilder( Storage::class )->getMockForAbstractClass();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $this->pods_object_storage );
 	}
 

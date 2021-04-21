@@ -69,10 +69,10 @@ class Tribe__Service_Providers__Processes extends tad_DI52_ServiceProvider {
 	 */
 	protected function hook_handler_for( $action ) {
 		if ( null === $this->handler_actions ) {
-			$handlers = array(
+			$handlers = [
 				'Tribe__Process__Tester',
 				'Tribe__Process__Post_Thumbnail_Setter',
-			);
+			];
 
 			/**
 			 * Filters the process handler classes the Service Provider should handle.
@@ -87,7 +87,7 @@ class Tribe__Service_Providers__Processes extends tad_DI52_ServiceProvider {
 
 			$this->handler_actions = array_combine(
 				$handlers,
-				array_map( array( $this, 'get_handler_action' ), $handlers )
+				array_map( [ $this, 'get_handler_action' ], $handlers )
 			);
 		}
 
@@ -110,9 +110,9 @@ class Tribe__Service_Providers__Processes extends tad_DI52_ServiceProvider {
 	 */
 	protected function hook_queue_for( $action ) {
 		if ( null === $this->queue_actions ) {
-			$queues = array(
+			$queues = [
 				'Tribe__Promise',
-			);
+			];
 
 			/**
 			 * Filters the queue processing classes the Service Provider should handle.
@@ -127,7 +127,7 @@ class Tribe__Service_Providers__Processes extends tad_DI52_ServiceProvider {
 
 			$all_queues_actions = array_combine(
 				$queues,
-				array_map( array( $this, 'get_queue_action' ), $queues )
+				array_map( [ $this, 'get_queue_action' ], $queues )
 			);
 		}
 
@@ -152,7 +152,7 @@ class Tribe__Service_Providers__Processes extends tad_DI52_ServiceProvider {
 	 */
 	protected function get_handler_action( $handler_class ) {
 		/** @var Tribe__Process__Handler handler_class */
-		return 'tribe_process_' . call_user_func( array( $handler_class, 'action' ) );
+		return 'tribe_process_' . call_user_func( [ $handler_class, 'action' ] );
 	}
 
 	/**
@@ -166,7 +166,7 @@ class Tribe__Service_Providers__Processes extends tad_DI52_ServiceProvider {
 	 */
 	protected function get_queue_action( $queue_class ) {
 		/** @var Tribe__Process__Queue queue_class */
-		return 'tribe_queue_' . call_user_func( array( $queue_class, 'action' ) );
+		return 'tribe_queue_' . call_user_func( [ $queue_class, 'action' ] );
 	}
 
 	/**
@@ -201,7 +201,7 @@ class Tribe__Service_Providers__Processes extends tad_DI52_ServiceProvider {
 		 * Here we parse the scheduled cron events to get those scheduled by a queue
 		 * or process handler.
 		 */
-		$hooks = $this->get_scheduled_like( array( 'tribe_process_', 'tribe_queue_' ) );
+		$hooks = $this->get_scheduled_like( [ 'tribe_process_', 'tribe_queue_' ] );
 
 		if ( empty( $hooks ) ) {
 			return;
@@ -254,11 +254,11 @@ class Tribe__Service_Providers__Processes extends tad_DI52_ServiceProvider {
 		$cron = get_option( 'cron', false );
 
 		if ( empty( $cron ) ) {
-			return array();
+			return [];
 		}
 
 		$needles  = (array) $needles;
-		$matching = array();
+		$matching = [];
 
 		foreach ( $cron as $time ) {
 			if ( ! is_array( $time ) ) {

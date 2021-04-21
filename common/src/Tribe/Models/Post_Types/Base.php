@@ -180,21 +180,26 @@ abstract class Base {
 			return '__return_true';
 		}
 
-		// Cache by post ID and filter.
-		$cache_key  = $cache_slug . '_' . $this->post->ID . '_' . $filter;
-		$cache      = new Cache();
+		$callback = null;
 
-		// Define a function to cache this event when, and if, one of the lazy properties is loaded.
-		$callback = function () use ( $cache, $cache_key, $filter )
-		{
-			$properties = $this->get_properties( $filter );
-
+		if ( wp_using_ext_object_cache() ) {
 			/*
-			 * Cache without expiration, but only until a post of the types managed by The Events Calendar is
-			 * updated or created.
+			 * If any real caching is in place , then define a function to cache this event when, and if, one of the
+			 * lazy properties is loaded.
+			 * Cache by post ID and filter.
 			 */
-			$cache->set( $cache_key, $properties, 0, Cache_Listener::TRIGGER_SAVE_POST );
-		};
+			$cache_key = $cache_slug . '_' . $this->post->ID . '_' . $filter;
+			$cache     = new Cache();
+			$callback  = function () use ( $cache, $cache_key, $filter ) {
+				$properties = $this->get_properties( $filter );
+
+				/*
+				 * Cache without expiration, but only until a post of the types managed by The Events Calendar is
+				 * updated or created.
+				 */
+				$cache->set( $cache_key, $properties, 0, Cache_Listener::TRIGGER_SAVE_POST );
+			};
+		}
 
 		return $callback;
 	}

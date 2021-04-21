@@ -16,25 +16,25 @@ class Tribe__Documentation__Swagger__Cost_Details_Definition_Provider
 	 * @return array An array description of a Swagger supported component.
 	 */
 	public function get_documentation() {
-		$documentation = array(
+		$documentation = [
 			'type'       => 'object',
-			'properties' => array(
-				'currency_symbol' => array(
-					'type' => 'string',
+			'properties' => [
+				'currency_symbol'    => [
+					'type'        => 'string',
 					'description' => __( 'The cost currency symbol', 'tribe-common' ),
-				),
-				'currency_position ' => array(
-					'type' => 'string',
+				],
+				'currency_position ' => [
+					'type'        => 'string',
 					'description' => __( 'The position of the currency symbol in the cost string', 'tribe-common' ),
-					'enum' => array( 'prefix', 'postfix' ),
-				),
-				'values' => array(
-					'type' => 'array',
-					'items' => array( 'type' => 'integer' ),
+					'enum'        => [ 'prefix', 'postfix' ],
+				],
+				'values'             => [
+					'type'        => 'array',
+					'items'       => [ 'type' => 'integer' ],
 					'description' => __( 'A sorted array of all the numeric values for the cost', 'tribe-common' ),
-				),
-			),
-		);
+				],
+			],
+		];
 
 		/**
 		 * Filters the Swagger documentation generated for a cost details in the TEC REST API.

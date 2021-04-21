@@ -1,18 +1,18 @@
 jQuery(document).ready(function () {
 
-    jQuery('#filter-right-tables, #filter-left-tables').focus(function() {
+    jQuery('#filter-right-tables, #filter-left-tables').on( 'focus', function() {
        if (jQuery(this).val() === 'Filter Tables') {
            jQuery(this).val('');
        }
-    });
+    } );
 
-    jQuery('#filter-right-tables, #filter-left-tables').blur(function() {
+    jQuery('#filter-right-tables, #filter-left-tables').on( 'blur', function() {
        if (jQuery(this).val() === '') {
            jQuery(this).val('Filter Tables');
        }
-    });
+    } );
 
-    jQuery('#filter-right-tables').keyup(function() {
+    jQuery('#filter-right-tables').on( 'keyup', function() {
         var query = jQuery(this).val();
 
         if (query === '') {
@@ -25,7 +25,7 @@ jQuery(document).ready(function () {
         }
     });
 
-    jQuery('#filter-left-tables').keyup(function() {
+    jQuery('#filter-left-tables').on( 'keyup', function() {
         var query = jQuery(this).val();
 
         if (query === '') {
@@ -52,7 +52,7 @@ jQuery(document).ready(function () {
      * and disables all other checkboxes since only one table can be selected
      * per import.
      */
-    jQuery('input[type="checkbox"].pods-importable-table').click(function () {
+    jQuery('input[type="checkbox"].pods-importable-table').on( 'click', function () {
         var checkedTable = jQuery(this).attr('name');
         var checkedValue = jQuery(this).val();
         var checked = jQuery(this).is(':checked');
@@ -75,7 +75,7 @@ jQuery(document).ready(function () {
     });
 
     // Step 1 submit
-    jQuery('button#continue-to-field-selection').click(function () {
+    jQuery('button#continue-to-field-selection').on( 'click', function () {
         jQuery('form#pods-import-table-selection').submit();
     });
 
@@ -84,7 +84,7 @@ jQuery(document).ready(function () {
      * closest parent tr, and finds all input/select elements within it and disables
      * or enables them.
      */
-    jQuery('.enabled-status.status-switcher').click(function () {
+    jQuery('.enabled-status.status-switcher').on( 'click', function () {
         var enabled = jQuery(this).hasClass('enabled');
 
         if (enabled) {
@@ -108,7 +108,7 @@ jQuery(document).ready(function () {
      * Ensures at least one column is enabled for converting to a pod,
      * and that at a minimum the pod name is entered.
      */
-    jQuery('a#pods-import-create-pod').click(function () {
+    jQuery('a#pods-import-create-pod').on( 'click', function () {
         if (jQuery('tr.pod-column-row.enabled').length === 0) {
             alert('At least one column must be selected to convert.');
         } else if (jQuery('input[name="new_pod_data[pod_name]"]').val() == '') {

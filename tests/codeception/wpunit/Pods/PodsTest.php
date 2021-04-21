@@ -2,7 +2,7 @@
 
 namespace Pods_Unit_Tests\Pods;
 
-use Mockery;
+use Pods;
 use Pods_Unit_Tests\Pods_UnitTestCase;
 
 /**
@@ -17,11 +17,11 @@ class PodsTest extends Pods_UnitTestCase {
 	 */
 	private $pod;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->pod = pods();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $this->pod );
 	}
 
@@ -308,11 +308,34 @@ class PodsTest extends Pods_UnitTestCase {
 	 * @depends test_method_exists_call
 	 */
 	public function test_method_call_method_does_not_exist() {
-		$deprecated            = Mockery::mock( 'Pods_Deprecated' );
-		$this->pod->deprecated = $deprecated;
-
 		$this->assertNull( $this->pod->__call( 'foo', array() ) );
 
 		$this->expectDeprecated();
+	}
+
+	/**
+	 * Test we can call a non-Pod post type.
+	 */
+	public function test_we_can_call_a_non_pod_post_type() {
+		register_post_type( 'my_test_cpt' );
+
+		$pod = pods( 'my_test_cpt' );
+
+		$this->assertInstanceOf( Pods::class, $pod );
+		$this->assertTrue( $pod->valid() );
+		$this->assertEquals( 'post_type', $pod->pod_data['type'] );
+	}
+
+	/**
+	 * Test we can call a non-Pod post type.
+	 */
+	public function test_we_can_call_a_non_pod_taxonomy() {
+		register_taxonomy( 'my_test_tax', 'post' );
+
+		$pod = pods( 'my_test_tax' );
+
+		$this->assertInstanceOf( Pods::class, $pod );
+		$this->assertTrue( $pod->valid() );
+		$this->assertEquals( 'taxonomy', $pod->pod_data['type'] );
 	}
 }

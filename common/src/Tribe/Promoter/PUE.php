@@ -23,10 +23,10 @@ class Tribe__Promoter__PUE {
 	 * @since 4.9
 	 */
 	public function load() {
-		$this->pue_checker = new Tribe__PUE__Checker( 'http://tri.be/', $this->slug, array(
+		$this->pue_checker = new Tribe__PUE__Checker( 'http://tri.be/', $this->slug, [
 			'context'     => 'service',
 			'plugin_name' => __( 'Promoter', 'tribe-common' ),
-		) );
+		] );
 	}
 
 	/**
@@ -57,10 +57,10 @@ class Tribe__Promoter__PUE {
 			return false;
 		}
 
-		return array(
+		return [
 			'key'            => $key,
 			'is_network_key' => $is_network_key,
-		);
+		];
 	}
 
 	/**
@@ -71,9 +71,7 @@ class Tribe__Promoter__PUE {
 	 * @since 4.9
 	 */
 	public function has_license_key() {
-		$license_info = $this->get_license_info();
-
-		return ! empty( $license_info );
+		return ! empty(  $this->get_license_info() );
 	}
 
 	/**

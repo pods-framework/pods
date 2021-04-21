@@ -20,7 +20,7 @@ class Tribe__Tabbed_View__Tab {
 	 *
 	 * @var array|object
 	 */
-	protected $data = array();
+	protected $data = [];
 
 	/**
 	 * The template file that should be used to render the tab.
@@ -164,9 +164,9 @@ class Tribe__Tabbed_View__Tab {
 			return '';
 		}
 
-		$default_data = array(
+		$default_data = [
 			'tab' => $this,
-		);
+		];
 
 		$data = array_merge( $default_data, (array) $this->data );
 
@@ -189,14 +189,14 @@ class Tribe__Tabbed_View__Tab {
 	 *
 	 * @return string
 	 */
-	public function get_url( $args = array(), $relative = false ) {
+	public function get_url( $args = [], $relative = false ) {
 		if ( ! empty( $this->url ) ) {
 			return $this->url;
 		}
 
-		$defaults = array(
+		$defaults = [
 			'tab' => $this->get_slug(),
-		);
+		];
 
 		// Allow the link to be "changed" on the fly
 		$args = wp_parse_args( $args, $defaults );

@@ -7,7 +7,7 @@ class Tribe__Admin__Notice__Plugin_Download {
 
 	private $plugin_path;
 
-	private $plugins_required = array();
+	private $plugins_required = [];
 
 	/**
 	 * @param string $plugin_path Path to the plugin file we're showing a notice for
@@ -17,7 +17,7 @@ class Tribe__Admin__Notice__Plugin_Download {
 
 		tribe_notice(
 			plugin_basename( $plugin_path ),
-			array( $this, 'show_inactive_plugins_alert' )
+			[ $this, 'show_inactive_plugins_alert' ]
 		);
 	}
 
@@ -60,7 +60,7 @@ class Tribe__Admin__Notice__Plugin_Download {
 		}
 
 		$plugin_data = get_plugin_data( $this->plugin_path );
-		$req_plugins = array();
+		$req_plugins = [];
 
 		if ( empty( $this->plugins_required ) ) {
 			return;
@@ -111,17 +111,17 @@ class Tribe__Admin__Notice__Plugin_Download {
 			$plugin_name[] = $plugin_data['Name'];
 		}
 
-		$allowed_html = array(
-			'strong' => array(),
-			'a'      => array( 'href' => array() ),
-		);
+		$allowed_html = [
+			'strong' => [],
+			'a'      => [ 'href' => [] ],
+		];
 
 		$plugin_names_clean_text = wp_kses( $this->implode_with_grammar( $plugin_name ), $allowed_html );
 		$req_plugin_names_clean_text = wp_kses( $this->implode_with_grammar( $req_plugins ), $allowed_html );
 
 		$notice_html_content = '<p>' . esc_html__( 'To begin using %2$s, please install and activate %3$s.', 'tribe-common' ) . '</p>';
 
-		$read_more_link = '<a href="http://m.tri.be/1aev" target="_blank">' . esc_html__( 'Read more.', 'tribe-common' ) . '</a>';
+		$read_more_link = '<a href="http://evnt.is/1aev" target="_blank">' . esc_html__( 'Read more', 'tribe-common' ) . '.</a>';
 		$pue_notice_text = esc_html__( 'There’s a new version of %1$s available, but your license is expired. You’ll need to renew your license to get access to the latest version. If you plan to continue using your current version of the plugin(s), be sure to use a compatible version of The Events Calendar. %2$s', 'tribe-common' );
 		$pue_notice_html = '<p>' . sprintf( $pue_notice_text, $plugin_names_clean_text, $read_more_link ) . '</p>';
 

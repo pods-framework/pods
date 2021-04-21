@@ -2,6 +2,8 @@
 /**
  * Name: Templates
  *
+ * Menu Name: Pod Templates
+ *
  * Description: An easy to use templating engine for Pods. Use {@field_name} magic tags to output values, within your HTML markup.
  *
  * Version: 2.3
@@ -99,7 +101,7 @@ class Pods_Templates extends PodsComponent {
 		if ( is_admin() ) {
 			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 
-			add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ) );
+			add_action( 'add_meta_boxes_' . $this->object_type, array( $this, 'edit_page_form' ) );
 
 			add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
 
@@ -179,13 +181,13 @@ class Pods_Templates extends PodsComponent {
 			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
-			8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
+			8  => sprintf( __( '%1$s submitted. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 			9  => sprintf(
-				__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %4$s</a>', 'pods' ), $labels->singular_name,
+				__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" rel="noopener noreferrer" href="%3$s">Preview %4$s</a>', 'pods' ), $labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
 				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name
 			),
-			10 => sprintf( __( '%1$s draft updated. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
+			10 => sprintf( __( '%1$s draft updated. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 		);
 
 		if ( false === (boolean) $post_type->public ) {
@@ -364,14 +366,14 @@ class Pods_Templates extends PodsComponent {
 		$fields = array(
 			array(
 				'name'       => 'admin_only',
-				'label'      => __( 'Show to Admins Only?', 'pods' ),
+				'label'      => __( 'Show to Admins Only', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			array(
 				'name'       => 'restrict_capability',
-				'label'      => __( 'Restrict access by Capability?', 'pods' ),
+				'label'      => __( 'Restrict access by Capability', 'pods' ),
 				'help'       => array(
 					__( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
 					'http://codex.wordpress.org/Roles_and_Capabilities',
@@ -391,6 +393,23 @@ class Pods_Templates extends PodsComponent {
 				'default'           => '',
 				'depends-on'        => array(
 					'restrict_capability' => true,
+				),
+			),
+			array(
+				'name'       => 'show_restrict_message',
+				'label'      => __( 'Show no access message', 'pods' ),
+				'default'    => 1,
+				'type'       => 'boolean',
+				'dependency' => true,
+			),
+			array(
+				'name'                  => 'restrict_message',
+				'label'                 => __( 'No access message', 'pods' ),
+				'type'                  => 'wysiwyg',
+				'default'               => __( 'You do not have access to view this content.', 'pods' ),
+				'wysiwyg_editor_height' => 200,
+				'depends-on'            => array(
+					'show_restrict_message' => true,
 				),
 			),
 		);
@@ -507,12 +526,19 @@ class Pods_Templates extends PodsComponent {
 					$code = $template['code'];
 				}
 
-				$permission = pods_permission( $template['options'] );
+				$options = pods_v( 'options', $template );
+
+				$permission = pods_permission( $options );
 
 				$permission = (boolean) apply_filters( 'pods_templates_permission', $permission, $code, $template, $obj );
 
 				if ( ! $permission ) {
-					return apply_filters( 'pods_templates_permission_denied', __( 'You do not have access to view this content.', 'pods' ), $code, $template, $obj );
+					if ( 1 === (int) pods_v( 'show_restrict_message', $options, 1 ) ) {
+						$message = pods_v( 'restrict_message', $options, __( 'You do not have access to view this content.', 'pods' ), true );
+						$message = PodsForm::field_method( 'wysiwyg', 'display', $message, 'restrict_message', $options );
+						return apply_filters( 'pods_templates_permission_denied', $message, $code, $template, $obj );
+					}
+					return '';
 				}
 			}
 		}
@@ -580,8 +606,6 @@ class Pods_Templates extends PodsComponent {
 			return '';
 		}
 
-		$code = trim( $code );
-
 		if ( false !== strpos( $code, '<?' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
 			pods_deprecated( 'Pod Template PHP code has been deprecated, please use WP Templates instead of embedding PHP.', '2.3' );
 
@@ -597,6 +621,11 @@ class Pods_Templates extends PodsComponent {
 		}
 
 		$out = $obj->do_magic_tags( $out );
+
+		// Prevent blank whitespace from being output if nothing came through.
+		if ( '' === trim( $out ) ) {
+			$out = '';
+		}
 
 		return apply_filters( 'pods_templates_do_template', $out, $code, $obj );
 	}

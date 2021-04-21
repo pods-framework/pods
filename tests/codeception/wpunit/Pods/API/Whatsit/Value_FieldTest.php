@@ -24,7 +24,7 @@ class Value_FieldTest extends Pods_WhatsitTestCase {
 	 */
 	public $value;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->value_field = new Value_Field( $this->pods_object_field );
@@ -33,7 +33,7 @@ class Value_FieldTest extends Pods_WhatsitTestCase {
 		$this->value_field->value = $this->value;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $this->value_field, $this->value );
 
 		parent::tearDown();
@@ -155,8 +155,10 @@ class Value_FieldTest extends Pods_WhatsitTestCase {
 		$this->assertCount( 24, $value_field['object_fields'] );
 		$this->assertCount( 27, $value_field['table_info'] );
 
+		$this->assertArrayHasKey( 'test-field', $value_field['fields'] );
 		$this->assertEquals( 'Test field', $value_field['fields']['test-field']['label'] );
 		$this->assertEquals( 'Test field', $value_field['fields']['test-field']['options']['label'] );
+		$this->assertArrayHasKey( 'test-group', $value_field['groups'] );
 		$this->assertEquals( 'Test group', $value_field['groups']['test-group']['label'] );
 		$this->assertEquals( 'Test group', $value_field['groups']['test-group']['options']['label'] );
 

@@ -12,17 +12,17 @@ class Tribe__Asset__Data {
 	 *
 	 * @var array
 	 */
-	protected $objects = array();
+	protected $objects = [];
 
 	/**
 	 * Hooks up the method used to actually render the JSON data.
 	 */
 	public function hook() {
 		if ( is_admin() ) {
-			add_action( 'admin_footer', array( $this, 'render_json' ) );
-			add_action( 'customize_controls_print_footer_scripts', array( $this, 'render_json' ) );
+			add_action( 'admin_footer', [ $this, 'render_json' ] );
+			add_action( 'customize_controls_print_footer_scripts', [ $this, 'render_json' ] );
 		} else {
-			add_action( 'wp_footer', array( $this, 'render_json' ) );
+			add_action( 'wp_footer', [ $this, 'render_json' ] );
 		}
 	}
 

@@ -78,7 +78,7 @@ class Action_Logger implements \Tribe__Log__Logger {
 	 *
 	 * @since 4.9.16
 	 */
-	public function retrieve( $limit = 0, array $args = array() ) {
+	public function retrieve( $limit = 0, array $args = [] ) {
 		return [
 			[
 				'message' => __(

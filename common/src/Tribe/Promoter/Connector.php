@@ -50,14 +50,14 @@ class Tribe__Promoter__Connector {
 
 		$payload = [
 			'clientSecret' => $secret_key,
-			'licenseKey' => $license_key,
-			'userId' => $user_id,
+			'licenseKey'   => $license_key,
+			'userId'       => $user_id,
 		];
 
 		$token = \Firebase\JWT\JWT::encode( $payload, $promoter_key );
 
 		$response = $this->make_call( $url, [
-			'body' => [ 'token' => $token ],
+			'body'      => [ 'token' => $token ],
 			'sslverify' => false,
 		] );
 
@@ -91,7 +91,7 @@ class Tribe__Promoter__Connector {
 		$url = $this->base_url() . 'connect/auth';
 
 		$response = $this->make_call( $url, [
-			'body' => [ 'token' => $token ],
+			'body'      => [ 'token' => $token ],
 			'sslverify' => false,
 		] );
 
@@ -175,6 +175,12 @@ class Tribe__Promoter__Connector {
 			return;
 		}
 
+		$secret_key  = $this->get_secret_key();
+
+		if ( empty( $secret_key ) ) {
+			return;
+		}
+
 		/** @var Tribe__Promoter__PUE $promoter_pue */
 		$promoter_pue = tribe( 'promoter.pue' );
 		$license_info = $promoter_pue->get_license_info();
@@ -184,15 +190,10 @@ class Tribe__Promoter__Connector {
 		}
 
 		$license_key = $license_info['key'];
-		$secret_key  = $this->get_secret_key();
-
-		if ( empty( $secret_key ) ) {
-			return;
-		}
 
 		$payload = [
 			'licenseKey' => $license_key,
-			'sourceId' => $post_id,
+			'sourceId' => $post_id instanceof WP_Post ? $post_id->ID : $post_id,
 		];
 
 		$token = \Firebase\JWT\JWT::encode( $payload, $secret_key );
@@ -200,7 +201,7 @@ class Tribe__Promoter__Connector {
 		$url = $this->base_url() . 'connect/notify';
 
 		$args = [
-			'body' => [ 'token' => $token ],
+			'body'      => [ 'token' => $token ],
 			'sslverify' => false,
 		];
 
@@ -214,8 +215,8 @@ class Tribe__Promoter__Connector {
 	 *
 	 * @return mixed
 	 */
-	protected function get_secret_key() {
-		$secret_key  = get_option( 'tribe_promoter_auth_key' );
+	public function get_secret_key() {
+		$secret_key = get_option( 'tribe_promoter_auth_key' );
 
 		/**
 		 * @since 4.9.12
@@ -228,19 +229,33 @@ class Tribe__Promoter__Connector {
 	/**
 	 * Make the call to the remote endpoint.
 	 *
-	 * @param string $url  URL to send data to.
+	 * @since 4.9
+	 *
 	 * @param array  $args Data to send.
+	 *
+	 * @param string $url  URL to send data to.
 	 *
 	 * @return string|false The response body or false if not successful.
 	 *
-	 * @since 4.9
 	 */
-	private function make_call( $url, $args ) {
-		$response = wp_remote_post( $url, $args );
+	public function make_call( $url, $args ) {
+		$response = wp_remote_post( $url, wp_parse_args( $args,  [ 'timeout' => 30 ] ) );
 		$code     = wp_remote_retrieve_response_code( $response );
 		$body     = wp_remote_retrieve_body( $response );
 
-		if ( is_wp_error( $response ) || $code > 299 ) {
+		if ( $code > 299 || is_wp_error( $response ) ) {
+			do_action(
+				'tribe_log',
+				'debug',
+				__METHOD__,
+				[
+					'url'           => $url,
+					'args'          => $args,
+					'response'      => $response,
+					'response_code' => $code,
+				]
+			);
+
 			return false;
 		}
 

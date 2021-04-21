@@ -64,25 +64,19 @@ class Pods_Templates_Auto_Template_Front_End {
 		$pod = null;
 		switch ( true ) {
 			case $obj instanceof WP_Post:
-				if ( isset( $possible_pods[ $obj->post_type ] ) ) {
-					$pod = $possible_pods[ $obj->post_type ];
-				}
+				$pod = $obj->post_type;
 				break;
 			case $obj instanceof WP_Term:
-				if ( isset( $possible_pods[ $obj->name ] ) ) {
-					$pod = $possible_pods[ $obj->name ];
-				}
+				$pod = $obj->name;
 				break;
 			case $obj instanceof WP_User:
-				if ( isset( $possible_pods['user'] ) ) {
-					$pod = $possible_pods['user'];
-				}
+				$pod = 'user';
 				break;
 		}
 
-		if ( $pod ) {
+		if ( ! empty( $possible_pods[ $pod ] ) ) {
 			// No need to check for default hooks, this is already done in auto_pods().
-			$filter = pods_v( 'single_filter', $pod, '', true );
+			$filter = pods_v( 'single_filter', $possible_pods[ $pod ], '', true );
 			if ( $filter ) {
 				$this->filtered_content[ $filter ] = 10.5;
 			}

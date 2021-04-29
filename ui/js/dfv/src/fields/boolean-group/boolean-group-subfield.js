@@ -25,7 +25,7 @@ const BooleanGroupSubfield = ( {
 } ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
-		help,
+		help: helpText,
 		label,
 		name,
 		'depends-on': dependsOn,
@@ -44,6 +44,16 @@ const BooleanGroupSubfield = ( {
 	);
 
 	const idAttribute = !! htmlAttributes.id ? htmlAttributes.id : name;
+
+	// Sort out different shapes that we could get the help text in.
+	// It's possible to get an array of strings for the help text, but it
+	// will usually be a string.
+	const shouldShowHelpText = helpText && ( 'help' !== helpText );
+
+	const helpTextString = Array.isArray( helpText ) ? helpText[ 0 ] : helpText;
+	const helpLink = ( Array.isArray( helpText ) && !! helpText[ 1 ] )
+		? helpText[ 1 ]
+		: undefined;
 
 	if ( ! meetsDependencies ) {
 		return null;
@@ -67,11 +77,14 @@ const BooleanGroupSubfield = ( {
 					{ label }
 				</label>
 
-				{ help && (
-					<>
+				{ shouldShowHelpText && (
+					<span className="pods-field-label__tooltip-wrapper">
 						{ '\u00A0' /* &nbsp; */ }
-						<HelpTooltip helpText={ help } />
-					</>
+						<HelpTooltip
+							helpText={ helpTextString }
+							helpLink={ helpLink }
+						/>
+					</span>
 				) }
 			</div>
 		</li>

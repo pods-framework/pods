@@ -1945,7 +1945,7 @@ class Pods implements Iterator {
 							$args = array_merge( $args, compact( $filter_args ) );
 						}
 
-						$val = call_user_func_array( 'apply_filters', $args );
+						$val = call_user_func_array( 'apply_filters', array_values( $args ) );
 
 						$value[ $key ] = $val;
 

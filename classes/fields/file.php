@@ -26,6 +26,12 @@ class PodsField_File extends PodsField {
 	protected static $api = false;
 
 	/**
+	 * Temporary upload directory.
+	 * @var string
+	 */
+	private static $tmp_upload_dir = null;
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function setup() {
@@ -1159,7 +1165,22 @@ class PodsField_File extends PodsField {
 			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params, $field );
 
 			if ( null === $custom_handler ) {
+
+				// Start custom directory.
+				$custom_dir = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
+				if ( $custom_dir ) {
+					self::$tmp_upload_dir = $custom_dir;
+					add_filter( 'upload_dir', array( $this, 'filter_upload_dir' ) );
+				}
+
+				// Upload file.
 				$attachment_id = media_handle_upload( 'Filedata', $params->post_id );
+
+				// End custom directory.
+				if ( $custom_dir ) {
+					remove_filter( 'upload_dir', array( $this, 'filter_upload_dir' ) );
+					self::$tmp_upload_dir = null;
+				}
 
 				if ( is_object( $attachment_id ) ) {
 					$errors = array();
@@ -1195,6 +1216,24 @@ class PodsField_File extends PodsField {
 
 		die();
 		// KBAI!
+	}
+
+	public function filter_upload_dir( $uploads ) {
+		if ( ! self::$tmp_upload_dir ) {
+			return $uploads;
+		}
+
+		$dir    = trim( self::$tmp_upload_dir, '/' );
+		$subdir = trim( $uploads['subdir'], '/' );
+
+		foreach ( $uploads as $key => $val ) {
+			if ( ! is_string( $val ) ) {
+				continue;
+			}
+			$uploads[ $key ] = str_replace( $subdir, $dir, $val );
+		}
+
+		return $uploads;
 	}
 
 }

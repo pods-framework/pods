@@ -95,6 +95,24 @@ class PodsField_File extends PodsField {
 					'browse' => __( 'Media Library', 'pods' ),
 				),
 			),
+			static::$type . '_upload_dir'             => array(
+				'label'      => __( 'Upload directory', 'pods' ),
+				'default'    => 'wp',
+				'type'       => 'pick',
+				'data'       => array(
+					'wp'     => __( 'WordPress Default', 'pods' ) . '(/yyyy/mm/)',
+					'custom' => __( 'Custom', 'pods' ),
+				),
+				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
+				'dependency' => true,
+			),
+			static::$type . '_upload_dir_custom'     => array(
+				'label'       => __( 'Custom upload directory', 'pods' ),
+				'description' => __( 'Magic tags allowed', 'pods' ),
+				'depends-on'  => array( static::$type . '_upload_dir' => 'custom' ),
+				'default'     => apply_filters( "pods_form_ui_field_{$type}_upload_dir_custom", '' ),
+				'type'        => 'text',
+			),
 			static::$type . '_edit_title'             => array(
 				'label'   => __( 'Editable Title', 'pods' ),
 				'default' => 1,

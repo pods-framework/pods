@@ -106,8 +106,8 @@ class PodsField_File extends PodsField {
 				'default'    => 'wp',
 				'type'       => 'pick',
 				'data'       => array(
-					'wp'     => __( 'WordPress Default', 'pods' ) . '(/yyyy/mm/)',
-					'custom' => __( 'Custom', 'pods' ),
+					'wp'      => __( 'WordPress Default', 'pods' ) . '(/yyyy/mm/)',
+					'uploads' => __( 'Custom directory within the default uploads directory.', 'pods' ),
 				),
 				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
 				'dependency' => true,
@@ -115,7 +115,7 @@ class PodsField_File extends PodsField {
 			static::$type . '_upload_dir_custom'     => array(
 				'label'       => __( 'Custom upload directory', 'pods' ),
 				'description' => __( 'Magic tags allowed', 'pods' ),
-				'depends-on'  => array( static::$type . '_upload_dir' => 'custom' ),
+				'depends-on'  => array( static::$type . '_upload_dir' => 'uploads' ),
 				'default'     => apply_filters( "pods_form_ui_field_{$type}_upload_dir_custom", '' ),
 				'type'        => 'text',
 			),

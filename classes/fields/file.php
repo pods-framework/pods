@@ -1218,6 +1218,17 @@ class PodsField_File extends PodsField {
 		// KBAI!
 	}
 
+	/**
+	 * Modify the upload directory.
+	 *
+	 * @since 2.7.28
+	 *
+	 * @see wp_upload_dir()
+	 *
+	 * @param array $uploads
+	 *
+	 * @return array
+	 */
 	public function filter_upload_dir( $uploads ) {
 		if ( ! self::$tmp_upload_dir ) {
 			return $uploads;

@@ -106,8 +106,8 @@ class PodsField_File extends PodsField {
 				'default'    => 'wp',
 				'type'       => 'pick',
 				'data'       => array(
-					'wp'      => __( 'WordPress Default', 'pods' ) . '(/yyyy/mm/)',
-					'uploads' => __( 'Custom directory within the default uploads directory.', 'pods' ),
+					'wp'      => __( 'WordPress Default', 'pods' ) . ' (/yyyy/mm/)',
+					'uploads' => __( 'Custom directory within the default uploads directory', 'pods' ),
 				),
 				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
 				'dependency' => true,

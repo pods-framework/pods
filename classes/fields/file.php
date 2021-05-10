@@ -1233,7 +1233,9 @@ class PodsField_File extends PodsField {
 			if ( $subdir ) {
 				$uploads[ $key ] = str_replace( $subdir, $dir, $val );
 			} else {
-				$uploads[ $key ] = trailingslashit( $val ) . $dir;
+				if ( in_array( $key, array( 'path', 'url', 'subdir' ), true ) ) {
+					$uploads[ $key ] = trailingslashit( $val ) . $dir;
+				}
 			}
 		}
 

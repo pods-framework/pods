@@ -125,7 +125,15 @@ class PodsRESTHandlers {
 				 */
 				$output_type = apply_filters( 'pods_rest_api_output_type_for_relationship_response', $output_type, $field_name, $field_data, $pod, $id, $request );
 
-				if ( 'array' === $output_type ) {
+				if ( 'custom' === $output_type ) {
+					// Support custom selectors for the response.
+					$custom_selector = pods_v( 'rest_pick_custom', $field_data['options'], $field_name );
+
+					if ( ! empty( $custom_selector ) ) {
+						$field_name = $custom_selector;
+					}
+				} elseif ( 'array' === $output_type ) {
+					// Support fully fleshed out data for the response.
 					$related_pod_items = $pod->field( $field_name, array( 'output' => 'pod' ) );
 
 					if ( $related_pod_items ) {

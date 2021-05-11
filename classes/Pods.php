@@ -1641,6 +1641,11 @@ class Pods implements Iterator {
 											} else {
 												$item = pods( $object, (int) $item_id );
 											}
+
+											if ( ! $item || ! $item->valid() ) {
+												// Related pod does not exist.
+												$item = false;
+											}
 										} else {
 											// arrays.
 											$item = get_object_vars( (object) $item );

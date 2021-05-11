@@ -154,7 +154,7 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.shape( {
 			default: BOOLEAN_ALL_TYPES,
 			dependency: PropTypes.bool,
-			help: PropTypes.string,
+			help: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
 			label: PropTypes.string,
 			name: PropTypes.string,
 			type: PropTypes.string,

@@ -205,6 +205,7 @@ export const FieldListItem = ( props ) => {
 						optionsPod={ editFieldPod }
 						selectedOptions={ field }
 						title={ sprintf(
+							// @todo Zack: Make these into elements we can style the parent pod / group label differently.
 							/* translators: %1$s: Pod Label, %2$s Group Label, %3$s Field Label */
 							__( '%1$s > %2$s > %3$s > Edit Field', 'pods' ),
 							podLabel,

@@ -1135,7 +1135,7 @@ class PodsMeta {
 
 		$id = null;
 
-		if ( is_object( $post ) && false === strpos( $_SERVER['REQUEST_URI'], '/post-new.php' ) ) {
+		if ( is_object( $post ) ) {
 			$id = $post->ID;
 		}
 
@@ -1177,14 +1177,19 @@ class PodsMeta {
 			$th_scope          = 'row';
 
 			$value_callback = static function( $field_name, $id, $field, $pod ) {
-				$value = '';
-
 				pods_no_conflict_on( 'post' );
+
+				$value = null;
 
 				if ( ! empty( $pod ) ) {
 					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
 				} elseif ( ! empty( $id ) ) {
 					$value = get_post_meta( $id, $field['name'], true );
+				}
+
+				if ( ! $value && ! is_numeric( $value ) && 'add' === get_current_screen()->action ) {
+					// Revert to default.
+					$value = null;
 				}
 
 				pods_no_conflict_off( 'post' );

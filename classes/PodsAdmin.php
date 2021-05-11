@@ -2803,26 +2803,40 @@ class PodsAdmin {
 		$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = [
 			'rest_pick_response' => [
 				'label'      => __( 'Response Type', 'pods' ),
-					'help'       => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
+				'help'       => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
 				'type'       => 'pick',
 				'default'    => 'array',
-				'depends-on' => [ 'type' => 'pick' ],
+				'depends-on' => [
+					'type' => 'pick',
+				],
 				'dependency' => true,
 				'data'       => [
-					'array' => __( 'Full', 'pods' ),
-					'id'    => __( 'ID only', 'pods' ),
-					'name'  => __( 'Name', 'pods' ),
+					'array'  => __( 'All fields', 'pods' ),
+					'id'     => __( 'ID only', 'pods' ),
+					'name'   => __( 'Name only', 'pods' ),
+					'custom' => __( 'Custom return (specify field to return)', 'pods' ),
 				],
 			],
 			'rest_pick_depth'    => [
 				'label'      => __( 'Depth', 'pods' ),
-				'help'       => __( 'How far to traverse relationships in response', 'pods' ),
+				'help'       => __( 'How far to traverse relationships in response. 1 will get you all of the fields on the related item. 2 will get you all of those fields plus related items and their fields. The higher the depth, the more data will be returned and the slower performance the REST API calls will be. Updates to this field do NOT take depth into account, so you will always send the ID of the related item when saving.', 'pods' ),
 				'type'       => 'number',
-				'default'    => '2',
+				'default'    => '1',
 				'depends-on' => [
 					'type'               => 'pick',
 					'rest_pick_response' => 'array',
- ],
+				],
+			],
+			'rest_pick_custom'   => [
+				'label'       => __( 'Custom return', 'pods' ),
+				'help'        => __( 'Specify the field to use following the established this_field_name.ID traversal pattern. You must include this field name in the selector for this to work properly.', 'pods' ),
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'this_field_name.ID',
+				'depends-on'  => [
+					'type'               => 'pick',
+					'rest_pick_response' => 'custom',
+				],
 			],
 			'rest_pick_notice'   => [
 				'label'        => 'Relationship Options',

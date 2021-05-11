@@ -154,7 +154,8 @@ class PodsInit {
 	 * @since 2.8
 	 */
 	public function maybe_set_common_lib_info() {
-		$common_version = file_get_contents( PODS_DIR . 'common/src/Tribe/Main.php' );
+		// Set up the path for /tribe-common/ loading.
+		$common_version = file_get_contents( PODS_DIR . 'tribe-common/src/Tribe/Main.php' );
 
 		// If there isn't a tribe-common version, bail.
 		if ( ! preg_match( "/const\s+VERSION\s*=\s*'([^']+)'/m", $common_version, $matches ) ) {
@@ -171,7 +172,7 @@ class PodsInit {
 		 */
 		if ( empty( $GLOBALS['tribe-common-info'] ) || version_compare( $GLOBALS['tribe-common-info']['version'], $common_version, '<' ) ) {
 			$GLOBALS['tribe-common-info'] = [
-				'dir'     => PODS_DIR . 'common/src/Tribe',
+				'dir'     => PODS_DIR . 'tribe-common/src/Tribe',
 				'version' => $common_version,
 			];
 

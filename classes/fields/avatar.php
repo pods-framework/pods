@@ -304,7 +304,7 @@ class PodsField_Avatar extends PodsField_File {
 	public function allow_avatar_overwrite() {
 
 		// Don't replace for the Avatars section of the Discussion settings page.
-		if ( is_admin() && ! doing_action( 'admin_bar_menu' ) ) {
+		if ( is_admin() && ! doing_action( 'admin_bar_menu' ) && function_exists( 'get_current_screen' ) ) {
 			$current_screen = get_current_screen();
 
 			$screens = array(

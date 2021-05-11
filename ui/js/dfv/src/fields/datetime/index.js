@@ -16,6 +16,7 @@ import {
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import 'react-datetime/css/react-datetime.css';
+import './datetime.scss';
 
 const checkForHTML5BrowserSupport = ( fieldType ) => {
 	const input = document.createElement( 'input' );
@@ -182,6 +183,7 @@ const DateTime = ( props ) => {
 
 	return (
 		<Datetime
+			className="pods-react-datetime-fix"
 			initialValue={ value }
 			onClose={ handleChange }
 			dateFormat={ includeDateField && momentDateFormat }

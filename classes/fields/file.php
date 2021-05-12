@@ -520,6 +520,13 @@ class PodsField_File extends PodsField {
 					'uri'      => $uri_hash,
 				),
 			);
+
+			// Pass post ID if we're in an add or edit post screen.
+			$post = get_post();
+			if ( $post instanceof WP_Post ) {
+				$options['plupload_init']['multipart_params']['post_id'] = $post->ID;
+			}
+
 		}//end if
 
 		return $options;

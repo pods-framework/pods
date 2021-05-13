@@ -1283,19 +1283,16 @@ class PodsUI {
 					}
 				}
 
-				if ( ! isset( $attributes['real_name'] ) ) {
-					$attributes['real_name'] = pods_var( 'name', $attributes, $field );
+				$field_name = pods_v( 'real_name', $attributes, pods_v( 'name', $attributes, $field ) );
+
+				if ( is_object( $this->pod ) ) {
+					$field_attributes = $this->pod->fields( $field_name );
+
+					if ( $field_attributes ) {
+						$attributes = pods_config_merge_data( $field_attributes, $attributes );
+					}
 				}
 
-				if ( is_object( $this->pod ) && isset( $this->pod->fields ) && isset( $this->pod->fields[ $attributes['real_name'] ] ) ) {
-					$field_attributes = $this->pod->fields[ $attributes['real_name'] ];
-
-					$attributes = pods_config_merge_data( $field_attributes, $attributes );
-				}
-
-				if ( ! isset( $attributes['options'] ) ) {
-					$attributes['options'] = array();
-				}
 				if ( ! isset( $attributes['id'] ) ) {
 					$attributes['id'] = '';
 				}
@@ -1358,25 +1355,25 @@ class PodsUI {
 				if ( ! isset( $attributes['sortable'] ) || false === $this->sortable ) {
 					$attributes['sortable'] = $this->sortable;
 				}
-				if ( ! isset( $attributes['options']['search'] ) || false === $this->searchable ) {
-					$attributes['options']['search'] = $this->searchable;
+				if ( ! isset( $attributes['search'] ) || false === $this->searchable ) {
+					$attributes['search'] = $this->searchable;
 				}
-				if ( ! isset( $attributes['options']['filter'] ) || false === $this->searchable ) {
-					$attributes['options']['filter'] = $this->searchable;
+				if ( ! isset( $attributes['filter'] ) || false === $this->searchable ) {
+					$attributes['filter'] = $this->searchable;
 				}
 				/*
 				if ( false !== $attributes[ 'options' ][ 'filter' ] && false !== $filterable )
                     $this->filters[] = $field;*/
-				if ( false === $attributes['options']['filter'] || ! isset( $attributes['filter_label'] ) || ! in_array( $field, $this->filters ) ) {
+				if ( false === $attributes['filter'] || ! isset( $attributes['filter_label'] ) || ! in_array( $field, $this->filters ) ) {
 					$attributes['filter_label'] = $attributes['label'];
 				}
-				if ( false === $attributes['options']['filter'] || ! isset( $attributes['filter_default'] ) || ! in_array( $field, $this->filters ) ) {
+				if ( false === $attributes['filter'] || ! isset( $attributes['filter_default'] ) || ! in_array( $field, $this->filters ) ) {
 					$attributes['filter_default'] = false;
 				}
-				if ( false === $attributes['options']['filter'] || ! isset( $attributes['date_ongoing'] ) || 'date' !== $attributes['type'] || ! in_array( $field, $this->filters ) ) {
+				if ( false === $attributes['filter'] || ! isset( $attributes['date_ongoing'] ) || 'date' !== $attributes['type'] || ! in_array( $field, $this->filters ) ) {
 					$attributes['date_ongoing'] = false;
 				}
-				if ( false === $attributes['options']['filter'] || ! isset( $attributes['date_ongoing'] ) || 'date' !== $attributes['type'] || ! isset( $attributes['date_ongoing_default'] ) || ! in_array( $field, $this->filters ) ) {
+				if ( false === $attributes['filter'] || ! isset( $attributes['date_ongoing'] ) || 'date' !== $attributes['type'] || ! isset( $attributes['date_ongoing_default'] ) || ! in_array( $field, $this->filters ) ) {
 					$attributes['date_ongoing_default'] = false;
 				}
 				if ( ! isset( $attributes['export'] ) ) {
@@ -1413,7 +1410,7 @@ class PodsUI {
 				if ( ! isset( $attributes['css_values'] ) ) {
 					$attributes['css_values'] = true;
 				}
-				if ( 'search_columns' === $which && ! $attributes['options']['search'] ) {
+				if ( 'search_columns' === $which && ! $attributes['search'] ) {
 					continue;
 				}
 

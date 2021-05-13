@@ -1073,6 +1073,7 @@ class PodsData {
 								'boolean',
 								'comment',
 								'taxonomy',
+								'password',
 							), true
 						) ) {
 							continue;

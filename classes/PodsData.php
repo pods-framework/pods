@@ -729,6 +729,11 @@ class PodsData {
 
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 		$file_field_types         = PodsForm::file_field_types();
+		$pick_field_types         = [
+			'pick',
+			'comment',
+			'taxonomy',
+		];
 
 		$defaults = array(
 			'select'              => '*',
@@ -810,12 +815,20 @@ class PodsData {
 			$params->offset = 0;
 		}
 
+		$merge_object_fields = false;
+
 		if ( ( empty( $params->fields ) || ! is_array( $params->fields ) ) && $pod ) {
 			$params->fields = $pod->get_fields();
+
+			$merge_object_fields = true;
 		}
 
 		if ( ( empty( $params->object_fields ) || ! is_array( $params->object_fields ) ) && $pod ) {
 			$params->object_fields = $pod->get_object_fields();
+
+			if ( $merge_object_fields ) {
+				$params->fields = $pod->get_all_fields();
+			}
 		}
 
 		if ( empty( $params->filters ) && $params->search ) {
@@ -1058,6 +1071,8 @@ class PodsData {
 								'phone',
 								'password',
 								'boolean',
+								'comment',
+								'taxonomy',
 							), true
 						) ) {
 							continue;
@@ -1065,7 +1080,9 @@ class PodsData {
 
 						$fieldfield = '`' . $field . '`';
 
-						if ( 'pick' === $attributes['type'] && ! in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects, true ) ) {
+						$is_object_field = isset( $params->object_fields[ $field ] );
+
+						if ( in_array( $attributes['type'], $pick_field_types, true ) && ! in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects, true ) ) {
 							if ( false === $params->search_across_picks ) {
 								continue;
 							} else {
@@ -3165,6 +3182,10 @@ class PodsData {
 			} else {
 				if ( ! isset( $traverse['pod'] ) ) {
 					$traverse['pod'] = null;
+				}
+
+				if ( ! isset( $traverse['pick_val'] ) ) {
+					$traverse['pick_val'] = null;
 				}
 
 				$table_info = $this->api->get_table_info( $traverse['pick_object'], $traverse['pick_val'], null, $traverse['pod'], $traverse );

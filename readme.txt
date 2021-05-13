@@ -194,6 +194,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 * Added: Relationship fields now support custom selectors in the REST API. You can specify `my_field.some_field` to output a specific field. (@sc0ttkclark)
 * Fixed: Resolved an issue with relationship fields not outputting their full data to the REST API when the related object is not a valid pod. (@sc0ttkclark) 
+* Fixed: Resolved an issue with not saving the fields for the extended Media pod when making update requests through the REST API. (@sc0ttkclark) 
 
 = 2.7.27 - April 20th, 2021 =
 

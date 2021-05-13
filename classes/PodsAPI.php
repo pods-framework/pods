@@ -1058,7 +1058,7 @@ class PodsAPI {
 					'name'  => 'post_password',
 					'label' => 'Password',
 					'type'  => 'password',
-					'alias' => array(),
+					'alias' => [],
 				),
 				'post_name'             => array(
 					'name'  => 'post_name',

@@ -45,7 +45,7 @@ class Pods implements Iterator {
 	/**
 	 * Current pod information.
 	 *
-	 * @var array|bool|mixed|null|void
+	 * @var \Pods\Whatsit\Pod|array|bool|mixed|null|void
 	 */
 	public $pod_data;
 

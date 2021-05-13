@@ -1831,23 +1831,23 @@ class PodsUI {
 		}
 
 		if ( is_object( $this->pod ) ) {
-			$object_fields = (array) pods_var_raw( 'object_fields', $this->pod->pod_data, array(), null, true );
+			$object_fields = $this->pod->pod_data->get_object_fields();
 
-			if ( empty( $object_fields ) && in_array(
-				$this->pod->pod_data['type'], array(
-					'post_type',
-					'taxonomy',
-					'media',
-					'user',
-					'comment',
-				)
-			) ) {
+			$object_field_objects = array(
+				'post_type',
+				'taxonomy',
+				'media',
+				'user',
+				'comment',
+			);
+
+			if ( empty( $object_fields ) && in_array( $this->pod->pod_data['type'], $object_field_objects, true ) ) {
 				$object_fields = $this->pod->api->get_wp_object_fields( $this->pod->pod_data['type'], $this->pod->pod_data );
 			}
 
 			if ( empty( $fields ) ) {
 				// Add core object fields if $fields is empty
-				$fields = array_merge( $object_fields, $this->pod->fields );
+				$fields = $this->pod->pod_data->get_all_fields();
 			}
 		}
 
@@ -1950,7 +1950,7 @@ class PodsUI {
 		}
 
 		if ( is_object( $this->pod ) ) {
-			$object_fields = (array) pods_var_raw( 'object_fields', $this->pod->pod_data, array(), null, true );
+			$object_fields = $this->pod->pod_data->get_object_fields();
 
 			$object_field_objects = array(
 				'post_type',
@@ -1960,13 +1960,13 @@ class PodsUI {
 				'comment',
 			);
 
-			if ( empty( $object_fields ) && in_array( $this->pod->pod_data['type'], $object_field_objects ) ) {
+			if ( empty( $object_fields ) && in_array( $this->pod->pod_data['type'], $object_field_objects, true ) ) {
 				$object_fields = $this->pod->api->get_wp_object_fields( $this->pod->pod_data['type'], $this->pod->pod_data );
 			}
 
 			if ( empty( $fields ) ) {
 				// Add core object fields if $fields is empty
-				$fields = array_merge( $object_fields, $this->pod->fields );
+				$fields = $this->pod->pod_data->get_all_fields();
 			}
 		}
 

@@ -67,7 +67,7 @@
 									<a href="#pods-wizard-export" data-opt="export">
 										<h2><?php _e( 'Export', 'pods' ); ?></h2>
 
-										<p><?php _e( 'Choose which Pods, Fields, and other settings to export into a package.', 'pods' ); ?></p>
+										<p><?php _e( 'Choose which Pods, Groups, Fields, and other settings to export into a package.', 'pods' ); ?></p>
 									</a>
 
 									<p><br /></p>
@@ -81,7 +81,7 @@
 					<div id="pods-wizard-panel-2" class="pods-wizard-panel">
 						<div class="pods-wizard-option-content" id="pods-wizard-import">
 							<div class="pods-wizard-content">
-								<p><?php _e( 'Packages allow you to import/export your Pods, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
+								<p><?php _e( 'Packages allow you to import/export your Pods, Groups, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
 							</div>
 
 							<div class="stuffbox">
@@ -98,13 +98,16 @@
 										] );
 										?>
 									</div>
+									<div class="pods-field-option">
+										<label><?php esc_html_e( 'Or select a pods-package.json file to load: ', 'pods' ); ?> <input type="file" id="import_package_file" accept=".json" /></label>
+									</div>
 								</div>
 							</div>
 						</div>
 
 						<div class="pods-wizard-option-content" id="pods-wizard-export">
 							<div class="pods-wizard-content">
-								<p><?php _e( 'Packages allow you to import/export your Pods, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
+								<p><?php _e( 'Packages allow you to import/export your Pods, Groups, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
 							</div>
 
 							<?php
@@ -392,6 +395,24 @@
 			$( this ).closest( '.pods-field-option-group' ).find( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', (!toggle_all[$( this ).data( 'toggle' )]) );
 
 			toggle_all[$( this ).data( 'toggle' )] = (!toggle_all[$( this ).data( 'toggle' )]);
+		} );
+
+		$( '#import_package_file' ).on( 'change', function( e ) {
+			if ( ! e.target.files[0] ) {
+				return;
+			}
+
+			const reader = new FileReader();
+
+			reader.onload = function( reader_event ) {
+				const fileContents = reader_event.target.result;
+
+				$( '#pods-form-ui-import-package' ).val( fileContents );
+			};
+
+			reader.readAsText( e.target.files[0] );
+
+			$( this ).val( '' );
 		} );
 
 		$( '#pods-wizard-export-copy' ).on( 'click', function( e ) {

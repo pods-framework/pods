@@ -175,6 +175,24 @@ class PodsUI {
 	public $pagination = true;
 
 	/**
+	 * The type of pagination to use.
+	 *
+	 * @since 2.7.28
+	 *
+	 * @var string
+	 */
+	public $pagination_type = 'table';
+
+	/**
+	 * The location of where to show pagination.
+	 *
+	 * @since 2.7.28
+	 *
+	 * @var string
+	 */
+	public $pagination_location = 'both';
+
+	/**
 	 * @var bool
 	 */
 	public $pagination_total = true;
@@ -948,10 +966,10 @@ class PodsUI {
 		$options->validate( 'bulk', $bulk, 'array_merge', $this->bulk );
 
 		$options->validate( 'views', $this->views, 'array' );
-		$options->validate( 'view', pods_var( $options->num_prefix . 'view' . $options->num, 'get', $this->view, null, true ), 'isset', $this->views );
+		$options->validate( 'view', pods_v( $options->num_prefix . 'view' . $options->num, 'get', $this->view, true ), 'isset', $this->views );
 
 		$options->validate( 'searchable', $this->searchable, 'boolean' );
-		$options->validate( 'search', pods_var( $options->num_prefix . 'search' . $options->num ) );
+		$options->validate( 'search', pods_v( $options->num_prefix . 'search' . $options->num ) );
 		$options->validate( 'search_across', $this->search_across, 'boolean' );
 		$options->validate( 'search_across_picks', $this->search_across_picks, 'boolean' );
 		$options->validate( 'filters', $this->filters, 'array' );
@@ -959,8 +977,10 @@ class PodsUI {
 		$options->validate( 'where', $this->where, 'array_merge' );
 
 		$options->validate( 'pagination', $this->pagination, 'boolean' );
-		$options->validate( 'page', pods_var( $options->num_prefix . 'pg' . $options->num, 'get', $this->page ), 'absint' );
-		$options->validate( 'limit', pods_var( $options->num_prefix . 'limit' . $options->num, 'get', $this->limit ), 'int' );
+		$options->validate( 'pagination_type', $this->pagination_type );
+		$options->validate( 'pagination_location', $this->pagination_location );
+		$options->validate( 'page', pods_v( $options->num_prefix . 'pg' . $options->num, 'get', $this->page ), 'absint' );
+		$options->validate( 'limit', pods_v( $options->num_prefix . 'limit' . $options->num, 'get', $this->limit ), 'int' );
 
 		if ( isset( $this->pods_data ) && is_object( $this->pods_data ) ) {
 			$this->sql = array_merge( $this->sql, array_filter( [
@@ -3247,7 +3267,7 @@ class PodsUI {
 						if ( true !== $reorder && ( false !== $this->pagination_total || false !== $this->pagination ) ) {
 							?>
 							<div class="tablenav-pages<?php esc_attr_e( ( $this->limit < $this->total_found || 1 < $this->page ) ? '' : ' one-page' ); ?>">
-								<?php $this->pagination( 1 ); ?>
+								<?php $this->pagination( true ); ?>
 							</div>
 							<?php
 						}
@@ -3310,7 +3330,7 @@ class PodsUI {
 						?>
 						<div class="tablenav">
 							<div class="tablenav-pages<?php esc_attr_e( ( $this->limit < $this->total_found || 1 < $this->page ) ? '' : ' one-page' ); ?>">
-								<?php $this->pagination( 0 ); ?>
+								<?php $this->pagination(); ?>
 								<br class="clear" />
 							</div>
 						</div>
@@ -4870,6 +4890,14 @@ class PodsUI {
 			return null;
 		}
 
+		// Check if we should show the pagination in this location.
+		if ( $header && 'after' === $this->pagination_location ) {
+			return null;
+		} elseif ( ! $header && 'before' === $this->pagination_location ) {
+			return null;
+		}
+
+
 		$total_pages = ceil( $this->total_found / $this->limit );
 		$request_uri = pods_query_arg(
 			array( $this->num_prefix . 'pg' . $this->num => '' ), array(
@@ -4898,6 +4926,24 @@ class PodsUI {
 			?>
 			<span class="displaying-num"><?php echo number_format_i18n( $this->total_found ) . ' ' . _n( $singular_label, $plural_label, $this->total_found, 'pods' ) . $this->extra['total']; ?></span>
 			<?php
+		}
+
+		// Check if we need to output a different pagination type.
+		if ( 'table' !== $this->pagination_type ) {
+			// This pagination type requires a Pod object.
+			if ( ! $this->pod instanceof Pods ) {
+				return null;
+			}
+
+			$pagination_params = array(
+				'type'     => $this->pagination_type,
+				'page_var' => $this->num_prefix . 'page' . $this->num,
+				'format'   => "{$this->num_prefix}page{$this->num}=%#%",
+			);
+
+			echo $this->pod->pagination( $pagination_params );
+
+			return;
 		}
 
 		if ( false !== $this->pagination ) {

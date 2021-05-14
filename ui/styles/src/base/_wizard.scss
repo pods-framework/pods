@@ -149,6 +149,7 @@
 		}
 		.stuffbox {
 			margin: 15px 15px 0 15px;
+			padding: 0 10px 10px 10px;
 			h3 {
 				font-size: 15px;
 				font-weight: normal;
@@ -223,7 +224,8 @@
 			&:first-child {
 				display: block;
 			}
-			.button-primary, .button-secondary {
+			a.button-primary,
+			a.button-secondary {
 				padding: 8px 15px;
 				border-radius: 14px 14px 14px 14px;
 			}
@@ -404,12 +406,26 @@
 		clear: both;
 		@include multi-border-radius(0, 0, 8px, 8px);
 		@include vertical-gradient(#ededed, #f9f9f9);
-		.button {
+
+		input.button,
+		a.button {
+			position: absolute;
+			top: 2px;
+		}
+
+		input.button {
+			&.button-primary {
+				right: 2px;
+			}
+			&.button-secondary {
+				left: 2px;
+			}
+		}
+
+		a.button {
 			display: block;
 			height: 35px;
 			width: 110px;
-			position: absolute;
-			top: 0;
 			line-height: 35px;
 			text-align: center;
 			font-weight: bold;

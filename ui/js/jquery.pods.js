@@ -319,6 +319,7 @@
                                     $next.css( 'cursor', 'pointer' );
                                     $next.prop( 'disabled', false );
                                     $next.text( $next.data( 'next' ) );
+                                    $next.show().removeClass( 'hidden' );
                                 }
                             }
                         },
@@ -342,6 +343,7 @@
                                 $next.css( 'cursor', 'pointer' );
                                 $next.prop( 'disabled', false );
                                 $next.text( $next.data( 'next' ) );
+                                $next.show().removeClass( 'hidden' );
                             }
                         }
                     } );
@@ -745,15 +747,18 @@
                 var methods = {
                     setFinished : function () {
                         $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'finished' ) );
+                        $( '#pods-wizard-next' ).show().removeClass( 'hidden' );
                     },
                     setProgress : function () {
                         $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next' ) );
+                        $( '#pods-wizard-next' ).show().removeClass( 'hidden' );
                     },
                     stepBackward : function () {
                         $( '#pods-wizard-next' )
                             .css( 'cursor', 'pointer' )
                             .prop( 'disabled', false )
                             .text( $( '#pods-wizard-next' ).data( 'next' ) );
+                        $( '#pods-wizard-next' ).show().removeClass( 'hidden' );
 
                         // Step toolbar menu state forwards
                         $( 'li.pods-wizard-menu-current' )
@@ -772,7 +777,7 @@
                         if ( 1 == step ) {
 	                        $( '#pods-wizard-start' ).hide();
                         } else {
-	                        $( '#pods-wizard-start' ).show();
+	                        $( '#pods-wizard-start' ).show().removeClass( 'hidden' );
                         }
 
                         // Check if last step
@@ -805,7 +810,7 @@
                         }
 
                         // Show start over button.
-                        $( '#pods-wizard-start' ).show();
+                        $( '#pods-wizard-start' ).show().removeClass( 'hidden' );
 
                         // Check if last step.
                         if ( $( 'div.pods-wizard-panel:visible' ).next( 'div.pods-wizard-panel' ).length ) {
@@ -828,6 +833,7 @@
                                 .css( 'cursor', 'default' )
                                 .prop( 'disabled', true )
                                 .text( $( '#pods-wizard-next' ).data( 'processing' ) );
+							$( '#pods-wizard-next' ).show().removeClass( 'hidden' );
 
                             // Allow for override
                             if ( 'undefined' != typeof pods_admin_wizard_callback ) {
@@ -845,6 +851,7 @@
                                     .css( 'cursor', 'pointer' )
                                     .prop( 'disabled', false )
                                     .text( $( '#pods-wizard-next' ).data( 'next' ) );
+                                $( '#pods-wizard-next' ).show().removeClass( 'hidden' );
 
                                 // Step toolbar menu state forwards
                                 $( 'li.pods-wizard-menu-complete:last' )

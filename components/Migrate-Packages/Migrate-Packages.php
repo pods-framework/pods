@@ -31,7 +31,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	 * @since 2.0.0
 	 */
 	public function admin_assets() {
-
+		wp_enqueue_script( 'pods-file-saver', PODS_URL . '/components/Migrate-Packages/js/FileSaver.min.js', '', [], '2.0.4', true );
 		wp_enqueue_style( 'pods-wizard' );
 	}
 
@@ -44,9 +44,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 	 * @since 2.0.0
 	 */
 	public function admin( $options, $component ) {
-
 		$method = 'import_export';
-		// ajax_import
+
 		pods_view( PODS_DIR . 'components/Migrate-Packages/ui/wizard.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
@@ -248,11 +247,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 								'description' => trim( $field['comment'] ),
 								'type'        => $field_type,
 								'weight'      => (int) $field['weight'],
-								'options'     => array(
-									'required'     => min( max( (int) $field['required'], 0 ), 1 ),
-									'unique'       => min( max( (int) $field['unique'], 0 ), 1 ),
-									'input_helper' => $field['input_helper'],
-								),
+								'required'     => min( max( (int) $field['required'], 0 ), 1 ),
+								'unique'       => min( max( (int) $field['unique'], 0 ), 1 ),
+								'input_helper' => $field['input_helper'],
 							);
 
 							if ( in_array( $new_field['name'], $found_fields, true ) ) {
@@ -284,7 +281,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 								$new_field['options']['pick_display'] = '';
 								$new_field['options']['pick_size']    = 'medium';
 
-								if ( 1 == $multiple ) {
+								if ( 1 === (int) $multiple ) {
 									$new_field['options']['pick_format_type']  = 'multi';
 									$new_field['options']['pick_format_multi'] = 'checkbox';
 									$new_field['options']['pick_limit']        = 0;
@@ -321,7 +318,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 					}
 
 					if ( isset( $pod_data['is_toplevel'] ) ) {
-						$pod_data['show_in_menu'] = ( 1 == $pod_data['is_toplevel'] ? 1 : 0 );
+						$pod_data['show_in_menu'] = ( 1 === (int) $pod_data['is_toplevel'] ? 1 : 0 );
 
 						unset( $pod_data['is_toplevel'] );
 					}
@@ -365,12 +362,12 @@ class Pods_Migrate_Packages extends PodsComponent {
 						'storage' => 'table',
 						'fields'  => $pod_data['fields'],
 						'options' => array(
-							'pre_save_helpers'    => pods_var_raw( 'pre_save_helpers', $pod_data ),
-							'post_save_helpers'   => pods_var_raw( 'post_save_helpers', $pod_data ),
-							'pre_delete_helpers'  => pods_var_raw( 'pre_delete_helpers', $pod_data ),
-							'post_delete_helpers' => pods_var_raw( 'post_delete_helpers', $pod_data ),
-							'show_in_menu'        => ( 1 == pods_var_raw( 'show_in_menu', $pod_data, 0 ) ? 1 : 0 ),
-							'detail_url'          => pods_var_raw( 'detail_url', $pod_data ),
+							'pre_save_helpers'    => pods_v( 'pre_save_helpers', $pod_data ),
+							'post_save_helpers'   => pods_v( 'post_save_helpers', $pod_data ),
+							'pre_delete_helpers'  => pods_v( 'pre_delete_helpers', $pod_data ),
+							'post_delete_helpers' => pods_v( 'post_delete_helpers', $pod_data ),
+							'show_in_menu'        => ( 1 === (int) pods_v( 'show_in_menu', $pod_data, 0 ) ? 1 : 0 ),
+							'detail_url'          => pods_v( 'detail_url', $pod_data ),
 							'pod_index'           => 'name',
 						),
 					);
@@ -465,7 +462,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 					unset( $page_data['id'] );
 				}
 
-				$page = $api->load_page( array( 'name' => pods_var_raw( 'name', $page_data, pods_var_raw( 'uri', $page_data ), null, true ) ) );
+				$page = $api->load_page( array( 'name' => pods_v( 'name', $page_data, pods_v( 'uri', $page_data ), true ) ) );
 
 				if ( ! empty( $page ) ) {
 					// Delete Page if it exists
@@ -596,23 +593,29 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 		$api = pods_api();
 
-		$pod_ids      = pods_var_raw( 'pods', $params );
-		$template_ids = pods_var_raw( 'templates', $params );
-		$page_ids     = pods_var_raw( 'pages', $params );
-		$helper_ids   = pods_var_raw( 'helpers', $params );
+		$pod_ids      = pods_v( 'pods', $params );
+		$template_ids = pods_v( 'templates', $params );
+		$page_ids     = pods_v( 'pages', $params );
+		$helper_ids   = pods_v( 'helpers', $params );
 
 		if ( ! empty( $pod_ids ) ) {
-			$api_params = array( 'export' => true );
+			$api_params = [];
 
 			if ( true !== $pod_ids ) {
 				$api_params['ids'] = (array) $pod_ids;
 			}
 
 			$export['pods'] = $api->load_pods( $api_params );
+			$export['pods'] = array_map( static function( $pod ) {
+				return $pod->export( [ 'include_fields' => false ] );
+			}, $export['pods'] );
 
 			$options_ignore = array(
 				'pod_id',
 				'old_name',
+				'podType',
+				'storageType',
+				'storage_type',
 				'object_type',
 				'object_name',
 				'object_hierarchical',
@@ -645,6 +648,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 				'dependency',
 				'depends-on',
 				'excludes-on',
+				'_locale',
 			);
 
 			$field_types = PodsForm::field_types();
@@ -655,45 +659,67 @@ class Pods_Migrate_Packages extends PodsComponent {
 				$field_type_options[ $type ] = PodsForm::ui_options( $type );
 			}
 
-			foreach ( $export['pods'] as &$pod ) {
+			foreach ( $export['pods'] as $pod_key => $pod ) {
 				foreach ( $pod as $option => $option_value ) {
 					if ( in_array( $option, $options_ignore, true ) || null === $option_value ) {
 						unset( $pod[ $option ] );
 					}
 				}
 
-				if ( ! empty( $pod['fields'] ) ) {
-					foreach ( $pod['fields'] as &$field ) {
-						foreach ( $field as $option => $option_value ) {
+				if ( ! empty( $pod['groups'] ) ) {
+					foreach ( $pod['groups'] as $group_key => $group ) {
+						foreach ( $group as $option => $option_value ) {
 							if ( in_array( $option, $options_ignore, true ) || null === $option_value ) {
-								unset( $field[ $option ] );
+								unset( $group[ $option ] );
 							}
 						}
 
-						foreach ( $field_type_options as $type => $options ) {
-							if ( $type == pods_var( 'type', $field ) ) {
-								continue;
-							}
+						if ( ! empty( $group['fields'] ) ) {
+							foreach ( $group['fields'] as $field_key => $field ) {
+								foreach ( $field as $option => $option_value ) {
+									if ( in_array( $option, $options_ignore, true ) || null === $option_value ) {
+										unset( $field[ $option ] );
+									}
+								}
 
-							foreach ( $options as $option_data ) {
-								if ( isset( $option_data['group'] ) && is_array( $option_data['group'] ) && ! empty( $option_data['group'] ) ) {
-									if ( isset( $field[ $option_data['name'] ] ) ) {
-										unset( $field[ $option_data['name'] ] );
+								foreach ( $field_type_options as $type => $options ) {
+									if ( $type === pods_v( 'type', $field ) ) {
+										continue;
 									}
 
-									foreach ( $option_data['group'] as $group_option_data ) {
-										if ( isset( $field[ $group_option_data['name'] ] ) ) {
-											unset( $field[ $group_option_data['name'] ] );
+									foreach ( $options as $option_data ) {
+										if ( isset( $option_data['group'] ) && is_array( $option_data['group'] ) && ! empty( $option_data['group'] ) ) {
+											if ( isset( $field[ $option_data['name'] ] ) ) {
+												unset( $field[ $option_data['name'] ] );
+											}
+
+											foreach ( $option_data['group'] as $group_option_data ) {
+												if ( isset( $field[ $group_option_data['name'] ] ) ) {
+													unset( $field[ $group_option_data['name'] ] );
+												}
+											}
+										} elseif ( isset( $field[ $option_data['name'] ] ) ) {
+											unset( $field[ $option_data['name'] ] );
 										}
 									}
-								} elseif ( isset( $field[ $option_data['name'] ] ) ) {
-									unset( $field[ $option_data['name'] ] );
-								}
-							}
-						}//end foreach
+								}//end foreach
+
+								$group['fields'][ $field_key ] = $field;
+							}//end foreach
+
+							$group['fields'] = array_values( $group['fields'] );
+						}//end if
+
+						$pod['groups'][ $group_key ] = $group;
 					}//end foreach
+
+					$pod['groups'] = array_values( $pod['groups'] );
 				}//end if
+
+				$export['pods'][ $pod_key ] = $pod;
 			}//end foreach
+
+			$export['pods'] = array_values ( $export['pods'] );
 		}//end if
 
 		if ( ! empty( $template_ids ) ) {
@@ -732,8 +758,6 @@ class Pods_Migrate_Packages extends PodsComponent {
 			return false;
 		}
 
-		$export = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $export, JSON_UNESCAPED_UNICODE ) : json_encode( $export );
-
-		return $export;
+		return wp_json_encode( $export, JSON_PRETTY_PRINT );
 	}
 }

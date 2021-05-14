@@ -46,7 +46,7 @@
 
 					<div id="pods-wizard-panel-1" class="pods-wizard-panel">
 						<div class="pods-wizard-content">
-							<p><?php _e( 'Packages allow you to import/export your Pods, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
+							<p><?php _e( 'Packages allow you to import/export your Pods, Groups, Fields, and other settings between any Pods sites.', 'pods' ); ?></p>
 						</div>
 
 						<div id="pods-wizard-options">
@@ -54,7 +54,7 @@
 								<a href="#pods-wizard-import" data-opt="import">
 									<h2><?php _e( 'Import', 'pods' ); ?></h2>
 
-									<p><?php _e( 'Import a package of Pods, Fields, and other settings from another site.', 'pods' ); ?></p>
+									<p><?php _e( 'Import a package of Pods, Groups, Fields, and other settings from another site.', 'pods' ); ?></p>
 								</a>
 
 								<p><br /></p>
@@ -299,17 +299,22 @@
 						<span id="import-export"></span>
 
 						<div class="stuffbox hidden" id="import-export-results">
-							<h3><label for="link_name"><?php _e( 'Results', 'pods' ); ?></label></h3>
+							<h3><label for="link_name"><?php _e( 'Package / Results', 'pods' ); ?></label></h3>
 
 							<div class="inside pods-manage-field pods-dependency">
 							</div>
+
+							<p align="right">
+								<button id="pods-wizard-export-copy" class="button button-secondary hidden"><?php esc_html_e( 'Copy the Package JSON', 'pods' ); ?></button>
+								<button id="pods-wizard-export-download" class="button button-secondary hidden"><?php esc_html_e( 'Download pods-package.json', 'pods' ); ?></button>
+							</p>
 						</div>
 					</div>
 
 					<div id="pods-wizard-actions">
 						<div id="pods-wizard-toolbar">
-							<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
-							<a href="#next" id="pods-wizard-next" class="button button-primary" data-again="<?php esc_attr_e( 'Process Again', 'pods' ); ?>" data-next="<?php esc_attr_e( 'Continue', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Continue', 'pods' ); ?></a>
+							<button id="pods-wizard-start" class="button button-secondary hidden"><?php esc_html_e( 'Start Over', 'pods' ); ?></button>
+							<button type="submit" id="pods-wizard-next" class="button button-primary hidden" data-again="<?php esc_attr_e( 'Process Again', 'pods' ); ?>" data-next="<?php esc_attr_e( 'Continue', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php esc_html_e( 'Continue', 'pods' ); ?></button>
 						</div>
 						<div id="pods-wizard-finished">
 
@@ -345,9 +350,12 @@
 
 		window.location.hash = 'import-export';
 
-		if ( 'export' == jQuery( '#pods-form-ui-import-export' ).val() ) {
-			// @todo We need copy/paste functionality here
-			//jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside textarea' ).select();
+		if ( 'export' === jQuery( '#pods-form-ui-import-export' ).val() ) {
+			jQuery( '#pods-wizard-export-copy' ).show().removeClass( 'hidden' );
+			jQuery( '#pods-wizard-export-download' ).show().removeClass( 'hidden' );
+		} else {
+			jQuery( '#pods-wizard-export-copy' ).hide().addClass( 'hidden' );
+			jQuery( '#pods-wizard-export-download' ).hide().addClass( 'hidden' );
 		}
 
 		return false;
@@ -355,6 +363,7 @@
 
 	var pods_admin_option_select_callback = function ( $opt ) {
 		jQuery( '#pods-form-ui-import-export' ).val( $opt.data( 'opt' ) );
+		jQuery( '#pods-wizard-next' ).show().removeClass( 'hidden' );
 	};
 
 	var pods_admin_wizard_startover_callback = function () {
@@ -383,6 +392,31 @@
 			$( this ).closest( '.pods-field-option-group' ).find( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', (!toggle_all[$( this ).data( 'toggle' )]) );
 
 			toggle_all[$( this ).data( 'toggle' )] = (!toggle_all[$( this ).data( 'toggle' )]);
+		} );
+
+		$( '#pods-wizard-export-copy' ).on( 'click', function( e ) {
+			e.preventDefault();
+
+			const packageData = jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside textarea' );
+
+			$( '#pods-wizard-panel-2 div#import-export-results div.inside textarea' ).select();
+
+			document.execCommand( 'copy' );
+		} );
+
+		$( '#pods-wizard-export-download' ).on( 'click', function( e ) {
+			e.preventDefault();
+
+			const packageData = jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside textarea' ).val();
+			const fileName = 'pods-package-' + new Date().toISOString().split( 'T' )[0] + '.json';
+			const fileType = 'application/json;charset=utf-8';
+			const fileContent = new Blob( [ packageData ], { type: fileType } );
+
+			try {
+				saveAs( fileContent, fileName );
+			} catch( e ) {
+				window.open( 'data:' + fileType + ',' + encodeURIComponent( fileContent ), '_blank', '' );
+			}
 		} );
 	} );
 </script>

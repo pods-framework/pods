@@ -4877,21 +4877,22 @@ class PodsUI {
 			return null;
 		}
 
+		$allowed_query_args = array(
+			$this->num_prefix . 'limit' . $this->num,
+			$this->num_prefix . 'orderby' . $this->num,
+			$this->num_prefix . 'orderby_dir' . $this->num,
+			$this->num_prefix . 'search' . $this->num,
+			'filter_*',
+			$this->num_prefix . 'view' . $this->num,
+			$this->num_prefix . 'page' . $this->num,
+			'post_type',
+			'taxonomy',
+			$this->num_prefix . 'action' . $this->num,
+		);
 
 		$total_pages = ceil( $this->total_found / $this->limit );
 		$request_uri = pods_query_arg(
-			array( $this->num_prefix . 'pg' . $this->num => '' ), array(
-				$this->num_prefix . 'limit' . $this->num,
-				$this->num_prefix . 'orderby' . $this->num,
-				$this->num_prefix . 'orderby_dir' . $this->num,
-				$this->num_prefix . 'search' . $this->num,
-				'filter_*',
-				$this->num_prefix . 'view' . $this->num,
-				$this->num_prefix . 'page' . $this->num,
-				'post_type',
-				'taxonomy',
-				$this->num_prefix . 'action' . $this->num,
-			), $this->exclusion()
+			array( $this->num_prefix . 'pg' . $this->num => '' ), $allowed_query_args, $this->exclusion()
 		);
 
 		$append = false;
@@ -4921,7 +4922,22 @@ class PodsUI {
 				'format'   => "{$this->num_prefix}page{$this->num}=%#%",
 			);
 
+			// Get global query args.
+			global $pods_query_args;
+
+			// Store current args for reference.
+			$old_query_args = isset( $pods_query_args ) ? $pods_query_args : null;
+
+			// Tell the pagination links what to include/exclude.
+			$pods_query_args = [
+				'allowed'  => $allowed_query_args,
+				'excluded' => $this->exclusion(),
+			];
+
 			echo $this->pod->pagination( $pagination_params );
+
+			// Reset global query args.
+			$pods_query_args = $old_query_args;
 
 			return;
 		}

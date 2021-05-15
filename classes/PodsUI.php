@@ -1313,6 +1313,8 @@ class PodsUI {
 					}
 				}
 
+				$attributes = pods_config_merge_data( $attributes['options'], $attributes );
+
 				if ( ! isset( $attributes['id'] ) ) {
 					$attributes['id'] = '';
 				}
@@ -1434,7 +1436,6 @@ class PodsUI {
 					continue;
 				}
 
-				$attributes = pods_config_merge_data( $attributes['options'], $attributes );
 				$attributes = PodsForm::field_setup( $attributes, null, $attributes['type'] );
 
 				$new_fields[ $field ] = $attributes;

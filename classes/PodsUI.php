@@ -150,6 +150,7 @@ class PodsUI {
 	public $fields = array(
 		'manage'    => array(),
 		'search'    => array(),
+		'sort'      => array(),
 		'form'      => array(),
 		'add'       => array(),
 		'edit'      => array(),
@@ -158,6 +159,15 @@ class PodsUI {
 		'reorder'   => array(),
 		'export'    => array(),
 	);
+
+	/**
+	 * Which field sets haven set up.
+	 *
+	 * @since 2.7.28
+	 *
+	 * @var array
+	 */
+	public $fields_setup = array();
 
 	/**
 	 * @var bool
@@ -999,11 +1009,15 @@ class PodsUI {
 			)
 		);
 
+		$options->validate( 'sortable', $this->sortable, 'boolean' );
+
 		$orderby = $this->orderby;
 
+		$provided_orderby = sanitize_text_field( pods_v( $options->num_prefix . 'orderby' . $options->num, 'get', '' ) );
+
 		// Enforce strict DB column name usage
-		if ( ! empty( $_GET[ $options->num_prefix . 'orderby' . $options->num ] ) ) {
-			$orderby = pods_clean_name( $_GET[ $options->num_prefix . 'orderby' . $options->num ], true, false );
+		if ( ! empty( $options->sortable ) && ! empty( $provided_orderby ) ) {
+			$orderby = pods_clean_name( $provided_orderby );
 		}
 
 		if ( ! empty( $orderby ) ) {
@@ -1015,7 +1029,6 @@ class PodsUI {
 		}
 
 		$options->validate( 'orderby', $orderby, 'array_merge' );
-		$options->validate( 'sortable', $this->sortable, 'boolean' );
 
 		$options->validate( 'params', $this->params, 'array' );
 
@@ -1442,59 +1455,106 @@ class PodsUI {
 			}//end foreach
 			$fields = $new_fields;
 		}//end if
+
 		if ( false !== $init ) {
-			if ( 'fields' !== $which && ! empty( $this->fields ) ) {
-				$this->fields = $this->setup_fields( $this->fields, 'fields' );
-			} else {
-				$this->fields['manage'] = $fields;
+			if ( empty( $this->fields_setup['fields'] ) ) {
+				if ( 'fields' !== $which && ! empty( $this->fields ) ) {
+					$this->fields = $this->setup_fields( $this->fields, 'fields' );
+				} else {
+					$this->fields['manage'] = $fields;
+				}
+
+				$this->fields_setup['fields'] = true;
 			}
 
 			if ( ! in_array( 'add', $this->actions_disabled ) || ! in_array( 'edit', $this->actions_disabled ) || ! in_array( 'duplicate', $this->actions_disabled ) ) {
-				if ( 'form' !== $which && isset( $this->fields['form'] ) && is_array( $this->fields['form'] ) ) {
-					$this->fields['form'] = $this->setup_fields( $this->fields['form'], 'form' );
-				} else {
-					$this->fields['form'] = $fields;
+				if ( empty( $this->fields_setup['form'] ) ) {
+					if ( 'form' !== $which && isset( $this->fields['form'] ) && is_array( $this->fields['form'] ) ) {
+						$this->fields['form'] = $this->setup_fields( $this->fields['form'], 'form' );
+					} else {
+						$this->fields['form'] = $fields;
+					}
+
+					$this->fields_setup['form'] = true;
 				}
 
-				if ( ! in_array( 'add', $this->actions_disabled ) ) {
-					if ( 'add' !== $which && isset( $this->fields['add'] ) && is_array( $this->fields['add'] ) ) {
-						$this->fields['add'] = $this->setup_fields( $this->fields['add'], 'add' );
+				if ( empty( $this->fields_setup['add'] ) ) {
+					if ( ! in_array( 'add', $this->actions_disabled ) ) {
+						if ( 'add' !== $which && isset( $this->fields['add'] ) && is_array( $this->fields['add'] ) ) {
+							$this->fields['add'] = $this->setup_fields( $this->fields['add'], 'add' );
+						}
 					}
+
+					$this->fields_setup['add'] = true;
 				}
-				if ( ! in_array( 'edit', $this->actions_disabled ) ) {
-					if ( 'edit' !== $which && isset( $this->fields['edit'] ) && is_array( $this->fields['edit'] ) ) {
-						$this->fields['edit'] = $this->setup_fields( $this->fields['edit'], 'edit' );
+
+				if ( empty( $this->fields_setup['edit'] ) ) {
+					if ( ! in_array( 'edit', $this->actions_disabled ) ) {
+						if ( 'edit' !== $which && isset( $this->fields['edit'] ) && is_array( $this->fields['edit'] ) ) {
+							$this->fields['edit'] = $this->setup_fields( $this->fields['edit'], 'edit' );
+						}
 					}
+
+					$this->fields_setup['edit'] = true;
 				}
-				if ( ! in_array( 'duplicate', $this->actions_disabled ) ) {
-					if ( 'duplicate' !== $which && isset( $this->fields['duplicate'] ) && is_array( $this->fields['duplicate'] ) ) {
-						$this->fields['duplicate'] = $this->setup_fields( $this->fields['duplicate'], 'duplicate' );
+
+				if ( empty( $this->fields_setup['duplicate'] ) ) {
+					if ( ! in_array( 'duplicate', $this->actions_disabled ) ) {
+						if ( 'duplicate' !== $which && isset( $this->fields['duplicate'] ) && is_array( $this->fields['duplicate'] ) ) {
+							$this->fields['duplicate'] = $this->setup_fields( $this->fields['duplicate'], 'duplicate' );
+						}
 					}
+
+					$this->fields_setup['duplicate'] = true;
 				}
 			}//end if
 
-			if ( false !== $this->searchable ) {
-				if ( 'search' !== $which && isset( $this->fields['search'] ) && ! empty( $this->fields['search'] ) ) {
-					$this->fields['search'] = $this->setup_fields( $this->fields['search'], 'search' );
+			if ( empty( $this->fields_setup['search'] ) ) {
+				if ( false !== $this->searchable ) {
+					if ( 'search' !== $which && isset( $this->fields['search'] ) && ! empty( $this->fields['search'] ) ) {
+						$this->fields['search'] = $this->setup_fields( $this->fields['search'], 'search' );
+					}
 				} else {
-					$this->fields['search'] = $fields;
+					$this->fields['search'] = false;
 				}
-			} else {
-				$this->fields['search'] = false;
+
+				$this->fields_setup['search'] = true;
 			}
 
-			if ( ! in_array( 'export', $this->actions_disabled ) ) {
-				if ( 'export' !== $which && isset( $this->fields['export'] ) && ! empty( $this->fields['export'] ) ) {
-					$this->fields['export'] = $this->setup_fields( $this->fields['export'], 'export' );
+			if ( empty( $this->fields_setup['sort'] ) ) {
+				if ( false !== $this->sortable ) {
+					if ( 'sort' !== $which ) {
+						if ( isset( $this->fields['sort'] ) && ! empty( $this->fields['sort'] ) ) {
+							$this->fields['sort'] = $this->setup_fields( $this->fields['sort'], 'sort' );
+						} else {
+							$this->fields['sort'] = $fields;
+						}
+					}
+				} else {
+					$this->fields['sort'] = false;
 				}
+
+				$this->fields_setup['sort'] = true;
 			}
 
-			if ( ! in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder['on'] ) {
-				if ( 'reorder' !== $which && isset( $this->fields['reorder'] ) && ! empty( $this->fields['reorder'] ) ) {
-					$this->fields['reorder'] = $this->setup_fields( $this->fields['reorder'], 'reorder' );
-				} else {
-					$this->fields['reorder'] = $fields;
+			if ( empty( $this->fields_setup['export'] ) ) {
+				if ( ! in_array( 'export', $this->actions_disabled, true ) ) {
+					if ( 'export' !== $which && isset( $this->fields['export'] ) && ! empty( $this->fields['export'] ) ) {
+						$this->fields['export'] = $this->setup_fields( $this->fields['export'], 'export' );
+					}
 				}
+
+				$this->fields_setup['export'] = true;
+			}
+
+			if ( empty( $this->fields_setup['reorder'] ) ) {
+				if ( ! in_array( 'reorder', $this->actions_disabled, true ) && false !== $this->reorder['on'] ) {
+					if ( 'reorder' !== $which && isset( $this->fields['reorder'] ) && ! empty( $this->fields['reorder'] ) ) {
+						$this->fields['reorder'] = $this->setup_fields( $this->fields['reorder'], 'reorder' );
+					}
+				}
+
+				$this->fields_setup['reorder'] = true;
 			}
 		}//end if
 
@@ -2603,6 +2663,7 @@ class PodsUI {
 				'search_query'        => $this->search,
 				'search_across'       => $this->search_across,
 				'search_across_picks' => $this->search_across_picks,
+				'fields'              => $this->fields['search'],
 				'filters'             => $this->filters,
 				'sql'                 => $sql,
 			);
@@ -4068,7 +4129,7 @@ class PodsUI {
 								$width = ' style="width: ' . esc_attr( $attributes['width'] ) . '"';
 							}
 
-							if ( $fields[ $field ]['sortable'] ) {
+							if ( $this->is_field_sortable( $attributes ) ) {
 								$column_classes[] = 'sortable' . $current_sort;
 								?>
 								<th scope="col"<?php echo $att_id; ?> class="<?php esc_attr_e( implode( ' ', $column_classes ) ); ?>"<?php echo $width; ?>>
@@ -4132,7 +4193,7 @@ class PodsUI {
 									$width = ' style="width: ' . esc_attr( $attributes['width'] ) . '"';
 								}
 
-								if ( $fields[ $field ]['sortable'] ) {
+								if ( $this->is_field_sortable( $attributes ) ) {
 									?>
 									<th scope="col" class="manage-column column-<?php echo esc_attr( $id ); ?> sortable <?php echo esc_attr( $current_sort ); ?>"<?php echo $width; ?>>
 										<a href="
@@ -5481,6 +5542,89 @@ class PodsUI {
 		$restricted = $this->do_hook( 'restricted_' . $action, $restricted, $restrict, $action, $row );
 
 		return $restricted;
+	}
+
+	/**
+	 * Normalize and get the field data from a field.
+	 *
+	 * @since 2.7.28
+	 *
+	 * @param string|array $field The field data.
+	 *
+	 * @return array|false The field data or false if invalid / not found.
+	 */
+	public function get_field_data( $field, $which = 'manage' ) {
+		$field_data = $field;
+
+		if ( ! is_array( $field_data ) ) {
+			// Field is not set.
+			if ( ! isset( $this->fields[ $which ][ $field ] ) ) {
+				return false;
+			}
+
+			$field_data = $this->fields[ $which ][ $field ];
+		} elseif ( ! isset( $field_data['name'] ) ) {
+			// Field name is required.
+			return false;
+		}
+
+		return $field_data;
+	}
+
+	/**
+	 * Determine whether a field is searchable.
+	 *
+	 * @since 2.7.28
+	 *
+	 * @param string|array $field The field data.
+	 *
+	 * @return bool Whether a field is searchable.
+	 */
+	public function is_field_searchable( $field ) {
+		$field_data = $this->get_field_data( $field );
+
+		// Field not valid.
+		if ( ! $field_data ) {
+			return false;
+		}
+
+		$field = $field_data['name'];
+
+		// Provided as a search field.
+		if ( isset( $this->fields['search'][ $field ] ) ) {
+			return true;
+		}
+
+		// Search is turned on individually.
+		return ! empty( $field_data['search'] );
+	}
+
+	/**
+	 * Determine whether a field is sortable.
+	 *
+	 * @since 2.7.28
+	 *
+	 * @param string|array $field The field data.
+	 *
+	 * @return bool Whether a field is sortable.
+	 */
+	public function is_field_sortable( $field ) {
+		$field_data = $this->get_field_data( $field );
+
+		// Field not valid.
+		if ( ! $field_data ) {
+			return false;
+		}
+
+		$field = $field_data['name'];
+
+		// Provided as a sort field.
+		if ( isset( $this->fields['sort'][ $field ] ) ) {
+			return true;
+		}
+
+		// Sort is turned on individually.
+		return ! empty( $field_data['sortable'] );
 	}
 
 	/**

@@ -4950,7 +4950,8 @@ class PodsUI {
 			$this->num_prefix . 'search' . $this->num,
 			'filter_*',
 			$this->num_prefix . 'view' . $this->num,
-			$this->num_prefix . 'page' . $this->num,
+			$this->num_prefix . 'pg' . $this->num,
+			'page',
 			'post_type',
 			'taxonomy',
 			$this->num_prefix . 'action' . $this->num,
@@ -4984,8 +4985,8 @@ class PodsUI {
 
 			$pagination_params = array(
 				'type'     => $this->pagination_type,
-				'page_var' => $this->num_prefix . 'page' . $this->num,
-				'format'   => "{$this->num_prefix}page{$this->num}=%#%",
+				'page_var' => $this->num_prefix . 'pg' . $this->num,
+				'format'   => "{$this->num_prefix}pg{$this->num}=%#%",
 			);
 
 			// Get global query args.
@@ -5093,7 +5094,7 @@ class PodsUI {
 							$this->num_prefix . 'orderby_dir' . $this->num,
 							$this->num_prefix . 'search' . $this->num,
 							'filter_*',
-							$this->num_prefix . 'page' . $this->num,
+							'page',
 						), $this->exclusion()
 					)
 				) . '">' . esc_html( $option ) . '</a>';

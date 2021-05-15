@@ -1130,14 +1130,14 @@ class PodsUI {
 			), 'array_merge'
 		);
 
-		$options->validate(
-			'fields', array(
-				'manage' => array(
-					$options->sql['field_index'] => array( 'label' => __( 'Name', 'pods' ) ),
-				),
-				'search' => [],
-			), 'array'
-		);
+		$options->validate( 'fields', $this->fields, 'array_merge' );
+
+		// Set up default manage field.
+		if ( empty( $options->fields['manage'] ) ) {
+			$options->fields['manage'][ $options->sql['field_index'] ] = [
+				'label' => __( 'Name', 'pods' ),
+			];
+		}
 
 		$options->validate( 'export', $this->export, 'array_merge' );
 		$options->validate( 'reorder', $this->reorder, 'array_merge' );
@@ -1315,6 +1315,10 @@ class PodsUI {
 					} else {
 						$attributes = array( 'label' => $attributes );
 					}
+				}
+
+				if ( ! isset( $attributes['name'] ) ) {
+					$attributes['name'] = $field;
 				}
 
 				$field_name = pods_v( 'real_name', $attributes, pods_v( 'name', $attributes, $field ) );
@@ -5601,8 +5605,8 @@ class PodsUI {
 			return true;
 		}
 
-		// Search is turned on individually.
-		return ! empty( $field_data['search'] );
+		// Search is turned on individually and we don't have a list of search-only fields.
+		return ! empty( $field_data['search'] ) && empty( $this->fields['search'] );
 	}
 
 	/**
@@ -5629,8 +5633,8 @@ class PodsUI {
 			return true;
 		}
 
-		// Sort is turned on individually.
-		return ! empty( $field_data['sortable'] );
+		// Sort is turned on individually and we don't have a list of sort-only fields.
+		return ! empty( $field_data['sortable'] ) && empty( $this->fields['sort'] );
 	}
 
 	/**

@@ -3268,7 +3268,7 @@ class PodsUI {
 							?>
 								<span class="pods-form-ui-filter-container pods-form-ui-filter-container-search">
 									<label<?php echo ( empty( $this->filters ) ) ? ' class="screen-reader-text"' : ''; ?> for="<?php echo esc_attr( $this->num_prefix ); ?>page-search<?php echo esc_attr( $this->num ); ?>-input"><?php _e( 'Search', 'pods' ); ?>:</label>
-									<?php echo PodsForm::field( $this->num_prefix . 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search' . $this->num . '-input' ) ) ); ?>
+									<?php echo PodsForm::field( $this->num_prefix . 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search' . $this->num . '-input' ), 'disable_dfv' => true ) ); ?>
 								</span>
 							<?php
 							} else {

@@ -482,3 +482,85 @@ function pods_video( $url, $args = false ) {
 	return wp_video_shortcode( $video_args );
 
 }
+
+/**
+ * Get the image URL for a post for a specific pod field.
+ *
+ * @since 2.7.28
+ *
+ * @param string $field_name The field name.
+ * @param string $size       The image size to use.
+ * @param int    $default    The default image ID to use if not found.
+ *
+ * @return string The image URL for a post for a specific pod field.
+ */
+function pods_image_url_for_post( $field_name, $size = 'full', $default = 0 ) {
+	// pods_field() will auto-detect the post type / post ID.
+	$value = pods_field( null, null, $field_name, true );
+
+	// No value found.
+	if ( empty( $value ) ) {
+		if ( $default ) {
+			// Maybe return default if it's set.
+			return pods_image_url( $default, $size );
+		} else {
+			// No value, no default to show.
+			return '';
+		}
+	}
+
+	if ( is_numeric( $value ) ) {
+		$attachment_id = $value;
+	} elseif ( is_array( $value ) && isset( $value['ID'] ) ) {
+		$attachment_id = $value['ID'];
+	} elseif ( $default ) {
+		// Maybe return default if it's set.
+		return pods_image_url( $default, $size );
+	} else {
+		// Unexpected value, no default to show.
+		return '';
+	}
+
+	return pods_image_url( $attachment_id, $size, $default );
+}
+
+/**
+ * Get the image HTML for a post for a specific pod field.
+ *
+ * @since 2.7.28
+ *
+ * @param string $field_name The field name.
+ * @param string $size       The image size to use.
+ * @param int    $default    The default image ID to use if not found.
+ *
+ * @return string The image HTML for a post for a specific pod field.
+ */
+function pods_image_for_post( $field_name, $size = 'full', $default = 0 ) {
+	// pods_field() will auto-detect the post type / post ID.
+	$value = pods_field( null, null, $field_name, true );
+
+	// No value found.
+	if ( empty( $value ) ) {
+		if ( $default ) {
+			// Maybe return default if it's set.
+			return pods_image( $default, $size );
+		} else {
+			// No value, no default to show.
+			return '';
+		}
+	}
+
+	if ( is_numeric( $value ) ) {
+		$attachment_id = $value;
+	} elseif ( is_array( $value ) && isset( $value['ID'] ) ) {
+		$attachment_id = $value['ID'];
+	} elseif ( $default ) {
+		// Maybe return default if it's set.
+		return pods_image( $default, $size );
+	} else {
+		// Unexpected value, no default to show.
+		return '';
+	}
+
+	return pods_image( $attachment_id, $size, $default );
+}

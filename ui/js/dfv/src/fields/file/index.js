@@ -6,7 +6,7 @@ import apiFetch from '@wordpress/api-fetch';
 
 import MarionetteAdapter from 'dfv/src/fields/marionette-adapter';
 import { File as FileView } from './file-upload';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const getMediaItemData = async ( mediaID ) => {
 	try {
@@ -35,6 +35,7 @@ const File = ( props ) => {
 		htmlAttr = {},
 		value,
 		setValue,
+		setHasBlurred,
 	} = props;
 
 	const [ collectionData, setCollectionData ] = useState( [] );
@@ -49,6 +50,8 @@ const File = ( props ) => {
 
 			setCollectionData( models.get( 'attributes' ) );
 		}
+
+		setHasBlurred( true );
 	};
 
 	// Force the limit to 1 if this the field only allows a single upload.
@@ -94,8 +97,7 @@ const File = ( props ) => {
 };
 
 File.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE.isRequired,
-	setValue: PropTypes.func.isRequired,
+	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.string,
 };
 

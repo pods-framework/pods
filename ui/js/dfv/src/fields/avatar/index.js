@@ -1,8 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import File from '../file';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const Avatar = ( props ) => {
 	const {
@@ -29,10 +28,6 @@ const Avatar = ( props ) => {
 	);
 };
 
-Avatar.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE.isRequired,
-	setValue: PropTypes.func.isRequired,
-	value: PropTypes.string,
-};
+Avatar.propTypes = FIELD_COMPONENT_BASE_PROPS;
 
 export default Avatar;

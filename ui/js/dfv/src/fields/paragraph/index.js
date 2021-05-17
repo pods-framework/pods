@@ -1,19 +1,21 @@
 import React from 'react';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
 
 import { toBool } from 'dfv/src/helpers/booleans';
 
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
+
 import './paragraph.scss';
 
-const Paragraph = ( props ) => {
-	const {
-		fieldConfig = {},
-		onBlur,
-		onChange,
-		setValue,
-		value,
-	} = props;
-
+const Paragraph = ( {
+	fieldConfig = {},
+	onBlur,
+	onChange,
+	setValue,
+	value,
+	setHasBlurred,
+} ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
 		name,
@@ -25,6 +27,11 @@ const Paragraph = ( props ) => {
 	// Default implementation if onChange is omitted from props
 	const handleChange = ( event ) => setValue( event.target.value );
 
+	const handleBlur = ( event ) => {
+		onBlur( event );
+		setHasBlurred();
+	};
+
 	return (
 		<textarea
 			value={ value }
@@ -34,12 +41,17 @@ const Paragraph = ( props ) => {
 			maxLength={ -1 !== parseInt( maxLength, 10 ) ? maxLength : undefined }
 			placeholder={ placeholder }
 			onChange={ onChange || handleChange }
-			onBlur={ onBlur }
+			onBlur={ handleBlur }
 			readOnly={ toBool( readOnly ) }
 		>
 			{ value }
 		</textarea>
 	);
+};
+
+Paragraph.propTypes = {
+	...FIELD_COMPONENT_BASE_PROPS,
+	value: PropTypes.string,
 };
 
 export default Paragraph;

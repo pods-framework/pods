@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import DateTime from '../datetime';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const Time = ( props ) => {
 	const {
@@ -37,8 +37,7 @@ const Time = ( props ) => {
 };
 
 Time.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE.isRequired,
-	setValue: PropTypes.func.isRequired,
+	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.string,
 };
 

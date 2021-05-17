@@ -1,7 +1,7 @@
 import React from 'react';
 import HelpTooltip from 'dfv/src/components/help-tooltip';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const Heading = ( props ) => {
 	const {
@@ -33,8 +33,6 @@ const Heading = ( props ) => {
 	);
 };
 
-Heading.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-};
+Heading.propTypes = FIELD_COMPONENT_BASE_PROPS;
 
 export default Heading;

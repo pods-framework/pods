@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import TinyMCE from './tinymce';
 
 import { toBool } from 'dfv/src/helpers/booleans';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 import 'react-quill/dist/quill.snow.css';
 import './wysiwyg.scss';
@@ -32,6 +32,7 @@ const Wysiwyg = ( props ) => {
 		fieldConfig = {},
 		setValue,
 		value,
+		setHasBlurred,
 	} = props;
 
 	const {
@@ -48,6 +49,7 @@ const Wysiwyg = ( props ) => {
 			<>
 				<ReactQuill
 					value={ value || '' }
+					onBlur={ () => setHasBlurred() }
 					onChange={ setValue }
 					theme="snow"
 					modules={ {
@@ -71,13 +73,13 @@ const Wysiwyg = ( props ) => {
 			setValue={ setValue }
 			editorHeight={ parseInt( editorHeight, 10 ) }
 			mediaButtons={ toBool( mediaButtons ) }
+			onBlur={ () => setHasBlurred() }
 		/>
 	);
 };
 
 Wysiwyg.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	setValue: PropTypes.func.isRequired,
+	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.string,
 };
 

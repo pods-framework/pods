@@ -8,15 +8,14 @@ import { __ } from '@wordpress/i18n';
 
 import { toBool } from 'dfv/src/helpers/booleans';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
-const Oembed = ( props ) => {
-	const {
-		value,
-		setValue,
-		fieldConfig = {},
-	} = props;
-
+const Oembed = ( {
+	value,
+	setValue,
+	fieldConfig = {},
+	setHasBlurred,
+} ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
 		name,
@@ -31,7 +30,10 @@ const Oembed = ( props ) => {
 
 	const handleChange = ( event ) => setValue( event.target.value );
 
-	const handleBlur = () => setIsPreviewUpdated( false );
+	const handleBlur = () => {
+		setIsPreviewUpdated( false );
+		setHasBlurred();
+	};
 
 	useEffect( () => {
 		if ( isPreviewUpdated || ! toBool( showPreview ) || ! value ) {
@@ -107,8 +109,7 @@ Oembed.defaultProps = {
 };
 
 Oembed.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	setValue: PropTypes.func.isRequired,
+	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.string,
 };
 

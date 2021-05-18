@@ -1190,7 +1190,30 @@ class PodsField_File extends PodsField {
 						}
 					}
 
-					self::$tmp_upload_dir = pods_evaluate_tags( $custom_dir, array( 'pod' => $context_pod ) );
+					/**
+					 * Filter the custom upload directory Pod context.
+					 * @since 2.7.28
+					 * @param Pods   $context_pod
+					 * @param array  $params
+					 * @param array  $field
+					 * @param array  $pod
+					 */
+					$context_pod = apply_filters( 'pods_upload_dir_custom_context_pod', $context_pod, $params, $field, $pod );
+
+					$custom_dir = pods_evaluate_tags( $custom_dir, array( 'pod' => $context_pod ) );
+
+					/**
+					 * Filter the custom Pod upload directory.
+					 * @since 2.7.28
+					 * @param string $custom_dir
+					 * @param array  $params
+					 * @param Pods   $context_pod
+					 * @param array  $field
+					 * @param array  $pod
+					 */
+					$custom_dir = apply_filters( 'pods_upload_dir_custom', $custom_dir, $params, $context_pod, $field, $pod );
+
+					self::$tmp_upload_dir = $custom_dir;
 					add_filter( 'upload_dir', array( $this, 'filter_upload_dir' ) );
 				}
 

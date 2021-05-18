@@ -14,11 +14,61 @@ $link_manager_enabled = (int) get_option( 'link_manager_enabled', 0 );
 if ( 0 === $link_manager_enabled ) {
 	$ignore[] = 'link_category';
 }
+
+$all_pods = pods_api()->load_pods( [ 'key_names' => true ] );
+
+$quick_actions = [];
+
+if ( ! isset( $all_pods['post'] ) ) {
+	$quick_actions[] = [
+		'label'         => __( 'Add custom fields to Posts', 'pods' ),
+		'create_extend' => 'extend',
+		'type'          => 'post_type',
+		'name'          => 'post',
+	];
+}
+
+if ( ! isset( $all_pods['page'] ) ) {
+	$quick_actions[] = [
+		'label'         => __( 'Add custom fields to Pages', 'pods' ),
+		'create_extend' => 'extend',
+		'type'          => 'post_type',
+		'name'          => 'page',
+	];
+}
+
+if ( ! isset( $all_pods['category'] ) ) {
+	$quick_actions[] = [
+		'label'         => __( 'Add custom fields to Categories', 'pods' ),
+		'create_extend' => 'extend',
+		'type'          => 'taxonomy',
+		'name'          => 'category',
+	];
+}
+
+if ( ! isset( $all_pods['user'] ) ) {
+	$quick_actions[] = [
+		'label'         => __( 'Add custom fields to Users', 'pods' ),
+		'create_extend' => 'extend',
+		'type'          => 'user',
+		'name'          => 'user',
+	];
+}
+
+/**
+ * Allow filtering the list of quick actions.
+ *
+ * @since 2.8
+ *
+ * @param array $quick_actions List of quick actions with the following info: label, create_extend, type, name
+ * @param array $all_pods      List of pods, keyed by name.
+ */
+$quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_actions, $all_pods );
 ?>
 
 <div class="wrap pods-admin">
 	<script>
-		var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
+		const PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
 	</script>
 	<div id="icon-pods" class="icon32"><br /></div>
 
@@ -31,14 +81,12 @@ if ( 0 === $link_manager_enabled ) {
 
 			<h2 class="italicized">
 				<?php
-				_e( 'Add New Pod', 'pods' );
-
-				$all_pods = pods_api()->load_pods( [ 'key_names' => true ] );
+				esc_html_e( 'Add New Pod', 'pods' );
 
 				if ( ! empty( $all_pods ) ) {
 					$link = pods_query_arg( [ 'page' => 'pods', 'action' . $obj->num => 'manage' ] );
 					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>
+					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php esc_html_e( 'Back to Manage', 'pods' ); ?></a>
 					<?php
 				}
 				?>
@@ -50,11 +98,11 @@ if ( 0 === $link_manager_enabled ) {
 				<div id="pods-wizard-heading">
 					<ul>
 						<li class="pods-wizard-menu-current" data-step="1">
-							<i></i> <span>1</span> <?php _e( 'Create or Extend', 'pods' ); ?>
+							<i></i> <span>1</span> <?php esc_html_e( 'Create or Extend', 'pods' ); ?>
 							<em></em>
 						</li>
 						<li data-step="2">
-							<i></i> <span>2</span> <?php _e( 'Configure', 'pods' ); ?>
+							<i></i> <span>2</span> <?php esc_html_e( 'Configure', 'pods' ); ?>
 							<em></em>
 						</li>
 					</ul>
@@ -63,38 +111,57 @@ if ( 0 === $link_manager_enabled ) {
 					<div id="pods-wizard-panel-1" class="pods-wizard-panel">
 						<div class="pods-wizard-content">
 							<p>
-								<?php _e( 'Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments.', 'pods' ); ?>
+								<?php esc_html_e( 'Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments.', 'pods' ); ?>
 								<br /><br />
 								<?php _e( 'Not sure what content type you should use? Check out our <a href="https://pods.io/docs/comparisons/compare-content-types/" target="_blank" rel="noopener noreferrer">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
 							</p>
 
+							<?php if ( ! empty( $quick_actions ) ) : ?>
+								<h3><?php esc_html_e( 'One-Click Quick Actions', 'pods' ); ?></h3>
+
+								<ul class="normal">
+									<?php foreach ( $quick_actions as $quick_action ) : ?>
+										<li>
+											<a href="#<?php echo sanitize_title( $quick_action['create_extend'] . '-' . $quick_action['type'] . '-' . $quick_action['name'] ); ?>"
+												data-create-extend="<?php echo esc_attr( $quick_action['create_extend'] ); ?>"
+												data-object="<?php echo esc_attr( $quick_action['object'] ); ?>"
+												data-type="<?php echo esc_attr( $quick_action['type'] ); ?>"
+												class="pods-wizard-quick-action"
+											>
+												<?php echo esc_html( $quick_action['label'] ); ?>
+											</a>
+										</li>
+									<?php endforeach; ?>
+								</ul>
+							<?php endif; ?>
 						</div>
 						<div id="pods-wizard-options">
+							<h3><?php esc_html_e( 'Add New Pod Wizard', 'pods' ); ?></h3>
+
 							<div class="pods-wizard-option">
 								<a href="#pods-wizard-create" data-opt="create">
-									<h2><?php _e( 'Create New', 'pods' ); ?></h2>
+									<h2><?php esc_html_e( 'Create New', 'pods' ); ?></h2>
 
 									<p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>.', 'pods' ); ?></p>
 								</a>
-
 							</div>
+
 							<div class="pods-wizard-option">
 								<a href="#pods-wizard-extend" data-opt="extend">
-									<h2><?php _e( 'Extend Existing', 'pods' ); ?></h2>
+									<h2><?php esc_html_e( 'Extend Existing', 'pods' ); ?></h2>
 
 									<p><?php _e( 'Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>.', 'pods' ); ?></p>
 								</a>
-
 							</div>
 						</div>
 					</div>
 					<div id="pods-wizard-panel-2" class="pods-wizard-panel">
 						<div class="pods-wizard-option-content" id="pods-wizard-create">
 							<div class="pods-wizard-content">
-								<p><?php _e( 'Creating a new Content Type allows you to control exactly what that content type does, how it acts like, the fields it has, and the way you manage it.', 'pods' ); ?></p>
+								<p><?php esc_html_e( 'Creating a new Content Type allows you to control exactly what that content type does, how it acts like, the fields it has, and the way you manage it.', 'pods' ); ?></p>
 							</div>
 							<div class="stuffbox">
-								<h3><label for="link_name"><?php _e( 'Create a New Content Type', 'pods' ); ?></label>
+								<h3><label for="link_name"><?php esc_html_e( 'Create a New Content Type', 'pods' ); ?></label>
 								</h3>
 
 								<div class="inside pods-manage-field pods-dependency">
@@ -221,7 +288,7 @@ if ( 0 === $link_manager_enabled ) {
 									</div>
 
 									<p>
-										<a href="#pods-advanced" class="pods-advanced-toggle"><?php _e( 'Advanced', 'pods' ); ?> +</a>
+										<a href="#pods-advanced" class="pods-advanced-toggle"><?php esc_html_e( 'Advanced', 'pods' ); ?> +</a>
 									</p>
 
 									<div class="pods-advanced">
@@ -299,11 +366,11 @@ if ( 0 === $link_manager_enabled ) {
 						</div>
 						<div class="pods-wizard-option-content" id="pods-wizard-extend">
 							<div class="pods-wizard-content">
-								<p><?php _e( 'Extending an existing Content Type allows you to add fields to it and take advantage of the Pods architecture for management and optionally for theming.', 'pods' ); ?></p>
+								<p><?php esc_html_e( 'Extending an existing Content Type allows you to add fields to it and take advantage of the Pods architecture for management and optionally for theming.', 'pods' ); ?></p>
 							</div>
 							<div class="stuffbox">
 								<h3>
-									<label for="link_name"><?php _e( 'Extend an Existing Content Type', 'pods' ); ?></label>
+									<label for="link_name"><?php esc_html_e( 'Extend an Existing Content Type', 'pods' ); ?></label>
 								</h3>
 
 								<div class="inside pods-manage-field pods-dependency">
@@ -448,7 +515,7 @@ if ( 0 === $link_manager_enabled ) {
 									if ( ! pods_tableless() && apply_filters( 'pods_admin_setup_add_extend_storage', false ) ) {
 										?>
 										<p>
-											<a href="#pods-advanced" class="pods-advanced-toggle"><?php _e( 'Advanced', 'pods' ); ?> +</a>
+											<a href="#pods-advanced" class="pods-advanced-toggle"><?php esc_html_e( 'Advanced', 'pods' ); ?> +</a>
 										</p>
 
 										<div class="pods-advanced">
@@ -489,8 +556,8 @@ if ( 0 === $link_manager_enabled ) {
 
 					<div id="pods-wizard-actions">
 						<div id="pods-wizard-toolbar">
-							<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
-							<a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></a>
+							<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php esc_html_e( 'Start Over', 'pods' ); ?></a>
+							<a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php esc_html_e( 'Next Step', 'pods' ); ?></a>
 						</div>
 						<div id="pods-wizard-finished">
 
@@ -526,5 +593,25 @@ if ( 0 === $link_manager_enabled ) {
 		$document.Pods( 'advanced' );
 		$document.Pods( 'confirm' );
 		$document.Pods( 'sluggable' );
+
+		const $quick_actions = $( '.pods-wizard-quick-action' );
+
+		if ( $quick_actions[0] ) {
+			$quick_actions.on( 'click', function( e ) {
+				e.preventDefault();
+
+				const $action = $( this );
+				const createExtend = $action.data( 'create-extend' );
+				const objectName = $action.data( 'object' );
+				const objectType = $action.data( 'type' );
+
+				console.log( { objectName, objectType, createExtend } );
+				jQuery( '#pods_create_extend' ).val( createExtend );
+				jQuery( '#pods-form-ui-' + createExtend + '-pod-type' ).val( objectType );
+				jQuery( '#pods-form-ui-' + createExtend + '-' + objectType.replace( '_', '-' ) ).val( objectName );
+
+				$action.closest( 'form' ).submit();
+			} );
+		}
 	} );
 </script>

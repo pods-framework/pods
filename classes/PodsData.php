@@ -1056,7 +1056,7 @@ class PodsData {
 							);
 						}
 
-						if ( isset( $attributes['options']['search'] ) && ! $attributes['options']['search'] ) {
+						if ( isset( $attributes['search'] ) && ! $attributes['search'] ) {
 							continue;
 						}
 

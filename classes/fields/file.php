@@ -1176,7 +1176,19 @@ class PodsField_File extends PodsField {
 				// Start custom directory.
 				$custom_dir = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
 				if ( $custom_dir ) {
-					self::$tmp_upload_dir = pods_evaluate_tags( $custom_dir, array( 'pod' => $pod ) );
+
+					$context_pod = $pod;
+					if ( $params->post_id ) {
+						$post = get_post( $params->post_id );
+						if ( $post ) {
+							$post_pod = pods( $post->post_type, $post->ID );
+							if ( $post_pod->exists() ) {
+								$context_pod = $post_pod;
+							}
+						}
+					}
+
+					self::$tmp_upload_dir = pods_evaluate_tags( $custom_dir, array( 'pod' => $context_pod ) );
 					add_filter( 'upload_dir', array( $this, 'filter_upload_dir' ) );
 				}
 

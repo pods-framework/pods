@@ -1176,10 +1176,10 @@ class PodsField_File extends PodsField {
 				// Start custom directory.
 				$upload_dir = pods_v( $field['type'] . '_upload_dir', $field['options'], 'wp' );
 
-					$context_pod = $pod;
 				if ( 'wp' !== $upload_dir ) {
 					$custom_dir = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
 
+					$context_pod = null;
 					if ( $params->post_id ) {
 						$post = get_post( $params->post_id );
 						if ( $post ) {

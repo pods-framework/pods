@@ -1174,10 +1174,12 @@ class PodsField_File extends PodsField {
 			if ( null === $custom_handler ) {
 
 				// Start custom directory.
-				$custom_dir = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
-				if ( $custom_dir ) {
+				$upload_dir = pods_v( $field['type'] . '_upload_dir', $field['options'], 'wp' );
 
 					$context_pod = $pod;
+				if ( 'wp' !== $upload_dir ) {
+					$custom_dir = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
+
 					if ( $params->post_id ) {
 						$post = get_post( $params->post_id );
 						if ( $post ) {
@@ -1196,7 +1198,7 @@ class PodsField_File extends PodsField {
 				$attachment_id = media_handle_upload( 'Filedata', $params->post_id );
 
 				// End custom directory.
-				if ( $custom_dir ) {
+				if ( 'wp' !== $upload_dir ) {
 					remove_filter( 'upload_dir', array( $this, 'filter_upload_dir' ) );
 					self::$tmp_upload_dir = null;
 				}

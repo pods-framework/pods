@@ -24,7 +24,7 @@ if ( ! isset( $all_pods['post'] ) ) {
 		'label'         => __( 'Add custom fields to Posts', 'pods' ),
 		'create_extend' => 'extend',
 		'type'          => 'post_type',
-		'name'          => 'post',
+		'object'        => 'post',
 	];
 }
 
@@ -33,7 +33,7 @@ if ( ! isset( $all_pods['page'] ) ) {
 		'label'         => __( 'Add custom fields to Pages', 'pods' ),
 		'create_extend' => 'extend',
 		'type'          => 'post_type',
-		'name'          => 'page',
+		'object'        => 'page',
 	];
 }
 
@@ -42,7 +42,7 @@ if ( ! isset( $all_pods['category'] ) ) {
 		'label'         => __( 'Add custom fields to Categories', 'pods' ),
 		'create_extend' => 'extend',
 		'type'          => 'taxonomy',
-		'name'          => 'category',
+		'object'        => 'category',
 	];
 }
 
@@ -51,7 +51,7 @@ if ( ! isset( $all_pods['user'] ) ) {
 		'label'         => __( 'Add custom fields to Users', 'pods' ),
 		'create_extend' => 'extend',
 		'type'          => 'user',
-		'name'          => 'user',
+		'object'        => 'user',
 	];
 }
 
@@ -60,7 +60,7 @@ if ( ! isset( $all_pods['user'] ) ) {
  *
  * @since 2.8
  *
- * @param array $quick_actions List of quick actions with the following info: label, create_extend, type, name
+ * @param array $quick_actions List of quick actions with the following info: label, create_extend, type, object.
  * @param array $all_pods      List of pods, keyed by name.
  */
 $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_actions, $all_pods );
@@ -429,8 +429,9 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 												unset( $post_types[ $post_type ] );
 
 												continue;
-											} elseif ( isset( $all_pods[ $post_type ] ) && 'post_type' == $all_pods[ $post_type ]['type'] ) {
+											} elseif ( isset( $all_pods[ $post_type ] ) && 'post_type' === $all_pods[ $post_type ]['type'] ) {
 												unset( $post_types[ $post_type ] );
+
 												continue;
 											}
 
@@ -605,7 +606,6 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 				const objectName = $action.data( 'object' );
 				const objectType = $action.data( 'type' );
 
-				console.log( { objectName, objectType, createExtend } );
 				jQuery( '#pods_create_extend' ).val( createExtend );
 				jQuery( '#pods-form-ui-' + createExtend + '-pod-type' ).val( objectType );
 				jQuery( '#pods-form-ui-' + createExtend + '-' + objectType.replace( '_', '-' ) ).val( objectName );

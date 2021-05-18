@@ -1126,6 +1126,20 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 	$allowed  = (array) $allowed;
 	$excluded = (array) $excluded;
 
+	// Support for globally defined arguments.
+	global $pods_query_args;
+
+	if ( empty( $pods_query_args ) ) {
+		$pods_query_args = [
+			'allowed'  => [],
+			'excluded' => [],
+		];
+	}
+
+	// Merge any global args that we need to.
+	$allowed  = array_unique( array_merge( $pods_query_args['allowed'], $allowed ) );
+	$excluded = array_unique( array_merge( $pods_query_args['excluded'], $excluded ) );
+
 	if ( ! isset( $_GET ) ) {
 		$query_args = array();
 	} else {

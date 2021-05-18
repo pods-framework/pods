@@ -763,7 +763,7 @@ class PodsField_Pick extends PodsField {
 			/**
 			 * @var $pod Pods Pods object.
 			 */
-			$fields = pods_config_get_all_fields( $pod->fields );
+			$fields = pods_config_get_all_fields( $pod );
 		} elseif ( is_array( $pod ) && isset( $pod['fields'] ) ) {
 			$fields = pods_config_get_all_fields( $pod );
 		}

@@ -1481,7 +1481,7 @@ class Pods implements Iterator {
 												( false !== strpos( $full_field, '_src' ) || 'guid' === $field )
 												&& (
 													in_array( $table['type'], [ 'attachment', 'media' ], true )
- 	|| in_array( $last_type, PodsForm::file_field_types(), true )
+													|| in_array( $last_type, PodsForm::file_field_types(), true )
 												)
 											)
 											|| ( in_array( $field, $permalink_fields, true ) && in_array( $last_type, PodsForm::file_field_types(), true ) )
@@ -1588,10 +1588,12 @@ class Pods implements Iterator {
 											}
 
 											$meta_value = get_metadata( $metadata_type, $metadata_object_id, $field, true );
-											$value[]    = pods_traverse( $traverse_fields, $meta_value );
+
+											$value[] = pods_traverse( $traverse_fields, $meta_value );
 										} elseif ( 'settings' === $object_type ) {
 											$option_value = get_option( $object . '_' . $field );
-											$value[]      = pods_traverse( $traverse_fields, $option_value );
+
+											$value[] = pods_traverse( $traverse_fields, $option_value );
 										}//end if
 									}//end foreach
 								}//end if
@@ -1655,8 +1657,6 @@ class Pods implements Iterator {
 
 		if ( ! empty( $field_data ) && ( $params->display || ! $params->raw ) && ! $params->in_form && ! $params->raw_display ) {
 			if ( $params->display || ( ( $params->get_meta || $params->deprecated ) && ! in_array( $field_data['type'], $tableless_field_types, true ) ) ) {
-				$field_data['options'] = pods_v( 'options', $field_data, array(), true );
-
 				$post_temp   = false;
 				$old_post    = null;
 				$old_post_id = null;
@@ -1676,22 +1676,20 @@ class Pods implements Iterator {
 					$post_ID = $this->id();
 				}
 
-				$filter = pods_v( 'display_filter', $field_data['options'] );
+				$filter = pods_v( 'display_filter', $field_data );
 
 				if ( 0 < strlen( $filter ) ) {
-
 					if ( $params->single ) {
 						$value = array( $value );
 					}
 
 					foreach ( $value as $key => $val ) {
-
 						$args = array(
 							$filter,
 							$val,
 						);
 
-						$filter_args = pods_v( 'display_filter_args', $field_data['options'] );
+						$filter_args = pods_v( 'display_filter_args', $field_data );
 
 						if ( ! empty( $filter_args ) ) {
 							$args = array_merge( $args, compact( $filter_args ) );
@@ -1706,8 +1704,7 @@ class Pods implements Iterator {
 					if ( $params->single ) {
 						$value = reset( $value );
 					}
-
-				} elseif ( 1 === (int) pods_v( 'display_process', $field_data['options'], 1 ) ) {
+				} elseif ( 1 === (int) pods_v( 'display_process', $field_data, 1 ) ) {
 					if ( ! is_array( $value ) || ! $params->display_process_individually ) {
 						// Do the normal display handling.
 						$value = PodsForm::display( $field_data['type'], $value, $params->name, $field_data, $this->pod_data, $this->id() );
@@ -3890,7 +3887,7 @@ class Pods implements Iterator {
 
 			if ( pods_v( 'hidden', $field, false, true ) || 'hidden' === $field['type'] ) {
 				continue;
-			} elseif ( ! PodsForm::permission( $field['type'], $field['name'], $field['options'], $fields, $pod, $pod->id() ) ) {
+			} elseif ( ! PodsForm::permission( $field['type'], $field['name'], $field, $fields, $pod, $pod->id() ) ) {
 				continue;
 			}
 
@@ -4058,8 +4055,8 @@ class Pods implements Iterator {
 			$this->ui = $options;
 
 			return pods_ui( $this );
-		} elseif ( ! empty( $options ) || 'custom' !== pods_v( 'ui_style', $this->pod_data['options'], 'post_type', true ) ) {
-			$actions_enabled = pods_v( 'ui_actions_enabled', $this->pod_data['options'] );
+		} elseif ( ! empty( $options ) || 'custom' !== pods_v( 'ui_style', $this->pod_data, 'post_type', true ) ) {
+			$actions_enabled = pods_v( 'ui_actions_enabled', $this->pod_data );
 
 			if ( ! empty( $actions_enabled ) ) {
 				$actions_enabled = (array) $actions_enabled;
@@ -4093,7 +4090,7 @@ class Pods implements Iterator {
 					'export'    => 'export',
 				);
 
-				if ( 1 === pods_v( 'ui_export', $this->pod_data['options'], 0 ) ) {
+				if ( 1 === pods_v( 'ui_export', $this->pod_data, 0 ) ) {
 					unset( $actions_disabled['export'] );
 				}
 			}//end if
@@ -4150,7 +4147,7 @@ class Pods implements Iterator {
 				$manage['modified'] = $this->pod_data['fields']['modified']['label'];
 			}
 
-			$manage_fields = (array) pods_v( 'ui_fields_manage', $this->pod_data['options'] );
+			$manage_fields = (array) pods_v( 'ui_fields_manage', $this->pod_data );
 
 			if ( ! empty( $manage_fields ) ) {
 				$manage_new = array();
@@ -4180,13 +4177,13 @@ class Pods implements Iterator {
 			$pod_name = $this->pod;
 			$manage   = apply_filters( "pods_admin_ui_fields_{$pod_name}", apply_filters( 'pods_admin_ui_fields', $manage, $this->pod, $this ), $this->pod, $this );
 
-			$icon = pods_v( 'ui_icon', $this->pod_data['options'] );
+			$icon = pods_v( 'ui_icon', $this->pod_data );
 
 			if ( ! empty( $icon ) ) {
 				$icon = pods_image_url( $icon, '32x32' );
 			}
 
-			$filters = pods_v( 'ui_filters', $this->pod_data['options'] );
+			$filters = pods_v( 'ui_filters', $this->pod_data );
 
 			if ( ! empty( $filters ) ) {
 				$filters_new = array();
@@ -4222,7 +4219,7 @@ class Pods implements Iterator {
 				$ui['filters_enhanced'] = true;
 			}
 
-			$reorder_field = pods_v( 'ui_reorder_field', $this->pod_data['options'] );
+			$reorder_field = pods_v( 'ui_reorder_field', $this->pod_data );
 
 			if ( ! empty( $reorder_field ) && in_array( 'reorder', $actions_enabled, true ) && ! in_array( 'reorder', $actions_disabled, true ) && ( ( ! empty( $this->pod_data['object_fields'] ) && isset( $this->pod_data['object_fields'][ $reorder_field ] ) ) || isset( $this->pod_data['fields'][ $reorder_field ] ) ) ) {
 				$ui['reorder']     = array( 'on' => $reorder_field );
@@ -4248,7 +4245,7 @@ class Pods implements Iterator {
 				);
 			}
 
-			$detail_url = pods_v( 'detail_url', $this->pod_data['options'] );
+			$detail_url = pods_v( 'detail_url', $this->pod_data );
 
 			if ( 0 < strlen( $detail_url ) ) {
 				$ui['actions_custom'] = array(

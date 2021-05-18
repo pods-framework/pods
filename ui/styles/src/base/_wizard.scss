@@ -230,13 +230,25 @@
 				border-radius: 14px 14px 14px 14px;
 			}
 			.pods-wizard-content {
+				padding: 20px;
+				margin-bottom: 25px;
 				background: #fff;
 				&.pods-wizard-grey {
 					background: #f9f9f9;
 				}
 				p {
-					padding: 20px;
 					margin-top: 0;
+				}
+				ul.normal {
+					margin: 15px 20px;
+					list-style: circle;
+					li {
+						margin: 0 0 8px 30px;
+						padding-left: 4px;
+						line-height: 22px;
+						font-size: 14px;
+						list-style: circle;
+					}
 				}
 			}
 			table {
@@ -333,8 +345,8 @@
 						margin-right: 40px;
 					}
 					a {
-						height: 140px;
-						padding-top: 10px;
+						min-height: 140px;
+						padding: 10px 0;
 						display: block;
 						background: #f9f9f9;
 						position: relative;

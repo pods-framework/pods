@@ -321,18 +321,21 @@ FieldListItem.propTypes = {
 
 export default compose( [
 	withSelect( ( select, ownProps ) => {
-		const {
-			field,
-		} = ownProps;
+		const { field = {} } = ownProps;
 
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 
-		const relatedObjects = storeSelect.getFieldRelatedObjects();
+		// Look up the relatedObject, to find the key for it, we may have to combine
+		// pick_object and pick_val
+		let relatedObject;
 
-		// eslint-disable-next-line camelcase
-		const relatedObject = ( 'pick' === field?.type && field?.pick_object )
-			? relatedObjects[ field.pick_object ]
-			: null;
+		if ( 'pick' === field.type && field.pick_object ) {
+			const key = field.pick_val
+				? `${ field.pick_object }-${ field.pick_val }`
+				: field.pick_object;
+
+			relatedObject = storeSelect.getFieldRelatedObjects()[ key ];
+		}
 
 		return {
 			editFieldPod: storeSelect.getGlobalFieldOptions(),

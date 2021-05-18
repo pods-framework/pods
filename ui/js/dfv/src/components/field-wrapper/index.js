@@ -259,6 +259,11 @@ const MemoizedFieldWrapper = React.memo(
 			return false;
 		}
 
+		// The label usually won't change, EXCEPT on the "Edit Pod" Labels tab.
+		if ( prevProps.field.label !== nextProps.field.label ) {
+			return false;
+		}
+
 		// If there are no dependencies, skip the expensive dependency checks.
 		let dependsOn = nextProps.field[ 'depends-on' ];
 		let dependsOnAny = nextProps.field[ 'depends-on-any' ];

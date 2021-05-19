@@ -29,7 +29,7 @@ class PodsField_File extends PodsField {
 	 * Temporary upload directory.
 	 * @var string
 	 */
-	private static $tmp_upload_dir = null;
+	private static $tmp_upload_dir;
 
 	/**
 	 * {@inheritdoc}
@@ -114,7 +114,8 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_upload_dir_custom'     => array(
 				'label'       => __( 'Custom upload directory', 'pods' ),
-				'description' => __( 'Magic tags allowed', 'pods' ),
+				'help'        => __( 'Magic tags are allowed for this field. The path is relative to the /wp-content/uploads/ folder on your site.', 'pods' ),
+				'placeholder' => 'my-custom-folder',
 				'depends-on'  => array( static::$type . '_upload_dir' => 'uploads' ),
 				/**
 				 * Allow filtering the custom upload directory used.
@@ -1185,13 +1186,15 @@ class PodsField_File extends PodsField {
 				$upload_dir = pods_v( $field['type'] . '_upload_dir', $field['options'], 'wp' );
 
 				if ( 'wp' !== $upload_dir ) {
-					$custom_dir = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
-
+					$custom_dir  = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
 					$context_pod = null;
+
 					if ( $params->post_id ) {
 						$post = get_post( $params->post_id );
+
 						if ( $post ) {
 							$post_pod = pods( $post->post_type, $post->ID );
+
 							if ( $post_pod->exists() ) {
 								$context_pod = $post_pod;
 							}
@@ -1288,7 +1291,7 @@ class PodsField_File extends PodsField {
 	 * @return array The filtered uploads directory information.
 	 */
 	public function filter_upload_dir( $uploads ) {
-		if ( ! self::$tmp_upload_dir ) {
+		if ( empty( self::$tmp_upload_dir ) ) {
 			return $uploads;
 		}
 

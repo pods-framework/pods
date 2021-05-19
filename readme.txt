@@ -192,7 +192,8 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 = 2.7.28 - May 19th, 2021 =
 
-* Added: Relationship fields now support custom selectors in the REST API. You can specify `my_field.some_field` to output a specific field. (@sc0ttkclark)
+* Added: New upload directory option for File fields that lets you choose to customize which directory the files end up in. #6021 (@JoryHogeveen)
+* Added: Relationship fields now support custom selectors in the REST API. You can specify `my_field.some_field` to output a specific field in your REST API options for each relationship field. (@sc0ttkclark)
 * Added: New `pods_image_for_post()` and `pods_image_url_for_post()` functions have been added for certain page builders like Oxygen. (@sc0ttkclark) 
 * Added: New query variable prefix option (`num_prefix`) for PodsUI instances. (@sc0ttkclark)
 * Added: `pagination_type` and `pagination_location` options for PodsUI instances to support more flexible pagination options. (@sc0ttkclark)

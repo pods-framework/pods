@@ -1283,9 +1283,9 @@ class PodsField_File extends PodsField {
 	 *
 	 * @see wp_upload_dir()
 	 *
-	 * @param array $uploads
+	 * @param array $uploads The uploads directory information.
 	 *
-	 * @return array
+	 * @return array The filtered uploads directory information.
 	 */
 	public function filter_upload_dir( $uploads ) {
 		if ( ! self::$tmp_upload_dir ) {

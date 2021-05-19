@@ -191,11 +191,20 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
-= 2.7.28 - TBD =
+= 2.7.28 - May 19th, 2021 =
 
-* Added: Relationship fields now support custom selectors in the REST API. You can specify `my_field.some_field` to output a specific field. (@sc0ttkclark)
-* Fixed: Resolved an issue with relationship fields not outputting their full data to the REST API when the related object is not a valid pod. (@sc0ttkclark)
-* Fixed: Resolved an issue with not saving the fields for the extended Media pod when making update requests through the REST API. (@sc0ttkclark)
+* Added: New upload directory option for File fields using Plupload that lets you choose to customize which directory the files end up in. #6021 (@JoryHogeveen)
+* Added: Relationship fields now support custom selectors in the REST API. You can specify `my_field.some_field` to output a specific field in your REST API options for each relationship field. (@sc0ttkclark)
+* Added: New `pods_image_for_post()` and `pods_image_url_for_post()` functions have been added for certain page builders like Oxygen. (@sc0ttkclark) 
+* Added: New query variable prefix option (`num_prefix`) for PodsUI instances. (@sc0ttkclark)
+* Added: `pagination_type` and `pagination_location` options for PodsUI instances to support more flexible pagination options. (@sc0ttkclark)
+* Enhancement: Implement `search` and `sort` field sets for PodsUI instances to more easily specify which fields are searchable or sortable. (@sc0ttkclark) 
+* Fixed: PHP fatal errors no longer occur for avatar fields in certain situations. #6007 (@JoryHogeveen)
+* Fixed: PHP fatal errors no longer occur for PHP 8 in certain situations. #6012 (@JoryHogeveen)
+* Fixed: Resolved an issue with relationship fields not outputting their full data to the REST API when the related object is not a valid pod. (@sc0ttkclark) 
+* Fixed: Resolved an issue with not saving the fields for the extended Media pod when making update requests through the REST API. (@sc0ttkclark) 
+* Fixed: Implemented a temporary PHP 7.4+ fix for Freemius. (@sc0ttkclark)
+* Fixed: Searching WP-based objects in PodsUI interfaces now resolves to the proper fields. (@sc0ttkclark)
 
 = 2.7.27 - March 4th, 2021 =
 

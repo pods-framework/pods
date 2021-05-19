@@ -13,6 +13,8 @@ const BASE_PROPS = {
 	allPodValues: {},
 	allFieldsMap: new Map(),
 	setOptionValue: jest.fn(),
+	setHasBlurred: jest.fn(),
+	addValidationRules: jest.fn(),
 	fieldConfig: {
 		group: 'group/pod/_pods_pod/dfv-demo',
 		id: 'some_id',

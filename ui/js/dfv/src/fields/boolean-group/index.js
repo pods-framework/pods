@@ -23,6 +23,7 @@ const BooleanGroup = ( {
 	values,
 	allPodValues,
 	allPodFieldsMap,
+	setHasBlurred,
 } ) => {
 	const {
 		boolean_group: booleanGroup = [],
@@ -30,6 +31,8 @@ const BooleanGroup = ( {
 
 	const toggleChange = ( name ) => () => {
 		setOptionValue( name, ! toBool( values[ name ] ) );
+
+		setHasBlurred();
 	};
 
 	return (
@@ -64,6 +67,12 @@ BooleanGroup.propTypes = {
 	 * Function to update the field's value on change.
 	 */
 	setOptionValue: PropTypes.func.isRequired,
+
+	/**
+	 * Used to notify the FieldWrapper that an onBlur event has
+	 * occurred, for validating purposes.
+	 */
+	setHasBlurred: PropTypes.func.isRequired,
 
 	/**
 	 * Subfield values.

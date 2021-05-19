@@ -4,7 +4,7 @@
     "<rootDir>/ui/js/dfv/src/",
     "<rootDir>/ui/js/blocks/src/"
   ],
-  "setupFiles": [
+  "setupFilesAfterEnv": [
     "<rootDir>/jest-setup-wordpress-globals.js"
   ],
   "testMatch": [

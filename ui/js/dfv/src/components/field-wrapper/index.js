@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -70,6 +70,8 @@ export const FieldWrapper = ( props ) => {
 
 	// Find the component for the field type
 	const FieldComponent = FIELD_MAP[ fieldType ]?.fieldComponent;
+
+	const [ hasBlurred, setHasBlurred ] = useState( false );
 
 	// Calculate dependencies, trying to skip as many of these checks as
 	// we can because they're expensive.
@@ -166,6 +168,7 @@ export const FieldWrapper = ( props ) => {
 				isValid={ !! validationMessages.length }
 				addValidationRules={ addValidationRules }
 				htmlAttr={ processedHtmlAttr }
+				setHasBlurred={ () => setHasBlurred( true ) }
 				fieldConfig={ {
 					...field,
 					data: dataOptions || field.data,
@@ -182,10 +185,8 @@ export const FieldWrapper = ( props ) => {
 		</span>
 	);
 
-	const validationMessagesComponent = validationMessages.length ? (
-		<ValidationMessages
-			messages={ validationMessages }
-		/>
+	const validationMessagesComponent = ( hasBlurred && validationMessages.length ) ? (
+		<ValidationMessages messages={ validationMessages } />
 	) : undefined;
 
 	// Don't render a field that hasn't had its dependencies met.
@@ -255,6 +256,11 @@ const MemoizedFieldWrapper = React.memo(
 			prevProps.value !== nextProps.value ||
 			! isEqual( prevProps.values, nextProps.values )
 		) {
+			return false;
+		}
+
+		// The label usually won't change, EXCEPT on the "Edit Pod" Labels tab.
+		if ( prevProps.field.label !== nextProps.field.label ) {
 			return false;
 		}
 

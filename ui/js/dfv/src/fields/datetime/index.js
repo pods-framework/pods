@@ -13,7 +13,7 @@ import {
 	getArrayOfYearsFromJqueryUIYearRange,
 } from 'dfv/src/helpers/dateFormats';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 import 'react-datetime/css/react-datetime.css';
 import './datetime.scss';
@@ -76,13 +76,12 @@ const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, 
 	return format;
 };
 
-const DateTime = ( props ) => {
-	const {
-		value,
-		setValue,
-		fieldConfig = {},
-	} = props;
-
+const DateTime = ( {
+	value,
+	setValue,
+	fieldConfig = {},
+	setHasBlurred,
+} ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
 		name,
@@ -145,6 +144,8 @@ const DateTime = ( props ) => {
 				? newValue.format( valueFormat )
 				: newValue
 		);
+
+		setHasBlurred();
 	};
 
 	// Set the inital view date to the current date, unless the range of years is before
@@ -177,6 +178,7 @@ const DateTime = ( props ) => {
 				type={ 'datetime' === type ? 'datetime-local' : type }
 				value={ value }
 				onChange={ handleInputFieldChange }
+				onBlur={ setHasBlurred }
 			/>
 		);
 	}
@@ -186,6 +188,7 @@ const DateTime = ( props ) => {
 			className="pods-react-datetime-fix"
 			initialValue={ value }
 			onClose={ handleChange }
+			onBlur={ setHasBlurred }
 			dateFormat={ includeDateField && momentDateFormat }
 			timeFormat={ includeTimeField && momentTimeFormat }
 			isValidDate={ isValidDate }
@@ -206,8 +209,7 @@ DateTime.defaultProps = {
 };
 
 DateTime.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	setValue: PropTypes.func.isRequired,
+	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.string,
 };
 

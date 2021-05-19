@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
 import { ColorIndicator, ColorPicker } from '@wordpress/components';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 import './color.scss';
 
 const Color = ( {
 	setValue,
 	value,
+	setHasBlurred,
 } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -31,7 +32,10 @@ const Color = ( {
 			{ isOpen && (
 				<ColorPicker
 					color={ value }
-					onChangeComplete={ ( newValue ) => setValue( newValue.hex ) }
+					onChangeComplete={ ( newValue ) => {
+						setValue( newValue.hex );
+						setHasBlurred();
+					} }
 					disableAlpha
 					className="pods-color-picker"
 				/>
@@ -41,8 +45,7 @@ const Color = ( {
 };
 
 Color.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	setValue: PropTypes.func.isRequired,
+	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.string,
 };
 

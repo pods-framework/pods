@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.7.1
 Requires PHP: 5.3
-Stable tag: 2.7.28-a-1
+Stable tag: 2.7.28
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -190,7 +190,7 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
-= 2.7.28 - TBD =
+= 2.7.28 - May 19th, 2021 =
 
 * Added: Relationship fields now support custom selectors in the REST API. You can specify `my_field.some_field` to output a specific field. (@sc0ttkclark)
 * Added: New `pods_image_for_post()` and `pods_image_url_for_post()` functions have been added for certain page builders like Oxygen. (@sc0ttkclark) 

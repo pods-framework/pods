@@ -2185,14 +2185,14 @@ class PodsAPI {
 
 		$all_fields = [];
 
-		if ( ! empty( $pod['groups'] ) ) {
+		if ( ! empty( $pod['fields'] ) ) {
+			$all_fields = (array) $pod['fields'];
+		} elseif ( ! empty( $pod['groups'] ) ) {
 			$all_fields = wp_list_pluck( array_values( $pod['groups'] ), 'fields' );
 
 			if ( ! empty( $all_fields ) ) {
 				$all_fields = array_merge( ...$all_fields );
 			}
-		} elseif ( ! empty( $pod['fields'] ) ) {
-			$all_fields = $pod['fields'];
 		}
 
 		// Maybe save the pod table schema.
@@ -2248,13 +2248,28 @@ class PodsAPI {
 			}
 		}
 
-		// @todo Figure out how to deal with field saving, since we need group fields OR fields.
-		// @todo We need to sort out $params vs $pod['fields'] futher down.
-		// @todo Maybe abstract pod field saving into ->save_pod_fields() where it looks at groups vs fields and runs it like that
-
 		$fields_to_save = [];
 
-		if ( ! empty( $params->groups ) ) {
+		if ( ! empty( $params->fields ) ) {
+			$params->fields = (array) $params->fields;
+
+			$weight = 0;
+
+			// Handle weight of fields.
+			foreach ( $params->fields as $field ) {
+				if ( ! ( is_array( $field ) || $field instanceof Pods\Whatsit ) || ! isset( $field['name'] ) ) {
+					continue;
+				}
+
+				if ( ! isset( $field['weight'] ) ) {
+					$field['weight'] = $weight;
+
+					$weight ++;
+				}
+
+				$fields_to_save[ $field['name'] ] = $field;
+			}
+		} elseif ( ! empty( $params->groups ) ) {
 			$params->groups = (array) $params->groups;
 
 			$group_weight = 0;
@@ -2318,25 +2333,6 @@ class PodsAPI {
 						$fields_to_save[ $field['name'] ] = $field;
 					}
 				}
-			}
-		} elseif ( ! empty( $params->fields ) ) {
-			$params->fields = (array) $params->fields;
-
-			$weight = 0;
-
-			// Handle weight of fields.
-			foreach ( $params->fields as $field ) {
-				if ( ! ( is_array( $field ) || $field instanceof Pods\Whatsit ) || ! isset( $field['name'] ) ) {
-					continue;
-				}
-
-				if ( ! isset( $field['weight'] ) ) {
-					$field['weight'] = $weight;
-
-					$weight ++;
-				}
-
-				$fields_to_save[ $field['name'] ] = $field;
 			}
 		}
 

@@ -2169,6 +2169,69 @@ function pods_register_related_object( $name, $label, $options = null ) {
 }
 
 /**
+ * Register an object with Pods.
+ *
+ * @since TBD
+ *
+ * @param array  $object The object configuration.
+ * @param string $type   The object type.
+ *
+ * @return true|WP_Error True if successful, or else an WP_Error with the problem.
+ */
+function pods_register_object( array $object, $type ) {
+	$object['object_type']  = $type;
+	$object['storage_type'] = 'collection';
+
+	$object_collection = Store::get_instance();
+	$object_collection->register_object( $object );
+
+	return true;
+}
+
+/**
+ * Register a group and it's fields with Pods.
+ *
+ * @since TBD
+ *
+ * @param array  $group The group configuration.
+ * @param string $pod   The pod to register to.
+ * @param array  $field The list of group fields.
+ *
+ * @return true|WP_Error True if successful, or else an WP_Error with the problem.
+ */
+function pods_register_group( array $group, $pod, array $fields ) {
+	$group['parent'] = 'pod/' . $pod;
+
+	pods_register_object( $group, 'group' );
+
+	foreach ( $fields as $field ) {
+		pods_register_group_field( $field, $group['name'], $pod );
+	}
+
+	return true;
+}
+
+/**
+ * Register a field with Pods.
+ *
+ * @since TBD
+ *
+ * @param array  $field The field configuration.
+ * @param string $group The group to register to.
+ * @param string $pod   The pod to register to.
+ *
+ * @return true|WP_Error True if successful, or else an WP_Error with the problem.
+ */
+function pods_register_group_field( array $field, $group, $pod ) {
+	$field['parent'] = 'pod/' . $pod;
+	$field['group']  = $group;
+
+	pods_register_object( $field, 'field' );
+
+	return true;
+}
+
+/**
  * Register a block type with Pods. Always register during the `pods_blocks_api_init` action.
  *
  * @since TBD

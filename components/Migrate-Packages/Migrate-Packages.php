@@ -74,8 +74,17 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 			$content = '<div class="pods-wizard-content">';
 
+			/**
+			 * Allow filtering whether to replace existing configurations when importing a package.
+			 *
+			 * @since 2.8
+			 *
+			 * @param bool $replace Whether to replace existing configurations when importing a package.
+			 */
+			$replace = apply_filters( 'pods_migrate_packages_import_replace', false );
+
 			if ( ! empty( $data ) ) {
-				$imported = self::import( $data );
+				$imported = self::import( $data, $replace );
 
 				if ( ! empty( $imported ) ) {
 					$content .= '<p>Import Complete! The following items were imported:</p>';
@@ -173,7 +182,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 		if ( isset( $data['pods'] ) && is_array( $data['pods'] ) ) {
 			foreach ( $data['pods'] as $pod_data ) {
-				$pod = self::import_pod( $pod_data );
+				$pod = self::import_pod( $pod_data, $replace );
 
 				if ( ! $pod ) {
 					continue;
@@ -189,7 +198,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 		if ( isset( $data['templates'] ) && is_array( $data['templates'] ) ) {
 			foreach ( $data['templates'] as $template_data ) {
-				$template = self::import_pod_template( $template_data );
+				$template = self::import_pod_template( $template_data, $replace );
 
 				if ( ! $template ) {
 					continue;
@@ -212,7 +221,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 		if ( isset( $data['pages'] ) && is_array( $data['pages'] ) ) {
 			foreach ( $data['pages'] as $page_data ) {
-				$page = self::import_pod_page( $page_data );
+				$page = self::import_pod_page( $page_data, $replace );
 
 				if ( ! $page ) {
 					continue;
@@ -228,7 +237,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 		if ( isset( $data['helpers'] ) && is_array( $data['helpers'] ) ) {
 			foreach ( $data['helpers'] as $helper_data ) {
-				$helper = self::import_pod_helper( $helper_data );
+				$helper = self::import_pod_helper( $helper_data, $replace );
 
 				if ( ! $helper ) {
 					continue;
@@ -266,29 +275,28 @@ class Pods_Migrate_Packages extends PodsComponent {
 			unset( $data['id'] );
 		}
 
-		$pod = self::$api->load_pod( [ 'name' => $data['name'] ], false );
+		$pod_object = self::$api->load_pod( [ 'name' => $data['name'] ], false );
+
+		$pod = [
+			'groups' => [],
+			'fields' => [],
+		];
 
 		$existing_groups = [];
 		$existing_fields = [];
 
-		if ( ! empty( $pod ) ) {
-			// Delete Pod if it exists
-			if ( $replace ) {
-				self::$api->delete_pod( [ 'id' => $pod['id'] ] );
+		if ( $pod_object ) {
+			// Convert to an array.
+			$pod = $pod_object->get_args();
 
-				$pod = [
-					'groups' => [],
-					'fields' => [],
-				];
-			} else {
-				$existing_groups = $pod['groups'];
-				$existing_fields = $pod['fields'];
+			if ( ! $replace ) {
+				// We will still be replacing any groups/fields that are sent.
+				$replace = true;
+
+				// Append to the groups and fields.
+				$existing_groups = $pod_object['groups'];
+				$existing_fields = $pod_object['fields'];
 			}
-		} else {
-			$pod = [
-				'groups' => [],
-				'fields' => [],
-			];
 		}
 
 		$pod_data = $data;
@@ -307,62 +315,58 @@ class Pods_Migrate_Packages extends PodsComponent {
 		}
 
 		if ( isset( $pod['groups'] ) ) {
-			foreach ( $pod['groups'] as $k => $group ) {
-				if ( isset( $group['id'] ) && ! isset( $existing_groups[ $group['name'] ] ) ) {
-					unset( $pod['groups'][ $k ]['id'] );
-				}
-
-				if ( isset( $group['pod_id'] ) ) {
-					unset( $pod['groups'][ $k ]['pod_id'] );
-				}
-
-				// Match the group up.
-				if ( isset( $existing_groups[ $group['name'] ] ) ) {
-					$existing_group = self::$api->load_group( [
-						'name' => $group['name'],
-						'pod'  => $pod['name'],
-					] );
-
-					if ( $existing_group ) {
-						$pod['groups'][ $k ]['id'] = $existing_group['id'];
-					}
-				}
-
-				if ( isset( $group['pod'] ) ) {
-					unset( $pod['groups'][ $k ]['pod'] );
-				}
-			}
+			$pod['groups'] = self::import_pod_setup_objects( $pod['groups'], $existing_groups, $existing_fields );
 		} elseif ( isset( $pod['fields'] ) ) {
-			foreach ( $pod['fields'] as $k => $field ) {
-				if ( isset( $field['id'] ) && ! isset( $existing_fields[ $field['name'] ] ) ) {
-					unset( $pod['fields'][ $k ]['id'] );
-				}
-
-				if ( isset( $field['pod_id'] ) ) {
-					unset( $pod['fields'][ $k ]['pod_id'] );
-				}
-
-				// Match the field up.
-				if ( isset( $existing_fields[ $field['name'] ] ) ) {
-					$existing_field = self::$api->load_field( [
-						'name' => $field['name'],
-						'pod'  => $pod['name'],
-					] );
-
-					if ( $existing_field ) {
-						$pod['fields'][ $k ]['id'] = $existing_field['id'];
-					}
-				}
-
-				if ( isset( $field['pod'] ) ) {
-					unset( $pod['fields'][ $k ]['pod'] );
-				}
-			}
+			$pod['fields'] = self::import_pod_setup_objects( $pod['fields'], $existing_fields );
 		}
+
+		$pod['overwrite'] = $replace;
 
 		self::$api->save_pod( $pod );
 
 		return $pod;
+	}
+
+	/**
+	 * Handle setting up the objects for importing.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array $objects          The objects to set up.
+	 * @param array $existing_objects List of existing objects.
+	 * @param array $existing_fields  List of existing fields (if the objects support fields).
+	 *
+	 * @return array The objects that were set up.
+	 */
+	private static function import_pod_setup_objects( array $objects, array $existing_objects, array $existing_fields = [] ) {
+		$unset_args = [
+			'id',
+			'pod',
+			'pod_data',
+			'pod_id',
+			'group',
+			'group_id',
+		];
+
+		foreach ( $objects as $key => $object ) {
+			foreach ( $unset_args as $unset_arg ) {
+				if ( isset( $object[ $unset_arg ] ) ) {
+					unset( $object[ $unset_arg ] );
+				}
+			}
+
+			if ( isset( $existing_objects[ $object['name'] ] ) ) {
+				$object['id'] = $existing_objects[ $object['name'] ]['id'];
+			}
+
+			if ( ! empty( $object['fields'] ) && $existing_fields ) {
+				$object['fields'] = self::import_pod_setup_objects( $object['fields'], $existing_fields );
+			}
+
+			$objects[ $key ] = $object;
+		}
+
+		return $objects;
 	}
 
 	/**
@@ -779,6 +783,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 			$options_ignore = array(
 				'pod_id',
+				'parent',
 				'old_name',
 				'podType',
 				'storageType',
@@ -808,6 +813,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 				'pod',
 				'recurse',
 				'table_info',
+				'pod_data',
 				'attributes',
 				'group',
 				'grouped',

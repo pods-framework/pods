@@ -1182,7 +1182,7 @@ class PodsMeta {
 				$value = null;
 
 				if ( ! empty( $pod ) ) {
-					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
+					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true, 'single' => true ] );
 				} elseif ( ! empty( $id ) ) {
 					$value = get_post_meta( $id, $field['name'], true );
 				}

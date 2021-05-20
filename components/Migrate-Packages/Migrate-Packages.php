@@ -608,7 +608,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 			unset( $data['id'] );
 		}
 
-		$template = self::$api->load_template( [ 'name' => $data['name'] ] );
+		$template = self::$api->load_template( [
+			'name' => $data['name'],
+		] );
 
 		if ( ! empty( $template ) ) {
 			// Delete Template if it exists
@@ -621,7 +623,13 @@ class Pods_Migrate_Packages extends PodsComponent {
 			$template = [];
 		}
 
+		$template_id = (int) pods_v( 'id', $template );
+
 		$template = pods_config_merge_data( $template, $data );
+
+		if ( 0 < $template_id ) {
+			$template['id'] = $template_id;
+		}
 
 		self::$api->save_template( $template );
 
@@ -643,7 +651,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 			unset( $data['id'] );
 		}
 
-		$page = self::$api->load_page( [ 'name' => pods_v( 'name', $data, pods_v( 'uri', $data ), true ) ] );
+		$page = self::$api->load_page( [
+			'name' => pods_v( 'name', $data, pods_v( 'uri', $data ), true ),
+		] );
 
 		if ( ! empty( $page ) ) {
 			// Delete Page if it exists
@@ -669,7 +679,13 @@ class Pods_Migrate_Packages extends PodsComponent {
 			unset( $data['phpcode'] );
 		}
 
+		$page_id = (int) pods_v( 'id', $page );
+
 		$page = pods_config_merge_data( $page, $data );
+
+		if ( 0 < $page_id ) {
+			$page['id'] = $page_id;
+		}
 
 		$page['name'] = trim( $page['name'], '/' );
 

@@ -223,7 +223,9 @@ class PodsAPI {
 		}
 
 		if ( ! is_array( $post_data ) || empty( $post_data ) ) {
-			$post_data = array( 'post_title' => '' );
+			$post_data = [
+				'post_title' => '',
+			];
 		}
 
 		if ( ! is_array( $post_meta ) ) {
@@ -4391,7 +4393,7 @@ class PodsAPI {
 		$post_data = array(
 			'post_name'    => pods_clean_name( $object['name'], true ),
 			'post_title'   => $object['name'],
-			'post_content' => $object['code'],
+			'post_content' => $object['code'] ?: '',
 			'post_type'    => '_pods_' . $object['type'],
 			'post_status'  => 'publish'
 		);
@@ -8363,7 +8365,7 @@ class PodsAPI {
 			}
 		}
 
-		return $this->_load_object( $params, true );
+		return $this->_load_object( $params, $strict );
 	}
 
 	/**
@@ -8434,6 +8436,12 @@ class PodsAPI {
 		$params       = (object) $params;
 		$params->type = 'template';
 
+		if ( isset( $params->name ) ) {
+			$params->title = $params->name;
+
+			unset( $params->name );
+		}
+
 		return $this->load_object( $params );
 	}
 
@@ -8484,10 +8492,19 @@ class PodsAPI {
 		}
 
 		$params = (object) $params;
-		if ( ! isset( $params->name ) && isset( $params->uri ) ) {
-			$params->name = $params->uri;
+
+		if ( isset( $params->name ) ) {
+			$params->title = $params->name;
+
+			unset( $params->name );
+		}
+
+		if ( ! isset( $params->title ) && isset( $params->uri ) ) {
+			$params->title = $params->uri;
+
 			unset( $params->uri );
 		}
+
 		$params->type = 'page';
 
 		return $this->load_object( $params );
@@ -10575,7 +10592,16 @@ class PodsAPI {
 		$object = false;
 
 		if ( isset( $params['title'] ) ) {
-			$object = pods_by_title( $params['title'], ARRAY_A, '_pods_' . $params['object_type'], 'publish' );
+			$object = pods_by_title( $params['title'], ARRAY_A, '_pods_' . $params['object_type'], 'publish', 'id' );
+
+			// Normalize the response as Whatsit.
+			if ( 0 < $object ) {
+				$params['id'] = $object;
+
+				unset( $params['title'] );
+
+				$object = $this->_load_object( $params, $strict );
+			}
 		} else {
 			$params['limit'] = 1;
 

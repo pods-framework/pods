@@ -1615,16 +1615,17 @@ function pods_has_permissions( $options ) {
  *
  * @see   get_page_by_title
  *
- * @param string       $title  Title of item to get
- * @param string       $output Optional. Output type. OBJECT, ARRAY_N, or ARRAY_A. Default OBJECT.
- * @param string       $type   Post Type
- * @param string|array $status Post statuses to include (default is what user has access to)
+ * @param string       $title   Title of item to get
+ * @param string       $output  Optional. Output type. OBJECT, ARRAY_N, or ARRAY_A. Default OBJECT.
+ * @param string       $type    Post Type
+ * @param string|array $status  Post statuses to include (default is what user has access to)
+ * @param bool         $return  Whether to return the 'id' or 'post'.
  *
  * @return WP_Post|null WP_Post on success or null on failure
  *
  * @since 2.3.4
  */
-function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null ) {
+function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null, $return = 'post' ) {
 	// @todo support Pod item lookups, not just Post Types
 	/**
 	 * @var $wpdb WPDB
@@ -1654,10 +1655,14 @@ function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null
 	// Once for WHERE, once for ORDER BY
 	$prepared = array_merge( array( $title, $type ), $status, $status );
 
-	$page = $wpdb->get_var( $wpdb->prepare( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_title` = %s AND `post_type` = %s" . $status_sql . $orderby_sql, $prepared ) );
+	$page = (int) $wpdb->get_var( $wpdb->prepare( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_title` = %s AND `post_type` = %s" . $status_sql . $orderby_sql, $prepared ) );
 
-	if ( $page ) {
-		return get_post( pods_v( $page, 'post_id' ), $output );
+	if ( 0 < $page ) {
+		if ( 'id' === $return ) {
+			return $page;
+		}
+
+		return get_post( $page, $output );
 	}
 
 	return null;

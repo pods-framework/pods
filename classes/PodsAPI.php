@@ -4342,58 +4342,42 @@ class PodsAPI {
 			return pods_error( __( 'Type must be given to save an Object', 'pods' ), $this );
 		}
 
-		$object = array(
-			'id'      => 0,
-			'name'    => $params->name,
-			'type'    => $params->type,
-			'code'    => '',
-			'options' => array()
-		);
+		$object = [
+			'id'   => isset( $params->id ) ? $params->id : 0,
+			'name' => $params->name,
+			'type' => $params->type,
+			'code' => isset( $params->code ) ? $params->code : '',
+		];
 
 		// Setup options
 		$options = get_object_vars( $params );
+
+		if ( isset( $options['options'] ) ) {
+			$options = array_merge( $options, $options['options'] );
+
+			unset( $options['options'] );
+		}
 
 		if ( isset( $options['method'] ) ) {
 			unset( $options['method'] );
 		}
 
-		$exclude = array(
-			'id',
-			'name',
-			'code',
-			'options',
-			'status',
-		);
+		$post_meta = $options;
 
-		foreach ( $exclude as $k => $exclude_field ) {
-			$aliases = array( $exclude_field );
+		$exclude = array_keys( $object );
 
-			if ( is_array( $exclude_field ) ) {
-				$aliases       = array_merge( array( $k ), $exclude_field );
-				$exclude_field = $k;
-			}
-
-			foreach ( $aliases as $alias ) {
-				if ( isset( $options[ $alias ] ) ) {
-					$object[ $exclude_field ] = pods_trim( $options[ $alias ] );
-
-					unset( $options[ $alias ] );
-				}
+		foreach ( $exclude as $excluded_key ) {
+			if ( isset( $post_meta[ $excluded_key ] ) ) {
+				unset( $post_meta[ $excluded_key ] );
 			}
 		}
 
-		if ( isset( $object['code'] ) ) {
-			unset( $object['code'] );
-		}
-
-		foreach ( $options as $o => $v ) {
-			$object[ $o ] = $v;
-		}
+		$object = array_merge( $options, $object );
 
 		$post_data = array(
 			'post_name'    => pods_clean_name( $object['name'], true ),
 			'post_title'   => $object['name'],
-			'post_content' => $object['code'] ?: '',
+			'post_content' => $object['code'],
 			'post_type'    => '_pods_' . $object['type'],
 			'post_status'  => 'publish'
 		);
@@ -4412,7 +4396,7 @@ class PodsAPI {
 
 		$post_data = pods_sanitize( $post_data );
 
-		$params->id = $this->save_post( $post_data, $object, true, true );
+		$params->id = $this->save_post( $post_data, $post_meta, true, true );
 
 		pods_transient_clear( 'pods_objects_' . $params->type );
 		pods_transient_clear( 'pods_objects_' . $params->type . '_get' );

@@ -627,6 +627,31 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 		$template = pods_config_merge_data( $template, $data );
 
+		if ( $template instanceof \Pods\Whatsit\Template ) {
+			$template = $template->get_args();
+
+			$excluded_args = [
+				'object_type',
+				'storage_type',
+				'parent',
+				'group',
+				'label',
+				'description',
+				'slug',
+				'weight',
+			];
+
+			foreach ( $excluded_args as $excluded_arg ) {
+				if ( isset( $template[ $excluded_arg ] ) ) {
+					unset( $template[ $excluded_arg ] );
+				}
+			}
+		} elseif ( ! empty( $template['options'] ) ) {
+			$template = pods_config_merge_data( $template, $template['options'] );
+
+			unset( $template['options'] );
+		}
+
 		if ( 0 < $template_id ) {
 			$template['id'] = $template_id;
 		}
@@ -682,6 +707,31 @@ class Pods_Migrate_Packages extends PodsComponent {
 		$page_id = (int) pods_v( 'id', $page );
 
 		$page = pods_config_merge_data( $page, $data );
+
+		if ( $page instanceof \Pods\Whatsit\Page ) {
+			$page = $page->get_args();
+
+			$excluded_args = [
+				'object_type',
+				'storage_type',
+				'parent',
+				'group',
+				'label',
+				'description',
+				'slug',
+				'weight',
+			];
+
+			foreach ( $excluded_args as $excluded_arg ) {
+				if ( isset( $template[ $excluded_arg ] ) ) {
+					unset( $template[ $excluded_arg ] );
+				}
+			}
+		} elseif ( ! empty( $page['options'] ) ) {
+			$page = pods_config_merge_data( $page, $page['options'] );
+
+			unset( $page['options'] );
+		}
 
 		if ( 0 < $page_id ) {
 			$page['id'] = $page_id;
@@ -908,8 +958,15 @@ class Pods_Migrate_Packages extends PodsComponent {
 				$export['pods'][ $pod_key ] = $pod;
 			}//end foreach
 
-			$export['pods'] = array_values ( $export['pods'] );
+			$export['pods'] = array_values( $export['pods'] );
 		}//end if
+
+		$excluded_args = [
+			'label',
+			'description',
+			'slug',
+			'weight',
+		];
 
 		if ( ! empty( $template_ids ) ) {
 			$api_params = array();
@@ -918,7 +975,19 @@ class Pods_Migrate_Packages extends PodsComponent {
 				$api_params['ids'] = (array) $template_ids;
 			}
 
-			$export['templates'] = self::$api->load_templates( $api_params );
+			$export['templates'] = array_values( self::$api->load_templates( $api_params ) );
+
+			foreach ( $export['templates'] as $k => $template ) {
+				$template = $template->get_clean_args();
+
+				foreach ( $excluded_args as $excluded_arg ) {
+					if ( isset( $template[ $excluded_arg ] ) ) {
+						unset( $template[ $excluded_arg ] );
+					}
+				}
+
+				$export['templates'][ $k ] = $template;
+			}
 		}
 
 		if ( ! empty( $page_ids ) ) {
@@ -928,7 +997,19 @@ class Pods_Migrate_Packages extends PodsComponent {
 				$api_params['ids'] = (array) $page_ids;
 			}
 
-			$export['pages'] = self::$api->load_pages( $api_params );
+			$export['pages'] = array_values( self::$api->load_pages( $api_params ) );
+
+			foreach ( $export['pages'] as $k => $page ) {
+				$page = $page->get_clean_args();
+
+				foreach ( $excluded_args as $excluded_arg ) {
+					if ( isset( $page[ $excluded_arg ] ) ) {
+						unset( $page[ $excluded_arg ] );
+					}
+				}
+
+				$export['pages'][ $k ] = $page;
+			}
 		}
 
 		if ( ! empty( $helper_ids ) ) {
@@ -938,7 +1019,19 @@ class Pods_Migrate_Packages extends PodsComponent {
 				$api_params['ids'] = (array) $helper_ids;
 			}
 
-			$export['helpers'] = self::$api->load_helpers( $api_params );
+			$export['helpers'] = array_values( self::$api->load_helpers( $api_params ) );
+
+			foreach ( $export['helpers'] as $k => $helper ) {
+				$helper = $helper->get_clean_args();
+
+				foreach ( $excluded_args as $excluded_arg ) {
+					if ( isset( $helper[ $excluded_arg ] ) ) {
+						unset( $helper[ $excluded_arg ] );
+					}
+				}
+
+				$export['helpers'][ $k ] = $helper;
+			}
 		}
 
 		$export = apply_filters( 'pods_packages_export', $export, $params );

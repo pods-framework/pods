@@ -721,12 +721,36 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
-	 * Get object arguments.
+	 * Get list of object arguments.
 	 *
-	 * @return array Object arguments.
+	 * @return arra List of object arguments.
 	 */
 	public function get_args() {
 		return $this->args;
+	}
+
+	/**
+	 * Get list of clean object arguments.
+	 *
+	 * @return array List of clean object arguments.
+	 */
+	public function get_clean_args() {
+		$args = $this->args;
+
+		$excluded_args = [
+			'object_type',
+			'storage_type',
+			'parent',
+			'group',
+		];
+
+		foreach ( $excluded_args as $excluded_arg ) {
+			if ( isset( $args[ $excluded_arg ] ) ) {
+				unset( $args[ $excluded_arg ] );
+			}
+		}
+
+		return $args;
 	}
 
 	/**

@@ -3,14 +3,17 @@
 
 	<?php
 	foreach ( $fields as $name => $field ) {
-		if ( 'pick' === $field['type'] && 'pick-custom' !== $field['pick_object'] && ! empty( $field['pick_object'] ) ) {
+		if ( in_array( $field['type'], array( 'pick', 'taxonomy' ), true ) && 'pick-custom' !== $field['pick_object'] && ! empty( $field['pick_object'] ) ) {
 			$field['options']['pick_format_type']   = 'single';
 			$field['options']['pick_format_single'] = 'dropdown';
 			$field['options']['pick_select_text']   = '-- ' . $field['label'] . ' --';
 
 			$filter = pods_var_raw( 'filter_' . $name, 'get', '' );
 
-			echo PodsForm::field( 'filter_' . $name, $filter, 'pick', $field, $pod->pod, $pod->id() );
+			// @todo Support other field types.
+			$field['type'] = 'pick';
+
+			echo PodsForm::field( 'filter_' . $name, $filter, $field['type'], $field, $pod->pod, $pod->id() );
 		}
 	}
 	?>

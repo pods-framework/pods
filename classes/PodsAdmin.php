@@ -241,6 +241,7 @@ class PodsAdmin {
 						$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 						$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
+						$menu_label = strip_tags( $menu_label );
 						$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 						$singular_label = pods_v( 'label_singular', $pod['options'], pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
@@ -444,6 +445,7 @@ class PodsAdmin {
 					$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 					$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
+					$menu_label = strip_tags( $menu_label );
 					$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 					$menu_icon            = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );
@@ -500,6 +502,7 @@ class PodsAdmin {
 					$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 					$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
+					$menu_label = strip_tags( $menu_label );
 					$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 					$menu_icon = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );
@@ -1671,6 +1674,20 @@ class PodsAdmin {
 					'default'     => '',
 					'object_type' => array( 'post_type' ),
 				),
+				'filter_by_date'                   => array(
+					'label'       => __( 'Filter by date', 'pods' ),
+					'help'        => __( 'help', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'object_type' => array( 'post_type' ),
+				),
+				'filter_by_item'                   => array(
+					'label'       => __( 'Filter by <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+					'help'        => __( 'help', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'object_type' => array( 'taxonomy' ),
+				),
 			);
 
 			$options['labels'] = array();
@@ -2064,14 +2081,14 @@ class PodsAdmin {
 			}
 
 			$options['advanced'] = array(
-				'public'                  => array(
+				'public'                   => array(
 					'label'             => __( 'Public', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => true,
 					'boolean_yes_label' => '',
 				),
-				'hierarchical'            => array(
+				'hierarchical'             => array(
 					'label'             => __( 'Hierarchical', 'pods' ),
 					'help'              => __( 'Hierarchical taxonomies will have a list with checkboxes to select an existing category in the taxonomy admin box on the post edit page (like default post categories). Non-hierarchical taxonomies will just have an empty text field to type-in taxonomy terms to associate with the post (like default post tags).', 'pods' ),
 					'type'              => 'boolean',
@@ -2079,28 +2096,28 @@ class PodsAdmin {
 					'dependency'        => true,
 					'boolean_yes_label' => '',
 				),
-				'label_parent_item_colon' => array(
+				'label_parent_item_colon'  => array(
 					'label'      => __( '<strong>Label: </strong> Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => array( 'hierarchical' => true ),
 				),
-				'label_parent'            => array(
+				'label_parent'             => array(
 					'label'      => __( '<strong>Label: </strong> Parent', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => array( 'hierarchical' => true ),
 				),
-				'label_no_terms'          => array(
+				'label_no_terms'           => array(
 					'label'      => __( '<strong>Label: </strong> No <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => array( 'hierarchical' => true ),
 				),
-				'rewrite'                 => array(
+				'rewrite'                  => array(
 					'label'             => __( 'Rewrite', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
@@ -2108,14 +2125,14 @@ class PodsAdmin {
 					'dependency'        => true,
 					'boolean_yes_label' => '',
 				),
-				'rewrite_custom_slug'     => array(
+				'rewrite_custom_slug'      => array(
 					'label'      => __( 'Custom Rewrite Slug', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => array( 'rewrite' => true ),
 				),
-				'rewrite_with_front'      => array(
+				'rewrite_with_front'       => array(
 					'label'             => __( 'Rewrite with Front', 'pods' ),
 					'help'              => __( 'Allows permalinks to be prepended with your front base (example: if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/)', 'pods' ),
 					'type'              => 'boolean',
@@ -2123,7 +2140,7 @@ class PodsAdmin {
 					'boolean_yes_label' => '',
 					'depends-on'        => array( 'rewrite' => true ),
 				),
-				'rewrite_hierarchical'    => array(
+				'rewrite_hierarchical'     => array(
 					'label'             => __( 'Hierarchical Permalinks', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
@@ -2131,7 +2148,7 @@ class PodsAdmin {
 					'boolean_yes_label' => '',
 					'depends-on'        => array( 'rewrite' => true ),
 				),
-				'capability_type'         => array(
+				'capability_type'          => array(
 					'label'      => __( 'User Capability', 'pods' ),
 					'help'       => __( 'Uses WordPress term capabilities by default', 'pods' ),
 					'type'       => 'pick',
@@ -2142,21 +2159,14 @@ class PodsAdmin {
 					),
 					'dependency' => true,
 				),
-				'capability_type_custom'  => array(
+				'capability_type_custom'   => array(
 					'label'      => __( 'Custom User Capability', 'pods' ),
 					'help'       => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
 					'type'       => 'text',
 					'default'    => pods_v( 'name', $pod ),
 					'depends-on' => array( 'capability_type' => 'custom' ),
 				),
-				'query_var'               => array(
-					'label'             => __( 'Query Var', 'pods' ),
-					'help'              => __( 'help', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => false,
-					'boolean_yes_label' => '',
-				),
-				'query_var'               => array(
+				'query_var'                => array(
 					'label'             => __( 'Query Var', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
@@ -2164,21 +2174,21 @@ class PodsAdmin {
 					'dependency'        => true,
 					'boolean_yes_label' => '',
 				),
-				'query_var_string'        => array(
+				'query_var_string'         => array(
 					'label'      => __( 'Custom Query Var Name', 'pods' ),
 					'help'       => __( 'help', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => array( 'query_var' => true ),
 				),
-				'sort'                    => array(
+				'sort'                     => array(
 					'label'             => __( 'Remember order saved on Post Types', 'pods' ),
 					'help'              => __( 'help', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'boolean_yes_label' => '',
 				),
-				'update_count_callback'   => array(
+				'update_count_callback'    => array(
 					'label'   => __( 'Function to call when updating counts', 'pods' ),
 					'help'    => __( 'help', 'pods' ),
 					'type'    => 'text',
@@ -3704,7 +3714,7 @@ class PodsAdmin {
 				),
 				'rest_write' => array(
 					'label'   => __( 'Write via REST API?', 'pods' ),
-					'help'    => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+					'help'    => __( 'Should this field be writeable via the REST API? You must enable REST API support for this Pod. For relationship and file fields, you will always pass the ID of the related item/file. If this is a non-ID based relationship field, you will pass the related value (not label).', 'pods' ),
 					'type'    => 'boolean',
 					'default' => '',
 				),
@@ -3718,22 +3728,33 @@ class PodsAdmin {
 					'depends-on' => array( 'type' => 'pick' ),
 					'dependency' => true,
 					'data'       => array(
-						'array' => __( 'Full', 'pods' ),
-						'id'    => __( 'ID only', 'pods' ),
-						'name'  => __( 'Name', 'pods' ),
+						'array'  => __( 'All fields', 'pods' ),
+						'id'     => __( 'ID only', 'pods' ),
+						'name'   => __( 'Name only', 'pods' ),
+						'custom' => __( 'Custom return (specify field to return)', 'pods' ),
 					),
 				),
 				'rest_pick_depth'    => array(
 					'label'      => __( 'Depth', 'pods' ),
-					'help'       => __( 'How far to traverse relationships in response', 'pods' ),
+					'help'       => __( 'How far to traverse relationships in response. 1 will get you all of the fields on the related item. 2 will get you all of those fields plus related items and their fields. The higher the depth, the more data will be returned and the slower performance the REST API calls will be. Updates to this field do NOT take depth into account, so you will always send the ID of the related item when saving.', 'pods' ),
 					'type'       => 'number',
-					'default'    => '2',
+					'default'    => '1',
 					'depends-on' => array(
 						'type'               => 'pick',
 						'rest_pick_response' => 'array',
 					),
 				),
-
+				'rest_pick_custom'    => array(
+					'label'       => __( 'Custom return', 'pods' ),
+					'help'        => __( 'Specify the field to use following the established this_field_name.ID traversal pattern. You must include this field name in the selector for this to work properly.', 'pods' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => 'this_field_name.ID',
+					'depends-on'  => array(
+						'type'               => 'pick',
+						'rest_pick_response' => 'custom',
+					),
+				),
 			);
 
 		}//end if

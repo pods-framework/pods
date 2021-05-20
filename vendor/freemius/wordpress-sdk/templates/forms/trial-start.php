@@ -28,7 +28,7 @@
 		fs_text_inline( 'For compliance with the WordPress.org guidelines, before we start the trial we ask that you opt in with your user and non-sensitive site information, allowing the %s to periodically send data to %s to check for version updates and to validate your trial.', 'start-trial-prompt-message', $slug ),
 		$fs->get_module_type(),
 		sprintf(
-			'<a href="%s" target="_blank">%s</a>',
+			'<a href="%s" target="_blank" rel="noopener">%s</a>',
 			'https://freemius.com',
 			'freemius.com'
 		)

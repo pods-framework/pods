@@ -471,6 +471,7 @@ class Pods_Component_I18n extends PodsComponent {
 			'item_reverted_to_draft'     => 'label_item_reverted_to_draft',
 			'item_scheduled'             => 'label_item_scheduled',
 			'item_updated'               => 'label_item_updated',
+			'filter_by_date'             => 'label_filter_by_date', // WP 5.7
 
 			// Taxonomies
 			'update_item'                => 'label_update_item',
@@ -481,6 +482,7 @@ class Pods_Component_I18n extends PodsComponent {
 			'add_or_remove_items'        => 'label_add_or_remove_items',
 			'choose_from_most_used'      => 'label_choose_from_the_most_used', // Different.
 			'no_terms'                   => 'label_no_terms',
+			'filter_by_item'             => 'label_filter_by_item', // WP 5.7
 		);
 
 		if ( ! isset( $options['labels'] ) || ! is_array( $options['labels'] ) ) {

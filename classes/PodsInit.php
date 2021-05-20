@@ -203,7 +203,7 @@ class PodsInit {
 				'type'           => 'plugin',
 				'public_key'     => 'pk_737105490825babae220297e18920',
 				'is_premium'     => false,
-				'has_addons'     => true,
+				'has_addons'     => false,
 				'has_paid_plans' => false,
 				'menu'           => array(
 					'slug'        => 'pods-settings',
@@ -212,7 +212,7 @@ class PodsInit {
 					'affiliation' => false,
 					'account'     => true,
 					'pricing'     => false,
-					'addons'      => true,
+					'addons'      => false,
 					'parent'      => array(
 						'slug' => 'pods',
 					),
@@ -228,8 +228,10 @@ class PodsInit {
 
 			/**
 			 * Allow hooking into the Freemius registration after Pods has registered it's own Freemius.
+			 *
+			 * @since 2.7.27
 			 */
-			do_action( 'pods_freemius_init' );
+			do_action( 'pods_freemius_after_init' );
 		} catch ( \Exception $exception ) {
 			return null;
 		}
@@ -863,7 +865,7 @@ class PodsInit {
 				$cpt_labels                             = array();
 				$cpt_labels['name']                     = $cpt_label;
 				$cpt_labels['singular_name']            = $cpt_singular;
-				$cpt_labels['menu_name']                = pods_v( 'menu_name', $post_type, '', true );
+				$cpt_labels['menu_name']                = strip_tags( pods_v( 'menu_name', $post_type, '', true ) );
 				$cpt_labels['name_admin_bar']           = pods_v( 'name_admin_bar', $post_type, '', true );
 				$cpt_labels['add_new']                  = pods_v( 'label_add_new', $post_type, '', true );
 				$cpt_labels['add_new_item']             = pods_v( 'label_add_new_item', $post_type, '', true );
@@ -895,6 +897,7 @@ class PodsInit {
 				$cpt_labels['item_reverted_to_draft']   = pods_v( 'label_item_reverted_to_draft', $post_type, '', true );
 				$cpt_labels['item_scheduled']           = pods_v( 'label_item_scheduled', $post_type, '', true );
 				$cpt_labels['item_updated']             = pods_v( 'label_item_updated', $post_type, '', true );
+				$cpt_labels['filter_by_date']           = pods_v( 'label_filter_by_date', $post_type, '', true );
 
 				// Supported
 				$cpt_supported = array(
@@ -1100,7 +1103,7 @@ class PodsInit {
 				$ct_labels                               = array();
 				$ct_labels['name']                       = $ct_label;
 				$ct_labels['singular_name']              = $ct_singular;
-				$ct_labels['menu_name']                  = pods_v( 'menu_name', $taxonomy, '', true );
+				$ct_labels['menu_name']                  = strip_tags( pods_v( 'menu_name', $taxonomy, '', true ) );
 				$ct_labels['search_items']               = pods_v( 'label_search_items', $taxonomy, '', true );
 				$ct_labels['popular_items']              = pods_v( 'label_popular_items', $taxonomy, '', true );
 				$ct_labels['all_items']                  = pods_v( 'label_all_items', $taxonomy, '', true );
@@ -1118,6 +1121,7 @@ class PodsInit {
 				$ct_labels['no_terms']                   = pods_v( 'label_no_terms', $taxonomy, '', true );
 				$ct_labels['items_list']                 = pods_v( 'label_items_list', $taxonomy, '', true );
 				$ct_labels['items_list_navigation']      = pods_v( 'label_items_list_navigation', $taxonomy, '', true );
+				$ct_labels['filter_by_item']             = pods_v( 'label_filter_by_item', $taxonomy, '', true );
 
 				// Rewrite
 				$ct_rewrite       = (boolean) pods_v( 'rewrite', $taxonomy, true );
@@ -1180,6 +1184,16 @@ class PodsInit {
 					'show_admin_column'     => (boolean) pods_v( 'show_admin_column', $taxonomy, false ),
 					'sort'                  => (boolean) pods_v( 'sort', $taxonomy, false ),
 				);
+
+				// @since WP 5.5: Default terms.
+				$default_term_name = pods_v( 'default_term_name', $taxonomy, null, true );
+				if ( $default_term_name ) {
+					$pods_taxonomies[ $taxonomy_name ][ 'default_term' ] = array(
+						'name'        => $default_term_name,
+						'slug'        => pods_v( 'default_term_slug', $taxonomy, null, true ),
+						'description' => pods_v( 'default_term_description', $taxonomy, null, true ),
+					);
+				}
 
 				if ( is_array( $ct_rewrite ) && ! $pods_taxonomies[ $taxonomy_name ]['query_var'] ) {
 					$pods_taxonomies[ $taxonomy_name ]['query_var'] = pods_v( 'query_var_string', $taxonomy, $taxonomy_name, true );
@@ -1585,7 +1599,7 @@ class PodsInit {
 		$labels['singular_name'] = $singular_label;
 
 		if ( 'post_type' === $type ) {
-			$labels['menu_name']                = pods_v( 'menu_name', $labels, $label, true );
+			$labels['menu_name']                = strip_tags( pods_v( 'menu_name', $labels, $label, true ) );
 			$labels['name_admin_bar']           = pods_v( 'name_admin_bar', $labels, $singular_label, true );
 			$labels['add_new']                  = pods_v( 'add_new', $labels, __( 'Add New', 'pods' ), true );
 			$labels['add_new_item']             = pods_v( 'add_new_item', $labels, sprintf( __( 'Add New %s', 'pods' ), $singular_label ), true );
@@ -1617,8 +1631,9 @@ class PodsInit {
 			$labels['item_reverted_to_draft']   = pods_v( 'item_reverted_to_draft', $labels, sprintf( __( '%s reverted to draft', 'pods'), $singular_label ), true );
 			$labels['item_scheduled']           = pods_v( 'item_scheduled', $labels, sprintf( __( '%s scheduled', 'pods' ), $singular_label ), true );
 			$labels['item_updated']             = pods_v( 'item_updated', $labels, sprintf( __( '%s updated', 'pods' ), $singular_label ), true );
+			$labels['filter_by_date']           = pods_v( 'filter_by_date', $labels, sprintf( __( 'Filter by date', 'pods' ), $label ), true );
 		} elseif ( 'taxonomy' === $type ) {
-			$labels['menu_name']                  = pods_v( 'menu_name', $labels, $label, true );
+			$labels['menu_name']                  = strip_tags( pods_v( 'menu_name', $labels, $label, true ) );
 			$labels['search_items']               = pods_v( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ), $label ), true );
 			$labels['popular_items']              = pods_v( 'popular_items', $labels, sprintf( __( 'Popular %s', 'pods' ), $label ), true );
 			$labels['all_items']                  = pods_v( 'all_items', $labels, sprintf( __( 'All %s', 'pods' ), $label ), true );
@@ -1636,6 +1651,7 @@ class PodsInit {
 			$labels['no_terms']                   = pods_v( 'no_terms', $labels, sprintf( __( 'No %s', 'pods' ), $label ), true );
 			$labels['items_list_navigation']      = pods_v( 'items_list_navigation', $labels, sprintf( __( '%s navigation', 'pods' ), $label ), true );
 			$labels['items_list']                 = pods_v( 'items_list', $labels, sprintf( __( '%s list', 'pods' ), $label ), true );
+			$labels['filter_by_item']             = pods_v( 'filter_by_item', $labels, sprintf( __( 'Filter by %s', 'pods' ), $label ), true );
 		}//end if
 
 		$args['labels'] = $labels;

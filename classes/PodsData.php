@@ -825,6 +825,11 @@ class PodsData {
 
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 		$file_field_types         = PodsForm::file_field_types();
+		$pick_field_types         = [
+			'pick',
+			'comment',
+			'taxonomy',
+		];
 
 		$defaults = array(
 			'select'              => '*',
@@ -906,12 +911,20 @@ class PodsData {
 			$params->offset = 0;
 		}
 
+		$merge_object_fields = false;
+
 		if ( ( empty( $params->fields ) || ! is_array( $params->fields ) ) && ! empty( $pod ) && isset( $this->fields ) && ! empty( $this->fields ) ) {
 			$params->fields = $this->fields;
+
+			$merge_object_fields = true;
 		}
 
 		if ( ( empty( $params->object_fields ) || ! is_array( $params->object_fields ) ) && ! empty( $pod ) && isset( $pod['object_fields'] ) && ! empty( $pod['object_fields'] ) ) {
 			$params->object_fields = $pod['object_fields'];
+
+			if ( $merge_object_fields ) {
+				$params->fields = array_merge( $params->object_fields, $params->fields );
+			}
 		}
 
 		if ( empty( $params->filters ) && $params->search ) {
@@ -1143,6 +1156,8 @@ class PodsData {
 								'phone',
 								'password',
 								'boolean',
+								'comment',
+								'taxonomy',
 							), true
 						) ) {
 							continue;
@@ -1150,7 +1165,9 @@ class PodsData {
 
 						$fieldfield = '`' . $field . '`';
 
-						if ( 'pick' === $attributes['type'] && ! in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects, true ) ) {
+						$is_object_field = isset( $params->object_fields[ $field ] );
+
+						if ( in_array( $attributes['type'], $pick_field_types, true ) && ! in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects, true ) ) {
 							if ( false === $params->search_across_picks ) {
 								continue;
 							} else {
@@ -1170,13 +1187,13 @@ class PodsData {
 							} else {
 								$fieldfield = $fieldfield . '.`post_title`';
 							}
-						} elseif ( isset( $params->fields[ $field ] ) ) {
+						} elseif ( isset( $params->fields[ $field ] ) && ! $is_object_field ) {
 							if ( $params->meta_fields ) {
 								$fieldfield = $fieldfield . '.`meta_value`';
 							} else {
 								$fieldfield = '`' . $params->pod_table_prefix . '`.' . $fieldfield;
 							}
-						} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[ $field ] ) && 'meta' === $pod['storage'] ) {
+						} elseif ( ( empty( $params->object_fields ) || ! $is_object_field ) && 'meta' === $pod['storage'] ) {
 							$fieldfield = $fieldfield . '.`meta_value`';
 						} else {
 							$fieldfield = '`t`.' . $fieldfield;
@@ -1236,12 +1253,20 @@ class PodsData {
 				$where  = array();
 				$having = array();
 
-				if ( ! isset( $params->fields[ $filter ] ) ) {
+				// Check if we have a matching field.
+				$attributes = pods_v( $filter, $params->fields, null );
+
+				// If we do not have a matching field, check for a matching object field.
+				if ( ! $attributes ) {
+					$attributes = pods_v( $filter, $params->object_fields, null );
+				}
+
+				if ( null === $attributes ) {
+					// Field not found.
 					continue;
 				}
 
-				$attributes = $params->fields[ $filter ];
-				$field      = pods_v( 'name', $attributes, $filter, true );
+				$field = pods_v( 'name', $attributes, $filter, true );
 
 				$filterfield = '`' . $field . '`';
 
@@ -1255,6 +1280,8 @@ class PodsData {
 					}
 
 					$filterfield = $filterfield . '.`' . $attributes['table_info']['field_index'] . '`';
+				} elseif ( 'taxonomy' === $attributes['type'] ) {
+					$filterfield = $filterfield . '.`term_id`';
 				} elseif ( in_array( $attributes['type'], $file_field_types, true ) ) {
 					$filterfield = $filterfield . '.`post_title`';
 				} elseif ( isset( $params->fields[ $field ] ) ) {
@@ -3223,6 +3250,10 @@ class PodsData {
 					$traverse['pod'] = null;
 				}
 
+				if ( ! isset( $traverse['pick_val'] ) ) {
+					$traverse['pick_val'] = null;
+				}
+
 				$traverse['table_info'] = $this->api->get_table_info( $traverse['pick_object'], $traverse['pick_val'], null, $traverse['pod'], $traverse );
 			}
 		}//end if
@@ -3525,7 +3556,7 @@ class PodsData {
 	 *
 	 * @since 2.0.5
 	 */
-	public function get_sql( $sql ) {
+	public function get_sql( $sql = '' ) {
 
 		global $wpdb;
 

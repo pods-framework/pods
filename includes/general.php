@@ -219,7 +219,19 @@ function pods_error( $error, $obj = null ) {
 
 			$pods_errors = $error;
 
-			set_exception_handler( 'pods_error' );
+			/**
+			 * Allow filtering whether the fallback is enabled to catch uncaught exceptions.
+			 *
+			 * @since 2.8
+			 *
+			 * @param bool   $exception_fallback_enabled Whether the fallback is enabled to catch uncaught exceptions.
+			 * @param string $error                      The error information.
+			 */
+			$exception_fallback_enabled = apply_filters( 'pods_error_exception_fallback_enabled', true, $error );
+
+			if ( $exception_fallback_enabled ) {
+				set_exception_handler( 'pods_error' );
+			}
 
 			throw new Exception( $error );
 		} elseif ( 'exit' === $error_mode ) {

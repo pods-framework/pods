@@ -122,7 +122,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 								<ul class="normal">
 									<?php foreach ( $quick_actions as $quick_action ) : ?>
 										<li>
-											<a href="#<?php echo sanitize_title( $quick_action['create_extend'] . '-' . $quick_action['type'] . '-' . $quick_action['name'] ); ?>"
+											<a href="#<?php echo sanitize_title( $quick_action['create_extend'] . '-' . $quick_action['type'] . '-' . $quick_action['object'] ); ?>"
 												data-create-extend="<?php echo esc_attr( $quick_action['create_extend'] ); ?>"
 												data-object="<?php echo esc_attr( $quick_action['object'] ); ?>"
 												data-type="<?php echo esc_attr( $quick_action['type'] ); ?>"

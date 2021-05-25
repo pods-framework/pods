@@ -9,6 +9,7 @@ const RadioSelect = ( {
 	value,
 	options,
 	setValue,
+	readOnly = false,
 } ) => {
 	return (
 		<ul className="pods-radio-pick" id={ name }>
@@ -35,10 +36,15 @@ const RadioSelect = ( {
 									type="radio"
 									value={ optionValue }
 									onChange={ ( event ) => {
+										if ( readOnly ) {
+											return;
+										}
+
 										if ( event.target.checked ) {
 											setValue( event.target.value );
 										}
 									} }
+									readOnly={ !! readOnly }
 								/>
 								{ optionLabel }
 							</label>
@@ -60,6 +66,7 @@ RadioSelect.propTypes = {
 	value: PropTypes.string,
 	setValue: PropTypes.func.isRequired,
 	options: PICK_OPTIONS.isRequired,
+	readOnly: PropTypes.bool,
 };
 
 export default RadioSelect;

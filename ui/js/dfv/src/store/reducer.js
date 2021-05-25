@@ -252,7 +252,7 @@ export const currentPod = ( state = {}, action = {} ) => {
 
 				return {
 					...action.result.group,
-					fields: result.group?.fields || [],
+					fields: result.group?.fields || group.fields || [],
 				};
 			} );
 

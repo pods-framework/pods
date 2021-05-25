@@ -1,5 +1,11 @@
+/* global global */
+
 import lodash from 'lodash';
 import React from 'react';
+
+import Backbone from 'backbone';
+import * as Mn from 'backbone.marionette';
+import underscore from 'underscore';
 
 import {
 	combineReducers,
@@ -19,14 +25,21 @@ global.window.matchMedia = () => ( {
 } );
 
 global.lodash = lodash;
+global._ = underscore;
 
 global.wp = {
 	data: {
-		registerStore: registerStore,
-		combineReducers: combineReducers,
-		select: select,
-		dispatch: dispatch,
-		withSelect: withSelect,
-		withDispatch: withDispatch,
-	}
+		registerStore,
+		combineReducers,
+		select,
+		dispatch,
+		withSelect,
+		withDispatch,
+	},
 };
+
+global.Backbone = Backbone;
+global.Backbone.Marionette = Mn;
+
+// @see PodsInit.php
+global.PodsMn = Backbone.Marionette.noConflict();

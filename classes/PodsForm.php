@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit\Field;
+
 /**
  * @package Pods
  */
@@ -818,9 +820,9 @@ class PodsForm {
 	 *
 	 * @static
 	 *
-	 * @param null $field
-	 * @param null $core_defaults
-	 * @param null $type
+	 * @param null|array|string|Field $field
+	 * @param null|array $core_defaults
+	 * @param null|string $type
 	 *
 	 * @return array|null
 	 *
@@ -859,21 +861,28 @@ class PodsForm {
 			}
 		}//end if
 
-		if ( ! is_array( $field ) ) {
+		$is_field_object = $field instanceof Field;
+
+		if ( ! is_array( $field ) && ! $is_field_object ) {
 			$field = array( 'default' => $field );
 		}
 
+		// @todo Revisit this.
 		if ( isset( $field['group'] ) && is_array( $field['group'] ) ) {
-			foreach ( $field['group'] as $g => $group_option ) {
-				$field['group'][ $g ] = array_merge( $core_defaults, $group_option );
+			$group = $field['group'];
 
-				if ( strlen( $field['group'][ $g ]['name'] ) < 1 ) {
-					$field['group'][ $g ]['name'] = $g;
+			foreach ( $group as $g => $group_option ) {
+				$group[ $g ] = array_merge( $core_defaults, $group_option );
+
+				if ( ! isset( $group[ $g ] ) || '' === $group[ $g ]['name'] ) {
+					$group[ $g ]['name'] = $g;
 				}
 			}
+
+			$field['group'] = $group;
 		}
 
-		$field = array_merge( $core_defaults, $field );
+		$field = pods_config_merge_data( $core_defaults, $field );
 
 		foreach ( $options as $option => $settings ) {
 			$v = null;
@@ -882,7 +891,13 @@ class PodsForm {
 				$v = $settings['default'];
 			}
 
-			if ( ! isset( $field['options'][ $option ] ) ) {
+			if ( $is_field_object ) {
+				$option_value = $field->get_arg( $option );
+
+				if ( null === $option_value ) {
+					$field->set_arg( $option, $v );
+				}
+			} elseif ( ! isset( $field['options'][ $option ] ) ) {
 				$field['options'][ $option ] = $v;
 			}
 		}

@@ -9,7 +9,7 @@ import {
 
 import { numberValidator } from 'dfv/src/helpers/validators';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 import './number-field.scss';
 
@@ -18,6 +18,7 @@ const NumberField = ( {
 	fieldConfig,
 	value,
 	setValue,
+	setHasBlurred,
 } ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
@@ -66,6 +67,11 @@ const NumberField = ( {
 		setFormattedValue( newFormattedValue );
 	};
 
+	const handleBlur = () => {
+		setHasBlurred();
+		reformatFormattedValue();
+	};
+
 	if ( 'slider' === type ) {
 		return (
 			<div>
@@ -78,7 +84,7 @@ const NumberField = ( {
 					value={ value || min || 0 }
 					readOnly={ !! readOnly }
 					onChange={ handleChange }
-					onBlur={ reformatFormattedValue }
+					onBlur={ handleBlur }
 					min={ parseInt( min, 10 ) || undefined }
 					max={ parseInt( max, 10 ) || undefined }
 					step={ parseFloat( step ) || undefined }
@@ -113,9 +119,7 @@ NumberField.defaultProps = {
 };
 
 NumberField.propTypes = {
-	addValidationRules: PropTypes.func.isRequired,
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	setValue: PropTypes.func.isRequired,
+	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.number,

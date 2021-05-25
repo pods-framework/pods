@@ -164,6 +164,18 @@ class Item_List extends Base {
 				'default' => 'after',
 			],
 			[
+				'name'  => 'pagination_type',
+				'label' => __( 'Pagination Type', 'pods' ),
+				'type'  => 'pick',
+				'data'  => [
+					'advanced' => __( 'Basic links', 'pods' ),
+					'simple'   => __( 'Previous and Next Links only', 'pods' ),
+					'list'     => __( 'Use an unordered list with paginate_links() native functionality', 'pods' ),
+					'paginate' => __( 'Use basic paginate_links() native functionality', 'pods' ),
+				],
+				'default' => 'advanced',
+			],
+			[
 				'name'        => 'filters',
 				'label'       => __( 'Filters (optional)', 'pods' ),
 				'type'        => 'text',

@@ -15,11 +15,10 @@ import './active-tab-content.scss';
 
 // Display the content for the active tab, manage-fields is treated special
 const ActiveTabContent = ( {
-	podType,
-	podName,
 	activeTab,
-	activeTabOptions,
-	activeTabOptionValues,
+	activeTabFields,
+	allPodFields,
+	allPodValues,
 	setOptionValue,
 } ) => {
 	const isManageFieldsTabActive = 'manage-fields' === activeTab;
@@ -33,11 +32,10 @@ const ActiveTabContent = ( {
 				<FieldGroups />
 			) : (
 				<DynamicTabContent
-					tabOptions={ activeTabOptions }
-					optionValues={ activeTabOptionValues }
+					tabOptions={ activeTabFields }
+					allPodFields={ allPodFields }
+					allPodValues={ allPodValues }
 					setOptionValue={ setOptionValue }
-					podType={ podType }
-					podName={ podName }
 				/>
 			) }
 		</div>
@@ -45,9 +43,30 @@ const ActiveTabContent = ( {
 };
 
 ActiveTabContent.propTypes = {
+	/**
+	 * Slug for the active tab.
+	 */
 	activeTab: PropTypes.string.isRequired,
-	activeTabOptions: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
-	activeTabOptionValues: PropTypes.object.isRequired,
+
+	/**
+	 * Array of fields belonging to the active tab.
+	 */
+	activeTabFields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
+
+	/**
+	 * Array of field configs for the whole Pod.
+	 */
+	allPodFields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
+
+	/**
+	 * All values for the Pod.
+	 */
+	allPodValues: PropTypes.object.isRequired,
+
+	/**
+	 * Function to update the field's value on change.
+	 */
+	setOptionValue: PropTypes.func.isRequired,
 };
 
 export default compose( [
@@ -57,11 +76,10 @@ export default compose( [
 		const activeTab = storeSelect.getActiveTab();
 
 		return {
-			podType: storeSelect.getPodOption( 'type' ),
-			podName: storeSelect.getPodOption( 'name' ),
 			activeTab,
-			activeTabOptions: storeSelect.getGlobalPodGroupFields( activeTab ),
-			activeTabOptionValues: storeSelect.getPodOptions(),
+			activeTabFields: storeSelect.getGlobalPodGroupFields( activeTab ),
+			allPodFields: storeSelect.getGlobalPodFieldsFromAllGroups(),
+			allPodValues: storeSelect.getPodOptions(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

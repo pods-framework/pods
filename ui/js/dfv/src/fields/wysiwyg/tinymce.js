@@ -10,6 +10,7 @@ const TinyMCE = ( {
 	setValue,
 	editorHeight,
 	mediaButtons,
+	onBlur,
 } ) => {
 	const fieldId = `pods-form-ui-${ name }`;
 
@@ -120,6 +121,7 @@ const TinyMCE = ( {
 				className="wp-editor-area"
 				name={ name }
 				id={ fieldId }
+				onBlur={ onBlur }
 				onChange={ ( event ) => setValue( event.target.value ) }
 				value={ value || '' }
 			/>
@@ -133,6 +135,7 @@ TinyMCE.propTypes = {
 	setValue: PropTypes.func.isRequired,
 	editorHeight: PropTypes.number,
 	mediaButtons: PropTypes.bool,
+	onBlur: PropTypes.func.isRequired,
 };
 
 export default TinyMCE;

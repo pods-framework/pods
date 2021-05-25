@@ -763,17 +763,9 @@ class PodsField_Pick extends PodsField {
 			/**
 			 * @var $pod Pods Pods object.
 			 */
-			$fields = $pod->fields;
-
-			if ( ! empty( $pod->pod_data['object_fields'] ) ) {
-				$fields = array_merge( $fields, $pod->pod_data['object_fields'] );
-			}
+			$fields = pods_config_get_all_fields( $pod );
 		} elseif ( is_array( $pod ) && isset( $pod['fields'] ) ) {
-			$fields = $pod['fields'];
-
-			if ( ! empty( $pod['object_fields'] ) ) {
-				$fields = array_merge( $fields, $pod['object_fields'] );
-			}
+			$fields = pods_config_get_all_fields( $pod );
 		}
 
 		$args = array(

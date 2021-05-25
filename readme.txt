@@ -1,11 +1,11 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, pglewis, jimtrue, keraweb, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
+Contributors: sc0ttkclark, keraweb, jimtrue, pglewis, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
-Requires at least: 5.4
-Tested up to: 5.6
+Requires at least: 5.5
+Tested up to: 5.7.2
 Requires PHP: 5.6
-Stable tag: 2.8.0-b-1
+Stable tag: 2.8.0-b-2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -190,6 +190,42 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.8 - TBD, 2021 =
+
+**New PHP & WP Minimum Version Requirements:**
+
+* PHP Version Change Requirement 5.3+
+* WP Version Change Required 4.5+
+
+**Major Features: Field Groups and new Edit Pod screen**
+
+Now you can add multiple field groups to your Pods using the brand new Edit Pod screen that's been completely rewritten.
+
+Our Edit Pod screen is powered on the technical side by our all new React form interfaces, tooltips, and our new Pods Admin REST API endpoints.
+
+* Feature: REST API endpoints are now available to create/edit various objects: Pods, Pod Groups, and Pod Fields.
+* Feature: WP-CLI commands that mirror the REST API endpoints we have.    
+
+= 2.7.28 - May 20th, 2021 =
+
+* Added: New upload directory option for File fields using Plupload that lets you choose to customize which directory the files end up in. #6021 (@JoryHogeveen)
+* Added: Relationship fields now support custom selectors in the REST API. You can specify `my_field.some_field` to output a specific field in your REST API options for each relationship field. (@sc0ttkclark)
+* Added: New `pods_image_for_post()` and `pods_image_url_for_post()` functions have been added for certain page builders like Oxygen. (@sc0ttkclark) 
+* Added: New query variable prefix option (`num_prefix`) for PodsUI instances. (@sc0ttkclark)
+* Added: `pagination_type` and `pagination_location` options for PodsUI instances to support more flexible pagination options. (@sc0ttkclark)
+* Enhancement: Implement `search` and `sort` field sets for PodsUI instances to more easily specify which fields are searchable or sortable. (@sc0ttkclark) 
+* Fixed: PHP fatal errors no longer occur for avatar fields in certain situations. #6007 (@JoryHogeveen)
+* Fixed: PHP fatal errors no longer occur for PHP 8 in certain situations. #6012 (@JoryHogeveen)
+* Fixed: Resolved an issue with relationship fields not outputting their full data to the REST API when the related object is not a valid pod. (@sc0ttkclark) 
+* Fixed: Resolved an issue with not saving the fields for the extended Media pod when making update requests through the REST API. (@sc0ttkclark) 
+* Fixed: Implemented a temporary PHP 7.4+ fix for Freemius. (@sc0ttkclark)
+* Fixed: Searching WP-based objects in PodsUI interfaces now resolves to the proper fields. (@sc0ttkclark)
+
+= 2.7.27 - March 4th, 2021 =
+
+* Fixed: Resolved PHP notice in the PodsAPI. #5952 (@sc0ttkclark)
+* Fixed: Resolved PHP notice when using `?pods_debug_sql=1` on Pods Admin UI screens. (@sc0ttkclark)
 
 = 2.7.26 - January 8th, 2021 =
 

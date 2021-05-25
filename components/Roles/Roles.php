@@ -303,7 +303,7 @@ class Pods_Roles extends PodsComponent {
 			return pods_error( __( 'Role label is required', 'pods' ) );
 		}
 
-		return add_role( $role_name, $role_label, $capabilities );
+		return add_role( $role_name, $role_label, $capabilities ) instanceof WP_Role;
 	}
 
 	/**

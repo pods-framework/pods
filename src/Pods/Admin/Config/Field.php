@@ -46,15 +46,43 @@ class Field extends Base {
 			$core_tabs['kitchen-sink'] = __( 'Kitchen Sink (temp)', 'pods' );
 		}
 
+		$pod_type = $pod['type'];
+		$pod_name = $pod['name'];
+
+		$tabs = $core_tabs;
+
 		/**
-		 * Filter the Field option tabs. Core tabs are added after this filter.
+		 * Filter the Pod Field option tabs for a specific pod type and name.
 		 *
-		 * @since unknown
+		 * @since 2.8.0
 		 *
-		 * @param array                  $tabs Tabs to add, starts empty.
-		 * @param null|\Pods\Whatsit\Pod $pod  Current Pods object.
+		 * @param array             $core_tabs Tabs to set.
+		 * @param \Pods\Whatsit\Pod $pod       Current Pods object.
 		 */
-		$tabs = apply_filters( 'pods_admin_setup_edit_field_tabs', [], $pod );
+		$tabs = (array) apply_filters( "pods_admin_setup_edit_field_tabs_{$pod_type}_{$pod_name}", $tabs, $pod );
+
+		/**
+		 * Filter the Pod Field option tabs for a specific pod type.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array             $tabs Tabs to set.
+		 * @param \Pods\Whatsit\Pod $pod  Current Pods object.
+		 */
+		$tabs = (array) apply_filters( "pods_admin_setup_edit_field_tabs_{$pod_type}", $tabs, $pod );
+
+		/**
+		 * Filter the Pod Field option tabs.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array             $tabs Tabs to set.
+		 * @param \Pods\Whatsit\Pod $pod  Current Pods object.
+		 */
+		$tabs = (array) apply_filters( 'pods_admin_setup_edit_field_tabs', $tabs, $pod );
+
+		// Sort and then enforce the core tabs to be in front.
+		uksort( $tabs, 'strnatcmp' );
 
 		$tabs = array_merge( $core_tabs, $tabs );
 
@@ -212,6 +240,7 @@ class Field extends Base {
 					'type'  => 'heading',
 				],
 				'restrict_access'         => [
+					'type'  => 'boolean_group',
 					'name'  => 'restrict_access',
 					'label' => __( 'Restrict Access', 'pods' ),
 					'boolean_group' => [
@@ -472,15 +501,42 @@ class Field extends Base {
 
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
 		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
-			$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink.json' ), true );
+			$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink-config.json' ), true );
 		}
 
+		$pod_type = $pod['type'];
+		$pod_name = $pod['name'];
+
 		/**
-		 * Modify tabs and their contents for field options.
+		 * Add admin fields to the Pod Fields editor for a specific Pod.
 		 *
-		 * @param array                  $options Tabs, indexed by label.
-		 * @param null|\Pods\Whatsit\Pod $pod     Pods object for the Pod this UI is for.
-		 * @param array                  $tabs    List of registered tabs.
+		 * @since 2.8.0
+		 *
+		 * @param array             $options The Options fields.
+		 * @param \Pods\Whatsit\Pod $pod     Current Pods object.
+		 * @param array             $tabs    List of registered tabs.
+		 */
+		$options = apply_filters( "pods_admin_setup_edit_field_options_{$pod_type}_{$pod_name}", $options, $pod, $tabs );
+
+		/**
+		 * Add admin fields to the Pod Fields editor for any Pod of a specific content type.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array             $options The Options fields.
+		 * @param \Pods\Whatsit\Pod $pod     Current Pods object.
+		 * @param array             $tabs    List of registered tabs.
+		 */
+		$options = apply_filters( "pods_admin_setup_edit_field_options_{$pod_type}", $options, $pod, $tabs );
+
+		/**
+		 * Add admin fields to the Pod Fields editor for all Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array             $options The Options fields.
+		 * @param \Pods\Whatsit\Pod $pod     Current Pods object.
+		 * @param array             $tabs    List of registered tabs.
 		 */
 		$options = apply_filters( 'pods_admin_setup_edit_field_options', $options, $pod, $tabs );
 

@@ -66,6 +66,7 @@ class PodsField_Phone extends PodsField {
 			),
 			static::$type . '_options'     => array(
 				'label' => __( 'Phone Options', 'pods' ),
+				'type'  => 'boolean_group',
 				'boolean_group' => array(
 					static::$type . '_enable_phone_extension' => array(
 						'label'   => __( 'Enable Phone Extension', 'pods' ),

@@ -242,6 +242,7 @@ class PodsAdmin {
 						$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 						$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
+						$menu_label = strip_tags( $menu_label );
 						$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 						$singular_label = pods_v( 'label_singular', $pod['options'], pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
@@ -445,6 +446,7 @@ class PodsAdmin {
 					$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 					$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
+					$menu_label = strip_tags( $menu_label );
 					$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 					$menu_icon            = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );
@@ -501,6 +503,7 @@ class PodsAdmin {
 					$page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
 					$menu_label = pods_v( 'menu_name', $pod['options'], $page_title, true );
+					$menu_label = strip_tags( $menu_label );
 					$menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
 					$menu_icon = pods_evaluate_tags( pods_v( 'menu_icon', $pod['options'], '', true ), true );
@@ -1672,69 +1675,40 @@ class PodsAdmin {
 				// Add fields for section.
 				foreach ( $section_fields as $field_name => $field_options ) {
 					$boolean_group = [];
-					$boolean_extra = [];
 
+					// Handle auto-formatting from shorthand.
 					if ( ! empty( $field_options['boolean_group'] ) ) {
 						$boolean_group = $field_options['boolean_group'];
 
-						unset( $field_options['boolean_group'] );
-
-						if ( ! empty( $field_options['depends-on'] ) ) {
-							$boolean_extra['depends-on']  = $field_options['depends-on'];
+						foreach ( $boolean_group as $bgf_key => $boolean_group_field ) {
+							// Make sure each field has a field name.
+							if ( is_string( $bgf_key ) ) {
+								$boolean_group[ $bgf_key ]['name'] = $bgf_key;
+							}
 						}
 
-						if ( ! empty( $field_options['excludes-on'] ) ) {
-							$boolean_extra['excludes-on'] = $field_options['excludes-on'];
-						}
+						$boolean_group = array_values( $boolean_group );
 
-						if ( ! empty( $field_options['wildcard-on'] ) ) {
-							$boolean_extra['wildcard-on'] = $field_options['wildcard-on'];
-						}
+						$field_options['boolean_group'] = $boolean_group;
 					}
 
-					if (
-						// Field type must be set.
-						! empty( $field_options['type'] )
-						&& (
-							// Must not have a boolean group.
-							empty( $boolean_group )
-							// Or it must be the proper heading field type.
-							|| 'heading' === $field_options['type']
-						)
-					) {
-						// Set a unique field name for boolean group headings.
-						if ( ! empty( $boolean_group ) ) {
-							$field_options['name'] = $parent . '_' . $group_name . '_' . $field_name . '_' . md5( json_encode( $boolean_group ) );
-						}
-
-						$field = $this->backcompat_convert_tabs_to_groups_setup_field( [
-							'field_name'    => $field_name,
-							'field_options' => $field_options,
-							'parent'        => $parent,
-							'group_name'    => $group_name,
-						] );
-
-						$fields[] = $storage->add( $field );
+					if ( empty( $field_options['type'] ) ) {
+						continue;
 					}
 
-					// Add any boolean group fields.
-					foreach ( $boolean_group as $boolean_field_name => $boolean_field_options ) {
-						if ( ! isset( $boolean_field_options['boolean_yes_label'] ) ) {
-							$boolean_field_options['boolean_yes_label'] = '';
-						}
-
-						// Maybe add extra options.
-						$boolean_field_options = array_merge( $boolean_extra, $boolean_field_options );
-
-						$field = $this->backcompat_convert_tabs_to_groups_setup_field( [
-							'field_name'    => $boolean_field_name,
-							'field_options' => $boolean_field_options,
-							'parent'        => $parent,
-							'group_name'    => $group_name,
-						] );
-
-						$fields[] = $storage->add( $field );
+					// Set a unique field name for boolean group headings.
+					if ( ! empty( $boolean_group ) ) {
+						$field_options['name'] = $field_name . '_' . md5( json_encode( $boolean_group ) );
 					}
+
+					$field = $this->backcompat_convert_tabs_to_groups_setup_field( [
+						'field_name'    => $field_name,
+						'field_options' => $field_options,
+						'parent'        => $parent,
+						'group_name'    => $group_name,
+					] );
+
+					$fields[] = $storage->add( $field );
 				}
 			}
 		}
@@ -2829,26 +2803,40 @@ class PodsAdmin {
 		$options['rest'][ __( 'Relationship Field Options', 'pods' ) ] = [
 			'rest_pick_response' => [
 				'label'      => __( 'Response Type', 'pods' ),
-					'help'       => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
+				'help'       => __( 'This will determine what amount of data for the related items will be returned.', 'pods' ),
 				'type'       => 'pick',
 				'default'    => 'array',
-				'depends-on' => [ 'type' => 'pick' ],
+				'depends-on' => [
+					'type' => 'pick',
+				],
 				'dependency' => true,
 				'data'       => [
-					'array' => __( 'Full', 'pods' ),
-					'id'    => __( 'ID only', 'pods' ),
-					'name'  => __( 'Name', 'pods' ),
+					'array'  => __( 'All fields', 'pods' ),
+					'id'     => __( 'ID only', 'pods' ),
+					'name'   => __( 'Name only', 'pods' ),
+					'custom' => __( 'Custom return (specify field to return)', 'pods' ),
 				],
 			],
 			'rest_pick_depth'    => [
 				'label'      => __( 'Depth', 'pods' ),
-				'help'       => __( 'How far to traverse relationships in response', 'pods' ),
+				'help'       => __( 'How far to traverse relationships in response. 1 will get you all of the fields on the related item. 2 will get you all of those fields plus related items and their fields. The higher the depth, the more data will be returned and the slower performance the REST API calls will be. Updates to this field do NOT take depth into account, so you will always send the ID of the related item when saving.', 'pods' ),
 				'type'       => 'number',
-				'default'    => '2',
+				'default'    => '1',
 				'depends-on' => [
 					'type'               => 'pick',
 					'rest_pick_response' => 'array',
- ],
+				],
+			],
+			'rest_pick_custom'   => [
+				'label'       => __( 'Custom return', 'pods' ),
+				'help'        => __( 'Specify the field to use following the established this_field_name.ID traversal pattern. You must include this field name in the selector for this to work properly.', 'pods' ),
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'this_field_name.ID',
+				'depends-on'  => [
+					'type'               => 'pick',
+					'rest_pick_response' => 'custom',
+				],
 			],
 			'rest_pick_notice'   => [
 				'label'        => 'Relationship Options',

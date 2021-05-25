@@ -1,20 +1,24 @@
 import PropTypes from 'prop-types';
 
 // @todo can these be changed to real Booleans on the PHP side?
-const BOOLEAN_STRINGS = PropTypes.oneOf(
+export const BOOLEAN_STRINGS = PropTypes.oneOf(
 	[ '0', '1', 0, 1 ]
 );
-const BOOLEAN_ALL_TYPES = PropTypes.oneOf(
+export const BOOLEAN_ALL_TYPES = PropTypes.oneOf(
 	[ '0', '1', 0, 1, true, false ]
 );
 
+export const BOOLEAN_ALL_TYPES_OR_EMPTY = PropTypes.oneOf(
+	[ '0', '1', 0, 1, true, false, '', null, undefined ]
+);
+
 // Handles issue where objects get passed as arrays when empty from PHP.
-const OBJECT_OR_ARRAY = PropTypes.oneOfType( [
+export const OBJECT_OR_ARRAY = PropTypes.oneOfType( [
 	PropTypes.object,
 	PropTypes.array,
 ] );
 
-const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
+export const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
 	// @todo custom validator to ensure that the string is a number
 	PropTypes.string,
 	PropTypes.number,
@@ -35,7 +39,14 @@ export const PICK_OPTIONS = PropTypes.arrayOf(
 	} )
 );
 
-export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
+export const HTML_ATTR = PropTypes.shape( {
+	id: PropTypes.string,
+	class: PropTypes.string,
+	name: PropTypes.string,
+	name_clean: PropTypes.string,
+} );
+
+export const FIELD_PROP_TYPE = {
 	// Used in multiple fields
 	admin_only: BOOLEAN_STRINGS,
 	attributes: OBJECT_OR_ARRAY,
@@ -51,6 +62,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	] ),
 	default_icon: PropTypes.string,
 	'depends-on': OBJECT_OR_ARRAY,
+	'depends-on-any': OBJECT_OR_ARRAY,
 	dependency: PropTypes.bool,
 	description: PropTypes.string,
 	developer_mode: PropTypes.bool,
@@ -69,12 +81,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
 	hidden: BOOLEAN_STRINGS,
-	htmlAttr: PropTypes.shape( {
-		id: PropTypes.string,
-		class: PropTypes.string,
-		name: PropTypes.string,
-		name_clean: PropTypes.string,
-	} ),
+	htmlAttr: HTML_ATTR,
 	fieldEmbed: PropTypes.bool,
 	id: NUMBER_OR_NUMBER_AS_STRING.isRequired,
 	iframe_src: PropTypes.string,
@@ -108,6 +115,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	sister_id: NUMBER_OR_NUMBER_AS_STRING,
 	slug_placeholder: PropTypes.string,
 	slug_separator: PropTypes.string,
+	slug_fallback: PropTypes.string,
 	storage_type: PropTypes.string,
 	type: PropTypes.string.isRequired,
 	unique: PropTypes.string,
@@ -122,7 +130,7 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	avatar_edit_title: PropTypes.string,
 	avatar_field_template: PropTypes.string,
 	avatar_format_type: PropTypes.string,
-	avatar_limit: PropTypes.string,
+	avatar_limit: NUMBER_OR_NUMBER_AS_STRING,
 	avatar_linked: PropTypes.string,
 	avatar_modal_add_button: PropTypes.string,
 	avatar_modal_title: PropTypes.string,
@@ -130,6 +138,8 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	avatar_show_edit_link: PropTypes.string,
 	avatar_type: PropTypes.string,
 	avatar_uploader: PropTypes.string,
+	avatar_upload_dir: PropTypes.string,
+	avatar_upload_dir_custom: PropTypes.string,
 	avatar_wp_gallery_columns: PropTypes.string,
 	avatar_wp_gallery_link: PropTypes.string,
 	avatar_wp_gallery_output: PropTypes.string,
@@ -140,6 +150,18 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	boolean_format_type: PropTypes.string,
 	boolean_no_label: PropTypes.string,
 	boolean_yes_label: PropTypes.string,
+
+	// Boolean Group fields
+	boolean_group: PropTypes.arrayOf(
+		PropTypes.shape( {
+			default: BOOLEAN_ALL_TYPES,
+			dependency: PropTypes.bool,
+			help: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
+			label: PropTypes.string,
+			name: PropTypes.string,
+			type: PropTypes.string,
+		} ),
+	),
 
 	// Code fields
 	code_allow_shortcode: PropTypes.string,
@@ -215,6 +237,8 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	file_show_edit_link: PropTypes.string,
 	file_type: PropTypes.string,
 	file_uploader: PropTypes.string,
+	file_upload_dir: PropTypes.string,
+	file_upload_dir_custom: PropTypes.string,
 	file_wp_gallery_columns: PropTypes.string,
 	file_wp_gallery_link: PropTypes.string,
 	file_wp_gallery_output: PropTypes.string,
@@ -421,7 +445,9 @@ export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( {
 	wysiwyg_repeatable: BOOLEAN_ALL_TYPES,
 	wysiwyg_wpautop: PropTypes.string,
 	wysiwyg_wptexturize: BOOLEAN_ALL_TYPES,
-} );
+};
+
+export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( FIELD_PROP_TYPE );
 
 export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {
 	description: PropTypes.string,
@@ -435,3 +461,42 @@ export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {
 	weight: PropTypes.number,
 	_locale: PropTypes.string,
 } );
+
+/**
+ * Components will extend this shape, but the base will guarantee
+ * the minimum props to render a Field Component (used by FieldWrapper).
+ */
+export const FIELD_COMPONENT_BASE_PROPS = {
+	/**
+	 * Function to add additional validation rules, beyond the
+	 * FieldWrapper defaults.
+	 */
+	addValidationRules: PropTypes.func.isRequired,
+
+	/**
+	 * Field config.
+	 */
+	fieldConfig: FIELD_PROP_TYPE_SHAPE.isRequired,
+
+	/**
+	 * Function to update the field's value on change.
+	 */
+	setValue: PropTypes.func.isRequired,
+
+	/**
+	 * Used to notify the FieldWrapper that an onBlur event has
+	 * occurred, for validating purposes.
+	 */
+	setHasBlurred: PropTypes.func.isRequired,
+
+	/**
+	 * Default type for `value` is a string, components may want to
+	 * override this with another specific type.
+	 */
+	value: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.bool,
+		PropTypes.number,
+		PropTypes.array,
+	] ),
+};

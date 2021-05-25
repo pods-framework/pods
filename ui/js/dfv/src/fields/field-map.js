@@ -1,5 +1,6 @@
 import Avatar from 'dfv/src/fields/avatar';
 import Boolean from 'dfv/src/fields/boolean';
+import BooleanGroup from 'dfv/src/fields/boolean-group';
 import Code from 'dfv/src/fields/code';
 import Color from 'dfv/src/fields/color';
 import Currency from 'dfv/src/fields/currency';
@@ -29,6 +30,10 @@ const FIELD_MAP = {
 	},
 	boolean: {
 		fieldComponent: Boolean,
+		directRender: false,
+	},
+	boolean_group: {
+		fieldComponent: BooleanGroup,
 		directRender: false,
 	},
 	code: {

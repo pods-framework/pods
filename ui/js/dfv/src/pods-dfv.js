@@ -27,8 +27,8 @@ import FIELD_MAP from 'dfv/src/fields/field-map';
 const SCRIPT_TARGET = 'script.pods-dfv-field-data';
 
 window.PodsDFV = {
-	fields: FIELD_MAP,
 	models,
+	dfvRootContainer: null,
 
 	/**
 	 * Initialize Pod data.
@@ -87,6 +87,28 @@ window.PodsDFV = {
 			( accumulator, currentValue ) => {
 				const fieldConfig = currentValue.fieldConfig || {};
 
+				// "Boolean Group" fields are actually comprised of other fields with their own
+				// named values, so instead of just one key/value, they'll have multiple ones.
+				// These are handled very differently, so process them and return early.
+				if ( 'boolean_group' === fieldConfig.type ) {
+					const values = {};
+
+					fieldConfig.boolean_group.forEach( ( groupItem ) => {
+						if ( ! groupItem.name || 'undefined' === typeof groupItem.default ) {
+							return;
+						}
+
+						values[ groupItem.name ] = currentValue.fieldItemData?.[ groupItem.name ] ||
+							groupItem.default ||
+							'';
+					} );
+
+					return {
+						...accumulator,
+						...values,
+					};
+				}
+
 				// Fields have values provided as arrays, even if the field
 				// type should just have a singular value.
 				const value = [ 'avatar', 'file', 'pick' ].includes( fieldConfig.type )
@@ -134,15 +156,21 @@ window.PodsDFV = {
 		// Creates a container for the React app to "render",
 		// although it doesn't actually render anything in the container,
 		// but places the fields in the correct places with Portals.
-		const dfvRootContainer = document.createElement( 'div' );
-		dfvRootContainer.id = 'pods-dfv-container';
-		document.body.appendChild( dfvRootContainer );
+		if ( ! this.dfvRootContainer ) {
+			this.dfvRootContainer = document.createElement( 'div' );
+			this.dfvRootContainer.id = 'pods-dfv-container';
+			document.body.appendChild( this.dfvRootContainer );
+		}
 
 		// Set up the DFV app.
 		ReactDOM.render(
 			<PodsDFVApp fieldsData={ validFieldsData } />,
-			dfvRootContainer
+			this.dfvRootContainer
 		);
+	},
+
+	isMediaModal() {
+		return window.location.pathname === '/wp-admin/upload.php';
 	},
 
 	isModalWindow() {
@@ -158,6 +186,11 @@ window.PodsDFV = {
  * Kick everything off on DOMContentLoaded
  */
 document.addEventListener( 'DOMContentLoaded', () => {
+	// For the Media context, init gets called later.
+	if ( window.PodsDFV.isMediaModal() ) {
+		return;
+	}
+
 	window.PodsDFV.init();
 
 	// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active

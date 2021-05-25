@@ -28,15 +28,43 @@ class Group extends Base {
 			$core_tabs['kitchen-sink'] = __( 'Kitchen Sink (temp)', 'pods' );
 		}
 
+		$pod_type = $pod['type'];
+		$pod_name = $pod['name'];
+
+		$tabs = $core_tabs;
+
 		/**
-		 * Filter the Group option tabs. Core tabs are added after this filter.
+		 * Filter the Pod Group option tabs for a specific pod type and name.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
-		 * @param array             $tabs Group option tabs.
+		 * @param array             $core_tabs Tabs to set.
+		 * @param \Pods\Whatsit\Pod $pod       Current Pods object.
+		 */
+		$tabs = (array) apply_filters( "pods_admin_setup_edit_group_tabs_{$pod_type}_{$pod_name}", $tabs, $pod );
+
+		/**
+		 * Filter the Pod Group option tabs for a specific pod type.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array             $tabs Tabs to set.
 		 * @param \Pods\Whatsit\Pod $pod  Current Pods object.
 		 */
-		$tabs = apply_filters( 'pods_admin_setup_edit_group_tabs', [], $pod );
+		$tabs = (array) apply_filters( "pods_admin_setup_edit_group_tabs_{$pod_type}", $tabs, $pod );
+
+		/**
+		 * Filter the Pod Group option tabs.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array             $tabs Tabs to set.
+		 * @param \Pods\Whatsit\Pod $pod  Current Pods object.
+		 */
+		$tabs = (array) apply_filters( 'pods_admin_setup_edit_group_tabs', $tabs, $pod );
+
+		// Sort and then enforce the core tabs to be in front.
+		uksort( $tabs, 'strnatcmp' );
 
 		$tabs = array_merge( $core_tabs, $tabs );
 
@@ -135,16 +163,41 @@ class Group extends Base {
 
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
 		if ( pods_developer() && ! function_exists( 'codecept_debug' ) ) {
-			$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink.json' ), true );
+			$options['kitchen-sink'] = json_decode( file_get_contents( PODS_DIR . 'tests/codeception/_data/kitchen-sink-config.json' ), true );
 		}
 
+		$pod_type = $pod['type'];
+		$pod_name = $pod['name'];
+
 		/**
-		 * Filter the Group options.
+		 * Add admin fields to the Pod Groups editor for a specific Pod.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
-		 * @param array             $options Tabs, indexed by label.
-		 * @param \Pods\Whatsit\Pod $pod     Pods object for the Pod this UI is for.
+		 * @param array             $options The Options fields.
+		 * @param \Pods\Whatsit\Pod $pod     Current Pods object.
+		 * @param array             $tabs    List of registered tabs.
+		 */
+		$options = apply_filters( "pods_admin_setup_edit_group_options_{$pod_type}_{$pod_name}", $options, $pod, $tabs );
+
+		/**
+		 * Add admin fields to the Pod Groups editor for any Pod of a specific content type.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array             $options The Options fields.
+		 * @param \Pods\Whatsit\Pod $pod     Current Pods object.
+		 * @param array             $tabs    List of registered tabs.
+		 */
+		$options = apply_filters( "pods_admin_setup_edit_group_options_{$pod_type}", $options, $pod, $tabs );
+
+		/**
+		 * Add admin fields to the Pod Groups editor for all Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array             $options The Options fields.
+		 * @param \Pods\Whatsit\Pod $pod     Current Pods object.
 		 * @param array             $tabs    List of registered tabs.
 		 */
 		$options = apply_filters( 'pods_admin_setup_edit_group_options', $options, $pod, $tabs );

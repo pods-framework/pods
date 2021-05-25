@@ -111,6 +111,7 @@ const FieldGroups = ( {
 					optionsPod={ editGroupPod }
 					selectedOptions={ {} }
 					title={ sprintf(
+						// @todo Zack: Make these into elements we can style the parent pod differently.
 						/* translators: %1$s: Pod Label */
 						__( '%1$s > Add Group', 'pods' ),
 						podLabel,

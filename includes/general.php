@@ -3,6 +3,9 @@
  * @package Pods\Global\Functions\General
  */
 
+use Pods\Whatsit;
+use Pods\Whatsit\Field;
+use Pods\Whatsit\Pod;
 use Pods\Whatsit\Store;
 
 /**
@@ -19,7 +22,11 @@ use Pods\Whatsit\Store;
  * @since 2.0.0
  */
 function pods_query( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
-	$podsdata = pods_data( null, null, true, false );
+	try {
+		$podsdata = pods_data( null, null, true, false );
+	} catch ( Exception $exception ) {
+		return null;
+	}
 
 	$sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
 	$sql = $podsdata->get_sql( $sql );
@@ -46,7 +53,7 @@ function pods_query( $sql, $error = 'Database Error', $results_error = null, $no
 		echo '</textarea>';
 	}
 
-	return $podsdata->query( $sql, $error, $results_error, $no_results_error );
+	return PodsData::query( $sql, $error, $results_error, $no_results_error );
 }
 
 /**
@@ -212,7 +219,19 @@ function pods_error( $error, $obj = null ) {
 
 			$pods_errors = $error;
 
-			set_exception_handler( 'pods_error' );
+			/**
+			 * Allow filtering whether the fallback is enabled to catch uncaught exceptions.
+			 *
+			 * @since 2.8
+			 *
+			 * @param bool   $exception_fallback_enabled Whether the fallback is enabled to catch uncaught exceptions.
+			 * @param string $error                      The error information.
+			 */
+			$exception_fallback_enabled = apply_filters( 'pods_error_exception_fallback_enabled', true, $error );
+
+			if ( $exception_fallback_enabled ) {
+				set_exception_handler( 'pods_error' );
+			}
 
 			throw new Exception( $error );
 		} elseif ( 'exit' === $error_mode ) {
@@ -411,8 +430,8 @@ function pods_podsrel_enabled() {
  *
  * @since TBD
  *
- * @param null|array|\Pods\Whatsit\Field $field The field object.
- * @param null|array|\Pods\Whatsit\Pod   $pod   The pod object.
+ * @param null|array|Field $field The field object.
+ * @param null|array|Pod   $pod   The pod object.
  *
  * @return bool Whether relationship meta storage is enabled.
  */
@@ -422,9 +441,9 @@ function pods_relationship_meta_storage_enabled( $field = null, $pod = null ) {
 	 *
 	 * @since TBD
 	 *
-	 * @param bool                           $enabled Whether relationship meta storage table is enabled.
-	 * @param null|array|\Pods\Whatsit\Field $field   The field object.
-	 * @param null|array|\Pods\Whatsit\Pod   $pod     The pod object.
+	 * @param bool             $enabled Whether relationship meta storage table is enabled.
+	 * @param null|array|Field $field   The field object.
+	 * @param null|array|Pod   $pod     The pod object.
 	 */
 	return apply_filters( 'pods_relationship_meta_storage_enabled', true, $field, $pod );
 }
@@ -874,6 +893,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'filters_label'       => null,
 		'filters_location'    => 'before',
 		'pagination_label'    => null,
+		'pagination_type'     => null,
 		'pagination_location' => 'after',
 	);
 
@@ -882,6 +902,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'col'              => null,
 		'template'         => null,
 		'pods_page'        => null,
+		'helper'           => null,
 		'form'             => null,
 		'form_output_type' => null,
 		'fields'           => null,
@@ -1022,6 +1043,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	$found = 0;
+	$filters = false;
 
 	$is_singular = ( ! empty( $id ) || $tags['use_current'] );
 
@@ -1066,6 +1088,11 @@ function pods_shortcode_run( $tags, $content = null ) {
 				$params['join'] = $tags['join'];
 			}
 		}//end if
+
+		// Load filters and return HTML for later use.
+		if ( false !== $tags['filters'] ) {
+			$filters = $pod->filters( $tags['filters'], $tags['filters_label'] );
+		}
 
 		// Forms require params set
 		if ( ! empty( $params ) || empty( $tags['form'] ) ) {
@@ -1138,8 +1165,10 @@ function pods_shortcode_run( $tags, $content = null ) {
 				// Content is null by default.
 				$return .= $related->template( $tags['template'], $content );
 			}
-		} else {
+		} elseif ( empty( $tags['helper'] ) ) {
 			$return = $pod->display( $tags['field'] );
+		} else {
+			$return = $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );
 		}
 
 		if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
@@ -1163,12 +1192,9 @@ function pods_shortcode_run( $tags, $content = null ) {
 		return $return;
 	}//end if
 
-	ob_start();
+	$pagination = false;
 
-	if ( ! $is_singular && false !== $tags['filters'] && 'before' === $tags['filters_location'] ) {
-		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
-	}
-
+	// Only handle pagination on non-singular shortcodes where items were found.
 	if (
 		! $is_singular
 		&& 0 < $found
@@ -1180,12 +1206,24 @@ function pods_shortcode_run( $tags, $content = null ) {
 			)
 		)
 		&& true === $tags['pagination']
-		&& in_array( $tags['pagination_location'], [
-			'before',
-			'both',
-		], true )
 	) {
-		echo $pod->pagination( $tags['pagination_label'] );
+		$pagination = array(
+			'label' => pods_v( 'pagination_label', $tags, null ),
+			'type'  => pods_v( 'pagination_type', $tags, null ),
+		);
+
+		// Remove empty params.
+		$pagination = array_filter( $pagination );
+	}
+
+	ob_start();
+
+	if ( $filters && 'before' === $tags['filters_location'] ) {
+		echo $filters;
+	}
+
+	if ( false !== $pagination && in_array( $tags['pagination_location'], [ 'before', 'both' ], true ) ) {
+		echo $pod->pagination( $pagination );
 	}
 
 	$content = $pod->template( $tags['template'], $content );
@@ -1197,27 +1235,12 @@ function pods_shortcode_run( $tags, $content = null ) {
 	// phpcs:ignore
 	echo $content;
 
-	if (
-		! $is_singular
-		&& 0 < $found
-		&& (
-			empty( $params['limit'] )
-			|| (
-				0 < $params['limit']
-				&& $params['limit'] < $found
-			)
-		)
-		&& true === $tags['pagination']
-		&& in_array( $tags['pagination_location'], [
-			'after',
-			'both',
-		], true )
-	) {
-		echo $pod->pagination( $tags['pagination_label'] );
+	if ( false !== $pagination && in_array( $tags['pagination_location'], [ 'after', 'both' ], true ) ) {
+		echo $pod->pagination( $pagination );
 	}
 
-	if ( ! $is_singular && false !== $tags['filters'] && 'after' === $tags['filters_location'] ) {
-		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
+	if ( $filters && 'after' === $tags['filters_location'] ) {
+		echo $filters;
 	}
 
 	$return = ob_get_clean();
@@ -1592,16 +1615,17 @@ function pods_has_permissions( $options ) {
  *
  * @see   get_page_by_title
  *
- * @param string       $title  Title of item to get
- * @param string       $output Optional. Output type. OBJECT, ARRAY_N, or ARRAY_A. Default OBJECT.
- * @param string       $type   Post Type
- * @param string|array $status Post statuses to include (default is what user has access to)
+ * @param string       $title   Title of item to get
+ * @param string       $output  Optional. Output type. OBJECT, ARRAY_N, or ARRAY_A. Default OBJECT.
+ * @param string       $type    Post Type
+ * @param string|array $status  Post statuses to include (default is what user has access to)
+ * @param bool         $return  Whether to return the 'id' or 'post'.
  *
  * @return WP_Post|null WP_Post on success or null on failure
  *
  * @since 2.3.4
  */
-function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null ) {
+function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null, $return = 'post' ) {
 	// @todo support Pod item lookups, not just Post Types
 	/**
 	 * @var $wpdb WPDB
@@ -1631,10 +1655,14 @@ function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null
 	// Once for WHERE, once for ORDER BY
 	$prepared = array_merge( array( $title, $type ), $status, $status );
 
-	$page = $wpdb->get_var( $wpdb->prepare( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_title` = %s AND `post_type` = %s" . $status_sql . $orderby_sql, $prepared ) );
+	$page = (int) $wpdb->get_var( $wpdb->prepare( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_title` = %s AND `post_type` = %s" . $status_sql . $orderby_sql, $prepared ) );
 
-	if ( $page ) {
-		return get_post( pods_v( $page, 'post_id' ), $output );
+	if ( 0 < $page ) {
+		if ( 'id' === $return ) {
+			return $page;
+		}
+
+		return get_post( $page, $output );
 	}
 
 	return null;
@@ -2138,6 +2166,69 @@ function pods_register_field_type( $type, $file = null ) {
  */
 function pods_register_related_object( $name, $label, $options = null ) {
 	return PodsForm::field_method( 'pick', 'register_related_object', $name, $label, $options );
+}
+
+/**
+ * Register an object with Pods.
+ *
+ * @since TBD
+ *
+ * @param array  $object The object configuration.
+ * @param string $type   The object type.
+ *
+ * @return true|WP_Error True if successful, or else an WP_Error with the problem.
+ */
+function pods_register_object( array $object, $type ) {
+	$object['object_type']  = $type;
+	$object['storage_type'] = 'collection';
+
+	$object_collection = Store::get_instance();
+	$object_collection->register_object( $object );
+
+	return true;
+}
+
+/**
+ * Register a group and it's fields with Pods.
+ *
+ * @since TBD
+ *
+ * @param array  $group The group configuration.
+ * @param string $pod   The pod to register to.
+ * @param array  $field The list of group fields.
+ *
+ * @return true|WP_Error True if successful, or else an WP_Error with the problem.
+ */
+function pods_register_group( array $group, $pod, array $fields ) {
+	$group['parent'] = 'pod/' . $pod;
+
+	pods_register_object( $group, 'group' );
+
+	foreach ( $fields as $field ) {
+		pods_register_group_field( $field, $group['name'], $pod );
+	}
+
+	return true;
+}
+
+/**
+ * Register a field with Pods.
+ *
+ * @since TBD
+ *
+ * @param array  $field The field configuration.
+ * @param string $group The group to register to.
+ * @param string $pod   The pod to register to.
+ *
+ * @return true|WP_Error True if successful, or else an WP_Error with the problem.
+ */
+function pods_register_group_field( array $field, $group, $pod ) {
+	$field['parent'] = 'pod/' . $pod;
+	$field['group']  = $group;
+
+	pods_register_object( $field, 'field' );
+
+	return true;
 }
 
 /**
@@ -2767,7 +2858,7 @@ function pods_is_modal_window() {
 function pod_is_valid( $pod ) {
 	$is_valid = false;
 
-	if ( $pod && is_a( $pod, 'Pods' ) && $pod->valid() ) {
+	if ( $pod && $pod instanceof Pods && $pod->valid() ) {
 		$is_valid = true;
 	}
 
@@ -2791,4 +2882,108 @@ function pod_has_items( $pod ) {
 	}
 
 	return $has_items;
+}
+
+/**
+ * Merge one config into another for purposes of overriding certain arguments.
+ *
+ * @since TBD
+ *
+ * @param array|Whatsit $config_to_merge_into The config to merge into.
+ * @param array|Field   $config_to_merge_from The config to merge from.
+ *
+ * @return array|Field The final config result.
+ */
+function pods_config_merge_data( $config_to_merge_into, $config_to_merge_from ) {
+	// The configs already match.
+	if ( $config_to_merge_into === $config_to_merge_from ) {
+		return $config_to_merge_into;
+	}
+
+	// Merge the config into the destination config.
+	if ( $config_to_merge_into instanceof Whatsit ) {
+		return $config_to_merge_into->set_args( $config_to_merge_from );
+	}
+
+	// Merge the destination config into the config but don't replace data.
+	if ( $config_to_merge_from instanceof Whatsit ) {
+		return $config_to_merge_from->set_args( $config_to_merge_into, false );
+	}
+
+	// The config was not an array.
+	if ( ! is_array( $config_to_merge_from ) ) {
+		return $config_to_merge_into;
+	}
+
+	// The config was not an array.
+	if ( ! is_array( $config_to_merge_into ) ) {
+		return $config_to_merge_from;
+	}
+
+	// Merge the config arrays together.
+	return array_merge( $config_to_merge_into, $config_to_merge_from );
+}
+
+/**
+ * Get the list of all fields, including object fields, from a Pod configuration.
+ *
+ * @since TBD
+ *
+ * @param array|Pod|Pods $pod The Pod configuration array or object.
+ *
+ * @return array[]|Field[] The list of all fields, including object fields.
+ */
+function pods_config_get_all_fields( $pod ) {
+	if ( $pod instanceof Pod ) {
+		return $pod->get_all_fields();
+	}
+
+	$fields        = (array) pods_v( 'fields', $pod, [] );
+	$object_fields = (array) pods_v( 'object_fields', $pod, [] );
+
+	return array_merge( $fields, $object_fields );
+}
+
+/**
+ * Get the field data for a specific field matching from all fields, including object fields, from a Pod configuration.
+ *
+ * @since TBD
+ *
+ * @param string         $field The field name to get.
+ * @param array|Pod|Pods $pod   The Pod configuration array or object.
+ * @param null|string    $arg   The field argument to use when getting the field.
+ *
+ * @return array|Field|null The field data or null if not found.
+ */
+function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
+	// Get the pod data from the Pods object if it's there.
+	if ( $pod instanceof Pods ) {
+		$pod = $pod->pod_data;
+	}
+
+	// Get the field directly from the Pod.
+	if ( $pod instanceof Pod ) {
+		return $pod->get_field( $field, $arg );
+	}
+
+	// The pod isn't there or valid.
+	if ( empty( $pod ) ) {
+		return null;
+	}
+
+	$fields        = (array) pods_v( 'fields', $pod, [] );
+	$object_fields = (array) pods_v( 'object_fields', $pod, [] );
+
+	// Return the object field.
+	if ( isset( $object_fields[ $field ] ) ) {
+		return $object_fields[ $field ];
+	}
+
+	// Return the pod field.
+	if ( isset( $fields[ $field ] ) ) {
+		return $fields[ $field ];
+	}
+
+	// No field found.
+	return null;
 }

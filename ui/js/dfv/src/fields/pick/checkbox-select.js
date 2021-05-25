@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
-import {PICK_OPTIONS} from 'dfv/src/config/prop-types';
+import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 const CheckboxSelect = ( {
 	htmlAttributes,
@@ -11,6 +11,7 @@ const CheckboxSelect = ( {
 	options = [],
 	setValue,
 	isMulti,
+	readOnly = false,
 } ) => {
 	const toggleValueOption = ( option ) => {
 		if ( value.includes( option ) ) {
@@ -41,7 +42,7 @@ const CheckboxSelect = ( {
 					? `${ nameBase }[${ optionIndex }]`
 					: nameBase;
 
-				let idAttribute = !!htmlAttributes.id ? htmlAttributes.id : name;
+				let idAttribute = !! htmlAttributes.id ? htmlAttributes.id : name;
 
 				if ( 1 < totalOptions ) {
 					idAttribute += `-${ optionValue }`;
@@ -65,12 +66,22 @@ const CheckboxSelect = ( {
 									type="checkbox"
 									value={ optionValue }
 									onChange={ () => {
+										if ( readOnly ) {
+											return;
+										}
+
 										if ( isMulti ) {
 											toggleValueOption( optionValue );
 										} else {
-											setValue( value === optionValue ? undefined : optionValue );
+											// Workaround for boolean fields:
+											const unsetValue = ( 1 === options.length && optionValue === '1' )
+												? '0'
+												: undefined;
+
+											setValue( value === optionValue ? unsetValue : optionValue );
 										}
 									} }
+									readOnly={ !! readOnly }
 								/>
 								{ optionLabel }
 							</label>
@@ -97,6 +108,7 @@ CheckboxSelect.propTypes = {
 	setValue: PropTypes.func.isRequired,
 	options: PICK_OPTIONS.isRequired,
 	isMulti: PropTypes.bool.isRequired,
+	readOnly: PropTypes.bool,
 };
 
 export default CheckboxSelect;

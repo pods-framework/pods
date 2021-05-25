@@ -102,6 +102,7 @@ class Store {
 				'name'         => '_pods_pod',
 				'label'        => __( 'Pod', 'pods' ),
 				'description'  => __( 'Pod configuration', 'pods' ),
+				'type'         => 'post_type',
 			],
 			'pod/_pods_group' => [
 				'internal'     => true,
@@ -110,6 +111,7 @@ class Store {
 				'name'         => '_pods_group',
 				'label'        => __( 'Pod Group', 'pods' ),
 				'description'  => __( 'Pod Group configuration', 'pods' ),
+				'type'         => 'post_type',
 			],
 			'pod/_pods_field' => [
 				'internal'     => true,
@@ -118,6 +120,25 @@ class Store {
 				'name'         => '_pods_field',
 				'label'        => __( 'Pod Field', 'pods' ),
 				'description'  => __( 'Pod Field configuration', 'pods' ),
+				'type'         => 'post_type',
+			],
+			'pod/_pods_template' => [
+				'internal'     => true,
+				'object_type'  => 'pod',
+				'storage_type' => 'collection',
+				'name'         => '_pods_template',
+				'label'        => __( 'Pod Template', 'pods' ),
+				'description'  => __( 'Pod Template configuration', 'pods' ),
+				'type'         => 'post_type',
+			],
+			'pod/_pods_page' => [
+				'internal'     => true,
+				'object_type'  => 'pod',
+				'storage_type' => 'collection',
+				'name'         => '_pods_page',
+				'label'        => __( 'Pod Page', 'pods' ),
+				'description'  => __( 'Pod Page configuration', 'pods' ),
+				'type'         => 'post_type',
 			],
 		];
 	}

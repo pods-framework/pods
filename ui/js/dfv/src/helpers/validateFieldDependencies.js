@@ -1,4 +1,4 @@
-import {toNumericBool} from './booleans';
+import { toNumericBool } from './booleans';
 
 /**
  * Helper function to validate that a field or tab's field dependencies
@@ -6,11 +6,12 @@ import {toNumericBool} from './booleans';
  *
  * @param {Object} options   Key/value object with the selected options to compare to.
  * @param {Object} dependsOn Key/value field slug and option to check for.
- * @param {string} mode      The dependency mode.
+ * @param {string} mode      The dependency mode, either 'wildcard', 'depends-on',
+ *                           'depends-on-any', or 'excludes'.
  *
  * @return {boolean} True if dependencies are met to show the item.
  */
-const validateFieldDependencies = ( options, dependsOn, mode = 'depends' ) => {
+const validateFieldDependencies = ( options, dependsOn, mode = 'depends-on' ) => {
 	const dependsOnKeys = Object.keys( dependsOn || {} );
 
 	if ( ! dependsOnKeys.length ) {
@@ -20,6 +21,12 @@ const validateFieldDependencies = ( options, dependsOn, mode = 'depends' ) => {
 	if ( 'excludes' === mode ) {
 		// Negate the check because the exclusion dependency has failed if it returns true.
 		return ! dependsOnKeys.some( ( key ) => {
+			return validateFieldDependenciesForKey( options, dependsOn, mode, key );
+		} );
+	}
+
+	if ( 'depends-on-any' === mode ) {
+		return dependsOnKeys.some( ( key ) => {
 			return validateFieldDependenciesForKey( options, dependsOn, mode, key );
 		} );
 	}
@@ -35,7 +42,8 @@ const validateFieldDependencies = ( options, dependsOn, mode = 'depends' ) => {
  *
  * @param {Object} options   Key/value object with the selected options to compare to.
  * @param {Object} dependsOn Key/value field slug and option to check for.
- * @param {string} mode      The dependency mode.
+ * @param {string} mode      The dependency mode, either 'wildcard', 'depends-on',
+ *                           'depends-on-any', or 'excludes'.
  * @param {string} key       The dependency key being checked.
  *
  * @return {boolean} True if dependencies are met to show the item.
@@ -93,6 +101,6 @@ const validateFieldDependenciesForKey = ( options, dependsOn, mode, key ) => {
 		: rule;
 
 	return currentValue === processedDependsOnValue;
-}
+};
 
 export default validateFieldDependencies;

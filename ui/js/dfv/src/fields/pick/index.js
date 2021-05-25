@@ -12,10 +12,7 @@ import CheckboxSelect from './checkbox-select';
 import ListSelect from './list-select';
 
 import { toBool } from 'dfv/src/helpers/booleans';
-import {
-	// PICK_OPTIONS,
-	FIELD_PROP_TYPE_SHAPE,
-} from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 import './pick.scss';
 
@@ -90,6 +87,7 @@ const Pick = ( props ) => {
 	const {
 		fieldConfig: {
 			htmlAttr: htmlAttributes = {},
+			readonly: readOnly,
 			data = [],
 			label,
 			name,
@@ -122,6 +120,7 @@ const Pick = ( props ) => {
 		},
 		setValue,
 		value,
+		setHasBlurred,
 	} = props;
 
 	const isSingle = 'single' === formatType;
@@ -135,6 +134,9 @@ const Pick = ( props ) => {
 		// We don't need to worry about limits if this isn't a multi-select field.
 		if ( isSingle ) {
 			setValue( newValue );
+
+			setHasBlurred( true );
+
 			return;
 		}
 
@@ -145,6 +147,8 @@ const Pick = ( props ) => {
 		const numericLimit = parseInt( limit, 10 ) || 0;
 
 		if ( isNaN( numericLimit ) || 0 === numericLimit || -1 === numericLimit ) {
+			setHasBlurred( true );
+
 			setValue( filteredNewValues );
 			return;
 		}
@@ -155,6 +159,8 @@ const Pick = ( props ) => {
 		}
 
 		setValue( filteredNewValues );
+
+		setHasBlurred( true );
 	};
 
 	useEffect( () => {
@@ -237,6 +243,7 @@ const Pick = ( props ) => {
 				value={ value }
 				setValue={ setValueWithLimit }
 				options={ dataOptions }
+				readOnly={ !! readOnly }
 			/>
 		);
 	}
@@ -261,6 +268,7 @@ const Pick = ( props ) => {
 				isMulti={ isMulti }
 				setValue={ setValueWithLimit }
 				options={ dataOptions }
+				readOnly={ !! readOnly }
 			/>
 		);
 	}
@@ -287,6 +295,7 @@ const Pick = ( props ) => {
 				showIcon={ toBool( showIcon ) }
 				showViewLink={ toBool( showViewLink ) }
 				showEditLink={ toBool( showEditLink ) }
+				readOnly={ !! readOnly }
 			/>
 		);
 	}
@@ -313,6 +322,7 @@ const Pick = ( props ) => {
 						setValueWithLimit( newOption.value );
 					}
 				} }
+				readOnly={ !! readOnly }
 			/>
 		);
 	}
@@ -326,13 +336,13 @@ const Pick = ( props ) => {
 			options={ dataOptions }
 			placeholder={ selectText }
 			isMulti={ isMulti }
+			readOnly={ !! readOnly }
 		/>
 	);
 };
 
 Pick.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	setValue: PropTypes.func.isRequired,
+	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.oneOfType( [
 		PropTypes.arrayOf( PropTypes.string ),
 		PropTypes.string,

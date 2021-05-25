@@ -21,7 +21,7 @@ $fields = apply_filters( 'pods_admin_settings_fields', array() );
 
 $nonce = wp_create_nonce( 'pods_settings_form' );
 
-if ( isset( $_POST['_pods_nonce'] ) ) {
+if ( isset( $_POST['_pods_nonce'] ) && wp_verify_nonce( $_POST['_pods_nonce'], 'pods_settings_form' ) ) {
 	$action = __( 'saved', 'pods' );
 
 	$params = pods_unslash( (array) $_POST );

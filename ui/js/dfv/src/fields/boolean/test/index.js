@@ -12,6 +12,7 @@ const BASE_PROPS = {
 	value: '',
 	setValue: jest.fn(),
 	addValidationRules: jest.fn(),
+	setHasBlurred: jest.fn(),
 	fieldConfig: {
 		group: 'group/pod/_pods_pod/dfv-demo',
 		id: 'some_id',
@@ -61,7 +62,6 @@ describe( 'Boolean field component', () => {
 		expect( labels.at( 1 ).text() ).toEqual( 'False' );
 
 		expect( props.setValue ).toHaveBeenNthCalledWith( 1, '1' );
-		expect( props.setValue ).toHaveBeenNthCalledWith( 2, '0' );
 	} );
 
 	it( 'renders a dropdown menu with custom labels and handles changes', () => {

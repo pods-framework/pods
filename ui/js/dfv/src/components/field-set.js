@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -9,49 +9,71 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 const FieldSet = ( {
 	fields,
-	optionValues,
+	allPodFields,
+	allPodValues,
 	setOptionValue,
 } ) => {
+	// Only calculate this once - this assumes that the array of all fields
+	// for the Pod does not change, to save render time.
+	const allPodFieldsMap = useMemo( () => {
+		return new Map(
+			allPodFields.map( ( fieldData ) => [ fieldData.name, fieldData ] )
+		);
+	}, [] );
+
 	return fields.map( ( field ) => {
-		const { name } = field;
+		const {
+			type,
+			name,
+			boolean_group: booleanGroup,
+		} = field;
 
-		const dependencyValueEntries = Object
-			.keys( field[ 'depends-on' ] || {} )
-			.map( ( fieldName ) => ( [
-				fieldName,
-				optionValues[ fieldName ],
-			] ) );
+		// Boolean Group fields get a map of values instead of a single value.
+		const isGroupField = 'boolean_group' === type;
 
-		const exclusionValueEntries = Object
-			.keys( field[ 'excludes-on' ] || {} )
-			.map( ( fieldName ) => ( [
-				fieldName,
-				optionValues[ fieldName ],
-			] ) );
+		const values = {};
 
-		const wildcardValueEntries = Object
-			.keys( field[ 'wildcard-on' ] || {} )
-			.map( ( fieldName ) => ( [
-				fieldName,
-				optionValues[ fieldName ],
-			] ) );
+		if ( isGroupField ) {
+			( booleanGroup || [] ).forEach( ( subField ) => {
+				values[ subField.name ] = subField.name
+					? allPodValues[ subField.name ]
+					: undefined;
+			} );
+		}
 
 		return (
 			<FieldWrapper
 				key={ name }
 				field={ field }
-				value={ optionValues[ name ] }
+				value={ isGroupField ? undefined : allPodValues[ name ] }
+				values={ isGroupField ? values : undefined }
 				setOptionValue={ setOptionValue }
-				dependencyValues={ Object.fromEntries( dependencyValueEntries ) }
-				exclusionValues={ Object.fromEntries( exclusionValueEntries ) }
-				wildcardValues={ Object.fromEntries( wildcardValueEntries ) }
+				allPodFieldsMap={ allPodFieldsMap }
+				allPodValues={ allPodValues }
 			/>
 		);
 	} );
 };
 
 FieldSet.propTypes = {
+	/**
+	 * Array of fields that should be rendered in the set.
+	 */
 	fields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
+
+	/**
+	 * All fields from the Pod, including ones that belong to other groups.
+	 */
+	allPodFields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
+
+	/**
+	 * A map object with all of the Pod's current values.
+	 */
+	allPodValues: PropTypes.object.isRequired,
+
+	/**
+	 * Function to update the field's value on change.
+	 */
 	setOptionValue: PropTypes.func.isRequired,
 };
 

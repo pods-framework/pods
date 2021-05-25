@@ -9,7 +9,7 @@ import {
 
 import { numberValidator } from 'dfv/src/helpers/validators';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 import './currency.scss';
 
@@ -18,6 +18,7 @@ const Currency = ( {
 	fieldConfig,
 	value,
 	setValue,
+	setHasBlurred,
 } ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
@@ -66,6 +67,12 @@ const Currency = ( {
 		setFormattedValue( newFormattedValue );
 	};
 
+	const handleBlur = () => {
+		setHasBlurred();
+
+		reformatFormattedValue();
+	};
+
 	const formatSignSymbol = window?.podsAdminConfig?.currencies[ formatSign ]?.sign || '$';
 
 	if ( 'slider' === type ) {
@@ -80,7 +87,7 @@ const Currency = ( {
 					value={ value || min || 0 }
 					readOnly={ !! readOnly }
 					onChange={ handleChange }
-					onBlur={ reformatFormattedValue }
+					onBlur={ handleBlur }
 					min={ min }
 					max={ max }
 					step={ step }
@@ -109,7 +116,7 @@ const Currency = ( {
 				value={ formattedValue }
 				readOnly={ !! readOnly }
 				onChange={ handleChange }
-				onBlur={ reformatFormattedValue }
+				onBlur={ handleBlur }
 			/>
 		</div>
 	);
@@ -120,9 +127,7 @@ Currency.defaultProps = {
 };
 
 Currency.propTypes = {
-	addValidationRules: PropTypes.func.isRequired,
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	setValue: PropTypes.func.isRequired,
+	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.number,

@@ -209,6 +209,7 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 						optionsPod={ editGroupPod }
 						selectedOptions={ omit( group, [ 'fields' ] ) }
 						title={ sprintf(
+							// @todo Zack: Make these into elements we can style the parent pod differently.
 							/* translators: %1$s: Pod Label, %2$s Group Label */
 							__( '%1$s > %2$s > Edit Group', 'pods' ),
 							podLabel,

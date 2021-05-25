@@ -1,15 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Pick from '../pick';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { toNumericBool } from 'dfv/src/helpers/booleans';
+import {
+	BOOLEAN_ALL_TYPES_OR_EMPTY,
+	FIELD_COMPONENT_BASE_PROPS,
+} from 'dfv/src/config/prop-types';
 
-const Boolean = ( {
-	fieldConfig = {},
-	setValue,
-	value,
-} ) => {
+const Boolean = ( props ) => {
+	const {
+		fieldConfig = {},
+		setValue,
+		value,
+	} = props;
+
 	const {
 		boolean_format_type: formatType = 'checkbox', // 'checkbox', 'radio', or 'dropdown'
 		boolean_no_label: noLabel = 'No',
@@ -24,25 +29,22 @@ const Boolean = ( {
 
 	return (
 		<Pick
+			{ ...props }
 			fieldConfig={ {
 				...fieldConfig,
 				pick_format_type: 'single',
 				pick_format_single: formatType,
 				data: options,
 			} }
-			value={ value }
+			value={ toNumericBool( value ) }
 			setValue={ setValue }
 		/>
 	);
 };
 
 Boolean.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	setValue: PropTypes.func.isRequired,
-	value: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.number,
-	] ),
+	...FIELD_COMPONENT_BASE_PROPS,
+	value: BOOLEAN_ALL_TYPES_OR_EMPTY,
 };
 
 export default Boolean;

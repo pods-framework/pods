@@ -2,7 +2,7 @@
 Contributors: sc0ttkclark, keraweb, jimtrue, pglewis, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
-Requires at least: 5.4
+Requires at least: 5.5
 Tested up to: 5.7.2
 Requires PHP: 5.6
 Stable tag: 2.8.0-b-2
@@ -190,6 +190,22 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.8 - TBD, 2021 =
+
+**New PHP & WP Minimum Version Requirements:**
+
+* PHP Version Change Requirement 5.3+
+* WP Version Change Required 4.5+
+
+**Major Features: Field Groups and new Edit Pod screen**
+
+Now you can add multiple field groups to your Pods using the brand new Edit Pod screen that's been completely rewritten.
+
+Our Edit Pod screen is powered on the technical side by our all new React form interfaces, tooltips, and our new Pods Admin REST API endpoints.
+
+* Feature: REST API endpoints are now available to create/edit various objects: Pods, Pod Groups, and Pod Fields.
+* Feature: WP-CLI commands that mirror the REST API endpoints we have.    
 
 = 2.7.28 - May 20th, 2021 =
 

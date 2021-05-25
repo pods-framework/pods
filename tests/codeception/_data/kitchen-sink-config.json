@@ -1,4 +1,39 @@
 {
+  "demo_long_title_for_tooltip": {
+    "name": "demo_long_title_for_tooltip",
+    "label": "Demo Extra-long Title on this field for testing the tooltip position",
+    "description": "max length 15",
+    "help": "The Query Var is used in the URL and underneath the WordPress Rewrite API to tell WordPress what page or post type you are on. For a list of reserved Query Vars, read <a href=\"http://codex.wordpress.org/WordPress_Query_Vars\">WordPress Query Vars</a> from the WordPress Codex.",
+    "class": "",
+    "type": "text",
+    "weight": 0,
+    "pick_object": "",
+    "pick_val": "",
+    "sister_id": "",
+    "required": "0",
+    "text_allow_shortcode": "0",
+    "text_allow_html": "0",
+    "text_allowed_html_tags": "strong em a ul ol li b i",
+    "text_max_length": "15",
+    "pick_post_status": [
+      "publish"
+    ],
+    "admin_only": "0",
+    "restrict_role": "0",
+    "restrict_capability": "0",
+    "hidden": "0",
+    "read_only": "0",
+    "roles_allowed": [
+      "administrator"
+    ],
+    "rest_read": "0",
+    "rest_write": "0",
+    "rest_pick_response": "array",
+    "rest_pick_depth": "2",
+    "unique": "0",
+    "text_repeatable": "0",
+    "text_placeholder": ""
+  },
   "demo_boolean_group": {
     "name"  : "demo_boolean_group",
     "label" : "Boolean Group",

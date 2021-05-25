@@ -2064,14 +2064,21 @@ class PodsAPI {
 
 			if ( ! is_array( $pod['groups'] ) || empty( $pod['groups'] ) ) {
 				$pod['groups'] = [
-					'name'   => 'more-fields',
-					'label'  => __( 'More Fields', 'pods' ),
-					'fields' => [],
+					'more-fields' => [
+						'name'   => 'more-fields',
+						'label'  => __( 'More Fields', 'pods' ),
+						'fields' => [],
+					],
 				];
 
 				// Advanced Content Types have default fields.
 				if ( 'pod' === $pod['type'] ) {
-					$pod['groups']['more-fields']['fields'] = [
+					$pod['groups']['details'] = $pod['groups']['more-fields'];
+
+					unset( $pod['groups']['more-fields'] );
+
+					$pod['groups']['details']['label']  = __( 'Details', 'pods' );
+					$pod['groups']['details']['fields'] = [
 						'name'      => [
 							'name'     => 'name',
 							'label'    => 'Name',
@@ -2192,6 +2199,8 @@ class PodsAPI {
 
 			if ( ! empty( $all_fields ) ) {
 				$all_fields = array_merge( ...$all_fields );
+			} else {
+				$all_fields = [];
 			}
 		}
 
@@ -3700,7 +3709,7 @@ class PodsAPI {
 				 * @param string             $definition_mode The definition mode used for the table field.
 				 * @param Pods\Whatsit\Pod   $pod             The pod object.
 				 * @param string             $type            The field type.
-				 * @param array $field           The field object.
+				 * @param array              $field           The field object.
 				 * @param array              $extra_info      {
 				 *      Extra information about the field.
 				 *

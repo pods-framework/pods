@@ -424,6 +424,10 @@
 			display: flex;
 			justify-content: flex-end;
 			align-content: center;
+
+			.button-primary {
+				margin-left: 10px;
+			}
 		}
 
 		input.button,

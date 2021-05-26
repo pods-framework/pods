@@ -314,10 +314,10 @@
 						</div>
 					</div>
 
-					<div id="pods-wizard-actions">
+					<div id="pods-wizard-actions" class="pods-wizard-button-interface">
 						<div id="pods-wizard-toolbar">
 							<button id="pods-wizard-start" class="button button-secondary hidden"><?php esc_html_e( 'Start Over', 'pods' ); ?></button>
-							<button type="submit" id="pods-wizard-next" class="button button-primary hidden" data-again="<?php esc_attr_e( 'Process Again', 'pods' ); ?>" data-next="<?php esc_attr_e( 'Continue', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php esc_html_e( 'Continue', 'pods' ); ?></button>
+							<button id="pods-wizard-next" class="button button-primary hidden" data-again="<?php esc_attr_e( 'Process Again', 'pods' ); ?>" data-next="<?php esc_attr_e( 'Continue', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php esc_html_e( 'Continue', 'pods' ); ?></button>
 						</div>
 						<div id="pods-wizard-finished">
 

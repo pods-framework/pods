@@ -139,7 +139,7 @@
 						</div>
 					</div>
 
-					<div id="pods-wizard-actions">
+					<div id="pods-wizard-actions" class="pods-wizard-button-interface">
 						<div id="pods-wizard-toolbar">
 							<button id="pods-wizard-start" class="button button-secondary hidden"><?php _e( 'Start Over', 'pods' ); ?></button>
 							<button id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></button>

@@ -419,6 +419,13 @@
 		@include multi-border-radius(0, 0, 8px, 8px);
 		@include vertical-gradient(#ededed, #f9f9f9);
 
+		&.pods-wizard-button-interface {
+			padding: 5px 15px 0 15px;
+			display: flex;
+			justify-content: flex-end;
+			align-content: center;
+		}
+
 		input.button,
 		a.button {
 			position: absolute;

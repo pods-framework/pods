@@ -420,13 +420,19 @@
 		@include vertical-gradient(#ededed, #f9f9f9);
 
 		&.pods-wizard-button-interface {
-			padding: 5px 15px 0 15px;
-			display: flex;
-			justify-content: flex-end;
-			align-content: center;
+			height: 45px;
 
-			.button-primary {
-				margin-left: 10px;
+			#pods-wizard-toolbar {
+				height: 45px;
+				padding: 0 15px;
+				display: flex;
+				justify-content: space-between;
+				align-content: center;
+				align-items: center;
+
+				.button-primary {
+					align-self: flex-end;
+				}
 			}
 		}
 

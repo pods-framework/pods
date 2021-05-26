@@ -337,6 +337,16 @@
 			}
 			#pods-wizard-options {
 				text-align: center;
+				.pods-wizard-options-list {
+					display: flex;
+					justify-content: space-evenly;
+
+					.pods-wizard-option {
+						&:first-child {
+							margin-right: 0 !important;
+						}
+					}
+				}
 				.pods-wizard-option {
 					width: 290px;
 					display: inline-block;

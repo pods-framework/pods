@@ -1870,7 +1870,7 @@ class PodsAPI {
 				'storage'     => 'table',
 				'object'      => '',
 				'alias'       => '',
-				'groups'      => array(), vbn
+				'groups'      => array(),
 			);
 		}
 

@@ -226,13 +226,9 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 				'validate_callback' => [ $this->validator, 'is_pod_id' ],
 			],
 			'delete_all' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to delete all content for Pod (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 		];

@@ -1484,6 +1484,7 @@ class PodsAPI {
 	 * $params['create_label_singular'] string Singular Label (for Creating)
 	 * $params['create_storage'] string Storage Type (for Creating Post Types)
 	 * $params['create_storage_taxonomy'] string Storage Type (for Creating Taxonomies)
+	 * $params['create_rest_api'] int Whether REST API will be enabled (for Creating Post Types and Taxonomies)
 	 * $params['extend_pod_type'] string Pod Type (for Extending)
 	 * $params['extend_post_type'] string Post Type (for Extending Post Types)
 	 * $params['extend_taxonomy'] string Taxonomy (for Extending Taxonomies)
@@ -1505,6 +1506,7 @@ class PodsAPI {
 			'create_label_plural'     => '',
 			'create_storage'          => 'meta',
 			'create_storage_taxonomy' => '',
+			'create_rest_api'         => 1,
 
 			'create_setting_name'  => '',
 			'create_label_title'   => '',
@@ -1569,6 +1571,8 @@ class PodsAPI {
 				if ( pods_tableless() ) {
 					$pod_params['storage'] = 'meta';
 				}
+
+				$pod_params['rest_enable'] = 1 === (int) $params->create_rest_api ? 1 : 0;
 			} elseif ( 'taxonomy' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
 					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
@@ -1585,6 +1589,8 @@ class PodsAPI {
 				}
 
 				$pod_params['hierarchical'] = 1;
+
+				$pod_params['rest_enable'] = 1 === (int) $params->create_rest_api ? 1 : 0;
 			} elseif ( 'pod' === $pod_params['type'] ) {
 				if ( empty( $pod_params['name'] ) ) {
 					return pods_error( __( 'Please enter a Name for this Pod', 'pod' ), $this );

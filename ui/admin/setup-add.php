@@ -330,6 +330,20 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											] );
 											?>
 										</div>
+										<div class="pods-field__container">
+											<?php
+											echo PodsForm::label( 'create_rest_api', __( 'Enable REST API', 'pods' ), __( 'This option will enable the REST API. For Custom Post Types, this will allow communication with the Block Editor. For Custom Taxonomies, this simply enables the REST API communication that can be taken advantage of by theme integrations.', 'pods' ) );
+											echo PodsForm::field( 'create_rest_api', pods_v( 'create_block_editor', 'post' ), 'boolean', [
+												'default' => 1,
+												'depends-on' => [
+													'create_pod_type' => [
+														'post_type',
+														'taxonomy',
+													],
+												],
+											] );
+											?>
+										</div>
 
 										<?php
 										if ( ! pods_tableless() && apply_filters( 'pods_admin_setup_add_create_storage', false ) ) {
@@ -557,8 +571,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 					<div id="pods-wizard-actions">
 						<div id="pods-wizard-toolbar">
-							<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php esc_html_e( 'Start Over', 'pods' ); ?></a>
-							<a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php esc_html_e( 'Next Step', 'pods' ); ?></a>
+							<button id="pods-wizard-start" class="button button-secondary"><?php esc_html_e( 'Start Over', 'pods' ); ?></button>
+							<button id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php esc_html_e( 'Next Step', 'pods' ); ?></button>
 						</div>
 						<div id="pods-wizard-finished">
 

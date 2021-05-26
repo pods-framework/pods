@@ -141,7 +141,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 							<div class="pods-wizard-options-list">
 								<div class="pods-wizard-option">
 									<a href="#pods-wizard-create" data-opt="create">
-										<h2><?php esc_html_e( 'Create New', 'pods' ); ?></h2>
+										<h2><?php esc_html_e( 'Create New', 'pods' ); ?> &raquo;</h2>
 
 										<p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>.', 'pods' ); ?></p>
 									</a>
@@ -149,7 +149,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 
 								<div class="pods-wizard-option">
 									<a href="#pods-wizard-extend" data-opt="extend">
-										<h2><?php esc_html_e( 'Extend Existing', 'pods' ); ?></h2>
+										<h2><?php esc_html_e( 'Extend Existing', 'pods' ); ?> &raquo;</h2>
 
 										<p><?php _e( 'Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>.', 'pods' ); ?></p>
 									</a>

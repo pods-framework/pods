@@ -2212,10 +2212,10 @@ class PodsAPI {
 
 		// Maybe save the pod table schema.
 		if ( $db ) {
-			$old_info = [
-				$old_storage,
-				$old_name,
-			];
+			$old_info = compact(
+				'old_storage',
+				'old_name',
+			);
 
 			$this->save_pod_table_schema( $pod, $all_fields, $old_info );
 		}

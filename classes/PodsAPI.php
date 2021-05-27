@@ -2256,7 +2256,7 @@ class PodsAPI {
 		$field_index_change = false;
 
 		if ( 'pod' === $pod['type'] && isset( $all_fields[ $field_index ] ) ) {
-			$field_index_id = $pod['fields'][ $field_index ];
+			$field_index_id = $all_fields[ $field_index ];
 
 			if ( ! is_numeric( $field_index_id ) ) {
 				$field_index_id = $field_index_id['id'];

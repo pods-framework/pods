@@ -235,4 +235,45 @@ class Test_Each extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$content = base64_encode( '{@number1}_{@number2}' );
 		$this->assertEquals( '1_12_43_94_165_25', do_shortcode( "[test_each_recurse][pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_sub_template][/test_each_recurse]" ) );
 	}
+
+	/**
+	 * Test traversal each statements.
+	 * Almost similar to test_each_nested_in_external() but this traverses one level deeper.
+	 */
+	public function test_each_traversal() {
+
+		$pod_name = self::$pod_name;
+		$subsub_ids  = array();
+		$pod      = pods( $pod_name );
+		for ( $x = 1; $x <= 5; $x ++ ) {
+			$subsub_ids[] = $pod->add(
+				array(
+					'post_status' => 'publish',
+					'name'        => $x,
+					'number1'     => $x,
+					'number2'     => $x * $x,
+				)
+			);
+		}
+		$sub_id = $pod->add(
+			array(
+				'post_status'   => 'publish',
+				'name'          => 'sub post',
+				'number1'       => 123,
+				'number2'       => 456,
+				'related_field' => $subsub_ids,
+			)
+		);
+		$main_id = $pod->add(
+			array(
+				'post_status'   => 'publish',
+				'name'          => 'main post',
+				'number1'       => 159,
+				'number2'       => 753,
+				'related_field' => $sub_id,
+			)
+		);
+		$content = base64_encode( '{@number1}_{@number2}' );
+		$this->assertEquals( '1_12_43_94_165_25', do_shortcode( "[test_each_recurse][pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field.related_field']{$content}[/pod_sub_template][/test_each_recurse]" ) );
+	}
 }

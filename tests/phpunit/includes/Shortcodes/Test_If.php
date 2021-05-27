@@ -235,4 +235,62 @@ class Test_If extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$this->assertEquals( 'first post title', do_shortcode( "[pods name='{$pod_name}' id='{$id2}'][if related_field]{@related_field.post_title}[/if][/pods]" ) );
 
 	}
+
+	/**
+	 * Test traversal if statements.
+	 * Almost similar to test_if_related_field() but this traverses one level deeper and also adds the post title to the if statement.
+	 */
+	public function test_if_traversal() {
+
+		$pod_name = self::$pod_name;
+		$id1      = pods( $pod_name )->add(
+			array(
+				'post_status' => 'publish',
+				'name'        => 'first post title',
+				'number1'     => 123,
+				'number2'     => 456,
+			)
+		);
+		$id2      = pods( $pod_name )->add(
+			array(
+				'post_status'   => 'publish',
+				'name'          => 'second post title',
+				'number1'       => 987,
+				'number2'       => 654,
+				'related_field' => $id1,
+			)
+		);
+		$id3      = pods( $pod_name )->add(
+			array(
+				'post_status'   => 'publish',
+				'name'          => 'third post title',
+				'number1'       => 159,
+				'number2'       => 753,
+				'related_field' => $id2,
+			)
+		);
+
+		// Not exactly related to the shortcode test but lets make sure we can at least retrieve the proper data
+		$this->assertEquals( '123', pods( $pod_name, $id3 )->field( 'related_field.related_field.number1' ) );
+
+
+		// Traverse to the second relationship.
+		$content = base64_encode( '{@related_field.related_field.post_title}' );
+		$this->assertEquals( 'first post title', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id3}' field='related_field.related_field']{$content}[/pod_if_field]" ) );
+
+		$content = base64_encode( '<a href="{@related_field.related_field.permalink}">{@related_field.related_field.post_title}</a>' );
+		$this->assertEquals( '<a href="http://example.org/?test_if=first-post-title">first post title</a>', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id3}' field='related_field.related_field']{$content}[/pod_if_field]" ) );
+
+		$this->assertEquals( 'first post title', do_shortcode( "[pods name='{$pod_name}' id='{$id3}'][if related_field.related_field]{@related_field.related_field.post_title}[/if][/pods]" ) );
+
+		// Traverse to the second relationship's post title
+		$content = base64_encode( '{@related_field.related_field.post_title}' );
+		$this->assertEquals( 'first post title', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id3}' field='related_field.related_field.post_title']{$content}[/pod_if_field]" ) );
+
+		$content = base64_encode( '<a href="{@related_field.related_field.permalink}">{@related_field.related_field.post_title}</a>' );
+		$this->assertEquals( '<a href="http://example.org/?test_if=first-post-title">first post title</a>', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id3}' field='related_field.related_field.post_title']{$content}[/pod_if_field]" ) );
+
+		$this->assertEquals( 'first post title', do_shortcode( "[pods name='{$pod_name}' id='{$id3}'][if related_field.related_field.post_title]{@related_field.related_field.post_title}[/if][/pods]" ) );
+
+	}
 }

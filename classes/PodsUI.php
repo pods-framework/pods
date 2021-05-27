@@ -4444,6 +4444,19 @@ class PodsUI {
 										$row_value = wp_kses_post( $row_value );
 									}
 
+									/**
+									 * Allow filtering the display value used for a field in the table column.
+									 *
+									 * @since 2.7.29
+									 *
+									 * @param string $row_value  The display value for the field.
+									 * @param string $field      The field name.
+									 * @param array  $attributes The field attributes.
+									 * @param array  $row        The other values for the row.
+									 * @param PodsUI $obj        The PodsUI object.
+									 */
+									$row_value = apply_filters( 'pods_ui_field_display_value', $row_value, $field, $attributes, $row, $this );
+
 									if ( ! in_array( 'edit', $this->actions_disabled ) && ! in_array( 'edit', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder['on'] ) && 'edit' === $default_action ) {
 										$link = pods_query_arg(
 											array(

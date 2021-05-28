@@ -16,9 +16,10 @@ const HelpTooltip = ( {
 	return (
 		<Tippy
 			className="pods-help-tooltip"
-			// z-index is 1 higher than the Modal component
 			trigger="click"
+			// z-index is 1 higher than the Modal component
 			zIndex={ 100001 }
+			interactive
 			content={ helpLink ? (
 				<a href={ helpLink } target="_blank" rel="noreferrer">
 					<span

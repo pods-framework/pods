@@ -296,7 +296,7 @@ class PodsAPI {
 		$meta = get_post_meta( $id );
 
 		foreach ( $meta as $k => $value ) {
-			if ( is_array( $value ) && 1 == count( $value ) ) {
+			if ( is_array( $value ) && 1 === count( $value ) ) {
 				$meta[ $k ] = current( $value );
 			}
 		}

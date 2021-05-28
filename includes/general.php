@@ -148,7 +148,7 @@ function pods_error( $error, $obj = null ) {
 	/**
 	 * @var string $error_mode Throw an exception, exit with the message, return false, or return WP_Error
 	 */
-	if ( ! in_array( $error_mode, array( 'exception', 'exit', 'false', 'wp_error' ), true ) ) {
+	if ( ! in_array( $error_mode, array( 'exception', 'exit', 'false', 'wp_error', 'json' ), true ) ) {
 		$error_mode = 'exception';
 	}
 
@@ -157,6 +157,8 @@ function pods_error( $error, $obj = null ) {
 	 */
 	if ( pods_doing_shortcode() ) {
 		$error_mode = 'exception';
+	} elseif ( pods_doing_json() ) {
+		$error_mode = 'json';
 	}
 
 	/**
@@ -249,6 +251,8 @@ function pods_error( $error, $obj = null ) {
 			}
 		} elseif ( 'wp_error' === $error_mode ) {
 			return $wp_error;
+		} elseif ( 'json' === $error_mode ) {
+			wp_send_json_error( $wp_error );
 		}//end if
 	}//end if
 
@@ -808,6 +812,23 @@ function pods_doing_shortcode( $bool = null ) {
 		$check = (bool) $bool;
 	}
 	return $check;
+}
+
+/**
+ * Check whether we are currently in a JSON request.
+ *
+ * @since  2.8
+ *
+ * @return bool Whether we are in a REST API or JSON request.
+ */
+function pods_doing_json() {
+	// Check whether we are doing a REST API request.
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		return true;
+	}
+
+	// Return whether we are doing a JSON request.
+	return wp_is_json_request();
 }
 
 /**

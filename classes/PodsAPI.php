@@ -1755,6 +1755,8 @@ class PodsAPI {
 
 		if ( false === $sanitized ) {
 			$params = pods_sanitize( $params );
+
+			$sanitized = true;
 		}
 
 		$old_id      = null;
@@ -3062,6 +3064,8 @@ class PodsAPI {
 
 		if ( false === $sanitized ) {
 			$params = pods_sanitize( $params );
+
+			$sanitized = true;
 		}
 
 		$id_required = false;
@@ -3288,6 +3292,7 @@ class PodsAPI {
 			'old_name',
 			'parent',
 			'group_id',
+			'sanitized',
 		);
 
 		foreach ( $options_ignore as $ignore ) {
@@ -3966,6 +3971,8 @@ class PodsAPI {
 
 		if ( false === $sanitized ) {
 			$params = pods_sanitize( $params );
+
+			$sanitized = true;
 		}
 
 		$id_required = false;
@@ -4343,6 +4350,8 @@ class PodsAPI {
 
 		if ( false === $sanitized ) {
 			$params = pods_sanitize( $params );
+
+			$sanitized = true;
 		}
 
 		if ( ! isset( $params->name ) || empty( $params->name ) ) {

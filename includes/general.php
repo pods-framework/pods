@@ -257,7 +257,9 @@ function pods_error( $error, $obj = null ) {
 		} elseif ( 'wp_error' === $error_mode ) {
 			return $wp_error;
 		} elseif ( 'json' === $error_mode ) {
-			wp_send_json_error( $error, 500 );
+			wp_send_json( [
+				'message' => $error,
+			], 500 );
 		}//end if
 	}//end if
 

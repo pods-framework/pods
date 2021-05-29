@@ -1790,8 +1790,8 @@ class PodsAPI {
 
 			$old_name    = $pod['name'];
 			$old_storage = $pod['storage'];
-			$old_groups  = $pod['groups'];
-			$old_fields  = $pod['fields'];
+			$old_groups  = isset( $pod['groups'] ) ? $pod['groups'] : [];
+			$old_fields  = isset( $pod['fields'] ) ? $pod['fields'] : [];
 
 			// Get group fields if we have groups.
 			if ( ! empty( $old_groups ) ) {

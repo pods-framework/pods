@@ -232,8 +232,8 @@ class Post_TypeTest extends Pods_WhatsitTestCase {
 			'object_type' => $this->pods_object_pod->get_object_type(),
 		];
 
-		// Post type + Collection (_pods_pod, _pods_group, _pods_field)
-		$this->assertCount( 4, $this->pods_object_storage->find( $args ) );
+		// Post type + Collection (_pods_pod, _pods_group, _pods_field, _pods_template, _pods_page, plus an additional)
+		$this->assertCount( 6, $this->pods_object_storage->find( $args ) );
 
 		$this->pods_object_storage->fallback_mode( false );
 
@@ -260,7 +260,8 @@ class Post_TypeTest extends Pods_WhatsitTestCase {
 			'status'      => 'publish',
 		];
 
-		$this->assertCount( 4, $this->pods_object_storage->find( $args ) );
+		// Post type + Collection (_pods_pod, _pods_group, _pods_field, _pods_template, _pods_page, plus an additional)
+		$this->assertCount( 6, $this->pods_object_storage->find( $args ) );
 	}
 
 	/**

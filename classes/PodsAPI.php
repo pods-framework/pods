@@ -2447,7 +2447,7 @@ class PodsAPI {
 		}
 
 		if ( is_array( $order_group_fields ) && ! empty( $order_group_fields['groups'] ) ) {
-			$this->save_pod_group_field_order( $order_group_fields['groups'], $pod, $object, $db );
+			$this->save_pod_group_field_order( $order_group_fields['groups'], $object, $db );
 		}
 
 		$this->cache_flush_pods( $pod );
@@ -2852,13 +2852,13 @@ class PodsAPI {
 	 *
 	 * @since 2.8
 	 *
-	 * @param array $groups List of group IDs and their fields to reorder.
-	 * @param int   $pod_id The pod ID.
-	 * @param Pod   $object The pod object.
+	 * @param array    $groups List of group IDs and their fields to reorder.
+	 * @param Pod      $object The pod object.
+	 * @param bool|int $db     (optional) Whether to save into the DB or just return group array.
 	 *
 	 * @throws Exception
 	 */
-	public function save_pod_group_field_order( $groups, $pod_id, $object, $db = true ) {
+	public function save_pod_group_field_order( $groups, $object, $db = true ) {
 		$group_order = 0;
 
 		foreach ( $groups as $group ) {
@@ -2869,9 +2869,9 @@ class PodsAPI {
 			$group_id = (int) $group['group_id'];
 
 			$this->save_group( [
-				'pod_id' => $pod_id,
-				'id'     => $group_id,
-				'weight' => $group_order,
+				'pod_data' => $object,
+				'id'       => $group_id,
+				'weight'   => $group_order,
 			], false, $db );
 
 			$group_order ++;
@@ -3938,7 +3938,14 @@ class PodsAPI {
 		$group = null;
 
 		// Setup Pod if passed.
-		if ( isset( $params->pod ) && $params->pod instanceof Pod ) {
+		if ( isset( $params->pod_data ) && $params->pod_data instanceof Pod ) {
+			$pod = $params->pod_data;
+
+			unset( $params->pod_data );
+
+			$params->pod    = $pod->get_name();
+			$params->pod_id = $pod->get_id();
+		} elseif ( isset( $params->pod ) && $params->pod instanceof Pod ) {
 			$pod = $params->pod;
 
 			$params->pod    = $pod->get_name();

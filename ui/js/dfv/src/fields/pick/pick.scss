@@ -37,10 +37,10 @@
 .pods-checkbox-pick__option__label,
 .pods-radio-pick__option__label {
 	display: inline-block;
+	float: none !important;
 	margin: 0 !important;
 	padding: 0 !important;
 }
-
 
 .pods-checkbox-pick--single {
 	border: none;

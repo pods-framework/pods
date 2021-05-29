@@ -43,7 +43,6 @@ npm-debug.log
 ui/js/pods-ui-ready.min.js.map
 
 # PHPCS
-/phpcs.xml
 phpcs-report-*.txt
 
 

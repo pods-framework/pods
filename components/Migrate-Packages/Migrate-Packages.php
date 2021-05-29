@@ -314,9 +314,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 			$pod['create_extend'] = 'extend';
 		}
 
-		if ( isset( $pod['groups'] ) ) {
+		if ( ! empty( $pod['groups'] ) ) {
 			$pod['groups'] = self::import_pod_setup_objects( $pod['groups'], $existing_groups, $existing_fields );
-		} elseif ( isset( $pod['fields'] ) ) {
+		} elseif ( ! empty( $pod['fields'] ) ) {
 			$pod['fields'] = self::import_pod_setup_objects( $pod['fields'], $existing_fields );
 		}
 
@@ -356,10 +356,11 @@ class Pods_Migrate_Packages extends PodsComponent {
 			}
 
 			if ( isset( $existing_objects[ $object['name'] ] ) ) {
+				// Set the ID as we need to be updating the existing object.
 				$object['id'] = $existing_objects[ $object['name'] ]['id'];
 			}
 
-			if ( ! empty( $object['fields'] ) && $existing_fields ) {
+			if ( ! empty( $object['fields'] ) ) {
 				$object['fields'] = self::import_pod_setup_objects( $object['fields'], $existing_fields );
 			}
 

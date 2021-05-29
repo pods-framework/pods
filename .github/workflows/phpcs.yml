@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 100
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
@@ -33,4 +33,4 @@ jobs:
           SKIP_FOLDERS: "tests,.github,tribe-common,vendor"
           PHPCS_SNIFFS_EXCLUDE: "WordPress.Files.FileName"
         with:
-          args: "TribalScents,WordPress-VIP-Go,WordPress,WordPress-Extra,WordPress-Docs,WordPress-Core"
+          args: "WordPress-VIP-Go,WordPress,WordPress-Extra,WordPress-Docs,WordPress-Core"

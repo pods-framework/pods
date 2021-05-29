@@ -13,7 +13,7 @@ jobs:
   phpcs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 100
       - name: Get Composer Cache Directory
@@ -26,6 +26,11 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-      - uses: the-events-calendar/action-tribe-phpcs@master
+      - name: Run PHPCS inspection
+        uses: rtCamp/action-phpcs-code-review@v2
+        env:
+          GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+          SKIP_FOLDERS: "tests,.github,tribe-common,vendor"
+          PHPCS_SNIFFS_EXCLUDE: "WordPress.Files.FileName"
         with:
-          github-bot-token: ${{ secrets.GH_BOT_TOKEN }}
+          args: "TribalScents,WordPress-VIP-Go,WordPress,WordPress-Extra,WordPress-Docs,WordPress-Core"

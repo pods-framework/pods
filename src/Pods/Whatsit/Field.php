@@ -127,11 +127,6 @@ class Field extends Whatsit {
 			return null;
 		}
 
-		// File field types are always related to the attachment post type.
-		if ( 'media' === $related_type ) {
-			return 'attachment';
-		}
-
 		$related_name = $this->get_arg( $type . '_val', $this->get_arg( 'pick_val', $related_type ) );
 
 		if ( '__current__' === $related_name ) {

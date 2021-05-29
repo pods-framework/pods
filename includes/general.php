@@ -211,6 +211,11 @@ function pods_error( $error, $obj = null ) {
 		$error_mode = 'exit';
 	}
 
+	// Support testing debug messages.
+	if ( function_exists( 'codecept_debug' ) ) {
+		codecept_debug( 'Pods Debug Error: ' . $error );
+	}
+
 	if ( ! empty( $error ) ) {
 		if ( 'exception' === $error_mode ) {
 			$exception_bypass = apply_filters( 'pods_error_exception', null, $error );

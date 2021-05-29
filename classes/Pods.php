@@ -1206,7 +1206,7 @@ class Pods implements Iterator {
 
 							if ( in_array( $last_type, PodsForm::file_field_types(), true ) ) {
 								$object_type = 'media';
-								$object      = 'attachment';
+								$object      = 'media';
 							}
 
 							$data  = array();
@@ -1456,9 +1456,9 @@ class Pods implements Iterator {
 									$value = array();
 
 									// $field is 123x123, needs to be _src.123x123
-										$traverse_fields = array_splice( $params->traverse, $key );
-										$full_field      = implode( '.', $traverse_fields );
-										array_shift( $traverse_fields );
+									$traverse_fields = array_splice( $params->traverse, $key );
+									$full_field      = implode( '.', $traverse_fields );
+									array_shift( $traverse_fields );
 
 									foreach ( $data as $item_id => $item ) {
 										if ( is_array( $item ) && isset( $item[ $field ] ) ) {

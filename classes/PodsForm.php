@@ -679,7 +679,9 @@ class PodsForm {
 			'developer_mode' => false,
 			'dependency'     => false,
 			'depends-on'     => array(),
+			'depends-on-any' => array(),
 			'excludes-on'    => array(),
+			'wildcard-on'    => array(),
 			'options'        => array(),
 		);
 
@@ -740,7 +742,9 @@ class PodsForm {
 			'developer_mode' => false,
 			'dependency'     => false,
 			'depends-on'     => array(),
+			'depends-on-any' => array(),
 			'excludes-on'    => array(),
+			'wildcard-on'    => array(),
 			'options'        => array(),
 		);
 
@@ -791,7 +795,9 @@ class PodsForm {
 				'developer_mode' => false,
 				'dependency'     => false,
 				'depends-on'     => array(),
+				'depends-on-any' => array(),
 				'excludes-on'    => array(),
+				'wildcard-on'    => array(),
 				'options'        => array(),
 			);
 		}
@@ -848,7 +854,9 @@ class PodsForm {
 				'developer_mode' => false,
 				'dependency'     => false,
 				'depends-on'     => array(),
+				'depends-on-any' => array(),
 				'excludes-on'    => array(),
+				'wildcard-on'    => array(),
 				'options'        => array(),
 			);
 
@@ -916,47 +924,35 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function dependencies( $options, $prefix = 'pods-form-ui-' ) {
+		$options        = (array) $options;
+		$classes        = [];
+		$data           = [];
 
-		$options     = (array) $options;
-		$classes     = array();
-		$data        = array();
-		$depends_on  = array();
-		$excludes_on = array();
-		$wildcard_on = array();
+		$dependency_checks = [
+			'depends-on',
+			'depends-on-any',
+			'excludes-on',
+		];
 
-		if ( isset( $options['depends-on'] ) ) {
-			$depends_on = (array) $options['depends-on'];
+		foreach ( $dependency_checks as $dependency_check ) {
+			if ( ! isset( $options[ $dependency_check ] ) ) {
+				continue;
+			}
 
-			if ( ! empty( $depends_on ) ) {
-				$classes[] = 'pods-depends-on';
+			$dependency_list = (array) $options[ $dependency_check ];
 
-				foreach ( $depends_on as $depends => $on ) {
-					$classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
+			if ( ! empty( $dependency_list ) ) {
+				$classes[] = 'pods-' . $dependency_check;
+
+				foreach ( $dependency_list as $depends => $on ) {
+					$classes[] = 'pods-' . $dependency_check . '-' . $prefix . self::clean( $depends, true );
 
 					if ( ! is_bool( $on ) ) {
 						$on = (array) $on;
 
 						foreach ( $on as $o ) {
-							$classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
+							$classes[] = 'pods-' . $dependency_check . '-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
 						}
-					}
-				}
-			}
-		}
-
-		if ( isset( $options['excludes-on'] ) ) {
-			$excludes_on = (array) $options['excludes-on'];
-
-			if ( ! empty( $excludes_on ) ) {
-				$classes[] = 'pods-excludes-on';
-
-				foreach ( $excludes_on as $excludes => $on ) {
-					$classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true );
-
-					$on = (array) $on;
-
-					foreach ( $on as $o ) {
-						$classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true ) . '-' . self::clean( $o, true );
 					}
 				}
 			}

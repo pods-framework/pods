@@ -1512,7 +1512,7 @@ class PodsField_Pick extends PodsField {
 				}
 
 				if ( ! empty( $related_field ) ) {
-					$current_ids = self::$api->lookup_related_items( $fields[ $name ]['id'], $pod['id'], $id, $fields[ $name ], $pod );
+					$current_ids = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
 
 					self::$related_data[ $options['id'] ]['current_ids'] = $current_ids;
 

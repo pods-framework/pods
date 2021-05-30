@@ -5391,14 +5391,16 @@ class PodsAPI {
 					// Get ids to remove
 					$remove_ids = array_diff( $related_ids, $value_ids );
 
-					// Delete relationships
-					if ( ! empty( $remove_ids ) ) {
-						$this->delete_relationships( $params->id, $remove_ids, $pod, $fields[ $field ] );
-					}
+					if ( ! empty( $fields[ $field ] ) ) {
+						// Delete relationships
+						if ( ! empty( $remove_ids ) ) {
+							$this->delete_relationships( $params->id, $remove_ids, $pod, $fields[ $field ] );
+						}
 
-					// Save relationships
-					if ( ! empty( $value_ids ) ) {
-						$this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
+						// Save relationships
+						if ( ! empty( $value_ids ) ) {
+							$this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
+						}
 					}
 
 					$field_save_values = $value_ids;

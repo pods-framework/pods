@@ -258,9 +258,17 @@ function pods_error( $error, $obj = null ) {
 		} elseif ( 'wp_error' === $error_mode ) {
 			return $wp_error;
 		} elseif ( 'json' === $error_mode ) {
-			wp_send_json( [
-				'message' => $error,
-			], 500 );
+			$meta_box_loader_compat = (int) pods_v( 'meta-box-loader', 'request', 0 );
+
+			// Check if this is a back-compat meta box save request.
+			if ( 1 === $meta_box_loader_compat ) {
+				// Do not block this page.
+				error_log( 'Pods Meta Save Error:' . $error );
+			} else {
+				wp_send_json( [
+					'message' => $error,
+				], 500 );
+			}
 		}//end if
 	}//end if
 

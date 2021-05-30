@@ -205,7 +205,12 @@ const Pick = ( props ) => {
 						const splitOption = unsplitOption.split( '|' );
 
 						// Return if malformed entry.
-						if ( splitOption.length !== 2 ) {
+						if ( 1 === splitOption.length ) {
+							return {
+								value: splitOption[ 0 ],
+								label: splitOption[ 0 ],
+							};
+						} else if ( 2 !== splitOption.length ) {
 							return null;
 						}
 

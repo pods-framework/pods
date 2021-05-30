@@ -26,11 +26,13 @@ class Bug_5476Test extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$result = $migrate->import( $import );
 		$this->assertNotFalse( $result );
 
+		$banana_content = 'This failure is brought to you by migrate-packages';
+
 		$pod = pods( 'page' );
-		$id = $pod->add( array( 'banana' => 'This failure is brought to you by migrate-packages' ) );
+		$id = $pod->add( array( 'banana' => $banana_content ) );
 		$pod->fetch( $id );
-		$value = $pod->display('banana');
-		$this->assertEquals( 'This failure is brought to you by migrate-packages', $value );
+		$value = $pod->display( 'banana' );
+		$this->assertEquals( wpautop( $banana_content ), $value );
 
 	}
 }

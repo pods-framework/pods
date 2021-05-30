@@ -7,6 +7,7 @@ use Pods\Whatsit;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Store;
+use Pods\Permissions;
 
 /**
  * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
@@ -211,6 +212,11 @@ function pods_error( $error, $obj = null ) {
 		$error_mode = 'exit';
 	}
 
+	// Support testing debug messages.
+	if ( function_exists( 'codecept_debug' ) ) {
+		codecept_debug( 'Pods Debug Error: ' . $error );
+	}
+
 	if ( ! empty( $error ) ) {
 		if ( 'exception' === $error_mode ) {
 			$exception_bypass = apply_filters( 'pods_error_exception', null, $error );
@@ -252,7 +258,9 @@ function pods_error( $error, $obj = null ) {
 		} elseif ( 'wp_error' === $error_mode ) {
 			return $wp_error;
 		} elseif ( 'json' === $error_mode ) {
-			wp_send_json_error( $error, 500 );
+			wp_send_json( [
+				'message' => $error,
+			], 500 );
 		}//end if
 	}//end if
 
@@ -1533,102 +1541,31 @@ function pods_redirect( $location, $status = 302, $die = true ) {
 /**
  * Check if a user has permission to be doing something based on standard permission options
  *
- * @param array $options
+ * @param array|Whatsit $object The object data.
  *
  * @return bool Whether the user has permissions
  *
  * @since 2.0.5
  */
-function pods_permission( $options ) {
-	global $current_user;
+function pods_permission( $object ) {
+	$permissions = tribe( Permissions::class );
 
-	wp_get_current_user();
-
-	$permission = false;
-
-	if ( isset( $options['options'] ) ) {
-		$options = $options['options'];
-	}
-
-	if ( pods_is_admin() ) {
-		$permission = true;
-	} elseif ( 0 === (int) pods_v( 'restrict_role', $options, 0 ) && 0 === (int) pods_v( 'restrict_capability', $options, 0 ) && 0 === (int) pods_v( 'admin_only', $options, 0 ) ) {
-		$permission = true;
-	}
-
-	if ( ! $permission && 1 === (int) pods_v( 'restrict_role', $options, 0 ) ) {
-		$roles = maybe_unserialize( pods_v( 'roles_allowed', $options ) );
-
-		if ( ! is_array( $roles ) ) {
-			$roles = explode( ',', $roles );
-		}
-
-		$roles = array_unique( array_filter( $roles ) );
-
-		foreach ( $roles as $role ) {
-			if ( is_user_logged_in() && in_array( $role, $current_user->roles, true ) ) {
-				$permission = true;
-
-				break;
-			}
-		}
-	}
-
-	if ( ! $permission && 1 === (int) pods_v( 'restrict_capability', $options, 0 ) ) {
-		$capabilities = maybe_unserialize( pods_v( 'capability_allowed', $options ) );
-
-		if ( ! is_array( $capabilities ) ) {
-			$capabilities = explode( ',', $capabilities );
-		}
-
-		$capabilities = array_unique( array_filter( $capabilities ) );
-
-		foreach ( $capabilities as $capability ) {
-			$must_have_capabilities = explode( '&&', $capability );
-			$must_have_capabilities = array_unique( array_filter( $must_have_capabilities ) );
-
-			$must_have_permission = true;
-
-			foreach ( $must_have_capabilities as $must_have_capability ) {
-				if ( ! current_user_can( $must_have_capability ) ) {
-					$must_have_permission = false;
-
-					break;
-				}
-			}
-
-			if ( $must_have_permission && is_user_logged_in() ) {
-				$permission = true;
-
-				break;
-			}
-		}
-	}//end if
-
-	return $permission;
+	return $permissions->user_has_permission( $object );
 }
 
 /**
- * Check if permissions are restricted
- *
- * @param array $options
- *
- * @return bool Whether the permissions are restricted
+ * Check if permissions are restricted for an object.
  *
  * @since 2.3.4
+ *
+ * @param array|Whatsit $object The object data.
+ *
+ * @return bool Whether the permissions are restricted for an object.
  */
-function pods_has_permissions( $options ) {
-	$permission = false;
+function pods_has_permissions( $object ) {
+	$permissions = tribe( Permissions::class );
 
-	if ( isset( $options['options'] ) ) {
-		$options = $options['options'];
-	}
-
-	if ( 1 === (int) pods_v( 'restrict_role', $options, 0 ) || 1 === (int) pods_v( 'restrict_capability', $options, 0 ) || 1 === (int) pods_v( 'admin_only', $options, 0 ) ) {
-		return true;
-	}
-
-	return false;
+	return $permissions->are_permissions_restricted( $object );
 }
 
 /**

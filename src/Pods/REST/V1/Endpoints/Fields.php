@@ -140,13 +140,9 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 				'swagger_type' => 'array',
 			],
 			'include_parent' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to include the parent Pod details (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 		];

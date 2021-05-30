@@ -1790,8 +1790,8 @@ class PodsAPI {
 
 			$old_name    = $pod['name'];
 			$old_storage = $pod['storage'];
-			$old_groups  = $pod['groups'];
-			$old_fields  = $pod['fields'];
+			$old_groups  = isset( $pod['groups'] ) ? $pod['groups'] : [];
+			$old_fields  = isset( $pod['fields'] ) ? $pod['fields'] : [];
 
 			// Get group fields if we have groups.
 			if ( ! empty( $old_groups ) ) {
@@ -5391,14 +5391,16 @@ class PodsAPI {
 					// Get ids to remove
 					$remove_ids = array_diff( $related_ids, $value_ids );
 
-					// Delete relationships
-					if ( ! empty( $remove_ids ) ) {
-						$this->delete_relationships( $params->id, $remove_ids, $pod, $fields[ $field ] );
-					}
+					if ( ! empty( $fields[ $field ] ) ) {
+						// Delete relationships
+						if ( ! empty( $remove_ids ) ) {
+							$this->delete_relationships( $params->id, $remove_ids, $pod, $fields[ $field ] );
+						}
 
-					// Save relationships
-					if ( ! empty( $value_ids ) ) {
-						$this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
+						// Save relationships
+						if ( ! empty( $value_ids ) ) {
+							$this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
+						}
 					}
 
 					$field_save_values = $value_ids;
@@ -9450,12 +9452,15 @@ class PodsAPI {
 			$object      = 'post';
 		} elseif ( empty( $object ) && in_array( $object_type, array( 'user', 'media', 'comment' ), true ) ) {
 			$object = $object_type;
+		} elseif ( 'post_type' === $object_type && 'attachment' === $object ) {
+			$object_type = 'media';
+			$object      = $object_type;
 		}
 
 		$pod_name = $pod;
 
 		if ( is_array( $pod_name ) || $pod_name instanceof Pods\Whatsit ) {
-			$pod_name = pods_v( 'name', $pod_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $pod_name ) ), true );
+			$pod_name = pods_v( 'name', $pod_name, json_encode( $pod_name, JSON_UNESCAPED_UNICODE ), true );
 		} else {
 			$pod_name = $object;
 		}
@@ -9463,7 +9468,7 @@ class PodsAPI {
 		$field_name = $field;
 
 		if ( is_array( $field_name ) || $field_name instanceof Pods\Whatsit ) {
-			$field_name = pods_v( 'name', $field_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $field_name ) ), true );
+			$field_name = pods_v( 'name', $field_name, json_encode( $pod_name, JSON_UNESCAPED_UNICODE ), true );
 		}
 
 		$transient = 'pods_' . $wpdb->prefix . '_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );

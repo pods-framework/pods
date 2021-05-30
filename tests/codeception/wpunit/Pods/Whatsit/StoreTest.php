@@ -95,7 +95,7 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->assertCount( 10, $this->pods_object_collection->get_object_types() );
 		$this->assertCount( 3, $this->pods_object_collection->get_storage_types() );
-		$this->assertCount( 4, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 6, $this->pods_object_collection->get_objects() );
 
 		Store::destroy();
 
@@ -103,7 +103,7 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->assertCount( 9, $this->pods_object_collection->get_object_types() );
 		$this->assertCount( 2, $this->pods_object_collection->get_storage_types() );
-		$this->assertCount( 3, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 5, $this->pods_object_collection->get_objects() );
 	}
 
 	/**
@@ -273,7 +273,7 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object( $object );
 
-		$this->assertCount( 4, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 6, $this->pods_object_collection->get_objects() );
 	}
 
 	/**
@@ -288,13 +288,13 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object( $object );
 
-		$this->assertCount( 4, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 6, $this->pods_object_collection->get_objects() );
 
 		$this->assertTrue( $this->pods_object_collection->unregister_object( $object ) );
 
 		$objects = $this->pods_object_collection->get_objects();
 
-		$this->assertCount( 3, $objects );
+		$this->assertCount( 5, $objects );
 
 		// Setup another object that is not registered.
 		$args = array(
@@ -332,11 +332,11 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object( $object2 );
 
-		$this->assertCount( 5, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 7, $this->pods_object_collection->get_objects() );
 
 		$this->pods_object_collection->flush_objects();
 
-		$this->assertCount( 3, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 5, $this->pods_object_collection->get_objects() );
 	}
 
 	/**
@@ -363,11 +363,11 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$this->pods_object_collection->register_object( $object2 );
 
-		$this->assertCount( 5, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 7, $this->pods_object_collection->get_objects() );
 
 		$this->pods_object_collection->delete_objects();
 
-		$this->assertCount( 3, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 5, $this->pods_object_collection->get_objects() );
 	}
 
 	/**
@@ -394,7 +394,7 @@ class StoreTest extends Pods_UnitTestCase {
 
 		$objects = $this->pods_object_collection->get_objects();
 
-		$this->assertCount( 5, $objects );
+		$this->assertCount( 7, $objects );
 
 		$this->assertEquals( $object, $objects[ $object->get_identifier() ] );
 		$this->assertEquals( $object2, $objects[ $object2->get_identifier() ] );
@@ -449,7 +449,7 @@ class StoreTest extends Pods_UnitTestCase {
 		$this->pods_object_collection->register_object_type( 'custom', Whatsit__Custom::class );
 		$this->pods_object_collection->register_object( $args );
 
-		$this->assertCount( 4, $this->pods_object_collection->get_objects() );
+		$this->assertCount( 6, $this->pods_object_collection->get_objects() );
 
 		$identifier = Whatsit::get_identifier_from_args( $args );
 

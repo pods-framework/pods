@@ -1514,14 +1514,9 @@ class PodsAdmin {
 	 * @return array Global config array.
 	 */
 	public function get_global_config( $pod = null ) {
-		/**
-		 * @var \Pods\Admin\Config\Pod   $config_pod
-		 * @var \Pods\Admin\Config\Group $config_group
-		 * @var \Pods\Admin\Config\Field $config_field
-		 */
-		$config_pod   = tribe( 'pods.admin.config.pod' );
-		$config_group = tribe( 'pods.admin.config.group' );
-		$config_field = tribe( 'pods.admin.config.field' );
+		$config_pod   = tribe( \Pods\Admin\Config\Pod::class );
+		$config_group = tribe( \Pods\Admin\Config\Group::class );
+		$config_field = tribe( \Pods\Admin\Config\Field::class );
 
 		// Pod: Backwards compatible configs and hooks.
 		$pod_tabs        = $config_pod->get_tabs( $pod );

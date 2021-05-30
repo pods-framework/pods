@@ -2170,6 +2170,7 @@ class PodsInit {
 
 		$ran = true;
 
+		tribe_register_provider( \Pods\Service_Provider::class );
 		tribe_register_provider( \Pods\Admin\Service_Provider::class );
 		tribe_register_provider( \Pods\Blocks\Service_Provider::class );
 		tribe_register_provider( \Pods\Integrations\Service_Provider::class );

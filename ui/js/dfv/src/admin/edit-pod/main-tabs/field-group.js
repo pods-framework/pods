@@ -76,6 +76,18 @@ const FieldGroup = ( props ) => {
 		}
 	};
 
+	const handleTitleClick = ( event ) => {
+		event.stopPropagation();
+
+		console.log( event );
+
+		if ( showSettings ) {
+			return;
+		}
+
+		toggleExpanded();
+	};
+
 	const onEditGroupClick = ( event ) => {
 		event.stopPropagation();
 		setShowSettings( true );
@@ -128,8 +140,7 @@ const FieldGroup = ( props ) => {
 				tabIndex={ 0 }
 				role="button"
 				className="pods-field-group_title"
-				onClick={ ! showSettings ? toggleExpanded : undefined }
-				style={ { cursor: 'pointer' } }
+				onClick={ handleTitleClick }
 				onKeyPress={ handleKeyPress }
 			>
 				<div

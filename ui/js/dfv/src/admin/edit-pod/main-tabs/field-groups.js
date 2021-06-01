@@ -85,8 +85,7 @@ const FieldGroups = ( {
 		);
 	};
 
-	const toggleExpandGroup = ( groupName ) => ( event ) => {
-		event.stopPropagation();
+	const toggleExpandGroup = ( groupName ) => () => {
 		setExpandedGroups( {
 			...expandedGroups,
 			[ groupName ]: expandedGroups[ groupName ] ? false : true,

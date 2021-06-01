@@ -79,8 +79,6 @@ const FieldGroup = ( props ) => {
 	const handleTitleClick = ( event ) => {
 		event.stopPropagation();
 
-		console.log( event );
-
 		if ( showSettings ) {
 			return;
 		}
@@ -143,15 +141,17 @@ const FieldGroup = ( props ) => {
 				onClick={ handleTitleClick }
 				onKeyPress={ handleKeyPress }
 			>
-				<div
-					className="pods-field-group_name"
-					aria-label="drag"
-					// eslint-disable-next-line react/jsx-props-no-spreading
-					{ ...listeners }
-					// eslint-disable-next-line react/jsx-props-no-spreading
-					{ ...attributes }
-				>
-					<div className="pods-field-group_handle">
+				<div className="pods-field-group_name">
+					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
+					<div
+						className="pods-field-group_handle"
+						aria-label="drag"
+						// eslint-disable-next-line react/jsx-props-no-spreading
+						{ ...listeners }
+						// eslint-disable-next-line react/jsx-props-no-spreading
+						{ ...attributes }
+						onClick={ ( event ) => event.stopPropagation() }
+					>
 						<Dashicon icon="menu" />
 					</div>
 

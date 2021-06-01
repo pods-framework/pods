@@ -137,7 +137,7 @@ const FieldList = ( {
 		isEmpty && 'pods-field-list--no-fields',
 	);
 
-	const handleDragEnd = ( event ) => {
+	const handleFieldDragEnd = ( event ) => {
 		const { active, over } = event;
 
 		if ( ! over?.id || active.id === over.id ) {
@@ -224,7 +224,7 @@ const FieldList = ( {
 					<DndContext
 						sensors={ sensors }
 						collisionDetection={ closestCenter }
-						onDragEnd={ handleDragEnd }
+						onDragEnd={ handleFieldDragEnd }
 						modifiers={ [
 							restrictToParentElement,
 							restrictToVerticalAxis,

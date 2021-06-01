@@ -60,7 +60,11 @@ const FieldGroups = ( {
 	const [ groupsMovedSinceLastSave, setGroupsMovedSinceLastSave ] = useState( [] );
 
 	const sensors = useSensors(
-		useSensor( PointerSensor ),
+		useSensor( PointerSensor, {
+			activationConstraint: {
+				distance: 5,
+			},
+		} ),
 		useSensor( KeyboardSensor, {
 			coordinateGetter: sortableKeyboardCoordinates,
 		} ),
@@ -189,7 +193,7 @@ const FieldGroups = ( {
 				>
 					<div>
 						{ groups.map( ( group, index ) => {
-							const hasMoved = groupsMovedSinceLastSave.includes[ group.name ];
+							const hasMoved = groupsMovedSinceLastSave.includes( group.name );
 
 							return (
 								<FieldGroup

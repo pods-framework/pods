@@ -22,7 +22,7 @@ foreach ( $fields as $k => $field ) {
 		} else {
 			unset( $fields[ $k ] );
 		}
-	} elseif ( ! pods_has_permissions( $field['options'] ) && pods_v_sanitized( 'hidden', $field['options'], false ) ) {
+	} elseif ( ! pods_has_permissions( $field ) && (boolean) pods_v( 'hidden', $field['options'], false ) ) {
 		$fields[ $k ]['type'] = 'hidden';
 	}
 }

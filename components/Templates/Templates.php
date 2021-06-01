@@ -528,7 +528,7 @@ class Pods_Templates extends PodsComponent {
 
 				$options = pods_v( 'options', $template );
 
-				$permission = pods_permission( $options );
+				$permission = pods_permission( $template );
 
 				$permission = (boolean) apply_filters( 'pods_templates_permission', $permission, $code, $template, $obj );
 

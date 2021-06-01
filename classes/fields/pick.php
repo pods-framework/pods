@@ -217,9 +217,7 @@ class PodsField_Pick extends PodsField {
 			static::$type . '_taggable'       => array(
 				'label'       => __( 'Taggable', 'pods' ),
 				'help'        => __( 'Allow new values to be inserted when using an Autocomplete field', 'pods' ),
-				// @todo Make depends on aware of requirements that themselves are hidden/off.
-				// @todo Support depends-on-any.
-				'depends-on'  => array(
+				'depends-on-any'  => array(
 					static::$type . '_format_single' => 'autocomplete',
 					static::$type . '_format_multi'  => 'autocomplete',
 				),
@@ -235,9 +233,7 @@ class PodsField_Pick extends PodsField {
 			),
 			static::$type . '_show_icon'      => array(
 				'label'       => __( 'Show Icons', 'pods' ),
-				// @todo Make depends on aware of requirements that themselves are hidden/off.
-				// @todo Support depends-on-any.
-				'depends-on'  => array(
+				'depends-on-any'  => array(
 					static::$type . '_format_single' => 'list',
 					static::$type . '_format_multi'  => 'list',
 				),
@@ -249,9 +245,7 @@ class PodsField_Pick extends PodsField {
 			),
 			static::$type . '_show_edit_link' => array(
 				'label'       => __( 'Show Edit Links', 'pods' ),
-				// @todo Make depends on aware of requirements that themselves are hidden/off.
-				// @todo Support depends-on-any.
-				'depends-on'  => array(
+				'depends-on-any'  => array(
 					static::$type . '_format_single' => 'list',
 					static::$type . '_format_multi'  => 'list',
 				),
@@ -263,9 +257,7 @@ class PodsField_Pick extends PodsField {
 			),
 			static::$type . '_show_view_link' => array(
 				'label'       => __( 'Show View Links', 'pods' ),
-				// @todo Make depends on aware of requirements that themselves are hidden/off.
-				// @todo Support depends-on-any.
-				'depends-on'  => array(
+				'depends-on-any'  => array(
 					static::$type . '_format_single' => 'list',
 					static::$type . '_format_multi'  => 'list',
 				),
@@ -1512,7 +1504,7 @@ class PodsField_Pick extends PodsField {
 				}
 
 				if ( ! empty( $related_field ) ) {
-					$current_ids = self::$api->lookup_related_items( $fields[ $name ]['id'], $pod['id'], $id, $fields[ $name ], $pod );
+					$current_ids = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
 
 					self::$related_data[ $options['id'] ]['current_ids'] = $current_ids;
 

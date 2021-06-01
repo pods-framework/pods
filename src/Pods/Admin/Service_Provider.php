@@ -8,9 +8,7 @@ use Pods\Admin\Config\Field;
 use tad_DI52_ServiceProvider;
 
 /**
- * Class Service_Provider
- *
- * Add Blocks integration.
+ * Class Service_Provider.
  *
  * @since 2.8
  */
@@ -22,9 +20,9 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	 * @since 2.8
 	 */
 	public function register() {
-		$this->container->singleton( 'pods.admin.config.pod', Pod::class );
-		$this->container->singleton( 'pods.admin.config.group', Group::class );
-		$this->container->singleton( 'pods.admin.config.field', Field::class );
+		$this->container->singleton( Pod::class, Pod::class );
+		$this->container->singleton( Group::class, Group::class );
+		$this->container->singleton( Field::class, Field::class );
 
 		$this->hooks();
 	}

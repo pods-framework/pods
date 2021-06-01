@@ -13,9 +13,9 @@ jobs:
   phpcs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          fetch-depth: 100
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
@@ -26,6 +26,8 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-      - uses: the-events-calendar/action-tribe-phpcs@master
-        with:
-          github-bot-token: ${{ secrets.GH_BOT_TOKEN }}
+      - name: Run PHPCS inspection
+        uses: rtCamp/action-phpcs-code-review@v2
+        env:
+          GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+          SKIP_FOLDERS: "tests,.github,tribe-common,vendor"

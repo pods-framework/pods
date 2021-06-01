@@ -679,7 +679,9 @@ class PodsForm {
 			'developer_mode' => false,
 			'dependency'     => false,
 			'depends-on'     => array(),
+			'depends-on-any' => array(),
 			'excludes-on'    => array(),
+			'wildcard-on'    => array(),
 			'options'        => array(),
 		);
 
@@ -740,7 +742,9 @@ class PodsForm {
 			'developer_mode' => false,
 			'dependency'     => false,
 			'depends-on'     => array(),
+			'depends-on-any' => array(),
 			'excludes-on'    => array(),
+			'wildcard-on'    => array(),
 			'options'        => array(),
 		);
 
@@ -791,7 +795,9 @@ class PodsForm {
 				'developer_mode' => false,
 				'dependency'     => false,
 				'depends-on'     => array(),
+				'depends-on-any' => array(),
 				'excludes-on'    => array(),
+				'wildcard-on'    => array(),
 				'options'        => array(),
 			);
 		}
@@ -848,7 +854,9 @@ class PodsForm {
 				'developer_mode' => false,
 				'dependency'     => false,
 				'depends-on'     => array(),
+				'depends-on-any' => array(),
 				'excludes-on'    => array(),
+				'wildcard-on'    => array(),
 				'options'        => array(),
 			);
 
@@ -916,47 +924,35 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function dependencies( $options, $prefix = 'pods-form-ui-' ) {
+		$options        = (array) $options;
+		$classes        = [];
+		$data           = [];
 
-		$options     = (array) $options;
-		$classes     = array();
-		$data        = array();
-		$depends_on  = array();
-		$excludes_on = array();
-		$wildcard_on = array();
+		$dependency_checks = [
+			'depends-on',
+			'depends-on-any',
+			'excludes-on',
+		];
 
-		if ( isset( $options['depends-on'] ) ) {
-			$depends_on = (array) $options['depends-on'];
+		foreach ( $dependency_checks as $dependency_check ) {
+			if ( ! isset( $options[ $dependency_check ] ) ) {
+				continue;
+			}
 
-			if ( ! empty( $depends_on ) ) {
-				$classes[] = 'pods-depends-on';
+			$dependency_list = (array) $options[ $dependency_check ];
 
-				foreach ( $depends_on as $depends => $on ) {
-					$classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
+			if ( ! empty( $dependency_list ) ) {
+				$classes[] = 'pods-' . $dependency_check;
+
+				foreach ( $dependency_list as $depends => $on ) {
+					$classes[] = 'pods-' . $dependency_check . '-' . $prefix . self::clean( $depends, true );
 
 					if ( ! is_bool( $on ) ) {
 						$on = (array) $on;
 
 						foreach ( $on as $o ) {
-							$classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
+							$classes[] = 'pods-' . $dependency_check . '-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
 						}
-					}
-				}
-			}
-		}
-
-		if ( isset( $options['excludes-on'] ) ) {
-			$excludes_on = (array) $options['excludes-on'];
-
-			if ( ! empty( $excludes_on ) ) {
-				$classes[] = 'pods-excludes-on';
-
-				foreach ( $excludes_on as $excludes => $on ) {
-					$classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true );
-
-					$on = (array) $on;
-
-					foreach ( $on as $o ) {
-						$classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true ) . '-' . self::clean( $o, true );
 					}
 				}
 			}
@@ -1286,12 +1282,13 @@ class PodsForm {
 	 * @return bool
 	 */
 	public static function permission( $type, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-
 		$permission = pods_permission( $options );
 
-		$permission = (boolean) apply_filters( 'pods_form_field_permission', $permission, $type, $name, $options, $fields, $pod, $id, $params );
-
-		return $permission;
+		/**
+		 * @since 2.0.0
+		 * @deprecated 2.8
+		 */
+		return (boolean) apply_filters( 'pods_form_field_permission', $permission, $type, $name, $options, $fields, $pod, $id, $params );
 	}
 
 	/**
@@ -1663,25 +1660,24 @@ class PodsForm {
 	}
 
 	/**
-	 * Get list of available tableless field types
-	 *
-	 * @return array Tableless field types
+	 * Get the list of available tableless field types.
 	 *
 	 * @since 2.3.0
+	 *
+	 * @return array The list of available tableless field types.
 	 */
 	public static function tableless_field_types() {
-
 		static $field_types = null;
 
 		if ( null === $field_types ) {
-			$field_types = array(
+			$field_types = [
 				'pick',
 				'file',
 				'avatar',
 				'taxonomy',
 				'comment',
 				'author',
-			);
+			];
 
 			$field_types = apply_filters( 'pods_tableless_field_types', $field_types );
 		}
@@ -1690,18 +1686,20 @@ class PodsForm {
 	}
 
 	/**
-	 * Get list of available file field types
-	 *
-	 * @return array File field types
+	 * Get the list of available file field types.
 	 *
 	 * @since 2.3.0
+	 *
+	 * @return array The list of available file field types.
 	 */
 	public static function file_field_types() {
-
 		static $field_types = null;
 
 		if ( null === $field_types ) {
-			$field_types = array( 'file', 'avatar' );
+			$field_types = [
+				'file',
+				'avatar',
+			];
 
 			$field_types = apply_filters( 'pods_file_field_types', $field_types );
 		}
@@ -1710,18 +1708,17 @@ class PodsForm {
 	}
 
 	/**
-	 * Get list of available repeatable field types
-	 *
-	 * @return array Repeatable field types
+	 * Get the list of available repeatable field types.
 	 *
 	 * @since 2.3.0
+	 *
+	 * @return array The list of available repeatable field types.
 	 */
 	public static function repeatable_field_types() {
-
 		static $field_types = null;
 
 		if ( null === $field_types ) {
-			$field_types = array(
+			$field_types = [
 				'code',
 				'color',
 				'currency',
@@ -1735,7 +1732,7 @@ class PodsForm {
 				'time',
 				'website',
 				'wysiwyg',
-			);
+			];
 
 			$field_types = apply_filters( 'pods_repeatable_field_types', $field_types );
 		}
@@ -1744,18 +1741,20 @@ class PodsForm {
 	}
 
 	/**
-	 * Get list of available number field types
-	 *
-	 * @return array Number field types
+	 * Get the list of available number field types.
 	 *
 	 * @since 2.3.0
+	 *
+	 * @return array The list of available number field types.
 	 */
 	public static function number_field_types() {
-
 		static $field_types = null;
 
 		if ( null === $field_types ) {
-			$field_types = array( 'currency', 'number' );
+			$field_types = [
+				'currency',
+				'number',
+			];
 
 			$field_types = apply_filters( 'pods_tableless_field_types', $field_types );
 		}
@@ -1764,18 +1763,21 @@ class PodsForm {
 	}
 
 	/**
-	 * Get list of available date field types
-	 *
-	 * @return array Date field types
+	 * Get the list of available date field types.
 	 *
 	 * @since 2.3.0
+	 *
+	 * @return array The list of available date field types.
 	 */
 	public static function date_field_types() {
-
 		static $field_types = null;
 
 		if ( null === $field_types ) {
-			$field_types = array( 'date', 'datetime', 'time' );
+			$field_types = [
+				'date',
+				'datetime',
+				'time',
+			];
 
 			$field_types = apply_filters( 'pods_tableless_field_types', $field_types );
 		}
@@ -1784,18 +1786,24 @@ class PodsForm {
 	}
 
 	/**
-	 * Get list of available text field types
-	 *
-	 * @return array Text field types
+	 * Get the list of available text field types.
 	 *
 	 * @since 2.3.0
+	 *
+	 * @return array The list of available text field types.
 	 */
 	public static function text_field_types() {
-
 		static $field_types = null;
 
 		if ( null === $field_types ) {
-			$field_types = array( 'code', 'paragraph', 'slug', 'password', 'text', 'wysiwyg' );
+			$field_types = [
+				'code',
+				'paragraph',
+				'slug',
+				'password',
+				'text',
+				'wysiwyg',
+			];
 
 			$field_types = apply_filters( 'pods_text_field_types', $field_types );
 		}
@@ -1804,14 +1812,13 @@ class PodsForm {
 	}
 
 	/**
-	 * Get list of available Layout field types
+	 * Get the list of available Layout field types.
 	 *
-	 * @return array Text field types
+	 * @since 2.8
 	 *
-	 * @since 2.3.0
+	 * @return array The list of available Layout field types.
 	 */
 	public static function layout_field_types() {
-
 		static $field_types = null;
 
 		if ( null === $field_types ) {
@@ -1834,11 +1841,39 @@ class PodsForm {
 	}
 
 	/**
-	 * Get list of available text field types
+	 * Get the list of available Non-Input field types.
 	 *
-	 * @return array Text field types
+	 * @since 2.8
+	 *
+	 * @return array The list of available Non-Input field types.
+	 */
+	public static function non_input_field_types() {
+		static $field_types = null;
+
+		if ( null === $field_types ) {
+			$field_types = [
+				'internal',
+			];
+
+			/**
+			 * Allow filtering of the list of Non-Input field types.
+			 *
+			 * @since 2.8
+			 *
+			 * @param array $field_types The list of Non-Input field types.
+			 */
+			$field_types = apply_filters( 'pods_non_input_field_types', $field_types );
+		}
+
+		return $field_types;
+	}
+
+	/**
+	 * Get the list of simple tableless objects.
 	 *
 	 * @since 2.3.0
+	 *
+	 * @return array The list of simple tableless objects.
 	 */
 	public static function simple_tableless_objects() {
 

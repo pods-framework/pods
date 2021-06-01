@@ -3163,7 +3163,7 @@ class PodsData {
 				&& in_array( $traverse['pick_object'], [ 'media', 'attachment' ], true )
 			)
 		) {
-			$table_info = $this->api->get_table_info( 'post_type', 'attachment' );
+			$table_info = $this->api->get_table_info( 'media', 'media' );
 		} elseif ( ! in_array( $traverse['type'], $tableless_field_types, true ) ) {
 			if ( $pod_data instanceof \Pods\Whatsit\Pod ) {
 				$table_info = $pod_data->get_table_info();

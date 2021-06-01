@@ -296,7 +296,7 @@ class PodsAPI {
 		$meta = get_post_meta( $id );
 
 		foreach ( $meta as $k => $value ) {
-			if ( is_array( $value ) && 1 == count( $value ) ) {
+			if ( is_array( $value ) && 1 === count( $value ) ) {
 				$meta[ $k ] = current( $value );
 			}
 		}
@@ -1755,6 +1755,8 @@ class PodsAPI {
 
 		if ( false === $sanitized ) {
 			$params = pods_sanitize( $params );
+
+			$sanitized = true;
 		}
 
 		$old_id      = null;
@@ -1788,8 +1790,8 @@ class PodsAPI {
 
 			$old_name    = $pod['name'];
 			$old_storage = $pod['storage'];
-			$old_groups  = $pod['groups'];
-			$old_fields  = $pod['fields'];
+			$old_groups  = isset( $pod['groups'] ) ? $pod['groups'] : [];
+			$old_fields  = isset( $pod['fields'] ) ? $pod['fields'] : [];
 
 			// Get group fields if we have groups.
 			if ( ! empty( $old_groups ) ) {
@@ -2445,7 +2447,7 @@ class PodsAPI {
 		}
 
 		if ( is_array( $order_group_fields ) && ! empty( $order_group_fields['groups'] ) ) {
-			$this->save_pod_group_field_order( $order_group_fields['groups'], $pod, $object, $db );
+			$this->save_pod_group_field_order( $order_group_fields['groups'], $object, $db );
 		}
 
 		$this->cache_flush_pods( $pod );
@@ -2850,13 +2852,13 @@ class PodsAPI {
 	 *
 	 * @since 2.8
 	 *
-	 * @param array $groups List of group IDs and their fields to reorder.
-	 * @param int   $pod_id The pod ID.
-	 * @param Pod   $object The pod object.
+	 * @param array    $groups List of group IDs and their fields to reorder.
+	 * @param Pod      $object The pod object.
+	 * @param bool|int $db     (optional) Whether to save into the DB or just return group array.
 	 *
 	 * @throws Exception
 	 */
-	public function save_pod_group_field_order( $groups, $pod_id, $object, $db = true ) {
+	public function save_pod_group_field_order( $groups, $object, $db = true ) {
 		$group_order = 0;
 
 		foreach ( $groups as $group ) {
@@ -2867,9 +2869,9 @@ class PodsAPI {
 			$group_id = (int) $group['group_id'];
 
 			$this->save_group( [
-				'pod_id' => $pod_id,
-				'id'     => $group_id,
-				'weight' => $group_order,
+				'pod_data' => $object,
+				'id'       => $group_id,
+				'weight'   => $group_order,
 			], false, $db );
 
 			$group_order ++;
@@ -3062,6 +3064,8 @@ class PodsAPI {
 
 		if ( false === $sanitized ) {
 			$params = pods_sanitize( $params );
+
+			$sanitized = true;
 		}
 
 		$id_required = false;
@@ -3288,6 +3292,7 @@ class PodsAPI {
 			'old_name',
 			'parent',
 			'group_id',
+			'sanitized',
 		);
 
 		foreach ( $options_ignore as $ignore ) {
@@ -3933,7 +3938,14 @@ class PodsAPI {
 		$group = null;
 
 		// Setup Pod if passed.
-		if ( isset( $params->pod ) && $params->pod instanceof Pod ) {
+		if ( isset( $params->pod_data ) && $params->pod_data instanceof Pod ) {
+			$pod = $params->pod_data;
+
+			unset( $params->pod_data );
+
+			$params->pod    = $pod->get_name();
+			$params->pod_id = $pod->get_id();
+		} elseif ( isset( $params->pod ) && $params->pod instanceof Pod ) {
 			$pod = $params->pod;
 
 			$params->pod    = $pod->get_name();
@@ -3966,6 +3978,8 @@ class PodsAPI {
 
 		if ( false === $sanitized ) {
 			$params = pods_sanitize( $params );
+
+			$sanitized = true;
 		}
 
 		$id_required = false;
@@ -4343,6 +4357,8 @@ class PodsAPI {
 
 		if ( false === $sanitized ) {
 			$params = pods_sanitize( $params );
+
+			$sanitized = true;
 		}
 
 		if ( ! isset( $params->name ) || empty( $params->name ) ) {
@@ -5375,14 +5391,16 @@ class PodsAPI {
 					// Get ids to remove
 					$remove_ids = array_diff( $related_ids, $value_ids );
 
-					// Delete relationships
-					if ( ! empty( $remove_ids ) ) {
-						$this->delete_relationships( $params->id, $remove_ids, $pod, $fields[ $field ] );
-					}
+					if ( ! empty( $fields[ $field ] ) ) {
+						// Delete relationships
+						if ( ! empty( $remove_ids ) ) {
+							$this->delete_relationships( $params->id, $remove_ids, $pod, $fields[ $field ] );
+						}
 
-					// Save relationships
-					if ( ! empty( $value_ids ) ) {
-						$this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
+						// Save relationships
+						if ( ! empty( $value_ids ) ) {
+							$this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
+						}
 					}
 
 					$field_save_values = $value_ids;
@@ -9434,12 +9452,15 @@ class PodsAPI {
 			$object      = 'post';
 		} elseif ( empty( $object ) && in_array( $object_type, array( 'user', 'media', 'comment' ), true ) ) {
 			$object = $object_type;
+		} elseif ( 'post_type' === $object_type && 'attachment' === $object ) {
+			$object_type = 'media';
+			$object      = $object_type;
 		}
 
 		$pod_name = $pod;
 
 		if ( is_array( $pod_name ) || $pod_name instanceof Pods\Whatsit ) {
-			$pod_name = pods_v( 'name', $pod_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $pod_name ) ), true );
+			$pod_name = pods_v( 'name', $pod_name, json_encode( $pod_name, JSON_UNESCAPED_UNICODE ), true );
 		} else {
 			$pod_name = $object;
 		}
@@ -9447,7 +9468,7 @@ class PodsAPI {
 		$field_name = $field;
 
 		if ( is_array( $field_name ) || $field_name instanceof Pods\Whatsit ) {
-			$field_name = pods_v( 'name', $field_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $field_name ) ), true );
+			$field_name = pods_v( 'name', $field_name, json_encode( $pod_name, JSON_UNESCAPED_UNICODE ), true );
 		}
 
 		$transient = 'pods_' . $wpdb->prefix . '_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );

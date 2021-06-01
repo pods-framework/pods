@@ -6,7 +6,6 @@ import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
 // Pods dependencies
-import withDragDropContext from './with-drag-drop-context';
 import { STORE_KEY_EDIT_POD } from '../../store/constants';
 import SaveStatusMessage from './save-status-message';
 import EditPodName from './edit-pod-name';
@@ -81,5 +80,4 @@ export default compose( [
 			setPodName: storeDispatch.setPodName,
 		};
 	} ),
-	withDragDropContext,
 ] )( EditPod );

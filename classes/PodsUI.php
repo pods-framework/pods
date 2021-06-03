@@ -4134,12 +4134,16 @@ class PodsUI {
 											array(
 												$this->num_prefix . 'orderby' . $this->num => $field,
 												$this->num_prefix . 'orderby_dir' . $this->num => $dir,
-											), array(
+											),
+											array(
 												$this->num_prefix . 'limit' . $this->num,
 												$this->num_prefix . 'search' . $this->num,
 												$this->num_prefix . 'pg' . $this->num,
 												'page',
-											), $this->exclusion()
+												'post_type',
+												'taxonomy',
+											),
+											$this->exclusion()
 										)
 									);
 									?>

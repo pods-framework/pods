@@ -320,20 +320,30 @@ class PodsView {
 		// Get proper cache key
 		$key = self::get_key( $key, $group_key );
 
+		$is_using_ext_object_cache = wp_using_ext_object_cache();
+
 		if ( apply_filters( 'pods_view_cache_alt_set', false, $cache_mode, $group_key . $key, $original_key, $value, $expires, $group ) ) {
 			return $value;
 		} elseif ( 'transient' === $cache_mode ) {
+			// Force transients in DB to be stored with expiration so they are not autoloaded.
+			if ( ! $expires && ! $is_using_ext_object_cache ) {
+				$expires = WEEK_IN_SECONDS;
+			}
+
 			set_transient( $group_key . $key, $value, $expires );
 		} elseif ( 'site-transient' === $cache_mode ) {
+			// Force transients in DB to be stored with expiration so they are not autoloaded.
+			if ( ! $expires && ! $is_using_ext_object_cache ) {
+				$expires = WEEK_IN_SECONDS;
+			}
+
 			set_site_transient( $group_key . $key, $value, $expires );
 		} elseif ( 'cache' === $cache_mode && $object_cache ) {
 			wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_view' : $group ), $expires );
 		} elseif ( 'option-cache' === $cache_mode ) {
-			global $_wp_using_ext_object_cache;
-
 			$value = apply_filters( "pre_set_transient_{$key}", $value );
 
-			if ( $_wp_using_ext_object_cache ) {
+			if ( $is_using_ext_object_cache ) {
 				$result = wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_option_cache' : $group ), $expires );
 			} else {
 				$transient_timeout = '_pods_option_timeout_' . $key;

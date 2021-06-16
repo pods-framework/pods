@@ -3736,7 +3736,7 @@ class Pods implements Iterator {
 				'name' => $name,
 			];
 
-			if ( ! is_array( $field ) ) {
+			if ( ! is_array( $field ) && ! is_object( $field ) ) {
 				$name = $field;
 
 				$field = [

@@ -72,13 +72,15 @@ class Permissions {
 				&& ! $this->are_capabilities_restricted_for_user( $object, $user )
 			);
 		}
-		}
 
 		/**
 		 * Allow filtering whether a user has permission to an object.
 		 *
 		 * @since 2.8
 		 *
+		 * @param bool             $permission Whether a user has permission to an object.
+		 * @param array|Whatsit    $object     The object data.
+		 * @param null|int|WP_User $user       The user ID or object (default: current user).
 		 */
 		return apply_filters( 'pods_permissions_user_has_permission', $permission, $object, $user );
 	}

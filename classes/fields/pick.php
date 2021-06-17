@@ -458,6 +458,15 @@ class PodsField_Pick extends PodsField {
 				$pod_options[ $pod['name'] ] = $pod['label'] . ' (' . $pod['name'] . ')';
 			}
 
+			/**
+			 * Allow filtering the list of Pods to show in the list of relationship objects.
+			 *
+			 * @since TBD
+			 *
+			 * @param array $pod_options List of Pods to show in the list of relationship objects.
+			 */
+			$pod_options = apply_filters( 'pods_field_pick_setup_related_objects_pods', $pod_options );
+
 			asort( $pod_options );
 
 			foreach ( $pod_options as $pod => $label ) {

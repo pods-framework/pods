@@ -2559,7 +2559,7 @@ class PodsAPI {
 		$old_name    = $old_info['old_name'];
 
 		// Skip custom mapped table pods.
-		if ( 'table' === $pod['type'] ) {
+		if ( 'table' === $pod['type'] || ! empty( $pod['table'] ) ) {
 			return;
 		}
 
@@ -9914,10 +9914,21 @@ class PodsAPI {
 			];
 
 			$info['orderby'] = "`t`.`{$info['field_index']}` ASC, `t`.`path` ASC, `t`.`{$info['field_id']}`";
-		} elseif ( 'table' === $object_type || 'table' === pods_v( 'type', $info['pod'] ) ) {
+		} elseif ( 'table' === $object_type || 'table' === pods_v( 'type', $info['pod'] ) || ! empty( $info['pod']['table'] ) ) {
 			// Custom tables.
-			$info['table']     = ( empty( $object ) ? $name : $object );
-			$info['pod_table'] = "{$wpdb->prefix}pods_" . $info['table'];
+			$info['table']      = pods_v( 'table', $info['pod'], ( empty( $object ) ? $name : $object ), true );
+			$info['meta_table'] = pods_v( 'meta_table', $info['pod'], $info['meta_table'], true );
+			$info['pod_table']  = pods_v( 'pod_table', $info['pod'], "{$wpdb->prefix}pods_" . $info['table'], true );
+
+			$info['field_id']    = pods_v( 'field_id', $info['pod'], $info['field_id'], true );
+			$info['field_index'] = pods_v( 'field_index', $info['pod'], $info['field_index'], true );
+			$info['field_slug']  = pods_v( 'field_slug', $info['pod'], $info['field_slug'], true );
+
+			$info['meta_field_id']    = pods_v( 'meta_field_id', $info['pod'], $info['meta_field_id'], true );
+			$info['meta_field_index'] = pods_v( 'meta_field_index', $info['pod'], $info['meta_field_index'], true );
+			$info['meta_field_value'] = pods_v( 'meta_field_value', $info['pod'], $info['meta_field_value'], true );
+
+			$info['orderby'] = pods_v( 'orderby', $info['pod'], $info['orderby'], true );
 
 			if ( ! empty( $field ) ) {
 				if ( ! is_array( $field ) && ! $field instanceof Pods\Whatsit ) {

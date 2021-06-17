@@ -10826,4 +10826,60 @@ class PodsAPI {
 		return $objects;
 	}
 
+	/**
+	 * Get the list of Pod types.
+	 *
+	 * @since TBD
+	 *
+	 * @return string[] The list of pod types and their labels.
+	 */
+	public function get_pod_types() {
+		$pod_types = [
+			'post_type' => _x( 'Post Type (extended)', 'pod type label', 'pods' ),
+			'taxonomy'  => _x( 'Taxonomy (extended)', 'pod type label', 'pods' ),
+			'cpt'       => _x( 'Custom Post Type', 'pod type label', 'pods' ),
+			'ct'        => _x( 'Custom Taxonomy', 'pod type label', 'pods' ),
+			'user'      => _x( 'User (extended)', 'pod type label', 'pods' ),
+			'media'     => _x( 'Media (extended)', 'pod type label', 'pods' ),
+			'comment'   => _x( 'Comments (extended)', 'pod type label', 'pods' ),
+			'pod'       => _x( 'Advanced Content Type', 'pod type label', 'pods' ),
+			'settings'  => _x( 'Custom Settings Page', 'pod type label', 'pods' ),
+			'internal'  => _x( 'Pods Internal', 'pod type label', 'pods' ),
+		];
+
+		/**
+		 * Allow filtering the list of pod types and their labels.
+		 *
+		 * @since TBD
+		 *
+		 * @param string[] $pod_types The list of pod types and their labels.
+		 */
+		return apply_filters( 'pods_api_pod_types', $pod_types );
+	}
+
+	/**
+	 * Get the list of Pod types.
+	 *
+	 * @since TBD
+	 *
+	 * @return string[] The list of storage types and their labels.
+	 */
+	public function get_storage_types() {
+		$storage_types = [
+			'none'    => _x( 'None (No Fields)', 'storage type label', 'pods' ),
+			'options' => _x( 'Options', 'storage type label', 'pods' ),
+			'meta'    => _x( 'Meta', 'storage type label', 'pods' ),
+			'table'   => _x( 'Table', 'storage type label', 'pods' ),
+		];
+
+		/**
+		 * Allow filtering the list of pod types and their labels.
+		 *
+		 * @since TBD
+		 *
+		 * @param string[] $storage_types The list of storage types and their labels.
+		 */
+		return apply_filters( 'pods_api_storage_types', $storage_types );
+	}
+
 }

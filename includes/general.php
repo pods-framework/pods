@@ -1551,7 +1551,7 @@ function pods_redirect( $location, $status = 302, $die = true ) {
  *
  * @param array|Whatsit $object The object data.
  *
- * @return bool Whether the user has permissions
+ * @return bool Whether the user has permissions.
  *
  * @since 2.0.5
  */

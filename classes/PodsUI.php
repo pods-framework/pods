@@ -2097,7 +2097,7 @@ class PodsUI {
 
 			if ( pods_v( 'hidden', $field, false, null, true ) || 'hidden' === $field['type'] ) {
 				continue;
-			} elseif ( ! PodsForm::permission( $field['type'], $field['name'], $field, $fields, $pod, $pod->id() ) ) {
+			} elseif ( ! pods_permission( $field ) ) {
 				continue;
 			}
 

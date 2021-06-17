@@ -16,7 +16,7 @@ if ( ! isset( $duplicate ) ) {
 foreach ( $fields as $k => $field ) {
 	if ( in_array( $field['name'], array( 'created', 'modified' ), true ) ) {
 		unset( $fields[ $k ] );
-	} elseif ( false === PodsForm::permission( $field['type'], $field['name'], $field['options'], $fields, $pod, $pod->id() ) ) {
+	} elseif ( ! pods_permission( $field ) ) {
 		if ( pods_v_sanitized( 'hidden', $field['options'], false ) ) {
 			$fields[ $k ]['type'] = 'hidden';
 		} else {

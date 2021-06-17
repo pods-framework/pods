@@ -30,7 +30,7 @@ foreach ( $fields as $k => $field ) {
 
 	if ( in_array( $field['name'], [ 'created', 'modified' ], true ) ) {
 		unset( $fields[ $k ] );
-	} elseif ( false === PodsForm::permission( $field['type'], $field['name'], $field, $fields, $pod, $id ) ) {
+	} elseif ( ! pods_permission( $field ) ) {
 		if ( pods_v( 'hidden', $field, false ) ) {
 			$fields[ $k ]['type'] = 'hidden';
 		} elseif ( pods_v( 'read_only', $field, false ) ) {

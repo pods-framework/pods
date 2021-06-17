@@ -29,7 +29,7 @@ foreach ( $groups as $g => $group ) {
 			unset( $group['fields'][ $k ] );
 
 			continue;
-		} elseif ( false === PodsForm::permission( $field['type'], $field['name'], $field['options'], $group['fields'], $pod, $pod->id() ) ) {
+		} elseif ( ! pods_permission( $field ) ) {
 			if ( (boolean) pods_v( 'hidden', $field['options'], false ) ) {
 				$group['fields'][ $k ]['type'] = 'hidden';
 			} elseif ( (boolean) pods_v( 'read_only', $field['options'], false ) ) {

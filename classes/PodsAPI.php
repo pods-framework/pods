@@ -4765,7 +4765,7 @@ class PodsAPI {
 
 					$fields_active[] = $field;
 				} elseif ( isset( $fields[ $field ] ) ) {
-					if ( 'save' === $params->from || true === PodsForm::permission( $fields[ $field ]['type'], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
+					if ( 'save' === $params->from || true === pods_permission( $fields[ $field ] ) ) {
 						$fields[ $field ]['value'] = $value;
 
 						$fields_active[] = $field;
@@ -4841,7 +4841,7 @@ class PodsAPI {
 				if ( in_array( $params->from, array(
 						'save',
 						'process_form'
-					), true ) || true === PodsForm::permission( $fields[ $field ]['type'], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
+					), true ) || true === pods_permission( $fields[ $field ] ) ) {
 					$value = PodsForm::default_value( pods_v( $field, 'post' ), $field_data['type'], $field, pods_v( 'options', $field_data, $field_data, true ), $pod, $params->id );
 
 					if ( null !== $value && '' !== $value && false !== $value ) {

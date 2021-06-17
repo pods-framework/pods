@@ -245,13 +245,13 @@ class Field extends Base {
 				'name'          => 'restrict_access',
 				'label'         => __( 'Restrict Access', 'pods' ),
 				'boolean_group' => [
-					'logged_in'           => [
-						'name'       => 'logged_in',
+					'logged_in_only'      => [
+						'name'       => 'logged_in_only',
 						'label'      => __( 'Restrict access to Logged In Users', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
-						'help'       => __( 'This field will only be able to be edited by logged in users', 'pods' ),
+						'help'       => __( 'This field will only be able to be edited by logged in users. This is not required to be on for the other Restrict Access options to work.', 'pods' ),
 					],
 					'admin_only'          => [
 						'name'       => 'admin_only',
@@ -320,6 +320,7 @@ class Field extends Base {
 				'depends-on'       => [
 					'restrict_role' => true,
 				],
+				'help'             => __( 'If none are selected, this option will be ignored.', 'pods' ),
 			],
 			'capability_allowed'      => [
 				'name'       => 'capability_allowed',
@@ -330,6 +331,7 @@ class Field extends Base {
 				'depends-on' => [
 					'restrict_capability' => true,
 				],
+				'help'       => __( 'If none are selected, this option will be ignored.', 'pods' ),
 			],
 		];
 

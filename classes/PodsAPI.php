@@ -1986,6 +1986,7 @@ class PodsAPI {
 			}
 		}
 
+		// Enforce pod types and storage types.
 		if ( pods_tableless() && ! in_array( $pod['type'], array( 'settings', 'table' ), true ) ) {
 			if ( 'pod' === $pod['type'] ) {
 				$pod['type'] = 'post_type';
@@ -2145,6 +2146,68 @@ class PodsAPI {
 			);
 		}
 
+		/**
+		 * Allow filtering the Pod config data before saving the options.
+		 *
+		 * @since TBD
+		 *
+		 * @param array  $pod       The Pod config data to be used for saving groups/fields.
+		 * @param object $params    The list of parameters used to save this pod.
+		 * @param bool   $sanitized Whether the data was sanitized already.
+		 * @param bool   $db        Whether to save the data to the database.
+		 */
+		$pod = apply_filters( 'pods_api_save_pod_config_data', $pod, $params, $sanitized, $db );
+
+		$meta = $pod;
+
+		$excluded_meta = array(
+			'id',
+			'name',
+			'label',
+			'description',
+			'weight',
+			'options',
+			'fields',
+			'group',
+			'groups',
+			'object_fields',
+			'object_type',
+			'storage_type',
+			'old_name',
+		);
+
+		foreach ( $excluded_meta as $meta_key ) {
+			if ( isset( $meta[ $meta_key ] ) ) {
+				unset( $meta[ $meta_key ] );
+			}
+		}
+
+		/**
+		 * Allow filtering the Pod object data before saving.
+		 *
+		 * @since TBD
+		 *
+		 * @param array  $post_data The Pod object data to be saved.
+		 * @param array  $pod       The Pod config data.
+		 * @param object $params    The list of parameters used to save this pod.
+		 * @param bool   $sanitized Whether the data was sanitized already.
+		 * @param bool   $db        Whether to save the data to the database.
+		 */
+		$post_data = apply_filters( 'pods_api_save_pod_post_data', $post_data, $pod, $params, $sanitized, $db );
+
+		/**
+		 * Allow filtering the Pod config data before saving the options.
+		 *
+		 * @since TBD
+		 *
+		 * @param array  $meta      The Pod meta data to be saved.
+		 * @param array  $pod       The Pod config data.
+		 * @param object $params    The list of parameters used to save this pod.
+		 * @param bool   $sanitized Whether the data was sanitized already.
+		 * @param bool   $db        Whether to save the data to the database.
+		 */
+		$meta = apply_filters( 'pods_api_save_pod_meta_data', $meta, $pod, $params, $sanitized, $db );
+
 		if ( true === $db ) {
 			if ( ! has_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ) ) ) {
 				add_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ), 100, 6 );
@@ -2157,30 +2220,6 @@ class PodsAPI {
 				remove_filter( 'wp_insert_post_data', 'headway_clean_slug', 0 );
 
 				$conflicted = true;
-			}
-
-			$meta = $pod;
-
-			$excluded_meta = array(
-				'id',
-				'name',
-				'label',
-				'description',
-				'weight',
-				'options',
-				'fields',
-				'group',
-				'groups',
-				'object_fields',
-				'object_type',
-				'storage_type',
-				'old_name',
-			);
-
-			foreach ( $excluded_meta as $meta_key ) {
-				if ( isset( $meta[ $meta_key ] ) ) {
-					unset( $meta[ $meta_key ] );
-				}
 			}
 
 			$params->id = $this->save_wp_object( 'post', $post_data, $meta, true, true );

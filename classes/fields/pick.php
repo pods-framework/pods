@@ -397,6 +397,10 @@ class PodsField_Pick extends PodsField {
 
 		$related_object = array_merge( $related_object, $options );
 
+		if ( $related_object['data_callback'] instanceof Closure ) {
+			return pods_error( 'Pods does not support closures for data callbacks' );
+		}
+
 		self::$custom_related_objects[ $name ] = $related_object;
 
 		return true;

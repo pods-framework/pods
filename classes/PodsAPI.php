@@ -2072,22 +2072,13 @@ class PodsAPI {
 			);
 
 			if ( ! is_array( $pod['groups'] ) || empty( $pod['groups'] ) ) {
-				$pod['groups'] = [
-					'more-fields' => [
-						'name'   => 'more-fields',
-						'label'  => __( 'More Fields', 'pods' ),
-						'fields' => [],
-					],
-				];
+				$default_group_label  = __( 'More Fields', 'pods' );
+				$default_group_fields = [];
 
 				// Advanced Content Types have default fields.
 				if ( 'pod' === $pod['type'] ) {
-					$pod['groups']['details'] = $pod['groups']['more-fields'];
-
-					unset( $pod['groups']['more-fields'] );
-
-					$pod['groups']['details']['label']  = __( 'Details', 'pods' );
-					$pod['groups']['details']['fields'] = [
+					$default_group_label  = __( 'Details', 'pods' );
+					$default_group_fields = [
 						'name'      => [
 							'name'     => 'name',
 							'label'    => 'Name',
@@ -2131,6 +2122,28 @@ class PodsAPI {
 						$pod['pod_index'] = 'name';
 					}
 				}
+
+				/**
+				 * Filter the title of the Pods Metabox used in the post editor.
+				 *
+				 * @since unknown
+				 *
+				 * @param string  $title  The title to use, default is 'More Fields'.
+				 * @param array   $pod    The Pods config data.
+				 * @param array   $fields Array of fields that will go in the metabox.
+				 * @param string  $type   The type of Pod.
+				 * @param string  $name   Name of the Pod.
+				 */
+				$default_group_label = apply_filters( 'pods_meta_default_box_title', $default_group_label, $pod, $default_group_fields, $pod['type'], $pod['name'] );
+				$default_group_name  = sanitize_key( sanitize_title( $default_group_label ) );
+
+				$pod['groups'] = [
+					$default_group_name => [
+						'name'   => $default_group_name,
+						'label'  => $default_group_label,
+						'fields' => $default_group_fields,
+					],
+				];
 			}
 
 			$pod = $this->do_hook( 'save_pod_default_pod', $pod, $params, $sanitized, $db );

@@ -1013,6 +1013,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'include_groups'        => true,
 			'include_group_fields'  => true,
 			'include_fields'        => true,
+			'include_field_data'    => false,
 			'include_object_fields' => false,
 			'include_table_info'    => false,
 			'assoc_keys'            => false,
@@ -1024,9 +1025,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		if ( $args['include_groups'] ) {
 			$data['groups'] = $this->get_export_for_items( $this->get_groups(), [
-				'include_groups' => false,
-				'include_fields' => $args['include_group_fields'],
-				'assoc_keys'     => $args['assoc_keys'],
+				'include_groups'     => false,
+				'include_fields'     => $args['include_group_fields'],
+				'include_field_data' => $args['include_field_data'],
+				'assoc_keys'         => $args['assoc_keys'],
 			] );
 
 			if ( ! $args['assoc_keys'] ) {
@@ -1035,7 +1037,9 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		if ( $args['include_fields'] ) {
-			$data['fields'] = $this->get_args_for_items( $this->get_fields() );
+			$data['fields'] = $this->get_args_for_items( $this->get_fields(), [
+				'include_field_data' => $args['include_field_data'],
+			] );
 
 			if ( ! $args['assoc_keys'] ) {
 				$data['fields'] = array_values( $data['fields'] );
@@ -1063,13 +1067,26 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @since 2.8
 	 *
 	 * @param Whatsit[] $items List of items.
+	 * @param array     $args  List of arguments to customize what is returned.
 	 *
 	 * @return array List of item args.
 	 */
-	protected function get_args_for_items( array $items ) {
-		return array_map( static function ( $object ) {
+	protected function get_args_for_items( array $items, array $args = [] ) {
+		return array_map( static function ( $object ) use ( $args ) {
 			/** @var Whatsit $object */
-			return $object->get_args();
+			$item_args = $object->get_args();
+
+			// Include related field data if needed.
+			if ( ! empty( $args['include_field_data'] ) ) {
+				/** @var Whatsit\Field $object */
+				$related_data = $object->get_related_object_data();
+
+				if ( is_array( $related_data ) ) {
+					$item_args['data'] = $related_data;
+				}
+			}
+
+			return $item_args;
 		}, $items );
 	}
 

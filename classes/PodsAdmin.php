@@ -1542,16 +1542,19 @@ class PodsAdmin {
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
+				'include_field_data'   => true,
 			] ),
 			'group' => $group_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
+				'include_field_data'   => true,
 			] ),
 			'field' => $field_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
+				'include_field_data'   => true,
 			] ),
 		];
 

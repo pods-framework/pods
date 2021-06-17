@@ -131,10 +131,13 @@ class PodsAdmin {
 			$page = $_GET['page'];
 			if ( 'pods' === $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
 				?>
-				<script type="text/javascript">
-					var PODS_URL = "<?php echo esc_js( PODS_URL ); ?>";
+				<script>
+					if ( 'undefined' === typeof PODS_URL ) {
+						const PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
+					}
 				</script>
 				<?php
+
 				wp_enqueue_script( 'jquery' );
 				wp_enqueue_script( 'jquery-ui-core' );
 				wp_enqueue_script( 'jquery-ui-sortable' );

@@ -1134,9 +1134,11 @@ class PodsUI {
 
 		// Set up default manage field.
 		if ( empty( $options->fields['manage'] ) ) {
-			$options->fields['manage'][ $options->sql['field_index'] ] = [
-				'label' => __( 'Name', 'pods' ),
-			];
+			$fields = $options->fields; // make a local copy of the fields
+			$fields['manage'][ $options->sql['field_index'] ] = array(
+					'label' => __( 'Name', 'pods' ),
+			);
+			$options->fields = $fields;
 		}
 
 		$options->validate( 'export', $this->export, 'array_merge' );

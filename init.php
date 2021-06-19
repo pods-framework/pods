@@ -90,6 +90,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 		// Include global functions.
 		require_once PODS_DIR . 'includes/classes.php';
 		require_once PODS_DIR . 'includes/data.php';
+		require_once PODS_DIR . 'includes/forms.php';
 		require_once PODS_DIR . 'includes/general.php';
 
 		// Maybe include media functions.

@@ -2171,7 +2171,7 @@ class PodsAPI {
 				 * @param string  $name   Name of the Pod.
 				 */
 				$default_group_label = apply_filters( 'pods_meta_default_box_title', $default_group_label, $pod, $default_group_fields, $pod['type'], $pod['name'] );
-				$default_group_name  = sanitize_key( sanitize_title( $default_group_label ) );
+				$default_group_name  = sanitize_key( pods_js_name( sanitize_title( $default_group_label ) ) );
 
 				$pod['groups'] = [
 					$default_group_name => [

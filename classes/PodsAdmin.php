@@ -1458,7 +1458,7 @@ class PodsAdmin {
 			 * @param string  $name   Name of the Pod.
 			 */
 			$label = apply_filters( 'pods_meta_default_box_title', $label, $pod, $fields, $pod->get_type(), $pod->get_name() );
-			$name  = sanitize_key( sanitize_title( $label ) );
+			$name  = sanitize_key( pods_js_name( sanitize_title( $label ) ) );
 
 			// Setup first group.
 			$group_id = $api->save_group( [

@@ -1701,6 +1701,17 @@ class PodsInit {
 		}
 
 		do_action( 'pods_setup_content_types' );
+
+		if ( ! did_action( 'pods_init' ) ) {
+			/**
+			 * Allow hooking into after Pods has been setup.
+			 *
+			 * @since TBD
+			 *
+			 * @param PodsInit $init The PodsInit class object.
+			 */
+			do_action( 'pods_init', $this );
+		}
 	}
 
 	/**

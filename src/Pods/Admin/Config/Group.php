@@ -20,7 +20,8 @@ class Group extends Base {
 	 */
 	public function get_tabs( \Pods\Whatsit\Pod $pod ) {
 		$core_tabs = [
-			'basic' => __( 'Group Details', 'pods' ),
+			'basic'    => __( 'Group Details', 'pods' ),
+			'advanced' => __( 'Advanced', 'pods' ),
 		];
 
 		// Only include kitchen sink if dev mode on and not running Codecept tests.
@@ -116,6 +117,75 @@ class Group extends Base {
 				'default' => '',
 				'data'    => [],
 			],*/
+		];
+
+		$options['advanced'] = [
+			'visibility'         => [
+				'name'  => 'visibility',
+				'label' => __( 'Visibility', 'pods' ),
+				'type'  => 'heading',
+			],
+			'restrict_access'    => [
+				'type'          => 'boolean_group',
+				'name'          => 'restrict_access',
+				'label'         => __( 'Restrict Access', 'pods' ),
+				'boolean_group' => [
+					'logged_in'           => [
+						'name'       => 'logged_in',
+						'label'      => __( 'Restrict access to Logged In Users', 'pods' ),
+						'default'    => 0,
+						'type'       => 'boolean',
+						'dependency' => true,
+						'help'       => __( 'This group of field will only be able to be edited by logged in users. This is not required to be on for the other Restrict Access options to work.', 'pods' ),
+					],
+					'admin_only'          => [
+						'name'       => 'admin_only',
+						'label'      => __( 'Restrict access to Admins', 'pods' ),
+						'default'    => 0,
+						'type'       => 'boolean',
+						'dependency' => true,
+						'help'       => __( 'This group of fields will only be able to be edited by users with the ability to manage_options or delete_users, or super admins of a WordPress Multisite network', 'pods' ),
+					],
+					'restrict_role'       => [
+						'name'       => 'restrict_role',
+						'label'      => __( 'Restrict access by Role', 'pods' ),
+						'default'    => 0,
+						'type'       => 'boolean',
+						'dependency' => true,
+					],
+					'restrict_capability' => [
+						'name'       => 'restrict_capability',
+						'label'      => __( 'Restrict access by Capability', 'pods' ),
+						'default'    => 0,
+						'type'       => 'boolean',
+						'dependency' => true,
+					],
+				],
+			],
+			'roles_allowed'      => [
+				'name'             => 'roles_allowed',
+				'label'            => __( 'Role(s) Allowed', 'pods' ),
+				'help'             => __( 'help', 'pods' ),
+				'type'             => 'pick',
+				'pick_object'      => 'role',
+				'pick_format_type' => 'multi',
+				'default'          => 'administrator',
+				'depends-on'       => [
+					'restrict_role' => true,
+				],
+				'help'             => __( 'If none are selected, this option will be ignored.', 'pods' ),
+			],
+			'capability_allowed' => [
+				'name'       => 'capability_allowed',
+				'label'      => __( 'Capability Allowed', 'pods' ),
+				'help'       => __( 'Comma-separated list of capabilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
+				'type'       => 'text',
+				'default'    => '',
+				'depends-on' => [
+					'restrict_capability' => true,
+				],
+				'help'       => __( 'If none are selected, this option will be ignored.', 'pods' ),
+			],
 		];
 
 		$object_type = $pod->get_type();

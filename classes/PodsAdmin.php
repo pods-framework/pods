@@ -131,10 +131,13 @@ class PodsAdmin {
 			$page = $_GET['page'];
 			if ( 'pods' === $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
 				?>
-				<script type="text/javascript">
-					var PODS_URL = "<?php echo esc_js( PODS_URL ); ?>";
+				<script>
+					if ( 'undefined' === typeof PODS_URL ) {
+						const PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
+					}
 				</script>
 				<?php
+
 				wp_enqueue_script( 'jquery' );
 				wp_enqueue_script( 'jquery-ui-core' );
 				wp_enqueue_script( 'jquery-ui-sortable' );
@@ -864,8 +867,9 @@ class PodsAdmin {
 	 * Handle main Pods Setup area for managing Pods and Fields
 	 */
 	public function admin_setup() {
+		$api = pods_api();
 
-		$pods = pods_api()->load_pods( array( 'fields' => false ) );
+		$pods = $api->load_pods( array( 'fields' => false ) );
 
 		$view = pods_v( 'view', 'get', 'all', true );
 
@@ -911,18 +915,8 @@ class PodsAdmin {
 			);
 		}//end if
 
-		$types = array(
-			'post_type' => __( 'Post Type (extended)', 'pods' ),
-			'taxonomy'  => __( 'Taxonomy (extended)', 'pods' ),
-			'cpt'       => __( 'Custom Post Type', 'pods' ),
-			'ct'        => __( 'Custom Taxonomy', 'pods' ),
-			'user'      => __( 'User (extended)', 'pods' ),
-			'media'     => __( 'Media (extended)', 'pods' ),
-			'comment'   => __( 'Comments (extended)', 'pods' ),
-			'pod'       => __( 'Advanced Content Type', 'pods' ),
-			'settings'  => __( 'Custom Settings Page', 'pods' ),
-			'internal'  => __( 'Pods Internal', 'pods' ),
-		);
+		$pod_types     = $api->get_pod_types();
+		$storage_types = $api->get_storage_types();
 
 		$row = false;
 
@@ -979,12 +973,17 @@ class PodsAdmin {
 				$pod_storage = 'options';
 			}
 
-			if ( isset( $types[ $pod_type ] ) ) {
-				$pod_type_label = $types[ $pod_type ];
+			if ( isset( $pod_types[ $pod_type ] ) ) {
+				$pod_type_label = $pod_types[ $pod_type ];
 			}
 
 			$pod_real_type = $pod_type;
-			$pod_storage   = ucwords( $pod_storage );
+
+			$storage_type_label = ucwords( $pod_storage );
+
+			if ( isset( $storage_types[ $pod_type ] ) ) {
+				$storage_type_label = $storage_types[ $pod_type ];
+			}
 
 			if ( null !== $pod_type_label ) {
 				if ( empty( $pod['object'] ) && in_array( $pod_type, array(
@@ -997,8 +996,8 @@ class PodsAdmin {
 						$pod_type = 'ct';
 					}
 
-					if ( isset( $types[ $pod_type ] ) ) {
-						$pod_type_label = $types[ $pod_type ];
+					if ( isset( $pod_types[ $pod_type ] ) ) {
+						$pod_type_label = $pod_types[ $pod_type ];
 					}
 				}
 
@@ -1030,7 +1029,7 @@ class PodsAdmin {
 				'object'      => pods_v( 'object', $pod, '' ),
 				'type'        => $pod_type,
 				'real_type'   => $pod_real_type,
-				'storage'     => $pod_storage,
+				'storage'     => $storage_type_label,
 				'group_count' => count( $pod['groups'] ),
 				'field_count' => count( $pod['fields'] ),
 			);
@@ -1107,7 +1106,7 @@ class PodsAdmin {
 			$ui['filters_enhanced'] = true;
 
 			foreach ( $pod_types_found as $pod_type => $number_found ) {
-				$ui['views'][ $pod_type ] = $types[ $pod_type ] . ' (' . $number_found . ')';
+				$ui['views'][ $pod_type ] = $pod_types[ $pod_type ] . ' (' . $number_found . ')';
 			}
 		}
 
@@ -1307,24 +1306,8 @@ class PodsAdmin {
 			'global'         => $this->get_global_config( $pod ),
 			'fieldTypes'     => PodsForm::field_types(),
 			'relatedObjects' => $this->get_field_related_objects(),
-			'podTypes'       => [
-				'post_type' => _x( 'Post Type (extended)', 'pod type label', 'pods' ),
-				'taxonomy'  => _x( 'Taxonomy (extended)', 'pod type label', 'pods' ),
-				'cpt'       => _x( 'Custom Post Type', 'pod type label', 'pods' ),
-				'ct'        => _x( 'Custom Taxonomy', 'pod type label', 'pods' ),
-				'user'      => _x( 'User (extended)', 'pod type label', 'pods' ),
-				'media'     => _x( 'Media (extended)', 'pod type label', 'pods' ),
-				'comment'   => _x( 'Comments (extended)', 'pod type label', 'pods' ),
-				'pod'       => _x( 'Advanced Content Type', 'pod type label', 'pods' ),
-				'settings'  => _x( 'Custom Settings Page', 'pod type label', 'pods' ),
-				'internal'  => _x( 'Pods Internal', 'pod type label', 'pods' ),
-			],
-			'storageTypes'   => [
-				'none'    => _x( 'None (No Fields)', 'storage type label', 'pods' ),
-				'options' => _x( 'Options', 'storage type label', 'pods' ),
-				'meta'    => _x( 'Meta', 'storage type label', 'pods' ),
-				'table'   => _x( 'Table', 'storage type label', 'pods' ),
-			],
+			'podTypes'       => $api->get_pod_types(),
+			'storageTypes'   => $api->get_storage_types(),
 			// @todo SKC: Remove these below and replace any references to podsDFVConfig
 			'wp_locale'      => $GLOBALS['wp_locale'],
 			'currencies'     => PodsField_Currency::$currencies,
@@ -1369,13 +1352,13 @@ class PodsAdmin {
 		}
 
 		/**
-		 * Allow filtering hte admin config data.
+		 * Allow filtering the admin config data.
 		 *
 		 * @since TBD
 		 *
-		 * @param array $config The admin config data.
-		 * @param Pod The pod object.
-		 * @param PodsUI $obj The PodsUI object.
+		 * @param array  $config The admin config data.
+		 * @param Pod    $pod    The pod object.
+		 * @param PodsUI $obj    The PodsUI object.
 		 */
 		$config = apply_filters( 'pods_admin_setup_edit_pod_config', $config, $pod, $obj );
 
@@ -1475,7 +1458,7 @@ class PodsAdmin {
 			 * @param string  $name   Name of the Pod.
 			 */
 			$label = apply_filters( 'pods_meta_default_box_title', $label, $pod, $fields, $pod->get_type(), $pod->get_name() );
-			$name  = sanitize_key( $label );
+			$name  = sanitize_key( pods_js_name( sanitize_title( $label ) ) );
 
 			// Setup first group.
 			$group_id = $api->save_group( [
@@ -1562,16 +1545,19 @@ class PodsAdmin {
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
+				'include_field_data'   => true,
 			] ),
 			'group' => $group_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
+				'include_field_data'   => true,
 			] ),
 			'field' => $field_object->export( [
 				'include_groups'       => true,
 				'include_group_fields' => true,
 				'include_fields'       => false,
+				'include_field_data'   => true,
 			] ),
 		];
 

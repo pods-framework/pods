@@ -67,9 +67,6 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 ?>
 
 <div class="wrap pods-admin">
-	<script>
-		const PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
-	</script>
 	<div id="icon-pods" class="icon32"><br /></div>
 
 	<form action="" method="post" class="pods-submittable">

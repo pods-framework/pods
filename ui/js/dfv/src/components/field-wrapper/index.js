@@ -56,10 +56,6 @@ export const FieldWrapper = ( props ) => {
 		type: fieldType,
 		html_no_label: htmlNoLabel = false,
 		htmlAttr,
-		'depends-on': dependsOn,
-		'depends-on-any': dependsOnAny,
-		'excludes-on': excludesOn,
-		'wildcard-on': wildcardOn,
 	} = field;
 
 	const isBooleanGroupField = 'boolean_group' === fieldType;
@@ -73,15 +69,11 @@ export const FieldWrapper = ( props ) => {
 
 	const [ hasBlurred, setHasBlurred ] = useState( false );
 
-	// Calculate dependencies, trying to skip as many of these checks as
-	// we can because they're expensive.
+	// Calculate dependencies.
 	const meetsDependencies = useDependencyCheck(
+		field,
 		allPodValues,
 		allPodFieldsMap,
-		dependsOn,
-		dependsOnAny,
-		excludesOn,
-		wildcardOn,
 	);
 
 	// Hacky thing to hide the container. This isn't needed on every screen.
@@ -162,7 +154,9 @@ export const FieldWrapper = ( props ) => {
 				value={ value || defaultValue || '' }
 				values={ isBooleanGroupField ? values : undefined }
 				allPodValues={ isBooleanGroupField ? allPodValues : undefined }
-				allPodFieldsMap={ isBooleanGroupField ? allPodFieldsMap : undefined }
+				// allPodFieldsMap={ isBooleanGroupField ? allPodFieldsMap : undefined }
+				// @todo why was this not set for booleangroup fields before?
+				allPodFieldsMap={ allPodFieldsMap }
 				setOptionValue={ isBooleanGroupField ? setOptionValue : undefined }
 				setValue={ isBooleanGroupField ? undefined : ( newValue ) => setOptionValue( name, newValue ) }
 				isValid={ !! validationMessages.length }

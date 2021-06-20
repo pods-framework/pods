@@ -7,7 +7,7 @@ const ALL_BOOLEAN_VALUES = [ '1', '0', 1, 0, true, false ];
  * have been met.
  *
  * @param {Object} options   Key/value object with the selected options to compare to.
- * @param {Object} rules Key/value field slug and option to check for.
+ * @param {Object} rules     Key/value field slug and option to check for.
  * @param {string} mode      The dependency mode, either 'wildcard', 'depends-on',
  *                           'depends-on-any', or 'excludes'.
  *
@@ -63,18 +63,10 @@ const validateFieldDependenciesForKey = ( options, mode, ruleKey, ruleValue ) =>
 	}
 
 	if ( 'wildcard' === mode ) {
-		let wildcardData = ruleValue;
-		let wildcardMatchFound = false;
-
 		// We could either have an array of possible values,
 		// or a string that is the possible value.
-		if ( ! Array.isArray( wildcardData ) ) {
-			wildcardData = [
-				ruleValue,
-			];
-		}
-
-		wildcardMatchFound = false;
+		const wildcardData = Array.isArray( wildcardData ) ? ruleValue : [ ruleValue ];
+		let wildcardMatchFound = false;
 
 		// Check for any wildcard match.
 		wildcardData.every(

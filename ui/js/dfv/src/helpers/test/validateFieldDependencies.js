@@ -1,5 +1,7 @@
 import validateFieldDependencies from '../validateFieldDependencies';
 
+// @todo write tests for 'wildcard' and 'excludes' modes
+
 describe( 'validateFieldDependencies helper function', () => {
 	it( 'correctly validates depends-on dependencies when there is one boolean dependency', () => {
 		const podValues = {
@@ -14,23 +16,23 @@ describe( 'validateFieldDependencies helper function', () => {
 			restrict_role: false,
 		};
 
-		const dependsOnSuccess = {
+		const dependsOnRules = {
 			restrict_role: true,
 		};
 
-		const dependsOnSuccessWithStringLooseTyping = {
+		const dependsOnRulesWithStringLooseTyping = {
 			restrict_role: '1',
 		};
 
-		const dependsOnSuccessWithNumberLooseTyping = {
+		const dependsOnRulesWithNumberLooseTyping = {
 			restrict_role: 1,
 		};
 
 		expect( validateFieldDependencies( podValues, dependsOnFail ) ).toBe( false );
 
-		expect( validateFieldDependencies( podValues, dependsOnSuccess ) ).toBe( true );
-		expect( validateFieldDependencies( podValues, dependsOnSuccessWithStringLooseTyping ) ).toBe( true );
-		expect( validateFieldDependencies( podValues, dependsOnSuccessWithNumberLooseTyping ) ).toBe( true );
+		expect( validateFieldDependencies( podValues, dependsOnRules ) ).toBe( true );
+		expect( validateFieldDependencies( podValues, dependsOnRulesWithStringLooseTyping ) ).toBe( true );
+		expect( validateFieldDependencies( podValues, dependsOnRulesWithNumberLooseTyping ) ).toBe( true );
 	} );
 
 	it( 'correctly validates depends-on dependencies when there are multiple string dependencies', () => {
@@ -55,15 +57,56 @@ describe( 'validateFieldDependencies helper function', () => {
 			second_string_dep: 'Yes',
 		};
 
-		const dependsOnSuccess = {
+		const dependsOnRules = {
 			first_string_dep: 'correct',
 			second_string_dep: 'Yes',
 		};
 
-		expect( validateFieldDependencies( podValuesFirstFail, dependsOnSuccess ) ).toBe( false );
-		expect( validateFieldDependencies( podValuesSecondFail, dependsOnSuccess ) ).toBe( false );
-		expect( validateFieldDependencies( podValuesThirdFail, dependsOnSuccess ) ).toBe( false );
+		expect( validateFieldDependencies( podValuesFirstFail, dependsOnRules ) ).toBe( false );
+		expect( validateFieldDependencies( podValuesSecondFail, dependsOnRules ) ).toBe( false );
+		expect( validateFieldDependencies( podValuesThirdFail, dependsOnRules ) ).toBe( false );
 
-		expect( validateFieldDependencies( podValuesSuccess, dependsOnSuccess ) ).toBe( true );
+		expect( validateFieldDependencies( podValuesSuccess, dependsOnRules ) ).toBe( true );
+	} );
+
+	it( 'correctly validates depends-on-any dependencies', () => {
+		const podValuesFail1 = {};
+
+		const podValuesFail2 = {
+			some_irrelevant_field: 'something',
+		};
+
+		const podValuesFail3 = {
+			pick_format_single: 'different',
+			pick_format_multi: 'also different',
+		};
+
+		const podValuesSuccess1 = {
+			pick_format_single: 'list',
+			pick_format_multi: 'wrong',
+		};
+
+		const podValuesSuccess2 = {
+			pick_format_single: 'wrong',
+			pick_format_multi: 'list',
+		};
+
+		const podValuesSuccess3 = {
+			pick_format_single: 'list',
+			pick_format_multi: 'list',
+		};
+
+		const dependsOnRules = {
+			pick_format_single: 'list',
+			pick_format_multi: 'list',
+		};
+
+		expect( validateFieldDependencies( podValuesFail1, dependsOnRules, 'depends-on-any' ) ).toBe( false );
+		expect( validateFieldDependencies( podValuesFail2, dependsOnRules, 'depends-on-any' ) ).toBe( false );
+		expect( validateFieldDependencies( podValuesFail3, dependsOnRules, 'depends-on-any' ) ).toBe( false );
+
+		expect( validateFieldDependencies( podValuesSuccess1, dependsOnRules, 'depends-on-any' ) ).toBe( true );
+		expect( validateFieldDependencies( podValuesSuccess2, dependsOnRules, 'depends-on-any' ) ).toBe( true );
+		expect( validateFieldDependencies( podValuesSuccess3, dependsOnRules, 'depends-on-any' ) ).toBe( true );
 	} );
 } );

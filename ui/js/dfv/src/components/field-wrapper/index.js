@@ -75,11 +75,6 @@ export const FieldWrapper = ( props ) => {
 		allPodFieldsMap,
 	);
 
-	// console.log( 'meetsDependencies', meetsDependencies, {
-	// 	field,
-	// 	allPodValues,
-	// } );
-
 	// Hacky thing to hide the container. This isn't needed on every screen.
 	// @todo rework how some fields render so that we don't need to do this.
 	useEffect( () => {

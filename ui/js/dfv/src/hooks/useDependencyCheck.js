@@ -1,6 +1,6 @@
 import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
 
-const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap, level = 1 ) => {
+const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap ) => {
 	const {
 		'depends-on': dependsOn = {},
 		'depends-on-any': dependsOnAny = {},
@@ -8,48 +8,31 @@ const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap,
 		'wildcard-on': wildcardOn = {},
 	} = fieldConfig;
 
-	let indent = '';
-	if ( 2 === level ) {
-		indent = '  ';
-	} else if ( 3 === level ) {
-		indent = '    ';
-	} else if ( 4 === level ) {
-		indent = '      ';
-	}
-
-	// console.log( `${ indent }validating  ${ fieldConfig.name }` );
-
 	// Calculate dependencies, trying to skip as many of these checks as
 	// we can because they're expensive.
 	if ( Object.keys( dependsOn ).length ) {
 		if ( ! validateFieldDependencies( allPodValues, dependsOn, 'depends-on' ) ) {
-			// console.log( `${ indent }- failed depends-on`, dependsOn, allPodValues );
 			return false;
 		}
 	}
 
 	if ( Object.keys( dependsOnAny ).length ) {
 		if ( ! validateFieldDependencies( allPodValues, dependsOnAny, 'depends-on-any' ) ) {
-			// console.log( `${ indent }- failed depends-on-any`, dependsOnAny, allPodValues );
 			return false;
 		}
 	}
 
 	if ( Object.keys( excludesOn ).length ) {
 		if ( ! validateFieldDependencies( allPodValues, excludesOn, 'excludes-on' ) ) {
-			// console.log( `${ indent }- failed excludes-on`, excludesOn, allPodValues );
 			return false;
 		}
 	}
 
 	if ( Object.keys( wildcardOn ).length ) {
 		if ( ! validateFieldDependencies( allPodValues, wildcardOn, 'wildcard-on' ) ) {
-			// console.log( `${ indent }- failed wildcard-on`, wildcardOn, allPodValues );
 			return false;
 		}
 	}
-
-	// console.log( `${ indent }-passed on its own 4 dependency types, going to check parents` );
 
 	// Go up the tree of dependencies. This works two different ways:
 	// parents from a 'depends-on-any' match should have at least one
@@ -63,11 +46,8 @@ const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap,
 	} );
 
 	if ( ! parentFieldsForAnyMatch.length && ! parentFieldsForEveryMatch.length ) {
-		// console.log( `${ indent }- no parents to check, passing!` );
 		return true;
 	}
-
-	// console.log( `${ indent }- all parents to check`, parentFieldsForAnyMatch, parentFieldsForEveryMatch );
 
 	// We should fail on the first parent field that doesn't meet its dependencies.
 	const checkParentDependencies = ( fieldKey ) => {
@@ -76,14 +56,12 @@ const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap,
 		// If it's missing, either something is wrong, or it's part of a Boolean Group field
 		// (so there wouldn't be a matching field config for the slug).
 		if ( ! parentFieldConfig ) {
-			// console.log( `${ indent }- missing parent field config from map` );
 			return true;
 		}
 
 		// If one doesn't pass, return false and we're done checking.
-		const parentFieldPasses = recursiveCheckDepsForField( parentFieldConfig, allPodValues, allPodFieldsMap, level + 1 );
+		const parentFieldPasses = recursiveCheckDepsForField( parentFieldConfig, allPodValues, allPodFieldsMap );
 
-		// console.log( `${ indent }- did parent field ${ parentFieldConfig.name } meet deps?`, parentFieldPasses );
 		return parentFieldPasses;
 	};
 
@@ -92,7 +70,6 @@ const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap,
 		: true;
 
 	if ( ! atLeastOneDependsOnAnyMatch ) {
-		// console.log( `${ indent }- false because at least one depends-on-any parent failed` );
 		return false;
 	}
 
@@ -101,13 +78,11 @@ const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap,
 		: true;
 
 	if ( ! doAllOtherParentFieldsMatch ) {
-		// console.log( `${ indent }- false because of other dependency parent failure` );
 		return false;
 	}
 
 	// If there were no depends-on, depends-on-any, excludes-on, or
 	// wildcard-on matches, and none from parent fields, then the check passes.
-	// console.log( `${ indent }- passed!` );
 	return true;
 };
 

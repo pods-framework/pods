@@ -8,19 +8,23 @@ const ALL_BOOLEAN_VALUES = [ '1', '0', 1, 0, true, false ];
  *
  * @param {Object} options   Key/value object with the selected options to compare to.
  * @param {Object} rules     Key/value field slug and option to check for.
- * @param {string} mode      The dependency mode, either 'wildcard', 'depends-on',
- *                           'depends-on-any', or 'excludes'.
+ * @param {string} mode      The dependency mode, either 'wildcard-on', 'depends-on',
+ *                           'depends-on-any', or 'excludes-on'.
  *
  * @return {boolean} True if dependencies are met to show the item.
  */
 const validateFieldDependencies = ( options, rules, mode = 'depends-on' ) => {
+	if ( ! [ 'wildcard-on', 'depends-on', 'depends-on-any', 'excludes-on' ].includes( mode ) ) {
+		throw 'Invalid dependency validation mode.';
+	}
+
 	const ruleKeys = Object.keys( rules || {} );
 
 	if ( ! ruleKeys.length ) {
 		return true;
 	}
 
-	if ( 'excludes' === mode ) {
+	if ( 'excludes-on' === mode ) {
 		// Negate the check because the exclusion dependency has failed if it returns true.
 		return ! ruleKeys.some( ( key ) => {
 			return validateFieldDependenciesForKey( options, mode, key, rules[ key ] );
@@ -33,6 +37,7 @@ const validateFieldDependencies = ( options, rules, mode = 'depends-on' ) => {
 		} );
 	}
 
+	// Either 'wildcard-on' or 'depends-on'
 	return ruleKeys.every( ( key ) => {
 		return validateFieldDependenciesForKey( options, mode, key, rules[ key ] );
 	} );
@@ -43,8 +48,8 @@ const validateFieldDependencies = ( options, rules, mode = 'depends-on' ) => {
  * have been met.
  *
  * @param {Object} options   Key/value object with the selected options to compare to.
- * @param {string} mode      The dependency mode, either 'wildcard', 'depends-on',
- *                           'depends-on-any', or 'excludes'.
+ * @param {string} mode      The dependency mode, either 'wildcard-on', 'depends-on',
+ *                           'depends-on-any', or 'excludes-on'.
  * @param {string} ruleKey   The dependency key being checked.
  * @param {string} ruleValue The dependency value being checked.
  *
@@ -58,28 +63,20 @@ const validateFieldDependenciesForKey = ( options, mode, ruleKey, ruleValue ) =>
 		return false;
 	}
 
-	if ( 'wildcard' === mode ) {
+	if ( 'wildcard-on' === mode ) {
 		// We could either have an array of possible values,
 		// or a string that is the possible value.
-		const wildcardData = Array.isArray( wildcardData ) ? ruleValue : [ ruleValue ];
-		let wildcardMatchFound = false;
+		const wildcardData = Array.isArray( ruleValue ) ? ruleValue : [ ruleValue ];
+
+		// Go ahead and return true if there are no wildcard rules.
+		if ( 0 === wildcardData.length ) {
+			return true;
+		}
 
 		// Check for any wildcard match.
-		wildcardData.every(
-			( regexRule ) => {
-				// Skip these rules, but keep going through the array.
-				if ( null === currentValue.match( regexRule ) ) {
-					return true;
-				}
-
-				wildcardMatchFound = true;
-
-				// Stop iterating through further.
-				return false;
-			}
+		return wildcardData.some(
+			( regexRule ) => !! currentValue.match( regexRule )
 		);
-
-		return wildcardMatchFound;
 	}
 
 	// We could either have an array of possible values,

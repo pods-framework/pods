@@ -36,15 +36,15 @@ const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap,
 	}
 
 	if ( Object.keys( excludesOn ).length ) {
-		if ( ! validateFieldDependencies( allPodValues, excludesOn, 'excludes' ) ) {
+		if ( ! validateFieldDependencies( allPodValues, excludesOn, 'excludes-on' ) ) {
 			// console.log( `${ indent }- failed excludes-on`, excludesOn, allPodValues );
 			return false;
 		}
 	}
 
 	if ( Object.keys( wildcardOn ).length ) {
-		if ( ! validateFieldDependencies( allPodValues, wildcardOn, 'wildcard' ) ) {
-			// console.log( `${ indent }- failed wildcard`, wildcardOn, allPodValues );
+		if ( ! validateFieldDependencies( allPodValues, wildcardOn, 'wildcard-on' ) ) {
+			// console.log( `${ indent }- failed wildcard-on`, wildcardOn, allPodValues );
 			return false;
 		}
 	}
@@ -73,10 +73,11 @@ const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap,
 	const checkParentDependencies = ( fieldKey ) => {
 		const parentFieldConfig = allPodFieldsMap.get( fieldKey );
 
-		// If it's missing, something is wrong.
+		// If it's missing, either something is wrong, or it's part of a Boolean Group field
+		// (so there wouldn't be a matching field config for the slug).
 		if ( ! parentFieldConfig ) {
 			// console.log( `${ indent }- missing parent field config from map` );
-			return false;
+			return true;
 		}
 
 		// If one doesn't pass, return false and we're done checking.
@@ -97,7 +98,7 @@ const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap,
 
 	const doAllOtherParentFieldsMatch = !! parentFieldsForEveryMatch.length
 		? parentFieldsForEveryMatch.every( checkParentDependencies )
-		: false;
+		: true;
 
 	if ( ! doAllOtherParentFieldsMatch ) {
 		// console.log( `${ indent }- false because of other dependency parent failure` );

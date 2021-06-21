@@ -47,11 +47,11 @@ const checkFormValidity = ( sections, options ) => {
 				return true;
 			}
 
-			if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( options, excludesOn, 'excludes' ) ) {
+			if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( options, excludesOn, 'excludes-on' ) ) {
 				return true;
 			}
 
-			if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( options, wildcardOn, 'wildcard' ) ) {
+			if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( options, wildcardOn, 'wildcard-on' ) ) {
 				return true;
 			}
 
@@ -82,11 +82,11 @@ const checkFormValidity = ( sections, options ) => {
 						return true;
 					}
 
-					if ( Object.keys( fieldExcludesOn || {} ).length && ! validateFieldDependencies( options, fieldExcludesOn, 'excludes' ) ) {
+					if ( Object.keys( fieldExcludesOn || {} ).length && ! validateFieldDependencies( options, fieldExcludesOn, 'excludes-on' ) ) {
 						return true;
 					}
 
-					if ( Object.keys( fieldWildcardOn || {} ).length && ! validateFieldDependencies( options, fieldWildcardOn, 'wildcard' ) ) {
+					if ( Object.keys( fieldWildcardOn || {} ).length && ! validateFieldDependencies( options, fieldWildcardOn, 'wildcard-on' ) ) {
 						return true;
 					}
 
@@ -263,12 +263,12 @@ const SettingsModal = ( {
 						}
 
 						// Check that exclusions are met.
-						if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( changedOptions, excludesOn, 'excludes' ) ) {
+						if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( changedOptions, excludesOn, 'excludes-on' ) ) {
 							return null;
 						}
 
 						// Check that wildcard dependencies are met.
-						if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( changedOptions, wildcardOn, 'wildcard' ) ) {
+						if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( changedOptions, wildcardOn, 'wildcard-on' ) ) {
 							return null;
 						}
 

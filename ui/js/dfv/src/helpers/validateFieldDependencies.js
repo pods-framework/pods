@@ -53,10 +53,6 @@ const validateFieldDependencies = ( options, rules, mode = 'depends-on' ) => {
 const validateFieldDependenciesForKey = ( options, mode, ruleKey, ruleValue ) => {
 	const currentValue = options[ ruleKey ];
 
-	// console.log( 'validateFieldDependenciesForKey', {
-	// 	options, mode, ruleKey, ruleValue,
-	// } );
-
 	// Bail if the current value is not set at all.
 	if ( 'undefined' === typeof currentValue ) {
 		return false;

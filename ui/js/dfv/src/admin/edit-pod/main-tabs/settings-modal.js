@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -149,6 +149,7 @@ const SettingsModal = ( {
 			...newOptions,
 		} ) );
 	};
+	const setOptionValueCallback = useCallback( setOptionValue, [] );
 
 	// When the modal first opens, set any options to their defaults, unless
 	// they're already set. This will need to happen again when any option changes,
@@ -211,6 +212,17 @@ const SettingsModal = ( {
 
 		setIsValid( validity );
 	}, [ changedOptions, setIsValid ] );
+
+	const allPodFields = useMemo(
+		() => optionsSections.reduce(
+			( accumulator, group ) => ( [
+				...accumulator,
+				...( group?.fields || [] ),
+			] ),
+			[]
+		),
+		[ optionsSections ],
+	);
 
 	return (
 		<Modal
@@ -294,19 +306,9 @@ const SettingsModal = ( {
 					{
 						<DynamicTabContent
 							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab )?.fields }
-							allPodFields={
-								optionsSections.reduce(
-									( accumulator, group ) => {
-										return [
-											...accumulator,
-											...( group?.fields || [] ),
-										];
-									},
-									[]
-								)
-							}
+							allPodFields={ allPodFields }
 							allPodValues={ changedOptions }
-							setOptionValue={ setOptionValue }
+							setOptionValue={ setOptionValueCallback }
 						/>
 					}
 				</div>

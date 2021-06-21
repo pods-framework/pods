@@ -24,7 +24,7 @@ const ConnectedFieldWrapper = compose( [
 		if ( 'boolean_group' === ownProps.field?.type ) {
 			valueData.values = {};
 
-			const subFields = ownProps.field?.['boolean_group'] || [];
+			const subFields = ownProps.field?.boolean_group || [];
 
 			subFields.forEach( ( subField ) => {
 				if ( ! subField.name ) {

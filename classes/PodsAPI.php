@@ -127,31 +127,26 @@ class PodsAPI {
 	 * @param bool   $strict      (optional) Decides whether the previous saved meta should be deleted or not
 	 * @param bool   $sanitized   (optional) Will unsanitize the data, should be passed if the data is sanitized before
 	 *                            sending.
-	 * @param array  $fields      (optional) The array of fields and their options, for further processing with
+	 * @param array  $fields      (optional) The array of fields and their options, for further processing with.
 	 *
-	 * @return bool|mixed
+	 * @return int|string|false The object ID after saving, false if not saved.
 	 *
 	 * @since 2.0.0
 	 */
-	public function save_wp_object( $object_type, $data, $meta = array(), $strict = false, $sanitized = false, $fields = array() ) {
-
-		if ( in_array( $object_type, array( 'post_type', 'media' ), true ) ) {
+	public function save_wp_object( $object_type, $data, $meta = [], $strict = false, $sanitized = false, $fields = [] ) {
+		if ( in_array( $object_type, [ 'post_type', 'media' ], true ) ) {
 			$object_type = 'post';
-		}
-
-		if ( 'taxonomy' === $object_type ) {
+		} elseif ( 'taxonomy' === $object_type ) {
 			$object_type = 'term';
 		}
-
-		$is_meta_object = in_array( $object_type, [ 'post', 'term', 'user', 'comment' ], true );
 
 		if ( $sanitized ) {
 			$data = pods_unsanitize( $data );
 			$meta = pods_unsanitize( $meta );
 		}
 
-		if ( $is_meta_object ) {
-			return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict, false, $fields );
+		if ( in_array( $object_type, [ 'post', 'term', 'user', 'comment' ], true ) ) {
+			return call_user_func( [ $this, 'save_' . $object_type ], $data, $meta, $strict, false, $fields );
 		} elseif ( 'settings' === $object_type ) {
 			// Nothing to save
 			if ( empty( $meta ) ) {
@@ -161,7 +156,48 @@ class PodsAPI {
 			return $this->save_setting( pods_v( 'option_id', $data ), $meta, false );
 		}
 
-		return false;
+		/**
+		 * Allow hooking in to support saving for custom object types.
+		 *
+		 * @since TBD
+		 *
+		 * @param int|string|false $object_id   The object ID after saving, false if not saved.
+		 * @param string           $object_type The custom object type.
+		 * @param array            $data        All object data to be saved
+		 * @param array            $meta        Associative array of meta keys and values.
+		 * @param bool             $strict      Decides whether the previous saved meta should be deleted or not.
+		 * @param bool             $sanitized   Will unsanitize the data, should be passed if the data is sanitized before sending.
+		 * @param array            $fields      The array of fields and their options, for further processing with.
+		 */
+		$object_id = apply_filters( 'pods_api_save_wp_object_for_custom_object_type', false, $object_type, $data, $meta, $strict, $sanitized, $fields );
+
+		if ( false === $object_id ) {
+			return $object_id;
+		}
+
+		/**
+		 * Allow hooking in to support saving meta using the meta fallback.
+		 *
+		 * @since TBD
+		 *
+		 * @param bool   $use_meta_fallback Whether to support saving meta using the meta fallback.
+		 * @param string $object_type       The custom object type.
+		 * @param array  $data              All object data to be saved
+		 * @param array  $meta              Associative array of meta keys and values.
+		 * @param bool   $strict            Decides whether the previous saved meta should be deleted or not.
+		 * @param bool   $sanitized         Will unsanitize the data, should be passed if the data is sanitized before sending.
+		 * @param array  $fields            The array of fields and their options, for further processing with.
+		 */
+		$use_meta_fallback = apply_filters( 'pods_api_save_wp_object_use_meta_fallback', false, $object_type, $data, $meta, $strict, $sanitized, $fields );
+
+		// Maybe use meta fallback for saving.
+		if ( $use_meta_fallback ) {
+			foreach ( $meta as $meta_key => $meta_value ) {
+				update_metadata( $object_type, $object_id, $meta_key, $meta_value );
+			}
+		}
+
+		return $object_id;
 	}
 
 	/**
@@ -2135,7 +2171,7 @@ class PodsAPI {
 				 * @param string  $name   Name of the Pod.
 				 */
 				$default_group_label = apply_filters( 'pods_meta_default_box_title', $default_group_label, $pod, $default_group_fields, $pod['type'], $pod['name'] );
-				$default_group_name  = sanitize_key( sanitize_title( $default_group_label ) );
+				$default_group_name  = sanitize_key( pods_js_name( sanitize_title( $default_group_label ) ) );
 
 				$pod['groups'] = [
 					$default_group_name => [

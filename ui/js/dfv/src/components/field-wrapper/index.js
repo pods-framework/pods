@@ -75,6 +75,11 @@ export const FieldWrapper = ( props ) => {
 		allPodFieldsMap,
 	);
 
+	// console.log( 'meetsDependencies', meetsDependencies, {
+	// 	field,
+	// 	allPodValues,
+	// } );
+
 	// Hacky thing to hide the container. This isn't needed on every screen.
 	// @todo rework how some fields render so that we don't need to do this.
 	useEffect( () => {
@@ -152,10 +157,10 @@ export const FieldWrapper = ( props ) => {
 			<FieldComponent
 				value={ value || defaultValue || '' }
 				values={ isBooleanGroupField ? values : undefined }
+				// Only the Boolean Group fields need allPodValues and allPodFieldsMap,
+				// because the subfields need to reference these.
 				allPodValues={ isBooleanGroupField ? allPodValues : undefined }
-				// allPodFieldsMap={ isBooleanGroupField ? allPodFieldsMap : undefined }
-				// @todo why was this not set for booleangroup fields before?
-				allPodFieldsMap={ allPodFieldsMap }
+				allPodFieldsMap={ isBooleanGroupField ? allPodFieldsMap : undefined }
 				setOptionValue={ isBooleanGroupField ? setOptionValue : undefined }
 				setValue={ isBooleanGroupField ? undefined : ( newValue ) => setOptionValue( name, newValue ) }
 				isValid={ !! validationMessages.length }

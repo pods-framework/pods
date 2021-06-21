@@ -2399,7 +2399,7 @@ class PodsUI {
 			if ( ! empty( $_POST['bulk_export_fields'] ) ) {
 				$export_fields = $_POST['bulk_export_fields'];
 
-				$this->fields['export '] = array();
+				$this->fields['export'] = array();
 
 				if ( $this->pod ) {
 					$fields = $this->pod->fields();
@@ -2600,7 +2600,11 @@ class PodsUI {
 			'type'    => '',
 		);
 
-		if ( ! empty( $params ) && is_array( $params ) ) {
+		if ( ! empty( $params ) ) {
+			if ( is_object( $params ) ) {
+				$params = get_object_vars( $params );
+			}
+
 			$params = (object) array_merge( $defaults, $params );
 		} else {
 			$params = (object) $defaults;
@@ -2734,7 +2738,11 @@ class PodsUI {
 			'type'    => '',
 		);
 
-		if ( ! empty( $params ) && is_array( $params ) ) {
+		if ( ! empty( $params ) ) {
+			if ( is_object( $params ) ) {
+				$params = get_object_vars( $params );
+			}
+
 			$params = (object) array_merge( $defaults, $params );
 		} else {
 			$params = (object) $defaults;

@@ -2,6 +2,7 @@
 
 namespace Pods\Whatsit;
 
+use PodsForm;
 use Pods\Whatsit;
 
 /**
@@ -84,12 +85,14 @@ class Field extends Whatsit {
 	/**
 	 * Get related object type from field.
 	 *
+	 * @since TBD
+	 *
 	 * @return string|null The related object type, or null if not found.
 	 */
 	public function get_related_object_type() {
 		$type = $this->get_type();
 
-		$simple_tableless_objects = \PodsForm::simple_tableless_objects();
+		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 
 		// File field types are always related to the media object type.
 		if ( 'file' === $type ) {
@@ -106,7 +109,7 @@ class Field extends Whatsit {
 			$related_type = 'media';
 		}
 
-		if ( empty( $related_type ) || \in_array( $related_type, $simple_tableless_objects, true ) ) {
+		if ( empty( $related_type ) || in_array( $related_type, $simple_tableless_objects, true ) ) {
 			return null;
 		}
 
@@ -115,6 +118,8 @@ class Field extends Whatsit {
 
 	/**
 	 * Get related object name from field.
+	 *
+	 * @since TBD
 	 *
 	 * @return string|null The related object name, or null if not found.
 	 */
@@ -143,7 +148,20 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Get related object data from field.
+	 *
+	 * @since TBD
+	 *
+	 * @return array|null The related object data, or null if not found.
+	 */
+	public function get_related_object_data() {
+		return PodsForm::field_method( $this->args['type'], 'data', $this->args['name'], null, $this->args, null, null, true );
+	}
+
+	/**
 	 * Get field value limit from field.
+	 *
+	 * @since TBD
 	 *
 	 * @return int The field value limit.
 	 */

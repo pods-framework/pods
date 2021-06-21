@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit\Pod;
+
 /**
  * @package Pods
  */
@@ -237,7 +239,7 @@ class PodsData {
 			return;
 		}
 
-		if ( $pod instanceof \Pods\Whatsit\Pod ) {
+		if ( $pod instanceof Pods\Whatsit\Pod ) {
 			$this->pod_data = $pod;
 		} else {
 			$this->pod_data = $this->api->load_pod( [
@@ -1895,21 +1897,10 @@ class PodsData {
 
 				$current_row_id = false;
 
-				if ( in_array(
-					$this->pod_data['type'], array(
-						'post_type',
-						'media',
-					), true
-				) ) {
-					$current_row_id = pods_v( 'ID', $this->row );
-				} elseif ( 'taxonomy' === $this->pod_data['type'] ) {
-					$current_row_id = pods_v( 'term_id', $this->row );
-				} elseif ( 'user' === $this->pod_data['type'] ) {
-					$current_row_id = pods_v( 'ID', $this->row );
-				} elseif ( 'comment' === $this->pod_data['type'] ) {
-					$current_row_id = pods_v( 'comment_ID', $this->row );
-				} elseif ( 'settings' === $this->pod_data['type'] ) {
+				if ( 'settings' === $this->pod_data['type'] ) {
 					$current_row_id = $this->pod_data['id'];
+				} else {
+					$current_row_id = pods_v( $this->field_id, $this->row );
 				}
 
 				if ( 0 < $current_row_id ) {
@@ -1926,7 +1917,7 @@ class PodsData {
 			$mode = 'id';
 			$id   = pods_absint( $row );
 
-			if ( ! is_numeric( $row ) || 0 === strpos( $row, '0' ) || $row != preg_replace( '/[^0-9]/', '', $row ) ) {
+			if ( ! is_numeric( $row ) || 0 === strpos( $row, '0' ) || $row !== preg_replace( '/[^0-9]/', '', $row ) ) {
 				if ( $this->id && is_numeric( $this->id ) ) {
 					$id = $this->id;
 				} else {
@@ -3111,7 +3102,7 @@ class PodsData {
 
 		$the_field = null;
 
-		if ( $pod_data instanceof \Pods\Whatsit\Pod ) {
+		if ( $pod_data instanceof Pods\Whatsit\Pod ) {
 			$the_field = $pod_data->get_field( $field );
 		} elseif ( ! isset( $pod_data['fields'][ $field ] ) ) {
 			// Fallback to meta table if the pod type supports it.
@@ -3165,7 +3156,7 @@ class PodsData {
 		) {
 			$table_info = $this->api->get_table_info( 'media', 'media' );
 		} elseif ( ! in_array( $traverse['type'], $tableless_field_types, true ) ) {
-			if ( $pod_data instanceof \Pods\Whatsit\Pod ) {
+			if ( $pod_data instanceof Pods\Whatsit\Pod ) {
 				$table_info = $pod_data->get_table_info();
 			} else {
 				$table_info = $this->api->get_table_info( $pod_data['type'], $pod_data['name'], $pod_data['name'], $pod_data );

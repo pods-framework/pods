@@ -58,17 +58,18 @@ class Permissions {
 			$object = pods_config_merge_data( $object, $object['options'] );
 		}
 
-		if ( ! $this->is_input_allowed( $object ) ) {
-			return false;
-		}
-
-		if ( $this->is_user_an_admin() ) {
-			$permission = true;
+		if ( $this->is_input_disallowed( $object ) ) {
+			$permission = false;
+		} elseif ( $this->is_admin_only( $object ) ) {
+			$permission = $this->is_user_an_admin();
 		} else {
 			$permission = (
-				$this->are_roles_restricted_for_user( $object, $user )
-				|| $this->are_capabilities_restricted_for_user( $object, $user )
-				|| $this->is_admin_only( $object )
+				(
+					! $this->is_logged_in_only( $object )
+					|| is_user_logged_in()
+				)
+				&& ! $this->are_roles_restricted_for_user( $object, $user )
+				&& ! $this->are_capabilities_restricted_for_user( $object, $user )
 			);
 		}
 
@@ -77,6 +78,9 @@ class Permissions {
 		 *
 		 * @since 2.8
 		 *
+		 * @param bool             $permission Whether a user has permission to an object.
+		 * @param array|Whatsit    $object     The object data.
+		 * @param null|int|WP_User $user       The user ID or object (default: current user).
 		 */
 		return apply_filters( 'pods_permissions_user_has_permission', $permission, $object, $user );
 	}
@@ -96,10 +100,11 @@ class Permissions {
 		}
 
 		return (
-			$this->get_restricted_roles( $object )
-			|| $this->get_restricted_capabilities( $object )
+			$this->is_input_disallowed( $object )
+			|| $this->is_logged_in_only( $object )
 			|| $this->is_admin_only( $object )
-			|| ! $this->is_input_allowed( $object )
+			|| $this->get_restricted_roles( $object )
+			|| $this->get_restricted_capabilities( $object )
 		);
 	}
 
@@ -263,23 +268,36 @@ class Permissions {
 	 *
 	 * @return bool Whether permissions are restricted to admins only.
 	 */
-	public function is_admin_only( $object ) {
-		return 1 === (int) pods_v( 'admin_only', $object, 0 );
+	public function is_logged_in_only( $object ) {
+		return 1 === (int) pods_v( 'logged_in_only', $object, 0 );
 	}
 
 	/**
-	 * Determine whether input is allowed.
+	 * Determine whether permissions are restricted to admins only.
 	 *
 	 * @since 2.8
 	 *
 	 * @param array|Whatsit $object The object data.
 	 *
-	 * @return bool Whether input is allowed.
+	 * @return bool Whether permissions are restricted to admins only.
 	 */
-	public function is_input_allowed( $object ) {
+	public function is_admin_only( $object ) {
+		return 1 === (int) pods_v( 'admin_only', $object, 0 );
+	}
+
+	/**
+	 * Determine whether input is disallowed.
+	 *
+	 * @since 2.8
+	 *
+	 * @param array|Whatsit $object The object data.
+	 *
+	 * @return bool Whether input is disallowed.
+	 */
+	public function is_input_disallowed( $object ) {
 		$non_input_field_types = PodsForm::non_input_field_types();
 
-		return ! in_array( pods_v( 'type', $object ), $non_input_field_types, true );
+		return in_array( pods_v( 'type', $object ), $non_input_field_types, true );
 	}
 
 	/**

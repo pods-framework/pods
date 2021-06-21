@@ -289,6 +289,43 @@ class PermissionsTest extends WPTestCase {
 	}
 
 	/**
+	 * Test is_logged_in_only().
+	 */
+	public function test_is_logged_in_only() {
+		$sut = $this->sut();
+
+		$object = [
+			'logged_in_only' => 1,
+		];
+
+		$this->assertTrue( $sut->is_logged_in_only( $object ) );
+	}
+
+	/**
+	 * Test is_logged_in_only() off.
+	 */
+	public function test_is_logged_in_only_off() {
+		$sut = $this->sut();
+
+		$object = [
+			'logged_in_only' => 0,
+		];
+
+		$this->assertFalse( $sut->is_logged_in_only( $object ) );
+	}
+
+	/**
+	 * Test is_logged_in_only() default.
+	 */
+	public function test_is_logged_in_only_default() {
+		$sut = $this->sut();
+
+		$object = [];
+
+		$this->assertFalse( $sut->is_logged_in_only( $object ) );
+	}
+
+	/**
 	 * Test is_admin_only().
 	 */
 	public function test_is_admin_only() {
@@ -326,42 +363,42 @@ class PermissionsTest extends WPTestCase {
 	}
 
 	/**
-	 * Test is_input_allowed() is not for internal.
+	 * Test is_input_disallowed() is not for internal.
 	 */
-	public function test_is_input_allowed_is_not_for_internal() {
+	public function test_is_input_disallowed_is_not_for_internal() {
 		$sut = $this->sut();
 
 		$object = [
 			'type' => 'internal',
 		];
 
-		$this->assertFalse( $sut->is_input_allowed( $object ) );
+		$this->assertTrue( $sut->is_input_disallowed( $object ) );
 	}
 
 	/**
-	 * Test is_input_allowed() is for hidden.
+	 * Test is_input_disallowed() is for hidden.
 	 */
-	public function test_is_input_allowed_is_for_hidden() {
+	public function test_is_input_disallowed_is_for_hidden() {
 		$sut = $this->sut();
 
 		$object = [
 			'type' => 'hidden',
 		];
 
-		$this->assertTrue( $sut->is_input_allowed( $object ) );
+		$this->assertFalse( $sut->is_input_disallowed( $object ) );
 	}
 
 	/**
-	 * Test is_input_allowed() is for text.
+	 * Test is_input_disallowed() is for text.
 	 */
-	public function test_is_input_allowed_is_for_text() {
+	public function test_is_input_disallowed_is_for_text() {
 		$sut = $this->sut();
 
 		$object = [
 			'type' => 'text',
 		];
 
-		$this->assertTrue( $sut->is_input_allowed( $object ) );
+		$this->assertFalse( $sut->is_input_disallowed( $object ) );
 	}
 
 	/**

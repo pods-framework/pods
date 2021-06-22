@@ -121,7 +121,7 @@ const FieldGroups = ( {
 	// that haven't been saved.
 	useEffect( () => {
 		if ( podSaveStatus === SAVE_STATUSES.SAVE_SUCCESS ) {
-			setGroupsMovedSinceLastSave( {} );
+			setGroupsMovedSinceLastSave( [] );
 		}
 	}, [ podSaveStatus ] );
 

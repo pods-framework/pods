@@ -545,10 +545,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @param string     $arg     Argument name.
 	 * @param mixed|null $default Default to use if not set.
+	 * @param bool       $strict  Whether to check only normal arguments and not special arguments.
 	 *
 	 * @return null|mixed Argument value, or null if not set.
 	 */
-	public function get_arg( $arg, $default = null ) {
+	public function get_arg( $arg, $default = null, $strict = false ) {
 		$arg = (string) $arg;
 
 		$special_args = [
@@ -566,6 +567,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		if ( ! isset( $this->args[ $arg ] ) ) {
+			// Maybe only return the default if we need a strict argument.
+			if ( $strict ) {
+				return $default;
+			}
+
 			$table_info_fields = [
 				'object_name',
 				'object_hierarchical',

@@ -9963,9 +9963,9 @@ class PodsAPI {
 			];
 
 			$info['orderby'] = "`t`.`{$info['field_index']}` ASC, `t`.`path` ASC, `t`.`{$info['field_id']}`";
-		} elseif ( 'table' === $object_type || 'table' === pods_v( 'type', $info['pod'] ) || ! empty( $info['pod']['table'] ) ) {
+		} elseif ( 'table' === $object_type || 'table' === pods_v( 'type', $info['pod'] ) || ! empty( $info['pod']['table_custom'] ) ) {
 			// Custom tables.
-			$info['table']      = pods_v( 'table', $info['pod'], ( empty( $object ) ? $name : $object ), true );
+			$info['table']      = pods_v( 'table_custom', $info['pod'], ( empty( $object ) ? $name : $object ), true );
 			$info['meta_table'] = pods_v( 'meta_table', $info['pod'], $info['meta_table'], true );
 			$info['pod_table']  = pods_v( 'pod_table', $info['pod'], "{$wpdb->prefix}pods_" . $info['table'], true );
 

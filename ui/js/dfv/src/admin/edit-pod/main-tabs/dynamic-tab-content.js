@@ -77,21 +77,20 @@ const processAllPodValues = ( fields, allPodValues ) => {
 	return allPodValues;
 };
 
+const getLabelValue = ( labelFormat, paramOption, paramDefault, value ) => {
+	if ( ! paramOption ) {
+		return labelFormat;
+	}
+
+	return sprintf( labelFormat, value || paramDefault || MISSING );
+};
+
 const DynamicTabContent = ( {
 	tabOptions,
 	allPodFields,
 	allPodValues,
 	setOptionValue,
 } ) => {
-	const getLabelValue = ( labelFormat, paramOption, paramDefault ) => {
-		if ( ! paramOption ) {
-			return labelFormat;
-		}
-
-		const param = allPodValues[ paramOption ] || paramDefault || MISSING;
-		return sprintf( labelFormat, param );
-	};
-
 	const fields = tabOptions.map( ( tabOption ) => {
 		const {
 			label: optionLabel,
@@ -101,7 +100,12 @@ const DynamicTabContent = ( {
 
 		return {
 			...tabOption,
-			label: getLabelValue( optionLabel, optionLabelParam, optionLabelParamDefault ),
+			label: getLabelValue(
+				optionLabel,
+				optionLabelParam,
+				optionLabelParamDefault,
+				allPodValues[ optionLabelParam ]
+			),
 		};
 	} );
 

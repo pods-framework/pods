@@ -28,7 +28,10 @@ const Paragraph = ( {
 	const handleChange = ( event ) => setValue( event.target.value );
 
 	const handleBlur = ( event ) => {
-		onBlur( event );
+		if ( onBlur ) {
+			onBlur( event );
+		}
+
 		setHasBlurred();
 	};
 

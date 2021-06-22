@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -47,11 +47,11 @@ const checkFormValidity = ( sections, options ) => {
 				return true;
 			}
 
-			if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( options, excludesOn, 'excludes' ) ) {
+			if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( options, excludesOn, 'excludes-on' ) ) {
 				return true;
 			}
 
-			if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( options, wildcardOn, 'wildcard' ) ) {
+			if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( options, wildcardOn, 'wildcard-on' ) ) {
 				return true;
 			}
 
@@ -82,11 +82,11 @@ const checkFormValidity = ( sections, options ) => {
 						return true;
 					}
 
-					if ( Object.keys( fieldExcludesOn || {} ).length && ! validateFieldDependencies( options, fieldExcludesOn, 'excludes' ) ) {
+					if ( Object.keys( fieldExcludesOn || {} ).length && ! validateFieldDependencies( options, fieldExcludesOn, 'excludes-on' ) ) {
 						return true;
 					}
 
-					if ( Object.keys( fieldWildcardOn || {} ).length && ! validateFieldDependencies( options, fieldWildcardOn, 'wildcard' ) ) {
+					if ( Object.keys( fieldWildcardOn || {} ).length && ! validateFieldDependencies( options, fieldWildcardOn, 'wildcard-on' ) ) {
 						return true;
 					}
 
@@ -149,6 +149,7 @@ const SettingsModal = ( {
 			...newOptions,
 		} ) );
 	};
+	const setOptionValueCallback = useCallback( setOptionValue, [] );
 
 	// When the modal first opens, set any options to their defaults, unless
 	// they're already set. This will need to happen again when any option changes,
@@ -212,6 +213,17 @@ const SettingsModal = ( {
 		setIsValid( validity );
 	}, [ changedOptions, setIsValid ] );
 
+	const allPodFields = useMemo(
+		() => optionsSections.reduce(
+			( accumulator, group ) => ( [
+				...accumulator,
+				...( group?.fields || [] ),
+			] ),
+			[]
+		),
+		[ optionsSections ],
+	);
+
 	return (
 		<Modal
 			className="pods-settings-modal"
@@ -251,12 +263,12 @@ const SettingsModal = ( {
 						}
 
 						// Check that exclusions are met.
-						if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( changedOptions, excludesOn, 'excludes' ) ) {
+						if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( changedOptions, excludesOn, 'excludes-on' ) ) {
 							return null;
 						}
 
 						// Check that wildcard dependencies are met.
-						if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( changedOptions, wildcardOn, 'wildcard' ) ) {
+						if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( changedOptions, wildcardOn, 'wildcard-on' ) ) {
 							return null;
 						}
 
@@ -294,19 +306,9 @@ const SettingsModal = ( {
 					{
 						<DynamicTabContent
 							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab )?.fields }
-							allPodFields={
-								optionsSections.reduce(
-									( accumulator, group ) => {
-										return [
-											...accumulator,
-											...( group?.fields || [] ),
-										];
-									},
-									[]
-								)
-							}
+							allPodFields={ allPodFields }
 							allPodValues={ changedOptions }
-							setOptionValue={ setOptionValue }
+							setOptionValue={ setOptionValueCallback }
 						/>
 					}
 				</div>

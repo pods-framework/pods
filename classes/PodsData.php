@@ -350,7 +350,7 @@ class PodsData {
 				$table['object_fields'] = pods_v( 'object_fields', $table['pod'], $this->api->get_wp_object_fields( $table['object_type'] ), true );
 			}
 
-			if(!is_object($this->pod_data)) {
+			if ( ! is_object( $this->pod_data ) ) {
 				$this->pod_data = $this->api->load_pod( [
 					'name'       => $table['name'],
 					'auto_setup' => true,

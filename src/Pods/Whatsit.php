@@ -681,7 +681,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @since TBD
 	 *
 	 * @param array $table_info The table information to be referenced by this object.
-	 *
 	 */
 	public function set_table_info( $table_info ) {
 		$this->_table_info = $table_info;

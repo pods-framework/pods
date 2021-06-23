@@ -357,7 +357,7 @@ class PodsData {
 				], false );
 			}
 
-			$this->pod_data->set_args($table);
+			$this->pod_data->set_table_info( $table );
 		}
 	}
 

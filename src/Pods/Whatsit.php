@@ -644,9 +644,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'table_info',
 		];
 
-		if ( 'options' === $arg ) {
-			$value = [];
-
+		if ( 'options' === $arg && is_array($value) ) {
 			foreach ( $value as $real_arg => $real_value ) {
 				$this->set_arg( $real_arg, $real_value );
 			}
@@ -675,6 +673,16 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		$this->args[ $arg ] = $value;
+	}
+
+	/**
+	 * Override table info when it needs to be set, for fields for example.
+	 *
+	 * @param $table_info array
+	 *
+	 */
+	public function set_table_info($table_info) {
+		$this->_table_info = $table_info;
 	}
 
 	/**

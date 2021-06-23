@@ -680,7 +680,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @since TBD
 	 *
-	 * @param $table_info array
+	 * @param array $table_info The table information to be referenced by this object.
 	 *
 	 */
 	public function set_table_info( $table_info ) {

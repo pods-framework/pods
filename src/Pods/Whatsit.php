@@ -989,6 +989,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return array Table information for object.
 	 */
 	public function get_table_info() {
+		if ( null !== $this->_table_info ) {
+			return $this->_table_info;
+		}
+
 		return [];
 	}
 

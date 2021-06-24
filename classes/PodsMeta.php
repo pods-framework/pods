@@ -1944,6 +1944,7 @@ class PodsMeta {
 		if ( is_object( $user_id ) ) {
 			$user_id = $user_id->ID;
 		}
+		$user = get_userdata($user_id);
 
 		$id  = $user_id;
 		$pod = null;
@@ -1995,12 +1996,12 @@ class PodsMeta {
 					return $value;
 				};
 
-				$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
-					do_action( "pods_meta_meta_user_pre_row_{$field_name}", $post, $field, $pod );
+				$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $user ) {
+					do_action( "pods_meta_meta_user_pre_row_{$field_name}", $user, $field, $pod );
 				};
 
-				$post_callback = static function( $field_name, $id, $field, $pod ) use ( $post ) {
-					do_action( "pods_meta_meta_user_post_row_{$field_name}", $post, $field, $pod );
+				$post_callback = static function( $field_name, $id, $field, $pod ) use ( $user ) {
+					do_action( "pods_meta_meta_user_post_row_{$field_name}", $user, $field, $pod );
 				};
 
 				pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );

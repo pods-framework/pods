@@ -2757,7 +2757,7 @@ class PodsUI {
 			$action = 'manage';
 		}
 
-		$find_params = $this->get_params( $params, $action );
+		$find_params = $this->get_params( (array) $params, $action );
 
 		if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
 			$this->pod->find( $find_params );

@@ -2606,6 +2606,8 @@ class PodsUI {
 			$action = $this->action;
 		}
 
+		$params = (array) $params;
+
 		$defaults = array(
 			'full'    => false,
 			'flatten' => true,
@@ -2613,7 +2615,7 @@ class PodsUI {
 			'type'    => '',
 		);
 
-		if ( ! empty( $params ) && is_array( $params ) ) {
+		if ( ! empty( $params ) ) {
 			$params = (object) array_merge( $defaults, $params );
 		} else {
 			$params = (object) $defaults;
@@ -2757,7 +2759,7 @@ class PodsUI {
 			$action = 'manage';
 		}
 
-		$find_params = $this->get_params( (array) $params, $action );
+		$find_params = $this->get_params( $params, $action );
 
 		if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
 			$this->pod->find( $find_params );

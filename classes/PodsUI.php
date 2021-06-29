@@ -2606,6 +2606,8 @@ class PodsUI {
 			$action = $this->action;
 		}
 
+		$params = (array) $params;
+
 		$defaults = array(
 			'full'    => false,
 			'flatten' => true,
@@ -2613,7 +2615,7 @@ class PodsUI {
 			'type'    => '',
 		);
 
-		if ( ! empty( $params ) && is_array( $params ) ) {
+		if ( ! empty( $params ) ) {
 			$params = (object) array_merge( $defaults, $params );
 		} else {
 			$params = (object) $defaults;

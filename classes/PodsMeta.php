@@ -1942,9 +1942,11 @@ class PodsMeta {
 		$groups = $this->groups_get( 'user', 'user' );
 
 		if ( is_object( $user_id ) ) {
+			$user    = $user_id;
 			$user_id = $user_id->ID;
+		} else {
+			$user = get_userdata( $user_id );
 		}
-		$user = get_userdata($user_id);
 
 		$id  = $user_id;
 		$pod = null;

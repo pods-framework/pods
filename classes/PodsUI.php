@@ -4057,7 +4057,7 @@ class PodsUI {
 					<?php
 		}//end if
 			$table_fields = $this->fields['manage'];
-		if ( true === $reorder && ! in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder['on'] ) {
+		if ( true === $reorder && ! in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder['on'] && ! empty( $this->fields['reorder'] ) ) {
 			$table_fields = $this->fields['reorder'];
 		}
 		if ( false === $table_fields || empty( $table_fields ) ) {

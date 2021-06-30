@@ -1,0 +1,910 @@
+[
+  {
+    "name": "test_post_meta",
+    "type": "post_type",
+    "storage": "meta",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "built_in_taxonomies_category": 1,
+    "built_in_taxonomies_post_tag": 1,
+    "built_in_taxonomies_nav_menu": 1,
+    "built_in_taxonomies_test_non_pod_ct": 1,
+    "overwrite": true
+  },
+  {
+    "name": "test_post_table",
+    "type": "post_type",
+    "storage": "table",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "built_in_taxonomies_category": 1,
+    "built_in_taxonomies_post_tag": 1,
+    "built_in_taxonomies_nav_menu": 1,
+    "built_in_taxonomies_test_non_pod_ct": 1,
+    "overwrite": true
+  },
+  {
+    "name": "post",
+    "type": "post_type",
+    "storage": "meta",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "built_in_taxonomies_category": 1,
+    "built_in_taxonomies_post_tag": 1,
+    "built_in_taxonomies_nav_menu": 1,
+    "built_in_taxonomies_test_non_pod_ct": 1,
+    "object": "post",
+    "overwrite": true
+  },
+  {
+    "name": "page",
+    "type": "post_type",
+    "storage": "meta",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "built_in_taxonomies_category": 1,
+    "built_in_taxonomies_post_tag": 1,
+    "built_in_taxonomies_nav_menu": 1,
+    "built_in_taxonomies_test_non_pod_ct": 1,
+    "object": "page",
+    "overwrite": true
+  },
+  {
+    "name": "nav_menu_item",
+    "type": "post_type",
+    "storage": "meta",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "built_in_taxonomies_category": 1,
+    "built_in_taxonomies_post_tag": 1,
+    "built_in_taxonomies_nav_menu": 1,
+    "built_in_taxonomies_test_non_pod_ct": 1,
+    "object": "nav_menu_item",
+    "overwrite": true
+  },
+  {
+    "name": "test_tax_table",
+    "type": "taxonomy",
+    "storage": "table",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "built_in_post_types_post": 1,
+    "built_in_post_types_page": 1,
+    "built_in_post_types_nav_menu_item": 1,
+    "overwrite": true
+  },
+  {
+    "name": "test_tax_meta",
+    "type": "taxonomy",
+    "storage": "meta",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "built_in_post_types_post": 1,
+    "built_in_post_types_page": 1,
+    "built_in_post_types_nav_menu_item": 1,
+    "overwrite": true
+  },
+  {
+    "name": "category",
+    "type": "taxonomy",
+    "storage": "table",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "built_in_post_types_post": 1,
+    "built_in_post_types_page": 1,
+    "built_in_post_types_nav_menu_item": 1,
+    "object": "category",
+    "overwrite": true
+  },
+  {
+    "name": "post_tag",
+    "type": "taxonomy",
+    "storage": "table",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "built_in_post_types_post": 1,
+    "built_in_post_types_page": 1,
+    "built_in_post_types_nav_menu_item": 1,
+    "object": "post_tag",
+    "overwrite": true
+  },
+  {
+    "name": "nav_menu",
+    "type": "taxonomy",
+    "storage": "table",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "built_in_post_types_post": 1,
+    "built_in_post_types_page": 1,
+    "built_in_post_types_nav_menu_item": 1,
+    "object": "nav_menu",
+    "overwrite": true
+  },
+  {
+    "name": "user",
+    "type": "user",
+    "storage": "meta",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      },
+      {
+        "name": "avatar",
+        "type": "avatar"
+      }
+    ],
+    "options": [],
+    "object": "user",
+    "overwrite": true
+  },
+  {
+    "name": "media",
+    "type": "media",
+    "storage": "meta",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "object": "media",
+    "overwrite": true
+  },
+  {
+    "name": "comment",
+    "type": "comment",
+    "storage": "meta",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      }
+    ],
+    "options": [],
+    "object": "comment",
+    "overwrite": true
+  },
+  {
+    "name": "test_act",
+    "type": "pod",
+    "storage": "table",
+    "fields": [
+      {
+        "name": "test_rel_user",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_val": "user",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_post",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "post",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_pages",
+        "type": "pick",
+        "pick_object": "post_type",
+        "pick_val": "page",
+        "pick_format_type": "multi"
+      },
+      {
+        "name": "test_rel_tag",
+        "type": "pick",
+        "pick_object": "taxonomy",
+        "pick_val": "post_tag",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_media",
+        "type": "pick",
+        "pick_object": "media",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_comment",
+        "type": "pick",
+        "pick_object": "comment",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_rel_act",
+        "type": "pick",
+        "pick_object": "pod",
+        "pick_val": "test_act",
+        "pick_format_type": "single"
+      },
+      {
+        "name": "test_text_field",
+        "type": "text"
+      },
+      {
+        "name": "name",
+        "type": "text"
+      },
+      {
+        "name": "permalink",
+        "type": "slug"
+      },
+      {
+        "name": "test_text_field",
+        "type": "test"
+      },
+      {
+        "name": "author",
+        "type": "pick",
+        "pick_object": "user",
+        "pick_format_type": "single"
+      }
+    ],
+    "options": {
+      "pod_index": "name"
+    },
+    "overwrite": true
+  }
+]

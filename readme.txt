@@ -2,10 +2,10 @@
 Contributors: sc0ttkclark, keraweb, jimtrue, pglewis, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
-Requires at least: 4.5
+Requires at least: 5.5
 Tested up to: 5.7.2
-Requires PHP: 5.3
-Stable tag: 2.7.28
+Requires PHP: 5.6
+Stable tag: 2.8.0-b-3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,8 @@ Manage all your custom content needs in one location with the Pods Framework.
 * **Extend and customize content types** including posts, pages, categories, tags, users, and media
 * **Create custom settings pages** easily within seconds
 * **Add custom fields** to *any* content type or settings page
-* **Show your fields** anywhere using our [shortcodes](https://docs.pods.io/displaying-pods/pods-shortcode/), [widgets](https://pods.io/2015/05/03/podscast-005-templates-shortcodes-widgets-displaying-data-in-pods-pt-3/), the code-free [Pods Template](https://pods.io/2015/05/03/podscast-005-templates-shortcodes-widgets-displaying-data-in-pods-pt-3/) approach, or our [automatic theme integration](https://docs.pods.io/displaying-pods/wordpress-theme-templates/)
+* **Group your fields** however you'd like into their own sections
+* **Show your fields** anywhere using our [shortcodes](https://docs.pods.io/displaying-pods/pods-shortcode/), [widgets](https://docs.pods.io/displaying-pods/widgets/), the code-free [Pods Template](https://docs.pods.io/displaying-pods/pods-templates/) approach, or our [automatic theme integration](https://docs.pods.io/displaying-pods/wordpress-theme-templates/)
 * **Create connections** between any of your content with [relationship fields](https://docs.pods.io/fields/relationship-fields/) to keep your content organized
 
 Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out our [Documentation](https://docs.pods.io/), [Support Forums](https://wordpress.org/support/plugin/pods/), and our [Live Slack Chat](https://pods.io/chat/) to help you build your dream project with Pods.
@@ -30,7 +31,7 @@ Let Pods help you grow your development skills and manage content beyond the sta
 
 = Content types that evolve with your needs =
 
-Create any type of content that you want -- small or large -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage custom fields and how your content type will look or function.
+Create any type of content that you want -- small or large -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage field groups, custom fields, and how your content type will look or function.
 
 = Create new content types =
 
@@ -190,6 +191,22 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.8 - TBD, 2021 =
+
+**New PHP & WP Minimum Version Requirements:**
+
+* PHP Version Change Requirement 5.3+
+* WP Version Change Required 4.5+
+
+**Major Features: Field Groups and new Edit Pod screen**
+
+Now you can add multiple field groups to your Pods using the brand new Edit Pod screen that's been completely rewritten.
+
+Our Edit Pod screen is powered on the technical side by our all new React form interfaces, tooltips, and our new Pods Admin REST API endpoints.
+
+* Feature: REST API endpoints are now available to create/edit various objects: Pods, Pod Groups, and Pod Fields.
+* Feature: WP-CLI commands that mirror the REST API endpoints we have.    
+
 = 2.7.28 - May 20th, 2021 =
 
 * Added: New upload directory option for File fields using Plupload that lets you choose to customize which directory the files end up in. #6021 (@JoryHogeveen)
@@ -205,21 +222,10 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 * Fixed: Implemented a temporary PHP 7.4+ fix for Freemius. (@sc0ttkclark)
 * Fixed: Searching WP-based objects in PodsUI interfaces now resolves to the proper fields. (@sc0ttkclark)
 
-= 2.7.27 - April 20th, 2021 =
+= 2.7.27 - March 4th, 2021 =
 
-* Added: Support taxonomy and other object field filters in Pods::find(). #5994 (@JoryHogeveen)
-* Added: WP 5.7 `filter_by_item` and `filter_by_date` labels. #5959 (@JoryHogeveen)
-* Added: `pagination_type` shortcode param. #5977 (@JoryHogeveen)
-* Enhancement: Allow ID as parameter for `pods_audio()` and `pods_video()`. #5999 (@JoryHogeveen, @sc0ttkclark)
-* Enhancement: Use correct pagination item classes. #5179 (@JoryHogeveen)
-* Fixed: Polylang compatibility for populating default field values. #5879 (@Chouby, @JoryHogeveen)
-* Fixed: Prevent incorrect sanitizing of option fields since 2.7.25. #5909 (@JoryHogeveen)
-* Fixed: Traversal display filters for single and multiple relationships. #5985 (@JoryHogeveen)
-* Fixed: Support capitalized file extensions. #5975 (@sc0ttkclark, @JoryHogeveen)
-* Fixed: Resolved PHP notice in the PodsAPI. #5952 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Resolved PHP notice in the PodsAPI. #5952 (@sc0ttkclark)
 * Fixed: Resolved PHP notice when using `?pods_debug_sql=1` on Pods Admin UI screens. (@sc0ttkclark)
-* Fixed: Stop tracking Freemius add-ons and rely on just Pods itself. #5981 (@sc0ttkclark)
-* Fixed: Prevent potentially unsafe HTML tags from being used in admin menu text. (@sc0ttkclark, props to Hagai Wechsler and Daniel Elkabes from WhiteSource Software)
 
 = 2.7.26 - January 8th, 2021 =
 

@@ -1,0 +1,27 @@
+@import './edit-pod-variables';
+
+#misc-publishing-actions {
+	svg.dashicon {
+		color: $color--grey;
+		vertical-align: middle;
+		margin-right: 0.25em;
+	}
+}
+
+#major-publishing-actions {
+	.editor-post-trash {
+		margin-left: 0;
+		color: $color--red;
+	}
+}
+
+.pods-edit-pod-manage-field .pods-dfv-container {
+	display: block;
+	max-width: 45em;
+	width: 65%;
+}
+
+.pods-edit-pod-manage-field .pods-dfv-container-wysiwyg,
+.pods-edit-pod-manage-field .pods-dfv-container-code {
+	width: 100%;
+}

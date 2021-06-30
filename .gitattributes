@@ -1,16 +1,24 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
+*.css linguist-generated=true
+*.min.css linguist-generated=true
+*.min.js linguist-generated=true
+*.snap linguist-generated=true
+tests/_support/_generated/* linguist-generated=true
+
 # Ignore
 
 # Directories
 /.wordpress-org export-ignore
 /.github export-ignore
 /bin export-ignore
+/dev export-ignore
 /docs export-ignore
 /tests export-ignore
-/ui/js/pods-dfv/src export-ignore
-/ui/js/pods-dfv/pods-dfv.min.js.map export-ignore
+/ui/js/blocks/src export-ignore
+/ui/js/dfv/src export-ignore
+/ui/js/dfv/pods-dfv.min.js.map export-ignore
 /ui/styles/src export-ignore
 
 # Files

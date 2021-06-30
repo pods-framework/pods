@@ -1,40 +1,48 @@
 <?php
+/**
+ * @var array   $fields
+ * @var boolean $fields_only
+ * @var Pods    $pod
+ * @var array   $params
+ * @var string  $label
+ * @var string  $thank_you
+ * @var string  $output_type
+ */
 wp_enqueue_style( 'pods-form' );
 wp_enqueue_script( 'pods' );
 
-// unset fields
+$pod_name = $pod->pod;
+$id       = $pod->id();
+
+// Set up fields.
 foreach ( $fields as $k => $field ) {
-
 	// Make sure all required array keys exist.
-	$field = wp_parse_args( $field, array(
-		'name' => '',
-		'type' => '',
-		'label' => '',
-		'help' => '',
-		'options' => array(),
-	) );
-	$fields[ $k ] = $field;
+	if ( ! $field instanceof \Pods\Whatsit\Field ) {
+		$field = wp_parse_args( $field, [
+			'name'    => '',
+			'type'    => '',
+			'label'   => '',
+			'help'    => '',
+		] );
 
-	if ( in_array( $field[ 'name' ], array( 'created', 'modified' ), true ) ) {
-		unset( $fields[ $k ] );
+		$fields[ $k ] = $field;
 	}
-	elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
-		if ( pods_var( 'hidden', $field[ 'options' ], false ) ) {
-			$fields[ $k ][ 'type' ] = 'hidden';
-		}
-		elseif ( pods_var( 'read_only', $field[ 'options' ], false ) ) {
-			$fields[ $k ][ 'readonly' ] = true;
-		}
-		else {
+
+	if ( in_array( $field['name'], [ 'created', 'modified' ], true ) ) {
+		unset( $fields[ $k ] );
+	} elseif ( ! pods_permission( $field ) ) {
+		if ( pods_v( 'hidden', $field, false ) ) {
+			$fields[ $k ]['type'] = 'hidden';
+		} elseif ( pods_v( 'read_only', $field, false ) ) {
+			$fields[ $k ]['readonly'] = true;
+		} else {
 			unset( $fields[ $k ] );
 		}
-	}
-	elseif ( !pods_has_permissions( $field[ 'options' ] ) ) {
-		if ( pods_var( 'hidden', $field[ 'options' ], false ) ) {
-			$fields[ $k ][ 'type' ] = 'hidden';
-		}
-		elseif ( pods_var( 'read_only', $field[ 'options' ], false ) ) {
-			$fields[ $k ][ 'readonly' ] = true;
+	} elseif ( ! pods_has_permissions( $field ) ) {
+		if ( pods_v( 'hidden', $field, false ) ) {
+			$fields[ $k ]['type'] = 'hidden';
+		} elseif ( pods_v( 'read_only', $field, false ) ) {
+			$fields[ $k ]['readonly'] = true;
 		}
 	}
 }
@@ -42,12 +50,14 @@ foreach ( $fields as $k => $field ) {
 $submittable_fields = $fields;
 
 foreach ( $submittable_fields as $k => $field ) {
-	if ( pods_var( 'readonly', $field, false ) ) {
-		unset( $submittable_fields[ $k ] );
+	if ( ! pods_v( 'readonly', $field, false ) ) {
+		continue;
 	}
+
+	unset( $submittable_fields[ $k ] );
 }
 
-$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
+$uri_hash   = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
 $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
 
 $uid = pods_session_id();
@@ -56,163 +66,135 @@ if ( is_user_logged_in() ) {
 	$uid = 'user_' . get_current_user_id();
 }
 
-$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . $pod->id() . '_' . $uri_hash . '_' . $field_hash );
+$nonce = wp_create_nonce( 'pods_form_' . $pod_name . '_' . $uid . '_' . $id . '_' . $uri_hash . '_' . $field_hash );
 
-if ( isset( $_POST[ '_pods_nonce' ] ) ) {
-    try {
-        $id = $pod->api->process_form( $_POST, $pod, $submittable_fields, $thank_you );
-    }
-    catch ( Exception $e ) {
-        echo '<div class="pods-message pods-message-error">' . $e->getMessage() . '</div>';
-    }
+if ( isset( $_POST['_pods_nonce'] ) ) {
+	try {
+		$id = $pod->api->process_form( $_POST, $pod, $submittable_fields, $thank_you );
+	} catch ( Exception $e ) {
+		echo '<div class="pods-message pods-message-error">' . $e->getMessage() . '</div>';
+	}
 }
 
 $field_prefix = '';
-
-if ( !$fields_only ) {
-	$field_prefix = 'pods_field_';
-?>
-	<form action="" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo esc_attr( $pod->pod ); ?> pods-submittable-ajax" data-location="<?php echo esc_attr( $thank_you ); ?>">
-		<div class="pods-submittable-fields">
-			<?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
-			<?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
-			<?php echo PodsForm::field( 'do', ( 0 < $pod->id() ? 'save' : 'create' ), 'hidden' ); ?>
-			<?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
-			<?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
-			<?php echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' ); ?>
-			<?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
-			<?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' ); ?>
-			<?php echo PodsForm::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
-<?php
-}
-
-/**
- * Runs before fields are outputted.
- *
- * @params array $fields Fields of the form.
- * @params object $pod The current Pod object.
- * @params array $params The form's parameters.
- *
- * @since 2.3.19
- */
-do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 ?>
 
-			<ul class="pods-form-fields pods-dependency">
-				<?php
-					foreach ( $fields as $field ) {
-						if ( 'hidden' == $field[ 'type' ] ) {
-							continue;
-						}
+<?php if ( ! $fields_only ) : ?>
+<?php $field_prefix = 'pods_field_'; ?>
+<form action="" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo esc_attr( $pod_name ); ?> pods-submittable-ajax" data-location="<?php echo esc_attr( $thank_you ); ?>">
+	<div class="pods-submittable-fields">
+		<?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
+		<?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
+		<?php echo PodsForm::field( 'do', ( ! empty( $id ) ? 'save' : 'create' ), 'hidden' ); ?>
+		<?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
+		<?php echo PodsForm::field( '_pods_pod', $pod_name, 'hidden' ); ?>
+		<?php echo PodsForm::field( '_pods_id', $id, 'hidden' ); ?>
+		<?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
+		<?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' ); ?>
+		<?php echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' ); ?>
+		<?php endif; ?>
 
-						/**
-						 * Runs before a field is outputted.
-						 *
-						 * @param array $field The current field.
-						 * @param array $fields All fields of the form.
-						 * @param object $pod The current Pod object.
-						 * @param array $params The form's parameters.
-						 *
-						 * @since 2.3.19
-						 */
-						do_action( 'pods_form_pre_field', $field, $fields, $pod, $params );
+		<?php
+		/**
+		 * Runs before fields are outputted.
+		 *
+		 * @params array $fields Fields of the form.
+		 * @params object $pod The current Pod object.
+		 * @params array $params The form's parameters.
+		 *
+		 * @since  2.3.19
+		 */
+		do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 
-						$default_class = ' pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ] );
+		$field_row_classes = 'pods-field-html-class';
+		$heading_tag       = 'h3';
 
-						// Setup field conditionals.
-						$dependencies = PodsForm::dependencies( $field, 'pods-field-' );
-						if ( ! empty( $dependencies['classes'] ) ) {
-							$default_class .= ' ' . $dependencies['classes'];
-						}
-						$dep_data = $dependencies['data'];
+		$pre_callback = static function ( $field_name, $id, $field, $pod ) use ( $fields, $params ) {
+			/**
+			 * Runs before a field is output.
+			 *
+			 * @since 2.3.19
+			 *
+			 * @param array  $field  The current field.
+			 * @param array  $fields All fields of the form.
+			 * @param object $pod    The current Pod object.
+			 * @param array  $params The form's parameters.
+			 */
+			do_action( 'pods_form_pre_field', $field, $fields, $pod, $params );
+		};
 
-						/**
-						 * Filter the html class used on form field list item element.
-						 *
-						 * @param string $html_class The HTML class.
-						 * @param array  $field      The current field.
-						 *
-						 * @since 2.7.2
-						 */
-						$html_class = apply_filters( 'pods_form_html_class', 'pods-field-html-class', $field ) . $default_class;
-				?>
-					<li class="pods-field <?php echo esc_attr( $html_class, true ); ?>" <?php PodsForm::data( $dep_data ); ?>>
-						<div class="pods-field-label">
-							<?php echo PodsForm::label( $field_prefix . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
-						</div>
+		$post_callback = static function ( $field_name, $id, $field, $pod ) use ( $fields, $params ) {
+			/**
+			 * Runs after a field is output.
+			 *
+			 * @since  2.3.19
+			 *
+			 * @params array  $field  The current field.
+			 * @params array  $fields All fields of the form.
+			 * @params object $pod    The current Pod object.
+			 * @params array  $params The form's parameters.
+			 */
+			do_action( 'pods_form_after_field', $field, $fields, $pod, $params );
+		};
 
-						<div class="pods-field-input">
-							<?php echo PodsForm::field( $field_prefix . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), $field[ 'type' ], $field, $pod, $pod->id() ); ?>
+		$template        = 'ui/forms/list-rows.php';
+		$template_before = '';
+		$template_after  = '';
 
-							<?php echo PodsForm::comment( $field_prefix . $field[ 'name' ], null, $field ); ?>
-						</div>
-					</li>
-				<?php
-						/**
-						 * Runs after a field is outputted.
-						 *
-						 * @params array $field The current field.
-						 * @params array $fields All fields of the form.
-						 * @params object $pod The current Pod object.
-						 * @params array $params The form's parameters.
-						 *
-						 * @since 2.3.19
-						 */
-						do_action( 'pods_form_after_field', $field, $fields, $pod, $params );
-					}
-				?>
-			</ul>
+		if ( 'div' === $output_type ) {
+			$template = 'ui/forms/div-rows.php';
+		} elseif ( 'p' === $output_type ) {
+			$template = 'ui/forms/p-rows.php';
+		} elseif ( 'table' === $output_type ) {
+			$template        = 'ui/forms/table-rows.php';
+			$template_before = '<table>';
+			$template_after  = '</table>';
+		}
 
-			<?php
-				foreach ( $fields as $field ) {
-					if ( 'hidden' != $field[ 'type' ] ) {
-						continue;
-					}
+		echo $template_before;
 
-					echo PodsForm::field( $field_prefix . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
-				}
+		pods_view( PODS_DIR . $template, compact( array_keys( get_defined_vars() ) ) );
 
-				/**
-				 * Runs after all fields are outputted.
-				 *
-				 * @params array $fields Fields of the form
-				 * @params object $pod The current Pod object
-				 * @params array $params The form's parameters.
-				 *
-				 * @since 2.3.19
-				 */
-				do_action( 'pods_form_after_fields', $fields, $pod, $params );
-			?>
+		echo $template_after;
 
-<?php
-if ( !$fields_only ) {
-?>
-        <p class="pods-submit">
-            <img class="waiting" src="<?php echo esc_url( admin_url( '/images/wpspin_light.gif' ) ); ?>" alt="">
-            <input type="submit" value=" <?php echo esc_attr( $label ); ?> " class="pods-submit-button" />
+		/**
+		 * Runs after all fields are outputted.
+		 *
+		 * @params array $fields Fields of the form
+		 * @params object $pod The current Pod object
+		 * @params array $params The form's parameters.
+		 *
+		 * @since  2.3.19
+		 */
+		do_action( 'pods_form_after_fields', $fields, $pod, $params );
+		?>
 
-            <?php do_action( 'pods_form_after_submit', $pod, $fields, $params ); ?>
-        </p>
-    </div>
+		<?php if ( ! $fields_only ) : ?>
+		<p class="pods-submit">
+			<img class="waiting" src="<?php echo esc_url( admin_url( '/images/wpspin_light.gif' ) ); ?>" alt="<?php esc_attr_e( 'Submitting...', 'pods' ); ?>">
+			<input type="submit" value=" <?php echo esc_attr( $label ); ?> " class="pods-submit-button" />
+
+			<?php do_action( 'pods_form_after_submit', $pod, $fields, $params ); ?>
+		</p>
+	</div>
 </form>
 
-<script type="text/javascript">
-	if ( 'undefined' === typeof pods_form_init ) {
-		var pods_form_init = true;
+	<script type="text/javascript">
+		if ( 'undefined' === typeof pods_form_init ) {
+			var pods_form_init = true;
 
-		document.addEventListener( "DOMContentLoaded", function() {
-			if ( 'undefined' !== typeof jQuery( document ).Pods ) {
+			document.addEventListener( "DOMContentLoaded", function () {
+				if ( 'undefined' !== typeof jQuery( document ).Pods ) {
 
-				if ( 'undefined' === typeof ajaxurl ) {
-					window.ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
+					if ( 'undefined' === typeof ajaxurl ) {
+						window.ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
+					}
+
+					jQuery( document ).Pods( 'validate' );
+					jQuery( document ).Pods( 'submit' );
+					jQuery( document ).Pods( 'dependency', true ); // Pass `true` to trigger init.
 				}
-
-				jQuery( document ).Pods( 'validate' );
-				jQuery( document ).Pods( 'submit' );
-				jQuery( document ).Pods( 'dependency', true ); // Pass `true` to trigger init.
-			}
-		}, false );
-	}
-</script>
-<?php
-}
+			}, false );
+		}
+	</script>
+<?php endif; ?>

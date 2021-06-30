@@ -26,7 +26,7 @@ wp_enqueue_style( 'pods-form' );
 			$default_class = ' pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ] );
 			$html_class = apply_filters( 'pods-field-html-class', $field ) . $default_class;
 			?>
-			<li class="pods-field <?php echo esc_attr( $html_class, true ); ?>">
+			<li class="pods-field__container pods-field <?php echo esc_attr( $html_class, true ); ?>">
 				<div class="pods-field-label">
 					<strong><?php echo $field['label']; ?></strong>
 				</div>

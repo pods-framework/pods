@@ -1,0 +1,10 @@
+# Ignore everything except `blocks` and `dfv`
+ui/js/codemirror
+ui/js/marionette
+ui/js/selectWoo
+ui/js/sprintf
+ui/js/timepicker
+ui/js/*.js
+
+# Ignore minified files
+**/*.min.js

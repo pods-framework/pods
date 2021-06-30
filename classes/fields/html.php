@@ -8,7 +8,7 @@ class PodsField_HTML extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $group = 'Layout Blocks';
+	public static $group = 'Layout Elements';
 
 	/**
 	 * {@inheritdoc}
@@ -18,7 +18,7 @@ class PodsField_HTML extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $label = 'HTML';
+	public static $label = 'HTML Content';
 
 	/**
 	 * {@inheritdoc}
@@ -29,90 +29,111 @@ class PodsField_HTML extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function setup() {
-
-		self::$label = __( 'HTML', 'pods' );
+		static::$group = __( 'Layout Elements', 'pods' );
+		static::$label = __( 'HTML Content', 'pods' );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function options() {
-
-		$options = array(
-			'output_options' => array(
+		return [
+			static::$type . '_content' => [
+				'label' => __( 'HTML Content', 'pods' ),
+				'type'  => 'code',
+			],
+			static::$type . '_no_label' => [
+				'label'   => __( 'Disable the form label', 'pods' ),
+				'default' => 1,
+				'type'    => 'boolean',
+				'help'    => __( 'By disabling the form label, the HTML will show as full width without the label text. Only the HTML content will be displayed in the form.', 'pods' ),
+			],
+			'output_options'           => [
 				'label' => __( 'Output Options', 'pods' ),
-				'group' => array(
-					static::$type . '_allow_html'      => array(
-						'label'      => __( 'Allow HTML?', 'pods' ),
+				'type'  => 'boolean_group',
+				'boolean_group' => [
+					static::$type . '_allow_html'      => [
+						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
-					),
-					static::$type . '_oembed'          => array(
-						'label'   => __( 'Enable oEmbed?', 'pods' ),
+					],
+					static::$type . '_oembed'          => [
+						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean',
-						'help'    => array(
+						'help'    => [
 							__( 'Embed videos, images, tweets, and other content.', 'pods' ),
 							'http://codex.wordpress.org/Embeds',
-						),
-					),
-					static::$type . '_wptexturize'     => array(
-						'label'   => __( 'Enable wptexturize?', 'pods' ),
+						],
+					],
+					static::$type . '_wptexturize'     => [
+						'label'   => __( 'Enable wptexturize', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
-						'help'    => array(
-							__( 'Transforms less-beautfiul text characters into stylized equivalents.', 'pods' ),
+						'help'    => [
+							__( 'Transforms less-beautiful text characters into stylized equivalents.', 'pods' ),
 							'http://codex.wordpress.org/Function_Reference/wptexturize',
-						),
-					),
-					static::$type . '_convert_chars'   => array(
-						'label'   => __( 'Enable convert_chars?', 'pods' ),
+						],
+					],
+					static::$type . '_convert_chars'   => [
+						'label'   => __( 'Enable convert_chars', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
-						'help'    => array(
+						'help'    => [
 							__( 'Converts text into valid XHTML and Unicode', 'pods' ),
 							'http://codex.wordpress.org/Function_Reference/convert_chars',
-						),
-					),
-					static::$type . '_wpautop'         => array(
-						'label'   => __( 'Enable wpautop?', 'pods' ),
+						],
+					],
+					static::$type . '_wpautop'         => [
+						'label'   => __( 'Enable wpautop', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
-						'help'    => array(
+						'help'    => [
 							__( 'Changes double line-breaks in the text into HTML paragraphs.', 'pods' ),
 							'http://codex.wordpress.org/Function_Reference/wpautop',
-						),
-					),
-					static::$type . '_allow_shortcode' => array(
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						],
+					],
+					static::$type . '_allow_shortcode' => [
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
-						'help'       => array(
+						'help'       => [
 							__( 'Embed [shortcodes] that help transform your static content into dynamic content.', 'pods' ),
 							'http://codex.wordpress.org/Shortcode_API',
-						),
-					),
-				),
-			),
-		);
-
-		return $options;
+						],
+					],
+				],
+			],
+		];
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
-
 		return false;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
+	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+		$options = (array) $options;
+
+		// @codingStandardsIgnoreLine
+		echo $this->display( $value, $name, $options, $pod, $id );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+		// Support passing html_content into the options for custom HTML option layouts.
+		if ( in_array( $value, [ '', null ], true ) ) {
+			$value = pods_v( static::$type . '_content', $options, '' );
+		}
 
 		$value = $this->strip_html( $value, $options );
 
@@ -148,19 +169,7 @@ class PodsField_HTML extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
-
-		$options = (array) $options;
-
-		// @codingStandardsIgnoreLine
-		echo $this->display( $value, $name, $options, $pod, $id );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-
 		$value = $this->strip_html( $value, $options );
 
 		$value = wp_trim_words( $value );

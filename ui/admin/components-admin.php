@@ -19,10 +19,10 @@
 				<?php
 				$depends_on = false;
 
-				foreach ( $options
-
-				as $field_name => $field_option ) {
+				foreach ( $options as $field_name => $field_option ) {
 					$field_option = PodsForm::field_setup( $field_option, null, $field_option['type'] );
+
+					$field_option['disable_dfv'] = true;
 
 					$dep_options = PodsForm::dependencies( $field_option );
 					$dep_classes = $dep_options['classes'];

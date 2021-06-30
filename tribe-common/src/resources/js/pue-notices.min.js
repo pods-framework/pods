@@ -1,0 +1,1 @@
+var tribe_plugin_notices=tribe_plugin_notices||{};!function(i,t){"use strict";t.init=function(){for(var t in tribe_plugin_notices)if(tribe_plugin_notices.hasOwnProperty(t)){var n=i(tribe_plugin_notices[t].message_row_html);i('tr[data-plugin="'+t+'"].active').addClass("update").after(n)}},i(function(){"object"==typeof tribe_plugin_notices&&t.init()})}(jQuery,tribe_plugin_notices);

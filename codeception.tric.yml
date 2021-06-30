@@ -1,0 +1,3 @@
+params:
+  # read dynamic configuration parameters from the .env file
+  - .env.testing.tric

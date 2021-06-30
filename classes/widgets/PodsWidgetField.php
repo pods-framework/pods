@@ -8,20 +8,17 @@ class PodsWidgetField extends WP_Widget {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct( $id_base = '', $name = '', $widget_options = array(), $control_options = array() ) {
-
-		parent::__construct( 'pods_widget_field', __( 'Pods - Field Value', 'pods' ), array(
+	public function __construct( $id_base = '', $name = '', $widget_options = [], $control_options = [] ) {
+		parent::__construct( 'pods_widget_field', __( 'Pods - Field Value', 'pods' ), [
 			'classname'   => 'pods_widget_field',
 			'description' => __( "Display a single Pod item's field value", 'pods' ),
-		), array( 'width' => 200 ) );
-
+		], [ 'width' => 200 ] );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function widget( $args, $instance ) {
-
 		// Setup basic widget parameters.
 		$before_widget  = pods_v( 'before_widget', $args );
 		$after_widget   = pods_v( 'after_widget', $args );
@@ -31,11 +28,11 @@ class PodsWidgetField extends WP_Widget {
 		$before_content = pods_v( 'before_content', $instance );
 		$after_content  = pods_v( 'after_content', $instance );
 
-		$args = array(
+		$args = [
 			'name'  => trim( pods_v( 'pod_type', $instance, '' ) ),
 			'slug'  => trim( pods_v( 'slug', $instance, '' ) ),
 			'field' => trim( pods_v( 'field', $instance, '' ) ),
-		);
+		];
 
 		if ( 0 < strlen( $args['name'] ) && 0 < strlen( $args['slug'] ) && 0 < strlen( $args['field'] ) ) {
 			require PODS_DIR . 'ui/front/widgets.php';
@@ -46,7 +43,6 @@ class PodsWidgetField extends WP_Widget {
 	 * {@inheritdoc}
 	 */
 	public function update( $new_instance, $old_instance ) {
-
 		$instance = $old_instance;
 
 		$instance['title']    = pods_v( 'title', $new_instance, '' );
@@ -61,7 +57,6 @@ class PodsWidgetField extends WP_Widget {
 	 * {@inheritdoc}
 	 */
 	public function form( $instance ) {
-
 		$title    = pods_v( 'title', $instance, '' );
 		$pod_type = pods_v( 'pod_type', $instance, '' );
 		$slug     = pods_v( 'slug', $instance, '' );

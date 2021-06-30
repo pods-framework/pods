@@ -22,6 +22,16 @@ When contributing please ensure you follow the guidelines below so that we can k
 
 At this point you're waiting on us to merge your pull request. We'll review all pull requests, and make suggestions and changes if necessary.
 
+## Tribe Common
+
+In Pods 2.8, we included the [Tribe Common](https://github.com/the-events-calendar/tribe-common) library which helps to power The Events Calendar and Event Tickets. It has many positive benefits as there are some great potential areas for reducing overall needs of custom code that has to be unique to each plugin.
+
+### Including Common
+
+For Pods, we will take the "shipped" version of [Tribe Common](https://github.com/the-events-calendar/tribe-common) that comes within The Events Calendar or Event Tickets (whichever is newest at the time). This involves opening up the plugin's zip and pulling out the entire "common" folder.
+
+This is the preferred way to handle dependencies. When using a composer requirement, certain dependencies like Tribe Common have their own dependencies, and some require additional build steps that Pods does not automate. Everything in the Pods GitHub repository is pre-built, meaning you can include it without running anything else. This is preferred as many users will download release ZIPs of certain release branches.
+
 # Additional Resources
 * [General GitHub documentation](https://help.github.com/)
 * [GitHub pull request documentation](https://help.github.com/send-pull-requests/)

@@ -1,7 +1,4 @@
 <div class="wrap pods-admin">
-	<script>
-		var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
-	</script>
 	<div id="icon-pods" class="icon32"><br /></div>
 
 	<form action="" method="post" class="pods-submittable">
@@ -41,19 +38,21 @@
 								<div class="pods-field-option">
 									<?php
 									echo PodsForm::label( 'role_label', __( 'Label', 'pods' ), __( 'Users will see this as the name of their role', 'pods' ) );
-									echo PodsForm::field( 'role_label', pods_var_raw( 'role_label', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );
+									echo PodsForm::field( 'role_label', pods_var_raw( 'role_label', 'post' ), 'text', [
+										'class'       => 'pods-validate pods-validate-required',
+										'disable_dfv' => true,
+									] );
 									?>
 								</div>
 
 								<div class="pods-field-option">
 									<?php
 									echo PodsForm::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
-									echo PodsForm::field(
-										'role_name', pods_var_raw( 'role_name', 'post' ), 'db', array(
-											'attributes' => array( 'data-sluggable' => 'role_label' ),
-											'class'      => 'pods-validate pods-validate-required pods-slugged-lower',
-										)
-									);
+									echo PodsForm::field( 'role_name', pods_var_raw( 'role_name', 'post' ), 'db', [
+										'attributes'  => [ 'data-sluggable' => 'role_label' ],
+										'class'       => 'pods-validate pods-validate-required pods-slugged-lower',
+										'disable_dfv' => true,
+									] );
 									?>
 								</div>
 							</div>
@@ -70,11 +69,11 @@
 
 							<div class="inside pods-manage-field pods-dependency">
 								<div class="pods-field-option-group">
-									<p>
-										<a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
-									</p>
-
 									<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+										<p>
+											<a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
+										</p>
+
 										<ul>
 											<?php
 											$zebra = false;
@@ -91,7 +90,10 @@
 												$zebra = ( ! $zebra );
 												?>
 												<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
-													<?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
+													<?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
+														'boolean_yes_label' => $capability,
+														'disable_dfv'       => true,
+													] ); ?>
 												</li>
 												<?php
 											}
@@ -110,10 +112,18 @@
 									<div class="pods-pick-values pods-pick-checkbox">
 										<ul id="custom-capabilities">
 											<li class="pods-repeater hidden">
-												<?php echo PodsForm::field( 'custom_capabilities[--1]', '', 'text' ); ?>
+												<?php
+												echo PodsForm::field( 'custom_capabilities[--1]', '', 'text', [
+													'disable_dfv' => true,
+												] );
+												?>
 											</li>
 											<li>
-												<?php echo PodsForm::field( 'custom_capabilities[0]', '', 'text' ); ?>
+												<?php
+												echo PodsForm::field( 'custom_capabilities[0]', '', 'text', [
+													'disable_dfv' => true,
+												] );
+												?>
 											</li>
 										</ul>
 
@@ -126,10 +136,10 @@
 						</div>
 					</div>
 
-					<div id="pods-wizard-actions">
+					<div id="pods-wizard-actions" class="pods-wizard-button-interface">
 						<div id="pods-wizard-toolbar">
-							<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
-							<a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></a>
+							<button id="pods-wizard-start" class="button button-secondary hidden"><?php _e( 'Start Over', 'pods' ); ?></button>
+							<button id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></button>
 						</div>
 						<div id="pods-wizard-finished">
 

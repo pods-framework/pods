@@ -268,13 +268,13 @@ function frontier_do_subtemplate( $atts, $content ) {
 
 	$entries = $pod->field( $field_name );
 
-	if ( ! empty( $entries ) ) {
+	$field = $pod->fields( $field_name );
+
+	if ( ! empty( $entries ) && $field ) {
 		$entries = (array) $entries;
 
-		$field = $pod->fields[ $field_name ];
-
 		// Force array even for single items since the logic below is using loops.
-		if ( 'single' === pods_v( $field['type'] . '_format_type', $field['options'], 'single' ) && ! isset( $entries[0] ) ) {
+		if ( 'single' === pods_v( $field['type'] . '_format_type', $field, 'single' ) && ! isset( $entries[0] ) ) {
 			$entries = array( $entries );
 		}
 
@@ -292,13 +292,13 @@ function frontier_do_subtemplate( $atts, $content ) {
 		 * the $pod->fields array and is something to not expect to be there in
 		 * 3.0 as this was unintentional.
 		 */
-		if ( in_array( $field['pick_object'], $object_types, true ) || 'taxonomy' == $field['type'] ) {
+		if ( 'taxonomy' === $field['type'] || in_array( $field['pick_object'], $object_types, true ) ) {
 			// Match any Pod object or taxonomy
 			foreach ( $entries as $key => $entry ) {
 				$subpod = pods( $field['pick_val'] );
 
 				$subatts = array(
-					'id'  => $entry[ $subpod->api->pod_data['field_id'] ],
+					'id'  => $entry[ $subpod->pod_data['field_id'] ],
 					'pod' => $field['pick_val'],
 				);
 
@@ -326,7 +326,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 			}//end foreach
-		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] ) {
+		} elseif ( 'file' === $field['type'] && 'attachment' === pods_v( 'file_uploader', $field, 'attachment' ) ) {
 			$template  = frontier_decode_template( $content, $atts );
 			$media_pod = pods( 'media' );
 
@@ -342,8 +342,10 @@ function frontier_do_subtemplate( $atts, $content ) {
 				} else {
 					// Fix for lowercase ID's.
 					$entry['id'] = $entry['ID'];
+
 					// Allow array-like tags.
 					$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
+
 					// Fallback to parent Pod so above tags still work.
 					$entry_pod = $pod;
 				}
@@ -536,7 +538,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 						if ( false !== strpos( $field, '.' ) ) {
 							$path  = explode( '.', $field );
 							$field = array_pop( $path );
-							$ID    = '{@' . implode( '.', $path ) . '.' . $pod->api->pod_data['field_id'] . '}';
+							$ID    = '{@' . implode( '.', $path ) . '.' . $pod->pod_data['field_id'] . '}';
 						}
 						$atts = ' id="' . $ID . '" pod="@pod" field="' . $field . '"';
 						if ( ! empty( $value ) ) {
@@ -567,7 +569,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 		$code = frontier_backtrack_template( $code, $aliases );
 	}
 	$code = str_replace( '@pod', $pod->pod, $code );
-	$code = str_replace( '@EntryID', '@' . $pod->api->pod_data['field_id'], $code );
+	$code = str_replace( '@EntryID', '@' . $pod->pod_data['field_id'], $code );
 
 	return $code;
 }

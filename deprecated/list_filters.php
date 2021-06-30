@@ -5,27 +5,30 @@
 			$filters = explode( ',', $filters );
 		}
 		foreach ( $filters as $field_name ) {
-			$field = $this->api->load_column(
-				array(
-					'name' => $field_name,
-					'pod'  => $this->pod,
-				)
-			);
+			$field = $this->api->load_column( array(
+				'name' => $field_name,
+				'pod'  => $this->pod,
+			) );
+
 			if ( empty( $field ) ) {
 				continue;
 			}
+
 			if ( 'pick' === $field['type'] && ! empty( $field['pick_object'] ) ) {
 				$pick_object = $field['pick_object'];
 				$pick_val    = $field['pick_val'];
+
 				if ( 'pod' === $pick_object ) {
 					$pick_pod    = $this->api->load_pod( array( 'name' => $pick_val ) );
 					$pick_object = $pick_pod['type'];
 					$pick_val    = $pick_pod['object'];
 				}
+
 				$pick_table     = '';
 				$pick_join      = '';
 				$pick_where     = '';
 				$pick_column_id = 'id';
+
 				switch ( $pick_object ) {
 					case 'pod':
 						$pick_table     = "@wp_pods_{$pick_val}";
@@ -56,6 +59,7 @@
 						$pick_column_id = 'id';
 						break;
 				}//end switch
+
 				$pick_params = array(
 					'selected_ids' => $selected_ids,
 					'table'        => $pick_table,
@@ -65,8 +69,10 @@
 					'orderby'      => $field['options']['pick_orderby'],
 					'where'        => $pick_where,
 				);
+
 				$field_data  = $this->get_dropdown_values( $pick_params );
 				$field_label = ucwords( str_replace( '_', ' ', $field_name ) );
+
 				if ( 0 < strlen( $row['label'] ) ) {
 					$field_label = $row['label'];
 				}

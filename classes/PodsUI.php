@@ -2399,7 +2399,7 @@ class PodsUI {
 			if ( ! empty( $_POST['bulk_export_fields'] ) ) {
 				$export_fields = $_POST['bulk_export_fields'];
 
-				$this->fields['export '] = array();
+				$this->fields['export'] = array();
 
 				if ( $this->pod ) {
 					$fields = $this->pod->fields();
@@ -2600,7 +2600,11 @@ class PodsUI {
 			'type'    => '',
 		);
 
-		if ( ! empty( $params ) && is_array( $params ) ) {
+		if ( ! empty( $params ) ) {
+			if ( is_object( $params ) ) {
+				$params = get_object_vars( $params );
+			}
+
 			$params = (object) array_merge( $defaults, $params );
 		} else {
 			$params = (object) $defaults;
@@ -2734,7 +2738,11 @@ class PodsUI {
 			'type'    => '',
 		);
 
-		if ( ! empty( $params ) && is_array( $params ) ) {
+		if ( ! empty( $params ) ) {
+			if ( is_object( $params ) ) {
+				$params = get_object_vars( $params );
+			}
+
 			$params = (object) array_merge( $defaults, $params );
 		} else {
 			$params = (object) $defaults;
@@ -4049,7 +4057,7 @@ class PodsUI {
 					<?php
 		}//end if
 			$table_fields = $this->fields['manage'];
-		if ( true === $reorder && ! in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder['on'] ) {
+		if ( true === $reorder && ! in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder['on'] && ! empty( $this->fields['reorder'] ) ) {
 			$table_fields = $this->fields['reorder'];
 		}
 		if ( false === $table_fields || empty( $table_fields ) ) {
@@ -4447,6 +4455,19 @@ class PodsUI {
 
 										$row_value = wp_kses_post( $row_value );
 									}
+
+									/**
+									 * Allow filtering the display value used for a field in the table column.
+									 *
+									 * @since 2.7.29
+									 *
+									 * @param string $row_value  The display value for the field.
+									 * @param string $field      The field name.
+									 * @param array  $attributes The field attributes.
+									 * @param array  $row        The other values for the row.
+									 * @param PodsUI $obj        The PodsUI object.
+									 */
+									$row_value = apply_filters( 'pods_ui_field_display_value', $row_value, $field, $attributes, $row, $this );
 
 									if ( ! in_array( 'edit', $this->actions_disabled ) && ! in_array( 'edit', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder['on'] ) && 'edit' === $default_action ) {
 										$link = pods_query_arg(

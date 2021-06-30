@@ -2727,6 +2727,17 @@ function pods_reserved_keywords() {
 }
 
 /**
+ * Determine if Session Auto Start is enabled
+ *
+ * @since 2.7.17
+ *
+ * @return bool
+ */
+function pods_session_auto_start() {
+	return defined( 'PODS_SESSION_AUTO_START' ) && PODS_SESSION_AUTO_START;
+}
+
+/**
  * Safely start a new session (without white screening on certain hosts,
  * which have no session path or the path is not writable).
  *
@@ -2743,8 +2754,8 @@ function pods_session_start() {
 	} elseif ( false !== is_user_logged_in() ) {
 		// We do not need a session ID if there is a valid user logged in
 		return false;
-	} elseif ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
-		// Allow for bypassing Pods session starting.
+	} elseif ( ! pods_session_auto_start() ) {
+		// Allow for bypassing Pods session autostarting.
 		return false;
 	} elseif ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
 		// Sessions are disabled.

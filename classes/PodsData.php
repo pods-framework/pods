@@ -331,38 +331,32 @@ class PodsData {
 		}
 
 		// @todo Revisit this mess, $this->pod_data can't be an array anymore.
-		if ( ! empty( $table ) && is_array( $table ) ) {
-			if ( ! empty( $table['pod'] ) && $table['pod'] instanceof Pods\Whatsit\Pod ) {
-				$table = $table['pod'];
-			} else {
-				$table['id']   = pods_v( 'id', $table['pod'], 0, true );
-				$table['name'] = pods_v( 'name', $table['pod'], $table['object_type'], true );
-				$table['type'] = pods_v( 'type', $table['pod'], $table['object_type'], true );
+		if ( ! empty( $table ) && $table['pod'] instanceof Pods\Whatsit\Pod ) {
+			$this->pod_data = $table['pod'];
+		} else {
+			$table['id']   = pods_v( 'id', $table['pod'], 0, true );
+			$table['name'] = pods_v( 'name', $table['pod'], $table['object_type'], true );
+			$table['type'] = pods_v( 'type', $table['pod'], $table['object_type'], true );
 
-				$default_storage = 'meta';
+			$default_storage = 'meta';
 
-				if ( ! function_exists( 'get_term_meta' ) && 'taxonomy' === $table['type'] ) {
-					$default_storage = 'none';
-				}
-
-				$table['storage']       = pods_v( 'storage', $table['pod'], $default_storage, true );
-				$table['fields']        = pods_v( 'fields', $table['pod'], [] );
-				$table['object_fields'] = pods_v( 'object_fields', $table['pod'], $this->api->get_wp_object_fields( $table['object_type'] ), true );
+			if ( ! function_exists( 'get_term_meta' ) && 'taxonomy' === $table['type'] ) {
+				$default_storage = 'none';
 			}
+
+			$table['storage']       = pods_v( 'storage', $table['pod'], $default_storage, true );
+			$table['fields']        = pods_v( 'fields', $table['pod'], [] );
+			$table['object_fields'] = pods_v( 'object_fields', $table['pod'], $this->api->get_wp_object_fields( $table['object_type'] ), true );
 
 			if ( ! is_object( $this->pod_data ) ) {
 				$pod_data = $this->api->load_pod( [
 					'name'       => $table['name'],
 					'auto_setup' => true,
-				], false );
+				] );
 
 				if ( $pod_data ) {
 					$this->pod_data = $pod_data;
 				}
-			}
-
-			if ( $this->pod_data ) {
-				$this->pod_data->set_table_info( $table );
 			}
 		}
 	}

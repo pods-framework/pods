@@ -89,8 +89,6 @@
     "npm": "^6.14.12",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
-    "react-dnd": "^7.4.5",
-    "react-dnd-html5-backend": "^7.4.4",
     "react-dom": "^16.13.1",
     "rememo": "^3.0.0",
     "sass-loader": "^7.1.0",
@@ -103,6 +101,10 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
+    "@dnd-kit/core": "^3.0.3",
+    "@dnd-kit/modifiers": "^2.0.0",
+    "@dnd-kit/sortable": "^3.0.1",
+    "@dnd-kit/utilities": "^2.0.0",
     "@reduxjs/toolkit": "^1.5.1",
     "@tippyjs/react": "^4.2.5",
     "codemirror": "^5.60.0",

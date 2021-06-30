@@ -1,38 +1,45 @@
-import { toNumericBool } from './booleans';
+import { toBool } from './booleans';
+
+const ALL_BOOLEAN_VALUES = [ '1', '0', 1, 0, true, false ];
 
 /**
  * Helper function to validate that a field or tab's field dependencies
  * have been met.
  *
  * @param {Object} options   Key/value object with the selected options to compare to.
- * @param {Object} dependsOn Key/value field slug and option to check for.
- * @param {string} mode      The dependency mode, either 'wildcard', 'depends-on',
- *                           'depends-on-any', or 'excludes'.
+ * @param {Object} rules     Key/value field slug and option to check for.
+ * @param {string} mode      The dependency mode, either 'wildcard-on', 'depends-on',
+ *                           'depends-on-any', or 'excludes-on'.
  *
  * @return {boolean} True if dependencies are met to show the item.
  */
-const validateFieldDependencies = ( options, dependsOn, mode = 'depends-on' ) => {
-	const dependsOnKeys = Object.keys( dependsOn || {} );
+const validateFieldDependencies = ( options, rules, mode = 'depends-on' ) => {
+	if ( ! [ 'wildcard-on', 'depends-on', 'depends-on-any', 'excludes-on' ].includes( mode ) ) {
+		throw 'Invalid dependency validation mode.';
+	}
 
-	if ( ! dependsOnKeys.length ) {
+	const ruleKeys = Object.keys( rules || {} );
+
+	if ( ! ruleKeys.length ) {
 		return true;
 	}
 
-	if ( 'excludes' === mode ) {
+	if ( 'excludes-on' === mode ) {
 		// Negate the check because the exclusion dependency has failed if it returns true.
-		return ! dependsOnKeys.some( ( key ) => {
-			return validateFieldDependenciesForKey( options, dependsOn, mode, key );
+		return ! ruleKeys.some( ( key ) => {
+			return validateFieldDependenciesForKey( options, mode, key, rules[ key ] );
 		} );
 	}
 
 	if ( 'depends-on-any' === mode ) {
-		return dependsOnKeys.some( ( key ) => {
-			return validateFieldDependenciesForKey( options, dependsOn, mode, key );
+		return ruleKeys.some( ( key ) => {
+			return validateFieldDependenciesForKey( options, mode, key, rules[ key ] );
 		} );
 	}
 
-	return dependsOnKeys.every( ( key ) => {
-		return validateFieldDependenciesForKey( options, dependsOn, mode, key );
+	// Either 'wildcard-on' or 'depends-on'
+	return ruleKeys.every( ( key ) => {
+		return validateFieldDependenciesForKey( options, mode, key, rules[ key ] );
 	} );
 };
 
@@ -41,66 +48,62 @@ const validateFieldDependencies = ( options, dependsOn, mode = 'depends-on' ) =>
  * have been met.
  *
  * @param {Object} options   Key/value object with the selected options to compare to.
- * @param {Object} dependsOn Key/value field slug and option to check for.
- * @param {string} mode      The dependency mode, either 'wildcard', 'depends-on',
- *                           'depends-on-any', or 'excludes'.
- * @param {string} key       The dependency key being checked.
+ * @param {string} mode      The dependency mode, either 'wildcard-on', 'depends-on',
+ *                           'depends-on-any', or 'excludes-on'.
+ * @param {string} ruleKey   The dependency key being checked.
+ * @param {string} ruleValue The dependency value being checked.
  *
  * @return {boolean} True if dependencies are met to show the item.
  */
-const validateFieldDependenciesForKey = ( options, dependsOn, mode, key ) => {
-	const rule = dependsOn[ key ];
-	const currentValue = options[ key ];
+const validateFieldDependenciesForKey = ( options, mode, ruleKey, ruleValue ) => {
+	const currentValue = options[ ruleKey ];
 
 	// Bail if the current value is not set at all.
 	if ( 'undefined' === typeof currentValue ) {
 		return false;
 	}
 
-	if ( 'wildcard' === mode ) {
-		let wildcardData = rule;
-		let wildcardMatchFound = false;
-
+	if ( 'wildcard-on' === mode ) {
 		// We could either have an array of possible values,
 		// or a string that is the possible value.
-		if ( ! Array.isArray( wildcardData ) ) {
-			wildcardData = [
-				rule,
-			];
+		const wildcardData = Array.isArray( ruleValue ) ? ruleValue : [ ruleValue ];
+
+		// Go ahead and return true if there are no wildcard rules.
+		if ( 0 === wildcardData.length ) {
+			return true;
 		}
 
-		wildcardMatchFound = false;
-
 		// Check for any wildcard match.
-		wildcardData.every(
-			( regexRule ) => {
-				// Skip these rules, but keep going through the array.
-				if ( null === currentValue.match( regexRule ) ) {
-					return true;
-				}
-
-				wildcardMatchFound = true;
-
-				// Stop iterating through further.
-				return false;
-			}
+		return wildcardData.some(
+			( regexRule ) => !! currentValue.match( regexRule )
 		);
-
-		return wildcardMatchFound;
 	}
 
 	// We could either have an array of possible values,
 	// or a string that is the possible value.
-	if ( Array.isArray( rule ) ) {
-		return rule.includes( currentValue );
+	if ( Array.isArray( ruleValue ) ) {
+		return ruleValue.includes( currentValue );
 	}
 
-	// Work around weird typing issues with how boolean fields are saved.
-	const processedDependsOnValue = typeof rule === 'boolean'
-		? toNumericBool( rule )
-		: rule;
+	// Start with a strict comparison.
+	if ( ruleValue === currentValue ) {
+		return true;
+	}
 
-	return currentValue === processedDependsOnValue;
+	// Work around  typing issues with how boolean fields are saved.
+	//
+	// This could potentially cause issues where the string '1' is considered
+	// equal to boolean true, but may be necessary for now due to type
+	// inconsistency with how field values are saved.
+	if (
+		ALL_BOOLEAN_VALUES.includes( ruleValue ) &&
+		ALL_BOOLEAN_VALUES.includes( currentValue ) &&
+		toBool( ruleValue ) === toBool( currentValue )
+	) {
+		return true;
+	}
+
+	return false;
 };
 
 export default validateFieldDependencies;

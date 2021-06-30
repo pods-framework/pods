@@ -1,5 +1,22 @@
 @import '../edit-pod-variables';
 
+.pods-field_outer-wrapper {
+	background: white;
+
+	&:nth-child(odd) {
+		background-color: $color--zebra-grey;
+		transition: 200ms ease background-color;
+	}
+}
+
+.pods-field_wrapper--dragging {
+	background: white;
+	box-shadow:  0 0 0 1px rgba(63, 63, 68, 0.05),
+		-1px 0 2px 0 rgba(34, 33, 81, 0.01),
+		0px 2px 2px 0 rgba(34, 33, 81, 0.25);
+	transform: scale(1.02);
+}
+
 .pods-field_wrapper {
 	display: flex;
 	width: auto;
@@ -9,11 +26,6 @@
 	&:hover .pods-field_controls-container {
 		opacity: 1;
 	}
-}
-
-.pods-field_outer-wrapper:nth-child(odd) {
-	background-color: $color--zebra-grey;
-	transition: 200ms ease background-color;
 }
 
 .pods-field_wrapper--unsaved {
@@ -148,7 +160,7 @@
 .pods-field_wrapper-items {
 	border: 1px solid $color--light-grey;
 	margin: 1em 0;
-	overflow: hidden;
+	// overflow: hidden;
 }
 
 .pods-field_wrapper:nth-child(even) {

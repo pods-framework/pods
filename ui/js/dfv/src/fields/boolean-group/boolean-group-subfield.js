@@ -28,19 +28,12 @@ const BooleanGroupSubfield = ( {
 		help: helpText,
 		label,
 		name,
-		'depends-on': dependsOn,
-		'depends-on-any': dependsOnAny,
-		'excludes-on': excludesOn,
-		'wildcard-on': wildcardOn,
 	} = subfieldConfig;
 
 	const meetsDependencies = useDependencyCheck(
+		subfieldConfig,
 		allPodValues,
 		allPodFieldsMap,
-		dependsOn,
-		dependsOnAny,
-		excludesOn,
-		wildcardOn,
 	);
 
 	const idAttribute = !! htmlAttributes.id ? htmlAttributes.id : name;

@@ -12,7 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { Placeholder, Spinner } from '@wordpress/components';
-import { InnerBlocks } from '@wordpress/editor';
+import { InnerBlocks } from '@wordpress/block-editor';
 
 export function rendererPath( block, attributes = null, urlQueryArgs = {} ) {
 	return addQueryArgs( `/wp/v2/block-renderer/${ block }`, {

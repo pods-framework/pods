@@ -545,10 +545,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @param string     $arg     Argument name.
 	 * @param mixed|null $default Default to use if not set.
+	 * @param bool       $strict  Whether to check only normal arguments and not special arguments.
 	 *
 	 * @return null|mixed Argument value, or null if not set.
 	 */
-	public function get_arg( $arg, $default = null ) {
+	public function get_arg( $arg, $default = null, $strict = false ) {
 		$arg = (string) $arg;
 
 		$special_args = [
@@ -566,6 +567,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		if ( ! isset( $this->args[ $arg ] ) ) {
+			// Maybe only return the default if we need a strict argument.
+			if ( $strict ) {
+				return $default;
+			}
+
 			$table_info_fields = [
 				'object_name',
 				'object_hierarchical',
@@ -638,9 +644,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'table_info',
 		];
 
-		if ( 'options' === $arg ) {
-			$value = [];
-
+		if ( 'options' === $arg && is_array( $value ) ) {
 			foreach ( $value as $real_arg => $real_value ) {
 				$this->set_arg( $real_arg, $real_value );
 			}
@@ -669,6 +673,17 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		$this->args[ $arg ] = $value;
+	}
+
+	/**
+	 * Override table info when it needs to be set, for fields for example.
+	 *
+	 * @since TBD
+	 *
+	 * @param array $table_info The table information to be referenced by this object.
+	 */
+	public function set_table_info( $table_info ) {
+		$this->_table_info = $table_info;
 	}
 
 	/**
@@ -983,6 +998,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return array Table information for object.
 	 */
 	public function get_table_info() {
+		if ( null !== $this->_table_info ) {
+			return $this->_table_info;
+		}
+
 		return [];
 	}
 

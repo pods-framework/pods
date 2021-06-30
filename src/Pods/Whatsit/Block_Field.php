@@ -311,7 +311,7 @@ class Block_Field extends Field {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_arg( $arg, $default = null ) {
+	public function get_arg( $arg, $default = null, $strict = false ) {
 		if ( 'block' === $arg ) {
 			return $this->get_parent_name();
 		}

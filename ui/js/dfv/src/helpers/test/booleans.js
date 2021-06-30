@@ -22,6 +22,14 @@ describe( 'toBool', () => {
 		expect( falseValue ).toBe( false );
 		expect( trueValue ).toBe( true );
 	} );
+
+	it( 'doesn\'t consider string values to be truthy', () => {
+		const falseValue = toBool( 'some string' );
+		const trueValue = toBool( '1' );
+
+		expect( falseValue ).toBe( false );
+		expect( trueValue ).toBe( true );
+	} );
 } );
 
 describe( 'toNumericBool', () => {

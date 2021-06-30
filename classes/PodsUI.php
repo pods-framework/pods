@@ -1134,10 +1134,15 @@ class PodsUI {
 
 		// Set up default manage field.
 		if ( empty( $options->fields['manage'] ) ) {
-			$fields = $options->fields; // make a local copy of the fields
-			$fields['manage'][ $options->sql['field_index'] ] = array(
+			// Make a local copy of the fields.
+			$fields = $options->fields;
+
+			// Change the info.
+			$fields['manage'][ $options->sql['field_index'] ] = [
 					'label' => __( 'Name', 'pods' ),
-			);
+			];
+
+			// Set the object fields property.
 			$options->fields = $fields;
 		}
 

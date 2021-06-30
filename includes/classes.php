@@ -85,7 +85,8 @@ function pods_api( $pod = null, $format = null ) {
 function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
 	if ( $unique ) {
 		if ( $pod instanceof Pods ) {
-			return $pod->data;
+			// instance has to be unique, $pod->data returns a reference and has a circular reference to Pod
+			return new PodsData( clone $pod->pod_data, $id, $strict );
 		}
 
 		if ( ! in_array( $pod, array( null, false ), true ) ) {

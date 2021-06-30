@@ -351,13 +351,19 @@ class PodsData {
 			}
 
 			if ( ! is_object( $this->pod_data ) ) {
-				$this->pod_data = $this->api->load_pod( [
+				$pod_data = $this->api->load_pod( [
 					'name'       => $table['name'],
 					'auto_setup' => true,
 				], false );
+
+				if ( $pod_data ) {
+					$this->pod_data = $pod_data;
+				}
 			}
 
-			$this->pod_data->set_table_info( $table );
+			if ( $this->pod_data ) {
+				$this->pod_data->set_table_info( $table );
+			}
 		}
 	}
 

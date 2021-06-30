@@ -1134,9 +1134,16 @@ class PodsUI {
 
 		// Set up default manage field.
 		if ( empty( $options->fields['manage'] ) ) {
-			$options->fields['manage'][ $options->sql['field_index'] ] = [
-				'label' => __( 'Name', 'pods' ),
+			// Make a local copy of the fields.
+			$fields = $options->fields;
+
+			// Change the info.
+			$fields['manage'][ $options->sql['field_index'] ] = [
+					'label' => __( 'Name', 'pods' ),
 			];
+
+			// Set the object fields property.
+			$options->fields = $fields;
 		}
 
 		$options->validate( 'export', $this->export, 'array_merge' );
@@ -2606,6 +2613,8 @@ class PodsUI {
 			$action = $this->action;
 		}
 
+		$params = (array) $params;
+
 		$defaults = array(
 			'full'    => false,
 			'flatten' => true,
@@ -2613,7 +2622,7 @@ class PodsUI {
 			'type'    => '',
 		);
 
-		if ( ! empty( $params ) && is_array( $params ) ) {
+		if ( ! empty( $params ) ) {
 			$params = (object) array_merge( $defaults, $params );
 		} else {
 			$params = (object) $defaults;

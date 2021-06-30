@@ -29,7 +29,7 @@ class Field extends Whatsit {
 		$related_name = $this->get_related_object_name();
 
 		if ( null === $related_type || null === $related_name ) {
-			return array();
+			return [];
 		}
 
 		$api = pods_api();
@@ -37,7 +37,7 @@ class Field extends Whatsit {
 		$table_info = $api->get_table_info( $related_type, $related_name );
 
 		if ( ! $table_info ) {
-			$table_info = array();
+			$table_info = [];
 		}
 
 		$this->_table_info = $table_info;
@@ -48,7 +48,7 @@ class Field extends Whatsit {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_arg( $arg, $default = null ) {
+	public function get_arg( $arg, $default = null, $strict = false ) {
 		$arg = (string) $arg;
 
 		$special_args = [

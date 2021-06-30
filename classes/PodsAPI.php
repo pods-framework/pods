@@ -9963,21 +9963,24 @@ class PodsAPI {
 			];
 
 			$info['orderby'] = "`t`.`{$info['field_index']}` ASC, `t`.`path` ASC, `t`.`{$info['field_id']}`";
-		} elseif ( 'table' === $object_type || 'table' === pods_v( 'type', $info['pod'] ) || ! empty( $info['pod']['table'] ) ) {
+		} elseif ( 'table' === $object_type || 'table' === pods_v( 'type', $info['pod'] ) || ! empty( $info['pod']['table_custom'] ) ) {
 			// Custom tables.
-			$info['table']      = pods_v( 'table', $info['pod'], ( empty( $object ) ? $name : $object ), true );
-			$info['meta_table'] = pods_v( 'meta_table', $info['pod'], $info['meta_table'], true );
-			$info['pod_table']  = pods_v( 'pod_table', $info['pod'], "{$wpdb->prefix}pods_" . $info['table'], true );
+			$info['table']      = pods_v( 'table_custom', $info['pod'], ( empty( $object ) ? $name : $object ), true );
+			$info['meta_table'] = pods_v( 'meta_table_custom', $info['pod'], $info['meta_table'], true );
+			$info['pod_table']  = pods_v( 'pod_table_custom', $info['pod'], "{$wpdb->prefix}pods_" . $info['table'], true );
 
-			$info['field_id']    = pods_v( 'field_id', $info['pod'], $info['field_id'], true );
-			$info['field_index'] = pods_v( 'field_index', $info['pod'], $info['field_index'], true );
-			$info['field_slug']  = pods_v( 'field_slug', $info['pod'], $info['field_slug'], true );
+			$info['field_id']            = pods_v( 'field_id_custom', $info['pod'], $info['field_id'], true );
+			$info['field_index']         = pods_v( 'field_index_custom', $info['pod'], $info['field_index'], true );
+			$info['field_slug']          = pods_v( 'field_slug_custom', $info['pod'], $info['field_slug'], true );
+			$info['field_type']          = pods_v( 'field_type_custom', $info['pod'], $info['field_type'], true );
+			$info['field_parent']        = pods_v( 'field_parent_custom', $info['pod'], $info['field_parent'], true );
+			$info['field_parent_select'] = pods_v( 'field_parent_select_custom', $info['pod'], $info['field_parent_select'], true );
 
-			$info['meta_field_id']    = pods_v( 'meta_field_id', $info['pod'], $info['meta_field_id'], true );
-			$info['meta_field_index'] = pods_v( 'meta_field_index', $info['pod'], $info['meta_field_index'], true );
-			$info['meta_field_value'] = pods_v( 'meta_field_value', $info['pod'], $info['meta_field_value'], true );
+			$info['meta_field_id']    = pods_v( 'meta_field_id_custom', $info['pod'], $info['meta_field_id'], true );
+			$info['meta_field_index'] = pods_v( 'meta_field_index_custom', $info['pod'], $info['meta_field_index'], true );
+			$info['meta_field_value'] = pods_v( 'meta_field_value_custom', $info['pod'], $info['meta_field_value'], true );
 
-			$info['orderby'] = pods_v( 'orderby', $info['pod'], $info['orderby'], true );
+			$info['orderby'] = pods_v( 'orderby_custom', $info['pod'], $info['orderby'], true );
 
 			if ( ! empty( $field ) ) {
 				if ( ! is_array( $field ) && ! $field instanceof Pods\Whatsit ) {

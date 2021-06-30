@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { isEqual } from 'lodash';
+import { isEqual, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -26,7 +26,6 @@ import ValidationMessages from 'dfv/src/components/validation-messages';
 import { requiredValidator } from 'dfv/src/helpers/validators';
 import { toBool } from 'dfv/src/helpers/booleans';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
-import unstackDependencies from 'dfv/src/helpers/unstackDependencies';
 import useDependencyCheck from 'dfv/src/hooks/useDependencyCheck';
 import useValidation from 'dfv/src/hooks/useValidation';
 import useBidirectionalFieldData from 'dfv/src/hooks/useBidirectionalFieldData';
@@ -56,10 +55,6 @@ export const FieldWrapper = ( props ) => {
 		type: fieldType,
 		html_no_label: htmlNoLabel = false,
 		htmlAttr,
-		'depends-on': dependsOn,
-		'depends-on-any': dependsOnAny,
-		'excludes-on': excludesOn,
-		'wildcard-on': wildcardOn,
 	} = field;
 
 	const isBooleanGroupField = 'boolean_group' === fieldType;
@@ -73,15 +68,11 @@ export const FieldWrapper = ( props ) => {
 
 	const [ hasBlurred, setHasBlurred ] = useState( false );
 
-	// Calculate dependencies, trying to skip as many of these checks as
-	// we can because they're expensive.
+	// Calculate dependencies.
 	const meetsDependencies = useDependencyCheck(
+		field,
 		allPodValues,
 		allPodFieldsMap,
-		dependsOn,
-		dependsOnAny,
-		excludesOn,
-		wildcardOn,
 	);
 
 	// Hacky thing to hide the container. This isn't needed on every screen.
@@ -161,6 +152,8 @@ export const FieldWrapper = ( props ) => {
 			<FieldComponent
 				value={ value || defaultValue || '' }
 				values={ isBooleanGroupField ? values : undefined }
+				// Only the Boolean Group fields need allPodValues and allPodFieldsMap,
+				// because the subfields need to reference these.
 				allPodValues={ isBooleanGroupField ? allPodValues : undefined }
 				allPodFieldsMap={ isBooleanGroupField ? allPodFieldsMap : undefined }
 				setOptionValue={ isBooleanGroupField ? setOptionValue : undefined }
@@ -264,90 +257,78 @@ const MemoizedFieldWrapper = React.memo(
 			return false;
 		}
 
-		// If there are no dependencies, skip the expensive dependency checks.
-		let dependsOn = nextProps.field[ 'depends-on' ];
-		let dependsOnAny = nextProps.field[ 'depends-on-any' ];
-		let excludesOn = nextProps.field[ 'excludes-on' ];
-		let wildcardOn = nextProps.field[ 'wildcard-on' ];
+		// Look up the dependencies, we may need to re-render if any of the
+		// values have changed.
+		const allDependencyFieldSlugs = [
+			...Object.keys( nextProps.field[ 'depends-on' ] || {} ),
+			...Object.keys( nextProps.field[ 'depends-on-any' ] || {} ),
+			...Object.keys( nextProps.field[ 'excludes-on' ] || {} ),
+			...Object.keys( nextProps.field[ 'wildcard-on' ] || {} ),
+		];
 
 		// If it's a boolean group, there are also subfields to check.
 		if ( 'boolean_group' === nextProps.field?.type ) {
 			const subfields = nextProps.field?.boolean_group;
 
 			subfields.forEach( ( subfield ) => {
-				if ( 'object' === typeof subfield[ 'depends-on' ] ) {
-					dependsOn = {
-						...dependsOn,
-						...subfield[ 'depends-on' ],
-					};
-				}
-
-				if ( 'object' === typeof subfield[ 'depends-on-any' ] ) {
-					dependsOnAny = {
-						...dependsOnAny,
-						...subfield[ 'depends-on-any' ],
-					};
-				}
-
-				if ( 'object' === typeof subfield[ 'excludes-on' ] ) {
-					excludesOn = {
-						...excludesOn,
-						...subfield[ 'excludes-on' ],
-					};
-				}
-
-				if ( 'object' === typeof subfield[ 'wildcard-on' ] ) {
-					wildcardOn = {
-						...wildcardOn,
-						...subfield[ 'wildcard-on' ],
-					};
-				}
+				allDependencyFieldSlugs.push(
+					...Object.keys( subfield[ 'depends-on' ] || {} ),
+					...Object.keys( subfield[ 'depends-on-any' ] || {} ),
+					...Object.keys( subfield[ 'excludes-on' ] || {} ),
+					...Object.keys( subfield[ 'wildcard-on' ] || {} ),
+				);
 			} );
 		}
 
-		if (
-			( ! dependsOn || 0 === Object.keys( dependsOn ).length ) &&
-			( ! dependsOnAny || 0 === Object.keys( dependsOnAny ).length ) &&
-			( ! excludesOn || 0 === Object.keys( excludesOn ).length ) &&
-			( ! wildcardOn || 0 === Object.keys( wildcardOn ).length )
-		) {
+		// If there were no dependencies, we don't need to look any further.
+		if ( 0 === allDependencyFieldSlugs.length ) {
 			return true;
 		}
 
-		// If any of the field values that we have dependencies on have changed, re-render.
-		// If not, try to avoid it.
-		const unstackedDependsOn = unstackDependencies(
-			dependsOn,
+		// Look up the tree of dependencies, for parents of the dependencies.
+		const unstackParentDependencies = ( dependencyFieldSlugs = [], allPodFieldsMap ) => {
+			const parentDependencySlugs = [];
+
+			if ( ! allPodFieldsMap ) {
+				return dependencyFieldSlugs;
+			}
+
+			dependencyFieldSlugs.forEach( ( fieldSlug ) => {
+				const parentField = allPodFieldsMap.get( fieldSlug );
+
+				if ( ! parentField ) {
+					return;
+				}
+
+				parentDependencySlugs.push(
+					...Object.keys( parentField[ 'depends-on' ] || {} ),
+					...Object.keys( parentField[ 'depends-on-any' ] || {} ),
+					...Object.keys( parentField[ 'excludes-on' ] || {} ),
+					...Object.keys( parentField[ 'wildcard-on' ] || {} ),
+				);
+			} );
+
+			const nextLevelSlugs = parentDependencySlugs.length
+				? unstackParentDependencies( parentDependencySlugs )
+				: [];
+
+			return uniq(
+				[
+					...dependencyFieldSlugs,
+					...parentDependencySlugs,
+					...nextLevelSlugs,
+				]
+			);
+		};
+
+		const unstackedDependencySlugs = unstackParentDependencies(
+			allDependencyFieldSlugs,
 			nextProps.allPodFieldsMap,
-			'depends-on'
 		);
 
-		const unstackedDependsOnAny = unstackDependencies(
-			dependsOnAny,
-			nextProps.allPodFieldsMap,
-			'depends-on-any'
-		);
-
-		const unstackedExcludesOn = unstackDependencies(
-			excludesOn,
-			nextProps.allPodFieldsMap,
-			'excludes-on'
-		);
-
-		const unstackedWildcardOn = unstackDependencies(
-			wildcardOn,
-			nextProps.allPodFieldsMap,
-			'wildcard-on'
-		);
-
-		const allFieldSlugsWithDependencies = [
-			...Object.keys( unstackedDependsOn ),
-			...Object.keys( unstackedDependsOnAny ),
-			...Object.keys( unstackedExcludesOn ),
-			...Object.keys( unstackedWildcardOn ),
-		];
-
-		const haveAnyDependenciesChanged = allFieldSlugsWithDependencies.some( ( slug ) => {
+		// If any of the field values that we have dependencies on have
+		// changed, re-render. If not, try to avoid it.
+		const haveAnyDependenciesChanged = unstackedDependencySlugs.some( ( slug ) => {
 			return prevProps.allPodValues[ slug ] !== nextProps.allPodValues[ slug ];
 		} );
 

@@ -1,49 +1,97 @@
-/**
- * Other Pods dependencies
- */
 import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
-import unstackDependencies from 'dfv/src/helpers/unstackDependencies';
 
-const useDependencyCheck = (
-	allPodValues = {},
-	allPodFieldsMap = new Map(),
-	dependsOn = {},
-	dependsOnAny = {},
-	excludesOn = {},
-	wildcardOn = {},
-) => {
-	let meetsDependencies = true;
+const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap ) => {
+	const {
+		'depends-on': dependsOn = {},
+		'depends-on-any': dependsOnAny = {},
+		'excludes-on': excludesOn = {},
+		'wildcard-on': wildcardOn = {},
+	} = fieldConfig;
 
 	// Calculate dependencies, trying to skip as many of these checks as
 	// we can because they're expensive.
-
-	if ( dependsOn && Object.keys( dependsOn ).length ) {
-		const unstackedDependsOn = unstackDependencies( dependsOn, allPodFieldsMap, 'depends-on' );
-
-		if ( ! validateFieldDependencies( allPodValues, unstackedDependsOn, 'depends-on' ) ) {
-			meetsDependencies = false;
-		}
-	} else if ( dependsOnAny && Object.keys( dependsOnAny ).length ) {
-		const unstackedDependsOnAny = unstackDependencies( dependsOn, allPodFieldsMap, 'depends-on-any' );
-
-		if ( ! validateFieldDependencies( allPodValues, unstackedDependsOnAny, 'depends-on-any' ) ) {
-			meetsDependencies = false;
-		}
-	} else if ( excludesOn && Object.keys( excludesOn ).length ) {
-		const unstackedExcludesOn = unstackDependencies( excludesOn, allPodFieldsMap, 'excludes-on' );
-
-		if ( ! validateFieldDependencies( allPodValues, unstackedExcludesOn, 'excludes' ) ) {
-			meetsDependencies = false;
-		}
-	} else if ( wildcardOn ) {
-		const unstackedWildcardOn = unstackDependencies( wildcardOn, allPodFieldsMap, 'wildcard-on' );
-
-		if ( ! validateFieldDependencies( allPodValues, unstackedWildcardOn, 'wildcard' ) ) {
-			meetsDependencies = false;
+	if ( Object.keys( dependsOn ).length ) {
+		if ( ! validateFieldDependencies( allPodValues, dependsOn, 'depends-on' ) ) {
+			return false;
 		}
 	}
 
-	return meetsDependencies;
+	if ( Object.keys( dependsOnAny ).length ) {
+		if ( ! validateFieldDependencies( allPodValues, dependsOnAny, 'depends-on-any' ) ) {
+			return false;
+		}
+	}
+
+	if ( Object.keys( excludesOn ).length ) {
+		if ( ! validateFieldDependencies( allPodValues, excludesOn, 'excludes-on' ) ) {
+			return false;
+		}
+	}
+
+	if ( Object.keys( wildcardOn ).length ) {
+		if ( ! validateFieldDependencies( allPodValues, wildcardOn, 'wildcard-on' ) ) {
+			return false;
+		}
+	}
+
+	// Go up the tree of dependencies. This works two different ways:
+	// parents from a 'depends-on-any' match should have at least one
+	// where the whole tree passes. For the other types, all parents need to match.
+	const parentFieldsForAnyMatch = Object.keys( dependsOnAny );
+
+	const parentFieldsForEveryMatch = Object.keys( {
+		...dependsOn,
+		...excludesOn,
+		...wildcardOn,
+	} );
+
+	if ( ! parentFieldsForAnyMatch.length && ! parentFieldsForEveryMatch.length ) {
+		return true;
+	}
+
+	// We should fail on the first parent field that doesn't meet its dependencies.
+	const checkParentDependencies = ( fieldKey ) => {
+		const parentFieldConfig = allPodFieldsMap.get( fieldKey );
+
+		// If it's missing, either something is wrong, or it's part of a Boolean Group field
+		// (so there wouldn't be a matching field config for the slug).
+		if ( ! parentFieldConfig ) {
+			return true;
+		}
+
+		// If one doesn't pass, return false and we're done checking.
+		const parentFieldPasses = recursiveCheckDepsForField( parentFieldConfig, allPodValues, allPodFieldsMap );
+
+		return parentFieldPasses;
+	};
+
+	const atLeastOneDependsOnAnyMatch = !! parentFieldsForAnyMatch.length
+		? parentFieldsForAnyMatch.some( checkParentDependencies )
+		: true;
+
+	if ( ! atLeastOneDependsOnAnyMatch ) {
+		return false;
+	}
+
+	const doAllOtherParentFieldsMatch = !! parentFieldsForEveryMatch.length
+		? parentFieldsForEveryMatch.every( checkParentDependencies )
+		: true;
+
+	if ( ! doAllOtherParentFieldsMatch ) {
+		return false;
+	}
+
+	// If there were no depends-on, depends-on-any, excludes-on, or
+	// wildcard-on matches, and none from parent fields, then the check passes.
+	return true;
+};
+
+const useDependencyCheck = (
+	fieldConfig = {},
+	allPodValues = {},
+	allPodFieldsMap = new Map(),
+) => {
+	return recursiveCheckDepsForField( fieldConfig, allPodValues, allPodFieldsMap );
 };
 
 export default useDependencyCheck;

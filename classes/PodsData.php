@@ -356,6 +356,8 @@ class PodsData {
 
 				if ( $pod_data ) {
 					$this->pod_data = $pod_data;
+				} else {
+					$this->pod_data = new Pod( $table );
 				}
 			}
 		}

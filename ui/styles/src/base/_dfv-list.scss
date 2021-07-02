@@ -25,6 +25,7 @@ ul.pods-dfv-list-meta {
 	overflow: hidden;
 	zoom: 1;
 	position: relative;
+	user-select: none;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-col {
@@ -152,6 +153,7 @@ ul.pods-dfv-list li.pods-dfv-list-name {
 	padding: 3px 0;
 	line-height: 24px;
 	overflow: visible;
+	user-select: none;
 	white-space: nowrap;
 }
 

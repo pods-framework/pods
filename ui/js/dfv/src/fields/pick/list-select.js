@@ -6,6 +6,95 @@ import { __ } from '@wordpress/i18n';
 
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
+const ListSelectItem = ( {
+	itemName,
+	itemId,
+	value,
+	removeItem,
+	isDraggable,
+	isRemovable,
+	isViewable,
+	isEditable,
+} ) => {
+	return (
+		<li className="pods-dfv-list-item pods-relationship">
+			<input
+				name={ itemName }
+				id={ itemId }
+				type="hidden"
+				value={ value.value }
+			/>
+
+			<ul className="pods-dfv-list-meta relationship-item">
+				{ isDraggable && (
+					<li className="pods-dfv-list-col pods-dfv-list-handle">
+						<span>{ __( 'Reorder', 'pods' ) }</span>
+					</li>
+				) }
+
+				{ /*
+				@todo icon logic, see:
+				https://github.com/pods-framework/pods/blob/main/ui/js/pods-dfv/_src/pick/views/list-item.html#L16-L32
+				*/ }
+
+				<li className="pods-dfv-list-col pods-dfv-list-name">
+					{ value.label }
+				</li>
+
+				{ isRemovable && (
+					<li className="pods-dfv-list-col pods-dfv-list-remove">
+						<a
+							href="#remove"
+							title={ __( 'Deselect', 'pods' ) }
+							onClick={ removeItem }
+						>
+							{ __( 'Deselect', 'pods' ) }
+						</a>
+					</li>
+				) }
+
+				{ isViewable && (
+					<li className="pods-dfv-list-col pods-dfv-list-link">
+						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+						<a
+							href="#" // @todo
+							title={ __( 'View', 'pods' ) }
+							target="_blank"
+						>
+							{ __( 'View', 'pods' ) }
+						</a>
+					</li>
+				) }
+
+				{ isEditable && (
+					<li className="pods-dfv-list-col pods-dfv-list-edit">
+						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+						<a
+							href="#" // @todo
+							title={ __( 'Edit', 'pods' ) }
+							target="_blank"
+						>
+							{ __( 'Edit', 'pods' ) }
+						</a>
+					</li>
+				) }
+			</ul>
+		</li>
+	);
+};
+
+ListSelectItem.propTypes = {
+	itemName: PropTypes.string.isRequired,
+	itemId: PropTypes.string.isRequired,
+	value: PropTypes.shape( {
+		label: PropTypes.string.isRequired,
+		value: PropTypes.string.isRequired,
+	} ),
+	removeItem: PropTypes.func.isRequired,
+	isDraggable: PropTypes.bool.isRequired,
+	isRemovable: PropTypes.bool.isRequired,
+};
+
 const ListSelect = ( {
 	htmlAttributes,
 	name,
@@ -52,88 +141,35 @@ const ListSelect = ( {
 
 			<div className="pods-pick-values">
 				{ !! arrayOfValues.length && (
-					<ul className="pods-dfv-list pods-relationship ui-sortable">
+					<ul className="pods-dfv-list pods-relationship">
 						{ arrayOfValues.map( ( valueItem, index ) => {
 							const itemName = isMulti ? `name[${ index }]` : name;
 							const itemId = isMulti ? `name[${ index }]` : name;
 
+							const removeValue = () => {
+								if ( isMulti ) {
+									setValue(
+										value
+											.filter( ( item ) => item.value !== value.value )
+											.map( ( item ) => item.value )
+									);
+								} else {
+									setValue( undefined );
+								}
+							};
+
 							return (
-								<li
-									className="pods-dfv-list-item pods-relationship"
+								<ListSelectItem
 									key={ `${ name }-${ index }` }
-								>
-									<input
-										name={ itemName }
-										id={ itemId }
-										type="hidden"
-										value={ valueItem.value }
-									/>
-
-									<ul className="pods-dfv-list-meta relationship-item">
-										{ ! readOnly && ( 1 !== limit ) && (
-											<li className="pods-dfv-list-col pods-dfv-list-handle">
-												<span>{ __( 'Reorder', 'pods' ) }</span>
-											</li>
-										) }
-
-										{ /*
-										@todo icon logic, see:
-										https://github.com/pods-framework/pods/blob/main/ui/js/pods-dfv/_src/pick/views/list-item.html#L16-L32
-										*/ }
-
-										<li className="pods-dfv-list-col pods-dfv-list-name">
-											{ valueItem.label }
-										</li>
-
-										{ ! readOnly && (
-											<li className="pods-dfv-list-col pods-dfv-list-remove">
-												<a
-													href="#remove"
-													title={ __( 'Deselect', 'pods' ) }
-													onClick={ () => {
-														if ( isMulti ) {
-															setValue(
-																value
-																	.filter( ( item ) => item.value !== valueItem.value )
-																	.map( ( item ) => item.value )
-															);
-														} else {
-															setValue( undefined );
-														}
-													} }
-												>
-													{ __( 'Deselect', 'pods' ) }
-												</a>
-											</li>
-										) }
-
-										{ showViewLink && (
-											<li className="pods-dfv-list-col pods-dfv-list-link">
-												{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-												<a
-													href="#" // @todo
-													title={ __( 'View', 'pods' ) }
-													target="_blank"
-												>
-													{ __( 'View', 'pods' ) }
-												</a>
-											</li>
-										) }
-
-										{ ! readOnly && showEditLink && (
-											<li className="pods-dfv-list-col pods-dfv-list-edit">
-												{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-												<a
-													href="#" // @todo
-													title={ __( 'Edit', 'pods' ) }
-													target="_blank"
-												>
-													{ __( 'Edit', 'pods' ) }
-												</a>
-											</li>
-										) }
-									</ul>
-								</li>
+									itemName={ itemName }
+									itemId={ itemId }
+									value={ valueItem }
+									removeItem={ removeValue }
+									isDraggable={ ! readOnly && ( 1 !== limit ) }
+									isRemovable={ ! readOnly }
+									isViewable={ showViewLink }
+									isEditable={ ! readOnly && showEditLink }
+								/>
 							);
 						} ) }
 					</ul>

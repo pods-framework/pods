@@ -1,0 +1,15 @@
+.pods-list-select-move-buttons {
+	display: flex;
+	flex-flow: column nowrap;
+	// 1px padding fixes WP outline on buttons from being cut off
+	padding-left: 1px;
+
+	.pods-list-select-move-buttons__button {
+		height: 16px;
+		padding: 0;
+	}
+
+	.pods-list-select-move-buttons__button--disabled {
+		opacity: 0.3;
+	}
+}

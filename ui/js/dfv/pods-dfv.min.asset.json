@@ -1,1 +1,1 @@
-{"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-url"],"version":"4f14a7d7afc74c58a378585ad6264e73"}
+{"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-primitives","wp-url"],"version":"6c63a9362c9eff6f13541c6d0f13048b"}

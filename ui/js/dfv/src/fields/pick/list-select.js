@@ -1,71 +1,41 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React from 'react';
 import Select from 'react-select';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import {
-	DndContext,
-	closestCorners,
-	KeyboardSensor,
-	PointerSensor,
-	useSensor,
-	useSensors,
-	LayoutMeasuringStrategy,
-	DragOverlay,
-} from '@dnd-kit/core';
-import {
-	restrictToParentElement,
-	restrictToVerticalAxis,
-} from '@dnd-kit/modifiers';
-import {
-	arrayMove,
-	SortableContext,
-	sortableKeyboardCoordinates,
-	verticalListSortingStrategy,
-	useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
+import {
+	chevronUp,
+	chevronDown,
+} from '@wordpress/icons';
 
 /**
  * Other Pods dependencies
  */
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
+import './list-select.scss';
+
 const ListSelectItem = ( {
 	itemName,
 	itemId,
 	value,
 	removeItem,
-	isDraggable,
 	isRemovable,
 	isViewable,
 	isEditable,
+	moveUp,
+	moveDown,
 } ) => {
-	const {
-		attributes,
-		listeners,
-		setNodeRef,
-		transform,
-		transition,
-	} = useSortable( { id: value.value } );
-
-	const style = {
-		transform: CSS.Transform.toString( transform ),
-		transition: transition || undefined,
-	};
-
 	return (
-		<li
-			className="pods-dfv-list-item pods-relationship"
-			ref={ setNodeRef }
-			style={ style }
-		>
+		<li className="pods-dfv-list-item pods-relationship">
 			<input
 				name={ itemName }
 				id={ itemId }
@@ -74,17 +44,35 @@ const ListSelectItem = ( {
 			/>
 
 			<ul className="pods-dfv-list-meta relationship-item">
-				{ isDraggable && (
-					<li
-						className="pods-dfv-list-col pods-dfv-list-handle"
-						// eslint-disable-next-line react/jsx-props-no-spreading
-						{ ...listeners }
-						// eslint-disable-next-line react/jsx-props-no-spreading
-						{ ...attributes }
-					>
-						<span>{ __( 'Reorder', 'pods' ) }</span>
-					</li>
-				) }
+				<li className="pods-dfv-list-col pods-dfv-list-handle pods-list-select-move-buttons">
+					<Button
+						className={
+							classnames(
+								'pods-list-select-move-buttons__button',
+								! moveUp && 'pods-list-select-move-buttons__button--disabled'
+							)
+						}
+						showTooltip
+						isDisabled={ ! moveUp }
+						onClick={ moveUp }
+						icon={ chevronUp }
+						label={ __( 'Move up', 'pods' ) }
+					/>
+
+					<Button
+						className={
+							classnames(
+								'pods-list-select-move-buttons__button',
+								! moveDown && 'pods-list-select-move-buttons__button--disabled'
+							)
+						}
+						showTooltip
+						isDisabled={ ! moveDown }
+						onClick={ moveDown }
+						icon={ chevronDown }
+						label={ __( 'Move down', 'pods' ) }
+					/>
+				</li>
 
 				{ /*
 				@todo icon logic, see:
@@ -144,6 +132,8 @@ ListSelectItem.propTypes = {
 		label: PropTypes.string.isRequired,
 		value: PropTypes.string.isRequired,
 	} ),
+	moveUp: PropTypes.func,
+	moveDown: PropTypes.func,
 	removeItem: PropTypes.func.isRequired,
 	isDraggable: PropTypes.bool.isRequired,
 	isRemovable: PropTypes.bool.isRequired,
@@ -171,15 +161,6 @@ const ListSelect = ( {
 		arrayOfValues = isMulti ? value : [ value ];
 	}
 
-	const [ activeValue, setActiveValue ] = useState( null );
-
-	const sensors = useSensors(
-		useSensor( PointerSensor ),
-		useSensor( KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
-		} ),
-	);
-
 	const removeValueAtIndex = ( index = 0 ) => {
 		if ( isMulti ) {
 			setValue(
@@ -193,45 +174,20 @@ const ListSelect = ( {
 		}
 	};
 
-	const handleDragStart = ( { active } ) => {
-		const newActiveValue = arrayOfValues.findIndex(
-			( item ) => ( item.value === active.id ),
-		);
-
-		setActiveValue( newActiveValue );
-	};
-
-	const handleDragEnd = ( { active, over } ) => {
-		if ( ! over?.id || active.id === over.id ) {
-			return;
+	const swapItems = ( oldIndex, newIndex ) => {
+		if ( ! isMulti ) {
+			throw 'Swap items shouldn\'nt be called on a single ListSelect';
 		}
 
-		const oldIndex = arrayOfValues.findIndex(
-			( item ) => ( item.value === active.id ),
+		const newValues = [ ...arrayOfValues ];
+		const tempValue = newValues[ newIndex ];
+
+		newValues[ newIndex ] = newValues[ oldIndex ];
+		newValues[ oldIndex ] = tempValue;
+
+		setValue(
+			newValues.map( ( item ) => item.value ),
 		);
-
-		const newIndex = arrayOfValues.findIndex(
-			( item ) => ( item.value === over.id ),
-		);
-
-		const updatedItems = arrayMove( arrayOfValues, oldIndex, newIndex );
-
-		console.log(
-			'handleDragEnd',
-			{
-				over,
-				active,
-				oldIndex,
-				newIndex,
-				arrayOfValues,
-				updatedItems,
-			}
-		);
-
-		// We can assume `isMulti` is true when it's a drag-and-drop event.
-		setValue( updatedItems.map( ( selection ) => selection.value ) );
-
-		setActiveValue( null );
 	};
 
 	return (
@@ -258,61 +214,36 @@ const ListSelect = ( {
 
 			<div className="pods-pick-values">
 				{ !! arrayOfValues.length && (
-					<DndContext
-						sensors={ sensors }
-						collisionDetection={ closestCorners }
-						onDragStart={ handleDragStart }
-						onDragEnd={ handleDragEnd }
-						layoutMeasuring={ {
-							strategy: LayoutMeasuringStrategy.Always,
-						} }
-						modifiers={ [
-							restrictToParentElement,
-							restrictToVerticalAxis,
-						] }
-					>
-						<SortableContext
-							items={ arrayOfValues.map( ( item ) => item.value ) }
-							strategy={ verticalListSortingStrategy }
-						>
-							<ul className="pods-dfv-list pods-relationship">
-								{ arrayOfValues.map( ( valueItem, index ) => {
-									const itemName = isMulti ? `${ name }[${ index }]` : name;
-									const itemId = isMulti ? `${ name }[${ index }]` : name;
+					<ul className="pods-dfv-list pods-relationship">
+						{ arrayOfValues.map( ( valueItem, index ) => {
+							const itemName = isMulti ? `${ name }[${ index }]` : name;
+							const itemId = isMulti ? `${ name }[${ index }]` : name;
 
-									return (
-										<ListSelectItem
-											key={ `${ name }-${ index }` }
-											itemName={ itemName }
-											itemId={ itemId }
-											value={ valueItem }
-											removeItem={ () => removeValueAtIndex( index ) }
-											isDraggable={ ! readOnly && ( 1 !== limit ) }
-											isRemovable={ ! readOnly }
-											isViewable={ showViewLink }
-											isEditable={ ! readOnly && showEditLink }
-										/>
-									);
-								} ) }
-							</ul>
-						</SortableContext>
-
-						<DragOverlay>
-							{ activeValue ? (
-								<li className="pods-dfv-list-item pods-relationship">
-									<ul className="pods-dfv-list-meta relationship-item">
-										<li className="pods-dfv-list-col pods-dfv-list-handle">
-											<span>{ __( 'Reorder', 'pods' ) }</span>
-										</li>
-
-										<li className="pods-dfv-list-col pods-dfv-list-name">
-											{ activeValue.label }
-										</li>
-									</ul>
-								</li>
-							) : null }
-						</DragOverlay>
-					</DndContext>
+							return (
+								<ListSelectItem
+									key={ `${ name }-${ index }` }
+									itemName={ itemName }
+									itemId={ itemId }
+									value={ valueItem }
+									removeItem={ () => removeValueAtIndex( index ) }
+									isDraggable={ ! readOnly && ( 1 !== limit ) }
+									isRemovable={ ! readOnly }
+									isViewable={ showViewLink }
+									isEditable={ ! readOnly && showEditLink }
+									moveUp={
+										( ! readOnly && index !== 0 )
+											? () => swapItems( index, index - 1 )
+											: undefined
+									}
+									moveDown={
+										( ! readOnly && index !== ( arrayOfValues.length - 1 ) )
+											? () => swapItems( index, index + 1 )
+											: undefined
+									}
+								/>
+							);
+						} ) }
+					</ul>
 				) }
 			</div>
 		</>

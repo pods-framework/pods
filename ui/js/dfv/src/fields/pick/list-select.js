@@ -1,16 +1,18 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
 import {
 	DndContext,
-	closestCenter,
+	closestCorners,
 	KeyboardSensor,
 	PointerSensor,
 	useSensor,
 	useSensors,
+	LayoutMeasuringStrategy,
+	DragOverlay,
 } from '@dnd-kit/core';
 import {
 	restrictToParentElement,
@@ -169,6 +171,8 @@ const ListSelect = ( {
 		arrayOfValues = isMulti ? value : [ value ];
 	}
 
+	const [ activeValue, setActiveValue ] = useState( null );
+
 	const sensors = useSensors(
 		useSensor( PointerSensor ),
 		useSensor( KeyboardSensor, {
@@ -189,9 +193,15 @@ const ListSelect = ( {
 		}
 	};
 
-	const handleDragEnd = ( event ) => {
-		const { active, over } = event;
+	const handleDragStart = ( { active } ) => {
+		const newActiveValue = arrayOfValues.findIndex(
+			( item ) => ( item.value === active.id ),
+		);
 
+		setActiveValue( newActiveValue );
+	};
+
+	const handleDragEnd = ( { active, over } ) => {
 		if ( ! over?.id || active.id === over.id ) {
 			return;
 		}
@@ -206,8 +216,22 @@ const ListSelect = ( {
 
 		const updatedItems = arrayMove( arrayOfValues, oldIndex, newIndex );
 
+		console.log(
+			'handleDragEnd',
+			{
+				over,
+				active,
+				oldIndex,
+				newIndex,
+				arrayOfValues,
+				updatedItems,
+			}
+		);
+
 		// We can assume `isMulti` is true when it's a drag-and-drop event.
 		setValue( updatedItems.map( ( selection ) => selection.value ) );
+
+		setActiveValue( null );
 	};
 
 	return (
@@ -236,8 +260,12 @@ const ListSelect = ( {
 				{ !! arrayOfValues.length && (
 					<DndContext
 						sensors={ sensors }
-						collisionDetection={ closestCenter }
+						collisionDetection={ closestCorners }
+						onDragStart={ handleDragStart }
 						onDragEnd={ handleDragEnd }
+						layoutMeasuring={ {
+							strategy: LayoutMeasuringStrategy.Always,
+						} }
 						modifiers={ [
 							restrictToParentElement,
 							restrictToVerticalAxis,
@@ -249,8 +277,8 @@ const ListSelect = ( {
 						>
 							<ul className="pods-dfv-list pods-relationship">
 								{ arrayOfValues.map( ( valueItem, index ) => {
-									const itemName = isMulti ? `name[${ index }]` : name;
-									const itemId = isMulti ? `name[${ index }]` : name;
+									const itemName = isMulti ? `${ name }[${ index }]` : name;
+									const itemId = isMulti ? `${ name }[${ index }]` : name;
 
 									return (
 										<ListSelectItem
@@ -268,6 +296,22 @@ const ListSelect = ( {
 								} ) }
 							</ul>
 						</SortableContext>
+
+						<DragOverlay>
+							{ activeValue ? (
+								<li className="pods-dfv-list-item pods-relationship">
+									<ul className="pods-dfv-list-meta relationship-item">
+										<li className="pods-dfv-list-col pods-dfv-list-handle">
+											<span>{ __( 'Reorder', 'pods' ) }</span>
+										</li>
+
+										<li className="pods-dfv-list-col pods-dfv-list-name">
+											{ activeValue.label }
+										</li>
+									</ul>
+								</li>
+							) : null }
+						</DragOverlay>
 					</DndContext>
 				) }
 			</div>

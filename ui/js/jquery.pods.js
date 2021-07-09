@@ -79,8 +79,6 @@
 
                     pods_changed = false;
 
-                    /* e.preventDefault(); */
-
                     var postdata = {};
                     var field_data = {};
 
@@ -123,6 +121,25 @@
                         }
                     } );
 
+					$submittable.find( '.pods-form-ui-field-type-file.pods-validate-required, .pods-form-ui-field-type-avatar.pods-validate-required' ).each( function() {
+						var $fieldEl = $( this );
+						var $fieldRow = $fieldEl.closest( 'tr' );
+
+						if ( ! $fieldRow[0] ) {
+							return;
+						}
+
+						$fieldRow.find( '.pods-validate-error-message' ).remove();
+
+						if( 0 === $fieldEl.find( '.pods-files-list > li' ).length ) {
+							valid_form = false;
+
+							var $fieldName = $fieldRow.find( 'label' ).text();
+
+							$fieldRow.append(' <td class="pods-validate-error-message">' + PodsI18n.__( '%s is required.' ).replace( '%s', $fieldName.replace('*', '' ) ) + '</td>' );
+						}
+					} );
+
                     if ( 'undefined' != typeof pods_admin_submit_validation )
                         valid_form = pods_admin_submit_validation( valid_form, $submittable );
 
@@ -139,6 +156,8 @@
                         } );
 
                         pods_form_field_names = [];
+
+                        e.preventDefault();
 
                         return false;
                     }

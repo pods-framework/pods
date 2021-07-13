@@ -31,6 +31,7 @@ const ListSelectItem = ( {
 	value,
 	editLink,
 	viewLink,
+	editIframeTitle,
 	icon,
 	removeItem,
 	isRemovable,
@@ -59,7 +60,7 @@ const ListSelectItem = ( {
 							)
 						}
 						showTooltip
-						isDisabled={ ! moveUp }
+						disabled={ ! moveUp }
 						onClick={ moveUp }
 						icon={ chevronUp }
 						label={ __( 'Move up', 'pods' ) }
@@ -145,11 +146,10 @@ const ListSelectItem = ( {
 
 			{ showEditModal ? (
 				<IframeModal
-					title={ `${ fieldName }: Edit` }
+					title={ editIframeTitle || `${ fieldName }: Edit` }
 					iframeSrc={ editLink }
 					onClose={ () => setShowEditModal( false ) }
 				/>
-
 			) : null }
 		</li>
 	);
@@ -164,6 +164,7 @@ ListSelectItem.propTypes = {
 		value: PropTypes.string.isRequired,
 	} ),
 	editLink: PropTypes.string,
+	editIframeTitle: PropTypes.string,
 	viewLink: PropTypes.string,
 	icon: PropTypes.string,
 	moveUp: PropTypes.func,
@@ -187,6 +188,7 @@ const ListSelect = ( {
 	showIcon,
 	showViewLink,
 	showEditLink,
+	editIframeTitle,
 	readOnly = false,
 } ) => {
 	// Always have an array of values for the list, even if
@@ -275,6 +277,7 @@ const ListSelect = ( {
 									isRemovable={ ! readOnly }
 									editLink={ ! readOnly && showEditLink ? moreData?.edit_link : undefined }
 									viewLink={ showViewLink ? moreData?.link : undefined }
+									editIframeTitle={ editIframeTitle }
 									icon={ icon }
 									moveUp={
 										( ! readOnly && index !== 0 )
@@ -327,6 +330,7 @@ ListSelect.propTypes = {
 	showIcon: PropTypes.bool.isRequired,
 	showViewLink: PropTypes.bool.isRequired,
 	showEditLink: PropTypes.bool.isRequired,
+	editIframeTitle: PropTypes.string,
 	readOnly: PropTypes.bool,
 };
 

@@ -1,14 +1,25 @@
+/**
+ * External dependencies
+ */
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
 
-// WordPress dependencies
+/**
+ * WordPress dependencies
+ */
+import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
+/**
+ * Other Pods dependencies
+ */
 import SimpleSelect from './simple-select';
 import RadioSelect from './radio-select';
 import CheckboxSelect from './checkbox-select';
 import ListSelect from './list-select';
+
+import IframeModal from 'dfv/src/components/iframe-modal';
 
 import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
@@ -92,7 +103,10 @@ const Pick = ( props ) => {
 			label,
 			name,
 			default_icon: defaultIcon,
-			// pick_allow_add_new: allowAddNew,
+			iframe_src: addNewIframeSrc,
+			iframe_title_add: addNewIframeTitle,
+			iframe_title_edit: editIframeTitle,
+			pick_allow_add_new: allowAddNew,
 			pick_custom: pickCustomOptions,
 			// pick_display,
 			// pick_display_format_multi,
@@ -126,6 +140,8 @@ const Pick = ( props ) => {
 
 	const isSingle = 'single' === formatType;
 	const isMulti = 'multi' === formatType;
+
+	const [ showAddNewIframe, setShowAddNewIframe ] = useState( false );
 
 	// The options could be derived from the `data` prop (as a default),
 	// or we may need to do more work to break them apart or load them by the API.
@@ -212,111 +228,139 @@ const Pick = ( props ) => {
 		setHasBlurred( true );
 	};
 
-	if ( ! isMulti && 'radio' === formatSingle ) {
-		return (
-			<RadioSelect
-				htmlAttributes={ htmlAttributes }
-				name={ name }
-				value={ value }
-				setValue={ setValueWithLimit }
-				options={ dataOptions }
-				readOnly={ !! readOnly }
-			/>
-		);
-	}
+	// There are a variety of different "select" components, this
+	// chooses the right one based on the options.
+	const renderSelectComponent = () => {
+		if ( ! isMulti && 'radio' === formatSingle ) {
+			return (
+				<RadioSelect
+					htmlAttributes={ htmlAttributes }
+					name={ name }
+					value={ value }
+					setValue={ setValueWithLimit }
+					options={ dataOptions }
+					readOnly={ !! readOnly }
+				/>
+			);
+		}
 
-	if (
-		( isSingle && 'checkbox' === formatSingle ) ||
-		( isMulti && 'checkbox' === formatMulti )
-	) {
-		let formattedValue = value;
+		if (
+			( isSingle && 'checkbox' === formatSingle ) ||
+			( isMulti && 'checkbox' === formatMulti )
+		) {
+			let formattedValue = value;
 
-		if ( isMulti ) {
-			formattedValue = Array.isArray( value )
-				? value
-				: ( value || '' ).split( ',' );
+			if ( isMulti ) {
+				formattedValue = Array.isArray( value )
+					? value
+					: ( value || '' ).split( ',' );
+			}
+
+			return (
+				<CheckboxSelect
+					htmlAttributes={ htmlAttributes }
+					name={ name }
+					value={ formattedValue }
+					isMulti={ isMulti }
+					setValue={ setValueWithLimit }
+					options={ dataOptions }
+					readOnly={ !! readOnly }
+				/>
+			);
+		}
+
+		if (
+			( isSingle && 'list' === formatSingle ) ||
+			( isMulti && 'list' === formatMulti )
+		) {
+			const formattedValue = ( Object.keys( dataOptions ).length && value )
+				? formatValuesForReactSelectComponent( value, dataOptions, isMulti )
+				: undefined;
+
+			return (
+				<ListSelect
+					htmlAttributes={ htmlAttributes }
+					name={ name }
+					value={ formattedValue }
+					setValue={ setValueWithLimit }
+					options={ dataOptions }
+					fieldItemData={ fieldItemData }
+					// translators: %s is the field label.
+					placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+					isMulti={ isMulti }
+					limit={ parseInt( limit, 10 ) || 0 }
+					defaultIcon={ defaultIcon }
+					showIcon={ toBool( showIcon ) }
+					showViewLink={ toBool( showViewLink ) }
+					showEditLink={ toBool( showEditLink ) }
+					editIframeTitle={ editIframeTitle }
+					readOnly={ !! readOnly }
+				/>
+			);
+		}
+
+		if (
+			( isSingle && 'autocomplete' === formatSingle ) ||
+			( isMulti && 'autocomplete' === formatMulti )
+		) {
+			const formattedValue = formatValuesForReactSelectComponent( value, dataOptions, isMulti );
+
+			return (
+				<Select
+					htmlAttributes={ htmlAttributes }
+					name={ name }
+					options={ dataOptions }
+					value={ formattedValue }
+					// translators: %s is the field label.
+					placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+					isMulti={ isMulti }
+					onChange={ ( newOption ) => {
+						if ( isMulti ) {
+							setValueWithLimit( newOption.map( ( selection ) => selection.value ) );
+						} else {
+							setValueWithLimit( newOption.value );
+						}
+					} }
+					readOnly={ !! readOnly }
+				/>
+			);
 		}
 
 		return (
-			<CheckboxSelect
+			<SimpleSelect
 				htmlAttributes={ htmlAttributes }
 				name={ name }
-				value={ formattedValue }
-				isMulti={ isMulti }
-				setValue={ setValueWithLimit }
+				value={ formatValuesForHTMLSelectElement( value, isMulti ) }
+				setValue={ ( newValue ) => setValueWithLimit( newValue ) }
 				options={ dataOptions }
+				placeholder={ selectText }
+				isMulti={ isMulti }
 				readOnly={ !! readOnly }
 			/>
 		);
-	}
-
-	if (
-		( isSingle && 'list' === formatSingle ) ||
-		( isMulti && 'list' === formatMulti )
-	) {
-		const formattedValue = ( Object.keys( dataOptions ).length && value )
-			? formatValuesForReactSelectComponent( value, dataOptions, isMulti )
-			: undefined;
-
-		return (
-			<ListSelect
-				htmlAttributes={ htmlAttributes }
-				name={ name }
-				value={ formattedValue }
-				setValue={ setValueWithLimit }
-				options={ dataOptions }
-				fieldItemData={ fieldItemData }
-				// translators: %s is the field label.
-				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
-				isMulti={ isMulti }
-				limit={ parseInt( limit, 10 ) || 0 }
-				defaultIcon={ defaultIcon }
-				showIcon={ toBool( showIcon ) }
-				showViewLink={ toBool( showViewLink ) }
-				showEditLink={ toBool( showEditLink ) }
-				readOnly={ !! readOnly }
-			/>
-		);
-	}
-
-	if (
-		( isSingle && 'autocomplete' === formatSingle ) ||
-		( isMulti && 'autocomplete' === formatMulti )
-	) {
-		const formattedValue = formatValuesForReactSelectComponent( value, dataOptions, isMulti );
-
-		return (
-			<Select
-				htmlAttributes={ htmlAttributes }
-				name={ name }
-				options={ dataOptions }
-				value={ formattedValue }
-				// translators: %s is the field label.
-				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
-				isMulti={ isMulti }
-				onChange={ ( newOption ) => {
-					if ( isMulti ) {
-						setValueWithLimit( newOption.map( ( selection ) => selection.value ) );
-					} else {
-						setValueWithLimit( newOption.value );
-					}
-				} }
-				readOnly={ !! readOnly }
-			/>
-		);
-	}
+	};
 
 	return (
-		<SimpleSelect
-			htmlAttributes={ htmlAttributes }
-			name={ name }
-			value={ formatValuesForHTMLSelectElement( value, isMulti ) }
-			setValue={ ( newValue ) => setValueWithLimit( newValue ) }
-			options={ dataOptions }
-			placeholder={ selectText }
-			isMulti={ isMulti }
-			readOnly={ !! readOnly }
-		/>
+		<>
+			{ renderSelectComponent() }
+			{ ( allowAddNew && addNewIframeSrc ) ? (
+				<Button
+					className="pods-related-add-new pods-modal"
+					onClick={ () => setShowAddNewIframe( true ) }
+					isSecondary
+				>
+					{ __( 'Add New', 'pods', ) }
+				</Button>
+			) : null }
+
+			{ showAddNewIframe ? (
+				<IframeModal
+					title={ addNewIframeTitle }
+					iframeSrc={ addNewIframeSrc }
+					onClose={ () => setShowAddNewIframe( false ) }
+				/>
+			) : null }
+		</>
 	);
 };
 

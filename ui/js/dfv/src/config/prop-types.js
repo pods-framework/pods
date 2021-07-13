@@ -60,7 +60,6 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.bool,
 		PropTypes.number,
 	] ),
-	default_icon: PropTypes.string,
 	'depends-on': OBJECT_OR_ARRAY,
 	'depends-on-any': OBJECT_OR_ARRAY,
 	dependency: PropTypes.bool,
@@ -342,6 +341,7 @@ export const FIELD_PROP_TYPE = {
 	phone_repeatable: BOOLEAN_ALL_TYPES,
 
 	// Pick field
+	default_icon: PropTypes.string,
 	fieldItemData: PropTypes.arrayOf(
 		PropTypes.shape( {
 			id: PropTypes.string,

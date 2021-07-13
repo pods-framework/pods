@@ -87,10 +87,11 @@ const Pick = ( props ) => {
 		fieldConfig: {
 			htmlAttr: htmlAttributes = {},
 			readonly: readOnly,
-			fieldItemData: fieldItemData,
+			fieldItemData,
 			data = [],
 			label,
 			name,
+			default_icon: defaultIcon,
 			// pick_allow_add_new: allowAddNew,
 			pick_custom: pickCustomOptions,
 			// pick_display,
@@ -264,10 +265,12 @@ const Pick = ( props ) => {
 				value={ formattedValue }
 				setValue={ setValueWithLimit }
 				options={ dataOptions }
+				fieldItemData={ fieldItemData }
 				// translators: %s is the field label.
 				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
 				isMulti={ isMulti }
 				limit={ parseInt( limit, 10 ) || 0 }
+				defaultIcon={ defaultIcon }
 				showIcon={ toBool( showIcon ) }
 				showViewLink={ toBool( showViewLink ) }
 				showEditLink={ toBool( showEditLink ) }

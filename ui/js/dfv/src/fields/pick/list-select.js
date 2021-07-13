@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import Select from 'react-select';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
@@ -19,21 +19,27 @@ import {
 /**
  * Other Pods dependencies
  */
+import IframeModal from 'dfv/src/components/iframe-modal';
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 import './list-select.scss';
 
 const ListSelectItem = ( {
+	fieldName,
 	itemName,
 	itemId,
 	value,
+	editLink,
+	viewLink,
+	icon,
 	removeItem,
 	isRemovable,
-	isViewable,
-	isEditable,
 	moveUp,
 	moveDown,
 } ) => {
+	const isDashIcon = /^dashicons/.test( icon );
+	const [ showEditModal, setShowEditModal ] = useState( false );
+
 	return (
 		<li className="pods-dfv-list-item pods-relationship">
 			<input
@@ -74,16 +80,27 @@ const ListSelectItem = ( {
 					/>
 				</li>
 
-				{ /*
-				@todo icon logic, see:
-				https://github.com/pods-framework/pods/blob/main/ui/js/pods-dfv/_src/pick/views/list-item.html#L16-L32
-				*/ }
+				{ icon ? (
+					<li className="pods-dfv-list-col pods-dfv-list-icon">
+						{ isDashIcon ? (
+							<span
+								className={ `pinkynail dashicons ${ icon }` }
+							/>
+						) : (
+							<img
+								className="pinkynail"
+								src={ icon }
+								alt="Icon"
+							/>
+						) }
+					</li>
+				) : null }
 
 				<li className="pods-dfv-list-col pods-dfv-list-name">
 					{ value.label }
 				</li>
 
-				{ isRemovable && (
+				{ isRemovable ? (
 					<li className="pods-dfv-list-col pods-dfv-list-remove">
 						<a
 							href="#remove"
@@ -93,45 +110,62 @@ const ListSelectItem = ( {
 							{ __( 'Deselect', 'pods' ) }
 						</a>
 					</li>
-				) }
+				) : null }
 
-				{ isViewable && (
+				{ viewLink ? (
 					<li className="pods-dfv-list-col pods-dfv-list-link">
-						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 						<a
-							href="#" // @todo
+							href={ viewLink }
 							title={ __( 'View', 'pods' ) }
 							target="_blank"
+							rel="noreferrer"
 						>
 							{ __( 'View', 'pods' ) }
 						</a>
 					</li>
-				) }
+				) : null }
 
-				{ isEditable && (
+				{ editLink ? (
 					<li className="pods-dfv-list-col pods-dfv-list-edit">
-						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 						<a
-							href="#" // @todo
+							href={ editLink }
 							title={ __( 'Edit', 'pods' ) }
 							target="_blank"
+							rel="noreferrer"
+							onClick={ ( event ) => {
+								event.preventDefault();
+								setShowEditModal( true );
+							} }
 						>
 							{ __( 'Edit', 'pods' ) }
 						</a>
 					</li>
-				) }
+				) : null }
 			</ul>
+
+			{ showEditModal ? (
+				<IframeModal
+					title={ `${ fieldName }: Edit` }
+					iframeSrc={ editLink }
+					onClose={ () => setShowEditModal( false ) }
+				/>
+
+			) : null }
 		</li>
 	);
 };
 
 ListSelectItem.propTypes = {
+	fieldName: PropTypes.string.isRequired,
 	itemName: PropTypes.string.isRequired,
 	itemId: PropTypes.string.isRequired,
 	value: PropTypes.shape( {
 		label: PropTypes.string.isRequired,
 		value: PropTypes.string.isRequired,
 	} ),
+	editLink: PropTypes.string,
+	viewLink: PropTypes.string,
+	icon: PropTypes.string,
 	moveUp: PropTypes.func,
 	moveDown: PropTypes.func,
 	removeItem: PropTypes.func.isRequired,
@@ -144,11 +178,13 @@ const ListSelect = ( {
 	name,
 	value,
 	options,
+	fieldItemData,
 	setValue,
 	placeholder,
 	isMulti,
 	limit,
-	// showIcon,
+	defaultIcon,
+	showIcon,
 	showViewLink,
 	showEditLink,
 	readOnly = false,
@@ -219,17 +255,27 @@ const ListSelect = ( {
 							const itemName = isMulti ? `${ name }[${ index }]` : name;
 							const itemId = isMulti ? `${ name }[${ index }]` : name;
 
+							// There may be additional data in an object from the fieldItemData
+							// array.
+							const moreData = fieldItemData.find(
+								( item ) => item?.id === valueItem.value
+							);
+
+							const icon = showIcon ? ( moreData?.icon || defaultIcon ) : undefined;
+
 							return (
 								<ListSelectItem
 									key={ `${ name }-${ index }` }
+									fieldName={ name }
 									itemName={ itemName }
 									itemId={ itemId }
 									value={ valueItem }
 									removeItem={ () => removeValueAtIndex( index ) }
 									isDraggable={ ! readOnly && ( 1 !== limit ) }
 									isRemovable={ ! readOnly }
-									isViewable={ showViewLink }
-									isEditable={ ! readOnly && showEditLink }
+									editLink={ ! readOnly && showEditLink ? moreData?.edit_link : undefined }
+									viewLink={ showViewLink ? moreData?.link : undefined }
+									icon={ icon }
 									moveUp={
 										( ! readOnly && index !== 0 )
 											? () => swapItems( index, index - 1 )
@@ -271,9 +317,13 @@ ListSelect.propTypes = {
 	] ),
 	setValue: PropTypes.func.isRequired,
 	options: PICK_OPTIONS.isRequired,
+	fieldItemData: PropTypes.arrayOf(
+		PropTypes.any,
+	),
 	placeholder: PropTypes.string.isRequired,
 	isMulti: PropTypes.bool.isRequired,
 	limit: PropTypes.number.isRequired,
+	defaultIcon: PropTypes.string,
 	showIcon: PropTypes.bool.isRequired,
 	showViewLink: PropTypes.bool.isRequired,
 	showEditLink: PropTypes.bool.isRequired,

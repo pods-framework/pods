@@ -342,6 +342,16 @@ export const FIELD_PROP_TYPE = {
 	phone_repeatable: BOOLEAN_ALL_TYPES,
 
 	// Pick field
+	fieldItemData: PropTypes.arrayOf(
+		PropTypes.shape( {
+			id: PropTypes.string,
+			icon: PropTypes.string,
+			name: PropTypes.string,
+			edit_link: PropTypes.string,
+			link: PropTypes.string,
+			selected: BOOLEAN_ALL_TYPES,
+		} ),
+	),
 	pick_ajax: BOOLEAN_ALL_TYPES,
 	pick_allow_add_new: BOOLEAN_ALL_TYPES,
 	pick_custom: PropTypes.string,

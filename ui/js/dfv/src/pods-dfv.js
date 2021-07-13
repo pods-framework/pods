@@ -64,8 +64,13 @@ window.PodsDFV = {
 				}
 			}
 
+			// Move other data into the field config so we have less to pass around.
 			cleanedFieldConfig.htmlAttr = data.htmlAttr || {};
 			cleanedFieldConfig.fieldEmbed = data.fieldEmbed || false;
+
+			if ( data.fieldItemData ) {
+				cleanedFieldConfig.fieldItemData = data.fieldItemData;
+			}
 
 			return {
 				directRender,

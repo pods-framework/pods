@@ -1,4 +1,3 @@
-// @todo add tests
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
@@ -88,6 +87,7 @@ const Pick = ( props ) => {
 		fieldConfig: {
 			htmlAttr: htmlAttributes = {},
 			readonly: readOnly,
+			fieldItemData: fieldItemData,
 			data = [],
 			label,
 			name,
@@ -130,66 +130,7 @@ const Pick = ( props ) => {
 	// or we may need to do more work to break them apart or load them by the API.
 	const [ dataOptions, setDataOptions ] = useState( formatDataFromProp( data ) );
 
-	const setValueWithLimit = ( newValue ) => {
-		// We don't need to worry about limits if this isn't a multi-select field.
-		if ( isSingle ) {
-			setValue( newValue );
-
-			setHasBlurred( true );
-
-			return;
-		}
-
-		// Filter out empty values that could have gotten passed in.
-		const filteredNewValues = newValue.filter( ( item ) => !! item );
-
-		// If no limit is set, set the value.
-		const numericLimit = parseInt( limit, 10 ) || 0;
-
-		if ( isNaN( numericLimit ) || 0 === numericLimit || -1 === numericLimit ) {
-			setHasBlurred( true );
-
-			setValue( filteredNewValues );
-			return;
-		}
-
-		// If we're trying to set more items than the limit allows, just return.
-		if ( filteredNewValues.length > numericLimit ) {
-			return;
-		}
-
-		setValue( filteredNewValues );
-
-		setHasBlurred( true );
-	};
-
 	useEffect( () => {
-		// const loadAjaxOptions = async () => {
-			// const url = window.ajaxurl + '?pods_ajax=1';
-
-			// const ajaxData = {
-			// 	_wpnonce: ajaxData._wpnonce,
-			// 	action: 'pods_relationship',
-			// 	method: 'select2',
-			// 	pod: ajaxData.pod,
-			// 	field: ajaxData.field,
-			// 	uri: ajaxData.uri,
-			// 	id: ajaxData.id,
-			// 	query: params.term,
-			// };
-
-			// const results = await fetch(
-			// 	url,
-			// 	{
-			// 		method: 'POST',
-			// 		headers: {
-			// 			'Content-Type': 'application/json',
-			// 		},
-			// 		body: JSON.stringify( data ),
-			// 	}
-			// );
-		// };
-
 		switch ( pickObject ) {
 			case 'custom-simple':
 				const unsplitOptions = pickCustomOptions.split( '\n' );
@@ -239,6 +180,36 @@ const Pick = ( props ) => {
 				break;
 		}
 	}, [ pickObject ] );
+
+	const setValueWithLimit = ( newValue ) => {
+		// We don't need to worry about limits if this isn't a multi-select field.
+		if ( isSingle ) {
+			setValue( newValue );
+			setHasBlurred( true );
+
+			return;
+		}
+
+		// Filter out empty values that could have gotten passed in.
+		const filteredNewValues = newValue.filter( ( item ) => !! item );
+
+		// If no limit is set, set the value.
+		const numericLimit = parseInt( limit, 10 ) || 0;
+
+		if ( isNaN( numericLimit ) || 0 === numericLimit || -1 === numericLimit ) {
+			setHasBlurred( true );
+			setValue( filteredNewValues );
+			return;
+		}
+
+		// If we're trying to set more items than the limit allows, just return.
+		if ( filteredNewValues.length > numericLimit ) {
+			return;
+		}
+
+		setValue( filteredNewValues );
+		setHasBlurred( true );
+	};
 
 	if ( ! isMulti && 'radio' === formatSingle ) {
 		return (

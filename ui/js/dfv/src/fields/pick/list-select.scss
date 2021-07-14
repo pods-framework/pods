@@ -5,6 +5,8 @@
 	padding-left: 1px;
 
 	.pods-list-select-move-buttons__button {
+		background: transparent;
+		border: none;
 		height: 16px;
 		padding: 0;
 	}
@@ -12,4 +14,8 @@
 	.pods-list-select-move-buttons__button--disabled {
 		opacity: 0.3;
 	}
+}
+
+.pods-dfv-list-meta .pods-dfv-list-name {
+	border-bottom: none;
 }

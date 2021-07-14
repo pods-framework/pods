@@ -199,7 +199,9 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	window.PodsDFV.init();
 
 	// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
+	// @todo this should be split into its own script?
 	if ( window.PodsDFV.isModalWindow() && window.PodsDFV.isGutenbergEditorLoaded() ) {
-		PodsGbModalListener.init();
+		console.log( 'is modal window, would load the listeners here' );
+		// PodsGbModalListener.init();
 	}
 } );

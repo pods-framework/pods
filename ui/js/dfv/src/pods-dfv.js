@@ -64,8 +64,13 @@ window.PodsDFV = {
 				}
 			}
 
+			// Move other data into the field config so we have less to pass around.
 			cleanedFieldConfig.htmlAttr = data.htmlAttr || {};
 			cleanedFieldConfig.fieldEmbed = data.fieldEmbed || false;
+
+			if ( data.fieldItemData ) {
+				cleanedFieldConfig.fieldItemData = data.fieldItemData;
+			}
 
 			return {
 				directRender,
@@ -194,7 +199,9 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	window.PodsDFV.init();
 
 	// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
+	// @todo this should be split into its own script?
 	if ( window.PodsDFV.isModalWindow() && window.PodsDFV.isGutenbergEditorLoaded() ) {
-		PodsGbModalListener.init();
+		console.log( 'is modal window, would load the listeners here' );
+		// PodsGbModalListener.init();
 	}
 } );

@@ -60,7 +60,6 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.bool,
 		PropTypes.number,
 	] ),
-	default_icon: PropTypes.string,
 	'depends-on': OBJECT_OR_ARRAY,
 	'depends-on-any': OBJECT_OR_ARRAY,
 	dependency: PropTypes.bool,
@@ -342,6 +341,27 @@ export const FIELD_PROP_TYPE = {
 	phone_repeatable: BOOLEAN_ALL_TYPES,
 
 	// Pick field
+	default_icon: PropTypes.string,
+	fieldItemData: PropTypes.oneOfType(
+		[
+			PropTypes.arrayOf(
+				PropTypes.oneOfType(
+					[
+						PropTypes.string,
+						PropTypes.shape( {
+							id: PropTypes.string,
+							icon: PropTypes.string,
+							name: PropTypes.string,
+							edit_link: PropTypes.string,
+							link: PropTypes.string,
+							selected: BOOLEAN_ALL_TYPES,
+						} ),
+					],
+				),
+			),
+			PropTypes.object,
+		]
+	),
 	pick_ajax: BOOLEAN_ALL_TYPES,
 	pick_allow_add_new: BOOLEAN_ALL_TYPES,
 	pick_custom: PropTypes.string,
@@ -374,7 +394,7 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.arrayOf( PropTypes.string ),
 	] ),
 	pick_select_text: PropTypes.string,
-	pick_show_edit_link: NUMBER_OR_NUMBER_AS_STRING,
+	pick_show_edit_link: BOOLEAN_ALL_TYPES,
 	pick_show_icon: NUMBER_OR_NUMBER_AS_STRING,
 	pick_show_view_link: NUMBER_OR_NUMBER_AS_STRING,
 	pick_table: PropTypes.string,

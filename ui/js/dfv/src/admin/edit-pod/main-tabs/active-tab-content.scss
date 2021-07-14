@@ -82,7 +82,8 @@
 }
 
 .pods-edit-pod-manage-field .pods-pick-values ul {
-	overflow: auto;
+	// overflow: auto;
+	overflow: visible;
 	margin: 5px 0;
 }
 

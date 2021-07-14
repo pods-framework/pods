@@ -880,9 +880,9 @@ class PodsInit {
 		$this->maybe_register_handlebars();
 
 		// As of 2.7 we combine styles to just three .css files
-		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', array(), PODS_VERSION );
+		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', array( 'wp-components' ), PODS_VERSION );
 		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', array(), PODS_VERSION );
-		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', array(), PODS_VERSION );
+		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', array( 'wp-components' ), PODS_VERSION );
 
 		/**
 		 * Filter to enabled loading of the DFV script on frontend.

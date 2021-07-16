@@ -108,6 +108,21 @@ class PodsField_Text extends PodsField {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function is_empty( $value ) {
+		$is_empty = false;
+
+		$value = (string) $value;
+
+		if ( '' === $value ) {
+			$is_empty = true;
+		}
+
+		return $is_empty;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
@@ -165,7 +180,7 @@ class PodsField_Text extends PodsField {
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			if ( 0 < strlen( (string) $value ) && '' === $check ) {
+			if ( $this->is_empty( $check ) ) {
 				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}

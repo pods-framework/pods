@@ -360,10 +360,6 @@ class PodsData {
 					$this->pod_data = new Pod( $table );
 				}
 			}
-
-			if ( $this->pod_data ) {
-				$this->pod_data->set_table_info( $table );
-			}
 		}
 	}
 

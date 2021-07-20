@@ -1798,55 +1798,13 @@ class PodsUI {
 			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 		}
 
-		$icon_style = '';
-		if ( false !== $this->icon ) {
-			$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $this->icon ) . ');"';
-		}
-		?>
-		<div class="wrap pods-ui">
-			<div id="icon-edit-pages" class="icon32"<?php echo $icon_style; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped ?>>
-				<br />
-			</div>
-			<h2>
-				<?php
-				echo wp_kses_post( $this->do_template( $duplicate ? $this->header['duplicate'] : $this->header['edit'] ) );
+		$params = [
+				'ui'        => $this,
+				'duplicate' => $duplicate
+		];
 
-				if ( ! in_array( 'add', $this->actions_disabled ) && ! in_array( 'add', $this->actions_hidden ) && ! $this->restricted( 'add' ) ) {
-					$link = pods_query_arg(
-						array(
-							$this->num_prefix . 'action' . $this->num => 'add',
-							$this->num_prefix . 'id' . $this->num     => '',
-							$this->num_prefix . 'do' . $this->num     => '',
-						), self::$allowed, $this->exclusion()
-					);
+		pods_view( PODS_DIR . 'ui/admin/ui/edit.php', $params );
 
-					if ( ! empty( $this->action_links['add'] ) ) {
-						$link = $this->action_links['add'];
-					}
-					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->heading['add'] ); ?></a>
-					<?php
-				} elseif ( ! in_array( 'manage', $this->actions_disabled ) && ! in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
-					$link = pods_query_arg(
-						array(
-							$this->num_prefix . 'action' . $this->num => 'manage',
-							$this->num_prefix . 'id' . $this->num     => '',
-						), self::$allowed, $this->exclusion()
-					);
-
-					if ( ! empty( $this->action_links['manage'] ) ) {
-						$link = $this->action_links['manage'];
-					}
-					?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading['manage'] ); ?></a>
-					<?php
-				}//end if
-				?>
-			</h2>
-
-			<?php $this->form( false, $duplicate ); ?>
-		</div>
-		<?php
 	}
 
 	/**

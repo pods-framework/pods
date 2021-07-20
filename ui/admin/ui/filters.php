@@ -51,7 +51,7 @@ if ( ! empty( $filters ) ) {
 									array(
 											$ui->num_prefix . 'view' . $ui->num => $view,
 											$ui->num_prefix . 'pg' . $ui->num   => '',
-									), self::$allowed, $ui->exclusion()
+									), $ui::$allowed, $ui->exclusion()
 							);
 
 							if ( $ui->view == $view ) {

@@ -3073,7 +3073,7 @@ class PodsUI {
 		$help_link   = $this->do_hook( 'screen_meta_help_link', $help_link );
 		if ( 0 < strlen( $screen_html ) || 0 < strlen( $screen_link ) || 0 < strlen( $help_html ) || 0 < strlen( $help_link ) ) {
 			$ui = $this;
-			pods_view( PODS_DIR . 'ui/admin/screen-meta.php', compact( array_keys( get_defined_vars() ) ) );
+			pods_view( PODS_DIR . 'ui/admin/ui/screen-meta.php', compact( array_keys( get_defined_vars() ) ) );
 		}//end if
 	}
 
@@ -3163,7 +3163,7 @@ class PodsUI {
 
 		if ( false !== $this->pagination ) {
 			$ui = $this;
-			pods_view( PODS_DIR . 'ui/admin/pagination.php', compact( array_keys( get_defined_vars() ) ) );
+			pods_view( PODS_DIR . 'ui/admin/ui/pagination.php', compact( array_keys( get_defined_vars() ) ) );
 		}//end if
 	}
 

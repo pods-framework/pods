@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $ui PodsUI
+ */
 if ( true === $reorder && ! in_array( 'reorder', $ui->actions_disabled ) && false !== $ui->reorder['on'] ) {
 
 ?>

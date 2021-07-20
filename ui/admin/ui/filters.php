@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $ui PodsUI
+ */
 wp_enqueue_script( 'thickbox' );
 wp_enqueue_style( 'thickbox' );
 

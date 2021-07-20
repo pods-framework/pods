@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var $ui PodsUI
+ */
+?>
 <div id="pods-ui-posts-filter-popup" class="pods-hidden">
 	<form action="" method="get" class="pods-ui-posts-filter-popup">
 		<h2><?php _e( 'Advanced Filters', 'pods' ); ?></h2>

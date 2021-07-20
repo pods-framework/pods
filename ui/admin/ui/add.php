@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $ui PodsUI
+ */
 $icon_style = '';
 if ( false !== $ui->icon ) {
 	$icon_style = ' style="background-position:0 0;background-size:100%;background-image:url(' . esc_url( $ui->icon ) . ');"';

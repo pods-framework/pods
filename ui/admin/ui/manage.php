@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $ui PodsUI
+ */
 $ui->screen_meta();
 
 wp_enqueue_script( 'jquery' );

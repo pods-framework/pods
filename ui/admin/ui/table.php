@@ -36,7 +36,7 @@ echo esc_url(
 	<?php
 		}//end if
 			$table_fields = $ui->fields['manage'];
-		if ( true === $reorder && ! in_array( 'reorder', $ui->actions_disabled ) && false !== $ui->reorder['on'] ) {
+		if ( true === $reorder && ! in_array( 'reorder', $ui->actions_disabled ) && false !== $ui->reorder['on'] && ! empty( $ui->fields['reorder'] ) ) {
 			$table_fields = $ui->fields['reorder'];
 		}
 		if ( false === $table_fields || empty( $table_fields ) ) {

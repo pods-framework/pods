@@ -117,7 +117,10 @@ class PodsField_File extends PodsField {
 				'label'       => __( 'Custom upload directory', 'pods' ),
 				'help'        => __( 'Magic tags are allowed for this field. The path is relative to the /wp-content/uploads/ folder on your site.', 'pods' ),
 				'placeholder' => 'my-custom-folder',
-				'depends-on'  => array( static::$type . '_upload_dir' => 'uploads' ),
+				'depends-on'  => array(
+					static::$type . '_uploader'   => 'plupload',
+					static::$type . '_upload_dir' => 'uploads',
+				),
 				/**
 				 * Allow filtering the custom upload directory used.
 				 *

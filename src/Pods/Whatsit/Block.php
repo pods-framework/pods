@@ -135,6 +135,12 @@ class Block extends Pod {
 			$block_args['render_template_path'] = $this->get_arg( 'render_template', $this->get_arg( 'render_template_path' ) );
 		}
 
+		$other_args = (array) $this->get_arg( 'raw_args', [] );
+
+		if ( $other_args ) {
+			$block_args = array_merge( $block_args, $other_args );
+		}
+
 		return $block_args;
 	}
 

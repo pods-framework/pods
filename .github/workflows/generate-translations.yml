@@ -9,5 +9,9 @@ jobs:
       uses: strangerstudios/action-wp-pot-po-mo-generator@main
       with:
         generate_pot: 1
+        generate_po: 0
+        generate_mo: 0
+        generate_lang_packs: 0
+        merge_changes: 0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

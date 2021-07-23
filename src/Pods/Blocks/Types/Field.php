@@ -2,6 +2,8 @@
 
 namespace Pods\Blocks\Types;
 
+use WP_Block;
+
 /**
  * Field block functionality class.
  *
@@ -41,6 +43,10 @@ class Field extends Base {
 				'pods',
 				'field',
 				'value',
+			],
+			'uses_context'    => [
+				'postType',
+				'postId',
 			],
 		];
 	}
@@ -86,11 +92,13 @@ class Field extends Base {
 	 *
 	 * @since TBD
 	 *
-	 * @param array $attributes
+	 * @param array         $attributes The block attributes.
+	 * @param string        $content    The block default content.
+	 * @param WP_Block|null $block      The block instance.
 	 *
-	 * @return string
+	 * @return string The block content to render.
 	 */
-	public function render( $attributes = [] ) {
+	public function render( $attributes = [], $content = '', $block = null ) {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'trim', $attributes );
 
@@ -109,7 +117,15 @@ class Field extends Base {
 			$attributes['use_current'] = true;
 		}
 
-		if (
+		if ( $attributes['use_current'] && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
+			$attributes['name'] = $block->context['postType'];
+
+			if ( ! empty( $block->context['postId'] ) ) {
+				$attributes['id'] = $block->context['postId'];
+
+				unset( $attributes['use_current'] );
+			}
+		} elseif (
 			! empty( $attributes['use_current'] )
 			&& ! empty( $_GET['post_id'] )
 			&& (

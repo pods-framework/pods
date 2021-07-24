@@ -169,7 +169,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						continue;
 					}
 
-					echo PodsForm::field( $field_prefix . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
+					echo PodsForm::field( $field_prefix . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden', $field, $pod, $pod->id() );
 				}
 
 				/**

@@ -10,8 +10,8 @@ These are the versions we support security updates for. If a problem is found in
 | 2.8.x   | :white_check_mark:      |
 | 2.7.x   | :white_check_mark:      |
 | 2.6.x   | :white_check_mark:      |
-| <2.6.x  | :x: Only if major issue |
-| 1.x     | :x: EOL                 |
+| <2.6.x  | :x: - Only if major issue |
+| 1.x     | :x: - EOL                 |
 
 ## Reporting a Vulnerability
 

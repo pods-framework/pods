@@ -193,6 +193,16 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 = 2.7.29 - August 4th, 2021 =
 
 * Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, reported by Muhammad Daffa via WPScan)
+* Friends of Pods: Updated CTA text about our 2021 donor goals. (@sc0ttkclark)
+* Added: Support for Timezones in datetime / time fields. #6042 (@JoryHogeveen)
+* Added: Support for Pantheon WP Native Sessions plugin. (@sc0ttkclark)
+* Enhancement: Optimized the PNG image assets using PNG8+Alpha with ImageAlpha and ImageOptim. #6028 (@lowwebtech)
+* Fixed: Hidden fields now properly submit correctly. (@sc0ttkclark)
+* Fixed: Post type `has_archive` no gets set to a false properly when disabled. #6069 (@JoryHogeveen)
+* Fixed: Resolve PHP `strlen()`` warnings when validating text values being saved. #6062 (@pd-cm, @sc0ttkclark, @JoryHogeveen)
+* Fixed: Sorting URLs in `PodsUI` include `post_type` and `taxonomy` when Advanced Content Types are set to be underneath a Post Type's top level menu. #6040 (@JoryHogeveen)
+* Fixed: Fallback to the manage fields in `PodsUI` for reordering when reorder fields are not overridden. #6058 (@JoryHogeveen)
+* Fixed: Depend on plupload when showing custom upload directory option for file fields. (@JoryHogeveen)
 
 = 2.7.28 - May 20th, 2021 =
 

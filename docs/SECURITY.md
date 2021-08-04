@@ -4,13 +4,14 @@
 
 These are the versions we support security updates for. If a problem is found in a covered version that existed in previous versions, all previously affected major versions will receive a fix as well.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| Current | :white_check_mark: |
-| 2.8.0   | :white_check_mark: |
-| 2.7.0   | :white_check_mark: |
-| 2.6.0   | :white_check_mark: |
-| <2.6.0  | :x:                |
+| Version | Supported               |
+| ------- | ----------------------- |
+| Current | :white_check_mark:      |
+| 2.8.x   | :white_check_mark:      |
+| 2.7.x   | :white_check_mark:      |
+| 2.6.x   | :white_check_mark:      |
+| <2.6.x  | :x: - Only if major issue |
+| 1.x     | :x: - EOL                 |
 
 ## Reporting a Vulnerability
 

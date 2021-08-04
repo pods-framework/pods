@@ -1230,9 +1230,16 @@ class PodsAdmin {
 						<?php echo esc_attr( $progress_width ); ?>%
 					</div>
 				</div>
+				<p class="pods-admin_friends-callout_text"><?php
+					// translators: %s: Pods Pro by SKCDEV link.
+					printf(
+						esc_html__( 'You can also check out the new add-ons available from %s which has partnered with Friends of Pods to bring in more donations.', 'pods' ),
+						'<a href="https://pods.io/2020/12/31/introducing-pods-pro-by-skcdev/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2021">Pods Pro by SKCDEV</a>'
+					);
+				?></p>
 				<div class="pods-admin_friends-callout_button-group">
-					<a href="https://friends.pods.io/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2020" class="pods-admin_friends-callout_button"><?php esc_html_e( 'Learn More', 'pods' ); ?></a>
-					<a href="https://friends.pods.io/membership-levels/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2020" class="pods-admin_friends-callout_button--join"><?php esc_html_e( 'Join Now', 'pods' ); ?></a>
+					<a href="https://friends.pods.io/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2021" class="pods-admin_friends-callout_button"><?php esc_html_e( 'Learn More', 'pods' ); ?></a>
+					<a href="https://friends.pods.io/donations/become-a-friend/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2021" class="pods-admin_friends-callout_button--join"><?php esc_html_e( 'Join Now', 'pods' ); ?></a>
 				</div>
 			</div>
 		</div>

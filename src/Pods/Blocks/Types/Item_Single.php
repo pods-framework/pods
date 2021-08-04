@@ -128,15 +128,17 @@ class Item_Single extends Base {
 			return '';
 		}
 
+		// Use current if no pod name / slug provided.
 		if ( empty( $attributes['name'] ) || empty( $attributes['slug'] ) ) {
 			$attributes['use_current'] = true;
 		}
 
 		if ( $attributes['use_current'] && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
+			// Detect post type / ID from context.
 			$attributes['name'] = $block->context['postType'];
 
 			if ( ! empty( $block->context['postId'] ) ) {
-				$attributes['id'] = $block->context['postId'];
+				$attributes['slug'] = $block->context['postId'];
 
 				unset( $attributes['use_current'] );
 			}

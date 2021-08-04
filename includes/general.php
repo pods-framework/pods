@@ -2746,15 +2746,19 @@ function pods_session_start() {
 	} elseif ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
 		// Allow for bypassing Pods session starting.
 		return false;
-	} elseif ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
-		// Sessions are disabled.
-		return false;
-	} elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
-		// Allow for non-file based sessions, like Memcache.
-		// This is OK, but we don't want to check if file_exists on next statement.
-	} elseif ( empty( $save_path ) || ! @file_exists( $save_path ) || ! is_writable( $save_path ) ) {
-		// Check if session path exists and can be written to, avoiding PHP fatal errors.
-		return false;
+	} elseif ( ! defined( 'PANTHEON_SESSIONS_ENABLED' ) || ! PANTHEON_SESSIONS_ENABLED ) {
+		// We aren't using Pantheon WP Native Sessions plugin so let's check if the normal session will work.
+
+		if ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
+			// Sessions are disabled.
+			return false;
+		} elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
+			// Allow for non-file based sessions, like Memcache.
+			// This is OK, but we don't want to check if file_exists on next statement.
+		} elseif ( empty( $save_path ) || ! @file_exists( $save_path ) || ! is_writable( $save_path ) ) {
+			// Check if session path exists and can be written to, avoiding PHP fatal errors.
+			return false;
+		}
 	}
 
 	// Check if session is already set.

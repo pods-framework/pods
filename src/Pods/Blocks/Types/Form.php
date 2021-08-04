@@ -42,6 +42,10 @@ class Form extends Base {
 				'form',
 				'input',
 			],
+			'uses_context'    => [
+				'postType',
+				'postId',
+			],
 		];
 	}
 
@@ -105,15 +109,17 @@ class Form extends Base {
 	}
 
 	/**
-	 * Since we are dealing with a Dynamic type of Block we need a PHP method to render it
+	 * Since we are dealing with a Dynamic type of Block we need a PHP method to render it.
 	 *
 	 * @since TBD
 	 *
-	 * @param array $attributes
+	 * @param array         $attributes The block attributes.
+	 * @param string        $content    The block default content.
+	 * @param WP_Block|null $block      The block instance.
 	 *
-	 * @return string
+	 * @return string The block content to render.
 	 */
-	public function render( $attributes = [] ) {
+	public function render( $attributes = [], $content = '', $block = null ) {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'trim', $attributes );
 
@@ -124,6 +130,15 @@ class Form extends Base {
 				esc_html__( 'No preview is available for this Pods Form, you will see it when you view or preview this on the front of your site.', 'pods' ),
 				'<img src="' . esc_url( PODS_URL . 'ui/images/pods-form-placeholder.svg' ) . '" alt="' . esc_attr__( 'Generic placeholder image depicting a common form layout', 'pods' ) . '" class="pods-block-placeholder_image">'
 			);
+		}
+
+		// Detect post type / ID from context.
+		if ( empty( $attributes['name'] ) && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
+			$attributes['name'] = $block->context['postType'];
+
+			if ( isset( $attributes['slug'] ) && '{@post.ID}' === $attributes['slug'] && ! empty( $block->context['postId'] ) ) {
+				$attributes['slug'] = $block->context['postId'];
+			}
 		}
 
 		return pods_shortcode_form( $attributes );

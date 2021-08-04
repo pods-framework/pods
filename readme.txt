@@ -205,7 +205,11 @@ Now you can add multiple field groups to your Pods using the brand new Edit Pod 
 Our Edit Pod screen is powered on the technical side by our all new React form interfaces, tooltips, and our new Pods Admin REST API endpoints.
 
 * Feature: REST API endpoints are now available to create/edit various objects: Pods, Pod Groups, and Pod Fields.
-* Feature: WP-CLI commands that mirror the REST API endpoints we have.    
+* Feature: WP-CLI commands that mirror the REST API endpoints we have.
+
+= 2.7.29 - August 4th, 2021 =
+
+* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, @)
 
 = 2.7.28 - May 20th, 2021 =
 
@@ -732,6 +736,12 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 **Known Issues with this Release:**
 
 * Relationships to Taxonomy have Flexible Relationships disabled as the input screen for Taxonomy was not able to be accessed in an iFrame. We’re working on this for a future release.
+
+= 2.6.11.2 - August 4th, 2021 =
+* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, @)
+
+= 2.6.11.1 - June 4th, 2020 =
+* Security: Remove deprecated usage of escapeMarkup in Select2 (@sc0ttkclark, @miha.jirov)
 
 = 2.6.11 - September 20th 2017 =
 * Fixed: WordPress 4.8.2 introduced a breaking change that no longer correctly prepared number/currency queries. It did not introduce a vulnerability but only produced Database errors.

@@ -190,6 +190,10 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.29 - August 4th, 2021 =
+
+* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, @)
+
 = 2.7.28 - May 20th, 2021 =
 
 * Added: New upload directory option for File fields using Plupload that lets you choose to customize which directory the files end up in. #6021 (@JoryHogeveen)
@@ -726,6 +730,12 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 **Known Issues with this Release:**
 
 * Relationships to Taxonomy have Flexible Relationships disabled as the input screen for Taxonomy was not able to be accessed in an iFrame. We’re working on this for a future release.
+
+= 2.6.11.2 - August 4th, 2021 =
+* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, @)
+
+= 2.6.11.1 - June 4th, 2020 =
+* Security: Remove deprecated usage of escapeMarkup in Select2 (@sc0ttkclark, @miha.jirov)
 
 = 2.6.11 - September 20th 2017 =
 * Fixed: WordPress 4.8.2 introduced a breaking change that no longer correctly prepared number/currency queries. It did not introduce a vulnerability but only produced Database errors.

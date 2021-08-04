@@ -1163,8 +1163,8 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 
 	if ( empty( $pods_query_args ) ) {
 		$pods_query_args = [
-			'allowed'  => [],
-			'excluded' => [],
+			'allowed'  => array(),
+			'excluded' => array(),
 		];
 	}
 

@@ -3,9 +3,9 @@ Contributors: sc0ttkclark, keraweb, jimtrue, pglewis, quasel, jamesgol, ramoonus
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.5
-Tested up to: 5.7.2
+Tested up to: 5.8
 Requires PHP: 5.3
-Stable tag: 2.7.28
+Stable tag: 2.7.29
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,20 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.29 - August 4th, 2021 =
+
+* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, reported by Muhammad Daffa via WPScan)
+* Friends of Pods: Updated CTA text about our 2021 donor goals. (@sc0ttkclark)
+* Added: Support for Timezones in datetime / time fields. #6042 (@JoryHogeveen)
+* Added: Support for Pantheon WP Native Sessions plugin. (@sc0ttkclark)
+* Enhancement: Optimized the PNG image assets using PNG8+Alpha with ImageAlpha and ImageOptim. #6028 (@lowwebtech)
+* Fixed: Hidden fields now properly submit correctly. (@sc0ttkclark)
+* Fixed: Post type `has_archive` no gets set to a false properly when disabled. #6069 (@JoryHogeveen)
+* Fixed: Resolve PHP `strlen()`` warnings when validating text values being saved. #6062 (@pd-cm, @sc0ttkclark, @JoryHogeveen)
+* Fixed: Sorting URLs in `PodsUI` include `post_type` and `taxonomy` when Advanced Content Types are set to be underneath a Post Type's top level menu. #6040 (@JoryHogeveen)
+* Fixed: Fallback to the manage fields in `PodsUI` for reordering when reorder fields are not overridden. #6058 (@JoryHogeveen)
+* Fixed: Depend on plupload when showing custom upload directory option for file fields. (@JoryHogeveen)
 
 = 2.7.28 - May 20th, 2021 =
 
@@ -726,6 +740,12 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 **Known Issues with this Release:**
 
 * Relationships to Taxonomy have Flexible Relationships disabled as the input screen for Taxonomy was not able to be accessed in an iFrame. We’re working on this for a future release.
+
+= 2.6.11.2 - August 4th, 2021 =
+* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, reported by Muhammad Daffa via WPScan)
+
+= 2.6.11.1 - June 4th, 2020 =
+* Security: Remove deprecated usage of escapeMarkup in Select2 (@sc0ttkclark, @miha.jirov)
 
 = 2.6.11 - September 20th 2017 =
 * Fixed: WordPress 4.8.2 introduced a breaking change that no longer correctly prepared number/currency queries. It did not introduce a vulnerability but only produced Database errors.

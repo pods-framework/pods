@@ -209,7 +209,7 @@ Our Edit Pod screen is powered on the technical side by our all new React form i
 
 = 2.7.29 - August 4th, 2021 =
 
-* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, @)
+* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, reported by Muhammad Daffa via WPScan)
 
 = 2.7.28 - May 20th, 2021 =
 
@@ -738,7 +738,7 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 * Relationships to Taxonomy have Flexible Relationships disabled as the input screen for Taxonomy was not able to be accessed in an iFrame. We’re working on this for a future release.
 
 = 2.6.11.2 - August 4th, 2021 =
-* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, @)
+* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, reported by Muhammad Daffa via WPScan)
 
 = 2.6.11.1 - June 4th, 2020 =
 * Security: Remove deprecated usage of escapeMarkup in Select2 (@sc0ttkclark, @miha.jirov)

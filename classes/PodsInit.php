@@ -1936,6 +1936,28 @@ class PodsInit {
 			);
 		}, $labels );
 
+		// Clean up and sanitize all of the labels since WP will take them exactly as is.
+		$labels = array_map( static function( $label ) {
+			/*
+			 * Notes to our future selves:
+			 *
+			 * 1. strip_tags() doesn't remove content within style/script tags
+			 * 2. wp_kses_post() is very heavy
+			 * 3. htmlspecialchars() is not enough on it's own and leaves open JS based issues
+			 * 4. we must use html_entity_decode() to ensure potential unsavory HTML is cleaned up properly
+			 * 5. the below code is safe against double entity attacks
+			 */
+
+			// Ensure we use special characters to prevent further entity exposure.
+			return htmlspecialchars(
+				// Remove HTML tags and strip script/style tag contents.
+				wp_strip_all_tags(
+					// Decode potential entities at the first level to so HTML tags can be removed.
+					htmlspecialchars_decode( $label )
+				)
+			);
+		}, $labels );
+
 		$args['labels'] = $labels;
 
 		return $args;

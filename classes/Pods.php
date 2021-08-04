@@ -665,7 +665,18 @@ class Pods implements Iterator {
 		/** @var string $pod_type The pod object type. */
 		$pod_type = pods_v( 'type', $this->pod_data, '' );
 
-		$is_wp_object = in_array( $pod_type, $wp_object_types, true );
+		$use_meta_fallback = in_array( $pod_type, $wp_object_types, true );
+
+		/**
+		 * Allow hooking in to support getting meta using the meta fallback.
+		 *
+		 * @since TBD
+		 *
+		 * @param bool   $use_meta_fallback Whether to support getting meta using the meta fallback.
+		 * @param string $object_type       The object type.
+		 */
+		$use_meta_fallback = apply_filters( 'pods_field_wp_object_use_meta_fallback', $use_meta_fallback, $pod_type );
+
 
 		if ( in_array( $params->name, $permalink_fields, true ) ) {
 			if ( 0 < strlen( $this->detail_page ) && false === strpos( $params->name, 'permalink' ) ) {
@@ -1002,7 +1013,7 @@ class Pods implements Iterator {
 						pods_no_conflict_on( $pod_type );
 					}
 
-					if ( $is_wp_object ) {
+					if ( $use_meta_fallback ) {
 						$id = $this->id();
 
 						$metadata_type = $pod_type;

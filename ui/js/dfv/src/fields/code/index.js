@@ -9,30 +9,41 @@ import 'codemirror/lib/codemirror.css';
 import './code.scss';
 
 const Code = ( {
+	fieldConfig,
 	setValue,
 	value,
 	setHasBlurred,
-} ) => (
-	<div className="pods-code-field">
-		<CodeMirror
-			value={ value }
-			options={ {
-				lineNumbers: true,
-				matchBrackets: true,
-				mode: 'php',
-				indentUnit: 4,
-				indentWithTabs: false,
-				lineWrapping: true,
-				enterMode: 'keep',
-				tabMode: 'shift',
-			} }
-			onBeforeChange={ ( editor, data, newValue ) => {
-				setValue( newValue );
-			} }
-			onBlur={ () => setHasBlurred() }
-		/>
-	</div>
-);
+} ) => {
+	const { name } = fieldConfig;
+
+	return (
+		<div className="pods-code-field">
+			<input
+				name={ name }
+				type="hidden"
+				value={ value }
+			/>
+
+			<CodeMirror
+				value={ value }
+				options={ {
+					lineNumbers: true,
+					matchBrackets: true,
+					mode: 'php',
+					indentUnit: 4,
+					indentWithTabs: false,
+					lineWrapping: true,
+					enterMode: 'keep',
+					tabMode: 'shift',
+				} }
+				onBeforeChange={ ( editor, data, newValue ) => {
+					setValue( newValue );
+				} }
+				onBlur={ () => setHasBlurred() }
+			/>
+		</div>
+	);
+};
 
 Code.propTypes = {
 	...FIELD_COMPONENT_BASE_PROPS,

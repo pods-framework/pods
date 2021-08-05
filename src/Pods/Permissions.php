@@ -59,11 +59,11 @@ class Permissions {
 		}
 
 		if ( $this->is_input_disallowed( $object ) ) {
-			$permission = false;
+			$user_has_permission = false;
 		} elseif ( $this->is_admin_only( $object ) ) {
-			$permission = $this->is_user_an_admin();
+			$user_has_permission = $this->is_user_an_admin();
 		} else {
-			$permission = (
+			$user_has_permission = (
 				(
 					! $this->is_logged_in_only( $object )
 					|| is_user_logged_in()
@@ -78,11 +78,11 @@ class Permissions {
 		 *
 		 * @since 2.8
 		 *
-		 * @param bool             $permission Whether a user has permission to an object.
-		 * @param array|Whatsit    $object     The object data.
-		 * @param null|int|WP_User $user       The user ID or object (default: current user).
+		 * @param bool             $user_has_permission Whether a user has permission to an object.
+		 * @param array|Whatsit    $object              The object data.
+		 * @param null|int|WP_User $user                The user ID or object (default: current user).
 		 */
-		return apply_filters( 'pods_permissions_user_has_permission', $permission, $object, $user );
+		return apply_filters( 'pods_permissions_user_has_permission', $user_has_permission, $object, $user );
 	}
 
 	/**
@@ -99,13 +99,23 @@ class Permissions {
 			$object = pods_config_merge_data( $object, $object['options'] );
 		}
 
-		return (
+		$are_permissions_restricted = (
 			$this->is_input_disallowed( $object )
 			|| $this->is_logged_in_only( $object )
 			|| $this->is_admin_only( $object )
 			|| $this->get_restricted_roles( $object )
 			|| $this->get_restricted_capabilities( $object )
 		);
+
+		/**
+		 * Allow filtering whether permissions are restricted for an object.
+		 *
+		 * @since 2.8
+		 *
+		 * @param bool          $are_permissions_restricted Whether the permissions are restricted for an object.
+		 * @param array|Whatsit $object                     The object data.
+		 */
+		return apply_filters( 'pods_permissions_are_permissions_restricted', $are_permissions_restricted, $object );
 	}
 
 	/**
@@ -119,18 +129,18 @@ class Permissions {
 	 * @return bool Whether roles are restricted for user on an object.
 	 */
 	public function are_roles_restricted_for_user( $object, $user = null ) {
-		$user = $this->get_user( $user );
-
-		// Restrict for invalid users.
-		if ( ! $user ) {
-			return true;
-		}
-
 		$restricted_roles = $this->get_restricted_roles( $object );
 
 		// Do not restrict if no restricted roles provided.
 		if ( ! $restricted_roles ) {
 			return false;
+		}
+
+		$user = $this->get_user( $user );
+
+		// Restrict for invalid users.
+		if ( ! $user ) {
+			return true;
 		}
 
 		$matching_roles = array_intersect( $restricted_roles, $user->roles );
@@ -179,18 +189,18 @@ class Permissions {
 	 * @return bool Whether capabilities are restricted for user on an object.
 	 */
 	public function are_capabilities_restricted_for_user( $object, $user = null ) {
-		$user = $this->get_user( $user );
-
-		// Restrict for invalid users.
-		if ( ! $user ) {
-			return true;
-		}
-
 		$restricted_capabilities = $this->get_restricted_capabilities( $object );
 
 		// Do not restrict if no restricted capabilities provided.
 		if ( ! $restricted_capabilities ) {
 			return false;
+		}
+
+		$user = $this->get_user( $user );
+
+		// Restrict for invalid users.
+		if ( ! $user ) {
+			return true;
 		}
 
 		$is_restricted = true;

@@ -6,7 +6,7 @@
  */
 
 // The guard in front is to ensure wp.data exists before accessing select
-const editorData = wp.data && wp.data.select( 'core/editor' );
+const editorData = wp.data?.select( 'core/editor' );
 let unSubscribe;
 
 /**
@@ -14,7 +14,6 @@ let unSubscribe;
  */
 export const PodsGbModalListener = {
 	init() {
-		console.log( 'PodsGbModalListener init' );
 		if ( editorData.isCurrentPostPublished() ) {
 			// Post is published, this is an edit
 			unSubscribe = wp.data.subscribe( saveListener );
@@ -103,7 +102,6 @@ function saveListener() {
  * @return {boolean} Whether editor is saving.
  */
 function isUserSaving() {
-	console.log( 'isUserSaving' );
 	return !! ( editorData.isSavingPost() && ! editorData.isAutosavingPost() );
 }
 
@@ -113,12 +111,14 @@ function isUserSaving() {
  * @param {Object} optionalData
  */
 function triggerUpdateEvent( optionalData ) {
-	console.log( 'triggerUpdateEvent' );
 	const defaultData = {
 		id: editorData.getCurrentPostId(),
 		name: editorData.getCurrentPostAttribute( 'title' ),
 	};
 	const postData = Object.assign( defaultData, optionalData );
 
-	window.parent.jQuery( window.parent ).trigger( 'dfv:modal:update', postData );
+	window.parent.postMessage( {
+		type: 'PODS_MESSAGE',
+		data: postData,
+	}, window.location.origin );
 }

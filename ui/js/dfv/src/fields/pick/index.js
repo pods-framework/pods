@@ -62,6 +62,7 @@ const formatDataFromProp = ( data ) => {
 const formatValuesForReactSelectComponent = (
 	value,
 	options = [],
+	fieldItemData = [],
 	isMulti = false
 ) => {
 	if ( ! value ) {
@@ -75,9 +76,28 @@ const formatValuesForReactSelectComponent = (
 	const splitValue = Array.isArray( value ) ? value : value.split( ',' );
 
 	return splitValue.map(
-		( currentValue ) => options.find(
-			( option ) => option.value === currentValue
-		)
+		( currentValue ) => {
+			const fullValueFromOptions = options.find(
+				( option ) => option.value === currentValue
+			);
+
+			if ( fullValueFromOptions ) {
+				return fullValueFromOptions;
+			}
+
+			const fullFieldItem = fieldItemData.find(
+				( item ) => Number( item.id ) === Number( currentValue )
+			);
+
+			if ( fullFieldItem ) {
+				return {
+					label: fullFieldItem?.name,
+					value: fullFieldItem?.id.toString(),
+				};
+			}
+
+			return {};
+		}
 	);
 };
 
@@ -146,6 +166,10 @@ const Pick = ( props ) => {
 	// The options could be derived from the `data` prop (as a default),
 	// or we may need to do more work to break them apart or load them by the API.
 	const [ dataOptions, setDataOptions ] = useState( formatDataFromProp( data ) );
+
+	// fieldItemData may get edited by add/edit modals, but we only need to track this
+	// in state.
+	const [ editedFieldItemData, setEditedFieldItemData ] = useState( fieldItemData );
 
 	useEffect( () => {
 		switch ( pickObject ) {
@@ -228,6 +252,42 @@ const Pick = ( props ) => {
 		setHasBlurred( true );
 	};
 
+	useEffect( () => {
+		const listenForIframeMessages = ( event ) => {
+			if (
+				event.origin !== window.location.origin ||
+				'PODS_MESSAGE' !== event.data.type ||
+				! event.data.data
+			) {
+				return;
+			}
+
+			setShowAddNewIframe( false );
+
+			const { data: newData = {} } = event.data;
+
+			setEditedFieldItemData( ( prevData ) => [
+				...prevData,
+				newData,
+			] );
+
+			setValueWithLimit( [
+				...( value || [] ),
+				newData?.id.toString(),
+			] );
+		};
+
+		if ( showAddNewIframe ) {
+			window.addEventListener( 'message', listenForIframeMessages, false );
+		} else {
+			window.removeEventListener( 'message', listenForIframeMessages, false );
+		}
+
+		return () => {
+			window.removeEventListener( 'message', listenForIframeMessages, false );
+		};
+	}, [ showAddNewIframe ] );
+
 	// There are a variety of different "select" components, this
 	// chooses the right one based on the options.
 	const renderSelectComponent = () => {
@@ -274,7 +334,7 @@ const Pick = ( props ) => {
 			( isMulti && 'list' === formatMulti )
 		) {
 			const formattedValue = ( Object.keys( dataOptions ).length && value )
-				? formatValuesForReactSelectComponent( value, dataOptions, isMulti )
+				? formatValuesForReactSelectComponent( value, dataOptions, editedFieldItemData, isMulti )
 				: undefined;
 
 			return (
@@ -284,7 +344,8 @@ const Pick = ( props ) => {
 					value={ formattedValue }
 					setValue={ setValueWithLimit }
 					options={ dataOptions }
-					fieldItemData={ fieldItemData }
+					fieldItemData={ editedFieldItemData }
+					setFieldItemData={ setEditedFieldItemData }
 					// translators: %s is the field label.
 					placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
 					isMulti={ isMulti }
@@ -303,7 +364,7 @@ const Pick = ( props ) => {
 			( isSingle && 'autocomplete' === formatSingle ) ||
 			( isMulti && 'autocomplete' === formatMulti )
 		) {
-			const formattedValue = formatValuesForReactSelectComponent( value, dataOptions, isMulti );
+			const formattedValue = formatValuesForReactSelectComponent( value, dataOptions, editedFieldItemData, isMulti );
 
 			return (
 				<Select

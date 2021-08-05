@@ -26,6 +26,8 @@ const IframeModal = ( {
 			isDismissible={ true }
 			onRequestClose={ onClose }
 			focusOnMount={ true }
+			shouldCloseOnEsc={ false }
+			shouldCloseOnClickOutside={ false }
 		>
 			<iframe
 				src={ iframeSrc }

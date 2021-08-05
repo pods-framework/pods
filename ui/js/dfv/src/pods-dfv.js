@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { omit } from 'lodash';
 
@@ -9,6 +9,7 @@ import { omit } from 'lodash';
  * WordPress dependencies
  */
 import { select } from '@wordpress/data';
+import { registerPlugin } from '@wordpress/plugins';
 
 /**
  * Pods dependencies
@@ -183,7 +184,7 @@ window.PodsDFV = {
 	},
 
 	isGutenbergEditorLoaded() {
-		return ! select( 'core/editor' );
+		return ( select( 'core/editor' ) !== undefined );
 	},
 };
 
@@ -197,11 +198,19 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	}
 
 	window.PodsDFV.init();
+} );
 
-	// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
-	// @todo this should be split into its own script?
-	if ( window.PodsDFV.isModalWindow() && window.PodsDFV.isGutenbergEditorLoaded() ) {
-		console.log( 'is modal window, would load the listeners here' );
-		// PodsGbModalListener.init();
-	}
+// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
+const LoadModalListeners = () => {
+	useEffect( () => {
+		if ( window.PodsDFV.isModalWindow() && window.PodsDFV.isGutenbergEditorLoaded() ) {
+			PodsGbModalListener.init();
+		}
+	}, [] );
+
+	return null;
+};
+
+registerPlugin( 'pods-load-modal-listeners', {
+	render: LoadModalListeners,
 } );

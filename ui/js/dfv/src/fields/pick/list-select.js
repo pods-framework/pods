@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
@@ -33,13 +33,46 @@ const ListSelectItem = ( {
 	viewLink,
 	editIframeTitle,
 	icon,
-	removeItem,
 	isRemovable,
 	moveUp,
 	moveDown,
+	removeItem,
+	setFieldItemData,
 } ) => {
 	const isDashIcon = /^dashicons/.test( icon );
 	const [ showEditModal, setShowEditModal ] = useState( false );
+
+	useEffect( () => {
+		const listenForIframeMessages = ( event ) => {
+			if (
+				event.origin !== window.location.origin ||
+				'PODS_MESSAGE' !== event.data.type ||
+				! event.data.data
+			) {
+				return;
+			}
+
+			setShowEditModal( false );
+
+			const { data: newData = {} } = event.data;
+
+			setFieldItemData( ( prevData ) => prevData.map( ( item ) => {
+				return ( newData.id && Number( item?.id ) === Number( newData.id ) )
+					? newData
+					: item;
+			} ) );
+		};
+
+		if ( showEditModal ) {
+			window.addEventListener( 'message', listenForIframeMessages, false );
+		} else {
+			window.removeEventListener( 'message', listenForIframeMessages, false );
+		}
+
+		return () => {
+			window.removeEventListener( 'message', listenForIframeMessages, false );
+		};
+	}, [ showEditModal ] );
 
 	return (
 		<li className="pods-dfv-list-item pods-relationship">
@@ -74,7 +107,7 @@ const ListSelectItem = ( {
 							)
 						}
 						showTooltip
-						isDisabled={ ! moveDown }
+						disabled={ ! moveDown }
 						onClick={ moveDown }
 						icon={ chevronDown }
 						label={ __( 'Move down', 'pods' ) }
@@ -167,11 +200,12 @@ ListSelectItem.propTypes = {
 	editIframeTitle: PropTypes.string,
 	viewLink: PropTypes.string,
 	icon: PropTypes.string,
+	isDraggable: PropTypes.bool.isRequired,
+	isRemovable: PropTypes.bool.isRequired,
 	moveUp: PropTypes.func,
 	moveDown: PropTypes.func,
 	removeItem: PropTypes.func.isRequired,
-	isDraggable: PropTypes.bool.isRequired,
-	isRemovable: PropTypes.bool.isRequired,
+	setFieldItemData: PropTypes.func.isRequired,
 };
 
 const ListSelect = ( {
@@ -180,6 +214,7 @@ const ListSelect = ( {
 	value,
 	options,
 	fieldItemData,
+	setFieldItemData,
 	setValue,
 	placeholder,
 	isMulti,
@@ -265,20 +300,32 @@ const ListSelect = ( {
 
 							const icon = showIcon ? ( moreData?.icon || defaultIcon ) : undefined;
 
+							// May need to change the label, if it differs from the provided value.
+							const displayValue = valueItem;
+
+							const matchingFieldItemData = fieldItemData.find(
+								( item ) => Number( item.id ) === Number( valueItem.value )
+							);
+
+							if ( matchingFieldItemData && matchingFieldItemData.name ) {
+								displayValue.label = matchingFieldItemData.name;
+							}
+
 							return (
 								<ListSelectItem
 									key={ `${ name }-${ index }` }
 									fieldName={ name }
 									itemName={ itemName }
 									itemId={ itemId }
-									value={ valueItem }
-									removeItem={ () => removeValueAtIndex( index ) }
+									value={ displayValue }
 									isDraggable={ ! readOnly && ( 1 !== limit ) }
 									isRemovable={ ! readOnly }
 									editLink={ ! readOnly && showEditLink ? moreData?.edit_link : undefined }
 									viewLink={ showViewLink ? moreData?.link : undefined }
 									editIframeTitle={ editIframeTitle }
 									icon={ icon }
+									removeItem={ () => removeValueAtIndex( index ) }
+									setFieldItemData={ setFieldItemData }
 									moveUp={
 										( ! readOnly && index !== 0 )
 											? () => swapItems( index, index - 1 )
@@ -323,6 +370,7 @@ ListSelect.propTypes = {
 	fieldItemData: PropTypes.arrayOf(
 		PropTypes.any,
 	),
+	setFieldItemData: PropTypes.func.isRequired,
 	placeholder: PropTypes.string.isRequired,
 	isMulti: PropTypes.bool.isRequired,
 	limit: PropTypes.number.isRequired,

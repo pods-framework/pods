@@ -5028,7 +5028,9 @@ class PodsAPI {
 
 		$object_ID = 'ID';
 
-		if ( ! empty( $pod['pod_field_id'] ) ) {
+		if ( ! empty( $pod['field_id'] ) ) {
+			$object_ID = $pod['field_id'];
+		} elseif ( ! empty( $pod['pod_field_id'] ) ) {
 			$object_ID = $pod['pod_field_id'];
 		}
 

@@ -112,15 +112,17 @@ class Map_Field_Values {
 	 * @return null|mixed The matching pod info value or null if there was no match.
 	 */
 	public function pod_info( $field, $traverse, $field_data, $obj ) {
+		// Skip if the field exists.
+		if ( $field_data ) {
+			return null;
+		}
+
+		// Skip if not the field we are looking for.
 		if ( '_pod' !== $field ) {
 			return null;
 		}
 
-		if ( empty( $traverse[0] ) ) {
-			return null;
-		}
-
-		$pod_option = $traverse[0];
+		$pod_option = ! empty( $traverse[0] ) ? $traverse[0] : 'label';
 
 		return $obj->pod_data->get_arg( $pod_option );
 	}
@@ -138,10 +140,17 @@ class Map_Field_Values {
 	 * @return null|mixed The matching field info value or null if there was no match.
 	 */
 	public function field_info( $field, $traverse, $field_data, $obj ) {
+		// Skip if the field exists.
+		if ( $field_data ) {
+			return null;
+		}
+
+		// Skip if not the field we are looking for.
 		if ( '_field' !== $field ) {
 			return null;
 		}
 
+		// Skip if no field was set.
 		if ( empty( $traverse[0] ) ) {
 			return null;
 		}
@@ -165,6 +174,11 @@ class Map_Field_Values {
 	 * @return null|mixed The matching image field value or null if there was no match.
 	 */
 	public function image_fields( $field, $traverse, $field_data, $obj ) {
+		// Skip if the field exists.
+		if ( $field_data ) {
+			return null;
+		}
+
 		// Default image field handlers.
 		$image_fields = [
 			'image_attachment',
@@ -283,7 +297,13 @@ class Map_Field_Values {
 	 * @return null|mixed The matching avatar field value or null if there was no match.
 	 */
 	public function avatar( $field, $traverse, $field_data, $obj ) {
-		if ( 'avatar' !== $field || 'user' !== $obj->pod_data->get_type() ) {
+		// Skip if not the field we are looking for.
+		if ( 'avatar' !== $field ) {
+			return null;
+		}
+
+		// Skip if not on the supported pod type.
+		if ( 'user' !== $obj->pod_data->get_type() ) {
 			return null;
 		}
 

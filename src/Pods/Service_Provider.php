@@ -18,6 +18,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	 */
 	public function register() {
 		$this->container->singleton( Permissions::class, Permissions::class );
+		$this->container->singleton( Map_Field_Values::class, Map_Field_Values::class );
 
 		$this->hooks();
 	}

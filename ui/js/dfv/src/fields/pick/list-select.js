@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
@@ -19,8 +19,9 @@ import {
 /**
  * Other Pods dependencies
  */
+import loadAjaxOptions from '../../helpers/loadAjaxOptions';
 import IframeModal from 'dfv/src/components/iframe-modal';
-import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
+import { PICK_OPTIONS, FIELD_PROP_TYPE } from 'dfv/src/config/prop-types';
 
 import './list-select.scss';
 
@@ -224,6 +225,7 @@ const ListSelect = ( {
 	showEditLink,
 	editIframeTitle,
 	readOnly = false,
+	ajaxData,
 } ) => {
 	// Always have an array of values for the list, even if
 	// we were just passed a single object.
@@ -266,8 +268,9 @@ const ListSelect = ( {
 		<>
 			{ ! readOnly && (
 				<div className="pods-ui-list-autocomplete">
-					<Select
-						options={ options }
+					<AsyncSelect
+						defaultOptions={ options }
+						loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
 						value={ value }
 						placeholder={ placeholder }
 						isMulti={ isMulti }
@@ -378,6 +381,7 @@ ListSelect.propTypes = {
 	showEditLink: PropTypes.bool.isRequired,
 	editIframeTitle: PropTypes.string,
 	readOnly: PropTypes.bool,
+	ajaxData: FIELD_PROP_TYPE.ajax_data,
 };
 
 export default ListSelect;

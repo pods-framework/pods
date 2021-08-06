@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 import PropTypes from 'prop-types';
 
 /**
@@ -21,6 +21,7 @@ import ListSelect from './list-select';
 
 import IframeModal from 'dfv/src/components/iframe-modal';
 
+import loadAjaxOptions from '../../helpers/loadAjaxOptions';
 import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
@@ -152,6 +153,7 @@ const Pick = ( props ) => {
 			// rest_pick_depth: pickDepth,
 			// rest_pick_response: pickResponse,
 			// pick_where,
+			ajax_data: ajaxData,
 		},
 		setValue,
 		value,
@@ -356,6 +358,7 @@ const Pick = ( props ) => {
 					showEditLink={ toBool( showEditLink ) }
 					editIframeTitle={ editIframeTitle }
 					readOnly={ !! readOnly }
+					ajaxData={ ajaxData }
 				/>
 			);
 		}
@@ -367,10 +370,11 @@ const Pick = ( props ) => {
 			const formattedValue = formatValuesForReactSelectComponent( value, dataOptions, editedFieldItemData, isMulti );
 
 			return (
-				<Select
+				<AsyncSelect
 					htmlAttributes={ htmlAttributes }
 					name={ name }
-					options={ dataOptions }
+					defaultOptions={ dataOptions }
+					loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
 					value={ formattedValue }
 					// translators: %s is the field label.
 					placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }

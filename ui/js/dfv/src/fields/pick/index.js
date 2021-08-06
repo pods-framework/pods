@@ -404,6 +404,7 @@ const Pick = ( props ) => {
 	return (
 		<>
 			{ renderSelectComponent() }
+
 			{ ( allowAddNew && addNewIframeSrc ) ? (
 				<Button
 					className="pods-related-add-new pods-modal"

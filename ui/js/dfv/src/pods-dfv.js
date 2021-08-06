@@ -121,23 +121,27 @@ window.PodsDFV = {
 					? ( currentValue.fieldItemData || fieldConfig.default || [] )
 					: ( currentValue.fieldItemData?.[ 0 ] || fieldConfig.default || '' );
 
-				// Some field types need the value to be adjusted because it's in a different
-				// shape than expected.
-				// @todo there are probably others?
+				// Some field types (maybe just pick?) have all available options in the
+				// fieldItemData, not just the selected values, so we need to clean those.
 				let formattedValue = value;
 
-				switch ( fieldConfig.type ) {
-					case 'pick':
-						if ( 'multi' === fieldConfig.format_type ) {
-							formattedValue = value
-								.map( ( option ) => option.selected ? option.id : null )
-								.filter( ( option ) => null !== option );
-						} else {
-							formattedValue = value.find( ( option ) => true === option.selected )?.id;
-						}
-						break;
-					default:
-						break;
+				if ( 'pick' === fieldConfig.type ) {
+					// @todo This may be handling a back-end bug, where some pick_object
+					// types get each fieldItemData 'selected' attribute set to false,
+					// even if they're actually selected.
+					if (
+						'custom-simple' === fieldConfig.pick_object &&
+						'multi' === fieldConfig.pick_format_type
+					) {
+						formattedValue = value
+							.map( ( option ) => option.selected ? option.id : null )
+							.filter( ( option ) => null !== option );
+					} else if ( 'multi' === fieldConfig.pick_format_type ) {
+						formattedValue = value
+							.map( ( option ) => option.id );
+					} else {
+						formattedValue = value.find( ( option ) => true === option.selected )?.id;
+					}
 				}
 
 				return {
@@ -147,6 +151,8 @@ window.PodsDFV = {
 			},
 			{}
 		);
+
+		console.log( 'initialValues', initialValues );
 
 		// The Edit Pod screen gets a different store set up than
 		// other contexts.

@@ -209,7 +209,6 @@ ListSelectItem.propTypes = {
 };
 
 const ListSelect = ( {
-	htmlAttributes,
 	name,
 	value,
 	options,
@@ -268,7 +267,6 @@ const ListSelect = ( {
 			{ ! readOnly && (
 				<div className="pods-ui-list-autocomplete">
 					<Select
-						name={ htmlAttributes.name || name }
 						options={ options }
 						value={ value }
 						placeholder={ placeholder }

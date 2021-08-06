@@ -27,8 +27,6 @@ const loadAjaxOptions = ( ajaxData = {} ) => ( inputValue = '' ) => {
 					body: formData,
 				},
 			).then( ( results ) => {
-				console.log( 'ajax results', results );
-
 				const formattedResults = results.map( ( result ) => ( {
 					label: result?.name,
 					value: result?.id,

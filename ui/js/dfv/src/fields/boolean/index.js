@@ -21,6 +21,18 @@ const Boolean = ( props ) => {
 		boolean_yes_label: yesLabel = 'Yes',
 	} = fieldConfig;
 
+	// Convert "Yes"/"No" strings to "1" or "0"
+	let formattedValue = value;
+
+	if ( 'Yes' === value ) {
+		formattedValue = '1';
+	} else if ( 'No' === value ) {
+		formattedValue = '0';
+	}
+
+	formattedValue = toNumericBool( formattedValue );
+
+	// Set up options to pass to Pick component
 	const options = [ { value: '1', label: yesLabel } ];
 
 	if ( 'checkbox' !== formatType ) {
@@ -36,7 +48,7 @@ const Boolean = ( props ) => {
 				pick_format_single: formatType,
 				data: options,
 			} }
-			value={ toNumericBool( value ) }
+			value={ formattedValue }
 			setValue={ setValue }
 		/>
 	);

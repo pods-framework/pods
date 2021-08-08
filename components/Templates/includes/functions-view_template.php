@@ -326,7 +326,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 			}//end foreach
-		} elseif ( 'file' === $field['type'] && 'attachment' === pods_v( 'file_uploader', $field, 'attachment' ) ) {
+		} elseif ( 'file' === $field['type'] ) {
 			$template  = frontier_decode_template( $content, $atts );
 			$media_pod = pods( 'media' );
 

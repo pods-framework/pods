@@ -330,8 +330,13 @@ class PodsData {
 			}
 		}
 
+		// No pod set.
+		if ( empty( $table['pod'] )  ) {
+			return;
+		}
+
 		// @todo Revisit this mess, $this->pod_data can't be an array anymore.
-		if ( ! empty( $table ) && $table['pod'] instanceof Pods\Whatsit\Pod ) {
+		if ( $table['pod'] instanceof Pods\Whatsit\Pod ) {
 			$this->pod_data = $table['pod'];
 		} else {
 			$table['id']   = pods_v( 'id', $table['pod'], 0, true );

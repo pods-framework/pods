@@ -1966,6 +1966,8 @@ class PodsData {
 					$post_type = 'attachment';
 				}
 
+				$this->row = [];
+
 				if ( 'id' === $mode ) {
 					$this->row = get_post( $id, ARRAY_A );
 
@@ -2025,6 +2027,8 @@ class PodsData {
 					$_term = apply_filters( 'get_term', $_term, $taxonomy );
 					$_term = apply_filters( "get_$taxonomy", $_term, $taxonomy );
 					$_term = sanitize_term( $_term, $taxonomy, $filter );
+
+					$this->row = [];
 
 					if ( is_object( $_term ) ) {
 						$this->row = get_object_vars( $_term );

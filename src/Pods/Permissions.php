@@ -61,7 +61,7 @@ class Permissions {
 		if ( $this->is_input_disallowed( $object ) ) {
 			$user_has_permission = false;
 		} elseif ( $this->is_admin_only( $object ) ) {
-			$user_has_permission = $this->is_user_an_admin();
+			$user_has_permission = $this->is_user_an_admin( null, $user );
 		} else {
 			$user_has_permission = (
 				(

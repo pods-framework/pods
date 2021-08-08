@@ -31,8 +31,18 @@ class Map_Field_Values {
 			array_shift( $traverse );
 		}
 
-		// @todo Add filter.
-		$value = null;
+		/**
+		 * Allow filtering the field mapping ahead of running all other method checks.
+		 *
+		 * @since 2.8
+		 *
+		 * @param null|mixed              $value      The matching field value or null if there was no match.
+		 * @param string                  $field      The first field name in the path.
+		 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
+		 * @param null|Field|Object_Field $field_data The field data or null if not a field.
+		 * @param Pods                    $obj        The Pods object.
+		 */
+		$value = apply_filters( 'pods_data_map_field_values_map_value_pre_check', null, $field, $traverse, $field_data, $obj );
 
 		if ( null !== $value ) {
 			return $value;

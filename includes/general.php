@@ -2370,14 +2370,250 @@ function pods_no_conflict_check( $object_type = 'post' ) {
 }
 
 /**
+ * Get the list of meta hooks to add/remove for a specific object type.
+ *
+ * @since TBD
+ *
+ * @param string      $object_type The object type.
+ * @param string|null $object      The object name.
+ *
+ * @return array List of filters and actions for a specific object type.
+ */
+function pods_meta_hook_list( $object_type = 'post', $object = null ) {
+	if ( 'post_type' === $object_type ) {
+		$object_type = 'post';
+	} elseif ( 'term' === $object_type ) {
+		$object_type = 'taxonomy';
+	}
+
+	$hooks = [
+		'filter' => [],
+		'action' => [],
+	];
+
+	// Filters = Usually get/update/delete meta functions
+	// Actions = Usually insert/update/save/delete object functions
+	if ( 'post' === $object_type || 'all' === $object_type ) {
+		// Handle *_post_meta
+		if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
+			if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
+				$hooks['filter'][] = [ 'get_post_metadata', [ PodsInit::$meta, 'get_post_meta' ], 10, 4 ];
+			}
+
+			if ( ! pods_tableless() ) {
+				$hooks['filter'][] = [ 'add_post_metadata', [ PodsInit::$meta, 'add_post_meta' ], 10, 5 ];
+				$hooks['filter'][] = [ 'update_post_metadata', [ PodsInit::$meta, 'update_post_meta' ], 10, 5 ];
+				$hooks['filter'][] = [ 'delete_post_metadata', [ PodsInit::$meta, 'delete_post_meta' ], 10, 5 ];
+			}
+		}
+
+		// Add meta box groups.
+		$hooks['action'][] = [ 'add_meta_boxes', [ PodsInit::$meta, 'meta_post_add' ], 10, 1 ];
+
+		// Handle detecting new post.
+		$hooks['action'][] = [ 'transition_post_status', [ PodsInit::$meta, 'save_post_detect_new' ], 10, 3 ];
+
+		// Handle save.
+		$hooks['action'][] = [ 'save_post', [ PodsInit::$meta, 'save_post' ], 10, 3 ];
+
+		// Handle delete from relationships.
+		$hooks['action'][] = [ 'delete_post', [ PodsInit::$meta, 'delete_post' ], 10, 1 ];
+
+		// Track changed fields.
+		$hooks['action'][] = [
+			'wp_insert_post_data',
+			[ PodsInit::$meta, 'save_post_track_changed_fields' ],
+			10,
+			2,
+		];
+	}
+
+	if ( 'taxonomy' === $object_type || 'all' === $object_type ) {
+		// Handle *_term_meta
+		if ( apply_filters( 'pods_meta_handler', true, 'term' ) ) {
+			if ( apply_filters( 'pods_meta_handler_get', true, 'term' ) ) {
+				$hooks['filter'][] = [ 'get_term_metadata', [ PodsInit::$meta, 'get_term_meta' ], 10, 4 ];
+			}
+
+			if ( ! pods_tableless() ) {
+				$hooks['filter'][] = [ 'add_term_metadata', [ PodsInit::$meta, 'add_term_meta' ], 10, 5 ];
+				$hooks['filter'][] = [ 'update_term_metadata', [ PodsInit::$meta, 'update_term_meta' ], 10, 5 ];
+				$hooks['filter'][] = [ 'delete_term_metadata', [ PodsInit::$meta, 'delete_term_meta' ], 10, 5 ];
+			}
+		}
+
+		// Handle save.
+		$hooks['action'][] = [ 'edited_term', [ PodsInit::$meta, 'save_taxonomy' ], 10, 3 ];
+		$hooks['action'][] = [ 'create_term', [ PodsInit::$meta, 'save_taxonomy' ], 10, 3 ];
+
+		// Handle delete from relationships.
+		$hooks['action'][] = [ 'delete_term_taxonomy', [ PodsInit::$meta, 'delete_taxonomy' ], 10, 1 ];
+
+		// Handle form fields specific to the taxonomy.
+		if ( $object ) {
+			$hooks['action'][] = [ $object . '_edit_form_fields', [ PodsInit::$meta, 'meta_taxonomy' ], 10, 2 ];
+			$hooks['action'][] = [ $object . '_add_form_fields', [ PodsInit::$meta, 'meta_taxonomy' ], 10, 1 ];
+		}
+
+		// Track changed fields.
+		$hooks['action'][] = [
+			'edit_terms',
+			[ PodsInit::$meta, 'save_taxonomy_track_changed_fields' ],
+			10,
+			2,
+		];
+
+		/**
+		 * Fires after a previously shared taxonomy term is split into two separate terms.
+		 *
+		 * @since 4.2.0
+		 *
+		 * @param int    $term_id          ID of the formerly shared term.
+		 * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
+		 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
+		 * @param string $taxonomy         Taxonomy for the split term.
+		 */
+		$hooks['action'][] = [ 'split_shared_term', [ PodsInit::$meta, 'split_shared_term' ], 10, 4 ];
+	}
+
+	if ( 'media' === $object_type || 'all' === $object_type ) {
+		// Handle *_post_meta.
+		if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
+			if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
+				$hooks['filter'][] = [ 'get_post_metadata', [ PodsInit::$meta, 'get_post_meta' ], 10, 4 ];
+			}
+
+			if ( ! pods_tableless() ) {
+				$hooks['filter'][] = [ 'add_post_metadata', [ PodsInit::$meta, 'add_post_meta' ], 10, 5 ];
+				$hooks['filter'][] = [ 'update_post_metadata', [ PodsInit::$meta, 'update_post_meta' ], 10, 5 ];
+				$hooks['filter'][] = [ 'delete_post_metadata', [ PodsInit::$meta, 'delete_post_meta' ], 10, 5 ];
+			}
+		}
+
+		// Add meta box groups.
+		$hooks['action'][] = [ 'add_meta_boxes', [ PodsInit::$meta, 'meta_post_add' ], 10, 1 ];
+
+		// Handle old AJAX attachment saving.
+		$hooks['action'][] = [ 'wp_ajax_save-attachment-compat', [ PodsInit::$meta, 'save_media_ajax' ], 0, 1 ];
+
+		// Handle showing meta fields in modal.
+		$hooks['filter'][] = [ 'attachment_fields_to_edit', [ PodsInit::$meta, 'meta_media' ], 10, 2 ];
+
+		// Handle saving meta fields from modal.
+		$hooks['filter'][] = [ 'attachment_fields_to_save', [ PodsInit::$meta, 'save_media' ], 10, 2 ];
+
+		// Handle saving attachment metadata.
+		$hooks['filter'][] = [ 'wp_update_attachment_metadata', [ PodsInit::$meta, 'save_media' ], 10, 2 ];
+
+		// Handle delete.
+		$hooks['action'][] = [ 'delete_attachment', [ PodsInit::$meta, 'delete_media' ], 10, 1 ];
+
+		// Track changed fields.
+		$hooks['filter'][] = [
+			'wp_insert_attachment_data',
+			[ PodsInit::$meta, 'save_post_track_changed_fields' ],
+			10,
+			2,
+		];
+	}
+
+	if ( 'user' === $object_type || 'all' === $object_type ) {
+		// Handle *_user_meta.
+		if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
+			if ( apply_filters( 'pods_meta_handler_get', true, 'user' ) ) {
+				$hooks['filter'][] = [ 'get_user_metadata', [ PodsInit::$meta, 'get_user_meta' ], 10, 4 ];
+			}
+
+			if ( ! pods_tableless() ) {
+				$hooks['filter'][] = [ 'add_user_metadata', [ PodsInit::$meta, 'add_user_meta' ], 10, 5 ];
+				$hooks['filter'][] = [ 'update_user_metadata', [ PodsInit::$meta, 'update_user_meta' ], 10, 5 ];
+				$hooks['filter'][] = [ 'delete_user_metadata', [ PodsInit::$meta, 'delete_user_meta' ], 10, 5 ];
+			}
+		}
+
+		// Handle showing fields in form.
+		$hooks['action'][] = [ 'show_user_profile', [ PodsInit::$meta, 'meta_user' ], 10, 1 ];
+		$hooks['action'][] = [ 'edit_user_profile', [ PodsInit::$meta, 'meta_user' ], 10, 1 ];
+
+		// Handle saving from registration form.
+		$hooks['action'][] = [ 'user_register', [ PodsInit::$meta, 'save_user' ], 10, 1 ];
+
+		// Handle saving from profile update.
+		$hooks['action'][] = [ 'profile_update', [ PodsInit::$meta, 'save_user' ], 10, 2 ];
+
+		// Track changed fields.
+		$hooks['filter'][] = [ 'pre_user_login', [ PodsInit::$meta, 'save_user_track_changed_fields' ], 10, 1 ];
+	}
+
+	if ( 'comment' === $object_type || 'all' === $object_type ) {
+		if ( apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
+			// Handle *_comment_meta
+			if ( apply_filters( 'pods_meta_handler_get', true, 'comment' ) ) {
+				$hooks['filter'][] = [ 'get_comment_metadata', [ PodsInit::$meta, 'get_comment_meta' ], 10, 4 ];
+			}
+
+			if ( ! pods_tableless() ) {
+				$hooks['filter'][] = [ 'add_comment_metadata', [ PodsInit::$meta, 'add_comment_meta' ], 10, 5 ];
+				$hooks['filter'][] = [
+					'update_comment_metadata',
+					[ PodsInit::$meta, 'update_comment_meta' ],
+					10,
+					5,
+				];
+				$hooks['filter'][] = [
+					'delete_comment_metadata',
+					[ PodsInit::$meta, 'delete_comment_meta' ],
+					10,
+					5,
+				];
+			}
+		}
+
+		// Handle showing fields in form.
+		$hooks['action'][] = [ 'comment_form_logged_in_after', [ PodsInit::$meta, 'meta_comment_new_logged_in' ], 10, 2 ];
+		$hooks['filter'][] = [ 'comment_form_default_fields', [ PodsInit::$meta, 'meta_comment_new' ], 10, 1 ];
+
+		// Add meta box groups.
+		$hooks['action'][] = [ 'add_meta_boxes_comment', [ PodsInit::$meta, 'meta_comment_add' ], 10, 1 ];
+
+		// Handle validation for fields.
+		$hooks['filter'][] = [ 'pre_comment_approved', [ PodsInit::$meta, 'validate_comment' ], 10, 2 ];
+
+		// Handle saving comment from frontend.
+		$hooks['action'][] = [ 'comment_post', [ PodsInit::$meta, 'save_comment' ], 10, 1 ];
+
+		// Handle saving comment from admin.
+		$hooks['action'][] = [ 'edit_comment', [ PodsInit::$meta, 'save_comment' ], 10, 1 ];
+
+		// Track changed fields.
+		$hooks['action'][] = [ 'wp_update_comment_data', [ PodsInit::$meta, 'save_comment_track_changed_fields' ], 10, 3 ];
+	}
+
+	if ( 'settings' === $object_type || 'all' === $object_type ) {
+		// @todo Patch core to provide $option back in filters, patch core to add filter pre_add_option to add_option.
+
+		// Undesirable way to do things which is heavy and requires access to looping through all fields, pulled from PodsMeta::core().
+		/*foreach ( self::$settings as $setting_pod ) {
+			foreach ( $setting_pod[ 'fields' ] as $option ) {
+				add_filter( 'pre_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( PodsInit::$meta, 'get_option' ), 10, 1 );
+				add_action( 'add_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( PodsInit::$meta, 'add_option' ), 10, 2 );
+				add_filter( 'pre_update_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( PodsInit::$meta, 'update_option' ), 10, 2 );
+			}
+		}*/
+	}
+
+	return $hooks;
+}
+
+/**
  * Turn off conflicting / recursive actions for an object type that Pods hooks into
  *
- * @param string $object_type
- * @param string $object
- *
- * @return bool
- *
  * @since 2.0.0
+ *
+ * @param string      $object_type The object type.
+ * @param string|null $object      The object name.
+ *
+ * @return bool Whether no conflict mode was turned on.
  */
 function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 	if ( 'post_type' === $object_type ) {
@@ -2398,144 +2634,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 		return false;
 	}
 
-	$no_conflict = array(
-		'filter' => array(),
-	);
-
-	// Filters = Usually get/update/delete meta functions
-	// Actions = Usually insert/update/save/delete object functions
-	if ( 'post' === $object_type || 'all' === $object_type ) {
-		if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
-			// Handle *_post_meta
-			if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
-				$no_conflict['filter'] = array(
-					array( 'get_post_metadata', array( PodsInit::$meta, 'get_post_meta' ), 10, 4 ),
-				);
-			}
-
-			if ( ! pods_tableless() ) {
-				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-					array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
-					array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
-					array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 ),
-				) );
-			}
-		}
-
-		$no_conflict['action'] = array(
-			array( 'transition_post_status', array( PodsInit::$meta, 'save_post_detect_new' ), 10, 3 ),
-			array( 'save_post', array( PodsInit::$meta, 'save_post' ), 10, 3 ),
-			array( 'wp_insert_post_data', array( PodsInit::$meta, 'save_post_track_changed_fields' ), 10, 2 ),
-		);
-	}
-
-	if ( 'taxonomy' === $object_type || 'all' === $object_type ) {
-		if ( apply_filters( 'pods_meta_handler', true, 'term' ) ) {
-			// Handle *_term_meta
-			if ( apply_filters( 'pods_meta_handler_get', true, 'term' ) ) {
-				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-					array( 'get_term_metadata', array( PodsInit::$meta, 'get_term_meta' ), 10, 4 ),
-				) );
-			}
-
-			if ( ! pods_tableless() ) {
-				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-					array( 'add_term_metadata', array( PodsInit::$meta, 'add_term_meta' ), 10, 5 ),
-					array( 'update_term_metadata', array( PodsInit::$meta, 'update_term_meta' ), 10, 5 ),
-					array( 'delete_term_metadata', array( PodsInit::$meta, 'delete_term_meta' ), 10, 5 ),
-				) );
-			}
-
-			$no_conflict['action'] = array(
-				array( 'edited_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 ),
-				array( 'create_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 ),
-				array( 'edit_terms', array( PodsInit::$meta, 'save_taxonomy_track_changed_fields' ), 10, 2 ),
-			);
-		}//end if
-	}
-
-	if ( 'media' === $object_type || 'all' === $object_type ) {
-		$no_conflict['filter'] = array(
-			array( 'attachment_fields_to_save', array( PodsInit::$meta, 'save_media' ), 10, 2 ),
-			array( 'wp_update_attachment_metadata', array( PodsInit::$meta, 'save_media' ), 10, 2 ),
-			array( 'wp_insert_attachment_data', array( PodsInit::$meta, 'save_post_track_changed_fields' ), 10, 2 ),
-		);
-
-		if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
-			// Handle *_post_meta
-			if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
-				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-					array( 'get_post_metadata', array( PodsInit::$meta, 'get_post_meta' ), 10, 4 ),
-				) );
-			}
-
-			if ( ! pods_tableless() ) {
-				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-					array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
-					array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
-					array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 ),
-				) );
-			}
-
-			$no_conflict['action'] = array();
-		}//end if
-	}
-
-	if ( 'user' === $object_type || 'all' === $object_type ) {
-		if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
-			// Handle *_term_meta
-			if ( apply_filters( 'pods_meta_handler_get', true, 'user' ) ) {
-				$no_conflict['filter'] = array(
-					array( 'get_user_metadata', array( PodsInit::$meta, 'get_user_meta' ), 10, 4 ),
-				);
-			}
-
-			if ( ! pods_tableless() ) {
-				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-					array( 'add_user_metadata', array( PodsInit::$meta, 'add_user_meta' ), 10, 5 ),
-					array( 'update_user_metadata', array( PodsInit::$meta, 'update_user_meta' ), 10, 5 ),
-					array( 'delete_user_metadata', array( PodsInit::$meta, 'delete_user_meta' ), 10, 5 ),
-				) );
-			}
-		}
-
-		$no_conflict['action'] = array(
-			array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
-			array( 'profile_update', array( PodsInit::$meta, 'save_user' ), 10, 2 ),
-			array( 'pre_user_login', array( PodsInit::$meta, 'save_user_track_changed_fields' ) ),
-		);
-	}
-
-	if ( 'comment' === $object_type || 'all' === $object_type ) {
-		if ( apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
-			// Handle *_term_meta
-			if ( apply_filters( 'pods_meta_handler_get', true, 'comment' ) ) {
-				$no_conflict['filter'] = array(
-					array( 'get_comment_metadata', array( PodsInit::$meta, 'get_comment_meta' ), 10, 4 ),
-				);
-			}
-
-			if ( ! pods_tableless() ) {
-				$no_conflict['filter'] = array_merge( $no_conflict['filter'], array(
-					array( 'add_comment_metadata', array( PodsInit::$meta, 'add_comment_meta' ), 10, 5 ),
-					array( 'update_comment_metadata', array( PodsInit::$meta, 'update_comment_meta' ), 10, 5 ),
-					array( 'delete_comment_metadata', array( PodsInit::$meta, 'delete_comment_meta' ), 10, 5 ),
-				) );
-			}
-		}
-
-		$no_conflict['action'] = array(
-			array( 'pre_comment_approved', array( PodsInit::$meta, 'validate_comment' ), 10, 2 ),
-			array( 'comment_post', array( PodsInit::$meta, 'save_comment' ) ),
-			array( 'edit_comment', array( PodsInit::$meta, 'save_comment' ) ),
-			array( 'wp_update_comment_data', array( PodsInit::$meta, 'save_comment_track_changed_fields' ), 10, 3 ),
-		);
-	}
-
-	if ( 'settings' === $object_type || 'all' === $object_type ) {
-		$no_conflict['filter'] = array();
-		// @todo Better handle settings conflicts apart from each other
-	}//end if
+	$no_conflict = pods_meta_hook_list( $object_type );
 
 	$conflicted = false;
 
@@ -2563,13 +2662,15 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 /**
  * Turn on actions after running code during pods_conflict
  *
- * @param string $object_type
- *
- * @return bool
- *
  * @since 2.0.0
+ *
+ * @param string      $object_type The object type.
+ * @param string|null $object      The object name.
+ * @param bool        $force       Whether to force turning all hooks back on even if they were already off.
+ *
+ * @return bool Whether no conflict mode was on and was successfully turned off.
  */
-function pods_no_conflict_off( $object_type = 'post' ) {
+function pods_no_conflict_off( $object_type = 'post', $object = null, $force = false ) {
 	if ( 'post_type' === $object_type ) {
 		$object_type = 'post';
 	} elseif ( 'term' === $object_type ) {
@@ -2580,15 +2681,22 @@ function pods_no_conflict_off( $object_type = 'post' ) {
 		pods_init();
 	}
 
-	if ( empty( PodsInit::$no_conflict[ $object_type ] ) ) {
-		return false;
-	}
-
 	if ( ! is_object( PodsInit::$meta ) ) {
 		return false;
 	}
 
-	$no_conflict = PodsInit::$no_conflict[ $object_type ];
+	if ( $force ) {
+		// Turn ALL hooks back on.
+		$no_conflict = pods_meta_hook_list( $object_type, $object );
+	} else {
+		// No conflict mode was not already on.
+		if ( empty( PodsInit::$no_conflict[ $object_type ] ) ) {
+			return false;
+		}
+
+		// Only turn on the hooks we turned off for no conflict mode.
+		$no_conflict = PodsInit::$no_conflict[ $object_type ];
+	}
 
 	$conflicted = false;
 

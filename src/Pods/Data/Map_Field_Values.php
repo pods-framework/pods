@@ -193,11 +193,19 @@ class Map_Field_Values {
 		$image_fields = [
 			'image_attachment',
 			'image_attachment_url',
+			'image_attachment_src',
 		];
 
-		if ( 'post_type' === $obj->pod_data->get_type() ) {
+		$object_type = $obj->pod_data->get_type();
+
+		if ( 'post_type' === $object_type ) {
 			$image_fields[] = 'post_thumbnail';
 			$image_fields[] = 'post_thumbnail_url';
+			$image_fields[] = 'post_thumbnail_src';
+		} elseif ( 'media' === $obj->pod_data->get_type() ) {
+			$image_fields[] = '_img';
+			$image_fields[] = '_url';
+			$image_fields[] = '_src';
 		}
 
 		// Handle special field tags.
@@ -212,10 +220,16 @@ class Map_Field_Values {
 		$traverse_params = $traverse;
 
 		// Is it a URL request?
-		$url = '_url' === substr( $image_field, - 4 );
+		if ( '_url' === $image_field || '_src' === $image_field ) {
+			// This is a _url or _src field itself.
+			$url = true;
+		} else {
+			$url = '_url' === substr( $image_field, - 4 ) || '_src' === substr( $image_field, - 4 );
 
-		if ( $url ) {
-			$image_field = substr( $image_field, 0, - 4 );
+			if ( $url ) {
+				// This is a image_field._url or a image_field._src field.
+				$image_field = substr( $image_field, 0, - 4 );
+			}
 		}
 
 		// Results in an empty array if no traversal params are passed.
@@ -224,6 +238,15 @@ class Map_Field_Values {
 		$attachment_id = 0;
 
 		switch ( $image_field ) {
+			// Media pods.
+			case '_img':
+			case '_url':
+			case '_src':
+				$attachment_id = $item_id;
+
+				break;
+
+			// All other pods.
 			case 'post_thumbnail':
 				$attachment_id = get_post_thumbnail_id( $item_id );
 
@@ -270,28 +293,37 @@ class Map_Field_Values {
 			return pods_image( $attachment_id, $size, 0, null, true );
 		}
 
-		// Fallback to attachment Post object to look for other image properties.
-		$media = pods( 'media', $attachment_id, false );
+		if ( 'media' !== $object_type ) {
+			// Fallback to attachment Post object to look for other image properties.
+			$media = pods( 'media', $attachment_id, false );
 
-		if ( $media && $media->valid() && $media->exists() ) {
-			return $media->field( implode( '.', $traverse_params ) );
-		}
-
-		// Fallback to default attachment object.
-		$attachment = get_post( $attachment_id );
-		$value      = pods_v( implode( '.', $traverse_params ), $attachment );
-
-		if ( null === $value ) {
-			// Start traversal though object property or metadata.
-			$name_key = array_shift( $traverse_params );
-			$value    = pods_v( $name_key, $attachment );
-
-			if ( null === $value ) {
-				$value = get_post_meta( $attachment_id, $name_key, true );
+			if ( $media && $media->valid() && $media->exists() ) {
+				return $media->field( implode( '.', $traverse_params ) );
 			}
 
-			return pods_traverse( $traverse_params, $value );
+			// Fallback to default attachment object.
+			$attachment = get_post( $attachment_id );
+		} else {
+			$attachment = $obj->row();
 		}
+
+		$value = pods_v( implode( '.', $traverse_params ), $attachment );
+
+		if ( null !== $value ) {
+			return $value;
+		}
+
+		// Start traversal though object property or metadata.
+		$name_key = array_shift( $traverse_params );
+		$value    = pods_v( $name_key, $attachment );
+
+		if ( null !== $value ) {
+			return $value;
+		}
+
+		$value = get_post_meta( $attachment_id, $name_key, true );
+
+		return pods_traverse( $traverse_params, $value );
 	}
 
 	/**

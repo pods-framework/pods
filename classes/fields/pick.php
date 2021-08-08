@@ -2095,6 +2095,11 @@ class PodsField_Pick extends PodsField {
 
 			$pick_object = pods_v( static::$type . '_object', $options, null, true );
 
+			// No pick object means this has no configuration to work from.
+			if ( empty( $pick_object ) ) {
+				return $data;
+			}
+
 			if ( 'custom-simple' === $pick_object ) {
 				$custom = pods_v( static::$type . '_custom', $options, '' );
 
@@ -2173,7 +2178,7 @@ class PodsField_Pick extends PodsField {
 			} elseif ( 'simple_value' !== $context ) {
 				$pick_val = pods_v( static::$type . '_val', $options );
 
-				if ( 'table' === pods_v( static::$type . '_object', $options ) ) {
+				if ( 'table' === $pick_object ) {
 					$pick_val = pods_v( static::$type . '_table', $options, $pick_val, true );
 				}
 
@@ -2189,8 +2194,8 @@ class PodsField_Pick extends PodsField {
 
 				$table_info = pods_v( 'table_info', $options );
 
-				if ( empty( $table_info ) && ! empty( $options ) ) {
-					$table_info = pods_api()->get_table_info( pods_v( static::$type . '_object', $options ), $pick_val, null, null, $object_params );
+				if ( empty( $table_info ) && ! empty( $pick_object ) ) {
+					$table_info = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $object_params );
 				}
 
 				$search_data = pods_data( is_object( $pod ) ? $pod : null );

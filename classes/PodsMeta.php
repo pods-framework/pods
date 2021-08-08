@@ -1143,9 +1143,11 @@ class PodsMeta {
 			$id = $post->ID;
 		}
 
-		if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod ) || self::$current_pod->pod !== $metabox['args']['group']['pod']['name'] ) {
-			self::$current_pod = pods( $metabox['args']['group']['pod']['name'], $id, true );
-		} elseif ( self::$current_pod->id() != $id ) {
+		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $metabox['args']['group']['pod']['name'] ) {
+			self::$current_pod = pods( $metabox['args']['group']['pod']['name'], null, true );
+		}
+
+		if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 			self::$current_pod->fetch( $id );
 		}
 
@@ -1323,8 +1325,10 @@ class PodsMeta {
 		$id = $post_id;
 
 		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $post->post_type ) {
-			self::$current_pod = pods( $post->post_type, $id, true );
-		} elseif ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
+			self::$current_pod = pods( $post->post_type, null, true );
+		}
+
+		if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 			self::$current_pod->fetch( $id );
 		}
 
@@ -1388,7 +1392,7 @@ class PodsMeta {
 				// Fix for Pods doing it's own sanitizing.
 				$data = pods_unslash( (array) $data );
 
-				$pod->save( $data, null, null, array(
+				$pod->save( $data, null, $id, array(
 					'is_new_item' => $is_new_item,
 					'podsmeta'    => true
 				) );
@@ -1473,9 +1477,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -1587,9 +1593,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -1630,7 +1638,7 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, null, array( 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array( 'podsmeta' => true ) );
 		} elseif ( ! empty( $id ) ) {
 			pods_no_conflict_on( 'post' );
 
@@ -1728,8 +1736,10 @@ class PodsMeta {
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
 				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() !== $id ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -1839,9 +1849,11 @@ class PodsMeta {
 			$has_fields = true;
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -1894,7 +1906,7 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
 		}
 
 		pods_no_conflict_off( 'taxonomy' );
@@ -1961,9 +1973,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -2047,8 +2061,10 @@ class PodsMeta {
 		$id = $user_id;
 
 		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== 'user' ) {
-			self::$current_pod = pods( 'user', $id, true );
-		} elseif ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
+			self::$current_pod = pods( 'user', null, true );
+		}
+
+		if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 			self::$current_pod->fetch( $id );
 		}
 
@@ -2109,7 +2125,7 @@ class PodsMeta {
 				// Fix for Pods doing it's own sanitizing
 				$data = pods_unslash( (array) $data );
 
-				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
+				$pod->save( $data, null, $id, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
 			} elseif ( ! empty( $id ) ) {
 				foreach ( $data as $field => $value ) {
 					update_user_meta( $id, $field, $value );
@@ -2183,9 +2199,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -2263,9 +2281,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -2436,9 +2456,11 @@ class PodsMeta {
 				$id = $comment->comment_ID;
 			}
 
-			if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $metabox['args']['group']['pod']['name'] ) {
-				self::$current_pod = pods( $metabox['args']['group']['pod']['name'], $id, true );
-			} elseif ( self::$current_pod->id() != $id ) {
+			if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $metabox['args']['group']['pod']['name'] ) {
+				self::$current_pod = pods( $metabox['args']['group']['pod']['name'], null, true );
+			}
+
+			if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 				self::$current_pod->fetch( $id );
 			}
 
@@ -2508,9 +2530,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -2581,9 +2605,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -2624,7 +2650,7 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, null, array( 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array( 'podsmeta' => true ) );
 		} elseif ( ! empty( $id ) ) {
 			pods_no_conflict_on( 'comment' );
 

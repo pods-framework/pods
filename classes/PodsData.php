@@ -1,6 +1,8 @@
 <?php
 
 use Pods\Whatsit\Pod;
+use Pods\Whatsit\Field;
+use Pods\Whatsit\Object_Field;
 
 /**
  * @package Pods
@@ -239,7 +241,7 @@ class PodsData {
 			return;
 		}
 
-		if ( $pod instanceof Pods\Whatsit\Pod ) {
+		if ( $pod instanceof Pod ) {
 			$this->pod_data = $pod;
 		} else {
 			$this->pod_data = $this->api->load_pod( [
@@ -813,7 +815,7 @@ class PodsData {
 
 		$pod = false;
 
-		if ( $this->pod_data instanceof Pods\Whatsit\Pod ) {
+		if ( $this->pod_data instanceof Pod ) {
 			$pod = $this->pod_data;
 		}
 
@@ -1078,7 +1080,7 @@ class PodsData {
 
 				if ( false !== $params->search_across ) {
 					foreach ( $params->fields as $key => $field ) {
-						if ( is_array( $field ) || $field instanceof Pods\Whatsit\Field ) {
+						if ( is_array( $field ) || $field instanceof Field ) {
 							$attributes = $field;
 							$field      = pods_v( 'name', $field, $key, true );
 						} else {
@@ -1165,7 +1167,7 @@ class PodsData {
 
 					$fieldfield = '`t`.`' . $params->index . '`';
 
-					if ( isset( $params->fields[ $params->index ] ) && ! $params->fields[ $params->index ] instanceof \Pods\Whatsit\Object_Field ) {
+					if ( isset( $params->fields[ $params->index ] ) && ! $params->fields[ $params->index ] instanceof Object_Field ) {
 						if ( $params->meta_fields ) {
 							$fieldfield = '`' . $params->index . '`.`' . $params->pod_table_prefix . '`';
 						} else {
@@ -1231,7 +1233,7 @@ class PodsData {
 					$filterfield = $filterfield . '.`term_id`';
 				} elseif ( in_array( $attributes['type'], $file_field_types, true ) ) {
 					$filterfield = $filterfield . '.`post_title`';
-				} elseif ( isset( $params->fields[ $field ] ) && $params->fields[ $field ] instanceof \Pods\Whatsit\Object_Field ) {
+				} elseif ( isset( $params->fields[ $field ] ) && $params->fields[ $field ] instanceof Object_Field ) {
 					if ( $params->meta_fields && $is_pod_meta_storage ) {
 						$filterfield = $filterfield . '.`meta_value`';
 					} else {
@@ -2456,9 +2458,9 @@ class PodsData {
 	/**
 	 * Get the string to use in a query for WHERE/HAVING, uses WP_Query meta_query arguments
 	 *
-	 * @param array                  $fields Array of field matches for querying.
-	 * @param array|Pods\Whatsit\Pod $pod    Related Pod.
-	 * @param object                 $params Parameters passed from select().
+	 * @param array     $fields Array of field matches for querying.
+	 * @param array|Pod $pod    Related Pod.
+	 * @param object    $params Parameters passed from select().
 	 *
 	 * @return string|null Query string for WHERE/HAVING
 	 *
@@ -2575,10 +2577,10 @@ class PodsData {
 	/**
 	 * Get the string to use in a query for matching, uses WP_Query meta_query arguments
 	 *
-	 * @param string|int             $field  Field name or array index.
-	 * @param array|string           $q      Query array (meta_query) or string for matching.
-	 * @param array|Pods\Whatsit\Pod $pod    Related Pod.
-	 * @param object                 $params Parameters passed from select().
+	 * @param string|int   $field  Field name or array index.
+	 * @param array|string $q      Query array (meta_query) or string for matching.
+	 * @param array|Pod    $pod    Related Pod.
+	 * @param object       $params Parameters passed from select().
 	 *
 	 * @return string|null Query field string
 	 *
@@ -2698,7 +2700,7 @@ class PodsData {
 									'table',
 								), true
 							) ) {
-								if ( $the_field instanceof \Pods\Whatsit\Object_Field ) {
+								if ( $the_field instanceof Object_Field ) {
 									$field_cast = "`t`.`{$field_name}`";
 								} elseif ( $is_pod_meta_storage ) {
 									$field_cast = "`{$field_name}`.`meta_value`";
@@ -3136,7 +3138,7 @@ class PodsData {
 
 		$the_field = null;
 
-		if ( $pod_data instanceof Pods\Whatsit\Pod ) {
+		if ( $pod_data instanceof Pod ) {
 			$the_field = $pod_data->get_field( $field );
 		} elseif ( ! isset( $pod_data['fields'][ $field ] ) ) {
 			// Fallback to meta table if the pod type supports it.
@@ -3179,7 +3181,7 @@ class PodsData {
 
 		$table_info = array();
 
-		if ( $the_field instanceof \Pods\Whatsit\Field && $the_field->get_table_info() ) {
+		if ( $the_field instanceof Field && $the_field->get_table_info() ) {
 			$table_info = $the_field->get_table_info();
 		} elseif (
 			in_array( $traverse['type'], $file_field_types, true )
@@ -3190,7 +3192,7 @@ class PodsData {
 		) {
 			$table_info = $this->api->get_table_info( 'media', 'media' );
 		} elseif ( ! in_array( $traverse['type'], $tableless_field_types, true ) ) {
-			if ( $pod_data instanceof Pods\Whatsit\Pod ) {
+			if ( $pod_data instanceof Pod ) {
 				$table_info = $pod_data->get_table_info();
 			} else {
 				$table_info = $this->api->get_table_info( $pod_data['type'], $pod_data['name'], $pod_data['name'], $pod_data );
@@ -3561,7 +3563,7 @@ class PodsData {
 			return $this->{$mapped[$name]};
 		}
 
-		// Handle alias Pods\Whatsit\Pod properties.
+		// Handle alias Pod properties.
 		$supported_pods_object = array(
 			'pod'           => 'name',
 			'pod_id'        => 'id',
@@ -3587,7 +3589,7 @@ class PodsData {
 			return $this->pod_data->get_arg( $supported_pods_object[ $name ] );
 		}
 
-		// Map deprecated properties to Pods\Whatsit\Pod properties.
+		// Map deprecated properties to Pod properties.
 		$mapped = array(
 			'datatype' => 'pod',
 			'datatype_id' => 'pod_id',
@@ -3627,7 +3629,7 @@ class PodsData {
 	 * @since 2.8
 	 */
 	public function __isset( $name ) {
-		// Handle alias Pods\Whatsit\Pod properties.
+		// Handle alias Pod properties.
 		$supported_pods_object = array(
 			'pod'           => 'name',
 			'pod_id'        => 'id',

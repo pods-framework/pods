@@ -5028,10 +5028,10 @@ class PodsAPI {
 
 		$object_ID = 'ID';
 
-		if ( 'comment' === $object_type ) {
-			$object_ID = 'comment_ID';
-		} elseif ( 'taxonomy' === $object_type ) {
-			$object_ID = 'term_id';
+		if ( ! empty( $pod['field_id'] ) ) {
+			$object_ID = $pod['field_id'];
+		} elseif ( ! empty( $pod['pod_field_id'] ) ) {
+			$object_ID = $pod['pod_field_id'];
 		}
 
 		$object_data    = array();

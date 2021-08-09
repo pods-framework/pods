@@ -12,6 +12,8 @@ use stdClass;
  */
 class DataTest extends Pods_UnitTestCase {
 
+	public static $db_reset_teardown = false;
+
 	/**
 	 * @covers ::pods_sanitize
 	 */

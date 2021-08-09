@@ -867,6 +867,9 @@ class PodsField_DateTime extends PodsField {
 				's' => 'ss',
 				// Microsecond.
 				'u' => 'c',
+				// Timezone.
+				'O' => 'z',
+				'P' => 'Z',
 			);
 
 			if ( version_compare( PHP_VERSION, '7.0.0' ) >= 0 ) {

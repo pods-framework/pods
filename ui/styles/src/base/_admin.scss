@@ -772,6 +772,25 @@ body[class*="settings_page_pods-"] {
 	}
 }
 
+.pods-admin_progress-bar_container {
+	width: 100%;
+	background-color: #e0e0e0;
+	padding: 3px;
+	border-radius: 3px;
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, .2);
+	margin-bottom: 20px;
+}
+
+.pods-admin_progress-bar_fill {
+	display: block;
+	text-align: center;
+	line-height: 22px;
+	height: 22px;
+	background-color: #95bf3b;
+	border-radius: 3px;
+	transition: width 500ms ease-in-out;
+}
+
 .pods-inspector-row .components-datetime {
 	padding-left: 0;
 	padding-right: 0;

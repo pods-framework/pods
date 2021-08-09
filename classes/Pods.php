@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Data\Map_Field_Values;
+
 /**
  * Pods class.
  *
@@ -665,7 +667,18 @@ class Pods implements Iterator {
 		/** @var string $pod_type The pod object type. */
 		$pod_type = pods_v( 'type', $this->pod_data, '' );
 
-		$is_wp_object = in_array( $pod_type, $wp_object_types, true );
+		$use_meta_fallback = in_array( $pod_type, $wp_object_types, true );
+
+		/**
+		 * Allow hooking in to support getting meta using the meta fallback.
+		 *
+		 * @since TBD
+		 *
+		 * @param bool   $use_meta_fallback Whether to support getting meta using the meta fallback.
+		 * @param string $object_type       The object type.
+		 */
+		$use_meta_fallback = apply_filters( 'pods_field_wp_object_use_meta_fallback', $use_meta_fallback, $pod_type );
+
 
 		if ( in_array( $params->name, $permalink_fields, true ) ) {
 			if ( 0 < strlen( $this->detail_page ) && false === strpos( $params->name, 'permalink' ) ) {
@@ -808,130 +821,13 @@ class Pods implements Iterator {
 				} else {
 					return null;
 				}
+			} else {
+				// Handle custom/supported value mappings.
+				$map_field_values = tribe( Map_Field_Values::class );
 
-			} elseif ( 'avatar' === $first_field && 'user' === $pod_type ) {
-				// User avatar.
-				$size       = null;
-				$get_avatar = true;
+				$value = $map_field_values->map_value( $first_field, $traverse_fields, $is_field_set ? $field_data : null, $this );
 
-				if ( $is_traversal ) {
-					if ( $is_field_set ) {
-						// This is a registered field.
-						if ( isset( $traverse_fields[1] ) && is_numeric( $traverse_fields[1] ) ) {
-							$size = (int) $traverse_fields[1];
-						} else {
-							// Traverse through attachment post.
-							$get_avatar = false;
-						}
-					} else {
-						if ( isset( $traverse_fields[1] ) ) {
-							$size = (int) $traverse_fields[1];
-						}
-					}
-				}
-
-				if ( $get_avatar ) {
-					$object_field_found = true;
-					if ( 0 < $size ) {
-						$value = get_avatar( $this->id(), $size );
-					} else {
-						$value = get_avatar( $this->id() );
-					}
-				}
-
-			} elseif ( ! $is_field_set ) {
-				// Default image field handlers.
-				$image_fields = [
-						'image_attachment',
-						'image_attachment_url',
-				];
-
-				if ( 'post_type' === $pod_type ) {
-					$image_fields[] = 'post_thumbnail';
-					$image_fields[] = 'post_thumbnail_url';
-				}
-
-				// Handle special field tags.
-				if ( in_array( $first_field, $image_fields, true ) ) {
-					// Default image field handlers.
-					$object_field_found = true;
-
-					$image_field = $first_field;
-					// Is it a URL request?
-					$url = '_url' === substr( $image_field, - 4 );
-					if ( $url ) {
-						$image_field = substr( $image_field, 0, - 4 );
-					}
-
-					// Copy traversal parameters.
-					$traverse_params = $traverse_fields;
-					// Results in an empty array if no traversal params are passed.
-					array_shift( $traverse_params );
-
-					$attachment_id = 0;
-					switch ( $image_field ) {
-						case 'post_thumbnail':
-							$attachment_id = get_post_thumbnail_id( $this->id() );
-							break;
-						case 'image_attachment':
-							if ( isset( $traverse_params[0] ) ) {
-								$attachment_id = $traverse_params[0];
-								array_shift( $traverse_params );
-							}
-							break;
-					}
-
-					if ( $attachment_id ) {
-						$is_image = wp_attachment_is_image( $attachment_id );
-
-						$size = 'thumbnail';
-						if ( isset( $traverse_params[0] ) ) {
-							$size = $traverse_params[0];
-
-							if ( pods_is_image_size( $size ) ) {
-								// Force image request since a valid size parameter is passed.
-								$is_image = true;
-							} else {
-								// No valid image size found.
-								$size = false;
-							}
-						}
-
-						if ( $url ) {
-							if ( $is_image ) {
-								$value = pods_image_url( $attachment_id, $size, 0, true );
-							} else {
-								$value = wp_get_attachment_url( $attachment_id );
-							}
-						} elseif ( $size ) {
-							// Pods will auto-get the thumbnail ID if this isn't an attachment.
-							$value = pods_image( $attachment_id, $size, 0, null, true );
-						} else {
-							// Fallback to attachment Post object to look for other image properties.
-							$media = pods( 'media', $attachment_id );
-
-							if ( $media && $media->valid() && $media->exists() ) {
-								$value = $media->field( implode( '.', $traverse_params ) );
-							} else {
-								// Fallback to default attachment object.
-								$attachment = get_post( $attachment_id );
-								$value      = pods_v( implode( '.', $traverse_params ), $attachment, null );
-
-								if ( null === $value ) {
-									// Start traversal though object property or metadata.
-									$name_key = array_shift( $traverse_params );
-									$value    = pods_v( $name_key, $attachment, null );
-
-									if ( null === $value ) {
-										$value = get_post_meta( $attachment_id, $name_key, true );
-									}
-
-									$value = pods_traverse( $traverse_params, $value );
-								}
-							}
-						}
-					}
-				}
+				$object_field_found = null !== $value;
 			}
 
 			// Continue regular field parsing.
@@ -1002,7 +898,7 @@ class Pods implements Iterator {
 						pods_no_conflict_on( $pod_type );
 					}
 
-					if ( $is_wp_object ) {
+					if ( $use_meta_fallback ) {
 						$id = $this->id();
 
 						$metadata_type = $pod_type;
@@ -3736,7 +3632,7 @@ class Pods implements Iterator {
 				'name' => $name,
 			];
 
-			if ( ! is_array( $field ) ) {
+			if ( is_string( $field ) ) {
 				$name = $field;
 
 				$field = [

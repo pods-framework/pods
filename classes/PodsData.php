@@ -330,9 +330,43 @@ class PodsData {
 			}
 		}
 
-		// @todo Revisit this mess, $this->pod_data can't be an array anymore.
-		if ( ! empty( $table ) && $table['pod'] instanceof Pods\Whatsit\Pod ) {
+		// No pod set.
+		if ( empty( $table['pod'] )  ) {
+			// No pod name to try to use.
+			if ( empty( $table['name'] ) ) {
+				return;
+			}
+
+			$pod_data = $this->api->load_pod( [
+				'name'       => $table['name'],
+				'auto_setup' => true,
+			] );
+
+			// No pod data found.
+			if ( ! $pod_data ) {
+				return;
+			}
+
+			$table['pod'] = $pod_data;
+		}
+
+		if ( $table['pod'] instanceof Pods\Whatsit\Pod ) {
 			$this->pod_data = $table['pod'];
+
+			return;
+		}
+
+		if ( is_object( $this->pod_data ) ) {
+			return;
+		}
+
+		$pod_data = $this->api->load_pod( [
+			'name'       => $table['name'],
+			'auto_setup' => true,
+		] );
+
+		if ( $pod_data ) {
+			$this->pod_data = $pod_data;
 		} else {
 			$table['id']   = pods_v( 'id', $table['pod'], 0, true );
 			$table['name'] = pods_v( 'name', $table['pod'], $table['object_type'], true );
@@ -348,18 +382,7 @@ class PodsData {
 			$table['fields']        = pods_v( 'fields', $table['pod'], [] );
 			$table['object_fields'] = pods_v( 'object_fields', $table['pod'], $this->api->get_wp_object_fields( $table['object_type'] ), true );
 
-			if ( ! is_object( $this->pod_data ) ) {
-				$pod_data = $this->api->load_pod( [
-					'name'       => $table['name'],
-					'auto_setup' => true,
-				] );
-
-				if ( $pod_data ) {
-					$this->pod_data = $pod_data;
-				} else {
-					$this->pod_data = new Pod( $table );
-				}
-			}
+			$this->pod_data = new Pod( $table );
 		}
 	}
 
@@ -1966,6 +1989,8 @@ class PodsData {
 					$post_type = 'attachment';
 				}
 
+				$this->row = [];
+
 				if ( 'id' === $mode ) {
 					$this->row = get_post( $id, ARRAY_A );
 
@@ -2025,6 +2050,8 @@ class PodsData {
 					$_term = apply_filters( 'get_term', $_term, $taxonomy );
 					$_term = apply_filters( "get_$taxonomy", $_term, $taxonomy );
 					$_term = sanitize_term( $_term, $taxonomy, $filter );
+
+					$this->row = [];
 
 					if ( is_object( $_term ) ) {
 						$this->row = get_object_vars( $_term );

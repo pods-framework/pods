@@ -530,7 +530,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 				foreach ( $storage_types as $storage_type => $pod ) {
 					$pod_name = $pod['name'];
 
-					$data_base[] = [
+					$data_base[ build_query( compact( [ 'pod_type', 'storage_type', 'pod_name' ] ) ) ] = [
 						build_query( compact( [ 'pod_type', 'storage_type', 'pod_name' ] ) ),
 						[
 							'pod_type'     => $pod_type,
@@ -572,7 +572,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 						$pod_name   = $pod['name'];
 						$field_name = $field['name'];
 
-						$data[] = [
+						$data[ build_query( compact( [ 'pod_type', 'storage_type', 'pod_name', 'field_name' ] ) ) ] = [
 							build_query( compact( [ 'pod_type', 'storage_type', 'pod_name', 'field_name' ] ) ),
 							[
 								'pod_type'     => $pod_type,
@@ -590,7 +590,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 						$pod_name   = $pod['name'];
 						$field_name = $field['name'];
 
-						$data[] = [
+						$data[ build_query( compact( [ 'pod_type', 'storage_type', 'pod_name', 'field_name' ] ) ) ] = [
 							build_query( compact( [ 'pod_type', 'storage_type', 'pod_name', 'field_name' ] ) ),
 							[
 								'pod_type'     => $pod_type,
@@ -648,7 +648,14 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 							$related_pod_name       = $related_pod['name'];
 							$related_pod_field_name = $related_pod_field['name'];
 
-							$data_deep[] = [
+							$data_deep[ build_query( compact( [
+									'pod_type',
+									'storage_type',
+									'pod_name',
+									'field_name',
+									'related_pod_name',
+									'related_pod_field_name',
+								] ) ) ] = [
 								build_query( compact( [
 									'pod_type',
 									'storage_type',
@@ -706,7 +713,16 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 								$sub_related_pod_name       = $sub_related_pod['name'];
 								$sub_related_pod_field_name = $sub_related_pod_field['name'];
 
-								$data_deep[] = [
+								$data_deep[ build_query( compact( [
+										'pod_type',
+										'storage_type',
+										'pod_name',
+										'field_name',
+										'related_pod_name',
+										'related_pod_field_name',
+										'sub_related_pod_name',
+										'sub_related_pod_field_name',
+									] ) ) ] = [
 									build_query( compact( [
 										'pod_type',
 										'storage_type',

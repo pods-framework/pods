@@ -43,6 +43,10 @@ class Item_Single extends Base {
 				'item',
 				'field',
 			],
+			'uses_context'    => [
+				'postType',
+				'postId',
+			],
 		];
 	}
 
@@ -100,11 +104,13 @@ class Item_Single extends Base {
 	 *
 	 * @since TBD
 	 *
-	 * @param array $attributes
+	 * @param array         $attributes The block attributes.
+	 * @param string        $content    The block default content.
+	 * @param WP_Block|null $block      The block instance.
 	 *
-	 * @return string
+	 * @return string The block content to render.
 	 */
-	public function render( $attributes = [] ) {
+	public function render( $attributes = [], $content = '', $block = null ) {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'trim', $attributes );
 
@@ -122,11 +128,21 @@ class Item_Single extends Base {
 			return '';
 		}
 
+		// Use current if no pod name / slug provided.
 		if ( empty( $attributes['name'] ) || empty( $attributes['slug'] ) ) {
 			$attributes['use_current'] = true;
 		}
 
-		if (
+		if ( $attributes['use_current'] && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
+			// Detect post type / ID from context.
+			$attributes['name'] = $block->context['postType'];
+
+			if ( ! empty( $block->context['postId'] ) ) {
+				$attributes['slug'] = $block->context['postId'];
+
+				unset( $attributes['use_current'] );
+			}
+		} elseif (
 			! empty( $attributes['use_current'] )
 			&& ! empty( $_GET['post_id'] )
 			&& (

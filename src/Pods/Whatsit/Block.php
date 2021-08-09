@@ -35,18 +35,20 @@ class Block extends Pod {
 		$category  = str_replace( '_', '-', sanitize_title_with_dashes( $category ) );
 
 		$block_args = [
-			'blockName'       => $namespace . '/' . $name,
-			'blockGroupLabel' => $this->get_arg( 'group_label', __( 'Options', 'pods' ) ),
-			'title'           => $this->get_arg( 'title', $this->get_arg( 'label' ) ),
-			'description'     => $this->get_arg( 'description' ),
-			'renderType'      => $this->get_arg( 'renderType', $this->get_arg( 'render_type', 'js' ) ),
-			'category'        => $category,
-			'icon'            => $this->get_arg( 'icon', 'align-right' ),
-			'keywords'        => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
-			'supports'        => $this->get_arg( 'supports', [] ),
-			'editor_script'   => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
-			'fields'          => $this->get_block_fields(),
-			'attributes'      => $this->get_arg( 'attributes', [] ),
+			'blockName'        => $namespace . '/' . $name,
+			'blockGroupLabel'  => $this->get_arg( 'group_label', __( 'Options', 'pods' ) ),
+			'title'            => $this->get_arg( 'title', $this->get_arg( 'label' ) ),
+			'description'      => $this->get_arg( 'description' ),
+			'renderType'       => $this->get_arg( 'renderType', $this->get_arg( 'render_type', 'js' ) ),
+			'category'         => $category,
+			'icon'             => $this->get_arg( 'icon', 'align-right' ),
+			'keywords'         => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
+			'supports'         => $this->get_arg( 'supports', [] ),
+			'editor_script'    => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
+			'fields'           => $this->get_block_fields(),
+			'attributes'       => $this->get_arg( 'attributes', [] ),
+			'uses_context'     => $this->get_arg( 'usesContext', $this->get_arg( 'uses_context', [] ) ),
+			'provides_context' => $this->get_arg( 'providesContext', $this->get_arg( 'provides_context', [] ) ),
 		];
 
 		$default_supports = [
@@ -131,6 +133,12 @@ class Block extends Pod {
 		} elseif ( 'php' === $block_args['renderType'] ) {
 			$block_args['render_callback']      = $this->get_arg( 'render_callback', [ $this, 'render_template' ] );
 			$block_args['render_template_path'] = $this->get_arg( 'render_template', $this->get_arg( 'render_template_path' ) );
+		}
+
+		$other_args = (array) $this->get_arg( 'raw_args', [] );
+
+		if ( $other_args ) {
+			$block_args = array_merge( $block_args, $other_args );
 		}
 
 		return $block_args;

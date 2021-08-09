@@ -123,50 +123,15 @@ class PodsMeta {
 		self::$comment                = pods_api()->load_pods( array( 'type' => 'comment' ) );
 		self::$settings               = pods_api()->load_pods( array( 'type' => 'settings' ) );
 
-		// Handle Post Type Editor (needed for Pods core)
+		// Handle Post Type Editor (needed for Pods core).
+		pods_no_conflict_off( 'post', null, true );
 
-		// Loop through and add meta boxes for individual types (can't use this, Tabify doesn't pick it up)
-		/*
-        foreach ( self::$post_types as $post_type ) {
-            $post_type_name = $post_type[ 'name' ];
-
-            if ( !empty( $post_type[ 'object' ] ) )
-                $post_type_name = $post_type[ 'object' ];
-
-            add_action( 'add_meta_boxes_' . $post_type_name, array( $this, 'meta_post_add' ) );
-        }
-        */
-
-		add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
-		add_action( 'transition_post_status', array( $this, 'save_post_detect_new' ), 10, 3 );
-		add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
-		add_filter( 'wp_insert_post_data', array( $this, 'save_post_track_changed_fields' ), 10, 2 );
-
-		if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
-			// Handle *_post_meta
-			if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
-				add_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10, 4 );
-			}
-
-			if ( ! pods_tableless() ) {
-				add_filter( 'add_post_metadata', array( $this, 'add_post_meta' ), 10, 5 );
-				add_filter( 'update_post_metadata', array( $this, 'update_post_meta' ), 10, 5 );
-				add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
-			}
-		}
-
-		add_action( 'delete_post', array( $this, 'delete_post' ), 10, 1 );
-
+		// Handle Taxonomies.
 		if ( ! empty( self::$taxonomies ) ) {
-			$has_fields = false;
-
-			// Handle Taxonomy Editor
 			foreach ( self::$taxonomies as $taxonomy ) {
 				if ( empty( $taxonomy['fields'] ) ) {
 					continue;
 				}
-
-				$has_fields = true;
 
 				$taxonomy_name = $taxonomy['name'];
 
@@ -174,135 +139,43 @@ class PodsMeta {
 					$taxonomy_name = $taxonomy['object'];
 				}
 
-				add_action( $taxonomy_name . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
-				add_action( $taxonomy_name . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 1 );
+				pods_no_conflict_off( 'taxonomy', $taxonomy_name, true );
 			}
-
-			if ( $has_fields ) {
-				// Handle Term Editor
-				add_action( 'edited_term', array( $this, 'save_taxonomy' ), 10, 3 );
-				add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
-				add_action( 'edit_terms', array( $this, 'save_taxonomy_track_changed_fields' ), 10, 2 );
-
-				if ( apply_filters( 'pods_meta_handler', true, 'term' ) ) {
-					// Handle *_term_meta
-					if ( apply_filters( 'pods_meta_handler_get', true, 'term' ) ) {
-						add_filter( 'get_term_metadata', array( $this, 'get_term_meta' ), 10, 4 );
-					}
-
-					if ( ! pods_tableless() ) {
-						add_filter( 'add_term_metadata', array( $this, 'add_term_meta' ), 10, 5 );
-						add_filter( 'update_term_metadata', array( $this, 'update_term_meta' ), 10, 5 );
-						add_filter( 'delete_term_metadata', array( $this, 'delete_term_meta' ), 10, 5 );
-					}
-				}
-			}
+		} else {
+			// At least add the delete hook.
+			add_action( 'delete_term_taxonomy', [ $this, 'delete_taxonomy' ], 10, 1 );
 		}
-
-		/**
-		 * Fires after a previously shared taxonomy term is split into two separate terms.
-		 *
-		 * @since 4.2.0
-		 *
-		 * @param int    $term_id          ID of the formerly shared term.
-		 * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
-		 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
-		 * @param string $taxonomy         Taxonomy for the split term.
-		 */
-		add_action( 'split_shared_term', array( $this, 'split_shared_term' ), 10, 4 );
-
-		// Handle Delete
-		add_action( 'delete_term_taxonomy', array( $this, 'delete_taxonomy' ), 10, 1 );
 
 		if ( ! empty( self::$media ) ) {
-			add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
-			add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
-
-			add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
-
-			add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
-			add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
-			add_filter( 'wp_insert_attachment_data', array( $this, 'save_post_track_changed_fields' ), 10, 2 );
-
-			if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
-				// Handle *_post_meta
-				if ( ! has_filter( 'get_post_metadata', array( $this, 'get_post_meta' ) ) ) {
-					if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
-						add_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10, 4 );
-					}
-
-					if ( ! pods_tableless() ) {
-						add_filter( 'add_post_metadata', array( $this, 'add_post_meta' ), 10, 5 );
-						add_filter( 'update_post_metadata', array( $this, 'update_post_meta' ), 10, 5 );
-						add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
-					}
-				}
-			}
+			pods_no_conflict_off( 'media', null, true );
+		} else {
+			// At least add the delete hook.
+			add_action( 'delete_attachment', [ $this, 'delete_media' ], 10, 1 );
 		}
-
-		// Handle Delete
-		add_action( 'delete_attachment', array( $this, 'delete_media' ), 10, 1 );
 
 		if ( ! empty( self::$user ) ) {
-			// Handle User Editor
-			add_action( 'show_user_profile', array( $this, 'meta_user' ) );
-			add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
-			add_action( 'user_register', array( $this, 'save_user' ) );
-			add_action( 'profile_update', array( $this, 'save_user' ), 10, 2 );
-			add_filter( 'pre_user_login', array( $this, 'save_user_track_changed_fields' ) );
-
-			if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
-				// Handle *_user_meta
-				if ( apply_filters( 'pods_meta_handler_get', true, 'user' ) ) {
-					add_filter( 'get_user_metadata', array( $this, 'get_user_meta' ), 10, 4 );
-				}
-
-				if ( ! pods_tableless() ) {
-					add_filter( 'add_user_metadata', array( $this, 'add_user_meta' ), 10, 5 );
-					add_filter( 'update_user_metadata', array( $this, 'update_user_meta' ), 10, 5 );
-					add_filter( 'delete_user_metadata', array( $this, 'delete_user_meta' ), 10, 5 );
-				}
-			}
+			pods_no_conflict_off( 'user', null, true );
+		} else {
+			// At least add the delete hook.
+			add_action( 'delete_user', [ $this, 'delete_user' ], 10, 1 );
 		}
-
-		// Handle Delete
-		add_action( 'delete_user', array( $this, 'delete_user' ), 10, 1 );
 
 		if ( ! empty( self::$comment ) ) {
-			// Handle Comment Form / Editor
-			add_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ), 10, 2 );
-			add_filter( 'comment_form_default_fields', array( $this, 'meta_comment_new' ) );
-			add_action( 'add_meta_boxes_comment', array( $this, 'meta_comment_add' ) );
-			add_filter( 'pre_comment_approved', array( $this, 'validate_comment' ), 10, 2 );
-			add_action( 'comment_post', array( $this, 'save_comment' ) );
-			add_action( 'edit_comment', array( $this, 'save_comment' ) );
-			add_action( 'wp_update_comment_data', array( $this, 'save_comment_track_changed_fields' ), 10, 3 );
-
-			if ( apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
-				// Handle *_comment_meta
-				add_filter( 'get_comment_metadata', array( $this, 'get_comment_meta' ), 10, 4 );
-
-				if ( ! pods_tableless() ) {
-					add_filter( 'add_comment_metadata', array( $this, 'add_comment_meta' ), 10, 5 );
-					add_filter( 'update_comment_metadata', array( $this, 'update_comment_meta' ), 10, 5 );
-					add_filter( 'delete_comment_metadata', array( $this, 'delete_comment_meta' ), 10, 5 );
-				}
-			}
+			pods_no_conflict_off( 'comment', null, true );
+		} else {
+			// At least add the delete hook.
+			add_action( 'delete_comment', [ $this, 'delete_comment' ], 10, 1 );
 		}
 
-		// Handle Delete
-		add_action( 'delete_comment', array( $this, 'delete_comment' ), 10, 1 );
+		if ( !empty( self::$settings ) ) {
+			foreach ( self::$settings as $setting_pod ) {
+				if ( empty( $setting_pod['fields'] ) ) {
+					continue;
+				}
 
-		// @todo Patch core to provide $option back in filters, patch core to add filter pre_add_option to add_option
-		/*if ( !empty( self::$settings ) ) {
-            foreach ( self::$settings as $setting_pod ) {
-                foreach ( $setting_pod[ 'fields' ] as $option ) {
-                    add_filter( 'pre_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( $this, 'get_option' ), 10, 1 );
-                    add_action( 'add_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( $this, 'add_option' ), 10, 2 );
-                    add_filter( 'pre_update_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( $this, 'update_option' ), 10, 2 );
-                }
-            }
-        }*/
+				pods_no_conflict_off( 'settings', $setting_pod['name'], true );
+			}
+		}
 
 		if ( is_admin() ) {
 			$this->integrations();
@@ -1143,9 +1016,11 @@ class PodsMeta {
 			$id = $post->ID;
 		}
 
-		if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod ) || self::$current_pod->pod !== $metabox['args']['group']['pod']['name'] ) {
-			self::$current_pod = pods( $metabox['args']['group']['pod']['name'], $id, true );
-		} elseif ( self::$current_pod->id() != $id ) {
+		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $metabox['args']['group']['pod']['name'] ) {
+			self::$current_pod = pods( $metabox['args']['group']['pod']['name'], null, true );
+		}
+
+		if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 			self::$current_pod->fetch( $id );
 		}
 
@@ -1323,8 +1198,10 @@ class PodsMeta {
 		$id = $post_id;
 
 		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $post->post_type ) {
-			self::$current_pod = pods( $post->post_type, $id, true );
-		} elseif ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
+			self::$current_pod = pods( $post->post_type, null, true );
+		}
+
+		if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 			self::$current_pod->fetch( $id );
 		}
 
@@ -1388,7 +1265,7 @@ class PodsMeta {
 				// Fix for Pods doing it's own sanitizing.
 				$data = pods_unslash( (array) $data );
 
-				$pod->save( $data, null, null, array(
+				$pod->save( $data, null, $id, array(
 					'is_new_item' => $is_new_item,
 					'podsmeta'    => true
 				) );
@@ -1473,9 +1350,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -1587,9 +1466,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -1630,7 +1511,7 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, null, array( 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array( 'podsmeta' => true ) );
 		} elseif ( ! empty( $id ) ) {
 			pods_no_conflict_on( 'post' );
 
@@ -1728,8 +1609,10 @@ class PodsMeta {
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
 				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() !== $id ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -1839,9 +1722,11 @@ class PodsMeta {
 			$has_fields = true;
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -1894,7 +1779,7 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
 		}
 
 		pods_no_conflict_off( 'taxonomy' );
@@ -1961,9 +1846,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -2047,8 +1934,10 @@ class PodsMeta {
 		$id = $user_id;
 
 		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== 'user' ) {
-			self::$current_pod = pods( 'user', $id, true );
-		} elseif ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
+			self::$current_pod = pods( 'user', null, true );
+		}
+
+		if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 			self::$current_pod->fetch( $id );
 		}
 
@@ -2109,7 +1998,7 @@ class PodsMeta {
 				// Fix for Pods doing it's own sanitizing
 				$data = pods_unslash( (array) $data );
 
-				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
+				$pod->save( $data, null, $id, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
 			} elseif ( ! empty( $id ) ) {
 				foreach ( $data as $field => $value ) {
 					update_user_meta( $id, $field, $value );
@@ -2183,9 +2072,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -2263,9 +2154,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -2436,9 +2329,11 @@ class PodsMeta {
 				$id = $comment->comment_ID;
 			}
 
-			if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $metabox['args']['group']['pod']['name'] ) {
-				self::$current_pod = pods( $metabox['args']['group']['pod']['name'], $id, true );
-			} elseif ( self::$current_pod->id() != $id ) {
+			if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $metabox['args']['group']['pod']['name'] ) {
+				self::$current_pod = pods( $metabox['args']['group']['pod']['name'], null, true );
+			}
+
+			if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 				self::$current_pod->fetch( $id );
 			}
 
@@ -2508,9 +2403,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -2581,9 +2478,11 @@ class PodsMeta {
 			}
 
 			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], $id, true );
-				} elseif ( self::$current_pod->id() != $id ) {
+				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
+					self::$current_pod = pods( $group['pod']['name'], null, true );
+				}
+
+				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
 					self::$current_pod->fetch( $id );
 				}
 
@@ -2624,7 +2523,7 @@ class PodsMeta {
 			// Fix for Pods doing it's own sanitization
 			$data = pods_unslash( (array) $data );
 
-			$pod->save( $data, null, null, array( 'podsmeta' => true ) );
+			$pod->save( $data, null, $id, array( 'podsmeta' => true ) );
 		} elseif ( ! empty( $id ) ) {
 			pods_no_conflict_on( 'comment' );
 

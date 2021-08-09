@@ -52,6 +52,7 @@ class Map_Field_Values {
 			'custom',
 			'pod_info',
 			'field_info',
+			'calculation',
 			'image_fields',
 			'avatar',
 		];
@@ -170,6 +171,65 @@ class Map_Field_Values {
 		$field_option = ! empty( $traverse[1] ) ? $traverse[1] : 'label';
 
 		return $obj->fields( $field_match, $field_option );
+	}
+
+	/**
+	 * Map the matching calculation value.
+	 *
+	 * @since 2.8
+	 *
+	 * @param string                  $field      The first field name in the path.
+	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
+	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
+	 * @param Pods                    $obj        The Pods object.
+	 *
+	 * @return null|mixed The matching calculation value or null if there was no match.
+	 */
+	public function calculation( $field, $traverse, $field_data, $obj ) {
+		// Skip if the field exists.
+		if ( $field_data ) {
+			return null;
+		}
+
+		$supported_calculations = [
+			'_zebra',
+			'_position',
+			'_total',
+			'_total_found',
+			'_total_pages',
+		];
+
+		// Skip if not the field we are looking for.
+		if ( ! in_array( $field, $supported_calculations, true ) ) {
+			return null;
+		}
+
+		$value = null;
+
+		switch ( $field ) {
+			case '_zebra':
+				$value = (int) $obj->zebra();
+
+				break;
+			case '_position':
+				$value = $obj->position();
+
+				break;
+			case '_total':
+				$value = $obj->total();
+
+				break;
+			case '_total_found':
+				$value = $obj->total_found();
+
+				break;
+			case '_total_pages':
+				$value = $obj->total_pages();
+
+				break;
+		}
+
+		return $value;
 	}
 
 	/**

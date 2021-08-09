@@ -314,15 +314,17 @@ class PodsData {
 	public function table( $table, $object = '' ) {
 		global $wpdb;
 
-		if ( ! is_array( $table ) ) {
+		if ( is_string( $table ) ) {
 			$object_type = '';
 
-			if ( $wpdb->users === $table ) {
-				$object_type = 'user';
-			} elseif ( $wpdb->posts === $table ) {
+			if ( $wpdb->posts === $table ) {
 				$object_type = 'post_type';
 			} elseif ( $wpdb->terms === $table ) {
 				$object_type = 'taxonomy';
+			} elseif ( $wpdb->users === $table ) {
+				$object_type = 'user';
+			} elseif ( $wpdb->comments === $table ) {
+				$object_type = 'comment';
 			} elseif ( $wpdb->options === $table ) {
 				$object_type = 'settings';
 			}
@@ -330,6 +332,13 @@ class PodsData {
 			if ( ! empty( $object_type ) ) {
 				$table = $this->api->get_table_info( $object_type, $object );
 			}
+		}
+
+		// Check if we received a pod object itself.
+		if ( $table instanceof Pod ) {
+			$table = [
+				'pod' => $table,
+			];
 		}
 
 		// No pod set.
@@ -352,39 +361,9 @@ class PodsData {
 			$table['pod'] = $pod_data;
 		}
 
-		if ( $table['pod'] instanceof Pods\Whatsit\Pod ) {
+		// Check for pod object.
+		if ( $table['pod'] instanceof Pod ) {
 			$this->pod_data = $table['pod'];
-
-			return;
-		}
-
-		if ( is_object( $this->pod_data ) ) {
-			return;
-		}
-
-		$pod_data = $this->api->load_pod( [
-			'name'       => $table['name'],
-			'auto_setup' => true,
-		] );
-
-		if ( $pod_data ) {
-			$this->pod_data = $pod_data;
-		} else {
-			$table['id']   = pods_v( 'id', $table['pod'], 0, true );
-			$table['name'] = pods_v( 'name', $table['pod'], $table['object_type'], true );
-			$table['type'] = pods_v( 'type', $table['pod'], $table['object_type'], true );
-
-			$default_storage = 'meta';
-
-			if ( ! function_exists( 'get_term_meta' ) && 'taxonomy' === $table['type'] ) {
-				$default_storage = 'none';
-			}
-
-			$table['storage']       = pods_v( 'storage', $table['pod'], $default_storage, true );
-			$table['fields']        = pods_v( 'fields', $table['pod'], [] );
-			$table['object_fields'] = pods_v( 'object_fields', $table['pod'], $this->api->get_wp_object_fields( $table['object_type'] ), true );
-
-			$this->pod_data = new Pod( $table );
 		}
 	}
 

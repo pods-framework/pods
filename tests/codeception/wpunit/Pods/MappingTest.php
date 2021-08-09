@@ -1,6 +1,6 @@
 <?php
 
-namespace Pods_Unit_Tests\Pods\Field;
+namespace Pods_Unit_Tests\Pods;
 
 use Pods;
 use Pods_Unit_Tests\Pods_UnitTestCase;
@@ -10,11 +10,12 @@ use Pods_Unit_Tests\Pods_UnitTestCase;
  *
  * @package Pods_Unit_Tests
  *
- * @group   pods-traversal
  * @group   pods-mapping
  * @group   pods-field
  */
 class MappingTest extends Pods_UnitTestCase {
+
+	public static $db_reset_teardown = false;
 
 	private $pod_id;
 	private $pod_name = 'mappingtest';
@@ -73,13 +74,6 @@ class MappingTest extends Pods_UnitTestCase {
 
 		// Delete the pod config.
 		$api->delete_pod( [ 'name' => $this->pod_name ] );
-
-		// Reset current user.
-		global $current_user;
-
-		$current_user = null;
-
-		wp_set_current_user( 0 );
 
 		parent::tearDown();
 	}

@@ -386,3 +386,6 @@
     if ( ! defined( 'WP_FS__DEMO_MODE' ) ) {
         define( 'WP_FS__DEMO_MODE', false );
     }
+    if ( ! defined( 'FS_SDK__SSLVERIFY' ) ) {
+        define( 'FS_SDK__SSLVERIFY', false );
+    }

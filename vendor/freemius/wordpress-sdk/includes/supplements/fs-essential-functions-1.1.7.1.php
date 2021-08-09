@@ -32,7 +32,7 @@
 
 		// Get active plugin's main files real full names (might be symlinks).
 		foreach ( $all_plugins as $relative_path => $data ) {
-			if ( 0 === strpos( $file_real_path, fs_normalize_path( dirname( realpath( WP_PLUGIN_DIR . '/' . $relative_path ) ) ) ) ) {
+            if ( 0 === strpos( $file_real_path, fs_normalize_path( dirname( realpath( WP_PLUGIN_DIR . '/' . $relative_path ) ) . '/' ) ) ) {
 				if ( '.' !== dirname( trailingslashit( $relative_path ) ) ) {
 	                return $relative_path;
 	            }

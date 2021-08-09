@@ -93,7 +93,7 @@
 						fs_esc_html_inline( 'An automated download and installation of %s (paid version) from %s will start in %s. If you would like to do it manually - click the cancellation button now.', 'installing-in-n', $slug ),
 						$plugin_title,
 						sprintf(
-							'<a href="%s" target="_blank">%s</a>',
+							'<a href="%s" target="_blank" rel="noopener">%s</a>',
 							'https://freemius.com',
 							'freemius.com'
 						),

@@ -197,8 +197,13 @@ class PodsField_OEmbed extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
@@ -216,7 +221,7 @@ class PodsField_OEmbed extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**

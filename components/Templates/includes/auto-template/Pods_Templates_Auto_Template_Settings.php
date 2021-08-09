@@ -41,8 +41,14 @@ class Pods_Templates_Auto_Template_Settings {
 		// Add option tab for post types
 		add_filter( 'pods_admin_setup_edit_tabs_post_type', array( $this, 'tab' ), 11, 3 );
 
-		// add the same tab for taxonomies
+		// Add the same tab for taxonomies.
 		add_filter( 'pods_admin_setup_edit_tabs_taxonomy', array( $this, 'tab' ), 11, 3 );
+
+		// Add the same tab for comments.
+		add_filter( 'pods_admin_setup_edit_tabs_comment', array( $this, 'tab' ), 11, 3 );
+
+		// Add the same tab for users / authors.
+		add_filter( 'pods_admin_setup_edit_tabs_user', array( $this, 'tab' ), 11, 3 );
 
 		// Add options to the new tab
 		add_filter( 'pods_admin_setup_edit_options', array( $this, 'options' ), 12, 2 );
@@ -85,6 +91,16 @@ class Pods_Templates_Auto_Template_Settings {
 	 * @since 2.5.5
 	 */
 	public function tab( $tabs, $pod, $addtl_args ) {
+		$type = $pod['type'];
+
+		if ( ! in_array( $type, array(
+			'post_type',
+			'taxonomy',
+			'user',
+			'comment',
+		) ) ) {
+			return $tabs;
+		}
 
 		$tabs['pods-pfat'] = __( 'Auto Template Options', 'pods' );
 
@@ -95,155 +111,224 @@ class Pods_Templates_Auto_Template_Settings {
 	/**
 	 * Adds options for this plugin under the Frontier Auto Template tab.
 	 *
-	 * @param array $options
-	 * @param array $pod
+	 * @param array $options Tab options.
+	 * @param array $pod     Pod options.
 	 *
 	 * @return array
 	 *
 	 * @since 2.5.5
 	 */
 	public function options( $options, $pod ) {
+		$type = $pod['type'];
 
-		// check if it's a post type pod and add fields for that.
-		if ( $pod['type'] === 'post_type' ) {
-			$options['pods-pfat'] = array(
-				'pfat_enable'           => array(
-					'label'             => __( 'Enable Automatic Pods Templates for this Pod?', 'pods' ),
-					'help'              => __( 'When enabled you can specify the names of Pods Templates to be used to display items in this Pod in the front-end.', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => false,
-					'dependency'        => true,
-					'boolean_yes_label' => '',
-				),
-				'pfat_run_outside_loop' => array(
-					'label'             => __( 'Execute Auto Template outside of the WordPress loop? (advanced)', 'pods' ),
-					'help'              => __( 'When enabled, the template will be executed whenever the specified filter is called.', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => false,
-					'depends-on'        => array( 'pfat_enable' => true ),
-					'boolean_yes_label' => '',
-				),
-				'pfat_single'           => array(
-					'label'      => __( 'Single item view template', 'pods' ),
-					'help'       => __( 'Name of Pods template to use for single item view.', 'pods' ),
-					'type'       => 'text',
-					'default'    => false,
-					'depends-on' => array( 'pfat_enable' => true ),
-				),
-				'pfat_append_single'    => array(
-					'label'      => __( 'Single Template Location', 'pods' ),
-					'help'       => __( 'Whether the template will go before, after or in place of the post content.', 'pods' ),
-					'depends-on' => array( 'pfat_enable' => true ),
-				),
-				'pfat_filter_single'    => array(
-					'label'      => __( 'Single Template Filter', 'pods' ),
-					'help'       => __( 'Which filter to use for single views.', 'pods' ),
-					'default'    => 'the_content',
-					'type'       => 'text',
-					'depends-on' => array( 'pfat_enable' => true ),
-				),
-				'pfat_archive'          => array(
-					'label'      => __( 'Archive view template', 'pods' ),
-					'help'       => __( 'Name of Pods template to use for use in this Pods archive pages.', 'pods' ),
-					'type'       => 'text',
-					'default'    => false,
-					'depends-on' => array( 'pfat_enable' => true ),
-				),
-				'pfat_append_archive'   => array(
-					'label'      => __( 'Archive Template Location', 'pods' ),
-					'help'       => __( 'Whether the template will go before, after or in place of the post content.', 'pods' ),
-					'depends-on' => array( 'pfat_enable' => true ),
-				),
-				'pfat_filter_archive'   => array(
-					'label'      => __( 'Archive Template Filter', 'pods' ),
-					'help'       => __( 'Which filter to use for archives.', 'pods' ),
-					'default'    => 'the_content',
-					'type'       => 'text',
-					'depends-on' => array( 'pfat_enable' => true ),
-				),
-			);
-		}//end if
+		if ( ! in_array( $type, array(
+			'post_type',
+			'taxonomy',
+			'user',
+			'comment',
+		) ) ) {
+			return $options;
+		}
 
-		// check if it's a taxonomy Pod, if so add fields for that
-		if ( $pod['type'] === 'taxonomy' ) {
-			$options['pods-pfat'] = array(
-				'pfat_enable'           => array(
-					'label'             => __( 'Enable Automatic Pods Templates for this Pod?', 'pods' ),
-					'help'              => __( 'When enabled you can specify the names of a Pods Template to be used to display items in this Pod in the front-end.', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => false,
-					'dependency'        => true,
-					'boolean_yes_label' => '',
-				),
-				'pfat_run_outside_loop' => array(
-					'label'             => __( 'Execute Auto Template outside of the WordPress loop? (advanced)', 'pods' ),
-					'help'              => __( 'When enabled, the template will be executed whenever the specified filter is called.', 'pods' ),
-					'type'              => 'boolean',
-					'default'           => false,
-					'depends-on'        => array( 'pfat_enable' => true ),
-					'boolean_yes_label' => '',
-				),
-				'pfat_archive'          => array(
-					'label'      => __( 'Taxonomy Template', 'pods' ),
-					'help'       => __( 'Name of Pods template to use for this taxonomy.', 'pods' ),
-					'type'       => 'text',
-					'default'    => false,
-					'depends-on' => array( 'pfat_enable' => true ),
-				),
-				'pfat_append_archive'   => array(
-					'label'      => __( 'Template Location', 'pods' ),
-					'help'       => __( 'Whether the template will go before, after or in place of the post content.', 'pods' ),
-					'depends-on' => array( 'pfat_enable' => true ),
-				),
-			);
-		}//end if
+		$default_single_hooks = array(
+			'post_type' => 'the_content',
+			'taxonomy'  => 'get_the_archive_description',
+			'user'      => 'get_the_author_description',
+			'comment'   => 'comment_text',
+		);
 
-		if ( isset( $options['pods-pfat'] ) ) {
+		$default_archive_hooks = $default_single_hooks;
 
-			// field options pick values
-			$pick = array(
-				'type'               => 'pick',
-				'pick_format_type'   => 'single',
-				'pick_format_single' => 'dropdown',
-				'default'            => 'true',
-			);
+		// Posts use excerpt for archive.
+		$default_archive_hooks['post_type'] = 'the_excerpt';
 
-			// get template titles
-			$titles = $this->get_template_titles();
+		$changed_single  = false;
+		$changed_archive = false;
 
-			if ( ! empty( $titles ) ) {
-				foreach ( $pick as $k => $v ) {
+		$single_hook                = pods_v( 'pfat_filter_single', $pod, '' );
+		$default_single_hook        = $default_single_hooks[ $type ];
+		$default_single_hook_custom = '';
+
+		if ( ! in_array( $single_hook, array(
+			'',
+			$default_single_hook,
+		), true ) ) {
+			$changed_single             = true;
+			$default_single_hook        = 'custom';
+			$default_single_hook_custom = $single_hook;
+		}
+
+		$archive_hook                = pods_v( 'pfat_filter_archive', $pod, '' );
+		$default_archive_hook        = $default_archive_hooks[ $type ];
+		$default_archive_hook_custom = '';
+
+		if ( ! in_array( $archive_hook, array(
+			'',
+			$default_archive_hook,
+		), true ) ) {
+			$changed_archive             = true;
+			$default_archive_hook        = 'custom';
+			$default_archive_hook_custom = $archive_hook;
+		}
+
+		$options['pods-pfat'] = array(
+			'pfat_enable'        => array(
+				'label'             => __( 'Enable Auto Templates', 'pods' ),
+				'help'              => __( 'When enabled you can specify the names of Pod Templates to be used to display items in this Pod in the front-end.', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => false,
+				'dependency'        => true,
+				'boolean_yes_label' => __( 'Enable Automatic Pod Templates for this Pod', 'pods' ),
+			),
+			'pfat_single'        => array(
+				'label'      => __( 'Singular Template', 'pods' ),
+				'help'       => __( 'Name of Pod Template to use. For post types, this is the singular post. For taxonomies, this is the taxonomy archive. For users, this is the author archive.', 'pods' ),
+				'type'       => 'text',
+				'default'    => false,
+				'depends-on' => array( 'pfat_enable' => true ),
+			),
+			'pfat_append_single' => array(
+				'label'      => __( 'Singular Template Location', 'pods' ),
+				'help'       => __( 'Whether the template will go before, after or in place of the existing content.', 'pods' ),
+				'depends-on' => array( 'pfat_enable' => true ),
+			),
+			'pfat_filter_single' => array(
+				'label'      => __( 'Singular Template Filter', 'pods' ),
+				'help'       => __( 'Which filter to use for singular views.', 'pods' ),
+				'default'    => $default_single_hook,
+				'type'       => 'pick',
+				'data'       => array(
+					$default_single_hooks[ $type ] => sprintf( __( 'Filter: %s', 'pods' ), $default_single_hooks[ $type ] ),
+					'custom'                       => __( 'Use a custom hook', 'pods' ),
+				),
+				'depends-on' => array( 'pfat_enable' => true ),
+				'dependency' => true,
+			),
+			'pfat_filter_single_custom' => array(
+				'label'      => __( 'Custom Singular Template Filter', 'pods' ),
+				'help'       => __( 'Which custom filter to use for singular views.', 'pods' ),
+				'default'    => $default_single_hook_custom,
+				'type'       => 'text',
+				'depends-on' => array( 'pfat_enable' => true, 'pfat_filter_single' => 'custom' ),
+			),
+			'pfat_archive'          => array(
+				'label'      => __( 'List Template', 'pods' ),
+				'help'       => __( 'Name of Pod Template to use. This will be used when outside the Singular context. For comments, there are no Singular comment views so they will always use the List Template.', 'pods' ),
+				'type'       => 'text',
+				'default'    => false,
+				'depends-on' => array( 'pfat_enable' => true ),
+			),
+			'pfat_append_archive'   => array(
+				'label'      => __( 'List Template Location', 'pods' ),
+				'help'       => __( 'Whether the template will go before, after or in place of the existing content.', 'pods' ),
+				'depends-on' => array( 'pfat_enable' => true ),
+			),
+			'pfat_filter_archive'   => array(
+				'label'      => __( 'List Template Filter', 'pods' ),
+				'help'       => __( 'Which filter to use for archive/list views.', 'pods' ),
+				'type'       => 'pick',
+				'default'    => $default_archive_hook,
+				'data'       => array(
+					$default_archive_hooks[ $type ] => sprintf( __( 'Filter: %s', 'pods' ), $default_archive_hooks[ $type ] ),
+					'custom'                        => __( 'Use a custom hook', 'pods' ),
+				),
+				'depends-on' => array( 'pfat_enable' => true ),
+				'dependency' => true,
+			),
+			'pfat_filter_archive_custom' => array(
+				'label'      => __( 'Custom List Template Filter', 'pods' ),
+				'help'       => __( 'Which custom filter to use for archive/list views.', 'pods' ),
+				'default'    => $default_archive_hook_custom,
+				'type'       => 'text',
+				'depends-on' => array( 'pfat_enable' => true, 'pfat_filter_archive' => 'custom' ),
+			),
+			'pfat_run_outside_loop' => array(
+				'label'             => __( 'Run outside loop', 'pods' ),
+				'help'              => __( 'When enabled, the template will be executed whenever the specified filter is called. Only use this if you know you need to. There could be unforeseen consequences such as content in widgets and other areas of the site getting the templates added.', 'pods' ),
+				'type'              => 'boolean',
+				'default'           => false,
+				'depends-on'        => array( 'pfat_enable' => true ),
+				'boolean_yes_label' => __( 'Execute Auto Template outside of the WordPress loop (advanced)', 'pods' ),
+			),
+		);
+
+		// Backcompat: Override the value used in the UI to force new option.
+		if ( $changed_single ) {
+			$options['pods-pfat']['pfat_filter_single']['value'] = 'custom';
+		}
+
+		// Backcompat: Override the value used in the UI to force new option.
+		if ( $changed_archive ) {
+			$options['pods-pfat']['pfat_filter_archive']['value'] = 'custom';
+		}
+
+
+		// Handle type exceptions.
+		if ( 'taxonomy' === $type ) {
+			// Taxonomies do not have archives, they only have a singular view.
+			unset( $options['pods-pfat']['pfat_archive'] );
+			unset( $options['pods-pfat']['pfat_append_archive'] );
+			unset( $options['pods-pfat']['pfat_filter_archive'] );
+			unset( $options['pods-pfat']['pfat_filter_archive_custom'] );
+		} elseif ( 'comment' === $type ) {
+			// Comments do not have singular views, they only have archive/loop views.
+			unset( $options['pods-pfat']['pfat_single'] );
+			unset( $options['pods-pfat']['pfat_append_single'] );
+			unset( $options['pods-pfat']['pfat_filter_single'] );
+			unset( $options['pods-pfat']['pfat_filter_single_custom'] );
+		}
+
+		// Non-post types do not check for loop.
+		if ( 'post_type' !== $type ) {
+			unset( $options['pods-pfat']['pfat_run_outside_loop'] );
+		}
+
+		// field options pick values
+		$pick = array(
+			'type'               => 'pick',
+			'pick_format_type'   => 'single',
+			'pick_format_single' => 'dropdown',
+			'default'            => 'true',
+		);
+
+		// get template titles
+		$titles = $this->get_template_titles();
+
+		if ( ! empty( $titles ) ) {
+			foreach ( $pick as $k => $v ) {
+				if ( isset( $options['pods-pfat']['pfat_single'] ) ) {
 					$options['pods-pfat']['pfat_single'][ $k ] = $v;
-
+				}
+				if ( isset( $options['pods-pfat']['pfat_archive'] ) ) {
 					$options['pods-pfat']['pfat_archive'][ $k ] = $v;
-
-				}
-
-				$options['pods-pfat']['pfat_archive']['data'] = array( null => __( 'No Archive view template', 'pods' ) ) + ( array_combine( $this->get_template_titles(), $this->get_template_titles() ) );
-				$options['pods-pfat']['pfat_single']['data']  = array_combine( $this->get_template_titles(), $this->get_template_titles() );
-			}
-
-			// Add data to $pick for template location
-			unset( $pick['data'] );
-			$location_data = array(
-				'append'  => __( 'After', 'pods' ),
-				'prepend' => __( 'Before', 'pods' ),
-				'replace' => __( 'Replace', 'pods' ),
-			);
-			$pick['data']  = $location_data;
-
-			// add location options to fields without type set.
-			foreach ( $options['pods-pfat'] as $k => $option ) {
-				if ( ! isset( $option['type'] ) ) {
-					$options['pods-pfat'][ $k ] = array_merge( $option, $pick );
 				}
 			}
 
-			// remove single from taxonomy
-			if ( 'taxonomy' === $pod['type'] ) {
-				unset( $options['pods-pfat']['pfat_single'] );
+			$titles_data = array( null => __( '-- Select One --', 'pods' ) ) + array_combine( $titles, $titles );
+
+			if ( isset( $options['pods-pfat']['pfat_single'] ) ) {
+				$options['pods-pfat']['pfat_single']['data'] = $titles_data;
 			}
-		}//end if
+			if ( isset( $options['pods-pfat']['pfat_archive'] ) ) {
+				$options['pods-pfat']['pfat_archive']['data'] = $titles_data;
+			}
+		}
+
+		// Add data to $pick for template location
+		unset( $pick['data'] );
+		$location_data = array(
+			'append'  => __( 'After', 'pods' ),
+			'prepend' => __( 'Before', 'pods' ),
+			'replace' => __( 'Replace', 'pods' ),
+		);
+		$pick['data'] = $location_data;
+
+		// add location options to fields without type set.
+		foreach ( $options['pods-pfat'] as $k => $option ) {
+			if ( ! isset( $option['type'] ) ) {
+				$options['pods-pfat'][ $k ] = array_merge( $option, $pick );
+			}
+		}
 
 		return $options;
 
@@ -324,7 +409,7 @@ class Pods_Templates_Auto_Template_Settings {
 			$auto_pods = $front->auto_pods();
 
 			foreach ( $auto_pods as $name => $pod ) {
-				if ( ! $pod['has_archive'] && $pod['archive'] && $pod['type'] !== 'taxonomy' && ! in_array(
+				if ( ! $pod['has_archive'] && $pod['archive'] && 'post_type' === $pod['type'] && ! in_array(
 					$name, array(
 						'post',
 						'page',
@@ -368,7 +453,7 @@ class Pods_Templates_Auto_Template_Settings {
 	}
 
 	/**
-	 * Get titles of all Pods Templates
+	 * Get titles of all Pod Templates
 	 *
 	 * @return string[] Array of template names
 	 *

@@ -1,48 +1,61 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Let us know if something isn't working quite right
+title: ''
+labels: 'Type: Bug'
+assignees: ''
 
 ---
 
-**Describe the bug**
-<!-- Please provide a clear and concise description of what the bug is. -->
+## Description
 
-**To Reproduce**
-Steps to reproduce the behavior:
+<!-- A clear and concise description of what the bug is. -->
+
+## Testing instructions
+
+<!-- List of steps to reproduce the behavior so we can see it on our side too. -->
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
-4. See error
+4. See error message '....'
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## Expected behavior
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+<!-- What you expected to be able to see or do if the problem did not happen. -->
 
-## Pods Version
-Please provide the version of Pods you are running: 
+## Screenshots / screencast
 
-## WordPress Environment
-<!-- This is REQUIRED for Bug Reports, so we can check for conflicts, version issues, etc. -->
+<!-- If you have any screenshot(s) or screencast(s) to show your problem, these can help us solve things more quickly. -->
+
+## Possible workaround
+
+<!-- If you have discovered a workaround, let us know so other people can be aware too. -->
+
+## Pods version
+
+<!-- Please enter the version of Pods you are running. -->
+
+## Other super helpful information
+
+<!-- Please provide this, we need to be able to review other plugins and versions to check for incompatibility problems. -->
+
 <details>
-
+<summary>WordPress Environment</summary>
+  
+```
 Copy and paste your Tools > Site Health > Info. Use the 'Copy Site Info to Clipboard' and paste the results over this line.
+```
 
 </details>
 
-## Pods Package Export (helpful!)
-<!-- Please include the Pods Package Export as it will be helpful in reproducing your issues. -->
-<!-- To access: Pods Admin, Components, Migrate: Packages, Enable. -->
-<!-- Then Pods Admin, Migrate: Packages, Export and Copy and Paste the JSON here OR -->
-<!-- Save to a text file and upload to this bug report -->
+<!-- This would be helpful for us if you provide it. You may need to enable the component at Pods Admin > Components > Migrate: Packages > Enable. -->
+
+<details>
+<summary>Pods Package Export</summary>
+
+```json
+Copy and paste your Pods Admin > Migrate: Packages > Export and paste the code over this line.
 ```
-Copy and Paste the JSON Export from **Pods Admin, Migrate: Packages, Export** in WordPress admin here
-```
 
-**Additional context**
-Add any other context about the problem here.
-
-**Possible Workaround**
-If you have discovered a workaround, please include it below.
-
+</details>

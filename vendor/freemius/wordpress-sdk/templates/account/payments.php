@@ -47,7 +47,7 @@
 						<td><?php echo $payment->formatted_gross() ?></td>
 						<td><?php if (! $payment->is_migrated() ) : ?><a href="<?php echo $fs->_get_invoice_api_url( $payment->id ) ?>"
 						       class="button button-small"
-						       target="_blank"><?php fs_esc_html_echo_inline( 'Invoice', 'invoice', $slug ) ?></a><?php endif ?></td>
+						       target="_blank" rel="noopener"><?php fs_esc_html_echo_inline( 'Invoice', 'invoice', $slug ) ?></a><?php endif ?></td>
 					</tr>
 					<?php $odd = ! $odd; endforeach ?>
 				</tbody>

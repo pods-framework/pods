@@ -395,6 +395,23 @@ class Pods_Templates extends PodsComponent {
 					'restrict_capability' => true,
 				),
 			),
+			array(
+				'name'       => 'show_restrict_message',
+				'label'      => __( 'Show no access message?', 'pods' ),
+				'default'    => 1,
+				'type'       => 'boolean',
+				'dependency' => true,
+			),
+			array(
+				'name'                  => 'restrict_message',
+				'label'                 => __( 'No access message', 'pods' ),
+				'type'                  => 'wysiwyg',
+				'default'               => __( 'You do not have access to view this content.', 'pods' ),
+				'wysiwyg_editor_height' => 200,
+				'depends-on'            => array(
+					'show_restrict_message' => true,
+				),
+			),
 		);
 
 		pods_group_add( $pod, __( 'Restrict Access', 'pods' ), $fields, 'normal', 'high' );
@@ -509,12 +526,19 @@ class Pods_Templates extends PodsComponent {
 					$code = $template['code'];
 				}
 
-				$permission = pods_permission( $template['options'] );
+				$options = pods_v( 'options', $template );
+
+				$permission = pods_permission( $options );
 
 				$permission = (boolean) apply_filters( 'pods_templates_permission', $permission, $code, $template, $obj );
 
 				if ( ! $permission ) {
-					return apply_filters( 'pods_templates_permission_denied', __( 'You do not have access to view this content.', 'pods' ), $code, $template, $obj );
+					if ( 1 === (int) pods_v( 'show_restrict_message', $options, 1 ) ) {
+						$message = pods_v( 'restrict_message', $options, __( 'You do not have access to view this content.', 'pods' ), true );
+						$message = PodsForm::field_method( 'wysiwyg', 'display', $message, 'restrict_message', $options );
+						return apply_filters( 'pods_templates_permission_denied', $message, $code, $template, $obj );
+					}
+					return '';
 				}
 			}
 		}

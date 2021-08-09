@@ -19,7 +19,7 @@ $css_id = $attributes['id'];
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
 
-$uid = @session_id();
+$uid = pods_session_id();
 
 if ( is_user_logged_in() ) {
 	$uid = 'user_' . get_current_user_id();

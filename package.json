@@ -1,6 +1,6 @@
 {
   "name": "pods",
-  "version": "2.7.22",
+  "version": "2.7.29",
   "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
   "author": "Pods Foundation, Inc",
   "homepage": "https://pods.io/",
@@ -64,7 +64,7 @@
   "scripts": {
     "test-dfv": "node node_modules/mocha/bin/mocha --compilers js:babel-core/register --reporter dot --recursive tests/js",
     "build-podsjs": "node node_modules/rollup/bin/rollup -c",
-    "scss": "node-sass --output-style compressed ui/styles/src -o ui/styles/dist --source-map ui/styles/src/sourcemaps",
+    "scss": "node-sass --output-style compressed ui/styles/src -o ui/styles/dist",
     "scss:watch": "node-sass --output-style compressed -w ui/styles/src -o ui/styles/dist",
     "version_number": "grunt version_number"
   },

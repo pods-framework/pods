@@ -137,7 +137,7 @@
 			} catch ( Exception $e ) {
 				// Map to error object.
 				$result = (object) array(
-					'error' => array(
+					'error' => (object) array(
 						'type'    => 'Unknown',
 						'message' => $e->getMessage() . ' (' . $e->getFile() . ': ' . $e->getLine() . ')',
 						'code'    => 'unknown',

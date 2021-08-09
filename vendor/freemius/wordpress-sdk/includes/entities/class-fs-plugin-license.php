@@ -51,6 +51,13 @@
          */
         public $parent_license_id;
         /**
+         * @author Leo Fajardo (@leorw)
+         * @since 2.4.0
+         *
+         * @var array
+         */
+        public $products;
+        /**
          * @var number
          */
         public $pricing_id;

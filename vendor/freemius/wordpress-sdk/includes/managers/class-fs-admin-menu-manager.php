@@ -703,7 +703,12 @@
                 $menu['parent_slug'] :
                 'admin.php';
 
-			return admin_url( $parent_slug . '?page=' . $menu['menu'][2] );
+            return admin_url(
+                $parent_slug .
+                ( false === strpos( $parent_slug, '?' ) ? '?' : '&' ) .
+                'page=' .
+                $menu['menu'][2]
+            );
 		}
 
 		/**

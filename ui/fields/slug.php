@@ -8,7 +8,7 @@ $attributes             = PodsForm::merge_attributes( $attributes, $name, $form_
 <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 <script>
 	jQuery( function ( $ ) {
-		$( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).change( function () {
+		$( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).on( 'change', function () {
 			var newval = $( this )
 				.val()
 				.toLowerCase()

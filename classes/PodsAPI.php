@@ -155,12 +155,14 @@ class PodsAPI {
 			$object_type = 'term';
 		}
 
+		$is_meta_object = in_array( $object_type, array( 'post', 'term', 'user', 'comment' ), true );
+
 		if ( $sanitized ) {
 			$data = pods_unsanitize( $data );
 			$meta = pods_unsanitize( $meta );
 		}
 
-		if ( in_array( $object_type, array( 'post', 'term', 'user', 'comment' ) ) ) {
+		if ( $is_meta_object ) {
 			return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict, false, $fields );
 		} elseif ( 'settings' === $object_type ) {
 			// Nothing to save
@@ -310,6 +312,10 @@ class PodsAPI {
 		}
 
 		foreach ( $post_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value || ( $strict && '' === $post_meta[ $meta_key ] ) ) {
 				$old_meta_value = '';
 
@@ -462,6 +468,10 @@ class PodsAPI {
 		$meta = get_user_meta( $id );
 
 		foreach ( $user_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value ) {
 				$old_meta_value = '';
 
@@ -605,6 +615,10 @@ class PodsAPI {
 		$meta = get_comment_meta( $id );
 
 		foreach ( $comment_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value ) {
 				$old_meta_value = '';
 
@@ -771,6 +785,10 @@ class PodsAPI {
 		}
 
 		foreach ( $term_meta as $meta_key => $meta_value ) {
+
+			// Prevent WP unslash removing already sanitized input.
+			$meta_value = pods_slash( $meta_value );
+
 			if ( null === $meta_value || ( $strict && '' === $term_meta[ $meta_key ] ) ) {
 				$old_meta_value = '';
 
@@ -1045,7 +1063,7 @@ class PodsAPI {
 				'post_password'         => array(
 					'name'  => 'post_password',
 					'label' => 'Password',
-					'type'  => 'text',
+					'type'  => 'password',
 					'alias' => array()
 				),
 				'post_name'             => array(
@@ -3976,6 +3994,8 @@ class PodsAPI {
 				$fields_to_send[ $field ] = $field_data;
 			}
 
+			$meta_fields = pods_sanitize( $meta_fields );
+
 			$params->id = $this->save_wp_object( $object_type, $object_data, $meta_fields, false, true, $fields_to_send );
 
 			if ( ! empty( $params->id ) && 'settings' === $pod['type'] ) {
@@ -4701,7 +4721,7 @@ class PodsAPI {
 		$field['name']  = $check_name;
 		$field['label'] = $new_label;
 
-		return $this->save_field( $field );
+		return $this->save_field( $field, true, true );
 
 	}
 
@@ -5006,7 +5026,7 @@ class PodsAPI {
 					$related_pod = pods( pods_var_raw( 'pick_val', $field ), null, false );
 
 					// If this isn't a Pod, return data exactly as Pods does normally
-					if ( empty( $related_pod ) || ( 'pod' !== $pick_object && $pick_object !== $related_pod->pod_data['type'] ) || $related_pod->pod == $pod->pod ) {
+					if ( empty( $related_pod ) || empty( $related_pod->pod_data ) || ( 'pod' !== $pick_object && $pick_object !== pods_v( 'type', $related_pod->pod_data, null ) ) || $related_pod->pod == $pod->pod ) {
 						$related_data = $pod->field( array( 'name' => $field['name'], 'output' => 'arrays' ) );
 					} else {
 						$related_object_fields = (array) pods_var_raw( 'object_fields', $related_pod->pod_data, array(), null, true );
@@ -9254,7 +9274,7 @@ class PodsAPI {
 			return pods_error( __( 'Invalid submission', 'pods' ), $this );
 		}
 
-		$uid = @session_id();
+		$uid = pods_session_id();
 
 		if ( is_user_logged_in() ) {
 			$uid = 'user_' . get_current_user_id();

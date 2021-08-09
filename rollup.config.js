@@ -24,8 +24,7 @@ export default {
 			'underscore': '_',
 			'backbone': 'Backbone',
 			'backbone.marionette': 'Marionette'
-		},
-		sourcemap: true
+		}
 	},
 	external: [
 		'jquery',

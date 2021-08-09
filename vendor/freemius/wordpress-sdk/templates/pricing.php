@@ -91,18 +91,25 @@
 		'currency'         => $fs->apply_filters( 'default_currency', 'usd' ),
 	) );
 
-	if ( ! $fs->is_registered() ) {
-		$template_data = array(
-			'id' => $fs->get_id(),
-		);
-		fs_require_template( 'forms/trial-start.php', $template_data);
-	}
+    $use_external_pricing = $fs->should_use_external_pricing();
 
-	$view_params = array(
-		'id'   => $VARS['id'],
-		'page' => strtolower( $fs->get_text_x_inline( 'Pricing', 'noun', 'pricing' ) ),
-	);
-	fs_require_once_template('secure-https-header.php', $view_params);
+    if ( ! $use_external_pricing ) {
+        $pricing_js_url = fs_asset_url( $fs->get_pricing_js_path() );
+        wp_enqueue_script( 'freemius-pricing', $pricing_js_url );
+    } else {
+        if ( ! $fs->is_registered() ) {
+            $template_data = array(
+                'id' => $fs->get_id(),
+            );
+            fs_require_template( 'forms/trial-start.php', $template_data);
+        }
+
+        $view_params = array(
+            'id'   => $VARS['id'],
+            'page' => strtolower( $fs->get_text_x_inline( 'Pricing', 'noun', 'pricing' ) ),
+        );
+        fs_require_once_template('secure-https-header.php', $view_params);
+    }
 
 	$has_tabs = $fs->_add_tabs_before_content();
 
@@ -111,7 +118,31 @@
 	}
 ?>
 	<div id="fs_pricing" class="wrap fs-section fs-full-size-wrapper">
-		<div id="fs_frame"></div>
+        <?php if ( ! $use_external_pricing ) : ?>
+        <div id="fs_pricing_wrapper" data-public-url="<?php echo trailingslashit( dirname( $pricing_js_url ) ) ?>"></div>
+        <?php
+        $pricing_config = array_merge( array(
+            'contact_url'         => $fs->contact_url(),
+            'is_network_admin'    => fs_is_network_admin(),
+            'is_production'       => ( defined( 'WP_FS__IS_PRODUCTION_MODE' ) ? WP_FS__IS_PRODUCTION_MODE : null ),
+            'menu_slug'           => $fs->get_menu_slug(),
+            'mode'                => 'dashboard',
+            'fs_wp_endpoint_url'  => WP_FS__ADDRESS,
+            'request_handler_url' => admin_url(
+                'admin-ajax.php?' . http_build_query( array(
+                    'module_id' => $fs->get_id(),
+                    'action'    => $fs->get_ajax_action( 'pricing_ajax_action' ),
+                    'security'  => $fs->get_ajax_security( 'pricing_ajax_action' )
+                ) )
+            ),
+            'selector'            => '#fs_pricing_wrapper',
+            'unique_affix'        => $fs->get_unique_affix(),
+        ), $query_params );
+
+        wp_add_inline_script( 'freemius-pricing', 'Freemius.pricing.new( ' . json_encode( $pricing_config ) . ' )' );
+        ?>
+        <?php else : ?>
+        <div id="fs_frame"></div>
 		<form action="" method="POST">
 			<input type="hidden" name="user_id"/>
 			<input type="hidden" name="user_email"/>
@@ -161,6 +192,7 @@
 				});
 			})(jQuery);
 		</script>
+        <?php endif ?>
 	</div>
 <?php
 	if ( $has_tabs ) {

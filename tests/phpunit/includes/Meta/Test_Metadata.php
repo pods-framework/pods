@@ -3,12 +3,11 @@
 namespace Pods_Unit_Tests\Meta;
 
 /**
- * Class Test_Each
+ * Class Metadata
  *
  * @package Pods_Unit_Tests
  * @group   pods_acceptance_tests
- * @group   pods-shortcodes
- * @group   pods-shortcodes-each
+ * @group   pods_meta
  */
 class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 {
@@ -20,11 +19,10 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 	protected static $pod_names = array(
 		'post_type' => 'post_meta',
 		'taxonomy'  => 'term_meta',
-		'comment'   => 'comment_meta',
-		'user'      => 'user_meta',
+		// Name should be equal as WP object name.
+		'comment'   => 'comment',
+		'user'      => 'user',
 	);
-
-	protected static $pod_ids = array();
 
 	protected static $obj_ids = array();
 
@@ -46,6 +44,9 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 	public static function wpTearDownAfterClass() {
 		foreach ( self::$pod_names as $type => $name ) {
+			if ( in_array( $name, array( 'comment', 'user' ), true ) ){
+				continue;
+			}
 			// Delete all pod objects as well.
 			$delete_all = true;
 			pods_api()->delete_pod( $name, false, $delete_all );
@@ -56,7 +57,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 		foreach ( self::$pod_names as $type => $name ) {
 
-			self::$pod_ids[ $type ] = pods_api()->save_pod(
+			$pod_id = pods_api()->save_pod(
 				array(
 					'storage' => 'meta',
 					'type'    => $type,
@@ -64,15 +65,12 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				)
 			);
 
-			$pod_id = self::$pod_ids[ $type ];
-
 			$params = array(
-				'pod'              => $name,
-				'pod_id'           => $pod_id,
-				'name'             => 'text',
-				'type'             => 'text',
+				'pod'    => $name,
+				'pod_id' => $pod_id,
+				'name'   => 'text',
+				'type'   => 'text',
 			);
-
 			pods_api()->save_field( $params );
 
 			$params = array(
@@ -82,7 +80,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				'type'             => 'file',
 				'file_format_type' => 'multi',
 			);
-
 			pods_api()->save_field( $params );
 
 			$params = array(
@@ -94,7 +91,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				'pick_val'         => $name,
 				'pick_format_type' => 'single',
 			);
-
 			pods_api()->save_field( $params );
 
 			$params = array(
@@ -106,7 +102,22 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 				'pick_val'         => $name,
 				'pick_format_type' => 'multi',
 			);
+			pods_api()->save_field( $params );
 
+			// PR #5665
+			$params = array(
+				'pod'    => $name,
+				'pod_id' => $pod_id,
+				'name'   => 'slash',
+				'type'   => 'text',
+			);
+			pods_api()->save_field( $params );
+			$params = array(
+				'pod'    => $name,
+				'pod_id' => $pod_id,
+				'name'   => 'quotes',
+				'type'   => 'text',
+			);
 			pods_api()->save_field( $params );
 		}
 	}
@@ -164,8 +175,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 
 			self::$obj_ids[ $type ] = $objects;
 
-			$update_meta = 'update_' . $name;
 			foreach ( $objects as $key => $id ) {
+				$data = array();
 
 				switch ( $key ) {
 					case 0:
@@ -173,6 +184,10 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 							'text'   => 'text',
 							'images' => self::get_images(),
 							// No relationship fields.
+
+							// PR #5665
+							'slash'  => 'Test \backslash',
+							'quotes' => 'Test \'quotes\' "doublequotes"',
 						);
 						break;
 					case 1:
@@ -189,11 +204,6 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						);
 						break;
 				}
-
-				// Pods doesn't fully handle update_metadata requests.
-				/*foreach ( $data as $meta_key => $meta_value ) {
-					call_user_func( $update_meta, $id, $meta_key, $meta_value );
-				}*/
 
 				$pod = pods( $name, $id );
 				$pod->save( $data );
@@ -212,13 +222,22 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 		return $images;
 	}
 
+	public function test_created_pods() {
+
+		foreach( self::$pod_names as $type => $name ) {
+			$pod = pods( $name );
+			$this->assertNotFalse( $pod->valid() );
+			$this->assertNotEmpty( self::$obj_ids[ $type ] );
+		}
+	}
+
 	public function test_get_metadata() {
 
 		foreach ( self::$obj_ids as $type => $ids ) {
 
 			$id_key   = self::get_id_key( $type );
 			$name     = self::$pod_names[ $type ];
-			$get_meta = 'get_' . $name;
+			$get_meta = self::get_meta_function( 'get', $type );
 
 			foreach ( $ids as $key => $id ) {
 
@@ -263,13 +282,19 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						$this->assertEquals( '', $single_single, $message );
 						$this->assertEquals( '', $multi_single, $message );
 
+						// PR #5665
+						$value = call_user_func( $get_meta, $id, 'slash', true );
+						$this->assertEquals( 'Test \backslash', $value, $message );
+						$value = call_user_func( $get_meta, $id, 'quotes', true );
+						$this->assertEquals( 'Test \'quotes\' "doublequotes"', $value, $message );
+
 						break;
 					case 1:
 						// Single related to: 2
 						// Multi related to: 2
 
-						$single_rel = self::$obj_ids[ $type ][ 2 ];
-						$multi_rel  = self::$obj_ids[ $type ][ 2 ];
+						$single_rel = $ids[ 2 ];
+						$multi_rel  = $ids[ 2 ];
 
 						// Single param false
 						$this->assertEquals( array( $single_rel ), $single, $message );
@@ -284,10 +309,10 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						// Single related to: 1
 						// Multi related to: 0 and 1
 
-						$single_rel = self::$obj_ids[ $type ][ 1 ];
+						$single_rel = $ids[ 1 ];
 						$multi_rel  = array(
-							self::$obj_ids[ $type ][ 0 ],
-							self::$obj_ids[ $type ][ 1 ]
+							$ids[ 0 ],
+							$ids[ 1 ]
 						);
 
 						// Single param false
@@ -316,7 +341,7 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 		foreach ( self::$obj_ids as $type => $ids ) {
 
 			$name     = self::$pod_names[ $type ];
-			$get_meta = 'get_' . $name;
+			$get_meta = self::get_meta_function( 'get', $type );
 
 			foreach ( $ids as $key => $id ) {
 
@@ -358,8 +383,8 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						// Single related to: 2
 						// Multi related to: 2
 
-						$single_rel = self::$obj_ids[ $type ][ 2 ];
-						$multi_rel  = self::$obj_ids[ $type ][ 2 ];
+						$single_rel = $ids[ 2 ];
+						$multi_rel  = $ids[ 2 ];
 
 						// Single param false
 						$this->assertEquals( array( $single_rel ), $single, $message );
@@ -374,10 +399,10 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 						// Single related to: 1
 						// Multi related to: 0 and 1
 
-						$single_rel = self::$obj_ids[ $type ][ 1 ];
+						$single_rel = $ids[ 1 ];
 						$multi_rel  = array(
-							self::$obj_ids[ $type ][ 0 ],
-							self::$obj_ids[ $type ][ 1 ]
+							$ids[ 0 ],
+							$ids[ 1 ]
 						);
 
 						// Single param false
@@ -397,6 +422,18 @@ class Test_Metadata extends \Pods_Unit_Tests\Pods_UnitTestCase
 		}
 
 		remove_filter( 'pods_pods_field_related_output_type', array( $this, 'filter_output_type_ids' ) );
+	}
+
+	public static function get_meta_function( $action, $type ) {
+		switch ( $type ) {
+			case 'post_type':
+				$type = 'post';
+				break;
+			case 'taxonomy':
+				$type = 'term';
+				break;
+		}
+		return $action . '_' . $type . '_meta';
 	}
 
 	public static function get_id_key( $type ) {

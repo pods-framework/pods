@@ -1,11 +1,11 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, pglewis, jimtrue, keraweb, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
+Contributors: sc0ttkclark, keraweb, jimtrue, pglewis, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 4.5
-Tested up to: 5.5
+Tested up to: 5.8
 Requires PHP: 5.3
-Stable tag: 2.7.22
+Stable tag: 2.7.29
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,115 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.29 - August 4th, 2021 =
+
+* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, reported by Muhammad Daffa via WPScan)
+* Friends of Pods: Updated CTA text about our 2021 donor goals. (@sc0ttkclark)
+* Added: Support for Timezones in datetime / time fields. #6042 (@JoryHogeveen)
+* Added: Support for Pantheon WP Native Sessions plugin. (@sc0ttkclark)
+* Enhancement: Optimized the PNG image assets using PNG8+Alpha with ImageAlpha and ImageOptim. #6028 (@lowwebtech)
+* Fixed: Hidden fields now properly submit correctly. (@sc0ttkclark)
+* Fixed: Post type `has_archive` no gets set to a false properly when disabled. #6069 (@JoryHogeveen)
+* Fixed: Resolve PHP `strlen()`` warnings when validating text values being saved. #6062 (@pd-cm, @sc0ttkclark, @JoryHogeveen)
+* Fixed: Sorting URLs in `PodsUI` include `post_type` and `taxonomy` when Advanced Content Types are set to be underneath a Post Type's top level menu. #6040 (@JoryHogeveen)
+* Fixed: Fallback to the manage fields in `PodsUI` for reordering when reorder fields are not overridden. #6058 (@JoryHogeveen)
+* Fixed: Depend on plupload when showing custom upload directory option for file fields. (@JoryHogeveen)
+
+= 2.7.28 - May 20th, 2021 =
+
+* Added: New upload directory option for File fields using Plupload that lets you choose to customize which directory the files end up in. #6021 (@JoryHogeveen)
+* Added: Relationship fields now support custom selectors in the REST API. You can specify `my_field.some_field` to output a specific field in your REST API options for each relationship field. (@sc0ttkclark)
+* Added: New `pods_image_for_post()` and `pods_image_url_for_post()` functions have been added for certain page builders like Oxygen. (@sc0ttkclark) 
+* Added: New query variable prefix option (`num_prefix`) for PodsUI instances. (@sc0ttkclark)
+* Added: `pagination_type` and `pagination_location` options for PodsUI instances to support more flexible pagination options. (@sc0ttkclark)
+* Enhancement: Implement `search` and `sort` field sets for PodsUI instances to more easily specify which fields are searchable or sortable. (@sc0ttkclark) 
+* Fixed: PHP fatal errors no longer occur for avatar fields in certain situations. #6007 (@JoryHogeveen)
+* Fixed: PHP fatal errors no longer occur for PHP 8 in certain situations. #6012 (@JoryHogeveen)
+* Fixed: Resolved an issue with relationship fields not outputting their full data to the REST API when the related object is not a valid pod. (@sc0ttkclark) 
+* Fixed: Resolved an issue with not saving the fields for the extended Media pod when making update requests through the REST API. (@sc0ttkclark) 
+* Fixed: Implemented a temporary PHP 7.4+ fix for Freemius. (@sc0ttkclark)
+* Fixed: Searching WP-based objects in PodsUI interfaces now resolves to the proper fields. (@sc0ttkclark)
+
+= 2.7.27 - April 20th, 2021 =
+
+* Added: Support taxonomy and other object field filters in Pods::find(). #5994 (@JoryHogeveen)
+* Added: WP 5.7 `filter_by_item` and `filter_by_date` labels. #5959 (@JoryHogeveen)
+* Added: `pagination_type` shortcode param. #5977 (@JoryHogeveen)
+* Enhancement: Allow ID as parameter for `pods_audio()` and `pods_video()`. #5999 (@JoryHogeveen, @sc0ttkclark)
+* Enhancement: Use correct pagination item classes. #5179 (@JoryHogeveen)
+* Fixed: Polylang compatibility for populating default field values. #5879 (@Chouby, @JoryHogeveen)
+* Fixed: Prevent incorrect sanitizing of option fields since 2.7.25. #5909 (@JoryHogeveen)
+* Fixed: Traversal display filters for single and multiple relationships. #5985 (@JoryHogeveen)
+* Fixed: Support capitalized file extensions. #5975 (@sc0ttkclark, @JoryHogeveen)
+* Fixed: Resolved PHP notice in the PodsAPI. #5952 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Resolved PHP notice when using `?pods_debug_sql=1` on Pods Admin UI screens. (@sc0ttkclark)
+* Fixed: Stop tracking Freemius add-ons and rely on just Pods itself. #5981 (@sc0ttkclark)
+* Fixed: Prevent potentially unsafe HTML tags from being used in admin menu text. (@sc0ttkclark, props to Hagai Wechsler and Daniel Elkabes from WhiteSource Software)
+
+= 2.7.26 - January 8th, 2021 =
+
+* Fixed: Prevent PHP warnings in the `components/Templates/includes/element-pod_reference.php` file. #5914 (@JoryHogeveen)
+* Added: New filter `pods_shortcode_detect_from_current_post` allows you to override whether a shortcode should detect the post object outside of the loop (default is only when `in_the_loop()`). This helps to fix problems that are part of the integration which the free Pods Beaver Themer Add-On uses. (@sc0ttkclark)
+
+= 2.7.25 - December 28th 2020 =
+
+**New Features & Enhancements**
+
+* Added: Custom no access message for templates. #5875 (@JoryHogeveen)
+* Added: New filter `pods_field_validate_{$type}`. #1106 (@JoryHogeveen)
+
+**Bug Fixes**
+
+* Fixed: Ensure compatibility with the WordPress 5.6 jQuery update. #5892, #5896 & #5897 (@JoryHogeveen)
+* Fixed: Prevent `wp_unslash()` from unnecessarily over sanitizing input. #5040 & #4424 (@JoryHogeveen)
+* Fixed: Prevent issues with HTML entities in custom relationship values when it gets to JavaScript. #5894 (@JoryHogeveen)
+* Fixed: Better support multiple languages in the Relationship AJAX search. #5888 (@JoryHogeveen)
+* Fixed: Include the `post_type` value in attachment saves so that the more WordPress core actions trigger. #5748 (@JoryHogeveen)
+* Fixed: Allow `the_excerpt` to be used as custom filter on singular pages. #5899 (@JoryHogeveen)
+* Fixed: Better support caching of the avatar images/data and integrate with the `get_avatar_data` filter. #5771 (@JoryHogeveen)
+
+
+= 2.7.24 - November 5th 2020 =
+
+**Bug Fixes**
+
+* Fixed: Fix media `[each]` loop if no `media` Pod exists. #5882 (@JoryHogeveen)
+* Fixed: Fallback to default display field if custom option is invalid for relationship fields. #5839 & #5859 (@JoryHogeveen)
+* Fixed: Use `pathinfo` to properly validate file extension. #5876 (@JoryHogeveen)
+
+= 2.7.23 - October 30th 2020 =
+
+**New Features & Enhancements**
+
+* Added: Support auto-templates for taxonomies, users and comments. #3962 & #5832 (@JoryHogeveen, @sc0ttkclark, @gwhitney)
+* Added: Support template parameter and nested shortcode content for field shortcodes. #5801 (@JoryHogeveen)
+* Added: Allow function calls in all tags, not just template tags. #4887 (@JoryHogeveen)
+* Added: Support custom image sizes for all image field types in magic tags. #5870 (@JoryHogeveen)
+* Added/Fixed: Support special magic tags in Pods Templates. #5697 (@JoryHogeveen)
+* Added/Fixed: Support Pod related magic tags in shortcode query parameters. #5734 (@JoryHogeveen)
+* Enhancement: Allow traversing in avatar attachment. #5870 (@JoryHogeveen)
+* Enhancement: If the media Pod exists, use it's context to run media loops to support other fields and traversal. #5855 (@JoryHogeveen)
+* Enhancement: Implement PHP 5.4 `session_status()` function. #5840 (@JoryHogeveen)
+* Enhancement: Allow WP objects to be passed in `pods()`. #5845 (@JoryHogeveen)
+* Compatibility: Enqueue DFV scripts when editing the page with Beaver Builder to fully support the media window. #5799 (@JoryHogeveen)
+* Updated: Primary Branch header for GitHub Updater. #5847 (@afragen)
+
+**Bug Fixes**
+
+* Fixed: `.src` tags for PDF's now render the PDF file link instead of the thumbnail in templates `[each]` loops. #4040 (@JoryHogeveen)
+* Fixed. HTML entities for relationship fields UI. #5843, #5835 & #5796 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Select2/SelectWoo now also enqueue the locale files when available. #5860 (@JoryHogeveen)
+* Fixed: Support lowercase ID's for magic tags in media loops #5852 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Avatar should always return a square image. #2738 (@JoryHogeveen)
+* Fixed: Selected items query for autocomplete relationships. #5542 & #5831 (@JoryHogeveen)
+* Fixed: Prevent SQL errors on magic tags in some cases. #5797 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Error if there is no DB prefix available. #5803 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Fix edge case "No Access" error when all Pods were deleted. Redirect to next Pod admin page if needed. #4842 (@JoryHogeveen)
+* Fixed: Removed empty filter in `ui/admin/setup-edit-field.php`. #5686 (@sc0ttkclark, @JoryHogeveen)
+* Fixed: Prevent possible notice if image doesn't exist. #5866 (@JoryHogeveen)
+* Fixed: Remove source maps from production builds. #5822 (@sc0ttkclark)
+* Fixed: PHP warning in file field gallery view. #5809 (@JoryHogeveen)
 
 = 2.7.22 - August 13th 2020 =
 
@@ -631,6 +740,12 @@ Fixed: Serial comma display works again for Users, Comments, and Media relations
 **Known Issues with this Release:**
 
 * Relationships to Taxonomy have Flexible Relationships disabled as the input screen for Taxonomy was not able to be accessed in an iFrame. We’re working on this for a future release.
+
+= 2.6.11.2 - August 4th, 2021 =
+* Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, reported by Muhammad Daffa via WPScan)
+
+= 2.6.11.1 - June 4th, 2020 =
+* Security: Remove deprecated usage of escapeMarkup in Select2 (@sc0ttkclark, @miha.jirov)
 
 = 2.6.11 - September 20th 2017 =
 * Fixed: WordPress 4.8.2 introduced a breaking change that no longer correctly prepared number/currency queries. It did not introduce a vulnerability but only produced Database errors.

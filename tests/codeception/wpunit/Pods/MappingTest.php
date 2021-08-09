@@ -21,7 +21,7 @@ class MappingTest extends Pods_UnitTestCase {
 	private $pod_name = 'mappingtest';
 	private $pod_label = 'Mapping Test';
 	private $pod_type = 'post_type';
-	private $pod_storge = 'meta';
+	private $pod_storage = 'meta';
 	private $field_id;
 	private $field_name = 'test_field';
 	private $field_label = 'Test field';
@@ -41,7 +41,7 @@ class MappingTest extends Pods_UnitTestCase {
 			'name'    => $this->pod_name,
 			'label'   => $this->pod_label,
 			'type'    => $this->pod_type,
-			'storage' => $this->pod_storge,
+			'storage' => $this->pod_storage,
 		];
 
 		$api = pods_api();
@@ -84,7 +84,7 @@ class MappingTest extends Pods_UnitTestCase {
 	public function test_default() {
 		$pod = pods( $this->pod_name, $this->item_id );
 
-		$this->assertEquals( null, $pod->field( 'any_map' ) );
+		$this->assertEquals( [], $pod->field( 'any_map' ) );
 	}
 
 	/**
@@ -96,14 +96,14 @@ class MappingTest extends Pods_UnitTestCase {
 		$pod = pods( $this->pod_name, $this->item_id );
 
 		$this->assertEquals( 0, $pod->field( 'any_map' ) );
+
+		remove_filter( 'pods_data_map_field_values_custom', '__return_zero' );
 	}
 
 	/**
 	 * @covers \Pods\Data\Map_Field_Values::pod_info
 	 */
 	public function test_pod_info() {
-		add_filter( 'pods_data_map_field_values_custom', '__return_zero' );
-
 		$pod = pods( $this->pod_name, $this->item_id );
 
 		$this->assertEquals( $this->pod_id, $pod->field( '_pod.id' ) );
@@ -118,15 +118,13 @@ class MappingTest extends Pods_UnitTestCase {
 	 * @covers \Pods\Data\Map_Field_Values::field_info
 	 */
 	public function test_field_info() {
-		add_filter( 'pods_data_map_field_values_custom', '__return_zero' );
-
 		$pod = pods( $this->pod_name, $this->item_id );
 
-		$this->assertEquals( $this->field_id, $pod->field( '_field.id' ) );
-		$this->assertEquals( $this->field_id, $pod->field( '_field.ID' ) );
-		$this->assertEquals( $this->field_name, $pod->field( '_field.name' ) );
-		$this->assertEquals( $this->field_label, $pod->field( '_field.label' ) );
-		$this->assertEquals( $this->field_type, $pod->field( '_field.type' ) );
+		$this->assertEquals( $this->field_id, $pod->field( '_field.' . $this->field_name . '.id' ) );
+		$this->assertEquals( $this->field_id, $pod->field( '_field.' . $this->field_name . '.ID' ) );
+		$this->assertEquals( $this->field_name, $pod->field( '_field.' . $this->field_name . '.name' ) );
+		$this->assertEquals( $this->field_label, $pod->field( '_field.' . $this->field_name . '.label' ) );
+		$this->assertEquals( $this->field_type, $pod->field( '_field.' . $this->field_name . '.type' ) );
 	}
 
 }

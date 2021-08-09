@@ -633,7 +633,7 @@ body[class*="settings_page_pods-"] {
 
 /* Pods Admin - Friends of Pods Callout
 ======================= */
-.pods-admin {
+.pods-admin--flex {
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
@@ -646,7 +646,7 @@ body[class*="settings_page_pods-"] {
 	        flex-direction: column;
 }
 
-.pods-admin > * {
+.pods-admin--flex > * {
 	flex-grow: 1;
 }
 
@@ -661,7 +661,7 @@ body[class*="settings_page_pods-"] {
 }
 
 @media (min-width: 851px) {
-	.pods-admin {
+	.pods-admin--flex {
 		-webkit-box-orient: horizontal;
 		-webkit-box-direction: normal;
 			-ms-flex-direction: row;
@@ -816,4 +816,23 @@ body[class*="settings_page_pods-"] {
 		margin-left: 40px;
 		margin-right: 80px;
 	}
+}
+
+.pods-admin_progress-bar_container {
+	width: 100%;
+	background-color: #e0e0e0;
+	padding: 3px;
+	border-radius: 3px;
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, .2);
+	margin-bottom: 20px;
+}
+
+.pods-admin_progress-bar_fill {
+	display: block;
+	text-align: center;
+	line-height: 22px;
+	height: 22px;
+	background-color: #95bf3b;
+	border-radius: 3px;
+	transition: width 500ms ease-in-out;
 }

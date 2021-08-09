@@ -1113,7 +1113,7 @@ class PodsMeta {
 
 		$id = null;
 
-		if ( is_object( $post ) && false === strpos( $_SERVER['REQUEST_URI'], '/post-new.php' ) ) {
+		if ( is_object( $post ) ) {
 			$id = $post->ID;
 		}
 
@@ -1161,7 +1161,7 @@ class PodsMeta {
 					$field['type'] = 'hidden';
 				}
 
-				$value = '';
+				$value = null;
 
 				if ( ! empty( $pod ) ) {
 					pods_no_conflict_on( 'post' );
@@ -1171,6 +1171,11 @@ class PodsMeta {
 					pods_no_conflict_off( 'post' );
 				} elseif ( ! empty( $id ) ) {
 					$value = get_post_meta( $id, $field['name'], true );
+				}
+
+				if ( ! $value && ! is_numeric( $value ) && 'add' === get_current_screen()->action ) {
+					// Revert to default.
+					$value = null;
 				}
 
 				if ( 'hidden' == $field['type'] ) {
@@ -1377,7 +1382,7 @@ class PodsMeta {
 			pods_no_conflict_on( 'post' );
 
 			if ( ! empty( $pod ) ) {
-				// Fix for Pods doing it's own sanitizing
+				// Fix for Pods doing it's own sanitizing.
 				$data = pods_unslash( (array) $data );
 
 				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
@@ -3089,49 +3094,31 @@ class PodsMeta {
 
 		foreach ( $meta_keys as $meta_k ) {
 			if ( ! empty( $pod ) ) {
-				if ( isset( $pod->fields[ $meta_k ] ) ) {
+				$first_meta_key = $meta_k;
+				if ( false !== strpos( $first_meta_key, '.' ) ) {
+					// Get the first meta key.
+					$first_meta_key = current( explode( '.', $first_meta_key ) );
+				}
+
+				if ( isset( $pod->fields[ $first_meta_key ] ) ) {
 					$key_found = true;
 
 					$meta_cache[ $meta_k ] = $pod->field( array(
 						'name'     => $meta_k,
 						'single'   => $single,
-						'get_meta' => true
+						'get_meta' => true,
 					) );
 
-					if ( ( ! is_array( $meta_cache[ $meta_k ] ) || ! isset( $meta_cache[ $meta_k ][0] ) ) ) {
-						if ( empty( $meta_cache[ $meta_k ] ) && ! is_array( $meta_cache[ $meta_k ] ) && $single ) {
+					if ( ! is_array( $meta_cache[ $meta_k ] ) || ! isset( $meta_cache[ $meta_k ][0] ) ) {
+						if ( empty( $meta_cache[ $meta_k ] ) ) {
 							$meta_cache[ $meta_k ] = array();
 						} else {
 							$meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
 						}
 					}
 
-					if ( in_array( $pod->fields[ $meta_k ]['type'], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $meta_k ] ) ) {
-						unset( $meta_cache[ '_pods_' . $meta_k ] );
-					}
-				} elseif ( false !== strpos( $meta_k, '.' ) ) {
-					$key_found = true;
-
-					$first = current( explode( '.', $meta_k ) );
-
-					if ( isset( $pod->fields[ $first ] ) ) {
-						$meta_cache[ $meta_k ] = $pod->field( array(
-							'name'     => $meta_k,
-							'single'   => $single,
-							'get_meta' => true
-						) );
-
-						if ( ( ! is_array( $meta_cache[ $meta_k ] ) || ! isset( $meta_cache[ $meta_k ][0] ) ) && $single ) {
-							if ( empty( $meta_cache[ $meta_k ] ) && ! is_array( $meta_cache[ $meta_k ] ) && $single ) {
-								$meta_cache[ $meta_k ] = array();
-							} else {
-								$meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
-							}
-						}
-
-						if ( in_array( $pod->fields[ $first ]['type'], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $first ] ) ) {
-							unset( $meta_cache[ '_pods_' . $first ] );
-						}
+					if ( in_array( $pod->fields[ $first_meta_key ]['type'], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $first_meta_key ] ) ) {
+						unset( $meta_cache[ '_pods_' . $first_meta_key ] );
 					}
 				}
 			}

@@ -72,11 +72,12 @@ class PodsRESTHandlers {
 		 */
 
 		if ( empty( $pod_name ) ) {
-			if ( 'attachment' === $object_type ) {
-				$pod_name = 'media';
-			} else {
-				$pod_name = $object_type;
-			}
+			$pod_name = $object_type;
+		}
+
+		// Fix media pod name.
+		if ( 'attachment' === $pod_name ) {
+			$pod_name = 'media';
 		}
 
 		/**
@@ -124,7 +125,15 @@ class PodsRESTHandlers {
 				 */
 				$output_type = apply_filters( 'pods_rest_api_output_type_for_relationship_response', $output_type, $field_name, $field_data, $pod, $id, $request );
 
-				if ( 'array' === $output_type ) {
+				if ( 'custom' === $output_type ) {
+					// Support custom selectors for the response.
+					$custom_selector = pods_v( 'rest_pick_custom', $field_data['options'], $field_name );
+
+					if ( ! empty( $custom_selector ) ) {
+						$field_name = $custom_selector;
+					}
+				} elseif ( 'array' === $output_type ) {
+					// Support fully fleshed out data for the response.
 					$related_pod_items = $pod->field( $field_name, array( 'output' => 'pod' ) );
 
 					if ( $related_pod_items ) {
@@ -221,23 +230,19 @@ class PodsRESTHandlers {
 	public static function save_handler( $object, $request, $creating ) {
 
 		if ( is_a( $object, 'WP_Post' ) ) {
-			$pod_name = $object->post_type;
-
-			if ( 'attachment' === $pod_name ) {
-				$pod_name = 'media';
-			}
+			$type = $object->post_type;
 
 			$id = $object->ID;
 		} elseif ( is_a( $object, 'WP_Term' ) ) {
-			$pod_name = $object->taxonomy;
+			$type = $object->taxonomy;
 
 			$id = $object->term_id;
 		} elseif ( is_a( $object, 'WP_User' ) ) {
-			$pod_name = 'user';
+			$type = 'user';
 
 			$id = $object->ID;
 		} elseif ( is_a( $object, 'WP_Comment' ) ) {
-			$pod_name = 'comment';
+			$type = 'comment';
 
 			$id = $object->comment_ID;
 		} else {
@@ -245,13 +250,19 @@ class PodsRESTHandlers {
 			return;
 		}//end if
 
+		$pod_name = $type;
+
+		if ( 'attachment' === $type && is_a( $object, 'WP_Post' ) ) {
+			$pod_name = 'media';
+		}
+
 		$pod = self::get_pod( $pod_name, $id );
 
 		global $wp_rest_additional_fields;
 
 		$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
 
-		if ( $pod && $rest_enable && ! empty( $wp_rest_additional_fields[ $pod_name ] ) ) {
+		if ( $pod && $rest_enable && ! empty( $wp_rest_additional_fields[ $type ] ) ) {
 			$fields = $pod->fields();
 
 			$save_fields = array();
@@ -261,7 +272,7 @@ class PodsRESTHandlers {
 			);
 
 			foreach ( $fields as $field_name => $field ) {
-				if ( empty( $wp_rest_additional_fields[ $pod_name ][ $field_name ]['pods_update'] ) ) {
+				if ( empty( $wp_rest_additional_fields[ $type ][ $field_name ]['pods_update'] ) ) {
 					continue;
 				} elseif ( ! isset( $request[ $field_name ] ) ) {
 					continue;

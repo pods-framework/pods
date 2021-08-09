@@ -65,7 +65,7 @@
 							<p>
 								<?php _e( 'Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments.', 'pods' ); ?>
 								<br /><br />
-								<?php _e( 'Not sure what content type you should use? Check out our <a href="https://pods.io/docs/comparisons/compare-content-types/" target="_blank">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
+								<?php _e( 'Not sure what content type you should use? Check out our <a href="https://pods.io/docs/comparisons/compare-content-types/" target="_blank" rel="noopener noreferrer">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
 							</p>
 
 						</div>
@@ -412,8 +412,7 @@
 
 		if ( !isNaN( id ) ) {
 			document.location = 'admin.php?page=pods&action=edit&id=' + id + '&do=create';
-		}
-		else {
+		} else {
 			document.location = 'admin.php?page=pods&do=create';
 		}
 	};
@@ -423,16 +422,22 @@
 	};
 
 	jQuery( function ( $ ) {
-		$( document ).Pods( 'validate' );
-		$( document ).Pods( 'submit' );
-		$( document ).Pods( 'wizard' );
-		$( document ).Pods( 'dependency' );
-		$( document ).Pods( 'advanced' );
-		$( document ).Pods( 'confirm' );
-		$( document ).Pods( 'sluggable' );
+		var $document = $( document );
 
-		$( '.pods-admin' ).on( 'render', '.pods-form-ui-field', function ( e ) {
-			$( this ).find( '.pods-dependent-toggle[data-name-clean]' ).trigger( 'change' );
+		$document.Pods( 'validate' );
+		$document.Pods( 'submit' );
+		$document.Pods( 'wizard' );
+		$document.Pods( 'dependency' );
+		$document.Pods( 'advanced' );
+		$document.Pods( 'confirm' );
+		$document.Pods( 'sluggable' );
+
+		var $admin = $( '.pods-admin' ),
+			$toggles = $admin.find( '.pods-dependent-toggle[data-name-clean]' );
+
+		$toggles.trigger( 'change' );
+		$admin.on( 'render', '.pods-form-ui-field', function ( e ) {
+			$toggles.trigger( 'change' );
 		} );
 	} );
 </script>

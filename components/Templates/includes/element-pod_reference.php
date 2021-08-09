@@ -1,18 +1,21 @@
 <div class="pod-queries-tools"><?php
 
-if ( empty( $atts ) ) {
-	$atts = array(
+	$defaults = array(
 		'pod' => '',
 	);
-}
+	if ( empty( $atts ) ) {
+		$atts = $defaults;
+	} else {
+		$atts = wp_parse_args( $atts, $defaults );
+	}
 
 	$api   = pods_api();
 	$_pods = $api->load_pods();
 	echo '<select name="pod_reference[pod]" id="pod-reference" class="pod-switch" data-template="#podref-tmpl" data-target="#pod-reference-wrapper" data-action="pq_loadpod" data-event="change" />';
 	echo '<option value="">' . __( 'Select Pod to use as reference', 'pods' ) . '</option>';
-foreach ( $_pods as $pod ) {
-	echo '<option value="' . esc_attr( $pod['name'] ) . '" ' . ( $atts['pod'] == $pod['name'] ? 'selected="selected"' : '' ) . '>' . esc_html( $pod['label'] ) . '</option>';
-}
+	foreach ( $_pods as $pod ) {
+		echo '<option value="' . esc_attr( $pod['name'] ) . '" ' . ( $atts['pod'] == $pod['name'] ? 'selected="selected"' : '' ) . '>' . esc_html( $pod['label'] ) . '</option>';
+	}
 	echo '</select>';
 	?></div>
 <div id="pod-reference-wrapper" class="pod-reference-wrapper">
@@ -27,8 +30,6 @@ foreach ( $_pods as $pod ) {
 				echo '</div>';
 			}
 		}
-	} else {
-
 	}
 
 	?>

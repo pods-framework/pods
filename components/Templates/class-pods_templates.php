@@ -164,7 +164,7 @@ class Pods_Templates_Frontier {
 	 */
 	public function activate_metaboxes() {
 
-		add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ), 5, 4 );
+		add_action( 'add_meta_boxes__pods_template', array( $this, 'add_metaboxes' ), 5, 2 );
 		add_action( 'save_post', array( $this, 'save_post_metaboxes' ), 1, 2 );
 
 	}
@@ -172,25 +172,28 @@ class Pods_Templates_Frontier {
 	/**
 	 * setup meta boxes.
 	 *
-	 * @param      $slug
 	 * @param bool $post
 	 *
 	 * @return null
 	 */
-	public function add_metaboxes( $slug, $post = false ) {
+	public function add_metaboxes( $post = false ) {
 
 		if ( ! empty( $post ) ) {
 			if ( ! in_array( $post->post_type, array( '_pods_template' ), true ) ) {
 				return;
 			}
+
+			$slug = $post->post_type;
 		} else {
 			$screen = get_current_screen();
 			if ( ! in_array( $screen->base, array( '_pods_template' ), true ) ) {
 				return;
 			}
+
+			$slug = $screen->base;
 		}
 
-		$this->plugin_screen_hook_suffix[ $slug ] = $slug;
+		$this->plugin_screen_hook_suffix[ $slug ] = $post->post_type;
 
 		// Required Styles for metabox
 		wp_enqueue_style( $this->plugin_slug . '-view_template-styles', $this->get_url( 'assets/css/styles-view_template.css', __FILE__ ), array(), self::VERSION );

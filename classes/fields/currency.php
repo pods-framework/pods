@@ -184,7 +184,7 @@ class PodsField_Currency extends PodsField_Number {
 
 		$placement = pods_v( static::$type . '_format_placement', $options, 'before', true );
 
-		// Currency placement policy
+		// Currency placement policy.
 		// Single sign currencies: 100$, £100
 		// Multiple sign currencies: 100 Fr, Kr 100
 		$currency_gap = '';
@@ -240,10 +240,6 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
-		$format_args = $this->get_number_format_args( $options );
-		$thousands   = $format_args['thousands'];
-		$dot         = $format_args['dot'];
-
 		$currency = 'usd';
 
 		if ( isset( static::$currencies[ pods_v( static::$type . '_format_sign', $options, - 1 ) ] ) ) {
@@ -253,30 +249,19 @@ class PodsField_Currency extends PodsField_Number {
 		$currency_sign   = static::$currencies[ $currency ]['sign'];
 		$currency_entity = static::$currencies[ $currency ]['entity'];
 
-		// Remove currency and thousands symbols
-		$check = str_replace(
+		// Remove currency and thousands symbols.
+		$value = str_replace(
 			array(
-				$thousands,
 				$currency_sign,
 				$currency_entity,
-				html_entity_decode( $thousands ),
 				html_entity_decode( $currency_sign ),
 				html_entity_decode( $currency_entity ),
-			), '', $value
+			),
+			'',
+			$value
 		);
-		// Convert decimal type for numeric type
-		$check = str_replace( $dot, '.', $check );
-		$check = trim( $check );
 
-		$check = preg_replace( '/[0-9\.\-\s]/', '', $check );
-
-		$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
-
-		if ( 0 < strlen( $check ) ) {
-			return sprintf( __( '%s is not numeric', 'pods' ), $label );
-		}
-
-		return true;
+		return parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 	}
 
@@ -285,11 +270,6 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		$format_args = $this->get_number_format_args( $options );
-		$thousands   = $format_args['thousands'];
-		$dot         = $format_args['dot'];
-		$decimals    = $format_args['decimals'];
-
 		$currency = 'usd';
 
 		if ( isset( static::$currencies[ pods_v( static::$type . '_format_sign', $options, - 1 ) ] ) ) {
@@ -299,26 +279,22 @@ class PodsField_Currency extends PodsField_Number {
 		$currency_sign   = static::$currencies[ $currency ]['sign'];
 		$currency_entity = static::$currencies[ $currency ]['entity'];
 
-		// Convert decimal type for numeric type
+		// Convert decimal type for numeric type.
 		$value = str_replace(
 			array(
-				$thousands,
 				$currency_sign,
 				$currency_entity,
-				html_entity_decode( $thousands ),
 				html_entity_decode( $currency_sign ),
 				html_entity_decode( $currency_entity ),
-			), '', $value
+			),
+			'',
+			$value
 		);
-		// Convert decimal type for numeric type
-		$value = str_replace( $dot, '.', $value );
-		$value = trim( $value );
 
-		$value = preg_replace( '/[^0-9\.\-]/', '', $value );
+		// Remove trailing dash only from the end of the string.
+		$value = rtrim( $value, '-' );
 
-		$value = number_format( (float) $value, $decimals, '.', '' );
-
-		return $value;
+		return parent::pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
 	}
 
@@ -327,25 +303,16 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
+		$value = parent::format( $value, $name, $options, $pod, $id );
 		if ( null === $value ) {
-			// Don't enforce a default value here
-			return null;
-		}
-
-		$format_args = $this->get_number_format_args( $options );
-		$thousands   = $format_args['thousands'];
-		$dot         = $format_args['dot'];
-		$decimals    = $format_args['decimals'];
-
-		if ( 'i18n' === pods_v( static::$type . '_format', $options ) ) {
-			$value = number_format_i18n( (float) $value, $decimals );
-		} else {
-			$value = number_format( (float) $value, $decimals, $dot, $thousands );
+			return $value;
 		}
 
 		// Additional output handling for decimals
 		$decimal_handling = pods_v( static::$type . '_decimal_handling', $options, 'none' );
 		if ( 'none' !== $decimal_handling ) {
+			$format_args = $this->get_number_format_args( $options );
+			$dot         = $format_args['dot'];
 			$value_parts = explode( $dot, $value );
 			// Make sure decimals are empty.
 			if ( isset( $value_parts[1] ) && ! (int) $value_parts[1] ) {
@@ -371,7 +338,7 @@ class PodsField_Currency extends PodsField_Number {
 	 */
 	public static function data_currencies() {
 
-		// If it's already done, do not redo the filter
+		// If it's already done, do not redo the filter.
 		if ( ! empty( static::$currencies ) ) {
 			return static::$currencies;
 		}

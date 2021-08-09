@@ -1,0 +1,24 @@
+# Codeception Test Suite Configuration
+
+# suite for WordPress functional tests.
+# Emulate web requests and make application process them.
+class_name: IntegrationTester
+modules:
+    enabled:
+        - \Helper\Integration
+        - WPLoader
+    config:
+        WPLoader:
+            wpRootFolder: %WP_ROOT_FOLDER%
+            dbName: %WP_TEST_DB_NAME%
+            dbHost: %WP_TEST_DB_HOST%
+            dbUser: %WP_TEST_DB_USER%
+            dbPassword: %WP_TEST_DB_PASSWORD%
+            tablePrefix: %WP_TABLE_PREFIX%
+            domain: %WP_DOMAIN%
+            adminEmail: admin@%WP_DOMAIN%
+            title: 'Pods Tests'
+            plugins:
+                - pods/init.php
+            activatePlugins:
+                - pods/init.php

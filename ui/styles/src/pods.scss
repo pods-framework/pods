@@ -5,8 +5,10 @@
 @import "helpers/typography";
 @import "helpers/dashicons";
 
+@import "base/loading";
 @import "base/admin";
 @import "base/advanced";
+@import "base/block-placeholders";
 @import "base/dfv-list";
 @import "base/manage";
 @import "base/meta-boxes";
@@ -14,13 +16,13 @@
 @import "base/ui-list-table";
 
 .pods-compat-container {
+	@import "overrides/codemirror";
 	@import "overrides/jquery-ui-timepicker";
 	@import "libs/jquery-ui-custom";
 }
 
 .pods-submittable {
 	@import "libs/jquery-qtip";
-	@import "overrides/codemirror";
 	@import "overrides/jquery-cleditor";
 	@import "overrides/select-woo";
 }

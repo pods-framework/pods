@@ -5,8 +5,7 @@
  */
 class Pods_I18n_Polylang {
 
-	public $languages  = array();
-	public $textdomain = 'polylang';
+	public $languages = array();
 
 	/**
 	 * Pods_I18n_Polylang constructor.
@@ -54,7 +53,7 @@ class Pods_I18n_Polylang {
 	public function pods_component_i18n_admin_ui_fields( $fields, $data ) {
 
 		$fields['manage']['polylang'] = array(
-			'label' => __( 'Polylang', $this->textdomain ),
+			'label' => __( 'Polylang', 'pods' ),
 			'type'  => 'boolean',
 			/*
 			'options' => array(

@@ -1,7 +1,4 @@
 <div class="wrap pods-admin">
-	<script>
-		var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
-	</script>
 	<div id="icon-pods" class="icon32"><br /></div>
 
 	<form action="" method="post" class="pods-submittable pods-form">
@@ -30,7 +27,7 @@
 
 			<p><?php _e( 'Choose below which Capabilities you would like this existing user role to have.', 'pods' ); ?></p>
 
-			<div id="poststuff">
+			<div id="poststuff" class="poststuff">
 				<div id="post-body" class="metabox-holder columns-2">
 
 					<div id="postbox-container-1" class="postbox-container">
@@ -80,11 +77,11 @@
 
 									<div class="inside pods-manage-field pods-dependency">
 										<div class="pods-field-option-group">
-											<p>
-												<a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
-											</p>
-
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+												<p>
+													<a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
+												</p>
+
 												<ul>
 													<?php
 													$zebra = false;
@@ -101,7 +98,12 @@
 														$zebra = ( ! $zebra );
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
-															<?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
+															<?php
+															echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', [
+																'boolean_yes_label' => $capability,
+																'disable_dfv'       => true,
+															] );
+															?>
 														</li>
 														<?php
 													}
@@ -120,15 +122,23 @@
 											<div class="pods-pick-values pods-pick-checkbox">
 												<ul id="custom-capabilities">
 													<li class="pods-repeater hidden">
-														<?php echo PodsForm::field( 'custom_capabilities[--1]', '', 'text' ); ?>
+														<?php
+														echo PodsForm::field( 'custom_capabilities[--1]', '', 'text', [
+															'disable_dfv' => true,
+														] );
+														?>
 													</li>
 													<li>
-														<?php echo PodsForm::field( 'custom_capabilities[0]', '', 'text' ); ?>
+														<?php
+														echo PodsForm::field( 'custom_capabilities[0]', '', 'text', [
+															'disable_dfv' => true,
+														] );
+														?>
 													</li>
 												</ul>
 
 												<p>
-													<a href="#add-capability" id="add-capability" class="button">Add Another Custom Capability</a>
+													<a href="#add-capability" id="add-capability" class="button"><?php _e( 'Add Another Custom Capability', 'pods' ); ?></a>
 												</p>
 											</div>
 										</div>
@@ -139,9 +149,8 @@
 							</div>
 							<!-- /#normal-sortables -->
 
-							<!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">
-						  </div>
-						   /#advanced-sortables -->
+							<!-- <div id="advanced-sortables" class="meta-box-sortables ui-sortable"></div> -->
+							<!-- /#advanced-sortables -->
 
 						</div>
 						<!-- /#post-body-content -->

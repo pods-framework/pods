@@ -29,7 +29,6 @@ class PodsUpgrade {
 	 *
 	 */
 	public function __construct() {
-
 		$this->api = pods_api();
 
 		$this->get_tables();
@@ -40,7 +39,6 @@ class PodsUpgrade {
 	 * @param null $_blog_id Blog ID to install.
 	 */
 	public function install( $_blog_id = null ) {
-
 		/**
 		 * @var $wpdb WPDB
 		 */
@@ -57,7 +55,14 @@ class PodsUpgrade {
 
 		do_action( 'pods_install', PODS_VERSION, $pods_version, $_blog_id );
 
-		if ( ( ! pods_tableless() ) && false !== apply_filters( 'pods_install_run', null, PODS_VERSION, $pods_version, $_blog_id ) && 0 === (int) pods_v( 'pods_bypass_install' ) ) {
+		/**
+		 * Allow filtering of whether the Pods SQL installation should be run. Return false to bypass.
+		 *
+		 * @param bool $run Whether the Pods SQL installation should be run.
+		 */
+		$run = apply_filters( 'pods_install_run', true, PODS_VERSION, $pods_version, $_blog_id );
+
+		if ( false !== $run && ! pods_tableless() && 0 === (int) pods_v( 'pods_bypass_install' ) ) {
 			$sql = file_get_contents( PODS_DIR . 'sql/dump.sql' );
 			$sql = apply_filters( 'pods_install_sql', $sql, PODS_VERSION, $pods_version, $_blog_id );
 
@@ -77,7 +82,8 @@ class PodsUpgrade {
 
 			$sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
 
-			for ( $i = 0, $z = count( $sql ); $i < $z; $i ++ ) {
+			$z = count( $sql );
+			for ( $i = 0; $i < $z; $i ++ ) {
 				$query = trim( $sql[ $i ] );
 
 				if ( empty( $query ) ) {
@@ -89,7 +95,7 @@ class PodsUpgrade {
 
 			// Auto activate component.
 			if ( ! PodsInit::$components ) {
-				if ( ! defined( 'PODS_LIGHT' ) || ! PODS_LIGHT ) {
+				if ( ! pods_light() ) {
 					PodsInit::$components = pods_components();
 				}
 			}
@@ -106,7 +112,6 @@ class PodsUpgrade {
 	 *
 	 */
 	public function get_tables() {
-
 		/**
 		 * @var $wpdb WPDB
 		 */
@@ -125,7 +130,6 @@ class PodsUpgrade {
 	 *
 	 */
 	public function get_progress() {
-
 		$methods = get_class_methods( $this );
 
 		foreach ( $methods as $method ) {
@@ -147,7 +151,6 @@ class PodsUpgrade {
 	 * @return mixed|void
 	 */
 	public function ajax( $params ) {
-
 		if ( ! isset( $params->step ) ) {
 			return pods_error( __( 'Invalid upgrade process.', 'pods' ) );
 		}
@@ -166,10 +169,9 @@ class PodsUpgrade {
 	/**
 	 * @param      $method
 	 * @param      $v
-	 * @param null   $x
+	 * @param null $x
 	 */
 	public function update_progress( $method, $v, $x = null ) {
-
 		if ( empty( $this->version ) ) {
 			return;
 		}
@@ -187,12 +189,11 @@ class PodsUpgrade {
 
 	/**
 	 * @param      $method
-	 * @param null   $x
+	 * @param null $x
 	 *
 	 * @return bool
 	 */
 	public function check_progress( $method, $x = null ) {
-
 		$method = str_replace( 'migrate_', '', $method );
 
 		if ( isset( $this->progress[ $method ] ) ) {
@@ -210,7 +211,6 @@ class PodsUpgrade {
 	 *
 	 */
 	public function upgraded() {
-
 		if ( empty( $this->version ) ) {
 			return;
 		}
@@ -234,7 +234,6 @@ class PodsUpgrade {
 	 *
 	 */
 	public function cleanup() {
-
 		/**
 		 * @var $wpdb WPDB
 		 */

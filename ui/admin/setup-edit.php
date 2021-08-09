@@ -85,7 +85,9 @@ foreach ( $pod[ 'fields' ] as $_field => $_data ) {
     }
 }
 
-$field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );
+$pod_name = $pod[ 'name' ];
+
+$field_defaults = apply_filters( 'pods_field_defaults', apply_filters( "pods_field_defaults_{$pod_name}", $field_defaults, $pod ) );
 
 $pick_table = pods_transient_get( 'pods_tables' );
 
@@ -115,9 +117,9 @@ $field_settings = array(
     'sister_id' => array( '' => __( 'No Related Fields Found', 'pods' ) )
 );
 
-$field_settings = apply_filters( 'pods_field_settings', apply_filters( 'pods_field_settings_' . $pod[ 'name' ], $field_settings, $pod ) );
+$field_settings = apply_filters( 'pods_field_settings', apply_filters( "pods_field_settings_{$pod_name}", $field_settings, $pod ) );
 
-$pod[ 'fields' ] = apply_filters( 'pods_fields_edit', apply_filters( 'pods_fields_edit_' . $pod[ 'name' ], $pod[ 'fields' ], $pod ) );
+$pod[ 'fields' ] = apply_filters( 'pods_fields_edit', apply_filters( "pods_fields_edit_{$pod_name}", $pod[ 'fields' ], $pod ) );
 
 global $wpdb;
 $max_length_name = 64;
@@ -142,7 +144,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
  *
  * Currently only context 'side' is available
  *
- * @since 2.7
+ * @since 2.7.0
  * @see https://codex.wordpress.org/Plugin_API/Action_Reference/add_meta_boxes
  * @param array $pod The Pod object as an array
  */
@@ -242,13 +244,13 @@ if ( isset( $_GET[ 'do' ] ) ) {
     elseif ( 'duplicate' ==$do )
         $action = __( 'duplicated', 'pods' );
 
-    $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+    $message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
     echo $obj->message( $message );
 }
 ?>
 
-<div id="poststuff">
+<div id="poststuff" class="poststuff">
 <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 <!-- /inner-sidebar -->
 <div id="post-body" class="meta-box-holder columns-2">
@@ -536,112 +538,6 @@ elseif ( 'taxonomy' == $pod_type && strlen( pods_v( 'object', $pod ) ) < 1 ) {
     </div>
     <?php
 }
-elseif ( 'pod' == $pod_type ) {
-?>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'detail_url', __( 'Detail Page URL', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'detail_url', pods_v( 'detail_url', $pod ), 'text' ); ?>
-    </div>
-
-    <?php
-        $index_fields = array( 'id' => 'ID' );
-
-        foreach ( $pod[ 'fields' ] as $field ) {
-            if ( !in_array( $field[ 'type' ], $tableless_field_types, true ) )
-                $index_fields[ $field[ 'name' ] ] = $field[ 'label' ];
-        }
-    ?>
-
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'pod_index', __( 'Title Field', 'pods' ), __( 'If you delete the "name" field, we need to specify the field to use as your primary title field. This field will serve as an index of your content. Most commonly this field represents the name of a person, place, thing, or a summary field.', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'pod_index', pods_v( 'pod_index', $pod, 'name' ), 'pick', array( 'data' => $index_fields ) ); ?>
-    </div>
-
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'hierarchical', __( 'Hierarchical', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'hierarchical', (int) pods_v( 'hierarchical', $pod, 0 ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
-    </div>
-
-    <?php
-        $hierarchical_fields = array();
-
-        foreach ( $pod[ 'fields' ] as $field ) {
-            if ( 'pick' == $field[ 'type' ] && 'pod' == pods_v( 'pick_object', $field ) && $pod[ 'name' ] == pods_v( 'pick_val', $field ) && 'single' == pods_v( 'pick_format_type', $field[ 'options' ] ) )
-                $hierarchical_fields[ $field[ 'name' ] ] = $field[ 'label' ];
-        }
-
-        if ( empty( $hierarchical_fields ) )
-            $hierarchical_fields = array( '' => __( 'No Hierarchical Fields found', 'pods' ) );
-    ?>
-
-    <div class="pods-field-option pods-depends-on pods-depends-on-hierarchical">
-        <?php echo PodsForm::label( 'pod_parent', __( 'Hierarchical Field', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'pod_parent', pods_v( 'pod_parent', $pod, 'name' ), 'pick', array( 'data' => $hierarchical_fields ) ); ?>
-    </div>
-
-    <?php
-    if ( class_exists( 'Pods_Helpers' ) ) {
-    ?>
-
-    <div class="pods-field-option">
-        <?php
-            $pre_save_helpers = array( '' => '-- Select --' );
-
-            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'pre_save' ) ) );
-
-            foreach ( $helpers as $helper ) {
-                $pre_save_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
-            }
-
-            echo PodsForm::label( 'pre_save_helpers', __( 'Pre-Save Helper(s)', 'pods' ), __( 'help', 'pods' ) );
-            echo PodsForm::field( 'pre_save_helpers', pods_v( 'pre_save_helpers', $pod ), 'pick', array( 'data' => $pre_save_helpers ) );
-        ?>
-    </div>
-    <div class="pods-field-option">
-        <?php
-            $post_save_helpers = array( '' => '-- Select --' );
-
-            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'post_save' ) ) );
-
-            foreach ( $helpers as $helper ) {
-                $post_save_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
-            }
-
-            echo PodsForm::label( 'post_save_helpers', __( 'Post-Save Helper(s)', 'pods' ), __( 'help', 'pods' ) );
-            echo PodsForm::field( 'post_save_helpers', pods_v( 'post_save_helpers', $pod ), 'pick', array( 'data' => $post_save_helpers ) );
-        ?>
-    </div>
-    <div class="pods-field-option">
-        <?php
-            $pre_delete_helpers = array( '' => '-- Select --' );
-
-            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'pre_delete' ) ) );
-
-            foreach ( $helpers as $helper ) {
-                $pre_delete_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
-            }
-
-            echo PodsForm::label( 'pre_delete_helpers', __( 'Pre-Delete Helper(s)', 'pods' ), __( 'help', 'pods' ) );
-            echo PodsForm::field( 'pre_delete_helpers', pods_v( 'pre_delete_helpers', $pod ), 'pick', array( 'data' => $pre_delete_helpers ) );
-        ?>
-    </div>
-    <div class="pods-field-option">
-        <?php
-            $post_delete_helpers = array( '' => '-- Select --' );
-
-            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'post_delete' ) ) );
-
-            foreach ( $helpers as $helper ) {
-                $post_delete_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
-            }
-
-            echo PodsForm::label( 'post_delete_helpers', __( 'Post-Delete Helper(s)', 'pods' ), __( 'help', 'pods' ) );
-            echo PodsForm::field( 'post_delete_helpers', pods_v( 'post_delete_helpers', $pod ), 'pick', array( 'data' => $post_delete_helpers ) );
-        ?>
-    </div>
-    <?php
-    }
-}
 ?>
 </div>
 <?php
@@ -650,10 +546,16 @@ elseif ( 'pod' == $pod_type ) {
 foreach ( $tabs as $tab => $tab_label ) {
     $tab = sanitize_title( $tab );
 
-    if ( in_array( $tab, array( 'manage-fields', 'labels', 'advanced', 'extra-fields' ), true ) || !isset( $tab_options[ $tab ] ) || empty( $tab_options[ $tab ] ) )
-        continue;
-?>
-    <div id="pods-<?php echo esc_attr( $tab ); ?>" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
+	if ( empty( $tab_options[ $tab ] ) || in_array( $tab, [
+			'manage-fields',
+			'labels',
+			'advanced',
+			'extra-fields',
+		], true ) ) {
+		continue;
+	}
+	?>
+	<div id="pods-<?php echo esc_attr( $tab ); ?>" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
         <?php
             $fields = $tab_options[ $tab ];
             $field_options = PodsForm::fields_setup( $fields );
@@ -672,7 +574,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
     <p><?php echo sprintf( __( 'Enabling extra fields for this taxonomy will add a custom table into your database as <em>%s</em>.', 'pods' ), $wpdb->prefix . 'pods_' . pods_v( 'name', $pod ) ); ?></p>
 
-    <p><a href="https://pods.io/docs/comparisons/compare-storage-types/" target="_blank"><?php _e( 'Find out more', 'pods' ); ?> &raquo;</a></p>
+    <p><a href="https://pods.io/docs/comparisons/compare-storage-types/" target="_blank" rel="noopener noreferrer"><?php _e( 'Find out more', 'pods' ); ?> &raquo;</a></p>
 
     <p class="submit">
         <a href="<?php echo esc_url( pods_query_arg( array( 'enable_extra_fields' => 1 ) ) ); ?>" class="button-primary"><?php _e( 'Enable Extra Fields', 'pods' ); ?></a>
@@ -809,7 +711,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
         sisterFieldsProcessing[ fieldKey ] = true;
 
-        fieldModel = new PodsDFV.models.PodsDFVFieldModel( {
+        fieldModel = new window.PodsDFV.models.PodsDFVFieldModel( {
             htmlAttr: {
                 id        : "pods-form-ui-field-data-" + id + "-sister-id",
                 "class"   : "pods-form-ui-field pods-form-ui-field-type-pick pods-form-ui-field-name-field-data-sister-id",
@@ -818,12 +720,12 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
             }
         } );
 
-        collection = new PodsDFV.models.RelationshipCollection( {
+        collection = new window.PodsDFV.models.RelationshipCollection( {
             id  : "",
             name: <?php echo json_encode( __( 'Loading available fields..', 'pods' ) ); ?>
         } );
 
-        selectField = new PodsDFV.fields.Pick( {
+        selectField = new window.PodsDFV.fields.pick.FieldClass( {
             el        : $container,
             model     : fieldModel,
             collection: collection

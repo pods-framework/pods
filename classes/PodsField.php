@@ -11,7 +11,7 @@ class PodsField {
 	 * Whether this field is running under 1.x deprecated forms
 	 *
 	 * @var bool
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static $deprecated = false;
 
@@ -19,7 +19,7 @@ class PodsField {
 	 * Field Type Identifier
 	 *
 	 * @var string
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static $type = 'text';
 
@@ -27,7 +27,7 @@ class PodsField {
 	 * Field Type Label
 	 *
 	 * @var string
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static $label = 'Unknown';
 
@@ -35,7 +35,7 @@ class PodsField {
 	 * Field Type Preparation
 	 *
 	 * @var string
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static $prepare = '%s';
 
@@ -43,7 +43,7 @@ class PodsField {
 	 * Pod Types supported on (true for all, false for none, or give array of specific types supported)
 	 *
 	 * @var array|bool
-	 * @since 2.1
+	 * @since 2.1.0
 	 */
 	public static $pod_types = true;
 
@@ -51,14 +51,14 @@ class PodsField {
 	 * API caching for fields that need it during validate/save
 	 *
 	 * @var \PodsAPI
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	private static $api;
 
 	/**
 	 * Initial setup of class object.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -79,7 +79,7 @@ class PodsField {
 	/**
 	 * Add admin_init actions.
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function admin_init() {
 
@@ -91,7 +91,7 @@ class PodsField {
 	 *
 	 * @return array $options
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @see   PodsField::ui_options
 	 */
 	public function options() {
@@ -145,7 +145,7 @@ class PodsField {
 	 *
 	 * @return array $options
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 * @see   PodsField::options
 	 */
 	public function ui_options() {
@@ -161,7 +161,7 @@ class PodsField {
 	 *
 	 * @return string|false
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function schema( $options = null ) {
 
@@ -178,7 +178,7 @@ class PodsField {
 	 *
 	 * @return string
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function prepare( $options = null ) {
 
@@ -195,7 +195,7 @@ class PodsField {
 	 *
 	 * @return bool
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function is_empty( $value ) {
 
@@ -221,7 +221,7 @@ class PodsField {
 	 *
 	 * @return bool
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function values_are_empty( $values, $strict = true ) {
 
@@ -260,7 +260,7 @@ class PodsField {
 	 *
 	 * @return mixed|null|string
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function value( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -279,7 +279,7 @@ class PodsField {
 	 *
 	 * @return mixed|null|string
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -297,7 +297,7 @@ class PodsField {
 	 * @param int|string|null $id      Current item ID.
 	 *
 	 * @return string|null
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -314,7 +314,7 @@ class PodsField {
 	 * @param array|null      $pod     Pod information.
 	 * @param int|string|null $id      Current item ID.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -363,9 +363,20 @@ class PodsField {
 			$args = (object) $args;
 		}
 
+		$disable_dfv = ! empty( $args->options['disable_dfv'] );
+
+		$field_class = "pods-form-ui-field pods-dfv-field";
+
+		if ( ! $disable_dfv ) {
+			$field_class .= ' pods-dfv-field--unloaded';
+		}
+
 		$script_content = wp_json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
 		?>
-		<div class="pods-form-ui-field pods-dfv-field">
+		<div class="<?php echo esc_attr( $field_class ); ?>">
+			<?php if ( ! $disable_dfv ) : ?>
+				<span class="pods-dfv-field__loading-indicator" role="progressbar"></span>
+			<?php endif; ?>
 			<?php // @codingStandardsIgnoreLine ?>
 			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content; ?></script>
 		</div>
@@ -411,12 +422,13 @@ class PodsField {
 			'fieldType'     => $args->type,
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
+			'fieldEmbed'    => true,
 		);
 
 		/**
 		 * Filter Pods DFV field data to further customize functionality.
 		 *
-		 * @since 2.7
+		 * @since 2.7.0
 		 *
 		 * @param array  $data       DFV field data
 		 * @param object $args       {
@@ -508,11 +520,25 @@ class PodsField {
 	 */
 	public function build_dfv_field_config( $args ) {
 
-		$config = $args->options;
+		$config = (array) $args->options;
 
 		unset( $config['data'] );
 
 		$config['item_id'] = (int) $args->id;
+
+		// Support passing missing options.
+		$check_missing = [
+			'type',
+			'name',
+			'label',
+			'id',
+		];
+
+		foreach ( $check_missing as $missing_name ) {
+			if ( ! empty( $args->{$missing_name} ) ) {
+				$config[ $missing_name ] = $args->{$missing_name};
+			}
+		}
 
 		return $config;
 
@@ -559,7 +585,7 @@ class PodsField {
 	 *
 	 * @return array Array of possible field data.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
 
@@ -578,7 +604,7 @@ class PodsField {
 	 *
 	 * @return string|false
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -599,11 +625,31 @@ class PodsField {
 	 *
 	 * @return bool
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
-		return true;
+		/**
+		 * Filter field validation return.
+		 *
+		 * @since 2.7.24
+		 *
+		 * @param true            $true    Default validation return.
+		 * @param mixed|null      $value   Current value.
+		 * @param string|null     $name    Field name.
+		 * @param array|null      $options Field options.
+		 * @param array|null      $fields  Pod fields.
+		 * @param array|null      $pod     Pod information.
+		 * @param int|string|null $id      Current item ID.
+		 * @param array|null      $params  Additional parameters.
+		 */
+		$validate = apply_filters( 'pods_field_validate_' . static::$type, true, $value, $name, $options, $fields, $pod, $id, $params );
+
+		if ( ! is_bool( $validate ) ) {
+			$validate = (array) $validate;
+		}
+
+		return $validate;
 
 	}
 
@@ -620,7 +666,7 @@ class PodsField {
 	 *
 	 * @return mixed
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
@@ -641,7 +687,7 @@ class PodsField {
 	 *
 	 * @return bool|null Whether the value was saved, returning null means no save needed to occur
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
@@ -660,7 +706,7 @@ class PodsField {
 	 * @param array|null      $pod     Pod information.
 	 * @param array|null      $params  Additional parameters.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function post_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
@@ -675,7 +721,7 @@ class PodsField {
 	 * @param array|null      $options Field options.
 	 * @param array|null      $pod     Pod information.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function pre_delete( $id = null, $name = null, $options = null, $pod = null ) {
 
@@ -690,7 +736,7 @@ class PodsField {
 	 * @param array|null      $options Field options.
 	 * @param array|null      $pod     Pod information.
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function delete( $id = null, $name = null, $options = null, $pod = null ) {
 
@@ -705,7 +751,7 @@ class PodsField {
 	 * @param array|null      $options Field options.
 	 * @param array|null      $pod     Pod information.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function post_delete( $id = null, $name = null, $options = null, $pod = null ) {
 
@@ -724,12 +770,25 @@ class PodsField {
 	 *
 	 * @return string Value to be shown in the UI
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 
 		return $this->display( $value, $name, $options, $pod, $id );
 
+	}
+
+	/**
+	 * Check if the field is required.
+	 *
+	 * @param array $options Field options.
+	 *
+	 * @return bool
+	 *
+	 * @since 2.7.18
+	 */
+	public function is_required( $options ) {
+		return filter_var( pods_v( 'required', $options, false ), FILTER_VALIDATE_BOOLEAN );
 	}
 
 	/**

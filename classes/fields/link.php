@@ -1,5 +1,4 @@
 <?php
-require_once PODS_DIR . 'classes/fields/website.php';
 
 /**
  * @package Pods\Fields
@@ -31,7 +30,8 @@ class PodsField_Link extends PodsField_Website {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Link', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Link', 'pods' );
 	}
 
 	/**
@@ -55,28 +55,29 @@ class PodsField_Link extends PodsField_Website {
 				),
 			),
 			static::$type . '_select_existing'   => array(
-				'label'      => __( 'Enable Selecting from Existing Links?', 'pods' ),
+				'label'      => __( 'Enable Selecting from Existing Links', 'pods' ),
 				'default'    => 1,
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			static::$type . '_new_window'        => array(
-				'label'      => __( 'Open link in new window by default?', 'pods' ),
+				'label'      => __( 'Open link in new window by default', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_link_new_window', 0, static::$type ),
 				'type'       => 'boolean',
 				'dependency' => false,
 			),
 			'output_options'                     => array(
 				'label' => __( 'Link Text Output Options', 'pods' ),
-				'group' => array(
+				'type'  => 'boolean_group',
+				'boolean_group' => array(
 					static::$type . '_allow_shortcode' => array(
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
 					),
 					static::$type . '_allow_html'      => array(
-						'label'      => __( 'Allow HTML?', 'pods' ),
+						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
@@ -90,7 +91,7 @@ class PodsField_Link extends PodsField_Website {
 				'type'       => 'text',
 			),
 			static::$type . '_html5'             => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),
@@ -146,7 +147,7 @@ class PodsField_Link extends PodsField_Website {
 
 			if ( ! empty( $value['target'] ) || ( ! isset( $value['target'] ) && 1 === (int) pods_v( static::$type . '_new_window', $options ) ) ) {
 				// Possible support for other targets in future
-				$atts .= ' target="' . esc_attr( $value['target'] ) . '"';
+				$atts .= ' target="' . esc_attr( $value['target'] ) . '" rel="noopener noreferrer"';
 			}
 
 			// Do shortcodes if this is enabled
@@ -178,7 +179,7 @@ class PodsField_Link extends PodsField_Website {
 	 *
 	 * @return mixed|null|string
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function display_list( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -198,16 +199,30 @@ class PodsField_Link extends PodsField_Website {
 		// Ensure proper format
 		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
 
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
@@ -219,7 +234,7 @@ class PodsField_Link extends PodsField_Website {
 			$errors = $check;
 		} else {
 			if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid link provided for the field %s.', 'pods' ), $label );
@@ -231,7 +246,7 @@ class PodsField_Link extends PodsField_Website {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 
 	}
 

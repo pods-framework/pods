@@ -26,6 +26,12 @@ class PodsField_File extends PodsField {
 	protected static $api = false;
 
 	/**
+	 * Temporary upload directory.
+	 * @var string
+	 */
+	private static $tmp_upload_dir;
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function setup() {
@@ -58,6 +64,8 @@ class PodsField_File extends PodsField {
 			$image_sizes[ $size ] = ucwords( str_replace( '-', ' ', $size ) );
 		}
 
+		$type = static::$type;
+
 		$options = array(
 			static::$type . '_format_type'            => array(
 				'label'      => __( 'Upload Limit', 'pods' ),
@@ -74,7 +82,8 @@ class PodsField_File extends PodsField {
 				'default'    => 'attachment',
 				'type'       => 'pick',
 				'data'       => apply_filters(
-					'pods_form_ui_field_' . static::$type . '_uploader_options', array(
+					"pods_form_ui_field_{$type}_uploader_options",
+					array(
 						'attachment' => __( 'Upload and/or Select (Media Library)', 'pods' ),
 						'plupload'   => __( 'Upload only (Plupload)', 'pods' ),
 					)
@@ -91,6 +100,35 @@ class PodsField_File extends PodsField {
 					'upload' => __( 'Upload File', 'pods' ),
 					'browse' => __( 'Media Library', 'pods' ),
 				),
+			),
+			static::$type . '_upload_dir'             => array(
+				'label'      => __( 'Upload directory', 'pods' ),
+				'default'    => 'wp',
+				'type'       => 'pick',
+				'data'       => array(
+					'wp'      => __( 'WordPress Default', 'pods' ) . ' (/yyyy/mm/)',
+					'uploads' => __( 'Custom directory within the default uploads directory', 'pods' ),
+				),
+				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
+				'dependency' => true,
+			),
+			static::$type . '_upload_dir_custom'     => array(
+				'label'       => __( 'Custom upload directory', 'pods' ),
+				'help'        => __( 'Magic tags are allowed for this field. The path is relative to the /wp-content/uploads/ folder on your site.', 'pods' ),
+				'placeholder' => 'my-custom-folder',
+				'depends-on'  => array(
+					static::$type . '_uploader'   => 'plupload',
+					static::$type . '_upload_dir' => 'uploads',
+				),
+				/**
+				 * Allow filtering the custom upload directory used.
+				 *
+				 * @since 2.7.28
+				 *
+				 * @param string @default_directory The custom upload directory to use by default for new fields.
+				 */
+				'default'     => apply_filters( "pods_form_ui_field_{$type}_upload_dir_custom", '' ),
+				'type'        => 'text',
 			),
 			static::$type . '_edit_title'             => array(
 				'label'   => __( 'Editable Title', 'pods' ),
@@ -122,10 +160,11 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_type'                   => array(
 				'label'      => __( 'Restrict File Types', 'pods' ),
-				'default'    => apply_filters( 'pods_form_ui_field_' . static::$type . '_type_default', 'images' ),
+				'default'    => apply_filters( "pods_form_ui_field_{$type}_type_default", 'images' ),
 				'type'       => 'pick',
 				'data'       => apply_filters(
-					'pods_form_ui_field_' . static::$type . '_type_options', array(
+					"pods_form_ui_field_{$type}_type_options",
+					array(
 						'images' => __( 'Images (jpg, jpeg, png, gif)', 'pods' ),
 						'video'  => __( 'Video (mpg, mov, flv, mp4, etc..)', 'pods' ),
 						'audio'  => __( 'Audio (mp3, m4a, wav, wma, etc..)', 'pods' ),
@@ -140,17 +179,18 @@ class PodsField_File extends PodsField {
 				'label'       => __( 'Allowed File Extensions', 'pods' ),
 				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
 				'depends-on'  => array( static::$type . '_type' => 'other' ),
-				'default'     => apply_filters( 'pods_form_ui_field_' . static::$type . '_extensions_default', '' ),
+				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
 				'type'        => 'text',
 			),
 			static::$type . '_field_template'         => array(
 				'label'      => __( 'List Style', 'pods' ),
 				'help'       => __( 'You can choose which style you would like the files to appear within the form.', 'pods' ),
 				'depends-on' => array( static::$type . '_type' => 'images' ),
-				'default'    => apply_filters( 'pods_form_ui_field_' . static::$type . '_template_default', 'rows' ),
+				'default'    => apply_filters( "pods_form_ui_field_{$type}_template_default", 'rows' ),
 				'type'       => 'pick',
 				'data'       => apply_filters(
-					'pods_form_ui_field_' . static::$type . '_type_templates', array(
+					"pods_form_ui_field_{$type}_type_templates",
+					array(
 						'rows'  => __( 'Rows', 'pods' ),
 						'tiles' => __( 'Tiles', 'pods' ),
 					)
@@ -177,7 +217,7 @@ class PodsField_File extends PodsField {
 			/* WP GALLERY OUTPUT */
 			static::$type . '_wp_gallery_output'      => array(
 				'label'      => __( 'Output as a WP Gallery', 'pods' ),
-				'help'       => sprintf( __( '<a href="%s" target="_blank">Click here for more info</a>', 'pods' ), 'https://codex.wordpress.org/The_WordPress_Gallery' ),
+				'help'       => sprintf( __( '<a href="%s" target="_blank" rel="noopener noreferrer">Click here for more info</a>', 'pods' ), 'https://wordpress.org/support/article/inserting-images-into-posts-and-pages/' ),
 				'depends-on' => array( static::$type . '_type' => 'images' ),
 				'dependency' => true,
 				'type'       => 'boolean',
@@ -447,11 +487,6 @@ class PodsField_File extends PodsField {
 
 		$is_user_logged_in = is_user_logged_in();
 
-		// @todo test frontend media modal
-		if ( empty( $options[ static::$type . '_uploader' ] ) || ! is_admin() || ! $is_user_logged_in || ( ! current_user_can( 'upload_files' ) && ! current_user_can( 'edit_files' ) ) ) {
-			$options[ static::$type . '_uploader' ] = 'plupload';
-		}
-
 		// @todo: plupload specific options need accommodation
 		if ( 'plupload' === $options[ static::$type . '_uploader' ] ) {
 			wp_enqueue_script( 'plupload-all' );
@@ -459,8 +494,7 @@ class PodsField_File extends PodsField {
 			if ( $is_user_logged_in ) {
 				$uid = 'user_' . get_current_user_id();
 			} else {
-				// @codingStandardsIgnoreLine
-				$uid = @session_id();
+				$uid = pods_session_id();
 			}
 
 			$pod_id = '0';
@@ -497,6 +531,14 @@ class PodsField_File extends PodsField {
 					'uri'      => $uri_hash,
 				),
 			);
+
+			// Pass post ID if we're in an add or edit post screen.
+			$post = get_post();
+
+			if ( $post instanceof WP_Post ) {
+				$options['plupload_init']['multipart_params']['post_id'] = $post->ID;
+			}
+
 		}//end if
 
 		return $options;
@@ -560,12 +602,12 @@ class PodsField_File extends PodsField {
 			}
 
 			$data[] = array(
-				'id'        => $id,
-				'icon'      => $icon,
-				'name'      => $title,
-				'edit_link' => $edit_link,
-				'link'      => $link,
-				'download'  => $download,
+				'id'        => esc_html( $id ),
+				'icon'      => esc_attr( $icon ),
+				'name'      => wp_strip_all_tags( html_entity_decode( $title ) ),
+				'edit_link' => html_entity_decode( esc_url( $edit_link ) ),
+				'link'      => html_entity_decode( esc_url( $link ) ),
+				'download'  => html_entity_decode( esc_url( $download ) ),
 			);
 		}//end foreach
 
@@ -580,7 +622,7 @@ class PodsField_File extends PodsField {
 
 		// @todo Check file size
 		// @todo Check file extensions
-		return true;
+		return parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 	}
 
@@ -613,6 +655,7 @@ class PodsField_File extends PodsField {
 				continue;
 			}
 
+			$attachment      = null;
 			$attachment_data = array();
 
 			// Update the title if set.
@@ -633,6 +676,11 @@ class PodsField_File extends PodsField {
 			if ( ! empty( $attachment_data ) ) {
 				$attachment_data['ID'] = $id;
 
+				if ( $attachment ) {
+					// Add post type to trigger attachment update filters from other plugins.
+					$attachment_data['post_type'] = $attachment->post_type;
+				}
+
 				self::$api->save_wp_object( 'media', $attachment_data );
 			}
 		}//end foreach
@@ -652,7 +700,8 @@ class PodsField_File extends PodsField {
 			$value = array( $value );
 		}
 
-		$image_size = apply_filters( 'pods_form_ui_field_' . static::$type . '_ui_image_size', 'thumbnail', $id, $value, $name, $options, $pod );
+		$type       = static::$type;
+		$image_size = apply_filters( "pods_form_ui_field_{$type}_ui_image_size", 'thumbnail', $id, $value, $name, $options, $pod );
 
 		return $this->images( $id, $value, $name, $options, $pod, $image_size );
 
@@ -669,7 +718,7 @@ class PodsField_File extends PodsField {
 	 * @param string $image_size Image size.
 	 *
 	 * @return string
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function images( $id, $value, $name = null, $options = null, $pod = null, $image_size = null ) {
 
@@ -698,7 +747,7 @@ class PodsField_File extends PodsField {
 	 *
 	 * @return array
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function data_image_sizes( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -710,14 +759,16 @@ class PodsField_File extends PodsField {
 			$data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
 		}
 
-		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+		$data['full'] = __( 'Full Size' ); // Translated by WordPress core.
+
+		return apply_filters( 'pods_form_ui_field_pick_data_image_sizes', $data, $name, $value, $options, $pod, $id );
 
 	}
 
 	/**
 	 * Create a WP Gallery from the passed values (need to be attachments)
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 *
 	 * @param  string|array $value   The value(s).
 	 * @param  array        $options The field options.
@@ -725,6 +776,10 @@ class PodsField_File extends PodsField {
 	 * @return string
 	 */
 	public function do_wp_gallery( $value, $options ) {
+
+		if ( ! $value ) {
+			return '';
+		}
 
 		$shortcode_args = array();
 
@@ -749,7 +804,7 @@ class PodsField_File extends PodsField {
 		} else {
 			$images = array();
 
-			foreach ( $value as $v ) {
+			foreach ( (array) $value as $v ) {
 				if ( ! is_array( $v ) ) {
 					$images[] = (int) $v;
 				} elseif ( isset( $v['ID'] ) ) {
@@ -789,9 +844,9 @@ class PodsField_File extends PodsField {
 	 * @param null|string     $link       Link URL.
 	 *
 	 * @return string
-	 * @since      2.0
+	 * @since 2.0.0
 	 *
-	 * @deprecated 2.7
+	 * @deprecated 2.7.0
 	 */
 	public function markup( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null, $linked = false, $link = null ) {
 
@@ -854,7 +909,7 @@ class PodsField_File extends PodsField {
 						if ( $linked ) {
 							?>
 							<li class="pods-file-col pods-file-download">
-								<a href="<?php echo esc_url( $link ); ?>" target="_blank">Download</a></li>
+								<a href="<?php echo esc_url( $link ); ?>" target="_blank" rel="noopener noreferrer">Download</a></li>
 							<?php
 						}
 						?>
@@ -872,7 +927,7 @@ class PodsField_File extends PodsField {
 	/**
 	 * Handle AJAX plupload calls.
 	 *
-	 * @since 2.3
+	 * @since 2.3.0
 	 */
 	public function admin_ajax_upload() {
 
@@ -898,11 +953,11 @@ class PodsField_File extends PodsField {
 		);
 
 		if ( ! isset( $params->method ) || ! in_array( $params->method, $methods, true ) || ! isset( $params->pod ) || ! isset( $params->field ) || ! isset( $params->uri ) || empty( $params->uri ) ) {
-			pods_error( 'Invalid AJAX request', PodsInit::$admin );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		} elseif ( ! empty( $params->pod ) && empty( $params->field ) ) {
-			pods_error( 'Invalid AJAX request', PodsInit::$admin );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		} elseif ( empty( $params->pod ) && ! current_user_can( 'upload_files' ) ) {
-			pods_error( 'Invalid AJAX request', PodsInit::$admin );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		}
 
 		// Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
@@ -941,7 +996,7 @@ class PodsField_File extends PodsField {
 			}
 		}
 
-		$uid = @session_id();
+		$uid = pods_session_id();
 
 		if ( $is_user_logged_in ) {
 			$uid = 'user_' . get_current_user_id();
@@ -1100,17 +1155,21 @@ class PodsField_File extends PodsField {
 			$limit_types = array_filter( array_unique( $limit_types ) );
 
 			if ( ! empty( $limit_types ) ) {
-				$ok = false;
+				$file_info = pathinfo( $file['name'] );
+				$ok        = false;
 
-				foreach ( $limit_types as $limit_type ) {
-					$limit_type = '.' . trim( $limit_type, ' .' );
+				if ( isset( $file_info['extension'] ) ) {
+					// Enforce lowercase for the extension checking.
+					$file_info['extension'] = strtolower( $file_info['extension'] );
 
-					$pos = ( strlen( $file['name'] ) - strlen( $limit_type ) );
+					foreach ( $limit_types as $limit_type ) {
+						$limit_type = strtolower( trim( $limit_type, ' .' ) );
 
-					if ( stripos( $file['name'], $limit_type ) === $pos ) {
-						$ok = true;
+						if ( $limit_type === $file_info['extension'] ) {
+							$ok = true;
 
-						break;
+							break;
+						}
 					}
 				}
 
@@ -1125,7 +1184,67 @@ class PodsField_File extends PodsField {
 			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params, $field );
 
 			if ( null === $custom_handler ) {
+
+				// Start custom directory.
+				$upload_dir = pods_v( $field['type'] . '_upload_dir', $field['options'], 'wp' );
+
+				if ( 'wp' !== $upload_dir ) {
+					$custom_dir  = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
+					$context_pod = null;
+
+					if ( $params->post_id ) {
+						$post = get_post( $params->post_id );
+
+						if ( $post ) {
+							$post_pod = pods( $post->post_type, $post->ID );
+
+							if ( $post_pod->exists() ) {
+								$context_pod = $post_pod;
+							}
+						}
+					}
+
+					/**
+					 * Filter the custom upload directory Pod context.
+					 *
+					 * @since 2.7.28
+					 *
+					 * @param Pods  $context_pod The Pods object of the associated pod for the post type.
+					 * @param array $params      The POSTed parameters for the request.
+					 * @param array $field       The field configuration associated to the upload field.
+					 * @param array $pod         The pod configuration associated to the upload field.
+					 */
+					$context_pod = apply_filters( 'pods_upload_dir_custom_context_pod', $context_pod, $params, $field, $pod );
+
+					$custom_dir = pods_evaluate_tags( $custom_dir, array( 'pod' => $context_pod ) );
+
+					/**
+					 * Filter the custom Pod upload directory.
+					 *
+					 * @since 2.7.28
+					 *
+					 * @param string $custom_dir  The directory to use for the uploaded file.
+					 * @param array  $params      The POSTed parameters for the request.
+					 * @param Pods   $context_pod The Pods object of the associated pod for the post type.
+					 * @param array  $field       The field configuration associated to the upload field.
+					 * @param array  $pod         The pod configuration associated to the upload field.
+					 */
+					$custom_dir = apply_filters( 'pods_upload_dir_custom', $custom_dir, $params, $context_pod, $field, $pod );
+
+					self::$tmp_upload_dir = $custom_dir;
+
+					add_filter( 'upload_dir', array( $this, 'filter_upload_dir' ) );
+				}
+
+				// Upload file.
 				$attachment_id = media_handle_upload( 'Filedata', $params->post_id );
+
+				// End custom directory.
+				if ( 'wp' !== $upload_dir ) {
+					remove_filter( 'upload_dir', array( $this, 'filter_upload_dir' ) );
+
+					self::$tmp_upload_dir = null;
+				}
 
 				if ( is_object( $attachment_id ) ) {
 					$errors = array();
@@ -1161,6 +1280,40 @@ class PodsField_File extends PodsField {
 
 		die();
 		// KBAI!
+	}
+
+	/**
+	 * Modify the upload directory.
+	 *
+	 * @since 2.7.28
+	 *
+	 * @see wp_upload_dir()
+	 *
+	 * @param array $uploads The uploads directory information.
+	 *
+	 * @return array The filtered uploads directory information.
+	 */
+	public function filter_upload_dir( $uploads ) {
+		if ( empty( self::$tmp_upload_dir ) ) {
+			return $uploads;
+		}
+
+		$dir    = trim( self::$tmp_upload_dir, '/' );
+		$subdir = trim( $uploads['subdir'], '/' );
+
+		foreach ( $uploads as $key => $val ) {
+			if ( ! is_string( $val ) ) {
+				continue;
+			}
+
+			if ( $subdir ) {
+				$uploads[ $key ] = str_replace( $subdir, $dir, $val );
+			} elseif ( in_array( $key, array( 'path', 'url', 'subdir' ), true ) ) {
+				$uploads[ $key ] = trailingslashit( $val ) . $dir;
+			}
+		}
+
+		return $uploads;
 	}
 
 }

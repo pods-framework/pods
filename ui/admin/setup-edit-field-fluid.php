@@ -42,7 +42,8 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 								continue;
 							}
 
-							$class = $extra_classes = '';
+							$class         = '';
+							$extra_classes = '';
 
 							$tab = sanitize_title( $tab );
 
@@ -76,10 +77,10 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 								echo PodsForm::field(
 									'field_data[' . $pods_i . '][name]', pods_v( 'name', $field, '' ), 'db', array(
 										'attributes' => array(
-											'maxlength' => 50,
+											'maxlength'      => 50,
 											'data-sluggable' => 'field_data[' . $pods_i . '][label]',
 										),
-										'class'      => 'pods-validate pods-validate-required pods-slugged-lower',
+										'class'      => 'pods-validate pods-validate-required pods-slugged-lower pods-slugged-sanitize-title',
 									)
 								);
 								?>
@@ -140,38 +141,33 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 									<?php _e( 'Options', 'pods' ); ?>
 								</p>
 
-								<div class="pods-pick-values pods-pick-checkbox">
-									<ul>
-										<li>
-											<?php
-											echo PodsForm::field(
-												'field_data[' . $pods_i . '][required]', pods_v( 'required', $field, 0 ), 'boolean', array(
-													'class' => 'pods-dependent-toggle',
-													'boolean_yes_label' => __( 'Required', 'pods' ),
-													'help' => __( 'help', 'pods' ),
-												)
-											);
-											?>
-										</li>
-										<?php
-										if ( 'table' === $pod['storage'] ) {
-											?>
-											<li class="pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-pick pods-excludes-on-field-data-type-file pods-excludes-on-field-data-type-boolean pods-excludes-on-field-data-type-date pods-excludes-on-field-data-type-datetime pods-excludes-on-field-data-type-time">
-												<?php
-												echo PodsForm::field(
-													'field_data[' . $pods_i . '][unique]', pods_v( 'unique', $field, 0 ), 'boolean', array(
-														'class' => 'pods-dependent-toggle',
-														'boolean_yes_label' => __( 'Unique', 'pods' ),
-														'help' => __( 'help', 'pods' ),
-													)
-												);
-												?>
+								<?php
+								$required_option = PodsForm::field( 'field_data[' . $pods_i . '][required]', pods_v( 'required', $field, 0 ), 'boolean', array(
+									'class'             => 'pods-dependent-toggle',
+									'boolean_yes_label' => __( 'Required', 'pods' ),
+									'help'              => __( 'help', 'pods' )
+								) );
+								if ( 'table' == $pod[ 'storage' ] ) {
+									?>
+									<div class="pods-pick-values pods-pick-checkbox">
+										<ul>
+											<li>
+												<?php echo $required_option; ?>
 											</li>
-											<?php
-										}
-										?>
-									</ul>
-								</div>
+											<li class="pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-pick pods-excludes-on-field-data-type-file pods-excludes-on-field-data-type-boolean pods-excludes-on-field-data-type-date pods-excludes-on-field-data-type-datetime pods-excludes-on-field-data-type-time">
+												<?php echo PodsForm::field( 'field_data[' . $pods_i . '][unique]', pods_v( 'unique', $field, 0 ), 'boolean', array(
+													'class'             => 'pods-dependent-toggle',
+													'boolean_yes_label' => __( 'Unique', 'pods' ),
+													'help'              => __( 'help', 'pods' )
+												) ); ?>
+											</li>
+										</ul>
+									</div>
+									<?php
+								} else {
+									echo $required_option;
+								}
+								?>
 							</div>
 						</div>
 
@@ -193,7 +189,7 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 										?>
 										<div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-<?php echo esc_attr( sanitize_title( $field_type ) ); ?>">
 											<?php
-											if ( ! isset( $first_field['name'] ) && ! isset( $first_field['label'] ) ) {
+											if ( ! isset( $first_field[ 'name' ] ) && ! isset( $first_field[ 'label' ] ) ) {
 												foreach ( $field_type_fields as $group => $group_fields ) {
 													?>
 													<h4><?php echo $group; ?></h4>
@@ -214,7 +210,7 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 								} else {
 									$first_field = current( $field_tab_fields );
 
-									if ( ! isset( $first_field['name'] ) && ! isset( $first_field['label'] ) ) {
+									if ( ! isset( $first_field[ 'name' ] ) && ! isset( $first_field[ 'label' ] ) ) {
 										foreach ( $field_tab_fields as $group => $group_fields ) {
 											?>
 											<h4><?php echo $group; ?></h4>
@@ -257,7 +253,7 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 		$type = 'Unknown';
 
 		if ( isset( $field_types[ pods_v_sanitized( 'type', $field ) ] ) ) {
-			$type = $field_types[ pods_v_sanitized( 'type', $field ) ]['label'];
+			$type = $field_types[ pods_v_sanitized( 'type', $field ) ][ 'label' ];
 		}
 
 		echo esc_html( $type ) . ' <span class="pods-manage-row-more">[type: ' . pods_v_sanitized( 'type', $field ) . ']</span>';
@@ -265,7 +261,7 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 		if ( 'pick' == pods_v_sanitized( 'type', $field ) && '' != pods_v_sanitized( 'pick_object', $field, '' ) ) {
 			$pick_object_name = null;
 
-			foreach ( $field_settings['pick_object'] as $object => $object_label ) {
+			foreach ( $field_settings[ 'pick_object' ] as $object => $object_label ) {
 				if ( null !== $pick_object_name ) {
 					break;
 				}
@@ -296,7 +292,10 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 			}//end foreach
 
 			if ( null === $pick_object_name ) {
-				$pick_object_name = ucwords( str_replace( array( '-', '_' ), ' ', pods_v( 'pick_object', $field ) ) );
+				$pick_object_name = ucwords( str_replace( array(
+					'-',
+					'_'
+				), ' ', pods_v( 'pick_object', $field ) ) );
 
 				if ( 0 < strlen( pods_v( 'pick_val', $field ) ) ) {
 					$pick_object_name = pods_v( 'pick_val', $field ) . ' (' . $pick_object_name . ')';

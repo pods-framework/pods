@@ -19,7 +19,7 @@ $css_id = $attributes['id'];
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
 
-$uid = @session_id();
+$uid = pods_session_id();
 
 if ( is_user_logged_in() ) {
 	$uid = 'user_' . get_current_user_id();
@@ -131,12 +131,12 @@ PodsForm::attributes(
 		// init sortable
 		$( '#<?php echo esc_js( $css_id ); ?> ul.pods-files' )
 			.sortable( {
-						   containment       : 'parent',
-						   axis              : 'y',
-						   scrollSensitivity : 40,
-						   tolerance         : 'pointer',
-						   opacity           : 0.6
-					   } );
+				containment       : 'parent',
+				axis              : 'y',
+				scrollSensitivity : 40,
+				tolerance         : 'pointer',
+				opacity           : 0.6
+			} );
 
 		// hook delete links
 		$( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'li.pods-file-delete a', function ( e ) {

@@ -60,17 +60,17 @@ class PodsField_Date extends PodsField_DateTime {
 				'developer_mode'    => true,
 			),
 			static::$type . '_type'             => array(
-				'label'                        => __( 'Date Format Type', 'pods' ),
-				'default'                      => 'format',
+				'label'      => __( 'Date Format Type', 'pods' ),
+				'default'    => 'format',
 				// Backwards compatibility
-										'type' => 'pick',
-				'help'                         => __( 'WordPress Default is the format used in Settings, General under "Date Format".', 'pods' ) . '<br>' . __( 'Predefined Format will allow you to select from a list of commonly used date formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
-				'data'                         => array(
+				'type'       => 'pick',
+				'help'       => __( 'WordPress Default is the format used in Settings, General under "Date Format".', 'pods' ) . '<br>' . __( 'Predefined Format will allow you to select from a list of commonly used date formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
+				'data'       => array(
 					'wp'     => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'date_format' ) ),
 					'format' => __( 'Predefined format', 'pods' ),
 					'custom' => __( 'Custom format', 'pods' ),
 				),
-				'dependency'                   => true,
+				'dependency' => true,
 			),
 			static::$type . '_format_custom'    => array(
 				'label'      => __( 'Date format for display', 'pods' ),
@@ -78,7 +78,7 @@ class PodsField_Date extends PodsField_DateTime {
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="http://php.net/manual/function.date.php" target="_blank">%s</a>',
+					'<a href="http://php.net/manual/function.date.php" target="_blank" rel="noopener noreferrer">%s</a>',
 					esc_html__( 'PHP date documentation', 'pods' )
 				),
 			),
@@ -88,7 +88,7 @@ class PodsField_Date extends PodsField_DateTime {
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="https://api.jqueryui.com/datepicker/" target="_blank">%1$s</a><br />%2$s',
+					'<a href="https://api.jqueryui.com/datepicker/" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
 					esc_html__( 'jQuery UI datepicker documentation', 'pods' ),
 					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
 				),
@@ -110,6 +110,20 @@ class PodsField_Date extends PodsField_DateTime {
 					'y'         => date_i18n( 'Y' ),
 				),
 				'dependency' => true,
+			),
+			static::$type . '_year_range_custom' => array(
+				'label'   => __( 'Year range', 'pods' ),
+				'default' => '',
+				'type'    => 'text',
+				'help'    => sprintf(
+					'%1$s<br /><a href="https://api.jqueryui.com/datepicker/#option-yearRange" target="_blank" rel="noopener noreferrer">%2$s</a>',
+					sprintf(
+						esc_html__( 'Example: %1$s for specifying a hard coded year range or %2$s for the last and next 10 years.', 'pods' ),
+						'<code>2010:2030</code>',
+						'<code>-10:+10</code>'
+					),
+					esc_html__( 'jQuery UI datepicker documentation', 'pods' )
+				),
 			),
 			static::$type . '_allow_empty'      => array(
 				'label'   => __( 'Allow empty value?', 'pods' ),
@@ -150,6 +164,19 @@ class PodsField_Date extends PodsField_DateTime {
 		$schema = 'DATE NOT NULL default "0000-00-00"';
 
 		return $schema;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function format_display( $options, $js = false ) {
+
+		if ( $js && 'custom' === pods_v( static::$type . '_type', $options, 'format' ) ) {
+			$format = $this->format_datetime( $options, $js );
+			return $this->convert_format( $format, array( 'source' => 'jquery_ui', 'type' => 'date' ) );
+		}
+
+		return parent::format_display( $options, $js );
 	}
 
 	/**

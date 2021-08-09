@@ -59,7 +59,7 @@ if ( ! function_exists( 'wp_send_json' ) ) {
  * @return string
  * @since      1.9.6
  *
- * @deprecated 2.3
+ * @deprecated 2.3.0
  */
 if ( ! function_exists( 'get_current_url' ) ) {
 	/**
@@ -76,8 +76,8 @@ if ( ! function_exists( 'get_current_url' ) ) {
 /**
  * Mapping function to new function name (following normalization of function names from pod_ to pods_)
  *
- * @since      1.x
- * @deprecated deprecated since version 2.0
+ * @since 1.x.x
+ * @deprecated 2.0.0
  *
  * @param string      $sql              SQL query.
  * @param string      $error            Error message on failure.
@@ -111,8 +111,8 @@ function pod_query( $sql, $error = 'SQL failed', $results_error = null, $no_resu
 /**
  * Include and Init the Pods class
  *
- * @since      1.x
- * @deprecated deprecated since version 2.0
+ * @since 1.x.x
+ * @deprecated 2.0.0
  * @package    Pods\Deprecated
  */
 class Pod {
@@ -151,7 +151,7 @@ class Pod {
 	/**
 	 * Handle variables that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name Property name.
 	 *
@@ -197,7 +197,7 @@ class Pod {
 	/**
 	 * Handle variables that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name  Property name.
 	 * @param mixed  $value Property value to set.
@@ -216,7 +216,7 @@ class Pod {
 	/**
 	 * Handle methods that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name Call name.
 	 * @param array  $args Call arguments.
@@ -233,7 +233,7 @@ class Pod {
 	/**
 	 * Handle variables that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name Property name.
 	 *
@@ -256,8 +256,8 @@ class Pod {
 /**
  * Include and Init the PodsAPI class
  *
- * @since      1.x
- * @deprecated deprecated since version 2.0
+ * @since 1.x.x
+ * @deprecated 2.0.0
  * @package    Pods\Deprecated
  */
 class PodAPI {
@@ -284,7 +284,7 @@ class PodAPI {
 	/**
 	 * Handle variables that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name Property name.
 	 *
@@ -302,7 +302,7 @@ class PodAPI {
 	/**
 	 * Handle methods that have been deprecated
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
 	 * @param string $name Call name.
 	 * @param array  $args Call arguments.
@@ -320,8 +320,8 @@ class PodAPI {
 /**
  * Include and Init the PodsUI class
  *
- * @since      2.0
- * @deprecated deprecated since version 2.0
+ * @since 2.0.0
+ * @deprecated 2.0.0
  *
  * @param Pods $obj Pods object.
  *
@@ -337,8 +337,8 @@ function pods_ui_manage( $obj ) {
 /**
  * Limit Access based on Field Value
  *
- * @since      1.x
- * @deprecated deprecated since version 2.0
+ * @since 1.x.x
+ * @deprecated 2.0.0
  *
  * @param Pods   $object Pods object.
  * @param array  $access Access array.
@@ -378,7 +378,7 @@ function pods_ui_access( $object, $access, $what ) {
  *
  * @return string The requested value, or null
  * @since      1.6.2
- * @deprecated deprecated since version 2.0
+ * @deprecated 2.0.0
  */
 function pods_url_variable( $key = 'last', $type = 'url' ) {
 
@@ -391,7 +391,7 @@ function pods_url_variable( $key = 'last', $type = 'url' ) {
  * Generate form key - INTERNAL USE
  *
  * @since      1.2.0
- * @deprecated deprecated since version 2.0
+ * @deprecated 2.0.0
  *
  * @param string $datatype   Pod name.
  * @param string $uri_hash   URI hash for session.
@@ -413,7 +413,7 @@ function pods_generate_key( $datatype, $uri_hash, $columns, $form_count = 1 ) {
  * Validate form key - INTERNAL USE
  *
  * @since      1.2.0
- * @deprecated deprecated since version 2.0
+ * @deprecated 2.0.0
  *
  * @param string     $token      Nonce token.
  * @param string     $datatype   Pod name.

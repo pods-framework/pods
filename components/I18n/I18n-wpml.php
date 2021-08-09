@@ -5,8 +5,7 @@
  */
 class Pods_I18n_WPML {
 
-	public $languages  = array();
-	public $textdomain = 'sitepress-multilingual-cms';
+	public $languages = array();
 
 	/**
 	 * Pods_I18n_WPML constructor.
@@ -60,7 +59,7 @@ class Pods_I18n_WPML {
 	public function pods_component_i18n_admin_ui_fields( $fields, $data ) {
 
 		$fields['manage']['wpml'] = array(
-			'label' => __( 'WPML', $this->textdomain ),
+			'label' => __( 'WPML', 'pods' ),
 			'type'  => 'boolean',
 			/*
 			'options' => array(

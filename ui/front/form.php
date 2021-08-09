@@ -50,7 +50,7 @@ foreach ( $submittable_fields as $k => $field ) {
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
 $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
 
-$uid = @session_id();
+$uid = pods_session_id();
 
 if ( is_user_logged_in() ) {
 	$uid = 'user_' . get_current_user_id();
@@ -98,7 +98,7 @@ if ( !$fields_only ) {
 do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 ?>
 
-			<ul class="pods-form-fields">
+			<ul class="pods-form-fields pods-dependency">
 				<?php
 					foreach ( $fields as $field ) {
 						if ( 'hidden' == $field[ 'type' ] ) {
@@ -108,16 +108,35 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						/**
 						 * Runs before a field is outputted.
 						 *
-						 * @params array $field The current field.
-						 * @params array $fields All fields of the form.
-						 * @params object $pod The current Pod object.
-						 * @params array $params The form's parameters.
+						 * @param array $field The current field.
+						 * @param array $fields All fields of the form.
+						 * @param object $pod The current Pod object.
+						 * @param array $params The form's parameters.
 						 *
 						 * @since 2.3.19
 						 */
 						do_action( 'pods_form_pre_field', $field, $fields, $pod, $params );
+
+						$default_class = ' pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ] );
+
+						// Setup field conditionals.
+						$dependencies = PodsForm::dependencies( $field, 'pods-field-' );
+						if ( ! empty( $dependencies['classes'] ) ) {
+							$default_class .= ' ' . $dependencies['classes'];
+						}
+						$dep_data = $dependencies['data'];
+
+						/**
+						 * Filter the html class used on form field list item element.
+						 *
+						 * @param string $html_class The HTML class.
+						 * @param array  $field      The current field.
+						 *
+						 * @since 2.7.2
+						 */
+						$html_class = apply_filters( 'pods_form_html_class', 'pods-field-html-class', $field ) . $default_class;
 				?>
-					<li class="pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>">
+					<li class="pods-field <?php echo esc_attr( $html_class, true ); ?>" <?php PodsForm::data( $dep_data ); ?>>
 						<div class="pods-field-label">
 							<?php echo PodsForm::label( $field_prefix . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
 						</div>
@@ -150,8 +169,8 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						continue;
 					}
 
-					echo PodsForm::field( $field_prefix . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
-			   }
+					echo PodsForm::field( $field_prefix . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden', $field, $pod, $pod->id() );
+				}
 
 				/**
 				 * Runs after all fields are outputted.
@@ -181,17 +200,18 @@ if ( !$fields_only ) {
 	if ( 'undefined' === typeof pods_form_init ) {
 		var pods_form_init = true;
 
-		jQuery(document).ready( function( $ ) {
+		document.addEventListener( "DOMContentLoaded", function() {
 			if ( 'undefined' !== typeof jQuery( document ).Pods ) {
 
 				if ( 'undefined' === typeof ajaxurl ) {
 					window.ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
 				}
 
-				$( document ).Pods( 'validate' );
-				$( document ).Pods( 'submit' );
+				jQuery( document ).Pods( 'validate' );
+				jQuery( document ).Pods( 'submit' );
+				jQuery( document ).Pods( 'dependency', true ); // Pass `true` to trigger init.
 			}
-		} );
+		}, false );
 	}
 </script>
 <?php

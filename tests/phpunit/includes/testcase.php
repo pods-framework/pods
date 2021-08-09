@@ -370,10 +370,25 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		 */
 	);
 
+	/**
+	 * Fetches the factory object for generating WordPress & Pods fixtures.
+	 *
+	 * @return Pods_UnitTest_Factory The fixture factory.
+	 */
+	protected static function factory() {
+		static $factory = null;
+		if ( ! $factory ) {
+			$factory = new Pods_UnitTest_Factory();
+		}
+		return $factory;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public function setUp() {
 
 		parent::setUp();
-		$this->factory = new Pods_UnitTest_Factory();
 
 		pods_require_component( 'table-storage' );
 		pods_require_component( 'advanced-relationships' );
@@ -396,9 +411,12 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	 */
 	public function go_to( $url ) {
 
-		$GLOBALS['_SERVER']['REQUEST_URI'] = $url = str_replace( network_home_url(), '', $url );
+		$url = str_replace( network_home_url(), '', $url );
 
-		$_GET = $_POST = array();
+		$GLOBALS['_SERVER']['REQUEST_URI'] = $url;
+
+		$_GET  = array();
+		$_POST = array();
 
 		foreach (
 			array(
@@ -644,6 +662,12 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 					foreach ( $pod['fields'] as $field ) {
 						self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ] = $field;
+					}
+
+					if ( in_array( $pod['name'], pods_reserved_keywords(), true ) ) {
+						// Extending objects when using reserved keywords.
+						// This will then accept `post`, `page` etc. as Pods object names.
+						$pod['create_extend'] = 'extend';
 					}
 
 					$id = $api->save_pod( $pod );

@@ -24,7 +24,7 @@ class PodsAPI_Deprecated {
 	 * @param object $obj The PodsAPI object
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
-	 * @since   2.0
+	 * @since 2.0.0
 	 */
 	public function __construct( $obj ) {
 

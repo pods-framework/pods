@@ -124,8 +124,13 @@ class PodsField_Email extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
@@ -135,7 +140,7 @@ class PodsField_Email extends PodsField {
 			if ( 0 < strlen( $value ) && '' === $check ) {
 				$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = sprintf( __( '%s is required', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid e-mail provided for %s', 'pods' ), $label );
@@ -147,7 +152,7 @@ class PodsField_Email extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**

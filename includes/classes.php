@@ -12,7 +12,7 @@
  * @param bool   $strict (optional) If set to true, return false instead of an object if the Pod doesn't exist
  *
  * @return bool|\Pods returns false if $strict, WP_DEBUG, PODS_STRICT or (PODS_DEPRECATED && PODS_STRICT_MODE) are true
- * @since 2.0
+ * @since 2.0.0
  * @link  https://pods.io/docs/pods/
  */
 function pods( $type = null, $id = null, $strict = null ) {
@@ -43,7 +43,7 @@ function pods( $type = null, $id = null, $strict = null ) {
  *
  * @return PodsUI
  *
- * @since 2.0
+ * @since 2.0.0
  * @link  https://pods.io/docs/pods-ui/
  */
 function pods_ui( $obj, $deprecated = false ) {
@@ -63,7 +63,7 @@ function pods_ui( $obj, $deprecated = false ) {
  *
  * @return PodsAPI
  *
- * @since 2.0
+ * @since 2.0.0
  * @link  https://pods.io/docs/pods-api/
  */
 function pods_api( $pod = null, $format = null ) {
@@ -85,7 +85,7 @@ function pods_api( $pod = null, $format = null ) {
  *
  * @return PodsData
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
 
@@ -105,7 +105,7 @@ function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
  *
  * @return PodsForm
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_form() {
 
@@ -121,7 +121,7 @@ function pods_form() {
  *
  * @return PodsInit
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_init() {
 
@@ -137,7 +137,7 @@ function pods_init() {
  *
  * @return PodsComponents
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_components() {
 
@@ -154,7 +154,7 @@ function pods_components() {
  *
  * @return PodsAdmin
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_admin() {
 
@@ -170,7 +170,7 @@ function pods_admin() {
  *
  * @return PodsMeta
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_meta() {
 
@@ -188,7 +188,7 @@ function pods_meta() {
  *
  * @return PodsArray
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_array( $container ) {
 
@@ -198,7 +198,7 @@ function pods_array( $container ) {
 }
 
 /**
- * @since 2.7
+ * @since 2.7.0
  */
 function pods_i18n() {
 
@@ -221,7 +221,7 @@ function pods_i18n() {
  *
  * @return string|bool The view output
  *
- * @since 2.0
+ * @since 2.0.0
  * @link  https://pods.io/docs/pods-view/
  */
 function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
@@ -248,7 +248,7 @@ function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache'
  *
  * @return PodsMigrate
  *
- * @since 2.2
+ * @since 2.2.0
  */
 function pods_migrate( $type = null, $delimiter = null, $data = null ) {
 
@@ -266,7 +266,7 @@ function pods_migrate( $type = null, $delimiter = null, $data = null ) {
  *
  * @return PodsUpgrade
  *
- * @since 2.1
+ * @since 2.1.0
  */
 function pods_upgrade( $version = '' ) {
 

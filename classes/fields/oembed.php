@@ -29,7 +29,7 @@ class PodsField_OEmbed extends PodsField {
 	 * Available oEmbed providers
 	 *
 	 * @var array
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private $providers = array();
 
@@ -37,7 +37,7 @@ class PodsField_OEmbed extends PodsField {
 	 * Current embed width
 	 *
 	 * @var int
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private $width = 0;
 
@@ -45,7 +45,7 @@ class PodsField_OEmbed extends PodsField {
 	 * Current embed height
 	 *
 	 * @var int
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	private $height = 0;
 
@@ -197,8 +197,13 @@ class PodsField_OEmbed extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
@@ -206,7 +211,7 @@ class PodsField_OEmbed extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}
 			}
@@ -216,7 +221,7 @@ class PodsField_OEmbed extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**
@@ -287,7 +292,7 @@ class PodsField_OEmbed extends PodsField {
 	 *
 	 * @return string Potentially modified $content.
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function autoembed( $content ) {
 
@@ -314,7 +319,7 @@ class PodsField_OEmbed extends PodsField {
 	 *
 	 * @return string The embed shortcode
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function autoembed_callback( $match ) {
 
@@ -336,7 +341,7 @@ class PodsField_OEmbed extends PodsField {
 	 * @type string Hostname for this provider
 	 * }
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function get_providers() {
 
@@ -345,7 +350,7 @@ class PodsField_OEmbed extends PodsField {
 			return $this->providers;
 		}
 
-		if ( file_exists( ABSPATH . WPINC . '/class-oembed.php' ) ) {
+		if ( ! class_exists( 'WP_oEmbed' ) && file_exists( ABSPATH . WPINC . '/class-oembed.php' ) ) {
 			require_once ABSPATH . WPINC . '/class-oembed.php';
 		}
 
@@ -385,52 +390,38 @@ class PodsField_OEmbed extends PodsField {
 
 	/**
 	 * Takes a URL and returns the corresponding oEmbed provider's URL, if there is one.
-	 * This function is ripped from WP since Pods has support from 3.8 and in the WP core this function is 4.0+
-	 * We've stripped the autodiscover part from this function to keep it basic
 	 *
-	 * @since  2.7
+	 * @since 2.7.0
 	 * @access public
 	 *
 	 * @see    WP_oEmbed::get_provider()
 	 *
-	 * @param string $url The URL to the content.
+	 * @param string       $url  The URL to the content.
+	 * @param string|array $args Optional provider arguments.
 	 *
 	 * @return false|string False on failure, otherwise the oEmbed provider URL.
 	 */
-	public function get_provider( $url ) {
+	public function get_provider( $url, $args = array() ) {
 
-		$provider = false;
+		if ( ! class_exists( 'WP_oEmbed' ) && file_exists( ABSPATH . WPINC . '/class-oembed.php' ) ) {
+			require_once ABSPATH . WPINC . '/class-oembed.php';
+		}
 
-		foreach ( $this->providers as $matchmask => $data ) {
-			if ( isset( $data['host'] ) ) {
-				unset( $data['host'] );
+		if ( function_exists( '_wp_oembed_get_object' ) ) {
+			$wp_oembed = _wp_oembed_get_object();
+
+			if ( is_callable( array( $wp_oembed, 'get_provider' ) ) ) {
+				return $wp_oembed->get_provider( $url, $args );
 			}
-			reset( $data );
+		}
 
-			list( $providerurl, $regex ) = $data;
-
-			$match = $matchmask;
-
-			// Turn the asterisk-type provider URLs into regex
-			if ( ! $regex ) {
-				$matchmask = '#' . str_replace( '___wildcard___', '(.+)', preg_quote( str_replace( '*', '___wildcard___', $matchmask ), '#' ) ) . '#i';
-				$matchmask = preg_replace( '|^#http\\\://|', '#https?\://', $matchmask );
-			}
-
-			if ( preg_match( $matchmask, $url ) ) {
-				$provider = $match;
-
-				break;
-			}
-		}//end foreach
-
-		return $provider;
+		return false;
 	}
 
 	/**
 	 * Validate a value with the enabled oEmbed providers (if required).
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 *
 	 * @param string $value   Field value.
 	 * @param array  $options Field options.
@@ -477,7 +468,7 @@ class PodsField_OEmbed extends PodsField {
 	/**
 	 * Handle update preview AJAX.
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function admin_ajax_oembed_update_preview() {
 

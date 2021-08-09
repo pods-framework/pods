@@ -13,7 +13,7 @@
  * @param string $no_results_error (optional) Throw an error if no records are found
  *
  * @return array|bool|mixed|null|void
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_query( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
 
@@ -56,7 +56,7 @@ function pods_query( $sql, $error = 'Database Error', $results_error = null, $no
  * @param object $obj   (optional) Object to reference for filter / action
  *
  * @return mixed
- * @since 2.0
+ * @since 2.0.0
  * @todo  Need to figure out how to handle $scope = 'pods' for the Pods class
  */
 function pods_do_hook( $scope, $name, $args = null, $obj = null ) {
@@ -104,38 +104,36 @@ $GLOBALS['pods_errors'] = array();
  * Error Handling which throws / displays errors
  *
  * @param string|array        $error The error message(s) to be thrown / displayed.
- * @param object|boolean|null $obj   If $obj->display_errors is set and is set to true it will display errors, if
- *                                   boolean and is set to true it will display errors.
- *
- * @throws Exception Throws exception for developer-oriented error handling.
+ * @param object|boolean|null $obj   If $obj->display_errors is set and is set to true it will display errors,
+ *                                   if boolean and is set to true it will display errors.
  *
  * @return mixed
  *
- * @since 2.0
+ * @throws Exception Throws exception for developer-oriented error handling.
+ *
+ * @since 2.0.0
  */
 function pods_error( $error, $obj = null ) {
 
 	global $pods_errors;
 
+	$display_errors = $obj;
+	if ( is_object( $obj ) && isset( $obj->display_errors ) ) {
+		$display_errors = $obj->display_errors;
+	}
+
 	$error_mode = 'exception';
 
-	if ( is_object( $obj ) && isset( $obj->display_errors ) ) {
-		if ( true === $obj->display_errors ) {
-			$error_mode = 'exit';
-		} elseif ( false === $obj->display_errors ) {
-			$error_mode = 'exception';
-		} else {
-			$error_mode = $obj->display_errors;
-		}
-	} elseif ( true === $obj ) {
+	if ( true === $display_errors ) {
 		$error_mode = 'exit';
-	} elseif ( false === $obj ) {
+	} elseif ( false === $display_errors ) {
 		$error_mode = 'exception';
-	} elseif ( is_string( $obj ) ) {
-		$error_mode = $obj;
+	} elseif ( is_string( $display_errors ) ) {
+		$error_mode = $display_errors;
 	}
 
 	if ( is_object( $error ) && 'Exception' === get_class( $error ) ) {
+		/** @var Exception $error */
 		$error = $error->getMessage();
 
 		$error_mode = 'exception';
@@ -145,6 +143,13 @@ function pods_error( $error, $obj = null ) {
 	 * @var string $error_mode Throw an exception, exit with the message, return false, or return WP_Error
 	 */
 	if ( ! in_array( $error_mode, array( 'exception', 'exit', 'false', 'wp_error' ), true ) ) {
+		$error_mode = 'exception';
+	}
+
+	/**
+	 * When running a Pods shortcode, never exit and only return exception.
+	 */
+	if ( pods_doing_shortcode() ) {
 		$error_mode = 'exception';
 	}
 
@@ -247,13 +252,20 @@ $pods_debug = 0;
  *
  * @return void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 
 	global $pods_debug;
 
 	$pods_debug ++;
+
+	if ( ! pods_is_debug_display() ) {
+		// Log errors if we do not display them.
+		error_log( 'Pods error: ' . (string) $debug );
+
+		return;
+	}
 
 	ob_start();
 
@@ -289,6 +301,16 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 }
 
 /**
+ * Check if debug is enabled and should be displayed.
+ *
+ * @return bool
+ * @since  2.7.13
+ */
+function pods_is_debug_display() {
+	return ( WP_DEBUG && WP_DEBUG_DISPLAY );
+}
+
+/**
  * Determine if user has admin access
  *
  * @param string|array $cap Additional capabilities to check
@@ -300,16 +322,19 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 function pods_is_admin( $cap = null ) {
 
 	if ( is_user_logged_in() ) {
-		// Default is_super_admin() checks against this.
-		$pods_admin_capabilities = array(
-			'delete_users',
-		);
-
-		$pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
 
 		if ( is_multisite() && is_super_admin() ) {
 			return apply_filters( 'pods_is_admin', true, $cap, '_super_admin' );
 		}
+
+		$pods_admin_capabilities = array();
+
+		if ( ! is_multisite() ) {
+			// Default is_super_admin() checks against this capability.
+			$pods_admin_capabilities[] = 'delete_users';
+		}
+
+		$pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
 
 		if ( empty( $cap ) ) {
 			$cap = array();
@@ -334,7 +359,7 @@ function pods_is_admin( $cap = null ) {
  *
  * @return bool Whether Developer Mode is enabled
  *
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_developer() {
 
@@ -350,11 +375,26 @@ function pods_developer() {
  *
  * @return bool Whether Tableless Mode is enabled
  *
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_tableless() {
 
 	if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Determine if Light Mode is enabled
+ *
+ * @return bool Whether Light Mode is enabled
+ *
+ * @since 2.7.13
+ */
+function pods_light() {
+	if ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) {
 		return true;
 	}
 
@@ -423,6 +463,21 @@ function pods_api_cache() {
 }
 
 /**
+ * Determine if Pods shortcodes can evaluate magic tags.
+ *
+ * @since 2.7.16
+ *
+ * @return bool
+ */
+function pods_shortcode_allow_evaluate_tags() {
+	if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Marks a function as deprecated and informs when it has been used.
  *
  * There is a hook deprecated_function_run that will be called that can be used
@@ -442,7 +497,7 @@ function pods_api_cache() {
  * @param string $version     The version of WordPress that deprecated the function
  * @param string $replacement Optional. The function that should have been called
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_deprecated( $function, $version, $replacement = null ) {
 
@@ -472,12 +527,12 @@ function pods_deprecated( $function, $version, $replacement = null ) {
  *
  * @return void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_help( $text, $url = null ) {
 
 	if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
-		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.2' );
+		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/qtip/jquery.qtip.min.js', array( 'jquery' ), '3.0.3' );
 	} elseif ( ! wp_script_is( 'jquery-qtip2', 'queue' ) && ! wp_script_is( 'jquery-qtip2', 'to_do' ) && ! wp_script_is( 'jquery-qtip2', 'done' ) ) {
 		wp_enqueue_script( 'jquery-qtip2' );
 	}
@@ -489,6 +544,7 @@ function pods_help( $text, $url = null ) {
 				'jquery-qtip2',
 			), PODS_VERSION
 		);
+		wp_enqueue_script( 'pods-qtip-init' );
 	} elseif ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
 		wp_enqueue_script( 'pods-qtip-init' );
 	}
@@ -506,7 +562,7 @@ function pods_help( $text, $url = null ) {
 	}
 
 	if ( 0 < strlen( $url ) ) {
-		$text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+		$text .= '<br /><br /><a href="' . $url . '" target="_blank" rel="noopener noreferrer">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
 	}
 
 	echo '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
@@ -563,7 +619,7 @@ function pods_helper( $helper_name, $value = null, $name = null ) {
  * Get the full URL of the current page
  *
  * @return string Full URL of the current page
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_current_url() {
 
@@ -584,7 +640,7 @@ function pods_current_url() {
  * @param object $object The Pod Object currently checking (optional)
  *
  * @return bool
- * @since 2.0
+ * @since 2.0.0
  */
 function is_pod( $object = null ) {
 
@@ -674,15 +730,59 @@ function pods_access( $privs, $method = 'OR' ) {
 }
 
 /**
- * Shortcode support for use anywhere that support WP Shortcodes
+ * Check whether a Pods shortcode is currently being parsed.
+ * If a boolean is passed it overwrites the status.
  *
- * @param array  $tags    An associative array of shortcode properties
- * @param string $content A string that represents a template override
+ * @param bool $bool
+ *
+ * @return bool
+ * @since  2.7.13
+ */
+function pods_doing_shortcode( $bool = null ) {
+	static $check = false;
+	if ( null !== $bool ) {
+		$check = (bool) $bool;
+	}
+	return $check;
+}
+
+/**
+ * Shortcode support for use anywhere that support WP Shortcodes.
+ * Will return error message on failure.
+ *
+ * @param array  $tags    An associative array of shortcode properties.
+ * @param string $content A string that represents a template override.
  *
  * @return string
  * @since 1.6.7
+ * @since 2.7.13 Try/Catch.
  */
 function pods_shortcode( $tags, $content = null ) {
+	pods_doing_shortcode( true );
+	try {
+		$return = pods_shortcode_run( $tags, $content );
+	} catch ( Exception $exception ) {
+		$return = $exception->getMessage();
+		if ( ! pods_is_debug_display() ) {
+			// Logs message.
+			pods_debug( $return );
+			$return = '';
+		}
+	}
+	pods_doing_shortcode( false );
+	return $return;
+}
+
+/**
+ * Shortcode support for use anywhere that support WP Shortcodes.
+ *
+ * @param array  $tags    An associative array of shortcode properties.
+ * @param string $content A string that represents a template override.
+ *
+ * @return string
+ * @since 2.7.13
+ */
+function pods_shortcode_run( $tags, $content = null ) {
 
 	if ( defined( 'PODS_DISABLE_SHORTCODE' ) && PODS_DISABLE_SHORTCODE ) {
 		return '';
@@ -702,7 +802,8 @@ function pods_shortcode( $tags, $content = null ) {
 		$offset = max( $offset, 0 );
 	}
 
-	$defaults = array(
+	// Query related tags separated to use later.
+	$default_query_tags = array(
 		'use_current'         => false,
 		'name'                => null,
 		'id'                  => null,
@@ -723,21 +824,28 @@ function pods_shortcode( $tags, $content = null ) {
 		'filters_label'       => null,
 		'filters_location'    => 'before',
 		'pagination_label'    => null,
+		'pagination_type'     => null,
 		'pagination_location' => 'after',
-		'field'               => null,
-		'col'                 => null,
-		'template'            => null,
-		'pods_page'           => null,
-		'helper'              => null,
-		'form'                => null,
-		'fields'              => null,
-		'label'               => null,
-		'thank_you'           => null,
-		'view'                => null,
-		'cache_mode'          => 'none',
-		'expires'             => 0,
-		'shortcodes'          => false,
 	);
+
+	$default_other_tags = array(
+		'field'      => null,
+		'col'        => null,
+		'template'   => null,
+		'pods_page'  => null,
+		'helper'     => null,
+		'form'       => null,
+		'fields'     => null,
+		'label'      => null,
+		'thank_you'  => null,
+		'not_found'  => null,
+		'view'       => null,
+		'cache_mode' => 'none',
+		'expires'    => 0,
+		'shortcodes' => false,
+	);
+
+	$defaults = array_merge( $default_other_tags, $default_query_tags );
 
 	if ( ! empty( $tags ) ) {
 		$tags = array_merge( $defaults, $tags );
@@ -748,7 +856,7 @@ function pods_shortcode( $tags, $content = null ) {
 	$tags = apply_filters( 'pods_shortcode', $tags );
 
 	$tags['pagination']  = filter_var( $tags['pagination'], FILTER_VALIDATE_BOOLEAN );
-	$tags['search']      = filter_var( $tags['pagination'], FILTER_VALIDATE_BOOLEAN );
+	$tags['search']      = filter_var( $tags['search'], FILTER_VALIDATE_BOOLEAN );
 	$tags['use_current'] = filter_var( $tags['use_current'], FILTER_VALIDATE_BOOLEAN );
 
 	if ( empty( $content ) ) {
@@ -771,17 +879,36 @@ function pods_shortcode( $tags, $content = null ) {
 	}
 
 	if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
-		if ( in_the_loop() || is_singular() ) {
-			$pod = pods( get_post_type(), get_the_ID(), false );
+		$has_query_tags = array_intersect_key( array_diff( $tags, $defaults ), $default_query_tags );
 
-			if ( ! empty( $pod ) ) {
-				$tags['name'] = get_post_type();
-				$id           = $tags['id'] = get_the_ID();
+		// Only allow revert to current object if there are no query tags.
+		if ( ! $has_query_tags ) {
+			/**
+			 * Allow filtering whether to detect the pod name / item ID from the current post object.
+			 *
+			 * @since 2.7.26
+			 *
+			 * @param bool  $detect_from_current  Whether to detect the pod name / item ID from the current post object.
+			 * @param array $shortcode_attributes The list of attributes used for the shortcode.
+			 */
+			$detect_from_current = apply_filters( 'pods_shortcode_detect_from_current_post', in_the_loop(), $tags );
+
+			// Archives, Post type archives, singular posts.
+			if ( $detect_from_current ) {
+				$pod = pods( get_post_type(), get_the_ID(), false );
+
+				if ( ! empty( $pod ) ) {
+					$id           = get_the_ID();
+					$tags['id']   = $id;
+					$tags['name'] = get_post_type();
+				}
+			} else {
+				$tags['use_current'] = true;
 			}
 		}
 
-		if ( empty( $tags['name'] ) ) {
-			return '<p>Please provide a Pod name</p>';
+		if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
+			return '<p>' . __( 'Please provide a Pod name', 'pods' ) . '</p>';
 		}
 	}
 
@@ -798,26 +925,32 @@ function pods_shortcode( $tags, $content = null ) {
 	}
 
 	if ( empty( $content ) && empty( $tags['pods_page'] ) && empty( $tags['template'] ) && empty( $tags['field'] ) && empty( $tags['form'] ) ) {
-		return '<p>Please provide either a template or field name</p>';
+		return '<p>' . __( 'Please provide either a template or field name', 'pods' ) . '</p>';
 	}
 
 	if ( ! $tags['use_current'] && ! isset( $id ) ) {
 		// id > slug (if both exist)
 		$id = null;
 
+		$evaluate_tags_args = array(
+			'sanitize'        => true,
+			'fallback'        => null,
+			'use_current_pod' => true,
+		);
+
 		if ( ! empty( $tags['slug'] ) ) {
 			$id = $tags['slug'];
 
-			if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-				$id = pods_evaluate_tags( $id );
+			if ( pods_shortcode_allow_evaluate_tags() ) {
+				$id = pods_evaluate_tags( $id, $evaluate_tags_args );
 			}
 		}
 
 		if ( ! empty( $tags['id'] ) ) {
 			$id = $tags['id'];
 
-			if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-				$id = pods_evaluate_tags( $id );
+			if ( pods_shortcode_allow_evaluate_tags() ) {
+				$id = pods_evaluate_tags( $id, $evaluate_tags_args );
 			}
 
 			if ( is_numeric( $id ) ) {
@@ -836,10 +969,11 @@ function pods_shortcode( $tags, $content = null ) {
 	}
 
 	if ( empty( $pod ) || ! $pod->valid() ) {
-		return '<p>Pod not found</p>';
+		return '<p>' . __( 'Pod not found', 'pods' ) . '</p>';
 	}
 
 	$found = 0;
+	$filters = false;
 
 	$is_singular = ( ! empty( $id ) || $tags['use_current'] );
 
@@ -847,6 +981,12 @@ function pods_shortcode( $tags, $content = null ) {
 		$params = array();
 
 		if ( ! defined( 'PODS_DISABLE_SHORTCODE_SQL' ) || ! PODS_DISABLE_SHORTCODE_SQL ) {
+			$evaluate_tags_args = array(
+				'sanitize'        => true,
+				'fallback'        => '""',
+				'use_current_pod' => true,
+			);
+
 			if ( 0 < strlen( $tags['orderby'] ) ) {
 				$params['orderby'] = $tags['orderby'];
 			}
@@ -854,16 +994,16 @@ function pods_shortcode( $tags, $content = null ) {
 			if ( 0 < strlen( $tags['where'] ) ) {
 				$params['where'] = $tags['where'];
 
-				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-					$params['where'] = pods_evaluate_tags( html_entity_decode( $params['where'] ) );
+				if ( pods_shortcode_allow_evaluate_tags() ) {
+					$params['where'] = pods_evaluate_tags_sql( html_entity_decode( $params['where'] ), $evaluate_tags_args );
 				}
 			}
 
 			if ( 0 < strlen( $tags['having'] ) ) {
 				$params['having'] = $tags['having'];
 
-				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-					$params['having'] = pods_evaluate_tags( html_entity_decode( $params['having'] ) );
+				if ( pods_shortcode_allow_evaluate_tags() ) {
+					$params['having'] = pods_evaluate_tags_sql( html_entity_decode( $params['having'] ), $evaluate_tags_args );
 				}
 			}
 
@@ -878,6 +1018,11 @@ function pods_shortcode( $tags, $content = null ) {
 				$params['join'] = $tags['join'];
 			}
 		}//end if
+
+		// Load filters and return HTML for later use.
+		if ( false !== $tags['filters'] ) {
+			$filters = $pod->filters( $tags['filters'], $tags['filters_label'] );
+		}
 
 		// Forms require params set
 		if ( ! empty( $params ) || empty( $tags['form'] ) ) {
@@ -935,7 +1080,15 @@ function pods_shortcode( $tags, $content = null ) {
 
 		return $pod->form( $tags['fields'], $tags['label'], $tags['thank_you'] );
 	} elseif ( ! empty( $tags['field'] ) ) {
-		if ( empty( $tags['helper'] ) ) {
+		if ( $tags['template'] || $content ) {
+			$return  = '';
+			$related = $pod->field( $tags['field'], array( 'output' => 'find' ) );
+
+			if ( $related instanceof Pods && $related->valid() ) {
+				// Content is null by default.
+				$return .= $related->template( $tags['template'], $content );
+			}
+		} elseif ( empty( $tags['helper'] ) ) {
 			$return = $pod->display( $tags['field'] );
 		} else {
 			$return = $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );
@@ -962,34 +1115,44 @@ function pods_shortcode( $tags, $content = null ) {
 		return $return;
 	}//end if
 
+	$pagination = false;
+
+	// Only handle pagination on non-singular shortcodes where items were found.
+	if ( ! $is_singular && 0 < $found && $tags['pagination'] ) {
+		$pagination = array(
+			'label' => pods_v( 'pagination_label', $tags, null ),
+			'type'  => pods_v( 'pagination_type', $tags, null ),
+		);
+
+		// Remove empty params.
+		$pagination = array_filter( $pagination );
+	}
+
 	ob_start();
 
-	if ( ! $is_singular && false !== $tags['filters'] && 'before' === $tags['filters_location'] ) {
-		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
+	if ( $filters && 'before' === $tags['filters_location'] ) {
+		echo $filters;
 	}
 
-	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array(
-		$tags['pagination_location'], array(
-			'before',
-			'both',
-		), true
-	) ) {
-		echo $pod->pagination( $tags['pagination_label'] );
+	if ( false !== $pagination && in_array( $tags['pagination_location'], array( 'before', 'both', ), true ) ) {
+		echo $pod->pagination( $pagination );
 	}
 
-	echo $pod->template( $tags['template'], $content );
+	$content = $pod->template( $tags['template'], $content );
 
-	if ( ! $is_singular && 0 < $found && true === $tags['pagination'] && in_array(
-		$tags['pagination_location'], array(
-			'after',
-			'both',
-		), true
-	) ) {
-		echo $pod->pagination( $tags['pagination_label'] );
+	if ( empty( $content ) && ! empty( $tags['not_found'] ) ) {
+		$content = $pod->do_magic_tags( $tags['not_found'] );
 	}
 
-	if ( ! $is_singular && false !== $tags['filters'] && 'after' === $tags['filters_location'] ) {
-		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
+	// phpcs:ignore
+	echo $content;
+
+	if ( false !== $pagination && in_array( $tags['pagination_location'], array( 'after', 'both', ), true ) ) {
+		echo $pod->pagination( $pagination );
+	}
+
+	if ( $filters && 'after' === $tags['filters_location'] ) {
+		echo $filters;
 	}
 
 	$return = ob_get_clean();
@@ -998,23 +1161,34 @@ function pods_shortcode( $tags, $content = null ) {
 		$return = do_shortcode( $return );
 	}
 
+	/**
+	 * Allow customization of shortcode output based on shortcode attributes.
+	 *
+	 * @since 2.7.9
+	 *
+	 * @param string $return Shortcode output to return.
+	 * @param array  $tags   Shortcode attributes.
+	 * @param Pods   $pod    Pods object.
+	 */
+	$return = apply_filters( 'pods_shortcode_output', $return, $tags, $pod );
+
 	return $return;
 }
 
 /**
- * Form Shortcode support for use anywhere that support WP Shortcodes
+ * Form Shortcode support for use anywhere that support WP Shortcodes.
  *
- * @param array  $tags    An associative array of shortcode properties
- * @param string $content Not currently used
+ * @param array  $tags    An associative array of shortcode properties.
+ * @param string $content Not currently used.
  *
  * @return string
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_shortcode_form( $tags, $content = null ) {
 
 	$tags['form'] = 1;
 
-	return pods_shortcode( $tags );
+	return pods_shortcode( $tags, $content );
 }
 
 /**
@@ -1244,7 +1418,7 @@ function pods_function_or_file( $function_or_file, $function_name = null, $file_
  *
  * @return void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_redirect( $location, $status = 302, $die = true ) {
 
@@ -1289,7 +1463,7 @@ function pods_permission( $options ) {
 	}
 
 	if ( ! $permission && 1 === (int) pods_v( 'restrict_role', $options, 0 ) ) {
-		$roles = pods_v( 'roles_allowed', $options );
+		$roles = maybe_unserialize( pods_v( 'roles_allowed', $options ) );
 
 		if ( ! is_array( $roles ) ) {
 			$roles = explode( ',', $roles );
@@ -1307,7 +1481,7 @@ function pods_permission( $options ) {
 	}
 
 	if ( ! $permission && 1 === (int) pods_v( 'restrict_capability', $options, 0 ) ) {
-		$capabilities = pods_v( 'capability_allowed', $options );
+		$capabilities = maybe_unserialize( pods_v( 'capability_allowed', $options ) );
 
 		if ( ! is_array( $capabilities ) ) {
 			$capabilities = explode( ',', $capabilities );
@@ -1419,97 +1593,152 @@ function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null
 }
 
 /**
- * Get a field value from a Pod
+ * Get a field value from a Pod.
  *
- * @param string       $pod    The pod name
- * @param mixed        $id     (optional) The ID or slug, to load a single record; Provide array of $params to run
- *                             'find'
- * @param string|array $name   The field name, or an associative array of parameters
- * @param boolean      $single (optional) For tableless fields, to return the whole array or the just the first item
+ * @param string|null  $pod    The pod name.
+ * @param mixed|null   $id     The ID or slug of the item.
+ * @param string|array $name   The field name, or an associative array of parameters.
+ * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
  *
- * @return mixed Field value
+ * @return mixed Field value.
  *
- * @since 2.1
+ * @since 2.1.0
  */
-function pods_field( $pod, $id = false, $name = null, $single = false ) {
+function pods_field( $pod, $id = null, $name = null, $single = false ) {
 
 	// allow for pods_field( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
 		$single = (boolean) $id;
 
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
 		$pod = get_post_type();
 		$id  = get_the_ID();
 	}
 
-	$pod = pods( $pod, $id );
+	$pod_object = pods( $pod, $id );
 
-	if ( is_object( $pod ) ) {
-		return $pod->field( $name, $single );
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->field( $name, $single );
 	}
 
 	return null;
 }
 
 /**
- * Get a field display value from a Pod
+ * Get a field display value from a Pod.
  *
- * @param string       $pod    The pod name
- * @param mixed        $id     (optional) The ID or slug, to load a single record; Provide array of $params to run
- *                             'find'
- * @param string|array $name   The field name, or an associative array of parameters
- * @param boolean      $single (optional) For tableless fields, to return the whole array or the just the first item
+ * @param string|null  $pod    The pod name.
+ * @param mixed|null   $id     The ID or slug of the item.
+ * @param string|array $name   The field name, or an associative array of parameters.
+ * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
  *
- * @return mixed Field value
+ * @return mixed Field value.
  *
- * @since 2.1
+ * @since 2.1.0
  */
-function pods_field_display( $pod, $id = false, $name = null, $single = false ) {
+function pods_field_display( $pod, $id = null, $name = null, $single = false ) {
 
 	// allow for pods_field_display( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
 		$single = (boolean) $id;
 
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
 		$pod = get_post_type();
 		$id  = get_the_ID();
 	}
 
-	$pod = pods( $pod, $id );
+	$pod_object = pods( $pod, $id );
 
-	if ( is_object( $pod ) ) {
-		return $pod->display( $name, $single );
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->display( $name, $single );
 	}
 
 	return null;
 }
 
 /**
- * Get a field raw value from a Pod
+ * Get a field raw value from a Pod.
  *
- * @param string       $pod    The pod name
- * @param mixed        $id     (optional) The ID or slug, to load a single record; Provide array of $params to run
- *                             'find'
- * @param string|array $name   The field name, or an associative array of parameters
- * @param boolean      $single (optional) For tableless fields, to return the whole array or the just the first item
+ * @param string|null  $pod    The pod name.
+ * @param mixed|null   $id     The ID or slug of the item.
+ * @param string|array $name   The field name, or an associative array of parameters.
+ * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
  *
- * @return mixed Field value
+ * @return mixed Field value.
  *
- * @since 2.1
+ * @since 2.1.0
  */
-function pods_field_raw( $pod, $id = false, $name = null, $single = false ) {
+function pods_field_raw( $pod, $id = null, $name = null, $single = false ) {
 
 	// allow for pods_field_raw( 'field_name' );
 	if ( null === $name ) {
 		$name   = $pod;
 		$single = (boolean) $id;
 
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
 		$pod = get_post_type();
 		$id  = get_the_ID();
 	}
 
-	return pods( $pod, $id )->raw( $name, $single );
+	$pod_object = pods( $pod, $id );
 
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->raw( $name, $single );
+	}
+
+	return null;
+
+}
+
+/**
+ * Update a field value for a Pod.
+ *
+ * @param string|null  $pod   The pod name.
+ * @param mixed|null   $id    The ID or slug of the item.
+ * @param string|array $name  The field name, or an associative array of parameters.
+ * @param boolean      $value Value to save.
+ *
+ * @return int|false The item ID or false if not saved.
+ *
+ * @since 2.7.17
+ */
+function pods_field_update( $pod, $id = null, $name = null, $value = null ) {
+
+	// allow for pods_field( 'field_name' );
+	if ( null === $name ) {
+		$name  = $pod;
+		$value = $id;
+
+		$pod = null;
+		$id  = null;
+	}
+
+	if ( null === $pod && null === $id ) {
+		$pod = get_post_type();
+		$id  = get_the_ID();
+	}
+
+	$pod_object = pods( $pod, $id );
+
+	if ( is_object( $pod_object ) && $pod_object->exists() ) {
+		return $pod_object->save( $name, $value );
+	}
+
+	return false;
 }
 
 /**
@@ -1525,7 +1754,7 @@ function pods_field_raw( $pod, $id = false, $name = null, $single = false ) {
  *
  * @return bool|mixed|null|string|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_view_set( $key, $value, $expires = 0, $cache_mode = 'cache', $group = '' ) {
 
@@ -1546,7 +1775,7 @@ function pods_view_set( $key, $value, $expires = 0, $cache_mode = 'cache', $grou
  *
  * @return bool|mixed|null|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_view_get( $key, $cache_mode = 'cache', $group = '', $callback = null ) {
 
@@ -1566,7 +1795,7 @@ function pods_view_get( $key, $cache_mode = 'cache', $group = '', $callback = nu
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_view_clear( $key = true, $cache_mode = 'cache', $group = '' ) {
 
@@ -1587,7 +1816,7 @@ function pods_view_clear( $key = true, $cache_mode = 'cache', $group = '' ) {
  *
  * @return bool|mixed|null|string|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_cache_set( $key, $value, $group = '', $expires = 0 ) {
 
@@ -1605,7 +1834,7 @@ function pods_cache_set( $key, $value, $group = '', $expires = 0 ) {
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_cache_get( $key, $group = '', $callback = null ) {
 
@@ -1622,7 +1851,7 @@ function pods_cache_get( $key, $group = '', $callback = null ) {
  *
  * @return bool|mixed|null|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_cache_clear( $key = true, $group = '' ) {
 
@@ -1640,7 +1869,7 @@ function pods_cache_clear( $key = true, $group = '' ) {
  *
  * @return bool|mixed|null|string|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_transient_set( $key, $value, $expires = 0 ) {
 
@@ -1657,7 +1886,7 @@ function pods_transient_set( $key, $value, $expires = 0 ) {
  *
  * @return bool|mixed|null|void
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_transient_get( $key, $callback = null ) {
 
@@ -1673,7 +1902,7 @@ function pods_transient_get( $key, $callback = null ) {
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_transient_clear( $key = true ) {
 
@@ -1821,7 +2050,7 @@ function pods_template_part( $template, $data = null, $return = false ) {
  * @param array  $object (optional) Pod array, including any 'fields' arrays
  *
  * @return array|boolean Pod data or false if unsuccessful
- * @since 2.1
+ * @since 2.1.0
  */
 function pods_register_type( $type, $name, $object = null ) {
 
@@ -1846,7 +2075,7 @@ function pods_register_type( $type, $name, $object = null ) {
  * @param array        $object (optional) Pod array, including any 'fields' arrays
  *
  * @return array|boolean Field data or false if unsuccessful
- * @since 2.1
+ * @since 2.1.0
  */
 function pods_register_field( $pod, $name, $field = null ) {
 
@@ -1870,7 +2099,7 @@ function pods_register_field( $pod, $name, $field = null ) {
  * @param string $file The new field type class file location
  *
  * @return array Field type array
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_register_field_type( $type, $file = null ) {
 
@@ -1885,7 +2114,7 @@ function pods_register_field_type( $type, $file = null ) {
  * @param array  $options Object options
  *
  * @return array|boolean Object array or false if unsuccessful
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_register_related_object( $name, $label, $options = null ) {
 
@@ -1899,7 +2128,7 @@ function pods_register_related_object( $name, $label, $options = null ) {
  *
  * @return void
  *
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_require_component( $component ) {
 
@@ -1923,7 +2152,7 @@ function pods_require_component( $component ) {
  *
  * @return void
  *
- * @since 2.0
+ * @since 2.0.0
  * @link  https://pods.io/docs/pods-group-add/
  */
 function pods_group_add( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
@@ -1945,7 +2174,7 @@ function pods_group_add( $pod, $label, $fields, $context = 'normal', $priority =
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_is_plugin_active( $plugin ) {
 
@@ -1981,7 +2210,7 @@ function pods_is_plugin_active( $plugin ) {
  *
  * @return bool
  *
- * @since 2.3
+ * @since 2.3.0
  */
 function pods_no_conflict_check( $object_type = 'post' ) {
 
@@ -1995,7 +2224,7 @@ function pods_no_conflict_check( $object_type = 'post' ) {
 		pods_init();
 	}
 
-	if ( ! empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
+	if ( ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
 		return true;
 	}
 
@@ -2010,7 +2239,7 @@ function pods_no_conflict_check( $object_type = 'post' ) {
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 
@@ -2024,7 +2253,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 		pods_init();
 	}
 
-	if ( ! empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
+	if ( ! empty( PodsInit::$no_conflict[ $object_type ] ) ) {
 		return true;
 	}
 
@@ -2060,7 +2289,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 
 		$no_conflict['action'] = array(
 			array( 'transition_post_status', array( PodsInit::$meta, 'save_post_detect_new' ), 10, 3 ),
-			array( 'save_post', array( PodsInit::$meta, 'save_post' ), 10, 2 ),
+			array( 'save_post', array( PodsInit::$meta, 'save_post' ), 10, 3 ),
 			array( 'wp_insert_post_data', array( PodsInit::$meta, 'save_post_track_changed_fields' ), 10, 2 ),
 		);
 	} elseif ( 'taxonomy' === $object_type ) {
@@ -2207,7 +2436,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
  *
  * @return bool
  *
- * @since 2.0
+ * @since 2.0.0
  */
 function pods_no_conflict_off( $object_type = 'post' ) {
 
@@ -2221,7 +2450,7 @@ function pods_no_conflict_off( $object_type = 'post' ) {
 		pods_init();
 	}
 
-	if ( empty( PodsInit::$no_conflict ) || ! isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) ) {
+	if ( empty( PodsInit::$no_conflict[ $object_type ] ) ) {
 		return false;
 	}
 
@@ -2253,6 +2482,117 @@ function pods_no_conflict_off( $object_type = 'post' ) {
 }
 
 /**
+ * Returns a list of all WordPress and Pods reserved keywords.
+ *
+ * @link https://codex.wordpress.org/Reserved_Terms
+ *
+ * @since 2.7.15
+ * @return array
+ */
+function pods_reserved_keywords() {
+
+	$keywords = array(
+		// WordPress.
+		'attachment',
+		'attachment_id',
+		'author',
+		'author_name',
+		'calendar',
+		'cat',
+		'category',
+		'category__and',
+		'category__in',
+		'category__not_in',
+		'category_name',
+		'comments_per_page',
+		'comments_popup',
+		'custom',
+		'customize_messenger_channel',
+		'customized',
+		'cpage',
+		'day',
+		'debug',
+		'embed',
+		'error',
+		'exact',
+		'feed',
+		'hour',
+		'link_category',
+		'm',
+		'minute',
+		'monthnum',
+		'more',
+		'name',
+		'nav_menu',
+		'nonce',
+		'nopaging',
+		'offset',
+		'order',
+		'orderby',
+		'p',
+		'page',
+		'page_id',
+		'paged',
+		'pagename',
+		'pb',
+		'perm',
+		'post',
+		'post__in',
+		'post__not_in',
+		'post_format',
+		'post_mime_type',
+		'post_status',
+		'post_tag',
+		'post_thumbnail',
+		'post_thumbnail_url',
+		'post_type',
+		'posts',
+		'posts_per_archive_page',
+		'posts_per_page',
+		'preview',
+		'robots',
+		's',
+		'search',
+		'second',
+		'sentence',
+		'showposts',
+		'static',
+		'subpost',
+		'subpost_id',
+		'tag',
+		'tag__and',
+		'tag__in',
+		'tag__not_in',
+		'tag_id',
+		'tag_slug__and',
+		'tag_slug__in',
+		'taxonomy',
+		'tb',
+		'term',
+		'terms',
+		'theme',
+		'title',
+		'type',
+		'w',
+		'withcomments',
+		'withoutcomments',
+		'year',
+		// Pods
+		'id',
+		'ID',
+	);
+
+	/**
+	 * Filter the WordPress and Pods reserved keywords.
+	 *
+	 * @since 2.7.15
+	 *
+	 * @param array $keywords List of WordPress and Pods reserved keywords.
+	 */
+	return apply_filters( 'pods_reserved_keywords', $keywords );
+}
+
+/**
  * Safely start a new session (without whitescreening on certain hosts,
  * which have no session path or isn't writable)
  *
@@ -2265,18 +2605,37 @@ function pods_session_start() {
 	if ( false !== headers_sent() ) {
 		// Check if headers were sent.
 		return false;
+	} elseif ( false !== is_user_logged_in() ) {
+		// We do not need a session ID if there is a valid user logged in
+		return false;
 	} elseif ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
 		// Allow for bypassing Pods session autostarting.
 		return false;
-	} elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
-		// Allow for non-file based sessions, like Memcache.
-		// This is OK, but we don't want to check if file_exists on next statement.
-	} elseif ( empty( $save_path ) || ! @file_exists( $save_path ) || ! is_writable( $save_path ) ) {
-		// Check if session path exists and can be written to, avoiding PHP fatal errors.
-		return false;
-	} elseif ( '' !== session_id() ) {
-		// Check if session ID is already set.
-		return false;
+	} elseif ( ! defined( 'PANTHEON_SESSIONS_ENABLED' ) || ! PANTHEON_SESSIONS_ENABLED ) {
+		// We aren't using Pantheon WP Native Sessions plugin so let's check if the normal session will work.
+
+		if ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
+			// Sessions are disabled.
+			return false;
+		} elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
+			// Allow for non-file based sessions, like Memcache.
+			// This is OK, but we don't want to check if file_exists on next statement.
+		} elseif ( empty( $save_path ) || ! @file_exists( $save_path ) || ! is_writable( $save_path ) ) {
+			// Check if session path exists and can be written to, avoiding PHP fatal errors.
+			return false;
+		}
+	}
+
+	// Check if session is already set.
+	// In separate if clause, to also check for non-file based sessions.
+	if ( function_exists( 'session_status' ) ) { // PHP >=5.4.
+		if ( PHP_SESSION_ACTIVE === session_status() ) {
+			return false;
+		}
+	} else { // PHP <5.4.
+		if ( pods_session_id() ) {
+			return false;
+		}
 	}
 
 	// Start session
@@ -2287,11 +2646,31 @@ function pods_session_start() {
 }
 
 /**
+ * Get current session ID.
+ *
+ * @since 2.7.23
+ *
+ * @return string
+ */
+function pods_session_id() {
+	if ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
+		return '';
+	}
+
+	if ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
+		// Sessions are disabled.
+		return '';
+	}
+
+	return @session_id();
+}
+
+/**
  * @todo  : replace string literal with a defined constant
  *
  * @return bool
  *
- * @since 2.7
+ * @since 2.7.0
  */
 function pods_is_modal_window() {
 
@@ -2311,7 +2690,7 @@ function pods_is_modal_window() {
  *
  * @return bool Whether the pod object is valid and exists
  *
- * @since 2.7
+ * @since 2.7.0
  */
 function pod_is_valid( $pod ) {
 
@@ -2331,7 +2710,7 @@ function pod_is_valid( $pod ) {
  *
  * @return bool Whether the pod object has items
  *
- * @since 2.7
+ * @since 2.7.0
  */
 function pod_has_items( $pod ) {
 

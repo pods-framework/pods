@@ -2,6 +2,9 @@ language: php
 
 sudo: false
 
+services:
+    - mysql
+
 php:
     - 7.1
 
@@ -13,6 +16,8 @@ env:
 matrix:
     allow_failures:
     - env: WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable
+    - php: 7.3
+      env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
 
     include:
     - php: 7.2
@@ -21,9 +26,6 @@ matrix:
       env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
     - php: 5.6
       env: WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
-    - php: 5.3
-      env: WP_VERSION=4.5 WP_MULTISITE=0 NODE_RELEASE=7
-      dist: precise
 
 ## Cache composer and node bits
 cache:

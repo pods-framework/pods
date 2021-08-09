@@ -149,8 +149,13 @@ class PodsField_Phone extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
@@ -160,7 +165,7 @@ class PodsField_Phone extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid phone number provided for the field %s.', 'pods' ), $label );
@@ -172,7 +177,7 @@ class PodsField_Phone extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**
@@ -220,7 +225,11 @@ class PodsField_Phone extends PodsField {
 
 			// Format number
 			if ( '(999) 999-9999 x999' === pods_v( static::$type . '_format', $options ) ) {
-				if ( 2 === count( $numbers ) ) {
+				$number_count = count( $numbers );
+
+				if ( 1 === $number_count ) {
+					$value = '';
+				} elseif ( 2 === $number_count ) {
 					$value = implode( '-', $numbers );
 				} else {
 					$value = '(' . $numbers[0] . ') ' . $numbers[1] . '-' . $numbers[2];

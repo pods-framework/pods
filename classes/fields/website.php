@@ -133,7 +133,7 @@ class PodsField_Website extends PodsField {
 			$atts = '';
 
 			if ( 1 === (int) pods_v( static::$type . '_new_window', $options ) ) {
-				$atts .= ' target="_blank"';
+				$atts .= ' target="_blank" rel="noopener noreferrer"';
 			}
 
 			$value = sprintf( $link, esc_url( $value ), $atts, esc_html( $value ) );
@@ -175,7 +175,13 @@ class PodsField_Website extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
+
 		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
@@ -185,7 +191,7 @@ class PodsField_Website extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid website provided for the field %s.', 'pods' ), $label );
@@ -197,7 +203,7 @@ class PodsField_Website extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**
@@ -234,7 +240,7 @@ class PodsField_Website extends PodsField {
 	 *
 	 * @return string
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function validate_url( $value, $options = null ) {
 		if ( empty( $value ) ) {
@@ -282,7 +288,7 @@ class PodsField_Website extends PodsField {
 
 				$value = $this->build_url( $url, $options );
 			} elseif ( 'force-www' === pods_v( static::$type . '_format', $options ) ) {
-				if ( false !== strpos( $url['host'], '.' ) && false === strpos( $url['host'], '.', 1 ) ) {
+				if ( false !== strpos( $url['host'], '.' ) && false === strpos( $url['host'], 'www', 0 ) ) {
 					$url['host'] = 'www.' . $url['host'];
 				}
 
@@ -306,7 +312,7 @@ class PodsField_Website extends PodsField {
 					$value = trim( $value, '/' );
 				}
 			} elseif ( 'no-http-force-www' === pods_v( static::$type . '_format', $options ) ) {
-				if ( false !== strpos( $url['host'], '.' ) && false === strpos( $url['host'], '.', 1 ) ) {
+				if ( false !== strpos( $url['host'], '.' ) && false === strpos( $url['host'], 'www', 0 ) ) {
 					$url['host'] = 'www.' . $url['host'];
 				}
 
@@ -329,7 +335,7 @@ class PodsField_Website extends PodsField {
 	 *
 	 * @return string
 	 *
-	 * @since 2.7
+	 * @since 2.7.0
 	 */
 	public function validate_target( $value ) {
 		if ( ! empty( $value ) && '_blank' === $value ) {

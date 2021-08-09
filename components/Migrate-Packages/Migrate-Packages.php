@@ -4,8 +4,7 @@
  *
  * Menu Name: Migrate Packages
  *
- * Description: Import/Export your Pods, Fields, and other settings from any Pods site; Includes an API to
- * Import/Export Packages via PHP
+ * Description: Import/Export your Pods, Fields, and other settings from any Pods site; Includes an API to Import/Export Packages via PHP
  *
  * Version: 2.0
  *
@@ -29,7 +28,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	/**
 	 * Enqueue styles
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_assets() {
 
@@ -42,7 +41,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	 * @param array  $options   Component options.
 	 * @param string $component Component name.
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin( $options, $component ) {
 
@@ -374,6 +373,12 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 				$pod = array_merge( $pod, $pod_data );
 
+				if ( in_array( $pod['name'], pods_reserved_keywords(), true ) ) {
+					// Extending objects when using reserved keywords.
+					// This will then accept `post`, `page` etc. as Pods object names.
+					$pod['create_extend'] = 'extend';
+				}
+
 				foreach ( $pod['fields'] as $k => $field ) {
 					if ( isset( $field['id'] ) && ! isset( $existing_fields[ $field['name'] ] ) ) {
 						unset( $pod['fields'][ $k ]['id'] );
@@ -384,12 +389,13 @@ class Pods_Migrate_Packages extends PodsComponent {
 					}
 
 					if ( isset( $existing_fields[ $field['name'] ] ) ) {
-						if ( $existing_field = pods_api()->load_field(
+						$existing_field = pods_api()->load_field(
 							array(
 								'name' => $field['name'],
 								'pod'  => $pod['name'],
 							)
-						) ) {
+						);
+						if ( $existing_field ) {
 							$pod['fields'][ $k ]['id'] = $existing_field['id'];
 						}
 					}
@@ -399,13 +405,14 @@ class Pods_Migrate_Packages extends PodsComponent {
 					}
 				}//end foreach
 
-				$api->save_pod( $pod );
+				if ( $api->save_pod( $pod ) ) {
+					if ( ! isset( $found['pods'] ) ) {
+						$found['pods'] = array();
+					}
 
-				if ( ! isset( $found['pods'] ) ) {
-					$found['pods'] = array();
+					$found['pods'][ $pod['name'] ] = $pod['label'];
 				}
 
-				$found['pods'][ $pod['name'] ] = $pod['label'];
 			}//end foreach
 		}//end if
 

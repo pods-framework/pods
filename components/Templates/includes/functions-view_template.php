@@ -60,7 +60,7 @@ function frontier_do_shortcode( $content ) {
  * @param array attributed provided from parent
  *
  * @return string
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_decode_template( $code, $atts ) {
 
@@ -87,7 +87,7 @@ function frontier_decode_template( $code, $atts ) {
  * @param string $code encoded template to be decoded
  *
  * @return string
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_if_block( $atts, $code ) {
 
@@ -191,7 +191,7 @@ function frontier_if_block( $atts, $code ) {
  * @param string shortcode slug used to process
  *
  * @return null
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_template_blocks( $atts, $code, $slug ) {
 
@@ -232,7 +232,7 @@ function frontier_template_blocks( $atts, $code, $slug ) {
  * @param string encoded template to be decoded
  *
  * @return string template code
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_template_once_blocks( $atts, $code ) {
 
@@ -258,7 +258,7 @@ function frontier_template_once_blocks( $atts, $code ) {
  * @param string template to be processed
  *
  * @return null
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_do_subtemplate( $atts, $content ) {
 
@@ -267,10 +267,17 @@ function frontier_do_subtemplate( $atts, $content ) {
 	$field_name = $atts['field'];
 
 	$entries = $pod->field( $field_name );
+
 	if ( ! empty( $entries ) ) {
 		$entries = (array) $entries;
 
 		$field = $pod->fields[ $field_name ];
+
+		// Force array even for single items since the logic below is using loops.
+		if ( 'single' === pods_v( $field['type'] . '_format_type', $field['options'], 'single' ) && ! isset( $entries[0] ) ) {
+			$entries = array( $entries );
+		}
+
 		// Object types that could be Pods
 		$object_types = array( 'post_type', 'pod' );
 
@@ -319,16 +326,44 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 			}//end foreach
-		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] && 'multi' == $field['options']['file_format_type'] ) {
-			$template = frontier_decode_template( $content, $atts );
+		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] ) {
+			$template  = frontier_decode_template( $content, $atts );
+			$media_pod = pods( 'media' );
+
 			foreach ( $entries as $key => $entry ) {
 				$content = str_replace( '{_index}', $key, $template );
 				$content = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $content );
 				$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $content );
 				$content = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $content );
-				$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
 
-				$out .= pods_do_shortcode( $pod->do_magic_tags( $content ), frontier_get_shortcodes() );
+				if ( $media_pod && $media_pod->valid() && $media_pod->fetch( $entry['ID'] ) ) {
+					$content   = str_replace( '{@' . $field_name . '.', '{@', $content );
+					$entry_pod = $media_pod;
+				} else {
+					// Fix for lowercase ID's.
+					$entry['id'] = $entry['ID'];
+					// Allow array-like tags.
+					$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
+					// Fallback to parent Pod so above tags still work.
+					$entry_pod = $pod;
+				}
+
+				$out .= pods_do_shortcode( $entry_pod->do_magic_tags( $content ), frontier_get_shortcodes() );
+			}
+		} elseif ( isset( $field['table_info'], $field['table_info']['pod'] ) ) {
+			// Relationship to something that is extended by Pods
+			$entries = $pod->field( array( 'name' => $field_name, 'output' => 'pod' ) );
+			foreach ( $entries as $key => $entry ) {
+				$subatts = array(
+					'id' => $entry->id,
+					'pod' => $entry->pod,
+				);
+
+				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
+				$template = str_replace( '{_index}', $key, $template );
+				$template = str_replace( '{@' . $field_name . '.', '{@', $template );
+
+				$out .= pods_do_shortcode( $entry->do_magic_tags( $template ), frontier_get_shortcodes() );
 			}
 		} else {
 			// Relationship to something other than a Pod (ie: user)
@@ -350,7 +385,6 @@ function frontier_do_subtemplate( $atts, $content ) {
 }
 
 /**
- *
  * Search and replace like Pods magic tags but with an array of data instead of a Pod
  *
  * @param Pod     $pod
@@ -359,7 +393,7 @@ function frontier_do_subtemplate( $atts, $content ) {
  * @param boolean $skip_unknown If true then values not in $data will not be touched
  *
  * @return string
- * @since 2.7
+ * @since 2.7.0
  */
 function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknown = false ) {
 
@@ -389,7 +423,9 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 
 			$field_name = $tag[0];
 
-			$helper_name = $before = $after = '';
+			$helper_name = '';
+			$before      = '';
+			$after       = '';
 
 			if ( isset( $data[ $field_name ] ) ) {
 				$value = $data[ $field_name ];
@@ -442,7 +478,7 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
  * @param string template to be processed
  *
  * @return null
- * @since 2.4
+ * @since 2.4.0
  */
 function frontier_prefilter_template( $code, $template, $pod ) {
 

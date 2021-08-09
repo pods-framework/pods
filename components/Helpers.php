@@ -2,8 +2,7 @@
 /**
  * Name: Helpers
  *
- * Description: A holdover from Pods 1.x for backwards compatibility purposes, you most likely don't need these and we
- * recommend you use our WP filters and actions instead.
+ * Description: A holdover from Pods 1.x for backwards compatibility purposes, you most likely don't need these and we recommend you use our WP filters and actions instead.
  *
  * Version: 2.3
  *
@@ -29,7 +28,7 @@ class Pods_Helpers extends PodsComponent {
 	 *
 	 * @var object
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	static $obj = null;
 
@@ -38,7 +37,7 @@ class Pods_Helpers extends PodsComponent {
 	 *
 	 * @var string
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	private $object_type = '_pods_helper';
 
@@ -73,7 +72,7 @@ class Pods_Helpers extends PodsComponent {
 		if ( is_admin() ) {
 			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 
-			add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ) );
+			add_action( 'add_meta_boxes_' . $this->object_type, array( $this, 'edit_page_form' ) );
 
 			add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
 			add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
@@ -122,13 +121,13 @@ class Pods_Helpers extends PodsComponent {
 			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
-			8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
+			8  => sprintf( __( '%1$s submitted. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 			9  => sprintf(
-				__( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ), $labels->singular_name,
+				__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" rel="noopener noreferrer" href="%3$s">Preview %4$s</a>', 'pods' ), $labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
 				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name
 			),
-			10 => sprintf( __( '%1$s draft updated. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
+			10 => sprintf( __( '%1$s draft updated. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 		);
 
 		if ( false === (boolean) $post_type->public ) {
@@ -136,7 +135,7 @@ class Pods_Helpers extends PodsComponent {
 			$messages[ $post_type->name ][6] = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
 			$messages[ $post_type->name ][8] = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
 			$messages[ $post_type->name ][9] = sprintf(
-				__( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels->singular_name,
+				__( '%1$s scheduled for: <strong>%2$s</strong>.', 'pods' ), $labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
 				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
 			);
@@ -149,7 +148,7 @@ class Pods_Helpers extends PodsComponent {
 	/**
 	 * Enqueue styles
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function admin_assets() {
 
@@ -212,7 +211,7 @@ class Pods_Helpers extends PodsComponent {
 	/**
 	 * Clear cache on save
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function clear_cache( $data, $pod = null, $id = null, $groups = null, $post = null ) {
 
@@ -239,7 +238,7 @@ class Pods_Helpers extends PodsComponent {
 	/**
 	 * Change post title placeholder text
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function set_title_text( $text, $post ) {
 
@@ -249,7 +248,7 @@ class Pods_Helpers extends PodsComponent {
 	/**
 	 * Edit page form
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function edit_page_form() {
 
@@ -265,7 +264,7 @@ class Pods_Helpers extends PodsComponent {
 	/**
 	 * Add meta boxes to the page
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public function add_meta_boxes() {
 
@@ -383,7 +382,7 @@ class Pods_Helpers extends PodsComponent {
 	 * @param null  $obj
 	 *
 	 * @return mixed Anything returned by the helper
-	 * @since 2.0
+	 * @since 2.0.0
 	 */
 	public static function helper( $params, $obj = null ) {
 
@@ -416,7 +415,7 @@ class Pods_Helpers extends PodsComponent {
 		$params = (object) $params;
 
 		if ( empty( $params->helper ) ) {
-			return pods_error( 'Helper name required', $obj );
+			return pods_error( __( 'Helper name required', 'pods' ), $obj );
 		} elseif ( ! is_array( $params->helper ) ) {
 			$params->helper = trim( $params->helper );
 		}
@@ -478,7 +477,7 @@ class Pods_Helpers extends PodsComponent {
 			 * @param array $disallowed List of callbacks not allowed.
 			 * @param array $params     Parameters used by Pods::helper() method.
 			 *
-			 * @since 2.7
+			 * @since 2.7.0
 			 */
 			$disallowed = apply_filters( 'pods_helper_disallowed_callbacks', $disallowed, get_object_vars( $params ) );
 
@@ -488,7 +487,7 @@ class Pods_Helpers extends PodsComponent {
 			 * @param array $allowed List of callbacks explicitly allowed.
 			 * @param array $params  Parameters used by Pods::helper() method.
 			 *
-			 * @since 2.7
+			 * @since 2.7.0
 			 */
 			$allowed = apply_filters( 'pods_helper_allowed_callbacks', $allowed, get_object_vars( $params ) );
 
@@ -510,10 +509,12 @@ class Pods_Helpers extends PodsComponent {
 			}
 		}//end if
 
+		$slug = $helper['slug'];
+
 		$out = ob_get_clean();
 
 		$out = apply_filters( 'pods_helpers_post_helper', $out, $params, $helper );
-		$out = apply_filters( 'pods_helpers_post_helper_' . $helper['slug'], $out, $params, $helper );
+		$out = apply_filters( "pods_helpers_post_helper_{$slug}", $out, $params, $helper );
 
 		return $out;
 	}

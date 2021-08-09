@@ -22,10 +22,6 @@ describe( 'Pick field', function () {
 	 */
 	afterEach( function () {
 		jQuery( document.body ).empty();
-
-		if ( field instanceof Backbone.View ) {
-			field.destroy();
-		}
 	} );
 
 	/**

@@ -51,6 +51,7 @@ class Map_Field_Values {
 		$methods = [
 			'custom',
 			'pod_info',
+			'field_info',
 			'image_fields',
 			'avatar',
 		];
@@ -165,7 +166,7 @@ class Map_Field_Values {
 			return null;
 		}
 
-		$field_match = $traverse[0];
+		$field_match  = $traverse[0];
 		$field_option = ! empty( $traverse[1] ) ? $traverse[1] : 'label';
 
 		return $obj->fields( $field_match, $field_option );

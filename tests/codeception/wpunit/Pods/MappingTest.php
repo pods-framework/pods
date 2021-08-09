@@ -106,12 +106,16 @@ class MappingTest extends Pods_UnitTestCase {
 	public function test_pod_info() {
 		$pod = pods( $this->pod_name, $this->item_id );
 
+		$this->assertEquals( $this->pod_label, $pod->field( '_pod' ) );
+
 		$this->assertEquals( $this->pod_id, $pod->field( '_pod.id' ) );
 		$this->assertEquals( $this->pod_id, $pod->field( '_pod.ID' ) );
 		$this->assertEquals( $this->pod_name, $pod->field( '_pod.name' ) );
 		$this->assertEquals( $this->pod_label, $pod->field( '_pod.label' ) );
 		$this->assertEquals( $this->pod_type, $pod->field( '_pod.type' ) );
 		$this->assertEquals( $this->pod_storage, $pod->field( '_pod.storage' ) );
+
+		$this->assertEquals( '', $pod->field( '_pod.any_non_option' ) );
 	}
 
 	/**
@@ -120,11 +124,15 @@ class MappingTest extends Pods_UnitTestCase {
 	public function test_field_info() {
 		$pod = pods( $this->pod_name, $this->item_id );
 
+		$this->assertEquals( $this->field_label, $pod->field( '_field.' . $this->field_name ) );
+
 		$this->assertEquals( $this->field_id, $pod->field( '_field.' . $this->field_name . '.id' ) );
 		$this->assertEquals( $this->field_id, $pod->field( '_field.' . $this->field_name . '.ID' ) );
 		$this->assertEquals( $this->field_name, $pod->field( '_field.' . $this->field_name . '.name' ) );
 		$this->assertEquals( $this->field_label, $pod->field( '_field.' . $this->field_name . '.label' ) );
 		$this->assertEquals( $this->field_type, $pod->field( '_field.' . $this->field_name . '.type' ) );
+
+		$this->assertEquals( '', $pod->field( '_field.' . $this->field_name . '.any_non_option' ) );
 	}
 
 }

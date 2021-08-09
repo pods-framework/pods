@@ -381,12 +381,12 @@ class Pods implements Iterator {
 
 			if ( empty( $option ) ) {
 				$field_data = $field;
-			} elseif ( 'data' === $option && in_array( $field_data['type'], PodsForm::tableless_field_types(), true ) ) {
+			} elseif ( 'data' === $option && in_array( $field['type'], PodsForm::tableless_field_types(), true ) ) {
 				// Get a list of available items from a relationship field.
 				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $field_data );
-			} elseif ( isset( $field_data[ $option ] ) ) {
+			} elseif ( isset( $field[ $option ] ) ) {
 				// Return option.
-				$field_data = $field_data[ $option ];
+				$field_data = $field[ $option ];
 			}//end if
 		}//end if
 

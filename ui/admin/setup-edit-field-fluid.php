@@ -1,5 +1,5 @@
 <?php
-$field = array_merge( $field_settings['field_defaults'], $field );
+$field = pods_config_merge_data( $field_settings['field_defaults'], $field );
 
 $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sanitized( 'pick_val', $field ), '-' );
 ?>
@@ -80,7 +80,7 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
 											'maxlength'      => 50,
 											'data-sluggable' => 'field_data[' . $pods_i . '][label]',
 										),
-										'class'      => 'pods-validate pods-validate-required pods-slugged-lower',
+										'class'      => 'pods-validate pods-validate-required pods-slugged-lower pods-slugged-sanitize-title',
 									)
 								);
 								?>

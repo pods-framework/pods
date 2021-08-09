@@ -31,21 +31,29 @@ $RECYCLE.BIN/
 .metadata
 /build/
 /tmp/
-tests/clover.xml
 
 # NPM / Composer
-composer.lock
+/composer.lock
 /node_modules/
-/vendor/
+vendor/*
 npm-debug.log
-
-# PHPunit config
-phpunit.xml
 
 # Source maps should just be built locally
 ui/js/pods-ui-ready.min.js.map
-/package-lock.json
-/phpcs.xml
 
-# PHPCS reports
+# PHPCS
 phpcs-report-*.txt
+
+
+# Tests - local config files
+codeception.yml
+tests/codeception/*.suite.yml
+tests/codeception/_support/_generated
+.env.local
+
+# Tests - local output files
+tests/codeception/_output
+/coverage/
+
+# Allowed vendor files
+!vendor/freemius

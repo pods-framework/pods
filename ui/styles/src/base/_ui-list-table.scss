@@ -4,10 +4,8 @@
 
 .pods-ui-filter-bar-primary {
 	padding: 8px 15px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	background-color: #F9F9F9;
-	border: 1px solid #DFDFDF;
+	background-color: #FFF;
+	border: 1px solid #CCD0D4;
 	position: relative;
 	height: auto;
 	line-height: 35px;
@@ -293,4 +291,14 @@ body.branch-3-5 .pods-ui-posts-filter-popup p.submit input.button {
 	height: 0;
 	clear: both;
 	visibility: hidden;
+}
+
+.pods-ui {
+	.wp-list-table .toggle-row {
+    	display: none;
+	}
+
+	p div.pods-pick-values {
+	    display: inline;
+	}
 }

@@ -1,7 +1,6 @@
 # [Pods Framework](https://pods.io) #
-[![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=release/2.8)](http://travis-ci.org/pods-framework/pods)
-[![Dependency Status](https://gemnasium.com/badges/github.com/pods-framework/pods.svg)](https://gemnasium.com/github.com/pods-framework/pods)
-[![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/release/2.8/license.txt)
+[![Travis](https://travis-ci.com/pods-framework/pods.svg?branch=main)](https://travis-ci.com/github/pods-framework/pods)
+[![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/main/license.txt)
 
 [![WordPress Plugin version](https://img.shields.io/wordpress/plugin/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
 [![WordPress Plugin WP tested version](https://img.shields.io/wordpress/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
@@ -17,24 +16,40 @@
 
 Check out <https://pods.io/> for our User Guide and many other resources to help you develop with Pods.
 
-For detailed setup instructions, visit the official [Documentation](https://pods.io/docs/) page.
+For detailed setup instructions, visit the official [Documentation](https://docs.pods.io/) page.
 
 1. You can clone the GitHub repository: `https://github.com/pods-framework/pods.git`
-2. Or download it directly as a ZIP file: `https://github.com/pods-framework/pods/archive/2.x.zip`
+2. Or download it directly as a ZIP file: `https://github.com/pods-framework/pods/archive/main.zip`
 
 This will download the latest stable copy of Pods Framework.
 
 ## Get Support / Help
 
-This is a developer's portal for Pods Framework and should _not_ be used for support. Please visit the [support forums](https://pods.io/forums/).
+This is where we develop Pods Framework itself and should _not_ be used for support questions. Please visit the [WordPress.org support forums](https://wordpress.org/support/plugin/pods/) or [join our Slack](https://support.pods.io/chat/). We have a [support page](https://support.pods.io/) that outlines everything for our plugins.
 
 ## Reporting Bugs
 
 If you find an issue that you believe to be a *bug*, [let us know](https://github.com/pods-framework/pods/issues?state=open).
 
+## Requirements
+
+### Recommended
+
+* WordPress 5.2+
+* PHP 7.3+
+* MySQL 5.6+ or MariaDB 10.1+
+
+### Minimum
+
+If you have restrictions on your server or site, these are the minimum versions that Pods will be supported to run on. Running the following minimum versions does bring with it their own risks including security and exposure to additional bugs that may have been resolved by the recommended versions above. 
+
+* WordPress 4.9+
+* PHP 5.6+
+* MySQL 5.5+
+
 ## Contributions Welcome
 
-Anyone is welcome to contribute to Pods Framework. Please read the [guidelines for contributing](https://github.com/pods-framework/pods/blob/release/2.8/CONTRIBUTING.md) to this repository.
+Anyone is welcome to contribute to Pods Framework. Please read the [guidelines for contributing](CONTRIBUTING.md) to this repository.
 
 There are various ways you can contribute:
 
@@ -47,9 +62,11 @@ There are various ways you can contribute:
 
 We're able to focus more on Pods when we have some cash to help keep the lights on, want to help? [Become a Friend of Pods!](https://pods.io/friends-of-pods/)
 
+Want to help make sure a specific bug, enhancement, or feature gets done ASAP? Try creating a bounty over at [Bountysource](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358).
+
 ## Developer Notes
 
-* Stable Branch: [master](https://github.com/pods-framework/pods/tree/master)
-* 2.x Development Branch: [2.x](https://github.com/pods-framework/pods/tree/2.x)
+* Stable Branch: [main](https://github.com/pods-framework/pods/tree/main) is the latest release
+* Release Branches: `release/x.x.x` holds the code we are working on for each release that is not yet complete
 
-<em>Please submit all pull requests against [2.x](https://github.com/pods-framework/pods/tree/2.x) branch.</em>
+<em>Please submit all pull requests against the [main](https://github.com/pods-framework/pods/tree/main) branch.</em>

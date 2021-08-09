@@ -113,6 +113,21 @@ class PodsMigrate {
 	}
 
 	/**
+	 * Get items.
+	 *
+	 * @since 2.7.17
+	 *
+	 * @return array List of data items.
+	 */
+	private function get_items() {
+
+		return empty( $this->data['single'] ) ?
+			$this->data['items'] :
+			array( $this->data['items'] );
+
+	}
+
+	/**
 	 * Importing / Parsing / Validating Code
 	 *
 	 * @param array  $data      Array of data
@@ -570,7 +585,9 @@ class PodsMigrate {
 
 		$head = substr( $head, 0, - 1 );
 
-		foreach ( $this->data['items'] as $item ) {
+		$items = $this->get_items();
+
+		foreach ( $items as $item ) {
 			$line = '';
 
 			foreach ( $this->data['columns'] as $column => $label ) {
@@ -636,10 +653,12 @@ class PodsMigrate {
 			return false;
 		}
 
-		$head  = '<' . '?' . 'xml version="1.0" encoding="utf-8" ' . '?' . '>' . "\r\n<items count=\"" . count( $this->data['items'] ) . "\">\r\n";
+		$items = $this->get_items();
+
+		$head  = '<' . '?' . 'xml version="1.0" encoding="utf-8" ' . '?' . '>' . "\r\n<items count=\"" . count( $items ) . "\">\r\n";
 		$lines = '';
 
-		foreach ( $this->data['items'] as $item ) {
+		foreach ( $items as $item ) {
 			$line = "\t<item>\r\n";
 
 			foreach ( $this->data['columns'] as $column => $label ) {
@@ -1082,7 +1101,7 @@ class PodsMigrate {
 						$field_data = array();
 					}
 
-					$field_data = array_merge( $default_field_data, $field_data );
+					$field_data = pods_config_merge_data( $default_field_data, $field_data );
 
 					if ( null === $field_data['field'] ) {
 						$field_data['field'] = $field;
@@ -1258,9 +1277,23 @@ class PodsMigrate {
 		}
 
 		$migrate_data = array(
-			'items'  => array( $data ),
+			'items'  => $data,
 			'single' => $single,
 		);
+
+		// Try to guess the column labels based on the supplied data.
+		$first_item = null;
+
+		if ( $single ) {
+			$first_item = $data;
+		} elseif ( is_array( $data ) ) {
+			$first_item = reset( $data );
+		}
+
+		if ( is_array( $first_item ) ) {
+			$fields                  = array_keys( $first_item );
+			$migrate_data['columns'] = array_combine( $fields, $fields );
+		}
 
 		$migrate = new self( $format, null, $migrate_data );
 
@@ -1290,7 +1323,7 @@ class PodsMigrate {
 		$path = ABSPATH;
 
 		// Detect path if it is set in the file param.
-		if ( false !== strpos( $file, '/' ) ) {
+		if ( false !== strpos( $file, DIRECTORY_SEPARATOR ) ) {
 			$path = dirname( $file );
 			$file = basename( $file );
 		}
@@ -1309,7 +1342,7 @@ class PodsMigrate {
 
 		$migrate = new self( $format, null, $migrate_data );
 
-		$raw_data = file_get_contents( $file );
+		$raw_data = file_get_contents( $path . DIRECTORY_SEPARATOR . $file );
 
 		// Handle processing the raw data from the format needed.
 		$data = $migrate->parse( $raw_data );

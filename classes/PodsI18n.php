@@ -36,9 +36,7 @@ final class PodsI18n {
 		self::$instance = $this;
 
 		// Hook all enqueue scripts actions
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'pods_before_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		// Polylang
 		add_filter( 'pll_get_post_types', array( $this, 'pll_get_post_types' ), 10, 2 );
@@ -102,7 +100,7 @@ final class PodsI18n {
 			self::register( $key, $str );
 		}
 
-		// Some other stuff we need to pass through
+		// Some other stuff we need to pass through.
 		$i18n_base = array(
 			'debug' => ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG == true ) ? true : false,
 		);
@@ -146,6 +144,7 @@ final class PodsI18n {
 
 		return array(
 
+			// Translators: %s stands for a name/identifier.
 			'%s is required.'                              => __( '%s is required.', 'pods' ),
 
 			'This field is required.'                      => __( 'This field is required.', 'pods' ),
@@ -176,6 +175,9 @@ final class PodsI18n {
 
 			'Search'                                       => __( 'Search', 'pods' ),
 
+			// Translators: %s stands for a name/identifier.
+			'Search %s'                                    => __( 'Search %s', 'pods' ),
+
 			'Navigating away from this page will discard any changes you have made.' => __( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
 
 			'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.' => __( 'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.', 'pods' ),
@@ -192,9 +194,17 @@ final class PodsI18n {
 
 			'You can only select'                          => __( 'You can only select', 'pods' ),
 
+			// Translators: %s stands for a number.
 			'%s item'                                      => __( '%s item', 'pods' ),
 
+			// Translators: %s stands for a number.
 			'%s items'                                     => __( '%s items', 'pods' ),
+
+			// Translators: %s stands for a number.
+			'You can only select %s item'                  => __( 'You can only select %s item', 'pods' ),
+
+			// Translators: %s stands for a number.
+			'You can only select %s items'                 => __( 'You can only select %s items', 'pods' ),
 
 			'Icon'                                         => __( 'Icon', 'pods' ),
 
@@ -216,11 +226,11 @@ final class PodsI18n {
 	 */
 	public function get_current_language( $args = array() ) {
 
-		$args = wp_parse_args(
-			$args, array(
-				'refresh' => false,
-			)
+		$defaults = array(
+			'refresh' => false,
 		);
+
+		$args = wp_parse_args( $args, $defaults );
 
 		if ( ! $args['refresh'] && ! empty( self::$current_language ) ) {
 			return self::$current_language;
@@ -246,11 +256,11 @@ final class PodsI18n {
 	 */
 	public function get_current_language_data( $args = array() ) {
 
-		$args = wp_parse_args(
-			$args, array(
-				'refresh' => false,
-			)
+		$defaults = array(
+			'refresh' => false,
 		);
+
+		$args = wp_parse_args( $args, $defaults );
 
 		if ( ! $args['refresh'] && ! empty( self::$current_language_data ) ) {
 			return self::$current_language_data;
@@ -303,15 +313,25 @@ final class PodsI18n {
 				$current_language = get_user_meta( get_current_user_id(), 'pll_filter_content', true );
 			}
 
+			$pods_ajax = pods_v( 'pods_ajax', 'request', false );
+
 			// Get current language based on the object language if available.
-			$page = basename( $_SERVER['SCRIPT_NAME'] );
+			$page = basename( pods_v( 'SCRIPT_NAME', $_SERVER, '' ) );
+			if ( $pods_ajax && 'admin-ajax.php' === $page ) {
+				$page = basename( pods_v( 'HTTP_REFERER', $_SERVER, '' ) );
+			}
+			$page = explode( '?', $page );
+			$page = reset( $page );
 
 			/**
 			 * Overwrite the current language if needed for post types.
 			 */
 			if ( 'post.php' === $page || 'edit.php' === $page ) {
 
-				$current_post = ( ! empty( $_GET['post'] ) ) ? (int) $_GET['post'] : 0;
+				$current_post = (int) pods_v( 'post', 'request', 0 );
+				if ( $pods_ajax ) {
+					$current_post = (int) pods_v( 'id', 'request', $current_post );
+				}
 
 				if ( $current_post ) {
 
@@ -346,9 +366,7 @@ final class PodsI18n {
 						 * Polylang (1.0.1+).
 						 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language.
 						 */
-						if ( ! empty( $_GET['new_lang'] ) ) {
-							$current_language = $_GET['new_lang'];
-						}
+						$current_language = pods_v( 'new_lang', 'request', $current_language );
 					}
 				}
 			} //end if
@@ -358,12 +376,18 @@ final class PodsI18n {
 			 */
 			elseif ( 'term.php' === $page || 'edit-tags.php' === $page ) {
 
-				$current_taxonomy = ( ! empty( $_GET['taxonomy'] ) ) ? sanitize_text_field( $_GET['taxonomy'] ) : '';
+				$current_term_id = pods_v( 'tag_ID', 'request', 0 );
+				if ( $pods_ajax ) {
+					$current_term_id = (int) pods_v( 'id', 'request', $current_term_id );
+				}
+
+				$current_taxonomy = pods_v( 'taxonomy', 'request', '' );
+				if ( ! $current_taxonomy && $current_term_id ) {
+					$current_taxonomy = pods_v( 'taxonomy', get_term( $current_term_id ), null );
+				}
 
 				// @todo MAYBE: Similar function like get_post_type for taxonomies so we don't need to check for $_GET['taxonomy']
 				if ( $current_taxonomy ) {
-
-					$current_tag_id = ( ! empty( $_GET['tag_ID'] ) ) ? (int) $_GET['tag_ID'] : 0;
 
 					/*
 					 * @todo wpml-comp API call for taxonomy needed!
@@ -390,18 +414,16 @@ final class PodsI18n {
 						 * Polylang (1.5.4+).
 						 * We only want the related objects if they are not translatable OR the same language as the current object.
 						 */
-						if ( $current_tag_id && function_exists( 'pll_get_term_language' ) ) {
+						if ( $current_term_id && function_exists( 'pll_get_term_language' ) ) {
 							// Overwrite the current language if this is a translatable taxonomy
-							$current_language = pll_get_term_language( $current_tag_id );
+							$current_language = pll_get_term_language( $current_term_id );
 						}
 
 						/**
 						 * Polylang (1.0.1+).
 						 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language.
 						 */
-						if ( ! empty( $_GET['new_lang'] ) ) {
-							$current_language = $_GET['new_lang'];
-						}
+						$current_language = pods_v( 'new_lang', 'request', $current_language );
 					}
 				}//end if
 			}//end if
@@ -466,8 +488,10 @@ final class PodsI18n {
 		 */
 		$lang_data = apply_filters( 'pods_get_current_language', $lang_data, $translator );
 
-		self::$current_language      = $lang_data['language'];
-		self::$current_language_data = $lang_data;
+		if ( $lang_data ) {
+			self::$current_language      = $lang_data['language'];
+			self::$current_language_data = $lang_data;
+		}
 
 		return $lang_data;
 

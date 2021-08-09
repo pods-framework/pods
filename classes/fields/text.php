@@ -30,7 +30,8 @@ class PodsField_Text extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Plain Text', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Plain Text', 'pods' );
 	}
 
 	/**
@@ -50,15 +51,16 @@ class PodsField_Text extends PodsField {
 			),
 			'output_options'                     => array(
 				'label' => __( 'Output Options', 'pods' ),
-				'group' => array(
+				'type'  => 'boolean_group',
+				'boolean_group' => array(
 					static::$type . '_allow_shortcode' => array(
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
 					),
 					static::$type . '_allow_html'      => array(
-						'label'      => __( 'Allow HTML?', 'pods' ),
+						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
@@ -135,7 +137,7 @@ class PodsField_Text extends PodsField {
 
 		$is_read_only = (boolean) pods_v( 'read_only', $options, false );
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( $is_read_only ) {
 				$options['readonly'] = true;
 			} else {
@@ -145,31 +147,39 @@ class PodsField_Text extends PodsField {
 			$options['readonly'] = true;
 		}
 
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
 		wp_enqueue_script( 'pods-dfv' );
 
 		$type = pods_v( 'type', $options, static::$type );
-		
+
 		$args = compact( array_keys( get_defined_vars() ) );
 		$args = (object) $args;
 
 		$this->render_input_script( $args );
-
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		$errors = array();
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( 1 === (int) pods_v( 'required', $options ) ) {
+			if ( '' !== $value && '' === $check ) {
+				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}
 			}
@@ -179,7 +189,7 @@ class PodsField_Text extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**

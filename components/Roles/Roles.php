@@ -4,10 +4,7 @@
  *
  * Menu Name: Roles &amp; Capabilities
  *
- * Description: Create and Manage WordPress User Roles and Capabilities; Uses the '<a
- * href="http://wordpress.org/plugins/members/" target="_blank">Members</a>' plugin filters for additional plugin
- * integrations; Portions of code based on the '<a href="http://wordpress.org/plugins/members/"
- * target="_blank">Members</a>' plugin by Justin Tadlock
+ * Description: Create and Manage WordPress User Roles and Capabilities; Uses the '<a href="http://wordpress.org/plugins/members/" target="_blank" rel="noopener noreferrer">Members</a>' plugin filters for additional plugin integrations; Portions of code based on the '<a href="http://wordpress.org/plugins/members/" target="_blank" rel="noopener noreferrer">Members</a>' plugin by Justin Tadlock
  *
  * Version: 1.0
  *
@@ -57,16 +54,6 @@ class Pods_Roles extends PodsComponent {
 
 		global $wp_roles;
 
-		// Hook into Gravity Forms roles (since it only adds filter if Members plugin itself is activated
-		if ( class_exists( 'RGForms' ) && ! has_filter(
-			'members_get_capabilities', array(
-				'RGForms',
-				'members_get_capabilities',
-			)
-		) ) {
-			add_filter( 'members_get_capabilities', array( 'RGForms', 'members_get_capabilities' ) );
-		}
-
 		$default_role = get_option( 'default_role' );
 
 		$roles = array();
@@ -96,8 +83,8 @@ class Pods_Roles extends PodsComponent {
 			'data'             => $roles,
 			'total'            => count( $roles ),
 			'total_found'      => count( $roles ),
-			'items'            => 'Roles',
-			'item'             => 'Role',
+			'items'            => __( 'Roles', 'pods' ),
+			'item'             => __( 'Role', 'pods' ),
 			'fields'           => array(
 				'manage' => array(
 					'label'        => array( 'label' => __( 'Label', 'pods' ) ),
@@ -108,7 +95,7 @@ class Pods_Roles extends PodsComponent {
 						'type'    => 'text',
 						'options' => array(
 							'text_allow_html'        => 1,
-							'text_allowed_html_tags' => '',
+							'text_allowed_html_tags' => 'strong em a ul ol li b i br',
 						),
 					),
 				),
@@ -316,7 +303,7 @@ class Pods_Roles extends PodsComponent {
 			return pods_error( __( 'Role label is required', 'pods' ) );
 		}
 
-		return add_role( $role_name, $role_label, $capabilities );
+		return add_role( $role_name, $role_label, $capabilities ) instanceof WP_Role;
 	}
 
 	/**
@@ -447,7 +434,12 @@ class Pods_Roles extends PodsComponent {
 
 		$capabilities = array_merge( $default_caps, $role_caps, $plugin_caps );
 
-		// To support Members filters
+		// Gravity Forms.
+		if ( is_callable( 'GFCommon::all_caps' ) ) {
+			$capabilities = array_merge( $capabilities, GFCommon::all_caps() );
+		}
+
+		// To support Members filters.
 		$capabilities = apply_filters( 'members_get_capabilities', $capabilities );
 
 		$capabilities = apply_filters( 'pods_roles_get_capabilities', $capabilities );

@@ -1,5 +1,4 @@
 <?php
-require_once PODS_DIR . 'classes/fields/datetime.php';
 
 /**
  * @package Pods\Fields
@@ -47,6 +46,7 @@ class PodsField_Time extends PodsField_DateTime {
 	 */
 	public function setup() {
 
+		static::$group = __( 'Date / Time', 'pods' );
 		static::$label = __( 'Time', 'pods' );
 	}
 
@@ -85,7 +85,7 @@ class PodsField_Time extends PodsField_DateTime {
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="http://php.net/manual/function.date.php" target="_blank">%s</a>',
+					'<a href="http://php.net/manual/function.date.php" target="_blank" rel="noopener noreferrer">%s</a>',
 					esc_html__( 'PHP date documentation', 'pods' )
 				),
 			),
@@ -95,7 +95,7 @@ class PodsField_Time extends PodsField_DateTime {
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank">%1$s</a><br />%2$s',
+					'<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
 					esc_html__( 'jQuery UI timepicker documentation', 'pods' ),
 					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
 				),
@@ -130,12 +130,12 @@ class PodsField_Time extends PodsField_DateTime {
 				),
 			),
 			static::$type . '_allow_empty'      => array(
-				'label'   => __( 'Allow empty value?', 'pods' ),
+				'label'   => __( 'Allow empty value', 'pods' ),
 				'default' => 1,
 				'type'    => 'boolean',
 			),
 			static::$type . '_html5'            => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),
@@ -170,48 +170,17 @@ class PodsField_Time extends PodsField_DateTime {
 	}
 
 	/**
-	 * Convert value to the correct format for display.
-	 *
-	 * @param string $value   Field value.
-	 * @param array  $options Field options.
-	 * @param bool   $js      Return formatted from jQuery UI format? (only for custom formats).
-	 *
-	 * @return string
-	 * @since 2.7.0
+	 * {@inheritdoc}
 	 */
-	public function format_value_display( $value, $options, $js = false ) {
+	public function format_display( $options, $js = false ) {
 
-		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
-			$js = false;
-		}
-		$format = $this->format_datetime( $options, $js );
-		if ( $js ) {
-			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
+		if ( $js && 'custom' === pods_v( static::$type . '_type', $options, 'format' ) ) {
+			$format = $this->format_datetime( $options, $js );
+			return $this->convert_format( $format, array( 'source' => 'jquery_ui', 'type' => 'time' ) );
 		}
 
-		if ( ! $this->is_empty( $value ) ) {
-			// Try default storage format.
-			$date = $this->createFromFormat( static::$storage_format, (string) $value );
-
-			// Try field format.
-			$date_local = $this->createFromFormat( $format, (string) $value );
-
-			if ( $date instanceof DateTime ) {
-				$value = $date->format( $format );
-			} elseif ( $date_local instanceof DateTime ) {
-				$value = $date_local->format( $format );
-			} else {
-				$value = date_i18n( $format, strtotime( (string) $value ) );
-			}
-		} elseif ( 0 === (int) pods_v( static::$type . '_allow_empty', $options, 1 ) ) {
-			$value = date_i18n( $format );
-		} else {
-			$value = '';
-		}
-
-		return $value;
+		return parent::format_display( $options, $js );
 	}
-
 
 	/**
 	 * {@inheritdoc}
@@ -235,28 +204,39 @@ class PodsField_Time extends PodsField_DateTime {
 		switch ( (string) pods_v( static::$type . '_type', $options, '12', true ) ) {
 			case '12':
 				$time_format = $this->get_time_formats( $js );
-				$format      = $time_format[ pods_v( static::$type . '_format', $options, 'hh_mm', true ) ];
+
+				$format = $time_format[ pods_v( static::$type . '_format', $options, 'hh_mm', true ) ];
+
 				break;
 			case '24':
 				$time_format_24 = $this->get_time_formats_24( $js );
-				$format         = $time_format_24[ pods_v( static::$type . '_format_24', $options, 'hh_mm', true ) ];
+
+				$format = $time_format_24[ pods_v( static::$type . '_format_24', $options, 'hh_mm', true ) ];
+
 				break;
 			case 'custom':
 				if ( ! $js ) {
 					$format = pods_v( static::$type . '_format_custom', $options, '' );
 				} else {
 					$format = pods_v( static::$type . '_format_custom_js', $options, '' );
+
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_format_custom', $options, '' );
-						$format = $this->convert_format( $format, array( 'source' => 'php' ) );
+
+						if ( $js ) {
+							$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'time' ) );
+						}
 					}
 				}
+
 				break;
 			default:
 				$format = get_option( 'time_format' );
+
 				if ( $js ) {
-					$format = $this->convert_format( $format, array( 'source' => 'php' ) );
+					$format = $this->convert_format( $format, array( 'source' => 'php', 'type' => 'time' ) );
 				}
+
 				break;
 		}//end switch
 

@@ -467,19 +467,19 @@ class PodsComponents {
 
 				$component_data['ID'] = sanitize_title( $component_data['ID'] );
 
-				if ( 'on' === strtolower( $component_data['DeveloperMode'] ) || 1 === $component_data['DeveloperMode'] ) {
+				if ( 'on' === strtolower( $component_data['DeveloperMode'] ) && '1' === $component_data['DeveloperMode'] ) {
 					$component_data['DeveloperMode'] = true;
 				} else {
 					$component_data['DeveloperMode'] = false;
 				}
 
-				if ( 'on' === strtolower( $component_data['TablelessMode'] ) || 1 === $component_data['TablelessMode'] ) {
+				if ( 'on' === strtolower( $component_data['TablelessMode'] ) && '1' === $component_data['TablelessMode'] ) {
 					$component_data['TablelessMode'] = true;
 				} else {
 					$component_data['TablelessMode'] = false;
 				}
 
-				$component_data['External'] = (boolean) $external;
+				$component_data['External'] = $external;
 
 				if ( 'on' === strtolower( $component_data['MustUse'] ) || '1' === $component_data['MustUse'] ) {
 					$component_data['MustUse'] = true;
@@ -750,11 +750,11 @@ class PodsComponents {
 		$method    = $params->method;
 
 		if ( ! isset( $component ) || ! isset( $this->components[ $component ] ) || ! isset( $this->settings['components'][ $component ] ) ) {
-			pods_error( 'Invalid AJAX request', $this );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), $this );
 		}
 
 		if ( ! isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-component-' . $component . '-' . $method ) ) {
-			pods_error( 'Unauthorized request', $this );
+			pods_error( __( 'Unauthorized request', 'pods' ), $this );
 		}
 
 		// Cleaning up $params
@@ -774,7 +774,7 @@ class PodsComponents {
 			$output = call_user_func( array( $this, 'admin_ajax_' . $method ), $component, $params );
 		} elseif ( ! isset( $this->components[ $component ]['object'] ) || ! method_exists( $this->components[ $component ]['object'], 'ajax_' . $method ) ) {
 			// Make sure method exists
-			pods_error( 'API method does not exist', $this );
+			pods_error( __( 'API method does not exist', 'pods' ), $this );
 		} else {
 			// Dynamically call the component method
 			$output = call_user_func( array( $this->components[ $component ]['object'], 'ajax_' . $method ), $params );
@@ -802,7 +802,7 @@ class PodsComponents {
 		if ( ! isset( $this->components[ $component ] ) ) {
 			wp_die( 'Invalid Component', '', array( 'back_link' => true ) );
 		} elseif ( ! method_exists( $this->components[ $component ]['object'], 'options' ) ) {
-			pods_error( 'Component options method does not exist', $this );
+			pods_error( __( 'Component options method does not exist', 'pods' ), $this );
 		}
 
 		$options = $this->components[ $component ]['object']->options( $this->settings['components'][ $component ] );

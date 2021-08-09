@@ -566,6 +566,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			return $this->{$special_args[ $arg ]}();
 		}
 
+		// Enforce lowercase 'id' argument usage.
+		if ( 'ID' === $arg ) {
+			$arg = 'id';
+		}
+
 		if ( ! isset( $this->args[ $arg ] ) ) {
 			// Maybe only return the default if we need a strict argument.
 			if ( $strict ) {

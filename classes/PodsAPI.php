@@ -8878,13 +8878,17 @@ class PodsAPI {
 	 *
 	 * @since 2.0.0
 	 */
-	public function handle_field_validation( &$value, $field, $object_fields, $fields, $pod, $params ) {
+	public function handle_field_validation( &$value, $field, $object_fields, $fields, $pod, $params = [] ) {
 
 		$tableless_field_types = PodsForm::tableless_field_types();
 
 		$fields = array_merge( $fields, $object_fields );
 
 		$options = $fields[ $field ];
+
+		if ( is_array( $params ) ) {
+			$params = (object) $params;
+		}
 
 		$id = ( is_object( $params ) ? $params->id : ( is_object( $pod ) ? $pod->id() : 0 ) );
 

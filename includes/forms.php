@@ -12,6 +12,8 @@ use Pods\Permissions;
 /**
  * Render form fields outside of the <form> context.
  *
+ * @since TBD
+ *
  * @param string     $name      The object name.
  * @param int|string $object_id The object ID.
  * @param array      $options   The customization options.
@@ -148,6 +150,8 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 /**
  * Get the list of Groups or Fields that are able to be shown.
  *
+ * @since TBD
+ *
  * @param Pods  $pod     The Pods object.
  * @param array $options The customization options.
  *
@@ -230,13 +234,17 @@ function pods_form_get_visible_objects( $pod, array $options = [] ) {
 }
 
 /**
- * Save the submitted fields from the form.
+ * Validate the submitted fields from the form.
  *
- * @param string     $name        The object name.
- * @param int|string $object_id   The object ID.
- * @param bool       $is_new_item Whether this is a new item being saved.
+ * @since TBD
+ *
+ * @param string          $name      The object name.
+ * @param int|string|null $object_id The object ID.
+ * @param array           $options   The customization options.
+ *
+ * @return true|WP_Error[] True if the fields validate or a list of WP_Error objects with validation errors.
  */
-function pods_form_save_submitted_fields( $name, $object_id, $is_new_item = false, array $options = [] ) {
+function pods_form_validate_submitted_fields( $name, $object_id = null, array $options = [] ) {
 	$pod = pods( $name, $object_id );
 
 	// Get the fields.
@@ -245,22 +253,122 @@ function pods_form_save_submitted_fields( $name, $object_id, $is_new_item = fals
 	// Get fields and save them.
 	$fields = pods_form_get_visible_objects( $pod, $options );
 
-	$data = [];
+	$api = pods_api();
+
+	// Enforce WP_Error objects for validation errors.
+	$api->display_errors = 'wp_error';
+
+	$errors = [];
 
 	foreach ( $fields as $field ) {
 		$field_name = $field['name'];
 
-		$value = pods_v( 'pods_meta_' . $field_name, 'post' );
+		$value = pods_form_get_submitted_field_value( $field_name );
 
-		if ( null === $value ) {
-			continue;
+		$field_is_valid = $api->handle_field_validation( $value, $field_name, [], $fields, $pod );
+
+		if ( is_wp_error( $field_is_valid ) ) {
+			$errors[] = $field_is_valid;
 		}
-
-		$data[ $field_name ] = $value;
 	}
+
+	// Check for validation errors.
+	if ( ! empty( $errors ) ) {
+		return $errors;
+	}
+
+	// Fields are valid.
+	return true;
+}
+
+/**
+ * Save the submitted fields from the form.
+ *
+ * @since TBD
+ *
+ * @param string     $name        The object name.
+ * @param int|string $object_id   The object ID.
+ * @param bool       $is_new_item Whether this is a new item being saved.
+ * @param array      $options     The customization options.
+ */
+function pods_form_save_submitted_fields( $name, $object_id, $is_new_item = false, array $options = [] ) {
+	$pod = pods( $name, $object_id );
+
+	// Get the submitted field values.
+	$data = pods_form_get_submitted_field_values( $name, $options );
 
 	return $pod->save( $data, null, null, [
 		'is_new_item' => $is_new_item,
 		'podsmeta'    => true,
 	] );
+}
+
+/**
+ * Get the submitted field values from the form.
+ *
+ * @since TBD
+ *
+ * @param string $name    The object name.
+ * @param array  $options The customization options.
+ *
+ * @return array List of submitted field values and their values.
+ */
+function pods_form_get_submitted_field_values( $name, array $options = [] ) {
+	// Get the submitted fields.
+	$fields = pods_form_get_submitted_fields( $name, $options );
+
+	$data = [];
+
+	foreach ( $fields as $field ) {
+		$field_name = $field['name'];
+
+		$data[ $field_name ] = pods_form_get_submitted_field_value( $field_name );
+	}
+
+	return $data;
+}
+
+/**
+ * Get the submitted field value for a field.
+ *
+ * @since TBD
+ *
+ * @param string|array|Field $field  The field name or object.
+ * @param string             $method The method to get the value from (default: post).
+ *
+ * @return mixed The submitted field value for a field.
+ */
+function pods_form_get_submitted_field_value( $field, $method = 'post' ) {
+	$field_name = $field;
+
+	if ( $field instanceof Field ) {
+		$field_name = $field->get_name();
+	} elseif ( is_array( $field ) ) {
+		$field_name = $field['name'];
+	} elseif ( ! is_string( $field ) ) {
+		return '';
+	}
+
+	return pods_v( 'pods_meta_' . $field_name, $method, '' );
+}
+
+
+/**
+ * Get the submitted fields from the form.
+ *
+ * @since TBD
+ *
+ * @param string $name    The object name.
+ * @param array  $options The customization options.
+ *
+ * @return array List of submitted fields and their values.
+ */
+function pods_form_get_submitted_fields( $name, array $options = [] ) {
+	$pod = pods( $name );
+
+	// Get the fields.
+	$options['return_type'] = 'field';
+
+	// Get fields and save them.
+	return pods_form_get_visible_objects( $pod, $options );
 }

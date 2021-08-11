@@ -310,7 +310,7 @@ class PodsInit {
 		}
 
 		if ( ! defined( 'PODS_STATS_TRACKING' ) || PODS_STATS_TRACKING ) {
-			$this->stats_tracking( PODS_FILE );
+			$this->stats_tracking( PODS_FILE, 'pods' );
 		}
 	}
 
@@ -319,11 +319,12 @@ class PodsInit {
 	 *
 	 * @since TBD
 	 *
-	 * @param string $plugin_file The plugin file to track.
+	 * @param string $plugin_file The plugin file.
+	 * @param string $plugin_slug The plugin slug.
 	 *
 	 * @return Wisdom_Tracker The Stats Tracking object.
 	 */
-	public function stats_tracking( $plugin_file ) {
+	public function stats_tracking( $plugin_file, $plugin_slug ) {
 		// Admin only.
 		if (
 			! is_admin()
@@ -354,6 +355,7 @@ class PodsInit {
 
 		$stats_tracking = new Wisdom_Tracker(
 			$plugin_file,
+			$plugin_slug,
 			'https://stats.pods.io',
 			[],
 			true,

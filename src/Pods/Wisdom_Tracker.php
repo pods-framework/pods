@@ -25,6 +25,7 @@ class Wisdom_Tracker {
 	 * Class constructor
 	 *
 	 * @param $_home_url                   The URL to the site we're sending data to
+	 * @param $_plugin_slug                The slug for this plugin
 	 * @param $_plugin_file                The file path for this plugin
 	 * @param $_options                    Plugin options to track
 	 * @param $_require_optin              Whether user opt-in is required (always required on WordPress.org)
@@ -35,14 +36,14 @@ class Wisdom_Tracker {
 	 *                                     2: Request permission after opt-in
 	 */
 	public function __construct(
-		$_plugin_file, $_home_url, $_options, $_require_optin = true, $_include_goodbye_form = true, $_marketing = false
+		$_plugin_file, $_plugin_slug, $_home_url, $_options, $_require_optin = true, $_include_goodbye_form = true, $_marketing = false
 	) {
 		$this->plugin_file = $_plugin_file;
 		$this->home_url    = trailingslashit( $_home_url );
 
 		// If the filename is 'functions' then we're tracking a theme
 		if ( basename( $this->plugin_file, '.php' ) != 'functions' ) {
-			$this->plugin_name = basename( $this->plugin_file, '.php' );
+			$this->plugin_name = ! empty( $_plugin_slug ) ? $_plugin_slug : basename( $this->plugin_file, '.php' );
 		} else {
 			$this->what_am_i = 'theme';
 			$theme           = wp_get_theme();

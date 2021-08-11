@@ -73,6 +73,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.5' );
 	}
 
+	define( 'PODS_FILE', __FILE__ );
 	define( 'PODS_SLUG', plugin_basename( __FILE__ ) );
 	define( 'PODS_URL', plugin_dir_url( __FILE__ ) );
 	define( 'PODS_DIR', plugin_dir_path( __FILE__ ) );

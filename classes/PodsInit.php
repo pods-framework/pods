@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Wisdom_Tracker;
+
 /**
  * @package Pods
  */
@@ -80,13 +82,13 @@ class PodsInit {
 	public static $upgrade_needed = false;
 
 	/**
-	 * Freemius object.
+	 * Stats Tracking object.
 	 *
-	 * @since 1.0.0
+	 * @since TBD
 	 *
-	 * @var \Freemius
+	 * @var Wisdom_Tracker
 	 */
-	protected $freemius;
+	protected $stats_tracking;
 
 	/**
 	 * Singleton handling for a basic pods_init() request
@@ -307,20 +309,21 @@ class PodsInit {
 			load_plugin_textdomain( 'pods' );
 		}
 
-		if ( ! defined( 'PODS_FREEMIUS' ) || PODS_FREEMIUS ) {
-			$this->freemius();
+		if ( ! defined( 'PODS_STATS_TRACKING' ) || PODS_STATS_TRACKING ) {
+			$this->stats_tracking( PODS_FILE );
 		}
-
 	}
 
 	/**
-	 * Handle Freemius SDK registration.
+	 * Handle Stats Tracking.
 	 *
-	 * @since 1.0.0
+	 * @since TBD
 	 *
-	 * @return \Freemius
+	 * @param string $plugin_file The plugin file to track.
+	 *
+	 * @return Wisdom_Tracker The Stats Tracking object.
 	 */
-	public function freemius() {
+	public function stats_tracking( $plugin_file ) {
 		// Admin only.
 		if (
 			! is_admin()
@@ -343,53 +346,49 @@ class PodsInit {
 			return;
 		}
 
-		if ( $this->freemius ) {
-			return $this->freemius;
+		$is_main_plugin = PODS_FILE === $plugin_file;
+
+		if ( $is_main_plugin && $this->stats_tracking ) {
+			return $this->stats_tracking;
 		}
 
-		require_once dirname( __DIR__ ) . '/vendor/freemius/wordpress-sdk/start.php';
+		$stats_tracking = new Wisdom_Tracker(
+			$plugin_file,
+			'https://stats.pods.io',
+			[],
+			true,
+			true,
+			0
+		);
 
-		try {
-			$this->freemius = fs_dynamic_init( array(
-				'id'             => '5347',
-				'slug'           => 'pods',
-				'type'           => 'plugin',
-				'public_key'     => 'pk_737105490825babae220297e18920',
-				'is_premium'     => false,
-				'has_addons'     => false,
-				'has_paid_plans' => false,
-				'menu'           => array(
-					'slug'        => 'pods-settings',
-					'contact'     => false,
-					'support'     => false,
-					'affiliation' => false,
-					'account'     => true,
-					'pricing'     => false,
-					'addons'      => false,
-					'parent'      => array(
-						'slug' => 'pods',
-					),
-				),
-			) );
-
-			$this->override_freemius_strings();
-
-			add_filter( 'fs_plugins_api', array( $this, 'filter_freemius_plugins_api_data' ), 15 );
-
-			$this->freemius->add_filter( 'templates/add-ons.php', array( $this, 'filter_freemius_addons_html' ) );
-			$this->freemius->add_filter( 'download_latest_url', array( $this, 'get_freemius_action_link' ) );
-
+		if ( ! $is_main_plugin ) {
 			/**
-			 * Allow hooking into the Freemius registration after Pods has registered it's own Freemius.
+			 * Allow hooking after the Stats Tracking object is setup for the main plugin.
 			 *
-			 * @since 2.7.27
+			 * @since TBD
+			 *
+			 * @param Wisdom_Tracker $stats_tracking The Stats Tracking object.
+			 * @param string         $plugin_file    The plugin file.
 			 */
-			do_action( 'pods_freemius_after_init' );
-		} catch ( \Exception $exception ) {
-			return null;
+			do_action( 'pods_stats_tracking_after_init', $stats_tracking, $plugin_file );
 		}
 
-		return $this->freemius;
+		/**
+		 * Allow hooking after the Stats Tracking object is setup.
+		 *
+		 * @since TBD
+		 *
+		 * @param Wisdom_Tracker $stats_tracking The Stats Tracking object.
+		 * @param string         $plugin_file    The plugin file.
+		 */
+		do_action( 'pods_stats_tracking_object', $stats_tracking, $plugin_file );
+
+		// Maybe store the object.
+		if ( $is_main_plugin ) {
+			$this->stats_tracking = $stats_tracking;
+		}
+
+		return $stats_tracking;
 	}
 
 	/**

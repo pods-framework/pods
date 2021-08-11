@@ -655,7 +655,7 @@ class PodsInit {
 
 			// DFV must be enqueued on the media library page for items in grid mode (#4785)
 			// and for posts due to the possibility that post-thumbnails are enabled (#4945)
-			if ( $screen->base && in_array( $screen->base, array( 'upload', 'post' ), true ) ) {
+			if ( $screen && $screen->base && in_array( $screen->base, array( 'upload', 'post' ), true ) ) {
 				wp_enqueue_script( 'pods-dfv' );
 			}
 		}

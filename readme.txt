@@ -190,6 +190,10 @@ We are also available through our [Live Slack Chat](https://pods.io/chat/) to he
 
 == Changelog ==
 
+= 2.7.30 - August 12th, 2021 =
+
+* Fixed: Prevented a few PHP notices from showing on the new WordPress 5.8+ widgets screen.
+
 = 2.7.29 - August 4th, 2021 =
 
 * Security: Clean up post type and taxonomy labels so they avoid potential output escaping problems in WordPress core (@sc0ttkclark, reported by Muhammad Daffa via WPScan)

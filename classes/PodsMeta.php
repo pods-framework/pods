@@ -1066,9 +1066,13 @@ class PodsMeta {
 					$value = get_post_meta( $id, $field['name'], true );
 				}
 
-				if ( ! $value && ! is_numeric( $value ) && 'add' === get_current_screen()->action ) {
-					// Revert to default.
-					$value = null;
+				if ( ! $value && ! is_numeric( $value ) ) {
+					$screen = get_current_screen();
+
+					if ( $screen && 'add' === $screen->action ) {
+						// Revert to default.
+						$value = null;
+					}
 				}
 
 				pods_no_conflict_off( 'post' );

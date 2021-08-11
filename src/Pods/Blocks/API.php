@@ -192,4 +192,23 @@ class API {
 
 		return $collections;
 	}
+
+	/**
+	 * Remove our legacy Pods widgets from the Legacy Widget block.
+	 *
+	 * @since TBD
+	 *
+	 * @param array $widgets An array of excluded widget-type IDs.
+	 *
+	 * @return array An array of excluded widget-type IDs.
+	 */
+	public function remove_legacy_widgets( $widgets ) {
+		$widgets[] = 'pods_widget_field';
+		$widgets[] = 'pods_widget_form';
+		$widgets[] = 'pods_widget_list';
+		$widgets[] = 'pods_widget_single';
+		$widgets[] = 'pods_widget_view';
+
+		return $widgets;
+	}
 }

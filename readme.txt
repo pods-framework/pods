@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.8
 Requires PHP: 5.3
-Stable tag: 2.7.29
+Stable tag: 2.7.30
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,10 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.30 - August 12th, 2021 =
+
+* Fixed: Prevented a few PHP notices from showing on the new WordPress 5.8+ widgets screen.
 
 = 2.7.29 - August 4th, 2021 =
 

@@ -19,6 +19,8 @@ const PodsDFVApp = ( { fieldsData } ) => {
 			fieldComponent: FieldComponent = null,
 			parentNode,
 			fieldConfig,
+			fieldItemData,
+			fieldValue
 		} = fieldData;
 
 		// Some components will have a React component passed in (eg. the Edit Pod field
@@ -65,6 +67,8 @@ PodsDFVApp.propTypes = {
 			fieldComponent: PropTypes.function,
 			parentNode: PropTypes.any,
 			fieldConfig: FIELD_PROP_TYPE_SHAPE,
+			fieldItemData: PropTypes.any,
+			fieldValue: PropTypes.any
 		} ),
 	),
 };

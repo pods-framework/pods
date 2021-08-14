@@ -79,6 +79,7 @@ window.PodsDFV = {
 				parentNode: tag.parentNode,
 				fieldConfig: directRender ? undefined : cleanedFieldConfig,
 				fieldItemData: data.fieldItemData || null,
+				fieldValue: data.fieldValue || null,
 			};
 		} );
 
@@ -143,12 +144,6 @@ window.PodsDFV = {
 						formattedValue = value.find( ( option ) => true === option.selected )?.id;
 					}
 				}
-
-				console.log( 'initialValue', {
-					'currentValue': currentValue,
-					'fieldConfig_type': fieldConfig.type,
-					'formattedValue': formattedValue,
-				} );
 
 				return {
 					...accumulator,

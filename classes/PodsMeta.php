@@ -114,14 +114,7 @@ class PodsMeta {
 	 * @return \PodsMeta
 	 */
 	public function core() {
-
-		self::$advanced_content_types = pods_api()->load_pods( array( 'type' => 'pod' ) );
-		self::$post_types             = pods_api()->load_pods( array( 'type' => 'post_type' ) );
-		self::$taxonomies             = pods_api()->load_pods( array( 'type' => 'taxonomy' ) );
-		self::$media                  = pods_api()->load_pods( array( 'type' => 'media' ) );
-		self::$user                   = pods_api()->load_pods( array( 'type' => 'user' ) );
-		self::$comment                = pods_api()->load_pods( array( 'type' => 'comment' ) );
-		self::$settings               = pods_api()->load_pods( array( 'type' => 'settings' ) );
+		$this->cache_pods( false );
 
 		// Handle Post Type Editor (needed for Pods core).
 		pods_no_conflict_off( 'post', null, true );
@@ -142,28 +135,28 @@ class PodsMeta {
 				pods_no_conflict_off( 'taxonomy', $taxonomy_name, true );
 			}
 		} else {
-			// At least add the delete hook.
+			// At least add the hook to delete.
 			add_action( 'delete_term_taxonomy', [ $this, 'delete_taxonomy' ], 10, 1 );
 		}
 
 		if ( ! empty( self::$media ) ) {
 			pods_no_conflict_off( 'media', null, true );
 		} else {
-			// At least add the delete hook.
+			// At least add the hook to delete.
 			add_action( 'delete_attachment', [ $this, 'delete_media' ], 10, 1 );
 		}
 
 		if ( ! empty( self::$user ) ) {
 			pods_no_conflict_off( 'user', null, true );
 		} else {
-			// At least add the delete hook.
+			// At least add the hook to delete.
 			add_action( 'delete_user', [ $this, 'delete_user' ], 10, 1 );
 		}
 
 		if ( ! empty( self::$comment ) ) {
 			pods_no_conflict_off( 'comment', null, true );
 		} else {
-			// At least add the delete hook.
+			// At least add the hook to delete.
 			add_action( 'delete_comment', [ $this, 'delete_comment' ], 10, 1 );
 		}
 
@@ -184,7 +177,7 @@ class PodsMeta {
 		add_action( 'init', array( $this, 'enqueue' ), 9 );
 
 		if ( function_exists( 'pll_current_language' ) ) {
-			add_action( 'init', array( $this, 'cache_pods' ), 101 );
+			add_action( 'init', array( $this, 'cache_pods' ), 101, 0 );
 		}
 
 		do_action( 'pods_meta_init' );
@@ -207,17 +200,47 @@ class PodsMeta {
 	}
 
 	/**
-	 * Go back through and cache the Pods now that Polylang has loaded
+	 * Cache the Pods list.
+	 *
+	 * This is helpful to run to cache the Pods after Polylang has loaded.
 	 */
-	public function cache_pods() {
+	public function cache_pods( $refresh = true ) {
+		$api = pods_api();
 
-		self::$advanced_content_types = pods_api()->load_pods( array( 'type' => 'pod', 'refresh' => true ) );
-		self::$post_types             = pods_api()->load_pods( array( 'type' => 'post_type', 'refresh' => true ) );
-		self::$taxonomies             = pods_api()->load_pods( array( 'type' => 'taxonomy', 'refresh' => true ) );
-		self::$media                  = pods_api()->load_pods( array( 'type' => 'media', 'refresh' => true ) );
-		self::$user                   = pods_api()->load_pods( array( 'type' => 'user', 'refresh' => true ) );
-		self::$comment                = pods_api()->load_pods( array( 'type' => 'comment', 'refresh' => true ) );
-		self::$settings               = pods_api()->load_pods( array( 'type' => 'settings', 'refresh' => true ) );
+		self::$advanced_content_types = $api->load_pods( [
+				'type'    => 'pod',
+				'refresh' => $refresh,
+		] );
+
+		self::$post_types             = $api->load_pods( [
+				'type'    => 'post_type',
+				'refresh' => $refresh,
+		] );
+
+		self::$taxonomies             = $api->load_pods( [
+				'type'    => 'taxonomy',
+				'refresh' => $refresh,
+		] );
+
+		self::$media                  = $api->load_pods( [
+				'type'    => 'media',
+				'refresh' => $refresh,
+		] );
+
+		self::$user                   = $api->load_pods( [
+				'type'    => 'user',
+				'refresh' => $refresh,
+		] );
+
+		self::$comment                = $api->load_pods( [
+				'type'    => 'comment',
+				'refresh' => $refresh,
+		] );
+
+		self::$settings               = $api->load_pods( [
+				'type'    => 'settings',
+				'refresh' => $refresh,
+		] );
 	}
 
 	/**
@@ -672,45 +695,23 @@ class PodsMeta {
 		// Hook it up!
 		if ( 'post_type' == $pod['type'] ) {
 			if ( ! has_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) ) ) {
-				add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
+				pods_no_conflict_off( $pod['type'], $pod['object'], true );
 			}
-
-			/*if ( !has_action( 'save_post', array( $this, 'save_post' ), 10, 3 ) )
-                add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );*/
 		} elseif ( 'taxonomy' == $pod['type'] ) {
-			if ( ! has_action( $pod['object'] . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 ) ) {
-				add_action( $pod['object'] . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
-				add_action( $pod['object'] . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 1 );
-			}
-
-			if ( ! has_action( 'edited_term', array( $this, 'save_taxonomy' ), 10, 3 ) ) {
-				add_action( 'edited_term', array( $this, 'save_taxonomy' ), 10, 3 );
-				add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
+			if ( ! has_action( $pod['object'] . '_edit_form_fields', array( $this, 'meta_taxonomy' ) ) ) {
+				pods_no_conflict_off( $pod['type'], $pod['object'], true );
 			}
 		} elseif ( 'media' == $pod['type'] ) {
-			if ( ! has_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 ) ) {
-				add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
-				add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
-
-				add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
-
-				add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
-				add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
+			if ( ! has_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ) ) ) {
+				pods_no_conflict_off( $pod['type'], null, true );
 			}
 		} elseif ( 'user' == $pod['type'] ) {
 			if ( ! has_action( 'show_user_profile', array( $this, 'meta_user' ) ) ) {
-				add_action( 'show_user_profile', array( $this, 'meta_user' ) );
-				add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
-				add_action( 'user_register', array( $this, 'save_user' ) );
-				add_action( 'profile_update', array( $this, 'save_user' ), 10, 2 );
+				pods_no_conflict_off( $pod['type'], null, true );
 			}
 		} elseif ( 'comment' == $pod['type'] ) {
-			if ( ! has_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ), 10, 2 ) ) {
-				add_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ), 10, 2 );
-				add_filter( 'comment_form_default_fields', array( $this, 'meta_comment_new' ) );
-				add_action( 'add_meta_boxes_comment', array( $this, 'meta_comment_add' ) );
-				add_action( 'wp_insert_comment', array( $this, 'save_comment' ) );
-				add_action( 'edit_comment', array( $this, 'save_comment' ) );
+			if ( ! has_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ) ) ) {
+				pods_no_conflict_off( $pod['type'], null, true );
 			}
 		}
 	}

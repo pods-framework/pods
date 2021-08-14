@@ -9507,6 +9507,7 @@ class PodsAPI {
 			'type'                => null,
 			'object_name'         => $object,
 			'object_hierarchical' => false,
+			'storage'             => null,
 
 			'table'      => $object,
 			'meta_table' => $object,
@@ -9642,6 +9643,7 @@ class PodsAPI {
 			// Post type.
 			$info['table']      = $wpdb->posts;
 			$info['meta_table'] = $wpdb->postmeta;
+			$info['storage']    = 'meta';
 
 			$info['field_id']            = 'ID';
 			$info['field_index']         = 'post_title';
@@ -9761,6 +9763,7 @@ class PodsAPI {
 			// Taxonomy.
 			$info['table']      = $wpdb->terms;
 			$info['meta_table'] = $wpdb->terms;
+			$info['storage']    = 'meta';
 
 			$info['join']['tt']          = "LEFT JOIN `{$wpdb->term_taxonomy}` AS `tt` ON `tt`.`term_id` = `t`.`term_id`";
 			$info['join']['tr']          = "LEFT JOIN `{$wpdb->term_relationships}` AS `tr` ON `tr`.`term_taxonomy_id` = `tt`.`term_taxonomy_id`";
@@ -9851,6 +9854,7 @@ class PodsAPI {
 			$info['table']      = $wpdb->users;
 			$info['meta_table'] = $wpdb->usermeta;
 			$info['pod_table']  = $wpdb->prefix . 'pods_user';
+			$info['storage']    = 'meta';
 
 			$info['field_id']    = 'ID';
 			$info['field_index'] = 'display_name';
@@ -9868,6 +9872,7 @@ class PodsAPI {
 			$info['table']      = $wpdb->comments;
 			$info['meta_table'] = $wpdb->commentmeta;
 			$info['pod_table']  = $wpdb->prefix . 'pods_comment';
+			$info['storage']    = 'meta';
 
 			$info['field_id']            = 'comment_ID';
 			$info['field_index']         = 'comment_date';
@@ -9907,6 +9912,7 @@ class PodsAPI {
 			// Setting.
 			$info['table']      = $wpdb->options;
 			$info['meta_table'] = $wpdb->options;
+			$info['storage']    = 'option';
 
 			$info['field_id']    = 'option_id';
 			$info['field_index'] = 'option_name';
@@ -9929,6 +9935,7 @@ class PodsAPI {
 			// Site meta.
 			$info['table']      = $wpdb->sitemeta;
 			$info['meta_table'] = $wpdb->sitemeta;
+			$info['storage']    = 'meta';
 
 			$info['field_id']    = 'site_id';
 			$info['field_index'] = 'meta_key';
@@ -9942,6 +9949,7 @@ class PodsAPI {
 			// Network = Site.
 			$info['table']      = $wpdb->site;
 			$info['meta_table'] = $wpdb->sitemeta;
+			$info['storage']    = 'meta';
 
 			$info['field_id']    = 'id';
 			$info['field_index'] = 'domain';
@@ -9953,7 +9961,8 @@ class PodsAPI {
 			$info['orderby'] = "`t`.`{$info['field_index']}` ASC, `t`.`path` ASC, `t`.`{$info['field_id']}`";
 		} elseif ( is_multisite() && 'site' === $object_type ) {
 			// Site = Blog.
-			$info['table'] = $wpdb->blogs;
+			$info['table']   = $wpdb->blogs;
+			$info['storage'] = 'none';
 
 			$info['field_id']    = 'blog_id';
 			$info['field_index'] = 'domain';
@@ -9972,6 +9981,7 @@ class PodsAPI {
 			$info['table']      = pods_v( 'table_custom', $info['pod'], ( empty( $object ) ? $name : $object ), true );
 			$info['meta_table'] = pods_v( 'meta_table_custom', $info['pod'], $info['meta_table'], true );
 			$info['pod_table']  = pods_v( 'pod_table_custom', $info['pod'], "{$wpdb->prefix}pods_" . $info['table'], true );
+			$info['storage']    = 'table';
 
 			$info['field_id']            = pods_v( 'field_id_custom', $info['pod'], $info['field_id'], true );
 			$info['field_index']         = pods_v( 'field_index_custom', $info['pod'], $info['field_index'], true );
@@ -10035,6 +10045,7 @@ class PodsAPI {
 
 		if ( ! empty( $info['pod'] ) && ( is_array( $info['pod'] ) || $info['pod'] instanceof Pods\Whatsit ) ) {
 			$info['recurse'] = true;
+			$info['storage'] = $info['pod']['storage'];
 		}
 
 		$info['type']        = $object_type;

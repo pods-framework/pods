@@ -2304,7 +2304,7 @@ class PodsAPI {
 		if ( $db ) {
 			$old_info = compact(
 				'old_storage',
-				'old_name',
+				'old_name'
 			);
 
 			$this->save_pod_table_schema( $pod, $all_fields, $old_info );
@@ -2613,7 +2613,7 @@ class PodsAPI {
 		}
 
 		// Skip if not using table storage.
-		if ( 'table' !== $pod['storage'] ) {
+		if ( isset( $pod['storage'] ) && 'table' !== $pod['storage'] ) {
 			return;
 		}
 

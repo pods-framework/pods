@@ -3083,11 +3083,10 @@ class PodsData {
 						'comment',
 					), true
 				) ) {
-					$new_pod = $this->api->load_pod(
-						array(
-							'name' => $traverse_recurse['pod'],
-						)
-					);
+					$new_pod = $this->api->load_pod( [
+						'name'       => $traverse_recurse['pod'],
+						'auto_setup' => true,
+					] );
 
 					if ( $new_pod && $new_pod['type'] === $traverse_recurse['pod'] ) {
 						$pod_data = $new_pod;
@@ -3123,11 +3122,10 @@ class PodsData {
 				return $joins;
 			}//end if
 		} else {
-			$pod_data = $this->api->load_pod(
-				array(
-					'name' => $traverse_recurse['pod'],
-				), false
-			);
+			$pod_data = $this->api->load_pod( [
+				'name'       => $traverse_recurse['pod'],
+				'auto_setup' => true,
+			] );
 
 			if ( empty( $pod_data ) ) {
 				return $joins;

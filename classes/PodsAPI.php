@@ -9375,7 +9375,10 @@ class PodsAPI {
 				$name = $object;
 			}
 
-			$pod = $this->load_pod( array( 'name' => $name ), false );
+			$pod = $this->load_pod( [
+				'name'       => $name,
+				'auto_setup' => true,
+			] );
 
 			if ( ! empty( $pod ) ) {
 				$object_type = $pod['type'];
@@ -9399,7 +9402,10 @@ class PodsAPI {
 			}
 
 			if ( ! empty( $name ) ) {
-				$pod = $this->load_pod( array( 'name' => $name ), false );
+				$pod = $this->load_pod( [
+					'name'       => $name,
+					'auto_setup' => true,
+				] );
 
 				if ( ! empty( $pod ) && ( null === $object_type || $object_type == $pod['type'] ) ) {
 					$object_type = $pod['type'];

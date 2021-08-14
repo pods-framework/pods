@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit\Pod;
+
 /**
  * @package Pods\Fields
  */
@@ -1509,11 +1511,10 @@ class PodsField_Pick extends PodsField {
 		}
 
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
-			$related_pod = self::$api->load_pod(
-				array(
-					'name' => $related_val,
-				), false
-			);
+			$related_pod = self::$api->load_pod( [
+				'name'       => $related_val,
+				'auto_setup' => true,
+			] );
 
 			if ( false !== $related_pod && ( 'pod' === $related_object || $related_object === $related_pod['type'] ) ) {
 				$related_field = false;
@@ -1715,11 +1716,10 @@ class PodsField_Pick extends PodsField {
 		$related_sister_id = (int) pods_v( 'sister_id', $options, 0 );
 
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
-			$related_pod = self::$api->load_pod(
-				array(
-					'name' => $related_val,
-				), false
-			);
+			$related_pod = self::$api->load_pod( [
+				'name'       => $related_val,
+				'auto_setup' => true,
+			] );
 
 			if ( false !== $related_pod && ( 'pod' === $related_object || $related_object === $related_pod['type'] ) ) {
 				$related_field = false;
@@ -2079,6 +2079,8 @@ class PodsField_Pick extends PodsField {
 		// Use field object if it was provided.
 		if ( isset( $options['_field_object'] ) ) {
 			$options = $options['_field_object'];
+
+			$name = $options->get_name();
 		}
 
 		$data  = apply_filters( 'pods_field_pick_object_data', null, $name, $value, $options, $pod, $id, $object_params );

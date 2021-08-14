@@ -572,8 +572,9 @@ class PodsInit {
 	 * Load Pods Meta
 	 */
 	public function load_meta() {
+		self::$meta = pods_meta();
 
-		self::$meta = pods_meta()->core();
+		self::$meta->core();
 	}
 
 	/**

@@ -30,7 +30,11 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 
 	$options = array_merge( $defaults, $options );
 
-	$pod = pods( $name, $object_id );
+	$pod = pods( $name, $object_id, true );
+
+	if ( ! $pod ) {
+		return;
+	}
 
 	// Return groups.
 	$options['return_type'] = 'group';
@@ -242,10 +246,14 @@ function pods_form_get_visible_objects( $pod, array $options = [] ) {
  * @param int|string|null $object_id The object ID.
  * @param array           $options   The customization options.
  *
- * @return true|WP_Error[] True if the fields validate or a list of WP_Error objects with validation errors.
+ * @return true|WP_Error[]|null True if the fields validate, a list of WP_Error objects with validation errors, or null if Pod does not exist.
  */
 function pods_form_validate_submitted_fields( $name, $object_id = null, array $options = [] ) {
-	$pod = pods( $name, $object_id );
+	$pod = pods( $name, $object_id, true );
+
+	if ( ! $pod ) {
+		return null;
+	}
 
 	// Get the fields.
 	$options['return_type'] = 'field';
@@ -290,9 +298,15 @@ function pods_form_validate_submitted_fields( $name, $object_id = null, array $o
  * @param int|string $object_id   The object ID.
  * @param bool       $is_new_item Whether this is a new item being saved.
  * @param array      $options     The customization options.
+ *
+ * @return int|null The saved item or null if the pod does not exist.
  */
 function pods_form_save_submitted_fields( $name, $object_id, $is_new_item = false, array $options = [] ) {
-	$pod = pods( $name, $object_id );
+	$pod = pods( $name, $object_id, true );
+
+	if ( ! $pod ) {
+		return null;
+	}
 
 	// Get the submitted field values.
 	$data = pods_form_get_submitted_field_values( $name, $options );
@@ -364,7 +378,11 @@ function pods_form_get_submitted_field_value( $field, $method = 'post' ) {
  * @return array List of submitted fields and their values.
  */
 function pods_form_get_submitted_fields( $name, array $options = [] ) {
-	$pod = pods( $name );
+	$pod = pods( $name, null, true );
+
+	if ( ! $pod ) {
+		return [];
+	}
 
 	// Get the fields.
 	$options['return_type'] = 'field';

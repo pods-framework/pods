@@ -144,6 +144,12 @@ window.PodsDFV = {
 					}
 				}
 
+				console.log( 'initialValue', {
+					'currentValue': currentValue,
+					'fieldConfig_type': fieldConfig.type,
+					'formattedValue': formattedValue,
+				} );
+
 				return {
 					...accumulator,
 					[ fieldConfig.name ]: formattedValue,

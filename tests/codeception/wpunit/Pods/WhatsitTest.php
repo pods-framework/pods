@@ -825,7 +825,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 		$table_info = $this->pods_object_pod->get_table_info();
 
-		$this->assertCount( 27, $table_info );
+		$this->assertCount( 28, $table_info );
 	}
 
 	/**
@@ -861,7 +861,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$this->assertCount( 1, $this->pods_object_pod['fields'] );
 		$this->assertCount( 1, $this->pods_object_pod['groups'] );
 		$this->assertCount( 24, $this->pods_object_pod['object_fields'] );
-		$this->assertCount( 27, $this->pods_object_pod['table_info'] );
+		$this->assertCount( 28, $this->pods_object_pod['table_info'] );
 
 		$this->assertArrayHasKey( 'test-field', $this->pods_object_pod['fields'] );
 		$this->assertEquals( 'Test field', $this->pods_object_pod['fields']['test-field']['label'] );

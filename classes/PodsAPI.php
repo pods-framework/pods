@@ -1825,7 +1825,7 @@ class PodsAPI {
 			$params->id = $pod['id'];
 
 			$old_name    = $pod['name'];
-			$old_storage = $pod['storage'];
+			$old_storage = isset( $pod['storage'] ) ? $pod['storage'] : 'meta';
 			$old_groups  = isset( $pod['groups'] ) ? $pod['groups'] : [];
 			$old_fields  = isset( $pod['fields'] ) ? $pod['fields'] : [];
 

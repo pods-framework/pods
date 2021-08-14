@@ -153,7 +153,7 @@ class Value_FieldTest extends Pods_WhatsitTestCase {
 		$this->assertCount( 1, $value_field['fields'] );
 		$this->assertCount( 1, $value_field['groups'] );
 		$this->assertCount( 24, $value_field['object_fields'] );
-		$this->assertCount( 27, $value_field['table_info'] );
+		$this->assertCount( 28, $value_field['table_info'] );
 
 		$this->assertArrayHasKey( 'test-field', $value_field['fields'] );
 		$this->assertEquals( 'Test field', $value_field['fields']['test-field']['label'] );

@@ -313,7 +313,7 @@ class PodsField_Avatar extends PodsField_File {
 				'options-discussion',
 			);
 
-			if ( null !== $current_screen && in_array( $current_screen->id, $screens, true ) ) {
+			if ( $current_screen && in_array( $current_screen->id, $screens, true ) ) {
 				return false;
 			}
 		}

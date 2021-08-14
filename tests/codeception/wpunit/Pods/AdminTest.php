@@ -48,6 +48,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 	public function provider_global_config_checks() {
 		$groups_for_group = [
 			'basic',
+			'advanced',
 		];
 
 		$groups_for_field = [

@@ -102,7 +102,6 @@ class MetaTest extends Pods_UnitTestCase {
 		$this->_add_save_actions();
 
 		// Reset all the hooks.
-		pods_no_conflict_on( 'all' );
 		pods_meta()->core();
 	}
 
@@ -121,6 +120,7 @@ class MetaTest extends Pods_UnitTestCase {
 
 		$GLOBALS['current_user'] = null;
 
+		pods_no_conflict_off( 'all' );
 		parent::tearDown();
 	}
 

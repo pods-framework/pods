@@ -3,7 +3,7 @@
 Plugin Name: Pods - Custom Content Types and Fields
 Plugin URI: https://pods.io/
 Description: Pods is a framework for creating, managing, and deploying customized content types and fields
-Version: 2.8.0-b-3
+Version: 2.8.0-b-4
 Author: Pods Framework Team
 Author URI: https://pods.io/about/
 Text Domain: pods
@@ -37,7 +37,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	add_action( 'init', 'pods_deactivate_pods_ui' );
 } else {
 	// Current version
-	define( 'PODS_VERSION', '2.8.0-b-3' );
+	define( 'PODS_VERSION', '2.8.0-b-4' );
 
 	// Version tracking between DB updates themselves
 	define( 'PODS_DB_VERSION', '2.3.5' );
@@ -73,6 +73,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.5' );
 	}
 
+	define( 'PODS_FILE', __FILE__ );
 	define( 'PODS_SLUG', plugin_basename( __FILE__ ) );
 	define( 'PODS_URL', plugin_dir_url( __FILE__ ) );
 	define( 'PODS_DIR', plugin_dir_path( __FILE__ ) );

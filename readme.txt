@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.5
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.8.0-b-3
+Stable tag: 2.8.0-b-4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -206,6 +206,10 @@ Our Edit Pod screen is powered on the technical side by our all new React form i
 
 * Feature: REST API endpoints are now available to create/edit various objects: Pods, Pod Groups, and Pod Fields.
 * Feature: WP-CLI commands that mirror the REST API endpoints we have.
+
+= 2.7.30 - August 12th, 2021 =
+
+* Fixed: Prevented a few PHP notices from showing on the new WordPress 5.8+ widgets screen.
 
 = 2.7.29 - August 4th, 2021 =
 

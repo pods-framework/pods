@@ -326,20 +326,22 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 			}//end foreach
-		} elseif ( 'file' === $field['type'] && 'attachment' === pods_v( 'file_uploader', $field, 'attachment' ) ) {
+		} elseif ( 'file' === $field['type'] ) {
 			$template  = frontier_decode_template( $content, $atts );
 			$media_pod = pods( 'media' );
 
 			foreach ( $entries as $key => $entry ) {
 				$content = str_replace( '{_index}', $key, $template );
-				$content = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $content );
-				$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $content );
-				$content = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $content );
 
 				if ( $media_pod && $media_pod->valid() && $media_pod->fetch( $entry['ID'] ) ) {
 					$content   = str_replace( '{@' . $field_name . '.', '{@', $content );
+
 					$entry_pod = $media_pod;
 				} else {
+					$content = str_replace( '{@_img', '{@image_attachment.' . $entry['ID'], $content );
+					$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry['ID'], $content );
+					$content = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry['ID'] . '}', $content );
+
 					// Fix for lowercase ID's.
 					$entry['id'] = $entry['ID'];
 

@@ -5028,10 +5028,10 @@ class PodsAPI {
 
 		$object_ID = 'ID';
 
-		if ( 'comment' === $object_type ) {
-			$object_ID = 'comment_ID';
-		} elseif ( 'taxonomy' === $object_type ) {
-			$object_ID = 'term_id';
+		if ( ! empty( $pod['field_id'] ) ) {
+			$object_ID = $pod['field_id'];
+		} elseif ( ! empty( $pod['pod_field_id'] ) ) {
+			$object_ID = $pod['pod_field_id'];
 		}
 
 		$object_data    = array();
@@ -8878,13 +8878,17 @@ class PodsAPI {
 	 *
 	 * @since 2.0.0
 	 */
-	public function handle_field_validation( &$value, $field, $object_fields, $fields, $pod, $params ) {
+	public function handle_field_validation( &$value, $field, $object_fields, $fields, $pod, $params = [] ) {
 
 		$tableless_field_types = PodsForm::tableless_field_types();
 
 		$fields = array_merge( $fields, $object_fields );
 
 		$options = $fields[ $field ];
+
+		if ( is_array( $params ) ) {
+			$params = (object) $params;
+		}
 
 		$id = ( is_object( $params ) ? $params->id : ( is_object( $pod ) ? $pod->id() : 0 ) );
 

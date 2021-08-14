@@ -566,8 +566,8 @@ class PodsField {
 
 		$data = array();
 
-		if ( ! empty( $args->options['data'] ) && is_array( $args->options['data'] ) ) {
-			$data = $args->options['data'];
+		if ( ! empty( $args->options['fieldItemData'] ) && is_array( $args->options['fieldItemData'] ) ) {
+			$data = $args->options['fieldItemData'];
 		}
 
 		return $data;

@@ -117,9 +117,9 @@ window.PodsDFV = {
 
 				// Fields have values provided as arrays, even if the field
 				// type should just have a singular value.
-				const value = [ 'avatar', 'file', 'pick' ].includes( fieldConfig.type )
+				const value = [ 'boolean', 'avatar', 'file', 'pick' ].includes( fieldConfig.type )
 					? ( currentValue.fieldItemData || fieldConfig.default || [] )
-					: ( currentValue.fieldItemData?.[ 0 ] || fieldConfig.default || '' );
+					: ( currentValue.fieldValue || fieldConfig.default || '' );
 
 				// Some field types (maybe just pick?) have all available options in the
 				// fieldItemData, not just the selected values, so we need to clean those.

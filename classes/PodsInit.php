@@ -1505,7 +1505,7 @@ class PodsInit {
 
 			$pods_cpt_ct['post_format_post_types'] = $post_format_post_types;
 
-			pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct );
+			pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct, WEEK_IN_SECONDS );
 		}//end if
 
 		foreach ( $pods_cpt_ct['taxonomies'] as $taxonomy => $options ) {
@@ -1737,7 +1737,7 @@ class PodsInit {
 			$wp_rewrite->flush_rules();
 			$wp_rewrite->init();
 
-			pods_transient_set( 'pods_flush_rewrites', 0 );
+			pods_transient_clear( 'pods_flush_rewrites' );
 		}
 	}
 

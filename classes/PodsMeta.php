@@ -192,7 +192,7 @@ class PodsMeta {
 
 		foreach ( self::$queue as $type => $objects ) {
 			foreach ( $objects as $pod_name => $pod ) {
-				pods_transient_set( 'pods_pod_' . $pod_name, $pod );
+				pods_transient_set( 'pods_pod_' . $pod_name, $pod, WEEK_IN_SECONDS );
 			}
 
 			self::${$type} = array_merge( self::${$type}, $objects );

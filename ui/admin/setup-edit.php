@@ -106,7 +106,7 @@ if ( empty( $pick_table ) ) {
         }
     }
 
-    pods_transient_set( 'pods_tables', $pick_table );
+    pods_transient_set( 'pods_tables', $pick_table, WEEK_IN_SECONDS );
 }
 
 $field_settings = array(

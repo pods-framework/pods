@@ -349,7 +349,7 @@ class Post_Type extends Collection {
 				$posts = get_posts( $post_args );
 
 				if ( empty( $args['bypass_cache'] ) ) {
-					pods_transient_set( $cache_key, $posts );
+					pods_transient_set( $cache_key, $posts, WEEK_IN_SECONDS );
 				}
 			}
 		}

@@ -1501,7 +1501,7 @@ class PodsAPI {
 		$fields = PodsForm::fields_setup( $fields );
 
 		if ( did_action( 'init' ) && pods_api_cache() ) {
-			pods_transient_set( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ), $fields );
+			pods_transient_set( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ), $fields, WEEK_IN_SECONDS );
 		}
 
 		return $fields;
@@ -10063,7 +10063,7 @@ class PodsAPI {
 			}
 
 			if ( !$transient_cached ) {
-				pods_transient_set( $transient, $info );
+				pods_transient_set( $transient, $info, WEEK_IN_SECONDS );
 			}
 		}
 
@@ -10441,7 +10441,7 @@ class PodsAPI {
 
 		pods_cache_clear( true );
 
-		pods_transient_set( 'pods_flush_rewrites', 1 );
+		pods_transient_set( 'pods_flush_rewrites', 1, WEEK_IN_SECONDS );
 
 		do_action( 'pods_cache_flushed' );
 	}

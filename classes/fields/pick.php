@@ -641,7 +641,7 @@ class PodsField_Pick extends PodsField {
 			do_action( 'pods_form_ui_field_pick_related_objects_predefined' );
 
 			if ( did_action( 'init' ) ) {
-				pods_transient_set( 'pods_related_objects', self::$related_objects );
+				pods_transient_set( 'pods_related_objects', self::$related_objects, WEEK_IN_SECONDS );
 			}
 		}//end if
 

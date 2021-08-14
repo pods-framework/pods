@@ -412,18 +412,19 @@ class PodsField {
 		$attributes = array_map( 'esc_attr', $attributes );
 
 		// Build DFV field data.
-		$data = array(
-			'htmlAttr'      => array(
+		$data = [
+			'htmlAttr'      => [
 				'id'         => $attributes['id'],
 				'class'      => $attributes['class'],
 				'name'       => $attributes['name'],
 				'name_clean' => $attributes['data-name-clean'],
-			),
+			],
 			'fieldType'     => $args->type,
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
 			'fieldEmbed'    => true,
-		);
+			'fieldValue'    => isset( $args->value ) ? $args->value : null,
+		];
 
 		/**
 		 * Filter Pods DFV field data to further customize functionality.

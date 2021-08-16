@@ -2883,7 +2883,7 @@ function pods_session_auto_start( $check_constant_only = false ) {
 		return null;
 	}
 
-	$auto_start = pods_get_setting( 'session_auto_start', false );
+	$auto_start = pods_get_setting( 'session_auto_start', 'auto' );
 
 	// Check for "auto" string and return that.
 	if ( 'auto' === $auto_start ) {

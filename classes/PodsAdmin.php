@@ -1925,6 +1925,12 @@ class PodsAdmin {
 	 * Get settings administration view
 	 */
 	public function admin_settings() {
+		/**
+		 * Allow hooking into our settings page to set up hooks.
+		 *
+		 * @since TBD
+		 */
+		do_action( 'pods_admin_settings_init' );
 
 		// Add our custom callouts.
 		add_action( 'pods_admin_after_settings', array( $this, 'admin_manage_callouts' ) );

@@ -1,5 +1,6 @@
 <?php
 
+use Pods\Admin\Settings;
 use Pods\Whatsit\Pod;
 
 /**
@@ -2900,6 +2901,22 @@ class PodsAdmin {
 	 * @return array Debug info with Pods-specific debug info added.
 	 */
 	public function add_debug_information( $info ) {
+		$auto_start = pods_session_auto_start();
+
+		if ( 'auto' !== $auto_start ) {
+			// Turn boolean into 0/1.
+			$auto_start = (int) $auto_start;
+		}
+
+		// Turn into a string.
+		$auto_start = (string) $auto_start;
+
+		$settings = tribe( Settings::class );
+
+		$fields = $settings->get_setting_fields();
+
+		$auto_start = pods_v( $auto_start, $fields['session_auto_start']['data'], __( 'Unknown', 'pods' ) );
+
 		$info['pods'] = [
 			'label'       => 'Pods',
 			'description' => __( 'Debug information for Pods installations.', 'pods' ),
@@ -3012,9 +3029,13 @@ class PodsAdmin {
 					'label' => __( 'Pods Shortcode Allow Evaluate Tags' ),
 					'value' => ( pods_shortcode_allow_evaluate_tags() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
-				'pods-session-auto-start'            => [
-					'label' => __( 'Pods Session Auto Start' ),
-					'value' => ( pods_session_auto_start() ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				'pods-sessions'                      => [
+					'label' => __( 'Pods Sessions' ),
+					'value' => $auto_start,
+				],
+				'pods-can-use-sessions'              => [
+					'label' => __( 'Pods Can Use Sessions' ),
+					'value' => ( pods_can_use_sessions( true ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
 				],
 			],
 		];

@@ -3,6 +3,7 @@
  * @package Pods\Global\Functions\General
  */
 
+use Pods\Admin\Settings;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
@@ -2835,14 +2836,113 @@ function pods_reserved_keywords() {
 }
 
 /**
- * Determine if Session Auto Start is enabled
+ * Get the value for a Pods setting.
  *
- * @since 2.7.17
+ * @since TBD
  *
- * @return bool
+ * @param string $setting_name The setting name.
+ * @param null   $default      The default value if the setting is not yet set.
+ *
+ * @return mixed The setting value.
  */
-function pods_session_auto_start() {
-	return defined( 'PODS_SESSION_AUTO_START' ) && PODS_SESSION_AUTO_START;
+function pods_get_setting( $setting_name, $default = null ) {
+	$settings = tribe( Settings::class );
+
+	return $settings->get_setting( $setting_name, $default );
+}
+
+/**
+ * Update the value for a Pods setting.
+ *
+ * @since TBD
+ *
+ * @param string $setting_name  The setting name.
+ * @param mixed  $setting_value The setting value.
+ */
+function pods_update_setting( $setting_name, $setting_value ) {
+	$settings = tribe( Settings::class );
+
+	$settings->update_setting( $setting_name, $setting_value );
+}
+
+/**
+ * Determine if Session Auto Start is enabled.
+ *
+ * @param bool $check_constant_only Whether to only check the constant.
+ *
+ * @since TBD
+ *
+ * @return bool|string|null Boolean if it is set to on or off, "auto" if set to auto, and null if $check_constant_only and constant is not set.
+ */
+function pods_session_auto_start( $check_constant_only = false ) {
+	if ( defined( 'PODS_SESSION_AUTO_START' ) ) {
+		return PODS_SESSION_AUTO_START;
+	}
+
+	if ( $check_constant_only ) {
+		return null;
+	}
+
+	$auto_start = pods_get_setting( 'session_auto_start', false );
+
+	// Check for "auto" string and return that.
+	if ( 'auto' === $auto_start ) {
+		return $auto_start;
+	}
+
+	return FILTER_VAR( $auto_start, FILTER_VALIDATE_BOOLEAN );
+}
+
+/**
+ * Determine if we can use PHP sessions.
+ *
+ * @since TBD
+ *
+ * @param bool $only_env_check Whether to ignore constant/option/logged in checks.
+ *
+ * @return bool Whether we can use sessions.
+ */
+function pods_can_use_sessions( $only_env_check = false ) {
+	// Maybe check non-environment factors.
+	if ( ! $only_env_check ) {
+		// We do not need a session ID if there is a valid user logged in.
+		if ( is_user_logged_in() ) {
+			return false;
+		}
+
+		// Allow for bypassing Pods session auto-starting.
+		if ( ! pods_session_auto_start() ) {
+			return false;
+		}
+	}
+
+	if ( ! defined( 'PANTHEON_SESSIONS_ENABLED' ) || ! PANTHEON_SESSIONS_ENABLED ) {
+		// We aren't using Pantheon WP Native Sessions plugin so let's check if the normal session will work.
+
+		$save_path = session_save_path();
+
+		if ( ! function_exists( 'session_status' ) || PHP_SESSION_DISABLED === session_status() ) {
+			// Sessions are disabled.
+			return false;
+		}
+
+		if ( 0 === strpos( $save_path, 'tcp://' ) ) {
+			// Allow for non-file based sessions, like Memcache.
+			// This is OK, but we don't want to check if file_exists on next statement.
+		} elseif ( empty( $save_path ) || ! @file_exists( $save_path ) || ! is_writable( $save_path ) ) {
+			// Check if session path exists and can be written to, avoiding PHP fatal errors.
+			return false;
+		}
+	}
+
+	// Check if session is already set.
+	// In separate if clause, to also check for non-file based sessions.
+	if ( ! function_exists( 'session_status' ) || PHP_SESSION_ACTIVE === session_status() ) {
+		return false;
+	}
+
+	// Allow sessions.
+	return true;
 }
 
 /**
@@ -2854,44 +2954,11 @@ function pods_session_auto_start() {
  * @return boolean Whether the session was started.
  */
 function pods_session_start() {
-	$save_path = session_save_path();
-
 	if ( false !== headers_sent() ) {
 		// Check if headers were sent.
 		return false;
-	} elseif ( false !== is_user_logged_in() ) {
-		// We do not need a session ID if there is a valid user logged in
+	} elseif ( ! pods_can_use_sessions() ) {
 		return false;
-	} elseif ( ! pods_session_auto_start() ) {
-		// Allow for bypassing Pods session autostarting.
-		return false;
-	} elseif ( ! defined( 'PANTHEON_SESSIONS_ENABLED' ) || ! PANTHEON_SESSIONS_ENABLED ) {
-		// We aren't using Pantheon WP Native Sessions plugin so let's check if the normal session will work.
-
-		if ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
-			// Sessions are disabled.
-			return false;
-		} elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
-			// Allow for non-file based sessions, like Memcache.
-			// This is OK, but we don't want to check if file_exists on next statement.
-		} elseif ( empty( $save_path ) || ! @file_exists( $save_path ) || ! is_writable( $save_path ) ) {
-			// Check if session path exists and can be written to, avoiding PHP fatal errors.
-			return false;
-		}
-	}
-
-	// Check if session is already set.
-	// In separate if clause, to also check for non-file based sessions.
-	if ( function_exists( 'session_status' ) ) {
-		// PHP 5.4+.
-		if ( PHP_SESSION_ACTIVE === session_status() ) {
-			return false;
-		}
-	} else {
-		// PHP prior to 5.4.
-		if ( '' !== pods_session_id() ) {
-			return false;
-		}
 	}
 
 	// Start session
@@ -2903,14 +2970,14 @@ function pods_session_start() {
  *
  * @since 2.7.23
  *
- * @return string
+ * @return string The session ID.
  */
 function pods_session_id() {
-	if ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
+	if ( ! pods_can_use_sessions() ) {
 		return '';
 	}
 
-	if ( function_exists( 'session_status' ) && PHP_SESSION_DISABLED === session_status() ) {
+	if ( ! function_exists( 'session_status' ) || PHP_SESSION_DISABLED === session_status() ) {
 		// Sessions are disabled.
 		return '';
 	}

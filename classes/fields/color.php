@@ -73,7 +73,7 @@ class PodsField_Color extends PodsField {
 		// WP Color Picker for 3.5+
 		$field_type = 'color';
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 

@@ -5,19 +5,19 @@ import PropTypes from 'prop-types';
 import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-const BaseInput = ( props ) => {
-	const {
-		fieldConfig = {},
-		autoComplete = 'on',
-		maxLength,
-		placeholder,
-		onBlur,
-		onChange,
-		setValue,
-		type,
-		value,
-	} = props;
-
+const BaseInput = ( {
+	fieldConfig = {},
+	autoComplete = 'on',
+	maxLength,
+	placeholder,
+	onBlur,
+	onChange,
+	setValue,
+	type,
+	value,
+	setHasBlurred,
+	className,
+} ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
 		readonly: readOnly,
@@ -36,14 +36,20 @@ const BaseInput = ( props ) => {
 			name={ htmlAttributes.name || name }
 			// eslint-disable-next-line camelcase
 			data-name-clean={ htmlAttributes.name_clean }
-			className={ classnames( props.className, htmlAttributes.class ) }
+			className={ classnames( className, htmlAttributes.class ) }
 			placeholder={ placeholder }
 			maxLength={ -1 !== maxLength ? maxLength : undefined }
 			value={ type !== 'checkbox' ? value : undefined }
 			checked={ type === 'checkbox' ? toBool( value ) : undefined }
 			readOnly={ !! readOnly }
 			onChange={ onChange || handleChange }
-			onBlur={ onBlur }
+			onBlur={ ( event ) => {
+				setHasBlurred();
+
+				if ( onBlur ) {
+					onBlur( event );
+				}
+			} }
 			autoComplete={ autoCompleteValue }
 		/>
 	);
@@ -64,6 +70,7 @@ BaseInput.propTypes = {
 	maxLength: PropTypes.number,
 	placeholder: PropTypes.string,
 	autoComplete: PropTypes.string,
+	setHasBlurred: PropTypes.func.isRequired,
 };
 
 export default BaseInput;

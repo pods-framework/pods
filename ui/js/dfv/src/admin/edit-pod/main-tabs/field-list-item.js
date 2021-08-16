@@ -1,16 +1,21 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
+import React, { useState, useEffect } from 'react';
 import { omit } from 'lodash';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
-// WordPress dependencies
+/**
+ * WordPress dependencies
+ */
 import { Dashicon } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import SettingsModal from './settings-modal';
 
 import {
@@ -33,17 +38,15 @@ export const FieldListItem = ( props ) => {
 		field,
 		saveStatus,
 		saveMessage,
-		podSaveStatus,
-		index,
 		typeObject,
 		relatedObject,
 		editFieldPod,
 		saveField,
 		resetFieldSaveStatus,
-		moveField,
 		groupName,
 		groupLabel,
 		groupID,
+		hasMoved,
 		cloneField,
 		deleteField,
 	} = props;
@@ -58,7 +61,20 @@ export const FieldListItem = ( props ) => {
 	const required = ( field.required && '0' !== field.required ) ? true : false;
 
 	const [ showEditFieldSettings, setShowEditFieldSettings ] = useState( false );
-	const [ hasMoved, setHasMoved ] = useState( false );
+
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable( { id: id.toString() } );
+
+	const style = {
+		transform: CSS.Translate.toString( transform ),
+		transition,
+	};
 
 	const handleKeyPress = ( event ) => {
 		if ( event.charCode === ENTER_KEY ) {
@@ -108,70 +124,6 @@ export const FieldListItem = ( props ) => {
 		}
 	};
 
-	const fieldRef = useRef( null );
-
-	const [ { isDragging }, drag, preview ] = useDrag( {
-		item: {
-			...field,
-			type: `field-list-item${ groupName }`,
-		},
-		collect: ( monitor ) => ( {
-			isDragging: monitor.isDragging(),
-		} ),
-		end: () => setHasMoved( true ),
-	} );
-
-	const [ , drop ] = useDrop( {
-		accept: `field-list-item${ groupName }`,
-		hover( item, monitor ) {
-			if ( ! fieldRef.current ) {
-				return;
-			}
-
-			const dragIndex = item.index;
-			const hoverIndex = index;
-
-			// Don't replace items with themselves
-			if ( dragIndex === hoverIndex ) {
-				return;
-			}
-			// Determine rectangle on screen
-			const hoverBoundingRect = fieldRef.current.getBoundingClientRect();
-
-			// Get vertical middle
-			const hoverMiddleY =
-			( hoverBoundingRect.bottom - hoverBoundingRect.top ) / 2;
-
-			// Determine mouse position
-			const clientOffset = monitor.getClientOffset();
-
-			// Get pixels to the top
-			const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-
-			// Only perform the move when the mouse has crossed half of the items height
-			// When dragging downwards, only move when the cursor is below 50%
-			// When dragging upwards, only move when the cursor is above 50%
-			// Dragging downwards
-			if ( dragIndex < hoverIndex && hoverClientY < hoverMiddleY ) {
-				return;
-			}
-
-			// Dragging upwards
-			if ( dragIndex > hoverIndex && hoverClientY > hoverMiddleY ) {
-				return;
-			}
-
-			// Time to actually perform the action
-			moveField( item.id, hoverIndex );
-
-			// Note: we're mutating the monitor item here!
-			// Generally it's better to avoid mutations,
-			// but it's good here for the sake of performance
-			// to avoid expensive index searches.
-			item.index = hoverIndex;
-		},
-	} );
-
 	useEffect( () => {
 		// Close the Field Settings modal if we finished saving.
 		if ( SAVE_STATUSES.SAVE_SUCCESS === saveStatus ) {
@@ -179,25 +131,19 @@ export const FieldListItem = ( props ) => {
 		}
 	}, [ saveStatus ] );
 
-	useEffect( () => {
-		// Reset the "unsaved" indicator after the pod has been saved.
-		if ( SAVE_STATUSES.SAVE_SUCCESS === podSaveStatus ) {
-			setHasMoved( false );
-		}
-	}, [ podSaveStatus ] );
-
 	const classes = classnames(
 		'pods-field_wrapper',
-		{ 'pods-field_wrapper--unsaved': hasMoved }
+		isDragging && 'pods-field_wrapper--dragging',
+		hasMoved && 'pods-field_wrapper--unsaved',
 	);
 
 	return (
-		<div className="pods-field_outer-wrapper" ref={ drop }>
-			<div
-				className={ classes }
-				ref={ drag( preview( fieldRef ) ) }
-				style={ { opacity: isDragging ? 0.4 : 1 } }
-			>
+		<div
+			ref={ setNodeRef }
+			className="pods-field_outer-wrapper"
+			style={ style }
+		>
+			<div className={ classes }>
 				{ showEditFieldSettings && (
 					<SettingsModal
 						podType={ podType }
@@ -205,6 +151,7 @@ export const FieldListItem = ( props ) => {
 						optionsPod={ editFieldPod }
 						selectedOptions={ field }
 						title={ sprintf(
+							// @todo Zack: Make these into elements we can style the parent pod / group label differently.
 							/* translators: %1$s: Pod Label, %2$s Group Label, %3$s Field Label */
 							__( '%1$s > %2$s > %3$s > Edit Field', 'pods' ),
 							podLabel,
@@ -222,7 +169,14 @@ export const FieldListItem = ( props ) => {
 					/>
 				) }
 
-				<div className="pods-field pods-field_handle" ref={ drag }>
+				<div
+					className="pods-field pods-field_handle"
+					aria-label="drag"
+					// eslint-disable-next-line react/jsx-props-no-spreading
+					{ ...listeners }
+					// eslint-disable-next-line react/jsx-props-no-spreading
+					{ ...attributes }
+				>
 					<Dashicon icon="menu" />
 				</div>
 
@@ -302,42 +256,42 @@ FieldListItem.propTypes = {
 	field: FIELD_PROP_TYPE_SHAPE,
 	saveStatus: PropTypes.string,
 	saveMessage: PropTypes.string,
-	podSaveStatus: PropTypes.string.isRequired,
-	index: PropTypes.number.isRequired,
 	groupName: PropTypes.string.isRequired,
 	groupLabel: PropTypes.string.isRequired,
 	groupID: PropTypes.number.isRequired,
 	typeObject: PropTypes.object.isRequired,
 	relatedObject: PropTypes.object,
 	editFieldPod: PropTypes.object.isRequired,
+	hasMoved: PropTypes.bool.isRequired,
 
 	saveField: PropTypes.func.isRequired,
 	resetFieldSaveStatus: PropTypes.func.isRequired,
-	moveField: PropTypes.func.isRequired,
 	cloneField: PropTypes.func.isRequired,
 	deleteField: PropTypes.func.isRequired,
 };
 
 export default compose( [
 	withSelect( ( select, ownProps ) => {
-		const {
-			field,
-		} = ownProps;
+		const { field = {} } = ownProps;
 
 		const storeSelect = select( STORE_KEY_EDIT_POD );
 
-		const relatedObjects = storeSelect.getFieldRelatedObjects();
+		// Look up the relatedObject, to find the key for it, we may have to combine
+		// pick_object and pick_val
+		let relatedObject;
 
-		// eslint-disable-next-line camelcase
-		const relatedObject = ( 'pick' === field?.type && field?.pick_object )
-			? relatedObjects[ field.pick_object ]
-			: null;
+		if ( 'pick' === field.type && field.pick_object ) {
+			const key = field.pick_val
+				? `${ field.pick_object }-${ field.pick_val }`
+				: field.pick_object;
+
+			relatedObject = storeSelect.getFieldRelatedObjects()[ key ];
+		}
 
 		return {
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
 			relatedObject,
 			typeObject: storeSelect.getFieldTypeObject( field.type ),
-			podSaveStatus: storeSelect.getSaveStatus(),
 			saveStatus: storeSelect.getFieldSaveStatus( field.name ),
 			saveMessage: storeSelect.getFieldSaveMessage( field.name ),
 		};

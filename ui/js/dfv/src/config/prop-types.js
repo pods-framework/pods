@@ -138,6 +138,8 @@ export const FIELD_PROP_TYPE = {
 	avatar_show_edit_link: PropTypes.string,
 	avatar_type: PropTypes.string,
 	avatar_uploader: PropTypes.string,
+	avatar_upload_dir: PropTypes.string,
+	avatar_upload_dir_custom: PropTypes.string,
 	avatar_wp_gallery_columns: PropTypes.string,
 	avatar_wp_gallery_link: PropTypes.string,
 	avatar_wp_gallery_output: PropTypes.string,
@@ -154,7 +156,7 @@ export const FIELD_PROP_TYPE = {
 		PropTypes.shape( {
 			default: BOOLEAN_ALL_TYPES,
 			dependency: PropTypes.bool,
-			help: PropTypes.string,
+			help: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
 			label: PropTypes.string,
 			name: PropTypes.string,
 			type: PropTypes.string,
@@ -235,6 +237,8 @@ export const FIELD_PROP_TYPE = {
 	file_show_edit_link: PropTypes.string,
 	file_type: PropTypes.string,
 	file_uploader: PropTypes.string,
+	file_upload_dir: PropTypes.string,
+	file_upload_dir_custom: PropTypes.string,
 	file_wp_gallery_columns: PropTypes.string,
 	file_wp_gallery_link: PropTypes.string,
 	file_wp_gallery_output: PropTypes.string,
@@ -457,3 +461,42 @@ export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {
 	weight: PropTypes.number,
 	_locale: PropTypes.string,
 } );
+
+/**
+ * Components will extend this shape, but the base will guarantee
+ * the minimum props to render a Field Component (used by FieldWrapper).
+ */
+export const FIELD_COMPONENT_BASE_PROPS = {
+	/**
+	 * Function to add additional validation rules, beyond the
+	 * FieldWrapper defaults.
+	 */
+	addValidationRules: PropTypes.func.isRequired,
+
+	/**
+	 * Field config.
+	 */
+	fieldConfig: FIELD_PROP_TYPE_SHAPE.isRequired,
+
+	/**
+	 * Function to update the field's value on change.
+	 */
+	setValue: PropTypes.func.isRequired,
+
+	/**
+	 * Used to notify the FieldWrapper that an onBlur event has
+	 * occurred, for validating purposes.
+	 */
+	setHasBlurred: PropTypes.func.isRequired,
+
+	/**
+	 * Default type for `value` is a string, components may want to
+	 * override this with another specific type.
+	 */
+	value: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.bool,
+		PropTypes.number,
+		PropTypes.array,
+	] ),
+};

@@ -149,6 +149,7 @@
 		}
 		.stuffbox {
 			margin: 15px 15px 0 15px;
+			padding: 0 10px 10px 10px;
 			h3 {
 				font-size: 15px;
 				font-weight: normal;
@@ -223,18 +224,31 @@
 			&:first-child {
 				display: block;
 			}
-			.button-primary, .button-secondary {
+			a.button-primary,
+			a.button-secondary {
 				padding: 8px 15px;
 				border-radius: 14px 14px 14px 14px;
 			}
 			.pods-wizard-content {
+				padding: 20px;
+				margin-bottom: 25px;
 				background: #fff;
 				&.pods-wizard-grey {
 					background: #f9f9f9;
 				}
 				p {
-					padding: 20px;
 					margin-top: 0;
+				}
+				ul.normal {
+					margin: 15px 20px;
+					list-style: circle;
+					li {
+						margin: 0 0 8px 30px;
+						padding-left: 4px;
+						line-height: 22px;
+						font-size: 14px;
+						list-style: circle;
+					}
 				}
 			}
 			table {
@@ -323,6 +337,16 @@
 			}
 			#pods-wizard-options {
 				text-align: center;
+				.pods-wizard-options-list {
+					display: flex;
+					justify-content: space-evenly;
+
+					.pods-wizard-option {
+						&:first-child {
+							margin-right: 0 !important;
+						}
+					}
+				}
 				.pods-wizard-option {
 					width: 290px;
 					display: inline-block;
@@ -331,8 +355,8 @@
 						margin-right: 40px;
 					}
 					a {
-						height: 140px;
-						padding-top: 10px;
+						min-height: 140px;
+						padding: 10px 0;
 						display: block;
 						background: #f9f9f9;
 						position: relative;
@@ -404,12 +428,39 @@
 		clear: both;
 		@include multi-border-radius(0, 0, 8px, 8px);
 		@include vertical-gradient(#ededed, #f9f9f9);
-		.button {
+
+		&.pods-wizard-button-interface {
+			height: 45px;
+
+			#pods-wizard-toolbar {
+				height: 45px;
+				padding: 0 15px;
+				display: flex;
+				justify-content: space-between;
+				align-content: center;
+				align-items: center;
+			}
+		}
+
+		input.button,
+		a.button {
+			position: absolute;
+			top: 2px;
+		}
+
+		input.button {
+			&.button-primary {
+				right: 2px;
+			}
+			&.button-secondary {
+				left: 2px;
+			}
+		}
+
+		a.button {
 			display: block;
 			height: 35px;
 			width: 110px;
-			position: absolute;
-			top: 0;
 			line-height: 35px;
 			text-align: center;
 			font-weight: bold;

@@ -95,7 +95,7 @@ class Pods_Templates_Frontier {
 
 		$screen = get_current_screen();
 
-		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
+		if ( ! $screen || ! isset( $this->plugin_screen_hook_suffix ) ) {
 			return;
 		}
 
@@ -186,7 +186,7 @@ class Pods_Templates_Frontier {
 			$slug = $post->post_type;
 		} else {
 			$screen = get_current_screen();
-			if ( ! in_array( $screen->base, array( '_pods_template' ), true ) ) {
+			if ( ! $screen || ! in_array( $screen->base, array( '_pods_template' ), true ) ) {
 				return;
 			}
 

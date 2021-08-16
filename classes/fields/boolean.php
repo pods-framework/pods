@@ -132,7 +132,7 @@ class PodsField_Boolean extends PodsField {
 			$field_type = 'select';
 		}
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 			} else {
@@ -252,5 +252,39 @@ class PodsField_Boolean extends PodsField {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function build_dfv_field_item_data( $args ) {
+		if ( empty( $args->options['data'] ) || ! is_array( $args->options['data'] ) ) {
+			return [];
+		}
+
+		$boolean_data = $args->options['data'];
+
+		$value = 0;
+
+		// If we have values, let's cast them.
+		if ( isset( $args->value ) ) {
+			$value = (int) $args->value;
+		}
+
+		$data = [];
+
+		foreach ( $boolean_data as $key => $label ) {
+			$data[] = [
+				'id'        => esc_html( $key ),
+				'icon'      => '',
+				'name'      => wp_strip_all_tags( html_entity_decode( $label ) ),
+				'edit_link' => '',
+				'link'      => '',
+				'download'  => '',
+				'selected'  => (int) $key === $value,
+			];
+		}
+
+		return $data;
 	}
 }

@@ -19,10 +19,10 @@ $pre_callback      = isset( $pre_callback ) ? $pre_callback : null;
 $post_callback     = isset( $post_callback ) ? $post_callback : null;
 
 foreach ( $fields as $field ) {
-	$hidden_field = (boolean) pods_v( 'hidden', $field, false );
+	$hidden_field = (boolean) pods_v( 'hidden', $field, false ) || 'hidden' === $field['type'];
 
 	if (
-		! PodsForm::permission( $field['type'], $field['name'], $field, $fields, $pod, $id )
+		! pods_permission( $field )
 		|| ( ! pods_has_permissions( $field ) && $hidden_field )
 	) {
 		if ( ! $hidden_field ) {

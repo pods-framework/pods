@@ -46,7 +46,12 @@ class API {
 			'collections' => [],
 		] );
 
-		add_filter( 'block_categories', [ $this, 'register_block_collections' ] );
+		// The 'block_categories' filter has been deprecated in WordPress 5.8+ and replaced by 'block_categories_all'.
+		if ( pods_version_check( 'wp', '5.8-beta0' ) ) {
+			add_filter( 'block_categories_all', [ $this, 'register_block_collections' ] );
+		} else {
+			add_filter( 'block_categories', [ $this, 'register_block_collections' ] );
+		}
 
 		foreach ( $blocks as $block ) {
 			$block_name = $block['blockName'];
@@ -186,5 +191,24 @@ class API {
 		}
 
 		return $collections;
+	}
+
+	/**
+	 * Remove our legacy Pods widgets from the Legacy Widget block.
+	 *
+	 * @since TBD
+	 *
+	 * @param array $widgets An array of excluded widget-type IDs.
+	 *
+	 * @return array An array of excluded widget-type IDs.
+	 */
+	public function remove_legacy_widgets( $widgets ) {
+		$widgets[] = 'pods_widget_field';
+		$widgets[] = 'pods_widget_form';
+		$widgets[] = 'pods_widget_list';
+		$widgets[] = 'pods_widget_single';
+		$widgets[] = 'pods_widget_view';
+
+		return $widgets;
 	}
 }

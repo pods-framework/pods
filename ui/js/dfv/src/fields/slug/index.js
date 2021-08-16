@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import BaseInput from 'dfv/src/fields/base-input';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const Slug = ( props ) => {
 	const {
@@ -32,8 +32,7 @@ const Slug = ( props ) => {
 };
 
 Slug.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	setValue: PropTypes.func.isRequired,
+	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.string,
 };
 

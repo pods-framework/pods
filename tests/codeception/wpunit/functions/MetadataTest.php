@@ -147,6 +147,8 @@ class MetadataTest extends Pods_UnitTestCase {
 	}
 
 	public static function load_pods() {
+		pods_no_conflict_on( 'all' );
+
 		self::$image_ids = [
 			self::factory()->attachment->create(),
 			self::factory()->attachment->create(),
@@ -242,6 +244,8 @@ class MetadataTest extends Pods_UnitTestCase {
 				}
 			}
 		}
+
+		pods_no_conflict_off( 'all' );
 	}
 
 	public function test_created_pods() {

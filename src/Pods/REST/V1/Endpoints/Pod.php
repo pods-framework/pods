@@ -103,33 +103,21 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 				'validate_callback' => [ $this->validator, 'is_pod_id' ],
 			],
 			'include_fields' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 			'include_groups' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to include groups (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 			'include_group_fields' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to include group fields (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 		];
@@ -226,13 +214,9 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 				'validate_callback' => [ $this->validator, 'is_pod_id' ],
 			],
 			'delete_all' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to delete all content for Pod (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 		];

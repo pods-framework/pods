@@ -13,6 +13,8 @@ import Oembed from '..';
 const BASE_PROPS = {
 	value: '',
 	setValue: jest.fn(),
+	addValidationRules: jest.fn(),
+	setHasBlurred: jest.fn(),
 	fieldConfig: {
 		group: 'group/pod/_pods_pod/dfv-demo',
 		id: 'some_id',

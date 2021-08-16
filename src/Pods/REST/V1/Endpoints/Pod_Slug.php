@@ -27,23 +27,15 @@ class Pod_Slug extends Pod {
 				'required'    => true,
 			],
 			'include_fields' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 			'include_groups' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to include groups (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 		];
@@ -110,13 +102,9 @@ class Pod_Slug extends Pod {
 				'required'    => true,
 			],
 			'delete_all' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to delete all content for Pod (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 		];

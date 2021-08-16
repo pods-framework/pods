@@ -5,13 +5,13 @@ import { removep } from '@wordpress/autop';
 
 import { richTextNoLinks } from '../../../../blocks/src/config/html';
 
-export const HTMLField = ( props ) => {
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
+
+export const HTMLField = ( { fieldConfig } ) => {
 	const {
-		fieldConfig: {
-			name,
-			html_content: content,
-		},
-	} = props;
+		name,
+		html_content: content,
+	} = fieldConfig;
 
 	return (
 		<div
@@ -23,5 +23,7 @@ export const HTMLField = ( props ) => {
 		</div>
 	);
 };
+
+HTMLField.propTypes = FIELD_COMPONENT_BASE_PROPS;
 
 export default HTMLField;

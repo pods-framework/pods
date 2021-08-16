@@ -12,10 +12,7 @@ import CheckboxSelect from './checkbox-select';
 import ListSelect from './list-select';
 
 import { toBool } from 'dfv/src/helpers/booleans';
-import {
-	// PICK_OPTIONS,
-	FIELD_PROP_TYPE_SHAPE,
-} from 'dfv/src/config/prop-types';
+import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 import './pick.scss';
 
@@ -123,6 +120,7 @@ const Pick = ( props ) => {
 		},
 		setValue,
 		value,
+		setHasBlurred,
 	} = props;
 
 	const isSingle = 'single' === formatType;
@@ -136,6 +134,9 @@ const Pick = ( props ) => {
 		// We don't need to worry about limits if this isn't a multi-select field.
 		if ( isSingle ) {
 			setValue( newValue );
+
+			setHasBlurred( true );
+
 			return;
 		}
 
@@ -146,6 +147,8 @@ const Pick = ( props ) => {
 		const numericLimit = parseInt( limit, 10 ) || 0;
 
 		if ( isNaN( numericLimit ) || 0 === numericLimit || -1 === numericLimit ) {
+			setHasBlurred( true );
+
 			setValue( filteredNewValues );
 			return;
 		}
@@ -156,6 +159,8 @@ const Pick = ( props ) => {
 		}
 
 		setValue( filteredNewValues );
+
+		setHasBlurred( true );
 	};
 
 	useEffect( () => {
@@ -200,7 +205,12 @@ const Pick = ( props ) => {
 						const splitOption = unsplitOption.split( '|' );
 
 						// Return if malformed entry.
-						if ( splitOption.length !== 2 ) {
+						if ( 1 === splitOption.length ) {
+							return {
+								value: splitOption[ 0 ],
+								label: splitOption[ 0 ],
+							};
+						} else if ( 2 !== splitOption.length ) {
 							return null;
 						}
 
@@ -337,8 +347,7 @@ const Pick = ( props ) => {
 };
 
 Pick.propTypes = {
-	fieldConfig: FIELD_PROP_TYPE_SHAPE,
-	setValue: PropTypes.func.isRequired,
+	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.oneOfType( [
 		PropTypes.arrayOf( PropTypes.string ),
 		PropTypes.string,

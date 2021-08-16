@@ -29,20 +29,20 @@ foreach ( $groups as $g => $group ) {
 			unset( $group['fields'][ $k ] );
 
 			continue;
-		} elseif ( false === PodsForm::permission( $field['type'], $field['name'], $field['options'], $group['fields'], $pod, $pod->id() ) ) {
-			if ( pods_v_sanitized( 'hidden', $field['options'], false ) ) {
+		} elseif ( ! pods_permission( $field ) ) {
+			if ( (boolean) pods_v( 'hidden', $field['options'], false ) ) {
 				$group['fields'][ $k ]['type'] = 'hidden';
-			} elseif ( pods_v_sanitized( 'read_only', $field['options'], false ) ) {
+			} elseif ( (boolean) pods_v( 'read_only', $field['options'], false ) ) {
 				$group['fields'][ $k ]['readonly'] = true;
 			} else {
 				unset( $group['fields'][ $k ] );
 
 				continue;
 			}
-		} elseif ( ! pods_has_permissions( $field['options'] ) ) {
-			if ( pods_v_sanitized( 'hidden', $field['options'], false ) ) {
+		} elseif ( ! pods_has_permissions( $field ) ) {
+			if ( (boolean) pods_v( 'hidden', $field['options'], false ) ) {
 				$group['fields'][ $k ]['type'] = 'hidden';
-			} elseif ( pods_v_sanitized( 'read_only', $field['options'], false ) ) {
+			} elseif ( (boolean) pods_v( 'read_only', $field['options'], false ) ) {
 				$group['fields'][ $k ]['readonly'] = true;
 			}
 		}//end if

@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Wisdom_Tracker;
+
 /**
  * @package Pods
  */
@@ -80,13 +82,13 @@ class PodsInit {
 	public static $upgrade_needed = false;
 
 	/**
-	 * Freemius object.
+	 * Stats Tracking object.
 	 *
-	 * @since 1.0.0
+	 * @since TBD
 	 *
-	 * @var \Freemius
+	 * @var Wisdom_Tracker
 	 */
-	protected $freemius;
+	protected $stats_tracking;
 
 	/**
 	 * Singleton handling for a basic pods_init() request
@@ -154,7 +156,8 @@ class PodsInit {
 	 * @since 2.8
 	 */
 	public function maybe_set_common_lib_info() {
-		$common_version = file_get_contents( PODS_DIR . 'common/src/Tribe/Main.php' );
+		// Set up the path for /tribe-common/ loading.
+		$common_version = file_get_contents( PODS_DIR . 'tribe-common/src/Tribe/Main.php' );
 
 		// If there isn't a tribe-common version, bail.
 		if ( ! preg_match( "/const\s+VERSION\s*=\s*'([^']+)'/m", $common_version, $matches ) ) {
@@ -171,7 +174,7 @@ class PodsInit {
 		 */
 		if ( empty( $GLOBALS['tribe-common-info'] ) || version_compare( $GLOBALS['tribe-common-info']['version'], $common_version, '<' ) ) {
 			$GLOBALS['tribe-common-info'] = [
-				'dir'     => PODS_DIR . 'common/src/Tribe',
+				'dir'     => PODS_DIR . 'tribe-common/src/Tribe',
 				'version' => $common_version,
 			];
 
@@ -306,20 +309,22 @@ class PodsInit {
 			load_plugin_textdomain( 'pods' );
 		}
 
-		if ( ! defined( 'PODS_FREEMIUS' ) || PODS_FREEMIUS ) {
-			$this->freemius();
+		if ( ! defined( 'PODS_STATS_TRACKING' ) || PODS_STATS_TRACKING ) {
+			$this->stats_tracking( PODS_FILE, 'pods' );
 		}
-
 	}
 
 	/**
-	 * Handle Freemius SDK registration.
+	 * Handle Stats Tracking.
 	 *
-	 * @since 1.0.0
+	 * @since TBD
 	 *
-	 * @return \Freemius
+	 * @param string $plugin_file The plugin file.
+	 * @param string $plugin_slug The plugin slug.
+	 *
+	 * @return Wisdom_Tracker The Stats Tracking object.
 	 */
-	public function freemius() {
+	public function stats_tracking( $plugin_file, $plugin_slug ) {
 		// Admin only.
 		if (
 			! is_admin()
@@ -342,53 +347,50 @@ class PodsInit {
 			return;
 		}
 
-		if ( $this->freemius ) {
-			return $this->freemius;
+		$is_main_plugin = PODS_FILE === $plugin_file;
+
+		if ( $is_main_plugin && $this->stats_tracking ) {
+			return $this->stats_tracking;
 		}
 
-		require_once dirname( __DIR__ ) . '/vendor/freemius/wordpress-sdk/start.php';
+		$stats_tracking = new Wisdom_Tracker(
+			$plugin_file,
+			$plugin_slug,
+			'https://stats.pods.io',
+			[],
+			true,
+			true,
+			0
+		);
 
-		try {
-			$this->freemius = fs_dynamic_init( array(
-				'id'             => '5347',
-				'slug'           => 'pods',
-				'type'           => 'plugin',
-				'public_key'     => 'pk_737105490825babae220297e18920',
-				'is_premium'     => false,
-				'has_addons'     => false,
-				'has_paid_plans' => false,
-				'menu'           => array(
-					'slug'        => 'pods-settings',
-					'contact'     => false,
-					'support'     => false,
-					'affiliation' => false,
-					'account'     => true,
-					'pricing'     => false,
-					'addons'      => false,
-					'parent'      => array(
-						'slug' => 'pods',
-					),
-				),
-			) );
-
-			$this->override_freemius_strings();
-
-			add_filter( 'fs_plugins_api', array( $this, 'filter_freemius_plugins_api_data' ), 15 );
-
-			$this->freemius->add_filter( 'templates/add-ons.php', array( $this, 'filter_freemius_addons_html' ) );
-			$this->freemius->add_filter( 'download_latest_url', array( $this, 'get_freemius_action_link' ) );
-
+		if ( ! $is_main_plugin ) {
 			/**
-			 * Allow hooking into the Freemius registration after Pods has registered it's own Freemius.
+			 * Allow hooking after the Stats Tracking object is setup for the main plugin.
 			 *
-			 * @since 2.7.27
+			 * @since TBD
+			 *
+			 * @param Wisdom_Tracker $stats_tracking The Stats Tracking object.
+			 * @param string         $plugin_file    The plugin file.
 			 */
-			do_action( 'pods_freemius_after_init' );
-		} catch ( \Exception $exception ) {
-			return null;
+			do_action( 'pods_stats_tracking_after_init', $stats_tracking, $plugin_file );
 		}
 
-		return $this->freemius;
+		/**
+		 * Allow hooking after the Stats Tracking object is setup.
+		 *
+		 * @since TBD
+		 *
+		 * @param Wisdom_Tracker $stats_tracking The Stats Tracking object.
+		 * @param string         $plugin_file    The plugin file.
+		 */
+		do_action( 'pods_stats_tracking_object', $stats_tracking, $plugin_file );
+
+		// Maybe store the object.
+		if ( $is_main_plugin ) {
+			$this->stats_tracking = $stats_tracking;
+		}
+
+		return $stats_tracking;
 	}
 
 	/**
@@ -570,8 +572,9 @@ class PodsInit {
 	 * Load Pods Meta
 	 */
 	public function load_meta() {
+		self::$meta = pods_meta();
 
-		self::$meta = pods_meta()->core();
+		self::$meta->core();
 	}
 
 	/**
@@ -871,7 +874,7 @@ class PodsInit {
 
 			// DFV must be enqueued on the media library page for items in grid mode (#4785)
 			// and for posts due to the possibility that post-thumbnails are enabled (#4945)
-			if ( $screen->base && in_array( $screen->base, array( 'upload', 'post' ), true ) ) {
+			if ( $screen && $screen->base && in_array( $screen->base, array( 'upload', 'post' ), true ) ) {
 				wp_enqueue_script( 'pods-dfv' );
 			}
 		}
@@ -1240,7 +1243,7 @@ class PodsInit {
 					'supports'            => $cpt_supports,
 					// 'register_meta_box_cb' => array($this, 'manage_meta_box'),
 					// 'permalink_epmask' => EP_PERMALINK,
-					'has_archive'         => pods_v( 'has_archive_slug', $post_type, (boolean) pods_v( 'has_archive', $post_type, false ), true ),
+					'has_archive'         => ( (boolean) pods_v( 'has_archive', $post_type, false ) ) ? pods_v( 'has_archive_slug', $post_type, true, true ) : false,
 					'rewrite'             => $cpt_rewrite,
 					'query_var'           => ( false !== (boolean) pods_v( 'query_var', $post_type, true ) ? pods_v( 'query_var_string', $post_type, $post_type_name, true ) : false ),
 					'can_export'          => (boolean) pods_v( 'can_export', $post_type, true ),
@@ -1700,6 +1703,17 @@ class PodsInit {
 		}
 
 		do_action( 'pods_setup_content_types' );
+
+		if ( ! did_action( 'pods_init' ) ) {
+			/**
+			 * Allow hooking into after Pods has been setup.
+			 *
+			 * @since TBD
+			 *
+			 * @param PodsInit $init The PodsInit class object.
+			 */
+			do_action( 'pods_init', $this );
+		}
 	}
 
 	/**
@@ -1879,6 +1893,28 @@ class PodsInit {
 			$labels['items_list']                 = pods_v( 'items_list', $labels, sprintf( __( '%s list', 'pods' ), $label ), true );
 			$labels['filter_by_item']             = pods_v( 'filter_by_item', $labels, sprintf( __( 'Filter by %s', 'pods' ), $label ), true );
 		}//end if
+
+		// Clean up and sanitize all of the labels since WP will take them exactly as is.
+		$labels = array_map( static function( $label ) {
+			/*
+			 * Notes to our future selves:
+			 *
+			 * 1. strip_tags() doesn't remove content within style/script tags
+			 * 2. wp_kses_post() is very heavy
+			 * 3. htmlspecialchars() is not enough on it's own and leaves open JS based issues
+			 * 4. we must use html_entity_decode() to ensure potential unsavory HTML is cleaned up properly
+			 * 5. the below code is safe against double entity attacks
+			 */
+
+			// Ensure we use special characters to prevent further entity exposure.
+			return htmlspecialchars(
+				// Remove HTML tags and strip script/style tag contents.
+				wp_strip_all_tags(
+					// Decode potential entities at the first level to so HTML tags can be removed.
+					htmlspecialchars_decode( $label )
+				)
+			);
+		}, $labels );
 
 		$args['labels'] = $labels;
 
@@ -2169,6 +2205,7 @@ class PodsInit {
 
 		$ran = true;
 
+		tribe_register_provider( \Pods\Service_Provider::class );
 		tribe_register_provider( \Pods\Admin\Service_Provider::class );
 		tribe_register_provider( \Pods\Blocks\Service_Provider::class );
 		tribe_register_provider( \Pods\Integrations\Service_Provider::class );

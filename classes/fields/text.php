@@ -137,7 +137,7 @@ class PodsField_Text extends PodsField {
 
 		$is_read_only = (boolean) pods_v( 'read_only', $options, false );
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( $is_read_only ) {
 				$options['readonly'] = true;
 			} else {
@@ -178,7 +178,7 @@ class PodsField_Text extends PodsField {
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			if ( 0 < strlen( $value ) && '' === $check ) {
+			if ( '' !== $value && '' === $check ) {
 				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}

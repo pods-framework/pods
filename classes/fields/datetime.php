@@ -289,7 +289,7 @@ class PodsField_DateTime extends PodsField {
 
 		$is_read_only = (boolean) pods_v( 'read_only', $options, false );
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( $is_read_only ) {
 				$options['readonly'] = true;
 
@@ -867,6 +867,9 @@ class PodsField_DateTime extends PodsField {
 				's' => 'ss',
 				// Microsecond.
 				'u' => 'c',
+				// Timezone.
+				'O' => 'z',
+				'P' => 'Z',
 			);
 
 			if ( version_compare( PHP_VERSION, '7.0.0' ) >= 0 ) {

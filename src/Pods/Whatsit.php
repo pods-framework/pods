@@ -545,10 +545,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @param string     $arg     Argument name.
 	 * @param mixed|null $default Default to use if not set.
+	 * @param bool       $strict  Whether to check only normal arguments and not special arguments.
 	 *
 	 * @return null|mixed Argument value, or null if not set.
 	 */
-	public function get_arg( $arg, $default = null ) {
+	public function get_arg( $arg, $default = null, $strict = false ) {
 		$arg = (string) $arg;
 
 		$special_args = [
@@ -565,7 +566,17 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			return $this->{$special_args[ $arg ]}();
 		}
 
+		// Enforce lowercase 'id' argument usage.
+		if ( 'ID' === $arg ) {
+			$arg = 'id';
+		}
+
 		if ( ! isset( $this->args[ $arg ] ) ) {
+			// Maybe only return the default if we need a strict argument.
+			if ( $strict ) {
+				return $default;
+			}
+
 			$table_info_fields = [
 				'object_name',
 				'object_hierarchical',
@@ -638,9 +649,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'table_info',
 		];
 
-		if ( 'options' === $arg ) {
-			$value = [];
-
+		if ( 'options' === $arg && is_array( $value ) ) {
 			foreach ( $value as $real_arg => $real_value ) {
 				$this->set_arg( $real_arg, $real_value );
 			}
@@ -669,6 +678,17 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		$this->args[ $arg ] = $value;
+	}
+
+	/**
+	 * Override table info when it needs to be set, for fields for example.
+	 *
+	 * @since TBD
+	 *
+	 * @param array $table_info The table information to be referenced by this object.
+	 */
+	public function set_table_info( $table_info ) {
+		$this->_table_info = $table_info;
 	}
 
 	/**
@@ -721,12 +741,36 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
-	 * Get object arguments.
+	 * Get list of object arguments.
 	 *
-	 * @return array Object arguments.
+	 * @return arra List of object arguments.
 	 */
 	public function get_args() {
 		return $this->args;
+	}
+
+	/**
+	 * Get list of clean object arguments.
+	 *
+	 * @return array List of clean object arguments.
+	 */
+	public function get_clean_args() {
+		$args = $this->args;
+
+		$excluded_args = [
+			'object_type',
+			'storage_type',
+			'parent',
+			'group',
+		];
+
+		foreach ( $excluded_args as $excluded_arg ) {
+			if ( isset( $args[ $excluded_arg ] ) ) {
+				unset( $args[ $excluded_arg ] );
+			}
+		}
+
+		return $args;
 	}
 
 	/**
@@ -959,6 +1003,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return array Table information for object.
 	 */
 	public function get_table_info() {
+		if ( null !== $this->_table_info ) {
+			return $this->_table_info;
+		}
+
 		return [];
 	}
 
@@ -989,6 +1037,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'include_groups'        => true,
 			'include_group_fields'  => true,
 			'include_fields'        => true,
+			'include_field_data'    => false,
 			'include_object_fields' => false,
 			'include_table_info'    => false,
 			'assoc_keys'            => false,
@@ -1000,9 +1049,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		if ( $args['include_groups'] ) {
 			$data['groups'] = $this->get_export_for_items( $this->get_groups(), [
-				'include_groups' => false,
-				'include_fields' => $args['include_group_fields'],
-				'assoc_keys'     => $args['assoc_keys'],
+				'include_groups'     => false,
+				'include_fields'     => $args['include_group_fields'],
+				'include_field_data' => $args['include_field_data'],
+				'assoc_keys'         => $args['assoc_keys'],
 			] );
 
 			if ( ! $args['assoc_keys'] ) {
@@ -1011,7 +1061,9 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		if ( $args['include_fields'] ) {
-			$data['fields'] = $this->get_args_for_items( $this->get_fields() );
+			$data['fields'] = $this->get_args_for_items( $this->get_fields(), [
+				'include_field_data' => $args['include_field_data'],
+			] );
 
 			if ( ! $args['assoc_keys'] ) {
 				$data['fields'] = array_values( $data['fields'] );
@@ -1039,13 +1091,26 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @since 2.8
 	 *
 	 * @param Whatsit[] $items List of items.
+	 * @param array     $args  List of arguments to customize what is returned.
 	 *
 	 * @return array List of item args.
 	 */
-	protected function get_args_for_items( array $items ) {
-		return array_map( static function ( $object ) {
+	protected function get_args_for_items( array $items, array $args = [] ) {
+		return array_map( static function ( $object ) use ( $args ) {
 			/** @var Whatsit $object */
-			return $object->get_args();
+			$item_args = $object->get_args();
+
+			// Include related field data if needed.
+			if ( ! empty( $args['include_field_data'] ) ) {
+				/** @var Whatsit\Field $object */
+				$related_data = $object->get_related_object_data();
+
+				if ( is_array( $related_data ) ) {
+					$item_args['data'] = $related_data;
+				}
+			}
+
+			return $item_args;
 		}, $items );
 	}
 

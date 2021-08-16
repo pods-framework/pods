@@ -712,7 +712,6 @@ class Pods_Pages extends PodsComponent {
 	 * @return array|bool
 	 */
 	public static function exists( $uri = null ) {
-
 		if ( null === $uri ) {
 			$uri = parse_url( pods_current_url() );
 			$uri = $uri['path'];
@@ -985,7 +984,7 @@ class Pods_Pages extends PodsComponent {
 		}
 
 		if ( false !== self::$exists ) {
-			$permission = pods_permission( self::$exists['options'] );
+			$permission = pods_permission( self::$exists );
 
 			$permission = (boolean) apply_filters( 'pods_pages_permission', $permission, self::$exists );
 
@@ -1331,7 +1330,6 @@ function get_pod_page_uri() {
  * @since 1.7.5
  */
 function pod_page_exists( $uri = null ) {
-
 	return Pods_Pages::exists( $uri );
 }
 

@@ -34,13 +34,9 @@ class Group_Slug extends Group {
 				'required'    => true,
 			],
 			'include_fields' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 		];

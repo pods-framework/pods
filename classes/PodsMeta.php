@@ -2843,6 +2843,158 @@ class PodsMeta {
 	}
 
 	/**
+	 * Handle updating post meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function update_post_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'post_type' );
+
+		// WP core filter is weird and has meta value before meta key.
+		$meta_value = $args[3];
+		$meta_key   = $args[4];
+
+		// Switch order of meta key / meta value.
+		$args[3] = $meta_key;
+		$args[4] = $meta_value;
+
+		/**
+		 * Allow circumventing the update meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_update_post_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( [ $this, 'update_meta_by_id' ], $args );
+	}
+
+	/**
+	 * Handle updating user meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function update_user_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'user' );
+
+		// WP core filter is weird and has meta value before meta key.
+		$meta_value = $args[3];
+		$meta_key   = $args[4];
+
+		// Switch order of meta key / meta value.
+		$args[3] = $meta_key;
+		$args[4] = $meta_value;
+
+		/**
+		 * Allow circumventing the update meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_update_user_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( [ $this, 'update_meta_by_id' ], $args );
+	}
+
+	/**
+	 * Handle updating comment meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function update_comment_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'comment' );
+
+		// WP core filter is weird and has meta value before meta key.
+		$meta_value = $args[3];
+		$meta_key   = $args[4];
+
+		// Switch order of meta key / meta value.
+		$args[3] = $meta_key;
+		$args[4] = $meta_value;
+
+		/**
+		 * Allow circumventing the update meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_update_comment_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( [ $this, 'update_meta_by_id' ], $args );
+	}
+
+	/**
+	 * Handle updating term meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function update_term_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'term' );
+
+		// WP core filter is weird and has meta value before meta key.
+		$meta_value = $args[3];
+		$meta_key   = $args[4];
+
+		// Switch order of meta key / meta value.
+		$args[3] = $meta_key;
+		$args[4] = $meta_value;
+
+		/**
+		 * Allow circumventing the update meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_update_term_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( [ $this, 'update_meta_by_id' ], $args );
+	}
+
+	/**
 	 * @return mixed
 	 */
 	public function delete_post_meta() {
@@ -2930,6 +3082,126 @@ class PodsMeta {
 		}
 
 		return call_user_func_array( array( $this, 'delete_meta' ), $args );
+	}
+
+	/**
+	 * Handle deleting post meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function delete_post_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'post_type' );
+
+		/**
+		 * Allow circumventing the delete meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_delete_post_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( [ $this, 'delete_meta_by_id' ], $args );
+	}
+
+	/**
+	 * Handle deleting user meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function delete_user_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'user' );
+
+		/**
+		 * Allow circumventing the delete meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_delete_user_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( [ $this, 'delete_meta_by_id' ], $args );
+	}
+
+	/**
+	 * Handle deleting comment meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function delete_comment_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'comment' );
+
+		/**
+		 * Allow circumventing the delete meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_delete_comment_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( [ $this, 'delete_meta_by_id' ], $args );
+	}
+
+	/**
+	 * Handle deleting term meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return mixed
+	 */
+	public function delete_term_meta_by_id() {
+
+		$args = func_get_args();
+
+		array_unshift( $args, 'term' );
+
+		/**
+		 * Allow circumventing the delete meta handling by meta ID for Pods.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param null|bool $_null Whether to override the meta handling by Pods.
+		 * @param array     $args  The function arguments with the type added to the front.
+		 */
+		$_null = apply_filters( 'pods_meta_delete_term_meta_by_id', null, $args );
+
+		if ( null !== $_null ) {
+			return $_null;
+		}
+
+		return call_user_func_array( [ $this, 'delete_meta_by_id' ], $args );
 	}
 
 	/*
@@ -3283,6 +3555,38 @@ class PodsMeta {
 	}
 
 	/**
+	 * Handle updating the meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $object_type The object type.
+	 * @param null   $_null       The default value for the filter.
+	 * @param int    $meta_id     The meta ID.
+	 * @param string $meta_value  The meta value.
+	 * @param string $meta_key    The meta key.
+	 *
+	 * @return bool|int|null
+	 */
+	public function update_meta_by_id( $object_type, $_null = null, $meta_id = 0, $meta_key = '', $meta_value = '' ) {
+		$meta_type = 'post_type' === $object_type ? 'post' : $object_type;
+
+		// Get the original meta record.
+		$meta = get_metadata_by_mid( $meta_type, $meta_id );
+
+		// Stop overriding the saving process if the original meta record was not found.
+		if ( ! $meta ) {
+			return $_null;
+		}
+
+		$column = sanitize_key( $meta_type . '_id' );
+
+		// Get the object ID from the original meta record.
+		$object_id = $meta->{$column};
+
+		return $this->update_meta( $object_type, $_null, $object_id, $meta_key, $meta_value );
+	}
+
+	/**
 	 * @param        $object_type
 	 * @param null   $_null
 	 * @param int    $object_id
@@ -3329,6 +3633,36 @@ class PodsMeta {
 		}
 
 		return $_null;
+	}
+
+	/**
+	 * Handle delete the meta by meta ID.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $object_type The object type.
+	 * @param null   $_null       The default value for the filter.
+	 * @param int    $meta_id     The meta ID.
+	 *
+	 * @return bool|int|null
+	 */
+	public function delete_meta_by_id( $object_type, $_null = null, $meta_id = 0 ) {
+		$meta_type = 'post_type' === $object_type ? 'post' : $object_type;
+
+		// Get the original meta record.
+		$meta = get_metadata_by_mid( $meta_type, $meta_id );
+
+		// Stop overriding the saving process if the original meta record was not found.
+		if ( ! $meta ) {
+			return $_null;
+		}
+
+		$column = sanitize_key( $meta_type . '_id' );
+
+		// Get the object ID from the original meta record.
+		$object_id = $meta->{$column};
+
+		return $this->delete_meta( $object_type, $_null, $object_id, $meta->meta_key, $meta->meta_value );
 	}
 
 	/**

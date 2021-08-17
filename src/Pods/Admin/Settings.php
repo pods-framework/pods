@@ -2,7 +2,7 @@
 
 namespace Pods\Admin;
 
-use PodsForm;
+use Tribe__Main;
 
 /**
  * Settings specific functionality.
@@ -150,9 +150,9 @@ class Settings {
 	 * @return array List of filtered tabs.
 	 */
 	public function add_settings_tab( $tabs ) {
-		$tabs['settings'] = __( 'Settings', 'pods' );
-
-		return $tabs;
+		return Tribe__Main::array_insert_after_key( 'tools', $tabs, [
+			'settings' => __( 'Settings', 'pods' ),
+		] );
 	}
 
 }

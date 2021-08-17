@@ -34,6 +34,13 @@ if ( isset( $_POST['_pods_nonce'] ) && wp_verify_nonce( $_POST['_pods_nonce'], '
 			$value = '0';
 		}
 
+		$sanitize_callback = pods_v( 'sanitize_callback', $field, 'sanitize_text_field', true );
+
+		// Sanitize value if needed.
+		if ( is_callable( $sanitize_callback ) ) {
+			$value = $sanitize_callback( $value );
+		}
+
 		pods_update_setting( $field['name'], $value );
 	}
 

@@ -312,7 +312,22 @@ class DataTest extends Pods_UnitTestCase {
 	}
 
 	public function test_pods_clean_name() {
-		$this->markTestSkipped( 'not yet implemented' );
+		$this->assertEquals( '_test_field_name_', pods_clean_name( ' _Test field! name_ ' ) );
+		$this->assertEquals( '_test_field_name_', pods_clean_name( ' _Test field!  name_ ' ) );
+		$this->assertEquals( '_test_field__name_', pods_clean_name( ' _Test field! __name_ ' ) );
+		$this->assertEquals( '_test_field__name_', pods_clean_name( ' _Test_field!__name_ ' ) );
+		$this->assertEquals( 'test_field-name', pods_clean_name( ' Test field-name ' ) );
+		$this->assertEquals( 'test_field-name', pods_clean_name( ' Test field--name ' ) );
+
+		$this->assertEquals( 'Test_field_name', pods_clean_name( ' Test field! name ', false ) );
+		$this->assertEquals( 'Test_field_name', pods_clean_name( ' Test field!  name ', false ) );
+		$this->assertEquals( 'Test_field__name', pods_clean_name( ' Test field! __name ', false ) );
+		$this->assertEquals( 'Test_field__name', pods_clean_name( ' Test_field!__name',  false ) );
+
+		$this->assertEquals( 'test_field_name', pods_clean_name( ' _Test field! name_ ', true, true ) );
+		$this->assertEquals( 'test_field_name', pods_clean_name( ' _Test field!  name_ ', true, true ) );
+		$this->assertEquals( 'test_field__name', pods_clean_name( ' _Test field! __name_ ', true, true ) );
+		$this->assertEquals( 'test_field__name', pods_clean_name( ' _Test_field!__name_ ', true, true ) );
 	}
 
 	/**

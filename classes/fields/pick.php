@@ -457,13 +457,6 @@ class PodsField_Pick extends PodsField {
 				$pod_options[ $pod['name'] ] = $pod['label'] . ' (' . $pod['name'] . ')';
 			}
 
-			// Settings pods for relationships.
-			$_pods = PodsMeta::$settings;
-
-			foreach ( $_pods as $pod ) {
-				$pod_options[ $pod['name'] ] = $pod['label'] . ' (' . $pod['name'] . ')';
-			}
-
 			/**
 			 * Allow filtering the list of Pods to show in the list of relationship objects.
 			 *
@@ -483,18 +476,36 @@ class PodsField_Pick extends PodsField {
 				);
 			}
 
-			// Post Types for relationships.
-			$post_types = get_post_types();
+			/**
+			 * Prevent ability to extend core Pods content types.
+			 *
+			 * @param bool $ignore_internal Default is true, when set to false Pods internal content types can not be extended.
+			 *
+			 * @since 2.3.19
+			 */
+			$ignore_internal = apply_filters( 'pods_pick_ignore_internal', true );
+
+			// Public Post Types for relationships.
+			$post_types = get_post_types( [ 'public' => true ] );
 			asort( $post_types );
 
-			$ignore = array( 'attachment', 'revision', 'nav_menu_item' );
+			$ignored_post_types = [
+				'attachment',
+				'revision',
+				'nav_menu_item',
+				'custom_css',
+				'customize_changeset',
+				'oembed_cache',
+				'user_request',
+				'wp_template',
+			];
 
 			foreach ( $post_types as $post_type => $label ) {
-				if ( in_array( $post_type, $ignore, true ) || empty( $post_type ) ) {
+				if ( empty( $post_type ) || in_array( $post_type, $ignored_post_types, true ) ) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
-				} elseif ( 0 === strpos( $post_type, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
+				} elseif ( $ignore_internal && 0 === strpos( $post_type, '_pods_' ) ) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -509,27 +520,47 @@ class PodsField_Pick extends PodsField {
 				);
 			}
 
+			// Post Types for relationships.
+			$post_types = get_post_types( [ 'public' => false ] );
+			asort( $post_types );
+
+			foreach ( $post_types as $post_type => $label ) {
+				if ( empty( $post_type ) || in_array( $post_type, $ignored_post_types, true ) ) {
+					unset( $post_types[ $post_type ] );
+
+					continue;
+				} elseif ( $ignore_internal && 0 === strpos( $post_type, '_pods_' ) ) {
+					unset( $post_types[ $post_type ] );
+
+					continue;
+				}
+
+				$post_type = get_post_type_object( $post_type );
+
+				self::$related_objects[ 'post_type-' . $post_type->name ] = array(
+					'label'         => $post_type->label . ' (' . $post_type->name . ')',
+					'group'         => __( 'Post Types (Private)', 'pods' ),
+					'bidirectional' => true,
+				);
+			}
+
 			// Taxonomies for relationships.
 			$taxonomies = get_taxonomies();
 			asort( $taxonomies );
 
-			$ignore = array( 'nav_menu', 'post_format' );
+			$ignored_taxonomies = [
+				'nav_menu',
+				'post_format',
+				'wp_theme',
+			];
 
 			foreach ( $taxonomies as $taxonomy => $label ) {
-				/**
-				 * Prevent ability to extend core Pods content types.
-				 *
-				 * @param bool $ignore_internal Default is true, when set to false Pods internal content types can not be extended.
-				 *
-				 * @since 2.3.19
-				 */
-				$ignore_internal = apply_filters( 'pods_pick_ignore_internal', true );
 
-				if ( in_array( $taxonomy, $ignore, true ) || empty( $taxonomy ) ) {
+				if ( empty( $taxonomy ) || in_array( $taxonomy, $ignored_taxonomies, true ) ) {
 					unset( $taxonomies[ $taxonomy ] );
 
 					continue;
-				} elseif ( 0 === strpos( $taxonomy, '_pods_' ) && $ignore_internal ) {
+				} elseif ( $ignore_internal && 0 === strpos( $taxonomy, '_pods_' ) ) {
 					unset( $taxonomies[ $taxonomy ] );
 
 					continue;

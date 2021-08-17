@@ -935,7 +935,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	);
 
 	$default_other_tags = [
-		'blog_id'          => null
+		'blog_id'          => null,
 		'field'            => null,
 		'col'              => null,
 		'template'         => null,

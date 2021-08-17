@@ -34,7 +34,9 @@ foreach ( $fields as $field ) {
 
 	$value = '';
 
-	if ( is_callable( $value_callback ) ) {
+	if ( isset( $field['value_override'] ) && $field['value_override'] !== $value ) {
+		$value = $field['value_override'];
+	} elseif ( is_callable( $value_callback ) ) {
 		$value = $value_callback( $field['name'], $id, $field, $pod );
 	} elseif ( ! empty( $pod ) ) {
 		$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );

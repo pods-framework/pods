@@ -62,53 +62,52 @@ if ( isset( $_POST['_pods_nonce'] ) && wp_verify_nonce( $_POST['_pods_nonce'], '
 $do = 'save';
 ?>
 
-<form action="" method="post" class="pods-submittable pods-form pods-form-settings">
-	<div class="pods-submittable-fields pods-dependency">
-		<?php echo PodsForm::field( 'do', $do, 'hidden' ); ?>
-		<?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
+<div class="pods-submittable-fields pods-dependency">
+	<?php echo PodsForm::field( 'do', $do, 'hidden' ); ?>
+	<?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
 
-		<?php
-		foreach ( $fields as $key => $field ) {
-			// Auto set the field name.
-			if ( ! isset( $field['name'] ) ) {
-				$fields[ $key ]['name'] = $key;
-			}
-
-			// Skip if not hidden.
-			if ( 'hidden' !== $field['type'] ) {
-				continue;
-			}
-
-			// Output hidden field at top.
-			echo PodsForm::field( 'pods_field_' . $field['name'], pods_get_setting( $field['name'], pods_v( 'default', $field ) ), 'hidden' );
-
-			// Remove from list of fields to render below.
-			unset( $fields[ $key ] );
+	<?php
+	foreach ( $fields as $key => $field ) {
+		// Auto set the field name.
+		if ( ! isset( $field['name'] ) ) {
+			$fields[ $key ]['name'] = $key;
 		}
-		?>
-		<table class="form-table pods-manage-field">
-			<?php
-			$field_prefix      = 'pods_field_';
-			$field_row_classes = '';
-			$id                = '';
-			$value_callback    = static function( $field_name, $id, $field, $pod ) {
-				return pods_get_setting( $field_name, pods_v( 'default', $field ) );
-			};
 
-			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
-		?>
-		</table>
+		// Skip if not hidden.
+		if ( 'hidden' !== $field['type'] ) {
+			continue;
+		}
 
-		<p class="submit">
-			<input type="submit" name="submit" id="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Settings', 'pods' ); ?>">
-			<img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-		</p>
-	</div>
-</form>
+		// Output hidden field at top.
+		echo PodsForm::field( 'pods_field_' . $field['name'], pods_get_setting( $field['name'], pods_v( 'default', $field ) ), 'hidden' );
+
+		// Remove from list of fields to render below.
+		unset( $fields[ $key ] );
+	}
+	?>
+	<table class="form-table pods-manage-field">
+		<?php
+		$field_prefix      = 'pods_field_';
+		$field_row_classes = '';
+		$id                = '';
+		$value_callback    = static function( $field_name, $id, $field, $pod ) {
+			return pods_get_setting( $field_name, pods_v( 'default', $field ) );
+		};
+
+		pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
+	?>
+	</table>
+
+	<p class="submit">
+		<input type="submit" name="submit" id="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Settings', 'pods' ); ?>">
+		<img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
+	</p>
+</div>
 
 <script type="text/javascript">
 	jQuery( function ( $ ) {
 		$( document ).Pods( 'validate' );
 		$( document ).Pods( 'dependency', true );
+		$( document ).Pods( 'qtip', '.pods-submittable' );
 	} );
 </script>

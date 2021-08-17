@@ -1,6 +1,6 @@
 <div class="wrap pods-admin pods-admin--flex">
 	<div class="pods-admin__content-container">
-		<form action="" method="post">
+		<form action="" method="post" class="pods-submittable pods-form pods-form-settings">
 
 			<div id="icon-pods" class="icon32"><br /></div>
 

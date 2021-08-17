@@ -19,7 +19,6 @@ class Settings {
 	 * @since TBD
 	 */
 	public function hook() {
-		add_filter( 'pods_admin_settings_tabs', [ $this, 'add_settings_tab' ] );
 		add_action( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
 	}
 
@@ -29,8 +28,7 @@ class Settings {
 	 * @since TBD
 	 */
 	public function unhook() {
-		remove_filter( 'pods_admin_settings_tabs', [ $this, 'add_settings_tab' ] );
-		remove_action( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ] );
+		remove_action( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
 	}
 
 	/**
@@ -179,21 +177,6 @@ class Settings {
 		$setting_fields = $this->get_setting_fields();
 
 		return array_merge( $fields, $setting_fields );
-	}
-
-	/**
-	 * Add the official Settings tab.
-	 *
-	 * @since TBD
-	 *
-	 * @param array $tabs List of tabs to filter.
-	 *
-	 * @return array List of filtered tabs.
-	 */
-	public function add_settings_tab( $tabs ) {
-		return Tribe__Main::array_insert_after_key( 'tools', $tabs, [
-			'settings' => __( 'Settings', 'pods' ),
-		] );
 	}
 
 }

@@ -2866,6 +2866,19 @@ function pods_update_setting( $setting_name, $setting_value ) {
 }
 
 /**
+ * Update the settings for a Pods.
+ *
+ * @since TBD
+ *
+ * @param array $setting_values The list of settings to update, pass null as a value to remove it.
+ */
+function pods_update_settings( $setting_values ) {
+	$settings = tribe( Settings::class );
+
+	$settings->update_settings( $setting_values );
+}
+
+/**
  * Determine if Session Auto Start is enabled.
  *
  * @param bool $check_constant_only Whether to only check the constant.

@@ -20,6 +20,8 @@ if ( isset( $_POST['_pods_nonce'] ) && wp_verify_nonce( $_POST['_pods_nonce'], '
 
 	$params = pods_unslash( (array) $_POST );
 
+	$settings_to_save = [];
+
 	foreach ( $fields as $key => $field ) {
 		// Auto set the field name.
 		if ( ! isset( $field['name'] ) ) {
@@ -41,17 +43,18 @@ if ( isset( $_POST['_pods_nonce'] ) && wp_verify_nonce( $_POST['_pods_nonce'], '
 			$value = $sanitize_callback( $value );
 		}
 
-		pods_update_setting( $field['name'], $value );
+		$settings_to_save[ $field['name'] ] = $value;
 	}
 
-	$saved = true;
+	if ( $settings_to_save ) {
+		pods_update_settings( $settings_to_save );
 
-	$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), __( 'Settings', 'pods' ), $action );
-	$error   = sprintf( __( '<strong>Error:</strong> %1$s %2$s successfully.', 'pods' ), __( 'Settings', 'pods' ), $action );
+		$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), __( 'Settings', 'pods' ), $action );
 
-	if ( $saved ) {
 		pods_message( $message );
 	} else {
+		$error = sprintf( __( '<strong>Error:</strong> %1$s %2$s successfully.', 'pods' ), __( 'Settings', 'pods' ), $action );
+
 		pods_message( $error, 'error' );
 	}
 }

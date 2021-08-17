@@ -79,7 +79,48 @@ class Settings {
 			unset( $settings[ $setting_name ] );
 		}
 
-		update_option( self::OPTION_NAME, $settings, 'yes' );
+		$this->update_option( $settings );
+	}
+
+	/**
+	 * Update the settings for a Pods.
+	 *
+	 * @since TBD
+	 *
+	 * @param array $setting_values The list of settings to update, pass null as a value to remove it.
+	 */
+	public function update_settings( array $setting_values ) {
+		$settings = get_option( self::OPTION_NAME, [] );
+
+		if ( ! $settings ) {
+			$settings = [];
+		}
+
+		$settings = array_merge( $settings, $setting_values );
+
+		foreach ( $settings as $setting_name => $setting_value ) {
+			if ( null === $setting_value ) {
+				unset( $settings[ $setting_name ] );
+			}
+		}
+
+		$this->update_option( $settings );
+	}
+
+	/**
+	 * Handle saving the Pods settings to the option.
+	 *
+	 * @param array $settings The Pods settings to be saved.
+	 */
+	private function update_option( array $settings ) {
+		/**
+		 * Allow filtering whether Pods settings are set to autoload.
+		 *
+		 * @param string $autoload Whether Pods settings should be saved as autoload, set to 'yes' to autoload (default) and 'no' to not autoload.
+		 */
+		$autoload = apply_filters( 'pods_admin_settings_autoload', 'yes' );
+
+		update_option( self::OPTION_NAME, $settings, $autoload );
 	}
 
 	/**

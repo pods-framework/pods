@@ -23,6 +23,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 		$this->container->singleton( Pod::class, Pod::class );
 		$this->container->singleton( Group::class, Group::class );
 		$this->container->singleton( Field::class, Field::class );
+		$this->container->singleton( Settings::class, Settings::class );
 
 		$this->hooks();
 	}
@@ -33,6 +34,6 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	 * @since 2.8
 	 */
 	protected function hooks() {
-		// Nothing here for now.
+		add_action( 'pods_admin_settings_init', $this->container->callback( Settings::class, 'hook' ) );
 	}
 }

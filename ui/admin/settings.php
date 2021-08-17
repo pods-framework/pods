@@ -58,7 +58,7 @@
 			];
 
 			if ( in_array( $tab, $supported, true ) ) {
-				echo pods_view( PODS_DIR . 'ui/admin/settings-' . $tab . '.php' );
+				pods_view( PODS_DIR . 'ui/admin/settings-' . $tab . '.php' );
 			}
 
 			/**

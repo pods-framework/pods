@@ -2709,15 +2709,20 @@ class PodsField_Pick extends PodsField {
 			$page = (int) $params->page;
 		}
 
+		$autocomplete_formats = [
+			'autocomplete',
+			'list',
+		];
+
 		if ( ! isset( $params->query ) || '' === trim( $params->query ) ) {
 			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
 		} elseif ( empty( $pod ) || empty( $field ) || (int) $pod['id'] !== (int) $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
 			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
 		} elseif ( 'pick' !== $field['type'] || empty( $field['table_info'] ) ) {
 			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
-		} elseif ( 'single' === pods_v( static::$type . '_format_type', $field ) && 'autocomplete' !== pods_v( static::$type . '_format_single', $field ) ) {
+		} elseif ( 'single' === pods_v( static::$type . '_format_type', $field ) && ! in_array( pods_v( static::$type . '_format_single', $field ), $autocomplete_formats, true ) ) {
 			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
-		} elseif ( 'multi' === pods_v( static::$type . '_format_type', $field ) && 'autocomplete' !== pods_v( static::$type . '_format_multi', $field ) ) {
+		} elseif ( 'multi' === pods_v( static::$type . '_format_type', $field ) && ! in_array( pods_v( static::$type . '_format_multi', $field ), $autocomplete_formats, true ) ) {
 			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
 		}
 

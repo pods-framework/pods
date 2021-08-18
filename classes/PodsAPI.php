@@ -102,15 +102,9 @@ class PodsAPI {
 	public function __construct( $pod = null, $format = null ) {
 
 		if ( null !== $pod && 0 < strlen( (string) $pod ) ) {
-			if ( null !== $format ) {
-				$this->format = $format;
-
-				pods_deprecated( 'pods_api( $pod, $format )', '2.0', 'pods_api( $pod )' );
-			}
-
 			$pod = pods_clean_name( $pod );
 
-			$pod = $this->load_pod( array( 'name' => $pod ), false );
+			$pod = $this->load_pod( array( 'name' => $pod ) );
 
 			if ( ! empty( $pod ) ) {
 				$this->pod_data = $pod;
@@ -4639,51 +4633,6 @@ class PodsAPI {
 			$error_mode = $params->error_mode;
 		}
 
-		// @deprecated 2.0.0
-		if ( isset( $params->datatype ) ) {
-			pods_deprecated( '$params->pod instead of $params->datatype', '2.0' );
-
-			$params->pod = $params->datatype;
-
-			unset( $params->datatype );
-
-			if ( isset( $params->pod_id ) ) {
-				pods_deprecated( '$params->id instead of $params->pod_id', '2.0' );
-
-				$params->id = $params->pod_id;
-
-				unset( $params->pod_id );
-			}
-
-			if ( isset( $params->data ) && ! empty( $params->data ) && is_array( $params->data ) ) {
-				$check = current( $params->data );
-
-				if ( is_array( $check ) ) {
-					pods_deprecated( 'PodsAPI::save_pod_items', '2.0' );
-
-					return $this->save_pod_items( $params, $params->data );
-				}
-			}
-		}
-
-		// @deprecated 2.0.0
-		if ( isset( $params->tbl_row_id ) ) {
-			pods_deprecated( '$params->id instead of $params->tbl_row_id', '2.0' );
-
-			$params->id = $params->tbl_row_id;
-
-			unset( $params->tbl_row_id );
-		}
-
-		// @deprecated 2.0.0
-		if ( isset( $params->columns ) ) {
-			pods_deprecated( '$params->data instead of $params->columns', '2.0' );
-
-			$params->data = $params->columns;
-
-			unset( $params->columns );
-		}
-
 		if ( ! isset( $params->pod ) ) {
 			$params->pod = false;
 		}
@@ -5000,18 +4949,6 @@ class PodsAPI {
 					foreach ( $helpers as $helper ) {
 						if ( isset( $pod[ $helper ] ) && ! empty( $pod[ $helper ] ) ) {
 							${$helper} = explode( ',', $pod[ $helper ] );
-						}
-					}
-				}
-
-				if ( ! empty( $pre_save_helpers ) ) {
-					pods_deprecated( sprintf( __( 'Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead', 'pods' ), $params->pod ), '2.0' );
-
-					foreach ( $pre_save_helpers as $helper ) {
-						$helper = $this->load_helper( array( 'name' => $helper ) );
-
-						if ( false !== $helper ) {
-							eval( '?>' . $helper['code'] );
 						}
 					}
 				}
@@ -5557,21 +5494,6 @@ class PodsAPI {
 			} else {
 				$this->do_hook( 'post_edit_pod_item', $compact_pieces, $params->id );
 				$this->do_hook( "post_edit_pod_item_{$params->pod}", $compact_pieces, $params->id );
-			}
-
-			// Call any post-save helpers (if not bypassed)
-			if ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) {
-				if ( ! empty( $post_save_helpers ) ) {
-					pods_deprecated( sprintf( __( 'Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead', 'pods' ), $params->pod ), '2.0' );
-
-					foreach ( $post_save_helpers as $helper ) {
-						$helper = $this->load_helper( array( 'name' => $helper ) );
-
-						if ( false !== $helper && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
-							eval( '?>' . $helper['code'] );
-						}
-					}
-				}
 			}
 		}
 
@@ -6565,15 +6487,6 @@ class PodsAPI {
 
 		$params = (object) pods_sanitize( $params );
 
-		// @deprecated 2.0.0
-		if ( isset( $params->datatype ) ) {
-			pods_deprecated( __( '$params->pod instead of $params->datatype', 'pods' ), '2.0' );
-
-			$params->pod = $params->datatype;
-
-			unset( $params->datatype );
-		}
-
 		if ( null === pods_v( 'pod', $params, null, true ) ) {
 			return pods_error( __( '$params->pod is required', 'pods' ), $this );
 		}
@@ -7270,33 +7183,6 @@ class PodsAPI {
 
 		$params = (object) $params;
 
-		// @deprecated 2.0.0
-		if ( isset( $params->datatype_id ) || isset( $params->datatype ) || isset( $params->tbl_row_id ) ) {
-			if ( isset( $params->tbl_row_id ) ) {
-				pods_deprecated( __( '$params->id instead of $params->tbl_row_id', 'pods' ), '2.0' );
-				$params->id = $params->tbl_row_id;
-				unset( $params->tbl_row_id );
-			}
-
-			if ( isset( $params->pod_id ) ) {
-				pods_deprecated( __( '$params->id instead of $params->pod_id', 'pods' ), '2.0' );
-				$params->id = $params->pod_id;
-				unset( $params->pod_id );
-			}
-
-			if ( isset( $params->dataype_id ) ) {
-				pods_deprecated( __( '$params->pod_id instead of $params->datatype_id', 'pods' ), '2.0' );
-				$params->pod_id = $params->dataype_id;
-				unset( $params->dataype_id );
-			}
-
-			if ( isset( $params->datatype ) ) {
-				pods_deprecated( __( '$params->pod instead of $params->datatype', 'pods' ), '2.0' );
-				$params->pod = $params->datatype;
-				unset( $params->datatype );
-			}
-		}
-
 		if ( ! isset( $params->id ) ) {
 			return pods_error( __( 'Pod Item not found', 'pods' ), $this );
 		}
@@ -7356,18 +7242,6 @@ class PodsAPI {
 						}
 					}
 				}
-
-				if ( ! empty( $pre_delete_helpers ) ) {
-					pods_deprecated( sprintf( __( 'Pre-delete helpers are deprecated, use the action pods_pre_delete_pod_item_%s instead', 'pods' ), $params->pod ), '2.0' );
-
-					foreach ( $pre_delete_helpers as $helper ) {
-						$helper = $this->load_helper( array( 'name' => $helper ) );
-
-						if ( false !== $helper ) {
-							eval( '?>' . $helper['code'] );
-						}
-					}
-				}
 			}
 		}
 
@@ -7396,21 +7270,6 @@ class PodsAPI {
 			// Plugin hook
 			$this->do_hook( 'post_delete_pod_item', $params, $pod );
 			$this->do_hook( "post_delete_pod_item_{$params->pod}", $params, $pod );
-
-			// Call any post-save helpers (if not bypassed)
-			if ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) {
-				if ( ! empty( $post_delete_helpers ) ) {
-					pods_deprecated( sprintf( __( 'Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead', 'pods' ), $params->pod ), '2.0' );
-
-					foreach ( $post_delete_helpers as $helper ) {
-						$helper = $this->load_helper( array( 'name' => $helper ) );
-
-						if ( false !== $helper ) {
-							eval( '?>' . $helper['code'] );
-						}
-					}
-				}
-			}
 		}
 
 		pods_cache_clear( $params->id, 'pods_items_' . $params->pod );
@@ -10586,41 +10445,7 @@ class PodsAPI {
 			return $this->pod_data->get_arg( $supported_pods_object[ $name ] );
 		}
 
-		if ( ! isset( $this->deprecated ) ) {
-						$this->deprecated = new PodsAPI_Deprecated( $this );
-		}
-
-		$var = null;
-
-		if ( isset( $this->deprecated->{$name} ) ) {
-			pods_deprecated( "PodsAPI->{$name}", '2.0' );
-
-			$var = $this->deprecated->{$name};
-		} else {
-			pods_deprecated( "PodsAPI->{$name}", '2.0' );
-		}
-
-		return $var;
-	}
-
-	/**
-	 * Handle methods that have been deprecated
-	 *
-	 * @since 2.0.0
-	 */
-	public function __call( $name, $args ) {
-
-		$name = (string) $name;
-
-		if ( ! isset( $this->deprecated ) ) {
-						$this->deprecated = new PodsAPI_Deprecated( $this );
-		}
-
-		if ( method_exists( $this->deprecated, $name ) ) {
-			return call_user_func_array( array( $this->deprecated, $name ), $args );
-		} else {
-			pods_deprecated( "PodsAPI::{$name}", '2.0' );
-		}
+		return null;
 	}
 
 	/**

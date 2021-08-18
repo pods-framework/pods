@@ -3642,20 +3642,6 @@ class PodsData {
 			return $this->pod_data->get_arg( $supported_pods_object[ $name ] );
 		}
 
-		// Map deprecated properties to Pod properties.
-		$mapped = array(
-			'datatype' => 'pod',
-			'datatype_id' => 'pod_id',
-		);
-
-		if ( isset( $mapped[ $name ] ) ) {
-			pods_deprecated( "Pods->{$name}", '2.0', "Pods->{$mapped[$name]}" );
-
-			return $this->data->{$mapped[$name]};
-		}
-
-		pods_deprecated( "Pods->{$name}", '2.0' );
-
 		return null;
 	}
 

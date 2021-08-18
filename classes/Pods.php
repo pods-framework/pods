@@ -4298,18 +4298,6 @@ class Pods implements Iterator {
 			return pods_v( $name, $this->pod_data );
 		}
 
-		// Map deprecated properties to Pods\Whatsit\Pod properties.
-		$mapped = array(
-			'datatype' => 'pod',
-			'datatype_id' => 'pod_id',
-		);
-
-		if ( isset( $mapped[ $name ] ) ) {
-			pods_deprecated( "Pods->{$name}", '2.0', "Pods->{$mapped[$name]}" );
-
-			return $this->data->{$mapped[$name]};
-		}
-
 		return null;
 	}
 

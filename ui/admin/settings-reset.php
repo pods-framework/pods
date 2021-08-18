@@ -90,10 +90,10 @@ if ( ! empty( $old_version ) ) {
 		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All users will remain', 'pods' ); ?></li>
 		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All custom field values will remain', 'pods' ); ?></li>
 		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods plugin will remain activated', 'pods' ); ?></li>
-		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETED', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods settings will be reset to defaults', 'pods' ); ?></li>
-		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETED', 'pods' ); ?>:</strong> <?php esc_html_e( 'All Pod configurations will be deleted including Custom Post Types, Custom Taxonomies, Custom Settings Pages, and all custom field configurations', 'pods' ); ?></li>
-		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETED', 'pods' ); ?>:</strong> <?php esc_html_e( 'Relationship table (wp_podsrel) will be deleted (and all of the relationships)', 'pods' ); ?></li>
-		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETED', 'pods' ); ?>:</strong> <?php esc_html_e( 'Advanced Content Type tables will be deleted (and all of their data)', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods settings will be reset to defaults', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'All Pod configurations will be deleted including Custom Post Types, Custom Taxonomies, Custom Settings Pages, and all custom field configurations', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Relationship table (wp_podsrel) will be deleted (and all of the relationships)', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Advanced Content Type tables will be deleted (and all of their data)', 'pods' ); ?></li>
 	</ul>
 
 	<p class="submit">
@@ -113,11 +113,11 @@ if ( ! empty( $old_version ) ) {
 		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All media will remain', 'pods' ); ?></li>
 		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All users will remain', 'pods' ); ?></li>
 		<li>🆗 &nbsp;&nbsp;<strong><?php esc_html_e( 'KEEP', 'pods' ); ?>:</strong> <?php esc_html_e( 'All custom field values will remain', 'pods' ); ?></li>
-		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DEACTIVATED', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods plugin will be deactivated', 'pods' ); ?></li>
-		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETED', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods settings will be reset to defaults', 'pods' ); ?></li>
-		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETED', 'pods' ); ?>:</strong> <?php esc_html_e( 'All Pod configurations will be deleted including Custom Post Types, Custom Taxonomies, Custom Settings Pages, and all custom field configurations', 'pods' ); ?></li>
-		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETED', 'pods' ); ?>:</strong> <?php esc_html_e( 'Relationship table (wp_podsrel) will be deleted (and all of the relationships)', 'pods' ); ?></li>
-		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETED', 'pods' ); ?>:</strong> <?php esc_html_e( 'Advanced Content Type tables will be deleted (and all of their data)', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DEACTIVATE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods plugin will be deactivated', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Pods settings will be reset to defaults', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'All Pod configurations will be deleted including Custom Post Types, Custom Taxonomies, Custom Settings Pages, and all custom field configurations', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Relationship table (wp_podsrel) will be deleted (and all of the relationships)', 'pods' ); ?></li>
+		<li>❌ &nbsp;&nbsp;<strong><?php esc_html_e( 'DELETE', 'pods' ); ?>:</strong> <?php esc_html_e( 'Advanced Content Type tables will be deleted (and all of their data)', 'pods' ); ?></li>
 	</ul>
 
 	<p class="submit">

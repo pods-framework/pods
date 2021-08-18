@@ -1030,7 +1030,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 				restore_current_blog();
 			}
 
-			return '<p>' . esc_html__( 'Please provide a Pod name', 'pods' ) . '</p>';
+			return '<p>' . esc_html__( 'Pods embed error: Please provide a Pod name', 'pods' ) . '</p>';
 		}
 	}
 
@@ -1051,7 +1051,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			restore_current_blog();
 		}
 
-		return '<p>' . esc_html__( 'Please provide either a template or field name', 'pods' ) . '</p>';
+		return '<p>' . esc_html__( 'Pods embed error: Please provide either a template or field name', 'pods' ) . '</p>';
 	}
 
 	if ( ! $tags['use_current'] && ! isset( $id ) ) {
@@ -1099,7 +1099,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			restore_current_blog();
 		}
 
-		return '<p>' . esc_html__( 'Pod not found', 'pods' ) . '</p>';
+		return '<p>' . esc_html__( 'Pods embed error: Pod not found', 'pods' ) . '</p>';
 	}
 
 	$found = 0;
@@ -1257,7 +1257,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 				restore_current_blog();
 			}
 
-			return '<p>' . esc_html__( 'Pods shortcode error: Pods Page not found.', 'pods' ) . '</p>';
+			return '<p>' . esc_html__( 'Pods embed error: Pods Page not found.', 'pods' ) . '</p>';
 		}
 
 		$return = Pods_Pages::content( true, $pods_page );

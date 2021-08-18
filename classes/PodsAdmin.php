@@ -64,6 +64,9 @@ class PodsAdmin {
 		// Add our debug to Site Info.
 		add_filter( 'debug_information', array( $this, 'add_debug_information' ) );
 
+		// Add our status tests.
+		add_filter( 'site_status_tests', [ $this, 'site_status_tests' ] );
+
 		$this->rest_admin();
 
 	}
@@ -3051,6 +3054,71 @@ class PodsAdmin {
 		];
 
 		return $info;
+	}
+
+	/**
+	 * Add our site status tests.
+	 *
+	 * @since TBD
+	 *
+	 * @param array $tests The list of status tests.
+	 *
+	 * @return array The list of status tests.
+	 */
+	public function site_status_tests( $tests ) {
+		$plugin_search_url = 'plugin-install.php?tab=search&type=term&s=';
+
+		if ( is_multisite() && ! is_network_admin() ) {
+			$plugin_search_url = network_admin_url( $plugin_search_url );
+		} else {
+			$plugin_search_url = self_admin_url( $plugin_search_url );
+		}
+
+		if ( ! is_pods_alternative_cache_activated() ) {
+			$tests['direct']['pods_alternative_cache'] = [
+				'label' => __( 'Pods Alternative Cache', 'pods' ),
+				'test'  => static function () use ( $plugin_search_url ) {
+					return [
+						'label'       => __( 'The Pods Team recommends you install the Pods Alternative Cache plugin', 'pods' ),
+						'status'      => 'recommended',
+						'badge'       => [
+							'label' => __( 'Performance', 'pods' ),
+							'color' => 'blue',
+						],
+						'description' => sprintf( '<p>%s</p>', __( 'Pods Alternative Cache is usually useful for Pods installs that use Shared Hosting with limited Object Cache capabilities or limits.', 'pods' ) ),
+						'actions'     => sprintf( '<p><a href="%s">%s</a></p>', esc_url( $plugin_search_url . urlencode( 'Pods Alternative Cache' ) ), __( 'Install Pods Alternative Cache', 'pods' ) ),
+						'test'        => 'pods_alternative_cache',
+					];
+				},
+			];
+		}
+
+		// Check if any of the Pods Pro Page Builder Toolkit plugins are active.
+		$bb_active     = defined( 'FL_BUILDER_VERSION' );
+		$divi_active   = defined( 'ET_BUILDER_PRODUCT_VERSION' );
+		$oxygen_active = defined( 'CT_VERSION' );
+		$pods_pro_pbtk_active = class_exists( '\Pods_Pro\Page_Builder_Toolkit\Plugin' );
+
+		if ( ! $pods_pro_pbtk_active && ( $bb_active || $divi_active || $oxygen_active ) ) {
+			$tests['direct']['pods_pro_page_builder_toolkit'] = [
+				'label' => __( 'Pods Pro Page Builder Toolkit', 'pods' ),
+				'test'  => static function () {
+					return [
+						'label'       => __( 'The Pods Team recommends you use the Pods Pro Page Builder Toolkit by SKCDEV', 'pods' ),
+						'status'      => 'recommended',
+						'badge'       => [
+							'label' => __( 'Page Builder', 'pods' ),
+							'color' => 'blue',
+						],
+						'description' => sprintf( '<p>%s</p>', __( 'Pods Pro Page Builder Toolkit by SKCDEV integrates Pods directly with Beaver Builder Themer, Divi, and Oxygen Builder.', 'pods' ) ),
+						'actions'     => sprintf( '<p><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></p>', esc_url( 'https://pods-pro.skc.dev/?utm_source=pods_plugin_site_health_callout&utm_medium=link&utm_campaign=friends_of_pods_2021' ), __( 'Get Pods Pro by SKCDEV', 'pods' ) ),
+						'test'        => 'pods_pro_page_builder_toolkit',
+					];
+				},
+			];
+		}
+
+		return $tests;
 	}
 
 }

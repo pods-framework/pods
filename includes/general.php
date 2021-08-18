@@ -3140,3 +3140,23 @@ function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
 	// No field found.
 	return null;
 }
+
+function is_pods_alternative_cache_activated() {
+	return function_exists( 'pods_alternative_cache_init' );
+}
+
+function is_pods_alternative_cache_activated_test() {
+	$result = [
+		'label'       => __( 'You are using the Pods Team recommended Pods Alternative Cache plugin', 'pods' ),
+		'status'      => 'good',
+		'badge'       => [
+			'label' => __( 'Security' ),
+			'color' => 'blue',
+		],
+		'description' => sprintf( '<p>%s</p>', __( 'The Pods Alternative Cache plugin is useful to many who use Pods.' ) ),
+		'actions'     => sprintf( '<p><a href="%s">%s</a></p>', esc_url( admin_url( 'plugins.php' ) ), __( 'Manage your plugins' ) ),
+		'test'        => 'is_pods_alternative_cache_activated',
+	];
+
+	return $result;
+}

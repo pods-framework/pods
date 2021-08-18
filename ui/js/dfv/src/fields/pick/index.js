@@ -17,7 +17,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import SimpleSelect from './simple-select';
 import RadioSelect from './radio-select';
 import CheckboxSelect from './checkbox-select';
-import ListSelect from './list-select';
+import ListSelectValues from './list-select-values';
 
 import IframeModal from 'dfv/src/components/iframe-modal';
 
@@ -174,55 +174,46 @@ const Pick = ( props ) => {
 	const [ editedFieldItemData, setEditedFieldItemData ] = useState( fieldItemData );
 
 	useEffect( () => {
-		switch ( pickObject ) {
-			case 'custom-simple':
-				const unsplitOptions = pickCustomOptions.split( '\n' );
+		if ( 'custom-simple' !== pickObject ) {
+			return;
+		}
 
-				// Set an empty array if no entries or malformed.
-				if ( ! unsplitOptions.length ) {
-					setDataOptions( [] );
-					return;
+		const unsplitOptions = pickCustomOptions.split( '\n' );
+
+		// Set an empty array if no entries or malformed.
+		if ( ! unsplitOptions.length ) {
+			setDataOptions( [] );
+			return;
+		}
+
+		const optionEntries = unsplitOptions.map(
+			( unsplitOption ) => {
+				const splitOption = unsplitOption.split( '|' );
+
+				// Return if malformed entry.
+				if ( 1 === splitOption.length ) {
+					return {
+						value: splitOption[ 0 ],
+						label: splitOption[ 0 ],
+					};
+				} else if ( 2 !== splitOption.length ) {
+					return null;
 				}
 
-				const optionEntries = unsplitOptions.map(
-					( unsplitOption ) => {
-						const splitOption = unsplitOption.split( '|' );
+				return {
+					value: splitOption[ 0 ],
+					label: splitOption[ 1 ],
+				};
+			}
+		);
 
-						// Return if malformed entry.
-						if ( 1 === splitOption.length ) {
-							return {
-								value: splitOption[ 0 ],
-								label: splitOption[ 0 ],
-							};
-						} else if ( 2 !== splitOption.length ) {
-							return null;
-						}
+		// Filter out any options missing the value or label.
+		const filteredOptionEntries = optionEntries.filter(
+			( entry ) => entry.value && entry.label
+		);
 
-						return {
-							value: splitOption[ 0 ],
-							label: splitOption[ 1 ],
-						};
-					}
-				);
-
-				// Filter out any options missing the value or label.
-				const filteredOptionEntries = optionEntries.filter(
-					( entry ) => entry.value && entry.label
-				);
-
-				setDataOptions( filteredOptionEntries );
-				break;
-			// @todo add cases for taxonomies, etc and fall through?
-			case 'post-type':
-				// @todo get request working
-				setDataOptions( [] );
-				// @todo
-				break;
-			default:
-				// By default, the options are already loaded from `data`.
-				break;
-		}
-	}, [ pickObject ] );
+		setDataOptions( filteredOptionEntries );
+	}, [ pickObject, pickCustomOptions ] );
 
 	const setValueWithLimit = ( newValue ) => {
 		// We don't need to worry about limits if this isn't a multi-select field.
@@ -333,61 +324,82 @@ const Pick = ( props ) => {
 
 		if (
 			( isSingle && 'list' === formatSingle ) ||
-			( isMulti && 'list' === formatMulti )
-		) {
-			const formattedValue = ( Object.keys( dataOptions ).length && value )
-				? formatValuesForReactSelectComponent( value, dataOptions, editedFieldItemData, isMulti )
-				: undefined;
-
-			return (
-				<ListSelect
-					htmlAttributes={ htmlAttributes }
-					name={ name }
-					value={ formattedValue }
-					setValue={ setValueWithLimit }
-					options={ dataOptions }
-					fieldItemData={ editedFieldItemData }
-					setFieldItemData={ setEditedFieldItemData }
-					// translators: %s is the field label.
-					placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
-					isMulti={ isMulti }
-					limit={ parseInt( limit, 10 ) || 0 }
-					defaultIcon={ defaultIcon }
-					showIcon={ toBool( showIcon ) }
-					showViewLink={ toBool( showViewLink ) }
-					showEditLink={ toBool( showEditLink ) }
-					editIframeTitle={ editIframeTitle }
-					readOnly={ !! readOnly }
-					ajaxData={ ajaxData }
-				/>
-			);
-		}
-
-		if (
+			( isMulti && 'list' === formatMulti ) ||
 			( isSingle && 'autocomplete' === formatSingle ) ||
 			( isMulti && 'autocomplete' === formatMulti )
 		) {
-			const formattedValue = formatValuesForReactSelectComponent( value, dataOptions, editedFieldItemData, isMulti );
+			const isListSelect = ( isSingle && 'list' === formatSingle ) || ( isMulti && 'list' === formatMulti );
+
+			const formattedValue = formatValuesForReactSelectComponent(
+				value,
+				dataOptions,
+				editedFieldItemData,
+				isMulti,
+			);
 
 			return (
-				<AsyncSelect
-					htmlAttributes={ htmlAttributes }
-					name={ name }
-					defaultOptions={ dataOptions }
-					loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
-					value={ formattedValue }
-					// translators: %s is the field label.
-					placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
-					isMulti={ isMulti }
-					onChange={ ( newOption ) => {
-						if ( isMulti ) {
-							setValueWithLimit( newOption.map( ( selection ) => selection.value ) );
-						} else {
-							setValueWithLimit( newOption.value );
-						}
-					} }
-					readOnly={ !! readOnly }
-				/>
+				<>
+					<AsyncSelect
+						controlShouldRenderValue={ ! isListSelect }
+						defaultOptions={ dataOptions }
+						loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
+						value={ formattedValue }
+						// translators: %s is the field label.
+						placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+						isMulti={ isMulti }
+						onChange={ ( newOption ) => {
+							if ( isMulti ) {
+								setValueWithLimit( newOption.map(
+									( selection ) => selection.value )
+								);
+
+								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
+								// in our array of dataOptions, and we should add it, so we can keep track of
+								// the label.
+								// This may cause duplicates in dataOptions, but that shouldn't cause issues
+								// and will be faster than trying to merge the arrays.
+								setDataOptions( ( prevData ) => ( [
+									...prevData,
+									...newOption,
+								] ) );
+							} else {
+								setValueWithLimit( newOption.value );
+
+								setDataOptions( ( prevData ) => ( [
+									...prevData,
+									newOption,
+								] ) );
+							}
+						} }
+						readOnly={ !! readOnly }
+					/>
+
+					{ isListSelect ? (
+						<ListSelectValues
+							value={ formattedValue }
+							setValue={ setValueWithLimit }
+							fieldItemData={ editedFieldItemData }
+							setFieldItemData={ setEditedFieldItemData }
+							isMulti={ isMulti }
+							limit={ parseInt( limit, 10 ) || 0 }
+							defaultIcon={ defaultIcon }
+							showIcon={ toBool( showIcon ) }
+							showViewLink={ toBool( showViewLink ) }
+							showEditLink={ toBool( showEditLink ) }
+							editIframeTitle={ editIframeTitle }
+							readOnly={ !! readOnly }
+						/>
+					) : null }
+
+					{ formattedValue.map( ( selectedValue, index ) => (
+						<input
+							name={ `${ name }[${ index }]` }
+							key={ selectedValue.value }
+							type="hidden"
+							value={ selectedValue.value }
+						/>
+					) ) }
+				</>
 			);
 		}
 

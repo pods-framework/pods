@@ -1,6 +1,6 @@
 /* global ajaxurl */
 
-const loadAjaxOptions = ( ajaxData = {} ) => ( inputValue = '' ) => {
+const loadAjaxOptions = ( ajaxData = {} ) => async ( inputValue = '' ) => {
 	const data = {
 		_wpnonce: ajaxData?._wpnonce,
 		action: 'pods_relationship',
@@ -18,24 +18,30 @@ const loadAjaxOptions = ( ajaxData = {} ) => ( inputValue = '' ) => {
 		formData.append( key, data[ key ] );
 	} );
 
-	return new Promise(
-		( resolve ) => {
-			fetch(
-				ajaxurl + '?pods_ajax=1',
-				{
-					method: 'POST',
-					body: formData,
-				},
-			).then( ( results ) => {
-				const formattedResults = results.map( ( result ) => ( {
-					label: result?.name,
-					value: result?.id,
-				} ) );
+	try {
+		const response = await fetch(
+			ajaxurl + '?pods_ajax=1',
+			{
+				method: 'POST',
+				body: formData,
+			},
+		);
 
-				resolve( formattedResults );
-			} );
+		const resultBody = await response.json();
+
+		if ( ! resultBody?.results ) {
+			throw new Error( 'Invalid response.' );
 		}
-	);
+
+		const formattedResults = resultBody.results.map( ( result ) => ( {
+			label: result?.name,
+			value: result?.id,
+		} ) );
+
+		return formattedResults;
+	} catch ( e ) {
+		throw e;
+	}
 };
 
 export default loadAjaxOptions;

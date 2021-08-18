@@ -127,19 +127,10 @@ window.PodsDFV = {
 				let formattedValue = value;
 
 				if ( 'pick' === fieldConfig.type ) {
-					// @todo This may be handling a back-end bug, where some pick_object
-					// types get each fieldItemData 'selected' attribute set to false,
-					// even if they're actually selected.
-					if (
-						'custom-simple' === fieldConfig.pick_object &&
-						'multi' === fieldConfig.pick_format_type
-					) {
+					if ( 'multi' === fieldConfig.pick_format_type ) {
 						formattedValue = value
 							.map( ( option ) => option.selected ? option.id : null )
 							.filter( ( option ) => null !== option );
-					} else if ( 'multi' === fieldConfig.pick_format_type ) {
-						formattedValue = value
-							.map( ( option ) => option.id );
 					} else {
 						formattedValue = value.find( ( option ) => true === option.selected )?.id;
 					}

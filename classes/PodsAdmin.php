@@ -950,7 +950,7 @@ class PodsAdmin {
 		/**
 		 * Filters whether to extend internal Pods.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param bool $extend_internal Whether to extend internal Pods.
 		 */
@@ -1400,7 +1400,7 @@ class PodsAdmin {
 		/**
 		 * Allow filtering the admin config data.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param array  $config The admin config data.
 		 * @param Pod    $pod    The pod object.
@@ -1416,7 +1416,7 @@ class PodsAdmin {
 	/**
 	 * Get list of field related objects.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array List of field related objects.
 	 */
@@ -1440,7 +1440,7 @@ class PodsAdmin {
 	/**
 	 * Maybe migrate pod fields into a group (if they have no group).
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param \Pods\Whatsit\Pod $pod The pod object.
 	 *
@@ -1536,7 +1536,7 @@ class PodsAdmin {
 	/**
 	 * Get the global config for Pods admin.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param null|\Pods\Whatsit $pod
 	 *
@@ -1620,7 +1620,7 @@ class PodsAdmin {
 	/**
 	 * Convert the tabs and their options to groups/fields in the collection storage.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array  $tabs    List of registered tabs.
 	 * @param array  $options List of tab options.
@@ -1746,7 +1746,7 @@ class PodsAdmin {
 	/**
 	 * Setup field for backwards compatibility tabs to groups layer.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array $args {
 	 * 		The field arguments.
@@ -1942,7 +1942,7 @@ class PodsAdmin {
 		/**
 		 * Allow hooking into our settings page to set up hooks.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 */
 		do_action( 'pods_admin_settings_init' );
 
@@ -3059,7 +3059,7 @@ class PodsAdmin {
 	/**
 	 * Add our site status tests.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array $tests The list of status tests.
 	 *

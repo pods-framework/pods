@@ -11,7 +11,7 @@ use Pods\Whatsit\Object_Field;
  *
  * @property string $value Value of field.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Value_Field implements \ArrayAccess {
 

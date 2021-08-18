@@ -9,7 +9,7 @@ use Pods\Whatsit\Store;
 /**
  * Collection class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Collection extends Storage {
 
@@ -61,7 +61,7 @@ class Collection extends Storage {
 		/**
 		 * Filter the maximum number of posts to get for post type storage.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param int $limit
 		 *

@@ -36,7 +36,7 @@ use Pods\Whatsit\Store;
  * @method string|null get_group_description()
  * @method string|null get_group_type()
  *
- * @since 2.8
+ * @since 2.8.0
  */
 abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
@@ -683,7 +683,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Override table info when it needs to be set, for fields for example.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array $table_info The table information to be referenced by this object.
 	 */
@@ -1088,7 +1088,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Get args for items in an array.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param Whatsit[] $items List of items.
 	 * @param array     $args  List of arguments to customize what is returned.
@@ -1117,7 +1117,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Get export for items in an array.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param Whatsit[] $items List of items.
 	 * @param array     $args  List of export arguments.

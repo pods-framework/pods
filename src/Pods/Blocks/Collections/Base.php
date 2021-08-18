@@ -5,14 +5,14 @@ namespace Pods\Blocks\Collections;
 /**
  * Block Collection functionality class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 abstract class Base {
 
 	/**
 	 * Register the block collection with Pods.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 */
 	public function register_with_pods() {
 		$collection = $this->block_collection();
@@ -29,7 +29,7 @@ abstract class Base {
 	/**
 	 * Get the name/slug of this block collection.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return string
 	 */
@@ -40,7 +40,7 @@ abstract class Base {
 	/**
 	 * Get block collection configuration to register with Pods.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array Block collection configuration.
 	 */

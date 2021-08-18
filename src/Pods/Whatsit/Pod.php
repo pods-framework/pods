@@ -7,7 +7,7 @@ use Pods\Whatsit;
 /**
  * Pod class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Pod extends Whatsit {
 

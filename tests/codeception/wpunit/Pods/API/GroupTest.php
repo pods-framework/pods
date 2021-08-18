@@ -78,7 +78,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_group_with_empty_params() {
@@ -92,7 +92,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_group_with_no_group_name() {
@@ -108,7 +108,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_group_with_pod_id() {
@@ -131,7 +131,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_group_with_pod_id_and_rename() {
@@ -165,7 +165,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::add_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_add_group_with_pod_id_using_existing_group_name() {
@@ -192,7 +192,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_group_with_pod_name() {
@@ -215,7 +215,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_group_with_pod_object() {
@@ -240,7 +240,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_group_with_pod_id() {
@@ -256,7 +256,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_group_with_pod_name() {
@@ -272,7 +272,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_group_with_pod_object() {
@@ -290,7 +290,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_group_with_id() {
@@ -305,7 +305,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_group_with_id_direct() {
@@ -318,7 +318,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_group_with_post_direct() {
@@ -331,7 +331,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_group
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_group_with_object_direct() {
@@ -345,7 +345,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_groups
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_groups_has_groups() {
@@ -374,7 +374,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_groups
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_groups_by_id() {
@@ -415,7 +415,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_groups
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_groups_by_args() {
@@ -447,7 +447,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_groups
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_groups_by_options() {
@@ -479,7 +479,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_groups
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_groups_by_where() {
@@ -517,7 +517,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_groups
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_groups_with_names() {
@@ -546,7 +546,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_groups
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_groups_with_names_ids() {
@@ -577,7 +577,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_groups
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_groups_with_ids() {
@@ -596,7 +596,7 @@ class GroupTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_groups
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_groups_with_count() {

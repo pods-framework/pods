@@ -7,7 +7,7 @@ use Tribe__REST__Messages_Interface as REST__Messages_Interface;
 /**
  * Class Messages
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Messages implements REST__Messages_Interface {
 
@@ -19,7 +19,7 @@ class Messages implements REST__Messages_Interface {
 	/**
 	 * Messages constructor.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function __construct() {
 		$this->messages = [
@@ -44,7 +44,7 @@ class Messages implements REST__Messages_Interface {
 	/**
 	 * Returns the localized message associated with the slug.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string $message_slug
 	 *
@@ -61,7 +61,7 @@ class Messages implements REST__Messages_Interface {
 	/**
 	 * Returns the associative array of all the messages handled by the class.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array An associative array in the `[ <slug> => <localized message> ]` format.
 	 */
@@ -72,7 +72,7 @@ class Messages implements REST__Messages_Interface {
 	/**
 	 * Prefixes a message slug with a common root.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string $message_slug
 	 *

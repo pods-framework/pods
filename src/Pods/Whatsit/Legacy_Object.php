@@ -7,7 +7,7 @@ use Pods\Whatsit;
 /**
  * Legacy Object class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Legacy_Object extends Whatsit {
 

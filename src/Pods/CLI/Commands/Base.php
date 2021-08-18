@@ -10,7 +10,7 @@ use WP_REST_Request;
 /**
  * Class Base
  *
- * @since 2.8
+ * @since 2.8.0
  */
 abstract class Base {
 
@@ -42,7 +42,7 @@ abstract class Base {
 	/**
 	 * Handle setup of things needed by command.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function hook() {
 		$this->add_commands();
@@ -51,7 +51,7 @@ abstract class Base {
 	/**
 	 * Add commands based on endpoint object.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function add_commands() {
 		// Permissions are relaxed for WP-CLI context.
@@ -133,7 +133,7 @@ abstract class Base {
 	/**
 	 * List items.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
@@ -147,7 +147,7 @@ abstract class Base {
 	/**
 	 * Add an item.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
@@ -161,7 +161,7 @@ abstract class Base {
 	/**
 	 * Get an item by ID.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
@@ -175,7 +175,7 @@ abstract class Base {
 	/**
 	 * Get an item by slug.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
@@ -189,7 +189,7 @@ abstract class Base {
 	/**
 	 * Update an item by ID.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
@@ -203,7 +203,7 @@ abstract class Base {
 	/**
 	 * Update an item by slug.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
@@ -217,7 +217,7 @@ abstract class Base {
 	/**
 	 * Delete an item by ID.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
@@ -231,7 +231,7 @@ abstract class Base {
 	/**
 	 * Delete an item by slug.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $args       List of positional arguments.
 	 * @param array $assoc_args List of associative arguments.
@@ -245,7 +245,7 @@ abstract class Base {
 	/**
 	 * Run endpoint method using args provided.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array         $args       List of positional arguments.
 	 * @param array         $assoc_args List of associative arguments.
@@ -335,7 +335,7 @@ abstract class Base {
 	/**
 	 * Get the list of arguments with JSON expanded if provided.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $assoc_args List of associative arguments.
 	 *
@@ -354,7 +354,7 @@ abstract class Base {
 	/**
 	 * Determine whether the args validated.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array         $args       List of positional arguments.
 	 * @param array         $assoc_args List of associative arguments.
@@ -418,7 +418,7 @@ abstract class Base {
 	/**
 	 * Determine whether the arg validates.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param mixed  $value CLI value provided.
 	 * @param array  $arg   REST API argument options.
@@ -490,7 +490,7 @@ abstract class Base {
 	/**
 	 * Get list of REST API arguments from endpoint.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string        $command  Command name.
 	 * @param Base_Endpoint $endpoint Endpoint object.
@@ -529,7 +529,7 @@ abstract class Base {
 	/**
 	 * Get list of properly formatted CLI command arguments.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string        $command  Command name.
 	 * @param Base_Endpoint $endpoint Endpoint object.
@@ -582,7 +582,7 @@ abstract class Base {
 	/**
 	 * Output the CLI error response from the WP_Error object.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param WP_Error $error The error object.
 	 *

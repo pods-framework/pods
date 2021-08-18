@@ -9,7 +9,7 @@ use WP_Post;
 /**
  * Class Post_Repository
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Post_Repository extends REST_Post_Repository {
 
@@ -28,7 +28,7 @@ class Post_Repository extends REST_Post_Repository {
 	/**
 	 * Post_Repository constructor.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param REST_Messages_Interface|null $messages The messages object.
 	 */
@@ -45,7 +45,7 @@ class Post_Repository extends REST_Post_Repository {
 	/**
 	 * Retrieves an array representation of the object.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param int    $id      The ID.
 	 * @param string $type    The type of content.
@@ -76,7 +76,7 @@ class Post_Repository extends REST_Post_Repository {
 	/**
 	 * Get pod data.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param int            $id      The ID.
 	 * @param WP_Post|object $object  The object.
@@ -101,7 +101,7 @@ class Post_Repository extends REST_Post_Repository {
 	/**
 	 * Get group data.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param int            $id      The ID.
 	 * @param WP_Post|object $object  The object.
@@ -126,7 +126,7 @@ class Post_Repository extends REST_Post_Repository {
 	/**
 	 * Get field data.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param int            $id      The ID.
 	 * @param WP_Post|object $object  The object.

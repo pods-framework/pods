@@ -9,14 +9,14 @@ use Pods\Whatsit\Object_Field;
 /**
  * Map_Field_Values class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Map_Field_Values {
 
 	/**
 	 * Map the matching image field value.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of all fields in the path.
@@ -34,7 +34,7 @@ class Map_Field_Values {
 		/**
 		 * Allow filtering the field mapping ahead of running all other method checks.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param null|mixed              $value      The matching field value or null if there was no match.
 		 * @param string                  $field      The first field name in the path.
@@ -72,7 +72,7 @@ class Map_Field_Values {
 		/**
 		 * Allow filtering the field mapping.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param null|mixed              $value      The matching field value or null if there was no match.
 		 * @param string                  $field      The first field name in the path.
@@ -87,7 +87,7 @@ class Map_Field_Values {
 	/**
 	 * Handle custom field mapping.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
@@ -100,7 +100,7 @@ class Map_Field_Values {
 		/**
 		 * Allow filtering for a custom field mapping.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param null|mixed              $value      The matching field value or null if there was no match.
 		 * @param string                  $field      The first field name in the path.
@@ -114,7 +114,7 @@ class Map_Field_Values {
 	/**
 	 * Map the matching pod info value.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
@@ -142,7 +142,7 @@ class Map_Field_Values {
 	/**
 	 * Map the matching field info value.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
@@ -176,7 +176,7 @@ class Map_Field_Values {
 	/**
 	 * Map the matching calculation value.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
@@ -235,7 +235,7 @@ class Map_Field_Values {
 	/**
 	 * Map the matching image field value.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
@@ -390,7 +390,7 @@ class Map_Field_Values {
 	/**
 	 * Map the matching avatar field value.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string                  $field      The first field name in the path.
 	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.

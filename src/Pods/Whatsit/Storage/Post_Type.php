@@ -8,7 +8,7 @@ use Pods\Whatsit\Store;
 /**
  * Post_Type class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Post_Type extends Collection {
 
@@ -101,7 +101,7 @@ class Post_Type extends Collection {
 		/**
 		 * Filter the maximum number of posts to get for post type storage.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param int $limit
 		 *
@@ -286,7 +286,7 @@ class Post_Type extends Collection {
 		/**
 		 * Filter the get_posts() arguments used for finding the objects for post type storage.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param array $args      Arguments to use.
 		 *
@@ -324,7 +324,7 @@ class Post_Type extends Collection {
 			/**
 			 * Filter cache key parts used for generating the cache key.
 			 *
-			 * @since 2.8
+			 * @since 2.8.0
 			 *
 			 * @param array $post_args       Post arguments to use in get_posts() call.
 			 * @param array $args            Arguments to use.

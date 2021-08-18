@@ -5,14 +5,14 @@ namespace Pods\Integrations;
 /**
  * Class Jetpack
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Jetpack {
 
 	/**
 	 * Add additional supports options for post types.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $supports List of supports options for post types.
 	 *

@@ -16,7 +16,7 @@
 			/**
 			 * Allow filtering of settings page tabs.
 			 *
-			 * @since TBD
+			 * @since 2.8.0
 			 *
 			 * @param array $tabs List of settings page tabs.
 			 */
@@ -64,7 +64,7 @@
 			/**
 			 * Allow customizations on tab page.
 			 *
-			 * @since TBD
+			 * @since 2.8.0
 			 */
 			do_action( 'pods_admin_settings_page_' . $tab );
 			?>

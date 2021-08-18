@@ -7,7 +7,7 @@ wp_enqueue_style( 'pods-form' );
 /**
  * Allow filtering the list of fields for the settings page.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param array $fields List of fields for the settings page.
  */

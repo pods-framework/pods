@@ -15,14 +15,14 @@ use tad_DI52_ServiceProvider;
  *
  * Add Blocks integration.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Service_Provider extends tad_DI52_ServiceProvider {
 
 	/**
 	 * Registers the classes and functionality needed for the Blocks API.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function register() {
 		$this->container->singleton( 'pods.blocks', API::class );
@@ -39,7 +39,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	/**
 	 * Hooks all the methods and actions the class needs.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	protected function hooks() {
 		add_action( 'pods_setup_content_types', tribe_callback( 'pods.blocks', 'register_blocks' ) );

@@ -5,7 +5,7 @@ namespace Pods;
 /**
  * Wisdom Tracker class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Wisdom_Tracker {
 

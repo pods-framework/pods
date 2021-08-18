@@ -231,7 +231,7 @@ function pods_error( $error, $obj = null ) {
 			/**
 			 * Allow filtering whether the fallback is enabled to catch uncaught exceptions.
 			 *
-			 * @since 2.8
+			 * @since 2.8.0
 			 *
 			 * @param bool   $exception_fallback_enabled Whether the fallback is enabled to catch uncaught exceptions.
 			 * @param string $error                      The error information.
@@ -426,7 +426,7 @@ function pods_tableless() {
 /**
  * Determine whether the wp_podsrel table is enabled.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @return bool Whether the wp_podsrel table is enabled.
  */
@@ -439,7 +439,7 @@ function pods_podsrel_enabled() {
 	/**
 	 * Allow filtering of whether or not the wp_podsrel table is enabled.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param bool $enabled Whether the wp_podsrel table is enabled.
 	 */
@@ -449,7 +449,7 @@ function pods_podsrel_enabled() {
 /**
  * Determine whether relationship meta storage is enabled.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param null|array|Field $field The field object.
  * @param null|array|Pod   $pod   The pod object.
@@ -460,7 +460,7 @@ function pods_relationship_meta_storage_enabled( $field = null, $pod = null ) {
 	/**
 	 * Allow filtering of whether or not relationship meta storage is enabled.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param bool             $enabled Whether relationship meta storage table is enabled.
 	 * @param null|array|Field $field   The field object.
@@ -510,7 +510,7 @@ function pods_strict( $include_debug = true ) {
 	 *
 	 * @param boolean $strict Whether strict mode is enabled.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	return apply_filters( 'pods_strict_mode', $strict );
 }
@@ -551,7 +551,7 @@ function pods_api_cache() {
 	 *
 	 * @param boolean $use_cache Whether or not to use the Pods API cache.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	return apply_filters( 'pods_api_cache', true );
 }
@@ -834,7 +834,7 @@ function pods_doing_shortcode( $bool = null ) {
 /**
  * Check whether we are currently in a JSON request.
  *
- * @since  2.8
+ * @since  2.8.0
  *
  * @return bool Whether we are in a REST API or JSON request.
  */
@@ -996,7 +996,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			$blog_is_switched = true;
 		}
 	}
-	
+
 	if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
 		$has_query_tags = array_intersect_key( array_diff( $tags, $defaults ), $default_query_tags );
 
@@ -2187,7 +2187,7 @@ function pods_register_related_object( $name, $label, $options = null ) {
 /**
  * Register an object with Pods.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param array  $object The object configuration.
  * @param string $type   The object type.
@@ -2207,7 +2207,7 @@ function pods_register_object( array $object, $type ) {
 /**
  * Register a group and it's fields with Pods.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param array  $group The group configuration.
  * @param string $pod   The pod to register to.
@@ -2230,7 +2230,7 @@ function pods_register_group( array $group, $pod, array $fields ) {
 /**
  * Register a field with Pods.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param array  $field The field configuration.
  * @param string $group The group to register to.
@@ -2250,7 +2250,7 @@ function pods_register_group_field( array $field, $group, $pod ) {
 /**
  * Register a block type with Pods. Always register during the `pods_blocks_api_init` action.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param array $block  The block configuration, compatible with `register_block_type()`.
  * @param array $fields List of fields to use for inspector controls.
@@ -2290,7 +2290,7 @@ function pods_register_block_type( array $block, array $fields = [] ) {
 /**
  * Register a block collection with Pods. Always register during the `pods_blocks_api_init` action.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param array $collection The block collection configuration, compatible with `block_categories` filter.
  *
@@ -2422,7 +2422,7 @@ function pods_no_conflict_check( $object_type = 'post' ) {
 /**
  * Get the list of meta hooks to add/remove for a specific object type.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param string      $object_type The object type.
  * @param string|null $object      The object name.
@@ -2871,7 +2871,7 @@ function pods_reserved_keywords() {
 /**
  * Get the value for a Pods setting.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param string $setting_name The setting name.
  * @param null   $default      The default value if the setting is not yet set.
@@ -2887,7 +2887,7 @@ function pods_get_setting( $setting_name, $default = null ) {
 /**
  * Update the value for a Pods setting.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param string $setting_name  The setting name.
  * @param mixed  $setting_value The setting value.
@@ -2901,7 +2901,7 @@ function pods_update_setting( $setting_name, $setting_value ) {
 /**
  * Update the settings for a Pods.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param array $setting_values The list of settings to update, pass null as a value to remove it.
  */
@@ -2916,7 +2916,7 @@ function pods_update_settings( $setting_values ) {
  *
  * @param bool $check_constant_only Whether to only check the constant.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @return bool|string|null Boolean if it is set to on or off, "auto" if set to auto, and null if $check_constant_only and constant is not set.
  */
@@ -2942,7 +2942,7 @@ function pods_session_auto_start( $check_constant_only = false ) {
 /**
  * Determine if we can use PHP sessions.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param bool $only_env_check Whether to ignore constant/option/logged in checks.
  *
@@ -3089,7 +3089,7 @@ function pod_has_items( $pod ) {
 /**
  * Merge one config into another for purposes of overriding certain arguments.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param array|Whatsit $config_to_merge_into The config to merge into.
  * @param array|Field   $config_to_merge_from The config to merge from.
@@ -3129,7 +3129,7 @@ function pods_config_merge_data( $config_to_merge_into, $config_to_merge_from ) 
 /**
  * Get the list of all fields, including object fields, from a Pod configuration.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param array|Pod|Pods $pod The Pod configuration array or object.
  *
@@ -3149,7 +3149,7 @@ function pods_config_get_all_fields( $pod ) {
 /**
  * Get the field data for a specific field matching from all fields, including object fields, from a Pod configuration.
  *
- * @since TBD
+ * @since 2.8.0
  *
  * @param string         $field The field name to get.
  * @param array|Pod|Pods $pod   The Pod configuration array or object.

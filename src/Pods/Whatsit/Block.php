@@ -8,7 +8,7 @@ use Tribe__Utils__Array;
 /**
  * Block class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Block extends Pod {
 
@@ -20,7 +20,7 @@ class Block extends Pod {
 	/**
 	 * Get list of Block API arguments to use.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array List of Block API arguments.
 	 */
@@ -147,7 +147,7 @@ class Block extends Pod {
 	/**
 	 * Render the template for the block.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array     $block     The block instance argument values.
 	 * @param string    $content   The block inner content.
@@ -161,7 +161,7 @@ class Block extends Pod {
 		/**
 		 * Allow filtering of the block render template path.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param string    $render_template_path The block render template path.
 		 * @param array     $block                The block instance argument values.
@@ -185,7 +185,7 @@ class Block extends Pod {
 		/**
 		 * Allow filtering of the block render HTML.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param string    $render    The HTML render for the block.
 		 * @param array     $block     The block instance argument values.
@@ -198,7 +198,7 @@ class Block extends Pod {
 	/**
 	 * Get list of Block API fields for the block.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array List of Block API fields.
 	 */

@@ -84,7 +84,7 @@ class PodsInit {
 	/**
 	 * Stats Tracking object.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @var Wisdom_Tracker
 	 */
@@ -153,7 +153,7 @@ class PodsInit {
 	/**
 	 * Setup of Common Library.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function maybe_set_common_lib_info() {
 		// Set up the path for /tribe-common/ loading.
@@ -192,7 +192,7 @@ class PodsInit {
 	/**
 	 * Display a missing-tribe-common library error.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function missing_common_libs() {
 		?>
@@ -214,7 +214,7 @@ class PodsInit {
 	 *
 	 * @param string $class Class name.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public static function autoload_class( $class ) {
 		// Bypass anything that doesn't start with Pods
@@ -317,7 +317,7 @@ class PodsInit {
 	/**
 	 * Handle Stats Tracking.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param string $plugin_file The plugin file.
 	 * @param string $plugin_slug The plugin slug.
@@ -367,7 +367,7 @@ class PodsInit {
 			/**
 			 * Allow hooking after the Stats Tracking object is setup for the main plugin.
 			 *
-			 * @since TBD
+			 * @since 2.8.0
 			 *
 			 * @param Wisdom_Tracker $stats_tracking The Stats Tracking object.
 			 * @param string         $plugin_file    The plugin file.
@@ -378,7 +378,7 @@ class PodsInit {
 		/**
 		 * Allow hooking after the Stats Tracking object is setup.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param Wisdom_Tracker $stats_tracking The Stats Tracking object.
 		 * @param string         $plugin_file    The plugin file.
@@ -510,7 +510,7 @@ class PodsInit {
 	/**
 	 * Sets up autoloading.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	protected function init_autoloading() {
 		$autoloader = $this->get_autoloader_instance();
@@ -520,7 +520,7 @@ class PodsInit {
 	/**
 	 * Returns the autoloader singleton instance to use in a context-aware manner.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return \Tribe__Autoloader The singleton common Autoloader instance.
 	 */
@@ -844,7 +844,7 @@ class PodsInit {
 		/**
 		 * Allow filtering hte admin config data.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param array $config The admin config data.
 		 */
@@ -1708,7 +1708,7 @@ class PodsInit {
 			/**
 			 * Allow hooking into after Pods has been setup.
 			 *
-			 * @since TBD
+			 * @since 2.8.0
 			 *
 			 * @param PodsInit $init The PodsInit class object.
 			 */
@@ -2278,7 +2278,7 @@ class PodsInit {
 	/**
 	 * Remove Common menu.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function remove_common_menu() {
 		if ( ! class_exists( 'Tribe__Events__Main' ) && ! class_exists( 'Tribe__Tickets__Main' ) ) {
@@ -2289,7 +2289,7 @@ class PodsInit {
 	/**
 	 * Remove Common network menu.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function remove_common_network_menu() {
 		if ( ! class_exists( 'Tribe__Events__Main' ) && ! class_exists( 'Tribe__Tickets__Main' ) ) {
@@ -2406,7 +2406,7 @@ class PodsInit {
 		/**
 		 * Allow hooking into the attachment deletion process.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param int $_ID The attachment ID being deleted.
 		 */

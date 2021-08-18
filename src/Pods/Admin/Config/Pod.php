@@ -7,14 +7,14 @@ use PodsForm;
 /**
  * Pod configuration class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Pod extends Base {
 
 	/**
 	 * Get list of tabs for the Pod object.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param \Pods\Whatsit\Pod $pod The pod object.
 	 *
@@ -111,7 +111,7 @@ class Pod extends Base {
 	/**
 	 * Get list of fields for the Pod object.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param \Pods\Whatsit\Pod $pod  The pod object.
 	 * @param array             $tabs The list of tabs for the Pod object.
@@ -894,7 +894,7 @@ class Pod extends Base {
 			/**
 			 * Allow filtering the list of supported features for the post type
 			 *
-			 * @since TBD
+			 * @since 2.8.0
 			 *
 			 * @param array             $supports The list of supported features for the post type.
 			 * @param array             $options The Options fields.

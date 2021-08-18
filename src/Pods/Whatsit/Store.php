@@ -9,7 +9,7 @@ use Pods\Whatsit\Storage\Post_Type;
 /**
  * Store class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Store {
 

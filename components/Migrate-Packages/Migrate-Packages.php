@@ -77,7 +77,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 			/**
 			 * Allow filtering whether to replace existing configurations when importing a package.
 			 *
-			 * @since 2.8
+			 * @since 2.8.0
 			 *
 			 * @param bool $replace Whether to replace existing configurations when importing a package.
 			 */
@@ -263,7 +263,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	/**
 	 * Handle importing of the pod.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $data    The import data.
 	 * @param bool  $replace Whether to replace an existing configuration if found.
@@ -330,7 +330,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	/**
 	 * Handle setting up the objects for importing.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $objects          The objects to set up.
 	 * @param array $existing_objects List of existing objects.
@@ -373,7 +373,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	/**
 	 * Handle import preparation of the pod.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $data The import data.
 	 * @param array $pod  The existing pod (if set).
@@ -498,7 +498,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	/**
 	 * Handle import preparation of the field.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $data The import data.
 	 *
@@ -597,7 +597,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	/**
 	 * Handle importing of the pod template.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $data    The import data.
 	 * @param bool  $replace Whether to replace an existing configuration if found.
@@ -665,7 +665,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	/**
 	 * Handle importing of the pod page.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $data    The import data.
 	 * @param bool  $replace Whether to replace an existing configuration if found.
@@ -748,7 +748,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	/**
 	 * Handle importing of the pod helper.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $data    The import data.
 	 * @param bool  $replace Whether to replace an existing configuration if found.

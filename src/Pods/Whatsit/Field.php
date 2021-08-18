@@ -8,7 +8,7 @@ use Pods\Whatsit;
 /**
  * Field class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Field extends Whatsit {
 
@@ -85,7 +85,7 @@ class Field extends Whatsit {
 	/**
 	 * Get related object type from field.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return string|null The related object type, or null if not found.
 	 */
@@ -119,7 +119,7 @@ class Field extends Whatsit {
 	/**
 	 * Get related object name from field.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return string|null The related object name, or null if not found.
 	 */
@@ -150,7 +150,7 @@ class Field extends Whatsit {
 	/**
 	 * Get related object data from field.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array|null The related object data, or null if not found.
 	 */
@@ -161,7 +161,7 @@ class Field extends Whatsit {
 	/**
 	 * Get field value limit from field.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return int The field value limit.
 	 */

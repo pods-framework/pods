@@ -8,14 +8,14 @@ use Tribe__Editor__Blocks__Abstract;
 /**
  * Field block functionality class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 abstract class Base extends Tribe__Editor__Blocks__Abstract {
 
 	/**
 	 * Set the default attributes of this block.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array List of attributes.
 	 */
@@ -34,7 +34,7 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 	/**
 	 * Get the default attribute for a field.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array $field The field to get the default attribute for.
 	 *
@@ -66,7 +66,7 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 	/**
 	 * Get list of Field configurations to register with Pods for the block.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array List of Field configurations.
 	 */
@@ -77,7 +77,7 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 	/**
 	 * Register the block with Pods.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 */
 	public function register_with_pods() {
 		$block = $this->block();
@@ -97,7 +97,7 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 	/**
 	 * Get block configuration to register with Pods.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array Block configuration.
 	 */
@@ -108,7 +108,7 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 	/*
 	 * {@inheritDoc}
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	*/
 	public function attributes( $params = [] ) {
 		// Convert any potential array values for pick/boolean.
@@ -128,7 +128,7 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 	/**
 	 * Render content for block with placeholder template.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string $heading The heading text.
 	 * @param string $content The content text.

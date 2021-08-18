@@ -21,7 +21,7 @@ use WP_REST_Server;
  *
  * Add REST API endpoints and objects.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Service_Provider extends \tad_DI52_ServiceProvider {
 
@@ -33,7 +33,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the classes and functionality needed for the REST API.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function register() {
 		$this->container->singleton( 'pods.rest-v1.main', Main::class );
@@ -62,7 +62,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the REST API endpoints.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function register_endpoints() {
 		/** @var Main $main */
@@ -86,7 +86,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Builds, registers and returns the Swagger.io documentation provider endpoint.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Swagger_Builder_Interface
 	 */
@@ -110,7 +110,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the REST API endpoint that will handle requests.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Pods
 	 */
@@ -141,7 +141,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the REST API endpoint that will handle requests.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Pod
 	 */
@@ -178,7 +178,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the REST API endpoint that will handle requests.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Pod_Slug
 	 */
@@ -215,7 +215,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the REST API endpoint that will handle requests.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Fields
 	 */
@@ -246,7 +246,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the REST API endpoint that will handle requests.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Field
 	 */
@@ -283,7 +283,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the REST API endpoint that will handle requests.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Field_Slug
 	 */
@@ -320,7 +320,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the REST API endpoint that will handle requests.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Groups
 	 */
@@ -351,7 +351,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the REST API endpoint that will handle requests.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Group
 	 */
@@ -388,7 +388,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the REST API endpoint that will handle requests.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Group_Slug
 	 */
@@ -425,7 +425,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Hooks all the methods and actions the class needs.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	protected function hooks() {
 		add_action( 'rest_api_init', [ $this, 'register_endpoints' ] );

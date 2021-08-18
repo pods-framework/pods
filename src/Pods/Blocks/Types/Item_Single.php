@@ -5,14 +5,14 @@ namespace Pods\Blocks\Types;
 /**
  * Item_Single block functionality class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Item_Single extends Base {
 
 	/**
 	 * Which is the name/slug of this block
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return string
 	 */
@@ -23,7 +23,7 @@ class Item_Single extends Base {
 	/**
 	 * Get block configuration to register with Pods.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array Block configuration.
 	 */
@@ -53,7 +53,7 @@ class Item_Single extends Base {
 	/**
 	 * Get list of Field configurations to register with Pods for the block.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array List of Field configurations.
 	 */
@@ -102,7 +102,7 @@ class Item_Single extends Base {
 	/**
 	 * Since we are dealing with a Dynamic type of Block we need a PHP method to render it
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array         $attributes The block attributes.
 	 * @param string        $content    The block default content.

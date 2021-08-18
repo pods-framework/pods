@@ -672,7 +672,7 @@ class Pods implements Iterator {
 		/**
 		 * Allow hooking in to support getting meta using the meta fallback.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param bool   $use_meta_fallback Whether to support getting meta using the meta fallback.
 		 * @param string $object_type       The object type.
@@ -4307,7 +4307,7 @@ class Pods implements Iterator {
 	 * @param string $name  Property name.
 	 * @param mixed  $value Property value.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function __set( $name, $value ) {
 		$name = (string) $name;
@@ -4338,7 +4338,7 @@ class Pods implements Iterator {
 	 *
 	 * @return bool Whether the variable is set or not.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function __isset( $name ) {
 		$value = $this->__get( $name );
@@ -4351,7 +4351,7 @@ class Pods implements Iterator {
 	 *
 	 * @param string $name Property name.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function __unset( $name ) {
 		$this->__set( $name, null );

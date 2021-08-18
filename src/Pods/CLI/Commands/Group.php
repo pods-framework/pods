@@ -5,7 +5,7 @@ namespace Pods\CLI\Commands;
 /**
  * Class Group
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Group extends Base {
 
@@ -17,7 +17,7 @@ class Group extends Base {
 	/**
 	 * Setup endpoint object.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function __construct() {
 		$this->endpoint_archive     = tribe( 'pods.rest-v1.endpoints.groups' );

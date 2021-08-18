@@ -9,14 +9,14 @@ use WP_User;
 /**
  * Permissions class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Permissions {
 
 	/**
 	 * Get the normalized user object.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param null|int|WP_User $user The user ID or object (default: current user).
 	 *
@@ -76,7 +76,7 @@ class Permissions {
 		/**
 		 * Allow filtering whether a user has permission to an object.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param bool             $user_has_permission Whether a user has permission to an object.
 		 * @param array|Whatsit    $object              The object data.
@@ -110,7 +110,7 @@ class Permissions {
 		/**
 		 * Allow filtering whether permissions are restricted for an object.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param bool          $are_permissions_restricted Whether the permissions are restricted for an object.
 		 * @param array|Whatsit $object                     The object data.
@@ -152,7 +152,7 @@ class Permissions {
 	/**
 	 * Get the list of restricted capabilities.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array|Whatsit $object The object data.
 	 *
@@ -231,7 +231,7 @@ class Permissions {
 	/**
 	 * Get the list of restricted capabilities.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array|Whatsit $object The object data.
 	 *
@@ -272,7 +272,7 @@ class Permissions {
 	/**
 	 * Determine whether permissions are restricted to admins only.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array|Whatsit $object The object data.
 	 *
@@ -285,7 +285,7 @@ class Permissions {
 	/**
 	 * Determine whether permissions are restricted to admins only.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array|Whatsit $object The object data.
 	 *
@@ -298,7 +298,7 @@ class Permissions {
 	/**
 	 * Determine whether input is disallowed.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array|Whatsit $object The object data.
 	 *
@@ -313,7 +313,7 @@ class Permissions {
 	/**
 	 * Determine whether a user is a Pods Admin.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string|array     $additional_capabilities Additional capabilities to check.
 	 * @param null|int|WP_User $user                    The user ID or object (default: current user).

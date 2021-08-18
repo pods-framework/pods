@@ -58,7 +58,7 @@ if ( ! isset( $all_pods['user'] ) ) {
 /**
  * Allow filtering the list of quick actions.
  *
- * @since 2.8
+ * @since 2.8.0
  *
  * @param array $quick_actions List of quick actions with the following info: label, create_extend, type, object.
  * @param array $all_pods      List of pods, keyed by name.

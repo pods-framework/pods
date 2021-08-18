@@ -13,21 +13,21 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public $route = '/fields/%1$d';
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public $object = 'field';
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get_documentation() {
 		$GET_defaults = [
@@ -91,7 +91,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function READ_args() {
 		return [
@@ -108,7 +108,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get( WP_REST_Request $request ) {
 		return $this->get_by_args( 'id', 'id', $request );
@@ -117,7 +117,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * Determine whether access to READ is available.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return bool Whether access to READ is available.
 	 */
@@ -128,7 +128,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function EDIT_args() {
 		return [
@@ -162,7 +162,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function update( WP_REST_Request $request ) {
 		return $this->update_by_args( 'id', 'id', $request );
@@ -171,7 +171,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function can_edit() {
 		return pods_is_admin( 'pods' );
@@ -180,7 +180,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function DELETE_args() {
 		return [
@@ -197,7 +197,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function delete( WP_REST_Request $request ) {
 		return $this->delete_by_args( 'id', 'id', $request );
@@ -206,7 +206,7 @@ class Field extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function can_delete() {
 		return pods_is_admin( 'pods' );

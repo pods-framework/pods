@@ -153,7 +153,7 @@ class PodsAPI {
 		/**
 		 * Allow hooking in to support saving for custom object types.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param int|string|false $object_id   The object ID after saving, false if not saved.
 		 * @param string           $object_type The custom object type.
@@ -172,7 +172,7 @@ class PodsAPI {
 		/**
 		 * Allow hooking in to support saving meta using the meta fallback.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param bool   $use_meta_fallback Whether to support saving meta using the meta fallback.
 		 * @param string $object_type       The custom object type.
@@ -2192,7 +2192,7 @@ class PodsAPI {
 		/**
 		 * Allow filtering the Pod config data before saving the options.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param array  $pod       The Pod config data to be used for saving groups/fields.
 		 * @param object $params    The list of parameters used to save this pod.
@@ -2228,7 +2228,7 @@ class PodsAPI {
 		/**
 		 * Allow filtering the Pod object data before saving.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param array  $post_data The Pod object data to be saved.
 		 * @param array  $pod       The Pod config data.
@@ -2241,7 +2241,7 @@ class PodsAPI {
 		/**
 		 * Allow filtering the Pod config data before saving the options.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param array  $meta      The Pod meta data to be saved.
 		 * @param array  $pod       The Pod config data.
@@ -2582,7 +2582,7 @@ class PodsAPI {
 	/**
 	 * Handle saving the pod table schema.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $pod      The pod configuration.
 	 * @param array $fields   The list of fields on the pod.
@@ -2698,7 +2698,7 @@ class PodsAPI {
 		/**
 		 * Allow hooking after the table schema has been created or the table has been renamed.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param array $pod      The pod configuration.
 		 * @param array $fields   The list of fields on the pod.
@@ -2712,7 +2712,7 @@ class PodsAPI {
 	/**
 	 * Handle saving the pod table schema.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array  $pod      The pod configuration.
 	 * @param string $old_name The old pod name.
@@ -2816,7 +2816,7 @@ class PodsAPI {
 		/**
 		 * Allow hooking after the pod has been renamed.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param array  $pod      The pod configuration.
 		 * @param string $old_name The old pod name.
@@ -2829,7 +2829,7 @@ class PodsAPI {
 	/**
 	 * Handle syncing the built-in post type / taxonomy options.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $pod The pod configuration.
 	 *
@@ -2932,7 +2932,7 @@ class PodsAPI {
 	/**
 	 * Handle saving the groups/fields order for a pod.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array    $groups List of group IDs and their fields to reorder.
 	 * @param Pod      $object The pod object.
@@ -3000,7 +3000,7 @@ class PodsAPI {
 	 *
 	 * @return int|array The field ID or field array (if !$db)
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 */
 	public function add_field( $params, $table_operation = true, $sanitized = false, $db = true ) {
 		$params = (object) $params;
@@ -3316,7 +3316,7 @@ class PodsAPI {
 			/**
 			 * Allow filtering of the old field definition when saving updated field.
 			 *
-			 * @since TBD
+			 * @since 2.8.0
 			 *
 			 * @param string|false       $field_definition The SQL definition to use for the field's table column.
 			 * @param string             $type             The field type.
@@ -3697,7 +3697,7 @@ class PodsAPI {
 		/**
 		 * Allow filtering of the field definition when saving field.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param string|false       $field_definition The SQL definition to use for the field's table column.
 		 * @param string             $type             The field type.
@@ -3958,7 +3958,7 @@ class PodsAPI {
 	/**
 	 * Add a Group within a Pod.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array    $params          {
 	 *      An associative array of parameters
@@ -3990,7 +3990,7 @@ class PodsAPI {
 	/**
 	 * Add or edit a Group within a Pod.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array    $params          {
 	 *      An associative array of parameters
@@ -5799,7 +5799,7 @@ class PodsAPI {
 		/**
 		 * Allow custom saving actions for relationships.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param int                       $id          ID of item.
 		 * @param array                     $related_ids ID(s) for items to save.
@@ -5932,7 +5932,7 @@ class PodsAPI {
 	 * $params['name'] string The Group name.
 	 * $params['new_name'] string The new Group name.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array $params An associative array of parameters.
 	 * @param bool  $strict (optional) Makes sure a group exists, if it doesn't throws an error.
@@ -6974,7 +6974,7 @@ class PodsAPI {
 	 * $params['pod'] string|Pods\Whatsit\Pod The Pod name or object.
 	 * $params['pod_id'] string The Pod ID.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array|string|int $params     An associative array of parameters, the pod name, or pod ID.
 	 * @param bool             $strict     (optional) Makes sure a group exists, if it doesn't throws an error.
@@ -7377,7 +7377,7 @@ class PodsAPI {
 			/**
 			 * Allow custom deletion actions for relationships.
 			 *
-			 * @since TBD
+			 * @since 2.8.0
 			 *
 			 * @param int                     $id  ID to remove.
 			 * @param array|Pod $pod The Pod object.
@@ -7519,7 +7519,7 @@ class PodsAPI {
 		/**
 		 * Allow custom deletion actions for relationships.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param int|array                 $related_id    ID(s) for items to save.
 		 * @param int|array                 $id            ID(s) to remove.
@@ -7931,7 +7931,7 @@ class PodsAPI {
 	 *
 	 * @return Pods\Whatsit\Field[] List of field objects.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function traverse_fields( array $params ) {
 		$fields = array();
@@ -8089,7 +8089,7 @@ class PodsAPI {
 	 *
 	 * @return bool
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 */
 	public function group_exists( $params, $allow_id = true ) {
 		$params = (object) $params;
@@ -8139,7 +8139,7 @@ class PodsAPI {
 	 * @return Pods\Whatsit\Group|false Group object or false if not found.
 	 *
 	 * @throws Exception
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function load_group( $params, $strict = false ) {
 		if ( $params instanceof Group ) {
@@ -8236,7 +8236,7 @@ class PodsAPI {
 	 *
 	 * @throws Exception
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function load_groups( $params = [] ) {
 		// Backwards compatibility handling.
@@ -10493,7 +10493,7 @@ class PodsAPI {
 		 *
 		 * @param string $storage_type Storage type.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 */
 		return apply_filters( 'pods_api_object_storage_type', 'post_type' );
 	}
@@ -10505,7 +10505,7 @@ class PodsAPI {
 	 *
 	 * @return false|Pods\Whatsit Object or false if the post does not exist.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get_pods_object_from_wp_post( $post ) {
 		if ( ! $post instanceof WP_Post ) {
@@ -10542,7 +10542,7 @@ class PodsAPI {
 	 *
 	 * @throws Exception
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function _load_object( array $params, $strict = false ) {
 		if ( empty( $params['object_type'] ) ) {
@@ -10606,7 +10606,7 @@ class PodsAPI {
 	 *
 	 * @return Pods\Whatsit[]|int List of objects or count.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function _load_objects( array $params ) {
 		if ( empty( $params['object_type'] ) ) {
@@ -10777,7 +10777,7 @@ class PodsAPI {
 	/**
 	 * Get the list of Pod types.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return string[] The list of pod types and their labels.
 	 */
@@ -10798,7 +10798,7 @@ class PodsAPI {
 		/**
 		 * Allow filtering the list of pod types and their labels.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param string[] $pod_types The list of pod types and their labels.
 		 */
@@ -10808,7 +10808,7 @@ class PodsAPI {
 	/**
 	 * Get the list of Pod types.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return string[] The list of storage types and their labels.
 	 */
@@ -10823,7 +10823,7 @@ class PodsAPI {
 		/**
 		 * Allow filtering the list of pod types and their labels.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param string[] $storage_types The list of storage types and their labels.
 		 */

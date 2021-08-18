@@ -7,7 +7,7 @@ use Pods\Whatsit;
 /**
  * Block Collection class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Block_Collection extends Pod {
 
@@ -19,7 +19,7 @@ class Block_Collection extends Pod {
 	/**
 	 * Get list of Block Collection API arguments to use.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array List of Block Collection API arguments.
 	 */

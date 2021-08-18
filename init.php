@@ -122,7 +122,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 /**
  * Deactivate this version of Pods if Pods is already included.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 function pods_deactivate_pods_duplicate() {
 	if ( defined( 'PODS_VERSION' ) && defined( 'PODS_DIR' ) && file_exists( untrailingslashit( PODS_DIR ) . '/init.php' ) ) {

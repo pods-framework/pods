@@ -123,7 +123,7 @@ class Pods_Term_Splitting {
 			/**
 			 * Allow hooking into the term splitting process for taxonomy.
 			 *
-			 * @since TBD
+			 * @since 2.8.0
 			 *
 			 * @param int    $pod_id      The pod ID for the taxonomy.
 			 * @param int    $term_id     The current term ID being split.
@@ -245,7 +245,7 @@ class Pods_Term_Splitting {
 			/**
 			 * Allow hooking into the term splitting process for taxonomy by related term.
 			 *
-			 * @since TBD
+			 * @since 2.8.0
 			 *
 			 * @param int    $field_id    The field ID for the relationship.
 			 * @param int    $term_id     The current term ID being split.

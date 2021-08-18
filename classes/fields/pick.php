@@ -460,7 +460,7 @@ class PodsField_Pick extends PodsField {
 			/**
 			 * Allow filtering the list of Pods to show in the list of relationship objects.
 			 *
-			 * @since TBD
+			 * @since 2.8.0
 			 *
 			 * @param array $pod_options List of Pods to show in the list of relationship objects.
 			 */

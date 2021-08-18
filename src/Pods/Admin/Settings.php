@@ -7,7 +7,7 @@ use Tribe__Main;
 /**
  * Settings specific functionality.
  *
- * @since TBD
+ * @since 2.8.0
  */
 class Settings {
 
@@ -16,7 +16,7 @@ class Settings {
 	/**
 	 * Add the class hooks.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 */
 	public function hook() {
 		add_action( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
@@ -25,7 +25,7 @@ class Settings {
 	/**
 	 * Remove the class hooks.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 */
 	public function unhook() {
 		remove_action( 'pods_admin_settings_fields', [ $this, 'add_settings_fields' ], 9 );
@@ -34,7 +34,7 @@ class Settings {
 	/**
 	 * Get the value for a Pods setting.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param string $setting_name The setting name.
 	 * @param null   $default      The default value if the setting is not yet set.
@@ -59,7 +59,7 @@ class Settings {
 	/**
 	 * Update the value for a Pods setting.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param string $setting_name  The setting name.
 	 * @param mixed  $setting_value The setting value.
@@ -83,7 +83,7 @@ class Settings {
 	/**
 	 * Update the settings for a Pods.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array $setting_values The list of settings to update, pass null as a value to remove it.
 	 */
@@ -124,7 +124,7 @@ class Settings {
 	/**
 	 * Get the list of Pods settings fields.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array The list of Pods settings fields.
 	 */
@@ -167,7 +167,7 @@ class Settings {
 	/**
 	 * Add custom settings fields.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array $fields List of fields to filter.
 	 *

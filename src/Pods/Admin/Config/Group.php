@@ -5,14 +5,14 @@ namespace Pods\Admin\Config;
 /**
  * Group configuration class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Group extends Base {
 
 	/**
 	 * Get list of tabs for the Group object.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param \Pods\Whatsit\Pod $pod The pod object.
 	 *
@@ -75,7 +75,7 @@ class Group extends Base {
 	/**
 	 * Get list of fields for the Group object.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param \Pods\Whatsit\Pod $pod  The pod object.
 	 * @param array             $tabs The list of tabs for the pod object.

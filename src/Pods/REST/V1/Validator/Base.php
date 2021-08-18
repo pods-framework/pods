@@ -8,7 +8,7 @@ use Tribe__Validator__Interface as Validator_Interface;
 /**
  * Class Base
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Base extends Validator_Base implements Validator_Interface {
 	/**

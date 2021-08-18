@@ -7,14 +7,14 @@ use Pods\Whatsit\Block;
 /**
  * Blocks functionality class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class API {
 
 	/**
 	 * Register blocks for the Pods Blocks API.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 */
 	public function register_blocks() {
 		static $registered = false;
@@ -67,7 +67,7 @@ class API {
 	/**
 	 * Setup core blocks.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 */
 	public function setup_core_blocks() {
 		static $setup = false;
@@ -79,7 +79,7 @@ class API {
 		/**
 		 * Allow any integrations to be set up before core blocks and collections are called.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 */
 		do_action( 'pods_blocks_api_pre_init' );
 
@@ -93,7 +93,7 @@ class API {
 		/**
 		 * Allow custom blocks to be registered with Pods.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 */
 		do_action( 'pods_blocks_api_init' );
 
@@ -103,7 +103,7 @@ class API {
 	/**
 	 * Get list of registered blocks for the Pods Blocks API.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array List of registered blocks.
 	 */
@@ -136,7 +136,7 @@ class API {
 	/**
 	 * Get list of registered block collections for the Pods Blocks API.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array List of registered block collections.
 	 */
@@ -169,7 +169,7 @@ class API {
 	/**
 	 * Register block collections by adding them to the list of 'categories'.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $collections List of block 'categories' from WordPress.
 	 *
@@ -196,7 +196,7 @@ class API {
 	/**
 	 * Remove our legacy Pods widgets from the Legacy Widget block.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array $widgets An array of excluded widget-type IDs.
 	 *

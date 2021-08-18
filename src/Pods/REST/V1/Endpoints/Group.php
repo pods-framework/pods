@@ -13,21 +13,21 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public $route = '/groups/%1$d';
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public $object = 'group';
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get_documentation() {
 		$GET_defaults = [
@@ -91,7 +91,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function READ_args() {
 		return [
@@ -114,7 +114,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get( WP_REST_Request $request ) {
 		return $this->get_by_args( 'id', 'id', $request );
@@ -123,7 +123,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * Determine whether access to READ is available.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return bool Whether access to READ is available.
 	 */
@@ -134,7 +134,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function EDIT_args() {
 		return [
@@ -168,7 +168,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function update( WP_REST_Request $request ) {
 		if ( ! empty( $request['fields'] ) ) {
@@ -181,7 +181,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function can_edit() {
 		return pods_is_admin( 'pods' );
@@ -190,7 +190,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function DELETE_args() {
 		return [
@@ -207,7 +207,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function delete( WP_REST_Request $request ) {
 		return $this->delete_by_args( 'id', 'id', $request );
@@ -216,7 +216,7 @@ class Group extends Base implements READ_Interface, UPDATE_Interface, DELETE_Int
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function can_delete() {
 		return pods_is_admin( 'pods' );

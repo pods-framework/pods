@@ -9,14 +9,14 @@ class Pod_Slug extends Pod {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public $route = '/pods/%1$s';
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function READ_args() {
 		return [
@@ -44,7 +44,7 @@ class Pod_Slug extends Pod {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get( WP_REST_Request $request ) {
 		return $this->get_by_args( 'slug', 'name', $request );
@@ -53,7 +53,7 @@ class Pod_Slug extends Pod {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function EDIT_args() {
 		return [
@@ -82,7 +82,7 @@ class Pod_Slug extends Pod {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function update( WP_REST_Request $request ) {
 		return $this->update_by_args( 'slug', 'name', $request );
@@ -91,7 +91,7 @@ class Pod_Slug extends Pod {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function DELETE_args() {
 		return [
@@ -113,7 +113,7 @@ class Pod_Slug extends Pod {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function delete( WP_REST_Request $request ) {
 		return $this->delete_by_args( 'slug', 'name', $request );

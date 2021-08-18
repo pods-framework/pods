@@ -56,7 +56,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_pod
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_pod_with_empty_params() {
@@ -96,7 +96,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers       PodsAPI::save_pod
-	 * @since        2.8
+	 * @since        2.8.0
 	 *
 	 * @dataProvider get_save_pod_configs
 	 * @throws \Exception
@@ -130,7 +130,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers       PodsAPI::save_pod
-	 * @since        2.8
+	 * @since        2.8.0
 	 *
 	 * @dataProvider get_save_pod_configs
 	 * @throws \Exception
@@ -163,7 +163,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pod
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pod_with_id() {
@@ -176,7 +176,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pod
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pod_with_internal() {
@@ -187,7 +187,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pod
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pod_with_name() {
@@ -200,7 +200,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pod
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pod_with_object_direct() {
@@ -214,7 +214,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pod
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pod_with_id_direct() {
@@ -227,7 +227,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pod
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pod_with_post_direct() {
@@ -240,7 +240,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pods
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pods_has_pods() {
@@ -269,7 +269,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pods
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pods_by_type() {
@@ -319,7 +319,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pods
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pods_by_id() {
@@ -371,7 +371,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pods
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pods_by_args() {
@@ -403,7 +403,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pods
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pods_by_options() {
@@ -435,7 +435,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pods
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pods_by_where() {
@@ -473,7 +473,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pods
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pods_include_internal() {
@@ -514,7 +514,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pods
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pods_with_names() {
@@ -543,7 +543,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pods
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pods_with_names_ids() {
@@ -574,7 +574,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pods
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pods_with_ids() {
@@ -593,7 +593,7 @@ class PodTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_pods
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_pods_with_count() {

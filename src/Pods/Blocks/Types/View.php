@@ -5,14 +5,14 @@ namespace Pods\Blocks\Types;
 /**
  * View block functionality class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class View extends Base {
 
 	/**
 	 * Which is the name/slug of this block
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return string
 	 */
@@ -23,7 +23,7 @@ class View extends Base {
 	/**
 	 * Get block configuration to register with Pods.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array Block configuration.
 	 */
@@ -48,7 +48,7 @@ class View extends Base {
 	/**
 	 * Get list of Field configurations to register with Pods for the block.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array List of Field configurations.
 	 */
@@ -75,7 +75,7 @@ class View extends Base {
 		/**
 		 * Allow filtering of the default cache mode used for the Pods shortcode.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param string $default_cache_mode Default cache mode.
 		 */
@@ -106,7 +106,7 @@ class View extends Base {
 	/**
 	 * Since we are dealing with a Dynamic type of Block we need a PHP method to render it
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array $attributes
 	 *

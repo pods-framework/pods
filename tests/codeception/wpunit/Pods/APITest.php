@@ -112,7 +112,7 @@ class APITest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::init
-	 * @since  2.8
+	 * @since  2.8.0
 	 */
 	public function test_method_exists_init() {
 		$this->assertTrue( method_exists( 'PodsAPI', 'init' ), 'Method init does not exist' );
@@ -122,7 +122,7 @@ class APITest extends Pods_UnitTestCase {
 	 * Test the init method with no pod defined
 	 * @covers  PodsAPI::init
 	 * @depends test_method_exists_init
-	 * @since   2.8
+	 * @since   2.8.0
 	 */
 	public function test_method_init_no_pod() {
 		$this->assertInstanceOf( 'PodsAPI', PodsAPI::init(), 'Object returned is not of type Pods_API' );
@@ -130,7 +130,7 @@ class APITest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::__construct
-	 * @since  2.8
+	 * @since  2.8.0
 	 */
 	public function test_method_construct_no_pod() {
 		$this->assertTrue( $this->api->display_errors, 'Property display_errors not true' );
@@ -144,7 +144,7 @@ class APITest extends Pods_UnitTestCase {
 	/**
 	 * @covers PodsAPI::traverse_fields
 	 * @throws \Exception
-	 * @since  2.8
+	 * @since  2.8.0
 	 */
 	public function test_method_traverse_fields() {
 		$this->assertTrue( method_exists( $this->api, 'traverse_fields' ), 'Method traverse_fields does not exist' );

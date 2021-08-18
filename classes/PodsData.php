@@ -62,7 +62,7 @@ class PodsData {
 	/**
 	 * The table information to fallback on when a Pod is not defined in $this->pod_data.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @var array
 	 */
@@ -3594,7 +3594,7 @@ class PodsData {
 	 *
 	 * @return mixed
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function __get( $name ) {
 		$name = (string) $name;
@@ -3651,7 +3651,7 @@ class PodsData {
 	 * @param string $name  Property name.
 	 * @param mixed  $value Property value.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function __set( $name, $value ) {
 		// Don't do anything.
@@ -3665,7 +3665,7 @@ class PodsData {
 	 *
 	 * @return bool Whether the variable is set or not.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function __isset( $name ) {
 		// Handle alias Pod properties.
@@ -3707,7 +3707,7 @@ class PodsData {
 	 *
 	 * @param string $name Property name.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function __unset( $name ) {
 		// Don't do anything.

@@ -695,7 +695,7 @@ class Pods_Pages extends PodsComponent {
 
 		uksort( $pod_page_rewrites, 'pods_page_length_sort' );
 
-		pods_transient_set( 'pods_object_page_rewrites', $pod_page_rewrites );
+		pods_transient_set( 'pods_object_page_rewrites', $pod_page_rewrites, WEEK_IN_SECONDS );
 
 		$pod_page_rewrites = array_flip( $pod_page_rewrites );
 

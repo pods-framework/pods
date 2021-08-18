@@ -1,6 +1,6 @@
 <div class="wrap pods-admin pods-admin--flex">
 	<div class="pods-admin__content-container">
-		<form action="" method="post">
+		<form action="" method="post" class="pods-submittable pods-form pods-form-settings">
 
 			<div id="icon-pods" class="icon32"><br /></div>
 
@@ -8,9 +8,9 @@
 			$default = 'tools';
 
 			$tabs = [
-				// 'settings' => __( 'Settings', 'pods' ),
-				'tools' => __( 'Tools', 'pods' ),
-				'reset' => __( 'Cleanup &amp; Reset', 'pods' ),
+				'tools'    => __( 'Tools', 'pods' ),
+				'settings' => __( 'Settings', 'pods' ),
+				'reset'    => __( 'Cleanup &amp; Reset', 'pods' ),
 			];
 
 			/**
@@ -58,7 +58,7 @@
 			];
 
 			if ( in_array( $tab, $supported, true ) ) {
-				echo pods_view( PODS_DIR . 'ui/admin/settings-' . $tab . '.php' );
+				pods_view( PODS_DIR . 'ui/admin/settings-' . $tab . '.php' );
 			}
 
 			/**

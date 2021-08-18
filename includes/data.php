@@ -1361,9 +1361,9 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
  */
 function pods_clean_name( $orig, $lower = true, $trim_underscores = false ) {
 	$str = trim( $orig );
-	$str = preg_replace( '/(\s)/', '_', $str );
-	$str = preg_replace( '/([^0-9a-zA-Z\-_])/', '', $str );
-	$str = preg_replace( '/(_){2,}/', '_', $str );
+	$str = preg_replace( '/([^0-9a-zA-Z\-_\s])/', '', $str );
+	$str = preg_replace( '/(\s_)/', '_', $str );
+	$str = preg_replace( '/(\s+)/', '_', $str );
 	$str = preg_replace( '/(-){2,}/', '-', $str );
 
 	if ( $lower ) {

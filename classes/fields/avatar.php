@@ -244,7 +244,7 @@ class PodsField_Avatar extends PodsField_File {
 						if ( 'avatar' === $field['type'] ) {
 							$avatar_field = $field['name'];
 
-							pods_transient_set( 'pods_avatar_field', $avatar_field );
+							pods_transient_set( 'pods_avatar_field', $avatar_field, WEEK_IN_SECONDS );
 
 							break;
 						}
@@ -313,7 +313,7 @@ class PodsField_Avatar extends PodsField_File {
 				'options-discussion',
 			);
 
-			if ( null !== $current_screen && in_array( $current_screen->id, $screens, true ) ) {
+			if ( $current_screen && in_array( $current_screen->id, $screens, true ) ) {
 				return false;
 			}
 		}

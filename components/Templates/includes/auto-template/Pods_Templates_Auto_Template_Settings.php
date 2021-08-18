@@ -420,7 +420,7 @@ class Pods_Templates_Auto_Template_Settings {
 				}
 			}
 
-			pods_transient_set( $key, $archive_test );
+			pods_transient_set( $key, $archive_test, WEEK_IN_SECONDS );
 
 		}
 

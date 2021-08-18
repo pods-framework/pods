@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit\Pod;
+
 /**
  * @package Pods\Fields
  */
@@ -455,13 +457,6 @@ class PodsField_Pick extends PodsField {
 				$pod_options[ $pod['name'] ] = $pod['label'] . ' (' . $pod['name'] . ')';
 			}
 
-			// Settings pods for relationships.
-			$_pods = PodsMeta::$settings;
-
-			foreach ( $_pods as $pod ) {
-				$pod_options[ $pod['name'] ] = $pod['label'] . ' (' . $pod['name'] . ')';
-			}
-
 			/**
 			 * Allow filtering the list of Pods to show in the list of relationship objects.
 			 *
@@ -481,18 +476,36 @@ class PodsField_Pick extends PodsField {
 				);
 			}
 
-			// Post Types for relationships.
-			$post_types = get_post_types();
+			/**
+			 * Prevent ability to extend core Pods content types.
+			 *
+			 * @param bool $ignore_internal Default is true, when set to false Pods internal content types can not be extended.
+			 *
+			 * @since 2.3.19
+			 */
+			$ignore_internal = apply_filters( 'pods_pick_ignore_internal', true );
+
+			// Public Post Types for relationships.
+			$post_types = get_post_types( [ 'public' => true ] );
 			asort( $post_types );
 
-			$ignore = array( 'attachment', 'revision', 'nav_menu_item' );
+			$ignored_post_types = [
+				'attachment',
+				'revision',
+				'nav_menu_item',
+				'custom_css',
+				'customize_changeset',
+				'oembed_cache',
+				'user_request',
+				'wp_template',
+			];
 
 			foreach ( $post_types as $post_type => $label ) {
-				if ( in_array( $post_type, $ignore, true ) || empty( $post_type ) ) {
+				if ( empty( $post_type ) || in_array( $post_type, $ignored_post_types, true ) ) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
-				} elseif ( 0 === strpos( $post_type, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
+				} elseif ( $ignore_internal && 0 === strpos( $post_type, '_pods_' ) ) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -507,27 +520,47 @@ class PodsField_Pick extends PodsField {
 				);
 			}
 
+			// Post Types for relationships.
+			$post_types = get_post_types( [ 'public' => false ] );
+			asort( $post_types );
+
+			foreach ( $post_types as $post_type => $label ) {
+				if ( empty( $post_type ) || in_array( $post_type, $ignored_post_types, true ) ) {
+					unset( $post_types[ $post_type ] );
+
+					continue;
+				} elseif ( $ignore_internal && 0 === strpos( $post_type, '_pods_' ) ) {
+					unset( $post_types[ $post_type ] );
+
+					continue;
+				}
+
+				$post_type = get_post_type_object( $post_type );
+
+				self::$related_objects[ 'post_type-' . $post_type->name ] = array(
+					'label'         => $post_type->label . ' (' . $post_type->name . ')',
+					'group'         => __( 'Post Types (Private)', 'pods' ),
+					'bidirectional' => true,
+				);
+			}
+
 			// Taxonomies for relationships.
 			$taxonomies = get_taxonomies();
 			asort( $taxonomies );
 
-			$ignore = array( 'nav_menu', 'post_format' );
+			$ignored_taxonomies = [
+				'nav_menu',
+				'post_format',
+				'wp_theme',
+			];
 
 			foreach ( $taxonomies as $taxonomy => $label ) {
-				/**
-				 * Prevent ability to extend core Pods content types.
-				 *
-				 * @param bool $ignore_internal Default is true, when set to false Pods internal content types can not be extended.
-				 *
-				 * @since 2.3.19
-				 */
-				$ignore_internal = apply_filters( 'pods_pick_ignore_internal', true );
 
-				if ( in_array( $taxonomy, $ignore, true ) || empty( $taxonomy ) ) {
+				if ( empty( $taxonomy ) || in_array( $taxonomy, $ignored_taxonomies, true ) ) {
 					unset( $taxonomies[ $taxonomy ] );
 
 					continue;
-				} elseif ( 0 === strpos( $taxonomy, '_pods_' ) && $ignore_internal ) {
+				} elseif ( $ignore_internal && 0 === strpos( $taxonomy, '_pods_' ) ) {
 					unset( $taxonomies[ $taxonomy ] );
 
 					continue;
@@ -639,7 +672,7 @@ class PodsField_Pick extends PodsField {
 			do_action( 'pods_form_ui_field_pick_related_objects_predefined' );
 
 			if ( did_action( 'init' ) ) {
-				pods_transient_set( 'pods_related_objects', self::$related_objects );
+				pods_transient_set( 'pods_related_objects', self::$related_objects, WEEK_IN_SECONDS );
 			}
 		}//end if
 
@@ -1509,11 +1542,10 @@ class PodsField_Pick extends PodsField {
 		}
 
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
-			$related_pod = self::$api->load_pod(
-				array(
-					'name' => $related_val,
-				), false
-			);
+			$related_pod = self::$api->load_pod( [
+				'name'       => $related_val,
+				'auto_setup' => true,
+			] );
 
 			if ( false !== $related_pod && ( 'pod' === $related_object || $related_object === $related_pod['type'] ) ) {
 				$related_field = false;
@@ -1715,11 +1747,10 @@ class PodsField_Pick extends PodsField {
 		$related_sister_id = (int) pods_v( 'sister_id', $options, 0 );
 
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
-			$related_pod = self::$api->load_pod(
-				array(
-					'name' => $related_val,
-				), false
-			);
+			$related_pod = self::$api->load_pod( [
+				'name'       => $related_val,
+				'auto_setup' => true,
+			] );
 
 			if ( false !== $related_pod && ( 'pod' === $related_object || $related_object === $related_pod['type'] ) ) {
 				$related_field = false;
@@ -2079,6 +2110,8 @@ class PodsField_Pick extends PodsField {
 		// Use field object if it was provided.
 		if ( isset( $options['_field_object'] ) ) {
 			$options = $options['_field_object'];
+
+			$name = $options->get_name();
 		}
 
 		$data  = apply_filters( 'pods_field_pick_object_data', null, $name, $value, $options, $pod, $id, $object_params );
@@ -2182,9 +2215,17 @@ class PodsField_Pick extends PodsField {
 					$pick_val = pods_v( static::$type . '_table', $options, $pick_val, true );
 				}
 
+				$related_pod = null;
+
 				if ( '__current__' === $pick_val ) {
-					if ( is_object( $pod ) ) {
+					if ( $pod instanceof Pod ) {
+						$pick_val = $pod->get_name();
+
+						$related_pod = $pod;
+					} elseif ( $pod instanceof Pods ) {
 						$pick_val = $pod->pod;
+
+						$related_pod = $pod->pod_data;
 					} elseif ( is_array( $pod ) ) {
 						$pick_val = $pod['name'];
 					} elseif ( 0 < strlen( $pod ) ) {
@@ -2198,7 +2239,11 @@ class PodsField_Pick extends PodsField {
 					$table_info = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $object_params );
 				}
 
-				$search_data = pods_data( is_object( $pod ) ? $pod : null );
+				if ( null === $related_pod && $table_info && $table_info['pod'] ) {
+					$related_pod = $table_info['pod'];
+				}
+
+				$search_data = pods_data( $related_pod );
 				$search_data->table( $table_info );
 
 				$default_field_index = $search_data->field_index;
@@ -2454,7 +2499,7 @@ class PodsField_Pick extends PodsField {
 				$ids = array();
 
 				if ( ! empty( $results ) ) {
-					$display_filter = pods_v( 'display_filter', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) );
+					$display_filter = pods_v( 'display_filter', pods_v( $search_data->field_index, $search_data->object_fields ) );
 
 					foreach ( $results as $result ) {
 						$result      = get_object_vars( $result );
@@ -2664,15 +2709,20 @@ class PodsField_Pick extends PodsField {
 			$page = (int) $params->page;
 		}
 
+		$autocomplete_formats = [
+			'autocomplete',
+			'list',
+		];
+
 		if ( ! isset( $params->query ) || '' === trim( $params->query ) ) {
 			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
 		} elseif ( empty( $pod ) || empty( $field ) || (int) $pod['id'] !== (int) $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
 			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
 		} elseif ( 'pick' !== $field['type'] || empty( $field['table_info'] ) ) {
 			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
-		} elseif ( 'single' === pods_v( static::$type . '_format_type', $field ) && 'autocomplete' === pods_v( static::$type . '_format_single', $field ) ) {
+		} elseif ( 'single' === pods_v( static::$type . '_format_type', $field ) && ! in_array( pods_v( static::$type . '_format_single', $field ), $autocomplete_formats, true ) ) {
 			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
-		} elseif ( 'multi' === pods_v( static::$type . '_format_type', $field ) && 'autocomplete' === pods_v( static::$type . '_format_multi', $field ) ) {
+		} elseif ( 'multi' === pods_v( static::$type . '_format_type', $field ) && ! in_array( pods_v( static::$type . '_format_multi', $field ), $autocomplete_formats, true ) ) {
 			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
 		}
 

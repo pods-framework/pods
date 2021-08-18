@@ -1985,8 +1985,17 @@
                     pods_changed = false;
                 } );
             },
-            qtip: function ( element ) {
-                $( element ).find( '.pods-qtip' ).each( function ( index, element ) {
+            qtip: function ( parentElement ) {
+            	let $parentElement = $( parentElement );
+            	let $submittable;
+
+            	if ( $parentElement.hasClass( 'pods-submittable' ) ) {
+            		$submittable = $parentElement;
+				} else {
+            		$submittable = $parentElement.closest( '.pods-submittable' );
+				}
+
+                $parentElement.find( '.pods-qtip' ).each( function ( index, element ) {
                     $( element ).qtip( {
                         content: {
                             attr: 'alt'
@@ -2004,7 +2013,7 @@
                             delay: 300
                         },
                         position: {
-                            container: $( element ).closest( '.pods-submittable' ),
+                            container: $submittable,
                             my: 'bottom left',
                             adjust: {
                                 y: -14

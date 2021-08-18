@@ -8,6 +8,8 @@ use Pods_Unit_Tests\Pods_UnitTestCase;
 /**
  * Class MappingTest
  *
+ * @todo    Add image_fields and avatar tests.
+ *
  * @package Pods_Unit_Tests
  *
  * @group   pods-mapping
@@ -30,11 +32,12 @@ class MappingTest extends Pods_UnitTestCase {
 
 	/**
 	 * The pods system under test
+	 *
 	 * @var   \Pods
 	 */
 	private $pod;
 
-	public function setUp(): void {
+	public function setUp() : void {
 		parent::setUp();
 
 		$params = [
@@ -61,12 +64,13 @@ class MappingTest extends Pods_UnitTestCase {
 		$pod = pods( $this->pod_name );
 
 		$this->item_id = $pod->add( [
-			'post_title' => 'Test title',
+			'post_title'   => 'Test title',
 			'post_content' => 'Test content',
+			'post_status'  => 'publish',
 		] );
 	}
 
-	public function tearDown(): void {
+	public function tearDown() : void {
 		$api = pods_api();
 
 		// Delete all posts.
@@ -133,6 +137,70 @@ class MappingTest extends Pods_UnitTestCase {
 		$this->assertEquals( $this->field_type, $pod->field( '_field.' . $this->field_name . '.type' ) );
 
 		$this->assertEquals( '', $pod->field( '_field.' . $this->field_name . '.any_non_option' ) );
+	}
+
+	/**
+	 * @covers \Pods\Data\Map_Field_Values::calculation
+	 */
+	public function test_calculation() {
+		$pod = pods( $this->pod_name );
+
+		// Add 4 more tests so we have 5 total.
+		$pod->add( [
+			'post_title'   => 'Test title 2',
+			'post_name'    => 'test-title-2',
+			'post_content' => 'Test content',
+			'post_status'  => 'publish',
+		] );
+
+		$pod->add( [
+			'post_title'   => 'Test title 3',
+			'post_name'    => 'test-title-3',
+			'post_content' => 'Test content',
+			'post_status'  => 'publish',
+		] );
+
+		$pod->add( [
+			'post_title'   => 'Test title 4',
+			'post_name'    => 'test-title-4',
+			'post_content' => 'Test content',
+			'post_status'  => 'publish',
+		] );
+
+		$pod->add( [
+			'post_title'   => 'Test title 5',
+			'post_name'    => 'test-title-5',
+			'post_content' => 'Test content',
+			'post_status'  => 'publish',
+		] );
+
+		$pod = pods( $this->pod_name );
+
+		$pod->find( [
+			// Limit to 2 and expect 3 pages.
+			'limit' => 2,
+		] );
+
+		// Defaults prior to loop.
+		$zebra    = true;
+		$position = 0;
+
+		$this->assertEquals( (int) $zebra, $pod->zebra() );
+		$this->assertEquals( $position, $pod->position() );
+		$this->assertEquals( 2, $pod->total() );
+		$this->assertEquals( 5, $pod->total_found() );
+		$this->assertEquals( 3, $pod->total_pages() );
+
+		while ( $pod->fetch() ) {
+			$position ++;
+			$zebra = ! $zebra;
+
+			$this->assertEquals( (int) $zebra, $pod->field( '_zebra' ) );
+			$this->assertEquals( $position, $pod->field( '_position' ) );
+			$this->assertEquals( 2, $pod->field( '_total' ) );
+			$this->assertEquals( 5, $pod->field( '_total_found' ) );
+			$this->assertEquals( 3, $pod->field( '_total_pages' ) );
+		}
 	}
 
 }

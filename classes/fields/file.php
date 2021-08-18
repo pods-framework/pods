@@ -626,6 +626,7 @@ class PodsField_File extends PodsField {
 				'edit_link' => html_entity_decode( esc_url( $edit_link ) ),
 				'link'      => html_entity_decode( esc_url( $link ) ),
 				'download'  => html_entity_decode( esc_url( $download ) ),
+				'selected'  => true,
 			);
 		}//end foreach
 

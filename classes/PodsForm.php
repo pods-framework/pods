@@ -1401,7 +1401,7 @@ class PodsForm {
 				}
 			}
 
-			pods_transient_set( 'pods_form_admin_init_field_types', $admin_field_types );
+			pods_transient_set( 'pods_form_admin_init_field_types', $admin_field_types, WEEK_IN_SECONDS );
 		} else {
 			foreach ( $admin_field_types as $field_type ) {
 				self::field_method( $field_type, 'admin_init' );
@@ -1536,7 +1536,7 @@ class PodsForm {
 			self::$field_types[ $type ]         = $class_vars;
 			self::$field_types[ $type ]['file'] = $file;
 
-			pods_transient_set( 'pods_field_type_' . $type, self::$field_types[ $type ] );
+			pods_transient_set( 'pods_field_type_' . $type, self::$field_types[ $type ], WEEK_IN_SECONDS );
 		} else {
 			self::$field_types[ $type ] = $field_type;
 		}
@@ -1651,7 +1651,7 @@ class PodsForm {
 
 			self::$field_types = $field_types;
 
-			pods_transient_set( 'pods_field_types', self::$field_types );
+			pods_transient_set( 'pods_field_types', self::$field_types, WEEK_IN_SECONDS );
 		} else {
 			self::$field_types = array_merge( $field_types, self::$field_types );
 		}//end if

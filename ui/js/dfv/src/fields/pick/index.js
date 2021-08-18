@@ -1,16 +1,27 @@
-// @todo add tests
+/**
+ * External dependencies
+ */
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 import PropTypes from 'prop-types';
 
-// WordPress dependencies
+/**
+ * WordPress dependencies
+ */
+import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
+/**
+ * Other Pods dependencies
+ */
 import SimpleSelect from './simple-select';
 import RadioSelect from './radio-select';
 import CheckboxSelect from './checkbox-select';
-import ListSelect from './list-select';
+import ListSelectValues from './list-select-values';
 
+import IframeModal from 'dfv/src/components/iframe-modal';
+
+import loadAjaxOptions from '../../helpers/loadAjaxOptions';
 import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
@@ -52,6 +63,7 @@ const formatDataFromProp = ( data ) => {
 const formatValuesForReactSelectComponent = (
 	value,
 	options = [],
+	fieldItemData = [],
 	isMulti = false
 ) => {
 	if ( ! value ) {
@@ -65,9 +77,28 @@ const formatValuesForReactSelectComponent = (
 	const splitValue = Array.isArray( value ) ? value : value.split( ',' );
 
 	return splitValue.map(
-		( currentValue ) => options.find(
-			( option ) => option.value === currentValue
-		)
+		( currentValue ) => {
+			const fullValueFromOptions = options.find(
+				( option ) => option.value === currentValue
+			);
+
+			if ( fullValueFromOptions ) {
+				return fullValueFromOptions;
+			}
+
+			const fullFieldItem = fieldItemData.find(
+				( item ) => Number( item.id ) === Number( currentValue )
+			);
+
+			if ( fullFieldItem ) {
+				return {
+					label: fullFieldItem?.name,
+					value: fullFieldItem?.id.toString(),
+				};
+			}
+
+			return {};
+		}
 	);
 };
 
@@ -88,10 +119,15 @@ const Pick = ( props ) => {
 		fieldConfig: {
 			htmlAttr: htmlAttributes = {},
 			readonly: readOnly,
+			fieldItemData,
 			data = [],
 			label,
 			name,
-			// pick_allow_add_new: allowAddNew,
+			default_icon: defaultIcon,
+			iframe_src: addNewIframeSrc,
+			iframe_title_add: addNewIframeTitle,
+			iframe_title_edit: editIframeTitle,
+			pick_allow_add_new: allowAddNew,
 			pick_custom: pickCustomOptions,
 			// pick_display,
 			// pick_display_format_multi,
@@ -117,6 +153,7 @@ const Pick = ( props ) => {
 			// rest_pick_depth: pickDepth,
 			// rest_pick_response: pickResponse,
 			// pick_where,
+			ajax_data: ajaxData,
 		},
 		setValue,
 		value,
@@ -126,15 +163,62 @@ const Pick = ( props ) => {
 	const isSingle = 'single' === formatType;
 	const isMulti = 'multi' === formatType;
 
+	const [ showAddNewIframe, setShowAddNewIframe ] = useState( false );
+
 	// The options could be derived from the `data` prop (as a default),
 	// or we may need to do more work to break them apart or load them by the API.
 	const [ dataOptions, setDataOptions ] = useState( formatDataFromProp( data ) );
+
+	// fieldItemData may get edited by add/edit modals, but we only need to track this
+	// in state.
+	const [ editedFieldItemData, setEditedFieldItemData ] = useState( fieldItemData );
+
+	useEffect( () => {
+		if ( 'custom-simple' !== pickObject ) {
+			return;
+		}
+
+		const unsplitOptions = pickCustomOptions.split( '\n' );
+
+		// Set an empty array if no entries or malformed.
+		if ( ! unsplitOptions.length ) {
+			setDataOptions( [] );
+			return;
+		}
+
+		const optionEntries = unsplitOptions.map(
+			( unsplitOption ) => {
+				const splitOption = unsplitOption.split( '|' );
+
+				// Return if malformed entry.
+				if ( 1 === splitOption.length ) {
+					return {
+						value: splitOption[ 0 ],
+						label: splitOption[ 0 ],
+					};
+				} else if ( 2 !== splitOption.length ) {
+					return null;
+				}
+
+				return {
+					value: splitOption[ 0 ],
+					label: splitOption[ 1 ],
+				};
+			}
+		);
+
+		// Filter out any options missing the value or label.
+		const filteredOptionEntries = optionEntries.filter(
+			( entry ) => entry.value && entry.label
+		);
+
+		setDataOptions( filteredOptionEntries );
+	}, [ pickObject, pickCustomOptions ] );
 
 	const setValueWithLimit = ( newValue ) => {
 		// We don't need to worry about limits if this isn't a multi-select field.
 		if ( isSingle ) {
 			setValue( newValue );
-
 			setHasBlurred( true );
 
 			return;
@@ -148,7 +232,6 @@ const Pick = ( props ) => {
 
 		if ( isNaN( numericLimit ) || 0 === numericLimit || -1 === numericLimit ) {
 			setHasBlurred( true );
-
 			setValue( filteredNewValues );
 			return;
 		}
@@ -159,190 +242,203 @@ const Pick = ( props ) => {
 		}
 
 		setValue( filteredNewValues );
-
 		setHasBlurred( true );
 	};
 
 	useEffect( () => {
-		// const loadAjaxOptions = async () => {
-			// const url = window.ajaxurl + '?pods_ajax=1';
+		const listenForIframeMessages = ( event ) => {
+			if (
+				event.origin !== window.location.origin ||
+				'PODS_MESSAGE' !== event.data.type ||
+				! event.data.data
+			) {
+				return;
+			}
 
-			// const ajaxData = {
-			// 	_wpnonce: ajaxData._wpnonce,
-			// 	action: 'pods_relationship',
-			// 	method: 'select2',
-			// 	pod: ajaxData.pod,
-			// 	field: ajaxData.field,
-			// 	uri: ajaxData.uri,
-			// 	id: ajaxData.id,
-			// 	query: params.term,
-			// };
+			setShowAddNewIframe( false );
 
-			// const results = await fetch(
-			// 	url,
-			// 	{
-			// 		method: 'POST',
-			// 		headers: {
-			// 			'Content-Type': 'application/json',
-			// 		},
-			// 		body: JSON.stringify( data ),
-			// 	}
-			// );
-		// };
+			const { data: newData = {} } = event.data;
 
-		switch ( pickObject ) {
-			case 'custom-simple':
-				const unsplitOptions = pickCustomOptions.split( '\n' );
+			setEditedFieldItemData( ( prevData ) => [
+				...prevData,
+				newData,
+			] );
 
-				// Set an empty array if no entries or malformed.
-				if ( ! unsplitOptions.length ) {
-					setDataOptions( [] );
-					return;
-				}
+			setValueWithLimit( [
+				...( value || [] ),
+				newData?.id.toString(),
+			] );
+		};
 
-				const optionEntries = unsplitOptions.map(
-					( unsplitOption ) => {
-						const splitOption = unsplitOption.split( '|' );
-
-						// Return if malformed entry.
-						if ( 1 === splitOption.length ) {
-							return {
-								value: splitOption[ 0 ],
-								label: splitOption[ 0 ],
-							};
-						} else if ( 2 !== splitOption.length ) {
-							return null;
-						}
-
-						return {
-							value: splitOption[ 0 ],
-							label: splitOption[ 1 ],
-						};
-					}
-				);
-
-				// Filter out any options missing the value or label.
-				const filteredOptionEntries = optionEntries.filter(
-					( entry ) => entry.value && entry.label
-				);
-
-				setDataOptions( filteredOptionEntries );
-				break;
-			// @todo add cases for taxonomies, etc and fall through?
-			case 'post-type':
-				// @todo get request working
-				setDataOptions( [] );
-				// @todo
-				break;
-			default:
-				// By default, the options are already loaded from `data`.
-				break;
-		}
-	}, [ pickObject ] );
-
-	if ( ! isMulti && 'radio' === formatSingle ) {
-		return (
-			<RadioSelect
-				htmlAttributes={ htmlAttributes }
-				name={ name }
-				value={ value }
-				setValue={ setValueWithLimit }
-				options={ dataOptions }
-				readOnly={ !! readOnly }
-			/>
-		);
-	}
-
-	if (
-		( isSingle && 'checkbox' === formatSingle ) ||
-		( isMulti && 'checkbox' === formatMulti )
-	) {
-		let formattedValue = value;
-
-		if ( isMulti ) {
-			formattedValue = Array.isArray( value )
-				? value
-				: ( value || '' ).split( ',' );
+		if ( showAddNewIframe ) {
+			window.addEventListener( 'message', listenForIframeMessages, false );
+		} else {
+			window.removeEventListener( 'message', listenForIframeMessages, false );
 		}
 
+		return () => {
+			window.removeEventListener( 'message', listenForIframeMessages, false );
+		};
+	}, [ showAddNewIframe ] );
+
+	// There are a variety of different "select" components, this
+	// chooses the right one based on the options.
+	const renderSelectComponent = () => {
+		if ( ! isMulti && 'radio' === formatSingle ) {
+			return (
+				<RadioSelect
+					htmlAttributes={ htmlAttributes }
+					name={ name }
+					value={ value }
+					setValue={ setValueWithLimit }
+					options={ dataOptions }
+					readOnly={ !! readOnly }
+				/>
+			);
+		}
+
+		if (
+			( isSingle && 'checkbox' === formatSingle ) ||
+			( isMulti && 'checkbox' === formatMulti )
+		) {
+			let formattedValue = value;
+
+			if ( isMulti ) {
+				formattedValue = Array.isArray( value )
+					? value
+					: ( value || '' ).split( ',' );
+			}
+
+			return (
+				<CheckboxSelect
+					htmlAttributes={ htmlAttributes }
+					name={ name }
+					value={ formattedValue }
+					isMulti={ isMulti }
+					setValue={ setValueWithLimit }
+					options={ dataOptions }
+					readOnly={ !! readOnly }
+				/>
+			);
+		}
+
+		if (
+			( isSingle && 'list' === formatSingle ) ||
+			( isMulti && 'list' === formatMulti ) ||
+			( isSingle && 'autocomplete' === formatSingle ) ||
+			( isMulti && 'autocomplete' === formatMulti )
+		) {
+			const isListSelect = ( isSingle && 'list' === formatSingle ) || ( isMulti && 'list' === formatMulti );
+
+			const formattedValue = formatValuesForReactSelectComponent(
+				value,
+				dataOptions,
+				editedFieldItemData,
+				isMulti,
+			);
+
+			return (
+				<>
+					<AsyncSelect
+						controlShouldRenderValue={ ! isListSelect }
+						defaultOptions={ dataOptions }
+						loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
+						value={ formattedValue }
+						// translators: %s is the field label.
+						placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+						isMulti={ isMulti }
+						onChange={ ( newOption ) => {
+							if ( isMulti ) {
+								setValueWithLimit( newOption.map(
+									( selection ) => selection.value )
+								);
+
+								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
+								// in our array of dataOptions, and we should add it, so we can keep track of
+								// the label.
+								// This may cause duplicates in dataOptions, but that shouldn't cause issues
+								// and will be faster than trying to merge the arrays.
+								setDataOptions( ( prevData ) => ( [
+									...prevData,
+									...newOption,
+								] ) );
+							} else {
+								setValueWithLimit( newOption.value );
+
+								setDataOptions( ( prevData ) => ( [
+									...prevData,
+									newOption,
+								] ) );
+							}
+						} }
+						readOnly={ !! readOnly }
+					/>
+
+					{ isListSelect ? (
+						<ListSelectValues
+							value={ formattedValue }
+							setValue={ setValueWithLimit }
+							fieldItemData={ editedFieldItemData }
+							setFieldItemData={ setEditedFieldItemData }
+							isMulti={ isMulti }
+							limit={ parseInt( limit, 10 ) || 0 }
+							defaultIcon={ defaultIcon }
+							showIcon={ toBool( showIcon ) }
+							showViewLink={ toBool( showViewLink ) }
+							showEditLink={ toBool( showEditLink ) }
+							editIframeTitle={ editIframeTitle }
+							readOnly={ !! readOnly }
+						/>
+					) : null }
+
+					{ formattedValue.map( ( selectedValue, index ) => (
+						<input
+							name={ `${ name }[${ index }]` }
+							key={ selectedValue.value }
+							type="hidden"
+							value={ selectedValue.value }
+						/>
+					) ) }
+				</>
+			);
+		}
+
 		return (
-			<CheckboxSelect
+			<SimpleSelect
 				htmlAttributes={ htmlAttributes }
 				name={ name }
-				value={ formattedValue }
-				isMulti={ isMulti }
-				setValue={ setValueWithLimit }
+				value={ formatValuesForHTMLSelectElement( value, isMulti ) }
+				setValue={ ( newValue ) => setValueWithLimit( newValue ) }
 				options={ dataOptions }
+				placeholder={ selectText }
+				isMulti={ isMulti }
 				readOnly={ !! readOnly }
 			/>
 		);
-	}
-
-	if (
-		( isSingle && 'list' === formatSingle ) ||
-		( isMulti && 'list' === formatMulti )
-	) {
-		const formattedValue = ( Object.keys( dataOptions ).length && value )
-			? formatValuesForReactSelectComponent( value, dataOptions, isMulti )
-			: undefined;
-
-		return (
-			<ListSelect
-				htmlAttributes={ htmlAttributes }
-				name={ name }
-				value={ formattedValue }
-				setValue={ setValueWithLimit }
-				options={ dataOptions }
-				// translators: %s is the field label.
-				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
-				isMulti={ isMulti }
-				limit={ parseInt( limit, 10 ) || 0 }
-				showIcon={ toBool( showIcon ) }
-				showViewLink={ toBool( showViewLink ) }
-				showEditLink={ toBool( showEditLink ) }
-				readOnly={ !! readOnly }
-			/>
-		);
-	}
-
-	if (
-		( isSingle && 'autocomplete' === formatSingle ) ||
-		( isMulti && 'autocomplete' === formatMulti )
-	) {
-		const formattedValue = formatValuesForReactSelectComponent( value, dataOptions, isMulti );
-
-		return (
-			<Select
-				htmlAttributes={ htmlAttributes }
-				name={ name }
-				options={ dataOptions }
-				value={ formattedValue }
-				// translators: %s is the field label.
-				placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
-				isMulti={ isMulti }
-				onChange={ ( newOption ) => {
-					if ( isMulti ) {
-						setValueWithLimit( newOption.map( ( selection ) => selection.value ) );
-					} else {
-						setValueWithLimit( newOption.value );
-					}
-				} }
-				readOnly={ !! readOnly }
-			/>
-		);
-	}
+	};
 
 	return (
-		<SimpleSelect
-			htmlAttributes={ htmlAttributes }
-			name={ name }
-			value={ formatValuesForHTMLSelectElement( value, isMulti ) }
-			setValue={ ( newValue ) => setValueWithLimit( newValue ) }
-			options={ dataOptions }
-			placeholder={ selectText }
-			isMulti={ isMulti }
-			readOnly={ !! readOnly }
-		/>
+		<>
+			{ renderSelectComponent() }
+
+			{ ( allowAddNew && addNewIframeSrc ) ? (
+				<Button
+					className="pods-related-add-new pods-modal"
+					onClick={ () => setShowAddNewIframe( true ) }
+					isSecondary
+				>
+					{ __( 'Add New', 'pods', ) }
+				</Button>
+			) : null }
+
+			{ showAddNewIframe ? (
+				<IframeModal
+					title={ addNewIframeTitle }
+					iframeSrc={ addNewIframeSrc }
+					onClose={ () => setShowAddNewIframe( false ) }
+				/>
+			) : null }
+		</>
 	);
 };
 

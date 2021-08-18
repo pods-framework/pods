@@ -1501,7 +1501,7 @@ class PodsAPI {
 		$fields = PodsForm::fields_setup( $fields );
 
 		if ( did_action( 'init' ) && pods_api_cache() ) {
-			pods_transient_set( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ), $fields );
+			pods_transient_set( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ), $fields, WEEK_IN_SECONDS );
 		}
 
 		return $fields;
@@ -1825,7 +1825,7 @@ class PodsAPI {
 			$params->id = $pod['id'];
 
 			$old_name    = $pod['name'];
-			$old_storage = $pod['storage'];
+			$old_storage = isset( $pod['storage'] ) ? $pod['storage'] : 'meta';
 			$old_groups  = isset( $pod['groups'] ) ? $pod['groups'] : [];
 			$old_fields  = isset( $pod['fields'] ) ? $pod['fields'] : [];
 
@@ -2304,7 +2304,7 @@ class PodsAPI {
 		if ( $db ) {
 			$old_info = compact(
 				'old_storage',
-				'old_name',
+				'old_name'
 			);
 
 			$this->save_pod_table_schema( $pod, $all_fields, $old_info );
@@ -2613,7 +2613,7 @@ class PodsAPI {
 		}
 
 		// Skip if not using table storage.
-		if ( 'table' !== $pod['storage'] ) {
+		if ( isset( $pod['storage'] ) && 'table' !== $pod['storage'] ) {
 			return;
 		}
 
@@ -8905,13 +8905,17 @@ class PodsAPI {
 	 *
 	 * @since 2.0.0
 	 */
-	public function handle_field_validation( &$value, $field, $object_fields, $fields, $pod, $params ) {
+	public function handle_field_validation( &$value, $field, $object_fields, $fields, $pod, $params = [] ) {
 
 		$tableless_field_types = PodsForm::tableless_field_types();
 
 		$fields = array_merge( $fields, $object_fields );
 
 		$options = $fields[ $field ];
+
+		if ( is_array( $params ) ) {
+			$params = (object) $params;
+		}
 
 		$id = ( is_object( $params ) ? $params->id : ( is_object( $pod ) ? $pod->id() : 0 ) );
 
@@ -9398,7 +9402,10 @@ class PodsAPI {
 				$name = $object;
 			}
 
-			$pod = $this->load_pod( array( 'name' => $name ), false );
+			$pod = $this->load_pod( [
+				'name'       => $name,
+				'auto_setup' => true,
+			] );
 
 			if ( ! empty( $pod ) ) {
 				$object_type = $pod['type'];
@@ -9422,7 +9429,10 @@ class PodsAPI {
 			}
 
 			if ( ! empty( $name ) ) {
-				$pod = $this->load_pod( array( 'name' => $name ), false );
+				$pod = $this->load_pod( [
+					'name'       => $name,
+					'auto_setup' => true,
+				] );
 
 				if ( ! empty( $pod ) && ( null === $object_type || $object_type == $pod['type'] ) ) {
 					$object_type = $pod['type'];
@@ -9530,6 +9540,7 @@ class PodsAPI {
 			'type'                => null,
 			'object_name'         => $object,
 			'object_hierarchical' => false,
+			'storage'             => null,
 
 			'table'      => $object,
 			'meta_table' => $object,
@@ -9665,6 +9676,7 @@ class PodsAPI {
 			// Post type.
 			$info['table']      = $wpdb->posts;
 			$info['meta_table'] = $wpdb->postmeta;
+			$info['storage']    = 'meta';
 
 			$info['field_id']            = 'ID';
 			$info['field_index']         = 'post_title';
@@ -9784,6 +9796,7 @@ class PodsAPI {
 			// Taxonomy.
 			$info['table']      = $wpdb->terms;
 			$info['meta_table'] = $wpdb->terms;
+			$info['storage']    = 'meta';
 
 			$info['join']['tt']          = "LEFT JOIN `{$wpdb->term_taxonomy}` AS `tt` ON `tt`.`term_id` = `t`.`term_id`";
 			$info['join']['tr']          = "LEFT JOIN `{$wpdb->term_relationships}` AS `tr` ON `tr`.`term_taxonomy_id` = `tt`.`term_taxonomy_id`";
@@ -9874,6 +9887,7 @@ class PodsAPI {
 			$info['table']      = $wpdb->users;
 			$info['meta_table'] = $wpdb->usermeta;
 			$info['pod_table']  = $wpdb->prefix . 'pods_user';
+			$info['storage']    = 'meta';
 
 			$info['field_id']    = 'ID';
 			$info['field_index'] = 'display_name';
@@ -9891,6 +9905,7 @@ class PodsAPI {
 			$info['table']      = $wpdb->comments;
 			$info['meta_table'] = $wpdb->commentmeta;
 			$info['pod_table']  = $wpdb->prefix . 'pods_comment';
+			$info['storage']    = 'meta';
 
 			$info['field_id']            = 'comment_ID';
 			$info['field_index']         = 'comment_date';
@@ -9930,6 +9945,7 @@ class PodsAPI {
 			// Setting.
 			$info['table']      = $wpdb->options;
 			$info['meta_table'] = $wpdb->options;
+			$info['storage']    = 'option';
 
 			$info['field_id']    = 'option_id';
 			$info['field_index'] = 'option_name';
@@ -9952,6 +9968,7 @@ class PodsAPI {
 			// Site meta.
 			$info['table']      = $wpdb->sitemeta;
 			$info['meta_table'] = $wpdb->sitemeta;
+			$info['storage']    = 'meta';
 
 			$info['field_id']    = 'site_id';
 			$info['field_index'] = 'meta_key';
@@ -9965,6 +9982,7 @@ class PodsAPI {
 			// Network = Site.
 			$info['table']      = $wpdb->site;
 			$info['meta_table'] = $wpdb->sitemeta;
+			$info['storage']    = 'meta';
 
 			$info['field_id']    = 'id';
 			$info['field_index'] = 'domain';
@@ -9976,7 +9994,8 @@ class PodsAPI {
 			$info['orderby'] = "`t`.`{$info['field_index']}` ASC, `t`.`path` ASC, `t`.`{$info['field_id']}`";
 		} elseif ( is_multisite() && 'site' === $object_type ) {
 			// Site = Blog.
-			$info['table'] = $wpdb->blogs;
+			$info['table']   = $wpdb->blogs;
+			$info['storage'] = 'none';
 
 			$info['field_id']    = 'blog_id';
 			$info['field_index'] = 'domain';
@@ -9995,6 +10014,7 @@ class PodsAPI {
 			$info['table']      = pods_v( 'table_custom', $info['pod'], ( empty( $object ) ? $name : $object ), true );
 			$info['meta_table'] = pods_v( 'meta_table_custom', $info['pod'], $info['meta_table'], true );
 			$info['pod_table']  = pods_v( 'pod_table_custom', $info['pod'], "{$wpdb->prefix}pods_" . $info['table'], true );
+			$info['storage']    = 'table';
 
 			$info['field_id']            = pods_v( 'field_id_custom', $info['pod'], $info['field_id'], true );
 			$info['field_index']         = pods_v( 'field_index_custom', $info['pod'], $info['field_index'], true );
@@ -10058,6 +10078,7 @@ class PodsAPI {
 
 		if ( ! empty( $info['pod'] ) && ( is_array( $info['pod'] ) || $info['pod'] instanceof Pods\Whatsit ) ) {
 			$info['recurse'] = true;
+			$info['storage'] = $info['pod']['storage'];
 		}
 
 		$info['type']        = $object_type;
@@ -10069,7 +10090,7 @@ class PodsAPI {
 			}
 
 			if ( !$transient_cached ) {
-				pods_transient_set( $transient, $info );
+				pods_transient_set( $transient, $info, WEEK_IN_SECONDS );
 			}
 		}
 
@@ -10447,7 +10468,7 @@ class PodsAPI {
 
 		pods_cache_clear( true );
 
-		pods_transient_set( 'pods_flush_rewrites', 1 );
+		pods_transient_set( 'pods_flush_rewrites', 1, WEEK_IN_SECONDS );
 
 		do_action( 'pods_cache_flushed' );
 	}

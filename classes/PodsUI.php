@@ -2281,14 +2281,27 @@ class PodsUI {
 			$values[]       = $value;
 			$data[ $field ] = $value;
 		}//end foreach
-		$field_sql = implode( ',', $field_sql );
-		if ( false === $insert && 0 < $this->id ) {
-			$this->insert_id = $this->id;
-			$values[]        = $this->id;
-			$check           = $wpdb->query( $wpdb->prepare( "UPDATE $this->sql['table'] SET $field_sql WHERE id=%d", $values ) );
+
+		if ( $this->pod instanceof Pods ) {
+			if ( false === $insert && 0 < $this->id ) {
+				$this->insert_id = $this->pod->save( $data );
+			} else {
+				$this->insert_id = $this->pod->add( $data );
+			}
+
+			$check = 0 < $this->insert_id;
 		} else {
-			$check = $wpdb->query( $wpdb->prepare( "INSERT INTO $this->sql['table'] SET $field_sql", $values ) );
+			$field_sql = implode( ',', $field_sql );
+
+			if ( false === $insert && 0 < $this->id ) {
+				$this->insert_id = $this->id;
+				$values[]        = $this->id;
+				$check           = $wpdb->query( $wpdb->prepare( "UPDATE $this->sql['table'] SET $field_sql WHERE id=%d", $values ) );
+			} else {
+				$check = $wpdb->query( $wpdb->prepare( "INSERT INTO $this->sql['table'] SET $field_sql", $values ) );
+			}
 		}
+
 		if ( $check ) {
 			if ( empty( $this->insert_id ) ) {
 				$this->insert_id = $wpdb->insert_id;
@@ -2297,6 +2310,7 @@ class PodsUI {
 		} else {
 			$this->error( sprintf( __( '<strong>Error:</strong> %1\$s has not been %2\$s.', 'pods' ), $this->item, $action ) );
 		}
+
 		$this->do_hook( 'post_save', $this->insert_id, $data, $insert );
 	}
 
@@ -4810,7 +4824,15 @@ class PodsUI {
 							continue;
 						}
 
-						$actions[ $custom_action ] = '<span class="edit action-' . esc_attr( $custom_action ) . '"><a href="' . esc_url( $this->do_template( $custom_data['link'], $row ) ) . '" title="' . esc_attr( $custom_data['label'] ) . ' this item"' . $confirm . '>' . $custom_data['label'] . '</a></span>';
+						$span_class = 'edit';
+
+						if ( isset( $custom_data['span_class'] ) ) {
+							$span_class = $custom_data['span_class'];
+						}
+
+						$span_class .= ' action-' . $custom_action;
+
+						$actions[ $custom_action ] = '<span class="' . esc_attr( $span_class ) . '"><a href="' . esc_url( $this->do_template( $custom_data['link'], $row ) ) . '" title="' . esc_attr( $custom_data['label'] ) . ' this item"' . $confirm . '>' . $custom_data['label'] . '</a></span>';
 					}//end if
 				}//end if
 			}//end foreach

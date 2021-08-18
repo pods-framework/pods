@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { omit } from 'lodash';
 
@@ -9,6 +9,7 @@ import { omit } from 'lodash';
  * WordPress dependencies
  */
 import { select } from '@wordpress/data';
+import { registerPlugin } from '@wordpress/plugins';
 
 /**
  * Pods dependencies
@@ -64,8 +65,13 @@ window.PodsDFV = {
 				}
 			}
 
+			// Move other data into the field config so we have less to pass around.
 			cleanedFieldConfig.htmlAttr = data.htmlAttr || {};
 			cleanedFieldConfig.fieldEmbed = data.fieldEmbed || false;
+
+			if ( data.fieldItemData ) {
+				cleanedFieldConfig.fieldItemData = data.fieldItemData;
+			}
 
 			return {
 				directRender,
@@ -73,6 +79,7 @@ window.PodsDFV = {
 				parentNode: tag.parentNode,
 				fieldConfig: directRender ? undefined : cleanedFieldConfig,
 				fieldItemData: data.fieldItemData || null,
+				fieldValue: data.fieldValue || null,
 			};
 		} );
 
@@ -113,25 +120,20 @@ window.PodsDFV = {
 				// type should just have a singular value.
 				const value = [ 'avatar', 'file', 'pick' ].includes( fieldConfig.type )
 					? ( currentValue.fieldItemData || fieldConfig.default || [] )
-					: ( currentValue.fieldItemData?.[ 0 ] || fieldConfig.default || '' );
+					: ( currentValue.fieldValue || fieldConfig.default || '' );
 
-				// Some field types need the value to be adjusted because it's in a different
-				// shape than expected.
-				// @todo there are probably others?
+				// Some field types (maybe just pick?) have all available options in the
+				// fieldItemData, not just the selected values, so we need to clean those.
 				let formattedValue = value;
 
-				switch ( fieldConfig.type ) {
-					case 'pick':
-						if ( 'multi' === fieldConfig.format_type ) {
-							formattedValue = value
-								.map( ( option ) => option.selected ? option.id : null )
-								.filter( ( option ) => null !== option );
-						} else {
-							formattedValue = value.find( ( option ) => true === option.selected )?.id;
-						}
-						break;
-					default:
-						break;
+				if ( 'pick' === fieldConfig.type ) {
+					if ( 'multi' === fieldConfig.pick_format_type ) {
+						formattedValue = value
+							.map( ( option ) => option.selected ? option.id : null )
+							.filter( ( option ) => null !== option );
+					} else {
+						formattedValue = value.find( ( option ) => true === option.selected )?.id;
+					}
 				}
 
 				return {
@@ -141,6 +143,8 @@ window.PodsDFV = {
 			},
 			{}
 		);
+
+		console.log( 'initialValues', initialValues );
 
 		// The Edit Pod screen gets a different store set up than
 		// other contexts.
@@ -178,7 +182,7 @@ window.PodsDFV = {
 	},
 
 	isGutenbergEditorLoaded() {
-		return ! select( 'core/editor' );
+		return ( select( 'core/editor' ) !== undefined );
 	},
 };
 
@@ -192,9 +196,19 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	}
 
 	window.PodsDFV.init();
+} );
 
-	// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
-	if ( window.PodsDFV.isModalWindow() && window.PodsDFV.isGutenbergEditorLoaded() ) {
-		PodsGbModalListener.init();
-	}
+// Load the Gutenberg modal listener if we're inside a Pods modal with Gutenberg active
+const LoadModalListeners = () => {
+	useEffect( () => {
+		if ( window.PodsDFV.isModalWindow() && window.PodsDFV.isGutenbergEditorLoaded() ) {
+			PodsGbModalListener.init();
+		}
+	}, [] );
+
+	return null;
+};
+
+registerPlugin( 'pods-load-modal-listeners', {
+	render: LoadModalListeners,
 } );

@@ -9,14 +9,23 @@ import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 import './color.scss';
 
 const Color = ( {
+	fieldConfig,
 	setValue,
 	value,
 	setHasBlurred,
 } ) => {
+	const { name } = fieldConfig;
+
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	return (
 		<div>
+			<input
+				name={ name }
+				type="hidden"
+				value={ value }
+			/>
+
 			<button
 				onClick={ ( event ) => {
 					event.preventDefault();

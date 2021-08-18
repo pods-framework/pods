@@ -4824,7 +4824,15 @@ class PodsUI {
 							continue;
 						}
 
-						$actions[ $custom_action ] = '<span class="edit action-' . esc_attr( $custom_action ) . '"><a href="' . esc_url( $this->do_template( $custom_data['link'], $row ) ) . '" title="' . esc_attr( $custom_data['label'] ) . ' this item"' . $confirm . '>' . $custom_data['label'] . '</a></span>';
+						$span_class = 'edit';
+
+						if ( isset( $custom_data['span_class'] ) ) {
+							$span_class = $custom_data['span_class'];
+						}
+
+						$span_class .= ' action-' . $custom_action;
+
+						$actions[ $custom_action ] = '<span class="' . esc_attr( $span_class ) . '"><a href="' . esc_url( $this->do_template( $custom_data['link'], $row ) ) . '" title="' . esc_attr( $custom_data['label'] ) . ' this item"' . $confirm . '>' . $custom_data['label'] . '</a></span>';
 					}//end if
 				}//end if
 			}//end foreach

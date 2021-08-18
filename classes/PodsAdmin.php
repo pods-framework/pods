@@ -1050,60 +1050,68 @@ class PodsAdmin {
 
 		$total_pods = count( $pod_list );
 
-		$ui = array(
+		$ui = [
 			'data'             => $pod_list,
 			'row'              => $row,
 			'total'            => $total_pods,
 			'total_found'      => $total_pods,
 			'items'            => 'Pods',
 			'item'             => 'Pod',
-			'fields'           => array(
+			'fields'           => [
 				'manage' => $fields,
-			),
-			'sql'              => array(
+			],
+			'sql'              => [
 				'field_id'    => 'id',
 				'field_index' => 'label',
-			),
-			'actions_disabled' => array( 'view', 'export' ),
-			'actions_custom'   => array(
-				'add'        => array( $this, 'admin_setup_add' ),
-				'edit'       => array( $this, 'admin_setup_edit' ),
-				'duplicate'  => array(
-					'callback'          => array( $this, 'admin_setup_duplicate' ),
-					'restrict_callback' => array( $this, 'admin_setup_duplicate_restrict' ),
-				),
-				'reset'      => array(
+			],
+			'actions_disabled' => [ 'view', 'export', 'delete' ],
+			'actions_custom'   => [
+				'add'        => [ $this, 'admin_setup_add' ],
+				'edit'       => [ $this, 'admin_setup_edit' ],
+				'duplicate'  => [
+					'callback'          => [ $this, 'admin_setup_duplicate' ],
+					'restrict_callback' => [ $this, 'admin_setup_duplicate_restrict' ],
+				],
+				'reset'      => [
 					'label'             => __( 'Delete All Items', 'pods' ),
 					'confirm'           => __( 'Are you sure you want to delete all items from this Pod? If this is an extended Pod, it will remove the original items extended too.', 'pods' ),
-					'callback'          => array( $this, 'admin_setup_reset' ),
-					'restrict_callback' => array( $this, 'admin_setup_reset_restrict' ),
+					'callback'          => [ $this, 'admin_setup_reset' ],
+					'restrict_callback' => [ $this, 'admin_setup_reset_restrict' ],
 					'nonce'             => true,
-				),
-				'delete'     => array( $this, 'admin_setup_delete' ),
-			),
-			'action_links'     => array(
-				'add' => pods_query_arg( array(
-						'page'     => 'pods-add-new',
-						'action'   => '',
-						'id'       => '',
-						'do'       => '',
-						'_wpnonce' => '',
-					) ),
-			),
+					'span_class'        => 'delete',
+				],
+				'delete_pod' => [
+					'label'      => __( 'Delete', 'pods' ),
+					'confirm'    => __( 'Are you sure you want to delete this Pod? All of the content and items will remain in the database, you may want to Delete All Items first.', 'pods' ),
+					'callback'   => [ $this, 'admin_setup_delete' ],
+					'nonce'      => true,
+					'span_class' => 'delete',
+				],
+			],
+			'action_links'     => [
+				'add' => pods_query_arg( [
+					'page'     => 'pods-add-new',
+					'action'   => '',
+					'id'       => '',
+					'do'       => '',
+					'_wpnonce' => '',
+				] ),
+			],
 			'search'           => false,
 			'searchable'       => false,
 			'sortable'         => true,
 			'pagination'       => false,
-			'extra'            => array(
-				'total' => ', ' . number_format_i18n( $total_groups ) . ' ' . _n( 'group', 'groups', $total_groups, 'pods' )
+			'extra'            => [
+				'total' =>
+					', ' . number_format_i18n( $total_groups ) . ' ' . _n( 'group', 'groups', $total_groups, 'pods' )
 					. ', ' . number_format_i18n( $total_fields ) . ' ' . _n( 'field', 'fields', $total_fields, 'pods' ),
-			),
-		);
+			],
+		];
 
 		if ( 1 < count( $pod_types_found ) ) {
-			$ui['views']            = array( 'all' => __( 'All', 'pods' ) . ' (' . $total_pods . ')' );
+			$ui['views']            = [ 'all' => __( 'All', 'pods' ) . ' (' . $total_pods . ')' ];
 			$ui['view']             = $view;
-			$ui['heading']          = array( 'views' => __( 'Type', 'pods' ) );
+			$ui['heading']          = [ 'views' => __( 'Type', 'pods' ) ];
 			$ui['filters_enhanced'] = true;
 
 			foreach ( $pod_types_found as $pod_type => $number_found ) {
@@ -1887,12 +1895,12 @@ class PodsAdmin {
 	/**
 	 * Delete a pod
 	 *
-	 * @param int|string $id  Item ID.
 	 * @param PodsUI     $obj PodsUI object.
+	 * @param int|string $id  Item ID.
 	 *
 	 * @return mixed
 	 */
-	public function admin_setup_delete( $id, $obj ) {
+	public function admin_setup_delete( $obj, $id ) {
 
 		$pod = pods_api()->load_pod( array( 'id' => $id ), false );
 
@@ -1912,6 +1920,8 @@ class PodsAdmin {
 		$obj->total_found = count( $obj->data );
 
 		$obj->message( __( 'Pod deleted successfully.', 'pods' ) );
+
+		$obj->manage();
 	}
 
 	/**

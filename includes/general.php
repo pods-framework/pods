@@ -652,7 +652,7 @@ function pods_help( $text, $url = null ) {
 	}
 
 	if ( 0 < strlen( $url ) ) {
-		$text .= '<br /><br /><a href=\'' . $url . '\' target=\'_blank\' rel=\'noopener noreferrer\'>' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+		$text .= '<br /><br /><a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Find out more', 'pods' ) . ' &raquo;</a>';
 	}
 
 	echo '<img src="' . esc_url( PODS_URL ) . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
@@ -936,6 +936,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 	);
 
 	$default_other_tags = [
+		'blog_id'          => null,
 		'field'            => null,
 		'col'              => null,
 		'template'         => null,
@@ -986,6 +987,16 @@ function pods_shortcode_run( $tags, $content = null ) {
 		return $return;
 	}
 
+	$blog_is_switched = false;
+
+	if ( defined( 'PODS_SHORTCODE_ALLOW_BLOG_SWITCHING' ) && PODS_SHORTCODE_ALLOW_BLOG_SWITCHING && is_multisite() ) {
+		if ( ! empty( $tags['blog_id'] ) && is_numeric( $tags['blog_id'] ) && (int) get_current_blog_id() !== (int) $tags['blog_id'] ) {
+			switch_to_blog( (int) $tags['blog_id'] );
+
+			$blog_is_switched = true;
+		}
+	}
+	
 	if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
 		$has_query_tags = array_intersect_key( array_diff( $tags, $defaults ), $default_query_tags );
 
@@ -1016,7 +1027,11 @@ function pods_shortcode_run( $tags, $content = null ) {
 		}
 
 		if ( ! $tags['use_current'] && empty( $tags['name'] ) ) {
-			return '<p>' . __( 'Please provide a Pod name', 'pods' ) . '</p>';
+			if ( $blog_is_switched ) {
+				restore_current_blog();
+			}
+
+			return '<p>' . esc_html__( 'Pods embed error: Please provide a Pod name', 'pods' ) . '</p>';
 		}
 	}
 
@@ -1033,7 +1048,11 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( empty( $content ) && empty( $tags['pods_page'] ) && empty( $tags['template'] ) && empty( $tags['field'] ) && empty( $tags['form'] ) ) {
-		return '<p>' . __( 'Please provide either a template or field name', 'pods' ) . '</p>';
+		if ( $blog_is_switched ) {
+			restore_current_blog();
+		}
+
+		return '<p>' . esc_html__( 'Pods embed error: Please provide either a template or field name', 'pods' ) . '</p>';
 	}
 
 	if ( ! $tags['use_current'] && ! isset( $id ) ) {
@@ -1077,7 +1096,11 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	if ( empty( $pod ) || ! $pod->valid() ) {
-		return '<p>' . __( 'Pod not found', 'pods' ) . '</p>';
+		if ( $blog_is_switched ) {
+			restore_current_blog();
+		}
+
+		return '<p>' . esc_html__( 'Pods embed error: Pod not found', 'pods' ) . '</p>';
 	}
 
 	$found = 0;
@@ -1178,9 +1201,17 @@ function pods_shortcode_run( $tags, $content = null ) {
 	if ( ! empty( $tags['form'] ) ) {
 		if ( 'user' === $pod->pod ) {
 			if ( false !== strpos( $tags['fields'], '_capabilities' ) || false !== strpos( $tags['fields'], '_user_level' ) ) {
+				if ( $blog_is_switched ) {
+					restore_current_blog();
+				}
+
 				// Further hardening of User-based forms
 				return '';
 			} elseif ( $is_singular && ( ! defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || ! PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
+				if ( $blog_is_switched ) {
+					restore_current_blog();
+				}
+
 				// Only explicitly allow user edit forms
 				return '';
 			}
@@ -1209,8 +1240,13 @@ function pods_shortcode_run( $tags, $content = null ) {
 			$return = $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );
 		}
 
+		// @todo $blog_is_switched >> Switch back before running other shortcodes?
 		if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 			$return = do_shortcode( $return );
+		}
+
+		if ( $blog_is_switched ) {
+			restore_current_blog();
 		}
 
 		return $return;
@@ -1218,13 +1254,22 @@ function pods_shortcode_run( $tags, $content = null ) {
 		$pods_page = Pods_Pages::exists( $tags['pods_page'] );
 
 		if ( empty( $pods_page ) ) {
-			return '<p>Pods Page not found</p>';
+			if ( $blog_is_switched ) {
+				restore_current_blog();
+			}
+
+			return '<p>' . esc_html__( 'Pods embed error: Pods Page not found.', 'pods' ) . '</p>';
 		}
 
 		$return = Pods_Pages::content( true, $pods_page );
 
+		// @todo $blog_is_switched >> Switch back before running other shortcodes?
 		if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 			$return = do_shortcode( $return );
+		}
+
+		if ( $blog_is_switched ) {
+			restore_current_blog();
 		}
 
 		return $return;
@@ -1285,6 +1330,10 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 	if ( $tags['shortcodes'] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 		$return = do_shortcode( $return );
+	}
+
+	if ( $blog_is_switched ) {
+		restore_current_blog();
 	}
 
 	/**

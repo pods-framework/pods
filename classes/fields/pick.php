@@ -850,15 +850,6 @@ class PodsField_Pick extends PodsField {
 		wp_enqueue_script( 'pods-select2' );
 
 		$this->render_input_script( $args );
-
-		/**
-		 * @todo Support custom integrations.
-		 *
-		 * Run the action 'pods_form_ui_field_pick_input_' . pods_v( static::$type . '_format_type', $options, 'single' ) . '_' . pods_v( static::$type . '_format_multi', $options, 'checkbox' )
-		 * Run the action 'pods_form_ui_field_pick_input'
-		 * Pass the arguments: $name, $value, $options, $pod, $id
-		 */
-
 	}
 
 	/**

@@ -352,14 +352,6 @@ class PodsField_File extends PodsField {
 
 		// Ensure the media library is initialized
 		$this->render_input_script( $args );
-
-		// @todo: we're short-circuiting for prototyping above. The actions below will need to be woven in somehow.
-		/**
-		 * $form_field_type . '_uploader' != attachment, plupload, media
-		 * Run this action 'pods_form_ui_field_' . static::$type . '_uploader_' . static::$type . '_uploader'
-		 * Run this action 'pods_form_ui_field_' . static::$type . '_uploader', static::$type . '_uploader'
-		 * Pass these args $name, $value, $options, $pod, $id
-		 */
 	}
 
 	/**

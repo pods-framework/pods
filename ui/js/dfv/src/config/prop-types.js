@@ -67,6 +67,7 @@ export const FIELD_PROP_TYPE = {
 	developer_mode: PropTypes.bool,
 	disable_dfv: BOOLEAN_ALL_TYPES,
 	display_filter: PropTypes.string,
+	display_filter_args: PropTypes.arrayOf( PropTypes.string ),
 	editor_options: PropTypes.oneOfType( [
 		PropTypes.string, // @todo is this an error message, or a back-end bug?
 		PropTypes.object,

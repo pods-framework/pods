@@ -253,7 +253,20 @@ const MemoizedFieldWrapper = React.memo(
 		}
 
 		// The label usually won't change, EXCEPT on the "Edit Pod" Labels tab.
-		if ( prevProps.field.label !== nextProps.field.label ) {
+		if (
+			prevProps.field?.label &&
+			nextProps.field?.label &&
+			prevProps.field.label !== nextProps.field.label
+		) {
+			return false;
+		}
+
+		// Add an extra dependency for the slug placeholder on the "Add Pod" screen.
+		if (
+			'create_name' === nextProps.field?.name &&
+			'pods-form-ui-create-name' === nextProps.field?.htmlAttr?.id &&
+			prevProps.allPodValues?.create_label_singular !== nextProps.allPodValues?.create_label_singular
+		) {
 			return false;
 		}
 

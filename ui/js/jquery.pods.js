@@ -950,19 +950,6 @@
                     methods.stepForward();
                 } );
 
-                // Create preview for post name.
-                $( 'input#pods-form-ui-create-label-singular' ).on( 'keyup', function() {
-                    var val = $( this )
-                        .val()
-                        .toLowerCase()
-                        .replace( /(\s)/, '_' )
-                        .replace( /([^0-9a-zA-Z\-_])/, '' )
-                        .replace( /(_){2,}/, '_' )
-                        .replace( /(-){2,}/, '-' );
-
-                    $( 'input#pods-form-ui-create-name' ).attr( 'placeholder', val );
-                } );
-
                 // Initial step panel setup
                 $( '.pods-wizard .pods-wizard-step' ).hide();
                 $( '.pods-wizard .pods-wizard-step:first' ).show();

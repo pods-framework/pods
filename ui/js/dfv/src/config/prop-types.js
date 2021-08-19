@@ -66,6 +66,7 @@ export const FIELD_PROP_TYPE = {
 	description: PropTypes.string,
 	developer_mode: PropTypes.bool,
 	disable_dfv: BOOLEAN_ALL_TYPES,
+	display_filter: PropTypes.string,
 	editor_options: PropTypes.oneOfType( [
 		PropTypes.string, // @todo is this an error message, or a back-end bug?
 		PropTypes.object,
@@ -73,6 +74,12 @@ export const FIELD_PROP_TYPE = {
 	'excludes-on': OBJECT_OR_ARRAY,
 	field_type: PropTypes.string,
 	group: NUMBER_OR_NUMBER_AS_STRING,
+	fields: PropTypes.arrayOf(
+		NUMBER_OR_NUMBER_AS_STRING
+	),
+	groups: PropTypes.arrayOf(
+		NUMBER_OR_NUMBER_AS_STRING
+	),
 	group_id: NUMBER_OR_NUMBER_AS_STRING,
 	grouped: PropTypes.number,
 	help: PropTypes.oneOfType( [

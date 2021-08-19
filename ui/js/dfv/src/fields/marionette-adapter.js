@@ -1,4 +1,5 @@
 import React from 'react';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { PodsDFVFieldModel } from 'dfv/src/core/pods-field-model';
@@ -33,13 +34,21 @@ class MarionetteAdapter extends React.Component {
 			isMarionetteGlobalLoaded: true,
 		} );
 
-		// Initial render of the Marionette component. (is this needed?)
+		// Initial render of the Marionette component.
 		this.renderMarionetteComponent();
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps, prevState ) {
 		// Don't do anything if Marionette is not setup yet.
 		if ( ! this.state.isMarionetteGlobalLoaded ) {
+			return;
+		}
+
+		if (
+			isEqual( prevProps.fieldConfig, this.props.fieldConfig ) &&
+			isEqual( prevProps.value, this.props.value ) &&
+			isEqual( prevState, this.state )
+		) {
 			return;
 		}
 
@@ -69,7 +78,6 @@ class MarionetteAdapter extends React.Component {
 
 		this.element.appendChild( this.marionetteComponent.el );
 
-		// @todo does this work? What if it's a model not a collection?
 		this.marionetteComponent.collection.on( 'all', ( eventName, collection ) => {
 			if ( ! [ 'update', 'remove', 'reset' ].includes( eventName ) ) {
 				return;

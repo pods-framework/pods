@@ -7,6 +7,11 @@
 	max-width: 100%;
 }
 
+.pods-form-ui-field-select[readonly] {
+	font-style: italic;
+	color: grey;
+}
+
 //
 // Radio and Checkbox fields
 //

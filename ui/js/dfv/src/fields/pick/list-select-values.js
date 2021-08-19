@@ -24,13 +24,12 @@ import './list-select.scss';
 
 const ListSelectItem = ( {
 	fieldName,
-	itemName,
-	itemId,
 	value,
 	editLink,
 	viewLink,
 	editIframeTitle,
 	icon,
+	isDraggable,
 	isRemovable,
 	moveUp,
 	moveDown,
@@ -74,43 +73,38 @@ const ListSelectItem = ( {
 
 	return (
 		<li className="pods-dfv-list-item pods-relationship">
-			<input
-				name={ itemName }
-				id={ itemId }
-				type="hidden"
-				value={ value.value }
-			/>
-
 			<ul className="pods-dfv-list-meta relationship-item">
-				<li className="pods-dfv-list-col pods-dfv-list-handle pods-list-select-move-buttons">
-					<Button
-						className={
-							classnames(
-								'pods-list-select-move-buttons__button',
-								! moveUp && 'pods-list-select-move-buttons__button--disabled'
-							)
-						}
-						showTooltip
-						disabled={ ! moveUp }
-						onClick={ moveUp }
-						icon={ chevronUp }
-						label={ __( 'Move up', 'pods' ) }
-					/>
+				{ isDraggable ? (
+					<li className="pods-dfv-list-col pods-dfv-list-handle pods-list-select-move-buttons">
+						<Button
+							className={
+								classnames(
+									'pods-list-select-move-buttons__button',
+									! moveUp && 'pods-list-select-move-buttons__button--disabled'
+								)
+							}
+							showTooltip
+							disabled={ ! moveUp }
+							onClick={ moveUp }
+							icon={ chevronUp }
+							label={ __( 'Move up', 'pods' ) }
+						/>
 
-					<Button
-						className={
-							classnames(
-								'pods-list-select-move-buttons__button',
-								! moveDown && 'pods-list-select-move-buttons__button--disabled'
-							)
-						}
-						showTooltip
-						disabled={ ! moveDown }
-						onClick={ moveDown }
-						icon={ chevronDown }
-						label={ __( 'Move down', 'pods' ) }
-					/>
-				</li>
+						<Button
+							className={
+								classnames(
+									'pods-list-select-move-buttons__button',
+									! moveDown && 'pods-list-select-move-buttons__button--disabled'
+								)
+							}
+							showTooltip
+							disabled={ ! moveDown }
+							onClick={ moveDown }
+							icon={ chevronDown }
+							label={ __( 'Move down', 'pods' ) }
+						/>
+					</li>
+				) : null }
 
 				{ icon ? (
 					<li className="pods-dfv-list-col pods-dfv-list-icon">
@@ -188,8 +182,6 @@ const ListSelectItem = ( {
 
 ListSelectItem.propTypes = {
 	fieldName: PropTypes.string.isRequired,
-	itemName: PropTypes.string.isRequired,
-	itemId: PropTypes.string.isRequired,
 	value: PropTypes.shape( {
 		label: PropTypes.string.isRequired,
 		value: PropTypes.string.isRequired,
@@ -207,8 +199,8 @@ ListSelectItem.propTypes = {
 };
 
 const ListSelectValues = ( {
-	name,
-	value,
+	fieldName,
+	value: arrayOfValues,
 	fieldItemData,
 	setFieldItemData,
 	setValue,
@@ -221,14 +213,6 @@ const ListSelectValues = ( {
 	editIframeTitle,
 	readOnly = false,
 } ) => {
-	// Always have an array of values for the list, even if
-	// we were just passed a single object.
-	let arrayOfValues = [];
-
-	if ( value ) {
-		arrayOfValues = isMulti ? value : [ value ];
-	}
-
 	const removeValueAtIndex = ( index = 0 ) => {
 		if ( isMulti ) {
 			setValue(
@@ -263,9 +247,6 @@ const ListSelectValues = ( {
 			{ !! arrayOfValues.length && (
 				<ul className="pods-dfv-list pods-relationship">
 					{ arrayOfValues.map( ( valueItem, index ) => {
-						const itemName = isMulti ? `${ name }[${ index }]` : name;
-						const itemId = isMulti ? `${ name }[${ index }]` : name;
-
 						// There may be additional data in an object from the fieldItemData
 						// array.
 						const moreData = fieldItemData.find(
@@ -287,10 +268,8 @@ const ListSelectValues = ( {
 
 						return (
 							<ListSelectItem
-								key={ `${ name }-${ index }` }
-								fieldName={ name }
-								itemName={ itemName }
-								itemId={ itemId }
+								key={ `${ fieldName }-${ index }` }
+								fieldName={ fieldName }
 								value={ displayValue }
 								isDraggable={ ! readOnly && ( 1 !== limit ) }
 								isRemovable={ ! readOnly }
@@ -320,24 +299,13 @@ const ListSelectValues = ( {
 };
 
 ListSelectValues.propTypes = {
-	htmlAttributes: PropTypes.shape( {
-		id: PropTypes.string,
-		class: PropTypes.string,
-		name: PropTypes.string,
-	} ),
-	name: PropTypes.string.isRequired,
-	value: PropTypes.oneOfType( [
+	fieldName: PropTypes.string.isRequired,
+	value: PropTypes.arrayOf(
 		PropTypes.shape( {
 			label: PropTypes.string.isRequired,
 			value: PropTypes.string.isRequired,
-		} ),
-		PropTypes.arrayOf(
-			PropTypes.shape( {
-				label: PropTypes.string.isRequired,
-				value: PropTypes.string.isRequired,
-			} )
-		),
-	] ),
+		} )
+	),
 	setValue: PropTypes.func.isRequired,
 	fieldItemData: PropTypes.arrayOf(
 		PropTypes.any,

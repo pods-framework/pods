@@ -19,10 +19,13 @@ describe( 'sanitizeSlug', () => {
 
 	it( 'forces lowercase and replaces spaces with dashes and keeps underscores', () => {
 		const value = 'Capitalized Words and an ALLCAPS_word';
+		const secondValue = 'Pod name with spaces';
 
 		const sanitizedValue = sanitizeSlug( value, '-' );
+		const secondSanitizedValue = sanitizeSlug( secondValue );
 
 		expect( sanitizedValue ).toBe( 'capitalized-words-and-an-allcaps_word' );
+		expect( secondSanitizedValue ).toBe( 'pod_name_with_spaces' );
 	} );
 
 	it( 'removes invalid characters', () => {

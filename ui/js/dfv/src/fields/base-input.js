@@ -28,6 +28,7 @@ const BaseInput = ( {
 	const handleChange = ( event ) => setValue( event.target.value );
 
 	const autoCompleteValue = htmlAttributes.autocomplete || autoComplete;
+	const placeholderValue = htmlAttributes.placeholder || placeholder;
 
 	return (
 		<input
@@ -37,7 +38,7 @@ const BaseInput = ( {
 			// eslint-disable-next-line camelcase
 			data-name-clean={ htmlAttributes.name_clean }
 			className={ classnames( className, htmlAttributes.class ) }
-			placeholder={ placeholder }
+			placeholder={ placeholderValue }
 			maxLength={ -1 !== maxLength ? maxLength : undefined }
 			value={ type !== 'checkbox' ? value : undefined }
 			checked={ type === 'checkbox' ? toBool( value ) : undefined }

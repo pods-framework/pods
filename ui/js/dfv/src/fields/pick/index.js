@@ -67,11 +67,13 @@ const formatValuesForReactSelectComponent = (
 	isMulti = false
 ) => {
 	if ( ! value ) {
-		return isMulti ? [] : undefined;
+		return isMulti ? [] : [];
 	}
 
 	if ( ! isMulti ) {
-		return options.find( ( option ) => option.value === value );
+		return [
+			options.find( ( option ) => option.value === value ),
+		];
 	}
 
 	const splitValue = Array.isArray( value ) ? value : value.split( ',' );
@@ -343,32 +345,36 @@ const Pick = ( props ) => {
 						controlShouldRenderValue={ ! isListSelect }
 						defaultOptions={ dataOptions }
 						loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
-						value={ formattedValue }
+						value={ isMulti ? formattedValue : formattedValue[ 0 ] }
 						// translators: %s is the field label.
 						placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
 						isMulti={ isMulti }
 						onChange={ ( newOption ) => {
+							// The new value(s) may have been loaded by ajax, if it was, then it wasn't
+							// in our array of dataOptions, and we should add it, so we can keep track of
+							// the label.
+							setDataOptions( ( prevData ) => {
+								const prevDataValues = prevData.map( ( option ) => option.value );
+								const updatedData = [ ...prevData ];
+								const newOptions = isMulti ? newOption : [ newOption ];
+
+								newOptions.forEach( ( option ) => {
+									if ( prevDataValues.includes( option.value ) ) {
+										return;
+									}
+
+									updatedData.push( option );
+								} );
+
+								return updatedData;
+							} );
+
 							if ( isMulti ) {
 								setValueWithLimit( newOption.map(
 									( selection ) => selection.value )
 								);
-
-								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
-								// in our array of dataOptions, and we should add it, so we can keep track of
-								// the label.
-								// This may cause duplicates in dataOptions, but that shouldn't cause issues
-								// and will be faster than trying to merge the arrays.
-								setDataOptions( ( prevData ) => ( [
-									...prevData,
-									...newOption,
-								] ) );
 							} else {
 								setValueWithLimit( newOption.value );
-
-								setDataOptions( ( prevData ) => ( [
-									...prevData,
-									newOption,
-								] ) );
 							}
 						} }
 						readOnly={ !! readOnly }
@@ -376,6 +382,7 @@ const Pick = ( props ) => {
 
 					{ isListSelect ? (
 						<ListSelectValues
+							fieldName={ name }
 							value={ formattedValue }
 							setValue={ setValueWithLimit }
 							fieldItemData={ editedFieldItemData }

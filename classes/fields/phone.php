@@ -201,35 +201,43 @@ class PodsField_Phone extends PodsField {
 
 		$options = (array) $options;
 
-		if ( 'international' !== pods_v( static::$type . '_format', $options ) ) {
+		$phone_format = pods_v( static::$type . '_format', $options, '999-999-9999 x999', true );
+
+		if ( 'international' !== $phone_format ) {
 			// Clean input
-			$number = preg_replace( '/([^0-9ext])/', '', $value );
+			$number = preg_replace( '/(\+\d+)/', '', $value );
+			$number = preg_replace( '/([^0-9ext])/', '', $number );
 
 			$number = str_replace(
-				array( '-', '.', 'ext', 'x', 't', 'e', '(', ')' ), array(
-					'',
-					'',
+				[
+					'ext',
+					'x',
+					't',
+					'e'
+				],
+				[
 					'|',
 					'|',
 					'',
 					'',
-					'',
-					'',
-				), $number
+				],
+				$number
 			);
 
+			$extension = '';
+
 			// Get extension
-			$extension = explode( '|', $number );
-			if ( 1 < count( $extension ) ) {
-				$number    = preg_replace( '/([^0-9])/', '', $extension[0] );
-				$extension = preg_replace( '/([^0-9])/', '', $extension[1] );
-			} else {
-				$extension = '';
+			$extension_data = explode( '|', $number );
+
+			if ( 1 < count( $extension_data ) ) {
+				$number    = $extension_data[0];
+				$extension = $extension_data[1];
 			}
 
 			// Build number array
 			$numbers = str_split( $number, 3 );
 
+			// Split up the numbers: 123-456-7890: 123[0] 456[1] 789[2]0[3]
 			if ( isset( $numbers[3] ) ) {
 				$numbers[2] .= $numbers[3];
 				$numbers     = array( $numbers[0], $numbers[1], $numbers[2] );
@@ -238,17 +246,20 @@ class PodsField_Phone extends PodsField {
 			}
 
 			// Format number
-			if ( '(999) 999-9999 x999' === pods_v( static::$type . '_format', $options ) ) {
+			if ( '(999) 999-9999 x999' === $phone_format ) {
 				$number_count = count( $numbers );
 
 				if ( 1 === $number_count ) {
+					// Invalid number.
 					$value = '';
 				} elseif ( 2 === $number_count ) {
+					// Basic number, no area code!
 					$value = implode( '-', $numbers );
 				} else {
+					// Full number.
 					$value = '(' . $numbers[0] . ') ' . $numbers[1] . '-' . $numbers[2];
 				}
-			} elseif ( '999.999.9999 x999' === pods_v( static::$type . '_format', $options ) ) {
+			} elseif ( '999.999.9999 x999' === $phone_format ) {
 				$value = implode( '.', $numbers );
 			} else {
 				$value = implode( '-', $numbers );

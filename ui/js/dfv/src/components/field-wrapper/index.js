@@ -100,7 +100,6 @@ export const FieldWrapper = ( props ) => {
 
 	if ( 'create_name' === name ) {
 		processedHtmlAttr.placeholder = sanitizeSlug( allPodValues.create_label_singular );
-		console.log( 'setting create_name placeholder', processedHtmlAttr.placeholder );
 	}
 
 	// Sort out different shapes that we could get the help text in.

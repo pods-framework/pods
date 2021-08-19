@@ -542,6 +542,11 @@ class PodsField_File extends PodsField {
 				),
 			);
 
+			// Disable multi selection if only one is allowed.
+			if ( 1 === $file_limit ) {
+				$options['plupload_init']['multi_selection'] = false;
+			}
+
 			// Pass post ID if we're in an add or edit post screen.
 			$post = get_post();
 

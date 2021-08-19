@@ -61,6 +61,7 @@ class PodsField_Website extends PodsField {
 					'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' ),
 					'none'              => __( 'No format', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_allow_port'  => array(

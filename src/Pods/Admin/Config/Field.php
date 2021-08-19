@@ -137,6 +137,7 @@ class Field extends Base {
 				'label'      => __( 'Field Type', 'pods' ),
 				'type'       => 'pick',
 				'default'    => 'text',
+				'required'   => true,
 				'data'       => [],
 				'dependency' => true,
 				'help'       => 'help',
@@ -146,8 +147,8 @@ class Field extends Base {
 				'label'      => __( 'Related Type', 'pods' ),
 				'type'       => 'pick',
 				'default'    => '',
-				'required'   => true,
 				'data'       => [],
+				'pick_show_select_text'   => 0,
 				'dependency' => true,
 				'depends-on' => [
 					'type' => 'pick',
@@ -171,8 +172,8 @@ class Field extends Base {
 				'label'      => __( 'Related Table', 'pods' ),
 				'type'       => 'pick',
 				'default'    => '',
-				'required'   => true,
 				'data'       => [],
+				'pick_show_select_text'   => 0,
 				'depends-on' => [
 					'type'        => 'pick',
 					'pick_object' => 'table',

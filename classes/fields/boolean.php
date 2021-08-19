@@ -45,6 +45,7 @@ class PodsField_Boolean extends PodsField {
 					'radio'    => __( 'Radio Buttons', 'pods' ),
 					'dropdown' => __( 'Drop Down', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_yes_label'   => array(

@@ -208,6 +208,7 @@ class Group extends Base {
 					'side'     => __( 'Side', 'pods' ),
 					'advanced' => __( 'Advanced', 'pods' ),
 				],
+				'pick_show_select_text'   => 0,
 			];
 
 			if ( $is_comment_type ) {
@@ -228,6 +229,7 @@ class Group extends Base {
 					'default' => __( 'Default', 'pods' ),
 					'low'     => __( 'Low', 'pods' ),
 				],
+				'pick_show_select_text'   => 0,
 			];
 		}
 

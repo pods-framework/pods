@@ -713,6 +713,7 @@ class Pod extends Base {
 						'page'   => 'page',
 						'custom' => __( 'Custom Capability', 'pods' ),
 					],
+					'pick_show_select_text'   => 0,
 					'dependency' => true,
 				],
 				'capability_type_custom'        => [
@@ -813,6 +814,7 @@ class Pod extends Base {
 					'type'        => 'pick',
 					'pick_object' => 'post-status',
 					'default'     => $default_post_status,
+					'pick_show_select_text'   => 0,
 				],
 				'post_type_supports'            => [
 					'name'          => 'post_type_supports',
@@ -968,6 +970,7 @@ class Pod extends Base {
 						'objects'     => __( 'Make a new menu item', 'pods' ),
 						'top'         => __( 'Make a new menu item below Settings', 'pods' ),
 					],
+					'pick_show_select_text'   => 0,
 					'dependency' => true,
 				],
 				'menu_location_custom'  => [
@@ -1108,6 +1111,7 @@ class Pod extends Base {
 						'default' => 'Default',
 						'custom'  => __( 'Custom Capability', 'pods' ),
 					],
+					'pick_show_select_text'   => 0,
 					'dependency' => true,
 				],
 				'capability_type_custom'   => [

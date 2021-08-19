@@ -437,7 +437,7 @@ function pods_podsrel_enabled() {
 	}
 
 	/**
-	 * Allow filtering of whether or not the wp_podsrel table is enabled.
+	 * Allow filtering of whether the wp_podsrel table is enabled.
 	 *
 	 * @since 2.8.0
 	 *
@@ -458,7 +458,7 @@ function pods_podsrel_enabled() {
  */
 function pods_relationship_meta_storage_enabled( $field = null, $pod = null ) {
 	/**
-	 * Allow filtering of whether or not relationship meta storage is enabled.
+	 * Allow filtering of whether relationship meta storage is enabled.
 	 *
 	 * @since 2.8.0
 	 *
@@ -547,9 +547,9 @@ function pods_api_cache() {
 	}
 
 	/**
-	 * Filter whether or not to use the Pods API cache.
+	 * Filter whether to use the Pods API cache.
 	 *
-	 * @param boolean $use_cache Whether or not to use the Pods API cache.
+	 * @param boolean $use_cache Whether to use the Pods API cache.
 	 *
 	 * @since 2.8.0
 	 */
@@ -659,7 +659,7 @@ function pods_help( $text, $url = null ) {
 }
 
 /**
- * Check whether or not something is a specific version minimum and/or maximum
+ * Check whether something is a specific version minimum and/or maximum
  *
  * @param string $minimum_version Minimum version
  * @param string $comparison      Comparison operator

@@ -76,6 +76,7 @@ class PodsField_DateTime extends PodsField {
 					'format' => __( 'Predefined format', 'pods' ),
 					'custom' => __( 'Custom format', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_format_custom'         => array(
@@ -115,6 +116,7 @@ class PodsField_DateTime extends PodsField {
 					'fjsy'      => date_i18n( 'F jS, Y' ),
 					'c'         => date_i18n( 'c' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_time_type'             => array(
@@ -130,6 +132,7 @@ class PodsField_DateTime extends PodsField {
 					'24'     => __( '24 hour', 'pods' ),
 					'custom' => __( 'Custom', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency'  => true,
 			),
 			static::$type . '_time_format_custom'    => array(
@@ -170,6 +173,7 @@ class PodsField_DateTime extends PodsField {
 					'hh_mm'      => date_i18n( 'h:i' ),
 					'hh_mm_ss'   => date_i18n( 'h:i:s' ),
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_time_format_24'        => array(
 				'label'       => __( 'Time Format', 'pods' ),
@@ -181,6 +185,7 @@ class PodsField_DateTime extends PodsField {
 					'hh_mm'    => date_i18n( 'H:i' ),
 					'hh_mm_ss' => date_i18n( 'H:i:s' ),
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_year_range_custom' => array(
 				'label'   => __( 'Year range', 'pods' ),

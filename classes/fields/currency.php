@@ -77,6 +77,7 @@ class PodsField_Currency extends PodsField_Number {
 					'number' => __( 'Freeform Number', 'pods' ),
 					'slider' => __( 'Slider', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_format_sign'      => array(
@@ -84,6 +85,7 @@ class PodsField_Currency extends PodsField_Number {
 				'default' => apply_filters( 'pods_form_ui_field_number_currency_default', 'usd' ),
 				'type'    => 'pick',
 				'data'    => apply_filters( 'pods_form_ui_field_number_currency_options', $currency_options ),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_format_placement' => array(
 				'label'   => __( 'Currency Placement', 'pods' ),
@@ -98,6 +100,7 @@ class PodsField_Currency extends PodsField_Number {
 					'beforeaftercode'       => __( 'Before with Currency Code after (ex. $100 USD)', 'pods' ),
 					'beforeaftercode_space' => __( 'Before with space and with Currency Code after (ex. $ 100 USD)', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_format'           => array(
 				'label'   => __( 'Format', 'pods' ),
@@ -112,6 +115,7 @@ class PodsField_Currency extends PodsField_Number {
 					'9 999,99'  => '1 234,00',
 					'9\'999.99' => '1\'234.00',
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_decimals'         => array(
 				'label'   => __( 'Decimals', 'pods' ),
@@ -127,6 +131,7 @@ class PodsField_Currency extends PodsField_Number {
 					'remove' => __( 'Remove decimals', 'pods' ),
 					'dash'   => __( 'Convert to dash', 'pods' ) . ' (-)',
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_step'             => array(
 				'label'      => __( 'Slider Increment (Step)', 'pods' ),

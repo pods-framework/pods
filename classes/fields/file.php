@@ -76,6 +76,7 @@ class PodsField_File extends PodsField {
 					'single' => __( 'Single File', 'pods' ),
 					'multi'  => __( 'Multiple Files', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_uploader'               => array(
@@ -89,6 +90,7 @@ class PodsField_File extends PodsField {
 						'plupload'   => __( 'Upload only (Plupload)', 'pods' ),
 					)
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_attachment_tab'         => array(
@@ -101,6 +103,7 @@ class PodsField_File extends PodsField {
 					'upload' => __( 'Upload File', 'pods' ),
 					'browse' => __( 'Media Library', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_upload_dir'             => array(
 				'label'      => __( 'Upload directory', 'pods' ),
@@ -110,6 +113,7 @@ class PodsField_File extends PodsField {
 					'wp'      => __( 'WordPress Default', 'pods' ) . ' (/yyyy/mm/)',
 					'uploads' => __( 'Custom directory within the default uploads directory', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
 				'dependency' => true,
 			),
@@ -174,6 +178,7 @@ class PodsField_File extends PodsField {
 						'other'  => __( 'Other (customize allowed extensions)', 'pods' ),
 					)
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_allowed_extensions'     => array(
@@ -196,6 +201,7 @@ class PodsField_File extends PodsField {
 						'tiles' => __( 'Tiles', 'pods' ),
 					)
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_add_button'             => array(
 				'label'   => __( 'Add Button Text', 'pods' ),
@@ -232,6 +238,7 @@ class PodsField_File extends PodsField {
 					'file' => __( 'Media File', 'pods' ),
 					'none' => __( 'None', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_wp_gallery_columns'     => array(
 				'label'      => __( 'Gallery image columns', 'pods' ),
@@ -248,6 +255,7 @@ class PodsField_File extends PodsField {
 					'8' => '8',
 					'9' => '9',
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_wp_gallery_random_sort' => array(
 				'label'      => __( 'Gallery randomized order', 'pods' ),
@@ -259,6 +267,7 @@ class PodsField_File extends PodsField {
 				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => $this->data_image_sizes(),
+				'pick_show_select_text' => 0,
 			),
 		);
 

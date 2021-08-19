@@ -137,23 +137,24 @@ class PodsField_Pick extends PodsField {
 
 		$options = array(
 			static::$type . '_format_type'    => array(
-				'label'      => __( 'Selection Type', 'pods' ),
-				'help'       => __( 'help', 'pods' ),
-				'default'    => 'single',
-				'type'       => 'pick',
-				'data'       => array(
+				'label'                 => __( 'Selection Type', 'pods' ),
+				'help'                  => __( 'help', 'pods' ),
+				'default'               => 'single',
+				'type'                  => 'pick',
+				'data'                  => array(
 					'single' => __( 'Single Select', 'pods' ),
 					'multi'  => __( 'Multiple Select', 'pods' ),
 				),
-				'dependency' => true,
+				'pick_show_select_text' => 0,
+				'dependency'            => true,
 			),
 			static::$type . '_format_single'  => array(
-				'label'      => __( 'Format', 'pods' ),
-				'help'       => __( 'help', 'pods' ),
-				'depends-on' => array( static::$type . '_format_type' => 'single' ),
-				'default'    => 'dropdown',
-				'type'       => 'pick',
-				'data'       => apply_filters(
+				'label'                 => __( 'Format', 'pods' ),
+				'help'                  => __( 'help', 'pods' ),
+				'depends-on'            => array( static::$type . '_format_type' => 'single' ),
+				'default'               => 'dropdown',
+				'type'                  => 'pick',
+				'data'                  => apply_filters(
 					'pods_form_ui_field_pick_format_single_options', array(
 						'dropdown'     => __( 'Drop Down', 'pods' ),
 						'radio'        => __( 'Radio Buttons', 'pods' ),
@@ -161,15 +162,16 @@ class PodsField_Pick extends PodsField {
 						'list'         => __( 'List view', 'pods' ),
 					)
 				),
-				'dependency' => true,
+				'pick_show_select_text' => 0,
+				'dependency'            => true,
 			),
 			static::$type . '_format_multi'   => array(
-				'label'      => __( 'Format', 'pods' ),
-				'help'       => __( 'help', 'pods' ),
-				'depends-on' => array( static::$type . '_format_type' => 'multi' ),
-				'default'    => 'checkbox',
-				'type'       => 'pick',
-				'data'       => apply_filters(
+				'label'                 => __( 'Format', 'pods' ),
+				'help'                  => __( 'help', 'pods' ),
+				'depends-on'            => array( static::$type . '_format_type' => 'multi' ),
+				'default'               => 'checkbox',
+				'type'                  => 'pick',
+				'data'                  => apply_filters(
 					'pods_form_ui_field_pick_format_multi_options', array(
 						'checkbox'     => __( 'Checkboxes', 'pods' ),
 						'multiselect'  => __( 'Multi Select', 'pods' ),
@@ -177,20 +179,22 @@ class PodsField_Pick extends PodsField {
 						'list'         => __( 'List view', 'pods' ),
 					)
 				),
-				'dependency' => true,
+				'pick_show_select_text' => 0,
+				'dependency'            => true,
 			),
 			static::$type . '_display_format_multi'   => array(
-				'label'      => __( 'Display Format', 'pods' ),
-				'help'       => __( 'Used as format for front-end display', 'pods' ),
-				'depends-on' => array( static::$type . '_format_type' => 'multi' ),
-				'default'    => 'default',
-				'type'       => 'pick',
-				'data'       => array(
+				'label'                 => __( 'Display Format', 'pods' ),
+				'help'                  => __( 'Used as format for front-end display', 'pods' ),
+				'depends-on'            => array( static::$type . '_format_type' => 'multi' ),
+				'default'               => 'default',
+				'type'                  => 'pick',
+				'data'                  => array(
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
 					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
 					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
 				),
-				'dependency' => true,
+				'pick_show_select_text' => 0,
+				'dependency'            => true,
 			),
 			static::$type . '_display_format_separator'   => array(
 				'label'      => __( 'Display Format Separator', 'pods' ),
@@ -1815,7 +1819,12 @@ class PodsField_Pick extends PodsField {
 			$data = $this->get_object_data( $object_params );
 		}
 
-		if ( 'single' === pods_v( static::$type . '_format_type', $options, 'single' ) && 'dropdown' === pods_v( static::$type . '_format_single', $options, 'dropdown' ) ) {
+		if (
+			'single' === pods_v( static::$type . '_format_type', $options, 'single' )
+			&& 'dropdown' === pods_v( static::$type . '_format_single', $options, 'dropdown' )
+			&& 0 !== (int) pods_v( static::$type . '_show_select_text', $options, 1 )
+			&& 0 === (int) pods_v( 'required', $options, 0 )
+		) {
 			$data = array( '' => pods_v( static::$type . '_select_text', $options, __( '-- Select One --', 'pods' ), true ) ) + $data;
 		}
 

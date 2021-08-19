@@ -70,6 +70,7 @@ class PodsField_Date extends PodsField_DateTime {
 					'format' => __( 'Predefined format', 'pods' ),
 					'custom' => __( 'Custom format', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_format_custom'    => array(
@@ -109,6 +110,7 @@ class PodsField_Date extends PodsField_DateTime {
 					'fjsy'      => date_i18n( 'F jS, Y' ),
 					'y'         => date_i18n( 'Y' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_year_range_custom' => array(

@@ -5801,8 +5801,8 @@ class PodsAPI {
 		 *
 		 * @since 2.8.0
 		 *
-		 * @param int                       $id          ID of item.
-		 * @param array                     $related_ids ID(s) for items to save.
+		 * @param int         $id          ID of item.
+		 * @param array       $related_ids ID(s) for items to save.
 		 * @param array|Pod   $pod         The Pod object.
 		 * @param array|Field $field       The Field object.
 		 */
@@ -7521,8 +7521,8 @@ class PodsAPI {
 		 *
 		 * @since 2.8.0
 		 *
-		 * @param int|array                 $related_id    ID(s) for items to save.
-		 * @param int|array                 $id            ID(s) to remove.
+		 * @param int|array   $related_id    ID(s) for items to save.
+		 * @param int|array   $id            ID(s) to remove.
 		 * @param array|Pod   $related_pod   The related Pod object.
 		 * @param array|Field $related_field The related Field object.
 		 */

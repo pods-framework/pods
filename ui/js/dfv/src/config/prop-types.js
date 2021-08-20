@@ -114,7 +114,7 @@ export const FIELD_PROP_TYPE = {
 	placeholder: PropTypes.string,
 	post_status: PropTypes.string,
 	readonly: BOOLEAN_ALL_TYPES,
-	read_only: BOOLEAN_STRINGS,
+	read_only: BOOLEAN_ALL_TYPES,
 	rest_pick_response: PropTypes.string,
 	rest_pick_depth: PropTypes.string,
 	rest_read: BOOLEAN_STRINGS,

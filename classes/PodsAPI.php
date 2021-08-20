@@ -5008,9 +5008,9 @@ class PodsAPI {
 					&& isset( $_POST['icl_ajx_action'] ) && isset( $_POST['_icl_nonce'] )
 					&& wp_verify_nonce( $_POST['_icl_nonce'], $_POST['icl_ajx_action'] . '_nonce' ) )
 			) {
-				$options['unique']                       = 0;
+				$options['unique']            = 0;
 				$fields[ $field ]['unique']   = 0;
-				$options['required']                     = 0;
+				$options['required']          = 0;
 				$fields[ $field ]['required'] = 0;
 			} else {
 				// Validate value
@@ -5027,7 +5027,7 @@ class PodsAPI {
 				}
 			}
 
-			$value = PodsForm::pre_save( $field_data['type'], $value, $params->id, $field, $field_data, array_merge( $fields, $object_fields ), $pod, $params );
+			$value = PodsForm::pre_save( $field_data['type'], $value, $params->id, $field, pods_config_get_field_from_value_field( $field_data ), pods_config_get_fields_from_value_fields( pods_config_merge_fields( $fields, $object_fields ) ), $pod, $params );
 
 			$field_data['value'] = $value;
 
@@ -5435,7 +5435,7 @@ class PodsAPI {
 					}
 
 					// Run save function for field type (where needed)
-					PodsForm::save( $type, $field_save_values, $params->id, $field, $fields[ $field ], array_merge( $fields, $object_fields ), $pod, $params );
+					PodsForm::save( $type, $field_save_values, $params->id, $field, $fields[ $field ], pods_config_merge_fields( $fields, $object_fields ), $pod, $params );
 				}
 
 				// Unset data no longer needed
@@ -7332,7 +7332,7 @@ class PodsAPI {
 			if ( ! empty( $pod ) && 'media' === $pod['type'] ) {
 				$params['args']['type'] = 'file';
 
-				$fields = array_merge( $fields, $this->load_fields( $params ) );
+				$fields = pods_config_merge_fields( $fields, $this->load_fields( $params ) );
 			}
 
 			if ( is_array( $fields ) && ! empty( $fields ) ) {
@@ -8741,7 +8741,10 @@ class PodsAPI {
 
 		$tableless_field_types = PodsForm::tableless_field_types();
 
-		$fields = array_merge( $fields, $object_fields );
+		$fields        = pods_config_get_fields_from_value_fields( $fields );
+		$object_fields = pods_config_get_fields_from_value_fields( $object_fields );
+
+		$fields = pods_config_merge_fields( $fields, $object_fields );
 
 		$options = $fields[ $field ];
 

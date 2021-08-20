@@ -1316,21 +1316,29 @@ class PodsForm {
 		$default = pods_v( 'default', $options, $default_value, true );
 
 		if ( is_string( $default ) ) {
-			$default_value = str_replace( array( '{@', '}' ), '', trim( $default ) );
+			$default_value = str_replace( array( '{@', '}' ), '', $default );
+
+			if ( $default !== $default_value && 1 === (int) pods_v( 'default_evaluate_tags', $options, 1 ) ) {
+				$default = pods_evaluate_tags( $default );
+			}
 		}
 
-		if ( $default != $default_value && 1 == (int) pods_v( 'default_evaluate_tags', $options, 1 ) ) {
-			$default = pods_evaluate_tags( $default );
-		}
+		$default_value_parameter = pods_v( 'default_value_parameter', $options );
 
-		$default = pods_v( pods_v( 'default_value_parameter', $options ), 'request', $default, true );
+		if ( $default_value_parameter ) {
+			$default_value = pods_v( $default_value_parameter, 'request', $default );
+
+			if ( '' !== $default_value ) {
+				$default = $default_value;
+			}
+		}
 
 		if ( $default != $value ) {
 			$value = $default;
 		}
 
 		if ( is_array( $value ) ) {
-			$value = pods_serial_comma( $value );
+			$value = pods_serial_comma( $value, $name, [ $name => $options ] );
 		}
 
 		return apply_filters( 'pods_form_field_default_value', $value, $default, $type, $options, $pod, $id );

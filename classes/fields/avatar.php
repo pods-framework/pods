@@ -56,7 +56,7 @@ class PodsField_Avatar extends PodsField_File {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		$options[ static::$type . '_type' ]              = 'images';
 		$options[ static::$type . '_field_template' ]    = 'rows';

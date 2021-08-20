@@ -120,7 +120,7 @@ class PodsField_HTML extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		// @codingStandardsIgnoreLine
 		echo $this->display( $value, $name, $options, $pod, $id );

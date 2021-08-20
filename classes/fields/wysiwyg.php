@@ -228,7 +228,7 @@ class PodsField_WYSIWYG extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options         = (array) $options;
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -312,7 +312,7 @@ class PodsField_WYSIWYG extends PodsField {
 	 */
 	public function strip_html( $value, $options = null ) {
 
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		// Allow HTML tags.
 		$options[ static::$type . '_allow_html' ] = 1;

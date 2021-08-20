@@ -193,7 +193,7 @@ class PodsField_Link extends PodsField_Website {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options         = (array) $options;
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 		$field_type      = 'link';
 
@@ -256,7 +256,7 @@ class PodsField_Link extends PodsField_Website {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		// Update from a single (non array) input field (like website) if the field updates
 		if ( is_string( $value ) ) {

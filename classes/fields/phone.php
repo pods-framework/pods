@@ -122,7 +122,7 @@ class PodsField_Phone extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options         = (array) $options;
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -177,13 +177,11 @@ class PodsField_Phone extends PodsField {
 
 		if ( is_array( $check ) ) {
 			$errors = $check;
-		} else {
-			if ( 0 < strlen( $value ) && '' === $check ) {
-				if ( $this->is_required( $options ) ) {
-					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
-				} else {
-					$errors[] = sprintf( __( 'Invalid phone number provided for the field %s.', 'pods' ), $label );
-				}
+		} elseif ( '' === $check && 0 < strlen( $value ) ) {
+			if ( $this->is_required( $options ) ) {
+				$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
+			} else {
+				$errors[] = sprintf( __( 'Invalid phone number provided for the field %s.', 'pods' ), $label );
 			}
 		}
 
@@ -198,8 +196,7 @@ class PodsField_Phone extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		$phone_format = pods_v( static::$type . '_format', $options, '999-999-9999 x999', true );
 

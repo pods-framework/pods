@@ -4,6 +4,7 @@
  */
 
 use Pods\Admin\Settings;
+use Pods\API\Whatsit\Value_Field;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
@@ -3091,14 +3092,28 @@ function pod_has_items( $pod ) {
  *
  * @since 2.8.0
  *
- * @param array|Whatsit $config_to_merge_into The config to merge into.
- * @param array|Field   $config_to_merge_from The config to merge from.
+ * @param array|Field $config_to_merge_into The config to merge into.
+ * @param array|Field $config_to_merge_from The config to merge from.
  *
  * @return array|Field The final config result.
  */
 function pods_config_merge_data( $config_to_merge_into, $config_to_merge_from ) {
 	// The configs already match.
 	if ( $config_to_merge_into === $config_to_merge_from ) {
+		return $config_to_merge_into;
+	}
+
+	// Merge the config into the destination config if both are Value_Field.
+	if ( $config_to_merge_into instanceof Value_Field && $config_to_merge_from instanceof Value_Field ) {
+		$field_object_into = $config_to_merge_into->get_field_object();
+		$field_value_into  = $config_to_merge_into->get_field_value();
+
+		$field_object_from = $config_to_merge_from->get_field_object();
+		$field_value_from  = $config_to_merge_from->get_field_value();
+
+		$config_to_merge_into->set_field_object( pods_config_merge_data( $field_object_into, $field_object_from ) );
+		$config_to_merge_into->set_field_value( $field_value_from );
+
 		return $config_to_merge_into;
 	}
 
@@ -3127,6 +3142,35 @@ function pods_config_merge_data( $config_to_merge_into, $config_to_merge_from ) 
 }
 
 /**
+ * Merge multiple configs into others for purposes of overriding certain arguments.
+ *
+ * @since 2.8.0
+ *
+ * @param array[]|Field[] $configs_to_merge_into The configs to merge into.
+ * @param array[]|Field[] $configs_to_merge_from The configs to merge from.
+ *
+ * @return array[]|Field[] The final config results.
+ */
+function pods_config_merge_fields( $configs_to_merge_into, $configs_to_merge_from ) {
+	// The configs already match.
+	if ( $configs_to_merge_into === $configs_to_merge_from ) {
+		return $configs_to_merge_into;
+	}
+
+	foreach ( $configs_to_merge_from as $key => $config_to_merge_from ) {
+		if ( ! isset( $config_to_merge_into[ $key ] ) ) {
+			$configs_to_merge_into[ $key ] = $config_to_merge_from;
+
+			continue;
+		}
+
+		$configs_to_merge_into[ $key ] = pods_config_merge_data( $config_to_merge_into[ $key ], $config_to_merge_from );
+	}
+
+	return $configs_to_merge_into;
+}
+
+/**
  * Get the list of all fields, including object fields, from a Pod configuration.
  *
  * @since 2.8.0
@@ -3143,7 +3187,53 @@ function pods_config_get_all_fields( $pod ) {
 	$fields        = (array) pods_v( 'fields', $pod, [] );
 	$object_fields = (array) pods_v( 'object_fields', $pod, [] );
 
-	return array_merge( $fields, $object_fields );
+	return pods_config_merge_fields( $fields, $object_fields );
+}
+
+/**
+ * Get the field object from a value field object.
+ *
+ * @since 2.8.0
+ *
+ * @param Value_Field|Field $value_field The value field object.
+ *
+ * @return Field The field object.
+ */
+function pods_config_get_field_from_value_field( $value_field ) {
+	// Maybe get the field object.
+	if ( $value_field instanceof Value_Field ) {
+		return $value_field->get_field_object();
+	}
+
+	return $value_field;
+}
+
+/**
+ * Get the list of all field objects from a list of value field objects.
+ *
+ * @since 2.8.0
+ *
+ * @param Value_Field[]|Field[] $value_fields The list of value field objects.
+ *
+ * @return Field[] The list of all field objects.
+ */
+function pods_config_get_fields_from_value_fields( array $value_fields ) {
+	$all_fields = [];
+
+	foreach ( $value_fields as $key => $field ) {
+		// Maybe get the field object.
+		if ( $field instanceof Value_Field ) {
+			$field = $field->get_field_object();
+		}
+
+		if ( is_int( $key ) ) {
+			$all_fields[] = $field;
+		} else {
+			$all_fields[ $key ] = $field;
+		}
+	}
+
+	return $all_fields;
 }
 
 /**

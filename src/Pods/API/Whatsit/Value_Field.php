@@ -190,4 +190,40 @@ class Value_Field implements \ArrayAccess {
 		return call_user_func_array( [ $this->_field, $method ], $arguments );
 	}
 
+	/**
+	 * Get the field object.
+	 *
+	 * @return Whatsit|Field|Object_Field The field object.
+	 */
+	public function get_field_object() {
+		return $this->_field;
+	}
+
+	/**
+	 * Get the field value.
+	 *
+	 * @return mixed The field value.
+	 */
+	public function get_field_value() {
+		return $this->_value;
+	}
+
+	/**
+	 * Set the field object.
+	 *
+	 * @param Whatsit|Field|Object_Field The field object.
+	 */
+	public function set_field_object( $field ) {
+		$this->_field = $field;
+	}
+
+	/**
+	 * Set the field value.
+	 *
+	 * @param mixed The field value.
+	 */
+	public function set_field_value( $value ) {
+		$this->_value = $value;
+	}
+
 }

@@ -35,6 +35,8 @@ window.PodsDFV = {
 	 * Initialize Pod data.
 	 */
 	init() {
+		const isEditPodScreen = 'undefined' !== typeof window.podsAdminConfig;
+
 		// Find all in-line data scripts
 		const dataTags = [ ...document.querySelectorAll( SCRIPT_TARGET ) ];
 
@@ -101,13 +103,16 @@ window.PodsDFV = {
 					const values = {};
 
 					fieldConfig.boolean_group.forEach( ( groupItem ) => {
-						if ( ! groupItem.name || 'undefined' === typeof groupItem.default ) {
+						if ( ! groupItem.name ) {
 							return;
 						}
 
-						values[ groupItem.name ] = currentField.fieldItemData?.[ groupItem.name ] ||
-							groupItem.default ||
-							'';
+						// Apply defaults if we're on the Edit Pod screen.
+						if ( isEditPodScreen && undefined === currentField.fieldItemData?.[ groupItem.name ] ) {
+							values[ groupItem.name ] = groupItem.default || '';
+						} else {
+							values[ groupItem.name ] = currentField.fieldItemData?.[ groupItem.name ];
+						}
 					} );
 
 					return {
@@ -116,30 +121,23 @@ window.PodsDFV = {
 					};
 				}
 
-				// Look up the value based on either the fieldValue, or any of the ways
-				// that the default value could be set.
-				const searchParams = new URLSearchParams( window.location.search );
-				let value;
+				// If we're on the Edit Pod screen, fall back to the `default` value
+				// if a value isn't set. On other screens, this is handled on the back-end.
+				let valueOrDefault;
 
-				if ( 'undefined' !== typeof currentField.fieldValue ) {
-					value = currentField.fieldValue;
-				} else if (
-					'undefined' !== currentField.default_value_parameter &&
-					'undefined' !== searchParams &&
-					'undefined' !== searchParams.get( currentField.default_value_parameter )
-				) {
-					value = searchParams.get( currentField.default_value_parameter );
-				} else if ( 'undefined' !== typeof currentField.default ) {
-					value = currentField.default;
-				} else if ( 'undefined' !== typeof currentField.default_value ) {
-					value = currentField.default_value;
+				if ( isEditPodScreen ) {
+					valueOrDefault = 'undefined' !== typeof currentField.fieldValue
+						? currentField.fieldValue
+						: currentField.default;
 				} else {
-					value = '';
+					valueOrDefault = 'undefined' !== typeof currentField.fieldValue
+						? currentField.fieldValue
+						: '';
 				}
 
 				return {
 					...accumulator,
-					[ fieldConfig.name ]: value,
+					[ fieldConfig.name ]: valueOrDefault,
 				};
 			},
 			{}
@@ -149,7 +147,7 @@ window.PodsDFV = {
 
 		// The Edit Pod screen gets a different store set up than
 		// other contexts.
-		if ( window.podsAdminConfig ) {
+		if ( isEditPodScreen ) {
 			initEditPodStore( window.podsAdminConfig );
 		} else if ( window.podsDFVConfig ) {
 			initPodStore( window.podsDFVConfig, initialValues );

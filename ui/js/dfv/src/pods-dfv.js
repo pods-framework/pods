@@ -35,6 +35,8 @@ window.PodsDFV = {
 	 * Initialize Pod data.
 	 */
 	init() {
+		const isEditPodScreen = 'undefined' !== typeof window.podsAdminConfig;
+
 		// Find all in-line data scripts
 		const dataTags = [ ...document.querySelectorAll( SCRIPT_TARGET ) ];
 
@@ -91,8 +93,8 @@ window.PodsDFV = {
 		// Some are arrays when we need single values (this may change once
 		// repeatable fields are implemented), others have special requirements.
 		const initialValues = validFieldsData.reduce(
-			( accumulator, currentValue ) => {
-				const fieldConfig = currentValue.fieldConfig || {};
+			( accumulator, currentField ) => {
+				const fieldConfig = currentField.fieldConfig || {};
 
 				// "Boolean Group" fields are actually comprised of other fields with their own
 				// named values, so instead of just one key/value, they'll have multiple ones.
@@ -101,13 +103,16 @@ window.PodsDFV = {
 					const values = {};
 
 					fieldConfig.boolean_group.forEach( ( groupItem ) => {
-						if ( ! groupItem.name || 'undefined' === typeof groupItem.default ) {
+						if ( ! groupItem.name ) {
 							return;
 						}
 
-						values[ groupItem.name ] = currentValue.fieldItemData?.[ groupItem.name ] ||
-							groupItem.default ||
-							'';
+						// Apply defaults if we're on the Edit Pod screen.
+						if ( isEditPodScreen && undefined === currentField.fieldItemData?.[ groupItem.name ] ) {
+							values[ groupItem.name ] = groupItem.default || '';
+						} else {
+							values[ groupItem.name ] = currentField.fieldItemData?.[ groupItem.name ];
+						}
 					} );
 
 					return {
@@ -116,29 +121,23 @@ window.PodsDFV = {
 					};
 				}
 
-				// Fields have values provided as arrays, even if the field
-				// type should just have a singular value.
-				const value = [ 'avatar', 'file', 'pick' ].includes( fieldConfig.type )
-					? ( currentValue.fieldItemData || fieldConfig.default || [] )
-					: ( currentValue.fieldValue || fieldConfig.default || '' );
+				// If we're on the Edit Pod screen, fall back to the `default` value
+				// if a value isn't set. On other screens, this is handled on the back-end.
+				let valueOrDefault;
 
-				// Some field types (maybe just pick?) have all available options in the
-				// fieldItemData, not just the selected values, so we need to clean those.
-				let formattedValue = value;
-
-				if ( 'pick' === fieldConfig.type ) {
-					if ( 'multi' === fieldConfig.pick_format_type ) {
-						formattedValue = value
-							.map( ( option ) => option.selected ? option.id : null )
-							.filter( ( option ) => null !== option );
-					} else {
-						formattedValue = value.find( ( option ) => true === option.selected )?.id;
-					}
+				if ( isEditPodScreen ) {
+					valueOrDefault = 'undefined' !== typeof currentField.fieldValue
+						? currentField.fieldValue
+						: currentField.default;
+				} else {
+					valueOrDefault = 'undefined' !== typeof currentField.fieldValue
+						? currentField.fieldValue
+						: '';
 				}
 
 				return {
 					...accumulator,
-					[ fieldConfig.name ]: formattedValue,
+					[ fieldConfig.name ]: valueOrDefault,
 				};
 			},
 			{}
@@ -148,7 +147,7 @@ window.PodsDFV = {
 
 		// The Edit Pod screen gets a different store set up than
 		// other contexts.
-		if ( window.podsAdminConfig ) {
+		if ( isEditPodScreen ) {
 			initEditPodStore( window.podsAdminConfig );
 		} else if ( window.podsDFVConfig ) {
 			initPodStore( window.podsDFVConfig, initialValues );

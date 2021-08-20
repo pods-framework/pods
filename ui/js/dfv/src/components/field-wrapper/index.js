@@ -45,7 +45,6 @@ export const FieldWrapper = ( props ) => {
 
 	const {
 		data,
-		default: defaultValue,
 		description,
 		help: helpText,
 		label,
@@ -150,7 +149,7 @@ export const FieldWrapper = ( props ) => {
 	const inputComponent = !! FieldComponent ? (
 		<FieldErrorBoundary>
 			<FieldComponent
-				value={ value || defaultValue || '' }
+				value={ value }
 				values={ isBooleanGroupField ? values : undefined }
 				// Only the Boolean Group fields need allPodValues and allPodFieldsMap,
 				// because the subfields need to reference these.

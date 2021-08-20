@@ -2886,6 +2886,19 @@ function pods_get_setting( $setting_name, $default = null ) {
 }
 
 /**
+ * Get the Pods settings.
+ *
+ * @since 2.8.0
+ *
+ * @return array The setting values.
+ */
+function pods_get_settings() {
+	$settings = tribe( Settings::class );
+
+	return $settings->get_settings();
+}
+
+/**
  * Update the value for a Pods setting.
  *
  * @since 2.8.0

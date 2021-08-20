@@ -57,6 +57,33 @@ class Settings {
 	}
 
 	/**
+	 * Get the Pods settings.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return array The setting values.
+	 */
+	public function get_settings() {
+		$defaults = $this->add_settings_fields( [] );
+		$settings = get_option( self::OPTION_NAME, [] );
+
+		if ( ! $settings ) {
+			$settings = [];
+		}
+
+		// Set up defaults as needed.
+		foreach ( $defaults as $setting_name => $setting ) {
+			if ( isset( $settings[ $setting_name ] ) || ! isset( $setting['default'] ) ) {
+				continue;
+			}
+
+			$settings[ $setting_name ] = $setting['default'];
+		}
+
+		return $settings;
+	}
+
+	/**
 	 * Update the value for a Pods setting.
 	 *
 	 * @since 2.8.0

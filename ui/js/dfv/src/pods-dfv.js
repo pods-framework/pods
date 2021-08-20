@@ -91,8 +91,8 @@ window.PodsDFV = {
 		// Some are arrays when we need single values (this may change once
 		// repeatable fields are implemented), others have special requirements.
 		const initialValues = validFieldsData.reduce(
-			( accumulator, currentValue ) => {
-				const fieldConfig = currentValue.fieldConfig || {};
+			( accumulator, currentField ) => {
+				const fieldConfig = currentField.fieldConfig || {};
 
 				// "Boolean Group" fields are actually comprised of other fields with their own
 				// named values, so instead of just one key/value, they'll have multiple ones.
@@ -105,7 +105,7 @@ window.PodsDFV = {
 							return;
 						}
 
-						values[ groupItem.name ] = currentValue.fieldItemData?.[ groupItem.name ] ||
+						values[ groupItem.name ] = currentField.fieldItemData?.[ groupItem.name ] ||
 							groupItem.default ||
 							'';
 					} );
@@ -116,29 +116,30 @@ window.PodsDFV = {
 					};
 				}
 
-				// Fields have values provided as arrays, even if the field
-				// type should just have a singular value.
-				const value = [ 'avatar', 'file', 'pick' ].includes( fieldConfig.type )
-					? ( currentValue.fieldItemData || fieldConfig.default || [] )
-					: ( currentValue.fieldValue || fieldConfig.default || '' );
+				// Look up the value based on either the fieldValue, or any of the ways
+				// that the default value could be set.
+				const searchParams = new URLSearchParams( window.location.search );
+				let value;
 
-				// Some field types (maybe just pick?) have all available options in the
-				// fieldItemData, not just the selected values, so we need to clean those.
-				let formattedValue = value;
-
-				if ( 'pick' === fieldConfig.type ) {
-					if ( 'multi' === fieldConfig.pick_format_type ) {
-						formattedValue = value
-							.map( ( option ) => option.selected ? option.id : null )
-							.filter( ( option ) => null !== option );
-					} else {
-						formattedValue = value.find( ( option ) => true === option.selected )?.id;
-					}
+				if ( 'undefined' !== typeof currentField.fieldValue ) {
+					value = currentField.fieldValue;
+				} else if (
+					'undefined' !== currentField.default_value_parameter &&
+					'undefined' !== window?.location?.search &&
+					'undefined' !== searchParams.get( currentField.default_value_parameter )
+				) {
+					value = searchParams.get( currentField.default_value_parameter );
+				} else if ( 'undefined' !== typeof currentField.default ) {
+					value = currentField.default;
+				} else if ( 'undefined' !== typeof currentField.default_value ) {
+					value = currentField.default_value;
+				} else {
+					value = '';
 				}
 
 				return {
 					...accumulator,
-					[ fieldConfig.name ]: formattedValue,
+					[ fieldConfig.name ]: value,
 				};
 			},
 			{}

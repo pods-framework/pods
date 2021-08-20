@@ -107,6 +107,7 @@ export const FIELD_PROP_TYPE = {
 	parent: NUMBER_OR_NUMBER_AS_STRING,
 	placeholder: PropTypes.string,
 	post_status: PropTypes.string,
+	readonly: BOOLEAN_ALL_TYPES,
 	read_only: BOOLEAN_STRINGS,
 	rest_pick_response: PropTypes.string,
 	rest_pick_depth: PropTypes.string,

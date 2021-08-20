@@ -125,7 +125,7 @@ window.PodsDFV = {
 					value = currentField.fieldValue;
 				} else if (
 					'undefined' !== currentField.default_value_parameter &&
-					'undefined' !== window?.location?.search &&
+					'undefined' !== searchParams &&
 					'undefined' !== searchParams.get( currentField.default_value_parameter )
 				) {
 					value = searchParams.get( currentField.default_value_parameter );

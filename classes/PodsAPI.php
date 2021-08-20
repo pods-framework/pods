@@ -5027,7 +5027,7 @@ class PodsAPI {
 				}
 			}
 
-			$value = PodsForm::pre_save( $field_data['type'], $value, $params->id, $field, pods_config_get_field_from_value_field( $field_data ), pods_config_get_fields_from_value_fields( pods_config_merge_fields( $fields, $object_fields ) ), $pod, $params );
+			$value = PodsForm::pre_save( $field_data['type'], $value, $params->id, $field, $field_data, pods_config_merge_fields( $fields, $object_fields ), $pod, $params );
 
 			$field_data['value'] = $value;
 
@@ -8740,9 +8740,6 @@ class PodsAPI {
 	public function handle_field_validation( &$value, $field, $object_fields, $fields, $pod, $params = [] ) {
 
 		$tableless_field_types = PodsForm::tableless_field_types();
-
-		$fields        = pods_config_get_fields_from_value_fields( $fields );
-		$object_fields = pods_config_get_fields_from_value_fields( $object_fields );
 
 		$fields = pods_config_merge_fields( $fields, $object_fields );
 

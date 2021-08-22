@@ -2,6 +2,7 @@
 
 namespace Pods;
 
+use Exception;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Object_Field;
@@ -812,11 +813,20 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @param string      $field_name Field name.
 	 * @param null|string $arg        Argument name.
+	 * @param bool        $load_all   Whether to load all fields when getting this field.
 	 *
 	 * @return Field|mixed|null Field object, argument value, or null if object not found.
 	 */
-	public function get_field( $field_name, $arg = null ) {
-		$fields = $this->get_fields();
+	public function get_field( $field_name, $arg = null, $load_all = true ) {
+		$get_fields_args = [];
+
+		if ( ! $load_all ) {
+			$get_fields_args = [
+				'name' => $field_name,
+			];
+		}
+
+		$fields = $this->get_fields( $get_fields_args );
 
 		$field = null;
 
@@ -875,46 +885,44 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		$has_custom_args = ! empty( $args );
 
-		if ( null === $this->_fields || $has_custom_args ) {
-			$filtered_args = [
-				'parent'            => $this->get_id(),
-				'parent_id'         => $this->get_id(),
-				'parent_name'       => $this->get_name(),
-				'parent_identifier' => $this->get_identifier(),
-			];
+		if ( null !== $this->_fields && ! $has_custom_args ) {
+			$objects = array_map( [ $object_collection, 'get_object' ], $this->_fields );
+			$objects = array_filter( $objects );
 
-			$filtered_args = array_filter( $filtered_args );
+			$names = wp_list_pluck( $objects, 'name' );
 
-			$args = array_merge( [
-				'orderby'           => 'menu_order title',
-				'order'             => 'ASC',
-			], $filtered_args, $args );
-
-			try {
-				$api = pods_api();
-
-				if ( ! empty( $args['object_type'] ) ) {
-					$objects = $api->_load_objects( $args );
-				} else {
-					$objects = $api->load_fields( $args );
-				}
-			} catch ( \Exception $exception ) {
-				$objects = [];
-			}
-
-			if ( ! $has_custom_args ) {
-				$this->_fields = wp_list_pluck( $objects, 'identifier' );
-			}
-
-			return $objects;
+			return array_combine( $names, $objects );
 		}
 
-		$objects = array_map( [ $object_collection, 'get_object' ], $this->_fields );
-		$objects = array_filter( $objects );
+		$filtered_args = [
+			'parent'            => $this->get_id(),
+			'parent_id'         => $this->get_id(),
+			'parent_name'       => $this->get_name(),
+			'parent_identifier' => $this->get_identifier(),
+		];
 
-		$names = wp_list_pluck( $objects, 'name' );
+		$filtered_args = array_filter( $filtered_args );
 
-		$objects = array_combine( $names, $objects );
+		$args = array_merge( [
+			'orderby'           => 'menu_order title',
+			'order'             => 'ASC',
+		], $filtered_args, $args );
+
+		try {
+			$api = pods_api();
+
+			if ( ! empty( $args['object_type'] ) ) {
+				$objects = $api->_load_objects( $args );
+			} else {
+				$objects = $api->load_fields( $args );
+			}
+		} catch ( Exception $exception ) {
+			$objects = [];
+		}
+
+		if ( ! $has_custom_args ) {
+			$this->_fields = wp_list_pluck( $objects, 'identifier' );
+		}
 
 		return $objects;
 	}
@@ -938,6 +946,86 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
+	 * Determine whether the object has fields.
+	 *
+	 * @param array $args List of arguments to filter by.
+	 *
+	 * @return bool Whether the object has fields.
+	 */
+	public function has_fields( array $args = [] ) {
+		$count = $this->count_fields( $args );
+
+		return 0 < $count;
+	}
+
+	/**
+	 * Count the number of fields the object has.
+	 *
+	 * @param array $args List of arguments to filter by.
+	 *
+	 * @return int The number of fields the object has.
+	 */
+	public function count_fields( array $args = [] ) {
+		if ( [] === $this->_fields ) {
+			return 0;
+		}
+
+		$has_custom_args = ! empty( $args );
+
+		if ( null !== $this->_fields && ! $has_custom_args ) {
+			return count( $this->_fields );
+		}
+
+		$filtered_args = [
+			'parent'            => $this->get_id(),
+			'parent_id'         => $this->get_id(),
+			'parent_name'       => $this->get_name(),
+			'parent_identifier' => $this->get_identifier(),
+		];
+
+		$filtered_args = array_filter( $filtered_args );
+
+		$args = array_merge( $filtered_args, $args );
+
+		// Enforce argument.
+		$args['count'] = true;
+
+		try {
+			$api = pods_api();
+
+			if ( ! empty( $args['object_type'] ) ) {
+				$total_objects = $api->_load_objects( $args );
+			} else {
+				$total_objects = $api->load_fields( $args );
+			}
+		} catch ( Exception $exception ) {
+			$total_objects = 0;
+		}
+
+		return $total_objects;
+	}
+
+	/**
+	 * Determine whether the object has object fields.
+	 *
+	 * @return bool Whether the object has object fields.
+	 */
+	public function has_object_fields() {
+		$count = $this->count_object_fields();
+
+		return 0 < $count;
+	}
+
+	/**
+	 * Count the number of object fields the object has.
+	 *
+	 * @return int The number of object fields the object has.
+	 */
+	public function count_object_fields() {
+		return 0;
+	}
+
+	/**
 	 * Get groups for object.
 	 *
 	 * @param array $args List of arguments to filter by.
@@ -953,48 +1041,106 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		$has_custom_args = ! empty( $args );
 
-		if ( null === $this->_groups || $has_custom_args ) {
-			$filtered_args = [
-				'parent'            => $this->get_id(),
-				'parent_id'         => $this->get_id(),
-				'parent_name'       => $this->get_name(),
-				'parent_identifier' => $this->get_identifier(),
-			];
+		if ( null !== $this->_groups && ! $has_custom_args ) {
+			$objects = array_map( [ $object_collection, 'get_object' ], $this->_groups );
+			$objects = array_filter( $objects );
 
-			$filtered_args = array_filter( $filtered_args );
+			$names = wp_list_pluck( $objects, 'name' );
 
-			$args = array_merge( [
-				'orderby'           => 'menu_order title',
-				'order'             => 'ASC',
-			], $filtered_args, $args );
-
-			try {
-				$api = pods_api();
-
-				if ( ! empty( $args['object_type'] ) ) {
-					$objects = $api->_load_objects( $args );
-				} else {
-					$objects = $api->load_groups( $args );
-				}
-			} catch ( \Exception $exception ) {
-				$objects = [];
-			}
-
-			if ( ! $has_custom_args ) {
-				$this->_groups = wp_list_pluck( $objects, 'identifier' );
-			}
-
-			return $objects;
+			return array_combine( $names, $objects );
 		}
 
-		$objects = array_map( [ $object_collection, 'get_object' ], $this->_groups );
-		$objects = array_filter( $objects );
+		$filtered_args = [
+			'parent'            => $this->get_id(),
+			'parent_id'         => $this->get_id(),
+			'parent_name'       => $this->get_name(),
+			'parent_identifier' => $this->get_identifier(),
+		];
 
-		$names = wp_list_pluck( $objects, 'name' );
+		$filtered_args = array_filter( $filtered_args );
 
-		$objects = array_combine( $names, $objects );
+		$args = array_merge( [
+			'orderby'           => 'menu_order title',
+			'order'             => 'ASC',
+		], $filtered_args, $args );
+
+		try {
+			$api = pods_api();
+
+			if ( ! empty( $args['object_type'] ) ) {
+				$objects = $api->_load_objects( $args );
+			} else {
+				$objects = $api->load_groups( $args );
+			}
+		} catch ( Exception $exception ) {
+			$objects = [];
+		}
+
+		if ( ! $has_custom_args ) {
+			$this->_groups = wp_list_pluck( $objects, 'identifier' );
+		}
 
 		return $objects;
+	}
+
+	/**
+	 * Determine whether the object has groups.
+	 *
+	 * @param array $args List of arguments to filter by.
+	 *
+	 * @return bool Whether the object has groups.
+	 */
+	public function has_groups( array $args = [] ) {
+		$count = $this->count_groups( $args );
+
+		return 0 < $count;
+	}
+
+	/**
+	 * Count the number of groups the object has.
+	 *
+	 * @param array $args List of arguments to filter by.
+	 *
+	 * @return int The number of groups the object has.
+	 */
+	public function count_groups( array $args = [] ) {
+		if ( [] === $this->_groups ) {
+			return 0;
+		}
+
+		$has_custom_args = ! empty( $args );
+
+		if ( null !== $this->_groups && ! $has_custom_args ) {
+			return $this->_groups;
+		}
+
+		$filtered_args = [
+			'parent'            => $this->get_id(),
+			'parent_id'         => $this->get_id(),
+			'parent_name'       => $this->get_name(),
+			'parent_identifier' => $this->get_identifier(),
+		];
+
+		$filtered_args = array_filter( $filtered_args );
+
+		$args = array_merge( $filtered_args, $args );
+
+		// Enforce argument.
+		$args['count'] = true;
+
+		try {
+			$api = pods_api();
+
+			if ( ! empty( $args['object_type'] ) ) {
+				$total_objects = $api->_load_objects( $args );
+			} else {
+				$total_objects = $api->load_groups( $args );
+			}
+		} catch ( Exception $exception ) {
+			$total_objects = 0;
+		}
+
+		return $total_objects;
 	}
 
 	/**

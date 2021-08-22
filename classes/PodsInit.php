@@ -609,16 +609,6 @@ class PodsInit {
 			'pods_upload_require_login_cap' => '',
 		);
 
-		if ( ! pods_strict( false ) ) {
-			foreach ( $security_settings as $security_setting => $setting ) {
-				$setting = get_option( $security_setting );
-
-				if ( ! empty( $setting ) ) {
-					$security_settings[ $security_setting ] = $setting;
-				}
-			}
-		}
-
 		foreach ( $security_settings as $security_setting => $setting ) {
 			if ( 0 === (int) $setting ) {
 				$setting = false;

@@ -32,8 +32,8 @@ class Pod extends Whatsit {
 	 * {@inheritdoc}
 	 */
 	public function get_object_fields() {
-		if ( array() === $this->_object_fields ) {
-			return array();
+		if ( [] === $this->_object_fields ) {
+			return [];
 		}
 
 		$api = pods_api();
@@ -42,7 +42,7 @@ class Pod extends Whatsit {
 
 		$object_collection = Store::get_instance();
 
-		$objects = array();
+		$objects = [];
 
 		foreach ( $object_fields as $object_field ) {
 			$object_field['object_type']  = 'object-field';
@@ -59,6 +59,21 @@ class Pod extends Whatsit {
 		$this->_object_fields = $objects;
 
 		return $objects;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function count_object_fields() {
+		if ( [] === $this->_object_fields ) {
+			return 0;
+		}
+
+		$api = pods_api();
+
+		$object_fields = $api->get_wp_object_fields( $this->get_type(), $this );
+
+		return count( $object_fields );
 	}
 
 	/**

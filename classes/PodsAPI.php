@@ -7654,7 +7654,7 @@ class PodsAPI {
 		}
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {
@@ -7855,7 +7855,7 @@ class PodsAPI {
 		}
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {
@@ -7943,7 +7943,7 @@ class PodsAPI {
 			}
 
 			// Check if we need to bypass cache automatically.
-			if ( empty( $params['bypass_cache'] ) ) {
+			if ( ! isset( $params['bypass_cache'] ) ) {
 				$api_cache = pods_api_cache();
 
 				if ( ! $api_cache ) {
@@ -8166,7 +8166,7 @@ class PodsAPI {
 		}
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {
@@ -8317,7 +8317,7 @@ class PodsAPI {
 		unset( $params['type'] );
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {
@@ -8364,7 +8364,7 @@ class PodsAPI {
 		}
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {
@@ -10275,6 +10275,7 @@ class PodsAPI {
 
 		pods_transient_clear( 'pods' );
 		pods_transient_clear( 'pods_components' );
+		pods_transient_clear( 'pods_core_loader_objects' );
 
 		if ( null !== $pod && ( is_array( $pod ) || ( $pod instanceof Pods\Whatsit && 'pod' === $pod->get_object_type() ) ) ) {
 			pods_transient_clear( 'pods_pod_' . $pod['name'] );
@@ -10614,7 +10615,7 @@ class PodsAPI {
 		}
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {

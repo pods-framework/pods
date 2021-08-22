@@ -58,13 +58,6 @@ class Block_Collection extends Pod {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_object_fields() {
-		return [];
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function get_table_info() {
 		return [];
 	}

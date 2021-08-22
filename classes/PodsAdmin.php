@@ -225,7 +225,7 @@ class PodsAdmin {
 				$pods_pages = 0;
 
 				foreach ( (array) $advanced_content_types as $pod ) {
-					if ( ! isset( $pod['name'] ) || ! isset( $pod['options'] ) || empty( $pod['fields'] ) ) {
+					if ( ! $pod instanceof Pod ) {
 						continue;
 					} elseif ( ! pods_is_admin(
 						array(
@@ -737,6 +737,11 @@ class PodsAdmin {
 
 		$pod = pods( $pod_name, pods_v( 'id', 'get', null, true ) );
 
+		if ( ! $pod->pod_data->has_fields() ) {
+			pods_message( 'error', __( 'This Pod does not have any fields defined.', 'pods' ) );
+			return;
+		}
+
 		// @codingStandardsIgnoreLine
 		if ( false !== strpos( $_GET['page'], 'pods-add-new-' ) ) {
 			// @codingStandardsIgnoreLine
@@ -1034,8 +1039,8 @@ class PodsAdmin {
 				'type'        => $pod_type,
 				'real_type'   => $pod_real_type,
 				'storage'     => $storage_type_label,
-				'group_count' => count( $pod['groups'] ),
-				'field_count' => count( $pod['fields'] ),
+				'group_count' => $pod->count_groups(),
+				'field_count' => $pod->count_fields(),
 			);
 
 			$total_groups += $pod['group_count'];
@@ -1451,21 +1456,18 @@ class PodsAdmin {
 			'fallback_mode' => false,
 		] );
 
-		$has_orphan_fields = empty( $groups );
+		$check_orphan_fields = ! $groups;
 
 		$api = pods_api();
 
-		$fields   = null;
 		$group_id = null;
 
 		// Only migrate if there are no groups or orphan fields.
-		if ( ! $has_orphan_fields ) {
-			$fields = $pod->get_fields( [
+		if ( ! $check_orphan_fields ) {
+			$has_orphan_fields = $pod->has_fields( [
 				'fallback_mode' => false,
 				'group'         => null,
 			] );
-
-			$has_orphan_fields = ! empty( $fields );
 
 			if ( ! $has_orphan_fields ) {
 				return $pod;
@@ -1479,13 +1481,12 @@ class PodsAdmin {
 			}
 		}
 
-		if ( empty( $group_id ) ) {
-			if ( empty( $fields ) ) {
-				$fields = $pod->get_fields( [
-					'fallback_mode' => false,
-				] );
-			}
+		$fields = $pod->get_fields( [
+			'fallback_mode' => false,
+			'group'         => null,
+		] );
 
+		if ( empty( $group_id ) ) {
 			$label = __( 'Details', 'pods' );
 
 			if ( in_array( $pod->get_type(), [ 'post_type', 'taxonomy', 'user', 'comment', 'media' ], true ) ) {
@@ -2381,14 +2382,16 @@ class PodsAdmin {
 			} else {
 				$capabilities[] = 'pods_add_' . $pod['name'];
 				$capabilities[] = 'pods_edit_' . $pod['name'];
-
-				if ( isset( $pod['fields']['author'] ) && 'pick' === $pod['fields']['author']['type'] && 'user' === $pod['fields']['author']['pick_object'] ) {
-					$capabilities[] = 'pods_edit_others_' . $pod['name'];
-				}
-
 				$capabilities[] = 'pods_delete_' . $pod['name'];
 
-				if ( isset( $pod['fields']['author'] ) && 'pick' === $pod['fields']['author']['type'] && 'user' === $pod['fields']['author']['pick_object'] ) {
+				if ( $pod instanceof Pod ) {
+					$author_field = $pod->get_field( 'author', null, false );
+				} else {
+					$author_field = pods_v( 'author', $pod['fields'] );
+				}
+
+				if ( $author_field && 'pick' === $author_field['type'] && 'user' === $author_field['pick_object'] ) {
+					$capabilities[] = 'pods_edit_others_' . $pod['name'];
 					$capabilities[] = 'pods_delete_others_' . $pod['name'];
 				}
 
@@ -2624,8 +2627,10 @@ class PodsAdmin {
 	 * @return array
 	 *
 	 * @since 2.7.0
+	 * @deprecated 2.8.0
 	 */
 	public function configuration( $pod = null, $full_field_info = false ) {
+		pods_deprecated( 'PodsAdmin::configuration', '2.8' );
 
 		$api = pods_api();
 

@@ -259,22 +259,6 @@ class Block extends Pod {
 
 		$names = wp_list_pluck( $objects, 'name' );
 
-		$objects = array_combine( $names, $objects );
-
-		return $objects;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_object_fields() {
-		return [];
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_table_info() {
-		return [];
+		return array_combine( $names, $objects );
 	}
 }

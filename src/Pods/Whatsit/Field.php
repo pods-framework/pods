@@ -140,7 +140,7 @@ class Field extends Whatsit {
 
 		if ( 'table' === $related_type ) {
 			$related_name = $this->get_arg( 'related_table', $related_name );
-		} elseif ( \in_array( $related_type, array( 'user', 'media', 'comment' ), true ) ) {
+		} elseif ( in_array( $related_type, [ 'user', 'media', 'comment' ], true ) ) {
 			$related_name = $related_type;
 		}
 

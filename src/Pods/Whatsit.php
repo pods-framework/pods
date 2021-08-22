@@ -1040,6 +1040,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'include_field_data'    => false,
 			'include_object_fields' => false,
 			'include_table_info'    => false,
+			'build_default_group'   => false,
 			'assoc_keys'            => false,
 		];
 
@@ -1054,6 +1055,42 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				'include_field_data' => $args['include_field_data'],
 				'assoc_keys'         => $args['assoc_keys'],
 			] );
+
+			// If there are no groups, see if we need to build the default one.
+			if ( $args['build_default_group'] && empty( $data['groups'] ) ) {
+				$fields = [];
+
+				if ( $args['include_group_fields'] ) {
+					$fields = $this->get_args_for_items( $this->get_fields(), [
+						'include_field_data' => $args['include_field_data'],
+					] );
+
+					if ( ! $args['assoc_keys'] ) {
+						$fields = array_values( $fields );
+					}
+				}
+
+				/**
+				 * Filter the title of the Pods Metabox used in the post editor.
+				 *
+				 * @since unknown
+				 *
+				 * @param string  $title  The title to use, default is 'More Fields'.
+				 * @param Whatsit $pod    Current Pods Object.
+				 * @param array   $fields Array of fields that will go in the metabox.
+				 * @param string  $type   The type of Pod.
+				 * @param string  $name   Name of the Pod.
+				 */
+				$group_title = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $this, $fields, $this->get_type(), $this->get_name() );
+
+				$group_name  = sanitize_key( pods_js_name( sanitize_title( $group_title ) ) );
+
+				$data['groups'][ $group_name ] = [
+					'name'   => $group_name,
+					'label'  => $group_title,
+					'fields' => $fields,
+				];
+			}
 
 			if ( ! $args['assoc_keys'] ) {
 				$data['groups'] = array_values( $data['groups'] );

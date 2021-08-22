@@ -845,7 +845,10 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 			$export['pods'] = self::$api->load_pods( $api_params );
 			$export['pods'] = array_map( static function( $pod ) {
-				return $pod->export( [ 'include_fields' => false ] );
+				return $pod->export( [
+					'include_fields'      => false,
+					'build_default_group' => true,
+				] );
 			}, $export['pods'] );
 
 			$options_ignore = array(

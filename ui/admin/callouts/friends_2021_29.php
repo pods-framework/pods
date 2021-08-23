@@ -69,8 +69,14 @@ $progress_width = ( $donor_count / $donor_goal ) * 100;
 			?>
 		</p>
 		<div class="pods-admin_friends-callout_button-group">
-			<a href="https://friends.pods.io/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2021" class="pods-admin_friends-callout_button"><?php esc_html_e( 'Learn More', 'pods' ); ?></a>
-			<a href="https://friends.pods.io/donations/become-a-friend/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2021" class="pods-admin_friends-callout_button--join"><?php esc_html_e( 'Join Now', 'pods' ); ?></a>
+			<a href="https://friends.pods.io/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2021"
+				class="pods-admin_friends-callout_button">
+				<?php esc_html_e( 'Learn More', 'pods' ); ?>
+			</a>
+			<a href="https://friends.pods.io/donations/become-a-friend/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2021"
+				class="pods-admin_friends-callout_button--join">
+				<?php esc_html_e( 'Donate Now', 'pods' ); ?>
+			</a>
 		</div>
 	</div>
 </div>

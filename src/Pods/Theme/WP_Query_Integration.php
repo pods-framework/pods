@@ -72,9 +72,11 @@ class WP_Query_Integration {
 
 		$post_types_to_show = array_keys( $post_types_to_show );
 
-		$existing_post_types = $query->get( 'post_type' );
+		$existing_post_types = $query->get( 'post_type', [] );
 
-		if ( ! empty( $existing_post_types ) && ! is_array( $existing_post_types ) ) {
+		if ( empty( $existing_post_types ) ) {
+			$existing_post_types = [];
+		} elseif ( ! is_array( $existing_post_types ) ) {
 			$existing_post_types = (array) $existing_post_types;
 		}
 

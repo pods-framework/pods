@@ -45,7 +45,8 @@ class WP_Query_Integration {
 
 		// Skip if not on the archive we want.
 		if (
-			! $query->is_main_query()
+			! empty( $query->query_vars['suppress_filters'] )
+			|| ! $query->is_main_query()
 			|| (
 				! $query->is_category()
 				&& ! $query->is_tag()
@@ -67,15 +68,17 @@ class WP_Query_Integration {
 				'names' => true,
 			] );
 		} catch ( Exception $exception ) {
-			$post_types_to_show = [];
+			return;
 		}
 
 		$post_types_to_show = array_keys( $post_types_to_show );
 
-		$existing_post_types = $query->get( 'post_type', [] );
+		$existing_post_types = $query->get( 'post_type' );
 
 		if ( empty( $existing_post_types ) ) {
-			$existing_post_types = [];
+			$existing_post_types = [
+				'post',
+			];
 		} elseif ( ! is_array( $existing_post_types ) ) {
 			$existing_post_types = (array) $existing_post_types;
 		}

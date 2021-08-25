@@ -1,11 +1,15 @@
 # [Pods Framework](https://pods.io) #
-[![Travis](https://travis-ci.com/pods-framework/pods.svg?branch=main)](https://travis-ci.com/github/pods-framework/pods)
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/main/license.txt)
+[![Codeception Tests](https://github.com/pods-framework/pods/workflows/Codeception%20Tests/badge.svg)](https://github.com/pods-framework/pods/actions/workflows/tests-php.yml)
+[![JS Tests](https://github.com/pods-framework/pods/workflows/JS%20Tests/badge.svg)](https://github.com/pods-framework/pods/actions/workflows/tests-js.yml)
 
 [![WordPress Plugin version](https://img.shields.io/wordpress/plugin/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
-[![WordPress Plugin WP tested version](https://img.shields.io/wordpress/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
 [![WordPress Plugin downloads](https://img.shields.io/wordpress/plugin/dt/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
 [![WordPress Plugin rating](https://img.shields.io/wordpress/plugin/r/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+
+[![WordPress Plugin Required PHP Version](https://img.shields.io/wordpress/plugin/required-php/pods)](https://wordpress.org/plugins/pods/)
+[![WordPress Plugin Required WP Version](https://img.shields.io/wordpress/plugin/wp-version/pods)](https://wordpress.org/plugins/pods/)
+[![WordPress Plugin Tested WP Version](https://img.shields.io/wordpress/plugin/tested/pods)](https://wordpress.org/plugins/pods/)
 
 [![Project Stats](https://www.openhub.net/p/pods-framework/widgets/project_thin_badge.gif)](https://www.openhub.net/p/pods-framework)
 [![Bountysource Bounties](https://api.bountysource.com/badge/tracker?tracker_id=247358)](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358)

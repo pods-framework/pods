@@ -2,6 +2,10 @@ import sanitizeHtml from 'sanitize-html';
 import { deburr } from 'lodash';
 
 const sanitizeSlug = ( value, separator = '_' ) => {
+	if ( undefined === value ) {
+		return '';
+	}
+
 	const withoutTags = sanitizeHtml(
 		value.replace( /\&/g, '' ),
 		{

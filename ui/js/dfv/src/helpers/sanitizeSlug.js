@@ -2,7 +2,7 @@ import sanitizeHtml from 'sanitize-html';
 import { deburr } from 'lodash';
 
 const sanitizeSlug = ( value, separator = '_' ) => {
-	if ( undefined === value ) {
+	if ( undefined === value || null === value ) {
 		return '';
 	}
 

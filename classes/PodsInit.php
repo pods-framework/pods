@@ -864,17 +864,27 @@ class PodsInit {
 
 			// DFV must be enqueued on the media library page for items in grid mode (#4785)
 			// and for posts due to the possibility that post-thumbnails are enabled (#4945)
-			if ( $screen && $screen->base && in_array( $screen->base, array( 'upload', 'post' ), true ) ) {
-				wp_enqueue_script( 'pods-dfv' );
+			if (
+				$screen
+				&& $screen->base
+				&& in_array( $screen->base, [
+					'upload',
+					'post',
+				], true )
+			) {
+				// Only load if we have a media pod.
+				if ( ! empty( PodsMeta::$media ) ) {
+					wp_enqueue_script( 'pods-dfv' );
+				}
 			}
 		}
 
 		$this->maybe_register_handlebars();
 
 		// As of 2.7 we combine styles to just three .css files
-		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', array( 'wp-components' ), PODS_VERSION );
-		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', array(), PODS_VERSION );
-		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', array( 'wp-components' ), PODS_VERSION );
+		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', [ 'wp-components' ], PODS_VERSION );
+		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', [], PODS_VERSION );
+		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', [ 'wp-components' ], PODS_VERSION );
 
 		/**
 		 * Filter to enabled loading of the DFV script on frontend.

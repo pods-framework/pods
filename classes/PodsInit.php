@@ -656,6 +656,13 @@ class PodsInit {
 	 * Register Scripts and Styles
 	 */
 	public function register_assets() {
+		static $registered = false;
+
+		if ( $registered ) {
+			return;
+		}
+
+		$registered = true;
 
 		$suffix_min = SCRIPT_DEBUG ? '' : '.min';
 
@@ -771,7 +778,7 @@ class PodsInit {
 
 		// Marionette dependencies for DFV/MV fields.
 		wp_register_script(
-			'backbone.radio',
+			'pods-backbone-radio',
 			PODS_URL . "ui/js/marionette/backbone.radio{$suffix_min}.js",
 			array( 'backbone' ),
 			'2.0.0',
@@ -782,7 +789,7 @@ class PodsInit {
 			PODS_URL . "ui/js/marionette/backbone.marionette{$suffix_min}.js",
 			array(
 				'backbone',
-				'backbone.radio',
+				'pods-backbone-radio',
 			),
 			'3.3.1',
 			true
@@ -896,7 +903,7 @@ class PodsInit {
 		 *
 		 * @since 2.7.13
 		 */
-		if ( apply_filters( 'pods_enqueue_dfv_on_front', false ) ) {
+		if ( ! is_admin() && apply_filters( 'pods_enqueue_dfv_on_front', false ) ) {
 			wp_enqueue_script( 'pods-dfv' );
 			wp_enqueue_style( 'pods-form' );
 		}

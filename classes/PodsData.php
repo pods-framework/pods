@@ -2575,20 +2575,24 @@ class PodsData {
 					$haystack = preg_replace( '/\w\(/', ' ', $haystack );
 					$haystack = str_replace( array( '(', ')', '  ', '\\\'', '\\"' ), ' ', $haystack );
 
+					// Find xyz.some_field and `xyz`.`some_field` variations.
 					preg_match_all( '/`?[\w\-]+`?(?:\\.`?[\w\-]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
 
+					// Find `some_field` variations but leave out some_field without backticks.
+					preg_match_all( '/(?:`?[\w\-]+`?)+(?!\.)(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found2, PREG_PATTERN_ORDER );
+
 					$found = (array) @current( $found );
+					$found = array_merge( $found, (array) @current( $found2 ) );
+					$found = array_unique( $found );
 
-					foreach ( $found as $value ) {
-						$value = str_replace( '`', '', $value );
-						$value = explode( '.', $value );
+					$post_status_patterns = [
+						'`t`.`post_status`',
+						't.post_status',
+						'`post_status`',
+						'post_status',
+					];
 
-						if ( ( 'post_status' === $value[0] && 1 === count( $value ) ) || ( 2 === count( $value ) && 't' === $value[0] && 'post_status' === $value[1] ) ) {
-							$post_status_found = true;
-
-							break;
-						}
-					}
+					$post_status_found = 0 === count( array_intersect( $found, $post_status_patterns ) );
 				} elseif ( ! empty( $params->query_fields ) && in_array( 'post_status', $params->query_fields, true ) ) {
 					$post_status_found = true;
 				}//end if

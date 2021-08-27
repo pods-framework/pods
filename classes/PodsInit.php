@@ -656,6 +656,13 @@ class PodsInit {
 	 * Register Scripts and Styles
 	 */
 	public function register_assets() {
+		static $registered = false;
+
+		if ( $registered ) {
+			return;
+		}
+
+		$registered = true;
 
 		$suffix_min = SCRIPT_DEBUG ? '' : '.min';
 
@@ -771,7 +778,7 @@ class PodsInit {
 
 		// Marionette dependencies for DFV/MV fields.
 		wp_register_script(
-			'backbone.radio',
+			'pods-backbone-radio',
 			PODS_URL . "ui/js/marionette/backbone.radio{$suffix_min}.js",
 			array( 'backbone' ),
 			'2.0.0',
@@ -782,7 +789,7 @@ class PodsInit {
 			PODS_URL . "ui/js/marionette/backbone.marionette{$suffix_min}.js",
 			array(
 				'backbone',
-				'backbone.radio',
+				'pods-backbone-radio',
 			),
 			'3.3.1',
 			true
@@ -858,23 +865,35 @@ class PodsInit {
 			add_filter( 'admin_body_class', array( $this, 'add_classes_to_modal_body' ) );
 		}
 
+		$is_admin = is_admin();
+
 		// Deal with specifics on admin pages.
-		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
+		if ( $is_admin && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 
 			// DFV must be enqueued on the media library page for items in grid mode (#4785)
 			// and for posts due to the possibility that post-thumbnails are enabled (#4945)
-			if ( $screen && $screen->base && in_array( $screen->base, array( 'upload', 'post' ), true ) ) {
-				wp_enqueue_script( 'pods-dfv' );
+			if (
+				$screen
+				&& $screen->base
+				&& in_array( $screen->base, [
+					'upload',
+					'post',
+				], true )
+			) {
+				// Only load if we have a media pod.
+				if ( ! empty( PodsMeta::$media ) ) {
+					wp_enqueue_script( 'pods-dfv' );
+				}
 			}
 		}
 
 		$this->maybe_register_handlebars();
 
 		// As of 2.7 we combine styles to just three .css files
-		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', array( 'wp-components' ), PODS_VERSION );
-		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', array(), PODS_VERSION );
-		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', array( 'wp-components' ), PODS_VERSION );
+		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', [ 'wp-components' ], PODS_VERSION );
+		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', [], PODS_VERSION );
+		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', [ 'wp-components' ], PODS_VERSION );
 
 		/**
 		 * Filter to enabled loading of the DFV script on frontend.
@@ -886,7 +905,7 @@ class PodsInit {
 		 *
 		 * @since 2.7.13
 		 */
-		if ( apply_filters( 'pods_enqueue_dfv_on_front', false ) ) {
+		if ( ! $is_admin && apply_filters( 'pods_enqueue_dfv_on_front', false ) ) {
 			wp_enqueue_script( 'pods-dfv' );
 			wp_enqueue_style( 'pods-form' );
 		}
@@ -2223,25 +2242,32 @@ class PodsInit {
 			$this->load_meta();
 		}
 
+		$is_admin = is_admin();
+
 		if ( ! did_action( 'init' ) ) {
 			add_action( 'init', array( $this, 'core' ), 11 );
 			add_action( 'init', array( $this, 'setup_content_types' ), 11 );
 
-			if ( is_admin() ) {
+			if ( $is_admin ) {
 				add_action( 'init', array( $this, 'admin_init' ), 12 );
 			}
 		} else {
 			$this->core();
 			$this->setup_content_types();
 
-			if ( is_admin() ) {
+			if ( $is_admin ) {
 				$this->admin_init();
 			}
 		}
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+		if ( ! $is_admin ) {
+			add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ], 15 );
+		} else {
+			add_action( 'admin_enqueue_scripts', [ $this, 'register_assets' ], 15 );
+		}
+
 		add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+
 		// @todo Elementor Page Builder.
 		//add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 

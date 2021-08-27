@@ -150,6 +150,17 @@ class Pods_Component_I18n extends PodsComponent {
 			 * PODS ADMIN UI.
 			 */
 
+			// Pod.
+			add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'pod_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_options', array( $this, 'pod_options' ), 99, 2 );
+			// Pod Fields.
+			add_filter( 'pods_admin_setup_edit_group_tabs', array( $this, 'pod_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_group_options', array( $this, 'pod_options' ), 99, 2 );
+			// Pod Fields.
+			add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'pod_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'pod_options' ), 99, 2 );
+
+
 			// Field specific
 			// add_filter( 'pods_field_pick_data', array( $this, 'field_pick_data_i18n' ), 10, 6 );
 			if ( $is_pods_edit_page ) {
@@ -750,62 +761,6 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
-	 * The i18n option tab.
-	 *
-	 * @todo   Remove if not used in final version
-	 *
-	 * @since 0.1.0
-	 *
-	 * @param  array $tabs
-	 * @param  array $pod
-	 * @param  array $args
-	 *
-	 * @return array
-	 */
-	public function pod_tab( $tabs, $pod, $args ) {
-
-		$tabs['pods-i18n'] = __( 'Translation Options', 'pods' );
-
-		return $tabs;
-	}
-
-	/**
-	 * The i18n options
-	 *
-	 * @todo   Remove if not used in final version
-	 *
-	 * @since 0.1.0
-	 *
-	 * @param  array $options
-	 * @param  array $pod
-	 *
-	 * @return array
-	 */
-	public function pod_options( $options, $pod ) {
-
-		// if ( $pod['type'] === '' )
-		/*
-		$options[ 'pods-i18n' ] = array(
-			'enabled_languages' => array(
-				'label' => __( 'Enable/Disable languages for this Pod', 'pods' ),
-				'help' => __( 'This overwrites the defaults set in the component admin.', 'pods' ),
-				'group' => array(),
-			),
-		);
-
-		foreach ( $this->languages as $locale => $lang_data ) {
-			$options['pods-i18n']['enabled_languages']['group']['enable_i18n'][ $locale ] = array(
-				'label'      => $locale . ' (' . $this->create_lang_label( $lang_data ) . ')',
-				'default'    => 1,
-				'type'       => 'boolean',
-			);
-		}*/
-
-		return $options;
-
-	}
-
-	/**
 	 * Add the i18n metabox.
 	 *
 	 * @todo Update/Check op 2.8
@@ -877,6 +832,90 @@ class Pods_Component_I18n extends PodsComponent {
 			</p>
 			<?php
 		}//end if
+	}
+
+	/**
+	 * The i18n option tab.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param  array $tabs
+	 *
+	 * @return array
+	 */
+	public function pod_tab( $tabs ) {
+
+		$tabs['i18n'] = __( 'Translations', 'pods' );
+
+		return $tabs;
+	}
+
+	/**
+	 * The i18n options
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param  array $options
+	 *
+	 * @return array
+	 */
+	public function pod_options( $options, $pod ) {
+
+		$i18n_fields = [];
+
+		foreach ( $options as $tab => $fields ) {
+			foreach ( $fields as $name => $field ) {
+				if ( ! $this->is_translatable_field( $name ) ) {
+					continue;
+				}
+
+				$heading_field = $field;
+				$heading_field['type'] = 'heading';
+				$heading_field['name'] = $name . '_i18n';
+				$heading_field['description'] = '%s';
+				$heading_field['description_param'] = $name;
+				$heading_field['description_param_default'] = '';
+				$i18n_fields[][ $name . '_i18n' ] = $heading_field;
+
+				foreach ( $this->languages as $locale => $lang_data ) {
+
+					if ( ! $this->obj_is_language_enabled( $locale, (array) $pod ) ) {
+						continue;
+					}
+
+					$locale_name              = $name . '_' . $locale;
+					$locale_field             = $field;
+					$locale_field['name']     = $locale_name;
+					$locale_field['label']    = $locale;
+					$locale_field['required'] = false;
+
+					$i18n_fields[][ $locale_name ] = $locale_field;
+				}
+			}
+		}
+
+		$options['i18n'] = $i18n_fields;
+
+		// if ( $pod['type'] === '' )
+		/*
+		$options[ 'pods-i18n' ] = array(
+			'enabled_languages' => array(
+				'label' => __( 'Enable/Disable languages for this Pod', 'pods' ),
+				'help' => __( 'This overwrites the defaults set in the component admin.', 'pods' ),
+				'group' => array(),
+			),
+		);
+
+		foreach ( $this->languages as $locale => $lang_data ) {
+			$options['pods-i18n']['enabled_languages']['group']['enable_i18n'][ $locale ] = array(
+				'label'      => $locale . ' (' . $this->create_lang_label( $lang_data ) . ')',
+				'default'    => 1,
+				'type'       => 'boolean',
+			);
+		}*/
+
+		return $options;
+
 	}
 
 	/**

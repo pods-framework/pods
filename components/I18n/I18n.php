@@ -174,6 +174,7 @@ class Pods_Component_I18n extends PodsComponent {
 				// Add options metabox to the pod edit screens
 				add_action( 'pods_add_meta_boxes', array( $this, 'admin_meta_box' ) );
 
+				// @todo Remove op 2.8
 				// Add the i18n input fields based on existing fields
 				add_filter( 'pods_form_ui_field_text', array( $this, 'add_i18n_inputs' ), 10, 6 );
 			}//end if
@@ -272,6 +273,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Get a translated option for a field key (if available)
 	 *
+	 * @todo Update/Check op 2.8
+	 *
 	 * @since 0.1.0
 	 *
 	 * @param  string $current Current value
@@ -297,6 +300,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Page title for setting pages
 	 *
+	 * @todo Update/Check op 2.8
+	 *
 	 * @since 0.1.0
 	 * @see    PodsAdmin.php >> admin_menu()
 	 * @see    PodsAdmin.php >> admin_content_settings()
@@ -314,6 +319,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Menu title for setting pages
 	 *
+	 * @todo Update/Check op 2.8
+	 *
 	 * @since 0.1.0
 	 * @see    PodsAdmin.php >> admin_menu()
 	 *
@@ -329,6 +336,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Returns the translated label if available
+	 *
+	 * @todo Update/Check op 2.8
 	 *
 	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_label_text' (filter)
@@ -348,6 +357,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Returns the translated description if available
 	 *
+	 * @todo Update/Check op 2.8
+	 *
 	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_comment_text' (filter)
 	 *
@@ -364,6 +375,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Replaces the default selected text with a translation if available
+	 *
+	 * @todo Update/Check op 2.8
 	 *
 	 * @since 0.1.0
 	 * @see    pick.php >> 'pods_field_pick_data' (filter)
@@ -392,6 +405,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Replaces the default values with a translation if available
 	 *
+	 * @todo Update/Check op 2.8
+	 *
 	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_field_' . $type . '_options' (filter)
 	 *
@@ -417,6 +432,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Filter hook function to overwrite the labels and description with translations (if available)
+	 *
+	 * @todo Update/Check op 2.8
 	 *
 	 * @since 0.1.0
 	 * @see    PodsInit.php >> setup_content_types()
@@ -517,6 +534,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Filter hook function to overwrite the labels and description with translations (if available)
+	 *
+	 * @todo Update/Check op 2.8
 	 *
 	 * @since 0.1.0
 	 * @see    PodsInit.php >> admin_menu()
@@ -789,6 +808,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Add the i18n metabox.
 	 *
+	 * @todo Update/Check op 2.8
+	 *
 	 * @since 0.1.0
 	 */
 	public function admin_meta_box() {
@@ -811,6 +832,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * The i18n metabox.
+	 *
+	 * @todo Update/Check op 2.8
 	 *
 	 * @todo   Store enabled languages serialized instead of separate inputs
 	 *
@@ -858,6 +881,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Adds translation inputs to fields
+	 *
+	 * @todo Update/Check op 2.8
 	 *
 	 * @since 0.1.0
 	 * @see    PodsForm.php >> 'pods_form_ui_field_' . $type (filter)
@@ -934,6 +959,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Check if a language is get to enabled for an object
+	 *
+	 * @todo Update/Check op 2.8
 	 *
 	 * @since 0.1.0
 	 *

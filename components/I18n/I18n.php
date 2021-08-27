@@ -108,6 +108,11 @@ class Pods_Component_I18n extends PodsComponent {
 		}
 
 		if ( $active ) {
+
+			/**
+			 * REGISTERING OBJ LABELS.
+			 */
+
 			// WP Object filters (post_type and taxonomy)
 			add_filter( 'pods_register_post_type', array( $this, 'pods_register_wp_object_i18n' ), 10, 2 );
 			add_filter( 'pods_register_taxonomy', array( $this, 'pods_register_wp_object_i18n' ), 10, 2 );
@@ -119,6 +124,10 @@ class Pods_Component_I18n extends PodsComponent {
 				10,
 				2
 			);
+
+			/**
+			 * LABEL REPLACEMENT.
+			 */
 
 			// Setting pages
 			add_filter( 'pods_admin_menu_page_title', array( $this, 'admin_menu_page_title_i18n' ), 10, 2 );
@@ -136,6 +145,10 @@ class Pods_Component_I18n extends PodsComponent {
 					5
 				);
 			}
+
+			/**
+			 * PODS ADMIN UI.
+			 */
 
 			// Field specific
 			// add_filter( 'pods_field_pick_data', array( $this, 'field_pick_data_i18n' ), 10, 6 );

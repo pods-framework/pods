@@ -77,12 +77,12 @@ const processAllPodValues = ( fields, allPodValues ) => {
 	return allPodValues;
 };
 
-const getLabelValue = ( labelFormat, paramOption, paramDefault, value ) => {
+const getParamValue = ( paramFormat, paramOption, paramDefault, value ) => {
 	if ( ! paramOption ) {
-		return labelFormat;
+		return paramFormat;
 	}
 
-	return sprintf( labelFormat, value || paramDefault || MISSING );
+	return sprintf( paramFormat, value || paramDefault || MISSING );
 };
 
 const DynamicTabContent = ( {
@@ -96,15 +96,33 @@ const DynamicTabContent = ( {
 			label: optionLabel,
 			label_param: optionLabelParam,
 			label_param_default: optionLabelParamDefault,
+			description: optionDescription,
+			description_param: optionDescriptionParam,
+			description_param_default: optionDescriptionParamDefault,
+			help: optionHelp,
+			help_param: optionHelpParam,
+			help_param_default: optionHelpParamDefault,
 		} = tabOption;
 
 		return {
 			...tabOption,
-			label: getLabelValue(
+			label: getParamValue(
 				optionLabel,
 				optionLabelParam,
 				optionLabelParamDefault,
 				allPodValues[ optionLabelParam ]
+			),
+			description: getParamValue(
+				optionDescription,
+				optionDescriptionParam,
+				optionDescriptionParamDefault,
+				allPodValues[ optionDescriptionParam ]
+			),
+			help: getParamValue(
+				optionHelp,
+				optionHelpParam,
+				optionHelpParamDefault,
+				allPodValues[ optionHelpParam ]
 			),
 		};
 	} );

@@ -77,11 +77,13 @@ const processAllPodValues = ( fields, allPodValues ) => {
 	return allPodValues;
 };
 
-const getParamValue = ( paramFormat, paramOption, paramDefault, value ) => {
+const getDynamicParamValue = ( paramFormat, paramOption, paramDefault, value ) => {
+	// No param option set, just return the plain param value.
 	if ( ! paramOption ) {
 		return paramFormat;
 	}
 
+	// Replace the %s with the value as necessary.
 	return sprintf( paramFormat, value || paramDefault || MISSING );
 };
 
@@ -106,19 +108,19 @@ const DynamicTabContent = ( {
 
 		return {
 			...tabOption,
-			label: getParamValue(
+			label: getDynamicParamValue(
 				optionLabel,
 				optionLabelParam,
 				optionLabelParamDefault,
 				allPodValues[ optionLabelParam ]
 			),
-			description: getParamValue(
+			description: getDynamicParamValue(
 				optionDescription,
 				optionDescriptionParam,
 				optionDescriptionParamDefault,
 				allPodValues[ optionDescriptionParam ]
 			),
-			help: getParamValue(
+			help: getDynamicParamValue(
 				optionHelp,
 				optionHelpParam,
 				optionHelpParamDefault,

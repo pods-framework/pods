@@ -2608,7 +2608,7 @@ class PodsData {
 						'post_status',
 					];
 
-					$post_status_found = 0 === count( array_intersect( $found, $post_status_patterns ) );
+					$post_status_found = 0 < count( array_intersect( $found, $post_status_patterns ) );
 				} elseif ( ! empty( $params->query_fields ) && in_array( 'post_status', $params->query_fields, true ) ) {
 					$post_status_found = true;
 				}//end if

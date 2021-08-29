@@ -142,7 +142,7 @@ const Pick = ( props ) => {
 			pick_object: pickObject,
 			// pick_orderby: orderBy,
 			// pick_post_status: postStatus,
-			pick_select_text: selectText,
+			pick_select_text: selectText = __( '-- Select One --', 'pods' ),
 			pick_show_edit_link: showEditLink,
 			pick_show_icon: showIcon,
 			pick_show_view_link: showViewLink,

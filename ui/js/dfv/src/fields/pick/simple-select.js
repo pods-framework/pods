@@ -27,7 +27,7 @@ const SimpleSelect = ( {
 			id={ htmlAttributes.id || `pods-form-ui-${ name }` }
 			name={ htmlAttributes.name || name }
 			className={ classes }
-			value={ value }
+			value={ value || '' }
 			onChange={ ( event ) => {
 				if ( readOnly ) {
 					return;

@@ -291,7 +291,7 @@ const Pick = ( props ) => {
 				<RadioSelect
 					htmlAttributes={ htmlAttributes }
 					name={ name }
-					value={ value }
+					value={ value || '' }
 					setValue={ setValueWithLimit }
 					options={ dataOptions }
 					readOnly={ !! readOnly }

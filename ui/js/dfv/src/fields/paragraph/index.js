@@ -37,7 +37,7 @@ const Paragraph = ( {
 
 	return (
 		<textarea
-			value={ value }
+			value={ value || '' }
 			id={ htmlAttributes.id || `pods-form-ui-${ name }` }
 			name={ htmlAttributes.name || name }
 			className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-paragraph', htmlAttributes.class ) }

@@ -705,10 +705,26 @@ function pods_helper( $helper_name, $value = null, $name = null ) {
 }
 
 /**
- * Get the full URL of the current page
+ * Get the full path of the current page.
  *
- * @return string Full URL of the current page
+ * @since 2.8.0
+ *
+ * @return string Full path of the current page.
+ */
+function pods_current_path() {
+	if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+		return '/';
+	}
+
+	return $_SERVER['REQUEST_URI'];
+}
+
+/**
+ * Get the full URL of the current page.
+ *
  * @since 2.3.0
+ *
+ * @return string Full URL of the current page.
  */
 function pods_current_url() {
 	$url = 'http';
@@ -717,7 +733,7 @@ function pods_current_url() {
 		$url = 'https';
 	}
 
-	$url .= '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	$url .= '://' . $_SERVER['HTTP_HOST'] . pods_current_path();
 
 	return apply_filters( 'pods_current_url', $url );
 }

@@ -713,18 +713,21 @@ class Pods_Pages extends PodsComponent {
 	 */
 	public static function exists( $uri = null ) {
 		if ( null === $uri ) {
-			$uri = parse_url( pods_current_url() );
-			$uri = $uri['path'];
-		} else {
-			$uri = explode( '?', $uri );
-			$uri = explode( '#', $uri[0] );
-			$uri = $uri[0];
+			$uri = pods_current_path();
 		}
 
-		$home = parse_url( get_home_url() );
+		if ( empty( $uri ) ) {
+			return false;
+		}
 
-		if ( ! empty( $home ) && isset( $home['path'] ) && '/' !== $home['path'] ) {
-			$uri = substr( $uri, strlen( $home['path'] ) );
+		$uri = explode( '?', $uri );
+		$uri = explode( '#', $uri[0] );
+		$uri = $uri[0];
+
+		$home_path = wp_parse_url( get_home_url(), PHP_URL_PATH );
+
+		if ( ! empty( $home_path ) && '/' !== $home_path ) {
+			$uri = substr( $uri, strlen( $home_path ) );
 		}
 
 		$uri       = trim( $uri, '/' );

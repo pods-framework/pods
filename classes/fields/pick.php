@@ -1996,7 +1996,9 @@ class PodsField_Pick extends PodsField {
 	public function get_field_data( $field, $deprecated = null, $object_params = array() ) {
 		$options = array();
 
-		if ( is_array( $field ) ) {
+		$is_field_object = $field instanceof Field;
+
+		if ( is_array( $field ) || $is_field_object ) {
 			$options = $field;
 		}
 

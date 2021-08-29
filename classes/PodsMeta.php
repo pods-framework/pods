@@ -705,7 +705,9 @@ class PodsMeta {
 				'type'  => 'text'
 			);
 
-			if ( ! is_array( $field ) ) {
+			$is_field_object = $field instanceof Field;
+
+			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$name = trim( $field );
 
 				$field = array(
@@ -946,9 +948,11 @@ class PodsMeta {
 			if ( $has_custom_groups ) {
 				$groups = array_merge( $groups, self::$groups[ $type ][ $name ] );
 			}
-		} elseif ( ! empty( self::$groups[ $type ][ $name ] ) ) {
+		} elseif ( $has_custom_groups ) {
 			$groups = self::$groups[ $type ][ $name ];
-		} else {
+		}
+
+		if ( empty( $groups ) && ! empty( $fields ) ) {
 			$groups[] = [
 				'pod'      => $pod,
 				'label'    => $title,

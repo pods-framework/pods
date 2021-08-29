@@ -1151,7 +1151,9 @@ class PodsData {
 				}
 
 				foreach ( $fields_to_search as $key => $field ) {
-					if ( is_array( $field ) || $field instanceof Field ) {
+					$is_field_object = $field instanceof Field;
+
+					if ( is_array( $field ) || $is_field_object ) {
 						$attributes = $field;
 						$field      = pods_v( 'name', $field, $key, true );
 					} else {

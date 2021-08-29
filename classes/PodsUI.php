@@ -1600,7 +1600,9 @@ class PodsUI {
 				'name' => $name,
 			);
 
-			if ( ! is_array( $field ) ) {
+			$is_field_object = $field instanceof Field;
+
+			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$name = $field;
 
 				$field = array(
@@ -1725,7 +1727,9 @@ class PodsUI {
 				'options' => 'text',
 			);
 
-			if ( ! is_array( $field ) ) {
+			$is_field_object = $field instanceof Field;
+
+			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$name = $field;
 
 				$field = array(

@@ -7,7 +7,10 @@ import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const Website = ( props ) => {
-	const { fieldConfig = {} } = props;
+	const {
+		fieldConfig = {},
+		value
+	} = props;
 
 	const {
 		website_max_length: maxLength,
@@ -20,6 +23,7 @@ const Website = ( props ) => {
 			{ ...props }
 			fieldConfig={ fieldConfig }
 			type={ true === toBool( html5 ) ? 'url' : 'text' }
+			value={ value || '' }
 			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
 			placeholder={ placeholder }
 		/>

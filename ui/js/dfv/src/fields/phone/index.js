@@ -7,7 +7,10 @@ import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const Phone = ( props ) => {
-	const { fieldConfig = {} } = props;
+	const {
+		fieldConfig = {},
+		value,
+	} = props;
 
 	const {
 		phone_max_length: maxLength,
@@ -20,6 +23,7 @@ const Phone = ( props ) => {
 			{ ...props }
 			fieldConfig={ fieldConfig }
 			type={ true === toBool( html5 ) ? 'tel' : 'text' }
+			value={ value || '' }
 			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
 			placeholder={ placeholder }
 		/>

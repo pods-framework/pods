@@ -734,7 +734,6 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @return array
 	 */
 	public function pod_options( $options, $pod ) {
-
 		$i18n_fields = [];
 
 		foreach ( $options as $tab => $fields ) {
@@ -749,6 +748,7 @@ class Pods_Component_I18n extends PodsComponent {
 				$heading_field = $field;
 				$heading_field['type'] = 'heading';
 				$heading_field['name'] = $name . '_i18n';
+
 				$i18n_fields[][ $name . '_i18n' ] = $heading_field;
 
 				$default_field = $field;
@@ -758,10 +758,10 @@ class Pods_Component_I18n extends PodsComponent {
 				$default_field['html_content'] = '%s';
 				$default_field['html_content_param'] = $name;
 				$default_field['html_content_param_default'] = '-';
+
 				$i18n_fields[][ $name . '_i18n_default' ] = $default_field;
 
 				foreach ( $this->languages as $locale => $lang_data ) {
-
 					if ( ! $this->obj_is_language_enabled( $locale, (array) $pod ) ) {
 						continue;
 					}
@@ -797,7 +797,6 @@ class Pods_Component_I18n extends PodsComponent {
 		}*/
 
 		return $options;
-
 	}
 
 	/**

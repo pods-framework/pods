@@ -25,13 +25,18 @@ const CheckboxSelect = ( {
 
 	return (
 		<ul
-			className={ classnames( 'pods-checkbox-pick', options.length === 1 && 'pods-checkbox-pick--single' ) }
+			className={
+				classnames(
+					'pods-checkbox-pick',
+					options.length === 1 && 'pods-checkbox-pick--single'
+				)
+			}
 			id={ name }
 		>
 			{ options.map( (
 				{
-					value: optionValue,
-					label: optionLabel,
+					id: optionValue,
+					name: optionLabel,
 				},
 				optionIndex,
 				allOptions
@@ -51,7 +56,12 @@ const CheckboxSelect = ( {
 				return (
 					<li
 						key={ optionValue }
-						className={ classnames( 'pods-checkbox-pick__option', options.length === 1 && 'pods-checkbox-pick__option--single' ) }
+						className={
+							classnames(
+								'pods-checkbox-pick__option',
+								options.length === 1 && 'pods-checkbox-pick__option--single'
+							)
+						}
 					>
 						<div className="pods-field pods-boolean">
 							<label

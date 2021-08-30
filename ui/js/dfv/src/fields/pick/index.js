@@ -27,42 +27,8 @@ import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 import './pick.scss';
 
-// We may get the data value as an array or an object.
-const formatDataFromProp = ( data ) => {
-	// Skip unless we're handling an object of values.
-	if ( 'object' !== typeof data || Array.isArray( data ) ) {
-		return data;
-	}
-
-	const entries = Object.entries( data );
-
-	return entries.reduce( ( accumulator, entry ) => {
-		if ( 'string' === typeof entry[ 1 ] ) {
-			return [
-				...accumulator,
-				{
-					label: entry[ 1 ],
-					value: entry[ 0 ],
-				},
-			];
-		}
-
-		const subOptions = Object.entries( entry[ 1 ] )
-			.map( ( subEntry ) => ( { label: subEntry[ 1 ], value: subEntry[ 0 ] } ) );
-
-		return [
-			...accumulator,
-			{
-				label: entry[ 0 ],
-				value: subOptions,
-			},
-		];
-	}, [] );
-};
-
 const formatValuesForReactSelectComponent = (
 	value,
-	options = [],
 	fieldItemData = [],
 	isMulti = false
 ) => {
@@ -71,8 +37,13 @@ const formatValuesForReactSelectComponent = (
 	}
 
 	if ( ! isMulti ) {
+		const selectedItemData = fieldItemData.find( ( option ) => option.id === value );
+
 		return [
-			options.find( ( option ) => option.value === value ),
+			{
+				label: selectedItemData?.name,
+				value: selectedItemData?.id.toString(),
+			},
 		];
 	}
 
@@ -80,16 +51,8 @@ const formatValuesForReactSelectComponent = (
 
 	return splitValue.map(
 		( currentValue ) => {
-			const fullValueFromOptions = options.find(
-				( option ) => option.value === currentValue
-			);
-
-			if ( fullValueFromOptions ) {
-				return fullValueFromOptions;
-			}
-
 			const fullFieldItem = fieldItemData.find(
-				( item ) => Number( item.id ) === Number( currentValue )
+				( option ) => option.id === currentValue
 			);
 
 			if ( fullFieldItem ) {
@@ -130,7 +93,7 @@ const Pick = ( props ) => {
 			iframe_title_add: addNewIframeTitle,
 			iframe_title_edit: editIframeTitle,
 			pick_allow_add_new: allowAddNew,
-			pick_custom: pickCustomOptions,
+			// pick_custom: pickCustomOptions,
 			// pick_display,
 			// pick_display_format_multi,
 			// pick_display_format_separator,
@@ -139,10 +102,10 @@ const Pick = ( props ) => {
 			pick_format_type: formatType = 'single',
 			// pick_groupby,
 			pick_limit: limit,
-			pick_object: pickObject,
+			// pick_object: pickObject,
 			// pick_orderby: orderBy,
 			// pick_post_status: postStatus,
-			pick_select_text: selectText = __( '-- Select One --', 'pods' ),
+			// pick_select_text: selectText = __( '-- Select One --', 'pods' ),
 			pick_show_edit_link: showEditLink,
 			pick_show_icon: showIcon,
 			pick_show_view_link: showViewLink,
@@ -167,55 +130,15 @@ const Pick = ( props ) => {
 
 	const [ showAddNewIframe, setShowAddNewIframe ] = useState( false );
 
-	// The options could be derived from the `data` prop (as a default),
-	// or we may need to do more work to break them apart or load them by the API.
-	const [ dataOptions, setDataOptions ] = useState( formatDataFromProp( data ) );
-
-	// fieldItemData may get edited by add/edit modals, but we only need to track this
-	// in state.
-	const [ editedFieldItemData, setEditedFieldItemData ] = useState( fieldItemData );
-
-	useEffect( () => {
-		if ( 'custom-simple' !== pickObject ) {
-			return;
-		}
-
-		const unsplitOptions = pickCustomOptions.split( '\n' );
-
-		// Set an empty array if no entries or malformed.
-		if ( ! unsplitOptions.length ) {
-			setDataOptions( [] );
-			return;
-		}
-
-		const optionEntries = unsplitOptions.map(
-			( unsplitOption ) => {
-				const splitOption = unsplitOption.split( '|' );
-
-				// Return if malformed entry.
-				if ( 1 === splitOption.length ) {
-					return {
-						value: splitOption[ 0 ],
-						label: splitOption[ 0 ],
-					};
-				} else if ( 2 !== splitOption.length ) {
-					return null;
-				}
-
-				return {
-					value: splitOption[ 0 ],
-					label: splitOption[ 1 ],
-				};
-			}
-		);
-
-		// Filter out any options missing the value or label.
-		const filteredOptionEntries = optionEntries.filter(
-			( entry ) => entry.value && entry.label
-		);
-
-		setDataOptions( filteredOptionEntries );
-	}, [ pickObject, pickCustomOptions ] );
+	// Most options are set from the field's fieldItemData, but this could get
+	// modified by the add/edit modals, or by loading ajax options, so we need to track
+	// this in state, starting with the supplied fieldItemData from the page load.
+	const [ modifiedFieldItemData, setModifiedFieldItemData ] = useState(
+		fieldItemData ? fieldItemData : data.map( ( dataOption ) => ( {
+			id: dataOption.value || '',
+			name: dataOption.label || '',
+		} ) )
+	);
 
 	const setValueWithLimit = ( newValue ) => {
 		// We don't need to worry about limits if this isn't a multi-select field.
@@ -261,7 +184,7 @@ const Pick = ( props ) => {
 
 			const { data: newData = {} } = event.data;
 
-			setEditedFieldItemData( ( prevData ) => [
+			setModifiedFieldItemData( ( prevData ) => [
 				...prevData,
 				newData,
 			] );
@@ -293,7 +216,7 @@ const Pick = ( props ) => {
 					name={ name }
 					value={ value || '' }
 					setValue={ setValueWithLimit }
-					options={ dataOptions }
+					options={ modifiedFieldItemData }
 					readOnly={ !! readOnly }
 				/>
 			);
@@ -318,7 +241,7 @@ const Pick = ( props ) => {
 					value={ formattedValue }
 					isMulti={ isMulti }
 					setValue={ setValueWithLimit }
-					options={ dataOptions }
+					options={ modifiedFieldItemData }
 					readOnly={ !! readOnly }
 				/>
 			);
@@ -334,16 +257,20 @@ const Pick = ( props ) => {
 
 			const formattedValue = formatValuesForReactSelectComponent(
 				value,
-				dataOptions,
-				editedFieldItemData,
+				modifiedFieldItemData,
 				isMulti,
 			);
+
+			const formattedOptions = modifiedFieldItemData.map( ( item ) => ( {
+				label: item.name,
+				value: item.id,
+			} ) );
 
 			return (
 				<>
 					<AsyncSelect
 						controlShouldRenderValue={ ! isListSelect }
-						defaultOptions={ dataOptions }
+						defaultOptions={ formattedOptions }
 						loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
 						value={ isMulti ? formattedValue : formattedValue[ 0 ] }
 						// translators: %s is the field label.
@@ -353,8 +280,8 @@ const Pick = ( props ) => {
 							// The new value(s) may have been loaded by ajax, if it was, then it wasn't
 							// in our array of dataOptions, and we should add it, so we can keep track of
 							// the label.
-							setDataOptions( ( prevData ) => {
-								const prevDataValues = prevData.map( ( option ) => option.value );
+							setModifiedFieldItemData( ( prevData ) => {
+								const prevDataValues = prevData.map( ( option ) => option.id );
 								const updatedData = [ ...prevData ];
 								const newOptions = isMulti ? newOption : [ newOption ];
 
@@ -363,7 +290,10 @@ const Pick = ( props ) => {
 										return;
 									}
 
-									updatedData.push( option );
+									updatedData.push( {
+										id: option.value,
+										name: option.label,
+									} );
 								} );
 
 								return updatedData;
@@ -385,8 +315,8 @@ const Pick = ( props ) => {
 							fieldName={ name }
 							value={ formattedValue }
 							setValue={ setValueWithLimit }
-							fieldItemData={ editedFieldItemData }
-							setFieldItemData={ setEditedFieldItemData }
+							fieldItemData={ modifiedFieldItemData }
+							setFieldItemData={ setModifiedFieldItemData }
 							isMulti={ isMulti }
 							limit={ parseInt( limit, 10 ) || 0 }
 							defaultIcon={ defaultIcon }
@@ -401,7 +331,7 @@ const Pick = ( props ) => {
 					{ formattedValue.map( ( selectedValue, index ) => (
 						<input
 							name={ `${ name }[${ index }]` }
-							key={ selectedValue.value }
+							key={ `${ name }-${ selectedValue.value }` }
 							type="hidden"
 							value={ selectedValue.value }
 						/>
@@ -416,8 +346,7 @@ const Pick = ( props ) => {
 				name={ name }
 				value={ formatValuesForHTMLSelectElement( value, isMulti ) }
 				setValue={ ( newValue ) => setValueWithLimit( newValue ) }
-				options={ dataOptions }
-				placeholder={ selectText }
+				options={ modifiedFieldItemData }
 				isMulti={ isMulti }
 				readOnly={ !! readOnly }
 			/>

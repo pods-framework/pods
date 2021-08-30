@@ -26,16 +26,12 @@ export const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
 
 export const PICK_OPTIONS = PropTypes.arrayOf(
 	PropTypes.shape( {
-		label: PropTypes.string.isRequired,
-		value: PropTypes.oneOfType( [
-			PropTypes.string.isRequired,
-			PropTypes.arrayOf(
-				PropTypes.shape( {
-					label: PropTypes.string.isRequired,
-					value: PropTypes.string.isRequired,
-				} )
-			),
-		] ),
+		id: PropTypes.string.isRequired,
+		icon: PropTypes.string.isRequired,
+		name: PropTypes.string.isRequired,
+		edit_link: PropTypes.string.isRequired,
+		link: PropTypes.string.isRequired,
+		selected: PropTypes.bool.isRequired,
 	} )
 );
 
@@ -51,10 +47,7 @@ export const FIELD_PROP_TYPE = {
 	admin_only: BOOLEAN_STRINGS,
 	attributes: OBJECT_OR_ARRAY,
 	class: PropTypes.string,
-	data: PropTypes.oneOfType( [
-		PICK_OPTIONS,
-		PropTypes.object,
-	] ),
+	data: PropTypes.any,
 	default: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,

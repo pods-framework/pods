@@ -2,8 +2,6 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
-import { __ } from '@wordpress/i18n';
-
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 const SimpleSelect = ( {
@@ -12,7 +10,6 @@ const SimpleSelect = ( {
 	value,
 	options,
 	setValue,
-	placeholder = __( '-- Select One --', 'pods' ),
 	isMulti = false,
 	readOnly = false,
 } ) => {
@@ -41,20 +38,14 @@ const SimpleSelect = ( {
 				setValue(
 					Array.from( event.target.options )
 						.filter( ( option ) => option.selected )
-						.map( ( option ) => option.value )
+						.map( ( option ) => option.id )
 				);
 			} }
 			multiple={ isMulti }
 			readOnly={ !! readOnly }
 		>
 			<>
-				{ ! isMulti && placeholder && (
-					<option key="placeholder" value="">
-						{ placeholder }
-					</option>
-				) }
-
-				{ options.map( ( { label: optionLabel, value: optionValue } ) => {
+				{ options.map( ( { name: optionLabel, id: optionValue } ) => {
 					if ( 'string' === typeof optionValue ) {
 						return (
 							<option key={ optionValue } value={ optionValue }>
@@ -108,7 +99,6 @@ SimpleSelect.propTypes = {
 	] ),
 	setValue: PropTypes.func.isRequired,
 	options: PICK_OPTIONS.isRequired,
-	placeholder: PropTypes.string,
 	isMulti: PropTypes.bool,
 	readOnly: PropTypes.bool,
 };

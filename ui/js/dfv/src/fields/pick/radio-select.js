@@ -14,8 +14,8 @@ const RadioSelect = ( {
 	return (
 		<ul className="pods-radio-pick" id={ name }>
 			{ options.map( ( {
-				value: optionValue,
-				label: optionLabel,
+				id: optionValue,
+				name: optionLabel,
 			} ) => {
 				const idAttribute = !! htmlAttributes.id
 					? `${ htmlAttributes.id }-${ optionValue }`

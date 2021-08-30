@@ -743,6 +743,9 @@ class Pods_Component_I18n extends PodsComponent {
 					continue;
 				}
 
+				// None of the i18n fields are required!
+				$field['required'] = false;
+
 				$heading_field = $field;
 				$heading_field['type'] = 'heading';
 				$heading_field['name'] = $name . '_i18n';
@@ -767,7 +770,6 @@ class Pods_Component_I18n extends PodsComponent {
 					$locale_field             = $field;
 					$locale_field['name']     = $locale_name;
 					$locale_field['label']    = $locale;
-					$locale_field['required'] = false;
 
 					$i18n_fields[][ $locale_name ] = $locale_field;
 				}

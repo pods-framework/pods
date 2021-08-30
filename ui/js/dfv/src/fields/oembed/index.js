@@ -75,7 +75,7 @@ const Oembed = ( {
 				name={ htmlAttributes.name || name }
 				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-oembed', htmlAttributes.class ) }
 				type="text"
-				value={ value }
+				value={ value || '' }
 				onChange={ handleChange }
 				onBlur={ handleBlur }
 			/>

@@ -2356,7 +2356,9 @@ class PodsAPI {
 
 			// Handle weight of fields.
 			foreach ( $params->fields as $field ) {
-				if ( ! ( is_array( $field ) || $field instanceof Pods\Whatsit ) || ! isset( $field['name'] ) ) {
+				$is_field_object = $field instanceof Field;
+
+				if ( ! $is_field_object && ! is_array( $field ) && empty( $field['name'] ) ) {
 					continue;
 				}
 
@@ -2410,7 +2412,9 @@ class PodsAPI {
 
 					// Handle weight of fields.
 					foreach ( $group_fields as $field ) {
-						if ( ! ( is_array( $field ) || $field instanceof Pods\Whatsit ) || ! isset( $field['name'] ) ) {
+						$is_field_object = $field instanceof Field;
+
+						if ( ! $is_field_object && ! is_array( $field ) && empty( $field['name'] ) ) {
 							continue;
 						}
 
@@ -2443,7 +2447,12 @@ class PodsAPI {
 			$weight = 0;
 
 			foreach ( $fields_to_save as $k => $field ) {
-				$is_field_ok = ( is_array( $field ) || $field instanceof Pods\Whatsit );
+				$is_field_object = $field instanceof Field;
+
+				$is_field_ok = (
+					is_array( $field )
+					|| $is_field_object
+				);
 
 				if (
 					! empty( $old_id )
@@ -2623,11 +2632,13 @@ class PodsAPI {
 			$defined_fields = [];
 
 			foreach ( $fields as $field ) {
+				$is_field_object = $field instanceof Field;
+
 				// Skip if not a field, if an invalid field, or if already defined.
 				if (
 					! (
 						is_array( $field )
-					    || $field instanceof Pods\Whatsit
+					    || $is_field_object
 					)
 					|| ! isset( $field['name'] )
 					|| in_array( $field['name'], $defined_fields, true )
@@ -6336,7 +6347,9 @@ class PodsAPI {
 		}
 
 		foreach ( $fields as $k => $field ) {
-			if ( ! is_array( $field ) && ! $field instanceof Pods\Whatsit ) {
+			$is_field_object = $field instanceof Field;
+
+			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$field = array(
 					'id'   => 0,
 					'name' => $field
@@ -9862,7 +9875,9 @@ class PodsAPI {
 			$info['orderby'] = pods_v( 'orderby_custom', $info['pod'], $info['orderby'], true );
 
 			if ( ! empty( $field ) ) {
-				if ( ! is_array( $field ) && ! $field instanceof Pods\Whatsit ) {
+				$is_field_object = $field instanceof Field;
+
+				if ( ! is_array( $field ) && ! $is_field_object ) {
 					if ( is_string( $pod ) ) {
 						$pod = pods( $pod );
 					}
@@ -9872,7 +9887,9 @@ class PodsAPI {
 					}
 				}
 
-				if ( is_array( $field ) || $field instanceof Pods\Whatsit ) {
+				$is_field_object = $field instanceof Field;
+
+				if ( is_array( $field ) || $is_field_object ) {
 					$info['table']            = pods_v( 'pick_table', pods_v( 'options', $field, $field ) );
 					$info['field_id']         = pods_v( 'pick_table_id', pods_v( 'options', $field, $field ) );
 					$info['meta_field_value'] = pods_v( 'pick_table_index', pods_v( 'options', $field, $field ) );

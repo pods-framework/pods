@@ -77,12 +77,14 @@ const processAllPodValues = ( fields, allPodValues ) => {
 	return allPodValues;
 };
 
-const getLabelValue = ( labelFormat, paramOption, paramDefault, value ) => {
+const getDynamicParamValue = ( paramFormat, paramOption, paramDefault, value ) => {
+	// No param option set, just return the plain param value.
 	if ( ! paramOption ) {
-		return labelFormat;
+		return paramFormat;
 	}
 
-	return sprintf( labelFormat, value || paramDefault || MISSING );
+	// Replace the %s with the value as necessary.
+	return sprintf( paramFormat, value || paramDefault || MISSING );
 };
 
 const DynamicTabContent = ( {
@@ -93,18 +95,45 @@ const DynamicTabContent = ( {
 } ) => {
 	const fields = tabOptions.map( ( tabOption ) => {
 		const {
+			description: optionDescription,
+			description_param: optionDescriptionParam,
+			description_param_default: optionDescriptionParamDefault,
+			help: optionHelp,
+			help_param: optionHelpParam,
+			help_param_default: optionHelpParamDefault,
 			label: optionLabel,
 			label_param: optionLabelParam,
 			label_param_default: optionLabelParamDefault,
+			placeholder: optionPlaceholder,
+			placeholder_param: optionPlaceholderParam,
+			placeholder_param_default: optionPlaceholderParamDefault,
 		} = tabOption;
 
 		return {
 			...tabOption,
-			label: getLabelValue(
+			description: getDynamicParamValue(
+				optionDescription,
+				optionDescriptionParam,
+				optionDescriptionParamDefault,
+				allPodValues[ optionDescriptionParam ]
+			),
+			help: getDynamicParamValue(
+				optionHelp,
+				optionHelpParam,
+				optionHelpParamDefault,
+				allPodValues[ optionHelpParam ]
+			),
+			label: getDynamicParamValue(
 				optionLabel,
 				optionLabelParam,
 				optionLabelParamDefault,
 				allPodValues[ optionLabelParam ]
+			),
+			placeholder: getDynamicParamValue(
+				optionPlaceholder,
+				optionPlaceholderParam,
+				optionPlaceholderParamDefault,
+				allPodValues[ optionPlaceholderParam ]
 			),
 		};
 	} );

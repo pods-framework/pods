@@ -323,8 +323,9 @@ class Pods implements Iterator {
 	 * @since 2.3.10
 	 */
 	public function input( $field, $input_name = null, $value = '__null' ) {
+		$is_field_object = $field instanceof Field;
 
-		if ( is_array( $field ) ) {
+		if ( is_array( $field ) || $is_field_object ) {
 			// Field data override.
 			$field_data = $field;
 
@@ -3294,7 +3295,9 @@ class Pods implements Iterator {
 					'name' => $name,
 				);
 
-				if ( ! is_array( $field ) ) {
+				$is_field_object = $field instanceof Field;
+
+				if ( ! is_array( $field ) && ! $is_field_object ) {
 					$name = $field;
 
 					$field = array(
@@ -3795,7 +3798,9 @@ class Pods implements Iterator {
 				'name' => $name,
 			];
 
-			if ( ! is_array( $field ) ) {
+			$is_field_object = $field instanceof Field;
+
+			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$name = $field;
 
 				$field = [

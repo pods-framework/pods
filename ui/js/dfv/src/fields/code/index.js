@@ -21,11 +21,11 @@ const Code = ( {
 			<input
 				name={ name }
 				type="hidden"
-				value={ value }
+				value={ value || '' }
 			/>
 
 			<CodeMirror
-				value={ value }
+				value={ value || '' }
 				options={ {
 					lineNumbers: true,
 					matchBrackets: true,

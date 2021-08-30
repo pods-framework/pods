@@ -705,10 +705,47 @@ function pods_helper( $helper_name, $value = null, $name = null ) {
 }
 
 /**
- * Get the full URL of the current page
+ * Get the current hostname.
  *
- * @return string Full URL of the current page
+ * @since 2.8.0
+ *
+ * @return string The current hostname.
+ */
+function pods_current_host() {
+	if ( empty( $_SERVER['HTTP_HOST'] ) ) {
+		$host = wp_parse_url( get_site_url(), PHP_URL_HOST );
+
+		if ( empty( $host ) ) {
+			return 'localhost';
+		}
+
+		return $host;
+	}
+
+	return $_SERVER['HTTP_HOST'];
+}
+
+/**
+ * Get the full path of the current page.
+ *
+ * @since 2.8.0
+ *
+ * @return string Full path of the current page.
+ */
+function pods_current_path() {
+	if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+		return '/';
+	}
+
+	return $_SERVER['REQUEST_URI'];
+}
+
+/**
+ * Get the full URL of the current page.
+ *
  * @since 2.3.0
+ *
+ * @return string Full URL of the current page.
  */
 function pods_current_url() {
 	$url = 'http';
@@ -717,7 +754,7 @@ function pods_current_url() {
 		$url = 'https';
 	}
 
-	$url .= '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	$url .= '://' . pods_current_host() . pods_current_path();
 
 	return apply_filters( 'pods_current_url', $url );
 }

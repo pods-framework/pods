@@ -69,7 +69,7 @@ const Wysiwyg = ( props ) => {
 	return (
 		<TinyMCE
 			name={ htmlAttributes.name || name }
-			value={ value }
+			value={ value || '' }
 			setValue={ setValue }
 			editorHeight={ parseInt( editorHeight, 10 ) }
 			mediaButtons={ toBool( mediaButtons ) }

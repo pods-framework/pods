@@ -1600,7 +1600,9 @@ class PodsUI {
 				'name' => $name,
 			);
 
-			if ( ! is_array( $field ) ) {
+			$is_field_object = $field instanceof Field;
+
+			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$name = $field;
 
 				$field = array(
@@ -1653,11 +1655,15 @@ class PodsUI {
 		$singular_label = $this->item;
 		$plural_label   = $this->items;
 
-		if ( is_object( $this->pod ) && 'settings' === $this->pod->pod_data['type'] && 'settings' === $this->style ) {
-			pods_view( PODS_DIR . 'ui/admin/form-settings.php', compact( array_keys( get_defined_vars() ) ) );
-		} else {
-			pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
+		$is_settings_pod = is_object( $this->pod ) && 'settings' === $this->pod->pod_data['type'];
+
+		$form_type = 'post';
+
+		if ( 'settings' === $this->style || $is_settings_pod ) {
+			$form_type = 'settings';
 		}
+
+		pods_view( PODS_DIR . 'ui/forms/form.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
 	/**
@@ -1721,7 +1727,9 @@ class PodsUI {
 				'options' => 'text',
 			);
 
-			if ( ! is_array( $field ) ) {
+			$is_field_object = $field instanceof Field;
+
+			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$name = $field;
 
 				$field = array(

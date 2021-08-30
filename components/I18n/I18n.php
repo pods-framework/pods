@@ -872,10 +872,16 @@ class Pods_Component_I18n extends PodsComponent {
 				$heading_field = $field;
 				$heading_field['type'] = 'heading';
 				$heading_field['name'] = $name . '_i18n';
-				$heading_field['description'] = '%s';
-				$heading_field['description_param'] = $name;
-				$heading_field['description_param_default'] = '';
 				$i18n_fields[][ $name . '_i18n' ] = $heading_field;
+
+				$default_field = $field;
+				$default_field['type'] = 'html';
+				$default_field['name'] = $name . '_i18n_default';
+				$default_field['label'] = __( 'Default', 'pods' );
+				$default_field['html_content'] = '%s';
+				$default_field['html_content_param'] = $name;
+				$default_field['html_content_param_default'] = '-';
+				$i18n_fields[][ $name . '_i18n_default' ] = $default_field;
 
 				foreach ( $this->languages as $locale => $lang_data ) {
 

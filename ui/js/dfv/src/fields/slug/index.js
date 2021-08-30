@@ -8,7 +8,6 @@ import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 const Slug = ( props ) => {
 	const {
 		fieldConfig = {},
-		value,
 		setValue,
 	} = props;
 
@@ -26,7 +25,6 @@ const Slug = ( props ) => {
 		<BaseInput
 			{ ...props }
 			type="text"
-			value={ value || '' }
 			placeholder={ placeholder }
 			setValue={ forceSlugFormatting }
 		/>

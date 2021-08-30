@@ -186,7 +186,7 @@ const DateTime = ( {
 	return (
 		<Datetime
 			className="pods-react-datetime-fix"
-			initialValue={ value }
+			initialValue={ moment( value ) }
 			onClose={ handleChange }
 			onBlur={ setHasBlurred }
 			dateFormat={ includeDateField && momentDateFormat }

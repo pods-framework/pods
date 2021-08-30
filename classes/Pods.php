@@ -680,7 +680,6 @@ class Pods implements Iterator {
 		 */
 		$use_meta_fallback = apply_filters( 'pods_field_wp_object_use_meta_fallback', $use_meta_fallback, $pod_type );
 
-
 		if ( in_array( $params->name, $permalink_fields, true ) ) {
 			if ( 0 < strlen( $this->detail_page ) && false === strpos( $params->name, 'permalink' ) ) {
 				// ACT Pods. Prevent tag loop by not parsing `permalink`.

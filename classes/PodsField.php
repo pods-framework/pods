@@ -318,7 +318,7 @@ class PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		$form_field_type = PodsForm::$field_type;
 
@@ -402,9 +402,10 @@ class PodsField {
 	 * @return array
 	 */
 	public function build_dfv_field_data( $args ) {
+		$options = $args->options;
 
 		// Handle DFV options.
-		$args->options = $this->build_dfv_field_options( $args->options, $args );
+		$args->options = $this->build_dfv_field_options( $options, $args );
 
 		// Handle DFV attributes.
 		$attributes = PodsForm::merge_attributes( array(), $args->name, $args->type, $args->options );
@@ -423,7 +424,7 @@ class PodsField {
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
 			'fieldEmbed'    => true,
-			'fieldValue'    => isset( $args->value ) ? $args->value : null,
+			'fieldValue'    => isset( $args->value ) ? $args->value : PodsForm::default_value( null, $options['type'], $options['name'], $options, $args->pod, $args->id ),
 		];
 
 		/**
@@ -813,14 +814,14 @@ class PodsField {
 			return $value;
 		}
 
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		// Strip HTML
 		if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0 ) ) {
 			$allowed_html_tags = '';
+			$allowed_tags      = pods_v( static::$type . '_allowed_html_tags', $options );
 
-			if ( 0 < strlen( pods_v( static::$type . '_allowed_html_tags', $options ) ) ) {
-				$allowed_tags = pods_v( static::$type . '_allowed_html_tags', $options );
+			if ( 0 < strlen( $allowed_tags ) ) {
 				$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
 				$allowed_tags = explode( ' ', $allowed_tags );
 				$allowed_tags = array_unique( array_filter( $allowed_tags ) );

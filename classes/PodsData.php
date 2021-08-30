@@ -2018,8 +2018,10 @@ class PodsData {
 			if ( ! empty( $this->pod ) ) {
 				$row = pods_cache_get( $id, 'pods_items_' . $this->pod );
 
-				if ( false !== $row ) {
+				if ( is_array( $row ) ) {
 					$already_cached = true;
+				} else {
+					$row = false;
 				}
 			}
 
@@ -2030,7 +2032,7 @@ class PodsData {
 
 			$pod_type = $this->type;
 
-			if ( false !== $row && is_array( $row ) ) {
+			if ( $already_cached ) {
 				$this->row = $row;
 			} elseif ( in_array(
 				$pod_type, array(
@@ -2057,16 +2059,16 @@ class PodsData {
 						$this->row = false;
 					}
 				} else {
-					$args = array(
-						'post_type'   => $post_type,
-						'name'        => $id,
-						'numberposts' => 5,
-					);
+					$args = [
+						'post_type'      => $post_type,
+						'name'           => $id,
+						'posts_per_page' => 5,
+					];
 
 					$find = get_posts( $args );
 
 					if ( ! empty( $find ) ) {
-						$this->row = get_object_vars( $find[0] );
+						$this->row = get_object_vars( reset( $find ) );
 					}
 				}
 
@@ -2121,7 +2123,7 @@ class PodsData {
 					$this->row = get_term_by( 'slug', $id, $taxonomy, ARRAY_A );
 				}//end if
 
-				if ( is_wp_error( $this->row ) || empty( $this->row ) ) {
+				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
 					$current_row_id = $this->row['term_id'];
@@ -2135,7 +2137,7 @@ class PodsData {
 					$this->row = get_user_by( 'slug', $id );
 				}
 
-				if ( is_wp_error( $this->row ) || empty( $this->row ) ) {
+				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
 					// Get other vars.
@@ -2160,7 +2162,7 @@ class PodsData {
 				$this->row = get_comment( $id, ARRAY_A );
 
 				// No slug handling here.
-				if ( is_wp_error( $this->row ) || empty( $this->row ) ) {
+				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
 					$current_row_id = $this->row['comment_ID'];
@@ -2168,7 +2170,7 @@ class PodsData {
 
 				$get_table_data = true;
 			} elseif ( 'settings' === $pod_type ) {
-				$this->row = array();
+				$this->row = [];
 
 				if ( empty( $this->fields ) || ! $this->pod_data ) {
 					$this->row = false;
@@ -2250,7 +2252,7 @@ class PodsData {
 			}//end if
 
 			if ( ! empty( $this->pod ) && ! $already_cached ) {
-				pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, 0 );
+				pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, WEEK_IN_SECONDS );
 			}
 		}//end if
 

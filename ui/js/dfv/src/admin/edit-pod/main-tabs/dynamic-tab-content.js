@@ -107,6 +107,9 @@ const DynamicTabContent = ( {
 			placeholder: optionPlaceholder,
 			placeholder_param: optionPlaceholderParam,
 			placeholder_param_default: optionPlaceholderParamDefault,
+			html_content: optionHtmlContent,
+			html_content_param: optionHtmlContentParam,
+			html_content_param_default: optionHtmlContentParamDefault,
 		} = tabOption;
 
 		return {
@@ -134,6 +137,12 @@ const DynamicTabContent = ( {
 				optionPlaceholderParam,
 				optionPlaceholderParamDefault,
 				allPodValues[ optionPlaceholderParam ]
+			),
+			html_content: getDynamicParamValue(
+				optionHtmlContent,
+				optionHtmlContentParam,
+				optionHtmlContentParamDefault,
+				allPodValues[ optionHtmlContentParam ]
 			),
 		};
 	} );

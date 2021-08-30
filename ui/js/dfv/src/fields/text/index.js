@@ -5,10 +5,7 @@ import BaseInput from 'dfv/src/fields/base-input';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const Text = ( props ) => {
-	const {
-		fieldConfig = {},
-		value,
-	} = props;
+	const { fieldConfig = {} } = props;
 
 	const {
 		text_max_length: maxLength,
@@ -19,7 +16,6 @@ const Text = ( props ) => {
 		<BaseInput
 			{ ...props }
 			type="text"
-			value={ value || '' }
 			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
 			placeholder={ placeholder }
 		/>

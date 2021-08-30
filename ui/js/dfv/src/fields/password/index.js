@@ -6,10 +6,7 @@ import BaseInput from 'dfv/src/fields/base-input';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 const Password = ( props ) => {
-	const {
-		fieldConfig = {},
-		value,
-	} = props;
+	const { fieldConfig = {} } = props;
 
 	const {
 		password_max_length: maxLength,
@@ -21,7 +18,6 @@ const Password = ( props ) => {
 			{ ...props }
 			fieldConfig={ fieldConfig }
 			type={ 'password' }
-			value={ value || '' }
 			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
 			placeholder={ placeholder }
 			autoComplete={ 'new-password' }

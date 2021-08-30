@@ -11,7 +11,6 @@ const Email = ( props ) => {
 	const {
 		addValidationRules,
 		fieldConfig = {},
-		value,
 	} = props;
 
 	const {
@@ -34,7 +33,6 @@ const Email = ( props ) => {
 			{ ...props }
 			fieldConfig={ fieldConfig }
 			type={ true === toBool( html5 ) ? 'email' : 'text' }
-			value={ value || '' }
 			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
 			placeholder={ placeholder }
 		/>

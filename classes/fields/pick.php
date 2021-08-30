@@ -3629,4 +3629,32 @@ class PodsField_Pick extends PodsField {
 
 	}
 
+	/**
+	 * Build field data for Pods DFV.
+	 *
+	 * @param object $args            {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name            Field name.
+	 *     @type string     $type            Field type.
+	 *     @type array      $options         Field options.
+	 *     @type mixed      $value           Current value.
+	 *     @type array      $pod             Pod information.
+	 *     @type int|string $id              Current item ID.
+	 *     @type string     $form_field_type HTML field type.
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_data( $args ) {
+		$data = parent::build_dfv_field_data( $args );
+
+		// Normalize arrays for multiple select.
+		if ( is_array( $data['fieldValue'] ) ) {
+			$data['fieldValue'] = array_values( $data['fieldValue'] );
+		}
+
+		return $data;
+	}
+
 }

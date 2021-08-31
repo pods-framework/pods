@@ -55,7 +55,7 @@ const SimpleSelect = ( {
 					} else if ( Array.isArray( optionValue ) ) {
 						return (
 							<optgroup label={ optionLabel } key={ optionLabel }>
-								{ optionValue.map( ( { value: suboptionValue, label: suboptionLabel } ) => {
+								{ optionValue.map( ( { id: suboptionValue, name: suboptionLabel } ) => {
 									return (
 										<option key={ suboptionValue } value={ suboptionValue }>
 											{ suboptionLabel }

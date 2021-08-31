@@ -26,7 +26,13 @@ export const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
 
 export const PICK_OPTIONS = PropTypes.arrayOf(
 	PropTypes.shape( {
-		id: PropTypes.string.isRequired,
+		id: PropTypes.oneOfType( [
+			PropTypes.string.isRequired,
+			PropTypes.arrayOf( PropTypes.shape( {
+				name: PropTypes.string.isRequired,
+				id: PropTypes.string.isRequired,
+			} ) ).isRequired,
+		] ),
 		icon: PropTypes.string.isRequired,
 		name: PropTypes.string.isRequired,
 		edit_link: PropTypes.string.isRequired,

@@ -28,10 +28,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import {
-	STORE_KEY_EDIT_POD,
-	SAVE_STATUSES,
-} from 'dfv/src/store/constants';
+import { SAVE_STATUSES } from 'dfv/src/store/constants';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 /**
@@ -43,6 +40,7 @@ import FieldListItem from './field-list-item';
 import './field-list.scss';
 
 const FieldList = ( {
+	storeKey,
 	podType,
 	podName,
 	podID,
@@ -238,6 +236,7 @@ const FieldList = ( {
 								{ fields.map( ( field ) => {
 									return (
 										<FieldListItem
+											storeKey={ storeKey }
 											podType={ podType }
 											podName={ podName }
 											key={ field.id }
@@ -270,6 +269,7 @@ const FieldList = ( {
 };
 
 FieldList.propTypes = {
+	storeKey: PropTypes.string.isRequired,
 	podType: PropTypes.string.isRequired,
 	podName: PropTypes.string.isRequired,
 	podLabel: PropTypes.string.isRequired,
@@ -288,8 +288,10 @@ FieldList.propTypes = {
 };
 
 export default compose( [
-	withSelect( ( select ) => {
-		const storeSelect = select( STORE_KEY_EDIT_POD );
+	withSelect( ( select, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeSelect = select( storeKey );
 
 		return {
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
@@ -298,8 +300,10 @@ export default compose( [
 			podSaveStatus: storeSelect.getSaveStatus(),
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
-		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+	withDispatch( ( dispatch, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeDispatch = dispatch( storeKey );
 
 		return {
 			setGroupFields: storeDispatch.setGroupFields,

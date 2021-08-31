@@ -141,6 +141,8 @@ const Pick = ( props ) => {
 	);
 
 	const setValueWithLimit = ( newValue ) => {
+		console.log( 'setValueWithLimit', name, newValue );
+
 		// We don't need to worry about limits if this isn't a multi-select field.
 		if ( isSingle ) {
 			setValue( newValue );

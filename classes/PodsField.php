@@ -371,6 +371,8 @@ class PodsField {
 			$field_class .= ' pods-dfv-field--unloaded';
 		}
 
+		$pod_name = $args->pod->data->pod_data->get_name();
+
 		$script_content = wp_json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
 		?>
 		<div class="<?php echo esc_attr( $field_class ); ?>">
@@ -378,7 +380,7 @@ class PodsField {
 				<span class="pods-dfv-field__loading-indicator" role="progressbar"></span>
 			<?php endif; ?>
 			<?php // @codingStandardsIgnoreLine ?>
-			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content; ?></script>
+			<script type="application/json" class="pods-dfv-field-data" data-pod="<?php echo esc_attr( $pod_name ); ?>"><?php echo $script_content; ?></script>
 		</div>
 		<?php
 

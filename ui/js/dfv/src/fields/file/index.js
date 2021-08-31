@@ -78,6 +78,11 @@ const File = ( props ) => {
 			setCollectionData( value );
 		} else if ( 'string' === typeof value ) {
 			getAndSetMediaData( value.split( ',' ) );
+		} else if ( 'number' === typeof value ) {
+			getAndSetMediaData( value );
+		} else {
+			// eslint-disable-next-line no-console
+			console.error( `Invalid value type for file field: ${ fieldConfig.name }` );
 		}
 	}, [] );
 

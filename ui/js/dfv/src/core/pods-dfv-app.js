@@ -12,23 +12,25 @@ import ConnectedFieldWrapper from 'dfv/src/components/connected-field-wrapper';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-const PodsDFVApp = ( { fieldsData } ) => {
+const PodsDFVApp = ( {
+	fieldsData,
+	storeKey,
+} ) => {
 	const fieldComponents = fieldsData.map( ( fieldData = {} ) => {
 		const {
 			directRender = false,
 			fieldComponent: FieldComponent = null,
 			parentNode,
 			fieldConfig,
-			fieldItemData,
-			fieldValue
 		} = fieldData;
 
 		// Some components will have a React component passed in (eg. the Edit Pod field
 		// for the Edit Pod screen), but most won't.
 		const renderedFieldComponent = directRender
-			? <FieldComponent />
+			? <FieldComponent storeKey={ storeKey } />
 			: (
 				<ConnectedFieldWrapper
+					storeKey={ storeKey }
 					field={ fieldConfig }
 					allPodFieldsMap={ new Map( fieldsData.map( ( field ) => [ field.name, field ] ) ) }
 				/>
@@ -68,9 +70,10 @@ PodsDFVApp.propTypes = {
 			parentNode: PropTypes.any,
 			fieldConfig: FIELD_PROP_TYPE_SHAPE,
 			fieldItemData: PropTypes.any,
-			fieldValue: PropTypes.any
+			fieldValue: PropTypes.any,
 		} ),
 	),
+	storeKey: PropTypes.string.isRequired,
 };
 
 export default PodsDFVApp;

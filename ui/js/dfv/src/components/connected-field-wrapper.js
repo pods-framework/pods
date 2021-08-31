@@ -6,17 +6,18 @@ import {
 	withDispatch,
 } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
+import PropTypes from 'prop-types';
 
 /**
  * Pods dependencies
  */
 import FieldWrapper from 'dfv/src/components/field-wrapper';
 
-import { STORE_KEY_DFV } from 'dfv/src/store/constants';
-
 const ConnectedFieldWrapper = compose( [
 	withSelect( ( storeSelect, ownProps ) => {
-		const allPodValues = storeSelect( STORE_KEY_DFV ).getPodOptions();
+		const { storeKey } = ownProps;
+
+		const allPodValues = storeSelect( storeKey ).getPodOptions();
 
 		const valueData = {};
 
@@ -44,11 +45,17 @@ const ConnectedFieldWrapper = compose( [
 			allPodValues,
 		};
 	} ),
-	withDispatch( ( storeDispatch ) => {
+	withDispatch( ( storeDispatch, ownProps ) => {
+		const { storeKey } = ownProps;
+
 		return {
-			setOptionValue: storeDispatch( STORE_KEY_DFV ).setOptionValue,
+			setOptionValue: storeDispatch( storeKey ).setOptionValue,
 		};
 	} ),
 ] )( FieldWrapper );
+
+ConnectedFieldWrapper.propTypes = {
+	storeKey: PropTypes.string.isRequired,
+};
 
 export default ConnectedFieldWrapper;

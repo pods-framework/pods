@@ -3,11 +3,12 @@
  */
 import { configureStore } from '@reduxjs/toolkit';
 import { omit } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * WordPress dependencies
  */
-import { select, registerGenericStore } from '@wordpress/data';
+import { registerGenericStore } from '@wordpress/data';
 
 /**
  * Pods dependencies
@@ -51,7 +52,11 @@ const initStore = ( initialState, storeKey ) => {
 		subscribe: reduxStore.subscribe,
 	};
 
-	registerGenericStore( storeKey, genericStore );
+	const uniqueStoreKey = `${ storeKey }-${ uuidv4() }`;
+
+	registerGenericStore( uniqueStoreKey, genericStore );
+
+	return uniqueStoreKey;
 };
 
 export const initEditPodStore = ( config ) => {
@@ -64,7 +69,7 @@ export const initEditPodStore = ( config ) => {
 		...omit( config, [ 'fieldTypes', 'relatedObjects' ] ),
 	};
 
-	initStore( initialState, STORE_KEY_EDIT_POD );
+	return initStore( initialState, STORE_KEY_EDIT_POD );
 };
 
 export const initPodStore = ( config = {}, initialValues = {} ) => {
@@ -77,5 +82,5 @@ export const initPodStore = ( config = {}, initialValues = {} ) => {
 		currentPod: initialValues,
 	};
 
-	initStore( initialState, STORE_KEY_DFV );
+	return initStore( initialState, STORE_KEY_DFV );
 };

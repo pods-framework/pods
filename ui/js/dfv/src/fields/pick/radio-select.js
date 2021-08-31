@@ -24,9 +24,9 @@ const RadioSelect = ( {
 				return (
 					<li key={ optionValue } className="pods-radio-pick__option">
 						<div className="pods-field pods-boolean">
+							{ /* eslint-disable-next-line jsx-a11y/label-has-for */ }
 							<label
 								className="pods-form-ui-label pods-radio-pick__option__label"
-								htmlFor={ idAttribute }
 							>
 								<input
 									name={ htmlAttributes.name || name }

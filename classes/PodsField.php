@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit;
+
 /**
  * Pods Field class for common type-specific methods.
  *
@@ -524,9 +526,14 @@ class PodsField {
 	 */
 	public function build_dfv_field_config( $args ) {
 
-		$config = (array) $args->options;
+		if ( $args->options instanceof Whatsit ) {
+			$config = $args->options->export();
+		} else {
+			$config = (array) $args->options;
+		}
 
 		unset( $config['data'] );
+		unset( $config['pod_data'] );
 
 		$config['item_id'] = (int) $args->id;
 

@@ -38,7 +38,7 @@ const SimpleSelect = ( {
 				setValue(
 					Array.from( event.target.options )
 						.filter( ( option ) => option.selected )
-						.map( ( option ) => option.id )
+						.map( ( option ) => option.value )
 				);
 			} }
 			multiple={ isMulti }

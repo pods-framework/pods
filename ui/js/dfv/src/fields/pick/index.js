@@ -134,9 +134,9 @@ const Pick = ( props ) => {
 	// modified by the add/edit modals, or by loading ajax options, so we need to track
 	// this in state, starting with the supplied fieldItemData from the page load.
 	const [ modifiedFieldItemData, setModifiedFieldItemData ] = useState(
-		fieldItemData ? fieldItemData : data.map( ( dataOption ) => ( {
-			id: dataOption.value || '',
-			name: dataOption.label || '',
+		fieldItemData ? fieldItemData : Object.keys( data ).map( ( dataKey ) => ( {
+			id: dataKey || '',
+			name: data[ dataKey ] || '',
 		} ) )
 	);
 

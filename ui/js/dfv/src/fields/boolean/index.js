@@ -33,10 +33,10 @@ const Boolean = ( props ) => {
 	formattedValue = toNumericBool( formattedValue );
 
 	// Set up options to pass to Pick component
-	const options = [ { value: '1', label: yesLabel } ];
+	const options = [ { id: '1', name: yesLabel } ];
 
 	if ( 'checkbox' !== formatType ) {
-		options.push( { value: '0', label: noLabel } );
+		options.push( { id: '0', name: noLabel } );
 	}
 
 	return (
@@ -46,7 +46,7 @@ const Boolean = ( props ) => {
 				...fieldConfig,
 				pick_format_type: 'single',
 				pick_format_single: formatType,
-				data: options,
+				fieldItemData: options,
 			} }
 			value={ formattedValue }
 			setValue={ setValue }

@@ -33,10 +33,26 @@ const Boolean = ( props ) => {
 	formattedValue = toNumericBool( formattedValue );
 
 	// Set up options to pass to Pick component
-	const options = [ { id: '1', name: yesLabel } ];
+	const options = [
+		{
+			id: '1',
+			icon: '',
+			name: yesLabel,
+			edit_link: '',
+			link: '',
+			selected: false,
+		},
+	];
 
 	if ( 'checkbox' !== formatType ) {
-		options.push( { id: '0', name: noLabel } );
+		options.push( {
+			id: '0',
+			icon: '',
+			name: noLabel,
+			edit_link: '',
+			link: '',
+			selected: false,
+		}, );
 	}
 
 	return (

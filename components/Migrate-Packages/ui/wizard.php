@@ -82,21 +82,31 @@
 							</div>
 
 							<div class="stuffbox">
-								<h3><label for="link_name"><?php _e( 'Paste the Package Code', 'pods' ); ?></label></h3>
+								<h3><?php esc_html_e( 'Import your Package', 'pods' ); ?></h3>
 
 								<div class="inside pods-manage-field pods-dependency">
-									<div class="pods-field-option">
+									<div class="pods-field__container pods-field-option">
 										<?php
-										echo PodsForm::field( 'import_package', pods_var_raw( 'import_package', 'post' ), 'paragraph', [
+										echo PodsForm::label( 'import_package_file', __( 'Upload your pods-package.json', 'pods' ) );
+										?>
+										<input type="file" name="import_package_file" id="pods-form-ui-import-package-file" accept=".json" />
+										<button type="button"
+											id="pods-form-ui-import-package-file-reset"
+											class="button button-secondary button-small hidden"
+											aria-hidden="true">
+											<?php esc_html_e( 'Clear file', 'pods' ); ?>
+										</button>
+									</div>
+									<div class="pods-field__container pods-field-option">
+										<?php
+										echo PodsForm::label( 'import_package', __( 'Or paste the Package code', 'pods' ), __( 'If you paste the code, you may encounter issues on certain hosts where mod_security will block the submission. If you encounter an error message on submit, contact your host and let them know that you believe you are seeing a mod_security issue with /wp-admin/admin-ajax.php and they can look through your error logs to help solve it.', 'pods' ) );
+										echo PodsForm::field( 'import_package', pods_v( 'import_package', 'post' ), 'paragraph', [
 											'attributes'  => [
-												'style' => 'width: 100%; max-width: 100%; height: 300px;',
+												'style' => 'width: 100%; max-width: 100%; height: 250px;',
 											],
 											'disable_dfv' => true,
 										] );
 										?>
-									</div>
-									<div class="pods-field-option">
-										<label><?php esc_html_e( 'Or select a pods-package.json file to load: ', 'pods' ); ?> <input type="file" id="import_package_file" accept=".json" /></label>
 									</div>
 								</div>
 							</div>
@@ -299,15 +309,16 @@
 						<span id="import-export"></span>
 
 						<div class="stuffbox hidden" id="import-export-results">
-							<h3><label for="link_name"><?php _e( 'Package / Results', 'pods' ); ?></label></h3>
+							<h3><?php _e( 'Exported Package', 'pods' ); ?></h3>
 
 							<div class="inside pods-manage-field pods-dependency">
-							</div>
+								<p>
+									<button id="pods-wizard-export-download" class="button button-secondary hidden"><?php esc_html_e( 'Download pods-package.json', 'pods' ); ?></button>
+									<button id="pods-wizard-export-copy" class="button button-secondary hidden"><?php esc_html_e( 'Copy the Package JSON', 'pods' ); ?></button>
+								</p>
 
-							<p align="right">
-								<button id="pods-wizard-export-copy" class="button button-secondary hidden"><?php esc_html_e( 'Copy the Package JSON', 'pods' ); ?></button>
-								<button id="pods-wizard-export-download" class="button button-secondary hidden"><?php esc_html_e( 'Download pods-package.json', 'pods' ); ?></button>
-							</p>
+								<div class="pods-wizard-results"></div>
+							</div>
 						</div>
 					</div>
 
@@ -327,13 +338,12 @@
 </div>
 
 <script type="text/javascript">
-	var pods_admin_wizard_callback = function ( step, completed ) {
-		console.log( step );
-		console.log( completed );
+	const $pods_admin_package_import_export = jQuery( '#pods-form-ui-import-export' );
 
+	var pods_admin_wizard_callback = function ( step, completed ) {
 		if ( 2 == step || !step ) {
 			jQuery( '#pods-wizard-panel-2 div#import-export-results' ).slideUp( 'fast', function () {
-				jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside' ).html( '' );
+				jQuery( '#pods-wizard-panel-2 div#import-export-results div.pods-wizard-results' ).html( '' );
 			} );
 		}
 
@@ -341,7 +351,7 @@
 	};
 
 	var pods_admin_submit_callback = function ( id ) {
-		jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside' ).html( id );
+		jQuery( '#pods-wizard-panel-2 div#import-export-results div.pods-wizard-results' ).html( id );
 		jQuery( '#pods-wizard-panel-2 div#import-export-results' ).slideDown( 'fast' );
 
 		jQuery( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
@@ -350,7 +360,7 @@
 
 		window.location.hash = 'import-export';
 
-		if ( 'export' === jQuery( '#pods-form-ui-import-export' ).val() ) {
+		if ( 'export' === $pods_admin_package_import_export.val() ) {
 			jQuery( '#pods-wizard-export-copy' ).show().removeClass( 'hidden' );
 			jQuery( '#pods-wizard-export-download' ).show().removeClass( 'hidden' );
 		} else {
@@ -362,13 +372,28 @@
 	};
 
 	var pods_admin_option_select_callback = function ( $opt ) {
-		jQuery( '#pods-form-ui-import-export' ).val( $opt.data( 'opt' ) );
+		$pods_admin_package_import_export.val( $opt.data( 'opt' ) );
 		jQuery( '#pods-wizard-next' ).show().removeClass( 'hidden' );
 	};
 
 	var pods_admin_wizard_startover_callback = function () {
 		jQuery( '#pods-wizard-panel-2 div#import-export-results' ).hide();
-		jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside' ).html( '' );
+		jQuery( '#pods-wizard-panel-2 div#import-export-results div.pods-wizard-results' ).html( '' );
+	};
+
+	const $pods_admin_package_import_package_code = jQuery( '#pods-form-ui-import-package' );
+	const $pods_admin_package_import_package_file = jQuery( '#pods-form-ui-import-package-file' );
+
+	let pods_admin_submit_validation = function ( valid_form ) {
+		if ( ! valid_form || 'import' !== $pods_admin_package_import_export.val() ) {
+			return valid_form;
+		}
+
+		// Check for at least one of these.
+		return (
+			'' !== $pods_admin_package_import_package_code.val()
+			|| '' !== $pods_admin_package_import_package_file.val()
+		);
 	};
 
 	jQuery( function ( $ ) {
@@ -380,7 +405,7 @@
 		$( document ).Pods( 'confirm' );
 		$( document ).Pods( 'sluggable' );
 
-		var toggle_all = {};
+		const toggle_all = {};
 
 		$( '.pods-wizard-toggle-all' ).on( 'click', function ( e ) {
 			e.preventDefault();
@@ -394,30 +419,42 @@
 			toggle_all[$( this ).data( 'toggle' )] = (!toggle_all[$( this ).data( 'toggle' )]);
 		} );
 
-		$( '#import_package_file' ).on( 'change', function( e ) {
+		const $import_package_reset = $( '#pods-form-ui-import-package-file-reset' );
+		const $import_package_code_parent = $pods_admin_package_import_package_code.parent();
+
+		$pods_admin_package_import_package_file.on( 'change', function( e ) {
 			if ( ! e.target.files[0] ) {
+				$pods_admin_package_import_package_code.prop( 'readonly', false );
+				$pods_admin_package_import_package_code.prop( 'disabled', false );
+				$import_package_reset.prop( 'aria-hidden', true );
+				$import_package_reset.addClass( 'hidden' );
+				$import_package_code_parent.show();
+
 				return;
 			}
 
-			const reader = new FileReader();
-
-			reader.onload = function( reader_event ) {
-				const fileContents = reader_event.target.result;
-
-				$( '#pods-form-ui-import-package' ).val( fileContents );
-			};
-
-			reader.readAsText( e.target.files[0] );
-
-			$( this ).val( '' );
+			$pods_admin_package_import_package_code.val( '' );
+			$pods_admin_package_import_package_code.prop( 'readonly', true );
+			$pods_admin_package_import_package_code.prop( 'disabled', true );
+			$import_package_reset.prop( 'aria-hidden', false );
+			$import_package_reset.removeClass( 'hidden' );
+			$import_package_code_parent.hide();
 		} );
+
+		$import_package_reset.on( 'click', function() {
+			$pods_admin_package_import_package_file.val( '' );
+			$pods_admin_package_import_package_file.change();
+		} );
+
+		const $export_results = $( '#pods-wizard-panel-2 div#import-export-results div.pods-wizard-results' );
 
 		$( '#pods-wizard-export-copy' ).on( 'click', function( e ) {
 			e.preventDefault();
 
-			const packageData = jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside textarea' );
+			const $export_textarea = $( 'textarea', $export_results );
+			const packageData = $export_textarea;
 
-			$( '#pods-wizard-panel-2 div#import-export-results div.inside textarea' ).select();
+			$export_textarea.select();
 
 			document.execCommand( 'copy' );
 		} );
@@ -425,7 +462,7 @@
 		$( '#pods-wizard-export-download' ).on( 'click', function( e ) {
 			e.preventDefault();
 
-			const packageData = jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside textarea' ).val();
+			const packageData = $( 'textarea', $export_results ).val();
 			const fileName = 'pods-package-' + new Date().toISOString().split( 'T' )[0] + '.json';
 			const fileType = 'application/json;charset=utf-8';
 			const fileContent = new Blob( [ packageData ], { type: fileType } );

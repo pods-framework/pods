@@ -14,8 +14,10 @@ const CheckboxSelect = ( {
 	readOnly = false,
 } ) => {
 	const toggleValueOption = ( option ) => {
-		if ( value.includes( option ) ) {
-			setValue( value.filter( ( item ) => item !== option ) );
+		if ( value.some( ( valueItem ) => valueItem.toString() === option.toString() ) ) {
+			setValue(
+				value.filter( ( item ) => item.toString() !== option.toString() )
+			);
 		} else {
 			setValue( [ ...value, option ] );
 		}
@@ -71,7 +73,11 @@ const CheckboxSelect = ( {
 								<input
 									name={ nameAttribute }
 									id={ idAttribute }
-									checked={ isMulti ? value.includes( optionValue ) : value === optionValue }
+									checked={
+										isMulti
+											? value.some( ( valueItem ) => valueItem.toString() === optionValue.toString() )
+											: value === optionValue
+									}
 									className="pods-form-ui-field-type-pick"
 									type="checkbox"
 									value={ optionValue }

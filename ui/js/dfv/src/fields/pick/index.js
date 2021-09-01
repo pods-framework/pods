@@ -27,6 +27,46 @@ import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
 import './pick.scss';
 
+const getFieldItemDataFromDataProp = ( data ) => {
+	// Skip unless we're handling an object of values.
+	if ( 'object' !== typeof data || Array.isArray( data ) ) {
+		return [];
+	}
+
+	const entries = Object.entries( data );
+
+	return entries.reduce( ( accumulator, entry ) => {
+		if ( 'string' === typeof entry[ 1 ] ) {
+			return [
+				...accumulator,
+				{
+					id: entry[ 0 ],
+					icon: '',
+					name: entry[ 1 ],
+					edit_link: '',
+					link: '',
+					selected: false,
+				},
+			];
+		}
+
+		const subOptions = Object.entries( entry[ 1 ] )
+			.map( ( subEntry ) => ( { name: subEntry[ 1 ], id: subEntry[ 0 ] } ) );
+
+		return [
+			...accumulator,
+			{
+				id: subOptions,
+				icon: '',
+				name: entry[ 0 ],
+				edit_link: '',
+				link: '',
+				selected: false,
+			},
+		];
+	}, [] );
+};
+
 const formatValuesForReactSelectComponent = (
 	value,
 	fieldItemData = [],
@@ -134,10 +174,7 @@ const Pick = ( props ) => {
 	// modified by the add/edit modals, or by loading ajax options, so we need to track
 	// this in state, starting with the supplied fieldItemData from the page load.
 	const [ modifiedFieldItemData, setModifiedFieldItemData ] = useState(
-		fieldItemData ? fieldItemData : Object.keys( data ).map( ( dataKey ) => ( {
-			id: dataKey || '',
-			name: data[ dataKey ] || '',
-		} ) )
+		fieldItemData ? fieldItemData : getFieldItemDataFromDataProp( data )
 	);
 
 	const setValueWithLimit = ( newValue ) => {

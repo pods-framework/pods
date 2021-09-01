@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-{"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"92f1452498ab03362b33ec4adbc25fda"}
-=======
-{"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"e97b2d6f1a55612e4050238ed72aefec"}
->>>>>>> release/2.8
+{"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"02e009560b790c2e6894259a19d6cc1d"}

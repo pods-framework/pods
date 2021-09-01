@@ -131,7 +131,16 @@ const File = ( props ) => {
 
 File.propTypes = {
 	...FIELD_COMPONENT_BASE_PROPS,
-	value: PropTypes.string,
+	value: PropTypes.oneOfType( [
+		PropTypes.arrayOf(
+			PropTypes.oneOfType( [
+				PropTypes.string,
+				PropTypes.number,
+			] )
+		),
+		PropTypes.string,
+		PropTypes.number,
+	] ),
 };
 
 export default File;

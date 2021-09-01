@@ -94,8 +94,14 @@ SimpleSelect.propTypes = {
 	} ),
 	name: PropTypes.string.isRequired,
 	value: PropTypes.oneOfType( [
+		PropTypes.arrayOf(
+			PropTypes.oneOfType( [
+				PropTypes.string,
+				PropTypes.number,
+			] )
+		),
 		PropTypes.string,
-		PropTypes.arrayOf( PropTypes.string ),
+		PropTypes.number,
 	] ),
 	setValue: PropTypes.func.isRequired,
 	options: PICK_OPTIONS.isRequired,

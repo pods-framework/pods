@@ -117,7 +117,12 @@ CheckboxSelect.propTypes = {
 	} ),
 	name: PropTypes.string.isRequired,
 	value: PropTypes.oneOfType( [
-		PropTypes.arrayOf( PropTypes.string ),
+		PropTypes.arrayOf(
+			PropTypes.oneOfType( [
+				PropTypes.string,
+				PropTypes.number,
+			] )
+		),
 		PropTypes.string,
 		PropTypes.number,
 	] ),

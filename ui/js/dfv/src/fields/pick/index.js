@@ -418,7 +418,12 @@ const Pick = ( props ) => {
 Pick.propTypes = {
 	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.oneOfType( [
-		PropTypes.arrayOf( PropTypes.string ),
+		PropTypes.arrayOf(
+			PropTypes.oneOfType( [
+				PropTypes.string,
+				PropTypes.number,
+			] )
+		),
 		PropTypes.string,
 		PropTypes.number,
 	] ),

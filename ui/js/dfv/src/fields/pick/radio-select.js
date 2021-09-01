@@ -63,7 +63,10 @@ RadioSelect.propTypes = {
 		name: PropTypes.string,
 	} ),
 	name: PropTypes.string.isRequired,
-	value: PropTypes.string,
+	value: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.number,
+	] ),
 	setValue: PropTypes.func.isRequired,
 	options: PICK_OPTIONS.isRequired,
 	readOnly: PropTypes.bool,

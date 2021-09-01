@@ -440,6 +440,12 @@ class PodsField {
 		$attributes = $this->build_dfv_field_attributes( $attributes, $args );
 		$attributes = array_map( 'esc_attr', $attributes );
 
+		$default_value = '';
+
+		if ( 'multi' === pods_v( $args->type . '_format_type' ) ) {
+			$default_value = [];
+		}
+
 		// Build DFV field data.
 		$data = [
 			'htmlAttr'      => [
@@ -452,7 +458,7 @@ class PodsField {
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
 			'fieldEmbed'    => true,
-			'fieldValue'    => isset( $args->value ) ? $args->value : PodsForm::default_value( null, $options['type'], $options['name'], $options, $args->pod, $args->id ),
+			'fieldValue'    => isset( $args->value ) ? $args->value : PodsForm::default_value( $default_value, $options['type'], $options['name'], $options, $args->pod, $args->id ),
 		];
 
 		/**

@@ -313,7 +313,7 @@ class PodsField {
 	 * @param string|null     $name    Field name.
 	 * @param mixed|null      $value   Current value.
 	 * @param array|null      $options Field options.
-	 * @param array|null      $pod     Pod information.
+	 * @param array|Pods|null $pod     Pod data or the Pods object.
 	 * @param int|string|null $id      Current item ID.
 	 *
 	 * @since 2.0.0
@@ -350,17 +350,16 @@ class PodsField {
 	 * @param array|object $args    {
 	 *     Field information arguments.
 	 *
-	 *     @type string     $name            Field name.
-	 *     @type string     $type            Field type.
-	 *     @type array      $options         Field options.
-	 *     @type mixed      $value           Current value.
-	 *     @type array      $pod             Pod information.
-	 *     @type int|string $id              Current item ID.
-	 *     @type string     $form_field_type HTML field type.
+	 *     @type string          $name            Field name.
+	 *     @type string          $type            Field type.
+	 *     @type array           $options         Field options.
+	 *     @type mixed           $value           Current value.
+	 *     @type array|Pods|null $pod             Pod data or the Pods object.
+	 *     @type int|string      $id              Current item ID.
+	 *     @type string          $form_field_type HTML field type.
 	 * }
 	 */
 	public function render_input_script( $args ) {
-
 		if ( is_array( $args ) ) {
 			$args = (object) $args;
 		}
@@ -373,7 +372,13 @@ class PodsField {
 			$field_class .= ' pods-dfv-field--unloaded';
 		}
 
-		$pod_name = $args->pod->data->pod_data->get_name();
+		$pod_name = '';
+
+		if ( $args->pod instanceof Pods ) {
+			$pod_name = $args->pod->pod_data['name'];
+		} elseif ( ! empty( $args->pod ) ) {
+			$pod_name = $args->pod['name'];
+		}
 
 		$script_content = wp_json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
 		?>
@@ -394,13 +399,14 @@ class PodsField {
 	 * @param object $args            {
 	 *     Field information arguments.
 	 *
-	 *     @type string     $name            Field name.
-	 *     @type string     $type            Field type.
-	 *     @type array      $options         Field options.
-	 *     @type mixed      $value           Current value.
-	 *     @type array      $pod             Pod information.
-	 *     @type int|string $id              Current item ID.
-	 *     @type string     $form_field_type HTML field type.
+	 *     @type string       $name            Field name.
+	 *     @type string       $type            Field type.
+	 *     @type array        $options         Field options.
+	 *     @type Whatsit|null $field         Field object (if provided).
+	 *     @type mixed        $value           Current value.
+	 *     @type array        $pod             Pod information.
+	 *     @type int|string   $id              Current item ID.
+	 *     @type string       $form_field_type HTML field type.
 	 * }
 	 *
 	 * @return array
@@ -513,13 +519,14 @@ class PodsField {
 	 * @param object $args {
 	 *     Field information arguments.
 	 *
-	 *     @type string     $name            Field name.
-	 *     @type string     $type            Field type.
-	 *     @type array      $options         Field options.
-	 *     @type mixed      $value           Current value.
-	 *     @type array      $pod             Pod information.
-	 *     @type int|string $id              Current item ID.
-	 *     @type string     $form_field_type HTML field type.
+	 *     @type string       $name            Field name.
+	 *     @type string       $type            Field type.
+	 *     @type array        $options         Field options.
+	 *     @type Whatsit|null $field         Field object (if provided).
+	 *     @type mixed        $value           Current value.
+	 *     @type array        $pod             Pod information.
+	 *     @type int|string   $id              Current item ID.
+	 *     @type string       $form_field_type HTML field type.
 	 * }
 	 *
 	 * @return array

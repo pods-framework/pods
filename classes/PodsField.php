@@ -458,7 +458,7 @@ class PodsField {
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
 			'fieldEmbed'    => true,
-			'fieldValue'    => isset( $args->value ) ? $args->value : PodsForm::default_value( $default_value, $options['type'], $options['name'], $options, $args->pod, $args->id ),
+			'fieldValue'    => isset( $args->value ) ? $args->value : PodsForm::default_value( $default_value, $args->type, pods_v( 'name', $options, $args->name ), $options, $args->pod, $args->id ),
 		];
 
 		/**

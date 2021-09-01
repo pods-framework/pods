@@ -3365,28 +3365,26 @@ class PodsAPI {
 		// Setup options
 		$options = get_object_vars( $params );
 
-		$options_ignore = array(
-			'object_type',
-			'storage_type',
-			'parent',
-			'method',
-			'table_info',
+		$options_ignore = [
+			'_locale',
 			'attributes',
-			'group',
-			'grouped',
-			'developer_mode',
 			'dependency',
 			'depends-on',
+			'developer_mode',
 			'excludes-on',
-			'object_type',
-			'storage_type',
+			'group',
+			'group_id',
+			'grouped',
 			'is_new',
-			'_locale',
+			'method',
+			'object_type',
 			'old_name',
 			'parent',
-			'group_id',
+			'pod_data',
 			'sanitized',
-		);
+			'storage_type',
+			'table_info',
+		];
 
 		foreach ( $options_ignore as $ignore ) {
 			if ( isset( $options[ $ignore ] ) ) {
@@ -3400,26 +3398,26 @@ class PodsAPI {
 			unset( $options['table_info'] );
 		}
 
-		$exclude = array(
-			'id',
-			'pod_id',
-			'pod',
-			'name',
-			'label',
+		$exclude = [
+			'_locale',
 			'description',
-			'type',
+			'group_id',
+			'id',
+			'is_new',
+			'label',
+			'name',
+			'old_name',
+			'options',
+			'parent',
 			'pick_object',
 			'pick_val',
-			'sister_id',
-			'weight',
-			'options',
-			'is_new',
-			'_locale',
-			'old_name',
-			'parent',
-			'group_id',
+			'pod',
+			'pod_id',
 			'post_status',
-		);
+			'sister_id',
+			'type',
+			'weight',
+		];
 
 		foreach ( $exclude as $k => $exclude_field ) {
 			$aliases = array( $exclude_field );

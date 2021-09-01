@@ -83,9 +83,8 @@ describe( 'Boolean field component', () => {
 			target: { value: '1' },
 		} );
 
-		expect( wrapper.find( 'option' ).at( 0 ).text() ).toEqual( '-- Select One --' );
-		expect( wrapper.find( 'option' ).at( 1 ).text() ).toEqual( 'True' );
-		expect( wrapper.find( 'option' ).at( 2 ).text() ).toEqual( 'False' );
+		expect( wrapper.find( 'option' ).at( 0 ).text() ).toEqual( 'True' );
+		expect( wrapper.find( 'option' ).at( 1 ).text() ).toEqual( 'False' );
 
 		expect( props.setValue ).toHaveBeenNthCalledWith( 1, '1' );
 	} );

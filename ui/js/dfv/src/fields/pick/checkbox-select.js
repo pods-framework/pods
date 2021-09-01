@@ -14,8 +14,10 @@ const CheckboxSelect = ( {
 	readOnly = false,
 } ) => {
 	const toggleValueOption = ( option ) => {
-		if ( value.includes( option ) ) {
-			setValue( value.filter( ( item ) => item !== option ) );
+		if ( value.some( ( valueItem ) => valueItem.toString() === option.toString() ) ) {
+			setValue(
+				value.filter( ( item ) => item.toString() !== option.toString() )
+			);
 		} else {
 			setValue( [ ...value, option ] );
 		}
@@ -25,13 +27,18 @@ const CheckboxSelect = ( {
 
 	return (
 		<ul
-			className={ classnames( 'pods-checkbox-pick', options.length === 1 && 'pods-checkbox-pick--single' ) }
+			className={
+				classnames(
+					'pods-checkbox-pick',
+					options.length === 1 && 'pods-checkbox-pick--single'
+				)
+			}
 			id={ name }
 		>
 			{ options.map( (
 				{
-					value: optionValue,
-					label: optionLabel,
+					id: optionValue,
+					name: optionLabel,
 				},
 				optionIndex,
 				allOptions
@@ -51,17 +58,26 @@ const CheckboxSelect = ( {
 				return (
 					<li
 						key={ optionValue }
-						className={ classnames( 'pods-checkbox-pick__option', options.length === 1 && 'pods-checkbox-pick__option--single' ) }
+						className={
+							classnames(
+								'pods-checkbox-pick__option',
+								options.length === 1 && 'pods-checkbox-pick__option--single'
+							)
+						}
 					>
 						<div className="pods-field pods-boolean">
+							{ /* eslint-disable-next-line jsx-a11y/label-has-for */ }
 							<label
 								className="pods-form-ui-label pods-checkbox-pick__option__label"
-								htmlFor={ idAttribute }
 							>
 								<input
 									name={ nameAttribute }
 									id={ idAttribute }
-									checked={ isMulti ? value.includes( optionValue ) : value === optionValue }
+									checked={
+										isMulti
+											? value.some( ( valueItem ) => valueItem.toString() === optionValue.toString() )
+											: value === optionValue
+									}
 									className="pods-form-ui-field-type-pick"
 									type="checkbox"
 									value={ optionValue }
@@ -101,7 +117,12 @@ CheckboxSelect.propTypes = {
 	} ),
 	name: PropTypes.string.isRequired,
 	value: PropTypes.oneOfType( [
-		PropTypes.arrayOf( PropTypes.string ),
+		PropTypes.arrayOf(
+			PropTypes.oneOfType( [
+				PropTypes.string,
+				PropTypes.number,
+			] )
+		),
 		PropTypes.string,
 		PropTypes.number,
 	] ),

@@ -34,6 +34,7 @@ const FieldGroup = ( props ) => {
 		saveGroup,
 		toggleExpanded,
 		editGroupPod,
+		storeKey,
 	} = props;
 
 	const {
@@ -233,6 +234,7 @@ const FieldGroup = ( props ) => {
 					groupName={ groupName }
 					groupID={ groupID }
 					groupLabel={ groupLabel }
+					storeKey={ storeKey }
 				/>
 			) }
 		</div>
@@ -240,6 +242,7 @@ const FieldGroup = ( props ) => {
 };
 
 FieldGroup.propTypes = {
+	storeKey: PropTypes.string.isRequired,
 	podType: PropTypes.string.isRequired,
 	podName: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,

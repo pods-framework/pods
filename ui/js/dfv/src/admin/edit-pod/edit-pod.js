@@ -6,7 +6,6 @@ import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
 // Pods dependencies
-import { STORE_KEY_EDIT_POD } from '../../store/constants';
 import SaveStatusMessage from './save-status-message';
 import EditPodName from './edit-pod-name';
 import PodsNavTab from 'dfv/src/components/pods-nav-tab';
@@ -22,6 +21,7 @@ const EditPod = ( {
 	podName,
 	setPodName,
 	isExtended,
+	storeKey,
 } ) => {
 	return (
 		<>
@@ -31,7 +31,7 @@ const EditPod = ( {
 					setPodName={ setPodName }
 					isEditable={ ! isExtended }
 				/>
-				<SaveStatusMessage />
+				<SaveStatusMessage storeKey={ storeKey } />
 				<PodsNavTab
 					tabs={ tabs }
 					activeTab={ activeTab }
@@ -40,8 +40,8 @@ const EditPod = ( {
 			</div>
 			<div id="poststuff">
 				<div id="post-body" className="columns-2">
-					<ActiveTabContent />
-					<Postbox />
+					<ActiveTabContent storeKey={ storeKey } />
+					<Postbox storeKey={ storeKey } />
 					<br className="clear" />
 				</div>
 			</div>
@@ -57,13 +57,16 @@ EditPod.propTypes = {
 	activeTab: PropTypes.string.isRequired,
 	podName: PropTypes.string.isRequired,
 	isExtended: PropTypes.bool.isRequired,
+	storeKey: PropTypes.string.isRequired,
 	setActiveTab: PropTypes.func.isRequired,
 	setPodName: PropTypes.func.isRequired,
 };
 
 export default compose( [
-	withSelect( ( select ) => {
-		const storeSelect = select( STORE_KEY_EDIT_POD );
+	withSelect( ( select, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeSelect = select( storeKey );
 
 		return {
 			tabs: storeSelect.getGlobalPodGroups(),
@@ -72,8 +75,10 @@ export default compose( [
 			isExtended: !! storeSelect.getPodOption( 'object' ),
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
-		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+	withDispatch( ( dispatch, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeDispatch = dispatch( storeKey );
 
 		return {
 			setActiveTab: storeDispatch.setActiveTab,

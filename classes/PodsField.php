@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit;
+
 /**
  * Pods Field class for common type-specific methods.
  *
@@ -311,7 +313,7 @@ class PodsField {
 	 * @param string|null     $name    Field name.
 	 * @param mixed|null      $value   Current value.
 	 * @param array|null      $options Field options.
-	 * @param array|null      $pod     Pod information.
+	 * @param array|Pods|null $pod     Pod data or the Pods object.
 	 * @param int|string|null $id      Current item ID.
 	 *
 	 * @since 2.0.0
@@ -348,19 +350,36 @@ class PodsField {
 	 * @param array|object $args    {
 	 *     Field information arguments.
 	 *
-	 *     @type string     $name            Field name.
-	 *     @type string     $type            Field type.
-	 *     @type array      $options         Field options.
-	 *     @type mixed      $value           Current value.
-	 *     @type array      $pod             Pod information.
-	 *     @type int|string $id              Current item ID.
-	 *     @type string     $form_field_type HTML field type.
+	 *     @type string          $name            Field name.
+	 *     @type string          $type            Field type.
+	 *     @type array           $options         Field options.
+	 *     @type Whatsit|null    $field           Field object (if provided).
+	 *     @type mixed           $value           Current value.
+	 *     @type array|Pods|null $pod             Pod data or the Pods object.
+	 *     @type int|string      $id              Current item ID.
+	 *     @type string          $form_field_type HTML field type.
 	 * }
 	 */
 	public function render_input_script( $args ) {
-
 		if ( is_array( $args ) ) {
 			$args = (object) $args;
+		}
+
+		// Detect field object being passed to the $options array upstream.
+		if ( ! empty( $args->options['_field_object'] ) ) {
+			$args->field   = $args->options['_field_object'];
+
+			unset( $args->options['_field_object'] );
+		}
+
+		// Update options so it's as expected.
+		if ( ! empty( $args->field ) ) {
+			$args->options = pods_config_merge_data( $args->options, clone $args->field );
+		}
+
+		// Remove potential 2.8 beta fragments.
+		if ( ! empty( $args->options['pod_data'] ) ) {
+			unset( $args->options['pod_data'] );
 		}
 
 		$disable_dfv = ! empty( $args->options['disable_dfv'] );
@@ -371,6 +390,14 @@ class PodsField {
 			$field_class .= ' pods-dfv-field--unloaded';
 		}
 
+		$pod_name = '';
+
+		if ( $args->pod instanceof Pods ) {
+			$pod_name = $args->pod->pod_data['name'];
+		} elseif ( ! empty( $args->pod ) ) {
+			$pod_name = $args->pod['name'];
+		}
+
 		$script_content = wp_json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
 		?>
 		<div class="<?php echo esc_attr( $field_class ); ?>">
@@ -378,7 +405,7 @@ class PodsField {
 				<span class="pods-dfv-field__loading-indicator" role="progressbar"></span>
 			<?php endif; ?>
 			<?php // @codingStandardsIgnoreLine ?>
-			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content; ?></script>
+			<script type="application/json" class="pods-dfv-field-data" data-pod="<?php echo esc_attr( $pod_name ); ?>"><?php echo $script_content; ?></script>
 		</div>
 		<?php
 
@@ -390,13 +417,14 @@ class PodsField {
 	 * @param object $args            {
 	 *     Field information arguments.
 	 *
-	 *     @type string     $name            Field name.
-	 *     @type string     $type            Field type.
-	 *     @type array      $options         Field options.
-	 *     @type mixed      $value           Current value.
-	 *     @type array      $pod             Pod information.
-	 *     @type int|string $id              Current item ID.
-	 *     @type string     $form_field_type HTML field type.
+	 *     @type string       $name            Field name.
+	 *     @type string       $type            Field type.
+	 *     @type array        $options         Field options.
+	 *     @type Whatsit|null $field           Field object (if provided).
+	 *     @type mixed        $value           Current value.
+	 *     @type array        $pod             Pod information.
+	 *     @type int|string   $id              Current item ID.
+	 *     @type string       $form_field_type HTML field type.
 	 * }
 	 *
 	 * @return array
@@ -412,6 +440,12 @@ class PodsField {
 		$attributes = $this->build_dfv_field_attributes( $attributes, $args );
 		$attributes = array_map( 'esc_attr', $attributes );
 
+		$default_value = '';
+
+		if ( 'multi' === pods_v( $args->type . '_format_type' ) ) {
+			$default_value = [];
+		}
+
 		// Build DFV field data.
 		$data = [
 			'htmlAttr'      => [
@@ -424,7 +458,7 @@ class PodsField {
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
 			'fieldEmbed'    => true,
-			'fieldValue'    => isset( $args->value ) ? $args->value : PodsForm::default_value( null, $options['type'], $options['name'], $options, $args->pod, $args->id ),
+			'fieldValue'    => isset( $args->value ) ? $args->value : PodsForm::default_value( $default_value, $options['type'], $options['name'], $options, $args->pod, $args->id ),
 		];
 
 		/**
@@ -509,20 +543,24 @@ class PodsField {
 	 * @param object $args {
 	 *     Field information arguments.
 	 *
-	 *     @type string     $name            Field name.
-	 *     @type string     $type            Field type.
-	 *     @type array      $options         Field options.
-	 *     @type mixed      $value           Current value.
-	 *     @type array      $pod             Pod information.
-	 *     @type int|string $id              Current item ID.
-	 *     @type string     $form_field_type HTML field type.
+	 *     @type string       $name            Field name.
+	 *     @type string       $type            Field type.
+	 *     @type array        $options         Field options.
+	 *     @type Whatsit|null $field         Field object (if provided).
+	 *     @type mixed        $value           Current value.
+	 *     @type array        $pod             Pod information.
+	 *     @type int|string   $id              Current item ID.
+	 *     @type string       $form_field_type HTML field type.
 	 * }
 	 *
 	 * @return array
 	 */
 	public function build_dfv_field_config( $args ) {
-
-		$config = (array) $args->options;
+		if ( $args->options instanceof Whatsit ) {
+			$config = $args->options->export();
+		} else {
+			$config = (array) $args->options;
+		}
 
 		unset( $config['data'] );
 

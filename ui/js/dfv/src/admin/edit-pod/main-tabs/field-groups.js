@@ -30,10 +30,7 @@ import { sprintf, __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import SettingsModal from './settings-modal';
-import {
-	STORE_KEY_EDIT_POD,
-	SAVE_STATUSES,
-} from 'dfv/src/store/constants';
+import { SAVE_STATUSES } from 'dfv/src/store/constants';
 import FieldGroup from './field-group';
 
 import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
@@ -41,6 +38,7 @@ import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 import './field-groups.scss';
 
 const FieldGroups = ( {
+	storeKey,
 	podType,
 	podName,
 	podID,
@@ -197,6 +195,7 @@ const FieldGroups = ( {
 
 							return (
 								<FieldGroup
+									storeKey={ storeKey }
 									key={ group.name }
 									podType={ podType }
 									podName={ podName }
@@ -233,6 +232,7 @@ const FieldGroups = ( {
 };
 
 FieldGroups.propTypes = {
+	storeKey: PropTypes.string.isRequired,
 	podType: PropTypes.string.isRequired,
 	podName: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
@@ -248,8 +248,10 @@ FieldGroups.propTypes = {
 };
 
 export default compose( [
-	withSelect( ( select ) => {
-		const storeSelect = select( STORE_KEY_EDIT_POD );
+	withSelect( ( select, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeSelect = select( storeKey );
 
 		return {
 			podType: storeSelect.getPodOption( 'type' ),
@@ -263,8 +265,10 @@ export default compose( [
 			groupSaveMessages: storeSelect.getGroupSaveMessages(),
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
-		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+	withDispatch( ( dispatch, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeDispatch = dispatch( storeKey );
 
 		return {
 			saveGroup: storeDispatch.saveGroup,

@@ -26,16 +26,18 @@ export const NUMBER_OR_NUMBER_AS_STRING = PropTypes.oneOfType( [
 
 export const PICK_OPTIONS = PropTypes.arrayOf(
 	PropTypes.shape( {
-		label: PropTypes.string.isRequired,
-		value: PropTypes.oneOfType( [
+		id: PropTypes.oneOfType( [
 			PropTypes.string.isRequired,
-			PropTypes.arrayOf(
-				PropTypes.shape( {
-					label: PropTypes.string.isRequired,
-					value: PropTypes.string.isRequired,
-				} )
-			),
+			PropTypes.arrayOf( PropTypes.shape( {
+				name: PropTypes.string.isRequired,
+				id: PropTypes.string.isRequired,
+			} ) ).isRequired,
 		] ),
+		icon: PropTypes.string.isRequired,
+		name: PropTypes.string.isRequired,
+		edit_link: PropTypes.string.isRequired,
+		link: PropTypes.string.isRequired,
+		selected: PropTypes.bool.isRequired,
 	} )
 );
 
@@ -51,10 +53,7 @@ export const FIELD_PROP_TYPE = {
 	admin_only: BOOLEAN_STRINGS,
 	attributes: OBJECT_OR_ARRAY,
 	class: PropTypes.string,
-	data: PropTypes.oneOfType( [
-		PICK_OPTIONS,
-		PropTypes.object,
-	] ),
+	data: PropTypes.any,
 	default: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.bool,
@@ -259,11 +258,11 @@ export const FIELD_PROP_TYPE = {
 	file_uploader: PropTypes.string,
 	file_upload_dir: PropTypes.string,
 	file_upload_dir_custom: PropTypes.string,
-	file_wp_gallery_columns: PropTypes.string,
-	file_wp_gallery_link: PropTypes.string,
-	file_wp_gallery_output: PropTypes.string,
-	file_wp_gallery_random_sort: PropTypes.string,
-	file_wp_gallery_size: PropTypes.string,
+	file_wp_gallery_columns: PropTypes.any,
+	file_wp_gallery_link: PropTypes.any,
+	file_wp_gallery_output: PropTypes.any,
+	file_wp_gallery_random_sort: PropTypes.any,
+	file_wp_gallery_size: PropTypes.any,
 	plupload_init: PropTypes.object,
 	limit_extensions: PropTypes.string,
 	limit_types: PropTypes.string,
@@ -491,7 +490,7 @@ export const FIELD_PROP_TYPE = {
 	wysiwyg_wptexturize: BOOLEAN_ALL_TYPES,
 };
 
-export const FIELD_PROP_TYPE_SHAPE = PropTypes.exact( FIELD_PROP_TYPE );
+export const FIELD_PROP_TYPE_SHAPE = PropTypes.shape( FIELD_PROP_TYPE );
 
 export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {
 	description: PropTypes.string,

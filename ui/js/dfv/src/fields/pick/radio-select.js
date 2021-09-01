@@ -14,8 +14,8 @@ const RadioSelect = ( {
 	return (
 		<ul className="pods-radio-pick" id={ name }>
 			{ options.map( ( {
-				value: optionValue,
-				label: optionLabel,
+				id: optionValue,
+				name: optionLabel,
 			} ) => {
 				const idAttribute = !! htmlAttributes.id
 					? `${ htmlAttributes.id }-${ optionValue }`
@@ -24,9 +24,9 @@ const RadioSelect = ( {
 				return (
 					<li key={ optionValue } className="pods-radio-pick__option">
 						<div className="pods-field pods-boolean">
+							{ /* eslint-disable-next-line jsx-a11y/label-has-for */ }
 							<label
 								className="pods-form-ui-label pods-radio-pick__option__label"
-								htmlFor={ idAttribute }
 							>
 								<input
 									name={ htmlAttributes.name || name }
@@ -63,7 +63,10 @@ RadioSelect.propTypes = {
 		name: PropTypes.string,
 	} ),
 	name: PropTypes.string.isRequired,
-	value: PropTypes.string,
+	value: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.number,
+	] ),
 	setValue: PropTypes.func.isRequired,
 	options: PICK_OPTIONS.isRequired,
 	readOnly: PropTypes.bool,

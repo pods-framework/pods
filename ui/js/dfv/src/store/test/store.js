@@ -4,10 +4,7 @@ import { select, dispatch } from '@wordpress/data';
 
 import { initEditPodStore } from '../store';
 import * as paths from '../state-paths';
-import {
-	STORE_KEY_EDIT_POD,
-	INITIAL_UI_STATE,
-} from '../constants';
+import { INITIAL_UI_STATE } from '../constants';
 
 import { TEST_CONFIG_DATA } from '../testData';
 
@@ -16,9 +13,10 @@ const testStore = {
 	dispatch: null,
 
 	initStore: ( initialState ) => {
-		initEditPodStore( initialState );
-		testStore.select = select( STORE_KEY_EDIT_POD );
-		testStore.dispatch = dispatch( STORE_KEY_EDIT_POD );
+		const storeKey = initEditPodStore( initialState );
+
+		testStore.select = select( storeKey );
+		testStore.dispatch = dispatch( storeKey );
 	},
 };
 

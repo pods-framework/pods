@@ -7,7 +7,6 @@ import { compose } from '@wordpress/compose';
 import { Dashicon, Spinner } from '@wordpress/components';
 
 import {
-	STORE_KEY_EDIT_POD,
 	SAVE_STATUSES,
 	DELETE_STATUSES,
 } from 'dfv/src/store/constants';
@@ -107,8 +106,10 @@ export const Postbox = ( {
 };
 
 export default compose( [
-	withSelect( ( select ) => {
-		const storeSelect = select( STORE_KEY_EDIT_POD );
+	withSelect( ( select, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeSelect = select( storeKey );
 
 		return {
 			saveStatus: storeSelect.getSaveStatus(),
@@ -117,8 +118,10 @@ export default compose( [
 			options: storeSelect.getPodOptions(),
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
-		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+	withDispatch( ( dispatch, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeDispatch = dispatch( storeKey );
 
 		return {
 			savePod: storeDispatch.savePod,

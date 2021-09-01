@@ -18,10 +18,7 @@ import { compose } from '@wordpress/compose';
  */
 import SettingsModal from './settings-modal';
 
-import {
-	STORE_KEY_EDIT_POD,
-	SAVE_STATUSES,
-} from 'dfv/src/store/constants';
+import { SAVE_STATUSES } from 'dfv/src/store/constants';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
@@ -31,6 +28,7 @@ const ENTER_KEY = 13;
 
 export const FieldListItem = ( props ) => {
 	const {
+		storeKey,
 		podType,
 		podName,
 		podID,
@@ -249,6 +247,7 @@ export const FieldListItem = ( props ) => {
 };
 
 FieldListItem.propTypes = {
+	storeKey: PropTypes.string.isRequired,
 	podType: PropTypes.string.isRequired,
 	podName: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
@@ -272,9 +271,12 @@ FieldListItem.propTypes = {
 
 export default compose( [
 	withSelect( ( select, ownProps ) => {
-		const { field = {} } = ownProps;
+		const {
+			field = {},
+			storeKey,
+		} = ownProps;
 
-		const storeSelect = select( STORE_KEY_EDIT_POD );
+		const storeSelect = select( storeKey );
 
 		// Look up the relatedObject, to find the key for it, we may have to combine
 		// pick_object and pick_val
@@ -296,8 +298,10 @@ export default compose( [
 			saveMessage: storeSelect.getFieldSaveMessage( field.name ),
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
-		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+	withDispatch( ( dispatch, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeDispatch = dispatch( storeKey );
 
 		return {
 			deleteField: ( groupID, fieldID ) => {

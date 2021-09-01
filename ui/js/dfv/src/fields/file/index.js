@@ -14,7 +14,6 @@ const getMediaItemData = async ( mediaID ) => {
 
 		return {
 			id: mediaID,
-			// eslint-disable-next-line camelcase
 			icon: result?.media_details?.sizes?.thumbnail?.source_url,
 			name: result.title.rendered,
 			// @todo This should be based on the adminurl instead of hardcoded to /wp-admin/ -- fix this later.
@@ -37,6 +36,10 @@ const File = ( props ) => {
 		setValue,
 		setHasBlurred,
 	} = props;
+
+	const {
+		fieldItemData = [],
+	} = fieldConfig;
 
 	const [ collectionData, setCollectionData ] = useState( [] );
 
@@ -64,20 +67,50 @@ const File = ( props ) => {
 	// to the Backbone view/model. Only make the expensive API requests if
 	// we don't have data about a media post on initial page load.
 	useEffect( () => {
-		if ( ! value || ! value.length ) {
+		if ( ! value ) {
 			setCollectionData( [] );
 			return;
 		}
 
 		const getAndSetMediaData = async ( mediaIDs ) => {
+			// Check first if all items are available in fieldItemData,
+			// if not we need to do a REST API request to get the data.
+			let areAllItemsAvailableFromFieldItemData = true;
+
+			const dataFromFieldItemData = mediaIDs.map( ( mediaID ) => {
+				const matchingFieldItemData = fieldItemData.find(
+					( fieldItem ) => Number( fieldItem.id ) === Number( mediaID ),
+				);
+
+				if ( ! matchingFieldItemData ) {
+					areAllItemsAvailableFromFieldItemData = false;
+					return null;
+				}
+
+				return matchingFieldItemData;
+			} );
+
+			if ( areAllItemsAvailableFromFieldItemData ) {
+				setCollectionData( dataFromFieldItemData );
+				return;
+			}
+
+			// If we didn't find everything, fall back to the API request.
 			const results = await Promise.all( mediaIDs.map( getMediaItemData ) );
 			setCollectionData( results );
 		};
 
-		if ( 'object' === typeof value ) {
+		if ( Array.isArray( value ) ) {
+			getAndSetMediaData( value );
+		} else if ( 'object' === typeof value ) {
 			setCollectionData( value );
 		} else if ( 'string' === typeof value ) {
 			getAndSetMediaData( value.split( ',' ) );
+		} else if ( 'number' === typeof value ) {
+			getAndSetMediaData( [ value ] );
+		} else {
+			// eslint-disable-next-line no-console
+			console.error( `Invalid value type for file field: ${ fieldConfig.name }` );
 		}
 	}, [] );
 
@@ -98,7 +131,16 @@ const File = ( props ) => {
 
 File.propTypes = {
 	...FIELD_COMPONENT_BASE_PROPS,
-	value: PropTypes.string,
+	value: PropTypes.oneOfType( [
+		PropTypes.arrayOf(
+			PropTypes.oneOfType( [
+				PropTypes.string,
+				PropTypes.number,
+			] )
+		),
+		PropTypes.string,
+		PropTypes.number,
+	] ),
 };
 
 export default File;

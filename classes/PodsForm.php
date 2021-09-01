@@ -620,7 +620,7 @@ class PodsForm {
 			$options_array['_field_object'] = null;
 		}
 
-		$defaults = self::options_setup( $type, $options_array );
+		$defaults = self::options_setup( $type );
 
 		$core_defaults = [
 			'id'          => 0,
@@ -636,9 +636,11 @@ class PodsForm {
 		$defaults = array_merge( $core_defaults, $defaults );
 
 		foreach ( $defaults as $option => $settings ) {
-			$default = $settings;
+			$default = $core_defaults['default'];
 
-			if ( is_array( $settings ) && isset( $settings['default'] ) ) {
+			if ( ! is_array( $settings ) ) {
+				$default = $settings;
+			} elseif ( isset( $settings['default'] ) ) {
 				$default = $settings['default'];
 			}
 
@@ -695,23 +697,19 @@ class PodsForm {
 			self::field_loader( $type );
 		}
 
-		$options = apply_filters( "pods_field_{$type}_options", (array) self::$loaded[ $type ]->options(), $type );
+		$ui_options = apply_filters( "pods_field_{$type}_options", (array) self::$loaded[ $type ]->options(), $type );
 
-		$first_field = current( $options );
+		$first_field = reset( $ui_options );
 
-		if ( ! empty( $options ) && ! isset( $first_field['name'] ) && ! isset( $first_field['label'] ) ) {
-			$all_options = array();
-
-			foreach ( $options as $group => $group_options ) {
-				$all_options = array_merge( $all_options, self::fields_setup( $group_options, $core_defaults ) );
+		if ( ! empty( $ui_options ) && ! isset( $first_field['name'] ) && ! isset( $first_field['label'] ) ) {
+			foreach ( $ui_options as $group => $group_options ) {
+				$ui_options[ $group ] = self::fields_setup( $group_options, $core_defaults );
 			}
 
-			$options = $all_options;
-		} else {
-			$options = self::fields_setup( $options, $core_defaults );
+			return $ui_options;
 		}
 
-		return $options;
+		return self::fields_setup( $ui_options, $core_defaults );
 	}
 
 	/**
@@ -750,19 +748,19 @@ class PodsForm {
 
 		self::field_loader( $type );
 
-		$options = apply_filters( "pods_field_{$type}_ui_options", (array) self::$loaded[ $type ]->ui_options(), $type );
+		$ui_options = apply_filters( "pods_field_{$type}_ui_options", (array) self::$loaded[ $type ]->ui_options(), $type );
 
-		$first_field = current( $options );
+		$first_field = reset( $ui_options );
 
-		if ( ! empty( $options ) && ! isset( $first_field['name'] ) && ! isset( $first_field['label'] ) ) {
-			foreach ( $options as $group => $group_options ) {
-				$options[ $group ] = self::fields_setup( $group_options, $core_defaults );
+		if ( ! empty( $ui_options ) && ! isset( $first_field['name'] ) && ! isset( $first_field['label'] ) ) {
+			foreach ( $ui_options as $group => $group_options ) {
+				$ui_options[ $group ] = self::fields_setup( $group_options, $core_defaults );
 			}
-		} else {
-			$options = self::fields_setup( $options, $core_defaults );
+
+			return $ui_options;
 		}
 
-		return $options;
+		return self::fields_setup( $ui_options, $core_defaults );
 	}
 
 	/**
@@ -807,11 +805,11 @@ class PodsForm {
 		}
 
 		foreach ( $fields as $f => $field ) {
-			$fields[ $f ] = self::field_setup( $field, $core_defaults, pods_v( 'type', $field, 'text' ) );
-
-			if ( ! $single && strlen( $fields[ $f ]['name'] ) < 1 ) {
-				$fields[ $f ]['name'] = $f;
+			if ( ! $single && empty( $field['name'] ) ) {
+				$field['name'] = $f;
 			}
+
+			$fields[ $f ] = self::field_setup( $field, $core_defaults, pods_v( 'type', $field, 'text' ) );
 		}
 
 		if ( $single ) {
@@ -836,7 +834,7 @@ class PodsForm {
 	 */
 	public static function field_setup( $field = null, $core_defaults = null, $type = null ) {
 
-		$options = array();
+		$ui_options = array();
 
 		if ( empty( $core_defaults ) ) {
 			$core_defaults = array(
@@ -864,7 +862,7 @@ class PodsForm {
 				self::field_loader( $type );
 
 				if ( method_exists( self::$loaded[ $type ], 'options' ) ) {
-					$options = apply_filters( "pods_field_{$type}_options", (array) self::$loaded[ $type ]->options(), $type );
+					$ui_options = apply_filters( "pods_field_{$type}_options", (array) self::$loaded[ $type ]->options(), $type );
 				}
 			}
 		}//end if
@@ -872,7 +870,9 @@ class PodsForm {
 		$is_field_object = $field instanceof Field;
 
 		if ( ! is_array( $field ) && ! $is_field_object ) {
-			$field = array( 'default' => $field );
+			$field = [
+				'default' => $field,
+			];
 		}
 
 		// @todo Revisit this.
@@ -892,21 +892,25 @@ class PodsForm {
 
 		$field = pods_config_merge_data( $core_defaults, $field );
 
-		foreach ( $options as $option => $settings ) {
-			$v = null;
+		foreach ( $ui_options as $option => $settings ) {
+			if ( ! is_string( $option ) ) {
+				$option = $settings['name'];
+			}
+
+			$default = null;
 
 			if ( isset( $settings['default'] ) ) {
-				$v = $settings['default'];
+				$default = $settings['default'];
 			}
 
 			if ( $is_field_object ) {
 				$option_value = $field->get_arg( $option );
 
 				if ( null === $option_value ) {
-					$field->set_arg( $option, $v );
+					$field->set_arg( $option, $default );
 				}
 			} elseif ( ! isset( $field['options'][ $option ] ) ) {
-				$field['options'][ $option ] = $v;
+				$field['options'][ $option ] = $default;
 			}
 		}
 

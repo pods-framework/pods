@@ -353,6 +353,7 @@ class PodsField {
 	 *     @type string          $name            Field name.
 	 *     @type string          $type            Field type.
 	 *     @type array           $options         Field options.
+	 *     @type Whatsit|null    $field           Field object (if provided).
 	 *     @type mixed           $value           Current value.
 	 *     @type array|Pods|null $pod             Pod data or the Pods object.
 	 *     @type int|string      $id              Current item ID.
@@ -362,6 +363,23 @@ class PodsField {
 	public function render_input_script( $args ) {
 		if ( is_array( $args ) ) {
 			$args = (object) $args;
+		}
+
+		// Detect field object being passed to the $options array upstream.
+		if ( ! empty( $args->options['_field_object'] ) ) {
+			$args->field   = $args->options['_field_object'];
+
+			unset( $args->options['_field_object'] );
+		}
+
+		// Update options so it's as expected.
+		if ( ! empty( $args->field ) ) {
+			$args->options = pods_config_merge_data( $args->options, clone $args->field );
+		}
+
+		// Remove potential 2.8 beta fragments.
+		if ( ! empty( $args->options['pod_data'] ) ) {
+			unset( $args->options['pod_data'] );
 		}
 
 		$disable_dfv = ! empty( $args->options['disable_dfv'] );
@@ -402,7 +420,7 @@ class PodsField {
 	 *     @type string       $name            Field name.
 	 *     @type string       $type            Field type.
 	 *     @type array        $options         Field options.
-	 *     @type Whatsit|null $field         Field object (if provided).
+	 *     @type Whatsit|null $field           Field object (if provided).
 	 *     @type mixed        $value           Current value.
 	 *     @type array        $pod             Pod information.
 	 *     @type int|string   $id              Current item ID.
@@ -532,7 +550,6 @@ class PodsField {
 	 * @return array
 	 */
 	public function build_dfv_field_config( $args ) {
-
 		if ( $args->options instanceof Whatsit ) {
 			$config = $args->options->export();
 		} else {
@@ -540,7 +557,6 @@ class PodsField {
 		}
 
 		unset( $config['data'] );
-		unset( $config['pod_data'] );
 
 		$config['item_id'] = (int) $args->id;
 

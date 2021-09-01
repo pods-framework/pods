@@ -176,12 +176,12 @@ class PodsForm {
 	/**
 	 * Output a field
 	 *
-	 * @param string $name    Field name
-	 * @param mixed  $value   Field value
-	 * @param string $type    Field type
-	 * @param array  $options Field options
-	 * @param array  $pod     Pod data
-	 * @param int    $id      Item ID
+	 * @param string     $name    Field name
+	 * @param mixed      $value   Field value
+	 * @param string     $type    Field type
+	 * @param array      $options Field options
+	 * @param array|Pods $pod     Pod data or the Pods object.
+	 * @param int        $id      Item ID
 	 *
 	 * @return string Field HTML
 	 *

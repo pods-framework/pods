@@ -49,7 +49,7 @@ const CheckboxSelect = ( {
 					? `${ nameBase }[${ optionIndex }]`
 					: nameBase;
 
-				let idAttribute = !! htmlAttributes.id ? htmlAttributes.id : name;
+				let idAttribute = !! htmlAttributes.id ? htmlAttributes.id : `pods-form-ui-${ name }`;
 
 				if ( 1 < totalOptions ) {
 					idAttribute += `-${ optionValue }`;

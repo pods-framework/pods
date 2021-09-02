@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 /**
  * WordPress Dependencies
  */
+import { withSelect } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
@@ -88,6 +90,9 @@ const getDynamicParamValue = ( paramFormat, paramOption, paramDefault, value ) =
 };
 
 const DynamicTabContent = ( {
+	storeKey,
+	podType,
+	podName,
 	tabOptions,
 	allPodFields,
 	allPodValues,
@@ -149,6 +154,9 @@ const DynamicTabContent = ( {
 
 	return (
 		<FieldSet
+			storeKey={ storeKey }
+			podType={ podType }
+			podName={ podName }
 			fields={ fields }
 			allPodFields={ allPodFields }
 			allPodValues={ processAllPodValues( allPodFields, allPodValues ) }
@@ -158,6 +166,21 @@ const DynamicTabContent = ( {
 };
 
 DynamicTabContent.propTypes = {
+	/**
+	 * Redux store key.
+	 */
+	storeKey: PropTypes.string.isRequired,
+
+	/**
+	 * Pod type being edited.
+	 */
+	podType: PropTypes.string.isRequired,
+
+	/**
+	 * Pod slug being edited.
+	 */
+	podName: PropTypes.string.isRequired,
+
 	/**
 	 * Array of fields that should be rendered.
 	 */
@@ -179,4 +202,15 @@ DynamicTabContent.propTypes = {
 	setOptionValue: PropTypes.func.isRequired,
 };
 
-export default DynamicTabContent;
+export default compose( [
+	withSelect( ( select, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeSelect = select( storeKey );
+
+		return {
+			podType: storeSelect.getPodOption( 'type' ),
+			podName: storeSelect.getPodOption( 'name' ),
+		};
+	} ),
+] )( DynamicTabContent );

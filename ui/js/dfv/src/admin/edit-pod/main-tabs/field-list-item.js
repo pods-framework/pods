@@ -144,6 +144,7 @@ export const FieldListItem = ( props ) => {
 			<div className={ classes }>
 				{ showEditFieldSettings && (
 					<SettingsModal
+						storeKey={ storeKey }
 						podType={ podType }
 						podName={ podName }
 						optionsPod={ editFieldPod }

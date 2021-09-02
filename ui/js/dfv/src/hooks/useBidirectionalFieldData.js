@@ -5,7 +5,6 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
 const useBidirectionalFieldData = (
-	data,
 	podType,
 	podName,
 	name,
@@ -14,7 +13,7 @@ const useBidirectionalFieldData = (
 ) => {
 	// In most cases, the 'data' passed to the field will be the 'data'
 	// prop, unless it's the "Bidirectional Field"/"sister_id".
-	const [ dataOptions, setDataOptions ] = useState( data );
+	const [ fieldItemData, setFieldItemData ] = useState( [] );
 
 	useEffect( () => {
 		// We only need to fetch data if we're creating a "Relationship"/"pick" field
@@ -42,10 +41,14 @@ const useBidirectionalFieldData = (
 
 		const loadBidirectionalFieldData = async () => {
 			// Initialize the field with loading text.
-			setDataOptions( [
+			setFieldItemData( [
 				{
-					value: '',
-					label: __( 'Loading available fields…', 'pods' ),
+					id: '',
+					name: __( 'Loading available fields…', 'pods' ),
+					icon: '',
+					edit_link: '',
+					link: '',
+					selected: false,
 				},
 			] );
 
@@ -72,10 +75,14 @@ const useBidirectionalFieldData = (
 				const results = await apiFetch( { path: requestPath } );
 
 				if ( ! results.fields || ! results.fields.length ) {
-					setDataOptions( [
+					setFieldItemData( [
 						{
-							value: '',
-							label: __( 'No Related Fields Found', 'pods' ),
+							id: '',
+							name: __( 'No Related Fields Found', 'pods' ),
+							icon: '',
+							edit_link: '',
+							link: '',
+							selected: false,
 						},
 					] );
 					return;
@@ -83,30 +90,45 @@ const useBidirectionalFieldData = (
 
 				// Reduce the API results to an ID for the value and a label.
 				const processedFields = results.fields.map( ( currentField ) => {
+					// @todo is it just currentField?
 					return {
-						value: currentField.id,
-						label: `${ currentField.label } (${ currentField.name }) [Pod: ${ currentField.parent_data?.name }]`,
+						id: currentField.id.toString(),
+						name: `${ currentField.label } (${ currentField.name }) [Pod: ${ currentField.parent_data?.name }]`,
+						icon: '',
+						edit_link: '',
+						link: '',
+						selected: false,
 					};
 				} );
 
 				processedFields.unshift( {
-					value: '',
-					label: __( '-- Select Related Field --', 'pods' ),
+					id: '',
+					name: __( '-- Select Related Field --', 'pods' ),
+					icon: '',
+					edit_link: '',
+					link: '',
+					selected: false,
 				} );
 
-				setDataOptions( processedFields );
+				setFieldItemData( processedFields );
 			} catch ( error ) {
-				setDataOptions( {
-					value: '',
-					label: __( 'No Related Fields Found', 'pods' ),
+				setFieldItemData( {
+					id: '',
+					name: __( 'No Related Fields Found', 'pods' ),
+					icon: '',
+					edit_link: '',
+					link: '',
+					selected: false,
 				} );
 			}
 		};
 
 		loadBidirectionalFieldData();
-	}, [ podType, podName, name, fieldTypeOption, relatedTypeOption, setDataOptions ] );
+	}, [ podType, podName, name, fieldTypeOption, relatedTypeOption, setFieldItemData ] );
 
-	return dataOptions;
+	return {
+		bidirectionFieldItemData: fieldItemData,
+	};
 };
 
 export default useBidirectionalFieldData;

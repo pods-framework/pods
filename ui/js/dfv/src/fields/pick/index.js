@@ -21,7 +21,9 @@ import ListSelectValues from './list-select-values';
 
 import IframeModal from 'dfv/src/components/iframe-modal';
 
+import useBidirectionalFieldData from 'dfv/src/hooks/useBidirectionalFieldData';
 import loadAjaxOptions from '../../helpers/loadAjaxOptions';
+
 import { toBool } from 'dfv/src/helpers/booleans';
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
@@ -77,7 +79,9 @@ const formatValuesForReactSelectComponent = (
 	}
 
 	if ( ! isMulti ) {
-		const selectedItemData = fieldItemData.find( ( option ) => option.id === value );
+		const selectedItemData = fieldItemData.find(
+			( option ) => option?.id?.toString() === value.toString()
+		);
 
 		return [
 			{
@@ -92,7 +96,7 @@ const formatValuesForReactSelectComponent = (
 	return splitValue.map(
 		( currentValue ) => {
 			const fullFieldItem = fieldItemData.find(
-				( option ) => option.id === currentValue
+				( option ) => option?.id?.toString() === currentValue.toString()
 			);
 
 			if ( fullFieldItem ) {
@@ -122,6 +126,7 @@ const formatValuesForHTMLSelectElement = ( value, isMulti ) => {
 const Pick = ( props ) => {
 	const {
 		fieldConfig: {
+			ajax_data: ajaxData,
 			htmlAttr: htmlAttributes = {},
 			readonly: readOnly,
 			fieldItemData,
@@ -158,11 +163,14 @@ const Pick = ( props ) => {
 			// rest_pick_depth: pickDepth,
 			// rest_pick_response: pickResponse,
 			// pick_where,
-			ajax_data: ajaxData,
+			type: fieldType,
 		},
 		setValue,
 		value,
 		setHasBlurred,
+		podType,
+		podName,
+		allPodValues,
 	} = props;
 
 	const isSingle = 'single' === formatType;
@@ -176,6 +184,25 @@ const Pick = ( props ) => {
 	const [ modifiedFieldItemData, setModifiedFieldItemData ] = useState(
 		fieldItemData ? fieldItemData : getFieldItemDataFromDataProp( data )
 	);
+
+	const { bidirectionFieldItemData } = useBidirectionalFieldData(
+		podType,
+		podName,
+		name,
+		fieldType,
+		allPodValues?.pick_object || '',
+	);
+
+	useEffect( () => {
+		// This is only relevant on the "Bidirectional"/'sister_id' field.
+		if ( 'sister_id' !== name ) {
+			return;
+		}
+
+		if ( bidirectionFieldItemData.length ) {
+			setModifiedFieldItemData( bidirectionFieldItemData );
+		}
+	}, [ bidirectionFieldItemData ] );
 
 	const setValueWithLimit = ( newValue ) => {
 		// We don't need to worry about limits if this isn't a multi-select field.
@@ -417,6 +444,26 @@ const Pick = ( props ) => {
 
 Pick.propTypes = {
 	...FIELD_COMPONENT_BASE_PROPS,
+
+	/**
+	 * Pod type being edited.
+	 */
+	podType: PropTypes.string,
+
+	/**
+	 * Pod slug being edited.
+	 */
+	podName: PropTypes.string,
+
+	/**
+	 * All field values for the Pod to use for
+	 * validating dependencies.
+	 */
+	allPodValues: PropTypes.object,
+
+	/**
+	 * Field value.
+	 */
 	value: PropTypes.oneOfType( [
 		PropTypes.arrayOf(
 			PropTypes.oneOfType( [

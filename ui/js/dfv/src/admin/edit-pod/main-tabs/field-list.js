@@ -164,6 +164,7 @@ const FieldList = ( {
 		<div className={ classes }>
 			{ showAddFieldModal && (
 				<SettingsModal
+					storeKey={ storeKey }
 					podType={ podType }
 					podName={ podName }
 					optionsPod={ editFieldPod }

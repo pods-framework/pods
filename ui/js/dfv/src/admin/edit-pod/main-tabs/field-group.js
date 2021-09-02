@@ -201,6 +201,7 @@ const FieldGroup = ( props ) => {
 
 				{ showSettings && (
 					<SettingsModal
+						storeKey={ storeKey }
 						podType={ podType }
 						podName={ podName }
 						optionsPod={ editGroupPod }
@@ -226,6 +227,7 @@ const FieldGroup = ( props ) => {
 
 			{ isExpanded && ! isDragging && (
 				<FieldList
+					storeKey={ storeKey }
 					podType={ podType }
 					podName={ podName }
 					fields={ fields || [] }
@@ -234,7 +236,6 @@ const FieldGroup = ( props ) => {
 					groupName={ groupName }
 					groupID={ groupID }
 					groupLabel={ groupLabel }
-					storeKey={ storeKey }
 				/>
 			) }
 		</div>

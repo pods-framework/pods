@@ -129,11 +129,11 @@ window.PodsDFV = {
 				let valueOrDefault;
 
 				if ( isEditPodScreen ) {
-					valueOrDefault = 'undefined' !== typeof currentField.fieldValue
+					valueOrDefault = ( 'undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue )
 						? currentField.fieldValue
 						: currentField.default;
 				} else {
-					valueOrDefault = 'undefined' !== typeof currentField.fieldValue
+					valueOrDefault = ( 'undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue )
 						? currentField.fieldValue
 						: '';
 				}

@@ -80,7 +80,7 @@ const formatValuesForReactSelectComponent = (
 
 	if ( ! isMulti ) {
 		const selectedItemData = fieldItemData.find(
-			( option ) => option.id.toString() === value.toString(),
+			( option ) => option?.id?.toString() === value.toString()
 		);
 
 		return [
@@ -96,7 +96,7 @@ const formatValuesForReactSelectComponent = (
 	return splitValue.map(
 		( currentValue ) => {
 			const fullFieldItem = fieldItemData.find(
-				( option ) => option.id.toString() === currentValue.toString()
+				( option ) => option?.id?.toString() === currentValue.toString()
 			);
 
 			if ( fullFieldItem ) {

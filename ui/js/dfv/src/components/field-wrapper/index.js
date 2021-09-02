@@ -53,7 +53,7 @@ export const FieldWrapper = ( props ) => {
 		name,
 		type: fieldType,
 		html_no_label: htmlNoLabel = false,
-		htmlAttr,
+		htmlAttr: htmlAttributes,
 	} = field;
 
 	const isBooleanGroupField = 'boolean_group' === fieldType;
@@ -93,7 +93,7 @@ export const FieldWrapper = ( props ) => {
 	}, [ name, fieldRef, meetsDependencies ] );
 
 	// Custom placeholder on the "Add Pod" screen.
-	const processedHtmlAttr = htmlAttr;
+	const processedHtmlAttr = htmlAttributes;
 
 	if ( 'create_name' === name ) {
 		processedHtmlAttr.placeholder = sanitizeSlug( allPodValues.create_label_singular );
@@ -134,7 +134,7 @@ export const FieldWrapper = ( props ) => {
 		<FieldLabel
 			label={ label }
 			required={ toBool( required ) }
-			htmlFor={ name }
+			htmlFor={ htmlAttributes?.id || `pods-form-ui-${ name }` }
 			helpTextString={ shouldShowHelpText ? helpTextString : undefined }
 			helpLink={ shouldShowHelpText ? helpLink : undefined }
 		/>

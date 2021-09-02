@@ -32,6 +32,7 @@ const ActiveTabContent = ( {
 				<FieldGroups storeKey={ storeKey } />
 			) : (
 				<DynamicTabContent
+					storeKey={ storeKey }
 					tabOptions={ activeTabFields }
 					allPodFields={ allPodFields }
 					allPodValues={ allPodValues }

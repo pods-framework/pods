@@ -115,6 +115,7 @@ const checkFormValidity = ( sections, options ) => {
 };
 
 const SettingsModal = ( {
+	storeKey,
 	title,
 	optionsPod: {
 		groups: optionsSections = [],
@@ -305,6 +306,7 @@ const SettingsModal = ( {
 				>
 					{
 						<DynamicTabContent
+							storeKey={ storeKey }
 							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab )?.fields }
 							allPodFields={ allPodFields }
 							allPodValues={ changedOptions }
@@ -335,6 +337,7 @@ const SettingsModal = ( {
 };
 
 SettingsModal.propTypes = {
+	storeKey: PropTypes.string.isRequired,
 	optionsPod: PropTypes.object.isRequired,
 	selectedOptions: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,

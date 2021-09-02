@@ -28,7 +28,6 @@ import { toBool } from 'dfv/src/helpers/booleans';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 import useDependencyCheck from 'dfv/src/hooks/useDependencyCheck';
 import useValidation from 'dfv/src/hooks/useValidation';
-import useBidirectionalFieldData from 'dfv/src/hooks/useBidirectionalFieldData';
 
 import FIELD_MAP from 'dfv/src/fields/field-map';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
@@ -36,6 +35,8 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 export const FieldWrapper = ( props ) => {
 	const {
 		field = {},
+		podName,
+		podType,
 		allPodFieldsMap,
 		value,
 		values,
@@ -44,7 +45,6 @@ export const FieldWrapper = ( props ) => {
 	} = props;
 
 	const {
-		data,
 		description,
 		help: helpText,
 		label,
@@ -59,8 +59,6 @@ export const FieldWrapper = ( props ) => {
 	const isBooleanGroupField = 'boolean_group' === fieldType;
 
 	const fieldRef = useRef( null );
-
-	const dataOptions = useBidirectionalFieldData( data );
 
 	// Find the component for the field type
 	const FieldComponent = FIELD_MAP[ fieldType ]?.fieldComponent;
@@ -146,6 +144,14 @@ export const FieldWrapper = ( props ) => {
 		<FieldDescription description={ description } />
 	) : undefined;
 
+	// Only the Boolean Group fields need both allPodValues and
+	// allPodFieldsMap, because the subfields need to reference these.
+	// The "Bidirectional Field"/'sister_id" field in the Edit Pod screen
+	// also needs allPodValues.
+	const passAllPodValues = isBooleanGroupField || 'sister_id' === name;
+
+	const passAllPodFieldsMap = isBooleanGroupField;
+
 	const inputComponent = !! FieldComponent ? (
 		<FieldErrorBoundary>
 			<FieldComponent
@@ -153,18 +159,17 @@ export const FieldWrapper = ( props ) => {
 				values={ isBooleanGroupField ? values : undefined }
 				// Only the Boolean Group fields need allPodValues and allPodFieldsMap,
 				// because the subfields need to reference these.
-				allPodValues={ isBooleanGroupField ? allPodValues : undefined }
-				allPodFieldsMap={ isBooleanGroupField ? allPodFieldsMap : undefined }
+				podName={ podName }
+				podType={ podType }
+				allPodValues={ passAllPodValues ? allPodValues : undefined }
+				allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
 				setOptionValue={ isBooleanGroupField ? setOptionValue : undefined }
 				setValue={ isBooleanGroupField ? undefined : ( newValue ) => setOptionValue( name, newValue ) }
 				isValid={ !! validationMessages.length }
 				addValidationRules={ addValidationRules }
 				htmlAttr={ processedHtmlAttr }
 				setHasBlurred={ () => setHasBlurred( true ) }
-				fieldConfig={ {
-					...field,
-					data: dataOptions || field.data,
-				} }
+				fieldConfig={ field }
 			/>
 		</FieldErrorBoundary>
 	) : (
@@ -207,6 +212,16 @@ FieldWrapper.propTypes = {
 	field: FIELD_PROP_TYPE_SHAPE,
 
 	/**
+	 * Pod type being edited.
+	 */
+	podType: PropTypes.string,
+
+	/**
+	 * Pod slug being edited.
+	 */
+	podName: PropTypes.string,
+
+	/**
 	 * All fields from the Pod, including ones that belong to other groups. This
 	 * should be a Map object, keyed by the field name, to make lookup easier.
 	 */
@@ -247,6 +262,14 @@ const MemoizedFieldWrapper = React.memo(
 		if (
 			prevProps.value !== nextProps.value ||
 			! isEqual( prevProps.values, nextProps.values )
+		) {
+			return false;
+		}
+
+		// If Pod information has changed, re-render
+		if (
+			prevProps.podName !== nextProps.podName ||
+			prevProps.podType !== nextProps.podType
 		) {
 			return false;
 		}

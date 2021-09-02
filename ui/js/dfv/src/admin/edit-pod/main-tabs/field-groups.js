@@ -139,6 +139,7 @@ const FieldGroups = ( {
 		<div className="field-groups">
 			{ showAddGroupModal && (
 				<SettingsModal
+					storeKey={ storeKey }
 					podType={ podType }
 					podName={ podName }
 					optionsPod={ editGroupPod }

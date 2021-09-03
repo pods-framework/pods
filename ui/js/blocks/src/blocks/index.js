@@ -42,7 +42,7 @@ const createBlock = ( block ) => {
 
 	registerBlockType( blockName, {
 		attributes: createAttributesFromFields( fields ),
-		apiVersion: 2,
+		apiVersion: 1, // @todo Update for apiVersion 2.
 		category,
 		description,
 		edit: EditComponent,

@@ -1061,6 +1061,35 @@ class PodsMeta {
 
 		return pods_v( 'placeholder_enter_title_here', $pod->pod_data, $placeholder, true );
 	}
+
+	/**
+	 * Handle overriding the number of revisions to keep.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param int     $num  Number of revisions to store.
+	 * @param WP_Post $post The post object.
+	 *
+	 * @return int The number of revisions to keep.
+	 */
+	public function meta_post_revisions_to_keep( $num, $post ) {
+		$pod = $this->maybe_set_up_pod( $post->post_type, null, 'post_type' );
+
+		// Check if we have a valid pod.
+		if ( ! $pod ) {
+			return $num;
+		}
+
+		$revisions_to_keep_limit = pods_v( 'revisions_to_keep_limit', $pod->pod_data );
+
+		// Check if we have a valid limit.
+		if ( ! is_numeric( $revisions_to_keep_limit ) ) {
+			return $num;
+		}
+
+		return (int) $revisions_to_keep_limit;
+	}
+
 	/**
 	 *
 	 * Called by 'post_edit_form_tag' action to include the classes in the <form> tag

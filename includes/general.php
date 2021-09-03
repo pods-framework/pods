@@ -2501,6 +2501,9 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		$hooks['action'][] = [ 'add_meta_boxes', [ PodsInit::$meta, 'meta_post_add' ], 10, 1 ];
 
 		// Other post-related hooks.
+		$hooks['filter'][] = [ 'enter_title_here', [ PodsInit::$meta, 'meta_post_enter_title_here' ], 10, 2 ];
+		$hooks['filter'][] = [ 'wp_revisions_to_keep', [ PodsInit::$meta, 'meta_post_revisions_to_keep' ], 10, 2 ];
+
 		if ( 'post' === $object_type || 'all' === $object_type ) {
 			// Handle detecting new post.
 			$hooks['action'][] = [ 'transition_post_status', [ PodsInit::$meta, 'save_post_detect_new' ], 10, 3 ];

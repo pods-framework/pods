@@ -927,6 +927,15 @@ class Pod extends Base {
 					'label' => __( 'Advanced Supports', 'pods' ),
 					'help'  => __( 'Comma-separated list of custom "supports" values to pass to register_post_type.', 'pods' ),
 				],
+				'revisions_to_keep_limit'        => [
+					'name'        => 'revisions_to_keep_limit',
+					'type'        => 'number',
+					'default'     => '0',
+					'label'       => __( 'Maximum revisions to keep per post', 'pods' ),
+					'description' => __( 'The default "0" will fallback to the normal WordPress default.', 'pods' ),
+					'help'        => __( 'Enter -1 to keep ALL revisions. Enter any positive number to limit the number of revisions kept to that amount.', 'pods' ),
+					'depends-on'  => [ 'supports_revisions' => true ],
+				],
 			];
 
 			/**

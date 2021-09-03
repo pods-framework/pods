@@ -1047,8 +1047,37 @@ class PodsMeta {
 	 *
 	 */
 	public function add_class_submittable() {
-
 		echo ' class="pods-submittable pods-form"';
+	}
+
+	/**
+	 * Maybe set up the Pods object or return the current one.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string      $pod_name The pod name.
+	 * @param int|null    $id       The item ID or null to not check ID.
+	 * @param string|null $pod_type The pod type if we need to be strict on the check.
+	 *
+	 * @return bool|Pods The Pods object or false if the pod is invalid.
+	 */
+	public function maybe_set_up_pod( $pod_name, $id = null, $pod_type = null ) {
+		// Check if we have a pod object set up for this pod name yet.
+		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $pod_name ) {
+			self::$current_pod = pods( $pod_name, null, true );
+		}
+
+		// Check if we need to strictly check the pod type.
+		if ( null !== $pod_type && self::$current_pod->pod_data['type'] !== $pod_type ) {
+			self::$current_pod = false;
+		}
+
+		// Check if we have a valid pod and if we need to fetch the new ID.
+		if ( is_object( self::$current_pod ) && null !== $id && (int) self::$current_pod->id() !== (int) $id ) {
+			self::$current_pod->fetch( $id );
+		}
+
+		return self::$current_pod;
 	}
 
 	/**
@@ -1074,15 +1103,7 @@ class PodsMeta {
 			$id = $post->ID;
 		}
 
-		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $metabox['args']['group']['pod']['name'] ) {
-			self::$current_pod = pods( $metabox['args']['group']['pod']['name'], null, true );
-		}
-
-		if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-			self::$current_pod->fetch( $id );
-		}
-
-		$pod = self::$current_pod;
+		$pod = $this->maybe_set_up_pod( $metabox['args']['group']['pod']['name'], $id, 'post_type' );
 
 		$fields = $metabox['args']['group']['fields'];
 
@@ -1257,18 +1278,9 @@ class PodsMeta {
 
 		$groups = $this->groups_get( 'post_type', $post->post_type );
 
-		$id = $post_id;
-
-		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $post->post_type ) {
-			self::$current_pod = pods( $post->post_type, null, true );
-		}
-
-		if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-			self::$current_pod->fetch( $id );
-		}
-
-		$pod  = self::$current_pod;
-		$data = array();
+		$id   = $post_id;
+		$pod  = $this->maybe_set_up_pod( $post->post_type, $id, 'post_type' );
+		$data = [];
 
 		if ( $pod ) {
 			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
@@ -1411,16 +1423,8 @@ class PodsMeta {
 				continue;
 			}
 
-			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], null, true );
-				}
-
-				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-					self::$current_pod->fetch( $id );
-				}
-
-				$pod = self::$current_pod;
+			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
+				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'media' );
 			}
 
 			$did_init = false;
@@ -1527,16 +1531,8 @@ class PodsMeta {
 				continue;
 			}
 
-			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], null, true );
-				}
-
-				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-					self::$current_pod->fetch( $id );
-				}
-
-				$pod = self::$current_pod;
+			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
+				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'media' );
 			}
 
 			foreach ( $group['fields'] as $field ) {
@@ -1669,16 +1665,8 @@ class PodsMeta {
 				continue;
 			}
 
-			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], null, true );
-				}
-
-				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-					self::$current_pod->fetch( $id );
-				}
-
-				$pod = self::$current_pod;
+			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
+				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'taxonomy' );
 			}
 
 			$fields            = array_merge( [
@@ -1783,16 +1771,8 @@ class PodsMeta {
 
 			$has_fields = true;
 
-			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], null, true );
-				}
-
-				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-					self::$current_pod->fetch( $id );
-				}
-
-				$pod = self::$current_pod;
+			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
+				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'taxonomy' );
 			}
 
 			foreach ( $group['fields'] as $field ) {
@@ -1907,16 +1887,8 @@ class PodsMeta {
 				continue;
 			}
 
-			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], null, true );
-				}
-
-				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-					self::$current_pod->fetch( $id );
-				}
-
-				$pod = self::$current_pod;
+			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
+				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'user' );
 			}
 			?>
 			<h3><?php echo $group['label']; ?></h3>
@@ -1993,18 +1965,9 @@ class PodsMeta {
 
 		$groups = $this->groups_get( 'user', 'user' );
 
-		$id = $user_id;
-
-		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== 'user' ) {
-			self::$current_pod = pods( 'user', null, true );
-		}
-
-		if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-			self::$current_pod->fetch( $id );
-		}
-
-		$pod  = self::$current_pod;
-		$data = array();
+		$id   = $user_id;
+		$pod  = $this->maybe_set_up_pod( 'user', $id, 'user' );
+		$data = [];
 
 		if ( $pod ) {
 			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
@@ -2133,16 +2096,8 @@ class PodsMeta {
 				continue;
 			}
 
-			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], null, true );
-				}
-
-				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-					self::$current_pod->fetch( $id );
-				}
-
-				$pod = self::$current_pod;
+			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
+				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'comment' );
 			}
 
 			$fields            = array_merge( [
@@ -2215,16 +2170,8 @@ class PodsMeta {
 				continue;
 			}
 
-			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], null, true );
-				}
-
-				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-					self::$current_pod->fetch( $id );
-				}
-
-				$pod = self::$current_pod;
+			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
+				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'comment' );
 			}
 
 			$fields            = array_merge( [
@@ -2391,15 +2338,7 @@ class PodsMeta {
 				$id = $comment->comment_ID;
 			}
 
-			if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $metabox['args']['group']['pod']['name'] ) {
-				self::$current_pod = pods( $metabox['args']['group']['pod']['name'], null, true );
-			}
-
-			if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-				self::$current_pod->fetch( $id );
-			}
-
-			$pod = self::$current_pod;
+			$pod = $this->maybe_set_up_pod( $metabox['args']['group']['pod']['name'], $id, 'comment' );
 
 			$fields            = $metabox['args']['group']['fields'];
 			$field_prefix      = 'pods_meta_';
@@ -2464,16 +2403,8 @@ class PodsMeta {
 				continue;
 			}
 
-			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], null, true );
-				}
-
-				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-					self::$current_pod->fetch( $id );
-				}
-
-				$pod = self::$current_pod;
+			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
+				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'comment' );
 			}
 
 			foreach ( $group['fields'] as $field ) {
@@ -2539,16 +2470,8 @@ class PodsMeta {
 				continue;
 			}
 
-			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $group['pod']['name'] ) {
-					self::$current_pod = pods( $group['pod']['name'], null, true );
-				}
-
-				if ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
-					self::$current_pod->fetch( $id );
-				}
-
-				$pod = self::$current_pod;
+			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
+				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'comment' );
 			}
 
 			foreach ( $group['fields'] as $field ) {

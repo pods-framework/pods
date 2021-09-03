@@ -1042,6 +1042,26 @@ class PodsMeta {
 	}
 
 	/**
+	 * Handle overriding the "Add title" placeholder.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string  $placeholder The "Add title" placeholder.
+	 * @param WP_Post $post        The post object.
+	 *
+	 * @return string The "Add title" placeholder.
+	 */
+	public function meta_post_enter_title_here( $placeholder, $post ) {
+		$pod = $this->maybe_set_up_pod( $post->post_type, null, 'post_type' );
+
+		// Check if we have a valid pod.
+		if ( ! $pod ) {
+			return $placeholder;
+		}
+
+		return pods_v( 'placeholder_enter_title_here', $pod->pod_data, $placeholder, true );
+	}
+	/**
 	 *
 	 * Called by 'post_edit_form_tag' action to include the classes in the <form> tag
 	 *

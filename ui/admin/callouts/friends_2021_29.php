@@ -3,9 +3,26 @@
  * @var bool $force_callouts Whether to force the callouts.
  */
 
-$donor_count    = 142;
+$donor_count    = 140;
 $donor_goal     = 200;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
+
+// @todo Add this.
+$feature_callout_link = 'https://pods.io/';
+$pods_pro_link        = 'https://pods.io/2020/12/31/introducing-pods-pro-by-skcdev/';
+$learn_more_link      = 'https://friends.pods.io/';
+$donate_now_link      = 'https://friends.pods.io/donations/become-a-friend/';
+
+$campaign_args = [
+	'utm_source'   => 'pods_plugin_callout',
+	'utm_medium'   => 'link',
+	'utm_campaign' => 'friends_of_pods_2021',
+];
+
+$feature_callout_link = add_query_arg( $campaign_args, $feature_callout_link );
+$pods_pro_link        = add_query_arg( $campaign_args, $pods_pro_link );
+$learn_more_link      = add_query_arg( $campaign_args, $learn_more_link );
+$donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 ?>
 
 <div class="pods-admin_friends-callout_container">
@@ -27,16 +44,22 @@ $progress_width = ( $donor_count / $donor_goal ) * 100;
 				);
 			?>
 		</h2>
+
 		<p class="pods-admin_friends-callout_text">
-			🎉
+			🎉&nbsp;
 			<?php
-				esc_html_e( 'Pods 2.8 is out and we are eager to finish work on our next big feature: Simple Repeatable Fields coming in Pods 2.9', 'pods' );
+				printf(
+					'%1$s: %2$s', //'%1$s: <a href="%2$s">%3$s</a>',
+					esc_html__( 'Pods 2.8 is out and we are eager to finish work on our next release', 'pods' ),
+					//esc_url( $feature_callout_link ),
+					esc_html__( 'Simple Repeatable Fields', 'pods' )
+				);
 			?>
 		</p>
 		<p class="pods-admin_friends-callout_text">
-			🤝
+			🤝&nbsp;
 			<?php
-				esc_html_e( 'Your support makes a difference in how quickly our team can finish our important work. We would be incredibly grateful to have you be a part of it! Our intention is to be fully funded by users like you. Help us reach our continued goal of 200 recurring donors in 2021.', 'pods' );
+				esc_html_e( 'Your support makes a direct impact on how quickly our team can finish this important work. Pods is fully funded by donations and powered by our community contributors. Help us reach our life sustaining goal of 200 recurring donors in 2021 - your contribution really makes a difference!', 'pods' );
 			?>
 		</p>
 		<p class="pods-admin_friends-callout_text">
@@ -58,25 +81,27 @@ $progress_width = ( $donor_count / $donor_goal ) * 100;
 				<?php echo esc_attr( $progress_width ); ?>%
 			</div>
 		</div>
+		<div class="pods-admin_friends-callout_button-group">
+			<a href="<?php echo esc_url( $learn_more_link ); ?>"
+				target="_blank" rel="noreferrer"
+				class="pods-admin_friends-callout_button">
+				<?php esc_html_e( 'Learn More', 'pods' ); ?>
+			</a>
+			<a href="<?php echo esc_url( $donate_now_link ); ?>"
+				target="_blank" rel="noreferrer"
+				class="pods-admin_friends-callout_button--join">
+				<?php esc_html_e( 'Donate Now', 'pods' ); ?> &raquo;
+			</a>
+		</div>
 		<p class="pods-admin_friends-callout_text">
-			🤗
+			🤗&nbsp;
 			<?php
 				// translators: %s: Pods Pro by SKCDEV link.
 				printf(
 					esc_html__( 'You can also check out the new add-ons available from %s which has partnered with Friends of Pods to help bring in more donations.', 'pods' ),
-					'<a href="https://pods.io/2020/12/31/introducing-pods-pro-by-skcdev/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2021">Pods Pro by SKCDEV</a>'
+					'<a href="' . esc_url( $pods_pro_link ) . '" target="_blank" rel="noreferrer">Pods Pro by SKCDEV</a>'
 				);
 			?>
 		</p>
-		<div class="pods-admin_friends-callout_button-group">
-			<a href="https://friends.pods.io/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2021"
-				class="pods-admin_friends-callout_button">
-				<?php esc_html_e( 'Learn More', 'pods' ); ?>
-			</a>
-			<a href="https://friends.pods.io/donations/become-a-friend/?utm_source=pods_plugin_callout&utm_medium=link&utm_campaign=friends_of_pods_2021"
-				class="pods-admin_friends-callout_button--join">
-				<?php esc_html_e( 'Donate Now', 'pods' ); ?>
-			</a>
-		</div>
 	</div>
 </div>

@@ -55,6 +55,9 @@ export class PodsServerSideRender extends Component {
 		if ( null !== this.state.response ) {
 			this.setState( { response: null } );
 		}
+
+		// @todo Support preloaded block content that is already provided on page load.
+
 		const {
 			block,
 			attributes = null,
@@ -100,6 +103,8 @@ export class PodsServerSideRender extends Component {
 	}
 
 	render() {
+		// @todo Support preloaded block content that is already provided on page load.
+
 		const response = this.state.response;
 		const {
 			className,

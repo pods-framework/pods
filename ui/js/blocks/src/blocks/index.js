@@ -42,6 +42,7 @@ const createBlock = ( block ) => {
 
 	registerBlockType( blockName, {
 		attributes: createAttributesFromFields( fields ),
+		apiVersion: 2,
 		category,
 		description,
 		edit: EditComponent,

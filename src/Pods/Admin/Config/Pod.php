@@ -888,7 +888,7 @@ class Pod extends Base {
 						],
 						'supports_custom_fields'   => [
 							'name'  => 'supports_custom_fields',
-							'label' => __( 'Custom Fields', 'pods' ),
+							'label' => __( 'Manually Edit Custom Fields (can cause slow performance)', 'pods' ),
 							'type'  => 'boolean',
 						],
 						'supports_comments'        => [

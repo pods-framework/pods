@@ -4,6 +4,7 @@ namespace Pods\Whatsit;
 
 use Pods\Whatsit;
 use Tribe__Utils__Array;
+use WP_Block;
 
 /**
  * Block class.
@@ -45,10 +46,16 @@ class Block extends Pod {
 			'keywords'         => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
 			'supports'         => $this->get_arg( 'supports', [] ),
 			'editor_script'    => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
-			'fields'           => $this->get_block_fields(),
-			'attributes'       => $this->get_arg( 'attributes', [] ),
+			'editor_style'     => $this->get_arg( 'editor_style' ),
+			'script'           => $this->get_arg( 'script' ),
+			'style'            => $this->get_arg( 'style' ),
+			'enqueue_script'   => $this->get_arg( 'enqueue_script' ),
+			'enqueue_style'    => $this->get_arg( 'enqueue_style' ),
+			'enqueue_assets'   => $this->get_arg( 'enqueue_assets' ),
 			'uses_context'     => $this->get_arg( 'usesContext', $this->get_arg( 'uses_context', [] ) ),
 			'provides_context' => $this->get_arg( 'providesContext', $this->get_arg( 'provides_context', [] ) ),
+			'fields'           => $this->get_block_fields(),
+			'attributes'       => $this->get_arg( 'attributes', [] ),
 		];
 
 		$default_supports = [
@@ -131,8 +138,9 @@ class Block extends Pod {
 		if ( 'js' === $block_args['renderType'] ) {
 			$block_args['renderTemplate'] = $this->get_arg( 'render_template', $this->get_arg( 'renderTemplate', __( 'No block preview is available', 'pods' ) ) );
 		} elseif ( 'php' === $block_args['renderType'] ) {
-			$block_args['render_callback']      = $this->get_arg( 'render_callback', [ $this, 'render_template' ] );
-			$block_args['render_template_path'] = $this->get_arg( 'render_template', $this->get_arg( 'render_template_path' ) );
+			$block_args['render_callback']        = [ $this, 'render' ];
+			$block_args['render_custom_callback'] = $this->get_arg( 'render_callback' );
+			$block_args['render_template_path']   = $this->get_arg( 'render_template', $this->get_arg( 'render_template_path' ) );
 		}
 
 		$other_args = (array) $this->get_arg( 'raw_args', [] );
@@ -149,32 +157,81 @@ class Block extends Pod {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param array     $block     The block instance argument values.
-	 * @param string    $content   The block inner content.
-	 * @param \WP_Block $block_obj The block object.
+	 * @param array         $attributes The block instance argument values.
+	 * @param string        $content    The block inner content.
+	 * @param WP_Block|null $block_obj  The block object.
 	 *
 	 * @return  string   The HTML render for the block.
 	 */
-	public function render_template( $block, $content, $block_obj ) {
-		$render_template_path = $block_obj->block_type->render_template_path;
+	public function render( $attributes, $content, $block_obj = null ) {
+		$block_config            = $block_obj ? $block_obj->block_type : [];
+		$block_name              = pods_v( 'name', $block_config, wp_generate_password( 12, false ), true );
+		$enqueue_style           = pods_v( 'enqueue_style', $block_config );
+		$enqueue_script          = pods_v( 'enqueue_script', $block_config );
+		$enqueue_assets_callback = pods_v( 'enqueue_assets', $block_config );
+		$template_path           = pods_v( 'render_template_path', $block_config );
+		$render_callback         = pods_v( 'render_custom_callback', $block_config );
 
+		$handle = 'block-' . pods_create_slug( $block_name );
+
+		// Maybe enqueue the style.
+		if ( $enqueue_style ) {
+			wp_enqueue_style( $handle, $enqueue_style );
+		}
+
+		// Maybe enqueue the script.
+		if ( $enqueue_script ) {
+			wp_enqueue_script( $handle, $enqueue_script, [], false, true );
+		}
+
+		// Maybe run the enqueue assets callback.
+		if ( $enqueue_assets_callback && is_callable( $enqueue_assets_callback ) ) {
+			$enqueue_assets_callback( $block_config );
+		}
+
+		// Render block from callback.
+		if ( $render_callback && is_callable( $render_callback ) ) {
+			return $render_callback( $attributes, $content, $block_obj );
+		}
+
+		// Render block from template.
+		if ( $template_path ) {
+			return $this->render_template( $template_path, $attributes, $content, $block_obj );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Render the template for the block.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string        $template_path The block render template path.
+	 * @param array         $attributes    The block instance argument values.
+	 * @param string        $content       The block inner content.
+	 * @param WP_Block|null $block_obj     The block object.
+	 *
+	 * @return  string   The HTML render for the block.
+	 */
+	public function render_template( $template_path, $attributes, $content, $block_obj = null ) {
 		/**
 		 * Allow filtering of the block render template path.
 		 *
 		 * @since 2.8.0
 		 *
-		 * @param string    $render_template_path The block render template path.
-		 * @param array     $block                The block instance argument values.
-		 * @param string    $content              The block inner content.
-		 * @param \WP_Block $block_obj            The block object.
+		 * @param string        $template_path The block render template path.
+		 * @param array         $attributes    The block instance argument values.
+		 * @param string        $content       The block inner content.
+		 * @param WP_Block|null $block_obj     The block object.
 		 */
-		$render_template_path = apply_filters( 'pods_block_render_template_path', $render_template_path, $block, $content, $block_obj );
+		$template_path = apply_filters( 'pods_block_render_template_path', $template_path, $attributes, $content, $block_obj );
 
-		if ( empty( $render_template_path ) ) {
+		if ( empty( $template_path ) ) {
 			return '';
 		}
 
-		$render = pods_view( $render_template_path, compact( 'block', 'content', 'block_obj' ), false, 'cache', true );
+		$render = pods_view( $template_path, compact( 'attributes', 'content', 'block_obj' ), false, 'cache', true );
 
 		// Avoid regex issues with $ capture groups.
 		$content = str_replace( '$', '\$', $content );
@@ -187,12 +244,13 @@ class Block extends Pod {
 		 *
 		 * @since 2.8.0
 		 *
-		 * @param string    $render    The HTML render for the block.
-		 * @param array     $block     The block instance argument values.
-		 * @param string    $content   The block inner content.
-		 * @param \WP_Block $block_obj The block object.
+		 * @param string        $render        The HTML render for the block.
+		 * @param string        $template_path The block render template path.
+		 * @param array         $attributes    The block instance argument values.
+		 * @param string        $content       The block inner content.
+		 * @param WP_Block|null $block_obj     The block object.
 		 */
-		return apply_filters( 'pods_block_render_html', $render, $block, $content, $block_obj );
+		return apply_filters( 'pods_block_render_html', $render, $attributes, $content, $block_obj );
 	}
 
 	/**

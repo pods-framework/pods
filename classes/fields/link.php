@@ -128,6 +128,8 @@ class PodsField_Link extends PodsField_Website {
 
 		if ( ! empty( $value['text'] ) ) {
 			$value['text'] = $this->strip_html( $value['text'], $options );
+			$value['text'] = $this->strip_shortcodes( $value['text'], $options );
+			$value['text'] = $this->trim_whitespace( $value['text'], $options );
 		}
 
 		if ( ! empty( $value['url'] ) ) {
@@ -279,6 +281,8 @@ class PodsField_Link extends PodsField_Website {
 		// Start Title format
 		if ( ! empty( $value['text'] ) ) {
 			$value['text'] = $this->strip_html( $value['text'], $options );
+			$value['text'] = $this->strip_shortcodes( $value['text'], $options );
+			$value['text'] = $this->trim_whitespace( $value['text'], $options );
 		}
 
 		// Start Target format

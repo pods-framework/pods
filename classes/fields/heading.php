@@ -106,6 +106,8 @@ class PodsField_Heading extends PodsField {
 		}
 
 		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
 
 		if ( 1 === (int) pods_v( static::$type . '_wptexturize', $options, 1 ) ) {
 			$value = wptexturize( $value );
@@ -123,9 +125,9 @@ class PodsField_Heading extends PodsField {
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
 
-		$value = wp_trim_words( $value );
-
-		return $value;
+		return wp_trim_words( $value );
 	}
 }

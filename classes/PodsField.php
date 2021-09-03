@@ -1,6 +1,6 @@
 <?php
 
-use Pods\Whatsit;
+use Pods\Whatsit\Field;
 
 /**
  * Pods Field class for common type-specific methods.
@@ -353,7 +353,7 @@ class PodsField {
 	 *     @type string          $name            Field name.
 	 *     @type string          $type            Field type.
 	 *     @type array           $options         Field options.
-	 *     @type Whatsit|null    $field           Field object (if provided).
+	 *     @type Field|null      $field           Field object (if provided).
 	 *     @type mixed           $value           Current value.
 	 *     @type array|Pods|null $pod             Pod data or the Pods object.
 	 *     @type int|string      $id              Current item ID.
@@ -420,7 +420,7 @@ class PodsField {
 	 *     @type string       $name            Field name.
 	 *     @type string       $type            Field type.
 	 *     @type array        $options         Field options.
-	 *     @type Whatsit|null $field           Field object (if provided).
+	 *     @type Field|null   $field           Field object (if provided).
 	 *     @type mixed        $value           Current value.
 	 *     @type array        $pod             Pod information.
 	 *     @type int|string   $id              Current item ID.
@@ -546,7 +546,7 @@ class PodsField {
 	 *     @type string       $name            Field name.
 	 *     @type string       $type            Field type.
 	 *     @type array        $options         Field options.
-	 *     @type Whatsit|null $field         Field object (if provided).
+	 *     @type Field|null   $field         Field object (if provided).
 	 *     @type mixed        $value           Current value.
 	 *     @type array        $pod             Pod information.
 	 *     @type int|string   $id              Current item ID.
@@ -556,7 +556,7 @@ class PodsField {
 	 * @return array
 	 */
 	public function build_dfv_field_config( $args ) {
-		if ( $args->options instanceof Whatsit ) {
+		if ( $args->options instanceof Field ) {
 			$config = $args->options->export();
 		} else {
 			$config = (array) $args->options;
@@ -840,13 +840,15 @@ class PodsField {
 	 * @return string
 	 */
 	public function strip_html( $value, $options = null ) {
-
 		if ( is_array( $value ) ) {
-			// @codingStandardsIgnoreLine
-			$value = @implode( ' ', $value );
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = $this->strip_html( $v, $options );
+			}
+
+			return $value;
 		}
 
-		$value = trim( $value );
+		$value = $this->trim_whitespace( $value, $options );
 
 		if ( empty( $value ) ) {
 			return $value;
@@ -876,12 +878,73 @@ class PodsField {
 			$value = strip_tags( $value );
 		}
 
-		// Strip shortcodes
-		if ( 0 === (int) pods_v( static::$type . '_allow_shortcode', $options ) ) {
-			$value = strip_shortcodes( $value );
+		return $value;
+	}
+
+	/**
+	 * Strip shortcodes based on options.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string|array     $value   The field value.
+	 * @param array|Field|null $options The field options.
+	 *
+	 * @return string The field value.
+	 */
+	public function strip_shortcodes( $value, $options = null ) {
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = $this->strip_shortcodes( $v, $options );
+			}
+
+			return $value;
 		}
 
-		return $value;
+		if ( ! $options ) {
+			return $value;
+		}
+
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+
+		// Check if we should strip shortcodes.
+		if ( 0 !== (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
+			return $value;
+		}
+
+		return strip_shortcodes( $value );
+	}
+
+	/**
+	 * Trim whitespace based on options.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string|array     $value   The field value.
+	 * @param array|Field|null $options The field options.
+	 *
+	 * @return string The field value.
+	 */
+	public function trim_whitespace( $value, $options = null ) {
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = $this->trim_whitespace( $v, $options );
+			}
+
+			return $value;
+		}
+
+		if ( ! $options ) {
+			return $value;
+		}
+
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+
+		// Check if we should trim the content.
+		if ( 0 !== (int) pods_v( static::$type . '_trim', $options, 1 ) ) {
+			return $value;
+		}
+
+		return trim( $value );
 	}
 
 	/**

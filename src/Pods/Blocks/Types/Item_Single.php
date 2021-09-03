@@ -131,6 +131,8 @@ class Item_Single extends Base {
 		// Use current if no pod name / slug provided.
 		if ( empty( $attributes['name'] ) || empty( $attributes['slug'] ) ) {
 			$attributes['use_current'] = true;
+		} elseif ( ! isset( $attributes['use_current'] ) ) {
+			$attributes['use_current'] = false;
 		}
 
 		if ( $attributes['use_current'] && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {

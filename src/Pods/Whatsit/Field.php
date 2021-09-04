@@ -159,6 +159,24 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Get the related Pod object if it exists.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return Whatsit|array|null The related object, or null if not found.
+	 */
+	public function get_related_object() {
+		$table_info = $this->get_table_info();
+
+		// Check if the pod was found.
+		if ( ! $table_info || empty( $table_info['pod'] ) ) {
+			return null;
+		}
+
+		return $table_info['pod'];
+	}
+
+	/**
 	 * Get field value limit from field.
 	 *
 	 * @since 2.8.0

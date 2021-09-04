@@ -378,13 +378,42 @@ class Pods implements Iterator {
 			// Return all fields.
 			$field_data = pods_config_get_all_fields( $this->pod_data );
 		} else {
-			$field = pods_config_get_field_from_all_fields( $field_name, $this->pod_data );
+			$tableless_field_types = PodsForm::tableless_field_types();
 
-			if ( empty( $option ) ) {
+			$fields_to_traverse = implode( '.', $field_name );
+			$fields_to_traverse = array_filter( $fields_to_traverse );
+
+			$total_fields_to_traverse = count( $fields_to_traverse );
+
+			$field    = null;
+			$pod_data = $this->pod_data;
+
+			for ( $f = 0; $f < $total_fields_to_traverse; $f ++ ) {
+				$field_to_traverse = $fields_to_traverse[ $f ];
+
+				$field = pods_config_get_field_from_all_fields( $field_to_traverse, $pod_data );
+
+				// Check if there are more fields to traverse.
+				if ( ( $f + 1 ) < $total_fields_to_traverse ) {
+					continue;
+				}
+
+				// Fill in the next pod data.
+				$pod_data = $field->get_related_object_data();
+
+				// Check if the related pod exists.
+				if ( ! $pod_data ) {
+					$field = null;
+
+					break;
+				}
+			}
+
+			if ( empty( $field ) || empty( $option ) ) {
 				$field_data = $field;
-			} elseif ( 'data' === $option && in_array( $field['type'], PodsForm::tableless_field_types(), true ) ) {
+			} elseif ( 'data' === $option && in_array( $field['type'], $tableless_field_types, true ) ) {
 				// Get a list of available items from a relationship field.
-				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $field_data );
+				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $field );
 			} elseif ( isset( $field[ $option ] ) ) {
 				// Return option.
 				$field_data = $field[ $option ];

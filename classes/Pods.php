@@ -775,7 +775,7 @@ class Pods implements Iterator {
 			}
 		}
 
-		if ( ! $field_data ) {
+		if ( ! $field_data && ! $is_traversal ) {
 			// Get the full field name data.
 			$field_data = $this->fields( $params->name );
 		}

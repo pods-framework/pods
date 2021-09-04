@@ -3,6 +3,7 @@
 use Pods\Data\Map_Field_Values;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
+use Pod as Deprecated_Pod;
 
 /**
  * Pods class.
@@ -639,7 +640,7 @@ class Pods implements Iterator {
 
 		// Support old $orderby variable.
 		if ( null !== $params->single && is_string( $params->single ) && empty( $params->orderby ) ) {
-			if ( ! class_exists( 'Pod' ) || Pod::$deprecated_notice ) {
+			if ( ! class_exists( 'Deprecated_Pod' ) || Deprecated_Pod::$deprecated_notice ) {
 				pods_deprecated( 'Pods::field', '2.0', 'Use $params[ \'orderby\' ] instead' );
 			}
 
@@ -4424,12 +4425,12 @@ class Pods implements Iterator {
 			$this->deprecated = new Pods_Deprecated( $this );
 		}
 
-		$pod_class_exists = class_exists( 'Pod' );
+		$pod_class_exists = class_exists( 'Deprecated_Pod' );
 
 		if ( method_exists( $this->deprecated, $name ) ) {
 			return call_user_func_array( array( $this->deprecated, $name ), $args );
 			// @codingStandardsIgnoreLine
-		} elseif ( ! $pod_class_exists || Pod::$deprecated_notice ) {
+		} elseif ( ! $pod_class_exists || Deprecated_Pod::$deprecated_notice ) {
 			pods_deprecated( "Pods::{$name}", '2.0' );
 		}
 

@@ -809,15 +809,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
-	 * Get field from object.
+	 * Fetch field from object with no traversal support.
 	 *
 	 * @param string      $field_name Field name.
-	 * @param null|string $arg        Argument name.
 	 * @param bool        $load_all   Whether to load all fields when getting this field.
 	 *
-	 * @return Field|mixed|null Field object, argument value, or null if object not found.
+	 * @return Field|null Field object, or null if object not found.
 	 */
-	public function get_field( $field_name, $arg = null, $load_all = true ) {
+	public function fetch_field( $field_name, $load_all = true ) {
 		$get_fields_args = [];
 
 		if ( ! $load_all ) {
@@ -855,6 +854,61 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 						}
 					}
 				}
+			}
+		}
+
+		if ( ! $field instanceof Field ) {
+			return null;
+		}
+
+		return $field;
+	}
+
+	/**
+	 * Get field from object with traversal support.
+	 *
+	 * @param string      $field_name Field name.
+	 * @param null|string $arg        Argument name.
+	 * @param bool        $load_all   Whether to load all fields when getting this field.
+	 *
+	 * @return Field|mixed|null Field object, argument value, or null if object not found.
+	 */
+	public function get_field( $field_name, $arg = null, $load_all = true ) {
+		$fields_to_traverse = explode( '.', $field_name );
+		$fields_to_traverse = array_filter( $fields_to_traverse );
+
+		$total_fields_to_traverse = count( $fields_to_traverse );
+
+		$field = null;
+
+		/** @var Whatsit $whatsit */
+		$whatsit = $this;
+
+		for ( $f = 0; $f < $total_fields_to_traverse; $f ++ ) {
+			$field_to_traverse = $fields_to_traverse[ $f ];
+
+			$field = $whatsit->fetch_field( $field_to_traverse, $load_all );
+
+			// Check if there are more fields to traverse.
+			if ( ( $f + 1 ) === $total_fields_to_traverse ) {
+				break;
+			}
+
+			// Check if the field is traversable.
+			if ( ! $field instanceof Field ) {
+				$field = null;
+
+				break;
+			}
+
+			// Fill in the next object data.
+			$whatsit = $field->get_related_object();
+
+			// Check if the related object exists.
+			if ( ! $whatsit instanceof Whatsit ) {
+				$field = null;
+
+				break;
 			}
 		}
 

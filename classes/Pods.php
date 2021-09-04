@@ -383,41 +383,7 @@ class Pods implements Iterator {
 		} else {
 			$tableless_field_types = PodsForm::tableless_field_types();
 
-			$fields_to_traverse = explode( '.', $field_name );
-			$fields_to_traverse = array_filter( $fields_to_traverse );
-
-			$total_fields_to_traverse = count( $fields_to_traverse );
-
-			$field    = null;
-			$pod_data = $this->pod_data;
-
-			for ( $f = 0; $f < $total_fields_to_traverse; $f ++ ) {
-				$field_to_traverse = $fields_to_traverse[ $f ];
-
-				$field = pods_config_get_field_from_all_fields( $field_to_traverse, $pod_data );
-
-				// Check if there are more fields to traverse.
-				if ( ( $f + 1 ) === $total_fields_to_traverse ) {
-					break;
-				}
-
-				// Check if the field is traversable.
-				if ( ! $field instanceof Field ) {
-					$field = null;
-
-					break;
-				}
-
-				// Fill in the next pod data.
-				$pod_data = $field->get_related_object();
-
-				// Check if the related pod exists.
-				if ( ! $pod_data instanceof Pod ) {
-					$field = null;
-
-					break;
-				}
-			}
+			$field = pods_config_get_field_from_all_fields( $field_name, $this->pod_data );
 
 			if ( empty( $field ) || empty( $option ) ) {
 				$field_data = $field;

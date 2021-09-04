@@ -394,12 +394,19 @@ class Pods implements Iterator {
 				$field = pods_config_get_field_from_all_fields( $field_to_traverse, $pod_data );
 
 				// Check if there are more fields to traverse.
-				if ( ( $f + 1 ) < $total_fields_to_traverse ) {
-					continue;
+				if ( ( $f + 1 ) === $total_fields_to_traverse ) {
+					break;
+				}
+
+				// Check if the field is traversable.
+				if ( $field instanceof Field ) {
+					$field = null;
+
+					break;
 				}
 
 				// Fill in the next pod data.
-				$pod_data = $field->get_related_object_data();
+				$pod_data = $field->get_related_object();
 
 				// Check if the related pod exists.
 				if ( ! $pod_data ) {

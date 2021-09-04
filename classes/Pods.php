@@ -1,6 +1,8 @@
 <?php
 
 use Pods\Data\Map_Field_Values;
+use Pods\Whatsit\Field;
+use Pods\Whatsit\Pod;
 
 /**
  * Pods class.
@@ -409,7 +411,7 @@ class Pods implements Iterator {
 				$pod_data = $field->get_related_object();
 
 				// Check if the related pod exists.
-				if ( ! $pod_data ) {
+				if ( ! $pod_data instanceof Pod ) {
 					$field = null;
 
 					break;

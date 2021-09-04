@@ -49,7 +49,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 	 * @param array  $options    Data config to test
 	 */
 	public function test_fields_traversal( $variant_id, $options ) {
-		$this->_test_fields_traversal( $variant_id, $options, 'field', false );
+		$this->_test_fields_traversal( $variant_id, $options, false );
 	}
 
 	/**
@@ -66,7 +66,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 	 * @param array  $options    Data config to test
 	 */
 	public function test_fields_deep_traversal( $variant_id, $options ) {
-		$this->_test_fields_traversal( $variant_id, $options, 'field', true );
+		$this->_test_fields_traversal( $variant_id, $options, true );
 	}
 
 	/**
@@ -129,10 +129,9 @@ class TraversalTest extends Pods_TraversalTestCase {
 	 *
 	 * @param string  $variant_id Testing variant identification
 	 * @param array   $options    Data config to test
-	 * @param string  $method     Method to test
 	 * @param boolean $deep       Whether to test deep traversal
 	 */
-	private function _test_fields_traversal( $variant_id, $options, $method, $deep ) {
+	private function _test_fields_traversal( $variant_id, $options, $deep ) {
 		pods_debug( $variant_id );
 
 		// Suppress MySQL errors
@@ -161,7 +160,6 @@ class TraversalTest extends Pods_TraversalTestCase {
 			'storage_type' => $storage_type,
 			'field_name'   => $field['name'],
 			'field_type'   => $field_type,
-			'method'       => $method,
 			'deep'         => (int) $deep,
 		);
 
@@ -232,7 +230,13 @@ class TraversalTest extends Pods_TraversalTestCase {
 			$traverse_index = $prefix . $related_data['_field_index'];
 
 			if ( ! $deep ) {
-				$this->assertEquals( (string) $related_data['_field_index'], (string) $p->fields( $traverse_index, 'name' ), sprintf( 'Related Item index field not as expected (%s) [%s] {%s should be %s}', $traverse_index, $variant_id, var_export( $p->fields( $traverse_index, 'name' ), true ), var_export( $related_data['_field_index'], true ) ) );
+				$the_field = $p->fields( $field['name'] );
+
+				$this->assertEquals( $related_data['_field_index'], $p->fields( $traverse_index, 'name' ), sprintf( 'Related Item index field not as expected (%s) [%s] | %s', $traverse_index, $variant_id, var_export( array(
+					'$related_data[\'_field_index\']'             => $related_data['_field_index'],
+					'$traverse_index'                         => $traverse_index,
+					'$p->fields( $traverse_index, \'name\' )' => $p->fields( $traverse_index, 'name' ),
+				), true ) ) );
 			} else {
 				// Related pod traversal
 				if ( in_array( $related_pod_field['type'], array( 'pick', 'taxonomy', 'avatar', 'author' ), true ) ) {

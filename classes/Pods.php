@@ -380,7 +380,7 @@ class Pods implements Iterator {
 		} else {
 			$tableless_field_types = PodsForm::tableless_field_types();
 
-			$fields_to_traverse = implode( '.', $field_name );
+			$fields_to_traverse = explode( '.', $field_name );
 			$fields_to_traverse = array_filter( $fields_to_traverse );
 
 			$total_fields_to_traverse = count( $fields_to_traverse );

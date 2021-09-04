@@ -848,37 +848,34 @@ class PodsField {
 			return $value;
 		}
 
-		$value = $this->trim_whitespace( $value, $options );
-
 		if ( empty( $value ) ) {
 			return $value;
 		}
 
-		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+		if ( $options ) {
+			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
-		// Strip HTML
-		if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0 ) ) {
-			$allowed_html_tags = '';
-			$allowed_tags      = pods_v( static::$type . '_allowed_html_tags', $options );
+			// Strip HTML
+			if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0 ) ) {
+				$allowed_tags = pods_v( static::$type . '_allowed_html_tags', $options );
 
-			if ( 0 < strlen( $allowed_tags ) ) {
-				$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
-				$allowed_tags = explode( ' ', $allowed_tags );
-				$allowed_tags = array_unique( array_filter( $allowed_tags ) );
+				if ( 0 < strlen( $allowed_tags ) ) {
+					$allowed_tags = trim( str_replace( [ '<', '>', ',' ], ' ', $allowed_tags ) );
+					$allowed_tags = explode( ' ', $allowed_tags );
+					$allowed_tags = array_unique( array_filter( $allowed_tags ) );
 
-				if ( ! empty( $allowed_tags ) ) {
-					$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
+					if ( ! empty( $allowed_tags ) ) {
+						$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
+
+						$value = strip_tags( $value, $allowed_html_tags );
+					}
 				}
-			}
 
-			if ( ! empty( $allowed_html_tags ) ) {
-				$value = strip_tags( $value, $allowed_html_tags );
+				return $value;
 			}
-		} else {
-			$value = strip_tags( $value );
 		}
 
-		return $value;
+		return strip_tags( $value );
 	}
 
 	/**
@@ -900,15 +897,17 @@ class PodsField {
 			return $value;
 		}
 
-		if ( ! $options ) {
+		if ( empty( $value ) ) {
 			return $value;
 		}
 
-		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+		if ( $options ) {
+			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
-		// Check if we should strip shortcodes.
-		if ( 0 !== (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
-			return $value;
+			// Check if we should strip shortcodes.
+			if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
+				return $value;
+			}
 		}
 
 		return strip_shortcodes( $value );
@@ -933,15 +932,13 @@ class PodsField {
 			return $value;
 		}
 
-		if ( ! $options ) {
-			return $value;
-		}
+		if ( $options ) {
+			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
-		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
-
-		// Check if we should trim the content.
-		if ( 0 !== (int) pods_v( static::$type . '_trim', $options, 1 ) ) {
-			return $value;
+			// Check if we should trim the content.
+			if ( 0 === (int) pods_v( static::$type . '_trim', $options, 1 ) ) {
+				return $value;
+			}
 		}
 
 		return trim( $value );

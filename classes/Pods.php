@@ -399,7 +399,7 @@ class Pods implements Iterator {
 				}
 
 				// Check if the field is traversable.
-				if ( $field instanceof Field ) {
+				if ( ! $field instanceof Field ) {
 					$field = null;
 
 					break;

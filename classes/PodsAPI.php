@@ -6374,8 +6374,10 @@ class PodsAPI {
 				$field                = $pod->fields( $field['name'] );
 				$field['lookup_name'] = $field['name'];
 
-				if ( in_array( $field['type'], $tableless_field_types, true ) && ! in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) ) {
-					if ( 'pick' === $field['type'] ) {
+				$field_type = pods_v( 'type', $field, 'text' );
+
+				if ( in_array( $field_type, $tableless_field_types, true ) && ! in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) ) {
+					if ( 'pick' === $field_type ) {
 						if ( empty( $field['table_info'] ) ) {
 							$field['table_info'] = $this->get_table_info( pods_v( 'pick_object', $field ), pods_v( 'pick_val', $field ), null, null, $field );
 						}
@@ -6383,7 +6385,7 @@ class PodsAPI {
 						if ( ! empty( $field['table_info'] ) && 'table' !== $field['table_info']['object_type'] ) {
 							$field['lookup_name'] .= '.' . $field['table_info']['field_id'];
 						}
-					} elseif ( in_array( $field['type'], PodsForm::file_field_types(), true ) ) {
+					} elseif ( in_array( $field_type, PodsForm::file_field_types(), true ) ) {
 						$field['lookup_name'] .= '.guid';
 					}
 				}

@@ -154,7 +154,7 @@ const SettingsModal = ( {
 
 		// eslint-disable-next-line no-alert
 		const result = confirm(
-			__( 'There are unsaved changes, are you sure you want to cancel editing?', 'pods' ),
+			__( 'There are unsaved changes that will be lost. Are you sure you want to discard those changes and close?', 'pods' ),
 		);
 
 		if ( result ) {

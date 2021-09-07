@@ -232,6 +232,7 @@ const SettingsModal = ( {
 			isDismissible={ true }
 			onRequestClose={ cancelEditing }
 			focusOnMount={ true }
+			shouldCloseOnClickOutside={ false }
 		>
 			{ hasSaveError && (
 				<div className="pod-field-group_settings-error-message">

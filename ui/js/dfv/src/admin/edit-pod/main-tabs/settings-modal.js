@@ -133,6 +133,29 @@ const SettingsModal = ( {
 
 	const [ isValid, setIsValid ] = useState( false );
 
+	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState( false );
+
+	const handleCancel = ( event ) => {
+		if ( ! hasUnsavedChanges ) {
+			cancelEditing( event );
+
+			return;
+		}
+
+		// eslint-disable-next-line no-alert
+		const result = confirm(
+			__( 'There are unsaved changes, are you sure you want to cancel editing?', 'pods' ),
+		);
+
+		if ( result ) {
+			cancelEditing( event );
+		}
+	};
+
+	const handleSave = () => {
+		save( changedOptions )( event );
+	};
+
 	// Wrapper around setChangedOptions(), which also sets the name/slug
 	// based on the Label, if the slug hasn't previously been set.
 	const setOptionValue = ( optionName, value ) => {
@@ -149,6 +172,8 @@ const SettingsModal = ( {
 			...previousChangedOptions,
 			...newOptions,
 		} ) );
+
+		setHasUnsavedChanges( true );
 	};
 	const setOptionValueCallback = useCallback( setOptionValue, [] );
 
@@ -230,7 +255,7 @@ const SettingsModal = ( {
 			className="pods-settings-modal"
 			title={ title }
 			isDismissible={ true }
-			onRequestClose={ cancelEditing }
+			onRequestClose={ handleCancel }
 			focusOnMount={ true }
 			shouldCloseOnClickOutside={ false }
 		>
@@ -320,14 +345,14 @@ const SettingsModal = ( {
 			<div className="pods-setting-modal__button-group">
 				<Button
 					isSecondary
-					onClick={ cancelEditing }
+					onClick={ handleCancel }
 				>
 					{ __( 'Cancel', 'pods' ) }
 				</Button>
 
 				<Button
 					isPrimary
-					onClick={ save( changedOptions ) }
+					onClick={ handleSave }
 					disabled={ ! isValid }
 				>
 					{ saveButtonText }

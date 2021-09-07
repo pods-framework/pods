@@ -7,12 +7,11 @@
 	top: 50%;
     transform: translate(-50%, -50%);
 	width: 90vw;
-	max-width: 48vw;
+	max-width: 950px;
 
 	@media screen and (min-width: 851px) {
 		height: 80vh;
 		width: 80vw;
-		max-width: 80vw;
 	}
 }
 

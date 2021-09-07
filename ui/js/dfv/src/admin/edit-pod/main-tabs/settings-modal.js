@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -134,6 +134,16 @@ const SettingsModal = ( {
 	const [ isValid, setIsValid ] = useState( false );
 
 	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState( false );
+
+	const tabContentRef = useRef( null );
+
+	const changeTab = ( tabName ) => {
+		setSelectedTab( tabName );
+
+		if ( tabContentRef.current ) {
+			tabContentRef.current.scrollTo( 0, 0 );
+		}
+	};
 
 	const handleCancel = ( event ) => {
 		if ( ! hasUnsavedChanges ) {
@@ -303,9 +313,7 @@ const SettingsModal = ( {
 
 						const classes = classNames(
 							'pods-settings-modal__tab-item',
-							{
-								'pods-settings-modal__tab-item--active': isActive,
-							}
+							isActive && 'pods-settings-modal__tab-item--active',
 						);
 
 						return (
@@ -315,8 +323,8 @@ const SettingsModal = ( {
 								role="button"
 								tabIndex={ 0 }
 								key={ sectionName }
-								onClick={ () => setSelectedTab( sectionName ) }
-								onKeyPress={ ( event ) => event.charCode === ENTER_KEY && setSelectedTab( sectionName ) }
+								onClick={ () => changeTab( sectionName ) }
+								onKeyPress={ ( event ) => event.charCode === ENTER_KEY && changeTab( sectionName ) }
 							>
 								{ sectionLabel }
 							</div>
@@ -329,6 +337,7 @@ const SettingsModal = ( {
 					role="tabpanel"
 					aria-labelledby="main"
 					id="main-tab"
+					ref={ tabContentRef }
 				>
 					{
 						<DynamicTabContent

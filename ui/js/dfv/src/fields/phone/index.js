@@ -20,7 +20,7 @@ const Phone = ( props ) => {
 			{ ...props }
 			fieldConfig={ fieldConfig }
 			type={ true === toBool( html5 ) ? 'tel' : 'text' }
-			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
+			maxLength={ 0 < parseInt( maxLength, 10 ) ? parseInt( maxLength, 10 ) : undefined }
 			placeholder={ placeholder }
 		/>
 	);

@@ -8,7 +8,7 @@ Author: Pods Framework Team
 Author URI: https://pods.io/about/
 Text Domain: pods
 GitHub Plugin URI: https://github.com/pods-framework/pods
-Primary Branch: release/2.8
+Primary Branch: main
 
 Copyright 2009-2021  Pods Foundation, Inc  (podsfoundation.org)
 

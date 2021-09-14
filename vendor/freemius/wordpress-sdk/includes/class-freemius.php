@@ -23429,6 +23429,7 @@
             if (
                 $this->is_addon() &&
                 ! $this->is_only_premium() &&
+		is_object( $this->_parent ) &&
                 $this->_parent->is_anonymous()
             ) {
                 return;

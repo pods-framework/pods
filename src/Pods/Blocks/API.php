@@ -24,8 +24,9 @@ class API {
 		}
 
 		$blocks = $this->get_blocks();
+		$js_blocks = $this->get_js_blocks();
 
-		// Pods Blocks API.
+		// The Pods Blocks JS API.
 		$pods_blocks_options_file = file_get_contents( PODS_DIR . 'ui/js/blocks/pods-blocks-api.min.asset.json' );
 
 		$pods_blocks_options = json_decode( $pods_blocks_options_file, true );
@@ -35,17 +36,7 @@ class API {
 		wp_set_script_translations( 'pods-blocks-api', 'pods' );
 
 		wp_localize_script( 'pods-blocks-api', 'podsBlocksConfig', [
-			'blocks'      => array_map( static function ( $block ) {
-				$js_block = $block;
-
-				// Remove render options.
-				unset( $js_block['render_callback'], $js_block['render_custom_callback'], $js_block['render_template'], $js_block['render_template_path'] );
-
-				// Remove assets options.
-				unset( $js_block['enqueue_assets'], $js_block['enqueue_script'], $js_block['enqueue_style'] );
-
-				return $js_block;
-			}, $blocks ),
+			'blocks'      => $js_blocks ,
 			// No custom collections to register directly with JS right now.
 			'collections' => [],
 		] );
@@ -138,6 +129,44 @@ class API {
 	}
 
 	/**
+	 * Get list of registered blocks for the Pods Blocks API and prepare them for JavaScript registerBlockType().
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return array List of registered blocks prepared for JavaScript registerBlockType().
+	 */
+	public function get_js_blocks() {
+		static $js_blocks = [];
+
+		if ( ! empty( $js_blocks ) ) {
+			return $js_blocks;
+		}
+
+		$blocks = $this->get_blocks();
+
+		foreach ( $blocks as $block_key => $block ) {
+			$js_block = [];
+
+			// Remove render options.
+			unset( $block['render_callback'], $block['render_custom_callback'], $block['render_template'], $block['render_template_path'] );
+
+			// Remove assets options.
+			unset( $block['enqueue_assets'], $block['enqueue_script'], $block['enqueue_style'] );
+
+			foreach ( $block as $key => $value ) {
+				// Prepare the keys as camelCase.
+				$key = pods_js_camelcase_name( $key );
+
+				$js_block[ $key ] = $value;
+			}
+
+			$js_blocks[ $block_key ] = $js_block;
+		}
+
+		return $js_blocks;
+	}
+
+	/**
 	 * Get list of registered block collections for the Pods Blocks API.
 	 *
 	 * @since 2.8.0
@@ -206,7 +235,7 @@ class API {
 	 *
 	 * @return array An array of excluded widget-type IDs.
 	 */
-	public function remove_legacy_widgets( $widgets ) {
+	public function remove_from_legacy_widgets( $widgets ) {
 		$widgets[] = 'pods_widget_field';
 		$widgets[] = 'pods_widget_form';
 		$widgets[] = 'pods_widget_list';

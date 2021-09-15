@@ -1,5 +1,6 @@
 {
-  "blockName": "pods/pods-block-view",
+  "apiVersion": 1,
+  "name": "pods/pods-block-view",
   "blockGroupLabel": "Options",
   "title": "Pods View",
   "description": "Include a file from a theme, with caching options",

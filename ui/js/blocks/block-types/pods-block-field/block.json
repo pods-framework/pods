@@ -1,5 +1,6 @@
 {
-  "blockName": "pods/pods-block-field",
+  "apiVersion": 1,
+  "name": "pods/pods-block-field",
   "blockGroupLabel": "Options",
   "title": "Pods Field Value",
   "description": "Display a single Pod item's field value.",

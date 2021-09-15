@@ -1,5 +1,6 @@
 {
-  "blockName": "pods/pods-block-form",
+  "apiVersion": 1,
+  "name": "pods/pods-block-form",
   "blockGroupLabel": "Options",
   "title": "Pods Form",
   "description": "Display a form for creating and editing Pod items.",

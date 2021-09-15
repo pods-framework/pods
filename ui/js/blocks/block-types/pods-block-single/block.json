@@ -1,5 +1,6 @@
 {
-  "blockName": "pods/pods-block-single",
+  "apiVersion": 1,
+  "name": "pods/pods-block-single",
   "blockGroupLabel": "Options",
   "title": "Pods Single Item",
   "description": "Display a single Pod item.",

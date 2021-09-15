@@ -1,5 +1,6 @@
 {
-  "blockName": "pods/pods-block-list",
+  "apiVersion": 1,
+  "name": "pods/pods-block-list",
   "blockGroupLabel": "Options",
   "title": "Pods Item List",
   "description": "List multiple Pod items.",

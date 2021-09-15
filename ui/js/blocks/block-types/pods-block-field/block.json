@@ -3,14 +3,16 @@
   "name": "pods/pods-block-field",
   "blockGroupLabel": "Options",
   "title": "Pods Field Value",
-  "description": "Display a single Pod item's field value.",
+  "description": "Display a single Pod item's field value (custom fields).",
   "renderType": "php",
   "category": "pods",
   "icon": "pods",
   "keywords": [
     "pods",
     "field",
-    "value"
+    "value",
+    "custom",
+    "meta"
   ],
   "supports": {
     "html": false,

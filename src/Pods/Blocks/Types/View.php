@@ -119,8 +119,8 @@ class View extends Base {
 		if ( empty( $attributes['view'] ) ) {
 			if ( is_admin() || wp_is_json_request() ) {
 				return $this->render_placeholder(
-					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods View - Block Error', 'pods' ),
-					esc_html__( 'This block is not configured properly, please specify a "View" to use.', 'pods' )
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods View', 'pods' ),
+					esc_html__( 'Please specify a "View" under "More Settings" to configure this block.', 'pods' )
 				);
 			}
 

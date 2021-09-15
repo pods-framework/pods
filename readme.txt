@@ -1,7 +1,7 @@
 === Pods - Custom Content Types and Fields ===
 Contributors: sc0ttkclark, keraweb, jimtrue, pglewis, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
 Donate link: https://pods.io/friends-of-pods/
-Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
+Tags: pods, custom post types, custom taxonomies, content types, custom fields, block
 Requires at least: 5.5
 Tested up to: 5.8
 Requires PHP: 5.6

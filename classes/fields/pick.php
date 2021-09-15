@@ -3436,10 +3436,10 @@ class PodsField_Pick extends PodsField {
 		$model_data = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $field_args );
 		?>
 			<script type="text/javascript">
-				window.parent.jQuery( window.parent ).trigger(
-					'dfv:modal:update',
-					<?php echo wp_json_encode( $model_data, JSON_HEX_TAG ); ?>
-				);
+				window.parent.postMessage( {
+					type: 'PODS_MESSAGE',
+					data: <?php echo wp_json_encode( $model_data, JSON_HEX_TAG ); ?>,
+				}, window.location.origin );
 			</script>
 		<?php
 

@@ -1,0 +1,67 @@
+{
+  "blockName": "pods/pods-block-field",
+  "blockGroupLabel": "Options",
+  "title": "Pods Field Value",
+  "description": "Display a single Pod item's field value.",
+  "renderType": "php",
+  "category": "pods",
+  "icon": "pods",
+  "keywords": [
+    "pods",
+    "field",
+    "value"
+  ],
+  "supports": {
+    "html": false,
+    "align": true,
+    "alignWide": true,
+    "anchor": true,
+    "customClassName": true,
+    "inserter": true,
+    "multiple": true,
+    "reusable": true,
+    "__experimentalColor": true,
+    "__experimentalFontSize": true,
+    "__experimentalPadding": true,
+    "__experimentalLineHeight": true,
+    "jsx": false
+  },
+  "editorScript": "pods-blocks-api",
+  "usesContext": [
+    "postType",
+    "postId"
+  ],
+  "attributes": {
+    "align": {
+      "type": "string"
+    },
+    "anchor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "fontSize": {
+      "type": "string"
+    },
+    "style": {
+      "type": "string"
+    },
+    "name": {
+      "type": "object",
+      "default": {
+        "label": "- Use Current Pod -",
+        "value": ""
+      }
+    },
+    "slug": {
+      "type": "string"
+    },
+    "field": {
+      "type": "string"
+    }
+  }
+}

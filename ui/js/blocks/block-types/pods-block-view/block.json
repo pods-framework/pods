@@ -1,0 +1,64 @@
+{
+  "blockName": "pods/pods-block-view",
+  "blockGroupLabel": "Options",
+  "title": "Pods View",
+  "description": "Include a file from a theme, with caching options",
+  "renderType": "php",
+  "category": "pods",
+  "icon": "pods",
+  "keywords": [
+    "pods",
+    "view",
+    "include"
+  ],
+  "supports": {
+    "html": false,
+    "align": true,
+    "alignWide": true,
+    "anchor": true,
+    "customClassName": true,
+    "inserter": true,
+    "multiple": true,
+    "reusable": true,
+    "__experimentalColor": true,
+    "__experimentalFontSize": true,
+    "__experimentalPadding": true,
+    "__experimentalLineHeight": true,
+    "jsx": false
+  },
+  "editorScript": "pods-blocks-api",
+  "attributes": {
+    "align": {
+      "type": "string"
+    },
+    "anchor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "fontSize": {
+      "type": "string"
+    },
+    "style": {
+      "type": "string"
+    },
+    "view": {
+      "type": "string"
+    },
+    "expires": {
+      "type": "number",
+      "default": 300
+    },
+    "cache_mode": {
+      "type": "object",
+      "default": {
+        "label": "Disable Caching",
+        "value": "none"
+      }
+    }
+  }
+}

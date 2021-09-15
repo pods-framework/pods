@@ -1,0 +1,80 @@
+{
+  "blockName": "pods/pods-block-form",
+  "blockGroupLabel": "Options",
+  "title": "Pods Form",
+  "description": "Display a form for creating and editing Pod items.",
+  "renderType": "php",
+  "category": "pods",
+  "icon": "pods",
+  "keywords": [
+    "pods",
+    "form",
+    "input"
+  ],
+  "supports": {
+    "html": false,
+    "align": true,
+    "alignWide": true,
+    "anchor": true,
+    "customClassName": true,
+    "inserter": true,
+    "multiple": true,
+    "reusable": true,
+    "__experimentalColor": true,
+    "__experimentalFontSize": true,
+    "__experimentalPadding": true,
+    "__experimentalLineHeight": true,
+    "jsx": false
+  },
+  "editorScript": "pods-blocks-api",
+  "usesContext": [
+    "postType",
+    "postId"
+  ],
+  "attributes": {
+    "align": {
+      "type": "string"
+    },
+    "anchor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "fontSize": {
+      "type": "string"
+    },
+    "style": {
+      "type": "string"
+    },
+    "name": {
+      "type": "object",
+      "default": {
+        "label": "- Use Current Pod -",
+        "value": ""
+      }
+    },
+    "slug": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "thank_you": {
+      "type": "string"
+    },
+    "form_output_type": {
+      "type": "object",
+      "default": {
+        "label": "Div containers (<div>)",
+        "value": "div"
+      }
+    }
+  }
+}

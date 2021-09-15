@@ -142,11 +142,13 @@ class PodsField_TextTest extends Pods_UnitTestCase {
 	 * @uses    ::pods_v
 	 */
 	public function test_method_display_value_allow_shortcode() {
-		add_shortcode( 'fooshortcode', function () {
+		add_shortcode( 'fooshortcode', static function() {
 			return 'foobar';
 		} );
 
-		$this->assertEquals( 'foobar', $this->field->display( '[fooshortcode]foo[/fooshortcode]', 'bar', array( 'text_allow_shortcode' => 1 ) ) );
+		$this->assertEquals( 'foobar', $this->field->display( '[fooshortcode]content not used[/fooshortcode]', 'bar', array( 'text_allow_shortcode' => 1 ) ) );
+		$this->assertEquals( '', $this->field->display( '[fooshortcode]content not used[/fooshortcode]', 'bar', array( 'text_allow_shortcode' => 0 ) ) );
+		$this->assertEquals( '', $this->field->display( '[fooshortcode]content not used[/fooshortcode]', 'bar' ) );
 	}
 
 	/**
@@ -239,7 +241,7 @@ class PodsField_TextTest extends Pods_UnitTestCase {
 	 * @uses    ::pods_v
 	 */
 	public function test_method_strip_html_array_value() {
-		$this->assertEquals( 'foo bar baz', $this->field->strip_html( array( 'foo', 'bar', 'baz' ) ) );
+		$this->assertEquals( array( 'foo', 'bar', 'baz' ), $this->field->strip_html( array( '<em>foo</em>', 'bar', 'baz' ) ) );
 	}
 
 	/**
@@ -247,7 +249,7 @@ class PodsField_TextTest extends Pods_UnitTestCase {
 	 * @depends test_method_exists_strip_html
 	 */
 	public function test_method_strip_html_empty_array_value() {
-		$this->assertEmpty( $this->field->strip_html( array() ) );
+		$this->assertEquals( array(), $this->field->strip_html( array() ) );
 	}
 
 	/**

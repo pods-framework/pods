@@ -19,12 +19,12 @@ abstract class Storage {
 	/**
 	 * @var array
 	 */
-	protected $primary_args = array();
+	protected $primary_args = [];
 
 	/**
 	 * @var array
 	 */
-	protected $secondary_args = array();
+	protected $secondary_args = [];
 
 	/**
 	 * @var bool
@@ -63,8 +63,8 @@ abstract class Storage {
 	 *
 	 * @return Whatsit[]
 	 */
-	public function find( array $args = array() ) {
-		return array();
+	public function find( array $args = [] ) {
+		return [];
 	}
 
 	/**
@@ -98,7 +98,7 @@ abstract class Storage {
 		$arg_value = [];
 
 		if ( array_key_exists( $arg, $args ) ) {
-			$arg_value[] = is_array( $args[ $arg ] ) ? $args[ $arg ] : array( $args[ $arg ] );
+			$arg_value[] = is_array( $args[ $arg ] ) ? $args[ $arg ] : [ $args[ $arg ] ];
 		}
 
 		$secondary_variations = [
@@ -112,7 +112,7 @@ abstract class Storage {
 				continue;
 			}
 
-			$arg_value[] = is_array( $args[ $arg . '_' . $variation ] ) ? $args[ $arg . '_' . $variation ] : array( $args[ $arg . '_' . $variation ] );
+			$arg_value[] = is_array( $args[ $arg . '_' . $variation ] ) ? $args[ $arg . '_' . $variation ] : [ $args[ $arg . '_' . $variation ] ];
 		}
 
 		if ( empty( $arg_value ) ) {

@@ -87,6 +87,12 @@ class PodsField_WYSIWYG extends PodsField {
 				'label' => __( 'Output Options', 'pods' ),
 				'type'  => 'boolean_group',
 				'boolean_group' => array(
+					static::$type . '_trim'      => array(
+						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
+						'default'    => 1,
+						'type'       => 'boolean',
+						'dependency' => true,
+					),
 					static::$type . '_oembed'          => array(
 						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
@@ -168,8 +174,9 @@ class PodsField_WYSIWYG extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
 		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
 
 		if ( 1 === (int) pods_v( static::$type . '_oembed', $options, 0 ) ) {
 			$post_temp = false;
@@ -283,8 +290,9 @@ class PodsField_WYSIWYG extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
 		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
 
 		$length = (int) pods_v( static::$type . '_max_length', $options, 0 );
 
@@ -299,8 +307,9 @@ class PodsField_WYSIWYG extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-
 		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
 
 		$value = wp_trim_words( $value );
 

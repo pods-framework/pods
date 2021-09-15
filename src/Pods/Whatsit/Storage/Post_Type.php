@@ -311,8 +311,9 @@ class Post_Type extends Collection {
 			$current_language = $lang_data['language'];
 		}
 
-		$cache_key = null;
-		$posts     = false;
+		$cache_key    = null;
+		$posts        = false;
+		$post_objects = false;
 
 		if ( empty( $args['bypass_cache'] ) && empty( $args['bypass_post_type_find'] ) ) {
 			$cache_key_parts = [
@@ -338,11 +339,12 @@ class Post_Type extends Collection {
 			$cache_key = implode( '_', $cache_key_parts );
 
 			if ( empty( $args['refresh'] ) ) {
-				$posts = pods_transient_get( $cache_key );
+				$posts        = pods_transient_get( $cache_key );
+				$post_objects = pods_cache_get( $cache_key . '_objects' );
 			}
 		}//end if
 
-		if ( ! is_array( $posts ) ) {
+		if ( ! is_array( $posts ) || ! is_array( $post_objects ) ) {
 			$posts = [];
 
 			if ( empty( $args['bypass_post_type_find'] ) ) {
@@ -354,14 +356,31 @@ class Post_Type extends Collection {
 			}
 		}
 
-		$posts = array_map( [ $this, 'to_object' ], $posts );
+		// Return the list of posts as they are if we are counting.
+		if ( ! empty( $args['count'] ) ) {
+			if ( $fallback_mode && ( empty( $args['status'] ) || in_array( 'publish', (array) $args['status'], true ) ) ) {
+				$posts = array_merge( $posts, parent::find( $args ) );
+			}
+
+			return $posts;
+		}
+
+		if ( ! is_array( $post_objects ) ) {
+			// Get the post objects.
+			$post_objects = array_map( 'get_post', $posts );
+
+			if ( empty( $args['bypass_post_type_find'] ) && empty( $args['bypass_cache'] ) ) {
+				pods_cache_set( $cache_key . '_objects', $post_objects, WEEK_IN_SECONDS );
+			}
+		}
+
+		$posts = array_map( [ $this, 'to_object' ], $post_objects );
 		$posts = array_filter( $posts );
 
 		$names = wp_list_pluck( $posts, 'name' );
-
 		$posts = array_combine( $names, $posts );
 
-		if ( $fallback_mode && ( empty( $args['status'] ) || \in_array( 'publish', (array) $args['status'], true ) ) ) {
+		if ( $fallback_mode && ( empty( $args['status'] ) || in_array( 'publish', (array) $args['status'], true ) ) ) {
 			$posts = array_merge( $posts, parent::find( $args ) );
 		}
 

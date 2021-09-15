@@ -52,12 +52,12 @@ class PodsField_HTML extends PodsField {
 				'label' => __( 'Output Options', 'pods' ),
 				'type'  => 'boolean_group',
 				'boolean_group' => [
-					static::$type . '_allow_html'      => [
-						'label'      => __( 'Allow HTML', 'pods' ),
+					static::$type . '_trim'      => array(
+						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
-					],
+					),
 					static::$type . '_oembed'          => [
 						'label'   => __( 'Enable oEmbed', 'pods' ),
 						'default' => 0,
@@ -135,7 +135,13 @@ class PodsField_HTML extends PodsField {
 			$value = pods_v( static::$type . '_content', $options, '' );
 		}
 
+		if ( $options ) {
+			$options[ static::$type . '_allow_html' ] = 1;
+		}
+
 		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
 
 		if ( 1 === (int) pods_v( static::$type . '_oembed', $options, 0 ) ) {
 			$embed = $GLOBALS['wp_embed'];
@@ -170,10 +176,14 @@ class PodsField_HTML extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+		if ( $options ) {
+			$options[ static::$type . '_allow_html' ] = 1;
+		}
+
 		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
 
-		$value = wp_trim_words( $value );
-
-		return $value;
+		return wp_trim_words( $value );
 	}
 }

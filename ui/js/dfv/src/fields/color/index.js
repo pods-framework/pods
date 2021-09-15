@@ -23,7 +23,7 @@ const Color = ( {
 			<input
 				name={ name }
 				type="hidden"
-				value={ value }
+				value={ value || '' }
 			/>
 
 			<button
@@ -33,7 +33,7 @@ const Color = ( {
 				} }
 				className="button pods-color-select-button"
 			>
-				<ColorIndicator colorValue={ value } />
+				<ColorIndicator colorValue={ value || '' } />
 
 				{ __( 'Select Color', 'pods' ) }
 			</button>

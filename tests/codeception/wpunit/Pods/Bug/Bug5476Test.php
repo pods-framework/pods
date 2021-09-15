@@ -22,17 +22,17 @@ class Bug_5476Test extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		// The WordPress test framework rolls back during tearDown, so we can safely delete the data without affecting other tests
 		pods_api()->delete_pod( 'page' );
 
+		/** @var \Pods_Migrate_Packages $migrate */
 		$migrate = $components->components['migrate-packages']['object'];
-		$result = $migrate->import( $import );
+		$result = $migrate->import( $import, true );
 		$this->assertNotFalse( $result );
 
-		$banana_content = 'This failure is brought to you by migrate-packages';
+		$banana_content = 'This failure is brought [pods] to you by migrate-packages';
 
 		$pod = pods( 'page' );
 		$id = $pod->add( array( 'banana' => $banana_content ) );
 		$pod->fetch( $id );
-		$value = $pod->display( 'banana' );
-		$this->assertEquals( wpautop( $banana_content ), $value );
+		$this->assertEquals( wpautop( trim( strip_shortcodes( $banana_content ) ) ), $pod->display( 'banana' ) );
 
 	}
 }

@@ -9,6 +9,8 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 const FieldSet = ( {
 	fields,
+	podType,
+	podName,
 	allPodFields,
 	allPodValues,
 	setOptionValue,
@@ -48,6 +50,8 @@ const FieldSet = ( {
 				value={ isGroupField ? undefined : allPodValues[ name ] }
 				values={ isGroupField ? values : undefined }
 				setOptionValue={ setOptionValue }
+				podType={ podType }
+				podName={ podName }
 				allPodFieldsMap={ allPodFieldsMap }
 				allPodValues={ allPodValues }
 			/>
@@ -60,6 +64,16 @@ FieldSet.propTypes = {
 	 * Array of fields that should be rendered in the set.
 	 */
 	fields: PropTypes.arrayOf( FIELD_PROP_TYPE_SHAPE ).isRequired,
+
+	/**
+	 * Pod type being edited.
+	 */
+	podType: PropTypes.string.isRequired,
+
+	/**
+	 * Pod slug being edited.
+	 */
+	podName: PropTypes.string.isRequired,
 
 	/**
 	 * All fields from the Pod, including ones that belong to other groups.

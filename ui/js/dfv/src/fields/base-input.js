@@ -39,7 +39,7 @@ const BaseInput = ( {
 			data-name-clean={ htmlAttributes.name_clean }
 			className={ classnames( className, htmlAttributes.class ) }
 			placeholder={ placeholderValue }
-			maxLength={ -1 !== maxLength ? maxLength : undefined }
+			maxLength={ 0 < parseInt( maxLength, 10 ) ? parseInt( maxLength, 10 ) : undefined }
 			value={ type !== 'checkbox' ? value : undefined }
 			checked={ type === 'checkbox' ? toBool( value ) : undefined }
 			readOnly={ !! readOnly }

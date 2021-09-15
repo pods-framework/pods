@@ -34,6 +34,7 @@ const FieldGroup = ( props ) => {
 		saveGroup,
 		toggleExpanded,
 		editGroupPod,
+		storeKey,
 	} = props;
 
 	const {
@@ -200,6 +201,7 @@ const FieldGroup = ( props ) => {
 
 				{ showSettings && (
 					<SettingsModal
+						storeKey={ storeKey }
 						podType={ podType }
 						podName={ podName }
 						optionsPod={ editGroupPod }
@@ -225,6 +227,7 @@ const FieldGroup = ( props ) => {
 
 			{ isExpanded && ! isDragging && (
 				<FieldList
+					storeKey={ storeKey }
 					podType={ podType }
 					podName={ podName }
 					fields={ fields || [] }
@@ -240,6 +243,7 @@ const FieldGroup = ( props ) => {
 };
 
 FieldGroup.propTypes = {
+	storeKey: PropTypes.string.isRequired,
 	podType: PropTypes.string.isRequired,
 	podName: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,

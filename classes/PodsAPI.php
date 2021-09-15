@@ -2356,7 +2356,9 @@ class PodsAPI {
 
 			// Handle weight of fields.
 			foreach ( $params->fields as $field ) {
-				if ( ! ( is_array( $field ) || $field instanceof Pods\Whatsit ) || ! isset( $field['name'] ) ) {
+				$is_field_object = $field instanceof Field;
+
+				if ( ! $is_field_object && ! is_array( $field ) && empty( $field['name'] ) ) {
 					continue;
 				}
 
@@ -2410,7 +2412,9 @@ class PodsAPI {
 
 					// Handle weight of fields.
 					foreach ( $group_fields as $field ) {
-						if ( ! ( is_array( $field ) || $field instanceof Pods\Whatsit ) || ! isset( $field['name'] ) ) {
+						$is_field_object = $field instanceof Field;
+
+						if ( ! $is_field_object && ! is_array( $field ) && empty( $field['name'] ) ) {
 							continue;
 						}
 
@@ -2443,7 +2447,12 @@ class PodsAPI {
 			$weight = 0;
 
 			foreach ( $fields_to_save as $k => $field ) {
-				$is_field_ok = ( is_array( $field ) || $field instanceof Pods\Whatsit );
+				$is_field_object = $field instanceof Field;
+
+				$is_field_ok = (
+					is_array( $field )
+					|| $is_field_object
+				);
 
 				if (
 					! empty( $old_id )
@@ -2623,11 +2632,13 @@ class PodsAPI {
 			$defined_fields = [];
 
 			foreach ( $fields as $field ) {
+				$is_field_object = $field instanceof Field;
+
 				// Skip if not a field, if an invalid field, or if already defined.
 				if (
 					! (
 						is_array( $field )
-					    || $field instanceof Pods\Whatsit
+					    || $is_field_object
 					)
 					|| ! isset( $field['name'] )
 					|| in_array( $field['name'], $defined_fields, true )
@@ -3354,28 +3365,26 @@ class PodsAPI {
 		// Setup options
 		$options = get_object_vars( $params );
 
-		$options_ignore = array(
-			'object_type',
-			'storage_type',
-			'parent',
-			'method',
-			'table_info',
+		$options_ignore = [
+			'_locale',
 			'attributes',
-			'group',
-			'grouped',
-			'developer_mode',
 			'dependency',
 			'depends-on',
+			'developer_mode',
 			'excludes-on',
-			'object_type',
-			'storage_type',
+			'group',
+			'group_id',
+			'grouped',
 			'is_new',
-			'_locale',
+			'method',
+			'object_type',
 			'old_name',
 			'parent',
-			'group_id',
+			'pod_data',
 			'sanitized',
-		);
+			'storage_type',
+			'table_info',
+		];
 
 		foreach ( $options_ignore as $ignore ) {
 			if ( isset( $options[ $ignore ] ) ) {
@@ -3389,26 +3398,26 @@ class PodsAPI {
 			unset( $options['table_info'] );
 		}
 
-		$exclude = array(
-			'id',
-			'pod_id',
-			'pod',
-			'name',
-			'label',
+		$exclude = [
+			'_locale',
 			'description',
-			'type',
+			'group_id',
+			'id',
+			'is_new',
+			'label',
+			'name',
+			'old_name',
+			'options',
+			'parent',
 			'pick_object',
 			'pick_val',
-			'sister_id',
-			'weight',
-			'options',
-			'is_new',
-			'_locale',
-			'old_name',
-			'parent',
-			'group_id',
+			'pod',
+			'pod_id',
 			'post_status',
-		);
+			'sister_id',
+			'type',
+			'weight',
+		];
 
 		foreach ( $exclude as $k => $exclude_field ) {
 			$aliases = array( $exclude_field );
@@ -6336,7 +6345,9 @@ class PodsAPI {
 		}
 
 		foreach ( $fields as $k => $field ) {
-			if ( ! is_array( $field ) && ! $field instanceof Pods\Whatsit ) {
+			$is_field_object = $field instanceof Field;
+
+			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$field = array(
 					'id'   => 0,
 					'name' => $field
@@ -6363,8 +6374,10 @@ class PodsAPI {
 				$field                = $pod->fields( $field['name'] );
 				$field['lookup_name'] = $field['name'];
 
-				if ( in_array( $field['type'], $tableless_field_types, true ) && ! in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) ) {
-					if ( 'pick' === $field['type'] ) {
+				$field_type = pods_v( 'type', $field, 'text' );
+
+				if ( in_array( $field_type, $tableless_field_types, true ) && ! in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) ) {
+					if ( 'pick' === $field_type ) {
 						if ( empty( $field['table_info'] ) ) {
 							$field['table_info'] = $this->get_table_info( pods_v( 'pick_object', $field ), pods_v( 'pick_val', $field ), null, null, $field );
 						}
@@ -6372,7 +6385,7 @@ class PodsAPI {
 						if ( ! empty( $field['table_info'] ) && 'table' !== $field['table_info']['object_type'] ) {
 							$field['lookup_name'] .= '.' . $field['table_info']['field_id'];
 						}
-					} elseif ( in_array( $field['type'], PodsForm::file_field_types(), true ) ) {
+					} elseif ( in_array( $field_type, PodsForm::file_field_types(), true ) ) {
 						$field['lookup_name'] .= '.guid';
 					}
 				}
@@ -7654,7 +7667,7 @@ class PodsAPI {
 		}
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {
@@ -7855,7 +7868,7 @@ class PodsAPI {
 		}
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {
@@ -7943,7 +7956,7 @@ class PodsAPI {
 			}
 
 			// Check if we need to bypass cache automatically.
-			if ( empty( $params['bypass_cache'] ) ) {
+			if ( ! isset( $params['bypass_cache'] ) ) {
 				$api_cache = pods_api_cache();
 
 				if ( ! $api_cache ) {
@@ -8166,7 +8179,7 @@ class PodsAPI {
 		}
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {
@@ -8317,7 +8330,7 @@ class PodsAPI {
 		unset( $params['type'] );
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {
@@ -8364,7 +8377,7 @@ class PodsAPI {
 		}
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {
@@ -9862,7 +9875,9 @@ class PodsAPI {
 			$info['orderby'] = pods_v( 'orderby_custom', $info['pod'], $info['orderby'], true );
 
 			if ( ! empty( $field ) ) {
-				if ( ! is_array( $field ) && ! $field instanceof Pods\Whatsit ) {
+				$is_field_object = $field instanceof Field;
+
+				if ( ! is_array( $field ) && ! $is_field_object ) {
 					if ( is_string( $pod ) ) {
 						$pod = pods( $pod );
 					}
@@ -9872,7 +9887,9 @@ class PodsAPI {
 					}
 				}
 
-				if ( is_array( $field ) || $field instanceof Pods\Whatsit ) {
+				$is_field_object = $field instanceof Field;
+
+				if ( is_array( $field ) || $is_field_object ) {
 					$info['table']            = pods_v( 'pick_table', pods_v( 'options', $field, $field ) );
 					$info['field_id']         = pods_v( 'pick_table_id', pods_v( 'options', $field, $field ) );
 					$info['meta_field_value'] = pods_v( 'pick_table_index', pods_v( 'options', $field, $field ) );
@@ -10275,8 +10292,9 @@ class PodsAPI {
 
 		pods_transient_clear( 'pods' );
 		pods_transient_clear( 'pods_components' );
+		pods_transient_clear( 'pods_core_loader_objects' );
 
-		if ( null !== $pod && ( is_array( $pod ) || ( $pod instanceof Pods\Whatsit && 'pod' === $pod->get_object_type() ) ) ) {
+		if ( is_array( $pod ) || $pod instanceof Pod ) {
 			pods_transient_clear( 'pods_pod_' . $pod['name'] );
 			pods_cache_clear( $pod['name'], 'pods-class' );
 
@@ -10614,7 +10632,7 @@ class PodsAPI {
 		}
 
 		// Check if we need to bypass cache automatically.
-		if ( empty( $params['bypass_cache'] ) ) {
+		if ( ! isset( $params['bypass_cache'] ) ) {
 			$api_cache = pods_api_cache();
 
 			if ( ! $api_cache ) {

@@ -38,7 +38,11 @@ class API {
 			'blocks'      => array_map( static function ( $block ) {
 				$js_block = $block;
 
-				unset( $js_block['render_callback'] );
+				// Remove render options.
+				unset( $js_block['render_callback'], $js_block['render_custom_callback'], $js_block['render_template'], $js_block['render_template_path'] );
+
+				// Remove assets options.
+				unset( $js_block['enqueue_assets'], $js_block['enqueue_script'], $js_block['enqueue_style'] );
 
 				return $js_block;
 			}, $blocks ),

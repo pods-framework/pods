@@ -17,11 +17,11 @@ class Legacy_Object extends Whatsit {
 	public function get_clean_args() {
 		$args = parent::get_clean_args();
 
-		$old_mapping = array(
+		$old_mapping = [
 			'name' => 'label',
 			'slug' => 'name',
 			'code' => 'description',
-		);
+		];
 
 		$new_args = [];
 
@@ -42,11 +42,11 @@ class Legacy_Object extends Whatsit {
 	 * {@inheritdoc}
 	 */
 	public function get_arg( $arg, $default = null, $strict = false ) {
-		$old_mapping = array(
+		$old_mapping = [
 			'name' => 'label',
 			'slug' => 'name',
 			'code' => 'description',
-		);
+		];
 
 		if ( isset( $old_mapping[ $arg ] ) ) {
 			$arg = $old_mapping[ $arg ];

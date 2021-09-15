@@ -176,7 +176,7 @@ const DateTime = ( {
 				name={ htmlAttributes.name || name }
 				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ) }
 				type={ 'datetime' === type ? 'datetime-local' : type }
-				value={ value }
+				value={ value || '' }
 				onChange={ handleInputFieldChange }
 				onBlur={ setHasBlurred }
 			/>
@@ -187,8 +187,10 @@ const DateTime = ( {
 		<Datetime
 			className="pods-react-datetime-fix"
 			initialValue={ moment( value ) }
+			onChange={ ( newValue ) => {
+				console.log( 'onChange', newValue );
+			} }
 			onClose={ handleChange }
-			onBlur={ setHasBlurred }
 			dateFormat={ includeDateField && momentDateFormat }
 			timeFormat={ includeTimeField && momentTimeFormat }
 			isValidDate={ isValidDate }

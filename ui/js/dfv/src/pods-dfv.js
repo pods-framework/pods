@@ -33,12 +33,15 @@ window.PodsDFV = {
 
 	/**
 	 * Initialize Pod data.
+	 *
+	 * @param {string} selector Selector to target script tags. If empty, selects all DFV script tags from the document.
 	 */
-	init() {
+	init( selector = '' ) {
 		const isEditPodScreen = 'undefined' !== typeof window.podsAdminConfig;
 
 		// Find all in-line data scripts
-		const dataTags = [ ...document.querySelectorAll( SCRIPT_TARGET ) ];
+		const scriptTagSelector = selector || SCRIPT_TARGET;
+		const dataTags = [ ...document.querySelectorAll( scriptTagSelector ) ];
 
 		const fieldsData = dataTags.map( ( tag ) => {
 			const data = JSON.parse( tag.innerHTML );
@@ -126,11 +129,11 @@ window.PodsDFV = {
 				let valueOrDefault;
 
 				if ( isEditPodScreen ) {
-					valueOrDefault = 'undefined' !== typeof currentField.fieldValue
+					valueOrDefault = ( 'undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue )
 						? currentField.fieldValue
 						: currentField.default;
 				} else {
-					valueOrDefault = 'undefined' !== typeof currentField.fieldValue
+					valueOrDefault = ( 'undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue )
 						? currentField.fieldValue
 						: '';
 				}
@@ -143,14 +146,17 @@ window.PodsDFV = {
 			{}
 		);
 
-		console.log( 'initialValues', initialValues );
+		// eslint-disable-next-line no-console
+		console.log( 'Pods init with initial values:', initialValues );
 
 		// The Edit Pod screen gets a different store set up than
 		// other contexts.
+		let storeKey = null;
+
 		if ( isEditPodScreen ) {
-			initEditPodStore( window.podsAdminConfig );
+			storeKey = initEditPodStore( window.podsAdminConfig );
 		} else if ( window.podsDFVConfig ) {
-			initPodStore( window.podsDFVConfig, initialValues );
+			storeKey = initPodStore( window.podsDFVConfig, initialValues );
 		} else {
 			// Something is wrong if neither set of globals is set.
 			return;
@@ -159,16 +165,15 @@ window.PodsDFV = {
 		// Creates a container for the React app to "render",
 		// although it doesn't actually render anything in the container,
 		// but places the fields in the correct places with Portals.
-		if ( ! this.dfvRootContainer ) {
-			this.dfvRootContainer = document.createElement( 'div' );
-			this.dfvRootContainer.id = 'pods-dfv-container';
-			document.body.appendChild( this.dfvRootContainer );
-		}
+		const dfvRootContainer = document.createElement( 'div' );
+		dfvRootContainer.class = 'pods-dfv-container';
+
+		document.body.appendChild( dfvRootContainer );
 
 		// Set up the DFV app.
 		ReactDOM.render(
-			<PodsDFVApp fieldsData={ validFieldsData } />,
-			this.dfvRootContainer
+			<PodsDFVApp fieldsData={ validFieldsData } storeKey={ storeKey } />,
+			dfvRootContainer
 		);
 	},
 

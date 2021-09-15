@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -115,6 +115,7 @@ const checkFormValidity = ( sections, options ) => {
 };
 
 const SettingsModal = ( {
+	storeKey,
 	title,
 	optionsPod: {
 		groups: optionsSections = [],
@@ -132,6 +133,39 @@ const SettingsModal = ( {
 
 	const [ isValid, setIsValid ] = useState( false );
 
+	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState( false );
+
+	const tabContentRef = useRef( null );
+
+	const changeTab = ( tabName ) => {
+		setSelectedTab( tabName );
+
+		if ( tabContentRef.current ) {
+			tabContentRef.current.scrollTo( 0, 0 );
+		}
+	};
+
+	const handleCancel = ( event ) => {
+		if ( ! hasUnsavedChanges ) {
+			cancelEditing( event );
+
+			return;
+		}
+
+		// eslint-disable-next-line no-alert
+		const result = confirm(
+			__( 'There are unsaved changes that will be lost. Are you sure you want to discard those changes and close?', 'pods' ),
+		);
+
+		if ( result ) {
+			cancelEditing( event );
+		}
+	};
+
+	const handleSave = () => {
+		save( changedOptions )( event );
+	};
+
 	// Wrapper around setChangedOptions(), which also sets the name/slug
 	// based on the Label, if the slug hasn't previously been set.
 	const setOptionValue = ( optionName, value ) => {
@@ -148,6 +182,8 @@ const SettingsModal = ( {
 			...previousChangedOptions,
 			...newOptions,
 		} ) );
+
+		setHasUnsavedChanges( true );
 	};
 	const setOptionValueCallback = useCallback( setOptionValue, [] );
 
@@ -229,8 +265,9 @@ const SettingsModal = ( {
 			className="pods-settings-modal"
 			title={ title }
 			isDismissible={ true }
-			onRequestClose={ cancelEditing }
+			onRequestClose={ handleCancel }
 			focusOnMount={ true }
+			shouldCloseOnClickOutside={ false }
 		>
 			{ hasSaveError && (
 				<div className="pod-field-group_settings-error-message">
@@ -276,9 +313,7 @@ const SettingsModal = ( {
 
 						const classes = classNames(
 							'pods-settings-modal__tab-item',
-							{
-								'pods-settings-modal__tab-item--active': isActive,
-							}
+							isActive && 'pods-settings-modal__tab-item--active',
 						);
 
 						return (
@@ -288,8 +323,8 @@ const SettingsModal = ( {
 								role="button"
 								tabIndex={ 0 }
 								key={ sectionName }
-								onClick={ () => setSelectedTab( sectionName ) }
-								onKeyPress={ ( event ) => event.charCode === ENTER_KEY && setSelectedTab( sectionName ) }
+								onClick={ () => changeTab( sectionName ) }
+								onKeyPress={ ( event ) => event.charCode === ENTER_KEY && changeTab( sectionName ) }
 							>
 								{ sectionLabel }
 							</div>
@@ -302,9 +337,11 @@ const SettingsModal = ( {
 					role="tabpanel"
 					aria-labelledby="main"
 					id="main-tab"
+					ref={ tabContentRef }
 				>
 					{
 						<DynamicTabContent
+							storeKey={ storeKey }
 							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab )?.fields }
 							allPodFields={ allPodFields }
 							allPodValues={ changedOptions }
@@ -317,14 +354,14 @@ const SettingsModal = ( {
 			<div className="pods-setting-modal__button-group">
 				<Button
 					isSecondary
-					onClick={ cancelEditing }
+					onClick={ handleCancel }
 				>
 					{ __( 'Cancel', 'pods' ) }
 				</Button>
 
 				<Button
 					isPrimary
-					onClick={ save( changedOptions ) }
+					onClick={ handleSave }
 					disabled={ ! isValid }
 				>
 					{ saveButtonText }
@@ -335,6 +372,7 @@ const SettingsModal = ( {
 };
 
 SettingsModal.propTypes = {
+	storeKey: PropTypes.string.isRequired,
 	optionsPod: PropTypes.object.isRequired,
 	selectedOptions: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,

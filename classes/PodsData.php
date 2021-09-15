@@ -1112,118 +1112,136 @@ class PodsData {
 		// Search.
 		if ( ! empty( $params->search ) && ! empty( $params->fields ) ) {
 			if ( false !== $params->search_query && 0 < strlen( $params->search_query ) ) {
-				$where  = array();
-				$having = array();
+				$where            = [];
+				$having           = [];
+				$fields_to_search = [];
+
+				$excluded_field_types_from_search = [
+					'date',
+					'time',
+					'datetime',
+					'number',
+					'decimal',
+					'currency',
+					'phone',
+					'password',
+					'boolean',
+					'comment',
+					'taxonomy',
+				];
 
 				if ( false !== $params->search_across ) {
-					foreach ( $params->fields as $key => $field ) {
-						if ( is_array( $field ) || $field instanceof Field ) {
-							$attributes = $field;
-							$field      = pods_v( 'name', $field, $key, true );
-						} else {
-							$attributes = array(
-								'type'    => '',
-								'options' => array(),
-							);
-						}
-
-						if ( isset( $attributes['search'] ) && ! $attributes['search'] ) {
-							continue;
-						}
-
-						if ( in_array(
-							$attributes['type'], array(
-								'date',
-								'time',
-								'datetime',
-								'number',
-								'decimal',
-								'currency',
-								'phone',
-								'password',
-								'boolean',
-								'comment',
-								'taxonomy',
-							), true
-						) ) {
-							continue;
-						}
-
-						$fieldfield = '`' . $field . '`';
-
-						$is_object_field = isset( $params->object_fields[ $field ] );
-
-						if ( in_array( $attributes['type'], $pick_field_types, true ) && ! in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects, true ) ) {
-							if ( false === $params->search_across_picks ) {
-								continue;
-							} else {
-								if ( empty( $attributes['table_info'] ) ) {
-									$attributes['table_info'] = $this->api->get_table_info( pods_v( 'pick_object', $attributes ), pods_v( 'pick_val', $attributes ) );
-								}
-
-								if ( empty( $attributes['table_info']['field_index'] ) ) {
-									continue;
-								}
-
-								$fieldfield = $fieldfield . '.`' . $attributes['table_info']['field_index'] . '`';
-							}
-						} elseif ( in_array( $attributes['type'], $file_field_types, true ) ) {
-							if ( false === $params->search_across_files ) {
-								continue;
-							} else {
-								$fieldfield = $fieldfield . '.`post_title`';
-							}
-						} elseif ( isset( $params->fields[ $field ] ) && ! $is_object_field ) {
-							if ( $params->meta_fields ) {
-								$fieldfield = $fieldfield . '.`meta_value`';
-							} else {
-								$fieldfield = '`' . $params->pod_table_prefix . '`.' . $fieldfield;
-							}
-						} elseif ( ! isset( $params->fields[ $field ] ) && $is_pod_meta_storage ) {
-							$fieldfield = $fieldfield . '.`meta_value`';
-						} else {
-							$fieldfield = '`t`.' . $fieldfield;
-						}//end if
-
-						if ( isset( $this->aliases[ $field ] ) ) {
-							$fieldfield = '`' . $this->aliases[ $field ] . '`';
-						}
-
-						if ( ! empty( $attributes['real_name'] ) ) {
-							$fieldfield = $attributes['real_name'];
-						}
-
-						if ( isset( $attributes['group_related'] ) && false !== $attributes['group_related'] ) {
-							$having[] = "{$fieldfield} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
-						} else {
-							$where[] = "{$fieldfield} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
-						}
-					}//end foreach
+					// Search all fields.
+					$fields_to_search = $params->fields;
 				} elseif ( ! empty( $params->index ) ) {
-					$attributes = array();
+					$index_field = null;
 
-					$fieldfield = '`t`.`' . $params->index . '`';
+					// Search just the index field if we can find it.
+					if ( isset( $params->fields[ $params->index ] ) ) {
+						$index_field = $params->fields[ $params->index ];
+					} elseif ( isset( $params->object_fields[ $params->index ] ) ) {
+						$index_field = $params->object_fields[ $params->index ];
+					}
 
-					if ( isset( $params->fields[ $params->index ] ) && ! $params->fields[ $params->index ] instanceof Object_Field ) {
-						if ( $params->meta_fields ) {
-							$fieldfield = '`' . $params->index . '`.`' . $params->pod_table_prefix . '`';
-						} else {
-							$fieldfield = '`' . $params->pod_table_prefix . '`.`' . $params->index . '`';
+					if ( $index_field ) {
+						$fields_to_search = [
+							$params->index => $index_field,
+						];
+					}
+				}
+
+				foreach ( $fields_to_search as $key => $field ) {
+					$is_field_object = $field instanceof Field;
+
+					if ( is_array( $field ) || $is_field_object ) {
+						$attributes = $field;
+						$field      = pods_v( 'name', $field, $key, true );
+					} else {
+						$attributes = [
+							'type'    => '',
+							'options' => [],
+						];
+					}
+
+					if ( isset( $attributes['search'] ) && ! $attributes['search'] ) {
+						continue;
+					}
+
+					// Exclude certain field types from search.
+					if ( in_array( $attributes['type'], $excluded_field_types_from_search, true ) ) {
+						continue;
+					}
+
+					$db_field_name = '`' . $field . '`';
+
+					$is_object_field = (
+						isset( $params->object_fields[ $field ] )
+						|| $attributes instanceof Object_Field
+					);
+					$is_custom_field = (
+						! $is_object_field
+						&& ! isset( $params->fields[ $field ] )
+					);
+
+					$pick_object = pods_v( $attributes['type'] . '_object', $attributes );
+					$pick_val    = pods_v( $attributes['type'] . '_val', $attributes );
+
+					if ( in_array( $attributes['type'], $pick_field_types, true ) && ! in_array( $pick_object, $simple_tableless_objects, true ) ) {
+						// Search relationship fields.
+						if ( false !== $params->search_across && false === $params->search_across_picks ) {
+							// Skip if we are searching but not searching across relationship fields.
+							continue;
+						} elseif ( empty( $attributes['table_info'] ) ) {
+							$attributes['table_info'] = $this->api->get_table_info( $pick_object, $pick_val );
 						}
-					} elseif ( ! isset( $params->fields[ $params->index ] ) && $is_pod_meta_storage ) {
-						$fieldfield = '`' . $params->index . '`.`meta_value`';
+
+						// Check if we have index column information about the related table.
+						if ( empty( $attributes['table_info']['field_index'] ) ) {
+							continue;
+						}
+
+						$db_field_name .= '.`' . $attributes['table_info']['field_index'] . '`';
+					} elseif ( in_array( $attributes['type'], $file_field_types, true ) ) {
+						// Search file fields.
+						if ( false !== $params->search_across && false === $params->search_across_files ) {
+							// Skip if we are searching but not searching across file fields.
+							continue;
+						}
+
+						$db_field_name .= '.`post_title`';
+					} elseif ( $is_custom_field ) {
+						// Search custom fields (they are not a defined field or an object field).
+						if ( $params->meta_fields ) {
+							// If meta is enabled, this must be a meta field.
+							$db_field_name .= '.`meta_value`';
+						} else {
+							// Maybe this is just a field we don't know about on the table.
+							$db_field_name = '`' . $params->pod_table_prefix . '`.' . $db_field_name;
+						}
+					} elseif ( ! $is_object_field && $is_pod_meta_storage ) {
+						// Search meta fields.
+						$db_field_name .= '.`meta_value`';
+					} else {
+						// Search object fields.
+						$db_field_name = '`t`.' . $db_field_name;
+					}//end if
+
+					if ( isset( $this->aliases[ $field ] ) ) {
+						$db_field_name = '`' . $this->aliases[ $field ] . '`';
 					}
 
-					if ( isset( $attributes['real_name'] ) && false !== $attributes['real_name'] && ! empty( $attributes['real_name'] ) ) {
-						$fieldfield = $attributes['real_name'];
+					if ( ! empty( $attributes['real_name'] ) ) {
+						$db_field_name = $attributes['real_name'];
 					}
+
+					$filter_clause = "{$db_field_name} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
 
 					if ( isset( $attributes['group_related'] ) && false !== $attributes['group_related'] ) {
-						$having[] = "{$fieldfield} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
+						$having[] = $filter_clause;
 					} else {
-						$where[] = "{$fieldfield} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
+						$where[] = $filter_clause;
 					}
-				}//end if
+				}//end foreach
 
 				if ( ! empty( $where ) ) {
 					$params->where[] = '( ' . implode( ' OR ', $where ) . ' )';
@@ -1986,7 +2004,7 @@ class PodsData {
 			$mode = 'id';
 			$id   = pods_absint( $row );
 
-			if ( ! is_numeric( $row ) || 0 === strpos( $row, '0' ) || $row !== preg_replace( '/[^0-9]/', '', $row ) ) {
+			if ( ! is_numeric( $row ) || 0 === strpos( $row, '0' ) || (string) $row !== (string) preg_replace( '/[^0-9]/', '', $row ) ) {
 				if ( $this->id && is_numeric( $this->id ) ) {
 					$id = $this->id;
 				} else {
@@ -2000,8 +2018,10 @@ class PodsData {
 			if ( ! empty( $this->pod ) ) {
 				$row = pods_cache_get( $id, 'pods_items_' . $this->pod );
 
-				if ( false !== $row ) {
+				if ( is_array( $row ) ) {
 					$already_cached = true;
+				} else {
+					$row = false;
 				}
 			}
 
@@ -2012,7 +2032,7 @@ class PodsData {
 
 			$pod_type = $this->type;
 
-			if ( false !== $row && is_array( $row ) ) {
+			if ( $already_cached ) {
 				$this->row = $row;
 			} elseif ( in_array(
 				$pod_type, array(
@@ -2039,16 +2059,16 @@ class PodsData {
 						$this->row = false;
 					}
 				} else {
-					$args = array(
-						'post_type'   => $post_type,
-						'name'        => $id,
-						'numberposts' => 5,
-					);
+					$args = [
+						'post_type'      => $post_type,
+						'name'           => $id,
+						'posts_per_page' => 5,
+					];
 
 					$find = get_posts( $args );
 
 					if ( ! empty( $find ) ) {
-						$this->row = get_object_vars( $find[0] );
+						$this->row = get_object_vars( reset( $find ) );
 					}
 				}
 
@@ -2103,7 +2123,7 @@ class PodsData {
 					$this->row = get_term_by( 'slug', $id, $taxonomy, ARRAY_A );
 				}//end if
 
-				if ( is_wp_error( $this->row ) || empty( $this->row ) ) {
+				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
 					$current_row_id = $this->row['term_id'];
@@ -2117,7 +2137,7 @@ class PodsData {
 					$this->row = get_user_by( 'slug', $id );
 				}
 
-				if ( is_wp_error( $this->row ) || empty( $this->row ) ) {
+				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
 					// Get other vars.
@@ -2142,7 +2162,7 @@ class PodsData {
 				$this->row = get_comment( $id, ARRAY_A );
 
 				// No slug handling here.
-				if ( is_wp_error( $this->row ) || empty( $this->row ) ) {
+				if ( empty( $this->row ) || is_wp_error( $this->row ) ) {
 					$this->row = false;
 				} else {
 					$current_row_id = $this->row['comment_ID'];
@@ -2150,7 +2170,7 @@ class PodsData {
 
 				$get_table_data = true;
 			} elseif ( 'settings' === $pod_type ) {
-				$this->row = array();
+				$this->row = [];
 
 				if ( empty( $this->fields ) || ! $this->pod_data ) {
 					$this->row = false;
@@ -2232,7 +2252,7 @@ class PodsData {
 			}//end if
 
 			if ( ! empty( $this->pod ) && ! $already_cached ) {
-				pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, 0 );
+				pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, WEEK_IN_SECONDS );
 			}
 		}//end if
 
@@ -2575,20 +2595,24 @@ class PodsData {
 					$haystack = preg_replace( '/\w\(/', ' ', $haystack );
 					$haystack = str_replace( array( '(', ')', '  ', '\\\'', '\\"' ), ' ', $haystack );
 
+					// Find xyz.some_field and `xyz`.`some_field` variations.
 					preg_match_all( '/`?[\w\-]+`?(?:\\.`?[\w\-]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
 
+					// Find `some_field` variations but leave out some_field without backticks.
+					preg_match_all( '/(?:`?[\w\-]+`?)+(?!\.)(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found2, PREG_PATTERN_ORDER );
+
 					$found = (array) @current( $found );
+					$found = array_merge( $found, (array) @current( $found2 ) );
+					$found = array_unique( $found );
 
-					foreach ( $found as $value ) {
-						$value = str_replace( '`', '', $value );
-						$value = explode( '.', $value );
+					$post_status_patterns = [
+						'`t`.`post_status`',
+						't.post_status',
+						'`post_status`',
+						'post_status',
+					];
 
-						if ( ( 'post_status' === $value[0] && 1 === count( $value ) ) || ( 2 === count( $value ) && 't' === $value[0] && 'post_status' === $value[1] ) ) {
-							$post_status_found = true;
-
-							break;
-						}
-					}
+					$post_status_found = 0 < count( array_intersect( $found, $post_status_patterns ) );
 				} elseif ( ! empty( $params->query_fields ) && in_array( 'post_status', $params->query_fields, true ) ) {
 					$post_status_found = true;
 				}//end if

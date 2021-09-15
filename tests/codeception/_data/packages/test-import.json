@@ -34,6 +34,7 @@
           "wysiwyg_wptexturize": "1",
           "wysiwyg_convert_chars": "1",
           "wysiwyg_wpautop": "1",
+          "wysiwyg_trim": "1",
           "wysiwyg_allow_shortcode": "0",
           "pick_post_status": [
             "publish"

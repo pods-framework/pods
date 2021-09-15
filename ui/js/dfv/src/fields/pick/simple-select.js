@@ -2,8 +2,6 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
-import { __ } from '@wordpress/i18n';
-
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
 const SimpleSelect = ( {
@@ -12,7 +10,6 @@ const SimpleSelect = ( {
 	value,
 	options,
 	setValue,
-	placeholder = __( '-- Select One --', 'pods' ),
 	isMulti = false,
 	readOnly = false,
 } ) => {
@@ -27,7 +24,7 @@ const SimpleSelect = ( {
 			id={ htmlAttributes.id || `pods-form-ui-${ name }` }
 			name={ htmlAttributes.name || name }
 			className={ classes }
-			value={ value }
+			value={ value || '' }
 			onChange={ ( event ) => {
 				if ( readOnly ) {
 					return;
@@ -48,13 +45,7 @@ const SimpleSelect = ( {
 			readOnly={ !! readOnly }
 		>
 			<>
-				{ ! isMulti && placeholder && (
-					<option key="placeholder" value="">
-						{ placeholder }
-					</option>
-				) }
-
-				{ options.map( ( { label: optionLabel, value: optionValue } ) => {
+				{ options.map( ( { name: optionLabel, id: optionValue } ) => {
 					if ( 'string' === typeof optionValue ) {
 						return (
 							<option key={ optionValue } value={ optionValue }>
@@ -64,7 +55,7 @@ const SimpleSelect = ( {
 					} else if ( Array.isArray( optionValue ) ) {
 						return (
 							<optgroup label={ optionLabel } key={ optionLabel }>
-								{ optionValue.map( ( { value: suboptionValue, label: suboptionLabel } ) => {
+								{ optionValue.map( ( { id: suboptionValue, name: suboptionLabel } ) => {
 									return (
 										<option key={ suboptionValue } value={ suboptionValue }>
 											{ suboptionLabel }
@@ -103,12 +94,17 @@ SimpleSelect.propTypes = {
 	} ),
 	name: PropTypes.string.isRequired,
 	value: PropTypes.oneOfType( [
+		PropTypes.arrayOf(
+			PropTypes.oneOfType( [
+				PropTypes.string,
+				PropTypes.number,
+			] )
+		),
 		PropTypes.string,
-		PropTypes.arrayOf( PropTypes.string ),
+		PropTypes.number,
 	] ),
 	setValue: PropTypes.func.isRequired,
 	options: PICK_OPTIONS.isRequired,
-	placeholder: PropTypes.string,
 	isMulti: PropTypes.bool,
 	readOnly: PropTypes.bool,
 };

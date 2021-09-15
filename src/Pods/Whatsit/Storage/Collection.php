@@ -246,10 +246,9 @@ class Collection extends Storage {
 			$objects = array_slice( $objects, 0, $args['limit'], true );
 		}
 
-		$names   = wp_list_pluck( $objects, 'name' );
-		$objects = array_combine( $names, $objects );
+		$names = wp_list_pluck( $objects, 'name' );
 
-		return $objects;
+		return array_combine( $names, $objects );
 	}
 
 	/**

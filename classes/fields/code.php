@@ -55,6 +55,12 @@ class PodsField_Code extends PodsField {
 				'label' => __( 'Output Options', 'pods' ),
 				'type'  => 'boolean_group',
 				'boolean_group' => array(
+					static::$type . '_trim'      => array(
+						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
+						'default'    => 1,
+						'type'       => 'boolean',
+						'dependency' => true,
+					),
 					static::$type . '_allow_shortcode' => array(
 						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
@@ -137,6 +143,7 @@ class PodsField_Code extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+		$value = $this->trim_whitespace( $value, $options );
 
 		$length = (int) pods_v( static::$type . '_max_length', $options, 0 );
 

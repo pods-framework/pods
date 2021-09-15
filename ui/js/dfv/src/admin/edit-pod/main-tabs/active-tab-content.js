@@ -6,7 +6,6 @@ import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
 // Pods dependencies
-import { STORE_KEY_EDIT_POD } from 'dfv/src/store/constants';
 import DynamicTabContent from './dynamic-tab-content';
 import FieldGroups from './field-groups';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
@@ -15,6 +14,7 @@ import './active-tab-content.scss';
 
 // Display the content for the active tab, manage-fields is treated special
 const ActiveTabContent = ( {
+	storeKey,
 	activeTab,
 	activeTabFields,
 	allPodFields,
@@ -29,9 +29,10 @@ const ActiveTabContent = ( {
 			className="pods-nav-tab-group pods-edit-pod-manage-field"
 		>
 			{ isManageFieldsTabActive ? (
-				<FieldGroups />
+				<FieldGroups storeKey={ storeKey } />
 			) : (
 				<DynamicTabContent
+					storeKey={ storeKey }
 					tabOptions={ activeTabFields }
 					allPodFields={ allPodFields }
 					allPodValues={ allPodValues }
@@ -43,6 +44,11 @@ const ActiveTabContent = ( {
 };
 
 ActiveTabContent.propTypes = {
+	/**
+	 * Redux store key.
+	 */
+	storeKey: PropTypes.string.isRequired,
+
 	/**
 	 * Slug for the active tab.
 	 */
@@ -70,8 +76,10 @@ ActiveTabContent.propTypes = {
 };
 
 export default compose( [
-	withSelect( ( select ) => {
-		const storeSelect = select( STORE_KEY_EDIT_POD );
+	withSelect( ( select, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeSelect = select( storeKey );
 
 		const activeTab = storeSelect.getActiveTab();
 
@@ -82,9 +90,11 @@ export default compose( [
 			allPodValues: storeSelect.getPodOptions(),
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
+	withDispatch( ( dispatch, ownProps ) => {
+		const { storeKey } = ownProps;
+
 		return {
-			setOptionValue: dispatch( STORE_KEY_EDIT_POD ).setOptionValue,
+			setOptionValue: dispatch( storeKey ).setOptionValue,
 		};
 	} ),
 ] )( ActiveTabContent );

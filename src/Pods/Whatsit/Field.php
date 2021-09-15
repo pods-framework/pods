@@ -140,7 +140,7 @@ class Field extends Whatsit {
 
 		if ( 'table' === $related_type ) {
 			$related_name = $this->get_arg( 'related_table', $related_name );
-		} elseif ( \in_array( $related_type, array( 'user', 'media', 'comment' ), true ) ) {
+		} elseif ( in_array( $related_type, [ 'user', 'media', 'comment' ], true ) ) {
 			$related_name = $related_type;
 		}
 
@@ -156,6 +156,24 @@ class Field extends Whatsit {
 	 */
 	public function get_related_object_data() {
 		return PodsForm::field_method( $this->args['type'], 'data', $this->args['name'], null, $this->args, null, null, true );
+	}
+
+	/**
+	 * Get the related Pod object if it exists.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return Whatsit|array|null The related object, or null if not found.
+	 */
+	public function get_related_object() {
+		$table_info = $this->get_table_info();
+
+		// Check if the pod was found.
+		if ( ! $table_info || empty( $table_info['pod'] ) ) {
+			return null;
+		}
+
+		return $table_info['pod'];
 	}
 
 	/**

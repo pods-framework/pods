@@ -2,6 +2,9 @@
 
 namespace Pods;
 
+use Pods\Data\Map_Field_Values;
+use Pods\Theme\WP_Query_Integration;
+
 use tad_DI52_ServiceProvider;
 
 /**
@@ -19,6 +22,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	public function register() {
 		$this->container->singleton( Permissions::class, Permissions::class );
 		$this->container->singleton( Map_Field_Values::class, Map_Field_Values::class );
+		$this->container->singleton( WP_Query_Integration::class, WP_Query_Integration::class );
 
 		$this->hooks();
 	}
@@ -29,6 +33,6 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	 * @since 2.8.0
 	 */
 	protected function hooks() {
-		// Nothing here for now.
+		add_action( 'init', $this->container->callback( WP_Query_Integration::class, 'hook' ), 20 );
 	}
 }

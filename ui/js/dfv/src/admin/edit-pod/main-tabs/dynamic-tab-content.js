@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 /**
  * WordPress Dependencies
  */
+import { withSelect } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
@@ -77,15 +79,20 @@ const processAllPodValues = ( fields, allPodValues ) => {
 	return allPodValues;
 };
 
-const getLabelValue = ( labelFormat, paramOption, paramDefault, value ) => {
+const getDynamicParamValue = ( paramFormat, paramOption, paramDefault, value ) => {
+	// No param option set, just return the plain param value.
 	if ( ! paramOption ) {
-		return labelFormat;
+		return paramFormat;
 	}
 
-	return sprintf( labelFormat, value || paramDefault || MISSING );
+	// Replace the %s with the value as necessary.
+	return sprintf( paramFormat, value || paramDefault || MISSING );
 };
 
 const DynamicTabContent = ( {
+	storeKey,
+	podType,
+	podName,
 	tabOptions,
 	allPodFields,
 	allPodValues,
@@ -93,24 +100,63 @@ const DynamicTabContent = ( {
 } ) => {
 	const fields = tabOptions.map( ( tabOption ) => {
 		const {
+			description: optionDescription,
+			description_param: optionDescriptionParam,
+			description_param_default: optionDescriptionParamDefault,
+			help: optionHelp,
+			help_param: optionHelpParam,
+			help_param_default: optionHelpParamDefault,
 			label: optionLabel,
 			label_param: optionLabelParam,
 			label_param_default: optionLabelParamDefault,
+			placeholder: optionPlaceholder,
+			placeholder_param: optionPlaceholderParam,
+			placeholder_param_default: optionPlaceholderParamDefault,
+			html_content: optionHtmlContent,
+			html_content_param: optionHtmlContentParam,
+			html_content_param_default: optionHtmlContentParamDefault,
 		} = tabOption;
 
 		return {
 			...tabOption,
-			label: getLabelValue(
+			description: getDynamicParamValue(
+				optionDescription,
+				optionDescriptionParam,
+				optionDescriptionParamDefault,
+				allPodValues[ optionDescriptionParam ]
+			),
+			help: getDynamicParamValue(
+				optionHelp,
+				optionHelpParam,
+				optionHelpParamDefault,
+				allPodValues[ optionHelpParam ]
+			),
+			label: getDynamicParamValue(
 				optionLabel,
 				optionLabelParam,
 				optionLabelParamDefault,
 				allPodValues[ optionLabelParam ]
+			),
+			placeholder: getDynamicParamValue(
+				optionPlaceholder,
+				optionPlaceholderParam,
+				optionPlaceholderParamDefault,
+				allPodValues[ optionPlaceholderParam ]
+			),
+			html_content: getDynamicParamValue(
+				optionHtmlContent,
+				optionHtmlContentParam,
+				optionHtmlContentParamDefault,
+				allPodValues[ optionHtmlContentParam ]
 			),
 		};
 	} );
 
 	return (
 		<FieldSet
+			storeKey={ storeKey }
+			podType={ podType }
+			podName={ podName }
 			fields={ fields }
 			allPodFields={ allPodFields }
 			allPodValues={ processAllPodValues( allPodFields, allPodValues ) }
@@ -120,6 +166,21 @@ const DynamicTabContent = ( {
 };
 
 DynamicTabContent.propTypes = {
+	/**
+	 * Redux store key.
+	 */
+	storeKey: PropTypes.string.isRequired,
+
+	/**
+	 * Pod type being edited.
+	 */
+	podType: PropTypes.string.isRequired,
+
+	/**
+	 * Pod slug being edited.
+	 */
+	podName: PropTypes.string.isRequired,
+
 	/**
 	 * Array of fields that should be rendered.
 	 */
@@ -141,4 +202,15 @@ DynamicTabContent.propTypes = {
 	setOptionValue: PropTypes.func.isRequired,
 };
 
-export default DynamicTabContent;
+export default compose( [
+	withSelect( ( select, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeSelect = select( storeKey );
+
+		return {
+			podType: storeSelect.getPodOption( 'type' ),
+			podName: storeSelect.getPodOption( 'name' ),
+		};
+	} ),
+] )( DynamicTabContent );

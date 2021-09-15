@@ -1600,7 +1600,9 @@ class PodsUI {
 				'name' => $name,
 			);
 
-			if ( ! is_array( $field ) ) {
+			$is_field_object = $field instanceof Field;
+
+			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$name = $field;
 
 				$field = array(
@@ -1653,11 +1655,15 @@ class PodsUI {
 		$singular_label = $this->item;
 		$plural_label   = $this->items;
 
-		if ( is_object( $this->pod ) && 'settings' === $this->pod->pod_data['type'] && 'settings' === $this->style ) {
-			pods_view( PODS_DIR . 'ui/admin/form-settings.php', compact( array_keys( get_defined_vars() ) ) );
-		} else {
-			pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
+		$is_settings_pod = is_object( $this->pod ) && 'settings' === $this->pod->pod_data['type'];
+
+		$form_type = 'post';
+
+		if ( 'settings' === $this->style || $is_settings_pod ) {
+			$form_type = 'settings';
 		}
+
+		pods_view( PODS_DIR . 'ui/forms/form.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
 	/**
@@ -1721,7 +1727,9 @@ class PodsUI {
 				'options' => 'text',
 			);
 
-			if ( ! is_array( $field ) ) {
+			$is_field_object = $field instanceof Field;
+
+			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$name = $field;
 
 				$field = array(
@@ -2775,6 +2783,8 @@ class PodsUI {
 								} else {
 									continue;
 								}
+
+								$filter_field[ 'disable_dfv' ] = true;
 								?>
 								<span class="pods-form-ui-filter-container pods-form-ui-filter-container-<?php echo esc_attr( $filter ); ?>">
 								<?php
@@ -3217,7 +3227,7 @@ class PodsUI {
 							?>
 							&nbsp;&nbsp;
 							<label class="screen-reader-text" for="<?php echo esc_attr( $this->num_prefix ); ?>page-search<?php echo esc_attr( $this->num ); ?>-input"><?php _e( 'Search', 'pods' ); ?>:</label>
-							<?php echo PodsForm::field( $this->num_prefix . 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search' . $this->num . '-input' ) ) ); ?>
+							<?php echo PodsForm::field( $this->num_prefix . 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search' . $this->num . '-input' ), 'disable_dfv' => true ) ); ?>
 							<?php
 						} else {
 							echo PodsForm::field( $this->num_prefix . 'search' . $this->num, '', 'hidden' );
@@ -3425,6 +3435,8 @@ class PodsUI {
 						} else {
 							continue;
 						}
+
+						$filter_field[ 'disable_dfv' ] = true;
 						?>
 						<p class="pods-ui-posts-filter-toggled pods-ui-posts-filter-<?php echo esc_attr( $filter . ( $zebra ? ' clear' : '' ) ); ?>">
 							<?php
@@ -3637,7 +3649,7 @@ class PodsUI {
 
 					<p class="pods-ui-posts-filter-toggled pods-ui-posts-filter-search<?php echo esc_attr( $zebra ? ' clear' : '' ); ?>">
 						<label for="<?php echo esc_attr( $this->num_prefix ); ?>pods-form-ui-search<?php echo esc_attr( $this->num ); ?>"><?php _e( 'Search Text', 'pods' ); ?></label>
-						<?php echo PodsForm::field( $this->num_prefix . 'search' . $this->num, pods_v( $this->num_prefix . 'search' . $this->num ), 'text' ); ?>
+						<?php echo PodsForm::field( $this->num_prefix . 'search' . $this->num, pods_v( $this->num_prefix . 'search' . $this->num ), 'text', [ 'disable_dfv' => true ] ); ?>
 					</p>
 
 					<?php $zebra = empty( $zebra ); ?>

@@ -261,7 +261,11 @@ class PodsField_Website extends PodsField {
 		}
 
 		if ( 'none' === pods_v( static::$type . '_format', $options ) ) {
-			return $this->strip_html( $value, $options );
+			$value = $this->strip_html( $value, $options );
+			$value = $this->strip_shortcodes( $value, $options );
+			$value = $this->trim_whitespace( $value, $options );
+
+			return $value;
 		}
 
 		if ( is_array( $value ) ) {

@@ -1822,10 +1822,14 @@ class PodsField_Pick extends PodsField {
 		if (
 			'single' === pods_v( static::$type . '_format_type', $options, 'single' )
 			&& 'dropdown' === pods_v( static::$type . '_format_single', $options, 'dropdown' )
-			&& 0 !== (int) pods_v( static::$type . '_show_select_text', $options, 1 )
+			//&& 0 !== (int) pods_v( static::$type . '_show_select_text', $options, 1 )
 			&& 0 === (int) pods_v( 'required', $options, 0 )
 		) {
-			$data = array( '' => pods_v( static::$type . '_select_text', $options, __( '-- Select One --', 'pods' ), true ) ) + $data;
+			$default_select = [
+				'' => pods_v( static::$type . '_select_text', $options, __( '-- Select One --', 'pods' ), true ),
+			];
+
+			$data = array_merge( $default_select, $data );
 		}
 
 		$data = apply_filters( 'pods_field_pick_data', $data, $name, $value, $options, $pod, $id );
@@ -1996,7 +2000,9 @@ class PodsField_Pick extends PodsField {
 	public function get_field_data( $field, $deprecated = null, $object_params = array() ) {
 		$options = array();
 
-		if ( is_array( $field ) ) {
+		$is_field_object = $field instanceof Field;
+
+		if ( is_array( $field ) || $is_field_object ) {
 			$options = $field;
 		}
 
@@ -3621,6 +3627,34 @@ class PodsField_Pick extends PodsField {
 
 		$this->admin_modal_bail_JSON( $item_id, $item_title, $field_args );
 
+	}
+
+	/**
+	 * Build field data for Pods DFV.
+	 *
+	 * @param object $args            {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name            Field name.
+	 *     @type string     $type            Field type.
+	 *     @type array      $options         Field options.
+	 *     @type mixed      $value           Current value.
+	 *     @type array      $pod             Pod information.
+	 *     @type int|string $id              Current item ID.
+	 *     @type string     $form_field_type HTML field type.
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_data( $args ) {
+		$data = parent::build_dfv_field_data( $args );
+
+		// Normalize arrays for multiple select.
+		if ( is_array( $data['fieldValue'] ) ) {
+			$data['fieldValue'] = array_values( $data['fieldValue'] );
+		}
+
+		return $data;
 	}
 
 }

@@ -1,6 +1,9 @@
 <?php
 
 use Pods\Data\Map_Field_Values;
+use Pods\Whatsit\Field;
+use Pods\Whatsit\Pod;
+use Pod as Deprecated_Pod;
 
 /**
  * Pods class.
@@ -323,8 +326,9 @@ class Pods implements Iterator {
 	 * @since 2.3.10
 	 */
 	public function input( $field, $input_name = null, $value = '__null' ) {
+		$is_field_object = $field instanceof Field;
 
-		if ( is_array( $field ) ) {
+		if ( is_array( $field ) || $is_field_object ) {
 			// Field data override.
 			$field_data = $field;
 
@@ -377,13 +381,15 @@ class Pods implements Iterator {
 			// Return all fields.
 			$field_data = pods_config_get_all_fields( $this->pod_data );
 		} else {
+			$tableless_field_types = PodsForm::tableless_field_types();
+
 			$field = pods_config_get_field_from_all_fields( $field_name, $this->pod_data );
 
-			if ( empty( $option ) ) {
+			if ( empty( $field ) || empty( $option ) ) {
 				$field_data = $field;
-			} elseif ( 'data' === $option && in_array( $field['type'], PodsForm::tableless_field_types(), true ) ) {
+			} elseif ( 'data' === $option && in_array( $field['type'], $tableless_field_types, true ) ) {
 				// Get a list of available items from a relationship field.
-				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $field_data );
+				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $field );
 			} elseif ( isset( $field[ $option ] ) ) {
 				// Return option.
 				$field_data = $field[ $option ];
@@ -600,7 +606,7 @@ class Pods implements Iterator {
 
 		// Support old $orderby variable.
 		if ( null !== $params->single && is_string( $params->single ) && empty( $params->orderby ) ) {
-			if ( ! class_exists( 'Pod' ) || Pod::$deprecated_notice ) {
+			if ( ! class_exists( 'Deprecated_Pod' ) || Deprecated_Pod::$deprecated_notice ) {
 				pods_deprecated( 'Pods::field', '2.0', 'Use $params[ \'orderby\' ] instead' );
 			}
 
@@ -679,7 +685,6 @@ class Pods implements Iterator {
 		 */
 		$use_meta_fallback = apply_filters( 'pods_field_wp_object_use_meta_fallback', $use_meta_fallback, $pod_type );
 
-
 		if ( in_array( $params->name, $permalink_fields, true ) ) {
 			if ( 0 < strlen( $this->detail_page ) && false === strpos( $params->name, 'permalink' ) ) {
 				// ACT Pods. Prevent tag loop by not parsing `permalink`.
@@ -739,7 +744,7 @@ class Pods implements Iterator {
 			}
 		}
 
-		if ( ! $field_data ) {
+		if ( ! $field_data && ! $is_traversal ) {
 			// Get the full field name data.
 			$field_data = $this->fields( $params->name );
 		}
@@ -3294,7 +3299,9 @@ class Pods implements Iterator {
 					'name' => $name,
 				);
 
-				if ( ! is_array( $field ) ) {
+				$is_field_object = $field instanceof Field;
+
+				if ( ! is_array( $field ) && ! $is_field_object ) {
 					$name = $field;
 
 					$field = array(
@@ -3795,7 +3802,9 @@ class Pods implements Iterator {
 				'name' => $name,
 			];
 
-			if ( ! is_array( $field ) ) {
+			$is_field_object = $field instanceof Field;
+
+			if ( ! is_array( $field ) && ! $is_field_object ) {
 				$name = $field;
 
 				$field = [
@@ -4382,12 +4391,12 @@ class Pods implements Iterator {
 			$this->deprecated = new Pods_Deprecated( $this );
 		}
 
-		$pod_class_exists = class_exists( 'Pod' );
+		$pod_class_exists = class_exists( 'Deprecated_Pod' );
 
 		if ( method_exists( $this->deprecated, $name ) ) {
 			return call_user_func_array( array( $this->deprecated, $name ), $args );
 			// @codingStandardsIgnoreLine
-		} elseif ( ! $pod_class_exists || Pod::$deprecated_notice ) {
+		} elseif ( ! $pod_class_exists || Deprecated_Pod::$deprecated_notice ) {
 			pods_deprecated( "Pods::{$name}", '2.0' );
 		}
 

@@ -3,6 +3,8 @@ import HelpTooltip from 'dfv/src/components/help-tooltip';
 
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
+import './heading.scss';
+
 const Heading = ( props ) => {
 	const {
 		fieldConfig: {

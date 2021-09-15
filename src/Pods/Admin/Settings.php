@@ -42,18 +42,37 @@ class Settings {
 	 * @return mixed The setting value.
 	 */
 	public function get_setting( $setting_name, $default = null ) {
-		$defaults = $this->add_settings_fields( [] );
+		$settings = $this->get_settings();
+
+		return pods_v( $setting_name, $settings, $default );
+	}
+
+	/**
+	 * Get the Pods settings.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return array The setting values.
+	 */
+	public function get_settings() {
 		$settings = get_option( self::OPTION_NAME, [] );
 
 		if ( ! $settings ) {
 			$settings = [];
 		}
 
-		if ( null === $default && isset( $defaults[ $setting_name ]['default'] ) ) {
-			$default = $defaults[ $setting_name ]['default'];
+		$defaults = $this->get_setting_fields();
+
+		// Set up defaults as needed.
+		foreach ( $defaults as $setting_name => $setting ) {
+			if ( isset( $settings[ $setting_name ] ) || ! isset( $setting['default'] ) ) {
+				continue;
+			}
+
+			$settings[ $setting_name ] = $setting['default'];
 		}
 
-		return pods_v( $setting_name, $settings, $default );
+		return $settings;
 	}
 
 	/**
@@ -65,11 +84,7 @@ class Settings {
 	 * @param mixed  $setting_value The setting value.
 	 */
 	public function update_setting( $setting_name, $setting_value ) {
-		$settings = get_option( self::OPTION_NAME, [] );
-
-		if ( ! $settings ) {
-			$settings = [];
-		}
+		$settings = $this->get_settings();
 
 		if ( null !== $setting_value ) {
 			$settings[ $setting_name ] = $setting_value;
@@ -88,12 +103,7 @@ class Settings {
 	 * @param array $setting_values The list of settings to update, pass null as a value to remove it.
 	 */
 	public function update_settings( array $setting_values ) {
-		$settings = get_option( self::OPTION_NAME, [] );
-
-		if ( ! $settings ) {
-			$settings = [];
-		}
-
+		$settings = $this->get_settings();
 		$settings = array_merge( $settings, $setting_values );
 
 		foreach ( $settings as $setting_name => $setting_value ) {

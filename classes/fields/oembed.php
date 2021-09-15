@@ -241,8 +241,9 @@ class PodsField_OEmbed extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
 		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
 
 		// Only allow ONE URL
 		if ( ! empty( $value ) ) {
@@ -490,13 +491,14 @@ class PodsField_OEmbed extends PodsField {
 		$params = pods_unslash( (array) $_POST );
 
 		if ( ! empty( $params['_nonce_pods_oembed'] ) && ! empty( $params['pods_field_oembed_value'] ) && wp_verify_nonce( $params['_nonce_pods_oembed'], 'pods_field_oembed_preview' ) ) {
-			$value = $this->strip_html( $params['pods_field_oembed_value'] );
-
 			$name    = '';
 			$options = array();
 
 			if ( ! empty( $params['pods_field_oembed_name'] ) ) {
-				$name = $this->strip_html( $params['pods_field_oembed_name'] );
+				$name = $params['pods_field_oembed_value'];
+				$name = $this->strip_html( $name );
+				$name = $this->strip_shortcodes( $name );
+				$name = $this->trim_whitespace( $name );
 			}
 
 			if ( ! empty( $params['pods_field_oembed_options'] ) ) {

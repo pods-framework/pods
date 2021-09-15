@@ -87,6 +87,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 						'groups' => [
 							'labels',
 							'admin-ui',
+							'connections',
 							'advanced',
 							'pods-pfat',
 							'rest-api',
@@ -114,6 +115,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 						'groups' => [
 							'labels',
 							'admin-ui',
+							'connections',
 							'advanced',
 							'pods-pfat',
 							'rest-api',
@@ -191,6 +193,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 						'groups' => [
 							'labels',
 							'admin-ui',
+							'connections',
 							'advanced',
 							'pods-pfat',
 							'rest-api',
@@ -218,6 +221,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 						'groups' => [
 							'labels',
 							'admin-ui',
+							'connections',
 							'advanced',
 							'pods-pfat',
 							'rest-api',

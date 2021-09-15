@@ -71,6 +71,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	public function ajax_import_export( $params ) {
 		if ( 'import' === $params->import_export ) {
 			$data = trim( $params->import_package );
+			$file = null;
 
 			$content = '<div class="pods-wizard-content">';
 
@@ -82,6 +83,24 @@ class Pods_Migrate_Packages extends PodsComponent {
 			 * @param bool $replace Whether to replace existing configurations when importing a package.
 			 */
 			$replace = apply_filters( 'pods_migrate_packages_import_replace', false );
+
+			if ( ! empty( $_FILES['import_package_file'] ) ) {
+				$data = null;
+				$file = $_FILES['import_package_file'];
+
+				if ( 0 !== (int) $file['error'] ) {
+					$content .= '<p>' . esc_html__( 'Import Error: Package upload failed', 'pods' ) . '</p>';
+				} elseif (
+					! in_array( $file['type'], [ 'application/json', 'text/json' ], true )
+					|| '.json' !== substr( $file['name'], -5, 5 )
+				) {
+					$content .= '<p>' . esc_html__( 'Import Error: Package upload is not a valid JSON file', 'pods' ) . '</p>';
+				} elseif ( ! is_file( $file['tmp_name'] ) ) {
+					$content .= '<p>' . esc_html__( 'Import Error: Package upload not completed', 'pods' ) . '</p>';
+				} else {
+					$data = file_get_contents( $file['tmp_name'] );
+				}
+			}
 
 			if ( ! empty( $data ) ) {
 				$imported = self::import( $data, $replace );
@@ -101,8 +120,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 						$content .= '</ul>';
 					}
 				}
-			} else {
-				$content .= '<p>Import Error: Invalid Package</p>';
+			} elseif ( null === $file ) {
+				$content .= '<p>' . esc_html__( 'Import Error: Invalid Package', 'pods' ) . '</p>';
 			}//end if
 
 			$content .= '</div>';
@@ -845,7 +864,10 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 			$export['pods'] = self::$api->load_pods( $api_params );
 			$export['pods'] = array_map( static function( $pod ) {
-				return $pod->export( [ 'include_fields' => false ] );
+				return $pod->export( [
+					'include_fields'      => false,
+					'build_default_group' => true,
+				] );
 			}, $export['pods'] );
 
 			$options_ignore = array(

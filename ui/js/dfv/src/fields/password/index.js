@@ -18,7 +18,7 @@ const Password = ( props ) => {
 			{ ...props }
 			fieldConfig={ fieldConfig }
 			type={ 'password' }
-			maxLength={ maxLength ? parseInt( maxLength, 10 ) : undefined }
+			maxLength={ 0 < parseInt( maxLength, 10 ) ? parseInt( maxLength, 10 ) : undefined }
 			placeholder={ placeholder }
 			autoComplete={ 'new-password' }
 		/>

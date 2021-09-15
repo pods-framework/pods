@@ -79,16 +79,15 @@ class Group extends Whatsit {
 
 		$names = wp_list_pluck( $objects, 'name' );
 
-		$objects = array_combine( $names, $objects );
-
-		return $objects;
+		return array_combine( $names, $objects );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function get_groups( array $args = [] ) {
-		return array();
+		// Groups do not support groups.
+		return [];
 	}
 
 	/**

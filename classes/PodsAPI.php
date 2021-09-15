@@ -9478,7 +9478,6 @@ class PodsAPI {
 		}
 
 		$_info = false;
-		$transient_cached = false;
 
 		if ( 'ok' !== pods_cache_get( 'table_info_cache', 'pods-static-cache' ) ) {
 			pods_cache_set( 'table_info_cache', 'ok', 'pods-static-cache' );
@@ -9490,16 +9489,22 @@ class PodsAPI {
 			// Prefer info from the object internal cache
 			$_info = self::$table_info_cache[ $transient ];
 		} elseif ( pods_api_cache() ) {
-			$_info = pods_transient_get( $transient );
-			if ( false === $_info && ! did_action( 'init' ) ) {
+			$_info = false;
+
+			if ( ! did_action( 'init' ) || doing_action( 'init' ) ) {
 				$_info = pods_transient_get( $transient . '_pre_init' );
+			} else {
+				$_info = pods_transient_get( $transient );
 			}
-			$transient_cached = true;
 		}
 
 		if ( false !== $_info && is_array( $_info ) ) {
 			// Data was cached, use that
 			$info = $_info;
+
+			self::$table_info_cache[ $transient ] = apply_filters( 'pods_api_get_table_info', $info, $object_type, $object, $name, $pod, $field, $this );
+
+			return self::$table_info_cache[ $transient ];
 		} else {
 			// Data not cached, load it up
 			$_info = $this->get_table_info_load( $object_type, $object, $name, $pod );
@@ -9934,11 +9939,9 @@ class PodsAPI {
 		$info['object_name'] = $object;
 
 		if ( pods_api_cache() ) {
-			if ( ! did_action( 'init' ) ) {
-				$transient .= '_pre_init';
-			}
-
-			if ( !$transient_cached ) {
+			if ( ! did_action( 'init' ) || doing_action( 'init' ) ) {
+				pods_transient_set( $transient . '_pre_init', $info, WEEK_IN_SECONDS );
+			} else {
 				pods_transient_set( $transient, $info, WEEK_IN_SECONDS );
 			}
 		}

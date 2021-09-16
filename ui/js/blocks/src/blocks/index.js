@@ -18,12 +18,6 @@ import createAttributesFromFields from './createAttributesFromFields';
 const createBlock = ( block ) => {
 	const {
 		blockName,
-		fields,
-		category,
-		description,
-		keywords,
-		supports,
-		title,
 	} = block;
 
 	let icon = block.icon;
@@ -40,18 +34,20 @@ const createBlock = ( block ) => {
 
 	const EditComponent = createBlockEditComponent( block );
 
-	registerBlockType( blockName, {
-		attributes: createAttributesFromFields( fields ),
-		apiVersion: 1, // @todo Update for apiVersion 2.
-		category,
-		description,
-		edit: EditComponent,
-		icon,
-		keywords,
-		save: () => null,
-		supports,
-		title,
-	} );
+	const blockArgs = block;
+
+	blockArgs.apiVersion = 1;
+	blockArgs.icon = icon;
+	blockArgs.edit = EditComponent;
+	blockArgs.save = () => null;
+
+	if ( 'undefined' !== typeof blockArgs.fields ) {
+		delete blockArgs.fields;
+	}
+
+	delete blockArgs.blockName;
+
+	registerBlockType( blockName, blockArgs );
 };
 
 export default createBlock;

@@ -23,7 +23,7 @@ class API {
 			return;
 		}
 
-		$blocks = $this->get_blocks();
+		$blocks    = $this->get_blocks();
 		$js_blocks = $this->get_js_blocks();
 
 		// The Pods Blocks JS API.
@@ -158,6 +158,10 @@ class API {
 				$key = pods_js_camelcase_name( $key );
 
 				$js_block[ $key ] = $value;
+			}
+
+			if ( ! isset( $js_block['usesContext'] ) ) {
+				$js_block['usesContext'] = [];
 			}
 
 			$js_blocks[ $block_key ] = $js_block;

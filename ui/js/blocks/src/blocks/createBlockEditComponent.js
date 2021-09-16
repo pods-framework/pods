@@ -31,8 +31,6 @@ const createBlockEditComponent = ( block ) => ( props ) => {
 		context = {},
 	} = props;
 
-	console.log( { attributes, context } );
-
 	return (
 		<div className={ className }>
 			<InspectorControls>
@@ -50,6 +48,7 @@ const createBlockEditComponent = ( block ) => ( props ) => {
 			<BlockPreview
 				block={ block }
 				attributes={ attributes }
+				context={ context }
 			/>
 		</div>
 	);

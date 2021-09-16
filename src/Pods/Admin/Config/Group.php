@@ -102,13 +102,13 @@ class Group extends Base {
 				'required' => true,
 				'default'  => '',
 			],
-			'description' => [
+			/*'description' => [
 				'name'    => 'description',
 				'label'   => __( 'Description', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
-			],
+			],*/
 			/*'type' => [
 				'name'    => 'type',
 				'label'   => __( 'Type', 'pods' ),

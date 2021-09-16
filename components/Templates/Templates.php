@@ -595,7 +595,6 @@ class Pods_Templates extends PodsComponent {
 	 * @return mixed|string|void
 	 */
 	public static function do_template( $code, $obj = null ) {
-
 		if ( ! empty( $obj ) ) {
 			self::$obj =& $obj;
 		} else {

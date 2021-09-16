@@ -46,9 +46,7 @@ const createBlock = ( block ) => {
 		apiVersion: 1,
 		attributes: createAttributesFromFields( fields ),
 		icon,
-		edit( { context } ) {
-			return createBlockEditComponent( block, context );
-		},
+		edit: createBlockEditComponent( block ),
 		save: () => null,
 	} );
 };

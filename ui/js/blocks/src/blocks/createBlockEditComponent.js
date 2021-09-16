@@ -16,9 +16,8 @@ import BlockPreview from './components/BlockPreview';
  * Creates the 'edit' component for a given block specification.
  *
  * @param {Object} block   Block specification (TBD).
- * @param {Object} context Block context (TBD).
  */
-const createBlockEditComponent = ( block, context ) => ( props ) => {
+const createBlockEditComponent = ( block ) => ( props ) => {
 	const {
 		fields = [],
 		blockName,
@@ -48,7 +47,6 @@ const createBlockEditComponent = ( block, context ) => ( props ) => {
 			<BlockPreview
 				block={ block }
 				attributes={ attributes }
-				context={ context }
 			/>
 		</div>
 	);

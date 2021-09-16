@@ -207,7 +207,6 @@ const renderField = ( field, attributes ) => {
 const BlockPreview = ( {
 	block,
 	attributes = {},
-	context = {},
 } ) => {
 	const {
 		blockName,
@@ -221,18 +220,13 @@ const BlockPreview = ( {
 	} = block;
 
 	if ( 'php' === renderType ) {
-		const urlQueryArgs = {};
-
-		usesContext.forEach( contextName => {
-			urlQueryArgs[ contextName ] = context[ contextName ] ?? null;
-		} );
+		console.log( { attributes, usesContext } );
 
 		if ( true === supports.jsx ) {
 			return (
 				<PodsServerSideRender
 					block={ blockName }
 					attributes={ attributes }
-					urlQueryArgs={ urlQueryArgs }
 				/>
 			);
 		}
@@ -241,14 +235,13 @@ const BlockPreview = ( {
 			<ServerSideRender
 				block={ blockName }
 				attributes={ attributes }
-				urlQueryArgs={ urlQueryArgs }
 			/>
 		);
 	}
 
 	return (
 		<>
-			{ renderBlockTemplate( renderTemplate, fields, attributes, renderField, context ) }
+			{ renderBlockTemplate( renderTemplate, fields, attributes, renderField ) }
 		</>
 	);
 };

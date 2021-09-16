@@ -38,7 +38,9 @@ const createBlock = ( block ) => {
 	blockArgs.apiVersion = 1;
 	blockArgs.attributes = createAttributesFromFields( fields );
 	blockArgs.icon = icon;
-	blockArgs.edit = ( { context } ) => createBlockEditComponent( block, context );
+	blockArgs.edit = ( { context } ) => {
+		return createBlockEditComponent( block, context );
+	};
 	blockArgs.save = () => null;
 
 	delete blockArgs.blockName;

@@ -35,21 +35,22 @@ const createBlock = ( block ) => {
 
 	const blockArgs = { ...block };
 
-	blockArgs.apiVersion = 1;
-	blockArgs.attributes = createAttributesFromFields( fields );
-	blockArgs.icon = icon;
-	blockArgs.edit = ( { context } ) => {
-		return createBlockEditComponent( block, context );
-	};
-	blockArgs.save = () => null;
-
 	delete blockArgs.blockName;
 	delete blockArgs.fields;
 	delete blockArgs.renderType;
 
 	console.log( { blockName, blockArgs } );
 
-	registerBlockType( blockName, blockArgs );
+	registerBlockType( blockName, {
+		...blockArgs,
+		apiVersion: 1,
+		attributes: createAttributesFromFields( fields ),
+		icon,
+		edit( { context } ) {
+			return createBlockEditComponent( block, context );
+		},
+		save: () => null,
+	} );
 };
 
 export default createBlock;

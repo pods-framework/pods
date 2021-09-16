@@ -23,7 +23,7 @@ const DateField = ( props ) => {
 		datetime_format_custom_js: fieldConfig.date_format_custom_js,
 		datetime_html5: fieldConfig.date_html5,
 		datetime_repeatable: fieldConfig.date_repeatable,
-		datetime_type: 'date',
+		datetime_type: fieldConfig.date_type,
 		datetime_year_range_custom: fieldConfig.date_year_range_custom,
 	};
 

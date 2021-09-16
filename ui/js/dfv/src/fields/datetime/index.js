@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import Datetime from 'react-datetime';
 import moment from 'moment';
 import classnames from 'classnames';
@@ -123,9 +123,7 @@ const DateTime = ( {
 		[ timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ]
 	);
 
-	const handleInputFieldChange = ( event ) => setValue( event.target.value );
-
-	const handleChange = ( newValue ) => {
+	const getFullFormat = () => {
 		// Use a full date and time format for our value string by default.
 		let valueFormat = `${ momentDateFormat }, ${ momentTimeFormat }`;
 
@@ -136,14 +134,41 @@ const DateTime = ( {
 			valueFormat = momentTimeFormat;
 		}
 
+		return valueFormat;
+	};
+
+	const formatMomentObject = ( momentObject ) => {
+		return momentObject.format( getFullFormat() );
+	};
+
+	const handleHTML5InputFieldChange = ( event ) => setValue( event.target.value );
+
+	// Keep local versions as a string (formatted and ready to display, and in case
+	// the Moment object is invalid) and as a Moment object.
+	const [ localStringValue, setLocalStringValue ] = useState(
+		'0000-00-00 00:00:00' === value
+			? ''
+			: formatMomentObject( moment( value ) )
+	);
+	const [ localMomentValue, setLocalMomentValue ] = useState(
+		'0000-00-00 00:00:00' === value
+			? null
+			: moment( value, getFullFormat() )
+	);
+
+	const handleChange = ( newValue ) => {
 		// Receives the selected moment object, if the date in the input is valid.
 		// If the date in the input is not valid, the callback receives the value of
 		// the input a string.
-		setValue(
-			moment.isMoment( newValue )
-				? newValue.format( valueFormat )
-				: newValue
-		);
+		if ( moment.isMoment( newValue ) ) {
+			setValue( formatMomentObject( newValue ) );
+			setLocalStringValue( formatMomentObject( newValue ) );
+			setLocalMomentValue( newValue );
+		} else {
+			setValue( newValue );
+			setLocalStringValue( newValue );
+			setLocalMomentValue( null );
+		}
 
 		setHasBlurred();
 	};
@@ -177,7 +202,7 @@ const DateTime = ( {
 				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ) }
 				type={ 'datetime' === type ? 'datetime-local' : type }
 				value={ value || '' }
-				onChange={ handleInputFieldChange }
+				onChange={ handleHTML5InputFieldChange }
 				onBlur={ setHasBlurred }
 			/>
 		);
@@ -186,22 +211,33 @@ const DateTime = ( {
 	return (
 		<Datetime
 			className="pods-react-datetime-fix"
-			initialValue={ moment( value ) }
-			onChange={ ( newValue ) => {
-				console.log( 'onChange', newValue );
-			} }
-			onClose={ handleChange }
-			dateFormat={ includeDateField && momentDateFormat }
-			timeFormat={ includeTimeField && momentTimeFormat }
+			value={ localMomentValue }
+			onChange={ ( newValue ) => handleChange( newValue ) }
+			dateFormat={ includeDateField ? momentDateFormat : false }
+			timeFormat={ includeTimeField ? momentTimeFormat : false }
 			isValidDate={ isValidDate }
 			initialViewDate={ initialViewDate }
-			inputProps={ {
-				onBlur: ( event ) => handleChange( event.target.value ),
-				id: htmlAttributes.id || `pods-form-ui-${ name }`,
-				name: htmlAttributes.name || name,
-				'data-name-clean': htmlAttributes.name_clean,
-				className: classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ),
-			} }
+			renderInput={ ( props ) => (
+				<input
+					{ ...props }
+					value={ localStringValue }
+					onChange={ ( event ) => {
+						// Track local values, but don't change actual value
+						// until blur event.
+						setLocalStringValue( event.target.value );
+						setLocalMomentValue( moment( event.target.value, getFullFormat() ) );
+					} }
+					onBlur={ ( event ) => handleChange( event.target.value ) }
+					id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+					name={ htmlAttributes.name || name }
+					className={
+						classnames(
+							'pods-form-ui-field pods-form-ui-field-type-datetime',
+							htmlAttributes.class
+						)
+					}
+				/>
+			) }
 		/>
 	);
 };

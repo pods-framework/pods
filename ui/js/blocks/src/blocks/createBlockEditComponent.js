@@ -28,7 +28,10 @@ const createBlockEditComponent = ( block ) => ( props ) => {
 		className,
 		attributes = {},
 		setAttributes,
+		context = {},
 	} = props;
+
+	console.log( { attributes, context } );
 
 	return (
 		<div className={ className }>

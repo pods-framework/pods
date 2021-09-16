@@ -105,7 +105,7 @@ class Field extends Base {
 		$attributes = array_map( 'trim', $attributes );
 
 		if ( empty( $attributes['field'] ) ) {
-			if ( is_admin() || wp_is_json_request() ) {
+			if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
 				return $this->render_placeholder(
 					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Field Value', 'pods' ),
 					esc_html__( 'Please specify a "Field Name" under "More Settings" to configure this block.', 'pods' )
@@ -134,10 +134,8 @@ class Field extends Base {
 		} elseif (
 			! empty( $attributes['use_current'] )
 			&& ! empty( $_GET['post_id'] )
-			&& (
-				is_admin()
-				|| wp_is_json_request()
-			)
+			&& wp_is_json_request()
+			&& did_action( 'rest_api_init' )
 		) {
 			$attributes['slug'] = absint( $_GET['post_id'] );
 

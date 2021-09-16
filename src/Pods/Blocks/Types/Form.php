@@ -124,7 +124,7 @@ class Form extends Base {
 		$attributes = array_map( 'trim', $attributes );
 
 		// Prevent any previews of this block.
-		if ( is_admin() || wp_is_json_request() ) {
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
 			return $this->render_placeholder(
 				esc_html__( 'Form', 'pods' ),
 				esc_html__( 'No preview is available for this Pods Form, you will see it when you view or preview this on the front of your site.', 'pods' ),

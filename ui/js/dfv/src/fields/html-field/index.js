@@ -11,7 +11,7 @@ export const HTMLField = ( { fieldConfig } ) => {
 	const {
 		name,
 		html_content: content,
-		html_wpautop: htmlWPAutoP,
+		html_wpautop: htmlWPAutoP = true,
 	} = fieldConfig;
 
 	let safeHTML = sanitizeHtml( content, richText );

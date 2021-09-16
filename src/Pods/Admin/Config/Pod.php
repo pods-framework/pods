@@ -728,6 +728,16 @@ class Pod extends Base {
 				];
 			}
 
+			$options['connections']['register_custom_taxonomy'] = [
+				'name'           => 'register_custom_taxonomy',
+				'label'          => __( 'Add new connections', 'pods' ),
+				'type'           => 'html',
+				'html_content'   => sprintf(
+					'<a href="%s">Create a new Custom Taxonomy</a>',
+					esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=taxonomy' ) )
+				),
+			];
+
 			$options['advanced'] = [
 				'public'                  => [
 					'label'             => __( 'Public', 'pods' ),

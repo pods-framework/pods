@@ -37,6 +37,7 @@ const createBlock = ( block ) => {
 	let blockArgs = block;
 
 	blockArgs.apiVersion = 1;
+	blockArgs.attributes = createAttributesFromFields( fields );
 	blockArgs.icon = icon;
 	blockArgs.edit = EditComponent;
 	blockArgs.save = () => null;

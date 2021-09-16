@@ -33,14 +33,12 @@ const createBlock = ( block ) => {
 		icon = parse( icon );
 	}
 
-	const EditComponent = createBlockEditComponent( block );
-
 	const blockArgs = { ...block };
 
 	blockArgs.apiVersion = 1;
 	blockArgs.attributes = createAttributesFromFields( fields );
 	blockArgs.icon = icon;
-	blockArgs.edit = EditComponent;
+	blockArgs.edit = ( { context } ) => createBlockEditComponent( block, context );
 	blockArgs.save = () => null;
 
 	delete blockArgs.blockName;

@@ -29,6 +29,7 @@ const renderBlockTemplate = (
 	fields = [],
 	attributes = {},
 	renderField,
+	context = {},
 	setAttributes
 ) => {
 	let htmlWithRenderedFields = sanitizeHtml( renderTemplate, richText );

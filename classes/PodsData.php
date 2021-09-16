@@ -2258,6 +2258,11 @@ class PodsData {
 
 		$this->row = apply_filters( 'pods_data_fetch', $this->row, $id, $this->row_number, $this );
 
+		// Set the ID if the row was found.
+		if ( $explicit_set && $this->row ) {
+			$this->id = $id;
+		}
+
 		return $this->row;
 	}
 

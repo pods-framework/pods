@@ -18,6 +18,7 @@ import createAttributesFromFields from './createAttributesFromFields';
 const createBlock = ( block ) => {
 	const {
 		blockName,
+		fields,
 	} = block;
 
 	let icon = block.icon;

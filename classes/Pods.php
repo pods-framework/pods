@@ -3670,9 +3670,13 @@ class Pods implements Iterator {
 
 		$all_fields = pods_config_get_all_fields( $this->pod_data );
 
+		$default_form = false;
+
 		// Get all fields if form fields are empty.
 		if ( empty( $form_fields ) ) {
 			$form_fields = $all_fields;
+
+			$default_form = true;
 		}
 
 		$fields = [];
@@ -3707,6 +3711,16 @@ class Pods implements Iterator {
 
 			if ( $to_merge ) {
 				$field = pods_config_merge_data( $to_merge, $field );
+			}
+
+			// Never show the ID field.
+			if ( $this->pod_data['field_id'] === $field['name'] ) {
+				continue;
+			}
+
+			// Hide fields from default form.
+			if ( 1 === (int) pods_v( 'hide_in_default_form', $field ) ) {
+				continue;
 			}
 
 			if ( pods_v( 'hidden', $field, false, true ) ) {

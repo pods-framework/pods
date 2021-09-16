@@ -157,6 +157,11 @@ class API {
 				// Prepare the keys as camelCase.
 				$key = pods_js_camelcase_name( $key );
 
+				// Skip if the value is null.
+				if ( null === $value ) {
+					continue;
+				}
+
 				$js_block[ $key ] = $value;
 			}
 

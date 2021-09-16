@@ -43,11 +43,9 @@ const createBlock = ( block ) => {
 	blockArgs.edit = EditComponent;
 	blockArgs.save = () => null;
 
-	if ( 'undefined' !== typeof blockArgs.fields ) {
-		delete blockArgs.fields;
-	}
-
 	delete blockArgs.blockName;
+	delete blockArgs.fields;
+	delete blockArgs.renderType;
 
 	console.log( { blockName, blockArgs } );
 

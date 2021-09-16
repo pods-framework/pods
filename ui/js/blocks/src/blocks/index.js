@@ -34,7 +34,7 @@ const createBlock = ( block ) => {
 
 	const EditComponent = createBlockEditComponent( block );
 
-	const blockArgs = block;
+	let blockArgs = block;
 
 	blockArgs.apiVersion = 1;
 	blockArgs.icon = icon;
@@ -46,6 +46,8 @@ const createBlock = ( block ) => {
 	}
 
 	delete blockArgs.blockName;
+
+	console.log( { blockName, blockArgs } );
 
 	registerBlockType( blockName, blockArgs );
 };

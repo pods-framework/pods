@@ -11,6 +11,8 @@
     "item",
     "field"
   ],
+  "editorScript": "file:../../pods-blocks-api.min.js",
+  "editorStyle": "file:../../../../styles/dist/pods.css",
   "supports": {
     "html": false,
     "align": true,

@@ -74,10 +74,10 @@ We have an extensive collection of fields that you can leverage to build the per
  * Plain Number
  * Currency (30+ international currencies)
 * **Relationships / Media**
- * File / Image / Video
+ * File / Image / Video (Media library and basic upload options available)
  * Avatar (for extended Users)
  * oEmbed
- * Relationship
+ * Relationship (Dropdowns, multiselect, autocomplete, checkboxes, radio buttons, and list views available)
 * **Checkbox** (Yes / No)
 * **Color Picker**
 
@@ -86,60 +86,49 @@ We have an extensive collection of fields that you can leverage to build the per
 The power is in your hands with our comprehensive support to **relate your content to anything**.
 
 * **Custom defined lists** of text options
-* Relate to **Post Type** content
-* Relate to **Taxonomy** content
+* Relate to any **Post Type or Taxonomy** posts / terms
 * Relate to any **User** profile
-* Relate to **User Roles**
-* Relate to **User Capabilities**
-* Relate to **Media** attachments
+* Relate to **User Roles or Capabilities**
 * Relate to any **Comment**
 
 And many other relationships are also available including:
 
 * **Image Sizes**
 * **Navigation Menus**
-* **Post Formats**
-* **Post Status**
 * Relate to content within **any Database Table**
-* **Themes**
-* **Page Templates**
-* **Sidebars**
-* **Post Type Objects** (choose the post type itself)
-* **Taxonomy Objects** (choose the taxonomy itself)
 * **Countries** (predefined)
 * **US States** (predefined)
 * **Canadian Provinces** (predefined)
 * **Calendar - Days of Week** (predefined)
 * **Calendar - Months of Year** (predefined)
+* And many more!
 
 = Optional Components to do even more =
 You can enable some of our included components to extend your WordPress site even further:
 
-* **Roles and Capabilities** - Create or edit Roles for your site, and customize their corresponding capabilities
 * **Templates** - Use our template engine to create templates that can be handed off to clients for care-free management
-* **Advanced Relationships** - Add advanced relationship objects for relating to including Database Tables, Multisite Networks, Multisite Sites, Themes, Page Templates, Sidebars, Post Type Objects, and Taxonomy Objects
-* **Advanced Content Types** - These types of content were built into Pods prior to 2.3, but are now optionally enabled
-* **Table Storage** - Enable table-based storage for custom fields on Post Types, Media, Users, and Comments. Also adds the ability to add custom fields to Taxonomies
 * **Markdown Syntax** - Parses Markdown Syntax for Paragraph Text / WYSIWYG fields
-* **Pages** - Create custom pages that function off of your site's URL path, with wildcard support, and choose the Page Template to use
+* **Advanced Relationships** - Add advanced relationship objects for relating to including Database Tables, Multisite Networks, Multisite Sites, Themes, Page Templates, Sidebars, Post Type Objects, and Taxonomy Objects
+* **Table Storage** - Enable table-based storage for custom fields on Post Types, Media, Users, and Comments
+* **Roles and Capabilities** - Create or edit Roles for your site, and customize their corresponding capabilities
+* **Advanced Content Types** - Create entirely custom content types that have their own table, they exist outside of the WordPress context and do not use meta tables
+* **Pages** - Create custom pages that function off of your site's URL path, with wildcard support, and choose the Page Template to use -- most useful paired with Advanced Content Types
 
 = Plays well with others =
 
 We also do our best to integrate and play nicely with other projects:
 
 * **Plugins we've integrated with**
- * [Tabify Edit Screen](http://wordpress.org/plugins/tabify-edit-screen/)
- * [Codepress Admin Columns](http://wordpress.org/plugins/codepress-admin-columns/)
- * [Polylang](http://wordpress.org/plugins/polylang/)
- * [YARPP](http://wordpress.org/plugins/yet-another-related-posts-plugin/)
- * [WPML](http://wpml.org/)
- * [Conductor](https://conductorplugin.com/)
- * [Timber](http://upstatement.com/timber/)
- * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
  * [Beaver Builder](https://www.wpbeaverbuilder.com/) and [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) Using the [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/)
+ * [Codepress Admin Columns](https://wordpress.org/plugins/codepress-admin-columns/) Using the [Pods Add-On for Admin Columns Pro](https://www.admincolumns.com/pods/)
+ * [Conductor](https://conductorplugin.com/)
+ * [Gravity Forms](https://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
+ * [Polylang](https://wordpress.org/plugins/polylang/)
+ * [Timber](https://wordpress.org/plugins/timber-library/)
+ * [WPML](http://wpml.org/)
+ * [YARPP](http://wordpress.org/plugins/yet-another-related-posts-plugin/)
 * **Themes we've integrated with**
- * [Builder](http://www.ithemes.com/) (iThemes)
- * [Genesis](http://www.studiopress.com/) (StudioPress)
+ * [Genesis](https://www.studiopress.com/themes/genesis/) (StudioPress)
 
 == Installation ==
 
@@ -158,13 +147,23 @@ Our primary Support is handled through our [Support Forums](https://wordpress.or
 
 We do have a community of Pods users and developers that hang out on Slack so you're sure to get an answer quickly. We answer our Forum questions once a week with follow-up during the week as we're prioritizing resources towards restructuring and improving our documentation.
 
-= I've found a Bug or I have a Feature Request =
+= Where do I report bugs or request features? =
 
-If you’ve uncovered a Bug or have a Feature Request, we kindly request you to create an Issue on our GitHub Repository at [https://github.com/pods-framework/pods/issues/new](https://github.com/pods-framework/pods/issues/new). Please be very specific about what steps you did to create the issue you’re having and include any screenshots or other configuration parameters to help us recreate or isolate the issue.
+If you’ve encountered a bug or have an idea for a new feature, we kindly request you to create an Issue on our GitHub Repository at [https://github.com/pods-framework/pods/issues/new](https://github.com/pods-framework/pods/issues/new). Please be very specific about what steps you did to create the issue you’re having and include any screenshots or other configuration parameters to help us recreate or isolate the issue.
 
 = Will Pods work with my Theme? =
 
 Most likely the answer is yes. We don't require any special CSS or display attributes to use Pods with your theme so you should have little to no difficulty showing your content in your theme. If you encounter any issues, contact your theme developer and ask them about their support for the standard WordPress theming functions and how to use [WordPress Template Hierarchy](https://wphierarchy.com) with their theme.
+
+== How can I translate Pods into my own language? ==
+
+Many thanks go out to the fine folks who have helped us translate the Pods plugin into many other languages.
+
+Join us in further translating the Pods interface at: [https://translate.wordpress.org/projects/wp-plugins/pods](https://translate.wordpress.org/projects/wp-plugins/pods)
+
+We are also available through our [Live Slack Chat](https://support.pods.io/chat/) to help our translators get started and to support them on the process.
+
+Are you looking to translate your Pods and Fields themselves? You'll want to enable the Translate Pods component from Pods Admin > Components.
 
 == Screenshots ==
 
@@ -180,14 +179,6 @@ Most likely the answer is yes. We don't require any special CSS or display attri
 == Contributors ==
 
 Pods really wouldn't be where it is without all of the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
-
-== Translations ==
-
-Many thanks go out to the fine folks who have helped us translate Pods into many other languages.
-
-Join us in further translating the Pods interface at: [https://translate.wordpress.org/projects/wp-plugins/pods](https://translate.wordpress.org/projects/wp-plugins/pods)
-
-We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
 

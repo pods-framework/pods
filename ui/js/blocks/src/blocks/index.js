@@ -35,7 +35,7 @@ const createBlock = ( block ) => {
 
 	const EditComponent = createBlockEditComponent( block );
 
-	let blockArgs = block;
+	const blockArgs = { ...block };
 
 	blockArgs.apiVersion = 1;
 	blockArgs.attributes = createAttributesFromFields( fields );

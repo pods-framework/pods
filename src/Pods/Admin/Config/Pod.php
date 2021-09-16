@@ -728,13 +728,13 @@ class Pod extends Base {
 				];
 			}
 
-			$options['connections']['register_custom_taxonomy'] = [
-				'name'           => 'register_custom_taxonomy',
-				'label'          => __( 'Add new connections', 'pods' ),
-				'type'           => 'html',
-				'html_content'   => sprintf(
-					'<a href="%s">Create a new Custom Taxonomy</a>',
-					esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=taxonomy' ) )
+			$options['connections']['register_custom_post_type'] = [
+				'name'         => 'register_custom_post_type',
+				'label'        => __( 'Add new connections', 'pods' ),
+				'type'         => 'html',
+				'html_content' => sprintf(
+					'<a href="%s">Create a new Custom Post Type</a>',
+					esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=post_type' ) )
 				),
 			];
 
@@ -1138,6 +1138,15 @@ class Pod extends Base {
 					'help'          => __( 'You can enable the ability to select posts from these post types on any term for this taxonomy.', 'pods' ),
 					'type'          => 'boolean_group',
 					'boolean_group' => [],
+				],
+				'register_custom_taxonomy'       => [
+					'name'           => 'register_custom_taxonomy',
+					'label'          => __( 'Add new connections', 'pods' ),
+					'type'           => 'html',
+					'html_content'   => sprintf(
+						'<a href="%s">Create a new Custom Taxonomy</a>',
+						esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=taxonomy' ) )
+					),
 				],
 			];
 

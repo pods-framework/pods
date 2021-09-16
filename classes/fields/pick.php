@@ -1829,7 +1829,13 @@ class PodsField_Pick extends PodsField {
 				'' => pods_v( static::$type . '_select_text', $options, __( '-- Select One --', 'pods' ), true ),
 			];
 
-			$data = array_merge( $default_select, $data );
+			// Unset to prevent conflict.
+			if ( isset( $data[''] ) ) {
+				unset( $data[''] );
+			}
+
+			// Prevent resetting the numeric ID keys when adding the empty option via array_merge, use union instead.
+			$data = $default_select + $data;
 		}
 
 		$data = apply_filters( 'pods_field_pick_data', $data, $name, $value, $options, $pod, $id );

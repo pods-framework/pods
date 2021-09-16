@@ -76,7 +76,7 @@ const CheckboxSelect = ( {
 									checked={
 										isMulti
 											? value.some( ( valueItem ) => valueItem.toString() === optionValue.toString() )
-											: value === optionValue
+											: value.toString() === optionValue.toString()
 									}
 									className="pods-form-ui-field-type-pick"
 									type="checkbox"

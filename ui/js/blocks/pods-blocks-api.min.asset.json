@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"dependencies":["wp-api-fetch","wp-autop","wp-block-editor","wp-blocks","wp-components","wp-compose","wp-date","wp-element","wp-i18n","wp-keycodes","wp-server-side-render","wp-url"],"version":"098d6cc2b9d1ed4605aa79d571e780f7"}
+=======
+{"dependencies":["wp-api-fetch","wp-autop","wp-block-editor","wp-blocks","wp-components","wp-compose","wp-date","wp-element","wp-i18n","wp-keycodes","wp-server-side-render","wp-url"],"version":"56badbcf7959e46b07bf51c4a401c622"}
+>>>>>>> fix/pick-issues

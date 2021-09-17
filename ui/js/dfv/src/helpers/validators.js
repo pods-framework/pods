@@ -1,7 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n';
+import moment from 'moment';
 
 import {
-	parseFloatWithPodsFormat,
 	formatNumberWithPodsFormat,
 	getThousandsSeparatorFromPodsFormat,
 	getDecimalSeparatorFromPodsFormat,
@@ -83,6 +83,38 @@ export const numberValidator = (
 		decimals.length > integerMaxDecimals
 	) {
 		throw __( 'Exceeded maximum decimal length.', 'pods' );
+	}
+
+	return true;
+};
+
+export const dateTimeValidator = (
+	yearRange,
+	momentFormat,
+) => ( value ) => {
+	if ( 'undefined' === typeof yearRange || ! yearRange.length ) {
+		return true;
+	}
+
+	const beginningOfFirstYearInRange = moment( `${ yearRange[ 0 ] }-01-01` );
+	const endOfLastYearInRange = moment( `${ yearRange[ yearRange.length - 1 ] }-12-31` );
+
+	const momentObject = moment( value, momentFormat );
+
+	if ( false === momentObject.isValid() ) {
+		throw __( 'Invalid date.', 'pods' );
+	}
+
+	const isAfterStartYear = momentObject.isSameOrAfter( beginningOfFirstYearInRange );
+
+	if ( ! isAfterStartYear ) {
+		throw __( 'Date occurs before the valid range.', 'pods' );
+	}
+
+	const isBeforeEndYear = momentObject.isSameOrBefore( endOfLastYearInRange );
+
+	if ( ! isBeforeEndYear ) {
+		throw __( 'Date occurs after the valid range.', 'pods' );
 	}
 
 	return true;

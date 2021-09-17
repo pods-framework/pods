@@ -117,10 +117,10 @@ class View extends Base {
 		$attributes = array_map( 'trim', $attributes );
 
 		if ( empty( $attributes['view'] ) ) {
-			if ( is_admin() || wp_is_json_request() ) {
+			if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
 				return $this->render_placeholder(
-					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods View - Block Error', 'pods' ),
-					esc_html__( 'This block is not configured properly, please specify a "View" to use.', 'pods' )
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods View', 'pods' ),
+					esc_html__( 'Please specify a "View" under "More Settings" to configure this block.', 'pods' )
 				);
 			}
 
@@ -128,7 +128,7 @@ class View extends Base {
 		}
 
 		// Prevent any previews of this block.
-		if ( is_admin() || wp_is_json_request() ) {
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
 			return $this->render_placeholder(
 				esc_html__( 'View', 'pods' ),
 				esc_html__( 'No preview is available for this Pods View, you will see it when you view or preview this on the front of your site.', 'pods' ),

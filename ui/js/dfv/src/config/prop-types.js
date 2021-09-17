@@ -271,6 +271,7 @@ export const FIELD_PROP_TYPE = {
 	html_content: PropTypes.string,
 	html_content_param: PropTypes.string,
 	html_content_param_default: PropTypes.string,
+	html_wpautop: BOOLEAN_ALL_TYPES,
 	html_no_label: BOOLEAN_ALL_TYPES,
 
 	// Number field

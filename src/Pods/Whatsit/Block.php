@@ -189,6 +189,16 @@ class Block extends Pod {
 			$enqueue_assets_callback( $block_config );
 		}
 
+		// Handle custom context overrides from editor.
+		if (
+			! empty( $_GET['post_id'] )
+			&& ! empty( $_GET['podsContext'] )
+			&& wp_is_json_request()
+			&& did_action( 'rest_api_init' )
+		) {
+			$block_obj->context = array_merge( $block_obj->context, (array) $_GET['podsContext'] );
+		}
+
 		// Render block from callback.
 		if ( $render_callback && is_callable( $render_callback ) ) {
 			return $render_callback( $attributes, $content, $block_obj );

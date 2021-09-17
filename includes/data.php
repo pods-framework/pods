@@ -1378,12 +1378,12 @@ function pods_clean_name( $orig, $lower = true, $trim_underscores = false ) {
 }
 
 /**
- * Return a lowercase alphanumeric name (with underscores) for safe Javascript variable names
+ * Return a lowercase alphanumeric name (with underscores) for safe JavaScript variable names.
  *
- * @param string  $orig  Input string to clean
- * @param boolean $lower Force lowercase
+ * @param string  $orig  Input string to clean.
+ * @param boolean $lower Whether to force lowercase.
  *
- * @return string Sanitized name
+ * @return string The sanitized name.
  *
  * @since 2.5.3
  */
@@ -1392,6 +1392,26 @@ function pods_js_name( $orig, $lower = true ) {
 	$str = str_replace( '-', '_', $str );
 
 	return $str;
+}
+
+/**
+ * Return a camelCase alphanumeric name for safe JavaScript variable names.
+ *
+ * @param string $orig Input string to clean.
+ *
+ * @return string The sanitized name as camelCase.
+ *
+ * @since 2.8.0
+ */
+function pods_js_camelcase_name( $orig ) {
+	// Clean the name for JS.
+	$str = pods_js_name( $orig, false );
+
+	// Replace _ with spaces and then Upper Case the words.
+	$str = ucwords( str_replace( '_', ' ', $str ) );
+
+	// Remove the spaces and lower case the firstWord.
+	return lcfirst( str_replace( ' ', '', $str ) );
 }
 
 /**

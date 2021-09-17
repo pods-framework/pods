@@ -1338,7 +1338,7 @@ class PodsUI {
 				}
 			}//end if
 
-			if ( ! in_array( 'manage', $this->actions_disabled ) ) {
+			if ( ! in_array( 'manage', $this->actions_disabled, true ) ) {
 				// handle session / user persistent settings for show_per_page, orderby, search, and filters
 				$methods = array( 'session', 'user' );
 
@@ -1360,7 +1360,15 @@ class PodsUI {
 							$value = $this->$setting;
 						}
 
-						pods_v_set( $value, $setting, $method );
+						$current_value = pods_v( $setting, $method );
+
+						if ( ! is_array( $current_value ) && ! is_array( $value ) ) {
+							if ( (string) $current_value !== (string) $value ) {
+								pods_v_set( $value, $setting, $method );
+							}
+						} elseif ( $current_value !== $value ) {
+							pods_v_set( $value, $setting, $method );
+						}
 					}
 				}
 

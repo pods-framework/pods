@@ -1829,7 +1829,13 @@ class PodsField_Pick extends PodsField {
 				'' => pods_v( static::$type . '_select_text', $options, __( '-- Select One --', 'pods' ), true ),
 			];
 
-			$data = array_merge( $default_select, $data );
+			// Unset to prevent conflict.
+			if ( isset( $data[''] ) ) {
+				unset( $data[''] );
+			}
+
+			// Prevent resetting the numeric ID keys when adding the empty option via array_merge, use union instead.
+			$data = $default_select + $data;
 		}
 
 		$data = apply_filters( 'pods_field_pick_data', $data, $name, $value, $options, $pod, $id );
@@ -3436,10 +3442,10 @@ class PodsField_Pick extends PodsField {
 		$model_data = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $field_args );
 		?>
 			<script type="text/javascript">
-				window.parent.jQuery( window.parent ).trigger(
-					'dfv:modal:update',
-					<?php echo wp_json_encode( $model_data, JSON_HEX_TAG ); ?>
-				);
+				window.parent.postMessage( {
+					type: 'PODS_MESSAGE',
+					data: <?php echo wp_json_encode( $model_data, JSON_HEX_TAG ); ?>,
+				}, window.location.origin );
 			</script>
 		<?php
 

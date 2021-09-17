@@ -207,37 +207,50 @@ const renderField = ( field, attributes ) => {
 const BlockPreview = ( {
 	block,
 	attributes = {},
+	context = {},
 } ) => {
 	const {
+		blockName,
 		fields = [],
 		renderTemplate,
-		blockName,
 		renderType,
 		supports = {
 			jsx: false,
 		},
+		usesContext = [],
 	} = block;
 
 	if ( 'php' === renderType ) {
+		const urlQueryArgs = {
+			podsContext: {},
+		};
+
+		usesContext.forEach( contextName => {
+			urlQueryArgs.podsContext[ contextName ] = context[ contextName ] ?? null;
+		} );
+
 		if ( true === supports.jsx ) {
 			return (
 				<PodsServerSideRender
 					block={ blockName }
 					attributes={ attributes }
+					urlQueryArgs={ urlQueryArgs }
 				/>
 			);
 		}
+
 		return (
 			<ServerSideRender
 				block={ blockName }
 				attributes={ attributes }
+				urlQueryArgs={ urlQueryArgs }
 			/>
 		);
 	}
 
 	return (
 		<>
-			{ renderBlockTemplate( renderTemplate, fields, attributes, renderField ) }
+			{ renderBlockTemplate( renderTemplate, fields, attributes, renderField, context ) }
 		</>
 	);
 };

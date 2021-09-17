@@ -231,10 +231,10 @@ class Item_List extends Base {
 		$attributes = array_map( 'trim', $attributes );
 
 		if ( empty( $attributes['template'] ) && empty( $attributes['template_custom'] ) ) {
-			if ( is_admin() || wp_is_json_request() ) {
+			if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
 				return $this->render_placeholder(
-					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Item List - Block Error', 'pods' ),
-					esc_html__( 'This block is not configured properly, please specify a "Template" or "Custom Template" to use.', 'pods' )
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Item List', 'pods' ),
+					esc_html__( 'Please specify a "Template" or "Custom Template" under "More Settings" to configure this block.', 'pods' )
 				);
 			}
 
@@ -249,10 +249,8 @@ class Item_List extends Base {
 		if ( empty( $attributes['name'] ) ) {
 			if (
 				! empty( $_GET['post_id'] )
-				&& (
-					is_admin()
-					|| wp_is_json_request()
-				)
+				&& wp_is_json_request()
+				&& did_action( 'rest_api_init' )
 			) {
 				$post_id = absint( $_GET['post_id'] );
 

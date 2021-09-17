@@ -1980,7 +1980,11 @@ class PodsData {
 			$this->row = false;
 
 			if ( isset( $this->rows[ $this->row_number ] ) ) {
-				$this->row = get_object_vars( $this->rows[ $this->row_number ] );
+				$this->row = $this->rows[ $this->row_number ];
+
+				if ( is_object( $this->row ) ) {
+					$this->row = get_object_vars( $this->row );
+				}
 
 				$current_row_id = false;
 
@@ -2258,6 +2262,11 @@ class PodsData {
 
 		$this->row = apply_filters( 'pods_data_fetch', $this->row, $id, $this->row_number, $this );
 
+		// Set the ID if the row was found.
+		if ( $explicit_set && $this->row ) {
+			$this->id = $id;
+		}
+
 		return $this->row;
 	}
 
@@ -2277,7 +2286,11 @@ class PodsData {
 		$this->row = false;
 
 		if ( isset( $this->rows[ $row ] ) ) {
-			$this->row = get_object_vars( $this->rows[ $row ] );
+			$this->row = $this->rows[ $row ];
+
+			if ( is_object( $this->row ) ) {
+				$this->row = get_object_vars( $this->row );
+			}
 		}
 
 		if ( empty( $row ) ) {

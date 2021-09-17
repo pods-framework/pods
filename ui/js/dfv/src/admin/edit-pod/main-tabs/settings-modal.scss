@@ -123,7 +123,7 @@
 // Panel
 .pods-settings-modal__panel {
 	margin: 0;
-	overflow-y: scroll;
+	overflow-y: auto;
 	padding-right: 1em;
 
 	@media screen and (min-width: 851px) {

@@ -134,7 +134,7 @@ class Map_Field_Values {
 			return null;
 		}
 
-		$pod_option = ! empty( $traverse[0] ) ? $traverse[0] : 'label';
+		$pod_option = ! empty( $traverse[0] ) ? $traverse[0] : 'name';
 
 		return $obj->pod_data->get_arg( $pod_option );
 	}

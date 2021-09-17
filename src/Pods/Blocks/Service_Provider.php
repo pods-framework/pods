@@ -43,6 +43,6 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	 */
 	protected function hooks() {
 		add_action( 'pods_setup_content_types', tribe_callback( 'pods.blocks', 'register_blocks' ) );
-		add_filter( 'widget_types_to_hide_from_legacy_widget_block', tribe_callback( 'pods.blocks', 'remove_legacy_widgets' ) );
+		add_filter( 'widget_types_to_hide_from_legacy_widget_block', tribe_callback( 'pods.blocks', 'remove_from_legacy_widgets' ) );
 	}
 }

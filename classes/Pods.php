@@ -3473,7 +3473,9 @@ class Pods implements Iterator {
 
 		$obj =& $this;
 
-		if ( ! empty( $code ) ) {
+		if ( class_exists( 'Pods_Templates' ) ) {
+			$out = Pods_Templates::template( $template_name, $code, $this, $deprecated );
+		} elseif ( ! empty( $code ) ) {
 			// backwards compatibility.
 			$code = str_replace( '$this->', '$obj->', $code );
 
@@ -3531,8 +3533,15 @@ class Pods implements Iterator {
 			 * @param Pods   $pod           Pods object.
 			 */
 			$out = apply_filters( "pods_templates_post_template_{$template_name}", $out, $code, $template_name, $this );
-		} elseif ( class_exists( 'Pods_Templates' ) ) {
-			$out = Pods_Templates::template( $template_name, $code, $this, $deprecated );
+
+			/**
+			 * Filter the final template output.
+			 *
+			 * @param string $out  Template output.
+			 * @param string $code Template code.
+			 * @param Pods   $pod  Pods object.
+			 */
+			$out = apply_filters( 'pods_templates_do_template', $out, $code, $this );
 		} elseif ( trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) === $template_name ) {
 			ob_start();
 
@@ -3661,9 +3670,13 @@ class Pods implements Iterator {
 
 		$all_fields = pods_config_get_all_fields( $this->pod_data );
 
+		$default_form = false;
+
 		// Get all fields if form fields are empty.
 		if ( empty( $form_fields ) ) {
 			$form_fields = $all_fields;
+
+			$default_form = true;
 		}
 
 		$fields = [];
@@ -3698,6 +3711,16 @@ class Pods implements Iterator {
 
 			if ( $to_merge ) {
 				$field = pods_config_merge_data( $to_merge, $field );
+			}
+
+			// Never show the ID field.
+			if ( $this->pod_data['field_id'] === $field['name'] ) {
+				continue;
+			}
+
+			// Hide fields from default form.
+			if ( 1 === (int) pods_v( 'hide_in_default_form', $field ) ) {
+				continue;
 			}
 
 			if ( pods_v( 'hidden', $field, false, true ) ) {

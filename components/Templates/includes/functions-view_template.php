@@ -83,42 +83,41 @@ function frontier_decode_template( $code, $atts ) {
 /**
  * processes if condition within a template
  *
- * @param array  $atts attributes from template
+ * @param array  $attributes attributes from template
  * @param string $code encoded template to be decoded
  *
  * @return string
  * @since 2.4.0
  */
-function frontier_if_block( $atts, $code ) {
+function frontier_if_block( $attributes, $code ) {
+	$attributes = array_merge( [
+		'pod'     => null,
+		'id'      => null,
+		'field'   => null,
+		'value'   => null,
+		'compare' => null,
+		'index'   => null,
+	], $attributes );
 
-	$pod = pods( $atts['pod'], $atts['id'] );
+	$pod = pods( $attributes['pod'], $attributes['id'] );
 
 	if ( ! $pod || ! $pod->valid() || ! $pod->exists() ) {
 		return '';
 	}
 
-	$code = explode( '[else]', frontier_decode_template( $code, $atts ) );
-
-	// sysvals
-	$system_values = array(
-		'_index',
-	);
+	$code = explode( '[else]', frontier_decode_template( $code, $attributes ) );
 
 	// field data
 	$field_data = null;
-	$field_type = null;
+	$field_type = 'text';
 
-	if ( in_array( $atts['field'], $system_values, true ) ) {
-		switch ( $atts['field'] ) {
-			case '_index':
-				$field_data = $atts['index'];
-
-				break;
+	if ( ! empty( $attributes['field'] ) ) {
+		if ( '_index' === $attributes['field'] ) {
+			$field_data = pods_v( 'index', $attributes );
+		} else {
+			$field_data = $pod->field( $attributes['field'] );
+			$field_type = $pod->fields( $attributes['field'], 'type' );
 		}
-	} else {
-		$field_data = $pod->field( $atts['field'] );
-
-		$field_type = $pod->fields( $atts['field'], 'type' );
 	}
 
 	$is_empty = true;
@@ -131,56 +130,148 @@ function frontier_if_block( $atts, $code ) {
 		$is_empty = PodsForm::field_method( $field_type, 'values_are_empty', $field_data );
 	}
 
-	$output = '';
+	$has_value_compare_attribute = null !== $attributes['value'] || null !== $attributes['compare'];
 
-	if ( ! $is_empty || isset( $atts['value'] ) ) {
-		// theres a field - let go deeper
-		if ( isset( $atts['value'] ) ) {
-
-			// check if + or - are present
-			if ( '+' === substr( $atts['value'], 0, 1 ) ) {
-				// is greater
-				$atts['value'] = (float) substr( $atts['value'], 1 ) + 1;
-
-				if ( (float) $field_data > $atts['value'] ) {
-					// is greater - set it the same to allow
-					$atts['value'] = $field_data;
-				}
-			} elseif ( substr( $atts['value'], 0, 1 ) === '-' ) {
-				// is smaller
-				$atts['value'] = (float) substr( $atts['value'], 1 ) - 1;
-
-				if ( (float) $field_data < $atts['value'] ) {
-					// is greater - set it the same to allow
-					$atts['value'] = $field_data;
-				}
-			}
-
-			if ( (string) $field_data === (string) $atts['value'] ) {
-				// IF statement true, use [IF] content as template
-				$template = $pod->do_magic_tags( $code[0] );
-			} else {
-				// No 'field' value (or value false), switch to [else] content
-				if ( isset( $code[1] ) ) {
-					// There is an [ELSE] tag
-					$template = $pod->do_magic_tags( $code[1] );
-				} else {
-					// Value did not match (and no [ELSE]), nothing should be displayed
-					$template = '';
-				}
-			}
-		} else {
+	if ( ! $is_empty || $has_value_compare_attribute ) {
+		// Check if we do not have a value to compare with.
+		if ( ! $has_value_compare_attribute ) {
 			// Field exists and is not empty, use [IF] content
 			$template = $pod->do_magic_tags( $code[0] );
-		}//end if
-	} elseif ( isset( $code[1] ) ) {
-		// No value or field is empty and there is an [ELSE] tag.  Use [ELSE]
-		$template = $pod->do_magic_tags( $code[1] );
-	} else {
-		$template = '';
-	}//end if
 
-	return do_shortcode( $template );
+			return frontier_do_shortcode( $template );
+		}
+
+		$first_character = substr( $attributes['value'], 0, 1 );
+
+		// check if + or - are present
+		if ( '+' === $first_character ) {
+			// is greater
+			$attributes['value']   = (float) substr( $attributes['value'], 1 ) + 1;
+			$attributes['compare'] = '>';
+		} elseif ( '-' === $first_character ) {
+			// is smaller
+			$attributes['value']   = (float) substr( $attributes['value'], 1 ) - 1;
+			$attributes['compare'] = '<';
+		}
+
+		if ( empty( $attributes['compare'] ) ) {
+			$attributes['compare'] = '=';
+		}
+
+		$attributes['compare'] = html_entity_decode( $attributes['compare'] );
+		$attributes['compare'] = strtoupper( $attributes['compare'] );
+
+		// Normalize the compare.
+		$comparisons = [
+			'=',
+			'!=',
+			'>',
+			'>=',
+			'<',
+			'<=',
+			'LIKE',
+			'NOT LIKE',
+			'EXISTS',
+			'NOT EXISTS',
+			'EMPTY',
+			'NOT EMPTY',
+		];
+
+		// Comparison not supported, assume it does not match.
+		if ( ! in_array( $attributes['compare'], $comparisons, true ) ) {
+			return '';
+		}
+
+		$pass = false;
+
+		$maybe_array = is_array( $field_data ) || is_array( $attributes['value'] );
+
+		// Handle comparison.
+		if ( '=' === $attributes['compare'] ) {
+			if ( $maybe_array ) {
+				$pass = $field_data === $attributes['value'];
+			} else {
+				$pass = (string) $field_data === (string) $attributes['value'];
+			}
+		} elseif ( '!=' === $attributes['compare'] ) {
+			if ( $maybe_array ) {
+				$pass = $field_data !== $attributes['value'];
+			} else {
+				$pass = (string) $field_data !== (string) $attributes['value'];
+			}
+		} elseif ( 'EXISTS' === $attributes['compare'] ) {
+			$pass = null !== $field_data && [] !== $field_data;
+		} elseif ( 'NOT EXISTS' === $attributes['compare'] ) {
+			$pass = null === $field_data || [] === $field_data;
+		} elseif ( $maybe_array ) {
+			// We do not support comparisons for array values beyond equals.
+			$pass = false;
+		} elseif ( '>' === $attributes['compare'] ) {
+			$pass = (float) $field_data > (float) $attributes['value'];
+		} elseif ( '>=' === $attributes['compare'] ) {
+			$pass = (float) $field_data >= (float) $attributes['value'];
+		} elseif ( '<' === $attributes['compare'] ) {
+			$pass = (float) $field_data < (float) $attributes['value'];
+		} elseif ( '<=' === $attributes['compare'] ) {
+			$pass = (float) $field_data <= (float) $attributes['value'];
+		} elseif ( 'LIKE' === $attributes['compare'] || 'NOT LIKE' === $attributes['compare'] ) {
+			$field_data = (string) $field_data;
+
+			$attributes['value'] = (string) $attributes['value'];
+
+			if ( false !== strpos( $attributes['value'], '%' ) ) {
+				// Handle % LIKE values.
+				$attributes['value'] = str_replace( '%', '.*', preg_quote( $attributes['value'], '/' ) );
+
+				$found = preg_match( '/^' . $attributes['value'] . '$/Uim', $field_data );
+
+				if ( 0 === $found ) {
+					$found = false;
+				}
+			} else {
+				$found = stripos( $field_data, $attributes['value'] );
+			}
+
+			if ( 'LIKE' === $attributes['compare'] ) {
+				// Check if the string contains the match.
+				$pass = false !== $found;
+			} elseif ( 'NOT LIKE' === $attributes['compare'] ) {
+				// Check if the string does not contain the match.
+				$pass = false === $found;
+			}
+		} elseif ( 'EMPTY' === $attributes['compare'] ) {
+			$pass = $is_empty;
+		} elseif ( 'NOT EMPTY' === $attributes['compare'] ) {
+			$pass = ! $is_empty;
+		}
+
+		if ( $pass ) {
+			// IF statement true, use [IF] content as template.
+			$template = $pod->do_magic_tags( $code[0] );
+
+			return frontier_do_shortcode( $template );
+		}
+
+		if ( isset( $code[1] ) ) {
+			// There is an [ELSE] tag
+			$template = $pod->do_magic_tags( $code[1] );
+
+			return frontier_do_shortcode( $template );
+		}
+
+		// Value did not match (and no [ELSE]), nothing should be displayed.
+		return '';
+	}
+
+	if ( isset( $code[1] ) ) {
+		// No value or field is empty and there is an [ELSE] tag. Use [ELSE].
+		$template = $pod->do_magic_tags( $code[1] );
+
+		return frontier_do_shortcode( $template );
+	}
+
+	// No match at all for the format we support.
+	return '';
 }
 
 /**
@@ -513,65 +604,101 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 
 	$aliases = array();
 	foreach ( $commands as $command => $shortcode ) {
-		preg_match_all( '/(\[' . $command . '(.*?)]|\[\/' . $command . '\])/m', $code, $matches );
+		//preg_match_all( '/(\[' . $command . '(?<attributes>.*?)]|\[\/' . $command . '\])/m', $code, $matches );
+		preg_match_all( '/('
+            . '\[' . preg_quote( $command, '/' ) . '\s*'
+            . '(?<field_attr>field="(?<field>[^"]*)")*' . '\s*'
+            . '(?<value_attr>value="(?<value>[^"]*)")*' . '\s*'
+            . '(?<compare_attr>compare="(?<compare>[^"]*)")*' . '\s*'
+            . '(?<other_attributes>[^\]]*)'
+            . ']|\[\/' . preg_quote( $command, '/' ) . '\]'
+            . ')/m', $code, $matches );
+
 		if ( ! empty( $matches[0] ) ) {
-			// holder for found blocks.
-			$blocks     = array();
+			// holder for found tags.
+			$tags       = array();
 			$indexCount = 0;
 			foreach ( $matches[0] as $key => $tag ) {
-				if ( false === strpos( $tag, '[/' ) ) {
-					// open tag
-					$field = null;
-					$value = null;
-					$ID    = '{@EntryID}';
-					$atts  = ' pod="@pod" id="' . $ID . '"';
-					if ( ! empty( $matches[2][ $key ] ) ) {
-						// get atts if any
-						// $atts = shortcode_parse_atts(str_replace('.', '____', $matches[2][$key]));
-						$atts    = array();
-						$pattern = '/(\w.+)\s*=\s*"([^"]*)"(?:\s|$)/';
-						$text    = preg_replace( "/[\x{00a0}\x{200b}]+/u", ' ', $matches[2][ $key ] );
-						if ( preg_match_all( $pattern, $text, $match, PREG_SET_ORDER ) ) {
-							$field = $match[0][1];
-							$value = $match[0][2];
-						} else {
-							$field = trim( $matches[2][ $key ] );
-						}
-						if ( false !== strpos( $field, '.' ) ) {
-							$path  = explode( '.', $field );
-							$field = array_pop( $path );
-							$ID    = '{@' . implode( '.', $path ) . '.' . $pod->pod_data['field_id'] . '}';
-						}
-						$atts = ' id="' . $ID . '" pod="@pod" field="' . $field . '"';
-						if ( ! empty( $value ) ) {
-							$atts .= ' value="' . $value . '"';
-						}
-					}//end if
-
-					$newtag              = $shortcode . '__' . $key;
-					$tags[ $indexCount ] = $newtag;
-					$aliases[]           = $newtag;
-					$code                = preg_replace( '/(' . preg_quote( $tag ) . ')/m', '[' . $newtag . $atts . ' index="{_index}"]', $code, 1 );
-					$indexCount ++;
-				} else {
+				if ( false !== strpos( $tag, '[/' ) ) {
 					// close tag
 					$indexCount --;
 					$newclose = $tags[ $indexCount ];
 					$code     = preg_replace( '/(' . preg_quote( $tag, '/' ) . ')/m', '[/' . $newclose . ']', $code, 1 );
 
+					continue;
 				}//end if
+
+				// Handle open tags.
+
+				$field   = null;
+				$value   = null;
+				$compare = null;
+
+				$ID    = '{@EntryID}';
+				$atts  = ' pod="{@pod}"';
+
+				if ( '' !== $matches['field_attr'][ $key ] ) {
+					$field = $matches['field'][ $key ];
+
+					if ( '' !== $matches['value_attr'][ $key ] ) {
+						$value = $matches['value'][ $key ];
+					}
+
+					if ( '' !== $matches['compare_attr'][ $key ] ) {
+						$compare = $matches['compare'][ $key ];
+					}
+				} elseif ( '' !== $matches['other_attributes'][ $key ] ) {
+					// get atts if any
+					// $atts = shortcode_parse_atts(str_replace('.', '____', $matches[2][$key]));
+					$pattern = '/(?<field>[\w\.]+)\s*=\s*"(?<value>[^"]*)"(?:\s|$)/';
+					$field   = trim( $matches['other_attributes'][ $key ] );
+					$text    = preg_replace( "/[\x{00a0}\x{200b}]+/u", ' ', $field );
+
+					if ( preg_match_all( $pattern, $text, $field_value_match, PREG_SET_ORDER ) ) {
+						$field = $field_value_match[0]['field'];
+						$value = $field_value_match[0]['value'];
+					}
+				}//end if
+
+				if ( $field && false !== strpos( $field, '.' ) && 0 !== strpos( $field, '_' ) ) {
+					// Take the last element off of the array and use the ID.
+					$path  = explode( '.', $field );
+					$field = array_pop( $path );
+
+					// Rebuild the ID used for the lookup.
+					$ID    = '{@' . implode( '.', $path ) . '.' . $pod->pod_data['field_id'] . '}';
+				}
+
+				$atts .= ' id="' . esc_attr( $ID ) . '"';
+
+				if ( $field ) {
+					$atts .= ' field="' . esc_attr( $field ) . '"';
+				}
+
+				if ( null !== $value ) {
+					$atts .= ' value="' . esc_attr( $value ) . '"';
+				}
+
+				if ( null !== $compare ) {
+					$atts .= ' compare="' . esc_attr( $compare ) . '"';
+				}
+
+				$newtag              = $shortcode . '__' . $key;
+				$tags[ $indexCount ] = $newtag;
+				$aliases[]           = $newtag;
+
+				$code = preg_replace( '/(' . preg_quote( $tag, '/' ) . ')/m', '[' . $newtag . $atts . ' index="{_index}"]', $code, 1 );
+
+				$indexCount ++;
 			}//end foreach
-			if ( $command == 'if' ) {
-				// dump($pod);
-			}
 		}//end if
 	}//end foreach
-	// get new aliased shotcodes
+	// get new aliased shortcodes
 	if ( ! empty( $aliases ) ) {
 		$code = frontier_backtrack_template( $code, $aliases );
 	}
-	$code = str_replace( '@pod', $pod->pod, $code );
-	$code = str_replace( '@EntryID', '@' . $pod->pod_data['field_id'], $code );
+	$code = str_replace( '{@pod}', $pod->pod, $code );
+	$code = str_replace( '{@EntryID}', '{@' . $pod->pod_data['field_id'] . '}', $code );
 
 	return $code;
 }

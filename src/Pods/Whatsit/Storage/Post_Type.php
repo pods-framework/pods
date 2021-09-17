@@ -366,8 +366,12 @@ class Post_Type extends Collection {
 		}
 
 		if ( ! is_array( $post_objects ) ) {
-			// Get the post objects.
-			$post_objects = array_map( 'get_post', $posts );
+			$post_objects = [];
+
+			if ( ! empty( $posts ) ) {
+				// Get the post objects.
+				$post_objects = array_map( 'get_post', $posts );
+			}
 
 			if ( empty( $args['bypass_post_type_find'] ) && empty( $args['bypass_cache'] ) ) {
 				pods_cache_set( $cache_key . '_objects', $post_objects, WEEK_IN_SECONDS );

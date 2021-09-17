@@ -709,19 +709,34 @@ class Pod extends Base {
 					'help'          => __( 'You can enable the ability to select terms from these Taxonomies on any post for this Post Type. Once connected, posts from this Custom Post Type will appear in the Taxonomy archive page of the associated Taxonomies selected. Only Categories and Tag need to be specifically selected to be shown on Taxonomy archives on their own.', 'pods' ),
 					'type'          => 'boolean_group',
 					'boolean_group' => [],
+					'dependency'    => true,
 				],
 			];
 
 			// Only show this if it is a Custom Post Type.
 			if ( '' === $pod_object ) {
 				$options['connections']['archive_show_in_taxonomies'] = [
-					'name'          => 'archive_show_in_taxonomies',
-					'label'         => __( 'Show in Taxonomy Archives', 'pods' ),
-					'help'          => __( 'You can include posts from this Custom Post Type in the Taxonomy archive page for Categories and Tags. These Taxonomies operate differently in WordPress and require an opt-in to have Custom Post Types included.', 'pods' ),
-					'type'          => 'boolean_group',
-					'boolean_group' => [],
+					'name'           => 'archive_show_in_taxonomies',
+					'label'          => __( 'Show in Taxonomy Archives', 'pods' ),
+					'help'           => __( 'You can include posts from this Custom Post Type in the Taxonomy archive page for Categories and Tags. These Taxonomies operate differently in WordPress and require an opt-in to have Custom Post Types included.', 'pods' ),
+					'type'           => 'boolean_group',
+					'boolean_group'  => [],
+					'depends-on-any' => [
+						'built_in_taxonomies_category' => true,
+						'built_in_taxonomies_post_tag' => true,
+					],
 				];
 			}
+
+			$options['connections']['register_custom_post_type'] = [
+				'name'         => 'register_custom_post_type',
+				'label'        => __( 'Add new connections', 'pods' ),
+				'type'         => 'html',
+				'html_content' => sprintf(
+					'<a href="%s">Create a new Custom Post Type</a>',
+					esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=post_type' ) )
+				),
+			];
 
 			$options['advanced'] = [
 				'public'                  => [
@@ -1123,6 +1138,15 @@ class Pod extends Base {
 					'help'          => __( 'You can enable the ability to select posts from these post types on any term for this taxonomy.', 'pods' ),
 					'type'          => 'boolean_group',
 					'boolean_group' => [],
+				],
+				'register_custom_taxonomy'       => [
+					'name'           => 'register_custom_taxonomy',
+					'label'          => __( 'Add new connections', 'pods' ),
+					'type'           => 'html',
+					'html_content'   => sprintf(
+						'<a href="%s">Create a new Custom Taxonomy</a>',
+						esc_url( admin_url( 'admin.php?page=pods-add-new&create_extend=create&type=taxonomy' ) )
+					),
 				],
 			];
 

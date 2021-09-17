@@ -19,11 +19,6 @@ const createBlock = ( block ) => {
 	const {
 		blockName,
 		fields,
-		category,
-		description,
-		keywords,
-		supports,
-		title,
 	} = block;
 
 	let icon = block.icon;
@@ -38,19 +33,21 @@ const createBlock = ( block ) => {
 		icon = parse( icon );
 	}
 
-	const EditComponent = createBlockEditComponent( block );
+	const blockArgs = { ...block };
+
+	delete blockArgs.blockName;
+	delete blockArgs.fields;
+	delete blockArgs.renderType;
+
+	console.log( { blockName, blockArgs } );
 
 	registerBlockType( blockName, {
+		...blockArgs,
+		apiVersion: 1,
 		attributes: createAttributesFromFields( fields ),
-		apiVersion: 1, // @todo Update for apiVersion 2.
-		category,
-		description,
-		edit: EditComponent,
+		edit: createBlockEditComponent( block ),
 		icon,
-		keywords,
 		save: () => null,
-		supports,
-		title,
 	} );
 };
 

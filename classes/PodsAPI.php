@@ -985,154 +985,161 @@ class PodsAPI {
 			return $this->do_hook( 'get_wp_object_fields', $fields, $object, $pod );
 		}
 
-		$fields = array();
+		$fields = [];
 
 		if ( 'post_type' === $object ) {
-			$fields = array(
-				'ID'                    => array(
-					'name'    => 'ID',
-					'label'   => 'ID',
-					'type'    => 'number',
-					'alias'   => array( 'id' ),
-					'options' => array(
+			$fields = [
+				'ID'                    => [
+					'name'                 => 'ID',
+					'label'                => 'ID',
+					'type'                 => 'number',
+					'alias'                => [ 'id' ],
+					'options'              => [
 						'number_format' => '9999.99',
-					),
-				),
-				'post_title'            => array(
+					],
+					'hide_in_default_form' => true,
+				],
+				'post_title'            => [
 					'name'    => 'post_title',
 					'label'   => 'Title',
 					'type'    => 'text',
-					'alias'   => array( 'title', 'name' ),
-					'options' => array(
+					'alias'   => [ 'title', 'name' ],
+					'options' => [
 						'display_filter'      => 'the_title',
-						'display_filter_args' => array( 'post_ID' ),
-					),
-				),
-				'post_content'          => array(
+						'display_filter_args' => [ 'post_ID' ],
+					],
+				],
+				'post_content'          => [
 					'name'    => 'post_content',
 					'label'   => 'Content',
 					'type'    => 'wysiwyg',
-					'alias'   => array( 'content' ),
-					'options' => array(
+					'alias'   => [ 'content' ],
+					'options' => [
 						'wysiwyg_allowed_html_tags' => '',
 						'display_filter'            => 'the_content',
 						'pre_save'                  => 0,
-					),
-				),
-				'post_excerpt'          => array(
+					],
+				],
+				'post_excerpt'          => [
 					'name'    => 'post_excerpt',
 					'label'   => 'Excerpt',
 					'type'    => 'paragraph',
-					'alias'   => array( 'excerpt' ),
-					'options' => array(
+					'alias'   => [ 'excerpt' ],
+					'options' => [
 						'paragraph_allow_html'        => 1,
 						'paragraph_allowed_html_tags' => '',
 						'display_filter'              => 'the_excerpt',
 						'pre_save'                    => 0,
-					),
-				),
-				'post_author'           => array(
+					],
+				],
+				'post_author'           => [
 					'name'        => 'post_author',
 					'label'       => 'Author',
 					'type'        => 'pick',
-					'alias'       => array( 'author' ),
+					'alias'       => [ 'author' ],
 					'pick_object' => 'user',
-					'options'     => array(
+					'options'     => [
 						'pick_format_type'   => 'single',
 						'pick_format_single' => 'autocomplete',
 						'default_value'      => '{@user.ID}',
-					),
-				),
-				'post_date'             => array(
+					],
+				],
+				'post_date'             => [
 					'name'  => 'post_date',
 					'label' => 'Publish Date',
 					'type'  => 'datetime',
-					'alias' => array( 'created', 'date' ),
-				),
-				'post_date_gmt'         => array(
-					'name'   => 'post_date_gmt',
-					'label'  => 'Publish Date (GMT)',
-					'type'   => 'datetime',
-					'alias'  => array(),
-					'hidden' => true,
-				),
-				'post_status'           => array(
+					'alias' => [ 'created', 'date' ],
+				],
+				'post_date_gmt'         => [
+					'name'                 => 'post_date_gmt',
+					'label'                => 'Publish Date (GMT)',
+					'type'                 => 'datetime',
+					'alias'                => [],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+				'post_status'           => [
 					'name'        => 'post_status',
 					'label'       => 'Status',
 					'type'        => 'pick',
 					'pick_object' => 'post-status',
 					'default'     => $this->do_hook( 'default_status_' . $pod_name, pods_v( 'default_status', pods_v( 'options', $pod ), 'draft', true ), $pod ),
-					'alias'       => array( 'status' ),
-				),
-				'comment_status'        => array(
+					'alias'       => [ 'status' ],
+				],
+				'comment_status'        => [
 					'name'    => 'comment_status',
 					'label'   => 'Comment Status',
 					'type'    => 'text',
 					'default' => get_option( 'default_comment_status', 'open' ),
-					'alias'   => array(),
-					'data'    => array(
+					'alias'   => [],
+					'data'    => [
 						'open'   => __( 'Open', 'pods' ),
 						'closed' => __( 'Closed', 'pods' ),
-					),
-				),
-				'ping_status'           => array(
-					'name'    => 'ping_status',
-					'label'   => 'Ping Status',
-					'default' => get_option( 'default_ping_status', 'open' ),
-					'type'    => 'text',
-					'alias'   => array(),
-					'data'    => array(
+					],
+				],
+				'ping_status'           => [
+					'name'                 => 'ping_status',
+					'label'                => 'Ping Status',
+					'default'              => get_option( 'default_ping_status', 'open' ),
+					'type'                 => 'text',
+					'alias'                => [],
+					'data'                 => [
 						'open'   => __( 'Open', 'pods' ),
 						'closed' => __( 'Closed', 'pods' ),
-					),
-				),
-				'post_password'         => array(
+					],
+					'hide_in_default_form' => true,
+				],
+				'post_password'         => [
 					'name'  => 'post_password',
 					'label' => 'Password',
 					'type'  => 'password',
 					'alias' => [],
-				),
-				'post_name'             => array(
+				],
+				'post_name'             => [
 					'name'  => 'post_name',
 					'label' => 'Permalink',
 					'type'  => 'slug',
-					'alias' => array( 'slug', 'permalink' ),
-				),
-				'to_ping'               => array(
-					'name'   => 'to_ping',
-					'label'  => 'To Ping',
-					'type'   => 'text',
-					'alias'  => array(),
-					'hidden' => true,
-				),
-				'pinged'                => array(
-					'name'   => 'pinged',
-					'label'  => 'Pinged',
-					'type'   => 'text',
-					'alias'  => array(),
-					'hidden' => true,
-				),
-				'post_modified'         => array(
-					'name'   => 'post_modified',
-					'label'  => 'Last Modified Date',
-					'type'   => 'datetime',
-					'alias'  => array( 'modified' ),
-					'hidden' => true,
-				),
-				'post_modified_gmt'     => array(
-					'name'   => 'post_modified_gmt',
-					'label'  => 'Last Modified Date (GMT)',
-					'type'   => 'datetime',
-					'alias'  => array(),
-					'hidden' => true,
-				),
-				'post_content_filtered' => array(
-					'name'    => 'post_content_filtered',
-					'label'   => 'Content (filtered)',
-					'type'    => 'paragraph',
-					'alias'   => array(),
-					'hidden'  => true,
-					'options' => array(
+					'alias' => [ 'slug', 'permalink' ],
+				],
+				'to_ping'               => [
+					'name'                 => 'to_ping',
+					'label'                => 'To Ping',
+					'type'                 => 'text',
+					'alias'                => [],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+				'pinged'                => [
+					'name'                 => 'pinged',
+					'label'                => 'Pinged',
+					'type'                 => 'text',
+					'alias'                => [],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+				'post_modified'         => [
+					'name'                 => 'post_modified',
+					'label'                => 'Last Modified Date',
+					'type'                 => 'datetime',
+					'alias'                => [ 'modified' ],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+				'post_modified_gmt'     => [
+					'name'                 => 'post_modified_gmt',
+					'label'                => 'Last Modified Date (GMT)',
+					'type'                 => 'datetime',
+					'alias'                => [],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+				'post_content_filtered' => [
+					'name'                 => 'post_content_filtered',
+					'label'                => 'Content (filtered)',
+					'type'                 => 'paragraph',
+					'alias'                => [],
+					'hidden'               => true,
+					'options'              => [
 						'paragraph_allow_html'        => 1,
 						'paragraph_oembed'            => 1,
 						'paragraph_wptexturize'       => 1,
@@ -1140,340 +1147,358 @@ class PodsAPI {
 						'paragraph_wpautop'           => 1,
 						'paragraph_allow_shortcode'   => 1,
 						'paragraph_allowed_html_tags' => '',
-					),
-				),
-				'post_parent'           => array(
+					],
+					'hide_in_default_form' => true,
+				],
+				'post_parent'           => [
 					'name'        => 'post_parent',
 					'label'       => 'Parent',
 					'type'        => 'pick',
 					'pick_object' => 'post_type',
 					'pick_val'    => '__current__',
-					'alias'       => array( 'parent' ),
-					'data'        => array(),
+					'alias'       => [ 'parent' ],
+					'data'        => [],
 					'hidden'      => true,
-				),
-				'guid'                  => array(
-					'name'   => 'guid',
-					'label'  => 'GUID',
-					'type'   => 'text',
-					'alias'  => array(),
-					'hidden' => true,
-				),
-				'menu_order'            => array(
+				],
+				'guid'                  => [
+					'name'                 => 'guid',
+					'label'                => 'GUID',
+					'type'                 => 'text',
+					'alias'                => [],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+				'menu_order'            => [
 					'name'    => 'menu_order',
 					'label'   => 'Menu Order',
 					'type'    => 'number',
-					'alias'   => array(),
-					'options' => array(
+					'alias'   => [],
+					'options' => [
 						'number_format' => '9999.99',
-					),
-				),
-				'post_type'             => array(
-					'name'   => 'post_type',
-					'label'  => 'Type',
-					'type'   => 'text',
-					'alias'  => array( 'type' ),
-					'hidden' => true,
-				),
-				'post_mime_type'        => array(
-					'name'   => 'post_mime_type',
-					'label'  => 'Mime Type',
-					'type'   => 'text',
-					'alias'  => array(),
-					'hidden' => true,
-				),
-				'comment_count'         => array(
-					'name'   => 'comment_count',
-					'label'  => 'Comment Count',
-					'type'   => 'number',
-					'alias'  => array(),
-					'hidden' => true,
-				),
-				'comments'              => array(
-					'name'        => 'comments',
-					'label'       => 'Comments',
-					'type'        => 'comment',
-					'pick_object' => 'comment',
-					'pick_val'    => 'comment',
-					'alias'       => array(),
-					'hidden'      => true,
-					'options'     => array(
+					],
+				],
+				'post_type'             => [
+					'name'                 => 'post_type',
+					'label'                => 'Type',
+					'type'                 => 'text',
+					'alias'                => [ 'type' ],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+				'post_mime_type'        => [
+					'name'                 => 'post_mime_type',
+					'label'                => 'Mime Type',
+					'type'                 => 'text',
+					'alias'                => [],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+				'comment_count'         => [
+					'name'                 => 'comment_count',
+					'label'                => 'Comment Count',
+					'type'                 => 'number',
+					'alias'                => [],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+				'comments'              => [
+					'name'                 => 'comments',
+					'label'                => 'Comments',
+					'type'                 => 'comment',
+					'pick_object'          => 'comment',
+					'pick_val'             => 'comment',
+					'alias'                => [],
+					'hidden'               => true,
+					'options'              => [
 						'comment_format_type' => 'multi',
-					),
-				)
-			);
+					],
+					'hide_in_default_form' => true,
+				],
+			];
 
 			if ( ! empty( $pod ) ) {
 				$taxonomies = get_object_taxonomies( $pod_name, 'objects' );
 
 				foreach ( $taxonomies as $taxonomy ) {
-					$fields[ $taxonomy->name ] = array(
+					$fields[ $taxonomy->name ] = [
 						'name'        => $taxonomy->name,
 						'label'       => $taxonomy->labels->name,
 						'type'        => 'taxonomy',
 						'pick_object' => 'taxonomy',
 						'pick_val'    => $taxonomy->name,
-						'alias'       => array(),
+						'alias'       => [],
 						'hidden'      => true,
-						'options'     => array(
+						'options'     => [
 							'taxonomy_format_type' => 'multi',
-						),
-					);
+						],
+					];
 				}
 			}
 		} elseif ( 'user' === $object ) {
-			$fields = array(
-				'ID'              => array(
-					'name'    => 'ID',
-					'label'   => 'ID',
-					'type'    => 'number',
-					'alias'   => array( 'id' ),
-					'options' => array(
+			$fields = [
+				'ID'              => [
+					'name'                 => 'ID',
+					'label'                => 'ID',
+					'type'                 => 'number',
+					'alias'                => [ 'id' ],
+					'options'              => [
 						'number_format' => '9999.99',
-					),
-				),
-				'user_login'      => array(
+					],
+					'hide_in_default_form' => true,
+				],
+				'user_login'      => [
 					'name'    => 'user_login',
 					'label'   => 'Title',
 					'type'    => 'text',
-					'alias'   => array( 'login' ),
-					'options' => array(
+					'alias'   => [ 'login' ],
+					'options' => [
 						'required' => 1,
-					),
-				),
-				'user_nicename'   => array(
+					],
+				],
+				'user_nicename'   => [
 					'name'  => 'user_nicename',
 					'label' => 'Permalink',
 					'type'  => 'slug',
-					'alias' => array( 'nicename', 'slug', 'permalink' ),
-				),
-				'display_name'    => array(
+					'alias' => [ 'nicename', 'slug', 'permalink' ],
+				],
+				'display_name'    => [
 					'name'  => 'display_name',
 					'label' => 'Display Name',
 					'type'  => 'text',
-					'alias' => array( 'title', 'name' ),
-				),
-				'user_pass'       => array(
+					'alias' => [ 'title', 'name' ],
+				],
+				'user_pass'       => [
 					'name'    => 'user_pass',
 					'label'   => 'Password',
 					'type'    => 'text',
-					'alias'   => array( 'password', 'pass' ),
-					'options' => array(
+					'alias'   => [ 'password', 'pass' ],
+					'options' => [
 						'required'         => 1,
 						'text_format_type' => 'password',
-					),
-				),
-				'user_email'      => array(
+					],
+				],
+				'user_email'      => [
 					'name'    => 'user_email',
 					'label'   => 'E-mail',
 					'type'    => 'text',
-					'alias'   => array( 'email' ),
-					'options' => array(
+					'alias'   => [ 'email' ],
+					'options' => [
 						'required'         => 1,
 						'text_format_type' => 'email',
-					),
-				),
-				'user_url'        => array(
+					],
+				],
+				'user_url'        => [
 					'name'    => 'user_url',
 					'label'   => 'URL',
 					'type'    => 'text',
-					'alias'   => array( 'url', 'website' ),
-					'options' => array(
+					'alias'   => [ 'url', 'website' ],
+					'options' => [
 						'required'            => 0,
 						'text_format_type'    => 'website',
 						'text_format_website' => 'normal',
-					),
-				),
-				'user_registered' => array(
-					'name'    => 'user_registered',
-					'label'   => 'Registration Date',
-					'type'    => 'date',
-					'alias'   => array( 'created', 'date', 'registered' ),
-					'options' => array(
+					],
+				],
+				'user_registered' => [
+					'name'                 => 'user_registered',
+					'label'                => 'Registration Date',
+					'type'                 => 'date',
+					'alias'                => [ 'created', 'date', 'registered' ],
+					'options'              => [
 						'date_format_type' => 'datetime',
-					),
-				)
-			);
+					],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+			];
 		} elseif ( 'comment' === $object ) {
-			$fields = array(
-				'comment_ID'           => array(
-					'name'    => 'comment_ID',
-					'label'   => 'ID',
-					'type'    => 'number',
-					'alias'   => array( 'id', 'ID', 'comment_id' ),
-					'options' => array(
+			$fields = [
+				'comment_ID'           => [
+					'name'                 => 'comment_ID',
+					'label'                => 'ID',
+					'type'                 => 'number',
+					'alias'                => [ 'id', 'ID', 'comment_id' ],
+					'options'              => [
 						'number_format' => '9999.99',
-					),
-				),
-				'comment_content'      => array(
+					],
+					'hide_in_default_form' => true,
+				],
+				'comment_content'      => [
 					'name'  => 'comment_content',
 					'label' => 'Content',
 					'type'  => 'wysiwyg',
-					'alias' => array( 'content' ),
-				),
-				'comment_approved'     => array(
+					'alias' => [ 'content' ],
+				],
+				'comment_approved'     => [
 					'name'    => 'comment_approved',
 					'label'   => 'Approved',
 					'type'    => 'number',
-					'alias'   => array( 'approved' ),
-					'options' => array(
+					'alias'   => [ 'approved' ],
+					'options' => [
 						'number_format' => '9999.99',
-					),
-				),
-				'comment_post_ID'      => array(
+					],
+				],
+				'comment_post_ID'      => [
 					'name'  => 'comment_post_ID',
 					'label' => 'Post',
 					'type'  => 'pick',
-					'alias' => array( 'post', 'post_id' ),
-					'data'  => array(),
-				),
-				'user_id'              => array(
+					'alias' => [ 'post', 'post_id' ],
+					'data'  => [],
+				],
+				'user_id'              => [
 					'name'        => 'user_id',
 					'label'       => 'Author',
 					'type'        => 'pick',
-					'alias'       => array( 'author' ),
+					'alias'       => [ 'author' ],
 					'pick_object' => 'user',
-					'data'        => array(),
-				),
-				'comment_date'         => array(
+					'data'        => [],
+				],
+				'comment_date'         => [
 					'name'    => 'comment_date',
 					'label'   => 'Date',
 					'type'    => 'date',
-					'alias'   => array( 'created', 'date' ),
-					'options' => array(
+					'alias'   => [ 'created', 'date' ],
+					'options' => [
 						'date_format_type' => 'datetime',
-					),
-				),
-				'comment_author'       => array(
+					],
+				],
+				'comment_author'       => [
 					'name'  => 'comment_author',
 					'label' => 'Author',
 					'type'  => 'text',
-					'alias' => array( 'author' ),
-				),
-				'comment_author_email' => array(
+					'alias' => [ 'author' ],
+				],
+				'comment_author_email' => [
 					'name'  => 'comment_author_email',
 					'label' => 'Author E-mail',
 					'type'  => 'email',
-					'alias' => array( 'author_email' ),
-				),
-				'comment_author_url'   => array(
+					'alias' => [ 'author_email' ],
+				],
+				'comment_author_url'   => [
 					'name'  => 'comment_author_url',
 					'label' => 'Author URL',
 					'type'  => 'text',
-					'alias' => array( 'author_url' ),
-				),
-				'comment_author_IP'    => array(
-					'name'  => 'comment_author_IP',
-					'label' => 'Author IP',
-					'type'  => 'text',
-					'alias' => array( 'author_IP' ),
-				),
-				'comment_type'         => array(
-					'name'   => 'comment_type',
-					'label'  => 'Type',
-					'type'   => 'text',
-					'alias'  => array( 'type' ),
-					'hidden' => true,
-				),
-				'comment_parent'       => array(
-					'name'        => 'comment_parent',
-					'label'       => 'Parent',
-					'type'        => 'pick',
-					'pick_object' => 'comment',
-					'pick_val'    => '__current__',
-					'alias'       => array( 'parent' ),
-					'data'        => array(),
-					'hidden'      => true,
-				),
-			);
+					'alias' => [ 'author_url' ],
+				],
+				'comment_author_IP'    => [
+					'name'                 => 'comment_author_IP',
+					'label'                => 'Author IP',
+					'type'                 => 'text',
+					'alias'                => [ 'author_IP' ],
+					'hide_in_default_form' => true,
+				],
+				'comment_type'         => [
+					'name'                 => 'comment_type',
+					'label'                => 'Type',
+					'type'                 => 'text',
+					'alias'                => [ 'type' ],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+				'comment_parent'       => [
+					'name'                 => 'comment_parent',
+					'label'                => 'Parent',
+					'type'                 => 'pick',
+					'pick_object'          => 'comment',
+					'pick_val'             => '__current__',
+					'alias'                => [ 'parent' ],
+					'data'                 => [],
+					'hidden'               => true,
+					'hide_in_default_form' => true,
+				],
+			];
 		} elseif ( 'taxonomy' === $object ) {
-			$fields = array(
-				'term_id'          => array(
-					'name'    => 'term_id',
-					'label'   => 'ID',
-					'type'    => 'number',
-					'alias'   => array( 'id', 'ID' ),
-					'options' => array(
+			$fields = [
+				'term_id'          => [
+					'name'                 => 'term_id',
+					'label'                => 'ID',
+					'type'                 => 'number',
+					'alias'                => [ 'id', 'ID' ],
+					'options'              => [
 						'number_format' => '9999.99',
-					),
-				),
-				'name'             => array(
+					],
+					'hide_in_default_form' => true,
+				],
+				'name'             => [
 					'name'  => 'name',
 					'label' => 'Title',
 					'type'  => 'text',
-					'alias' => array( 'title' ),
-				),
-				'slug'             => array(
+					'alias' => [ 'title' ],
+				],
+				'slug'             => [
 					'name'  => 'slug',
 					'label' => 'Permalink',
 					'type'  => 'slug',
-					'alias' => array( 'permalink' ),
-				),
-				'description'      => array(
+					'alias' => [ 'permalink' ],
+				],
+				'description'      => [
 					'name'  => 'description',
 					'label' => 'Description',
 					'type'  => 'wysiwyg',
-					'alias' => array( 'content' ),
-				),
-				'taxonomy'         => array(
+					'alias' => [ 'content' ],
+				],
+				'taxonomy'         => [
 					'name'  => 'taxonomy',
 					'label' => 'Taxonomy',
 					'type'  => 'text',
-					'alias' => array(),
-				),
-				'parent'           => array(
+					'alias' => [],
+				],
+				'parent'           => [
 					'name'        => 'parent',
 					'label'       => 'Parent',
 					'type'        => 'pick',
 					'pick_object' => 'taxonomy',
 					'pick_val'    => '__current__',
-					'alias'       => array( 'parent' ),
-					'data'        => array(),
+					'alias'       => [ 'parent' ],
+					'data'        => [],
 					'hidden'      => true,
-				),
-				'term_taxonomy_id' => array(
-					'name'    => 'term_taxonomy_id',
-					'label'   => 'Term Taxonomy ID',
-					'type'    => 'number',
-					'alias'   => array(),
-					'hidden'  => true,
-					'options' => array(
+				],
+				'term_taxonomy_id' => [
+					'name'                 => 'term_taxonomy_id',
+					'label'                => 'Term Taxonomy ID',
+					'type'                 => 'number',
+					'alias'                => [],
+					'hidden'               => true,
+					'options'              => [
 						'number_format' => '9999.99',
-					),
-				),
-				'term_group'       => array(
-					'name'    => 'term_group',
-					'label'   => 'Term Group',
-					'type'    => 'number',
-					'alias'   => array( 'group' ),
-					'hidden'  => true,
-					'options' => array(
+					],
+					'hide_in_default_form' => true,
+				],
+				'term_group'       => [
+					'name'                 => 'term_group',
+					'label'                => 'Term Group',
+					'type'                 => 'number',
+					'alias'                => [ 'group' ],
+					'hidden'               => true,
+					'options'              => [
 						'number_format' => '9999.99',
-					),
-				),
-				'count'            => array(
-					'name'    => 'count',
-					'label'   => 'Count',
-					'type'    => 'number',
-					'alias'   => array(),
-					'hidden'  => true,
-					'options' => array(
+					],
+					'hide_in_default_form' => true,
+				],
+				'count'            => [
+					'name'                 => 'count',
+					'label'                => 'Count',
+					'type'                 => 'number',
+					'alias'                => [],
+					'hidden'               => true,
+					'options'              => [
 						'number_format' => '9999.99',
-					),
-				),
-			);
+					],
+					'hide_in_default_form' => true,
+				],
+			];
 		} elseif ( 'pod' === $object ) {
-			$fields = array(
-				'id' => array(
-					'name'    => 'id',
-					'label'   => 'ID',
-					'type'    => 'number',
-					'alias'   => array( 'ID' ),
-					'options' => array(
+			$fields = [
+				'id' => [
+					'name'                 => 'id',
+					'label'                => 'ID',
+					'type'                 => 'number',
+					'alias'                => [ 'ID' ],
+					'options'              => [
 						'number_format' => '9999.99',
-					),
-				),
-			);
+					],
+					'hide_in_default_form' => true,
+				],
+			];
 		}
 
 		$fields = $this->do_hook( 'get_wp_object_fields', $fields, $object, $pod );
@@ -9478,7 +9503,6 @@ class PodsAPI {
 		}
 
 		$_info = false;
-		$transient_cached = false;
 
 		if ( 'ok' !== pods_cache_get( 'table_info_cache', 'pods-static-cache' ) ) {
 			pods_cache_set( 'table_info_cache', 'ok', 'pods-static-cache' );
@@ -9490,16 +9514,22 @@ class PodsAPI {
 			// Prefer info from the object internal cache
 			$_info = self::$table_info_cache[ $transient ];
 		} elseif ( pods_api_cache() ) {
-			$_info = pods_transient_get( $transient );
-			if ( false === $_info && ! did_action( 'init' ) ) {
+			$_info = false;
+
+			if ( ! did_action( 'init' ) || doing_action( 'init' ) ) {
 				$_info = pods_transient_get( $transient . '_pre_init' );
+			} else {
+				$_info = pods_transient_get( $transient );
 			}
-			$transient_cached = true;
 		}
 
 		if ( false !== $_info && is_array( $_info ) ) {
 			// Data was cached, use that
 			$info = $_info;
+
+			self::$table_info_cache[ $transient ] = apply_filters( 'pods_api_get_table_info', $info, $object_type, $object, $name, $pod, $field, $this );
+
+			return self::$table_info_cache[ $transient ];
 		} else {
 			// Data not cached, load it up
 			$_info = $this->get_table_info_load( $object_type, $object, $name, $pod );
@@ -9934,11 +9964,9 @@ class PodsAPI {
 		$info['object_name'] = $object;
 
 		if ( pods_api_cache() ) {
-			if ( ! did_action( 'init' ) ) {
-				$transient .= '_pre_init';
-			}
-
-			if ( !$transient_cached ) {
+			if ( ! did_action( 'init' ) || doing_action( 'init' ) ) {
+				pods_transient_set( $transient . '_pre_init', $info, WEEK_IN_SECONDS );
+			} else {
 				pods_transient_set( $transient, $info, WEEK_IN_SECONDS );
 			}
 		}

@@ -31,7 +31,7 @@ const RadioSelect = ( {
 								<input
 									name={ htmlAttributes.name || name }
 									id={ idAttribute }
-									checked={ value === optionValue }
+									checked={ value.toString() === optionValue.toString() }
 									className="pods-form-ui-field-type-pick"
 									type="radio"
 									value={ optionValue }

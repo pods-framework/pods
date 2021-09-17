@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Datetime from 'react-datetime';
 import moment from 'moment';
 import classnames from 'classnames';
@@ -12,6 +12,8 @@ import {
 	convertPodsDateFormatToMomentFormat,
 	getArrayOfYearsFromJqueryUIYearRange,
 } from 'dfv/src/helpers/dateFormats';
+
+import { dateTimeValidator } from 'dfv/src/helpers/validators';
 
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
@@ -77,6 +79,7 @@ const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, 
 };
 
 const DateTime = ( {
+	addValidationRules,
 	value,
 	setValue,
 	fieldConfig = {},
@@ -123,18 +126,46 @@ const DateTime = ( {
 		[ timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ]
 	);
 
-	const getFullFormat = () => {
+	const getDBFormat = () => {
 		// Use a full date and time format for our value string by default.
-		let valueFormat = `${ momentDateFormat }, ${ momentTimeFormat }`;
-
 		// Unless we're only showing the date OR the time picker.
-		if ( ! includeTimeField ) {
-			valueFormat = momentDateFormat;
-		} else if ( ! includeDateField ) {
-			valueFormat = momentTimeFormat;
+		if ( includeDateField && includeTimeField ) {
+			return 'YYYY-MM-DD hh:mm:ss A';
+		} else if ( includeTimeField ) {
+			return 'hh:mm:ss A';
+		} else if ( includeDateField ) {
+			return 'YYYY-MM-DD';
+		}
+	};
+
+	const formatValueForHTML5Field = ( stringValue ) => {
+		if ( ! stringValue ) {
+			return '';
 		}
 
-		return valueFormat;
+		const momentObject = moment( stringValue, getDBFormat() );
+
+		// Use a full date and time format for our value string by default.
+		// Unless we're only showing the date OR the time picker.
+		if ( includeDateField && includeTimeField ) {
+			return momentObject.format( 'YYYY-MM-DDThh:mm' );
+		} else if ( includeTimeField ) {
+			return momentObject.format( 'hh:mm' );
+		} else if ( includeDateField ) {
+			return momentObject.format( 'YYYY-MM-DD' );
+		}
+	};
+
+	const getFullFormat = () => {
+		// Use a full date and time format for our value string by default.
+		// Unless we're only showing the date OR the time picker.
+		if ( includeDateField && includeTimeField ) {
+			return `${ momentDateFormat }, ${ momentTimeFormat }`;
+		} else if ( includeTimeField ) {
+			return momentTimeFormat;
+		} else if ( includeDateField ) {
+			return momentDateFormat;
+		}
 	};
 
 	const formatMomentObject = ( momentObject ) => {
@@ -145,15 +176,29 @@ const DateTime = ( {
 
 	// Keep local versions as a string (formatted and ready to display, and in case
 	// the Moment object is invalid) and as a Moment object.
+	const isValueEmpty = [ '0000-00-00', '0000-00-00 00:00:00', '00:00:00', '' ].includes( value );
+
 	const [ localStringValue, setLocalStringValue ] = useState(
-		'0000-00-00 00:00:00' === value
-			? ''
-			: formatMomentObject( moment( value ) )
+		() => {
+			if ( isValueEmpty ) {
+				return '';
+			}
+
+			return formatMomentObject(
+				moment( value, [ getDBFormat(), getFullFormat() ] )
+			);
+		},
 	);
 	const [ localMomentValue, setLocalMomentValue ] = useState(
-		'0000-00-00 00:00:00' === value
-			? null
-			: moment( value, getFullFormat() )
+		() => {
+			if ( isValueEmpty ) {
+				return '';
+			}
+
+			return formatMomentObject(
+				moment( value, [ getDBFormat(), getFullFormat() ] )
+			);
+		},
 	);
 
 	const handleChange = ( newValue ) => {
@@ -179,6 +224,8 @@ const DateTime = ( {
 		? new Date( yearRange[ 0 ], 0, 1 )
 		: new Date();
 
+	// Set up range validator, both for the react-datetime component
+	// and our validation hook.
 	const isValidDate = ( current ) => {
 		if ( 'undefined' === typeof yearRange || ! yearRange.length ) {
 			return true;
@@ -193,6 +240,15 @@ const DateTime = ( {
 		return isAfterStartYear && isBeforeEndYear;
 	};
 
+	useEffect( () => {
+		const rangeValidationRule = {
+			rule: dateTimeValidator( yearRange, getFullFormat() ),
+			condition: () => true,
+		};
+
+		addValidationRules( [ rangeValidationRule ] );
+	}, [] );
+
 	// If we can use an HTML5 input field, we can just return an input field.
 	if ( useHTML5Field ) {
 		return (
@@ -201,7 +257,7 @@ const DateTime = ( {
 				name={ htmlAttributes.name || name }
 				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ) }
 				type={ 'datetime' === type ? 'datetime-local' : type }
-				value={ value || '' }
+				value={ formatValueForHTML5Field( value ) }
 				onChange={ handleHTML5InputFieldChange }
 				onBlur={ setHasBlurred }
 			/>

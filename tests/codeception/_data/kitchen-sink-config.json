@@ -1952,7 +1952,7 @@
     "rest_pick_depth": "2",
     "date_repeatable": "0",
     "date_format_custom": "d-m-Y",
-    "date_format_custom_js": "d-m-Y",
+    "date_format_custom_js": "",
     "date_year_range_custom": ""
   },
   "demo_time_wp_default": {

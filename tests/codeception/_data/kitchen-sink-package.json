@@ -1840,7 +1840,7 @@
           "rest_pick_depth": "2",
           "date_repeatable": "0",
           "date_format_custom": "d-m-Y",
-          "date_format_custom_js": "d-m-Y",
+          "date_format_custom_js": "",
           "date_year_range_custom": ""
         },
         "demo_time_wp_default": {
@@ -2116,7 +2116,7 @@
           "required": "0",
           "time_type": "custom",
           "time_format_custom": "h:i:s A",
-          "time_format_custom_js": "h:i:s A",
+          "time_format_custom_js": "",
           "time_format": "h_mm_A",
           "time_format_24": "hh_mm",
           "time_allow_empty": "0",
@@ -6760,7 +6760,7 @@
           "rest_pick_depth": "2",
           "date_repeatable": "0",
           "date_format_custom": "d-m-Y",
-          "date_format_custom_js": "d-m-Y",
+          "date_format_custom_js": "",
           "date_year_range_custom": ""
         },
         "demo_time_wp_default": {
@@ -11435,7 +11435,7 @@
           "rest_pick_depth": "2",
           "date_repeatable": "0",
           "date_format_custom": "d-m-Y",
-          "date_format_custom_js": "d-m-Y",
+          "date_format_custom_js": "",
           "date_year_range_custom": ""
         },
         "demo_time_wp_default": {
@@ -16110,7 +16110,7 @@
           "rest_pick_depth": "2",
           "date_repeatable": "0",
           "date_format_custom": "d-m-Y",
-          "date_format_custom_js": "d-m-Y",
+          "date_format_custom_js": "",
           "date_year_range_custom": ""
         },
         "demo_time_wp_default": {
@@ -20785,7 +20785,7 @@
           "rest_pick_depth": "2",
           "date_repeatable": "0",
           "date_format_custom": "d-m-Y",
-          "date_format_custom_js": "d-m-Y",
+          "date_format_custom_js": "",
           "date_year_range_custom": ""
         },
         "demo_time_wp_default": {
@@ -25460,7 +25460,7 @@
           "rest_pick_depth": "2",
           "date_repeatable": "0",
           "date_format_custom": "d-m-Y",
-          "date_format_custom_js": "d-m-Y",
+          "date_format_custom_js": "",
           "date_year_range_custom": ""
         },
         "demo_time_wp_default": {
@@ -30135,7 +30135,7 @@
           "rest_pick_depth": "2",
           "date_repeatable": "0",
           "date_format_custom": "d-m-Y",
-          "date_format_custom_js": "d-m-Y",
+          "date_format_custom_js": "",
           "date_year_range_custom": ""
         },
         "demo_time_wp_default": {

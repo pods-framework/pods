@@ -12,7 +12,7 @@ import SettingsModal from './settings-modal';
 import FieldList from 'dfv/src/admin/edit-pod/main-tabs/field-list';
 import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-import { SAVE_STATUSES } from 'dfv/src/store/constants';
+import { SAVE_STATUSES, DELETE_STATUSES } from 'dfv/src/store/constants';
 
 import './field-group.scss';
 
@@ -29,8 +29,10 @@ const FieldGroup = ( props ) => {
 		hasMoved,
 		saveStatus,
 		saveMessage,
+		deleteStatus,
 		resetGroupSaveStatus,
 		deleteGroup,
+		removeGroupFromPod,
 		saveGroup,
 		toggleExpanded,
 		editGroupPod,
@@ -43,6 +45,9 @@ const FieldGroup = ( props ) => {
 		id: groupID,
 		fields,
 	} = group;
+
+	const isDeleting = DELETE_STATUSES.DELETING === deleteStatus;
+	const hasDeleteFailed = DELETE_STATUSES.DELETE_ERROR === deleteStatus;
 
 	const {
 		attributes,
@@ -66,6 +71,14 @@ const FieldGroup = ( props ) => {
 			setShowSettings( false );
 		}
 	}, [ saveStatus ] );
+
+	// After the group deletion is finished, remove the group from the pod.
+	useEffect( () => {
+		// Close the Field Settings modal if we finished saving.
+		if ( DELETE_STATUSES.DELETE_SUCCESS === deleteStatus ) {
+			removeGroupFromPod();
+		}
+	}, [ deleteStatus ] );
 
 	const handleKeyPress = ( event ) => {
 		if ( showSettings ) {
@@ -120,19 +133,21 @@ const FieldGroup = ( props ) => {
 		);
 
 		if ( confirmation ) {
-			deleteGroup( groupID );
+			deleteGroup( groupID, groupName );
 		}
 	};
-
-	const classes = classnames(
-		'pods-field-group-wrapper',
-		hasMoved && 'pods-field-group-wrapper--unsaved',
-	);
 
 	return (
 		<div
 			ref={ setNodeRef }
-			className={ classes }
+			className={
+				classnames(
+					'pods-field-group-wrapper',
+					hasMoved && 'pods-field-group-wrapper--unsaved',
+					isDeleting && 'pods-field-group-wrapper--deleting',
+					hasDeleteFailed && 'pods-field-group-wrapper--errored',
+				)
+			}
 			style={ style }
 		>
 			<div
@@ -157,6 +172,12 @@ const FieldGroup = ( props ) => {
 					</div>
 
 					{ groupLabel }
+
+					{ hasDeleteFailed ? (
+						<div className="pods-field-group_name__error">
+							{ __( 'Delete failed. Try again?', 'pods' ) }
+						</div>
+					) : null }
 
 					{ !! groupID && (
 						<span className="pods-field-group_name__id">
@@ -256,9 +277,11 @@ FieldGroup.propTypes = {
 	hasMoved: PropTypes.bool.isRequired,
 	saveStatus: PropTypes.string,
 	saveMessage: PropTypes.string,
+	deleteStatus: PropTypes.string,
 
 	toggleExpanded: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
+	removeGroupFromPod: PropTypes.func.isRequired,
 	saveGroup: PropTypes.func.isRequired,
 	resetGroupSaveStatus: PropTypes.func.isRequired,
 };

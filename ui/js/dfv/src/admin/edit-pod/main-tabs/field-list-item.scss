@@ -22,7 +22,7 @@
 	width: auto;
 	align-items: center;
 	padding: .7em 0;
-	transition: opacity 0.5s;
+	transition: border 0.2s ease-in-out, opacity 0.5s ease-in-out;
 
 	&:hover .pods-field_controls-container {
 		opacity: 1;
@@ -39,7 +39,7 @@
 }
 
 .pods-field_wrapper--errored {
-	border-left: 5px red solid;
+	border-left: 5px $color--red solid;
 }
 
 .pods-field_handle {

@@ -7,19 +7,6 @@
 	cursor: ns-resize;
 }
 
-.pods-field-group-wrapper {
-	margin-bottom: 10px;
-	border: 1px solid $color--light-grey;
-	background-color: #fff;
-	position: relative;
-	transition: border 200ms ease-in-out;
-}
-
-.pods-field-group-wrapper--unsaved  {
-	border-left-color: #95BF3B;
-	border-left-width: 5px;
-}
-
 .pods-field-group_title {
 	cursor: pointer;
 	display: flex;

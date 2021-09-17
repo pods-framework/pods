@@ -172,6 +172,7 @@ export const FieldListItem = ( props ) => {
 							groupLabel,
 							label
 						) }
+						isSaving={ saveStatus === SAVE_STATUSES.SAVING }
 						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
 						errorMessage={
 							saveMessage ||

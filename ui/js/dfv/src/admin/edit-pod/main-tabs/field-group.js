@@ -234,6 +234,7 @@ const FieldGroup = ( props ) => {
 							podLabel,
 							groupLabel
 						) }
+						isSaving={ saveStatus === SAVE_STATUSES.SAVING }
 						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
 						errorMessage={
 							saveMessage ||

@@ -152,6 +152,7 @@ const FieldGroups = ( {
 						__( '%1$s > Add Group', 'pods' ),
 						podLabel,
 					) }
+					isSaving={ groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVING }
 					hasSaveError={ groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVE_ERROR }
 					saveButtonText={ __( 'Save New Group', 'pods' ) }
 					errorMessage={
@@ -244,7 +245,8 @@ FieldGroups.propTypes = {
 	podLabel: PropTypes.string.isRequired,
 	podSaveStatus: PropTypes.string.isRequired,
 	groups: PropTypes.arrayOf( GROUP_PROP_TYPE_SHAPE ).isRequired,
-	deleteAndRemoveGroup: PropTypes.func.isRequired,
+	deleteGroup: PropTypes.func.isRequired,
+	removeGroupFromPod: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
 	resetGroupSaveStatus: PropTypes.func.isRequired,

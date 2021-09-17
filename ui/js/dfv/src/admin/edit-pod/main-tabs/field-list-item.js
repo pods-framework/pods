@@ -134,9 +134,8 @@ export const FieldListItem = ( props ) => {
 		}
 	}, [ saveStatus ] );
 
-	// After the field deletion is finished, remove the field from its group.
 	useEffect( () => {
-		// Close the Field Settings modal if we finished saving.
+		// After the field deletion is finished, remove the field from its group.
 		if ( DELETE_STATUSES.DELETE_SUCCESS === deleteStatus ) {
 			removeFieldFromGroup();
 		}

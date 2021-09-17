@@ -72,9 +72,8 @@ const FieldGroup = ( props ) => {
 		}
 	}, [ saveStatus ] );
 
-	// After the group deletion is finished, remove the group from the pod.
 	useEffect( () => {
-		// Close the Field Settings modal if we finished saving.
+		// After the group deletion is finished, remove the group from the pod.
 		if ( DELETE_STATUSES.DELETE_SUCCESS === deleteStatus ) {
 			removeGroupFromPod();
 		}

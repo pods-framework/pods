@@ -87,9 +87,9 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 		case UI_ACTIONS.SET_GROUP_DELETE_STATUS: {
 			const newStatus = Object.values( DELETE_STATUSES ).includes( action.deleteStatus )
 				? action.deleteStatus
-				: INITIAL_UI_STATE.deleteStatus;
+				: DELETE_STATUSES.NONE;
 
-			if ( ! action.result?.group?.name ) {
+			if ( ! action.name ) {
 				return state;
 			}
 
@@ -97,11 +97,11 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 				...state,
 				groupDeleteStatuses: {
 					...state.groupDeleteStatuses,
-					[ action.result.group.name ]: newStatus,
+					[ action.name ]: newStatus,
 				},
 				groupDeleteMessages: {
 					...state.groupDeleteMessages,
-					[ name ]: action.result?.message || '',
+					[ action.name ]: action.result?.message || '',
 				},
 			};
 		}
@@ -140,9 +140,9 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 		case UI_ACTIONS.SET_FIELD_DELETE_STATUS: {
 			const newStatus = Object.values( DELETE_STATUSES ).includes( action.deleteStatus )
 				? action.deleteStatus
-				: INITIAL_UI_STATE.deleteStatus;
+				: DELETE_STATUSES.NONE;
 
-			if ( ! action.result?.field?.name ) {
+			if ( ! action.name ) {
 				return state;
 			}
 
@@ -150,11 +150,11 @@ export const ui = ( state = INITIAL_UI_STATE, action = {} ) => {
 				...state,
 				fieldDeleteStatuses: {
 					...state.fieldDeleteStatuses,
-					[ action.result.field.name ]: newStatus,
+					[ action.name ]: newStatus,
 				},
 				fieldDeleteMessages: {
 					...state.fieldDeleteMessages,
-					[ action.result.field.name ]: action.result?.message,
+					[ action.name ]: action.result?.message,
 				},
 			};
 		}

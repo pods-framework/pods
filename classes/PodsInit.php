@@ -88,7 +88,7 @@ class PodsInit {
 	 *
 	 * @var Wisdom_Tracker
 	 */
-	protected $stats_tracking;
+	public $stats_tracking;
 
 	/**
 	 * Singleton handling for a basic pods_init() request
@@ -335,13 +335,15 @@ class PodsInit {
 
 		global $pagenow;
 
+		$is_pods_page = isset( $_GET['page'] ) && 0 === strpos( $_GET['page'], 'pods' );
+
 		// Pods admin pages or plugins/update page only.
 		if (
 			'plugins.php' !== $pagenow
 			&& 'update-core.php' !== $pagenow
 			&& 'update.php' !== $pagenow
 			&& ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
-			&& ( ! isset( $_GET['page'] ) || 0 !== strpos( $_GET['page'], 'pods' ) )
+			&& ! $is_pods_page
 			&& ! wp_doing_cron()
 		) {
 			return;
@@ -353,15 +355,89 @@ class PodsInit {
 			return $this->stats_tracking;
 		}
 
+		$settings = [];
+
+		if ( $is_main_plugin ) {
+			$settings[] = 'pods_settings';
+		}
+
 		$stats_tracking = new Wisdom_Tracker(
 			$plugin_file,
 			$plugin_slug,
 			'https://stats.pods.io',
-			[],
+			$settings,
 			true,
 			true,
-			0
+			1
 		);
+
+		if ( $is_main_plugin ) {
+			add_action( 'update_option_wisdom_allow_tracking', static function ( $old_value, $value ) use ( $plugin_slug ) {
+				$opt_out = ! empty( $value[ $plugin_slug ] ) ? 0 : 1;
+
+				pods_update_setting( 'wisdom_opt_out', $opt_out );
+			}, 10, 2 );
+		}
+
+		add_action( 'update_option_pods_settings', static function ( $old_value, $value ) use ( $stats_tracking, $plugin_slug ) {
+			// Only handle opt in when needed.
+			if ( ! isset( $value['wisdom_opt_out'] ) || 0 !== (int) $value['wisdom_opt_out'] ) {
+				return;
+			}
+
+			// We are doing opt-in>
+			$stats_tracking->set_is_tracking_allowed( true, $plugin_slug );
+			$stats_tracking->set_can_collect_email( true, $plugin_slug );
+		}, 10, 2 );
+
+		add_filter( 'wisdom_is_local_' . $plugin_slug, static function ( $is_local = false ) {
+			if ( true === $is_local ) {
+				return $is_local;
+			}
+
+			$url = network_site_url( '/' );
+
+			$url       = strtolower( trim( $url ) );
+			$url_parts = parse_url( $url );
+			$host      = ! empty( $url_parts['host'] ) ? $url_parts['host'] : false;
+
+			if ( empty( $host ) ) {
+				return $is_local;
+			}
+
+			if ( 'localhost' === $host ) {
+				return true;
+			}
+
+			if ( false !== ip2long( $host ) && ! filter_var( $host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
+				return true;
+			}
+
+			$tlds_to_check = [
+				'.local',
+				'.test',
+			];
+
+			foreach ( $tlds_to_check as $tld ) {
+				$minus_tld = strlen( $host ) - strlen( $tld );
+
+				if ( $minus_tld === strpos( $host, $tld ) ) {
+					return true;
+				}
+			}
+
+			return $is_local;
+		} );
+
+		add_filter( 'wisdom_notice_text_' . $plugin_slug, static function() {
+			return __( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site. We won\'t record any sensitive data, only information regarding the WordPress environment, your site admin email address, and plugin settings. We will only use this information help us make improvements to the plugin and provide better support when you reach out. Tracking is completely optional.', 'pods' );
+		} );
+
+		// Handle non-Pods pages, we don't want certain things happening.
+		if ( ! $is_pods_page ) {
+			remove_action( 'admin_notices', [ $stats_tracking, 'optin_notice' ] );
+			remove_action( 'admin_notices', [ $stats_tracking, 'marketing_notice' ] );
+		}
 
 		if ( ! $is_main_plugin ) {
 			/**

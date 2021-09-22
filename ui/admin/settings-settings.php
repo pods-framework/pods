@@ -31,10 +31,17 @@ if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'pods-s
 
 		$settings_to_save = [];
 
+		$layout_field_types = PodsForm::layout_field_types();
+
 		foreach ( $fields as $key => $field ) {
 			// Auto set the field name.
 			if ( ! isset( $field['name'] ) ) {
 				$field['name'] = $key;
+			}
+
+			// Skip layout field types.
+			if ( isset( $field['type'] ) && in_array( $field['type'], $layout_field_types, true ) ) {
+				continue;
 			}
 
 			$value = '';

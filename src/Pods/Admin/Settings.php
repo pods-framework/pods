@@ -183,7 +183,7 @@ class Settings {
 
 		$pods_init = pods_init();
 
-		$is_wisdom_opted_out = ! $pods_init->stats_tracking->get_is_tracking_allowed();
+		$is_wisdom_opted_out = ! $pods_init->stats_tracking || ! $pods_init->stats_tracking->get_is_tracking_allowed();
 
 		$fields['wisdom-opt-in'] = [
 			'label' => __( 'Stats Tracking', 'pods' ),

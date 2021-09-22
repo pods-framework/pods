@@ -22,7 +22,7 @@
 		<?php echo PodsForm::field( $field_prefix . $field['name'], $value, $field['type'], $field, $pod, $id ); ?>
 	<?php else : ?>
 		<div class="pods-field-label">
-			<?php echo PodsForm::label( $field_prefix . $field['name'], $field['label'], $field['help'], $field ); ?>
+			<?php echo PodsForm::label( $field_prefix . $field['name'], $field['label'], pods_v( 'help', $field ), $field ); ?>
 		</div>
 
 		<div class="pods-field-input">

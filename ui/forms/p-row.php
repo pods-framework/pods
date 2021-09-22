@@ -24,7 +24,7 @@
 			class="<?php echo esc_attr( $row_classes ); ?>
 					<?php endif; ?>>
 					<?php
-			echo PodsForm::label( $field_prefix . $field['name'], $field['label'], $field['help'], $field );
+			echo PodsForm::label( $field_prefix . $field['name'], $field['label'], pods_v( 'help', $field ), $field );
 			echo PodsForm::field( $field_prefix . $field['name'], $value, $field['type'], $field, $pod, $id );
 			echo PodsForm::comment( $field_prefix . $field['name'], pods_v( 'description', $field ), $field );
 			?>

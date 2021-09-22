@@ -29,7 +29,7 @@
 		<th<?php if ( ! empty( $th_scope ) ) : ?>
 			scope="<?php echo esc_attr( $th_scope ); ?>"
 		<?php endif; ?>>
-			<?php echo PodsForm::label( $field_prefix . $field['name'], $field['label'], $field['help'], $field ); ?>
+			<?php echo PodsForm::label( $field_prefix . $field['name'], $field['label'], pods_v( 'help', $field ), $field ); ?>
 		</th>
 		<td>
 			<div class="pods-submittable-fields">

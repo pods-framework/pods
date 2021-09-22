@@ -47,7 +47,7 @@
 						?>
 						<tr valign="top" class="pods-field-option" id="pods-setting-<?php echo esc_attr( $field_name ); ?>">
 						<th>
-							<?php echo PodsForm::label( 'pods_setting_' . $field_name, $field_option['label'], $field_option['help'], $field_option ); ?>
+							<?php echo PodsForm::label( 'pods_setting_' . $field_name, $field_option['label'], pods_v( 'help', $field_option ), $field_option ); ?>
 						</th>
 						<td>
 							<?php echo PodsForm::field( 'pods_setting_' . $field_name, $value, $field_option['type'], $field_option ); ?>

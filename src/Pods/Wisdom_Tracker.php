@@ -5,6 +5,8 @@ namespace Pods;
 /**
  * Wisdom Tracker class.
  *
+ * @link https://wisdomplugin.com/
+ *
  * @since 2.8.0
  */
 class Wisdom_Tracker {
@@ -423,6 +425,8 @@ class Wisdom_Tracker {
 		// First, check if the user has changed their mind and opted out of tracking
 		if ( $this->has_user_opted_out() ) {
 			$this->set_is_tracking_allowed( false, $this->plugin_name );
+			// SKC modification for Pods.
+			$this->set_can_collect_email( false, $this->plugin_name );
 
 			return false;
 		}
@@ -777,6 +781,11 @@ class Wisdom_Tracker {
 		$is_local = apply_filters( 'wisdom_is_local_' . $this->plugin_name, $is_local );
 		if ( $is_local ) {
 			$this->update_block_notice();
+
+			// SKC modification for Pods.
+			if ( $this->marketing ) {
+				$this->set_can_collect_email( false );
+			}
 		} else {
 			// Display the notice requesting permission to track
 			// Retrieve current plugin information

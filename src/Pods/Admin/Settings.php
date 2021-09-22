@@ -2,7 +2,7 @@
 
 namespace Pods\Admin;
 
-use Tribe__Main;
+use PodsForm;
 
 /**
  * Settings specific functionality.
@@ -61,10 +61,20 @@ class Settings {
 			$settings = [];
 		}
 
+		// Register settings with Wisdom Tracker.
+		$settings['wisdom_registered_setting'] = 1;
+
 		$defaults = $this->get_setting_fields();
+
+		$layout_field_types = PodsForm::layout_field_types();
 
 		// Set up defaults as needed.
 		foreach ( $defaults as $setting_name => $setting ) {
+			// Skip layout field types.
+			if ( isset( $setting['type'] ) && in_array( $setting['type'], $layout_field_types, true ) ) {
+				continue;
+			}
+
 			if ( isset( $settings[ $setting_name ] ) || ! isset( $setting['default'] ) ) {
 				continue;
 			}
@@ -168,6 +178,30 @@ class Settings {
 				'0'    => __( 'Disable sessions', 'pods' ),
 				'1'    => __( 'Enable sessions', 'pods' ),
 				'auto' => __( 'Auto-detect sessions (enable on first anonymous submission)', 'pods' ),
+			],
+		];
+
+		$pods_init = pods_init();
+
+		$is_wisdom_opted_out = ! $pods_init->stats_tracking->get_is_tracking_allowed();
+
+		$fields['wisdom-opt-in'] = [
+			'label' => __( 'Stats Tracking', 'pods' ),
+			'type'  => 'heading',
+		];
+
+		// Only register if they are already opted-in.
+		$fields['wisdom_opt_out'] = [
+			'name'               => 'wisdom_opt_out',
+			'label'              => __( 'Would you like to opt-out of tracking?', 'pods' ),
+			'description'        => __( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site. We won\'t record any sensitive data, only information regarding the WordPress environment, your site admin email address, and plugin settings. We will only use this information help us make improvements to the plugin and provide better support when you reach out. Tracking is completely optional.', 'pods' ),
+			'type'               => 'pick',
+			'default'            => $is_wisdom_opted_out ? '1' : '',
+			'pick_format'        => 'single',
+			'pick_format_single' => 'radio',
+			'data'               => [
+				'' => __( 'Track usage on my site', 'pods' ),
+				'1' => __( 'DO NOT track usage on my site', 'pods' ),
 			],
 		];
 

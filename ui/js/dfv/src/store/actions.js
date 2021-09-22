@@ -51,10 +51,10 @@ export const resetGroupSaveStatus = ( groupName ) => {
 	};
 };
 
-export const setGroupDeleteStatus = ( deleteStatus, previousGroupName ) => ( result = {} ) => {
+export const setGroupDeleteStatus = ( deleteStatus, name ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_GROUP_DELETE_STATUS,
-		previousGroupName,
+		name,
 		deleteStatus,
 		result,
 	};
@@ -78,10 +78,10 @@ export const resetFieldSaveStatus = ( fieldName ) => {
 	};
 };
 
-export const setFieldDeleteStatus = ( deleteStatus, previousFieldName ) => ( result = {} ) => {
+export const setFieldDeleteStatus = ( deleteStatus, name ) => ( result = {} ) => {
 	return {
 		type: UI_ACTIONS.SET_FIELD_DELETE_STATUS,
-		previousFieldName,
+		name,
 		deleteStatus,
 		result,
 	};
@@ -266,7 +266,7 @@ export const saveGroup = (
 	};
 };
 
-export const deleteGroup = ( groupId ) => {
+export const deleteGroup = ( groupId, name ) => {
 	return {
 		type: CURRENT_POD_ACTIONS.API_REQUEST,
 		payload: {

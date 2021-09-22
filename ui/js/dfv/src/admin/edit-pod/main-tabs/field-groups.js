@@ -46,11 +46,13 @@ const FieldGroups = ( {
 	podSaveStatus,
 	groups,
 	saveGroup,
-	deleteAndRemoveGroup,
+	deleteGroup,
+	removeGroupFromPod,
 	moveGroup,
 	resetGroupSaveStatus,
 	groupSaveStatuses,
 	groupSaveMessages,
+	groupDeleteStatuses,
 	editGroupPod,
 } ) => {
 	const [ showAddGroupModal, setShowAddGroupModal ] = useState( false );
@@ -150,6 +152,7 @@ const FieldGroups = ( {
 						__( '%1$s > Add Group', 'pods' ),
 						podLabel,
 					) }
+					isSaving={ groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVING }
 					hasSaveError={ groupSaveStatuses[ addedGroupName ] === SAVE_STATUSES.SAVE_ERROR }
 					saveButtonText={ __( 'Save New Group', 'pods' ) }
 					errorMessage={
@@ -205,9 +208,11 @@ const FieldGroups = ( {
 									group={ group }
 									index={ index }
 									editGroupPod={ editGroupPod }
-									deleteGroup={ deleteAndRemoveGroup }
+									deleteGroup={ deleteGroup }
+									removeGroupFromPod={ removeGroupFromPod }
 									saveStatus={ groupSaveStatuses[ group.name ] }
 									saveMessage={ groupSaveMessages[ group.name ] }
+									deleteStatus={ groupDeleteStatuses[ group.name ] }
 									saveGroup={ saveGroup }
 									resetGroupSaveStatus={ resetGroupSaveStatus }
 									isExpanded={ expandedGroups[ group.name ] || false }
@@ -240,12 +245,14 @@ FieldGroups.propTypes = {
 	podLabel: PropTypes.string.isRequired,
 	podSaveStatus: PropTypes.string.isRequired,
 	groups: PropTypes.arrayOf( GROUP_PROP_TYPE_SHAPE ).isRequired,
-	deleteAndRemoveGroup: PropTypes.func.isRequired,
+	deleteGroup: PropTypes.func.isRequired,
+	removeGroupFromPod: PropTypes.func.isRequired,
 	moveGroup: PropTypes.func.isRequired,
 	editGroupPod: PropTypes.object.isRequired,
 	resetGroupSaveStatus: PropTypes.func.isRequired,
 	groupSaveStatuses: PropTypes.object.isRequired,
 	groupSaveMessages: PropTypes.object.isRequired,
+	groupDeleteStatuses: PropTypes.object.isRequired,
 };
 
 export default compose( [
@@ -264,6 +271,7 @@ export default compose( [
 			editGroupPod: storeSelect.getGlobalGroupOptions(),
 			groupSaveStatuses: storeSelect.getGroupSaveStatuses(),
 			groupSaveMessages: storeSelect.getGroupSaveMessages(),
+			groupDeleteStatuses: storeSelect.getGroupDeleteStatuses(),
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
@@ -273,10 +281,8 @@ export default compose( [
 
 		return {
 			saveGroup: storeDispatch.saveGroup,
-			deleteAndRemoveGroup: ( groupID ) => {
-				storeDispatch.deleteGroup( groupID );
-				storeDispatch.removeGroup( groupID );
-			},
+			deleteGroup: storeDispatch.deleteGroup, // groupID, name
+			removeGroupFromPod: storeDispatch.removeGroup, // groupID
 			moveGroup: storeDispatch.moveGroup,
 			resetGroupSaveStatus: storeDispatch.resetGroupSaveStatus,
 		};

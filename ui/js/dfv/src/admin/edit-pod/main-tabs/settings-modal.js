@@ -2,9 +2,15 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
-import { Modal, Button } from '@wordpress/components';
+import { Modal, Button, Spinner } from '@wordpress/components';
 
+/**
+ * Internal dependencies
+ */
 import DynamicTabContent from './dynamic-tab-content';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
@@ -120,6 +126,7 @@ const SettingsModal = ( {
 	optionsPod: {
 		groups: optionsSections = [],
 	} = {},
+	isSaving,
 	hasSaveError,
 	saveButtonText,
 	errorMessage,
@@ -162,7 +169,7 @@ const SettingsModal = ( {
 		}
 	};
 
-	const handleSave = () => {
+	const handleSave = ( event ) => {
 		save( changedOptions )( event );
 	};
 
@@ -352,9 +359,12 @@ const SettingsModal = ( {
 			</div>
 
 			<div className="pods-setting-modal__button-group">
+				{ isSaving && <Spinner /> }
+
 				<Button
 					isSecondary
 					onClick={ handleCancel }
+					disabled={ isSaving }
 				>
 					{ __( 'Cancel', 'pods' ) }
 				</Button>
@@ -362,7 +372,7 @@ const SettingsModal = ( {
 				<Button
 					isPrimary
 					onClick={ handleSave }
-					disabled={ ! isValid }
+					disabled={ ! isValid || isSaving }
 				>
 					{ saveButtonText }
 				</Button>
@@ -376,6 +386,7 @@ SettingsModal.propTypes = {
 	optionsPod: PropTypes.object.isRequired,
 	selectedOptions: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
+	isSaving: PropTypes.bool.isRequired,
 	hasSaveError: PropTypes.bool.isRequired,
 	errorMessage: PropTypes.string.isRequired,
 	saveButtonText: PropTypes.string.isRequired,

@@ -18,7 +18,7 @@ import { compose } from '@wordpress/compose';
  */
 import SettingsModal from './settings-modal';
 
-import { SAVE_STATUSES } from 'dfv/src/store/constants';
+import { SAVE_STATUSES, DELETE_STATUSES } from 'dfv/src/store/constants';
 
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
@@ -35,6 +35,7 @@ export const FieldListItem = ( props ) => {
 		podLabel,
 		field,
 		saveStatus,
+		deleteStatus,
 		saveMessage,
 		typeObject,
 		relatedObject,
@@ -47,6 +48,7 @@ export const FieldListItem = ( props ) => {
 		hasMoved,
 		cloneField,
 		deleteField,
+		removeFieldFromGroup,
 	} = props;
 
 	const {
@@ -57,6 +59,9 @@ export const FieldListItem = ( props ) => {
 	} = field;
 
 	const required = ( field.required && '0' !== field.required ) ? true : false;
+
+	const isDeleting = DELETE_STATUSES.DELETING === deleteStatus;
+	const hasDeleteFailed = DELETE_STATUSES.DELETE_ERROR === deleteStatus;
 
 	const [ showEditFieldSettings, setShowEditFieldSettings ] = useState( false );
 
@@ -118,7 +123,7 @@ export const FieldListItem = ( props ) => {
 		);
 
 		if ( confirmation ) {
-			deleteField( groupID, id );
+			deleteField();
 		}
 	};
 
@@ -129,10 +134,19 @@ export const FieldListItem = ( props ) => {
 		}
 	}, [ saveStatus ] );
 
+	useEffect( () => {
+		// After the field deletion is finished, remove the field from its group.
+		if ( DELETE_STATUSES.DELETE_SUCCESS === deleteStatus ) {
+			removeFieldFromGroup();
+		}
+	}, [ deleteStatus ] );
+
 	const classes = classnames(
 		'pods-field_wrapper',
 		isDragging && 'pods-field_wrapper--dragging',
 		hasMoved && 'pods-field_wrapper--unsaved',
+		isDeleting && 'pods-field_wrapper--deleting',
+		hasDeleteFailed && 'pods-field_wrapper--errored',
 	);
 
 	return (
@@ -157,6 +171,7 @@ export const FieldListItem = ( props ) => {
 							groupLabel,
 							label
 						) }
+						isSaving={ saveStatus === SAVE_STATUSES.SAVING }
 						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
 						errorMessage={
 							saveMessage ||
@@ -192,6 +207,12 @@ export const FieldListItem = ( props ) => {
 					</span>
 
 					<div className="pods-field_id"> [id = { id }]</div>
+
+					{ hasDeleteFailed ? (
+						<div className="pods-field_controls-container__error">
+							{ __( 'Delete failed. Try again?', 'pods' ) }
+						</div>
+					) : null }
 
 					<div className="pods-field_controls-container">
 						<button
@@ -255,6 +276,7 @@ FieldListItem.propTypes = {
 	podLabel: PropTypes.string.isRequired,
 	field: FIELD_PROP_TYPE_SHAPE,
 	saveStatus: PropTypes.string,
+	deleteStatus: PropTypes.string,
 	saveMessage: PropTypes.string,
 	groupName: PropTypes.string.isRequired,
 	groupLabel: PropTypes.string.isRequired,
@@ -268,6 +290,7 @@ FieldListItem.propTypes = {
 	resetFieldSaveStatus: PropTypes.func.isRequired,
 	cloneField: PropTypes.func.isRequired,
 	deleteField: PropTypes.func.isRequired,
+	removeFieldFromGroup: PropTypes.func.isRequired,
 };
 
 export default compose( [
@@ -296,19 +319,25 @@ export default compose( [
 			relatedObject,
 			typeObject: storeSelect.getFieldTypeObject( field.type ),
 			saveStatus: storeSelect.getFieldSaveStatus( field.name ),
+			deleteStatus: storeSelect.getFieldDeleteStatus( field.name ),
 			saveMessage: storeSelect.getFieldSaveMessage( field.name ),
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
-		const { storeKey } = ownProps;
+		const {
+			storeKey,
+			field: {
+				id: fieldID,
+				name: fieldName,
+			},
+			groupID,
+		} = ownProps;
 
 		const storeDispatch = dispatch( storeKey );
 
 		return {
-			deleteField: ( groupID, fieldID ) => {
-				storeDispatch.deleteField( fieldID );
-				storeDispatch.removeGroupField( groupID, fieldID );
-			},
+			deleteField: () => storeDispatch.deleteField( fieldID, fieldName ),
+			removeFieldFromGroup: () => storeDispatch.removeGroupField( groupID, fieldID ),
 			resetFieldSaveStatus: storeDispatch.resetFieldSaveStatus,
 			saveField: storeDispatch.saveField,
 		};

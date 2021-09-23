@@ -2443,6 +2443,8 @@ class PodsMeta {
 
 		$layout_field_types = PodsForm::layout_field_types();
 
+		$api = pods_api();
+
 		foreach ( $groups as $group ) {
 			if ( empty( $group['fields'] ) ) {
 				continue;
@@ -2473,7 +2475,7 @@ class PodsMeta {
 					$data[ $field['name'] ] = $_POST[ 'pods_meta_' . $field['name'] ];
 				}
 
-				$validate = pods_api()->handle_field_validation( $data[ $field['name'] ], $field['name'], pods_api()->get_wp_object_fields( 'comment' ), $pod->fields(), $pod, array() );
+				$validate = $api->handle_field_validation( $data[ $field['name'] ], $field['name'], $api->get_wp_object_fields( 'comment' ), $pod->fields(), $pod, array() );
 
 				if ( false === $validate ) {
 					$validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $field['label'] );

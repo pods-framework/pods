@@ -160,7 +160,7 @@ const DateTime = ( {
 		// Use a full date and time format for our value string by default.
 		// Unless we're only showing the date OR the time picker.
 		if ( includeDateField && includeTimeField ) {
-			return `${ momentDateFormat }, ${ momentTimeFormat }`;
+			return `${ momentDateFormat } ${ momentTimeFormat }`;
 		} else if ( includeTimeField ) {
 			return momentTimeFormat;
 		} else if ( includeDateField ) {

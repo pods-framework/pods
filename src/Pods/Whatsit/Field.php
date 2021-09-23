@@ -79,6 +79,24 @@ class Field extends Whatsit {
 			return $this->{$special_args[ $arg ]}();
 		}
 
+		// Backwards compatibility with previous Pods 2.8 pre-releases.
+		if ( 'sister_id' === $arg && isset( $this->args[ $arg ] ) ) {
+			$invalid_options = [
+				0,
+				'0',
+				'',
+				'-- Select One --',
+				__( '-- Select One --', 'pods' ),
+				null,
+			];
+
+			if ( in_array( $this->args[ $arg ], $invalid_options, true ) ) {
+				return $default;
+			}
+
+			return (int) $this->args[ $arg ];
+		}
+
 		return parent::get_arg( $arg, $default );
 	}
 
@@ -174,6 +192,30 @@ class Field extends Whatsit {
 		}
 
 		return $table_info['pod'];
+	}
+
+	/**
+	 * Get the bi-directional field if it is set.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return Whatsit|null The bi-directional field if it is set.
+	 */
+	public function get_bidirectional_field() {
+		$sister_id = $this->get_arg( 'sister_id' );
+
+		if ( ! $sister_id ) {
+			return null;
+		}
+
+		$related_field = Store::get_instance()->get_object( $sister_id );
+
+		// Only return if it is a valid field.
+		if ( ! $related_field instanceof Field ) {
+			return null;
+		}
+
+		return $related_field;
 	}
 
 	/**

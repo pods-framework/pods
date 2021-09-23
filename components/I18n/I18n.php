@@ -6,7 +6,7 @@
  *
  * Description: Allow UI of Pods and fields to be translated.
  *
- * Version: 0.2
+ * Version: 1.0
  *
  * Category: I18n
  *
@@ -711,7 +711,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * The i18n option tab.
 	 *
-	 * @since 2.8.0
+	 * @since 1.0.0
 	 *
 	 * @param  array $tabs
 	 *
@@ -727,7 +727,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * The i18n options
 	 *
-	 * @since 2.8.0
+	 * @since 1.0.0
 	 *
 	 * @param  array $options
 	 *

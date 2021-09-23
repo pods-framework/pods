@@ -278,9 +278,9 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Page title for setting pages.
 	 *
-	 * @since 0.1.0
-	 * @see    PodsAdmin.php >> admin_menu()
-	 * @see    PodsAdmin.php >> admin_content_settings()
+	 * @since 1.0.0
+	 * @see   PodsAdmin.php >> admin_menu()
+	 * @see   PodsAdmin.php >> admin_content_settings()
 	 *
 	 * @param  string $page_title Current page title
 	 * @param  array  $pod        Pod data
@@ -295,8 +295,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Menu title for setting pages.
 	 *
-	 * @since 0.1.0
-	 * @see    PodsAdmin.php >> admin_menu()
+	 * @since 1.0.0
+	 * @see   PodsAdmin.php >> admin_menu()
 	 *
 	 * @param  string $menu_label Current menu label
 	 * @param  array  $pod        Pod data
@@ -312,7 +312,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * Returns the translated label if available.
 	 *
 	 * @since 1.0.0
-	 * @see    \Pods\Whatsit >> 'pods_whatsit_get_label' (filter)
+	 * @see   \Pods\Whatsit >> 'pods_whatsit_get_label' (filter)
 	 *
 	 * @param  string       $label  The default label.
 	 * @param  Pods\Whatsit $object The Pod Object.
@@ -328,7 +328,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * Returns the translated description if available.
 	 *
 	 * @since 1.0.0
-	 * @see    \Pods\Whatsit >> 'pods_whatsit_get_description' (filter)
+	 * @see   \Pods\Whatsit >> 'pods_whatsit_get_description' (filter)
 	 *
 	 * @param  string       $description  The default description.
 	 * @param  Pods\Whatsit $object The Pod Object.
@@ -343,8 +343,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Replaces the default selected text with a translation if available.
 	 *
-	 * @since 0.1.0
-	 * @see    pick.php >> 'pods_field_pick_data' (filter)
+	 * @since 1.0.0
+	 * @see   pick.php >> 'pods_field_pick_data' (filter)
 	 *
 	 * @param  array  $data    The default data of the field
 	 * @param  string $name    The field name
@@ -370,8 +370,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Replaces the default values with a translation if available.
 	 *
-	 * @since 0.1.0
-	 * @see    PodsForm.php >> 'pods_form_ui_field_' . $type . '_options' (filter)
+	 * @since 1.0.0
+	 * @see   PodsForm.php >> 'pods_form_ui_field_' . $type . '_options' (filter)
 	 *
 	 * @param  array  $options The field options
 	 * @param  string $name    The field name
@@ -396,8 +396,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Filter hook function to overwrite the labels and description with translations (if available)
 	 *
-	 * @since 0.1.0
-	 * @see    PodsInit.php >> setup_content_types()
+	 * @since 1.0.0
+	 * @see   PodsInit.php >> setup_content_types()
 	 *
 	 * @param  array  $options The array of object options
 	 * @param  string $object  The object type name/slug
@@ -496,8 +496,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Filter hook function to overwrite the labels and description with translations (if available)
 	 *
-	 * @since 0.1.0
-	 * @see    PodsInit.php >> admin_menu()
+	 * @since 1.0.0
+	 * @see   PodsInit.php >> admin_menu()
 	 *
 	 * @param  array  $options The array of object options
 	 * @param  string $object  The object type name/slug

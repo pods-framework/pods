@@ -11,6 +11,10 @@ use Pods\Whatsit\Store;
 /**
  * Whatsit abstract class.
  *
+ * Why did we name this "Whatsit"? Because we wanted "Object" but that's a reserved PHP keyword,
+ * and we couldn't think of a better name. We said "let's just use Whatsit for now" and then we
+ * never changed it. Enjoy!
+ *
  * @method string      get_object_type()
  * @method string|null get_storage_type()
  * @method string|null get_name()

@@ -78,6 +78,7 @@ const JQUERY_TIME_FORMAT_REPLACEMENTS = new Map( [
 	[ 'hh', 'hh' ], // Hour with leading 0 (12 hour)
 	[ 'm', 'm' ], // Minute with no leading 0
 	[ 'mm', 'mm' ], // Minute with leading 0
+	[ 'i', 'mm' ], // In case they got confused with PHP time format
 	[ 's', 's' ], // Second with no leading 0
 	[ 'ss', 'ss' ], // Second with leading 0
 	[ 'l', 'SSS' ], // Milliseconds always with leading 0

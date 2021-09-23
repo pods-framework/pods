@@ -1700,10 +1700,6 @@ class PodsField_Pick extends PodsField {
 				self::$api->delete_relationships( $id, $remove_ids, $pod, $options );
 			}
 
-			if ( in_array( (int) $options['id'], [ 2057, 2058 ], true ) ) {
-				die();
-			}
-
 			if ( ! $no_conflict ) {
 				pods_no_conflict_off( $related_pod['type'] );
 			}
@@ -1753,10 +1749,6 @@ class PodsField_Pick extends PodsField {
 				self::$api->delete_relationships( $bidirectional_remove_ids, $related_id, $pod, $options );
 			}
 		}//end foreach
-
-		if ( in_array( (int) $options['id'], [ 2057, 2058 ], true ) ) {
-			die();
-		}
 
 		if ( ! $no_conflict ) {
 			pods_no_conflict_off( $related_pod['type'] );

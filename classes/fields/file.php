@@ -1249,7 +1249,12 @@ class PodsField_File extends PodsField {
 				}
 
 				// Upload file.
-				$attachment_id = media_handle_upload( 'Filedata', $params->item_id );
+				$post_id = 0;
+				if ( 'post_type' === pods_v( 'type', $pod, null ) ) {
+					$post_id = $params->item_id;
+				}
+
+				$attachment_id = media_handle_upload( 'Filedata', $post_id );
 
 				// End custom directory.
 				if ( 'wp' !== $upload_dir ) {

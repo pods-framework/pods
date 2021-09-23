@@ -1209,14 +1209,10 @@ class PodsField_File extends PodsField {
 					$context_pod = null;
 
 					if ( $params->item_id ) {
-						$post = get_post( $params->item_id );
+						$context_pod = pods( pods_v( 'name', $pod, false ), $params->item_id );
 
-						if ( $post ) {
-							$post_pod = pods( $post->post_type, $post->ID );
-
-							if ( $post_pod->exists() ) {
-								$context_pod = $post_pod;
-							}
+						if ( ! $context_pod->exists() ) {
+							$context_pod = null;
 						}
 					}
 

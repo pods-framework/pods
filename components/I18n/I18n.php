@@ -128,6 +128,9 @@ class Pods_Component_I18n extends PodsComponent {
 			add_filter( 'pods_admin_menu_page_title', array( $this, 'admin_menu_page_title_i18n' ), 10, 2 );
 			add_filter( 'pods_admin_menu_label', array( $this, 'admin_menu_label_i18n' ), 10, 2 );
 
+			// Filters for Pod Groups.
+			add_filter( 'pods_meta_group_label', array( $this, 'groups_ui_label_text_i18n' ), 10, 2 );
+
 			// Default filters for all fields
 			add_filter( 'pods_form_ui_label_text', array( $this, 'fields_ui_label_text_i18n' ), 10, 4 );
 			add_filter( 'pods_form_ui_comment_text', array( $this, 'fields_ui_comment_text_i18n' ), 10, 3 );
@@ -310,6 +313,22 @@ class Pods_Component_I18n extends PodsComponent {
 	public function admin_menu_label_i18n( $menu_label, $pod ) {
 
 		return (string) $this->get_value_translation( $menu_label, 'menu_name', $pod );
+	}
+
+	/**
+	 * Returns the translated label if available.
+	 *
+	 * @since 1.0.0
+	 * @see    PodsMeta.php >> 'pods_meta_group_label' (filter)
+	 *
+	 * @param  string             $label The default label
+	 * @param  Pods\Whatsit\Group $group The Pods Group
+	 *
+	 * @return string
+	 */
+	public function groups_ui_label_text_i18n( $label, $group ) {
+
+		return (string) $this->get_value_translation( $label, 'label', $group );
 	}
 
 	/**

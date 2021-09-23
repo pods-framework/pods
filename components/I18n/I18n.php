@@ -265,14 +265,10 @@ class Pods_Component_I18n extends PodsComponent {
 			return $current;
 		}
 
-		if ( is_callable( array( $data, 'get_args' ) ) ) {
-			$data = $data->get_args();
-		}
-
-		if ( is_array( $data ) && $this->obj_is_language_enabled( $locale, $data ) ) {
-			// Check if the i18n option exists and isn't empty
-			if ( ! empty( $data[ $key . '_' . $locale ] ) ) {
-				return (string) $data[ $key . '_' . $locale ];
+		if ( $this->obj_is_language_enabled( $locale, $data ) ) {
+			$translation = pods_v( $key . '_' . $locale, $data, null );
+			if ( $translation ) {
+				return $translation;
 			}
 		}
 
@@ -819,10 +815,15 @@ class Pods_Component_I18n extends PodsComponent {
 		if ( ! array_key_exists( $locale, $this->languages ) ) {
 			return false;
 		}
-		$data    = (array) $data;
-		$options = ( isset( $data['options'] ) ) ? $data['options'] : $data;
-		// If it doesn't exist in the object data then use the default (enabled)
-		if ( isset( $options['enable_i18n'][ $locale ] ) && false === (bool) $options['enable_i18n'][ $locale ] ) {
+		$options = pods_v( 'options', $data, $data );
+
+		$i18n = pods_v( 'enable_i18n', $options, null );
+		if ( null === $i18n ) {
+			// If it doesn't exist in the object data then assume it's enabled.
+			return true;
+		}
+
+		if ( false === pods_v( $locale, $i18n, true ) ) {
 			return false;
 		}
 

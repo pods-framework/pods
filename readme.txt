@@ -182,7 +182,9 @@ Pods really wouldn't be where it is without all of the contributions from our [d
 
 == Changelog ==
 
-= 2.8 - TBD, 2021 =
+= 2.8 - October 11th, 2021 =
+
+Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) which includes information about all of the features, enhancements, nd changes in this major Pods release.
 
 **New PHP & WP Minimum Version Requirements:**
 
@@ -197,6 +199,11 @@ Our Edit Pod screen is powered on the technical side by our all new React form i
 
 * Feature: REST API endpoints are now available to create/edit various objects: Pods, Pod Groups, and Pod Fields.
 * Feature: WP-CLI commands that mirror the REST API endpoints we have.
+
+= 2.7.31 - September 23rd, 2021 =
+
+* Pods 2.8 is coming on October 11th! Check out the [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) for more information.
+* Fixed: Resolve issues where searching a Pod would cause queries like `post_title.t` or `display_name.t` unexpectedly. #6050 (@sc0ttkclark, @unknownnf)
 
 = 2.7.30 - August 12th, 2021 =
 

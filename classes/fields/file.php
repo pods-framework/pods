@@ -508,18 +508,14 @@ class PodsField_File extends PodsField {
 		if ( 'plupload' === pods_v( static::$type . '_uploader', $options ) ) {
 			wp_enqueue_script( 'plupload-all' );
 
-			$field_id = pods_v( 'id', $options, 0 );
+			$pod_id   = (int) pods_v( 'pod_id', $args->pod, 0 );
+			$field_id = (int) pods_v( 'id', $options, 0 );
+			$item_id  = (int) pods_v( 'id', $args, 0 );
 
 			if ( $is_user_logged_in ) {
 				$uid = 'user_' . get_current_user_id();
 			} else {
 				$uid = pods_session_id();
-			}
-
-			$pod_id = '0';
-
-			if ( is_object( $args->pod ) ) {
-				$pod_id = $args->pod->pod_id;
 			}
 
 			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
@@ -547,6 +543,8 @@ class PodsField_File extends PodsField {
 					'method'   => 'upload',
 					'pod'      => $pod_id,
 					'field'    => $field_id,
+					'item_id'  => $item_id,
+					'post_id'  => $item_id,
 					'uri'      => $uri_hash,
 				],
 			];
@@ -554,13 +552,6 @@ class PodsField_File extends PodsField {
 			// Disable multi selection if only one is allowed.
 			if ( 1 === $file_limit ) {
 				$plupload_init['multi_selection'] = false;
-			}
-
-			// Pass post ID if we're in an add or edit post screen.
-			$post = get_post();
-
-			if ( $post instanceof WP_Post ) {
-				$plupload_init['multipart_params']['post_id'] = $post->ID;
 			}
 
 			$options['plupload_init'] = $plupload_init;
@@ -1064,7 +1055,7 @@ class PodsField_File extends PodsField {
 		// Cleaning up $params
 		unset( $params->action, $params->method, $params->_wpnonce );
 
-		$params->post_id = (int) pods_v( 'post_id', $params, 0 );
+		$params->item_id = (int) pods_v( 'item_id', $params, 0 );
 
 		/**
 		 * Upload a new file (advanced - returns URL and ID)
@@ -1207,7 +1198,7 @@ class PodsField_File extends PodsField {
 				}
 			}//end if
 
-			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params, $field );
+			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->item_id, $params, $field );
 
 			if ( null === $custom_handler ) {
 
@@ -1218,15 +1209,11 @@ class PodsField_File extends PodsField {
 					$custom_dir  = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
 					$context_pod = null;
 
-					if ( $params->post_id ) {
-						$post = get_post( $params->post_id );
+					if ( $params->item_id ) {
+						$context_pod = pods( pods_v( 'name', $pod, false ), $params->item_id );
 
-						if ( $post ) {
-							$post_pod = pods( $post->post_type, $post->ID );
-
-							if ( $post_pod->exists() ) {
-								$context_pod = $post_pod;
-							}
+						if ( ! $context_pod->exists() ) {
+							$context_pod = null;
 						}
 					}
 
@@ -1263,7 +1250,12 @@ class PodsField_File extends PodsField {
 				}
 
 				// Upload file.
-				$attachment_id = media_handle_upload( 'Filedata', $params->post_id );
+				$post_id = 0;
+				if ( 'post_type' === pods_v( 'type', $pod, null ) ) {
+					$post_id = $params->item_id;
+				}
+
+				$attachment_id = media_handle_upload( 'Filedata', $post_id );
 
 				// End custom directory.
 				if ( 'wp' !== $upload_dir ) {
@@ -1297,7 +1289,7 @@ class PodsField_File extends PodsField {
 					$attachment['edit_link'] = get_edit_post_link( $attachment['ID'] );
 					$attachment['download']  = wp_get_attachment_url( $attachment['ID'] );
 
-					$attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->post_id );
+					$attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->item_id );
 
 					wp_send_json( $attachment );
 				}//end if

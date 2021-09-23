@@ -110,7 +110,7 @@ class MappingTest extends Pods_UnitTestCase {
 	public function test_pod_info() {
 		$pod = pods( $this->pod_name, $this->item_id );
 
-		$this->assertEquals( $this->pod_label, $pod->field( '_pod' ) );
+		$this->assertEquals( $this->pod_name, $pod->field( '_pod' ) );
 
 		$this->assertEquals( $this->pod_id, $pod->field( '_pod.id' ) );
 		$this->assertEquals( $this->pod_id, $pod->field( '_pod.ID' ) );

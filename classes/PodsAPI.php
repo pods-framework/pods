@@ -9914,7 +9914,12 @@ class PodsAPI {
 			$info['meta_field_index'] = pods_v( 'meta_field_index_custom', $info['pod'], $info['meta_field_index'], true );
 			$info['meta_field_value'] = pods_v( 'meta_field_value_custom', $info['pod'], $info['meta_field_value'], true );
 
+			$info['join'] = (array) pods_v( 'join_custom', $info['pod'], $info['join'], true );
+
 			$info['orderby'] = pods_v( 'orderby_custom', $info['pod'], $info['orderby'], true );
+
+			$info['where']         = pods_v( 'where_custom', $info['pod'], $info['where'], true );
+			$info['where_default'] = pods_v( 'where_default_custom', $info['pod'], $info['where_default'], true );
 
 			if ( ! empty( $field ) ) {
 				$is_field_object = $field instanceof Field;

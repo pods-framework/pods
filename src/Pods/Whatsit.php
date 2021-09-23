@@ -17,8 +17,6 @@ use Pods\Whatsit\Store;
  * @method string|null get_id()
  * @method string|null get_parent()
  * @method string|null get_group()
- * @method string|null get_label()
- * @method string|null get_description()
  * @method string|null get_type()
  * @method string|null get_parent_identifier()
  * @method string|null get_parent_object_type()
@@ -555,6 +553,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		$special_args = [
 			'identifier'    => 'get_identifier',
+			'label'         => 'get_label',
+			'description'   => 'get_description',
 			'fields'        => 'get_fields',
 			'object_fields' => 'get_object_fields',
 			'all_fields'    => 'get_all_fields',
@@ -739,6 +739,52 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 */
 	public function get_identifier() {
 		return self::get_identifier_from_args( $this->get_args() );
+	}
+
+	/**
+	 * Get object label.
+	 *
+	 * @return string Object label.
+	 */
+	public function get_label() {
+		$label = '';
+
+		if ( isset( $this->args['label'] ) ) {
+			$label = $this->args['label'];
+		}
+
+		/**
+		 * Allow filtering the object label.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param string  $label  The object label.
+		 * @param Whatsit $object The object.
+		 */
+		return apply_filters( 'pods_whatsit_get_label', $label, $this );
+	}
+
+	/**
+	 * Get object description.
+	 *
+	 * @return string Object description.
+	 */
+	public function get_description() {
+		$description = '';
+
+		if ( isset( $this->args['description'] ) ) {
+			$description = $this->args['description'];
+		}
+
+		/**
+		 * Allow filtering the object description.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param string  $description The object description.
+		 * @param Whatsit $object      The object.
+		 */
+		return apply_filters( 'pods_whatsit_get_description', $description, $this );
 	}
 
 	/**

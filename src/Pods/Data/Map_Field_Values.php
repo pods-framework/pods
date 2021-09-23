@@ -405,8 +405,10 @@ class Map_Field_Values {
 			return null;
 		}
 
+		global $wpdb;
+
 		// Skip if not on the supported pod type.
-		if ( 'user' !== $obj->pod_data->get_type() ) {
+		if ( 'user' !== $obj->pod_data->get_type() && $wpdb->users !== $obj->pod_data->get_table_name() ) {
 			return null;
 		}
 

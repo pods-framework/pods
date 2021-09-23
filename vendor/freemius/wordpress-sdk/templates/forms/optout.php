@@ -49,7 +49,7 @@
 		fs_text_inline( 'By clicking "Opt Out", we will no longer be sending any data from %s to %s.', 'opt-out-message-clicking-opt-out', $slug ),
 		$plugin_title,
 		sprintf(
-			'<a href="%s" target="_blank">%s</a>',
+			'<a href="%s" target="_blank" rel="noopener">%s</a>',
 			'https://freemius.com',
 			'freemius.com'
 		)
@@ -98,20 +98,21 @@
                 $modal              = $(modalHtml),
                 $adminNotice        = $( <?php echo json_encode( $admin_notice_html ) ?> ),
                 action              = '<?php echo $action ?>',
-                $actionLink         = $( 'span.opt-in-or-opt-out.<?php echo $slug ?> a' ),
+                actionLinkSelector  = 'span.opt-in-or-opt-out.<?php echo $slug ?> a',
                 $optOutButton       = $modal.find( '.button-opt-out' ),
                 $optOutErrorMessage = $modal.find( '.opt-out-error-message' ),
                 $extensionsTracking = $modal.find( '.fs-permission-extensions' ),
+                $body               = $( 'body' ),
                 moduleID            = '<?php echo $fs->get_id() ?>';
 
-			$actionLink.attr( 'data-action', action );
-			$modal.appendTo( $( 'body' ) );
+			$modal.data( 'action', action );
+			$modal.appendTo( $body );
 
 			function registerActionLinkClick() {
-				$actionLink.click(function( evt ) {
+                $body.on( 'click', actionLinkSelector, function( evt ) {
 					evt.preventDefault();
 
-					if ( 'stop_tracking' == $actionLink.attr( 'data-action' ) ) {
+					if ( 'stop_tracking' == $modal.data( 'action' ) ) {
 						showModal();
 					} else {
 						optIn();
@@ -151,12 +152,12 @@
 
 				// Display the dialog box.
 				$modal.addClass( 'active' );
-				$( 'body' ).addClass( 'has-fs-modal' );
+				$body.addClass( 'has-fs-modal' );
 			}
 
 			function closeModal() {
 				$modal.removeClass( 'active' );
-				$( 'body' ).removeClass( 'has-fs-modal' );
+				$body.removeClass( 'has-fs-modal' );
 			}
 
 			function resetOptOutButton() {
@@ -178,6 +179,8 @@
 			}
 
 			function sendRequest() {
+			    var $actionLink = $( actionLinkSelector );
+
 				$.ajax({
 					url: ajaxurl,
 					method: 'POST',
@@ -216,7 +219,7 @@
 								}
 							}
 
-							$actionLink.attr( 'data-action', action );
+							$modal.data( 'action', action );
 						} else {
 							showError( resultObj.error );
 							resetOptOutButton();
@@ -315,7 +318,11 @@
                         '<?php echo ( $fs->is_registered() ? '' : esc_js( $reconnect_url ) ) ?>' :
                         '');
 
-				$actionLink = $('<a id="fs_theme_opt_in_out" href="' + encodeURI(href) + '" class="button" data-action="' + action + '">' + label + '</a>');
+				var $actionLink = $('<a id="fs_theme_opt_in_out" href="' + encodeURI(href) + '" class="button">' + label + '</a>');
+
+				actionLinkSelector = '#fs_theme_opt_in_out';
+
+				$modal.data( 'action', action );
 
 				$('.theme-wrap .theme-actions .active-theme').append($actionLink);
 

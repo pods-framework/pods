@@ -158,8 +158,8 @@
                 // Lazy load.
                 self::$CURRENCY_2_SYMBOL = array(
                     self::CURRENCY_USD => '$',
-                    self::CURRENCY_GBP => '£',
-                    self::CURRENCY_EUR => '€',
+                    self::CURRENCY_GBP => '&pound;',
+                    self::CURRENCY_EUR => '&euro;',
                 );
             }
 

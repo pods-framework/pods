@@ -261,8 +261,15 @@ class Pods_Component_I18n extends PodsComponent {
 	public function get_value_translation( $current, $key, $data ) {
 
 		$locale = $this->locale;
-		// Validate locale and pod
-		if ( is_array( $data ) && array_key_exists( $locale, $this->languages ) && $this->obj_is_language_enabled( $locale, $data ) ) {
+		if ( ! array_key_exists( $locale, $this->languages ) ) {
+			return $current;
+		}
+
+		if ( is_callable( array( $data, 'get_args' ) ) ) {
+			$data = $data->get_args();
+		}
+
+		if ( is_array( $data ) && $this->obj_is_language_enabled( $locale, $data ) ) {
 			// Check if the i18n option exists and isn't empty
 			if ( ! empty( $data[ $key . '_' . $locale ] ) ) {
 				return (string) $data[ $key . '_' . $locale ];

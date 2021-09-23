@@ -124,16 +124,13 @@ class Pods_Component_I18n extends PodsComponent {
 			 * LABEL REPLACEMENT.
 			 */
 
-			// Setting pages
+			// Setting pages.
 			add_filter( 'pods_admin_menu_page_title', array( $this, 'admin_menu_page_title_i18n' ), 10, 2 );
 			add_filter( 'pods_admin_menu_label', array( $this, 'admin_menu_label_i18n' ), 10, 2 );
 
-			// Filters for Pod Groups.
-			add_filter( 'pods_meta_group_label', array( $this, 'groups_ui_label_text_i18n' ), 10, 2 );
-
-			// Default filters for all fields
-			add_filter( 'pods_form_ui_label_text', array( $this, 'fields_ui_label_text_i18n' ), 10, 4 );
-			add_filter( 'pods_form_ui_comment_text', array( $this, 'fields_ui_comment_text_i18n' ), 10, 3 );
+			// Pod Objects.
+			add_filter( 'pods_whatsit_get_label', array( $this, 'pods_label_text_i18n' ), 10, 2 );
+			add_filter( 'pods_whatsit_get_description', array( $this, 'pods_description_text_i18n' ), 10, 2 );
 
 			foreach ( pods_form()->field_types() as $type => $data ) {
 				add_filter(
@@ -257,7 +254,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 *
 	 * @param  string $current Current value
 	 * @param  string $key     The key / opion name to search for
-	 * @param  array  $data    Pod data (can also be an options array of a pod or field)
+	 * @param  array|Pods\Whatsit  $data    Pod data (can also be an options array of a pod or field)
 	 *
 	 * @return string
 	 */
@@ -319,51 +316,32 @@ class Pods_Component_I18n extends PodsComponent {
 	 * Returns the translated label if available.
 	 *
 	 * @since 1.0.0
-	 * @see    PodsMeta.php >> 'pods_meta_group_label' (filter)
+	 * @see    \Pods\Whatsit >> 'pods_whatsit_get_label' (filter)
 	 *
-	 * @param  string             $label The default label
-	 * @param  Pods\Whatsit\Group $group The Pods Group
-	 *
-	 * @return string
-	 */
-	public function groups_ui_label_text_i18n( $label, $group ) {
-
-		return (string) $this->get_value_translation( $label, 'label', $group );
-	}
-
-	/**
-	 * Returns the translated label if available.
-	 *
-	 * @since 0.1.0
-	 * @see    PodsForm.php >> 'pods_form_ui_label_text' (filter)
-	 *
-	 * @param  string $label   The default label
-	 * @param  string $name    The field name
-	 * @param  string $help    The help text
-	 * @param  array  $options The field options
+	 * @param  string       $label  The default label.
+	 * @param  Pods\Whatsit $object The Pod Object.
 	 *
 	 * @return string
 	 */
-	public function fields_ui_label_text_i18n( $label, $name, $help, $options ) {
+	public function pods_label_text_i18n( $label, $object ) {
 
-		return (string) $this->get_value_translation( $label, 'label', $options );
+		return (string) $this->get_value_translation( $label, 'label', $object );
 	}
 
 	/**
 	 * Returns the translated description if available.
 	 *
-	 * @since 0.1.0
-	 * @see    PodsForm.php >> 'pods_form_ui_comment_text' (filter)
+	 * @since 1.0.0
+	 * @see    \Pods\Whatsit >> 'pods_whatsit_get_description' (filter)
 	 *
-	 * @param  string $message The default description
-	 * @param  string $name    The field name
-	 * @param  array  $options The field options
+	 * @param  string       $description  The default description.
+	 * @param  Pods\Whatsit $object The Pod Object.
 	 *
 	 * @return string
 	 */
-	public function fields_ui_comment_text_i18n( $message, $name, $options ) {
+	public function pods_description_text_i18n( $description, $object ) {
 
-		return (string) $this->get_value_translation( $message, 'description', $options );
+		return (string) $this->get_value_translation( $description, 'description', $object );
 	}
 
 	/**

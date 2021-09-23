@@ -544,6 +544,7 @@ class PodsField_File extends PodsField {
 					'pod'      => $pod_id,
 					'field'    => $field_id,
 					'item_id'  => $item_id,
+					'post_id'  => $item_id,
 					'uri'      => $uri_hash,
 				],
 			];

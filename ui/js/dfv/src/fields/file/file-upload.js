@@ -87,15 +87,16 @@ export const File = PodsDFVFieldLayout.extend( {
 	 */
 	onAddedFiles( data ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
-		const fileLimit = +fieldConfig.file_limit; // Unary plus to force to number
+		const fileLimit = parseInt( fieldConfig.file_limit, 10 );
 		let filteredModels;
 
 		// Get a copy of the existing collection with the new files added
 		const newCollection = this.collection.clone();
-		newCollection.add( data );
 
 		// Enforce the file limit option if one is set
-		if ( UNLIMITED_FILES === fileLimit ) {
+		if ( UNLIMITED_FILES === fileLimit || newCollection.length < fileLimit ) {
+			newCollection.add( data );
+
 			filteredModels = newCollection.models;
 		} else {
 			// Number of uploads is limited: keep the last N models, FIFO/queue style

@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 4.5
 Tested up to: 5.8
 Requires PHP: 5.3
-Stable tag: 2.7.30
+Stable tag: 2.7.31
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,11 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We are also available through our [Live Slack Chat](https://pods.io/chat/) to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.7.31 - September 23rd, 2021 =
+
+* Pods 2.8 is coming on October 11th! Check out the [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) for more information.
+* Fixed: Resolve issues where searching a Pod would cause queries like `post_title.t` or `display_name.t` unexpectedly. #6050 (@sc0ttkclark, @unknownnf)
 
 = 2.7.30 - August 12th, 2021 =
 

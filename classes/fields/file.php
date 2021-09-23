@@ -508,18 +508,13 @@ class PodsField_File extends PodsField {
 		if ( 'plupload' === pods_v( static::$type . '_uploader', $options ) ) {
 			wp_enqueue_script( 'plupload-all' );
 
-			$field_id = pods_v( 'id', $options, 0 );
+			$pod_id   = (int) pods_v( 'pod_id', $args->pod, 0 );
+			$field_id = (int) pods_v( 'id', $options, 0 );
 
 			if ( $is_user_logged_in ) {
 				$uid = 'user_' . get_current_user_id();
 			} else {
 				$uid = pods_session_id();
-			}
-
-			$pod_id = '0';
-
-			if ( is_object( $args->pod ) ) {
-				$pod_id = $args->pod->pod_id;
 			}
 
 			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );

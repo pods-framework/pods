@@ -823,7 +823,7 @@ class Pods_Component_I18n extends PodsComponent {
 			return true;
 		}
 
-		if ( false === pods_v( $locale, $i18n, true ) ) {
+		if ( false === (bool) pods_v( $locale, $i18n, true ) ) {
 			return false;
 		}
 

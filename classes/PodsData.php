@@ -1219,8 +1219,8 @@ class PodsData {
 					$fieldfield = '`t`.`' . $params->index . '`';
 
 					if ( isset( $params->fields[ $params->index ] ) ) {
-						if ( $params->meta_fields ) {
-							$fieldfield = '`' . $params->index . '`.`' . $params->pod_table_prefix . '`';
+						if ( $params->meta_fields && ! isset( $params->object_fields[ $params->index ] ) ) {
+							$fieldfield = '`' . $params->index . '`.`meta_value`';
 						} else {
 							$fieldfield = '`' . $params->pod_table_prefix . '`.`' . $params->index . '`';
 						}

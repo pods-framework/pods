@@ -5441,8 +5441,8 @@ class PodsAPI {
 					}
 
 					// Get current values
-					if ( 'pick' === $type && isset( PodsField_Pick::$related_data[ $fields[ $field ]['id'] ] ) && isset( PodsField_Pick::$related_data[ $fields[ $field ]['id'] ]['current_ids'] ) ) {
-						$related_ids = PodsField_Pick::$related_data[ $fields[ $field ]['id'] ]['current_ids'];
+					if ( 'pick' === $type && isset( PodsField_Pick::$related_data[ $fields[ $field ]['id'] ] ) && isset( PodsField_Pick::$related_data[ $fields[ $field ]['id'] ][ 'current_ids_' . $params->id ] ) ) {
+						$related_ids = PodsField_Pick::$related_data[ $fields[ $field ]['id'] ][ 'current_ids_' . $params->id ];
 					} else {
 						$related_ids = $this->lookup_related_items( $fields[ $field ]['id'], $pod['id'], $params->id, $fields[ $field ], $pod );
 					}
@@ -5685,8 +5685,8 @@ class PodsAPI {
 	 */
 	public function save_relationships( $id, $related_ids, $pod, $field ) {
 		// Get current values
-		if ( 'pick' === $field['type'] && isset( PodsField_Pick::$related_data[ $field['id'] ] ) && isset( PodsField_Pick::$related_data[ $field['id'] ]['current_ids'] ) ) {
-			$current_ids = PodsField_Pick::$related_data[ $field['id'] ]['current_ids'];
+		if ( 'pick' === $field['type'] && isset( PodsField_Pick::$related_data[ $field['id'] ] ) && isset( PodsField_Pick::$related_data[ $field['id'] ][ 'current_ids_' . $id ] ) ) {
+			$current_ids = PodsField_Pick::$related_data[ $field['id'] ][ 'current_ids_' . $id ];
 		} else {
 			$current_ids = $this->lookup_related_items( $field['id'], $pod['id'], $id, $field, $pod );
 		}
@@ -7431,12 +7431,13 @@ class PodsAPI {
 	 *
 	 * @since 2.3.0
 	 *
-	 * @param int|array                 $related_id    ID(s) for items to save.
-	 * @param int|array                 $id            ID(s) to remove.
+	 * @param int|array   $related_id    ID(s) for items to save.
+	 * @param int|array   $id            ID(s) to remove.
 	 * @param array|Pod   $related_pod   The related Pod object.
 	 * @param array|Field $related_field The related Field object.
+	 * @param bool        $force         Whether to force the deletion, even if found related IDs not set or matching.
 	 */
-	public function delete_relationships( $related_id, $id, $related_pod, $related_field ) {
+	public function delete_relationships( $related_id, $id, $related_pod, $related_field, $force = true ) {
 
 		if ( is_array( $related_id ) ) {
 			foreach ( $related_id as $rid ) {
@@ -7462,10 +7463,12 @@ class PodsAPI {
 
 		$related_ids = $this->lookup_related_items( $related_field['id'], $related_pod['id'], $related_id, $related_field, $related_pod );
 
-		if ( empty( $related_ids ) ) {
-			return;
-		} elseif ( ! in_array( $id, $related_ids ) ) {
-			return;
+		if ( ! $force ) {
+			if ( empty( $related_ids ) ) {
+				return;
+			} elseif ( ! in_array( $id, $related_ids ) ) {
+				return;
+			}
 		}
 
 		if ( 'ok' !== pods_cache_get( 'related_item_cache', 'pods-static-cache' ) ) {
@@ -8787,10 +8790,19 @@ class PodsAPI {
 			$params = (object) $params;
 		}
 
-		$id = ( is_object( $params ) ? $params->id : ( is_object( $pod ) ? $pod->id() : 0 ) );
+		$id = 0;
 
-		if ( is_object( $pod ) ) {
+		if ( is_object( $params ) ) {
+			$id = $params->id;
+		} elseif ( $pod instanceof Pods ) {
+			$id = $pod->id();
+		}
+
+		// Normalize to Pod config object.
+		if ( $pod instanceof Pods ) {
 			$pod = $pod->pod_data;
+		} elseif ( ! is_array( $pod ) && ! $pod instanceof Pod ) {
+			$pod = null;
 		}
 
 		$type  = $options['type'];
@@ -8877,7 +8889,7 @@ class PodsAPI {
 	 *
 	 * @uses  pods_query()
 	 */
-	public function lookup_related_items( $field_id, $pod_id, $ids, $field = null, $pod = null ) {
+	public function lookup_related_items( $field_id, $pod_id, $ids, $field = null, $pod = null, $force_meta = true ) {
 
 		$related_ids = array();
 

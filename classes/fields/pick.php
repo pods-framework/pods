@@ -1,6 +1,8 @@
 <?php
 
 use Pods\Whatsit\Pod;
+use Pods\Whatsit\Field;
+use Pods\API\Whatsit\Value_Field;
 
 /**
  * @package Pods\Fields
@@ -1557,7 +1559,7 @@ class PodsField_Pick extends PodsField {
 				if ( ! empty( $related_field ) ) {
 					$current_ids = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
 
-					self::$related_data[ $options['id'] ]['current_ids'] = $current_ids;
+					self::$related_data[ $options['id'] ][ 'current_ids_' . $id ] = $current_ids;
 
 					$value_ids = $value;
 
@@ -1570,6 +1572,8 @@ class PodsField_Pick extends PodsField {
 
 					// Get ids to remove.
 					$remove_ids = array_diff( $current_ids, $value_ids );
+
+					self::$related_data[ $options['id'] ][ 'remove_ids_' . $id ] = $remove_ids;
 
 					$related_required   = (boolean) pods_v( 'required', $related_field, 0 );
 					$related_pick_limit = (int) pods_v( static::$type . '_limit', $related_field, 0 );
@@ -1643,77 +1647,120 @@ class PodsField_Pick extends PodsField {
 
 		$options['id'] = (int) $options['id'];
 
-		if ( ! isset( self::$related_data[ $options['id'] ] ) ) {
+		$related_pod        = null;
+		$related_field      = null;
+		$related_pick_limit = 0;
+		$current_ids        = [];
+		$remove_ids         = [];
+
+		$value_ids = array_unique( array_filter( $value ) );
+
+		if ( isset( self::$related_data[ $options['id'] ] ) ) {
+			$related_pod        = self::$related_data[ $options['id'] ]['related_pod'];
+			$related_field      = self::$related_data[ $options['id'] ]['related_field'];
+			$related_pick_limit = self::$related_data[ $options['id'] ]['related_pick_limit'];
+			$current_ids        = self::$related_data[ $options['id'] ][ 'current_ids_' . $id ];
+			$remove_ids         = self::$related_data[ $options['id'] ][ 'remove_ids_' . $id ];
+		} elseif ( $options instanceof Field || $options instanceof Value_Field ) {
+			$related_field = $options->get_bidirectional_field();
+
+			if ( ! $related_field ) {
+				return;
+			}
+
+			$related_pod        = $related_field->get_parent_object();
+			$related_pick_limit = $related_field->get_arg( 'related_pick_limit', 0 );
+			$current_ids        = self::$api->lookup_related_items( $options['id'], $pod['id'], $id, $options, $pod );
+
+			// Get ids to remove.
+			$remove_ids = array_diff( $current_ids, $value_ids );
+		}
+
+		if ( empty( $related_field ) || empty( $related_pod ) ) {
 			return;
 		}
 
-		$related_pod        = self::$related_data[ $options['id'] ]['related_pod'];
-		$related_field      = self::$related_data[ $options['id'] ]['related_field'];
-		$related_pick_limit = self::$related_data[ $options['id'] ]['related_pick_limit'];
+		// Handle the bi-directional relationship updates.
 
-		// Bidirectional relationship updates.
-		if ( ! empty( $related_field ) ) {
-			// Don't use no conflict mode unless this isn't the current pod type.
-			$no_conflict = true;
+		$no_conflict = true;
 
-			if ( $related_pod['type'] !== $pod['type'] ) {
-				$no_conflict = pods_no_conflict_check( $related_pod['type'] );
+		// Only check no conflict mode if this isn't the current pod type.
+		if ( $related_pod['type'] !== $pod['type'] ) {
+			$no_conflict = pods_no_conflict_check( $related_pod['type'] );
+		}
+
+		if ( ! $no_conflict ) {
+			pods_no_conflict_on( $related_pod['type'] );
+		}
+
+		if ( empty( $value_ids ) ) {
+			// Remove all bidirectional relationships.
+			if ( ! empty( $remove_ids ) ) {
+				self::$api->delete_relationships( $remove_ids, $id, $related_pod, $related_field );
+				self::$api->delete_relationships( $id, $remove_ids, $pod, $options );
 			}
 
-			if ( ! $no_conflict ) {
-				pods_no_conflict_on( $related_pod['type'] );
+			if ( in_array( (int) $options['id'], [ 2057, 2058 ], true ) ) {
+				die();
 			}
-
-			$value = array_filter( $value );
-
-			foreach ( $value as $related_id ) {
-				if ( isset( self::$related_data[ $options['id'] ][ 'related_ids_' . $related_id ] ) && ! empty( self::$related_data[ $options['id'] ][ 'related_ids_' . $related_id ] ) ) {
-					$bidirectional_ids = self::$related_data[ $options['id'] ][ 'related_ids_' . $related_id ];
-				} else {
-					$bidirectional_ids = self::$api->lookup_related_items( $related_field['id'], $related_pod['id'], $related_id, $related_field, $related_pod );
-				}
-
-				$bidirectional_ids = array_filter( $bidirectional_ids );
-
-				if ( empty( $bidirectional_ids ) ) {
-					$bidirectional_ids = array();
-				}
-
-				$remove_ids = array();
-
-				if ( 0 < $related_pick_limit && ! empty( $bidirectional_ids ) && ! in_array( $id, $bidirectional_ids, true ) ) {
-					$total_bidirectional_ids = count( $bidirectional_ids );
-
-					while ( $related_pick_limit <= $total_bidirectional_ids ) {
-						$remove_ids[] = (int) array_pop( $bidirectional_ids );
-
-						$total_bidirectional_ids = count( $bidirectional_ids );
-					}
-				}
-
-				// Remove this item from related items no longer related to.
-				$remove_ids = array_unique( array_filter( $remove_ids ) );
-
-				if ( ! in_array( $id, $bidirectional_ids, true ) ) {
-					// Add to related items.
-					$bidirectional_ids[] = $id;
-				} elseif ( empty( $remove_ids ) ) {
-					// Nothing to change.
-					continue;
-				}
-
-				self::$api->save_relationships( $related_id, $bidirectional_ids, $related_pod, $related_field );
-
-				if ( ! empty( $remove_ids ) ) {
-					self::$api->delete_relationships( $remove_ids, $related_id, $pod, $options );
-				}
-			}//end foreach
 
 			if ( ! $no_conflict ) {
 				pods_no_conflict_off( $related_pod['type'] );
 			}
-		}//end if
 
+			return;
+		}
+
+		foreach ( $value_ids as $related_id ) {
+			if ( isset( self::$related_data[ $options['id'] ][ 'related_ids_' . $related_id ] ) && ! empty( self::$related_data[ $options['id'] ][ 'related_ids_' . $related_id ] ) ) {
+				$bidirectional_ids = self::$related_data[ $options['id'] ][ 'related_ids_' . $related_id ];
+			} else {
+				$bidirectional_ids = self::$api->lookup_related_items( $related_field['id'], $related_pod['id'], $related_id, $related_field, $related_pod );
+			}
+
+			$bidirectional_ids = array_filter( $bidirectional_ids );
+
+			if ( empty( $bidirectional_ids ) ) {
+				$bidirectional_ids = array();
+			}
+
+			$bidirectional_remove_ids = array();
+
+			if ( 0 < $related_pick_limit && ! empty( $bidirectional_ids ) && ! in_array( $id, $bidirectional_ids, true ) ) {
+				$total_bidirectional_ids = count( $bidirectional_ids );
+
+				while ( $related_pick_limit <= $total_bidirectional_ids ) {
+					$bidirectional_remove_ids[] = (int) array_pop( $bidirectional_ids );
+
+					$total_bidirectional_ids = count( $bidirectional_ids );
+				}
+			}
+
+			// Remove this item from related items no longer related to.
+			$bidirectional_remove_ids = array_unique( array_filter( $bidirectional_remove_ids ) );
+
+			if ( ! in_array( $id, $bidirectional_ids, true ) ) {
+				// Add to related items.
+				$bidirectional_ids[] = $id;
+			} elseif ( empty( $remove_ids ) ) {
+				// Nothing to change.
+				continue;
+			}
+
+			self::$api->save_relationships( $related_id, $bidirectional_ids, $related_pod, $related_field );
+
+			if ( ! empty( $bidirectional_remove_ids ) ) {
+				self::$api->delete_relationships( $bidirectional_remove_ids, $related_id, $pod, $options );
+			}
+		}//end foreach
+
+		if ( in_array( (int) $options['id'], [ 2057, 2058 ], true ) ) {
+			die();
+		}
+
+		if ( ! $no_conflict ) {
+			pods_no_conflict_off( $related_pod['type'] );
+		}
 	}
 
 	/**

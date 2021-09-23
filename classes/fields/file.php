@@ -525,7 +525,7 @@ class PodsField_File extends PodsField {
 			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
 			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
 
-			$options['plupload_init'] = array(
+			$plupload_init = [
 				'runtimes'            => 'html5,silverlight,flash,html4',
 				'url'                 => admin_url( 'admin-ajax.php?pods_ajax=1', 'relative' ),
 				'file_data_name'      => 'Filedata',
@@ -533,36 +533,37 @@ class PodsField_File extends PodsField {
 				'max_file_size'       => wp_max_upload_size() . 'b',
 				'flash_swf_url'       => includes_url( 'js/plupload/plupload.flash.swf' ),
 				'silverlight_xap_url' => includes_url( 'js/plupload/plupload.silverlight.xap' ),
-				'filters'             => array(
-					array(
+				'filters'             => [
+					[
 						'title'      => __( 'Allowed Files', 'pods' ),
 						'extensions' => '*',
-					),
-				),
+					],
+				],
 				'multipart'           => true,
 				'urlstream_upload'    => true,
-				'multipart_params'    => array(
+				'multipart_params'    => [
 					'_wpnonce' => $field_nonce,
 					'action'   => 'pods_upload',
 					'method'   => 'upload',
 					'pod'      => $pod_id,
 					'field'    => $field_id,
 					'uri'      => $uri_hash,
-				),
-			);
+				],
+			];
 
 			// Disable multi selection if only one is allowed.
 			if ( 1 === $file_limit ) {
-				$options['plupload_init']['multi_selection'] = false;
+				$plupload_init['multi_selection'] = false;
 			}
 
 			// Pass post ID if we're in an add or edit post screen.
 			$post = get_post();
 
 			if ( $post instanceof WP_Post ) {
-				$options['plupload_init']['multipart_params']['post_id'] = $post->ID;
+				$plupload_init['multipart_params']['post_id'] = $post->ID;
 			}
 
+			$options['plupload_init'] = $plupload_init;
 		}//end if
 
 		return $options;

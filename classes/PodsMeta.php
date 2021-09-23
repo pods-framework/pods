@@ -1,6 +1,5 @@
 <?php
 
-use Pods\Whatsit\Group;
 use Pods\Whatsit\Pod;
 
 /**
@@ -937,23 +936,9 @@ class PodsMeta {
 					continue;
 				}
 
-				/**
-				 * Filter the title of the Pods Group used in the post editor.
-				 *
-				 * @since 2.8
-				 *
-				 * @param string    $title  The title to use, default is 'More Fields'.
-				 * @param obj|Group $group  Current Group Object.
-				 * @param obj|Pod   $pod    Current Pods Object.
-				 * @param array     $fields Array of fields that will go in the metabox.
-				 * @param string    $type   The type of Pod.
-				 * @param string    $name   Name of the Pod.
-				 */
-				$label = apply_filters( 'pods_meta_group_label', $group['label'], $group, $pod, $fields, $type, $name );
-
 				$groups[] = [
 					'pod'      => $pod,
-					'label'    => $label,
+					'label'    => $group['label'],
 					'fields'   => $group['fields'],
 					'context'  => pods_v( 'meta_box_context', $group, 'normal', true ),
 					'priority' => pods_v( 'meta_box_priority', $group, 'default', true ),

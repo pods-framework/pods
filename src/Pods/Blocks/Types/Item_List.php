@@ -97,7 +97,7 @@ class Item_List extends Base {
 								'attribute' => 'where',
 							],
 							'pagination'  => [
-								'type'      => 'object',
+								'type'      => 'boolean',
 								'source'    => 'shortcode',
 								'attribute' => 'pagination',
 							],

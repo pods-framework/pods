@@ -60,7 +60,6 @@ class Field extends Base {
 								'type'      => 'object',
 								'source'    => 'shortcode',
 								'attribute' => 'name',
-								'selector'  => 'name',
 							],
 							'slug'  => [
 								'type'      => 'string',
@@ -75,19 +74,8 @@ class Field extends Base {
 						],
 						'isMatchConfig' => [
 							[
-								'name'     => 'name',
-								'required' => false,
-								'type'     => 'string',
-							],
-							[
-								'name'     => 'slug',
-								'required' => false,
-								'type'     => 'string',
-							],
-							[
 								'name'     => 'field',
 								'required' => true,
-								'type'     => 'string',
 							],
 						],
 					],

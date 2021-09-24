@@ -46,6 +46,114 @@ class Form extends Base {
 				'postType',
 				'postId',
 			],
+			'transforms'      => [
+				'from' => [
+					[
+						'type'       => 'shortcode',
+						'tag'        => 'pods',
+						'attributes' => [
+							'name'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'name',
+							],
+							'slug'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'slug',
+							],
+							'fields' => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'fields',
+							],
+							'label'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'label',
+							],
+							'thank_you' => [
+								'type'      => 'string',
+								'source'    => 'thank_you',
+								'attribute' => 'thank_you',
+							],
+							'form_output_type'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'form_output_type',
+							],
+						],
+						'isMatchConfig' => [
+							[
+								'name'     => 'form',
+								'required' => true,
+							],
+						],
+					],
+					[
+						'type'       => 'shortcode',
+						'tag'        => 'pods-form',
+						'attributes' => [
+							'name'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'name',
+							],
+							'slug'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'slug',
+							],
+							'fields' => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'fields',
+							],
+							'label'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'label',
+							],
+							'thank_you' => [
+								'type'      => 'string',
+								'source'    => 'thank_you',
+								'attribute' => 'thank_you',
+							],
+							'form_output_type'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'form_output_type',
+							],
+						],
+						'isMatchConfig' => [
+							[
+								'name'     => 'name',
+								'required' => false,
+							],
+							[
+								'name'     => 'slug',
+								'required' => false,
+							],
+							[
+								'name'     => 'fields',
+								'required' => false,
+							],
+							[
+								'name'     => 'label',
+								'required' => false,
+							],
+							[
+								'name'     => 'thank_you',
+								'required' => false,
+							],
+							[
+								'name'     => 'form_output_type',
+								'required' => false,
+							],
+						],
+					],
+				],
+			],
 		];
 	}
 

@@ -45,6 +45,115 @@ class Item_List extends Base {
 			'uses_context'    => [
 				'postType',
 			],
+			'transforms'      => [
+				'from' => [
+					[
+						'type'       => 'shortcode',
+						'tag'        => 'pods',
+						'attributes' => [
+							'name'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'name',
+							],
+							'template'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'template',
+							],
+							'template_custom'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'template_custom',
+							],
+							'content_before'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'content_before',
+							],
+							'content_after'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'content_after',
+							],
+							'not_found'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'not_found',
+							],
+							'limit'  => [
+								'type'      => 'integer',
+								'source'    => 'shortcode',
+								'attribute' => 'limit',
+							],
+							'orderby'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'orderby',
+							],
+							'where'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'where',
+							],
+							'pagination'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'pagination',
+							],
+							'pagination_location'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'pagination_location',
+							],
+							'pagination_type'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'pagination_type',
+							],
+							'filters'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'filters',
+							],
+							'filters_label'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'filters_label',
+							],
+							'filters_location'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'filters_location',
+							],
+							'expires'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'expires',
+							],
+							'cache_mode'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'cache_mode',
+							],
+						],
+						'isMatchConfig' => [
+							[
+								'name'     => 'field',
+								'excluded' => true,
+							],
+							[
+								'name'     => 'form',
+								'excluded' => true,
+							],
+							[
+								'name'     => 'view',
+								'excluded' => true,
+							],
+						],
+					],
+				],
+			],
 		];
 	}
 

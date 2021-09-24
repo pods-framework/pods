@@ -70,10 +70,11 @@ const createBlock = ( block ) => {
 					delete attribute.selector;
 				}
 
-				attribute.shortcode = ( allProps ) => {
-					console.log( allProps );
+				attribute.shortcode = ( { named }, data ) => {
+					console.log( named );
+					console.log( data );
 
-					let shortcodeAttribute = allProps.named[ shortcodeArgName ] ?? null;
+					let shortcodeAttribute = named[ shortcodeArgName ] ?? null;
 					const blockAttribute = blockAttributes[ attributeName ] ?? null;
 					const blockAttributeDefault = blockAttribute?.default ?? null;
 

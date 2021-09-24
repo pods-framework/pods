@@ -40,7 +40,7 @@ const createBlock = ( block ) => {
 	delete blockArgs.renderType;
 
 	// Handle attributes shortcode function setup.
-	const setupTransformAttributes = ( transform ) => {
+	const setupTransformAttributes = ( transform, blockAttributes ) => {
 		const attributes = transform.attributes ?? null;
 
 		if ( ! attributes ) {
@@ -71,6 +71,12 @@ const createBlock = ( block ) => {
 
 				attribute.shortcode = ( { named } ) => {
 					let shortcodeAttribute = named[ shortcodeArgName ] ?? null;
+					const blockAttribute = blockAttributes[ key ] ?? null;
+					const blockAttributeDefault = blockAttribute?.default ?? null;
+
+					if ( null === shortcodeAttribute ) {
+						shortcodeAttribute = blockAttributeDefault;
+					}
 
 					if ( 'boolean' === attributeType ) {
 						if ( null === shortcodeAttribute ) {
@@ -89,7 +95,7 @@ const createBlock = ( block ) => {
 						if ( null === shortcodeAttribute ) {
 							return {
 								label: '',
-								value: ''
+								value: '',
 							};
 						}
 
@@ -101,7 +107,7 @@ const createBlock = ( block ) => {
 
 						return {
 							label: shortcodeAttribute,
-							value: shortcodeAttribute
+							value: shortcodeAttribute,
 						};
 					} else if ( 'array' === attributeType ) {
 						if ( null === shortcodeAttribute ) {
@@ -156,13 +162,19 @@ const createBlock = ( block ) => {
 		console.log( { isMatchConfig, shortcodeArgs } );
 
 		isMatchConfig.forEach( ( matchConfig ) => {
+			const shortcodeArgValue = shortcodeArgs[ matchConfig.name ] ?? null;
+
 			if ( matchConfig?.required && ! shortcodeArgs[ matchConfig.name ] ) {
+				matches = false;
+			} else if ( matchConfig?.excluded && null !== shortcodeArgs[ matchConfig.name ] ) {
 				matches = false;
 			}
 		} );
 
 		return matches;
 	};
+
+	blockArgs.attributes = createAttributesFromFields( fields );
 
 	if ( ! blockArgs.transforms || ! blockArgs.transforms.from || [] === blockArgs.transforms.from ) {
 		delete blockArgs.transforms;
@@ -176,7 +188,9 @@ const createBlock = ( block ) => {
 				return;
 			}
 
-			transform.attributes = setupTransformAttributes( transform );
+			const blockAttributes = blockArgs.attributes;
+
+			transform.attributes = setupTransformAttributes( transform, blockAttributes );
 
 			if ( ! transform?.isMatch && transform?.isMatchConfig ) {
 				const isMatchConfig = transform.isMatchConfig;
@@ -200,7 +214,6 @@ const createBlock = ( block ) => {
 	registerBlockType( blockName, {
 		...blockArgs,
 		apiVersion: 1,
-		attributes: createAttributesFromFields( fields ),
 		edit: createBlockEditComponent( block ),
 		icon,
 		save: () => null,

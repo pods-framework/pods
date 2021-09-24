@@ -70,8 +70,10 @@ const createBlock = ( block ) => {
 					delete attribute.selector;
 				}
 
-				attribute.shortcode = ( { named } ) => {
-					let shortcodeAttribute = named[ shortcodeArgName ] ?? null;
+				attribute.shortcode = ( allProps ) => {
+					console.log( allProps );
+
+					let shortcodeAttribute = allProps.named[ shortcodeArgName ] ?? null;
 					const blockAttribute = blockAttributes[ attributeName ] ?? null;
 					const blockAttributeDefault = blockAttribute?.default ?? null;
 
@@ -199,10 +201,8 @@ const createBlock = ( block ) => {
 				delete transform.isMatchConfig;
 
 				// Set up the handler on transform.isMatch with what it needs.
-				transform.isMatch = ( allProps ) => {
-					console.log( allProps );
-
-					return transformCheckForMatch( isMatchConfig, allProps.named );
+				transform.isMatch = ( { named } ) => {
+					return transformCheckForMatch( isMatchConfig, named );
 				};
 			}
 

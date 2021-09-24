@@ -70,13 +70,11 @@ const createBlock = ( block ) => {
 					delete attribute.selector;
 				}
 
-				attribute.shortcode = ( { named }, data ) => {
-					console.log( named );
-					console.log( data );
-
+				attribute.shortcode = ( { named }, { shortcode } ) => {
 					let shortcodeAttribute = named[ shortcodeArgName ] ?? null;
 					const blockAttribute = blockAttributes[ attributeName ] ?? null;
 					const blockAttributeDefault = blockAttribute?.default ?? null;
+					const shortcodeContent = shortcode.content ?? '';
 
 					if ( null === shortcodeAttribute ) {
 						shortcodeAttribute = blockAttributeDefault;
@@ -143,6 +141,18 @@ const createBlock = ( block ) => {
 						}
 
 						return parseInt( shortcodeAttribute ).toString();
+					} else if ( 'content' === attributeType ) {
+						attribute.type = 'string';
+
+						if ( '' !== shortcodeContent ) {
+							return shortcodeContent.toString();
+						}
+
+						if ( null === shortcodeAttribute ) {
+							return '';
+						}
+
+						return shortcodeAttribute.toString();
 					}
 
 					return shortcodeAttribute;
@@ -162,8 +172,6 @@ const createBlock = ( block ) => {
 		}
 
 		let matches = true;
-
-		console.log( { isMatchConfig, shortcodeArgs } );
 
 		isMatchConfig.forEach( ( matchConfig ) => {
 			const shortcodeArgValue = shortcodeArgs[ matchConfig.name ] ?? null;
@@ -212,8 +220,6 @@ const createBlock = ( block ) => {
 
 		blockArgs.transforms.from = newTransforms;
 	}
-
-	console.log( { blockName, blockArgs } );
 
 	registerBlockType( blockName, {
 		...blockArgs,

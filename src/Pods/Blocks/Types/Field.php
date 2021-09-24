@@ -57,7 +57,7 @@ class Field extends Base {
 						'tag'        => 'pods',
 						'attributes' => [
 							'name'  => [
-								'type'      => 'string',
+								'type'      => 'object',
 								'source'    => 'shortcode',
 								'attribute' => 'name',
 								'selector'  => 'name',

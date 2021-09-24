@@ -146,16 +146,17 @@ const createBlock = ( block ) => {
 	};
 
 	// Handle isMatch function setup.
-	const transformCheckForMatch = ( isMatchConfig, named ) => {
+	const transformCheckForMatch = ( isMatchConfig, shortcodeArgs ) => {
 		if ( ! isMatchConfig || ! Array.isArray( isMatchConfig ) ) {
 			return true;
 		}
 
 		let matches = true;
 
+		console.log( { isMatchConfig, shortcodeArgs } );
+
 		isMatchConfig.forEach( ( matchConfig ) => {
-			console.log( { matchConfig, named } );
-			if ( matchConfig?.required && ! named[ matchConfig.name ] ) {
+			if ( matchConfig?.required && ! shortcodeArgs[ matchConfig.name ] ) {
 				matches = false;
 			}
 		} );
@@ -180,11 +181,11 @@ const createBlock = ( block ) => {
 			if ( ! transform?.isMatch && transform?.isMatchConfig ) {
 				// Set up the handler on transform.isMatch with what it needs.
 				transform.isMatch = ( { named } ) => {
-					const isMatchConfig = transform.isMatchConfig;
+					const isMatch = transformCheckForMatch( transform.isMatchConfig, named );
 
 					delete transform.isMatchConfig;
 
-					return transformCheckForMatch( isMatchConfig, named );
+					return isMatch;
 				};
 			}
 

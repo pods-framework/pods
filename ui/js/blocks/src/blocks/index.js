@@ -40,7 +40,7 @@ const createBlock = ( block ) => {
 	delete blockArgs.renderType;
 
 	// Handle attributes shortcode function setup.
-	const setupAttributes = ( transform ) => {
+	const setupTransformAttributes = ( transform ) => {
 		const attributes = transform.attributes ?? null;
 
 		if ( ! attributes ) {
@@ -70,7 +70,7 @@ const createBlock = ( block ) => {
 				}
 
 				attribute.shortcode = ( { named } ) => {
-					const shortcodeAttribute = named[ shortcodeArgName ] ?? null;
+					let shortcodeAttribute = named[ shortcodeArgName ] ?? null;
 
 					if ( 'boolean' === attributeType ) {
 						if ( null === shortcodeAttribute ) {
@@ -85,6 +85,24 @@ const createBlock = ( block ) => {
 							|| 'yes' === shortcodeAttribute
 							|| 'on' === shortcodeAttribute
 						);
+					} else if ( 'object' === attributeType ) {
+						if ( null === shortcodeAttribute ) {
+							return {
+								label: '',
+								value: ''
+							};
+						}
+
+						if ( 'object' === typeof shortcodeAttribute ) {
+							return shortcodeAttribute;
+						}
+
+						shortcodeAttribute = shortcodeAttribute.toString();
+
+						return {
+							label: shortcodeAttribute,
+							value: shortcodeAttribute
+						};
 					} else if ( 'array' === attributeType ) {
 						if ( null === shortcodeAttribute ) {
 							return [];
@@ -128,7 +146,7 @@ const createBlock = ( block ) => {
 	};
 
 	// Handle isMatch function setup.
-	const isMatchHandler = ( isMatchConfig, named ) => {
+	const transformCheckForMatch = ( isMatchConfig, named ) => {
 		if ( ! isMatchConfig || ! Array.isArray( isMatchConfig ) ) {
 			return true;
 		}
@@ -136,6 +154,7 @@ const createBlock = ( block ) => {
 		let matches = true;
 
 		isMatchConfig.forEach( ( matchConfig ) => {
+			console.log( { matchConfig, named } );
 			if ( matchConfig?.required && ! named[ matchConfig.name ] ) {
 				matches = false;
 			}
@@ -156,7 +175,7 @@ const createBlock = ( block ) => {
 				return;
 			}
 
-			transform.attributes = setupAttributes( transform );
+			transform.attributes = setupTransformAttributes( transform );
 
 			if ( ! transform?.isMatch && transform?.isMatchConfig ) {
 				// Set up the handler on transform.isMatch with what it needs.
@@ -165,7 +184,7 @@ const createBlock = ( block ) => {
 
 					delete transform.isMatchConfig;
 
-					return isMatchHandler( isMatchConfig, named );
+					return transformCheckForMatch( isMatchConfig, named );
 				};
 			}
 

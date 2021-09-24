@@ -128,26 +128,20 @@ const createBlock = ( block ) => {
 	};
 
 	// Handle isMatch function setup.
-	const isMatchHandler = ( transform ) => {
-		const isMatchConfig = transform.isMatchConfig ?? null;
+	const isMatchHandler = ( isMatchConfig, named ) => {
+		if ( ! isMatchConfig || ! Array.isArray( isMatchConfig ) ) {
+			return true;
+		}
 
-		delete transform.isMatchConfig;
+		let matches = true;
 
-		return ( { named } ) => {
-			if ( ! isMatchConfig || ! Array.isArray( isMatchConfig ) ) {
-				return true;
+		isMatchConfig.forEach( ( matchConfig ) => {
+			if ( matchConfig?.required && ! named[ matchConfig.name ] ) {
+				matches = false;
 			}
+		} );
 
-			let matches = true;
-
-			isMatchConfig.forEach( ( matchConfig ) => {
-				if ( matchConfig?.required && ! named[ matchConfig.name ] ) {
-					matches = false;
-				}
-			} );
-
-			return matches;
-		};
+		return matches;
 	};
 
 	if ( ! blockArgs.transforms || ! blockArgs.transforms.from || [] === blockArgs.transforms.from ) {
@@ -164,8 +158,15 @@ const createBlock = ( block ) => {
 
 			transform.attributes = setupAttributes( transform );
 
-			if ( transform?.isMatch ) {
-				transform.isMatch = isMatchHandler( transform );
+			if ( ! transform?.isMatch && transform?.isMatchConfig ) {
+				// Set up the handler on transform.isMatch with what it needs.
+				transform.isMatch = ( { named } ) => {
+					const isMatchConfig = transform.isMatchConfig;
+
+					delete transform.isMatchConfig;
+
+					return isMatchHandler( isMatchConfig, named );
+				};
 			}
 
 			newTransforms.push( transform );

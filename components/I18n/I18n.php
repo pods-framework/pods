@@ -821,13 +821,13 @@ class Pods_Component_I18n extends PodsComponent {
 		}
 		$options = pods_v( 'options', $data, $data );
 
-		$i18n = pods_v( 'enable_i18n', $options, null );
-		if ( null === $i18n ) {
-			// If it doesn't exist in the object data then assume it's enabled.
+		$enable_i18n = pods_v( 'enable_i18n', $options, null );
+		if ( null === $enable_i18n ) {
+			// If there are no i18n settings in the object data then assume it's enabled.
 			return true;
 		}
 
-		return (bool) pods_v( $locale, $i18n, true );
+		return (bool) pods_v( $locale, $enable_i18n, true );
 	}
 
 	/**

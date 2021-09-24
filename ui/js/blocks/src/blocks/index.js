@@ -199,8 +199,10 @@ const createBlock = ( block ) => {
 				delete transform.isMatchConfig;
 
 				// Set up the handler on transform.isMatch with what it needs.
-				transform.isMatch = ( { named } ) => {
-					return transformCheckForMatch( isMatchConfig, named );
+				transform.isMatch = ( allProps ) => {
+					console.log( allProps );
+
+					return transformCheckForMatch( isMatchConfig, allProps.named );
 				};
 			}
 

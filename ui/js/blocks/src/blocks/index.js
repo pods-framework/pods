@@ -65,7 +65,7 @@ const createBlock = ( block ) => {
 			transform.isMatch = ( { named } ) => {
 				let matches = true;
 
-				transform.isMatchConfig.forEach( ( matchConfig ) => {
+				isMatchConfig.forEach( ( matchConfig ) => {
 					if ( matchConfig?.required && ! named[ matchConfig.name ] ) {
 						matches = false;
 					}

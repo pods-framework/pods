@@ -44,24 +44,28 @@ const createBlock = ( block ) => {
 	} else {
 		const newTransforms = [];
 
-		blockArgs.transforms.from.forEach( ( transforms ) => {
-			if ( 'shortcode' !== transforms.type ) {
-				newTransforms.push( transforms );
+		blockArgs.transforms.from.forEach( ( transform ) => {
+			if ( 'shortcode' !== transform.type ) {
+				newTransforms.push( transform );
 
 				return;
 			}
 
 			// Handle isMatch handling.
-			if ( ! transforms?.isMatchConfig || ! Array.isArray( transforms.isMatchConfig ) ) {
-				newTransforms.push( transforms );
+			if ( ! transform?.isMatchConfig || ! Array.isArray( transform.isMatchConfig ) ) {
+				newTransforms.push( transform );
 
 				return;
 			}
 
-			transforms.isMatch = ( { named } ) => {
+			const isMatchConfig = transform.isMatchConfig;
+
+			delete transform.isMatchConfig;
+
+			transform.isMatch = ( { named } ) => {
 				let matches = true;
 
-				transforms.isMatchConfig.forEach( ( matchConfig ) => {
+				transform.isMatchConfig.forEach( ( matchConfig ) => {
 					if ( matchConfig?.required && ! named[ matchConfig.name ] ) {
 						matches = false;
 					}
@@ -70,9 +74,7 @@ const createBlock = ( block ) => {
 				return matches;
 			};
 
-			delete transforms.isMatchConfig;
-
-			newTransforms.push( transforms );
+			newTransforms.push( transform );
 		} );
 
 		blockArgs.transforms.from = newTransforms;

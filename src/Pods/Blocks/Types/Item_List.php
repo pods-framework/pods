@@ -62,7 +62,8 @@ class Item_List extends Base {
 								'attribute' => 'template',
 							],
 							'template_custom'  => [
-								'type'      => 'string',
+								// Pull this from content or the attribute.
+								'type'      => 'content',
 								'source'    => 'shortcode',
 								'attribute' => 'template_custom',
 							],

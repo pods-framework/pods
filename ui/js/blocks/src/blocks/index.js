@@ -165,9 +165,9 @@ const createBlock = ( block ) => {
 		isMatchConfig.forEach( ( matchConfig ) => {
 			const shortcodeArgValue = shortcodeArgs[ matchConfig.name ] ?? null;
 
-			if ( matchConfig?.required && ! shortcodeArgs[ matchConfig.name ] ) {
+			if ( matchConfig?.required && ! shortcodeArgValue ) {
 				matches = false;
-			} else if ( matchConfig?.excluded && null !== shortcodeArgs[ matchConfig.name ] ) {
+			} else if ( matchConfig?.excluded && null !== shortcodeArgValue && undefined !== shortcodeArgValue ) {
 				matches = false;
 			}
 		} );

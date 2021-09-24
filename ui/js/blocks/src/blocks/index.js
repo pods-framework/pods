@@ -179,13 +179,13 @@ const createBlock = ( block ) => {
 			transform.attributes = setupTransformAttributes( transform );
 
 			if ( ! transform?.isMatch && transform?.isMatchConfig ) {
+				const isMatchConfig = transform.isMatchConfig;
+
+				delete transform.isMatchConfig;
+
 				// Set up the handler on transform.isMatch with what it needs.
 				transform.isMatch = ( { named } ) => {
-					const isMatch = transformCheckForMatch( transform.isMatchConfig, named );
-
-					delete transform.isMatchConfig;
-
-					return isMatch;
+					return transformCheckForMatch( isMatchConfig, named );
 				};
 			}
 

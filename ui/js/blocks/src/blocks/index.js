@@ -39,12 +39,12 @@ const createBlock = ( block ) => {
 	delete blockArgs.fields;
 	delete blockArgs.renderType;
 
-	if ( ! blockArgs.transforms || [] === blockArgs.transforms ) {
+	if ( ! blockArgs.transforms || ! blockArgs.transforms.from || [] === blockArgs.transforms.from ) {
 		delete blockArgs.transforms;
 	} else {
 		const newTransforms = [];
 
-		blockArgs.transforms.foreach( ( transforms ) => {
+		blockArgs.transforms.from.foreach( ( transforms ) => {
 			if ( 'shortcode' !== transforms.type ) {
 				newTransforms.push( transforms );
 
@@ -75,8 +75,10 @@ const createBlock = ( block ) => {
 			newTransforms.push( transforms );
 		} );
 
-		blockArgs.transforms = newTransforms;
+		blockArgs.transforms.from = newTransforms;
 	}
+
+	console.log( { blockName, blockArgs } );
 
 	registerBlockType( blockName, {
 		...blockArgs,

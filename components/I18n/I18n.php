@@ -382,11 +382,15 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @return array
 	 */
 	public function translate_field_options( $options, $name, $value, $pod, $id ) {
+		$locale = $this->locale;
+		if ( ! array_key_exists( $locale, $this->languages ) || ! $this->obj_is_language_enabled( $locale, $pod ) ) {
+			return $options;
+		}
 
 		foreach ( $this->get_translatable_fields() as $field ) {
-			$locale = $this->locale;
-			if ( isset( $options[ $field . '_' . $locale ] ) && array_key_exists( $locale, $this->languages ) && $this->obj_is_language_enabled( $locale, $pod ) ) {
-				$options[ $field ] = $options[ $field . '_' . $locale ];
+			$translation = pods_v( $field . '_' . $locale, $options, null );
+			if ( $translation ) {
+				$options[ $field ] = $translation;
 			}
 		}
 

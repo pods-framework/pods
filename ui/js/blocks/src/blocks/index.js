@@ -60,6 +60,7 @@ const createBlock = ( block ) => {
 
 				const shortcodeArgName = attribute.selector ?? attribute.attribute ?? null;
 				const attributeType = attribute.type ?? 'string';
+				const attributeName = attribute.attribute ?? key;
 
 				if ( ! shortcodeArgName ) {
 					return;
@@ -71,7 +72,7 @@ const createBlock = ( block ) => {
 
 				attribute.shortcode = ( { named } ) => {
 					let shortcodeAttribute = named[ shortcodeArgName ] ?? null;
-					const blockAttribute = blockAttributes[ key ] ?? null;
+					const blockAttribute = blockAttributes[ attributeName ] ?? null;
 					const blockAttributeDefault = blockAttribute?.default ?? null;
 
 					if ( null === shortcodeAttribute ) {

@@ -44,7 +44,7 @@ const createBlock = ( block ) => {
 	} else {
 		const newTransforms = [];
 
-		blockArgs.transforms.from.foreach( ( transforms ) => {
+		blockArgs.transforms.from.forEach( ( transforms ) => {
 			if ( 'shortcode' !== transforms.type ) {
 				newTransforms.push( transforms );
 

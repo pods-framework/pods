@@ -58,17 +58,18 @@ class Field extends Base {
 						'attributes' => [
 							'name'  => [
 								'type'      => 'string',
-								'source'    => 'attribute',
+								'source'    => 'shortcode',
 								'attribute' => 'name',
+								'selector'  => 'name',
 							],
 							'slug'  => [
 								'type'      => 'string',
-								'source'    => 'attribute',
+								'source'    => 'shortcode',
 								'attribute' => 'slug',
 							],
 							'field' => [
 								'type'      => 'string',
-								'source'    => 'attribute',
+								'source'    => 'shortcode',
 								'attribute' => 'field',
 							],
 						],

@@ -39,6 +39,117 @@ const createBlock = ( block ) => {
 	delete blockArgs.fields;
 	delete blockArgs.renderType;
 
+	// Handle attributes shortcode function setup.
+	const setupAttributes = ( transform ) => {
+		const attributes = transform.attributes ?? null;
+
+		if ( ! attributes ) {
+			return {};
+		}
+
+		const attributeKeys = Object.keys( attributes );
+
+		const newAttributes = {};
+
+		attributeKeys.forEach( ( key ) => {
+			const attribute = attributes[ key ];
+			const source = attribute.source ?? '';
+
+			if ( 'shortcode' === source ) {
+				delete attribute.source;
+
+				const shortcodeArgName = attribute.selector ?? attribute.attribute ?? null;
+				const attributeType = attribute.type ?? 'string';
+
+				if ( ! shortcodeArgName ) {
+					return;
+				}
+
+				if ( attribute?.selector ) {
+					delete attribute.selector;
+				}
+
+				attribute.shortcode = ( { named } ) => {
+					const shortcodeAttribute = named[ shortcodeArgName ] ?? null;
+
+					if ( 'boolean' === attributeType ) {
+						if ( null === shortcodeAttribute ) {
+							return false;
+						}
+
+						return (
+							'true' === shortcodeAttribute
+							|| true === shortcodeAttribute
+							|| '1' === shortcodeAttribute
+							|| 1 === shortcodeAttribute
+							|| 'yes' === shortcodeAttribute
+							|| 'on' === shortcodeAttribute
+						);
+					} else if ( 'array' === attributeType ) {
+						if ( null === shortcodeAttribute ) {
+							return [];
+						}
+
+						if ( Array.isArray( shortcodeAttribute ) ) {
+							return shortcodeAttribute;
+						}
+
+						return shortcodeAttribute.split( ',' );
+					} else if ( 'string' === attributeType ) {
+						if ( null === shortcodeAttribute ) {
+							return '';
+						}
+
+						return shortcodeAttribute.toString();
+					} else if ( 'integer' === attributeType || 'number' === attributeType ) {
+						if ( null === shortcodeAttribute ) {
+							return 0;
+						}
+
+						return parseInt( shortcodeAttribute );
+					} else if ( 'string_integer' === attributeType ) {
+						attribute.type = 'string';
+
+						if ( null === shortcodeAttribute ) {
+							return '0';
+						}
+
+						return parseInt( shortcodeAttribute ).toString();
+					}
+
+					return shortcodeAttribute;
+				};
+			}
+
+			newAttributes[ key ] = attribute;
+		} );
+
+		return newAttributes;
+	};
+
+	// Handle isMatch function setup.
+	const isMatchHandler = ( transform ) => {
+		const isMatchConfig = transform.isMatchConfig ?? null;
+
+		delete transform.isMatchConfig;
+
+		return ( { named } ) => {
+			if ( ! isMatchConfig || ! Array.isArray( isMatchConfig ) ) {
+				return true;
+			}
+
+			let matches = true;
+
+			isMatchConfig.forEach( ( matchConfig ) => {
+				if ( matchConfig?.required && ! named[ matchConfig.name ] ) {
+					matches = false;
+				}
+			} );
+
+			return matches;
+		};
+	};
+
 	if ( ! blockArgs.transforms || ! blockArgs.transforms.from || [] === blockArgs.transforms.from ) {
 		delete blockArgs.transforms;
 	} else {
@@ -51,28 +162,11 @@ const createBlock = ( block ) => {
 				return;
 			}
 
-			// Handle isMatch handling.
-			if ( ! transform?.isMatchConfig || ! Array.isArray( transform.isMatchConfig ) ) {
-				newTransforms.push( transform );
+			transform.attributes = setupAttributes( transform );
 
-				return;
+			if ( transform?.isMatch ) {
+				transform.isMatch = isMatchHandler( transform );
 			}
-
-			const isMatchConfig = transform.isMatchConfig;
-
-			delete transform.isMatchConfig;
-
-			transform.isMatch = ( { named } ) => {
-				let matches = true;
-
-				isMatchConfig.forEach( ( matchConfig ) => {
-					if ( matchConfig?.required && ! named[ matchConfig.name ] ) {
-						matches = false;
-					}
-				} );
-
-				return matches;
-			};
 
 			newTransforms.push( transform );
 		} );

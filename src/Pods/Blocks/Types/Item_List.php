@@ -139,6 +139,10 @@ class Item_List extends Base {
 						],
 						'isMatchConfig' => [
 							[
+								'name'     => 'slug',
+								'excluded' => true,
+							],
+							[
 								'name'     => 'field',
 								'excluded' => true,
 							],

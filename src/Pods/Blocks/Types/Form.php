@@ -50,48 +50,6 @@ class Form extends Base {
 				'from' => [
 					[
 						'type'       => 'shortcode',
-						'tag'        => 'pods',
-						'attributes' => [
-							'name'  => [
-								'type'      => 'object',
-								'source'    => 'shortcode',
-								'attribute' => 'name',
-							],
-							'slug'  => [
-								'type'      => 'string',
-								'source'    => 'shortcode',
-								'attribute' => 'slug',
-							],
-							'fields' => [
-								'type'      => 'string',
-								'source'    => 'shortcode',
-								'attribute' => 'fields',
-							],
-							'label'  => [
-								'type'      => 'string',
-								'source'    => 'shortcode',
-								'attribute' => 'label',
-							],
-							'thank_you' => [
-								'type'      => 'string',
-								'source'    => 'thank_you',
-								'attribute' => 'thank_you',
-							],
-							'form_output_type'  => [
-								'type'      => 'object',
-								'source'    => 'shortcode',
-								'attribute' => 'form_output_type',
-							],
-						],
-						'isMatchConfig' => [
-							[
-								'name'     => 'form',
-								'required' => true,
-							],
-						],
-					],
-					[
-						'type'       => 'shortcode',
 						'tag'        => 'pods-form',
 						'attributes' => [
 							'name'  => [
@@ -116,7 +74,7 @@ class Form extends Base {
 							],
 							'thank_you' => [
 								'type'      => 'string',
-								'source'    => 'thank_you',
+								'source'    => 'shortcode',
 								'attribute' => 'thank_you',
 							],
 							'form_output_type'  => [
@@ -130,25 +88,47 @@ class Form extends Base {
 								'name'     => 'name',
 								'required' => false,
 							],
-							[
-								'name'     => 'slug',
-								'required' => false,
+						],
+					],
+					[
+						'type'       => 'shortcode',
+						'tag'        => 'pods',
+						'attributes' => [
+							'name'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'name',
 							],
-							[
-								'name'     => 'fields',
-								'required' => false,
+							'slug'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'slug',
 							],
-							[
-								'name'     => 'label',
-								'required' => false,
+							'fields' => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'fields',
 							],
-							[
-								'name'     => 'thank_you',
-								'required' => false,
+							'label'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'label',
 							],
+							'thank_you' => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'thank_you',
+							],
+							'form_output_type'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'form_output_type',
+							],
+						],
+						'isMatchConfig' => [
 							[
-								'name'     => 'form_output_type',
-								'required' => false,
+								'name'     => 'form',
+								'required' => true,
 							],
 						],
 					],

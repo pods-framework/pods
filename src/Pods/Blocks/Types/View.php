@@ -42,6 +42,27 @@ class View extends Base {
 				'view',
 				'include',
 			],
+			'transforms'      => [
+				'from' => [
+					[
+						'type'       => 'shortcode',
+						'tag'        => 'pods',
+						'attributes' => [
+							'view'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'view',
+							],
+						],
+						'isMatchConfig' => [
+							[
+								'name'     => 'view',
+								'required' => true,
+							],
+						],
+					],
+				],
+			],
 		];
 	}
 

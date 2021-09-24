@@ -47,6 +47,106 @@ class Item_Single extends Base {
 				'postType',
 				'postId',
 			],
+			'transforms'      => [
+				'from' => [
+					[
+						'type'       => 'shortcode',
+						'tag'        => 'pods',
+						'attributes' => [
+							'name'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'name',
+							],
+							'slug'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'slug',
+							],
+							'template'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'template',
+							],
+							'template_custom'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'template_custom',
+							],
+						],
+						'isMatchConfig' => [
+							[
+								'name'     => 'field',
+								'excluded' => true,
+							],
+							[
+								'name'     => 'form',
+								'excluded' => true,
+							],
+							[
+								'name'     => 'view',
+								'excluded' => true,
+							],
+							[
+								'name' => 'content_before',
+								'excluded' => true,
+							],
+							[
+								'name' => 'content_after',
+								'excluded' => true,
+							],
+							[
+								'name' => 'not_found',
+								'excluded' => true,
+							],
+							[
+								'name' => 'limit',
+								'excluded' => true,
+							],
+							[
+								'name' => 'orderby',
+								'excluded' => true,
+							],
+							[
+								'name' => 'where',
+								'excluded' => true,
+							],
+							[
+								'name' => 'pagination',
+								'excluded' => true,
+							],
+							[
+								'name' => 'pagination_location',
+								'excluded' => true,
+							],
+							[
+								'name' => 'pagination_type',
+								'excluded' => true,
+							],
+							[
+								'name' => 'filters',
+								'excluded' => true,
+							],
+							[
+								'name' => 'filters_label',
+								'excluded' => true,
+							],
+							[
+								'name' => 'filters_location',
+								'excluded' => true,
+							],
+							[
+								'name' => 'expires',
+								'excluded' => true,
+							],
+							[
+								'name' => 'cache_mode',
+								'excluded' => true,
+							],
+						],
+					],
+				],
+			],
 		];
 	}
 

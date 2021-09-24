@@ -39,7 +39,44 @@ const createBlock = ( block ) => {
 	delete blockArgs.fields;
 	delete blockArgs.renderType;
 
-	console.log( { blockName, blockArgs } );
+	if ( ! blockArgs.transforms || [] === blockArgs.transforms ) {
+		delete blockArgs.transforms;
+	} else {
+		const newTransforms = [];
+
+		blockArgs.transforms.foreach( ( transforms ) => {
+			if ( 'shortcode' !== transforms.type ) {
+				newTransforms.push( transforms );
+
+				return;
+			}
+
+			// Handle isMatch handling.
+			if ( ! transforms?.isMatchConfig || ! Array.isArray( transforms.isMatchConfig ) ) {
+				newTransforms.push( transforms );
+
+				return;
+			}
+
+			transforms.isMatch = ( { named } ) => {
+				let matches = true;
+
+				transforms.isMatchConfig.forEach( ( matchConfig ) => {
+					if ( matchConfig?.required && ! named[ matchConfig.name ] ) {
+						matches = false;
+					}
+				} );
+
+				return matches;
+			};
+
+			delete transforms.isMatchConfig;
+
+			newTransforms.push( transforms );
+		} );
+
+		blockArgs.transforms = newTransforms;
+	}
 
 	registerBlockType( blockName, {
 		...blockArgs,

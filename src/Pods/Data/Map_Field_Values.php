@@ -415,20 +415,44 @@ class Map_Field_Values {
 		$size    = 0;
 		$item_id = $obj->id();
 
-		if ( isset( $traverse_fields[0] ) ) {
-			$size = (int) $traverse_fields[0];
+		// Copy for further modification.
+		$image_field     = $field;
+		$traverse_params = $traverse;
 
+		$url = '_url' === substr( $image_field, - 4 ) || '_src' === substr( $image_field, - 4 );
+
+		if ( isset( $traverse_params[0] ) ) {
 			// Check if there is a numeric size, bail if not because it needs normal relationship traversal.
-			if ( $field_data && ! is_numeric( $traverse_fields[0] ) ) {
+			if ( $field_data && ! is_numeric( $traverse_params[0] ) ) {
 				return null;
+			}
+
+			$size = absint( $traverse_params[0] );
+		}
+
+		if ( $url ) {
+			if ( 0 < $size ) {
+				$avatar_url = get_avatar_url( $item_id, $size );
+			} else {
+				$avatar_url = get_avatar_url( $item_id );
+			}
+
+			if ( ! $avatar_url ) {
+				return '';
 			}
 		}
 
 		if ( 0 < $size ) {
-			return get_avatar( $item_id, $size );
+			$avatar = get_avatar( $item_id, $size );
+		} else {
+			$avatar = get_avatar( $item_id );
 		}
 
-		return get_avatar( $item_id );
+		if ( ! $avatar ) {
+			return '';
+		}
+
+		return $avatar;
 	}
 
 }

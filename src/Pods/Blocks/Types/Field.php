@@ -50,6 +50,37 @@ class Field extends Base {
 				'postType',
 				'postId',
 			],
+			'transforms'      => [
+				'from' => [
+					[
+						'type'       => 'shortcode',
+						'tag'        => 'pods',
+						'attributes' => [
+							'name'  => [
+								'type'      => 'object',
+								'source'    => 'shortcode',
+								'attribute' => 'name',
+							],
+							'slug'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'slug',
+							],
+							'field' => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'field',
+							],
+						],
+						'isMatchConfig' => [
+							[
+								'name'     => 'field',
+								'required' => true,
+							],
+						],
+					],
+				],
+			],
 		];
 	}
 

@@ -39,12 +39,191 @@ const createBlock = ( block ) => {
 	delete blockArgs.fields;
 	delete blockArgs.renderType;
 
-	console.log( { blockName, blockArgs } );
+	// Handle attributes shortcode function setup.
+	const setupTransformAttributes = ( transform, blockAttributes ) => {
+		const attributes = transform.attributes ?? null;
+
+		if ( ! attributes ) {
+			return {};
+		}
+
+		const attributeKeys = Object.keys( attributes );
+
+		const newAttributes = {};
+
+		attributeKeys.forEach( ( key ) => {
+			const attribute = attributes[ key ];
+			const source = attribute.source ?? '';
+
+			if ( 'shortcode' === source ) {
+				delete attribute.source;
+
+				const shortcodeArgName = attribute.selector ?? attribute.attribute ?? null;
+				const attributeType = attribute.type ?? 'string';
+				const attributeName = attribute.attribute ?? key;
+
+				if ( ! shortcodeArgName ) {
+					return;
+				}
+
+				if ( attribute?.selector ) {
+					delete attribute.selector;
+				}
+
+				attribute.shortcode = ( { named }, { shortcode } ) => {
+					let shortcodeAttribute = named[ shortcodeArgName ] ?? null;
+					const blockAttribute = blockAttributes[ attributeName ] ?? null;
+					const blockAttributeDefault = blockAttribute?.default ?? null;
+					const shortcodeContent = shortcode.content ?? '';
+
+					if ( null === shortcodeAttribute ) {
+						shortcodeAttribute = blockAttributeDefault;
+					}
+
+					if ( 'boolean' === attributeType ) {
+						if ( null === shortcodeAttribute ) {
+							return false;
+						}
+
+						return (
+							'true' === shortcodeAttribute
+							|| true === shortcodeAttribute
+							|| '1' === shortcodeAttribute
+							|| 1 === shortcodeAttribute
+							|| 'yes' === shortcodeAttribute
+							|| 'on' === shortcodeAttribute
+						);
+					} else if ( 'object' === attributeType ) {
+						if ( null === shortcodeAttribute ) {
+							return {
+								label: '',
+								value: '',
+							};
+						}
+
+						if ( 'object' === typeof shortcodeAttribute ) {
+							return shortcodeAttribute;
+						}
+
+						shortcodeAttribute = shortcodeAttribute.toString();
+
+						return {
+							label: shortcodeAttribute,
+							value: shortcodeAttribute,
+						};
+					} else if ( 'array' === attributeType ) {
+						if ( null === shortcodeAttribute ) {
+							return [];
+						}
+
+						if ( Array.isArray( shortcodeAttribute ) ) {
+							return shortcodeAttribute;
+						}
+
+						return shortcodeAttribute.split( ',' );
+					} else if ( 'string' === attributeType ) {
+						if ( null === shortcodeAttribute ) {
+							return '';
+						}
+
+						return shortcodeAttribute.toString();
+					} else if ( 'integer' === attributeType || 'number' === attributeType ) {
+						if ( null === shortcodeAttribute ) {
+							return 0;
+						}
+
+						return parseInt( shortcodeAttribute );
+					} else if ( 'string_integer' === attributeType ) {
+						attribute.type = 'string';
+
+						if ( null === shortcodeAttribute ) {
+							return '0';
+						}
+
+						return parseInt( shortcodeAttribute ).toString();
+					} else if ( 'content' === attributeType ) {
+						attribute.type = 'string';
+
+						if ( '' !== shortcodeContent ) {
+							return shortcodeContent.toString();
+						}
+
+						if ( null === shortcodeAttribute ) {
+							return '';
+						}
+
+						return shortcodeAttribute.toString();
+					}
+
+					return shortcodeAttribute;
+				};
+			}
+
+			newAttributes[ key ] = attribute;
+		} );
+
+		return newAttributes;
+	};
+
+	// Handle isMatch function setup.
+	const transformCheckForMatch = ( isMatchConfig, shortcodeArgs ) => {
+		if ( ! isMatchConfig || ! Array.isArray( isMatchConfig ) ) {
+			return true;
+		}
+
+		let matches = true;
+
+		isMatchConfig.forEach( ( matchConfig ) => {
+			const shortcodeArgValue = shortcodeArgs[ matchConfig.name ] ?? null;
+
+			if ( matchConfig?.required && ! shortcodeArgValue ) {
+				matches = false;
+			} else if ( matchConfig?.excluded && null !== shortcodeArgValue && undefined !== shortcodeArgValue ) {
+				matches = false;
+			}
+		} );
+
+		return matches;
+	};
+
+	blockArgs.attributes = createAttributesFromFields( fields );
+
+	if ( ! blockArgs.transforms || ! blockArgs.transforms.from || [] === blockArgs.transforms.from ) {
+		delete blockArgs.transforms;
+	} else {
+		const newTransforms = [];
+
+		blockArgs.transforms.from.forEach( ( transform ) => {
+			if ( 'shortcode' !== transform.type ) {
+				newTransforms.push( transform );
+
+				return;
+			}
+
+			const blockAttributes = blockArgs.attributes;
+
+			transform.attributes = setupTransformAttributes( transform, blockAttributes );
+
+			if ( ! transform?.isMatch && transform?.isMatchConfig ) {
+				const isMatchConfig = transform.isMatchConfig;
+
+				delete transform.isMatchConfig;
+
+				// Set up the handler on transform.isMatch with what it needs.
+				transform.isMatch = ( { named } ) => {
+					return transformCheckForMatch( isMatchConfig, named );
+				};
+			}
+
+			newTransforms.push( transform );
+		} );
+
+		blockArgs.transforms.from = newTransforms;
+	}
 
 	registerBlockType( blockName, {
 		...blockArgs,
 		apiVersion: 1,
-		attributes: createAttributesFromFields( fields ),
 		edit: createBlockEditComponent( block ),
 		icon,
 		save: () => null,

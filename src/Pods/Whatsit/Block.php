@@ -56,6 +56,7 @@ class Block extends Pod {
 			'provides_context' => $this->get_arg( 'providesContext', $this->get_arg( 'provides_context', [] ) ),
 			'fields'           => $this->get_block_fields(),
 			'attributes'       => $this->get_arg( 'attributes', [] ),
+			'transforms'       => $this->get_arg( 'transforms', [] ),
 		];
 
 		$default_supports = [

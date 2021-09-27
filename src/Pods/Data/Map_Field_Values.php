@@ -242,11 +242,21 @@ class Map_Field_Values {
 
 		$context_var = isset( $traverse[1] ) ? $traverse[1] : null;
 
+		$raw = isset( $traverse[2] ) && 'raw' === $traverse[2];
+
 		if ( 'user' === $context_type && 'user_pass' === $context_var ) {
 			return null;
 		}
 
-		return pods_v( $context_var, $context_type );
+		$value = pods_v( $context_var, $context_type );
+
+		// Maybe return the raw value.
+		if ( $raw ) {
+			return $value;
+		}
+
+		// Sanitize the field with some basic protections.
+		return sanitize_text_field( $value );
 	}
 
 	/**

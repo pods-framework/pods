@@ -145,14 +145,27 @@ class MappingTest extends Pods_UnitTestCase {
 	public function test_context_info() {
 		$pod = pods( $this->pod_name, $this->item_id );
 
+		// Test $_GET.
 		$_GET['some-value'] = '123';
 
-		$this->assertEquals( '123', $pod->field( '_context.get.some-value' ) );
+		$this->assertEquals( $_GET['some-value'], $pod->field( '_context.get.some-value' ) );
 
+		// Test $_POST.
 		$_POST['some-value2'] = '456';
 
-		$this->assertEquals( '456', $pod->field( '_context.post.some-value2' ) );
+		$this->assertEquals( $_POST['some-value2'], $pod->field( '_context.post.some-value2' ) );
 
+		// Test removal of HTML in value.
+		$_POST['some-value3'] = '<a href="https://gosomewhere.com">Go somewhere</a>';
+
+		$this->assertEquals( 'Go somewhere', $pod->field( '_context.post.some-value3' ) );
+
+		// Test HTML in raw value.
+		$_POST['some-value3'] = '<a href="https://gosomewhere.com">Go somewhere</a>';
+
+		$this->assertEquals( $_POST['some-value3'], $pod->field( '_context.post.some-value3.raw' ) );
+
+		// Test prefix.
 		global $wpdb;
 
 		$this->assertEquals( $wpdb->prefix, $pod->field( '_context.prefix' ) );

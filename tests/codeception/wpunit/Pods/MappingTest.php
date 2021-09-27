@@ -140,6 +140,25 @@ class MappingTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * @covers \Pods\Data\Map_Field_Values::context_info
+	 */
+	public function test_context_info() {
+		$pod = pods( $this->pod_name, $this->item_id );
+
+		$_GET['some-value'] = '123';
+
+		$this->assertEquals( '123', $pod->field( '_context.get.some-value' ) );
+
+		$_POST['some-value2'] = '456';
+
+		$this->assertEquals( '456', $pod->field( '_context.get.some-value2' ) );
+
+		global $wpdb;
+
+		$this->assertEquals( $wpdb->prefix, $pod->field( '_context.prefix' ) );
+	}
+
+	/**
 	 * @covers \Pods\Data\Map_Field_Values::calculation
 	 */
 	public function test_calculation() {

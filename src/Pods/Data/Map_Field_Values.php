@@ -52,6 +52,7 @@ class Map_Field_Values {
 			'custom',
 			'pod_info',
 			'field_info',
+			'context_info',
 			'calculation',
 			'image_fields',
 			'avatar',
@@ -171,6 +172,81 @@ class Map_Field_Values {
 		$field_option = ! empty( $traverse[1] ) ? $traverse[1] : 'label';
 
 		return $obj->fields( $field_match, $field_option );
+	}
+
+	/**
+	 * Map the matching context info value.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string                  $field      The first field name in the path.
+	 * @param string[]                $traverse   The list of fields in the path excluding the first field name.
+	 * @param null|Field|Object_Field $field_data The field data or null if not a field.
+	 * @param Pods                    $obj        The Pods object.
+	 *
+	 * @return null|mixed The matching context info value or null if there was no match.
+	 */
+	public function context_info( $field, $traverse, $field_data, $obj ) {
+		// Skip if the field exists.
+		if ( $field_data ) {
+			return null;
+		}
+
+		// Skip if not the field we are looking for.
+		if ( '_context' !== $field ) {
+			return null;
+		}
+
+		// Skip if no field was set.
+		if ( empty( $traverse[0] ) ) {
+			return null;
+		}
+
+		$context_type = $traverse[0];
+
+		$supported_contexts = [
+			'get',
+			'post',
+			'request',
+			'query',
+			'url',
+			'uri',
+			'url-relative',
+			'template-url',
+			'stylesheet-url',
+			'site-url',
+			'home-url',
+			'admin-url',
+			'includes-url',
+			'content-url',
+			'plugins-url',
+			'network-site-url',
+			'network-home-url',
+			'network-admin-url',
+			'user-admin-url',
+			'prefix',
+			'session',
+			'cookie',
+			'user',
+			'option',
+			'site-option',
+			'date',
+			'pods',
+			'pods_display',
+			'post_id',
+		];
+
+		if ( ! in_array( $context_type, $supported_contexts, true ) ) {
+			return null;
+		}
+
+		$context_var = isset( $traverse[1] ) ? $traverse[1] : null;
+
+		if ( 'user' === $context_type && 'user_pass' === $context_var ) {
+			return null;
+		}
+
+		return pods_v( $context_var, $context_type );
 	}
 
 	/**

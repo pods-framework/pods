@@ -6953,13 +6953,17 @@ class PodsAPI {
 				return pods_error( __( 'Field not found', 'pods' ), $this );
 			}
 		}
-
-		$params->id   = $field['id'];
-		$params->name = $field['name'];
+		$params->id     = $field['id'];
+		$params->name   = $field['name'];
 
 		// Get the pod from the field if pod information not provided.
 		if ( false === $pod ) {
 			$pod = $field->get_parent_object();
+
+			if ( $pod ) {
+				$params->pod_id = $pod['id'];
+				$params->pod    = $pod['name'];
+			}
 		}
 
 		$simple = ( 'pick' === $field['type'] && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );

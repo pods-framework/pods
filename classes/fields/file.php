@@ -544,7 +544,6 @@ class PodsField_File extends PodsField {
 					'pod'      => $pod_id,
 					'field'    => $field_id,
 					'item_id'  => $item_id,
-					'post_id'  => $item_id,
 					'uri'      => $uri_hash,
 				],
 			];
@@ -552,6 +551,12 @@ class PodsField_File extends PodsField {
 			// Disable multi selection if only one is allowed.
 			if ( 1 === $file_limit ) {
 				$plupload_init['multi_selection'] = false;
+			}
+
+			// Backwards compatibility: Pass post ID if we're in an add or edit post screen.
+			$post = get_post();
+			if ( $post instanceof WP_Post ) {
+				$plupload_init['multipart_params']['post_id'] = $post->ID;
 			}
 
 			$options['plupload_init'] = $plupload_init;

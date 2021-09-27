@@ -151,7 +151,7 @@ class MappingTest extends Pods_UnitTestCase {
 
 		$_POST['some-value2'] = '456';
 
-		$this->assertEquals( '456', $pod->field( '_context.get.some-value2' ) );
+		$this->assertEquals( '456', $pod->field( '_context.post.some-value2' ) );
 
 		global $wpdb;
 

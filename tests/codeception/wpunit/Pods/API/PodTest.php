@@ -121,11 +121,36 @@ class PodTest extends Pods_UnitTestCase {
 		$this->assertEquals( $params['label'], $pod['label'] );
 		$this->assertEquals( $params['storage'], $pod['storage'] );
 
+		/**
+		 * Table testing.
+		 */
+
 		global $wpdb;
 
-		$wpdb->get_var( 'SELECT id FROM `' . $db->grabTablePrefix() . 'pods_' . $params['name'] . '`' );
+		$wpdb->show_errors( false );
+		$wpdb->suppress_errors( true );
 
+		// Test that the test_field column was added.
+		$response = $this->api->save_field( [
+			'name' => 'test_field',
+			'type' => 'text',
+			'pod'  => $pod,
+		] );
+		$this->assertInternalType( 'int', $response );
+
+		$field = $this->api->load_field( [ 'name' => 'test_field', 'pod' => $pod ] );
+		$this->assertEquals( 'test_field', $field['name'] );
+		$this->assertEquals( 'text', $field['type'] );
+
+		$wpdb->get_var( 'SELECT `id`, `test_field` FROM `' . $db->grabTablePrefix() . 'pods_' . $params['name'] . '`' );
 		$this->assertEmpty( $wpdb->last_error );
+
+		// Test that the test_field column was deleted.
+		$deleted = $this->api->delete_field( [ 'name' => 'test_field', 'pod' => $pod ] );
+		$this->assertTrue( $deleted );
+
+		$wpdb->get_var( 'SELECT `id`, `test_field` FROM `' . $db->grabTablePrefix() . 'pods_' . $params['name'] . '`' );
+		$this->assertNotEmpty( $wpdb->last_error );
 	}
 
 	/**

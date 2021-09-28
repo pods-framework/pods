@@ -14,9 +14,9 @@ use Pods\Whatsit\Storage\Post_Type;
 class Store {
 
 	/**
-	 * @var Store
+	 * @var Store[]
 	 */
-	protected static $instance;
+	protected static $instances = [];
 
 	/**
 	 * @var string[]
@@ -149,11 +149,13 @@ class Store {
 	 * @return Store
 	 */
 	public static function get_instance() {
-		if ( ! self::$instance ) {
-			self::$instance = new self();
+		$current_blog_id = get_current_blog_id();
+
+		if ( empty( self::$instances[ $current_blog_id ] ) ) {
+			self::$instances[ $current_blog_id ] = new self();
 		}
 
-		return self::$instance;
+		return self::$instances[ $current_blog_id ];
 	}
 
 	/**

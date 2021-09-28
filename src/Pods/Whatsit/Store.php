@@ -144,25 +144,35 @@ class Store {
 	}
 
 	/**
-	 * Get instance of object.
+	 * Get the Store instance.
 	 *
-	 * @return Store
+	 * @param int|null $blog_id The blog ID for the Store instance.
+	 *
+	 * @return self The Store instance.
 	 */
-	public static function get_instance() {
-		$current_blog_id = get_current_blog_id();
-
-		if ( empty( self::$instances[ $current_blog_id ] ) ) {
-			self::$instances[ $current_blog_id ] = new self();
+	public static function get_instance( $blog_id = null ) {
+		if ( null === $blog_id ) {
+			$blog_id = get_current_blog_id();
 		}
 
-		return self::$instances[ $current_blog_id ];
+		if ( ! isset( self::$instances[ $blog_id ] ) ) {
+			self::$instances[ $blog_id ] = new self();
+		}
+
+		return self::$instances[ $blog_id ];
 	}
 
 	/**
-	 * Destroy instance.
+	 * Destroy the Store instance.
+	 *
+	 * @param int|null $blog_id The blog ID for the Store instance.
 	 */
-	public static function destroy() {
-		self::$instance = null;
+	public static function destroy( $blog_id = null ) {
+		if ( null === $blog_id ) {
+			self::$instances = [];
+		} elseif ( isset( self::$instances[ $blog_id ] ) ) {
+			unset( self::$instances[ $blog_id ] );
+		}
 	}
 
 	/**

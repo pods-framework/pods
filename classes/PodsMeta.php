@@ -1117,12 +1117,12 @@ class PodsMeta {
 		}
 
 		// Check if we need to strictly check the pod type.
-		if ( null !== $pod_type && self::$current_pod->pod_data['type'] !== $pod_type ) {
+		if ( self::$current_pod instanceof Pods && null !== $pod_type && self::$current_pod->pod_data['type'] !== $pod_type ) {
 			self::$current_pod = false;
 		}
 
 		// Check if we have a valid pod and if we need to fetch the new ID.
-		if ( is_object( self::$current_pod ) && null !== $id && (int) self::$current_pod->id() !== (int) $id ) {
+		if ( self::$current_pod instanceof Pods && null !== $id && (int) self::$current_pod->id() !== (int) $id ) {
 			self::$current_pod->fetch( $id );
 		}
 

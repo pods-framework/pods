@@ -206,8 +206,6 @@ class MappingTest extends Pods_UnitTestCase {
 			'post_status'  => 'publish',
 		] );
 
-		$pod = pods( $this->pod_name );
-
 		$pod->find( [
 			// Limit to 2 and expect 3 pages.
 			'limit' => 2,
@@ -233,6 +231,58 @@ class MappingTest extends Pods_UnitTestCase {
 			$this->assertEquals( 5, $pod->field( '_total_found' ) );
 			$this->assertEquals( 3, $pod->field( '_total_pages' ) );
 		}
+	}
+
+	/**
+	 * @covers \Pods\Data\Map_Field_Values::image_fields
+	 */
+	public function test_image_fields_post_thumbnail() {
+		$image_path = codecept_data_dir( 'images/zoltar.jpg' );
+
+		$attachment_id = $this->factory()->attachment->create_upload_object( $image_path, $this->item_id );
+
+		set_post_thumbnail( $this->item_id, $attachment_id );
+
+		$pod = pods( $this->pod_name, $this->item_id );
+
+		$this->assertStringStartsWith( '<img width="150" height="150" src="', $pod->field( 'post_thumbnail' ) );
+		$this->assertStringStartsWith( '<img width="200" height="300" src="', $pod->field( 'post_thumbnail.medium' ) );
+		$this->assertStringStartsWith( '<img width="123" height="123" src="', $pod->field( 'post_thumbnail.123x123' ) );
+
+		$this->assertContains( '-150x150.jpg', $pod->field( 'post_thumbnail_url' ) );
+		$this->assertContains( '-200x300.jpg', $pod->field( 'post_thumbnail_url.medium' ) );
+		$this->assertContains( '-123x123.jpg', $pod->field( 'post_thumbnail_url.123x123' ) );
+
+		$this->assertContains( '-150x150.jpg', $pod->field( 'post_thumbnail_src' ) );
+		$this->assertContains( '-200x300.jpg', $pod->field( 'post_thumbnail_src.medium' ) );
+		$this->assertContains( '-123x123.jpg', $pod->field( 'post_thumbnail_src.123x123' ) );
+	}
+
+	/**
+	 * @covers \Pods\Data\Map_Field_Values::image_fields
+	 */
+	public function test_image_fields_image_attachment() {
+		$image_path = codecept_data_dir( 'images/zoltar.jpg' );
+
+		$attachment_id = $this->factory()->attachment->create_upload_object( $image_path, $this->item_id );
+
+		set_post_thumbnail( $this->item_id, $attachment_id );
+
+		$pod = pods( $this->pod_name, $this->item_id );
+
+		$this->assertEquals( [], $pod->field( 'image_attachment' ) );
+
+		$this->assertStringStartsWith( '<img width="150" height="150" src="', $pod->field( 'image_attachment.' . $attachment_id ) );
+		$this->assertStringStartsWith( '<img width="200" height="300" src="', $pod->field( 'image_attachment.' . $attachment_id . '.medium' ) );
+		$this->assertStringStartsWith( '<img width="123" height="123" src="', $pod->field( 'image_attachment.' . $attachment_id . '.123x123' ) );
+
+		$this->assertContains( '-150x150.jpg', $pod->field( 'image_attachment_url.' . $attachment_id ) );
+		$this->assertContains( '-200x300.jpg', $pod->field( 'image_attachment_url.' . $attachment_id . '.medium' ) );
+		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_url.' . $attachment_id . '.123x123' ) );
+
+		$this->assertContains( '-150x150.jpg', $pod->field( 'image_attachment_src.' . $attachment_id ) );
+		$this->assertContains( '-200x300.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.medium' ) );
+		$this->assertContains( '-123x123.jpg', $pod->field( 'image_attachment_src.' . $attachment_id . '.123x123' ) );
 	}
 
 }

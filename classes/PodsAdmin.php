@@ -1250,7 +1250,6 @@ class PodsAdmin {
 	 * @param PodsUI $obj PodsUI object.
 	 */
 	public function admin_setup_add( $obj ) {
-
 		pods_view( PODS_DIR . 'ui/admin/setup-add.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
@@ -1261,31 +1260,33 @@ class PodsAdmin {
 	 * @param PodsUI  $obj       PodsUI object.
 	 */
 	public function admin_setup_edit( $duplicate, $obj ) {
-		return $this->admin_setup_edit_proto( $duplicate, $obj );
-
-		pods_view( PODS_DIR . 'ui/admin/setup-edit.php', compact( array_keys( get_defined_vars() ) ) );
-	}
-
-	/**
-	 * Prototype for testing
-	 *
-	 * @param        $duplicate
-	 * @param PodsUI $obj
-	 */
-	public function admin_setup_edit_proto( $duplicate, $obj ) {
 		$api = pods_api();
 
 		$pod = $api->load_pod( [ 'id' => $obj->id ] );
 
-		if ( ! $pod instanceof \Pods\Whatsit\Pod ) {
-			return $obj->error( __( 'Invalid Pod configuration detected.' ) );
+		if ( ! $pod instanceof Pod ) {
+			$obj->id = null;
+			$obj->row = [];
+			$obj->action = 'manage';
+
+			$obj->error( __( 'Invalid Pod configuration detected.' ) );
+			$obj->manage();
+
+			return null;
 		}
 
 		$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
 
 		// Check again in case the pod migrated wrong.
-		if ( ! $pod instanceof \Pods\Whatsit\Pod ) {
-			return $obj->error( __( 'Invalid Pod configuration detected.' ) );
+		if ( ! $pod instanceof Pod ) {
+			$obj->id = null;
+			$obj->row = [];
+			$obj->action = 'manage';
+
+			$obj->error( __( 'Invalid Pod configuration detected.' ) );
+			$obj->manage();
+
+			return null;
 		}
 
 		$config = [
@@ -1387,9 +1388,9 @@ class PodsAdmin {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param \Pods\Whatsit\Pod $pod The pod object.
+	 * @param Pod $pod The pod object.
 	 *
-	 * @return \Pods\Whatsit\Pod The pod object.
+	 * @return Pod The pod object.
 	 */
 	public function maybe_migrate_pod_fields_into_group( $pod ) {
 		$groups = $pod->get_groups( [

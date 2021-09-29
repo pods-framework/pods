@@ -73,7 +73,6 @@ class PodsAPI {
 	 * @since 2.3.5
 	 */
 	public static function init( $pod = null, $format = null ) {
-
 		if ( null !== $pod || null !== $format ) {
 			if ( ! isset( self::$instances[ $pod ] ) ) {
 				// Cache API singleton per Pod
@@ -81,7 +80,9 @@ class PodsAPI {
 			}
 
 			return self::$instances[ $pod ];
-		} elseif ( ! is_object( self::$instance ) ) {
+		}
+
+		if ( ! is_object( self::$instance ) ) {
 			self::$instance = new PodsAPI();
 		}
 
@@ -100,15 +101,15 @@ class PodsAPI {
 	 * @since   1.7.1
 	 */
 	public function __construct( $pod = null, $format = null ) {
+		if ( null === $pod || '' === (string) $pod  ) {
+			return;
+		}
 
-		if ( null !== $pod && 0 < strlen( (string) $pod ) ) {
-			$pod = pods_clean_name( $pod );
+		$pod = pods_clean_name( $pod );
+		$pod = $this->load_pod( [ 'name' => $pod ] );
 
-			$pod = $this->load_pod( array( 'name' => $pod ) );
-
-			if ( ! empty( $pod ) ) {
-				$this->pod_data = $pod;
-			}
+		if ( ! empty( $pod ) ) {
+			$this->pod_data = $pod;
 		}
 	}
 

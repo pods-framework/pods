@@ -23,6 +23,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 		$this->container->singleton( Permissions::class, Permissions::class );
 		$this->container->singleton( Map_Field_Values::class, Map_Field_Values::class );
 		$this->container->singleton( WP_Query_Integration::class, WP_Query_Integration::class );
+		$this->container->singleton( Static_Cache::class, Static_Cache::class );
 
 		$this->hooks();
 	}

@@ -17,6 +17,7 @@ class WPML {
 	public function hook() {
 		add_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10, 7 );
 		add_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
+		add_filter( 'pods_pods_field_get_metadata_object_id', [ $this, 'pods_pods_field_get_metadata_object_id' ], 10, 4 );
 	}
 
 	/**
@@ -27,6 +28,7 @@ class WPML {
 	public function unhook() {
 		remove_action( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10, 7 );
 		remove_action( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
+		remove_action( 'pods_pods_field_get_metadata_object_id', [ $this, 'pods_pods_field_get_metadata_object_id' ], 10, 4 );
 	}
 
 	/**
@@ -36,6 +38,34 @@ class WPML {
 	public function pods_data_traverse_recurse_ignore_aliases( $ignore_aliases ) {
 		$ignore_aliases[] = 'wpml_languages';
 		return $ignore_aliases;
+	}
+
+	/**
+	 * Support for WPML 'duplicated' translation handling.
+	 *
+	 * @param int $id
+	 * @param string $metadata_type
+	 * @param array $params
+	 * @param \Pods $pod
+	 *
+	 * @return int
+	 */
+	public function pods_pods_field_get_metadata_object_id( $id, $metadata_type, $params, $pod ) {
+		if ( ! did_action( 'wpml_loaded' ) ) {
+			return $id;
+		}
+		switch ( $metadata_type ) {
+			case 'post':
+				if ( $this->is_translated_post_type( $pod->pod_data['name'] ) ) {
+					$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $id );
+
+					if ( $master_post_id ) {
+						$id = $master_post_id;
+					}
+				}
+				break;
+		}
+		return $id;
 	}
 
 	/**

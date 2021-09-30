@@ -10,6 +10,17 @@ namespace Pods\Integrations;
 class WPML {
 
 	/**
+	 * Whether the plugin is active.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return bool
+	 */
+	public static function is_active() {
+		return defined( 'ICL_SITEPRESS_VERSION' ) || ! empty( $GLOBALS['sitepress'] );
+	}
+
+	/**
 	 * Add the class hooks.
 	 *
 	 * @since 2.8.0

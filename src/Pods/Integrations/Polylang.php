@@ -10,6 +10,17 @@ namespace Pods\Integrations;
 class Polylang {
 
 	/**
+	 * Whether the plugin is active.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return bool
+	 */
+	public static function is_active() {
+		return function_exists( 'PLL' ) || ! empty( $GLOBALS['polylang'] );
+	}
+
+	/**
 	 * Add the class hooks.
 	 *
 	 * @since 2.8.0

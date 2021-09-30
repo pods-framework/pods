@@ -37,9 +37,6 @@ final class PodsI18n {
 
 		// Hook all enqueue scripts actions
 		add_action( 'pods_before_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-
-		// Polylang
-		add_filter( 'pll_get_post_types', array( $this, 'pll_get_post_types' ), 10, 2 );
 	}
 
 	/**
@@ -495,25 +492,6 @@ final class PodsI18n {
 
 		return $lang_data;
 
-	}
-
-	/**
-	 * Add Pods templates to possible i18n enabled post-types (polylang settings).
-	 *
-	 * @since 2.7.0
-	 *
-	 * @param  array $post_types
-	 * @param  bool  $is_settings
-	 *
-	 * @return array  mixed
-	 */
-	public function pll_get_post_types( $post_types, $is_settings = false ) {
-
-		if ( $is_settings ) {
-			$post_types['_pods_template'] = '_pods_template';
-		}
-
-		return $post_types;
 	}
 
 }

@@ -32,11 +32,14 @@ class WPML {
 	}
 
 	/**
+	 * @since 2.8.0
 	 * @param array $ignore_aliases
 	 * @return array
 	 */
 	public function pods_data_traverse_recurse_ignore_aliases( $ignore_aliases ) {
+
 		$ignore_aliases[] = 'wpml_languages';
+
 		return $ignore_aliases;
 	}
 

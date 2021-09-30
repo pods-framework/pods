@@ -18,6 +18,7 @@ class Polylang {
 		add_action( 'pods_meta_init', [ $this, 'pods_meta_init' ] );
 		add_action( 'pll_get_post_types', [ $this, 'pll_get_post_types' ], 10, 2 );
 		add_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10, 7 );
+		add_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
 	}
 
 	/**
@@ -29,6 +30,7 @@ class Polylang {
 		remove_action( 'pods_meta_init', [ $this, 'pods_meta_init' ] );
 		remove_action( 'pll_get_post_types', [ $this, 'pll_get_post_types' ], 10 );
 		remove_action( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10, 7 );
+		remove_action( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
 	}
 
 	/**
@@ -41,6 +43,15 @@ class Polylang {
 		if ( function_exists( 'pll_current_language' ) ) {
 			add_action( 'init', array( $pods_meta, 'cache_pods' ), 101, 0 );
 		}
+	}
+
+	/**
+	 * @param array $ignore_aliases
+	 * @return array
+	 */
+	public function pods_data_traverse_recurse_ignore_aliases( $ignore_aliases ) {
+		$ignore_aliases[] = 'polylang_languages';
+		return $ignore_aliases;
 	}
 
 	/**

@@ -16,6 +16,7 @@ class WPML {
 	 */
 	public function hook() {
 		add_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10, 7 );
+		add_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
 	}
 
 	/**
@@ -25,6 +26,16 @@ class WPML {
 	 */
 	public function unhook() {
 		remove_action( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10, 7 );
+		remove_action( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
+	}
+
+	/**
+	 * @param array $ignore_aliases
+	 * @return array
+	 */
+	public function pods_data_traverse_recurse_ignore_aliases( $ignore_aliases ) {
+		$ignore_aliases[] = 'wpml_languages';
+		return $ignore_aliases;
 	}
 
 	/**

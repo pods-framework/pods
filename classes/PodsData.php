@@ -3183,12 +3183,7 @@ class PodsData {
 
 		$field = $traverse_recurse['fields'][ $traverse_recurse['depth'] ];
 
-		$ignore_aliases = array(
-			'wpml_languages',
-			'polylang_languages',
-		);
-
-		$ignore_aliases = apply_filters( 'pods_data_traverse_recurse_ignore_aliases', $ignore_aliases, $field, $traverse_recurse, $this );
+		$ignore_aliases = apply_filters( 'pods_data_traverse_recurse_ignore_aliases', [], $field, $traverse_recurse, $this );
 
 		if ( in_array( $field, $ignore_aliases, true ) ) {
 			return $joins;

@@ -56,7 +56,7 @@ class WPML {
 
 			case 'post':
 			case 'post_type':
-				if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_is_translated_post_type', false, $object_name ) ) {
+				if ( $this->is_translated_post_type( $object_name ) ) {
 					$info['join']['wpml_translations'] = "
 						LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
 							ON `wpml_translations`.`element_id` = `t`.`ID`
@@ -74,7 +74,7 @@ class WPML {
 				break;
 
 			case 'taxonomy':
-				if ( is_object( $sitepress ) && $sitepress->is_translated_taxonomy( $object_name ) ) {
+				if ( $this->is_translated_taxonomy( $object_name ) ) {
 					$info['join']['wpml_translations'] = "
 						LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
 							ON `wpml_translations`.`element_id` = `tt`.`term_taxonomy_id`
@@ -93,5 +93,43 @@ class WPML {
 		}
 
 		return $info;
+	}
+
+	/**
+	 * Helper method for backwards compatibility.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $object_name
+	 *
+	 * @return false|mixed|void
+	 */
+	public function is_translated_post_type( $object_name ) {
+		global $sitepress;
+		if ( has_filter( 'wpml_is_translated_post_type' ) ) {
+			return apply_filters( 'wpml_is_translated_post_type', false, $object_name );
+		} elseif ( is_callable( [ $sitepress, 'is_translated_post_type' ] ) ) {
+			return $sitepress->is_translated_post_type( $object_name );
+		}
+		return false;
+	}
+
+	/**
+	 * Helper method for backwards compatibility.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $object_name
+	 *
+	 * @return false|mixed|void
+	 */
+	public function is_translated_taxonomy( $object_name ) {
+		global $sitepress;
+		if ( has_filter( 'wpml_is_translated_taxonomy' ) ) {
+			return apply_filters( 'wpml_is_translated_taxonomy', false, $object_name );
+		} elseif ( is_callable( [ $sitepress, 'is_translated_taxonomy' ] ) ) {
+			return $sitepress->is_translated_taxonomy( $object_name );
+		}
+		return false;
 	}
 }

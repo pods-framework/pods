@@ -26,6 +26,7 @@ class WPML {
 	 * @since 2.8.0
 	 */
 	public function hook() {
+		add_filter( 'pods_get_current_language', [ $this, 'pods_get_current_language' ], 10, 2 );
 		add_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10, 7 );
 		add_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
 		add_filter( 'pods_pods_field_get_metadata_object_id', [ $this, 'pods_pods_field_get_metadata_object_id' ], 10, 4 );
@@ -37,6 +38,7 @@ class WPML {
 	 * @since 2.8.0
 	 */
 	public function unhook() {
+		remove_filter( 'pods_get_current_language', [ $this, 'pods_get_current_language' ], 10 );
 		remove_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10 );
 		remove_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
 		remove_filter( 'pods_pods_field_get_metadata_object_id', [ $this, 'pods_pods_field_get_metadata_object_id' ], 10 );
@@ -52,6 +54,73 @@ class WPML {
 		$ignore_aliases[] = 'wpml_languages';
 
 		return $ignore_aliases;
+	}
+
+	/**
+	 * Get the current language.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $current_language
+	 * @param array  $context
+	 *
+	 * @return string
+	 */
+	public function pods_get_current_language( $current_language, $context ) {
+		// Get the global current language (if set).
+		$wpml_language = apply_filters( 'wpml_current_language', null );
+		$current_language = ( 'all' !== $wpml_language ) ? $wpml_language : '';
+
+		if ( ! is_admin() ) {
+			return $current_language;
+		}
+
+		$defaults = [
+			'is_admin'            => is_admin(),
+			'is_ajax'             => null,
+			'is_pods_ajax'        => null,
+			'current_page'        => '',
+			'current_object_type' => '',
+			'current_item_id'     => '',
+			'current_item_type'   => '',
+		];
+
+		$context = wp_parse_args( $context, $defaults );
+
+		$object_type = $context['current_object_type'];
+		$item_type   = $context['current_item_type'];
+
+		if ( ! $item_type ) {
+			return $current_language;
+		}
+
+		/**
+		 * WPML support.
+		 * In WPML the current language is always set to default on an edit screen.
+		 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages.
+		 */
+		switch ( $object_type ) {
+			case 'post':
+				if ( ! $this->is_translated_post_type( $item_type ) ) {
+					// Overwrite the current language to nothing if this is a NOT-translatable post_type.
+					$current_language = '';
+				}
+				break;
+
+			case 'term':
+				if ( ! $this->is_translated_taxonomy( $item_type ) ) {
+					// Overwrite the current language to nothing if this is a NOT-translatable taxonomy.
+					$current_language = '';
+				}
+				break;
+
+			case 'comment';
+				// @todo Get comment post parent??
+				//$current_language = '';
+				break;
+		}
+
+		return $current_language;
 	}
 
 	/**

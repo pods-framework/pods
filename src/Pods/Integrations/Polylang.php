@@ -29,6 +29,7 @@ class Polylang {
 		add_action( 'pods_meta_init', [ $this, 'pods_meta_init' ] );
 
 		add_filter( 'pll_get_post_types', [ $this, 'pll_get_post_types' ], 10, 2 );
+		add_filter( 'pods_get_current_language', [ $this, 'pods_get_current_language' ], 10, 2 );
 		add_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10, 7 );
 		add_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
 	}
@@ -42,6 +43,7 @@ class Polylang {
 		remove_action( 'pods_meta_init', [ $this, 'pods_meta_init' ] );
 
 		remove_filter( 'pll_get_post_types', [ $this, 'pll_get_post_types' ], 10 );
+		remove_filter( 'pods_get_current_language', [ $this, 'pods_get_current_language' ], 10 );
 		remove_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10 );
 		remove_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
 	}
@@ -91,23 +93,97 @@ class Polylang {
 	}
 
 	/**
-	 * Add Pods templates to possible i18n enabled post-types (polylang settings).
+	 * Get the current language.
 	 *
-	 * @since 2.7.0
-	 * @since 2.8.0 Moved from PodsI18n class.
+	 * @since 2.8.0
 	 *
-	 * @param  array $post_types
-	 * @param  bool  $is_settings
+	 * @param string $current_language
+	 * @param array  $context
 	 *
-	 * @return array  mixed
+	 * @return string
 	 */
-	public function pll_get_post_types( $post_types, $is_settings = false ) {
+	public function pods_get_current_language( $current_language, $context ) {
 
-		if ( $is_settings ) {
-			$post_types['_pods_template'] = '_pods_template';
+		if ( ! is_admin() ) {
+			// Get the global current language (if set).
+			return pll_current_language( 'slug' );
 		}
 
-		return $post_types;
+		$defaults = [
+			'is_admin'            => is_admin(),
+			'is_ajax'             => null,
+			'is_pods_ajax'        => null,
+			'current_page'        => '',
+			'current_object_type' => '',
+			'current_item_id'     => '',
+			'current_item_type'   => '',
+		];
+
+		$context = wp_parse_args( $context, $defaults );
+
+		$page        = $context['current_page'];
+		$object_type = $context['current_object_type'];
+		$item_id     = $context['current_item_id'];
+		$item_type   = $context['current_item_type'];
+
+		/**
+		 * Get the current user's preferred language.
+		 * This is a user meta setting that will overwrite the language returned from pll_current_language().
+		 *
+		 * @see \PLL_Admin_Base::init_user() (polylang/admin/admin-base.php)
+		 */
+		$current_language = get_user_meta( get_current_user_id(), 'pll_filter_content', true );
+
+		if ( ! $item_type ) {
+			return $current_language;
+		}
+
+		/**
+		 * In polylang the preferred language could be anything.
+		 */
+		switch ( $object_type ) {
+			case 'post':
+				if ( $this->is_translated_post_type( $item_type ) ) {
+
+					/**
+					 * Polylang (1.5.4+).
+					 * We only want the related objects if they are not translatable OR the same language as the current object.
+					 */
+					if ( $item_id && function_exists( 'pll_get_post_language' ) ) {
+						// Overwrite the current language if this is a translatable post_type.
+						$current_language = pll_get_post_language( $item_id );
+					}
+
+					/**
+					 * Polylang (1.0.1+).
+					 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language.
+					 */
+					$current_language = pods_v( 'new_lang', 'request', $current_language );
+				}
+				break;
+
+			case 'term':
+				if ( $this->is_translated_taxonomy( $item_type ) ) {
+
+					/**
+					 * Polylang (1.5.4+).
+					 * We only want the related objects if they are not translatable OR the same language as the current object.
+					 */
+					if ( $item_id && function_exists( 'pll_get_term_language' ) ) {
+						// Overwrite the current language if this is a translatable taxonomy
+						$current_language = pll_get_term_language( $item_id );
+					}
+
+					/**
+					 * Polylang (1.0.1+).
+					 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language.
+					 */
+					$current_language = pods_v( 'new_lang', 'request', $current_language );
+				}
+				break;
+		}
+
+		return $current_language;
 	}
 
 	/**

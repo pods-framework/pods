@@ -26,9 +26,9 @@ class WPML {
 	 * @since 2.8.0
 	 */
 	public function unhook() {
-		remove_action( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10, 7 );
-		remove_action( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
-		remove_action( 'pods_pods_field_get_metadata_object_id', [ $this, 'pods_pods_field_get_metadata_object_id' ], 10, 4 );
+		remove_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10 );
+		remove_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
+		remove_filter( 'pods_pods_field_get_metadata_object_id', [ $this, 'pods_pods_field_get_metadata_object_id' ], 10 );
 	}
 
 	/**

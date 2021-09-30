@@ -110,7 +110,7 @@ class Polylang {
 
 			case 'post':
 			case 'post_type':
-				if ( function_exists( 'pll_is_translated_post_type' ) && pll_is_translated_post_type( $object_name ) ) {
+				if ( $this->is_translated_post_type( $object_name ) ) {
 					$info['join']['polylang_languages'] = "
 						LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
 							ON `polylang_languages`.`object_id` = `t`.`ID`
@@ -122,7 +122,7 @@ class Polylang {
 				break;
 
 			case 'taxonomy':
-				if ( function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $object_name ) ) {
+				if ( $this->is_translated_taxonomy( $object_name ) ) {
 					$info['join']['polylang_languages'] = "
 					LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
 						ON `polylang_languages`.`object_id` = `t`.`term_id`
@@ -135,5 +135,37 @@ class Polylang {
 		}
 
 		return $info;
+	}
+
+	/**
+	 * Helper method for backwards compatibility.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $object_name
+	 *
+	 * @return false|mixed|void
+	 */
+	public function is_translated_post_type( $object_name ) {
+		if ( function_exists( 'pll_is_translated_post_type' ) ) {
+			return pll_is_translated_post_type( $object_name );
+		}
+		return false;
+	}
+
+	/**
+	 * Helper method for backwards compatibility.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string $object_name
+	 *
+	 * @return false|mixed|void
+	 */
+	public function is_translated_taxonomy( $object_name ) {
+		if ( function_exists( 'pll_is_translated_taxonomy' ) ) {
+			return pll_is_translated_taxonomy( $object_name );
+		}
+		return false;
 	}
 }

@@ -259,14 +259,14 @@ final class PodsI18n {
 	 * }
 	 *
 	 * @return array $context  {
-	 *     Language data
-	 *     @type bool   $is_admin            Is admin
-	 *     @type bool   $is_ajax             Is AJAX call
-	 *     @type bool   $is_pods_ajax        Is Pods AJAX call
+	 *     Language data.
+	 *     @type bool   $is_admin            Is admin.
+	 *     @type bool   $is_ajax             Is AJAX call.
+	 *     @type bool   $is_pods_ajax        Is Pods AJAX call.
 	 *     @type string $current_page        Current admin page.
-	 *     @type string $current_object_type Current object type (post / term) @todo Comment.
-	 *     @type int    $current_item_id     Current item id
-	 *     @type string $current_item_type   Current item type
+	 *     @type string $current_object_type Current object type (post / term / comment / user).
+	 *     @type int    $current_item_id     Current item id.
+	 *     @type string $current_item_type   Current item type.
 	 * }
 	 */
 	public function get_current_language_context( $args = array() ) {
@@ -382,14 +382,14 @@ final class PodsI18n {
 		 * @since 2.8.0
 		 *
 		 * @param array $context  {
-		 *     Language data
-		 *     @type bool   $is_admin            Is admin
-		 *     @type bool   $is_ajax             Is AJAX call
-		 *     @type bool   $is_pods_ajax        Is Pods AJAX call
+		 *     Language data.
+		 *     @type bool   $is_admin            Is admin.
+		 *     @type bool   $is_ajax             Is AJAX call.
+		 *     @type bool   $is_pods_ajax        Is Pods AJAX call.
 		 *     @type string $current_page        Current admin page.
-		 *     @type string $current_object_type Current object type (post / term) @todo Comment.
-		 *     @type int    $current_item_id     Current item id
-		 *     @type string $current_item_type   Current item type
+		 *     @type string $current_object_type Current object type (post / term / comment / user).
+		 *     @type int    $current_item_id     Current item id.
+		 *     @type string $current_item_type   Current item type.
 		 * }
 		 */
 		self::$current_language_context = apply_filters( 'pods_get_current_language_context', $context );

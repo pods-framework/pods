@@ -39,7 +39,9 @@ class WPML extends Integration {
 
 	/**
 	 * @since 2.8.0
+	 *
 	 * @param array $ignore_aliases
+	 *
 	 * @return array
 	 */
 	public function pods_data_traverse_recurse_ignore_aliases( $ignore_aliases ) {
@@ -88,7 +90,6 @@ class WPML extends Integration {
 		}
 
 		/**
-		 * WPML support.
 		 * In WPML the current language is always set to default on an edit screen.
 		 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages.
 		 */
@@ -119,10 +120,10 @@ class WPML extends Integration {
 	/**
 	 * Support for WPML 'duplicated' translation handling.
 	 *
-	 * @param int $id
-	 * @param string $metadata_type
-	 * @param array $params
-	 * @param \Pods $pod
+	 * @param int         $id
+	 * @param string      $metadata_type
+	 * @param array       $params
+	 * @param array|\Pods $pod
 	 *
 	 * @return int
 	 */
@@ -147,15 +148,17 @@ class WPML extends Integration {
 	/**
 	 * Filter table info data.
 	 *
-	 * @param $info
-	 * @param $object_type
-	 * @param $object
-	 * @param $name
-	 * @param $pod
-	 * @param $field
-	 * @param $pods_api
-	 *
 	 * @since 2.8.0
+	 *
+	 * @param array       $info
+	 * @param string      $object_type
+	 * @param string      $object
+	 * @param string      $name
+	 * @param array|\Pods $pod
+	 * @param array       $field
+	 * @param \PodsAPI    $pods_api
+	 *
+	 * @return array
 	 */
 	public function pods_api_get_table_info( $info, $object_type, $object, $name, $pod, $field, $pods_api ) {
 		global $wpdb;
@@ -215,9 +218,9 @@ class WPML extends Integration {
 	}
 
 	/**
-	 * @param $data
+	 * @param array $data
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public function pods_component_i18n_admin_data( $data ) {
 
@@ -233,21 +236,16 @@ class WPML extends Integration {
 	}
 
 	/**
-	 * @param $fields
-	 * @param $data
+	 * @param array $fields
+	 * @param array $data
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public function pods_component_i18n_admin_ui_fields( $fields, $data ) {
 
 		$fields['manage']['wpml'] = array(
 			'label' => __( 'WPML', 'pods' ),
 			'type'  => 'boolean',
-			/*
-			'options' => array(
-				'text_allow_html' => 1,
-				'text_allowed_html_tags' => 'br a',
-			)*/
 		);
 
 		return $fields;

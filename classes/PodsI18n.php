@@ -318,16 +318,16 @@ final class PodsI18n {
 
 				$context['current_object_type'] = 'post';
 
-				$current_post = (int) pods_v( 'post', 'request', 0 );
+				$current_post_id = (int) pods_v( 'post', 'request', 0 );
 				if ( $pods_ajax ) {
-					$current_post = (int) pods_v( 'id', 'request', $current_post );
+					$current_post_id = (int) pods_v( 'id', 'request', $current_post_id );
 				}
 
-				if ( $current_post ) {
+				if ( $current_post_id ) {
 
-					$current_post_type = get_post_type( $current_post );
+					$current_post_type = get_post_type( $current_post_id );
 
-					$context['current_item_id']   = $current_post;
+					$context['current_item_id']   = $current_post_id;
 					$context['current_item_type'] = $current_post_type;
 				}
 			} //end if
@@ -339,7 +339,7 @@ final class PodsI18n {
 
 				$context['current_object_type'] = 'term';
 
-				$current_term_id = pods_v( 'tag_ID', 'request', 0 );
+				$current_term_id = (int) pods_v( 'tag_ID', 'request', 0 );
 				if ( $pods_ajax ) {
 					$current_term_id = (int) pods_v( 'id', 'request', $current_term_id );
 				}

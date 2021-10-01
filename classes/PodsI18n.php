@@ -323,7 +323,7 @@ final class PodsI18n {
 					}
 
 					$current_post_type = pods_v( 'post_type', 'request', '' );
-					if ( $current_post_id ) {
+					if ( ! $current_post_type && $current_post_id ) {
 						$current_post_type = get_post_type( $current_post_id );
 					}
 

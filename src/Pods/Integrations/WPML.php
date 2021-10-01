@@ -247,4 +247,44 @@ class WPML extends Integration {
 		}
 		return false;
 	}
+
+	/**
+	 * @return array
+	 */
+	public function get_language( $locale ) {
+		$languages = apply_filters( 'wpml_active_languages', array() );
+		$language  = null;
+		if ( ! empty( $languages ) ) {
+			foreach ( $languages as $lang => $lang_data ) {
+				if ( isset( $lang_data['default_locale'] ) && $locale === $lang_data['default_locale'] ) {
+					$language = $lang_data;
+					break;
+				}
+			}
+		}
+		return $language;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function get_locales() {
+		$languages = $this->get_languages();
+		$locales   = [];
+		if ( ! empty( $languages ) ) {
+			foreach ( $languages as $lang => $lang_data ) {
+				if ( isset( $lang_data['default_locale'] ) ) {
+					$locales[] = $lang_data['default_locale'];;
+				}
+			}
+		}
+		return $locales;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_languages() {
+		return apply_filters( 'wpml_active_languages', array() );
+	}
 }

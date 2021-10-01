@@ -343,4 +343,26 @@ class Polylang extends Integration {
 
 		return $language;
 	}
+
+	/**
+	 * @return string[]
+	 */
+	public function get_locales() {
+		$locales = [];
+		if ( function_exists( 'pll_languages_list' ) ) {
+			$locales = pll_languages_list( array( 'fields' => 'locale' ) );
+		}
+		return $locales;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_languages() {
+		$languages = [];
+		if ( function_exists( 'pll_languages_list' ) ) {
+			$languages = pll_languages_list( array( 'fields' => null ) );
+		}
+		return $languages;
+	}
 }

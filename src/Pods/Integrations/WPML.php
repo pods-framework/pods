@@ -21,6 +21,8 @@ class WPML extends Integration {
 			'pods_api_get_table_info' => [ 'pods_api_get_table_info', 10, 7 ],
 			'pods_data_traverse_recurse_ignore_aliases' => [ 'pods_data_traverse_recurse_ignore_aliases', 10 ],
 			'pods_pods_field_get_metadata_object_id' => [ 'pods_pods_field_get_metadata_object_id', 10, 4 ],
+			'pods_component_i18n_admin_data' => [ 'pods_component_i18n_admin_data' ],
+			'pods_component_i18n_admin_ui_fields' => [ 'pods_component_i18n_admin_ui_fields', 10, 2 ],
 		],
 	];
 
@@ -208,6 +210,45 @@ class WPML extends Integration {
 		}
 
 		return $info;
+	}
+
+	/**
+	 * @param $data
+	 *
+	 * @return mixed
+	 */
+	public function pods_component_i18n_admin_data( $data ) {
+
+		foreach ( $data as $lang => $field_data ) {
+			if ( in_array( $lang, $this->get_locales(), true ) ) {
+				$data[ $lang ]['wpml'] = true;
+			} else {
+				$data[ $lang ]['wpml'] = false;
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @param $fields
+	 * @param $data
+	 *
+	 * @return mixed
+	 */
+	public function pods_component_i18n_admin_ui_fields( $fields, $data ) {
+
+		$fields['manage']['wpml'] = array(
+			'label' => __( 'WPML', 'pods' ),
+			'type'  => 'boolean',
+			/*
+			'options' => array(
+				'text_allow_html' => 1,
+				'text_allowed_html_tags' => 'br a',
+			)*/
+		);
+
+		return $fields;
 	}
 
 	/**

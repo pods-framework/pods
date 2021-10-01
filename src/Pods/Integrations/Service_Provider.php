@@ -8,6 +8,7 @@ use tad_DI52_ServiceProvider;
  * Class Service_Provider
  *
  * Add third party integrations where needed.
+ * @todo Make all integrations inherit the Integration abstract class and use loops.
  *
  * @since 2.8.0
  */
@@ -22,6 +23,9 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 		$this->container->singleton( 'pods.integration.genesis', Genesis::class );
 		$this->container->singleton( 'pods.integration.yarpp', YARPP::class );
 		$this->container->singleton( 'pods.integration.jetpack', Jetpack::class );
+
+		$this->container->singleton( 'pods.integration.polylang', Polylang::class );
+		$this->container->singleton( 'pods.integration.wpml', WPML::class );
 
 		$this->hooks();
 	}
@@ -51,15 +55,19 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	 */
 	public function plugins_loaded() {
 
-		if ( Polylang::is_active() ) {
-			$this->container->singleton( 'pods.integration.i18n', Polylang::class );
-		} elseif ( WPML::is_active() ) {
-			$this->container->singleton( 'pods.integration.i18n', WPML::class );
+		$active = $this->container->callback( 'pods.integration.polylang', 'is_active' );
+		if ( is_callable( $active ) && $active() ) {
+			$hooks = $this->container->callback( 'pods.integration.polylang', 'hook' );
+			if ( is_callable( $hooks ) ) {
+				$hooks();
+			}
 		}
-
-		$i18n_hooks = $this->container->callback( 'pods.integration.i18n', 'hook' );
-		if ( is_callable( $i18n_hooks ) ) {
-			$i18n_hooks();
+		$active = $this->container->callback( 'pods.integration.wpml', 'is_active' );
+		if ( is_callable( $active ) && $active() ) {
+			$hooks = $this->container->callback( 'pods.integration.wpml', 'hook' );
+			if ( is_callable( $hooks ) ) {
+				$hooks();
+			}
 		}
 	}
 }

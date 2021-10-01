@@ -275,57 +275,72 @@ class Polylang extends Integration {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param string $language
+	 * @param string $locale
 	 *
-	 * @return array|mixed
+	 * @return array
 	 */
-	public function get_language_data( $language = null ) {
+	public function get_language_data( $locale = null ) {
 		static $lang_data = [];
 
-		if ( ! $language ) {
-			$language = pods_i18n()->get_current_language();
+		if ( ! $locale ) {
+			$locale = pods_i18n()->get_current_language();
 		}
 
-		if ( isset( $lang_data[ $language ] ) ) {
-			return $lang_data[ $language ];
+		if ( isset( $lang_data[ $locale ] ) ) {
+			return $lang_data[ $locale ];
 		}
 
 		// We need to return language data
 		$lang_data = array(
-			'language' => $language,
+			'language' => $locale,
 			't_id'     => 0,
 			'tt_id'    => 0,
 			'term'     => null,
 		);
 
-		$language_t = false;
+		$language = $this->get_language( $locale );
+
+		// If the language object exists, add it!
+		if ( $language && ! empty( $language->term_id ) ) {
+			$lang_data['t_id']     = (int) $language->term_id;
+			$lang_data['tt_id']    = (int) $language->term_taxonomy_id;
+			$lang_data['tl_t_id']  = (int) $language->tl_term_id;
+			$lang_data['tl_tt_id'] = (int) $language->tl_term_taxonomy_id;
+			$lang_data['term']     = $language;
+		}
+
+		$lang_data[ $locale ] = $lang_data;
+
+		return $lang_data[ $locale ];
+	}
+
+	/**
+	 * @param $locale
+	 *
+	 * @return false|\PLL_Language
+	 */
+	public function get_language( $locale ) {
+		$language = false;
+
+		if ( ! $locale ) {
+			$locale = pods_i18n()->get_current_language();
+		}
 
 		// Get the language term object.
 		if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'get_language' ) ) {
 			// Polylang 1.8 and newer.
-			$language_t = PLL()->model->get_language( $language );
+			$language = PLL()->model->get_language( $locale );
 		} else {
 			global $polylang;
 			if ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_language' ) ) {
 				// Polylang 1.2 - 1.7.x
-				$language_t = $polylang->model->get_language( $language );
+				$language = $polylang->model->get_language( $locale );
 			} elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_language' ) ) {
 				// Polylang 1.1.x and older.
-				$language_t = $polylang->get_language( $language );
+				$language = $polylang->get_language( $locale );
 			}
 		}
 
-		// If the language object exists, add it!
-		if ( $language_t && ! empty( $language_t->term_id ) ) {
-			$lang_data['t_id']     = (int) $language_t->term_id;
-			$lang_data['tt_id']    = (int) $language_t->term_taxonomy_id;
-			$lang_data['tl_t_id']  = (int) $language_t->tl_term_id;
-			$lang_data['tl_tt_id'] = (int) $language_t->tl_term_taxonomy_id;
-			$lang_data['term']     = $language_t;
-		}
-
-		$lang_data[ $language ] = $lang_data;
-
-		return $lang_data[ $language ];
+		return $language;
 	}
 }

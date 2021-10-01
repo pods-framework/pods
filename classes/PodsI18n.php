@@ -258,7 +258,16 @@ final class PodsI18n {
 	 *     @type bool   $refresh Rerun logic?
 	 * }
 	 *
-	 * @return array
+	 * @return array $context  {
+	 *     Language data
+	 *     @type bool   $is_admin            Is admin
+	 *     @type bool   $is_ajax             Is AJAX call
+	 *     @type bool   $is_pods_ajax        Is Pods AJAX call
+	 *     @type string $current_page        Current admin page.
+	 *     @type string $current_object_type Current object type (post / term) @todo Comment.
+	 *     @type int    $current_item_id     Current item id
+	 *     @type string $current_item_type   Current item type
+	 * }
 	 */
 	public function get_current_language_context( $args = array() ) {
 

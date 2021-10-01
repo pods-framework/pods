@@ -2,12 +2,29 @@
 
 namespace Pods\Integrations;
 
+use Pods\Integration;
+
 /**
  * Class Polylang
  *
  * @since 2.8.0
  */
-class Polylang {
+class Polylang extends Integration {
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $hooks = [
+		'action' => [
+			'pods_meta_init' => [ 'pods_meta_init' ],
+		],
+		'filter' => [
+			'pods_get_current_language' => [ 'pods_get_current_language', 10, 2 ],
+			'pods_api_get_table_info' => [ 'pods_api_get_table_info', 10, 7 ],
+			'pods_data_traverse_recurse_ignore_aliases' => [ 'pods_data_traverse_recurse_ignore_aliases', 10 ],
+			'pll_get_post_types' => [ 'pll_get_post_types', 10, 2 ],
+		],
+	];
 
 	/**
 	 * Whether the plugin is active.
@@ -18,34 +35,6 @@ class Polylang {
 	 */
 	public static function is_active() {
 		return function_exists( 'PLL' ) || ! empty( $GLOBALS['polylang'] );
-	}
-
-	/**
-	 * Add the class hooks.
-	 *
-	 * @since 2.8.0
-	 */
-	public function hook() {
-		add_action( 'pods_meta_init', [ $this, 'pods_meta_init' ] );
-
-		add_filter( 'pll_get_post_types', [ $this, 'pll_get_post_types' ], 10, 2 );
-		add_filter( 'pods_get_current_language', [ $this, 'pods_get_current_language' ], 10, 2 );
-		add_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10, 7 );
-		add_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
-	}
-
-	/**
-	 * Remove the class hooks.
-	 *
-	 * @since 2.8.0
-	 */
-	public function unhook() {
-		remove_action( 'pods_meta_init', [ $this, 'pods_meta_init' ] );
-
-		remove_filter( 'pll_get_post_types', [ $this, 'pll_get_post_types' ], 10 );
-		remove_filter( 'pods_get_current_language', [ $this, 'pods_get_current_language' ], 10 );
-		remove_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10 );
-		remove_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
 	}
 
 	/**

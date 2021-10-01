@@ -2,12 +2,27 @@
 
 namespace Pods\Integrations;
 
+use Pods\Integration;
+
 /**
  * Class WPML
  *
  * @since 2.8.0
  */
-class WPML {
+class WPML extends Integration {
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $hooks = [
+		'action' => [],
+		'filter' => [
+			'pods_get_current_language' => [ 'pods_get_current_language', 10, 2 ],
+			'pods_api_get_table_info' => [ 'pods_api_get_table_info', 10, 7 ],
+			'pods_data_traverse_recurse_ignore_aliases' => [ 'pods_data_traverse_recurse_ignore_aliases', 10 ],
+			'pods_pods_field_get_metadata_object_id' => [ 'pods_pods_field_get_metadata_object_id', 10, 4 ],
+		],
+	];
 
 	/**
 	 * Whether the plugin is active.
@@ -18,30 +33,6 @@ class WPML {
 	 */
 	public static function is_active() {
 		return defined( 'ICL_SITEPRESS_VERSION' ) || ! empty( $GLOBALS['sitepress'] );
-	}
-
-	/**
-	 * Add the class hooks.
-	 *
-	 * @since 2.8.0
-	 */
-	public function hook() {
-		add_filter( 'pods_get_current_language', [ $this, 'pods_get_current_language' ], 10, 2 );
-		add_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10, 7 );
-		add_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
-		add_filter( 'pods_pods_field_get_metadata_object_id', [ $this, 'pods_pods_field_get_metadata_object_id' ], 10, 4 );
-	}
-
-	/**
-	 * Remove the class hooks.
-	 *
-	 * @since 2.8.0
-	 */
-	public function unhook() {
-		remove_filter( 'pods_get_current_language', [ $this, 'pods_get_current_language' ], 10 );
-		remove_filter( 'pods_api_get_table_info', [ $this, 'pods_api_get_table_info' ], 10 );
-		remove_filter( 'pods_data_traverse_recurse_ignore_aliases', [ $this, 'pods_data_traverse_recurse_ignore_aliases' ], 10 );
-		remove_filter( 'pods_pods_field_get_metadata_object_id', [ $this, 'pods_pods_field_get_metadata_object_id' ], 10 );
 	}
 
 	/**

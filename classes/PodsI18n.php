@@ -311,48 +311,68 @@ final class PodsI18n {
 
 			$context['current_page'] = $page;
 
-			/**
-			 * Overwrite the current language if needed for post types.
-			 */
-			if ( 'post.php' === $page || 'edit.php' === $page ) {
+			switch ( $page ) {
 
-				$context['current_object_type'] = 'post';
+				case 'post.php':
+				case 'edit.php':
+					$context['current_object_type'] = 'post';
 
-				$current_post_id = (int) pods_v( 'post', 'request', 0 );
-				if ( $pods_ajax ) {
-					$current_post_id = (int) pods_v( 'id', 'request', $current_post_id );
-				}
+					$current_post_id = (int) pods_v( 'post', 'request', 0 );
+					if ( $pods_ajax ) {
+						$current_post_id = (int) pods_v( 'id', 'request', $current_post_id );
+					}
 
-				if ( $current_post_id ) {
-
-					$current_post_type = get_post_type( $current_post_id );
+					$current_post_type = pods_v( 'post_type', 'request', '' );
+					if ( $current_post_id ) {
+						$current_post_type = get_post_type( $current_post_id );
+					}
 
 					$context['current_item_id']   = $current_post_id;
 					$context['current_item_type'] = $current_post_type;
-				}
-			} //end if
+					break;
 
-			/**
-			 * Overwrite the current language if needed for taxonomies.
-			 */
-			elseif ( 'term.php' === $page || 'edit-tags.php' === $page ) {
+				case 'term.php':
+				case 'edit-tags.php':
+					$context['current_object_type'] = 'term';
 
-				$context['current_object_type'] = 'term';
+					$current_term_id = (int) pods_v( 'tag_ID', 'request', 0 );
+					if ( $pods_ajax ) {
+						$current_term_id = (int) pods_v( 'id', 'request', $current_term_id );
+					}
 
-				$current_term_id = (int) pods_v( 'tag_ID', 'request', 0 );
-				if ( $pods_ajax ) {
-					$current_term_id = (int) pods_v( 'id', 'request', $current_term_id );
-				}
+					$current_taxonomy = pods_v( 'taxonomy', 'request', '' );
+					if ( ! $current_taxonomy && $current_term_id ) {
+						$current_taxonomy = pods_v( 'taxonomy', get_term( $current_term_id ), null );
+					}
 
-				$current_taxonomy = pods_v( 'taxonomy', 'request', '' );
-				if ( ! $current_taxonomy && $current_term_id ) {
-					$current_taxonomy = pods_v( 'taxonomy', get_term( $current_term_id ), null );
-				}
+					$context['current_item_id']   = $current_term_id;
+					$context['current_item_type'] = $current_taxonomy;
+					break;
 
-				$context['current_item_id']   = $current_term_id;
-				$context['current_item_type'] = $current_taxonomy;
+				case 'comment.php':
+					$context['current_object_type'] = 'comment';
+					$context['current_item_type']   = 'comment';
 
-			}//end if
+					$current_comment_id = (int) pods_v( 'c', 'request', 0 );
+					if ( $pods_ajax ) {
+						$current_comment_id = (int) pods_v( 'id', 'request', $current_comment_id );
+					}
+
+					$context['current_item_id']   = $current_comment_id;
+					break;
+
+				case 'user-edit.php':
+					$context['current_object_type'] = 'user';
+					$context['current_item_type']   = 'user';
+
+					$current_user_id = (int) pods_v( 'user_id', 'request', 0 );
+					if ( $pods_ajax ) {
+						$current_user_id = (int) pods_v( 'id', 'request', $current_user_id );
+					}
+
+					$context['current_item_id']   = $current_user_id;
+					break;
+			}
 
 		}//end if (admin)
 

@@ -114,7 +114,6 @@ class Polylang extends Integration {
 
 		$context = wp_parse_args( $context, $defaults );
 
-		$page        = $context['current_page'];
 		$object_type = $context['current_object_type'];
 		$item_id     = $context['current_item_id'];
 		$item_type   = $context['current_item_type'];

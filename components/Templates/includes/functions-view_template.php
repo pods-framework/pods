@@ -91,6 +91,14 @@ function frontier_decode_template( $code, $atts ) {
  */
 function frontier_if_block( $atts, $code ) {
 
+	$defaults = array(
+		'pod'   => null,
+		'id'    => null,
+		'field' => null,
+	);
+
+	$atts = wp_parse_args( $atts, $defaults );
+
 	$pod = pods( $atts['pod'], $atts['id'] );
 
 	if ( ! $pod || ! $pod->valid() || ! $pod->exists() ) {
@@ -116,9 +124,58 @@ function frontier_if_block( $atts, $code ) {
 				break;
 		}
 	} else {
-		$field_data = $pod->field( $atts['field'] );
 
-		$field_type = $pod->fields( $atts['field'], 'type' );
+		/**
+		 * @since 2.7.27 Iterate recursively over magic tag fields (relationships).
+		 * @todo Refactor to only use the Pods::field() method.
+		 */
+		$fields    = explode( '.', $atts['field'] );
+		$field_pod = $pod;
+		$total     = count( $fields );
+		$counter   = 0;
+
+		foreach ( $fields as $field_name ) {
+			$field = $field_name;
+			if ( ++$counter < $total ) {
+
+				$field_type = $field_pod->fields( $field, 'type' );
+				if ( ! in_array( $field_type, array( 'pick', 'taxonomy' ), true ) ) {
+					// Relationship type required.
+					break;
+				}
+
+				$entries = $field_pod->field( $field );
+				$rel_pod = $field_pod->fields( $field, 'pick_val' );
+
+				if ( ! $entries || ! $rel_pod ) {
+					// No relationships or pod name found.
+					break;
+				}
+
+				$entry_id = null;
+				if ( isset( $entries['ID'] ) ) {
+					$entry_id = $entries['ID'];
+				} elseif ( isset( $entries['term_id'] ) ) {
+					$entry_id = $entries['term_id'];
+				} else {
+					// Multiple relationships.
+					$entries = reset( $entries );
+					if ( isset( $entries['ID'] ) ) {
+						$entry_id = $entries['ID'];
+					} elseif ( isset( $entries['term_id'] ) ) {
+						$entry_id = $entries['term_id'];
+					}
+				}
+
+				$new_pod = pods( $rel_pod, $entry_id );
+				if ( $new_pod && $new_pod->valid() && $new_pod->exists() ) {
+					$field_pod = $new_pod;
+				}
+			} else {
+				$field_data = $field_pod->field( $field );
+				$field_type = $field_pod->fields( $field, 'type' );
+			}
+		}
 	}
 
 	$is_empty = true;
@@ -472,7 +529,7 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 }
 
 /**
- * processes template code within an each command from the base template
+ * Processes template code within an each command from the base template.
  *
  * @param array attributes from template
  * @param string template to be processed
@@ -532,11 +589,6 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 							$value = $match[0][2];
 						} else {
 							$field = trim( $matches[2][ $key ] );
-						}
-						if ( false !== strpos( $field, '.' ) ) {
-							$path  = explode( '.', $field );
-							$field = array_pop( $path );
-							$ID    = '{@' . implode( '.', $path ) . '.' . $pod->api->pod_data['field_id'] . '}';
 						}
 						$atts = ' id="' . $ID . '" pod="@pod" field="' . $field . '"';
 						if ( ! empty( $value ) ) {

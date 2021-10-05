@@ -922,8 +922,6 @@ class Pods implements Iterator {
 						 * @param string $metadata_type The object metadata type.
 						 * @param array  $params        Field params
 						 * @param \Pods  $pod           Pods object.
-						 *
-						 * @return int
 						 */
 						$id = apply_filters( 'pods_pods_field_get_metadata_object_id', $this->id(), $metadata_type, $params, $this );
 

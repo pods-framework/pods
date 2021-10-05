@@ -29,11 +29,7 @@ class Polylang extends Integration {
 	];
 
 	/**
-	 * Whether the plugin is active.
-	 *
-	 * @since 2.8.0
-	 *
-	 * @return bool
+	 * @inheritDoc
 	 */
 	public static function is_active() {
 		return function_exists( 'PLL' ) || ! empty( $GLOBALS['polylang'] );

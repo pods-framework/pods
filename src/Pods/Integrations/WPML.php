@@ -27,11 +27,7 @@ class WPML extends Integration {
 	];
 
 	/**
-	 * Whether the plugin is active.
-	 *
-	 * @since 2.8.0
-	 *
-	 * @return bool
+	 * @inheritDoc
 	 */
 	public static function is_active() {
 		return defined( 'ICL_SITEPRESS_VERSION' ) || ! empty( $GLOBALS['sitepress'] );

@@ -921,7 +921,7 @@ class Pods implements Iterator {
 						 * @param int    $id            The object ID.
 						 * @param string $metadata_type The object metadata type.
 						 * @param array  $params        Field params
-						 * @param \Pods  $this          Pods object.
+						 * @param \Pods  $pod           Pods object.
 						 *
 						 * @return int
 						 */

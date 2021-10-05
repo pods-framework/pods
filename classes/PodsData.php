@@ -3184,7 +3184,14 @@ class PodsData {
 		$field = $traverse_recurse['fields'][ $traverse_recurse['depth'] ];
 
 		/**
+		 * Prevent aliases from being used in traversals.
 		 *
+		 * @since 2.3.0
+		 *
+		 * @param array     $ignore_aliases   Aliases.
+		 * @param array     $field            Field data.
+		 * @param array     $traverse_recurse Traverse params.
+		 * @param \PodsData $pods_data        PodsData instance.
 		 */
 		$ignore_aliases = apply_filters( 'pods_data_traverse_recurse_ignore_aliases', [], $field, $traverse_recurse, $this );
 

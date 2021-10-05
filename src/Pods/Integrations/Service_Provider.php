@@ -70,7 +70,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 		 *
 		 * @since 2.8.0
 		 *
-		 * @param \Pods\Integration[] $integrations
+		 * @param \Pods\Integration[] $integrations The list of integrations to run on plugins_loaded hook.
 		 */
 		$integrations = apply_filters( 'pods_integrations_on_plugins_loaded', $this->integrations );
 		foreach ( $integrations as $class ) {

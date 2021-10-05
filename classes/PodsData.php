@@ -3548,7 +3548,7 @@ class PodsData {
 				'pod'             => $this->pod,
 				'fields'          => (array) $field,
 				'params'          => $params,
-				'last_table_info' => $this->pod_data || $this->table_info,
+				'last_table_info' => isset( $this->pod_data ) ? $this->pod_data : $this->table_info,
 				'joined_id'       => $this->field_id,
 				'joined_index'    => $this->field_index,
 			];

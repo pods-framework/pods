@@ -293,7 +293,7 @@ class WPML extends Integration {
 	 * @return array
 	 */
 	public function get_language( $locale ) {
-		$languages = apply_filters( 'wpml_active_languages', array() );
+		$languages = $this->get_languages();
 		$language  = null;
 		if ( ! empty( $languages ) ) {
 			foreach ( $languages as $lang => $lang_data ) {

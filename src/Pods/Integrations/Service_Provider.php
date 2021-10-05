@@ -65,7 +65,15 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	 */
 	public function plugins_loaded() {
 
-		foreach ( $this->$integrations as $class ) {
+		/**
+		 * Filter what integration classes should run on the plugins_loaded hook.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param \Pods\Integration[] $integrations
+		 */
+		$integrations = apply_filters( 'pods_integrations_on_plugins_loaded', $this->integrations );
+		foreach ( $integrations as $class ) {
 			if ( is_string( $class ) ) {
 				$class = $this->container->make( $class );
 			}

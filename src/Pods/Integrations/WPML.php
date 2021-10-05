@@ -180,6 +180,7 @@ class WPML extends Integration {
 
 			case 'post':
 			case 'post_type':
+			case 'media':
 				if ( $this->is_translated_post_type( $object_name ) ) {
 					$wpml_translations = "
 						LEFT JOIN `{$db_prefix}icl_translations` AS `wpml_translations`
@@ -191,6 +192,9 @@ class WPML extends Integration {
 				break;
 
 			case 'taxonomy':
+			case 'term':
+			case 'nav_menu':
+			case 'post_format':
 				if ( $this->is_translated_taxonomy( $object_name ) ) {
 					$wpml_translations = "
 						LEFT JOIN `{$db_prefix}icl_translations` AS `wpml_translations`

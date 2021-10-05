@@ -3188,7 +3188,7 @@ class PodsData {
 		 *
 		 * @since 2.3.0
 		 *
-		 * @param array     $ignore_aliases   Aliases.
+		 * @param array     $ignore_aliases   Aliases to be ignored.
 		 * @param array     $field            Field data.
 		 * @param array     $traverse_recurse Traverse params.
 		 * @param \PodsData $pods_data        PodsData instance.

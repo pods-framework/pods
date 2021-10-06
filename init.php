@@ -37,7 +37,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	add_action( 'init', 'pods_deactivate_pods_ui' );
 } else {
 	// Current version
-	define( 'PODS_VERSION', '2.8.0-rc-1' );
+	define( 'PODS_VERSION', '2.8.0-rc-2' );
 
 	// Version tracking between DB updates themselves
 	define( 'PODS_DB_VERSION', '2.3.5' );

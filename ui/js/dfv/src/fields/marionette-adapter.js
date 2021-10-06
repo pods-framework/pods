@@ -74,9 +74,9 @@ class MarionetteAdapter extends React.Component {
 			fieldItemData: value,
 		} );
 
-		this.marionetteComponent.render();
-
 		this.element.appendChild( this.marionetteComponent.el );
+
+		this.marionetteComponent.render();
 
 		this.marionetteComponent.collection.on( 'all', ( eventName, collection ) => {
 			if ( ! [ 'update', 'remove', 'reset' ].includes( eventName ) ) {

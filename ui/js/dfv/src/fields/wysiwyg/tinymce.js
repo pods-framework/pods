@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 
 import { F10, isKeyboardEvent } from '@wordpress/keycodes';
 
+// Based on the core Freeform block's edit component, see:
+// https://github.com/WordPress/gutenberg/blob/trunk/packages/block-library/src/freeform/edit.js
 const TinyMCE = ( {
 	name,
 	value,
@@ -32,17 +34,25 @@ const TinyMCE = ( {
 	useEffect( () => {
 		const { baseURL, suffix } = window.wpEditorL10n.tinymce;
 
-		didMount.current = true;
-
 		window.tinymce.EditorManager.overrideDefaults( {
 			base_url: baseURL,
 			suffix,
 		} );
 
 		function onSetup( editor ) {
+			if ( ! didMount.current ) {
+				return;
+			}
+
 			if ( value ) {
 				editor.on( 'loadContent', () => editor.setContent( value ) );
 			}
+
+			editor.on( 'blur', () => {
+				setValue( editor.getContent() );
+
+				onBlur();
+			} );
 
 			const debouncedOnChange = debounce( () => {
 				const newValue = editor.getContent();
@@ -74,6 +84,8 @@ const TinyMCE = ( {
 					event.stopPropagation();
 				}
 			} );
+
+			didMount.current = true;
 		}
 
 		function initialize() {
@@ -119,11 +131,10 @@ const TinyMCE = ( {
 		>
 			<textarea
 				className="wp-editor-area"
-				name={ name }
 				id={ fieldId }
-				onBlur={ onBlur }
-				onChange={ ( event ) => setValue( event.target.value ) }
 				value={ value || '' }
+				onChange={ ( event ) => setValue( event.target.value ) }
+				name={ name }
 			/>
 		</div>
 	);

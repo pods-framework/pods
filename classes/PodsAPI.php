@@ -1,6 +1,7 @@
 <?php
 
 use Pods\API\Whatsit\Value_Field;
+use Pods\Static_Cache;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Object_Field;
@@ -43,26 +44,6 @@ class PodsAPI {
 	private $deprecated;
 
 	/**
-	 * @var array
-	 * @since 2.5.0
-	 */
-	private $fields_cache = array();
-
-	/**
-	 * @var array
-	 * @since 2.5.0
-	 *
-	 */
-	private static $table_info_cache = array();
-
-	/**
-	 * @var array
-	 * @since 2.5.0
-	 *
-	 */
-	private static $related_item_cache = array();
-
-	/**
 	 * Singleton-ish handling for a basic pods_api() request
 	 *
 	 * @param string $pod    (optional) The pod name
@@ -73,7 +54,6 @@ class PodsAPI {
 	 * @since 2.3.5
 	 */
 	public static function init( $pod = null, $format = null ) {
-
 		if ( null !== $pod || null !== $format ) {
 			if ( ! isset( self::$instances[ $pod ] ) ) {
 				// Cache API singleton per Pod
@@ -81,7 +61,9 @@ class PodsAPI {
 			}
 
 			return self::$instances[ $pod ];
-		} elseif ( ! is_object( self::$instance ) ) {
+		}
+
+		if ( ! is_object( self::$instance ) ) {
 			self::$instance = new PodsAPI();
 		}
 
@@ -100,15 +82,15 @@ class PodsAPI {
 	 * @since   1.7.1
 	 */
 	public function __construct( $pod = null, $format = null ) {
+		if ( null === $pod || '' === (string) $pod  ) {
+			return;
+		}
 
-		if ( null !== $pod && 0 < strlen( (string) $pod ) ) {
-			$pod = pods_clean_name( $pod );
+		$pod = pods_clean_name( $pod );
+		$pod = $this->load_pod( [ 'name' => $pod ] );
 
-			$pod = $this->load_pod( array( 'name' => $pod ) );
-
-			if ( ! empty( $pod ) ) {
-				$this->pod_data = $pod;
-			}
+		if ( ! empty( $pod ) ) {
+			$this->pod_data = $pod;
 		}
 	}
 
@@ -5585,18 +5567,11 @@ class PodsAPI {
 	 * @return array List of changed fields (if $mode = 'get')
 	 */
 	public static function handle_changed_fields( $pod, $id, $mode = 'set' ) {
+		$static_cache = tribe( Static_Cache::class );
 
-		static $changed_pods_cache = array();
-		static $old_fields_cache = array();
-		static $changed_fields_cache = array();
-
-		if ( 'ok' !== pods_cache_get( __FUNCTION__, 'pods-static-cache' ) ) {
-			pods_cache_set( __FUNCTION__, 'ok', 'pods-static-cache' );
-
-			$changed_pods_cache = array();
-			$old_fields_cache = array();
-			$changed_fields_cache = array();
-		}
+		$changed_pods_cache   = $static_cache->get( 'changed_pods_cache', __METHOD__ ) ?: [];
+		$old_fields_cache     = $static_cache->get( 'old_fields_cache', __METHOD__ ) ?: [];
+		$changed_fields_cache = $static_cache->get( 'changed_fields_cache', __METHOD__ ) ?: [];
 
 		$cache_key = $pod . '|' . $id;
 
@@ -5654,6 +5629,10 @@ class PodsAPI {
 			}
 		}
 
+		$static_cache->set( 'changed_pods_cache', $changed_pods_cache, __METHOD__ );
+		$static_cache->set( 'old_fields_cache', $old_fields_cache, __METHOD__ );
+		$static_cache->set( 'changed_fields_cache', $changed_fields_cache, __METHOD__ );
+
 		return $changed_fields;
 
 	}
@@ -5668,9 +5647,9 @@ class PodsAPI {
 	 * @deprecated 2.7.0 Use PodsAPI::handle_changed_fields
 	 */
 	public function get_changed_fields( $pieces ) {
+		_deprecated_function( __METHOD__, '2.7.0', 'PodsAPI::handle_changed_fields' );
 
 		return self::handle_changed_fields( $pieces['params']->pod, $pieces['params']->id, 'get' );
-
 	}
 
 	/**
@@ -5691,16 +5670,12 @@ class PodsAPI {
 			$current_ids = $this->lookup_related_items( $field['id'], $pod['id'], $id, $field, $pod );
 		}
 
-		if ( 'ok' !== pods_cache_get( 'related_item_cache', 'pods-static-cache' ) ) {
-			pods_cache_set( 'related_item_cache', 'ok', 'pods-static-cache' );
+		$static_cache = tribe( Static_Cache::class );
 
-			self::$related_item_cache = array();
-		}
+		$cache_key = $pod['id'] . '|' . $field['id'];
 
-		if ( isset( self::$related_item_cache[ $pod['id'] ][ $field['id'] ] ) ) {
-			// Delete relationship from cache
-			unset( self::$related_item_cache[ $pod['id'] ][ $field['id'] ] );
-		}
+		// Delete relationship from cache.
+		$static_cache->delete( $cache_key, __CLASS__ . '/related_item_cache' );
 
 		if ( ! is_array( $related_ids ) ) {
 			$related_ids = implode( ',', $related_ids );
@@ -6781,10 +6756,6 @@ class PodsAPI {
 	        $success = $post_type_storage->delete( $object );
         }
 
-        // @todo Remove this statement later.
-        // Only delete the post once the fields are taken care of, it's not required anymore
-        //$success = wp_delete_post( $params->id );
-
 		if ( ! $success ) {
 			return pods_error( __( 'Pod unable to be deleted', 'pods' ), $this );
 		}
@@ -7475,16 +7446,12 @@ class PodsAPI {
 			}
 		}
 
-		if ( 'ok' !== pods_cache_get( 'related_item_cache', 'pods-static-cache' ) ) {
-			pods_cache_set( 'related_item_cache', 'ok', 'pods-static-cache' );
+		$static_cache = tribe( Static_Cache::class );
 
-			self::$related_item_cache = array();
-		}
+		$cache_key = $related_pod['id'] . '|' . $related_field['id'];
 
-		if ( isset( self::$related_item_cache[ $related_pod['id'] ][ $related_field['id'] ] ) ) {
-			// Delete relationship from cache
-			unset( self::$related_item_cache[ $related_pod['id'] ][ $related_field['id'] ] );
-		}
+		// Delete relationship from cache.
+		$static_cache->delete( $cache_key, __CLASS__ . '/related_item_cache' );
 
 		// @codingStandardsIgnoreLine
 		unset( $related_ids[ array_search( $id, $related_ids ) ] );
@@ -8907,15 +8874,17 @@ class PodsAPI {
 
 		$idstring = implode( ',', $ids );
 
-		if ( 'ok' !== pods_cache_get( 'related_item_cache', 'pods-static-cache' ) ) {
-			pods_cache_set( 'related_item_cache', 'ok', 'pods-static-cache' );
+		$static_cache = tribe( Static_Cache::class );
 
-			self::$related_item_cache = array();
-		}
+		$cache_key = $pod_id . '|' . $field_id;
 
-		if ( 0 != $pod_id && 0 != $field_id && isset( self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] ) ) {
-			// Check cache first, no point in running the same query multiple times
-			return self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ];
+		// Check cache first, no point in running the same query multiple times
+		if ( $pod_id && $field_id ) {
+			$cache_value = $static_cache->get( $cache_key, __CLASS__ . '/related_item_cache' ) ?: [];
+
+			if ( isset( $cache_value[ $idstring ] ) ) {
+				return $cache_value;
+			}
 		}
 
 		$tableless_field_types = PodsForm::tableless_field_types();
@@ -9089,7 +9058,11 @@ class PodsAPI {
 
 		if ( 0 != $pod_id && 0 != $field_id && ! empty( $related_ids ) ) {
 			// Only cache if $pod_id and $field_id were passed
-			self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] = $related_ids;
+			$cache_value = $static_cache->get( $cache_key, __CLASS__ . '/related_item_cache' ) ?: [];
+
+			$cache_value[ $idstring ] = $related_ids;
+
+			$static_cache->set( $cache_key, $cache_value, __CLASS__ . '/related_item_cache' );
 		}
 
 		return $related_ids;
@@ -9483,31 +9456,27 @@ class PodsAPI {
 			$field_name = pods_v( 'name', $field_name, json_encode( $pod_name, JSON_UNESCAPED_UNICODE ), true );
 		}
 
-		$transient = 'pods_' . $wpdb->prefix . '_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
+		$cache_key = 'pods_' . $wpdb->prefix . '_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
 
 		$current_language = pods_i18n()->get_current_language();
 		if ( ! empty( $current_language ) ) {
-			$transient = 'pods_' . $wpdb->prefix . '_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
+			$cache_key = 'pods_' . $wpdb->prefix . '_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
 		}
 
 		$_info = false;
 
-		if ( 'ok' !== pods_cache_get( 'table_info_cache', 'pods-static-cache' ) ) {
-			pods_cache_set( 'table_info_cache', 'ok', 'pods-static-cache' );
+		$static_cache = tribe( Static_Cache::class );
 
-			self::$table_info_cache = array();
-		}
+		$table_info_cache = $static_cache->get( $cache_key, __CLASS__ . '/table_info_cache' ) ?: [];
 
-		if ( isset( self::$table_info_cache[ $transient ] ) ) {
+		if ( $table_info_cache ) {
 			// Prefer info from the object internal cache
-			$_info = self::$table_info_cache[ $transient ];
+			$_info = $table_info_cache;
 		} elseif ( pods_api_cache() ) {
-			$_info = false;
-
 			if ( ! did_action( 'init' ) || doing_action( 'init' ) ) {
-				$_info = pods_transient_get( $transient . '_pre_init' );
+				$_info = pods_transient_get( $cache_key . '_pre_init' );
 			} else {
-				$_info = pods_transient_get( $transient );
+				$_info = pods_transient_get( $cache_key );
 			}
 		}
 
@@ -9515,9 +9484,18 @@ class PodsAPI {
 			// Data was cached, use that
 			$info = $_info;
 
-			self::$table_info_cache[ $transient ] = apply_filters( 'pods_api_get_table_info', $info, $object_type, $object, $name, $pod, $field, $this );
-
-			return self::$table_info_cache[ $transient ];
+			/**
+			 * Allow filtering the table information for an object.
+			 *
+			 * @param array       $info        The table information.
+			 * @param string      $object_type The object type.
+			 * @param string      $object      The object name.
+			 * @param string      $name        The pod name.
+			 * @param array|Pod   $pod         The pod config (if found).
+			 * @param array|Field $field       The field config (if found).
+			 * @param self        $obj         The PodsAPI object.
+			 */
+			return apply_filters( 'pods_api_get_table_info', $info, $object_type, $object, $name, $pod, $field, $this );
 		} else {
 			// Data not cached, load it up
 			$_info = $this->get_table_info_load( $object_type, $object, $name, $pod );
@@ -9897,17 +9875,28 @@ class PodsAPI {
 		$info['type']        = $object_type;
 		$info['object_name'] = $object;
 
+		$static_cache->set( $cache_key, $info, __CLASS__ . '/table_info_cache' );
+
 		if ( pods_api_cache() ) {
 			if ( ! did_action( 'init' ) || doing_action( 'init' ) ) {
-				pods_transient_set( $transient . '_pre_init', $info, WEEK_IN_SECONDS );
+				pods_transient_set( $cache_key . '_pre_init', $info, WEEK_IN_SECONDS );
 			} else {
-				pods_transient_set( $transient, $info, WEEK_IN_SECONDS );
+				pods_transient_set( $cache_key, $info, WEEK_IN_SECONDS );
 			}
 		}
 
-		self::$table_info_cache[ $transient ] = apply_filters( 'pods_api_get_table_info', $info, $object_type, $object, $name, $pod, $field, $this );
-
-		return self::$table_info_cache[ $transient ];
+		/**
+		 * Allow filtering the table information for an object.
+		 *
+		 * @param array       $info        The table information.
+		 * @param string      $object_type The object type.
+		 * @param string      $object      The object name.
+		 * @param string      $name        The pod name.
+		 * @param array|Pod   $pod         The pod config (if found).
+		 * @param array|Field $field       The field config (if found).
+		 * @param self        $obj         The PodsAPI object.
+		 */
+		return apply_filters( 'pods_api_get_table_info', $info, $object_type, $object, $name, $pod, $field, $this );
 	}
 
 	/**
@@ -10267,9 +10256,10 @@ class PodsAPI {
 			pods_transient_clear( 'pods_wp_cpt_ct' );
 		}
 
-		$this->fields_cache       = array();
-		self::$table_info_cache   = array();
-		self::$related_item_cache = array();
+		$static_cache = tribe( Static_Cache::class );
+
+		$static_cache->flush( __CLASS__ . '/table_info_cache' );
+		$static_cache->flush( __CLASS__ . '/related_item_cache' );
 
 		// Delete transients in the database
 		$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );

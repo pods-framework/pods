@@ -2223,6 +2223,7 @@ class PodsField_Pick extends PodsField {
 				}//end if
 			} elseif (
 				$pick_object
+				&& $this->setup_related_objects()
 				&& isset( self::$related_objects[ $pick_object ] )
 				&& ! empty( self::$related_objects[$pick_object ]['data'] )
 			) {
@@ -2231,6 +2232,7 @@ class PodsField_Pick extends PodsField {
 				$simple = true;
 			} elseif (
 				$pick_object
+				&& $this->setup_related_objects()
 				&& isset( self::$related_objects[ $pick_object ] )
 				&& isset( self::$related_objects[ $pick_object ]['data_callback'] )
 				&& is_callable( self::$related_objects[ $pick_object ]['data_callback'] )

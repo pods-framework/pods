@@ -27,13 +27,13 @@ class Static_Cache {
 	 * @param string $key   The cache key.
 	 * @param string $group The cache group.
 	 *
-	 * @return mixed|null The cache value from the cache.
+	 * @return mixed|false The cache value from the cache.
 	 */
 	public function get( $key, $group = 'global' ) {
 		$blog_id = get_current_blog_id();
 
 		if ( ! isset( self::$cache[ $blog_id ][ $group ][ $key ] ) ) {
-			return null;
+			return false;
 		}
 
 		return self::$cache[ $blog_id ][ $group ][ $key ];

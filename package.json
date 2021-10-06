@@ -95,7 +95,7 @@
     "sprintf-js": "^1.1.2",
     "style-loader": "^0.23.1",
     "terser-webpack-plugin": "^1.4.5",
-    "underscore": "~1.8.3",
+    "underscore": "~1.12.1",
     "webpack": "^4.46.0",
     "webpack-cli": "^3.3.12",
     "webpack-merge": "^4.2.1"

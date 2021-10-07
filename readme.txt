@@ -1,6 +1,6 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, zackrothauser keraweb, jimtrue, pglewis, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
-Donate link: https://pods.io/friends-of-pods/
+Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, jamesgol, ramoonus, pglewis, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
+Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, block
 Requires at least: 5.5
 Tested up to: 5.8
@@ -1192,5 +1192,5 @@ Our GitHub has the full list of all prior releases of Pods: https://github.com/p
 
 == Upgrade Notice ==
 
-= 2.7 =
-This upgrade requires a minimum PHP version of 5.3+ and WordPress 4.5+.
+= 2.8 =
+This upgrade requires a minimum PHP version of 5.6+ and WordPress 5.5+.

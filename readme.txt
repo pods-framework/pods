@@ -1,5 +1,5 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, keraweb, jimtrue, pglewis, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
+Contributors: sc0ttkclark, zackrothauser keraweb, jimtrue, pglewis, quasel, jamesgol, ramoonus, nicdford, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
 Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, block
 Requires at least: 5.5
@@ -182,27 +182,30 @@ Pods really wouldn't be where it is without all of the contributions from our [d
 
 == Changelog ==
 
-= 2.8 - October 11th, 2021 =
+= 2.8 - October 12th, 2021 =
 
-Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) which includes information about all of the features, enhancements, nd changes in this major Pods release.
+Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) which includes information about all of the features, enhancements, and changes in this major Pods release.
 
-**New PHP & WP Minimum Version Requirements:**
+**Breaking compatability warning:**
+* New minimum required versions have been updated as follows which includes notices to let you know if you need to update something.
+* New minimum WP version required: WordPress 5.5+ (previously: WP 4.5+) — Going forward we will support the last two major WP releases on each major feature release of Pods.
+* New minimum PHP version required: PHP 5.6+ (previously: PHP 5.3+) — Hey! You should take the time to update to PHP 7.4+ because there’s major speed improvements to be had 🙂
+* New minimum MySQL version required: MySQL 5.5+ (previously: MySQL 5.1+)
+* Refactored object handling for Pod and Field configurations — instead of passing around arrays we now are using a fully scoped object for these configs. This gives us flexibility to lazy load and pull things as-needed from the database instead of always pulling entire Pods and Fields configurations all at once on any page it may not be needed. This also reduces how much we have to use/cache on each page further reducing overall memory usage on every page. It remains backward compatible in most array usage cases like `$pod['name']` but be aware that PHP ArrayAccess overloading errors may occur when manipulating Pod configs like `$pod['fields']['your_field']['name'] = 'My new field name';` or `$pod['options']['some_option'] = 1;` 
 
-* PHP Version Change Requirement 5.3+
-* WP Version Change Required 4.5+
-
-**Major Features: Field Groups and new Edit Pod screen**
-
-Now you can add multiple field groups to your Pods using the brand new Edit Pod screen that's been completely rewritten.
-
-Our Edit Pod screen is powered on the technical side by our all new React form interfaces, tooltips, and our new Pods Admin REST API endpoints.
-
-* Feature: REST API endpoints are now available to create/edit various objects: Pods, Pod Groups, and Pod Fields.
-* Feature: WP-CLI commands that mirror the REST API endpoints we have.
+**Features and changes in this release**
+* Feature: Now you can add multiple groups of fields. (@sc0ttkclark, @zrothauser)
+* Feature: Our Edit Pod screen is powered by our all new React form interfaces, tooltips, and they use our new Pods Admin REST API endpoints. (@sc0ttkclark, @zrothauser)
+* Feature: All of our form fields are powered by React now in preparation for Pods 2.9 repeatable fields that we're working on next. (@sc0ttkclark, @zrothauser)
+* Feature: New field types for Heading and HTML. (@sc0ttkclark, @zrothauser) 
+* Feature: New Pods Blocks available and the underlying Pods Block PHP API is compatible with ACF Blocks if you've ever used those before. (@sc0ttkclark, @zrothauser)
+* Feature: REST API endpoints are now available to create/edit various objects: Pods, Pod Groups, and Pod Fields. (@sc0ttkclark)
+* Feature: WP-CLI commands that mirror the REST API endpoints we have. (@sc0ttkclark)
+* Feature: The new WYSIWYG editor option to use [Quill Editor](https://github.com/zenoamaro/react-quill) is now available and the CLEditor has been removed. (@sc0ttkclark, @zrothauser) 
 
 = 2.7.31 - September 23rd, 2021 =
 
-* Pods 2.8 is coming on October 11th! Check out the [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) for more information.
+* Pods 2.8 is coming on October 12th! Check out the [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) for more information.
 * Fixed: Resolve issues where searching a Pod would cause queries like `post_title.t` or `display_name.t` unexpectedly. #6050 (@sc0ttkclark, @unknownnf)
 
 = 2.7.30 - August 12th, 2021 =

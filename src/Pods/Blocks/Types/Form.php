@@ -183,7 +183,7 @@ class Form extends Base {
 				'name'        => 'thank_you',
 				'label'       => __( 'Redirect URL', 'pods' ),
 				'type'        => 'text',
-				'description' => __( 'After someone submits the form, they can be redirected anywhere you would like. ', 'pods' ),
+				'description' => __( 'After someone submits the form, they can be redirected anywhere you would like. You can reference the saved item ID by using "X_ID_X" in the URL. The default is to not redirect.', 'pods' ),
 			],
 			[
 				'name'        => 'form_output_type',
@@ -196,7 +196,7 @@ class Form extends Base {
 					'table' => 'Table rows (<table>)',
 				],
 				'default'     => 'div',
-				'description' => __( '', 'pods' ),
+				'description' => __( 'Choose how you want your form HTML to be set up. This allows you flexibility to build and style your forms with any CSS customizations you would like. Some output types are naturally laid out better in certain themes.', 'pods' ),
 			],
 		];
 	}

@@ -154,11 +154,11 @@ class Form extends Base {
 
 		return [
 			[
-				'name'    => 'name',
-				'label'   => __( 'Pod Name', 'pods' ),
-				'type'    => 'pick',
-				'data'    => $all_pods,
-				'default' => '',
+				'name'        => 'name',
+				'label'       => __( 'Pod Name', 'pods' ),
+				'type'        => 'pick',
+				'data'        => $all_pods,
+				'default'     => '',
 				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],
 			[
@@ -168,31 +168,35 @@ class Form extends Base {
 				'description' => __( 'Use this to enable editing of an item.', 'pods' ),
 			],
 			[
-				'name'  => 'fields',
-				'label' => __( 'Field Names (comma-separated)', 'pods' ),
-				'type'  => 'paragraph',
+				'name'        => 'fields',
+				'label'       => __( 'Form Fields', 'pods' ),
+				'type'        => 'paragraph',
+				'description' => __( 'Comma-separated list of the Pod Fields you want to include. Default is to show all.', 'pods' ),
 			],
 			[
-				'name'  => 'label',
-				'label' => __( 'Submit Button Label', 'pods' ),
-				'type'  => 'text',
+				'name'        => 'label',
+				'label'       => __( 'Submit Button Label', 'pods' ),
+				'type'        => 'text',
+				'description' => __( 'The label to show in the submit button of the form.', 'pods' ),
 			],
 			[
-				'name'  => 'thank_you',
-				'label' => __( 'Redirect URL', 'pods' ),
-				'type'  => 'text',
+				'name'        => 'thank_you',
+				'label'       => __( 'Redirect URL', 'pods' ),
+				'type'        => 'text',
+				'description' => __( 'After someone submits the form, they can be redirected anywhere you would like. ', 'pods' ),
 			],
 			[
-				'name'    => 'form_output_type',
-				'label'   => __( 'Output Type', 'pods' ),
-				'type'    => 'pick',
-				'data'    => [
+				'name'        => 'form_output_type',
+				'label'       => __( 'Output Type', 'pods' ),
+				'type'        => 'pick',
+				'data'        => [
 					'div'   => 'Div containers (<div>)',
 					'ul'    => 'Unordered list (<ul>)',
 					'p'     => 'Paragraph elements (<p>)',
 					'table' => 'Table rows (<table>)',
 				],
-				'default' => 'div',
+				'default'     => 'div',
+				'description' => __( '', 'pods' ),
 			],
 		];
 	}

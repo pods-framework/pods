@@ -159,26 +159,27 @@ class Form extends Base {
 				'type'    => 'pick',
 				'data'    => $all_pods,
 				'default' => '',
+				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],
 			[
 				'name'        => 'slug',
-				'label'       => __( 'Slug or ID (optional)', 'pods' ),
+				'label'       => __( 'Slug or ID', 'pods' ),
 				'type'        => 'text',
 				'description' => __( 'Use this to enable editing of an item.', 'pods' ),
 			],
 			[
 				'name'  => 'fields',
-				'label' => __( 'Field Names (comma-separated) (optional)', 'pods' ),
+				'label' => __( 'Field Names (comma-separated)', 'pods' ),
 				'type'  => 'paragraph',
 			],
 			[
 				'name'  => 'label',
-				'label' => __( 'Submit Button Label (optional)', 'pods' ),
+				'label' => __( 'Submit Button Label', 'pods' ),
 				'type'  => 'text',
 			],
 			[
 				'name'  => 'thank_you',
-				'label' => __( 'Redirect URL (optional)', 'pods' ),
+				'label' => __( 'Redirect URL', 'pods' ),
 				'type'  => 'text',
 			],
 			[

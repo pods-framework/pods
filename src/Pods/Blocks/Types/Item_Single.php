@@ -137,11 +137,11 @@ class Item_Single extends Base {
 								'excluded' => true,
 							],
 							[
-								'name' => 'expires',
+								'name' => 'cache_mode',
 								'excluded' => true,
 							],
 							[
-								'name' => 'cache_mode',
+								'name' => 'expires',
 								'excluded' => true,
 							],
 						],
@@ -178,30 +178,33 @@ class Item_Single extends Base {
 				'type'    => 'pick',
 				'data'    => $all_pods,
 				'default' => '',
+				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],
 			[
 				'name'        => 'slug',
-				'label'       => __( 'Slug or ID (optional)', 'pods' ),
+				'label'       => __( 'Slug or ID', 'pods' ),
 				'type'        => 'text',
 				'description' => __( 'Defaults to using the current pod item.', 'pods' ),
 			],
 			[
 				'name'    => 'template',
-				'label'   => __( 'Template (optional)', 'pods' ),
+				'label'   => __( 'Template', 'pods' ),
 				'type'    => 'pick',
 				'data'    => $all_templates,
 				'default' => '',
+				'description' => __( 'You can choose a previously saved Pods Template here. We recommend saving your Pods Templates with our Templates component so you can enjoy the full editing experience.', 'pods' ),
 			],
 			[
 				'name'  => 'template_custom',
-				'label' => __( 'Custom Template (optional)', 'pods' ),
+				'label' => __( 'Custom Template', 'pods' ),
 				'type'  => 'paragraph',
+				'description' => __( 'You can specify a custom template to use, it accepts HTML and magic tags. Any content here will override whatever Template you may have chosen above.', 'pods' ),
 			],
 		];
 	}
 
 	/**
-	 * Since we are dealing with a Dynamic type of Block we need a PHP method to render it
+	 * Since we are dealing with a Dynamic type of Block we need a PHP method to render it.
 	 *
 	 * @since 2.8.0
 	 *

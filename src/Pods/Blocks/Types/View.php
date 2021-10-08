@@ -107,19 +107,22 @@ class View extends Base {
 				'name'  => 'view',
 				'label' => __( 'File to include from theme', 'pods' ),
 				'type'  => 'text',
-			],
-			[
-				'name'    => 'expires',
-				'label'   => __( 'Expires (optional)', 'pods' ),
-				'type'    => 'number',
-				'default' => ( MINUTE_IN_SECONDS * 5 ),
+				'description' => __( 'This is the file location relative to your theme or child theme folder. For example: my-text.php or parts/ad-spot.php', 'pods' ),
 			],
 			[
 				'name'    => 'cache_mode',
-				'label'   => __( 'Cache Mode (optional)', 'pods' ),
+				'label'   => __( 'Cache Mode', 'pods' ),
 				'type'    => 'pick',
 				'data'    => $cache_modes,
 				'default' => $default_cache_mode,
+				'description' => __( 'The mode to cache the output with.', 'pods' ),
+			],
+			[
+				'name'    => 'expires',
+				'label'   => __( 'Expires', 'pods' ),
+				'type'    => 'number',
+				'default' => ( MINUTE_IN_SECONDS * 5 ),
+				'description' => __( 'Set how long to cache the output for in seconds.', 'pods' ),
 			],
 		];
 	}

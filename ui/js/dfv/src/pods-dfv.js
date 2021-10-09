@@ -20,6 +20,7 @@ import {
 } from 'dfv/src/store/store';
 import PodsDFVApp from 'dfv/src/core/pods-dfv-app';
 import { PodsGbModalListener } from 'dfv/src/core/gb-modal-listener';
+
 import * as models from 'dfv/src/config/model-manifest';
 
 import FIELD_MAP from 'dfv/src/fields/field-map';
@@ -92,9 +93,7 @@ window.PodsDFV = {
 		const validFieldsData = fieldsData.filter( ( fieldData ) => !! fieldData );
 
 		// Create the store if it hasn't been done already.
-		// The initial values for the data store require some massaging:
-		// Some are arrays when we need single values (this may change once
-		// repeatable fields are implemented), others have special requirements.
+		// The initial values for the data store require some massaging.
 		const initialValues = validFieldsData.reduce(
 			( accumulator, currentField ) => {
 				const fieldConfig = currentField.fieldConfig || {};

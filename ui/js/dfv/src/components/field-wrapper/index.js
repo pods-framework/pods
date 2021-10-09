@@ -26,6 +26,7 @@ import ValidationMessages from 'dfv/src/components/validation-messages';
 import { requiredValidator } from 'dfv/src/helpers/validators';
 import { toBool } from 'dfv/src/helpers/booleans';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
+import isFieldRepeatable from 'dfv/src/helpers/isFieldRepeatable';
 import useDependencyCheck from 'dfv/src/hooks/useDependencyCheck';
 import useValidation from 'dfv/src/hooks/useValidation';
 
@@ -117,6 +118,8 @@ export const FieldWrapper = ( props ) => {
 
 	const showDescription = !! description && ! fieldEmbed;
 
+	const isRepeatable = isFieldRepeatable( field );
+
 	// The only one set up by default here
 	// is to validate a required field, but the field child component
 	// may set additional rules.
@@ -152,25 +155,108 @@ export const FieldWrapper = ( props ) => {
 
 	const passAllPodFieldsMap = isBooleanGroupField;
 
-	const inputComponent = !! FieldComponent ? (
+	// Make all values into an array, to make handling repeatable fields easier.
+	const valuesArray = ( isRepeatable && Array.isArray( value ) )
+		? value
+		: [ value ];
+
+	const setSingleValue = ( newValue ) => setOptionValue( name, newValue );
+
+	const setRepeatableValue = ( index ) => ( newValue ) => {
+		const newValues = [ ...valuesArray ];
+		newValues[ index ] = newValue;
+
+		setOptionValue( name, newValues );
+	};
+
+	const deleteValueAtIndex = ( index ) => {
+		const newValues = [
+			...( valuesArray || [] ).slice( 0, index ),
+			...( valuesArray || [] ).slice( index + 1 ),
+		];
+
+		setOptionValue( name, newValues );
+	};
+
+	const addValue = () => {
+		const newValues = [
+			...valuesArray,
+			// @todo does an empty string always work?
+			'',
+		];
+
+		setOptionValue( name, newValues );
+	};
+
+	const inputComponents = !! FieldComponent ? (
 		<FieldErrorBoundary>
-			<FieldComponent
-				value={ value }
-				values={ isBooleanGroupField ? values : undefined }
-				// Only the Boolean Group fields need allPodValues and allPodFieldsMap,
-				// because the subfields need to reference these.
-				podName={ podName }
-				podType={ podType }
-				allPodValues={ passAllPodValues ? allPodValues : undefined }
-				allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
-				setOptionValue={ isBooleanGroupField ? setOptionValue : undefined }
-				setValue={ isBooleanGroupField ? undefined : ( newValue ) => setOptionValue( name, newValue ) }
-				isValid={ !! validationMessages.length }
-				addValidationRules={ addValidationRules }
-				htmlAttr={ processedHtmlAttr }
-				setHasBlurred={ () => setHasBlurred( true ) }
-				fieldConfig={ field }
-			/>
+			<div className="pods-field-wrapper">
+				{ isBooleanGroupField ? (
+					<div className="pods-field-wrapper__item">
+						<FieldComponent
+							values={ values }
+							podName={ podName }
+							podType={ podType }
+							allPodValues={ passAllPodValues ? allPodValues : undefined }
+							allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
+							setOptionValue={ setOptionValue }
+							isValid={ !! validationMessages.length }
+							addValidationRules={ addValidationRules }
+							htmlAttr={ processedHtmlAttr }
+							setHasBlurred={ () => setHasBlurred( true ) }
+							fieldConfig={ field }
+						/>
+					</div>
+				) : (
+					<>
+						{ valuesArray.map( ( valueItem, index ) => {
+							// Adjust the `name` and `htmlAttr[name]` for repeatable fields,
+							// so that each value gets saved.
+
+							// @todo confirm that this way of naming fields is correct.
+							const repeaterFieldConfig = {
+								...field,
+								name: isRepeatable ? `${ field.name }[${ index }]` : field.name,
+								htmlAttr: {
+									...( field.htmlAttr || {} ),
+								},
+							};
+
+							if ( repeaterFieldConfig.htmlAttr?.name && isRepeatable ) {
+								repeaterFieldConfig.htmlAttr.name = `${ repeaterFieldConfig.htmlAttr.name }[${ index }]`;
+							}
+
+							return (
+								<div className="pods-field-wrapper__item" key={ `${ field.name }-${ index }` }>
+									<FieldComponent
+										value={ valueItem }
+										// Only the Boolean Group fields need allPodValues and allPodFieldsMap,
+										// because the subfields need to reference these.
+										podName={ podName }
+										podType={ podType }
+										setValue={ isRepeatable ? setRepeatableValue( index ) : setSingleValue }
+										isValid={ !! validationMessages.length }
+										addValidationRules={ addValidationRules }
+										htmlAttr={ processedHtmlAttr }
+										setHasBlurred={ () => setHasBlurred( true ) }
+										fieldConfig={ repeaterFieldConfig }
+									/>
+
+									{ ( isRepeatable && Array.isArray( value ) && value.length > 1 ) ? (
+										<button onClick={ () => deleteValueAtIndex( index ) }>
+											Delete
+										</button>
+									) : null }
+								</div>
+							);
+						} ) }
+					</>
+				) }
+
+				{ isRepeatable ? (
+					<button onClick={ addValue }>Add</button>
+				) : null }
+			</div>
 		</FieldErrorBoundary>
 	) : (
 		<span className="pods-field-option__invalid-field">
@@ -197,7 +283,7 @@ export const FieldWrapper = ( props ) => {
 			<DivFieldLayout
 				labelComponent={ labelComponent }
 				descriptionComponent={ descriptionComponent }
-				inputComponent={ inputComponent }
+				inputComponent={ inputComponents }
 				validationMessagesComponent={ validationMessagesComponent }
 				fieldType={ fieldType }
 			/>

@@ -5272,6 +5272,8 @@ class PodsAPI {
 			pods_no_conflict_on( $pod['type'] );
 		}
 
+		$static_cache = tribe( Static_Cache::class );
+
 		// Save relationship / file data
 		if ( ! empty( $rel_fields ) ) {
 			foreach ( $rel_fields as $type => $data ) {
@@ -5422,9 +5424,11 @@ class PodsAPI {
 						$values    = array_slice( $values, 0, $related_limit );
 					}
 
+					$related_data = $static_cache->get( $fields[ $field ]['name'] . '/' . $fields[ $field ]['id'], 'PodsField_Pick/related_data' ) ?: [];
+
 					// Get current values
-					if ( 'pick' === $type && isset( PodsField_Pick::$related_data[ $fields[ $field ]['id'] ] ) && isset( PodsField_Pick::$related_data[ $fields[ $field ]['id'] ][ 'current_ids_' . $params->id ] ) ) {
-						$related_ids = PodsField_Pick::$related_data[ $fields[ $field ]['id'] ][ 'current_ids_' . $params->id ];
+					if ( 'pick' === $type && isset( $related_data[ 'current_ids_' . $params->id ] ) ) {
+						$related_ids = $related_data[ 'current_ids_' . $params->id ];
 					} else {
 						$related_ids = $this->lookup_related_items( $fields[ $field ]['id'], $pod['id'], $params->id, $fields[ $field ], $pod );
 					}
@@ -5457,9 +5461,14 @@ class PodsAPI {
 				// Unset data no longer needed
 				if ( 'pick' === $type ) {
 					foreach ( $data as $field => $values ) {
-						if ( isset( PodsField_Pick::$related_data[ $fields[ $field ]['id'] ] ) ) {
-							unset( PodsField_Pick::$related_data[ PodsField_Pick::$related_data[ $fields[ $field ]['id'] ]['related_field']['id'] ] );
-							unset( PodsField_Pick::$related_data[ $fields[ $field ]['id'] ] );
+						$related_data = $static_cache->get( $fields[ $field ]['name'] . '/' . $fields[ $field ]['id'], 'PodsField_Pick/related_data' ) ?: [];
+
+						if ( ! empty( $related_data ) ) {
+							if ( ! empty( $related_data['related_field'] ) ) {
+								$static_cache->delete( $related_data['related_field']['name'] . '/' . $related_data['related_field']['id'], 'PodsField_Pick/related_data' );
+							}
+
+							$static_cache->delete( $fields[ $field ]['name'] . '/' . $fields[ $field ]['id'], 'PodsField_Pick/related_data' );
 						}
 					}
 				}
@@ -5663,9 +5672,13 @@ class PodsAPI {
 	 * @return array List of ID(s) that were setup for saving.
 	 */
 	public function save_relationships( $id, $related_ids, $pod, $field ) {
+		$static_cache = tribe( Static_Cache::class );
+
+		$related_data = $static_cache->get( $field['name'] . '/' . $field['id'], 'PodsField_Pick/related_data' ) ?: [];
+
 		// Get current values
-		if ( 'pick' === $field['type'] && isset( PodsField_Pick::$related_data[ $field['id'] ] ) && isset( PodsField_Pick::$related_data[ $field['id'] ][ 'current_ids_' . $id ] ) ) {
-			$current_ids = PodsField_Pick::$related_data[ $field['id'] ][ 'current_ids_' . $id ];
+		if ( 'pick' === $field['type'] && isset( $related_data[ 'current_ids_' . $id ] ) ) {
+			$current_ids = $related_data[ 'current_ids_' . $id ];
 		} else {
 			$current_ids = $this->lookup_related_items( $field['id'], $pod['id'], $id, $field, $pod );
 		}
@@ -5737,9 +5750,9 @@ class PodsAPI {
 		$related_pod_id   = 0;
 		$related_field_id = 0;
 
-		if ( 'pick' === $field['type'] && isset( PodsField_Pick::$related_data[ $field['id'] ] ) && ! empty( PodsField_Pick::$related_data[ $field['id'] ]['related_field'] ) ) {
-			$related_pod_id   = PodsField_Pick::$related_data[ $field['id'] ]['related_pod']['id'];
-			$related_field_id = PodsField_Pick::$related_data[ $field['id'] ]['related_field']['id'];
+		if ( 'pick' === $field['type'] && ! empty( $related_data['related_field'] ) ) {
+			$related_pod_id   = $related_data['related_pod']['id'];
+			$related_field_id = $related_data['related_field']['id'];
 		}
 
 		// Relationships table
@@ -8883,7 +8896,7 @@ class PodsAPI {
 			$cache_value = $static_cache->get( $cache_key, __CLASS__ . '/related_item_cache' ) ?: [];
 
 			if ( isset( $cache_value[ $idstring ] ) ) {
-				return $cache_value;
+				return $cache_value[ $idstring ];
 			}
 		}
 

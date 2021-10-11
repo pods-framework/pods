@@ -105,10 +105,12 @@ class Field extends Base {
 				'label' => __( 'Pod Name', 'pods' ),
 				'type'  => 'pick',
 				'data'  => $all_pods,
+				'default' => '',
+				'description' => __( 'Choose the pod to reference, or reference the Pod in the current context of this block.', 'pods' ),
 			],
 			[
 				'name'        => 'slug',
-				'label'       => __( 'Slug or ID (optional)', 'pods' ),
+				'label'       => __( 'Slug or ID', 'pods' ),
 				'type'        => 'text',
 				'description' => __( 'Defaults to using the current pod item.', 'pods' ),
 			],
@@ -116,6 +118,7 @@ class Field extends Base {
 				'name'  => 'field',
 				'label' => __( 'Field Name', 'pods' ),
 				'type'  => 'text',
+				'description' => __( 'This is the field name you want to display.', 'pods' ),
 			],
 		];
 	}

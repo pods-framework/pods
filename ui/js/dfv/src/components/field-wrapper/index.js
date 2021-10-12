@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { isEqual, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -9,12 +9,20 @@ import PropTypes from 'prop-types';
  * WordPress dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
+import {
+	chevronUp,
+	chevronDown,
+	trash,
+	dragHandle,
+} from '@wordpress/icons';
 
 /**
  * Pods components
  */
 import FieldErrorBoundary from 'dfv/src/components/field-wrapper/field-error-boundary';
 import DivFieldLayout from 'dfv/src/components/field-wrapper/div-field-layout';
+import SubfieldWrapper from 'dfv/src/components/field-wrapper/subfield-wrapper';
 
 import FieldDescription from 'dfv/src/components/field-description';
 import FieldLabel from 'dfv/src/components/field-label';
@@ -29,9 +37,12 @@ import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
 import isFieldRepeatable from 'dfv/src/helpers/isFieldRepeatable';
 import useDependencyCheck from 'dfv/src/hooks/useDependencyCheck';
 import useValidation from 'dfv/src/hooks/useValidation';
+import useHideContainerDOM from 'dfv/src/components/field-wrapper/useHideContainerDOM';
 
 import FIELD_MAP from 'dfv/src/fields/field-map';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
+
+import './field-wrapper.scss';
 
 export const FieldWrapper = ( props ) => {
 	const {
@@ -57,47 +68,20 @@ export const FieldWrapper = ( props ) => {
 		htmlAttr: htmlAttributes,
 	} = field;
 
+	// Find the component for the field type
+	const FieldComponent = FIELD_MAP[ fieldType ]?.fieldComponent;
 	const isBooleanGroupField = 'boolean_group' === fieldType;
 
 	const fieldRef = useRef( null );
 
-	// Find the component for the field type
-	const FieldComponent = FIELD_MAP[ fieldType ]?.fieldComponent;
-
-	const [ hasBlurred, setHasBlurred ] = useState( false );
-
-	// Calculate dependencies.
-	const meetsDependencies = useDependencyCheck(
-		field,
-		allPodValues,
-		allPodFieldsMap,
-	);
-
-	// Hacky thing to hide the container. This isn't needed on every screen.
-	// @todo rework how some fields render so that we don't need to do this.
-	useEffect( () => {
-		if ( ! fieldRef?.current ) {
-			return;
-		}
-
-		const outsideOfReactFieldContainer = fieldRef.current.closest( '.pods-field__container' );
-
-		if ( ! outsideOfReactFieldContainer ) {
-			return;
-		}
-
-		if ( meetsDependencies ) {
-			outsideOfReactFieldContainer.style.display = '';
-		} else {
-			outsideOfReactFieldContainer.style.display = 'none';
-		}
-	}, [ name, fieldRef, meetsDependencies ] );
-
 	// Custom placeholder on the "Add Pod" screen.
-	const processedHtmlAttr = htmlAttributes;
+	const processedFieldConfig = {
+		...field,
+		htmlAttr: { ...htmlAttributes || {} },
+	};
 
 	if ( 'create_name' === name ) {
-		processedHtmlAttr.placeholder = sanitizeSlug( allPodValues.create_label_singular );
+		processedFieldConfig.htmlAttr.placeholder = sanitizeSlug( allPodValues.create_label_singular );
 	}
 
 	// Sort out different shapes that we could get the help text in.
@@ -110,6 +94,8 @@ export const FieldWrapper = ( props ) => {
 		? helpText[ 1 ]
 		: undefined;
 
+	// Some fields show a label, and some don't.
+	// Others get a description and others don't.
 	const showLabel = (
 		'heading' !== fieldType &&
 		( 'html' !== fieldType || ! htmlNoLabel ) &&
@@ -119,33 +105,6 @@ export const FieldWrapper = ( props ) => {
 	const showDescription = !! description && ! fieldEmbed;
 
 	const isRepeatable = isFieldRepeatable( field );
-
-	// The only one set up by default here
-	// is to validate a required field, but the field child component
-	// may set additional rules.
-	const [ validationMessages, addValidationRules ] = useValidation(
-		[
-			{
-				rule: requiredValidator( label ),
-				condition: () => true === toBool( required ),
-			},
-		],
-		value
-	);
-
-	const labelComponent = showLabel ? (
-		<FieldLabel
-			label={ label }
-			required={ toBool( required ) }
-			htmlFor={ htmlAttributes?.id || `pods-form-ui-${ name }` }
-			helpTextString={ shouldShowHelpText ? helpTextString : undefined }
-			helpLink={ shouldShowHelpText ? helpLink : undefined }
-		/>
-	) : undefined;
-
-	const descriptionComponent = showDescription ? (
-		<FieldDescription description={ description } />
-	) : undefined;
 
 	// Only the Boolean Group fields need both allPodValues and
 	// allPodFieldsMap, because the subfields need to reference these.
@@ -160,6 +119,11 @@ export const FieldWrapper = ( props ) => {
 		? value
 		: [ value ];
 
+	// State
+	const [ hasBlurred, setHasBlurred ] = useState( false );
+
+	// Helper functions for setting, moving, adding, and deleting the value
+	// or subvalues.
 	const setSingleValue = ( newValue ) => setOptionValue( name, newValue );
 
 	const setRepeatableValue = ( index ) => ( newValue ) => {
@@ -188,6 +152,64 @@ export const FieldWrapper = ( props ) => {
 		setOptionValue( name, newValues );
 	};
 
+	const swapValues = ( firstIndex, secondIndex ) => {
+		if (
+			typeof valuesArray?.[ firstIndex ] === 'undefined' ||
+			typeof valuesArray?.[ secondIndex ] === 'undefined'
+		) {
+			return;
+		}
+
+		const newValues = [ ...valuesArray ];
+		const tempValue = newValues[ secondIndex ];
+
+		newValues[ secondIndex ] = newValues[ firstIndex ];
+		newValues[ firstIndex ] = tempValue;
+
+		setOptionValue( name, newValues );
+	};
+
+	// Calculate dependencies.
+	const meetsDependencies = useDependencyCheck(
+		field,
+		allPodValues,
+		allPodFieldsMap,
+	);
+
+	// Use hook to hide the container element
+	useHideContainerDOM( name, fieldRef, meetsDependencies );
+
+	// The only validator set up by default is to validate a required
+	// field, but the field child component may set additional rules.
+	const [ validationMessages, addValidationRules ] = useValidation(
+		[
+			{
+				rule: requiredValidator( label ),
+				condition: () => true === toBool( required ),
+			},
+		],
+		value
+	);
+
+	// Don't render a field that hasn't had its dependencies met.
+	if ( ! meetsDependencies ) {
+		return <span ref={ fieldRef } />;
+	}
+
+	const labelComponent = showLabel ? (
+		<FieldLabel
+			label={ label }
+			required={ toBool( required ) }
+			htmlFor={ processedFieldConfig.htmlAttr?.id || `pods-form-ui-${ name }` }
+			helpTextString={ shouldShowHelpText ? helpTextString : undefined }
+			helpLink={ shouldShowHelpText ? helpLink : undefined }
+		/>
+	) : undefined;
+
+	const descriptionComponent = showDescription ? (
+		<FieldDescription description={ description } />
+	) : undefined;
+
 	const inputComponents = !! FieldComponent ? (
 		<FieldErrorBoundary>
 			<div className="pods-field-wrapper">
@@ -202,7 +224,6 @@ export const FieldWrapper = ( props ) => {
 							setOptionValue={ setOptionValue }
 							isValid={ !! validationMessages.length }
 							addValidationRules={ addValidationRules }
-							htmlAttr={ processedHtmlAttr }
 							setHasBlurred={ () => setHasBlurred( true ) }
 							fieldConfig={ field }
 						/>
@@ -210,11 +231,9 @@ export const FieldWrapper = ( props ) => {
 				) : (
 					<>
 						{ valuesArray.map( ( valueItem, index ) => {
-							// Adjust the `name` and `htmlAttr[name]` for repeatable fields,
-							// so that each value gets saved.
-
-							// @todo confirm that this way of naming fields is correct.
-							const repeaterFieldConfig = {
+							// Adjust the `name`/`htmlAttr[name]` and IDs
+							// for repeatable fields, so that each value gets saved.
+							const subfieldConfig = {
 								...field,
 								name: isRepeatable ? `${ field.name }[${ index }]` : field.name,
 								htmlAttr: {
@@ -222,39 +241,82 @@ export const FieldWrapper = ( props ) => {
 								},
 							};
 
-							if ( repeaterFieldConfig.htmlAttr?.name && isRepeatable ) {
-								repeaterFieldConfig.htmlAttr.name = `${ repeaterFieldConfig.htmlAttr.name }[${ index }]`;
+							if ( subfieldConfig.htmlAttr?.name && isRepeatable ) {
+								subfieldConfig.htmlAttr.name = `${ subfieldConfig.htmlAttr.name }[${ index }]`;
+							}
+
+							if ( subfieldConfig.htmlAttr?.id && isRepeatable ) {
+								subfieldConfig.htmlAttr.id = `${ subfieldConfig.htmlAttr.id }-${ index }`;
 							}
 
 							return (
-								<div className="pods-field-wrapper__item" key={ `${ field.name }-${ index }` }>
-									<FieldComponent
-										value={ valueItem }
-										// Only the Boolean Group fields need allPodValues and allPodFieldsMap,
-										// because the subfields need to reference these.
-										podName={ podName }
-										podType={ podType }
-										setValue={ isRepeatable ? setRepeatableValue( index ) : setSingleValue }
-										isValid={ !! validationMessages.length }
-										addValidationRules={ addValidationRules }
-										htmlAttr={ processedHtmlAttr }
-										setHasBlurred={ () => setHasBlurred( true ) }
-										fieldConfig={ repeaterFieldConfig }
-									/>
-
-									{ ( isRepeatable && Array.isArray( value ) && value.length > 1 ) ? (
-										<button onClick={ () => deleteValueAtIndex( index ) }>
-											Delete
-										</button>
+								<SubfieldWrapper
+									fieldConfig={ processedFieldConfig }
+									FieldComponent={ FieldComponent }
+									isRepeatable={ isRepeatable }
+									index={ index }
+									value={ valueItem }
+									podType={ podType }
+									podName={ podName }
+									allPodValues={ passAllPodValues ? allPodValues : undefined }
+									allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
+									validationMessages={ validationMessages }
+									addValidationRules={ addValidationRules }
+									setValue={ isRepeatable ? setRepeatableValue( index ) : setSingleValue }
+									setHasBlurred={ setHasBlurred }
+									startControls={ ( isRepeatable && valuesArray.length > 1 ) ? (
+										<Button
+											onClick={ () => {} }
+											icon={ dragHandle }
+											label={ __( 'Drag to reorder', 'pods' ) }
+											showTooltip
+											isSecondary
+										/>
 									) : null }
-								</div>
+									endControls={ ( isRepeatable && valuesArray.length > 1 ) ? (
+										<>
+											<Button
+												onClick={ () => deleteValueAtIndex( index ) }
+												icon={ trash }
+												label={ __( 'Delete', 'pods' ) }
+												showTooltip
+												isSecondary
+												isDestructive
+											/>
+
+											<Button
+												disabled={ index === 0 }
+												onClick={ () => swapValues( index, index - 1 ) }
+												icon={ chevronUp }
+												label={ __( 'Move up', 'pods' ) }
+												showTooltip
+												isSecondary
+											/>
+
+											<Button
+												disabled={ index === ( valuesArray.length - 1 ) }
+												onClick={ () => swapValues( index, index + 1 ) }
+												icon={ chevronDown }
+												label={ __( 'Move down', 'pods' ) }
+												showTooltip
+												isSecondary
+											/>
+										</>
+									) : null }
+									key={ `${ field.name }-${ index }` }
+								/>
 							);
 						} ) }
 					</>
 				) }
 
 				{ isRepeatable ? (
-					<button onClick={ addValue }>Add</button>
+					<Button
+						onClick={ addValue }
+						isSecondary
+					>
+						Add
+					</Button>
 				) : null }
 			</div>
 		</FieldErrorBoundary>
@@ -271,11 +333,6 @@ export const FieldWrapper = ( props ) => {
 	const validationMessagesComponent = ( hasBlurred && validationMessages.length ) ? (
 		<ValidationMessages messages={ validationMessages } />
 	) : undefined;
-
-	// Don't render a field that hasn't had its dependencies met.
-	if ( ! meetsDependencies ) {
-		return <span ref={ fieldRef } />;
-	}
 
 	return (
 		<>

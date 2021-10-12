@@ -4,6 +4,24 @@
 import React, { useRef, useState } from 'react';
 import { isEqual, uniq } from 'lodash';
 import PropTypes from 'prop-types';
+import {
+	DndContext,
+	closestCenter,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from '@dnd-kit/core';
+import {
+	restrictToParentElement,
+	restrictToVerticalAxis,
+} from '@dnd-kit/modifiers';
+import {
+	arrayMove,
+	SortableContext,
+	sortableKeyboardCoordinates,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 /**
  * WordPress dependencies
@@ -14,7 +32,6 @@ import {
 	chevronUp,
 	chevronDown,
 	trash,
-	dragHandle,
 } from '@wordpress/icons';
 
 /**
@@ -134,6 +151,8 @@ export const FieldWrapper = ( props ) => {
 	};
 
 	const deleteValueAtIndex = ( index ) => {
+		// @todo confirmation
+
 		const newValues = [
 			...( valuesArray || [] ).slice( 0, index ),
 			...( valuesArray || [] ).slice( index + 1 ),
@@ -167,6 +186,32 @@ export const FieldWrapper = ( props ) => {
 		newValues[ firstIndex ] = tempValue;
 
 		setOptionValue( name, newValues );
+	};
+
+	// Set up drag-and-drop
+	const sensors = useSensors(
+		useSensor( PointerSensor ),
+		useSensor( KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		} ),
+	);
+
+	const handleDragEnd = ( event ) => {
+		const { active, over } = event;
+
+		if ( ! over?.id || active.id === over.id ) {
+			return;
+		}
+
+		const oldIndex = parseInt( active.id, 10 );
+		const newIndex = parseInt( over.id, 10 );
+
+		setOptionValue(
+			name,
+			arrayMove( valuesArray, oldIndex, newIndex )
+		);
+
+		setHasBlurred( true );
 	};
 
 	// Calculate dependencies.
@@ -229,85 +274,84 @@ export const FieldWrapper = ( props ) => {
 						/>
 					</div>
 				) : (
-					<>
-						{ valuesArray.map( ( valueItem, index ) => {
-							// Adjust the `name`/`htmlAttr[name]` and IDs
-							// for repeatable fields, so that each value gets saved.
-							const subfieldConfig = {
-								...field,
-								name: isRepeatable ? `${ field.name }[${ index }]` : field.name,
-								htmlAttr: {
-									...( field.htmlAttr || {} ),
-								},
-							};
+					<DndContext
+						sensors={ sensors }
+						collisionDetection={ closestCenter }
+						onDragEnd={ handleDragEnd }
+						modifiers={ [
+							restrictToParentElement,
+							restrictToVerticalAxis,
+						] }
+					>
+						<SortableContext
+							items={ valuesArray.map( ( valueItem, index ) => index.toString() ) }
+							strategy={ verticalListSortingStrategy }
+						>
+							{ valuesArray.map( ( valueItem, index ) => {
+								return (
+									<SubfieldWrapper
+										fieldConfig={ processedFieldConfig }
+										FieldComponent={ FieldComponent }
+										isRepeatable={ isRepeatable }
+										index={ index }
+										value={ valueItem }
+										podType={ podType }
+										podName={ podName }
+										allPodValues={ passAllPodValues ? allPodValues : undefined }
+										allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
+										validationMessages={ validationMessages }
+										addValidationRules={ addValidationRules }
+										setValue={ isRepeatable ? setRepeatableValue( index ) : setSingleValue }
+										setHasBlurred={ setHasBlurred }
+										isDraggable={ ( isRepeatable && valuesArray.length > 1 ) }
+										endControls={ ( isRepeatable && valuesArray.length > 1 ) ? (
+											<>
+												<Button
+													onClick={ ( event ) => {
+														event.stopPropagation();
 
-							if ( subfieldConfig.htmlAttr?.name && isRepeatable ) {
-								subfieldConfig.htmlAttr.name = `${ subfieldConfig.htmlAttr.name }[${ index }]`;
-							}
+														// eslint-disable-next-line no-alert
+														const confirmation = confirm(
+															// eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
+															__( 'Are you sure you want to delete this value?', 'pods' )
+														);
 
-							if ( subfieldConfig.htmlAttr?.id && isRepeatable ) {
-								subfieldConfig.htmlAttr.id = `${ subfieldConfig.htmlAttr.id }-${ index }`;
-							}
+														if ( confirmation ) {
+															deleteValueAtIndex( index );
+														}
+													} }
+													icon={ trash }
+													label={ __( 'Delete', 'pods' ) }
+													showTooltip
+													isSecondary
+													isDestructive
+												/>
 
-							return (
-								<SubfieldWrapper
-									fieldConfig={ processedFieldConfig }
-									FieldComponent={ FieldComponent }
-									isRepeatable={ isRepeatable }
-									index={ index }
-									value={ valueItem }
-									podType={ podType }
-									podName={ podName }
-									allPodValues={ passAllPodValues ? allPodValues : undefined }
-									allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
-									validationMessages={ validationMessages }
-									addValidationRules={ addValidationRules }
-									setValue={ isRepeatable ? setRepeatableValue( index ) : setSingleValue }
-									setHasBlurred={ setHasBlurred }
-									startControls={ ( isRepeatable && valuesArray.length > 1 ) ? (
-										<Button
-											onClick={ () => {} }
-											icon={ dragHandle }
-											label={ __( 'Drag to reorder', 'pods' ) }
-											showTooltip
-											isSecondary
-										/>
-									) : null }
-									endControls={ ( isRepeatable && valuesArray.length > 1 ) ? (
-										<>
-											<Button
-												onClick={ () => deleteValueAtIndex( index ) }
-												icon={ trash }
-												label={ __( 'Delete', 'pods' ) }
-												showTooltip
-												isSecondary
-												isDestructive
-											/>
+												<Button
+													disabled={ index === 0 }
+													onClick={ () => swapValues( index, index - 1 ) }
+													icon={ chevronUp }
+													label={ __( 'Move up', 'pods' ) }
+													showTooltip
+													isSecondary
+												/>
 
-											<Button
-												disabled={ index === 0 }
-												onClick={ () => swapValues( index, index - 1 ) }
-												icon={ chevronUp }
-												label={ __( 'Move up', 'pods' ) }
-												showTooltip
-												isSecondary
-											/>
-
-											<Button
-												disabled={ index === ( valuesArray.length - 1 ) }
-												onClick={ () => swapValues( index, index + 1 ) }
-												icon={ chevronDown }
-												label={ __( 'Move down', 'pods' ) }
-												showTooltip
-												isSecondary
-											/>
-										</>
-									) : null }
-									key={ `${ field.name }-${ index }` }
-								/>
-							);
-						} ) }
-					</>
+												<Button
+													disabled={ index === ( valuesArray.length - 1 ) }
+													onClick={ () => swapValues( index, index + 1 ) }
+													icon={ chevronDown }
+													label={ __( 'Move down', 'pods' ) }
+													showTooltip
+													isSecondary
+												/>
+											</>
+										) : null }
+										key={ `${ field.name }-${ index }` }
+									/>
+								);
+							} ) }
+						</SortableContext>
+					</DndContext>
 				) }
 
 				{ isRepeatable ? (

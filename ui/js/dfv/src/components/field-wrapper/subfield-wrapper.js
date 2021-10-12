@@ -3,10 +3,15 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 /**
- * Pods components
+ * WordPress dependencies
  */
+import { __ } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
+import { dragHandle } from '@wordpress/icons';
 
 /**
  * Other Pods dependencies
@@ -16,7 +21,7 @@ import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 const SubfieldWrapper = ( {
 	fieldConfig,
 	FieldComponent,
-	startControls,
+	isDraggable,
 	endControls,
 	isRepeatable,
 	value,
@@ -48,11 +53,40 @@ const SubfieldWrapper = ( {
 		subfieldConfig.htmlAttr.id = `${ subfieldConfig.htmlAttr.id }-${ index }`;
 	}
 
+	// Set up useSortable hook
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		// isDragging,
+	} = useSortable( {
+		id: index.toString(),
+		disabled: ! isDraggable,
+	} );
+
+	const style = {
+		transform: CSS.Translate.toString( transform ),
+		transition,
+	};
+
 	return (
-		<div className="pods-field-wrapper__item">
-			{ startControls ? (
+		<div
+			className="pods-field-wrapper__item"
+			ref={ setNodeRef }
+			style={ style }
+		>
+			{ isDraggable ? (
 				<div className="pods-field-wrapper__controls pods-field-wrapper__controls--start">
-					{ startControls }
+					<Button
+						icon={ dragHandle }
+						label={ __( 'Drag to reorder', 'pods' ) }
+						showTooltip
+						isSecondary
+						{ ...listeners }
+						{ ...attributes }
+					/>
 				</div>
 			) : null }
 
@@ -94,9 +128,14 @@ SubfieldWrapper.propTypes = {
 	FieldComponent: PropTypes.elementType.isRequired,
 
 	/**
+	 * Enable the draggable handle.
+	 */
+	isDraggable: PropTypes.bool.isRequired,
+
+	/**
 	 * Additional controls to add.
 	 */
-	controls: PropTypes.element,
+	endControls: PropTypes.element,
 
 	/**
 	 * True if part of a Repeatable field.

@@ -23,11 +23,6 @@ const isFieldRepeatable = ( fieldConfig ) => {
 		'currency',
 		'oembed',
 		'color',
-		'slug',
-		// Later these will be supported:
-		// 'pick',
-		// 'file',
-		// 'avatar'
 	];
 
 	if ( ! supportedRepeatableTypes.includes( type ) ) {

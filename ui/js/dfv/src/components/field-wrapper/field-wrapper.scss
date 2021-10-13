@@ -1,7 +1,31 @@
+$color--grey: #82878c;
+
+.pods-field-wrapper__repeatable-field-table {
+	margin-bottom: 10px;
+}
+
 .pods-field-wrapper__item {
 	display: flex;
 	flex-flow: row nowrap;
 	margin-bottom: 1em;
+}
+
+.pods-field-wrapper__repeatable {
+	align-items: center;
+	background: #f9f9f9;
+	border: 1px solid $color--grey;
+	margin-bottom: 0;
+	padding: 10px;
+	position: relative;
+	top: -1px;
+
+	&:first-child {
+		top: 0;
+	}
+
+	.components-button {
+		background: white;
+	}
 }
 
 .pods-field-wrapper__controls {
@@ -10,9 +34,6 @@
 
 .pods-field-wrapper__field {
 	flex: 1 1 auto;
-}
-
-.pods-field-wrapper__controls {
 }
 
 .pods-field-wrapper__controls--start {

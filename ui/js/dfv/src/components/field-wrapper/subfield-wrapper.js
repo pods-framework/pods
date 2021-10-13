@@ -24,7 +24,6 @@ const SubfieldWrapper = ( {
 	FieldComponent,
 	isDraggable,
 	endControls,
-	isRepeatable,
 	value,
 	podType,
 	podName,
@@ -40,17 +39,17 @@ const SubfieldWrapper = ( {
 	// for repeatable fields, so that each value gets saved.
 	const subfieldConfig = {
 		...fieldConfig,
-		name: isRepeatable ? `${ fieldConfig.name }[${ index }]` : fieldConfig.name,
+		name: `${ fieldConfig.name }[${ index }]`,
 		htmlAttr: {
 			...( fieldConfig.htmlAttr || {} ),
 		},
 	};
 
-	if ( subfieldConfig.htmlAttr?.name && isRepeatable ) {
+	if ( subfieldConfig.htmlAttr?.name ) {
 		subfieldConfig.htmlAttr.name = `${ subfieldConfig.htmlAttr.name }[${ index }]`;
 	}
 
-	if ( subfieldConfig.htmlAttr?.id && isRepeatable ) {
+	if ( subfieldConfig.htmlAttr?.id ) {
 		subfieldConfig.htmlAttr.id = `${ subfieldConfig.htmlAttr.id }-${ index }`;
 	}
 
@@ -74,7 +73,7 @@ const SubfieldWrapper = ( {
 
 	return (
 		<div
-			className="pods-field-wrapper__item"
+			className="pods-field-wrapper__item pods-field-wrapper__repeatable"
 			ref={ setNodeRef }
 			style={ style }
 		>
@@ -138,11 +137,6 @@ SubfieldWrapper.propTypes = {
 	 * Additional controls to add.
 	 */
 	endControls: PropTypes.element,
-
-	/**
-	 * True if part of a Repeatable field.
-	 */
-	isRepeatable: PropTypes.bool.isRequired,
 
 	/**
 	 * Field value.

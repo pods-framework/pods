@@ -4,46 +4,17 @@
 import React, { useRef, useState } from 'react';
 import { isEqual, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-import {
-	DndContext,
-	closestCenter,
-	KeyboardSensor,
-	PointerSensor,
-	useSensor,
-	useSensors,
-} from '@dnd-kit/core';
-import {
-	restrictToParentElement,
-	restrictToVerticalAxis,
-} from '@dnd-kit/modifiers';
-import {
-	arrayMove,
-	SortableContext,
-	sortableKeyboardCoordinates,
-	verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
 
 /**
  * WordPress dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
-import {
-	Button,
-	ToolbarGroup,
-	ToolbarButton,
-} from '@wordpress/components';
-import {
-	chevronUp,
-	chevronDown,
-	close,
-} from '@wordpress/icons';
 
 /**
  * Pods components
  */
 import FieldErrorBoundary from 'dfv/src/components/field-wrapper/field-error-boundary';
 import DivFieldLayout from 'dfv/src/components/field-wrapper/div-field-layout';
-import SubfieldWrapper from 'dfv/src/components/field-wrapper/subfield-wrapper';
 
 import FieldDescription from 'dfv/src/components/field-description';
 import FieldLabel from 'dfv/src/components/field-label';
@@ -64,6 +35,7 @@ import FIELD_MAP from 'dfv/src/fields/field-map';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './field-wrapper.scss';
+import RepeatableFieldList from './repeatable-field-list';
 
 export const FieldWrapper = ( props ) => {
 	const {
@@ -143,80 +115,7 @@ export const FieldWrapper = ( props ) => {
 	// State
 	const [ hasBlurred, setHasBlurred ] = useState( false );
 
-	// Helper functions for setting, moving, adding, and deleting the value
-	// or subvalues.
-	const setSingleValue = ( newValue ) => setOptionValue( name, newValue );
-
-	const setRepeatableValue = ( index ) => ( newValue ) => {
-		const newValues = [ ...valuesArray ];
-		newValues[ index ] = newValue;
-
-		setOptionValue( name, newValues );
-	};
-
-	const deleteValueAtIndex = ( index ) => {
-		// @todo confirmation
-
-		const newValues = [
-			...( valuesArray || [] ).slice( 0, index ),
-			...( valuesArray || [] ).slice( index + 1 ),
-		];
-
-		setOptionValue( name, newValues );
-	};
-
-	const addValue = () => {
-		const newValues = [
-			...valuesArray,
-			// @todo does an empty string always work?
-			'',
-		];
-
-		setOptionValue( name, newValues );
-	};
-
-	const swapValues = ( firstIndex, secondIndex ) => {
-		if (
-			typeof valuesArray?.[ firstIndex ] === 'undefined' ||
-			typeof valuesArray?.[ secondIndex ] === 'undefined'
-		) {
-			return;
-		}
-
-		const newValues = [ ...valuesArray ];
-		const tempValue = newValues[ secondIndex ];
-
-		newValues[ secondIndex ] = newValues[ firstIndex ];
-		newValues[ firstIndex ] = tempValue;
-
-		setOptionValue( name, newValues );
-	};
-
-	// Set up drag-and-drop
-	const sensors = useSensors(
-		useSensor( PointerSensor ),
-		useSensor( KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
-		} ),
-	);
-
-	const handleDragEnd = ( event ) => {
-		const { active, over } = event;
-
-		if ( ! over?.id || active.id === over.id ) {
-			return;
-		}
-
-		const oldIndex = parseInt( active.id, 10 );
-		const newIndex = parseInt( over.id, 10 );
-
-		setOptionValue(
-			name,
-			arrayMove( valuesArray, oldIndex, newIndex )
-		);
-
-		setHasBlurred( true );
-	};
+	const setValue = ( newValue ) => setOptionValue( name, newValue );
 
 	// Calculate dependencies.
 	const meetsDependencies = useDependencyCheck(
@@ -262,110 +161,63 @@ export const FieldWrapper = ( props ) => {
 	const inputComponents = !! FieldComponent ? (
 		<FieldErrorBoundary>
 			<div className="pods-field-wrapper">
-				{ isBooleanGroupField ? (
-					<div className="pods-field-wrapper__item">
-						<FieldComponent
-							values={ values }
-							podName={ podName }
-							podType={ podType }
-							allPodValues={ passAllPodValues ? allPodValues : undefined }
-							allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
-							setOptionValue={ setOptionValue }
-							isValid={ !! validationMessages.length }
-							addValidationRules={ addValidationRules }
-							setHasBlurred={ () => setHasBlurred( true ) }
-							fieldConfig={ field }
-						/>
-					</div>
-				) : (
-					<DndContext
-						sensors={ sensors }
-						collisionDetection={ closestCenter }
-						onDragEnd={ handleDragEnd }
-						modifiers={ [
-							restrictToParentElement,
-							restrictToVerticalAxis,
-						] }
-					>
-						<SortableContext
-							items={ valuesArray.map( ( valueItem, index ) => index.toString() ) }
-							strategy={ verticalListSortingStrategy }
-						>
-							{ valuesArray.map( ( valueItem, index ) => {
-								return (
-									<SubfieldWrapper
-										fieldConfig={ processedFieldConfig }
-										FieldComponent={ FieldComponent }
-										isRepeatable={ isRepeatable }
-										index={ index }
-										value={ valueItem }
-										podType={ podType }
-										podName={ podName }
-										allPodValues={ passAllPodValues ? allPodValues : undefined }
-										allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
-										validationMessages={ validationMessages }
-										addValidationRules={ addValidationRules }
-										setValue={ isRepeatable ? setRepeatableValue( index ) : setSingleValue }
-										setHasBlurred={ setHasBlurred }
-										isDraggable={ ( isRepeatable && valuesArray.length > 1 ) }
-										endControls={ ( isRepeatable && valuesArray.length > 1 ) ? (
-											<>
-												<ToolbarGroup className="pods-field-wrapper__movers">
-													<ToolbarButton
-														disabled={ index === 0 }
-														onClick={ () => swapValues( index, index - 1 ) }
-														icon={ chevronUp }
-														label={ __( 'Move up', 'pods' ) }
-														showTooltip
-														className="pods-field-wrapper__mover"
-													/>
+				{ ( () => {
+					if ( true === isBooleanGroupField ) {
+						return (
+							<div className="pods-field-wrapper__item">
+								<FieldComponent
+									values={ values }
+									podName={ podName }
+									podType={ podType }
+									allPodValues={ passAllPodValues ? allPodValues : undefined }
+									allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
+									setOptionValue={ setOptionValue }
+									isValid={ !! validationMessages.length }
+									addValidationRules={ addValidationRules }
+									setHasBlurred={ () => setHasBlurred( true ) }
+									fieldConfig={ field }
+								/>
+							</div>
+						);
+					}
 
-													<ToolbarButton
-														disabled={ index === ( valuesArray.length - 1 ) }
-														onClick={ () => swapValues( index, index + 1 ) }
-														icon={ chevronDown }
-														label={ __( 'Move down', 'pods' ) }
-														showTooltip
-														className="pods-field-wrapper__mover"
-													/>
-												</ToolbarGroup>
+					if ( true === isRepeatable ) {
+						return (
+							<RepeatableFieldList
+								fieldConfig={ processedFieldConfig }
+								valuesArray={ valuesArray }
+								FieldComponent={ FieldComponent }
+								podType={ podType }
+								podName={ podName }
+								allPodValues={ passAllPodValues ? allPodValues : undefined }
+								allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
+								validationMessages={ validationMessages }
+								addValidationRules={ addValidationRules }
+								setFullValue={ setValue }
+								setHasBlurred={ () => setHasBlurred( true ) }
+							/>
+						);
+					}
 
-												<ToolbarButton
-													onClick={ ( event ) => {
-														event.stopPropagation();
-
-														// eslint-disable-next-line no-alert
-														const confirmation = confirm(
-															// eslint-disable-next-line @wordpress/i18n-no-collapsible-whitespace
-															__( 'Are you sure you want to delete this value?', 'pods' )
-														);
-
-														if ( confirmation ) {
-															deleteValueAtIndex( index );
-														}
-													} }
-													icon={ close }
-													label={ __( 'Delete', 'pods' ) }
-													showTooltip
-												/>
-											</>
-										) : null }
-										key={ `${ field.name }-${ index }` }
-									/>
-								);
-							} ) }
-						</SortableContext>
-					</DndContext>
-				) }
-
-				{ isRepeatable ? (
-					<Button
-						onClick={ addValue }
-						isSecondary
-					>
-						Add
-					</Button>
-				) : null }
+					return (
+						<div className="pods-field-wrapper__item">
+							<FieldComponent
+								value={ value }
+								// Only the Boolean Group fields need allPodValues and allPodFieldsMap,
+								// because the subfields need to reference these.
+								podName={ podName }
+								podType={ podType }
+								allPodValues={ allPodValues }
+								allPodFieldsMap={ allPodFieldsMap }
+								setValue={ setValue }
+								isValid={ !! validationMessages.length }
+								addValidationRules={ addValidationRules }
+								setHasBlurred={ () => setHasBlurred( true ) }
+								fieldConfig={ processedFieldConfig }
+							/>
+						</div>
+					);
+				} )() }
 			</div>
 		</FieldErrorBoundary>
 	) : (

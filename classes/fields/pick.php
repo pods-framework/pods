@@ -696,7 +696,16 @@ class PodsField_Pick extends PodsField {
 			}
 		}
 
-		return $new_data_loaded;
+		if ( $new_data_loaded ) {
+			/**
+			 * Allow hooking in when new data has been loaded.
+			 *
+			 * @since 2.8.0
+			 */
+			do_action( 'pods_form_ui_field_pick_related_objects_new_data_loaded' );
+		}
+
+		return true;
 
 	}
 

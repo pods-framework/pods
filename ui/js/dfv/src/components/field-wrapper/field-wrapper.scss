@@ -13,20 +13,6 @@
 }
 
 .pods-field-wrapper__controls {
-	display: flex;
-    flex-flow: row nowrap;
-
-	button {
-		margin: 0 0.5em;
-
-		&:first-child {
-			margin-left: 0;
-		}
-
-		&:last-child {
-			margin-right: 0;
-		}
-	}
 }
 
 .pods-field-wrapper__controls--start {
@@ -35,4 +21,18 @@
 
 .pods-field-wrapper__controls--end {
 	padding-left: 1em;
+}
+
+.pods-field-wrapper__drag-handle {
+	cursor: grab;
+}
+
+.pods-field-wrapper__movers {
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: center;
+}
+
+.components-accessible-toolbar .components-button.pods-field-wrapper__mover {
+	height: 20px;
 }

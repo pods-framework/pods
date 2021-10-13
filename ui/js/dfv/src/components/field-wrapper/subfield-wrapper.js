@@ -10,7 +10,13 @@ import { CSS } from '@dnd-kit/utilities';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	Toolbar,
+	ToolbarGroup,
+	ToolbarButton,
+} from '@wordpress/components';
+
 import { dragHandle } from '@wordpress/icons';
 
 /**
@@ -79,14 +85,21 @@ const SubfieldWrapper = ( {
 		>
 			{ isDraggable ? (
 				<div className="pods-field-wrapper__controls pods-field-wrapper__controls--start">
-					<Button
-						icon={ dragHandle }
-						label={ __( 'Drag to reorder', 'pods' ) }
-						showTooltip
-						isSecondary
-						{ ...listeners }
-						{ ...attributes }
-					/>
+					<Toolbar label="Repeatable field">
+						<ToolbarButton
+							icon={ dragHandle }
+							label={ __( 'Drag to reorder', 'pods' ) }
+							showTooltip
+							// Should not be able to tab to drag handle as this
+							// button can only be used with a pointer device.
+							tabIndex="-1"
+							className="pods-field-wrapper__drag-handle"
+							{ ...listeners }
+							{ ...attributes }
+						/>
+
+						{ endControls ? endControls : null }
+					</Toolbar>
 				</div>
 			) : null }
 
@@ -106,12 +119,6 @@ const SubfieldWrapper = ( {
 					fieldConfig={ subfieldConfig }
 				/>
 			</div>
-
-			{ endControls ? (
-				<div className="pods-field-wrapper__controls pods-field-wrapper__controls--end">
-					{ endControls }
-				</div>
-			) : null }
 		</div>
 	);
 };

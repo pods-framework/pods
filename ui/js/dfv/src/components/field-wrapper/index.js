@@ -27,11 +27,16 @@ import {
  * WordPress dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	Toolbar,
+	ToolbarGroup,
+	ToolbarButton,
+} from '@wordpress/components';
 import {
 	chevronUp,
 	chevronDown,
-	trash,
+	close,
 } from '@wordpress/icons';
 
 /**
@@ -306,7 +311,27 @@ export const FieldWrapper = ( props ) => {
 										isDraggable={ ( isRepeatable && valuesArray.length > 1 ) }
 										endControls={ ( isRepeatable && valuesArray.length > 1 ) ? (
 											<>
-												<Button
+												<ToolbarGroup className="pods-field-wrapper__movers">
+													<ToolbarButton
+														disabled={ index === 0 }
+														onClick={ () => swapValues( index, index - 1 ) }
+														icon={ chevronUp }
+														label={ __( 'Move up', 'pods' ) }
+														showTooltip
+														className="pods-field-wrapper__mover"
+													/>
+
+													<ToolbarButton
+														disabled={ index === ( valuesArray.length - 1 ) }
+														onClick={ () => swapValues( index, index + 1 ) }
+														icon={ chevronDown }
+														label={ __( 'Move down', 'pods' ) }
+														showTooltip
+														className="pods-field-wrapper__mover"
+													/>
+												</ToolbarGroup>
+
+												<ToolbarButton
 													onClick={ ( event ) => {
 														event.stopPropagation();
 
@@ -320,29 +345,9 @@ export const FieldWrapper = ( props ) => {
 															deleteValueAtIndex( index );
 														}
 													} }
-													icon={ trash }
+													icon={ close }
 													label={ __( 'Delete', 'pods' ) }
 													showTooltip
-													isSecondary
-													isDestructive
-												/>
-
-												<Button
-													disabled={ index === 0 }
-													onClick={ () => swapValues( index, index - 1 ) }
-													icon={ chevronUp }
-													label={ __( 'Move up', 'pods' ) }
-													showTooltip
-													isSecondary
-												/>
-
-												<Button
-													disabled={ index === ( valuesArray.length - 1 ) }
-													onClick={ () => swapValues( index, index + 1 ) }
-													icon={ chevronDown }
-													label={ __( 'Move down', 'pods' ) }
-													showTooltip
-													isSecondary
 												/>
 											</>
 										) : null }

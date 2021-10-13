@@ -29,7 +29,6 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	Button,
-	Toolbar,
 	ToolbarGroup,
 	ToolbarButton,
 } from '@wordpress/components';
@@ -234,7 +233,7 @@ export const FieldWrapper = ( props ) => {
 	const [ validationMessages, addValidationRules ] = useValidation(
 		[
 			{
-				rule: requiredValidator( label ),
+				rule: requiredValidator( label, isRepeatable ),
 				condition: () => true === toBool( required ),
 			},
 		],

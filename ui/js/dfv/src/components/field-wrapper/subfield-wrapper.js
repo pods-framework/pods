@@ -10,12 +10,7 @@ import { CSS } from '@dnd-kit/utilities';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import {
-	Button,
-	Toolbar,
-	ToolbarGroup,
-	ToolbarButton,
-} from '@wordpress/components';
+import { Toolbar, ToolbarButton } from '@wordpress/components';
 
 import { dragHandle } from '@wordpress/icons';
 

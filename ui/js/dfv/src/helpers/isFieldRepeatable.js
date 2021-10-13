@@ -34,8 +34,6 @@ const isFieldRepeatable = ( fieldConfig ) => {
 		return false;
 	}
 
-	console.log( 'isFieldRepeatable', fieldConfig.name, )
-
 	return toBool( fieldConfig?.[ `${type}_repeatable` ] || false );
 };
 

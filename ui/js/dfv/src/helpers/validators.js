@@ -7,13 +7,19 @@ import {
 	getDecimalSeparatorFromPodsFormat,
 } from 'dfv/src/helpers/formatNumberWithPodsFormat';
 
-export const requiredValidator = ( fieldLabel ) => ( value ) => {
-	if ( ! value ) {
-		// translators: %s is the Field label of the required field.
-		throw sprintf( __( '%s is required.', 'pods' ), fieldLabel );
+export const requiredValidator = ( fieldLabel, isRepeatable ) => ( value ) => {
+	// Convert all values into an array.
+	const valuesArray = ( isRepeatable && Array.isArray( value ) )
+		? value
+		: [ value ];
+
+	// If any item in the array is valid, the field is valid.
+	if ( valuesArray.some( ( valueItem ) => !! valueItem ) ) {
+		return true;
 	}
 
-	return true;
+	// translators: %s is the Field label of the required field.
+	throw sprintf( __( '%s is required.', 'pods' ), fieldLabel );
 };
 
 export const maxValidator = ( maxValue ) => ( value ) => {

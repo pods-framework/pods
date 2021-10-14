@@ -3730,4 +3730,3 @@ class PodsField_Pick extends PodsField {
 	}
 
 }
-'

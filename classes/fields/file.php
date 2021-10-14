@@ -94,7 +94,7 @@ class PodsField_File extends PodsField {
 				'dependency' => true,
 			),
 			static::$type . '_attachment_tab'         => array(
-				'label'      => __( 'Attachments Default Tab', 'pods' ),
+				'label'      => __( 'Media Library Default Tab', 'pods' ),
 				'depends-on' => array( static::$type . '_uploader' => 'attachment' ),
 				'default'    => 'upload',
 				'type'       => 'pick',
@@ -106,11 +106,11 @@ class PodsField_File extends PodsField {
 				'pick_show_select_text' => 0,
 			),
 			static::$type . '_upload_dir'             => array(
-				'label'      => __( 'Upload directory', 'pods' ),
+				'label'      => __( 'Upload Directory', 'pods' ),
 				'default'    => 'wp',
 				'type'       => 'pick',
 				'data'       => array(
-					'wp'      => __( 'WordPress Default', 'pods' ) . ' (/yyyy/mm/)',
+					'wp'      => __( 'WordPress Default', 'pods' ) . ' (/wp-content/uploads/yyyy/mm/)',
 					'uploads' => __( 'Custom directory within the default uploads directory', 'pods' ),
 				),
 				'pick_show_select_text' => 0,
@@ -118,7 +118,7 @@ class PodsField_File extends PodsField {
 				'dependency' => true,
 			),
 			static::$type . '_upload_dir_custom'     => array(
-				'label'       => __( 'Custom upload directory', 'pods' ),
+				'label'       => __( 'Custom Upload Directory', 'pods' ),
 				'help'        => __( 'Magic tags are allowed for this field. The path is relative to the /wp-content/uploads/ folder on your site.', 'pods' ),
 				'placeholder' => 'my-custom-folder',
 				'depends-on'  => array(
@@ -160,7 +160,8 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'Restrict File Size', 'pods' ),
 				'help'       => __( 'Valid size suffixes are: GB (gigabytes), MB (megabytes), KB (kilobytes), or B (bytes).  Defaults to the <a href="https://developer.wordpress.org/reference/functions/wp_max_upload_size/">wp_max_upload_size</a> setting.', 'pods' ),
 				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
-				'default'    => '10MB',
+				'default'    => '',
+				'text_placeholder' => '10MB',
 				'type'       => 'text',
 			),
 			static::$type . '_type'                   => array(
@@ -186,6 +187,7 @@ class PodsField_File extends PodsField {
 				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
 				'depends-on'  => array( static::$type . '_type' => 'other' ),
 				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
+				'text_placeholder' => 'jpg,png,mp4,mov',
 				'type'        => 'text',
 			),
 			static::$type . '_field_template'         => array(
@@ -230,7 +232,7 @@ class PodsField_File extends PodsField {
 				'type'       => 'boolean',
 			),
 			static::$type . '_wp_gallery_link'        => array(
-				'label'      => __( 'Gallery image links', 'pods' ),
+				'label'      => __( 'Gallery Image Links', 'pods' ),
 				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => array(
@@ -241,7 +243,7 @@ class PodsField_File extends PodsField {
 				'pick_show_select_text' => 0,
 			),
 			static::$type . '_wp_gallery_columns'     => array(
-				'label'      => __( 'Gallery image columns', 'pods' ),
+				'label'      => __( 'Gallery Image Columns', 'pods' ),
 				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => array(
@@ -258,12 +260,12 @@ class PodsField_File extends PodsField {
 				'pick_show_select_text' => 0,
 			),
 			static::$type . '_wp_gallery_random_sort' => array(
-				'label'      => __( 'Gallery randomized order', 'pods' ),
+				'label'      => __( 'Gallery Randomized Order', 'pods' ),
 				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'boolean',
 			),
 			static::$type . '_wp_gallery_size'        => array(
-				'label'      => __( 'Gallery image size', 'pods' ),
+				'label'      => __( 'Gallery Image Size', 'pods' ),
 				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => $this->data_image_sizes(),

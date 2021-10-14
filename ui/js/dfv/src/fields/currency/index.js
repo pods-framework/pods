@@ -88,9 +88,9 @@ const Currency = ( {
 					readOnly={ !! readOnly }
 					onChange={ handleChange }
 					onBlur={ handleBlur }
-					min={ min }
-					max={ max }
-					step={ step }
+					min={ parseInt( min, 10 ) || undefined }
+					max={ parseInt( max, 10 ) || undefined }
+					step={ parseFloat( step ) || undefined }
 				/>
 
 				<div className="pods-slider-field-display">
@@ -113,6 +113,8 @@ const Currency = ( {
 				className={ classnames( 'pods-currency-input', htmlAttributes.class ) }
 				placeholder={ placeholder }
 				step={ html5 ? 'any' : undefined }
+				min={ html5 ? ( parseInt( min, 10 ) || undefined ) : undefined }
+				max={ html5 ? ( parseInt( max, 10 ) || undefined ) : undefined }
 				value={ formattedValue }
 				readOnly={ !! readOnly }
 				onChange={ handleChange }

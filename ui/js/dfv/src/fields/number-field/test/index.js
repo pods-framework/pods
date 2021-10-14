@@ -76,6 +76,35 @@ describe( 'Number field component', () => {
 
 		expect( input.props().type ).toEqual( 'number' );
 		expect( input.props().placeholder ).toEqual( 'Number Field' );
+		expect( input.props().max ).toBeUndefined();
+		expect( input.props().min ).toBeUndefined();
+		expect( input.props().step ).toEqual( 'any' );
+	} );
+
+	it( 'applies the relevant attributes to the number input field with min max', () => {
+		const props = {
+			...BASE_PROPS,
+			fieldConfig: {
+				...BASE_PROPS.fieldConfig,
+				number_decimals: '2',
+				number_format: '9.999,99',
+				number_format_soft: '0',
+				number_format_type: 'number',
+				number_html5: '1',
+				number_max_length: '5',
+				number_placeholder: 'Number Field',
+				number_max: '1000',
+				number_min: '-1000',
+			},
+		};
+
+		const wrapper = mount( <NumberField { ...props } /> );
+		const input = wrapper.find( 'input' );
+
+		expect( input.props().type ).toEqual( 'number' );
+		expect( input.props().placeholder ).toEqual( 'Number Field' );
+		expect( input.props().max ).toEqual( 1000 );
+		expect( input.props().min ).toEqual( -1000 );
 		expect( input.props().step ).toEqual( 'any' );
 	} );
 

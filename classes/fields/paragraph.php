@@ -75,7 +75,7 @@ class PodsField_Paragraph extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Embed videos, images, tweets, and other content.', 'pods' ),
-							'http://codex.wordpress.org/Embeds',
+							'https://wordpress.org/support/article/embeds/',
 						),
 					),
 					static::$type . '_wptexturize'     => array(
@@ -84,7 +84,7 @@ class PodsField_Paragraph extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Transforms less-beautiful text characters into stylized equivalents.', 'pods' ),
-							'http://codex.wordpress.org/Function_Reference/wptexturize',
+							'https://developer.wordpress.org/reference/functions/wptexturize/',
 						),
 					),
 					static::$type . '_convert_chars'   => array(
@@ -93,7 +93,7 @@ class PodsField_Paragraph extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Converts text into valid XHTML and Unicode', 'pods' ),
-							'http://codex.wordpress.org/Function_Reference/convert_chars',
+							'https://developer.wordpress.org/reference/functions/convert_chars/',
 						),
 					),
 					static::$type . '_wpautop'         => array(
@@ -102,7 +102,7 @@ class PodsField_Paragraph extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Changes double line-breaks in the text into HTML paragraphs', 'pods' ),
-							'http://codex.wordpress.org/Function_Reference/wpautop',
+							'https://developer.wordpress.org/reference/functions/wpautop/',
 						),
 					),
 					static::$type . '_allow_shortcode' => array(
@@ -112,7 +112,7 @@ class PodsField_Paragraph extends PodsField {
 						'dependency' => true,
 						'help'       => array(
 							__( 'Embed [shortcodes] that help transform your static content into dynamic content.', 'pods' ),
-							'http://codex.wordpress.org/Shortcode_API',
+							'https://codex.wordpress.org/Shortcode_API',
 						),
 					),
 				),
@@ -126,7 +126,7 @@ class PodsField_Paragraph extends PodsField {
 			),
 			static::$type . '_max_length'        => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
-				'default' => 0,
+				'default' => -1,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),

@@ -1028,12 +1028,12 @@ function pods_shortcode_run( $tags, $content = null ) {
 		 *
 		 * @since 2.7.9
 		 *
-		 * @param string $return  Shortcode output to return.
-		 * @param array  $tags    Shortcode attributes.
-		 * @param Pods   $pod     Pods object.
-		 * @param string $context The shortcode context (form, field, pods-page, view, or list).
+		 * @param string    $return  Shortcode output to return.
+		 * @param array     $tags    Shortcode attributes.
+		 * @param null|Pods $pod     Pods object, or null if 'view' context.
+		 * @param string    $context The shortcode context (form, field, pods-page, view, or list).
 		 */
-		return apply_filters( 'pods_shortcode_output', $return, $tags, $pod, 'view' );
+		return apply_filters( 'pods_shortcode_output', $return, $tags, null, 'view' );
 	}
 
 	$blog_is_switched = false;
@@ -1292,10 +1292,10 @@ function pods_shortcode_run( $tags, $content = null ) {
 		 *
 		 * @since 2.7.9
 		 *
-		 * @param string $return  Shortcode output to return.
-		 * @param array  $tags    Shortcode attributes.
-		 * @param Pods   $pod     Pods object.
-		 * @param string $context The shortcode context (form, field, pods-page, view, or list).
+		 * @param string    $return  Shortcode output to return.
+		 * @param array     $tags    Shortcode attributes.
+		 * @param null|Pods $pod     Pods object, or null if 'view' context.
+		 * @param string    $context The shortcode context (form, field, pods-page, view, or list).
 		 */
 		return apply_filters( 'pods_shortcode_output', $return, $tags, $pod, 'form' );
 	}
@@ -1330,10 +1330,10 @@ function pods_shortcode_run( $tags, $content = null ) {
 		 *
 		 * @since 2.7.9
 		 *
-		 * @param string $return  Shortcode output to return.
-		 * @param array  $tags    Shortcode attributes.
-		 * @param Pods   $pod     Pods object.
-		 * @param string $context The shortcode context (form, field, pods-page, or list).
+		 * @param string    $return  Shortcode output to return.
+		 * @param array     $tags    Shortcode attributes.
+		 * @param null|Pods $pod     Pods object, or null if 'view' context.
+		 * @param string    $context The shortcode context (form, field, pods-page, view, or list).
 		 */
 		return apply_filters( 'pods_shortcode_output', $return, $tags, $pod, 'field' );
 	}
@@ -1366,10 +1366,10 @@ function pods_shortcode_run( $tags, $content = null ) {
 		 *
 		 * @since 2.7.9
 		 *
-		 * @param string $return  Shortcode output to return.
-		 * @param array  $tags    Shortcode attributes.
-		 * @param Pods   $pod     Pods object.
-		 * @param string $context The shortcode context (form, field, pods-page, or list).
+		 * @param string    $return  Shortcode output to return.
+		 * @param array     $tags    Shortcode attributes.
+		 * @param null|Pods $pod     Pods object, or null if 'view' context.
+		 * @param string    $context The shortcode context (form, field, pods-page, view, or list).
 		 */
 		return apply_filters( 'pods_shortcode_output', $return, $tags, $pod, 'pods-page' );
 	}//end if
@@ -1446,10 +1446,10 @@ function pods_shortcode_run( $tags, $content = null ) {
 	 *
 	 * @since 2.7.9
 	 *
-	 * @param string $return  Shortcode output to return.
-	 * @param array  $tags    Shortcode attributes.
-	 * @param Pods   $pod     Pods object.
-	 * @param string $context The shortcode context (form, field, pods-page, or list).
+	 * @param string    $return  Shortcode output to return.
+	 * @param array     $tags    Shortcode attributes.
+	 * @param null|Pods $pod     Pods object, or null if 'view' context.
+	 * @param string    $context The shortcode context (form, field, pods-page, view, or list).
 	 */
 	return apply_filters( 'pods_shortcode_output', $return, $tags, $pod, 'list' );
 }

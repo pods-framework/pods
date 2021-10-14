@@ -59,14 +59,14 @@ class PodsField_Text extends PodsField {
 						'type'       => 'boolean',
 						'dependency' => true,
 					),
-					static::$type . '_allow_shortcode' => array(
-						'label'      => __( 'Allow Shortcodes', 'pods' ),
+					static::$type . '_allow_html'      => array(
+						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
 					),
-					static::$type . '_allow_html'      => array(
-						'label'      => __( 'Allow HTML', 'pods' ),
+					static::$type . '_allow_shortcode' => array(
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,

@@ -3388,63 +3388,82 @@ class Pods implements Iterator {
 			$params = array_merge( $params, $helper );
 		}
 
-		if ( is_callable( $params['helper'] ) ) {
-			$disallowed = array(
-				'system',
-				'exec',
-				'popen',
-				'eval',
-				'preg_replace',
-				'create_function',
-				'include',
-				'include_once',
-				'require',
-				'require_once',
-			);
+		/**
+		 * Allows changing whether callbacks are allowed to run.
+		 *
+		 * @param bool  $allowed Whether callbacks are allowed to run.
+		 * @param array $params  Parameters used by Pods::helper() method.
+		 *
+		 * @since 2.8.0
+		 */
+		$allow_callbacks = (boolean) apply_filters( 'pods_helper_allow_callbacks', true, $params );
 
-			$allowed = array();
+		if ( ! $allow_callbacks ) {
+			return $value;
+		}
 
-			/**
-			 * Allows adjusting the disallowed callbacks as needed.
-			 *
-			 * @param array $disallowed List of callbacks not allowed.
-			 * @param array $params     Parameters used by Pods::helper() method.
-			 *
-			 * @since 2.7.0
-			 */
-			$disallowed = apply_filters( 'pods_helper_disallowed_callbacks', $disallowed, $params );
+		if ( ! is_callable( $params['helper'] ) ) {
+			return apply_filters( $params['helper'], $value );
+		}
 
-			/**
-			 * Allows adjusting the allowed allowed callbacks as needed.
-			 *
-			 * @param array $allowed List of callbacks explicitly allowed.
-			 * @param array $params  Parameters used by Pods::helper() method.
-			 *
-			 * @since 2.7.0
-			 */
-			$allowed = apply_filters( 'pods_helper_allowed_callbacks', $allowed, $params );
+		$disallowed = array(
+			'system',
+			'exec',
+			'popen',
+			'eval',
+			'preg_replace',
+			'preg_replace_array',
+			'preg_replace_callback',
+			'preg_replace_callback_array',
+			'preg_match',
+			'preg_match_all',
+			'create_function',
+			'include',
+			'include_once',
+			'require',
+			'require_once',
+		);
 
-			// Clean up helper callback (if string).
-			if ( is_string( $params['helper'] ) ) {
-				$params['helper'] = strip_tags( str_replace( array( '`', chr( 96 ) ), "'", $params['helper'] ) );
-			}
+		$allowed = array();
 
-			$is_allowed = false;
+		/**
+		 * Allows adjusting the disallowed callbacks as needed.
+		 *
+		 * @param array $disallowed List of callbacks not allowed.
+		 * @param array $params     Parameters used by Pods::helper() method.
+		 *
+		 * @since 2.7.0
+		 */
+		$disallowed = apply_filters( 'pods_helper_disallowed_callbacks', $disallowed, $params );
 
-			if ( ! empty( $allowed ) ) {
-				if ( in_array( $params['helper'], $allowed, true ) ) {
-					$is_allowed = true;
-				}
-			} elseif ( ! in_array( $params['helper'], $disallowed, true ) ) {
+		/**
+		 * Allows adjusting the allowed callbacks as needed.
+		 *
+		 * @param array $allowed List of callbacks explicitly allowed.
+		 * @param array $params  Parameters used by Pods::helper() method.
+		 *
+		 * @since 2.7.0
+		 */
+		$allowed = apply_filters( 'pods_helper_allowed_callbacks', $allowed, $params );
+
+		// Clean up helper callback (if string).
+		if ( is_string( $params['helper'] ) ) {
+			$params['helper'] = strip_tags( str_replace( array( '`', chr( 96 ) ), "'", $params['helper'] ) );
+		}
+
+		$is_allowed = false;
+
+		if ( ! empty( $allowed ) ) {
+			if ( in_array( $params['helper'], $allowed, true ) ) {
 				$is_allowed = true;
 			}
+		} elseif ( ! in_array( $params['helper'], $disallowed, true ) ) {
+			$is_allowed = true;
+		}
 
-			if ( $is_allowed ) {
-				$value = call_user_func( $params['helper'], $value );
-			}
-		} else {
-			$value = apply_filters( $params['helper'], $value );
-		}//end if
+		if ( $is_allowed ) {
+			$value = call_user_func( $params['helper'], $value );
+		}
 
 		return $value;
 	}

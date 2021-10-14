@@ -3071,35 +3071,28 @@ class PodsData {
 	 * @since 2.0.0
 	 */
 	public function traverse_recurse( $traverse_recurse ) {
-
 		global $wpdb;
 
-		$defaults = array(
+		$defaults = [
 			'pod'             => null,
-			'fields'          => array(),
+			'fields'          => [],
 			'joined'          => 't',
 			'depth'           => 0,
 			'joined_id'       => 'id',
 			'joined_index'    => 'id',
 			'params'          => new stdClass(),
-			'last_table_info' => array(),
-		);
+			'last_table_info' => [],
+		];
 
 		$traverse_recurse = array_merge( $defaults, $traverse_recurse );
 
-		$joins = array();
+		$joins = [];
 
 		if ( 0 === $traverse_recurse['depth'] && ! empty( $traverse_recurse['pod'] ) && ! empty( $traverse_recurse ['last_table_info'] ) && isset( $traverse_recurse ['last_table_info']['id'] ) ) {
 			$pod_data = $traverse_recurse['last_table_info'];
 		} elseif ( empty( $traverse_recurse['pod'] ) ) {
-			if (
-				! empty( $traverse_recurse['params'] )
-				&& ! empty( $traverse_recurse['params']->table )
-				&& (
-					! $wpdb->prefix // Make sure there is a prefix.
-					|| 0 === strpos( $traverse_recurse['params']->table, $wpdb->prefix )
-				)
-			) {
+			if ( ! empty( $traverse_recurse['params'] ) && ! empty( $traverse_recurse['params']->table ) && ( ! $wpdb->prefix // Make sure there is a prefix.
+			                                                                                                  || 0 === strpos( $traverse_recurse['params']->table, $wpdb->prefix ) ) ) {
 				if ( $wpdb->posts === $traverse_recurse['params']->table ) {
 					$traverse_recurse['pod'] = 'post_type';
 				} elseif ( $wpdb->terms === $traverse_recurse['params']->table ) {
@@ -3112,14 +3105,12 @@ class PodsData {
 					return $joins;
 				}
 
-				$pod_data = array();
+				$pod_data = [];
 
-				if ( in_array(
-					$traverse_recurse['pod'], array(
-						'user',
-						'comment',
-					), true
-				) ) {
+				if ( in_array( $traverse_recurse['pod'], [
+					'user',
+					'comment',
+				], true ) ) {
 					$new_pod = $this->api->load_pod( [
 						'name'       => $traverse_recurse['pod'],
 						'auto_setup' => true,
@@ -3138,14 +3129,14 @@ class PodsData {
 						$default_storage = 'none';
 					}
 
-					$pod_data = array(
+					$pod_data = [
 						'id'            => 0,
 						'name'          => '_table_' . $traverse_recurse['pod'],
 						'type'          => $traverse_recurse['pod'],
 						'storage'       => $default_storage,
 						'fields'        => $this->api->get_wp_object_fields( $traverse_recurse['pod'] ),
-						'object_fields' => array(),
-					);
+						'object_fields' => [],
+					];
 
 					$pod_data['object_fields'] = $pod_data['fields'];
 
@@ -3174,7 +3165,7 @@ class PodsData {
 		$file_field_types         = PodsForm::file_field_types();
 
 		if ( ! isset( $this->traversal[ $traverse_recurse['pod'] ] ) ) {
-			$this->traversal[ $traverse_recurse['pod'] ] = array();
+			$this->traversal[ $traverse_recurse['pod'] ] = [];
 		}
 
 		if ( ( empty( $pod_data['meta_table'] ) || $pod_data['meta_table'] === $pod_data['table'] ) && ( empty( $traverse_recurse['fields'] ) || empty( $traverse_recurse['fields'][ $traverse_recurse['depth'] ] ) ) ) {
@@ -3212,53 +3203,48 @@ class PodsData {
 				$field_type = $traverse_recurse['last_table_info']['pod']['object_fields'][ $field ]['type'];
 			}
 
-			$pod_data['fields'][ $field ] = array(
+			$pod_data['fields'][ $field ] = [
 				'id'          => 0,
 				'name'        => $field,
 				'type'        => $field_type,
 				'pick_object' => $traverse_recurse['last_table_info']['pod']['type'],
 				'pick_val'    => $traverse_recurse['last_table_info']['pod']['name'],
-			);
+			];
 
 			$meta_data_table = true;
 		}//end if
 
 		$the_field = null;
 
-		if ( $pod_data instanceof Pod ) {
-			$the_field = $pod_data->get_field( $field );
-		} elseif ( ! isset( $pod_data['fields'][ $field ] ) ) {
-			// Fallback to meta table if the pod type supports it.
-			$last = end( $traverse_recurse['fields'] );
+		// Fallback to meta table if the pod type supports it.
+		$last = end( $traverse_recurse['fields'] );
 
-			if ( 'post_type' === $pod_data['type'] && isset( $pod_data['object_fields'][ $field ] ) && in_array( $pod_data['object_fields'][ $field ]['type'], $tableless_field_types, true ) ) {
-				$the_field = $pod_data['object_fields'][ $field ];
-			} elseif ( 'meta_value' === $last && in_array(
-				$pod_data['type'], array(
+		if ( $pod_data instanceof Pod ) {
+			// Maybe get the field / object field from the pod.
+			$the_field = $pod_data->get_field( $field );
+		} elseif ( isset( $pod_data['fields'][ $field ] ) ) {
+			$the_field = $pod_data['fields'][ $field ];
+		}
+
+		if ( ! $the_field ) {
+			if ( 'meta_value' === $last && in_array( $pod_data['type'], [
 					'post_type',
 					'media',
 					'taxonomy',
 					'user',
 					'comment',
-				), true
-			) ) {
-				$the_field = PodsForm::field_setup( array( 'name' => $field ) );
-			} else {
-				if ( 'post_type' === $pod_data['type'] ) {
-					$pod_data['object_fields'] = $this->api->get_wp_object_fields( 'post_type', $pod_data, true );
+				], true ) ) {
+				// Set up a faux-field and use meta table fallback.
+				$the_field = PodsForm::field_setup( [ 'name' => $field ] );
+			} elseif ( ! $pod_data instanceof Pod && 'post_type' === $pod_data['type'] ) {
+				// Maybe fallback to object field if it is tableless.
+				$pod_data['object_fields'] = $this->api->get_wp_object_fields( 'post_type', $pod_data, true );
 
-					if ( 'post_type' === $pod_data['type'] && isset( $pod_data['object_fields'][ $field ] ) && in_array( $pod_data['object_fields'][ $field ]['type'], $tableless_field_types, true ) ) {
-						$the_field = $pod_data['object_fields'][ $field ];
-					} else {
-						return $joins;
-					}
-				} else {
-					return $joins;
+				if ( isset( $pod_data['object_fields'][ $field ] ) && in_array( $pod_data['object_fields'][ $field ]['type'], $tableless_field_types, true ) ) {
+					$the_field = $pod_data['object_fields'][ $field ];
 				}
-			}//end if
-		} elseif ( isset( $pod_data['object_fields'][ $field ] ) && ! in_array( $pod_data['object_fields'][ $field ]['type'], $tableless_field_types, true ) ) {
-			return $joins;
-		}//end if
+			}
+		}
 
 		if ( null === $the_field ) {
 			return $joins;

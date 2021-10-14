@@ -10653,6 +10653,7 @@ class PodsAPI {
 					'type'        => $type,
 					'name'        => $type,
 					'label'       => __( 'User', 'pods' ),
+					'storage'     => 'meta',
 				];
 			} elseif ( 'comment' === $params['name'] ) {
 				// Detect comment.
@@ -10663,6 +10664,7 @@ class PodsAPI {
 					'type'        => $type,
 					'name'        => $type,
 					'label'       => __( 'Comment', 'pods' ),
+					'storage'     => 'meta',
 				];
 			} elseif ( 'media' === $params['name'] || 'attachment' === $params['name'] ) {
 				// Detect media.
@@ -10673,6 +10675,7 @@ class PodsAPI {
 					'type'        => $type,
 					'name'        => $type,
 					'label'       => __( 'Media', 'pods' ),
+					'storage'     => 'meta',
 				];
 			}
 
@@ -10689,6 +10692,7 @@ class PodsAPI {
 						'name'        => $post_type->name,
 						'label'       => $post_type->label,
 						'description' => $post_type->description,
+						'storage'     => 'meta',
 					];
 				}
 			}
@@ -10706,6 +10710,7 @@ class PodsAPI {
 						'name'        => $taxonomy->name,
 						'label'       => $taxonomy->label,
 						'description' => $taxonomy->description,
+						'storage'     => 'meta',
 					];
 				}
 			}

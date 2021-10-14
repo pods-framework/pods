@@ -53,9 +53,9 @@ class PodsField_Website extends PodsField {
 				'default'    => 'normal',
 				'type'       => 'pick',
 				'data'       => array(
-					'normal'            => __( 'http://example.com/', 'pods' ),
-					'no-www'            => __( 'http://example.com/ (remove www)', 'pods' ),
-					'force-www'         => __( 'http://www.example.com/ (force www if no sub-domain provided)', 'pods' ),
+					'normal'            => __( 'https://example.com/', 'pods' ),
+					'no-www'            => __( 'https://example.com/ (remove www)', 'pods' ),
+					'force-www'         => __( 'https://www.example.com/ (force www if no sub-domain provided)', 'pods' ),
 					'no-http'           => __( 'example.com', 'pods' ),
 					'no-http-no-www'    => __( 'example.com (force removal of www)', 'pods' ),
 					'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' ),

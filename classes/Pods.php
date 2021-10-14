@@ -904,24 +904,26 @@ class Pods implements Iterator {
 					}
 
 					if ( $use_meta_fallback ) {
-						$id = $this->id();
-
 						$metadata_type = $pod_type;
 
 						if ( in_array( $metadata_type, array( 'post_type', 'media' ), true ) ) {
 							$metadata_type = 'post';
-
-							// Support for WPML 'duplicated' translation handling.
-							if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_is_translated_post_type', false, $this->pod_data['name'] ) ) {
-								$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $id );
-
-								if ( $master_post_id ) {
-									$id = $master_post_id;
-								}
-							}
 						} elseif ( 'taxonomy' === $metadata_type ) {
 							$metadata_type = 'term';
 						}
+
+						/**
+						 * Modify the object ID for getting metadata.
+						 * Added for i18n integration classes.
+						 *
+						 * @since 2.8.0
+						 *
+						 * @param int    $id            The object ID.
+						 * @param string $metadata_type The object metadata type.
+						 * @param array  $params        Field params
+						 * @param \Pods  $pod           Pods object.
+						 */
+						$id = apply_filters( 'pods_pods_field_get_metadata_object_id', $this->id(), $metadata_type, $params, $this );
 
 						$value = get_metadata( $metadata_type, $id, $params->name, $params->single );
 
@@ -1475,18 +1477,12 @@ class Pods implements Iterator {
 
 											$metadata_type = $object_type;
 
-											if ( 'post' === $object_type ) {
-												// Support for WPML 'duplicated' translation handling.
-												if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_is_translated_post_type', false, $object ) ) {
-													$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $metadata_object_id );
-
-													if ( 0 < $master_post_id ) {
-														$metadata_object_id = $master_post_id;
-													}
-												}
-											} elseif ( 'taxonomy' === $object_type ) {
+											if ( 'taxonomy' === $object_type ) {
 												$metadata_type = 'term';
 											}
+
+											/** This filter is documented earlier in this method */
+											$metadata_object_id = apply_filters( 'pods_pods_field_get_metadata_object_id', $metadata_object_id, $metadata_type, $params, $this );
 
 											$meta_value = get_metadata( $metadata_type, $metadata_object_id, $field, true );
 

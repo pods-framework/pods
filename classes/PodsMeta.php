@@ -229,11 +229,7 @@ class PodsMeta {
 
 		add_action( 'init', array( $this, 'enqueue' ), 9 );
 
-		if ( function_exists( 'pll_current_language' ) ) {
-			add_action( 'init', array( $this, 'cache_pods' ), 101, 0 );
-		}
-
-		do_action( 'pods_meta_init' );
+		do_action( 'pods_meta_init', $this );
 
 		return $this;
 	}

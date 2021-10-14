@@ -55,8 +55,6 @@ const RepeatableFieldList = ( {
 	podName,
 	allPodValues,
 	allPodFieldsMap,
-	validationMessages,
-	addValidationRules,
 	setFullValue,
 	setHasBlurred,
 } ) => {
@@ -158,8 +156,6 @@ const RepeatableFieldList = ( {
 									podName={ podName }
 									allPodValues={ allPodValues }
 									allPodFieldsMap={ allPodFieldsMap }
-									validationMessages={ validationMessages }
-									addValidationRules={ addValidationRules }
 									setValue={ createSetValueAtIndex( index ) }
 									setHasBlurred={ setHasBlurred }
 									isDraggable={ valuesArray.length > 1 }
@@ -269,16 +265,6 @@ RepeatableFieldList.propTypes = {
 	 * Component to render.
 	 */
 	FieldComponent: PropTypes.elementType.isRequired,
-
-	/**
-	 * Array of validation messages.
-	 */
-	validationMessages: PropTypes.arrayOf( PropTypes.string ).isRequired,
-
-	/**
-	 * Callback to add additional validation rules.
-	 */
-	addValidationRules: PropTypes.func.isRequired,
 
 	/**
 	 * Function to update the field's full value on change.

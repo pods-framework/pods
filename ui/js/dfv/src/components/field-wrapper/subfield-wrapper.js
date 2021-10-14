@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -15,8 +15,14 @@ import { Toolbar, ToolbarButton } from '@wordpress/components';
 import { dragHandle } from '@wordpress/icons';
 
 /**
+ * Pods components
+ */
+import ValidationMessages from 'dfv/src/components/validation-messages';
+
+/**
  * Other Pods dependencies
  */
+import useValidation from 'dfv/src/hooks/useValidation';
 import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 const SubfieldWrapper = ( {
@@ -32,8 +38,6 @@ const SubfieldWrapper = ( {
 	allPodFieldsMap,
 	setValue,
 	setHasBlurred,
-	validationMessages,
-	addValidationRules,
 } ) => {
 	// Adjust the `name`/`htmlAttr[name]` and IDs
 	// for repeatable fields, so that each value gets saved.
@@ -53,6 +57,19 @@ const SubfieldWrapper = ( {
 		subfieldConfig.htmlAttr.id = `${ subfieldConfig.htmlAttr.id }-${ index }`;
 	}
 
+	const [ hasSubfieldBlurred, setHasSubfieldBlurred ] = useState( false );
+
+	const handleBlur = () => {
+		setHasSubfieldBlurred( true );
+		setHasBlurred( true );
+	};
+
+	// Subfields get their own set of validation rules
+	const [ validationMessages, addValidationRules ] = useValidation(
+		[],
+		value
+	);
+
 	// Set up useSortable hook
 	const {
 		attributes,
@@ -60,7 +77,6 @@ const SubfieldWrapper = ( {
 		setNodeRef,
 		transform,
 		transition,
-		// isDragging,
 	} = useSortable( {
 		id: index.toString(),
 		disabled: ! isDraggable,
@@ -70,6 +86,10 @@ const SubfieldWrapper = ( {
 		transform: CSS.Translate.toString( transform ),
 		transition,
 	};
+
+	const validationMessagesComponent = ( hasSubfieldBlurred && validationMessages.length ) ? (
+		<ValidationMessages messages={ validationMessages } />
+	) : undefined;
 
 	return (
 		<div
@@ -109,9 +129,11 @@ const SubfieldWrapper = ( {
 					setValue={ setValue }
 					isValid={ !! validationMessages.length }
 					addValidationRules={ addValidationRules }
-					setHasBlurred={ () => setHasBlurred( true ) }
+					setHasBlurred={ handleBlur }
 					fieldConfig={ subfieldConfig }
 				/>
+
+				{ validationMessagesComponent }
 			</div>
 		</div>
 	);
@@ -168,16 +190,6 @@ SubfieldWrapper.propTypes = {
 	 * should be a Map object, keyed by the field name, to make lookup easier (optional).
 	 */
 	allPodFieldsMap: PropTypes.object,
-
-	/**
-	 * Array of validation messages.
-	 */
-	validationMessages: PropTypes.arrayOf( PropTypes.string ).isRequired,
-
-	/**
-	 * Callback to add additional validation rules.
-	 */
-	addValidationRules: PropTypes.func.isRequired,
 
 	/**
 	 * Function to update the field's value on change.

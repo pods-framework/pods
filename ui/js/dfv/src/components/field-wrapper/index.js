@@ -191,8 +191,6 @@ export const FieldWrapper = ( props ) => {
 								podName={ podName }
 								allPodValues={ passAllPodValues ? allPodValues : undefined }
 								allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
-								validationMessages={ validationMessages }
-								addValidationRules={ addValidationRules }
 								setFullValue={ setValue }
 								setHasBlurred={ () => setHasBlurred( true ) }
 							/>

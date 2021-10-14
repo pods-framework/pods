@@ -152,7 +152,7 @@ class PodsField_Pick extends PodsField {
 				'dependency'            => true,
 			),
 			static::$type . '_format_single'  => array(
-				'label'                 => __( 'Format', 'pods' ),
+				'label'                 => __( 'Input Type', 'pods' ),
 				'help'                  => __( 'help', 'pods' ),
 				'depends-on'            => array( static::$type . '_format_type' => 'single' ),
 				'default'               => 'dropdown',
@@ -162,14 +162,14 @@ class PodsField_Pick extends PodsField {
 						'dropdown'     => __( 'Drop Down', 'pods' ),
 						'radio'        => __( 'Radio Buttons', 'pods' ),
 						'autocomplete' => __( 'Autocomplete', 'pods' ),
-						'list'         => __( 'List view', 'pods' ),
+						'list'         => __( 'List View (with reordering)', 'pods' ),
 					)
 				),
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
 			),
 			static::$type . '_format_multi'   => array(
-				'label'                 => __( 'Format', 'pods' ),
+				'label'                 => __( 'Input Type', 'pods' ),
 				'help'                  => __( 'help', 'pods' ),
 				'depends-on'            => array( static::$type . '_format_type' => 'multi' ),
 				'default'               => 'checkbox',
@@ -177,9 +177,9 @@ class PodsField_Pick extends PodsField {
 				'data'                  => apply_filters(
 					'pods_form_ui_field_pick_format_multi_options', array(
 						'checkbox'     => __( 'Checkboxes', 'pods' ),
-						'multiselect'  => __( 'Multi Select', 'pods' ),
+						'multiselect'  => __( 'Multi Select (basic selection)', 'pods' ),
 						'autocomplete' => __( 'Autocomplete', 'pods' ),
-						'list'         => __( 'List view', 'pods' ),
+						'list'         => __( 'List View (with reordering)', 'pods' ),
 					)
 				),
 				'pick_show_select_text' => 0,
@@ -278,17 +278,18 @@ class PodsField_Pick extends PodsField {
 			),
 			static::$type . '_select_text'    => array(
 				'label'      => __( 'Default Select Text', 'pods' ),
-				'help'       => __( 'This is the text use for the default "no selection" dropdown item, if empty, it will default to "-- Select One --"', 'pods' ),
+				'help'       => __( 'This is the text used for the default "no selection" dropdown item. If left empty, it will default to "-- Select One --"', 'pods' ),
 				'depends-on' => array(
 					static::$type . '_format_type'   => 'single',
 					static::$type . '_format_single' => 'dropdown',
 				),
 				'default'    => '',
+				'text_placeholder' => __( '-- Select One --', 'pods' ),
 				'type'       => 'text',
 			),
 			static::$type . '_limit'          => array(
 				'label'      => __( 'Selection Limit', 'pods' ),
-				'help'       => __( 'help', 'pods' ),
+				'help'       => __( 'Default is "0" for no limit, but you can enter 1 or more to limit the number of items that can be selected.', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'multi' ),
 				'default'    => 0,
 				'type'       => 'number',
@@ -319,8 +320,8 @@ class PodsField_Pick extends PodsField {
 				'type'        => 'text',
 			),
 			static::$type . '_user_role'      => array(
-				'label'            => __( 'Limit list to Role(s)', 'pods' ),
-				'help'             => __( 'help', 'pods' ),
+				'label'            => __( 'Limit list by Role(s)', 'pods' ),
+				'help'             => __( 'You can choose to limit Users available for selection by specific role(s).', 'pods' ),
 				'depends-on'       => array( static::$type . '_object' => 'user' ),
 				'default'          => '',
 				'type'             => 'pick',
@@ -364,8 +365,8 @@ class PodsField_Pick extends PodsField {
 
 		$options[ static::$type . '_post_status' ] = array(
 			'name'             => 'post_status',
-			'label'            => __( 'Post Status', 'pods' ),
-			'help'             => __( 'help', 'pods' ),
+			'label'            => __( 'Limit list by Post Status', 'pods' ),
+			'help'             => __( 'You can choose to limit Posts available for selection by one or more specific post status.', 'pods' ),
 			'type'             => 'pick',
 			'pick_object'      => 'post-status',
 			'pick_format_type' => 'multi',
@@ -3729,3 +3730,4 @@ class PodsField_Pick extends PodsField {
 	}
 
 }
+'

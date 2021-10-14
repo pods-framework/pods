@@ -3174,12 +3174,17 @@ class PodsData {
 
 		$field = $traverse_recurse['fields'][ $traverse_recurse['depth'] ];
 
-		$ignore_aliases = [
-			'wpml_languages',
-			'polylang_languages',
-		];
-
-		$ignore_aliases = apply_filters( 'pods_data_traverse_recurse_ignore_aliases', $ignore_aliases, $field, $traverse_recurse, $this );
+		/**
+		 * Prevent aliases from being used in traversals.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param array     $ignore_aliases   Aliases to be ignored.
+		 * @param array     $field            Field data.
+		 * @param array     $traverse_recurse Traverse params.
+		 * @param \PodsData $pods_data        PodsData instance.
+		 */
+		$ignore_aliases = apply_filters( 'pods_data_traverse_recurse_ignore_aliases', [], $field, $traverse_recurse, $this );
 
 		if ( in_array( $field, $ignore_aliases, true ) ) {
 			return $joins;

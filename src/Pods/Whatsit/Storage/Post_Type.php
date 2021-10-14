@@ -302,14 +302,7 @@ class Post_Type extends Collection {
 
 		asort( $post_args );
 
-		$current_language = false;
-
-		// Get current language data
-		$lang_data = pods_i18n()->get_current_language_data();
-
-		if ( $lang_data && ! empty( $lang_data['language'] ) ) {
-			$current_language = $lang_data['language'];
-		}
+		$current_language = pods_i18n()->get_current_language();
 
 		$cache_key    = null;
 		$posts        = false;

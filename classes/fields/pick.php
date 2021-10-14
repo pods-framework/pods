@@ -2529,16 +2529,19 @@ class PodsField_Pick extends PodsField {
 					if ( ! empty( $value ) ) {
 						$ids = $value;
 
-						if ( is_array( $ids ) && isset( $ids[0] ) && is_array( $ids[0] ) ) {
-							$ids = wp_list_pluck( $ids, $search_data->field_id );
-						}
-
-						if ( $params['limit'] < count( $ids ) ) {
-							$params['limit'] = count( $ids );
-						}
-
 						if ( is_array( $ids ) ) {
+							if ( isset( $ids[0] ) && is_array( $ids[0] ) ) {
+								$ids = wp_list_pluck( $ids, $search_data->field_id );
+							}
+
+							if ( $params['limit'] < count( $ids ) ) {
+								$params['limit'] = count( $ids );
+							}
+
+							$ids = array_map( 'absint', $ids );
 							$ids = implode( ', ', $ids );
+						} else {
+							$ids = (int) $ids;
 						}
 
 						if ( is_array( $params['where'] ) ) {

@@ -5,10 +5,8 @@ wp_enqueue_script( 'pods-handlebars' );
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 wp_enqueue_script( 'thickbox' );
-wp_enqueue_script( 'pods-attach' );
 
 wp_enqueue_style( 'thickbox' );
-wp_enqueue_style( 'pods-attach' );
 
 $field_file = PodsForm::field_loader( 'file' );
 

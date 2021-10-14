@@ -36,7 +36,8 @@ class PodsField_File extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'File / Image / Video', 'pods' );
+		static::$group = __( 'Relationships / Media', 'pods' );
+		static::$label = __( 'File / Image / Video', 'pods' );
 
 	}
 
@@ -75,6 +76,7 @@ class PodsField_File extends PodsField {
 					'single' => __( 'Single File', 'pods' ),
 					'multi'  => __( 'Multiple Files', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_uploader'               => array(
@@ -88,10 +90,11 @@ class PodsField_File extends PodsField {
 						'plupload'   => __( 'Upload only (Plupload)', 'pods' ),
 					)
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_attachment_tab'         => array(
-				'label'      => __( 'Attachments Default Tab', 'pods' ),
+				'label'      => __( 'Media Library Default Tab', 'pods' ),
 				'depends-on' => array( static::$type . '_uploader' => 'attachment' ),
 				'default'    => 'upload',
 				'type'       => 'pick',
@@ -100,20 +103,22 @@ class PodsField_File extends PodsField {
 					'upload' => __( 'Upload File', 'pods' ),
 					'browse' => __( 'Media Library', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_upload_dir'             => array(
-				'label'      => __( 'Upload directory', 'pods' ),
+				'label'      => __( 'Upload Directory', 'pods' ),
 				'default'    => 'wp',
 				'type'       => 'pick',
 				'data'       => array(
-					'wp'      => __( 'WordPress Default', 'pods' ) . ' (/yyyy/mm/)',
+					'wp'      => __( 'WordPress Default', 'pods' ) . ' (/wp-content/uploads/yyyy/mm/)',
 					'uploads' => __( 'Custom directory within the default uploads directory', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
 				'dependency' => true,
 			),
 			static::$type . '_upload_dir_custom'     => array(
-				'label'       => __( 'Custom upload directory', 'pods' ),
+				'label'       => __( 'Custom Upload Directory', 'pods' ),
 				'help'        => __( 'Magic tags are allowed for this field. The path is relative to the /wp-content/uploads/ folder on your site.', 'pods' ),
 				'placeholder' => 'my-custom-folder',
 				'depends-on'  => array(
@@ -155,7 +160,8 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'Restrict File Size', 'pods' ),
 				'help'       => __( 'Valid size suffixes are: GB (gigabytes), MB (megabytes), KB (kilobytes), or B (bytes).  Defaults to the <a href="https://developer.wordpress.org/reference/functions/wp_max_upload_size/">wp_max_upload_size</a> setting.', 'pods' ),
 				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
-				'default'    => '10MB',
+				'default'    => '',
+				'text_placeholder' => '10MB',
 				'type'       => 'text',
 			),
 			static::$type . '_type'                   => array(
@@ -173,6 +179,7 @@ class PodsField_File extends PodsField {
 						'other'  => __( 'Other (customize allowed extensions)', 'pods' ),
 					)
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_allowed_extensions'     => array(
@@ -180,6 +187,7 @@ class PodsField_File extends PodsField {
 				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
 				'depends-on'  => array( static::$type . '_type' => 'other' ),
 				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
+				'text_placeholder' => 'jpg,png,mp4,mov',
 				'type'        => 'text',
 			),
 			static::$type . '_field_template'         => array(
@@ -195,6 +203,7 @@ class PodsField_File extends PodsField {
 						'tiles' => __( 'Tiles', 'pods' ),
 					)
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_add_button'             => array(
 				'label'   => __( 'Add Button Text', 'pods' ),
@@ -223,41 +232,44 @@ class PodsField_File extends PodsField {
 				'type'       => 'boolean',
 			),
 			static::$type . '_wp_gallery_link'        => array(
-				'label'      => __( 'Gallery image links', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'label'      => __( 'Gallery Image Links', 'pods' ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => array(
 					'post' => __( 'Attachment Page', 'pods' ),
 					'file' => __( 'Media File', 'pods' ),
 					'none' => __( 'None', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_wp_gallery_columns'     => array(
-				'label'      => __( 'Gallery image columns', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'label'      => __( 'Gallery Image Columns', 'pods' ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => array(
-					'1' => 1,
-					'2' => 2,
-					'3' => 3,
-					'4' => 4,
-					'5' => 5,
-					'6' => 6,
-					'7' => 7,
-					'8' => 8,
-					'9' => 9,
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_wp_gallery_random_sort' => array(
-				'label'      => __( 'Gallery randomized order', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'label'      => __( 'Gallery Randomized Order', 'pods' ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'boolean',
 			),
 			static::$type . '_wp_gallery_size'        => array(
-				'label'      => __( 'Gallery image size', 'pods' ),
-				'depends-on' => array( static::$type . '_wp_gallery_output' => 1 ),
+				'label'      => __( 'Gallery Image Size', 'pods' ),
+				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
 				'data'       => $this->data_image_sizes(),
+				'pick_show_select_text' => 0,
 			),
 		);
 
@@ -311,7 +323,7 @@ class PodsField_File extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		$type = pods_v( 'type', $options, static::$type );
 
@@ -351,14 +363,6 @@ class PodsField_File extends PodsField {
 
 		// Ensure the media library is initialized
 		$this->render_input_script( $args );
-
-		// @todo: we're short-circuiting for prototyping above. The actions below will need to be woven in somehow.
-		/**
-		 * $form_field_type . '_uploader' != attachment, plupload, media
-		 * Run this action 'pods_form_ui_field_' . static::$type . '_uploader_' . static::$type . '_uploader'
-		 * Run this action 'pods_form_ui_field_' . static::$type . '_uploader', static::$type . '_uploader'
-		 * Pass these args $name, $value, $options, $pod, $id
-		 */
 	}
 
 	/**
@@ -374,11 +378,26 @@ class PodsField_File extends PodsField {
 			}
 		}
 
+		// Enforce defaults.
+		$all_options = static::options();
+
+		foreach ( $all_options as $option_name => $option ) {
+			$default = pods_v( 'default', $option, '' );
+
+			$options[ $option_name ] = pods_v( $option_name, $options, $default );
+
+			if ( '' === $options[ $option_name ] ) {
+				$options[ $option_name ] = $default;
+			}
+		}
+
 		// Handle default template setting.
-		$file_field_template = pods_v( $args->type . '_field_template', $options, 'rows', true );
+		$file_field_template = pods_v( $args->type . '_field_template', $options );
 
 		// Get which file types the field is limited to.
-		$limit_file_type = pods_v( $args->type . '_type', $options, 'images' );
+		$limit_file_type = pods_v( $args->type . '_type', $options );
+
+		$options[ $args->type . '_type' ] = $limit_file_type;
 
 		// Non-image file types are forced to rows template right now.
 		if ( 'images' !== $limit_file_type ) {
@@ -488,8 +507,12 @@ class PodsField_File extends PodsField {
 		$is_user_logged_in = is_user_logged_in();
 
 		// @todo: plupload specific options need accommodation
-		if ( 'plupload' === $options[ static::$type . '_uploader' ] ) {
+		if ( 'plupload' === pods_v( static::$type . '_uploader', $options ) ) {
 			wp_enqueue_script( 'plupload-all' );
+
+			$pod_id   = (int) pods_v( 'pod_id', $args->pod, 0 );
+			$field_id = (int) pods_v( 'id', $options, 0 );
+			$item_id  = (int) pods_v( 'id', $args, 0 );
 
 			if ( $is_user_logged_in ) {
 				$uid = 'user_' . get_current_user_id();
@@ -497,16 +520,10 @@ class PodsField_File extends PodsField {
 				$uid = pods_session_id();
 			}
 
-			$pod_id = '0';
-
-			if ( is_object( $args->pod ) ) {
-				$pod_id = $args->pod->pod_id;
-			}
-
 			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
-			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $options['id'] );
+			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
 
-			$options['plupload_init'] = array(
+			$plupload_init = [
 				'runtimes'            => 'html5,silverlight,flash,html4',
 				'url'                 => admin_url( 'admin-ajax.php?pods_ajax=1', 'relative' ),
 				'file_data_name'      => 'Filedata',
@@ -514,31 +531,37 @@ class PodsField_File extends PodsField {
 				'max_file_size'       => wp_max_upload_size() . 'b',
 				'flash_swf_url'       => includes_url( 'js/plupload/plupload.flash.swf' ),
 				'silverlight_xap_url' => includes_url( 'js/plupload/plupload.silverlight.xap' ),
-				'filters'             => array(
-					array(
+				'filters'             => [
+					[
 						'title'      => __( 'Allowed Files', 'pods' ),
 						'extensions' => '*',
-					),
-				),
+					],
+				],
 				'multipart'           => true,
 				'urlstream_upload'    => true,
-				'multipart_params'    => array(
+				'multipart_params'    => [
 					'_wpnonce' => $field_nonce,
 					'action'   => 'pods_upload',
 					'method'   => 'upload',
 					'pod'      => $pod_id,
-					'field'    => $options['id'],
+					'field'    => $field_id,
+					'item_id'  => $item_id,
 					'uri'      => $uri_hash,
-				),
-			);
+				],
+			];
 
-			// Pass post ID if we're in an add or edit post screen.
-			$post = get_post();
-
-			if ( $post instanceof WP_Post ) {
-				$options['plupload_init']['multipart_params']['post_id'] = $post->ID;
+			// Disable multi selection if only one is allowed.
+			if ( 1 === $file_limit ) {
+				$plupload_init['multi_selection'] = false;
 			}
 
+			// Backwards compatibility: Pass post ID if we're in an add or edit post screen.
+			$post = get_post();
+			if ( $post instanceof WP_Post ) {
+				$plupload_init['multipart_params']['post_id'] = $post->ID;
+			}
+
+			$options['plupload_init'] = $plupload_init;
 		}//end if
 
 		return $options;
@@ -608,6 +631,7 @@ class PodsField_File extends PodsField {
 				'edit_link' => html_entity_decode( esc_url( $edit_link ) ),
 				'link'      => html_entity_decode( esc_url( $link ) ),
 				'download'  => html_entity_decode( esc_url( $download ) ),
+				'selected'  => true,
 			);
 		}//end foreach
 
@@ -1038,7 +1062,7 @@ class PodsField_File extends PodsField {
 		// Cleaning up $params
 		unset( $params->action, $params->method, $params->_wpnonce );
 
-		$params->post_id = (int) pods_v( 'post_id', $params, 0 );
+		$params->item_id = (int) pods_v( 'item_id', $params, 0 );
 
 		/**
 		 * Upload a new file (advanced - returns URL and ID)
@@ -1181,7 +1205,7 @@ class PodsField_File extends PodsField {
 				}
 			}//end if
 
-			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params, $field );
+			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->item_id, $params, $field );
 
 			if ( null === $custom_handler ) {
 
@@ -1192,15 +1216,11 @@ class PodsField_File extends PodsField {
 					$custom_dir  = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
 					$context_pod = null;
 
-					if ( $params->post_id ) {
-						$post = get_post( $params->post_id );
+					if ( $params->item_id ) {
+						$context_pod = pods( pods_v( 'name', $pod, false ), $params->item_id );
 
-						if ( $post ) {
-							$post_pod = pods( $post->post_type, $post->ID );
-
-							if ( $post_pod->exists() ) {
-								$context_pod = $post_pod;
-							}
+						if ( ! $context_pod->exists() ) {
+							$context_pod = null;
 						}
 					}
 
@@ -1237,7 +1257,12 @@ class PodsField_File extends PodsField {
 				}
 
 				// Upload file.
-				$attachment_id = media_handle_upload( 'Filedata', $params->post_id );
+				$post_id = 0;
+				if ( 'post_type' === pods_v( 'type', $pod, null ) ) {
+					$post_id = $params->item_id;
+				}
+
+				$attachment_id = media_handle_upload( 'Filedata', $post_id );
 
 				// End custom directory.
 				if ( 'wp' !== $upload_dir ) {
@@ -1271,7 +1296,7 @@ class PodsField_File extends PodsField {
 					$attachment['edit_link'] = get_edit_post_link( $attachment['ID'] );
 					$attachment['download']  = wp_get_attachment_url( $attachment['ID'] );
 
-					$attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->post_id );
+					$attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->item_id );
 
 					wp_send_json( $attachment );
 				}//end if
@@ -1314,6 +1339,34 @@ class PodsField_File extends PodsField {
 		}
 
 		return $uploads;
+	}
+
+	/**
+	 * Build field data for Pods DFV.
+	 *
+	 * @param object $args            {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name            Field name.
+	 *     @type string     $type            Field type.
+	 *     @type array      $options         Field options.
+	 *     @type mixed      $value           Current value.
+	 *     @type array      $pod             Pod information.
+	 *     @type int|string $id              Current item ID.
+	 *     @type string     $form_field_type HTML field type.
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_data( $args ) {
+		$data = parent::build_dfv_field_data( $args );
+
+		// Normalize arrays for multiple select.
+		if ( is_array( $data['fieldValue'] ) ) {
+			$data['fieldValue'] = array_values( $data['fieldValue'] );
+		}
+
+		return $data;
 	}
 
 }

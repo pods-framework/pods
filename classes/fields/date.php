@@ -1,5 +1,4 @@
 <?php
-require_once PODS_DIR . 'classes/fields/datetime.php';
 
 /**
  * @package Pods\Fields
@@ -41,6 +40,7 @@ class PodsField_Date extends PodsField_DateTime {
 	 */
 	public function setup() {
 
+		static::$group = __( 'Date / Time', 'pods' );
 		static::$label = __( 'Date', 'pods' );
 	}
 
@@ -70,6 +70,7 @@ class PodsField_Date extends PodsField_DateTime {
 					'format' => __( 'Predefined format', 'pods' ),
 					'custom' => __( 'Custom format', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_format_custom'    => array(
@@ -109,6 +110,7 @@ class PodsField_Date extends PodsField_DateTime {
 					'fjsy'      => date_i18n( 'F jS, Y' ),
 					'y'         => date_i18n( 'Y' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_year_range_custom' => array(
@@ -126,12 +128,12 @@ class PodsField_Date extends PodsField_DateTime {
 				),
 			),
 			static::$type . '_allow_empty'      => array(
-				'label'   => __( 'Allow empty value?', 'pods' ),
+				'label'   => __( 'Allow empty value', 'pods' ),
 				'default' => 1,
 				'type'    => 'boolean',
 			),
 			static::$type . '_html5'            => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),

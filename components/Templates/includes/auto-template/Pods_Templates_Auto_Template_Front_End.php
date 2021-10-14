@@ -140,7 +140,7 @@ class Pods_Templates_Auto_Template_Front_End {
 			);
 
 			// cache the results.
-			pods_transient_set( $key, $the_pods );
+			pods_transient_set( $key, $the_pods, WEEK_IN_SECONDS );
 
 		}
 
@@ -271,7 +271,7 @@ class Pods_Templates_Auto_Template_Front_End {
 			}//end foreach
 
 			// cache the results.
-			pods_transient_set( $key, $auto_pods );
+			pods_transient_set( $key, $auto_pods, WEEK_IN_SECONDS );
 		}//end if
 
 		/**

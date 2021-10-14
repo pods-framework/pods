@@ -1,0 +1,46 @@
+
+.editor-styles-wrapper {
+	.pods-block-placeholder_container {
+		padding: 1em;
+		background-color: rgba(139,139,150,.1);
+		border-radius: 9px;
+	
+		& .pods-block-placeholder_image {
+			width: 100%;
+			max-width: 750px;
+			margin: 2em auto 1em;
+			display: block;
+		}
+	
+		& .pods-block-placeholder_content-container {
+			display: flex;
+			align-items: center;
+			margin-bottom: 1em;
+		}
+	
+		& .pods-block-placeholder_title {
+			margin-bottom: 0;
+			margin-top: 0;
+			font-size: 1em;
+			font-weight: bold;
+
+			&:before {
+				display: none;
+			}
+		}
+
+		& p {
+			font-family: sans-serif;
+			font-size: .7em;
+			margin-top: 0;
+			margin-bottom: 0;
+			line-height: 1.7;
+		}
+	
+		& .pods-logo {
+			width: 185px;
+			margin-right: 40px;
+			margin-left: 8px;
+		}
+	}
+}

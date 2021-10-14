@@ -1,0 +1,1 @@
+jQuery(function(){var i=0;jQuery("div.tribe-addon .caption").each(function(){var t=jQuery(this).height();i=t>i?t:i}),jQuery("div.tribe-addon:not(.first) .caption").css("height",i)});

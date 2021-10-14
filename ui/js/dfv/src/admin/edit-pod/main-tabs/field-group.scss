@@ -1,0 +1,85 @@
+@import '../edit-pod-variables';
+
+.pods-field-group-wrapper {
+	margin-bottom: 10px;
+	border: 1px solid $color--light-grey;
+	background-color: #fff;
+	position: relative;
+	transition: border 0.2s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.pods-field-group-wrapper--unsaved  {
+	border-left: 5px #95BF3B;
+}
+
+.pods-field-group-wrapper--deleting  {
+	opacity: 0.5;
+	user-select: none;
+}
+
+.pods-field-group-wrapper--errored  {
+	border-left: 5px $color--red solid;
+}
+
+.pods-field-group_name__error {
+	color: $color--red;
+	display: inline-block;
+	padding-left: 0.5em;
+}
+
+.pods-field-group_name__id {
+	font-size: 13px;
+	color: #999;
+	display: inline;
+	opacity: 0;
+	transition: 200ms ease opacity;
+
+	.pods-field-group-wrapper:hover & {
+		opacity: 1;
+	}
+}
+
+.pods-field-group_buttons {
+	color: $color--light-grey;
+	opacity: 0;
+
+	.pods-field-group-wrapper:hover & {
+		opacity: 1;
+	}
+}
+
+.pods-field-group_button {
+	background: transparent;
+	border: none;
+	color: $color--wp-blue;
+	cursor: pointer;
+	height: auto;
+	margin: 0.25em 0;
+	overflow: visible;
+	padding: 0 0.5em;
+	position: relative;
+
+	&:hover,
+	&:focus {
+		color: $color--wp-blue-light;
+	}
+}
+
+.pods-field-group_manage,
+.pods-field-group_delete {
+	border-right: none;
+	margin-right: 0;
+}
+
+.pods-field-group_manage {
+	color: #e1e1e1;
+}
+
+.pods-field-group_delete {
+    color: $color--red;
+
+    &:hover,
+    &:hover:not(:disabled) {
+        color: $color--red-dark;
+    }
+}

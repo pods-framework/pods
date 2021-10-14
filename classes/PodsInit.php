@@ -1113,7 +1113,6 @@ class PodsInit {
 			return;
 		}
 
-
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
 
@@ -1371,7 +1370,7 @@ class PodsInit {
 
 				// Taxonomies
 				$cpt_taxonomies = array();
-				$_taxonomies    = get_taxonomies();
+				$_taxonomies    = $existing_taxonomies;
 				$_taxonomies    = array_merge_recursive( $_taxonomies, $pods_taxonomies );
 				$ignore         = array( 'nav_menu', 'link_category', 'post_format' );
 
@@ -1537,7 +1536,7 @@ class PodsInit {
 
 				// Post Types
 				$ct_post_types = array();
-				$_post_types   = get_post_types();
+				$_post_types   = $existing_post_types;
 				$_post_types   = array_merge_recursive( $_post_types, $pods_post_types );
 				$ignore        = array( 'revision' );
 
@@ -1703,30 +1702,25 @@ class PodsInit {
 		// Handle existing post types / taxonomies settings (just REST for now)
 		global $wp_post_types, $wp_taxonomies;
 
-		$post_type_names = wp_list_pluck( $post_types, 'name', 'id' );
-		$taxonomy_names  = wp_list_pluck( $taxonomies, 'name', 'id' );
-
 		foreach ( $existing_post_types as $post_type_name => $post_type_name_again ) {
 			if ( isset( self::$content_types_registered['post_types'] ) && in_array( $post_type_name, self::$content_types_registered['post_types'], true ) ) {
 				// Post type already registered / setup by Pods
 				continue;
 			}
 
-			$pod_id = array_search( $post_type_name, $post_type_names, false );
-
-			if ( ! $pod_id || ! isset( $post_types[ $pod_id ] ) ) {
+			if ( ! isset( $post_types[ $post_type_name ] ) ) {
 				// Post type not a pod
 				continue;
 			}
 
-			$pod = $post_types[ $pod_id ];
+			$pod = $post_types[ $post_type_name ];
 
 			// REST API
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				if ( empty( $wp_post_types[ $post_type_name ]->show_in_rest ) ) {
-					$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], pods_v( 'rest_base', $wp_post_types[ $post_type_name ] ), true ) );
+					$rest_base = sanitize_title( pods_v( 'rest_base', $pod, pods_v( 'rest_base', $wp_post_types[ $post_type_name ] ), true ) );
 
 					$wp_post_types[ $post_type_name ]->show_in_rest          = true;
 					$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
@@ -1743,21 +1737,19 @@ class PodsInit {
 				continue;
 			}
 
-			$pod_id = array_search( $taxonomy_name, $taxonomy_names, false );
-
-			if ( ! $pod_id || ! isset( $taxonomies[ $pod_id ] ) ) {
+			if ( ! isset( $taxonomies[ $taxonomy_name ] ) ) {
 				// Taxonomy not a pod
 				continue;
 			}
 
-			$pod = $taxonomies[ $pod_id ];
+			$pod = $taxonomies[ $taxonomy_name ];
 
 			// REST API
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				if ( empty( $wp_taxonomies[ $taxonomy_name ]->show_in_rest ) ) {
-					$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], pods_v( 'rest_base', $wp_taxonomies[ $taxonomy_name ] ), true ) );
+					$rest_base = sanitize_title( pods_v( 'rest_base', $pod, pods_v( 'rest_base', $wp_taxonomies[ $taxonomy_name ] ), true ) );
 
 					$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
 					$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
@@ -1771,7 +1763,7 @@ class PodsInit {
 		if ( ! empty( PodsMeta::$user ) ) {
 			$pod = current( PodsMeta::$user );
 
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				new PodsRESTFields( $pod['name'] );
@@ -1781,7 +1773,7 @@ class PodsInit {
 		if ( ! empty( PodsMeta::$media ) ) {
 			$pod = current( PodsMeta::$media );
 
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				new PodsRESTFields( $pod['name'] );
@@ -2544,7 +2536,7 @@ class PodsInit {
 
 		// Add New item links for all pods
 		foreach ( $all_pods as $pod ) {
-			if ( ! isset( $pod['options']['show_in_menu'] ) || 0 === (int) $pod['options']['show_in_menu'] ) {
+			if ( ! isset( $pod['show_in_menu'] ) || 0 === (int) $pod['show_in_menu'] ) {
 				continue;
 			}
 
@@ -2552,7 +2544,7 @@ class PodsInit {
 				continue;
 			}
 
-			$singular_label = pods_v( 'label_singular', $pod['options'], pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
+			$singular_label = pods_v( 'label_singular', $pod, pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
 
 			$wp_admin_bar->add_node(
 				array(
@@ -2569,7 +2561,7 @@ class PodsInit {
 			$pod = $pods->pod_data;
 
 			if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod['name'] ) ) ) {
-				$singular_label = pods_v( 'label_singular', $pod['options'], pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
+				$singular_label = pods_v( 'label_singular', $pod, pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
 
 				$wp_admin_bar->add_node(
 					array(

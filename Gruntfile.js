@@ -27,7 +27,7 @@ module.exports = function( grunt ) {
 				overwrite: true,
 				replacements: [
 					{
-						from: /Version: ([\.\d\w\-]*)/,
+						from: /Version:\s+([\.\d\w\-]*)/,
 						to() {
 							return 'Version: ' + grunt.option( 'ver' ) || pkg.version;
 						},

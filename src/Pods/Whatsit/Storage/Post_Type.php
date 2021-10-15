@@ -337,7 +337,7 @@ class Post_Type extends Collection {
 			}
 		}//end if
 
-		if ( ! is_array( $posts ) || ! is_array( $post_objects ) ) {
+		if ( ! is_array( $posts ) || ( empty( $args['count'] ) && ! is_array( $post_objects ) ) ) {
 			$posts = [];
 
 			if ( empty( $args['bypass_post_type_find'] ) ) {

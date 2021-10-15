@@ -111,7 +111,7 @@ class Pods implements Iterator {
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 * @since   1.0.0
-	 * @link    https://pods.io/docs/pods/
+	 * @link    https://docs.pods.io/code/pods/
 	 */
 	public function __construct( $pod = null, $id = null ) {
 		if ( null === $pod ) {
@@ -301,7 +301,7 @@ class Pods implements Iterator {
 	 * @return array|bool An array of all rows returned from a find() call, or false if no items returned
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/data/
+	 * @link  https://docs.pods.io/code/pods/data/
 	 */
 	public function data() {
 
@@ -440,7 +440,7 @@ class Pods implements Iterator {
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/display/
+	 * @link  https://docs.pods.io/code/pods/display/
 	 */
 	public function display( $name, $single = null ) {
 
@@ -496,7 +496,7 @@ class Pods implements Iterator {
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/display/
+	 * @link  https://docs.pods.io/code/pods/display/
 	 */
 	public function raw( $name, $single = null ) {
 
@@ -537,7 +537,7 @@ class Pods implements Iterator {
 	 * @return mixed|null Value returned depends on the field type, null if the field doesn't exist, false if no value
 	 *                    returned for tableless fields.
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/field/
+	 * @link  https://docs.pods.io/code/pods/field/
 	 */
 	public function field( $name, $single = null, $raw = false ) {
 		$defaults = [
@@ -2156,7 +2156,7 @@ class Pods implements Iterator {
 	 *
 	 * @return \Pods The pod object
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/find/
+	 * @link  https://docs.pods.io/code/pods/find/
 	 */
 	public function find( $params = null, $limit = 15, $where = null, $sql = null ) {
 
@@ -2409,7 +2409,7 @@ class Pods implements Iterator {
 	 * @return array An array of fields from the row
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/fetch/
+	 * @link  https://docs.pods.io/code/pods/fetch/
 	 */
 	public function fetch( $id = null, $explicit_set = true ) {
 
@@ -2442,7 +2442,7 @@ class Pods implements Iterator {
 	 * @return \Pods The pod object
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/reset/
+	 * @link  https://docs.pods.io/code/pods/reset/
 	 */
 	public function reset( $row = null ) {
 
@@ -2470,7 +2470,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int Number of rows returned by find(), based on the 'limit' parameter set
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/total/
+	 * @link  https://docs.pods.io/code/pods/total/
 	 */
 	public function total() {
 
@@ -2490,7 +2490,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int Number of rows returned by find(), regardless of the 'limit' parameter
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/total-found/
+	 * @link  https://docs.pods.io/code/pods/total-found/
 	 */
 	public function total_found() {
 
@@ -2599,7 +2599,7 @@ class Pods implements Iterator {
 	 * @return int The item ID
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/add/
+	 * @link  https://docs.pods.io/code/pods/add/
 	 */
 	public function add( $data = null, $value = null ) {
 
@@ -2892,7 +2892,7 @@ class Pods implements Iterator {
 	 * @return int The item ID
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/save/
+	 * @link  https://docs.pods.io/code/pods/save/
 	 */
 	public function save( $data = null, $value = null, $id = null, $params = null ) {
 
@@ -2976,7 +2976,7 @@ class Pods implements Iterator {
 	 * @return bool Whether the item was successfully deleted
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/delete/
+	 * @link  https://docs.pods.io/code/pods/delete/
 	 */
 	public function delete( $id = null ) {
 
@@ -3033,7 +3033,7 @@ class Pods implements Iterator {
 	 * @return int|bool ID of the new pod item
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/duplicate/
+	 * @link  https://docs.pods.io/code/pods/duplicate/
 	 */
 	public function duplicate( $id = null ) {
 
@@ -3085,7 +3085,7 @@ class Pods implements Iterator {
 	 * @return array|bool Data array of the exported pod item
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/export/
+	 * @link  https://docs.pods.io/code/pods/export/
 	 */
 	public function export( $fields = null, $id = null, $format = null ) {
 
@@ -3165,7 +3165,7 @@ class Pods implements Iterator {
 	 *
 	 * @return string Pagination HTML
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/pagination/
+	 * @link  https://docs.pods.io/code/pods/pagination/
 	 */
 	public function pagination( $params = null ) {
 
@@ -3244,7 +3244,7 @@ class Pods implements Iterator {
 	 * @return string Filters HTML
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/filters/
+	 * @link  https://docs.pods.io/code/pods/filters/
 	 */
 	public function filters( $params = null ) {
 
@@ -3480,7 +3480,7 @@ class Pods implements Iterator {
 	 * @return mixed Template output
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/template/
+	 * @link  https://docs.pods.io/code/pods/template/
 	 */
 	public function template( $template_name, $code = null, $deprecated = false ) {
 
@@ -3619,7 +3619,7 @@ class Pods implements Iterator {
 	 *
 	 * @return bool|mixed
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/form/
+	 * @link  https://docs.pods.io/code/pods/form/
 	 */
 	public function form( $params = null, $label = null, $thank_you = null ) {
 		// Check for anonymous submissions.

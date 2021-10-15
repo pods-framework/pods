@@ -1,5 +1,5 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, jamesgol, ramoonus, pglewis, Shelob9, clubduece, dan.stefan, Desertsnowman, curtismchale, mgibbs189, mikedamage, jchristopher, pcfreak30
+Contributors: sc0ttkclark, zrothauser, keraweb, jimtrue, quasel, nicdford, jamesgol, ramoonus, pglewis, dan.stefan, Desertsnowman, mgibbs189, Shelob9, clubduece, curtismchale, mikedamage, jchristopher, pcfreak30
 Donate link: https://friends.pods.io/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, block
 Requires at least: 5.5
@@ -18,12 +18,14 @@ Manage all your custom content needs in one location with the Pods Framework.
 * **Create content types** including Custom Post Types, Custom Taxonomies, and our special Advanced Content Types (ACTs get their own custom tables)
 * **Extend and customize content types** including Posts, Pages, Categories, Tags, Users, and Media with one easy click
 * **Create custom settings pages** easily within seconds
-* **Add custom fields** to *any* content type or settings page
-* **Group your fields** however you'd like into their own sections
-* **Show your fields** anywhere using our [blocks](https://docs.pods.io/dispaying-pods/pods-bocks/), [shortcodes](https://docs.pods.io/displaying-pods/pods-shortcode/), [widgets](https://docs.pods.io/displaying-pods/widgets/), the code-free [Pods Template](https://docs.pods.io/displaying-pods/pods-templates/) approach, or our [automatic theme integration](https://docs.pods.io/displaying-pods/wordpress-theme-templates/)
-* **Create connections** between any of your content with [relationship fields](https://docs.pods.io/fields/relationship-fields/) to keep your content organized
+* **Add custom fields** to *any* content type
+* **Group your fields** however you'd like into their own sections and add additional headings to help organize
+* **Show your fields** anywhere using our [blocks](https://docs.pods.io/displaying-pods/pods-blocks/), [shortcodes](https://docs.pods.io/displaying-pods/pods-shortcode/), [widgets](https://docs.pods.io/displaying-pods/pods-widgets/), or the non-coder [Pods Template](https://docs.pods.io/displaying-pods/pods-templates/) approach along with our [automatic theme integration](https://docs.pods.io/displaying-pods/pods-templates/auto-templates/)
+* **Create connections** between any of your content with [relationship fields](https://docs.pods.io/fields/relationship/) to keep your content organized
 
-Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out our [Documentation](https://docs.pods.io/), [Support Forums](https://wordpress.org/support/plugin/pods/), and our [Live Slack Chat](https://support.pods.io/chat/) for help to build your dream project with Pods.
+Let Pods help you grow your development and site building skills so that you can manage content beyond the standard WordPress Posts & Pages.
+
+Check out our [Documentation](https://docs.pods.io/), [Support Forums](https://wordpress.org/support/plugin/pods/), and our [Live Community Slack Chat](https://support.pods.io/chat/) for assistance building your dream project with Pods.
 
 = Introduction =
 
@@ -31,53 +33,21 @@ Let Pods help you grow your development skills and manage content beyond the sta
 
 = Content types that evolve with your needs =
 
-Create any type of content that you want -- small or large -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage field groups, custom fields, and how your content type will look or function.
+Create any type of content that you want -- small or large -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy-to-use interface that lets you manage field groups, custom fields, and how your content type will look or function.
 
 = Create new content types =
 
 With Pods, you can create entirely new content types and settings pages.
 
-* **Custom Post Types** - Content types that look and function like Posts and Pages, but in their own separate sections of WordPress
-* **Custom Taxonomies** - Content types that look and function like Categories and Tags, but in their own separate sections of WordPress
-* **Custom Settings Pages** - Create custom settings under Settings menu to help organize your site's custom global settings
-* **Advanced Content Types** - These are entirely separate from WordPress and function off their own database tables (much like the [Drupal CCK](https://www.drupal.org/project/cck))
+= Every Field Type, FREE =
 
-= Extend existing content types =
+We have an extensive collection of over [25 different input types to choose from on 20+ different field types for any content structure](https://docs.pods.io/fields/). Each field type comes with their own additional options to help you customize content entry and display. You can also control visibility by role/capability and [other advanced options](https://docs.pods.io/fields/settings-advanced/).
 
-Need to customize your existing content types in WordPress? We offer the ability to extend existing content types across all of WordPress:
-
-* **Post Types** - Customize and create/manage fields for any existing post type -- Posts, Pages, and even those created by plugins or themes
-* **Taxonomies** - Customize and create/manage fields for any existing taxonomy -- Categories, Tags, and even those created by plugins or themes
-* **Media** - Create and manage fields for your media uploads to enable you to fill in additional information and context to any image/file you want
-* **Users** - Create and manage fields for your user/author profiles
-* **Comments** - Create and manage fields for your visitor comments, easily add fields to fit the way you use comments as reviews and more
-
-= Field Types =
-
-We have an extensive collection of fields that you can leverage to build the perfect content structure for your site. You can also build your own custom field types with our extensible field type classes.
-
-* **Text**
- * Plain Text
- * Website
- * Phone
- * E-mail
- * Password
-* **Paragraph**
- * Plain Paragraph Text
- * WYSIWYG (Visual Editor)
- * Code (Syntax Highlighting)
-* **Date / Time**
- * Date and Time
- * Date
- * Time
-* **Number**
- * Plain Number
- * Currency (30+ international currencies)
-* **Relationships / Media**
- * File / Image / Video (Media library and basic upload options available)
- * Avatar (for extended Users)
- * oEmbed
- * Relationship (Dropdowns, multiselect, autocomplete, checkboxes, radio buttons, and list views available)
+* **Text:** Plain Text, Website, Phone, Email, Password
+* **Paragraph:** Plain Paragraph Text, WYSIWYG (Visual Editor), Code (Syntax Highlighting)
+* **Date / Time:** Date and Time, Date, Time
+* **Number:** Plain Number, Currency (30+ international currencies)
+* **Relationships / Media:** File / Image / Video (Media library and basic upload options available), Avatar (for extended Users), oEmbed, Relationship (Dropdown, Multi Select, Autocomplete, Checkboxes, Radio Buttons, and List View available)
 * **Checkbox** (Yes / No)
 * **Color Picker**
 
@@ -106,23 +76,23 @@ And many other relationships are also available including:
 = Optional Components to do even more =
 You can enable some of our included components to extend your WordPress site even further:
 
-* **Templates** - Use our template engine to create templates that can be handed off to clients for care-free management
-* **Markdown Syntax** - Parses Markdown Syntax for Paragraph Text / WYSIWYG fields
-* **Advanced Relationships** - Add advanced relationship objects for relating to including Database Tables, Multisite Networks, Multisite Sites, Themes, Page Templates, Sidebars, Post Type Objects, and Taxonomy Objects
-* **Table Storage** - Enable table-based storage for custom fields on Post Types, Media, Users, and Comments
-* **Roles and Capabilities** - Create or edit Roles for your site, and customize their corresponding capabilities
-* **Advanced Content Types** - Create entirely custom content types that have their own table, they exist outside of the WordPress context and do not use meta tables
-* **Pages** - Create custom pages that function off of your site's URL path, with wildcard support, and choose the Page Template to use -- most useful paired with Advanced Content Types
+* **Pods Templates** - Use our [template engine](https://docs.pods.io/displaying-pods/pods-templates/) to create templates that can be handed off to clients for care-free management
+* **Markdown Syntax** - Parses [Markdown Syntax](https://www.markdownguide.org/basic-syntax) for Paragraph Text / WYSIWYG fields
+* **Advanced Relationships** - Add even more relationship objects including Database Tables, Multisite Networks, Multisite Sites, Themes, Page Templates (in the theme), Sidebars, Post Type Objects, and Taxonomy Objects
+* **Table Storage** - Enable table-based database storage for custom fields on Post Types, Media, Users, and Comments
+* **Roles and Capabilities** - Create or edit Roles for your site and customize what they have access to
+* **Advanced Content Types** - Create entirely custom content types that have their own database table, and they will exist outside the normal WordPress context avoiding meta database tables
+* **Pods Pages** - Create custom pages that function off of your site's URL path with wildcard support and choose the Page Template in the theme to use -- most useful paired with Advanced Content Types
 
 = Plays well with others =
 
 We also do our best to integrate and play nicely with other projects:
 
 * **Plugins we've integrated with**
- * [Beaver Builder](https://www.wpbeaverbuilder.com/) and [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) Using the [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/)
- * [Codepress Admin Columns](https://wordpress.org/plugins/codepress-admin-columns/) Using the [Pods Add-On for Admin Columns Pro](https://www.admincolumns.com/pods/)
+ * [Beaver Builder](https://www.wpbeaverbuilder.com/) and [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) using the [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/)
+ * [Codepress Admin Columns](https://wordpress.org/plugins/codepress-admin-columns/) using the [Pods Add-On for Admin Columns Pro](https://www.admincolumns.com/pods/)
  * [Conductor](https://conductorplugin.com/)
- * [Gravity Forms](https://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
+ * [Gravity Forms](https://www.gravityforms.com/) using the [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
  * [Polylang](https://wordpress.org/plugins/polylang/)
  * [Timber](https://wordpress.org/plugins/timber-library/)
  * [WPML](http://wpml.org/)
@@ -143,7 +113,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 = Where do I go for Support on your plugin? =
 
-Our primary Support is handled through our [Support Forums](https://wordpress.org/support/plugin/pods/). For the fastest support, you can contact us on our [Live Slack Chat](https://support.pods.io/chat/) in the #support channel. We do not staff our Slack channel 24/7, but we do check any questions that come through daily and reply to any unanswered questions.
+Our primary Support is handled through our [Support Forums](https://wordpress.org/support/plugin/pods/). For the fastest support, you can contact us on our [Live Community Slack Chat](https://support.pods.io/chat/) in the #support channel. We do not staff our Slack channel 24/7, but we do check any questions that come through daily and reply to any unanswered questions.
 
 We do have a community of Pods users and developers that hang out on Slack, so you're sure to get an answer quickly. We answer our Forum questions once a week with follow-up during the week as we're prioritizing resources towards restructuring and improving our documentation.
 
@@ -161,7 +131,7 @@ Many thanks go out to the fine folks who have helped us translate the Pods plugi
 
 Join us in further translating the Pods interface on the official [Translating WordPress dashboard](https://translate.wordpress.org/projects/wp-plugins/pods)
 
-We are also available through our [Live Slack Chat](https://support.pods.io/chat/) to help our translators get started and to support them on the process.
+We are also available through our [Live Community Slack Chat](https://support.pods.io/chat/) to help our translators get started and to support them on the process.
 
 Are you looking to translate your Pods and Fields themselves? You'll want to enable the "Translate Pods" component from Pods Admin > Components.
 
@@ -182,9 +152,9 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 2.8 - October 12th, 2021 =
+= 2.8 - October 18th, 2021 =
 
-Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) which includes information about all of the features, enhancements, and changes in this major Pods release.
+Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) which includes information about all the features, enhancements, and changes in this major Pods release.
 
 **Breaking compatability warning:**
 * New minimum required versions have been updated as follows which includes notices to let you know if you need to update something.

@@ -257,6 +257,9 @@ class PodsField_WYSIWYG extends PodsField {
 		} elseif ( 'tinymce' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'tinymce';
 
+			// Enforce boolean.
+			$options[ static::$type . '_media_buttons' ] = filter_var( pods_v( static::$type . '_editor', $options, true ), FILTER_VALIDATE_BOOLEAN );
+
 			wp_tinymce_inline_scripts();
 			wp_enqueue_editor();
 		} elseif ( 'quill' === pods_v( static::$type . '_editor', $options ) ) {

@@ -121,7 +121,13 @@ class PodsInit {
 		self::$db_version   = get_option( 'pods_framework_db_version' );
 
 		if ( ! pods_strict( false ) ) {
-			self::$upgraded = (int) get_option( 'pods_framework_upgraded_1_x' );
+			self::$upgraded = get_option( 'pods_framework_upgraded_1_x' );
+
+			if ( false === self::$upgraded ) {
+				self::$upgraded = 2;
+
+				update_option( 'pods_framework_upgraded_1_x', 2, 'yes' );
+			}
 		}
 
 		if ( empty( self::$version_last ) && 0 < strlen( get_option( 'pods_version' ) ) ) {
@@ -173,6 +179,46 @@ class PodsInit {
 		 * overwrite what should be loaded by the auto-loader.
 		 */
 		if ( empty( $GLOBALS['tribe-common-info'] ) || version_compare( $GLOBALS['tribe-common-info']['version'], $common_version, '<' ) ) {
+			$solo_install = empty( $GLOBALS['tribe-common-info'] );
+
+			// Handle stopping anything we don't want to run in Tribe Common.
+			if ( $solo_install ) {
+				// Bypass Tribe-related options.
+				$tribe_options = [
+					'tribe_settings_errors',
+					'pue_install_key_promoter',
+					'tribe_pue_key_notices',
+					'tribe_events_calendar_options',
+					'tribe_settings_major_error',
+					'tribe_settings_sent_data',
+					'tribe_events_calendar_network_options',
+				];
+
+				$tribe_empty_options = [
+					'pue_install_key_promoter',
+					'tribe_settings_major_error',
+					'_tribe_admin_notices',
+				];
+
+				foreach ( $tribe_options as $option_name ) {
+					$return_third_param = static function() {
+						return func_get_arg( 2 );
+					};
+					$return_fourth_param = static function() {
+						return func_get_arg( 3 );
+					};
+
+					add_filter( "pre_option_{$option_name}", $return_third_param, 10, 3 );
+					add_filter( "pre_site_option_{$option_name}", $return_fourth_param, 10, 4 );
+				}
+
+				foreach ( $tribe_empty_options as $option_name ) {
+					add_filter( "pre_option_{$option_name}", '__return_null' );
+					add_filter( "pre_site_option_{$option_name}", '__return_null' );
+					add_filter( "pre_transient_{$option_name}", '__return_null' );
+				}
+			}
+
 			$GLOBALS['tribe-common-info'] = [
 				'dir'     => PODS_DIR . 'tribe-common/src/Tribe',
 				'version' => $common_version,
@@ -186,6 +232,11 @@ class PodsInit {
 			// Start up Common.
 			$main = Tribe__Main::instance();
 			$main->plugins_loaded();
+
+			// Handle anything we want to unhook/stop in Tribe Common.
+			if ( $solo_install ) {
+				// @todo Determine if there are any things we can mess with here.
+			}
 		}
 	}
 
@@ -2078,7 +2129,7 @@ class PodsInit {
 				if ( '2.1.0' === $new_version && ( is_developer() ) )
 					continue;*/
 
-				if ( version_compare( $last, $old_version, '>=' ) && version_compare( $last, $new_version, '<' ) && version_compare( $current, $new_version, '>=' ) && 1 !== self::$upgraded ) {
+				if ( version_compare( $last, $old_version, '>=' ) && version_compare( $last, $new_version, '<' ) && version_compare( $current, $new_version, '>=' ) && 1 !== self::$upgraded && 2 !== self::$upgraded ) {
 					$upgrade_needed = true;
 
 					break;

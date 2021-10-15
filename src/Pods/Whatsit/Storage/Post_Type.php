@@ -333,7 +333,7 @@ class Post_Type extends Collection {
 
 			if ( empty( $args['refresh'] ) ) {
 				$posts        = pods_transient_get( $cache_key );
-				$post_objects = pods_cache_get( $cache_key . '_objects' );
+				$post_objects = pods_cache_get( $cache_key . '_objects', 'pods_post_type_storage' );
 			}
 		}//end if
 
@@ -367,7 +367,7 @@ class Post_Type extends Collection {
 			}
 
 			if ( empty( $args['bypass_post_type_find'] ) && empty( $args['bypass_cache'] ) ) {
-				pods_cache_set( $cache_key . '_objects', $post_objects, WEEK_IN_SECONDS );
+				pods_cache_set( $cache_key . '_objects', $post_objects, 'pods_post_type_storage', WEEK_IN_SECONDS );
 			}
 		}
 

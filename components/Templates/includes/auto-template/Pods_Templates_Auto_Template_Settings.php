@@ -186,11 +186,13 @@ class Pods_Templates_Auto_Template_Settings {
 				'type'       => 'text',
 				'default'    => false,
 				'depends-on' => array( 'pfat_enable' => true ),
+				'dependency' => true,
 			),
 			'pfat_append_single' => array(
 				'label'      => __( 'Singular Template Location', 'pods' ),
 				'help'       => __( 'Whether the template will go before, after or in place of the existing content.', 'pods' ),
 				'depends-on' => array( 'pfat_enable' => true ),
+				'excludes-on' => array( 'pfat_single' => '' ),
 			),
 			'pfat_filter_single' => array(
 				'label'      => __( 'Singular Template Filter', 'pods' ),
@@ -202,6 +204,7 @@ class Pods_Templates_Auto_Template_Settings {
 					'custom'                       => __( 'Use a custom hook', 'pods' ),
 				),
 				'depends-on' => array( 'pfat_enable' => true ),
+				'excludes-on' => array( 'pfat_single' => '' ),
 				'dependency' => true,
 			),
 			'pfat_filter_single_custom' => array(
@@ -210,6 +213,7 @@ class Pods_Templates_Auto_Template_Settings {
 				'default'    => $default_single_hook_custom,
 				'type'       => 'text',
 				'depends-on' => array( 'pfat_enable' => true, 'pfat_filter_single' => 'custom' ),
+				'excludes-on' => array( 'pfat_single' => '' ),
 			),
 			'pfat_archive'          => array(
 				'label'      => __( 'List Template', 'pods' ),
@@ -217,11 +221,13 @@ class Pods_Templates_Auto_Template_Settings {
 				'type'       => 'text',
 				'default'    => false,
 				'depends-on' => array( 'pfat_enable' => true ),
+				'dependency' => true,
 			),
 			'pfat_append_archive'   => array(
 				'label'      => __( 'List Template Location', 'pods' ),
 				'help'       => __( 'Whether the template will go before, after or in place of the existing content.', 'pods' ),
 				'depends-on' => array( 'pfat_enable' => true ),
+				'excludes-on' => array( 'pfat_archive' => '' ),
 			),
 			'pfat_filter_archive'   => array(
 				'label'      => __( 'List Template Filter', 'pods' ),
@@ -233,6 +239,7 @@ class Pods_Templates_Auto_Template_Settings {
 					'custom'                        => __( 'Use a custom hook', 'pods' ),
 				),
 				'depends-on' => array( 'pfat_enable' => true ),
+				'excludes-on' => array( 'pfat_archive' => '' ),
 				'dependency' => true,
 			),
 			'pfat_filter_archive_custom' => array(
@@ -241,6 +248,7 @@ class Pods_Templates_Auto_Template_Settings {
 				'default'    => $default_archive_hook_custom,
 				'type'       => 'text',
 				'depends-on' => array( 'pfat_enable' => true, 'pfat_filter_archive' => 'custom' ),
+				'excludes-on' => array( 'pfat_archive' => '' ),
 			),
 			'pfat_run_outside_loop' => array(
 				'label'             => __( 'Run outside loop', 'pods' ),

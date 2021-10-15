@@ -56,8 +56,8 @@ class Pods_Templates_Auto_Template_Settings {
 		// Include and init front-end class
 		add_action( 'init', array( $this, 'front_end' ), 25 );
 
-		// Delete transients when Pods settings are updated.
-		add_action( 'update_option', array( $this, 'reset' ), 21, 3 );
+		// Delete transients when Pods cache is flushed.
+		add_action( 'pods_cache_flushed', array( $this, 'reseter' ) );
 
 		// admin notice for archives without archives
 		add_action( 'admin_notices', array( $this, 'archive_warning' ) );
@@ -359,32 +359,13 @@ class Pods_Templates_Auto_Template_Settings {
 	}
 
 	/**
-	 * Reset the transients for front-end class when Pods are saved.
-	 *
-	 * @uses  update_option hook
-	 *
-	 * @param string $option
-	 * @param mixed  $old_value
-	 * @param mixed  $value
-	 *
-	 * @since 2.5.5
-	 */
-	public function reset( $option, $old_value, $value ) {
-
-		if ( $option === '_transient_pods_flush_rewrites' ) {
-			$this->reseter();
-		}
-
-	}
-
-	/**
 	 * Delete transients that stores the settings.
 	 *
 	 * @since 2.5.5
 	 */
 	public function reseter() {
 
-		$keys = array( 'pods_pfat_the_pods', 'pods_pfat_auto_pods', 'pods_pfat_archive_test' );
+		$keys = array( '_pods_pfat_the_pods', 'pods_pfat_the_pods', 'pods_pfat_auto_pods', 'pods_pfat_archive_test' );
 		foreach ( $keys as $key ) {
 			pods_transient_clear( $key );
 		}

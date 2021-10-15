@@ -175,10 +175,16 @@ class PodsInit {
 		$common_version = $matches[1];
 
 		/**
-		 * If we don't have a version of Common or a Older version of the Lib
-		 * overwrite what should be loaded by the auto-loader.
+		 * Attempt to load our Common if it's not already loaded.
 		 */
-		if ( empty( $GLOBALS['tribe-common-info'] ) || version_compare( $GLOBALS['tribe-common-info']['version'], $common_version, '<' ) ) {
+		if ( empty( $GLOBALS['tribe-common-info'] ) ) {
+			/**
+			 * Custom tribe-common package:
+			 *
+			 * - Removed /vendor/freemius/ folder.
+			 * - Removed /lang/ folder (for now).
+			 * - Removed /src/resources/ folder (for now).
+			 */
 			$solo_install = empty( $GLOBALS['tribe-common-info'] );
 
 			// Handle stopping anything we don't want to run in Tribe Common.
@@ -217,6 +223,18 @@ class PodsInit {
 					add_filter( "pre_site_option_{$option_name}", '__return_null' );
 					add_filter( "pre_transient_{$option_name}", '__return_null' );
 				}
+
+				// Remove hooks that are added and run before we can remove them.
+				add_action( 'tribe_common_loaded', static function() {
+					$main = Tribe__Main::instance();
+
+					remove_action( 'tribe_common_loaded', [ $main, 'load_assets' ], 1 );
+					remove_action( 'plugins_loaded', [ $main, 'tribe_plugins_loaded' ], PHP_INT_MAX );
+				}, 0 );
+
+				if ( ! defined( 'TRIBE_HIDE_MARKETING_NOTICES' ) ) {
+					define( 'TRIBE_HIDE_MARKETING_NOTICES', true );
+				}
 			}
 
 			$GLOBALS['tribe-common-info'] = [
@@ -235,7 +253,13 @@ class PodsInit {
 
 			// Handle anything we want to unhook/stop in Tribe Common.
 			if ( $solo_install ) {
-				// @todo Determine if there are any things we can mess with here.
+				// Look into any others here.
+				remove_action( 'plugins_loaded', [ 'Tribe__App_Shop', 'instance' ] );
+				remove_action( 'plugins_loaded', [ 'Tribe__Admin__Notices', 'instance' ], 1 );
+
+				/** @var Tribe__Assets $assets */
+				$assets = tribe( 'assets' );
+				$assets->remove( 'tribe-tooltip' );
 			}
 		}
 	}

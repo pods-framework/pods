@@ -129,11 +129,15 @@ class PodsAdmin {
 
 		wp_register_script( 'pods-migrate', PODS_URL . 'ui/js/jquery.pods.migrate.js', array(), PODS_VERSION );
 
+		$load_pods_assets = false;
+
 		// @codingStandardsIgnoreLine
 		if ( isset( $_GET['page'] ) ) {
 			// @codingStandardsIgnoreLine
 			$page = $_GET['page'];
 			if ( 'pods' === $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
+				$load_pods_assets = true;
+
 				?>
 				<script>
 					if ( 'undefined' === typeof PODS_URL ) {
@@ -187,22 +191,25 @@ class PodsAdmin {
 			}//end if
 		}//end if
 
-		/**
-		 * Filter to disable default loading of the DFV script. By default, Pods
-		 * will always enqueue the DFV script if is_admin()
-		 *
-		 * Example: add_filter( 'pods_default_enqueue_dfv', '__return_false');
-		 *
-		 * @param bool Whether or not to enqueue by default
-		 *
-		 * @since 2.7.10
-		 */
-		if ( apply_filters( 'pods_default_enqueue_dfv', true ) ) {
-			wp_enqueue_script( 'pods-dfv' );
-		}
+		if ( $load_pods_assets ) {
+			/**
+			 * Filter to disable default loading of the DFV script. By default, Pods
+			 * will always enqueue the DFV script if is_admin()
+			 *
+			 * Example: add_filter( 'pods_default_enqueue_dfv', '__return_false');
+			 *
+			 * @since 2.7.10
+			 *
+			 * @param bool Whether or not to enqueue by default
+			 *
+			 */
+			if ( apply_filters( 'pods_default_enqueue_dfv', true ) ) {
+				wp_enqueue_script( 'pods-dfv' );
+			}
 
-		// New styles enqueue.
-		wp_enqueue_style( 'pods-styles' );
+			// New styles enqueue.
+			wp_enqueue_style( 'pods-styles' );
+		}
 	}
 
 	/**

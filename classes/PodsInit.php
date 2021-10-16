@@ -126,7 +126,8 @@ class PodsInit {
 			if ( false === self::$upgraded ) {
 				self::$upgraded = 2;
 
-				update_option( 'pods_framework_upgraded_1_x', 2, 'yes' );
+				delete_option( 'pods_framework_upgraded_1_x' );
+				add_option( 'pods_framework_upgraded_1_x', 2, '', 'yes' );
 			}
 		}
 
@@ -138,7 +139,8 @@ class PodsInit {
 					$old_version = pods_version_to_point( $old_version );
 				}
 
-				update_option( 'pods_framework_version_last', $old_version );
+				delete_option( 'pods_framework_version_last' );
+				add_option( 'pods_framework_version_last', $old_version, '', 'yes' );
 
 				self::$version_last = $old_version;
 			}

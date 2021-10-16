@@ -318,11 +318,19 @@ class Post_Type extends Collection {
 				'pods_whatsit_storage_post_type_find',
 			];
 
-			if ( $args['count'] ) {
+			if ( ! empty( $args['count'] ) ) {
 				$cache_key_parts[] = '_count';
 			}
 
-			if ( $args['ids'] ) {
+			if ( ! empty( $args['names'] ) ) {
+				$cache_key_parts[] = '_names';
+			}
+
+			if ( ! empty( $args['names_ids'] ) ) {
+				$cache_key_parts[] = '_namesids';
+			}
+
+			if ( ! empty( $args['ids'] ) ) {
 				$cache_key_parts[] = '_ids';
 			}
 
@@ -353,7 +361,7 @@ class Post_Type extends Collection {
 
 		if ( ! is_array( $posts ) ) {
 			$posts        = [];
-			$post_objects = [];
+			$post_objects = false;
 
 			if ( empty( $args['bypass_post_type_find'] ) ) {
 				$query = new WP_Query( $post_args );
@@ -387,8 +395,9 @@ class Post_Type extends Collection {
 				if ( ! empty( $args['ids'] ) ) {
 					// Get a list of the post IDs in basic array form.
 					$post_objects = array_map( static function ( $post_id ) {
-						return [
+						return (object) [
 							'id' => (int) $post_id,
+							'ID' => (int) $post_id,
 						];
 					}, $posts );
 				} else {
@@ -407,8 +416,20 @@ class Post_Type extends Collection {
 			// We set $post_objects as id => $post_id above already.
 			$posts = $post_objects;
 		} else {
-			$posts = array_map( [ $this, 'to_object' ], $post_objects );
-			$posts = array_filter( $posts );
+			if ( ! empty( $args['names'] ) || ! empty( $args['names_ids'] ) ) {
+				// Just do a quick setup of the data we need for names and names+ids return.
+				$posts = array_map( static function( $post ) {
+					return (object) [
+						'id'    => $post->ID,
+						'name'  => $post->post_name,
+						'label' => $post->post_title,
+					];
+				}, $post_objects );
+			} else {
+				// Handle normal Whatsit object setup.
+				$posts = array_map( [ $this, 'to_object' ], $post_objects );
+				$posts = array_filter( $posts );
+			}
 
 			$names = wp_list_pluck( $posts, 'name' );
 			$posts = array_combine( $names, $posts );

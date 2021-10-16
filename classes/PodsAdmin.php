@@ -1281,7 +1281,9 @@ class PodsAdmin {
 			return null;
 		}
 
-		$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+		if ( 1 !== (int) $pod->get_arg( '_migrated_28' ) ) {
+			$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+		}
 
 		// Check again in case the pod migrated wrong.
 		if ( ! $pod instanceof Pod ) {
@@ -1417,6 +1419,12 @@ class PodsAdmin {
 			] );
 
 			if ( ! $has_orphan_fields ) {
+				$pod->set_arg( '_migrated_28', 1 );
+
+				$api->save_pod( $pod );
+
+				$pod->flush();
+
 				return $pod;
 			}
 
@@ -1472,6 +1480,12 @@ class PodsAdmin {
 
 			$field->set_arg( 'group_id', $group_id );
 		}
+
+		$pod->set_arg( '_migrated_28', 1 );
+
+		$api->save_pod( $pod );
+
+		$pod->flush();
 
 		$api->cache_flush_pods( $pod );
 

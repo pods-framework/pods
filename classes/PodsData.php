@@ -9,12 +9,12 @@ use Pods\Whatsit\Object_Field;
  *
  * @package Pods
  *
- * @property null|string       $pod           The name data.
- * @property null|string       $pod_id        The id data.
- * @property null|array        $fields        The fields data.
- * @property null|array        $object_fields The object_fields data.
- * @property null|string       $detail_page   The detail_url data.
- * @property null|string       $detail_url    The detail_url data.
+ * @property null|string       $pod           The Pod name.
+ * @property null|string       $pod_id        The Pod id.
+ * @property null|array        $fields        The list of Pod fields.
+ * @property null|array        $object_fields The list of Pod object fields.
+ * @property null|string       $detail_page   The detail_url (if set), alias of detail_url.
+ * @property null|string       $detail_url    The detail_url (if set).
  * @property null|string       $select        The select data.
  * @property null|string       $table         The table data.
  * @property null|string       $field_id      The field_id data.

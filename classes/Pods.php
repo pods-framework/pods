@@ -9,6 +9,20 @@ use Pod as Deprecated_Pod;
  * Pods class.
  *
  * @package Pods
+ *
+ * @property null|string $pod         The Pod name.
+ * @property null|string $pod_id      The Pod ID.
+ * @property null|string $id          The current item ID (singular mode).
+ * @property null|string $rows        The list of rows.
+ * @property null|string $row         The current row.
+ * @property null|string $pagination  Whether pagination is enabled.
+ * @property null|string $page        The current page number.
+ * @property null|string $page_var    The query variable used for pagination.
+ * @property null|string $search      Whether search is enabled.
+ * @property null|string $search_var  The query variable used for search.
+ * @property null|string $search_mode The search mode to use.
+ * @property null|string $params      The last find() params.
+ * @property null|string $sql         The last find() SQL query.
  */
 class Pods implements Iterator {
 

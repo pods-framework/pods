@@ -1363,7 +1363,7 @@ class PodsAdmin {
 
 		wp_localize_script( 'pods-dfv', 'podsAdminConfig', $config );
 
-		pods_view( PODS_DIR . 'ui/admin/setup-edit-proto.php', compact( array_keys( get_defined_vars() ) ) );
+		pods_view( PODS_DIR . 'ui/admin/setup-edit.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
 	/**

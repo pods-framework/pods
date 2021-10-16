@@ -3400,6 +3400,51 @@ function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
 	return null;
 }
 
+/**
+ * Get a normalized Pod configuration.
+ *
+ * @since 2.8.0
+ *
+ * @param Pod|Pods|string $pod The Pod configuration object, Pods() object, or name.
+ *
+ * @return false|Pod The Pod object.
+ */
+function pods_config_for_pod( $pod ) {
+	if ( $pod instanceof Pod ) {
+		return $pod;
+	}
+
+	if ( $pod instanceof Pods ) {
+		// Check if the $pod is invalid.
+		if ( ! $pod->valid() ) {
+			return false;
+		}
+
+		return $pod->pod_data;
+	}
+
+	if ( is_string( $pod ) ) {
+		try {
+			$api = pods_api();
+
+			$pod = $api->load_pod( [ 'name' => $pod ] );
+		} catch ( Exception $exception ) {
+			return false;
+		}
+
+		// Check if the $pod is invalid.
+		if ( ! $pod ) {
+			return false;
+		}
+
+		return $pod;
+	}
+
+	// @todo Support arrays in the future by migrating them into a Pod() object.
+
+	return false;
+}
+
 function is_pods_alternative_cache_activated() {
 	return function_exists( 'pods_alternative_cache_init' );
 }

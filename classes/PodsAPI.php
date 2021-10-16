@@ -1731,10 +1731,10 @@ class PodsAPI {
 	 * $params['create_extend'] string Create or Extend a Content Type
 	 * $params['order'] array List of group and field IDs to reorder
 	 *
-	 * @param array    $params    An associative array of parameters
-	 * @param bool     $sanitized (optional) Decides whether the params have been sanitized before being passed, will
-	 *                            sanitize them if false.
-	 * @param bool|int $db        (optional) Whether to save into the DB or just return Pod array.
+	 * @param array|Pod $params    An associative array of parameters
+	 * @param bool      $sanitized (optional) Decides whether the params have been sanitized before being passed, will
+	 *                             sanitize them if false.
+	 * @param bool|int  $db        (optional) Whether to save into the DB or just return Pod array.
 	 *
 	 * @throws Exception
 	 *
@@ -1742,6 +1742,12 @@ class PodsAPI {
 	 * @since 1.7.9
 	 */
 	public function save_pod( $params, $sanitized = false, $db = true ) {
+		if ( $params instanceof Pod ) {
+			$params = [
+				'pod' => $params,
+			];
+		}
+
 		$params = (object) $params;
 
 		$extend = false;
@@ -3043,16 +3049,21 @@ class PodsAPI {
 	 * $params['sister_id'] int (optional) Related Field ID (for bidirectional relationships)
 	 * $params['weight'] int (optional) Order in which the field appears
 	 *
-	 * @param array    $params          An associative array of parameters
-	 * @param bool     $table_operation (optional) Whether or not to handle table operations
-	 * @param bool     $sanitized       (optional) Decides whether the params have been sanitized before being passed,
-	 *                                  will sanitize them if false.
-	 * @param bool|int $db              (optional) Whether to save into the DB or just return field array.
+	 * @param array|Field $params          An associative array of parameters
+	 * @param bool        $table_operation (optional) Whether or not to handle table operations
+	 * @param bool        $sanitized       (optional) Decides whether the params have been sanitized before being passed,
+	 *                                     will sanitize them if false.
+	 * @param bool|int    $db              (optional) Whether to save into the DB or just return field array.
 	 *
 	 * @return int|array The field ID or field array (if !$db)
 	 * @since 1.7.9
 	 */
 	public function save_field( $params, $table_operation = true, $sanitized = false, $db = true ) {
+		if ( $params instanceof Field ) {
+			$params = [
+				'field' => $params,
+			];
+		}
 
 		$params = (object) $params;
 
@@ -4008,7 +4019,7 @@ class PodsAPI {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param array    $params          {
+	 * @param array|Group $params        {
 	 *      An associative array of parameters
 	 *
 	 *      @type int|null    $id        The Group ID (id OR pod_id+name OR pod+name required).
@@ -4021,15 +4032,21 @@ class PodsAPI {
 	 *      @type bool        $is_new    Whether to try to add the group as a new group when passing name.
 	 *      @type bool        $overwrite Whether to try to replace the existing group if name and no ID is passed.
 	 * }
-	 * @param bool     $sanitized       (optional) Decides whether the params have been sanitized before being passed,
-	 *                                  will sanitize them if false.
-	 * @param bool|int $db              (optional) Whether to save into the DB or just return group array.
+	 * @param bool        $sanitized     (optional) Decides whether the params have been sanitized before being passed,
+	 *                                   will sanitize them if false.
+	 * @param bool|int    $db            (optional) Whether to save into the DB or just return group array.
 	 *
 	 * @return int|array The group ID or group array (if !$db)
 	 *
 	 * @throws \Exception
 	 */
 	public function save_group( $params, $sanitized = false, $db = true ) {
+		if ( $params instanceof Group ) {
+			$params = [
+				'group' => $params,
+			];
+		}
+
 		$params = (object) $params;
 
 		$pod   = null;

@@ -4,6 +4,7 @@ namespace Pods\Whatsit\Storage;
 
 use Pods\Whatsit;
 use Pods\Whatsit\Store;
+use WP_Query;
 
 /**
  * Post_Type class.
@@ -279,6 +280,10 @@ class Post_Type extends Collection {
 			$post_args['orderby'] = $args['orderby'];
 		}
 
+		if ( ! empty( $args['count'] ) ) {
+			$args['limit'] = 1;
+		}
+
 		if ( ! empty( $args['limit'] ) ) {
 			$post_args['posts_per_page'] = (int) $args['limit'];
 		}
@@ -346,11 +351,19 @@ class Post_Type extends Collection {
 			}
 		}//end if
 
-		if ( ! is_array( $posts ) || ( empty( $args['count'] ) && ! is_array( $post_objects ) ) ) {
-			$posts = [];
+		if ( ! is_array( $posts ) ) {
+			$posts        = [];
+			$post_objects = [];
 
 			if ( empty( $args['bypass_post_type_find'] ) ) {
-				$posts = get_posts( $post_args );
+				$query = new WP_Query( $post_args );
+
+				$posts = $query->get_posts();
+
+				// We only receive the first post, so let's just override the posts with the count.
+				if ( ! empty( $args['count'] ) ) {
+					$posts = array_fill( 0, $query->found_posts, 'temp_count_holder' );
+				}
 
 				if ( empty( $args['bypass_cache'] ) ) {
 					pods_transient_set( $cache_key, $posts, WEEK_IN_SECONDS );
@@ -371,8 +384,17 @@ class Post_Type extends Collection {
 			$post_objects = [];
 
 			if ( ! empty( $posts ) ) {
-				// Get the post objects.
-				$post_objects = array_map( 'get_post', $posts );
+				if ( ! empty( $args['ids'] ) ) {
+					// Get a list of the post IDs in basic array form.
+					$post_objects = array_map( static function ( $post_id ) {
+						return [
+							'id' => (int) $post_id,
+						];
+					}, $posts );
+				} else {
+					// Get the post objects.
+					$post_objects = array_map( 'get_post', $posts );
+				}
 			}
 
 			if ( empty( $args['bypass_post_type_find'] ) && empty( $args['bypass_cache'] ) ) {
@@ -380,11 +402,17 @@ class Post_Type extends Collection {
 			}
 		}
 
-		$posts = array_map( [ $this, 'to_object' ], $post_objects );
-		$posts = array_filter( $posts );
+		// Use the objects as they are if we only need the IDs.
+		if ( ! empty( $args['ids'] ) ) {
+			// We set $post_objects as id => $post_id above already.
+			$posts = $post_objects;
+		} else {
+			$posts = array_map( [ $this, 'to_object' ], $post_objects );
+			$posts = array_filter( $posts );
 
-		$names = wp_list_pluck( $posts, 'name' );
-		$posts = array_combine( $names, $posts );
+			$names = wp_list_pluck( $posts, 'name' );
+			$posts = array_combine( $names, $posts );
+		}
 
 		if ( $fallback_mode && ( empty( $args['status'] ) || in_array( 'publish', (array) $args['status'], true ) ) ) {
 			$posts = array_merge( $posts, parent::find( $args ) );

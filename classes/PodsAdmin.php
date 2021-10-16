@@ -1421,7 +1421,11 @@ class PodsAdmin {
 			if ( ! $has_orphan_fields ) {
 				$pod->set_arg( '_migrated_28', 1 );
 
-				$api->save_pod( $pod );
+				try {
+					$api->save_pod( $pod );
+				} catch ( Exception $exception ) {
+					// Nothing to do for now.
+				}
 
 				$pod->flush();
 

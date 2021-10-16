@@ -311,9 +311,18 @@ class Post_Type extends Collection {
 		if ( empty( $args['bypass_cache'] ) && empty( $args['bypass_post_type_find'] ) ) {
 			$cache_key_parts = [
 				'pods_whatsit_storage_post_type_find',
-				$current_language,
-				wp_json_encode( $post_args ),
 			];
+
+			if ( $args['count'] ) {
+				$cache_key_parts[] = '_count';
+			}
+
+			if ( $args['ids'] ) {
+				$cache_key_parts[] = '_ids';
+			}
+
+			$cache_key_parts[] = $current_language;
+			$cache_key_parts[] = wp_json_encode( $post_args );
 
 			/**
 			 * Filter cache key parts used for generating the cache key.

@@ -1163,12 +1163,12 @@ class PodsAdmin {
 
 		if ( ! $callouts ) {
 			$callouts = array(
-				'friends_2021' => 1,
+				'friends_2021_29' => 1,
 			);
 		}
 
 		// Handle Friends of Pods 2021 callout logic.
-		$callouts['friends_2021'] = ! isset( $callouts['friends_2021'] ) || $callouts['friends_2021'] || $force_callouts ? 1 : 0;
+		$callouts['friends_2021_29'] = ! isset( $callouts['friends_2021_29'] ) || $callouts['friends_2021_29'] || $force_callouts ? 1 : 0;
 
 		/**
 		 * Allow hooking into whether or not the specific callouts should show.
@@ -1246,7 +1246,7 @@ class PodsAdmin {
 
 		$callouts = $this->get_callouts();
 
-		if ( ! empty( $callouts['friends_2021'] ) ) {
+		if ( ! empty( $callouts['friends_2021_29'] ) ) {
 			pods_view( PODS_DIR . 'ui/admin/callouts/friends_2021_29.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 	}

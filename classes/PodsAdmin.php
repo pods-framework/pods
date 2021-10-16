@@ -49,7 +49,6 @@ class PodsAdmin {
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );
 
 		// AJAX for Admin
-		add_action( 'wp_ajax_pods_admin_proto', array( $this, 'admin_ajax_proto' ) );
 		add_action( 'wp_ajax_pods_admin', array( $this, 'admin_ajax' ) );
 		add_action( 'wp_ajax_nopriv_pods_admin', array( $this, 'admin_ajax' ) );
 
@@ -2532,35 +2531,6 @@ class PodsAdmin {
 
 		die();
 		// KBAI!
-	}
-
-	public function admin_ajax_proto() {
-		$METHOD = 'save_pod';
-
-		// Request header should be Content-Type: application/json
-		$http_method = filter_input( INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING );
-		$data = json_decode( file_get_contents('php://input'), true );
-
-		if ( false === headers_sent() ) {
-			pods_session_start();
-			header( 'Content-Type: application/json; charset=' . get_bloginfo( 'charset' ) );
-		}
-
-		if ( false === wp_verify_nonce( $data[ '_wpnonce' ], 'pods-' . $METHOD ) ) {
-			pods_error( __( 'Unauthorized request', 'pods' ), $this );
-		}
-
-		// Check permissions
-		if ( !pods_is_admin( array( 'pods' ) ) && !pods_is_admin( $METHOD ) ) {
-			pods_error( __( 'Access denied', 'pods' ), $this );
-		}
-
-		// Dynamically call the API method
-		$api = pods_api();
-		$api->display_errors = false;
-		$output = $api->save_pod( $data );
-
-		die();
 	}
 
 	/**

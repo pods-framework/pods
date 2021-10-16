@@ -2610,20 +2610,35 @@ class PodsMeta {
 		$keys_not_covered = [
 			'post_type' => [
 				'_wp_attachment_metadata' => true,
+				'_thumbnail_id'           => true,
 			],
 			'user' => [
-				'session_tokens'          => true,
-				'primary_blog'            => true,
-				'wp_default_password_nag' => true,
-				'default_password_nag'    => true,
-				'tribe-dismiss-notice'    => true,
-				'wp_user-settings'        => true,
-				'wp_admin_color'          => true,
-				'admin_color'             => true,
+				'capabilities'         => true,
+				'session_tokens'       => true,
+				'primary_blog'         => true,
+				'default_password_nag' => true,
+				'tribe-dismiss-notice' => true,
+				'user-settings'        => true,
+				'admin_color'          => true,
+				'show_admin_bar_front' => true,
+				'show_admin_bar_admin' => true,
 			],
 			'settings' => [
 			],
 		];
+
+		// Add prefix-specific keys for user type.
+		if ( 'user' === $type ) {
+			global $wpdb;
+
+			$prefix = $wpdb->get_blog_prefix();
+
+			$keys = $keys_not_covered['user'];
+
+			foreach ( $keys as $key => $ignored ) {
+				$keys_not_covered['user'][ $prefix . $key ] = true;
+			}
+		}
 
 		/**
 		 * Allow filtering the list of keys not covered.

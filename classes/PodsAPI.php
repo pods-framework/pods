@@ -1744,6 +1744,7 @@ class PodsAPI {
 	public function save_pod( $params, $sanitized = false, $db = true ) {
 		if ( $params instanceof Pod ) {
 			$params = [
+				'id'  => $params->get_id(),
 				'pod' => $params,
 			];
 		}
@@ -3061,6 +3062,7 @@ class PodsAPI {
 	public function save_field( $params, $table_operation = true, $sanitized = false, $db = true ) {
 		if ( $params instanceof Field ) {
 			$params = [
+				'id'    => $params->get_id(),
 				'field' => $params,
 			];
 		}
@@ -4043,6 +4045,7 @@ class PodsAPI {
 	public function save_group( $params, $sanitized = false, $db = true ) {
 		if ( $params instanceof Group ) {
 			$params = [
+				'id'    => $params->get_id(),
 				'group' => $params,
 			];
 		}

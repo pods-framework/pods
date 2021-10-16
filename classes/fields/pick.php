@@ -2617,6 +2617,11 @@ class PodsField_Pick extends PodsField {
 
 							if ( ! empty( $display_filter_args ) ) {
 								foreach ( (array) $display_filter_args as $display_filter_arg ) {
+									// Manual solution to a problem that won't map correctly.
+									if ( 'post_ID' === $display_filter_arg ) {
+										$display_filter_arg = 'ID';
+									}
+
 									if ( isset( $result[ $display_filter_arg ] ) ) {
 										$filter_args[] = $result[ $display_filter_arg ];
 									}

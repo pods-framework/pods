@@ -988,7 +988,7 @@ class PodsAPI {
 					'alias'   => [ 'title', 'name' ],
 					'options' => [
 						'display_filter'      => 'the_title',
-						'display_filter_args' => [ 'ID' ],
+						'display_filter_args' => [ 'post_ID' ],
 					],
 				],
 				'post_content'          => [

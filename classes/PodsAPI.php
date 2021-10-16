@@ -10646,6 +10646,20 @@ class PodsAPI {
 			}
 		}
 
+		if ( ! empty( $params['return_type'] ) ) {
+			$return_type = $params['return_type'];
+
+			if ( 'names' === $return_type ) {
+				$params['names'] = true;
+			} elseif ( 'names_ids' === $return_type ) {
+				$params['names_ids'] = true;
+			} elseif ( 'ids' === $return_type ) {
+				$params['ids'] = true;
+			} elseif ( 'count' === $return_type ) {
+				$params['count'] = true;
+			}
+		}
+
 		$storage_type = ! empty( $params['storage_type'] ) ? $params['storage_type'] : $this->get_default_object_storage_type();
 
 		$object_collection = Pods\Whatsit\Store::get_instance();
@@ -10743,20 +10757,6 @@ class PodsAPI {
 				$object_collection->register_object( $pod );
 
 				return $this->_load_objects( $params );
-			}
-		}
-
-		if ( ! empty( $params['return_type'] ) ) {
-			$return_type = $params['return_type'];
-
-			if ( 'names' === $return_type ) {
-				$params['names'] = true;
-			} elseif ( 'names_ids' === $return_type ) {
-				$params['names_ids'] = true;
-			} elseif ( 'ids' === $return_type ) {
-				$params['ids'] = true;
-			} elseif ( 'count' === $return_type ) {
-				$params['count'] = true;
 			}
 		}
 

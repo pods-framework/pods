@@ -7487,7 +7487,11 @@ class PodsAPI {
 		$static_cache->delete( $cache_key, __CLASS__ . '/related_item_cache' );
 
 		// @codingStandardsIgnoreLine
-		unset( $related_ids[ array_search( $id, $related_ids ) ] );
+		$key = array_search( $id, $related_ids );
+
+		if ( false !== $key ) {
+			unset( $related_ids[ $key ] );
+		}
 
 		$no_conflict = pods_no_conflict_check( $related_pod['type'] );
 

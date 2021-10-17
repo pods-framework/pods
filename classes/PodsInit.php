@@ -1012,12 +1012,6 @@ class PodsInit {
 			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
 		}
 
-		// Check if Pod is a Modal Window.
-		if ( pods_is_modal_window() ) {
-			add_filter( 'body_class', array( $this, 'add_classes_to_modal_body' ) );
-			add_filter( 'admin_body_class', array( $this, 'add_classes_to_modal_body' ) );
-		}
-
 		$is_admin = is_admin();
 
 		// Deal with specifics on admin pages.
@@ -1061,6 +1055,14 @@ class PodsInit {
 		if ( ! $is_admin && apply_filters( 'pods_enqueue_dfv_on_front', false ) ) {
 			wp_enqueue_script( 'pods-dfv' );
 			wp_enqueue_style( 'pods-form' );
+		}
+
+		// Check if Pod is a Modal Window.
+		if ( pods_is_modal_window() ) {
+			add_filter( 'body_class', array( $this, 'add_classes_to_modal_body' ) );
+			add_filter( 'admin_body_class', array( $this, 'add_classes_to_modal_body' ) );
+
+			wp_enqueue_style( 'pods-styles' );
 		}
 
 		/**

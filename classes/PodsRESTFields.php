@@ -41,7 +41,6 @@ class PodsRESTFields {
 		if ( $this->pod ) {
 			add_action( 'rest_api_init', [ $this, 'add_fields' ] );
 		}
-
 	}
 
 	/**

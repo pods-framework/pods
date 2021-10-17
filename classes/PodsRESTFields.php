@@ -39,7 +39,7 @@ class PodsRESTFields {
 		$this->set_pod( $pod );
 
 		if ( $this->pod ) {
-			add_action( 'rest_api_init', [ $this, 'add_fields'] );
+			add_action( 'rest_api_init', [ $this, 'add_fields' ] );
 		}
 
 	}
@@ -93,10 +93,8 @@ class PodsRESTFields {
 	 * Add fields, based on options to REST read/write requests
 	 *
 	 * @since  2.5.6
-	 *
-	 * @access protected
 	 */
-	protected function add_fields() {
+	public function add_fields() {
 		$pod_name = $this->pod->get_name();
 		$pod_type = $this->pod->get_type();
 		$fields   = $this->pod->get_fields();
@@ -118,7 +116,6 @@ class PodsRESTFields {
 		foreach ( $fields as $field ) {
 			$this->register( $field );
 		}
-
 	}
 
 	/**

@@ -5598,9 +5598,9 @@ class PodsAPI {
 	public static function handle_changed_fields( $pod, $id, $mode = 'set' ) {
 		$static_cache = tribe( Static_Cache::class );
 
-		$changed_pods_cache   = $static_cache->get( 'changed_pods_cache', __METHOD__ ) ?: [];
-		$old_fields_cache     = $static_cache->get( 'old_fields_cache', __METHOD__ ) ?: [];
-		$changed_fields_cache = $static_cache->get( 'changed_fields_cache', __METHOD__ ) ?: [];
+		$changed_pods_cache   = $static_cache->get( 'changed_pods_cache', __CLASS__ ) ?: [];
+		$old_fields_cache     = $static_cache->get( 'old_fields_cache', __CLASS__ ) ?: [];
+		$changed_fields_cache = $static_cache->get( 'changed_fields_cache', __CLASS__ ) ?: [];
 
 		$cache_key = $pod . '|' . $id;
 
@@ -5658,9 +5658,9 @@ class PodsAPI {
 			}
 		}
 
-		$static_cache->set( 'changed_pods_cache', $changed_pods_cache, __METHOD__ );
-		$static_cache->set( 'old_fields_cache', $old_fields_cache, __METHOD__ );
-		$static_cache->set( 'changed_fields_cache', $changed_fields_cache, __METHOD__ );
+		$static_cache->set( 'changed_pods_cache', $changed_pods_cache, __CLASS__ );
+		$static_cache->set( 'old_fields_cache', $old_fields_cache, __CLASS__ );
+		$static_cache->set( 'changed_fields_cache', $changed_fields_cache, __CLASS__ );
 
 		return $changed_fields;
 

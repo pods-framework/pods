@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Static_Cache;
+
 /**
  * @package Pods\Fields
  */
@@ -300,17 +302,19 @@ class PodsField_Link extends PodsField_Website {
 	 * Init the editor needed for WP Link modal to work
 	 */
 	public function validate_link_modal() {
+		$static_cache = tribe( Static_Cache::class );
 
-		static $init;
+		$init = (boolean) $static_cache->get( 'init', __METHOD__ );
 
-		if ( empty( $init ) ) {
-			if ( ! did_action( 'wp_enqueue_editor' ) ) {
-				add_action( 'shutdown', array( $this, 'add_link_modal' ) );
-			}
+		if ( $init ) {
+			return;
 		}
 
-		$init = true;
+		if ( ! did_action( 'wp_enqueue_editor' ) && ! has_action( 'shutdown', [ $this, 'add_link_modal' ] ) ) {
+			add_action( 'shutdown', [ $this, 'add_link_modal' ] );
+		}
 
+		$static_cache->set( 'init', 1, __METHOD__ );
 	}
 
 	/**

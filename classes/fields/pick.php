@@ -3444,7 +3444,7 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for US States.
+	 * Data callback for Days of the Week.
 	 *
 	 * @param string|null       $name    The name of the field.
 	 * @param string|array|null $value   The value of the field.
@@ -3468,7 +3468,7 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for US States.
+	 * Data callback for Months of the Year.
 	 *
 	 * @param string|null       $name    The name of the field.
 	 * @param string|array|null $value   The value of the field.

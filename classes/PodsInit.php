@@ -466,6 +466,9 @@ class PodsInit {
 
 		$this->register_pods();
 
+		// Instantiate WP Icon Picker class.
+		$icon = PodsForm::field_loader( 'icon' );
+
 		$avatar = PodsForm::field_loader( 'avatar' );
 
 		if ( method_exists( $avatar, 'get_avatar' ) ) {

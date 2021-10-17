@@ -419,7 +419,7 @@ class PodsForm {
 			$attributes = $other_attributes;
 		}
 
-		$button  = '<input type="submit" name="' . esc_attr( $name ) . '" id="' . esc_attr( $id ) . '" class="' . esc_attr( $class );
+		$button = '<input type="submit" name="' . esc_attr( $name ) . '" id="' . esc_attr( $id ) . '" class="' . esc_attr( $class );
 		$button .= '" value="' . esc_attr( $text ) . '" ' . $attributes . ' />';
 
 		if ( $wrap ) {
@@ -463,9 +463,9 @@ class PodsForm {
 	 * @since 2.0.0
 	 *
 	 * @param      $attributes
-	 * @param null       $name
-	 * @param null       $type
-	 * @param null       $options
+	 * @param null $name
+	 * @param null $type
+	 * @param null $options
 	 */
 	public static function attributes( $attributes, $name = null, $type = null, $options = null ) {
 
@@ -515,10 +515,10 @@ class PodsForm {
 	 * @since 2.0.0
 	 *
 	 * @param        $attributes
-	 * @param null       $name
-	 * @param null       $type
-	 * @param null       $options
-	 * @param string     $classes
+	 * @param null   $name
+	 * @param null   $type
+	 * @param null   $options
+	 * @param string $classes
 	 *
 	 * @return array
 	 */
@@ -1055,41 +1055,35 @@ class PodsForm {
 		$tableless_field_types = self::tableless_field_types();
 
 		if ( method_exists( self::$loaded[ $type ], 'display_list' ) ) {
-			$value = call_user_func_array(
-				array( self::$loaded[ $type ], 'display_list' ), array(
+			$value = call_user_func_array( array( self::$loaded[ $type ], 'display_list' ), array(
 					$value,
 					$name,
 					$options,
 					$pod,
 					$id,
 					$traverse,
-				)
-			);
+				) );
 		} elseif ( method_exists( self::$loaded[ $type ], 'display' ) ) {
 			if ( is_array( $value ) && ! in_array( $type, $tableless_field_types ) ) {
 				foreach ( $value as $k => $display_value ) {
-					$value[ $k ] = call_user_func_array(
-						array( self::$loaded[ $type ], 'display' ), array(
+					$value[ $k ] = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array(
 							$display_value,
 							$name,
 							$options,
 							$pod,
 							$id,
 							$traverse,
-						)
-					);
+						) );
 				}
 			} else {
-				$value = call_user_func_array(
-					array( self::$loaded[ $type ], 'display' ), array(
+				$value = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array(
 						$value,
 						$name,
 						$options,
 						$pod,
 						$id,
 						$traverse,
-					)
-				);
+					) );
 			}//end if
 		}//end if
 
@@ -1343,8 +1337,8 @@ class PodsForm {
 	 * @since 2.0.0
 	 *
 	 * @param      $input
-	 * @param bool  $noarray
-	 * @param bool  $db_field
+	 * @param bool $noarray
+	 * @param bool $db_field
 	 *
 	 * @return mixed|string
 	 */
@@ -1573,6 +1567,7 @@ class PodsForm {
 			'pick',
 			'boolean',
 			'color',
+			'icon',
 			'slug',
 		);
 

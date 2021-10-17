@@ -50,7 +50,8 @@
   "require": {
     "composer/installers": "1.12.*",
     "php": ">=5.3",
-    "freemius/wordpress-sdk": "2.4.2"
+    "freemius/wordpress-sdk": "2.4.2",
+    "kucrut/icon-picker": "^0.5.0"
   },
   "require-dev": {
     "automattic/vipwpcs": "^2.0",
@@ -67,6 +68,9 @@
     "wp-cli/wp-cli": "Enables access to Pods CLI commands."
   },
   "extra": {
-    "installer-name": "pods"
+    "installer-name": "pods",
+    "installer-paths": {
+      "vendor/{$vendor}/{$name}/": ["type:wordpress-plugin"]
+    }
   }
 }

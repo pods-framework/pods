@@ -1,0 +1,79 @@
+.iconpicker-fonts-browser .media-toolbar-secondary {
+	min-width: 40%;
+}
+.iconpicker-item ._icon {
+	display: inline-block;
+	margin-top: 8px;
+	color: #555;
+}
+.iconpicker-items .selected ._icon {
+	color: #222;
+}
+
+.iconpicker-item ._icon i {
+	font-size: 100px;
+	width: 100%;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.attachment .svg-icon img {
+	min-width: 80%;
+	max-width: 100%;
+}
+
+/** Field **/
+.ipf-select {
+	cursor: pointer;
+}
+.ipf .has-icon {
+	display: block;
+	width: 100px;
+	height: 100px;
+	line-height: 100px;
+	margin-bottom: 1em;
+	text-align: center;
+	padding: 12px;
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.1) inset, 0 0 0 1px rgba(0, 0, 0, .05) inset;
+	background: #eee;
+}
+.ipf ._icon {
+	display: inline-block;
+	color: #333;
+	font-size: 6em;
+	width: 100%;
+	height: 100%;
+}
+.ipf ._icon::before {
+	line-height: 100px;
+}
+
+/** CMB **/
+.cmb_metabox .Icon_Picker_Field_Cmb.repeatable > .field-item {
+	float: left;
+	height: 100px;
+	line-height: 100px;
+	margin-right: 12px;
+	margin-bottom: 12px;
+	padding: 12px;
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.1) inset, 0 0 0 1px rgba(0, 0, 0, .05) inset;
+	background: #eee;
+	min-width: 100px;
+	text-align: center;
+}
+.Icon_Picker_Field_Cmb.repeatable .button {
+	display: inline-block;
+	vertical-align: middle;
+}
+.Icon_Picker_Field_Cmb.repeatable .has-icon {
+	margin-bottom: 0;
+	padding: 0;
+	box-shadow: none;
+	background: none;
+}
+.Icon_Picker_Field_Cmb.repeatable .ipf-remove {
+	display: none;
+}
+.Icon_Picker_Field_Cmb .cmb-delete-field {
+	right: 3px;
+}

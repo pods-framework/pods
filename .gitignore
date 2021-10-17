@@ -39,6 +39,9 @@ composer.lock
 vendor/*
 npm-debug.log
 
+# Re-enable required composer libraries
+!/vendor/kucrut/
+
 # PHPunit config
 phpunit.xml
 

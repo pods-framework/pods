@@ -1,0 +1,71 @@
+=== Icon Picker ===
+Contributors: kucrut
+Donate Link: http://kucrut.org/#coffee
+Tags: icons, image, svg
+Requires at least: 4.3
+Tested up to: 4.7.2
+Stable tag: 0.5.0
+License: GPLv2
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+Pick an icon of your choice.
+
+
+== Description ==
+An icon picker library plugin.
+
+== Screenshots ==
+1. Icon selector
+2. Icon fields in a post meta box using [CMB](https://github.com/humanmade/Custom-Meta-Boxes/)
+
+== Frequently Asked Questions ==
+= How do I use css file from CDN? =
+You can use the `icon_picker_icon_type_stylesheet_uri` filter, eg:
+`
+/**
+ * Load Font Awesome's CSS from CDN
+ *
+ * @param  string                $stylesheet_uri Icon type's stylesheet URI.
+ * @param  string                $icon_type_id   Icon type's ID.
+ * @param  Icon_Picker_Type_Font $icon_type      Icon type's instance.
+ *
+ * @return string
+ */
+function myprefix_font_awesome_css_from_cdn( $stylesheet_uri, $icon_type_id, $icon_type ) {
+	if ( 'fa' === $icon_type_id ) {
+		$stylesheet_uri = sprintf(
+			'https://maxcdn.bootstrapcdn.com/font-awesome/%s/css/font-awesome.min.css',
+			$icon_type->version
+		);
+	}
+
+	return $stylesheet_uri;
+}
+add_filter( 'icon_picker_icon_type_stylesheet_uri', 'myprefix_font_awesome_css_from_cdn', 10, 3 );
+`
+
+== Changelog ==
+= 0.5.0 =
+* Update Font Awesome to 4.7.0.
+* Switch to Webpack.
+* Various [bug fixes and enhancements](https://github.com/kucrut/wp-icon-picker/issues?q=is%3Aissue+milestone%3A0.5.0+is%3Aclosed).
+
+= 0.4.1 =
+* Improve support for CMB: Make the field usable in a repeatable field.
+
+= 0.4.0 =
+* Introduce `icon_picker_icon_type_stylesheet_uri` filter hook.
+* Font Awesome 4.6.1
+
+= 0.3.0 =
+* Fix CSS classname conflicts.
+
+= 0.2.0 =
+* Introduce `icon_picker_field()`.
+* Add support for [CMB](https://github.com/humanmade/Custom-Meta-Boxes/).
+
+= 0.1.1 =
+* Load translation, props [Eduardo Larequi](https://wordpress.org/support/profile/elarequi).
+
+= 0.1.0 =
+* Initial

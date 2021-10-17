@@ -3619,7 +3619,16 @@ class Pods implements Iterator {
 			$out = apply_filters( "pods_templates_post_template_{$template_name}", $out, $code, $template_name, $this );
 		}//end if
 
-		return $out;
+		/**
+		 * Filter the final content.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param string $out  The template content.
+		 * @param string $code The original template code.
+		 * @param Pods   $pod  The current Pods object.
+		 */
+		return apply_filters( 'pods_template_content', $out, $code, $this );
 	}
 
 	/**

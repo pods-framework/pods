@@ -8,7 +8,8 @@ import {
 } from 'dfv/src/helpers/formatNumberWithPodsFormat';
 
 export const requiredValidator = ( fieldLabel ) => ( value ) => {
-	if ( ! value ) {
+	// Allow zero to be OK for required fields.
+	if ( false === value || undefined === value || null === value || '' === value || [] === value ) {
 		// translators: %s is the Field label of the required field.
 		throw sprintf( __( '%s is required.', 'pods' ), fieldLabel );
 	}

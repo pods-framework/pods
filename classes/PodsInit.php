@@ -262,6 +262,11 @@ class PodsInit {
 				/** @var Tribe__Assets $assets */
 				$assets = tribe( 'assets' );
 				$assets->remove( 'tribe-tooltip' );
+
+				/** @var Tribe__Assets_Pipeline $assets_pipeline */
+				$assets_pipeline = tribe( 'assets.pipeline' );
+
+				remove_filter( 'script_loader_tag', [ $assets_pipeline, 'prevent_underscore_conflict' ] );
 			}
 		}
 	}

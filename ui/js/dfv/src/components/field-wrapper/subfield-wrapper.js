@@ -120,8 +120,6 @@ const SubfieldWrapper = ( {
 			<div className="pods-field-wrapper__field">
 				<FieldComponent
 					value={ value }
-					// Only the Boolean Group fields need allPodValues and allPodFieldsMap,
-					// because the subfields need to reference these.
 					podName={ podName }
 					podType={ podType }
 					allPodValues={ allPodValues }

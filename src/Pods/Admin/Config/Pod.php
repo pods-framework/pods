@@ -663,7 +663,7 @@ class Pod extends Base {
 				],
 				'menu_icon'            => [
 					'label'      => __( 'Menu Icon', 'pods' ),
-					'help'       => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank" rel="noopener noreferrer">site tag</a> type <a href="https://pods.io/docs/build/special-magic-tags/" target="_blank" rel="noopener noreferrer">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank" rel="noopener noreferrer">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
+					'help'       => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://docs.pods.io/displaying-pods/magic-tags/special-magic-tags/#Site_Tags" target="_blank" rel="noopener noreferrer">site tag</a> type <a href="https://docs.pods.io/displaying-pods/magic-tags/special-magic-tags/" target="_blank" rel="noopener noreferrer">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank" rel="noopener noreferrer">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => [ 'show_in_menu' => true ],
@@ -1068,7 +1068,7 @@ class Pod extends Base {
 				],
 				'menu_icon'             => [
 					'label'      => __( 'Menu Icon URL', 'pods' ),
-					'help'       => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank" rel="noopener noreferrer">site tag</a> type <a href="https://pods.io/docs/build/special-magic-tags/" target="_blank" rel="noopener noreferrer">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank" rel="noopener noreferrer">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
+					'help'       => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://docs.pods.io/displaying-pods/magic-tags/special-magic-tags/#Site_Tags" target="_blank" rel="noopener noreferrer">site tag</a> type <a href="https://docs.pods.io/displaying-pods/magic-tags/special-magic-tags/" target="_blank" rel="noopener noreferrer">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank" rel="noopener noreferrer">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => [ 'menu_location' => [ 'objects', 'top' ] ],
@@ -1342,7 +1342,7 @@ class Pod extends Base {
 				],
 				'menu_icon'            => [
 					'label'      => __( 'Menu Icon URL', 'pods' ),
-					'help'       => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank" rel="noopener noreferrer">site tag</a> type <a href="https://pods.io/docs/build/special-magic-tags/" target="_blank" rel="noopener noreferrer">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank" rel="noopener noreferrer">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
+					'help'       => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://docs.pods.io/displaying-pods/magic-tags/special-magic-tags/#Site_Tags" target="_blank" rel="noopener noreferrer">site tag</a> type <a href="https://docs.pods.io/displaying-pods/magic-tags/special-magic-tags/" target="_blank" rel="noopener noreferrer">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank" rel="noopener noreferrer">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => [ 'menu_location' => 'top' ],
@@ -1410,7 +1410,7 @@ class Pod extends Base {
 				],
 				'menu_icon'            => [
 					'label'      => __( 'Menu Icon URL', 'pods' ),
-					'help'       => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank" rel="noopener noreferrer">site tag</a> type <a href="https://pods.io/docs/build/special-magic-tags/" target="_blank" rel="noopener noreferrer">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank" rel="noopener noreferrer">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
+					'help'       => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://docs.pods.io/displaying-pods/magic-tags/special-magic-tags/#Site_Tags" target="_blank" rel="noopener noreferrer">site tag</a> type <a href="https://docs.pods.io/displaying-pods/magic-tags/special-magic-tags/" target="_blank" rel="noopener noreferrer">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank" rel="noopener noreferrer">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
 					'type'       => 'text',
 					'default'    => '',
 					'depends-on' => [ 'show_in_menu' => true ],

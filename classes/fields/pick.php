@@ -152,7 +152,7 @@ class PodsField_Pick extends PodsField {
 				'dependency'            => true,
 			),
 			static::$type . '_format_single'  => array(
-				'label'                 => __( 'Format', 'pods' ),
+				'label'                 => __( 'Input Type', 'pods' ),
 				'help'                  => __( 'help', 'pods' ),
 				'depends-on'            => array( static::$type . '_format_type' => 'single' ),
 				'default'               => 'dropdown',
@@ -162,14 +162,14 @@ class PodsField_Pick extends PodsField {
 						'dropdown'     => __( 'Drop Down', 'pods' ),
 						'radio'        => __( 'Radio Buttons', 'pods' ),
 						'autocomplete' => __( 'Autocomplete', 'pods' ),
-						'list'         => __( 'List view', 'pods' ),
+						'list'         => __( 'List View (with reordering)', 'pods' ),
 					)
 				),
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
 			),
 			static::$type . '_format_multi'   => array(
-				'label'                 => __( 'Format', 'pods' ),
+				'label'                 => __( 'Input Type', 'pods' ),
 				'help'                  => __( 'help', 'pods' ),
 				'depends-on'            => array( static::$type . '_format_type' => 'multi' ),
 				'default'               => 'checkbox',
@@ -177,9 +177,9 @@ class PodsField_Pick extends PodsField {
 				'data'                  => apply_filters(
 					'pods_form_ui_field_pick_format_multi_options', array(
 						'checkbox'     => __( 'Checkboxes', 'pods' ),
-						'multiselect'  => __( 'Multi Select', 'pods' ),
+						'multiselect'  => __( 'Multi Select (basic selection)', 'pods' ),
 						'autocomplete' => __( 'Autocomplete', 'pods' ),
-						'list'         => __( 'List view', 'pods' ),
+						'list'         => __( 'List View (with reordering)', 'pods' ),
 					)
 				),
 				'pick_show_select_text' => 0,
@@ -278,17 +278,18 @@ class PodsField_Pick extends PodsField {
 			),
 			static::$type . '_select_text'    => array(
 				'label'      => __( 'Default Select Text', 'pods' ),
-				'help'       => __( 'This is the text use for the default "no selection" dropdown item, if empty, it will default to "-- Select One --"', 'pods' ),
+				'help'       => __( 'This is the text used for the default "no selection" dropdown item. If left empty, it will default to "-- Select One --"', 'pods' ),
 				'depends-on' => array(
 					static::$type . '_format_type'   => 'single',
 					static::$type . '_format_single' => 'dropdown',
 				),
 				'default'    => '',
+				'text_placeholder' => __( '-- Select One --', 'pods' ),
 				'type'       => 'text',
 			),
 			static::$type . '_limit'          => array(
 				'label'      => __( 'Selection Limit', 'pods' ),
-				'help'       => __( 'help', 'pods' ),
+				'help'       => __( 'Default is "0" for no limit, but you can enter 1 or more to limit the number of items that can be selected.', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'multi' ),
 				'default'    => 0,
 				'type'       => 'number',
@@ -319,8 +320,8 @@ class PodsField_Pick extends PodsField {
 				'type'        => 'text',
 			),
 			static::$type . '_user_role'      => array(
-				'label'            => __( 'Limit list to Role(s)', 'pods' ),
-				'help'             => __( 'help', 'pods' ),
+				'label'            => __( 'Limit list by Role(s)', 'pods' ),
+				'help'             => __( 'You can choose to limit Users available for selection by specific role(s).', 'pods' ),
 				'depends-on'       => array( static::$type . '_object' => 'user' ),
 				'default'          => '',
 				'type'             => 'pick',
@@ -364,8 +365,8 @@ class PodsField_Pick extends PodsField {
 
 		$options[ static::$type . '_post_status' ] = array(
 			'name'             => 'post_status',
-			'label'            => __( 'Post Status', 'pods' ),
-			'help'             => __( 'help', 'pods' ),
+			'label'            => __( 'Limit list by Post Status', 'pods' ),
+			'help'             => __( 'You can choose to limit Posts available for selection by one or more specific post status.', 'pods' ),
 			'type'             => 'pick',
 			'pick_object'      => 'post-status',
 			'pick_format_type' => 'multi',
@@ -1100,6 +1101,9 @@ class PodsField_Pick extends PodsField {
 			$config[ $args->type . '_show_edit_link' ] = false;
 		}
 
+		$config[ $args->type . '_allow_add_new' ]  = filter_var( pods_v( $args->type . '_allow_add_new', $config ), FILTER_VALIDATE_BOOLEAN );
+		$config[ $args->type . '_show_edit_link' ] = filter_var( pods_v( $args->type . '_show_edit_link', $config ), FILTER_VALIDATE_BOOLEAN );
+
 		$iframe = array(
 			'src'        => '',
 			'url'        => '',
@@ -1210,7 +1214,6 @@ class PodsField_Pick extends PodsField {
 		if ( ! empty( $iframe['src'] ) ) {
 			// We extend wp.media.view.Modal for modal add/edit, we must ensure we load the template for it
 			wp_enqueue_media();
-
 		}
 
 		$config['iframe_src']        = $iframe['src'];
@@ -2526,16 +2529,19 @@ class PodsField_Pick extends PodsField {
 					if ( ! empty( $value ) ) {
 						$ids = $value;
 
-						if ( is_array( $ids ) && isset( $ids[0] ) && is_array( $ids[0] ) ) {
-							$ids = wp_list_pluck( $ids, $search_data->field_id );
-						}
-
-						if ( $params['limit'] < count( $ids ) ) {
-							$params['limit'] = count( $ids );
-						}
-
 						if ( is_array( $ids ) ) {
+							if ( isset( $ids[0] ) && is_array( $ids[0] ) ) {
+								$ids = wp_list_pluck( $ids, $search_data->field_id );
+							}
+
+							if ( $params['limit'] < count( $ids ) ) {
+								$params['limit'] = count( $ids );
+							}
+
+							$ids = array_map( 'absint', $ids );
 							$ids = implode( ', ', $ids );
+						} else {
+							$ids = (int) $ids;
 						}
 
 						if ( is_array( $params['where'] ) ) {
@@ -2611,6 +2617,11 @@ class PodsField_Pick extends PodsField {
 
 							if ( ! empty( $display_filter_args ) ) {
 								foreach ( (array) $display_filter_args as $display_filter_arg ) {
+									// Manual solution to a problem that won't map correctly.
+									if ( 'post_ID' === $display_filter_arg ) {
+										$display_filter_arg = 'ID';
+									}
+
 									if ( isset( $result[ $display_filter_arg ] ) ) {
 										$filter_args[] = $result[ $display_filter_arg ];
 									}
@@ -3433,7 +3444,7 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for US States.
+	 * Data callback for Days of the Week.
 	 *
 	 * @param string|null       $name    The name of the field.
 	 * @param string|array|null $value   The value of the field.
@@ -3457,7 +3468,7 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for US States.
+	 * Data callback for Months of the Year.
 	 *
 	 * @param string|null       $name    The name of the field.
 	 * @param string|array|null $value   The value of the field.

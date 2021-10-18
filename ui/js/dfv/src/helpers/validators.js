@@ -7,6 +7,16 @@ import {
 	getDecimalSeparatorFromPodsFormat,
 } from 'dfv/src/helpers/formatNumberWithPodsFormat';
 
+const isValueSet = ( value ) => {
+	// Allow zero to be OK for required fields.
+	return (
+		'undefined' !== typeof value &&
+		null !== value &&
+		'' !== value &&
+		( Array.isArray( value ) ? value.length > 0 : true )
+	);
+};
+
 export const requiredValidator = ( fieldLabel, isRepeatable ) => ( value ) => {
 	// Convert all values into an array.
 	const valuesArray = ( isRepeatable && Array.isArray( value ) )
@@ -14,7 +24,7 @@ export const requiredValidator = ( fieldLabel, isRepeatable ) => ( value ) => {
 		: [ value ];
 
 	// If any item in the array is valid, the field is valid.
-	if ( valuesArray.some( ( valueItem ) => !! valueItem ) ) {
+	if ( valuesArray.some( isValueSet ) ) {
 		return true;
 	}
 

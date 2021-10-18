@@ -3,7 +3,7 @@
  * @var bool $force_callouts Whether to force the callouts.
  */
 
-$donor_count    = 140;
+$donor_count    = 138;
 $donor_goal     = 200;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
 

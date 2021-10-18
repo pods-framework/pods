@@ -18,13 +18,20 @@ const SimpleSelect = ( {
 		htmlAttributes.class
 	);
 
+	let htmlName = htmlAttributes.name || name;
+
+	// Maybe add [] to the multiple select field.
+	if ( isMulti ) {
+		htmlName += '[]';
+	}
+
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-onchange */
 		<select
 			id={ htmlAttributes.id || `pods-form-ui-${ name }` }
-			name={ htmlAttributes.name || name }
+			name={ htmlName }
 			className={ classes }
-			value={ value || '' }
+			value={ value || ( isMulti ? [] : '' ) }
 			onChange={ ( event ) => {
 				if ( readOnly ) {
 					return;

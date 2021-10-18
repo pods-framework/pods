@@ -99,7 +99,7 @@ class PodsField_WYSIWYG extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Embed videos, images, tweets, and other content.', 'pods' ),
-							'http://codex.wordpress.org/Embeds',
+							'https://wordpress.org/support/article/embeds/',
 						),
 					),
 					static::$type . '_wptexturize'     => array(
@@ -108,7 +108,7 @@ class PodsField_WYSIWYG extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Transforms less-beautiful text characters into stylized equivalents.', 'pods' ),
-							'http://codex.wordpress.org/Function_Reference/wptexturize',
+							'https://developer.wordpress.org/reference/functions/wptexturize/',
 						),
 					),
 					static::$type . '_convert_chars'   => array(
@@ -117,7 +117,7 @@ class PodsField_WYSIWYG extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Converts text into valid XHTML and Unicode', 'pods' ),
-							'http://codex.wordpress.org/Function_Reference/convert_chars',
+							'https://developer.wordpress.org/reference/functions/convert_chars/',
 						),
 					),
 					static::$type . '_wpautop'         => array(
@@ -126,7 +126,7 @@ class PodsField_WYSIWYG extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Changes double line-breaks in the text into HTML paragraphs', 'pods' ),
-							'http://codex.wordpress.org/Function_Reference/wpautop',
+							'https://developer.wordpress.org/reference/functions/wpautop/',
 						),
 					),
 					static::$type . '_allow_shortcode' => array(
@@ -136,7 +136,7 @@ class PodsField_WYSIWYG extends PodsField {
 						'dependency' => true,
 						'help'       => array(
 							__( 'Embed [shortcodes] that help transform your static content into dynamic content.', 'pods' ),
-							'http://codex.wordpress.org/Shortcode_API',
+							'https://codex.wordpress.org/Shortcode_API',
 						),
 					),
 				),
@@ -256,6 +256,9 @@ class PodsField_WYSIWYG extends PodsField {
 			$field_type = 'textarea';
 		} elseif ( 'tinymce' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'tinymce';
+
+			// Enforce boolean.
+			$options[ static::$type . '_media_buttons' ] = filter_var( pods_v( static::$type . '_editor', $options, true ), FILTER_VALIDATE_BOOLEAN );
 
 			wp_tinymce_inline_scripts();
 			wp_enqueue_editor();

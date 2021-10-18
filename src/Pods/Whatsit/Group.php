@@ -42,11 +42,19 @@ class Group extends Whatsit {
 
 		if ( null === $this->_fields || $has_custom_args ) {
 			$filtered_args = [
-				'group'            => $this->get_name(),
-				'group_id'         => $this->get_id(),
-				'group_name'       => $this->get_name(),
-				'group_identifier' => $this->get_identifier(),
+				'parent'            => $this->get_parent_id(),
+				'parent_id'         => $this->get_parent_id(),
+				'parent_name'       => $this->get_parent_name(),
+				'parent_identifier' => $this->get_parent_identifier(),
+				'group'             => $this->get_name(),
+				'group_id'          => $this->get_id(),
+				'group_name'        => $this->get_name(),
+				'group_identifier'  => $this->get_identifier(),
 			];
+
+			if ( empty( $filtered_args['parent_id'] ) || empty( $filtered_args['group_id'] ) ) {
+				$filtered_args['bypass_post_type_find'] = true;
+			}
 
 			$filtered_args = array_filter( $filtered_args );
 

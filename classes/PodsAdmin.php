@@ -49,7 +49,6 @@ class PodsAdmin {
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );
 
 		// AJAX for Admin
-		add_action( 'wp_ajax_pods_admin_proto', array( $this, 'admin_ajax_proto' ) );
 		add_action( 'wp_ajax_pods_admin', array( $this, 'admin_ajax' ) );
 		add_action( 'wp_ajax_nopriv_pods_admin', array( $this, 'admin_ajax' ) );
 
@@ -129,11 +128,15 @@ class PodsAdmin {
 
 		wp_register_script( 'pods-migrate', PODS_URL . 'ui/js/jquery.pods.migrate.js', array(), PODS_VERSION );
 
+		$load_pods_assets = false;
+
 		// @codingStandardsIgnoreLine
 		if ( isset( $_GET['page'] ) ) {
 			// @codingStandardsIgnoreLine
 			$page = $_GET['page'];
 			if ( 'pods' === $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
+				$load_pods_assets = true;
+
 				?>
 				<script>
 					if ( 'undefined' === typeof PODS_URL ) {
@@ -187,22 +190,25 @@ class PodsAdmin {
 			}//end if
 		}//end if
 
-		/**
-		 * Filter to disable default loading of the DFV script. By default, Pods
-		 * will always enqueue the DFV script if is_admin()
-		 *
-		 * Example: add_filter( 'pods_default_enqueue_dfv', '__return_false');
-		 *
-		 * @param bool Whether or not to enqueue by default
-		 *
-		 * @since 2.7.10
-		 */
-		if ( apply_filters( 'pods_default_enqueue_dfv', true ) ) {
-			wp_enqueue_script( 'pods-dfv' );
-		}
+		if ( $load_pods_assets ) {
+			/**
+			 * Filter to disable default loading of the DFV script. By default, Pods
+			 * will always enqueue the DFV script if is_admin()
+			 *
+			 * Example: add_filter( 'pods_default_enqueue_dfv', '__return_false');
+			 *
+			 * @since 2.7.10
+			 *
+			 * @param bool Whether or not to enqueue by default
+			 *
+			 */
+			if ( apply_filters( 'pods_default_enqueue_dfv', true ) ) {
+				wp_enqueue_script( 'pods-dfv' );
+			}
 
-		// New styles enqueue.
-		wp_enqueue_style( 'pods-styles' );
+			// New styles enqueue.
+			wp_enqueue_style( 'pods-styles' );
+		}
 	}
 
 	/**
@@ -1156,12 +1162,12 @@ class PodsAdmin {
 
 		if ( ! $callouts ) {
 			$callouts = array(
-				'friends_2021' => 1,
+				'friends_2021_29' => 1,
 			);
 		}
 
 		// Handle Friends of Pods 2021 callout logic.
-		$callouts['friends_2021'] = ! isset( $callouts['friends_2021'] ) || $callouts['friends_2021'] || $force_callouts ? 1 : 0;
+		$callouts['friends_2021_29'] = ! isset( $callouts['friends_2021_29'] ) || $callouts['friends_2021_29'] || $force_callouts ? 1 : 0;
 
 		/**
 		 * Allow hooking into whether or not the specific callouts should show.
@@ -1239,7 +1245,7 @@ class PodsAdmin {
 
 		$callouts = $this->get_callouts();
 
-		if ( ! empty( $callouts['friends_2021'] ) ) {
+		if ( ! empty( $callouts['friends_2021_29'] ) ) {
 			pods_view( PODS_DIR . 'ui/admin/callouts/friends_2021_29.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 	}
@@ -1275,7 +1281,9 @@ class PodsAdmin {
 			return null;
 		}
 
-		$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+		if ( 1 !== (int) $pod->get_arg( '_migrated_28' ) ) {
+			$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+		}
 
 		// Check again in case the pod migrated wrong.
 		if ( ! $pod instanceof Pod ) {
@@ -1356,7 +1364,7 @@ class PodsAdmin {
 
 		wp_localize_script( 'pods-dfv', 'podsAdminConfig', $config );
 
-		pods_view( PODS_DIR . 'ui/admin/setup-edit-proto.php', compact( array_keys( get_defined_vars() ) ) );
+		pods_view( PODS_DIR . 'ui/admin/setup-edit.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
 	/**
@@ -1411,6 +1419,16 @@ class PodsAdmin {
 			] );
 
 			if ( ! $has_orphan_fields ) {
+				$pod->set_arg( '_migrated_28', 1 );
+
+				try {
+					$api->save_pod( $pod );
+				} catch ( Exception $exception ) {
+					// Nothing to do for now.
+				}
+
+				$pod->flush();
+
 				return $pod;
 			}
 
@@ -1466,6 +1484,12 @@ class PodsAdmin {
 
 			$field->set_arg( 'group_id', $group_id );
 		}
+
+		$pod->set_arg( '_migrated_28', 1 );
+
+		$api->save_pod( $pod );
+
+		$pod->flush();
 
 		$api->cache_flush_pods( $pod );
 
@@ -2525,35 +2549,6 @@ class PodsAdmin {
 
 		die();
 		// KBAI!
-	}
-
-	public function admin_ajax_proto() {
-		$METHOD = 'save_pod';
-
-		// Request header should be Content-Type: application/json
-		$http_method = filter_input( INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING );
-		$data = json_decode( file_get_contents('php://input'), true );
-
-		if ( false === headers_sent() ) {
-			pods_session_start();
-			header( 'Content-Type: application/json; charset=' . get_bloginfo( 'charset' ) );
-		}
-
-		if ( false === wp_verify_nonce( $data[ '_wpnonce' ], 'pods-' . $METHOD ) ) {
-			pods_error( __( 'Unauthorized request', 'pods' ), $this );
-		}
-
-		// Check permissions
-		if ( !pods_is_admin( array( 'pods' ) ) && !pods_is_admin( $METHOD ) ) {
-			pods_error( __( 'Access denied', 'pods' ), $this );
-		}
-
-		// Dynamically call the API method
-		$api = pods_api();
-		$api->display_errors = false;
-		$output = $api->save_pod( $data );
-
-		die();
 	}
 
 	/**

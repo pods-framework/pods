@@ -9,6 +9,20 @@ use Pod as Deprecated_Pod;
  * Pods class.
  *
  * @package Pods
+ *
+ * @property null|string $pod         The Pod name.
+ * @property null|string $pod_id      The Pod ID.
+ * @property null|string $id          The current item ID (singular mode).
+ * @property null|string $rows        The list of rows.
+ * @property null|string $row         The current row.
+ * @property null|string $pagination  Whether pagination is enabled.
+ * @property null|string $page        The current page number.
+ * @property null|string $page_var    The query variable used for pagination.
+ * @property null|string $search      Whether search is enabled.
+ * @property null|string $search_var  The query variable used for search.
+ * @property null|string $search_mode The search mode to use.
+ * @property null|string $params      The last find() params.
+ * @property null|string $sql         The last find() SQL query.
  */
 class Pods implements Iterator {
 
@@ -111,7 +125,7 @@ class Pods implements Iterator {
 	 *
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 * @since   1.0.0
-	 * @link    https://pods.io/docs/pods/
+	 * @link    https://docs.pods.io/code/pods/
 	 */
 	public function __construct( $pod = null, $id = null ) {
 		if ( null === $pod ) {
@@ -301,7 +315,7 @@ class Pods implements Iterator {
 	 * @return array|bool An array of all rows returned from a find() call, or false if no items returned
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/data/
+	 * @link  https://docs.pods.io/code/pods/data/
 	 */
 	public function data() {
 
@@ -440,7 +454,7 @@ class Pods implements Iterator {
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/display/
+	 * @link  https://docs.pods.io/code/pods/display/
 	 */
 	public function display( $name, $single = null ) {
 
@@ -496,7 +510,7 @@ class Pods implements Iterator {
 	 * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned
 	 *                           for tableless fields
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/display/
+	 * @link  https://docs.pods.io/code/pods/display/
 	 */
 	public function raw( $name, $single = null ) {
 
@@ -537,7 +551,7 @@ class Pods implements Iterator {
 	 * @return mixed|null Value returned depends on the field type, null if the field doesn't exist, false if no value
 	 *                    returned for tableless fields.
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/field/
+	 * @link  https://docs.pods.io/code/pods/field/
 	 */
 	public function field( $name, $single = null, $raw = false ) {
 		$defaults = [
@@ -904,24 +918,26 @@ class Pods implements Iterator {
 					}
 
 					if ( $use_meta_fallback ) {
-						$id = $this->id();
-
 						$metadata_type = $pod_type;
 
 						if ( in_array( $metadata_type, array( 'post_type', 'media' ), true ) ) {
 							$metadata_type = 'post';
-
-							// Support for WPML 'duplicated' translation handling.
-							if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_is_translated_post_type', false, $this->pod_data['name'] ) ) {
-								$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $id );
-
-								if ( $master_post_id ) {
-									$id = $master_post_id;
-								}
-							}
 						} elseif ( 'taxonomy' === $metadata_type ) {
 							$metadata_type = 'term';
 						}
+
+						/**
+						 * Modify the object ID for getting metadata.
+						 * Added for i18n integration classes.
+						 *
+						 * @since 2.8.0
+						 *
+						 * @param int    $id            The object ID.
+						 * @param string $metadata_type The object metadata type.
+						 * @param array  $params        Field params
+						 * @param \Pods  $pod           Pods object.
+						 */
+						$id = apply_filters( 'pods_pods_field_get_metadata_object_id', $this->id(), $metadata_type, $params, $this );
 
 						$value = get_metadata( $metadata_type, $id, $params->name, $params->single );
 
@@ -1475,18 +1491,12 @@ class Pods implements Iterator {
 
 											$metadata_type = $object_type;
 
-											if ( 'post' === $object_type ) {
-												// Support for WPML 'duplicated' translation handling.
-												if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_is_translated_post_type', false, $object ) ) {
-													$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $metadata_object_id );
-
-													if ( 0 < $master_post_id ) {
-														$metadata_object_id = $master_post_id;
-													}
-												}
-											} elseif ( 'taxonomy' === $object_type ) {
+											if ( 'taxonomy' === $object_type ) {
 												$metadata_type = 'term';
 											}
+
+											/** This filter is documented earlier in this method */
+											$metadata_object_id = apply_filters( 'pods_pods_field_get_metadata_object_id', $metadata_object_id, $metadata_type, $params, $this );
 
 											$meta_value = get_metadata( $metadata_type, $metadata_object_id, $field, true );
 
@@ -2160,7 +2170,7 @@ class Pods implements Iterator {
 	 *
 	 * @return \Pods The pod object
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/find/
+	 * @link  https://docs.pods.io/code/pods/find/
 	 */
 	public function find( $params = null, $limit = 15, $where = null, $sql = null ) {
 
@@ -2413,7 +2423,7 @@ class Pods implements Iterator {
 	 * @return array An array of fields from the row
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/fetch/
+	 * @link  https://docs.pods.io/code/pods/fetch/
 	 */
 	public function fetch( $id = null, $explicit_set = true ) {
 
@@ -2446,7 +2456,7 @@ class Pods implements Iterator {
 	 * @return \Pods The pod object
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/reset/
+	 * @link  https://docs.pods.io/code/pods/reset/
 	 */
 	public function reset( $row = null ) {
 
@@ -2474,7 +2484,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int Number of rows returned by find(), based on the 'limit' parameter set
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/total/
+	 * @link  https://docs.pods.io/code/pods/total/
 	 */
 	public function total() {
 
@@ -2494,7 +2504,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int Number of rows returned by find(), regardless of the 'limit' parameter
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/total-found/
+	 * @link  https://docs.pods.io/code/pods/total-found/
 	 */
 	public function total_found() {
 
@@ -2603,7 +2613,7 @@ class Pods implements Iterator {
 	 * @return int The item ID
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/add/
+	 * @link  https://docs.pods.io/code/pods/add/
 	 */
 	public function add( $data = null, $value = null ) {
 
@@ -2896,7 +2906,7 @@ class Pods implements Iterator {
 	 * @return int The item ID
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/save/
+	 * @link  https://docs.pods.io/code/pods/save/
 	 */
 	public function save( $data = null, $value = null, $id = null, $params = null ) {
 
@@ -2980,7 +2990,7 @@ class Pods implements Iterator {
 	 * @return bool Whether the item was successfully deleted
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/delete/
+	 * @link  https://docs.pods.io/code/pods/delete/
 	 */
 	public function delete( $id = null ) {
 
@@ -3037,7 +3047,7 @@ class Pods implements Iterator {
 	 * @return int|bool ID of the new pod item
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/duplicate/
+	 * @link  https://docs.pods.io/code/pods/duplicate/
 	 */
 	public function duplicate( $id = null ) {
 
@@ -3089,7 +3099,7 @@ class Pods implements Iterator {
 	 * @return array|bool Data array of the exported pod item
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/export/
+	 * @link  https://docs.pods.io/code/pods/export/
 	 */
 	public function export( $fields = null, $id = null, $format = null ) {
 
@@ -3169,7 +3179,7 @@ class Pods implements Iterator {
 	 *
 	 * @return string Pagination HTML
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/pagination/
+	 * @link  https://docs.pods.io/code/pods/pagination/
 	 */
 	public function pagination( $params = null ) {
 
@@ -3248,7 +3258,7 @@ class Pods implements Iterator {
 	 * @return string Filters HTML
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/filters/
+	 * @link  https://docs.pods.io/code/pods/filters/
 	 */
 	public function filters( $params = null ) {
 
@@ -3484,7 +3494,7 @@ class Pods implements Iterator {
 	 * @return mixed Template output
 	 *
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/template/
+	 * @link  https://docs.pods.io/code/pods/template/
 	 */
 	public function template( $template_name, $code = null, $deprecated = false ) {
 
@@ -3609,7 +3619,16 @@ class Pods implements Iterator {
 			$out = apply_filters( "pods_templates_post_template_{$template_name}", $out, $code, $template_name, $this );
 		}//end if
 
-		return $out;
+		/**
+		 * Filter the final content.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param string $out  The template content.
+		 * @param string $code The original template code.
+		 * @param Pods   $pod  The current Pods object.
+		 */
+		return apply_filters( 'pods_template_content', $out, $code, $this );
 	}
 
 	/**
@@ -3623,7 +3642,7 @@ class Pods implements Iterator {
 	 *
 	 * @return bool|mixed
 	 * @since 2.0.0
-	 * @link  https://pods.io/docs/form/
+	 * @link  https://docs.pods.io/code/pods/form/
 	 */
 	public function form( $params = null, $label = null, $thank_you = null ) {
 		// Check for anonymous submissions.

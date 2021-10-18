@@ -211,7 +211,7 @@ class Pods_Templates extends PodsComponent {
 	 * @since 2.0.0
 	 */
 	public function admin_assets() {
-
+		wp_enqueue_script( 'pods-dfv' );
 		wp_enqueue_style( 'pods-styles' );
 	}
 
@@ -362,6 +362,8 @@ class Pods_Templates extends PodsComponent {
 		if ( isset( PodsMeta::$post_types[ $pod['name'] ] ) ) {
 			return;
 		}
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ), 21 );
 
 		$fields = array(
 			array(

@@ -4,6 +4,7 @@ namespace Pods\Whatsit\Storage;
 
 use Pods\Whatsit;
 use Pods\Whatsit\Store;
+use WP_Query;
 
 /**
  * Post_Type class.
@@ -279,6 +280,10 @@ class Post_Type extends Collection {
 			$post_args['orderby'] = $args['orderby'];
 		}
 
+		if ( ! empty( $args['count'] ) ) {
+			$args['limit'] = 1;
+		}
+
 		if ( ! empty( $args['limit'] ) ) {
 			$post_args['posts_per_page'] = (int) $args['limit'];
 		}
@@ -302,14 +307,7 @@ class Post_Type extends Collection {
 
 		asort( $post_args );
 
-		$current_language = false;
-
-		// Get current language data
-		$lang_data = pods_i18n()->get_current_language_data();
-
-		if ( $lang_data && ! empty( $lang_data['language'] ) ) {
-			$current_language = $lang_data['language'];
-		}
+		$current_language = pods_i18n()->get_current_language();
 
 		$cache_key    = null;
 		$posts        = false;
@@ -318,9 +316,26 @@ class Post_Type extends Collection {
 		if ( empty( $args['bypass_cache'] ) && empty( $args['bypass_post_type_find'] ) ) {
 			$cache_key_parts = [
 				'pods_whatsit_storage_post_type_find',
-				$current_language,
-				wp_json_encode( $post_args ),
 			];
+
+			if ( ! empty( $args['count'] ) ) {
+				$cache_key_parts[] = '_count';
+			}
+
+			if ( ! empty( $args['names'] ) ) {
+				$cache_key_parts[] = '_names';
+			}
+
+			if ( ! empty( $args['names_ids'] ) ) {
+				$cache_key_parts[] = '_namesids';
+			}
+
+			if ( ! empty( $args['ids'] ) ) {
+				$cache_key_parts[] = '_ids';
+			}
+
+			$cache_key_parts[] = $current_language;
+			$cache_key_parts[] = wp_json_encode( $post_args );
 
 			/**
 			 * Filter cache key parts used for generating the cache key.
@@ -340,15 +355,23 @@ class Post_Type extends Collection {
 
 			if ( empty( $args['refresh'] ) ) {
 				$posts        = pods_transient_get( $cache_key );
-				$post_objects = pods_cache_get( $cache_key . '_objects' );
+				$post_objects = pods_cache_get( $cache_key . '_objects', 'pods_post_type_storage' );
 			}
 		}//end if
 
-		if ( ! is_array( $posts ) || ! is_array( $post_objects ) ) {
-			$posts = [];
+		if ( ! is_array( $posts ) ) {
+			$posts        = [];
+			$post_objects = false;
 
 			if ( empty( $args['bypass_post_type_find'] ) ) {
-				$posts = get_posts( $post_args );
+				$query = new WP_Query( $post_args );
+
+				$posts = $query->get_posts();
+
+				// We only receive the first post, so let's just override the posts with the count.
+				if ( ! empty( $args['count'] ) ) {
+					$posts = array_fill( 0, $query->found_posts, 'temp_count_holder' );
+				}
 
 				if ( empty( $args['bypass_cache'] ) ) {
 					pods_transient_set( $cache_key, $posts, WEEK_IN_SECONDS );
@@ -369,20 +392,48 @@ class Post_Type extends Collection {
 			$post_objects = [];
 
 			if ( ! empty( $posts ) ) {
-				// Get the post objects.
-				$post_objects = array_map( 'get_post', $posts );
+				if ( ! empty( $args['ids'] ) ) {
+					// Get a list of the post IDs in basic array form.
+					$post_objects = array_map( static function ( $post_id ) {
+						return (object) [
+							'id' => (int) $post_id,
+							'ID' => (int) $post_id,
+						];
+					}, $posts );
+				} else {
+					// Get the post objects.
+					$post_objects = array_map( 'get_post', $posts );
+				}
 			}
 
 			if ( empty( $args['bypass_post_type_find'] ) && empty( $args['bypass_cache'] ) ) {
-				pods_cache_set( $cache_key . '_objects', $post_objects, WEEK_IN_SECONDS );
+				pods_cache_set( $cache_key . '_objects', $post_objects, 'pods_post_type_storage', WEEK_IN_SECONDS );
 			}
 		}
 
-		$posts = array_map( [ $this, 'to_object' ], $post_objects );
-		$posts = array_filter( $posts );
+		// Use the objects as they are if we only need the IDs.
+		if ( ! empty( $args['ids'] ) ) {
+			// We set $post_objects as id => $post_id above already.
+			$posts = $post_objects;
+		} else {
+			if ( ! empty( $args['names'] ) || ! empty( $args['names_ids'] ) ) {
+				// Just do a quick setup of the data we need for names and names+ids return.
+				$posts = array_map( static function( $post ) {
+					return (object) [
+						'id'    => $post->ID,
+						'name'  => $post->post_name,
+						'label' => $post->post_title,
+					];
+				}, $post_objects );
+			} else {
+				// Handle normal Whatsit object setup.
+				$posts = array_map( [ $this, 'to_object' ], $post_objects );
+				$posts = array_filter( $posts );
+			}
 
-		$names = wp_list_pluck( $posts, 'name' );
-		$posts = array_combine( $names, $posts );
+			$names = wp_list_pluck( $posts, 'name' );
+			$posts = array_combine( $names, $posts );
+		}
 
 		if ( $fallback_mode && ( empty( $args['status'] ) || in_array( 'publish', (array) $args['status'], true ) ) ) {
 			$posts = array_merge( $posts, parent::find( $args ) );

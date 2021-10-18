@@ -9,12 +9,12 @@ use Pods\Whatsit\Object_Field;
  *
  * @package Pods
  *
- * @property null|string       $pod           The name data.
- * @property null|string       $pod_id        The id data.
- * @property null|array        $fields        The fields data.
- * @property null|array        $object_fields The object_fields data.
- * @property null|string       $detail_page   The detail_url data.
- * @property null|string       $detail_url    The detail_url data.
+ * @property null|string       $pod           The Pod name.
+ * @property null|string       $pod_id        The Pod id.
+ * @property null|array        $fields        The list of Pod fields.
+ * @property null|array        $object_fields The list of Pod object fields.
+ * @property null|string       $detail_page   The detail_url (if set), alias of detail_url.
+ * @property null|string       $detail_url    The detail_url (if set).
  * @property null|string       $select        The select data.
  * @property null|string       $table         The table data.
  * @property null|string       $field_id      The field_id data.
@@ -3174,12 +3174,17 @@ class PodsData {
 
 		$field = $traverse_recurse['fields'][ $traverse_recurse['depth'] ];
 
-		$ignore_aliases = [
-			'wpml_languages',
-			'polylang_languages',
-		];
-
-		$ignore_aliases = apply_filters( 'pods_data_traverse_recurse_ignore_aliases', $ignore_aliases, $field, $traverse_recurse, $this );
+		/**
+		 * Prevent aliases from being used in traversals.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param array     $ignore_aliases   Aliases to be ignored.
+		 * @param array     $field            Field data.
+		 * @param array     $traverse_recurse Traverse params.
+		 * @param \PodsData $pods_data        PodsData instance.
+		 */
+		$ignore_aliases = apply_filters( 'pods_data_traverse_recurse_ignore_aliases', [], $field, $traverse_recurse, $this );
 
 		if ( in_array( $field, $ignore_aliases, true ) ) {
 			return $joins;

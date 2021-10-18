@@ -61,7 +61,7 @@ class PodsField_Number extends PodsField {
 				'dependency' => true,
 			),
 			static::$type . '_format'      => array(
-				'label'   => __( 'Format', 'pods' ),
+				'label'   => __( 'Number Format', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_number_format_default', 'i18n' ),
 				'type'    => 'pick',
 				'data'    => array(
@@ -80,9 +80,10 @@ class PodsField_Number extends PodsField {
 				'default'    => 0,
 				'type'       => 'number',
 				'dependency' => true,
+				'help'    => __( 'Set to a positive number to enable decimals. The upper limit in the database for this field is 30 decimals.', 'pods' ),
 			),
 			static::$type . '_format_soft' => array(
-				'label'       => __( 'Soft format', 'pods' ),
+				'label'       => __( 'Soft Formatting', 'pods' ),
 				'help'        => __( 'Remove trailing decimals (0)', 'pods' ),
 				'default'     => 0,
 				'type'        => 'boolean',
@@ -96,25 +97,32 @@ class PodsField_Number extends PodsField {
 			),
 			static::$type . '_min'         => array(
 				'label'      => __( 'Minimum Number', 'pods' ),
-				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
+				'depends-on-any' => array(
+					static::$type . '_format_type' => 'slider',
+					static::$type . '_html5' => true,
+				),
 				'default'    => '',
 				'type'       => 'text',
 			),
 			static::$type . '_max'         => array(
 				'label'      => __( 'Maximum Number', 'pods' ),
-				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
+				'depends-on-any' => array(
+					static::$type . '_format_type' => 'slider',
+					static::$type . '_html5' => true,
+				),
 				'default'    => '',
 				'type'       => 'text',
 			),
 			static::$type . '_max_length'  => array(
-				'label'   => __( 'Maximum Length', 'pods' ),
+				'label'   => __( 'Maximum Digits', 'pods' ),
 				'default' => 12,
 				'type'    => 'number',
-				'help'    => __( 'Set to -1 for no limit', 'pods' ),
+				'help'    => __( 'Set to -1 for no limit. The upper limit in the database for this field is 64 digits.', 'pods' ),
 			),
 			static::$type . '_html5'       => array(
 				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
+				'depends-on' => array( static::$type . '_format_type' => 'number' ),
 				'type'    => 'boolean',
 			),
 			static::$type . '_placeholder' => array(
@@ -234,6 +242,10 @@ class PodsField_Number extends PodsField {
 
 			$value = $this->format( $value, $name, $options, $pod, $id );
 		}
+
+		// Enforce boolean.
+		$options[ static::$type . '_html5' ]       = filter_var( pods_v( static::$type . '_html5', $options, false ), FILTER_VALIDATE_BOOLEAN );
+		$options[ static::$type . '_format_soft' ] = filter_var( pods_v( static::$type . '_format_soft', $options, false ), FILTER_VALIDATE_BOOLEAN );
 
 		if ( ! empty( $options['disable_dfv'] ) ) {
 			return pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );

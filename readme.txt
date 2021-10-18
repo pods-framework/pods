@@ -152,14 +152,16 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 = 2.8 - October 18th, 2021 =
 
+Release post: https://pods.io/2021/10/18/pods-2-8-feature-release/
+
 Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) which includes information about all the features, enhancements, and changes in this major Pods release.
 
-**Breaking compatability warning:**
+**Breaking compatibility warning:**
 * New minimum required versions have been updated as follows which includes notices to let you know if you need to update something.
-* New minimum WP version required: WordPress 5.5+ (previously: WP 4.5+) — Going forward we will support the last two major WP releases on each major feature release of Pods.
+* New minimum WP version required: WordPress 5.5+ (previously: WP 4.5+)
 * New minimum PHP version required: PHP 5.6+ (previously: PHP 5.3+) — Hey! You should take the time to update to PHP 7.4+ because there’s major speed improvements to be had 🙂
 * New minimum MySQL version required: MySQL 5.5+ (previously: MySQL 5.1+)
-* Refactored object handling for Pod and Field configurations — instead of passing around arrays we now are using a fully scoped object for these configs. This gives us flexibility to lazy load and pull things as-needed from the database instead of always pulling entire Pods and Fields configurations all at once on any page it may not be needed. This also reduces how much we have to use/cache on each page further reducing overall memory usage on every page. It remains backward compatible in most array usage cases like `$pod['name']` but be aware that PHP ArrayAccess overloading errors may occur when manipulating Pod configs like `$pod['fields']['your_field']['name'] = 'My new field name';` or `$pod['options']['some_option'] = 1;` 
+* Refactored object handling for Pod and Field configurations — we now lazy load and pull things as-needed from the database instead of always pulling all Pods and Fields at once. It remains backward compatible in most array usage
 
 **Features and changes in this release**
 * Feature: Now you can add multiple groups of fields. (@sc0ttkclark, @zrothauser)

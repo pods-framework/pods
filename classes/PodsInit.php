@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Wisdom_Tracker;
+
 /**
  * @package Pods
  */
@@ -68,9 +70,9 @@ class PodsInit {
 	/**
 	 * Whether an Upgrade for 1.x has happened
 	 *
-	 * @var bool
+	 * @var int
 	 */
-	public static $upgraded;
+	public static $upgraded = 0;
 
 	/**
 	 * Whether an Upgrade is needed
@@ -80,13 +82,13 @@ class PodsInit {
 	public static $upgrade_needed = false;
 
 	/**
-	 * Freemius object.
+	 * Stats Tracking object.
 	 *
-	 * @since 1.0.0
+	 * @since 2.8.0
 	 *
-	 * @var \Freemius
+	 * @var Wisdom_Tracker
 	 */
-	protected $freemius;
+	public $stats_tracking;
 
 	/**
 	 * Singleton handling for a basic pods_init() request
@@ -117,7 +119,17 @@ class PodsInit {
 		self::$version      = get_option( 'pods_framework_version' );
 		self::$version_last = get_option( 'pods_framework_version_last' );
 		self::$db_version   = get_option( 'pods_framework_db_version' );
-		self::$upgraded     = (int) get_option( 'pods_framework_upgraded_1_x' );
+
+		if ( ! pods_strict( false ) ) {
+			self::$upgraded = get_option( 'pods_framework_upgraded_1_x' );
+
+			if ( false === self::$upgraded ) {
+				self::$upgraded = 2;
+
+				delete_option( 'pods_framework_upgraded_1_x' );
+				add_option( 'pods_framework_upgraded_1_x', 2, '', 'yes' );
+			}
+		}
 
 		if ( empty( self::$version_last ) && 0 < strlen( get_option( 'pods_version' ) ) ) {
 			$old_version = get_option( 'pods_version' );
@@ -127,7 +139,8 @@ class PodsInit {
 					$old_version = pods_version_to_point( $old_version );
 				}
 
-				update_option( 'pods_framework_version_last', $old_version );
+				delete_option( 'pods_framework_version_last' );
+				add_option( 'pods_framework_version_last', $old_version, '', 'yes' );
 
 				self::$version_last = $old_version;
 			}
@@ -135,21 +148,245 @@ class PodsInit {
 
 		self::$upgrade_needed = $this->needs_upgrade();
 
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
-		add_action( 'plugins_loaded', array( $this, 'activate_install' ), 9 );
-		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
+		add_action( 'plugins_loaded', [ $this, 'plugins_loaded' ], 0 );
+		add_action( 'plugins_loaded', [ $this, 'activate_install' ], 9 );
+		add_action( 'after_setup_theme', [ $this, 'after_setup_theme' ] );
+		add_action( 'wp_loaded', [ $this, 'flush_rewrite_rules' ] );
 
-		add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
+		// Setup common info for after TEC/ET load.
+		add_action( 'plugins_loaded', [ $this, 'maybe_set_common_lib_info' ], 1 );
+		add_action( 'tribe_common_loaded', [ $this, 'run' ], 0 );
+	}
 
-		$this->run();
+	/**
+	 * Setup of Common Library.
+	 *
+	 * @since 2.8.0
+	 */
+	public function maybe_set_common_lib_info() {
+		// Set up the path for /tribe-common/ loading.
+		$common_version = file_get_contents( PODS_DIR . 'tribe-common/src/Tribe/Main.php' );
 
+		// If there isn't a tribe-common version, bail.
+		if ( ! preg_match( "/const\s+VERSION\s*=\s*'([^']+)'/m", $common_version, $matches ) ) {
+			add_action( 'admin_head', [ $this, 'missing_common_libs' ] );
+
+			return;
+		}
+
+		$common_version = $matches[1];
+
+		/**
+		 * Attempt to load our Common if it's not already loaded.
+		 */
+		if ( empty( $GLOBALS['tribe-common-info'] ) ) {
+			/**
+			 * Custom tribe-common package:
+			 *
+			 * - Removed /vendor/freemius/ folder.
+			 * - Removed /lang/ folder (for now).
+			 * - Removed /src/resources/ folder (for now).
+			 */
+			$solo_install = empty( $GLOBALS['tribe-common-info'] );
+
+			// Handle stopping anything we don't want to run in Tribe Common.
+			if ( $solo_install ) {
+				// Bypass Tribe-related options.
+				$tribe_options = [
+					'tribe_settings_errors',
+					'pue_install_key_promoter',
+					'tribe_pue_key_notices',
+					'tribe_events_calendar_options',
+					'tribe_settings_major_error',
+					'tribe_settings_sent_data',
+					'tribe_events_calendar_network_options',
+				];
+
+				$tribe_empty_options = [
+					'pue_install_key_promoter',
+					'tribe_settings_major_error',
+					'_tribe_admin_notices',
+				];
+
+				foreach ( $tribe_options as $option_name ) {
+					$return_third_param = static function() {
+						return func_get_arg( 2 );
+					};
+					$return_fourth_param = static function() {
+						return func_get_arg( 3 );
+					};
+
+					add_filter( "pre_option_{$option_name}", $return_third_param, 10, 3 );
+					add_filter( "pre_site_option_{$option_name}", $return_fourth_param, 10, 4 );
+				}
+
+				foreach ( $tribe_empty_options as $option_name ) {
+					add_filter( "pre_option_{$option_name}", '__return_null' );
+					add_filter( "pre_site_option_{$option_name}", '__return_null' );
+					add_filter( "pre_transient_{$option_name}", '__return_null' );
+				}
+
+				// Remove hooks that are added and run before we can remove them.
+				add_action( 'tribe_common_loaded', static function() {
+					$main = Tribe__Main::instance();
+
+					remove_action( 'tribe_common_loaded', [ $main, 'load_assets' ], 1 );
+					remove_action( 'plugins_loaded', [ $main, 'tribe_plugins_loaded' ], PHP_INT_MAX );
+					remove_filter( 'body_class', [ $main, 'add_js_class' ] );
+					remove_action( 'wp_footer', [ $main, 'toggle_js_class' ] );
+				}, 0 );
+
+				if ( ! defined( 'TRIBE_HIDE_MARKETING_NOTICES' ) ) {
+					define( 'TRIBE_HIDE_MARKETING_NOTICES', true );
+				}
+			}
+
+			$GLOBALS['tribe-common-info'] = [
+				'dir'     => PODS_DIR . 'tribe-common/src/Tribe',
+				'version' => $common_version,
+			];
+
+			/**
+			 * After this method we can use any `Tribe__` and `\Pods\...` classes
+			 */
+			$this->init_autoloading();
+
+			// Start up Common.
+			$main = Tribe__Main::instance();
+			$main->plugins_loaded();
+
+			// Handle anything we want to unhook/stop in Tribe Common.
+			if ( $solo_install ) {
+				// Look into any others here.
+				remove_action( 'plugins_loaded', [ 'Tribe__App_Shop', 'instance' ] );
+				remove_action( 'plugins_loaded', [ 'Tribe__Admin__Notices', 'instance' ], 1 );
+
+				/** @var Tribe__Assets $assets */
+				$assets = tribe( 'assets' );
+				$assets->remove( 'tribe-tooltip' );
+
+				/** @var Tribe__Asset__Data $asset_data */
+				$asset_data = tribe( 'asset.data' );
+
+				remove_action( 'admin_footer', [ $asset_data, 'render_json' ] );
+				remove_action( 'customize_controls_print_footer_scripts', [ $asset_data, 'render_json' ] );
+				remove_action( 'wp_footer', [ $asset_data, 'render_json' ] );
+
+				/** @var Tribe__Assets_Pipeline $assets_pipeline */
+				$assets_pipeline = tribe( 'assets.pipeline' );
+				remove_filter( 'script_loader_tag', [ $assets_pipeline, 'prevent_underscore_conflict' ] );
+			}
+		}
+	}
+
+	/**
+	 * Display a missing-tribe-common library error.
+	 *
+	 * @since 2.8.0
+	 */
+	public function missing_common_libs() {
+		?>
+		<div class="error">
+			<p>
+				<?php
+				esc_html_e(
+					'It appears as if the tribe-common libraries cannot be found! The directory should be in the "common/" directory in the Pods plugin.',
+					'pods'
+				);
+				?>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Autoloader for Pods classes.
+	 *
+	 * @param string $class Class name.
+	 *
+	 * @since 2.8.0
+	 */
+	public static function autoload_class( $class ) {
+		// Bypass anything that doesn't start with Pods
+		if ( 0 !== strpos( $class, 'Pods' ) ) {
+			return;
+		}
+
+		$custom = array(
+			'Pods_CLI_Command'    => PODS_DIR . 'classes/cli/Pods_CLI_Command.php',
+			'PodsAPI_CLI_Command' => PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php',
+		);
+
+		if ( isset( $custom[ $class ] ) ) {
+			$path = $custom[ $class ];
+
+			require_once $path;
+
+			return;
+		}
+
+		$loaders = array(
+			array(
+				'prefix'    => 'Pods',
+				'separator' => '\\', // Namespace
+				'path'      => PODS_DIR . 'src',
+			),
+			array(
+				'prefix'         => 'PodsField_',
+				'filter'         => 'strtolower',
+				'exclude_prefix' => true,
+				'path'           => PODS_DIR . 'classes/fields',
+			),
+			array(
+				'prefix' => 'PodsWidget',
+				'path'   => PODS_DIR . 'classes/widgets',
+			),
+			array(
+				'prefix' => 'Pods',
+				'path'   => PODS_DIR . 'classes',
+			),
+		);
+
+		foreach ( $loaders as $loader ) {
+			if ( 0 !== strpos( $class, $loader['prefix'] ) ) {
+				continue;
+			}
+
+			$path = array(
+				$loader['path'],
+			);
+
+			if ( ! empty( $loader['exclude_prefix'] ) ) {
+				$class = substr( $class, strlen( $loader['prefix'] ) );
+			}
+
+			if ( ! empty( $loader['filter'] ) ) {
+				$class = call_user_func( $loader['filter'], $class );
+			}
+
+			if ( ! isset( $loader['separator'] ) ) {
+				$path[] = $class;
+			} else {
+				$separated_path = explode( $loader['separator'], $class );
+
+				/** @noinspection SlowArrayOperationsInLoopInspection */
+				$path = array_merge( $path, $separated_path );
+			}
+
+			$path = implode( DIRECTORY_SEPARATOR, $path ) . '.php';
+
+			if ( file_exists( $path ) ) {
+				require_once $path;
+
+				break;
+			}
+		}
 	}
 
 	/**
 	 * Load the plugin textdomain and set default constants
 	 */
 	public function plugins_loaded() {
-
 		if ( ! defined( 'PODS_LIGHT' ) ) {
 			define( 'PODS_LIGHT', false );
 		}
@@ -158,26 +395,37 @@ class PodsInit {
 			define( 'PODS_TABLELESS', false );
 		}
 
-		load_plugin_textdomain( 'pods' );
+		if ( ! defined( 'PODS_TEXTDOMAIN' ) || PODS_TEXTDOMAIN ) {
+			load_plugin_textdomain( 'pods' );
+		}
 
-		$this->freemius();
-
+		if ( ! defined( 'PODS_STATS_TRACKING' ) || PODS_STATS_TRACKING ) {
+			$this->stats_tracking( PODS_FILE, 'pods' );
+		}
 	}
 
 	/**
-	 * Handle Freemius SDK registration.
+	 * Handle Stats Tracking.
 	 *
-	 * @since 1.0.0
+	 * @since 2.8.0
 	 *
-	 * @return \Freemius
+	 * @param string $plugin_file The plugin file.
+	 * @param string $plugin_slug The plugin slug.
+	 *
+	 * @return Wisdom_Tracker The Stats Tracking object.
 	 */
-	public function freemius() {
+	public function stats_tracking( $plugin_file, $plugin_slug ) {
 		// Admin only.
-		if ( ! is_admin() ) {
+		if (
+			! is_admin()
+			&& ! wp_doing_cron()
+		) {
 			return;
 		}
 
 		global $pagenow;
+
+		$is_pods_page = isset( $_GET['page'] ) && 0 === strpos( $_GET['page'], 'pods' );
 
 		// Pods admin pages or plugins/update page only.
 		if (
@@ -185,58 +433,130 @@ class PodsInit {
 			&& 'update-core.php' !== $pagenow
 			&& 'update.php' !== $pagenow
 			&& ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX )
-			&& ( ! isset( $_GET['page'] ) || 0 !== strpos( $_GET['page'], 'pods' ) )
+			&& ! $is_pods_page
+			&& ! wp_doing_cron()
 		) {
 			return;
 		}
 
-		if ( $this->freemius ) {
-			return $this->freemius;
+		$is_main_plugin = PODS_FILE === $plugin_file;
+
+		if ( $is_main_plugin && $this->stats_tracking ) {
+			return $this->stats_tracking;
 		}
 
-		require_once dirname( __DIR__ ) . '/vendor/freemius/wordpress-sdk/start.php';
+		$settings = [];
 
-		try {
-			$this->freemius = fs_dynamic_init( array(
-				'id'             => '5347',
-				'slug'           => 'pods',
-				'type'           => 'plugin',
-				'public_key'     => 'pk_737105490825babae220297e18920',
-				'is_premium'     => false,
-				'has_addons'     => false,
-				'has_paid_plans' => false,
-				'menu'           => array(
-					'slug'        => 'pods-settings',
-					'contact'     => false,
-					'support'     => false,
-					'affiliation' => false,
-					'account'     => true,
-					'pricing'     => false,
-					'addons'      => false,
-					'parent'      => array(
-						'slug' => 'pods',
-					),
-				),
-			) );
+		if ( $is_main_plugin ) {
+			$settings[] = 'pods_settings';
+		}
 
-			$this->override_freemius_strings();
+		$stats_tracking = new Wisdom_Tracker(
+			$plugin_file,
+			$plugin_slug,
+			'https://stats.pods.io',
+			$settings,
+			true,
+			true,
+			1
+		);
 
-			add_filter( 'fs_plugins_api', array( $this, 'filter_freemius_plugins_api_data' ), 15 );
+		if ( $is_main_plugin ) {
+			add_action( 'update_option_wisdom_allow_tracking', static function ( $old_value, $value ) use ( $plugin_slug ) {
+				$opt_out = ! empty( $value[ $plugin_slug ] ) ? 0 : 1;
 
-			$this->freemius->add_filter( 'templates/add-ons.php', array( $this, 'filter_freemius_addons_html' ) );
-			$this->freemius->add_filter( 'download_latest_url', array( $this, 'get_freemius_action_link' ) );
+				pods_update_setting( 'wisdom_opt_out', $opt_out );
+			}, 10, 2 );
+		}
 
+		add_action( 'update_option_pods_settings', static function ( $old_value, $value ) use ( $stats_tracking, $plugin_slug ) {
+			// Only handle opt in when needed.
+			if ( ! isset( $value['wisdom_opt_out'] ) || 0 !== (int) $value['wisdom_opt_out'] ) {
+				return;
+			}
+
+			// We are doing opt-in>
+			$stats_tracking->set_is_tracking_allowed( true, $plugin_slug );
+			$stats_tracking->set_can_collect_email( true, $plugin_slug );
+		}, 10, 2 );
+
+		add_filter( 'wisdom_is_local_' . $plugin_slug, static function ( $is_local = false ) {
+			if ( true === $is_local ) {
+				return $is_local;
+			}
+
+			$url = network_site_url( '/' );
+
+			$url       = strtolower( trim( $url ) );
+			$url_parts = parse_url( $url );
+			$host      = ! empty( $url_parts['host'] ) ? $url_parts['host'] : false;
+
+			if ( empty( $host ) ) {
+				return $is_local;
+			}
+
+			if ( 'localhost' === $host ) {
+				return true;
+			}
+
+			if ( false !== ip2long( $host ) && ! filter_var( $host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
+				return true;
+			}
+
+			$tlds_to_check = [
+				'.local',
+				'.test',
+			];
+
+			foreach ( $tlds_to_check as $tld ) {
+				$minus_tld = strlen( $host ) - strlen( $tld );
+
+				if ( $minus_tld === strpos( $host, $tld ) ) {
+					return true;
+				}
+			}
+
+			return $is_local;
+		} );
+
+		add_filter( 'wisdom_notice_text_' . $plugin_slug, static function() {
+			return __( 'Thank you for installing our plugin. We\'d like your permission to track its usage on your site. We won\'t record any sensitive data, only information regarding the WordPress environment, your site admin email address, and plugin settings. We will only use this information help us make improvements to the plugin and provide better support when you reach out. Tracking is completely optional.', 'pods' );
+		} );
+
+		// Handle non-Pods pages, we don't want certain things happening.
+		if ( ! $is_pods_page ) {
+			remove_action( 'admin_notices', [ $stats_tracking, 'optin_notice' ] );
+			remove_action( 'admin_notices', [ $stats_tracking, 'marketing_notice' ] );
+		}
+
+		if ( ! $is_main_plugin ) {
 			/**
-			 * Allow hooking into the Freemius registration after Pods has registered it's own Freemius.
+			 * Allow hooking after the Stats Tracking object is setup for the main plugin.
 			 *
-			 * @since 2.7.27
+			 * @since 2.8.0
+			 *
+			 * @param Wisdom_Tracker $stats_tracking The Stats Tracking object.
+			 * @param string         $plugin_file    The plugin file.
 			 */
-			do_action( 'pods_freemius_after_init' );
-		} catch ( \Exception $exception ) {
-			return null;
+			do_action( 'pods_stats_tracking_after_init', $stats_tracking, $plugin_file );
 		}
 
-		return $this->freemius;
+		/**
+		 * Allow hooking after the Stats Tracking object is setup.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param Wisdom_Tracker $stats_tracking The Stats Tracking object.
+		 * @param string         $plugin_file    The plugin file.
+		 */
+		do_action( 'pods_stats_tracking_object', $stats_tracking, $plugin_file );
+
+		// Maybe store the object.
+		if ( $is_main_plugin ) {
+			$this->stats_tracking = $stats_tracking;
+		}
+
+		return $stats_tracking;
 	}
 
 	/**
@@ -354,12 +674,40 @@ class PodsInit {
 	}
 
 	/**
+	 * Sets up autoloading.
+	 *
+	 * @since 2.8.0
+	 */
+	protected function init_autoloading() {
+		$autoloader = $this->get_autoloader_instance();
+		$autoloader->register_autoloader();
+	}
+
+	/**
+	 * Returns the autoloader singleton instance to use in a context-aware manner.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return \Tribe__Autoloader The singleton common Autoloader instance.
+	 */
+	public function get_autoloader_instance() {
+		if ( ! class_exists( 'Tribe__Autoloader' ) ) {
+			require_once $GLOBALS['tribe-common-info']['dir'] . '/Autoloader.php';
+
+			Tribe__Autoloader::instance()->register_prefixes( [
+				'Tribe__' => $GLOBALS['tribe-common-info']['dir'],
+			] );
+		}
+
+		return Tribe__Autoloader::instance();
+	}
+
+	/**
 	 * Add compatibility for other plugins.
 	 *
 	 * @since 2.7.17
 	 */
 	public function after_setup_theme() {
-
 		if ( ! defined( 'PODS_COMPATIBILITY' ) ) {
 			define( 'PODS_COMPATIBILITY', true );
 		}
@@ -369,7 +717,6 @@ class PodsInit {
 		}
 
 		require_once PODS_DIR . 'includes/compatibility/acf.php';
-
 	}
 
 	/**
@@ -391,8 +738,9 @@ class PodsInit {
 	 * Load Pods Meta
 	 */
 	public function load_meta() {
+		self::$meta = pods_meta();
 
-		self::$meta = pods_meta()->core();
+		self::$meta->core();
 	}
 
 	/**
@@ -419,20 +767,13 @@ class PodsInit {
 		add_shortcode( 'pods-form', 'pods_shortcode_form' );
 
 		$security_settings = array(
-			'pods_disable_file_browser'     => 0,
-			'pods_files_require_login'      => 1,
+			'pods_disable_file_browser'     => false,
+			'pods_files_require_login'      => true,
 			'pods_files_require_login_cap'  => '',
-			'pods_disable_file_upload'      => 0,
-			'pods_upload_require_login'     => 1,
+			'pods_disable_file_upload'      => false,
+			'pods_upload_require_login'     => true,
 			'pods_upload_require_login_cap' => '',
 		);
-
-		foreach ( $security_settings as $security_setting => $setting ) {
-			$setting = get_option( $security_setting );
-			if ( ! empty( $setting ) ) {
-				$security_settings[ $security_setting ] = $setting;
-			}
-		}
 
 		foreach ( $security_settings as $security_setting => $setting ) {
 			if ( 0 === (int) $setting ) {
@@ -481,6 +822,13 @@ class PodsInit {
 	 * Register Scripts and Styles
 	 */
 	public function register_assets() {
+		static $registered = false;
+
+		if ( $registered ) {
+			return;
+		}
+
+		$registered = true;
 
 		$suffix_min = SCRIPT_DEBUG ? '' : '.min';
 
@@ -596,7 +944,7 @@ class PodsInit {
 
 		// Marionette dependencies for DFV/MV fields.
 		wp_register_script(
-			'backbone.radio',
+			'pods-backbone-radio',
 			PODS_URL . "ui/js/marionette/backbone.radio{$suffix_min}.js",
 			array( 'backbone' ),
 			'2.0.0',
@@ -607,7 +955,7 @@ class PodsInit {
 			PODS_URL . "ui/js/marionette/backbone.marionette{$suffix_min}.js",
 			array(
 				'backbone',
-				'backbone.radio',
+				'pods-backbone-radio',
 			),
 			'3.3.1',
 			true
@@ -617,21 +965,55 @@ class PodsInit {
 			'PodsMn = Backbone.Marionette.noConflict();'
 		);
 
-		// DFV/MV.
+		// Dynamic Field Views / Marionette Views scripts.
+		$pods_dfv_options_file = file_get_contents( PODS_DIR . 'ui/js/dfv/pods-dfv.min.asset.json' );
+
+		$pods_dfv_options = json_decode( $pods_dfv_options_file, true );
+
 		wp_register_script(
-			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js',
-			array(
-				'jquery',
-				'jquery-ui-core',
-				'jquery-ui-sortable',
-				'pods-i18n',
-				'pods-marionette',
-				'media-views',
-				'media-models',
+			'pods-dfv',
+			PODS_URL . 'ui/js/dfv/pods-dfv.min.js',
+			array_merge(
+				$pods_dfv_options['dependencies'],
+				[
+					'jquery',
+					'jquery-ui-core',
+					'jquery-ui-sortable',
+					'pods-marionette',
+					'media-views',
+					'media-models',
+					'wp-components',
+					'wp-block-library',
+					'wp-tinymce',
+				]
 			),
-			PODS_VERSION,
+			$pods_dfv_options['version'],
 			true
 		);
+
+		wp_set_script_translations( 'pods-dfv', 'pods' );
+
+		$config = [
+			'wp_locale'      => $GLOBALS['wp_locale'],
+			'currencies'     => PodsField_Currency::$currencies,
+			'datetime'       => [
+				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
+				'gmt_offset'    => (int) get_option( 'gmt_offset', 0 ),
+				'date_format'   => get_option( 'date_format' ),
+				'time_format'   => get_option( 'time_format' ),
+			],
+		];
+
+		/**
+		 * Allow filtering hte admin config data.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array $config The admin config data.
+		 */
+		$config = apply_filters( 'pods_admin_dfv_config', $config );
+
+		wp_localize_script( 'pods-dfv', 'podsDFVConfig', $config );
 
 		// Page builders.
 		if (
@@ -643,29 +1025,35 @@ class PodsInit {
 			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
 		}
 
-		// Check if Pod is a Modal Window.
-		if ( pods_is_modal_window() ) {
-			add_filter( 'body_class', array( $this, 'add_classes_to_modal_body' ) );
-			add_filter( 'admin_body_class', array( $this, 'add_classes_to_modal_body' ) );
-		}
+		$is_admin = is_admin();
 
 		// Deal with specifics on admin pages.
-		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
+		if ( $is_admin && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 
 			// DFV must be enqueued on the media library page for items in grid mode (#4785)
 			// and for posts due to the possibility that post-thumbnails are enabled (#4945)
-			if ( $screen && $screen->base && in_array( $screen->base, array( 'upload', 'post' ), true ) ) {
-				wp_enqueue_script( 'pods-dfv' );
+			if (
+				$screen
+				&& $screen->base
+				&& in_array( $screen->base, [
+					'upload',
+					'post',
+				], true )
+			) {
+				// Only load if we have a media pod.
+				if ( ! empty( PodsMeta::$media ) ) {
+					wp_enqueue_script( 'pods-dfv' );
+				}
 			}
 		}
 
 		$this->maybe_register_handlebars();
 
 		// As of 2.7 we combine styles to just three .css files
-		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', array(), PODS_VERSION );
-		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', array(), PODS_VERSION );
-		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', array(), PODS_VERSION );
+		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', [ 'wp-components' ], PODS_VERSION );
+		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', [], PODS_VERSION );
+		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', [ 'wp-components' ], PODS_VERSION );
 
 		/**
 		 * Filter to enabled loading of the DFV script on frontend.
@@ -677,9 +1065,17 @@ class PodsInit {
 		 *
 		 * @since 2.7.13
 		 */
-		if ( apply_filters( 'pods_enqueue_dfv_on_front', false ) ) {
+		if ( ! $is_admin && apply_filters( 'pods_enqueue_dfv_on_front', false ) ) {
 			wp_enqueue_script( 'pods-dfv' );
 			wp_enqueue_style( 'pods-form' );
+		}
+
+		// Check if Pod is a Modal Window.
+		if ( pods_is_modal_window() ) {
+			add_filter( 'body_class', array( $this, 'add_classes_to_modal_body' ) );
+			add_filter( 'admin_body_class', array( $this, 'add_classes_to_modal_body' ) );
+
+			wp_enqueue_style( 'pods-styles' );
 		}
 
 		/**
@@ -735,10 +1131,9 @@ class PodsInit {
 	 * Register internal Post Types
 	 */
 	public function register_pods() {
-
 		$args = array(
-			'label'           => 'Pods',
-			'labels'          => array( 'singular_name' => 'Pod' ),
+			'label'           => __( 'Pods', 'pods' ),
+			'labels'          => array( 'singular_name' => __( 'Pod', 'pods' ) ),
 			'public'          => false,
 			'can_export'      => false,
 			'query_var'       => false,
@@ -755,8 +1150,26 @@ class PodsInit {
 		register_post_type( '_pods_pod', apply_filters( 'pods_internal_register_post_type_pod', $args ) );
 
 		$args = array(
-			'label'           => 'Pod Fields',
-			'labels'          => array( 'singular_name' => 'Pod Field' ),
+			'label'           => __( 'Pod Groups', 'pods' ),
+			'labels'          => array( 'singular_name' => __( 'Pod Group', 'pods' ) ),
+			'public'          => false,
+			'can_export'      => false,
+			'query_var'       => false,
+			'rewrite'         => false,
+			'capability_type' => 'pods_pod',
+			'has_archive'     => false,
+			'hierarchical'    => true,
+			'supports'        => array( 'title', 'editor', 'author' ),
+			'menu_icon'       => 'dashicons-pods',
+		);
+
+		$args = self::object_label_fix( $args, 'post_type' );
+
+		register_post_type( '_pods_group', apply_filters( 'pods_internal_register_post_type_group', $args ) );
+
+		$args = array(
+			'label'           => __( 'Pod Fields', 'pods' ),
+			'labels'          => array( 'singular_name' => __( 'Pod Field', 'pods' ) ),
 			'public'          => false,
 			'can_export'      => false,
 			'query_var'       => false,
@@ -791,9 +1204,6 @@ class PodsInit {
 		if ( empty( self::$version ) ) {
 			return;
 		}
-
-		require_once PODS_DIR . 'classes/PodsRESTHandlers.php';
-		require_once PODS_DIR . 'classes/PodsRESTFields.php';
 
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
@@ -852,9 +1262,6 @@ class PodsInit {
 					// Post type was setup and exists already, but we aren't forcing it to be setup again
 					continue;
 				}
-
-				$post_type['options']['name'] = $post_type['name'];
-				$post_type                    = array_merge( $post_type, (array) $post_type['options'] );
 
 				$post_type_name = pods_v_sanitized( 'name', $post_type );
 
@@ -1016,6 +1423,7 @@ class PodsInit {
 					'rewrite'             => $cpt_rewrite,
 					'query_var'           => ( false !== (boolean) pods_v( 'query_var', $post_type, true ) ? pods_v( 'query_var_string', $post_type, $post_type_name, true ) : false ),
 					'can_export'          => (boolean) pods_v( 'can_export', $post_type, true ),
+					'delete_with_user'    => (boolean) pods_v( 'delete_with_user', $post_type, true ),
 				);
 
 				// REST API
@@ -1054,7 +1462,7 @@ class PodsInit {
 
 				// Taxonomies
 				$cpt_taxonomies = array();
-				$_taxonomies    = get_taxonomies();
+				$_taxonomies    = $existing_taxonomies;
 				$_taxonomies    = array_merge_recursive( $_taxonomies, $pods_taxonomies );
 				$ignore         = array( 'nav_menu', 'link_category', 'post_format' );
 
@@ -1090,9 +1498,6 @@ class PodsInit {
 					// Taxonomy was setup and exists already, but we aren't forcing it to be setup again
 					continue;
 				}
-
-				$taxonomy['options']['name'] = $taxonomy['name'];
-				$taxonomy                    = array_merge( $taxonomy, (array) $taxonomy['options'] );
 
 				$taxonomy_name = pods_v( 'name', $taxonomy );
 
@@ -1223,7 +1628,7 @@ class PodsInit {
 
 				// Post Types
 				$ct_post_types = array();
-				$_post_types   = get_post_types();
+				$_post_types   = $existing_post_types;
 				$_post_types   = array_merge_recursive( $_post_types, $pods_post_types );
 				$ignore        = array( 'revision' );
 
@@ -1277,7 +1682,7 @@ class PodsInit {
 
 			$pods_cpt_ct['post_format_post_types'] = $post_format_post_types;
 
-			pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct );
+			pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct, WEEK_IN_SECONDS );
 		}//end if
 
 		foreach ( $pods_cpt_ct['taxonomies'] as $taxonomy => $options ) {
@@ -1389,30 +1794,25 @@ class PodsInit {
 		// Handle existing post types / taxonomies settings (just REST for now)
 		global $wp_post_types, $wp_taxonomies;
 
-		$post_type_names = wp_list_pluck( $post_types, 'name', 'id' );
-		$taxonomy_names  = wp_list_pluck( $taxonomies, 'name', 'id' );
-
 		foreach ( $existing_post_types as $post_type_name => $post_type_name_again ) {
 			if ( isset( self::$content_types_registered['post_types'] ) && in_array( $post_type_name, self::$content_types_registered['post_types'], true ) ) {
 				// Post type already registered / setup by Pods
 				continue;
 			}
 
-			$pod_id = array_search( $post_type_name, $post_type_names, true );
-
-			if ( ! $pod_id ) {
+			if ( ! isset( $post_types[ $post_type_name ] ) ) {
 				// Post type not a pod
 				continue;
 			}
 
-			$pod = $post_types[ $pod_id ];
+			$pod = $post_types[ $post_type_name ];
 
 			// REST API
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				if ( empty( $wp_post_types[ $post_type_name ]->show_in_rest ) ) {
-					$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], pods_v( 'rest_base', $wp_post_types[ $post_type_name ] ), true ) );
+					$rest_base = sanitize_title( pods_v( 'rest_base', $pod, pods_v( 'rest_base', $wp_post_types[ $post_type_name ] ), true ) );
 
 					$wp_post_types[ $post_type_name ]->show_in_rest          = true;
 					$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
@@ -1429,21 +1829,19 @@ class PodsInit {
 				continue;
 			}
 
-			$pod_id = array_search( $taxonomy_name, $taxonomy_names, true );
-
-			if ( ! $pod_id ) {
+			if ( ! isset( $taxonomies[ $taxonomy_name ] ) ) {
 				// Taxonomy not a pod
 				continue;
 			}
 
-			$pod = $taxonomies[ $pod_id ];
+			$pod = $taxonomies[ $taxonomy_name ];
 
 			// REST API
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				if ( empty( $wp_taxonomies[ $taxonomy_name ]->show_in_rest ) ) {
-					$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], pods_v( 'rest_base', $wp_taxonomies[ $taxonomy_name ] ), true ) );
+					$rest_base = sanitize_title( pods_v( 'rest_base', $pod, pods_v( 'rest_base', $wp_taxonomies[ $taxonomy_name ] ), true ) );
 
 					$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
 					$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
@@ -1457,7 +1855,7 @@ class PodsInit {
 		if ( ! empty( PodsMeta::$user ) ) {
 			$pod = current( PodsMeta::$user );
 
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				new PodsRESTFields( $pod['name'] );
@@ -1467,13 +1865,25 @@ class PodsInit {
 		if ( ! empty( PodsMeta::$media ) ) {
 			$pod = current( PodsMeta::$media );
 
-			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod, false );
 
 			if ( $rest_enabled ) {
 				new PodsRESTFields( $pod['name'] );
 			}
 		}
 
+		do_action( 'pods_setup_content_types' );
+
+		if ( ! did_action( 'pods_init' ) ) {
+			/**
+			 * Allow hooking into after Pods has been setup.
+			 *
+			 * @since 2.8.0
+			 *
+			 * @param PodsInit $init The PodsInit class object.
+			 */
+			do_action( 'pods_init', $this );
+		}
 	}
 
 	/**
@@ -1497,7 +1907,7 @@ class PodsInit {
 			$wp_rewrite->flush_rules();
 			$wp_rewrite->init();
 
-			pods_transient_set( 'pods_flush_rewrites', 0 );
+			pods_transient_clear( 'pods_flush_rewrites' );
 		}
 	}
 
@@ -1760,7 +2170,7 @@ class PodsInit {
 				if ( '2.1.0' === $new_version && ( is_developer() ) )
 					continue;*/
 
-				if ( version_compare( $last, $old_version, '>=' ) && version_compare( $last, $new_version, '<' ) && version_compare( $current, $new_version, '>=' ) && 1 !== self::$upgraded ) {
+				if ( version_compare( $last, $old_version, '>=' ) && version_compare( $last, $new_version, '<' ) && version_compare( $current, $new_version, '>=' ) && 1 !== self::$upgraded && 2 !== self::$upgraded ) {
 					$upgrade_needed = true;
 
 					break;
@@ -1885,12 +2295,7 @@ class PodsInit {
 
 		$api = pods_api();
 
-		$pods = $api->load_pods(
-			array(
-				'names_ids'  => true,
-				'table_info' => false,
-			)
-		);
+		$pods = $api->load_pods( array( 'names_ids' => true ) );
 
 		foreach ( $pods as $pod_id => $pod_label ) {
 			$api->delete_pod( array( 'id' => $pod_id ) );
@@ -1970,6 +2375,20 @@ class PodsInit {
 
 		$ran = true;
 
+		tribe_register_provider( \Pods\Service_Provider::class );
+		tribe_register_provider( \Pods\Admin\Service_Provider::class );
+		tribe_register_provider( \Pods\Blocks\Service_Provider::class );
+		tribe_register_provider( \Pods\Integrations\Service_Provider::class );
+		tribe_register_provider( \Pods\REST\V1\Service_Provider::class );
+
+		// Add WP-CLI commands.
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			//require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
+			//require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
+
+			tribe_register_provider( \Pods\CLI\Service_Provider::class );
+		}
+
 		$this->load_i18n();
 
 		if ( ! did_action( 'plugins_loaded' ) ) {
@@ -1984,25 +2403,32 @@ class PodsInit {
 			$this->load_meta();
 		}
 
+		$is_admin = is_admin();
+
 		if ( ! did_action( 'init' ) ) {
 			add_action( 'init', array( $this, 'core' ), 11 );
 			add_action( 'init', array( $this, 'setup_content_types' ), 11 );
 
-			if ( is_admin() ) {
+			if ( $is_admin ) {
 				add_action( 'init', array( $this, 'admin_init' ), 12 );
 			}
 		} else {
 			$this->core();
 			$this->setup_content_types();
 
-			if ( is_admin() ) {
+			if ( $is_admin ) {
 				$this->admin_init();
 			}
 		}
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+		if ( ! $is_admin ) {
+			add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ], 15 );
+		} else {
+			add_action( 'admin_enqueue_scripts', [ $this, 'register_assets' ], 15 );
+		}
+
 		add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+
 		// @todo Elementor Page Builder.
 		//add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'register_assets' ), 15 );
 
@@ -2021,12 +2447,32 @@ class PodsInit {
 		// Compatibility for Query Monitor conditionals
 		add_filter( 'query_monitor_conditionals', array( $this, 'filter_query_monitor_conditionals' ) );
 
-		// Add WP-CLI commands
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
-			require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
-		}
+		// Remove Common menus
+		add_action( 'admin_menu', array( $this, 'remove_common_menu' ), 11 );
+		add_action( 'network_admin_menu', array( $this, 'remove_common_network_menu' ), 11 );
+	}
 
+	/**
+	 * Remove Common menu.
+	 *
+	 * @since 2.8.0
+	 */
+	public function remove_common_menu() {
+		if ( ! class_exists( 'Tribe__Events__Main' ) && ! class_exists( 'Tribe__Tickets__Main' ) ) {
+			remove_menu_page( 'tribe-common' );
+		}
+	}
+
+	/**
+	 * Remove Common network menu.
+	 *
+	 * @since 2.8.0
+	 */
+	public function remove_common_network_menu() {
+		if ( ! class_exists( 'Tribe__Events__Main' ) && ! class_exists( 'Tribe__Tickets__Main' ) ) {
+			remove_submenu_page( 'settings.php', 'tribe-common' );
+			remove_submenu_page( 'settings.php', 'tribe-common-help' );
+		}
 	}
 
 	/**
@@ -2044,7 +2490,7 @@ class PodsInit {
 
 		$file_types = "'" . implode( "', '", PodsForm::file_field_types() ) . "'";
 
-		if ( ! pods_tableless() ) {
+		if ( pods_podsrel_enabled() ) {
 			$sql = "
                 DELETE `rel`
                 FROM `@wp_podsrel` AS `rel`
@@ -2060,14 +2506,16 @@ class PodsInit {
                 WHERE
                     `p`.`ID` IS NOT NULL
                     AND `pm`.`meta_id` IS NOT NULL
-                    AND `rel`.`item_id` = {$_ID}";
+                    AND `rel`.`item_id` = {$_ID}
+			";
 
 			pods_query( $sql, false );
 		}
 
-		// Post Meta
-		if ( ! empty( PodsMeta::$post_types ) ) {
-			$sql = "
+		if ( pods_relationship_meta_storage_enabled() ) {
+			// Post Meta
+			if ( ! empty( PodsMeta::$post_types ) ) {
+				$sql = "
                 DELETE `rel`
                 FROM `@wp_postmeta` AS `rel`
                 LEFT JOIN `{$wpdb->posts}` AS `p`
@@ -2084,12 +2532,12 @@ class PodsInit {
                     AND `rel`.`meta_key` = `p`.`post_name`
                     AND `rel`.`meta_value` = '{$_ID}'";
 
-			pods_query( $sql, false );
-		}
+				pods_query( $sql, false );
+			}
 
-		// User Meta
-		if ( ! empty( PodsMeta::$user ) ) {
-			$sql = "
+			// User Meta
+			if ( ! empty( PodsMeta::$user ) ) {
+				$sql = "
                 DELETE `rel`
                 FROM `@wp_usermeta` AS `rel`
                 LEFT JOIN `{$wpdb->posts}` AS `p`
@@ -2106,12 +2554,12 @@ class PodsInit {
                     AND `rel`.`meta_key` = `p`.`post_name`
                     AND `rel`.`meta_value` = '{$_ID}'";
 
-			pods_query( $sql, false );
-		}
+				pods_query( $sql, false );
+			}
 
-		// Comment Meta
-		if ( ! empty( PodsMeta::$comment ) ) {
-			$sql = "
+			// Comment Meta
+			if ( ! empty( PodsMeta::$comment ) ) {
+				$sql = "
                 DELETE `rel`
                 FROM `@wp_commentmeta` AS `rel`
                 LEFT JOIN `{$wpdb->posts}` AS `p`
@@ -2128,8 +2576,18 @@ class PodsInit {
                     AND `rel`.`meta_key` = `p`.`post_name`
                     AND `rel`.`meta_value` = '{$_ID}'";
 
-			pods_query( $sql, false );
+				pods_query( $sql, false );
+			}
 		}
+
+		/**
+		 * Allow hooking into the attachment deletion process.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param int $_ID The attachment ID being deleted.
+		 */
+		do_action( 'pods_init_delete_attachment', $_ID );
 	}
 
 	/**
@@ -2150,7 +2608,6 @@ class PodsInit {
 				continue;
 			}
 
-			require_once PODS_DIR . 'classes/widgets/' . $widget . '.php';
 
 			register_widget( $widget );
 		}
@@ -2167,17 +2624,11 @@ class PodsInit {
 			return;
 		}
 
-		$all_pods = pods_api()->load_pods(
-			array(
-				'type'       => 'pod',
-				'fields'     => false,
-				'table_info' => false,
-			)
-		);
+		$all_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
 
 		// Add New item links for all pods
 		foreach ( $all_pods as $pod ) {
-			if ( 0 === (int) $pod['options']['show_in_menu'] ) {
+			if ( ! isset( $pod['show_in_menu'] ) || 0 === (int) $pod['show_in_menu'] ) {
 				continue;
 			}
 
@@ -2185,7 +2636,7 @@ class PodsInit {
 				continue;
 			}
 
-			$singular_label = pods_v( 'label_singular', $pod['options'], pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
+			$singular_label = pods_v( 'label_singular', $pod, pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
 
 			$wp_admin_bar->add_node(
 				array(
@@ -2202,7 +2653,7 @@ class PodsInit {
 			$pod = $pods->pod_data;
 
 			if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod['name'] ) ) ) {
-				$singular_label = pods_v( 'label_singular', $pod['options'], pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
+				$singular_label = pods_v( 'label_singular', $pod, pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), true ), true );
 
 				$wp_admin_bar->add_node(
 					array(
@@ -2266,6 +2717,7 @@ class PodsInit {
 		$conditionals[] = 'pods_allow_deprecated';
 		$conditionals[] = 'pods_api_cache';
 		$conditionals[] = 'pods_shortcode_allow_evaluate_tags';
+		$conditionals[] = 'pods_session_auto_start';
 		return $conditionals;
 	}
 }

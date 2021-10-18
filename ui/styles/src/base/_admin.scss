@@ -1,3 +1,6 @@
+.toplevel_page_pods #wpcontent {
+	background: #f1f1f1;
+}
 .pods-hidden {
 	display: none;
 }
@@ -30,17 +33,10 @@
 	vertical-align: middle;
 }
 
-.pods-admin button,
-.pods-admin a.button,
-.pods-admin a.button-secondary,
-.pods-admin a.button-primary {
-	vertical-align: middle;
-}
-
 /*
  * Pods Validate
  */
-.pods-admin .pods-validate.pods-validate-error {
+.pods-admin .pods-validate-error {
 	border-color: #C89797;
 	color: #790000;
 	background-color: #FFDFDF;
@@ -236,10 +232,12 @@ tbody.pods-manage-list .pods-manage-row th.check-field {
 	padding: 3px 5px;
 	transition: border-color 300ms ease; /* ooh, fancy! */
 }
+
 /* Any changed or new field */
 tbody.pods-manage-list .pods-field-updated th.check-field {
 	border-left-color: #95BF3B;
 }
+
 /* Applies to a new field just added or existing field being modified. */
 tbody.pods-manage-list .pods-manage-row-expanded th.check-field,
 tbody.pods-manage-list .pods-field-new th.check-field {
@@ -303,20 +301,21 @@ tr.pods-toggled-off {
 /*
  * Pods Fields
  */
-div.pods-manage-field div {
-	overflow: hidden;
+div.pods-manage-field {
 	zoom: 1;
-}
-
-div.pods-manage-field .description {
-	clear: both;
 }
 
 div.pods-manage-field .pods-field-option,
 div.pods-manage-field .pods-field-option-group {
 	background: #fcfcfc;
-	border-bottom: 1px solid #CCD0D4;
+	box-sizing: border-box;
+	display: flex;
+	flex-flow: row nowrap;
 	padding: 10px;
+
+	> * {
+		box-sizing: border-box;
+	}
 }
 
 div.pods-manage-field .pods-pick-values li,
@@ -333,25 +332,12 @@ div.pods-manage-field .pods-field-option-group:nth-child(odd) {
 	background: #fff;
 }
 
-div.pods-manage-field .pods-field-option label,
+div.pods-manage-field .pods-field-option .pods-field-label,
 div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
-	padding-top: 4px;
-	float: left;
 	width: 30%;
-	max-width: 150px;
-	margin-right: 2%;
-}
-
-.pods-manage-field .pods-field.pods-boolean label,
-.pods-manage-field .pods-field-option .pods-pick-values label {
-	float: none;
-	width: auto;
-	max-width: 100%;
-	display: block;
-	margin-left: 22px;
-	padding: 7px 0;
-	line-height: 14px;
-	margin-right: 0;
+	flex: 0 0 30%;
+	padding-right: 2%;
+	padding-top: 4px;
 }
 
 .pods-manage-field .pods-field-option .pods-pick-values .pods-field.pods-boolean {
@@ -361,32 +347,12 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 	max-width: 100%;
 }
 
-.pods-manage-field .pods-field-option input[type="text"],
-.pods-manage-field .pods-field-option select,
-.pods-manage-field .pods-field-option textarea,
-.pods-manage-field .pods-field-option .pods-field.pods-boolean,
-.pods-manage-field .pods-pick-values,
-.pods-manage-field .pods-field-option .pods-form-ui-field-type-file,
-.pods-manage-field .pods-slider-field {
-	display: block;
-	float: left;
-	width: 65%;
-	max-width: 25em;
-}
-
 .pods-manage-field label + div .pods-pick-values {
 	/* Match width to input fields */
 	width: 96%;
 }
 
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-wysiwyg textarea {
-	max-width: 100%;
-}
-
-.pods-manage-field .pods-field-option div select {
-	float: none;
-	width: 100%;
-	margin: 0;
 	max-width: 100%;
 }
 
@@ -404,14 +370,6 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 	margin-top: 0;
 }
 
-.pods-manage-field input[type="checkbox"],
-.pods-manage-field input[type="radio"] {
-	display: inline-block;
-	margin: 6px 6px 6px 1px;
-	float: left;
-	vertical-align: middle;
-	position: static;
-}
 .pods-manage-field .pods-pick-values input[type="checkbox"],
 .pods-manage-field .pods-pick-values input[type="radio"] {
 	margin: 6px;
@@ -431,6 +389,7 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 	width: 100%;
 	max-width: 100%;
 }
+
 .pods-manage-field .pods-pick-values.pods-zebra li {
 	margin-bottom: 4px;
 }
@@ -438,8 +397,8 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 .pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean input {
 	margin: 4px;
 }
+
 .pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean label {
-	margin-left: 26px;
 	padding: 5px 0;
 }
 
@@ -547,7 +506,6 @@ table.pods-admin {
  */
 body[class*="settings_page_pods-"] {
 	.pods-manage-field .pods-field-option input[type="text"],
-	.pods-manage-field .pods-field-option select,
 	.pods-manage-field .pods-field-option textarea,
 	.pods-manage-field .pods-field-option .pods-field.pods-boolean,
 	.pods-manage-field .pods-pick-values,
@@ -556,9 +514,6 @@ body[class*="settings_page_pods-"] {
 		float: none;
 	}
 }
-
-
-
 
 
 /*
@@ -603,7 +558,6 @@ body[class*="settings_page_pods-"] {
 	}
 
 	.pods-manage-field .pods-field-option input[type="text"],
-	.pods-manage-field .pods-field-option select,
 	.pods-manage-field .pods-field-option textarea,
 	.pods-manage-field .pods-field-option .pods-field.pods-boolean,
 	.pods-manage-field .pods-pick-values,
@@ -771,7 +725,7 @@ body[class*="settings_page_pods-"] {
 }
 
 .pods-admin_friends-callout_button--join {
-	padding: 8px 10px;
+	padding: 8px 12px;
 	color: #444;
 	background: #f6f6e8;
 	display: block;
@@ -835,4 +789,29 @@ body[class*="settings_page_pods-"] {
 	background-color: #95bf3b;
 	border-radius: 3px;
 	transition: width 500ms ease-in-out;
+}
+
+.pods-inspector-row .components-datetime {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.pods-inspector-row {
+	.full-width-base-control {
+		width: 100%;
+	}
+
+	.components-block-fields-checkbox-control__help {
+		margin-top: 10px;
+		font-style: italic;
+	}
+
+	.components-block-fields-checkbox-group__help {
+		margin-top: 10px;
+		font-style: italic;
+	}
+
+	.components-block-fields-checkbox-group .components-base-control {
+		margin-bottom: 10px;
+	}
 }

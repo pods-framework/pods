@@ -46,6 +46,7 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function setup() {
 
+		static::$group = __( 'Date / Time', 'pods' );
 		static::$label = __( 'Date / Time', 'pods' );
 	}
 
@@ -75,31 +76,32 @@ class PodsField_DateTime extends PodsField {
 					'format' => __( 'Predefined format', 'pods' ),
 					'custom' => __( 'Custom format', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_format_custom'         => array(
-				'label'      => __( 'Date format for display', 'pods' ),
+				'label'      => __( 'Date Format for Display', 'pods' ),
 				'depends-on' => array( static::$type . '_type' => 'custom' ),
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="http://php.net/manual/function.date.php" target="_blank" rel="noopener noreferrer">%s</a>',
-					esc_html__( 'PHP date documentation', 'pods' )
+					'<a href="https://docs.pods.io/fields/date-time-fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a>',
+					esc_html__( 'Date / Time field documentation', 'pods' )
 				),
 			),
 			static::$type . '_format_custom_js'      => array(
-				'label'      => __( 'Date format for input', 'pods' ),
+				'label'      => __( 'Date Format for Input', 'pods' ),
 				'depends-on' => array( static::$type . '_type' => 'custom' ),
 				'default'    => '',
 				'type'       => 'text',
 				'help'       => sprintf(
-					'<a href="https://api.jqueryui.com/datepicker/" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
-					esc_html__( 'jQuery UI datepicker documentation', 'pods' ),
+					'<a href="https://docs.pods.io/fields/date-time-fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
+					esc_html__( 'Date / Time field documentation', 'pods' ),
 					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
 				),
 			),
 			static::$type . '_format'                => array(
-				'label'      => __( 'Date Format', 'pods' ),
+				'label'      => __( 'Date Format (predefined)', 'pods' ),
 				'depends-on' => array( static::$type . '_type' => 'format' ),
 				'default'    => 'mdy',
 				'type'       => 'pick',
@@ -114,6 +116,7 @@ class PodsField_DateTime extends PodsField {
 					'fjsy'      => date_i18n( 'F jS, Y' ),
 					'c'         => date_i18n( 'c' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_time_type'             => array(
@@ -129,30 +132,34 @@ class PodsField_DateTime extends PodsField {
 					'24'     => __( '24 hour', 'pods' ),
 					'custom' => __( 'Custom', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency'  => true,
 			),
 			static::$type . '_time_format_custom'    => array(
-				'label'       => __( 'Time format', 'pods' ),
+				'label'       => __( 'Time Format for Display', 'pods' ),
 				'depends-on'  => array( static::$type . '_time_type' => 'custom' ),
 				'excludes-on' => array( static::$type . '_format' => 'c' ),
 				'default'     => '',
 				'type'        => 'text',
-				'help'        => '<a href="http://php.net/manual/function.date.php" target="_blank" rel="noopener noreferrer">' . __( 'PHP date documentation', 'pods' ) . '</a>',
+				'help'       => sprintf(
+					'<a href="https://docs.pods.io/fields/date-time-fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a>',
+					esc_html__( 'Date / Time field documentation', 'pods' )
+				),
 			),
 			static::$type . '_time_format_custom_js' => array(
-				'label'       => __( 'Time format field input', 'pods' ),
+				'label'       => __( 'Time Format for Input', 'pods' ),
 				'depends-on'  => array( static::$type . '_time_type' => 'custom' ),
 				'excludes-on' => array( static::$type . '_format' => 'c' ),
 				'default'     => '',
 				'type'        => 'text',
-				'help'        => sprintf(
-					'<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
-					esc_html__( 'jQuery UI timepicker documentation', 'pods' ),
+				'help'       => sprintf(
+					'<a href="https://docs.pods.io/fields/date-time-fields/datetime/" target="_blank" rel="noopener noreferrer">%1$s</a><br />%2$s',
+					esc_html__( 'Date / Time field documentation', 'pods' ),
 					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
 				),
 			),
 			static::$type . '_time_format'           => array(
-				'label'       => __( 'Time Format', 'pods' ),
+				'label'       => __( 'Time Format (12 hour)', 'pods' ),
 				'depends-on'  => array( static::$type . '_time_type' => '12' ),
 				'excludes-on' => array( static::$type . '_format' => 'c' ),
 				'default'     => 'h_mma',
@@ -169,9 +176,10 @@ class PodsField_DateTime extends PodsField {
 					'hh_mm'      => date_i18n( 'h:i' ),
 					'hh_mm_ss'   => date_i18n( 'h:i:s' ),
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_time_format_24'        => array(
-				'label'       => __( 'Time Format', 'pods' ),
+				'label'       => __( 'Time Format (24 hour)', 'pods' ),
 				'depends-on'  => array( static::$type . '_time_type' => '24' ),
 				'excludes-on' => array( static::$type . '_format' => 'c' ),
 				'default'     => 'hh_mm',
@@ -180,28 +188,29 @@ class PodsField_DateTime extends PodsField {
 					'hh_mm'    => date_i18n( 'H:i' ),
 					'hh_mm_ss' => date_i18n( 'H:i:s' ),
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_year_range_custom' => array(
-				'label'   => __( 'Year range', 'pods' ),
+				'label'   => __( 'Year Range', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
 				'help'    => sprintf(
-					'%1$s<br /><a href="https://api.jqueryui.com/datepicker/#option-yearRange" target="_blank" rel="noopener noreferrer">%2$s</a>',
+					'%1$s<br /><a href="https://docs.pods.io/fields/date-time-fields/datetime/" target="_blank" rel="noopener noreferrer">%2$s</a>',
 					sprintf(
 						esc_html__( 'Example: %1$s for specifying a hard coded year range or %2$s for the last and next 10 years.', 'pods' ),
 						'<code>2010:2030</code>',
 						'<code>-10:+10</code>'
 					),
-					esc_html__( 'jQuery UI datepicker documentation', 'pods' )
+					esc_html__( 'Date / Time field documentation', 'pods' )
 				),
 			),
 			static::$type . '_allow_empty'           => array(
-				'label'   => __( 'Allow empty value?', 'pods' ),
+				'label'   => __( 'Allow empty value', 'pods' ),
 				'default' => 1,
 				'type'    => 'boolean',
 			),
 			static::$type . '_html5'                 => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),
@@ -274,7 +283,7 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options         = (array) $options;
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -286,21 +295,34 @@ class PodsField_DateTime extends PodsField {
 
 		$field_type = static::$type;
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
-			if ( pods_v( 'read_only', $options, false ) ) {
+		$is_read_only = (boolean) pods_v( 'read_only', $options, false );
+
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
+			if ( $is_read_only ) {
 				$options['readonly'] = true;
 
 				$field_type = 'text';
 			} else {
 				return;
 			}
-		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
+		} elseif ( ! pods_has_permissions( $options ) && $is_read_only ) {
 			$options['readonly'] = true;
 
 			$field_type = 'text';
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**
@@ -951,49 +973,61 @@ class PodsField_DateTime extends PodsField {
 	 * @since 2.7.0
 	 */
 	public function enqueue_jquery_ui_i18n() {
+		$static_cache = tribe( Static_Cache::class );
 
-		static $done = array();
+		$done = (array) $static_cache->get( 'done', __METHOD__ );
 
 		$types = array();
 
 		switch ( static::$type ) {
 			case 'time':
-				$types[] = 'time';
+				$types['time'] = true;
 
 				break;
 			case 'date':
-				$types[] = 'date';
+				$types['date'] = true;
 
 				break;
 			case 'datetime':
-				$types[] = 'time';
-				$types[] = 'date';
+				$types['time'] = true;
+				$types['date'] = true;
 
 				break;
 		}
 
-		if ( in_array( 'date', $types, true ) && ! in_array( 'date', $done, true ) ) {
+		$locale = str_replace( '_', '-', get_locale() );
+
+		if ( isset( $types['date'] ) && ! isset( $done[ 'date-' . $locale ] ) ) {
 			if ( function_exists( 'wp_localize_jquery_ui_datepicker' ) ) {
 				wp_localize_jquery_ui_datepicker();
 			}
 
-			$done[] = 'date';
+			$done['date'] = true;
 		}
 
-		if ( in_array( 'time', $types, true ) && ! in_array( 'time', $done, true ) ) {
-			$locale = str_replace( '_', '-', get_locale() );
+		if ( isset( $types['time'] ) && ! isset( $done[ 'time-' . $locale ] ) ) {
+			/**
+			 * @var $wp_filesystem WP_Filesystem_Base
+			 */
+			global $wp_filesystem;
+
+			WP_Filesystem();
+
+			$locale_exists = $wp_filesystem->exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' );
 
 			// Local files.
-			if ( ! file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' ) ) {
+			if ( ! $locale_exists ) {
 				// Fallback to the base language (non-region specific).
 				$locale = substr( $locale, 0, strpos( $locale, '-' ) );
+
+				$locale_exists = $wp_filesystem->exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' );
 			}
 
-			if ( ! wp_script_is( 'jquery-ui-timepicker-i18n-' . $locale, 'registered' ) && file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' ) ) {
-				wp_enqueue_script( 'jquery-ui-timepicker-i18n-' . $locale, PODS_URL . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js', array( 'jquery-ui-timepicker' ), '1.6.3' );
+			if ( $locale_exists && ! wp_script_is( 'jquery-ui-timepicker-i18n-' . $locale ) ) {
+				wp_enqueue_script( 'jquery-ui-timepicker-i18n-' . $locale, PODS_URL . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js', [ 'jquery-ui-timepicker' ], '1.6.3' );
 			}
 
-			$done[] = 'time';
+			$done[ 'time-' . $locale ] = true;
 		}
 	}
 }

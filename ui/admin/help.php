@@ -8,9 +8,9 @@
 
 		<p><?php _e( 'There are many resources available to help you learn to use Pods on our site, <a href="https://pods.io/" target="_blank" rel="noopener noreferrer">Pods.io</a>:', 'pods'); ?></p>
 		<ul class="ul-disc">
-			<li><?php _e('To learn more about using Pods, see our <a href="https://pods.io/docs/" target="_blank" rel="noopener noreferrer">documentation</a> and subscribe to our <a href="https://www.youtube.com/user/podsframework/" target="_blank" rel="noopener noreferrer">YouTube Channel</a>', 'pods'); ?>.
+			<li><?php _e('To learn more about using Pods, see our <a href="https://docs.pods.io/" target="_blank" rel="noopener noreferrer">documentation</a> and subscribe to our <a href="https://www.youtube.com/user/podsframework/" target="_blank" rel="noopener noreferrer">YouTube Channel</a>', 'pods'); ?>.
 
-			<li><?php _e( 'To get help with a specific issue, you can ask in our <a href="https://wordpress.org/support/plugin/pods" target="_blank" rel="noopener noreferrer">support forums</a>, or you can join <a href="https://pods.io/chat/" target="_blank" rel="noopener noreferrer">our Slack chat</a>', 'pods'); ?>.
+			<li><?php _e( 'To get help with a specific issue, you can ask in our <a href="https://wordpress.org/support/plugin/pods" target="_blank" rel="noopener noreferrer">support forums</a>, or you can join our <a href="https://support.pods.io/chat/" target="_blank" rel="noopener noreferrer">Live Community Slack Chat</a>', 'pods'); ?>.
 
 			<li><?php _e('To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank" rel="noopener noreferrer">GitHub</a>.', 'pods' ); ?></li>
 

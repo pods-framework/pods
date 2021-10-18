@@ -168,7 +168,7 @@
                     if ( 'undefined' != typeof ajaxurl && $submittable.hasClass( 'pods-submittable-ajax' ) )
                         pods_ajaxurl = ajaxurl + '?pods_ajax=1';
 
-                    var postdata = {};
+                    var postdata = new FormData();
                     var field_data = {};
 
                     var valid_form = true;
@@ -181,22 +181,21 @@
                         tinyMCE.triggerSave();
 
                     $submittable.find( '.pods-submittable-fields' ).find( 'input, select, textarea' ).each( function () {
-                        var $el = $( this );
-                        var field_name = $el.prop( 'name' );
+                        const $el = $( this );
+                        const field_name = $el.prop( 'name' );
+                        let value = $el.val();
 
                         if ( 'undefined' != typeof field_name && null !== field_name && '' != field_name && 0 != field_name.indexOf( 'field_data[' ) ) {
-                            var val = $el.val();
-
                             if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
                                 if ( $el.is( '.pods-boolean' ) || $el.is( '.pods-form-ui-field-type-boolean') )
-                                    val = 0;
+                                    value = 0;
                                 else
                                     return true; // This input isn't a boolean, continue the loop
                             }
                             else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
                                 return true; // This input is not checked, continue the loop
 
-                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' === $el.val() ) ) {
+                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' === value ) ) {
                                 $el.trigger( 'change' );
 
                                 if ( false !== valid_form )
@@ -205,21 +204,23 @@
                                 valid_form = false;
                             }
 
-                            if ( null !== val ) {
-                                postdata[field_name] = val;
+                            // Handle manual file uploads.
+                            if ( $el.is( 'input[type=file]' ) ) {
+                            	if ( '' !== value ) {
+                            		const fileValue = $el[0].files[0];
+
+									postdata.append( field_name, fileValue, fileValue.name );
+								}
+
+                            	// Force the skip of the next conditional.
+                            	value = null;
+							}
+
+                            if ( null !== value ) {
+                                postdata.append( field_name, value );
                             }
                         }
                     } );
-
-                    // Check for unsaved open fields. (separate if's to prevent possible unneeded jQuery selector)
-                    if ( 'undefined' !== typeof postdata.method ) {
-	                    if ( 'save_pod' === postdata.method ) {
-	                        if ( $( 'tbody.pods-manage-list tr.pods-manage-row-expanded', $submittable ).length ) {
-		                        alert( PodsI18n.__( 'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.' ) );
-		                        valid_form = false;
-	                        }
-	                    }
-                    }
 
                     if ( 'undefined' != typeof pods_admin_submit_validation )
                         valid_form = pods_admin_submit_validation( valid_form, $submittable );
@@ -243,7 +244,7 @@
                     else
                         $submittable.removeClass( 'invalid-form' );
 
-                    pods_ajaxurl = pods_ajaxurl + '&action=' + postdata.action;
+                    pods_ajaxurl = pods_ajaxurl + '&action=' + postdata.get( 'action' );
 
                     $submitbutton = $submittable.find( 'input[type=submit], button[type=submit]' );
 
@@ -253,6 +254,8 @@
                         url : pods_ajaxurl,
                         cache : false,
                         data : postdata,
+						contentType: false,
+						processData: false,
                         success : function ( d ) {
 
                             // Attempt to parse what was returned as data
@@ -319,6 +322,7 @@
                                     $next.css( 'cursor', 'pointer' );
                                     $next.prop( 'disabled', false );
                                     $next.text( $next.data( 'next' ) );
+                                    $next.show().removeClass( 'hidden' );
                                 }
                             }
                         },
@@ -342,6 +346,7 @@
                                 $next.css( 'cursor', 'pointer' );
                                 $next.prop( 'disabled', false );
                                 $next.text( $next.data( 'next' ) );
+                                $next.show().removeClass( 'hidden' );
                             }
                         }
                     } );
@@ -486,7 +491,7 @@
 
                         last_slug = $this.parent().find( 'input[type=text]' ).val();
 
-                        last_slug = last_slug.replace( /<( ?:. )*?>/g, '' ).replace( /([^0-9a-zA-Z\_\- ])/g, '' );
+                        last_slug = last_slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z\_\- ])/g, '' );
 
                         $this.closest( '.pods-sluggable' ).find( '.pods-slug em' ).html( last_slug );
                         $( '.pods-slugged-lower:not(.pods-slugged[data-sluggable])' ).html( last_slug.toLowerCase() );
@@ -745,15 +750,18 @@
                 var methods = {
                     setFinished : function () {
                         $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'finished' ) );
+                        $( '#pods-wizard-next' ).show().removeClass( 'hidden' );
                     },
                     setProgress : function () {
                         $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next' ) );
+                        $( '#pods-wizard-next' ).show().removeClass( 'hidden' );
                     },
                     stepBackward : function () {
                         $( '#pods-wizard-next' )
                             .css( 'cursor', 'pointer' )
                             .prop( 'disabled', false )
                             .text( $( '#pods-wizard-next' ).data( 'next' ) );
+                        $( '#pods-wizard-next' ).show().removeClass( 'hidden' );
 
                         // Step toolbar menu state forwards
                         $( 'li.pods-wizard-menu-current' )
@@ -772,7 +780,7 @@
                         if ( 1 == step ) {
 	                        $( '#pods-wizard-start' ).hide();
                         } else {
-	                        $( '#pods-wizard-start' ).show();
+	                        $( '#pods-wizard-start' ).show().removeClass( 'hidden' );
                         }
 
                         // Check if last step
@@ -805,7 +813,7 @@
                         }
 
                         // Show start over button.
-                        $( '#pods-wizard-start' ).show();
+                        $( '#pods-wizard-start' ).show().removeClass( 'hidden' );
 
                         // Check if last step.
                         if ( $( 'div.pods-wizard-panel:visible' ).next( 'div.pods-wizard-panel' ).length ) {
@@ -828,6 +836,7 @@
                                 .css( 'cursor', 'default' )
                                 .prop( 'disabled', true )
                                 .text( $( '#pods-wizard-next' ).data( 'processing' ) );
+							$( '#pods-wizard-next' ).show().removeClass( 'hidden' );
 
                             // Allow for override
                             if ( 'undefined' != typeof pods_admin_wizard_callback ) {
@@ -845,6 +854,7 @@
                                     .css( 'cursor', 'pointer' )
                                     .prop( 'disabled', false )
                                     .text( $( '#pods-wizard-next' ).data( 'next' ) );
+                                $( '#pods-wizard-next' ).show().removeClass( 'hidden' );
 
                                 // Step toolbar menu state forwards
                                 $( 'li.pods-wizard-menu-complete:last' )
@@ -943,19 +953,6 @@
                     methods.stepForward();
                 } );
 
-                // Create preview for post name.
-                $( 'input#pods-form-ui-create-label-singular' ).on( 'keyup', function() {
-                    var val = $( this )
-                        .val()
-                        .toLowerCase()
-                        .replace( /(\s)/, '_' )
-                        .replace( /([^0-9a-zA-Z\-_])/, '' )
-                        .replace( /(_){2,}/, '_' )
-                        .replace( /(-){2,}/, '-' );
-
-                    $( 'input#pods-form-ui-create-name' ).attr( 'placeholder', val );
-                } );
-
                 // Initial step panel setup
                 $( '.pods-wizard .pods-wizard-step' ).hide();
                 $( '.pods-wizard .pods-wizard-step:first' ).show();
@@ -1008,11 +1005,7 @@
                     if ( $dependent.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) ) {
                             if ( $field.is( ':checked' ) && ( 1 == $field.val() || $dependent.is( dependent_specific ) ) ) {
-                                if ( $dependent.is( 'tr' ) ) {
-	                                $dependent.show().addClass( 'pods-dependent-visible' );
-                                } else {
-	                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                                }
+                                $dependent.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent.find( '.pods-dependency .pods-depends-on' ).hide();
                                 $dependent.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1034,11 +1027,7 @@
                                 }
                             }
                         } else if ( $dependent.is( dependent_specific ) ) {
-                            if ( $dependent.is( 'tr' ) ) {
-	                            $dependent.show().addClass( 'pods-dependent-visible' );
-                            } else {
-	                            $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                            }
+                            $dependent.show().addClass( 'pods-dependent-visible' );
 
                             $dependent.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1114,11 +1103,7 @@
                                 }
                             }
                             else if ( !$field.is( ':checked' ) && ( !$field.is( '.pods-dependent-multi' ) || $dependent.is( exclude_specific ) ) ) {
-                                if ( $dependent.is( 'tr' ) ) {
-	                                $dependent.show().addClass( 'pods-dependent-visible' );
-                                } else {
-	                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                                }
+                                $dependent.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent.find( '.pods-dependency .pods-depends-on' ).hide();
                                 $dependent.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1141,11 +1126,7 @@
                             }
                         }
                         else {
-                            if ( $dependent.is( 'tr' ) ) {
-	                            $dependent.show().addClass( 'pods-dependent-visible' );
-                            } else {
-	                            $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                            }
+                            $dependent.show().addClass( 'pods-dependent-visible' );
 
                             $dependent.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1225,11 +1206,7 @@
                     // Set the state of the dependent element
                     if ( $dependent.parent().is( ':visible' ) ) {
                         if ( match_found ) {
-                            if ( $dependent.is( 'tr' ) ) {
-                                $dependent.show().addClass( 'pods-dependent-visible' );
-                            } else {
-                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                            }
+                            $dependent.show().addClass( 'pods-dependent-visible' );
 
                             $dependent.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1280,7 +1257,7 @@
                 $( '.pods-dependency .pods-depends-on, .pods-dependency .pods-excludes-on, .pods-dependency .pods-wildcard-on' ).hide();
 
                 // Handle dependent toggle
-                $( '.pods-admin, .pods-form-front' ).on( 'change', '.pods-dependent-toggle[data-name-clean]', function ( e ) {
+                $( '.pods-admin, .pods-form-front, .pods-form-settings' ).on( 'change', '.pods-dependent-toggle[data-name-clean]', function ( e ) {
                     var selectionTypeRegex = /pick-format-type$/g,
 	                    elementId = $( this ).attr( 'id' ),
 	                    selectionType, selectionFormatId;
@@ -1322,11 +1299,7 @@
 
                         if ( $dependent.parent().is( ':visible' ) ) {
                             if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) && 1 == $field.val() ) {
-                                if ( $dependent.is( 'tr' ) ) {
-	                                $dependent.show().addClass( 'pods-dependent-visible' );
-                                } else {
-	                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                                }
+                                $dependent.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
                                 $dependent.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
@@ -1336,11 +1309,7 @@
                                 } );
                             }
                             else if ( $dependent.is( dependent_specific ) ) {
-                                if ( $dependent.is( 'tr' ) ) {
-	                                $dependent.show().addClass( 'pods-dependent-visible' );
-                                } else {
-	                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                                }
+                                $dependent.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
                                 $dependent.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
@@ -1402,11 +1371,7 @@
                                 }
                             }
                             else {
-                                if ( $dependent.is( 'tr' ) ) {
-	                                $dependent.show().addClass( 'pods-dependent-visible' );
-                                } else {
-	                                $dependent.slideDown().addClass( 'pods-dependent-visible' );
-                                }
+                                $dependent.show().addClass( 'pods-dependent-visible' );
 
                                 $dependent.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
                                 $dependent.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
@@ -1543,7 +1508,7 @@
                                 $field_wrapper.append( edit_row );
 
                                 // Duct tape to handle fields added dynamically
-                                PodsDFV.init();
+                                window.PodsDFV.init();
                             }
 
                             $field_wrapper.find( '.pods-depends-on' ).hide();
@@ -1849,7 +1814,7 @@
                         $new_row = $tbody.find( 'tr#row-' + row_counter );
 
                         // Duct tape to handle fields added dynamically
-                        PodsDFV.init();
+                        window.PodsDFV.init();
 
                         $new_row.data( 'row', row_counter );
                         $new_row.find( '.pods-dependency .pods-depends-on' ).hide();
@@ -1909,7 +1874,7 @@
                         $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
 
                         // Duct tape to handle fields added dynamically
-                        PodsDFV.init();
+                        window.PodsDFV.init();
 
                         field_data[ 'name' ] += '_copy';
                         field_data[ 'label' ] += ' (' + PodsI18n.__( 'Copy' ) + ')';
@@ -2010,8 +1975,17 @@
                     pods_changed = false;
                 } );
             },
-            qtip: function ( element ) {
-                $( element ).find( '.pods-qtip' ).each( function ( index, element ) {
+            qtip: function ( parentElement ) {
+            	let $parentElement = $( parentElement );
+            	let $submittable;
+
+            	if ( $parentElement.hasClass( 'pods-submittable' ) ) {
+            		$submittable = $parentElement;
+				} else {
+            		$submittable = $parentElement.closest( '.pods-submittable' );
+				}
+
+                $parentElement.find( '.pods-qtip' ).each( function ( index, element ) {
                     $( element ).qtip( {
                         content: {
                             attr: 'alt'
@@ -2029,7 +2003,7 @@
                             delay: 300
                         },
                         position: {
-                            container: $( element ).closest( '.pods-submittable' ),
+                            container: $submittable,
                             my: 'bottom left',
                             adjust: {
                                 y: -14

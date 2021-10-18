@@ -32,7 +32,8 @@ class PodsField_Code extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Code (Syntax Highlighting)', 'pods' );
+		static::$group = __( 'Paragraph', 'pods' );
+		static::$label = __( 'Code (Syntax Highlighting)', 'pods' );
 	}
 
 	/**
@@ -52,9 +53,16 @@ class PodsField_Code extends PodsField {
 			),
 			'output_options'              => array(
 				'label' => __( 'Output Options', 'pods' ),
-				'group' => array(
+				'type'  => 'boolean_group',
+				'boolean_group' => array(
+					static::$type . '_trim'      => array(
+						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
+						'default'    => 1,
+						'type'       => 'boolean',
+						'dependency' => true,
+					),
 					static::$type . '_allow_shortcode' => array(
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
@@ -63,7 +71,7 @@ class PodsField_Code extends PodsField {
 			),
 			static::$type . '_max_length' => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
-				'default' => 0,
+				'default' => -1,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
@@ -105,7 +113,7 @@ class PodsField_Code extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options         = (array) $options;
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -117,13 +125,25 @@ class PodsField_Code extends PodsField {
 		do_action( "pods_form_ui_field_code_{$field_type}", $name, $value, $options, $pod, $id );
 		do_action( 'pods_form_ui_field_code', $field_type, $name, $value, $options, $pod, $id );
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+		$value = $this->trim_whitespace( $value, $options );
 
 		$length = (int) pods_v( static::$type . '_max_length', $options, 0 );
 

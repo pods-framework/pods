@@ -19,10 +19,10 @@
 				<?php
 				$depends_on = false;
 
-				foreach ( $options
-
-				as $field_name => $field_option ) {
+				foreach ( $options as $field_name => $field_option ) {
 					$field_option = PodsForm::field_setup( $field_option, null, $field_option['type'] );
+
+					$field_option['disable_dfv'] = true;
 
 					$dep_options = PodsForm::dependencies( $field_option );
 					$dep_classes = $dep_options['classes'];
@@ -47,7 +47,7 @@
 						?>
 						<tr valign="top" class="pods-field-option" id="pods-setting-<?php echo esc_attr( $field_name ); ?>">
 						<th>
-							<?php echo PodsForm::label( 'pods_setting_' . $field_name, $field_option['label'], $field_option['help'], $field_option ); ?>
+							<?php echo PodsForm::label( 'pods_setting_' . $field_name, $field_option['label'], pods_v( 'help', $field_option ), $field_option ); ?>
 						</th>
 						<td>
 							<?php echo PodsForm::field( 'pods_setting_' . $field_name, $value, $field_option['type'], $field_option ); ?>

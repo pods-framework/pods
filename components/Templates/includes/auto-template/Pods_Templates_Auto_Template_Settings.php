@@ -56,8 +56,8 @@ class Pods_Templates_Auto_Template_Settings {
 		// Include and init front-end class
 		add_action( 'init', array( $this, 'front_end' ), 25 );
 
-		// Delete transients when Pods settings are updated.
-		add_action( 'update_option', array( $this, 'reset' ), 21, 3 );
+		// Delete transients when Pods cache is flushed.
+		add_action( 'pods_cache_flushed', array( $this, 'reseter' ) );
 
 		// admin notice for archives without archives
 		add_action( 'admin_notices', array( $this, 'archive_warning' ) );
@@ -186,11 +186,13 @@ class Pods_Templates_Auto_Template_Settings {
 				'type'       => 'text',
 				'default'    => false,
 				'depends-on' => array( 'pfat_enable' => true ),
+				'dependency' => true,
 			),
 			'pfat_append_single' => array(
 				'label'      => __( 'Singular Template Location', 'pods' ),
 				'help'       => __( 'Whether the template will go before, after or in place of the existing content.', 'pods' ),
 				'depends-on' => array( 'pfat_enable' => true ),
+				'excludes-on' => array( 'pfat_single' => '' ),
 			),
 			'pfat_filter_single' => array(
 				'label'      => __( 'Singular Template Filter', 'pods' ),
@@ -202,6 +204,7 @@ class Pods_Templates_Auto_Template_Settings {
 					'custom'                       => __( 'Use a custom hook', 'pods' ),
 				),
 				'depends-on' => array( 'pfat_enable' => true ),
+				'excludes-on' => array( 'pfat_single' => '' ),
 				'dependency' => true,
 			),
 			'pfat_filter_single_custom' => array(
@@ -210,6 +213,7 @@ class Pods_Templates_Auto_Template_Settings {
 				'default'    => $default_single_hook_custom,
 				'type'       => 'text',
 				'depends-on' => array( 'pfat_enable' => true, 'pfat_filter_single' => 'custom' ),
+				'excludes-on' => array( 'pfat_single' => '' ),
 			),
 			'pfat_archive'          => array(
 				'label'      => __( 'List Template', 'pods' ),
@@ -217,11 +221,13 @@ class Pods_Templates_Auto_Template_Settings {
 				'type'       => 'text',
 				'default'    => false,
 				'depends-on' => array( 'pfat_enable' => true ),
+				'dependency' => true,
 			),
 			'pfat_append_archive'   => array(
 				'label'      => __( 'List Template Location', 'pods' ),
 				'help'       => __( 'Whether the template will go before, after or in place of the existing content.', 'pods' ),
 				'depends-on' => array( 'pfat_enable' => true ),
+				'excludes-on' => array( 'pfat_archive' => '' ),
 			),
 			'pfat_filter_archive'   => array(
 				'label'      => __( 'List Template Filter', 'pods' ),
@@ -233,6 +239,7 @@ class Pods_Templates_Auto_Template_Settings {
 					'custom'                        => __( 'Use a custom hook', 'pods' ),
 				),
 				'depends-on' => array( 'pfat_enable' => true ),
+				'excludes-on' => array( 'pfat_archive' => '' ),
 				'dependency' => true,
 			),
 			'pfat_filter_archive_custom' => array(
@@ -241,6 +248,7 @@ class Pods_Templates_Auto_Template_Settings {
 				'default'    => $default_archive_hook_custom,
 				'type'       => 'text',
 				'depends-on' => array( 'pfat_enable' => true, 'pfat_filter_archive' => 'custom' ),
+				'excludes-on' => array( 'pfat_archive' => '' ),
 			),
 			'pfat_run_outside_loop' => array(
 				'label'             => __( 'Run outside loop', 'pods' ),
@@ -359,32 +367,13 @@ class Pods_Templates_Auto_Template_Settings {
 	}
 
 	/**
-	 * Reset the transients for front-end class when Pods are saved.
-	 *
-	 * @uses  update_option hook
-	 *
-	 * @param string $option
-	 * @param mixed  $old_value
-	 * @param mixed  $value
-	 *
-	 * @since 2.5.5
-	 */
-	public function reset( $option, $old_value, $value ) {
-
-		if ( $option === '_transient_pods_flush_rewrites' ) {
-			$this->reseter();
-		}
-
-	}
-
-	/**
 	 * Delete transients that stores the settings.
 	 *
 	 * @since 2.5.5
 	 */
 	public function reseter() {
 
-		$keys = array( 'pods_pfat_the_pods', 'pods_pfat_auto_pods', 'pods_pfat_archive_test' );
+		$keys = array( '_pods_pfat_the_pods', 'pods_pfat_the_pods', 'pods_pfat_auto_pods', 'pods_pfat_archive_test' );
 		foreach ( $keys as $key ) {
 			pods_transient_clear( $key );
 		}
@@ -420,7 +409,7 @@ class Pods_Templates_Auto_Template_Settings {
 				}
 			}
 
-			pods_transient_set( $key, $archive_test );
+			pods_transient_set( $key, $archive_test, WEEK_IN_SECONDS );
 
 		}
 

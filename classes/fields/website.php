@@ -29,7 +29,8 @@ class PodsField_Website extends PodsField {
 	 */
 	public function setup() {
 
-		self::$label = __( 'Website', 'pods' );
+		static::$group = __( 'Text', 'pods' );
+		static::$label = __( 'Website', 'pods' );
 
 	}
 
@@ -52,30 +53,31 @@ class PodsField_Website extends PodsField {
 				'default'    => 'normal',
 				'type'       => 'pick',
 				'data'       => array(
-					'normal'            => __( 'http://example.com/', 'pods' ),
-					'no-www'            => __( 'http://example.com/ (remove www)', 'pods' ),
-					'force-www'         => __( 'http://www.example.com/ (force www if no sub-domain provided)', 'pods' ),
+					'normal'            => __( 'https://example.com/', 'pods' ),
+					'no-www'            => __( 'https://example.com/ (remove www)', 'pods' ),
+					'force-www'         => __( 'https://www.example.com/ (force www if no sub-domain provided)', 'pods' ),
 					'no-http'           => __( 'example.com', 'pods' ),
 					'no-http-no-www'    => __( 'example.com (force removal of www)', 'pods' ),
 					'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' ),
 					'none'              => __( 'No format', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_allow_port'  => array(
-				'label'      => __( 'Allow port in URL?', 'pods' ),
+				'label'      => __( 'Allow port in URL', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_website_port', 0, static::$type ),
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			static::$type . '_clickable'   => array(
-				'label'      => __( 'Output as a link?', 'pods' ),
+				'label'      => __( 'Output as a link', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_website_clickable', 0, static::$type ),
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			static::$type . '_new_window'  => array(
-				'label'      => __( 'Open link in new window?', 'pods' ),
+				'label'      => __( 'Open link in new window', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_website_new_window', 0, static::$type ),
 				'type'       => 'boolean',
 				'depends-on' => array( static::$type . '_clickable' => true ),
@@ -87,7 +89,7 @@ class PodsField_Website extends PodsField {
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
 			static::$type . '_html5'       => array(
-				'label'       => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'       => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default'     => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'        => 'boolean',
 				'excludes-on' => array( static::$type . '_format' => array( 'no-http', 'no-http-no-www', 'no-http-force-www' ) ),
@@ -146,7 +148,7 @@ class PodsField_Website extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
-		$options         = (array) $options;
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
 		// Ensure proper format
@@ -154,7 +156,7 @@ class PodsField_Website extends PodsField {
 
 		$field_type = 'website';
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 
@@ -168,7 +170,18 @@ class PodsField_Website extends PodsField {
 			$field_type = 'text';
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**
@@ -210,7 +223,7 @@ class PodsField_Website extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		// Update from a array input field (like link) if the field updates
 		if ( is_array( $value ) ) {
@@ -248,7 +261,11 @@ class PodsField_Website extends PodsField {
 		}
 
 		if ( 'none' === pods_v( static::$type . '_format', $options ) ) {
-			return $this->strip_html( $value, $options );
+			$value = $this->strip_html( $value, $options );
+			$value = $this->strip_shortcodes( $value, $options );
+			$value = $this->trim_whitespace( $value, $options );
+
+			return $value;
 		}
 
 		if ( is_array( $value ) ) {

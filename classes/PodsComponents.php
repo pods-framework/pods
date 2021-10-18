@@ -496,9 +496,9 @@ class PodsComponents {
 
 			ksort( $components );
 
-			pods_transient_set( 'pods_components_refresh', 1, ( 60 * 60 * 12 ) );
+			pods_transient_set( 'pods_components_refresh', 1, HOUR_IN_SECONDS * 12 );
 
-			pods_transient_set( 'pods_components', $components );
+			pods_transient_set( 'pods_components', $components, WEEK_IN_SECONDS );
 		}//end if
 
 		if ( 1 === (int) pods_v( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {

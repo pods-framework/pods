@@ -244,7 +244,8 @@ class PodsField_Number extends PodsField {
 		}
 
 		// Enforce boolean.
-		$options[ static::$type . '_html5' ] = filter_var( pods_v( static::$type . '_html5', $options, false ), FILTER_VALIDATE_BOOLEAN );
+		$options[ static::$type . '_html5' ]       = filter_var( pods_v( static::$type . '_html5', $options, false ), FILTER_VALIDATE_BOOLEAN );
+		$options[ static::$type . '_format_soft' ] = filter_var( pods_v( static::$type . '_format_soft', $options, false ), FILTER_VALIDATE_BOOLEAN );
 
 		if ( ! empty( $options['disable_dfv'] ) ) {
 			return pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );

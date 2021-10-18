@@ -232,6 +232,8 @@ class PodsInit {
 
 					remove_action( 'tribe_common_loaded', [ $main, 'load_assets' ], 1 );
 					remove_action( 'plugins_loaded', [ $main, 'tribe_plugins_loaded' ], PHP_INT_MAX );
+					remove_filter( 'body_class', [ $main, 'add_js_class' ] );
+					remove_action( 'wp_footer', [ $main, 'toggle_js_class' ] );
 				}, 0 );
 
 				if ( ! defined( 'TRIBE_HIDE_MARKETING_NOTICES' ) ) {
@@ -263,9 +265,15 @@ class PodsInit {
 				$assets = tribe( 'assets' );
 				$assets->remove( 'tribe-tooltip' );
 
+				/** @var Tribe__Asset__Data $asset_data */
+				$asset_data = tribe( 'asset.data' );
+
+				remove_action( 'admin_footer', [ $asset_data, 'render_json' ] );
+				remove_action( 'customize_controls_print_footer_scripts', [ $asset_data, 'render_json' ] );
+				remove_action( 'wp_footer', [ $asset_data, 'render_json' ] );
+
 				/** @var Tribe__Assets_Pipeline $assets_pipeline */
 				$assets_pipeline = tribe( 'assets.pipeline' );
-
 				remove_filter( 'script_loader_tag', [ $assets_pipeline, 'prevent_underscore_conflict' ] );
 			}
 		}

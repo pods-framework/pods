@@ -145,7 +145,7 @@ class PodsRESTFields {
 			$rest_args['pods_update'] = true;
 		}
 
-		$object_type = $this->pod->get_type();
+		$object_type = $this->pod->get_name();
 
 		if ( 'media' === $object_type ) {
 			$object_type = 'attachment';

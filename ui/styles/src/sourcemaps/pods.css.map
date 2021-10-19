@@ -7,7 +7,6 @@
 		"../helpers/_breakpoints.scss",
 		"../helpers/_colors.scss",
 		"../helpers/_mixins.scss",
-		"../helpers/_typography.scss",
 		"../helpers/_dashicons.scss",
 		"../base/_admin.scss",
 		"../base/_advanced.scss",

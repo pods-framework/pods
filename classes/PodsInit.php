@@ -2675,6 +2675,10 @@ class PodsInit {
 	 * @return string
 	 */
 	public function get_menu_icon() {
+		static $icon;
+		if ( $icon ) {
+			return $icon;
+		}
 
 		$icon = file_get_contents( PODS_DIR . '/ui/images/icon-menu.svg' );
 		$icon = 'data:image/svg+xml;base64,' . base64_encode( $icon );

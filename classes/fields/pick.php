@@ -1422,7 +1422,7 @@ class PodsField_Pick extends PodsField {
 			case 'pod':
 				if ( ! empty( $args->options['pick_val'] ) ) {
 
-					$icon = pods_init()->get_menu_icon();
+					$icon = pods_svg_icon( 'pods' );
 
 					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {
 						$file_name  = 'admin.php';

@@ -1142,7 +1142,7 @@ class PodsInit {
 			'has_archive'     => false,
 			'hierarchical'    => false,
 			'supports'        => array( 'title', 'author' ),
-			'menu_icon'       => $this->get_menu_icon(),
+			'menu_icon'       => pods_svg_icon( 'pods' ),
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -1160,7 +1160,7 @@ class PodsInit {
 			'has_archive'     => false,
 			'hierarchical'    => true,
 			'supports'        => array( 'title', 'editor', 'author' ),
-			'menu_icon'       => $this->get_menu_icon(),
+			'menu_icon'       => pods_svg_icon( 'pods' ),
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -1178,7 +1178,7 @@ class PodsInit {
 			'has_archive'     => false,
 			'hierarchical'    => true,
 			'supports'        => array( 'title', 'editor', 'author' ),
-			'menu_icon'       => $this->get_menu_icon(),
+			'menu_icon'       => pods_svg_icon( 'pods' ),
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -2665,25 +2665,6 @@ class PodsInit {
 			}
 		}
 
-	}
-
-	/**
-	 * Get the Pods icon in base64 encoded SVG format.
-	 *
-	 * @since 2.8.1
-	 *
-	 * @return string
-	 */
-	public function get_menu_icon() {
-		static $icon;
-		if ( $icon ) {
-			return $icon;
-		}
-
-		$icon = file_get_contents( PODS_DIR . '/ui/images/icon-menu.svg' );
-		$icon = 'data:image/svg+xml;base64,' . base64_encode( $icon );
-
-		return $icon;
 	}
 
 	/**

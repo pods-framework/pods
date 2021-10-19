@@ -378,7 +378,7 @@ class PodsAdmin {
 							if ( null === $parent_page ) {
 								$parent_page = $page;
 
-								add_menu_page( 'Pods', 'Pods', 'read', $parent_page, null, pods_init()->get_menu_icon(), '58.5' );
+								add_menu_page( 'Pods', 'Pods', 'read', $parent_page, null, pods_svg_icon( 'pods' ), '58.5' );
 							}
 
 							$all_title = $plural_label;
@@ -404,7 +404,7 @@ class PodsAdmin {
 							if ( null === $parent_page ) {
 								$parent_page = $page;
 
-								add_menu_page( 'Pods', 'Pods', 'read', $parent_page, null, pods_init()->get_menu_icon(), '58.5' );
+								add_menu_page( 'Pods', 'Pods', 'read', $parent_page, null, pods_svg_icon( 'pods' ), '58.5' );
 							}
 
 							$add_title = __( 'Add New', 'pods' ) . ' ' . $singular_label;
@@ -650,7 +650,7 @@ class PodsAdmin {
 						$menu = __( 'Pods Upgrade', 'pods' );
 					}
 
-					add_menu_page( $menu, $menu, 'read', $parent, null, pods_init()->get_menu_icon() );
+					add_menu_page( $menu, $menu, 'read', $parent, null, pods_svg_icon( 'pods' ) );
 				}
 
 				add_submenu_page( $parent, $menu_item['label'], $menu_item['label'], 'read', $page, $menu_item['function'] );

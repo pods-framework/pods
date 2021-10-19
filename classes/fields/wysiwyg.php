@@ -64,10 +64,10 @@ class PodsField_WYSIWYG extends PodsField {
 				'dependency' => true,
 			),
 			'editor_options'                     => array(
-				'label'      => __( 'Editor Options', 'pods' ),
-				'type'  => 'boolean_group',
-				'depends-on' => array( static::$type . '_editor' => 'tinymce' ),
-				'boolean_group'      => array(
+				'label'         => __( 'Editor Options', 'pods' ),
+				'type'          => 'boolean_group',
+				'depends-on'    => array( static::$type . '_editor' => 'tinymce' ),
+				'boolean_group' => array(
 					static::$type . '_media_buttons' => array(
 						'label'   => __( 'Enable Media Buttons', 'pods' ),
 						'default' => 1,

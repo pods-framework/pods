@@ -164,20 +164,18 @@ export const FieldWrapper = ( props ) => {
 				{ ( () => {
 					if ( true === isBooleanGroupField ) {
 						return (
-							<div className="pods-field-wrapper__item">
-								<FieldComponent
-									values={ values }
-									podName={ podName }
-									podType={ podType }
-									allPodValues={ passAllPodValues ? allPodValues : undefined }
-									allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
-									setOptionValue={ setOptionValue }
-									isValid={ !! validationMessages.length }
-									addValidationRules={ addValidationRules }
-									setHasBlurred={ () => setHasBlurred( true ) }
-									fieldConfig={ field }
-								/>
-							</div>
+							<FieldComponent
+								values={ values }
+								podName={ podName }
+								podType={ podType }
+								allPodValues={ passAllPodValues ? allPodValues : undefined }
+								allPodFieldsMap={ passAllPodFieldsMap ? allPodFieldsMap : undefined }
+								setOptionValue={ setOptionValue }
+								isValid={ !! validationMessages.length }
+								addValidationRules={ addValidationRules }
+								setHasBlurred={ () => setHasBlurred( true ) }
+								fieldConfig={ field }
+							/>
 						);
 					}
 
@@ -198,22 +196,18 @@ export const FieldWrapper = ( props ) => {
 					}
 
 					return (
-						<div className="pods-field-wrapper__item">
-							<FieldComponent
-								value={ value }
-								// Only the Boolean Group fields need allPodValues and allPodFieldsMap,
-								// because the subfields need to reference these.
-								podName={ podName }
-								podType={ podType }
-								allPodValues={ allPodValues }
-								allPodFieldsMap={ allPodFieldsMap }
-								setValue={ setValue }
-								isValid={ !! validationMessages.length }
-								addValidationRules={ addValidationRules }
-								setHasBlurred={ () => setHasBlurred( true ) }
-								fieldConfig={ processedFieldConfig }
-							/>
-						</div>
+						<FieldComponent
+							value={ value }
+							podName={ podName }
+							podType={ podType }
+							allPodValues={ allPodValues }
+							allPodFieldsMap={ allPodFieldsMap }
+							setValue={ setValue }
+							isValid={ !! validationMessages.length }
+							addValidationRules={ addValidationRules }
+							setHasBlurred={ () => setHasBlurred( true ) }
+							fieldConfig={ processedFieldConfig }
+						/>
 					);
 				} )() }
 			</div>

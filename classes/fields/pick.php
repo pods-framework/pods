@@ -1422,7 +1422,7 @@ class PodsField_Pick extends PodsField {
 			case 'pod':
 				if ( ! empty( $args->options['pick_val'] ) ) {
 
-					$icon = 'dashicons-pods';
+					$icon = pods_svg_icon( 'pods' );
 
 					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {
 						$file_name  = 'admin.php';
@@ -1449,9 +1449,9 @@ class PodsField_Pick extends PodsField {
 
 		// Parse icon type
 		if ( 'none' === $icon || 'div' === $icon ) {
-			$icon         = '';
+			$icon = '';
 		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
-			$icon         = sanitize_html_class( $icon );
+			$icon = sanitize_html_class( $icon );
 		}
 
 		// #5740 Check for WP_Error object.

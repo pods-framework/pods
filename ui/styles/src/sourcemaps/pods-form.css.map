@@ -4,7 +4,6 @@
 	"sources": [
 		"../pods-form.scss",
 		"../helpers/_asset-paths.scss",
-		"../helpers/_typography.scss",
 		"../helpers/_dashicons.scss",
 		"../overrides/_jquery-qtip.scss",
 		"../base/_form.scss",

@@ -73,6 +73,16 @@ class PodsField_WYSIWYG extends PodsField {
 						'default' => 1,
 						'type'    => 'boolean',
 					),
+					static::$type . '_tinymce' => array(
+						'label'   => __( 'Enable TinyMCE (Visual)', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+					),
+					static::$type . '_quicktags' => array(
+						'label'   => __( 'Enable Quicktags (Text)', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+					),
 				),
 			),
 			static::$type . '_editor_height'     => array(

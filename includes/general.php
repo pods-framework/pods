@@ -3467,15 +3467,15 @@ function is_pods_alternative_cache_activated_test() {
 }
 
 /**
- * Get the SVG icon base64 data for the icon or the dashicon default class.
+ * Get the SVG icon data (base64 or svg itself) for the icon or the dashicon default class.
  *
  * @since 2.8.1
  *
- * @param string $icon_path The icon name or SVG path to use.
+ * @param string $icon_path The icon name or the SVG full file path to use.
  * @param string $default   The dashicons helper class (dashicons-database) to use if SVG not found.
  * @param string $mode      How to return the SVG (base64 or svg).
  *
- * @return string The SVG icon base64 data for the icon or the dashicon default class.
+ * @return string The SVG icon data (base64 or svg itself) for the icon or the dashicon default class.
  */
 function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'base64' ) {
 	if ( 'pods' === $icon_path ) {

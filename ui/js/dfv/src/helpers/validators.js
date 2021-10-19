@@ -9,6 +9,8 @@ import {
 
 const isValueSet = ( value ) => {
 	// Allow zero to be OK for required fields.
+	// @todo this may not account for boolean values correctly,
+	// do we need to take field types into account?
 	return (
 		'undefined' !== typeof value &&
 		null !== value &&

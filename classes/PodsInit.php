@@ -2668,6 +2668,21 @@ class PodsInit {
 	}
 
 	/**
+	 * Get the Pods icon in base64 encoded SVG format.
+	 *
+	 * @since 2.8.1
+	 *
+	 * @return string
+	 */
+	public function get_menu_icon() {
+
+		$icon = file_get_contents( PODS_DIR . '/ui/images/icon-menu.svg' );
+		$icon = 'data:image/svg+xml;base64,' . base64_encode( $icon );
+
+		return $icon;
+	}
+
+	/**
 	 * Add Pod fields to user export.
 	 * Requires WordPress 5.4+
 	 *

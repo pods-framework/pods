@@ -10,6 +10,7 @@ use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Store;
 use Pods\Permissions;
+use Pods\Static_Cache;
 
 /**
  * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
@@ -3463,4 +3464,72 @@ function is_pods_alternative_cache_activated_test() {
 	];
 
 	return $result;
+}
+
+/**
+ * Get the SVG icon data (base64 or svg itself) for the icon or the dashicon default class.
+ *
+ * @since 2.8.1
+ *
+ * @param string $icon_path The icon name or the SVG full file path to use.
+ * @param string $default   The dashicons helper class (dashicons-database) to use if SVG not found.
+ * @param string $mode      How to return the SVG (base64 or svg).
+ *
+ * @return string The SVG icon data (base64 or svg itself) for the icon or the dashicon default class.
+ */
+function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'base64' ) {
+	if ( 'pods' === $icon_path ) {
+		$icon_path = PODS_DIR . '/ui/images/icon-menu.svg';
+	}
+
+	$static_cache = tribe( Static_Cache::class );
+
+	$icon = $static_cache->get( $icon_path, __FUNCTION__ . '/' . $mode );
+
+	// If the cached icon did not exist, use default.
+	if ( '404-not-exists' === $icon ) {
+		return $default;
+	}
+
+	// If the cached icon was found and is not empty, return it.
+	if ( is_string( $icon ) && '' !== $icon ) {
+		return $icon;
+	}
+
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+
+	/**
+	 * @var $wp_filesystem WP_Filesystem_Base
+	 */
+	global $wp_filesystem;
+
+	WP_Filesystem();
+
+	$icon_exists = $wp_filesystem->exists( $icon_path );
+
+	if ( ! $icon_exists ) {
+		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
+
+		return $default;
+	}
+
+	$svg_data = $wp_filesystem->get_contents( $icon_path );
+
+	if ( ! $svg_data ) {
+		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
+
+		return $default;
+	}
+
+	$static_cache->set( $icon_path, $icon, __FUNCTION__ . '/' . $mode );
+
+	// If mode is SVG data, return that.
+	if ( 'svg' === $mode ) {
+		return $svg_data;
+	}
+
+	// Default mode is base64.
+	$icon = 'data:image/svg+xml;base64,' . base64_encode( $svg_data );
+
+	return $icon;
 }

@@ -87,7 +87,7 @@ class Pods_Templates extends PodsComponent {
 			'has_archive'  => false,
 			'hierarchical' => false,
 			'supports'     => array( 'title', 'author', 'revisions' ),
-			'menu_icon'    => 'dashicons-pods',
+			'menu_icon'    => pods_init()->get_menu_icon(),
 		);
 
 		if ( ! pods_is_admin() ) {

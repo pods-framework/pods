@@ -145,13 +145,11 @@ class PodsRESTFields {
 			$rest_args['pods_update'] = true;
 		}
 
-		$object_type = $this->pod->get_type();
+		// Get the object type for register_rest_field(), this is documented weird and we should just pass the object name.
+		$object_type = $this->pod->get_name();
 
-		if ( 'post_type' === $object_type ) {
-			$object_type = 'post';
-		} elseif ( 'taxonomy' === $object_type ) {
-			$object_type = 'term';
-		} elseif ( 'media' === $object_type ) {
+		// Use the "attachment" post type if the Pod name is "media".
+		if ( 'media' === $object_type ) {
 			$object_type = 'attachment';
 		}
 

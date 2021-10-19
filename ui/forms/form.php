@@ -107,8 +107,8 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 
 if ( null !== $submit_result ) {
 	$messages = [
-		'success'            => __( 'Success!', 'pods' ),
-		'error'              => __( 'Error:', 'pods' ),
+		'success'            => __( 'Success', 'pods' ),
+		'error'              => __( 'Error', 'pods' ),
 		// translators: %s: The singular item label.
 		'view_item'          => __( 'View %s', 'pods' ),
 		// translators: %s: The singular item label.
@@ -125,16 +125,16 @@ if ( null !== $submit_result ) {
 		'error_duplicated'   => _x( '%s not duplicated', 'The error message shown after saving form', 'pods' ),
 	];
 
-	$success_message = sprintf( '<strong>%1$s</strong> %2$s.', $messages['success'], $messages['success_saved'] );
-	$error_message   = sprintf( '<strong>%1$s</strong> %2$s.', $messages['error'], $messages['error_saved'] );
+	$success_message = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['success'], $messages['success_saved'] );
+	$error_message   = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['error'], $messages['error_saved'] );
 
 	if ( ! $is_settings_pod ) {
 		if ( 'create' === pods_v( 'do', 'post', pods_v( 'do', 'get', 'save' ) ) ) {
-			$success_message = sprintf( '<strong>%1$s</strong> %2$s.', $messages['success'], $messages['success_created'] );
-			$error_message   = sprintf( '<strong>%1$s</strong> %2$s.', $messages['error'], $messages['error_created'] );
+			$success_message = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['success'], $messages['success_created'] );
+			$error_message   = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['error'], $messages['error_created'] );
 		} elseif ( 'duplicate' === pods_v( 'do', 'get', 'save' ) ) {
-			$success_message = sprintf( '<strong>%1$s</strong> %2$s.', $messages['success'], $messages['success_duplicated'] );
-			$error_message   = sprintf( '<strong>%1$s</strong> %2$s.', $messages['error'], $messages['error_duplicated'] );
+			$success_message = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['success'], $messages['success_duplicated'] );
+			$error_message   = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['error'], $messages['error_duplicated'] );
 		}
 	}
 

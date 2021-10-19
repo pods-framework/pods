@@ -3652,7 +3652,7 @@ class Pods implements Iterator {
 			// Check if Pods sessions are disabled.
 			if ( false === $session_auto_start ) {
 				return sprintf(
-					'<strong>%1$s</strong> %2$s, <a href="%3$s">%4$s</a> %5$s.',
+					'<strong>%1$s:</strong> %2$s, <a href="%3$s">%4$s</a> %5$s.',
 					esc_html__( 'Error', 'pods' ),
 					esc_html__( 'Anonymous form submissions are not enabled for this site', 'pods' ),
 					esc_url( wp_login_url( pods_current_url() ) ),
@@ -3666,7 +3666,7 @@ class Pods implements Iterator {
 				pods_update_setting( 'pods_session_auto_start', '1' );
 
 				return sprintf(
-					'<strong>%1$s</strong> %2$s',
+					'<strong>%1$s:</strong> %2$s',
 					esc_html__( 'Error', 'pods' ),
 					esc_html__( 'Please refresh the page to access this form.', 'pods' )
 				);
@@ -3675,7 +3675,7 @@ class Pods implements Iterator {
 			// Check if the session started properly.
 			if ( '' === pods_session_id() ) {
 				return sprintf(
-					'<strong>%1$s</strong> %2$s',
+					'<strong>%1$s:</strong> %2$s',
 					esc_html__( 'Error', 'pods' ),
 					esc_html__( 'Anonymous form submissions are not compatible with sessions on this site.', 'pods' )
 				);

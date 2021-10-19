@@ -3496,6 +3496,8 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 		return $icon;
 	}
 
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+
 	/**
 	 * @var $wp_filesystem WP_Filesystem_Base
 	 */

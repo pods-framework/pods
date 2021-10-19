@@ -145,10 +145,14 @@ class PodsRESTFields {
 			$rest_args['pods_update'] = true;
 		}
 
-		$object_type = $this->pod->get_name();
+		$object_type = $this->pod->get_type();
 
-		if ( 'media' === $object_type ) {
-			$object_type = 'attachment';
+		if ( 'post_type' === $meta_type ) {
+			$meta_type = 'post';
+		} elseif ( 'taxonomy' === $meta_type ) {
+			$meta_type = 'term';
+		} elseif ( 'media' === $meta_type ) {
+			$meta_type = 'attachment';
 		}
 
 		if ( ! empty( $rest_args ) ) {

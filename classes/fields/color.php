@@ -125,6 +125,12 @@ class PodsField_Color extends PodsField {
 		} else {
 			$color = str_replace( '#', '', $check );
 
+			if ( pods_v( self::$type . '_alpha', $options, false ) ) {
+				$regex = '/^([0-9A-F]{3,4}){1,2}$/i';
+			} else {
+				$regex = '/^([0-9A-F]{3}){1,2}$/i';
+			}
+
 			if ( 0 < strlen( $value ) && '' === $check ) {
 				if ( $this->is_required( $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
@@ -132,7 +138,7 @@ class PodsField_Color extends PodsField {
 					// @todo Ask for a specific format in error message
 					$errors[] = __( 'Invalid value provided for this field.', 'pods' );
 				}
-			} elseif ( ! empty( $color ) && ! in_array( strlen( $color ), array( 3, 6 ), true ) ) {
+			} elseif ( ! empty( $color ) && ! preg_match( $regex, $color ) ) {
 				$errors[] = __( 'Invalid Hex Color value provided for this field.', 'pods' );
 			}
 		}

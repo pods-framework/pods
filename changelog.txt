@@ -2,16 +2,34 @@ Found a bug? Have a great feature idea? Get on GitHub and tell us about it and w
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 
-= 2.8 - October 12th, 2021 =
+= 2.8.1 - October 20th, 2021 =
 
-Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) which includes information about all of the features, enhancements, and changes in this major Pods release.
+* Fixed: Simple Custom Defined Relationships now output correctly again when displaying them like `{@my_relationship.my_custom_defined_relationship}`. #6189 #6191 (@sc0ttkclark)
+* Fixed: Color Picker now has the "Clear" button back. #6194 #6196 (@JoryHogeveen)
+* Fixed: Display Field in Selection option now properly works again. #6195 (@sc0ttkclark)
+* Fixed: REST API fields are registered properly for post types and taxonomies again. #6175 (@jamesgol, @sc0ttkclark)
+* Fixed: The Pods Admin menu icon shows up again and has been switched to SVG format. #6177 #6180 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: The correct Currency now shows up for the currency input field as intended again. #6184 (@sc0ttkclark)
+* Fixed: Taggable autocomplete works as expected again. #6182 (@sc0ttkclark)
+* Fixed: ORDER BY basic field detection has been improved to prevent certain fields from using the incorrect alias. (@sc0ttkclark)
+* Fixed: The `<ul>` used with checkbox inputs has been styled with `list-style:none` as it should be. (@sc0ttkclark)
+* Fixed: Default the form output type to `div` if it's provided but empty. (@sc0ttkclark) 
+* Compatibility: Added compatibility for Enfold theme and public forms so that `wp-mediaelement` is not removed by the theme. #6188 (@sc0ttkclark)
+* Tweak: Internal API - Storage and Storage Types used in the internal Pods code has been clarified to prevent ambiguity. Storage Types have been changed to Object Storage Types in all areas regarding Whatsit Storage). (@sc0ttkclark)
+* Tweak: Public forms now have unique IDs added to them to help in custom CSS work. (@sc0ttkclark)
 
-**Breaking compatability warning:**
+= 2.8 - October 18th, 2021 =
+
+Release post: https://pods.io/2021/10/18/pods-2-8-feature-release/
+
+Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-released-and-the-field-guide-to-pods-2-8/) which includes information about all the features, enhancements, and changes in this major Pods release.
+
+**Breaking compatibility warning:**
 * New minimum required versions have been updated as follows which includes notices to let you know if you need to update something.
-* New minimum WP version required: WordPress 5.5+ (previously: WP 4.5+) — Going forward we will support the last two major WP releases on each major feature release of Pods.
+* New minimum WP version required: WordPress 5.5+ (previously: WP 4.5+)
 * New minimum PHP version required: PHP 5.6+ (previously: PHP 5.3+) — Hey! You should take the time to update to PHP 7.4+ because there’s major speed improvements to be had 🙂
 * New minimum MySQL version required: MySQL 5.5+ (previously: MySQL 5.1+)
-* Refactored object handling for Pod and Field configurations — instead of passing around arrays we now are using a fully scoped object for these configs. This gives us flexibility to lazy load and pull things as-needed from the database instead of always pulling entire Pods and Fields configurations all at once on any page it may not be needed. This also reduces how much we have to use/cache on each page further reducing overall memory usage on every page. It remains backward compatible in most array usage cases like `$pod['name']` but be aware that PHP ArrayAccess overloading errors may occur when manipulating Pod configs like `$pod['fields']['your_field']['name'] = 'My new field name';` or `$pod['options']['some_option'] = 1;` 
+* Refactored object handling for Pod and Field configurations — we now lazy load and pull things as-needed from the database instead of always pulling all Pods and Fields at once. It remains backward compatible in most array usage
 
 **Features and changes in this release**
 * Feature: Now you can add multiple groups of fields. (@sc0ttkclark, @zrothauser)
@@ -21,7 +39,8 @@ Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-
 * Feature: New Pods Blocks available and the underlying Pods Block PHP API is compatible with ACF Blocks if you've ever used those before. (@sc0ttkclark, @zrothauser)
 * Feature: REST API endpoints are now available to create/edit various objects: Pods, Pod Groups, and Pod Fields. (@sc0ttkclark)
 * Feature: WP-CLI commands that mirror the REST API endpoints we have. (@sc0ttkclark)
-* Feature: The new WYSIWYG editor option to use [Quill Editor](https://github.com/zenoamaro/react-quill) is now available and the CLEditor has been removed. (@sc0ttkclark, @zrothauser) 
+* Feature: The new WYSIWYG editor option to use [Quill Editor](https://github.com/zenoamaro/react-quill) is now available and the CLEditor has been removed. (@sc0ttkclark, @zrothauser)
+* Compatibility: Completely updated compatibility with WPML and Polylang plugins. 
 
 = 2.7.31 - September 23rd, 2021 =
 

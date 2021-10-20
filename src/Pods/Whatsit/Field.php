@@ -61,7 +61,7 @@ class Field extends Whatsit {
 			'pod_description'    => 'get_parent_description',
 			'pod_object'         => 'get_parent_object',
 			'pod_object_type'    => 'get_parent_object_type',
-			'pod_storage_type'   => 'get_parent_storage_type',
+			'pod_object_storage_type'   => 'get_parent_object_storage_type',
 			'pod_type'           => 'get_parent_type',
 			// Group args.
 			'group_id'           => 'get_group_id',
@@ -71,7 +71,7 @@ class Field extends Whatsit {
 			'group_description'  => 'get_group_description',
 			'group_object'       => 'get_group_object',
 			'group_object_type'  => 'get_group_object_type',
-			'group_storage_type' => 'get_group_storage_type',
+			'group_object_storage_type' => 'get_group_object_storage_type',
 			'group_type'         => 'get_group_type',
 		];
 

@@ -16,7 +16,7 @@ use Pods\Whatsit\Store;
  * never changed it. Enjoy!
  *
  * @method string      get_object_type()
- * @method string|null get_storage_type()
+ * @method string|null get_object_storage_type()
  * @method string|null get_name()
  * @method string|null get_id()
  * @method string|null get_parent()
@@ -24,7 +24,7 @@ use Pods\Whatsit\Store;
  * @method string|null get_type()
  * @method string|null get_parent_identifier()
  * @method string|null get_parent_object_type()
- * @method string|null get_parent_storage_type()
+ * @method string|null get_parent_object_storage_type()
  * @method string|null get_parent_name()
  * @method string|null get_parent_id()
  * @method string|null get_parent_label()
@@ -32,7 +32,7 @@ use Pods\Whatsit\Store;
  * @method string|null get_parent_type()
  * @method string|null get_group_identifier()
  * @method string|null get_group_object_type()
- * @method string|null get_group_storage_type()
+ * @method string|null get_group_object_storage_type()
  * @method string|null get_group_name()
  * @method string|null get_group_id()
  * @method string|null get_group_label()
@@ -59,7 +59,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 */
 	protected $args = [
 		'object_type'  => '',
-		'storage_type' => 'collection',
+		'object_storage_type' => 'collection',
 		'name'         => '',
 		'id'           => '',
 		'parent'       => '',
@@ -483,7 +483,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		$defaults = [
 			'object_type'  => $this->get_arg( 'object_type' ),
-			'storage_type' => $this->get_arg( 'storage_type', 'collection' ),
+			'object_storage_type' => $this->get_arg( 'object_storage_type', 'collection' ),
 			'name'         => '',
 			'id'           => '',
 			'parent'       => '',
@@ -633,7 +633,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		$reserved = [
 			'object_type',
-			'storage_type',
+			'object_storage_type',
 			'fields',
 			'object_fields',
 			'groups',
@@ -810,7 +810,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		$excluded_args = [
 			'object_type',
-			'storage_type',
+			'object_storage_type',
 			'parent',
 			'group',
 		];
@@ -1475,7 +1475,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 			$supported_args = [
 				'object_type',
-				'storage_type',
+				'object_storage_type',
 				'name',
 				'id',
 				'parent',

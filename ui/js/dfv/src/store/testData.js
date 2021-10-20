@@ -17,7 +17,7 @@ export const TEXT_FIELD = {
 	restrict_capability: '0',
 	restrict_role: '0',
 	roles_allowed: [ 'administrator' ],
-	storage_type: 'post_type',
+	object_storage_type: 'post_type',
 	text_allow_html: '0',
 	text_allow_shortcode: '0',
 	text_allowed_html_tags: 'strong em a ul ol li b i',
@@ -45,7 +45,7 @@ export const SECOND_TEXT_FIELD = {
 	restrict_capability: '0',
 	restrict_role: '0',
 	roles_allowed: [ 'administrator' ],
-	storage_type: 'post_type',
+	object_storage_type: 'post_type',
 	text_allow_html: '0',
 	text_allow_shortcode: '0',
 	text_allowed_html_tags: 'strong em a ul ol li b i',
@@ -61,7 +61,7 @@ export const GROUP = {
 	name: 'more-fields',
 	object_type: 'group',
 	parent: 117,
-	storage_type: 'post_type',
+	object_storage_type: 'post_type',
 	weight: 0,
 	fields: [
 		TEXT_FIELD,
@@ -108,7 +108,7 @@ export const POD = {
 	show_in_nav_menus: '1',
 	show_ui: '1',
 	storage: 'meta',
-	storage_type: 'post_type',
+	object_storage_type: 'post_type',
 	supports_author: '0',
 	supports_comments: '0',
 	supports_custom_fields: '0',
@@ -135,7 +135,7 @@ export const GLOBAL_POD = {
 	label: 'Pod',
 	name: '_pods_pod',
 	object_type: 'pod',
-	storage_type: 'collection',
+	object_storage_type: 'collection',
 	groups: [
 		{
 			description: '',
@@ -144,7 +144,7 @@ export const GLOBAL_POD = {
 			name: 'labels',
 			object_type: 'group',
 			parent: '_pods_pod',
-			storage_type: 'collection',
+			object_storage_type: 'collection',
 			fields: [
 				{
 					default: 'test',
@@ -156,7 +156,7 @@ export const GLOBAL_POD = {
 					name: 'label',
 					object_type: 'field',
 					parent: '_pods_pod',
-					storage_type: 'collection',
+					object_storage_type: 'collection',
 					text_max_length: 30,
 					type: 'text',
 				},
@@ -169,7 +169,7 @@ export const GLOBAL_POD = {
 			name: 'rest-api',
 			object_type: 'group',
 			parent: '_pods_pod',
-			storage_type: 'collection',
+			object_storage_type: 'collection',
 			fields: [
 				{
 					default: '',
@@ -182,7 +182,7 @@ export const GLOBAL_POD = {
 					name: 'rest_enable',
 					object_type: 'field',
 					parent: '_pods_pod',
-					storage_type: 'collection',
+					object_storage_type: 'collection',
 					type: 'boolean',
 				},
 				{
@@ -196,7 +196,7 @@ export const GLOBAL_POD = {
 					name: 'rest_base',
 					object_type: 'field',
 					parent: '_pods_pod',
-					storage_type: 'collection',
+					object_storage_type: 'collection',
 					type: 'text',
 				},
 			],
@@ -212,7 +212,7 @@ export const GLOBAL_GROUP = {
 	label: 'Pod Group',
 	name: '_pods_group',
 	object_type: 'pod',
-	storage_type: 'collection',
+	object_storage_type: 'collection',
 };
 
 export const TEST_CONFIG_DATA = {

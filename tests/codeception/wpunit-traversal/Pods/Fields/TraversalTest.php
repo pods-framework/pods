@@ -86,13 +86,13 @@ class TraversalTest extends Pods_TraversalTestCase {
 		// $wpdb->hide_errors();
 		// Options
 		$pod_type     = $options['pod_type'];
-		$storage_type = $options['storage_type'];
+		$storage_type = $options['object_storage_type'];
 		$pod          = $options['pod'];
 
 		$debug = array(
 			'pod'          => $pod['name'],
 			'pod_type'     => $pod_type,
-			'storage_type' => $storage_type,
+			'object_storage_type' => $storage_type,
 		);
 
 		$this->assertInstanceOf( Pods\Whatsit\Pod::class, $pod );
@@ -142,7 +142,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 		// $wpdb->hide_errors();
 		// Options
 		$pod_type          = $options['pod_type'];
-		$storage_type      = $options['storage_type'];
+		$storage_type      = $options['object_storage_type'];
 		$pod               = $options['pod'];
 		$field             = $options['field'];
 		$field_name        = $field['name'];
@@ -157,7 +157,7 @@ class TraversalTest extends Pods_TraversalTestCase {
 		$debug = array(
 			'pod'          => $pod['name'],
 			'pod_type'     => $pod_type,
-			'storage_type' => $storage_type,
+			'object_storage_type' => $storage_type,
 			'field_name'   => $field['name'],
 			'field_type'   => $field_type,
 			'deep'         => (int) $deep,

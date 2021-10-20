@@ -652,7 +652,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 			$excluded_args = [
 				'object_type',
-				'storage_type',
+				'object_storage_type',
 				'parent',
 				'group',
 				'label',
@@ -733,7 +733,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 			$excluded_args = [
 				'object_type',
-				'storage_type',
+				'object_storage_type',
 				'parent',
 				'group',
 				'label',
@@ -876,7 +876,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 				'old_name',
 				'podType',
 				'storageType',
-				'storage_type',
+				'object_storage_type',
 				'object_type',
 				'object_name',
 				'object_hierarchical',

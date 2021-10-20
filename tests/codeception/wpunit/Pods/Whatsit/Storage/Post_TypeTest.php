@@ -23,12 +23,12 @@ class Post_TypeTest extends Pods_WhatsitTestCase {
 	}
 
 	/**
-	 * @covers Post_Type::get_storage_type
+	 * @covers Post_Type::get_object_storage_type
 	 */
-	public function test_get_storage_type() {
-		$this->assertTrue( method_exists( $this->pods_object_storage, 'get_storage_type' ), 'Method get_storage_type does not exist' );
+	public function test_get_object_storage_type() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'get_object_storage_type' ), 'Method get_object_storage_type does not exist' );
 
-		$this->assertEquals( 'post_type', $this->pods_object_storage->get_storage_type() );
+		$this->assertEquals( 'post_type', $this->pods_object_storage->get_object_storage_type() );
 	}
 
 	/**
@@ -439,7 +439,7 @@ class Post_TypeTest extends Pods_WhatsitTestCase {
 		$this->assertEquals( $object->get_parent(), $post->post_parent );
 		$this->assertEquals( $object->get_parent_id(), $post->post_parent );
 		$this->assertEquals( '_pods_field', $post->post_type );
-		$this->assertEquals( 'post_type', $object->get_storage_type() );
+		$this->assertEquals( 'post_type', $object->get_object_storage_type() );
 		$this->assertEquals( $object->get_arg( 'group' ), get_post_meta( $id, 'group', true ) );
 		$this->assertEquals( $object->get_arg( 'fourohfour' ), get_post_meta( $id, 'fourohfour', true ) );
 		$this->assertEquals( $object->get_arg( 'custom1' ), get_post_meta( $id, 'custom1', true ) );
@@ -479,7 +479,7 @@ class Post_TypeTest extends Pods_WhatsitTestCase {
 		$this->assertEquals( $object->get_parent(), $post->post_parent );
 		$this->assertEquals( $object->get_parent_id(), $post->post_parent );
 		$this->assertEquals( '_pods_' . $object->get_object_type(), $post->post_type );
-		$this->assertEquals( 'post_type', $object->get_storage_type() );
+		$this->assertEquals( 'post_type', $object->get_object_storage_type() );
 		$this->assertEquals( $object->get_arg( 'group' ), get_post_meta( $id, 'group', true ) );
 		$this->assertEquals( $object->get_arg( 'fourohfour' ), get_post_meta( $id, 'fourohfour', true ) );
 		$this->assertEquals( $object->get_arg( 'custom1' ), get_post_meta( $id, 'custom1', true ) );
@@ -588,7 +588,7 @@ class Post_TypeTest extends Pods_WhatsitTestCase {
 		$this->assertEquals( $duplicated_object->get_parent(), $post->post_parent );
 		$this->assertEquals( $duplicated_object->get_parent_id(), $post->post_parent );
 		$this->assertEquals( '_pods_field', $post->post_type );
-		$this->assertEquals( 'post_type', $duplicated_object->get_storage_type() );
+		$this->assertEquals( 'post_type', $duplicated_object->get_object_storage_type() );
 		$this->assertEquals( $duplicated_object->get_arg( 'group' ), get_post_meta( $id, 'group', true ) );
 		$this->assertEquals( $duplicated_object->get_arg( 'fourohfour' ), get_post_meta( $id, 'fourohfour', true ) );
 		$this->assertEquals( $duplicated_object->get_arg( 'custom1' ), get_post_meta( $id, 'custom1', true ) );

@@ -135,7 +135,7 @@ const TinyMCE = ( {
 			);
 			wp.oldEditor.remove( fieldId );
 		};
-	}, [ mediaButtons ] );
+	}, [ mediaButtons, editorHeight, defaultEditor ] );
 
 	return (
 		<div

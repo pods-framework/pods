@@ -12,6 +12,7 @@ const TinyMCE = ( {
 	setValue,
 	editorHeight,
 	mediaButtons,
+	defaultEditor,
 	onBlur,
 } ) => {
 	const fieldId = `pods-form-ui-${ name }`;
@@ -109,6 +110,10 @@ const TinyMCE = ( {
 				mediaButtons,
 				quicktags: true,
 			} );
+
+			if ( defaultEditor ) {
+				window.switchEditors.go( fieldId, defaultEditor );
+			}
 		}
 
 		function onReadyStateChange() {

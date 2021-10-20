@@ -86,6 +86,10 @@ const TinyMCE = ( {
 				}
 			} );
 
+			if ( defaultEditor ) {
+				window.switchEditors.go( fieldId, defaultEditor );
+			}
+
 			didMount.current = true;
 		}
 
@@ -110,10 +114,6 @@ const TinyMCE = ( {
 				mediaButtons,
 				quicktags: true,
 			} );
-
-			if ( defaultEditor ) {
-				window.switchEditors.go( fieldId, defaultEditor );
-			}
 		}
 
 		function onReadyStateChange() {

@@ -215,7 +215,7 @@ class PodsField_Pick extends PodsField {
 				'wildcard-on' => array(
 					static::$type . '_object' => array(
 						'^post_type-(?!(custom_css|customize_changeset)).*$',
-						'^taxonomy-.*$',
+						//'^taxonomy-.*$', @todo We need to finish adding support for add new on term form.
 						'^user$',
 						'^pod-.*$'
 					),

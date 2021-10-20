@@ -44,16 +44,16 @@ const Color = ( {
 					color={ value }
 					onChangeComplete={ ( newValue ) => {
 
-						newValue.hexa = newValue.hex;
+						newValue.hex8 = newValue.hex;
 						if ( 1 > newValue.color._a ) {
-							newValue.hexa = Math.round( newValue.color._a * 255 ).toString(16);
-							if ( 2 > newValue.hexa.length ) {
-								newValue.hexa = '0' + newValue.hexa;
+							newValue.hex8 = Math.round( newValue.color._a * 255 ).toString(16);
+							if ( 2 > newValue.hex8.length ) {
+								newValue.hex8 = '0' + newValue.hex8;
 							}
-							newValue.hexa = newValue.hex + newValue.hexa;
+							newValue.hex8 = newValue.hex + newValue.hex8;
 						}
 
-						setValue( newValue.hexa );
+						setValue( newValue.hex8 );
 						setHasBlurred();
 					} }
 					enableAlpha={ enableAlpha }

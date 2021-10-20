@@ -43,17 +43,7 @@ const Color = ( {
 				<ColorPicker
 					color={ value }
 					onChangeComplete={ ( newValue ) => {
-
-						newValue.hex8 = newValue.hex;
-						if ( 1 > newValue.color._a ) {
-							newValue.hex8 = Math.round( newValue.color._a * 255 ).toString(16);
-							if ( 2 > newValue.hex8.length ) {
-								newValue.hex8 = '0' + newValue.hex8;
-							}
-							newValue.hex8 = newValue.hex + newValue.hex8;
-						}
-
-						setValue( newValue.hex8 );
+						setValue( ( newValue.color._a < 1 ) ? newValue.color.toHex8String() : newValue.color.toHexString() );
 						setHasBlurred();
 					} }
 					enableAlpha={ enableAlpha }

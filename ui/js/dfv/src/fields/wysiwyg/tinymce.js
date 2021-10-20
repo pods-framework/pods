@@ -91,6 +91,14 @@ const TinyMCE = ( {
 		function initialize() {
 			const { settings } = window.wpEditorL10n.tinymce;
 
+			// Remove the media button from the TinyMCE toolbars if found.
+			if ( ! mediaButtons ) {
+				settings.toolbar1 = settings.toolbar1.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
+				settings.toolbar2 = settings.toolbar2.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
+				settings.toolbar3 = settings.toolbar3.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
+				settings.toolbar4 = settings.toolbar4.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
+			}
+
 			window.wp.oldEditor.initialize( fieldId, {
 				tinymce: {
 					...settings,

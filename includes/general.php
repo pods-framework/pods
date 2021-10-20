@@ -965,7 +965,8 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'pagination'          => false,
 		'page'                => null,
 		'offset'              => null,
-		'filters'             => false,
+		'filters_enable'      => null,
+		'filters'             => '',
 		'filters_label'       => null,
 		'filters_location'    => 'before',
 		'pagination_label'    => null,
@@ -1022,7 +1023,17 @@ function pods_shortcode_run( $tags, $content = null ) {
 			}
 		}
 
-		return $return;
+		/**
+		 * Allow customization of shortcode output based on shortcode attributes.
+		 *
+		 * @since 2.7.9
+		 *
+		 * @param string    $return  Shortcode output to return.
+		 * @param array     $tags    Shortcode attributes.
+		 * @param null|Pods $pod     Pods object, or null if 'view' context.
+		 * @param string    $context The shortcode context (form, field, pods-page, view, or list).
+		 */
+		return apply_filters( 'pods_shortcode_output', $return, $tags, null, 'view' );
 	}
 
 	$blog_is_switched = false;
@@ -1189,8 +1200,19 @@ function pods_shortcode_run( $tags, $content = null ) {
 		}//end if
 
 		// Load filters and return HTML for later use.
-		if ( false !== $tags['filters'] ) {
-			$filters = $pod->filters( $tags['filters'], $tags['filters_label'] );
+		if (
+			true === (bool) $tags['filters_enable']
+			|| (
+				! empty( $tags['filters'] )
+				&& null === $tags['filters_enable']
+			)
+		) {
+			$filters_params = [
+				'fields' => (string) $tags['filters'],
+				'label'  => (string) $tags['filters_label'],
+			];
+
+			$filters = $pod->filters( $filters_params );
 		}
 
 		// Forms require params set
@@ -1236,6 +1258,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		}//end if
 	}//end if
 
+	// Handle form output.
 	if ( ! empty( $tags['form'] ) ) {
 		if ( 'user' === $pod->pod ) {
 			if ( false !== strpos( $tags['fields'], '_capabilities' ) || false !== strpos( $tags['fields'], '_user_level' ) ) {
@@ -1262,8 +1285,23 @@ function pods_shortcode_run( $tags, $content = null ) {
 			'output_type' => $tags['form_output_type'],
 		];
 
-		return $pod->form( $form_params );
-	} elseif ( ! empty( $tags['field'] ) ) {
+		$return = $pod->form( $form_params );
+
+		/**
+		 * Allow customization of shortcode output based on shortcode attributes.
+		 *
+		 * @since 2.7.9
+		 *
+		 * @param string    $return  Shortcode output to return.
+		 * @param array     $tags    Shortcode attributes.
+		 * @param null|Pods $pod     Pods object, or null if 'view' context.
+		 * @param string    $context The shortcode context (form, field, pods-page, view, or list).
+		 */
+		return apply_filters( 'pods_shortcode_output', $return, $tags, $pod, 'form' );
+	}
+
+	// Handle field output.
+	if ( ! empty( $tags['field'] ) ) {
 		if ( $tags['template'] || $content ) {
 			$return  = '';
 			$related = $pod->field( $tags['field'], array( 'output' => 'find' ) );
@@ -1287,8 +1325,21 @@ function pods_shortcode_run( $tags, $content = null ) {
 			restore_current_blog();
 		}
 
-		return $return;
-	} elseif ( ! empty( $tags['pods_page'] ) && class_exists( 'Pods_Pages' ) ) {
+		/**
+		 * Allow customization of shortcode output based on shortcode attributes.
+		 *
+		 * @since 2.7.9
+		 *
+		 * @param string    $return  Shortcode output to return.
+		 * @param array     $tags    Shortcode attributes.
+		 * @param null|Pods $pod     Pods object, or null if 'view' context.
+		 * @param string    $context The shortcode context (form, field, pods-page, view, or list).
+		 */
+		return apply_filters( 'pods_shortcode_output', $return, $tags, $pod, 'field' );
+	}
+
+	// Handle Pods Page output.
+	if ( ! empty( $tags['pods_page'] ) && class_exists( 'Pods_Pages' ) ) {
 		$pods_page = Pods_Pages::exists( $tags['pods_page'] );
 
 		if ( empty( $pods_page ) ) {
@@ -1310,7 +1361,17 @@ function pods_shortcode_run( $tags, $content = null ) {
 			restore_current_blog();
 		}
 
-		return $return;
+		/**
+		 * Allow customization of shortcode output based on shortcode attributes.
+		 *
+		 * @since 2.7.9
+		 *
+		 * @param string    $return  Shortcode output to return.
+		 * @param array     $tags    Shortcode attributes.
+		 * @param null|Pods $pod     Pods object, or null if 'view' context.
+		 * @param string    $context The shortcode context (form, field, pods-page, view, or list).
+		 */
+		return apply_filters( 'pods_shortcode_output', $return, $tags, $pod, 'pods-page' );
 	}//end if
 
 	$pagination = false;
@@ -1328,23 +1389,27 @@ function pods_shortcode_run( $tags, $content = null ) {
 		)
 		&& true === $tags['pagination']
 	) {
-		$pagination = array(
+		$pagination_params = array(
 			'label' => pods_v( 'pagination_label', $tags, null ),
 			'type'  => pods_v( 'pagination_type', $tags, null ),
 		);
 
 		// Remove empty params.
-		$pagination = array_filter( $pagination );
+		$pagination_params = array_filter( $pagination_params );
+
+		$pagination = $pod->pagination( $pagination_params );
 	}
 
 	ob_start();
 
 	if ( $filters && 'before' === $tags['filters_location'] ) {
+		// phpcs:ignore
 		echo $filters;
 	}
 
-	if ( false !== $pagination && in_array( $tags['pagination_location'], [ 'before', 'both' ], true ) ) {
-		echo $pod->pagination( $pagination );
+	if ( $pagination && in_array( $tags['pagination_location'], [ 'before', 'both' ], true ) ) {
+		// phpcs:ignore
+		echo $pagination;
 	}
 
 	$content = $pod->template( $tags['template'], $content );
@@ -1356,11 +1421,13 @@ function pods_shortcode_run( $tags, $content = null ) {
 	// phpcs:ignore
 	echo $content;
 
-	if ( false !== $pagination && in_array( $tags['pagination_location'], [ 'after', 'both' ], true ) ) {
-		echo $pod->pagination( $pagination );
+	if ( $pagination && in_array( $tags['pagination_location'], [ 'after', 'both' ], true ) ) {
+		// phpcs:ignore
+		echo $pagination;
 	}
 
 	if ( $filters && 'after' === $tags['filters_location'] ) {
+		// phpcs:ignore
 		echo $filters;
 	}
 
@@ -1379,13 +1446,12 @@ function pods_shortcode_run( $tags, $content = null ) {
 	 *
 	 * @since 2.7.9
 	 *
-	 * @param string $return Shortcode output to return.
-	 * @param array  $tags   Shortcode attributes.
-	 * @param Pods   $pod    Pods object.
+	 * @param string    $return  Shortcode output to return.
+	 * @param array     $tags    Shortcode attributes.
+	 * @param null|Pods $pod     Pods object, or null if 'view' context.
+	 * @param string    $context The shortcode context (form, field, pods-page, view, or list).
 	 */
-	$return = apply_filters( 'pods_shortcode_output', $return, $tags, $pod );
-
-	return $return;
+	return apply_filters( 'pods_shortcode_output', $return, $tags, $pod, 'list' );
 }
 
 /**
@@ -2382,7 +2448,7 @@ function pods_require_component( $component ) {
  * @return void
  *
  * @since 2.0.0
- * @link  https://pods.io/docs/pods-group-add/
+ * @link  https://docs.pods.io/code/general-functions/pods-group-add/
  */
 function pods_group_add( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
 	if ( ! is_array( $pod ) && ! $pod instanceof Pods\Whatsit && null !== $type ) {
@@ -3332,6 +3398,51 @@ function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
 
 	// No field found.
 	return null;
+}
+
+/**
+ * Get a normalized Pod configuration.
+ *
+ * @since 2.8.0
+ *
+ * @param Pod|Pods|string $pod The Pod configuration object, Pods() object, or name.
+ *
+ * @return false|Pod The Pod object.
+ */
+function pods_config_for_pod( $pod ) {
+	if ( $pod instanceof Pod ) {
+		return $pod;
+	}
+
+	if ( $pod instanceof Pods ) {
+		// Check if the $pod is invalid.
+		if ( ! $pod->valid() ) {
+			return false;
+		}
+
+		return $pod->pod_data;
+	}
+
+	if ( is_string( $pod ) ) {
+		try {
+			$api = pods_api();
+
+			$pod = $api->load_pod( [ 'name' => $pod ] );
+		} catch ( Exception $exception ) {
+			return false;
+		}
+
+		// Check if the $pod is invalid.
+		if ( ! $pod ) {
+			return false;
+		}
+
+		return $pod;
+	}
+
+	// @todo Support arrays in the future by migrating them into a Pod() object.
+
+	return false;
 }
 
 function is_pods_alternative_cache_activated() {

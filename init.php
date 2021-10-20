@@ -1,45 +1,51 @@
 <?php
-/*
-Plugin Name: Pods - Custom Content Types and Fields
-Plugin URI: https://pods.io/
-Description: Pods is a framework for creating, managing, and deploying customized content types and fields
-Version: 2.8.0-rc.1
-Author: Pods Framework Team
-Author URI: https://pods.io/about/
-Text Domain: pods
-GitHub Plugin URI: https://github.com/pods-framework/pods
-Primary Branch: main
-
-Copyright 2009-2021  Pods Foundation, Inc  (podsfoundation.org)
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
 /**
- * @package Pods\Global
+ * Pods - Custom Content Types and Fields
+ *
+ * @package   Pods
+ * @author    Pods Framework Team
+ * @copyright 2021 Pods Foundation, Inc
+ * @license   GPL v2 or later
+ *
+ * Plugin Name:       Pods - Custom Content Types and Fields
+ * Plugin URI:        https://pods.io/
+ * Description:       Pods is a framework for creating, managing, and deploying customized content types and fields
+ * Version:           2.8.0
+ * Author:            Pods Framework Team
+ * Author URI:        https://pods.io/about/
+ * Text Domain:       pods
+ * License:           GPL v2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Requires at least: 5.5
+ * Requires PHP:      5.6
+ * GitHub Plugin URI: https://github.com/pods-framework/pods
+ * Primary Branch:    main
  */
 
-// Prevent conflicts with Pods 1.x
+/*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
+ */
+
 if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
+	// Prevent conflicts with Pods 1.x and Pods UI plugins.
 	add_action( 'init', 'pods_deactivate_pods_duplicate' );
 	add_action( 'init', 'pods_deactivate_pods_ui' );
 } else {
-	// Current version
-	define( 'PODS_VERSION', '2.8.0-rc-1' );
+	// Current version.
+	define( 'PODS_VERSION', '2.8.0' );
 
-	// Version tracking between DB updates themselves
+	// Current database version, this is the last version the database changed.
 	define( 'PODS_DB_VERSION', '2.3.5' );
 
 	/**
@@ -86,6 +92,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 
 		// Init custom autoloader.
 		require_once PODS_DIR . 'classes/PodsInit.php';
+
 		spl_autoload_register( array( 'PodsInit', 'autoload_class' ) );
 
 		// Include global functions.
@@ -142,7 +149,7 @@ function pods_deactivate_pods_duplicate() {
 /**
  * Deactivate Pods UI plugin if already included.
  *
- * @since unknown
+ * @since 2.0.0
  */
 function pods_deactivate_pods_ui() {
 	if ( function_exists( 'pods_ui_manage' ) && file_exists( WP_CONTENT_DIR . 'plugins/pods-ui/pods-ui.php' ) ) {

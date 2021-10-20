@@ -2348,3 +2348,28 @@ function pods_list_filter( $list, $args = array(), $operator = 'AND' ) {
 
 	return $filtered;
 }
+
+/**
+ * Clean extra line breaks to prevent empty <p></p> when it eventually goes into wpautop().
+ *
+ * @since 2.8.0
+ *
+ * @param string $content The content to be cleaned up.
+ *
+ * @return string The content that has been cleaned up.
+ */
+function pods_clean_linebreaks( $content ) {
+	// Replace \n\n\n (or more) with \n\n.
+	$content = preg_replace( '/(\n+[ \t]*\n+[ \t]*\n+)+/m', "\n\n", $content );
+
+	// Replace extra whitespace at the end of lines.
+	$content = preg_replace( '/([ \t]+\n)/m', "\n", $content );
+
+	if ( ! $content || ! is_string( $content ) ) {
+		return '';
+	}
+
+	return $content;
+}
+
+add_filter( 'pods_template_content', 'pods_clean_linebreaks' );

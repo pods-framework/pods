@@ -110,7 +110,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 							<p>
 								<?php esc_html_e( 'Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments.', 'pods' ); ?>
 								<br /><br />
-								<?php _e( 'Not sure what content type you should use? Check out our <a href="https://pods.io/docs/comparisons/compare-content-types/" target="_blank" rel="noopener noreferrer">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
+								<?php _e( 'Not sure what content type you should use? Check out our <a href="https://docs.pods.io/creating-editing-pods/compare-content-types/" target="_blank" rel="noopener noreferrer">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
 							</p>
 
 							<?php if ( ! empty( $quick_actions ) ) : ?>
@@ -168,7 +168,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										<?php
 										echo PodsForm::label( 'create_pod_type', __( 'Content Type', 'pods' ), [
 											__( '<h3>Content Types</h3> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best.', 'pods' ),
-											'https://pods.io/docs/comparisons/compare-content-types/',
+											'https://docs.pods.io/creating-editing-pods/compare-content-types/',
 										] );
 
 										$data = [
@@ -199,7 +199,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											<?php
 											echo PodsForm::label( 'create_storage_taxonomy', __( 'Enable Extra Fields?', 'pods' ), [
 												__( '<h3>Storage Types</h3> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ),
-												'https://pods.io/docs/comparisons/compare-storage-types/',
+												'https://docs.pods.io/creating-editing-pods/meta-vs-table-storage/',
 											] );
 
 											$data = [
@@ -351,7 +351,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 												<?php
 												echo PodsForm::label( 'create_storage', __( 'Storage Type', 'pods' ), [
 													__( '<h3>Storage Types</h3> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ),
-													'https://pods.io/docs/comparisons/compare-storage-types/',
+													'https://docs.pods.io/creating-editing-pods/meta-vs-table-storage/',
 												] );
 
 												$data = [
@@ -392,7 +392,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										<?php
 										echo PodsForm::label( 'extend_pod_type', __( 'Content Type', 'pods' ), [
 											__( '<h3>Content Types</h3> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best.', 'pods' ),
-											'https://pods.io/docs/comparisons/compare-content-types/',
+											'https://docs.pods.io/creating-editing-pods/compare-content-types/',
 										] );
 
 										$data = [
@@ -503,7 +503,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 											<?php
 											echo PodsForm::label( 'extend_storage_taxonomy', __( 'Enable Extra Fields?', 'pods' ), [
 												__( '<h3>Storage Types</h3> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ),
-												'https://pods.io/docs/comparisons/compare-storage-types/',
+												'https://docs.pods.io/creating-editing-pods/meta-vs-table-storage/',
 											] );
 
 											$data = [
@@ -537,7 +537,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 												<?php
 												echo PodsForm::label( 'extend_storage', __( 'Storage Type', 'pods' ), [
 													__( '<h3>Storage Types</h3> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ),
-													'https://pods.io/docs/comparisons/compare-storage-types/',
+													'https://docs.pods.io/creating-editing-pods/meta-vs-table-storage/',
 												] );
 
 												$data = [

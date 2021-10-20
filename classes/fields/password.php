@@ -38,24 +38,32 @@ class PodsField_Password extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function options() {
-
-		$options = array(
-			static::$type . '_max_length'  => array(
+		$options = [
+			static::$type . '_repeatable'  => [
+				'label'             => __( 'Repeatable Field', 'pods' ),
+				'default'           => 0,
+				'type'              => 'boolean',
+				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
+				'boolean_yes_label' => '',
+				'dependency'        => true,
+				'developer_mode'    => true,
+			],
+			static::$type . '_max_length'  => [
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 255,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
-			),
-			static::$type . '_placeholder' => array(
+			],
+			static::$type . '_placeholder' => [
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
-				'help'    => array(
+				'help'    => [
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
-				),
-			),
-		);
+				],
+			],
+		];
 
 		return $options;
 	}

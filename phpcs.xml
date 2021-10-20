@@ -8,4 +8,26 @@
 	<rule ref="WordPress-Extra"></rule>
 	<rule ref="WordPress-Docs"></rule>
 	<rule ref="WordPress-Core"></rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array" value="pods"/>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array" value="pods"/>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.Files">
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+	</rule>
+
+	<rule ref="Squiz.PHP">
+		<exclude name="Squiz.PHP.CommentedOutCode.Found"/>
+		<exclude name="Squiz.PHP.GlobalKeyword.NotAllowed"/>
+	</rule>
 </ruleset>

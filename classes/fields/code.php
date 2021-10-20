@@ -71,7 +71,7 @@ class PodsField_Code extends PodsField {
 			),
 			static::$type . '_max_length' => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
-				'default' => 0,
+				'default' => -1,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),

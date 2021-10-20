@@ -1005,6 +1005,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'parent_identifier' => $this->get_identifier(),
 		];
 
+		if ( empty( $filtered_args['parent_id'] ) ) {
+			$filtered_args['bypass_post_type_find'] = true;
+		}
+
 		$filtered_args = array_filter( $filtered_args );
 
 		$args = array_merge( [
@@ -1087,6 +1091,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'parent_identifier' => $this->get_identifier(),
 		];
 
+		if ( empty( $filtered_args['parent_id'] ) ) {
+			$filtered_args['bypass_post_type_find'] = true;
+		}
+
 		$filtered_args = array_filter( $filtered_args );
 
 		$args = array_merge( $filtered_args, $args );
@@ -1161,6 +1169,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'parent_identifier' => $this->get_identifier(),
 		];
 
+		if ( empty( $filtered_args['parent_id'] ) ) {
+			$filtered_args['bypass_post_type_find'] = true;
+		}
+
 		$filtered_args = array_filter( $filtered_args );
 
 		$args = array_merge( [
@@ -1224,6 +1236,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'parent_name'       => $this->get_name(),
 			'parent_identifier' => $this->get_identifier(),
 		];
+
+		if ( empty( $filtered_args['parent_id'] ) ) {
+			$filtered_args['bypass_post_type_find'] = true;
+		}
 
 		$filtered_args = array_filter( $filtered_args );
 

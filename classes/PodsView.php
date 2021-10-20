@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Static_Cache;
+
 /**
  * @package Pods
  */
@@ -8,7 +10,7 @@ class PodsView {
 	/**
 	 * @var array $cache_modes Array of available cache modes
 	 */
-	public static $cache_modes = array( 'none', 'transient', 'site-transient', 'cache', 'option-cache' );
+	public static $cache_modes = array( 'none', 'transient', 'site-transient', 'cache', 'static-cache', 'option-cache' );
 
 	/**
 	 * @return \PodsView
@@ -261,6 +263,10 @@ class PodsView {
 			if ( false !== $value ) {
 				$value = apply_filters( "transient_{$key}", $value );
 			}
+		} elseif ( 'static-cache' === $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
+			$static_cache = tribe( Static_Cache::class );
+
+			$value = $static_cache->get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
 		} else {
 			$value = false;
 		}//end if
@@ -358,6 +364,10 @@ class PodsView {
 				do_action( "set_transient_{$key}" );
 				do_action( 'setted_transient', $key );
 			}
+		} elseif ( 'static-cache' === $cache_mode ) {
+			$static_cache = tribe( Static_Cache::class );
+
+			$static_cache->set( $key, $value, ( empty( $group ) ? 'pods_view' : $group ) );
 		}//end if
 
 		do_action( "pods_view_set_{$cache_mode}", $original_key, $value, $expires, $group );
@@ -462,6 +472,14 @@ class PodsView {
 
 			if ( $result ) {
 				do_action( 'deleted_transient', $key );
+			}
+		} elseif ( 'static-cache' === $cache_mode ) {
+			$static_cache = tribe( Static_Cache::class );
+
+			if ( true === $key ) {
+				$static_cache->flush( ( empty( $group ) ? 'pods_view' : $group ) );
+			} else {
+				$static_cache->delete( ( empty( $key ) ? 'pods_view' : $key ), ( empty( $group ) ? 'pods_view' : $group ) );
 			}
 		}//end if
 

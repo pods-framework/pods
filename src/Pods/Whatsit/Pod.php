@@ -55,7 +55,7 @@ class Pod extends Whatsit {
 
 		foreach ( $object_fields as $object_field ) {
 			$object_field['object_type']  = 'object-field';
-			$object_field['storage_type'] = 'collection';
+			$object_field['object_storage_type'] = 'collection';
 			$object_field['parent']       = $this->get_id();
 
 			$object = $object_collection->get_object( $object_field );

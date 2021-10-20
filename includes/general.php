@@ -2301,7 +2301,7 @@ function pods_register_related_object( $name, $label, $options = null ) {
  */
 function pods_register_object( array $object, $type ) {
 	$object['object_type']  = $type;
-	$object['storage_type'] = 'collection';
+	$object['object_storage_type'] = 'collection';
 
 	$object_collection = Store::get_instance();
 	$object_collection->register_object( $object );
@@ -2371,7 +2371,7 @@ function pods_register_block_type( array $block, array $fields = [] ) {
 	}
 
 	$block['object_type']  = 'block';
-	$block['storage_type'] = 'collection';
+	$block['object_storage_type'] = 'collection';
 	$block['name']         = pods_v( 'name', $block, pods_v( 'slug', $block ) );
 	$block['label']        = pods_v( 'label', $block, pods_v( 'title', $block ) );
 	$block['category']     = pods_v( 'category', $block, pods_v( 'collection', $block ) );
@@ -2381,7 +2381,7 @@ function pods_register_block_type( array $block, array $fields = [] ) {
 
 	foreach ( $fields as $field ) {
 		$field['object_type']  = 'block-field';
-		$field['storage_type'] = 'collection';
+		$field['object_storage_type'] = 'collection';
 		$field['parent']       = 'block/' . $block['name'];
 		$field['name']         = pods_v( 'name', $field, pods_v( 'slug', $field ) );
 		$field['label']        = pods_v( 'label', $field, pods_v( 'title', $field ) );
@@ -2409,7 +2409,7 @@ function pods_register_block_collection( array $collection ) {
 	}
 
 	$collection['object_type']  = 'block-collection';
-	$collection['storage_type'] = 'collection';
+	$collection['object_storage_type'] = 'collection';
 	$collection['label']        = pods_v( 'label', $collection, pods_v( 'title', $collection ) );
 
 	$object_collection = Store::get_instance();

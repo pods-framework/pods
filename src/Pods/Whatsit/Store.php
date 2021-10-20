@@ -98,7 +98,7 @@ class Store {
 			'pod/_pods_pod'   => [
 				'internal'     => true,
 				'object_type'  => 'pod',
-				'storage_type' => 'collection',
+				'object_storage_type' => 'collection',
 				'name'         => '_pods_pod',
 				'label'        => __( 'Pod', 'pods' ),
 				'description'  => __( 'Pod configuration', 'pods' ),
@@ -107,7 +107,7 @@ class Store {
 			'pod/_pods_group' => [
 				'internal'     => true,
 				'object_type'  => 'pod',
-				'storage_type' => 'collection',
+				'object_storage_type' => 'collection',
 				'name'         => '_pods_group',
 				'label'        => __( 'Pod Group', 'pods' ),
 				'description'  => __( 'Pod Group configuration', 'pods' ),
@@ -116,7 +116,7 @@ class Store {
 			'pod/_pods_field' => [
 				'internal'     => true,
 				'object_type'  => 'pod',
-				'storage_type' => 'collection',
+				'object_storage_type' => 'collection',
 				'name'         => '_pods_field',
 				'label'        => __( 'Pod Field', 'pods' ),
 				'description'  => __( 'Pod Field configuration', 'pods' ),
@@ -125,7 +125,7 @@ class Store {
 			'pod/_pods_template' => [
 				'internal'     => true,
 				'object_type'  => 'pod',
-				'storage_type' => 'collection',
+				'object_storage_type' => 'collection',
 				'name'         => '_pods_template',
 				'label'        => __( 'Pod Template', 'pods' ),
 				'description'  => __( 'Pod Template configuration', 'pods' ),
@@ -134,7 +134,7 @@ class Store {
 			'pod/_pods_page' => [
 				'internal'     => true,
 				'object_type'  => 'pod',
-				'storage_type' => 'collection',
+				'object_storage_type' => 'collection',
 				'name'         => '_pods_page',
 				'label'        => __( 'Pod Page', 'pods' ),
 				'description'  => __( 'Pod Page configuration', 'pods' ),
@@ -288,7 +288,7 @@ class Store {
 	 *
 	 * @return array List of object storage types.
 	 */
-	public function get_storage_types() {
+	public function get_object_storage_types() {
 		return $this->storage_types;
 	}
 
@@ -305,14 +305,14 @@ class Store {
 		if ( $object instanceof Whatsit ) {
 			$id           = $object->get_id();
 			$identifier   = $object->get_identifier();
-			$storage_type = $object->get_storage_type();
+			$storage_type = $object->get_object_storage_type();
 		} elseif ( is_array( $object ) ) {
 			if ( ! empty( $object['id'] ) ) {
 				$id = $object['id'];
 			}
 
-			if ( ! empty( $object['storage_type'] ) ) {
-				$storage_type = $object['storage_type'];
+			if ( ! empty( $object['object_storage_type'] ) ) {
+				$storage_type = $object['object_storage_type'];
 			}
 
 			$identifier = Whatsit::get_identifier_from_args( $object );
@@ -391,11 +391,11 @@ class Store {
 			$storage_type = 'collection';
 
 			if ( is_array( $object ) ) {
-				if ( ! empty( $object['storage_type'] ) ) {
-					$storage_type = $object['storage_type'];
+				if ( ! empty( $object['object_storage_type'] ) ) {
+					$storage_type = $object['object_storage_type'];
 				}
 			} elseif ( $object instanceof Whatsit ) {
-				$storage_type = $object->get_storage_type();
+				$storage_type = $object->get_object_storage_type();
 			} else {
 				return false;
 			}
@@ -467,7 +467,7 @@ class Store {
 			}
 
 			// Delete from storage.
-			$storage_type = $object->get_storage_type();
+			$storage_type = $object->get_object_storage_type();
 
 			if ( empty( $storage_type ) ) {
 				$storage_type = 'collection';
@@ -495,7 +495,7 @@ class Store {
 			return $this->storage_engine[ $storage_type ];
 		}
 
-		$class_name = $this->get_storage_type( $storage_type );
+		$class_name = $this->get_object_storage_type( $storage_type );
 
 		if ( ! $class_name || ! class_exists( $class_name ) ) {
 			return null;
@@ -515,7 +515,7 @@ class Store {
 	 *
 	 * @return string Storage type class.
 	 */
-	public function get_storage_type( $storage_type ) {
+	public function get_object_storage_type( $storage_type ) {
 		if ( isset( $this->storage_types[ $storage_type ] ) ) {
 			return $this->storage_types[ $storage_type ];
 		}

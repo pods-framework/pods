@@ -2229,7 +2229,7 @@ class PodsAPI {
 			'groups',
 			'object_fields',
 			'object_type',
-			'storage_type',
+			'object_storage_type',
 			'old_name',
 		);
 
@@ -3402,7 +3402,7 @@ class PodsAPI {
 			'parent',
 			'pod_data',
 			'sanitized',
-			'storage_type',
+			'object_storage_type',
 			'table_info',
 		];
 
@@ -3679,7 +3679,7 @@ class PodsAPI {
 				'groups',
 				'object_fields',
 				'object_type',
-				'storage_type',
+				'object_storage_type',
 				'parent',
 			);
 
@@ -4229,7 +4229,7 @@ class PodsAPI {
 			'depends-on',
 			'excludes-on',
 			'object_type',
-			'storage_type',
+			'object_storage_type',
 			'is_new',
 			'overwrite',
 			'_locale',
@@ -5929,7 +5929,7 @@ class PodsAPI {
 
 		$groups = $pod['groups'];
 
-		unset( $pod['id'], $pod['parent'], $pod['object_type'], $pod['storage_type'], $pod['groups'] );
+		unset( $pod['id'], $pod['parent'], $pod['object_type'], $pod['object_storage_type'], $pod['groups'] );
 
 		try {
 			$pod_id = $this->save_pod( $pod );
@@ -5944,14 +5944,14 @@ class PodsAPI {
 		foreach ( $groups as $group => $group_data ) {
 			$fields = $group_data['fields'];
 
-			unset( $group_data['id'], $group_data['parent'], $group_data['object_type'], $group_data['storage_type'], $group_data['fields'] );
+			unset( $group_data['id'], $group_data['parent'], $group_data['object_type'], $group_data['object_storage_type'], $group_data['fields'] );
 
 			$group_data['pod_id'] = $pod_id;
 
 			$group_id = $this->save_group( $group_data );
 
 			foreach ( $fields as $field => $field_data ) {
-				unset( $field_data['id'], $field_data['parent'], $field_data['object_type'], $field_data['storage_type'], $field_data['group'] );
+				unset( $field_data['id'], $field_data['parent'], $field_data['object_type'], $field_data['object_storage_type'], $field_data['group'] );
 
 				$field_data['pod_id'] = $pod_id;
 				$field_data['group_id'] = $group_id;
@@ -6042,7 +6042,7 @@ class PodsAPI {
 
 		$fields = $group['fields'];
 
-		unset( $group['id'], $group['parent'], $group['object_type'], $group['storage_type'], $group['fields'] );
+		unset( $group['id'], $group['parent'], $group['object_type'], $group['object_storage_type'], $group['fields'] );
 
 		try {
 			$group_id = $this->save_group( $group );
@@ -6055,7 +6055,7 @@ class PodsAPI {
 		}
 
 		foreach ( $fields as $field => $field_data ) {
-			unset( $field_data['id'], $field_data['parent'], $field_data['object_type'], $field_data['storage_type'], $field_data['group'] );
+			unset( $field_data['id'], $field_data['parent'], $field_data['object_type'], $field_data['object_storage_type'], $field_data['group'] );
 
 			$field_data['group_id'] = $group_id;
 
@@ -6147,7 +6147,7 @@ class PodsAPI {
 		$field['name']  = $check_name;
 		$field['label'] = $new_label;
 
-		unset( $field['id'], $field['object_type'], $field['storage_type'] );
+		unset( $field['id'], $field['object_type'], $field['object_storage_type'] );
 
 		return $this->save_field( $field, true, true );
 
@@ -10667,7 +10667,7 @@ class PodsAPI {
 			}
 		}
 
-		$storage_type = ! empty( $params['storage_type'] ) ? $params['storage_type'] : $this->get_default_object_storage_type();
+		$storage_type = ! empty( $params['object_storage_type'] ) ? $params['object_storage_type'] : $this->get_default_object_storage_type();
 
 		$object_collection = Pods\Whatsit\Store::get_instance();
 
@@ -10757,7 +10757,7 @@ class PodsAPI {
 			if ( null !== $whatsit_args ) {
 				// Set up the params for the next call.
 				$params['auto_setup']   = false;
-				$params['storage_type'] = 'collection';
+				$params['object_storage_type'] = 'collection';
 
 				$pod = new Pod( $whatsit_args );
 

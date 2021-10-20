@@ -102,10 +102,12 @@ const TinyMCE = ( {
 			}
 
 			if ( ! enableTinyMCE && ! enableQuicktags ) {
+				// Plain paragraph.
 				return;
 			}
 
 			if ( ! enableTinyMCE ) {
+				// Quicktags only.
 				window.quicktags( { ...wp.oldEditor.getDefaultSettings().quicktags, id: fieldId } );
 				return;
 			}

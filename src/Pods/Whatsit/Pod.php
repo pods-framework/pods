@@ -17,6 +17,15 @@ class Pod extends Whatsit {
 	protected static $type = 'pod';
 
 	/**
+	 * Get the storage used for the Pod data (meta, table, etc).
+	 *
+	 * @return string The storage used for the Pod data (meta, table, etc).
+	 */
+	public function get_storage() {
+		return $this->get_arg( 'storage' );
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function get_args() {

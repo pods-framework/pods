@@ -2359,7 +2359,7 @@ class Pods implements Iterator {
 
 					$key = $k;
 
-					$order_field = $this->fields( $k, null, true );
+					$order_field = $this->fields( $k );
 
 					if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ), true ) ) {
 						if ( isset( $this->pod_data['object_fields'][ $k ] ) ) {

@@ -8,6 +8,8 @@
  * @var null|string $label
  */
 
+use Pods\Static_Cache;
+
 wp_enqueue_script( 'pods' );
 wp_enqueue_style( 'pods-form' );
 
@@ -171,9 +173,20 @@ if ( 0 < $pod->id() ) {
 		$do = 'save';
 	}
 }
+
+$static_cache = tribe( Static_Cache::class );
+
+$counter = (int) $static_cache->get( 'counter', 'pods-forms' );
+
+$counter ++;
+
+$static_cache->set( 'counter', $counter, 'pods-forms' );
 ?>
 
-<form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo esc_attr( $pod->pod ); ?> pods-submittable-ajax">
+<form action="" method="post"
+	class="pods-submittable pods-form pods-form-pod-<?php echo esc_attr( $pod->pod ); ?> pods-submittable-ajax"
+	id="pods-form-<?php echo esc_attr( $counter ); ?>"
+>
 	<div class="pods-submittable-fields">
 		<?php
 		echo PodsForm::field( 'action', 'pods_admin', 'hidden' );

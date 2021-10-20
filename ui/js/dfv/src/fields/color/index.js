@@ -12,6 +12,7 @@ const Color = ( {
 	fieldConfig,
 	setValue,
 	value,
+	enableAlpha,
 	setHasBlurred,
 } ) => {
 	const { name } = fieldConfig;
@@ -45,7 +46,7 @@ const Color = ( {
 						setValue( newValue.hex );
 						setHasBlurred();
 					} }
-					disableAlpha
+					enableAlpha={ enableAlpha }
 					className="pods-color-picker"
 				/>
 			) }
@@ -56,6 +57,7 @@ const Color = ( {
 Color.propTypes = {
 	...FIELD_COMPONENT_BASE_PROPS,
 	value: PropTypes.string,
+	enableAlpha: PropTypes.bool,
 };
 
 export default Color;

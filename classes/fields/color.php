@@ -43,6 +43,11 @@ class PodsField_Color extends PodsField {
 				'dependency'        => true,
 				'developer_mode'    => true,
 			),
+			static::$type . '_alpha' => array(
+				'label'   => __( 'Enable alpha channel', 'pods' ),
+				'default' => 0,
+				'type'    => 'boolean',
+			),
 		);
 
 		return $options;

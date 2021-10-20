@@ -189,6 +189,7 @@ export const FIELD_PROP_TYPE = {
 
 	// Color fields
 	color_repeatable: BOOLEAN_ALL_TYPES,
+	color_alpha: BOOLEAN_ALL_TYPES,
 
 	// Currency fields
 	currency_decimal_handling: PropTypes.string,

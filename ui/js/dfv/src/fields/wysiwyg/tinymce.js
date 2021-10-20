@@ -12,6 +12,7 @@ const TinyMCE = ( {
 	setValue,
 	editorHeight,
 	mediaButtons,
+	defaultEditor,
 	onBlur,
 } ) => {
 	const fieldId = `pods-form-ui-${ name }`;
@@ -130,7 +131,7 @@ const TinyMCE = ( {
 			);
 			wp.oldEditor.remove( fieldId );
 		};
-	}, [ mediaButtons ] );
+	}, [ mediaButtons, editorHeight, defaultEditor ] );
 
 	return (
 		<div

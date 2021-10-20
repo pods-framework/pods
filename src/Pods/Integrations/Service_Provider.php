@@ -27,6 +27,7 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 		$this->integrations = [
 			'polylang' => Polylang::class,
 			'wpml'     => WPML::class,
+			'enfold'   => Enfold::class,
 		];
 
 		foreach ( $this->integrations as $integration ) {

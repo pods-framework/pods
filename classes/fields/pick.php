@@ -215,7 +215,7 @@ class PodsField_Pick extends PodsField {
 				'wildcard-on' => array(
 					static::$type . '_object' => array(
 						'^post_type-(?!(custom_css|customize_changeset)).*$',
-						'^taxonomy-.*$',
+						//'^taxonomy-.*$', @todo We need to finish adding support for add new on term form.
 						'^user$',
 						'^pod-.*$'
 					),
@@ -1101,6 +1101,7 @@ class PodsField_Pick extends PodsField {
 			$config[ $args->type . '_show_edit_link' ] = false;
 		}
 
+		$config[ $args->type . '_taggable' ]  = filter_var( pods_v( $args->type . '_taggable', $config ), FILTER_VALIDATE_BOOLEAN );
 		$config[ $args->type . '_allow_add_new' ]  = filter_var( pods_v( $args->type . '_allow_add_new', $config ), FILTER_VALIDATE_BOOLEAN );
 		$config[ $args->type . '_show_edit_link' ] = filter_var( pods_v( $args->type . '_show_edit_link', $config ), FILTER_VALIDATE_BOOLEAN );
 
@@ -1422,7 +1423,7 @@ class PodsField_Pick extends PodsField {
 			case 'pod':
 				if ( ! empty( $args->options['pick_val'] ) ) {
 
-					$icon = 'dashicons-pods';
+					$icon = pods_svg_icon( 'pods' );
 
 					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {
 						$file_name  = 'admin.php';
@@ -1449,9 +1450,9 @@ class PodsField_Pick extends PodsField {
 
 		// Parse icon type
 		if ( 'none' === $icon || 'div' === $icon ) {
-			$icon         = '';
+			$icon = '';
 		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
-			$icon         = sanitize_html_class( $icon );
+			$icon = sanitize_html_class( $icon );
 		}
 
 		// #5740 Check for WP_Error object.
@@ -3583,9 +3584,60 @@ class PodsField_Pick extends PodsField {
 			return;
 		}
 
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+
+			if ( 'edit-tags' === $screen->base ) {
+				// @todo Need more effort on the solution for add new handling.
+				//add_action( 'admin_footer', [ $this, 'admin_modal_bail_term_action_add_new' ], 20 );
+			}
+		}
+
 		add_action( 'created_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
 		add_action( 'edited_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
 
+	}
+
+	/**
+	 * Hook into term creation process to bail after success.
+	 *
+	 * @todo Try and catch the added tr node on the table tbody.
+	 */
+	public function admin_modal_bail_term_action_add_new() {
+		?>
+			<script type="text/javascript">
+				jQuery( function ( $ ) {
+					/** @var {jQuery.Event} e */
+					$( '.tags' ).on( 'DOMSubtreeModified', function(e) {
+						console.log( e );
+
+						if ( !== e.target.is( 'tbody#the-list' ) ) {
+							return;
+						}
+
+						const $theTermRow = $( e.target.innerHTML() );
+						const titleRow = $theTermRow.find( '.column-name .row-title' );
+						const actionView = $theTermRow.find( '.row-actions span.view a' );
+
+						const termData = {
+							id       : $theTermRow.find( '.check-column input' ).val(),
+							icon     : '',
+							name     : titleRow.text(),
+							edit_link: titleRow.prop( 'href' ),
+							link     : actionView[0] ? actionView.prop( 'href' ) : '',
+							selected : true,
+						};
+
+						console.log( termData );
+
+						window.parent.postMessage( {
+							type : 'PODS_MESSAGE',
+							data : termData,
+						}, window.location.origin );
+					} );
+				} );
+			</script>
+		<?php
 	}
 
 	/**

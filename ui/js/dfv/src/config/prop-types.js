@@ -50,7 +50,7 @@ export const HTML_ATTR = PropTypes.shape( {
 
 export const FIELD_PROP_TYPE = {
 	// Used in multiple fields
-	admin_only: BOOLEAN_STRINGS,
+	admin_only: BOOLEAN_ALL_TYPES,
 	attributes: OBJECT_OR_ARRAY,
 	class: PropTypes.string,
 	data: PropTypes.any,
@@ -96,7 +96,7 @@ export const FIELD_PROP_TYPE = {
 	] ),
 	help_param: PropTypes.string,
 	help_param_default: PropTypes.string,
-	hidden: BOOLEAN_STRINGS,
+	hidden: BOOLEAN_ALL_TYPES,
 	htmlAttr: HTML_ATTR,
 	fieldEmbed: PropTypes.bool,
 	id: NUMBER_OR_NUMBER_AS_STRING.isRequired,
@@ -122,10 +122,10 @@ export const FIELD_PROP_TYPE = {
 	read_only: BOOLEAN_ALL_TYPES,
 	rest_pick_response: PropTypes.string,
 	rest_pick_depth: PropTypes.string,
-	rest_read: BOOLEAN_STRINGS,
-	rest_write: BOOLEAN_STRINGS,
-	restrict_capability: BOOLEAN_STRINGS,
-	restrict_role: BOOLEAN_STRINGS,
+	rest_read: BOOLEAN_ALL_TYPES,
+	rest_write: BOOLEAN_ALL_TYPES,
+	restrict_capability: BOOLEAN_ALL_TYPES,
+	restrict_role: BOOLEAN_ALL_TYPES,
 	required: BOOLEAN_ALL_TYPES,
 	roles_allowed: PropTypes.oneOfType( [
 		PropTypes.string,
@@ -216,11 +216,11 @@ export const FIELD_PROP_TYPE = {
 	date_year_range_custom: PropTypes.string,
 
 	// Date/Time fields
-	datetime_allow_empty: BOOLEAN_STRINGS,
+	datetime_allow_empty: BOOLEAN_ALL_TYPES,
 	datetime_format: PropTypes.string,
 	datetime_format_custom: PropTypes.string,
 	datetime_format_custom_js: PropTypes.string,
-	datetime_html5: BOOLEAN_STRINGS,
+	datetime_html5: BOOLEAN_ALL_TYPES,
 	datetime_repeatable: BOOLEAN_ALL_TYPES,
 	datetime_time_format: PropTypes.string,
 	datetime_time_format_24: PropTypes.string,
@@ -424,7 +424,7 @@ export const FIELD_PROP_TYPE = {
 	pick_table: PropTypes.string,
 	pick_table_id: PropTypes.string,
 	pick_table_index: PropTypes.string,
-	pick_taggable: NUMBER_OR_NUMBER_AS_STRING,
+	pick_taggable: BOOLEAN_ALL_TYPES,
 	pick_user_role: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.arrayOf( PropTypes.string ),
@@ -451,15 +451,15 @@ export const FIELD_PROP_TYPE = {
 	optgroup: PropTypes.any,
 
 	// Text field
-	text_allow_html: BOOLEAN_STRINGS,
-	text_allow_shortcode: BOOLEAN_STRINGS,
+	text_allow_html: BOOLEAN_ALL_TYPES,
+	text_allow_shortcode: BOOLEAN_ALL_TYPES,
 	text_allowed_html_tags: PropTypes.string,
 	text_max_length: NUMBER_OR_NUMBER_AS_STRING,
 	text_placeholder: PropTypes.string,
-	text_repeatable: BOOLEAN_STRINGS,
+	text_repeatable: BOOLEAN_ALL_TYPES,
 
 	// Time	field
-	time_allow_empty: BOOLEAN_STRINGS,
+	time_allow_empty: BOOLEAN_ALL_TYPES,
 	time_format: PropTypes.string,
 	time_format_24: PropTypes.string,
 	time_format_custom: PropTypes.string,
@@ -484,7 +484,8 @@ export const FIELD_PROP_TYPE = {
 	wysiwyg_convert_chars: PropTypes.string,
 	wysiwyg_editor: PropTypes.string,
 	wysiwyg_editor_height: NUMBER_OR_NUMBER_AS_STRING,
-	wysiwyg_media_buttons: PropTypes.string,
+	wysiwyg_media_buttons: BOOLEAN_ALL_TYPES,
+	wysiwyg_default_editor: PropTypes.string,
 	wysiwyg_oembed: PropTypes.string,
 	wysiwyg_repeatable: BOOLEAN_ALL_TYPES,
 	wysiwyg_wpautop: PropTypes.string,

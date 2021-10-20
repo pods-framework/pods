@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 
 import { PICK_OPTIONS } from 'dfv/src/config/prop-types';
 
+import './checkbox-select.scss';
+
 const CheckboxSelect = ( {
 	htmlAttributes,
 	name,

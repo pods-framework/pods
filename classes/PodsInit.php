@@ -1142,7 +1142,7 @@ class PodsInit {
 			'has_archive'     => false,
 			'hierarchical'    => false,
 			'supports'        => array( 'title', 'author' ),
-			'menu_icon'       => 'dashicons-pods',
+			'menu_icon'       => pods_svg_icon( 'pods' ),
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -1160,7 +1160,7 @@ class PodsInit {
 			'has_archive'     => false,
 			'hierarchical'    => true,
 			'supports'        => array( 'title', 'editor', 'author' ),
-			'menu_icon'       => 'dashicons-pods',
+			'menu_icon'       => pods_svg_icon( 'pods' ),
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -1178,7 +1178,7 @@ class PodsInit {
 			'has_archive'     => false,
 			'hierarchical'    => true,
 			'supports'        => array( 'title', 'editor', 'author' ),
-			'menu_icon'       => 'dashicons-pods',
+			'menu_icon'       => pods_svg_icon( 'pods' ),
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );

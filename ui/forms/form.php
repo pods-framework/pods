@@ -8,6 +8,8 @@
  * @var null|string $label
  */
 
+use Pods\Static_Cache;
+
 wp_enqueue_script( 'pods' );
 wp_enqueue_style( 'pods-form' );
 
@@ -107,8 +109,8 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 
 if ( null !== $submit_result ) {
 	$messages = [
-		'success'            => __( 'Success!', 'pods' ),
-		'error'              => __( 'Error:', 'pods' ),
+		'success'            => __( 'Success', 'pods' ),
+		'error'              => __( 'Error', 'pods' ),
 		// translators: %s: The singular item label.
 		'view_item'          => __( 'View %s', 'pods' ),
 		// translators: %s: The singular item label.
@@ -125,16 +127,16 @@ if ( null !== $submit_result ) {
 		'error_duplicated'   => _x( '%s not duplicated', 'The error message shown after saving form', 'pods' ),
 	];
 
-	$success_message = sprintf( '<strong>%1$s</strong> %2$s.', $messages['success'], $messages['success_saved'] );
-	$error_message   = sprintf( '<strong>%1$s</strong> %2$s.', $messages['error'], $messages['error_saved'] );
+	$success_message = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['success'], $messages['success_saved'] );
+	$error_message   = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['error'], $messages['error_saved'] );
 
 	if ( ! $is_settings_pod ) {
 		if ( 'create' === pods_v( 'do', 'post', pods_v( 'do', 'get', 'save' ) ) ) {
-			$success_message = sprintf( '<strong>%1$s</strong> %2$s.', $messages['success'], $messages['success_created'] );
-			$error_message   = sprintf( '<strong>%1$s</strong> %2$s.', $messages['error'], $messages['error_created'] );
+			$success_message = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['success'], $messages['success_created'] );
+			$error_message   = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['error'], $messages['error_created'] );
 		} elseif ( 'duplicate' === pods_v( 'do', 'get', 'save' ) ) {
-			$success_message = sprintf( '<strong>%1$s</strong> %2$s.', $messages['success'], $messages['success_duplicated'] );
-			$error_message   = sprintf( '<strong>%1$s</strong> %2$s.', $messages['error'], $messages['error_duplicated'] );
+			$success_message = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['success'], $messages['success_duplicated'] );
+			$error_message   = sprintf( '<strong>%1$s:</strong> %2$s.', $messages['error'], $messages['error_duplicated'] );
 		}
 	}
 
@@ -171,9 +173,20 @@ if ( 0 < $pod->id() ) {
 		$do = 'save';
 	}
 }
+
+$static_cache = tribe( Static_Cache::class );
+
+$counter = (int) $static_cache->get( 'counter', 'pods-forms' );
+
+$counter ++;
+
+$static_cache->set( 'counter', $counter, 'pods-forms' );
 ?>
 
-<form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo esc_attr( $pod->pod ); ?> pods-submittable-ajax">
+<form action="" method="post"
+	class="pods-submittable pods-form pods-form-pod-<?php echo esc_attr( $pod->pod ); ?> pods-submittable-ajax"
+	id="pods-form-<?php echo esc_attr( $counter ); ?>"
+>
 	<div class="pods-submittable-fields">
 		<?php
 		echo PodsForm::field( 'action', 'pods_admin', 'hidden' );

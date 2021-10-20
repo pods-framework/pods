@@ -3,6 +3,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import AsyncSelect from 'react-select/async';
+import AsyncCreatableSelect from 'react-select/async-creatable';
 import PropTypes from 'prop-types';
 
 /**
@@ -157,7 +158,7 @@ const Pick = ( props ) => {
 			// pick_table,
 			// pick_table_id,
 			// pick_table_index,
-			// pick_taggable,
+			pick_taggable: taggable,
 			// pick_user_role,
 			// pick_val: pickValue,
 			// rest_pick_depth: pickDepth,
@@ -329,6 +330,81 @@ const Pick = ( props ) => {
 				label: item.name,
 				value: item.id,
 			} ) );
+
+			if ( taggable ) {
+				return (
+					<>
+						<AsyncCreatableSelect
+							controlShouldRenderValue={ ! isListSelect }
+							defaultOptions={ formattedOptions }
+							loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
+							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
+							// translators: %s is the field label.
+							placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+							isMulti={ isMulti }
+							onChange={ ( newOption ) => {
+								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
+								// in our array of dataOptions, and we should add it, so we can keep track of
+								// the label.
+								setModifiedFieldItemData( ( prevData ) => {
+									const prevDataValues = prevData.map( ( option ) => option.id );
+									const updatedData = [ ...prevData ];
+									const newOptions = isMulti ? newOption : [ newOption ];
+
+									newOptions.forEach( ( option ) => {
+										if ( prevDataValues.includes( option.value ) ) {
+											return;
+										}
+
+										updatedData.push( {
+											id: option.value,
+											name: option.label,
+										} );
+									} );
+
+									return updatedData;
+								} );
+
+								if ( isMulti ) {
+									setValueWithLimit( newOption.map(
+										( selection ) => selection.value )
+									);
+								} else {
+									setValueWithLimit( newOption.value );
+								}
+							} }
+							readOnly={ !! readOnly }
+						/>
+
+						{ isListSelect ? (
+							<ListSelectValues
+								fieldName={ name }
+								value={ formattedValue }
+								setValue={ setValueWithLimit }
+								fieldItemData={ modifiedFieldItemData }
+								setFieldItemData={ setModifiedFieldItemData }
+								isMulti={ isMulti }
+								limit={ parseInt( limit, 10 ) || 0 }
+								defaultIcon={ defaultIcon }
+								showIcon={ toBool( showIcon ) }
+								showViewLink={ toBool( showViewLink ) }
+								showEditLink={ toBool( showEditLink ) }
+								editIframeTitle={ editIframeTitle }
+								readOnly={ !! readOnly }
+							/>
+						) : null }
+
+						{ formattedValue.map( ( selectedValue, index ) => (
+							<input
+								name={ `${ name }[${ index }]` }
+								key={ `${ name }-${ selectedValue.value }` }
+								type="hidden"
+								value={ selectedValue.value }
+							/>
+						) ) }
+					</>
+				);
+			}
 
 			return (
 				<>

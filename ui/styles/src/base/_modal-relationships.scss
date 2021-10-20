@@ -12,8 +12,9 @@
 	#adminmenuwrap,
 	#preview-action,
 	#wpfooter,
-	body.edit-tags-php #col-right,
-	body.edit-tags-php .search-form {
+	&.edit-tags-php #col-right,
+	&.edit-tags-php #screen-options-link-wrap,
+	&.edit-tags-php .search-form {
 		display: none;
 	}
 

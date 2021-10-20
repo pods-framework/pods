@@ -176,16 +176,16 @@ if ( 0 < $pod->id() ) {
 
 $static_cache = tribe( Static_Cache::class );
 
-$counter = (int) $static_cache->get( 'counter', 'pods-forms' );
+$counter = (int) $static_cache->get( $pod->pod . '-counter', 'pods-forms' );
 
 $counter ++;
 
-$static_cache->set( 'counter', $counter, 'pods-forms' );
+$static_cache->set( $pod->pod . '-counter', $counter, 'pods-forms' );
 ?>
 
 <form action="" method="post"
 	class="pods-submittable pods-form pods-form-pod-<?php echo esc_attr( $pod->pod ); ?> pods-submittable-ajax"
-	id="pods-form-<?php echo esc_attr( $counter ); ?>"
+	id="pods-form-<?php echo esc_attr( $pod->pod . '-' . $counter ); ?>"
 >
 	<div class="pods-submittable-fields">
 		<?php

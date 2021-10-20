@@ -2285,64 +2285,50 @@ class Pods implements Iterator {
 
 					$order_field = $this->fields( $k );
 
-					if ( $order_field && in_array( $order_field['type'], $tableless_field_types, true ) ) {
-						$order_object_type = $order_field->get_related_object_type();
-						$order_object_name = $order_field->get_related_object_name();
+					if ( $order_field ) {
+						if ( in_array( $order_field['type'], $tableless_field_types, true ) ) {
+							$order_object_type = $order_field->get_related_object_type();
+							$order_object_name = $order_field->get_related_object_name();
 
-						if ( in_array( $order_object_type, $simple_tableless_objects, true ) ) {
-							if ( 'table' === $this->pod_data['storage'] ) {
-								if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ), true ) ) {
-									$key = "`d`.`{$k}`";
-								} else {
-									$key = "`t`.`{$k}`";
-								}
-							} else {
-								$key = "`{$k}`.`meta_value`";
-							}
-						} else {
-							$table = $order_field->get_table_info();
-
-							if ( ! empty( $table ) ) {
-								$key = "`{$k}`.`" . $table['field_index'] . '`';
-							}
-						}//end if
-					}//end if
-
-					if ( empty( $key ) ) {
-						if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ), true ) ) {
-							if ( isset( $this->pod_data['object_fields'][ $k ] ) ) {
-								$key = "`t`.`{$k}`";
-							} elseif ( $order_field ) {
+							if ( in_array( $order_object_type, $simple_tableless_objects, true ) ) {
 								if ( 'table' === $this->pod_data['storage'] ) {
-									$key = "`d`.`{$k}`";
+									if ( ! in_array( $this->pod_data['type'], [ 'pod', 'table' ], true ) ) {
+										$key = "`d`.`{$k}`";
+									} else {
+										$key = "`t`.`{$k}`";
+									}
 								} else {
 									$key = "`{$k}`.`meta_value`";
 								}
 							} else {
-								$object_fields = (array) $this->pod_data['object_fields'];
+								$table = $order_field->get_table_info();
 
-								foreach ( $object_fields as $object_field => $object_field_opt ) {
-									if ( $object_field === $k || in_array( $k, $object_field_opt['alias'], true ) ) {
-										$key = "`t`.`{$object_field}`";
-									}
+								if ( ! empty( $table ) ) {
+									$key = "`{$k}`.`" . $table['field_index'] . '`';
 								}
 							}
-						} elseif ( $order_field ) {
-							if ( 'table' === $this->pod_data['storage'] ) {
-								$key = "`t`.`{$k}`";
-							} else {
+						} else {
+							$storage_type = $this->pod_data->get_storage_type();
+
+							if ( $order_field instanceof Object_Field || 'table' === $storage_type ) {
+								if ( ! in_array( $this->pod_data['type'], [ 'pod', 'table' ], true ) ) {
+									$key = "`d`.`{$k}`";
+								} else {
+									$key = "`t`.`{$k}`";
+								}
+							} elseif ( 'meta' === $storage_type ) {
 								$key = "`{$k}`.`meta_value`";
 							}
-						}//end if
-
-						if ( empty( $key ) ) {
-							$key = $k;
-
-							if ( false === strpos( $key, ' ' ) && false === strpos( $key, '`' ) ) {
-								$key = '`' . str_replace( '.', '`.`', $key ) . '`';
-							}
 						}
-					}//end if
+					}
+
+					if ( empty( $key ) ) {
+						$key = $k;
+
+						if ( false === strpos( $key, ' ' ) && false === strpos( $key, '`' ) ) {
+							$key = '`' . str_replace( '.', '`.`', $key ) . '`';
+						}
+					}
 
 					$orderby = $key;
 
@@ -2373,7 +2359,7 @@ class Pods implements Iterator {
 
 					$key = $k;
 
-					$order_field = $this->fields( $k );
+					$order_field = $this->fields( $k, null, true );
 
 					if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ), true ) ) {
 						if ( isset( $this->pod_data['object_fields'][ $k ] ) ) {

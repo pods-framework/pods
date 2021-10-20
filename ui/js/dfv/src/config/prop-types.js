@@ -424,7 +424,7 @@ export const FIELD_PROP_TYPE = {
 	pick_table: PropTypes.string,
 	pick_table_id: PropTypes.string,
 	pick_table_index: PropTypes.string,
-	pick_taggable: NUMBER_OR_NUMBER_AS_STRING,
+	pick_taggable: BOOLEAN_ALL_TYPES,
 	pick_user_role: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.arrayOf( PropTypes.string ),

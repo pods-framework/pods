@@ -17,6 +17,17 @@ class Pod extends Whatsit {
 	protected static $type = 'pod';
 
 	/**
+	 * Get the storage used for the Pod data (meta, table, etc).
+	 *
+	 * @since 2.8.1
+	 *
+	 * @return string The storage used for the Pod data (meta, table, etc).
+	 */
+	public function get_storage() {
+		return $this->get_arg( 'storage' );
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function get_args() {
@@ -46,7 +57,7 @@ class Pod extends Whatsit {
 
 		foreach ( $object_fields as $object_field ) {
 			$object_field['object_type']  = 'object-field';
-			$object_field['storage_type'] = 'collection';
+			$object_field['object_storage_type'] = 'collection';
 			$object_field['parent']       = $this->get_id();
 
 			$object = $object_collection->get_object( $object_field );

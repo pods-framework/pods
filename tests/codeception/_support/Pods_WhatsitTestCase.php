@@ -127,7 +127,7 @@ class Pods_WhatsitTestCase extends Pods_UnitTestCase {
 	public function setup_pods_object( array $args = array(), $type = '' ) {
 		$defaults = array(
 			'object_type'  => 'pod',
-			'storage_type' => 'post_type',
+			'object_storage_type' => 'post_type',
 			'id'           => '',
 			'name'         => 'test',
 			'label'        => 'Test',

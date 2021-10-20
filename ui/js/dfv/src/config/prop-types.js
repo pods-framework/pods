@@ -135,7 +135,7 @@ export const FIELD_PROP_TYPE = {
 	slug_placeholder: PropTypes.string,
 	slug_separator: PropTypes.string,
 	slug_fallback: PropTypes.string,
-	storage_type: PropTypes.string,
+	object_storage_type: PropTypes.string,
 	type: PropTypes.string.isRequired,
 	unique: PropTypes.string,
 	weight: PropTypes.number,
@@ -502,7 +502,7 @@ export const GROUP_PROP_TYPE_SHAPE = PropTypes.shape( {
 	name: PropTypes.string.isRequired,
 	object_type: PropTypes.string,
 	parent: NUMBER_OR_NUMBER_AS_STRING.isRequired,
-	storage_type: PropTypes.string,
+	object_storage_type: PropTypes.string,
 	weight: PropTypes.number,
 	_locale: PropTypes.string,
 } );

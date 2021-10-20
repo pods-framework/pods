@@ -114,7 +114,7 @@ class Group extends Whatsit {
 			'pod_description'    => 'get_parent_description',
 			'pod_object'         => 'get_parent_object',
 			'pod_object_type'    => 'get_parent_object_type',
-			'pod_storage_type'   => 'get_parent_storage_type',
+			'pod_object_storage_type'   => 'get_parent_object_storage_type',
 			'pod_type'           => 'get_parent_type',
 		];
 

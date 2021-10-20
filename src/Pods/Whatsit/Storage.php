@@ -39,11 +39,11 @@ abstract class Storage {
 	}
 
 	/**
-	 * Get storage type.
+	 * Get the object storage type.
 	 *
-	 * @return string
+	 * @return string The object storage type.
 	 */
-	public function get_storage_type() {
+	public function get_object_storage_type() {
 		return static::$type;
 	}
 

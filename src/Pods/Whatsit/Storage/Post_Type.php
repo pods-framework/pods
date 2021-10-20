@@ -569,7 +569,7 @@ class Post_Type extends Collection {
 
 		$excluded = [
 			'object_type',
-			'storage_type',
+			'object_storage_type',
 			'id',
 			'name',
 			'label',
@@ -672,7 +672,7 @@ class Post_Type extends Collection {
 
 		$this->get_args( $object );
 
-		$object->set_arg( 'storage_type', $this->get_storage_type() );
+		$object->set_arg( 'object_storage_type', $this->get_object_storage_type() );
 
 		if ( $object->is_valid() ) {
 			$object_collection->register_object( $object );

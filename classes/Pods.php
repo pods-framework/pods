@@ -2308,7 +2308,7 @@ class Pods implements Iterator {
 								}
 							}
 						} else {
-							$storage_type = $this->pod_data->get_storage_type();
+							$storage_type = $this->pod_data->get_storage();
 
 							if ( $order_field instanceof Object_Field || 'table' === $storage_type ) {
 								if ( ! in_array( $this->pod_data['type'], [ 'pod', 'table' ], true ) ) {

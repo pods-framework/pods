@@ -527,7 +527,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 	public function provider_methods() {
 		return array(
 			array( 'object_type' ),
-			array( 'storage_type' ),
+			array( 'object_storage_type' ),
 			array( 'name' ),
 			array( 'id' ),
 			array( 'parent' ),
@@ -540,7 +540,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 	/**
 	 * @covers       Whatsit::get_object_type
-	 * @covers       Whatsit::get_storage_type
+	 * @covers       Whatsit::get_object_storage_type
 	 * @covers       Whatsit::get_name
 	 * @covers       Whatsit::get_id
 	 * @covers       Whatsit::get_parent
@@ -571,7 +571,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 	public function provider_parent_methods() {
 		return array(
 			array( 'object_type' ),
-			array( 'storage_type' ),
+			array( 'object_storage_type' ),
 			array( 'name' ),
 			array( 'id' ),
 			array( 'label' ),
@@ -582,7 +582,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 	/**
 	 * @covers       Whatsit::get_parent_object_type
-	 * @covers       Whatsit::get_parent_storage_type
+	 * @covers       Whatsit::get_parent_object_storage_type
 	 * @covers       Whatsit::get_parent_name
 	 * @covers       Whatsit::get_parent_id
 	 * @covers       Whatsit::get_parent_label
@@ -611,7 +611,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 	public function provider_group_methods() {
 		return array(
 			array( 'object_type' ),
-			array( 'storage_type' ),
+			array( 'object_storage_type' ),
 			array( 'name' ),
 			array( 'id' ),
 			array( 'label' ),
@@ -622,7 +622,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 	/**
 	 * @covers       Whatsit::get_group_object_type
-	 * @covers       Whatsit::get_group_storage_type
+	 * @covers       Whatsit::get_group_object_storage_type
 	 * @covers       Whatsit::get_group_name
 	 * @covers       Whatsit::get_group_id
 	 * @covers       Whatsit::get_group_label

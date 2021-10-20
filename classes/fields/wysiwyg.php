@@ -268,7 +268,7 @@ class PodsField_WYSIWYG extends PodsField {
 			$field_type = 'tinymce';
 
 			// Enforce boolean.
-			$options[ static::$type . '_media_buttons' ] = filter_var( pods_v( static::$type . '_editor', $options, true ), FILTER_VALIDATE_BOOLEAN );
+			$options[ static::$type . '_media_buttons' ] = filter_var( pods_v( static::$type . '_media_buttons', $options, true ), FILTER_VALIDATE_BOOLEAN );
 
 			wp_tinymce_inline_scripts();
 			wp_enqueue_editor();

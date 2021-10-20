@@ -20,33 +20,35 @@ const Color = ( {
 
 	return (
 		<div>
-			<input
-				name={ name }
-				type="hidden"
-				value={ value || '' }
-			/>
+			<div className="pods-color-buttons">
+				<input
+					name={ name }
+					type="hidden"
+					value={ value || '' }
+				/>
 
-			<button
-				onClick={ ( event ) => {
-					event.preventDefault();
-					setIsOpen( ( prevValue ) => ! prevValue );
-				} }
-				className="button pods-color-select-button"
-			>
-				<ColorIndicator colorValue={ value || '' } />
+				<button
+					onClick={ ( event ) => {
+						event.preventDefault();
+						setIsOpen( ( prevValue ) => ! prevValue );
+					} }
+					className="button pods-color-select-button"
+				>
+					<ColorIndicator colorValue={ value || '' } />
 
-				{ __( 'Select Color', 'pods' ) }
-			</button>
+					{ __( 'Select Color', 'pods' ) }
+				</button>
 
-			<button
-				onClick={ ( event ) => {
-					event.preventDefault();
-					setValue( '' );
-				} }
-				className="button"
-			>
-				{ __( 'Clear', 'pods' ) }
-			</button>
+				<button
+					onClick={ ( event ) => {
+						event.preventDefault();
+						setValue( '' );
+					} }
+					className="button"
+				>
+					{ __( 'Clear', 'pods' ) }
+				</button>
+			</div>
 
 			{ isOpen && (
 				<ColorPicker

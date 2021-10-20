@@ -3583,9 +3583,60 @@ class PodsField_Pick extends PodsField {
 			return;
 		}
 
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+
+			if ( 'edit-tags' === $screen->base ) {
+				// @todo Need more effort on the solution for add new handling.
+				//add_action( 'admin_footer', [ $this, 'admin_modal_bail_term_action_add_new' ], 20 );
+			}
+		}
+
 		add_action( 'created_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
 		add_action( 'edited_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
 
+	}
+
+	/**
+	 * Hook into term creation process to bail after success.
+	 *
+	 * @todo Try and catch the added tr node on the table tbody.
+	 */
+	public function admin_modal_bail_term_action_add_new() {
+		?>
+			<script type="text/javascript">
+				jQuery( function ( $ ) {
+					/** @var {jQuery.Event} e */
+					$( '.tags' ).on( 'DOMSubtreeModified', function(e) {
+						console.log( e );
+
+						if ( !== e.target.is( 'tbody#the-list' ) ) {
+							return;
+						}
+
+						const $theTermRow = $( e.target.innerHTML() );
+						const titleRow = $theTermRow.find( '.column-name .row-title' );
+						const actionView = $theTermRow.find( '.row-actions span.view a' );
+
+						const termData = {
+							id       : $theTermRow.find( '.check-column input' ).val(),
+							icon     : '',
+							name     : titleRow.text(),
+							edit_link: titleRow.prop( 'href' ),
+							link     : actionView[0] ? actionView.prop( 'href' ) : '',
+							selected : true,
+						};
+
+						console.log( termData );
+
+						window.parent.postMessage( {
+							type : 'PODS_MESSAGE',
+							data : termData,
+						}, window.location.origin );
+					} );
+				} );
+			</script>
+		<?php
 	}
 
 	/**

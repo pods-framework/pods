@@ -86,12 +86,6 @@ const TinyMCE = ( {
 				}
 			} );
 
-			editor.on( 'init', () => {
-				if ( defaultEditor ) {
-					window.switchEditors.go( fieldId, defaultEditor );
-				}
-			} );
-
 			didMount.current = true;
 		}
 

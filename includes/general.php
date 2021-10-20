@@ -983,7 +983,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'pods_page'        => null,
 		'helper'           => null,
 		'form'             => null,
-		'form_output_type' => null,
+		'form_output_type' => 'div',
 		'fields'           => null,
 		'label'            => null,
 		'thank_you'        => null,
@@ -1283,7 +1283,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			'fields'      => $tags['fields'],
 			'label'       => $tags['label'],
 			'thank_you'   => $tags['thank_you'],
-			'output_type' => $tags['form_output_type'],
+			'output_type' => ! empty( $tags['form_output_type'] ) ? $tags['form_output_type'] : 'div',
 		];
 
 		$return = $pod->form( $form_params );

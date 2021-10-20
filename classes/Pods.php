@@ -3794,6 +3794,10 @@ class Pods implements Iterator {
 		$fields_only = $params['fields_only'];
 		$output_type = $params['output_type'];
 
+		if ( empty( $output_type ) ) {
+			$output_type = 'div';
+		}
+
 		PodsForm::$form_counter ++;
 
 		ob_start();

@@ -12,6 +12,8 @@ const TinyMCE = ( {
 	setValue,
 	editorHeight,
 	mediaButtons,
+	enableTinyMCE,
+	enableQuicktags,
 	onBlur,
 } ) => {
 	const fieldId = `pods-form-ui-${ name }`;
@@ -99,6 +101,11 @@ const TinyMCE = ( {
 				settings.toolbar4 = settings.toolbar4.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
 			}
 
+			if ( ! enableTinyMCE ) {
+				window.quicktags( { ...wp.oldEditor.getDefaultSettings().quicktags, id: fieldId } );
+				return;
+			}
+
 			window.wp.oldEditor.initialize( fieldId, {
 				tinymce: {
 					...settings,
@@ -107,7 +114,7 @@ const TinyMCE = ( {
 					height: editorHeight,
 				},
 				mediaButtons,
-				quicktags: true,
+				quicktags: enableQuicktags,
 			} );
 		}
 
@@ -154,6 +161,8 @@ TinyMCE.propTypes = {
 	setValue: PropTypes.func.isRequired,
 	editorHeight: PropTypes.number,
 	mediaButtons: PropTypes.bool,
+	enableTinyMCE: PropTypes.bool,
+	enableQuicktags: PropTypes.bool,
 	onBlur: PropTypes.func.isRequired,
 };
 

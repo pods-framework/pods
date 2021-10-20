@@ -41,6 +41,8 @@ const Wysiwyg = ( props ) => {
 		wysiwyg_editor: editor = 'tinymce',
 		wysiwyg_editor_height: editorHeight = 400,
 		wysiwyg_media_buttons: mediaButtons,
+		wysiwyg_tinymce: enableTinyMCE,
+		wysiwyg_quicktags: enableQuicktags,
 	} = fieldConfig;
 
 	if ( 'quill' === editor || 'cleditor' === editor ) {
@@ -73,6 +75,8 @@ const Wysiwyg = ( props ) => {
 			setValue={ setValue }
 			editorHeight={ parseInt( editorHeight, 10 ) }
 			mediaButtons={ toBool( mediaButtons ) }
+			enableQuicktags={ toBool( enableQuicktags ) }
+			enableTinyMCE={ toBool( enableTinyMCE ) }
 			onBlur={ () => setHasBlurred() }
 		/>
 	);

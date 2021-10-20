@@ -64,12 +64,22 @@ class PodsField_WYSIWYG extends PodsField {
 				'dependency' => true,
 			),
 			'editor_options'                     => array(
-				'label'      => __( 'Editor Options', 'pods' ),
-				'type'  => 'boolean_group',
-				'depends-on' => array( static::$type . '_editor' => 'tinymce' ),
-				'boolean_group'      => array(
+				'label'         => __( 'Editor Options', 'pods' ),
+				'type'          => 'boolean_group',
+				'depends-on'    => array( static::$type . '_editor' => 'tinymce' ),
+				'boolean_group' => array(
 					static::$type . '_media_buttons' => array(
 						'label'   => __( 'Enable Media Buttons', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+					),
+					static::$type . '_tinymce' => array(
+						'label'   => __( 'Enable TinyMCE (Visual)', 'pods' ),
+						'default' => 1,
+						'type'    => 'boolean',
+					),
+					static::$type . '_quicktags' => array(
+						'label'   => __( 'Enable Quicktags (Text)', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 					),
@@ -257,8 +267,10 @@ class PodsField_WYSIWYG extends PodsField {
 		} elseif ( 'tinymce' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'tinymce';
 
-			// Enforce boolean.
-			$options[ static::$type . '_media_buttons' ] = filter_var( pods_v( static::$type . '_editor', $options, true ), FILTER_VALIDATE_BOOLEAN );
+			// Enforce booleans.
+			$options[ static::$type . '_media_buttons' ] = filter_var( pods_v( static::$type . '_media_buttons', $options, true ), FILTER_VALIDATE_BOOLEAN );
+			$options[ static::$type . '_tinymce' ] = filter_var( pods_v( static::$type . '_tinymce', $options, true ), FILTER_VALIDATE_BOOLEAN );
+			$options[ static::$type . '_quicktags' ] = filter_var( pods_v( static::$type . '_quicktags', $options, true ), FILTER_VALIDATE_BOOLEAN );
 
 			wp_tinymce_inline_scripts();
 			wp_enqueue_editor();

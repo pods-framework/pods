@@ -127,7 +127,7 @@ class Field extends Whatsit {
 			$related_type = 'media';
 		}
 
-		if ( empty( $related_type ) || in_array( $related_type, $simple_tableless_objects, true ) ) {
+		if ( empty( $related_type ) ) {
 			return null;
 		}
 
@@ -146,7 +146,9 @@ class Field extends Whatsit {
 
 		$related_type = $this->get_related_object_type();
 
-		if ( null === $related_type ) {
+		$simple_tableless_objects = PodsForm::simple_tableless_objects();
+
+		if ( null === $related_type || in_array( $related_type, $simple_tableless_objects, true ) ) {
 			return null;
 		}
 

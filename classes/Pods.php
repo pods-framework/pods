@@ -1002,10 +1002,11 @@ class Pods implements Iterator {
 						}
 					}//end if
 
-					$last_type     = '';
-					$last_object   = '';
-					$last_pick_val = '';
-					$last_options  = array();
+					$last_type           = '';
+					$last_object         = '';
+					$last_pick_val       = '';
+					$last_options        = [];
+					$last_object_options = [];
 
 					$single_multi = pods_v( $field_type . '_format_type', $field_data, 'single' );
 
@@ -1063,10 +1064,11 @@ class Pods implements Iterator {
 								}
 							}
 
-							$last_type     = $type;
-							$last_object   = $pick_object;
-							$last_pick_val = $pick_val;
-							$last_options  = $current_field;
+							$last_type           = $type;
+							$last_object         = $pick_object;
+							$last_pick_val       = $pick_val;
+							$last_options        = $current_field;
+							$last_object_options = $current_field;
 
 							// Temporary hack until there's some better handling here.
 							$last_limit *= count( $ids );
@@ -1130,7 +1132,11 @@ class Pods implements Iterator {
 							$table = array();
 
 							if ( $last_options ) {
-								$table = $last_options->get_table_info();
+								if ( $simple ) {
+									$table = $last_object_options->get_table_info();
+								} else {
+									$table = $last_options->get_table_info();
+								}
 							}
 
 							$join  = array();
@@ -1354,7 +1360,6 @@ class Pods implements Iterator {
 								if ( in_array( $table['type'], array( 'post_type', 'attachment', 'media' ), true ) ) {
 									$object_type = 'post';
 								}
-
 
 								$object_no_conflict = in_array( $object_type, array( 'post', 'taxonomy', 'user', 'comment', 'settings' ), true );
 

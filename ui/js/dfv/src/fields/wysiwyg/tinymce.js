@@ -101,6 +101,10 @@ const TinyMCE = ( {
 				settings.toolbar4 = settings.toolbar4.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
 			}
 
+			if ( ! enableTinyMCE && ! enableQuicktags ) {
+				return;
+			}
+
 			if ( ! enableTinyMCE ) {
 				window.quicktags( { ...wp.oldEditor.getDefaultSettings().quicktags, id: fieldId } );
 				return;

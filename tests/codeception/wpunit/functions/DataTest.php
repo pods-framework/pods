@@ -566,4 +566,29 @@ class DataTest extends Pods_UnitTestCase {
 		$this->assertEquals( $result, pods_list_filter( $obj, $args, 'NOT' ) );
 	}
 
+	public function test_pods_clean_linebreaks() {
+		$input = "
+			My text here.
+\t
+			My second text here.
+\t
+
+			My extended text here.
+
+\t
+
+		";
+
+		$expected = "
+			My text here.
+
+			My second text here.
+
+			My extended text here.
+
+		";
+
+		$this->assertEquals( $expected, pods_clean_linebreaks( $input ) );
+	}
+
 }

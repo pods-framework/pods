@@ -53,12 +53,12 @@ class StorageTest extends Pods_UnitTestCase {
 	}
 
 	/**
-	 * @covers Storage::get_storage_type
+	 * @covers Storage::get_object_storage_type
 	 */
-	public function test_get_storage_type() {
-		$this->assertTrue( method_exists( $this->pods_object_storage, 'get_storage_type' ), 'Method get_storage_type does not exist' );
+	public function test_get_object_storage_type() {
+		$this->assertTrue( method_exists( $this->pods_object_storage, 'get_object_storage_type' ), 'Method get_object_storage_type does not exist' );
 
-		$this->assertEquals( '', $this->pods_object_storage->get_storage_type() );
+		$this->assertEquals( '', $this->pods_object_storage->get_object_storage_type() );
 	}
 
 	/**

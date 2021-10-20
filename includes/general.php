@@ -10,6 +10,7 @@ use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Store;
 use Pods\Permissions;
+use Pods\Static_Cache;
 
 /**
  * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
@@ -982,7 +983,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'pods_page'        => null,
 		'helper'           => null,
 		'form'             => null,
-		'form_output_type' => null,
+		'form_output_type' => 'div',
 		'fields'           => null,
 		'label'            => null,
 		'thank_you'        => null,
@@ -1282,7 +1283,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			'fields'      => $tags['fields'],
 			'label'       => $tags['label'],
 			'thank_you'   => $tags['thank_you'],
-			'output_type' => $tags['form_output_type'],
+			'output_type' => ! empty( $tags['form_output_type'] ) ? $tags['form_output_type'] : 'div',
 		];
 
 		$return = $pod->form( $form_params );
@@ -2300,7 +2301,7 @@ function pods_register_related_object( $name, $label, $options = null ) {
  */
 function pods_register_object( array $object, $type ) {
 	$object['object_type']  = $type;
-	$object['storage_type'] = 'collection';
+	$object['object_storage_type'] = 'collection';
 
 	$object_collection = Store::get_instance();
 	$object_collection->register_object( $object );
@@ -2370,7 +2371,7 @@ function pods_register_block_type( array $block, array $fields = [] ) {
 	}
 
 	$block['object_type']  = 'block';
-	$block['storage_type'] = 'collection';
+	$block['object_storage_type'] = 'collection';
 	$block['name']         = pods_v( 'name', $block, pods_v( 'slug', $block ) );
 	$block['label']        = pods_v( 'label', $block, pods_v( 'title', $block ) );
 	$block['category']     = pods_v( 'category', $block, pods_v( 'collection', $block ) );
@@ -2380,7 +2381,7 @@ function pods_register_block_type( array $block, array $fields = [] ) {
 
 	foreach ( $fields as $field ) {
 		$field['object_type']  = 'block-field';
-		$field['storage_type'] = 'collection';
+		$field['object_storage_type'] = 'collection';
 		$field['parent']       = 'block/' . $block['name'];
 		$field['name']         = pods_v( 'name', $field, pods_v( 'slug', $field ) );
 		$field['label']        = pods_v( 'label', $field, pods_v( 'title', $field ) );
@@ -2408,7 +2409,7 @@ function pods_register_block_collection( array $collection ) {
 	}
 
 	$collection['object_type']  = 'block-collection';
-	$collection['storage_type'] = 'collection';
+	$collection['object_storage_type'] = 'collection';
 	$collection['label']        = pods_v( 'label', $collection, pods_v( 'title', $collection ) );
 
 	$object_collection = Store::get_instance();
@@ -3463,4 +3464,72 @@ function is_pods_alternative_cache_activated_test() {
 	];
 
 	return $result;
+}
+
+/**
+ * Get the SVG icon data (base64 or svg itself) for the icon or the dashicon default class.
+ *
+ * @since 2.8.1
+ *
+ * @param string $icon_path The icon name or the SVG full file path to use.
+ * @param string $default   The dashicons helper class (dashicons-database) to use if SVG not found.
+ * @param string $mode      How to return the SVG (base64 or svg).
+ *
+ * @return string The SVG icon data (base64 or svg itself) for the icon or the dashicon default class.
+ */
+function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'base64' ) {
+	if ( 'pods' === $icon_path ) {
+		$icon_path = PODS_DIR . '/ui/images/icon-menu.svg';
+	}
+
+	$static_cache = tribe( Static_Cache::class );
+
+	$icon = $static_cache->get( $icon_path, __FUNCTION__ . '/' . $mode );
+
+	// If the cached icon did not exist, use default.
+	if ( '404-not-exists' === $icon ) {
+		return $default;
+	}
+
+	// If the cached icon was found and is not empty, return it.
+	if ( is_string( $icon ) && '' !== $icon ) {
+		return $icon;
+	}
+
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+
+	/**
+	 * @var $wp_filesystem WP_Filesystem_Base
+	 */
+	global $wp_filesystem;
+
+	WP_Filesystem();
+
+	$icon_exists = $wp_filesystem->exists( $icon_path );
+
+	if ( ! $icon_exists ) {
+		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
+
+		return $default;
+	}
+
+	$svg_data = $wp_filesystem->get_contents( $icon_path );
+
+	if ( ! $svg_data ) {
+		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
+
+		return $default;
+	}
+
+	$static_cache->set( $icon_path, $icon, __FUNCTION__ . '/' . $mode );
+
+	// If mode is SVG data, return that.
+	if ( 'svg' === $mode ) {
+		return $svg_data;
+	}
+
+	// Default mode is base64.
+	$icon = 'data:image/svg+xml;base64,' . base64_encode( $svg_data );
+
+	return $icon;
 }

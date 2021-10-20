@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.5
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.8.0
+Stable tag: 2.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -150,6 +150,24 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.8.1 - October 20th, 2021 =
+
+* Fixed: Simple Custom Defined Relationships now output correctly again when displaying them like `{@my_relationship.my_custom_defined_relationship}`. #6189 #6191 (@sc0ttkclark)
+* Fixed: Color Picker now has the "Clear" button back. #6194 #6196 (@JoryHogeveen)
+* Fixed: Display Field in Selection option now properly works again. #6195 (@sc0ttkclark)
+* Fixed: REST API fields are registered properly for post types and taxonomies again. #6175 (@jamesgol, @sc0ttkclark)
+* Fixed: The Pods Admin menu icon shows up again and has been switched to SVG format. #6177 #6180 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: The correct Currency now shows up for the currency input field as intended again. #6184 (@sc0ttkclark)
+* Fixed: Taggable autocomplete works as expected again. #6182 (@sc0ttkclark)
+* Fixed: ORDER BY basic field detection has been improved to prevent certain fields from using the incorrect alias. (@sc0ttkclark)
+* Fixed: The `<ul>` used with checkbox inputs has been styled with `list-style:none` as it should be. (@sc0ttkclark)
+* Fixed: Default the form output type to `div` if it's provided but empty. (@sc0ttkclark) 
+* Compatibility: Added compatibility for Enfold theme and public forms so that `wp-mediaelement` is not removed by the theme. #6188 (@sc0ttkclark)
+* Tweak: Internal API - Storage and Storage Types used in the internal Pods code has been clarified to prevent ambiguity. Storage Types have been changed to Object Storage Types in all areas regarding Whatsit Storage). (@sc0ttkclark)
+* Tweak: Public forms now have unique IDs added to them to help in custom CSS work. (@sc0ttkclark)
+
+Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+
 = 2.8 - October 18th, 2021 =
 
 Release post: https://pods.io/2021/10/18/pods-2-8-feature-release/
@@ -173,8 +191,6 @@ Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-
 * Feature: WP-CLI commands that mirror the REST API endpoints we have. (@sc0ttkclark)
 * Feature: The new WYSIWYG editor option to use [Quill Editor](https://github.com/zenoamaro/react-quill) is now available and the CLEditor has been removed. (@sc0ttkclark, @zrothauser)
 * Compatibility: Completely updated compatibility with WPML and Polylang plugins. 
-
-Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 

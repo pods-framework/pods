@@ -250,7 +250,7 @@ describe( 'actions', () => {
 				name: 'test-pod-name',
 				object_type: 'pod',
 				storage: 'test',
-				storage_type: 'collection',
+				object_storage_type: 'collection',
 				type: 'post_type',
 				_locale: 'user',
 				// The following should be included.

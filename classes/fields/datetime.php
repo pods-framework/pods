@@ -1006,6 +1006,8 @@ class PodsField_DateTime extends PodsField {
 		}
 
 		if ( isset( $types['time'] ) && ! isset( $done[ 'time-' . $locale ] ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+
 			/**
 			 * @var $wp_filesystem WP_Filesystem_Base
 			 */

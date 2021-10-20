@@ -88,8 +88,9 @@ class PodsField_Currency extends PodsField_Number {
 				'pick_show_select_text' => 0,
 			),
 			static::$type . '_format_placement' => array(
-				'label'   => __( 'Currency Placement', 'pods' ),
+				'label'   => __( 'Currency Placement on Display', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_number_currency_placement_default', 'before' ),
+				'help'    => __( 'This is the placement of the currency sign when displaying the value. The input will always have the sign on the left to identify the currency', 'pods' ),
 				'type'    => 'pick',
 				'data'    => array(
 					'before'                => __( 'Before (ex. $100)', 'pods' ),

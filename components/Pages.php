@@ -89,7 +89,7 @@ class Pods_Pages extends PodsComponent {
 			'has_archive'  => false,
 			'hierarchical' => false,
 			'supports'     => array( 'title', 'author', 'revisions' ),
-			'menu_icon'    => 'dashicons-pods',
+			'menu_icon'    => pods_svg_icon( 'pods' ),
 		);
 
 		if ( ! pods_is_admin() ) {

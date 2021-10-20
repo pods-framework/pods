@@ -3,6 +3,7 @@
 use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Field;
+use Pods\Whatsit\Object_Field;
 use Pods\API\Whatsit\Value_Field;
 
 /**
@@ -215,7 +216,7 @@ class PodsField_Pick extends PodsField {
 				'wildcard-on' => array(
 					static::$type . '_object' => array(
 						'^post_type-(?!(custom_css|customize_changeset)).*$',
-						'^taxonomy-.*$',
+						//'^taxonomy-.*$', @todo We need to finish adding support for add new on term form.
 						'^user$',
 						'^pod-.*$'
 					),
@@ -1101,6 +1102,7 @@ class PodsField_Pick extends PodsField {
 			$config[ $args->type . '_show_edit_link' ] = false;
 		}
 
+		$config[ $args->type . '_taggable' ]  = filter_var( pods_v( $args->type . '_taggable', $config ), FILTER_VALIDATE_BOOLEAN );
 		$config[ $args->type . '_allow_add_new' ]  = filter_var( pods_v( $args->type . '_allow_add_new', $config ), FILTER_VALIDATE_BOOLEAN );
 		$config[ $args->type . '_show_edit_link' ] = filter_var( pods_v( $args->type . '_show_edit_link', $config ), FILTER_VALIDATE_BOOLEAN );
 
@@ -1422,7 +1424,7 @@ class PodsField_Pick extends PodsField {
 			case 'pod':
 				if ( ! empty( $args->options['pick_val'] ) ) {
 
-					$icon = 'dashicons-pods';
+					$icon = pods_svg_icon( 'pods' );
 
 					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {
 						$file_name  = 'admin.php';
@@ -1449,9 +1451,9 @@ class PodsField_Pick extends PodsField {
 
 		// Parse icon type
 		if ( 'none' === $icon || 'div' === $icon ) {
-			$icon         = '';
+			$icon = '';
 		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
-			$icon         = sanitize_html_class( $icon );
+			$icon = sanitize_html_class( $icon );
 		}
 
 		// #5740 Check for WP_Error object.
@@ -2362,28 +2364,36 @@ class PodsField_Pick extends PodsField {
 				$display = trim( pods_v( static::$type . '_display', $options ), ' {@}' );
 
 				if ( 0 < strlen( $display ) ) {
-					if ( isset( $table_info['pod'] ) && ! empty( $table_info['pod'] ) ) {
-						if ( isset( $table_info['pod']['object_fields'] ) && isset( $table_info['pod']['object_fields'][ $display ] ) ) {
-							$search_data->field_index = $display;
+					if ( ! empty( $table_info['pod'] ) ) {
+						/** @var Pod $related_pod */
+						$related_pod = $table_info['pod'];
 
+						$related_storage     = $related_pod->get_storage();
+						$related_type        = $related_pod->get_type();
+						$found_display_field = $related_pod->get_field( $display );
+
+						if ( $found_display_field ) {
+							$search_data->field_index = $found_display_field->get_name();
+						}
+
+						if ( $found_display_field instanceof Object_Field ) {
 							$params['select'] .= ", `t`.`{$search_data->field_index}`";
-						} else {
-							$search_data->field_index = sanitize_key( $display );
-
-							if ( isset( $table_info['pod']['fields'][ $display ] ) && 'table' === $table_info['pod']['storage'] && ! in_array(
-								$table_info['pod']['type'], array(
+						} elseif (
+							'table' === $related_storage
+							&& ! in_array(
+								$related_type, array(
 									'pod',
 									'table',
 								), true
 							)
 							) {
 								$params['select'] .= ", `d`.`{$search_data->field_index}`";
-							} elseif ( 'meta' === $table_info['pod']['storage'] ) {
-								$params['select'] .= ", `{$search_data->field_index}`.`meta_value` AS {$search_data->field_index}";
-							} else {
-								$params['select'] .= ", `t`.`{$search_data->field_index}`";
-							}
-						}//end if
+						} elseif ( 'meta' === $related_storage ) {
+							$params['select'] .= ", `{$search_data->field_index}`.`meta_value` AS `{$search_data->field_index}`";
+						} else {
+													var_dump( 'other field', $related_storage );
+							$params['select'] .= ", `t`.`{$search_data->field_index}`";
+						}
 					} elseif ( isset( $table_info['object_fields'] ) && isset( $table_info['object_fields'][ $display ] ) ) {
 						$search_data->field_index = $display;
 
@@ -3583,9 +3593,60 @@ class PodsField_Pick extends PodsField {
 			return;
 		}
 
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+
+			if ( 'edit-tags' === $screen->base ) {
+				// @todo Need more effort on the solution for add new handling.
+				//add_action( 'admin_footer', [ $this, 'admin_modal_bail_term_action_add_new' ], 20 );
+			}
+		}
+
 		add_action( 'created_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
 		add_action( 'edited_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
 
+	}
+
+	/**
+	 * Hook into term creation process to bail after success.
+	 *
+	 * @todo Try and catch the added tr node on the table tbody.
+	 */
+	public function admin_modal_bail_term_action_add_new() {
+		?>
+			<script type="text/javascript">
+				jQuery( function ( $ ) {
+					/** @var {jQuery.Event} e */
+					$( '.tags' ).on( 'DOMSubtreeModified', function(e) {
+						console.log( e );
+
+						if ( !== e.target.is( 'tbody#the-list' ) ) {
+							return;
+						}
+
+						const $theTermRow = $( e.target.innerHTML() );
+						const titleRow = $theTermRow.find( '.column-name .row-title' );
+						const actionView = $theTermRow.find( '.row-actions span.view a' );
+
+						const termData = {
+							id       : $theTermRow.find( '.check-column input' ).val(),
+							icon     : '',
+							name     : titleRow.text(),
+							edit_link: titleRow.prop( 'href' ),
+							link     : actionView[0] ? actionView.prop( 'href' ) : '',
+							selected : true,
+						};
+
+						console.log( termData );
+
+						window.parent.postMessage( {
+							type : 'PODS_MESSAGE',
+							data : termData,
+						}, window.location.origin );
+					} );
+				} );
+			</script>
+		<?php
 	}
 
 	/**

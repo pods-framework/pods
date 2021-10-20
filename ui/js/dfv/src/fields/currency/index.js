@@ -73,7 +73,7 @@ const Currency = ( {
 		reformatFormattedValue();
 	};
 
-	const formatSignSymbol = window?.podsAdminConfig?.currencies[ formatSign ]?.sign || '$';
+	const formatSignSymbol = window?.podsDFVConfig?.currencies[ formatSign ]?.sign || '$';
 
 	if ( 'slider' === type ) {
 		return (

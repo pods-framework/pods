@@ -1002,10 +1002,11 @@ class Pods implements Iterator {
 						}
 					}//end if
 
-					$last_type     = '';
-					$last_object   = '';
-					$last_pick_val = '';
-					$last_options  = array();
+					$last_type           = '';
+					$last_object         = '';
+					$last_pick_val       = '';
+					$last_options        = [];
+					$last_object_options = [];
 
 					$single_multi = pods_v( $field_type . '_format_type', $field_data, 'single' );
 
@@ -1063,10 +1064,11 @@ class Pods implements Iterator {
 								}
 							}
 
-							$last_type     = $type;
-							$last_object   = $pick_object;
-							$last_pick_val = $pick_val;
-							$last_options  = $current_field;
+							$last_type           = $type;
+							$last_object         = $pick_object;
+							$last_pick_val       = $pick_val;
+							$last_options        = $current_field;
+							$last_object_options = $current_field;
 
 							// Temporary hack until there's some better handling here.
 							$last_limit *= count( $ids );
@@ -1130,7 +1132,11 @@ class Pods implements Iterator {
 							$table = array();
 
 							if ( $last_options ) {
-								$table = $last_options->get_table_info();
+								if ( $simple ) {
+									$table = $last_object_options->get_table_info();
+								} else {
+									$table = $last_options->get_table_info();
+								}
 							}
 
 							$join  = array();
@@ -1354,7 +1360,6 @@ class Pods implements Iterator {
 								if ( in_array( $table['type'], array( 'post_type', 'attachment', 'media' ), true ) ) {
 									$object_type = 'post';
 								}
-
 
 								$object_no_conflict = in_array( $object_type, array( 'post', 'taxonomy', 'user', 'comment', 'settings' ), true );
 
@@ -2280,64 +2285,50 @@ class Pods implements Iterator {
 
 					$order_field = $this->fields( $k );
 
-					if ( $order_field && in_array( $order_field['type'], $tableless_field_types, true ) ) {
-						$order_object_type = $order_field->get_related_object_type();
-						$order_object_name = $order_field->get_related_object_name();
+					if ( $order_field ) {
+						if ( in_array( $order_field['type'], $tableless_field_types, true ) ) {
+							$order_object_type = $order_field->get_related_object_type();
+							$order_object_name = $order_field->get_related_object_name();
 
-						if ( in_array( $order_object_type, $simple_tableless_objects, true ) ) {
-							if ( 'table' === $this->pod_data['storage'] ) {
-								if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ), true ) ) {
-									$key = "`d`.`{$k}`";
-								} else {
-									$key = "`t`.`{$k}`";
-								}
-							} else {
-								$key = "`{$k}`.`meta_value`";
-							}
-						} else {
-							$table = $order_field->get_table_info();
-
-							if ( ! empty( $table ) ) {
-								$key = "`{$k}`.`" . $table['field_index'] . '`';
-							}
-						}//end if
-					}//end if
-
-					if ( empty( $key ) ) {
-						if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ), true ) ) {
-							if ( isset( $this->pod_data['object_fields'][ $k ] ) ) {
-								$key = "`t`.`{$k}`";
-							} elseif ( $order_field ) {
+							if ( in_array( $order_object_type, $simple_tableless_objects, true ) ) {
 								if ( 'table' === $this->pod_data['storage'] ) {
-									$key = "`d`.`{$k}`";
+									if ( ! in_array( $this->pod_data['type'], [ 'pod', 'table' ], true ) ) {
+										$key = "`d`.`{$k}`";
+									} else {
+										$key = "`t`.`{$k}`";
+									}
 								} else {
 									$key = "`{$k}`.`meta_value`";
 								}
 							} else {
-								$object_fields = (array) $this->pod_data['object_fields'];
+								$table = $order_field->get_table_info();
 
-								foreach ( $object_fields as $object_field => $object_field_opt ) {
-									if ( $object_field === $k || in_array( $k, $object_field_opt['alias'], true ) ) {
-										$key = "`t`.`{$object_field}`";
-									}
+								if ( ! empty( $table ) ) {
+									$key = "`{$k}`.`" . $table['field_index'] . '`';
 								}
 							}
-						} elseif ( $order_field ) {
-							if ( 'table' === $this->pod_data['storage'] ) {
-								$key = "`t`.`{$k}`";
-							} else {
+						} else {
+							$storage_type = $this->pod_data->get_storage();
+
+							if ( $order_field instanceof Object_Field || 'table' === $storage_type ) {
+								if ( ! in_array( $this->pod_data['type'], [ 'pod', 'table' ], true ) ) {
+									$key = "`d`.`{$k}`";
+								} else {
+									$key = "`t`.`{$k}`";
+								}
+							} elseif ( 'meta' === $storage_type ) {
 								$key = "`{$k}`.`meta_value`";
 							}
-						}//end if
-
-						if ( empty( $key ) ) {
-							$key = $k;
-
-							if ( false === strpos( $key, ' ' ) && false === strpos( $key, '`' ) ) {
-								$key = '`' . str_replace( '.', '`.`', $key ) . '`';
-							}
 						}
-					}//end if
+					}
+
+					if ( empty( $key ) ) {
+						$key = $k;
+
+						if ( false === strpos( $key, ' ' ) && false === strpos( $key, '`' ) ) {
+							$key = '`' . str_replace( '.', '`.`', $key ) . '`';
+						}
+					}
 
 					$orderby = $key;
 
@@ -3652,7 +3643,7 @@ class Pods implements Iterator {
 			// Check if Pods sessions are disabled.
 			if ( false === $session_auto_start ) {
 				return sprintf(
-					'<strong>%1$s</strong> %2$s, <a href="%3$s">%4$s</a> %5$s.',
+					'<strong>%1$s:</strong> %2$s, <a href="%3$s">%4$s</a> %5$s.',
 					esc_html__( 'Error', 'pods' ),
 					esc_html__( 'Anonymous form submissions are not enabled for this site', 'pods' ),
 					esc_url( wp_login_url( pods_current_url() ) ),
@@ -3666,7 +3657,7 @@ class Pods implements Iterator {
 				pods_update_setting( 'pods_session_auto_start', '1' );
 
 				return sprintf(
-					'<strong>%1$s</strong> %2$s',
+					'<strong>%1$s:</strong> %2$s',
 					esc_html__( 'Error', 'pods' ),
 					esc_html__( 'Please refresh the page to access this form.', 'pods' )
 				);
@@ -3675,7 +3666,7 @@ class Pods implements Iterator {
 			// Check if the session started properly.
 			if ( '' === pods_session_id() ) {
 				return sprintf(
-					'<strong>%1$s</strong> %2$s',
+					'<strong>%1$s:</strong> %2$s',
 					esc_html__( 'Error', 'pods' ),
 					esc_html__( 'Anonymous form submissions are not compatible with sessions on this site.', 'pods' )
 				);
@@ -3788,6 +3779,10 @@ class Pods implements Iterator {
 		$thank_you   = $params['thank_you'];
 		$fields_only = $params['fields_only'];
 		$output_type = $params['output_type'];
+
+		if ( empty( $output_type ) ) {
+			$output_type = 'div';
+		}
 
 		PodsForm::$form_counter ++;
 

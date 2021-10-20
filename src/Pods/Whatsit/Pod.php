@@ -19,6 +19,8 @@ class Pod extends Whatsit {
 	/**
 	 * Get the storage used for the Pod data (meta, table, etc).
 	 *
+	 * @since 2.8.1
+	 *
 	 * @return string The storage used for the Pod data (meta, table, etc).
 	 */
 	public function get_storage() {

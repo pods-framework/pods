@@ -38,6 +38,16 @@ const Color = ( {
 				{ __( 'Select Color', 'pods' ) }
 			</button>
 
+			<button
+				onClick={ ( event ) => {
+					event.preventDefault();
+					setValue( '' );
+				} }
+				className="button"
+			>
+				{ __( 'Clear', 'pods' ) }
+			</button>
+
 			{ isOpen && (
 				<ColorPicker
 					color={ value }

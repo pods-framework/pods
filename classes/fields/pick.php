@@ -3,6 +3,7 @@
 use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Field;
+use Pods\Whatsit\Object_Field;
 use Pods\API\Whatsit\Value_Field;
 
 /**
@@ -2363,28 +2364,36 @@ class PodsField_Pick extends PodsField {
 				$display = trim( pods_v( static::$type . '_display', $options ), ' {@}' );
 
 				if ( 0 < strlen( $display ) ) {
-					if ( isset( $table_info['pod'] ) && ! empty( $table_info['pod'] ) ) {
-						if ( isset( $table_info['pod']['object_fields'] ) && isset( $table_info['pod']['object_fields'][ $display ] ) ) {
-							$search_data->field_index = $display;
+					if ( ! empty( $table_info['pod'] ) ) {
+						/** @var Pod $related_pod */
+						$related_pod = $table_info['pod'];
 
+						$related_storage     = $related_pod->get_storage();
+						$related_type        = $related_pod->get_type();
+						$found_display_field = $related_pod->get_field( $display );
+
+						if ( $found_display_field ) {
+							$search_data->field_index = $found_display_field->get_name();
+						}
+
+						if ( $found_display_field instanceof Object_Field ) {
 							$params['select'] .= ", `t`.`{$search_data->field_index}`";
-						} else {
-							$search_data->field_index = sanitize_key( $display );
-
-							if ( isset( $table_info['pod']['fields'][ $display ] ) && 'table' === $table_info['pod']['storage'] && ! in_array(
-								$table_info['pod']['type'], array(
+						} elseif (
+							'table' === $related_storage
+							&& ! in_array(
+								$related_type, array(
 									'pod',
 									'table',
 								), true
 							)
 							) {
 								$params['select'] .= ", `d`.`{$search_data->field_index}`";
-							} elseif ( 'meta' === $table_info['pod']['storage'] ) {
-								$params['select'] .= ", `{$search_data->field_index}`.`meta_value` AS {$search_data->field_index}";
-							} else {
-								$params['select'] .= ", `t`.`{$search_data->field_index}`";
-							}
-						}//end if
+						} elseif ( 'meta' === $related_storage ) {
+							$params['select'] .= ", `{$search_data->field_index}`.`meta_value` AS `{$search_data->field_index}`";
+						} else {
+													var_dump( 'other field', $related_storage );
+							$params['select'] .= ", `t`.`{$search_data->field_index}`";
+						}
 					} elseif ( isset( $table_info['object_fields'] ) && isset( $table_info['object_fields'][ $display ] ) ) {
 						$search_data->field_index = $display;
 

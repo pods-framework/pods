@@ -3682,8 +3682,22 @@ class PodsData {
 	 * @since 2.8.0
 	 */
 	public function __set( $name, $value ) {
-		// Don't do anything.
-		return;
+		$supported_overrides = array(
+			'select'        => 'select',
+			'table'         => 'table',
+			'field_id'      => 'field_id',
+			'field_index'   => 'field_index',
+			'field_slug'    => 'field_slug',
+			'join'          => 'join',
+			'where'         => 'where',
+			'where_default' => 'where_default',
+			'orderby'       => 'orderby',
+		);
+
+		// Allow overrides for certain values.
+		if ( isset( $supported_overrides[ $name ] ) ) {
+			$this->{$name} = $value;
+		}
 	}
 
 	/**

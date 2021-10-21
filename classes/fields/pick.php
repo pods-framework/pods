@@ -2363,7 +2363,9 @@ class PodsField_Pick extends PodsField {
 
 				$display = trim( pods_v( static::$type . '_display', $options ), ' {@}' );
 
-				$display_field = "`t`.`{$search_data->field_index}`";
+				$display_field       = "`t`.`{$search_data->field_index}`";
+				$display_field_name  = $search_data->field_index;
+				$display_field_alias = false;
 
 				if ( 0 < strlen( $display ) ) {
 					if ( ! empty( $table_info['pod'] ) ) {
@@ -2374,14 +2376,12 @@ class PodsField_Pick extends PodsField {
 						$related_type        = $related_pod->get_type();
 						$found_display_field = $related_pod->get_field( $display );
 
-						$found_display_field_name = '';
-
 						if ( $found_display_field ) {
-							$found_display_field_name = $found_display_field->get_name();
+							$display_field_name = $found_display_field->get_name();
 						}
 
 						if ( $found_display_field instanceof Object_Field ) {
-							$display_field = "`t`.`{$found_display_field_name}`";
+							$display_field = "`t`.`{$display_field_name}`";
 						} elseif (
 							'table' === $related_storage
 							&& ! in_array(
@@ -2391,19 +2391,23 @@ class PodsField_Pick extends PodsField {
 								), true
 							)
 						) {
-							$display_field = "`d`.`{$found_display_field_name}`";
+							$display_field = "`d`.`{$display_field_name}`";
 						} elseif ( 'meta' === $related_storage ) {
-							$display_field = "`{$found_display_field_name}`.`meta_value` AS `{$found_display_field_name}`";
+							$display_field = "`{$display_field_name}`.`meta_value`";
+
+							$display_field_alias = true;
 						} else {
-							$display_field = "`t`.`{$found_display_field_name}`";
+							$display_field = "`t`.`{$display_field_name}`";
 						}
 					} elseif ( isset( $table_info['object_fields'] ) && isset( $table_info['object_fields'][ $display ] ) ) {
-						$display_field = "`t`.`{$found_display_field_name}`";
+						$display_field_name = $table_info['object_fields'][ $display ];
+
+						$display_field = "`t`.`{$display_field_name}`";
 					}//end if
 				}//end if
 
 				if ( false === strpos( $params['select'], $display_field ) ) {
-					$params['select'] .= ', ' . $display_field;
+					$params['select'] .= ', ' . $display_field . ( $display_field_alias ? " AS `{$display_field_name}`" : '' );
 				}
 
 				$autocomplete = $this->is_autocomplete( $options );
@@ -2454,6 +2458,10 @@ class PodsField_Pick extends PodsField {
 							$search_data->field_index => "`t`.`{$search_data->field_index}` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'",
 						);
 
+						if ( $display_field_name !== $search_data->field_index ) {
+							$lookup_where[ $display_field_name ] = "{$display_field} LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
+						}
+
 						// @todo Hook into WPML for each table
 						if ( $wpdb->users === $search_data->table ) {
 							$lookup_where['display_name'] = "`t`.`display_name` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
@@ -2480,7 +2488,7 @@ class PodsField_Pick extends PodsField {
 						}
 
 						$orderby   = array();
-						$orderby[] = "(`t`.`{$search_data->field_index}` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%' ) DESC";
+						$orderby[] = "( {$display_field} LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%' ) DESC";
 
 						$pick_orderby = pods_v( static::$type . '_orderby', $options, null, true );
 
@@ -2488,8 +2496,13 @@ class PodsField_Pick extends PodsField {
 							$orderby[] = $pick_orderby;
 						}
 
-						$orderby[] = "`t`.`{$search_data->field_index}`";
-						$orderby[] = "`t`.`{$search_data->field_id}`";
+						if ( ! in_array( $orderby, $search_data->field_index, true ) ) {
+							$orderby[] = "`t`.`{$search_data->field_index}`";
+						}
+
+						if ( ! in_array( $orderby, $search_data->field_id, true ) ) {
+							$orderby[] = "`t`.`{$search_data->field_id}`";
+						}
 
 						$params['orderby'] = $orderby;
 					}//end if
@@ -2589,7 +2602,7 @@ class PodsField_Pick extends PodsField {
 				if ( $hierarchy && ! $autocomplete && ! empty( $results ) && $table_info['object_hierarchical'] && ! empty( $table_info['field_parent'] ) ) {
 					$select_args = array(
 						'id'     => $table_info['field_id'],
-						'index'  => $table_info['field_index'],
+						'index'  => $display_field_name,
 						'parent' => $table_info['field_parent'],
 					);
 
@@ -2604,11 +2617,12 @@ class PodsField_Pick extends PodsField {
 					foreach ( $results as $result ) {
 						$result      = get_object_vars( $result );
 						$field_id    = $search_data->field_id;
-						$field_index = $search_data->field_index;
+						$field_index = $display_field_name;
 
 						if ( ! isset( $result[ $field_index ] ) ) {
 							$field_index = $default_field_index;
 						}
+
 						if ( ! isset( $result[ $field_id ], $result[ $field_index ] ) ) {
 							continue;
 						}

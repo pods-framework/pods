@@ -25,6 +25,7 @@ class Polylang extends Integration {
 			'pll_get_post_types' => [ 'pll_get_post_types', 10, 2 ],
 			'pods_component_i18n_admin_data' => [ 'pods_component_i18n_admin_data' ],
 			'pods_component_i18n_admin_ui_fields' => [ 'pods_component_i18n_admin_ui_fields', 10, 2 ],
+			'pods_var_post_id' => [ 'pods_var_post_id' ],
 		],
 	];
 
@@ -33,6 +34,21 @@ class Polylang extends Integration {
 	 */
 	public static function is_active() {
 		return function_exists( 'PLL' ) || ! empty( $GLOBALS['polylang'] );
+	}
+
+	/**
+	 * @since 2.8.2
+	 *
+	 * @param int $id
+	 *
+	 * @return mixed|void
+	 */
+	public function pods_var_post_id( $id ) {
+		$polylang_id = pll_get_post( $id );
+		if ( ! empty( $polylang_id ) ) {
+			$id = $polylang_id;
+		}
+		return $id;
 	}
 
 	/**

@@ -9419,14 +9419,9 @@ class PodsAPI {
 	public function get_table_info( $object_type, $object, $name = null, $pod = null, $field = null ) {
 
 		/**
-		 * @var $wpdb                         wpdb
-		 * @var $sitepress                    SitePress
-		 * @var $polylang                     object
+		 * @var $wpdb wpdb
 		 */
-		/*
-		 * @todo wpml-comp Remove global object usage
-		 */
-		global $wpdb, $sitepress, $polylang;
+		global $wpdb;
 
 		// @todo Handle $object arrays for Post Types, Taxonomies, Comments (table pulled from first object in array)
 

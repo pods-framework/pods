@@ -8429,8 +8429,9 @@ class PodsAPI {
 	 *
 	 * Load a Pod Template
 	 *
-	 * $params['id'] int The template ID
-	 * $params['name'] string The template name
+	 * $params['id'] int The template ID.
+	 * $params['name'] string The template name (title).
+	 * $params['slug'] string The template slug.
 	 *
 	 * @param array $params An associative array of parameters
 	 *
@@ -8445,10 +8446,18 @@ class PodsAPI {
 		$params       = (object) $params;
 		$params->type = 'template';
 
+		// Backwards compatibility check.
 		if ( isset( $params->name ) ) {
 			$params->title = $params->name;
 
 			unset( $params->name );
+		}
+
+		// Because we always used name for title, support slug for name.
+		if ( isset( $params->slug ) ) {
+			$params->name = $params->slug;
+
+			unset( $params->slug );
 		}
 
 		return $this->load_object( $params );

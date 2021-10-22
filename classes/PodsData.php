@@ -3244,6 +3244,10 @@ class PodsData {
 			return $joins;
 		}
 
+		if ( $the_field instanceof Object_Field && ! in_array( $the_field['type'], $tableless_field_types, true ) ) {
+			return $joins;
+		}
+
 		$traverse = $the_field;
 
 		$table_info = array();

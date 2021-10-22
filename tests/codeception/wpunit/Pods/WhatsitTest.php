@@ -6,6 +6,7 @@ use Pods_Unit_Tests\Pods_WhatsitTestCase;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
+use Pods\Whatsit\Object_Field;
 
 /**
  * @group  pods-whatsit
@@ -848,6 +849,38 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$table_info = $this->pods_object_field->get_table_info();
 
 		$this->assertCount( 0, $table_info );
+	}
+
+	/**
+	 * @covers Whatsit::get_field
+	 * @covers Whatsit::fetch_field
+	 */
+	public function test_get_field_with_alias() {
+		$this->assertTrue( method_exists( $this->pods_object_pod, 'get_field' ), 'Method get_field does not exist' );
+
+		$aliases = [
+			'id'        => 'ID',
+			'title'     => 'post_title',
+			'name'      => 'post_title',
+			'content'   => 'post_content',
+			'excerpt'   => 'post_excerpt',
+			'author'    => 'post_author',
+			'created'   => 'post_date',
+			'date'      => 'post_date',
+			'status'    => 'post_status',
+			'slug'      => 'post_name',
+			'permalink' => 'post_name',
+			'modified'  => 'post_modified',
+			'parent'    => 'post_parent',
+			'type'      => 'post_type',
+		];
+
+		foreach ( $aliases as $alias => $expected_field ) {
+			$found_field = $this->pods_object_pod->get_field( $alias );
+
+			$this->assertInstanceOf( Object_Field::class, $found_field );
+			$this->assertEquals( $expected_field, $found_field->get_name() );
+		}
 	}
 
 	/**

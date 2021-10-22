@@ -23,6 +23,7 @@ class WPML extends Integration {
 			'pods_pods_field_get_metadata_object_id' => [ 'pods_pods_field_get_metadata_object_id', 10, 4 ],
 			'pods_component_i18n_admin_data' => [ 'pods_component_i18n_admin_data' ],
 			'pods_component_i18n_admin_ui_fields' => [ 'pods_component_i18n_admin_ui_fields', 10, 2 ],
+			'pods_auto_template_template_name' => [ 'pods_auto_template_template_name' ],
 		],
 	];
 
@@ -45,6 +46,26 @@ class WPML extends Integration {
 		$ignore_aliases[] = 'wpml_languages';
 
 		return $ignore_aliases;
+	}
+
+	/**
+	 * @since 2.8.2
+	 * @param $template_name
+	 * @return mixed|void
+	 */
+	public function pods_auto_template_template_name( $template_name ) {
+
+		$obj = pods_by_title( $template_name );
+
+		if ( $obj ) {
+			$id = apply_filters( 'wpml_object_id', $obj->ID, $obj->post_type, true );
+
+			if ( (int) $id !== (int) $obj->ID ) {
+				$template_name = get_post( $id )->post_title;
+			}
+		}
+
+		return $template_name;
 	}
 
 	/**

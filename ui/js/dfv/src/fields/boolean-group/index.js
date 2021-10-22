@@ -30,8 +30,6 @@ const BooleanGroup = ( {
 	} = fieldConfig;
 
 	const toggleChange = ( name ) => () => {
-		console.log( 'changing boolean subgroup value', name, ! toBool( values[ name ] ) );
-
 		setOptionValue( name, ! toBool( values[ name ] ) );
 
 		setHasBlurred();

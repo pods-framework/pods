@@ -136,6 +136,8 @@ const DateTime = ( {
 		} else if ( includeDateField ) {
 			return 'YYYY-MM-DD';
 		}
+
+		return 'YYYY-MM-DD kk:mm:ss';
 	};
 
 	const formatValueForHTML5Field = ( stringValue ) => {
@@ -143,21 +145,13 @@ const DateTime = ( {
 			return '';
 		}
 
-		const momentObject = moment( stringValue, [ getDBFormat(), getFullFormat() ] );
+		const momentObject = moment( stringValue, getDBFormat() );
 
 		if ( ! momentObject.isValid() ) {
-			return stringValue;
+			return '';
 		}
 
-		// Use a full date and time format for our value string by default.
-		// Unless we're only showing the date OR the time picker.
-		if ( includeDateField && includeTimeField ) {
-			return momentObject.format( 'YYYY-MM-DDTkk:mm:ss' );
-		} else if ( includeTimeField ) {
-			return momentObject.format( 'kk:mm:ss' );
-		} else if ( includeDateField ) {
-			return momentObject.format( 'YYYY-MM-DD' );
-		}
+		return momentObject.format( getDBFormat() );
 	};
 
 	const getFullFormat = () => {
@@ -170,11 +164,13 @@ const DateTime = ( {
 		} else if ( includeDateField ) {
 			return momentDateFormat;
 		}
+
+		return `${ momentDateFormat } ${ momentTimeFormat }`;
 	};
 
-	const formatMomentObject = ( momentObject ) => {
+	const formatMomentObject = ( momentObject, defaultValue = '' ) => {
 		if ( ! momentObject.isValid() ) {
-			return value;
+			return defaultValue;
 		}
 
 		return momentObject.format( getFullFormat() );
@@ -193,7 +189,8 @@ const DateTime = ( {
 			}
 
 			return formatMomentObject(
-				moment( value, [ getDBFormat(), getFullFormat() ] )
+				moment( value, [ getDBFormat(), getFullFormat() ] ),
+				value
 			);
 		},
 	);
@@ -204,7 +201,8 @@ const DateTime = ( {
 			}
 
 			return formatMomentObject(
-				moment( value, [ getDBFormat(), getFullFormat() ] )
+				moment( value, [ getDBFormat(), getFullFormat() ] ),
+				value
 			);
 		},
 	);

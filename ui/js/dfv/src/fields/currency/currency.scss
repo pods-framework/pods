@@ -13,10 +13,17 @@
 	line-height: 28px;
 }
 
-.pods-currency-input[type="text"] {
+input.pods-form-ui-field-type-currency[type="text"] {
 	padding-left: 30px;
 }
 
-.pods-currency-field-slider-input {
-	width: 100%;
+.pods-field-option {
+	.pods-form-ui-field.pods-form-ui-field-type-currency,
+	.pods-form-ui-field.pods-form-ui-field-type-currency-slider {
+		max-width: 500px;
+	}
+
+	.pods-form-ui-field.pods-form-ui-field-type-currency-slider {
+		width: 100%;
+	}
 }

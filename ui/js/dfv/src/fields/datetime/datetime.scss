@@ -1,3 +1,9 @@
 .pods-react-datetime-fix .rdtPicker {
 	position: sticky !important;
 }
+
+.pods-form-ui-field.pods-form-ui-field-type-datetime,
+.pods-form-ui-field.pods-form-ui-field-type-date,
+.pods-form-ui-field.pods-form-ui-field-type-time {
+	max-width: 300px;
+}

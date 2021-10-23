@@ -318,6 +318,9 @@ class PodsAPI {
 			// Prevent WP unslash removing already sanitized input.
 			$meta_value = pods_slash( $meta_value );
 
+			// Enforce boolean integer values.
+			$meta_value = pods_bool_to_int( $meta_value );
+
 			if ( null === $meta_value || ( $strict && '' === $post_meta[ $meta_key ] ) ) {
 				$old_meta_value = '';
 
@@ -474,6 +477,9 @@ class PodsAPI {
 			// Prevent WP unslash removing already sanitized input.
 			$meta_value = pods_slash( $meta_value );
 
+			// Enforce boolean integer values.
+			$meta_value = pods_bool_to_int( $meta_value );
+
 			if ( null === $meta_value ) {
 				$old_meta_value = '';
 
@@ -620,6 +626,9 @@ class PodsAPI {
 
 			// Prevent WP unslash removing already sanitized input.
 			$meta_value = pods_slash( $meta_value );
+
+			// Enforce boolean integer values.
+			$meta_value = pods_bool_to_int( $meta_value );
 
 			if ( null === $meta_value ) {
 				$old_meta_value = '';
@@ -797,6 +806,9 @@ class PodsAPI {
 			// Prevent WP unslash removing already sanitized input.
 			$meta_value = pods_slash( $meta_value );
 
+			// Enforce boolean integer values.
+			$meta_value = pods_bool_to_int( $meta_value );
+
 			if ( null === $meta_value || ( $strict && '' === $term_meta[ $meta_key ] ) ) {
 				$old_meta_value = '';
 
@@ -879,6 +891,9 @@ class PodsAPI {
 			if ( ! empty( $setting ) ) {
 				$option = $setting . '_' . $option;
 			}
+
+			// Enforce boolean integer values.
+			$value = pods_bool_to_int( $value );
 
 			update_option( $option, $value );
 		}

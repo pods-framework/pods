@@ -263,7 +263,7 @@ const DateTime = ( {
 				name={ htmlAttributes.name || name }
 				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ) }
 				type={ 'datetime' === type ? 'datetime-local' : type }
-				value={ html5 ? formatValueForHTML5Field( value ) : localStringValue }
+				value={ useHTML5Field ? formatValueForHTML5Field( value ) : localStringValue }
 				onChange={ handleHTML5InputFieldChange }
 				onBlur={ setHasBlurred }
 			/>
@@ -282,7 +282,7 @@ const DateTime = ( {
 			renderInput={ ( props ) => (
 				<input
 					{ ...props }
-					value={ html5 ? formatValueForHTML5Field( value ) : localStringValue }
+					value={ useHTML5Field ? formatValueForHTML5Field( value ) : localStringValue }
 					onChange={ ( event ) => {
 						// Track local values, but don't change actual value
 						// until blur event.

@@ -36,6 +36,8 @@ const NumberField = ( {
 		number_step: step,
 	} = fieldConfig;
 
+	const isSlider = 'slider' === type;
+
 	// The actual value from the store could be either a float or
 	// a formatted string, so be able to handle either one, but keep
 	// a formatted version available locally.
@@ -55,11 +57,11 @@ const NumberField = ( {
 	const handleChange = ( event ) => {
 		setValue( parseFloatWithPodsFormat( event.target.value, format ) );
 
-		setFormattedValue( formatNumberWithPodsFormat(
-			event.target.value,
-			format,
-			softFormat
-		) );
+		if ( isSlider ) {
+			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, softFormat ) );
+		} else {
+			setFormattedValue( event.target.value );
+		}
 	};
 
 	const reformatFormattedValue = () => {

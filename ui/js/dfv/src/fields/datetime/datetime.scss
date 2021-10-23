@@ -2,8 +2,10 @@
 	position: sticky !important;
 }
 
-.pods-form-ui-field.pods-form-ui-field-type-datetime,
-.pods-form-ui-field.pods-form-ui-field-type-date,
-.pods-form-ui-field.pods-form-ui-field-type-time {
-	max-width: 300px;
+.pods-field-option {
+	.pods-form-ui-field.pods-form-ui-field-type-datetime,
+	.pods-form-ui-field.pods-form-ui-field-type-date,
+	.pods-form-ui-field.pods-form-ui-field-type-time {
+		max-width: 300px;
+	}
 }

@@ -2001,8 +2001,8 @@ class PodsAPI {
 		);
 
 		foreach ( $options_ignore as $ignore ) {
-			if ( isset( $options[ $ignore ] ) ) {
-				unset( $options[ $ignore ] );
+			if ( isset( $pod[ $ignore ] ) ) {
+				unset( $pod[ $ignore ] );
 			}
 		}
 
@@ -2032,15 +2032,16 @@ class PodsAPI {
 			$aliases = array( $exclude_field );
 
 			if ( is_array( $exclude_field ) ) {
-				$aliases       = array_merge( array( $k ), $exclude_field );
+				$aliases = array_merge( array( $k ), $exclude_field );
+
 				$exclude_field = $k;
 			}
 
 			foreach ( $aliases as $alias ) {
-				if ( isset( $options[ $alias ] ) ) {
-					$pod[ $exclude_field ] = pods_trim( $options[ $alias ] );
+				if ( isset( $pod[ $alias ] ) ) {
+					$pod[ $exclude_field ] = pods_trim( $pod[ $alias ] );
 
-					unset( $options[ $alias ] );
+					unset( $pod[ $alias ] );
 				}
 			}
 		}

@@ -251,7 +251,7 @@ const DateTime = ( {
 
 	let inputValue = html5 ? formatValueForHTML5Field( value ) : localStringValue;
 
-	if ( '' === value ) {
+	if ( '' === localStringValue ) {
 		inputValue = '';
 	}
 
@@ -263,7 +263,7 @@ const DateTime = ( {
 				name={ htmlAttributes.name || name }
 				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ) }
 				type={ 'datetime' === type ? 'datetime-local' : type }
-				value={ inputValue }
+				value={ html5 ? formatValueForHTML5Field( value ) : localStringValue }
 				onChange={ handleHTML5InputFieldChange }
 				onBlur={ setHasBlurred }
 			/>

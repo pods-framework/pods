@@ -249,11 +249,7 @@ const DateTime = ( {
 		addValidationRules( [ rangeValidationRule ] );
 	}, [] );
 
-	let inputValue = html5 ? formatValueForHTML5Field( value ) : localStringValue;
-
-	if ( '' === localStringValue ) {
-		inputValue = '';
-	}
+	const inputValue = html5 ? formatValueForHTML5Field( value ) : localStringValue;
 
 	// If we can use an HTML5 input field, we can just return an input field.
 	if ( useHTML5Field ) {
@@ -263,7 +259,7 @@ const DateTime = ( {
 				name={ htmlAttributes.name || name }
 				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ) }
 				type={ 'datetime' === type ? 'datetime-local' : type }
-				value={ html5 ? formatValueForHTML5Field( value ) : localStringValue }
+				value={ inputValue }
 				onChange={ handleHTML5InputFieldChange }
 				onBlur={ setHasBlurred }
 			/>

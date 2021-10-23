@@ -130,9 +130,9 @@ const DateTime = ( {
 		// Use a full date and time format for our value string by default.
 		// Unless we're only showing the date OR the time picker.
 		if ( includeDateField && includeTimeField ) {
-			return 'YYYY-MM-DD hh:mm:ss A';
+			return 'YYYY-MM-DD kk:mm:ss';
 		} else if ( includeTimeField ) {
-			return 'hh:mm:ss A';
+			return 'kk:mm:ss';
 		} else if ( includeDateField ) {
 			return 'YYYY-MM-DD';
 		}
@@ -143,7 +143,7 @@ const DateTime = ( {
 			return '';
 		}
 
-		const momentObject = moment( stringValue, getDBFormat() );
+		const momentObject = moment( stringValue, [ getDBFormat(), getFullFormat() ] );
 
 		if ( ! momentObject.isValid() ) {
 			return stringValue;
@@ -152,9 +152,9 @@ const DateTime = ( {
 		// Use a full date and time format for our value string by default.
 		// Unless we're only showing the date OR the time picker.
 		if ( includeDateField && includeTimeField ) {
-			return momentObject.format( 'YYYY-MM-DDThh:mm' );
+			return momentObject.format( 'YYYY-MM-DDTkk:mm:ss' );
 		} else if ( includeTimeField ) {
-			return momentObject.format( 'hh:mm' );
+			return momentObject.format( 'kk:mm:ss' );
 		} else if ( includeDateField ) {
 			return momentObject.format( 'YYYY-MM-DD' );
 		}
@@ -289,7 +289,7 @@ const DateTime = ( {
 						// Track local values, but don't change actual value
 						// until blur event.
 						setLocalStringValue( event.target.value );
-						setLocalMomentValue( moment( event.target.value, getFullFormat() ) );
+						setLocalMomentValue( moment( event.target.value, [ getDBFormat(), getFullFormat() ] ) );
 					} }
 					onBlur={ ( event ) => handleChange( event.target.value ) }
 					id={ htmlAttributes.id || `pods-form-ui-${ name }` }

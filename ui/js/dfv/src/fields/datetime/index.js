@@ -145,6 +145,10 @@ const DateTime = ( {
 
 		const momentObject = moment( stringValue, getDBFormat() );
 
+		if ( ! momentObject.isValid() ) {
+			return stringValue;
+		}
+
 		// Use a full date and time format for our value string by default.
 		// Unless we're only showing the date OR the time picker.
 		if ( includeDateField && includeTimeField ) {
@@ -169,6 +173,10 @@ const DateTime = ( {
 	};
 
 	const formatMomentObject = ( momentObject ) => {
+		if ( ! momentObject.isValid() ) {
+			return value;
+		}
+
 		return momentObject.format( getFullFormat() );
 	};
 

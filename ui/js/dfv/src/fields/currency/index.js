@@ -57,7 +57,12 @@ const Currency = ( {
 
 	const handleChange = ( event ) => {
 		setValue( parseFloatWithPodsFormat( event.target.value, format ) );
-		reformatFormattedValue();
+
+		setFormattedValue( formatNumberWithPodsFormat(
+			event.target.value,
+			format,
+			softFormat
+		) );
 	};
 
 	const reformatFormattedValue = () => {

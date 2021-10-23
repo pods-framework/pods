@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-{"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"2c717975f9da7c1f508c249c4a2f4f84"}
-=======
-{"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"372dcd0e8ecbc9021b3e235957fc3024"}
->>>>>>> fix/boolean-group-defaults
+{"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"5f6bbd04628a0b1f7950f2c1b915d26d"}

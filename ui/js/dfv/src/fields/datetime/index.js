@@ -140,18 +140,32 @@ const DateTime = ( {
 		return 'YYYY-MM-DD kk:mm:ss';
 	};
 
+	const getHTML5Format = () => {
+		// Use a full date and time format for our value string by default.
+		// Unless we're only showing the date OR the time picker.
+		if ( includeDateField && includeTimeField ) {
+			return 'YYYY-MM-DD[T]kk:mm:ss';
+		} else if ( includeTimeField ) {
+			return 'kk:mm:ss';
+		} else if ( includeDateField ) {
+			return 'YYYY-MM-DD';
+		}
+
+		return 'YYYY-MM-DD[T]kk:mm:ss';
+	};
+
 	const formatValueForHTML5Field = ( stringValue ) => {
 		if ( ! stringValue ) {
 			return '';
 		}
 
-		const momentObject = moment( stringValue, getDBFormat() );
+		const momentObject = moment( stringValue, [ getHTML5Format(), getDBFormat() ] );
 
 		if ( ! momentObject.isValid() ) {
 			return '';
 		}
 
-		return momentObject.format( getDBFormat() );
+		return momentObject.format( getHTML5Format() );
 	};
 
 	const getFullFormat = () => {

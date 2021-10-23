@@ -22,11 +22,12 @@ const Currency = ( {
 } ) => {
 	const {
 		htmlAttr: htmlAttributes = {},
+		name,
 		readonly: readOnly,
 		currency_decimal_handling: decimalHandling = 'none',
-		currency_decimals: decimalMaxLength,
+		currency_decimals: decimalMaxLength = 'auto',
 		currency_format: format,
-		currency_format_sign: formatSign,
+		currency_format_sign: formatSign = 'usd',
 		currency_format_type: type = 'number',
 		currency_html5: html5,
 		currency_max: max,
@@ -36,11 +37,13 @@ const Currency = ( {
 		currency_step: step,
 	} = fieldConfig;
 
+	const softFormat = decimalHandling === 'remove';
+
 	// The actual value from the store could be either a float or
 	// a formatted string, so be able to handle either one, but keep
 	// a formatted version available locally.
 	const [ formattedValue, setFormattedValue ] = useState(
-		formatNumberWithPodsFormat( value, format, decimalHandling === 'remove' )
+		formatNumberWithPodsFormat( value, format, softFormat )
 	);
 
 	useEffect( () => {
@@ -61,7 +64,7 @@ const Currency = ( {
 		const newFormattedValue = formatNumberWithPodsFormat(
 			value,
 			format,
-			decimalHandling === 'remove'
+			softFormat
 		);
 
 		setFormattedValue( newFormattedValue );
@@ -69,7 +72,6 @@ const Currency = ( {
 
 	const handleBlur = () => {
 		setHasBlurred();
-
 		reformatFormattedValue();
 	};
 
@@ -80,9 +82,9 @@ const Currency = ( {
 			<div>
 				<input
 					type="range"
-					id={ htmlAttributes.id }
-					name={ htmlAttributes.name }
-					className={ classnames( 'pods-currency-field-slider-input', htmlAttributes.class ) }
+					id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+					name={ htmlAttributes.name || name }
+					className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-currency-slider', htmlAttributes.class ) }
 					placeholder={ placeholder }
 					value={ value || min || 0 }
 					readOnly={ !! readOnly }
@@ -100,6 +102,12 @@ const Currency = ( {
 		);
 	}
 
+	let inputValue = html5 ? value : formattedValue;
+
+	if ( '' === value ) {
+		inputValue = '';
+	}
+
 	return (
 		<div className="pods-currency-container">
 			<code className="pods-currency-sign">
@@ -107,18 +115,18 @@ const Currency = ( {
 			</code>
 			<input
 				type={ html5 ? 'number' : 'text' }
-				id={ htmlAttributes.id }
-				name={ htmlAttributes.name }
+				id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+				name={ htmlAttributes.name || name }
 				data-name-clean={ htmlAttributes.name_clean }
-				className={ classnames( 'pods-currency-input', htmlAttributes.class ) }
+				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-currency', htmlAttributes.class ) }
 				placeholder={ placeholder }
+				value={ inputValue }
 				step={ html5 ? 'any' : undefined }
 				min={ html5 ? ( parseInt( min, 10 ) || undefined ) : undefined }
 				max={ html5 ? ( parseInt( max, 10 ) || undefined ) : undefined }
-				value={ formattedValue }
 				readOnly={ !! readOnly }
 				onChange={ handleChange }
-				onBlur={ handleBlur }
+				onBlur={ reformatFormattedValue }
 			/>
 		</div>
 	);

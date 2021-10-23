@@ -27,7 +27,7 @@ const NumberField = ( {
 		number_decimals: decimalMaxLength = 'auto',
 		number_format: format,
 		number_format_soft: softFormat,
-		number_format_type: type,
+		number_format_type: type = 'number',
 		number_html5: html5,
 		number_max: max,
 		number_max_length: digitMaxLength,
@@ -79,7 +79,7 @@ const NumberField = ( {
 					type="range"
 					id={ htmlAttributes.id || `pods-form-ui-${ name }` }
 					name={ htmlAttributes.name || name }
-					className={ classnames( 'pods-form-ui-number-range', htmlAttributes.class ) }
+					className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-number-slider', htmlAttributes.class ) }
 					placeholder={ placeholder }
 					value={ value || min || 0 }
 					readOnly={ !! readOnly }
@@ -97,15 +97,21 @@ const NumberField = ( {
 		);
 	}
 
+	let inputValue = html5 ? value : formattedValue;
+
+	if ( '' === value ) {
+		inputValue = '';
+	}
+
 	return (
 		<input
 			type={ html5 ? 'number' : 'text' }
-			name={ htmlAttributes.name }
 			id={ htmlAttributes.id || `pods-form-ui-${ name }` }
+			name={ htmlAttributes.name || name }
 			data-name-clean={ htmlAttributes.name_clean }
 			className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-number', htmlAttributes.class ) }
 			placeholder={ placeholder }
-			value={ html5 ? value : formattedValue }
+			value={ inputValue }
 			step={ html5 ? 'any' : undefined }
 			min={ html5 ? ( parseInt( min, 10 ) || undefined ) : undefined }
 			max={ html5 ? ( parseInt( max, 10 ) || undefined ) : undefined }

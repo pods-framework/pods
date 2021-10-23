@@ -218,7 +218,7 @@ const DateTime = ( {
 		setHasBlurred();
 	};
 
-	// Set the inital view date to the current date, unless the range of years is before
+	// Set the initial view date to the current date, unless the range of years is before
 	// the current time.
 	const initialViewDate = ( yearRange && yearRange[ yearRange.length - 1 ] < new Date().getFullYear() )
 		? new Date( yearRange[ 0 ], 0, 1 )
@@ -249,6 +249,12 @@ const DateTime = ( {
 		addValidationRules( [ rangeValidationRule ] );
 	}, [] );
 
+	let inputValue = html5 ? formatValueForHTML5Field( value ) : localStringValue;
+
+	if ( '' === value ) {
+		inputValue = '';
+	}
+
 	// If we can use an HTML5 input field, we can just return an input field.
 	if ( useHTML5Field ) {
 		return (
@@ -257,7 +263,7 @@ const DateTime = ( {
 				name={ htmlAttributes.name || name }
 				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ) }
 				type={ 'datetime' === type ? 'datetime-local' : type }
-				value={ formatValueForHTML5Field( value ) }
+				value={ inputValue }
 				onChange={ handleHTML5InputFieldChange }
 				onBlur={ setHasBlurred }
 			/>
@@ -276,7 +282,7 @@ const DateTime = ( {
 			renderInput={ ( props ) => (
 				<input
 					{ ...props }
-					value={ localStringValue }
+					value={ inputValue }
 					onChange={ ( event ) => {
 						// Track local values, but don't change actual value
 						// until blur event.

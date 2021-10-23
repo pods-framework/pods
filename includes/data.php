@@ -123,7 +123,7 @@ function pods_sanitize_like( $input ) {
  * @see   wp_slash
  */
 function pods_slash( $input, $params = array() ) {
-	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
+	if ( '' === $input || is_int( $input ) || is_float( $input ) || is_bool( $input ) || empty( $input ) ) {
 		return $input;
 	}
 
@@ -2364,3 +2364,20 @@ function pods_clean_linebreaks( $content ) {
 }
 
 add_filter( 'pods_template_content', 'pods_clean_linebreaks' );
+
+/**
+ * Convert the value from a boolean to an integer.
+ *
+ * @since 2.8.2
+ *
+ * @param bool|mixed $value The value to convert from boolean to integer.
+ *
+ * @return int|mixed The value as an integer if it was boolean, or the value as it was passed in.
+ */
+function pods_bool_to_int( $value ) {
+	if ( ! is_bool( $value ) ) {
+		return $value;
+	}
+
+	return (int) $value;
+}

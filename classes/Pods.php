@@ -1595,7 +1595,7 @@ class Pods implements Iterator {
 				$filter = pods_v( 'display_filter', $field_data );
 
 				if ( 0 < strlen( $filter ) ) {
-					if ( $params->single ) {
+					if ( $params->single || ! is_array( $value ) ) {
 						$value = array( $value );
 					}
 

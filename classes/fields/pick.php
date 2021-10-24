@@ -854,20 +854,11 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
-
 		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
-		$type = pods_v( 'type', $options, static::$type );
+		// Do anything we need to do here with options setup / enforcement.
 
-		$args = compact( array_keys( get_defined_vars() ) );
-		$args = (object) $args;
-
-		wp_enqueue_script( 'pods-dfv' );
-
-		wp_enqueue_style( 'pods-select2' );
-		wp_enqueue_script( 'pods-select2' );
-
-		$this->render_input_script( $args );
+		parent::input( $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -990,15 +981,21 @@ class PodsField_Pick extends PodsField {
 		$field_options[ $args->type . '_limit' ] = $limit;
 
 		$field_options['ajax_data'] = $this->build_dfv_autocomplete_ajax_data( $field_options, $args, $ajax );
+		$field_options['select2_overrides'] = null;
 
-		/**
-		 * Allow overriding some of the Select2 options used in the JS init.
-		 *
-		 * @since 2.7.0
-		 *
-		 * @param array|null $select2_overrides Override options for Select2/SelectWoo.
-		 */
-		$field_options['select2_overrides'] = apply_filters( 'pods_pick_select2_overrides', null );
+		if ( 'select2' === $field_options['view_name'] ) {
+			wp_enqueue_style( 'pods-select2' );
+			wp_enqueue_script( 'pods-select2' );
+
+			/**
+			 * Allow overriding some Select2/SelectWoo options used in the JS init.
+			 *
+			 * @since 2.7.0
+			 *
+			 * @param array|null $select2_overrides Override options for Select2/SelectWoo.
+			 */
+			$field_options['select2_overrides'] = apply_filters( 'pods_pick_select2_overrides', $field_options['select2_overrides'] );
+		}
 
 		return $field_options;
 	}

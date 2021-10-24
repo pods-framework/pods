@@ -61,9 +61,13 @@ class WPML extends Integration {
 	}
 
 	/**
+	 * Check for translated object ID for template.
+	 *
 	 * @since 2.8.2
-	 * @param $template_name
-	 * @return mixed|void
+	 *
+	 * @param string $template_name The template name.
+	 *
+	 * @return string The template name for the translated template if set, or original template name.
 	 */
 	public function pods_auto_template_template_name( $template_name ) {
 

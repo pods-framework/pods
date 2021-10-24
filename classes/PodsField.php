@@ -319,20 +319,7 @@ class PodsField {
 	 * @since 2.0.0
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
-
 		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
-
-		$form_field_type = PodsForm::$field_type;
-
-		if ( is_array( $value ) ) {
-			$value = implode( ' ', $value );
-		}
-
-		pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
-
-		/*
-		 * @todo Eventually use this code
-		$options = (array) $options;
 
 		$type = pods_v( 'type', $options, static::$type );
 
@@ -340,8 +327,6 @@ class PodsField {
 		$args = (object) $args;
 
 		$this->render_input_script( $args );
-		*/
-
 	}
 
 	/**
@@ -361,6 +346,8 @@ class PodsField {
 	 * }
 	 */
 	public function render_input_script( $args ) {
+		wp_enqueue_script( 'pods-dfv' );
+
 		if ( is_array( $args ) ) {
 			$args = (object) $args;
 		}

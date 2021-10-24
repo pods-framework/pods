@@ -267,10 +267,22 @@ class PodsField_WYSIWYG extends PodsField {
 		} elseif ( 'tinymce' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'tinymce';
 
+			// Set defaults if they were not set before (for new options added since field was in use).
+			$options[ static::$type . '_tinymce' ] = pods_v( static::$type . '_tinymce', $options, true );
+			$options[ static::$type . '_quicktags' ] = pods_v( static::$type . '_quicktags', $options, true );
+
+			if ( '' === $options[ static::$type . '_tinymce' ] ) {
+				$options[ static::$type . '_tinymce' ] = true;
+			}
+
+			if ( '' === $options[ static::$type . '_quicktags' ] ) {
+				$options[ static::$type . '_quicktags' ] = true;
+			}
+
 			// Enforce booleans.
 			$options[ static::$type . '_media_buttons' ] = filter_var( pods_v( static::$type . '_media_buttons', $options, true ), FILTER_VALIDATE_BOOLEAN );
-			$options[ static::$type . '_tinymce' ] = filter_var( pods_v( static::$type . '_tinymce', $options, true ), FILTER_VALIDATE_BOOLEAN );
-			$options[ static::$type . '_quicktags' ] = filter_var( pods_v( static::$type . '_quicktags', $options, true ), FILTER_VALIDATE_BOOLEAN );
+			$options[ static::$type . '_tinymce' ] = filter_var( $options[ static::$type . '_tinymce' ], FILTER_VALIDATE_BOOLEAN );
+			$options[ static::$type . '_quicktags' ] = filter_var( $options[ static::$type . '_quicktags' ], FILTER_VALIDATE_BOOLEAN );
 
 			wp_tinymce_inline_scripts();
 			wp_enqueue_editor();

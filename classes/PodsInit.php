@@ -974,7 +974,7 @@ class PodsInit {
 			'pods-dfv',
 			PODS_URL . 'ui/js/dfv/pods-dfv.min.js',
 			array_merge(
-				$pods_dfv_options['dependencies'],
+				(array) $pods_dfv_options['dependencies'],
 				[
 					'jquery',
 					'jquery-ui-core',
@@ -987,7 +987,7 @@ class PodsInit {
 					'wp-tinymce',
 				]
 			),
-			$pods_dfv_options['version'],
+			(string) $pods_dfv_options['version'],
 			true
 		);
 

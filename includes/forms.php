@@ -123,7 +123,7 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 			$field_prefix      = 'pods_meta_';
 			$field_row_classes = 'pods-meta';
 
-			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
+			pods_view( PODS_DIR . 'ui/forms/div-rows.php', compact( array_keys( get_defined_vars() ) ) );
 
 			echo "</div>\n";
 		}

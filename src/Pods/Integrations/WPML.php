@@ -24,6 +24,7 @@ class WPML extends Integration {
 			'pods_component_i18n_admin_data' => [ 'pods_component_i18n_admin_data' ],
 			'pods_component_i18n_admin_ui_fields' => [ 'pods_component_i18n_admin_ui_fields', 10, 2 ],
 			'pods_auto_template_template_name' => [ 'pods_auto_template_template_name' ],
+			'pods_var_post_id' => [ 'pods_var_post_id' ],
 		],
 	];
 
@@ -32,6 +33,17 @@ class WPML extends Integration {
 	 */
 	public static function is_active() {
 		return defined( 'ICL_SITEPRESS_VERSION' ) || ! empty( $GLOBALS['sitepress'] );
+	}
+
+	/**
+	 * @since 2.8.2
+	 *
+	 * @param int $id
+	 *
+	 * @return mixed|void
+	 */
+	public function pods_var_post_id( $id ) {
+		return apply_filters( 'wpml_object_id', $id, get_post_type( $id ), true );
 	}
 
 	/**

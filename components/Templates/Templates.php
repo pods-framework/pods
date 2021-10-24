@@ -30,6 +30,8 @@ new Pods_Templates_Auto_Template_Settings();
 
 Pods_Templates_Frontier::get_instance();
 
+use Pods\Whatsit\Template;
+
 /**
  * Class Pods_Templates
  */
@@ -513,13 +515,30 @@ class Pods_Templates extends PodsComponent {
 
 		$template = array(
 			'id'      => 0,
+			'name'    => $template_name,
 			'slug'    => $template_name,
 			'code'    => $code,
 			'options' => array(),
 		);
 
 		if ( empty( $code ) && ! empty( $template_name ) ) {
-			$template_obj = $obj->api->load_template( array( 'name' => $template_name ) );
+			// Check for an ID in the template name.
+			if ( is_int( $template_name ) ) {
+				$template_obj = $obj->api->load_template( [ 'id' => $template_name ] );
+			} else {
+				// First check by title.
+				$template_obj = $obj->api->load_template( [ 'title' => $template_name ] );
+
+				// Then check by slug.
+				if ( ! $template_obj ) {
+					$template_obj = $obj->api->load_template( [ 'slug' => $template_name ] );
+				}
+
+				// Then check by ID.
+				if ( ! $template_obj && is_numeric( $template_name ) ) {
+					$template_obj = $obj->api->load_template( [ 'id' => (int) $template_name ] );
+				}
+			}
 
 			if ( ! empty( $template_obj ) ) {
 				$template = $template_obj;
@@ -528,7 +547,11 @@ class Pods_Templates extends PodsComponent {
 					$code = $template['code'];
 				}
 
-				$options = pods_v( 'options', $template );
+				if ( $template instanceof Template ) {
+					$options = $template;
+				} else {
+					$options = pods_v( 'options', $template );
+				}
 
 				$permission = pods_permission( $template );
 
@@ -538,8 +561,10 @@ class Pods_Templates extends PodsComponent {
 					if ( 1 === (int) pods_v( 'show_restrict_message', $options, 1 ) ) {
 						$message = pods_v( 'restrict_message', $options, __( 'You do not have access to view this content.', 'pods' ), true );
 						$message = PodsForm::field_method( 'wysiwyg', 'display', $message, 'restrict_message', $options );
+
 						return apply_filters( 'pods_templates_permission_denied', $message, $code, $template, $obj );
 					}
+
 					return '';
 				}
 			}

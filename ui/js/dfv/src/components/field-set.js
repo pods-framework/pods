@@ -33,22 +33,28 @@ const FieldSet = ( {
 		// Boolean Group fields get a map of values instead of a single value.
 		const isGroupField = 'boolean_group' === type;
 
-		const values = {};
+		const valuesWithDefaults = {};
 
 		if ( isGroupField ) {
 			( booleanGroup || [] ).forEach( ( subField ) => {
-				values[ subField.name ] = subField.name
+				// If the value is undefined (not falsy), use the default value.
+				valuesWithDefaults[ subField.name ] = ( 'undefined' !== typeof allPodValues[ subField.name ] )
 					? allPodValues[ subField.name ]
-					: undefined;
+					: subField.default;
 			} );
 		}
+
+		// If the value is undefined (not falsy), use the default value.
+		const valueOrDefault = ( 'undefined' !== typeof allPodValues[ name ] )
+			? allPodValues[ name ]
+			: field?.default;
 
 		return (
 			<FieldWrapper
 				key={ name }
 				field={ field }
-				value={ isGroupField ? undefined : allPodValues[ name ] }
-				values={ isGroupField ? values : undefined }
+				value={ isGroupField ? undefined : valueOrDefault }
+				values={ isGroupField ? valuesWithDefaults : undefined }
 				setOptionValue={ setOptionValue }
 				podType={ podType }
 				podName={ podName }

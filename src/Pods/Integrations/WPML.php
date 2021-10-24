@@ -73,7 +73,11 @@ class WPML extends Integration {
 			$id = apply_filters( 'wpml_object_id', $obj->ID, $obj->post_type, true );
 
 			if ( (int) $id !== (int) $obj->ID ) {
-				$template_name = get_post( $id )->post_title;
+				$obj = get_post( $id );
+
+				if ( $obj ) {
+					$template_name = $obj->post_title;
+				}
 			}
 		}
 

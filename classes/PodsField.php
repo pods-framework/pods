@@ -402,7 +402,6 @@ class PodsField {
 		}
 
 		$dfv_field_data = $this->build_dfv_field_data( $args );
-
 		$script_content = wp_json_encode( $dfv_field_data, JSON_HEX_TAG );
 		?>
 		<div class="<?php echo esc_attr( $field_class ); ?>">

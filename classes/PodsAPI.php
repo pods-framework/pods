@@ -1959,90 +1959,59 @@ class PodsAPI {
 			unset( $pod['options'] );
 		}
 
+		// Get raw args because $pod may be Pod object and could return magic __get() options.
+		$raw_args = $pod;
+
+		if ( $pod instanceof Pod ) {
+			$raw_args = $pod->get_args();
+		}
+
 		$options_ignore = array(
-			'object_type',
-			'object_name',
-			'table',
-			'meta_table',
-			'pod_table',
+			'_locale',
+			'attributes',
+			'dependency',
+			'depends-on',
+			'developer_mode',
+			'excludes-on',
 			'field_id',
 			'field_index',
-			'field_slug',
-			'field_type',
 			'field_parent',
 			'field_parent_select',
+			'field_slug',
+			'field_type',
+			'fields',
+			'group',
+			'group_id',
+			'grouped',
+			'groups',
+			'is_new',
+			'join',
 			'meta_field_id',
 			'meta_field_index',
 			'meta_field_value',
+			'meta_table',
+			'object_fields',
+			'object_name',
+			'object_type',
+			'old_name',
+			'orderby',
+			'parent',
+			'pod',
 			'pod_field_id',
 			'pod_field_index',
-			'fields',
-			'object_fields',
-			'groups',
-			'join',
+			'pod_table',
+			'post_status',
+			'recurse',
+			'table',
+			'table_info',
 			'where',
 			'where_default',
-			'orderby',
-			'pod',
-			'recurse',
-			'table_info',
-			'attributes',
-			'group',
-			'grouped',
-			'developer_mode',
-			'dependency',
-			'depends-on',
-			'excludes-on',
-			'is_new',
-			'_locale',
-			'old_name',
-			'parent',
-			'group_id',
 		);
 
+		// Remove options we do not want to set on the Pod.
 		foreach ( $options_ignore as $ignore ) {
-			if ( isset( $pod[ $ignore ] ) ) {
+			if ( isset( $raw_args[ $ignore ] ) ) {
 				unset( $pod[ $ignore ] );
-			}
-		}
-
-		$exclude = array(
-			'id',
-			'name',
-			'label',
-			'description',
-			'type',
-			'storage',
-			'object',
-			'alias',
-			'fields',
-			'weight',
-			'parent',
-			'group',
-			'groups',
-			'is_new',
-			'_locale',
-			'old_name',
-			'parent',
-			'group_id',
-			'post_status',
-		);
-
-		foreach ( $exclude as $k => $exclude_field ) {
-			$aliases = array( $exclude_field );
-
-			if ( is_array( $exclude_field ) ) {
-				$aliases = array_merge( array( $k ), $exclude_field );
-
-				$exclude_field = $k;
-			}
-
-			foreach ( $aliases as $alias ) {
-				if ( isset( $pod[ $alias ] ) ) {
-					$pod[ $exclude_field ] = pods_trim( $pod[ $alias ] );
-
-					unset( $pod[ $alias ] );
-				}
 			}
 		}
 
@@ -2232,6 +2201,10 @@ class PodsAPI {
 		$pod = apply_filters( 'pods_api_save_pod_config_data', $pod, $params, $sanitized, $db );
 
 		$meta = $pod;
+
+		if ( $pod instanceof Pod ) {
+			$meta = $pod->get_args();
+		}
 
 		$excluded_meta = array(
 			'id',

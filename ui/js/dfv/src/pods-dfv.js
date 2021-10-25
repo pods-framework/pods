@@ -157,6 +157,8 @@ window.PodsDFV = {
 			storeKey = initEditPodStore( window.podsAdminConfig );
 		} else if ( window.podsDFVConfig ) {
 			storeKey = initPodStore( window.podsDFVConfig, initialValues );
+
+			console.log( 'created store with key', storeKey );
 		} else {
 			// Something is wrong if neither set of globals is set.
 			return;

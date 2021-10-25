@@ -66,6 +66,7 @@
     margin-bottom: 1em;
 	padding-bottom: 0.5em;
 	overflow-x: scroll;
+	min-width: 200px;
 
 	@media screen and (min-width: 851px) {
         border-right: 1px solid $color--super-light-grey;

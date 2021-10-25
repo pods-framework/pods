@@ -261,14 +261,49 @@ class PodsField_WYSIWYG extends PodsField {
 			$options[ static::$type . '_media_buttons' ]  = filter_var( pods_v( static::$type . '_editor', $options, true ), FILTER_VALIDATE_BOOLEAN );
 
 			// Set up default editor.
+			// @todo Support this properly in React, which will be a challenge.
 			$options[ static::$type . '_default_editor' ] = pods_v( static::$type . '_default_editor', $options, wp_default_editor(), true );
 
 			if ( in_array( $options[ static::$type . '_default_editor' ], [ 'html', 'tinymce' ], true ) ) {
 				$options[ static::$type . '_default_editor' ] = 'tinymce';
 			}
 
+			$mce_buttons = [];
+
+			if ( ! wp_is_mobile() ) {
+				if ( $set['_content_editor_dfw'] ) {
+					$mce_buttons[] = 'wp_adv';
+					$mce_buttons[] = 'dfw';
+				} else {
+					$mce_buttons[] = 'fullscreen';
+					$mce_buttons[] = 'wp_adv';
+				}
+			} else {
+				$mce_buttons[] = 'wp_adv';
+			}
+
 			wp_tinymce_inline_scripts();
 			wp_enqueue_editor();
+
+			$settings = [];
+			$settings['textarea_name'] = $name;
+			$settings['media_buttons'] = false;
+
+			if ( ! ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ) && ! ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! is_user_logged_in() ) && ! ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && ! is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! is_user_logged_in() || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ) ) {
+				$settings['media_buttons'] = (boolean) pods_v( static::$type . '_media_buttons', $options, true );
+			}
+
+			$editor_height = (int) pods_v( static::$type . '_editor_height', $options, false );
+
+			if ( $editor_height ) {
+				$settings['editor_height'] = $editor_height;
+			}
+
+			if ( ! empty( $options[ static::$type . '_tinymce_settings' ] ) ) {
+				$settings = array_merge( $settings, $options[ static::$type . '_tinymce_settings' ] );
+			}
+
+			_WP_Editors::editor_settings( 'pods-form-ui-' . $options['name'], $settings );
 		} elseif ( 'quill' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'quill';
 		} elseif ( 'cleditor' === pods_v( static::$type . '_editor', $options ) ) {

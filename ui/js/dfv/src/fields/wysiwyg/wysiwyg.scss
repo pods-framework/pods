@@ -9,3 +9,10 @@
 .pods-alternate-editor {
 	width: 100%;
 }
+
+#profile-page .form-table .pods-field-option,
+.pods-field-option {
+	.wp-editor-container textarea.wp-editor-area {
+		width: 100%;
+	}
+}

@@ -303,7 +303,10 @@ class PodsField_WYSIWYG extends PodsField {
 				$settings = array_merge( $settings, $options[ static::$type . '_tinymce_settings' ] );
 			}
 
-			_WP_Editors::editor_settings( 'pods-form-ui-' . $options['name'], $settings );
+			// WP will handle the scripting needed, but we don't need to output it here.
+			ob_start();
+			wp_editor( $value, '_pods_dfv_' . $options['name'], $settings );
+			$unused_output = ob_get_clean();
 		} elseif ( 'quill' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'quill';
 		} elseif ( 'cleditor' === pods_v( static::$type . '_editor', $options ) ) {

@@ -92,8 +92,14 @@ const TinyMCE = ( {
 		function initialize() {
 			let settings = window?.tinyMCEPreInit?.mceInit[ '_pods_dfv_' + name ] || null;
 
+			console.log( 'settings found for _pods_dfv_' + name );
+			console.log( settings );
+
 			if ( null === settings || 'undefined' === typeof settings ) {
 				settings = window?.wpEditorL10n?.tinymce?.settings || window.wp.oldEditor.getDefaultSettings().tinymce;
+
+				console.log( 'default settings used' );
+				console.log( settings );
 
 				// Remove the media button from the TinyMCE toolbars if found.
 				if ( ! mediaButtons ) {

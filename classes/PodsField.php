@@ -587,6 +587,13 @@ class PodsField {
 			'id',
 		];
 
+		// Fix weird serialization issues.
+		foreach ( $config as $key => $value ) {
+			if ( 'a:0:{}' === $value ) {
+				$config[ $key ] = [];
+			}
+		}
+
 		foreach ( $check_missing as $missing_name ) {
 			if ( ! empty( $args->{$missing_name} ) ) {
 				$config[ $missing_name ] = $args->{$missing_name};

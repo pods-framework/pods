@@ -2100,7 +2100,7 @@ class PodsAPI {
 				'post_status'  => 'publish',
 			);
 
-			if ( ! is_array( $pod['groups'] ) || empty( $pod['groups'] ) ) {
+			if ( empty( $pod['groups'] ) || ! is_array( $pod['groups'] ) ) {
 				$default_group_label  = __( 'More Fields', 'pods' );
 				$default_group_fields = [];
 

@@ -12,7 +12,7 @@ import './wysiwyg.scss';
 
 const QUILL_TOOLBAR_OPTIONS = [
 	[ 'bold', 'italic', 'underline', 'strike' ],
-	[ 'blockquote', 'code-block' ],
+	[ 'blockquote', 'code-block', 'link' ],
 
 	[ { header: 1 }, { header: 2 } ],
 	[ { list: 'ordered' }, { list: 'bullet' } ],

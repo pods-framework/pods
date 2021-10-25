@@ -2758,54 +2758,48 @@ class PodsData {
 
 					$tableless_field_types = PodsForm::tableless_field_types();
 
-					if ( $the_field && in_array( $the_field['type'], $tableless_field_types, true ) ) {
-						$related_object_type = $the_field->get_related_object_type();
+					if ( $the_field ) {
+						$field_name = $the_field->get_name();
 
-						if ( in_array( $related_object_type, $simple_tableless_objects, true ) ) {
+						if ( $the_field instanceof Object_Field ) {
+							$field_cast = "`t`.`{$field_name}`";
+						} elseif ( in_array( $the_field['type'], $tableless_field_types, true ) ) {
+							$related_object_type = $the_field->get_related_object_type();
+
+							if ( in_array( $related_object_type, $simple_tableless_objects, true ) ) {
+								if ( $is_pod_meta_storage ) {
+									$field_cast = "`{$field_name}`.`meta_value`";
+								} else {
+									$field_cast = "`t`.`{$field_name}`";
+								}
+							} else {
+								$table = $the_field->get_table_info();
+
+								if ( ! empty( $table ) ) {
+									$field_cast = "`{$field_name}`.`" . $table['field_id'] . '`';
+								}
+							}
+						} elseif ( ! in_array( $pod['type'], [ 'pod', 'table' ], true ) ) {
 							if ( $is_pod_meta_storage ) {
 								$field_cast = "`{$field_name}`.`meta_value`";
 							} else {
-								$field_cast = "`t`.`{$field_name}`";
+								$field_cast = "`d`.`{$field_name}`";
 							}
+						} elseif ( $is_pod_meta_storage ) {
+							$field_cast = "`{$field_name}`.`meta_value`";
 						} else {
-							$table = $the_field->get_table_info();
-
-							if ( ! empty( $table ) ) {
-								$field_cast = "`{$field_name}`.`" . $table['field_index'] . '`';
-							}
+							$field_cast = "`t`.`{$field_name}`";
 						}
 					}
 
+					// Fallback to support meta or object field that's not registered.
 					if ( empty( $field_cast ) ) {
-						if ( $the_field ) {
-							if ( ! in_array(
-								$pod['type'], array(
-									'pod',
-									'table',
-								), true
-							) ) {
-								if ( $the_field instanceof Object_Field ) {
-									$field_cast = "`t`.`{$field_name}`";
-								} elseif ( $is_pod_meta_storage ) {
-									$field_cast = "`{$field_name}`.`meta_value`";
-								} else {
-									$field_cast = "`d`.`{$field_name}`";
-								}
-							} elseif ( $is_pod_meta_storage ) {
-								$field_cast = "`{$field_name}`.`meta_value`";
-							} else {
-								$field_cast = "`t`.`{$field_name}`";
-							}//end if
-						}//end if
-
-						if ( empty( $field_cast ) ) {
-							if ( $is_pod_meta_storage ) {
-								$field_cast = "`{$field_name}`.`meta_value`";
-							} else {
-								$field_cast = "`t`.`{$field_name}`";
-							}
+						if ( $is_pod_meta_storage ) {
+							$field_cast = "`{$field_name}`.`meta_value`";
+						} else {
+							$field_cast = "`t`.`{$field_name}`";
 						}
-					}//end if
+					}
 				} else {
 					$field_cast = '`' . str_replace( '.', '`.`', $field_name ) . '`';
 				}//end if
@@ -3247,6 +3241,10 @@ class PodsData {
 		}
 
 		if ( null === $the_field ) {
+			return $joins;
+		}
+
+		if ( $the_field instanceof Object_Field && ! in_array( $the_field['type'], $tableless_field_types, true ) ) {
 			return $joins;
 		}
 

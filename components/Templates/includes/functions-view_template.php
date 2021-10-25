@@ -63,9 +63,7 @@ function frontier_do_shortcode( $content ) {
  * @since 2.4.0
  */
 function frontier_decode_template( $code, $atts ) {
-
 	$code = base64_decode( $code );
-	$pod  = pods( $atts['pod'] );
 
 	if ( isset( $atts['pod'] ) ) {
 		$code = str_replace( '@pod', $atts['pod'], $code );
@@ -357,6 +355,10 @@ function frontier_do_subtemplate( $atts, $content ) {
 	$pod        = pods( $atts['pod'], $atts['id'] );
 	$field_name = $atts['field'];
 
+	if ( ! $pod || ! $pod->valid() || ! $pod->exists() ) {
+		return '';
+	}
+
 	$entries = $pod->field( $field_name );
 
 	$field = $pod->fields( $field_name );
@@ -387,6 +389,10 @@ function frontier_do_subtemplate( $atts, $content ) {
 			// Match any Pod object or taxonomy
 			foreach ( $entries as $key => $entry ) {
 				$subpod = pods( $field['pick_val'] );
+
+				if ( ! $subpod || ! $subpod->valid() ) {
+					continue;
+				}
 
 				$subatts = array(
 					'id'  => $entry[ $subpod->pod_data['field_id'] ],

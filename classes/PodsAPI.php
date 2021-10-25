@@ -318,6 +318,9 @@ class PodsAPI {
 			// Prevent WP unslash removing already sanitized input.
 			$meta_value = pods_slash( $meta_value );
 
+			// Enforce boolean integer values.
+			$meta_value = pods_bool_to_int( $meta_value );
+
 			if ( null === $meta_value || ( $strict && '' === $post_meta[ $meta_key ] ) ) {
 				$old_meta_value = '';
 
@@ -474,6 +477,9 @@ class PodsAPI {
 			// Prevent WP unslash removing already sanitized input.
 			$meta_value = pods_slash( $meta_value );
 
+			// Enforce boolean integer values.
+			$meta_value = pods_bool_to_int( $meta_value );
+
 			if ( null === $meta_value ) {
 				$old_meta_value = '';
 
@@ -620,6 +626,9 @@ class PodsAPI {
 
 			// Prevent WP unslash removing already sanitized input.
 			$meta_value = pods_slash( $meta_value );
+
+			// Enforce boolean integer values.
+			$meta_value = pods_bool_to_int( $meta_value );
 
 			if ( null === $meta_value ) {
 				$old_meta_value = '';
@@ -797,6 +806,9 @@ class PodsAPI {
 			// Prevent WP unslash removing already sanitized input.
 			$meta_value = pods_slash( $meta_value );
 
+			// Enforce boolean integer values.
+			$meta_value = pods_bool_to_int( $meta_value );
+
 			if ( null === $meta_value || ( $strict && '' === $term_meta[ $meta_key ] ) ) {
 				$old_meta_value = '';
 
@@ -879,6 +891,9 @@ class PodsAPI {
 			if ( ! empty( $setting ) ) {
 				$option = $setting . '_' . $option;
 			}
+
+			// Enforce boolean integer values.
+			$value = pods_bool_to_int( $value );
 
 			update_option( $option, $value );
 		}
@@ -1986,8 +2001,8 @@ class PodsAPI {
 		);
 
 		foreach ( $options_ignore as $ignore ) {
-			if ( isset( $options[ $ignore ] ) ) {
-				unset( $options[ $ignore ] );
+			if ( isset( $pod[ $ignore ] ) ) {
+				unset( $pod[ $ignore ] );
 			}
 		}
 
@@ -2017,15 +2032,16 @@ class PodsAPI {
 			$aliases = array( $exclude_field );
 
 			if ( is_array( $exclude_field ) ) {
-				$aliases       = array_merge( array( $k ), $exclude_field );
+				$aliases = array_merge( array( $k ), $exclude_field );
+
 				$exclude_field = $k;
 			}
 
 			foreach ( $aliases as $alias ) {
-				if ( isset( $options[ $alias ] ) ) {
-					$pod[ $exclude_field ] = pods_trim( $options[ $alias ] );
+				if ( isset( $pod[ $alias ] ) ) {
+					$pod[ $exclude_field ] = pods_trim( $pod[ $alias ] );
 
-					unset( $options[ $alias ] );
+					unset( $pod[ $alias ] );
 				}
 			}
 		}
@@ -8429,8 +8445,9 @@ class PodsAPI {
 	 *
 	 * Load a Pod Template
 	 *
-	 * $params['id'] int The template ID
-	 * $params['name'] string The template name
+	 * $params['id'] int The template ID.
+	 * $params['name'] string The template name (title).
+	 * $params['slug'] string The template slug.
 	 *
 	 * @param array $params An associative array of parameters
 	 *
@@ -8445,10 +8462,18 @@ class PodsAPI {
 		$params       = (object) $params;
 		$params->type = 'template';
 
+		// Backwards compatibility check.
 		if ( isset( $params->name ) ) {
 			$params->title = $params->name;
 
 			unset( $params->name );
+		}
+
+		// Because we always used name for title, support slug for name.
+		if ( isset( $params->slug ) ) {
+			$params->name = $params->slug;
+
+			unset( $params->slug );
 		}
 
 		return $this->load_object( $params );
@@ -9419,14 +9444,9 @@ class PodsAPI {
 	public function get_table_info( $object_type, $object, $name = null, $pod = null, $field = null ) {
 
 		/**
-		 * @var $wpdb                         wpdb
-		 * @var $sitepress                    SitePress
-		 * @var $polylang                     object
+		 * @var $wpdb wpdb
 		 */
-		/*
-		 * @todo wpml-comp Remove global object usage
-		 */
-		global $wpdb, $sitepress, $polylang;
+		global $wpdb;
 
 		// @todo Handle $object arrays for Post Types, Taxonomies, Comments (table pulled from first object in array)
 

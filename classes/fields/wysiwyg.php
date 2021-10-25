@@ -56,7 +56,7 @@ class PodsField_WYSIWYG extends PodsField {
 				'data'       => apply_filters(
 					'pods_form_ui_field_wysiwyg_editors', array(
 						'tinymce'  => __( 'TinyMCE (WP Default)', 'pods' ),
-						'quill'    => __( 'Quill Editor', 'pods' ),
+						'quill'    => __( 'Quill Editor (Limited line break functionality)', 'pods' ),
 						'cleditor' => __( 'CLEditor (No longer available, now using Quill Editor)', 'pods' ),
 					)
 				),

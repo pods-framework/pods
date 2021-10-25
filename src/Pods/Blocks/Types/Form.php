@@ -234,9 +234,6 @@ class Form extends Base {
 			}
 		}
 
-		// Without this, the form DFV scripts will be texturized.
-		remove_filter( 'the_content', 'wptexturize' );
-
 		return pods_shortcode_form( $attributes );
 	}
 }

@@ -403,18 +403,14 @@ class PodsField {
 
 		$dfv_field_data = $this->build_dfv_field_data( $args );
 		$script_content = wp_json_encode( $dfv_field_data, JSON_HEX_TAG );
+
+		// Important! The script tag must be all on one line or wptexturize will eat it up :( the regex matching breaks.
 		?>
 		<div class="<?php echo esc_attr( $field_class ); ?>">
 			<?php if ( ! $disable_dfv ) : ?>
 				<span class="pods-dfv-field__loading-indicator" role="progressbar"></span>
 			<?php endif; ?>
-			<script
-				type="application/json"
-				class="pods-dfv-field-data"
-				data-pod="<?php echo esc_attr( $pod_name ); ?>"
-				data-item-id="<?php echo esc_attr( $item_id ); ?>"
-				data-group="<?php echo esc_attr( $group_name ); ?>"
-			><?php
+			<script type="application/json" class="pods-dfv-field-data" data-pod="<?php echo esc_attr( $pod_name ); ?>" data-item-id="<?php echo esc_attr( $item_id ); ?>" data-group="<?php echo esc_attr( $group_name ); ?>"><?php
 				// @codingStandardsIgnoreLine
 				echo $script_content;
 			?></script>

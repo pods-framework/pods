@@ -3103,12 +3103,6 @@ function pods_can_use_sessions( $only_env_check = false ) {
 		}
 	}
 
-	// Check if session is already set.
-	// In separate if clause, to also check for non-file based sessions.
-	if ( ! function_exists( 'session_status' ) || PHP_SESSION_ACTIVE === session_status() ) {
-		return false;
-	}
-
 	// Allow sessions.
 	return true;
 }
@@ -3122,10 +3116,16 @@ function pods_can_use_sessions( $only_env_check = false ) {
  * @return boolean Whether the session was started.
  */
 function pods_session_start() {
+	if ( function_exists( 'session_status' ) && PHP_SESSION_ACTIVE === session_status() ) {
+		return true;
+	}
+
 	if ( false !== headers_sent() ) {
 		// Check if headers were sent.
 		return false;
-	} elseif ( ! pods_can_use_sessions() ) {
+	}
+
+	if ( ! pods_can_use_sessions() ) {
 		return false;
 	}
 
@@ -3141,12 +3141,7 @@ function pods_session_start() {
  * @return string The session ID.
  */
 function pods_session_id() {
-	if ( ! pods_can_use_sessions() ) {
-		return '';
-	}
-
-	if ( ! function_exists( 'session_status' ) || PHP_SESSION_DISABLED === session_status() ) {
-		// Sessions are disabled.
+	if ( false === pods_session_start() ) {
 		return '';
 	}
 

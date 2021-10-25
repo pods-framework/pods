@@ -305,7 +305,7 @@ class PodsField_WYSIWYG extends PodsField {
 
 			// WP will handle the scripting needed, but we don't need to output it here.
 			ob_start();
-			wp_editor( $value, '_pods_dfv_' . $options['name'], $settings );
+			wp_editor( $value, '_pods_dfv_' . $name, $settings );
 			$unused_output = ob_get_clean();
 		} elseif ( 'quill' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'quill';

@@ -151,3 +151,21 @@
 	// Fixes conflicting different WP checkbox styles
     background: white;
 }
+
+// RTL support.
+.rtl {
+
+	.pods-settings-modal__panel {
+		padding-right: 0;
+		padding-left: 1em;
+	}
+
+	.pods-settings-modal__tabs {
+		@media screen and (min-width: 851px) {
+			border-right: 0;
+			border-left: 1px solid $color--super-light-grey;
+			margin-right: 0;
+			margin-left: 2em;
+		}
+	}
+}

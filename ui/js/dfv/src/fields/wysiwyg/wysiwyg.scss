@@ -1,5 +1,6 @@
 .pods-dfv-container .pods-tinymce-editor-container {
 	border: none;
+	background: transparent;
 }
 
 .pods-tinymce-editor-container .mce-tinymce {
@@ -14,5 +15,6 @@
 .pods-field-option {
 	.wp-editor-container textarea.wp-editor-area {
 		width: 100%;
+		border: none;
 	}
 }

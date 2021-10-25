@@ -303,10 +303,21 @@ class PodsField_WYSIWYG extends PodsField {
 				$settings = array_merge( $settings, $options[ static::$type . '_tinymce_settings' ] );
 			}
 
-			// WP will handle the scripting needed, but we don't need to output it here.
+			// WP will handle the scripting needed, but we won't output the textarea here.
 			ob_start();
 			wp_editor( $value, '_pods_dfv_' . $name, $settings );
 			$unused_output = ob_get_clean();
+
+			// Workaround because the above already outputs the style we need.
+			$styles = wp_styles();
+
+			$found_editor_buttons = array_search( 'editor-buttons', $styles->done, true );
+
+			if ( false !== $found_editor_buttons ) {
+				unset( $styles->done[ $found_editor_buttons ] );
+			}
+
+			wp_print_styles( 'editor-buttons' );
 		} elseif ( 'quill' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'quill';
 		} elseif ( 'cleditor' === pods_v( static::$type . '_editor', $options ) ) {

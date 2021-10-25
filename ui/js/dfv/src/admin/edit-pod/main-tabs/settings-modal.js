@@ -13,7 +13,7 @@ import { Modal, Button, Spinner } from '@wordpress/components';
  */
 import DynamicTabContent from './dynamic-tab-content';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
-import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
+import { validateFieldDependencies, formatDependency } from 'dfv/src/helpers/validateFieldDependencies';
 import { toBool } from 'dfv/src/helpers/booleans';
 
 import './settings-modal.scss';
@@ -31,13 +31,18 @@ const checkFormValidity = ( sections, options ) => {
 	// Go through each section, check that each one has all valid fields.
 	return sections.every(
 		( section ) => {
-			const {
+			let {
 				fields,
 				'depends-on': dependsOn,
 				'depends-on-any': dependsOnAny,
 				'excludes-on': excludesOn,
 				'wildcard-on': wildcardOn,
 			} = section;
+
+			dependsOn = formatDependency( dependsOn );
+			dependsOnAny = formatDependency( dependsOnAny );
+			excludesOn = formatDependency( excludesOn );
+			wildcardOn = formatDependency( wildcardOn );
 
 			// Skip the section if it doesn't have any fields.
 			if ( ! fields || 0 === fields.length ) {

@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 
-import { TextareaControl } from '@wordpress/components';
 import { F10, isKeyboardEvent } from '@wordpress/keycodes';
 
 // Based on the core Freeform block's edit component, see:
@@ -143,7 +142,7 @@ const TinyMCE = ( {
 			id={ `wp-${ fieldId }-container` }
 			className="wp-editor-container pods-tinymce-editor-container"
 		>
-			<TextareaControl
+			<textarea
 				className="wp-editor-area"
 				id={ fieldId }
 				value={ value || '' }

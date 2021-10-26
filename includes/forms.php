@@ -104,6 +104,8 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 		$container_classes = array_map( 'sanitize_html_class', $container_classes );
 		$container_classes = implode( ' ', $container_classes );
 
+		$id = $object_id;
+
 		if ( $is_table_render || $is_table_rows_render ) {
 			if ( $is_table_render ) {
 				echo '<table class="form-table ' . esc_attr( $container_classes ) . '">' . "\n";

@@ -3784,6 +3784,8 @@ class Pods implements Iterator {
 			}
 		}//end if
 
+		$id = $this->id();
+
 		pods_view( PODS_DIR . 'ui/front/form.php', compact( array_keys( get_defined_vars() ) ) );
 
 		$output = ob_get_clean();

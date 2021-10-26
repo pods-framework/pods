@@ -104,6 +104,12 @@ const TinyMCE = ( {
 				}
 			}
 
+			// Remove fullscreen button from the TinyMCE toolbar.
+			settings.toolbar1 = settings.toolbar1.replace( 'fullscreen,', '' ).replace( ',fullscreen', '' ).replace( 'fullscreen', '' );
+			settings.toolbar2 = settings.toolbar2.replace( 'fullscreen,', '' ).replace( ',fullscreen', '' ).replace( 'fullscreen', '' );
+			settings.toolbar3 = settings.toolbar3.replace( 'fullscreen,', '' ).replace( ',fullscreen', '' ).replace( 'fullscreen', '' );
+			settings.toolbar4 = settings.toolbar4.replace( 'fullscreen,', '' ).replace( ',fullscreen', '' ).replace( 'fullscreen', '' );
+
 			window.wp.oldEditor.initialize( fieldId, {
 				tinymce: {
 					...settings,

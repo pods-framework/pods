@@ -1,12 +1,17 @@
-import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
+import { validateFieldDependencies, formatDependency } from 'dfv/src/helpers/validateFieldDependencies';
 
 const recursiveCheckDepsForField = ( fieldConfig, allPodValues, allPodFieldsMap ) => {
-	const {
+	let {
 		'depends-on': dependsOn = {},
 		'depends-on-any': dependsOnAny = {},
 		'excludes-on': excludesOn = {},
 		'wildcard-on': wildcardOn = {},
 	} = fieldConfig;
+
+	dependsOn = formatDependency( dependsOn );
+	dependsOnAny = formatDependency( dependsOnAny );
+	excludesOn = formatDependency( excludesOn );
+	wildcardOn = formatDependency( wildcardOn );
 
 	// Calculate dependencies, trying to skip as many of these checks as
 	// we can because they're expensive.

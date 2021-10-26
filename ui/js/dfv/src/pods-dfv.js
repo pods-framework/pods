@@ -111,7 +111,7 @@ window.PodsDFV = {
 						}
 
 						// Apply defaults if we're on the Edit Pod screen.
-						if ( isEditPodScreen && undefined === currentField.fieldItemData?.[ groupItem.name ] ) {
+						if ( isEditPodScreen && 'undefined' === typeof currentField.fieldItemData?.[ groupItem.name ] ) {
 							values[ groupItem.name ] = groupItem.default || '';
 						} else {
 							values[ groupItem.name ] = currentField.fieldItemData?.[ groupItem.name ];

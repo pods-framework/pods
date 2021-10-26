@@ -1,6 +1,7 @@
 <?php
 
 use Pods\Data\Map_Field_Values;
+use Pods\Whatsit\Object_Field;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pod as Deprecated_Pod;
@@ -1595,7 +1596,7 @@ class Pods implements Iterator {
 				$filter = pods_v( 'display_filter', $field_data );
 
 				if ( 0 < strlen( $filter ) ) {
-					if ( $params->single ) {
+					if ( $params->single || ! is_array( $value ) ) {
 						$value = array( $value );
 					}
 
@@ -2271,6 +2272,9 @@ class Pods implements Iterator {
 			$params->search_query = pods_v_sanitized( $this->search_var, 'get', '' );
 		}
 
+		$pod_type     = $this->pod_data->get_type();
+		$storage_type = $this->pod_data->get_storage();
+
 		// Allow orderby array ( 'field' => 'asc|desc' ).
 		if ( ! empty( $params->orderby ) && is_array( $params->orderby ) ) {
 			foreach ( $params->orderby as $k => $orderby ) {
@@ -2281,53 +2285,6 @@ class Pods implements Iterator {
 
 					if ( 'DESC' === strtoupper( $orderby ) ) {
 						$order = 'DESC';
-					}
-
-					$order_field = $this->fields( $k );
-
-					if ( $order_field ) {
-						if ( in_array( $order_field['type'], $tableless_field_types, true ) ) {
-							$order_object_type = $order_field->get_related_object_type();
-							$order_object_name = $order_field->get_related_object_name();
-
-							if ( in_array( $order_object_type, $simple_tableless_objects, true ) ) {
-								if ( 'table' === $this->pod_data['storage'] ) {
-									if ( ! in_array( $this->pod_data['type'], [ 'pod', 'table' ], true ) ) {
-										$key = "`d`.`{$k}`";
-									} else {
-										$key = "`t`.`{$k}`";
-									}
-								} else {
-									$key = "`{$k}`.`meta_value`";
-								}
-							} else {
-								$table = $order_field->get_table_info();
-
-								if ( ! empty( $table ) ) {
-									$key = "`{$k}`.`" . $table['field_index'] . '`';
-								}
-							}
-						} else {
-							$storage_type = $this->pod_data->get_storage();
-
-							if ( $order_field instanceof Object_Field || 'table' === $storage_type ) {
-								if ( ! in_array( $this->pod_data['type'], [ 'pod', 'table' ], true ) ) {
-									$key = "`d`.`{$k}`";
-								} else {
-									$key = "`t`.`{$k}`";
-								}
-							} elseif ( 'meta' === $storage_type ) {
-								$key = "`{$k}`.`meta_value`";
-							}
-						}
-					}
-
-					if ( empty( $key ) ) {
-						$key = $k;
-
-						if ( false === strpos( $key, ' ' ) && false === strpos( $key, '`' ) ) {
-							$key = '`' . str_replace( '.', '`.`', $key ) . '`';
-						}
 					}
 
 					$orderby = $key;
@@ -2361,31 +2318,42 @@ class Pods implements Iterator {
 
 					$order_field = $this->fields( $k );
 
-					if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ), true ) ) {
-						if ( isset( $this->pod_data['object_fields'][ $k ] ) ) {
-							$key = "`t`.`{$k}`";
-						} elseif ( $order_field ) {
-							if ( 'table' === $this->pod_data['storage'] ) {
-								$key = "`d`.`{$k}`";
-							} else {
-								$key = "`{$k}`.`meta_value`";
-							}
-						} else {
-							$object_fields = (array) $this->pod_data['object_fields'];
+					if ( $order_field ) {
+						$k = $order_field->get_name();
 
-							foreach ( $object_fields as $object_field => $object_field_opt ) {
-								if ( $object_field === $k || in_array( $k, $object_field_opt['alias'], true ) ) {
-									$key = "`t`.`{$object_field}`";
+						$is_object_field      = $order_field instanceof Object_Field;
+						$is_pod_or_table_type = in_array( $pod_type, [ 'pod', 'table' ], true );
+
+						if ( in_array( $order_field['type'], $tableless_field_types, true ) ) {
+							$order_object_type = $order_field->get_related_object_type();
+
+							if ( in_array( $order_object_type, $simple_tableless_objects, true ) ) {
+								if ( $is_object_field || 'table' === $storage_type ) {
+									if ( ! $is_object_field && ! $is_pod_or_table_type ) {
+										$key = "`d`.`{$k}`";
+									} else {
+										$key = "`t`.`{$k}`";
+									}
+								} else {
+									$key = "`{$k}`.`meta_value`";
+								}
+							} else {
+								$table = $order_field->get_table_info();
+
+								if ( ! empty( $table ) ) {
+									$key = "`{$k}`.`" . $table['field_index'] . '`';
 								}
 							}
-						}
-					} elseif ( $order_field ) {
-						if ( 'table' === $this->pod_data['storage'] ) {
-							$key = "`t`.`{$k}`";
-						} else {
+						} elseif ( $is_object_field || 'table' === $storage_type ) {
+							if ( ! $is_object_field && ! $is_pod_or_table_type ) {
+								$key = "`d`.`{$k}`";
+							} else {
+								$key = "`t`.`{$k}`";
+							}
+						} elseif ( 'meta' === $storage_type ) {
 							$key = "`{$k}`.`meta_value`";
 						}
-					}//end if
+					}
 
 					$prefix_orderby = "{$key} {$dir}";
 
@@ -3474,7 +3442,35 @@ class Pods implements Iterator {
 	}
 
 	/**
-	 * Display the page template
+	 * Display the pod template (singular) in the context from within a fetch() loop.
+	 *
+	 * @see   Pods_Templates::template
+	 *
+	 * @param string      $template_name The template name.
+	 * @param string|null $code          Custom template code to use instead.
+	 * @param bool        $deprecated    Whether to use deprecated functionality based on old function usage.
+	 *
+	 * @return mixed Template output
+	 *
+	 * @since 2.0.0
+	 * @link  https://docs.pods.io/code/pods/template/
+	 */
+	public function template_singular( $template_name, $code = null, $deprecated = false ) {
+		$old_id = $this->id;
+
+		$this->id = $this->id();
+
+		$out = $this->template( $template_name, $code, $deprecated );
+
+		if ( ! empty( $old_id ) ) {
+			$this->id = $old_id;
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Display the pod template.
 	 *
 	 * @see   Pods_Templates::template
 	 *
@@ -3643,7 +3639,7 @@ class Pods implements Iterator {
 			// Check if Pods sessions are disabled.
 			if ( false === $session_auto_start ) {
 				return sprintf(
-					'<strong>%1$s:</strong> %2$s, <a href="%3$s">%4$s</a> %5$s.',
+					'<p><strong>%1$s:</strong> %2$s, <a href="%3$s">%4$s</a> %5$s.</p>',
 					esc_html__( 'Error', 'pods' ),
 					esc_html__( 'Anonymous form submissions are not enabled for this site', 'pods' ),
 					esc_url( wp_login_url( pods_current_url() ) ),
@@ -3657,7 +3653,7 @@ class Pods implements Iterator {
 				pods_update_setting( 'pods_session_auto_start', '1' );
 
 				return sprintf(
-					'<strong>%1$s:</strong> %2$s',
+					'<p><strong>%1$s:</strong> %2$s</p>',
 					esc_html__( 'Error', 'pods' ),
 					esc_html__( 'Please refresh the page to access this form.', 'pods' )
 				);
@@ -3666,7 +3662,7 @@ class Pods implements Iterator {
 			// Check if the session started properly.
 			if ( '' === pods_session_id() ) {
 				return sprintf(
-					'<strong>%1$s:</strong> %2$s',
+					'<p><strong>%1$s:</strong> %2$s</p>',
 					esc_html__( 'Error', 'pods' ),
 					esc_html__( 'Anonymous form submissions are not compatible with sessions on this site.', 'pods' )
 				);
@@ -3815,6 +3811,8 @@ class Pods implements Iterator {
 				echo '<div id="message" class="pods-form-front-success">' . wp_kses_post( $message ) . '</div>';
 			}
 		}//end if
+
+		$id = $this->id();
 
 		pods_view( PODS_DIR . 'ui/front/form.php', compact( array_keys( get_defined_vars() ) ) );
 
@@ -4386,6 +4384,7 @@ class Pods implements Iterator {
 			'search'      => 'boolean',
 			'search_var'  => 'string',
 			'search_mode' => 'string',
+			'id'          => 'int',
 		);
 
 		if ( isset( $supported_pods_data[ $name ] ) ) {

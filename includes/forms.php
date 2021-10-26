@@ -104,6 +104,8 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 		$container_classes = array_map( 'sanitize_html_class', $container_classes );
 		$container_classes = implode( ' ', $container_classes );
 
+		$id = $object_id;
+
 		if ( $is_table_render || $is_table_rows_render ) {
 			if ( $is_table_render ) {
 				echo '<table class="form-table ' . esc_attr( $container_classes ) . '">' . "\n";
@@ -123,7 +125,7 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 			$field_prefix      = 'pods_meta_';
 			$field_row_classes = 'pods-meta';
 
-			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
+			pods_view( PODS_DIR . 'ui/forms/div-rows.php', compact( array_keys( get_defined_vars() ) ) );
 
 			echo "</div>\n";
 		}

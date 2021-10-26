@@ -2605,27 +2605,52 @@ class PodsMeta {
 	public function get_keys_not_covered( $type ) {
 		if ( 'post' === $type ) {
 			$type = 'post_type';
+		} elseif ( 'term' === $type ) {
+			$type = 'taxonomy';
 		}
 
 		$keys_not_covered = [
 			'post_type' => [
-				'_wp_attachment_metadata' => true,
-				'_thumbnail_id'           => true,
+				'_wp_attachment_metadata'        => true,
+				'_thumbnail_id'                  => true,
+				// Optimize for Duplicate Post plugin.
+				'_dp_is_rewrite_republish_copy'  => true,
+				'_dp_has_rewrite_republish_copy' => true,
+				'_dp_creation_date_gmt'          => true,
+				'_dp_has_been_republished'       => true,
 			],
 			'user' => [
 				'capabilities'         => true,
 				'session_tokens'       => true,
 				'primary_blog'         => true,
 				'default_password_nag' => true,
-				'tribe-dismiss-notice' => true,
 				'user-settings'        => true,
 				'admin_color'          => true,
 				'show_admin_bar_front' => true,
 				'show_admin_bar_admin' => true,
+				// Optimize for Tribe Common.
+				'tribe-dismiss-notice' => true,
 			],
 			'settings' => [
+				'upload_filetypes'                      => true,
+				'fileupload_maxk'                       => true,
+				'upload_space_check_disabled'           => true,
+				// Optimize for Duplicate Post plugin.
+				'duplicate_post_title_prefix'           => true,
+				'duplicate_post_increase_menu_order_by' => true,
+				'duplicate_post_show_notice'            => true,
 			],
 		];
+
+		/**
+		 * Allow filtering the list of keys not covered.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array  $keys_not_covered The list of keys not covered in key=>true format for isset() optimization.
+		 * @param string $type             The object type.
+		 */
+		$keys_not_covered = apply_filters( 'pods_meta_keys_not_covered', $keys_not_covered, $type );
 
 		// Add prefix-specific keys for user type.
 		if ( 'user' === $type ) {
@@ -2640,17 +2665,42 @@ class PodsMeta {
 			}
 		}
 
+		return isset( $keys_not_covered[ $type ] ) ? $keys_not_covered[ $type ] : [];
+	}
+
+	/**
+	 * Determine whether the key is covered.
+	 *
+	 * @since 2.8.2
+	 *
+	 * @param string $type The object type.
+	 * @param string $key  The value key.
+	 *
+	 * @return bool Whether the key is covered.
+	 */
+	public function is_key_covered( $type, $key ) {
+		if ( 'post' === $type ) {
+			$type = 'post_type';
+		} elseif ( 'term' === $type ) {
+			$type = 'taxonomy';
+		}
+
+		// List of keys we do not cover optimized for fastest isset() operation.
+		$keys_not_covered = $this->get_keys_not_covered( $type );
+
+		// Check if this key is covered.
+		$key_is_covered = ! isset( $keys_not_covered[ $key ] );
+
 		/**
 		 * Allow filtering the list of keys not covered.
 		 *
 		 * @since 2.8.0
 		 *
-		 * @param array  $keys_not_covered The list of keys not covered in key=>true format for isset() optimization.
-		 * @param string $type             The object type.
+		 * @param bool   $key_is_covered The list of keys not covered in key=>true format for isset() optimization.
+		 * @param string $type           The object type.
+		 * @param string $key            The value key.
 		 */
-		$keys_not_covered = apply_filters( 'pods_meta_keys_not_covered', $keys_not_covered, $type );
-
-		return isset( $keys_not_covered[ $type ] ) ? $keys_not_covered[ $type ] : [];
+		return apply_filters( 'pods_meta_key_is_covered', $key_is_covered, $type, $key );
 	}
 
 	/**
@@ -3391,11 +3441,8 @@ class PodsMeta {
 			$meta_type = 'term';
 		}
 
-		// List of keys we do not cover optimized for fastest isset() operation.
-		$keys_not_covered = $this->get_keys_not_covered( $object_type );
-
 		// Skip keys we do not cover.
-		if ( $meta_key && isset( $keys_not_covered[ $meta_key ] ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
 			return $_null;
 		}
 
@@ -3550,11 +3597,8 @@ class PodsMeta {
 			return $_null;
 		}
 
-		// List of keys we do not cover optimized for fastest isset() operation.
-		$keys_not_covered = $this->get_keys_not_covered( $object_type );
-
 		// Skip keys we do not cover.
-		if ( $meta_key && isset( $keys_not_covered[ $meta_key ] ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
 			return $_null;
 		}
 
@@ -3605,11 +3649,8 @@ class PodsMeta {
 			return $_null;
 		}
 
-		// List of keys we do not cover optimized for fastest isset() operation.
-		$keys_not_covered = $this->get_keys_not_covered( $object_type );
-
 		// Skip keys we do not cover.
-		if ( $meta_key && isset( $keys_not_covered[ $meta_key ] ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
 			return $_null;
 		}
 
@@ -3696,11 +3737,8 @@ class PodsMeta {
 			return $_null;
 		}
 
-		// List of keys we do not cover optimized for fastest isset() operation.
-		$keys_not_covered = $this->get_keys_not_covered( $object_type );
-
 		// Skip keys we do not cover.
-		if ( $meta_key && isset( $keys_not_covered[ $meta_key ] ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
 			return $_null;
 		}
 

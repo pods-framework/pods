@@ -3103,12 +3103,6 @@ function pods_can_use_sessions( $only_env_check = false ) {
 		}
 	}
 
-	// Check if session is already set.
-	// In separate if clause, to also check for non-file based sessions.
-	if ( ! function_exists( 'session_status' ) || PHP_SESSION_ACTIVE === session_status() ) {
-		return false;
-	}
-
 	// Allow sessions.
 	return true;
 }
@@ -3122,10 +3116,16 @@ function pods_can_use_sessions( $only_env_check = false ) {
  * @return boolean Whether the session was started.
  */
 function pods_session_start() {
+	if ( function_exists( 'session_status' ) && PHP_SESSION_ACTIVE === session_status() ) {
+		return true;
+	}
+
 	if ( false !== headers_sent() ) {
 		// Check if headers were sent.
 		return false;
-	} elseif ( ! pods_can_use_sessions() ) {
+	}
+
+	if ( ! pods_can_use_sessions() ) {
 		return false;
 	}
 
@@ -3141,12 +3141,7 @@ function pods_session_start() {
  * @return string The session ID.
  */
 function pods_session_id() {
-	if ( ! pods_can_use_sessions() ) {
-		return '';
-	}
-
-	if ( ! function_exists( 'session_status' ) || PHP_SESSION_DISABLED === session_status() ) {
-		// Sessions are disabled.
+	if ( false === pods_session_start() ) {
 		return '';
 	}
 
@@ -3478,6 +3473,11 @@ function is_pods_alternative_cache_activated_test() {
  * @return string The SVG icon data (base64 or svg itself) for the icon or the dashicon default class.
  */
 function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'base64' ) {
+	// Return the default when doing WP-CLI requests and Codeception testing.
+	if ( ( defined( 'WP_CLI' ) && WP_CLI ) || function_exists( 'codecept_debug' ) ) {
+		return $default;
+	}
+
 	if ( 'pods' === $icon_path ) {
 		$icon_path = PODS_DIR . '/ui/images/icon-menu.svg';
 	}
@@ -3496,6 +3496,21 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 		return $icon;
 	}
 
+	/**
+	 * Allow filtering the SVG icon used and bypass the normal functionality.
+	 *
+	 * @since 2.8.2
+	 *
+	 * @param null|string $icon      The icon to use.
+	 * @param string      $icon_path The SVG full file path to use.
+	 * @param string      $default   The dashicons helper class (dashicons-database) to use if SVG not found.
+	 * @param string      $mode      How to return the SVG (base64 or svg).
+	 */
+	$icon = apply_filters( 'pods_svg_icon', null, $icon_path, $default, $mode );
+
+	if ( null !== $icon ) {
+		return $icon;
+	}
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 
 	/**
@@ -3529,7 +3544,5 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 	}
 
 	// Default mode is base64.
-	$icon = 'data:image/svg+xml;base64,' . base64_encode( $svg_data );
-
-	return $icon;
+	return 'data:image/svg+xml;base64,' . base64_encode( $svg_data );
 }

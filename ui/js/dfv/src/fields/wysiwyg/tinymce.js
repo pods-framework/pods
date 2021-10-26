@@ -90,15 +90,25 @@ const TinyMCE = ( {
 		}
 
 		function initialize() {
-			const { settings } = window.wpEditorL10n.tinymce;
+			let settings = window?.tinyMCEPreInit?.mceInit[ '_pods_dfv_' + name ] || null;
 
-			// Remove the media button from the TinyMCE toolbars if found.
-			if ( ! mediaButtons ) {
-				settings.toolbar1 = settings.toolbar1.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
-				settings.toolbar2 = settings.toolbar2.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
-				settings.toolbar3 = settings.toolbar3.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
-				settings.toolbar4 = settings.toolbar4.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
+			if ( null === settings || 'undefined' === typeof settings ) {
+				settings = window?.wpEditorL10n?.tinymce?.settings || window.wp.oldEditor.getDefaultSettings().tinymce;
+
+				// Remove the media button from the TinyMCE toolbars if found.
+				if ( ! mediaButtons ) {
+					settings.toolbar1 = settings.toolbar1.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
+					settings.toolbar2 = settings.toolbar2.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
+					settings.toolbar3 = settings.toolbar3.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
+					settings.toolbar4 = settings.toolbar4.replace( 'wp_add_media,', '' ).replace( ',wp_add_media', '' ).replace( 'wp_add_media', '' );
+				}
 			}
+
+			// Remove fullscreen button from the TinyMCE toolbar.
+			settings.toolbar1 = settings.toolbar1.replace( 'fullscreen,', '' ).replace( ',fullscreen', '' ).replace( 'fullscreen', '' );
+			settings.toolbar2 = settings.toolbar2.replace( 'fullscreen,', '' ).replace( ',fullscreen', '' ).replace( 'fullscreen', '' );
+			settings.toolbar3 = settings.toolbar3.replace( 'fullscreen,', '' ).replace( ',fullscreen', '' ).replace( 'fullscreen', '' );
+			settings.toolbar4 = settings.toolbar4.replace( 'fullscreen,', '' ).replace( ',fullscreen', '' ).replace( 'fullscreen', '' );
 
 			window.wp.oldEditor.initialize( fieldId, {
 				tinymce: {

@@ -34,7 +34,7 @@ class Field extends Whatsit {
 
 		$api = pods_api();
 
-		$table_info = $api->get_table_info( $related_type, $related_name );
+		$table_info = $api->get_table_info( $related_type, $related_name, null, null, $this );
 
 		if ( ! $table_info ) {
 			$table_info = [];

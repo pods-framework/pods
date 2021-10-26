@@ -1,4 +1,4 @@
-import validateFieldDependencies from '../validateFieldDependencies';
+import { validateFieldDependencies } from '../validateFieldDependencies';
 
 test( 'invalid mode throws an error', () => {
 	expect( () => {

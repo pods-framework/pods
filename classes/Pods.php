@@ -3442,7 +3442,35 @@ class Pods implements Iterator {
 	}
 
 	/**
-	 * Display the page template
+	 * Display the pod template (singular) in the context from within a fetch() loop.
+	 *
+	 * @see   Pods_Templates::template
+	 *
+	 * @param string      $template_name The template name.
+	 * @param string|null $code          Custom template code to use instead.
+	 * @param bool        $deprecated    Whether to use deprecated functionality based on old function usage.
+	 *
+	 * @return mixed Template output
+	 *
+	 * @since 2.0.0
+	 * @link  https://docs.pods.io/code/pods/template/
+	 */
+	public function template_singular( $template_name, $code = null, $deprecated = false ) {
+		$old_id = $this->id;
+
+		$this->id = $this->id();
+
+		$out = $this->template( $template_name, $code, $deprecated );
+
+		if ( ! empty( $old_id ) ) {
+			$this->id = $old_id;
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Display the pod template.
 	 *
 	 * @see   Pods_Templates::template
 	 *
@@ -4356,6 +4384,7 @@ class Pods implements Iterator {
 			'search'      => 'boolean',
 			'search_var'  => 'string',
 			'search_mode' => 'string',
+			'id'          => 'int',
 		);
 
 		if ( isset( $supported_pods_data[ $name ] ) ) {

@@ -721,7 +721,7 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function related_objects( $force = false ) {
 
-		if ( $this->setup_related_objects( $force ) || null === self::$names_related ) {
+		if ( null === self::$names_related || $this->setup_related_objects( $force ) ) {
 			$related_objects = array();
 
 			foreach ( self::$related_objects as $related_object_name => $related_object ) {
@@ -747,7 +747,7 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function simple_objects() {
 
-		if ( $this->setup_related_objects() || null === self::$names_simple ) {
+		if ( null === self::$names_simple || $this->setup_related_objects() ) {
 			$simple_objects = array();
 
 			foreach ( self::$related_objects as $object => $related_object ) {
@@ -773,7 +773,7 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function bidirectional_objects() {
 
-		if ( $this->setup_related_objects() || null === self::$names_bidirectional ) {
+		if ( null === self::$names_bidirectional || $this->setup_related_objects() ) {
 			$bidirectional_objects = array();
 
 			foreach ( self::$related_objects as $object => $related_object ) {

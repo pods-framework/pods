@@ -265,6 +265,7 @@ class PodsField_WYSIWYG extends PodsField {
 			$options[ static::$type . '_media_buttons' ]  = filter_var( pods_v( static::$type . '_editor', $options, true ), FILTER_VALIDATE_BOOLEAN );
 
 			// Set up default editor.
+			// @todo Support this properly in React, which will be a challenge.
 			$options[ static::$type . '_default_editor' ] = pods_v( static::$type . '_default_editor', $options, wp_default_editor(), true );
 
 			if ( in_array( $options[ static::$type . '_default_editor' ], [ 'html', 'tinymce' ], true ) ) {
@@ -273,6 +274,40 @@ class PodsField_WYSIWYG extends PodsField {
 
 			wp_tinymce_inline_scripts();
 			wp_enqueue_editor();
+
+			$settings = [];
+			$settings['textarea_name'] = $name;
+			$settings['media_buttons'] = false;
+
+			if ( ! ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ) && ! ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! is_user_logged_in() ) && ! ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && ! is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! is_user_logged_in() || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ) ) {
+				$settings['media_buttons'] = (boolean) pods_v( static::$type . '_media_buttons', $options, true );
+			}
+
+			$editor_height = (int) pods_v( static::$type . '_editor_height', $options, false );
+
+			if ( $editor_height ) {
+				$settings['editor_height'] = $editor_height;
+			}
+
+			if ( ! empty( $options[ static::$type . '_tinymce_settings' ] ) ) {
+				$settings = array_merge( $settings, $options[ static::$type . '_tinymce_settings' ] );
+			}
+
+			// WP will handle the scripting needed, but we won't output the textarea here.
+			ob_start();
+			wp_editor( $value, '_pods_dfv_' . $name, $settings );
+			$unused_output = ob_get_clean();
+
+			// Workaround because the above already outputs the style we need.
+			$styles = wp_styles();
+
+			$found_editor_buttons = array_search( 'editor-buttons', $styles->done, true );
+
+			if ( false !== $found_editor_buttons ) {
+				unset( $styles->done[ $found_editor_buttons ] );
+			}
+
+			wp_print_styles( 'editor-buttons' );
 		} elseif ( 'quill' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'quill';
 		} elseif ( 'cleditor' === pods_v( static::$type . '_editor', $options ) ) {

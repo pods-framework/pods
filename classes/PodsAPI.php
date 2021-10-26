@@ -9461,7 +9461,7 @@ class PodsAPI {
 		$field_name = $field;
 
 		if ( is_array( $field_name ) || $field_name instanceof Pods\Whatsit ) {
-			$field_name = pods_v( 'name', $field_name, json_encode( $pod_name, JSON_UNESCAPED_UNICODE ), true );
+			$field_name = pods_v( 'name', $field_name, json_encode( $field_name, JSON_UNESCAPED_UNICODE ), true );
 		}
 
 		$cache_key = 'pods_' . $wpdb->prefix . '_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
@@ -9768,7 +9768,7 @@ class PodsAPI {
 			$info['meta_field_value'] = 'meta_value';
 
 			$info['orderby'] = "`t`.`{$info['field_index']}` ASC";
-		} elseif ( is_multisite() && 'network' === $object_type ) {
+		} elseif ( 'network' === $object_type && is_multisite() ) {
 			// Network = Site.
 			$info['table']      = $wpdb->site;
 			$info['meta_table'] = $wpdb->sitemeta;
@@ -9782,7 +9782,7 @@ class PodsAPI {
 			$info['meta_field_value'] = 'meta_value';
 
 			$info['orderby'] = "`t`.`{$info['field_index']}` ASC, `t`.`path` ASC, `t`.`{$info['field_id']}`";
-		} elseif ( is_multisite() && 'site' === $object_type ) {
+		} elseif ( 'site' === $object_type && is_multisite() ) {
 			// Site = Blog.
 			$info['table']   = $wpdb->blogs;
 			$info['storage'] = 'none';
@@ -9840,9 +9840,9 @@ class PodsAPI {
 				$is_field_object = $field instanceof Field;
 
 				if ( is_array( $field ) || $is_field_object ) {
-					$info['table']            = pods_v( 'pick_table', pods_v( 'options', $field, $field ) );
-					$info['field_id']         = pods_v( 'pick_table_id', pods_v( 'options', $field, $field ) );
-					$info['meta_field_value'] = pods_v( 'pick_table_index', pods_v( 'options', $field, $field ) );
+					$info['table']            = pods_v( 'pick_table', $field, $info['table'], true );
+					$info['field_id']         = pods_v( 'pick_table_id', $field, $info['field_id'], true );
+					$info['meta_field_value'] = pods_v( 'pick_table_index', $field, $info['meta_field_value'], true );
 					$info['field_index']      = $info['meta_field_value'];
 					$info['meta_field_index'] = $info['meta_field_value'];
 				}

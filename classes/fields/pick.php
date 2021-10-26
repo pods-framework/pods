@@ -2313,7 +2313,7 @@ class PodsField_Pick extends PodsField {
 				$table_info = pods_v( 'table_info', $options );
 
 				if ( empty( $table_info ) && ! empty( $pick_object ) ) {
-					$table_info = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $object_params );
+					$table_info = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $options );
 				}
 
 				if ( null === $related_pod && $table_info && $table_info['pod'] ) {

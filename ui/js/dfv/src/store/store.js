@@ -59,7 +59,7 @@ const initStore = ( initialState, storeKey ) => {
 	return uniqueStoreKey;
 };
 
-export const initEditPodStore = ( config ) => {
+export const initEditPodStore = ( config, storeKeyIdentifier = '' ) => {
 	const initialState = {
 		...paths.UI.createTree( INITIAL_UI_STATE ),
 		data: {
@@ -69,10 +69,10 @@ export const initEditPodStore = ( config ) => {
 		...omit( config, [ 'fieldTypes', 'relatedObjects' ] ),
 	};
 
-	return initStore( initialState, STORE_KEY_EDIT_POD );
+	return initStore( initialState, `${ STORE_KEY_EDIT_POD }-${ storeKeyIdentifier }` );
 };
 
-export const initPodStore = ( config = {}, initialValues = {} ) => {
+export const initPodStore = ( config = {}, initialValues = {}, storeKeyIdentifier = '' ) => {
 	const initialState = {
 		data: {
 			fieldTypes: { ...config.fieldTypes || {} },
@@ -82,5 +82,5 @@ export const initPodStore = ( config = {}, initialValues = {} ) => {
 		currentPod: initialValues,
 	};
 
-	return initStore( initialState, STORE_KEY_DFV );
+	return initStore( initialState, `${ STORE_KEY_DFV }-${ storeKeyIdentifier }` );
 };

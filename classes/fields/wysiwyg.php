@@ -272,20 +272,6 @@ class PodsField_WYSIWYG extends PodsField {
 				$options[ static::$type . '_default_editor' ] = 'tinymce';
 			}
 
-			$mce_buttons = [];
-
-			if ( ! wp_is_mobile() ) {
-				if ( $set['_content_editor_dfw'] ) {
-					$mce_buttons[] = 'wp_adv';
-					$mce_buttons[] = 'dfw';
-				} else {
-					$mce_buttons[] = 'fullscreen';
-					$mce_buttons[] = 'wp_adv';
-				}
-			} else {
-				$mce_buttons[] = 'wp_adv';
-			}
-
 			wp_tinymce_inline_scripts();
 			wp_enqueue_editor();
 

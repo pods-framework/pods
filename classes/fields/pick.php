@@ -480,7 +480,7 @@ class PodsField_Pick extends PodsField {
 			foreach ( $pod_options as $pod => $label ) {
 				self::$related_objects[ 'pod-' . $pod ] = array(
 					'label'         => $label,
-					'group'         => __( 'Pods', 'pods' ),
+					'group'         => __( 'Advanced Content Types', 'pods' ),
 					'bidirectional' => true,
 				);
 			}

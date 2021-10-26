@@ -2669,6 +2669,41 @@ class PodsMeta {
 	}
 
 	/**
+	 * Determine whether the key is covered.
+	 *
+	 * @since 2.8.2
+	 *
+	 * @param string $type The object type.
+	 * @param string $key  The value key.
+	 *
+	 * @return bool Whether the key is covered.
+	 */
+	public function is_key_covered( $type, $key ) {
+		if ( 'post' === $type ) {
+			$type = 'post_type';
+		} elseif ( 'term' === $type ) {
+			$type = 'taxonomy';
+		}
+
+		// List of keys we do not cover optimized for fastest isset() operation.
+		$keys_not_covered = $this->get_keys_not_covered( $type );
+
+		// Check if this key is covered.
+		$key_is_covered = ! isset( $keys_not_covered[ $key ] );
+
+		/**
+		 * Allow filtering the list of keys not covered.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param bool   $key_is_covered The list of keys not covered in key=>true format for isset() optimization.
+		 * @param string $type           The object type.
+		 * @param string $key            The value key.
+		 */
+		return apply_filters( 'pods_meta_key_is_covered', $key_is_covered, $type, $key );
+	}
+
+	/**
 	 * All *_*_meta filter handler aliases
 	 *
 	 * @return mixed
@@ -3406,11 +3441,8 @@ class PodsMeta {
 			$meta_type = 'term';
 		}
 
-		// List of keys we do not cover optimized for fastest isset() operation.
-		$keys_not_covered = $this->get_keys_not_covered( $object_type );
-
 		// Skip keys we do not cover.
-		if ( $meta_key && isset( $keys_not_covered[ $meta_key ] ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
 			return $_null;
 		}
 
@@ -3565,11 +3597,8 @@ class PodsMeta {
 			return $_null;
 		}
 
-		// List of keys we do not cover optimized for fastest isset() operation.
-		$keys_not_covered = $this->get_keys_not_covered( $object_type );
-
 		// Skip keys we do not cover.
-		if ( $meta_key && isset( $keys_not_covered[ $meta_key ] ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
 			return $_null;
 		}
 
@@ -3620,11 +3649,8 @@ class PodsMeta {
 			return $_null;
 		}
 
-		// List of keys we do not cover optimized for fastest isset() operation.
-		$keys_not_covered = $this->get_keys_not_covered( $object_type );
-
 		// Skip keys we do not cover.
-		if ( $meta_key && isset( $keys_not_covered[ $meta_key ] ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
 			return $_null;
 		}
 
@@ -3711,11 +3737,8 @@ class PodsMeta {
 			return $_null;
 		}
 
-		// List of keys we do not cover optimized for fastest isset() operation.
-		$keys_not_covered = $this->get_keys_not_covered( $object_type );
-
 		// Skip keys we do not cover.
-		if ( $meta_key && isset( $keys_not_covered[ $meta_key ] ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
 			return $_null;
 		}
 

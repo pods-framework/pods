@@ -1448,23 +1448,25 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$object = null;
 		$method = null;
 
-		// Handle parent method calls.
 		if ( 0 === strpos( $name, 'get_parent_' ) ) {
+			// Handle parent method calls.
 			$object = $this->get_parent_object();
 
 			$method = explode( 'get_parent_', $name );
 			$method = 'get_' . $method[1];
-		}
-
-		// Handle group method calls.
-		if ( 0 === strpos( $name, 'get_group_' ) ) {
+		} elseif ( 0 === strpos( $name, 'get_group_' ) ) {
+			// Handle group method calls.
 			$object = $this->get_group_object();
 
 			$method = explode( 'get_group_', $name );
 			$method = 'get_' . $method[1];
 		}
 
-		if ( $object && $method ) {
+		if ( $method ) {
+			if ( ! $object ) {
+				return null;
+			}
+
 			return call_user_func_array( [ $object, $method ], $arguments );
 		}
 

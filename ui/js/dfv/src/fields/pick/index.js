@@ -294,9 +294,15 @@ const Pick = ( props ) => {
 			let formattedValue = value;
 
 			if ( isMulti ) {
-				formattedValue = Array.isArray( value )
-					? value
-					: ( value || '' ).split( ',' );
+				if ( 'object' === typeof value ) {
+					formattedValue = Object.values( value );
+				} else if ( Array.isArray( value ) ) {
+					formattedValue = value;
+				} else if ( 'string' === typeof value ) {
+					formattedValue = (value || '').split( ',' );
+				} else {
+					formattedValue = [];
+				}
 			}
 
 			return (

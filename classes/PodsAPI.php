@@ -2647,23 +2647,10 @@ class PodsAPI {
 
 				$defined_fields[] = $field['name'];
 
-				$define_tableless_fields = false;
-
 				// Skip if we are not defining tableless fields and it is a tableless field or not a simple tableless object.
-				if (
-					! $define_tableless_fields
-					&& in_array( $field['type'], $tableless_field_types, true )
-					&& (
-						'pick' !== $field['type']
-						|| in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true )
-					)
-				) {
-					continue;
-				}
-
 				$definition = $this->get_field_definition( $field['type'], $field );
 
-				if ( 0 < strlen( $definition ) ) {
+				if ( $definition && '' !== $definition ) {
 					$definitions[] = "`{$field['name']}` " . $definition;
 				}
 			}
@@ -3322,12 +3309,8 @@ class PodsAPI {
 				$params->id = $old_id;
 			}
 
-			$field_definition      = false;
+			$field_definition      = $this->get_field_definition( $old_type, $old_options );
 			$old_type_is_tableless = in_array( $old_type, $tableless_field_types, true );
-
-			if ( $old_simple || ! $old_type_is_tableless ) {
-				$field_definition  = $this->get_field_definition( $old_type, $old_options );
-			}
 
 			/**
 			 * Allow filtering of the old field definition when saving updated field.
@@ -8756,7 +8739,6 @@ class PodsAPI {
 	 * @since 2.0.0
 	 */
 	private function get_field_definition( $type, $options = null ) {
-
 		$definition = PodsForm::field_method( $type, 'schema', $options );
 
 		return $this->do_hook( 'field_definition', $definition, $type, $options );

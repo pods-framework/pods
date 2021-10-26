@@ -2518,7 +2518,7 @@ class PodsField_Pick extends PodsField {
 					$extra = '`t`.`comment_type`';
 				}
 
-				if ( false === strpos( $params['select'], $extra ) ) {
+				if ( '' !== $extra && false === strpos( $params['select'], $extra ) ) {
 					$params['select'] .= ', ' . $extra;
 				}
 

@@ -1,6 +1,7 @@
 <?php
 
 use Pods\Data\Map_Field_Values;
+use Pods\Whatsit\Object_Field;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pod as Deprecated_Pod;
@@ -2271,6 +2272,9 @@ class Pods implements Iterator {
 			$params->search_query = pods_v_sanitized( $this->search_var, 'get', '' );
 		}
 
+		$pod_type     = $this->pod_data->get_type();
+		$storage_type = $this->pod_data->get_storage();
+
 		// Allow orderby array ( 'field' => 'asc|desc' ).
 		if ( ! empty( $params->orderby ) && is_array( $params->orderby ) ) {
 			foreach ( $params->orderby as $k => $orderby ) {
@@ -2281,53 +2285,6 @@ class Pods implements Iterator {
 
 					if ( 'DESC' === strtoupper( $orderby ) ) {
 						$order = 'DESC';
-					}
-
-					$order_field = $this->fields( $k );
-
-					if ( $order_field ) {
-						if ( in_array( $order_field['type'], $tableless_field_types, true ) ) {
-							$order_object_type = $order_field->get_related_object_type();
-							$order_object_name = $order_field->get_related_object_name();
-
-							if ( in_array( $order_object_type, $simple_tableless_objects, true ) ) {
-								if ( 'table' === $this->pod_data['storage'] ) {
-									if ( ! in_array( $this->pod_data['type'], [ 'pod', 'table' ], true ) ) {
-										$key = "`d`.`{$k}`";
-									} else {
-										$key = "`t`.`{$k}`";
-									}
-								} else {
-									$key = "`{$k}`.`meta_value`";
-								}
-							} else {
-								$table = $order_field->get_table_info();
-
-								if ( ! empty( $table ) ) {
-									$key = "`{$k}`.`" . $table['field_index'] . '`';
-								}
-							}
-						} else {
-							$storage_type = $this->pod_data->get_storage();
-
-							if ( $order_field instanceof Object_Field || 'table' === $storage_type ) {
-								if ( ! in_array( $this->pod_data['type'], [ 'pod', 'table' ], true ) ) {
-									$key = "`d`.`{$k}`";
-								} else {
-									$key = "`t`.`{$k}`";
-								}
-							} elseif ( 'meta' === $storage_type ) {
-								$key = "`{$k}`.`meta_value`";
-							}
-						}
-					}
-
-					if ( empty( $key ) ) {
-						$key = $k;
-
-						if ( false === strpos( $key, ' ' ) && false === strpos( $key, '`' ) ) {
-							$key = '`' . str_replace( '.', '`.`', $key ) . '`';
-						}
 					}
 
 					$orderby = $key;
@@ -2361,31 +2318,42 @@ class Pods implements Iterator {
 
 					$order_field = $this->fields( $k );
 
-					if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ), true ) ) {
-						if ( isset( $this->pod_data['object_fields'][ $k ] ) ) {
-							$key = "`t`.`{$k}`";
-						} elseif ( $order_field ) {
-							if ( 'table' === $this->pod_data['storage'] ) {
-								$key = "`d`.`{$k}`";
-							} else {
-								$key = "`{$k}`.`meta_value`";
-							}
-						} else {
-							$object_fields = (array) $this->pod_data['object_fields'];
+					if ( $order_field ) {
+						$k = $order_field->get_name();
 
-							foreach ( $object_fields as $object_field => $object_field_opt ) {
-								if ( $object_field === $k || in_array( $k, $object_field_opt['alias'], true ) ) {
-									$key = "`t`.`{$object_field}`";
+						$is_object_field      = $order_field instanceof Object_Field;
+						$is_pod_or_table_type = in_array( $pod_type, [ 'pod', 'table' ], true );
+
+						if ( in_array( $order_field['type'], $tableless_field_types, true ) ) {
+							$order_object_type = $order_field->get_related_object_type();
+
+							if ( in_array( $order_object_type, $simple_tableless_objects, true ) ) {
+								if ( $is_object_field || 'table' === $storage_type ) {
+									if ( ! $is_object_field && ! $is_pod_or_table_type ) {
+										$key = "`d`.`{$k}`";
+									} else {
+										$key = "`t`.`{$k}`";
+									}
+								} else {
+									$key = "`{$k}`.`meta_value`";
+								}
+							} else {
+								$table = $order_field->get_table_info();
+
+								if ( ! empty( $table ) ) {
+									$key = "`{$k}`.`" . $table['field_index'] . '`';
 								}
 							}
-						}
-					} elseif ( $order_field ) {
-						if ( 'table' === $this->pod_data['storage'] ) {
-							$key = "`t`.`{$k}`";
-						} else {
+						} elseif ( $is_object_field || 'table' === $storage_type ) {
+							if ( ! $is_object_field && ! $is_pod_or_table_type ) {
+								$key = "`d`.`{$k}`";
+							} else {
+								$key = "`t`.`{$k}`";
+							}
+						} elseif ( 'meta' === $storage_type ) {
 							$key = "`{$k}`.`meta_value`";
 						}
-					}//end if
+					}
 
 					$prefix_orderby = "{$key} {$dir}";
 

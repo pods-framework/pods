@@ -119,7 +119,6 @@ class PodsAdmin {
 	 * @since 2.0.0
 	 */
 	public function admin_head() {
-
 		wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery.pods.upgrade.js', array(), PODS_VERSION );
 
 		$page = sanitize_text_field( pods_v( 'page' ) );
@@ -139,13 +138,16 @@ class PodsAdmin {
 		</script>
 		<?php
 
+		// To be phased out.
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-ui-core' );
 		wp_enqueue_script( 'jquery-ui-sortable' );
 
+		// To be replaced.
 		wp_enqueue_script( 'jquery-qtip2' );
 		wp_enqueue_script( 'pods-qtip-init' );
 
+		// To be phased out.
 		wp_enqueue_script( 'pods' );
 
 		$action = sanitize_text_field( pods_v( 'action', 'get', 'manage' ) );
@@ -167,22 +169,7 @@ class PodsAdmin {
 			}
 		}
 
-		/**
-		 * Filter to disable default loading of the DFV script. By default, Pods
-		 * will always enqueue the DFV script if is_admin()
-		 *
-		 * Example: add_filter( 'pods_default_enqueue_dfv', '__return_false');
-		 *
-		 * @since 2.7.10
-		 *
-		 * @param bool Whether or not to enqueue by default
-		 *
-		 */
-		if ( apply_filters( 'pods_default_enqueue_dfv', true ) ) {
-			wp_enqueue_script( 'pods-dfv' );
-		}
-
-		// New styles enqueue.
+		wp_enqueue_script( 'pods-dfv' );
 		wp_enqueue_style( 'pods-styles' );
 	}
 

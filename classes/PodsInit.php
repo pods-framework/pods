@@ -1930,8 +1930,7 @@ class PodsInit {
 
 		global $post, $post_ID;
 
-		$post_types          = PodsMeta::$post_types;
-		$existing_post_types = get_post_types();
+		$post_types = PodsMeta::$post_types;
 
 		$pods_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
 
@@ -1957,13 +1956,25 @@ class PodsInit {
 			$labels = self::object_label_fix( $pods_cpt_ct['post_types'][ $post_type['name'] ], 'post_type' );
 			$labels = $labels['labels'];
 
+			$revision = (int) pods_v( 'revision' );
+
+			$revision_title = false;
+
+			if ( 0 < $revision ) {
+				$revision_title = wp_post_revision_title( $revision, false );
+
+				if ( empty( $revision_title ) ) {
+					$revision_title = false;
+				}
+			}
+
 			$messages[ $post_type['name'] ] = array(
 				1  => sprintf( __( '%1$s updated. <a href="%2$s">%3$s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
 				2  => __( 'Custom field updated.', 'pods' ),
 				3  => __( 'Custom field deleted.', 'pods' ),
 				4  => sprintf( __( '%s updated.', 'pods' ), $labels['singular_name'] ),
-				/* translators: %s: date and time of the revision */
-				5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels['singular_name'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+				/* translators: %1$s: date and time of the revision, %2$s: the revision post title */
+				5  => $revision_title ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels['singular_name'], $revision_title ) : false,
 				6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
 				7  => sprintf( __( '%s saved.', 'pods' ), $labels['singular_name'] ),
 				8  => sprintf( __( '%1$s submitted. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),

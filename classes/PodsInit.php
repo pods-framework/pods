@@ -965,10 +965,17 @@ class PodsInit {
 			'PodsMn = Backbone.Marionette.noConflict();'
 		);
 
-		// Dynamic Field Views / Marionette Views scripts.
-		$pods_dfv_options_file = file_get_contents( PODS_DIR . 'ui/js/dfv/pods-dfv.min.asset.json' );
+		$pods_dfv_options = [
+			'dependencies' => [],
+			'version'      => PODS_VERSION,
+		];
 
-		$pods_dfv_options = json_decode( $pods_dfv_options_file, true );
+		if ( file_exists( PODS_DIR . 'ui/js/dfv/pods-dfv.min.asset.json' ) ) {
+			// Dynamic Field Views / Marionette Views scripts.
+			$pods_dfv_options_file = file_get_contents( PODS_DIR . 'ui/js/dfv/pods-dfv.min.asset.json' );
+
+			$pods_dfv_options = array_merge( $pods_dfv_options, (array) json_decode( $pods_dfv_options_file, true ) );
+		}
 
 		wp_register_script(
 			'pods-dfv',

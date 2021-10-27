@@ -377,9 +377,9 @@ class PodsField {
 			$field_class .= ' pods-dfv-field--unloaded';
 		}
 
-		$pod_name         = '';
-		$item_id          = 0;
-		$group_identifier = '';
+		$pod_name   = '';
+		$item_id    = 0;
+		$group_name = '';
 
 		if ( ! empty( $args->pod ) ) {
 			if ( $args->pod instanceof Pods ) {
@@ -394,23 +394,26 @@ class PodsField {
 		}
 
 		if ( $args->options instanceof Field ) {
-			$group_identifier = $args->options->get_group_identifier();
+			$group_name = $args->options->get_group_name();
 		}
 
-		$script_content = wp_json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
+		if ( empty( $group_name ) ) {
+			$group_name = $pod_name;
+		}
+
+		$dfv_field_data = $this->build_dfv_field_data( $args );
+		$script_content = wp_json_encode( $dfv_field_data, JSON_HEX_TAG );
+
+		// Important! The script tag must be all on one line or wptexturize will eat it up :( the regex matching breaks.
 		?>
 		<div class="<?php echo esc_attr( $field_class ); ?>">
 			<?php if ( ! $disable_dfv ) : ?>
 				<span class="pods-dfv-field__loading-indicator" role="progressbar"></span>
 			<?php endif; ?>
-			<?php // @codingStandardsIgnoreLine ?>
-			<script
-				type="application/json"
-				class="pods-dfv-field-data"
-				data-pod="<?php echo esc_attr( $pod_name ); ?>"
-				data-item-id="<?php echo esc_attr( $item_id ); ?>"
-				data-group-identifier="<?php echo esc_attr( $group_identifier ); ?>"
-			><?php echo $script_content; ?></script>
+			<script type="application/json" class="pods-dfv-field-data" data-pod="<?php echo esc_attr( $pod_name ); ?>" data-item-id="<?php echo esc_attr( $item_id ); ?>" data-group="<?php echo esc_attr( $group_name ); ?>"><?php
+				// @codingStandardsIgnoreLine
+				echo $script_content;
+			?></script>
 		</div>
 		<?php
 
@@ -578,6 +581,13 @@ class PodsField {
 			'label',
 			'id',
 		];
+
+		// Fix weird serialization issues.
+		foreach ( $config as $key => $value ) {
+			if ( 'a:0:{}' === $value ) {
+				$config[ $key ] = [];
+			}
+		}
 
 		foreach ( $check_missing as $missing_name ) {
 			if ( ! empty( $args->{$missing_name} ) ) {

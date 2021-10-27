@@ -480,7 +480,7 @@ class PodsField_Pick extends PodsField {
 			foreach ( $pod_options as $pod => $label ) {
 				self::$related_objects[ 'pod-' . $pod ] = array(
 					'label'         => $label,
-					'group'         => __( 'Pods', 'pods' ),
+					'group'         => __( 'Advanced Content Types', 'pods' ),
 					'bidirectional' => true,
 				);
 			}
@@ -720,23 +720,25 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.3.0
 	 */
 	public function related_objects( $force = false ) {
-
-		if ( $this->setup_related_objects( $force ) || null === self::$names_related ) {
-			$related_objects = array();
-
-			foreach ( self::$related_objects as $related_object_name => $related_object ) {
-				if ( ! isset( $related_objects[ $related_object['group'] ] ) ) {
-					$related_objects[ $related_object['group'] ] = array();
-				}
-
-				$related_objects[ $related_object['group'] ][ $related_object_name ] = $related_object['label'];
-			}
-
-			self::$names_related = (array) apply_filters( 'pods_form_ui_field_pick_related_objects', $related_objects );
+		if ( null !== self::$names_related ) {
+			return self::$names_related;
 		}
 
-		return self::$names_related;
+		$this->setup_related_objects( $force );
 
+		$related_objects = array();
+
+		foreach ( self::$related_objects as $related_object_name => $related_object ) {
+			if ( ! isset( $related_objects[ $related_object['group'] ] ) ) {
+				$related_objects[ $related_object['group'] ] = array();
+			}
+
+			$related_objects[ $related_object['group'] ][ $related_object_name ] = $related_object['label'];
+		}
+
+		self::$names_related = (array) apply_filters( 'pods_form_ui_field_pick_related_objects', $related_objects );
+
+		return self::$names_related;
 	}
 
 	/**
@@ -746,23 +748,25 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.3.0
 	 */
 	public function simple_objects() {
-
-		if ( $this->setup_related_objects() || null === self::$names_simple ) {
-			$simple_objects = array();
-
-			foreach ( self::$related_objects as $object => $related_object ) {
-				if ( ! isset( $related_object['simple'] ) || ! $related_object['simple'] ) {
-					continue;
-				}
-
-				$simple_objects[] = $object;
-			}
-
-			self::$names_simple = (array) apply_filters( 'pods_form_ui_field_pick_simple_objects', $simple_objects );
+		if ( null !== self::$names_simple ) {
+			return self::$names_simple;
 		}
 
-		return self::$names_simple;
+		$this->setup_related_objects();
 
+		$simple_objects = array();
+
+		foreach ( self::$related_objects as $object => $related_object ) {
+			if ( ! isset( $related_object['simple'] ) || ! $related_object['simple'] ) {
+				continue;
+			}
+
+			$simple_objects[] = $object;
+		}
+
+		self::$names_simple = (array) apply_filters( 'pods_form_ui_field_pick_simple_objects', $simple_objects );
+
+		return self::$names_simple;
 	}
 
 	/**
@@ -772,23 +776,25 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.3.4
 	 */
 	public function bidirectional_objects() {
-
-		if ( $this->setup_related_objects() || null === self::$names_bidirectional ) {
-			$bidirectional_objects = array();
-
-			foreach ( self::$related_objects as $object => $related_object ) {
-				if ( ! isset( $related_object['bidirectional'] ) || ! $related_object['bidirectional'] ) {
-					continue;
-				}
-
-				$bidirectional_objects[] = $object;
-			}
-
-			self::$names_bidirectional = (array) apply_filters( 'pods_form_ui_field_pick_bidirectional_objects', $bidirectional_objects );
+		if ( null !== self::$names_bidirectional ) {
+			return self::$names_bidirectional;
 		}
 
-		return self::$names_bidirectional;
+		$this->setup_related_objects();
 
+		$bidirectional_objects = array();
+
+		foreach ( self::$related_objects as $object => $related_object ) {
+			if ( ! isset( $related_object['bidirectional'] ) || ! $related_object['bidirectional'] ) {
+				continue;
+			}
+
+			$bidirectional_objects[] = $object;
+		}
+
+		self::$names_bidirectional = (array) apply_filters( 'pods_form_ui_field_pick_bidirectional_objects', $bidirectional_objects );
+
+		return self::$names_bidirectional;
 	}
 
 	/**
@@ -2313,7 +2319,7 @@ class PodsField_Pick extends PodsField {
 				$table_info = pods_v( 'table_info', $options );
 
 				if ( empty( $table_info ) && ! empty( $pick_object ) ) {
-					$table_info = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $object_params );
+					$table_info = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $options );
 				}
 
 				if ( null === $related_pod && $table_info && $table_info['pod'] ) {
@@ -2518,7 +2524,7 @@ class PodsField_Pick extends PodsField {
 					$extra = '`t`.`comment_type`';
 				}
 
-				if ( false === strpos( $params['select'], $extra ) ) {
+				if ( '' !== $extra && false === strpos( $params['select'], $extra ) ) {
 					$params['select'] .= ', ' . $extra;
 				}
 

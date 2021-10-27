@@ -122,6 +122,9 @@ class PodsField_HTML extends PodsField {
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
+		// Enforce boolean.
+		$options[ static::$type . '_no_label' ] = filter_var( pods_v( static::$type . '_no_label', $options, false ), FILTER_VALIDATE_BOOLEAN );
+
 		// @codingStandardsIgnoreLine
 		echo $this->display( $value, $name, $options, $pod, $id );
 	}

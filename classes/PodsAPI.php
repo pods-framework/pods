@@ -1959,90 +1959,55 @@ class PodsAPI {
 			unset( $pod['options'] );
 		}
 
+		// Get raw args because $pod may be Pod object and could return magic __get() options.
+		$raw_args = $pod;
+
+		if ( $pod instanceof Pod ) {
+			$raw_args = $pod->get_args();
+		}
+
 		$options_ignore = array(
-			'object_type',
-			'object_name',
-			'table',
-			'meta_table',
-			'pod_table',
+			'_locale',
+			'attributes',
+			'dependency',
+			'depends-on',
+			'developer_mode',
+			'excludes-on',
 			'field_id',
 			'field_index',
-			'field_slug',
-			'field_type',
 			'field_parent',
 			'field_parent_select',
+			'field_slug',
+			'field_type',
+			'group',
+			'group_id',
+			'grouped',
+			'is_new',
+			'join',
 			'meta_field_id',
 			'meta_field_index',
 			'meta_field_value',
+			'meta_table',
+			'object_name',
+			'object_type',
+			'old_name',
+			'orderby',
+			'parent',
+			'pod',
 			'pod_field_id',
 			'pod_field_index',
-			'fields',
-			'object_fields',
-			'groups',
-			'join',
+			'pod_table',
+			'post_status',
+			'recurse',
+			'table',
 			'where',
 			'where_default',
-			'orderby',
-			'pod',
-			'recurse',
-			'table_info',
-			'attributes',
-			'group',
-			'grouped',
-			'developer_mode',
-			'dependency',
-			'depends-on',
-			'excludes-on',
-			'is_new',
-			'_locale',
-			'old_name',
-			'parent',
-			'group_id',
 		);
 
+		// Remove options we do not want to set on the Pod.
 		foreach ( $options_ignore as $ignore ) {
-			if ( isset( $pod[ $ignore ] ) ) {
+			if ( isset( $raw_args[ $ignore ] ) ) {
 				unset( $pod[ $ignore ] );
-			}
-		}
-
-		$exclude = array(
-			'id',
-			'name',
-			'label',
-			'description',
-			'type',
-			'storage',
-			'object',
-			'alias',
-			'fields',
-			'weight',
-			'parent',
-			'group',
-			'groups',
-			'is_new',
-			'_locale',
-			'old_name',
-			'parent',
-			'group_id',
-			'post_status',
-		);
-
-		foreach ( $exclude as $k => $exclude_field ) {
-			$aliases = array( $exclude_field );
-
-			if ( is_array( $exclude_field ) ) {
-				$aliases = array_merge( array( $k ), $exclude_field );
-
-				$exclude_field = $k;
-			}
-
-			foreach ( $aliases as $alias ) {
-				if ( isset( $pod[ $alias ] ) ) {
-					$pod[ $exclude_field ] = pods_trim( $pod[ $alias ] );
-
-					unset( $pod[ $alias ] );
-				}
 			}
 		}
 
@@ -2131,7 +2096,7 @@ class PodsAPI {
 				'post_status'  => 'publish',
 			);
 
-			if ( ! is_array( $pod['groups'] ) || empty( $pod['groups'] ) ) {
+			if ( empty( $pod['groups'] ) || ! is_array( $pod['groups'] ) ) {
 				$default_group_label  = __( 'More Fields', 'pods' );
 				$default_group_fields = [];
 
@@ -2232,6 +2197,10 @@ class PodsAPI {
 		$pod = apply_filters( 'pods_api_save_pod_config_data', $pod, $params, $sanitized, $db );
 
 		$meta = $pod;
+
+		if ( $pod instanceof Pod ) {
+			$meta = $pod->get_args();
+		}
 
 		$excluded_meta = array(
 			'id',
@@ -2678,23 +2647,10 @@ class PodsAPI {
 
 				$defined_fields[] = $field['name'];
 
-				$define_tableless_fields = false;
-
 				// Skip if we are not defining tableless fields and it is a tableless field or not a simple tableless object.
-				if (
-					! $define_tableless_fields
-					&& in_array( $field['type'], $tableless_field_types, true )
-					&& (
-						'pick' !== $field['type']
-						|| in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true )
-					)
-				) {
-					continue;
-				}
-
 				$definition = $this->get_field_definition( $field['type'], $field );
 
-				if ( 0 < strlen( $definition ) ) {
+				if ( $definition && '' !== $definition ) {
 					$definitions[] = "`{$field['name']}` " . $definition;
 				}
 			}
@@ -3353,12 +3309,8 @@ class PodsAPI {
 				$params->id = $old_id;
 			}
 
-			$field_definition      = false;
+			$field_definition      = $this->get_field_definition( $old_type, $old_options );
 			$old_type_is_tableless = in_array( $old_type, $tableless_field_types, true );
-
-			if ( $old_simple || ! $old_type_is_tableless ) {
-				$field_definition  = $this->get_field_definition( $old_type, $old_options );
-			}
 
 			/**
 			 * Allow filtering of the old field definition when saving updated field.
@@ -5319,10 +5271,15 @@ class PodsAPI {
 				}
 
 				foreach ( $data as $field => $values ) {
-					$pick_val = pods_v( 'pick_val', $fields[ $field ] );
+					$pick_object = pods_v( 'pick_object', $fields[ $field ] );
+					$pick_val    = pods_v( 'pick_val', $fields[ $field ] );
 
-					if ( 'table' === pods_v( 'pick_object', $fields[ $field ] ) ) {
+					if ( 'table' === $pick_object ) {
 						$pick_val = pods_v( 'pick_table', $fields[ $field ], $pick_val, true );
+					}
+
+					if ( in_array( $pick_object, $simple_tableless_objects, true ) ) {
+						continue;
 					}
 
 					if ( '__current__' === $pick_val ) {
@@ -5335,15 +5292,19 @@ class PodsAPI {
 						}
 					}
 
-					$fields[ $field ]['table_info'] = pods_api()->get_table_info( pods_v( 'pick_object', $fields[ $field ] ), $pick_val, null, null, $fields[ $field ] );
+					if ( ! $fields[ $field ] instanceof Field ) {
+						$fields[ $field ]['table_info'] = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $fields[ $field ] );
+					}
 
-					if ( isset( $fields[ $field ]['table_info']['pod'] ) && ! empty( $fields[ $field ]['table_info']['pod'] ) && isset( $fields[ $field ]['table_info']['pod']['name'] ) ) {
-						$search_data = pods( $fields[ $field ]['table_info']['pod']['name'] );
+					$field_table_info = $fields[ $field ]['table_info'];
+
+					if ( isset( $field_table_info['pod'] ) && ! empty( $field_table_info['pod'] ) && isset( $field_table_info['pod']['name'] ) ) {
+						$search_data = pods( $field_table_info['pod']['name'] );
 
 						$data_mode = 'pods';
 					} else {
 						$search_data = pods_data();
-						$search_data->table( $fields[ $field ]['table_info'] );
+						$search_data->table( $field_table_info );
 
 						$data_mode = 'data';
 					}
@@ -8787,7 +8748,6 @@ class PodsAPI {
 	 * @since 2.0.0
 	 */
 	private function get_field_definition( $type, $options = null ) {
-
 		$definition = PodsForm::field_method( $type, 'schema', $options );
 
 		return $this->do_hook( 'field_definition', $definition, $type, $options );
@@ -9510,7 +9470,7 @@ class PodsAPI {
 		$field_name = $field;
 
 		if ( is_array( $field_name ) || $field_name instanceof Pods\Whatsit ) {
-			$field_name = pods_v( 'name', $field_name, json_encode( $pod_name, JSON_UNESCAPED_UNICODE ), true );
+			$field_name = pods_v( 'name', $field_name, json_encode( $field_name, JSON_UNESCAPED_UNICODE ), true );
 		}
 
 		$cache_key = 'pods_' . $wpdb->prefix . '_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
@@ -9817,7 +9777,7 @@ class PodsAPI {
 			$info['meta_field_value'] = 'meta_value';
 
 			$info['orderby'] = "`t`.`{$info['field_index']}` ASC";
-		} elseif ( is_multisite() && 'network' === $object_type ) {
+		} elseif ( 'network' === $object_type && is_multisite() ) {
 			// Network = Site.
 			$info['table']      = $wpdb->site;
 			$info['meta_table'] = $wpdb->sitemeta;
@@ -9831,7 +9791,7 @@ class PodsAPI {
 			$info['meta_field_value'] = 'meta_value';
 
 			$info['orderby'] = "`t`.`{$info['field_index']}` ASC, `t`.`path` ASC, `t`.`{$info['field_id']}`";
-		} elseif ( is_multisite() && 'site' === $object_type ) {
+		} elseif ( 'site' === $object_type && is_multisite() ) {
 			// Site = Blog.
 			$info['table']   = $wpdb->blogs;
 			$info['storage'] = 'none';
@@ -9889,9 +9849,9 @@ class PodsAPI {
 				$is_field_object = $field instanceof Field;
 
 				if ( is_array( $field ) || $is_field_object ) {
-					$info['table']            = pods_v( 'pick_table', pods_v( 'options', $field, $field ) );
-					$info['field_id']         = pods_v( 'pick_table_id', pods_v( 'options', $field, $field ) );
-					$info['meta_field_value'] = pods_v( 'pick_table_index', pods_v( 'options', $field, $field ) );
+					$info['table']            = pods_v( 'pick_table', $field, $info['table'], true );
+					$info['field_id']         = pods_v( 'pick_table_id', $field, $info['field_id'], true );
+					$info['meta_field_value'] = pods_v( 'pick_table_index', $field, $info['meta_field_value'], true );
 					$info['field_index']      = $info['meta_field_value'];
 					$info['meta_field_index'] = $info['meta_field_value'];
 				}

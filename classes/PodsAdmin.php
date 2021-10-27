@@ -119,96 +119,58 @@ class PodsAdmin {
 	 * @since 2.0.0
 	 */
 	public function admin_head() {
-
-		wp_register_script( 'pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array(), PODS_VERSION );
-
-		wp_register_script( 'pods-admin-importer', PODS_URL . 'ui/js/admin-importer.js', array(), PODS_VERSION );
-
 		wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery.pods.upgrade.js', array(), PODS_VERSION );
 
-		wp_register_script( 'pods-migrate', PODS_URL . 'ui/js/jquery.pods.migrate.js', array(), PODS_VERSION );
+		$page = sanitize_text_field( pods_v( 'page' ) );
 
-		$load_pods_assets = false;
-
-		// @codingStandardsIgnoreLine
-		if ( isset( $_GET['page'] ) ) {
-			// @codingStandardsIgnoreLine
-			$page = $_GET['page'];
-			if ( 'pods' === $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
-				$load_pods_assets = true;
-
-				?>
-				<script>
-					if ( 'undefined' === typeof PODS_URL ) {
-						const PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
-					}
-				</script>
-				<?php
-
-				wp_enqueue_script( 'jquery' );
-				wp_enqueue_script( 'jquery-ui-core' );
-				wp_enqueue_script( 'jquery-ui-sortable' );
-
-				wp_enqueue_script( 'pods-floatmenu' );
-
-				wp_enqueue_script( 'jquery-qtip2' );
-				wp_enqueue_script( 'pods-qtip-init' );
-
-				wp_enqueue_script( 'pods' );
-
-				if ( 0 === strpos( $page, 'pods-manage-' ) || 0 === strpos( $page, 'pods-add-new-' ) ) {
-					wp_enqueue_script( 'post' );
-				} elseif ( 0 === strpos( $page, 'pods-settings-' ) ) {
-					wp_enqueue_script( 'post' );
-				}
-
-				if ( 'pods-advanced' === $page ) {
-					wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
-					wp_enqueue_script( 'jquery-ui-effects-core', PODS_URL . 'ui/js/jquery-ui/jquery.effects.core.js', array( 'jquery' ), '1.8.8' );
-					wp_enqueue_script( 'jquery-ui-effects-fade', PODS_URL . 'ui/js/jquery-ui/jquery.effects.fade.js', array( 'jquery' ), '1.8.8' );
-					wp_enqueue_script( 'jquery-ui-dialog' );
-					wp_enqueue_script( 'pods-advanced' );
-				} elseif ( 'pods-packages' === $page ) {
-					wp_enqueue_style( 'pods-wizard' );
-				} elseif ( 'pods-wizard' === $page || 'pods-upgrade' === $page || ( in_array(
-					$page, array(
-						'pods',
-						'pods-add-new',
-					), true
-				) && in_array(
-					pods_v( 'action', 'get', 'manage' ), array(
-						'add',
-						'manage',
-					), true
-				) ) ) {
-					wp_enqueue_style( 'pods-wizard' );
-
-					if ( 'pods-upgrade' === $page ) {
-						wp_enqueue_script( 'pods-upgrade' );
-					}
-				}//end if
-			}//end if
-		}//end if
-
-		if ( $load_pods_assets ) {
-			/**
-			 * Filter to disable default loading of the DFV script. By default, Pods
-			 * will always enqueue the DFV script if is_admin()
-			 *
-			 * Example: add_filter( 'pods_default_enqueue_dfv', '__return_false');
-			 *
-			 * @since 2.7.10
-			 *
-			 * @param bool Whether or not to enqueue by default
-			 *
-			 */
-			if ( apply_filters( 'pods_default_enqueue_dfv', true ) ) {
-				wp_enqueue_script( 'pods-dfv' );
-			}
-
-			// New styles enqueue.
-			wp_enqueue_style( 'pods-styles' );
+		if ( empty( $page ) ) {
+			return;
 		}
+
+		if ( 'pods' !== $page && 0 !== strpos( $page, 'pods-' ) ) {
+			return;
+		}
+		?>
+		<script>
+			if ( 'undefined' === typeof PODS_URL ) {
+				const PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
+			}
+		</script>
+		<?php
+
+		// To be phased out.
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jquery-ui-core' );
+		wp_enqueue_script( 'jquery-ui-sortable' );
+
+		// To be replaced.
+		wp_enqueue_script( 'jquery-qtip2' );
+		wp_enqueue_script( 'pods-qtip-init' );
+
+		// To be phased out.
+		wp_enqueue_script( 'pods' );
+
+		$action = sanitize_text_field( pods_v( 'action', 'get', 'manage' ) );
+
+		if (
+			0 === strpos( $page, 'pods-manage-' )
+			|| 0 === strpos( $page, 'pods-add-new-' )
+			|| 0 === strpos( $page, 'pods-settings-' )
+		) {
+			wp_enqueue_script( 'post' );
+		} elseif (
+			in_array( $page, [ 'pods', 'pods-add-new', 'pods-packages', 'pods-wizard', 'pods-upgrade' ], true )
+			|| in_array( $action, [ 'add', 'manage' ], true )
+		) {
+			wp_enqueue_style( 'pods-wizard' );
+
+			if ( 'pods-upgrade' === $page ) {
+				wp_enqueue_script( 'pods-upgrade' );
+			}
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+		wp_enqueue_style( 'pods-styles' );
 	}
 
 	/**

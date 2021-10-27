@@ -1596,8 +1596,12 @@ class Pods implements Iterator {
 				$filter = pods_v( 'display_filter', $field_data );
 
 				if ( 0 < strlen( $filter ) ) {
+					$value_reset = false;
+
 					if ( $params->single || ! is_array( $value ) ) {
 						$value = array( $value );
+
+						$value_reset = true;
 					}
 
 					foreach ( $value as $key => $val ) {
@@ -1618,7 +1622,7 @@ class Pods implements Iterator {
 
 					}
 
-					if ( $params->single ) {
+					if ( $value_reset ) {
 						$value = reset( $value );
 					}
 				} elseif ( 1 === (int) pods_v( 'display_process', $field_data, 1 ) ) {

@@ -44,7 +44,6 @@ window.PodsDFV = {
 		const dataTags = [ ...document.querySelectorAll( scriptTagSelector ) ];
 
 		const fieldsData = dataTags.map( ( tag ) => {
-			console.log( tag );
 			const data = JSON.parse( tag.innerHTML );
 
 			// Ignore anything malformed or that doesn't have the field type set

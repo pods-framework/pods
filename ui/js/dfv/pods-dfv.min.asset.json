@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"87c7ef72bd1cbd557e3aba63c0da7051"}
+=======
+{"dependencies":["moment","wp-api-fetch","wp-autop","wp-components","wp-compose","wp-data","wp-element","wp-i18n","wp-keycodes","wp-plugins","wp-primitives","wp-url"],"version":"e5bcf37bfba5fc8456ca6a562bed6ed9"}
+>>>>>>> feature/6208-rtl

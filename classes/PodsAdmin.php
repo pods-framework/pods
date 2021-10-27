@@ -120,8 +120,6 @@ class PodsAdmin {
 	 */
 	public function admin_head() {
 
-		wp_register_script( 'pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array(), PODS_VERSION );
-
 		wp_register_script( 'pods-admin-importer', PODS_URL . 'ui/js/admin-importer.js', array(), PODS_VERSION );
 
 		wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery.pods.upgrade.js', array(), PODS_VERSION );
@@ -148,8 +146,6 @@ class PodsAdmin {
 				wp_enqueue_script( 'jquery' );
 				wp_enqueue_script( 'jquery-ui-core' );
 				wp_enqueue_script( 'jquery-ui-sortable' );
-
-				wp_enqueue_script( 'pods-floatmenu' );
 
 				wp_enqueue_script( 'jquery-qtip2' );
 				wp_enqueue_script( 'pods-qtip-init' );

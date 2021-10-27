@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.5
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.8.2-b-1
+Stable tag: 2.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -149,6 +149,25 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.8.2 - October 26th, 2021 =
+
+* Added: Include the link button on the Quill Editor toolbar. #6221 (@pdclark)
+* Added: You can now use `$pod->template_singular()` just like `$pod->template()` except it runs while within a `$pod->fetch()` loop without conflicting. #6215 (@sc0ttkclark)
+* Fixed: Pod Templates now work expected when you set `$pod->id` manually. #6215 (@sc0ttkclark)
+* Fixed: Table relationship data queries now work as expected for custom column names. #6244, #6241, #6223 (@sc0ttkclark)
+* Fixed: Advanced Content Type UI options now show option fields correctly for UI columns and other fields which may have formatting different than expected by React. #6210 (@sc0ttkclark)
+* Fixed: Pod Page and Pod Templates now have correct conditional logic handling to show/hide fields based on settings. #6240 (@sc0ttkclark)
+* Fixed: Order By `date` and other aliases for object fields like `post_date` now work again as expected. #6230 (@sc0ttkclark)
+* Fixed: When a value comes back from get_post_meta that is not as expected, better handle the value based on `$single` in `Pods::field()`. #6231 (@sc0ttkclark)
+* Fixed: When `depends-on` and other dependency options are not formatted as expected, prevent conditional check from failing. #6212 (@sc0ttkclark)
+* Fixed: Ensure filters in `PodsUI` set overrides needed for display. #6239 (@gafiulov)
+* Fixed: Number and currency fields no longer force 0 as default value. #6226, #6209 (@sc0ttkclark)
+* Fixed: Improved compatibility with WPML for Pods Auto Templating. #6219, #6218 (@JoryHogeveen, @sc0ttkclark)
+* Fixed: Resolve PHP errors on page when using `[each category]` template tag with posts. #5971 (@sc0ttkclark)
+* Fixed: Prevent erroneous meta JOINs added for object fields when they target `t` already. #6192 (@sc0ttkclark)
+* Fixed: Resolve issues with default values for certain Pod configuration options. #6178 (@zrothauser, @sc0ttkclark)
+* Fixed: Ensure certain Pod configuration checkboxes can be unchecked properly and saved. #6200 (@zrothauser, @JoryHogeveen, @sc0ttkclark)
 
 = 2.8.1 - October 20th, 2021 =
 

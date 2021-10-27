@@ -342,7 +342,7 @@ class Pods_Templates extends PodsComponent {
 
 		global $post_type;
 
-		if ( $this->object_type != $post_type ) {
+		if ( $this->object_type !== $post_type ) {
 			return;
 		}
 
@@ -396,13 +396,13 @@ class Pods_Templates extends PodsComponent {
 				'pick_ajax'         => false,
 				'default'           => '',
 				'depends-on'        => array(
-					'restrict_capability' => true,
+					'pods_meta_restrict_capability' => true,
 				),
 			),
 			array(
 				'name'       => 'show_restrict_message',
 				'label'      => __( 'Show no access message', 'pods' ),
-				'default'    => 1,
+				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
@@ -413,7 +413,7 @@ class Pods_Templates extends PodsComponent {
 				'default'               => __( 'You do not have access to view this content.', 'pods' ),
 				'wysiwyg_editor_height' => 200,
 				'depends-on'            => array(
-					'show_restrict_message' => true,
+					'pods_meta_show_restrict_message' => true,
 				),
 			),
 		);
@@ -432,16 +432,17 @@ class Pods_Templates extends PodsComponent {
 	 * @return array|bool|int|mixed|null|string|void
 	 */
 	public function get_meta( $_null, $post_ID = null, $meta_key = null, $single = false ) {
-
-		if ( 'code' === $meta_key ) {
-			$post = get_post( $post_ID );
-
-			if ( is_object( $post ) && $this->object_type == $post->post_type ) {
-				return $post->post_content;
-			}
+		if ( 'code' !== $meta_key ) {
+			return $_null;
 		}
 
-		return $_null;
+		$post = get_post( $post_ID );
+
+		if ( ! is_object( $post ) || $this->object_type !== $post->post_type ) {
+			return $_null;
+		}
+
+		return $post->post_content;
 	}
 
 	/**
@@ -455,37 +456,39 @@ class Pods_Templates extends PodsComponent {
 	 * @return bool|int|null
 	 */
 	public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
+		if ( 'code' !== $meta_key ) {
+			return $_null;
+		}
 
-		if ( 'code' === $meta_key ) {
-			$post = get_post( $post_ID );
+		$post = get_post( $post_ID );
 
-			if ( is_object( $post ) && $this->object_type == $post->post_type ) {
-				$postdata = array(
-					'ID'           => $post_ID,
-					'post_content' => $meta_value,
-				);
+		if ( ! is_object( $post ) || $this->object_type !== $post->post_type ) {
+			return $_null;
+		}
 
-				remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
+		$postdata = array(
+			'ID'           => $post_ID,
+			'post_content' => $meta_value,
+		);
 
-				$revisions = false;
+		remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
 
-				if ( has_action( 'pre_post_update', 'wp_save_post_revision' ) ) {
-					remove_action( 'pre_post_update', 'wp_save_post_revision' );
+		$revisions = false;
 
-					$revisions = true;
-				}
+		if ( has_action( 'pre_post_update', 'wp_save_post_revision' ) ) {
+			remove_action( 'pre_post_update', 'wp_save_post_revision' );
 
-				wp_update_post( (object) $postdata );
-				// objects will be automatically sanitized
-				if ( $revisions ) {
-					add_action( 'pre_post_update', 'wp_save_post_revision' );
-				}
+			$revisions = true;
+		}
 
-				return true;
-			}//end if
-		}//end if
+		wp_update_post( (object) $postdata );
 
-		return $_null;
+		// objects will be automatically sanitized
+		if ( $revisions ) {
+			add_action( 'pre_post_update', 'wp_save_post_revision' );
+		}
+
+		return true;
 	}
 
 	/**

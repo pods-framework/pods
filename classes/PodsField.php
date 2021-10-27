@@ -395,10 +395,10 @@ class PodsField {
 
 		if ( $args->options instanceof Field ) {
 			$group_name = $args->options->get_group_name();
+		}
 
-			if ( empty( $group_name ) ) {
-				$group_name = $pod_name;
-			}
+		if ( empty( $group_name ) ) {
+			$group_name = $pod_name;
 		}
 
 		$dfv_field_data = $this->build_dfv_field_data( $args );

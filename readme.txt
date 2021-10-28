@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.5
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.8.3-b-1
+Stable tag: 2.8.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -149,6 +149,19 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.8.3 - October 28th, 2021 =
+
+* Fixed: Custom date formats for both Display and Input now validated against instead of Display only. #6213 (@sc0ttkclark, @jamesgol, @zrothauser)
+* Fixed: Improved RTL support for Edit Pod screen modals. #6208 (@JoryHogeveen, @jaavid)
+* Fixed: Filesystem checks adjusted to reduce errors when only reading files. #6242 (@sc0ttkclark)
+* Fixed: Resolved PHP errors with PodsUI and sorting fields. #6247, #6249, #6250 (@sc0ttkclark)
+* Fixed: Improved compatibility with MySQL 5.7+ for `DISTINCT` query issues with `SELECT` and `ORDER BY`. #6251 (@sc0ttkclark)
+* Fixed: Tile mode for Image gallery on File field no longer overlaps when showing many tiles. #6252 (@bwdgroup, @sc0ttkclark)
+* Fixed: Multiple forms now work correctly on the same page and no longer conflict with each other. #6203 (@zrothauser, @sc0ttkclark)
+* Fixed: Resolve potential PHP errors when getting information about a relationship to an object that no longer exists. (@sc0ttkclark)
+* Fixed: Resolved issue from Pods 2.8.2 where certain values come back as unexpected as fixed in #6231, the values now get set back to the proper expected type after processing. (@sc0ttkclark)
+* Fixed: Removed unused JS files from Pods 2.x and clean up admin asset enqueing logic. (@sc0ttkclark)
 
 = 2.8.2 - October 26th, 2021 =
 

@@ -2281,90 +2281,88 @@ class Pods implements Iterator {
 		$pod_type     = $this->pod_data->get_type();
 		$storage_type = $this->pod_data->get_storage();
 
-		// Allow orderby array ( 'field' => 'asc|desc' ).
-		if ( ! empty( $params->orderby ) && is_array( $params->orderby ) ) {
-			foreach ( $params->orderby as $k => $orderby ) {
-				if ( ! is_numeric( $k ) ) {
-					$key = '';
-
-					$order = 'ASC';
-
-					if ( 'DESC' === strtoupper( $orderby ) ) {
-						$order = 'DESC';
-					}
-
-					$orderby = $key;
-
-					if ( false === strpos( $orderby, ' ' ) ) {
-						$orderby .= ' ' . $order;
-					}
-
-					$params->orderby[ $k ] = $orderby;
-				}//end if
-			}//end foreach
-		}//end if
-
-		// Add prefix to $params->orderby if needed.
+		// Add prefix to $params->orderby if needed and handle field => ASC|DESC formats.
 		if ( ! empty( $params->orderby ) ) {
 			if ( ! is_array( $params->orderby ) ) {
 				$params->orderby = array( $params->orderby );
 			}
 
-			foreach ( $params->orderby as $ok => $prefix_orderby ) {
-				if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === stripos( $prefix_orderby, ' AS ' ) && false === strpos( $prefix_orderby, '`' ) && false === strpos( $prefix_orderby, '.' ) ) {
-					if ( false !== stripos( $prefix_orderby, ' DESC' ) ) {
-						$k   = trim( str_ireplace( array( '`', ' DESC' ), '', $prefix_orderby ) );
-						$dir = 'DESC';
-					} else {
-						$k   = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
-						$dir = 'ASC';
-					}
+			foreach ( $params->orderby as $key => $prefix_orderby ) {
+				if (
+					false !== strpos( $prefix_orderby, ',' )
+					|| false !== strpos( $prefix_orderby, '(' )
+					|| false !== stripos( $prefix_orderby, ' AS ' )
+					|| false !== strpos( $prefix_orderby, '`' )
+					|| false !== strpos( $prefix_orderby, '.' )
+				) {
+					continue;
+				}
 
-					$key = $k;
+				if ( in_array( strtoupper( $prefix_orderby ), [ 'ASC', 'DESC' ], true ) ) {
+					// Handle field => ASC|DESC.
+					$field_name = $key;
+					$dir        = $prefix_orderby;
+				} elseif ( false !== stripos( $prefix_orderby, ' ASC' ) ) {
+					// Handle field ASC.
+					$field_name = trim( str_ireplace( [ '`', ' ASC' ], '', $prefix_orderby ) );
+					$dir        = 'ASC';
+				} elseif ( false !== stripos( $prefix_orderby, ' DESC' ) ) {
+					// Handle field DESC.
+					$field_name = trim( str_ireplace( [ '`', ' DESC' ], '', $prefix_orderby ) );
+					$dir        = 'DESC';
+				} else {
+					// Default assumes no order was set but the field was given.
+					$field_name = trim( str_ireplace( '`', '', $prefix_orderby ) );
+					$dir        = 'ASC';
+				}
 
-					$order_field = $this->fields( $k );
+				// Invalid orderby provided.
+				if ( empty( $field_name ) ) {
+					unset( $params->orderby[ $key ] );
 
-					if ( $order_field instanceof Field ) {
-						$k = $order_field->get_name();
+					continue;
+				}
 
-						$is_object_field      = $order_field instanceof Object_Field;
-						$is_pod_or_table_type = in_array( $pod_type, [ 'pod', 'table' ], true );
+				$order_field = $this->fields( $field_name );
 
-						if ( in_array( $order_field['type'], $tableless_field_types, true ) ) {
-							$order_object_type = $order_field->get_related_object_type();
+				if ( $order_field instanceof Field ) {
+					$field_name = $order_field->get_name();
 
-							if ( in_array( $order_object_type, $simple_tableless_objects, true ) ) {
-								if ( $is_object_field || 'table' === $storage_type ) {
-									if ( ! $is_object_field && ! $is_pod_or_table_type ) {
-										$key = "`d`.`{$k}`";
-									} else {
-										$key = "`t`.`{$k}`";
-									}
+					$is_object_field      = $order_field instanceof Object_Field;
+					$is_pod_or_table_type = in_array( $pod_type, [ 'pod', 'table' ], true );
+
+					if ( in_array( $order_field['type'], $tableless_field_types, true ) ) {
+						$order_object_type = $order_field->get_related_object_type();
+
+						if ( in_array( $order_object_type, $simple_tableless_objects, true ) ) {
+							if ( $is_object_field || 'table' === $storage_type ) {
+								if ( ! $is_object_field && ! $is_pod_or_table_type ) {
+									$field_name = "`d`.`{$field_name}`";
 								} else {
-									$key = "`{$k}`.`meta_value`";
+									$field_name = "`t`.`{$field_name}`";
 								}
 							} else {
-								$table = $order_field->get_table_info();
+								$field_name = "`{$field_name}`.`meta_value`";
+							}
+						} else {
+							$table = $order_field->get_table_info();
 
-								if ( ! empty( $table ) ) {
-									$key = "`{$k}`.`" . $table['field_index'] . '`';
-								}
+							if ( ! empty( $table ) ) {
+								$field_name = "`{$field_name}`.`" . $table['field_index'] . '`';
 							}
-						} elseif ( $is_object_field || 'table' === $storage_type ) {
-							if ( ! $is_object_field && ! $is_pod_or_table_type ) {
-								$key = "`d`.`{$k}`";
-							} else {
-								$key = "`t`.`{$k}`";
-							}
-						} elseif ( 'meta' === $storage_type ) {
-							$key = "`{$k}`.`meta_value`";
 						}
+					} elseif ( $is_object_field || 'table' === $storage_type ) {
+						if ( ! $is_object_field && ! $is_pod_or_table_type ) {
+							$field_name = "`d`.`{$field_name}`";
+						} else {
+							$field_name = "`t`.`{$field_name}`";
+						}
+					} elseif ( 'meta' === $storage_type ) {
+						$field_name = "`{$field_name}`.`meta_value`";
 					}
+				}
 
-					$prefix_orderby = "{$key} {$dir}";
-
-					$params->orderby[ $ok ] = $prefix_orderby;
-				}//end if
+				$params->orderby[ $key ] = "{$field_name} {$dir}";
 			}//end foreach
 		}//end if
 

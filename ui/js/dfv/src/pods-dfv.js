@@ -82,6 +82,12 @@ window.PodsDFV = {
 				directRender,
 				fieldComponent: FIELD_MAP[ data.fieldType ]?.fieldComponent || null,
 				parentNode: tag.parentNode,
+				pod: tag.dataset.pod || null,
+				group: tag.dataset.group || null,
+				// The itemId is used when there are multiple instances of a
+				// pod as a form on the page.
+				itemId: tag.dataset.itemId || null,
+				formCounter: tag.dataset.formCounter || null,
 				fieldConfig: directRender ? undefined : cleanedFieldConfig,
 				fieldItemData: data.fieldItemData || null,
 				fieldValue: data.fieldValue || null,
@@ -91,76 +97,109 @@ window.PodsDFV = {
 		// Filter out any that we skipped.
 		const validFieldsData = fieldsData.filter( ( fieldData ) => !! fieldData );
 
+		// We may need to create multiple DFV instances and multiple stores, if either
+		// the pod, item ID, or group are different between the tags.
+		//
+		// Loop through all of the data/configs that we gathered, create the keys that
+		// will be used to create the individual stores, and track the initial values
+		// for the store as a nested object by those keys. Also separate out the validFieldsData
+		// using these same keys.
+		const initialStoresWithValues = {};
+		const fieldDataByStoreKeyPrefix = {};
+
 		// Create the store if it hasn't been done already.
 		// The initial values for the data store require some massaging:
 		// Some are arrays when we need single values (this may change once
 		// repeatable fields are implemented), others have special requirements.
-		const initialValues = validFieldsData.reduce(
-			( accumulator, currentField ) => {
-				const fieldConfig = currentField.fieldConfig || {};
+		validFieldsData.forEach( ( currentField ) => {
+			const {
+				fieldConfig = {},
+				pod,
+				itemId,
+				formCounter,
+			} = currentField;
 
-				// "Boolean Group" fields are actually comprised of other fields with their own
-				// named values, so instead of just one key/value, they'll have multiple ones.
-				// These are handled very differently, so process them and return early.
-				if ( 'boolean_group' === fieldConfig.type ) {
-					const values = {};
+			// @todo should group be used here?
+			const storeKeyPrefix = `${ pod }-${ itemId }-${ formCounter }`;
 
-					fieldConfig.boolean_group.forEach( ( groupItem ) => {
-						if ( ! groupItem.name ) {
-							return;
-						}
+			fieldDataByStoreKeyPrefix[ storeKeyPrefix ] = [
+				...( fieldDataByStoreKeyPrefix[ storeKeyPrefix ] || [] ),
+				currentField,
+			];
 
-						// Apply defaults if we're on the Edit Pod screen.
-						if ( isEditPodScreen && 'undefined' === typeof currentField.fieldItemData?.[ groupItem.name ] ) {
-							values[ groupItem.name ] = groupItem.default || '';
-						} else {
-							values[ groupItem.name ] = currentField.fieldItemData?.[ groupItem.name ];
-						}
-					} );
+			// "Boolean Group" fields are actually comprised of other fields with their own
+			// named values, so instead of just one key/value, they'll have multiple ones.
+			// These are handled very differently, so process them and return early.
+			if ( 'boolean_group' === fieldConfig.type ) {
+				const booleanGroupValues = {};
 
-					return {
-						...accumulator,
-						...values,
-					};
-				}
+				fieldConfig.boolean_group.forEach( ( groupItem ) => {
+					if ( ! groupItem.name ) {
+						return;
+					}
 
-				// If we're on the Edit Pod screen, fall back to the `default` value
-				// if a value isn't set. On other screens, this is handled on the back-end.
-				let valueOrDefault;
+					// Apply defaults if we're on the Edit Pod screen.
+					if ( isEditPodScreen && 'undefined' === typeof currentField.fieldItemData?.[ groupItem.name ] ) {
+						booleanGroupValues[ groupItem.name ] = groupItem.default || '';
+					} else {
+						booleanGroupValues[ groupItem.name ] = currentField.fieldItemData?.[ groupItem.name ];
+					}
+				} );
 
-				if ( isEditPodScreen ) {
-					valueOrDefault = ( 'undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue )
-						? currentField.fieldValue
-						: currentField.default;
-				} else {
-					valueOrDefault = ( 'undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue )
-						? currentField.fieldValue
-						: '';
-				}
-
-				return {
-					...accumulator,
-					[ fieldConfig.name ]: valueOrDefault,
+				initialStoresWithValues[ storeKeyPrefix ] = {
+					...( initialStoresWithValues[ storeKeyPrefix ] || {} ),
+					...booleanGroupValues,
 				};
-			},
-			{}
-		);
+
+				return;
+			}
+
+			// If we're on the Edit Pod screen, fall back to the `default` value
+			// if a value isn't set. On other screens, this is handled on the back-end.
+			let valueOrDefault;
+
+			if ( isEditPodScreen ) {
+				valueOrDefault = ( 'undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue )
+					? currentField.fieldValue
+					: currentField.default;
+			} else {
+				valueOrDefault = ( 'undefined' !== typeof currentField.fieldValue && null !== currentField.fieldValue )
+					? currentField.fieldValue
+					: '';
+			}
+
+			initialStoresWithValues[ storeKeyPrefix ] = {
+				...( initialStoresWithValues[ storeKeyPrefix ] || {} ),
+				[ fieldConfig.name ]: valueOrDefault,
+			};
+		} );
 
 		// eslint-disable-next-line no-console
-		console.log( 'Pods init with initial values:', initialValues );
+		console.log( 'Pods init with initial values:', initialStoresWithValues );
 
-		// The Edit Pod screen gets a different store set up than
-		// other contexts.
-		let storeKey = null;
+		// Create stores for each of the individual keys we found (the keys of
+		// the initialStoresWithValues object).
+		const storeKeyPrefixes = Object.keys( initialStoresWithValues );
 
-		if ( isEditPodScreen ) {
-			storeKey = initEditPodStore( window.podsAdminConfig );
-		} else if ( window.podsDFVConfig ) {
-			storeKey = initPodStore( window.podsDFVConfig, initialValues );
-		} else {
+		const storeKeys = storeKeyPrefixes.map( ( storeKeyPrefix ) => {
+			// The Edit Pod screen gets a different store set up than
+			// other contexts.
+			if ( isEditPodScreen ) {
+				return initEditPodStore(
+					window.podsAdminConfig,
+					storeKeyPrefix
+				);
+			} else if ( window.podsDFVConfig ) {
+				return initPodStore(
+					window.podsDFVConfig,
+					initialStoresWithValues[ storeKeyPrefix ],
+					storeKeyPrefix,
+				);
+			}
+
 			// Something is wrong if neither set of globals is set.
-			return;
-		}
+			throw new Error( 'Missing window.podsDFVConfig, cannot set up Pods DFV' );
+		} );
 
 		// Creates a container for the React app to "render",
 		// although it doesn't actually render anything in the container,
@@ -172,7 +211,15 @@ window.PodsDFV = {
 
 		// Set up the DFV app.
 		ReactDOM.render(
-			<PodsDFVApp fieldsData={ validFieldsData } storeKey={ storeKey } />,
+			<>
+				{ storeKeyPrefixes.map( ( storeKeyPrefix, index ) => (
+					<PodsDFVApp
+						fieldsData={ fieldDataByStoreKeyPrefix[ storeKeyPrefix ] }
+						storeKey={ storeKeys[ index ] }
+						key={ storeKeys[ index ] }
+					/>
+				) ) }
+			</>,
 			dfvRootContainer
 		);
 	},

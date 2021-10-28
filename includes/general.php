@@ -3511,24 +3511,14 @@ function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'ba
 	if ( null !== $icon ) {
 		return $icon;
 	}
-	require_once ABSPATH . 'wp-admin/includes/file.php';
 
-	/**
-	 * @var $wp_filesystem WP_Filesystem_Base
-	 */
-	global $wp_filesystem;
-
-	WP_Filesystem();
-
-	$icon_exists = $wp_filesystem->exists( $icon_path );
-
-	if ( ! $icon_exists ) {
+	if ( ! file_exists( $icon_path ) ) {
 		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
 
 		return $default;
 	}
 
-	$svg_data = $wp_filesystem->get_contents( $icon_path );
+	$svg_data = file_get_contents( $icon_path );
 
 	if ( ! $svg_data ) {
 		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );

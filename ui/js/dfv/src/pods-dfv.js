@@ -87,6 +87,7 @@ window.PodsDFV = {
 				// The itemId is used when there are multiple instances of a
 				// pod as a form on the page.
 				itemId: tag.dataset.itemId || null,
+				formCounter: tag.dataset.formCounter || null,
 				fieldConfig: directRender ? undefined : cleanedFieldConfig,
 				fieldItemData: data.fieldItemData || null,
 				fieldValue: data.fieldValue || null,
@@ -114,12 +115,12 @@ window.PodsDFV = {
 			const {
 				fieldConfig = {},
 				pod,
-				group,
 				itemId,
+				formCounter,
 			} = currentField;
 
 			// @todo should group be used here?
-			const storeKeyPrefix = `${ pod }-${ group }-${ itemId }`;
+			const storeKeyPrefix = `${ pod }-${ itemId }-${ formCounter }`;
 
 			fieldDataByStoreKeyPrefix[ storeKeyPrefix ] = [
 				...( fieldDataByStoreKeyPrefix[ storeKeyPrefix ] || [] ),

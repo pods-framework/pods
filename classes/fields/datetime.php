@@ -1008,23 +1008,14 @@ class PodsField_DateTime extends PodsField {
 		}
 
 		if ( isset( $types['time'] ) && ! isset( $done[ 'time-' . $locale ] ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-
-			/**
-			 * @var $wp_filesystem WP_Filesystem_Base
-			 */
-			global $wp_filesystem;
-
-			WP_Filesystem();
-
-			$locale_exists = $wp_filesystem->exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' );
+			$locale_exists = file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' );
 
 			// Local files.
 			if ( ! $locale_exists ) {
 				// Fallback to the base language (non-region specific).
 				$locale = substr( $locale, 0, strpos( $locale, '-' ) );
 
-				$locale_exists = $wp_filesystem->exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' );
+				$locale_exists = file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' );
 			}
 
 			if ( $locale_exists && ! wp_script_is( 'jquery-ui-timepicker-i18n-' . $locale ) ) {

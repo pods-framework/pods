@@ -9266,8 +9266,9 @@ class PodsAPI {
 	 * @since 2.5.0
 	 */
 	public function get_table_info_load( $object_type, $object, $name = null, $pod = null ) {
-
-		$info = array();
+		$info = [
+			'pod' => null,
+		];
 
 		if ( 'pod' === $object_type && null === $pod ) {
 			if ( empty( $name ) ) {

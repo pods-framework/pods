@@ -1029,7 +1029,8 @@ class PodsInit {
 			// null !== pods_v( 'et_fb', 'get' ) // Divi.
 			null !== pods_v( 'fl_builder', 'get' ) // Beaver Builder.
 		) {
-			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
+			wp_enqueue_script( 'pods-dfv' );
+			wp_enqueue_style( 'pods-form' );
 		}
 
 		$is_admin = is_admin();
@@ -1061,21 +1062,6 @@ class PodsInit {
 		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', [ 'wp-components' ], PODS_VERSION );
 		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', [], PODS_VERSION );
 		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', [ 'wp-components' ], PODS_VERSION );
-
-		/**
-		 * Filter to enabled loading of the DFV script on frontend.
-		 * By default, Pods does not load DFV on frontend.
-		 *
-		 * Example: add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
-		 *
-		 * @param bool Whether or not to enqueue by default
-		 *
-		 * @since 2.7.13
-		 */
-		if ( ! $is_admin && apply_filters( 'pods_enqueue_dfv_on_front', false ) ) {
-			wp_enqueue_script( 'pods-dfv' );
-			wp_enqueue_style( 'pods-form' );
-		}
 
 		// Check if Pod is a Modal Window.
 		if ( pods_is_modal_window() ) {

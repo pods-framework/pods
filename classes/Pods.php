@@ -1074,6 +1074,9 @@ class Pods implements Iterator {
 							// Temporary hack until there's some better handling here.
 							$last_limit *= count( $ids );
 
+							// Override the $limit in case $limit was a single select, there are multiple values to return now.
+							$limit = $last_limit;
+
 							// Get related IDs.
 							if ( isset( $current_field['id'] ) ) {
 								$ids = $this->data->api->lookup_related_items( $current_field['id'], $current_field->get_parent_id(), $ids, $current_field );

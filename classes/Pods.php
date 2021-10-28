@@ -1204,9 +1204,11 @@ class Pods implements Iterator {
 
 								// Output types.
 								if ( in_array( $params->output, array( 'ids', 'objects', 'pods' ), true ) ) {
-									$sql['select'] = '`t`.`' . $table['field_id'] . '` AS `pod_item_id`';
+									$sql['select']  = '`t`.`' . $table['field_id'] . '` AS `pod_item_id`';
+									$sql['orderby'] = [];
 								} elseif ( 'names' === $params->output && ! empty( $table['field_index'] ) ) {
-									$sql['select'] = '`t`.`' . $table['field_index'] . '` AS `pod_item_index`, `t`.`' . $table['field_id'] . '` AS `pod_item_id`';
+									$sql['select']  = '`t`.`' . $table['field_index'] . '` AS `pod_item_index`, `t`.`' . $table['field_id'] . '` AS `pod_item_id`';
+									$sql['orderby'] = [];
 								}
 
 								if ( ! empty( $params->params ) && is_array( $params->params ) ) {

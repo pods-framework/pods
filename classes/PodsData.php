@@ -1015,6 +1015,9 @@ class PodsData {
 			$params->having = (array) $params->having;
 		}
 
+		// If orderby is passed exactly as an empty array or strict mode, let's assume we don't want to use it at all.
+		$strict_orderby = [] === $params->orderby || $params->strict;
+
 		if ( ! empty( $params->orderby ) ) {
 			if ( $is_pod_meta_storage && is_array( $params->orderby ) ) {
 				foreach ( $params->orderby as $i => $orderby ) {
@@ -1031,7 +1034,7 @@ class PodsData {
 			$params->orderby = array();
 		}
 
-		if ( false === $params->strict && ! empty( $this->orderby ) ) {
+		if ( ! $strict_orderby && ! empty( $this->orderby ) ) {
 			$params->orderby = array_merge( $params->orderby, (array) $this->orderby );
 		}
 

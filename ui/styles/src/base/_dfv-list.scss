@@ -11,9 +11,6 @@ ul.pods-dfv-list,
 	padding: 0;
 	border-radius: 0;
 	border: 1px solid #dfdfdf;
-	// overflow: hidden;
-	// max-height: 220px;
-	// overflow-y: auto;
 }
 
 ul.pods-dfv-list:empty {
@@ -223,10 +220,6 @@ ul.pods-dfv-list-queue li.pods-dfv-list-item ul.pods-dfv-list-meta:after {
 /**
  * Tiles view
  */
-.pods-field-template-tiles ul.pods-dfv-list {
-	max-height: 500px;
-}
-
 .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-item {
 	display: inline-block;
 	width: 150px;

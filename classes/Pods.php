@@ -831,7 +831,7 @@ class Pods implements Iterator {
 		} elseif ( empty( $value ) ) {
 			$object_field_found = false;
 
-			if ( 'object_field' === $field_source ) {
+			if ( 'object_field' === $field_source && ! $is_traversal ) {
 				$object_field_found = true;
 
 				if ( isset( $this->data->row[ $first_field ] ) ) {

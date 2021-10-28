@@ -2540,11 +2540,15 @@ class PodsField_Pick extends PodsField {
 				$extra = '';
 
 				if ( $wpdb->posts === $search_data->table ) {
-					$extra = '`t`.`post_type`';
+					$extra = '`t`.`post_type`, `t`.`menu_order`, `t`.`post_date`';
 				} elseif ( $wpdb->terms === $search_data->table ) {
 					$extra = '`tt`.`taxonomy`';
 				} elseif ( $wpdb->comments === $search_data->table ) {
 					$extra = '`t`.`comment_type`';
+				} elseif ( $wpdb->site === $search_data->table ) {
+					$extra = '`t`.`path`';
+				} elseif ( $wpdb->blogs === $search_data->table ) {
+					$extra = '`t`.`path`';
 				}
 
 				if ( '' !== $extra && false === strpos( $params['select'], $extra ) ) {

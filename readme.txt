@@ -152,6 +152,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 = 2.8.3 - October 28th, 2021 =
 
+* Fixed: Resolved problem when using `taxonomy_name.name` in `Pods::field()` where some circumstances could cause it to return empty unexpectedly. #6214 (@sc0ttkclark)
 * Fixed: Custom date formats for both Display and Input now validated against instead of Display only. #6213 (@sc0ttkclark, @jamesgol, @zrothauser)
 * Fixed: Improved RTL support for Edit Pod screen modals. #6208 (@JoryHogeveen, @jaavid)
 * Fixed: Filesystem checks adjusted to reduce errors when only reading files. #6242 (@sc0ttkclark)
@@ -161,7 +162,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Multiple forms now work correctly on the same page and no longer conflict with each other. #6203 (@zrothauser, @sc0ttkclark)
 * Fixed: Resolve potential PHP errors when getting information about a relationship to an object that no longer exists. (@sc0ttkclark)
 * Fixed: Resolved issue from Pods 2.8.2 where certain values come back as unexpected as fixed in #6231, the values now get set back to the proper expected type after processing. (@sc0ttkclark)
-* Fixed: Removed unused JS files from Pods 2.x and clean up admin asset enqueing logic. (@sc0ttkclark)
+* Fixed: Removed unused JS files from Pods 2.x and clean up admin asset enqueueing logic. (@sc0ttkclark)
 
 = 2.8.2 - October 26th, 2021 =
 

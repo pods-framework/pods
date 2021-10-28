@@ -2324,7 +2324,7 @@ class Pods implements Iterator {
 
 					$order_field = $this->fields( $k );
 
-					if ( $order_field ) {
+					if ( $order_field instanceof Field ) {
 						$k = $order_field->get_name();
 
 						$is_object_field      = $order_field instanceof Object_Field;

@@ -659,4 +659,20 @@ class Pods_Templates extends PodsComponent {
 		return apply_filters( 'pods_templates_do_template', $out, $code, $obj );
 	}
 
+	/**
+	 * Get the object and possibly use the current object context if available.
+	 *
+	 * @param string     $pod_name The pod name.
+	 * @param int|string $item_id  The item ID.
+	 *
+	 * @return Pods|false The Pods object or false if Pod not valid.
+	 */
+	public static function get_obj( $pod_name, $item_id ) {
+		if ( ! empty( self::$obj ) && self::$obj->pod === $pod_name && self::$obj->id() == $item_id ) {
+			return self::$obj;
+		}
+
+		return pods( $pod_name, $item_id, true );
+	}
+
 }

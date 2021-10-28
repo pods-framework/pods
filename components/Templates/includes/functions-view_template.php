@@ -97,9 +97,9 @@ function frontier_if_block( $attributes, $code ) {
 		'index'   => null,
 	], $attributes );
 
-	$pod = pods( $attributes['pod'], $attributes['id'] );
+	$pod = Pods_Templates::get_obj( $attributes['pod'], $attributes['id'] );
 
-	if ( ! $pod || ! $pod->valid() || ! $pod->exists() ) {
+	if ( ! $pod || ! $pod->exists() ) {
 		return '';
 	}
 
@@ -352,10 +352,11 @@ function frontier_template_once_blocks( $atts, $code ) {
 function frontier_do_subtemplate( $atts, $content ) {
 
 	$out        = null;
-	$pod        = pods( $atts['pod'], $atts['id'] );
 	$field_name = $atts['field'];
 
-	if ( ! $pod || ! $pod->valid() || ! $pod->exists() ) {
+	$pod = Pods_Templates::get_obj( $atts['pod'], $atts['id'] );
+
+	if ( ! $pod || ! $pod->exists() ) {
 		return '';
 	}
 

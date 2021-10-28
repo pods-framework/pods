@@ -656,7 +656,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 				} elseif ( '' !== $matches['other_attributes'][ $key ] ) {
 					// get atts if any
 					// $atts = shortcode_parse_atts(str_replace('.', '____', $matches[2][$key]));
-					$pattern = '/(?<field>[\w\.]+)\s*=\s*"(?<value>[^"]*)"(?:\s|$)/';
+					$pattern = '/(?<field>[\w\.\_\-]+)\s*=\s*"(?<value>[^"]*)"(?:\s|$)/';
 					$field   = trim( $matches['other_attributes'][ $key ] );
 					$text    = preg_replace( "/[\x{00a0}\x{200b}]+/u", ' ', $field );
 
@@ -666,7 +666,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 					}
 				}//end if
 
-				if ( $field && false !== strpos( $field, '.' ) && 0 !== strpos( $field, '_' ) ) {
+				if ( $field && false !== strpos( $field, '.' ) ) {
 					// Take the last element off of the array and use the ID.
 					$path  = explode( '.', $field );
 					$field = array_pop( $path );

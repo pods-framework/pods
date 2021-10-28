@@ -138,225 +138,248 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function options() {
+		// translators: %s: is the Documentation linked text.
+		$fallback_help = __( 'More details on our %s.', 'pods' );
 
-		$options = array(
-			static::$type . '_format_type'    => array(
+		$fallback_help_link = sprintf(
+			'<a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a>',
+			esc_url( 'https://docs.pods.io/fields/relationship/' ),
+			__( 'Field Type Documentation', 'pods' )
+		);
+
+		$fallback_help = sprintf( $fallback_help, $fallback_help_link );
+
+		$options = [
+			static::$type . '_format_type'              => [
 				'label'                 => __( 'Selection Type', 'pods' ),
-				'help'                  => __( 'help', 'pods' ),
+				'help'                  => $fallback_help,
 				'default'               => 'single',
 				'type'                  => 'pick',
-				'data'                  => array(
+				'data'                  => [
 					'single' => __( 'Single Select', 'pods' ),
 					'multi'  => __( 'Multiple Select', 'pods' ),
-				),
+				],
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
-			),
-			static::$type . '_format_single'  => array(
+			],
+			static::$type . '_format_single'            => [
 				'label'                 => __( 'Input Type', 'pods' ),
-				'help'                  => __( 'help', 'pods' ),
-				'depends-on'            => array( static::$type . '_format_type' => 'single' ),
+				'help'                  => $fallback_help,
+				'depends-on'            => [
+					static::$type . '_format_type' => 'single',
+				],
 				'default'               => 'dropdown',
 				'type'                  => 'pick',
-				'data'                  => apply_filters(
-					'pods_form_ui_field_pick_format_single_options', array(
-						'dropdown'     => __( 'Drop Down', 'pods' ),
-						'radio'        => __( 'Radio Buttons', 'pods' ),
-						'autocomplete' => __( 'Autocomplete', 'pods' ),
-						'list'         => __( 'List View (with reordering)', 'pods' ),
-					)
-				),
+				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_single_options', [
+					'dropdown'     => __( 'Drop Down', 'pods' ),
+					'radio'        => __( 'Radio Buttons', 'pods' ),
+					'autocomplete' => __( 'Autocomplete', 'pods' ),
+					'list'         => __( 'List View (with reordering)', 'pods' ),
+				] ),
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
-			),
-			static::$type . '_format_multi'   => array(
+			],
+			static::$type . '_format_multi'             => [
 				'label'                 => __( 'Input Type', 'pods' ),
-				'help'                  => __( 'help', 'pods' ),
-				'depends-on'            => array( static::$type . '_format_type' => 'multi' ),
+				'help'                  => $fallback_help,
+				'depends-on'            => [
+					static::$type . '_format_type' => 'multi',
+				],
 				'default'               => 'checkbox',
 				'type'                  => 'pick',
-				'data'                  => apply_filters(
-					'pods_form_ui_field_pick_format_multi_options', array(
-						'checkbox'     => __( 'Checkboxes', 'pods' ),
-						'multiselect'  => __( 'Multi Select (basic selection)', 'pods' ),
-						'autocomplete' => __( 'Autocomplete', 'pods' ),
-						'list'         => __( 'List View (with reordering)', 'pods' ),
-					)
-				),
+				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_multi_options', [
+					'checkbox'     => __( 'Checkboxes', 'pods' ),
+					'multiselect'  => __( 'Multi Select (basic selection)', 'pods' ),
+					'autocomplete' => __( 'Autocomplete', 'pods' ),
+					'list'         => __( 'List View (with reordering)', 'pods' ),
+				] ),
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
-			),
-			static::$type . '_display_format_multi'   => array(
+			],
+			static::$type . '_display_format_multi'     => [
 				'label'                 => __( 'Display Format', 'pods' ),
-				'help'                  => __( 'Used as format for front-end display', 'pods' ),
-				'depends-on'            => array( static::$type . '_format_type' => 'multi' ),
+				'help'                  => __( 'Used as format for front-end display', 'pods' ) . ' ' . $fallback_help,
+				'depends-on'            => [
+					static::$type . '_format_type' => 'multi',
+				],
 				'default'               => 'default',
 				'type'                  => 'pick',
-				'data'                  => array(
+				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
 					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
 					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
-				),
+				],
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
-			),
-			static::$type . '_display_format_separator'   => array(
+			],
+			static::$type . '_display_format_separator' => [
 				'label'      => __( 'Display Format Separator', 'pods' ),
-				'help'       => __( 'Used as separator for front-end display. This also turns off the "and" portion of the formatting.', 'pods' ),
-				'depends-on' => array(
+				'help'       => __( 'Used as separator for front-end display. This also turns off the "and" portion of the formatting.', 'pods' ) . ' ' . $fallback_help,
+				'depends-on' => [
 					static::$type . '_display_format_multi' => 'custom',
 					static::$type . '_format_type'          => 'multi',
-				),
+				],
 				'default'    => ', ',
 				'type'       => 'text',
-			),
-			static::$type . '_allow_add_new'  => array(
+			],
+			static::$type . '_allow_add_new'            => [
 				'label'       => __( 'Allow Add New', 'pods' ),
-				'help'        => __( 'Allow new related records to be created in a modal window', 'pods' ),
-				'wildcard-on' => array(
-					static::$type . '_object' => array(
+				'help'        => __( 'Allow new related records to be created in a modal window', 'pods' ) . ' ' . $fallback_help,
+				'wildcard-on' => [
+					static::$type . '_object' => [
 						'^post_type-(?!(custom_css|customize_changeset)).*$',
 						//'^taxonomy-.*$', @todo We need to finish adding support for add new on term form.
 						'^user$',
-						'^pod-.*$'
-					),
-				),
+						'^pod-.*$',
+					],
+				],
 				'type'        => 'boolean',
 				'default'     => 1,
-			),
-			static::$type . '_taggable'       => array(
-				'label'       => __( 'Taggable', 'pods' ),
-				'help'        => __( 'Allow new values to be inserted when using an Autocomplete field', 'pods' ),
-				'depends-on-any'  => array(
+			],
+			static::$type . '_taggable'                 => [
+				'label'          => __( 'Taggable', 'pods' ),
+				'help'           => __( 'Allow new values to be inserted when using an Autocomplete field', 'pods' ) . ' ' . $fallback_help,
+				'depends-on-any' => [
 					static::$type . '_format_single' => 'autocomplete',
 					static::$type . '_format_multi'  => 'autocomplete',
-				),
-				'excludes-on' => array(
-					static::$type . '_object' => array_merge( array(
+				],
+				'excludes-on'    => [
+					static::$type . '_object'        => array_merge( [
 						'site',
 						'network',
-					), self::simple_objects() ),
+					], self::simple_objects() ),
 					static::$type . '_allow_add_new' => false,
-				),
-				'type'        => 'boolean',
-				'default'     => 0,
-			),
-			static::$type . '_show_icon'      => array(
-				'label'       => __( 'Show Icons', 'pods' ),
-				'depends-on-any'  => array(
+				],
+				'type'           => 'boolean',
+				'default'        => 0,
+			],
+			static::$type . '_show_icon'                => [
+				'label'          => __( 'Show Icons', 'pods' ),
+				'help'           => $fallback_help,
+				'depends-on-any' => [
 					static::$type . '_format_single' => 'list',
 					static::$type . '_format_multi'  => 'list',
-				),
-				'excludes-on' => array(
-					static::$type . '_object'        => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
-				'type'        => 'boolean',
-				'default'     => 1,
-			),
-			static::$type . '_show_edit_link' => array(
-				'label'       => __( 'Show Edit Links', 'pods' ),
-				'depends-on-any'  => array(
+				],
+				'excludes-on'    => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
+				'type'           => 'boolean',
+				'default'        => 1,
+			],
+			static::$type . '_show_edit_link'           => [
+				'label'          => __( 'Show Edit Links', 'pods' ),
+				'help'           => $fallback_help,
+				'depends-on-any' => [
 					static::$type . '_format_single' => 'list',
 					static::$type . '_format_multi'  => 'list',
-				),
-				'excludes-on' => array(
-					static::$type . '_object'        => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
-				'type'        => 'boolean',
-				'default'     => 1,
-			),
-			static::$type . '_show_view_link' => array(
-				'label'       => __( 'Show View Links', 'pods' ),
-				'depends-on-any'  => array(
+				],
+				'excludes-on'    => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
+				'type'           => 'boolean',
+				'default'        => 1,
+			],
+			static::$type . '_show_view_link'           => [
+				'label'          => __( 'Show View Links', 'pods' ),
+				'help'           => $fallback_help,
+				'depends-on-any' => [
 					static::$type . '_format_single' => 'list',
 					static::$type . '_format_multi'  => 'list',
-				),
-				'excludes-on' => array(
-					static::$type . '_object'        => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
-				'type'        => 'boolean',
-				'default'     => 1,
-			),
-			static::$type . '_select_text'    => array(
-				'label'      => __( 'Default Select Text', 'pods' ),
-				'help'       => __( 'This is the text used for the default "no selection" dropdown item. If left empty, it will default to "-- Select One --"', 'pods' ),
-				'depends-on' => array(
+				],
+				'excludes-on'    => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
+				'type'           => 'boolean',
+				'default'        => 1,
+			],
+			static::$type . '_select_text'              => [
+				'label'            => __( 'Default Select Text', 'pods' ),
+				'help'             => __( 'This is the text used for the default "no selection" dropdown item. If left empty, it will default to "-- Select One --"', 'pods' ) . ' ' . $fallback_help,
+				'depends-on'       => [
 					static::$type . '_format_type'   => 'single',
 					static::$type . '_format_single' => 'dropdown',
-				),
-				'default'    => '',
+				],
+				'default'          => '',
 				'text_placeholder' => __( '-- Select One --', 'pods' ),
-				'type'       => 'text',
-			),
-			static::$type . '_limit'          => array(
+				'type'             => 'text',
+			],
+			static::$type . '_limit'                    => [
 				'label'      => __( 'Selection Limit', 'pods' ),
-				'help'       => __( 'Default is "0" for no limit, but you can enter 1 or more to limit the number of items that can be selected.', 'pods' ),
-				'depends-on' => array( static::$type . '_format_type' => 'multi' ),
+				'help'       => __( 'Default is "0" for no limit, but you can enter 1 or more to limit the number of items that can be selected.', 'pods' ) . ' ' . $fallback_help,
+				'depends-on' => [
+					static::$type . '_format_type' => 'multi',
+				],
 				'default'    => 0,
 				'type'       => 'number',
-			),
-			static::$type . '_table_id'       => array(
+			],
+			static::$type . '_table_id'                 => [
 				'label'      => __( 'Table ID Column', 'pods' ),
-				'help'       => __( 'You must provide the ID column name for the table, this will be used to keep track of the relationship', 'pods' ),
-				'depends-on' => array( static::$type . '_object' => 'table' ),
+				'help'       => __( 'You must provide the ID column name for the table, this will be used to keep track of the relationship', 'pods' ) . ' ' . $fallback_help,
+				'depends-on' => [
+					static::$type . '_object' => 'table',
+				],
 				'required'   => 1,
 				'default'    => '',
 				'type'       => 'text',
-			),
-			static::$type . '_table_index'    => array(
+			],
+			static::$type . '_table_index'              => [
 				'label'      => __( 'Table Index Column', 'pods' ),
-				'help'       => __( 'You must provide the index column name for the table, this may optionally also be the ID column name', 'pods' ),
-				'depends-on' => array( static::$type . '_object' => 'table' ),
+				'help'       => __( 'You must provide the index column name for the table, this may optionally also be the ID column name', 'pods' ) . ' ' . $fallback_help,
+				'depends-on' => [
+					static::$type . '_object' => 'table',
+				],
 				'required'   => 1,
 				'default'    => '',
 				'type'       => 'text',
-			),
-			static::$type . '_display'        => array(
+			],
+			static::$type . '_display'                  => [
 				'label'       => __( 'Display Field in Selection List', 'pods' ),
-				'help'        => __( 'Provide the name of a field on the related object to reference, example: {@post_title}', 'pods' ),
-				'excludes-on' => array(
-					static::$type . '_object' => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
+				'help'        => __( 'Provide the name of a field on the related object to reference, example: {@post_title}', 'pods' ) . ' ' . $fallback_help,
+				'excludes-on' => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
 				'default'     => '',
 				'type'        => 'text',
-			),
-			static::$type . '_user_role'      => array(
+			],
+			static::$type . '_user_role'                => [
 				'label'            => __( 'Limit list by Role(s)', 'pods' ),
-				'help'             => __( 'You can choose to limit Users available for selection by specific role(s).', 'pods' ),
-				'depends-on'       => array( static::$type . '_object' => 'user' ),
+				'help'             => __( 'You can choose to limit Users available for selection by specific role(s).', 'pods' ) . ' ' . $fallback_help,
+				'depends-on'       => [
+					static::$type . '_object' => 'user',
+				],
 				'default'          => '',
 				'type'             => 'pick',
 				'pick_object'      => 'role',
 				'pick_format_type' => 'multi',
-			),
-			static::$type . '_where'          => array(
+			],
+			static::$type . '_where'                    => [
 				'label'       => __( 'Customized <em>WHERE</em>', 'pods' ),
-				'help'        => __( 'help', 'pods' ),
-				'excludes-on' => array(
-					static::$type . '_object' => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
+				'help'        => $fallback_help,
+				'excludes-on' => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
 				'default'     => '',
 				'type'        => 'text',
-			),
-			static::$type . '_orderby'        => array(
+			],
+			static::$type . '_orderby'                  => [
 				'label'       => __( 'Customized <em>ORDER BY</em>', 'pods' ),
-				'help'        => __( 'help', 'pods' ),
-				'excludes-on' => array(
-					static::$type . '_object' => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
+				'help'        => $fallback_help,
+				'excludes-on' => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
 				'default'     => '',
 				'type'        => 'text',
-			),
-			static::$type . '_groupby'        => array(
+			],
+			static::$type . '_groupby'                  => [
 				'label'       => __( 'Customized <em>GROUP BY</em>', 'pods' ),
-				'help'        => __( 'help', 'pods' ),
-				'excludes-on' => array(
-					static::$type . '_object' => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
+				'help'        => $fallback_help,
+				'excludes-on' => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
 				'default'     => '',
 				'type'        => 'text',
-			),
-		);
+			],
+		];
 
 		$post_type_pick_objects = array();
 

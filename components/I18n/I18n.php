@@ -233,8 +233,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 */
 	public function is_translatable_field( $name ) {
 
-		$translatable_fields = $this->get_translatable_fields();
-		$translatable_fields = array_keys( $translatable_fields );
+		$translatable_fields = $this->get_translatable_fields( 'names' );
 
 		// All fields that start with "label"
 		if ( strpos( $name, 'label' ) === 0 && false === strpos( $name, $this->locale ) ) {
@@ -442,7 +441,7 @@ class Pods_Component_I18n extends PodsComponent {
 			return $options;
 		}
 
-		foreach ( $this->get_translatable_fields() as $field ) {
+		foreach ( $this->get_translatable_fields( 'names' ) as $field ) {
 			$translation = pods_v( $field . '_' . $locale, $options, null );
 			if ( $translation ) {
 				$options[ $field ] = $translation;
@@ -915,9 +914,10 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
+	 * @param string $return Return type (supports 'names').
 	 * @return array
 	 */
-	public function get_translatable_fields() {
+	public function get_translatable_fields( $return = '' ) {
 
 		/**
 		 * Overwrite translatable fields.
@@ -936,6 +936,10 @@ class Pods_Component_I18n extends PodsComponent {
 					$fields[ $value ] = [];
 				}
 			}
+		}
+
+		if ( 'names' === $return ) {
+			return array_keys( $fields );
 		}
 
 		return $fields;

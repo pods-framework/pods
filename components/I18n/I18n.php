@@ -801,7 +801,7 @@ class Pods_Component_I18n extends PodsComponent {
 					continue;
 				}
 
-				$i18n_options = $this->get_translatable_fields_options( $name );
+				$i18n_options = $this->get_translatable_field_options( $name );
 
 				// None of the i18n fields are required!
 				$field['required'] = false;
@@ -918,31 +918,32 @@ class Pods_Component_I18n extends PodsComponent {
 	 */
 	public function get_translatable_fields() {
 
-		$fields = array_keys( $this->translatable_fields );
-
 		/**
-		 * Overwrite translatable fields
+		 * Overwrite translatable fields.
 		 *
 		 * @since 0.1
-		 * @since 2.8.4 Added second type parameter.
 		 *
 		 * @param string[] $fields The translatable fields.
-		 * @param string   $type   Field type context (if available).
 		 */
-		return apply_filters( 'pods_translatable_fields', $fields );
+		return apply_filters( 'pods_translatable_fields', $this->translatable_fields );
 	}
 
 	/**
+	 * @since 1.1
 	 * @return array[]
 	 */
-	public function get_translatable_fields_options( $key = null ) {
+	public function get_translatable_field_options( $key ) {
 
-		$fields = $this->translatable_fields;
+		$field_options = pods_v( $key, $this->get_translatable_fields(), array() );
 
-		if ( $key ) {
-			return pods_v( $key, $fields );
-		}
-
-		return $fields;
+		/**
+		 * Overwrite translatable field options.
+		 *
+		 * @since 1.1
+		 *
+		 * @param array  $field_options The translatable field options.
+		 * @param string $key           The field name.
+		 */
+		return apply_filters( 'pods_translatable_field_options', $field_options, $key );
 	}
 }

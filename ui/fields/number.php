@@ -1,8 +1,6 @@
 <?php
 $field_number = PodsForm::field_loader( 'number' );
 
-$value = $field_number->format( $value, $name, $options, $pod, $id );
-
 $attributes             = array();
 $attributes['type']     = 'text';
 $attributes['value']    = $value;

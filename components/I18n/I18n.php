@@ -122,6 +122,7 @@ class Pods_Component_I18n extends PodsComponent {
 			// Pod Objects.
 			add_filter( 'pods_whatsit_get_label', array( $this, 'translate_label' ), 10, 2 );
 			add_filter( 'pods_whatsit_get_description', array( $this, 'translate_description' ), 10, 2 );
+			add_filter( 'pods_whatsit_get_arg', array( $this, 'translate_arg' ), 10, 3 );
 
 			foreach ( pods_form()->field_types() as $type => $data ) {
 				add_filter(
@@ -247,7 +248,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @param  string $key     The key / opion name to search for
 	 * @param  array|Pods\Whatsit  $data    Pod data (can also be an options array of a pod or field)
 	 *
-	 * @return string
+	 * @return mixed
 	 */
 	public function get_value_translation( $current, $key, $data ) {
 
@@ -329,6 +330,23 @@ class Pods_Component_I18n extends PodsComponent {
 	public function translate_description( $description, $object ) {
 
 		return (string) $this->get_value_translation( $description, 'description', $object );
+	}
+
+	/**
+	 * Returns the translated argument if available.
+	 *
+	 * @since 1.0.0
+	 * @see   \Pods\Whatsit >> 'pods_whatsit_get_arg' (filter)
+	 *
+	 * @param  mixed        $arg    The default argument.
+	 * @param  string       $name   The argument name.
+	 * @param  Pods\Whatsit $object The Pod Object.
+	 *
+	 * @return string
+	 */
+	public function translate_arg( $arg, $name, $object ) {
+
+		return $this->get_value_translation( $arg, $name, $object );
 	}
 
 	/**

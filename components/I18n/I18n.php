@@ -925,7 +925,17 @@ class Pods_Component_I18n extends PodsComponent {
 		 *
 		 * @param string[] $fields The translatable fields.
 		 */
-		return apply_filters( 'pods_translatable_fields', $this->translatable_fields );
+		$fields = apply_filters( 'pods_translatable_fields', $this->translatable_fields );
+
+		// Backwards compatibility: Before v1.1 this was a list of field names instead of options.
+		foreach ( $fields as $name => $value ) {
+			if ( is_string( $value ) ) {
+				unset( $fields[ $name ] );
+				$fields[ $value ] = [];
+			}
+		}
+
+		return $fields;
 	}
 
 	/**

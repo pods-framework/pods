@@ -619,7 +619,16 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			return $default;
 		}//end if
 
-		return $this->args[ $arg ];
+		/**
+		 * Allow filtering the object arguments / options.
+		 *
+		 * @since 2.8.4
+		 *
+		 * @param mixed   $value  The object argument value.
+		 * @param string  $name   The argument name.
+		 * @param Whatsit $object The object.
+		 */
+		return apply_filters( 'pods_whatsit_get_arg', $this->args[ $arg ], $arg, $this );
 	}
 
 	/**

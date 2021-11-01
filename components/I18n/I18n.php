@@ -6,7 +6,7 @@
  *
  * Description: Allow UI of Pods and fields to be translated.
  *
- * Version: 1.0
+ * Version: 1.1
  *
  * Category: I18n
  *

@@ -800,7 +800,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Get list of object arguments.
 	 *
-	 * @return arra List of object arguments.
+	 * @return array List of object arguments.
 	 */
 	public function get_args() {
 		return $this->args;

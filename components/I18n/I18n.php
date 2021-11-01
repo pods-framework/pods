@@ -73,6 +73,7 @@ class Pods_Component_I18n extends PodsComponent {
 		}
 
 		$is_component_page = false;
+		$is_pod_page = false;
 
 		if ( is_admin() && isset( $_GET['page'] ) ) {
 
@@ -81,6 +82,8 @@ class Pods_Component_I18n extends PodsComponent {
 			// Is the current page the admin page of this component or a Pods edit page?
 			if ( $this->admin_page === $page ) {
 				$is_component_page = true;
+			} elseif ( false !== strpos( $page, 'pods' ) ) {
+				$is_pod_page = true;
 			}
 		}
 
@@ -94,6 +97,20 @@ class Pods_Component_I18n extends PodsComponent {
 		}
 
 		if ( $active ) {
+
+			/**
+			 * PODS ADMIN UI.
+			 */
+
+			// Pod.
+			add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'pod_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_options', array( $this, 'pod_options' ), 99, 2 );
+			// Pod Fields.
+			add_filter( 'pods_admin_setup_edit_group_tabs', array( $this, 'pod_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_group_options', array( $this, 'pod_options' ), 99, 2 );
+			// Pod Fields.
+			add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'pod_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'pod_options' ), 99, 2 );
 
 			/**
 			 * REGISTERING OBJ LABELS.
@@ -115,37 +132,26 @@ class Pods_Component_I18n extends PodsComponent {
 			 * LABEL REPLACEMENT.
 			 */
 
-			// Setting pages.
+			// Menu labels.
 			add_filter( 'pods_admin_menu_page_title', array( $this, 'translate_admin_menu_page_title' ), 10, 2 );
 			add_filter( 'pods_admin_menu_label', array( $this, 'translate_admin_menu_label' ), 10, 2 );
 
-			// Pod Objects.
-			add_filter( 'pods_whatsit_get_label', array( $this, 'translate_label' ), 10, 2 );
-			add_filter( 'pods_whatsit_get_description', array( $this, 'translate_description' ), 10, 2 );
-			add_filter( 'pods_whatsit_get_arg', array( $this, 'translate_arg' ), 10, 3 );
+			if ( ! $is_pod_page ) {
 
-			foreach ( pods_form()->field_types() as $type => $data ) {
-				add_filter(
-					'pods_form_ui_field_' . $type . '_options',
-					array( $this, 'translate_field_options' ),
-					10,
-					5
-				);
+				// Pod Objects.
+				add_filter( 'pods_whatsit_get_label', array( $this, 'translate_label' ), 10, 2 );
+				add_filter( 'pods_whatsit_get_description', array( $this, 'translate_description' ), 10, 2 );
+				add_filter( 'pods_whatsit_get_arg', array( $this, 'translate_arg' ), 10, 3 );
+
+				foreach ( pods_form()->field_types() as $type => $data ) {
+					add_filter(
+						'pods_form_ui_field_' . $type . '_options',
+						array( $this, 'translate_field_options' ),
+						10,
+						5
+					);
+				}
 			}
-
-			/**
-			 * PODS ADMIN UI.
-			 */
-
-			// Pod.
-			add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'pod_tab' ), 99, 2 );
-			add_filter( 'pods_admin_setup_edit_options', array( $this, 'pod_options' ), 99, 2 );
-			// Pod Fields.
-			add_filter( 'pods_admin_setup_edit_group_tabs', array( $this, 'pod_tab' ), 99, 2 );
-			add_filter( 'pods_admin_setup_edit_group_options', array( $this, 'pod_options' ), 99, 2 );
-			// Pod Fields.
-			add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'pod_tab' ), 99, 2 );
-			add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'pod_options' ), 99, 2 );
 
 		}//end if
 	}

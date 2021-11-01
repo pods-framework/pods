@@ -38,17 +38,29 @@ class Pods_Component_I18n extends PodsComponent {
 	public $capability           = 'pods_i18n_activate_lanuages';
 	public $nonce                = 'pods_i18n_activate_lanuages';
 
-	public $translatable_fields = array(
-		'label',
-		'description',
-		'placeholder',
-		'menu_name',
-		'name_admin_bar',
-		'pick_select_text',
-		'file_add_button',
-		'file_modal_title',
-		'file_modal_add_button',
-	);
+	/**
+	 * All fields that are translatable.
+	 * @var array
+	 */
+	protected $translatable_fields = [
+		'label' => [],
+		'description' => [],
+		'placeholder' => [],
+		'menu_name' => [],
+		'name_admin_bar' => [],
+		'pick_select_text' => [
+			'depends-on' => [ 'type' => 'pick' ],
+		],
+		'file_add_button' => [
+			'depends-on' => [ 'type' => 'file' ],
+		],
+		'file_modal_title' => [
+			'depends-on' => [ 'type' => 'file' ],
+		],
+		'file_modal_add_button' => [
+			'depends-on' => [ 'type' => 'file' ],
+		],
+	];
 
 	/**
 	 * {@inheritdoc}
@@ -789,6 +801,8 @@ class Pods_Component_I18n extends PodsComponent {
 					continue;
 				}
 
+				$i18n_options = $this->get_translatable_fields_options( $name );
+
 				// None of the i18n fields are required!
 				$field['required'] = false;
 
@@ -796,7 +810,7 @@ class Pods_Component_I18n extends PodsComponent {
 				$heading_field['type'] = 'heading';
 				$heading_field['name'] = $name . '_i18n';
 
-				$i18n_fields[][ $name . '_i18n' ] = $heading_field;
+				$i18n_fields[][ $name . '_i18n' ] = array_merge_recursive( $heading_field, $i18n_options );
 
 				$default_field = $field;
 				$default_field['type'] = 'html';
@@ -806,7 +820,7 @@ class Pods_Component_I18n extends PodsComponent {
 				$default_field['html_content_param'] = $name;
 				$default_field['html_content_param_default'] = '-';
 
-				$i18n_fields[][ $name . '_i18n_default' ] = $default_field;
+				$i18n_fields[][ $name . '_i18n_default' ] = array_merge_recursive( $default_field, $i18n_options );
 
 				foreach ( $this->languages as $locale => $lang_data ) {
 					if ( ! $this->obj_is_language_enabled( $locale, $object ) ) {
@@ -819,7 +833,7 @@ class Pods_Component_I18n extends PodsComponent {
 					$locale_field['label']    = $locale;
 					$locale_field['default']  = '';
 
-					$i18n_fields[][ $locale_name ] = $locale_field;
+					$i18n_fields[][ $locale_name ] = array_merge_recursive( $locale_field, $i18n_options );
 				}
 			}
 		}
@@ -904,7 +918,31 @@ class Pods_Component_I18n extends PodsComponent {
 	 */
 	public function get_translatable_fields() {
 
-		return apply_filters( 'pods_translatable_fields', $this->translatable_fields );
+		$fields = array_keys( $this->translatable_fields );
+
+		/**
+		 * Overwrite translatable fields
+		 *
+		 * @since 0.1
+		 * @since 2.8.4 Added second type parameter.
+		 *
+		 * @param string[] $fields The translatable fields.
+		 * @param string   $type   Field type context (if available).
+		 */
+		return apply_filters( 'pods_translatable_fields', $fields );
 	}
 
+	/**
+	 * @return array[]
+	 */
+	public function get_translatable_fields_options( $key = null ) {
+
+		$fields = $this->translatable_fields;
+
+		if ( $key ) {
+			return pods_v( $key, $fields );
+		}
+
+		return $fields;
+	}
 }

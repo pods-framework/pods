@@ -898,22 +898,16 @@ class Pods_Component_I18n extends PodsComponent {
 			$native_name = $lang_data['native_name'];
 		}
 
-		if ( ! empty( $native_name ) && ! empty( $english_name ) ) {
-			if ( $native_name == $english_name ) {
-				return $english_name;
-			} else {
-				return $english_name . ' / ' . $native_name;
-			}
-		} else {
-			if ( ! empty( $english_name ) ) {
-				return $english_name;
-			}
-			if ( ! empty( $native_name ) ) {
-				return $native_name;
-			}
+		$label = '';
+
+		if ( ! empty( $english_name ) ) {
+			$label = $english_name;
+		}
+		if ( ! empty( $native_name ) && $label !== $native_name ) {
+			$label .= ' / ' . $native_name;
 		}
 
-		return '';
+		return $label;
 	}
 
 	/**

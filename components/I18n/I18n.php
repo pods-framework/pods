@@ -73,7 +73,7 @@ class Pods_Component_I18n extends PodsComponent {
 		}
 
 		$is_component_page = false;
-		$is_pod_page = false;
+		$is_pods_edit_page = false;
 
 		if ( is_admin() && isset( $_GET['page'] ) ) {
 
@@ -82,8 +82,8 @@ class Pods_Component_I18n extends PodsComponent {
 			// Is the current page the admin page of this component or a Pods edit page?
 			if ( $this->admin_page === $page ) {
 				$is_component_page = true;
-			} elseif ( false !== strpos( $page, 'pods' ) ) {
-				$is_pod_page = true;
+			} elseif ( 'pods' === $page ) {
+				$is_pods_edit_page = true;
 			}
 		}
 
@@ -136,7 +136,7 @@ class Pods_Component_I18n extends PodsComponent {
 			add_filter( 'pods_admin_menu_page_title', array( $this, 'translate_admin_menu_page_title' ), 10, 2 );
 			add_filter( 'pods_admin_menu_label', array( $this, 'translate_admin_menu_label' ), 10, 2 );
 
-			if ( ! $is_pod_page ) {
+			if ( ! $is_pods_edit_page ) {
 
 				// Pod Objects.
 				add_filter( 'pods_whatsit_get_label', array( $this, 'translate_label' ), 10, 2 );

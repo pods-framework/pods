@@ -156,6 +156,7 @@ class Pods_Component_I18n extends PodsComponent {
 				add_filter( 'pods_whatsit_get_arg', array( $this, 'translate_arg' ), 10, 3 );
 				add_filter( 'pods_whatsit_get_args', array( $this, 'translate_args' ), 10, 2 );
 
+				// Non DFV field UI.
 				foreach ( pods_form()->field_types() as $type => $data ) {
 					add_filter(
 						'pods_form_ui_field_' . $type . '_options',
@@ -223,7 +224,7 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
-	 * Check is a field name is set for translation
+	 * Check is a field name is set for translation.
 	 *
 	 * @since 0.1.0
 	 *

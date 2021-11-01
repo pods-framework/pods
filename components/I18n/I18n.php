@@ -341,10 +341,10 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Returns the translated argument if available.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 * @see   \Pods\Whatsit >> 'pods_whatsit_get_arg' (filter)
 	 *
-	 * @param  mixed        $arg    The default argument.
+	 * @param  mixed        $arg    The object argument.
 	 * @param  string       $name   The argument name.
 	 * @param  Pods\Whatsit $object The Pod Object.
 	 *
@@ -355,6 +355,7 @@ class Pods_Component_I18n extends PodsComponent {
 		if ( $this->is_translatable_field( $name ) ) {
 			return $this->get_value_translation( $arg, $name, $object );
 		}
+
 		return $arg;
 	}
 

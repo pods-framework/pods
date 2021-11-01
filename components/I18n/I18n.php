@@ -223,7 +223,7 @@ class Pods_Component_I18n extends PodsComponent {
 		$translatable_fields = $this->get_translatable_fields();
 
 		// All fields that start with "label"
-		if ( strpos( $name, 'label' ) === 0 ) {
+		if ( strpos( $name, 'label' ) === 0 && false === strpos( $name, $this->locale ) ) {
 			return true;
 		}
 		// All translatable fields

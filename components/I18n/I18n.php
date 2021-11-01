@@ -346,7 +346,10 @@ class Pods_Component_I18n extends PodsComponent {
 	 */
 	public function translate_arg( $arg, $name, $object ) {
 
-		return $this->get_value_translation( $arg, $name, $object );
+		if ( $this->is_translatable_field( $name ) ) {
+			return $this->get_value_translation( $arg, $name, $object );
+		}
+		return $arg;
 	}
 
 	/**

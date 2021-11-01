@@ -103,14 +103,14 @@ class Pods_Component_I18n extends PodsComponent {
 			 */
 
 			// Pod.
-			add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'pod_tab' ), 99, 2 );
-			add_filter( 'pods_admin_setup_edit_options', array( $this, 'pod_options' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'translation_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_options', array( $this, 'translation_options' ), 99, 2 );
 			// Pod Fields.
-			add_filter( 'pods_admin_setup_edit_group_tabs', array( $this, 'pod_tab' ), 99, 2 );
-			add_filter( 'pods_admin_setup_edit_group_options', array( $this, 'pod_options' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_group_tabs', array( $this, 'translation_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_group_options', array( $this, 'translation_options' ), 99, 2 );
 			// Pod Fields.
-			add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'pod_tab' ), 99, 2 );
-			add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'pod_options' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'translation_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'translation_options' ), 99, 2 );
 
 			/**
 			 * REGISTERING OBJ LABELS.
@@ -763,7 +763,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 *
 	 * @return array
 	 */
-	public function pod_tab( $tabs ) {
+	public function translation_tab( $tabs ) {
 
 		$tabs['i18n'] = __( 'Translations', 'pods' );
 
@@ -771,15 +771,16 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
-	 * The i18n options
+	 * The i18n options.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param  array $options
+	 * @param array              $options
+	 * @param array|Pods\Whatsit $object
 	 *
 	 * @return array
 	 */
-	public function pod_options( $options, $pod ) {
+	public function translation_options( $options, $object ) {
 		$i18n_fields = [];
 
 		foreach ( $options as $tab => $fields ) {
@@ -808,7 +809,7 @@ class Pods_Component_I18n extends PodsComponent {
 				$i18n_fields[][ $name . '_i18n_default' ] = $default_field;
 
 				foreach ( $this->languages as $locale => $lang_data ) {
-					if ( ! $this->obj_is_language_enabled( $locale, (array) $pod ) ) {
+					if ( ! $this->obj_is_language_enabled( $locale, $object ) ) {
 						continue;
 					}
 
@@ -825,7 +826,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 		$options['i18n'] = $i18n_fields;
 
-		// if ( $pod['type'] === '' )
+		// if ( $object['type'] === '' )
 		/*
 		$options[ 'pods-i18n' ] = array(
 			'enabled_languages' => array(

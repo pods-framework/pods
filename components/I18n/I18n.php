@@ -816,6 +816,7 @@ class Pods_Component_I18n extends PodsComponent {
 					$locale_field             = $field;
 					$locale_field['name']     = $locale_name;
 					$locale_field['label']    = $locale;
+					$locale_field['default']  = '';
 
 					$i18n_fields[][ $locale_name ] = $locale_field;
 				}

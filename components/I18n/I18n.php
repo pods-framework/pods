@@ -375,7 +375,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 		foreach ( $args as $name => $value ) {
 			if ( $this->is_translatable_field( $name ) ) {
-				$args[ $name ] = $this->translate_arg( $value, $name, $object->getArrayCopy() );
+				$args[ $name ] = $this->translate_arg( $value, $name, $object );
 			}
 		}
 
@@ -861,9 +861,13 @@ class Pods_Component_I18n extends PodsComponent {
 		if ( ! array_key_exists( $locale, $this->languages ) ) {
 			return false;
 		}
-		$options = pods_v( 'options', $data, $data );
+		if ( $data instanceof Pods\Whatsit ) {
+			$enable_i18n = $data->get_arg( 'enable_i18n' );
+		} else {
+			$options = pods_v( 'options', $data, $data );
+			$enable_i18n = pods_v( 'enable_i18n', $options, null );
+		}
 
-		$enable_i18n = pods_v( 'enable_i18n', $options, null );
 		if ( null === $enable_i18n ) {
 			// If there are no i18n settings in the object data then assume it's enabled.
 			return true;

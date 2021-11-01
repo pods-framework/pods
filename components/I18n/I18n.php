@@ -888,21 +888,9 @@ class Pods_Component_I18n extends PodsComponent {
 	 */
 	public function create_lang_label( $lang_data ) {
 
-		$english_name = '';
-		$native_name  = '';
+		$label       = pods_v( 'english_name', $lang_data, '' );
+		$native_name = pods_v( 'native_name', $lang_data, '' );
 
-		if ( isset( $lang_data['english_name'] ) ) {
-			$english_name = $lang_data['english_name'];
-		}
-		if ( isset( $lang_data['native_name'] ) ) {
-			$native_name = $lang_data['native_name'];
-		}
-
-		$label = '';
-
-		if ( ! empty( $english_name ) ) {
-			$label = $english_name;
-		}
 		if ( ! empty( $native_name ) && $label !== $native_name ) {
 			$label .= ' / ' . $native_name;
 		}

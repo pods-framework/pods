@@ -931,7 +931,9 @@ class Pods_Component_I18n extends PodsComponent {
 		foreach ( $fields as $name => $value ) {
 			if ( is_string( $value ) ) {
 				unset( $fields[ $name ] );
-				$fields[ $value ] = [];
+				if ( ! isset( $fields[ $value ] ) ) {
+					$fields[ $value ] = [];
+				}
 			}
 		}
 

@@ -60,6 +60,12 @@ class Pods_Component_I18n extends PodsComponent {
 		'file_modal_add_button' => [
 			'depends-on' => [ 'type' => 'file' ],
 		],
+		'boolean_yes_label' => [
+			'depends-on' => [ 'type' => 'boolean' ],
+		],
+		'boolean_no_label' => [
+			'depends-on' => [ 'type' => 'boolean' ],
+		],
 	];
 
 	/**

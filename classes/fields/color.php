@@ -44,16 +44,16 @@ class PodsField_Color extends PodsField {
 				'developer_mode'    => true,
 			),
 			static::$type . '_select_label'   => array(
-				'label'   => __( 'Select Label', 'pods' ),
-				'help'    => __( 'Default', 'pods' ) . ': ' . __( 'Select Color', 'pods' ),
-				'default' => '',
-				'type'    => 'text',
+				'label'       => __( 'Select Color Label', 'pods' ),
+				'placeholder' => __( 'Select Color', 'pods' ),
+				'default'     => '',
+				'type'        => 'text',
 			),
 			static::$type . '_clear_label'   => array(
-				'label'   => __( 'Clear Label', 'pods' ),
-				'help'    => __( 'Default', 'pods' ) . ': ' . __( 'Clear', 'pods' ),
-				'default' => '',
-				'type'    => 'text',
+				'label'       => __( 'Clear Label', 'pods' ),
+				'placeholder' => __( 'Clear', 'pods' ),
+				'default'     => '',
+				'type'        => 'text',
 			),
 		);
 

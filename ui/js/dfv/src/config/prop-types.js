@@ -475,7 +475,7 @@ export const FIELD_PROP_TYPE = {
 
 	// Wysiwyg field
 	wysiwyg_allow_shortcode: BOOLEAN_ALL_TYPES,
-	wysiwyg_allowed_html_tags: BOOLEAN_ALL_TYPES,
+	wysiwyg_allowed_html_tags: PropTypes.string,
 	wysiwyg_convert_chars: BOOLEAN_ALL_TYPES,
 	wysiwyg_editor: PropTypes.string,
 	wysiwyg_editor_height: NUMBER_OR_NUMBER_AS_STRING,

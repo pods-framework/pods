@@ -14,7 +14,13 @@ const Color = ( {
 	value,
 	setHasBlurred,
 } ) => {
-	const { name } = fieldConfig;
+	const {
+		name,
+		color_select_label: selectLabel = __( 'Select Color', 'pods' ),
+		color_clear_label: clearLabel = __( 'Clear', 'pods' ),
+	} = fieldConfig;
+
+	console.log( fieldConfig );
 
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -36,7 +42,7 @@ const Color = ( {
 				>
 					<ColorIndicator colorValue={ value || '' } />
 
-					{ __( 'Select Color', 'pods' ) }
+					{ selectLabel }
 				</button>
 
 				{ value && (
@@ -47,7 +53,7 @@ const Color = ( {
 						} }
 						className="button"
 					>
-						{ __( 'Clear', 'pods' ) }
+						{ clearLabel }
 					</button>
 				) }
 			</div>

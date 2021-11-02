@@ -148,7 +148,8 @@ class Pods_Component_I18n extends PodsComponent {
 			add_filter( 'pods_admin_menu_page_title', array( $this, 'translate_admin_menu_page_title' ), 10, 2 );
 			add_filter( 'pods_admin_menu_label', array( $this, 'translate_admin_menu_label' ), 10, 2 );
 
-			if ( ! $is_pods_edit_page ) {
+			// Do not overwrite Whatsit object fields if we're editing Pods.
+			if ( ! $is_pods_edit_page && ! pods_doing_json() ) {
 
 				// Pod Objects.
 				add_filter( 'pods_whatsit_get_label', array( $this, 'translate_label' ), 10, 2 );

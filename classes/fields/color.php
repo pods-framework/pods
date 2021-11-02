@@ -45,11 +45,13 @@ class PodsField_Color extends PodsField {
 			),
 			static::$type . '_select_label'   => array(
 				'label'   => __( 'Select Label', 'pods' ),
+				'help'    => __( 'Default', 'pods' ) . ': ' . __( 'Select Color', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
 			),
 			static::$type . '_clear_label'   => array(
 				'label'   => __( 'Clear Label', 'pods' ),
+				'help'    => __( 'Default', 'pods' ) . ': ' . __( 'Clear', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
 			),

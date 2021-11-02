@@ -139,6 +139,7 @@ const Pick = ( props ) => {
 			iframe_title_add: addNewIframeTitle,
 			iframe_title_edit: editIframeTitle,
 			pick_allow_add_new: allowAddNew,
+			pick_add_new_label: addNewLabel = __( 'Add New', 'pods' ),
 			// pick_custom: pickCustomOptions,
 			// pick_display,
 			// pick_display_format_multi,
@@ -509,7 +510,7 @@ const Pick = ( props ) => {
 					onClick={ () => setShowAddNewIframe( true ) }
 					isSecondary
 				>
-					{ __( 'Add New', 'pods', ) }
+					{ addNewLabel }
 				</Button>
 			) : null }
 

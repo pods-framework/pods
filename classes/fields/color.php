@@ -43,6 +43,16 @@ class PodsField_Color extends PodsField {
 				'dependency'        => true,
 				'developer_mode'    => true,
 			),
+			static::$type . '_select_label'   => array(
+				'label'   => __( 'Select Label', 'pods' ),
+				'default' => '',
+				'type'    => 'text',
+			),
+			static::$type . '_clear_label'   => array(
+				'label'   => __( 'Clear Label', 'pods' ),
+				'default' => '',
+				'type'    => 'text',
+			),
 		);
 
 		return $options;

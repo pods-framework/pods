@@ -241,6 +241,7 @@ class PodsField_Pick extends PodsField {
 					'placeholder' => __( 'Add New', 'pods' ),
 					'default'     => '',
 					'type'        => 'text',
+					'depends-on'  => [ static::$type . '_allow_add_new' => true ]
 			),
 			static::$type . '_taggable'                 => [
 				'label'          => __( 'Taggable', 'pods' ),

@@ -123,7 +123,7 @@ class Pods_Component_I18n extends PodsComponent {
 			// Pod.
 			add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'translation_tab' ), 99, 2 );
 			add_filter( 'pods_admin_setup_edit_options', array( $this, 'translation_options' ), 99, 2 );
-			// Pod Fields.
+			// Pod Groups.
 			add_filter( 'pods_admin_setup_edit_group_tabs', array( $this, 'translation_tab' ), 99, 2 );
 			add_filter( 'pods_admin_setup_edit_group_options', array( $this, 'translation_options' ), 99, 2 );
 			// Pod Fields.
@@ -134,7 +134,7 @@ class Pods_Component_I18n extends PodsComponent {
 			 * REGISTERING OBJ LABELS.
 			 */
 
-			// WP Object filters (post_type and taxonomy)
+			// WP Object filters (post_type and taxonomy).
 			add_filter( 'pods_register_post_type', array( $this, 'translate_register_wp_object' ), 10, 2 );
 			add_filter( 'pods_register_taxonomy', array( $this, 'translate_register_wp_object' ), 10, 2 );
 

@@ -237,10 +237,10 @@ class PodsField_Pick extends PodsField {
 				'default'     => 1,
 			],
 			static::$type . '_add_new_label'            => array(
-					'label'   => __( 'Add New Label', 'pods' ),
-					'help'    => __( 'Default', 'pods' ) . ': ' . __( 'Add New', 'pods' ),
-					'default' => '',
-					'type'    => 'text',
+					'label'       => __( 'Add New Label', 'pods' ),
+					'placeholder' => __( 'Add New', 'pods' ),
+					'default'     => '',
+					'type'        => 'text',
 			),
 			static::$type . '_taggable'                 => [
 				'label'          => __( 'Taggable', 'pods' ),

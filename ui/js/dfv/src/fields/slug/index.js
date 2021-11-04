@@ -12,7 +12,7 @@ const Slug = ( props ) => {
 	} = props;
 
 	const {
-		slug_placeholder: placeholder,
+		slug_placeholder: placeholder = fieldConfig.placeholder,
 		slug_separator: separator,
 	} = fieldConfig;
 

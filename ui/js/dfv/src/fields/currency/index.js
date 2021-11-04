@@ -33,7 +33,7 @@ const Currency = ( {
 		currency_max: max,
 		currency_max_length: digitMaxLength,
 		currency_min: min,
-		currency_placeholder: placeholder,
+		currency_placeholder: placeholder = fieldConfig.placeholder,
 		currency_step: step,
 	} = fieldConfig;
 

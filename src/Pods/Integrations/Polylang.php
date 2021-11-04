@@ -212,12 +212,12 @@ class Polylang extends Integration {
 		// Get current language data
 		$lang_data = $this->get_language_data();
 
-		$current_language_tt_id    = 0;
-		$current_language_tl_tt_id = 0;
-
 		if ( ! $lang_data ) {
 			return $info;
 		}
+
+		$current_language_tt_id    = 0;
+		$current_language_tl_tt_id = 0;
 
 		if ( ! empty( $lang_data['tt_id'] ) ) {
 			$current_language_tt_id = $lang_data['tt_id'];

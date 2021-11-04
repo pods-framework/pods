@@ -350,6 +350,8 @@ class Polylang extends Integration {
 			'language' => $locale,
 			't_id'     => 0,
 			'tt_id'    => 0,
+			'tl_t_id'  => 0,
+			'tl_tt_id' => 0,
 			'term'     => null,
 		);
 

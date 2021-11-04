@@ -231,7 +231,7 @@ class Polylang extends Integration {
 			case 'post':
 			case 'post_type':
 			case 'media':
-				if ( $this->is_translated_post_type( $object_name ) && $current_language_tt_id ) {
+				if ( $current_language_tt_id && $this->is_translated_post_type( $object_name ) ) {
 					$info['join']['polylang_languages'] = "
 						LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
 							ON `polylang_languages`.`object_id` = `t`.`ID`
@@ -246,7 +246,7 @@ class Polylang extends Integration {
 			case 'term':
 			case 'nav_menu':
 			case 'post_format':
-				if ( $this->is_translated_taxonomy( $object_name ) && $current_language_tl_tt_id ) {
+				if ( $current_language_tl_tt_id && $this->is_translated_taxonomy( $object_name ) ) {
 					$info['join']['polylang_languages'] = "
 					LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
 						ON `polylang_languages`.`object_id` = `t`.`term_id`

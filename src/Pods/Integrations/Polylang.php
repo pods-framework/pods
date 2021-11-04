@@ -215,13 +215,15 @@ class Polylang extends Integration {
 		$current_language_tt_id    = 0;
 		$current_language_tl_tt_id = 0;
 
-		if ( $lang_data ) {
-			if ( ! empty( $lang_data['tt_id'] ) ) {
-				$current_language_tt_id = $lang_data['tt_id'];
-			}
-			if ( ! empty( $lang_data['tl_tt_id'] ) ) {
-				$current_language_tl_tt_id = $lang_data['tl_tt_id'];
-			}
+		if ( ! $lang_data ) {
+			return $info;
+		}
+
+		if ( ! empty( $lang_data['tt_id'] ) ) {
+			$current_language_tt_id = $lang_data['tt_id'];
+		}
+		if ( ! empty( $lang_data['tl_tt_id'] ) ) {
+			$current_language_tl_tt_id = $lang_data['tl_tt_id'];
 		}
 
 		switch ( $object_type ) {

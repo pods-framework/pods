@@ -345,6 +345,10 @@ class Polylang extends Integration {
 			return $lang_data[ $locale ];
 		}
 
+		if ( ! $locale ) {
+			return null;
+		}
+
 		// We need to return language data
 		$lang_data = array(
 			'language' => $locale,

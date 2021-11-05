@@ -634,6 +634,7 @@ class PodsField_DateTime extends PodsField {
 			'fjy'       => 'F j, Y',
 			'fjsy'      => 'F jS, Y',
 			'y'         => 'Y',
+			'c'         => 'c',
 		);
 
 		$filter = 'pods_form_ui_field_date_formats';

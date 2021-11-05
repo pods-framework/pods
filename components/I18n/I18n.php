@@ -918,7 +918,7 @@ class Pods_Component_I18n extends PodsComponent {
 		/**
 		 * Overwrite translatable fields.
 		 *
-		 * @since 0.1
+		 * @since 2.8.4
 		 *
 		 * @param string[] $fields The translatable fields.
 		 */
@@ -942,7 +942,7 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
-	 * @since 1.1
+	 * @since 2.8.4
 	 * @return array[]
 	 */
 	public function get_translatable_field_options( $key ) {
@@ -952,7 +952,7 @@ class Pods_Component_I18n extends PodsComponent {
 		/**
 		 * Overwrite translatable field options.
 		 *
-		 * @since 1.1
+		 * @since 2.8.4
 		 *
 		 * @param array  $field_options The translatable field options.
 		 * @param string $key           The field name.

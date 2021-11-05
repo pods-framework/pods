@@ -3506,7 +3506,7 @@ class PodsAPI {
 
 			foreach ( $object_fields as $object_field => $object_field_opt ) {
 				if ( $object_field === $field['name'] || in_array( $field['name'], $object_field_opt['alias'], true ) ) {
-					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in.', 'pods' ), $field['name'] ), $this );
+					return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name. You may also want to consider what built-in functionality WordPress and Pods provides you.', 'pods' ), $field['name'] ), $this );
 				}
 			}
 

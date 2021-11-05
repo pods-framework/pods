@@ -236,6 +236,13 @@ class PodsField_Pick extends PodsField {
 				'type'        => 'boolean',
 				'default'     => 1,
 			],
+			static::$type . '_add_new_label'            => array(
+					'label'       => __( 'Add New Label', 'pods' ),
+					'placeholder' => __( 'Add New', 'pods' ),
+					'default'     => '',
+					'type'        => 'text',
+					'depends-on'  => [ static::$type . '_allow_add_new' => true ]
+			),
 			static::$type . '_taggable'                 => [
 				'label'          => __( 'Taggable', 'pods' ),
 				'help'           => __( 'Allow new values to be inserted when using an Autocomplete field', 'pods' ) . ' ' . $fallback_help,
@@ -886,6 +893,11 @@ class PodsField_Pick extends PodsField {
 		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		// Do anything we need to do here with options setup / enforcement.
+
+		// Default labels.
+		if ( empty( $options[ static::$type . '_add_new_label' ] ) ) {
+			$options[ static::$type . '_add_new_label' ] = __( 'Add New', 'pods' );
+		}
 
 		parent::input( $name, $value, $options, $pod, $id );
 	}

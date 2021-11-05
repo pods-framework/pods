@@ -382,6 +382,7 @@ export const FIELD_PROP_TYPE = {
 	),
 	pick_ajax: BOOLEAN_ALL_TYPES,
 	pick_allow_add_new: BOOLEAN_ALL_TYPES,
+	pick_add_new_label: PropTypes.string,
 	pick_custom: PropTypes.string,
 	pick_display: PropTypes.string,
 	pick_display_format_multi: PropTypes.string,

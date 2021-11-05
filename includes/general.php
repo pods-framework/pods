@@ -2872,12 +2872,15 @@ function pods_no_conflict_off( $object_type = 'post', $object = null, $force = f
  * @link https://codex.wordpress.org/Reserved_Terms
  *
  * @since 2.7.15
+ *
+ * @param null|string $context The reserved keyword context.
+ *
  * @return array
  */
-function pods_reserved_keywords() {
-
-	$keywords = array(
-		// WordPress.
+function pods_reserved_keywords( $context = null ) {
+	// WordPress keywords.
+	$wp_keywords = [
+		'ID',
 		'attachment',
 		'attachment_id',
 		'author',
@@ -2962,19 +2965,35 @@ function pods_reserved_keywords() {
 		'withcomments',
 		'withoutcomments',
 		'year',
-		// Pods
+	];
+
+	// Pods keywords.
+	$pods_keywords = [
 		'id',
 		'ID',
-	);
+	];
+
+	$keywords = [];
+
+	if ( in_array( $context, [ null, 'wp' ], true ) ) {
+		$keywords = array_merge( $keywords, $wp_keywords );
+	}
+
+	if ( in_array( $context, [ null, 'pods' ], true ) ) {
+		$keywords = array_merge( $keywords, $pods_keywords );
+	}
+
+	$keywords = array_filter( array_unique( $keywords ) );
 
 	/**
 	 * Filter the WordPress and Pods reserved keywords.
 	 *
 	 * @since 2.7.15
 	 *
-	 * @param array $keywords List of WordPress and Pods reserved keywords.
+	 * @param array       $keywords List of WordPress and Pods reserved keywords.
+	 * @param null|string $context  The reserved keyword context.
 	 */
-	return apply_filters( 'pods_reserved_keywords', $keywords );
+	return apply_filters( 'pods_reserved_keywords', $keywords, $context );
 }
 
 /**

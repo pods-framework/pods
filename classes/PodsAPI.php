@@ -1908,7 +1908,7 @@ class PodsAPI {
 			}
 
 			if (
-				in_array( $params->name, pods_reserved_keywords(), true )
+				in_array( $params->name, pods_reserved_keywords( 'wp' ), true )
 				&& in_array( pods_v( 'type', $params ), array( 'post_type', 'taxonomy' ), true )
 			) {
 				$valid_name = false;
@@ -3194,7 +3194,8 @@ class PodsAPI {
 
 		$params->is_new = isset( $params->is_new ) ? (boolean) $params->is_new : false;
 
-		$reserved_keywords = pods_reserved_keywords();
+		$reserved_context  = ( 'pod' === $pod['type'] || 'table' === $pod['type'] ) ? 'pods' : 'wp';
+		$reserved_keywords = pods_reserved_keywords( $reserved_context );
 
 		if ( isset( $params->name ) ) {
 			$params->name = pods_clean_name( $params->name, true, 'meta' !== $pod['storage'] );
@@ -4103,7 +4104,8 @@ class PodsAPI {
 			return pods_error( __( 'Pod not found', 'pods' ), $this );
 		}
 
-		$reserved_keywords = pods_reserved_keywords();
+		$reserved_context  = ( 'pod' === $pod['type'] || 'table' === $pod['type'] ) ? 'pods' : 'wp';
+		$reserved_keywords = pods_reserved_keywords( $reserved_context );
 
 		/** @var Pod $pod */
 		$params->pod_id = $pod->get_id();

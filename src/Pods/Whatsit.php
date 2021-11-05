@@ -576,11 +576,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$arg = 'id';
 		}
 
-		if ( ! isset( $this->args[ $arg ] ) ) {
-			// Maybe only return the default if we need a strict argument.
-			if ( $strict ) {
-				return $default;
-			}
+		if ( ! isset( $this->args[ $arg ] ) && ! $strict ) {
 
 			$table_info_fields = [
 				'object_name',
@@ -616,10 +612,20 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				}
 			}
 
-			return $default;
 		}//end if
 
-		return $this->args[ $arg ];
+		$value = isset( $this->args[ $arg ] ) ? $this->args[ $arg ] : $default;
+
+		/**
+		 * Allow filtering the object arguments / options.
+		 *
+		 * @since 2.8.4
+		 *
+		 * @param mixed   $value  The object argument value.
+		 * @param string  $name   The argument name.
+		 * @param Whatsit $object The object.
+		 */
+		return apply_filters( 'pods_whatsit_get_arg', $value, $arg, $this );
 	}
 
 	/**
@@ -794,10 +800,18 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Get list of object arguments.
 	 *
-	 * @return arra List of object arguments.
+	 * @return array List of object arguments.
 	 */
 	public function get_args() {
-		return $this->args;
+		/**
+		 * Allow filtering the object arguments.
+		 *
+		 * @since 2.8.4
+		 *
+		 * @param array   $args   The object arguments.
+		 * @param Whatsit $object The object.
+		 */
+		return apply_filters( 'pods_whatsit_get_args', $this->args, $this );
 	}
 
 	/**

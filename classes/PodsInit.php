@@ -1,5 +1,6 @@
 <?php
 
+use Pods\Static_Cache;
 use Pods\Wisdom_Tracker;
 
 /**
@@ -1203,6 +1204,21 @@ class PodsInit {
 
 		$existing_post_types = get_post_types();
 		$existing_taxonomies = get_taxonomies();
+
+		// Handle static cache for determining whether an object was extended or not.
+		$static_cache = tribe( Static_Cache::class );
+
+		$existing_post_types_cached = $static_cache->get( 'post_type', __CLASS__ . '/existing_content_types' );
+
+		if ( empty( $existing_post_types_cached ) ) {
+			$static_cache->set( 'post_type', array_keys( $existing_post_types ), __CLASS__ . '/existing_content_types' );
+		}
+
+		$existing_taxonomies_cached = $static_cache->get( 'taxonomy', __CLASS__ . '/existing_content_types' );
+
+		if ( empty( $existing_taxonomies_cached ) ) {
+			$static_cache->set( 'taxonomy', array_keys( $existing_taxonomies ), __CLASS__ . '/existing_content_types' );
+		}
 
 		$pods_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
 

@@ -963,7 +963,7 @@ class PodsAdmin {
 			}
 
 			if ( null !== $pod_type_label ) {
-				if ( empty( $pod['object'] ) && in_array( $pod_type, array(
+				if ( ! $pod->is_extended() && in_array( $pod_type, array(
 						'post_type',
 						'taxonomy',
 					), true ) ) {
@@ -1289,7 +1289,7 @@ class PodsAdmin {
 
 		if ( ! empty( $config['currentPod']['internal'] ) ) {
 			$config['currentPod']['podType']['name'] = 'internal';
-		} elseif ( empty( $config['currentPod']['object'] ) ) {
+		} elseif ( ! $pod->is_extended() ) {
 			if ( 'post_type' === $config['currentPod']['type'] ) {
 				$config['currentPod']['podType']['name'] = 'cpt';
 			} elseif ( 'taxonomy' === $config['currentPod']['type'] ) {

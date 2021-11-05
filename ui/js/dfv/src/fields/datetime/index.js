@@ -244,9 +244,14 @@ const DateTime = ( {
 
 	// Set the initial view date to the current date, unless the range of years is before
 	// the current time.
-	const initialViewDate = ( yearRange && yearRange[ yearRange.length - 1 ] < new Date().getFullYear() )
+	let initialViewDate = ( yearRange && yearRange[ yearRange.length - 1 ] < new Date().getFullYear() )
 		? new Date( yearRange[ 0 ], 0, 1 )
 		: new Date();
+
+	// Initial view date should be current value if we have one set.
+	if ( ! isValueEmpty ) {
+		iniitalViewDate = localMomentValue;
+	}
 
 	// Set up range validator, both for the react-datetime component
 	// and our validation hook.

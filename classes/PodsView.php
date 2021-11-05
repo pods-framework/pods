@@ -141,7 +141,7 @@ class PodsView {
 	public static function get_key( $key, $group_key = '' ) {
 
 		// Add some salt
-		$key .= '-' . PODS_VERSION;
+		$key .= '-' . sanitize_key( PODS_VERSION );
 
 		// Patch for limitations in DB
 		if ( 44 < strlen( $group_key . $key ) ) {

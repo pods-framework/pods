@@ -195,7 +195,10 @@ class PodsRESTFields {
 			return false;
 		}
 
-		return filter_var( $field->get_arg( $mode, false ), FILTER_VALIDATE_BOOLEAN );
+		// Field arguments are prefixed with `rest`;
+		$mode_arg = 'rest_' . $mode;
+
+		return filter_var( $field->get_arg( $mode_arg, false ), FILTER_VALIDATE_BOOLEAN );
 	}
 
 }

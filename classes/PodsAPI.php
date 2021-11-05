@@ -974,8 +974,14 @@ class PodsAPI {
 
 		$fields = false;
 
-		if ( pods_api_cache() ) {
-			$fields = pods_transient_get( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ) );
+		$cache_key = null;
+
+		if ( did_action( 'init' ) && pods_api_cache() ) {
+			$cache_key = 'pods_api_object_fields_' . $object . '/' . $pod_name;
+		}
+
+		if ( $cache_key ) {
+			$fields = pods_transient_get( $cache_key );
 		}
 
 		if ( false !== $fields && ! $refresh ) {
@@ -1516,8 +1522,8 @@ class PodsAPI {
 
 		$fields = PodsForm::fields_setup( $fields );
 
-		if ( did_action( 'init' ) && pods_api_cache() ) {
-			pods_transient_set( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ), $fields, WEEK_IN_SECONDS );
+		if ( $cache_key ) {
+			pods_transient_set( $cache_key, $fields, WEEK_IN_SECONDS );
 		}
 
 		return $fields;

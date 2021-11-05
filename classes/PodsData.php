@@ -899,7 +899,7 @@ class PodsData {
 					$params->fields = $pod->get_all_fields();
 				} elseif ( $params->object_fields ) {
 					if ( $params->fields ) {
-						$params->fields = array_merge( $params->fields, $params->object_fields );
+						$params->fields = pods_config_merge_fields( $params->fields, $params->object_fields );
 					} else {
 						$params->fields = $params->object_fields;
 					}
@@ -3189,7 +3189,16 @@ class PodsData {
 
 		$meta_data_table = false;
 
-		if ( ! isset( $pod_data['fields'][ $field ] ) && 'd' === $field && isset( $traverse_recurse['fields'][ $traverse_recurse['depth'] - 1 ] ) ) {
+		$the_field = null;
+
+		if ( $pod_data instanceof Pod ) {
+			// Maybe get the field / object field from the pod.
+			$the_field = $pod_data->get_field( $field );
+		} elseif ( isset( $pod_data['fields'][ $field ] ) ) {
+			$the_field = $pod_data['fields'][ $field ];
+		}
+
+		if ( null === $the_field && 'd' === $field && isset( $traverse_recurse['fields'][ $traverse_recurse['depth'] - 1 ] ) ) {
 			$field = $traverse_recurse['fields'][ $traverse_recurse['depth'] - 1 ];
 
 			$field_type = 'pick';
@@ -3200,7 +3209,7 @@ class PodsData {
 				$field_type = $traverse_recurse['last_table_info']['pod']['object_fields'][ $field ]['type'];
 			}
 
-			$pod_data['fields'][ $field ] = [
+			$the_field = [
 				'id'          => 0,
 				'name'        => $field,
 				'type'        => $field_type,
@@ -3211,17 +3220,8 @@ class PodsData {
 			$meta_data_table = true;
 		}//end if
 
-		$the_field = null;
-
 		// Fallback to meta table if the pod type supports it.
 		$last = end( $traverse_recurse['fields'] );
-
-		if ( $pod_data instanceof Pod ) {
-			// Maybe get the field / object field from the pod.
-			$the_field = $pod_data->get_field( $field );
-		} elseif ( isset( $pod_data['fields'][ $field ] ) ) {
-			$the_field = $pod_data['fields'][ $field ];
-		}
 
 		if ( ! $the_field ) {
 			if ( 'meta_value' === $last && in_array( $pod_data['type'], [
@@ -3536,6 +3536,10 @@ class PodsData {
 		$recurse_joins = [];
 
 		foreach ( $fields as $field ) {
+			/**
+			 * @var string[]|string $field The field(s) to recurse (related_field.name would be [related_field, name]).
+			 */
+
 			$traverse_recurse = [
 				'pod'             => $this->pod,
 				'fields'          => (array) $field,

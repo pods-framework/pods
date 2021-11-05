@@ -10,7 +10,7 @@ const Password = ( props ) => {
 
 	const {
 		password_max_length: maxLength,
-		password_placeholder: placeholder,
+		password_placeholder: placeholder = fieldConfig.placeholder,
 	} = fieldConfig;
 
 	return (

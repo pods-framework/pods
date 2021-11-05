@@ -596,6 +596,11 @@ class PodsField {
 			}
 		}
 
+		// Set up default placeholder option.
+		if ( ! isset( $config['placeholder'] ) || ! is_string( $config['placeholder'] ) ) {
+			$config['placeholder'] = '';
+		}
+
 		return $config;
 
 	}

@@ -250,7 +250,7 @@ const DateTime = ( {
 
 	// Initial view date should be current value if we have one set.
 	if ( ! isValueEmpty ) {
-		iniitalViewDate = localMomentValue;
+		initialViewDate = localMomentValue;
 	}
 
 	// Set up range validator, both for the react-datetime component

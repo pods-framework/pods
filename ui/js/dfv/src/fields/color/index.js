@@ -20,8 +20,6 @@ const Color = ( {
 		color_clear_label: clearLabel = __( 'Clear', 'pods' ),
 	} = fieldConfig;
 
-	console.log( fieldConfig );
-
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	return (

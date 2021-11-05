@@ -212,16 +212,18 @@ class Polylang extends Integration {
 		// Get current language data
 		$lang_data = $this->get_language_data();
 
+		if ( ! $lang_data ) {
+			return $info;
+		}
+
 		$current_language_tt_id    = 0;
 		$current_language_tl_tt_id = 0;
 
-		if ( $lang_data ) {
-			if ( ! empty( $lang_data['tt_id'] ) ) {
-				$current_language_tt_id = $lang_data['tt_id'];
-			}
-			if ( ! empty( $lang_data['tl_tt_id'] ) ) {
-				$current_language_tl_tt_id = $lang_data['tl_tt_id'];
-			}
+		if ( ! empty( $lang_data['tt_id'] ) ) {
+			$current_language_tt_id = $lang_data['tt_id'];
+		}
+		if ( ! empty( $lang_data['tl_tt_id'] ) ) {
+			$current_language_tl_tt_id = $lang_data['tl_tt_id'];
 		}
 
 		switch ( $object_type ) {
@@ -229,7 +231,7 @@ class Polylang extends Integration {
 			case 'post':
 			case 'post_type':
 			case 'media':
-				if ( $this->is_translated_post_type( $object_name ) ) {
+				if ( $current_language_tt_id && $this->is_translated_post_type( $object_name ) ) {
 					$info['join']['polylang_languages'] = "
 						LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
 							ON `polylang_languages`.`object_id` = `t`.`ID`
@@ -244,7 +246,7 @@ class Polylang extends Integration {
 			case 'term':
 			case 'nav_menu':
 			case 'post_format':
-				if ( $this->is_translated_taxonomy( $object_name ) ) {
+				if ( $current_language_tl_tt_id && $this->is_translated_taxonomy( $object_name ) ) {
 					$info['join']['polylang_languages'] = "
 					LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
 						ON `polylang_languages`.`object_id` = `t`.`term_id`
@@ -345,11 +347,17 @@ class Polylang extends Integration {
 			return $lang_data[ $locale ];
 		}
 
+		if ( ! $locale ) {
+			return null;
+		}
+
 		// We need to return language data
 		$lang_data = array(
 			'language' => $locale,
 			't_id'     => 0,
 			'tt_id'    => 0,
+			'tl_t_id'  => 0,
+			'tl_tt_id' => 0,
 			'term'     => null,
 		);
 

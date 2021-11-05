@@ -350,7 +350,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Returns the translated argument if available.
 	 *
-	 * @since 1.1.0
+	 * @since 2.8.4
 	 * @see   \Pods\Whatsit >> 'pods_whatsit_get_arg' (filter)
 	 *
 	 * @param  mixed        $arg    The object argument.
@@ -371,7 +371,7 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Returns the translated arguments if available.
 	 *
-	 * @since 1.1.0
+	 * @since 2.8.4
 	 * @see   \Pods\Whatsit >> 'pods_whatsit_get_args' (filter)
 	 *
 	 * @param  array        $args   The object arguments.

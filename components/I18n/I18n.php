@@ -48,8 +48,17 @@ class Pods_Component_I18n extends PodsComponent {
 		'placeholder' => [],
 		'menu_name' => [],
 		'name_admin_bar' => [],
-		'pick_select_text' => [
-			'depends-on' => [ 'type' => 'pick' ],
+		'boolean_yes_label' => [
+			'depends-on' => [ 'type' => 'boolean' ],
+		],
+		'boolean_no_label' => [
+			'depends-on' => [ 'type' => 'boolean' ],
+		],
+		'color_select_label' => [
+			'depends-on' => [ 'type' => 'color' ],
+		],
+		'color_clear_label' => [
+			'depends-on' => [ 'type' => 'color' ],
 		],
 		'file_add_button' => [
 			'depends-on' => [ 'type' => 'file' ],
@@ -60,11 +69,11 @@ class Pods_Component_I18n extends PodsComponent {
 		'file_modal_add_button' => [
 			'depends-on' => [ 'type' => 'file' ],
 		],
-		'boolean_yes_label' => [
-			'depends-on' => [ 'type' => 'boolean' ],
+		'pick_select_text' => [
+			'depends-on' => [ 'type' => 'pick' ],
 		],
-		'boolean_no_label' => [
-			'depends-on' => [ 'type' => 'boolean' ],
+		'pick_add_new_label' => [
+			'depends-on' => [ 'type' => 'pick' ],
 		],
 	];
 

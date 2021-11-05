@@ -3739,10 +3739,13 @@ class Pods implements Iterator {
 				$field['name'] = trim( $name );
 			}
 
-			$to_merge = pods_v( $field['name'], $all_fields );
+			$to_merge = $this->pod_data->get_field( $field['name'] );
 
 			if ( $to_merge ) {
 				$field = pods_config_merge_data( $to_merge, $field );
+
+				// Override the name field as the alias should not be used.
+				$field['name'] = $to_merge['name'];
 			}
 
 			// Never show the ID field.
@@ -3881,10 +3884,13 @@ class Pods implements Iterator {
 				$field['name'] = trim( $name );
 			}
 
-			$to_merge = pods_v( $field['name'], $all_fields );
+			$to_merge = $this->pod_data->get_field( $field['name'] );
 
 			if ( $to_merge ) {
 				$field = pods_config_merge_data( $to_merge, $field );
+
+				// Override the name field as the alias should not be used.
+				$field['name'] = $to_merge['name'];
 			}
 
 			if ( pods_v( 'hidden', $field, false, true ) || 'hidden' === $field['type'] ) {

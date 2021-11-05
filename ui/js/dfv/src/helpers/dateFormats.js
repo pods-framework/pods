@@ -96,10 +96,8 @@ const replaceAllMapEntries = ( map, value ) => {
 		return '';
 	}
 
-	const findRegex = new RegExp(
-		Array.from( map.keys() ).join( '|' ),
-		'g',
-	);
+	const regexString = '[^\\](' + Array.from( map.keys() ).join( '|' ) + ')';
+	const findRegex = new RegExp( regexString, 'g' );
 
 	return value.replace(
 		findRegex,

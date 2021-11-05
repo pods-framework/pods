@@ -198,7 +198,7 @@ const DateTime = ( {
 
 	// Keep local versions as a string (formatted and ready to display, and in case
 	// the Moment object is invalid) and as a Moment object.
-	const isValueEmpty = [ '0000-00-00', '0000-00-00 00:00:00', '00:00:00', '' ].includes( value );
+	const isValueEmpty = [ '0000-00-00', '0000-00-00 00:00:00', '' ].includes( value );
 
 	const [ localStringValue, setLocalStringValue ] = useState(
 		() => {

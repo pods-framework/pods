@@ -803,7 +803,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return array List of object arguments.
 	 */
 	public function get_args() {
-
 		/**
 		 * Allow filtering the object arguments.
 		 *

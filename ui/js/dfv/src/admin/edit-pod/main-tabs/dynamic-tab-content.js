@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * WordPress Dependencies
  */
-import { withSelect } from '@wordpress/data';
+import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -97,6 +97,7 @@ const DynamicTabContent = ( {
 	allPodFields,
 	allPodValues,
 	setOptionValue,
+	setOptionsValues,
 } ) => {
 	const fields = tabOptions.map( ( tabOption ) => {
 		const {
@@ -161,6 +162,7 @@ const DynamicTabContent = ( {
 			allPodFields={ allPodFields }
 			allPodValues={ processAllPodValues( allPodFields, allPodValues ) }
 			setOptionValue={ setOptionValue }
+			setOptionsValues={ setOptionsValues }
 		/>
 	);
 };
@@ -200,6 +202,11 @@ DynamicTabContent.propTypes = {
 	 * Function to update the field's value on change.
 	 */
 	setOptionValue: PropTypes.func.isRequired,
+
+	/**
+	 * Function to update the values of multiple options.
+	 */
+	setOptionsValues: PropTypes.func.isRequired,
 };
 
 export default compose( [
@@ -211,6 +218,13 @@ export default compose( [
 		return {
 			podType: storeSelect.getPodOption( 'type' ),
 			podName: storeSelect.getPodOption( 'name' ),
+		};
+	} ),
+	withDispatch( ( dispatch, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		return {
+			setOptionsValues: dispatch( storeKey ).setOptionsValues,
 		};
 	} ),
 ] )( DynamicTabContent );

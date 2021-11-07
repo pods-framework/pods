@@ -6994,6 +6994,10 @@ class PodsAPI {
 
 		// @todo Delete tableless relationship meta
 
+		if ( ! $save_pod ) {
+			$this->cache_flush_pods( $pod );
+		}
+
 		return true;
 	}
 

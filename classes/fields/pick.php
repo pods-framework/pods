@@ -1587,7 +1587,13 @@ class PodsField_Pick extends PodsField {
 			$related_val = $related_object;
 		}
 
-		$related_sister_id = (int) pods_v( 'sister_id', $options, 0 );
+		$related_sister_id = pods_v( 'sister_id', $options, 0 );
+
+		if ( is_numeric( $related_sister_id ) ) {
+			$related_sister_id = (int) $related_sister_id;
+		} else {
+			$related_sister_id = 0;
+		}
 
 		$options['id'] = (int) $options['id'];
 
@@ -1840,10 +1846,18 @@ class PodsField_Pick extends PodsField {
 
 		// Bidirectional relationship requirement checks.
 		$related_object = pods_v( static::$type . '_object', $options, '' );
+
 		// pod, post_type, taxonomy, etc..
 		$related_val = pods_v( static::$type . '_val', $options, $related_object, true );
+
 		// pod name, post type name, taxonomy name, etc..
-		$related_sister_id = (int) pods_v( 'sister_id', $options, 0 );
+		$related_sister_id = pods_v( 'sister_id', $options, 0 );
+
+		if ( is_numeric( $related_sister_id ) ) {
+			$related_sister_id = (int) $related_sister_id;
+		} else {
+			$related_sister_id = 0;
+		}
 
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
 			$related_pod = self::$api->load_pod( [

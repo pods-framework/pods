@@ -3276,7 +3276,13 @@ class PodsAPI {
 			$old_name      = pods_clean_name( $field['name'], true, 'meta' !== $pod['storage'] );
 			$old_type      = $field['type'];
 			$old_options   = $field;
-			$old_sister_id = (int) pods_v( 'sister_id', $old_options, 0 );
+			$old_sister_id = pods_v( 'sister_id', $old_options, 0 );
+
+			if ( is_numeric( $old_sister_id ) ) {
+				$old_sister_id = (int) $old_sister_id;
+			} else {
+				$old_sister_id = 0;
+			}
 
 			$old_simple = ( 'pick' === $old_type && in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) );
 
@@ -3720,7 +3726,13 @@ class PodsAPI {
 		$simple_diff        = $old_simple !== $simple;
 		$definition_diff    = $old_definition !== $definition;
 
-		$sister_id = (int) pods_v( 'sister_id', $field, 0 );
+		$sister_id = pods_v( 'sister_id', $field, 0 );
+
+		if ( is_numeric( $sister_id ) ) {
+			$sister_id = (int) $sister_id;
+		} else {
+			$sister_id = 0;
+		}
 
 		$definition_mode = 'bypass';
 
@@ -8975,7 +8987,13 @@ class PodsAPI {
 			$ids = implode( ', ', $ids );
 
 			$field_id  = (int) $field_id;
-			$sister_id = (int) pods_v( 'sister_id', $field, 0 );
+			$sister_id = pods_v( 'sister_id', $field, 0 );
+
+			if ( is_numeric( $sister_id ) ) {
+				$sister_id = (int) $sister_id;
+			} else {
+				$sister_id = 0;
+			}
 
 			$sql = "
 				SELECT item_id, related_item_id, related_field_id
@@ -9141,7 +9159,13 @@ class PodsAPI {
 
 		if ( ! pods_tableless() ) {
 			$field_id  = (int) $field_id;
-			$sister_id = (int) pods_v( 'sister_id', $field, 0 );
+			$sister_id = pods_v( 'sister_id', $field, 0 );
+
+			if ( is_numeric( $sister_id ) ) {
+				$sister_id = (int) $sister_id;
+			} else {
+				$sister_id = 0;
+			}
 
 			$relationships = array();
 

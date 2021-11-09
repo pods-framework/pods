@@ -2977,7 +2977,7 @@ class PodsAdmin {
 			$plugin_search_url = self_admin_url( $plugin_search_url );
 		}
 
-		if ( ! is_pods_alternative_cache_activated() ) {
+		if ( ! is_pods_alternative_cache_activated() && ! wp_using_ext_object_cache() ) {
 			$tests['direct']['pods_alternative_cache'] = [
 				'label' => __( 'Pods Alternative Cache', 'pods' ),
 				'test'  => static function () use ( $plugin_search_url ) {
@@ -2988,7 +2988,7 @@ class PodsAdmin {
 							'label' => __( 'Performance', 'pods' ),
 							'color' => 'blue',
 						],
-						'description' => sprintf( '<p>%s</p>', __( 'Pods Alternative Cache is usually useful for Pods installs that use Shared Hosting with limited Object Cache capabilities or limits.', 'pods' ) ),
+						'description' => sprintf( '<p>%s</p>', __( 'You are not using an external object cache for this site. Pods Alternative Cache is usually useful for Pods installs that use Shared Hosting with limited Object Cache capabilities.', 'pods' ) ),
 						'actions'     => sprintf( '<p><a href="%s">%s</a></p>', esc_url( $plugin_search_url . urlencode( 'Pods Alternative Cache' ) ), __( 'Install Pods Alternative Cache', 'pods' ) ),
 						'test'        => 'pods_alternative_cache',
 					];

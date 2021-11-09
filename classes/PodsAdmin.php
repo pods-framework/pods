@@ -2911,7 +2911,7 @@ class PodsAdmin {
 				],
 				'pods-install-location'              => [
 					'label' => __( 'Pods Install Location', 'pods' ),
-					'value' => PODS_DIR,
+					'value' => str_replace( ABSPATH, '/', PODS_DIR ),
 				],
 				'pods-developer'                     => [
 					'label' => __( 'Pods Developer Activated' ),

@@ -28,10 +28,10 @@ body:
       label: Testing Instructions
       description: "List of steps to reproduce the behavior so we can see it on our side too."
       placeholder: |
-        1. Go to '...' |
-        2. Click on '....' |
-        3. Scroll down to '....' |
-        4. See error message '....' |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error message '....'
     validations:
       required: false
   - type: textarea

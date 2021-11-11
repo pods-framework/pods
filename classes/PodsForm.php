@@ -1828,6 +1828,22 @@ class PodsForm {
 	}
 
 	/**
+	 * Get the list of available Layout field types (backwards compatible version).
+	 *
+	 * @since 2.3.0
+	 *
+	 * @deprecated since 2.3.0
+	 * @see PodsForm::layout_field_types()
+	 *
+	 * @return array The list of available Layout field types.
+	 */
+	public static function block_field_types() {
+		_doing_it_wrong( 'PodsForm::layout_field_types', 'This function is deprecated, use PodsForm::layout_field_types instead.', '2.8.0' );
+
+		return self::layout_field_types();
+	}
+
+	/**
 	 * Get the list of available Layout field types.
 	 *
 	 * @since 2.8.0

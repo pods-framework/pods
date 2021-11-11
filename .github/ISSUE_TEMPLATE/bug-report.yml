@@ -2,7 +2,7 @@ name: "Bug Report"
 description: "Let us know if something isn't working quite right"
 title: "[Bug]: "
 labels: ["Type: Bug"]
-assignees: ""
+assignees: []
 body:
   - type: markdown
     attributes:

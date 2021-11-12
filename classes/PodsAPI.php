@@ -10282,13 +10282,14 @@ class PodsAPI {
 	/**
 	 * Clear Pod-related cache
 	 *
-	 * @param array $pod
+	 * @param array|Pod|null $pod            The pod object or null of flushing general cache.
+	 * @param bool           $flush_rewrites Whether to flush rewrites.
 	 *
 	 * @return void
 	 *
 	 * @since 2.0.0
 	 */
-	public function cache_flush_pods( $pod = null ) {
+	public function cache_flush_pods( $pod = null, $flush_rewrites = true ) {
 
 		/**
 		 * @var $wpdb wpdb
@@ -10324,7 +10325,9 @@ class PodsAPI {
 
 		pods_cache_clear( true );
 
-		pods_transient_set( 'pods_flush_rewrites', 1, WEEK_IN_SECONDS );
+		if ( $flush_rewrites ) {
+			pods_transient_set( 'pods_flush_rewrites', 1, WEEK_IN_SECONDS );
+		}
 
 		do_action( 'pods_cache_flushed' );
 	}

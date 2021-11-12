@@ -10321,8 +10321,15 @@ class PodsAPI {
 
 		$static_cache = tribe( Static_Cache::class );
 
+		$static_cache->flush( __CLASS__ );
 		$static_cache->flush( __CLASS__ . '/table_info_cache' );
 		$static_cache->flush( __CLASS__ . '/related_item_cache' );
+		$static_cache->flush( PodsInit::class . '/existing_content_types' );
+		$static_cache->flush( PodsView::class );
+		$static_cache->flush( PodsField_Pick::class . '/related_data' );
+		$static_cache->flush( PodsField_Pick::class . '/field_data' );
+		$static_cache->flush( 'pods_svg_icon/base64' );
+		$static_cache->flush( 'pods_svg_icon/svg' );
 
 		// Delete transients in the database
 		$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );

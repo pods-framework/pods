@@ -3499,6 +3499,10 @@ class PodsMeta {
 
 		$pod_object = $pod->pod_data;
 
+		if ( ! $pod_object instanceof Pod ) {
+			return $_null;
+		}
+
 		$meta_keys = [
 			$meta_key,
 		];
@@ -3666,7 +3670,12 @@ class PodsMeta {
 
 		$pod = self::$current_field_pod;
 
-		$pod_object   = $pod->pod_data;
+		$pod_object = $pod->pod_data;
+
+		if ( ! $pod_object instanceof Pod ) {
+			return $_null;
+		}
+
 		$field_object = $pod_object->get_field( $meta_key );
 
 		$tableless_field_types = PodsForm::tableless_field_types();

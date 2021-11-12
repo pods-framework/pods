@@ -70,26 +70,6 @@ class Pod extends Whatsit {
 
 		$object_fields = $api->get_wp_object_fields( $this->get_type(), $this );
 
-		// Add any taxonomies to object fields that may not yet be set up.
-		if ( 'post_type' === $this->get_type() ) {
-			$taxonomies = get_object_taxonomies( $this->get_name(), 'objects' );
-
-			foreach ( $taxonomies as $taxonomy ) {
-				$object_fields[ $taxonomy->name ] = [
-					'name'        => $taxonomy->name,
-					'label'       => $taxonomy->labels->name,
-					'type'        => 'taxonomy',
-					'pick_object' => 'taxonomy',
-					'pick_val'    => $taxonomy->name,
-					'alias'       => [],
-					'hidden'      => true,
-					'options'     => [
-						'taxonomy_format_type' => 'multi',
-					],
-				];
-			}
-		}
-
 		$object_collection = Store::get_instance();
 
 		$objects = [];

@@ -985,6 +985,26 @@ class PodsAPI {
 		}
 
 		if ( false !== $fields && ! $refresh ) {
+			// Add currently associated taxonomies to object fields that may not yet be set up.
+			if ( 'post_type' === $object ) {
+				$taxonomies = get_object_taxonomies( $pod_name, 'objects' );
+
+				foreach ( $taxonomies as $taxonomy ) {
+					$fields[ $taxonomy->name ] = [
+						'name'        => $taxonomy->name,
+						'label'       => $taxonomy->labels->name,
+						'type'        => 'taxonomy',
+						'pick_object' => 'taxonomy',
+						'pick_val'    => $taxonomy->name,
+						'alias'       => [],
+						'hidden'      => true,
+						'options'     => [
+							'taxonomy_format_type' => 'multi',
+						],
+					];
+				}
+			}
+
 			return $this->do_hook( 'get_wp_object_fields', $fields, $object, $pod );
 		}
 
@@ -1540,8 +1560,7 @@ class PodsAPI {
 	 * $params['create_name'] string Pod Name (for Creating)
 	 * $params['create_label_plural'] string Plural Label (for Creating)
 	 * $params['create_label_singular'] string Singular Label (for Creating)
-	 * $params['create_storage'] string Storage Type (for Creating Post Types)
-	 * $params['create_storage_taxonomy'] string Storage Type (for Creating Taxonomies)
+	 * $params['create_storage'] string Storage Type (for Creating)
 	 * $params['create_rest_api'] int Whether REST API will be enabled (for Creating Post Types and Taxonomies)
 	 * $params['extend_pod_type'] string Pod Type (for Extending)
 	 * $params['extend_post_type'] string Post Type (for Extending Post Types)
@@ -1554,35 +1573,28 @@ class PodsAPI {
 	 * @since 2.0.0
 	 */
 	public function add_pod( $params ) {
-
-		$defaults = array(
+		$defaults = [
 			'create_extend'   => 'create',
 			'create_pod_type' => 'post_type',
 
-			'create_name'             => '',
-			'create_label_singular'   => '',
-			'create_label_plural'     => '',
-			'create_storage'          => 'meta',
-			'create_storage_taxonomy' => '',
-			'create_rest_api'         => 1,
+			'create_name'           => '',
+			'create_label_singular' => '',
+			'create_label_plural'   => '',
+			'create_storage'        => 'meta',
+			'create_rest_api'       => 1,
 
 			'create_setting_name'  => '',
 			'create_label_title'   => '',
 			'create_label_menu'    => '',
 			'create_menu_location' => 'settings',
 
-			'extend_pod_type' => 'post_type',
-			'extend_post_type' => 'post',
-			'extend_taxonomy' => 'category',
-			'extend_table' => '',
-			'extend_storage' => 'meta',
+			'extend_pod_type'         => 'post_type',
+			'extend_post_type'        => 'post',
+			'extend_taxonomy'         => 'category',
+			'extend_table'            => '',
+			'extend_storage'          => 'meta',
 			'extend_storage_taxonomy' => '',
-		);
-
-		if( ! function_exists( 'get_term_meta' ) ) {
-			$defaults['create_storage_taxonomy'] = 'none';
-			$defaults['extend_storage_taxonomy' ] = 'table' ;
-		}
+		];
 
 		$params = (object) array_merge( $defaults, (array) $params );
 
@@ -1624,11 +1636,7 @@ class PodsAPI {
 					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 
-				$pod_params['storage'] = $params->create_storage;
-
-				if ( pods_tableless() ) {
-					$pod_params['storage'] = 'meta';
-				}
+				$pod_params['storage'] = pods_tableless() ? 'meta' : $params->create_storage;
 
 				$pod_params['rest_enable'] = 1 === (int) $params->create_rest_api ? 1 : 0;
 			} elseif ( 'taxonomy' === $pod_params['type'] ) {
@@ -1636,15 +1644,7 @@ class PodsAPI {
 					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 
-				$pod_params['storage'] = $params->create_storage;
-
-				if ( ! function_exists( 'get_term_meta' ) || ! empty( $params->create_storage_taxonomy ) ) {
-					$pod_params['storage'] = $params->create_storage_taxonomy;
-				}
-
-				if ( pods_tableless() ) {
-					$pod_params['storage'] = ( function_exists( 'get_term_meta' ) ? 'meta' : 'none' );
-				}
+				$pod_params['storage'] = pods_tableless() ? 'meta' : $params->create_storage;
 
 				$pod_params['hierarchical'] = 1;
 

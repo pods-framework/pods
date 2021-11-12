@@ -7,8 +7,7 @@ $donor_count    = 18;
 $donor_goal     = 100;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
 
-// @todo Add this.
-$feature_callout_link = 'https://pods.io/';
+$feature_callout_link = 'https://docs.pods.io/fields/simple-repeatable-fields/';
 $pods_pro_link        = 'https://pods.io/2020/12/31/introducing-pods-pro-by-skcdev/';
 $learn_more_link      = 'https://friends.pods.io/';
 $donate_now_link      = 'https://friends.pods.io/donations/become-a-friend/';
@@ -49,9 +48,9 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 			🎉&nbsp;
 			<?php
 				printf(
-					'%1$s: %2$s', //'%1$s: <a href="%2$s">%3$s</a>',
+					'%1$s: <a href="%2$s" target="_blank" rel="noreferrer">%3$s</a>',
 					esc_html__( 'Pods 2.8 is out now and we are building the next feature for Pods 2.9', 'pods' ),
-					//esc_url( $feature_callout_link ),
+					esc_url( $feature_callout_link ),
 					esc_html__( 'Simple Repeatable Fields', 'pods' )
 				);
 			?>

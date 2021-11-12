@@ -5291,56 +5291,67 @@ class PodsAPI {
 				}
 
 				foreach ( $data as $field => $values ) {
-					$pick_object = pods_v( 'pick_object', $fields[ $field ] );
-					$pick_val    = pods_v( 'pick_val', $fields[ $field ] );
+					$is_file_field = in_array( $type, PodsForm::file_field_types(), true );
 
-					if ( 'table' === $pick_object ) {
-						$pick_val = pods_v( 'pick_table', $fields[ $field ], $pick_val, true );
-					}
+					$search_data     = false;
+					$find_rel_params = false;
+					$data_mode       = false;
+					$is_taggable     = false;
 
-					if ( in_array( $pick_object, $simple_tableless_objects, true ) ) {
-						continue;
-					}
+					if ( ! $is_file_field ) {
+						$pick_object = pods_v( 'pick_object', $fields[ $field ] );
+						$pick_val    = pods_v( 'pick_val', $fields[ $field ] );
 
-					if ( '__current__' === $pick_val ) {
-						if ( is_array( $pod ) || $pod instanceof Pods\Whatsit ) {
-							$pick_val = $pod['name'];
-						} elseif ( is_object( $pod ) && isset( $pod->pod ) ) {
-							$pick_val = $pod->pod;
-						} elseif ( is_string( $pod ) && 0 < strlen( $pod ) ) {
-							$pick_val = $pod;
+						if ( 'table' === $pick_object ) {
+							$pick_val = pods_v( 'pick_table', $fields[ $field ], $pick_val, true );
 						}
-					}
 
-					if ( ! $fields[ $field ] instanceof Field ) {
-						$fields[ $field ]['table_info'] = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $fields[ $field ] );
-					}
+						if ( in_array( $pick_object, $simple_tableless_objects, true ) ) {
+							continue;
+						}
 
-					$field_table_info = $fields[ $field ]['table_info'];
+						if ( '__current__' === $pick_val ) {
+							if ( is_array( $pod ) || $pod instanceof Pods\Whatsit ) {
+								$pick_val = $pod['name'];
+							} elseif ( is_object( $pod ) && isset( $pod->pod ) ) {
+								$pick_val = $pod->pod;
+							} elseif ( is_string( $pod ) && 0 < strlen( $pod ) ) {
+								$pick_val = $pod;
+							}
+						}
 
-					if ( isset( $field_table_info['pod'] ) && ! empty( $field_table_info['pod'] ) && isset( $field_table_info['pod']['name'] ) ) {
-						$search_data = pods( $field_table_info['pod']['name'] );
+						if ( ! $fields[ $field ] instanceof Field ) {
+							$fields[ $field ]['table_info'] = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $fields[ $field ] );
+						}
 
-						$data_mode = 'pods';
-					} else {
-						$search_data = pods_data();
-						$search_data->table( $field_table_info );
+						$field_table_info = $fields[ $field ]['table_info'];
 
-						$data_mode = 'data';
-					}
+						if ( isset( $field_table_info['pod'] ) && ! empty( $field_table_info['pod'] ) && isset( $field_table_info['pod']['name'] ) ) {
+							$search_data = pods( $field_table_info['pod']['name'] );
 
-					$find_rel_params = array(
-						'select'     => "`t`.`{$search_data->field_id}`",
-						'where'      => "`t`.`{$search_data->field_slug}` = %s OR `t`.`{$search_data->field_index}` = %s",
-						'limit'      => 1,
-						'pagination' => false,
-						'search'     => false
-					);
+							$data_mode = 'pods';
+						} else {
+							$search_data = pods_data();
+							$search_data->table( $field_table_info );
 
-					if ( empty( $search_data->field_slug ) && ! empty( $search_data->field_index ) ) {
-						$find_rel_params['where'] = "`t`.`{$search_data->field_index}` = %s";
-					} elseif ( empty( $search_data->field_slug ) && empty( $search_data->field_index ) ) {
-						$find_rel_params = false;
+							$data_mode = 'data';
+						}
+
+						$find_rel_params = [
+							'select'     => "`t`.`{$search_data->field_id}`",
+							'where'      => "`t`.`{$search_data->field_slug}` = %s OR `t`.`{$search_data->field_index}` = %s",
+							'limit'      => 1,
+							'pagination' => false,
+							'search'     => false
+						];
+
+						if ( empty( $search_data->field_slug ) && ! empty( $search_data->field_index ) ) {
+							$find_rel_params['where'] = "`t`.`{$search_data->field_index}` = %s";
+						} elseif ( empty( $search_data->field_slug ) && empty( $search_data->field_index ) ) {
+							$find_rel_params = false;
+						}
+
+						$is_taggable = 1 === (int) pods_v( $type . '_taggable', $fields[ $field ] );
 					}
 
 					$related_limit = (int) pods_v( $type . '_limit', $fields[ $field ], 0 );
@@ -5351,9 +5362,6 @@ class PodsAPI {
 
 					// Enforce integers / unique values for IDs
 					$value_ids = array();
-
-					$is_file_field = in_array( $type, PodsForm::file_field_types(), true );
-					$is_taggable   = ( in_array( $type, PodsForm::tableless_field_types(), true ) && 1 === (int) pods_v( $type . '_taggable', $fields[ $field ] ) );
 
 					// @todo Handle simple relationships eventually
 					foreach ( $values as $v ) {
@@ -5467,7 +5475,7 @@ class PodsAPI {
 
 					$field_save_values = $value_ids;
 
-					if ( 'file' === $type ) {
+					if ( $is_file_field ) {
 						$field_save_values = $values;
 					}
 

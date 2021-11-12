@@ -2548,11 +2548,11 @@ class PodsField_Pick extends PodsField {
 							$orderby[] = $pick_orderby;
 						}
 
-						if ( ! in_array( $orderby, $search_data->field_index, true ) ) {
+						if ( ! in_array( $search_data->field_index, $orderby, true ) ) {
 							$orderby[] = "`t`.`{$search_data->field_index}`";
 						}
 
-						if ( ! in_array( $orderby, $search_data->field_id, true ) ) {
+						if ( ! in_array( $search_data->field_id, $orderby, true ) ) {
 							$orderby[] = "`t`.`{$search_data->field_id}`";
 						}
 

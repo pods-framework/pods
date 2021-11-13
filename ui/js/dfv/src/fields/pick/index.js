@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import AsyncCreatableSelect from 'react-select/async-creatable';
 import PropTypes from 'prop-types';
@@ -415,47 +416,68 @@ const Pick = ( props ) => {
 
 			return (
 				<>
-					<AsyncSelect
-						controlShouldRenderValue={ ! isListSelect }
-						defaultOptions={ formattedOptions }
-						loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
-						value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-						// translators: %s is the field label.
-						placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
-						isMulti={ isMulti }
-						onChange={ ( newOption ) => {
-							// The new value(s) may have been loaded by ajax, if it was, then it wasn't
-							// in our array of dataOptions, and we should add it, so we can keep track of
-							// the label.
-							setModifiedFieldItemData( ( prevData ) => {
-								const prevDataValues = prevData.map( ( option ) => option.id );
-								const updatedData = [ ...prevData ];
-								const newOptions = isMulti ? newOption : [ newOption ];
+					{ ajaxData?.ajax ? (
+						<AsyncSelect
+							controlShouldRenderValue={ ! isListSelect }
+							defaultOptions={ formattedOptions }
+							loadOptions={ loadAjaxOptions( ajaxData ) }
+							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
+							// translators: %s is the field label.
+							placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+							isMulti={ isMulti }
+							onChange={ ( newOption ) => {
+								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
+								// in our array of dataOptions, and we should add it, so we can keep track of
+								// the label.
+								setModifiedFieldItemData( ( prevData ) => {
+									const prevDataValues = prevData.map( ( option ) => option.id );
+									const updatedData = [ ...prevData ];
+									const newOptions = isMulti ? newOption : [ newOption ];
 
-								newOptions.forEach( ( option ) => {
-									if ( prevDataValues.includes( option.value ) ) {
-										return;
-									}
+									newOptions.forEach( ( option ) => {
+										if ( prevDataValues.includes( option.value ) ) {
+											return;
+										}
 
-									updatedData.push( {
-										id: option.value,
-										name: option.label,
+										updatedData.push( {
+											id: option.value,
+											name: option.label,
+										} );
 									} );
+
+									return updatedData;
 								} );
 
-								return updatedData;
-							} );
-
-							if ( isMulti ) {
-								setValueWithLimit( newOption.map(
-									( selection ) => selection.value )
-								);
-							} else {
-								setValueWithLimit( newOption.value );
-							}
-						} }
-						readOnly={ !! readOnly }
-					/>
+								if ( isMulti ) {
+									setValueWithLimit( newOption.map(
+										( selection ) => selection.value )
+									);
+								} else {
+									setValueWithLimit( newOption.value );
+								}
+							} }
+							readOnly={ !! readOnly }
+						/>
+					) : (
+						<Select
+							controlShouldRenderValue={ ! isListSelect }
+							options={ formattedOptions }
+							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
+							// translators: %s is the field label.
+							placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+							isMulti={ isMulti }
+							onChange={ ( newOption ) => {
+								if ( isMulti ) {
+									setValueWithLimit( newOption.map(
+										( selection ) => selection.value )
+									);
+								} else {
+									setValueWithLimit( newOption.value );
+								}
+							} }
+							readOnly={ !! readOnly }
+						/>
+					) }
 
 					{ isListSelect ? (
 						<ListSelectValues

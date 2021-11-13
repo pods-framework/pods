@@ -3524,7 +3524,7 @@ class PodsMeta {
 					$first_meta_key = current( explode( '.', $first_meta_key ) );
 				}
 
-				$field_object = $pod_object->get_field( $first_meta_key );
+				$field_object = $pod_object->get_field( $first_meta_key, null, true, false );
 
 				if ( $field_object ) {
 					$key_found = true;

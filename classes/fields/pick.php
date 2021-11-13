@@ -1325,13 +1325,23 @@ class PodsField_Pick extends PodsField {
 
 		// Maintain any saved sort order from $args->value
 		if ( is_array( $args->value ) && 1 < count( $args->value ) && $this->is_autocomplete( $args->options ) ) {
-			$item_data = array_replace( $args->value, $item_data );
+			$new_item_data = [];
+
+			foreach ( $args->value as $value_key => $value_item ) {
+				if ( ! is_int( $value_key ) ) {
+					if ( isset( $item_data[ $value_key ] ) ) {
+						$value_item = $item_data[ $value_key ];
+					}
+
+					$new_item_data[ $value_key ] = $value_item;
+				}
+			}
+
+			$item_data = array_merge( $new_item_data, $item_data );
 		}
 
 		// Convert from associative to numeric array
-		$item_data = array_values( $item_data );
-
-		return $item_data;
+		return array_values( $item_data );
 
 	}
 

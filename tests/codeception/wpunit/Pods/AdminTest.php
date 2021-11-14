@@ -28,6 +28,12 @@ class AdminTest extends Pods_WhatsitTestCase {
 
 		$this->api   = pods_api();
 		$this->admin = new PodsAdmin();
+
+		register_post_type( 'ext-post-type-meta', [] );
+		register_post_type( 'ext-post-type-table', [] );
+
+		register_taxonomy( 'ext-taxonomy-meta', 'post', [] );
+		register_taxonomy( 'ext-taxonomy-table', 'post', [] );
 	}
 
 	/**
@@ -36,6 +42,12 @@ class AdminTest extends Pods_WhatsitTestCase {
 	public function tearDown(): void {
 		$this->api   = null;
 		$this->admin = null;
+
+		unregister_post_type( 'ext-post-type-meta' );
+		unregister_post_type( 'ext-post-type-table' );
+
+		unregister_taxonomy( 'ext-taxonomy-meta' );
+		unregister_taxonomy( 'ext-taxonomy-table' );
 
 		parent::tearDown();
 	}

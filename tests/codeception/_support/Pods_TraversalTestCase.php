@@ -530,11 +530,11 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 				foreach ( $storage_types as $storage_type => $pod ) {
 					$pod_name = $pod['name'];
 
-					$data_base[ build_query( compact( [ 'pod_type', 'object_storage_type', 'pod_name' ] ) ) ] = [
-						build_query( compact( [ 'pod_type', 'object_storage_type', 'pod_name' ] ) ),
+					$data_base[ build_query( compact( [ 'pod_type', 'storage_type', 'pod_name' ] ) ) ] = [
+						build_query( compact( [ 'pod_type', 'storage_type', 'pod_name' ] ) ),
 						[
 							'pod_type'     => $pod_type,
-							'object_storage_type' => $storage_type,
+							'storage_type' => $storage_type,
 							'pod'          => $pod,
 						],
 					];

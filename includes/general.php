@@ -2713,8 +2713,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		}
 
 		// Handle showing fields in form.
-		$hooks['action'][] = [ 'comment_form_logged_in_after', [ PodsInit::$meta, 'meta_comment_new_logged_in' ], 10, 2 ];
-		$hooks['filter'][] = [ 'comment_form_default_fields', [ PodsInit::$meta, 'meta_comment_new' ], 10, 1 ];
+		$hooks['filter'][] = [ 'comment_form_submit_field', [ PodsInit::$meta, 'meta_comment_new' ], 10, 1 ];
 
 		// Add meta box groups.
 		$hooks['action'][] = [ 'add_meta_boxes_comment', [ PodsInit::$meta, 'meta_comment_add' ], 10, 1 ];

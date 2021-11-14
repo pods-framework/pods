@@ -367,7 +367,7 @@ class PodsView {
 		} elseif ( 'static-cache' === $cache_mode ) {
 			$static_cache = tribe( Static_Cache::class );
 
-			$static_cache->set( $key, $value, ( empty( $group ) ? 'pods_view' : $group ) );
+			$static_cache->set( $key, $value, ( empty( $group ) ? __CLASS__ : $group ) );
 		}//end if
 
 		do_action( "pods_view_set_{$cache_mode}", $original_key, $value, $expires, $group );

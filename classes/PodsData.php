@@ -1467,23 +1467,23 @@ class PodsData {
 			}//end foreach
 
 			if ( ! empty( $this->traverse ) ) {
-				foreach ( (array) $this->traverse as $key => $traverse ) {
-					$traverse      = str_replace( '`', '', $traverse );
+				foreach ( (array) $this->traverse as $key => $traverse_field ) {
+					$traverse_field      = str_replace( '`', '', $traverse_field );
 					$already_found = false;
 
-					foreach ( $traverse as $traversal ) {
+					foreach ( $traverse_field as $traversal ) {
 						if ( is_array( $traversal ) ) {
 							$traversal = implode( '.', $traversal );
 						}
 
-						if ( $traversal === $traverse ) {
+						if ( $traversal === $traverse_field ) {
 							$already_found = true;
 							break;
 						}
 					}
 
 					if ( ! $already_found ) {
-						$traverse[ 'traverse_' . $key ] = explode( '.', $traverse );
+						$traverse[ 'traverse_' . $key ] = explode( '.', $traverse_field );
 					}
 				}
 			}//end if

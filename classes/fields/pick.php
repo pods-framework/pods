@@ -1325,13 +1325,23 @@ class PodsField_Pick extends PodsField {
 
 		// Maintain any saved sort order from $args->value
 		if ( is_array( $args->value ) && 1 < count( $args->value ) && $this->is_autocomplete( $args->options ) ) {
-			$item_data = array_replace( $args->value, $item_data );
+			$new_item_data = [];
+
+			foreach ( $args->value as $value_key => $value_item ) {
+				if ( ! is_int( $value_key ) ) {
+					if ( isset( $item_data[ $value_key ] ) ) {
+						$value_item = $item_data[ $value_key ];
+					}
+
+					$new_item_data[ $value_key ] = $value_item;
+				}
+			}
+
+			$item_data = array_merge( $new_item_data, $item_data );
 		}
 
 		// Convert from associative to numeric array
-		$item_data = array_values( $item_data );
-
-		return $item_data;
+		return array_values( $item_data );
 
 	}
 
@@ -1587,7 +1597,13 @@ class PodsField_Pick extends PodsField {
 			$related_val = $related_object;
 		}
 
-		$related_sister_id = (int) pods_v( 'sister_id', $options, 0 );
+		$related_sister_id = pods_v( 'sister_id', $options, 0 );
+
+		if ( is_numeric( $related_sister_id ) ) {
+			$related_sister_id = (int) $related_sister_id;
+		} else {
+			$related_sister_id = 0;
+		}
 
 		$options['id'] = (int) $options['id'];
 
@@ -1840,10 +1856,18 @@ class PodsField_Pick extends PodsField {
 
 		// Bidirectional relationship requirement checks.
 		$related_object = pods_v( static::$type . '_object', $options, '' );
+
 		// pod, post_type, taxonomy, etc..
 		$related_val = pods_v( static::$type . '_val', $options, $related_object, true );
+
 		// pod name, post type name, taxonomy name, etc..
-		$related_sister_id = (int) pods_v( 'sister_id', $options, 0 );
+		$related_sister_id = pods_v( 'sister_id', $options, 0 );
+
+		if ( is_numeric( $related_sister_id ) ) {
+			$related_sister_id = (int) $related_sister_id;
+		} else {
+			$related_sister_id = 0;
+		}
 
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
 			$related_pod = self::$api->load_pod( [
@@ -2534,11 +2558,11 @@ class PodsField_Pick extends PodsField {
 							$orderby[] = $pick_orderby;
 						}
 
-						if ( ! in_array( $orderby, $search_data->field_index, true ) ) {
+						if ( ! in_array( $search_data->field_index, $orderby, true ) ) {
 							$orderby[] = "`t`.`{$search_data->field_index}`";
 						}
 
-						if ( ! in_array( $orderby, $search_data->field_id, true ) ) {
+						if ( ! in_array( $search_data->field_id, $orderby, true ) ) {
 							$orderby[] = "`t`.`{$search_data->field_id}`";
 						}
 

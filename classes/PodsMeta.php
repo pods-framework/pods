@@ -761,7 +761,7 @@ class PodsMeta {
 				pods_no_conflict_off( $pod['type'], null, true );
 			}
 		} elseif ( 'comment' == $pod['type'] ) {
-			if ( ! has_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ) ) ) {
+			if ( ! has_filter( 'comment_form_submit_field', array( $this, 'meta_comment_new' ) ) ) {
 				pods_no_conflict_off( $pod['type'], null, true );
 			}
 		}
@@ -2115,15 +2115,22 @@ class PodsMeta {
 	}
 
 	/**
-	 * @param $commenter
-	 * @param $user_identity
+	 * @deprecated since 2.8.4
 	 */
-	public function meta_comment_new_logged_in( $commenter, $user_identity ) {
+	public function meta_comment_new_logged_in() {
+		return null;
+	}
+
+	/**
+	 * @param string $submit_field HTML markup for the submit field.
+	 *
+	 * @return string HTML markup for the submit field.
+	 */
+	public function meta_comment_new( $submit_field ) {
+		ob_start();
 
 		wp_enqueue_style( 'pods-form' );
 		wp_enqueue_script( 'pods' );
-
-		do_action( 'pods_meta_meta_comment_new_logged_in', $commenter, $user_identity );
 
 		$groups = $this->groups_get( 'comment', 'comment' );
 
@@ -2150,81 +2157,7 @@ class PodsMeta {
 					'name'        => '_group_title',
 					'label'       => $group['label'],
 					'type'        => 'heading',
-					'heading_tag' => 'h2',
-				],
-			], $group['fields'] );
-			$field_prefix      = 'pods_meta_';
-			$field_row_classes = 'comment-form-author comment-form-pods-meta';
-
-			$value_callback = static function( $field_name, $id, $field, $pod ) {
-				$value = '';
-
-				pods_no_conflict_on( 'comment' );
-
-				if ( ! empty( $pod ) ) {
-					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
-				} elseif ( ! empty( $id ) ) {
-					$value = get_comment_meta( $id, $field['name'], true );
-				}
-
-				pods_no_conflict_off( 'comment' );
-
-				return $value;
-			};
-
-			// There is no comment yet.
-			$comment = null;
-
-			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
-				do_action( "pods_meta_meta_comment_pre_row_{$field_name}", $comment, $field, $pod );
-			};
-
-			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $comment ) {
-				do_action( "pods_meta_meta_comment_post_row_{$field_name}", $comment, $field, $pod );
-			};
-
-			pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
-		}
-
-		do_action( 'pods_meta_meta_comment_new_logged_in_post', $commenter, $user_identity );
-	}
-
-	/**
-	 * @param $form_fields
-	 *
-	 * @return array
-	 */
-	public function meta_comment_new( $form_fields ) {
-
-		wp_enqueue_style( 'pods-form' );
-		wp_enqueue_script( 'pods' );
-
-		$groups = $this->groups_get( 'comment', 'comment' );
-
-		$id  = null;
-		$pod = null;
-
-		$form_fields['pods_meta'] = PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment' ), 'hidden' );
-
-		foreach ( $groups as $group ) {
-			if ( empty( $group['fields'] ) ) {
-				continue;
-			}
-
-			if ( ! pods_permission( $group ) ) {
-				continue;
-			}
-
-			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
-				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'comment' );
-			}
-
-			$fields            = array_merge( [
-				'_group_title' => [
-					'name'        => '_group_title',
-					'label'       => $group['label'],
-					'type'        => 'heading',
-					'heading_tag' => 'h2',
+					'heading_tag' => 'h3',
 				],
 			], $group['fields'] );
 			$field_prefix      = 'pods_meta_';
@@ -2282,25 +2215,20 @@ class PodsMeta {
 				$row_classes = $field_row_classes . ' pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true );
 				$row_classes = trim( $row_classes );
 
-				ob_start();
-
 				if ( ! empty( $pre_callback ) && is_callable( $pre_callback ) ) {
 					$pre_callback( $field['name'], $id, $field, $pod );
 				}
 
-				pods_view( PODS_DIR . 'ui/forms/p-row.php', compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
+				pods_view( PODS_DIR . 'ui/forms/p-row.php', compact( array_keys( get_defined_vars() ) ) );
 
 				if ( ! empty( $post_callback ) && is_callable( $post_callback ) ) {
 					$post_callback( $field['name'], $id, $field, $pod );
 				}
-
-				$form_fields[ 'pods_meta_' . $field['name'] ] = ob_get_clean();
 			}
 		}
 
-		$form_fields = apply_filters( 'pods_meta_meta_comment_new', $form_fields );
-
-		return $form_fields;
+		// Add the fields before submit.
+		return ob_get_clean() . $submit_field;
 	}
 
 	/**

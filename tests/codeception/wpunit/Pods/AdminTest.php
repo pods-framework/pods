@@ -2,6 +2,7 @@
 
 namespace Pods_Unit_Tests\Pods;
 
+use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods_Unit_Tests\Pods_WhatsitTestCase;
 use PodsAdmin;
@@ -29,11 +30,35 @@ class AdminTest extends Pods_WhatsitTestCase {
 		$this->api   = pods_api();
 		$this->admin = new PodsAdmin();
 
-		register_post_type( 'ext-post-type-meta', [] );
-		register_post_type( 'ext-post-type-table', [] );
+		$post_types = [
+			'ext-post-type-meta',
+			'ext-post-type-table',
+		];
 
-		register_taxonomy( 'ext-taxonomy-meta', 'post', [] );
-		register_taxonomy( 'ext-taxonomy-table', 'post', [] );
+		$taxonomies = [
+			'ext-taxonomy-meta',
+			'ext-taxonomy-table',
+		];
+
+		$static_cache = tribe( Static_Cache::class );
+
+		$existing_post_type_cached = (array) $static_cache->get( 'post_type', 'PodsInit/existing_content_types' );
+		$existing_taxonomy_cached  = (array) $static_cache->get( 'taxonomy', 'PodsInit/existing_content_types' );
+
+		foreach ( $post_types as $post_type ) {
+			register_post_type( $post_type );
+
+			$existing_post_type_cached[] = $post_type;
+		}
+
+		foreach ( $taxonomies as $taxonomy ) {
+			register_taxonomy( $taxonomy, 'post' );
+
+			$existing_taxonomy_cached[] = $taxonomy;
+		}
+
+		$static_cache->set( 'post_type', $existing_post_type_cached, 'PodsInit/existing_content_types' );
+		$static_cache->set( 'taxonomy', $existing_taxonomy_cached, 'PodsInit/existing_content_types' );
 	}
 
 	/**
@@ -43,11 +68,43 @@ class AdminTest extends Pods_WhatsitTestCase {
 		$this->api   = null;
 		$this->admin = null;
 
-		unregister_post_type( 'ext-post-type-meta' );
-		unregister_post_type( 'ext-post-type-table' );
+		$post_types = [
+			'ext-post-type-meta',
+			'ext-post-type-table',
+		];
 
-		unregister_taxonomy( 'ext-taxonomy-meta' );
-		unregister_taxonomy( 'ext-taxonomy-table' );
+		$taxonomies = [
+			'ext-taxonomy-meta',
+			'ext-taxonomy-table',
+		];
+
+		$static_cache = tribe( Static_Cache::class );
+
+		$existing_post_type_cached = (array) $static_cache->get( 'post_type', 'PodsInit/existing_content_types' );
+		$existing_taxonomy_cached  = (array) $static_cache->get( 'taxonomy', 'PodsInit/existing_content_types' );
+
+		foreach ( $post_types as $post_type ) {
+			unregister_post_type( $post_type );
+
+			$found = array_search( $post_type, $existing_post_type_cached, true );
+
+			if ( false !== $found ) {
+				unset( $existing_post_type_cached[ $found ] );
+			}
+		}
+
+		foreach ( $taxonomies as $taxonomy ) {
+			unregister_taxonomy( $taxonomy );
+
+			$found = array_search( $taxonomy, $existing_taxonomy_cached, true );
+
+			if ( false !== $found ) {
+				unset( $existing_taxonomy_cached[ $found ] );
+			}
+		}
+
+		$static_cache->set( 'post_type', $existing_post_type_cached, 'PodsInit/existing_content_types' );
+		$static_cache->set( 'taxonomy', $existing_taxonomy_cached, 'PodsInit/existing_content_types' );
 
 		parent::tearDown();
 	}

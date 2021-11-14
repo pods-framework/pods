@@ -2055,6 +2055,15 @@ class PodsAPI {
 			$pod['query_var'] = $pod['type'] . '_' . $pod['query_var'];
 		}
 
+		// Solve custom rewrite slug common misconfiguration issues.
+		if ( ! empty( $pod['rewrite_custom_slug'] ) ) {
+			$pod['rewrite_custom_slug'] = trim( $pod['rewrite_custom_slug'] );
+
+			if ( '/' === $pod['rewrite_custom_slug'] ) {
+				$pod['rewrite_custom_slug'] = '';
+			}
+		}
+
 		if ( '' === $pod['label'] ) {
 			$pod['label'] = $pod['name'];
 		}

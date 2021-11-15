@@ -163,9 +163,16 @@ class Pod extends Whatsit {
 
 		$static_cache = tribe( Static_Cache::class );
 
-		$existing_cached = (array) $static_cache->get( $type, 'PodsInit/existing_content_types' );
+		$existing_cached = $static_cache->get( $type, 'PodsInit/existing_content_types' );
 
-		return $existing_cached && in_array( $this->get_name(), $existing_cached, true );
+		// Check if we need to refresh the content types cache.
+		if ( empty( $existing_cached ) || ! is_array( $existing_cached ) ) {
+			pods_init()->refresh_existing_content_types_cache();
+
+			$existing_cached = (array) $static_cache->get( $type, 'PodsInit/existing_content_types' );
+		}
+
+		return $existing_cached && array_key_exists( $this->get_name(), $existing_cached );
 	}
 
 }

@@ -10641,18 +10641,20 @@ class PodsAPI {
 	/**
 	 * Load objects.
 	 *
-	 * @param array       $params       {
-	 *                                  An associative array of parameters.
+	 * @param array $params {
+	 *                      An associative array of parameters.
 	 *
-	 * @type string|array $object_type  The object type(s).
-	 * @type string|array $id           The ID(s).
-	 * @type string|array $name         The name(s).
-	 * @type string|array $type         The type(s).
-	 * @type array        $args         Arg(s) key=>value to filter by.
-	 * @type boolean      $count        Return only a count of fields.
-	 * @type boolean      $names        Return only an array of name => label.
-	 * @type boolean      $ids          Return only an array of ID => label.
-	 * @type boolean      $bypass_cache Bypass the cache when getting data.
+	 *                      @type string|array $object_type  The object type(s).
+	 *                      @type string|array $id           The ID(s).
+	 *                      @type string|array $name         The name(s).
+	 *                      @type string|array $type         The type(s).
+	 *                      @type array        $args         Arg(s) key=>value to filter by.
+	 *                      @type boolean      $count        Return only a count of fields.
+	 *                      @type boolean      $labels       Return only an array of name => label.
+	 *                      @type boolean      $names        Return only an array of name.
+	 *                      @type boolean      $names_ids    Return only an array of id => name.
+	 *                      @type boolean      $ids          Return only an array of ID => label.
+	 *                      @type boolean      $bypass_cache Bypass the cache when getting data.
 	 * }
 	 *
 	 * @return Pods\Whatsit[]|int List of objects or count.
@@ -10700,7 +10702,9 @@ class PodsAPI {
 		if ( ! empty( $params['return_type'] ) ) {
 			$return_type = $params['return_type'];
 
-			if ( 'names' === $return_type ) {
+			if ( 'labels' === $return_type ) {
+				$params['labels'] = true;
+			} elseif ( 'names' === $return_type ) {
 				$params['names'] = true;
 			} elseif ( 'names_ids' === $return_type ) {
 				$params['names_ids'] = true;
@@ -10813,6 +10817,10 @@ class PodsAPI {
 
 		if ( ! empty( $params['count'] ) ) {
 			return count( $objects );
+		}
+
+		if ( ! empty( $params['labels'] ) ) {
+			return wp_list_pluck( $objects, 'label', 'name' );
 		}
 
 		if ( ! empty( $params['names'] ) ) {

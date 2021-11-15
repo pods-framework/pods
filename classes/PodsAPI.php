@@ -1644,6 +1644,11 @@ class PodsAPI {
 					return pods_error( __( 'Please enter a Name for this Pod', 'pods' ), $this );
 				}
 
+				// Backwards compatibility with old parameter name.
+				if ( ! empty( $params->create_storage_taxonomy ) ) {
+					$params->create_storage = $params->create_storage_taxonomy;
+				}
+
 				$pod_params['storage'] = pods_tableless() ? 'meta' : $params->create_storage;
 
 				$pod_params['hierarchical'] = 1;

@@ -369,7 +369,7 @@ class Pods_Templates_Auto_Template_Settings {
 	/**
 	 * Delete transients that stores the settings.
 	 *
-	 * @since TBD
+	 * @since 2.8.4
 	 */
 	public function flush_cache() {
 		$keys = [

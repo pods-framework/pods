@@ -991,14 +991,16 @@ class PodsAPI {
 
 				foreach ( $taxonomies as $taxonomy ) {
 					$fields[ $taxonomy->name ] = [
-						'name'        => $taxonomy->name,
-						'label'       => $taxonomy->labels->name,
-						'type'        => 'taxonomy',
-						'pick_object' => 'taxonomy',
-						'pick_val'    => $taxonomy->name,
-						'alias'       => [],
-						'hidden'      => true,
-						'options'     => [
+						'name'            => $taxonomy->name,
+						'label'           => $taxonomy->labels->name,
+						'type'            => 'taxonomy',
+						'pick_object'     => 'taxonomy',
+						'pick_val'        => $taxonomy->name,
+						'taxonomy_object' => 'taxonomy',
+						'taxonomy_val'    => $taxonomy->name,
+						'alias'           => [],
+						'hidden'          => true,
+						'options'         => [
 							'taxonomy_format_type' => 'multi',
 						],
 					];
@@ -1244,14 +1246,16 @@ class PodsAPI {
 
 				foreach ( $taxonomies as $taxonomy ) {
 					$fields[ $taxonomy->name ] = [
-						'name'        => $taxonomy->name,
-						'label'       => $taxonomy->labels->name,
-						'type'        => 'taxonomy',
-						'pick_object' => 'taxonomy',
-						'pick_val'    => $taxonomy->name,
-						'alias'       => [],
-						'hidden'      => true,
-						'options'     => [
+						'name'            => $taxonomy->name,
+						'label'           => $taxonomy->labels->name,
+						'type'            => 'taxonomy',
+						'pick_object'     => 'taxonomy',
+						'pick_val'        => $taxonomy->name,
+						'taxonomy_object' => 'taxonomy',
+						'taxonomy_val'    => $taxonomy->name,
+						'alias'           => [],
+						'hidden'          => true,
+						'options'         => [
 							'taxonomy_format_type' => 'multi',
 						],
 					];

@@ -3122,10 +3122,6 @@ class PodsData {
 					// @todo This logic is problematic with the new object based Pod configs.
 					$default_storage = 'meta';
 
-					if ( 'taxonomy' === $traverse_recurse['pod'] && ! function_exists( 'get_term_meta' ) ) {
-						$default_storage = 'none';
-					}
-
 					$pod_data = [
 						'id'            => 0,
 						'name'          => '_table_' . $traverse_recurse['pod'],
@@ -3138,7 +3134,7 @@ class PodsData {
 					$pod_data['object_fields'] = $pod_data['fields'];
 
 					$pod_data = pods_config_merge_data( $this->api->get_table_info( $traverse_recurse['pod'], '' ), $pod_data );
-				} elseif ( 'taxonomy' === $pod_data['type'] && 'none' === $pod_data['storage'] && function_exists( 'get_term_meta' ) ) {
+				} elseif ( 'taxonomy' === $pod_data['type'] && 'none' === $pod_data['storage'] ) {
 					$pod_data['storage'] = 'meta';
 				}
 
@@ -3353,7 +3349,7 @@ class PodsData {
 		if ( 'taxonomy' === $traverse['type'] ) {
 			$rel_tt_alias = 'rel_tt_' . $field_joined;
 
-			if ( pods_tableless() && function_exists( 'get_term_meta' ) ) {
+			if ( pods_tableless() ) {
 				$the_join = "
                     LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
                         `{$rel_alias}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'

@@ -32,7 +32,7 @@ const NumberField = ( {
 		number_max: max,
 		number_max_length: digitMaxLength,
 		number_min: min,
-		number_placeholder: placeholder,
+		number_placeholder: placeholder = fieldConfig.placeholder,
 		number_step: step,
 	} = fieldConfig;
 

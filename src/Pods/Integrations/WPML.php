@@ -175,10 +175,14 @@ class WPML extends Integration {
 			return $info;
 		}
 
-		$object_name = pods_sanitize( ( empty( $object ) ? $name : $object ) );
-
 		// Get current language
 		$current_language = pods_i18n()->get_current_language();
+
+		if ( ! $current_language ) {
+			return $info;
+		}
+
+		$object_name = pods_sanitize( ( empty( $object ) ? $name : $object ) );
 
 		$db_prefix = $wpdb->get_blog_prefix();
 

@@ -899,7 +899,7 @@ class PodsData {
 					$params->fields = $pod->get_all_fields();
 				} elseif ( $params->object_fields ) {
 					if ( $params->fields ) {
-						$params->fields = array_merge( $params->fields, $params->object_fields );
+						$params->fields = pods_config_merge_fields( $params->fields, $params->object_fields );
 					} else {
 						$params->fields = $params->object_fields;
 					}
@@ -1467,23 +1467,23 @@ class PodsData {
 			}//end foreach
 
 			if ( ! empty( $this->traverse ) ) {
-				foreach ( (array) $this->traverse as $key => $traverse ) {
-					$traverse      = str_replace( '`', '', $traverse );
+				foreach ( (array) $this->traverse as $key => $traverse_field ) {
+					$traverse_field      = str_replace( '`', '', $traverse_field );
 					$already_found = false;
 
-					foreach ( $traverse as $traversal ) {
+					foreach ( $traverse_field as $traversal ) {
 						if ( is_array( $traversal ) ) {
 							$traversal = implode( '.', $traversal );
 						}
 
-						if ( $traversal === $traverse ) {
+						if ( $traversal === $traverse_field ) {
 							$already_found = true;
 							break;
 						}
 					}
 
 					if ( ! $already_found ) {
-						$traverse[ 'traverse_' . $key ] = explode( '.', $traverse );
+						$traverse[ 'traverse_' . $key ] = explode( '.', $traverse_field );
 					}
 				}
 			}//end if
@@ -3079,6 +3079,7 @@ class PodsData {
 			'joined_index'    => 'id',
 			'params'          => new stdClass(),
 			'last_table_info' => [],
+			'last_field'      => [],
 		];
 
 		$traverse_recurse = array_merge( $defaults, $traverse_recurse );
@@ -3122,10 +3123,6 @@ class PodsData {
 					// @todo This logic is problematic with the new object based Pod configs.
 					$default_storage = 'meta';
 
-					if ( 'taxonomy' === $traverse_recurse['pod'] && ! function_exists( 'get_term_meta' ) ) {
-						$default_storage = 'none';
-					}
-
 					$pod_data = [
 						'id'            => 0,
 						'name'          => '_table_' . $traverse_recurse['pod'],
@@ -3138,7 +3135,7 @@ class PodsData {
 					$pod_data['object_fields'] = $pod_data['fields'];
 
 					$pod_data = pods_config_merge_data( $this->api->get_table_info( $traverse_recurse['pod'], '' ), $pod_data );
-				} elseif ( 'taxonomy' === $pod_data['type'] && 'none' === $pod_data['storage'] && function_exists( 'get_term_meta' ) ) {
+				} elseif ( 'taxonomy' === $pod_data['type'] && 'none' === $pod_data['storage'] ) {
 					$pod_data['storage'] = 'meta';
 				}
 
@@ -3189,32 +3186,7 @@ class PodsData {
 
 		$meta_data_table = false;
 
-		if ( ! isset( $pod_data['fields'][ $field ] ) && 'd' === $field && isset( $traverse_recurse['fields'][ $traverse_recurse['depth'] - 1 ] ) ) {
-			$field = $traverse_recurse['fields'][ $traverse_recurse['depth'] - 1 ];
-
-			$field_type = 'pick';
-
-			if ( isset( $traverse_recurse['last_table_info']['pod']['fields'][ $field ] ) ) {
-				$field_type = $traverse_recurse['last_table_info']['pod']['fields'][ $field ]['type'];
-			} elseif ( isset( $traverse_recurse['last_table_info']['pod']['object_fields'][ $field ] ) ) {
-				$field_type = $traverse_recurse['last_table_info']['pod']['object_fields'][ $field ]['type'];
-			}
-
-			$pod_data['fields'][ $field ] = [
-				'id'          => 0,
-				'name'        => $field,
-				'type'        => $field_type,
-				'pick_object' => $traverse_recurse['last_table_info']['pod']['type'],
-				'pick_val'    => $traverse_recurse['last_table_info']['pod']['name'],
-			];
-
-			$meta_data_table = true;
-		}//end if
-
 		$the_field = null;
-
-		// Fallback to meta table if the pod type supports it.
-		$last = end( $traverse_recurse['fields'] );
 
 		if ( $pod_data instanceof Pod ) {
 			// Maybe get the field / object field from the pod.
@@ -3222,6 +3194,42 @@ class PodsData {
 		} elseif ( isset( $pod_data['fields'][ $field ] ) ) {
 			$the_field = $pod_data['fields'][ $field ];
 		}
+
+		if ( null === $the_field && 'd' === $field && isset( $traverse_recurse['fields'][ $traverse_recurse['depth'] - 1 ] ) ) {
+			$field = $traverse_recurse['fields'][ $traverse_recurse['depth'] - 1 ];
+
+			if ( ! empty( $traverse_recurse['last_field'] ) ) {
+				$the_field = $traverse_recurse['last_field'];
+			} elseif ( $pod_data instanceof Pod ) {
+				// Maybe get the field / object field from the pod.
+				$the_field = $pod_data->get_field( $field );
+			} elseif ( isset( $pod_data['fields'][ $field ] ) ) {
+				$the_field = $pod_data['fields'][ $field ];
+			}
+
+			if ( null === $the_field ) {
+				$field_type = 'pick';
+
+				if ( isset( $traverse_recurse['last_table_info']['pod']['fields'][ $field ] ) ) {
+					$field_type = $traverse_recurse['last_table_info']['pod']['fields'][ $field ]['type'];
+				} elseif ( isset( $traverse_recurse['last_table_info']['pod']['object_fields'][ $field ] ) ) {
+					$field_type = $traverse_recurse['last_table_info']['pod']['object_fields'][ $field ]['type'];
+				}
+
+				$the_field = [
+					'id'          => 0,
+					'name'        => $field,
+					'type'        => $field_type,
+					'pick_object' => $traverse_recurse['last_table_info']['pod']['type'],
+					'pick_val'    => $traverse_recurse['last_table_info']['pod']['name'],
+				];
+			}
+
+			$meta_data_table = true;
+		}//end if
+
+		// Fallback to meta table if the pod type supports it.
+		$last = end( $traverse_recurse['fields'] );
 
 		if ( ! $the_field ) {
 			if ( 'meta_value' === $last && in_array( $pod_data['type'], [
@@ -3271,29 +3279,33 @@ class PodsData {
 			} else {
 				$table_info = $this->api->get_table_info( $pod_data['type'], $pod_data['name'], $pod_data['name'], $pod_data );
 			}
-		} elseif ( in_array( $traverse['pick_object'], $simple_tableless_objects, true ) && ! empty( $traverse_recurse['last_table_info'] ) ) {
-			$has_last_table_info = ! empty( $traverse_recurse['last_table_info'] );
+		} else {
+			$pick_object = pods_v( $traverse['type'] . '_object', $traverse );
 
-			if ( $has_last_table_info ) {
-				$table_info = $traverse_recurse['last_table_info'];
+			if ( in_array( $pick_object, $simple_tableless_objects, true ) && ! empty( $traverse_recurse['last_table_info'] ) ) {
+				$has_last_table_info = ! empty( $traverse_recurse['last_table_info'] );
 
-				if ( ! empty( $table_info['meta_table'] ) ) {
-					$meta_data_table = true;
+				if ( $has_last_table_info ) {
+					$table_info = $traverse_recurse['last_table_info'];
+
+					if ( ! empty( $table_info['meta_table'] ) ) {
+						$meta_data_table = true;
+					}
+				} else {
+					if ( ! isset( $traverse['pod'] ) ) {
+						$traverse['pod'] = null;
+					}
+
+					if ( ! isset( $traverse['pick_val'] ) ) {
+						$traverse['pick_val'] = null;
+					}
+
+					$table_info = $this->api->get_table_info( $traverse['pick_object'], $traverse['pick_val'], null, $traverse['pod'], $traverse );
+
+					$traverse['table_info'] = $table_info;
 				}
-			} else {
-				if ( ! isset( $traverse['pod'] ) ) {
-					$traverse['pod'] = null;
-				}
-
-				if ( ! isset( $traverse['pick_val'] ) ) {
-					$traverse['pick_val'] = null;
-				}
-
-				$table_info = $this->api->get_table_info( $traverse['pick_object'], $traverse['pick_val'], null, $traverse['pod'], $traverse );
-
-				$traverse['table_info'] = $table_info;
 			}
-		}//end if
+		}
 
 		if ( isset( $this->traversal[ $traverse_recurse['pod'] ][ $traverse['name'] ] ) ) {
 			$traverse = $this->traversal[ $traverse_recurse['pod'] ][ $traverse['name'] ];
@@ -3315,8 +3327,17 @@ class PodsData {
 
 		$field_joined = $field;
 
+		$is_pickable = in_array( $traverse['type'], [ 'pick', 'taxonomy' ], true );
+		$pick_object = pods_v( $traverse['type'] . '_object', $traverse );
+
 		if ( 0 < $traverse_recurse['depth'] && 't' !== $traverse_recurse['joined'] ) {
-			if ( $meta_data_table && ( 'pick' !== $traverse['type'] || ! in_array( pods_v( 'pick_object', $traverse, true ), $simple_tableless_objects, true ) ) ) {
+			if (
+				$meta_data_table
+				&& (
+					! $is_pickable
+					|| ! in_array( $pick_object, $simple_tableless_objects, true )
+				)
+			) {
 				$field_joined = $traverse_recurse['joined'] . '_d';
 			} else {
 				$field_joined = $traverse_recurse['joined'] . '_' . $field;
@@ -3353,36 +3374,36 @@ class PodsData {
 		if ( 'taxonomy' === $traverse['type'] ) {
 			$rel_tt_alias = 'rel_tt_' . $field_joined;
 
-			if ( pods_tableless() && function_exists( 'get_term_meta' ) ) {
+			if ( pods_tableless() ) {
 				$the_join = "
-                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
-                        `{$rel_alias}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                        AND `{$rel_alias}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+					LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
+						`{$rel_alias}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+						AND `{$rel_alias}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
 
-                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                        AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = CONVERT( `{$rel_alias}`.`{$table_info[ 'meta_field_value' ]}`, SIGNED )
-                ";
+					LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+						`{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+						AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = CONVERT( `{$rel_alias}`.`{$table_info[ 'meta_field_value' ]}`, SIGNED )
+				";
 
 				$joined_id    = $table_info['meta_field_id'];
 				$joined_index = $table_info['meta_field_index'];
 			} elseif ( $meta_data_table ) {
 				$the_join = "
-                    LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
-                ";
+					LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
+						`{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+				";
 			} else {
 				$the_join = "
-                    LEFT JOIN `{$wpdb->term_relationships}` AS `{$rel_alias}` ON
-                        `{$rel_alias}`.`object_id` = `{$traverse_recurse[ 'joined' ]}`.`ID`
+					LEFT JOIN `{$wpdb->term_relationships}` AS `{$rel_alias}` ON
+						`{$rel_alias}`.`object_id` = `{$traverse_recurse[ 'joined' ]}`.`ID`
 
-                    LEFT JOIN `{$wpdb->term_taxonomy}` AS `{$rel_tt_alias}` ON
-                        `{$rel_tt_alias}`.`taxonomy` = '{$traverse[ 'name' ]}'
-                        AND `{$rel_tt_alias}`.`term_taxonomy_id` = `{$rel_alias}`.`term_taxonomy_id`
+					LEFT JOIN `{$wpdb->term_taxonomy}` AS `{$rel_tt_alias}` ON
+						`{$rel_tt_alias}`.`taxonomy` = '{$traverse[ 'name' ]}'
+						AND `{$rel_tt_alias}`.`term_taxonomy_id` = `{$rel_alias}`.`term_taxonomy_id`
 
-                    LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_tt_alias}`.`{$table_info[ 'field_id' ]}`
-                ";
+					LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
+						`{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_tt_alias}`.`{$table_info[ 'field_id' ]}`
+				";
 
 				// Override $rel_alias.
 				$rel_alias = $field_joined;
@@ -3393,27 +3414,27 @@ class PodsData {
 		} elseif ( 'comment' === $traverse['type'] ) {
 			if ( pods_tableless() ) {
 				$the_join = "
-                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
-                        `{$rel_alias}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                        AND `{$rel_alias}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+					LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
+						`{$rel_alias}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+						AND `{$rel_alias}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
 
-                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                        AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = CONVERT( `{$rel_alias}`.`{$table_info[ 'meta_field_value' ]}`, SIGNED )
-                ";
+					LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+						`{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+						AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = CONVERT( `{$rel_alias}`.`{$table_info[ 'meta_field_value' ]}`, SIGNED )
+				";
 
 				$joined_id    = $table_info['meta_field_id'];
 				$joined_index = $table_info['meta_field_index'];
 			} elseif ( $meta_data_table ) {
 				$the_join = "
-                    LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
-                ";
+					LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
+						`{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+				";
 			} else {
 				$the_join = "
-                    LEFT JOIN `{$wpdb->comments}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`comment_post_ID` = `{$traverse_recurse[ 'joined' ]}`.`ID`
-                ";
+					LEFT JOIN `{$wpdb->comments}` AS `{$field_joined}` ON
+						`{$field_joined}`.`comment_post_ID` = `{$traverse_recurse[ 'joined' ]}`.`ID`
+				";
 
 				// Override $rel_alias.
 				$rel_alias = $field_joined;
@@ -3421,17 +3442,17 @@ class PodsData {
 				$joined_id    = $table_info['field_id'];
 				$joined_index = $table_info['field_index'];
 			}//end if
-		} elseif ( in_array( $traverse['type'], $tableless_field_types, true ) && ( 'pick' !== $traverse['type'] || ! in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects, true ) ) ) {
+		} elseif ( in_array( $traverse['type'], $tableless_field_types, true ) && ( ! $is_pickable || ! in_array( $pick_object, $simple_tableless_objects, true ) ) ) {
 			if ( pods_tableless() ) {
 				$the_join = "
-                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
-                        `{$rel_alias}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                        AND `{$rel_alias}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+					LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
+						`{$rel_alias}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+						AND `{$rel_alias}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
 
-                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                        AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = CONVERT( `{$rel_alias}`.`{$table_info[ 'meta_field_value' ]}`, SIGNED )
-                ";
+					LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+						`{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+						AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = CONVERT( `{$rel_alias}`.`{$table_info[ 'meta_field_value' ]}`, SIGNED )
+				";
 
 				$joined_id    = $table_info['meta_field_id'];
 				$joined_index = $table_info['meta_field_index'];
@@ -3444,45 +3465,45 @@ class PodsData {
 				}
 
 				$the_join = "
-                     LEFT JOIN `{$table_info['pod_table']}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info['pod_field_id']}` = `{$traverse_recurse['rel_alias']}`.`{$joined_id}`
-                 ";
+					LEFT JOIN `{$table_info['pod_table']}` AS `{$field_joined}` ON
+						`{$field_joined}`.`{$table_info['pod_field_id']}` = `{$traverse_recurse['rel_alias']}`.`{$joined_id}`
+				";
 			} elseif ( pods_podsrel_enabled() ) {
-				if ( ( $traverse_recurse['depth'] + 2 ) === count( $traverse_recurse['fields'] ) && ( 'pick' !== $traverse['type'] || ! in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects, true ) ) && 'post_author' === $traverse_recurse['fields'][ $traverse_recurse['depth'] + 1 ] ) {
+				if ( ( $traverse_recurse['depth'] + 2 ) === count( $traverse_recurse['fields'] ) && ( ! $is_pickable || ! in_array( $pick_object, $simple_tableless_objects, true ) ) && 'post_author' === $traverse_recurse['fields'][ $traverse_recurse['depth'] + 1 ] ) {
 					$table_info['recurse'] = false;
 				}
 
 				if ( ! is_numeric( $traverse['id'] ) ) {
 					$the_join = "
-	                    LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
-	                        `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse['id']}`
-	                ";
+						LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
+							`{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse['id']}`
+					";
 				} else {
 					$the_join = "
-	                    LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
-	                        `{$rel_alias}`.`field_id` = {$traverse[ 'id' ]}
-	                        AND `{$rel_alias}`.`item_id` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+						LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
+							`{$rel_alias}`.`field_id` = {$traverse[ 'id' ]}
+							AND `{$rel_alias}`.`item_id` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
 
-	                    LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
-	                        `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
-	                ";
+						LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
+							`{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
+					";
 				}
 			}//end if
 		} elseif ( 'meta' === $pod_data['storage'] ) {
-			if ( ( $traverse_recurse['depth'] + 2 ) === count( $traverse_recurse['fields'] ) && ( 'pick' !== $traverse['type'] || ! in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects, true ) ) && $table_info['meta_field_value'] === $traverse_recurse['fields'][ $traverse_recurse['depth'] + 1 ] ) {
+			if ( ( $traverse_recurse['depth'] + 2 ) === count( $traverse_recurse['fields'] ) && ( ! $is_pickable || ! in_array( $pick_object, $simple_tableless_objects, true ) ) && $table_info['meta_field_value'] === $traverse_recurse['fields'][ $traverse_recurse['depth'] + 1 ] ) {
 				$the_join = "
-                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                        AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
-                ";
+					LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+						`{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+						AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+				";
 
 				$table_info['recurse'] = false;
 			} else {
 				$the_join = "
-                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                        AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
-                ";
+					LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+						`{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+						AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+				";
 
 				$joined_id    = $table_info['meta_field_id'];
 				$joined_index = $table_info['meta_field_index'];
@@ -3499,6 +3520,7 @@ class PodsData {
 			'params'          => $traverse_recurse['params'],
 			'rel_alias'       => $rel_alias,
 			'last_table_info' => $table_info,
+			'last_field'      => $the_field,
 		);
 
 		$the_join = apply_filters( 'pods_data_traverse_the_join', $the_join, $traverse_recurse, $traverse_recursive, $this );
@@ -3536,6 +3558,10 @@ class PodsData {
 		$recurse_joins = [];
 
 		foreach ( $fields as $field ) {
+			/**
+			 * @var string[]|string $field The field(s) to recurse (related_field.name would be [related_field, name]).
+			 */
+
 			$traverse_recurse = [
 				'pod'             => $this->pod,
 				'fields'          => (array) $field,

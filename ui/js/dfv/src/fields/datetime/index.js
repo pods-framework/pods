@@ -172,6 +172,10 @@ const DateTime = ( {
 		// Use a full date and time format for our value string by default.
 		// Unless we're only showing the date OR the time picker.
 		if ( includeDateField && includeTimeField ) {
+			if ( 'c' === podsFormat ) {
+				return momentDateFormat;
+			}
+
 			return `${ momentDateFormat } ${ momentTimeFormat }`;
 		} else if ( includeTimeField ) {
 			return momentTimeFormat;
@@ -194,7 +198,7 @@ const DateTime = ( {
 
 	// Keep local versions as a string (formatted and ready to display, and in case
 	// the Moment object is invalid) and as a Moment object.
-	const isValueEmpty = [ '0000-00-00', '0000-00-00 00:00:00', '00:00:00', '' ].includes( value );
+	const isValueEmpty = [ '0000-00-00', '0000-00-00 00:00:00', '' ].includes( value );
 
 	const [ localStringValue, setLocalStringValue ] = useState(
 		() => {
@@ -240,9 +244,14 @@ const DateTime = ( {
 
 	// Set the initial view date to the current date, unless the range of years is before
 	// the current time.
-	const initialViewDate = ( yearRange && yearRange[ yearRange.length - 1 ] < new Date().getFullYear() )
+	let initialViewDate = ( yearRange && yearRange[ yearRange.length - 1 ] < new Date().getFullYear() )
 		? new Date( yearRange[ 0 ], 0, 1 )
 		: new Date();
+
+	// Initial view date should be current value if we have one set.
+	if ( ! isValueEmpty ) {
+		initialViewDate = localMomentValue;
+	}
 
 	// Set up range validator, both for the react-datetime component
 	// and our validation hook.

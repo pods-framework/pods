@@ -1,5 +1,6 @@
 <?php
 
+use Pods\Static_Cache;
 use Pods\Wisdom_Tracker;
 
 /**
@@ -1029,7 +1030,8 @@ class PodsInit {
 			// null !== pods_v( 'et_fb', 'get' ) // Divi.
 			null !== pods_v( 'fl_builder', 'get' ) // Beaver Builder.
 		) {
-			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
+			wp_enqueue_script( 'pods-dfv' );
+			wp_enqueue_style( 'pods-form' );
 		}
 
 		$is_admin = is_admin();
@@ -1061,21 +1063,6 @@ class PodsInit {
 		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', [ 'wp-components' ], PODS_VERSION );
 		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', [], PODS_VERSION );
 		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', [ 'wp-components' ], PODS_VERSION );
-
-		/**
-		 * Filter to enabled loading of the DFV script on frontend.
-		 * By default, Pods does not load DFV on frontend.
-		 *
-		 * Example: add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
-		 *
-		 * @param bool Whether or not to enqueue by default
-		 *
-		 * @since 2.7.13
-		 */
-		if ( ! $is_admin && apply_filters( 'pods_enqueue_dfv_on_front', false ) ) {
-			wp_enqueue_script( 'pods-dfv' );
-			wp_enqueue_style( 'pods-form' );
-		}
 
 		// Check if Pod is a Modal Window.
 		if ( pods_is_modal_window() ) {
@@ -1202,12 +1189,58 @@ class PodsInit {
 	}
 
 	/**
+	 * Refresh the existing content types cache for Post Types and Taxonomies.
+	 *
+	 * @since 2.8.4
+	 */
+	public function refresh_existing_content_types_cache() {
+		$existing_post_types = get_post_types( [], 'objects' );
+		$existing_taxonomies = get_taxonomies( [], 'objects' );
+
+		// Handle static cache for determining whether an object was extended or not.
+		$static_cache = tribe( Static_Cache::class );
+
+		$existing_post_types_cached = $static_cache->get( 'post_type', __CLASS__ . '/existing_content_types' );
+
+		if ( empty( $existing_post_types_cached ) ) {
+			$existing_post_types_cached = [];
+
+			foreach ( $existing_post_types as $post_type ) {
+				// Skip Pods types.
+				if ( ! empty( $post_type->_provider ) && 'pods' === $post_type->_provider ) {
+					continue;
+				}
+
+				$existing_post_types_cached[ $post_type->name ] = $post_type->name;
+			}
+
+			$static_cache->set( 'post_type', $existing_post_types_cached, __CLASS__ . '/existing_content_types' );
+		}
+
+		$existing_taxonomies_cached = $static_cache->get( 'taxonomy', __CLASS__ . '/existing_content_types' );
+
+		if ( empty( $existing_taxonomies_cached ) ) {
+			$existing_taxonomies_cached = [];
+
+			foreach ( $existing_taxonomies as $taxonomy ) {
+				// Skip Pods types.
+				if ( ! empty( $taxonomy->_provider ) && 'pods' === $taxonomy->_provider ) {
+					continue;
+				}
+
+				$existing_taxonomies_cached[ $taxonomy->name ] = $taxonomy->name;
+			}
+
+			$static_cache->set( 'taxonomy', $existing_taxonomies_cached, __CLASS__ . '/existing_content_types' );
+		}
+	}
+
+	/**
 	 * Register Post Types and Taxonomies
 	 *
 	 * @param bool $force
 	 */
 	public function setup_content_types( $force = false ) {
-
 		if ( empty( self::$version ) ) {
 			return;
 		}
@@ -1217,6 +1250,8 @@ class PodsInit {
 
 		$existing_post_types = get_post_types();
 		$existing_taxonomies = get_taxonomies();
+
+		$this->refresh_existing_content_types_cache();
 
 		$pods_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
 
@@ -1431,6 +1466,7 @@ class PodsInit {
 					'query_var'           => ( false !== (boolean) pods_v( 'query_var', $post_type, true ) ? pods_v( 'query_var_string', $post_type, $post_type_name, true ) : false ),
 					'can_export'          => (boolean) pods_v( 'can_export', $post_type, true ),
 					'delete_with_user'    => (boolean) pods_v( 'delete_with_user', $post_type, true ),
+					'_provider'           => 'pods',
 				);
 
 				// REST API
@@ -1595,6 +1631,7 @@ class PodsInit {
 					'rewrite'               => $ct_rewrite,
 					'show_admin_column'     => (boolean) pods_v( 'show_admin_column', $taxonomy, false ),
 					'sort'                  => (boolean) pods_v( 'sort', $taxonomy, false ),
+					'_provider'             => 'pods',
 				);
 
 				// @since WP 5.5: Default terms.

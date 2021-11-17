@@ -236,6 +236,10 @@ class PodsForm {
 			$helper = pods_api()->load_helper( array( 'name' => $options['input_helper'] ) );
 		}
 
+		if ( empty( $type ) ) {
+			return pods_error( __( 'Invalid field configuration', 'pods' ) );
+		}
+
 		// @todo Move into DFV field method or Pods\Whatsit later
 		if ( ( ! isset( $options['data'] ) || empty( $options['data'] ) ) && is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'data' ) ) {
 			$options['data'] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id, true );
@@ -1821,6 +1825,22 @@ class PodsForm {
 		}
 
 		return $field_types;
+	}
+
+	/**
+	 * Get the list of available Layout field types (backwards compatible version).
+	 *
+	 * @since 2.3.0
+	 *
+	 * @deprecated since 2.3.0
+	 * @see PodsForm::layout_field_types()
+	 *
+	 * @return array The list of available Layout field types.
+	 */
+	public static function block_field_types() {
+		_doing_it_wrong( 'PodsForm::layout_field_types', 'This function is deprecated, use PodsForm::layout_field_types instead.', '2.8.0' );
+
+		return self::layout_field_types();
 	}
 
 	/**

@@ -1074,6 +1074,9 @@ class Pods implements Iterator {
 							// Temporary hack until there's some better handling here.
 							$last_limit *= count( $ids );
 
+							// Override the $limit in case $limit was a single select, there are multiple values to return now.
+							$limit = $last_limit;
+
 							// Get related IDs.
 							if ( isset( $current_field['id'] ) ) {
 								$ids = $this->data->api->lookup_related_items( $current_field['id'], $current_field->get_parent_id(), $ids, $current_field );
@@ -3736,10 +3739,13 @@ class Pods implements Iterator {
 				$field['name'] = trim( $name );
 			}
 
-			$to_merge = pods_v( $field['name'], $all_fields );
+			$to_merge = $this->pod_data->get_field( $field['name'] );
 
 			if ( $to_merge ) {
 				$field = pods_config_merge_data( $to_merge, $field );
+
+				// Override the name field as the alias should not be used.
+				$field['name'] = $to_merge['name'];
 			}
 
 			// Never show the ID field.
@@ -3878,10 +3884,13 @@ class Pods implements Iterator {
 				$field['name'] = trim( $name );
 			}
 
-			$to_merge = pods_v( $field['name'], $all_fields );
+			$to_merge = $this->pod_data->get_field( $field['name'] );
 
 			if ( $to_merge ) {
 				$field = pods_config_merge_data( $to_merge, $field );
+
+				// Override the name field as the alias should not be used.
+				$field['name'] = $to_merge['name'];
 			}
 
 			if ( pods_v( 'hidden', $field, false, true ) || 'hidden' === $field['type'] ) {

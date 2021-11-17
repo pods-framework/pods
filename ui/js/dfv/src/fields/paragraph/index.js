@@ -20,7 +20,7 @@ const Paragraph = ( {
 		htmlAttr: htmlAttributes = {},
 		name,
 		paragraph_max_length: maxLength,
-		paragraph_placeholder: placeholder,
+		paragraph_placeholder: placeholder = fieldConfig.placeholder,
 		readonly: readOnly,
 	} = fieldConfig;
 

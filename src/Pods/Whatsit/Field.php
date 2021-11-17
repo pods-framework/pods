@@ -110,8 +110,6 @@ class Field extends Whatsit {
 	public function get_related_object_type() {
 		$type = $this->get_type();
 
-		$simple_tableless_objects = PodsForm::simple_tableless_objects();
-
 		// File field types are always related to the media object type.
 		if ( 'file' === $type ) {
 			return 'media';

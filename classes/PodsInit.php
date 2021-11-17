@@ -2221,6 +2221,11 @@ class PodsInit {
 
 		if ( ! empty( $current ) ) {
 			foreach ( self::$upgrades as $old_version => $new_version ) {
+				// Check if Pods 1.x upgrade has already been run.
+				if ( '1.0.0' === $old_version && self::$upgraded ) {
+					continue;
+				}
+
 				/*
 				if ( '2.1.0' === $new_version && ( is_developer() ) )
 					continue;*/

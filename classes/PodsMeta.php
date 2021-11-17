@@ -668,11 +668,7 @@ class PodsMeta {
 			$pod['object'] = $pod['name'];
 		}
 
-		if ( empty( $pod['object'] ) ) {
-			return pods_error( __( 'Object required to add a Pods meta group', 'pods' ) );
-		}
-
-		$object_name = $pod['object'];
+		$object_name = ! empty( $pod['object'] ) ? $pod['object'] : $pod['name'];
 
 		if ( 'pod' == $pod['type'] ) {
 			$object_name = $pod['name'];

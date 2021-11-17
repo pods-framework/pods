@@ -2452,10 +2452,10 @@ function pods_require_component( $component ) {
  * @link  https://docs.pods.io/code/general-functions/pods-group-add/
  */
 function pods_group_add( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
-	if ( ! is_array( $pod ) && ! $pod instanceof Pods\Whatsit && null !== $type ) {
+	if ( ! is_array( $pod ) && ! $pod instanceof Pods\Whatsit ) {
 		$pod = array(
 			'name' => $pod,
-			'type' => $type,
+			'type' => null !== $type ? $type : 'post_type',
 		);
 	}
 

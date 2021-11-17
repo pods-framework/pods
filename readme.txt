@@ -151,9 +151,13 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
+= 2.8.4.1 - November 17th, 2021 =
+
+* Fixed: Resolved issues where usage of `pods_group_add()` could produce errors which would stop the Edit Post screen from loading. (@sc0ttkclark)
+
 = 2.8.4 - November 16th, 2021 =
 
-* Added: Pods Field Value widget now supports using current post/term just like the Pods Single Item widget does. (@sc0ttkclark) 
+* Added: Pods Field Value widget now supports using current post/term just like the Pods Single Item widget does. (@sc0ttkclark)
 * Fixed: Checkbox dependencies for Pod options now show as expected when loading the Edit Pod screen for a newly created Pod. #6255 #6291 (@zrothauser)
 * Fixed: "/" is now specifically disallowed from being used for the custom rewrite slug on a post type or taxonomy to prevent rewrite conflicts. #5744 (@sc0ttkclark, @dingman)
 * Fixed: Advanced Filters pop-up now shows without showing the unused scrollbars in most cases. #6264 (@sc0ttkclark)
@@ -172,7 +176,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Placeholder values are properly inherited based on field type specific options. #6289 (@JoryHogeveen, @sc0ttkclark)
 * Fixed: REST API fields now correctly check the right field option for whether fields should be individually shown. #6288 (@JoryHogeveen)
 * Fixed: Relationship traversal now properly handle selection limit if more than the original field. #6243 (@sc0ttkclark)
-* Fixed: Prevent potential conflicts when a plugin uses `$post->content` instead of `$post->post_content` to get the content of a post. Pods no longer checks objet field aliases with `get_post_meta()` and directly integrated metadata function calls. (@sc0ttkclark) 
+* Fixed: Prevent potential conflicts when a plugin uses `$post->content` instead of `$post->post_content` to get the content of a post. Pods no longer checks objet field aliases with `get_post_meta()` and directly integrated metadata function calls. (@sc0ttkclark)
 * Fixed: Fix `orderby` PHP notices for `in_array()` checks on field id and field index. (@sc0ttkclark)
 * Fixed: Better checks for Pod objects existing in PodsMeta. (@sc0ttkclark)
 * Fixed: Removed the "Extra Fields" option (old WP compatibility option) for Custom Taxonomies on the Pods Admin > Add New screen. (@sc0ttkclark)
@@ -224,7 +228,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 * Fixed: Taggable autocomplete works as expected again. #6182 (@sc0ttkclark)
 * Fixed: ORDER BY basic field detection has been improved to prevent certain fields from using the incorrect alias. (@sc0ttkclark)
 * Fixed: The `<ul>` used with checkbox inputs has been styled with `list-style:none` as it should be. (@sc0ttkclark)
-* Fixed: Default the form output type to `div` if it's provided but empty. (@sc0ttkclark) 
+* Fixed: Default the form output type to `div` if it's provided but empty. (@sc0ttkclark)
 * Compatibility: Added compatibility for Enfold theme and public forms so that `wp-mediaelement` is not removed by the theme. #6188 (@sc0ttkclark)
 * Tweak: Internal API - Storage and Storage Types used in the internal Pods code has been clarified to prevent ambiguity. Storage Types have been changed to Object Storage Types in all areas regarding Whatsit Storage). (@sc0ttkclark)
 * Tweak: Public forms now have unique IDs added to them to help in custom CSS work. (@sc0ttkclark)
@@ -248,12 +252,12 @@ Read the full [Pods 2.8 Field Guide](https://pods.io/2021/02/11/pods-2-8-beta-1-
 * Feature: Now you can add multiple groups of fields. (@sc0ttkclark, @zrothauser)
 * Feature: Our Edit Pod screen is powered by our all new React form interfaces, tooltips, and they use our new Pods Admin REST API endpoints. (@sc0ttkclark, @zrothauser)
 * Feature: All of our form fields are powered by React now in preparation for Pods 2.9 repeatable fields that we're working on next. (@sc0ttkclark, @zrothauser)
-* Feature: New field types for Heading and HTML. (@sc0ttkclark, @zrothauser) 
+* Feature: New field types for Heading and HTML. (@sc0ttkclark, @zrothauser)
 * Feature: New Pods Blocks available and the underlying Pods Block PHP API is compatible with ACF Blocks if you've ever used those before. (@sc0ttkclark, @zrothauser)
 * Feature: REST API endpoints are now available to create/edit various objects: Pods, Pod Groups, and Pod Fields. (@sc0ttkclark)
 * Feature: WP-CLI commands that mirror the REST API endpoints we have. (@sc0ttkclark)
 * Feature: The new WYSIWYG editor option to use [Quill Editor](https://github.com/zenoamaro/react-quill) is now available and the CLEditor has been removed. (@sc0ttkclark, @zrothauser)
-* Compatibility: Completely updated compatibility with WPML and Polylang plugins. 
+* Compatibility: Completely updated compatibility with WPML and Polylang plugins.
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases
 

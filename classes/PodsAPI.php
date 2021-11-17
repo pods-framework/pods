@@ -2599,7 +2599,10 @@ class PodsAPI {
 		     	'post_type',
 				'taxonomy'
 			), true )
-			&& empty( $pod['object'] )
+			&& (
+				! $pod instanceof Pod
+				|| ! $pod->is_extended()
+			)
 		) {
 			pods_init()->setup_content_types( true );
 		}

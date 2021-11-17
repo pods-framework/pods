@@ -151,7 +151,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-= 2.8.4 - November 15th, 2021 =
+= 2.8.4 - November 16th, 2021 =
 
 * Added: Pods Field Value widget now supports using current post/term just like the Pods Single Item widget does. (@sc0ttkclark) 
 * Fixed: Checkbox dependencies for Pod options now show as expected when loading the Edit Pod screen for a newly created Pod. #6255 #6291 (@zrothauser)

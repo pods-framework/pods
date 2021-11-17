@@ -80,7 +80,6 @@ class PodsField_OEmbed extends PodsField {
 				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
 				'boolean_yes_label' => '',
 				'dependency'        => true,
-				'developer_mode'    => true,
 			),
 			static::$type . '_width'        => array(
 				'label'   => __( 'Embed Width', 'pods' ),

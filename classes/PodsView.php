@@ -141,7 +141,7 @@ class PodsView {
 	public static function get_key( $key, $group_key = '' ) {
 
 		// Add some salt
-		$key .= '-' . PODS_VERSION;
+		$key .= '-' . sanitize_key( PODS_VERSION );
 
 		// Patch for limitations in DB
 		if ( 44 < strlen( $group_key . $key ) ) {
@@ -191,7 +191,7 @@ class PodsView {
 
 		$called = false;
 
-		$pods_nocache = pods_var_raw( 'pods_nocache' );
+		$pods_nocache = pods_v( 'pods_nocache' );
 		$nocache      = array();
 
 		if ( null !== $pods_nocache && pods_is_admin() ) {
@@ -367,7 +367,7 @@ class PodsView {
 		} elseif ( 'static-cache' === $cache_mode ) {
 			$static_cache = tribe( Static_Cache::class );
 
-			$static_cache->set( $key, $value, ( empty( $group ) ? 'pods_view' : $group ) );
+			$static_cache->set( $key, $value, ( empty( $group ) ? __CLASS__ : $group ) );
 		}//end if
 
 		do_action( "pods_view_set_{$cache_mode}", $original_key, $value, $expires, $group );
@@ -628,36 +628,36 @@ class PodsView {
 			if ( ( isset( $expires['anonymous'] ) || isset( $expires['user_with_access'] ) ) && isset( $expires['user'] ) ) {
 				if ( isset( $expires['user_with_access'] ) ) {
 					$expires = array(
-						pods_var_raw( 'anonymous', $expires, false ),
-						pods_var_raw( 'user', $expires, false ),
-						pods_var_raw( 'user_with_access', $expires, false ),
-						pods_var_raw( 'capability', $expires, null, null, true ),
+						pods_v( 'anonymous', $expires, false ),
+						pods_v( 'user', $expires, false ),
+						pods_v( 'user_with_access', $expires, false ),
+						pods_v( 'capability', $expires, null, null, true ),
 					);
 				} elseif ( isset( $expires['anonymous'] ) ) {
 					$expires = array(
-						pods_var_raw( 'anonymous', $expires, false ),
-						pods_var_raw( 'user', $expires, false ),
-						pods_var_raw( 'capability', $expires, null, null, true ),
+						pods_v( 'anonymous', $expires, false ),
+						pods_v( 'user', $expires, false ),
+						pods_v( 'capability', $expires, null, null, true ),
 					);
 				}
 			} else {
 				$expires = array_values( $expires );
 			}
 
-			if ( 4 == count( $expires ) ) {
+			if ( 4 === count( $expires ) ) {
 				if ( ! is_user_logged_in() ) {
-					$expires = pods_var_raw( 0, $expires, false );
+					$expires = pods_v( 0, $expires, false );
 				} else {
-					$user_no_access   = pods_var_raw( 1, $expires, false );
-					$user_with_access = pods_var_raw( 2, $expires, false );
-					$capability       = pods_var_raw( 3, $expires, null, null, true );
+					$user_no_access   = pods_v( 1, $expires, false );
+					$user_with_access = pods_v( 2, $expires, false );
+					$capability       = pods_v( 3, $expires, null, true );
 
 					$expires = pods_var_user( $user_no_access, $user_with_access, $capability );
 				}
 			} else {
-				$anon       = pods_var_raw( 0, $expires, false );
-				$user       = pods_var_raw( 1, $expires, false );
-				$capability = pods_var_raw( 2, $expires, null, null, true );
+				$anon       = pods_v( 0, $expires, false );
+				$user       = pods_v( 1, $expires, false );
+				$capability = pods_v( 2, $expires, null, true );
 
 				$expires = pods_var_user( $anon, $user, $capability );
 			}

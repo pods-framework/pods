@@ -57,7 +57,7 @@ class Pods_Templates_Auto_Template_Settings {
 		add_action( 'init', array( $this, 'front_end' ), 25 );
 
 		// Delete transients when Pods cache is flushed.
-		add_action( 'pods_cache_flushed', array( $this, 'reseter' ) );
+		add_action( 'pods_cache_flushed', array( $this, 'flush_cache' ) );
 
 		// admin notice for archives without archives
 		add_action( 'admin_notices', array( $this, 'archive_warning' ) );
@@ -369,15 +369,19 @@ class Pods_Templates_Auto_Template_Settings {
 	/**
 	 * Delete transients that stores the settings.
 	 *
-	 * @since 2.5.5
+	 * @since 2.8.4
 	 */
-	public function reseter() {
+	public function flush_cache() {
+		$keys = [
+			'_pods_pfat_the_pods',
+			'pods_pfat_the_pods',
+			'pods_pfat_auto_pods',
+			'pods_pfat_archive_test',
+		];
 
-		$keys = array( '_pods_pfat_the_pods', 'pods_pfat_the_pods', 'pods_pfat_auto_pods', 'pods_pfat_archive_test' );
 		foreach ( $keys as $key ) {
 			pods_transient_clear( $key );
 		}
-
 	}
 
 	/**

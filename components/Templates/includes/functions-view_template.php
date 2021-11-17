@@ -63,9 +63,7 @@ function frontier_do_shortcode( $content ) {
  * @since 2.4.0
  */
 function frontier_decode_template( $code, $atts ) {
-
 	$code = base64_decode( $code );
-	$pod  = pods( $atts['pod'] );
 
 	if ( isset( $atts['pod'] ) ) {
 		$code = str_replace( '@pod', $atts['pod'], $code );
@@ -99,9 +97,9 @@ function frontier_if_block( $attributes, $code ) {
 		'index'   => null,
 	], $attributes );
 
-	$pod = pods( $attributes['pod'], $attributes['id'] );
+	$pod = Pods_Templates::get_obj( $attributes['pod'], $attributes['id'] );
 
-	if ( ! $pod || ! $pod->valid() || ! $pod->exists() ) {
+	if ( ! $pod || ! $pod->exists() ) {
 		return '';
 	}
 
@@ -354,8 +352,13 @@ function frontier_template_once_blocks( $atts, $code ) {
 function frontier_do_subtemplate( $atts, $content ) {
 
 	$out        = null;
-	$pod        = pods( $atts['pod'], $atts['id'] );
 	$field_name = $atts['field'];
+
+	$pod = Pods_Templates::get_obj( $atts['pod'], $atts['id'] );
+
+	if ( ! $pod || ! $pod->exists() ) {
+		return '';
+	}
 
 	$entries = $pod->field( $field_name );
 
@@ -387,6 +390,10 @@ function frontier_do_subtemplate( $atts, $content ) {
 			// Match any Pod object or taxonomy
 			foreach ( $entries as $key => $entry ) {
 				$subpod = pods( $field['pick_val'] );
+
+				if ( ! $subpod || ! $subpod->valid() ) {
+					continue;
+				}
 
 				$subatts = array(
 					'id'  => $entry[ $subpod->pod_data['field_id'] ],
@@ -650,7 +657,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 				} elseif ( '' !== $matches['other_attributes'][ $key ] ) {
 					// get atts if any
 					// $atts = shortcode_parse_atts(str_replace('.', '____', $matches[2][$key]));
-					$pattern = '/(?<field>[\w\.]+)\s*=\s*"(?<value>[^"]*)"(?:\s|$)/';
+					$pattern = '/(?<field>[\w\.\_\-]+)\s*=\s*"(?<value>[^"]*)"(?:\s|$)/';
 					$field   = trim( $matches['other_attributes'][ $key ] );
 					$text    = preg_replace( "/[\x{00a0}\x{200b}]+/u", ' ', $field );
 
@@ -660,7 +667,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 					}
 				}//end if
 
-				if ( $field && false !== strpos( $field, '.' ) && 0 !== strpos( $field, '_' ) ) {
+				if ( $field && false !== strpos( $field, '.' ) ) {
 					// Take the last element off of the array and use the ID.
 					$path  = explode( '.', $field );
 					$field = array_pop( $path );

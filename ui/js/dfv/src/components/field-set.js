@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -14,6 +14,7 @@ const FieldSet = ( {
 	allPodFields,
 	allPodValues,
 	setOptionValue,
+	setOptionsValues,
 } ) => {
 	// Only calculate this once - this assumes that the array of all fields
 	// for the Pod does not change, to save render time.
@@ -23,23 +24,60 @@ const FieldSet = ( {
 		);
 	}, [] );
 
+	// When the set first mounts, apply any defaults to replace any undefined values
+	// (NOT falsy values).
+	useEffect( () => {
+		const allDefaultValues = {};
+
+		fields.forEach( ( field ) => {
+			const {
+				type: fieldType,
+				name: fieldName,
+				boolean_group: booleanGroup = [],
+			} = field;
+
+			// Boolean Group fields need to have each subfield checked.
+			const isGroupField = 'boolean_group' === fieldType;
+
+			if ( isGroupField ) {
+				booleanGroup.forEach( ( subField ) => {
+					if (
+						'undefined' === typeof allPodValues[ subField.name ] &&
+						'' !== subField.default
+					) {
+						// @todo can this be batched?
+						// setOptionValue( subField.name, subField.default );
+						allDefaultValues[ subField.name ] = subField.default;
+					}
+				} );
+			} else if (
+				'undefined' === typeof allPodValues[ fieldName ] &&
+				'' !== field.default
+			) {
+				// @todo can this be batched?
+				// setOptionValue( fieldName, field.default );
+				allDefaultValues[ fieldName ] = field.default;
+			}
+		} );
+
+		setOptionsValues( allDefaultValues );
+	}, [] );
+
 	return fields.map( ( field ) => {
 		const {
 			type,
 			name,
-			boolean_group: booleanGroup,
+			boolean_group: booleanGroup = [],
 		} = field;
 
-		// Boolean Group fields get a map of values instead of a single value.
 		const isGroupField = 'boolean_group' === type;
 
-		const values = {};
+		// Boolean Group fields get a map of subfield values instead of a single value.
+		const booleanGroupValues = {};
 
 		if ( isGroupField ) {
-			( booleanGroup || [] ).forEach( ( subField ) => {
-				values[ subField.name ] = subField.name
-					? allPodValues[ subField.name ]
-					: undefined;
+			booleanGroup.forEach( ( subField ) => {
+				booleanGroupValues[ subField.name ] = allPodValues[ subField.name ];
 			} );
 		}
 
@@ -48,7 +86,7 @@ const FieldSet = ( {
 				key={ name }
 				field={ field }
 				value={ isGroupField ? undefined : allPodValues[ name ] }
-				values={ isGroupField ? values : undefined }
+				values={ isGroupField ? booleanGroupValues : undefined }
 				setOptionValue={ setOptionValue }
 				podType={ podType }
 				podName={ podName }
@@ -89,6 +127,11 @@ FieldSet.propTypes = {
 	 * Function to update the field's value on change.
 	 */
 	setOptionValue: PropTypes.func.isRequired,
+
+	/**
+	 * Function to update the values of multiple options.
+	 */
+	setOptionsValues: PropTypes.func.isRequired,
 };
 
 export default FieldSet;

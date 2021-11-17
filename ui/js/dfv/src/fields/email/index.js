@@ -15,7 +15,7 @@ const Email = ( props ) => {
 
 	const {
 		email_max_length: maxLength,
-		email_placeholder: placeholder,
+		email_placeholder: placeholder = fieldConfig.placeholder,
 		email_html5: html5,
 	} = fieldConfig;
 

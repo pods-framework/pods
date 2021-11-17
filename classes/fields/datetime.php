@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Static_Cache;
+
 /**
  * @package Pods\Fields
  */
@@ -340,14 +342,21 @@ class PodsField_DateTime extends PodsField {
 		if ( ! $this->is_empty( $value ) ) {
 
 			// Value should always be passed as storage format since 2.7.15.
-			$format = static::$storage_format;
+			$formats = [
+				static::$storage_format,
+			];
 
 			if ( ! $this->is_storage_format( $value ) ) {
-				// Allow input values compatible with the display format.
-				$format = $this->format_display( $options, false );
+				// Allow input values compatible with the input (JS) or display (PHP) formats.
+				$formats = [
+					$this->format_display( $options, true ),
+					$this->format_display( $options, false ),
+				];
+
+				$formats = array_unique( array_filter( $formats ) );
 			}
 
-			$check = $this->convert_date( $value, static::$storage_format, $format, true );
+			$check = $this->convert_date( $value, static::$storage_format, $formats, true );
 
 			if ( false === $check ) {
 				$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
@@ -625,6 +634,7 @@ class PodsField_DateTime extends PodsField {
 			'fjy'       => 'F j, Y',
 			'fjsy'      => 'F jS, Y',
 			'y'         => 'Y',
+			'c'         => 'c',
 		);
 
 		$filter = 'pods_form_ui_field_date_formats';
@@ -793,10 +803,10 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Convert a date from one format to another.
 	 *
-	 * @param string  $value            Field value.
-	 * @param string  $new_format       New format string.
-	 * @param string  $original_format  Original format string (if known).
-	 * @param boolean $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
+	 * @param string       $value            Field value.
+	 * @param string       $new_format       New format string.
+	 * @param string|array $original_format  Original format string(s) (if known).
+	 * @param boolean      $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
 	 *
 	 * @return string|int|boolean|DateTime
 	 */
@@ -804,6 +814,18 @@ class PodsField_DateTime extends PodsField {
 
 		if ( empty( $original_format ) ) {
 			$original_format = static::$storage_format;
+		}
+
+		if ( is_array( $original_format ) ) {
+			foreach ( $original_format as $original_format_option ) {
+				$value = $this->convert_date( $value, $new_format, $original_format_option, $return_timestamp );
+
+				if ( false !== $value ) {
+					return $value;
+				}
+			}
+
+			return false;
 		}
 
 		$date = '';
@@ -1006,21 +1028,14 @@ class PodsField_DateTime extends PodsField {
 		}
 
 		if ( isset( $types['time'] ) && ! isset( $done[ 'time-' . $locale ] ) ) {
-			/**
-			 * @var $wp_filesystem WP_Filesystem_Base
-			 */
-			global $wp_filesystem;
-
-			WP_Filesystem();
-
-			$locale_exists = $wp_filesystem->exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' );
+			$locale_exists = file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' );
 
 			// Local files.
 			if ( ! $locale_exists ) {
 				// Fallback to the base language (non-region specific).
 				$locale = substr( $locale, 0, strpos( $locale, '-' ) );
 
-				$locale_exists = $wp_filesystem->exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' );
+				$locale_exists = file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' );
 			}
 
 			if ( $locale_exists && ! wp_script_is( 'jquery-ui-timepicker-i18n-' . $locale ) ) {

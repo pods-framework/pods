@@ -130,12 +130,28 @@ const DateTime = ( {
 		// Use a full date and time format for our value string by default.
 		// Unless we're only showing the date OR the time picker.
 		if ( includeDateField && includeTimeField ) {
-			return 'YYYY-MM-DD hh:mm:ss A';
+			return 'YYYY-MM-DD kk:mm:ss';
 		} else if ( includeTimeField ) {
-			return 'hh:mm:ss A';
+			return 'kk:mm:ss';
 		} else if ( includeDateField ) {
 			return 'YYYY-MM-DD';
 		}
+
+		return 'YYYY-MM-DD kk:mm:ss';
+	};
+
+	const getHTML5Format = () => {
+		// Use a full date and time format for our value string by default.
+		// Unless we're only showing the date OR the time picker.
+		if ( includeDateField && includeTimeField ) {
+			return 'YYYY-MM-DD[T]kk:mm:ss';
+		} else if ( includeTimeField ) {
+			return 'kk:mm:ss';
+		} else if ( includeDateField ) {
+			return 'YYYY-MM-DD';
+		}
+
+		return 'YYYY-MM-DD[T]kk:mm:ss';
 	};
 
 	const formatValueForHTML5Field = ( stringValue ) => {
@@ -143,32 +159,38 @@ const DateTime = ( {
 			return '';
 		}
 
-		const momentObject = moment( stringValue, getDBFormat() );
+		const momentObject = moment( stringValue, [ getHTML5Format(), getDBFormat() ] );
 
-		// Use a full date and time format for our value string by default.
-		// Unless we're only showing the date OR the time picker.
-		if ( includeDateField && includeTimeField ) {
-			return momentObject.format( 'YYYY-MM-DDThh:mm' );
-		} else if ( includeTimeField ) {
-			return momentObject.format( 'hh:mm' );
-		} else if ( includeDateField ) {
-			return momentObject.format( 'YYYY-MM-DD' );
+		if ( ! momentObject.isValid() ) {
+			return '';
 		}
+
+		return momentObject.format( getHTML5Format() );
 	};
 
 	const getFullFormat = () => {
 		// Use a full date and time format for our value string by default.
 		// Unless we're only showing the date OR the time picker.
 		if ( includeDateField && includeTimeField ) {
+			if ( 'c' === podsFormat ) {
+				return momentDateFormat;
+			}
+
 			return `${ momentDateFormat } ${ momentTimeFormat }`;
 		} else if ( includeTimeField ) {
 			return momentTimeFormat;
 		} else if ( includeDateField ) {
 			return momentDateFormat;
 		}
+
+		return `${ momentDateFormat } ${ momentTimeFormat }`;
 	};
 
-	const formatMomentObject = ( momentObject ) => {
+	const formatMomentObject = ( momentObject, defaultValue = '' ) => {
+		if ( ! momentObject.isValid() ) {
+			return defaultValue;
+		}
+
 		return momentObject.format( getFullFormat() );
 	};
 
@@ -176,7 +198,7 @@ const DateTime = ( {
 
 	// Keep local versions as a string (formatted and ready to display, and in case
 	// the Moment object is invalid) and as a Moment object.
-	const isValueEmpty = [ '0000-00-00', '0000-00-00 00:00:00', '00:00:00', '' ].includes( value );
+	const isValueEmpty = [ '0000-00-00', '0000-00-00 00:00:00', '' ].includes( value );
 
 	const [ localStringValue, setLocalStringValue ] = useState(
 		() => {
@@ -185,7 +207,8 @@ const DateTime = ( {
 			}
 
 			return formatMomentObject(
-				moment( value, [ getDBFormat(), getFullFormat() ] )
+				moment( value, [ getDBFormat(), getFullFormat() ] ),
+				value
 			);
 		},
 	);
@@ -196,7 +219,8 @@ const DateTime = ( {
 			}
 
 			return formatMomentObject(
-				moment( value, [ getDBFormat(), getFullFormat() ] )
+				moment( value, [ getDBFormat(), getFullFormat() ] ),
+				value
 			);
 		},
 	);
@@ -218,11 +242,16 @@ const DateTime = ( {
 		setHasBlurred();
 	};
 
-	// Set the inital view date to the current date, unless the range of years is before
+	// Set the initial view date to the current date, unless the range of years is before
 	// the current time.
-	const initialViewDate = ( yearRange && yearRange[ yearRange.length - 1 ] < new Date().getFullYear() )
+	let initialViewDate = ( yearRange && yearRange[ yearRange.length - 1 ] < new Date().getFullYear() )
 		? new Date( yearRange[ 0 ], 0, 1 )
 		: new Date();
+
+	// Initial view date should be current value if we have one set.
+	if ( ! isValueEmpty ) {
+		initialViewDate = localMomentValue;
+	}
 
 	// Set up range validator, both for the react-datetime component
 	// and our validation hook.
@@ -257,7 +286,7 @@ const DateTime = ( {
 				name={ htmlAttributes.name || name }
 				className={ classnames( 'pods-form-ui-field pods-form-ui-field-type-datetime', htmlAttributes.class ) }
 				type={ 'datetime' === type ? 'datetime-local' : type }
-				value={ formatValueForHTML5Field( value ) }
+				value={ useHTML5Field ? formatValueForHTML5Field( value ) : localStringValue }
 				onChange={ handleHTML5InputFieldChange }
 				onBlur={ setHasBlurred }
 			/>
@@ -276,12 +305,12 @@ const DateTime = ( {
 			renderInput={ ( props ) => (
 				<input
 					{ ...props }
-					value={ localStringValue }
+					value={ useHTML5Field ? formatValueForHTML5Field( value ) : localStringValue }
 					onChange={ ( event ) => {
 						// Track local values, but don't change actual value
 						// until blur event.
 						setLocalStringValue( event.target.value );
-						setLocalMomentValue( moment( event.target.value, getFullFormat() ) );
+						setLocalMomentValue( moment( event.target.value, [ getDBFormat(), getFullFormat() ] ) );
 					} }
 					onBlur={ ( event ) => handleChange( event.target.value ) }
 					id={ htmlAttributes.id || `pods-form-ui-${ name }` }

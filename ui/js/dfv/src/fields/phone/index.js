@@ -11,7 +11,7 @@ const Phone = ( props ) => {
 
 	const {
 		phone_max_length: maxLength,
-		phone_placeholder: placeholder,
+		phone_placeholder: placeholder = fieldConfig.placeholder,
 		phone_html5: html5,
 	} = fieldConfig;
 

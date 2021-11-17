@@ -3,12 +3,11 @@
  * @var bool $force_callouts Whether to force the callouts.
  */
 
-$donor_count    = 138;
-$donor_goal     = 200;
+$donor_count    = 18;
+$donor_goal     = 100;
 $progress_width = ( $donor_count / $donor_goal ) * 100;
 
-// @todo Add this.
-$feature_callout_link = 'https://pods.io/';
+$feature_callout_link = 'https://docs.pods.io/fields/simple-repeatable-fields/';
 $pods_pro_link        = 'https://pods.io/2020/12/31/introducing-pods-pro-by-skcdev/';
 $learn_more_link      = 'https://friends.pods.io/';
 $donate_now_link      = 'https://friends.pods.io/donations/become-a-friend/';
@@ -49,9 +48,9 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 			🎉&nbsp;
 			<?php
 				printf(
-					'%1$s: %2$s', //'%1$s: <a href="%2$s">%3$s</a>',
-					esc_html__( 'Pods 2.8 is out and we are eager to finish work on our next release', 'pods' ),
-					//esc_url( $feature_callout_link ),
+					'%1$s: <a href="%2$s" target="_blank" rel="noreferrer">%3$s</a>',
+					esc_html__( 'Pods 2.8 is out now and we are building the next feature for Pods 2.9', 'pods' ),
+					esc_url( $feature_callout_link ),
 					esc_html__( 'Simple Repeatable Fields', 'pods' )
 				);
 			?>
@@ -59,26 +58,24 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 		<p class="pods-admin_friends-callout_text">
 			🤝&nbsp;
 			<?php
-				esc_html_e( 'Your support makes a direct impact on how quickly our team can finish this important work. Pods is fully funded by donations and powered by our community contributors. Help us reach our life sustaining goal of 200 recurring donors in 2021 - your contribution really makes a difference!', 'pods' );
+				esc_html_e( 'Your support makes a direct impact on how quickly our team can finish this important work.', 'pods' );
+				echo ' ';
+				esc_html_e( 'Pods is fully funded by donations and powered by our community contributors.', 'pods' );
+				echo ' ';
+				esc_html_e( 'Help us continue our work and get Pods 2.9 finished.', 'pods' );
 			?>
 		</p>
 		<p class="pods-admin_friends-callout_text">
 			<?php
 				printf(
-					'<strong>%s:</strong> %s',
-					esc_html__( 'Goal Progress', 'pods' ),
-					// translators: %1$d: is the number of donors we have; %2$d: the number of donors for our goal.
-					sprintf(
-						esc_html__( '%1$d of %2$d donors', 'pods' ),
-						$donor_count,
-						$donor_goal
-					)
+					'<strong>%s</strong>',
+					esc_html__( 'Pods 2.9 Funding Progress', 'pods' )
 				);
 			?>
 		</p>
 		<div class="pods-admin_progress-bar_container">
 			<div class="pods-admin_progress-bar_fill" style="width:<?php echo esc_attr( $progress_width ); ?>%">
-				<?php echo esc_attr( $progress_width ); ?>%
+				<?php echo esc_attr( ceil( $progress_width ) ); ?>%
 			</div>
 		</div>
 		<div class="pods-admin_friends-callout_button-group">

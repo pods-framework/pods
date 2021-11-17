@@ -15,7 +15,8 @@
 }
 
 .pods-admin .pods_floatmenu {
-	width: 200px;
+	position: sticky;
+	top: 48px; /* Toolbar */
 }
 
 .pods-admin .pods-icon {
@@ -521,7 +522,7 @@ body[class*="settings_page_pods-"] {
  */
 @media only screen and (max-width: 850px) {
 	.pods-admin .pods_floatmenu {
-		position: static !important;
+		position: static;
 		float: none;
 		display: block;
 		width: 100%;

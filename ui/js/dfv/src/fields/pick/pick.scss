@@ -37,6 +37,10 @@
 	&:nth-child(even) {
 		background: #fcfcfc;
 	}
+
+	.pods-field {
+		padding: 0;
+	}
 }
 
 .pods-checkbox-pick__option__label,

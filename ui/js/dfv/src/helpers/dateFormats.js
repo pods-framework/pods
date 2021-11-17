@@ -96,10 +96,8 @@ const replaceAllMapEntries = ( map, value ) => {
 		return '';
 	}
 
-	const findRegex = new RegExp(
-		Array.from( map.keys() ).join( '|' ),
-		'g',
-	);
+	const regexString = '(?<!\\\\)(' + Array.from( map.keys() ).join( '|' ) + ')';
+	const findRegex = new RegExp( regexString, 'g' );
 
 	return value.replace(
 		findRegex,
@@ -137,6 +135,16 @@ export const convertPodsDateFormatToMomentFormat = ( podsFormat, is24Hour = fals
 			return convertPHPDateFormatToMomentFormat( 'Y-m-d' );
 		case 'ymd_dot':
 			return convertPHPDateFormatToMomentFormat( 'Y.m.d' );
+		case 'dmy':
+			return convertPHPDateFormatToMomentFormat( 'd/m/Y' );
+		case 'dmy_dash':
+			return convertPHPDateFormatToMomentFormat( 'd-m-Y' );
+		case 'dmy_dot':
+			return convertPHPDateFormatToMomentFormat( 'd.m.Y' );
+		case 'dMy':
+			return convertPHPDateFormatToMomentFormat( 'd/M/Y' );
+		case 'dMy_dash':
+			return convertPHPDateFormatToMomentFormat( 'd-M-Y' );
 		case 'fjy':
 			return convertPHPDateFormatToMomentFormat( 'F j, Y' );
 		case 'fjsy':

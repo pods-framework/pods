@@ -16,7 +16,7 @@ use Pods\Whatsit\Store;
  * never changed it. Enjoy!
  *
  * @method string      get_object_type()
- * @method string|null get_storage_type()
+ * @method string|null get_object_storage_type()
  * @method string|null get_name()
  * @method string|null get_id()
  * @method string|null get_parent()
@@ -24,7 +24,7 @@ use Pods\Whatsit\Store;
  * @method string|null get_type()
  * @method string|null get_parent_identifier()
  * @method string|null get_parent_object_type()
- * @method string|null get_parent_storage_type()
+ * @method string|null get_parent_object_storage_type()
  * @method string|null get_parent_name()
  * @method string|null get_parent_id()
  * @method string|null get_parent_label()
@@ -32,7 +32,7 @@ use Pods\Whatsit\Store;
  * @method string|null get_parent_type()
  * @method string|null get_group_identifier()
  * @method string|null get_group_object_type()
- * @method string|null get_group_storage_type()
+ * @method string|null get_group_object_storage_type()
  * @method string|null get_group_name()
  * @method string|null get_group_id()
  * @method string|null get_group_label()
@@ -59,7 +59,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 */
 	protected $args = [
 		'object_type'  => '',
-		'storage_type' => 'collection',
+		'object_storage_type' => 'collection',
 		'name'         => '',
 		'id'           => '',
 		'parent'       => '',
@@ -483,7 +483,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		$defaults = [
 			'object_type'  => $this->get_arg( 'object_type' ),
-			'storage_type' => $this->get_arg( 'storage_type', 'collection' ),
+			'object_storage_type' => $this->get_arg( 'object_storage_type', 'collection' ),
 			'name'         => '',
 			'id'           => '',
 			'parent'       => '',
@@ -576,11 +576,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			$arg = 'id';
 		}
 
-		if ( ! isset( $this->args[ $arg ] ) ) {
-			// Maybe only return the default if we need a strict argument.
-			if ( $strict ) {
-				return $default;
-			}
+		if ( ! isset( $this->args[ $arg ] ) && ! $strict ) {
 
 			$table_info_fields = [
 				'object_name',
@@ -616,10 +612,20 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				}
 			}
 
-			return $default;
 		}//end if
 
-		return $this->args[ $arg ];
+		$value = isset( $this->args[ $arg ] ) ? $this->args[ $arg ] : $default;
+
+		/**
+		 * Allow filtering the object arguments / options.
+		 *
+		 * @since 2.8.4
+		 *
+		 * @param mixed   $value  The object argument value.
+		 * @param string  $name   The argument name.
+		 * @param Whatsit $object The object.
+		 */
+		return apply_filters( 'pods_whatsit_get_arg', $value, $arg, $this );
 	}
 
 	/**
@@ -633,7 +639,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		$reserved = [
 			'object_type',
-			'storage_type',
+			'object_storage_type',
 			'fields',
 			'object_fields',
 			'groups',
@@ -794,10 +800,18 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Get list of object arguments.
 	 *
-	 * @return arra List of object arguments.
+	 * @return array List of object arguments.
 	 */
 	public function get_args() {
-		return $this->args;
+		/**
+		 * Allow filtering the object arguments.
+		 *
+		 * @since 2.8.4
+		 *
+		 * @param array   $args   The object arguments.
+		 * @param Whatsit $object The object.
+		 */
+		return apply_filters( 'pods_whatsit_get_args', $this->args, $this );
 	}
 
 	/**
@@ -810,7 +824,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 		$excluded_args = [
 			'object_type',
-			'storage_type',
+			'object_storage_type',
 			'parent',
 			'group',
 		];
@@ -861,12 +875,13 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Fetch field from object with no traversal support.
 	 *
-	 * @param string      $field_name Field name.
-	 * @param bool        $load_all   Whether to load all fields when getting this field.
+	 * @param string $field_name    Field name.
+	 * @param bool   $load_all      Whether to load all fields when getting this field.
+	 * @param bool   $check_aliases Whether to check aliases if field not found.
 	 *
 	 * @return Field|null Field object, or null if object not found.
 	 */
-	public function fetch_field( $field_name, $load_all = true ) {
+	public function fetch_field( $field_name, $load_all = true, $check_aliases = true ) {
 		$get_fields_args = [];
 
 		if ( ! $load_all ) {
@@ -886,7 +901,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 			if ( isset( $object_fields[ $field_name ] ) ) {
 				$field = $object_fields[ $field_name ];
-			} else {
+			} elseif ( $check_aliases ) {
 				foreach ( $fields as $the_field ) {
 					if ( ! empty( $the_field['alias'] ) && in_array( $field_name, $the_field['alias'], true ) ) {
 						$field = $the_field;
@@ -895,7 +910,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 					}
 				}
 
-				if ( ! $field && isset( $object_fields ) ) {
+				if ( ! $field && ! empty( $object_fields ) ) {
 					foreach ( $object_fields as $the_field ) {
 						if ( ! empty( $the_field['alias'] ) && in_array( $field_name, $the_field['alias'], true ) ) {
 							$field = $the_field;
@@ -917,13 +932,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Get field from object with traversal support.
 	 *
-	 * @param string      $field_name Field name.
-	 * @param null|string $arg        Argument name.
-	 * @param bool        $load_all   Whether to load all fields when getting this field.
+	 * @param string      $field_name    Field name.
+	 * @param null|string $arg           Argument name.
+	 * @param bool        $load_all      Whether to load all fields when getting this field.
+	 * @param bool        $check_aliases Whether to check aliases if field not found.
 	 *
 	 * @return Field|mixed|null Field object, argument value, or null if object not found.
 	 */
-	public function get_field( $field_name, $arg = null, $load_all = true ) {
+	public function get_field( $field_name, $arg = null, $load_all = true, $check_aliases = true ) {
 		$fields_to_traverse = explode( '.', $field_name );
 		$fields_to_traverse = array_filter( $fields_to_traverse );
 
@@ -937,7 +953,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		for ( $f = 0; $f < $total_fields_to_traverse; $f ++ ) {
 			$field_to_traverse = $fields_to_traverse[ $f ];
 
-			$field = $whatsit->fetch_field( $field_to_traverse, $load_all );
+			$field = $whatsit->fetch_field( $field_to_traverse, $load_all, $check_aliases );
 
 			// Check if there are more fields to traverse.
 			if ( ( $f + 1 ) === $total_fields_to_traverse ) {
@@ -1446,23 +1462,25 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$object = null;
 		$method = null;
 
-		// Handle parent method calls.
 		if ( 0 === strpos( $name, 'get_parent_' ) ) {
+			// Handle parent method calls.
 			$object = $this->get_parent_object();
 
 			$method = explode( 'get_parent_', $name );
 			$method = 'get_' . $method[1];
-		}
-
-		// Handle group method calls.
-		if ( 0 === strpos( $name, 'get_group_' ) ) {
+		} elseif ( 0 === strpos( $name, 'get_group_' ) ) {
+			// Handle group method calls.
 			$object = $this->get_group_object();
 
 			$method = explode( 'get_group_', $name );
 			$method = 'get_' . $method[1];
 		}
 
-		if ( $object && $method ) {
+		if ( $method ) {
+			if ( ! $object ) {
+				return null;
+			}
+
 			return call_user_func_array( [ $object, $method ], $arguments );
 		}
 
@@ -1473,7 +1491,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 
 			$supported_args = [
 				'object_type',
-				'storage_type',
+				'object_storage_type',
 				'name',
 				'id',
 				'parent',

@@ -10,6 +10,7 @@ use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Store;
 use Pods\Permissions;
+use Pods\Static_Cache;
 
 /**
  * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
@@ -982,7 +983,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 		'pods_page'        => null,
 		'helper'           => null,
 		'form'             => null,
-		'form_output_type' => null,
+		'form_output_type' => 'div',
 		'fields'           => null,
 		'label'            => null,
 		'thank_you'        => null,
@@ -1282,7 +1283,7 @@ function pods_shortcode_run( $tags, $content = null ) {
 			'fields'      => $tags['fields'],
 			'label'       => $tags['label'],
 			'thank_you'   => $tags['thank_you'],
-			'output_type' => $tags['form_output_type'],
+			'output_type' => ! empty( $tags['form_output_type'] ) ? $tags['form_output_type'] : 'div',
 		];
 
 		$return = $pod->form( $form_params );
@@ -2300,7 +2301,7 @@ function pods_register_related_object( $name, $label, $options = null ) {
  */
 function pods_register_object( array $object, $type ) {
 	$object['object_type']  = $type;
-	$object['storage_type'] = 'collection';
+	$object['object_storage_type'] = 'collection';
 
 	$object_collection = Store::get_instance();
 	$object_collection->register_object( $object );
@@ -2370,7 +2371,7 @@ function pods_register_block_type( array $block, array $fields = [] ) {
 	}
 
 	$block['object_type']  = 'block';
-	$block['storage_type'] = 'collection';
+	$block['object_storage_type'] = 'collection';
 	$block['name']         = pods_v( 'name', $block, pods_v( 'slug', $block ) );
 	$block['label']        = pods_v( 'label', $block, pods_v( 'title', $block ) );
 	$block['category']     = pods_v( 'category', $block, pods_v( 'collection', $block ) );
@@ -2380,7 +2381,7 @@ function pods_register_block_type( array $block, array $fields = [] ) {
 
 	foreach ( $fields as $field ) {
 		$field['object_type']  = 'block-field';
-		$field['storage_type'] = 'collection';
+		$field['object_storage_type'] = 'collection';
 		$field['parent']       = 'block/' . $block['name'];
 		$field['name']         = pods_v( 'name', $field, pods_v( 'slug', $field ) );
 		$field['label']        = pods_v( 'label', $field, pods_v( 'title', $field ) );
@@ -2408,7 +2409,7 @@ function pods_register_block_collection( array $collection ) {
 	}
 
 	$collection['object_type']  = 'block-collection';
-	$collection['storage_type'] = 'collection';
+	$collection['object_storage_type'] = 'collection';
 	$collection['label']        = pods_v( 'label', $collection, pods_v( 'title', $collection ) );
 
 	$object_collection = Store::get_instance();
@@ -2712,8 +2713,7 @@ function pods_meta_hook_list( $object_type = 'post', $object = null ) {
 		}
 
 		// Handle showing fields in form.
-		$hooks['action'][] = [ 'comment_form_logged_in_after', [ PodsInit::$meta, 'meta_comment_new_logged_in' ], 10, 2 ];
-		$hooks['filter'][] = [ 'comment_form_default_fields', [ PodsInit::$meta, 'meta_comment_new' ], 10, 1 ];
+		$hooks['filter'][] = [ 'comment_form_submit_field', [ PodsInit::$meta, 'meta_comment_new' ], 10, 1 ];
 
 		// Add meta box groups.
 		$hooks['action'][] = [ 'add_meta_boxes_comment', [ PodsInit::$meta, 'meta_comment_add' ], 10, 1 ];
@@ -2871,12 +2871,16 @@ function pods_no_conflict_off( $object_type = 'post', $object = null, $force = f
  * @link https://codex.wordpress.org/Reserved_Terms
  *
  * @since 2.7.15
+ *
+ * @param null|string $context The reserved keyword context.
+ *
  * @return array
  */
-function pods_reserved_keywords() {
-
-	$keywords = array(
-		// WordPress.
+function pods_reserved_keywords( $context = null ) {
+	// WordPress keywords.
+	$wp_keywords = [
+		'id',
+		'ID',
 		'attachment',
 		'attachment_id',
 		'author',
@@ -2961,19 +2965,35 @@ function pods_reserved_keywords() {
 		'withcomments',
 		'withoutcomments',
 		'year',
-		// Pods
+	];
+
+	// Pods keywords.
+	$pods_keywords = [
 		'id',
 		'ID',
-	);
+	];
+
+	$keywords = [];
+
+	if ( in_array( $context, [ null, 'wp' ], true ) ) {
+		$keywords = array_merge( $keywords, $wp_keywords );
+	}
+
+	if ( in_array( $context, [ null, 'pods' ], true ) ) {
+		$keywords = array_merge( $keywords, $pods_keywords );
+	}
+
+	$keywords = array_filter( array_unique( $keywords ) );
 
 	/**
 	 * Filter the WordPress and Pods reserved keywords.
 	 *
 	 * @since 2.7.15
 	 *
-	 * @param array $keywords List of WordPress and Pods reserved keywords.
+	 * @param array       $keywords List of WordPress and Pods reserved keywords.
+	 * @param null|string $context  The reserved keyword context.
 	 */
-	return apply_filters( 'pods_reserved_keywords', $keywords );
+	return apply_filters( 'pods_reserved_keywords', $keywords, $context );
 }
 
 /**
@@ -3102,12 +3122,6 @@ function pods_can_use_sessions( $only_env_check = false ) {
 		}
 	}
 
-	// Check if session is already set.
-	// In separate if clause, to also check for non-file based sessions.
-	if ( ! function_exists( 'session_status' ) || PHP_SESSION_ACTIVE === session_status() ) {
-		return false;
-	}
-
 	// Allow sessions.
 	return true;
 }
@@ -3121,10 +3135,16 @@ function pods_can_use_sessions( $only_env_check = false ) {
  * @return boolean Whether the session was started.
  */
 function pods_session_start() {
+	if ( function_exists( 'session_status' ) && PHP_SESSION_ACTIVE === session_status() ) {
+		return true;
+	}
+
 	if ( false !== headers_sent() ) {
 		// Check if headers were sent.
 		return false;
-	} elseif ( ! pods_can_use_sessions() ) {
+	}
+
+	if ( ! pods_can_use_sessions() ) {
 		return false;
 	}
 
@@ -3140,12 +3160,7 @@ function pods_session_start() {
  * @return string The session ID.
  */
 function pods_session_id() {
-	if ( ! pods_can_use_sessions() ) {
-		return '';
-	}
-
-	if ( ! function_exists( 'session_status' ) || PHP_SESSION_DISABLED === session_status() ) {
-		// Sessions are disabled.
+	if ( false === pods_session_start() ) {
 		return '';
 	}
 
@@ -3463,4 +3478,80 @@ function is_pods_alternative_cache_activated_test() {
 	];
 
 	return $result;
+}
+
+/**
+ * Get the SVG icon data (base64 or svg itself) for the icon or the dashicon default class.
+ *
+ * @since 2.8.1
+ *
+ * @param string $icon_path The icon name or the SVG full file path to use.
+ * @param string $default   The dashicons helper class (dashicons-database) to use if SVG not found.
+ * @param string $mode      How to return the SVG (base64 or svg).
+ *
+ * @return string The SVG icon data (base64 or svg itself) for the icon or the dashicon default class.
+ */
+function pods_svg_icon( $icon_path, $default = 'dashicons-database', $mode = 'base64' ) {
+	// Return the default when doing WP-CLI requests and Codeception testing.
+	if ( ( defined( 'WP_CLI' ) && WP_CLI ) || function_exists( 'codecept_debug' ) ) {
+		return $default;
+	}
+
+	if ( 'pods' === $icon_path ) {
+		$icon_path = PODS_DIR . '/ui/images/icon-menu.svg';
+	}
+
+	$static_cache = tribe( Static_Cache::class );
+
+	$icon = $static_cache->get( $icon_path, __FUNCTION__ . '/' . $mode );
+
+	// If the cached icon did not exist, use default.
+	if ( '404-not-exists' === $icon ) {
+		return $default;
+	}
+
+	// If the cached icon was found and is not empty, return it.
+	if ( is_string( $icon ) && '' !== $icon ) {
+		return $icon;
+	}
+
+	/**
+	 * Allow filtering the SVG icon used and bypass the normal functionality.
+	 *
+	 * @since 2.8.2
+	 *
+	 * @param null|string $icon      The icon to use.
+	 * @param string      $icon_path The SVG full file path to use.
+	 * @param string      $default   The dashicons helper class (dashicons-database) to use if SVG not found.
+	 * @param string      $mode      How to return the SVG (base64 or svg).
+	 */
+	$icon = apply_filters( 'pods_svg_icon', null, $icon_path, $default, $mode );
+
+	if ( null !== $icon ) {
+		return $icon;
+	}
+
+	if ( ! file_exists( $icon_path ) ) {
+		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
+
+		return $default;
+	}
+
+	$svg_data = file_get_contents( $icon_path );
+
+	if ( ! $svg_data ) {
+		$static_cache->set( '404-not-exists', $icon, __FUNCTION__ . '/' . $mode );
+
+		return $default;
+	}
+
+	$static_cache->set( $icon_path, $icon, __FUNCTION__ . '/' . $mode );
+
+	// If mode is SVG data, return that.
+	if ( 'svg' === $mode ) {
+		return $svg_data;
+	}
+
+	// Default mode is base64.
+	return 'data:image/svg+xml;base64,' . base64_encode( $svg_data );
 }

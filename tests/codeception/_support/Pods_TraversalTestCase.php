@@ -498,7 +498,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 	public static function index_build( $pod ) {
 		$pod_type     = $pod['type'];
 		$object       = $pod['name'];
-		$storage_type = $pod['storage_type'];
+		$storage_type = $pod['object_storage_type'];
 
 		if ( ! isset( self::$builds[ $pod_type ] ) ) {
 			self::$builds[ $pod_type ] = [];

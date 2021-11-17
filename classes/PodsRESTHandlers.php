@@ -109,7 +109,7 @@ class PodsRESTHandlers {
 			$field_data = $pod->fields( $field_name );
 
 			if ( 'pick' === pods_v( 'type', $field_data ) ) {
-				$output_type = pods_v( 'rest_pick_response', $field_data['options'], 'array' );
+				$output_type = pods_v( 'rest_pick_response', $field_data, 'array' );
 
 				/**
 				 * What output type to use for a related field REST response.
@@ -127,7 +127,7 @@ class PodsRESTHandlers {
 
 				if ( 'custom' === $output_type ) {
 					// Support custom selectors for the response.
-					$custom_selector = pods_v( 'rest_pick_custom', $field_data['options'], $field_name );
+					$custom_selector = pods_v( 'rest_pick_custom', $field_data, $field_name );
 
 					if ( ! empty( $custom_selector ) ) {
 						$field_name = $custom_selector;
@@ -139,7 +139,7 @@ class PodsRESTHandlers {
 					if ( $related_pod_items ) {
 						$fields = false;
 						$items  = array();
-						$depth  = pods_v( 'rest_pick_depth', $field_data['options'], 2 );
+						$depth  = pods_v( 'rest_pick_depth', $field_data, 2 );
 
 						if ( ! is_array( $related_pod_items ) ) {
 							$related_pod_items = array( $related_pod_items );
@@ -256,7 +256,7 @@ class PodsRESTHandlers {
 
 		global $wp_rest_additional_fields;
 
-		$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+		$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data, false );
 
 		if ( $pod && $rest_enable && ! empty( $wp_rest_additional_fields[ $type ] ) ) {
 			$fields = $pod->fields();

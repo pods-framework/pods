@@ -2,10 +2,6 @@
 
 .components-modal__frame.pods-settings-modal {
 	height: 90vh;
-    left: 50%;
-	overflow: hidden;
-	top: 50%;
-    transform: translate(-50%, -50%);
 	width: 90vw;
 	max-width: 950px;
 
@@ -60,10 +56,6 @@
 
 	button {
 		margin-right: 5px;
-
-		&:last-child {
-			margin-right: 0;
-		}
 	}
 }
 
@@ -74,6 +66,7 @@
     margin-bottom: 1em;
 	padding-bottom: 0.5em;
 	overflow-x: scroll;
+	min-width: 200px;
 
 	@media screen and (min-width: 851px) {
         border-right: 1px solid $color--super-light-grey;
@@ -96,7 +89,6 @@
 
 	@media screen and (min-width: 851px) {
 		text-align: left;
-        margin: 0 10px 0 0;
 		width: 200px;
 	}
 
@@ -159,4 +151,22 @@
 .components-modal__frame .pods-field-option input[type="checkbox"]:checked {
 	// Fixes conflicting different WP checkbox styles
     background: white;
+}
+
+// RTL support.
+.rtl {
+
+	.pods-settings-modal__panel {
+		padding-right: 0;
+		padding-left: 1em;
+	}
+
+	.pods-settings-modal__tabs {
+		@media screen and (min-width: 851px) {
+			border-right: 0;
+			border-left: 1px solid $color--super-light-grey;
+			margin-right: 0;
+			margin-left: 2em;
+		}
+	}
 }

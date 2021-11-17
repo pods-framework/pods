@@ -1,5 +1,6 @@
 <?php
 
+use Pods\Static_Cache;
 use Pods\Wisdom_Tracker;
 
 /**
@@ -860,7 +861,7 @@ class PodsInit {
 
 		wp_register_script( 'pods-cleditor', PODS_URL . "ui/js/cleditor/jquery.cleditor{$suffix_min}.js", array( 'jquery' ), '1.4.5', true );
 
-		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror.js', array(), '4.8', true );
+		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror/codemirror.js', array(), '4.8', true );
 		wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', array( 'pods-codemirror' ), '4.8', true );
 		wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', array( 'pods-codemirror' ), '4.8', true );
 		wp_register_script( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/mode/show-hint.js', array( 'pods-codemirror' ), '4.8', true );
@@ -965,16 +966,23 @@ class PodsInit {
 			'PodsMn = Backbone.Marionette.noConflict();'
 		);
 
-		// Dynamic Field Views / Marionette Views scripts.
-		$pods_dfv_options_file = file_get_contents( PODS_DIR . 'ui/js/dfv/pods-dfv.min.asset.json' );
+		$pods_dfv_options = [
+			'dependencies' => [],
+			'version'      => PODS_VERSION,
+		];
 
-		$pods_dfv_options = json_decode( $pods_dfv_options_file, true );
+		if ( file_exists( PODS_DIR . 'ui/js/dfv/pods-dfv.min.asset.json' ) ) {
+			// Dynamic Field Views / Marionette Views scripts.
+			$pods_dfv_options_file = file_get_contents( PODS_DIR . 'ui/js/dfv/pods-dfv.min.asset.json' );
+
+			$pods_dfv_options = array_merge( $pods_dfv_options, (array) json_decode( $pods_dfv_options_file, true ) );
+		}
 
 		wp_register_script(
 			'pods-dfv',
 			PODS_URL . 'ui/js/dfv/pods-dfv.min.js',
 			array_merge(
-				$pods_dfv_options['dependencies'],
+				(array) $pods_dfv_options['dependencies'],
 				[
 					'jquery',
 					'jquery-ui-core',
@@ -987,7 +995,7 @@ class PodsInit {
 					'wp-tinymce',
 				]
 			),
-			$pods_dfv_options['version'],
+			(string) $pods_dfv_options['version'],
 			true
 		);
 
@@ -1022,7 +1030,8 @@ class PodsInit {
 			// null !== pods_v( 'et_fb', 'get' ) // Divi.
 			null !== pods_v( 'fl_builder', 'get' ) // Beaver Builder.
 		) {
-			add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
+			wp_enqueue_script( 'pods-dfv' );
+			wp_enqueue_style( 'pods-form' );
 		}
 
 		$is_admin = is_admin();
@@ -1054,21 +1063,6 @@ class PodsInit {
 		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', [ 'wp-components' ], PODS_VERSION );
 		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', [], PODS_VERSION );
 		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', [ 'wp-components' ], PODS_VERSION );
-
-		/**
-		 * Filter to enabled loading of the DFV script on frontend.
-		 * By default, Pods does not load DFV on frontend.
-		 *
-		 * Example: add_filter( 'pods_enqueue_dfv_on_front', '__return_true' );
-		 *
-		 * @param bool Whether or not to enqueue by default
-		 *
-		 * @since 2.7.13
-		 */
-		if ( ! $is_admin && apply_filters( 'pods_enqueue_dfv_on_front', false ) ) {
-			wp_enqueue_script( 'pods-dfv' );
-			wp_enqueue_style( 'pods-form' );
-		}
 
 		// Check if Pod is a Modal Window.
 		if ( pods_is_modal_window() ) {
@@ -1142,7 +1136,7 @@ class PodsInit {
 			'has_archive'     => false,
 			'hierarchical'    => false,
 			'supports'        => array( 'title', 'author' ),
-			'menu_icon'       => 'dashicons-pods',
+			'menu_icon'       => pods_svg_icon( 'pods' ),
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -1160,7 +1154,7 @@ class PodsInit {
 			'has_archive'     => false,
 			'hierarchical'    => true,
 			'supports'        => array( 'title', 'editor', 'author' ),
-			'menu_icon'       => 'dashicons-pods',
+			'menu_icon'       => pods_svg_icon( 'pods' ),
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -1178,7 +1172,7 @@ class PodsInit {
 			'has_archive'     => false,
 			'hierarchical'    => true,
 			'supports'        => array( 'title', 'editor', 'author' ),
-			'menu_icon'       => 'dashicons-pods',
+			'menu_icon'       => pods_svg_icon( 'pods' ),
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -1195,12 +1189,58 @@ class PodsInit {
 	}
 
 	/**
+	 * Refresh the existing content types cache for Post Types and Taxonomies.
+	 *
+	 * @since 2.8.4
+	 */
+	public function refresh_existing_content_types_cache() {
+		$existing_post_types = get_post_types( [], 'objects' );
+		$existing_taxonomies = get_taxonomies( [], 'objects' );
+
+		// Handle static cache for determining whether an object was extended or not.
+		$static_cache = tribe( Static_Cache::class );
+
+		$existing_post_types_cached = $static_cache->get( 'post_type', __CLASS__ . '/existing_content_types' );
+
+		if ( empty( $existing_post_types_cached ) ) {
+			$existing_post_types_cached = [];
+
+			foreach ( $existing_post_types as $post_type ) {
+				// Skip Pods types.
+				if ( ! empty( $post_type->_provider ) && 'pods' === $post_type->_provider ) {
+					continue;
+				}
+
+				$existing_post_types_cached[ $post_type->name ] = $post_type->name;
+			}
+
+			$static_cache->set( 'post_type', $existing_post_types_cached, __CLASS__ . '/existing_content_types' );
+		}
+
+		$existing_taxonomies_cached = $static_cache->get( 'taxonomy', __CLASS__ . '/existing_content_types' );
+
+		if ( empty( $existing_taxonomies_cached ) ) {
+			$existing_taxonomies_cached = [];
+
+			foreach ( $existing_taxonomies as $taxonomy ) {
+				// Skip Pods types.
+				if ( ! empty( $taxonomy->_provider ) && 'pods' === $taxonomy->_provider ) {
+					continue;
+				}
+
+				$existing_taxonomies_cached[ $taxonomy->name ] = $taxonomy->name;
+			}
+
+			$static_cache->set( 'taxonomy', $existing_taxonomies_cached, __CLASS__ . '/existing_content_types' );
+		}
+	}
+
+	/**
 	 * Register Post Types and Taxonomies
 	 *
 	 * @param bool $force
 	 */
 	public function setup_content_types( $force = false ) {
-
 		if ( empty( self::$version ) ) {
 			return;
 		}
@@ -1210,6 +1250,8 @@ class PodsInit {
 
 		$existing_post_types = get_post_types();
 		$existing_taxonomies = get_taxonomies();
+
+		$this->refresh_existing_content_types_cache();
 
 		$pods_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
 
@@ -1424,6 +1466,7 @@ class PodsInit {
 					'query_var'           => ( false !== (boolean) pods_v( 'query_var', $post_type, true ) ? pods_v( 'query_var_string', $post_type, $post_type_name, true ) : false ),
 					'can_export'          => (boolean) pods_v( 'can_export', $post_type, true ),
 					'delete_with_user'    => (boolean) pods_v( 'delete_with_user', $post_type, true ),
+					'_provider'           => 'pods',
 				);
 
 				// REST API
@@ -1588,6 +1631,7 @@ class PodsInit {
 					'rewrite'               => $ct_rewrite,
 					'show_admin_column'     => (boolean) pods_v( 'show_admin_column', $taxonomy, false ),
 					'sort'                  => (boolean) pods_v( 'sort', $taxonomy, false ),
+					'_provider'             => 'pods',
 				);
 
 				// @since WP 5.5: Default terms.
@@ -1923,8 +1967,7 @@ class PodsInit {
 
 		global $post, $post_ID;
 
-		$post_types          = PodsMeta::$post_types;
-		$existing_post_types = get_post_types();
+		$post_types = PodsMeta::$post_types;
 
 		$pods_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
 
@@ -1950,13 +1993,25 @@ class PodsInit {
 			$labels = self::object_label_fix( $pods_cpt_ct['post_types'][ $post_type['name'] ], 'post_type' );
 			$labels = $labels['labels'];
 
+			$revision = (int) pods_v( 'revision' );
+
+			$revision_title = false;
+
+			if ( 0 < $revision ) {
+				$revision_title = wp_post_revision_title( $revision, false );
+
+				if ( empty( $revision_title ) ) {
+					$revision_title = false;
+				}
+			}
+
 			$messages[ $post_type['name'] ] = array(
 				1  => sprintf( __( '%1$s updated. <a href="%2$s">%3$s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
 				2  => __( 'Custom field updated.', 'pods' ),
 				3  => __( 'Custom field deleted.', 'pods' ),
 				4  => sprintf( __( '%s updated.', 'pods' ), $labels['singular_name'] ),
-				/* translators: %s: date and time of the revision */
-				5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels['singular_name'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+				/* translators: %1$s: date and time of the revision, %2$s: the revision post title */
+				5  => $revision_title ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels['singular_name'], $revision_title ) : false,
 				6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
 				7  => sprintf( __( '%s saved.', 'pods' ), $labels['singular_name'] ),
 				8  => sprintf( __( '%1$s submitted. <a target="_blank" rel="noopener noreferrer" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),

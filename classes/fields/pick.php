@@ -3,6 +3,7 @@
 use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Field;
+use Pods\Whatsit\Object_Field;
 use Pods\API\Whatsit\Value_Field;
 
 /**
@@ -137,225 +138,255 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function options() {
+		// translators: %s: is the Documentation linked text.
+		$fallback_help = __( 'More details on our %s.', 'pods' );
 
-		$options = array(
-			static::$type . '_format_type'    => array(
+		$fallback_help_link = sprintf(
+			'<a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a>',
+			esc_url( 'https://docs.pods.io/fields/relationship/' ),
+			__( 'Field Type Documentation', 'pods' )
+		);
+
+		$fallback_help = sprintf( $fallback_help, $fallback_help_link );
+
+		$options = [
+			static::$type . '_format_type'              => [
 				'label'                 => __( 'Selection Type', 'pods' ),
-				'help'                  => __( 'help', 'pods' ),
+				'help'                  => $fallback_help,
 				'default'               => 'single',
 				'type'                  => 'pick',
-				'data'                  => array(
+				'data'                  => [
 					'single' => __( 'Single Select', 'pods' ),
 					'multi'  => __( 'Multiple Select', 'pods' ),
-				),
+				],
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
-			),
-			static::$type . '_format_single'  => array(
+			],
+			static::$type . '_format_single'            => [
 				'label'                 => __( 'Input Type', 'pods' ),
-				'help'                  => __( 'help', 'pods' ),
-				'depends-on'            => array( static::$type . '_format_type' => 'single' ),
+				'help'                  => $fallback_help,
+				'depends-on'            => [
+					static::$type . '_format_type' => 'single',
+				],
 				'default'               => 'dropdown',
 				'type'                  => 'pick',
-				'data'                  => apply_filters(
-					'pods_form_ui_field_pick_format_single_options', array(
-						'dropdown'     => __( 'Drop Down', 'pods' ),
-						'radio'        => __( 'Radio Buttons', 'pods' ),
-						'autocomplete' => __( 'Autocomplete', 'pods' ),
-						'list'         => __( 'List View (with reordering)', 'pods' ),
-					)
-				),
+				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_single_options', [
+					'dropdown'     => __( 'Drop Down', 'pods' ),
+					'radio'        => __( 'Radio Buttons', 'pods' ),
+					'autocomplete' => __( 'Autocomplete', 'pods' ),
+					'list'         => __( 'List View (with reordering)', 'pods' ),
+				] ),
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
-			),
-			static::$type . '_format_multi'   => array(
+			],
+			static::$type . '_format_multi'             => [
 				'label'                 => __( 'Input Type', 'pods' ),
-				'help'                  => __( 'help', 'pods' ),
-				'depends-on'            => array( static::$type . '_format_type' => 'multi' ),
+				'help'                  => $fallback_help,
+				'depends-on'            => [
+					static::$type . '_format_type' => 'multi',
+				],
 				'default'               => 'checkbox',
 				'type'                  => 'pick',
-				'data'                  => apply_filters(
-					'pods_form_ui_field_pick_format_multi_options', array(
-						'checkbox'     => __( 'Checkboxes', 'pods' ),
-						'multiselect'  => __( 'Multi Select (basic selection)', 'pods' ),
-						'autocomplete' => __( 'Autocomplete', 'pods' ),
-						'list'         => __( 'List View (with reordering)', 'pods' ),
-					)
-				),
+				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_multi_options', [
+					'checkbox'     => __( 'Checkboxes', 'pods' ),
+					'multiselect'  => __( 'Multi Select (basic selection)', 'pods' ),
+					'autocomplete' => __( 'Autocomplete', 'pods' ),
+					'list'         => __( 'List View (with reordering)', 'pods' ),
+				] ),
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
-			),
-			static::$type . '_display_format_multi'   => array(
+			],
+			static::$type . '_display_format_multi'     => [
 				'label'                 => __( 'Display Format', 'pods' ),
-				'help'                  => __( 'Used as format for front-end display', 'pods' ),
-				'depends-on'            => array( static::$type . '_format_type' => 'multi' ),
+				'help'                  => __( 'Used as format for front-end display', 'pods' ) . ' ' . $fallback_help,
+				'depends-on'            => [
+					static::$type . '_format_type' => 'multi',
+				],
 				'default'               => 'default',
 				'type'                  => 'pick',
-				'data'                  => array(
+				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
 					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
 					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
-				),
+				],
 				'pick_show_select_text' => 0,
 				'dependency'            => true,
-			),
-			static::$type . '_display_format_separator'   => array(
+			],
+			static::$type . '_display_format_separator' => [
 				'label'      => __( 'Display Format Separator', 'pods' ),
-				'help'       => __( 'Used as separator for front-end display. This also turns off the "and" portion of the formatting.', 'pods' ),
-				'depends-on' => array(
+				'help'       => __( 'Used as separator for front-end display. This also turns off the "and" portion of the formatting.', 'pods' ) . ' ' . $fallback_help,
+				'depends-on' => [
 					static::$type . '_display_format_multi' => 'custom',
 					static::$type . '_format_type'          => 'multi',
-				),
+				],
 				'default'    => ', ',
 				'type'       => 'text',
-			),
-			static::$type . '_allow_add_new'  => array(
+			],
+			static::$type . '_allow_add_new'            => [
 				'label'       => __( 'Allow Add New', 'pods' ),
-				'help'        => __( 'Allow new related records to be created in a modal window', 'pods' ),
-				'wildcard-on' => array(
-					static::$type . '_object' => array(
+				'help'        => __( 'Allow new related records to be created in a modal window', 'pods' ) . ' ' . $fallback_help,
+				'wildcard-on' => [
+					static::$type . '_object' => [
 						'^post_type-(?!(custom_css|customize_changeset)).*$',
-						'^taxonomy-.*$',
+						//'^taxonomy-.*$', @todo We need to finish adding support for add new on term form.
 						'^user$',
-						'^pod-.*$'
-					),
-				),
+						'^pod-.*$',
+					],
+				],
 				'type'        => 'boolean',
 				'default'     => 1,
+			],
+			static::$type . '_add_new_label'            => array(
+					'label'       => __( 'Add New Label', 'pods' ),
+					'placeholder' => __( 'Add New', 'pods' ),
+					'default'     => '',
+					'type'        => 'text',
+					'depends-on'  => [ static::$type . '_allow_add_new' => true ]
 			),
-			static::$type . '_taggable'       => array(
-				'label'       => __( 'Taggable', 'pods' ),
-				'help'        => __( 'Allow new values to be inserted when using an Autocomplete field', 'pods' ),
-				'depends-on-any'  => array(
+			static::$type . '_taggable'                 => [
+				'label'          => __( 'Taggable', 'pods' ),
+				'help'           => __( 'Allow new values to be inserted when using an Autocomplete field', 'pods' ) . ' ' . $fallback_help,
+				'depends-on-any' => [
 					static::$type . '_format_single' => 'autocomplete',
 					static::$type . '_format_multi'  => 'autocomplete',
-				),
-				'excludes-on' => array(
-					static::$type . '_object' => array_merge( array(
+				],
+				'excludes-on'    => [
+					static::$type . '_object'        => array_merge( [
 						'site',
 						'network',
-					), self::simple_objects() ),
+					], self::simple_objects() ),
 					static::$type . '_allow_add_new' => false,
-				),
-				'type'        => 'boolean',
-				'default'     => 0,
-			),
-			static::$type . '_show_icon'      => array(
-				'label'       => __( 'Show Icons', 'pods' ),
-				'depends-on-any'  => array(
+				],
+				'type'           => 'boolean',
+				'default'        => 0,
+			],
+			static::$type . '_show_icon'                => [
+				'label'          => __( 'Show Icons', 'pods' ),
+				'help'           => $fallback_help,
+				'depends-on-any' => [
 					static::$type . '_format_single' => 'list',
 					static::$type . '_format_multi'  => 'list',
-				),
-				'excludes-on' => array(
-					static::$type . '_object'        => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
-				'type'        => 'boolean',
-				'default'     => 1,
-			),
-			static::$type . '_show_edit_link' => array(
-				'label'       => __( 'Show Edit Links', 'pods' ),
-				'depends-on-any'  => array(
+				],
+				'excludes-on'    => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
+				'type'           => 'boolean',
+				'default'        => 1,
+			],
+			static::$type . '_show_edit_link'           => [
+				'label'          => __( 'Show Edit Links', 'pods' ),
+				'help'           => $fallback_help,
+				'depends-on-any' => [
 					static::$type . '_format_single' => 'list',
 					static::$type . '_format_multi'  => 'list',
-				),
-				'excludes-on' => array(
-					static::$type . '_object'        => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
-				'type'        => 'boolean',
-				'default'     => 1,
-			),
-			static::$type . '_show_view_link' => array(
-				'label'       => __( 'Show View Links', 'pods' ),
-				'depends-on-any'  => array(
+				],
+				'excludes-on'    => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
+				'type'           => 'boolean',
+				'default'        => 1,
+			],
+			static::$type . '_show_view_link'           => [
+				'label'          => __( 'Show View Links', 'pods' ),
+				'help'           => $fallback_help,
+				'depends-on-any' => [
 					static::$type . '_format_single' => 'list',
 					static::$type . '_format_multi'  => 'list',
-				),
-				'excludes-on' => array(
-					static::$type . '_object'        => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
-				'type'        => 'boolean',
-				'default'     => 1,
-			),
-			static::$type . '_select_text'    => array(
-				'label'      => __( 'Default Select Text', 'pods' ),
-				'help'       => __( 'This is the text used for the default "no selection" dropdown item. If left empty, it will default to "-- Select One --"', 'pods' ),
-				'depends-on' => array(
+				],
+				'excludes-on'    => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
+				'type'           => 'boolean',
+				'default'        => 1,
+			],
+			static::$type . '_select_text'              => [
+				'label'            => __( 'Default Select Text', 'pods' ),
+				'help'             => __( 'This is the text used for the default "no selection" dropdown item. If left empty, it will default to "-- Select One --"', 'pods' ) . ' ' . $fallback_help,
+				'depends-on'       => [
 					static::$type . '_format_type'   => 'single',
 					static::$type . '_format_single' => 'dropdown',
-				),
-				'default'    => '',
+				],
+				'default'          => '',
 				'text_placeholder' => __( '-- Select One --', 'pods' ),
-				'type'       => 'text',
-			),
-			static::$type . '_limit'          => array(
+				'type'             => 'text',
+			],
+			static::$type . '_limit'                    => [
 				'label'      => __( 'Selection Limit', 'pods' ),
-				'help'       => __( 'Default is "0" for no limit, but you can enter 1 or more to limit the number of items that can be selected.', 'pods' ),
-				'depends-on' => array( static::$type . '_format_type' => 'multi' ),
+				'help'       => __( 'Default is "0" for no limit, but you can enter 1 or more to limit the number of items that can be selected.', 'pods' ) . ' ' . $fallback_help,
+				'depends-on' => [
+					static::$type . '_format_type' => 'multi',
+				],
 				'default'    => 0,
 				'type'       => 'number',
-			),
-			static::$type . '_table_id'       => array(
+			],
+			static::$type . '_table_id'                 => [
 				'label'      => __( 'Table ID Column', 'pods' ),
-				'help'       => __( 'You must provide the ID column name for the table, this will be used to keep track of the relationship', 'pods' ),
-				'depends-on' => array( static::$type . '_object' => 'table' ),
+				'help'       => __( 'You must provide the ID column name for the table, this will be used to keep track of the relationship', 'pods' ) . ' ' . $fallback_help,
+				'depends-on' => [
+					static::$type . '_object' => 'table',
+				],
 				'required'   => 1,
 				'default'    => '',
 				'type'       => 'text',
-			),
-			static::$type . '_table_index'    => array(
+			],
+			static::$type . '_table_index'              => [
 				'label'      => __( 'Table Index Column', 'pods' ),
-				'help'       => __( 'You must provide the index column name for the table, this may optionally also be the ID column name', 'pods' ),
-				'depends-on' => array( static::$type . '_object' => 'table' ),
+				'help'       => __( 'You must provide the index column name for the table, this may optionally also be the ID column name', 'pods' ) . ' ' . $fallback_help,
+				'depends-on' => [
+					static::$type . '_object' => 'table',
+				],
 				'required'   => 1,
 				'default'    => '',
 				'type'       => 'text',
-			),
-			static::$type . '_display'        => array(
+			],
+			static::$type . '_display'                  => [
 				'label'       => __( 'Display Field in Selection List', 'pods' ),
-				'help'        => __( 'Provide the name of a field on the related object to reference, example: {@post_title}', 'pods' ),
-				'excludes-on' => array(
-					static::$type . '_object' => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
+				'help'        => __( 'Provide the name of a field on the related object to reference, example: {@post_title}', 'pods' ) . ' ' . $fallback_help,
+				'excludes-on' => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
 				'default'     => '',
 				'type'        => 'text',
-			),
-			static::$type . '_user_role'      => array(
+			],
+			static::$type . '_user_role'                => [
 				'label'            => __( 'Limit list by Role(s)', 'pods' ),
-				'help'             => __( 'You can choose to limit Users available for selection by specific role(s).', 'pods' ),
-				'depends-on'       => array( static::$type . '_object' => 'user' ),
+				'help'             => __( 'You can choose to limit Users available for selection by specific role(s).', 'pods' ) . ' ' . $fallback_help,
+				'depends-on'       => [
+					static::$type . '_object' => 'user',
+				],
 				'default'          => '',
 				'type'             => 'pick',
 				'pick_object'      => 'role',
 				'pick_format_type' => 'multi',
-			),
-			static::$type . '_where'          => array(
+			],
+			static::$type . '_where'                    => [
 				'label'       => __( 'Customized <em>WHERE</em>', 'pods' ),
-				'help'        => __( 'help', 'pods' ),
-				'excludes-on' => array(
-					static::$type . '_object' => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
+				'help'        => $fallback_help,
+				'excludes-on' => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
 				'default'     => '',
 				'type'        => 'text',
-			),
-			static::$type . '_orderby'        => array(
+			],
+			static::$type . '_orderby'                  => [
 				'label'       => __( 'Customized <em>ORDER BY</em>', 'pods' ),
-				'help'        => __( 'help', 'pods' ),
-				'excludes-on' => array(
-					static::$type . '_object' => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
+				'help'        => $fallback_help,
+				'excludes-on' => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
 				'default'     => '',
 				'type'        => 'text',
-			),
-			static::$type . '_groupby'        => array(
+			],
+			static::$type . '_groupby'                  => [
 				'label'       => __( 'Customized <em>GROUP BY</em>', 'pods' ),
-				'help'        => __( 'help', 'pods' ),
-				'excludes-on' => array(
-					static::$type . '_object' => array_merge( array( 'site', 'network' ), self::simple_objects() ),
-				),
+				'help'        => $fallback_help,
+				'excludes-on' => [
+					static::$type . '_object' => array_merge( [ 'site', 'network' ], self::simple_objects() ),
+				],
 				'default'     => '',
 				'type'        => 'text',
-			),
-		);
+			],
+		];
 
 		$post_type_pick_objects = array();
 
@@ -479,7 +510,7 @@ class PodsField_Pick extends PodsField {
 			foreach ( $pod_options as $pod => $label ) {
 				self::$related_objects[ 'pod-' . $pod ] = array(
 					'label'         => $label,
-					'group'         => __( 'Pods', 'pods' ),
+					'group'         => __( 'Advanced Content Types', 'pods' ),
 					'bidirectional' => true,
 				);
 			}
@@ -719,23 +750,25 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.3.0
 	 */
 	public function related_objects( $force = false ) {
-
-		if ( $this->setup_related_objects( $force ) || null === self::$names_related ) {
-			$related_objects = array();
-
-			foreach ( self::$related_objects as $related_object_name => $related_object ) {
-				if ( ! isset( $related_objects[ $related_object['group'] ] ) ) {
-					$related_objects[ $related_object['group'] ] = array();
-				}
-
-				$related_objects[ $related_object['group'] ][ $related_object_name ] = $related_object['label'];
-			}
-
-			self::$names_related = (array) apply_filters( 'pods_form_ui_field_pick_related_objects', $related_objects );
+		if ( null !== self::$names_related ) {
+			return self::$names_related;
 		}
 
-		return self::$names_related;
+		$this->setup_related_objects( $force );
 
+		$related_objects = array();
+
+		foreach ( self::$related_objects as $related_object_name => $related_object ) {
+			if ( ! isset( $related_objects[ $related_object['group'] ] ) ) {
+				$related_objects[ $related_object['group'] ] = array();
+			}
+
+			$related_objects[ $related_object['group'] ][ $related_object_name ] = $related_object['label'];
+		}
+
+		self::$names_related = (array) apply_filters( 'pods_form_ui_field_pick_related_objects', $related_objects );
+
+		return self::$names_related;
 	}
 
 	/**
@@ -745,23 +778,25 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.3.0
 	 */
 	public function simple_objects() {
-
-		if ( $this->setup_related_objects() || null === self::$names_simple ) {
-			$simple_objects = array();
-
-			foreach ( self::$related_objects as $object => $related_object ) {
-				if ( ! isset( $related_object['simple'] ) || ! $related_object['simple'] ) {
-					continue;
-				}
-
-				$simple_objects[] = $object;
-			}
-
-			self::$names_simple = (array) apply_filters( 'pods_form_ui_field_pick_simple_objects', $simple_objects );
+		if ( null !== self::$names_simple ) {
+			return self::$names_simple;
 		}
 
-		return self::$names_simple;
+		$this->setup_related_objects();
 
+		$simple_objects = array();
+
+		foreach ( self::$related_objects as $object => $related_object ) {
+			if ( ! isset( $related_object['simple'] ) || ! $related_object['simple'] ) {
+				continue;
+			}
+
+			$simple_objects[] = $object;
+		}
+
+		self::$names_simple = (array) apply_filters( 'pods_form_ui_field_pick_simple_objects', $simple_objects );
+
+		return self::$names_simple;
 	}
 
 	/**
@@ -771,23 +806,25 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.3.4
 	 */
 	public function bidirectional_objects() {
-
-		if ( $this->setup_related_objects() || null === self::$names_bidirectional ) {
-			$bidirectional_objects = array();
-
-			foreach ( self::$related_objects as $object => $related_object ) {
-				if ( ! isset( $related_object['bidirectional'] ) || ! $related_object['bidirectional'] ) {
-					continue;
-				}
-
-				$bidirectional_objects[] = $object;
-			}
-
-			self::$names_bidirectional = (array) apply_filters( 'pods_form_ui_field_pick_bidirectional_objects', $bidirectional_objects );
+		if ( null !== self::$names_bidirectional ) {
+			return self::$names_bidirectional;
 		}
 
-		return self::$names_bidirectional;
+		$this->setup_related_objects();
 
+		$bidirectional_objects = array();
+
+		foreach ( self::$related_objects as $object => $related_object ) {
+			if ( ! isset( $related_object['bidirectional'] ) || ! $related_object['bidirectional'] ) {
+				continue;
+			}
+
+			$bidirectional_objects[] = $object;
+		}
+
+		self::$names_bidirectional = (array) apply_filters( 'pods_form_ui_field_pick_bidirectional_objects', $bidirectional_objects );
+
+		return self::$names_bidirectional;
 	}
 
 	/**
@@ -853,20 +890,16 @@ class PodsField_Pick extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
-
 		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
-		$type = pods_v( 'type', $options, static::$type );
+		// Do anything we need to do here with options setup / enforcement.
 
-		$args = compact( array_keys( get_defined_vars() ) );
-		$args = (object) $args;
+		// Default labels.
+		if ( empty( $options[ static::$type . '_add_new_label' ] ) ) {
+			$options[ static::$type . '_add_new_label' ] = __( 'Add New', 'pods' );
+		}
 
-		wp_enqueue_script( 'pods-dfv' );
-
-		wp_enqueue_style( 'pods-select2' );
-		wp_enqueue_script( 'pods-select2' );
-
-		$this->render_input_script( $args );
+		parent::input( $name, $value, $options, $pod, $id );
 	}
 
 	/**
@@ -989,15 +1022,21 @@ class PodsField_Pick extends PodsField {
 		$field_options[ $args->type . '_limit' ] = $limit;
 
 		$field_options['ajax_data'] = $this->build_dfv_autocomplete_ajax_data( $field_options, $args, $ajax );
+		$field_options['select2_overrides'] = null;
 
-		/**
-		 * Allow overriding some of the Select2 options used in the JS init.
-		 *
-		 * @since 2.7.0
-		 *
-		 * @param array|null $select2_overrides Override options for Select2/SelectWoo.
-		 */
-		$field_options['select2_overrides'] = apply_filters( 'pods_pick_select2_overrides', null );
+		if ( 'select2' === $field_options['view_name'] ) {
+			wp_enqueue_style( 'pods-select2' );
+			wp_enqueue_script( 'pods-select2' );
+
+			/**
+			 * Allow overriding some Select2/SelectWoo options used in the JS init.
+			 *
+			 * @since 2.7.0
+			 *
+			 * @param array|null $select2_overrides Override options for Select2/SelectWoo.
+			 */
+			$field_options['select2_overrides'] = apply_filters( 'pods_pick_select2_overrides', $field_options['select2_overrides'] );
+		}
 
 		return $field_options;
 	}
@@ -1101,6 +1140,7 @@ class PodsField_Pick extends PodsField {
 			$config[ $args->type . '_show_edit_link' ] = false;
 		}
 
+		$config[ $args->type . '_taggable' ]  = filter_var( pods_v( $args->type . '_taggable', $config ), FILTER_VALIDATE_BOOLEAN );
 		$config[ $args->type . '_allow_add_new' ]  = filter_var( pods_v( $args->type . '_allow_add_new', $config ), FILTER_VALIDATE_BOOLEAN );
 		$config[ $args->type . '_show_edit_link' ] = filter_var( pods_v( $args->type . '_show_edit_link', $config ), FILTER_VALIDATE_BOOLEAN );
 
@@ -1285,13 +1325,23 @@ class PodsField_Pick extends PodsField {
 
 		// Maintain any saved sort order from $args->value
 		if ( is_array( $args->value ) && 1 < count( $args->value ) && $this->is_autocomplete( $args->options ) ) {
-			$item_data = array_replace( $args->value, $item_data );
+			$new_item_data = [];
+
+			foreach ( $args->value as $value_key => $value_item ) {
+				if ( ! is_int( $value_key ) ) {
+					if ( isset( $item_data[ $value_key ] ) ) {
+						$value_item = $item_data[ $value_key ];
+					}
+
+					$new_item_data[ $value_key ] = $value_item;
+				}
+			}
+
+			$item_data = array_merge( $new_item_data, $item_data );
 		}
 
 		// Convert from associative to numeric array
-		$item_data = array_values( $item_data );
-
-		return $item_data;
+		return array_values( $item_data );
 
 	}
 
@@ -1422,7 +1472,7 @@ class PodsField_Pick extends PodsField {
 			case 'pod':
 				if ( ! empty( $args->options['pick_val'] ) ) {
 
-					$icon = 'dashicons-pods';
+					$icon = pods_svg_icon( 'pods' );
 
 					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {
 						$file_name  = 'admin.php';
@@ -1449,9 +1499,9 @@ class PodsField_Pick extends PodsField {
 
 		// Parse icon type
 		if ( 'none' === $icon || 'div' === $icon ) {
-			$icon         = '';
+			$icon = '';
 		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
-			$icon         = sanitize_html_class( $icon );
+			$icon = sanitize_html_class( $icon );
 		}
 
 		// #5740 Check for WP_Error object.
@@ -1547,7 +1597,13 @@ class PodsField_Pick extends PodsField {
 			$related_val = $related_object;
 		}
 
-		$related_sister_id = (int) pods_v( 'sister_id', $options, 0 );
+		$related_sister_id = pods_v( 'sister_id', $options, 0 );
+
+		if ( is_numeric( $related_sister_id ) ) {
+			$related_sister_id = (int) $related_sister_id;
+		} else {
+			$related_sister_id = 0;
+		}
 
 		$options['id'] = (int) $options['id'];
 
@@ -1800,10 +1856,18 @@ class PodsField_Pick extends PodsField {
 
 		// Bidirectional relationship requirement checks.
 		$related_object = pods_v( static::$type . '_object', $options, '' );
+
 		// pod, post_type, taxonomy, etc..
 		$related_val = pods_v( static::$type . '_val', $options, $related_object, true );
+
 		// pod name, post type name, taxonomy name, etc..
-		$related_sister_id = (int) pods_v( 'sister_id', $options, 0 );
+		$related_sister_id = pods_v( 'sister_id', $options, 0 );
+
+		if ( is_numeric( $related_sister_id ) ) {
+			$related_sister_id = (int) $related_sister_id;
+		} else {
+			$related_sister_id = 0;
+		}
 
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects, true ) ) {
 			$related_pod = self::$api->load_pod( [
@@ -2314,7 +2378,7 @@ class PodsField_Pick extends PodsField {
 				$table_info = pods_v( 'table_info', $options );
 
 				if ( empty( $table_info ) && ! empty( $pick_object ) ) {
-					$table_info = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $object_params );
+					$table_info = pods_api()->get_table_info( $pick_object, $pick_val, null, null, $options );
 				}
 
 				if ( null === $related_pod && $table_info && $table_info['pod'] ) {
@@ -2361,35 +2425,52 @@ class PodsField_Pick extends PodsField {
 
 				$display = trim( pods_v( static::$type . '_display', $options ), ' {@}' );
 
+				$display_field       = "`t`.`{$search_data->field_index}`";
+				$display_field_name  = $search_data->field_index;
+				$display_field_alias = false;
+
 				if ( 0 < strlen( $display ) ) {
-					if ( isset( $table_info['pod'] ) && ! empty( $table_info['pod'] ) ) {
-						if ( isset( $table_info['pod']['object_fields'] ) && isset( $table_info['pod']['object_fields'][ $display ] ) ) {
-							$search_data->field_index = $display;
+					if ( ! empty( $table_info['pod'] ) ) {
+						/** @var Pod $related_pod */
+						$related_pod = $table_info['pod'];
 
-							$params['select'] .= ", `t`.`{$search_data->field_index}`";
-						} else {
-							$search_data->field_index = sanitize_key( $display );
+						$related_storage     = $related_pod->get_storage();
+						$related_type        = $related_pod->get_type();
+						$found_display_field = $related_pod->get_field( $display );
 
-							if ( isset( $table_info['pod']['fields'][ $display ] ) && 'table' === $table_info['pod']['storage'] && ! in_array(
-								$table_info['pod']['type'], array(
+						if ( $found_display_field ) {
+							$display_field_name = $found_display_field->get_name();
+						}
+
+						if ( $found_display_field instanceof Object_Field ) {
+							$display_field = "`t`.`{$display_field_name}`";
+						} elseif (
+							'table' === $related_storage
+							&& ! in_array(
+								$related_type, array(
 									'pod',
 									'table',
 								), true
 							)
-							) {
-								$params['select'] .= ", `d`.`{$search_data->field_index}`";
-							} elseif ( 'meta' === $table_info['pod']['storage'] ) {
-								$params['select'] .= ", `{$search_data->field_index}`.`meta_value` AS {$search_data->field_index}";
-							} else {
-								$params['select'] .= ", `t`.`{$search_data->field_index}`";
-							}
-						}//end if
-					} elseif ( isset( $table_info['object_fields'] ) && isset( $table_info['object_fields'][ $display ] ) ) {
-						$search_data->field_index = $display;
+						) {
+							$display_field = "`d`.`{$display_field_name}`";
+						} elseif ( 'meta' === $related_storage ) {
+							$display_field = "`{$display_field_name}`.`meta_value`";
 
-						$params['select'] .= ", `t`.`{$search_data->field_index}`";
+							$display_field_alias = true;
+						} else {
+							$display_field = "`t`.`{$display_field_name}`";
+						}
+					} elseif ( isset( $table_info['object_fields'] ) && isset( $table_info['object_fields'][ $display ] ) ) {
+						$display_field_name = $table_info['object_fields'][ $display ];
+
+						$display_field = "`t`.`{$display_field_name}`";
 					}//end if
 				}//end if
+
+				if ( false === strpos( $params['select'], $display_field ) ) {
+					$params['select'] .= ', ' . $display_field . ( $display_field_alias ? " AS `{$display_field_name}`" : '' );
+				}
 
 				$autocomplete = $this->is_autocomplete( $options );
 
@@ -2416,7 +2497,9 @@ class PodsField_Pick extends PodsField {
 				}
 
 				if ( $hierarchy && $table_info['object_hierarchical'] && ! empty( $table_info['field_parent'] ) ) {
-					$params['select'] .= ', ' . $table_info['field_parent_select'];
+					if ( false === strpos( $params['select'], $table_info['field_parent_select'] ) ) {
+						$params['select'] .= ', ' . $table_info['field_parent_select'];
+					}
 				}
 
 				if ( $autocomplete ) {
@@ -2436,6 +2519,10 @@ class PodsField_Pick extends PodsField {
 						$lookup_where = array(
 							$search_data->field_index => "`t`.`{$search_data->field_index}` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'",
 						);
+
+						if ( $display_field_name !== $search_data->field_index ) {
+							$lookup_where[ $display_field_name ] = "{$display_field} LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
+						}
 
 						// @todo Hook into WPML for each table
 						if ( $wpdb->users === $search_data->table ) {
@@ -2463,7 +2550,7 @@ class PodsField_Pick extends PodsField {
 						}
 
 						$orderby   = array();
-						$orderby[] = "(`t`.`{$search_data->field_index}` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%' ) DESC";
+						$orderby[] = "( {$display_field} LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%' ) DESC";
 
 						$pick_orderby = pods_v( static::$type . '_orderby', $options, null, true );
 
@@ -2471,8 +2558,13 @@ class PodsField_Pick extends PodsField {
 							$orderby[] = $pick_orderby;
 						}
 
-						$orderby[] = "`t`.`{$search_data->field_index}`";
-						$orderby[] = "`t`.`{$search_data->field_id}`";
+						if ( ! in_array( $search_data->field_index, $orderby, true ) ) {
+							$orderby[] = "`t`.`{$search_data->field_index}`";
+						}
+
+						if ( ! in_array( $search_data->field_id, $orderby, true ) ) {
+							$orderby[] = "`t`.`{$search_data->field_id}`";
+						}
 
 						$params['orderby'] = $orderby;
 					}//end if
@@ -2484,14 +2576,20 @@ class PodsField_Pick extends PodsField {
 				$extra = '';
 
 				if ( $wpdb->posts === $search_data->table ) {
-					$extra = ', `t`.`post_type`';
+					$extra = '`t`.`post_type`, `t`.`menu_order`, `t`.`post_date`';
 				} elseif ( $wpdb->terms === $search_data->table ) {
-					$extra = ', `tt`.`taxonomy`';
+					$extra = '`tt`.`taxonomy`';
 				} elseif ( $wpdb->comments === $search_data->table ) {
-					$extra = ', `t`.`comment_type`';
+					$extra = '`t`.`comment_type`';
+				} elseif ( $wpdb->site === $search_data->table ) {
+					$extra = '`t`.`path`';
+				} elseif ( $wpdb->blogs === $search_data->table ) {
+					$extra = '`t`.`path`';
 				}
 
-				$params['select'] .= $extra;
+				if ( '' !== $extra && false === strpos( $params['select'], $extra ) ) {
+					$params['select'] .= ', ' . $extra;
+				}
 
 				if ( 'user' === pods_v( static::$type . '_object', $options ) ) {
 					$roles = pods_v( static::$type . '_user_role', $options );
@@ -2570,7 +2668,7 @@ class PodsField_Pick extends PodsField {
 				if ( $hierarchy && ! $autocomplete && ! empty( $results ) && $table_info['object_hierarchical'] && ! empty( $table_info['field_parent'] ) ) {
 					$select_args = array(
 						'id'     => $table_info['field_id'],
-						'index'  => $table_info['field_index'],
+						'index'  => $display_field_name,
 						'parent' => $table_info['field_parent'],
 					);
 
@@ -2585,11 +2683,12 @@ class PodsField_Pick extends PodsField {
 					foreach ( $results as $result ) {
 						$result      = get_object_vars( $result );
 						$field_id    = $search_data->field_id;
-						$field_index = $search_data->field_index;
+						$field_index = $display_field_name;
 
 						if ( ! isset( $result[ $field_index ] ) ) {
 							$field_index = $default_field_index;
 						}
+
 						if ( ! isset( $result[ $field_id ], $result[ $field_index ] ) ) {
 							continue;
 						}
@@ -3583,9 +3682,60 @@ class PodsField_Pick extends PodsField {
 			return;
 		}
 
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+
+			if ( 'edit-tags' === $screen->base ) {
+				// @todo Need more effort on the solution for add new handling.
+				//add_action( 'admin_footer', [ $this, 'admin_modal_bail_term_action_add_new' ], 20 );
+			}
+		}
+
 		add_action( 'created_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
 		add_action( 'edited_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
 
+	}
+
+	/**
+	 * Hook into term creation process to bail after success.
+	 *
+	 * @todo Try and catch the added tr node on the table tbody.
+	 */
+	public function admin_modal_bail_term_action_add_new() {
+		?>
+			<script type="text/javascript">
+				jQuery( function ( $ ) {
+					/** @var {jQuery.Event} e */
+					$( '.tags' ).on( 'DOMSubtreeModified', function(e) {
+						console.log( e );
+
+						if ( !== e.target.is( 'tbody#the-list' ) ) {
+							return;
+						}
+
+						const $theTermRow = $( e.target.innerHTML() );
+						const titleRow = $theTermRow.find( '.column-name .row-title' );
+						const actionView = $theTermRow.find( '.row-actions span.view a' );
+
+						const termData = {
+							id       : $theTermRow.find( '.check-column input' ).val(),
+							icon     : '',
+							name     : titleRow.text(),
+							edit_link: titleRow.prop( 'href' ),
+							link     : actionView[0] ? actionView.prop( 'href' ) : '',
+							selected : true,
+						};
+
+						console.log( termData );
+
+						window.parent.postMessage( {
+							type : 'PODS_MESSAGE',
+							data : termData,
+						}, window.location.origin );
+					} );
+				} );
+			</script>
+		<?php
 	}
 
 	/**

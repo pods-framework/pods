@@ -77,7 +77,7 @@ class Collection extends Storage {
 		$objects = $object_collection->get_objects();
 
 		foreach ( $objects as $k => $object ) {
-			if ( self::$type === $object->get_storage_type() ) {
+			if ( self::$type === $object->get_object_storage_type() ) {
 				continue;
 			}
 
@@ -255,10 +255,10 @@ class Collection extends Storage {
 	 * {@inheritdoc}
 	 */
 	protected function save_object( Whatsit $object ) {
-		$storage_type = $object->get_storage_type();
+		$storage_type = $object->get_object_storage_type();
 
 		if ( empty( $storage_type ) ) {
-			$object->set_arg( 'storage_type', static::$type );
+			$object->set_arg( 'object_storage_type', static::$type );
 		}
 
 		$object_collection = Store::get_instance();

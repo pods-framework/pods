@@ -281,9 +281,7 @@ class PodsField_File extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
-
 		return false;
-
 	}
 
 	/**

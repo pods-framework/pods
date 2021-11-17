@@ -11,7 +11,7 @@ const Website = ( props ) => {
 
 	const {
 		website_max_length: maxLength,
-		website_placeholder: placeholder,
+		website_placeholder: placeholder = fieldConfig.placeholder,
 		website_html5: html5,
 	} = fieldConfig;
 

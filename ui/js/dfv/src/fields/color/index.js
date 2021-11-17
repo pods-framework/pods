@@ -14,29 +14,47 @@ const Color = ( {
 	value,
 	setHasBlurred,
 } ) => {
-	const { name } = fieldConfig;
+	const {
+		name,
+		color_select_label: selectLabel = __( 'Select Color', 'pods' ),
+		color_clear_label: clearLabel = __( 'Clear', 'pods' ),
+	} = fieldConfig;
 
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	return (
 		<div>
-			<input
-				name={ name }
-				type="hidden"
-				value={ value || '' }
-			/>
+			<div className="pods-color-buttons">
+				<input
+					name={ name }
+					type="hidden"
+					value={ value || '' }
+				/>
 
-			<button
-				onClick={ ( event ) => {
-					event.preventDefault();
-					setIsOpen( ( prevValue ) => ! prevValue );
-				} }
-				className="button pods-color-select-button"
-			>
-				<ColorIndicator colorValue={ value || '' } />
+				<button
+					onClick={ ( event ) => {
+						event.preventDefault();
+						setIsOpen( ( prevValue ) => ! prevValue );
+					} }
+					className="button pods-color-select-button"
+				>
+					<ColorIndicator colorValue={ value || '' } />
 
-				{ __( 'Select Color', 'pods' ) }
-			</button>
+					{ selectLabel }
+				</button>
+
+				{ value && (
+					<button
+						onClick={ ( event ) => {
+							event.preventDefault();
+							setValue( '' );
+						} }
+						className="button"
+					>
+						{ clearLabel }
+					</button>
+				) }
+			</div>
 
 			{ isOpen && (
 				<ColorPicker

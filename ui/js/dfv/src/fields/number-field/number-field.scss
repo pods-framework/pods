@@ -1,3 +1,10 @@
-.pods-number-field-slider-input {
-	width: 100%;
+.pods-field-option {
+	.pods-form-ui-field.pods-form-ui-field-type-number,
+	.pods-form-ui-field.pods-form-ui-field-type-number-slider {
+		max-width: 500px;
+	}
+
+	.pods-form-ui-field.pods-form-ui-field-type-number-slider {
+		width: 100%;
+	}
 }

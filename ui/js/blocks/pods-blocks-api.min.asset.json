@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"dependencies":["wp-api-fetch","wp-autop","wp-block-editor","wp-blocks","wp-components","wp-compose","wp-date","wp-element","wp-i18n","wp-keycodes","wp-server-side-render","wp-url"],"version":"13f682bfa2397e4554110b4cd5ca0343"}
+=======
+{"dependencies":["wp-api-fetch","wp-autop","wp-block-editor","wp-blocks","wp-components","wp-compose","wp-date","wp-element","wp-i18n","wp-keycodes","wp-server-side-render","wp-url"],"version":"fba43fa1601f1ff4506c6bc6f730afc9"}
+>>>>>>> main

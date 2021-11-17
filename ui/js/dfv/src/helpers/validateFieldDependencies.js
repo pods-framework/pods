@@ -3,6 +3,21 @@ import { toBool } from './booleans';
 const ALL_BOOLEAN_VALUES = [ '1', '0', 1, 0, true, false ];
 
 /**
+ * Ensure that the dependencies are set properly as an object.
+ *
+ * @param {Object|Array|string} dependency The dependency object or non-object.
+ *
+ * @return {Object} The dependency object or an empty object if not set up properly.
+ */
+export const formatDependency = ( dependency ) => {
+	if ( 'object' === typeof dependency ) {
+		return dependency;
+	}
+
+	return {};
+};
+
+/**
  * Helper function to validate that a field or tab's field dependencies
  * have been met.
  *
@@ -13,10 +28,12 @@ const ALL_BOOLEAN_VALUES = [ '1', '0', 1, 0, true, false ];
  *
  * @return {boolean} True if dependencies are met to show the item.
  */
-const validateFieldDependencies = ( options, rules, mode = 'depends-on' ) => {
+export const validateFieldDependencies = ( options, rules, mode = 'depends-on' ) => {
 	if ( ! [ 'wildcard-on', 'depends-on', 'depends-on-any', 'excludes-on' ].includes( mode ) ) {
 		throw 'Invalid dependency validation mode.';
 	}
+
+	rules = formatDependency( rules || {} );
 
 	const ruleKeys = Object.keys( rules || {} );
 
@@ -105,5 +122,3 @@ const validateFieldDependenciesForKey = ( options, mode, ruleKey, ruleValue ) =>
 
 	return false;
 };
-
-export default validateFieldDependencies;

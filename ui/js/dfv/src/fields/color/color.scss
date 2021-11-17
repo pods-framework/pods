@@ -1,5 +1,15 @@
-.button.pods-color-select-button {
+.pods-color-buttons {
 	align-items: center;
+	display: flex;
+	flex-flow: row nowrap;
+
+	.button {
+		margin-right: .5em;
+	}
+}
+
+.button.pods-color-select-button {
+	align-items: stretch;
 	display: flex;
 	flex-flow: row nowrap;
 	padding-left: 0;
@@ -7,7 +17,7 @@
 	> .component-color-indicator {
 		border: 0;
 		display: block;
-		height: 2.25em;
+		height: auto;
 		margin-left: 0;
 		margin-right: 0.5em;
 		width: 2.5em;
@@ -17,4 +27,5 @@
 .pods-color-picker {
 	padding: 0.5em;
 	border: 1px solid #ccd0d4;
+	max-width: 550px;
 }

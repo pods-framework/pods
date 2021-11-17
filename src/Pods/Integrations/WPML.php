@@ -23,6 +23,7 @@ class WPML extends Integration {
 			'pods_pods_field_get_metadata_object_id' => [ 'pods_pods_field_get_metadata_object_id', 10, 4 ],
 			'pods_component_i18n_admin_data' => [ 'pods_component_i18n_admin_data' ],
 			'pods_component_i18n_admin_ui_fields' => [ 'pods_component_i18n_admin_ui_fields', 10, 2 ],
+			'pods_var_post_id' => [ 'pods_var_post_id' ],
 		],
 	];
 
@@ -31,6 +32,17 @@ class WPML extends Integration {
 	 */
 	public static function is_active() {
 		return defined( 'ICL_SITEPRESS_VERSION' ) || ! empty( $GLOBALS['sitepress'] );
+	}
+
+	/**
+	 * @since 2.8.2
+	 *
+	 * @param int $id
+	 *
+	 * @return mixed|void
+	 */
+	public function pods_var_post_id( $id ) {
+		return apply_filters( 'wpml_object_id', $id, get_post_type( $id ), true );
 	}
 
 	/**
@@ -163,10 +175,14 @@ class WPML extends Integration {
 			return $info;
 		}
 
-		$object_name = pods_sanitize( ( empty( $object ) ? $name : $object ) );
-
 		// Get current language
 		$current_language = pods_i18n()->get_current_language();
+
+		if ( ! $current_language ) {
+			return $info;
+		}
+
+		$object_name = pods_sanitize( ( empty( $object ) ? $name : $object ) );
 
 		$db_prefix = $wpdb->get_blog_prefix();
 

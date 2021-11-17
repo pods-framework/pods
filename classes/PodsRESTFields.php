@@ -145,8 +145,10 @@ class PodsRESTFields {
 			$rest_args['pods_update'] = true;
 		}
 
-		$object_type = $this->pod->get_type();
+		// Get the object type for register_rest_field(), this is documented weird and we should just pass the object name.
+		$object_type = $this->pod->get_name();
 
+		// Use the "attachment" post type if the Pod name is "media".
 		if ( 'media' === $object_type ) {
 			$object_type = 'attachment';
 		}
@@ -193,7 +195,10 @@ class PodsRESTFields {
 			return false;
 		}
 
-		return filter_var( $field->get_arg( $mode, false ), FILTER_VALIDATE_BOOLEAN );
+		// Field arguments are prefixed with `rest`;
+		$mode_arg = 'rest_' . $mode;
+
+		return filter_var( $field->get_arg( $mode_arg, false ), FILTER_VALIDATE_BOOLEAN );
 	}
 
 }

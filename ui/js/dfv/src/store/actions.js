@@ -185,7 +185,7 @@ export const savePod = ( data, podId ) => {
 			'name',
 			'object_type',
 			'storage',
-			'storage_type',
+			'object_storage_type',
 			'type',
 			'_locale',
 			'groups',

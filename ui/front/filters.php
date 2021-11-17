@@ -4,9 +4,9 @@
 	<?php
 	foreach ( $fields as $name => $field ) {
 		if ( in_array( $field['type'], array( 'pick', 'taxonomy' ), true ) && 'pick-custom' !== $field['pick_object'] && ! empty( $field['pick_object'] ) ) {
-			$field['options']['pick_format_type']   = 'single';
-			$field['options']['pick_format_single'] = 'dropdown';
-			$field['options']['pick_select_text']   = '-- ' . $field['label'] . ' --';
+			$field['pick_format_type']   = 'single';
+			$field['pick_format_single'] = 'dropdown';
+			$field['pick_select_text']   = '-- ' . $field['label'] . ' --';
 
 			$filter = pods_var_raw( 'filter_' . $name, 'get', '' );
 

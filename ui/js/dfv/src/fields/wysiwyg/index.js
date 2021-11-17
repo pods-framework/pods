@@ -12,7 +12,7 @@ import './wysiwyg.scss';
 
 const QUILL_TOOLBAR_OPTIONS = [
 	[ 'bold', 'italic', 'underline', 'strike' ],
-	[ 'blockquote', 'code-block' ],
+	[ 'blockquote', 'code-block', 'link' ],
 
 	[ { header: 1 }, { header: 2 } ],
 	[ { list: 'ordered' }, { list: 'bullet' } ],
@@ -41,6 +41,7 @@ const Wysiwyg = ( props ) => {
 		wysiwyg_editor: editor = 'tinymce',
 		wysiwyg_editor_height: editorHeight = 400,
 		wysiwyg_media_buttons: mediaButtons,
+		wysiwyg_default_editor: defaultEditor = 'tinymce',
 	} = fieldConfig;
 
 	if ( 'quill' === editor || 'cleditor' === editor ) {
@@ -73,6 +74,7 @@ const Wysiwyg = ( props ) => {
 			setValue={ setValue }
 			editorHeight={ parseInt( editorHeight, 10 ) }
 			mediaButtons={ toBool( mediaButtons ) }
+			defaultEditor={ defaultEditor }
 			onBlur={ () => setHasBlurred() }
 		/>
 	);

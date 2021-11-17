@@ -123,7 +123,7 @@ function pods_sanitize_like( $input ) {
  * @see   wp_slash
  */
 function pods_slash( $input, $params = array() ) {
-	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
+	if ( '' === $input || is_int( $input ) || is_float( $input ) || is_bool( $input ) || empty( $input ) ) {
 		return $input;
 	}
 
@@ -814,16 +814,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				} else {
 					$post_id = $var;
 				}
-				if ( did_action( 'wpml_loaded' ) ) {
-					/* Only call filter if WPML is installed */
-					$post_type = get_post_type( $post_id );
-					$post_id   = apply_filters( 'wpml_object_id', $post_id, $post_type, true );
-				} elseif ( function_exists( 'pll_get_post' ) ) {
-					$polylang_id = pll_get_post( $post_id );
-					if ( ! empty( $polylang_id ) ) {
-						$post_id = $polylang_id;
-					}
-				}
+
 				// Add other translation plugin specific code here
 				/**
 				 * Filter to override post_id
@@ -2373,3 +2364,20 @@ function pods_clean_linebreaks( $content ) {
 }
 
 add_filter( 'pods_template_content', 'pods_clean_linebreaks' );
+
+/**
+ * Convert the value from a boolean to an integer.
+ *
+ * @since 2.8.2
+ *
+ * @param bool|mixed $value The value to convert from boolean to integer.
+ *
+ * @return int|mixed The value as an integer if it was boolean, or the value as it was passed in.
+ */
+function pods_bool_to_int( $value ) {
+	if ( ! is_bool( $value ) ) {
+		return $value;
+	}
+
+	return (int) $value;
+}

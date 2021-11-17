@@ -12,6 +12,8 @@ use stdClass;
  */
 class DataTest extends Pods_UnitTestCase {
 
+	public static $db_reset_teardown = false;
+
 	/**
 	 * @covers ::pods_sanitize
 	 */
@@ -310,7 +312,22 @@ class DataTest extends Pods_UnitTestCase {
 	}
 
 	public function test_pods_clean_name() {
-		$this->markTestSkipped( 'not yet implemented' );
+		$this->assertEquals( '_test_field_name_', pods_clean_name( ' _Test field! name_ ' ) );
+		$this->assertEquals( '_test_field_name_', pods_clean_name( ' _Test field!  name_ ' ) );
+		$this->assertEquals( '_test_field__name_', pods_clean_name( ' _Test field! __name_ ' ) );
+		$this->assertEquals( '_test_field__name_', pods_clean_name( ' _Test_field!__name_ ' ) );
+		$this->assertEquals( 'test_field-name', pods_clean_name( ' Test field-name ' ) );
+		$this->assertEquals( 'test_field-name', pods_clean_name( ' Test field--name ' ) );
+
+		$this->assertEquals( 'Test_field_name', pods_clean_name( ' Test field! name ', false ) );
+		$this->assertEquals( 'Test_field_name', pods_clean_name( ' Test field!  name ', false ) );
+		$this->assertEquals( 'Test_field__name', pods_clean_name( ' Test field! __name ', false ) );
+		$this->assertEquals( 'Test_field__name', pods_clean_name( ' Test_field!__name',  false ) );
+
+		$this->assertEquals( 'test_field_name', pods_clean_name( ' _Test field! name_ ', true, true ) );
+		$this->assertEquals( 'test_field_name', pods_clean_name( ' _Test field!  name_ ', true, true ) );
+		$this->assertEquals( 'test_field__name', pods_clean_name( ' _Test field! __name_ ', true, true ) );
+		$this->assertEquals( 'test_field__name', pods_clean_name( ' _Test_field!__name_ ', true, true ) );
 	}
 
 	/**
@@ -392,6 +409,41 @@ class DataTest extends Pods_UnitTestCase {
 
 		// Should be `ID` but added lowercase for backwards compatibility.
 		$this->assertEquals( get_current_user_id(), pods_evaluate_tag( '{@user.id}' ) );
+	}
+
+	/**
+	 * @covers ::pods_evaluate_tag_sql
+	 */
+	public function test_pods_evaluate_tag_sql() {
+
+		$params = array(
+			'sanitize' => true,
+			'fallback' => '""',
+		);
+
+		// EQUALS
+
+		$sql     = "value = {@get.test_sql_tag}";
+		$compare = 'value = ""';
+
+		$this->assertEquals( pods_evaluate_tags_sql( $sql, $params ), $compare );
+
+		$_GET['test_sql_tag'] = '5797';
+		$compare              = 'value = 5797';
+
+		$this->assertEquals( pods_evaluate_tags_sql( $sql, $params ), $compare );
+
+		// LIKE
+
+		$sql     = "value LIKE '{@get.test_sql_tag_like}%'";
+		$compare = "value LIKE '%'";
+
+		$this->assertEquals( pods_evaluate_tags_sql( $sql, $params ), $compare );
+
+		$_GET['test_sql_tag_like'] = '5797';
+		$compare                   = "value LIKE '5797%'";
+
+		$this->assertEquals( pods_evaluate_tags_sql( $sql, $params ), $compare );
 	}
 
 	public function test_pods_evaluate_tag_sanitized() {
@@ -512,6 +564,31 @@ class DataTest extends Pods_UnitTestCase {
 		unset( $result->obj4 );
 
 		$this->assertEquals( $result, pods_list_filter( $obj, $args, 'NOT' ) );
+	}
+
+	public function test_pods_clean_linebreaks() {
+		$input = "
+			My text here.
+\t
+			My second text here.
+\t
+
+			My extended text here.
+
+\t
+
+		";
+
+		$expected = "
+			My text here.
+
+			My second text here.
+
+			My extended text here.
+
+		";
+
+		$this->assertEquals( $expected, pods_clean_linebreaks( $input ) );
 	}
 
 }

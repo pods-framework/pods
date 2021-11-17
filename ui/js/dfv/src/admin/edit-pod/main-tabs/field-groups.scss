@@ -7,34 +7,10 @@
 	cursor: ns-resize;
 }
 
-.pods-field-group-wrapper {
-	margin-bottom: 10px;
-	border: 1px solid $color--light-grey;
-	background-color: #fff;
-	position: relative;
-	transition: border 200ms ease-in-out;
-
-	&.pods-unsaved-data  {
-		border-left-color: #95BF3B;
-		border-left-width: 5px;
-	}
-
-	&>.pods-field_wrapper {
-		background-color: #f3f3f3;
-
-		&:hover {
-			background-color: #e4e4e4;
-		}
-	}
-
-	&:last-child {
-		border-bottom: 0;
-	}
-}
-
 .pods-field-group_title {
-	padding: 0.5em;
+	cursor: pointer;
 	display: flex;
+	padding: 0.5em;
 	justify-content: space-between;
 	color: #333;
 	align-items: center;

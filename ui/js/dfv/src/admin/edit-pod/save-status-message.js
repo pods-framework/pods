@@ -4,10 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { withSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
-import {
-	STORE_KEY_EDIT_POD,
-	SAVE_STATUSES,
-} from 'dfv/src/admin/edit-pod/store/constants';
+import { SAVE_STATUSES } from 'dfv/src/store/constants';
 
 export const SaveStatusMessage = ( { saveStatus, saveMessage } ) => {
 	switch ( saveStatus ) {
@@ -42,10 +39,12 @@ export const SaveStatusMessage = ( { saveStatus, saveMessage } ) => {
 };
 
 export default compose( [
-	withSelect( ( select ) => {
+	withSelect( ( select, ownProps ) => {
+		const { storeKey } = ownProps;
+
 		return {
-			saveStatus: select( STORE_KEY_EDIT_POD ).getSaveStatus(),
-			saveMessage: select( STORE_KEY_EDIT_POD ).getSaveMessage(),
+			saveStatus: select( storeKey ).getSaveStatus(),
+			saveMessage: select( storeKey ).getSaveMessage(),
 		};
 	} ),
 ] )( SaveStatusMessage );

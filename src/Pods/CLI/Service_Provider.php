@@ -11,7 +11,7 @@ use Pods\CLI\Commands\Pod;
  *
  * Add CLI commands and objects.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Service_Provider extends \tad_DI52_ServiceProvider {
 
@@ -23,7 +23,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Registers the classes and functionality needed for CLI.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function register() {
 		$this->container->singleton( 'pods.cli.commands.pods.pod', Pod::class, [ 'hook' ] );
@@ -36,7 +36,7 @@ class Service_Provider extends \tad_DI52_ServiceProvider {
 	/**
 	 * Hooks all the methods and actions the class needs.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	protected function hooks() {
 		tribe( 'pods.cli.commands.pods.pod' );

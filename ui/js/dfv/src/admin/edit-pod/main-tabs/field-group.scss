@@ -1,5 +1,32 @@
 @import '../edit-pod-variables';
 
+.pods-field-group-wrapper {
+	margin-bottom: 10px;
+	border: 1px solid $color--light-grey;
+	background-color: #fff;
+	position: relative;
+	transition: border 0.2s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.pods-field-group-wrapper--unsaved  {
+	border-left: 5px #95BF3B;
+}
+
+.pods-field-group-wrapper--deleting  {
+	opacity: 0.5;
+	user-select: none;
+}
+
+.pods-field-group-wrapper--errored  {
+	border-left: 5px $color--red solid;
+}
+
+.pods-field-group_name__error {
+	color: $color--red;
+	display: inline-block;
+	padding-left: 0.5em;
+}
+
 .pods-field-group_name__id {
 	font-size: 13px;
 	color: #999;

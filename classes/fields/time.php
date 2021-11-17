@@ -77,6 +77,7 @@ class PodsField_Time extends PodsField_DateTime {
 					'24'     => __( '24 hour', 'pods' ),
 					'custom' => __( 'Custom format', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency'                   => true,
 			),
 			static::$type . '_format_custom'    => array(
@@ -117,6 +118,7 @@ class PodsField_Time extends PodsField_DateTime {
 					'hh_mm'      => date_i18n( 'h:i' ),
 					'hh_mm_ss'   => date_i18n( 'h:i:s' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_format_24'        => array(
@@ -128,14 +130,15 @@ class PodsField_Time extends PodsField_DateTime {
 					'hh_mm'    => date_i18n( 'H:i' ),
 					'hh_mm_ss' => date_i18n( 'H:i:s' ),
 				),
+				'pick_show_select_text' => 0,
 			),
 			static::$type . '_allow_empty'      => array(
-				'label'   => __( 'Allow empty value?', 'pods' ),
+				'label'   => __( 'Allow empty value', 'pods' ),
 				'default' => 1,
 				'type'    => 'boolean',
 			),
 			static::$type . '_html5'            => array(
-				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
+				'label'   => __( 'Enable HTML5 Input Field', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
 				'type'    => 'boolean',
 			),

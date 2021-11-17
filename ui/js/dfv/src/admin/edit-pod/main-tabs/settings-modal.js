@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import * as PropTypes from 'prop-types';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
-import { Modal, Button } from '@wordpress/components';
+import { Modal, Button, Spinner } from '@wordpress/components';
 
+/**
+ * Internal dependencies
+ */
 import DynamicTabContent from './dynamic-tab-content';
 import sanitizeSlug from 'dfv/src/helpers/sanitizeSlug';
-import validateFieldDependencies from 'dfv/src/helpers/validateFieldDependencies';
+import { validateFieldDependencies, formatDependency } from 'dfv/src/helpers/validateFieldDependencies';
+import { toBool } from 'dfv/src/helpers/booleans';
 
 import './settings-modal.scss';
 
@@ -24,18 +31,38 @@ const checkFormValidity = ( sections, options ) => {
 	// Go through each section, check that each one has all valid fields.
 	return sections.every(
 		( section ) => {
-			const {
+			let {
 				fields,
 				'depends-on': dependsOn,
+				'depends-on-any': dependsOnAny,
+				'excludes-on': excludesOn,
+				'wildcard-on': wildcardOn,
 			} = section;
 
+			dependsOn = formatDependency( dependsOn );
+			dependsOnAny = formatDependency( dependsOnAny );
+			excludesOn = formatDependency( excludesOn );
+			wildcardOn = formatDependency( wildcardOn );
+
 			// Skip the section if it doesn't have any fields.
-			if ( ! fields ) {
+			if ( ! fields || 0 === fields.length ) {
 				return true;
 			}
 
-			// Skip the section if it isn't being shown because it's deps aren't met.
-			if ( dependsOn && ! validateFieldDependencies( options, dependsOn ) ) {
+			// Skip the section if it isn't being shown because it's dependencies aren't met.
+			if ( Object.keys( dependsOn || {} ).length && ! validateFieldDependencies( options, dependsOn ) ) {
+				return true;
+			}
+
+			if ( Object.keys( dependsOnAny || {} ).length && ! validateFieldDependencies( options, dependsOnAny, 'depends-on-any' ) ) {
+				return true;
+			}
+
+			if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( options, excludesOn, 'excludes-on' ) ) {
+				return true;
+			}
+
+			if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( options, wildcardOn, 'wildcard-on' ) ) {
 				return true;
 			}
 
@@ -45,17 +72,32 @@ const checkFormValidity = ( sections, options ) => {
 					const {
 						required: fieldRequired,
 						'depends-on': fieldDependsOn,
+						'depends-on-any': fieldDependsOnAny,
+						'excludes-on': fieldExcludesOn,
+						'wildcard-on': fieldWildcardOn,
 						type: fieldType,
 						name: fieldName,
 					} = field;
 
 					// Fields that aren't required are automatically valid.
-					if ( undefined === typeof fieldRequired || ! fieldRequired ) {
+					if ( undefined === typeof fieldRequired || ! toBool( fieldRequired ) ) {
 						return true;
 					}
 
-					// Skip fields won't be shown because their dependency isn't met.
-					if ( fieldDependsOn && ! validateFieldDependencies( options, fieldDependsOn ) ) {
+					// Skip the fields if it isn't being shown because it's dependencies aren't met.
+					if ( Object.keys( fieldDependsOn || {} ).length && ! validateFieldDependencies( options, fieldDependsOn ) ) {
+						return true;
+					}
+
+					if ( Object.keys( fieldDependsOnAny || {} ).length && ! validateFieldDependencies( options, fieldDependsOn, 'depends-on-any' ) ) {
+						return true;
+					}
+
+					if ( Object.keys( fieldExcludesOn || {} ).length && ! validateFieldDependencies( options, fieldExcludesOn, 'excludes-on' ) ) {
+						return true;
+					}
+
+					if ( Object.keys( fieldWildcardOn || {} ).length && ! validateFieldDependencies( options, fieldWildcardOn, 'wildcard-on' ) ) {
 						return true;
 					}
 
@@ -84,10 +126,12 @@ const checkFormValidity = ( sections, options ) => {
 };
 
 const SettingsModal = ( {
+	storeKey,
 	title,
 	optionsPod: {
 		groups: optionsSections = [],
 	} = {},
+	isSaving,
 	hasSaveError,
 	saveButtonText,
 	errorMessage,
@@ -100,6 +144,39 @@ const SettingsModal = ( {
 	const [ changedOptions, setChangedOptions ] = useState( selectedOptions );
 
 	const [ isValid, setIsValid ] = useState( false );
+
+	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState( false );
+
+	const tabContentRef = useRef( null );
+
+	const changeTab = ( tabName ) => {
+		setSelectedTab( tabName );
+
+		if ( tabContentRef.current ) {
+			tabContentRef.current.scrollTo( 0, 0 );
+		}
+	};
+
+	const handleCancel = ( event ) => {
+		if ( ! hasUnsavedChanges ) {
+			cancelEditing( event );
+
+			return;
+		}
+
+		// eslint-disable-next-line no-alert
+		const result = confirm(
+			__( 'There are unsaved changes that will be lost. Are you sure you want to discard those changes and close?', 'pods' ),
+		);
+
+		if ( result ) {
+			cancelEditing( event );
+		}
+	};
+
+	const handleSave = ( event ) => {
+		save( changedOptions )( event );
+	};
 
 	// Wrapper around setChangedOptions(), which also sets the name/slug
 	// based on the Label, if the slug hasn't previously been set.
@@ -117,7 +194,10 @@ const SettingsModal = ( {
 			...previousChangedOptions,
 			...newOptions,
 		} ) );
+
+		setHasUnsavedChanges( true );
 	};
+	const setOptionValueCallback = useCallback( setOptionValue, [] );
 
 	// When the modal first opens, set any options to their defaults, unless
 	// they're already set. This will need to happen again when any option changes,
@@ -181,13 +261,25 @@ const SettingsModal = ( {
 		setIsValid( validity );
 	}, [ changedOptions, setIsValid ] );
 
+	const allPodFields = useMemo(
+		() => optionsSections.reduce(
+			( accumulator, group ) => ( [
+				...accumulator,
+				...( group?.fields || [] ),
+			] ),
+			[]
+		),
+		[ optionsSections ],
+	);
+
 	return (
 		<Modal
 			className="pods-settings-modal"
 			title={ title }
 			isDismissible={ true }
-			onRequestClose={ cancelEditing }
+			onRequestClose={ handleCancel }
 			focusOnMount={ true }
+			shouldCloseOnClickOutside={ false }
 		>
 			{ hasSaveError && (
 				<div className="pod-field-group_settings-error-message">
@@ -205,6 +297,8 @@ const SettingsModal = ( {
 						name: sectionName,
 						label: sectionLabel,
 						'depends-on': dependsOn = {},
+						'excludes-on': excludesOn = {},
+						'wildcard-on': wildcardOn = {},
 						fields,
 					} ) => {
 						// Hide any sections that are missing fields.
@@ -213,7 +307,17 @@ const SettingsModal = ( {
 						}
 
 						// Check that dependencies are met.
-						if ( ! validateFieldDependencies( changedOptions, dependsOn ) ) {
+						if ( Object.keys( dependsOn || {} ).length && ! validateFieldDependencies( changedOptions, dependsOn ) ) {
+							return null;
+						}
+
+						// Check that exclusions are met.
+						if ( Object.keys( excludesOn || {} ).length && ! validateFieldDependencies( changedOptions, excludesOn, 'excludes-on' ) ) {
+							return null;
+						}
+
+						// Check that wildcard dependencies are met.
+						if ( Object.keys( wildcardOn || {} ).length && ! validateFieldDependencies( changedOptions, wildcardOn, 'wildcard-on' ) ) {
 							return null;
 						}
 
@@ -221,9 +325,7 @@ const SettingsModal = ( {
 
 						const classes = classNames(
 							'pods-settings-modal__tab-item',
-							{
-								'pods-settings-modal__tab-item--active': isActive,
-							}
+							isActive && 'pods-settings-modal__tab-item--active',
 						);
 
 						return (
@@ -233,8 +335,8 @@ const SettingsModal = ( {
 								role="button"
 								tabIndex={ 0 }
 								key={ sectionName }
-								onClick={ () => setSelectedTab( sectionName ) }
-								onKeyPress={ ( event ) => event.charCode === ENTER_KEY && setSelectedTab( sectionName ) }
+								onClick={ () => changeTab( sectionName ) }
+								onKeyPress={ ( event ) => event.charCode === ENTER_KEY && changeTab( sectionName ) }
 							>
 								{ sectionLabel }
 							</div>
@@ -247,29 +349,35 @@ const SettingsModal = ( {
 					role="tabpanel"
 					aria-labelledby="main"
 					id="main-tab"
+					ref={ tabContentRef }
 				>
 					{
 						<DynamicTabContent
-							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab ).fields }
-							optionValues={ changedOptions }
-							setOptionValue={ setOptionValue }
+							storeKey={ storeKey }
+							tabOptions={ optionsSections.find( ( section ) => section.name === selectedTab )?.fields }
+							allPodFields={ allPodFields }
+							allPodValues={ changedOptions }
+							setOptionValue={ setOptionValueCallback }
 						/>
 					}
 				</div>
 			</div>
 
 			<div className="pods-setting-modal__button-group">
+				{ isSaving && <Spinner /> }
+
 				<Button
 					isSecondary
-					onClick={ cancelEditing }
+					onClick={ handleCancel }
+					disabled={ isSaving }
 				>
 					{ __( 'Cancel', 'pods' ) }
 				</Button>
 
 				<Button
 					isPrimary
-					onClick={ save( changedOptions ) }
-					disabled={ ! isValid }
+					onClick={ handleSave }
+					disabled={ ! isValid || isSaving }
 				>
 					{ saveButtonText }
 				</Button>
@@ -279,9 +387,11 @@ const SettingsModal = ( {
 };
 
 SettingsModal.propTypes = {
+	storeKey: PropTypes.string.isRequired,
 	optionsPod: PropTypes.object.isRequired,
 	selectedOptions: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
+	isSaving: PropTypes.bool.isRequired,
 	hasSaveError: PropTypes.bool.isRequired,
 	errorMessage: PropTypes.string.isRequired,
 	saveButtonText: PropTypes.string.isRequired,

@@ -40,13 +40,11 @@ vendor/*
 !/vendor/mustangostang/README.md
 !/vendor/mustangostang/Spyc.php
 npm-debug.log
-/package-lock.json
 
 # Source maps should just be built locally
 ui/js/pods-ui-ready.min.js.map
 
 # PHPCS
-/phpcs.xml
 phpcs-report-*.txt
 
 

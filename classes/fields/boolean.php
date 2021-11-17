@@ -45,6 +45,7 @@ class PodsField_Boolean extends PodsField {
 					'radio'    => __( 'Radio Buttons', 'pods' ),
 					'dropdown' => __( 'Drop Down', 'pods' ),
 				),
+				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
 			static::$type . '_yes_label'   => array(
@@ -113,7 +114,7 @@ class PodsField_Boolean extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options         = (array) $options;
+		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -132,7 +133,7 @@ class PodsField_Boolean extends PodsField {
 			$field_type = 'select';
 		}
 
-		if ( isset( $options['name'] ) && false === PodsForm::permission( static::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options['name'] ) && ! pods_permission( $options ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 			} else {
@@ -148,7 +149,18 @@ class PodsField_Boolean extends PodsField {
 			$value = 0;
 		}
 
-		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( ! empty( $options['disable_dfv'] ) ) {
+			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
+
+		wp_enqueue_script( 'pods-dfv' );
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
 	}
 
 	/**
@@ -174,14 +186,20 @@ class PodsField_Boolean extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
 		if ( ! $this->is_required( $options ) ) {
 			// Any value can be parsed to boolean.
-			return true;
+			return $validate;
 		}
 
 		$errors = array();
-		$check  = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
+
+		if ( is_array( $validate ) ) {
+			$errors = $validate;
+		}
+
+		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
 		$yes_required = ( 'checkbox' === pods_v( static::$type . '_format_type', $options ) );
 
@@ -193,7 +211,7 @@ class PodsField_Boolean extends PodsField {
 			return $errors;
 		}
 
-		return true;
+		return $validate;
 	}
 
 	/**
@@ -235,5 +253,39 @@ class PodsField_Boolean extends PodsField {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function build_dfv_field_item_data( $args ) {
+		if ( empty( $args->options['data'] ) || ! is_array( $args->options['data'] ) ) {
+			return [];
+		}
+
+		$boolean_data = $args->options['data'];
+
+		$value = 0;
+
+		// If we have values, let's cast them.
+		if ( isset( $args->value ) ) {
+			$value = (int) $args->value;
+		}
+
+		$data = [];
+
+		foreach ( $boolean_data as $key => $label ) {
+			$data[] = [
+				'id'        => esc_html( $key ),
+				'icon'      => '',
+				'name'      => wp_strip_all_tags( html_entity_decode( $label ) ),
+				'edit_link' => '',
+				'link'      => '',
+				'download'  => '',
+				'selected'  => (int) $key === $value,
+			];
+		}
+
+		return $data;
 	}
 }

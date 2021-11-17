@@ -37,35 +37,34 @@
     "issues": "https://github.com/pods-framework/pods/issues",
     "forum": "https://wordpress.org/support/plugin/pods",
     "source": "https://github.com/pods-framework/pods",
-    "docs": "https://pods.io/docs/"
+    "docs": "https://docs.pods.io/"
   },
   "repositories": [
     {
-      "name": "moderntribe/tribalscents",
+      "name": "the-events-calendar/tribalscents",
       "type": "github",
-      "url": "https://github.com/moderntribe/tribalscents",
+      "url": "https://github.com/the-events-calendar/tribalscents",
       "no-api": true
     }
   ],
   "require": {
-    "composer/installers": "1.8.*",
-    "php": ">=5.6",
-    "mustangostang/spyc": "^0.6.2",
-    "freemius/wordpress-sdk": "2.3.2"
+    "composer/installers": "1.12.*",
+    "php": ">=5.6"
   },
   "require-dev": {
     "automattic/vipwpcs": "^2.0",
     "bvanhoekelen/performance": "^2.5.1",
-    "codeception/codeception": "^2.5.6",
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
+    "codeception/codeception": "2.5.6",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
     "fzaninotto/faker": "^1.8",
     "lucatume/function-mocker": "^1.3.8",
     "lucatume/function-mocker-le": "^1.0.1",
     "lucatume/wp-browser": "2.2.15",
     "lucatume/wp-snaphot-assertions": "^1.0",
-    "moderntribe/tribalscents": "dev-master",
-    "phpunit/phpunit": "^6.5.14",
+    "the-events-calendar/tribalscents": "dev-master",
+    "phpunit/phpunit": "6.5.14",
     "spatie/phpunit-snapshot-assertions": "^1.4.2",
+    "wp-cli/wp-cli": "2.*",
     "wp-coding-standards/wpcs": "^2.1"
   },
   "minimum-stability": "stable",

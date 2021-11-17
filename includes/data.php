@@ -123,7 +123,7 @@ function pods_sanitize_like( $input ) {
  * @see   wp_slash
  */
 function pods_slash( $input, $params = array() ) {
-	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
+	if ( '' === $input || is_int( $input ) || is_float( $input ) || is_bool( $input ) || empty( $input ) ) {
 		return $input;
 	}
 
@@ -404,7 +404,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( 'first' === $var ) {
 					$var = 0;
 				} elseif ( 'last' === $var ) {
-					$var = - 1;
+					$var = -1;
 				}
 
 				if ( is_numeric( $var ) ) {
@@ -426,7 +426,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( 'first' === $var ) {
 					$var = 0;
 				} elseif ( 'last' === $var ) {
-					$var = - 1;
+					$var = -1;
 				}
 
 				if ( is_numeric( $var ) ) {
@@ -447,9 +447,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$blog_id = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$path = $var[1];
-					} elseif ( isset( $var[2] ) ) {
+					}
+					if ( isset( $var[2] ) ) {
 						$scheme = $var[2];
 					}
 				} else {
@@ -466,9 +468,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$blog_id = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$path = $var[1];
-					} elseif ( isset( $var[2] ) ) {
+					}
+					if ( isset( $var[2] ) ) {
 						$scheme = $var[2];
 					}
 				} else {
@@ -485,9 +489,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$blog_id = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$path = $var[1];
-					} elseif ( isset( $var[2] ) ) {
+					}
+					if ( isset( $var[2] ) ) {
 						$scheme = $var[2];
 					}
 				} else {
@@ -509,7 +515,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$path = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$plugin = $var[1];
 					}
 				} else {
@@ -525,7 +532,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$path = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$scheme = $var[1];
 					}
 				} else {
@@ -541,7 +549,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$path = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$scheme = $var[1];
 					}
 				} else {
@@ -557,7 +566,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$path = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$scheme = $var[1];
 					}
 				} else {
@@ -573,7 +583,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_array( $var ) ) {
 					if ( isset( $var[0] ) ) {
 						$path = $var[0];
-					} elseif ( isset( $var[1] ) ) {
+					}
+					if ( isset( $var[1] ) ) {
 						$scheme = $var[1];
 					}
 				} else {
@@ -803,16 +814,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				} else {
 					$post_id = $var;
 				}
-				if ( did_action( 'wpml_loaded' ) ) {
-					/* Only call filter if WPML is installed */
-					$post_type = get_post_type( $post_id );
-					$post_id   = apply_filters( 'wpml_object_id', $post_id, $post_type, true );
-				} elseif ( function_exists( 'pll_get_post' ) ) {
-					$polylang_id = pll_get_post( $post_id );
-					if ( ! empty( $polylang_id ) ) {
-						$post_id = $polylang_id;
-					}
-				}
+
 				// Add other translation plugin specific code here
 				/**
 				 * Filter to override post_id
@@ -1115,6 +1117,20 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 	$allowed  = (array) $allowed;
 	$excluded = (array) $excluded;
 
+	// Support for globally defined arguments.
+	global $pods_query_args;
+
+	if ( empty( $pods_query_args ) ) {
+		$pods_query_args = [
+			'allowed'  => array(),
+			'excluded' => array(),
+		];
+	}
+
+	// Merge any global args that we need to.
+	$allowed  = array_unique( array_merge( $pods_query_args['allowed'], $allowed ) );
+	$excluded = array_unique( array_merge( $pods_query_args['excluded'], $excluded ) );
+
 	if ( ! isset( $_GET ) ) {
 		$query_args = array();
 	} else {
@@ -1336,9 +1352,9 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
  */
 function pods_clean_name( $orig, $lower = true, $trim_underscores = false ) {
 	$str = trim( $orig );
-	$str = preg_replace( '/(\s)/', '_', $str );
-	$str = preg_replace( '/([^0-9a-zA-Z\-_])/', '', $str );
-	$str = preg_replace( '/(_){2,}/', '_', $str );
+	$str = preg_replace( '/([^0-9a-zA-Z\-_\s])/', '', $str );
+	$str = preg_replace( '/(\s_)/', '_', $str );
+	$str = preg_replace( '/(\s+)/', '_', $str );
 	$str = preg_replace( '/(-){2,}/', '-', $str );
 
 	if ( $lower ) {
@@ -1353,12 +1369,12 @@ function pods_clean_name( $orig, $lower = true, $trim_underscores = false ) {
 }
 
 /**
- * Return a lowercase alphanumeric name (with underscores) for safe Javascript variable names
+ * Return a lowercase alphanumeric name (with underscores) for safe JavaScript variable names.
  *
- * @param string  $orig  Input string to clean
- * @param boolean $lower Force lowercase
+ * @param string  $orig  Input string to clean.
+ * @param boolean $lower Whether to force lowercase.
  *
- * @return string Sanitized name
+ * @return string The sanitized name.
  *
  * @since 2.5.3
  */
@@ -1367,6 +1383,26 @@ function pods_js_name( $orig, $lower = true ) {
 	$str = str_replace( '-', '_', $str );
 
 	return $str;
+}
+
+/**
+ * Return a camelCase alphanumeric name for safe JavaScript variable names.
+ *
+ * @param string $orig Input string to clean.
+ *
+ * @return string The sanitized name as camelCase.
+ *
+ * @since 2.8.0
+ */
+function pods_js_camelcase_name( $orig ) {
+	// Clean the name for JS.
+	$str = pods_js_name( $orig, false );
+
+	// Replace _ with spaces and then Upper Case the words.
+	$str = ucwords( str_replace( '_', ' ', $str ) );
+
+	// Remove the spaces and lower case the firstWord.
+	return lcfirst( str_replace( ' ', '', $str ) );
 }
 
 /**
@@ -1473,22 +1509,104 @@ function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
 }
 
 /**
- * Evaluate tags like magic tags but through pods_v.
+ * Evaluate tags like magic tags but through pods_v and sanitize for SQL with an empty double quote if needed.
  *
- * @since 2.1
+ * @since 2.7.23
  *
- * @param string|array|object $tags     String to be evaluated.
- * @param bool                $sanitize Whether to sanitize.
- * @param null|mixed          $fallback The fallback value to use if not set, should already be sanitized.
+ * @param string|array|object $tags String to be evaluated.
+ * @param array               $args {
+ *     Function arguments.
+ *     @type bool       $sanitize        Whether to sanitize.
+ *     @type null|mixed $fallback        The fallback value to use if not set, should already be sanitized.
+ *     @type Pods       $pod             Pod to parse the tags through.
+ *     @type bool       $use_current_pod Whether to auto-detect the current Pod.
+ * }
  *
- * @return string
+ * @return string Evaluated string.
  *
  * @see pods_evaluate_tag
  */
-function pods_evaluate_tags( $tags, $sanitize = false, $fallback = null ) {
+function pods_evaluate_tags_sql( $tags, $args = array() ) {
+	// The temporary placeholder we will use.
+	$placeholder = '__PODS__TMP__EMPTY_VALUE__';
+
+	// Store and overwrite fallback argument.
+	$fallback = '""';
+	if ( isset( $args['fallback'] ) ) {
+		$fallback         = $args['fallback'];
+		$args['fallback'] = $placeholder;
+	}
+
+	$defaults = array(
+		'sanitize' => true,
+		'fallback' => $placeholder,
+	);
+
+	// Set default arguments to use.
+	$args = array_merge( $defaults, $args );
+
+	// Evaluate the magic tags.
+	$evaluated = pods_evaluate_tags( $tags, $args );
+
+	$find = array(
+		'= ' . $placeholder,
+		'=' . $placeholder,
+		$placeholder,
+	);
+
+	$replace = array(
+		'= ' . $fallback,
+		'=' . $fallback,
+		'',
+	);
+
+	// Finish sanitizing the string so it is SQL-safe.
+	$sanitized = str_replace( $find, $replace, $evaluated );
+
+	/**
+	 * Allow filtering the result of how we evaluate and sanitize the SQL.
+	 *
+	 * @since 2.7.23
+	 *
+	 * @param string              $sanitized The evaluated and sanitized string.
+	 * @param string              $evaluated The evaluated string.
+	 * @param string|array|object $tags      Original string to be evaluated.
+	 * @param array               $args      Additional function arguments.
+	 */
+	return apply_filters( 'pods_evaluate_tags_sql', $sanitized, $evaluated, $tags, $args );
+}
+
+/**
+ * Evaluate tags like magic tags but through pods_v.
+ *
+ * @param string|array|object $tags String to be evaluated.
+ * @param array               $args {
+ *     Function arguments.
+ *     @type bool       $sanitize        Whether to sanitize.
+ *     @type null|mixed $fallback        The fallback value to use if not set, should already be sanitized.
+ *     @type Pods       $pod             Pod to parse the tags through.
+ *     @type bool       $use_current_pod Whether to auto-detect the current Pod.
+ * }
+ *
+ * @return string
+ *
+ * @since 2.1
+ *
+ * @see pods_evaluate_tag
+ */
+function pods_evaluate_tags( $tags, $args = array() ) {
+
+	// Back compat.
+	if ( ! is_array( $args ) ) {
+		$prev_args = array( 'tags', 'sanitize', 'fallback' );
+		$args      = func_get_args();
+		$args      = array_combine( array_slice( $prev_args, 0, count( $args ) ), $args );
+		unset( $args['tags'] );
+	}
+
 	if ( is_array( $tags ) ) {
 		foreach ( $tags as $k => $tag ) {
-			$tags[ $k ] = pods_evaluate_tags( $tag, $sanitize );
+			$tags[ $k ] = pods_evaluate_tags( $tag, $args );
 		}
 
 		return $tags;
@@ -1498,33 +1616,43 @@ function pods_evaluate_tags( $tags, $sanitize = false, $fallback = null ) {
 		$tags = get_object_vars( $tags );
 
 		// Evaluate array and cast as object.
-		$tags = (object) pods_evaluate_tags( $tags );
+		$tags = (object) pods_evaluate_tags( $tags, $args );
 
 		return $tags;
 	}
 
 	return preg_replace_callback(
 		'/({@(.*?)})/m',
-		function ( $tag ) use ( $sanitize, $fallback ) {
-			return pods_evaluate_tag( $tag, $sanitize, $fallback );
+		function ( $tag ) use ( $args ) {
+			return pods_evaluate_tag( $tag, $args );
 		},
 		(string) $tags
 	);
 }
 
 /**
- * Evaluate tag like magic tag but mapped through pods_v_sanitized.
+ * Evaluate tag like magic tag but sanitized.
  *
  * @since 2.1
  *
  * @param string|array $tag String to be evaluated.
+ * @param array        $args {
+ *     Function arguments.
+ *     @type null|mixed $fallback        The fallback value to use if not set, should already be sanitized.
+ *     @type Pods       $pod             Pod to parse the tags through.
+ *     @type bool       $use_current_pod Whether to auto-detect the current Pod.
+ * }
  *
  * @return string Evaluated content.
  *
  * @see pods_evaluate_tag
  */
-function pods_evaluate_tag_sanitized( $tag ) {
-	return pods_evaluate_tag( $tag, true );
+function pods_evaluate_tag_sanitized( $tag, $args = array() ) {
+	if ( ! is_array( $args ) ) {
+		$args = array();
+	}
+	$args['sanitize'] = true;
+	return pods_evaluate_tag( $tag, $args );
 }
 
 /**
@@ -1532,14 +1660,37 @@ function pods_evaluate_tag_sanitized( $tag ) {
  *
  * @since 2.1
  *
- * @param string|array $tag      String to be evaluated.
- * @param bool         $sanitize Whether to sanitize tags.
- * @param null|mixed   $fallback The fallback value to use if not set, should already be sanitized.
+ * @param string|array $tag String to be evaluated.
+ * @param array        $args {
+ *     Function arguments.
+ *     @type bool       $sanitize        Whether to sanitize.
+ *     @type null|mixed $fallback        The fallback value to use if not set, should already be sanitized.
+ *     @type bool|Pods  $pod             Pod to parse the tags through.
+ *     @type bool       $use_current_pod Whether to auto-detect the current Pod.
+ * }
  *
  * @return string Evaluated content.
  */
-function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null ) {
-	global $wpdb;
+function pods_evaluate_tag( $tag, $args = array() ) {
+	$defaults = array(
+		'sanitize'        => false,
+		'fallback'        => null,
+		'pod'             => null,
+		'use_current_pod' => false,
+	);
+
+	// Back compat.
+	if ( ! is_array( $args ) ) {
+		$prev_args = array( 'tag', 'sanitize', 'fallback' );
+		$args      = func_get_args();
+		$args      = array_combine( array_slice( $prev_args, 0, count( $args ) ), $args );
+		unset( $args['tag'] );
+	}
+
+	$args     = wp_parse_args( $args, $defaults );
+	$sanitize = $args['sanitize'];
+	$fallback = $args['fallback'];
+	$pod      = $args['pod'];
 
 	// Handle pods_evaluate_tags
 	if ( is_array( $tag ) ) {
@@ -1554,8 +1705,40 @@ function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null ) {
 		$tag = $tag[2];
 	}
 
+	if ( $args['use_current_pod'] ) {
+		$pod = pods();
+	}
+
+	// Handle Pod fields.
+	// The Pod will call this function without Pod param if no field is found.
+	if ( $pod instanceof Pods ) {
+		$value = $pod->do_magic_tags( '{@' . $tag . '}' );
+
+		if ( ! $value ) {
+			if ( null === $fallback ) {
+				return '';
+			}
+
+			return $fallback;
+		}
+
+		if ( $sanitize ) {
+			$value = pods_sanitize( $value );
+		}
+
+		return $value;
+	}
+
 	$tag = trim( $tag, ' {@}' );
-	$tag = explode( '.', $tag );
+	$tag = explode( ',', $tag );
+	$tag = pods_trim( $tag );
+
+	$value  = '';
+	$helper = isset( $tag[1] ) ? $tag[1] : null;
+	$before = isset( $tag[2] ) ? $tag[2] : '';
+	$after  = isset( $tag[3] ) ? $tag[3] : '';
+
+	$tag = explode( '.', $tag[0] );
 
 	if ( empty( $tag ) || ! isset( $tag[0] ) || '' === trim( $tag[0] ) ) {
 		if ( null === $fallback ) {
@@ -1576,11 +1759,7 @@ function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null ) {
 		);
 	}
 
-	foreach ( $tag as $k => $v ) {
-		$tag[ $k ] = trim( $v );
-	}
-
-	$value = '';
+	$tag = pods_trim( $tag );
 
 	$single_supported = array(
 		'template-url',
@@ -1604,6 +1783,16 @@ function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null ) {
 		$value = pods_v( $tag[0], 'get', null );
 	} elseif ( 2 === count( $tag ) ) {
 		$value = pods_v( $tag[1], $tag[0], null );
+	} else {
+		// Some magic tags support traversal.
+		$value = pods_v( array_slice( $tag, 1 ), $tag[0], null );
+	}
+
+	if ( $helper ) {
+		if ( ! $pod instanceof Pods ) {
+			$pod = pods();
+		}
+		$value = $pod->helper( $helper, $value );
 	}
 
 	$value = apply_filters( 'pods_evaluate_tag', $value, $tag, $fallback );
@@ -1628,7 +1817,7 @@ function pods_evaluate_tag( $tag, $sanitize = false, $fallback = null ) {
 		$value = $fallback;
 	}
 
-	return $value;
+	return $before . $value . $after;
 }
 
 /**
@@ -2149,4 +2338,46 @@ function pods_list_filter( $list, $args = array(), $operator = 'AND' ) {
 	}
 
 	return $filtered;
+}
+
+/**
+ * Clean extra line breaks to prevent empty <p></p> when it eventually goes into wpautop().
+ *
+ * @since 2.8.0
+ *
+ * @param string $content The content to be cleaned up.
+ *
+ * @return string The content that has been cleaned up.
+ */
+function pods_clean_linebreaks( $content ) {
+	// Replace \n\n\n (or more) with \n\n.
+	$content = preg_replace( '/(\n+[ \t]*\n+[ \t]*\n+)+/m', "\n\n", $content );
+
+	// Replace extra whitespace at the end of lines.
+	$content = preg_replace( '/([ \t]+\n)/m', "\n", $content );
+
+	if ( ! $content || ! is_string( $content ) ) {
+		return '';
+	}
+
+	return $content;
+}
+
+add_filter( 'pods_template_content', 'pods_clean_linebreaks' );
+
+/**
+ * Convert the value from a boolean to an integer.
+ *
+ * @since 2.8.2
+ *
+ * @param bool|mixed $value The value to convert from boolean to integer.
+ *
+ * @return int|mixed The value as an integer if it was boolean, or the value as it was passed in.
+ */
+function pods_bool_to_int( $value ) {
+	if ( ! is_bool( $value ) ) {
+		return $value;
+	}
+
+	return (int) $value;
 }

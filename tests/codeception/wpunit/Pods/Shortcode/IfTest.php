@@ -96,6 +96,17 @@ class IfTest extends Pods_UnitTestCase {
 	}
 
 	/**
+	 * Render the template and handle shortcode.
+	 *
+	 * @param string $template
+	 *
+	 * @return string The rendered template.
+	 */
+	private function render_template( $template ) {
+		return trim( $this->pod->template( null, $template ) );
+	}
+
+	/**
 	 *
 	 */
 	public function test_psuedo_shortcodes() {
@@ -110,39 +121,651 @@ class IfTest extends Pods_UnitTestCase {
 	public function test_if_simple() {
 		$this->assertNotFalse( $this->pod );
 
-		$pod_name = $this->pod_name;
-
 		$id = $this->pod->add( array(
-			'name'    => __FUNCTION__ . '1',
-			'number1' => 123,
-			'number2' => 456,
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
 		) );
 
-		$content = base64_encode( 'ABC' );
+		$this->pod->fetch( $id );
 
-		$this->assertEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
+		$template = '
+			[if number1]
+				ABC
+			[/if]
+		';
 
-		$content = base64_encode( 'ABC[else]DEF' );
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
 
-		$this->assertEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
-		$this->assertNotEquals( 'DEF', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
+		$template = '
+			[if number1]
+				ABC
+			[else]
+				DEF
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if invalid_field]
+				ABC
+			[else]
+				DEF
+			[/if]
+		';
+
+		$this->assertEquals( 'DEF', $this->render_template( $template ) );
 
 		$id = $this->pod->add( array(
-			'name'    => __FUNCTION__ . '2',
+			'post_title'    => __FUNCTION__ . '2',
 			'number1' => 456,
 			'number2' => 0,
 		) );
 
-		$content = base64_encode( 'ABC' );
+		$this->pod->fetch( $id );
 
-		$this->assertNotEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$content}[/pod_if_field]" ) );
-		$this->assertNotEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='invalidfield']{$content}[/pod_if_field]" ) );
+		$template = '
+			[if number2]
+				ABC
+			[/if]
+		';
 
-		$content = base64_encode( 'ABC[else]DEF' );
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
 
-		$this->assertEquals( 'DEF', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$content}[/pod_if_field]" ) );
-		$this->assertEquals( 'DEF', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='invalidfield']{$content}[/pod_if_field]" ) );
-		$this->assertNotEquals( 'ABC', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$content}[/pod_if_field]" ) );
+	/**
+	 *
+	 */
+	public function test_if_equals() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		$template = '
+			[if number1="123"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if number1="123"]
+				ABC
+			[else]
+				DEF
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if invalid_field="123"]
+				ABC
+			[else]
+				DEF
+			[/if]
+		';
+
+		$this->assertEquals( 'DEF', $this->render_template( $template ) );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '2',
+			'number1'    => 123,
+			'number2'    => 0,
+		) );
+
+		$this->pod->fetch( $id );
+
+		$template = '
+			[if number2="456"]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_not_supported() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test a comparison operator that is not supported.
+		 */
+
+		$template = '
+			[if field="number1" value="123" compare="not supported comparison operator"]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_equals() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test === comparison.
+		 */
+
+		$template = '
+			[if field="number1" value="123"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="number1" value="123" compare="="]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="number1" value="124" compare="="]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_not_equals() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test !== comparison.
+		 */
+
+		$template = '
+			[if field="number1" value="124" compare="!="]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="number1" value="123" compare="!="]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_lt() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test < comparison.
+		 */
+
+		$template = '
+			[if field="number1" value="124" compare="<"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="number1" value="123" compare="<"]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_lt_or_equals() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test <= comparison.
+		 */
+
+		$template = '
+			[if field="number1" value="124" compare="<="]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="number1" value="123" compare="<="]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="number1" value="122" compare="<="]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_gt() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test > comparison.
+		 */
+
+		$template = '
+			[if field="number1" value="122" compare=">"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="number1" value="123" compare=">"]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_gt_or_equals() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test >= comparison.
+		 */
+
+		$template = '
+			[if field="number1" value="122" compare=">="]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="number1" value="123" compare=">="]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="number1" value="124" compare=">="]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_like() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test LIKE comparison.
+		 */
+
+		$template = '
+			[if field="post_title" value="if_compare" compare="like"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="post_title" value="if_compare" compare="LIKE"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="post_title" value="if_compare_like_not_how_it_is" compare="LIKE"]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_like_wildcard() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test LIKE comparison.
+		 */
+
+		$template = '
+			[if field="post_title" value="%if_compare%" compare="like"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="post_title" value="%if_compare%" compare="LIKE"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="post_title" value="%if_compare" compare="LIKE"]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="post_title" value="%if_compare_like_not_how_it_is%" compare="LIKE"]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_not_like() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test NOT LIKE comparison.
+		 */
+
+		$template = '
+			[if field="post_title" value="if_compare_something_else" compare="not like"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="post_title" value="if_compare_something_else" compare="NOT LIKE"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="post_title" value="if_compare_not_like" compare="NOT LIKE"]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_not_like_wildcard() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test NOT LIKE comparison.
+		 */
+
+		$template = '
+			[if field="post_title" value="%if_compare_something_else%" compare="not like"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="post_title" value="%if_compare_something_else%" compare="NOT LIKE"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="post_title" value="%if_compare_something_else" compare="NOT LIKE"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="post_title" value="%if_compare_not_like_wildcard%" compare="NOT LIKE"]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_exists() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 0,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test EXISTS comparison.
+		 */
+
+		$template = '
+			[if field="number1" compare="exists"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="number2" compare="EXISTS"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="invalid_field" compare="EXISTS"]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
+	}
+
+	/**
+	 *
+	 */
+	public function test_if_compare_not_exists() {
+		$this->assertNotFalse( $this->pod );
+
+		$id = $this->pod->add( array(
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 0,
+		) );
+
+		$this->pod->fetch( $id );
+
+		/**
+		 * Test NOT EXISTS comparison.
+		 */
+
+		$template = '
+			[if field="invalid_field" compare="not exists"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="invalid_field" compare="NOT EXISTS"]
+				ABC
+			[/if]
+		';
+
+		$this->assertEquals( 'ABC', $this->render_template( $template ) );
+
+		$template = '
+			[if field="number1" compare="NOT EXISTS"]
+				ABC
+			[/if]
+		';
+
+		$this->assertNotEquals( 'ABC', $this->render_template( $template ) );
 	}
 
 	/**
@@ -153,11 +776,11 @@ class IfTest extends Pods_UnitTestCase {
 
 		$pod_name = $this->pod_name;
 
-		$id = $this->pod->add( array(
-			'name'    => __FUNCTION__ . '1',
-			'number1' => 123,
-			'number2' => 456,
-		) );
+		$id = $this->pod->add( [
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		] );
 
 		$inner_content = base64_encode( 'XYZ' );
 		$content       = base64_encode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$inner_content}[/pod_if_field]" );
@@ -189,11 +812,11 @@ class IfTest extends Pods_UnitTestCase {
 
 		$pod_name = $this->pod_name;
 
-		$id = $this->pod->add( array(
-			'name'    => __FUNCTION__ . '1',
-			'number1' => 123,
-			'number2' => 456,
-		) );
+		$id = $this->pod->add( [
+			'post_title' => __FUNCTION__ . '1',
+			'number1'    => 123,
+			'number2'    => 456,
+		] );
 
 		$content = base64_encode( '[test_if_text][else]INVALID' );
 
@@ -208,11 +831,11 @@ class IfTest extends Pods_UnitTestCase {
 
 		$pod_name = $this->pod_name;
 
-		$id = $this->pod->add( array(
-			'name'    => 'my post title',
-			'number1' => 123,
-			'number2' => 456,
-		) );
+		$id = $this->pod->add( [
+			'post_title' => 'my post title',
+			'number1'    => 123,
+			'number2'    => 456,
+		] );
 
 		$content = base64_encode( '{@post_title}' );
 		$this->assertEquals( 'my post title', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
@@ -220,11 +843,11 @@ class IfTest extends Pods_UnitTestCase {
 		$content = base64_encode( '{@number1}' );
 		$this->assertEquals( '123', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
 
-		$id = $this->pod->add( array(
-			'name'    => 'my post title',
-			'number1' => 456,
-			'number2' => 0,
-		) );
+		$id = $this->pod->add( [
+			'post_title' => 'my post title',
+			'number1'    => 456,
+			'number2'    => 0,
+		] );
 
 		$content = base64_encode( '{@number2}[else]{@number1}' );
 		$this->assertEquals( '456', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$content}[/pod_if_field]" ) );
@@ -238,11 +861,11 @@ class IfTest extends Pods_UnitTestCase {
 
 		$pod_name = $this->pod_name;
 
-		$id      = $this->pod->add( array(
-			'name'    => 'my post title',
-			'number1' => 123,
-			'number2' => 456,
-		) );
+		$id      = $this->pod->add( [
+			'post_title' => 'my post title',
+			'number1'    => 123,
+			'number2'    => 456,
+		] );
 		$content = base64_encode( '{@number1}[else]{@number2}' );
 		// This isn't supposed to be perfect HTML, just good enough for the test
 		$this->assertEquals( '<img src="123">', do_shortcode( "<img src=\"[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]\">" ) );
@@ -256,19 +879,19 @@ class IfTest extends Pods_UnitTestCase {
 
 		$pod_name = $this->pod_name;
 
-		$id1 = $this->pod->add( array(
+		$id1 = $this->pod->add( [
 			'post_status' => 'publish',
-			'name'        => 'first post title',
+			'post_title'  => 'first post title',
 			'number1'     => 123,
 			'number2'     => 456,
-		) );
-		$id2 = $this->pod->add( array(
+		] );
+		$id2 = $this->pod->add( [
 			'post_status'   => 'publish',
-			'name'          => 'second post title',
+			'post_title'    => 'second post title',
 			'number1'       => 987,
 			'number2'       => 654,
 			'related_field' => $id1,
-		) );
+		] );
 
 		// Not exactly related to the shortcode test but lets make sure we can at least retrieve the proper data
 		$this->assertEquals( '123', pods( $pod_name, $id2 )->field( 'related_field.number1' ) );
@@ -280,11 +903,11 @@ class IfTest extends Pods_UnitTestCase {
 
 		$site_url = site_url();
 
-		$valid = array(
+		$valid = [
 			'<a href="' . $site_url . '/first-post-title">first post title</a>',
 			'<a href="' . $site_url . '/?test_if=first-post-title">first post title</a>',
-			'<a href="' . $site_url . '/?p=' . $id1. '">first post title</a>',
-		);
+			'<a href="' . $site_url . '/?p=' . $id1 . '">first post title</a>',
+		];
 
 		$this->assertContains( do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id2}' field='related_field']{$content}[/pod_if_field]" ), $valid );
 

@@ -1,24 +1,26 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
+import React, { useState, useEffect } from 'react';
 import { omit } from 'lodash';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import classnames from 'classnames';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
-// WordPress dependencies
+/**
+ * WordPress dependencies
+ */
 import { Dashicon } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import SettingsModal from './settings-modal';
 
-import {
-	STORE_KEY_EDIT_POD,
-	SAVE_STATUSES,
-} from 'dfv/src/admin/edit-pod/store/constants';
+import { SAVE_STATUSES, DELETE_STATUSES } from 'dfv/src/store/constants';
 
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
 import './field-list-item.scss';
 
@@ -26,24 +28,27 @@ const ENTER_KEY = 13;
 
 export const FieldListItem = ( props ) => {
 	const {
+		storeKey,
+		podType,
+		podName,
 		podID,
 		podLabel,
 		field,
 		saveStatus,
+		deleteStatus,
 		saveMessage,
-		podSaveStatus,
-		index,
 		typeObject,
 		relatedObject,
 		editFieldPod,
 		saveField,
 		resetFieldSaveStatus,
-		moveField,
 		groupName,
 		groupLabel,
 		groupID,
+		hasMoved,
 		cloneField,
 		deleteField,
+		removeFieldFromGroup,
 	} = props;
 
 	const {
@@ -55,8 +60,24 @@ export const FieldListItem = ( props ) => {
 
 	const required = ( field.required && '0' !== field.required ) ? true : false;
 
+	const isDeleting = DELETE_STATUSES.DELETING === deleteStatus;
+	const hasDeleteFailed = DELETE_STATUSES.DELETE_ERROR === deleteStatus;
+
 	const [ showEditFieldSettings, setShowEditFieldSettings ] = useState( false );
-	const [ hasMoved, setHasMoved ] = useState( false );
+
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable( { id: id.toString() } );
+
+	const style = {
+		transform: CSS.Translate.toString( transform ),
+		transition,
+	};
 
 	const handleKeyPress = ( event ) => {
 		if ( event.charCode === ENTER_KEY ) {
@@ -102,73 +123,9 @@ export const FieldListItem = ( props ) => {
 		);
 
 		if ( confirmation ) {
-			deleteField( groupID, id );
+			deleteField();
 		}
 	};
-
-	const fieldRef = useRef( null );
-
-	const [ { isDragging }, drag, preview ] = useDrag( {
-		item: {
-			...field,
-			type: `field-list-item${ groupName }`,
-		},
-		collect: ( monitor ) => ( {
-			isDragging: monitor.isDragging(),
-		} ),
-		end: () => setHasMoved( true ),
-	} );
-
-	const [ , drop ] = useDrop( {
-		accept: `field-list-item${ groupName }`,
-		hover( item, monitor ) {
-			if ( ! fieldRef.current ) {
-				return;
-			}
-
-			const dragIndex = item.index;
-			const hoverIndex = index;
-
-			// Don't replace items with themselves
-			if ( dragIndex === hoverIndex ) {
-				return;
-			}
-			// Determine rectangle on screen
-			const hoverBoundingRect = fieldRef.current.getBoundingClientRect();
-
-			// Get vertical middle
-			const hoverMiddleY =
-			( hoverBoundingRect.bottom - hoverBoundingRect.top ) / 2;
-
-			// Determine mouse position
-			const clientOffset = monitor.getClientOffset();
-
-			// Get pixels to the top
-			const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-
-			// Only perform the move when the mouse has crossed half of the items height
-			// When dragging downwards, only move when the cursor is below 50%
-			// When dragging upwards, only move when the cursor is above 50%
-			// Dragging downwards
-			if ( dragIndex < hoverIndex && hoverClientY < hoverMiddleY ) {
-				return;
-			}
-
-			// Dragging upwards
-			if ( dragIndex > hoverIndex && hoverClientY > hoverMiddleY ) {
-				return;
-			}
-
-			// Time to actually perform the action
-			moveField( item.id, hoverIndex );
-
-			// Note: we're mutating the monitor item here!
-			// Generally it's better to avoid mutations,
-			// but it's good here for the sake of performance
-			// to avoid expensive index searches.
-			item.index = hoverIndex;
-		},
-	} );
 
 	useEffect( () => {
 		// Close the Field Settings modal if we finished saving.
@@ -178,35 +135,43 @@ export const FieldListItem = ( props ) => {
 	}, [ saveStatus ] );
 
 	useEffect( () => {
-		// Reset the "unsaved" indicator after the pod has been saved.
-		if ( SAVE_STATUSES.SAVE_SUCCESS === podSaveStatus ) {
-			setHasMoved( false );
+		// After the field deletion is finished, remove the field from its group.
+		if ( DELETE_STATUSES.DELETE_SUCCESS === deleteStatus ) {
+			removeFieldFromGroup();
 		}
-	}, [ podSaveStatus ] );
+	}, [ deleteStatus ] );
 
 	const classes = classnames(
 		'pods-field_wrapper',
-		{ 'pods-field_wrapper--unsaved': hasMoved }
+		isDragging && 'pods-field_wrapper--dragging',
+		hasMoved && 'pods-field_wrapper--unsaved',
+		isDeleting && 'pods-field_wrapper--deleting',
+		hasDeleteFailed && 'pods-field_wrapper--errored',
 	);
 
 	return (
-		<div className="pods-field_outer-wrapper" ref={ drop }>
-			<div
-				className={ classes }
-				ref={ drag( preview( fieldRef ) ) }
-				style={ { opacity: isDragging ? 0.4 : 1 } }
-			>
+		<div
+			ref={ setNodeRef }
+			className="pods-field_outer-wrapper"
+			style={ style }
+		>
+			<div className={ classes }>
 				{ showEditFieldSettings && (
 					<SettingsModal
+						storeKey={ storeKey }
+						podType={ podType }
+						podName={ podName }
 						optionsPod={ editFieldPod }
 						selectedOptions={ field }
 						title={ sprintf(
+							// @todo Zack: Make these into elements we can style the parent pod / group label differently.
 							/* translators: %1$s: Pod Label, %2$s Group Label, %3$s Field Label */
 							__( '%1$s > %2$s > %3$s > Edit Field', 'pods' ),
 							podLabel,
 							groupLabel,
 							label
 						) }
+						isSaving={ saveStatus === SAVE_STATUSES.SAVING }
 						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
 						errorMessage={
 							saveMessage ||
@@ -218,7 +183,14 @@ export const FieldListItem = ( props ) => {
 					/>
 				) }
 
-				<div className="pods-field pods-field_handle" ref={ drag }>
+				<div
+					className="pods-field pods-field_handle"
+					aria-label="drag"
+					// eslint-disable-next-line react/jsx-props-no-spreading
+					{ ...listeners }
+					// eslint-disable-next-line react/jsx-props-no-spreading
+					{ ...attributes }
+				>
 					<Dashicon icon="menu" />
 				</div>
 
@@ -235,6 +207,12 @@ export const FieldListItem = ( props ) => {
 					</span>
 
 					<div className="pods-field_id"> [id = { id }]</div>
+
+					{ hasDeleteFailed ? (
+						<div className="pods-field_controls-container__error">
+							{ __( 'Delete failed. Try again?', 'pods' ) }
+						</div>
+					) : null }
 
 					<div className="pods-field_controls-container">
 						<button
@@ -291,59 +269,75 @@ export const FieldListItem = ( props ) => {
 };
 
 FieldListItem.propTypes = {
+	storeKey: PropTypes.string.isRequired,
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	field: FIELD_PROP_TYPE_SHAPE,
 	saveStatus: PropTypes.string,
+	deleteStatus: PropTypes.string,
 	saveMessage: PropTypes.string,
-	podSaveStatus: PropTypes.string.isRequired,
-	index: PropTypes.number.isRequired,
 	groupName: PropTypes.string.isRequired,
 	groupLabel: PropTypes.string.isRequired,
 	groupID: PropTypes.number.isRequired,
 	typeObject: PropTypes.object.isRequired,
 	relatedObject: PropTypes.object,
 	editFieldPod: PropTypes.object.isRequired,
+	hasMoved: PropTypes.bool.isRequired,
 
 	saveField: PropTypes.func.isRequired,
 	resetFieldSaveStatus: PropTypes.func.isRequired,
-	moveField: PropTypes.func.isRequired,
 	cloneField: PropTypes.func.isRequired,
 	deleteField: PropTypes.func.isRequired,
+	removeFieldFromGroup: PropTypes.func.isRequired,
 };
 
 export default compose( [
 	withSelect( ( select, ownProps ) => {
 		const {
-			field,
+			field = {},
+			storeKey,
 		} = ownProps;
 
-		const storeSelect = select( STORE_KEY_EDIT_POD );
+		const storeSelect = select( storeKey );
 
-		const relatedObjects = storeSelect.getFieldRelatedObjects();
+		// Look up the relatedObject, to find the key for it, we may have to combine
+		// pick_object and pick_val
+		let relatedObject;
 
-		// eslint-disable-next-line camelcase
-		const relatedObject = ( 'pick' === field?.type && field?.pick_object )
-			? relatedObjects[ field.pick_object ]
-			: null;
+		if ( 'pick' === field.type && field.pick_object ) {
+			const key = field.pick_val
+				? `${ field.pick_object }-${ field.pick_val }`
+				: field.pick_object;
+
+			relatedObject = storeSelect.getFieldRelatedObjects()[ key ];
+		}
 
 		return {
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
 			relatedObject,
 			typeObject: storeSelect.getFieldTypeObject( field.type ),
-			podSaveStatus: storeSelect.getSaveStatus(),
 			saveStatus: storeSelect.getFieldSaveStatus( field.name ),
+			deleteStatus: storeSelect.getFieldDeleteStatus( field.name ),
 			saveMessage: storeSelect.getFieldSaveMessage( field.name ),
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
-		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+	withDispatch( ( dispatch, ownProps ) => {
+		const {
+			storeKey,
+			field: {
+				id: fieldID,
+				name: fieldName,
+			},
+			groupID,
+		} = ownProps;
+
+		const storeDispatch = dispatch( storeKey );
 
 		return {
-			deleteField: ( groupID, fieldID ) => {
-				storeDispatch.deleteField( fieldID );
-				storeDispatch.removeGroupField( groupID, fieldID );
-			},
+			deleteField: () => storeDispatch.deleteField( fieldID, fieldName ),
+			removeFieldFromGroup: () => storeDispatch.removeGroupField( groupID, fieldID ),
 			resetFieldSaveStatus: storeDispatch.resetFieldSaveStatus,
 			saveField: storeDispatch.saveField,
 		};

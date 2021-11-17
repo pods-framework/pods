@@ -4,11 +4,12 @@ namespace Pods\Whatsit;
 
 use Pods\Whatsit;
 use Tribe__Utils__Array;
+use WP_Block;
 
 /**
  * Block class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Block extends Pod {
 
@@ -20,7 +21,7 @@ class Block extends Pod {
 	/**
 	 * Get list of Block API arguments to use.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array List of Block API arguments.
 	 */
@@ -35,18 +36,27 @@ class Block extends Pod {
 		$category  = str_replace( '_', '-', sanitize_title_with_dashes( $category ) );
 
 		$block_args = [
-			'blockName'       => $namespace . '/' . $name,
-			'blockGroupLabel' => $this->get_arg( 'group_label', __( 'Options', 'pods' ) ),
-			'title'           => $this->get_arg( 'title', $this->get_arg( 'label' ) ),
-			'description'     => $this->get_arg( 'description' ),
-			'renderType'      => $this->get_arg( 'renderType', $this->get_arg( 'render_type', 'js' ) ),
-			'category'        => $category,
-			'icon'            => $this->get_arg( 'icon', 'align-right' ),
-			'keywords'        => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
-			'supports'        => $this->get_arg( 'supports', [] ),
-			'editor_script'   => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
-			'fields'          => $this->get_block_fields(),
-			'attributes'      => $this->get_arg( 'attributes', [] ),
+			'blockName'        => $namespace . '/' . $name,
+			'blockGroupLabel'  => $this->get_arg( 'group_label', __( 'Options', 'pods' ) ),
+			'title'            => $this->get_arg( 'title', $this->get_arg( 'label' ) ),
+			'description'      => $this->get_arg( 'description' ),
+			'renderType'       => $this->get_arg( 'renderType', $this->get_arg( 'render_type', 'js' ) ),
+			'category'         => $category,
+			'icon'             => $this->get_arg( 'icon', 'align-right' ),
+			'keywords'         => Tribe__Utils__Array::list_to_array( $this->get_arg( 'keywords', 'pods' ) ),
+			'supports'         => $this->get_arg( 'supports', [] ),
+			'editor_script'    => $this->get_arg( 'editor_script', 'pods-blocks-api' ),
+			'editor_style'     => $this->get_arg( 'editor_style' ),
+			'script'           => $this->get_arg( 'script' ),
+			'style'            => $this->get_arg( 'style' ),
+			'enqueue_script'   => $this->get_arg( 'enqueue_script' ),
+			'enqueue_style'    => $this->get_arg( 'enqueue_style' ),
+			'enqueue_assets'   => $this->get_arg( 'enqueue_assets' ),
+			'uses_context'     => $this->get_arg( 'usesContext', $this->get_arg( 'uses_context', [] ) ),
+			'provides_context' => $this->get_arg( 'providesContext', $this->get_arg( 'provides_context', [] ) ),
+			'fields'           => $this->get_block_fields(),
+			'attributes'       => $this->get_arg( 'attributes', [] ),
+			'transforms'       => $this->get_arg( 'transforms', [] ),
 		];
 
 		$default_supports = [
@@ -129,16 +139,135 @@ class Block extends Pod {
 		if ( 'js' === $block_args['renderType'] ) {
 			$block_args['renderTemplate'] = $this->get_arg( 'render_template', $this->get_arg( 'renderTemplate', __( 'No block preview is available', 'pods' ) ) );
 		} elseif ( 'php' === $block_args['renderType'] ) {
-			$block_args['render_callback'] = $this->get_arg( 'render_callback' );
+			$block_args['render_callback']        = [ $this, 'render' ];
+			$block_args['render_custom_callback'] = $this->get_arg( 'render_callback' );
+			$block_args['render_template_path']   = $this->get_arg( 'render_template', $this->get_arg( 'render_template_path' ) );
+		}
+
+		$other_args = (array) $this->get_arg( 'raw_args', [] );
+
+		if ( $other_args ) {
+			$block_args = array_merge( $block_args, $other_args );
 		}
 
 		return $block_args;
 	}
 
 	/**
+	 * Render the template for the block.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param array         $attributes The block instance argument values.
+	 * @param string        $content    The block inner content.
+	 * @param WP_Block|null $block_obj  The block object.
+	 *
+	 * @return  string   The HTML render for the block.
+	 */
+	public function render( $attributes, $content, $block_obj = null ) {
+		$block_config            = $block_obj ? $block_obj->block_type : [];
+		$block_name              = pods_v( 'name', $block_config, wp_generate_password( 12, false ), true );
+		$enqueue_style           = pods_v( 'enqueue_style', $block_config );
+		$enqueue_script          = pods_v( 'enqueue_script', $block_config );
+		$enqueue_assets_callback = pods_v( 'enqueue_assets', $block_config );
+		$template_path           = pods_v( 'render_template_path', $block_config );
+		$render_callback         = pods_v( 'render_custom_callback', $block_config );
+
+		$handle = 'block-' . pods_create_slug( $block_name );
+
+		// Maybe enqueue the style.
+		if ( $enqueue_style ) {
+			wp_enqueue_style( $handle, $enqueue_style );
+		}
+
+		// Maybe enqueue the script.
+		if ( $enqueue_script ) {
+			wp_enqueue_script( $handle, $enqueue_script, [], false, true );
+		}
+
+		// Maybe run the enqueue assets callback.
+		if ( $enqueue_assets_callback && is_callable( $enqueue_assets_callback ) ) {
+			$enqueue_assets_callback( $block_config );
+		}
+
+		// Handle custom context overrides from editor.
+		if (
+			! empty( $_GET['post_id'] )
+			&& ! empty( $_GET['podsContext'] )
+			&& wp_is_json_request()
+			&& did_action( 'rest_api_init' )
+		) {
+			$block_obj->context = array_merge( $block_obj->context, (array) $_GET['podsContext'] );
+		}
+
+		// Render block from callback.
+		if ( $render_callback && is_callable( $render_callback ) ) {
+			return $render_callback( $attributes, $content, $block_obj );
+		}
+
+		// Render block from template.
+		if ( $template_path ) {
+			return $this->render_template( $template_path, $attributes, $content, $block_obj );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Render the template for the block.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string        $template_path The block render template path.
+	 * @param array         $attributes    The block instance argument values.
+	 * @param string        $content       The block inner content.
+	 * @param WP_Block|null $block_obj     The block object.
+	 *
+	 * @return  string   The HTML render for the block.
+	 */
+	public function render_template( $template_path, $attributes, $content, $block_obj = null ) {
+		/**
+		 * Allow filtering of the block render template path.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param string        $template_path The block render template path.
+		 * @param array         $attributes    The block instance argument values.
+		 * @param string        $content       The block inner content.
+		 * @param WP_Block|null $block_obj     The block object.
+		 */
+		$template_path = apply_filters( 'pods_block_render_template_path', $template_path, $attributes, $content, $block_obj );
+
+		if ( empty( $template_path ) ) {
+			return '';
+		}
+
+		$render = pods_view( $template_path, compact( 'attributes', 'content', 'block_obj' ), false, 'cache', true );
+
+		// Avoid regex issues with $ capture groups.
+		$content = str_replace( '$', '\$', $content );
+
+		// Replace the <InnerBlocks /> placeholder with the real deal.
+		$render = preg_replace( '/<InnerBlocks([\S\s]*?)\/>/', $content, $render );
+
+		/**
+		 * Allow filtering of the block render HTML.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param string        $render        The HTML render for the block.
+		 * @param string        $template_path The block render template path.
+		 * @param array         $attributes    The block instance argument values.
+		 * @param string        $content       The block inner content.
+		 * @param WP_Block|null $block_obj     The block object.
+		 */
+		return apply_filters( 'pods_block_render_html', $render, $attributes, $content, $block_obj );
+	}
+
+	/**
 	 * Get list of Block API fields for the block.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array List of Block API fields.
 	 */
@@ -199,22 +328,6 @@ class Block extends Pod {
 
 		$names = wp_list_pluck( $objects, 'name' );
 
-		$objects = array_combine( $names, $objects );
-
-		return $objects;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_object_fields() {
-		return [];
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_table_info() {
-		return [];
+		return array_combine( $names, $objects );
 	}
 }

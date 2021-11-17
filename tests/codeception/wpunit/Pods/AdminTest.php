@@ -2,6 +2,7 @@
 
 namespace Pods_Unit_Tests\Pods;
 
+use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods_Unit_Tests\Pods_WhatsitTestCase;
 use PodsAdmin;
@@ -28,6 +29,36 @@ class AdminTest extends Pods_WhatsitTestCase {
 
 		$this->api   = pods_api();
 		$this->admin = new PodsAdmin();
+
+		$post_types = [
+			'ext-post-type-meta',
+			'ext-post-type-table',
+		];
+
+		$taxonomies = [
+			'ext-taxonomy-meta',
+			'ext-taxonomy-table',
+		];
+
+		$static_cache = tribe( Static_Cache::class );
+
+		$existing_post_type_cached = (array) $static_cache->get( 'post_type', 'PodsInit/existing_content_types' );
+		$existing_taxonomy_cached  = (array) $static_cache->get( 'taxonomy', 'PodsInit/existing_content_types' );
+
+		foreach ( $post_types as $post_type ) {
+			register_post_type( $post_type );
+
+			$existing_post_type_cached[] = $post_type;
+		}
+
+		foreach ( $taxonomies as $taxonomy ) {
+			register_taxonomy( $taxonomy, 'post' );
+
+			$existing_taxonomy_cached[] = $taxonomy;
+		}
+
+		$static_cache->set( 'post_type', $existing_post_type_cached, 'PodsInit/existing_content_types' );
+		$static_cache->set( 'taxonomy', $existing_taxonomy_cached, 'PodsInit/existing_content_types' );
 	}
 
 	/**
@@ -36,6 +67,44 @@ class AdminTest extends Pods_WhatsitTestCase {
 	public function tearDown(): void {
 		$this->api   = null;
 		$this->admin = null;
+
+		$post_types = [
+			'ext-post-type-meta',
+			'ext-post-type-table',
+		];
+
+		$taxonomies = [
+			'ext-taxonomy-meta',
+			'ext-taxonomy-table',
+		];
+
+		$static_cache = tribe( Static_Cache::class );
+
+		$existing_post_type_cached = (array) $static_cache->get( 'post_type', 'PodsInit/existing_content_types' );
+		$existing_taxonomy_cached  = (array) $static_cache->get( 'taxonomy', 'PodsInit/existing_content_types' );
+
+		foreach ( $post_types as $post_type ) {
+			unregister_post_type( $post_type );
+
+			$found = array_search( $post_type, $existing_post_type_cached, true );
+
+			if ( false !== $found ) {
+				unset( $existing_post_type_cached[ $found ] );
+			}
+		}
+
+		foreach ( $taxonomies as $taxonomy ) {
+			unregister_taxonomy( $taxonomy );
+
+			$found = array_search( $taxonomy, $existing_taxonomy_cached, true );
+
+			if ( false !== $found ) {
+				unset( $existing_taxonomy_cached[ $found ] );
+			}
+		}
+
+		$static_cache->set( 'post_type', $existing_post_type_cached, 'PodsInit/existing_content_types' );
+		$static_cache->set( 'taxonomy', $existing_taxonomy_cached, 'PodsInit/existing_content_types' );
 
 		parent::tearDown();
 	}
@@ -48,6 +117,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 	public function provider_global_config_checks() {
 		$groups_for_group = [
 			'basic',
+			'advanced',
 		];
 
 		$groups_for_field = [
@@ -69,6 +139,9 @@ class AdminTest extends Pods_WhatsitTestCase {
 			'additional-field-oembed',
 			'additional-field-pick',
 			'additional-field-boolean',
+			'additional-field-color',
+			'additional-field-heading',
+			'additional-field-html',
 			'advanced',
 		];
 
@@ -84,6 +157,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 						'groups' => [
 							'labels',
 							'admin-ui',
+							'connections',
 							'advanced',
 							'pods-pfat',
 							'rest-api',
@@ -111,6 +185,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 						'groups' => [
 							'labels',
 							'admin-ui',
+							'connections',
 							'advanced',
 							'pods-pfat',
 							'rest-api',
@@ -188,6 +263,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 						'groups' => [
 							'labels',
 							'admin-ui',
+							'connections',
 							'advanced',
 							'pods-pfat',
 							'rest-api',
@@ -215,6 +291,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 						'groups' => [
 							'labels',
 							'admin-ui',
+							'connections',
 							'advanced',
 							'pods-pfat',
 							'rest-api',
@@ -336,6 +413,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'pods-pfat',
 						],
 					],
 					'group' => [
@@ -358,6 +436,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'pods-pfat',
 						],
 					],
 					'group' => [
@@ -380,6 +459,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'pods-pfat',
 							'rest-api',
 						],
 					],
@@ -407,6 +487,9 @@ class AdminTest extends Pods_WhatsitTestCase {
 							'additional-field-oembed',
 							'additional-field-pick',
 							'additional-field-boolean',
+							'additional-field-color',
+							'additional-field-heading',
+							'additional-field-html',
 							'advanced',
 							'rest',
 						],
@@ -425,6 +508,7 @@ class AdminTest extends Pods_WhatsitTestCase {
 				'config'   => [
 					'pod'   => [
 						'groups' => [
+							'pods-pfat',
 							'rest-api',
 						],
 					],
@@ -452,6 +536,9 @@ class AdminTest extends Pods_WhatsitTestCase {
 							'additional-field-oembed',
 							'additional-field-pick',
 							'additional-field-boolean',
+							'additional-field-color',
+							'additional-field-heading',
+							'additional-field-html',
 							'advanced',
 							'rest',
 						],
@@ -520,7 +607,10 @@ class AdminTest extends Pods_WhatsitTestCase {
 							'additional-field-oembed',
 							'additional-field-pick',
 							'additional-field-boolean',
+							'additional-field-color',
 							'additional-field-slug',
+							'additional-field-heading',
+							'additional-field-html',
 							'advanced',
 						],
 					],

@@ -5,14 +5,14 @@ namespace Pods\Blocks\Types;
 /**
  * View block functionality class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class View extends Base {
 
 	/**
 	 * Which is the name/slug of this block
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return string
 	 */
@@ -23,7 +23,7 @@ class View extends Base {
 	/**
 	 * Get block configuration to register with Pods.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array Block configuration.
 	 */
@@ -42,13 +42,34 @@ class View extends Base {
 				'view',
 				'include',
 			],
+			'transforms'      => [
+				'from' => [
+					[
+						'type'       => 'shortcode',
+						'tag'        => 'pods',
+						'attributes' => [
+							'view'  => [
+								'type'      => 'string',
+								'source'    => 'shortcode',
+								'attribute' => 'view',
+							],
+						],
+						'isMatchConfig' => [
+							[
+								'name'     => 'view',
+								'required' => true,
+							],
+						],
+					],
+				],
+			],
 		];
 	}
 
 	/**
 	 * Get list of Field configurations to register with Pods for the block.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array List of Field configurations.
 	 */
@@ -75,7 +96,7 @@ class View extends Base {
 		/**
 		 * Allow filtering of the default cache mode used for the Pods shortcode.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 *
 		 * @param string $default_cache_mode Default cache mode.
 		 */
@@ -86,19 +107,22 @@ class View extends Base {
 				'name'  => 'view',
 				'label' => __( 'File to include from theme', 'pods' ),
 				'type'  => 'text',
-			],
-			[
-				'name'    => 'expires',
-				'label'   => __( 'Expires (optional)', 'pods' ),
-				'type'    => 'number',
-				'default' => ( MINUTE_IN_SECONDS * 5 ),
+				'description' => __( 'This is the file location relative to your theme or child theme folder. For example: my-text.php or parts/ad-spot.php', 'pods' ),
 			],
 			[
 				'name'    => 'cache_mode',
-				'label'   => __( 'Cache Mode (optional)', 'pods' ),
+				'label'   => __( 'Cache Mode', 'pods' ),
 				'type'    => 'pick',
 				'data'    => $cache_modes,
 				'default' => $default_cache_mode,
+				'description' => __( 'The mode to cache the output with.', 'pods' ),
+			],
+			[
+				'name'    => 'expires',
+				'label'   => __( 'Expires', 'pods' ),
+				'type'    => 'number',
+				'default' => ( MINUTE_IN_SECONDS * 5 ),
+				'description' => __( 'Set how long to cache the output for in seconds.', 'pods' ),
 			],
 		];
 	}
@@ -106,7 +130,7 @@ class View extends Base {
 	/**
 	 * Since we are dealing with a Dynamic type of Block we need a PHP method to render it
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @param array $attributes
 	 *
@@ -117,10 +141,10 @@ class View extends Base {
 		$attributes = array_map( 'trim', $attributes );
 
 		if ( empty( $attributes['view'] ) ) {
-			if ( is_admin() || wp_is_json_request() ) {
+			if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
 				return $this->render_placeholder(
-					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods View - Block Error', 'pods' ),
-					esc_html__( 'This block is not configured properly, please specify a "View" to use.', 'pods' )
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods View', 'pods' ),
+					esc_html__( 'Please specify a "View" under "More Settings" to configure this block.', 'pods' )
 				);
 			}
 
@@ -128,7 +152,7 @@ class View extends Base {
 		}
 
 		// Prevent any previews of this block.
-		if ( is_admin() || wp_is_json_request() ) {
+		if ( wp_is_json_request() && did_action( 'rest_api_init' ) ) {
 			return $this->render_placeholder(
 				esc_html__( 'View', 'pods' ),
 				esc_html__( 'No preview is available for this Pods View, you will see it when you view or preview this on the front of your site.', 'pods' ),

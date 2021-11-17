@@ -10,7 +10,7 @@
  * @var string|null         $heading_tag
  */
 ?>
-<tr valign="top" class="pods-field pods-field-option <?php echo esc_attr( $row_classes ); ?>"
+<tr valign="top" class="pods-field__container pods-field-option <?php echo esc_attr( $row_classes ); ?>"
 	style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
 	<?php if ( 'heading' === $field['type'] ) : ?>
 		<?php $heading_tag = pods_v( $field['type'] . '_tag', $field, isset( $heading_tag ) ? $heading_tag : 'h2', true ); ?>
@@ -19,7 +19,7 @@
 				class="pods-form-ui-heading pods-form-ui-heading-<?php echo esc_attr( $field['name'] ); ?>">
 				<?php echo esc_html( $field['label'] ); ?>
 			</<?php echo esc_html( $heading_tag ); ?>>
-			<?php echo PodsForm::comment( $field_prefix . $field['name'], $field['description'], $field ); ?>
+			<?php echo PodsForm::comment( $field_prefix . $field['name'], pods_v( 'description', $field ), $field ); ?>
 		</td>
 	<?php elseif ( 'html' === $field['type'] ) : ?>
 		<td colspan="2">
@@ -29,13 +29,13 @@
 		<th<?php if ( ! empty( $th_scope ) ) : ?>
 			scope="<?php echo esc_attr( $th_scope ); ?>"
 		<?php endif; ?>>
-			<?php echo PodsForm::label( $field_prefix . $field['name'], $field['label'], $field['help'], $field ); ?>
+			<?php echo PodsForm::label( $field_prefix . $field['name'], $field['label'], pods_v( 'help', $field ), $field ); ?>
 		</th>
 		<td>
 			<div class="pods-submittable-fields">
 				<?php
 				echo PodsForm::field( $field_prefix . $field['name'], $value, $field['type'], $field, $pod, $id );
-				echo PodsForm::comment( $field_prefix . $field['name'], $field['description'], $field );
+				echo PodsForm::comment( $field_prefix . $field['name'], pods_v( 'description', $field ), $field );
 				?>
 			</div>
 		</td>

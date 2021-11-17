@@ -6,6 +6,7 @@ use Pods_Unit_Tests\Pods_WhatsitTestCase;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
+use Pods\Whatsit\Object_Field;
 
 /**
  * @group  pods-whatsit
@@ -527,7 +528,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 	public function provider_methods() {
 		return array(
 			array( 'object_type' ),
-			array( 'storage_type' ),
+			array( 'object_storage_type' ),
 			array( 'name' ),
 			array( 'id' ),
 			array( 'parent' ),
@@ -540,7 +541,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 	/**
 	 * @covers       Whatsit::get_object_type
-	 * @covers       Whatsit::get_storage_type
+	 * @covers       Whatsit::get_object_storage_type
 	 * @covers       Whatsit::get_name
 	 * @covers       Whatsit::get_id
 	 * @covers       Whatsit::get_parent
@@ -571,7 +572,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 	public function provider_parent_methods() {
 		return array(
 			array( 'object_type' ),
-			array( 'storage_type' ),
+			array( 'object_storage_type' ),
 			array( 'name' ),
 			array( 'id' ),
 			array( 'label' ),
@@ -582,7 +583,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 	/**
 	 * @covers       Whatsit::get_parent_object_type
-	 * @covers       Whatsit::get_parent_storage_type
+	 * @covers       Whatsit::get_parent_object_storage_type
 	 * @covers       Whatsit::get_parent_name
 	 * @covers       Whatsit::get_parent_id
 	 * @covers       Whatsit::get_parent_label
@@ -611,7 +612,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 	public function provider_group_methods() {
 		return array(
 			array( 'object_type' ),
-			array( 'storage_type' ),
+			array( 'object_storage_type' ),
 			array( 'name' ),
 			array( 'id' ),
 			array( 'label' ),
@@ -622,7 +623,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 	/**
 	 * @covers       Whatsit::get_group_object_type
-	 * @covers       Whatsit::get_group_storage_type
+	 * @covers       Whatsit::get_group_object_storage_type
 	 * @covers       Whatsit::get_group_name
 	 * @covers       Whatsit::get_group_id
 	 * @covers       Whatsit::get_group_label
@@ -825,7 +826,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 
 		$table_info = $this->pods_object_pod->get_table_info();
 
-		$this->assertCount( 27, $table_info );
+		$this->assertCount( 28, $table_info );
 	}
 
 	/**
@@ -851,6 +852,38 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 	}
 
 	/**
+	 * @covers Whatsit::get_field
+	 * @covers Whatsit::fetch_field
+	 */
+	public function test_get_field_with_alias() {
+		$this->assertTrue( method_exists( $this->pods_object_pod, 'get_field' ), 'Method get_field does not exist' );
+
+		$aliases = [
+			'id'        => 'ID',
+			'title'     => 'post_title',
+			'name'      => 'post_title',
+			'content'   => 'post_content',
+			'excerpt'   => 'post_excerpt',
+			'author'    => 'post_author',
+			'created'   => 'post_date',
+			'date'      => 'post_date',
+			'status'    => 'post_status',
+			'slug'      => 'post_name',
+			'permalink' => 'post_name',
+			'modified'  => 'post_modified',
+			'parent'    => 'post_parent',
+			'type'      => 'post_type',
+		];
+
+		foreach ( $aliases as $alias => $expected_field ) {
+			$found_field = $this->pods_object_pod->get_field( $alias );
+
+			$this->assertInstanceOf( Object_Field::class, $found_field );
+			$this->assertEquals( $expected_field, $found_field->get_name() );
+		}
+	}
+
+	/**
 	 * @covers Whatsit::get_fields
 	 * @covers Whatsit::get_groups
 	 * @covers Whatsit::get_object_fields
@@ -861,7 +894,7 @@ class WhatsitTest extends Pods_WhatsitTestCase {
 		$this->assertCount( 1, $this->pods_object_pod['fields'] );
 		$this->assertCount( 1, $this->pods_object_pod['groups'] );
 		$this->assertCount( 24, $this->pods_object_pod['object_fields'] );
-		$this->assertCount( 27, $this->pods_object_pod['table_info'] );
+		$this->assertCount( 28, $this->pods_object_pod['table_info'] );
 
 		$this->assertArrayHasKey( 'test-field', $this->pods_object_pod['fields'] );
 		$this->assertEquals( 'Test field', $this->pods_object_pod['fields']['test-field']['label'] );

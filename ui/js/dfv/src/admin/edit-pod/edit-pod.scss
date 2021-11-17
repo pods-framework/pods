@@ -14,3 +14,14 @@
 		color: $color--red;
 	}
 }
+
+.pods-edit-pod-manage-field .pods-dfv-container {
+	display: block;
+	max-width: 45em;
+	width: 65%;
+}
+
+.pods-edit-pod-manage-field .pods-dfv-container-wysiwyg,
+.pods-edit-pod-manage-field .pods-dfv-container-code {
+	width: 100%;
+}

@@ -12,7 +12,7 @@ use WP_REST_Response;
 /**
  * Class Swagger_Documentation
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interface, Builder_Interface {
 
@@ -46,7 +46,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	/**
 	 * Set the current REST API version.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string $current_rest_api_version Current REST API version.
 	 */
@@ -57,7 +57,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	/**
 	 * Handles GET requests on the endpoint.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param WP_REST_Request $request
 	 *
@@ -72,7 +72,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	/**
 	 * Returns an array in the format used by Swagger 2.0.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array An array description of a Swagger supported component.
 	 *
@@ -99,7 +99,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 		/**
 		 * Filters the Swagger documentation generated for the REST API.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param array                 $documentation An associative PHP array in the format supported by Swagger.
 		 * @param Swagger_Documentation $this          This documentation endpoint instance.
@@ -114,7 +114,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	/**
 	 * Get the REST API info.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array The REST API info.
 	 */
@@ -129,7 +129,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	/**
 	 * Get the REST API paths.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array The REST API paths.
 	 */
@@ -150,7 +150,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	/**
 	 * Get the list of REST API definitions.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array List of REST API definitions.
 	 */
@@ -167,7 +167,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	/**
 	 * Registers a documentation provider for a path.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string             $path     Documentation path.
 	 * @param Provider_Interface $endpoint Docuemntation endpoint object.
@@ -179,7 +179,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	/**
 	 * Get list of documentation providers.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Provider_Interface[] List of documentation providers.
 	 */
@@ -190,7 +190,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	/**
 	 * Registers a documentation provider for a definition.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string             $type     The documentation provider type.
 	 * @param Provider_Interface $provider The provider interface object.
@@ -202,7 +202,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	/**
 	 * Get list of definition providers.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return Provider_Interface[] List of definition providers.
 	 */
@@ -214,7 +214,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	 * Returns the content of the `args` array that should be used to register the endpoint
 	 * with the `register_rest_route` function.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array Args to use for READ requests.
 	 */
@@ -225,7 +225,7 @@ class Swagger_Documentation implements Provider_Interface, READ_Endpoint_Interfa
 	/**
 	 * Get REST API Documentation for the Swagger endpoint.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array REST API Documentation for the Swagger endpoint.
 	 */

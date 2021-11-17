@@ -12,21 +12,21 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public $route = '/groups';
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public $object = 'group';
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get_documentation() {
 		$GET_defaults = [
@@ -97,7 +97,7 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function READ_args() {
 		return [
@@ -144,7 +144,7 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get( WP_REST_Request $request ) {
 		return $this->archive_by_args( $request );
@@ -153,7 +153,7 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	/**
 	 * Determine whether access to READ is available.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return bool Whether access to READ is available.
 	 */
@@ -164,7 +164,7 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function CREATE_args() {
 		return [
@@ -198,7 +198,7 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function create( WP_REST_REQUEST $request, $return_id = false ) {
 		return $this->create_by_args( $request, $return_id );
@@ -207,7 +207,7 @@ class Groups extends Base implements READ_Interface, CREATE_Interface, Swagger_I
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function can_create() {
 		return pods_is_admin( 'pods' );

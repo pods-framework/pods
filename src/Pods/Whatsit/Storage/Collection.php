@@ -9,7 +9,7 @@ use Pods\Whatsit\Store;
 /**
  * Collection class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Collection extends Storage {
 
@@ -61,7 +61,7 @@ class Collection extends Storage {
 		/**
 		 * Filter the maximum number of posts to get for post type storage.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param int $limit
 		 *
@@ -77,7 +77,7 @@ class Collection extends Storage {
 		$objects = $object_collection->get_objects();
 
 		foreach ( $objects as $k => $object ) {
-			if ( self::$type === $object->get_storage_type() ) {
+			if ( self::$type === $object->get_object_storage_type() ) {
 				continue;
 			}
 
@@ -246,20 +246,19 @@ class Collection extends Storage {
 			$objects = array_slice( $objects, 0, $args['limit'], true );
 		}
 
-		$names   = wp_list_pluck( $objects, 'name' );
-		$objects = array_combine( $names, $objects );
+		$names = wp_list_pluck( $objects, 'name' );
 
-		return $objects;
+		return array_combine( $names, $objects );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	protected function save_object( Whatsit $object ) {
-		$storage_type = $object->get_storage_type();
+		$storage_type = $object->get_object_storage_type();
 
 		if ( empty( $storage_type ) ) {
-			$object->set_arg( 'storage_type', static::$type );
+			$object->set_arg( 'object_storage_type', static::$type );
 		}
 
 		$object_collection = Store::get_instance();

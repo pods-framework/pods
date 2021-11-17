@@ -127,7 +127,7 @@ class PodsTest extends Pods_UnitTestCase {
 	 * PR 2339
 	 *
 	 * @link  https://github.com/pods-framework/pods/pull/2339
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function test_shortcode_pods_field_in_shortcode() {
 		$this->assertNotFalse( $this->pod );

@@ -10,8 +10,8 @@ composer install
 
 Now you'll want to ensure you have a local WP/DB set up. Once you confirm you have that done, you can setup your .env.local file. Copy the `.env.example` file to `.env.local` and fill in your local paths and DB connection information.
 
-Copy the `codeception.example.yml` file to `codeception.yml`, and you're all set to run tests. 
- 
+Copy the `codeception.example.yml` file to `codeception.yml`, and you're all set to run tests.
+
 
 ## Running Tests
 
@@ -23,7 +23,7 @@ vendor/bin/codecept run wpunit -vvv
 
 ## Testing Traversal (find/field/display)
 
-Running traversal tests requires use a different codeception test suite `wpunit-traversal` which makes use of special configuration files (see tests/codeception/_data/traversal-*.json). These tests have to be run apart from the other tests to prevent pollution of their configurations or data in the much more cleaner `wpunit` tests:  
+Running traversal tests requires use a different codeception test suite `wpunit-traversal` which makes use of special configuration files (see tests/codeception/_data/traversal-*.json). These tests have to be run apart from the other tests to prevent pollution of their configurations or data in the much more cleaner `wpunit` tests:
 
 ```
 vendor/bin/codecept run wpunit-traversal -vvv
@@ -42,5 +42,5 @@ npm install
 Now you can run the tests:
 
 ```
-npm run test-dfv
+npm run jest
 ```

@@ -98,7 +98,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_field_with_empty_params() {
@@ -112,7 +112,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_field_with_no_field_name() {
@@ -128,7 +128,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_field_with_group_id() {
@@ -154,7 +154,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::add_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_add_field_with_group_id_using_existing_field_name() {
@@ -183,7 +183,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_field_with_group_name() {
@@ -209,7 +209,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_field_with_group_object() {
@@ -238,7 +238,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_field_with_new_group_id() {
@@ -275,7 +275,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::save_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_save_field_with_weight() {
@@ -320,7 +320,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_field_with_group_id() {
@@ -337,7 +337,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_field_with_group_name() {
@@ -354,7 +354,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_field_with_group_object() {
@@ -374,7 +374,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_field_with_id() {
@@ -389,7 +389,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_field_with_id_direct() {
@@ -402,7 +402,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_field_with_post_direct() {
@@ -415,7 +415,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_field_with_object_direct() {
@@ -429,7 +429,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_fields
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_fields_has_fields() {
@@ -458,7 +458,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_fields
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_fields_by_type() {
@@ -510,7 +510,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_fields
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_fields_by_id() {
@@ -553,7 +553,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_fields
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_fields_by_args() {
@@ -585,7 +585,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_fields
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_fields_by_options() {
@@ -617,7 +617,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_fields
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_fields_by_where() {
@@ -655,7 +655,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_fields
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_fields_with_names() {
@@ -684,7 +684,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_fields
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_fields_with_names_ids() {
@@ -715,7 +715,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_fields
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_fields_with_ids() {
@@ -734,7 +734,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::load_fields
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_load_fields_with_count() {
@@ -777,7 +777,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::delete_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_delete_field() {
@@ -794,7 +794,7 @@ class FieldTest extends Pods_UnitTestCase {
 
 	/**
 	 * @covers PodsAPI::delete_field
-	 * @since  2.8
+	 * @since  2.8.0
 	 * @throws \Exception
 	 */
 	public function test_delete_field_with_field_not_found() {

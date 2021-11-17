@@ -1,5 +1,7 @@
 <?php
 
+use Pods\Whatsit\Field;
+
 /**
  * Pods Field class for common type-specific methods.
  *
@@ -311,26 +313,13 @@ class PodsField {
 	 * @param string|null     $name    Field name.
 	 * @param mixed|null      $value   Current value.
 	 * @param array|null      $options Field options.
-	 * @param array|null      $pod     Pod information.
+	 * @param array|Pods|null $pod     Pod data or the Pods object.
 	 * @param int|string|null $id      Current item ID.
 	 *
 	 * @since 2.0.0
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
-
-		$options = (array) $options;
-
-		$form_field_type = PodsForm::$field_type;
-
-		if ( is_array( $value ) ) {
-			$value = implode( ' ', $value );
-		}
-
-		pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
-
-		/*
-		 * @todo Eventually use this code
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		$type = pods_v( 'type', $options, static::$type );
 
@@ -338,8 +327,6 @@ class PodsField {
 		$args = (object) $args;
 
 		$this->render_input_script( $args );
-		*/
-
 	}
 
 	/**
@@ -348,26 +335,86 @@ class PodsField {
 	 * @param array|object $args    {
 	 *     Field information arguments.
 	 *
-	 *     @type string     $name            Field name.
-	 *     @type string     $type            Field type.
-	 *     @type array      $options         Field options.
-	 *     @type mixed      $value           Current value.
-	 *     @type array      $pod             Pod information.
-	 *     @type int|string $id              Current item ID.
-	 *     @type string     $form_field_type HTML field type.
+	 *     @type string          $name            Field name.
+	 *     @type string          $type            Field type.
+	 *     @type array           $options         Field options.
+	 *     @type Field|null      $field           Field object (if provided).
+	 *     @type mixed           $value           Current value.
+	 *     @type array|Pods|null $pod             Pod data or the Pods object.
+	 *     @type int|string      $id              Current item ID.
+	 *     @type string          $form_field_type HTML field type.
 	 * }
 	 */
 	public function render_input_script( $args ) {
+		wp_enqueue_script( 'pods-dfv' );
 
 		if ( is_array( $args ) ) {
 			$args = (object) $args;
 		}
 
-		$script_content = wp_json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
+		// Detect field object being passed to the $options array upstream.
+		if ( ! empty( $args->options['_field_object'] ) ) {
+			$args->field   = $args->options['_field_object'];
+
+			unset( $args->options['_field_object'] );
+		}
+
+		// Update options so it's as expected.
+		if ( ! empty( $args->field ) ) {
+			$args->options = pods_config_merge_data( $args->options, clone $args->field );
+		}
+
+		// Remove potential 2.8 beta fragments.
+		if ( ! empty( $args->options['pod_data'] ) ) {
+			unset( $args->options['pod_data'] );
+		}
+
+		$disable_dfv = ! empty( $args->options['disable_dfv'] );
+
+		$field_class = "pods-form-ui-field pods-dfv-field";
+
+		if ( ! $disable_dfv ) {
+			$field_class .= ' pods-dfv-field--unloaded';
+		}
+
+		$pod_name   = '';
+		$item_id    = 0;
+		$group_name = '';
+
+		if ( ! empty( $args->pod ) ) {
+			if ( $args->pod instanceof Pods ) {
+				$pod_name = $args->pod->pod_data['name'];
+			} else {
+				$pod_name = $args->pod['name'];
+			}
+		}
+
+		if ( isset( $args->id ) && '' !== $args->id ) {
+			$item_id = $args->id;
+		}
+
+		if ( $args->options instanceof Field ) {
+			$group_name = $args->options->get_group_name();
+		}
+
+		if ( empty( $group_name ) ) {
+			$group_name = $pod_name;
+		}
+
+		$dfv_field_data = $this->build_dfv_field_data( $args );
+		$script_content = wp_json_encode( $dfv_field_data, JSON_HEX_TAG );
 		?>
-		<div class="pods-form-ui-field pods-dfv-field">
-			<?php // @codingStandardsIgnoreLine ?>
-			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content; ?></script>
+		<div class="<?php echo esc_attr( $field_class ); ?>">
+			<?php if ( ! $disable_dfv ) : ?>
+				<span class="pods-dfv-field__loading-indicator" role="progressbar"></span>
+			<?php endif; ?>
+			<?php
+				// Important! The script tag must be all on one line or wptexturize will eat it up :( the regex matching breaks.
+			?>
+			<script type="application/json" class="pods-dfv-field-data" data-pod="<?php echo esc_attr( $pod_name ); ?>" data-group="<?php echo esc_attr( $group_name ); ?>" data-item-id="<?php echo esc_attr( $item_id ); ?>" data-form-counter="<?php echo esc_attr( PodsForm::$form_counter ); ?>"><?php
+				// @codingStandardsIgnoreLine
+				echo $script_content;
+			?></script>
 		</div>
 		<?php
 
@@ -379,39 +426,49 @@ class PodsField {
 	 * @param object $args            {
 	 *     Field information arguments.
 	 *
-	 *     @type string     $name            Field name.
-	 *     @type string     $type            Field type.
-	 *     @type array      $options         Field options.
-	 *     @type mixed      $value           Current value.
-	 *     @type array      $pod             Pod information.
-	 *     @type int|string $id              Current item ID.
-	 *     @type string     $form_field_type HTML field type.
+	 *     @type string       $name            Field name.
+	 *     @type string       $type            Field type.
+	 *     @type array        $options         Field options.
+	 *     @type Field|null   $field           Field object (if provided).
+	 *     @type mixed        $value           Current value.
+	 *     @type array        $pod             Pod information.
+	 *     @type int|string   $id              Current item ID.
+	 *     @type string       $form_field_type HTML field type.
 	 * }
 	 *
 	 * @return array
 	 */
 	public function build_dfv_field_data( $args ) {
+		$options = $args->options;
 
 		// Handle DFV options.
-		$args->options = $this->build_dfv_field_options( $args->options, $args );
+		$args->options = $this->build_dfv_field_options( $options, $args );
 
 		// Handle DFV attributes.
 		$attributes = PodsForm::merge_attributes( array(), $args->name, $args->type, $args->options );
 		$attributes = $this->build_dfv_field_attributes( $attributes, $args );
 		$attributes = array_map( 'esc_attr', $attributes );
 
+		$default_value = '';
+
+		if ( 'multi' === pods_v( $args->type . '_format_type' ) ) {
+			$default_value = [];
+		}
+
 		// Build DFV field data.
-		$data = array(
-			'htmlAttr'      => array(
+		$data = [
+			'htmlAttr'      => [
 				'id'         => $attributes['id'],
 				'class'      => $attributes['class'],
 				'name'       => $attributes['name'],
 				'name_clean' => $attributes['data-name-clean'],
-			),
+			],
 			'fieldType'     => $args->type,
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
-		);
+			'fieldEmbed'    => true,
+			'fieldValue'    => isset( $args->value ) ? $args->value : PodsForm::default_value( $default_value, $args->type, pods_v( 'name', $options, $args->name ), $options, $args->pod, $args->id ),
+		];
 
 		/**
 		 * Filter Pods DFV field data to further customize functionality.
@@ -495,24 +552,54 @@ class PodsField {
 	 * @param object $args {
 	 *     Field information arguments.
 	 *
-	 *     @type string     $name            Field name.
-	 *     @type string     $type            Field type.
-	 *     @type array      $options         Field options.
-	 *     @type mixed      $value           Current value.
-	 *     @type array      $pod             Pod information.
-	 *     @type int|string $id              Current item ID.
-	 *     @type string     $form_field_type HTML field type.
+	 *     @type string       $name            Field name.
+	 *     @type string       $type            Field type.
+	 *     @type array        $options         Field options.
+	 *     @type Field|null   $field         Field object (if provided).
+	 *     @type mixed        $value           Current value.
+	 *     @type array        $pod             Pod information.
+	 *     @type int|string   $id              Current item ID.
+	 *     @type string       $form_field_type HTML field type.
 	 * }
 	 *
 	 * @return array
 	 */
 	public function build_dfv_field_config( $args ) {
-
-		$config = $args->options;
+		if ( $args->options instanceof Field ) {
+			$config = $args->options->export();
+		} else {
+			$config = (array) $args->options;
+		}
 
 		unset( $config['data'] );
 
 		$config['item_id'] = (int) $args->id;
+
+		// Support passing missing options.
+		$check_missing = [
+			'type',
+			'name',
+			'label',
+			'id',
+		];
+
+		// Fix weird serialization issues.
+		foreach ( $config as $key => $value ) {
+			if ( 'a:0:{}' === $value ) {
+				$config[ $key ] = [];
+			}
+		}
+
+		foreach ( $check_missing as $missing_name ) {
+			if ( ! empty( $args->{$missing_name} ) ) {
+				$config[ $missing_name ] = $args->{$missing_name};
+			}
+		}
+
+		// Set up default placeholder option.
+		if ( ! isset( $config['placeholder'] ) || ! is_string( $config['placeholder'] ) ) {
+			$config['placeholder'] = '';
+		}
 
 		return $config;
 
@@ -539,8 +626,8 @@ class PodsField {
 
 		$data = array();
 
-		if ( ! empty( $args->options['data'] ) && is_array( $args->options['data'] ) ) {
-			$data = $args->options['data'];
+		if ( ! empty( $args->options['fieldItemData'] ) && is_array( $args->options['fieldItemData'] ) ) {
+			$data = $args->options['fieldItemData'];
 		}
 
 		return $data;
@@ -603,7 +690,27 @@ class PodsField {
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
-		return true;
+		/**
+		 * Filter field validation return.
+		 *
+		 * @since 2.7.24
+		 *
+		 * @param true            $true    Default validation return.
+		 * @param mixed|null      $value   Current value.
+		 * @param string|null     $name    Field name.
+		 * @param array|null      $options Field options.
+		 * @param array|null      $fields  Pod fields.
+		 * @param array|null      $pod     Pod information.
+		 * @param int|string|null $id      Current item ID.
+		 * @param array|null      $params  Additional parameters.
+		 */
+		$validate = apply_filters( 'pods_field_validate_' . static::$type, true, $value, $name, $options, $fields, $pod, $id, $params );
+
+		if ( ! is_bool( $validate ) ) {
+			$validate = (array) $validate;
+		}
+
+		return $validate;
 
 	}
 
@@ -754,48 +861,108 @@ class PodsField {
 	 * @return string
 	 */
 	public function strip_html( $value, $options = null ) {
-
 		if ( is_array( $value ) ) {
-			// @codingStandardsIgnoreLine
-			$value = @implode( ' ', $value );
-		}
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = $this->strip_html( $v, $options );
+			}
 
-		$value = trim( $value );
+			return $value;
+		}
 
 		if ( empty( $value ) ) {
 			return $value;
 		}
 
-		$options = (array) $options;
+		if ( $options ) {
+			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
-		// Strip HTML
-		if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0 ) ) {
-			$allowed_html_tags = '';
-
-			if ( 0 < strlen( pods_v( static::$type . '_allowed_html_tags', $options ) ) ) {
+			// Strip HTML
+			if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0 ) ) {
 				$allowed_tags = pods_v( static::$type . '_allowed_html_tags', $options );
-				$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
-				$allowed_tags = explode( ' ', $allowed_tags );
-				$allowed_tags = array_unique( array_filter( $allowed_tags ) );
 
-				if ( ! empty( $allowed_tags ) ) {
-					$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
+				if ( 0 < strlen( $allowed_tags ) ) {
+					$allowed_tags = trim( str_replace( [ '<', '>', ',' ], ' ', $allowed_tags ) );
+					$allowed_tags = explode( ' ', $allowed_tags );
+					$allowed_tags = array_unique( array_filter( $allowed_tags ) );
+
+					if ( ! empty( $allowed_tags ) ) {
+						$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
+
+						$value = strip_tags( $value, $allowed_html_tags );
+					}
 				}
-			}
 
-			if ( ! empty( $allowed_html_tags ) ) {
-				$value = strip_tags( $value, $allowed_html_tags );
+				return $value;
 			}
-		} else {
-			$value = strip_tags( $value );
 		}
 
-		// Strip shortcodes
-		if ( 0 === (int) pods_v( static::$type . '_allow_shortcode', $options ) ) {
-			$value = strip_shortcodes( $value );
+		return strip_tags( $value );
+	}
+
+	/**
+	 * Strip shortcodes based on options.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string|array     $value   The field value.
+	 * @param array|Field|null $options The field options.
+	 *
+	 * @return string The field value.
+	 */
+	public function strip_shortcodes( $value, $options = null ) {
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = $this->strip_shortcodes( $v, $options );
+			}
+
+			return $value;
 		}
 
-		return $value;
+		if ( empty( $value ) ) {
+			return $value;
+		}
+
+		if ( $options ) {
+			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+
+			// Check if we should strip shortcodes.
+			if ( 1 === (int) pods_v( static::$type . '_allow_shortcode', $options, 0 ) ) {
+				return $value;
+			}
+		}
+
+		return strip_shortcodes( $value );
+	}
+
+	/**
+	 * Trim whitespace based on options.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param string|array     $value   The field value.
+	 * @param array|Field|null $options The field options.
+	 *
+	 * @return string The field value.
+	 */
+	public function trim_whitespace( $value, $options = null ) {
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = $this->trim_whitespace( $v, $options );
+			}
+
+			return $value;
+		}
+
+		if ( $options ) {
+			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
+
+			// Check if we should trim the content.
+			if ( 0 === (int) pods_v( static::$type . '_trim', $options, 1 ) ) {
+				return $value;
+			}
+		}
+
+		return trim( $value );
 	}
 
 	/**

@@ -1,27 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import * as PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { omit } from 'lodash';
+import {
+	DndContext,
+	closestCenter,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from '@dnd-kit/core';
+import {
+	restrictToParentElement,
+	restrictToVerticalAxis,
+} from '@dnd-kit/modifiers';
+import {
+	arrayMove,
+	SortableContext,
+	sortableKeyboardCoordinates,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
-// WordPress dependencies
+/**
+ * WordPress dependencies
+ */
 import { sprintf, __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import {
-	STORE_KEY_EDIT_POD,
-	SAVE_STATUSES,
-} from 'dfv/src/admin/edit-pod/store/constants';
-import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+import { SAVE_STATUSES } from 'dfv/src/store/constants';
+import { FIELD_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import SettingsModal from './settings-modal';
 import FieldListItem from './field-list-item';
 
-import './manage-fields.scss';
 import './field-list.scss';
 
 const FieldList = ( {
+	storeKey,
+	podType,
+	podName,
 	podID,
 	podLabel,
 	groupName,
@@ -33,11 +54,20 @@ const FieldList = ( {
 	saveField,
 	fields,
 	setGroupFields,
+	podSaveStatus,
 } ) => {
 	const [ showAddFieldModal, setShowAddFieldModal ] = useState( false );
 	const [ newFieldOptions, setNewFieldOptions ] = useState( {} );
 	const [ newFieldIndex, setNewFieldIndex ] = useState( null );
 	const [ addedFieldName, setAddedFieldName ] = useState( null );
+	const [ movedFieldIDs, setMovedFieldIDs ] = useState( [] );
+
+	const sensors = useSensors(
+		useSensor( PointerSensor ),
+		useSensor( KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		} ),
+	);
 
 	const handleAddField = ( options = {} ) => ( event ) => {
 		event.stopPropagation();
@@ -79,27 +109,6 @@ const FieldList = ( {
 		setShowAddFieldModal( true );
 	};
 
-	const findField = ( id ) => {
-		return {
-			field: fields.find( ( item ) => item.id === id ),
-			index: fields.findIndex( ( item ) => item.id === id ),
-		};
-	};
-
-	const moveField = ( id, atIndex ) => {
-		const { field, index } = findField( id );
-
-		const remainingItems = fields.filter( ( item, itemIndex ) => index !== itemIndex );
-
-		const reorderedItems = [
-			...remainingItems.slice( 0, atIndex ),
-			field,
-			...remainingItems.slice( atIndex ),
-		];
-
-		setGroupFields( groupName, reorderedItems );
-	};
-
 	// Close the modal after a new field has been successfully added.
 	useEffect( () => {
 		if (
@@ -112,25 +121,62 @@ const FieldList = ( {
 		}
 	}, [ addedFieldName, setShowAddFieldModal, fieldSaveStatuses ] );
 
+	// Reset the "unsaved" indicators after the pod has been saved.
+	useEffect( () => {
+		if ( SAVE_STATUSES.SAVE_SUCCESS === podSaveStatus ) {
+			setMovedFieldIDs( [] );
+		}
+	}, [ podSaveStatus ] );
+
 	const isEmpty = 0 === fields.length;
 
 	const classes = classnames(
-		'pods-manage-fields',
-		{ 'no-fields': isEmpty }
+		'pods-field-list',
+		isEmpty && 'pods-field-list--no-fields',
 	);
+
+	const handleFieldDragEnd = ( event ) => {
+		const { active, over } = event;
+
+		if ( ! over?.id || active.id === over.id ) {
+			return;
+		}
+
+		const oldIndex = fields.findIndex(
+			( item ) => ( item.id.toString() === active.id ),
+		);
+
+		const newIndex = fields.findIndex(
+			( item ) => ( item.id.toString() === over.id ),
+		);
+
+		const reorderedItems = arrayMove( fields, oldIndex, newIndex );
+
+		setGroupFields( groupName, reorderedItems );
+
+		setMovedFieldIDs( ( prevState ) => [
+			...prevState,
+			parseInt( active.id, 10 ),
+		] );
+	};
 
 	return (
 		<div className={ classes }>
 			{ showAddFieldModal && (
 				<SettingsModal
+					storeKey={ storeKey }
+					podType={ podType }
+					podName={ podName }
 					optionsPod={ editFieldPod }
 					selectedOptions={ newFieldOptions }
 					title={ sprintf(
+						// @todo Zack: Make these into elements we can style the parent pod / group label differently.
 						/* translators: %1$s: Pod Label, %2$s Group Label */
 						__( '%1$s > %2$s > Add Field', 'pods' ),
 						podLabel,
 						groupLabel,
 					) }
+					isSaving={ fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVING }
 					hasSaveError={ fieldSaveStatuses[ addedFieldName ] === SAVE_STATUSES.SAVE_ERROR }
 					saveButtonText={ __( 'Save New Field', 'pods' ) }
 					errorMessage={
@@ -175,24 +221,41 @@ const FieldList = ( {
 						<div className="pods-field_wrapper-label_type">{ __( 'Type', 'pods' ) }</div>
 					</div>
 
-					<div className="pods-field_wrapper-items">
-						{ fields.map( ( field, index ) => {
-							return (
-								<FieldListItem
-									key={ field.id }
-									podID={ podID }
-									podLabel={ podLabel }
-									groupLabel={ groupLabel }
-									field={ field }
-									index={ index }
-									moveField={ moveField }
-									groupName={ groupName }
-									groupID={ groupID }
-									cloneField={ handleCloneField( field ) }
-								/>
-							);
-						} ) }
-					</div>
+					<DndContext
+						sensors={ sensors }
+						collisionDetection={ closestCenter }
+						onDragEnd={ handleFieldDragEnd }
+						modifiers={ [
+							restrictToParentElement,
+							restrictToVerticalAxis,
+						] }
+					>
+						<SortableContext
+							items={ fields.map( ( field ) => field.id.toString() ) }
+							strategy={ verticalListSortingStrategy }
+						>
+							<div className="pods-field_wrapper-items">
+								{ fields.map( ( field ) => {
+									return (
+										<FieldListItem
+											storeKey={ storeKey }
+											podType={ podType }
+											podName={ podName }
+											key={ field.id }
+											podID={ podID }
+											podLabel={ podLabel }
+											groupLabel={ groupLabel }
+											field={ field }
+											groupName={ groupName }
+											groupID={ groupID }
+											cloneField={ handleCloneField( field ) }
+											hasMoved={ movedFieldIDs.includes( field.id ) }
+										/>
+									);
+								} ) }
+							</div>
+						</SortableContext>
+					</DndContext>
 
 					<Button
 						isSecondary
@@ -208,6 +271,9 @@ const FieldList = ( {
 };
 
 FieldList.propTypes = {
+	storeKey: PropTypes.string.isRequired,
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
 	groupName: PropTypes.string.isRequired,
@@ -220,20 +286,26 @@ FieldList.propTypes = {
 	fieldSaveMessages: PropTypes.object.isRequired,
 	editFieldPod: PropTypes.object.isRequired,
 	saveField: PropTypes.func.isRequired,
+	podSaveStatus: PropTypes.string.isRequired,
 };
 
 export default compose( [
-	withSelect( ( select ) => {
-		const storeSelect = select( STORE_KEY_EDIT_POD );
+	withSelect( ( select, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeSelect = select( storeKey );
 
 		return {
 			editFieldPod: storeSelect.getGlobalFieldOptions(),
 			fieldSaveStatuses: storeSelect.getFieldSaveStatuses(),
 			fieldSaveMessages: storeSelect.getFieldSaveMessages(),
+			podSaveStatus: storeSelect.getSaveStatus(),
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
-		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+	withDispatch( ( dispatch, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeDispatch = dispatch( storeKey );
 
 		return {
 			setGroupFields: storeDispatch.setGroupFields,

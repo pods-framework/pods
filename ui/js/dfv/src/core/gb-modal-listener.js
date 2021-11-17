@@ -6,7 +6,7 @@
  */
 
 // The guard in front is to ensure wp.data exists before accessing select
-const editorData = wp.data && wp.data.select( 'core/editor' );
+const editorData = wp.data?.select( 'core/editor' );
 let unSubscribe;
 
 /**
@@ -117,5 +117,8 @@ function triggerUpdateEvent( optionalData ) {
 	};
 	const postData = Object.assign( defaultData, optionalData );
 
-	window.parent.jQuery( window.parent ).trigger( 'dfv:modal:update', postData );
+	window.parent.postMessage( {
+		type: 'PODS_MESSAGE',
+		data: postData,
+	}, window.location.origin );
 }

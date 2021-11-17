@@ -5,14 +5,14 @@ namespace Pods\Admin\Config;
 /**
  * Base configuration class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Base {
 
 	/**
 	 * Get list of tabs for the pod object.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param \Pods\Whatsit\Pod $pod The pod object.
 	 *
@@ -25,7 +25,7 @@ class Base {
 	/**
 	 * Get list of fields for the pod object.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param \Pods\Whatsit\Pod $pod  The pod object.
 	 * @param array             $tabs The list of tabs for the pod object.

@@ -15,7 +15,7 @@
  *
  * @return bool|\Pods returns false if $strict, WP_DEBUG, PODS_STRICT or (PODS_DEPRECATED && PODS_STRICT_MODE) are true
  * @since 2.0.0
- * @link  https://pods.io/docs/pods/
+ * @link  https://docs.pods.io/code/pods/
  */
 function pods( $type = null, $id = null, $strict = null ) {
 	$pod = new Pods( $type, $id );
@@ -43,7 +43,7 @@ function pods( $type = null, $id = null, $strict = null ) {
  * @return PodsUI
  *
  * @since 2.0.0
- * @link  https://pods.io/docs/pods-ui/
+ * @link  https://docs.pods.io/code/pods-ui/
  */
 function pods_ui( $obj, $deprecated = false ) {
 	return new PodsUI( $obj, $deprecated );
@@ -60,7 +60,7 @@ function pods_ui( $obj, $deprecated = false ) {
  * @return PodsAPI
  *
  * @since 2.0.0
- * @link  https://pods.io/docs/pods-api/
+ * @link  https://docs.pods.io/code/pods-api/
  */
 function pods_api( $pod = null, $format = null ) {
 	return PodsAPI::init( $pod, $format );
@@ -85,7 +85,8 @@ function pods_api( $pod = null, $format = null ) {
 function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
 	if ( $unique ) {
 		if ( $pod instanceof Pods ) {
-			return $pod->data;
+			// instance has to be unique, $pod->data returns a reference and has a circular reference to Pod
+			return new PodsData( clone $pod->pod_data, $id, $strict );
 		}
 
 		if ( ! in_array( $pod, array( null, false ), true ) ) {
@@ -200,7 +201,7 @@ function pods_i18n() {
  * @return string|bool The view output
  *
  * @since 2.0.0
- * @link  https://pods.io/docs/pods-view/
+ * @link  https://docs.pods.io/code/pods-view/
  */
 function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
 	$view = PodsView::view( $view, $data, $expires, $cache_mode );

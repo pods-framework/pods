@@ -6,6 +6,7 @@
  * @var array   $params
  * @var string  $label
  * @var string  $thank_you
+ * @var string  $output_type
  */
 wp_enqueue_style( 'pods-form' );
 wp_enqueue_script( 'pods' );
@@ -29,7 +30,7 @@ foreach ( $fields as $k => $field ) {
 
 	if ( in_array( $field['name'], [ 'created', 'modified' ], true ) ) {
 		unset( $fields[ $k ] );
-	} elseif ( false === PodsForm::permission( $field['type'], $field['name'], $field, $fields, $pod, $id ) ) {
+	} elseif ( ! pods_permission( $field ) ) {
 		if ( pods_v( 'hidden', $field, false ) ) {
 			$fields[ $k ]['type'] = 'hidden';
 		} elseif ( pods_v( 'read_only', $field, false ) ) {
@@ -59,7 +60,7 @@ foreach ( $submittable_fields as $k => $field ) {
 $uri_hash   = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
 $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
 
-$uid = pods_session_start();
+$uid = pods_session_id();
 
 if ( is_user_logged_in() ) {
 	$uid = 'user_' . get_current_user_id();
@@ -136,7 +137,25 @@ $field_prefix = '';
 			do_action( 'pods_form_after_field', $field, $fields, $pod, $params );
 		};
 
-		pods_view( PODS_DIR . 'ui/forms/list-rows.php', compact( array_keys( get_defined_vars() ) ) );
+		$template        = 'ui/forms/list-rows.php';
+		$template_before = '';
+		$template_after  = '';
+
+		if ( 'div' === $output_type ) {
+			$template = 'ui/forms/div-rows.php';
+		} elseif ( 'p' === $output_type ) {
+			$template = 'ui/forms/p-rows.php';
+		} elseif ( 'table' === $output_type ) {
+			$template        = 'ui/forms/table-rows.php';
+			$template_before = '<table>';
+			$template_after  = '</table>';
+		}
+
+		echo $template_before;
+
+		pods_view( PODS_DIR . $template, compact( array_keys( get_defined_vars() ) ) );
+
+		echo $template_after;
 
 		/**
 		 * Runs after all fields are outputted.

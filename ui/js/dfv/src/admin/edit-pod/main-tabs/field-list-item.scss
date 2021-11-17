@@ -1,23 +1,45 @@
 @import '../edit-pod-variables';
 
+.pods-field_outer-wrapper {
+	background: white;
+
+	&:nth-child(odd) {
+		background-color: $color--zebra-grey;
+		transition: 200ms ease background-color;
+	}
+}
+
+.pods-field_wrapper--dragging {
+	background: white;
+	box-shadow:  0 0 0 1px rgba(63, 63, 68, 0.05),
+		-1px 0 2px 0 rgba(34, 33, 81, 0.01),
+		0px 2px 2px 0 rgba(34, 33, 81, 0.25);
+	transform: scale(1.02);
+}
+
 .pods-field_wrapper {
 	display: flex;
 	width: auto;
 	align-items: center;
 	padding: .7em 0;
+	transition: border 0.2s ease-in-out, opacity 0.5s ease-in-out;
 
 	&:hover .pods-field_controls-container {
 		opacity: 1;
 	}
 }
 
-.pods-field_outer-wrapper:nth-child(odd) {
-	background-color: $color--zebra-grey;
-	transition: 200ms ease background-color;
-}
-
 .pods-field_wrapper--unsaved {
 	border-left: 5px #95BF3B solid;
+}
+
+.pods-field_wrapper--deleting {
+	opacity: 0.5;
+	user-select: none;
+}
+
+.pods-field_wrapper--errored {
+	border-left: 5px $color--red solid;
 }
 
 .pods-field_handle {
@@ -61,6 +83,10 @@
 	transition: 200ms ease opacity;
 }
 
+.pods-field_controls-container__error {
+	color: black;
+}
+
 .pods-field_type,
 .pods-field_wrapper-label_type {
 	width: 60px;
@@ -94,8 +120,6 @@
 
 .pods-field_name {
 	cursor: pointer;
-	padding-right: 1em;
-	text-overflow: ellipsis;
 	user-select: none;
 }
 
@@ -116,21 +140,23 @@
 
 .pods-field_wrapper-label,
 .pods-field_label {
-	width: calc(50% - 30px);
-	flex: 0 0 calc(50% - 30px);
+	width: calc(50% - 50px);
+	flex: 0 0 calc(50% - 50px);
 }
 
 .pods-field_wrapper-label:first-child {
-	margin-left: 40px;
+	margin-left: 50px;
 }
 
 .pods-field_name,
 .pods-field_type,
 .pods-field_wrapper-label_name,
 .pods-field_wrapper-label_type {
-	width: 25%;
-	flex: 0 0 25%;
+	flex: 0 0 calc(25% - 1em);
 	padding-bottom: 1em;
+	padding-right: 1em;
+	overflow-wrap: break-word;
+	width: calc(25% - 1em);
 }
 
 .pods-field_wrapper-label-items {
@@ -148,7 +174,7 @@
 .pods-field_wrapper-items {
 	border: 1px solid $color--light-grey;
 	margin: 1em 0;
-	overflow: hidden;
+	// overflow: hidden;
 }
 
 .pods-field_wrapper:nth-child(even) {

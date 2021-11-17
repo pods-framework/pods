@@ -2,12 +2,13 @@
 
 namespace Pods\Whatsit;
 
+use PodsForm;
 use Pods\Whatsit;
 
 /**
  * Field class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Field extends Whatsit {
 
@@ -28,15 +29,15 @@ class Field extends Whatsit {
 		$related_name = $this->get_related_object_name();
 
 		if ( null === $related_type || null === $related_name ) {
-			return array();
+			return [];
 		}
 
 		$api = pods_api();
 
-		$table_info = $api->get_table_info( $related_type, $related_name );
+		$table_info = $api->get_table_info( $related_type, $related_name, null, null, $this );
 
 		if ( ! $table_info ) {
-			$table_info = array();
+			$table_info = [];
 		}
 
 		$this->_table_info = $table_info;
@@ -47,7 +48,7 @@ class Field extends Whatsit {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_arg( $arg, $default = null ) {
+	public function get_arg( $arg, $default = null, $strict = false ) {
 		$arg = (string) $arg;
 
 		$special_args = [
@@ -60,7 +61,7 @@ class Field extends Whatsit {
 			'pod_description'    => 'get_parent_description',
 			'pod_object'         => 'get_parent_object',
 			'pod_object_type'    => 'get_parent_object_type',
-			'pod_storage_type'   => 'get_parent_storage_type',
+			'pod_object_storage_type'   => 'get_parent_object_storage_type',
 			'pod_type'           => 'get_parent_type',
 			// Group args.
 			'group_id'           => 'get_group_id',
@@ -70,12 +71,30 @@ class Field extends Whatsit {
 			'group_description'  => 'get_group_description',
 			'group_object'       => 'get_group_object',
 			'group_object_type'  => 'get_group_object_type',
-			'group_storage_type' => 'get_group_storage_type',
+			'group_object_storage_type' => 'get_group_object_storage_type',
 			'group_type'         => 'get_group_type',
 		];
 
 		if ( isset( $special_args[ $arg ] ) ) {
 			return $this->{$special_args[ $arg ]}();
+		}
+
+		// Backwards compatibility with previous Pods 2.8 pre-releases.
+		if ( 'sister_id' === $arg && isset( $this->args[ $arg ] ) ) {
+			$invalid_options = [
+				0,
+				'0',
+				'',
+				'-- Select One --',
+				__( '-- Select One --', 'pods' ),
+				null,
+			];
+
+			if ( in_array( $this->args[ $arg ], $invalid_options, true ) ) {
+				return $default;
+			}
+
+			return (int) $this->args[ $arg ];
 		}
 
 		return parent::get_arg( $arg, $default );
@@ -84,12 +103,17 @@ class Field extends Whatsit {
 	/**
 	 * Get related object type from field.
 	 *
+	 * @since 2.8.0
+	 *
 	 * @return string|null The related object type, or null if not found.
 	 */
 	public function get_related_object_type() {
 		$type = $this->get_type();
 
-		$simple_tableless_objects = \PodsForm::simple_tableless_objects();
+		// File field types are always related to the media object type.
+		if ( 'file' === $type ) {
+			return 'media';
+		}
 
 		$related_type = $this->get_arg( $type . '_object', $this->get_arg( 'pick_object' ) );
 
@@ -101,7 +125,7 @@ class Field extends Whatsit {
 			$related_type = 'media';
 		}
 
-		if ( empty( $related_type ) || \in_array( $related_type, $simple_tableless_objects, true ) ) {
+		if ( empty( $related_type ) ) {
 			return null;
 		}
 
@@ -111,6 +135,8 @@ class Field extends Whatsit {
 	/**
 	 * Get related object name from field.
 	 *
+	 * @since 2.8.0
+	 *
 	 * @return string|null The related object name, or null if not found.
 	 */
 	public function get_related_object_name() {
@@ -118,7 +144,9 @@ class Field extends Whatsit {
 
 		$related_type = $this->get_related_object_type();
 
-		if ( null === $related_type ) {
+		$simple_tableless_objects = PodsForm::simple_tableless_objects();
+
+		if ( null === $related_type || in_array( $related_type, $simple_tableless_objects, true ) ) {
 			return null;
 		}
 
@@ -130,11 +158,82 @@ class Field extends Whatsit {
 
 		if ( 'table' === $related_type ) {
 			$related_name = $this->get_arg( 'related_table', $related_name );
-		} elseif ( \in_array( $related_type, array( 'user', 'media', 'comment' ), true ) ) {
+		} elseif ( in_array( $related_type, [ 'user', 'media', 'comment' ], true ) ) {
 			$related_name = $related_type;
 		}
 
 		return $related_name;
+	}
+
+	/**
+	 * Get related object data from field.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return array|null The related object data, or null if not found.
+	 */
+	public function get_related_object_data() {
+		return PodsForm::field_method( $this->args['type'], 'data', $this->args['name'], null, $this->args, null, null, true );
+	}
+
+	/**
+	 * Get the related Pod object if it exists.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return Whatsit|array|null The related object, or null if not found.
+	 */
+	public function get_related_object() {
+		$table_info = $this->get_table_info();
+
+		// Check if the pod was found.
+		if ( ! $table_info || empty( $table_info['pod'] ) ) {
+			return null;
+		}
+
+		return $table_info['pod'];
+	}
+
+	/**
+	 * Get the bi-directional field if it is set.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return Whatsit|null The bi-directional field if it is set.
+	 */
+	public function get_bidirectional_field() {
+		$sister_id = $this->get_arg( 'sister_id' );
+
+		if ( ! $sister_id ) {
+			return null;
+		}
+
+		$related_field = Store::get_instance()->get_object( $sister_id );
+
+		// Only return if it is a valid field.
+		if ( ! $related_field instanceof Field ) {
+			return null;
+		}
+
+		return $related_field;
+	}
+
+	/**
+	 * Get field value limit from field.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return int The field value limit.
+	 */
+	public function get_limit() {
+		$type   = $this->get_type();
+		$format = $this->get_arg( $type .'_format_type', 'single' );
+
+		if ( 'multi' === $format ) {
+			return (int) $this->get_arg( $type . '_limit', 0 );
+		}
+
+		return 1;
 	}
 
 	/**

@@ -11,7 +11,7 @@ use Tribe__REST__Main as REST__Main;
  *
  * This class should not contain business logic and merely set up and start the REST API support.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Main extends REST__Main {
 
@@ -41,7 +41,7 @@ class Main extends REST__Main {
 	/**
 	 * Returns the semantic version for REST API
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return string
 	 */
@@ -52,7 +52,7 @@ class Main extends REST__Main {
 	/**
 	 * Returns the string indicating the REST API version.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return string
 	 */
@@ -63,7 +63,7 @@ class Main extends REST__Main {
 	/**
 	 * Returns the Pods REST API namespace string that hsould be used to register a route.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return string
 	 */
@@ -76,7 +76,7 @@ class Main extends REST__Main {
 	 *
 	 * The prefix should be in the `/some/path` format.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return string
 	 */
@@ -87,7 +87,7 @@ class Main extends REST__Main {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get_reference_url() {
 		return esc_url( 'https://docs.pods.io/' );

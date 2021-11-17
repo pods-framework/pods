@@ -4,18 +4,12 @@ import { withSelect, withDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
-import { Dashicon } from '@wordpress/components';
+import { Dashicon, Spinner } from '@wordpress/components';
 
 import {
-	STORE_KEY_EDIT_POD,
 	SAVE_STATUSES,
 	DELETE_STATUSES,
-} from 'dfv/src/admin/edit-pod/store/constants';
-
-// Helper components
-const Spinner = () => (
-	<img src="/wp-admin/images/wpspin_light.gif" alt="" />
-);
+} from 'dfv/src/store/constants';
 
 export const Postbox = ( {
 	podID,
@@ -42,6 +36,7 @@ export const Postbox = ( {
 	useEffect( () => {
 		// Redirect if the Pod has successfully been deleted.
 		if ( deleteStatus === DELETE_STATUSES.DELETE_SUCCESS ) {
+			// @todo This should be based on the adminurl instead of hardcoded to /wp-admin/ -- fix this later.
 			window.location.replace( '/wp-admin/admin.php?page=pods&deleted=1' );
 		}
 	}, [ deleteStatus ] );
@@ -54,12 +49,6 @@ export const Postbox = ( {
 						<h3>
 							<span>
 								{ __( 'Manage', 'pods' ) }
-								{ '\u00A0' /* &nbsp; */ }
-								<small>
-									(<a href="/wp-admin/admin.php?page=pods&amp;action=manage">
-										{ __( '« Back to Manage', 'pods' ) }
-									</a>)
-								</small>
 							</span>
 						</h3>
 						<div className="inside">
@@ -74,7 +63,7 @@ export const Postbox = ( {
 										</div>
 										<div className="misc-pub-section pods-storage-type">
 											<span>
-												<Dashicon icon="admin-tools" size="16" />
+												<Dashicon icon="database" size="16" />
 												{ __( 'Storage', 'pods' ) }: <strong>{ window.podsAdminConfig.currentPod.storageType.label }</strong>
 											</span>
 										</div>
@@ -117,8 +106,10 @@ export const Postbox = ( {
 };
 
 export default compose( [
-	withSelect( ( select ) => {
-		const storeSelect = select( STORE_KEY_EDIT_POD );
+	withSelect( ( select, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeSelect = select( storeKey );
 
 		return {
 			saveStatus: storeSelect.getSaveStatus(),
@@ -127,8 +118,10 @@ export default compose( [
 			options: storeSelect.getPodOptions(),
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
-		const storeDispatch = dispatch( STORE_KEY_EDIT_POD );
+	withDispatch( ( dispatch, ownProps ) => {
+		const { storeKey } = ownProps;
+
+		const storeDispatch = dispatch( storeKey );
 
 		return {
 			savePod: storeDispatch.savePod,

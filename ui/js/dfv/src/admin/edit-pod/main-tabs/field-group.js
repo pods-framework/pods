@@ -1,34 +1,27 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import * as PropTypes from 'prop-types';
-import { flow, omit } from 'lodash';
-import { getEmptyImage } from 'react-dnd-html5-backend';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { omit } from 'lodash';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import classnames from 'classnames';
 
 import { Dashicon } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 
-import dragSource from './group-drag-source';
-import dropTarget from './group-drop-target';
-
 import SettingsModal from './settings-modal';
 import FieldList from 'dfv/src/admin/edit-pod/main-tabs/field-list';
-import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/prop-types';
+import { GROUP_PROP_TYPE_SHAPE } from 'dfv/src/config/prop-types';
 
-import { SAVE_STATUSES } from 'dfv/src/admin/edit-pod/store/constants';
+import { SAVE_STATUSES, DELETE_STATUSES } from 'dfv/src/store/constants';
 
 import './field-group.scss';
 
 const ENTER_KEY = 13;
 
-const FieldGroup = forwardRef( ( props, ref ) => {
+const FieldGroup = ( props ) => {
 	const {
-		connectDragSource,
-		connectDropTarget,
-		connectDragPreview,
-		isDragging,
-	} = props;
-
-	const {
+		podType,
+		podName,
 		podID,
 		podLabel,
 		group,
@@ -36,11 +29,14 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		hasMoved,
 		saveStatus,
 		saveMessage,
+		deleteStatus,
 		resetGroupSaveStatus,
 		deleteGroup,
+		removeGroupFromPod,
 		saveGroup,
 		toggleExpanded,
 		editGroupPod,
+		storeKey,
 	} = props;
 
 	const {
@@ -50,22 +46,24 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		fields,
 	} = group;
 
-	const wrapperRef = useRef( ref );
-	const dragHandleRef = useRef( ref );
+	const isDeleting = DELETE_STATUSES.DELETING === deleteStatus;
+	const hasDeleteFailed = DELETE_STATUSES.DELETE_ERROR === deleteStatus;
+
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable( { id: groupName } );
+
+	const style = {
+		transform: CSS.Translate.toString( transform ),
+		transition,
+	};
 
 	const [ showSettings, setShowSettings ] = useState( false );
-
-	useEffect( () => {
-		if ( connectDragPreview ) {
-			// Use empty image as a drag preview so browsers don't draw it,
-			// we use our custom drag layer instead.
-			connectDragPreview( getEmptyImage(), {
-				// IE fallback: specify that we'd rather screenshot the node
-				// when it already knows it's being dragged so we can hide it with CSS.
-				captureDraggingState: true,
-			} );
-		}
-	} );
 
 	useEffect( () => {
 		// Close the Group Settings modal if we finished saving.
@@ -74,13 +72,12 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		}
 	}, [ saveStatus ] );
 
-	connectDropTarget( wrapperRef );
-	connectDragSource( dragHandleRef );
-
-	useImperativeHandle( ref, () => ( {
-		getWrapperNode: () => wrapperRef.current,
-		getHandleNode: () => dragHandleRef.current,
-	} ) );
+	useEffect( () => {
+		// After the group deletion is finished, remove the group from the pod.
+		if ( DELETE_STATUSES.DELETE_SUCCESS === deleteStatus ) {
+			removeGroupFromPod();
+		}
+	}, [ deleteStatus ] );
 
 	const handleKeyPress = ( event ) => {
 		if ( showSettings ) {
@@ -90,6 +87,16 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		if ( event.charCode === ENTER_KEY ) {
 			toggleExpanded();
 		}
+	};
+
+	const handleTitleClick = ( event ) => {
+		event.stopPropagation();
+
+		if ( showSettings ) {
+			return;
+		}
+
+		toggleExpanded();
 	};
 
 	const onEditGroupClick = ( event ) => {
@@ -125,39 +132,51 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 		);
 
 		if ( confirmation ) {
-			deleteGroup( groupID );
+			deleteGroup( groupID, groupName );
 		}
 	};
 
-	const classes = classnames(
-		'pods-field-group-wrapper',
-		{ 'pods-unsaved-data': hasMoved }
-	);
-
 	return (
 		<div
-			className={ classes }
-			ref={ wrapperRef }
-			style={ { opacity: isDragging ? 0 : 1 } }
+			ref={ setNodeRef }
+			className={
+				classnames(
+					'pods-field-group-wrapper',
+					hasMoved && 'pods-field-group-wrapper--unsaved',
+					isDeleting && 'pods-field-group-wrapper--deleting',
+					hasDeleteFailed && 'pods-field-group-wrapper--errored',
+				)
+			}
+			style={ style }
 		>
 			<div
 				tabIndex={ 0 }
 				role="button"
 				className="pods-field-group_title"
-				onClick={ ! showSettings ? toggleExpanded : undefined }
-				style={ { cursor: 'pointer' } }
+				onClick={ handleTitleClick }
 				onKeyPress={ handleKeyPress }
 			>
-				<div
-					className="pods-field-group_name"
-					ref={ dragHandleRef }
-					style={ { cursor: isDragging ? 'ns-resize' : null } }
-				>
-					<div className="pods-field-group_handle">
+				<div className="pods-field-group_name">
+					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
+					<div
+						className="pods-field-group_handle"
+						aria-label="drag"
+						// eslint-disable-next-line react/jsx-props-no-spreading
+						{ ...listeners }
+						// eslint-disable-next-line react/jsx-props-no-spreading
+						{ ...attributes }
+						onClick={ ( event ) => event.stopPropagation() }
+					>
 						<Dashicon icon="menu" />
 					</div>
 
 					{ groupLabel }
+
+					{ hasDeleteFailed ? (
+						<div className="pods-field-group_name__error">
+							{ __( 'Delete failed. Try again?', 'pods' ) }
+						</div>
+					) : null }
 
 					{ !! groupID && (
 						<span className="pods-field-group_name__id">
@@ -202,14 +221,19 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 				{ showSettings && (
 					<SettingsModal
+						storeKey={ storeKey }
+						podType={ podType }
+						podName={ podName }
 						optionsPod={ editGroupPod }
 						selectedOptions={ omit( group, [ 'fields' ] ) }
 						title={ sprintf(
+							// @todo Zack: Make these into elements we can style the parent pod differently.
 							/* translators: %1$s: Pod Label, %2$s Group Label */
 							__( '%1$s > %2$s > Edit Group', 'pods' ),
 							podLabel,
 							groupLabel
 						) }
+						isSaving={ saveStatus === SAVE_STATUSES.SAVING }
 						hasSaveError={ saveStatus === SAVE_STATUSES.SAVE_ERROR }
 						errorMessage={
 							saveMessage ||
@@ -224,6 +248,9 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 
 			{ isExpanded && ! isDragging && (
 				<FieldList
+					storeKey={ storeKey }
+					podType={ podType }
+					podName={ podName }
 					fields={ fields || [] }
 					podID={ podID }
 					podLabel={ podLabel }
@@ -234,9 +261,12 @@ const FieldGroup = forwardRef( ( props, ref ) => {
 			) }
 		</div>
 	);
-} );
+};
 
 FieldGroup.propTypes = {
+	storeKey: PropTypes.string.isRequired,
+	podType: PropTypes.string.isRequired,
+	podName: PropTypes.string.isRequired,
 	podID: PropTypes.number.isRequired,
 	podLabel: PropTypes.string.isRequired,
 	group: GROUP_PROP_TYPE_SHAPE,
@@ -247,23 +277,13 @@ FieldGroup.propTypes = {
 	hasMoved: PropTypes.bool.isRequired,
 	saveStatus: PropTypes.string,
 	saveMessage: PropTypes.string,
+	deleteStatus: PropTypes.string,
 
 	toggleExpanded: PropTypes.func.isRequired,
 	deleteGroup: PropTypes.func.isRequired,
+	removeGroupFromPod: PropTypes.func.isRequired,
 	saveGroup: PropTypes.func.isRequired,
 	resetGroupSaveStatus: PropTypes.func.isRequired,
-	moveGroup: PropTypes.func.isRequired,
-	handleGroupDrop: PropTypes.func.isRequired,
-
-	// This comes from the drop target
-	connectDropTarget: PropTypes.func.isRequired,
-
-	// These come from the drag source
-	connectDragSource: PropTypes.func.isRequired,
-	connectDragPreview: PropTypes.func.isRequired,
-	isDragging: PropTypes.bool.isRequired,
 };
 
-FieldGroup.displayName = 'FieldGroup';
-
-export default flow( dropTarget, dragSource )( FieldGroup );
+export default FieldGroup;

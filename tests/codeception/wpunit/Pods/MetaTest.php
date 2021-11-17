@@ -88,11 +88,15 @@ class MetaTest extends Pods_UnitTestCase {
 
 		$api->save_field( $params );
 
-		$this->pod_id2 = $api->save_pod( array(
-			'type'          => 'user',
-			'name'          => $this->pod_name2,
-			'create_extend' => 'extend',
-		) );
+		try {
+			$this->pod_id2 = $api->save_pod( [
+				'type'          => 'user',
+				'name'          => $this->pod_name2,
+				'create_extend' => 'extend',
+			] );
+		} catch ( \Exception $exception ) {
+			// Do nothing.
+		}
 
 		$this->pod  = pods( $this->pod_name );
 		$this->pod2 = pods( $this->pod_name2 );
@@ -102,7 +106,6 @@ class MetaTest extends Pods_UnitTestCase {
 		$this->_add_save_actions();
 
 		// Reset all the hooks.
-		pods_no_conflict_on( 'all' );
 		pods_meta()->core();
 	}
 
@@ -121,6 +124,7 @@ class MetaTest extends Pods_UnitTestCase {
 
 		$GLOBALS['current_user'] = null;
 
+		pods_no_conflict_off( 'all' );
 		parent::tearDown();
 	}
 

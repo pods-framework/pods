@@ -47,15 +47,16 @@ class PodsField_Heading extends PodsField {
 			],
 			'output_options' => [
 				'label' => __( 'Output Options', 'pods' ),
-				'group' => [
+				'type'  => 'boolean_group',
+				'boolean_group' => [
 					static::$type . '_allow_html'      => [
-						'label'      => __( 'Allow HTML?', 'pods' ),
+						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true,
 					],
 					static::$type . '_wptexturize'     => [
-						'label'   => __( 'Enable wptexturize?', 'pods' ),
+						'label'   => __( 'Enable wptexturize', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => [
@@ -64,7 +65,7 @@ class PodsField_Heading extends PodsField {
 						],
 					],
 					static::$type . '_allow_shortcode' => [
-						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
@@ -89,7 +90,7 @@ class PodsField_Heading extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
-		$options = (array) $options;
+		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		// @codingStandardsIgnoreLine
 		echo $this->display( $value, $name, $options, $pod, $id );
@@ -105,6 +106,8 @@ class PodsField_Heading extends PodsField {
 		}
 
 		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
 
 		if ( 1 === (int) pods_v( static::$type . '_wptexturize', $options, 1 ) ) {
 			$value = wptexturize( $value );
@@ -122,9 +125,9 @@ class PodsField_Heading extends PodsField {
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 		$value = $this->strip_html( $value, $options );
+		$value = $this->strip_shortcodes( $value, $options );
+		$value = $this->trim_whitespace( $value, $options );
 
-		$value = wp_trim_words( $value );
-
-		return $value;
+		return wp_trim_words( $value );
 	}
 }

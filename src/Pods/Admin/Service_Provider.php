@@ -8,23 +8,22 @@ use Pods\Admin\Config\Field;
 use tad_DI52_ServiceProvider;
 
 /**
- * Class Service_Provider
+ * Class Service_Provider.
  *
- * Add Blocks integration.
- *
- * @since 2.8
+ * @since 2.8.0
  */
 class Service_Provider extends tad_DI52_ServiceProvider {
 
 	/**
 	 * Registers the classes and functionality needed for Admin configs.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function register() {
-		$this->container->singleton( 'pods.admin.config.pod', Pod::class );
-		$this->container->singleton( 'pods.admin.config.group', Group::class );
-		$this->container->singleton( 'pods.admin.config.field', Field::class );
+		$this->container->singleton( Pod::class, Pod::class );
+		$this->container->singleton( Group::class, Group::class );
+		$this->container->singleton( Field::class, Field::class );
+		$this->container->singleton( Settings::class, Settings::class );
 
 		$this->hooks();
 	}
@@ -32,9 +31,9 @@ class Service_Provider extends tad_DI52_ServiceProvider {
 	/**
 	 * Hooks all the methods and actions the class needs.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	protected function hooks() {
-		// Nothing here for now.
+		add_action( 'pods_admin_settings_init', $this->container->callback( Settings::class, 'hook' ) );
 	}
 }

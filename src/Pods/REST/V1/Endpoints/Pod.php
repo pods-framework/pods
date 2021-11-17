@@ -13,21 +13,21 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public $route = '/pods/%1$d';
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public $object = 'pod';
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get_documentation() {
 		$GET_defaults = [
@@ -91,7 +91,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function READ_args() {
 		return [
@@ -103,33 +103,21 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 				'validate_callback' => [ $this->validator, 'is_pod_id' ],
 			],
 			'include_fields' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to include fields (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 			'include_groups' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to include groups (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 			'include_group_fields' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to include group fields (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 		];
@@ -138,7 +126,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get( WP_REST_Request $request ) {
 		return $this->get_by_args( 'id', 'id', $request );
@@ -147,7 +135,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	/**
 	 * Determine whether access to READ is available.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return bool Whether access to READ is available.
 	 */
@@ -158,7 +146,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function EDIT_args() {
 		return [
@@ -188,7 +176,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function update( WP_REST_Request $request ) {
 		if ( ! empty( $request['groups'] ) ) {
@@ -205,7 +193,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function can_edit() {
 		return pods_is_admin( 'pods' );
@@ -214,7 +202,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function DELETE_args() {
 		return [
@@ -226,13 +214,9 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 				'validate_callback' => [ $this->validator, 'is_pod_id' ],
 			],
 			'delete_all' => [
-				'type'        => 'integer',
+				'type'        => 'boolean',
 				'description' => __( 'Whether to delete all content for Pod (default: off).', 'pods' ),
-				'default'     => '0',
-				'enum'        => [
-					'0',
-					'1',
-				],
+				'default'     => false,
 				'cli_boolean' => true,
 			],
 		];
@@ -241,7 +225,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function delete( WP_REST_Request $request ) {
 		return $this->delete_by_args( 'id', 'id', $request );
@@ -250,7 +234,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function can_delete() {
 		return pods_is_admin( 'pods' );

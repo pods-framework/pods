@@ -7,7 +7,7 @@ use Pods\Whatsit;
 /**
  * Block_Field class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Block_Field extends Field {
 
@@ -19,7 +19,7 @@ class Block_Field extends Field {
 	/**
 	 * Get list of block args used for each field type.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array[] List of block args used for each field type.
 	 */
@@ -98,7 +98,7 @@ class Block_Field extends Field {
 	/**
 	 * Get list of Block API arguments to use.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return array|null List of Block API arguments or null if not valid.
 	 */
@@ -311,7 +311,7 @@ class Block_Field extends Field {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_arg( $arg, $default = null ) {
+	public function get_arg( $arg, $default = null, $strict = false ) {
 		if ( 'block' === $arg ) {
 			return $this->get_parent_name();
 		}

@@ -14,42 +14,42 @@ use WP_REST_Request;
 /**
  * Class Base
  *
- * @since 2.8
+ * @since 2.8.0
  */
 abstract class Base {
 
 	/**
-	 * @since 2.8
+	 * @since 2.8.0
 	 * @var string
 	 */
 	public $route;
 
 	/**
-	 * @since 2.8
+	 * @since 2.8.0
 	 * @var string
 	 */
 	public $object;
 
 	/**
-	 * @since 2.8
+	 * @since 2.8.0
 	 * @var Messages_Interface
 	 */
 	protected $messages;
 
 	/**
-	 * @since 2.8
+	 * @since 2.8.0
 	 * @var Post_Repository
 	 */
 	protected $post_repository;
 
 	/**
-	 * @since 2.8
+	 * @since 2.8.0
 	 * @var Validator_Interface
 	 */
 	protected $validator;
 
 	/**
-	 * @since 2.8
+	 * @since 2.8.0
 	 * @var array
 	 */
 	protected $supported_query_vars = [];
@@ -57,7 +57,7 @@ abstract class Base {
 	/**
 	 * Base constructor.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param Messages_Interface  $messages
 	 * @param Post_Repository     $post_repository
@@ -74,7 +74,7 @@ abstract class Base {
 	/**
 	 * Converts an array of arguments suitable for the WP REST API to the Swagger format.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $args     List of arguments to convert to Swagger format.
 	 * @param array $defaults List of defaults to merge into the arguments.
@@ -160,7 +160,7 @@ abstract class Base {
 	/**
 	 * Converts REST format type argument to the corresponding Swagger.io definition.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string $type A type string or an array of types to define a `oneOf` type.
 	 *
@@ -178,7 +178,7 @@ abstract class Base {
 	/**
 	 * Check whether a value is null or not.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param mixed $value The value to check.
 	 *
@@ -191,7 +191,7 @@ abstract class Base {
 	/**
 	 * Get the route path for this endpoint.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @return string The route path.
 	 */
@@ -207,7 +207,7 @@ abstract class Base {
 	/**
 	 * Handle getting the object archive.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param WP_REST_Request $request The request object.
 	 *
@@ -287,7 +287,7 @@ abstract class Base {
 	/**
 	 * Handle creating the object using specific REST / Pods API arguments.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param WP_REST_Request $request   REST API Request object.
 	 * @param bool            $return_id Whether to return the object ID (off returns full response).
@@ -395,7 +395,7 @@ abstract class Base {
 	/**
 	 * Handle getting the object using specific REST / Pods API arguments.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string|array         $rest_param REST API parameter name to look for OR arguments to pass to loader.
 	 * @param string               $api_arg    Pods API argument name to use for lookups.
@@ -440,8 +440,27 @@ abstract class Base {
 			return new WP_Error( 'rest-object-not-found', sprintf( __( '%s not found.', 'pods' ), ucwords( $this->object ) ), $args );
 		}
 
+		$include_parent       = false;
+		$include_groups       = false;
+		$include_group_fields = false;
+		$include_fields       = false;
+
+		// Set up flags based on request.
+		if ( $request ) {
+			$include_parent = in_array( $this->object, [ 'group', 'field' ], true ) && 1 === (int) $request['include_parent'];
+
+			if ( 'pod' === $this->object ) {
+				$include_groups       = 1 === (int) $request['include_groups'];
+				$include_group_fields = 1 === (int) $request['include_group_fields'];
+			}
+
+			if ( in_array( $this->object, [ 'pod', 'group' ], true ) ) {
+				$include_fields = 1 === (int) $request['include_fields'];
+			}
+		}
+
 		// Handle parent details.
-		if ( in_array( $this->object, [ 'group', 'field' ], true ) && 1 === (int) $request['include_parent'] ) {
+		if ( $include_parent ) {
 			// Set temporary data so parent data gets exported.
 			$object->set_arg( 'parent_data', $object->get_parent_data() );
 		}
@@ -449,9 +468,9 @@ abstract class Base {
 		/** @var Whatsit $object */
 		return [
 			$this->object => $object->export( [
-				'include_groups'       => 'pod' === $this->object && 1 === (int) $request['include_groups'],
-				'include_group_fields' => 'pod' === $this->object && 1 === (int) $request['include_group_fields'],
-				'include_fields'       => in_array( $this->object, [ 'pod', 'group' ], true ) && 1 === (int) $request['include_fields'],
+				'include_groups'       => $include_groups,
+				'include_group_fields' => $include_group_fields,
+				'include_fields'       => $include_fields,
 			] ),
 		];
 	}
@@ -459,7 +478,7 @@ abstract class Base {
 	/**
 	 * Handle updating the object using specific REST / Pods API arguments.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string          $rest_param REST API parameter name to look for.
 	 * @param string          $api_arg    Pods API argument name to use for lookups.
@@ -527,7 +546,7 @@ abstract class Base {
 	/**
 	 * Handle deleting the object using specific REST / Pods API arguments.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param string|array    $rest_param REST API parameter name to look for OR arguments to pass to loader.
 	 * @param string          $api_arg    Pods API argument name to use for lookups.
@@ -578,7 +597,7 @@ abstract class Base {
 	/**
 	 * Parses the arguments populated parsing the request filling out with the defaults.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $args     List of arguments to fill out with defaults.
 	 * @param array $defaults List of defaults to merge with arguments.

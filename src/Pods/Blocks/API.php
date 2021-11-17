@@ -7,14 +7,14 @@ use Pods\Whatsit\Block;
 /**
  * Blocks functionality class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class API {
 
 	/**
 	 * Register blocks for the Pods Blocks API.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 */
 	public function register_blocks() {
 		static $registered = false;
@@ -23,9 +23,10 @@ class API {
 			return;
 		}
 
-		$blocks = $this->get_blocks();
+		$blocks    = $this->get_blocks();
+		$js_blocks = $this->get_js_blocks();
 
-		// Pods Blocks API.
+		// The Pods Blocks JS API.
 		$pods_blocks_options_file = file_get_contents( PODS_DIR . 'ui/js/blocks/pods-blocks-api.min.asset.json' );
 
 		$pods_blocks_options = json_decode( $pods_blocks_options_file, true );
@@ -35,18 +36,17 @@ class API {
 		wp_set_script_translations( 'pods-blocks-api', 'pods' );
 
 		wp_localize_script( 'pods-blocks-api', 'podsBlocksConfig', [
-			'blocks'      => array_map( static function ( $block ) {
-				$js_block = $block;
-
-				unset( $js_block['render_callback'] );
-
-				return $js_block;
-			}, $blocks ),
+			'blocks'      => $js_blocks ,
 			// No custom collections to register directly with JS right now.
 			'collections' => [],
 		] );
 
-		add_filter( 'block_categories', [ $this, 'register_block_collections' ] );
+		// The 'block_categories' filter has been deprecated in WordPress 5.8+ and replaced by 'block_categories_all'.
+		if ( pods_version_check( 'wp', '5.8-beta0' ) ) {
+			add_filter( 'block_categories_all', [ $this, 'register_block_collections' ] );
+		} else {
+			add_filter( 'block_categories', [ $this, 'register_block_collections' ] );
+		}
 
 		foreach ( $blocks as $block ) {
 			$block_name = $block['blockName'];
@@ -62,7 +62,7 @@ class API {
 	/**
 	 * Setup core blocks.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 */
 	public function setup_core_blocks() {
 		static $setup = false;
@@ -74,7 +74,7 @@ class API {
 		/**
 		 * Allow any integrations to be set up before core blocks and collections are called.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 */
 		do_action( 'pods_blocks_api_pre_init' );
 
@@ -88,7 +88,7 @@ class API {
 		/**
 		 * Allow custom blocks to be registered with Pods.
 		 *
-		 * @since TBD
+		 * @since 2.8.0
 		 */
 		do_action( 'pods_blocks_api_init' );
 
@@ -98,7 +98,7 @@ class API {
 	/**
 	 * Get list of registered blocks for the Pods Blocks API.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array List of registered blocks.
 	 */
@@ -116,6 +116,8 @@ class API {
 		/** @var Block[] $blocks */
 		$blocks = $api->_load_objects( [
 			'object_type' => 'block',
+			// Disable DB queries for now.
+			'bypass_post_type_find' => false,
 		] );
 
 		// Ensure the response is an array.
@@ -129,9 +131,56 @@ class API {
 	}
 
 	/**
+	 * Get list of registered blocks for the Pods Blocks API and prepare them for JavaScript registerBlockType().
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return array List of registered blocks prepared for JavaScript registerBlockType().
+	 */
+	public function get_js_blocks() {
+		static $js_blocks = [];
+
+		if ( ! empty( $js_blocks ) ) {
+			return $js_blocks;
+		}
+
+		$blocks = $this->get_blocks();
+
+		foreach ( $blocks as $block_key => $block ) {
+			$js_block = [];
+
+			// Remove render options.
+			unset( $block['render_callback'], $block['render_custom_callback'], $block['render_template'], $block['render_template_path'] );
+
+			// Remove assets options.
+			unset( $block['enqueue_assets'], $block['enqueue_script'], $block['enqueue_style'] );
+
+			foreach ( $block as $key => $value ) {
+				// Prepare the keys as camelCase.
+				$key = pods_js_camelcase_name( $key );
+
+				// Skip if the value is null.
+				if ( null === $value ) {
+					continue;
+				}
+
+				$js_block[ $key ] = $value;
+			}
+
+			if ( ! isset( $js_block['usesContext'] ) ) {
+				$js_block['usesContext'] = [];
+			}
+
+			$js_blocks[ $block_key ] = $js_block;
+		}
+
+		return $js_blocks;
+	}
+
+	/**
 	 * Get list of registered block collections for the Pods Blocks API.
 	 *
-	 * @since TBD
+	 * @since 2.8.0
 	 *
 	 * @return array List of registered block collections.
 	 */
@@ -164,7 +213,7 @@ class API {
 	/**
 	 * Register block collections by adding them to the list of 'categories'.
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 *
 	 * @param array $collections List of block 'categories' from WordPress.
 	 *
@@ -186,5 +235,24 @@ class API {
 		}
 
 		return $collections;
+	}
+
+	/**
+	 * Remove our legacy Pods widgets from the Legacy Widget block.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param array $widgets An array of excluded widget-type IDs.
+	 *
+	 * @return array An array of excluded widget-type IDs.
+	 */
+	public function remove_from_legacy_widgets( $widgets ) {
+		$widgets[] = 'pods_widget_field';
+		$widgets[] = 'pods_widget_form';
+		$widgets[] = 'pods_widget_list';
+		$widgets[] = 'pods_widget_single';
+		$widgets[] = 'pods_widget_view';
+
+		return $widgets;
 	}
 }

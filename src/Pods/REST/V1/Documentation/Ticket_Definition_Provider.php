@@ -7,14 +7,14 @@ use Tribe__Documentation__Swagger__Provider_Interface as Provider_Interface;
 /**
  * Class Ticket_Definition_Provider
  *
- * @since 2.8
+ * @since 2.8.0
  */
 class Ticket_Definition_Provider implements Provider_Interface {
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @since 2.8
+	 * @since 2.8.0
 	 */
 	public function get_documentation() {
 		$documentation = [
@@ -153,7 +153,7 @@ class Ticket_Definition_Provider implements Provider_Interface {
 		/**
 		 * Filters the Swagger documentation generated in the REST API.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 *
 		 * @param array $documentation An associative PHP array in the format supported by Swagger.
 		 *

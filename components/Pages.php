@@ -89,7 +89,7 @@ class Pods_Pages extends PodsComponent {
 			'has_archive'  => false,
 			'hierarchical' => false,
 			'supports'     => array( 'title', 'author', 'revisions' ),
-			'menu_icon'    => 'dashicons-pods',
+			'menu_icon'    => pods_svg_icon( 'pods' ),
 		);
 
 		if ( ! pods_is_admin() ) {
@@ -241,7 +241,7 @@ class Pods_Pages extends PodsComponent {
 	 * @since 2.0.0
 	 */
 	public function admin_assets() {
-
+		wp_enqueue_script( 'pods-dfv' );
 		wp_enqueue_style( 'pods-styles' );
 	}
 
@@ -375,6 +375,13 @@ class Pods_Pages extends PodsComponent {
 	 * @since 2.0.0
 	 */
 	public function edit_page_form() {
+
+		global $post_type;
+
+		if ( $this->object_type !== $post_type ) {
+			return;
+		}
+
 		add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
 	}
 
@@ -416,6 +423,8 @@ class Pods_Pages extends PodsComponent {
 		if ( isset( PodsMeta::$post_types[ $pod['name'] ] ) ) {
 			return;
 		}
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ), 21 );
 
 		if ( ! function_exists( 'get_page_templates' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/theme.php';
@@ -515,14 +524,14 @@ class Pods_Pages extends PodsComponent {
 		$fields = array(
 			array(
 				'name'       => 'admin_only',
-				'label'      => __( 'Restrict access to Admins?', 'pods' ),
+				'label'      => __( 'Restrict access to Admins', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,
 			),
 			array(
 				'name'       => 'restrict_role',
-				'label'      => __( 'Restrict access by Role?', 'pods' ),
+				'label'      => __( 'Restrict access by Role', 'pods' ),
 				'help'       => array(
 					__( '<h6>Roles</h6> Roles are assigned to users to provide them access to specific functionality in WordPress. Please see the Roles and Capabilities component in Pods for an easy tool to add your own roles and edit existing ones.', 'pods' ),
 					'http://codex.wordpress.org/Roles_and_Capabilities',
@@ -541,12 +550,12 @@ class Pods_Pages extends PodsComponent {
 				'pick_ajax'         => false,
 				'default'           => '',
 				'depends-on'        => array(
-					'restrict_role' => true,
+					'pods_meta_restrict_role' => true,
 				),
 			),
 			array(
 				'name'       => 'restrict_capability',
-				'label'      => __( 'Restrict access by Capability?', 'pods' ),
+				'label'      => __( 'Restrict access by Capability', 'pods' ),
 				'help'       => array(
 					__( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
 					'http://codex.wordpress.org/Roles_and_Capabilities',
@@ -565,12 +574,12 @@ class Pods_Pages extends PodsComponent {
 				'pick_ajax'         => false,
 				'default'           => '',
 				'depends-on'        => array(
-					'restrict_capability' => true,
+					'pods_meta_restrict_capability' => true,
 				),
 			),
 			array(
 				'name'       => 'restrict_redirect',
-				'label'      => __( 'Redirect if Restricted?', 'pods' ),
+				'label'      => __( 'Redirect if Restricted', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
 				'dependency' => true,
@@ -582,7 +591,7 @@ class Pods_Pages extends PodsComponent {
 				'type'       => 'boolean',
 				'dependency' => true,
 				'depends-on' => array(
-					'restrict_redirect' => true,
+					'pods_meta_restrict_redirect' => true,
 				),
 			),
 			array(
@@ -591,8 +600,8 @@ class Pods_Pages extends PodsComponent {
 				'default'    => '',
 				'type'       => 'text',
 				'depends-on' => array(
-					'restrict_redirect'       => true,
-					'restrict_redirect_login' => false,
+					'pods_meta_restrict_redirect'       => true,
+					'pods_meta_restrict_redirect_login' => false,
 				),
 			),
 		);
@@ -611,16 +620,17 @@ class Pods_Pages extends PodsComponent {
 	 * @return array|bool|int|mixed|null|string|void
 	 */
 	public function get_meta( $_null, $post_ID = null, $meta_key = null, $single = false ) {
-
-		if ( 'code' === $meta_key ) {
-			$post = get_post( $post_ID );
-
-			if ( is_object( $post ) && $this->object_type == $post->post_type ) {
-				return $post->post_content;
-			}
+		if ( 'code' !== $meta_key ) {
+			return $_null;
 		}
 
-		return $_null;
+		$post = get_post( $post_ID );
+
+		if ( ! is_object( $post ) || $this->object_type !== $post->post_type ) {
+			return $_null;
+		}
+
+		return $post->post_content;
 	}
 
 	/**
@@ -629,42 +639,44 @@ class Pods_Pages extends PodsComponent {
 	 * @param        $_null
 	 * @param int    $post_ID
 	 * @param string $meta_key
-	 * @param null   $meta_value
+	 * @param string $meta_value
 	 *
 	 * @return bool|int|null
 	 */
 	public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
+		if ( 'code' !== $meta_key ) {
+			return $_null;
+		}
 
-		if ( 'code' === $meta_key ) {
-			$post = get_post( $post_ID );
+		$post = get_post( $post_ID );
 
-			if ( is_object( $post ) && $this->object_type == $post->post_type ) {
-				$postdata = array(
-					'ID'           => $post_ID,
-					'post_content' => $meta_value,
-				);
+		if ( ! is_object( $post ) || $this->object_type !== $post->post_type ) {
+			return $_null;
+		}
 
-				remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
+		$postdata = array(
+			'ID'           => $post_ID,
+			'post_content' => $meta_value,
+		);
 
-				$revisions = false;
+		remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
 
-				if ( has_action( 'pre_post_update', 'wp_save_post_revision' ) ) {
-					remove_action( 'pre_post_update', 'wp_save_post_revision' );
+		$revisions = false;
 
-					$revisions = true;
-				}
+		if ( has_action( 'pre_post_update', 'wp_save_post_revision' ) ) {
+			remove_action( 'pre_post_update', 'wp_save_post_revision' );
 
-				wp_update_post( (object) $postdata );
-				// objects will be automatically sanitized
-				if ( $revisions ) {
-					add_action( 'pre_post_update', 'wp_save_post_revision' );
-				}
+			$revisions = true;
+		}
 
-				return true;
-			}//end if
-		}//end if
+		wp_update_post( (object) $postdata );
 
-		return $_null;
+		// objects will be automatically sanitized
+		if ( $revisions ) {
+			add_action( 'pre_post_update', 'wp_save_post_revision' );
+		}
+
+		return true;
 	}
 
 	/**
@@ -695,7 +707,7 @@ class Pods_Pages extends PodsComponent {
 
 		uksort( $pod_page_rewrites, 'pods_page_length_sort' );
 
-		pods_transient_set( 'pods_object_page_rewrites', $pod_page_rewrites );
+		pods_transient_set( 'pods_object_page_rewrites', $pod_page_rewrites, WEEK_IN_SECONDS );
 
 		$pod_page_rewrites = array_flip( $pod_page_rewrites );
 
@@ -712,20 +724,22 @@ class Pods_Pages extends PodsComponent {
 	 * @return array|bool
 	 */
 	public static function exists( $uri = null ) {
-
 		if ( null === $uri ) {
-			$uri = parse_url( pods_current_url() );
-			$uri = $uri['path'];
-		} else {
-			$uri = explode( '?', $uri );
-			$uri = explode( '#', $uri[0] );
-			$uri = $uri[0];
+			$uri = pods_current_path();
 		}
 
-		$home = parse_url( get_home_url() );
+		if ( empty( $uri ) ) {
+			return false;
+		}
 
-		if ( ! empty( $home ) && isset( $home['path'] ) && '/' !== $home['path'] ) {
-			$uri = substr( $uri, strlen( $home['path'] ) );
+		$uri = explode( '?', $uri );
+		$uri = explode( '#', $uri[0] );
+		$uri = $uri[0];
+
+		$home_path = wp_parse_url( get_home_url(), PHP_URL_PATH );
+
+		if ( ! empty( $home_path ) && '/' !== $home_path ) {
+			$uri = substr( $uri, strlen( $home_path ) );
 		}
 
 		$uri       = trim( $uri, '/' );
@@ -985,7 +999,7 @@ class Pods_Pages extends PodsComponent {
 		}
 
 		if ( false !== self::$exists ) {
-			$permission = pods_permission( self::$exists['options'] );
+			$permission = pods_permission( self::$exists );
 
 			$permission = (boolean) apply_filters( 'pods_pages_permission', $permission, self::$exists );
 
@@ -1331,7 +1345,6 @@ function get_pod_page_uri() {
  * @since 1.7.5
  */
 function pod_page_exists( $uri = null ) {
-
 	return Pods_Pages::exists( $uri );
 }
 

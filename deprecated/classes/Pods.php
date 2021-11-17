@@ -1,6 +1,8 @@
 <?php
 require_once PODS_DIR . 'deprecated/deprecated.php';
 
+use Pods\Whatsit\Field;
+
 /**
  * @package Pods\Deprecated
  */
@@ -103,7 +105,15 @@ class Pods_Deprecated {
 		do_action( 'pods_showform_pre', $pod_id, $public_fields, $label, $this );
 
 		foreach ( $fields as $key => $field ) {
-			if ( ! is_array( $field ) || in_array( $key, array( 'created', 'modified' ), true ) ) {
+			$is_field_object = $field instanceof Field;
+
+			if (
+				(
+					! is_array( $field )
+					&& ! $is_field_object
+				)
+				|| in_array( $key, array( 'created', 'modified' ), true )
+			) {
 				continue;
 			}
 
@@ -112,7 +122,7 @@ class Pods_Deprecated {
 
 			// Replace field attributes with public form attributes
 			if ( ! empty( $attributes ) && is_array( $attributes[ $key ] ) ) {
-				$field = array_merge( $field, $attributes[ $key ] );
+				$field = pods_config_merge_data( $field, $attributes[ $key ] );
 			}
 
 			// Replace the input helper name with the helper code
@@ -380,7 +390,9 @@ class Pods_Deprecated {
 			foreach ( $fields as $k => $field ) {
 				$name = $k;
 
-				if ( ! is_array( $field ) ) {
+				$is_field_object = $field instanceof Field;
+
+				if ( ! is_array( $field ) && ! $is_field_object ) {
 					$name  = $field;
 					$field = array();
 				} elseif ( isset( $field['name'] ) ) {

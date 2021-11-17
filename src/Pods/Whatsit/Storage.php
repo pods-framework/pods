@@ -7,7 +7,7 @@ use Pods\Whatsit;
 /**
  * Storage class.
  *
- * @since 2.8
+ * @since 2.8.0
  */
 abstract class Storage {
 
@@ -19,12 +19,12 @@ abstract class Storage {
 	/**
 	 * @var array
 	 */
-	protected $primary_args = array();
+	protected $primary_args = [];
 
 	/**
 	 * @var array
 	 */
-	protected $secondary_args = array();
+	protected $secondary_args = [];
 
 	/**
 	 * @var bool
@@ -39,11 +39,11 @@ abstract class Storage {
 	}
 
 	/**
-	 * Get storage type.
+	 * Get the object storage type.
 	 *
-	 * @return string
+	 * @return string The object storage type.
 	 */
-	public function get_storage_type() {
+	public function get_object_storage_type() {
 		return static::$type;
 	}
 
@@ -63,8 +63,8 @@ abstract class Storage {
 	 *
 	 * @return Whatsit[]
 	 */
-	public function find( array $args = array() ) {
-		return array();
+	public function find( array $args = [] ) {
+		return [];
 	}
 
 	/**
@@ -98,7 +98,7 @@ abstract class Storage {
 		$arg_value = [];
 
 		if ( array_key_exists( $arg, $args ) ) {
-			$arg_value[] = is_array( $args[ $arg ] ) ? $args[ $arg ] : array( $args[ $arg ] );
+			$arg_value[] = is_array( $args[ $arg ] ) ? $args[ $arg ] : [ $args[ $arg ] ];
 		}
 
 		$secondary_variations = [
@@ -112,7 +112,7 @@ abstract class Storage {
 				continue;
 			}
 
-			$arg_value[] = is_array( $args[ $arg . '_' . $variation ] ) ? $args[ $arg . '_' . $variation ] : array( $args[ $arg . '_' . $variation ] );
+			$arg_value[] = is_array( $args[ $arg . '_' . $variation ] ) ? $args[ $arg . '_' . $variation ] : [ $args[ $arg . '_' . $variation ] ];
 		}
 
 		if ( empty( $arg_value ) ) {
@@ -154,7 +154,7 @@ abstract class Storage {
 		 * @param Whatsit          $object  Pod object.
 		 * @param Storage $storage Storage object.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 */
 		do_action( 'pods_whatsit_storage_save', $object, $this );
 
@@ -164,7 +164,7 @@ abstract class Storage {
 		 * @param Whatsit          $object  Pod object.
 		 * @param Storage $storage Storage object.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 */
 		do_action( 'pods_whatsit_storage_save_' . $object->get_object_type(), $object, $this );
 
@@ -177,7 +177,7 @@ abstract class Storage {
 			 * @param Whatsit          $object  Pod object.
 			 * @param Storage $storage Storage object.
 			 *
-			 * @since 2.8
+			 * @since 2.8.0
 			 */
 			do_action( 'pods_whatsit_storage_added', $object, $this );
 
@@ -187,7 +187,7 @@ abstract class Storage {
 			 * @param Whatsit          $object  Pod object.
 			 * @param Storage $storage Storage object.
 			 *
-			 * @since 2.8
+			 * @since 2.8.0
 			 */
 			do_action( 'pods_whatsit_storage_added_' . $object->get_object_type(), $object, $this );
 
@@ -228,7 +228,7 @@ abstract class Storage {
 		 * @param Whatsit          $object  Pod object.
 		 * @param Storage $storage Storage object.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 */
 		do_action( 'pods_whatsit_storage_save', $object, $this );
 
@@ -238,7 +238,7 @@ abstract class Storage {
 		 * @param Whatsit          $object  Pod object.
 		 * @param Storage $storage Storage object.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 */
 		do_action( 'pods_whatsit_storage_save_' . $object->get_object_type(), $object, $this );
 
@@ -251,7 +251,7 @@ abstract class Storage {
 			 * @param Whatsit          $object  Pod object.
 			 * @param Storage $storage Storage object.
 			 *
-			 * @since 2.8
+			 * @since 2.8.0
 			 */
 			do_action( 'pods_whatsit_storage_saved', $object, $this );
 
@@ -261,7 +261,7 @@ abstract class Storage {
 			 * @param Whatsit          $object  Pod object.
 			 * @param Storage $storage Storage object.
 			 *
-			 * @since 2.8
+			 * @since 2.8.0
 			 */
 			do_action( 'pods_whatsit_storage_saved_' . $object->get_object_type(), $object, $this );
 
@@ -299,7 +299,7 @@ abstract class Storage {
 			 * @param Whatsit          $object  Original pod object.
 			 * @param Storage $storage Storage object.
 			 *
-			 * @since 2.8
+			 * @since 2.8.0
 			 */
 			do_action( 'pods_whatsit_storage_duplicated', $object, $this );
 
@@ -309,7 +309,7 @@ abstract class Storage {
 			 * @param Whatsit          $object  Original pod object.
 			 * @param Storage $storage Storage object.
 			 *
-			 * @since 2.8
+			 * @since 2.8.0
 			 */
 			do_action( 'pods_whatsit_storage_duplicated_' . $object->get_object_type(), $object, $this );
 		}//end if
@@ -342,7 +342,7 @@ abstract class Storage {
 		 * @param Whatsit          $object  Pod object.
 		 * @param Storage $storage Storage object.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 */
 		do_action( 'pods_whatsit_storage_delete', $object, $this );
 
@@ -352,7 +352,7 @@ abstract class Storage {
 		 * @param Whatsit          $object  Pod object.
 		 * @param Storage $storage Storage object.
 		 *
-		 * @since 2.8
+		 * @since 2.8.0
 		 */
 		do_action( 'pods_whatsit_storage_delete_' . $object->get_object_type(), $object, $this );
 
@@ -365,7 +365,7 @@ abstract class Storage {
 			 * @param Whatsit          $object  Pod object.
 			 * @param Storage $storage Storage object.
 			 *
-			 * @since 2.8
+			 * @since 2.8.0
 			 */
 			do_action( 'pods_whatsit_storage_deleted', $object, $this );
 
@@ -375,7 +375,7 @@ abstract class Storage {
 			 * @param Whatsit          $object  Pod object.
 			 * @param Storage $storage Storage object.
 			 *
-			 * @since 2.8
+			 * @since 2.8.0
 			 */
 			do_action( 'pods_whatsit_storage_deleted_' . $object->get_object_type(), $object, $this );
 		}//end if

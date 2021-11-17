@@ -12,7 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { Placeholder, Spinner } from '@wordpress/components';
-import { InnerBlocks } from '@wordpress/editor';
+import { InnerBlocks } from '@wordpress/block-editor';
 
 export function rendererPath( block, attributes = null, urlQueryArgs = {} ) {
 	return addQueryArgs( `/wp/v2/block-renderer/${ block }`, {
@@ -55,6 +55,9 @@ export class PodsServerSideRender extends Component {
 		if ( null !== this.state.response ) {
 			this.setState( { response: null } );
 		}
+
+		// @todo Support preloaded block content that is already provided on page load.
+
 		const {
 			block,
 			attributes = null,
@@ -100,6 +103,8 @@ export class PodsServerSideRender extends Component {
 	}
 
 	render() {
+		// @todo Support preloaded block content that is already provided on page load.
+
 		const response = this.state.response;
 		const {
 			className,

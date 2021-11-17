@@ -1,6 +1,7 @@
 <?php
 
 use Pods\Static_Cache;
+use Pods\Whatsit\Pod;
 use Pods\Wisdom_Tracker;
 
 /**
@@ -1245,6 +1246,8 @@ class PodsInit {
 			return;
 		}
 
+		$save_transient = doing_action( 'init' ) || did_action( 'init' );
+
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
 
@@ -1297,11 +1300,13 @@ class PodsInit {
 				if ( isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
 					// Post type was setup already
 					continue;
-				} elseif ( ! empty( $post_type['object'] ) && isset( $existing_post_types[ $post_type['object'] ] ) ) {
+				} elseif ( isset( $existing_post_types[ $post_type['name'] ] ) ) {
 					// Post type exists already
 					continue;
 				} elseif ( ! $force && isset( $existing_post_types[ $post_type['name'] ] ) ) {
 					// Post type was setup and exists already, but we aren't forcing it to be setup again
+					continue;
+				} elseif ( $post_type instanceof Pod && $post_type->is_extended() ) {
 					continue;
 				}
 
@@ -1540,6 +1545,8 @@ class PodsInit {
 				} elseif ( ! $force && isset( $existing_taxonomies[ $taxonomy['name'] ] ) ) {
 					// Taxonomy was setup and exists already, but we aren't forcing it to be setup again
 					continue;
+				} elseif ( $taxonomy instanceof Pod && $taxonomy->is_extended() ) {
+					continue;
 				}
 
 				$taxonomy_name = pods_v( 'name', $taxonomy );
@@ -1726,7 +1733,9 @@ class PodsInit {
 
 			$pods_cpt_ct['post_format_post_types'] = $post_format_post_types;
 
-			pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct, WEEK_IN_SECONDS );
+			if ( $save_transient ) {
+				pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct, WEEK_IN_SECONDS );
+			}
 		}//end if
 
 		foreach ( $pods_cpt_ct['taxonomies'] as $taxonomy => $options ) {

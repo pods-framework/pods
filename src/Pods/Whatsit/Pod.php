@@ -47,7 +47,7 @@ class Pod extends Whatsit {
 		$value = parent::get_arg( $arg, $default, $strict );
 
 		// Better handle object for extended objects.
-		if ( 'object' === $arg && 'table' !== $this->get_type() ) {
+		if ( 'object' === $arg && 'table' !== $this->get_type() && ( did_action( 'init' ) || doing_action( 'init' ) ) ) {
 			if ( $this->is_extended() ) {
 				return $this->get_name();
 			}
@@ -166,7 +166,7 @@ class Pod extends Whatsit {
 		$existing_cached = $static_cache->get( $type, 'PodsInit/existing_content_types' );
 
 		// Check if we need to refresh the content types cache.
-		if ( empty( $existing_cached ) || ! is_array( $existing_cached ) ) {
+		if ( empty( $existing_cached ) || ! is_array( $existing_cached ) || ! did_action( 'init' ) ) {
 			pods_init()->refresh_existing_content_types_cache();
 
 			$existing_cached = (array) $static_cache->get( $type, 'PodsInit/existing_content_types' );

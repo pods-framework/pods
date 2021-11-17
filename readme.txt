@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.5
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.8.5-b-1
+Stable tag: 2.8.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -150,6 +150,11 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.8.5 - November 17th, 2021 =
+
+* Fixed: Resolved problems with old Pods 1.x upgrades not fully going away. (@sc0ttkclark)
+* Fixed: Resolved problems with extended post types being overridden. (@sc0ttkclark)
 
 = 2.8.4.1 - November 17th, 2021 =
 

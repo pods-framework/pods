@@ -16,9 +16,9 @@ When contributing please ensure you follow the guidelines below so that we can k
 * Fork the repository on GitHub
 * Make the changes to your forked repository's code
   * Ensure you stick to the [WordPress Coding Standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/)
-* Create a new branch, named according to our [git workflow](docs/git-workflow.md)
+* Create a new branch, named according to our [git workflow](git-workflow.md)
 * When committing, reference your issue (if present) and include a note about the fix
-* Push the changes to the branch you created and submit a pull request against the corresponding branch according to our [git workflow](docs/git-workflow.md)
+* Push the changes to the branch you created and submit a pull request against the corresponding branch according to our [git workflow](git-workflow.md)
 
 At this point you're waiting on us to merge your pull request. We'll review all pull requests, and make suggestions and changes if necessary.
 
@@ -26,7 +26,7 @@ At this point you're waiting on us to merge your pull request. We'll review all 
 
 In Pods 2.8, we included the [Tribe Common](https://github.com/the-events-calendar/tribe-common) library which helps to power The Events Calendar and Event Tickets. It has many positive benefits as there are some great potential areas for reducing overall needs of custom code that has to be unique to each plugin.
 
-### Including Common
+### How we include Tribe Common
 
 For Pods, we will take the "shipped" version of [Tribe Common](https://github.com/the-events-calendar/tribe-common) that comes within The Events Calendar or Event Tickets (whichever is newest at the time). This involves opening up the plugin's zip and pulling out the entire "common" folder.
 

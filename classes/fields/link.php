@@ -213,6 +213,11 @@ class PodsField_Link extends PodsField_Website {
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
 
+		// Remove valid field keys from returning in website field.
+		if ( is_array( $value ) ) {
+			$validate = array_diff_key( $validate, $value );
+		}
+
 		$errors = array();
 		if ( is_array( $validate ) ) {
 			$errors = $validate;

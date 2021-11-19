@@ -641,8 +641,8 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 				$value   = null;
 				$compare = null;
 
-				$ID    = '{@EntryID}';
-				$atts  = ' pod="{@pod}"';
+				$ID   = '{@EntryID}';
+				$atts = ' pod="{@pod}"';
 
 				if ( '' !== $matches['field_attr'][ $key ] ) {
 					$field = $matches['field'][ $key ];

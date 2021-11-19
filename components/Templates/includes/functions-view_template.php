@@ -66,7 +66,7 @@ function frontier_decode_template( $code, $atts ) {
 	$code = base64_decode( $code );
 
 	if ( isset( $atts['pod'] ) ) {
-		$code = str_replace( '@pod', $atts['pod'], $code );
+		$code = str_replace( '{@pod}', $atts['pod'], $code );
 	}
 	if ( isset( $atts['id'] ) ) {
 		$code = str_replace( '{@EntryID}', $atts['id'], $code );

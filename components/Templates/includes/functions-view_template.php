@@ -283,6 +283,9 @@ function frontier_if_block( $attributes, $code ) {
  * @since 2.4.0
  */
 function frontier_template_blocks( $atts, $code, $slug ) {
+	$atts = array_merge( [
+		'pod' => null,
+	], $atts );
 
 	global $template_post_blocks;
 	if ( ! isset( $template_post_blocks ) ) {

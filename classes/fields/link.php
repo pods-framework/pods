@@ -212,10 +212,11 @@ class PodsField_Link extends PodsField_Website {
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 		$validate = parent::validate( $value, $name, $options, $fields, $pod, $id, $params );
+		$check    = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
 		// Remove valid field keys from returning in website field.
 		if ( is_array( $value ) ) {
-			$validate = array_diff_key( $validate, $value );
+			$validate = array_diff_key( $validate, $check );
 		}
 
 		$errors = array();
@@ -223,21 +224,13 @@ class PodsField_Link extends PodsField_Website {
 			$errors = $validate;
 		}
 
-		$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
+		if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && '' === $check['url'] ) {
+			$label = strip_tags( pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
-		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
-
-		$check = $check['url'];
-
-		if ( is_array( $check ) ) {
-			$errors = $check;
-		} else {
-			if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && '' === $check ) {
-				if ( $this->is_required( $options ) ) {
-					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
-				} else {
-					$errors[] = sprintf( __( 'Invalid link provided for the field %s.', 'pods' ), $label );
-				}
+			if ( $this->is_required( $options ) ) {
+				$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
+			} else {
+				$errors[] = sprintf( __( 'Invalid link provided for the field %s.', 'pods' ), $label );
 			}
 		}
 

@@ -2025,7 +2025,7 @@ class PodsField_Pick extends PodsField {
 					$val = array();
 
 					foreach ( $value as $k => $v ) {
-						if ( isset( $data[ $v ] ) ) {
+						if ( is_scalar( $v ) && isset( $data[ $v ] ) ) {
 							if ( false === $raw ) {
 								$k = $v;
 								$v = $data[ $v ];

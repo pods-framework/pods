@@ -133,7 +133,7 @@ function frontier_if_block( $attributes, $code ) {
 	if ( ! $is_empty || $has_value_compare_attribute ) {
 		// Check if we do not have a value to compare with.
 		if ( ! $has_value_compare_attribute ) {
-			// Field exists and is not empty, use [IF] content
+			// Field exists and is not empty, use [IF] content.
 			$template = $pod->do_magic_tags( $code[0] );
 
 			return frontier_do_shortcode( $template );
@@ -577,7 +577,7 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 }
 
 /**
- * processes template code within an each command from the base template
+ * Processes template code within an [each] command from the base template.
  *
  * @param array attributes from template
  * @param string template to be processed
@@ -823,5 +823,5 @@ function frontier_end_template( $code, $base, $template, $pod ) {
 		unset( $template_post_blocks['after'][ $pod->pod ] );
 	}
 
-	return pods_do_shortcode( $code, frontier_get_shortcodes() );
+	return frontier_do_shortcode( $code );
 }

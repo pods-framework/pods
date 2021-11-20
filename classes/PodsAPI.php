@@ -3320,6 +3320,16 @@ class PodsAPI {
 			}
 
 			if ( $old_name !== $field['name'] || empty( $params->id ) || $old_id !== $params->id ) {
+				/*
+				 * Prevent adding / renaming fields that conflict with taxonomy names. This is to prevent cases
+				 * where someone has a field named as the taxonomy and then chooses to associate the taxonomy
+				 * to the post type. That will then cause conflicts for the field because it then matches an
+				 * object field.
+				 */
+				if ( 'post_type' === $pod['type'] && taxonomy_exists( $field['name'] ) ) {
+					return pods_error( sprintf( __( '%s conflicts with the name of an existing Taxonomy, please try a different name', 'pods' ), $field['name'] ), $this );
+				}
+
 				if (
 					in_array( $field['name'], $reserved_keywords, true )
 					&& (

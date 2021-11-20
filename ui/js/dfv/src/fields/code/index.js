@@ -1,11 +1,15 @@
-import React from 'react';
-import { Controlled as CodeMirror } from 'react-codemirror2';
+import React, { useMemo, useState, useEffect } from 'react';
+import CodeMirror from 'rodemirror';
+import { basicSetup } from '@codemirror/basic-setup';
+import { EditorState, Compartment } from '@codemirror/state';
+import { php } from '@codemirror/lang-php';
+
 import PropTypes from 'prop-types';
+
 import 'codemirror/mode/php/php';
 
 import { FIELD_COMPONENT_BASE_PROPS } from 'dfv/src/config/prop-types';
 
-import 'codemirror/lib/codemirror.css';
 import './code.scss';
 
 const Code = ( {
@@ -16,6 +20,22 @@ const Code = ( {
 } ) => {
 	const { name } = fieldConfig;
 
+	const extensions = useMemo(
+		() => {
+			const language = new Compartment;
+			const tabSize = new Compartment;
+
+			return [
+				basicSetup,
+				language.of( php() ),
+				tabSize.of( EditorState.tabSize.of( 4 ) ),
+			];
+		},
+		[]
+	);
+
+	const [ readValue, setReadValue ] = useState( value );
+
 	return (
 		<div className="pods-code-field">
 			<input
@@ -25,21 +45,19 @@ const Code = ( {
 			/>
 
 			<CodeMirror
-				value={ value || '' }
-				options={ {
-					lineNumbers: true,
-					matchBrackets: true,
-					mode: 'php',
-					indentUnit: 4,
-					indentWithTabs: false,
-					lineWrapping: true,
-					enterMode: 'keep',
-					tabMode: 'shift',
+				value={ readValue }
+				onUpdate={ ( view ) => {
+					if ( view.docChanged ) {
+						setReadValue( view.state.doc.toString() );
+					}
+
+					if ( view.focusChanged ) {
+						console.log( 'blurred code field' );
+						setValue( view.state.doc.toString() );
+						setHasBlurred();
+					}
 				} }
-				onBeforeChange={ ( editor, data, newValue ) => {
-					setValue( newValue );
-				} }
-				onBlur={ () => setHasBlurred() }
+				extensions={ extensions }
 			/>
 		</div>
 	);

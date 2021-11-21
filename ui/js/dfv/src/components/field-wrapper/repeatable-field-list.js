@@ -64,6 +64,8 @@ const RepeatableFieldList = ( {
 		const newValues = [ ...valuesArray ];
 		newValues[ index ] = newValue;
 
+		console.log( 'createSetValueAtIndex', index, newValue, valuesArray, newValues );
+
 		setFullValue( newValues );
 	};
 

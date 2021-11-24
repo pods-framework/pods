@@ -2996,31 +2996,6 @@ class PodsAdmin {
 			];
 		}
 
-		// Check if any of the Pods Pro Page Builder Toolkit plugins are active.
-		$bb_active     = defined( 'FL_BUILDER_VERSION' );
-		$divi_active   = defined( 'ET_BUILDER_PRODUCT_VERSION' );
-		$oxygen_active = defined( 'CT_VERSION' );
-		$pods_pro_pbtk_active = class_exists( '\Pods_Pro\Page_Builder_Toolkit\Plugin' );
-
-		if ( ! $pods_pro_pbtk_active && ( $bb_active || $divi_active || $oxygen_active ) ) {
-			$tests['direct']['pods_pro_page_builder_toolkit'] = [
-				'label' => __( 'Pods Pro Page Builder Toolkit', 'pods' ),
-				'test'  => static function () {
-					return [
-						'label'       => __( 'The Pods Team recommends you use the Pods Pro Page Builder Toolkit by SKCDEV', 'pods' ),
-						'status'      => 'recommended',
-						'badge'       => [
-							'label' => __( 'Page Builder', 'pods' ),
-							'color' => 'blue',
-						],
-						'description' => sprintf( '<p>%s</p>', __( 'Pods Pro Page Builder Toolkit by SKCDEV integrates Pods directly with Beaver Builder Themer, Divi, and Oxygen Builder.', 'pods' ) ),
-						'actions'     => sprintf( '<p><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></p>', esc_url( 'https://pods-pro.skc.dev/?utm_source=pods_plugin_site_health_callout&utm_medium=link&utm_campaign=friends_of_pods_2021' ), __( 'Get Pods Pro by SKCDEV', 'pods' ) ),
-						'test'        => 'pods_pro_page_builder_toolkit',
-					];
-				},
-			];
-		}
-
 		return $tests;
 	}
 

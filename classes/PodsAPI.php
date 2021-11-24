@@ -2017,6 +2017,8 @@ class PodsAPI {
 			'table',
 			'where',
 			'where_default',
+			'podType',
+			'storageType',
 		);
 
 		// Remove options we do not want to set on the Pod.

@@ -1,6 +1,6 @@
 <label<?php PodsForm::attributes( $attributes, $name, 'label' ); ?>>
 	<?php
-	echo $label;
+	echo wp_kses_post( $label );
 
 	if ( 1 == pods_var( 'required', $options, pods_var( 'options', $options, $options ) ) ) {
 		echo ' <abbr title="required" class="required">*</abbr>';

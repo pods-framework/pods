@@ -1019,7 +1019,7 @@ class PodsMeta {
 
 			if ( $field_found ) {
 				$pods_field_found = true;
-				add_meta_box( 'pods-meta-' . sanitize_title( $group['label'] ), $group['label'], array(
+				add_meta_box( 'pods-meta-' . sanitize_title( $group['label'] ), wp_kses_post( $group['label'] ), array(
 						$this,
 						'meta_post'
 					), $post_type, $group['context'], $group['priority'], array( 'group' => $group ) );
@@ -2276,7 +2276,7 @@ class PodsMeta {
 			}
 
 			if ( $field_found ) {
-				add_meta_box( 'pods-meta-' . sanitize_title( $group['label'] ), $group['label'], array(
+				add_meta_box( 'pods-meta-' . sanitize_title( $group['label'] ), wp_kses_post( $group['label'] ), array(
 						$this,
 						'meta_comment'
 					), $comment_type, $group['context'], $group['priority'], array( 'group' => $group ) );

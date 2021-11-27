@@ -1901,6 +1901,7 @@ class PodsMeta {
 	 * @param $user_id
 	 */
 	public function meta_user( $user_id ) {
+		$is_bbpress_profile = doing_action( 'bbp_user_edit_after' );
 
 		wp_enqueue_style( 'pods-form' );
 		wp_enqueue_script( 'pods' );
@@ -1931,48 +1932,69 @@ class PodsMeta {
 			if ( null === $pod || ( is_object( $pod ) && (int) $pod->id() !== (int) $id ) ) {
 				$pod = $this->maybe_set_up_pod( $group['pod']['name'], $id, 'user' );
 			}
+
+			$fields            = $group['fields'];
+			$field_prefix      = 'pods_meta_';
+			$field_row_classes = 'form-field pods-field-input';
+			$th_scope          = 'row';
+
+			$value_callback = static function( $field_name, $id, $field, $pod ) {
+				$value = '';
+
+				pods_no_conflict_on( 'user' );
+
+				if ( ! empty( $pod ) ) {
+					$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
+				} elseif ( ! empty( $id ) ) {
+					$value = get_user_meta( $id, $field['name'], true );
+				}
+
+				pods_no_conflict_off( 'user' );
+
+				return $value;
+			};
+
+			$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $user ) {
+				do_action( "pods_meta_meta_user_pre_row_{$field_name}", $user, $field, $pod );
+			};
+
+			$post_callback = static function( $field_name, $id, $field, $pod ) use ( $user ) {
+				do_action( "pods_meta_meta_user_post_row_{$field_name}", $user, $field, $pod );
+			};
+
+			if ( $is_bbpress_profile ) {
 			?>
-			<h3><?php echo $group['label']; ?></h3>
-
-			<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_user' ), 'hidden' ); ?>
-
-			<table class="form-table pods-meta">
-				<tbody>
-				<?php
-				$fields            = $group['fields'];
-				$field_prefix      = 'pods_meta_';
-				$field_row_classes = 'form-field pods-field-input';
-				$th_scope          = 'row';
-
-				$value_callback = static function( $field_name, $id, $field, $pod ) {
-					$value = '';
-
-					pods_no_conflict_on( 'user' );
-
-					if ( ! empty( $pod ) ) {
-						$value = $pod->field( [ 'name' => $field['name'], 'in_form' => true ] );
-					} elseif ( ! empty( $id ) ) {
-						$value = get_user_meta( $id, $field['name'], true );
+				<style type="text/css">
+					#bbpress-forums #bbp-your-profile fieldset div.pods-form-ui-field,
+					#bbpress-forums #bbp-your-profile fieldset div.pods-form-ui-field div {
+						margin: 0;
+						float: none;
+						width: auto;
+						clear: none;
 					}
+				</style>
 
-					pods_no_conflict_off( 'user' );
+				<h2 class="entry-title"><?php echo wp_kses_post( $group['label'] ); ?></h2>
 
-					return $value;
-				};
+				<fieldset class="bbp-form pods-meta">
+					<legend><?php echo wp_kses_post( $group['label'] ); ?></legend>
 
-				$pre_callback = static function( $field_name, $id, $field, $pod ) use ( $user ) {
-					do_action( "pods_meta_meta_user_pre_row_{$field_name}", $user, $field, $pod );
-				};
+					<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_user' ), 'hidden' ); ?>
 
-				$post_callback = static function( $field_name, $id, $field, $pod ) use ( $user ) {
-					do_action( "pods_meta_meta_user_post_row_{$field_name}", $user, $field, $pod );
-				};
+					<?php pods_view( PODS_DIR . 'ui/forms/div-rows.php', compact( array_keys( get_defined_vars() ) ) ); ?>
+				</fieldset>
+			<?php } else { ?>
+				<h3><?php echo wp_kses_post( $group['label'] ); ?></h3>
 
-				pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) );
-				?>
-				</tbody>
-			</table>
+				<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_user' ), 'hidden' ); ?>
+
+				<table class="form-table pods-meta">
+					<tbody>
+						<?php pods_view( PODS_DIR . 'ui/forms/table-rows.php', compact( array_keys( get_defined_vars() ) ) ); ?>
+					</tbody>
+				</table>
 			<?php
+			}
 		}
 
 		do_action( 'pods_meta_meta_user_post', $user_id );

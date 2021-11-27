@@ -348,7 +348,15 @@ class PodsField {
 	 * }
 	 */
 	public function render_input_script( $args ) {
-		wp_enqueue_script( 'pods-dfv' );
+		if ( wp_script_is( 'pods-dfv', 'registered' ) ) {
+			// Check that the script is already registered.
+			wp_enqueue_script( 'pods-dfv' );
+		} else {
+			// The field was rendered before the enqueue scripts action was called.
+			add_action( 'pods_after_enqueue_scripts', static function() {
+				wp_enqueue_script( 'pods-dfv' );
+			} );
+		}
 
 		if ( is_array( $args ) ) {
 			$args = (object) $args;

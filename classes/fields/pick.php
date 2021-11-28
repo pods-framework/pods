@@ -1025,6 +1025,7 @@ class PodsField_Pick extends PodsField {
 		$field_options['select2_overrides'] = null;
 
 		if ( 'select2' === $field_options['view_name'] ) {
+			// @todo Revisit this, they probably aren't used anymore now since this is DFV.
 			wp_enqueue_style( 'pods-select2' );
 			wp_enqueue_script( 'pods-select2' );
 

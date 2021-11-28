@@ -154,6 +154,7 @@ class PodsField_Pick extends PodsField {
 				'label'                 => __( 'Selection Type', 'pods' ),
 				'help'                  => $fallback_help,
 				'default'               => 'single',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => [
 					'single' => __( 'Single Select', 'pods' ),
@@ -169,6 +170,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'single',
 				],
 				'default'               => 'dropdown',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_single_options', [
 					'dropdown'     => __( 'Drop Down', 'pods' ),
@@ -186,6 +188,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'multi',
 				],
 				'default'               => 'checkbox',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_multi_options', [
 					'checkbox'     => __( 'Checkboxes', 'pods' ),
@@ -203,6 +206,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'multi',
 				],
 				'default'               => 'default',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),

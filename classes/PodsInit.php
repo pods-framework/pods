@@ -1252,7 +1252,7 @@ class PodsInit {
 			return;
 		}
 
-		$save_transient = doing_action( 'init' ) || did_action( 'init' );
+		$save_transient = ! did_action( 'pods_init' ) && ( doing_action( 'init' ) || did_action( 'init' ) );
 
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
@@ -1955,7 +1955,7 @@ class PodsInit {
 
 		do_action( 'pods_setup_content_types' );
 
-		if ( ! did_action( 'pods_init' ) ) {
+		if ( $save_transient ) {
 			/**
 			 * Allow hooking into after Pods has been setup.
 			 *

@@ -1127,8 +1127,8 @@ class PodsMeta {
 	 */
 	public function meta_post( $post, $metabox ) {
 
-		wp_enqueue_style( 'pods-form' );
-		wp_enqueue_script( 'pods' );
+		pods_form_enqueue_style( 'pods-form' );
+		pods_form_enqueue_script( 'pods' );
 
 		$pod_type = 'post';
 
@@ -1442,8 +1442,8 @@ class PodsMeta {
 			return $form_fields;
 		}
 
-		wp_enqueue_style( 'pods-form' );
-		wp_enqueue_script( 'pods' );
+		pods_form_enqueue_style( 'pods-form' );
+		pods_form_enqueue_script( 'pods' );
 
 		$id = null;
 
@@ -1674,8 +1674,8 @@ class PodsMeta {
 	 */
 	public function meta_taxonomy( $tag, $taxonomy = null ) {
 
-		wp_enqueue_style( 'pods-form' );
-		wp_enqueue_script( 'pods' );
+		pods_form_enqueue_style( 'pods-form' );
+		pods_form_enqueue_script( 'pods' );
 
 		do_action( 'pods_meta_meta_taxonomy', $tag, $taxonomy );
 
@@ -1903,8 +1903,23 @@ class PodsMeta {
 	public function meta_user( $user_id ) {
 		$is_bbpress_profile = doing_action( 'bbp_user_edit_after' );
 
-		wp_enqueue_style( 'pods-form' );
-		wp_enqueue_script( 'pods' );
+		if ( $is_bbpress_profile ) {
+			/**
+			 * Allow filtering whether to show groups on bbPress profile form.
+			 *
+			 * @since TBD
+			 *
+			 * @param bool $show_groups_on_bbpress_profile Whether to show groups on bbPress profile form.
+			 */
+			$show_groups_on_bbpress_profile = apply_filters( 'pods_meta_user_show_groups_on_bbpress_profile', true );
+
+			if ( ! $show_groups_on_bbpress_profile ) {
+				return;
+			}
+		}
+
+		pods_form_enqueue_style( 'pods-form' );
+		pods_form_enqueue_script( 'pods' );
 
 		do_action( 'pods_meta_meta_user', $user_id );
 
@@ -2147,8 +2162,8 @@ class PodsMeta {
 	public function meta_comment_new( $submit_field ) {
 		ob_start();
 
-		wp_enqueue_style( 'pods-form' );
-		wp_enqueue_script( 'pods' );
+		pods_form_enqueue_style( 'pods-form' );
+		pods_form_enqueue_script( 'pods' );
 
 		$groups = $this->groups_get( 'comment', 'comment' );
 
@@ -2312,8 +2327,8 @@ class PodsMeta {
 	 */
 	public function meta_comment( $comment, $metabox ) {
 
-		wp_enqueue_style( 'pods-form' );
-		wp_enqueue_script( 'pods' );
+		pods_form_enqueue_style( 'pods-form' );
+		pods_form_enqueue_script( 'pods' );
 
 		do_action( 'pods_meta_meta_comment', $comment, $metabox );
 

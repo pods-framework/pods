@@ -3,7 +3,7 @@
 wp_enqueue_script( 'wplink' );
 wp_enqueue_style( 'editor-buttons' );
 
-wp_enqueue_script( 'pods-link-picker', PODS_URL . 'ui/js/pods-link-picker.js', array( 'jquery' ), '1.0.0' );
+pods_form_enqueue_script( 'pods-link-picker', PODS_URL . 'ui/js/pods-link-picker.js', array( 'jquery' ), '1.0.0' );
 
 PodsForm::field_method( 'link', 'validate_link_modal' );
 

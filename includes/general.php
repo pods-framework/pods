@@ -636,9 +636,9 @@ function pods_help( $text, $url = null ) {
 			'jquery',
 			'jquery-qtip2',
 		), PODS_VERSION );
-		wp_enqueue_script( 'pods-qtip-init' );
+		pods_form_enqueue_script( 'pods-qtip-init' );
 	} elseif ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
-		wp_enqueue_script( 'pods-qtip-init' );
+		pods_form_enqueue_script( 'pods-qtip-init' );
 	}
 
 	if ( is_array( $text ) ) {

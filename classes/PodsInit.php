@@ -1193,6 +1193,8 @@ class PodsInit {
 	 * Refresh the existing content types cache for Post Types and Taxonomies.
 	 *
 	 * @since 2.8.4
+	 *
+	 * @return array The existing post types and taxonomies.
 	 */
 	public function refresh_existing_content_types_cache() {
 		$existing_post_types = get_post_types( [], 'objects' );
@@ -1238,6 +1240,8 @@ class PodsInit {
 		if ( 1 === (int) pods_v( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 			pods_debug( [ __METHOD__, compact( 'existing_post_types_cached', 'existing_taxonomies_cached' ) ] );
 		}
+
+		return compact( 'existing_post_types_cached', 'existing_taxonomies_cached' );
 	}
 
 	/**
@@ -1257,10 +1261,10 @@ class PodsInit {
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
 
-		$existing_post_types = get_post_types();
-		$existing_taxonomies = get_taxonomies();
+		$existing_content_types = $this->refresh_existing_content_types_cache();
 
-		$this->refresh_existing_content_types_cache();
+		$existing_post_types = $existing_content_types['existing_post_types_cached'];
+		$existing_taxonomies = $existing_content_types['existing_taxonomies_cached'];
 
 		$pods_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
 
@@ -1304,19 +1308,15 @@ class PodsInit {
 
 			foreach ( $post_types as $post_type ) {
 				if ( isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
-					// Post type was setup already.
+					// Post type was set up already.
 					continue;
 				} elseif ( isset( $existing_post_types[ $post_type['name'] ] ) ) {
 					// Post type exists already.
 					$pods_cpt_ct['post_types'][ $post_type['name'] ] = false;
 
 					continue;
-				} elseif ( ! $force && isset( $existing_post_types[ $post_type['name'] ] ) ) {
-					// Post type was setup and exists already, but we aren't forcing it to be setup again.
-					$pods_cpt_ct['post_types'][ $post_type['name'] ] = false;
-
-					continue;
 				} elseif ( $post_type instanceof Pod && $post_type->is_extended() ) {
+					// Post type is extended.
 					$pods_cpt_ct['post_types'][ $post_type['name'] ] = false;
 
 					continue;
@@ -1549,19 +1549,15 @@ class PodsInit {
 
 			foreach ( $taxonomies as $taxonomy ) {
 				if ( isset( $pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] ) ) {
-					// Taxonomy was setup already.
+					// Taxonomy was set up already.
 					continue;
-				} elseif ( ! empty( $taxonomy['object'] ) && isset( $existing_taxonomies[ $taxonomy['object'] ] ) ) {
+				} elseif ( isset( $existing_taxonomies[ $taxonomy['name'] ] ) ) {
 					// Taxonomy exists already.
 					$pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] = false;
 
 					continue;
-				} elseif ( ! $force && isset( $existing_taxonomies[ $taxonomy['name'] ] ) ) {
-					// Taxonomy was setup and exists already, but we aren't forcing it to be setup again.
-					$pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] = false;
-
-					continue;
 				} elseif ( $taxonomy instanceof Pod && $taxonomy->is_extended() ) {
+					// Taxonomy is extended.
 					$pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] = false;
 
 					continue;

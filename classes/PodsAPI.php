@@ -5972,27 +5972,43 @@ class PodsAPI {
 		try {
 			$pod_id = $this->save_pod( $pod );
 		} catch ( Exception $exception ) {
+			// Pod not saved.
 			return false;
 		}
 
 		if ( ! is_int( $pod_id ) ) {
+			// Pod not saved.
 			return false;
 		}
 
-		foreach ( $groups as $group => $group_data ) {
+		$pod = $this->load_pod( [ 'id' => $pod_id ] );
+
+		foreach ( $groups as $group_data ) {
 			$fields = $group_data['fields'];
 
 			unset( $group_data['id'], $group_data['parent'], $group_data['object_type'], $group_data['object_storage_type'], $group_data['fields'] );
 
-			$group_data['pod_id'] = $pod_id;
+			$group_data['pod_data'] = $pod;
 
-			$group_id = $this->save_group( $group_data );
+			try {
+				$group_id = $this->save_group( $group_data );
+			} catch ( Exception $exception ) {
+				// Group not saved.
+				continue;
+			}
 
-			foreach ( $fields as $field => $field_data ) {
+			if ( ! is_int( $group_id ) ) {
+				// Group not saved.
+				continue;
+			}
+
+			$group = $this->load_pod( [ 'id' => $group_id ] );
+
+			foreach ( $fields as $field_data ) {
 				unset( $field_data['id'], $field_data['parent'], $field_data['object_type'], $field_data['object_storage_type'], $field_data['group'] );
 
-				$field_data['pod_id'] = $pod_id;
-				$field_data['group_id'] = $group_id;
+				$field_data['pod_data'] = $pod;
+				$field_data['group']    = $group;
 
 				try {
 					$this->save_field( $field_data );
@@ -7772,18 +7788,14 @@ class PodsAPI {
 			unset( $params['id'] );
 		}
 
-		$object = $this->_load_object( $params );
+		try {
+			$object = $this->_load_object( $params );
 
-		$pod = 'n/a';
-
-		if ( ! empty( $params['name'] ) ) {
-			$pod = $params['name'];
-		} elseif ( ! empty( $params['id'] ) ) {
-			$pod = $params['id'];
-		}
-
-		if ( $object ) {
-			return $object;
+			if ( $object ) {
+				return $object;
+			}
+		} catch ( Exception $exception ) {
+			// Return error below.
 		}
 
 		if ( $strict ) {

@@ -2023,7 +2023,7 @@ class PodsInit {
 		$preview_post_link = function_exists( 'get_preview_post_link' ) ? get_preview_post_link( $post ) : apply_filters( 'preview_post_link', add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ), $post );
 
 		foreach ( $post_types as $post_type ) {
-			if ( ! isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
+			if ( empty( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
 				continue;
 			}
 

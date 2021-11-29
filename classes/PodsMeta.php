@@ -1,6 +1,7 @@
 <?php
 
 use Pods\Whatsit\Pod;
+use Pods\Whatsit\Field;
 
 /**
  * @package Pods
@@ -628,7 +629,7 @@ class PodsMeta {
 			return true;
 		}
 
-		if ( ! is_array( $pod ) ) {
+		if ( ! is_array( $pod ) && ! $pod instanceof Pods\Whatsit ) {
 			if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] != $pod ) {
 				self::$current_pod_data = pods_api()->load_pod( array( 'name' => $pod ), false );
 			}
@@ -692,9 +693,8 @@ class PodsMeta {
 			$name = $k;
 
 			$defaults = array(
-				'name'  => $name,
-				'label' => $name,
-				'type'  => 'text'
+				'name' => $name,
+				'type' => 'text'
 			);
 
 			$is_field_object = $field instanceof Field;
@@ -703,8 +703,7 @@ class PodsMeta {
 				$name = trim( $field );
 
 				$field = array(
-					'name'  => $name,
-					'label' => $name
+					'name' => $name,
 				);
 			}
 
@@ -713,14 +712,32 @@ class PodsMeta {
 			$field['name'] = trim( $field['name'] );
 
 			if ( isset( $pod['fields'] ) && isset( $pod['fields'][ $field['name'] ] ) ) {
-				$field = pods_config_merge_data( $field, $pod['fields'][ $field['name'] ] );
+				$is_field_hidden = (bool) pods_v( 'hidden', $field, 0 );
+
+				$field = pods_config_merge_data( $pod['fields'][ $field['name'] ], $field );
+
+				if ( $field instanceof Field ) {
+                    $field = $field->export();
+                }
+
+				// If we are adding a field that is hidden, we should override that as no longer hidden now.
+				if ( ! $is_field_hidden && isset( $pod['fields'][ $field['name'] ]['hidden'] ) && 1 === (int) $pod['fields'][ $field['name'] ]['hidden'] ) {
+                    $field['hidden'] = 0;
+                }
+			}
+
+			if ( empty( $field['label'] ) ) {
+				$field['label'] = $field['name'];
+			}
+
+			if ( is_array( $field ) ) {
+				$field = PodsForm::fields_setup( $field, null, true );
 			}
 
 			$_fields[ $k ] = $field;
 		}
 
-		// Setup field options
-		$fields = PodsForm::fields_setup( $_fields );
+		$fields = $_fields;
 
 		$group = array(
 			'pod'      => $pod,

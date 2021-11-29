@@ -1004,7 +1004,7 @@ class PodsInit {
 
 		$config = [
 			'wp_locale'      => $GLOBALS['wp_locale'],
-			'currencies'     => PodsField_Currency::$currencies,
+			'currencies'     => PodsField_Currency::data_currencies(),
 			'datetime'       => [
 				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
 				'gmt_offset'    => (int) get_option( 'gmt_offset', 0 ),

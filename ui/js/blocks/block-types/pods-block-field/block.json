@@ -1,4 +1,5 @@
 {
+  "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": "1",
   "name": "pods/pods-block-field",
   "title": "Pods Field Value",

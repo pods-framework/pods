@@ -10385,6 +10385,7 @@ class PodsAPI {
 		if ( is_array( $pod ) || $pod instanceof Pod ) {
 			pods_transient_clear( 'pods_pod_' . $pod['name'] );
 			pods_cache_clear( $pod['name'], 'pods-class' );
+			pods_cache_clear( $pod['type'] . '/' . $pod['name'], PodsMeta::class . '/is_key_covered' );
 
 			if ( in_array( $pod['type'], array( 'post_type', 'taxonomy' ) ) ) {
 				pods_transient_clear( 'pods_wp_cpt_ct' );

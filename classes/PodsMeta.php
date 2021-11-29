@@ -2668,18 +2668,20 @@ class PodsMeta {
 		// List of keys we do not cover optimized for fastest isset() operation.
 		$keys_not_covered = $this->get_keys_not_covered( $type );
 
-		$static_cache = tribe( Static_Cache::class );
+		if ( $object_name ) {
+			// Check if object type/name is not covered.
+			$cached_is_key_covered = pods_cache_get( $type . '/' . $object_name, __CLASS__ . '/is_key_covered' );
 
-		// Check if object type/name is not covered.
-		$static_is_key_covered = $static_cache->get( $type . '/' . $object_name, __CLASS__ . '/is_key_covered' );
+			if ( '404' !== $cached_is_key_covered ) {
+				$static_cache = tribe( Static_Cache::class );
 
-		if ( '404' !== $static_is_key_covered ) {
-			// Check if object type/name/key is not covered.
-			$static_is_key_covered = $static_cache->get( $type . '/' . $object_name . '/' . $key, __CLASS__ . '/is_key_covered' );
-		}
+				// Check if object type/name/key is not covered.
+				$cached_is_key_covered = $static_cache->get( $type . '/' . $object_name . '/' . $key, __CLASS__ . '/is_key_covered' );
+			}
 
-		if ( '404' === $static_is_key_covered ) {
-			$keys_not_covered[ $key ] = true;
+			if ( '404' === $cached_is_key_covered ) {
+				$keys_not_covered[ $key ] = true;
+			}
 		}
 
 		// Check if this key is covered.
@@ -3479,7 +3481,7 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
@@ -3488,16 +3490,14 @@ class PodsMeta {
 				)
 			)
 		) {
-			$static_cache = tribe( Static_Cache::class );
-
-			if (
-				empty( $object_id )
-				|| empty( $object )
-			) {
-				$static_cache->set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
+			if ( $object_name && empty( $object ) ) {
+				pods_cache_set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
 			}
 
-			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+			if ( $meta_key ) {
+				$static_cache = tribe( Static_Cache::class );
+				$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+			}
 
 			return $_null;
 		}
@@ -3668,7 +3668,7 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
@@ -3677,16 +3677,14 @@ class PodsMeta {
 				)
 			)
 		) {
-			$static_cache = tribe( Static_Cache::class );
-
-			if (
-				empty( $object_id )
-				|| empty( $object )
-			) {
-				$static_cache->set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
+			if ( $object_name && empty( $object ) ) {
+				pods_cache_set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
 			}
 
-			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+			if ( $meta_key ) {
+				$static_cache = tribe( Static_Cache::class );
+				$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+			}
 
 			return $_null;
 		}
@@ -3761,7 +3759,7 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
@@ -3770,16 +3768,14 @@ class PodsMeta {
 				)
 			)
 		) {
-			$static_cache = tribe( Static_Cache::class );
-
-			if (
-				empty( $object_id )
-				|| empty( $object )
-			) {
-				$static_cache->set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
+			if ( $object_name && empty( $object ) ) {
+				pods_cache_set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
 			}
 
-			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+			if ( $meta_key ) {
+				$static_cache = tribe( Static_Cache::class );
+				$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+			}
 
 			return $_null;
 		}
@@ -3895,7 +3891,7 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
@@ -3904,16 +3900,14 @@ class PodsMeta {
 				)
 			)
 		) {
-			$static_cache = tribe( Static_Cache::class );
-
-			if (
-				empty( $object_id )
-				|| empty( $object )
-			) {
-				$static_cache->set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
+			if ( $object_name && empty( $object ) ) {
+				pods_cache_set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
 			}
 
-			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+			if ( $meta_key ) {
+				$static_cache = tribe( Static_Cache::class );
+				$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+			}
 
 			return $_null;
 		}

@@ -6493,10 +6493,38 @@ class PodsAPI {
 
 		$data = array();
 
+		$is_strict_mode = pods_strict( false );
+
+		/**
+		 * Allow filtering whether to export IDs at the final depth, set to false to return the normal object data.
+		 *
+		 * @since TBD
+		 *
+		 * @param bool  $export_ids_at_final_depth Whether to export IDs at the final depth, set to false to return the normal object data.
+		 * @param Pods  $pod                       Pods object.
+		 * @param array $params                    Export params.
+		 */
+		$export_ids_at_final_depth = (bool) apply_filters( 'pods_api_export_pod_item_level_export_ids_at_final_depth', $is_strict_mode, $pod, $params );
+
+		/**
+		 * Allow filtering whether to export relationships as JSON compatible.
+		 *
+		 * @since TBD
+		 *
+		 * @param bool  $export_as_json_compatible Whether to export relationships as JSON compatible.
+		 * @param Pods  $pod                       Pods object.
+		 * @param array $params                    Export params.
+		 */
+		$export_as_json_compatible = (bool) apply_filters( 'pods_api_export_pod_item_level_export_as_json', $is_strict_mode || pods_doing_json(), $pod, $params );
+
 		foreach ( $export_fields as $field ) {
 			// Return IDs (or guid for files) if only one level deep
-			if ( 1 === $depth ) {
+			if ( 1 === $depth || ( $export_ids_at_final_depth && $current_depth === $depth ) ) {
 				$data[ $field['name'] ] = $pod->field( array( 'name' => $field['lookup_name'], 'output' => 'arrays' ) );
+
+				if ( $export_as_json_compatible && is_array( $data[ $field['name'] ] ) ) {
+					$data[ $field['name'] ] = array_values( $data[ $field['name'] ] );
+				}
 			} elseif ( ( - 1 === $depth || $current_depth < $depth ) && 'pick' === $field['type'] && ! in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) ) {
 				// Recurse depth levels for pick fields if $depth allows
 				$related_data = array();
@@ -6507,8 +6535,9 @@ class PodsAPI {
 					$related_ids = (array) $related_ids;
 
 					$pick_object = pods_v( 'pick_object', $field );
+					$pick_val    = pods_v( 'pick_val', $field );
 
-					$related_pod = pods( pods_v( 'pick_val', $field ), null, false );
+					$related_pod = pods( $pick_val, null, false );
 
 					// If this isn't a Pod, return data exactly as Pods does normally
 					if ( empty( $related_pod ) || empty( $related_pod->pod_data ) || ( 'pod' !== $pick_object && $pick_object !== $related_pod->pod_data['type'] ) || $related_pod->pod === $pod->pod ) {
@@ -6532,7 +6561,7 @@ class PodsAPI {
 
 								$related_item_data = $this->do_hook( 'export_pod_item_level', $related_item, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ), $params );
 
-								if ( function_exists( 'wp_is_json_request' ) && wp_is_json_request() ) {
+								if ( $export_as_json_compatible ) {
 									// Don't pass IDs as keys for REST API context to ensure arrays of data are returned.
 									$related_data[] = $related_item_data;
 								} else {

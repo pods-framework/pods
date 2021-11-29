@@ -2670,7 +2670,13 @@ class PodsMeta {
 
 		$static_cache = tribe( Static_Cache::class );
 
-		$static_is_key_covered = $static_cache->get( $type . '/' . $object_name . '/' . $key, __CLASS__ . '/is_key_covered' );
+		// Check if object type/name is not covered.
+		$static_is_key_covered = $static_cache->get( $type . '/' . $object_name, __CLASS__ . '/is_key_covered' );
+
+		if ( '404' !== $static_is_key_covered ) {
+			// Check if object type/name/key is not covered.
+			$static_is_key_covered = $static_cache->get( $type . '/' . $object_name . '/' . $key, __CLASS__ . '/is_key_covered' );
+		}
 
 		if ( '404' === $static_is_key_covered ) {
 			$keys_not_covered[ $key ] = true;
@@ -3483,6 +3489,14 @@ class PodsMeta {
 			)
 		) {
 			$static_cache = tribe( Static_Cache::class );
+
+			if (
+				empty( $object_id )
+				|| empty( $object )
+			) {
+				$static_cache->set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
+			}
+
 			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
 
 			return $_null;
@@ -3664,6 +3678,14 @@ class PodsMeta {
 			)
 		) {
 			$static_cache = tribe( Static_Cache::class );
+
+			if (
+				empty( $object_id )
+				|| empty( $object )
+			) {
+				$static_cache->set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
+			}
+
 			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
 
 			return $_null;
@@ -3749,6 +3771,14 @@ class PodsMeta {
 			)
 		) {
 			$static_cache = tribe( Static_Cache::class );
+
+			if (
+				empty( $object_id )
+				|| empty( $object )
+			) {
+				$static_cache->set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
+			}
+
 			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
 
 			return $_null;
@@ -3875,6 +3905,14 @@ class PodsMeta {
 			)
 		) {
 			$static_cache = tribe( Static_Cache::class );
+
+			if (
+				empty( $object_id )
+				|| empty( $object )
+			) {
+				$static_cache->set( $object_type . '/' . $object_name, '404', __CLASS__ . '/is_key_covered' );
+			}
+
 			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
 
 			return $_null;

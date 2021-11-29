@@ -1,5 +1,6 @@
 <?php
 
+use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Field;
 
@@ -2651,12 +2652,13 @@ class PodsMeta {
 	 *
 	 * @since 2.8.2
 	 *
-	 * @param string $type The object type.
-	 * @param string $key  The value key.
+	 * @param string      $type        The object type.
+	 * @param string      $key         The value key.
+	 * @param string|null $object_name The object name.
 	 *
 	 * @return bool Whether the key is covered.
 	 */
-	public function is_key_covered( $type, $key ) {
+	public function is_key_covered( $type, $key, $object_name = null ) {
 		if ( 'post' === $type ) {
 			$type = 'post_type';
 		} elseif ( 'term' === $type ) {
@@ -2666,6 +2668,14 @@ class PodsMeta {
 		// List of keys we do not cover optimized for fastest isset() operation.
 		$keys_not_covered = $this->get_keys_not_covered( $type );
 
+		$static_cache = tribe( Static_Cache::class );
+
+		$static_is_key_covered = $static_cache->get( $type . '/' . $object_name . '/' . $key, __CLASS__ . '/is_key_covered' );
+
+		if ( '404' === $static_is_key_covered ) {
+			$keys_not_covered[ $key ] = true;
+		}
+
 		// Check if this key is covered.
 		$key_is_covered = ! isset( $keys_not_covered[ $key ] );
 
@@ -2674,11 +2684,12 @@ class PodsMeta {
 		 *
 		 * @since 2.8.0
 		 *
-		 * @param bool   $key_is_covered The list of keys not covered in key=>true format for isset() optimization.
-		 * @param string $type           The object type.
-		 * @param string $key            The value key.
+		 * @param bool        $key_is_covered The list of keys not covered in key=>true format for isset() optimization.
+		 * @param string      $type           The object type.
+		 * @param string      $key            The value key.
+		 * @param string|null $object_name    The object name.
 		 */
-		return apply_filters( 'pods_meta_key_is_covered', $key_is_covered, $type, $key );
+		return apply_filters( 'pods_meta_key_is_covered', $key_is_covered, $type, $key, $object_name );
 	}
 
 	/**
@@ -3333,15 +3344,17 @@ class PodsMeta {
 		$object_name = null;
 
 		if ( 'media' == $object_type ) {
-			return @current( $objects );
+			return reset( $objects );
 		} elseif ( 'user' == $object_type ) {
-			return @current( $objects );
+			return reset( $objects );
 		} elseif ( 'comment' == $object_type ) {
-			return @current( $objects );
+			return reset( $objects );
+		} elseif ( ! empty( $aux ) ) {
+			$object_name = $aux;
 		} elseif ( 'post_type' == $object_type ) {
 			$object = get_post( $object_id );
 
-			if ( ! is_object( $object ) || ! isset( $object->post_type ) ) {
+			if ( ! is_object( $object ) || empty( $object->post_type ) ) {
 				return false;
 			}
 
@@ -3349,18 +3362,13 @@ class PodsMeta {
 		} elseif ( 'taxonomy' == $object_type ) {
 			$object = get_term( $object_id );
 
-			if ( ! is_object( $object ) || ! isset( $object->taxonomy ) ) {
+			if ( ! is_object( $object ) || empty( $object->taxonomy ) ) {
 				return false;
 			}
 
 			$object_name = $object->taxonomy;
-			if ( empty( $aux ) ) {
-				$object_name = $wpdb->get_var( $wpdb->prepare( "SELECT `taxonomy` FROM `{$wpdb->term_taxonomy}` WHERE `term_id` = %d", $object_id ) );
-			} else {
-				$object_name = $aux;
-			}
 		} elseif ( 'settings' == $object_type ) {
-			$object = $object_id;
+			$object_name = $object_id;
 		} else {
 			return false;
 		}
@@ -3371,21 +3379,28 @@ class PodsMeta {
 
 		$reserved_post_types = apply_filters( 'pods_meta_reserved_post_types', $reserved_post_types, $object_type, $object_id, $object_name, $objects );
 
-		if ( empty( $object_name ) || ( 'post_type' == $object_type && ( 0 === strpos( $object_name, '_pods_' ) ) || in_array( $object_name, $reserved_post_types ) ) ) {
+		if (
+			empty( $object_name )
+			|| (
+				'post_type' === $object_type
+				&& 0 === strpos( $object_name, '_pods_' )
+			)
+			|| in_array( $object_name, $reserved_post_types, true )
+		) {
 			return false;
-		} elseif ( 'attachment' == $object_name ) {
-			return @current( self::$media );
+		} elseif ( 'attachment' === $object_name ) {
+			return reset( self::$media );
 		}
 
 		$recheck = array();
 
 		// Return first created by Pods, save extended for later
 		foreach ( $objects as $pod ) {
-			if ( $object_name == $pod['object'] ) {
+			if ( $object_name === $pod['object'] ) {
 				$recheck[] = $pod;
 			}
 
-			if ( '' == $pod['object'] && $object_name == $pod['name'] ) {
+			if ( '' === $pod['object'] && $object_name === $pod['name'] ) {
 				return $pod;
 			}
 		}
@@ -3413,14 +3428,24 @@ class PodsMeta {
 
 		$meta_type = $object_type;
 
-		if ( in_array( $meta_type, array( 'post_type', 'media' ) ) ) {
+		if ( in_array( $meta_type, array( 'post', 'post_type', 'media' ) ) ) {
 			$meta_type = 'post';
+
+			$object_name = get_post_type( $object_id );
 		} elseif ( 'taxonomy' == $meta_type ) {
 			$meta_type = 'term';
+
+			$object_name = get_term_field( 'taxonomy', $object_id );
+		} else {
+			$object_name = $meta_type;
+		}
+
+		if ( empty( $object_name ) || is_wp_error( $object_name ) ) {
+			$object_name = null;
 		}
 
 		// Skip keys we do not cover.
-		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key, $object_name ) ) {
 			return $_null;
 		}
 
@@ -3438,7 +3463,28 @@ class PodsMeta {
 
 		$object = $this->get_object( $object_type, $object_id );
 
-		if ( empty( $object_id ) || empty( $object ) ) {
+		$object_is_pod_object = $object instanceof Pod;
+
+		if (
+			empty( $object_id )
+			|| empty( $object )
+			|| (
+				$meta_key
+				&& (
+					(
+						$object_is_pod_object
+						&& $object->get_field( $meta_key, null, false )
+					)
+					|| (
+						! $object_is_pod_object
+						&& ! isset( $object['fields'][ $meta_key ] )
+					)
+				)
+			)
+		) {
+			$static_cache = tribe( Static_Cache::class );
+			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+
 			return $_null;
 		}
 
@@ -3579,14 +3625,47 @@ class PodsMeta {
 			return $_null;
 		}
 
+		if ( in_array( $object_type, array( 'post', 'post_type', 'media' ) ) ) {
+			$object_name = get_post_type( $object_id );
+		} elseif ( 'taxonomy' == $object_type ) {
+			$object_name = get_term_field( 'taxonomy', $object_id );
+		} else {
+			$object_name = $object_type;
+		}
+
+		if ( empty( $object_name ) || is_wp_error( $object_name ) ) {
+			$object_name = null;
+		}
+
 		// Skip keys we do not cover.
-		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key, $object_name ) ) {
 			return $_null;
 		}
 
 		$object = $this->get_object( $object_type, $object_id );
 
-		if ( empty( $object_id ) || empty( $object ) || ! isset( $object['fields'][ $meta_key ] ) ) {
+		$object_is_pod_object = $object instanceof Pod;
+
+		if (
+			empty( $object_id )
+			|| empty( $object )
+			|| (
+				$meta_key
+				&& (
+					(
+						$object_is_pod_object
+						&& $object->get_field( $meta_key, null, false )
+					)
+					|| (
+						! $object_is_pod_object
+						&& ! isset( $object['fields'][ $meta_key ] )
+					)
+				)
+			)
+		) {
+			$static_cache = tribe( Static_Cache::class );
+			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+
 			return $_null;
 		}
 
@@ -3631,14 +3710,47 @@ class PodsMeta {
 			return $_null;
 		}
 
+		if ( in_array( $object_type, array( 'post', 'post_type', 'media' ) ) ) {
+			$object_name = get_post_type( $object_id );
+		} elseif ( 'taxonomy' == $object_type ) {
+			$object_name = get_term_field( 'taxonomy', $object_id );
+		} else {
+			$object_name = $object_type;
+		}
+
+		if ( empty( $object_name ) || is_wp_error( $object_name ) ) {
+			$object_name = null;
+		}
+
 		// Skip keys we do not cover.
-		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key, $object_name ) ) {
 			return $_null;
 		}
 
 		$object = $this->get_object( $object_type, $object_id );
 
-		if ( empty( $object_id ) || empty( $object ) || ! isset( $object['fields'][ $meta_key ] ) ) {
+		$object_is_pod_object = $object instanceof Pod;
+
+		if (
+			empty( $object_id )
+			|| empty( $object )
+			|| (
+				$meta_key
+				&& (
+					(
+						$object_is_pod_object
+						&& $object->get_field( $meta_key, null, false )
+					)
+					|| (
+						! $object_is_pod_object
+						&& ! isset( $object['fields'][ $meta_key ] )
+					)
+				)
+			)
+		) {
+			$static_cache = tribe( Static_Cache::class );
+			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+
 			return $_null;
 		}
 
@@ -3724,14 +3836,47 @@ class PodsMeta {
 			return $_null;
 		}
 
+		if ( in_array( $object_type, array( 'post', 'post_type', 'media' ) ) ) {
+			$object_name = get_post_type( $object_id );
+		} elseif ( 'taxonomy' == $object_type ) {
+			$object_name = get_term_field( 'taxonomy', $object_id );
+		} else {
+			$object_name = $object_type;
+		}
+
+		if ( empty( $object_name ) || is_wp_error( $object_name ) ) {
+			$object_name = null;
+		}
+
 		// Skip keys we do not cover.
-		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key ) ) {
+		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key, $object_name ) ) {
 			return $_null;
 		}
 
 		$object = $this->get_object( $object_type, $object_id );
 
-		if ( empty( $object_id ) || empty( $object ) || ! isset( $object['fields'][ $meta_key ] ) ) {
+		$object_is_pod_object = $object instanceof Pod;
+
+		if (
+			empty( $object_id )
+			|| empty( $object )
+			|| (
+				$meta_key
+				&& (
+					(
+						$object_is_pod_object
+						&& $object->get_field( $meta_key, null, false )
+					)
+					|| (
+						! $object_is_pod_object
+						&& ! isset( $object['fields'][ $meta_key ] )
+					)
+				)
+			)
+		) {
+			$static_cache = tribe( Static_Cache::class );
+			$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
+
 			return $_null;
 		}
 

@@ -1,6 +1,6 @@
 <?php
-wp_enqueue_script( 'pods-cleditor' );
-wp_enqueue_style( 'pods-styles' );
+pods_form_enqueue_script( 'pods-cleditor' );
+pods_form_enqueue_style( 'pods-styles' );
 
 $type                   = 'textarea';
 $attributes             = array();

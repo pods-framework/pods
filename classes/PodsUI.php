@@ -2771,7 +2771,7 @@ class PodsUI {
 					}
 
 					if ( ( ! empty( $this->data ) || false !== $this->search || ( $this->filters_enhanced && ! empty( $this->views ) ) ) && ( ( $this->filters_enhanced && ! empty( $this->views ) ) || false !== $this->searchable ) ) {
-						wp_enqueue_style( 'pods-styles' );
+						pods_form_enqueue_style( 'pods-styles' );
 
 						if ( $this->filters_enhanced ) {
 							$this->filters();

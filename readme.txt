@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.5
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.8.5
+Stable tag: 2.8.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -150,6 +150,28 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+- 2.8.6 - November 30th, 2021 =
+
+* Security: Escape/KSES labels and descriptions in more places. (@sc0ttkclark)
+* Tweak: Added bbPress profile form support so that Pods fields appear like the other form fields. (@sc0ttkclark)
+* Tweak: Added ability enable more consistent responses with REST API relationship depths. Filter `pods_api_export_pod_item_level_export_ids_at_final_depth` and return true to only export IDs at the final depth (note: depth set as 1 always returns IDs). #6260 (@sc0ttkclark) 
+* Tweak: Added ability to force checking if a Pod has orphan fields that aren't assigned to groups and setting them to the first group. Add `pods_debug_find_orphan_fields=1` to the URL when editing a pod. (@sc0ttkclark)
+* Tweak: Implement Block schema for Pods blocks and set the icons to use dashicons for WordPress.org. (@sc0ttkclark)
+* Tweak: Improve performance by only checking a Pod once for a field when filtering meta related functions. (@sc0ttkclark)
+* Tweak: When calling pick_object and pick_val for a field object, automatically map to the corresponding method to deal with additional logic. (@sc0ttkclark)
+* Fixed: Flush cache after importing packages. (@sc0ttkclark)
+* Fixed: Adjust CSS for fields in meta boxes that are in side context. (@sc0ttkclark)
+* Fixed: Resolve issues with enqueueing assets that may not be registered yet (for bbPress compatibility) by doing a late enqueue. (@sc0ttkclark)
+* Fixed: Resolve PHP notices and added a fallback when related IDs are not set in the cache as expected. #6322 (@sc0ttkclark)
+* Fixed: Advanced Content Types now create the default fields as expected (name, created, modified, author, permalink) . #6314 (@sc0ttkclark)
+* Fixed: Added backwards compatibility for some more old Pods 1.x code, but be sure to update compatibility as this may not be maintained in the future. #6312 (@sc0ttkclark)
+* Fixed: Added backwards compatibility for `[if]` template tags to support running normal shortcodes in them. To enable this, set `PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES` to true in your wp-config.php file. #6290 (@sc0ttkclark)
+* Fixed: Set up the currency configurations needed for frontend forms with currency fields (using non-USD currencies) in case they haven't been set up yet. #6315 (@sc0ttkclark)
+* Fixed: Added backwards compatibility for `pods_group_add()` so that when a field is marked as hidden in the UI but it is added directly with `pods_group_add()`, then it will treat it as not hidden anymore. #6309 (@sc0ttkclark)
+* Fixed: Automatically assume configuration needs to be refreshed when transient of Pods registered post types/taxonomies does not match current post types/taxonomies count in Pods configs. #6313 (@sc0ttkclark)
+* Fixed: Relationships now require a Related Type option to be set. #6327 (@sc0ttkclark)
+* Fixed: Resolve issues with duplicating a Pod so that it properly creates the duplicated groups/fields for the new pod. #6330 (@sc0ttkclark)
 
 = 2.8.5 - November 17th, 2021 =
 

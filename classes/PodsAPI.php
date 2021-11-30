@@ -2017,6 +2017,8 @@ class PodsAPI {
 			'table',
 			'where',
 			'where_default',
+			'podType',
+			'storageType',
 		);
 
 		// Remove options we do not want to set on the Pod.
@@ -2120,6 +2122,8 @@ class PodsAPI {
 				'post_status'  => 'publish',
 			);
 
+			$save_groups_for_pod = false;
+
 			if ( empty( $pod['groups'] ) || ! is_array( $pod['groups'] ) ) {
 				$default_group_label  = __( 'More Fields', 'pods' );
 				$default_group_fields = [];
@@ -2186,16 +2190,25 @@ class PodsAPI {
 				$default_group_label = apply_filters( 'pods_meta_default_box_title', $default_group_label, $pod, $default_group_fields, $pod['type'], $pod['name'] );
 				$default_group_name  = sanitize_key( pods_js_name( sanitize_title( $default_group_label ) ) );
 
-				$pod['groups'] = [
-					$default_group_name => [
-						'name'   => $default_group_name,
-						'label'  => $default_group_label,
-						'fields' => $default_group_fields,
-					],
-				];
+				if ( ! empty( $default_group_fields ) ) {
+					$save_groups_for_pod = true;
+
+					$pod['groups'] = [
+						$default_group_name => [
+							'name'   => $default_group_name,
+							'label'  => $default_group_label,
+							'fields' => $default_group_fields,
+						],
+					];
+				}
 			}
 
 			$pod = $this->do_hook( 'save_pod_default_pod', $pod, $params, $sanitized, $db );
+
+			// Maybe save default groups and fields.
+			if ( $save_groups_for_pod && ! empty( $pod['groups'] ) ) {
+				$params->groups = $pod['groups'];
+			}
 
 			$field_table_operation = false;
 		} else {
@@ -3320,6 +3333,16 @@ class PodsAPI {
 			}
 
 			if ( $old_name !== $field['name'] || empty( $params->id ) || $old_id !== $params->id ) {
+				/*
+				 * Prevent adding / renaming fields that conflict with taxonomy names. This is to prevent cases
+				 * where someone has a field named as the taxonomy and then chooses to associate the taxonomy
+				 * to the post type. That will then cause conflicts for the field because it then matches an
+				 * object field.
+				 */
+				if ( 'post_type' === $pod['type'] && taxonomy_exists( $field['name'] ) ) {
+					return pods_error( sprintf( __( '%s conflicts with the name of an existing Taxonomy, please try a different name', 'pods' ), $field['name'] ), $this );
+				}
+
 				if (
 					in_array( $field['name'], $reserved_keywords, true )
 					&& (
@@ -5960,27 +5983,43 @@ class PodsAPI {
 		try {
 			$pod_id = $this->save_pod( $pod );
 		} catch ( Exception $exception ) {
+			// Pod not saved.
 			return false;
 		}
 
 		if ( ! is_int( $pod_id ) ) {
+			// Pod not saved.
 			return false;
 		}
 
-		foreach ( $groups as $group => $group_data ) {
+		$pod = $this->load_pod( [ 'id' => $pod_id ] );
+
+		foreach ( $groups as $group_data ) {
 			$fields = $group_data['fields'];
 
 			unset( $group_data['id'], $group_data['parent'], $group_data['object_type'], $group_data['object_storage_type'], $group_data['fields'] );
 
-			$group_data['pod_id'] = $pod_id;
+			$group_data['pod_data'] = $pod;
 
-			$group_id = $this->save_group( $group_data );
+			try {
+				$group_id = $this->save_group( $group_data );
+			} catch ( Exception $exception ) {
+				// Group not saved.
+				continue;
+			}
 
-			foreach ( $fields as $field => $field_data ) {
+			if ( ! is_int( $group_id ) ) {
+				// Group not saved.
+				continue;
+			}
+
+			$group = $this->load_pod( [ 'id' => $group_id ] );
+
+			foreach ( $fields as $field_data ) {
 				unset( $field_data['id'], $field_data['parent'], $field_data['object_type'], $field_data['object_storage_type'], $field_data['group'] );
 
-				$field_data['pod_id'] = $pod_id;
-				$field_data['group_id'] = $group_id;
+				$field_data['pod_data'] = $pod;
+				$field_data['group']    = $group;
 
 				try {
 					$this->save_field( $field_data );
@@ -6465,10 +6504,38 @@ class PodsAPI {
 
 		$data = array();
 
+		$is_strict_mode = pods_strict( false );
+
+		/**
+		 * Allow filtering whether to export IDs at the final depth, set to false to return the normal object data.
+		 *
+		 * @since TBD
+		 *
+		 * @param bool  $export_ids_at_final_depth Whether to export IDs at the final depth, set to false to return the normal object data.
+		 * @param Pods  $pod                       Pods object.
+		 * @param array $params                    Export params.
+		 */
+		$export_ids_at_final_depth = (bool) apply_filters( 'pods_api_export_pod_item_level_export_ids_at_final_depth', $is_strict_mode, $pod, $params );
+
+		/**
+		 * Allow filtering whether to export relationships as JSON compatible.
+		 *
+		 * @since TBD
+		 *
+		 * @param bool  $export_as_json_compatible Whether to export relationships as JSON compatible.
+		 * @param Pods  $pod                       Pods object.
+		 * @param array $params                    Export params.
+		 */
+		$export_as_json_compatible = (bool) apply_filters( 'pods_api_export_pod_item_level_export_as_json', $is_strict_mode || pods_doing_json(), $pod, $params );
+
 		foreach ( $export_fields as $field ) {
 			// Return IDs (or guid for files) if only one level deep
-			if ( 1 === $depth ) {
+			if ( 1 === $depth || ( $export_ids_at_final_depth && $current_depth === $depth ) ) {
 				$data[ $field['name'] ] = $pod->field( array( 'name' => $field['lookup_name'], 'output' => 'arrays' ) );
+
+				if ( $export_as_json_compatible && is_array( $data[ $field['name'] ] ) ) {
+					$data[ $field['name'] ] = array_values( $data[ $field['name'] ] );
+				}
 			} elseif ( ( - 1 === $depth || $current_depth < $depth ) && 'pick' === $field['type'] && ! in_array( pods_v( 'pick_object', $field ), $simple_tableless_objects, true ) ) {
 				// Recurse depth levels for pick fields if $depth allows
 				$related_data = array();
@@ -6479,8 +6546,9 @@ class PodsAPI {
 					$related_ids = (array) $related_ids;
 
 					$pick_object = pods_v( 'pick_object', $field );
+					$pick_val    = pods_v( 'pick_val', $field );
 
-					$related_pod = pods( pods_v( 'pick_val', $field ), null, false );
+					$related_pod = pods( $pick_val, null, false );
 
 					// If this isn't a Pod, return data exactly as Pods does normally
 					if ( empty( $related_pod ) || empty( $related_pod->pod_data ) || ( 'pod' !== $pick_object && $pick_object !== $related_pod->pod_data['type'] ) || $related_pod->pod === $pod->pod ) {
@@ -6504,7 +6572,7 @@ class PodsAPI {
 
 								$related_item_data = $this->do_hook( 'export_pod_item_level', $related_item, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ), $params );
 
-								if ( function_exists( 'wp_is_json_request' ) && wp_is_json_request() ) {
+								if ( $export_as_json_compatible ) {
 									// Don't pass IDs as keys for REST API context to ensure arrays of data are returned.
 									$related_data[] = $related_item_data;
 								} else {
@@ -7760,18 +7828,14 @@ class PodsAPI {
 			unset( $params['id'] );
 		}
 
-		$object = $this->_load_object( $params );
+		try {
+			$object = $this->_load_object( $params );
 
-		$pod = 'n/a';
-
-		if ( ! empty( $params['name'] ) ) {
-			$pod = $params['name'];
-		} elseif ( ! empty( $params['id'] ) ) {
-			$pod = $params['id'];
-		}
-
-		if ( $object ) {
-			return $object;
+			if ( $object ) {
+				return $object;
+			}
+		} catch ( Exception $exception ) {
+			// Return error below.
 		}
 
 		if ( $strict ) {
@@ -8957,7 +9021,7 @@ class PodsAPI {
 		if ( $pod_id && $field_id ) {
 			$cache_value = $static_cache->get( $cache_key, __CLASS__ . '/related_item_cache' ) ?: [];
 
-			if ( isset( $cache_value[ $idstring ] ) ) {
+			if ( isset( $cache_value[ $idstring ] ) && is_array( $cache_value[ $idstring ] ) ) {
 				return $cache_value[ $idstring ];
 			}
 		}
@@ -10332,6 +10396,7 @@ class PodsAPI {
 		if ( is_array( $pod ) || $pod instanceof Pod ) {
 			pods_transient_clear( 'pods_pod_' . $pod['name'] );
 			pods_cache_clear( $pod['name'], 'pods-class' );
+			pods_cache_clear( $pod['type'] . '/' . $pod['name'], PodsMeta::class . '/is_key_covered' );
 
 			if ( in_array( $pod['type'], array( 'post_type', 'taxonomy' ) ) ) {
 				pods_transient_clear( 'pods_wp_cpt_ct' );

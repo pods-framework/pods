@@ -224,12 +224,12 @@ final class PodsI18n {
 	public function get_current_language( $args = array() ) {
 
 		$defaults = array(
-			'refresh' => false,
+			'refresh' => empty( self::$current_language ),
 		);
 
 		$args = wp_parse_args( $args, $defaults );
 
-		if ( ! $args['refresh'] && ! empty( self::$current_language ) ) {
+		if ( ! $args['refresh'] ) {
 			return self::$current_language;
 		}
 

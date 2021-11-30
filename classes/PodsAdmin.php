@@ -1243,7 +1243,12 @@ class PodsAdmin {
 			return null;
 		}
 
-		if ( 1 !== (int) $pod->get_arg( '_migrated_28' ) ) {
+		$find_orphan_fields = (
+			1 === (int) pods_v( 'pods_debug_find_orphan_fields', 'get', 0 )
+			&& pods_is_admin( array( 'pods' ) )
+		);
+
+		if ( $find_orphan_fields || 1 !== (int) $pod->get_arg( '_migrated_28' ) ) {
 			$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
 		}
 
@@ -1397,6 +1402,7 @@ class PodsAdmin {
 			$groups = wp_list_pluck( $groups, 'id' );
 			$groups = array_filter( $groups );
 
+			// Get the first group ID.
 			if ( ! empty( $groups ) ) {
 				$group_id = reset( $groups );
 			}

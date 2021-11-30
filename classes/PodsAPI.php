@@ -2125,8 +2125,6 @@ class PodsAPI {
 			$save_groups_for_pod = false;
 
 			if ( empty( $pod['groups'] ) || ! is_array( $pod['groups'] ) ) {
-				$save_groups_for_pod = true;
-
 				$default_group_label  = __( 'More Fields', 'pods' );
 				$default_group_fields = [];
 
@@ -2192,13 +2190,17 @@ class PodsAPI {
 				$default_group_label = apply_filters( 'pods_meta_default_box_title', $default_group_label, $pod, $default_group_fields, $pod['type'], $pod['name'] );
 				$default_group_name  = sanitize_key( pods_js_name( sanitize_title( $default_group_label ) ) );
 
-				$pod['groups'] = [
-					$default_group_name => [
-						'name'   => $default_group_name,
-						'label'  => $default_group_label,
-						'fields' => $default_group_fields,
-					],
-				];
+				if ( ! empty( $default_group_fields ) ) {
+					$save_groups_for_pod = true;
+
+					$pod['groups'] = [
+						$default_group_name => [
+							'name'   => $default_group_name,
+							'label'  => $default_group_label,
+							'fields' => $default_group_fields,
+						],
+					];
+				}
 			}
 
 			$pod = $this->do_hook( 'save_pod_default_pod', $pod, $params, $sanitized, $db );

@@ -151,7 +151,7 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 == Changelog ==
 
-- 2.8.6 - November 30th, 2021 =
+= 2.8.6 - November 30th, 2021 =
 
 * Security: Escape/KSES labels and descriptions in more places. (@sc0ttkclark)
 * Tweak: Added bbPress profile form support so that Pods fields appear like the other form fields. (@sc0ttkclark)

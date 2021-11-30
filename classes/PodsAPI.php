@@ -2122,7 +2122,11 @@ class PodsAPI {
 				'post_status'  => 'publish',
 			);
 
+			$save_groups_for_pod = false;
+
 			if ( empty( $pod['groups'] ) || ! is_array( $pod['groups'] ) ) {
+				$save_groups_for_pod = true;
+
 				$default_group_label  = __( 'More Fields', 'pods' );
 				$default_group_fields = [];
 
@@ -2200,7 +2204,7 @@ class PodsAPI {
 			$pod = $this->do_hook( 'save_pod_default_pod', $pod, $params, $sanitized, $db );
 
 			// Maybe save default groups and fields.
-			if ( ! empty( $pod['groups'] ) ) {
+			if ( $save_groups_for_pod && ! empty( $pod['groups'] ) ) {
 				$params->groups = $pod['groups'];
 			}
 

@@ -2199,6 +2199,11 @@ class PodsAPI {
 
 			$pod = $this->do_hook( 'save_pod_default_pod', $pod, $params, $sanitized, $db );
 
+			// Maybe save default groups and fields.
+			if ( ! empty( $pod['groups'] ) ) {
+				$params->groups = $pod['groups'];
+			}
+
 			$field_table_operation = false;
 		} else {
 			$post_data = array(

@@ -1741,7 +1741,7 @@ class PodsField_Pick extends PodsField {
 
 		$related_data = $static_cache->get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
-		if ( ! empty( $related_data ) ) {
+		if ( ! empty( $related_data ) && isset( $related_data['current_ids_' . $id ], $related_data['remove_ids_' . $id ] ) ) {
 			$related_pod        = $related_data['related_pod'];
 			$related_field      = $related_data['related_field'];
 			$related_pick_limit = $related_data['related_pick_limit'];

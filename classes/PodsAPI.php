@@ -9015,7 +9015,7 @@ class PodsAPI {
 		if ( $pod_id && $field_id ) {
 			$cache_value = $static_cache->get( $cache_key, __CLASS__ . '/related_item_cache' ) ?: [];
 
-			if ( isset( $cache_value[ $idstring ] ) ) {
+			if ( isset( $cache_value[ $idstring ] ) && is_array( $cache_value[ $idstring ] ) ) {
 				return $cache_value[ $idstring ];
 			}
 		}

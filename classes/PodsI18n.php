@@ -229,6 +229,11 @@ final class PodsI18n {
 
 		$args = wp_parse_args( $args, $defaults );
 
+		if ( doing_filter( 'pods_get_current_language' ) ) {
+			// Prevent loop.
+			$args['refresh'] = false;
+		}
+
 		if ( ! $args['refresh'] ) {
 			return self::$current_language;
 		}

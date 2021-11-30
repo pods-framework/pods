@@ -1484,12 +1484,13 @@ function pods_shortcode_form( $tags, $content = null ) {
  * @uses  $shortcode_tags
  * @uses  get_shortcode_regex() Gets the search pattern for searching shortcodes.
  *
- * @param string $content    Content to search for shortcodes
- * @param array  $shortcodes Array of shortcodes to run
+ * @param string $content            Content to search for shortcodes.
+ * @param array  $shortcodes         Array of shortcodes to run.
+ * @param array  $ignored_shortcodes Array of shortcodes to ignore.
  *
  * @return string Content with shortcodes filtered out.
  */
-function pods_do_shortcode( $content, $shortcodes ) {
+function pods_do_shortcode( $content, $shortcodes = [], $ignored_shortcodes = [] ) {
 	global $shortcode_tags;
 
 	// No shortcodes in content
@@ -1502,16 +1503,25 @@ function pods_do_shortcode( $content, $shortcodes ) {
 		return $content;
 	}
 
-	if ( ! empty( $shortcodes ) ) {
-		$temp_shortcode_filter = function ( $return, $tag, $attr, $m ) use ( $shortcodes ) {
-			if ( in_array( $m[2], $shortcodes, true ) ) {
-				// If shortcode being called is in list, return false to allow it to run
+	$only_shortcodes   = ! empty( $shortcodes );
+	$ignore_shortcodes = ! empty( $ignored_shortcodes );
+
+	if ( $only_shortcodes || $ignore_shortcodes ) {
+		$temp_shortcode_filter = function ( $return, $tag, $attr, $m ) use ( $only_shortcodes, $shortcodes, $ignore_shortcodes, $ignored_shortcodes ) {
+			if ( $only_shortcodes && in_array( $m[2], $shortcodes, true ) ) {
+				// If shortcode being called is in list, return false to allow it to run.
+				return false;
+			}
+
+			if ( ! $ignore_shortcodes || ! in_array( $m[2], $ignored_shortcodes, true ) ) {
+				// If shortcode being called is not in ignore list, return false to allow it to run.
 				return false;
 			}
 
 			// Return original shortcode string if we aren't going to handle at this time
 			return $m[0];
 		};
+
 		add_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter, 10, 4 );
 	}
 

@@ -5,7 +5,7 @@
   "title": "Pods View",
   "description": "Include a file from a theme, with caching options",
   "category": "pods",
-  "icon": "pods",
+  "icon": "page",
   "keywords": [
     "pods",
     "view",

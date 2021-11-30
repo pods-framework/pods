@@ -5,7 +5,7 @@
   "title": "Pods Form",
   "description": "Display a form for creating and editing Pod items.",
   "category": "pods",
-  "icon": "pods",
+  "icon": "button",
   "keywords": [
     "pods",
     "form",

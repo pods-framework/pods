@@ -224,12 +224,17 @@ final class PodsI18n {
 	public function get_current_language( $args = array() ) {
 
 		$defaults = array(
-			'refresh' => false,
+			'refresh' => empty( self::$current_language ),
 		);
 
 		$args = wp_parse_args( $args, $defaults );
 
-		if ( ! $args['refresh'] && ! empty( self::$current_language ) ) {
+		if ( doing_filter( 'pods_get_current_language' ) ) {
+			// Prevent loop.
+			$args['refresh'] = false;
+		}
+
+		if ( ! $args['refresh'] ) {
 			return self::$current_language;
 		}
 
@@ -272,12 +277,17 @@ final class PodsI18n {
 	public function get_current_language_context( $args = array() ) {
 
 		$defaults = array(
-			'refresh' => false,
+			'refresh' => empty( self::$current_language_context ),
 		);
 
 		$args = wp_parse_args( $args, $defaults );
 
-		if ( ! $args['refresh'] && ! empty( self::$current_language_context ) ) {
+		if ( doing_filter( 'pods_get_current_language_context' ) ) {
+			// Prevent loop.
+			$args['refresh'] = false;
+		}
+
+		if ( ! $args['refresh'] ) {
 			return self::$current_language_context;
 		}
 

@@ -1250,6 +1250,12 @@ class PodsAdmin {
 
 		if ( $find_orphan_fields || 1 !== (int) $pod->get_arg( '_migrated_28' ) ) {
 			$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+
+			// Maybe redirect the page to reload it fresh.
+			if ( $find_orphan_fields ) {
+				pods_redirect( pods_query_arg( [ 'pods_debug_find_orphan_fields' => null ] ) );
+				die();
+			}
 		}
 
 		// Check again in case the pod migrated wrong.

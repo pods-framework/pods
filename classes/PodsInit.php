@@ -1278,6 +1278,8 @@ class PodsInit {
 			$force = true;
 		}
 
+		$original_cpt_ct = $pods_cpt_ct;
+
 		if ( false === $pods_cpt_ct || $force ) {
 			/**
 			 * @var WP_Query
@@ -1752,6 +1754,8 @@ class PodsInit {
 			}
 		}//end if
 
+		$is_changed = $pods_cpt_ct !== $original_cpt_ct;
+
 		foreach ( $pods_cpt_ct['taxonomies'] as $taxonomy => $options ) {
 			// Check for a skipped type.
 			if ( empty( $options ) ) {
@@ -1951,6 +1955,11 @@ class PodsInit {
 
 		do_action( 'pods_setup_content_types' );
 
+		// Maybe set the rewrites to be flushed.
+		if ( $is_changed ) {
+			pods_transient_set( 'pods_flush_rewrites', 1, WEEK_IN_SECONDS );
+		}
+
 		if ( $save_transient ) {
 			/**
 			 * Allow hooking into after Pods has been setup.
@@ -1967,10 +1976,10 @@ class PodsInit {
 	 * Check if we need to flush WordPress rewrite rules
 	 * This gets run during 'init' action late in the game to give other plugins time to register their rewrite rules
 	 */
-	public function flush_rewrite_rules() {
+	public function flush_rewrite_rules( $force = false ) {
 
 		// Only run $wp_rewrite->flush_rules() in an admin context.
-		if ( ! is_admin() ) {
+		if ( ! $force && ! is_admin() ) {
 			return;
 		}
 

@@ -1513,7 +1513,7 @@ function pods_do_shortcode( $content, $shortcodes = [], $ignored_shortcodes = []
 				return false;
 			}
 
-			if ( ! $ignore_shortcodes || ! in_array( $m[2], $ignored_shortcodes, true ) ) {
+			if ( $ignore_shortcodes && ! in_array( $m[2], $ignored_shortcodes, true ) ) {
 				// If shortcode being called is not in ignore list, return false to allow it to run.
 				return false;
 			}

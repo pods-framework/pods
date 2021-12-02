@@ -630,7 +630,7 @@ class PodsMeta {
 			return true;
 		}
 
-		if ( ! is_array( $pod ) && ! $pod instanceof Pods\Whatsit ) {
+		if ( ! is_array( $pod ) && ! $pod instanceof Pod ) {
 			if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] != $pod ) {
 				self::$current_pod_data = pods_api()->load_pod( array( 'name' => $pod ), false );
 			}
@@ -2712,11 +2712,19 @@ class PodsMeta {
 
 		$_null = apply_filters( 'pods_meta_get_post_meta', null, $args );
 
-		if ( null !== $_null ) {
+		static $no_conflict = false;
+
+		if ( null !== $_null || $no_conflict ) {
 			return $_null;
 		}
 
-		return call_user_func_array( array( $this, 'get_meta' ), $args );
+		$no_conflict = true;
+
+		$return = call_user_func_array( array( $this, 'get_meta' ), $args );
+
+		$no_conflict = false;
+
+		return $return;
 	}
 
 	/**
@@ -2729,11 +2737,19 @@ class PodsMeta {
 
 		$_null = apply_filters( 'pods_meta_get_user_meta', null, $args );
 
-		if ( null !== $_null ) {
+		static $no_conflict = false;
+
+		if ( null !== $_null || $no_conflict ) {
 			return $_null;
 		}
 
-		return call_user_func_array( array( $this, 'get_meta' ), $args );
+		$no_conflict = true;
+
+		$return = call_user_func_array( array( $this, 'get_meta' ), $args );
+
+		$no_conflict = false;
+
+		return $return;
 	}
 
 	/**
@@ -2746,11 +2762,19 @@ class PodsMeta {
 
 		$_null = apply_filters( 'pods_meta_get_comment_meta', null, $args );
 
-		if ( null !== $_null ) {
+		static $no_conflict = false;
+
+		if ( null !== $_null || $no_conflict ) {
 			return $_null;
 		}
 
-		return call_user_func_array( array( $this, 'get_meta' ), $args );
+		$no_conflict = true;
+
+		$return = call_user_func_array( array( $this, 'get_meta' ), $args );
+
+		$no_conflict = false;
+
+		return $return;
 	}
 
 	/**
@@ -2763,11 +2787,19 @@ class PodsMeta {
 
 		$_null = apply_filters( 'pods_meta_get_term_meta', null, $args );
 
-		if ( null !== $_null ) {
+		static $no_conflict = false;
+
+		if ( null !== $_null || $no_conflict ) {
 			return $_null;
 		}
 
-		return call_user_func_array( array( $this, 'get_meta' ), $args );
+		$no_conflict = true;
+
+		$return = call_user_func_array( array( $this, 'get_meta' ), $args );
+
+		$no_conflict = false;
+
+		return $return;
 	}
 
 	/**
@@ -2786,11 +2818,19 @@ class PodsMeta {
 
 		$_null = apply_filters( 'pods_meta_get_option', null, $args );
 
-		if ( null !== $_null ) {
+		static $no_conflict = false;
+
+		if ( null !== $_null || $no_conflict ) {
 			return $_null;
 		}
 
-		return call_user_func_array( array( $this, 'get_meta' ), $args );
+		$no_conflict = true;
+
+		$return = call_user_func_array( array( $this, 'get_meta' ), $args );
+
+		$no_conflict = false;
+
+		return $return;
 	}
 
 	/**

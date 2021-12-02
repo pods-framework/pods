@@ -3513,6 +3513,12 @@ class PodsMeta {
 
 		$object_is_pod_object = $object instanceof Pod;
 
+		$first_meta_key = false;
+
+		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
+			$first_meta_key = current( explode( '.', $first_meta_key ) );
+		}
+
 		if (
 			empty( $object_id )
 			|| empty( $object )
@@ -3521,11 +3527,11 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& ! $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $first_meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
-						&& ! isset( $object['fields'][ $meta_key ] )
+						&& ! isset( $object['fields'][ $first_meta_key ] )
 					)
 				)
 			)
@@ -3700,6 +3706,12 @@ class PodsMeta {
 
 		$object_is_pod_object = $object instanceof Pod;
 
+		$first_meta_key = false;
+
+		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
+			$first_meta_key = current( explode( '.', $first_meta_key ) );
+		}
+
 		if (
 			empty( $object_id )
 			|| empty( $object )
@@ -3708,11 +3720,11 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& ! $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $first_meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
-						&& ! isset( $object['fields'][ $meta_key ] )
+						&& ! isset( $object['fields'][ $first_meta_key ] )
 					)
 				)
 			)
@@ -3791,6 +3803,12 @@ class PodsMeta {
 
 		$object_is_pod_object = $object instanceof Pod;
 
+		$first_meta_key = false;
+
+		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
+			$first_meta_key = current( explode( '.', $first_meta_key ) );
+		}
+
 		if (
 			empty( $object_id )
 			|| empty( $object )
@@ -3799,11 +3817,11 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& ! $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $first_meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
-						&& ! isset( $object['fields'][ $meta_key ] )
+						&& ! isset( $object['fields'][ $first_meta_key ] )
 					)
 				)
 			)
@@ -3923,6 +3941,12 @@ class PodsMeta {
 
 		$object_is_pod_object = $object instanceof Pod;
 
+		$first_meta_key = false;
+
+		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
+			$first_meta_key = current( explode( '.', $first_meta_key ) );
+		}
+
 		if (
 			empty( $object_id )
 			|| empty( $object )
@@ -3931,11 +3955,11 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& ! $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $first_meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
-						&& ! isset( $object['fields'][ $meta_key ] )
+						&& ! isset( $object['fields'][ $first_meta_key ] )
 					)
 				)
 			)

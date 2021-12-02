@@ -6509,7 +6509,7 @@ class PodsAPI {
 		/**
 		 * Allow filtering whether to export IDs at the final depth, set to false to return the normal object data.
 		 *
-		 * @since TBD
+		 * @since 2.8.6
 		 *
 		 * @param bool  $export_ids_at_final_depth Whether to export IDs at the final depth, set to false to return the normal object data.
 		 * @param Pods  $pod                       Pods object.
@@ -6520,7 +6520,7 @@ class PodsAPI {
 		/**
 		 * Allow filtering whether to export relationships as JSON compatible.
 		 *
-		 * @since TBD
+		 * @since 2.8.6
 		 *
 		 * @param bool  $export_as_json_compatible Whether to export relationships as JSON compatible.
 		 * @param Pods  $pod                       Pods object.

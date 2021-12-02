@@ -54,7 +54,7 @@ function frontier_do_shortcode( $content ) {
  * @param $content
  *
  * @return string
- * @since TBD
+ * @since 2.8.6
  */
 function frontier_do_other_shortcodes( $content ) {
 	// Run all other shortcodes but ignore the Pods template shortcodes (each, once, before, after, if, and else).

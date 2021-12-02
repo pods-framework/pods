@@ -1925,7 +1925,7 @@ class PodsMeta {
 			/**
 			 * Allow filtering whether to show groups on bbPress profile form.
 			 *
-			 * @since TBD
+			 * @since 2.8.6
 			 *
 			 * @param bool $show_groups_on_bbpress_profile Whether to show groups on bbPress profile form.
 			 */

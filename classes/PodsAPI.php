@@ -10417,7 +10417,7 @@ class PodsAPI {
 		$static_cache->flush( 'pods_svg_icon/base64' );
 		$static_cache->flush( 'pods_svg_icon/svg' );
 
-		pods_init()->refresh_existing_content_types_cache();
+		pods_init()->refresh_existing_content_types_cache( true );
 
 		// Delete transients in the database
 		$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );

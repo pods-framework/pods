@@ -154,6 +154,7 @@ class PodsField_Pick extends PodsField {
 				'label'                 => __( 'Selection Type', 'pods' ),
 				'help'                  => $fallback_help,
 				'default'               => 'single',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => [
 					'single' => __( 'Single Select', 'pods' ),
@@ -169,6 +170,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'single',
 				],
 				'default'               => 'dropdown',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_single_options', [
 					'dropdown'     => __( 'Drop Down', 'pods' ),
@@ -186,6 +188,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'multi',
 				],
 				'default'               => 'checkbox',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => apply_filters( 'pods_form_ui_field_pick_format_multi_options', [
 					'checkbox'     => __( 'Checkboxes', 'pods' ),
@@ -203,6 +206,7 @@ class PodsField_Pick extends PodsField {
 					static::$type . '_format_type' => 'multi',
 				],
 				'default'               => 'default',
+				'required'              => true,
 				'type'                  => 'pick',
 				'data'                  => [
 					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
@@ -1025,6 +1029,7 @@ class PodsField_Pick extends PodsField {
 		$field_options['select2_overrides'] = null;
 
 		if ( 'select2' === $field_options['view_name'] ) {
+			// @todo Revisit this, they probably aren't used anymore now since this is DFV.
 			wp_enqueue_style( 'pods-select2' );
 			wp_enqueue_script( 'pods-select2' );
 
@@ -1736,7 +1741,7 @@ class PodsField_Pick extends PodsField {
 
 		$related_data = $static_cache->get( $options['name'] . '/' . $options['id'], __CLASS__ . '/related_data' ) ?: [];
 
-		if ( ! empty( $related_data ) ) {
+		if ( ! empty( $related_data ) && isset( $related_data['current_ids_' . $id ], $related_data['remove_ids_' . $id ] ) ) {
 			$related_pod        = $related_data['related_pod'];
 			$related_field      = $related_data['related_field'];
 			$related_pick_limit = $related_data['related_pick_limit'];

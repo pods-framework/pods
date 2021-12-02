@@ -348,7 +348,7 @@ class PodsField {
 	 * }
 	 */
 	public function render_input_script( $args ) {
-		wp_enqueue_script( 'pods-dfv' );
+		pods_form_enqueue_script( 'pods-dfv' );
 
 		if ( is_array( $args ) ) {
 			$args = (object) $args;

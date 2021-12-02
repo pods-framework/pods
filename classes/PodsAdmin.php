@@ -1243,8 +1243,19 @@ class PodsAdmin {
 			return null;
 		}
 
-		if ( 1 !== (int) $pod->get_arg( '_migrated_28' ) ) {
+		$find_orphan_fields = (
+			1 === (int) pods_v( 'pods_debug_find_orphan_fields', 'get', 0 )
+			&& pods_is_admin( array( 'pods' ) )
+		);
+
+		if ( $find_orphan_fields || 1 !== (int) $pod->get_arg( '_migrated_28' ) ) {
 			$pod = $this->maybe_migrate_pod_fields_into_group( $pod );
+
+			// Maybe redirect the page to reload it fresh.
+			if ( $find_orphan_fields ) {
+				pods_redirect( pods_query_arg( [ 'pods_debug_find_orphan_fields' => null ] ) );
+				die();
+			}
 		}
 
 		// Check again in case the pod migrated wrong.
@@ -1272,7 +1283,7 @@ class PodsAdmin {
 			'storageTypes'   => $api->get_storage_types(),
 			// @todo SKC: Remove these below and replace any references to podsDFVConfig
 			'wp_locale'      => $GLOBALS['wp_locale'],
-			'currencies'     => PodsField_Currency::$currencies,
+			'currencies'     => PodsField_Currency::data_currencies(),
 			'datetime'       => [
 				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
 				'gmt_offset'    => (int) get_option( 'gmt_offset', 0 ),
@@ -1397,6 +1408,7 @@ class PodsAdmin {
 			$groups = wp_list_pluck( $groups, 'id' );
 			$groups = array_filter( $groups );
 
+			// Get the first group ID.
 			if ( ! empty( $groups ) ) {
 				$group_id = reset( $groups );
 			}
@@ -2991,31 +3003,6 @@ class PodsAdmin {
 						'description' => sprintf( '<p>%s</p>', __( 'You are not using an external object cache for this site. Pods Alternative Cache is usually useful for Pods installs that use Shared Hosting with limited Object Cache capabilities.', 'pods' ) ),
 						'actions'     => sprintf( '<p><a href="%s">%s</a></p>', esc_url( $plugin_search_url . urlencode( 'Pods Alternative Cache' ) ), __( 'Install Pods Alternative Cache', 'pods' ) ),
 						'test'        => 'pods_alternative_cache',
-					];
-				},
-			];
-		}
-
-		// Check if any of the Pods Pro Page Builder Toolkit plugins are active.
-		$bb_active     = defined( 'FL_BUILDER_VERSION' );
-		$divi_active   = defined( 'ET_BUILDER_PRODUCT_VERSION' );
-		$oxygen_active = defined( 'CT_VERSION' );
-		$pods_pro_pbtk_active = class_exists( '\Pods_Pro\Page_Builder_Toolkit\Plugin' );
-
-		if ( ! $pods_pro_pbtk_active && ( $bb_active || $divi_active || $oxygen_active ) ) {
-			$tests['direct']['pods_pro_page_builder_toolkit'] = [
-				'label' => __( 'Pods Pro Page Builder Toolkit', 'pods' ),
-				'test'  => static function () {
-					return [
-						'label'       => __( 'The Pods Team recommends you use the Pods Pro Page Builder Toolkit by SKCDEV', 'pods' ),
-						'status'      => 'recommended',
-						'badge'       => [
-							'label' => __( 'Page Builder', 'pods' ),
-							'color' => 'blue',
-						],
-						'description' => sprintf( '<p>%s</p>', __( 'Pods Pro Page Builder Toolkit by SKCDEV integrates Pods directly with Beaver Builder Themer, Divi, and Oxygen Builder.', 'pods' ) ),
-						'actions'     => sprintf( '<p><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></p>', esc_url( 'https://pods-pro.skc.dev/?utm_source=pods_plugin_site_health_callout&utm_medium=link&utm_campaign=friends_of_pods_2021' ), __( 'Get Pods Pro by SKCDEV', 'pods' ) ),
-						'test'        => 'pods_pro_page_builder_toolkit',
 					];
 				},
 			];

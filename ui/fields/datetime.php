@@ -9,7 +9,7 @@ $use_time = ( 'time' === $form_field_type || 'datetime' === $form_field_type );
 $use_date = ( 'date' === $form_field_type || 'datetime' === $form_field_type );
 
 wp_enqueue_script( 'jquery-ui-datepicker' );
-wp_enqueue_style( 'pods-styles' );
+pods_form_enqueue_style( 'pods-styles' );
 
 if ( $use_time ) {
 	wp_enqueue_script( 'jquery-ui-timepicker' );

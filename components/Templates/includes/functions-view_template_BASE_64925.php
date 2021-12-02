@@ -46,19 +46,11 @@ function frontier_get_shortcodes() {
  * @since 2.4.3
  */
 function frontier_do_shortcode( $content ) {
-	// Run only Pods template shortcodes (each, once, before, after, if, and else).
-	return pods_do_shortcode( $content, frontier_get_shortcodes() );
-}
 
-/**
- * @param $content
- *
- * @return string
- * @since TBD
- */
-function frontier_do_other_shortcodes( $content ) {
-	// Run all other shortcodes but ignore the Pods template shortcodes (each, once, before, after, if, and else).
-	return pods_do_shortcode( $content, [], frontier_get_shortcodes() );
+	$content = pods_do_shortcode( $content, frontier_get_shortcodes() );
+
+	return $content;
+
 }
 
 /**
@@ -74,7 +66,7 @@ function frontier_decode_template( $code, $atts ) {
 	$code = base64_decode( $code );
 
 	if ( isset( $atts['pod'] ) ) {
-		$code = str_replace( '{@pod}', $atts['pod'], $code );
+		$code = str_replace( '@pod', $atts['pod'], $code );
 	}
 	if ( isset( $atts['id'] ) ) {
 		$code = str_replace( '{@EntryID}', $atts['id'], $code );
@@ -141,15 +133,8 @@ function frontier_if_block( $attributes, $code ) {
 	if ( ! $is_empty || $has_value_compare_attribute ) {
 		// Check if we do not have a value to compare with.
 		if ( ! $has_value_compare_attribute ) {
-			$template = $code[0];
-
-			// Maybe run any shortcode.
-			if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
-				$template = frontier_do_other_shortcodes( $template );
-			}
-
 			// Field exists and is not empty, use [IF] content
-			$template = $pod->do_magic_tags( $template );
+			$template = $pod->do_magic_tags( $code[0] );
 
 			return frontier_do_shortcode( $template );
 		}
@@ -259,29 +244,15 @@ function frontier_if_block( $attributes, $code ) {
 		}
 
 		if ( $pass ) {
-			$template = $code[0];
-
-			// Maybe run any shortcode.
-			if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
-				$template = frontier_do_other_shortcodes( $template );
-			}
-
 			// IF statement true, use [IF] content as template.
-			$template = $pod->do_magic_tags( $template );
+			$template = $pod->do_magic_tags( $code[0] );
 
 			return frontier_do_shortcode( $template );
 		}
 
 		if ( isset( $code[1] ) ) {
-			$template = $code[1];
-
-			// Maybe run any shortcode.
-			if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
-				$template = frontier_do_other_shortcodes( $template );
-			}
-
 			// There is an [ELSE] tag
-			$template = $pod->do_magic_tags( $template );
+			$template = $pod->do_magic_tags( $code[1] );
 
 			return frontier_do_shortcode( $template );
 		}
@@ -291,15 +262,8 @@ function frontier_if_block( $attributes, $code ) {
 	}
 
 	if ( isset( $code[1] ) ) {
-		$template = $code[1];
-
-		// Maybe run any shortcode.
-		if ( defined( 'PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES' ) && PODS_TEMPLATES_ALLOW_OTHER_SHORTCODES ) {
-			$template = frontier_do_other_shortcodes( $template );
-		}
-
 		// No value or field is empty and there is an [ELSE] tag. Use [ELSE].
-		$template = $pod->do_magic_tags( $template );
+		$template = $pod->do_magic_tags( $code[1] );
 
 		return frontier_do_shortcode( $template );
 	}
@@ -319,9 +283,6 @@ function frontier_if_block( $attributes, $code ) {
  * @since 2.4.0
  */
 function frontier_template_blocks( $atts, $code, $slug ) {
-	$atts = array_merge( [
-		'pod' => null,
-	], $atts );
 
 	global $template_post_blocks;
 	if ( ! isset( $template_post_blocks ) ) {
@@ -613,7 +574,7 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 }
 
 /**
- * Processes template code within an [each] command from the base template.
+ * processes template code within an each command from the base template
  *
  * @param array attributes from template
  * @param string template to be processed
@@ -680,8 +641,8 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 				$value   = null;
 				$compare = null;
 
-				$ID   = '{@EntryID}';
-				$atts = ' pod="{@pod}"';
+				$ID    = '{@EntryID}';
+				$atts  = ' pod="{@pod}"';
 
 				if ( '' !== $matches['field_attr'][ $key ] ) {
 					$field = $matches['field'][ $key ];
@@ -859,5 +820,5 @@ function frontier_end_template( $code, $base, $template, $pod ) {
 		unset( $template_post_blocks['after'][ $pod->pod ] );
 	}
 
-	return frontier_do_shortcode( $code );
+	return pods_do_shortcode( $code, frontier_get_shortcodes() );
 }

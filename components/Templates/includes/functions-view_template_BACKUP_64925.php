@@ -141,6 +141,10 @@ function frontier_if_block( $attributes, $code ) {
 	if ( ! $is_empty || $has_value_compare_attribute ) {
 		// Check if we do not have a value to compare with.
 		if ( ! $has_value_compare_attribute ) {
+<<<<<<< HEAD
+			// Field exists and is not empty, use [IF] content.
+			$template = $pod->do_magic_tags( $code[0] );
+=======
 			$template = $code[0];
 
 			// Maybe run any shortcode.
@@ -150,6 +154,7 @@ function frontier_if_block( $attributes, $code ) {
 
 			// Field exists and is not empty, use [IF] content
 			$template = $pod->do_magic_tags( $template );
+>>>>>>> main
 
 			return frontier_do_shortcode( $template );
 		}

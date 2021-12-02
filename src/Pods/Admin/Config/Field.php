@@ -147,6 +147,7 @@ class Field extends Base {
 				'label'      => __( 'Related Type', 'pods' ),
 				'type'       => 'pick',
 				'default'    => '',
+				'required'   => true,
 				'data'       => [],
 				'pick_show_select_text'   => 0,
 				'dependency' => true,

@@ -1004,7 +1004,7 @@ class PodsInit {
 
 		$config = [
 			'wp_locale'      => $GLOBALS['wp_locale'],
-			'currencies'     => PodsField_Currency::$currencies,
+			'currencies'     => PodsField_Currency::data_currencies(),
 			'datetime'       => [
 				'start_of_week' => (int) get_option( 'start_of_week', 0 ),
 				'gmt_offset'    => (int) get_option( 'gmt_offset', 0 ),
@@ -1193,6 +1193,8 @@ class PodsInit {
 	 * Refresh the existing content types cache for Post Types and Taxonomies.
 	 *
 	 * @since 2.8.4
+	 *
+	 * @return array The existing post types and taxonomies.
 	 */
 	public function refresh_existing_content_types_cache() {
 		$existing_post_types = get_post_types( [], 'objects' );
@@ -1234,6 +1236,12 @@ class PodsInit {
 
 			$static_cache->set( 'taxonomy', $existing_taxonomies_cached, __CLASS__ . '/existing_content_types' );
 		}
+
+		if ( 1 === (int) pods_v( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+			pods_debug( [ __METHOD__, compact( 'existing_post_types_cached', 'existing_taxonomies_cached' ) ] );
+		}
+
+		return compact( 'existing_post_types_cached', 'existing_taxonomies_cached' );
 	}
 
 	/**
@@ -1242,19 +1250,21 @@ class PodsInit {
 	 * @param bool $force
 	 */
 	public function setup_content_types( $force = false ) {
+		$force = (bool) $force;
+
 		if ( empty( self::$version ) ) {
 			return;
 		}
 
-		$save_transient = doing_action( 'init' ) || did_action( 'init' );
+		$save_transient = ! did_action( 'pods_init' ) && ( doing_action( 'init' ) || did_action( 'init' ) );
 
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
 
-		$existing_post_types = get_post_types();
-		$existing_taxonomies = get_taxonomies();
+		$existing_content_types = $this->refresh_existing_content_types_cache();
 
-		$this->refresh_existing_content_types_cache();
+		$existing_post_types = $existing_content_types['existing_post_types_cached'];
+		$existing_taxonomies = $existing_content_types['existing_taxonomies_cached'];
 
 		$pods_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
 
@@ -1262,11 +1272,13 @@ class PodsInit {
 
 		if ( empty( $pods_cpt_ct ) && ( ! empty( $post_types ) || ! empty( $taxonomies ) ) ) {
 			$force = true;
-		} elseif ( ! empty( $pods_cpt_ct ) && empty( $pods_cpt_ct['post_types'] ) && ! empty( $post_types ) ) {
+		} elseif ( ! empty( $pods_cpt_ct ) && count( $pods_cpt_ct['post_types'] ) !== count( $post_types ) ) {
 			$force = true;
-		} elseif ( ! empty( $pods_cpt_ct ) && empty( $pods_cpt_ct['taxonomies'] ) && ! empty( $taxonomies ) ) {
+		} elseif ( ! empty( $pods_cpt_ct ) && count( $pods_cpt_ct['taxonomies'] ) !== count( $taxonomies ) ) {
 			$force = true;
 		}
+
+		$original_cpt_ct = $pods_cpt_ct;
 
 		if ( false === $pods_cpt_ct || $force ) {
 			/**
@@ -1298,15 +1310,17 @@ class PodsInit {
 
 			foreach ( $post_types as $post_type ) {
 				if ( isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
-					// Post type was setup already
+					// Post type was set up already.
 					continue;
 				} elseif ( isset( $existing_post_types[ $post_type['name'] ] ) ) {
-					// Post type exists already
-					continue;
-				} elseif ( ! $force && isset( $existing_post_types[ $post_type['name'] ] ) ) {
-					// Post type was setup and exists already, but we aren't forcing it to be setup again
+					// Post type exists already.
+					$pods_cpt_ct['post_types'][ $post_type['name'] ] = false;
+
 					continue;
 				} elseif ( $post_type instanceof Pod && $post_type->is_extended() ) {
+					// Post type is extended.
+					$pods_cpt_ct['post_types'][ $post_type['name'] ] = false;
+
 					continue;
 				}
 
@@ -1537,15 +1551,17 @@ class PodsInit {
 
 			foreach ( $taxonomies as $taxonomy ) {
 				if ( isset( $pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] ) ) {
-					// Taxonomy was setup already
+					// Taxonomy was set up already.
 					continue;
-				} elseif ( ! empty( $taxonomy['object'] ) && isset( $existing_taxonomies[ $taxonomy['object'] ] ) ) {
-					// Taxonomy exists already
-					continue;
-				} elseif ( ! $force && isset( $existing_taxonomies[ $taxonomy['name'] ] ) ) {
-					// Taxonomy was setup and exists already, but we aren't forcing it to be setup again
+				} elseif ( isset( $existing_taxonomies[ $taxonomy['name'] ] ) ) {
+					// Taxonomy exists already.
+					$pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] = false;
+
 					continue;
 				} elseif ( $taxonomy instanceof Pod && $taxonomy->is_extended() ) {
+					// Taxonomy is extended.
+					$pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] = false;
+
 					continue;
 				}
 
@@ -1738,7 +1754,14 @@ class PodsInit {
 			}
 		}//end if
 
+		$is_changed = $pods_cpt_ct !== $original_cpt_ct;
+
 		foreach ( $pods_cpt_ct['taxonomies'] as $taxonomy => $options ) {
+			// Check for a skipped type.
+			if ( empty( $options ) ) {
+				continue;
+			}
+
 			if ( isset( self::$content_types_registered['taxonomies'] ) && in_array( $taxonomy, self::$content_types_registered['taxonomies'], true ) ) {
 				continue;
 			}
@@ -1780,7 +1803,7 @@ class PodsInit {
 			$options = apply_filters( 'pods_register_taxonomy', $options, $taxonomy, $ct_post_types );
 
 			if ( 1 === (int) pods_v( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-				pods_debug( array( 'register_taxonomy', compact( 'taxonomy', 'ct_post_types', 'options' ) ) );
+				pods_debug( [ __METHOD__ . '/register_taxonomy', compact( 'taxonomy', 'ct_post_types', 'options' ) ] );
 			}
 
 			register_taxonomy( $taxonomy, $ct_post_types, $options );
@@ -1797,6 +1820,11 @@ class PodsInit {
 		}//end foreach
 
 		foreach ( $pods_cpt_ct['post_types'] as $post_type => $options ) {
+			// Check for a skipped type.
+			if ( empty( $options ) ) {
+				continue;
+			}
+
 			if ( isset( self::$content_types_registered['post_types'] ) && in_array( $post_type, self::$content_types_registered['post_types'], true ) ) {
 				continue;
 			}
@@ -1823,7 +1851,7 @@ class PodsInit {
 			$options = apply_filters( 'pods_register_post_type', $options, $post_type );
 
 			if ( 1 === (int) pods_v( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-				pods_debug( array( 'register_post_type', compact( 'post_type', 'options' ) ) );
+				pods_debug( [ __METHOD__ . '/register_post_type', compact( 'post_type', 'options' ) ] );
 			}
 
 			register_post_type( $post_type, $options );
@@ -1927,7 +1955,12 @@ class PodsInit {
 
 		do_action( 'pods_setup_content_types' );
 
-		if ( ! did_action( 'pods_init' ) ) {
+		// Maybe set the rewrites to be flushed.
+		if ( $is_changed ) {
+			pods_transient_set( 'pods_flush_rewrites', 1, WEEK_IN_SECONDS );
+		}
+
+		if ( $save_transient ) {
 			/**
 			 * Allow hooking into after Pods has been setup.
 			 *
@@ -1943,10 +1976,10 @@ class PodsInit {
 	 * Check if we need to flush WordPress rewrite rules
 	 * This gets run during 'init' action late in the game to give other plugins time to register their rewrite rules
 	 */
-	public function flush_rewrite_rules() {
+	public function flush_rewrite_rules( $force = false ) {
 
 		// Only run $wp_rewrite->flush_rules() in an admin context.
-		if ( ! is_admin() ) {
+		if ( ! $force && ! is_admin() ) {
 			return;
 		}
 
@@ -1995,7 +2028,7 @@ class PodsInit {
 		$preview_post_link = function_exists( 'get_preview_post_link' ) ? get_preview_post_link( $post ) : apply_filters( 'preview_post_link', add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ), $post );
 
 		foreach ( $post_types as $post_type ) {
-			if ( ! isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
+			if ( empty( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
 				continue;
 			}
 

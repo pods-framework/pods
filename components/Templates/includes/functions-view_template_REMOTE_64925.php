@@ -74,7 +74,7 @@ function frontier_decode_template( $code, $atts ) {
 	$code = base64_decode( $code );
 
 	if ( isset( $atts['pod'] ) ) {
-		$code = str_replace( '{@pod}', $atts['pod'], $code );
+		$code = str_replace( '@pod', $atts['pod'], $code );
 	}
 	if ( isset( $atts['id'] ) ) {
 		$code = str_replace( '{@EntryID}', $atts['id'], $code );
@@ -319,9 +319,6 @@ function frontier_if_block( $attributes, $code ) {
  * @since 2.4.0
  */
 function frontier_template_blocks( $atts, $code, $slug ) {
-	$atts = array_merge( [
-		'pod' => null,
-	], $atts );
 
 	global $template_post_blocks;
 	if ( ! isset( $template_post_blocks ) ) {
@@ -613,7 +610,7 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 }
 
 /**
- * Processes template code within an [each] command from the base template.
+ * processes template code within an each command from the base template
  *
  * @param array attributes from template
  * @param string template to be processed
@@ -680,8 +677,8 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 				$value   = null;
 				$compare = null;
 
-				$ID   = '{@EntryID}';
-				$atts = ' pod="{@pod}"';
+				$ID    = '{@EntryID}';
+				$atts  = ' pod="{@pod}"';
 
 				if ( '' !== $matches['field_attr'][ $key ] ) {
 					$field = $matches['field'][ $key ];
@@ -859,5 +856,5 @@ function frontier_end_template( $code, $base, $template, $pod ) {
 		unset( $template_post_blocks['after'][ $pod->pod ] );
 	}
 
-	return frontier_do_shortcode( $code );
+	return pods_do_shortcode( $code, frontier_get_shortcodes() );
 }

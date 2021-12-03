@@ -3516,7 +3516,7 @@ class PodsMeta {
 		$first_meta_key = false;
 
 		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
-			$first_meta_key = current( explode( '.', $first_meta_key ) );
+			$first_meta_key = current( explode( '.', $meta_key ) );
 		}
 
 		if (
@@ -3709,7 +3709,7 @@ class PodsMeta {
 		$first_meta_key = false;
 
 		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
-			$first_meta_key = current( explode( '.', $first_meta_key ) );
+			$first_meta_key = current( explode( '.', $meta_key ) );
 		}
 
 		if (
@@ -3806,7 +3806,7 @@ class PodsMeta {
 		$first_meta_key = false;
 
 		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
-			$first_meta_key = current( explode( '.', $first_meta_key ) );
+			$first_meta_key = current( explode( '.', $meta_key ) );
 		}
 
 		if (
@@ -3944,7 +3944,7 @@ class PodsMeta {
 		$first_meta_key = false;
 
 		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
-			$first_meta_key = current( explode( '.', $first_meta_key ) );
+			$first_meta_key = current( explode( '.', $meta_key ) );
 		}
 
 		if (

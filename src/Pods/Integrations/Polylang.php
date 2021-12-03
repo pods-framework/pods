@@ -22,10 +22,11 @@ class Polylang extends Integration {
 			'pods_get_current_language' => [ 'pods_get_current_language', 10, 2 ],
 			'pods_api_get_table_info' => [ 'pods_api_get_table_info', 10, 7 ],
 			'pods_data_traverse_recurse_ignore_aliases' => [ 'pods_data_traverse_recurse_ignore_aliases', 10 ],
-			'pll_get_post_types' => [ 'pll_get_post_types', 10, 2 ],
+			'pods_meta_ignored_types' => [ 'pods_meta_ignored_types' ],
 			'pods_component_i18n_admin_data' => [ 'pods_component_i18n_admin_data' ],
 			'pods_component_i18n_admin_ui_fields' => [ 'pods_component_i18n_admin_ui_fields', 10, 2 ],
 			'pods_var_post_id' => [ 'pods_var_post_id' ],
+			'pll_get_post_types' => [ 'pll_get_post_types', 10, 2 ],
 		],
 	];
 
@@ -72,15 +73,33 @@ class Polylang extends Integration {
 	}
 
 	/**
-	 * @param \PodsMeta $pods_meta
-	 *
 	 * @since 2.8.0
+	 *
+	 * @param \PodsMeta $pods_meta
 	 */
 	public function pods_meta_init( $pods_meta ) {
 
 		if ( function_exists( 'pll_current_language' ) ) {
 			add_action( 'init', array( $pods_meta, 'cache_pods' ), 101, 0 );
 		}
+	}
+
+	/**
+	 * @since 2.8.8
+	 *
+	 * @param array[] $ignored_types
+	 *
+	 * @return mixed
+	 */
+	public function pods_meta_ignored_types( $ignored_types ) {
+
+		// Add Polylang related taxonomies to the ignored types for PodsMeta.
+		$ignored_types['taxonomy']['language'] = true;
+		$ignored_types['taxonomy']['term_language'] = true;
+		$ignored_types['taxonomy']['post_translations'] = true;
+		$ignored_types['taxonomy']['term_translations'] = true;
+
+		return $ignored_types;
 	}
 
 	/**

@@ -2694,17 +2694,18 @@ class PodsMeta {
 		 */
 		$ignored_types = apply_filters( 'pods_meta_ignored_types', $ignored_types );
 
-		if ( isset( $ignored_types[ $type ] ) ) {
-			if ( null === $object_name ) {
-				// Is the whole object type ignored?
-				return true === $ignored_types[ $type ];
-			}
-
-			// Is the content type ignored?
-			return isset( $ignored_types[ $type ][ $object_name ] );
+		// Is the type ignored at all?
+		if ( ! isset( $ignored_types[ $type ] ) ) {
+			return true;
 		}
 
-		return true;
+		// Is the whole object type ignored?
+		if ( null === $object_name ) {
+			return true !== $ignored_types[ $type ];
+		}
+
+		// Is the content type ignored?
+		return ! isset( $ignored_types[ $type ][ $object_name ] );
 	}
 
 	/**

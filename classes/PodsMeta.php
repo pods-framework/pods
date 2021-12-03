@@ -2648,6 +2648,66 @@ class PodsMeta {
 	}
 
 	/**
+	 * Determine whether the type is covered.
+	 *
+	 * @since 2.8.8
+	 *
+	 * @param string      $type        The object type.
+	 * @param string|null $object_name The object name.
+	 *
+	 * @return bool Whether the type is covered.
+	 */
+	public function is_type_covered( $type, $object_name = null ) {
+		if ( 'post' === $type ) {
+			$type = 'post_type';
+		} elseif ( 'term' === $type ) {
+			$type = 'taxonomy';
+		}
+
+		$ignored_types = [
+			'post_type' => [
+				'revision'            => true,
+				'nav_menu_item'       => true,
+				'custom_css'          => true,
+				'customize_changeset' => true,
+				'oembed_cache'        => true,
+				'user_request'        => true,
+				'wp_template'         => true,
+				'fl-theme-layout'     => true,
+				'fl-builder-template' => true,
+			],
+			'taxonomy'  => [
+				'nav_menu'                     => true,
+				'post_format'                  => true,
+				'wp_theme'                     => true,
+				'fl-builder-template-category' => true,
+				'fl-builder-template-type'     => true,
+			],
+		];
+
+		/**
+		 * Allow filtering the list of types not covered.
+		 *
+		 * @since 2.8.8
+		 *
+		 * @param array $ignored_types The list of content types not covered, based on object type, in key=>true format for isset() optimization.
+		 */
+		$ignored_types = apply_filters( 'pods_meta_ignored_types', $ignored_types );
+
+		if ( isset( $ignored_types[ $type ] ) ) {
+			if ( null === $object_name ) {
+				// Is the whole object type ignored?
+				return true === $ignored_types[ $type ];
+			}
+
+			// Is the content type ignored?
+			return isset( $ignored_types[ $type ][ $object_name ] );
+		}
+
+		return true;
+	}
+
+	/**
 	 * Determine whether the key is covered.
 	 *
 	 * @since 2.8.2
@@ -2663,6 +2723,10 @@ class PodsMeta {
 			$type = 'post_type';
 		} elseif ( 'term' === $type ) {
 			$type = 'taxonomy';
+		}
+
+		if ( ! $this->is_type_covered( $type, $object_name ) ) {
+			return false;
 		}
 
 		// List of keys we do not cover optimized for fastest isset() operation.
@@ -3515,8 +3579,12 @@ class PodsMeta {
 
 		$first_meta_key = false;
 
-		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
-			$first_meta_key = current( explode( '.', $meta_key ) );
+		if ( $meta_key ) {
+			$first_meta_key = $meta_key;
+
+			if ( false !== strpos( $first_meta_key, '.' ) ) {
+				$first_meta_key = current( explode( '.', $first_meta_key ) );
+			}
 		}
 
 		if (
@@ -3708,8 +3776,12 @@ class PodsMeta {
 
 		$first_meta_key = false;
 
-		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
-			$first_meta_key = current( explode( '.', $meta_key ) );
+		if ( $meta_key ) {
+			$first_meta_key = $meta_key;
+
+			if ( false !== strpos( $first_meta_key, '.' ) ) {
+				$first_meta_key = current( explode( '.', $first_meta_key ) );
+			}
 		}
 
 		if (
@@ -3805,8 +3877,12 @@ class PodsMeta {
 
 		$first_meta_key = false;
 
-		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
-			$first_meta_key = current( explode( '.', $meta_key ) );
+		if ( $meta_key ) {
+			$first_meta_key = $meta_key;
+
+			if ( false !== strpos( $first_meta_key, '.' ) ) {
+				$first_meta_key = current( explode( '.', $first_meta_key ) );
+			}
 		}
 
 		if (
@@ -3943,8 +4019,12 @@ class PodsMeta {
 
 		$first_meta_key = false;
 
-		if ( $meta_key && false !== strpos( $meta_key, '.' ) ) {
-			$first_meta_key = current( explode( '.', $meta_key ) );
+		if ( $meta_key ) {
+			$first_meta_key = $meta_key;
+
+			if ( false !== strpos( $first_meta_key, '.' ) ) {
+				$first_meta_key = current( explode( '.', $first_meta_key ) );
+			}
 		}
 
 		if (

@@ -1,6 +1,7 @@
 <?php
 
 use Pods\Static_Cache;
+use Pods\Whatsit\Field;
 
 /**
  * @package Pods\Fields
@@ -990,6 +991,15 @@ class PodsField_DateTime extends PodsField {
 		return $new_format;
 	}
 
+	/**
+	 * Prepare the date/datetime/time field object or options for MomentJS formatting.
+	 *
+	 * @since TBD
+	 *
+	 * @param array|Field $options The field object or options.
+	 *
+	 * @return array|Field The field object or options.
+	 */
 	public function prepare_options_for_moment_js( $options ) {
 		// Handle time formats for datetime.
 		if ( 'datetime' === static::$type ) {
@@ -1029,6 +1039,18 @@ class PodsField_DateTime extends PodsField {
 		return $options;
 	}
 
+	/**
+	 * Get the format from the options for a specific type (date/datetime/time).
+	 *
+	 * @since TBD
+	 *
+	 * @param array|Field $options The field object or options.
+	 * @param string      $type    The specific field type.
+	 * @param string      $prefix  The prefix to use on the format options if needed (like "_time" in datetime_time_format).
+	 * @param bool        $js      Whether we want to get the format in the JS context.
+	 *
+	 * @return array The format information including if found/using the JS context option and the format.
+	 */
 	public function get_format_from_options_for_type( $options, $type, $prefix = '', $js = false ) {
 		$format_type = pods_v( $type . $prefix . '_type', $options );
 
@@ -1091,6 +1113,7 @@ class PodsField_DateTime extends PodsField {
 				}
 			}
 
+			// Check if there's a custom format.
 			if ( ! empty( $format_custom ) ) {
 				return [
 					'is_js'  => $is_js,
@@ -1117,6 +1140,16 @@ class PodsField_DateTime extends PodsField {
 		];
 	}
 
+	/**
+	 * Convert the source format to MomentJS format for PHP / jQuery UI formats.
+	 *
+	 * @since TBD
+	 *
+	 * @param string|mixed $source_format The source format.
+	 * @param array        $args          The list of format arguments including source (php/jquery_ui) and type (date/time).
+	 *
+	 * @return string|mixed The converted MomentJS format.
+	 */
 	public function convert_format_to_moment_js( $source_format, $args = array() ) {
 		if ( ! is_string( $source_format ) || '' === trim( $source_format ) ) {
 			return $source_format;

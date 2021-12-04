@@ -2381,3 +2381,24 @@ function pods_bool_to_int( $value ) {
 
 	return (int) $value;
 }
+
+function pods_replace_keys_to_values( $value, $replacements ) {
+	$replacements_prepared = array_map(
+		static function( $replacement ) {
+			return preg_quote( $replacement, '/' );
+		},
+		array_keys( $replacements )
+	);
+
+	$replacements_prepared = implode( '|', $replacements_prepared );
+
+	$pattern = '/(?<!\\\\)(' . $replacements_prepared . ')/';
+
+	return preg_replace_callback(
+		$pattern,
+		static function( $data ) use ( $replacements ) {
+			return $replacements[ $data[0] ];
+		},
+		$value
+	);
+}

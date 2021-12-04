@@ -29,7 +29,11 @@ const checkForHTML5BrowserSupport = ( fieldType ) => {
 };
 
 // Determine date and time formats based on the field's config values.
-const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCustom ) => {
+const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCustom, formatMomentJS ) => {
+	if ( formatMomentJS ) {
+		return formatMomentJS;
+	}
+
 	// eslint-disable-next-line camelcase
 	const wpDefaultFormat = window?.podsDFVConfig?.datetime?.date_format || 'F j, Y';
 
@@ -52,7 +56,11 @@ const getMomentDateFormat = ( formatType, podsFormat, formatCustomJS, formatCust
 	return format;
 };
 
-const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ) => {
+const getMomentTimeFormat = ( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, formatMomentJS ) => {
+	if ( formatMomentJS ) {
+		return formatMomentJS;
+	}
+
 	// eslint-disable-next-line camelcase
 	const wpDefaultFormat = window?.podsDFVConfig?.datetime?.time_format || 'g:i a';
 
@@ -92,6 +100,7 @@ const DateTime = ( {
 		datetime_format: podsFormat,
 		datetime_format_custom: formatCustom,
 		datetime_format_custom_js: formatCustomJS,
+		datetime_format_moment_js: formatMomentJS,
 		datetime_html5: html5,
 		datetime_time_format: podsTimeFormat,
 		datetime_time_format_24: podsTimeFormat24,
@@ -117,13 +126,13 @@ const DateTime = ( {
 	);
 
 	const momentDateFormat = useMemo(
-		() => getMomentDateFormat( dateFormatType, podsFormat, formatCustomJS, formatCustom ),
-		[ dateFormatType, podsFormat, formatCustomJS, formatCustom ]
+		() => getMomentDateFormat( dateFormatType, podsFormat, formatCustomJS, formatCustom, formatMomentJS ),
+		[ dateFormatType, podsFormat, formatCustomJS, formatCustom, formatMomentJS ]
 	);
 
 	const momentTimeFormat = useMemo(
-		() => getMomentTimeFormat( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ),
-		[ timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom ]
+		() => getMomentTimeFormat( timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, formatMomentJS ),
+		[ timeFormatType, podsTimeFormat, podsTimeFormat24, timeFormatCustomJS, timeFormatCustom, formatMomentJS ]
 	);
 
 	const getDBFormat = () => {
@@ -172,7 +181,7 @@ const DateTime = ( {
 		// Use a full date and time format for our value string by default.
 		// Unless we're only showing the date OR the time picker.
 		if ( includeDateField && includeTimeField ) {
-			if ( 'c' === podsFormat ) {
+			if ( 'c' === podsFormat || formatMomentJS ) {
 				return momentDateFormat;
 			}
 

@@ -1050,13 +1050,13 @@ class PodsField_DateTime extends PodsField {
 		if ( 'format' === $format_type ) {
 			if ( $is_date_format ) {
 				// Get the format for date.
-				$formats = $this->get_date_formats( $js );
+				$formats = $this->get_date_formats();
 			} elseif ( $is_24_hour ) {
 				// Get the format for time (24-hour).
-				$formats = $this->get_time_formats_24( $js );
+				$formats = $this->get_time_formats_24();
 			} else {
 				// Get the format for time (12-hour).
-				$formats = $this->get_time_formats( $js );
+				$formats = $this->get_time_formats();
 			}
 
 			$format = pods_v( $type . $prefix . '_format', $options );
@@ -1121,6 +1121,13 @@ class PodsField_DateTime extends PodsField {
 		if ( ! is_string( $source_format ) || '' === trim( $source_format ) ) {
 			return $source_format;
 		}
+
+		$defaults = [
+			'source' => 'php', // php or jquery_ui.
+			'type'   => 'date', // date or time.
+		];
+
+		$args = array_merge( $defaults, $args );
 
 		// For PHP symbols, see https://www.php.net/manual/en/datetime.format.php
 		// For Moment.js symbols, see https://momentjs.com/docs/#/displaying/format/
@@ -1205,13 +1212,6 @@ class PodsField_DateTime extends PodsField {
 			'z'  => '', // Timezone as defined by timezoneList => moment().zone();
 			'Z'  => '', // Timezone in Iso 8601 format (+04:45) => moment().zone();
 		];
-
-		$defaults = [
-			'source' => 'php', // php or jquery_ui.
-			'type'   => 'date', // date or time.
-		];
-
-		$args = array_merge( $defaults, $args );
 
 		// Handle PHP first since it only has one replacement logic.
 		if ( 'php' === $args['source'] ) {

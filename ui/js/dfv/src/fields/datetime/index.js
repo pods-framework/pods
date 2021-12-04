@@ -193,8 +193,8 @@ const DateTime = ( {
 		}
 
 		if ( formatMomentJS ) {
-            return momentDateFormat;
-        }
+			return momentDateFormat;
+		}
 
 		return `${ momentDateFormat } ${ momentTimeFormat }`;
 	};
@@ -203,7 +203,7 @@ const DateTime = ( {
 		if ( ! momentObject.isValid() ) {
 			return defaultValue;
 		}
-		
+
 		const userLocale = window?.podsDFVConfig?.userLocale ?? 'en';
 
 		momentObject.locale( userLocale );

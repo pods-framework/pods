@@ -2,6 +2,8 @@
 
 namespace Pods\Blocks\Types;
 
+use WP_Block;
+
 /**
  * Item_List block functionality class.
  *

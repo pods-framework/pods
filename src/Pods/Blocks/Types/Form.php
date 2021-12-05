@@ -2,6 +2,8 @@
 
 namespace Pods\Blocks\Types;
 
+use WP_Block;
+
 /**
  * Form block functionality class.
  *

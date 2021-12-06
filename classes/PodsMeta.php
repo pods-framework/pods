@@ -3,6 +3,7 @@
 use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Field;
+use Pods\Whatsit\Object_Field;
 
 /**
  * @package Pods
@@ -3699,7 +3700,7 @@ class PodsMeta {
 
 				$field_object = $pod_object->get_field( $first_meta_key, null, true, false );
 
-				if ( $field_object ) {
+				if ( $field_object && ( ! $field_object instanceof Object_Field || $this->cover_object_fields_in_meta() ) ) {
 					$key_found = true;
 
 					$meta_cache[ $meta_k ] = $pod->field( array(
@@ -3843,6 +3844,13 @@ class PodsMeta {
 
 			$pod = self::$current_field_pod;
 
+			$field = $pod->fields( $meta_key );
+
+			// Don't save object fields using meta integration.
+			if ( $field instanceof Object_Field && ! $this->cover_object_fields_in_meta() ) {
+				return $_null;
+			}
+
 			$pod->add_to( $meta_key, $meta_value );
 		} else {
 			if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
@@ -3850,6 +3858,13 @@ class PodsMeta {
 			}
 
 			$pod = self::$current_field_pod;
+
+			$field = $pod->fields( $meta_key );
+
+			// Don't save object fields using meta integration.
+			if ( $field instanceof Object_Field && ! $this->cover_object_fields_in_meta() ) {
+				return $_null;
+			}
 
 			$pod->save( $meta_key, $meta_value, $object_id, array(
 				'podsmeta_direct' => true,
@@ -3948,6 +3963,11 @@ class PodsMeta {
 		}
 
 		$field_object = $pod_object->get_field( $meta_key );
+
+		// Don't save object fields using meta integration.
+		if ( $field_object instanceof Object_Field && ! $this->cover_object_fields_in_meta() ) {
+			return $_null;
+		}
 
 		$tableless_field_types = PodsForm::tableless_field_types();
 
@@ -4087,6 +4107,13 @@ class PodsMeta {
 
 			$pod = self::$current_field_pod;
 
+			$field = $pod->fields( $meta_key );
+
+			// Don't save object fields using meta integration.
+			if ( $field instanceof Object_Field && ! $this->cover_object_fields_in_meta() ) {
+				return $_null;
+			}
+
 			$pod->remove_from( $meta_key, $meta_value );
 		} else {
 			if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
@@ -4094,6 +4121,13 @@ class PodsMeta {
 			}
 
 			$pod = self::$current_field_pod;
+
+			$field = $pod->fields( $meta_key );
+
+			// Don't save object fields using meta integration.
+			if ( $field instanceof Object_Field && ! $this->cover_object_fields_in_meta() ) {
+				return $_null;
+			}
 
 			$pod->save( array( $meta_key => null ), null, $object_id, array(
 				'podsmeta_direct' => true,
@@ -4250,5 +4284,23 @@ class PodsMeta {
 		} else {
 			return pods_api()->delete_object_from_relationships( $id, $type, $name );
 		}
+	}
+
+	/**
+	 * Determine whether to cover object fields in metadata integration.
+	 *
+	 * @since 2.8.8
+	 *
+	 * @return bool Whether to cover object fields in metadata integration.
+	 */
+	public function cover_object_fields_in_meta() {
+		/**
+		 * Allow filtering whether to cover object fields in metadata integration.
+		 *
+		 * @since 2.8.8
+		 *
+		 * @param bool $cover_object_fields_in_meta Whether to cover object fields in metadata integration.
+		 */
+		return (bool) apply_filters( 'pods_meta_cover_object_fields_in_meta', false );
 	}
 }

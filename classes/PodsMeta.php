@@ -3541,6 +3541,12 @@ class PodsMeta {
 
 		$meta_type = $object_type;
 
+		$no_conflict = pods_no_conflict_check( $meta_type );
+
+		if ( ! $no_conflict ) {
+			pods_no_conflict_on( $meta_type );
+		}
+
 		if ( in_array( $meta_type, array( 'post', 'post_type', 'media' ) ) ) {
 			$meta_type = 'post';
 
@@ -3559,11 +3565,19 @@ class PodsMeta {
 
 		// Skip keys we do not cover.
 		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key, $object_name ) ) {
+			if ( ! $no_conflict ) {
+				pods_no_conflict_off( $meta_type );
+			}
+
 			return $_null;
 		}
 
 		if ( empty( $meta_key ) ) {
 			if ( ! defined( 'PODS_ALLOW_FULL_META' ) || ! PODS_ALLOW_FULL_META ) {
+				if ( ! $no_conflict ) {
+					pods_no_conflict_off( $meta_type );
+				}
+
 				return $_null; // don't cover get_post_meta( $id )
 			}
 
@@ -3571,6 +3585,10 @@ class PodsMeta {
 		}
 
 		if ( 'user' === $object_type && 'locale' === $meta_key ) {
+			if ( ! $no_conflict ) {
+				pods_no_conflict_off( $meta_type );
+			}
+
 			return $_null; // don't interfere with locale
 		}
 
@@ -3614,13 +3632,11 @@ class PodsMeta {
 				$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
 			}
 
+			if ( ! $no_conflict ) {
+				pods_no_conflict_off( $meta_type );
+			}
+
 			return $_null;
-		}
-
-		$no_conflict = pods_no_conflict_check( $meta_type );
-
-		if ( ! $no_conflict ) {
-			pods_no_conflict_on( $meta_type );
 		}
 
 		$meta_cache = array();
@@ -3653,6 +3669,10 @@ class PodsMeta {
 		$pod_object = $pod->pod_data;
 
 		if ( ! $pod_object instanceof Pod ) {
+			if ( ! $no_conflict ) {
+				pods_no_conflict_off( $meta_type );
+			}
+
 			return $_null;
 		}
 

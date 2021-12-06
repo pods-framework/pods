@@ -382,6 +382,11 @@ class Item_List extends Base {
 			return '';
 		}
 
+		// Check whether we should preload the block.
+		if ( $this->is_preloading_block() && ! $this->should_preload_block( $attributes, $block ) ) {
+			return '';
+		}
+
 		// Detect post type / ID from context.
 		if ( empty( $attributes['name'] ) && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
 			$attributes['name'] = $block->context['postType'];

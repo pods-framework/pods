@@ -234,6 +234,11 @@ class Item_Single extends Base {
 			return '';
 		}
 
+		// Check whether we should preload the block.
+		if ( $this->is_preloading_block() && ! $this->should_preload_block( $attributes, $block ) ) {
+			return '';
+		}
+
 		// Use current if no pod name / slug provided.
 		if ( empty( $attributes['name'] ) || empty( $attributes['slug'] ) ) {
 			$attributes['use_current'] = true;

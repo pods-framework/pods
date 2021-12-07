@@ -764,12 +764,16 @@ class Pods implements Iterator {
 			$field_data = $this->fields( $params->name );
 		}
 
+		$override_object_field = false;
+
 		if ( $field_data instanceof \Pods\Whatsit\Object_Field ) {
 			$field_source = 'object_field';
 			$is_field_set = true;
 		} elseif ( $field_data instanceof \Pods\Whatsit\Field ) {
 			$field_source = 'field';
 			$is_field_set = true;
+
+			$override_object_field = (bool) $field_data->get_arg( 'override_object_field', false );
 		}
 
 		// Store field info.
@@ -807,6 +811,7 @@ class Pods implements Iterator {
 		}
 
 		if (
+			! $override_object_field &&
 			empty( $value ) &&
 			isset( $this->data->row[ $params->name ] ) &&
 			( ! $is_tableless_field || 'arrays' === $params->output )

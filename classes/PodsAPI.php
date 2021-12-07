@@ -3042,7 +3042,8 @@ class PodsAPI {
 	public function add_field( $params, $table_operation = true, $sanitized = false, $db = true ) {
 		$params = (object) $params;
 
-		$params->is_new = true;
+		$params->is_new    = true;
+		$params->overwrite = false;
 
 		return $this->save_field( $params, $table_operation, $sanitized, $db );
 	}
@@ -3455,6 +3456,7 @@ class PodsAPI {
 			'group_id',
 			'id',
 			'is_new',
+			'overwrite',
 			'label',
 			'name',
 			'old_name',

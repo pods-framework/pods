@@ -491,7 +491,7 @@ class Pods_Pages extends PodsComponent {
 			0 => __( '-- Select a Pod --', 'pods' ),
 		);
 
-		$all_pods = pods_api()->load_pods( array( 'names' => true ) );
+		$all_pods = pods_api()->load_pods( array( 'labels' => true ) );
 
 		if ( ! empty( $all_pods ) ) {
 			foreach ( $all_pods as $pod_name => $pod_label ) {

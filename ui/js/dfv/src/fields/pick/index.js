@@ -168,7 +168,7 @@ const Pick = ( props ) => {
 			// rest_pick_response: pickResponse,
 			// pick_where,
 			type: fieldType,
-			pick_placeholder: placeholder = null,
+			pick_placeholder: pickPlaceholder = null,
 		},
 		setValue,
 		value,
@@ -178,9 +178,11 @@ const Pick = ( props ) => {
 		allPodValues,
 	} = props;
 
-	if ( null === placeholder || '' === placeholder ) {
+	let fieldPlaceholder = pickPlaceholder;
+
+	if ( null === fieldPlaceholder || '' === fieldPlaceholder ) {
 		// translators: %s is the field label.
-		placeholder = sprintf( __( 'Search %s…', 'pods' ), label );
+		fieldPlaceholder = sprintf( __( 'Search %s…', 'pods' ), label );
 	}
 
 	const isSingle = 'single' === formatType;
@@ -354,7 +356,7 @@ const Pick = ( props ) => {
 							defaultOptions={ formattedOptions }
 							loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
 							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							placeholder={ placeholder }
+							placeholder={ fieldPlaceholder }
 							isMulti={ isMulti }
 							onChange={ ( newOption ) => {
 								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
@@ -428,7 +430,7 @@ const Pick = ( props ) => {
 							defaultOptions={ formattedOptions }
 							loadOptions={ loadAjaxOptions( ajaxData ) }
 							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							placeholder={ placeholder }
+							placeholder={ fieldPlaceholder }
 							isMulti={ isMulti }
 							isClearable={ ! toBool( isRequired ) }
 							onChange={ ( newOption ) => {
@@ -473,7 +475,7 @@ const Pick = ( props ) => {
 							controlShouldRenderValue={ ! isListSelect }
 							options={ formattedOptions }
 							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							placeholder={ placeholder }
+							placeholder={ fieldPlaceholder }
 							isMulti={ isMulti }
 							isClearable={ ! toBool( isRequired ) }
 							onChange={ ( newOption ) => {

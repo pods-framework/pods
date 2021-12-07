@@ -1440,6 +1440,9 @@ class PodsInit {
 
 				if ( false !== $cpt_rewrite ) {
 					$cpt_rewrite = $cpt_rewrite_array;
+
+					// Only allow specific characters.
+					$cpt_rewrite['slug'] = preg_replace( '/[^a-zA-Z0-9%\-_\/]/', '-', $cpt_rewrite['slug'] );
 				}
 
 				$capability_type = pods_v( 'capability_type', $post_type, 'post' );
@@ -1488,6 +1491,13 @@ class PodsInit {
 					'delete_with_user'    => (boolean) pods_v( 'delete_with_user', $post_type, true ),
 					'_provider'           => 'pods',
 				);
+
+				// Check if we have a custom archive page slug.
+				if ( is_string( $pods_post_types[ $post_type_name ]['has_archive'] ) ) {
+					// Only allow specific characters.
+					$pods_post_types[ $post_type_name ]['has_archive'] = preg_replace( '/[^a-zA-Z0-9%\-_\/]/', '-', $pods_post_types[ $post_type_name ][
+						'has_archive'] );
+				}
 
 				// REST API
 				$rest_enabled = (boolean) pods_v( 'rest_enable', $post_type, false );
@@ -1600,6 +1610,9 @@ class PodsInit {
 
 				if ( false !== $ct_rewrite ) {
 					$ct_rewrite = $ct_rewrite_array;
+
+					// Only allow specific characters.
+					$ct_rewrite['slug'] = preg_replace( '/[^a-zA-Z0-9%\-_\/]/', '-', $ct_rewrite['slug'] );
 				}
 
 				/**

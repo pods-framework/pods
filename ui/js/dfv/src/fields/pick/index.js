@@ -135,6 +135,7 @@ const Pick = ( props ) => {
 			data = [],
 			label,
 			name,
+			required: isRequired = false,
 			default_icon: defaultIcon,
 			iframe_src: addNewIframeSrc,
 			iframe_title_add: addNewIframeTitle,
@@ -425,6 +426,7 @@ const Pick = ( props ) => {
 							// translators: %s is the field label.
 							placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
 							isMulti={ isMulti }
+							isClearable={ ! toBool( isRequired ) }
 							onChange={ ( newOption ) => {
 								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
 								// in our array of dataOptions, and we should add it, so we can keep track of
@@ -466,6 +468,7 @@ const Pick = ( props ) => {
 							// translators: %s is the field label.
 							placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
 							isMulti={ isMulti }
+							isClearable={ ! toBool( isRequired ) }
 							onChange={ ( newOption ) => {
 								if ( isMulti ) {
 									setValueWithLimit( newOption.map(

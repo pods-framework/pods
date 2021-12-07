@@ -3,8 +3,6 @@
  * @package Pods\Global\Functions\Media
  */
 
-use Exception;
-
 /**
  * Get the Attachment ID for a specific image field.
  *

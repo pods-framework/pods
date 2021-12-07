@@ -5,7 +5,7 @@ Tags: pods, custom post types, custom taxonomies, content types, custom fields, 
 Requires at least: 5.5
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.8.8-a-1
+Stable tag: 2.8.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -150,6 +150,22 @@ Are you looking to translate your Pods and Fields themselves? You'll want to ena
 Pods really wouldn't be where it is without all the contributions from our [donors](https://friends.pods.io) and [code/support contributors](https://github.com/pods-framework/pods/graphs/contributors).
 
 == Changelog ==
+
+= 2.8.8 - December 7th, 2021 =
+
+* Tweak: Support passing the object into specific field functions/helpers using the filter `pods_helper_include_obj` and returning `true`. (@sc0ttkclark)
+* Tweak: Exclude post types and taxonomies more uniformly and allow filtering the ignored types with the filter `pods_meta_ignored_types`. You can check whether a content type is covered by calling `PodsMeta::is_type_covered( $content_type, $object_name )`. (@sc0ttkclark)
+* Fixed: Resolved conflicts with Ultimate Member plugin by disabling Object Field access in meta data functions. You can enable access to these fields by returning true on the `pods_meta_cover_object_fields_in_meta` filter going forward. (@sc0ttkclark)
+* Fixed: Ensure Number formatting is normalized for all number/currency inputs to prevent issues with decimal/thousands formats. #6269 #6356 #6333 (@JoryHogeveen)
+* Fixed: Pods Pages now loads the expected value for page_template when editing a Pod Page. #6355 (@sc0ttkclark)
+* Fixed: Pods Pages now loads the labels for Associated Pod when editing a Pod Page. #6355 (@sc0ttkclark)
+* Fixed: Prevent potential timeouts by reducing areas of conflict in `PodsMeta`. #6349 (@sc0ttkclark)
+* Fixed: Resolved potential performance issues / timeouts with large datasets and many Pods Blocks when loading Block Editor by adding the filter `pods_blocks_types_preload_block` and returning `false` to disable preloading blocks on load of the edit post screen. #6349 (@sc0ttkclark) 
+* Fixed: Enforce slug characters on registration of post type / taxonomy instead of the admin config field for Custom Rewrite Slug and Archive Page Slug Override. #6354 (@sc0ttkclark)
+* Fixed: Resolve issues with `PodsAPI::save_field()` when trying to save a field just using the name, now you can pass the `override` parameter as true to bypass duplicate field checks to force saving as matching field. #6345 (@sc0ttkclark)
+* Fixed: More robust checking for conflicts with extended post types and taxonomies before registering them. #6348 #6342 (@sc0ttkclark)
+* Fixed: Resolved bug with Form, Item List, and Item Single blocks so they get the correct context from the Query blocks when rendering. #6351 (@sc0ttkclark)
+* Fixed: Use `copy()` instead of `file_get_contents()` in `pods_attachment_import()`. (@sc0ttkclark)
 
 = 2.8.7 - December 1st, 2021 =
 

@@ -43,6 +43,18 @@ class PodsField_Color extends PodsField {
 				'dependency'        => true,
 				'developer_mode'    => true,
 			),
+			static::$type . '_select_label'   => array(
+				'label'       => __( 'Select Color Label', 'pods' ),
+				'placeholder' => __( 'Select Color', 'pods' ),
+				'default'     => '',
+				'type'        => 'text',
+			),
+			static::$type . '_clear_label'   => array(
+				'label'       => __( 'Clear Label', 'pods' ),
+				'placeholder' => __( 'Clear', 'pods' ),
+				'default'     => '',
+				'type'        => 'text',
+			),
 		);
 
 		return $options;
@@ -91,7 +103,13 @@ class PodsField_Color extends PodsField {
 			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 
-		wp_enqueue_script( 'pods-dfv' );
+		// Default labels.
+		if ( empty( $options[ static::$type . '_select_label' ] ) ) {
+			$options[ static::$type . '_select_label' ] = __( 'Select Color', 'pods' );
+		}
+		if ( empty( $options[ static::$type . '_clear_label' ] ) ) {
+			$options[ static::$type . '_clear_label' ] = __( 'Clear', 'pods' );
+		}
 
 		$type = pods_v( 'type', $options, static::$type );
 

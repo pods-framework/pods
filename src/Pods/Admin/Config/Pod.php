@@ -27,15 +27,15 @@ class Pod extends Base {
 		$connections = false;
 		$advanced    = false;
 
-		$pod_type   = pods_v( 'type', $pod );
-		$pod_object = pods_v( 'object', $pod, '' );
+		$pod_type    = pods_v( 'type', $pod );
+		$is_extended = $pod->is_extended();
 
-		if ( 'post_type' === $pod_type && '' === $pod_object ) {
+		if ( 'post_type' === $pod_type && ! $is_extended ) {
 			$labels      = true;
 			$admin_ui    = true;
 			$connections = true;
 			$advanced    = true;
-		} elseif ( 'taxonomy' === $pod_type && '' === $pod_object ) {
+		} elseif ( 'taxonomy' === $pod_type && ! $is_extended ) {
 			$labels      = true;
 			$admin_ui    = true;
 			$connections = true;
@@ -76,7 +76,7 @@ class Pod extends Base {
 			$core_tabs['kitchen-sink'] = __( 'Kitchen Sink (temp)', 'pods' );
 		}
 
-		$args = compact( [ 'fields', 'labels', 'admin_ui', 'advanced' ] );
+		$args = compact( [ 'fields', 'labels', 'admin_ui', 'connections', 'advanced' ] );
 
 		$pod_name = $pod['name'];
 
@@ -128,15 +128,15 @@ class Pod extends Base {
 	 * @return array List of fields for the Pod object.
 	 */
 	public function get_fields( \Pods\Whatsit\Pod $pod, array $tabs ) {
-		$pod_type   = pods_v( 'type', $pod );
-		$pod_object = pods_v( 'object', $pod, '' );
-		$pod_name   = pods_v( 'name', $pod );
+		$pod_type    = pods_v( 'type', $pod );
+		$pod_name    = pods_v( 'name', $pod );
+		$is_extended = $pod->is_extended();
 
 		$options = [];
 
 		$tableless_field_types = PodsForm::tableless_field_types();
 
-		if ( '' === pods_v( 'object', $pod, '' ) && 'settings' !== $pod_type ) {
+		if ( 'settings' !== $pod_type && ! $is_extended ) {
 			$labels = [
 				'label'                            => [
 					'label'           => __( 'Label', 'pods' ),
@@ -714,7 +714,7 @@ class Pod extends Base {
 			];
 
 			// Only show this if it is a Custom Post Type.
-			if ( '' === $pod_object ) {
+			if ( ! $is_extended ) {
 				$options['connections']['archive_show_in_taxonomies'] = [
 					'name'           => 'archive_show_in_taxonomies',
 					'label'          => __( 'Show in Taxonomy Archives', 'pods' ),
@@ -798,7 +798,7 @@ class Pod extends Base {
 				'has_archive_slug'        => [
 					'label'         => __( 'Archive Page Slug Override', 'pods' ),
 					'help'          => __( 'If archive page is enabled, you can override the slug used by WordPress, which defaults to the name of the post type.', 'pods' ),
-					'type'          => 'slug',
+					'type'          => 'text',
 					'slug_fallback' => '-',
 					'default'       => '',
 					'depends-on'    => [ 'has_archive' => true ],
@@ -822,7 +822,7 @@ class Pod extends Base {
 				'rewrite_custom_slug'     => [
 					'label'         => __( 'Custom Rewrite Slug', 'pods' ),
 					'help'          => __( 'Changes the first segment of the URL, which by default is the name of the Pod. For example, if your Pod is called "foo", if this field is left blank, your link will be "example.com/foo/post_slug", but if you were to enter "bar" your link will be "example.com/bar/post_slug".', 'pods' ),
-					'type'          => 'slug',
+					'type'          => 'text',
 					'slug_fallback' => '-',
 					'default'       => '',
 					'depends-on'    => [ 'rewrite' => true ],
@@ -1177,7 +1177,7 @@ class Pod extends Base {
 				'rewrite_custom_slug'      => [
 					'label'         => __( 'Custom Rewrite Slug', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
-					'type'          => 'slug',
+					'type'          => 'text',
 					'slug_fallback' => '-',
 					'default'       => '',
 					'depends-on'    => [ 'rewrite' => true ],

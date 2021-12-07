@@ -2,6 +2,8 @@
 
 namespace Pods\Blocks\Types;
 
+use WP_Block;
+
 /**
  * Item_List block functionality class.
  *
@@ -377,6 +379,11 @@ class Item_List extends Base {
 				);
 			}
 
+			return '';
+		}
+
+		// Check whether we should preload the block.
+		if ( $this->is_preloading_block() && ! $this->should_preload_block( $attributes, $block ) ) {
 			return '';
 		}
 

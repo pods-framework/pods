@@ -6,7 +6,7 @@
  *
  * Description: Allow UI of Pods and fields to be translated.
  *
- * Version: 1.0
+ * Version: 1.1
  *
  * Category: I18n
  *
@@ -38,17 +38,44 @@ class Pods_Component_I18n extends PodsComponent {
 	public $capability           = 'pods_i18n_activate_lanuages';
 	public $nonce                = 'pods_i18n_activate_lanuages';
 
-	public $translatable_fields = array(
-		'label',
-		'description',
-		'placeholder',
-		'menu_name',
-		'name_admin_bar',
-		'pick_select_text',
-		'file_add_button',
-		'file_modal_title',
-		'file_modal_add_button',
-	);
+	/**
+	 * All fields that are translatable.
+	 * @var array
+	 */
+	protected $translatable_fields = [
+		'label' => [],
+		'description' => [],
+		'placeholder' => [],
+		'menu_name' => [],
+		'name_admin_bar' => [],
+		'boolean_yes_label' => [
+			'depends-on' => [ 'type' => 'boolean' ],
+		],
+		'boolean_no_label' => [
+			'depends-on' => [ 'type' => 'boolean' ],
+		],
+		'color_select_label' => [
+			'depends-on' => [ 'type' => 'color' ],
+		],
+		'color_clear_label' => [
+			'depends-on' => [ 'type' => 'color' ],
+		],
+		'file_add_button' => [
+			'depends-on' => [ 'type' => 'file' ],
+		],
+		'file_modal_title' => [
+			'depends-on' => [ 'type' => 'file' ],
+		],
+		'file_modal_add_button' => [
+			'depends-on' => [ 'type' => 'file' ],
+		],
+		'pick_select_text' => [
+			'depends-on' => [ 'type' => 'pick' ],
+		],
+		'pick_add_new_label' => [
+			'depends-on' => [ 'type' => 'pick' ],
+		],
+	];
 
 	/**
 	 * {@inheritdoc}
@@ -73,6 +100,7 @@ class Pods_Component_I18n extends PodsComponent {
 		}
 
 		$is_component_page = false;
+		$is_pods_edit_page = false;
 
 		if ( is_admin() && isset( $_GET['page'] ) ) {
 
@@ -81,6 +109,8 @@ class Pods_Component_I18n extends PodsComponent {
 			// Is the current page the admin page of this component or a Pods edit page?
 			if ( $this->admin_page === $page ) {
 				$is_component_page = true;
+			} elseif ( 'pods' === $page ) {
+				$is_pods_edit_page = true;
 			}
 		}
 
@@ -96,10 +126,24 @@ class Pods_Component_I18n extends PodsComponent {
 		if ( $active ) {
 
 			/**
+			 * PODS ADMIN UI.
+			 */
+
+			// Pod.
+			add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'translation_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_options', array( $this, 'translation_options' ), 99, 2 );
+			// Pod Groups.
+			add_filter( 'pods_admin_setup_edit_group_tabs', array( $this, 'translation_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_group_options', array( $this, 'translation_options' ), 99, 2 );
+			// Pod Fields.
+			add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'translation_tab' ), 99, 2 );
+			add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'translation_options' ), 99, 2 );
+
+			/**
 			 * REGISTERING OBJ LABELS.
 			 */
 
-			// WP Object filters (post_type and taxonomy)
+			// WP Object filters (post_type and taxonomy).
 			add_filter( 'pods_register_post_type', array( $this, 'translate_register_wp_object' ), 10, 2 );
 			add_filter( 'pods_register_taxonomy', array( $this, 'translate_register_wp_object' ), 10, 2 );
 
@@ -115,36 +159,29 @@ class Pods_Component_I18n extends PodsComponent {
 			 * LABEL REPLACEMENT.
 			 */
 
-			// Setting pages.
+			// Menu labels.
 			add_filter( 'pods_admin_menu_page_title', array( $this, 'translate_admin_menu_page_title' ), 10, 2 );
 			add_filter( 'pods_admin_menu_label', array( $this, 'translate_admin_menu_label' ), 10, 2 );
 
-			// Pod Objects.
-			add_filter( 'pods_whatsit_get_label', array( $this, 'translate_label' ), 10, 2 );
-			add_filter( 'pods_whatsit_get_description', array( $this, 'translate_description' ), 10, 2 );
+			// Do not overwrite Whatsit object fields if we're editing Pods.
+			if ( ! $is_pods_edit_page && ! pods_doing_json() && ! wp_doing_ajax() ) {
 
-			foreach ( pods_form()->field_types() as $type => $data ) {
-				add_filter(
-					'pods_form_ui_field_' . $type . '_options',
-					array( $this, 'translate_field_options' ),
-					10,
-					5
-				);
+				// Pod Objects.
+				add_filter( 'pods_whatsit_get_label', array( $this, 'translate_label' ), 10, 2 );
+				add_filter( 'pods_whatsit_get_description', array( $this, 'translate_description' ), 10, 2 );
+				add_filter( 'pods_whatsit_get_arg', array( $this, 'translate_arg' ), 10, 3 );
+				add_filter( 'pods_whatsit_get_args', array( $this, 'translate_args' ), 10, 2 );
+
+				// Non DFV field UI.
+				foreach ( pods_form()->field_types() as $type => $data ) {
+					add_filter(
+						'pods_form_ui_field_' . $type . '_options',
+						array( $this, 'translate_field_options' ),
+						10,
+						5
+					);
+				}
 			}
-
-			/**
-			 * PODS ADMIN UI.
-			 */
-
-			// Pod.
-			add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'pod_tab' ), 99, 2 );
-			add_filter( 'pods_admin_setup_edit_options', array( $this, 'pod_options' ), 99, 2 );
-			// Pod Fields.
-			add_filter( 'pods_admin_setup_edit_group_tabs', array( $this, 'pod_tab' ), 99, 2 );
-			add_filter( 'pods_admin_setup_edit_group_options', array( $this, 'pod_options' ), 99, 2 );
-			// Pod Fields.
-			add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'pod_tab' ), 99, 2 );
-			add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'pod_options' ), 99, 2 );
 
 		}//end if
 	}
@@ -203,7 +240,7 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
-	 * Check is a field name is set for translation
+	 * Check is a field name is set for translation.
 	 *
 	 * @since 0.1.0
 	 *
@@ -213,26 +250,14 @@ class Pods_Component_I18n extends PodsComponent {
 	 */
 	public function is_translatable_field( $name ) {
 
-		$translatable_fields = $this->get_translatable_fields();
+		// All fields that start with "label".
+		if ( strpos( $name, 'label' ) === 0 && false === strpos( $name, $this->locale ) ) {
+			return true;
+		}
 
-		// All fields that start with "label"
-		if ( strpos( $name, 'label' ) === 0 ) {
+		// All translatable fields.
+		if ( in_array( $name, $this->get_translatable_fields( 'names' ), true ) ) {
 			return true;
-		}
-		// All translatable fields
-		if ( in_array( $name, $translatable_fields, true ) ) {
-			return true;
-		}
-		// Custom fields data, the name must begin with field_data[
-		if ( strpos( $name, 'field_data[' ) === 0 ) {
-			$name = str_replace( 'field_data[', '', $name );
-			$name = rtrim( $name, ']' );
-			$name = explode( '][', $name );
-			$name = end( $name );
-			// All translatable fields from field_data[ (int) ][ $name ]
-			if ( in_array( $name, $translatable_fields, true ) ) {
-				return true;
-			}
 		}
 
 		return false;
@@ -247,7 +272,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @param  string $key     The key / opion name to search for
 	 * @param  array|Pods\Whatsit  $data    Pod data (can also be an options array of a pod or field)
 	 *
-	 * @return string
+	 * @return mixed
 	 */
 	public function get_value_translation( $current, $key, $data ) {
 
@@ -332,6 +357,49 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
+	 * Returns the translated argument if available.
+	 *
+	 * @since 2.8.4
+	 * @see   \Pods\Whatsit >> 'pods_whatsit_get_arg' (filter)
+	 *
+	 * @param  mixed        $arg    The object argument.
+	 * @param  string       $name   The argument name.
+	 * @param  array|Pods\Whatsit $object The Pod Object.
+	 *
+	 * @return string
+	 */
+	public function translate_arg( $arg, $name, $object ) {
+
+		if ( $this->is_translatable_field( $name ) ) {
+			return $this->get_value_translation( $arg, $name, $object );
+		}
+
+		return $arg;
+	}
+
+	/**
+	 * Returns the translated arguments if available.
+	 *
+	 * @since 2.8.4
+	 * @see   \Pods\Whatsit >> 'pods_whatsit_get_args' (filter)
+	 *
+	 * @param  array        $args   The object arguments.
+	 * @param  Pods\Whatsit $object The Pod Object.
+	 *
+	 * @return array
+	 */
+	public function translate_args( $args, $object ) {
+
+		foreach ( $args as $name => $value ) {
+			if ( $this->is_translatable_field( $name ) ) {
+				$args[ $name ] = $this->translate_arg( $value, $name, $object );
+			}
+		}
+
+		return $args;
+	}
+
+	/**
 	 * Replaces the default selected text with a translation if available.
 	 *
 	 * @since 1.0.0
@@ -378,7 +446,7 @@ class Pods_Component_I18n extends PodsComponent {
 			return $options;
 		}
 
-		foreach ( $this->get_translatable_fields() as $field ) {
+		foreach ( $this->get_translatable_fields( 'names' ) as $field ) {
 			$translation = pods_v( $field . '_' . $locale, $options, null );
 			if ( $translation ) {
 				$options[ $field ] = $translation;
@@ -712,7 +780,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 *
 	 * @return array
 	 */
-	public function pod_tab( $tabs ) {
+	public function translation_tab( $tabs ) {
 
 		$tabs['i18n'] = __( 'Translations', 'pods' );
 
@@ -720,15 +788,16 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
-	 * The i18n options
+	 * The i18n options.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param  array $options
+	 * @param array              $options
+	 * @param array|Pods\Whatsit $object
 	 *
 	 * @return array
 	 */
-	public function pod_options( $options, $pod ) {
+	public function translation_options( $options, $object ) {
 		$i18n_fields = [];
 
 		foreach ( $options as $tab => $fields ) {
@@ -737,6 +806,8 @@ class Pods_Component_I18n extends PodsComponent {
 					continue;
 				}
 
+				$i18n_options = $this->get_translatable_field_options( $name );
+
 				// None of the i18n fields are required!
 				$field['required'] = false;
 
@@ -744,7 +815,7 @@ class Pods_Component_I18n extends PodsComponent {
 				$heading_field['type'] = 'heading';
 				$heading_field['name'] = $name . '_i18n';
 
-				$i18n_fields[][ $name . '_i18n' ] = $heading_field;
+				$i18n_fields[][ $name . '_i18n' ] = array_merge_recursive( $heading_field, $i18n_options );
 
 				$default_field = $field;
 				$default_field['type'] = 'html';
@@ -754,10 +825,10 @@ class Pods_Component_I18n extends PodsComponent {
 				$default_field['html_content_param'] = $name;
 				$default_field['html_content_param_default'] = '-';
 
-				$i18n_fields[][ $name . '_i18n_default' ] = $default_field;
+				$i18n_fields[][ $name . '_i18n_default' ] = array_merge_recursive( $default_field, $i18n_options );
 
 				foreach ( $this->languages as $locale => $lang_data ) {
-					if ( ! $this->obj_is_language_enabled( $locale, (array) $pod ) ) {
+					if ( ! $this->obj_is_language_enabled( $locale, $object ) ) {
 						continue;
 					}
 
@@ -765,15 +836,16 @@ class Pods_Component_I18n extends PodsComponent {
 					$locale_field             = $field;
 					$locale_field['name']     = $locale_name;
 					$locale_field['label']    = $locale;
+					$locale_field['default']  = '';
 
-					$i18n_fields[][ $locale_name ] = $locale_field;
+					$i18n_fields[][ $locale_name ] = array_merge_recursive( $locale_field, $i18n_options );
 				}
 			}
 		}
 
 		$options['i18n'] = $i18n_fields;
 
-		// if ( $pod['type'] === '' )
+		// if ( $object['type'] === '' )
 		/*
 		$options[ 'pods-i18n' ] = array(
 			'enabled_languages' => array(
@@ -810,9 +882,13 @@ class Pods_Component_I18n extends PodsComponent {
 		if ( ! array_key_exists( $locale, $this->languages ) ) {
 			return false;
 		}
-		$options = pods_v( 'options', $data, $data );
+		if ( $data instanceof Pods\Whatsit ) {
+			$enable_i18n = $data->get_arg( 'enable_i18n' );
+		} else {
+			$options = pods_v( 'options', $data, $data );
+			$enable_i18n = pods_v( 'enable_i18n', $options, null );
+		}
 
-		$enable_i18n = pods_v( 'enable_i18n', $options, null );
 		if ( null === $enable_i18n ) {
 			// If there are no i18n settings in the object data then assume it's enabled.
 			return true;
@@ -832,40 +908,64 @@ class Pods_Component_I18n extends PodsComponent {
 	 */
 	public function create_lang_label( $lang_data ) {
 
-		$english_name = '';
-		$native_name  = '';
+		$label       = pods_v( 'english_name', $lang_data, '' );
+		$native_name = pods_v( 'native_name', $lang_data, '' );
 
-		if ( isset( $lang_data['english_name'] ) ) {
-			$english_name = $lang_data['english_name'];
-		}
-		if ( isset( $lang_data['native_name'] ) ) {
-			$native_name = $lang_data['native_name'];
+		if ( ! empty( $native_name ) && $label !== $native_name ) {
+			$label .= ' / ' . $native_name;
 		}
 
-		if ( ! empty( $native_name ) && ! empty( $english_name ) ) {
-			if ( $native_name == $english_name ) {
-				return $english_name;
-			} else {
-				return $english_name . ' / ' . $native_name;
-			}
-		} else {
-			if ( ! empty( $english_name ) ) {
-				return $english_name;
-			}
-			if ( ! empty( $native_name ) ) {
-				return $native_name;
-			}
-		}
-
-		return '';
+		return $label;
 	}
 
 	/**
+	 * @param string $return Return type (supports 'names').
 	 * @return array
 	 */
-	public function get_translatable_fields() {
+	public function get_translatable_fields( $return = '' ) {
 
-		return apply_filters( 'pods_translatable_fields', $this->translatable_fields );
+		/**
+		 * Overwrite translatable fields.
+		 *
+		 * @since 2.8.4
+		 *
+		 * @param string[] $fields The translatable fields.
+		 */
+		$fields = apply_filters( 'pods_translatable_fields', $this->translatable_fields );
+
+		// Backwards compatibility: Before v1.1 this was a list of field names instead of options.
+		foreach ( $fields as $name => $value ) {
+			if ( is_string( $value ) ) {
+				unset( $fields[ $name ] );
+				if ( ! isset( $fields[ $value ] ) ) {
+					$fields[ $value ] = [];
+				}
+			}
+		}
+
+		if ( 'names' === $return ) {
+			return array_keys( $fields );
+		}
+
+		return $fields;
 	}
 
+	/**
+	 * @since 2.8.4
+	 * @return array[]
+	 */
+	public function get_translatable_field_options( $key ) {
+
+		$field_options = pods_v( $key, $this->get_translatable_fields(), array() );
+
+		/**
+		 * Overwrite translatable field options.
+		 *
+		 * @since 2.8.4
+		 *
+		 * @param array  $field_options The translatable field options.
+		 * @param string $key           The field name.
+		 */
+		return apply_filters( 'pods_translatable_field_options', $field_options, $key );
+	}
 }

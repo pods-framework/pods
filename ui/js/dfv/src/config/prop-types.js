@@ -189,6 +189,8 @@ export const FIELD_PROP_TYPE = {
 
 	// Color fields
 	color_repeatable: BOOLEAN_ALL_TYPES,
+	color_select_label: PropTypes.string,
+	color_clear_label: PropTypes.string,
 
 	// Currency fields
 	currency_decimal_handling: PropTypes.string,
@@ -382,6 +384,7 @@ export const FIELD_PROP_TYPE = {
 	),
 	pick_ajax: BOOLEAN_ALL_TYPES,
 	pick_allow_add_new: BOOLEAN_ALL_TYPES,
+	pick_add_new_label: PropTypes.string,
 	pick_custom: PropTypes.string,
 	pick_display: PropTypes.string,
 	pick_display_format_multi: PropTypes.string,
@@ -475,7 +478,7 @@ export const FIELD_PROP_TYPE = {
 
 	// Wysiwyg field
 	wysiwyg_allow_shortcode: BOOLEAN_ALL_TYPES,
-	wysiwyg_allowed_html_tags: BOOLEAN_ALL_TYPES,
+	wysiwyg_allowed_html_tags: PropTypes.string,
 	wysiwyg_convert_chars: BOOLEAN_ALL_TYPES,
 	wysiwyg_editor: PropTypes.string,
 	wysiwyg_editor_height: NUMBER_OR_NUMBER_AS_STRING,

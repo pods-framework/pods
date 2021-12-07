@@ -132,11 +132,13 @@ class View extends Base {
 	 *
 	 * @since 2.8.0
 	 *
-	 * @param array $attributes
+	 * @param array         $attributes The block attributes.
+	 * @param string        $content    The block default content.
+	 * @param WP_Block|null $block      The block instance.
 	 *
-	 * @return string
+	 * @return string The block content to render.
 	 */
-	public function render( $attributes = [] ) {
+	public function render( $attributes = [], $content = '', $block = null ) {
 		$attributes = $this->attributes( $attributes );
 		$attributes = array_map( 'trim', $attributes );
 
@@ -158,6 +160,11 @@ class View extends Base {
 				esc_html__( 'No preview is available for this Pods View, you will see it when you view or preview this on the front of your site.', 'pods' ),
 				'<img src="' . esc_url( PODS_URL . 'ui/images/pods-view-placeholder.svg' ) . '" alt="' . esc_attr__( 'Generic placeholder image depicting a common view layout', 'pods' ) . '" class="pods-block-placeholder_image">'
 			);
+		}
+
+		// Check whether we should preload the block.
+		if ( $this->is_preloading_block() && ! $this->should_preload_block( $attributes, $block ) ) {
+			return '';
 		}
 
 		return pods_shortcode( $attributes );

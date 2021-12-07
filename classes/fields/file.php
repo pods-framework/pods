@@ -71,6 +71,7 @@ class PodsField_File extends PodsField {
 			static::$type . '_format_type'            => array(
 				'label'      => __( 'Upload Limit', 'pods' ),
 				'default'    => 'single',
+				'required'   => true,
 				'type'       => 'pick',
 				'data'       => array(
 					'single' => __( 'Single File', 'pods' ),
@@ -82,6 +83,7 @@ class PodsField_File extends PodsField {
 			static::$type . '_uploader'               => array(
 				'label'      => __( 'File Uploader', 'pods' ),
 				'default'    => 'attachment',
+				'required'   => true,
 				'type'       => 'pick',
 				'data'       => apply_filters(
 					"pods_form_ui_field_{$type}_uploader_options",
@@ -97,6 +99,7 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'Media Library Default Tab', 'pods' ),
 				'depends-on' => array( static::$type . '_uploader' => 'attachment' ),
 				'default'    => 'upload',
+				'required'   => true,
 				'type'       => 'pick',
 				'data'       => array(
 					// These keys must match WP media modal router names.
@@ -109,6 +112,7 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'Upload Directory', 'pods' ),
 				'default'    => 'wp',
 				'type'       => 'pick',
+				'required'   => true,
 				'data'       => array(
 					'wp'      => __( 'WordPress Default', 'pods' ) . ' (/wp-content/uploads/yyyy/mm/)',
 					'uploads' => __( 'Custom directory within the default uploads directory', 'pods' ),
@@ -121,6 +125,7 @@ class PodsField_File extends PodsField {
 				'label'       => __( 'Custom Upload Directory', 'pods' ),
 				'help'        => __( 'Magic tags are allowed for this field. The path is relative to the /wp-content/uploads/ folder on your site.', 'pods' ),
 				'placeholder' => 'my-custom-folder',
+				'required'    => true,
 				'depends-on'  => array(
 					static::$type . '_uploader'   => 'plupload',
 					static::$type . '_upload_dir' => 'uploads',
@@ -356,7 +361,6 @@ class PodsField_File extends PodsField {
 			return;
 		}
 
-		wp_enqueue_script( 'pods-dfv' );
 		wp_enqueue_media();
 
 		// Ensure the media library is initialized

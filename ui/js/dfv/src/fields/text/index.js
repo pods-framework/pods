@@ -9,7 +9,7 @@ const Text = ( props ) => {
 
 	const {
 		text_max_length: maxLength,
-		text_placeholder: placeholder,
+		text_placeholder: placeholder = fieldConfig.placeholder,
 	} = fieldConfig;
 
 	return (

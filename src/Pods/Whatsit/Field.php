@@ -79,17 +79,37 @@ class Field extends Whatsit {
 			return $this->{$special_args[ $arg ]}();
 		}
 
+		$type = isset( $this->args['type'] ) ? $this->args['type'] : 'invalid';
+
+		$invalid_options = [
+			0,
+			'0',
+			'',
+			'-- Select One --',
+			__( '-- Select One --', 'pods' ),
+			null,
+		];
+
+		// Handle related object types.
+		if ( ! $strict && $type . '_object' === $arg ) {
+			if ( ! isset( $this->args[ $arg ] ) || in_array( $this->args[ $arg ], $invalid_options, true ) ) {
+				return $default;
+			}
+
+			return $this->get_related_object_type();
+		}
+
+		// Handle related object name.
+		if ( ! $strict && $type . '_val' === $arg ) {
+			if ( ! isset( $this->args[ $arg ] ) || in_array( $this->args[ $arg ], $invalid_options, true ) ) {
+				return $default;
+			}
+
+			return $this->get_related_object_name();
+		}
+
 		// Backwards compatibility with previous Pods 2.8 pre-releases.
 		if ( 'sister_id' === $arg && isset( $this->args[ $arg ] ) ) {
-			$invalid_options = [
-				0,
-				'0',
-				'',
-				'-- Select One --',
-				__( '-- Select One --', 'pods' ),
-				null,
-			];
-
 			if ( in_array( $this->args[ $arg ], $invalid_options, true ) ) {
 				return $default;
 			}
@@ -110,14 +130,12 @@ class Field extends Whatsit {
 	public function get_related_object_type() {
 		$type = $this->get_type();
 
-		$simple_tableless_objects = PodsForm::simple_tableless_objects();
-
 		// File field types are always related to the media object type.
 		if ( 'file' === $type ) {
 			return 'media';
 		}
 
-		$related_type = $this->get_arg( $type . '_object', $this->get_arg( 'pick_object' ) );
+		$related_type = $this->get_arg( $type . '_object', $this->get_arg( 'pick_object', null, true ), true );
 
 		if ( '__current__' === $related_type ) {
 			$related_type = $this->get_object_type();
@@ -152,7 +170,7 @@ class Field extends Whatsit {
 			return null;
 		}
 
-		$related_name = $this->get_arg( $type . '_val', $this->get_arg( 'pick_val', $related_type ) );
+		$related_name = $this->get_arg( $type . '_val', $this->get_arg( 'pick_val', $related_type, true ), true );
 
 		if ( '__current__' === $related_name ) {
 			$related_name = $this->get_name();

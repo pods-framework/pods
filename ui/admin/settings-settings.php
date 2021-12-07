@@ -1,6 +1,6 @@
 <?php
 wp_enqueue_script( 'pods' );
-wp_enqueue_style( 'pods-form' );
+pods_form_enqueue_style( 'pods-form' );
 
 /**
  * Allow filtering the list of fields for the settings page.

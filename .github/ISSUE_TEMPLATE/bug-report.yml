@@ -1,0 +1,66 @@
+name: "Bug Report"
+description: "Let us know if something isn't working quite right"
+labels: ["Type: Bug"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for taking the time to fill out this bug report!"
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: "A clear and concise description of what the bug is."
+      placeholder: "The pod edit screen will not save my date field options as I set them."
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "Please enter the version of Pods you are running."
+      placeholder: "2.8.0"
+    validations:
+      required: true
+  - type: textarea
+    id: testing-instructions
+    attributes:
+      label: Testing Instructions
+      description: "List of steps to reproduce the behavior so we can see it on our side too."
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error message '....'
+    validations:
+      required: false
+  - type: textarea
+    id: screenshots-screencast
+    attributes:
+      label: Screenshots / Screencast
+      description: "If you have any screenshot(s) or screencast(s) to show your problem, these can help us solve things more quickly."
+    validations:
+      required: false
+  - type: textarea
+    id: possible-workaround
+    attributes:
+      label: Possible Workaround
+      description: "If you have discovered a workaround, let us know so other people can be aware too."
+    validations:
+      required: false
+  - type: textarea
+    id: site-health
+    attributes:
+      label: Site Health Information
+      description: "Please provide this, we need to be able to review other plugins and versions to check for incompatibility problems. Go to Tools > Site Health > Info, then Press the 'Copy site info to clipboard' button, and paste the results here."
+      render: text
+    validations:
+      required: false
+  - type: textarea
+    id: pods-package
+    attributes:
+      label: Pods Package
+      description: "This would be helpful for us if you provide it. Go to Pods Admin > Components > Migrate: Packages, export your affected Pods/Templates, and then paste your package JSON or provide your JSON file."
+      render: json
+    validations:
+      required: false

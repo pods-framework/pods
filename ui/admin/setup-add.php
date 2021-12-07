@@ -1,18 +1,13 @@
 <?php
-$ignore = [
-	'attachment',
-	'revision',
-	'nav_menu_item',
-	'custom_css',
-	'customize_changeset',
-	'post_format',
-];
+$pods_meta = pods_meta();
+
+$ignore = [];
 
 // Only add support for built-in taxonomy "link_category" if link manager is enabled.
 $link_manager_enabled = (int) get_option( 'link_manager_enabled', 0 );
 
 if ( 0 === $link_manager_enabled ) {
-	$ignore[] = 'link_category';
+	$ignore['link_category'] = true;
 }
 
 $all_pods = pods_api()->load_pods( [ 'key_names' => true ] );
@@ -191,36 +186,6 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										] );
 										?>
 									</div>
-
-									<?php
-									if ( ! pods_tableless() && apply_filters( 'pods_admin_setup_add_create_taxonomy_storage', false ) ) {
-										?>
-										<div class="pods-field__container">
-											<?php
-											echo PodsForm::label( 'create_storage_taxonomy', __( 'Enable Extra Fields?', 'pods' ), [
-												__( '<h3>Storage Types</h3> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ),
-												'https://docs.pods.io/creating-editing-pods/meta-vs-table-storage/',
-											] );
-
-											$data = [
-												'none'  => __( 'Do not enable extra fields to be added', 'pods' ),
-												'table' => __( 'Enable extra fields for this Taxonomy (Table Based)', 'pods' ),
-											];
-
-											$default = 'none';
-
-											echo PodsForm::field( 'create_storage_taxonomy', pods_v( 'create_storage_taxonomy', 'post', $default, null, true ), 'pick', [
-												'data'       => $data,
-												'depends-on' => [
-													'create_pod_type' => 'taxonomy',
-												],
-											] );
-											?>
-										</div>
-										<?php
-									}
-									?>
-
 									<div class="pods-field__container">
 										<?php
 										echo PodsForm::label( 'create_label_singular', __( 'Singular Label', 'pods' ), __( '<h3>Singular Label</h3> This is the label for 1 item (Singular) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
@@ -437,7 +402,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										$post_types = get_post_types();
 
 										foreach ( $post_types as $post_type => $label ) {
-											if ( in_array( $post_type, $ignore, true ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
+											if ( empty( $post_type ) || isset( $ignore[ $post_type ] ) || 0 === strpos( $post_type, '_pods_' ) || $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
 												// Post type is ignored
 												unset( $post_types[ $post_type ] );
 
@@ -469,7 +434,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										$taxonomies = get_taxonomies();
 
 										foreach ( $taxonomies as $taxonomy => $label ) {
-											if ( in_array( $taxonomy, $ignore, true ) ) {
+											if ( empty( $taxonomy ) || isset( $ignore[ $taxonomy ] ) || 0 === strpos( $taxonomy, '_pods_' ) || $pods_meta->is_type_covered( 'taxonomy', $taxonomy ) ) {
 												// Taxonomy is ignored
 												unset( $taxonomies[ $taxonomy ] );
 
@@ -495,35 +460,6 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										] );
 										?>
 									</div>
-
-									<?php
-									if ( ! pods_tableless() && apply_filters( 'pods_admin_setup_add_extend_taxonomy_storage', false ) ) {
-										?>
-										<div class="pods-field__container">
-											<?php
-											echo PodsForm::label( 'extend_storage_taxonomy', __( 'Enable Extra Fields?', 'pods' ), [
-												__( '<h3>Storage Types</h3> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ),
-												'https://docs.pods.io/creating-editing-pods/meta-vs-table-storage/',
-											] );
-
-											$data = [
-												'none'  => __( 'Do not enable extra fields to be added', 'pods' ),
-												'table' => __( 'Enable extra fields for this Taxonomy (Table Based)', 'pods' ),
-											];
-
-											$default = 'none';
-
-											echo PodsForm::field( 'extend_storage_taxonomy', pods_v( 'extend_storage_taxonomy', 'post', $default, null, true ), 'pick', [
-												'data'       => $data,
-												'depends-on' => [
-													'extend_pod_type' => 'taxonomy',
-												],
-											] );
-											?>
-										</div>
-										<?php
-									}
-									?>
 
 									<?php
 									if ( ! pods_tableless() && apply_filters( 'pods_admin_setup_add_extend_storage', false ) ) {

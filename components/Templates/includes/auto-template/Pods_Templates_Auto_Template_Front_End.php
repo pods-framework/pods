@@ -235,7 +235,7 @@ class Pods_Templates_Auto_Template_Front_End {
 
 					// Check if it's a type that supports archive templates. This will be used for admin checks.
 					if ( 'post_type' === $type ) {
-						if ( empty( $pod_data['object'] ) ) {
+						if ( ! $pod_data->is_extended() ) {
 							// Custom post types.
 							$has_archive = pods_v( 'has_archive', $options, false, true );
 						} else {

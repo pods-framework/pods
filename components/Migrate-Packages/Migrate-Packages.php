@@ -273,6 +273,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 		$found = apply_filters( 'pods_packages_import', $found, $data, $replace );
 
 		if ( ! empty( $found ) ) {
+			self::$api->cache_flush_pods();
+
 			return $found;
 		}
 
@@ -327,7 +329,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 		$pod = pods_config_merge_data( $pod, $pod_data );
 
-		if ( in_array( $pod['name'], pods_reserved_keywords(), true ) ) {
+		$reserved_context = ( 'pod' === $pod['type'] || 'table' === $pod['type'] ) ? 'pods' : 'wp';
+
+		if ( in_array( $pod['name'], pods_reserved_keywords( $reserved_context ), true ) ) {
 			// Extending objects when using reserved keywords.
 			// This will then accept `post`, `page` etc. as Pods object names.
 			$pod['create_extend'] = 'extend';

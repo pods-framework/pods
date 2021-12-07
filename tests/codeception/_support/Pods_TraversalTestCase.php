@@ -530,11 +530,11 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 				foreach ( $storage_types as $storage_type => $pod ) {
 					$pod_name = $pod['name'];
 
-					$data_base[ build_query( compact( [ 'pod_type', 'object_storage_type', 'pod_name' ] ) ) ] = [
-						build_query( compact( [ 'pod_type', 'object_storage_type', 'pod_name' ] ) ),
+					$data_base[ build_query( compact( [ 'pod_type', 'storage_type', 'pod_name' ] ) ) ] = [
+						build_query( compact( [ 'pod_type', 'storage_type', 'pod_name' ] ) ),
 						[
 							'pod_type'     => $pod_type,
-							'object_storage_type' => $storage_type,
+							'storage_type' => $storage_type,
 							'pod'          => $pod,
 						],
 					];
@@ -572,11 +572,11 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 						$pod_name   = $pod['name'];
 						$field_name = $field['name'];
 
-						$data[ build_query( compact( [ 'pod_type', 'object_storage_type', 'pod_name', 'field_name' ] ) ) ] = [
-							build_query( compact( [ 'pod_type', 'object_storage_type', 'pod_name', 'field_name' ] ) ),
+						$data[ build_query( compact( [ 'pod_type', 'storage_type', 'pod_name', 'field_name' ] ) ) ] = [
+							build_query( compact( [ 'pod_type', 'storage_type', 'pod_name', 'field_name' ] ) ),
 							[
 								'pod_type'     => $pod_type,
-								'object_storage_type' => $storage_type,
+								'storage_type' => $storage_type,
 								'pod'          => $pod,
 								'field'        => $field,
 							],
@@ -590,11 +590,11 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 						$pod_name   = $pod['name'];
 						$field_name = $field['name'];
 
-						$data[ build_query( compact( [ 'pod_type', 'object_storage_type', 'pod_name', 'field_name' ] ) ) ] = [
-							build_query( compact( [ 'pod_type', 'object_storage_type', 'pod_name', 'field_name' ] ) ),
+						$data[ build_query( compact( [ 'pod_type', 'storage_type', 'pod_name', 'field_name' ] ) ) ] = [
+							build_query( compact( [ 'pod_type', 'storage_type', 'pod_name', 'field_name' ] ) ),
 							[
 								'pod_type'     => $pod_type,
-								'object_storage_type' => $storage_type,
+								'storage_type' => $storage_type,
 								'pod'          => $pod,
 								'field'        => $field,
 							],
@@ -650,7 +650,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 							$data_deep[ build_query( compact( [
 									'pod_type',
-									'object_storage_type',
+									'storage_type',
 									'pod_name',
 									'field_name',
 									'related_pod_name',
@@ -658,7 +658,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 								] ) ) ] = [
 								build_query( compact( [
 									'pod_type',
-									'object_storage_type',
+									'storage_type',
 									'pod_name',
 									'field_name',
 									'related_pod_name',
@@ -666,7 +666,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 								] ) ),
 								[
 									'pod_type'          => $pod_type,
-									'object_storage_type'      => $storage_type,
+									'storage_type'      => $storage_type,
 									'pod'               => $pod,
 									'field'             => $field,
 									'related_pod'       => $related_pod,
@@ -715,7 +715,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 
 								$data_deep[ build_query( compact( [
 										'pod_type',
-										'object_storage_type',
+										'storage_type',
 										'pod_name',
 										'field_name',
 										'related_pod_name',
@@ -725,7 +725,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 									] ) ) ] = [
 									build_query( compact( [
 										'pod_type',
-										'object_storage_type',
+										'storage_type',
 										'pod_name',
 										'field_name',
 										'related_pod_name',
@@ -735,7 +735,7 @@ class Pods_TraversalTestCase extends Pods_UnitTestCase {
 									] ) ),
 									[
 										'pod_type'              => $pod_type,
-										'object_storage_type'          => $storage_type,
+										'storage_type'          => $storage_type,
 										'pod'                   => $pod,
 										'field'                 => $field,
 										'related_pod'           => $related_pod,

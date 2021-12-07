@@ -3371,8 +3371,8 @@ class Pods implements Iterator {
 		/**
 		 * Allows changing whether callbacks are allowed to run.
 		 *
-		 * @param bool  $allowed Whether callbacks are allowed to run.
-		 * @param array $params  Parameters used by Pods::helper() method.
+		 * @param bool  $allow_callbacks Whether callbacks are allowed to run.
+		 * @param array $params          Parameters used by Pods::helper() method.
 		 *
 		 * @since 2.8.0
 		 */
@@ -3382,8 +3382,22 @@ class Pods implements Iterator {
 			return $value;
 		}
 
+		/**
+		 * Allows changing whether to include the Pods object as the second value to the callback.
+		 *
+		 * @param bool  $include_obj Whether to include the Pods object as the second value to the callback.
+		 * @param array $params      Parameters used by Pods::helper() method.
+		 *
+		 * @since 2.8.0
+		 */
+		$include_obj = (boolean) apply_filters( 'pods_helper_include_obj', false, $params );
+
 		if ( ! is_callable( $params['helper'] ) ) {
-			return apply_filters( $params['helper'], $value );
+			if ( $include_obj ) {
+				return apply_filters( $params['helper'], $value, $this );
+			} else {
+				return apply_filters( $params['helper'], $value );
+			}
 		}
 
 		$disallowed = array(
@@ -3441,11 +3455,15 @@ class Pods implements Iterator {
 			$is_allowed = true;
 		}
 
-		if ( $is_allowed ) {
-			$value = call_user_func( $params['helper'], $value );
+		if ( ! $is_allowed ) {
+			return $value;
 		}
 
-		return $value;
+		if ( $include_obj ) {
+			return call_user_func( $params['helper'], $value, $this );
+		}
+
+		return call_user_func( $params['helper'], $value );
 	}
 
 	/**
@@ -3739,10 +3757,13 @@ class Pods implements Iterator {
 				$field['name'] = trim( $name );
 			}
 
-			$to_merge = pods_v( $field['name'], $all_fields );
+			$to_merge = $this->pod_data->get_field( $field['name'] );
 
 			if ( $to_merge ) {
 				$field = pods_config_merge_data( $to_merge, $field );
+
+				// Override the name field as the alias should not be used.
+				$field['name'] = $to_merge['name'];
 			}
 
 			// Never show the ID field.
@@ -3881,10 +3902,13 @@ class Pods implements Iterator {
 				$field['name'] = trim( $name );
 			}
 
-			$to_merge = pods_v( $field['name'], $all_fields );
+			$to_merge = $this->pod_data->get_field( $field['name'] );
 
 			if ( $to_merge ) {
 				$field = pods_config_merge_data( $to_merge, $field );
+
+				// Override the name field as the alias should not be used.
+				$field['name'] = $to_merge['name'];
 			}
 
 			if ( pods_v( 'hidden', $field, false, true ) || 'hidden' === $field['type'] ) {

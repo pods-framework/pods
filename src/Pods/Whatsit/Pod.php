@@ -2,6 +2,7 @@
 
 namespace Pods\Whatsit;
 
+use Pods\Static_Cache;
 use Pods\Whatsit;
 
 /**
@@ -37,6 +38,24 @@ class Pod extends Whatsit {
 		unset( $args['parent'], $args['group'], $args['weight'] );
 
 		return $args;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_arg( $arg, $default = null, $strict = false ) {
+		$value = parent::get_arg( $arg, $default, $strict );
+
+		// Better handle object for extended objects.
+		if ( 'object' === $arg && 'table' !== $this->get_type() && ( did_action( 'init' ) || doing_action( 'init' ) ) ) {
+			if ( $this->is_extended() ) {
+				return $this->get_name();
+			}
+
+			return '';
+		}
+
+		return $value;
 	}
 
 	/**
@@ -106,6 +125,53 @@ class Pod extends Whatsit {
 		$this->_table_info = $table_info;
 
 		return $table_info;
+	}
+
+	/**
+	 * Determine whether the Pod is an extending an existing content type.
+	 *
+	 * @since 2.8.4
+	 *
+	 * @return bool Whether the Pod is an extending an existing content type.
+	 */
+	public function is_extended() {
+		$type = $this->get_type();
+		$name = $this->get_name();
+
+		// Simple content type checks.
+		if ( 'user' === $type ) {
+			return true;
+		} elseif ( 'media' === $type ) {
+			return true;
+		} elseif ( 'comment' === $type ) {
+			return true;
+		} elseif ( 'post_type' !== $type && 'taxonomy' !== $type ) {
+			return false;
+		}
+
+		$cached_var = '';
+
+		// Simple checks for post types.
+		if ( 'post_type' === $type ) {
+			if ( 'post' === $name || 'page' === $name ) {
+				return true;
+			}
+
+			$cached_var = 'existing_post_types_cached';
+		}
+
+		// Simple checks for taxonomies.
+		if ( 'taxonomy' === $type ) {
+			if ( 'category' === $name || 'post_tag' === $name ) {
+				return true;
+			}
+
+			$cached_var = 'existing_taxonomies_cached';
+		}
+
+		$existing_cached = pods_init()->refresh_existing_content_types_cache();
+
+		return ! empty( $existing_cached[ $cached_var ] ) && array_key_exists( $this->get_name(), $existing_cached[ $cached_var ] );
 	}
 
 }

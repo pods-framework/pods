@@ -22,10 +22,11 @@ class Polylang extends Integration {
 			'pods_get_current_language' => [ 'pods_get_current_language', 10, 2 ],
 			'pods_api_get_table_info' => [ 'pods_api_get_table_info', 10, 7 ],
 			'pods_data_traverse_recurse_ignore_aliases' => [ 'pods_data_traverse_recurse_ignore_aliases', 10 ],
-			'pll_get_post_types' => [ 'pll_get_post_types', 10, 2 ],
+			'pods_meta_ignored_types' => [ 'pods_meta_ignored_types' ],
 			'pods_component_i18n_admin_data' => [ 'pods_component_i18n_admin_data' ],
 			'pods_component_i18n_admin_ui_fields' => [ 'pods_component_i18n_admin_ui_fields', 10, 2 ],
 			'pods_var_post_id' => [ 'pods_var_post_id' ],
+			'pll_get_post_types' => [ 'pll_get_post_types', 10, 2 ],
 		],
 	];
 
@@ -72,15 +73,33 @@ class Polylang extends Integration {
 	}
 
 	/**
-	 * @param \PodsMeta $pods_meta
-	 *
 	 * @since 2.8.0
+	 *
+	 * @param \PodsMeta $pods_meta
 	 */
 	public function pods_meta_init( $pods_meta ) {
 
 		if ( function_exists( 'pll_current_language' ) ) {
 			add_action( 'init', array( $pods_meta, 'cache_pods' ), 101, 0 );
 		}
+	}
+
+	/**
+	 * @since 2.8.8
+	 *
+	 * @param array[] $ignored_types
+	 *
+	 * @return mixed
+	 */
+	public function pods_meta_ignored_types( $ignored_types ) {
+
+		// Add Polylang related taxonomies to the ignored types for PodsMeta.
+		$ignored_types['taxonomy']['language'] = true;
+		$ignored_types['taxonomy']['term_language'] = true;
+		$ignored_types['taxonomy']['post_translations'] = true;
+		$ignored_types['taxonomy']['term_translations'] = true;
+
+		return $ignored_types;
 	}
 
 	/**
@@ -212,16 +231,18 @@ class Polylang extends Integration {
 		// Get current language data
 		$lang_data = $this->get_language_data();
 
+		if ( ! $lang_data ) {
+			return $info;
+		}
+
 		$current_language_tt_id    = 0;
 		$current_language_tl_tt_id = 0;
 
-		if ( $lang_data ) {
-			if ( ! empty( $lang_data['tt_id'] ) ) {
-				$current_language_tt_id = $lang_data['tt_id'];
-			}
-			if ( ! empty( $lang_data['tl_tt_id'] ) ) {
-				$current_language_tl_tt_id = $lang_data['tl_tt_id'];
-			}
+		if ( ! empty( $lang_data['tt_id'] ) ) {
+			$current_language_tt_id = $lang_data['tt_id'];
+		}
+		if ( ! empty( $lang_data['tl_tt_id'] ) ) {
+			$current_language_tl_tt_id = $lang_data['tl_tt_id'];
 		}
 
 		switch ( $object_type ) {
@@ -229,7 +250,7 @@ class Polylang extends Integration {
 			case 'post':
 			case 'post_type':
 			case 'media':
-				if ( $this->is_translated_post_type( $object_name ) ) {
+				if ( $current_language_tt_id && $this->is_translated_post_type( $object_name ) ) {
 					$info['join']['polylang_languages'] = "
 						LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
 							ON `polylang_languages`.`object_id` = `t`.`ID`
@@ -244,7 +265,7 @@ class Polylang extends Integration {
 			case 'term':
 			case 'nav_menu':
 			case 'post_format':
-				if ( $this->is_translated_taxonomy( $object_name ) ) {
+				if ( $current_language_tl_tt_id && $this->is_translated_taxonomy( $object_name ) ) {
 					$info['join']['polylang_languages'] = "
 					LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
 						ON `polylang_languages`.`object_id` = `t`.`term_id`
@@ -345,11 +366,17 @@ class Polylang extends Integration {
 			return $lang_data[ $locale ];
 		}
 
+		if ( ! $locale ) {
+			return null;
+		}
+
 		// We need to return language data
 		$lang_data = array(
 			'language' => $locale,
 			't_id'     => 0,
 			'tt_id'    => 0,
+			'tl_t_id'  => 0,
+			'tl_tt_id' => 0,
 			'term'     => null,
 		);
 

@@ -317,8 +317,6 @@ class PodsField_DateTime extends PodsField {
 			return pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 
-		wp_enqueue_script( 'pods-dfv' );
-
 		$type = pods_v( 'type', $options, static::$type );
 
 		$args = compact( array_keys( get_defined_vars() ) );
@@ -634,6 +632,7 @@ class PodsField_DateTime extends PodsField {
 			'fjy'       => 'F j, Y',
 			'fjsy'      => 'F jS, Y',
 			'y'         => 'Y',
+			'c'         => 'c',
 		);
 
 		$filter = 'pods_form_ui_field_date_formats';

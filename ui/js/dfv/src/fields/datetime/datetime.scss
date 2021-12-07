@@ -1,5 +1,6 @@
 .pods-react-datetime-fix .rdtPicker {
 	position: sticky !important;
+	max-width: 500px;
 }
 
 .pods-field-option {
@@ -7,5 +8,15 @@
 	.pods-form-ui-field.pods-form-ui-field-type-date,
 	.pods-form-ui-field.pods-form-ui-field-type-time {
 		max-width: 300px;
+	}
+}
+
+#side-sortables {
+	.pods-field-option {
+		.pods-form-ui-field.pods-form-ui-field-type-datetime,
+		.pods-form-ui-field.pods-form-ui-field-type-date,
+		.pods-form-ui-field.pods-form-ui-field-type-time {
+			max-width: 100%;
+		}
 	}
 }

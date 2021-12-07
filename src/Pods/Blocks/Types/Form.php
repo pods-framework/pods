@@ -2,6 +2,8 @@
 
 namespace Pods\Blocks\Types;
 
+use WP_Block;
+
 /**
  * Form block functionality class.
  *
@@ -223,6 +225,11 @@ class Form extends Base {
 				esc_html__( 'No preview is available for this Pods Form, you will see it when you view or preview this on the front of your site.', 'pods' ),
 				'<img src="' . esc_url( PODS_URL . 'ui/images/pods-form-placeholder.svg' ) . '" alt="' . esc_attr__( 'Generic placeholder image depicting a common form layout', 'pods' ) . '" class="pods-block-placeholder_image">'
 			);
+		}
+
+		// Check whether we should preload the block.
+		if ( $this->is_preloading_block() && ! $this->should_preload_block( $attributes, $block ) ) {
+			return '';
 		}
 
 		// Detect post type / ID from context.

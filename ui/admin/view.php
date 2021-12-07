@@ -1,5 +1,5 @@
 <?php
-wp_enqueue_style( 'pods-form' );
+pods_form_enqueue_style( 'pods-form' );
 
 /**
  * @var array  $fields

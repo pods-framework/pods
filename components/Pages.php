@@ -498,7 +498,7 @@ class Pods_Pages extends PodsComponent {
 		];
 
 		$associated_pods = [
-			//0 => __( '-- Select a Pod --', 'pods' ),
+			0 => __( '-- Select a Pod --', 'pods' ),
 		];
 
 		$all_pods = pods_api()->load_pods( [ 'labels' => true ] );

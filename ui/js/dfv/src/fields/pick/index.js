@@ -450,7 +450,11 @@ const Pick = ( props ) => {
 									return updatedData;
 								} );
 
-								if ( isMulti ) {
+								if ( null === newOption || 'undefined' === typeof newOption.value ) {
+									setValueWithLimit( '' );
+
+									return;
+								} else if ( isMulti ) {
 									setValueWithLimit( newOption.map(
 										( selection ) => selection.value )
 									);
@@ -470,7 +474,9 @@ const Pick = ( props ) => {
 							isMulti={ isMulti }
 							isClearable={ ! toBool( isRequired ) }
 							onChange={ ( newOption ) => {
-								if ( isMulti ) {
+								if ( null === newOption || 'undefined' === typeof newOption.value ) {
+									setValueWithLimit( '' );
+								} else if ( isMulti ) {
 									setValueWithLimit( newOption.map(
 										( selection ) => selection.value )
 									);

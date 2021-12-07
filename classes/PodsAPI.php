@@ -3226,7 +3226,8 @@ class PodsAPI {
 		$params->pod_id = $pod['id'];
 		$params->pod    = $pod['name'];
 
-		$params->is_new = isset( $params->is_new ) ? (boolean) $params->is_new : false;
+		$params->is_new    = isset( $params->is_new ) ? (boolean) $params->is_new : false;
+		$params->overwrite = isset( $params->overwrite ) ? (boolean) $params->overwrite : false;
 
 		$reserved_context  = ( 'pod' === $pod['type'] || 'table' === $pod['type'] ) ? 'pods' : 'wp';
 		$reserved_keywords = pods_reserved_keywords( $reserved_context );
@@ -3311,6 +3312,11 @@ class PodsAPI {
 			$old_type      = $field['type'];
 			$old_options   = $field;
 			$old_sister_id = pods_v( 'sister_id', $old_options, 0 );
+
+			// Maybe set up the field to save over the existing field.
+			if ( $params->overwrite && empty( $params->id ) ) {
+				$params->id = $old_id;
+			}
 
 			if ( is_numeric( $old_sister_id ) ) {
 				$old_sister_id = (int) $old_sister_id;

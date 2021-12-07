@@ -168,6 +168,7 @@ const Pick = ( props ) => {
 			// rest_pick_response: pickResponse,
 			// pick_where,
 			type: fieldType,
+			pick_placeholder: placeholder = null,
 		},
 		setValue,
 		value,
@@ -176,6 +177,11 @@ const Pick = ( props ) => {
 		podName,
 		allPodValues,
 	} = props;
+
+	if ( null === placeholder || '' === placeholder ) {
+		// translators: %s is the field label.
+		placeholder = sprintf( __( 'Search %s…', 'pods' ), label );
+	}
 
 	const isSingle = 'single' === formatType;
 	const isMulti = 'multi' === formatType;
@@ -348,8 +354,7 @@ const Pick = ( props ) => {
 							defaultOptions={ formattedOptions }
 							loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
 							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							// translators: %s is the field label.
-							placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+							placeholder={ placeholder }
 							isMulti={ isMulti }
 							onChange={ ( newOption ) => {
 								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
@@ -423,8 +428,7 @@ const Pick = ( props ) => {
 							defaultOptions={ formattedOptions }
 							loadOptions={ loadAjaxOptions( ajaxData ) }
 							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							// translators: %s is the field label.
-							placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+							placeholder={ placeholder }
 							isMulti={ isMulti }
 							isClearable={ ! toBool( isRequired ) }
 							onChange={ ( newOption ) => {
@@ -469,8 +473,7 @@ const Pick = ( props ) => {
 							controlShouldRenderValue={ ! isListSelect }
 							options={ formattedOptions }
 							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							// translators: %s is the field label.
-							placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+							placeholder={ placeholder }
 							isMulti={ isMulti }
 							isClearable={ ! toBool( isRequired ) }
 							onChange={ ( newOption ) => {

@@ -57,7 +57,7 @@ const Currency = ( {
 	}, [] );
 
 	const handleChange = ( event ) => {
-
+		// Slider input is always format: `9999.99`.
 		if ( isSlider ) {
 			setValue( parseFloatWithPodsFormat( event.target.value, '9999.99' ) );
 			setFormattedValue( formatNumberWithPodsFormat( value, format, softFormat ) );

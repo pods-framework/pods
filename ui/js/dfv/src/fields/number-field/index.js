@@ -55,11 +55,12 @@ const NumberField = ( {
 	}, [] );
 
 	const handleChange = ( event ) => {
-		setValue( parseFloatWithPodsFormat( event.target.value, format ) );
 
 		if ( isSlider ) {
-			setFormattedValue( formatNumberWithPodsFormat( event.target.value, format, softFormat ) );
+			setValue( parseFloatWithPodsFormat( event.target.value, '9999.99' ) );
+			setFormattedValue( formatNumberWithPodsFormat( value, format, softFormat ) );
 		} else {
+			setValue( parseFloatWithPodsFormat( event.target.value, format ) );
 			setFormattedValue( event.target.value );
 		}
 	};

@@ -153,7 +153,8 @@ Pods really wouldn't be where it is without all the contributions from our [dono
 
 = 2.8.8.1 - December 8th, 2021 =
 
-* Fix: Resolve issues with going to Add New Pod screen and not seeing expected post types / taxonomies to be extended. #6358 #6359 (@JoryHogeveen)
+* Fixed: Resolve issues with going to Add New Pod screen and not seeing expected post types / taxonomies to be extended. #6358 #6359 (@JoryHogeveen)
+* Fixed: Slider formatting for input now supports more varied separators and decimal characters. #6357 #6361 (@JoryHogeveen)
 
 = 2.8.8 - December 7th, 2021 =
 

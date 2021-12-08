@@ -133,7 +133,7 @@ class Pods_Templates_Auto_Template_Front_End {
 						'comment',
 						'user',
 					),
-					'names'      => true,
+					'labels'     => true,
 					'fields'     => false,
 					'table_info' => false,
 				)

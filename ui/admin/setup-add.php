@@ -1,18 +1,13 @@
 <?php
-$ignore = [
-	'attachment',
-	'revision',
-	'nav_menu_item',
-	'custom_css',
-	'customize_changeset',
-	'post_format',
-];
+$pods_meta = pods_meta();
+
+$ignore = [];
 
 // Only add support for built-in taxonomy "link_category" if link manager is enabled.
 $link_manager_enabled = (int) get_option( 'link_manager_enabled', 0 );
 
 if ( 0 === $link_manager_enabled ) {
-	$ignore[] = 'link_category';
+	$ignore['link_category'] = true;
 }
 
 $all_pods = pods_api()->load_pods( [ 'key_names' => true ] );
@@ -407,7 +402,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										$post_types = get_post_types();
 
 										foreach ( $post_types as $post_type => $label ) {
-											if ( in_array( $post_type, $ignore, true ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
+											if ( empty( $post_type ) || isset( $ignore[ $post_type ] ) || 0 === strpos( $post_type, '_pods_' ) || $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
 												// Post type is ignored
 												unset( $post_types[ $post_type ] );
 
@@ -439,7 +434,7 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										$taxonomies = get_taxonomies();
 
 										foreach ( $taxonomies as $taxonomy => $label ) {
-											if ( in_array( $taxonomy, $ignore, true ) ) {
+											if ( empty( $taxonomy ) || isset( $ignore[ $taxonomy ] ) || 0 === strpos( $taxonomy, '_pods_' ) || $pods_meta->is_type_covered( 'taxonomy', $taxonomy ) ) {
 												// Taxonomy is ignored
 												unset( $taxonomies[ $taxonomy ] );
 

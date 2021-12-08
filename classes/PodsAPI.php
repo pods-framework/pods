@@ -3042,7 +3042,8 @@ class PodsAPI {
 	public function add_field( $params, $table_operation = true, $sanitized = false, $db = true ) {
 		$params = (object) $params;
 
-		$params->is_new = true;
+		$params->is_new    = true;
+		$params->overwrite = false;
 
 		return $this->save_field( $params, $table_operation, $sanitized, $db );
 	}
@@ -3226,7 +3227,8 @@ class PodsAPI {
 		$params->pod_id = $pod['id'];
 		$params->pod    = $pod['name'];
 
-		$params->is_new = isset( $params->is_new ) ? (boolean) $params->is_new : false;
+		$params->is_new    = isset( $params->is_new ) ? (boolean) $params->is_new : false;
+		$params->overwrite = isset( $params->overwrite ) ? (boolean) $params->overwrite : false;
 
 		$reserved_context  = ( 'pod' === $pod['type'] || 'table' === $pod['type'] ) ? 'pods' : 'wp';
 		$reserved_keywords = pods_reserved_keywords( $reserved_context );
@@ -3311,6 +3313,11 @@ class PodsAPI {
 			$old_type      = $field['type'];
 			$old_options   = $field;
 			$old_sister_id = pods_v( 'sister_id', $old_options, 0 );
+
+			// Maybe set up the field to save over the existing field.
+			if ( $params->overwrite && empty( $params->id ) ) {
+				$params->id = $old_id;
+			}
 
 			if ( is_numeric( $old_sister_id ) ) {
 				$old_sister_id = (int) $old_sister_id;
@@ -3449,6 +3456,7 @@ class PodsAPI {
 			'group_id',
 			'id',
 			'is_new',
+			'overwrite',
 			'label',
 			'name',
 			'old_name',
@@ -6509,7 +6517,7 @@ class PodsAPI {
 		/**
 		 * Allow filtering whether to export IDs at the final depth, set to false to return the normal object data.
 		 *
-		 * @since TBD
+		 * @since 2.8.6
 		 *
 		 * @param bool  $export_ids_at_final_depth Whether to export IDs at the final depth, set to false to return the normal object data.
 		 * @param Pods  $pod                       Pods object.
@@ -6520,7 +6528,7 @@ class PodsAPI {
 		/**
 		 * Allow filtering whether to export relationships as JSON compatible.
 		 *
-		 * @since TBD
+		 * @since 2.8.6
 		 *
 		 * @param bool  $export_as_json_compatible Whether to export relationships as JSON compatible.
 		 * @param Pods  $pod                       Pods object.
@@ -10417,7 +10425,7 @@ class PodsAPI {
 		$static_cache->flush( 'pods_svg_icon/base64' );
 		$static_cache->flush( 'pods_svg_icon/svg' );
 
-		pods_init()->refresh_existing_content_types_cache();
+		pods_init()->refresh_existing_content_types_cache( true );
 
 		// Delete transients in the database
 		$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );

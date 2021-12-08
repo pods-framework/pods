@@ -145,34 +145,33 @@ class Pod extends Whatsit {
 			return true;
 		} elseif ( 'comment' === $type ) {
 			return true;
+		} elseif ( 'post_type' !== $type && 'taxonomy' !== $type ) {
+			return false;
 		}
+
+		$cached_var = '';
 
 		// Simple checks for post types.
 		if ( 'post_type' === $type ) {
 			if ( 'post' === $name || 'page' === $name ) {
 				return true;
 			}
+
+			$cached_var = 'existing_post_types_cached';
 		}
 
 		// Simple checks for taxonomies.
-		if ( 'post_type' === $type ) {
+		if ( 'taxonomy' === $type ) {
 			if ( 'category' === $name || 'post_tag' === $name ) {
 				return true;
 			}
+
+			$cached_var = 'existing_taxonomies_cached';
 		}
 
-		$static_cache = tribe( Static_Cache::class );
+		$existing_cached = pods_init()->refresh_existing_content_types_cache();
 
-		$existing_cached = $static_cache->get( $type, 'PodsInit/existing_content_types' );
-
-		// Check if we need to refresh the content types cache.
-		if ( empty( $existing_cached ) || ! is_array( $existing_cached ) || ! did_action( 'init' ) ) {
-			pods_init()->refresh_existing_content_types_cache();
-
-			$existing_cached = (array) $static_cache->get( $type, 'PodsInit/existing_content_types' );
-		}
-
-		return $existing_cached && array_key_exists( $this->get_name(), $existing_cached );
+		return ! empty( $existing_cached[ $cached_var ] ) && array_key_exists( $this->get_name(), $existing_cached[ $cached_var ] );
 	}
 
 }

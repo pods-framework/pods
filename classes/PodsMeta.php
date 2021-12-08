@@ -3,6 +3,7 @@
 use Pods\Static_Cache;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Field;
+use Pods\Whatsit\Object_Field;
 
 /**
  * @package Pods
@@ -1925,7 +1926,7 @@ class PodsMeta {
 			/**
 			 * Allow filtering whether to show groups on bbPress profile form.
 			 *
-			 * @since TBD
+			 * @since 2.8.6
 			 *
 			 * @param bool $show_groups_on_bbpress_profile Whether to show groups on bbPress profile form.
 			 */
@@ -2648,6 +2649,67 @@ class PodsMeta {
 	}
 
 	/**
+	 * Determine whether the type is covered.
+	 *
+	 * @since 2.8.8
+	 *
+	 * @param string      $type        The object type.
+	 * @param string|null $object_name The object name.
+	 *
+	 * @return bool Whether the type is covered.
+	 */
+	public function is_type_covered( $type, $object_name = null ) {
+		if ( 'post' === $type ) {
+			$type = 'post_type';
+		} elseif ( 'term' === $type ) {
+			$type = 'taxonomy';
+		}
+
+		$ignored_types = [
+			'post_type' => [
+				'revision'            => true,
+				'nav_menu_item'       => true,
+				'custom_css'          => true,
+				'customize_changeset' => true,
+				'oembed_cache'        => true,
+				'user_request'        => true,
+				'wp_template'         => true,
+				'fl-theme-layout'     => true,
+				'fl-builder-template' => true,
+			],
+			'taxonomy'  => [
+				'nav_menu'                     => true,
+				'post_format'                  => true,
+				'wp_theme'                     => true,
+				'fl-builder-template-category' => true,
+				'fl-builder-template-type'     => true,
+			],
+		];
+
+		/**
+		 * Allow filtering the list of types not covered.
+		 *
+		 * @since 2.8.8
+		 *
+		 * @param array $ignored_types The list of content types not covered, based on object type, in key=>true format for isset() optimization.
+		 */
+		$ignored_types = apply_filters( 'pods_meta_ignored_types', $ignored_types );
+
+		// Is the type ignored at all?
+		if ( ! isset( $ignored_types[ $type ] ) ) {
+			return true;
+		}
+
+		// Is the whole object type ignored?
+		if ( null === $object_name ) {
+			return true !== $ignored_types[ $type ];
+		}
+
+		// Is the content type ignored?
+		return ! isset( $ignored_types[ $type ][ $object_name ] );
+	}
+
+	/**
 	 * Determine whether the key is covered.
 	 *
 	 * @since 2.8.2
@@ -2663,6 +2725,10 @@ class PodsMeta {
 			$type = 'post_type';
 		} elseif ( 'term' === $type ) {
 			$type = 'taxonomy';
+		}
+
+		if ( ! $this->is_type_covered( $type, $object_name ) ) {
+			return false;
 		}
 
 		// List of keys we do not cover optimized for fastest isset() operation.
@@ -3476,6 +3542,12 @@ class PodsMeta {
 
 		$meta_type = $object_type;
 
+		$no_conflict = pods_no_conflict_check( $meta_type );
+
+		if ( ! $no_conflict ) {
+			pods_no_conflict_on( $meta_type );
+		}
+
 		if ( in_array( $meta_type, array( 'post', 'post_type', 'media' ) ) ) {
 			$meta_type = 'post';
 
@@ -3494,11 +3566,19 @@ class PodsMeta {
 
 		// Skip keys we do not cover.
 		if ( $meta_key && ! $this->is_key_covered( $object_type, $meta_key, $object_name ) ) {
+			if ( ! $no_conflict ) {
+				pods_no_conflict_off( $meta_type );
+			}
+
 			return $_null;
 		}
 
 		if ( empty( $meta_key ) ) {
 			if ( ! defined( 'PODS_ALLOW_FULL_META' ) || ! PODS_ALLOW_FULL_META ) {
+				if ( ! $no_conflict ) {
+					pods_no_conflict_off( $meta_type );
+				}
+
 				return $_null; // don't cover get_post_meta( $id )
 			}
 
@@ -3506,12 +3586,26 @@ class PodsMeta {
 		}
 
 		if ( 'user' === $object_type && 'locale' === $meta_key ) {
+			if ( ! $no_conflict ) {
+				pods_no_conflict_off( $meta_type );
+			}
+
 			return $_null; // don't interfere with locale
 		}
 
 		$object = $this->get_object( $object_type, $object_id );
 
 		$object_is_pod_object = $object instanceof Pod;
+
+		$first_meta_key = false;
+
+		if ( $meta_key ) {
+			$first_meta_key = $meta_key;
+
+			if ( false !== strpos( $first_meta_key, '.' ) ) {
+				$first_meta_key = current( explode( '.', $first_meta_key ) );
+			}
+		}
 
 		if (
 			empty( $object_id )
@@ -3521,11 +3615,11 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& ! $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $first_meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
-						&& ! isset( $object['fields'][ $meta_key ] )
+						&& ! isset( $object['fields'][ $first_meta_key ] )
 					)
 				)
 			)
@@ -3539,13 +3633,11 @@ class PodsMeta {
 				$static_cache->set( $object_type . '/' . $object_name . '/' . $meta_key, '404', __CLASS__ . '/is_key_covered' );
 			}
 
+			if ( ! $no_conflict ) {
+				pods_no_conflict_off( $meta_type );
+			}
+
 			return $_null;
-		}
-
-		$no_conflict = pods_no_conflict_check( $meta_type );
-
-		if ( ! $no_conflict ) {
-			pods_no_conflict_on( $meta_type );
 		}
 
 		$meta_cache = array();
@@ -3578,6 +3670,10 @@ class PodsMeta {
 		$pod_object = $pod->pod_data;
 
 		if ( ! $pod_object instanceof Pod ) {
+			if ( ! $no_conflict ) {
+				pods_no_conflict_off( $meta_type );
+			}
+
 			return $_null;
 		}
 
@@ -3604,7 +3700,7 @@ class PodsMeta {
 
 				$field_object = $pod_object->get_field( $first_meta_key, null, true, false );
 
-				if ( $field_object ) {
+				if ( $field_object && ( ! $field_object instanceof Object_Field || $this->cover_object_fields_in_meta() ) ) {
 					$key_found = true;
 
 					$meta_cache[ $meta_k ] = $pod->field( array(
@@ -3700,6 +3796,16 @@ class PodsMeta {
 
 		$object_is_pod_object = $object instanceof Pod;
 
+		$first_meta_key = false;
+
+		if ( $meta_key ) {
+			$first_meta_key = $meta_key;
+
+			if ( false !== strpos( $first_meta_key, '.' ) ) {
+				$first_meta_key = current( explode( '.', $first_meta_key ) );
+			}
+		}
+
 		if (
 			empty( $object_id )
 			|| empty( $object )
@@ -3708,11 +3814,11 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& ! $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $first_meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
-						&& ! isset( $object['fields'][ $meta_key ] )
+						&& ! isset( $object['fields'][ $first_meta_key ] )
 					)
 				)
 			)
@@ -3738,6 +3844,13 @@ class PodsMeta {
 
 			$pod = self::$current_field_pod;
 
+			$field = $pod->fields( $meta_key );
+
+			// Don't save object fields using meta integration.
+			if ( $field instanceof Object_Field && ! $this->cover_object_fields_in_meta() ) {
+				return $_null;
+			}
+
 			$pod->add_to( $meta_key, $meta_value );
 		} else {
 			if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
@@ -3745,6 +3858,13 @@ class PodsMeta {
 			}
 
 			$pod = self::$current_field_pod;
+
+			$field = $pod->fields( $meta_key );
+
+			// Don't save object fields using meta integration.
+			if ( $field instanceof Object_Field && ! $this->cover_object_fields_in_meta() ) {
+				return $_null;
+			}
 
 			$pod->save( $meta_key, $meta_value, $object_id, array(
 				'podsmeta_direct' => true,
@@ -3791,6 +3911,16 @@ class PodsMeta {
 
 		$object_is_pod_object = $object instanceof Pod;
 
+		$first_meta_key = false;
+
+		if ( $meta_key ) {
+			$first_meta_key = $meta_key;
+
+			if ( false !== strpos( $first_meta_key, '.' ) ) {
+				$first_meta_key = current( explode( '.', $first_meta_key ) );
+			}
+		}
+
 		if (
 			empty( $object_id )
 			|| empty( $object )
@@ -3799,11 +3929,11 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& ! $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $first_meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
-						&& ! isset( $object['fields'][ $meta_key ] )
+						&& ! isset( $object['fields'][ $first_meta_key ] )
 					)
 				)
 			)
@@ -3833,6 +3963,11 @@ class PodsMeta {
 		}
 
 		$field_object = $pod_object->get_field( $meta_key );
+
+		// Don't save object fields using meta integration.
+		if ( $field_object instanceof Object_Field && ! $this->cover_object_fields_in_meta() ) {
+			return $_null;
+		}
 
 		$tableless_field_types = PodsForm::tableless_field_types();
 
@@ -3923,6 +4058,16 @@ class PodsMeta {
 
 		$object_is_pod_object = $object instanceof Pod;
 
+		$first_meta_key = false;
+
+		if ( $meta_key ) {
+			$first_meta_key = $meta_key;
+
+			if ( false !== strpos( $first_meta_key, '.' ) ) {
+				$first_meta_key = current( explode( '.', $first_meta_key ) );
+			}
+		}
+
 		if (
 			empty( $object_id )
 			|| empty( $object )
@@ -3931,11 +4076,11 @@ class PodsMeta {
 				&& (
 					(
 						$object_is_pod_object
-						&& ! $object->get_field( $meta_key, null, false )
+						&& ! $object->get_field( $first_meta_key, null, false )
 					)
 					|| (
 						! $object_is_pod_object
-						&& ! isset( $object['fields'][ $meta_key ] )
+						&& ! isset( $object['fields'][ $first_meta_key ] )
 					)
 				)
 			)
@@ -3962,6 +4107,13 @@ class PodsMeta {
 
 			$pod = self::$current_field_pod;
 
+			$field = $pod->fields( $meta_key );
+
+			// Don't save object fields using meta integration.
+			if ( $field instanceof Object_Field && ! $this->cover_object_fields_in_meta() ) {
+				return $_null;
+			}
+
 			$pod->remove_from( $meta_key, $meta_value );
 		} else {
 			if ( ! is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object['name'] ) {
@@ -3969,6 +4121,13 @@ class PodsMeta {
 			}
 
 			$pod = self::$current_field_pod;
+
+			$field = $pod->fields( $meta_key );
+
+			// Don't save object fields using meta integration.
+			if ( $field instanceof Object_Field && ! $this->cover_object_fields_in_meta() ) {
+				return $_null;
+			}
 
 			$pod->save( array( $meta_key => null ), null, $object_id, array(
 				'podsmeta_direct' => true,
@@ -4125,5 +4284,23 @@ class PodsMeta {
 		} else {
 			return pods_api()->delete_object_from_relationships( $id, $type, $name );
 		}
+	}
+
+	/**
+	 * Determine whether to cover object fields in metadata integration.
+	 *
+	 * @since 2.8.8
+	 *
+	 * @return bool Whether to cover object fields in metadata integration.
+	 */
+	public function cover_object_fields_in_meta() {
+		/**
+		 * Allow filtering whether to cover object fields in metadata integration.
+		 *
+		 * @since 2.8.8
+		 *
+		 * @param bool $cover_object_fields_in_meta Whether to cover object fields in metadata integration.
+		 */
+		return (bool) apply_filters( 'pods_meta_cover_object_fields_in_meta', false );
 	}
 }

@@ -12,7 +12,7 @@ use Pods\Permissions;
 /**
  * Enqueue a script in a way that is compatible with enqueueing before the asset was registered.
  *
- * @since TBD
+ * @since 2.8.6
  *
  * @param string           $handle    Name of the script. Should be unique.
  * @param string           $src       Full URL of the script, or path of the script relative to the WordPress root directory.
@@ -45,7 +45,7 @@ function pods_form_enqueue_script( $handle, $src = '', $deps = [], $ver = false,
 /**
  * Enqueue a style in a way that is compatible with enqueueing before the asset was registered.
  *
- * @since TBD
+ * @since 2.8.6
  *
  * @param string           $handle Name of the stylesheet. Should be unique.
  * @param string           $src    Full URL of the stylesheet, or path of the stylesheet relative to the WordPress root directory.

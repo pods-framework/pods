@@ -528,23 +528,14 @@ class PodsField_Pick extends PodsField {
 			 */
 			$ignore_internal = apply_filters( 'pods_pick_ignore_internal', true );
 
+			$pods_meta = pods_meta();
+
 			// Public Post Types for relationships.
 			$post_types = get_post_types( [ 'public' => true ] );
 			asort( $post_types );
 
-			$ignored_post_types = [
-				'attachment',
-				'revision',
-				'nav_menu_item',
-				'custom_css',
-				'customize_changeset',
-				'oembed_cache',
-				'user_request',
-				'wp_template',
-			];
-
 			foreach ( $post_types as $post_type => $label ) {
-				if ( empty( $post_type ) || in_array( $post_type, $ignored_post_types, true ) ) {
+				if ( empty( $post_type ) || 'attachment' === $post_type || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -568,7 +559,7 @@ class PodsField_Pick extends PodsField {
 			asort( $post_types );
 
 			foreach ( $post_types as $post_type => $label ) {
-				if ( empty( $post_type ) || in_array( $post_type, $ignored_post_types, true ) ) {
+				if ( empty( $post_type ) || 'attachment' === $post_type || ! $pods_meta->is_type_covered( 'post_type', $post_type ) ) {
 					unset( $post_types[ $post_type ] );
 
 					continue;
@@ -591,15 +582,8 @@ class PodsField_Pick extends PodsField {
 			$taxonomies = get_taxonomies();
 			asort( $taxonomies );
 
-			$ignored_taxonomies = [
-				'nav_menu',
-				'post_format',
-				'wp_theme',
-			];
-
 			foreach ( $taxonomies as $taxonomy => $label ) {
-
-				if ( empty( $taxonomy ) || in_array( $taxonomy, $ignored_taxonomies, true ) ) {
+				if ( empty( $taxonomy ) || ! $pods_meta->is_type_covered( 'taxonomy', $taxonomy ) ) {
 					unset( $taxonomies[ $taxonomy ] );
 
 					continue;

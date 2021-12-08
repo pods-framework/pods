@@ -135,6 +135,7 @@ const Pick = ( props ) => {
 			data = [],
 			label,
 			name,
+			required: isRequired = false,
 			default_icon: defaultIcon,
 			iframe_src: addNewIframeSrc,
 			iframe_title_add: addNewIframeTitle,
@@ -167,6 +168,7 @@ const Pick = ( props ) => {
 			// rest_pick_response: pickResponse,
 			// pick_where,
 			type: fieldType,
+			pick_placeholder: pickPlaceholder = null,
 		},
 		setValue,
 		value,
@@ -175,6 +177,13 @@ const Pick = ( props ) => {
 		podName,
 		allPodValues,
 	} = props;
+
+	let fieldPlaceholder = pickPlaceholder;
+
+	if ( null === fieldPlaceholder || '' === fieldPlaceholder ) {
+		// translators: %s is the field label.
+		fieldPlaceholder = sprintf( __( 'Search %s…', 'pods' ), label );
+	}
 
 	const isSingle = 'single' === formatType;
 	const isMulti = 'multi' === formatType;
@@ -347,8 +356,7 @@ const Pick = ( props ) => {
 							defaultOptions={ formattedOptions }
 							loadOptions={ ajaxData?.ajax ? loadAjaxOptions( ajaxData ) : undefined }
 							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							// translators: %s is the field label.
-							placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+							placeholder={ fieldPlaceholder }
 							isMulti={ isMulti }
 							onChange={ ( newOption ) => {
 								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
@@ -422,9 +430,9 @@ const Pick = ( props ) => {
 							defaultOptions={ formattedOptions }
 							loadOptions={ loadAjaxOptions( ajaxData ) }
 							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							// translators: %s is the field label.
-							placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+							placeholder={ fieldPlaceholder }
 							isMulti={ isMulti }
+							isClearable={ ! toBool( isRequired ) }
 							onChange={ ( newOption ) => {
 								// The new value(s) may have been loaded by ajax, if it was, then it wasn't
 								// in our array of dataOptions, and we should add it, so we can keep track of
@@ -448,7 +456,11 @@ const Pick = ( props ) => {
 									return updatedData;
 								} );
 
-								if ( isMulti ) {
+								if ( null === newOption ) {
+									setValueWithLimit( '' );
+
+									return;
+								} else if ( isMulti ) {
 									setValueWithLimit( newOption.map(
 										( selection ) => selection.value )
 									);
@@ -463,11 +475,13 @@ const Pick = ( props ) => {
 							controlShouldRenderValue={ ! isListSelect }
 							options={ formattedOptions }
 							value={ isMulti ? formattedValue : formattedValue[ 0 ] }
-							// translators: %s is the field label.
-							placeholder={ sprintf( __( 'Search %s…', 'pods' ), label ) }
+							placeholder={ fieldPlaceholder }
 							isMulti={ isMulti }
+							isClearable={ ! toBool( isRequired ) }
 							onChange={ ( newOption ) => {
-								if ( isMulti ) {
+								if ( null === newOption ) {
+									setValueWithLimit( '' );
+								} else if ( isMulti ) {
 									setValueWithLimit( newOption.map(
 										( selection ) => selection.value )
 									);

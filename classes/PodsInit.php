@@ -197,6 +197,7 @@ class PodsInit {
 				$tribe_options = [
 					'tribe_settings_errors',
 					'pue_install_key_promoter',
+					'external_updates-promoter',
 					'tribe_pue_key_notices',
 					'tribe_events_calendar_options',
 					'tribe_settings_major_error',

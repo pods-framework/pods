@@ -410,6 +410,7 @@ export const FIELD_PROP_TYPE = {
 	pick_limit: NUMBER_OR_NUMBER_AS_STRING,
 	pick_object: PropTypes.string,
 	pick_orderby: PropTypes.string,
+	pick_placeholder: PropTypes.string,
 	pick_post_status: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.arrayOf( PropTypes.string ),

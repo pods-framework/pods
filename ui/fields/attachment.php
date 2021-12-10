@@ -1,7 +1,7 @@
 <?php
 global $post_ID;
 
-wp_enqueue_script( 'pods-handlebars' );
+pods_form_enqueue_script( 'pods-handlebars' );
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 wp_enqueue_script( 'thickbox' );

@@ -1,6 +1,8 @@
 <?php
 
 use Pods\Whatsit\Field;
+use Pods\Whatsit\Pod;
+use Pod as Pod_Deprecated;
 
 /**
  * Pods Field class for common type-specific methods.
@@ -346,7 +348,7 @@ class PodsField {
 	 * }
 	 */
 	public function render_input_script( $args ) {
-		wp_enqueue_script( 'pods-dfv' );
+		pods_form_enqueue_script( 'pods-dfv' );
 
 		if ( is_array( $args ) ) {
 			$args = (object) $args;
@@ -382,9 +384,9 @@ class PodsField {
 		$group_name = '';
 
 		if ( ! empty( $args->pod ) ) {
-			if ( $args->pod instanceof Pods ) {
+			if ( $args->pod instanceof Pods || $args->pod instanceof Pod_Deprecated ) {
 				$pod_name = $args->pod->pod_data['name'];
-			} else {
+			} elseif ( $args->pod instanceof Pod || is_array( $args->pod ) ) {
 				$pod_name = $args->pod['name'];
 			}
 		}

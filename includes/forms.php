@@ -10,6 +10,73 @@ use Pods\Whatsit\Store;
 use Pods\Permissions;
 
 /**
+ * Enqueue a script in a way that is compatible with enqueueing before the asset was registered.
+ *
+ * @since 2.8.6
+ *
+ * @param string           $handle    Name of the script. Should be unique.
+ * @param string           $src       Full URL of the script, or path of the script relative to the WordPress root directory.
+ *                                    Default empty.
+ * @param string[]         $deps      Optional. An array of registered script handles this script depends on. Default empty array.
+ * @param string|bool|null $ver       Optional. String specifying script version number, if it has one, which is added to the URL
+ *                                    as a query string for cache busting purposes. If version is set to false, a version
+ *                                    number is automatically added equal to current installed WordPress version.
+ *                                    If set to null, no version is added.
+ * @param bool             $in_footer Optional. Whether to enqueue the script before </body> instead of in the <head>.
+ *                                    Default 'false'.
+ */
+function pods_form_enqueue_script( $handle, $src = '', $deps = [], $ver = false, $in_footer = false ) {
+	// Use dynamic arguments to support future versions of wp_enqueue_script.
+	$args = func_get_args();
+
+	// Check that the script is already registered, or we are registering it when enqueueing.
+	if ( ! empty( $src ) || wp_script_is( $handle, 'registered' ) ) {
+		call_user_func_array( 'wp_enqueue_script', $args );
+
+		return;
+	}
+
+	// The script was enqueued before the enqueue scripts action was called.
+	add_action( 'pods_after_enqueue_scripts', static function() use ( $args ) {
+		call_user_func_array( 'wp_enqueue_script', $args );
+	} );
+}
+
+/**
+ * Enqueue a style in a way that is compatible with enqueueing before the asset was registered.
+ *
+ * @since 2.8.6
+ *
+ * @param string           $handle Name of the stylesheet. Should be unique.
+ * @param string           $src    Full URL of the stylesheet, or path of the stylesheet relative to the WordPress root directory.
+ *                                 Default empty.
+ * @param string[]         $deps   Optional. An array of registered stylesheet handles this stylesheet depends on. Default empty array.
+ * @param string|bool|null $ver    Optional. String specifying stylesheet version number, if it has one, which is added to the URL
+ *                                 as a query string for cache busting purposes. If version is set to false, a version
+ *                                 number is automatically added equal to current installed WordPress version.
+ *                                 If set to null, no version is added.
+ * @param string           $media  Optional. The media for which this stylesheet has been defined.
+ *                                 Default 'all'. Accepts media types like 'all', 'print' and 'screen', or media queries like
+ *                                 '(orientation: portrait)' and '(max-width: 640px)'.
+ */
+function pods_form_enqueue_style( $handle, $src = '', $deps = array(), $ver = false, $media = 'all' ) {
+	// Use dynamic arguments to support future versions of wp_enqueue_script.
+	$args = func_get_args();
+
+	// Check that the style is already registered, or we are registering it when enqueueing.
+	if ( ! empty( $src ) || wp_style_is( $handle, 'registered' ) ) {
+		call_user_func_array( 'wp_enqueue_style', $args );
+
+		return;
+	}
+
+	// The style was enqueued before the enqueue scripts action was called.
+	add_action( 'pods_after_enqueue_scripts', static function() use ( $args ) {
+		call_user_func_array( 'wp_enqueue_style', $args );
+	} );
+}
+
+/**
  * Render form fields outside of the <form> context.
  *
  * @since 2.8.0

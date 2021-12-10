@@ -110,8 +110,6 @@ class PodsField_Color extends PodsField {
 			$options[ static::$type . '_clear_label' ] = __( 'Clear', 'pods' );
 		}
 
-		wp_enqueue_script( 'pods-dfv' );
-
 		$type = pods_v( 'type', $options, static::$type );
 
 		$args = compact( array_keys( get_defined_vars() ) );

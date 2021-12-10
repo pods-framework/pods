@@ -323,7 +323,7 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 
 	$debug = ob_get_clean();
 
-	if ( false === strpos( $debug, "<pre class='xdebug-var-dump'" ) && ( ! ini_get( 'xdebug.overload_var_dump' ) && ! ini_get( 'html_errors' ) ) ) {
+	if ( false === strpos( $debug, "<pre class='xdebug-var-dump'" ) ) {
 		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 			$debug = esc_html( $debug );
 		}
@@ -636,9 +636,9 @@ function pods_help( $text, $url = null ) {
 			'jquery',
 			'jquery-qtip2',
 		), PODS_VERSION );
-		wp_enqueue_script( 'pods-qtip-init' );
+		pods_form_enqueue_script( 'pods-qtip-init' );
 	} elseif ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
-		wp_enqueue_script( 'pods-qtip-init' );
+		pods_form_enqueue_script( 'pods-qtip-init' );
 	}
 
 	if ( is_array( $text ) ) {
@@ -1484,12 +1484,13 @@ function pods_shortcode_form( $tags, $content = null ) {
  * @uses  $shortcode_tags
  * @uses  get_shortcode_regex() Gets the search pattern for searching shortcodes.
  *
- * @param string $content    Content to search for shortcodes
- * @param array  $shortcodes Array of shortcodes to run
+ * @param string $content            Content to search for shortcodes.
+ * @param array  $shortcodes         Array of shortcodes to run.
+ * @param array  $ignored_shortcodes Array of shortcodes to ignore.
  *
  * @return string Content with shortcodes filtered out.
  */
-function pods_do_shortcode( $content, $shortcodes ) {
+function pods_do_shortcode( $content, $shortcodes = [], $ignored_shortcodes = [] ) {
 	global $shortcode_tags;
 
 	// No shortcodes in content
@@ -1502,16 +1503,25 @@ function pods_do_shortcode( $content, $shortcodes ) {
 		return $content;
 	}
 
-	if ( ! empty( $shortcodes ) ) {
-		$temp_shortcode_filter = function ( $return, $tag, $attr, $m ) use ( $shortcodes ) {
-			if ( in_array( $m[2], $shortcodes, true ) ) {
-				// If shortcode being called is in list, return false to allow it to run
+	$only_shortcodes   = ! empty( $shortcodes );
+	$ignore_shortcodes = ! empty( $ignored_shortcodes );
+
+	if ( $only_shortcodes || $ignore_shortcodes ) {
+		$temp_shortcode_filter = static function ( $return, $tag, $attr, $m ) use ( $only_shortcodes, $shortcodes, $ignore_shortcodes, $ignored_shortcodes ) {
+			if ( $only_shortcodes && in_array( $m[2], $shortcodes, true ) ) {
+				// If shortcode being called is in list, return false to allow it to run.
+				return false;
+			}
+
+			if ( $ignore_shortcodes && ! in_array( $m[2], $ignored_shortcodes, true ) ) {
+				// If shortcode being called is not in ignore list, return false to allow it to run.
 				return false;
 			}
 
 			// Return original shortcode string if we aren't going to handle at this time
 			return $m[0];
 		};
+
 		add_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter, 10, 4 );
 	}
 
@@ -2452,13 +2462,6 @@ function pods_require_component( $component ) {
  * @link  https://docs.pods.io/code/general-functions/pods-group-add/
  */
 function pods_group_add( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
-	if ( ! is_array( $pod ) && ! $pod instanceof Pods\Whatsit && null !== $type ) {
-		$pod = array(
-			'name' => $pod,
-			'type' => $type,
-		);
-	}
-
 	pods_meta()->group_add( $pod, $label, $fields, $context, $priority );
 }
 

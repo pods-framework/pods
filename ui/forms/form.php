@@ -10,8 +10,8 @@
 
 use Pods\Static_Cache;
 
-wp_enqueue_script( 'pods' );
-wp_enqueue_style( 'pods-form' );
+pods_form_enqueue_script( 'pods' );
+pods_form_enqueue_style( 'pods-form' );
 
 $is_settings_pod = 'settings' === $pod->pod_data['type'];
 

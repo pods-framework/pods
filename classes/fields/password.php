@@ -109,8 +109,6 @@ class PodsField_Password extends PodsField {
 			return pods_view( PODS_DIR . 'ui/fields/password.php', compact( array_keys( get_defined_vars() ) ) );
 		}
 
-		wp_enqueue_script( 'pods-dfv' );
-
 		$type = pods_v( 'type', $options, static::$type );
 
 		$args = compact( array_keys( get_defined_vars() ) );

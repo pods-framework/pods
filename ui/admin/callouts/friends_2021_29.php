@@ -66,6 +66,13 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 			?>
 		</p>
 		<p class="pods-admin_friends-callout_text">
+			☑︎️&nbsp;
+			<?php
+				esc_html_e( 'Donors get to vote on the next feature we work on, they decide what we do next.', 'pods' );
+			?>
+		</p>
+		<?php /*
+		<p class="pods-admin_friends-callout_text">
 			<?php
 				printf(
 					'<strong>%s</strong>',
@@ -78,6 +85,7 @@ $donate_now_link      = add_query_arg( $campaign_args, $donate_now_link );
 				<?php echo esc_attr( ceil( $progress_width ) ); ?>%
 			</div>
 		</div>
+ 		*/ ?>
 		<div class="pods-admin_friends-callout_button-group">
 			<a href="<?php echo esc_url( $learn_more_link ); ?>"
 				target="_blank" rel="noreferrer"

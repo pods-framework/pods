@@ -33,7 +33,7 @@ This is where we develop Pods Framework itself and should _not_ be used for supp
 
 ## Reporting Bugs
 
-If you find an issue that you believe to be a *bug*, [let us know](https://github.com/pods-framework/pods/issues?state=open).
+If you find an issue that you believe to be a *bug*, [let us know](https://github.com/pods-framework/pods/issues/new/choose).
 
 ## Requirements
 
@@ -53,20 +53,18 @@ If you have restrictions on your server or site, these are the minimum versions 
 
 ## Contributions Welcome
 
-Anyone is welcome to contribute to Pods Framework. Please read the [guidelines for contributing](CONTRIBUTING.md) to this repository.
+Anyone is welcome to contribute to Pods Framework. Please read the [guidelines for contributing](docs/CONTRIBUTING.md) to this repository.
 
 There are various ways you can contribute:
 
 1. Raise an [Issue](https://github.com/pods-framework/pods/issues) on GitHub
 2. Send us a [Pull Request](https://github.com/pods-framework/pods/pulls) with your bug fixes and/or enhancements
 3. Translate Pods Framework into different languages via [WP Translate](https://translate.wordpress.org/projects/wp-plugins/pods), just sign in with your wordpress.org account and add translations where you can
-4. Provide feedback and suggestions on [enhancements](https://github.com/pods-framework/pods/issues?direction=desc&labels=Enhancement&page=1&sort=created&state=open)
+4. Provide feedback and suggestions on [enhancements](https://github.com/pods-framework/pods/issues/new/choose)
 
 ## Donations
 
-We're able to focus more on Pods when we have some cash to help keep the lights on, want to help? [Become a Friend of Pods!](https://pods.io/friends-of-pods/)
-
-Want to help make sure a specific bug, enhancement, or feature gets done ASAP? Try creating a bounty over at [Bountysource](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358).
+We're able to focus more on Pods when we have some cash to help keep the lights on, want to help? [Become a Friend of Pods!](https://friends.pods.io/)
 
 ## Developer Notes
 

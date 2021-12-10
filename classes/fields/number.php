@@ -238,9 +238,9 @@ class PodsField_Number extends PodsField {
 			$options['readonly'] = true;
 
 			$field_type = 'text';
-
-			$value = $this->format( $value, $name, $options, $pod, $id );
 		}
+
+		$value = $this->format( $value, $name, $options, $pod, $id );
 
 		// Enforce boolean.
 		$options[ static::$type . '_html5' ]       = filter_var( pods_v( static::$type . '_html5', $options, false ), FILTER_VALIDATE_BOOLEAN );
@@ -249,8 +249,6 @@ class PodsField_Number extends PodsField {
 		if ( ! empty( $options['disable_dfv'] ) ) {
 			return pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );
 		}
-
-		wp_enqueue_script( 'pods-dfv' );
 
 		$type = pods_v( 'type', $options, static::$type );
 

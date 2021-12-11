@@ -2589,36 +2589,67 @@ class PodsMeta {
 			$type = 'taxonomy';
 		}
 
+		// These are the keys we want to exclude from any additional queries/checks on within Pods.
 		$keys_not_covered = [
 			'post_type' => [
-				'_wp_attachment_metadata'        => true,
-				'_thumbnail_id'                  => true,
+				'_additional_settings' => true,
+				'_edit_last'           => true,
+				'_edit_lock'           => true,
+				'_thumbnail_id'        => true,
+				'_wp_.*'               => true,
 				// Optimize for Duplicate Post plugin.
-				'_dp_is_rewrite_republish_copy'  => true,
-				'_dp_has_rewrite_republish_copy' => true,
-				'_dp_creation_date_gmt'          => true,
-				'_dp_has_been_republished'       => true,
+				'_dp_.*'               => true,
+				// Optimize for Elementor plugin.
+				'_elementor_.*'        => true,
+				// Optimize for Divi.
+				'_et_pb_.*'            => true,
+				'_et_builder_version'  => true,
 			],
-			'user' => [
-				'capabilities'         => true,
-				'session_tokens'       => true,
-				'primary_blog'         => true,
-				'default_password_nag' => true,
-				'user-settings'        => true,
-				'admin_color'          => true,
-				'show_admin_bar_front' => true,
-				'show_admin_bar_admin' => true,
+			'user'      => [
+				'admin_color'                                      => true,
+				'capabilities'                                     => true,
+				'closedpostboxes_.*'                               => true,
+				'comment_shortcuts'                                => true,
+				'default_password_nag'                             => true,
+				'description'                                      => true,
+				'dismissed_wp_pointers'                            => true,
+				'first_name'                                       => true,
+				'last_name'                                        => true,
+				'locale'                                           => true,
+				'metaboxhidden_'                                   => true,
+				'metaboxhidden_.*'                                 => true,
+				'nav_menu_recently_edited'                         => true,
+				'nickname'                                         => true,
+				'primary_blog'                                     => true,
+				'rich_editing'                                     => true,
+				'session_tokens'                                   => true,
+				'show_admin_bar_admin'                             => true,
+				'show_admin_bar_front'                             => true,
+				'show_per_page'                                    => true,
+				'show_welcome_panel'                               => true,
+				'syntax_highlighting'                              => true,
+				'use_ssl'                                          => true,
+				'user_level'                                       => true,
+				'user-settings'                                    => true,
+				'dashboard_quick_press_last_post_id'               => true,
 				// Optimize for Tribe Common.
-				'tribe-dismiss-notice' => true,
+				'tribe-dismiss-notice'                             => true,
+				'tribe-dismiss-notice-.*'                          => true,
+				// Optimize for Beaver Builder.
+				'_fl_builder_launched'                             => true,
+				// Optimize for Gravity Forms.
+				'gform_recent_forms'                               => true,
+				// Optimize for WooCommerce.
+				'woocommerce_admin_activity_panel_inbox_last_read' => true,
 			],
-			'settings' => [
-				'upload_filetypes'                      => true,
+			'settings'  => [
 				'fileupload_maxk'                       => true,
+				'upload_filetypes'                      => true,
 				'upload_space_check_disabled'           => true,
 				// Optimize for Duplicate Post plugin.
-				'duplicate_post_title_prefix'           => true,
 				'duplicate_post_increase_menu_order_by' => true,
 				'duplicate_post_show_notice'            => true,
+				'duplicate_post_title_prefix'           => true,
 			],
 		];
 
@@ -2641,6 +2672,7 @@ class PodsMeta {
 			$keys = $keys_not_covered['user'];
 
 			foreach ( $keys as $key => $ignored ) {
+				$keys_not_covered['user'][ 'wp_' . $key ] = true;
 				$keys_not_covered['user'][ $prefix . $key ] = true;
 			}
 		}
@@ -2753,6 +2785,21 @@ class PodsMeta {
 		// Check if this key is covered.
 		$key_is_covered = ! isset( $keys_not_covered[ $key ] );
 
+		if ( $key_is_covered ) {
+			// Check regex matches.
+			$regex_keys = array_keys( $keys_not_covered );
+
+			$regex_keys = array_filter( $regex_keys, static function( $regex_key ) {
+                return '.*' === substr( $regex_key, -2 );
+            } );
+
+			if ( ! empty( $regex_keys ) ) {
+				$regex_keys = implode( '|', $regex_keys );
+
+				$key_is_covered = false === ( (bool) preg_match( '/^(' . $regex_keys . ')$/', $key ) );
+			}
+		}
+
 		/**
 		 * Allow filtering the list of keys not covered.
 		 *
@@ -2763,7 +2810,7 @@ class PodsMeta {
 		 * @param string      $key            The value key.
 		 * @param string|null $object_name    The object name.
 		 */
-		return apply_filters( 'pods_meta_key_is_covered', $key_is_covered, $type, $key, $object_name );
+		return (bool) apply_filters( 'pods_meta_key_is_covered', $key_is_covered, $type, $key, $object_name );
 	}
 
 	/**

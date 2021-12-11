@@ -2880,56 +2880,21 @@ function pods_no_conflict_off( $object_type = 'post', $object = null, $force = f
  * @return array
  */
 function pods_reserved_keywords( $context = null ) {
-	// WordPress keywords.
-	$wp_keywords = [
+	// WordPress Post keywords.
+	$wp_post_keywords = [
 		'id',
 		'ID',
 		'attachment',
 		'attachment_id',
 		'author',
 		'author_name',
-		'calendar',
-		'cat',
 		'category',
-		'category__and',
-		'category__in',
-		'category__not_in',
-		'category_name',
-		'comments_per_page',
-		'comments_popup',
-		'custom',
-		'customize_messenger_channel',
-		'customized',
-		'cpage',
-		'day',
-		'debug',
-		'embed',
-		'error',
-		'exact',
-		'feed',
-		'hour',
 		'link_category',
-		'm',
-		'minute',
-		'monthnum',
-		'more',
 		'name',
-		'nav_menu',
-		'nonce',
-		'nopaging',
-		'offset',
-		'order',
-		'orderby',
 		'p',
 		'page',
-		'page_id',
 		'paged',
-		'pagename',
-		'pb',
-		'perm',
 		'post',
-		'post__in',
-		'post__not_in',
 		'post_format',
 		'post_mime_type',
 		'post_status',
@@ -2937,33 +2902,72 @@ function pods_reserved_keywords( $context = null ) {
 		'post_thumbnail',
 		'post_thumbnail_url',
 		'post_type',
+		's',
+		'search',
+		'tag',
+		'taxonomy',
+		'term',
+		'terms',
+		'title',
+		'type',
+	];
+
+	// WordPress keywords.
+	$wp_keywords = [
+		'calendar',
+		'cat',
+		'category__and',
+		'category__in',
+		'category__not_in',
+		'category_name',
+		'comments_per_page',
+		'comments_popup',
+		'cpage',
+		'custom',
+		'customize_messenger_channel',
+		'customized',
+		'day',
+		'debug',
+		'embed',
+		'error',
+		'exact',
+		'feed',
+		'hour',
+		'm',
+		'minute',
+		'monthnum',
+		'more',
+		'nav_menu',
+		'nonce',
+		'nopaging',
+		'offset',
+		'order',
+		'orderby',
+		'page_id',
+		'pagename',
+		'pb',
+		'perm',
+		'post__in',
+		'post__not_in',
 		'posts',
 		'posts_per_archive_page',
 		'posts_per_page',
 		'preview',
 		'robots',
-		's',
-		'search',
 		'second',
 		'sentence',
 		'showposts',
 		'static',
 		'subpost',
 		'subpost_id',
-		'tag',
 		'tag__and',
 		'tag__in',
 		'tag__not_in',
 		'tag_id',
 		'tag_slug__and',
 		'tag_slug__in',
-		'taxonomy',
 		'tb',
-		'term',
-		'terms',
 		'theme',
-		'title',
-		'type',
 		'w',
 		'withcomments',
 		'withoutcomments',
@@ -2978,10 +2982,17 @@ function pods_reserved_keywords( $context = null ) {
 
 	$keywords = [];
 
+	// Add keywords for WP context.
 	if ( in_array( $context, [ null, 'wp' ], true ) ) {
 		$keywords = array_merge( $keywords, $wp_keywords );
 	}
 
+	// Add keywords for WP Post contexts (also applies to WP context).
+	if ( in_array( $context, [ null, 'wp', 'wp-post' ], true ) ) {
+		$keywords = array_merge( $keywords, $wp_post_keywords );
+	}
+
+	// Add keywords for Pods context.
 	if ( in_array( $context, [ null, 'pods' ], true ) ) {
 		$keywords = array_merge( $keywords, $pods_keywords );
 	}

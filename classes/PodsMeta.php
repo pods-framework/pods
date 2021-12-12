@@ -3621,12 +3621,13 @@ class PodsMeta {
 		}
 
 		if ( empty( $meta_key ) ) {
+			// Check whether we want to cover get_*_meta( $id ) calls.
 			if ( ! defined( 'PODS_ALLOW_FULL_META' ) || ! PODS_ALLOW_FULL_META ) {
 				if ( ! $no_conflict ) {
 					pods_no_conflict_off( $meta_type );
 				}
 
-				return $_null; // don't cover get_post_meta( $id )
+				return $_null;
 			}
 
 			$single = false;

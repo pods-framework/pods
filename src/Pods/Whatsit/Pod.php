@@ -174,4 +174,26 @@ class Pod extends Whatsit {
 		return ! empty( $existing_cached[ $cached_var ] ) && array_key_exists( $this->get_name(), $existing_cached[ $cached_var ] );
 	}
 
+	/**
+	 * Count the total rows for the pod.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @return int The total rows for the Pod.
+	 */
+	public function count_rows() {
+		$params = [
+			// Minimal select information.
+			'select' => 'COUNT(*) AS total_rows',
+		];
+
+		$pod = pods( $this, $params );
+
+		if ( ! $pod || ! $pod->valid() ) {
+			return 0;
+		}
+
+		return $pod->count_all_rows();
+	}
+
 }

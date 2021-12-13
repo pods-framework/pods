@@ -2877,6 +2877,8 @@ class PodsAdmin {
 
 		$auto_start = pods_v( $auto_start, $fields['session_auto_start']['data'], __( 'Unknown', 'pods' ) );
 
+		global $wpdb;
+
 		$info['pods'] = [
 			'label'       => 'Pods',
 			'description' => __( 'Debug information for Pods installations.', 'pods' ),
@@ -2996,6 +2998,10 @@ class PodsAdmin {
 				'pods-can-use-sessions'              => [
 					'label' => __( 'Pods Can Use Sessions' ),
 					'value' => ( pods_can_use_sessions( true ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				],
+				'pods-relationship-table-status'              => [
+					'label' => __( 'Pods Relationship Table Count' ),
+					'value' => ( ! pods_tableless() ? number_format( (float) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}podsrel" ) ) : 'No table' ),
 				],
 			],
 		];

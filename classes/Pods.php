@@ -133,7 +133,7 @@ class Pods implements Iterator {
 			$pod = get_queried_object();
 		}
 
-		if ( $pod && ! is_string( $pod ) ) {
+		if ( $pod && ! is_string( $pod ) && ! $pod instanceof Pod ) {
 			if ( $pod instanceof WP_Post ) {
 				// Post Type Singular.
 				$pod       = $pod->post_type;

@@ -899,6 +899,8 @@ class PodsAdmin {
 
 		$pod_types_found = array();
 
+		$include_row_counts = filter_var( pods_v( 'pods_include_row_counts' ), FILTER_VALIDATE_BOOLEAN );
+
 		$fields = [
 			'label'       => [ 'label' => __( 'Label', 'pods' ) ],
 			'name'        => [ 'label' => __( 'Name', 'pods' ) ],
@@ -917,8 +919,16 @@ class PodsAdmin {
 			],
 		];
 
+		if ( $include_row_counts ) {
+			$fields['row_count'] = [
+				'label' => __( 'Rows', 'pods' ),
+				'width' => '8%',
+			];
+		}
+
 		$total_groups = 0;
 		$total_fields = 0;
+		$total_rows   = 0;
 
 		/**
 		 * Filters whether to extend internal Pods.
@@ -999,6 +1009,8 @@ class PodsAdmin {
 				$row = $pod;
 			}
 
+			$row_count = $include_row_counts ? $pod->count_rows() : 0;
+
 			$pod = array(
 				'id'          => $pod['id'],
 				'label'       => pods_v( 'label', $pod ),
@@ -1009,10 +1021,16 @@ class PodsAdmin {
 				'storage'     => $storage_type_label,
 				'group_count' => $pod->count_groups(),
 				'field_count' => $pod->count_fields(),
+				'row_count'   => $pod->count_rows(),
 			);
+
+			if ( $include_row_counts ) {
+				$pod['row_count'] = $row_count;
+			}
 
 			$total_groups += $pod['group_count'];
 			$total_fields += $pod['field_count'];
+			$total_rows   += $pod['row_count'];
 
 			$pod_list[] = $pod;
 		}//end foreach
@@ -1025,6 +1043,22 @@ class PodsAdmin {
 		}
 
 		$total_pods = count( $pod_list );
+
+		$extra_total_text = sprintf(
+			', %1$s %2$s, %3$s %4$s',
+			number_format_i18n( $total_groups ),
+			_n( 'group', 'groups', $total_groups, 'pods' ),
+			number_format_i18n( $total_fields ),
+			_n( 'field', 'fields', $total_fields, 'pods' )
+		);
+
+		if ( $include_row_counts ) {
+			$extra_total_text .= sprintf(
+				', %1$s %2$s',
+				number_format_i18n( $total_rows ),
+				_n( 'row', 'rows', $total_rows, 'pods' )
+			);
+		}
 
 		$ui = [
 			'data'             => $pod_list,
@@ -1078,9 +1112,7 @@ class PodsAdmin {
 			'sortable'         => true,
 			'pagination'       => false,
 			'extra'            => [
-				'total' =>
-					', ' . number_format_i18n( $total_groups ) . ' ' . _n( 'group', 'groups', $total_groups, 'pods' )
-					. ', ' . number_format_i18n( $total_fields ) . ' ' . _n( 'field', 'fields', $total_fields, 'pods' ),
+				'total' => $extra_total_text,
 			],
 		];
 

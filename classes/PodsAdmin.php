@@ -961,6 +961,8 @@ class PodsAdmin {
 			$pod_type_label = null;
 			$pod_storage    = $pod['storage'];
 
+			$show_meta_count = 'meta' === $pod_storage || in_array( $pod['type'], [ 'post_type', 'taxonomy', 'user', 'comment' ], true );
+
 			if ( ! empty( $pod['internal'] ) ) {
 				// Don't show internal if we aren't extending them.
 				if ( ! $extend_internal ) {
@@ -1033,7 +1035,7 @@ class PodsAdmin {
 			if ( $include_row_counts ) {
 				$row_count      = $pod->count_rows();
 
-				if ( 'meta' === $pod_storage ) {
+				if ( $show_meta_count ) {
 					$row_meta_count = $pod->count_row_meta();
 				}
 
@@ -1062,7 +1064,10 @@ class PodsAdmin {
 
 				$total_rows += $row_count;
 
-				if ( 'meta' === $pod_storage ) {
+				$pod['row_meta_count'] = 'n/a';
+				$pod['podsrel_count']  = 'n/a';
+
+				if ( $show_meta_count ) {
 					$pod['row_meta_count'] = number_format_i18n( $row_meta_count );
 
 					$total_row_meta += $row_meta_count;

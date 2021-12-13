@@ -199,7 +199,7 @@ class Pod extends Whatsit {
 	 * @return int The total row meta for the Pod.
 	 */
 	public function count_row_meta() {
-		if ( 'meta' !== $this->get_storage() ) {
+		if ( 'meta' !== $this->get_storage() && ! in_array( $this->get_type(), [ 'post_type', 'taxonomy', 'user', 'comment' ], true ) ) {
 			return 0;
 		}
 

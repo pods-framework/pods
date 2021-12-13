@@ -921,12 +921,12 @@ class PodsAdmin {
 
 		if ( $include_row_counts ) {
 			$fields['row_count'] = [
-				'label' => __( 'Rows', 'pods' ),
+				'label' => __( 'Data Rows', 'pods' ),
 				'width' => '8%',
 			];
 
 			$fields['row_meta_count'] = [
-				'label' => __( 'Row Meta', 'pods' ),
+				'label' => __( 'Meta Rows', 'pods' ),
 				'width' => '8%',
 			];
 
@@ -1104,12 +1104,12 @@ class PodsAdmin {
 			$extra_total_text .= sprintf(
 			', %1$s %2$s, %3$s %4$s, %5$s %6$s',
 				number_format_i18n( $total_rows ),
-				_n( 'row', 'rows', $total_rows, 'pods' ),
+				_n( 'data row', 'data rows', $total_rows, 'pods' ),
 				number_format_i18n( $total_row_meta ),
 				_n( 'meta row', 'meta rows', $total_row_meta, 'pods' ),
 				number_format_i18n( $total_podsrel_rows ),
-				// translators: "PodsRel" references the name of the Pods relationships table in the database.
-				_n( 'PodsRel row', 'PodsRel rows', $total_podsrel_rows, 'pods' )
+				// translators: "podsrel" references the name of the Pods relationships table in the database.
+				_n( 'podsrel row', 'podsrel rows', $total_podsrel_rows, 'pods' )
 			);
 		}
 

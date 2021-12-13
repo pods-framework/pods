@@ -2503,7 +2503,7 @@ class Pods implements Iterator {
 	 *
 	 * @return int The total count of all rows in a simple find() across the whole Pod.
 	 */
-	public function count_all_rows() {
+	public function total_all_rows() {
 		$field_id = pods_v( 'field_id', $this->pod_data );
 
 		if ( empty( $field_id ) ) {
@@ -2522,102 +2522,6 @@ class Pods implements Iterator {
 		$pod->find( $params );
 
 		return $pod->total_found();
-	}
-
-	/**
-	 * Get the total count of all row meta in a simple find() across the whole Pod. This will perform a new find() request
-	 * and then return the total number of row meta found.
-	 *
-	 * This method is non-destructive and it will not alter the current Pod object.
-	 *
-	 * @since 2.8.9
-	 *
-	 * @return int The total count of all row meta in a simple find() across the whole Pod.
-	 */
-	public function count_all_row_meta() {
-		if ( 'meta' !== $this->pod_data['storage'] ) {
-			return 0;
-		}
-
-		$field_id      = pods_v( 'field_id', $this->pod_data );
-		$meta_field_id = pods_v( 'meta_field_id', $this->pod_data );
-		$meta_table    = pods_v( 'meta_table', $this->pod_data );
-
-		if ( empty( $meta_field_id ) || empty( $meta_table ) ) {
-			return 0;
-		}
-
-		$pod = clone $this;
-
-		// Make a simple request so we can perform a total_found() SQL request.
-		$params = [
-			'distinct' => false,
-			'select'   => 'meta.' . $meta_field_id,
-			'join'     => "LEFT JOIN {$meta_table} AS meta ON meta.{$meta_field_id} = t.{$field_id}",
-			'limit'    => 1,
-		];
-
-		$pod->find( $params );
-
-		return $pod->total_found();
-	}
-
-	/**
-	 * Get the total count of all wp_podsrel rows across all fields on the Pod.
-	 *
-	 * This method is non-destructive and it will not alter the current Pod object.
-	 *
-	 * @since 2.8.9
-	 *
-	 * @return int The total count of all wp_podsrel rows across all fields on the Pod.
-	 */
-	public function count_all_podsrel_rows() {
-		if ( pods_tableless() ) {
-			return 0;
-		}
-
-		$fields = $this->pod_data['fields'];
-
-		if ( empty( $fields ) ) {
-			return 0;
-		}
-
-		$pod_id    = (int) $this->pod_data['id'];
-		$field_ids = wp_list_pluck( $fields, 'id' );
-		$field_ids = array_map( 'absint', $field_ids );
-		$field_ids = array_filter( $field_ids );
-
-		if ( empty( $field_ids ) ) {
-			return 0;
-		}
-
-		$field_ids = implode( ', ', $field_ids );
-
-		$data = pods_data();
-
-		global $wpdb;
-
-		// Make a simple request so we can perform a total_found() SQL request.
-		$params = [
-			'distinct' => false,
-			'select'   => 't.id',
-			'table'    => $wpdb->prefix . 'podsrel',
-			'where'    => "
-				(
-					t.pod_id = {$pod_id}
-					AND t.field_id IN ( {$field_ids} )
-				)
-				OR (
-					t.related_pod_id = {$pod_id}
-					AND t.related_field_id IN ( {$field_ids} )
-				)
-			",
-			'limit'    => 1,
-		];
-
-		$data->select( $params );
-
-		return $data->total_found();
 	}
 
 	/**

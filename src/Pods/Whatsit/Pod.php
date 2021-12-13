@@ -188,7 +188,7 @@ class Pod extends Whatsit {
 			return 0;
 		}
 
-		return $pod->count_all_rows();
+		return $pod->total_all_rows();
 	}
 
 	/**
@@ -199,13 +199,35 @@ class Pod extends Whatsit {
 	 * @return int The total row meta for the Pod.
 	 */
 	public function count_row_meta() {
+		if ( 'meta' !== $this->get_storage() ) {
+			return 0;
+		}
+
 		$pod = pods( $this );
 
 		if ( ! $pod || ! $pod->valid() ) {
 			return 0;
 		}
 
-		return $pod->count_all_row_meta();
+		$field_id      = $this->get_arg( 'field_id' );
+		$meta_field_id = $this->get_arg( 'meta_field_id' );
+		$meta_table    = $this->get_arg( 'meta_table' );
+
+		if ( empty( $meta_field_id ) || empty( $meta_table ) ) {
+			return 0;
+		}
+
+		// Make a simple request so we can perform a total_found() SQL request.
+		$params = [
+			'distinct' => false,
+			'select'   => 'meta.' . $meta_field_id,
+			'join'     => "LEFT JOIN {$meta_table} AS meta ON meta.{$meta_field_id} = t.{$field_id}",
+			'limit'    => 1,
+		];
+
+		$pod->find( $params );
+
+		return $pod->total_found();
 	}
 
 	/**
@@ -216,13 +238,58 @@ class Pod extends Whatsit {
 	 * @return int The total wp_podsrel rows for the pod.
 	 */
 	public function count_podsrel_rows() {
+		if ( pods_tableless() ) {
+			return 0;
+		}
+
 		$pod = pods( $this );
 
 		if ( ! $pod || ! $pod->valid() ) {
 			return 0;
 		}
 
-		return $pod->count_all_podsrel_rows();
+		$fields = $this->get_fields();
+
+		if ( empty( $fields ) ) {
+			return 0;
+		}
+
+		$pod_id    = (int) $this->get_id();
+		$field_ids = wp_list_pluck( $fields, 'id' );
+		$field_ids = array_map( 'absint', $field_ids );
+		$field_ids = array_filter( $field_ids );
+
+		if ( empty( $field_ids ) ) {
+			return 0;
+		}
+
+		$field_ids = implode( ', ', $field_ids );
+
+		$data = pods_data();
+
+		global $wpdb;
+
+		// Make a simple request so we can perform a total_found() SQL request.
+		$params = [
+			'distinct' => false,
+			'select'   => 't.id',
+			'table'    => $wpdb->prefix . 'podsrel',
+			'where'    => "
+				(
+					t.pod_id = {$pod_id}
+					AND t.field_id IN ( {$field_ids} )
+				)
+				OR (
+					t.related_pod_id = {$pod_id}
+					AND t.related_field_id IN ( {$field_ids} )
+				)
+			",
+			'limit'    => 1,
+		];
+
+		$data->select( $params );
+
+		return $data->total_found();
 	}
 
 }

@@ -931,9 +931,9 @@ class PodsAdmin {
 			];
 
 			$fields['podsrel_count'] = [
-				// translators: wp_podsrel references the name of the Pods relationships table in the database.
-				'label' => __( 'wp_podsrel Rows', 'pods' ),
-				'width' => '8%',
+				// translators: "PodsRel" references the name of the Pods relationships table in the database.
+				'label' => __( 'PodsRel Rows', 'pods' ),
+				'width' => '10%',
 			];
 		}
 
@@ -1103,8 +1103,8 @@ class PodsAdmin {
 				number_format_i18n( $total_row_meta ),
 				_n( 'meta row', 'meta rows', $total_row_meta, 'pods' ),
 				number_format_i18n( $total_podsrel_rows ),
-				// translators: wp_podsrel references the name of the Pods relationships table in the database.
-				_n( 'wp_podsrel row', 'wp_podsrel rows', $total_podsrel_rows, 'pods' )
+				// translators: "PodsRel" references the name of the Pods relationships table in the database.
+				_n( 'PodsRel row', 'PodsRel rows', $total_podsrel_rows, 'pods' )
 			);
 		}
 

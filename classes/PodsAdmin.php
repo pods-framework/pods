@@ -1238,8 +1238,8 @@ class PodsAdmin {
 		$disable_pods = pods_v( 'pods_callout_dismiss' );
 
 		// Disable Friends of Pods 2021 callout.
-		if ( 'friends_2021' === $disable_pods ) {
-			$callouts['friends_2021'] = 0;
+		if ( 'friends_2021_29' === $disable_pods ) {
+			$callouts['friends_2021_29'] = 0;
 
 			update_option( 'pods_callouts', $callouts );
 		} elseif ( 'reset' === $disable_pods ) {

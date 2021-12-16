@@ -183,6 +183,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										echo PodsForm::field( 'create_pod_type', pods_v( 'create_pod_type', 'post', 'post_type', true ), 'pick', [
 											'data'       => $data,
 											'dependency' => true,
+											'pick_format_type' => 'single',
+											'pick_format_single' => 'radio',
 										] );
 										?>
 									</div>
@@ -394,6 +396,8 @@ $quick_actions = apply_filters( 'pods_admin_setup_add_quick_actions', $quick_act
 										echo PodsForm::field( 'extend_pod_type', pods_v( 'extend_pod_type', 'post', 'post_type', true ), 'pick', [
 											'data'       => $data,
 											'dependency' => true,
+											'pick_format_type' => 'single',
+											'pick_format_single' => 'radio',
 										] );
 										?>
 									</div>

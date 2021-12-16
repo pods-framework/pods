@@ -949,31 +949,32 @@ function pods_shortcode_run( $tags, $content = null ) {
 	}
 
 	// Query related tags separated to use later.
-	$default_query_tags = array(
-		'use_current'         => false,
-		'name'                => null,
-		'id'                  => null,
-		'slug'                => null,
-		'select'              => null,
-		'join'                => null,
-		'order'               => null,
-		'orderby'             => null,
-		'limit'               => null,
-		'where'               => null,
-		'having'              => null,
-		'groupby'             => null,
-		'search'              => true,
-		'pagination'          => false,
-		'page'                => null,
-		'offset'              => null,
-		'filters_enable'      => null,
-		'filters'             => '',
-		'filters_label'       => null,
-		'filters_location'    => 'before',
-		'pagination_label'    => null,
-		'pagination_type'     => null,
-		'pagination_location' => 'after',
-	);
+	$default_query_tags = [
+		'use_current'            => false,
+		'name'                   => null,
+		'id'                     => null,
+		'slug'                   => null,
+		'select'                 => null,
+		'join'                   => null,
+		'order'                  => null,
+		'orderby'                => null,
+		'limit'                  => null,
+		'where'                  => null,
+		'having'                 => null,
+		'groupby'                => null,
+		'search'                 => true,
+		'pagination'             => false,
+		'page'                   => null,
+		'offset'                 => null,
+		'filters_enable'         => null,
+		'filters'                => '',
+		'filters_label'          => null,
+		'filters_location'       => 'before',
+		'pagination_label'       => null,
+		'pagination_type'        => null,
+		'pagination_location'    => 'after',
+		'check_template_context' => false,
+	];
 
 	$default_other_tags = [
 		'blog_id'          => null,
@@ -1004,9 +1005,10 @@ function pods_shortcode_run( $tags, $content = null ) {
 
 	$tags = apply_filters( 'pods_shortcode', $tags );
 
-	$tags['pagination']  = filter_var( $tags['pagination'], FILTER_VALIDATE_BOOLEAN );
-	$tags['search']      = filter_var( $tags['search'], FILTER_VALIDATE_BOOLEAN );
-	$tags['use_current'] = filter_var( $tags['use_current'], FILTER_VALIDATE_BOOLEAN );
+	$tags['pagination']             = filter_var( $tags['pagination'], FILTER_VALIDATE_BOOLEAN );
+	$tags['search']                 = filter_var( $tags['search'], FILTER_VALIDATE_BOOLEAN );
+	$tags['use_current']            = filter_var( $tags['use_current'], FILTER_VALIDATE_BOOLEAN );
+	$tags['check_template_context'] = filter_var( $tags['check_template_context'], FILTER_VALIDATE_BOOLEAN );
 
 	if ( empty( $content ) ) {
 		$content = null;
@@ -1135,6 +1137,21 @@ function pods_shortcode_run( $tags, $content = null ) {
 			}
 		}
 	}//end if
+
+	// Check if Pods Templates are being used.
+	if ( ! isset( $pod ) && $tags['check_template_context'] && class_exists( 'Pods_Templates' ) ) {
+		$template_context = Pods_Templates::get_context();
+
+		// Check if the template context is set and if it is a Pod.
+		if ( $template_context instanceof Pods ) {
+			$pod = $template_context;
+
+			$tags['name'] = $pod->pod_data['name'];
+			$id           = $pod->id();
+
+			$tags['use_current'] = false;
+		}
+	}
 
 	if ( ! isset( $pod ) ) {
 		if ( ! $tags['use_current'] ) {

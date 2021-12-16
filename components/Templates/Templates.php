@@ -73,13 +73,23 @@ class Pods_Templates extends PodsComponent {
 	private $capability_type = 'pods_template';
 
 	/**
+	 * The list of context objects for the current Pod Template.
+	 *
+	 * @since TBD
+	 *
+	 * @var Pods[]|array
+	 */
+	private static $context = [];
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function init() {
-
-		$args = array(
+		$args = [
 			'label'        => 'Pod Templates',
-			'labels'       => array( 'singular_name' => 'Pod Template' ),
+			'labels'       => [
+				'singular_name' => 'Pod Template',
+			],
 			'public'       => false,
 			'can_export'   => false,
 			'show_ui'      => true,
@@ -88,15 +98,28 @@ class Pods_Templates extends PodsComponent {
 			'rewrite'      => false,
 			'has_archive'  => false,
 			'hierarchical' => false,
-			'supports'     => array( 'title', 'author', 'revisions' ),
+			'supports'     => [
+				'title',
+				'author',
+				'revisions',
+			],
 			'menu_icon'    => pods_svg_icon( 'pods' ),
-		);
+		];
 
 		if ( ! pods_is_admin() ) {
 			$args['capability_type'] = $this->capability_type;
 		}
 
 		$args = PodsInit::object_label_fix( $args, 'post_type' );
+
+		// Enable the REST API for the block editor if needed.
+		if ( self::use_block_editor() ) {
+			$args['supports'][] = 'editor';
+
+			$args['show_in_rest']          = true;
+			$args['rest_base']             = $this->object_type;
+			$args['rest_controller_class'] = 'WP_REST_Posts_Controller';
+		}
 
 		register_post_type( $this->object_type, apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
 
@@ -618,8 +641,8 @@ class Pods_Templates extends PodsComponent {
 	/**
 	 * Parse a template string
 	 *
-	 * @param string $code The template string to parse
-	 * @param object $obj  The Pods object
+	 * @param string      $code The template string to parse.
+	 * @param Pods|object $obj  The Pods object.
 	 *
 	 * @since 1.8.5
 	 * @return mixed|string|void
@@ -649,6 +672,16 @@ class Pods_Templates extends PodsComponent {
 			$out = $code;
 		}
 
+		if ( self::use_block_editor() && has_blocks( $code ) ) {
+			$key = wp_generate_uuid4();
+
+			self::set_context( $obj, $key );
+
+			$out = do_blocks( $code );
+
+			self::remove_context( $key );
+		}
+
 		$out = $obj->do_magic_tags( $out );
 
 		// Prevent blank whitespace from being output if nothing came through.
@@ -673,6 +706,101 @@ class Pods_Templates extends PodsComponent {
 		}
 
 		return pods( $pod_name, $item_id, true );
+	}
+
+	/**
+	 * Determine whether to use the block editor.
+	 *
+	 * @since TBD
+	 *
+	 * @return bool Whether to use the block editor.
+	 */
+	public static function use_block_editor() {
+		// Template eval is not supported for use with the block editor.
+		if ( defined( 'PODS_DISABLE_EVAL' ) && ! PODS_DISABLE_EVAL ) {
+			return false;
+		}
+
+		/**
+		 * Allow filtering to turn on using the block editor.
+		 *
+		 * @since TBD
+		 *
+		 * @param bool $use_block_editor Whether to use the block editor.
+		 */
+		return (bool) apply_filters( 'pods_templates_use_block_editor', false );
+	}
+
+	/**
+	 *
+	 *
+	 * @since TBD
+	 *
+	 * @param Pods|mixed $context The context to set.
+	 * @param string     $key     The unique identifier for the context.
+	 */
+	public static function set_context( $context, $key ) {
+		if ( ! self::use_block_editor() ) {
+			return;
+		}
+
+		self::$context[ $key ] = $context;
+	}
+
+	/**
+	 * Get the currently available context.
+	 *
+	 * @since TBD
+	 *
+	 * @param null|string $key The unique identifier for the context, if not set then it will return the last context in the list.
+	 *
+	 * @return null|Pods|mixed The currently available context.
+	 */
+	public static function get_context( $key = null ) {
+		// Check if using the block editor.
+		if ( ! self::use_block_editor() ) {
+			return null;
+		}
+
+		// Check if we have any context set.
+		if ( empty( self::$context ) ) {
+			return null;
+		}
+
+		// Check if we need to get the context by key.
+		if ( $key ) {
+			// Check if the context is set for the key.
+			if ( ! isset( self::$context[ $key ] ) ) {
+				return null;
+			}
+
+			return self::$context[ $key ];
+        }
+
+		// Return the last context set.
+		return end( self::$context );
+	}
+
+	/**
+	 * Reset the current context by removing it off of the stack.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $key The unique identifier for the context.
+	 */
+	public static function remove_context( $key ) {
+		// Check if using the block editor.
+		if ( ! self::use_block_editor() ) {
+			return null;
+		}
+
+		// Check if the context is set.
+		if ( ! isset( self::$context[ $key ] ) ) {
+			return null;
+		}
+
+		// Remove the context.
+		unset( self::$context[ $key ] );
 	}
 
 }

@@ -193,6 +193,10 @@ class Pods_Templates_Frontier {
 			$slug = $screen->base;
 		}
 
+		if ( Pods_Templates::use_block_editor() ) {
+			return;
+		}
+
 		$this->plugin_screen_hook_suffix[ $slug ] = $post->post_type;
 
 		// Required Styles for metabox
@@ -206,25 +210,21 @@ class Pods_Templates_Frontier {
 		wp_enqueue_style( $this->plugin_slug . '-pod_reference-styles', $this->get_url( 'assets/css/styles-pod_reference.css', __FILE__ ), array(), self::VERSION );
 
 		// add metabox
-		add_meta_box(
-			'view_template', __( 'Template', 'pods' ), array(
-				$this,
-				'render_metaboxes_custom',
-			), '_pods_template', 'normal', 'high', array(
-				'slug'   => 'view_template',
-				'groups' => array(),
-			)
-		);
-		add_meta_box(
-			'pod_reference', __( 'Pod Reference', 'pods' ), array(
-				$this,
-				'render_metaboxes_custom',
-			), '_pods_template', 'side', 'default', array(
-				'slug'   => 'pod_reference',
-				'groups' => array(),
-			)
-		);
+		add_meta_box( 'view_template', __( 'Template', 'pods' ), [
+			$this,
+			'render_metaboxes_custom',
+		], '_pods_template', 'normal', 'high', [
+			'slug'   => 'view_template',
+			'groups' => [],
+		] );
 
+		add_meta_box( 'pod_reference', __( 'Pod Reference', 'pods' ), [
+			$this,
+			'render_metaboxes_custom',
+		], '_pods_template', 'side', 'default', [
+			'slug'   => 'pod_reference',
+			'groups' => [],
+		] );
 	}
 
 	/**

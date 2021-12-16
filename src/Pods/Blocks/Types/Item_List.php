@@ -387,8 +387,17 @@ class Item_List extends Base {
 			return '';
 		}
 
+		$attributes['check_template_context'] = true;
+
 		// Detect post type / ID from context.
 		if ( empty( $attributes['name'] ) && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
+			if ( '_pods_template' === $block->context['postType'] ) {
+				return $this->render_placeholder(
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Item List', 'pods' ),
+					esc_html__( 'There is no preview for this block while in the Pods Template editor.', 'pods' )
+				);
+			}
+
 			$attributes['name'] = $block->context['postType'];
 		}
 

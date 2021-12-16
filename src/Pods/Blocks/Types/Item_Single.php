@@ -242,11 +242,22 @@ class Item_Single extends Base {
 		// Use current if no pod name / slug provided.
 		if ( empty( $attributes['name'] ) || empty( $attributes['slug'] ) ) {
 			$attributes['use_current'] = true;
-		} elseif ( ! isset( $attributes['use_current'] ) ) {
+
+			$attributes['check_template_context'] = true;
+		} elseif ( ! empty( $attributes['use_current'] ) ) {
+			$attributes['check_template_context'] = true;
+		} else {
 			$attributes['use_current'] = false;
 		}
 
 		if ( $attributes['use_current'] && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
+			if ( '_pods_template' === $block->context['postType'] ) {
+				return $this->render_placeholder(
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Pods Single Item', 'pods' ),
+					esc_html__( 'There is no preview for this block while in the Pods Template editor.', 'pods' )
+				);
+			}
+
 			// Detect post type / ID from context.
 			$attributes['name'] = $block->context['postType'];
 

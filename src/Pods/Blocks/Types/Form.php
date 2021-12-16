@@ -232,8 +232,17 @@ class Form extends Base {
 			return '';
 		}
 
+		$attributes['check_template_context'] = true;
+
 		// Detect post type / ID from context.
 		if ( empty( $attributes['name'] ) && $block instanceof WP_Block && ! empty( $block->context['postType'] ) ) {
+			if ( '_pods_template' === $block->context['postType'] ) {
+				return $this->render_placeholder(
+					'<i class="pods-block-placeholder_error"></i>' . esc_html__( 'Form', 'pods' ),
+					esc_html__( 'There is no preview for this block while in the Pods Template editor.', 'pods' )
+				);
+			}
+
 			$attributes['name'] = $block->context['postType'];
 
 			if ( isset( $attributes['slug'] ) && '{@post.ID}' === $attributes['slug'] && ! empty( $block->context['postId'] ) ) {

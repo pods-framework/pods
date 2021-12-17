@@ -102,6 +102,7 @@ class PodsUpgrade {
 
 			if ( PodsInit::$components ) {
 				PodsInit::$components->activate_component( 'templates' );
+				PodsInit::$components->activate_component( 'migrate-packages' );
 			}
 		}//end if
 

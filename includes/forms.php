@@ -201,8 +201,8 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 						$options['heading_sub_container_class'] = explode( ' ', $options['heading_sub_container_class'] );
 					}
 
-					foreach ( $options['heading_sub_container_class'] as $heading_class ) {
-						$heading_sub_container_classes[] = $heading_class;
+					foreach ( $options['heading_sub_container_class'] as $heading_sub_container_class ) {
+						$heading_sub_container_classes[] = $heading_sub_container_class;
 					}
 				}
 
@@ -236,8 +236,6 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 
 		if ( $is_table_rows_render ) {
 			echo '</td></tr>';
-		} elseif ( $is_div_rows_render && $options['wrapper'] ) {
-			echo '</div>';
 		}
 
 		$id = $object_id;
@@ -293,6 +291,8 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 			}
 
 			echo '<table class="form-table">' . "\n";
+		} elseif ( $is_div_rows_render && $options['wrapper'] ) {
+			echo '</div>';
 		}
 
 		if ( ! $is_table_rows_render && 'after' === $options['separator'] ) {

@@ -87,12 +87,18 @@ function pods_form_enqueue_style( $handle, $src = '', $deps = array(), $ver = fa
  */
 function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 	$defaults = [
-		'section_field'     => null,
-		'section'           => null,
-		'separator'         => 'before',
-		'heading'           => 'h2',
-		'separated_heading' => null,
-		'render'            => 'table',
+		'section_field'                   => null,
+		'section'                         => null,
+		'separator'                       => 'before',
+		'wrapper'                         => false,
+		'wrapper_class'                   => null,
+		'container_class'                 => null,
+		'heading'                         => 'h2',
+		'heading_class'                   => null,
+		'heading_sub_container'           => null,
+		'heading_sub_container_class'     => null,
+		'separated_heading'               => null,
+		'render'                          => 'table',
 	];
 
 	$options = array_merge( $defaults, $options );
@@ -105,6 +111,24 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 
 	// Return groups.
 	$options['return_type'] = 'group';
+
+	$wrapper_classes = [
+		'pods-form-wrapper',
+		'pods-form-wrapper--pod--' . $name,
+	];
+
+	if ( $options['wrapper_class'] ) {
+		if ( ! is_array( $options['wrapper_class'] ) ) {
+			$options['wrapper_class'] = explode( ' ', $options['wrapper_class'] );
+		}
+
+		foreach ( $options['wrapper_class'] as $wrapper_class ) {
+			$wrapper_classes[] = $wrapper_class;
+		}
+	}
+
+	$wrapper_classes = array_map( 'sanitize_html_class', $wrapper_classes );
+	$wrapper_classes = implode( ' ', $wrapper_classes );
 
 	// Get groups/fields and render them.
 	$groups = pods_form_get_visible_objects( $pod, $options );
@@ -124,6 +148,7 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 		$is_table_separated_render = 'table-separated' === $options['render'];
 		$is_table_render           = 'table' === $options['render'] || $is_table_separated_render;
 		$is_table_rows_render      = 'table-rows' === $options['render'];
+		$is_div_rows_render        = 'div-rows' === $options['render'];
 
 		if ( $is_table_separated_render ) {
 			echo "</table>\n";
@@ -134,7 +159,15 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 		}
 
 		if ( $is_table_rows_render ) {
-			echo '<tr><td colspan="2">';
+			printf(
+				'<tr><td colspan="2" class="%s">',
+				$wrapper_classes
+			);
+		} elseif ( $is_div_rows_render && $options['wrapper'] ) {
+			printf(
+				'<div class="%s">',
+			    $wrapper_classes
+            );
 		}
 
 		if ( $options['heading'] ) {
@@ -145,20 +178,69 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 				'pods-form-heading--group-' . $group['name'],
 			];
 
+			if ( $options['heading_class'] ) {
+				if ( ! is_array( $options['heading_class'] ) ) {
+					$options['heading_class'] = explode( ' ', $options['heading_class'] );
+				}
+
+				foreach ( $options['heading_class'] as $heading_class ) {
+					$heading_classes[] = $heading_class;
+				}
+			}
+
 			$heading_classes = array_map( 'sanitize_html_class', $heading_classes );
 			$heading_classes = implode( ' ', $heading_classes );
+
+			$heading_text = wp_kses_post( $group['label'] );
+
+			if ( $options['heading_sub_container'] ) {
+				$heading_sub_container_classes = [];
+
+				if ( $options['heading_sub_container_class'] ) {
+					if ( ! is_array( $options['heading_sub_container_class'] ) ) {
+						$options['heading_sub_container_class'] = explode( ' ', $options['heading_sub_container_class'] );
+					}
+
+					foreach ( $options['heading_sub_container_class'] as $heading_class ) {
+						$heading_sub_container_classes[] = $heading_class;
+					}
+				}
+
+				$heading_sub_container_extra_html = '';
+
+				if ( ! empty( $heading_sub_container_classes ) ) {
+					$heading_sub_container_classes = array_map( 'sanitize_html_class', $heading_sub_container_classes );
+					$heading_sub_container_classes = implode( ' ', $heading_sub_container_classes );
+
+					$heading_sub_container_extra_html = sprintf(
+						' class="%s"',
+						esc_attr( $heading_sub_container_classes )
+					);
+				}
+
+				$heading_text = sprintf(
+					'<%1$s%2$s>%3$s</%1$s>' . "\n",
+					esc_html( $options['heading_sub_container'] ),
+					$heading_sub_container_extra_html,
+					$heading_text
+				);
+			}
 
 			printf(
 				'<%1$s class="%2$s">%3$s</%1$s>' . "\n",
 				esc_html( $options['heading'] ),
 				esc_attr( $heading_classes ),
-				wp_kses_post( $group['label'] )
+				$heading_text
 			);
 		}
 
 		if ( $is_table_rows_render ) {
 			echo '</td></tr>';
+		} elseif ( $is_div_rows_render && $options['wrapper'] ) {
+			echo '</div>';
 		}
+
+		$id = $object_id;
 
 		$container_classes = [
 			'pods-form',
@@ -168,10 +250,18 @@ function pods_form_render_fields( $name, $object_id, array $options = [] ) {
 			'pods-form-container--group--' . $group['name'],
 		];
 
+		if ( $options['container_class'] ) {
+			if ( ! is_array( $options['container_class'] ) ) {
+				$options['container_class'] = explode( ' ', $options['container_class'] );
+			}
+
+			foreach ( $options['container_class'] as $container_class ) {
+				$container_classes[] = $container_class;
+			}
+		}
+
 		$container_classes = array_map( 'sanitize_html_class', $container_classes );
 		$container_classes = implode( ' ', $container_classes );
-
-		$id = $object_id;
 
 		if ( $is_table_render || $is_table_rows_render ) {
 			if ( $is_table_render ) {

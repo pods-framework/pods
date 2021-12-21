@@ -798,7 +798,7 @@ class Pod extends Base {
 				'has_archive_slug'        => [
 					'label'         => __( 'Archive Page Slug Override', 'pods' ),
 					'help'          => __( 'If archive page is enabled, you can override the slug used by WordPress, which defaults to the name of the post type.', 'pods' ),
-					'type'          => 'slug',
+					'type'          => 'text',
 					'slug_fallback' => '-',
 					'default'       => '',
 					'depends-on'    => [ 'has_archive' => true ],
@@ -822,7 +822,7 @@ class Pod extends Base {
 				'rewrite_custom_slug'     => [
 					'label'         => __( 'Custom Rewrite Slug', 'pods' ),
 					'help'          => __( 'Changes the first segment of the URL, which by default is the name of the Pod. For example, if your Pod is called "foo", if this field is left blank, your link will be "example.com/foo/post_slug", but if you were to enter "bar" your link will be "example.com/bar/post_slug".', 'pods' ),
-					'type'          => 'slug',
+					'type'          => 'text',
 					'slug_fallback' => '-',
 					'default'       => '',
 					'depends-on'    => [ 'rewrite' => true ],
@@ -1177,7 +1177,7 @@ class Pod extends Base {
 				'rewrite_custom_slug'      => [
 					'label'         => __( 'Custom Rewrite Slug', 'pods' ),
 					'help'          => __( 'help', 'pods' ),
-					'type'          => 'slug',
+					'type'          => 'text',
 					'slug_fallback' => '-',
 					'default'       => '',
 					'depends-on'    => [ 'rewrite' => true ],

@@ -4,6 +4,7 @@ namespace Pods\Blocks\Types;
 
 use Pods\Whatsit\Store;
 use Tribe__Editor__Blocks__Abstract;
+use WP_Block;
 
 /**
  * Field block functionality class.
@@ -153,5 +154,40 @@ abstract class Base extends Tribe__Editor__Blocks__Abstract {
 		</div>
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * Determine whether we are preloading a block.
+	 *
+	 * @since 2.8.8
+	 *
+	 * @return bool Whether we are preloading a block.
+	 */
+	public function is_preloading_block() {
+		return is_admin() && 'edit' === pods_v( 'action' ) && 0 < (int) pods_v( 'post' );
+	}
+
+	/**
+	 * Determine whether to preload the block.
+	 *
+	 * @since 2.8.8
+	 *
+	 * @param array         $attributes           The block attributes used.
+	 * @param WP_Block|null $block                The WP_Block object or null if not provided.
+	 *
+	 * @return bool Whether to preload the block.
+	 */
+	public function should_preload_block( $attributes = [], $block = null ) {
+		/**
+		 * Allow filtering whether to preload the block.
+		 *
+		 * @since 2.8.8
+		 *
+		 * @param bool          $should_preload_block Whether to preload the block.
+		 * @param array         $attributes           The block attributes used.
+		 * @param WP_Block|null $block                The WP_Block object or null if not provided.
+		 * @param Base          $block_type           The block type object (not WP_Block).
+		 */
+		return (bool) apply_filters( 'pods_blocks_types_preload_block', true, $this );
 	}
 }

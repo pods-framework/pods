@@ -271,9 +271,9 @@ class PodsData {
 		}
 
 		if ( $pod instanceof Pod ) {
-			$this->pod_data = $pod;
+			$this->pod_data = clone $pod;
 		} elseif ( $pod instanceof Pods ) {
-			$this->pod_data = $pod->pod_data;
+			$this->pod_data = clone $pod->pod_data;
 		} else {
 			$this->pod_data = $this->api->load_pod( [
 				'name'       => $pod,

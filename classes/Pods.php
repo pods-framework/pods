@@ -133,7 +133,7 @@ class Pods implements Iterator {
 			$pod = get_queried_object();
 		}
 
-		if ( $pod && ! is_string( $pod ) ) {
+		if ( $pod && ! is_string( $pod ) && ! $pod instanceof Pod ) {
 			if ( $pod instanceof WP_Post ) {
 				// Post Type Singular.
 				$pod       = $pod->post_type;
@@ -764,12 +764,16 @@ class Pods implements Iterator {
 			$field_data = $this->fields( $params->name );
 		}
 
+		$override_object_field = false;
+
 		if ( $field_data instanceof \Pods\Whatsit\Object_Field ) {
 			$field_source = 'object_field';
 			$is_field_set = true;
 		} elseif ( $field_data instanceof \Pods\Whatsit\Field ) {
 			$field_source = 'field';
 			$is_field_set = true;
+
+			$override_object_field = (bool) $field_data->get_arg( 'override_object_field', false );
 		}
 
 		// Store field info.
@@ -807,6 +811,7 @@ class Pods implements Iterator {
 		}
 
 		if (
+			! $override_object_field &&
 			empty( $value ) &&
 			isset( $this->data->row[ $params->name ] ) &&
 			( ! $is_tableless_field || 'arrays' === $params->output )
@@ -2485,7 +2490,38 @@ class Pods implements Iterator {
 
 		$this->data->total_found();
 
-		return $this->data->total_found;
+		return (int) $this->data->total_found;
+	}
+
+	/**
+	 * Get the total count of all rows in a simple find() across the whole Pod. This will perform a new find() request
+	 * and then return the total number of rows found.
+	 *
+	 * This method is non-destructive and it will not alter the current Pod object.
+	 *
+	 * @since 2.8.9
+	 *
+	 * @return int The total count of all rows in a simple find() across the whole Pod.
+	 */
+	public function total_all_rows() {
+		$field_id = pods_v( 'field_id', $this->pod_data );
+
+		if ( empty( $field_id ) ) {
+			return 0;
+		}
+
+		$pod = clone $this;
+
+		// Make a simple request so we can perform a total_found() SQL request.
+		$params = [
+			'distinct' => false,
+			'select'   => 't.' . $this->pod_data['field_id'],
+			'limit'    => 1,
+		];
+
+		$pod->find( $params );
+
+		return $pod->total_found();
 	}
 
 	/**

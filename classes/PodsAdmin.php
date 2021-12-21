@@ -899,6 +899,8 @@ class PodsAdmin {
 
 		$pod_types_found = array();
 
+		$include_row_counts = filter_var( pods_v( 'pods_include_row_counts' ), FILTER_VALIDATE_BOOLEAN );
+
 		$fields = [
 			'label'       => [ 'label' => __( 'Label', 'pods' ) ],
 			'name'        => [ 'label' => __( 'Name', 'pods' ) ],
@@ -917,8 +919,29 @@ class PodsAdmin {
 			],
 		];
 
-		$total_groups = 0;
-		$total_fields = 0;
+		if ( $include_row_counts ) {
+			$fields['row_count'] = [
+				'label' => __( 'Data Rows', 'pods' ),
+				'width' => '8%',
+			];
+
+			$fields['row_meta_count'] = [
+				'label' => __( 'Meta Rows', 'pods' ),
+				'width' => '8%',
+			];
+
+			$fields['podsrel_count'] = [
+				// translators: "PodsRel" references the name of the Pods relationships table in the database.
+				'label' => __( 'PodsRel Rows', 'pods' ),
+				'width' => '10%',
+			];
+		}
+
+		$total_groups       = 0;
+		$total_fields       = 0;
+		$total_rows         = 0;
+		$total_row_meta     = 0;
+		$total_podsrel_rows = 0;
 
 		/**
 		 * Filters whether to extend internal Pods.
@@ -931,10 +954,14 @@ class PodsAdmin {
 
 		$pod_list = array();
 
+		$is_tableless = pods_tableless();
+
 		foreach ( $pods as $k => $pod ) {
 			$pod_type       = $pod['type'];
 			$pod_type_label = null;
 			$pod_storage    = $pod['storage'];
+
+			$show_meta_count = 'meta' === $pod_storage || in_array( $pod['type'], [ 'post_type', 'taxonomy', 'user', 'comment' ], true );
 
 			if ( ! empty( $pod['internal'] ) ) {
 				// Don't show internal if we aren't extending them.
@@ -999,7 +1026,25 @@ class PodsAdmin {
 				$row = $pod;
 			}
 
-			$pod = array(
+			$group_count    = $pod->count_groups();
+			$field_count    = $pod->count_fields();
+			$row_count      = 0;
+			$row_meta_count = 0;
+			$podsrel_count  = 0;
+
+			if ( $include_row_counts ) {
+				$row_count      = $pod->count_rows();
+
+				if ( $show_meta_count ) {
+					$row_meta_count = $pod->count_row_meta();
+				}
+
+				if ( ! $is_tableless ) {
+					$podsrel_count = $pod->count_podsrel_rows();
+				}
+			}
+
+			$pod = [
 				'id'          => $pod['id'],
 				'label'       => pods_v( 'label', $pod ),
 				'name'        => pods_v( 'name', $pod ),
@@ -1007,12 +1052,33 @@ class PodsAdmin {
 				'type'        => $pod_type,
 				'real_type'   => $pod_real_type,
 				'storage'     => $storage_type_label,
-				'group_count' => $pod->count_groups(),
-				'field_count' => $pod->count_fields(),
-			);
+				'group_count' => number_format_i18n( $group_count ),
+				'field_count' => number_format_i18n( $field_count ),
+			];
 
-			$total_groups += $pod['group_count'];
-			$total_fields += $pod['field_count'];
+			$total_groups += $group_count;
+			$total_fields += $field_count;
+
+			if ( $include_row_counts ) {
+				$pod['row_count'] = number_format_i18n( $row_count );
+
+				$total_rows += $row_count;
+
+				$pod['row_meta_count'] = 'n/a';
+				$pod['podsrel_count']  = 'n/a';
+
+				if ( $show_meta_count ) {
+					$pod['row_meta_count'] = number_format_i18n( $row_meta_count );
+
+					$total_row_meta += $row_meta_count;
+				}
+
+				if ( ! $is_tableless ) {
+					$pod['podsrel_count'] = number_format_i18n( $podsrel_count );
+
+					$total_podsrel_rows += $podsrel_count;
+				}
+			}
 
 			$pod_list[] = $pod;
 		}//end foreach
@@ -1025,6 +1091,27 @@ class PodsAdmin {
 		}
 
 		$total_pods = count( $pod_list );
+
+		$extra_total_text = sprintf(
+			', %1$s %2$s, %3$s %4$s',
+			number_format_i18n( $total_groups ),
+			_n( 'group', 'groups', $total_groups, 'pods' ),
+			number_format_i18n( $total_fields ),
+			_n( 'field', 'fields', $total_fields, 'pods' )
+		);
+
+		if ( $include_row_counts ) {
+			$extra_total_text .= sprintf(
+			', %1$s %2$s, %3$s %4$s, %5$s %6$s',
+				number_format_i18n( $total_rows ),
+				_n( 'data row', 'data rows', $total_rows, 'pods' ),
+				number_format_i18n( $total_row_meta ),
+				_n( 'meta row', 'meta rows', $total_row_meta, 'pods' ),
+				number_format_i18n( $total_podsrel_rows ),
+				// translators: "podsrel" references the name of the Pods relationships table in the database.
+				_n( 'podsrel row', 'podsrel rows', $total_podsrel_rows, 'pods' )
+			);
+		}
 
 		$ui = [
 			'data'             => $pod_list,
@@ -1078,9 +1165,7 @@ class PodsAdmin {
 			'sortable'         => true,
 			'pagination'       => false,
 			'extra'            => [
-				'total' =>
-					', ' . number_format_i18n( $total_groups ) . ' ' . _n( 'group', 'groups', $total_groups, 'pods' )
-					. ', ' . number_format_i18n( $total_fields ) . ' ' . _n( 'field', 'fields', $total_fields, 'pods' ),
+				'total' => $extra_total_text,
 			],
 		];
 
@@ -1158,8 +1243,8 @@ class PodsAdmin {
 		$disable_pods = pods_v( 'pods_callout_dismiss' );
 
 		// Disable Friends of Pods 2021 callout.
-		if ( 'friends_2021' === $disable_pods ) {
-			$callouts['friends_2021'] = 0;
+		if ( 'friends_2021_29' === $disable_pods ) {
+			$callouts['friends_2021_29'] = 0;
 
 			update_option( 'pods_callouts', $callouts );
 		} elseif ( 'reset' === $disable_pods ) {
@@ -2846,6 +2931,8 @@ class PodsAdmin {
 
 		$auto_start = pods_v( $auto_start, $fields['session_auto_start']['data'], __( 'Unknown', 'pods' ) );
 
+		global $wpdb;
+
 		$info['pods'] = [
 			'label'       => 'Pods',
 			'description' => __( 'Debug information for Pods installations.', 'pods' ),
@@ -2965,6 +3052,10 @@ class PodsAdmin {
 				'pods-can-use-sessions'              => [
 					'label' => __( 'Pods Can Use Sessions' ),
 					'value' => ( pods_can_use_sessions( true ) ) ? __( 'Yes', 'pods' ) : __( 'No', 'pods' ),
+				],
+				'pods-relationship-table-status'              => [
+					'label' => __( 'Pods Relationship Table Count' ),
+					'value' => ( ! pods_tableless() ? number_format( (float) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}podsrel" ) ) : 'No table' ),
 				],
 			],
 		];

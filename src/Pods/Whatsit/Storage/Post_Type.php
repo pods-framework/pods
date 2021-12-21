@@ -364,9 +364,9 @@ class Post_Type extends Collection {
 			$post_objects = false;
 
 			if ( empty( $args['bypass_post_type_find'] ) ) {
-				$query = new WP_Query( $post_args );
+				$query = new WP_Query();
 
-				$posts = $query->get_posts();
+				$posts = $query->query( $post_args );
 
 				// We only receive the first post, so let's just override the posts with the count.
 				if ( ! empty( $args['count'] ) ) {
